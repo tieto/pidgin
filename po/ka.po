@@ -1,19 +1,25 @@
+# https://launchpad.net/people/ubuntu-l10n-ka
+# 
+# Temuri Doghonadze <temuri@mail.ge>, 2005.
+# Alexander Didebulidze <alexander.didebulidze@stusta.mhn.de>,12.2005.
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 1.1.2\n"
+"Project-Id-Version: gaim 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-27 16:12-0400\n"
-"PO-Revision-Date: 2005-03-05 13:45+03\n"
-"Last-Translator: Temuri Doghonadze <temuri@mail.ge>\n"
-"Language-Team: GEORGIAN <temuri@mail.ge>\n"
+"PO-Revision-Date: 2005-12-17 01:08+0100\n"
+"Last-Translator: Ubuntu Georgian Translators <alexander.didebulidze@stusta.mhn.de>\n"
+"Language-Team: GEORGIAN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;"
 
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
-msgstr ""
+msgstr "არ აჩვენო შეცდომები"
 
 #: plugins/autorecon.c:305
 msgid "Hide Disconnect Errors"
@@ -26,7 +32,7 @@ msgstr "დაიმალოს შესვლის შეცდომებ�
 #: plugins/autorecon.c:313
 #, fuzzy
 msgid "Hide Reconnecting Dialog"
-msgstr "დაიმალოს დაკავშირების შეცდომები"
+msgstr "დაიმალოს დაკავშირების ფანჯარა"
 
 #. *< type
 #. *< ui_requirement
@@ -48,26 +54,27 @@ msgstr "როცა გამოგაგდებენ, გადაგაკ
 
 #: plugins/contact_priority.c:84
 msgid "Point values to use when..."
-msgstr ""
+msgstr "მიუთითეთ მნიშვნელობები რომ გამოვიყენოთ როცა..."
 
 #: plugins/contact_priority.c:93
 msgid "Buddy is offline:"
-msgstr ""
+msgstr "მომხმარებელი გასულია ქსელიდან:"
 
 #: plugins/contact_priority.c:107
 msgid "Buddy is away:"
-msgstr ""
+msgstr "მომხმარებელი გასულია:"
 
 #: plugins/contact_priority.c:121
 msgid "Buddy is idle:"
-msgstr ""
+msgstr "მომხმარებელი უმოქმედოთაა:"
 
 #: plugins/contact_priority.c:135
 msgid "Use last matching buddy"
-msgstr ""
+msgstr "გამოიყენე ბოლო შესაბამისი მომხმარებელი"
 
 #. Explanation
 #: plugins/contact_priority.c:141
+#, fuzzy
 msgid ""
 "The buddy with the lowest score is the buddy who will have priority in the "
 "contact.\n"
@@ -75,10 +82,16 @@ msgid ""
 "to be\n"
 "the built-in order: active, idle, away, away + idle, offline."
 msgstr ""
+"მომხმარებელი ყველაზე ნაკლები ქულებით იქნება ის, რომელსაც ექნება პრიორიტეტი "
+"კონტაქტებში.\n"
+"ნაგულისხმები მნიშვბელობები (შემოსული გათიშული=4, გასული=2, და უმოქმედოთ=1)\n"
+"გამოიყენებს პირველად მიმდევრობას აქტიური->უმოქმედო->გასული->გასული+უმოქმედო-"
+">შემოსული არაა."
 
 #: plugins/contact_priority.c:144
+#, fuzzy
 msgid "Point values to use for account..."
-msgstr ""
+msgstr "მიუთითეთ მნიშვნელობები რომ გამოვიყენოთ ანგარიშისთვის..."
 
 #. *< type
 #. *< ui_requirement
@@ -97,6 +110,8 @@ msgstr "კონტაქტის პრიორიტეტი"
 msgid ""
 "Allows for controlling the values associated with different buddy states."
 msgstr ""
+"გაძლევთ საშუალებას  აკონტროლოთ სხვადასხვა მეგობართან ასოცირებული "
+"მნიშვნელობები."
 
 #. *< description
 #: plugins/contact_priority.c:200
@@ -109,9 +124,8 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-#, fuzzy
 msgid "Gaim"
-msgstr "თამაში"
+msgstr "Gaim"
 
 #: plugins/docklet/docklet-win32.c:45
 msgid "Gaim - Signed off"
@@ -122,17 +136,16 @@ msgid "Gaim - Away"
 msgstr "Gaim - გასულია"
 
 #: plugins/docklet/docklet.c:383
-#, fuzzy
 msgid "Show Buddy List"
-msgstr "დაიმალოს შესვლის შეცდომები"
+msgstr "აჩვენე მეგობრების სია"
 
 #: plugins/docklet/docklet.c:390
 msgid "New Message..."
-msgstr "ახალი შეტყობინება"
+msgstr "ახალი შეტყობინება..."
 
 #: plugins/docklet/docklet.c:394
 msgid "Join A Chat..."
-msgstr "საუბარში ჩართვა"
+msgstr "საუბარში ჩართვა..."
 
 #: plugins/docklet/docklet.c:399
 msgid "Mute Sounds"
@@ -145,7 +158,7 @@ msgstr "ფაილების გადაგზავნა"
 
 #: plugins/docklet/docklet.c:407 src/gtkaccount.c:2422
 msgid "Accounts"
-msgstr "წევრები"
+msgstr "ანგარიშები"
 
 #: plugins/docklet/docklet.c:408 src/gtkprefs.c:1763
 msgid "Preferences"
@@ -166,14 +179,14 @@ msgstr "გამოსვლა"
 #. *< id
 #: plugins/docklet/docklet.c:556
 msgid "System Tray Icon"
-msgstr ""
+msgstr "სისტემური პანელის ნახატი"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:559
 msgid "Displays an icon for Gaim in the system tray."
-msgstr ""
+msgstr "გამოაჩინე Gaim-ი სისტემის პანელში"
 
 #. *  description
 #: plugins/docklet/docklet.c:561
@@ -185,23 +198,20 @@ msgid ""
 msgstr ""
 
 #: plugins/extplacement.c:79
-#, fuzzy
 msgid "By conversation count"
 msgstr "IMის საუბრის ფანჯარა"
 
 #: plugins/extplacement.c:100
-#, fuzzy
 msgid "Conversation Placement"
 msgstr "საუბარი %s-თან"
 
 #: plugins/extplacement.c:105
-#, fuzzy
 msgid "Number of conversations per window"
-msgstr "IMის საუბრის ფანჯარა"
+msgstr "საუბრების რაოდენობა ფანჯარაში"
 
 #: plugins/extplacement.c:111
 msgid "Separate IM and Chat windows when placing by number"
-msgstr ""
+msgstr "გაანცალკევე IM და Chat-ფანჯრები ნომრების მიხედვით დალაგების დროს"
 
 #. *< type
 #. *< ui_requirement
@@ -211,13 +221,13 @@ msgstr ""
 #. *< id
 #: plugins/extplacement.c:132
 msgid "ExtPlacement"
-msgstr ""
+msgstr "დამატებითი განლაგება"
 
 #. *< name
 #. *< version
 #: plugins/extplacement.c:134
 msgid "Extra conversation placement options."
-msgstr ""
+msgstr "საუბრების ფანჯრების განლაგების დამატებითი პარამეტრები."
 
 #. *< summary
 #. *  description
@@ -243,7 +253,7 @@ msgstr "Gaim - ის ფაილკონტროლი"
 #. *  description
 #: plugins/filectl.c:248 plugins/filectl.c:250
 msgid "Allows you to control Gaim by entering commands in a file."
-msgstr "გაძლევთ Gaim-ის კონტროლის საშუალებას ფაილში ბრძანებების შეტანით "
+msgstr "გაძლევთ Gaim-ის კონტროლის საშუალებას ფაილში ბრძანებების შეტანით"
 
 #. *< type
 #. *< ui_requirement
@@ -260,7 +270,7 @@ msgstr "Gaim-ის სადემონსტრაციო პლაგი�
 #. *  summary
 #: plugins/gaiminc.c:94
 msgid "An example plugin that does stuff - see the description."
-msgstr ""
+msgstr "სანიმუშო პლაგინი რომელიც რამოდენიმე რაღაცას აკეთებს - ნახეთ აღწერა."
 
 #. *  description
 #: plugins/gaiminc.c:96
@@ -290,12 +300,12 @@ msgstr ""
 #: plugins/gaimrc.c:72
 #, fuzzy
 msgid "Conversation Entry"
-msgstr "საუბრის შენახვა"
+msgstr "საუბრები"
 
 #: plugins/gaimrc.c:73
 #, fuzzy
 msgid "Conversation History"
-msgstr "საუბრის შენახვა"
+msgstr "საუბრები"
 
 #: plugins/gaimrc.c:74
 #, fuzzy
@@ -317,9 +327,8 @@ msgid "Select Color for %s"
 msgstr "ფონტის ფერის არჩევა"
 
 #: plugins/gaimrc.c:211
-#, fuzzy
 msgid "Select Color"
-msgstr "ფონტის ფერის არჩევა"
+msgstr "ამოირჩიე ფერი"
 
 #: plugins/gaimrc.c:246
 #, fuzzy, c-format
@@ -332,9 +341,8 @@ msgid "Select Interface Font"
 msgstr "ფონტის არჩევა"
 
 #: plugins/gaimrc.c:343
-#, fuzzy
 msgid "GTK+ Interface Font"
-msgstr "ინტერფეისის პარამეტრები"
+msgstr "GTK+ ინტერფეისის ფონტი"
 
 #: plugins/gaimrc.c:362
 msgid "GTK+ Text Shortcut Theme"
@@ -352,7 +360,7 @@ msgstr ""
 #. Configuration frame
 #: plugins/gestures/gestures.c:243
 msgid "Mouse Gestures Configuration"
-msgstr ""
+msgstr "თაგვის ჟესტიკულაციის კონფიგურირება"
 
 #: plugins/gestures/gestures.c:250
 msgid "Middle mouse button"
@@ -365,7 +373,7 @@ msgstr "მაუსის მარჯვენა ღილაკი"
 #. "Visual gesture display" checkbox
 #: plugins/gestures/gestures.c:267
 msgid "_Visual gesture display"
-msgstr ""
+msgstr "_ჟესტიკულაციის ვიზუალური ჩვენება"
 
 #. *< type
 #. *< ui_requirement
@@ -375,14 +383,14 @@ msgstr ""
 #. *< id
 #: plugins/gestures/gestures.c:296
 msgid "Mouse Gestures"
-msgstr ""
+msgstr "თაგვის ჟესტები"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/gestures/gestures.c:299
 msgid "Provides support for mouse gestures"
-msgstr ""
+msgstr "თაგვის ჟესტიკულაციის აქტივირება"
 
 #. *  description
 #: plugins/gestures/gestures.c:301
@@ -403,12 +411,13 @@ msgstr "სახელი"
 
 #: plugins/gevolution/add_buddy_dialog.c:142
 msgid "Instant Messaging"
-msgstr ""
+msgstr "მოკლე-შეტყობინება"
 
 #. Add the label.
 #: plugins/gevolution/add_buddy_dialog.c:458
 msgid "Select a person from your address book below, or add a new person."
 msgstr ""
+"ამოირჩიეთ პიროვნება მისამართების წიგნაკიდან ან დაამატეთ ახალი პიროვნება."
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:471
@@ -431,7 +440,6 @@ msgstr "ახალი პერსონა"
 
 #. "Select Buddy" button
 #: plugins/gevolution/add_buddy_dialog.c:595
-#, fuzzy
 msgid "Select Buddy"
 msgstr "ფონტის არჩევა"
 
@@ -440,7 +448,7 @@ msgstr "ფონტის არჩევა"
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
-msgstr ""
+msgstr "შეარჩიე პიროვნება წიგნაკიდან დამატებისთვის ან დაამატე ახალი."
 
 #. Add the expander
 #: plugins/gevolution/assoc-buddy.c:428
@@ -451,13 +459,13 @@ msgstr "მომხმარებლის მონაცემების �
 #. "Associate Buddy" button
 #: plugins/gevolution/assoc-buddy.c:481
 msgid "_Associate Buddy"
-msgstr ""
+msgstr "_შეასაბამე მეგობარს"
 
 #: plugins/gevolution/gevo-util.c:64 plugins/gevolution/gevolution.c:96
 #: src/blist.c:518 src/blist.c:1259 src/blist.c:1480 src/gtkblist.c:3897
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
-msgstr ""
+msgstr "მეგობრები"
 
 #: plugins/gevolution/gevolution.c:262 plugins/gevolution/gevolution.c:268
 #, fuzzy
@@ -477,15 +485,13 @@ msgid "Add to Address Book"
 msgstr "მისამართების წიგნში ჩამატება"
 
 #: plugins/gevolution/gevolution.c:290
-#, fuzzy
 msgid "Send E-Mail"
-msgstr "ელ-ფოსტა"
+msgstr "გააგზავნე E-Mail-ი"
 
 #. Configuration frame
 #: plugins/gevolution/gevolution.c:414
-#, fuzzy
 msgid "Evolution Integration Configuration"
-msgstr "Evolution-ში ინტეგრაცია"
+msgstr "Evolution-ში ინტეგრაციის კონფიგურაცია"
 
 #. Label
 #: plugins/gevolution/gevolution.c:417
@@ -494,7 +500,7 @@ msgstr ""
 
 #: plugins/gevolution/gevolution.c:447 plugins/idle.c:111 plugins/idle.c:140
 msgid "Account"
-msgstr "წევრი"
+msgstr "ანგარიში"
 
 #. *< type
 #. *< ui_requirement
@@ -520,22 +526,19 @@ msgid "Please enter the person's information below."
 msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
 
 #: plugins/gevolution/new_person_dialog.c:270
-#, fuzzy
 msgid "Please enter the buddy's screen name and account type below."
-msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
+msgstr "გთხოვთ ქვემოთ შეიტანოთ მეგობრის მომხმარებლის სახელი და ანგარიშის ტიპი."
 
 #: plugins/gevolution/new_person_dialog.c:290
 msgid "Account type:"
-msgstr "წევრის ტიპი:"
+msgstr "ანგარიშის ტიპი:"
 
 #: plugins/gevolution/new_person_dialog.c:294
-#, fuzzy
 msgid "Screenname:"
-msgstr "ეკრანული სახელი:"
+msgstr "მეტსახელი:"
 
 #. Optional Information section
 #: plugins/gevolution/new_person_dialog.c:314
-#, fuzzy
 msgid "Optional information:"
 msgstr "დამატებითი ინფორმაცია"
 
@@ -543,7 +546,7 @@ msgstr "დამატებითი ინფორმაცია"
 #: plugins/gevolution/new_person_dialog.c:337 src/gtkaccount.c:412
 #: src/gtkaccount.c:434 src/protocols/oscar/oscar.c:613
 msgid "Buddy Icon"
-msgstr ""
+msgstr "მეგობრის მინი-სურათი"
 
 #: plugins/gevolution/new_person_dialog.c:349
 msgid "First name:"
@@ -575,7 +578,7 @@ msgstr "ისტორია"
 
 #: plugins/history.c:188
 msgid "Shows recently logged conversations in new conversations."
-msgstr ""
+msgstr "აჩვენე წინა საუბრის ჩანაწერი ახალ საუბრის ფანჯარაში."
 
 #: plugins/history.c:189
 msgid ""
@@ -611,25 +614,24 @@ msgstr "წუთი"
 
 #: plugins/idle.c:122 plugins/idle.c:149 plugins/idle.c:215
 msgid "I'dle Mak'er"
-msgstr ""
+msgstr "უმოქმედობის მოურავი"
 
 #: plugins/idle.c:123 plugins/idle.c:181
 msgid "Set Account Idle Time"
-msgstr ""
+msgstr "შეიყვანე ანგარიშიხ ვადა უმოქმედობაში გადასვლამდე"
 
 #: plugins/idle.c:126
-#, fuzzy
 msgid "_Set"
 msgstr "შენახვა"
 
 #: plugins/idle.c:127 plugins/idle.c:154
-#, fuzzy
 msgid "_Cancel"
-msgstr "გაუქმება"
+msgstr "_გაუქმება"
 
 #: plugins/idle.c:150 plugins/idle.c:185
+#, fuzzy
 msgid "Unset Account Idle Time"
-msgstr ""
+msgstr "შეიყვანე ანგარიშიხ ვადა უმოქმედობაში გადასვლამდე"
 
 #: plugins/idle.c:153
 #, fuzzy
@@ -652,7 +654,7 @@ msgstr ""
 #. *< id
 #: plugins/ipc-test-client.c:87
 msgid "IPC Test Client"
-msgstr ""
+msgstr "IPC ტესტ კლიენტი"
 
 #. *< name
 #. *< version
@@ -676,7 +678,7 @@ msgstr ""
 #. *< id
 #: plugins/ipc-test-server.c:74
 msgid "IPC Test Server"
-msgstr ""
+msgstr "IPC ტესტ სერვერი"
 
 #. *< name
 #. *< version
@@ -708,27 +710,25 @@ msgid "Notify For"
 msgstr ""
 
 #: plugins/notify.c:642
-#, fuzzy
 msgid "_IM windows"
-msgstr "IMის ფანჯრის გამჭირვალობა"
+msgstr "_მოკლე შეტყობინებების ფანჯრები"
 
 #: plugins/notify.c:649
 msgid "C_hat windows"
-msgstr ""
+msgstr "C_hat ფანჯრები"
 
 #: plugins/notify.c:656
 msgid "_Focused windows"
-msgstr ""
+msgstr "_ფოკუსირებული ფანჯრები"
 
 #. ---------- "Notification Methods" ----------
 #: plugins/notify.c:664
-#, fuzzy
 msgid "Notification Methods"
 msgstr "ახალი ელ.ფოსტის შეტყობინებები"
 
 #: plugins/notify.c:671
 msgid "Prepend _string into window title:"
-msgstr ""
+msgstr "დაამატე ეს სიტყვა ფანჯრის სახელს:"
 
 #. Count method button
 #: plugins/notify.c:690
@@ -748,8 +748,9 @@ msgstr "IMის საუბრის ფანჯარა"
 
 #. ---------- "Notification Removals" ----------
 #: plugins/notify.c:714
+#, fuzzy
 msgid "Notification Removal"
-msgstr ""
+msgstr "წაშლილი შეტყობინებები"
 
 #. Remove on focus button
 #: plugins/notify.c:719
@@ -764,12 +765,12 @@ msgstr ""
 #. Remove on type button
 #: plugins/notify.c:734
 msgid "Remove when _typing in conversation window"
-msgstr ""
+msgstr "გააუქმე შეტყობინების აკრეფვისას"
 
 #. Remove on message send button
 #: plugins/notify.c:742
 msgid "Remove when a _message gets sent"
-msgstr ""
+msgstr "გააუქმე შეტყობინების გაგზავნისას"
 
 #. Remove on conversation switch button
 #: plugins/notify.c:751
@@ -783,9 +784,8 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/notify.c:841
-#, fuzzy
 msgid "Message Notification"
-msgstr "ახალი ელ.ფოსტის შეტყობინებები"
+msgstr "შეტყობინებები"
 
 #. *< name
 #. *< version
@@ -814,7 +814,7 @@ msgstr ""
 
 #: plugins/raw.c:151
 msgid "Raw"
-msgstr ""
+msgstr "დაუმუშავებელი"
 
 #: plugins/raw.c:153
 msgid "Lets you send raw input to text-based protocols."
@@ -829,7 +829,7 @@ msgstr ""
 #: plugins/relnot.c:63
 #, c-format
 msgid "You are using Gaim version %s.  The current version is %s.<hr>"
-msgstr ""
+msgstr "თქვენ იყენებთ Gaim-ის ვერსიას %s. ახლანდელი ვერსიაა %s.<hr>"
 
 #: plugins/relnot.c:69
 #, c-format
@@ -837,6 +837,8 @@ msgid ""
 "<b>ChangeLog:</b>\n"
 "%s<br><br>"
 msgstr ""
+"<b>ცვლილებების ლოგი:</b>\n"
+"%s<br><br>"
 
 #: plugins/relnot.c:74
 #, c-format
@@ -844,9 +846,10 @@ msgid ""
 "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
 "\">http://gaim.sourceforge.net</a>."
 msgstr ""
+"გადმოწერეთ ვერსია %s აქედან:<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
 
 #: plugins/relnot.c:78 plugins/relnot.c:79
-#, fuzzy
 msgid "New Version Available"
 msgstr "ხელმიუწვდომელია"
 
@@ -857,9 +860,8 @@ msgstr "ხელმიუწვდომელია"
 #. *< priority
 #. *< id
 #: plugins/relnot.c:137
-#, fuzzy
 msgid "Release Notification"
-msgstr "ახალი ელ.ფოსტის შეტყობინებები"
+msgstr "შეტყობინება ახალი ვერსიის დროს"
 
 #. *< name
 #. *< version
@@ -882,9 +884,8 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/signals-test.c:730
-#, fuzzy
 msgid "Signals Test"
-msgstr "GTK-ს სიგნალების ტესტი"
+msgstr "სიგნალების ტესტი"
 
 #. *< name
 #. *< version
@@ -902,7 +903,7 @@ msgstr ""
 #. *< id
 #: plugins/simple.c:34
 msgid "Simple Plugin"
-msgstr ""
+msgstr "მარტივი პლაგინი"
 
 #. *< name
 #. *< version
@@ -925,13 +926,12 @@ msgid "Text Replacements"
 msgstr ""
 
 #: plugins/spellchk.c:1972
-#, fuzzy
 msgid "You type"
-msgstr "წევრის ტიპი:"
+msgstr "თქვენ კრიფავთ"
 
 #: plugins/spellchk.c:1984
 msgid "You send"
-msgstr ""
+msgstr "თქვენ გააგზავნეთ"
 
 #: plugins/spellchk.c:1996
 msgid "Whole words only"
@@ -942,13 +942,12 @@ msgid "Add a new text replacement"
 msgstr ""
 
 #: plugins/spellchk.c:2032
-#, fuzzy
 msgid "You _type:"
-msgstr "პროქსის ტიპი"
+msgstr "თქვენ კრიფავთ:"
 
 #: plugins/spellchk.c:2048
 msgid "You _send:"
-msgstr ""
+msgstr "თქვენ გააგზავნეთ:"
 
 #: plugins/spellchk.c:2060
 msgid "Only replace _whole words"
@@ -970,7 +969,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-gnutls.c:227
 msgid "GNUTLS"
-msgstr ""
+msgstr "GNUTLS"
 
 #. *< name
 #. *< version
@@ -988,7 +987,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-nss.c:319
 msgid "NSS"
-msgstr ""
+msgstr "NSS"
 
 #. *< name
 #. *< version
@@ -1006,7 +1005,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl.c:94
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #. *< name
 #. *< version
@@ -1019,34 +1018,34 @@ msgstr ""
 #: plugins/statenotify.c:42
 #, c-format
 msgid "%s has gone away."
-msgstr ""
+msgstr "%s გავიდა."
 
 #: plugins/statenotify.c:49
 #, c-format
 msgid "%s is no longer away."
-msgstr ""
+msgstr "%s დაბრუნდა."
 
 #: plugins/statenotify.c:56
 #, c-format
 msgid "%s has become idle."
-msgstr ""
+msgstr "%s გახდა უმოქმედო."
 
 #: plugins/statenotify.c:63
 #, c-format
 msgid "%s is no longer idle."
-msgstr ""
+msgstr "%s არ არის უმოქმედო."
 
 #: plugins/statenotify.c:74
 msgid "Notify When"
-msgstr ""
+msgstr "შემატყობინე როცა"
 
 #: plugins/statenotify.c:77
 msgid "Buddy Goes _Away"
-msgstr ""
+msgstr "მეგობარი გადის"
 
 #: plugins/statenotify.c:80
 msgid "Buddy Goes _Idle"
-msgstr ""
+msgstr "მეგობარი ხდება უმოქმედო"
 
 #. *< type
 #. *< ui_requirement
@@ -1055,9 +1054,8 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/statenotify.c:120
-#, fuzzy
 msgid "Buddy State Notification"
-msgstr "ახალი ელ.ფოსტის შეტყობინებები"
+msgstr ""
 
 #. *< name
 #. *< version
@@ -1097,7 +1095,7 @@ msgstr ""
 
 #: plugins/timestamp.c:202
 msgid "iChat Timestamp"
-msgstr "iChatის დროის შტამპი "
+msgstr "iChatის დროის შტამპი"
 
 #: plugins/timestamp.c:209
 msgid "Delay"
@@ -1158,17 +1156,16 @@ msgstr "კონტაქტის სინონიმი"
 #. Buddy List trans options
 #: plugins/win32/transparency/win2ktrans.c:590
 msgid "Buddy List Window"
-msgstr ""
+msgstr "მეგობრების სიის ფანჯარა"
 
 #: plugins/win32/transparency/win2ktrans.c:591
-#, fuzzy
 msgid "_Buddy List window transparency"
-msgstr "IMის ფანჯრის გამჭირვალობა"
+msgstr "მეგობრების სიის გამჭირვალობა"
 
 #: plugins/win32/transparency/win2ktrans.c:604
 #, fuzzy
 msgid "Remove Buddy List window transparency on focus"
-msgstr "IMის ფანჯრის გამჭირვალობა"
+msgstr "მეგობრების სიის გამჭირვალობა"
 
 #. *< type
 #. *< ui_requirement
@@ -1204,16 +1201,16 @@ msgstr ""
 #: plugins/win32/winprefs/winprefs.c:393
 #, fuzzy
 msgid "Startup"
-msgstr "სტატუსი"
+msgstr "ჩართვის დროს"
 
 #: plugins/win32/winprefs/winprefs.c:394
 msgid "_Start Gaim on Windows startup"
-msgstr ""
+msgstr "ჩართე Gaim Windows-ის ჩატვირთვისას"
 
 #. Buddy List
 #: plugins/win32/winprefs/winprefs.c:405 src/gtkblist.c:3173
 msgid "Buddy List"
-msgstr ""
+msgstr "მეგობრების სია"
 
 #: plugins/win32/winprefs/winprefs.c:406
 msgid "_Dockable Buddy List"
@@ -1223,16 +1220,15 @@ msgstr ""
 #: plugins/win32/winprefs/winprefs.c:410
 #, fuzzy
 msgid "_Keep Buddy List window on top:"
-msgstr "IMის ფანჯრის გამჭირვალობა"
+msgstr "მეგობრების სიის გამჭირვალობა"
 
 #: plugins/win32/winprefs/winprefs.c:412 src/gtkprefs.c:1657
 msgid "Never"
 msgstr "არასოდეს"
 
 #: plugins/win32/winprefs/winprefs.c:413
-#, fuzzy
 msgid "Always"
-msgstr "გასული"
+msgstr "ყოველთვის"
 
 #. XXX: Did this ever work?
 #: plugins/win32/winprefs/winprefs.c:415
@@ -1242,22 +1238,20 @@ msgstr ""
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:419 src/gtkprefs.c:803
 #: src/gtkprefs.c:1727
-#, fuzzy
 msgid "Conversations"
-msgstr "საუბრის შენახვა"
+msgstr "საუბრები"
 
 #: plugins/win32/winprefs/winprefs.c:420
 msgid "_Flash window when messages are received"
 msgstr ""
 
 #: plugins/win32/winprefs/winprefs.c:443
-#, fuzzy
 msgid "WinGaim Options"
-msgstr "შესვლის პარამეტრები\t"
+msgstr "WinGaim-ის პარამეტრები"
 
 #: plugins/win32/winprefs/winprefs.c:445
 msgid "Options specific to Windows Gaim."
-msgstr ""
+msgstr "Windows Gaim-ის სპეციფიკური პარამეტრები."
 
 #: plugins/win32/winprefs/winprefs.c:446
 msgid ""
@@ -1266,14 +1260,13 @@ msgid ""
 msgstr ""
 
 #: src/account.c:773
-#, fuzzy
 msgid "accounts"
-msgstr "წევრები"
+msgstr "ანგარიშები"
 
 #: src/account.c:915
 #, fuzzy
 msgid "Password is required to sign on."
-msgstr "პაროლი გაგზავნილია"
+msgstr "პაროლს ვადა გაუვიდა"
 
 #: src/account.c:940
 #, c-format
@@ -1281,14 +1274,12 @@ msgid "Enter password for %s (%s)"
 msgstr "შეიყვანეთ პაროლი %s (%s) სათვის"
 
 #: src/account.c:947
-#, fuzzy
 msgid "Enter Password"
-msgstr "პაროლის შეცვლა..."
+msgstr "შეიყვანე პაროლი"
 
 #: src/account.c:952
-#, fuzzy
 msgid "Save password"
-msgstr "ახალი პაროლი"
+msgstr "შეინახე პაროლი"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
@@ -1310,7 +1301,7 @@ msgstr "ახალი პაროლი"
 #: src/protocols/silc/silc.c:716 src/protocols/yahoo/yahoo.c:2965
 #: src/protocols/yahoo/yahoo.c:2974 src/request.h:1331
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: src/account.c:961 src/account.c:1117 src/account.c:1155
 #: src/gtkaccount.c:2124 src/gtkaccount.c:2575 src/gtkblist.c:4497
@@ -1345,7 +1336,7 @@ msgstr "გაუქმება"
 #: src/account.c:986 src/connection.c:96
 #, c-format
 msgid "Missing protocol plugin for %s"
-msgstr ""
+msgstr "არ მაქ პროტოკოლის პლაგინი %s-თვის"
 
 #: src/account.c:988 src/connection.c:99
 msgid "Connection Error"
@@ -1398,24 +1389,21 @@ msgid "Unknown"
 msgstr "უცნობი"
 
 #: src/blist.c:545
-#, fuzzy
 msgid "buddy list"
-msgstr "დაიმალოს შესვლის შეცდომები"
+msgstr "მეგობრების სია"
 
 #: src/blist.c:1162
 msgid "Chats"
-msgstr ""
+msgstr "Chats"
 
 #: src/blist.c:1863
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
 "in.  This buddy and the group were not removed.\n"
-msgid_plural ""
 "%d buddies from group %s were not removed because their accounts were not "
 "logged in.  These buddies and the group were not removed.\n"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/blist.c:1872
 msgid "Group not removed"
@@ -1446,7 +1434,7 @@ msgstr "შეუძლებელია შეტყობინების �
 #: src/conversation.c:1497
 #, c-format
 msgid "%s entered the room."
-msgstr ""
+msgstr "%s შემოვიდა ოთახში."
 
 #: src/conversation.c:1499
 #, c-format
@@ -1456,7 +1444,7 @@ msgstr ""
 #: src/conversation.c:1598
 #, c-format
 msgid "You are now known as %s"
-msgstr ""
+msgstr "თქვენ ახლა ჩანხართ სახელით %s"
 
 #: src/conversation.c:1613
 #, c-format
@@ -1466,52 +1454,55 @@ msgstr ""
 #: src/conversation.c:1669
 #, c-format
 msgid "%s left the room (%s)."
-msgstr ""
+msgstr "%s გავიდა ოთახიდან (%s)."
 
 #: src/conversation.c:1671
 #, c-format
 msgid "%s left the room."
-msgstr ""
+msgstr "%s გავიდა ოთახიდან."
 
 #: src/conversation.c:1748
 #, c-format
 msgid "(+%d more)"
-msgstr ""
+msgstr "(+%d მეტი)"
 
 #: src/conversation.c:1750
 #, c-format
 msgid " left the room (%s)."
-msgstr ""
+msgstr " გავიდა ოთახიდან(%s)."
 
 #: src/ft.c:188 src/protocols/msn/msn.c:412
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading %s: \n"
 "%s.\n"
-msgstr "%s სურათის შენახვის შეცდომა"
+msgstr ""
+"შეცდომა %s -ის წაკითხვისას: \n"
+"%s.\n"
 
 #: src/ft.c:192
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error writing %s: \n"
 "%s.\n"
-msgstr "სოკეტში წერისას შეცდომაა"
+msgstr ""
+"შეცდომა %s ის წერისას: \n"
+"%s.\n"
 
 #: src/ft.c:196
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error accessing %s: \n"
 "%s.\n"
-msgstr "%s სურათის შენახვის შეცდომა"
+msgstr ""
 
 #: src/ft.c:229
-#, fuzzy
 msgid "Cannot send a file of 0 bytes."
-msgstr "ფაილის გაგზავნს მომხმარებლისთვის"
+msgstr "0 ზომის ფაილის გაგზავნა არ შემიძლია."
 
 #: src/ft.c:239
 msgid "Cannot send a directory."
-msgstr ""
+msgstr "დირექტორიის გაგზავნა არ შემიძლია."
 
 #: src/ft.c:248
 #, c-format
@@ -1521,17 +1512,17 @@ msgstr ""
 #: src/ft.c:306
 #, c-format
 msgid "%s wants to send you %s (%s)"
-msgstr ""
+msgstr "%s სურს გამოგიგზავნოთ %s (%s)"
 
 #: src/ft.c:313
 #, c-format
 msgid "%s wants to send you a file"
-msgstr ""
+msgstr "%s სურს გამოგიგზავნოთ ფაილი"
 
 #: src/ft.c:354
 #, c-format
 msgid "Accept file transfer request from %s?"
-msgstr ""
+msgstr "მივიღო ფაილი %s-გან?"
 
 #: src/ft.c:358
 #, c-format
@@ -1552,54 +1543,52 @@ msgid "%s is not a valid filename.\n"
 msgstr ""
 
 #: src/ft.c:443
-#, fuzzy, c-format
+#, c-format
 msgid "Offering to send %s to %s"
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr "ვთავაზობ ფაილს %s··%s-ს"
 
 #: src/ft.c:454
-#, c-format
+#, fuzzy, c-format
 msgid "Starting transfer of %s from %s"
-msgstr ""
+msgstr "მივიღო ფაილი %s-გან?"
 
 #: src/ft.c:608
 #, c-format
 msgid "Transfer of file %s complete"
-msgstr ""
+msgstr "%s ფაილის გადატანა დასრულდა"
 
 #: src/ft.c:611
-#, fuzzy
 msgid "File transfer complete"
-msgstr "ფაილების გადაგზავნა"
+msgstr "ფაილის გადაგზავნა შესრულდა"
 
 #: src/ft.c:995
 #, c-format
 msgid "You canceled the transfer of %s"
-msgstr ""
+msgstr "თქვენ შეწყვიტეთ %s ფაილის გადატანა"
 
 #: src/ft.c:1000
-#, fuzzy
 msgid "File transfer cancelled"
-msgstr "ფაილების გადაგზავნა"
+msgstr "ფაილის გადაგზავნა შეწყვეტილია"
 
 #: src/ft.c:1057
 #, c-format
 msgid "%s canceled the transfer of %s"
-msgstr ""
+msgstr "%s -მა შეწყვიტა %s ფაილის გადატანა"
 
 #: src/ft.c:1062
 #, c-format
 msgid "%s canceled the file transfer"
-msgstr ""
+msgstr "%s-მა შეწყვიტა ფაილის გადატანა"
 
 #: src/ft.c:1119
 #, fuzzy, c-format
 msgid "File transfer to %s failed."
-msgstr "ფაილების გადაგზავნა"
+msgstr "ფაილის გადატანა %s-თან შეწყვეტილია.\n"
 
 #: src/ft.c:1121
 #, fuzzy, c-format
 msgid "File transfer from %s failed."
-msgstr "ფაილების გადაგზავნა"
+msgstr "ფაილის გადატანა %s-გან შეწყვეტილია.\n"
 
 #: src/gtkaccount.c:362
 #, c-format
@@ -1608,11 +1597,14 @@ msgid ""
 "<b>File size:</b> %s\n"
 "<b>Image size:</b> %dx%d"
 msgstr ""
+"<b>ფაილი:</b> %s\n"
+"<b>ფაილის ზომა:</b> %s\n"
+"<b>სურათის ზომა:</b> %dx%d"
 
 #. Build the login options frame.
 #: src/gtkaccount.c:730
 msgid "Login Options"
-msgstr "შესვლის პარამეტრები\t"
+msgstr "შესვლის პარამეტრები"
 
 #: src/gtkaccount.c:747 src/gtkft.c:623
 msgid "Protocol:"
@@ -1645,7 +1637,7 @@ msgstr "ახალი ელ.ფოსტის შეტყობინებ
 
 #: src/gtkaccount.c:901
 msgid "Buddy icon:"
-msgstr ""
+msgstr "მეგობრის ხატულა:"
 
 #. Build the protocol options frame.
 #: src/gtkaccount.c:990
@@ -1671,12 +1663,12 @@ msgstr "HTTP"
 #. SOCKS 4
 #: src/gtkaccount.c:1146 src/gtkaccount.c:1196
 msgid "SOCKS 4"
-msgstr ""
+msgstr "SOCKS 4"
 
 #. SOCKS 5
 #: src/gtkaccount.c:1152 src/gtkaccount.c:1203
 msgid "SOCKS 5"
-msgstr ""
+msgstr "SOCKS 5"
 
 #. Use Environmental Settings
 #: src/gtkaccount.c:1158 src/gtkaccount.c:1210 src/gtkprefs.c:1007
@@ -1701,7 +1693,7 @@ msgstr "პროქსის ტიპი"
 
 #: src/gtkaccount.c:1296 src/gtkprefs.c:1022
 msgid "_Host:"
-msgstr "ჰოსტი"
+msgstr ""
 
 #: src/gtkaccount.c:1300 src/gtkprefs.c:1040
 msgid "_Port:"
@@ -1717,11 +1709,11 @@ msgstr "პაროლი"
 
 #: src/gtkaccount.c:1700
 msgid "Add Account"
-msgstr "წევრის ჩამატება"
+msgstr "ანგარიშის დამატება"
 
 #: src/gtkaccount.c:1702
 msgid "Modify Account"
-msgstr "წევრის პარამეტრების შეცვლა"
+msgstr "ანგარიშის პარამეტრების შეცვლა"
 
 #. Register button
 #: src/gtkaccount.c:1750 src/protocols/jabber/jabber.c:706
@@ -1743,9 +1735,8 @@ msgid "Screen Name"
 msgstr "ეკრანული სახელი"
 
 #: src/gtkaccount.c:2210
-#, fuzzy
 msgid "Enabled"
-msgstr "მდედრობითი"
+msgstr "აქტიური"
 
 #: src/gtkaccount.c:2218
 msgid "Protocol"
@@ -1762,10 +1753,13 @@ msgid ""
 "\n"
 "Do you wish to add him or her to your buddy list?"
 msgstr ""
+"\n"
+"\n"
+"გინდა მისი დამატება შენ მეგობრების სიაში?"
 
 #: src/gtkaccount.c:2572
 msgid "Add buddy to your list?"
-msgstr ""
+msgstr "დავამატო მეგობარი შენ სიას?"
 
 #: src/gtkaccount.c:2574 src/gtkblist.c:4496 src/gtkconv.c:1527
 #: src/gtkrequest.c:266 src/protocols/gg/gg.c:655
@@ -1774,20 +1768,18 @@ msgid "Add"
 msgstr "ჩამატება"
 
 #: src/gtkblist.c:595
-#, fuzzy
 msgid "Join a Chat"
 msgstr "საუბარში ჩართვა"
 
 #: src/gtkblist.c:616
-#, fuzzy
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
-msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
+msgstr ""
 
 #: src/gtkblist.c:627 src/gtkpounce.c:415 src/gtkroomlist.c:354
 msgid "_Account:"
-msgstr "წევრი"
+msgstr "_ანგარიში:"
 
 #: src/gtkblist.c:935
 msgid "Get _Info"
@@ -1795,7 +1787,7 @@ msgstr "ინფორმაცია"
 
 #: src/gtkblist.c:938
 msgid "I_M"
-msgstr ""
+msgstr "მოკ_შე"
 
 #: src/gtkblist.c:944
 msgid "_Send File"
@@ -1808,17 +1800,15 @@ msgstr ""
 #: src/gtkblist.c:954 src/gtkblist.c:958 src/gtkblist.c:1056
 #: src/gtkblist.c:1079
 msgid "View _Log"
-msgstr ""
+msgstr "დაათვალიერე _ლოგი"
 
 #: src/gtkblist.c:969
-#, fuzzy
 msgid "_Alias Buddy..."
-msgstr "სინონიმი"
+msgstr "მეგობრის _მეტსახელი..."
 
 #: src/gtkblist.c:971
-#, fuzzy
 msgid "_Remove Buddy"
-msgstr "წაშლა"
+msgstr "მეგობრის ამოშლა"
 
 #: src/gtkblist.c:973
 msgid "Alias Contact..."
@@ -1838,11 +1828,11 @@ msgstr "წაშლა"
 
 #: src/gtkblist.c:1028
 msgid "Add a _Buddy"
-msgstr ""
+msgstr "მეგობრის დამატება"
 
 #: src/gtkblist.c:1030
 msgid "Add a C_hat"
-msgstr ""
+msgstr "C_hat ის დამატება"
 
 #: src/gtkblist.c:1032
 msgid "_Delete Group"
@@ -1856,10 +1846,9 @@ msgstr "სახელის შეცვლა"
 #: src/gtkblist.c:1052 src/gtkroomlist.c:264 src/gtkroomlist.c:409
 #: src/gtkstock.c:118
 msgid "_Join"
-msgstr ""
+msgstr "შესვლა"
 
 #: src/gtkblist.c:1054
-#, fuzzy
 msgid "Auto-Join"
 msgstr "თვითშესვლა"
 
@@ -1873,9 +1862,8 @@ msgstr ""
 
 #: src/gtkblist.c:1353 src/gtkblist.c:1363 src/gtkblist.c:3326
 #: src/gtkblist.c:3331
-#, fuzzy
 msgid "/Tools/Mute Sounds"
-msgstr "გაჩუმება"
+msgstr "/ხელსაწყოები/გააჩუმე ხმები"
 
 #: src/gtkblist.c:1822 src/gtkconv.c:3745 src/gtkpounce.c:314
 msgid ""
@@ -1885,60 +1873,57 @@ msgstr ""
 #. Buddies menu
 #: src/gtkblist.c:2329
 msgid "/_Buddies"
-msgstr ""
+msgstr "/_მეგობრები"
 
 #: src/gtkblist.c:2330
-#, fuzzy
 msgid "/Buddies/New Instant _Message..."
-msgstr "ახალი შეტყობინება"
+msgstr "/მეგობრები/ახალი მოკლე შეტყობინება..."
 
 #: src/gtkblist.c:2331
-#, fuzzy
 msgid "/Buddies/Join a _Chat..."
-msgstr "საუბარში ჩართვა"
+msgstr "/მეგობრები/საუბარში ჩართვა..."
 
 #: src/gtkblist.c:2332
-#, fuzzy
 msgid "/Buddies/Get User _Info..."
-msgstr "მომხმარებლის ინფორმაციის შეტანა..."
+msgstr "/მეგობრები/მანახე მომხმარებლის ინფორმაცია..."
 
 #: src/gtkblist.c:2333
 msgid "/Buddies/View User _Log..."
-msgstr ""
+msgstr "/მეგობრები/ნახე მომხმარებლის ლოგი..."
 
 #: src/gtkblist.c:2335
 msgid "/Buddies/Show _Offline Buddies"
-msgstr ""
+msgstr "/მეგობრები/მიჩვენე გასული მეგობრები"
 
 #: src/gtkblist.c:2336
 msgid "/Buddies/Show _Empty Groups"
-msgstr ""
+msgstr "/მეგობრები/მიჩვენე ცარიელი ჯგუფები"
 
 #: src/gtkblist.c:2337
 #, fuzzy
 msgid "/Buddies/Show Buddy _Details"
-msgstr "მომხმარებლის მონაცემების ჩვენება"
+msgstr "/მეგობრები/მიჩვენე გასული მეგობრები"
 
 #: src/gtkblist.c:2338 src/gtkblist.c:5158
 #, fuzzy
 msgid "/Buddies/Sort Buddies"
-msgstr "სინონიმი"
+msgstr "/მეგობრები/მიჩვენე გასული მეგობრები"
 
 #: src/gtkblist.c:2340
 msgid "/Buddies/_Add Buddy..."
-msgstr ""
+msgstr "/მეგობრები/_დაამატე მეგობარი..."
 
 #: src/gtkblist.c:2341
 msgid "/Buddies/Add C_hat..."
-msgstr ""
+msgstr "/მეგობრები/დაამატე C_hat..."
 
 #: src/gtkblist.c:2342
 msgid "/Buddies/Add _Group..."
-msgstr ""
+msgstr "/მეგობრები/დაამატე ჟგუფი..."
 
 #: src/gtkblist.c:2344
 msgid "/Buddies/_Quit"
-msgstr ""
+msgstr "/მეგობრები/_გამორთვა"
 
 #. Tools
 #: src/gtkblist.c:2347
@@ -1946,43 +1931,36 @@ msgid "/_Tools"
 msgstr "/ხელსაწყოები"
 
 #: src/gtkblist.c:2348
-#, fuzzy
 msgid "/Tools/Buddy _Pounce"
-msgstr "/ხელსაწყოები/წევრები"
+msgstr "/ხელსაწყოები/მეგობრის _გაფრთხილება"
 
 #: src/gtkblist.c:2349
-#, fuzzy
 msgid "/Tools/Account Ac_tions"
-msgstr "/ხელსაწყოები/წევრები"
+msgstr "/ხელსაწყოები/ანგარიშ-მოქმედებები"
 
 #: src/gtkblist.c:2351
 msgid "/Tools/A_ccounts"
-msgstr "/ხელსაწყოები/წევრები"
+msgstr "/ხელსაწყოები/ანგარიშები"
 
 #: src/gtkblist.c:2352
-#, fuzzy
 msgid "/Tools/Pr_eferences"
-msgstr "პარამეტრები"
+msgstr "/ხელსაწყოები/პარამეტრები"
 
 #: src/gtkblist.c:2353
-#, fuzzy
 msgid "/Tools/Plu_gins"
-msgstr "/ხელსაწყოები/წევრები"
+msgstr "/ხელსაწყოები/პლაგინები"
 
 #: src/gtkblist.c:2354
-#, fuzzy
 msgid "/Tools/Pr_ivacy"
-msgstr "/ხელსაწყოები/გასული"
+msgstr "/ხელსაწყოები/პივატობა"
 
 #: src/gtkblist.c:2355
-#, fuzzy
 msgid "/Tools/_File Transfers"
-msgstr "ფაილების გადაგზავნა"
+msgstr "/ხელსაწყოები/ფაილების გადაგზავნა"
 
 #: src/gtkblist.c:2356
-#, fuzzy
 msgid "/Tools/R_oom List"
-msgstr "ოთახების სია"
+msgstr "/ხელსაწყოები/_ოთახების სია"
 
 #: src/gtkblist.c:2358
 #, fuzzy
@@ -1991,66 +1969,78 @@ msgstr "გაჩუმება"
 
 #: src/gtkblist.c:2359
 msgid "/Tools/View System _Log"
-msgstr ""
+msgstr "/ხელსაწყოები/დაათვალიერე სისტემის _Log-ი"
 
 #. Help
 #: src/gtkblist.c:2362
 msgid "/_Help"
-msgstr ""
+msgstr "/_დახმარება"
 
 #: src/gtkblist.c:2363
 msgid "/Help/Online _Help"
-msgstr ""
+msgstr "/დახმარება/Online დახმარება"
 
 #: src/gtkblist.c:2364
 msgid "/Help/_Debug Window"
-msgstr ""
+msgstr "/დახმარება/_გამართვის ფანჯარა"
 
 #: src/gtkblist.c:2365
 msgid "/Help/_About"
-msgstr ""
+msgstr "/დახმარება/_შესახებ"
 
 #: src/gtkblist.c:2397 src/gtkblist.c:2464
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Account:</b> %s"
-msgstr "<b>წევრი:</b>"
+msgstr ""
+"\n"
+"<b>ანგარიში:</b> %s"
 
 #: src/gtkblist.c:2473
 #, fuzzy, c-format
 msgid ""
 "\n"
 "<b>Contact Alias:</b> %s"
-msgstr "<b>პაროლი:</b>"
+msgstr ""
+"\n"
+"<b>მეტსახელი:</b>"
 
 #: src/gtkblist.c:2481
 #, fuzzy, c-format
 msgid ""
 "\n"
 "<b>Alias:</b> %s"
-msgstr "<b>პაროლი:</b>"
+msgstr ""
+"\n"
+"<b>Alias:</b> %s"
 
 #: src/gtkblist.c:2489
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Nickname:</b> %s"
-msgstr "მეტსახელი"
+msgstr ""
+"\n"
+"<b>მეტსახელი:</b> %s"
 
 #: src/gtkblist.c:2498
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Logged In:</b> %s"
-msgstr "<b>წევრი:</b>"
+msgstr ""
+"\n"
+"<b>შესული:</b>"
 
 #: src/gtkblist.c:2510
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Idle:</b> %s"
-msgstr "<b>წევრი:</b>"
+msgstr ""
+"\n"
+"<b>უმოქმედო:</b> %s"
 
 #: src/gtkblist.c:2546
 #, c-format
@@ -2064,97 +2054,96 @@ msgid ""
 "\n"
 "<b>Status:</b> Offline"
 msgstr ""
+"\n"
+"<b>სტატუსი:</b> გასული"
 
 #: src/gtkblist.c:2577
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
 msgstr ""
+"\n"
+"<b>აღწერა:</b> Spooky"
 
 #: src/gtkblist.c:2579
 msgid ""
 "\n"
 "<b>Status:</b> Awesome"
 msgstr ""
+"\n"
+"<b>სტატუსი</b>: Awesome"
 
 #: src/gtkblist.c:2581
 msgid ""
 "\n"
 "<b>Status:</b> Rockin'"
 msgstr ""
+"\n"
+"<b>სტატუსი</b>: Rockin'"
 
 #: src/gtkblist.c:2843
 #, c-format
 msgid "Idle (%dh %02dm) "
-msgstr ""
+msgstr "უმოქმედო (%dh%02dm) "
 
 #: src/gtkblist.c:2845
 #, c-format
 msgid "Idle (%dm) "
-msgstr ""
+msgstr "უმოქმედო (%dm) "
 
 #: src/gtkblist.c:2848
 msgid "Idle "
-msgstr ""
+msgstr "უმოქმედო "
 
 #: src/gtkblist.c:2852
-#, fuzzy
 msgid "Offline "
-msgstr "ხაზზე"
+msgstr "გასული ქსელიდან "
 
 #: src/gtkblist.c:2968
-#, fuzzy
 msgid "/Buddies/New Instant Message..."
-msgstr "ახალი შეტყობინება"
+msgstr "/მეგობრები/ახალი მოკლე შეტყობინება..."
 
 #: src/gtkblist.c:2969 src/gtkblist.c:3003
-#, fuzzy
 msgid "/Buddies/Join a Chat..."
-msgstr "საუბარში ჩართვა"
+msgstr "/მეგობრები/Chat-ში შესვლა..."
 
 #: src/gtkblist.c:2970
 #, fuzzy
 msgid "/Buddies/Get User Info..."
-msgstr "მომხმარებლის ინფორმაციის შეტანა..."
+msgstr "/მეგობრები/მანახე მომხმარებლის ინფორმაცია..."
 
 #: src/gtkblist.c:2971
-#, fuzzy
 msgid "/Buddies/Add Buddy..."
-msgstr "სინონიმი"
+msgstr "/მეგობრები/დაამატე მეგობარი..."
 
 #: src/gtkblist.c:2972
-#, fuzzy
 msgid "/Buddies/Add Chat..."
-msgstr "საუბარში ჩართვა"
+msgstr "/მეგობრები/დაამატე C_hat-ი..."
 
 #: src/gtkblist.c:2973
-#, fuzzy
 msgid "/Buddies/Add Group..."
-msgstr "მომხმარებლის ინფორმაციის შეტანა..."
+msgstr "/მეგობრები/დაამატე ჟგუფი..."
 
 #: src/gtkblist.c:3006
-#, fuzzy
 msgid "/Tools/Room List"
-msgstr "ოთახების სია"
+msgstr "/ხელსაწყოები/ოთახების სია"
 
 #: src/gtkblist.c:3009
-#, fuzzy
 msgid "/Tools/Privacy"
-msgstr "/ხელსაწყოები/გასული"
+msgstr "/ხელსაწყოები/პრივატობა"
 
 #: src/gtkblist.c:3085
 #, fuzzy
 msgid "Manually"
-msgstr "ხელით."
+msgstr "ხელით"
 
 #: src/gtkblist.c:3087
 msgid "Alphabetically"
-msgstr ""
+msgstr "ანბანის მიხედვით"
 
 #: src/gtkblist.c:3088
-#, fuzzy
 msgid "By status"
-msgstr "სტატუსი"
+msgstr "სტატუსის მიხედვით"
 
 #: src/gtkblist.c:3089
 msgid "By log size"
@@ -2165,31 +2154,30 @@ msgid "/Tools/Buddy Pounce"
 msgstr ""
 
 #: src/gtkblist.c:3202
-#, fuzzy
 msgid "/Tools/Account Actions"
-msgstr "/ხელსაწყოები/წევრები"
+msgstr "/ხელსაწყოები/მოქმედებები ანგარიშებზე"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
 #: src/gtkblist.c:3322
 msgid "/Buddies/Show Offline Buddies"
-msgstr ""
+msgstr "/მეგობრები/მიჩვენე გასული მეგობრები"
 
 #: src/gtkblist.c:3324
 msgid "/Buddies/Show Empty Groups"
-msgstr ""
+msgstr "/მეგობრები/მიჩვენე ცარიელი ჯგუფები"
 
 #: src/gtkblist.c:3328
 #, fuzzy
 msgid "/Buddies/Show Buddy Details"
-msgstr "მომხმარებლის მონაცემების ჩვენება"
+msgstr "/მეგობრები/მიჩვენე გასული მეგობრები"
 
 #: src/gtkblist.c:4005 src/protocols/silc/buddy.c:736
 #: src/protocols/silc/buddy.c:994 src/protocols/silc/buddy.c:1039
 #: src/protocols/silc/buddy.c:1129 src/protocols/yahoo/yahoo.c:2886
 msgid "Add Buddy"
-msgstr ""
+msgstr "დაამატე მეგობარი"
 
 #: src/gtkblist.c:4029
 msgid ""
@@ -2200,13 +2188,12 @@ msgstr ""
 
 #. Set up stuff for the account box
 #: src/gtkblist.c:4092 src/gtkblist.c:4424
-#, fuzzy
 msgid "Account:"
-msgstr "წევრი"
+msgstr "ანგარიში:"
 
 #: src/gtkblist.c:4357
 msgid "This protocol does not support chat rooms."
-msgstr ""
+msgstr "ეს პროტოკოლს არ ააქ chat-ოთახების მხარდაჭერა."
 
 #: src/gtkblist.c:4373
 msgid ""
@@ -2237,7 +2224,6 @@ msgid "No actions available"
 msgstr "მოქმედებები მიუღებელია"
 
 #: src/gtkblist.c:5094
-#, fuzzy
 msgid "/Tools"
 msgstr "/ხელსაწყოები"
 
@@ -2256,7 +2242,7 @@ msgstr ""
 #: src/gtkconv.c:325
 #, c-format
 msgid "me is using Gaim v%s."
-msgstr ""
+msgstr "ვიყენებ Gaim ვერსია %s."
 
 #: src/gtkconv.c:334
 msgid "Supported debug options are:  version"
@@ -2274,7 +2260,7 @@ msgstr ""
 
 #: src/gtkconv.c:446
 msgid "No such command."
-msgstr ""
+msgstr "მასეთი ბრძანება არ არსებობს"
 
 #: src/gtkconv.c:453
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
@@ -2307,7 +2293,7 @@ msgstr ""
 
 #: src/gtkconv.c:772
 msgid "Invite Buddy Into Chat Room"
-msgstr ""
+msgstr "მოიწვიე მეგობარი Chat-ოთახში"
 
 #. Put our happy label in it.
 #: src/gtkconv.c:802
@@ -2318,22 +2304,20 @@ msgstr ""
 
 #: src/gtkconv.c:823
 msgid "_Buddy:"
-msgstr ""
+msgstr "_მეგობარი:"
 
 #: src/gtkconv.c:843 src/gtksavedstatuses.c:836
-#, fuzzy
 msgid "_Message:"
-msgstr "გასულობის შეტყობინება"
+msgstr "_შეტყობინება:"
 
 #: src/gtkconv.c:900 src/gtkconv.c:2228 src/gtkdebug.c:217 src/gtkft.c:470
-#, fuzzy
 msgid "Unable to open file."
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr "ფაილის გახსნა შეუძლებელია."
 
 #: src/gtkconv.c:906
-#, fuzzy, c-format
+#, c-format
 msgid "<h1>Conversation with %s</h1>\n"
-msgstr "საუბარი %s-თან"
+msgstr "<h1>საუბარი %s-თან</h1>\n"
 
 #: src/gtkconv.c:930
 msgid "Save Conversation"
@@ -2344,9 +2328,8 @@ msgid "Find"
 msgstr "ძებნა"
 
 #: src/gtkconv.c:1056 src/gtkdebug.c:193
-#, fuzzy
 msgid "_Search for:"
-msgstr "ძებნა"
+msgstr "_მოძებნე:"
 
 #: src/gtkconv.c:1227
 msgid "Logging started. Future messages in this conversation will be logged."
@@ -2359,7 +2342,7 @@ msgstr ""
 
 #: src/gtkconv.c:1489
 msgid "IM"
-msgstr ""
+msgstr "მოკ-შე"
 
 #: src/gtkconv.c:1495 src/protocols/oscar/oscar.c:628
 msgid "Send File"
@@ -2378,9 +2361,8 @@ msgid "Info"
 msgstr "ინფორმაცია"
 
 #: src/gtkconv.c:1517
-#, fuzzy
 msgid "Get Away Message"
-msgstr "გასულობის შეტყობინება"
+msgstr "მივიღე გასულობის შეტყობინება"
 
 #: src/gtkconv.c:1524 src/gtkrequest.c:267
 msgid "Remove"
@@ -2392,9 +2374,8 @@ msgid "Unable to save icon file to disk."
 msgstr "შეუძლებელია სერვერთან დაკავშირება"
 
 #: src/gtkconv.c:2259
-#, fuzzy
 msgid "Save Icon"
-msgstr "სურათის შენახვა"
+msgstr "ხატულას შენახვა"
 
 #: src/gtkconv.c:2308
 msgid "Animate"
@@ -2405,71 +2386,61 @@ msgid "Hide Icon"
 msgstr ""
 
 #: src/gtkconv.c:2319
-#, fuzzy
 msgid "Save Icon As..."
-msgstr "სურათის შენახვა...."
+msgstr "შეინახე ხატულა როგორც..."
 
 #. Conversation menu
 #: src/gtkconv.c:2367
-#, fuzzy
 msgid "/_Conversation"
-msgstr "საუბრის შენახვა"
+msgstr "/_საუბარი"
 
 #: src/gtkconv.c:2369
 msgid "/Conversation/New Instant _Message..."
-msgstr ""
+msgstr "/_საუბარი/ახალი მოკ-შე..."
 
 #: src/gtkconv.c:2374
-#, fuzzy
 msgid "/Conversation/_Find..."
-msgstr "IMის საუბრის ფანჯარა"
+msgstr "/საუბარი/_ძებნა..."
 
 #: src/gtkconv.c:2376
-#, fuzzy
 msgid "/Conversation/View _Log"
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/_მანახე ლოგი"
 
 #: src/gtkconv.c:2377
-#, fuzzy
 msgid "/Conversation/_Save As..."
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/_შეინახე როგორც..."
 
 #: src/gtkconv.c:2379
-#, fuzzy
 msgid "/Conversation/Clear"
-msgstr "საუბრის შენახვა"
+msgstr "/საუბარი/გაწმინდე"
 
 #: src/gtkconv.c:2383
 msgid "/Conversation/Se_nd File..."
-msgstr ""
+msgstr "/საუბარი/გააგზავნე ფაილი..."
 
 #: src/gtkconv.c:2384
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr ""
 
 #: src/gtkconv.c:2386
-#, fuzzy
 msgid "/Conversation/_Get Info"
-msgstr "IMის საუბრის ფანჯარა"
+msgstr "/საუბარი/მაჩვენე ინფორმაცია"
 
 #: src/gtkconv.c:2388
-#, fuzzy
 msgid "/Conversation/In_vite..."
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/მო_წვევა..."
 
 #: src/gtkconv.c:2393
-#, fuzzy
 msgid "/Conversation/Al_ias..."
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/მე_ტსახელი..."
 
 #: src/gtkconv.c:2395
 msgid "/Conversation/_Block..."
-msgstr ""
+msgstr "/საუბარი/_დაბლოკე..."
 
 #: src/gtkconv.c:2397
-#, fuzzy
 msgid "/Conversation/_Add..."
-msgstr "საუბრის შენახვა"
+msgstr "/საუბრი/_დაამატე..."
 
 #: src/gtkconv.c:2399
 msgid "/Conversation/_Remove..."
@@ -2484,84 +2455,75 @@ msgid "/Conversation/Insert Imag_e..."
 msgstr ""
 
 #: src/gtkconv.c:2411
-#, fuzzy
 msgid "/Conversation/_Close"
-msgstr "IMის საუბრის ფანჯარა"
+msgstr "/საუბარი/_დახურვა"
 
 #. Options
 #: src/gtkconv.c:2415
-#, fuzzy
 msgid "/_Options"
-msgstr "%s პარამეტრები"
+msgstr "/_პარამეტრები"
 
 #: src/gtkconv.c:2416
 msgid "/Options/Enable _Logging"
-msgstr ""
+msgstr "/პარამეტრები/ჩართე _ლოგგინგი"
 
 #: src/gtkconv.c:2417
 msgid "/Options/Enable _Sounds"
-msgstr ""
+msgstr "/პარამეტრები/ჩართე _ხმები"
 
 #: src/gtkconv.c:2418
 #, fuzzy
 msgid "/Options/Show Formatting _Toolbars"
-msgstr "iChatის დროის შტამპი "
+msgstr "/პარამეტრები/აჩვენე დრო"
 
 #: src/gtkconv.c:2419
-#, fuzzy
 msgid "/Options/Show Ti_mestamps"
-msgstr "iChatის დროის შტამპი "
+msgstr "/პარამეტრები/აჩვენე დრო"
 
 #: src/gtkconv.c:2420
+#, fuzzy
 msgid "/Options/Show Buddy _Icon"
-msgstr ""
+msgstr "/პარამეტრები/აჩვენე დრო"
 
 #: src/gtkconv.c:2460
-#, fuzzy
 msgid "/Conversation/View Log"
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/მოჩვენე ლოგი"
 
 #: src/gtkconv.c:2466
 msgid "/Conversation/Send File..."
-msgstr ""
+msgstr "/საუბარი/გააგზავნე ფაილი..."
 
 #: src/gtkconv.c:2470
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr ""
 
 #: src/gtkconv.c:2476
-#, fuzzy
 msgid "/Conversation/Get Info"
-msgstr "IMის საუბრის ფანჯარა"
+msgstr "/საუბარი/მიჩვენე ინფორმაცია"
 
 #: src/gtkconv.c:2480
-#, fuzzy
 msgid "/Conversation/Invite..."
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/მოიწვიე..."
 
 #: src/gtkconv.c:2486
-#, fuzzy
 msgid "/Conversation/Alias..."
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/მეტსახელი..."
 
 #: src/gtkconv.c:2490
-#, fuzzy
 msgid "/Conversation/Block..."
-msgstr "საუბრის შენახვა"
+msgstr "/საუბრი/დაბლოკე..."
 
 #: src/gtkconv.c:2494
-#, fuzzy
 msgid "/Conversation/Add..."
-msgstr "საუბრის შენახვა"
+msgstr "/საუბრი/დაამატე..."
 
 #: src/gtkconv.c:2498
 msgid "/Conversation/Remove..."
 msgstr ""
 
 #: src/gtkconv.c:2504
-#, fuzzy
 msgid "/Conversation/Insert Link..."
-msgstr "საუბარი %s-თან"
+msgstr "/საუბარი/ჩასვი ლინკი..."
 
 #: src/gtkconv.c:2508
 msgid "/Conversation/Insert Image..."
@@ -2569,21 +2531,20 @@ msgstr ""
 
 #: src/gtkconv.c:2514
 msgid "/Options/Enable Logging"
-msgstr ""
+msgstr "/პარამეტრები/ჩართე ლოგგინგი"
 
 #: src/gtkconv.c:2517
 msgid "/Options/Enable Sounds"
-msgstr ""
+msgstr "/პარამეტრები/ჩართე ხმები"
 
 #: src/gtkconv.c:2520
 #, fuzzy
 msgid "/Options/Show Formatting Toolbars"
-msgstr "iChatის დროის შტამპი "
+msgstr "/პარამეტრები/აჩვენე დრო"
 
 #: src/gtkconv.c:2523
-#, fuzzy
 msgid "/Options/Show Timestamps"
-msgstr "iChatის დროის შტამპი "
+msgstr "/პარამეტრები/აჩვენე დრო"
 
 #: src/gtkconv.c:2526
 msgid "/Options/Show Buddy Icon"
@@ -2604,14 +2565,13 @@ msgid "_Send To"
 msgstr "გაგზავნა როგორც"
 
 #: src/gtkconv.c:3373
-#, fuzzy
 msgid "Topic:"
-msgstr "თემა"
+msgstr "თემა:"
 
 #. Setup the label telling how many people are in the room.
 #: src/gtkconv.c:3421
 msgid "0 people in room"
-msgstr ""
+msgstr "0 პიროვნება ოთახში"
 
 #: src/gtkconv.c:3500
 #, fuzzy
@@ -2619,9 +2579,8 @@ msgid "IM the user"
 msgstr "მომხმარებლის ბლოკირება"
 
 #: src/gtkconv.c:3513
-#, fuzzy
 msgid "Ignore the user"
-msgstr "მომხმარებლის ბლოკირება"
+msgstr "მომხმარებლის იგნორირება"
 
 #: src/gtkconv.c:3525
 msgid "Get the user's information"
@@ -2630,9 +2589,7 @@ msgstr "მომხმარებლის შესახებ ინფო�
 #: src/gtkconv.c:4360 src/gtkconv.c:4462 src/gtkconv.c:4517
 #, c-format
 msgid "%d person in room"
-msgid_plural "%d people in room"
-msgstr[0] ""
-msgstr[1] ""
+msgstr "%d ადამიანი ოთახში"
 
 #: src/gtkconv.c:5582
 msgid ""
@@ -2661,7 +2618,7 @@ msgstr ""
 #: src/gtkconv.c:5709
 #, fuzzy
 msgid "Confirm close"
-msgstr "წევრის დადასტურება"
+msgstr "ანგარიშის დადასტურება"
 
 #: src/gtkconv.c:5741
 #, fuzzy
@@ -2669,30 +2626,28 @@ msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
 
 #: src/gtkconv.c:6408
-#, fuzzy
 msgid "Close conversation"
-msgstr "საუბრის შენახვა"
+msgstr "დაასრულე საუბარი"
 
 #: src/gtkconv.c:6872
 msgid "Last created window"
-msgstr ""
+msgstr "ბოლო შექმნილი ფანჯარა"
 
 #: src/gtkconv.c:6874
 msgid "Separate IM and Chat windows"
-msgstr ""
+msgstr "განასხვავე მოკლე შეტყობინენბების და Chat ფანჯრები"
 
 #: src/gtkconv.c:6876 src/gtkprefs.c:1205
 msgid "New window"
-msgstr ""
+msgstr "ახალი ფანჯარა"
 
 #: src/gtkconv.c:6878
 msgid "By group"
-msgstr ""
+msgstr "ჯგუფების მიხედვით"
 
 #: src/gtkconv.c:6880
-#, fuzzy
 msgid "By account"
-msgstr "წევრი"
+msgstr "ანგარიშების მიხედვით"
 
 #: src/gtkdebug.c:232
 msgid "Save Debug Log"
@@ -2721,14 +2676,12 @@ msgid "Pause"
 msgstr "პაუზა"
 
 #: src/gtkdebug.c:705 src/gtkdebug.c:706
-#, fuzzy
 msgid "Timestamps"
 msgstr "დროის შტამპი"
 
 #: src/gtkdebug.c:724
-#, fuzzy
 msgid "Filter"
-msgstr "მდედრობითი"
+msgstr "ფილტრი"
 
 #: src/gtkdebug.c:743
 #, fuzzy
@@ -2754,14 +2707,12 @@ msgid "win32 port"
 msgstr ""
 
 #: src/gtkdialogs.c:68
-#, fuzzy
 msgid "support"
-msgstr "დამადასტ. პორტი"
+msgstr "სუპორტი"
 
 #: src/gtkdialogs.c:88 src/gtkdialogs.c:91
-#, fuzzy
 msgid "maintainer"
-msgstr "წუთი"
+msgstr ""
 
 #: src/gtkdialogs.c:89
 #, fuzzy
@@ -2785,9 +2736,8 @@ msgid "Bulgarian"
 msgstr "ბულგარული"
 
 #: src/gtkdialogs.c:101
-#, fuzzy
 msgid "Bosnian"
-msgstr "რუმინული"
+msgstr "ბოსნიური"
 
 #: src/gtkdialogs.c:102 src/gtkdialogs.c:145 src/gtkdialogs.c:146
 msgid "Catalan"
@@ -2854,9 +2804,8 @@ msgid "Lithuanian"
 msgstr "ლიტვური"
 
 #: src/gtkdialogs.c:118
-#, fuzzy
 msgid "Georgian"
-msgstr "გერმანული"
+msgstr "ქართული"
 
 #: src/gtkdialogs.c:119 src/gtkdialogs.c:154
 msgid "Korean"
@@ -2948,11 +2897,11 @@ msgstr ""
 
 #: src/gtkdialogs.c:235
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-msgstr ""
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:238
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
-msgstr ""
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:244
 msgid "Active Developers"
@@ -2977,19 +2926,17 @@ msgstr "წინა თარგმანები"
 #: src/gtkdialogs.c:327
 #, fuzzy
 msgid "Debugging Information"
-msgstr "ინფორმაცია"
+msgstr "ინფორმაცია მომხმარებელძე"
 
 #: src/gtkdialogs.c:489 src/gtkdialogs.c:630 src/gtkdialogs.c:685
-#, fuzzy
 msgid "_Name"
-msgstr "სახელი"
+msgstr "_სახელი"
 
 #: src/gtkdialogs.c:494 src/gtkdialogs.c:635 src/gtkdialogs.c:690
 msgid "_Account"
-msgstr "წევრი"
+msgstr "_ანგარიში"
 
 #: src/gtkdialogs.c:502
-#, fuzzy
 msgid "New Instant Message"
 msgstr "ახალი შეტყობინება"
 
@@ -3013,7 +2960,7 @@ msgstr "ჩასამატებელი ჯგუფის სახელ�
 #: src/gtkdialogs.c:699
 #, fuzzy
 msgid "View User Log"
-msgstr "მომხმარებლის ინფორმაციის გაგება"
+msgstr "დაათვალიერე მომხმარებლის ლოგი"
 
 #: src/gtkdialogs.c:701
 #, fuzzy
@@ -3036,35 +2983,30 @@ msgid "Alias"
 msgstr "სინონიმი"
 
 #: src/gtkdialogs.c:741
-#, fuzzy, c-format
+#, c-format
 msgid "Enter an alias for %s."
-msgstr "ამ კონტაქტისთვის სინონიმის შექმნა"
+msgstr "შეიყვანე მეტსახელი %s-თვის."
 
 #: src/gtkdialogs.c:743
-#, fuzzy
 msgid "Alias Buddy"
-msgstr "სინონიმი"
+msgstr "მიანიჭე მეტსახელი"
 
 #: src/gtkdialogs.c:762
-#, fuzzy
 msgid "Alias Chat"
-msgstr "კონტაქტის სინონიმი"
+msgstr ""
 
 #: src/gtkdialogs.c:763
-#, fuzzy
 msgid "Enter an alias for this chat."
-msgstr "ამ კონტაქტისთვის სინონიმის შექმნა"
+msgstr ""
 
 #: src/gtkdialogs.c:800
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddy from "
-"your buddy list.  Do you want to continue?"
-msgid_plural ""
-"You are about to remove the contact containing %s and %d other buddies from "
-"your buddy list.  Do you want to continue?"
-msgstr[0] ""
-msgstr[1] ""
+"your buddy list.  Do you want to continue?You are about to remove the "
+"contact containing %s and %d other buddies from your buddy list.  Do you "
+"want to continue?"
+msgstr ""
 
 #: src/gtkdialogs.c:867
 #, c-format
@@ -3084,9 +3026,8 @@ msgid ""
 msgstr ""
 
 #: src/gtkdialogs.c:912 src/gtkdialogs.c:913
-#, fuzzy
 msgid "Remove Buddy"
-msgstr "წაშლა"
+msgstr "ამოშალე მეგობარი"
 
 #: src/gtkdialogs.c:951
 #, c-format
@@ -3096,14 +3037,13 @@ msgid ""
 msgstr ""
 
 #: src/gtkdialogs.c:954 src/gtkdialogs.c:955
-#, fuzzy
 msgid "Remove Chat"
-msgstr "კონტატის წაშლა"
+msgstr "ამოშალე Chat-ი"
 
 #: src/gtkft.c:138
 #, c-format
 msgid "%.2f KB/s"
-msgstr ""
+msgstr "%.2f KB/s"
 
 #: src/gtkft.c:159 src/gtkft.c:1035
 msgid "Finished"
@@ -3115,11 +3055,11 @@ msgstr "გაუქმებულია"
 
 #: src/gtkft.c:165 src/gtkft.c:905
 msgid "Waiting for transfer to begin"
-msgstr ""
+msgstr "ველოდები გადატანის დაწყებას"
 
 #: src/gtkft.c:218
 msgid "<b>Receiving As:</b>"
-msgstr ""
+msgstr "<b>ვღებულობ როგორც:</b>"
 
 #: src/gtkft.c:220
 msgid "<b>Receiving From:</b>"
@@ -3144,7 +3084,9 @@ msgstr ""
 #: src/gtkft.c:467
 #, fuzzy, c-format
 msgid "Error launching %s: %s"
-msgstr "%s სურათის შენახვის შეცდომა"
+msgstr ""
+"შეცდომა %s -ის წაკითხვისას: \n"
+"%s.\n"
 
 #: src/gtkft.c:476
 #, fuzzy, c-format
@@ -3157,9 +3099,8 @@ msgid "Process returned error code %d"
 msgstr ""
 
 #: src/gtkft.c:572
-#, fuzzy
 msgid "Progress"
-msgstr "პორტები"
+msgstr "პროგრესი"
 
 #: src/gtkft.c:579
 msgid "Filename"
@@ -3170,7 +3111,6 @@ msgid "Size"
 msgstr "ზომა"
 
 #: src/gtkft.c:593
-#, fuzzy
 msgid "Remaining"
 msgstr "დარჩენილი დრო"
 
@@ -3179,13 +3119,12 @@ msgid "Filename:"
 msgstr "ფაილის სახელი:"
 
 #: src/gtkft.c:625
-#, fuzzy
 msgid "Local File:"
-msgstr "მდებარეობა"
+msgstr "ლოკალური ფაილი:"
 
 #: src/gtkft.c:626
 msgid "Status:"
-msgstr "სტატუსი"
+msgstr "სტატუსი:"
 
 #: src/gtkft.c:627
 msgid "Speed:"
@@ -3234,7 +3173,7 @@ msgstr "ტექსტის ჩასმა"
 
 #: src/gtkimhtml.c:1313
 msgid "Hyperlink color"
-msgstr ""
+msgstr "ლინკების ფერი"
 
 #: src/gtkimhtml.c:1314
 msgid "Color to draw hyperlinks."
@@ -3253,9 +3192,8 @@ msgid "_Copy E-Mail Address"
 msgstr ""
 
 #: src/gtkimhtml.c:1549
-#, fuzzy
 msgid "_Open Link in Browser"
-msgstr "გახსნას მაჩვენებელი :"
+msgstr ""
 
 #: src/gtkimhtml.c:1559
 msgid "_Copy Link Location"
@@ -3284,12 +3222,15 @@ msgid ""
 msgstr ""
 
 #: src/gtkimhtml.c:3253
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error saving image\n"
 "\n"
 "%s"
-msgstr "%s სურათის შენახვის შეცდომა"
+msgstr ""
+"სურათის შენახვის შეცდომა\n"
+"\n"
+"%s"
 
 #: src/gtkimhtml.c:3333 src/gtkimhtml.c:3345
 msgid "Save Image"
@@ -3313,7 +3254,7 @@ msgstr "ფონიდ ფერის არჩევა"
 
 #: src/gtkimhtmltoolbar.c:394
 msgid "_URL"
-msgstr ""
+msgstr "_URL"
 
 #: src/gtkimhtmltoolbar.c:402
 msgid "_Description"
@@ -3341,7 +3282,7 @@ msgstr "ჩამატება"
 #: src/gtkimhtmltoolbar.c:487
 #, fuzzy, c-format
 msgid "Failed to store image: %s\n"
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან\n"
 
 #: src/gtkimhtmltoolbar.c:513 src/gtkimhtmltoolbar.c:523
 msgid "Insert Image"
@@ -3487,9 +3428,7 @@ msgstr "წაშლა"
 #: src/gtknotify.c:275
 #, c-format
 msgid "%s has %d new message."
-msgid_plural "%s has %d new messages."
-msgstr[0] ""
-msgstr[1] ""
+msgstr "%s-ს აქვს %d ახალი შეტყობინება."
 
 #: src/gtknotify.c:289
 #, c-format
@@ -3497,36 +3436,30 @@ msgid "<span weight=\"bold\">From:</span> %s\n"
 msgstr ""
 
 #: src/gtknotify.c:298
-#, fuzzy, c-format
+#, c-format
 msgid "<span weight=\"bold\">Subject:</span> %s\n"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
-"\n"
-"%s\n"
-"%s"
 
 #: src/gtknotify.c:303
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
 "\n"
 "%s%s%s%s"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
+"<span weight=\"bold\" size=\"larger\">მოსულია ახალი წერილი!</span>\n"
 "\n"
-"%s\n"
-"%s"
+"%s%s%s%s"
 
 #: src/gtknotify.c:319
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
 "\n"
 "%s"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
+"<span weight=\"bold\" size=\"larger\">მოსულია ახალი წერილი!</span>\n"
 "\n"
-"%s\n"
 "%s"
 
 #: src/gtknotify.c:504
@@ -3539,9 +3472,8 @@ msgid "Info for %s"
 msgstr "ინფორმაცია %s-თვის"
 
 #: src/gtknotify.c:644 src/protocols/toc/toc.c:470
-#, fuzzy
 msgid "Buddy Information"
-msgstr "ინფორმაცია"
+msgstr "ინფორმაცია მომხმარებელზე"
 
 #: src/gtknotify.c:687
 #, c-format
@@ -3550,9 +3482,8 @@ msgstr ""
 
 #: src/gtknotify.c:689 src/gtknotify.c:701 src/gtknotify.c:714
 #: src/gtknotify.c:838
-#, fuzzy
 msgid "Unable to open URL"
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr "ვერ ვხსნი URL-ს"
 
 #: src/gtknotify.c:699 src/gtknotify.c:712
 #, c-format
@@ -3569,9 +3500,8 @@ msgid "Select a file"
 msgstr "ფაილის არჩევა"
 
 #: src/gtkpounce.c:161
-#, fuzzy
 msgid "Please enter a buddy to pounce."
-msgstr "გთხოვთ შექმნათ წევრი"
+msgstr ""
 
 #. "New Buddy Pounce"
 #: src/gtkpounce.c:391 src/gtkpounce.c:898
@@ -3589,7 +3519,7 @@ msgstr ""
 
 #: src/gtkpounce.c:435
 msgid "_Buddy name:"
-msgstr ""
+msgstr "_მეგობრის სახელი:"
 
 #. Create the "Pounce When" frame.
 #: src/gtkpounce.c:459
@@ -3617,9 +3547,8 @@ msgid "_Idle"
 msgstr ""
 
 #: src/gtkpounce.c:477
-#, fuzzy
 msgid "Retur_n from idle"
-msgstr "დაბრუნება"
+msgstr ""
 
 #: src/gtkpounce.c:479
 msgid "Buddy starts _typing"
@@ -3631,18 +3560,16 @@ msgstr ""
 
 #. Create the "Pounce Action" frame.
 #: src/gtkpounce.c:510
-#, fuzzy
 msgid "Pounce Action"
-msgstr "ხმის არჩევა"
+msgstr ""
 
 #: src/gtkpounce.c:518
 msgid "Op_en an IM window"
 msgstr ""
 
 #: src/gtkpounce.c:520
-#, fuzzy
 msgid "_Popup notification"
-msgstr "ახალი ელ.ფოსტის შეტყობინებები"
+msgstr "_Popup-შეტყობინება"
 
 #: src/gtkpounce.c:522
 msgid "Send a _message"
@@ -3674,9 +3601,8 @@ msgstr ""
 
 #. "Remove Buddy Pounce"
 #: src/gtkpounce.c:906
-#, fuzzy
 msgid "Remove Buddy Pounce"
-msgstr "კონტატის წაშლა"
+msgstr ""
 
 #: src/gtkpounce.c:964
 #, c-format
@@ -3711,12 +3637,12 @@ msgstr ""
 #: src/gtkpounce.c:976
 #, c-format
 msgid "%s has become idle (%s)"
-msgstr ""
+msgstr "%s გახდა უმოქმედო (%s)"
 
 #: src/gtkpounce.c:978
 #, c-format
 msgid "%s has gone away. (%s)"
-msgstr ""
+msgstr "%s გავიდა. (%s)"
 
 #: src/gtkpounce.c:979
 msgid "Unknown pounce event. Please report this!"
@@ -3742,8 +3668,9 @@ msgid "Send unknown \"_slash\" commands as messages"
 msgstr "გავაგზავნოთ უცნობი 'დახრილი ხაზი' ბრძანებები როგორც შეტყობინებები"
 
 #: src/gtkprefs.c:807
+#, fuzzy
 msgid "Show _formatting on incoming messages"
-msgstr ""
+msgstr "აჩვენე შეტყობინებებთან ერთად დროც"
 
 #: src/gtkprefs.c:809
 msgid "Show buddy _icons"
@@ -3759,7 +3686,7 @@ msgstr ""
 
 #: src/gtkprefs.c:816
 msgid "_Highlight misspelled words"
-msgstr ""
+msgstr "_მონიშნე არასწორად დაწერილი სიტყვები"
 
 #: src/gtkprefs.c:834
 msgid ""
@@ -3771,9 +3698,8 @@ msgstr ""
 
 #. All the tab options!
 #: src/gtkprefs.c:856
-#, fuzzy
 msgid "Tab Options"
-msgstr "%s პარამეტრები"
+msgstr "ტაბ-პარამეტრები"
 
 #: src/gtkprefs.c:858
 msgid "Show IMs and chats in _tabbed windows"
@@ -3784,8 +3710,9 @@ msgid "Show close b_utton on tabs"
 msgstr ""
 
 #: src/gtkprefs.c:878
+#, fuzzy
 msgid "_Placement:"
-msgstr ""
+msgstr "დამატებითი განლაგება"
 
 #: src/gtkprefs.c:880
 msgid "Top"
@@ -3797,7 +3724,7 @@ msgstr "ქვემოთ"
 
 #: src/gtkprefs.c:882
 msgid "Left"
-msgstr "მარცხენა "
+msgstr "მარცხენა"
 
 #: src/gtkprefs.c:883
 msgid "Right"
@@ -3812,9 +3739,8 @@ msgid "Right Vertical"
 msgstr ""
 
 #: src/gtkprefs.c:891
-#, fuzzy
 msgid "N_ew conversations:"
-msgstr "საუბრის შენახვა"
+msgstr "_ახალი საუბარი:"
 
 #: src/gtkprefs.c:942 src/protocols/oscar/oscar.c:779
 #: src/protocols/oscar/oscar.c:5959
@@ -3822,9 +3748,8 @@ msgid "IP Address"
 msgstr "IP მისამართი"
 
 #: src/gtkprefs.c:944
-#, fuzzy
 msgid "STUN Server:"
-msgstr "ელ.ფოსტის სერვერი"
+msgstr "STUN სერვერი:"
 
 #: src/gtkprefs.c:946
 msgid "_Autodetect IP Address"
@@ -3832,7 +3757,7 @@ msgstr "IP მისამართის თვითდადგენა"
 
 #: src/gtkprefs.c:955
 msgid "Public _IP:"
-msgstr "გარე IP"
+msgstr "გარე _IP:"
 
 #: src/gtkprefs.c:979
 msgid "Ports"
@@ -3860,7 +3785,7 @@ msgstr "უპროქსიოდ"
 
 #: src/gtkprefs.c:1059
 msgid "_User:"
-msgstr "მომხმარებელი"
+msgstr "_მომხმარებელი:"
 
 #: src/gtkprefs.c:1119
 msgid "Epiphany"
@@ -3901,7 +3826,7 @@ msgstr "Opera"
 
 #: src/gtkprefs.c:1136
 msgid "Manual"
-msgstr "ხელით."
+msgstr "ხელით"
 
 #: src/gtkprefs.c:1189
 msgid "Browser Selection"
@@ -3936,9 +3861,8 @@ msgid ""
 msgstr ""
 
 #: src/gtkprefs.c:1256 src/gtkprefs.c:1738
-#, fuzzy
 msgid "Logging"
-msgstr "შესვლა"
+msgstr "პროტოკოლირება"
 
 #: src/gtkprefs.c:1259
 msgid "Log _Format:"
@@ -3982,9 +3906,8 @@ msgid "Command"
 msgstr "ბრძანება"
 
 #: src/gtkprefs.c:1465
-#, fuzzy
 msgid "No sounds"
-msgstr "ხმები"
+msgstr "გამორთე ხმები"
 
 #: src/gtkprefs.c:1473
 #, c-format
@@ -4080,7 +4003,7 @@ msgstr ""
 #: src/gtkprefs.c:1678
 #, fuzzy
 msgid "Change _status to:"
-msgstr "პაროლის შეცვლა..."
+msgstr "შეცვალე პაროლი"
 
 #: src/gtkprefs.c:1728
 msgid "Smiley Themes"
@@ -4100,7 +4023,7 @@ msgstr "Browser-ი"
 
 #: src/gtkprefs.c:1739
 msgid "Away / Idle"
-msgstr ""
+msgstr "გასული / უმოქმედო"
 
 #: src/gtkprivacy.c:79
 msgid "Allow all users to contact me"
@@ -4115,18 +4038,17 @@ msgid "Allow only the users below"
 msgstr ""
 
 #: src/gtkprivacy.c:82
-#, fuzzy
 msgid "Block all users"
-msgstr "მომხმარებლის ბლოკირება"
+msgstr "დაბლოკე ყველა მომხმარებელი"
 
 #: src/gtkprivacy.c:83
-#, fuzzy
 msgid "Block only the users below"
-msgstr "მომხმარებლის ბლოკირება"
+msgstr "დაბლოკე მხოლოდ ქვემოთ მოცემული მომხმარებელი"
 
 #: src/gtkprivacy.c:398
+#, fuzzy
 msgid "Privacy"
-msgstr ""
+msgstr "პრივატობა"
 
 #: src/gtkprivacy.c:411
 msgid "Changes to privacy settings take effect immediately."
@@ -4138,18 +4060,16 @@ msgid "Set privacy for:"
 msgstr ""
 
 #: src/gtkprivacy.c:589 src/gtkprivacy.c:605
-#, fuzzy
 msgid "Permit User"
-msgstr "დაშვება"
+msgstr ""
 
 #: src/gtkprivacy.c:590
 msgid "Type a user you permit to contact you."
 msgstr ""
 
 #: src/gtkprivacy.c:591
-#, fuzzy
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr "ჩასამატებელი ჯგუფის სახელი"
+msgstr ""
 
 #: src/gtkprivacy.c:594 src/gtkprivacy.c:607
 msgid "Permit"
@@ -4166,9 +4086,8 @@ msgid "Are you sure you wish to allow %s to contact you?"
 msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
 
 #: src/gtkprivacy.c:628 src/gtkprivacy.c:641
-#, fuzzy
 msgid "Block User"
-msgstr "მომხმარებლის ბლოკირება"
+msgstr "დაბლოკე მომხმარებლი"
 
 #: src/gtkprivacy.c:629
 msgid "Type a user to block."
@@ -4184,14 +4103,14 @@ msgid "Block"
 msgstr "ბლოკირება"
 
 #: src/gtkprivacy.c:637
-#, fuzzy, c-format
+#, c-format
 msgid "Block %s?"
-msgstr "ბლოკირება"
+msgstr "დავბლოკო %s?"
 
 #: src/gtkprivacy.c:639
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure you want to block %s?"
-msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
+msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის დაბლოკვა?"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
@@ -4267,19 +4186,17 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:2771 src/protocols/simple/simple.c:255
 #: src/protocols/yahoo/yahoo.c:3220 src/protocols/yahoo/yahoo.c:3226
 #: src/protocols/zephyr/zephyr.c:2260
-#, fuzzy
 msgid "Message"
-msgstr "შეტყობინების ტექსტი"
+msgstr "შეტყობინება"
 
 #: src/gtksavedstatuses.c:451
 #, fuzzy
 msgid "Saved Statuses"
-msgstr "%s-ს სტატუსი "
+msgstr "%s-ს სტატუსი"
 
 #. Use button
 #. TODO: It might be better if the button said "Use" or "Activate"
 #: src/gtksavedstatuses.c:477
-#, fuzzy
 msgid "_Use"
 msgstr "გამოყენება"
 
@@ -4290,7 +4207,7 @@ msgstr ""
 #: src/gtksavedstatuses.c:675
 #, fuzzy
 msgid "Custom status"
-msgstr "სტატუსი"
+msgstr "სტატუსის მიხედვით"
 
 #: src/gtksavedstatuses.c:778 src/protocols/gg/gg.c:1064
 #: src/protocols/gg/gg.c:1069 src/protocols/jabber/buddy.c:626
@@ -4299,7 +4216,6 @@ msgstr "სტატუსი"
 #: src/protocols/novell/novell.c:2844 src/protocols/novell/novell.c:2848
 #: src/protocols/oscar/oscar.c:762 src/protocols/oscar/oscar.c:767
 #: src/protocols/oscar/oscar.c:769 src/protocols/yahoo/yahoo.c:2787
-#, fuzzy
 msgid "Status"
 msgstr "სტატუსი"
 
@@ -4309,9 +4225,8 @@ msgid "_Title:"
 msgstr "სათაური"
 
 #: src/gtksavedstatuses.c:817
-#, fuzzy
 msgid "_Status:"
-msgstr "სტატუსი"
+msgstr "_სტატუსი:"
 
 #. Custom status message expander
 #: src/gtksavedstatuses.c:852
@@ -4331,9 +4246,8 @@ msgid "Message received"
 msgstr "შეტყობინება მიღებულია"
 
 #: src/gtksound.c:64
-#, fuzzy
 msgid "Message received begins conversation"
-msgstr "შეტყობინება მიღებულია"
+msgstr ""
 
 #: src/gtksound.c:65
 msgid "Message sent"
@@ -4432,9 +4346,8 @@ msgid "Custom..."
 msgstr ""
 
 #: src/gtkstatusbox.c:300
-#, fuzzy
 msgid "Saved..."
-msgstr "ფაილის შენახვა..."
+msgstr "შენახულია..."
 
 #: src/gtkstock.c:117
 msgid "_Alias"
@@ -4464,12 +4377,12 @@ msgstr ""
 #: src/gtkutils.c:1395 src/gtkutils.c:1420
 #, fuzzy
 msgid "Failed to load image"
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან\n"
 
 #: src/gtkutils.c:1495
 #, fuzzy, c-format
 msgid "Cannot send folder %s."
-msgstr "ფაილის გაგზავნს მომხმარებლისთვის"
+msgstr "ვერ ვაგზავნი ფაილს"
 
 #: src/gtkutils.c:1497
 msgid ""
@@ -4524,8 +4437,9 @@ msgstr ""
 #. * Probably not.  I'll just give an error and return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 #: src/gtkutils.c:1596
+#, fuzzy
 msgid "Cannot send launcher"
-msgstr ""
+msgstr "ვერ ვაგზავნი ფაილს"
 
 #: src/gtkutils.c:1596
 msgid ""
@@ -4574,11 +4488,11 @@ msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr ""
 
 #: src/plugin.c:331
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
 "again."
-msgstr "%s პლაკინის ჩატვირთვა შეუძლებელია"
+msgstr "ვერ ვპოულობ %s პლაგინს. გთხოვთ დააყენოთ პლაგინი და სცადოთ თავიდან."
 
 #: src/plugin.c:336 src/plugin.c:364
 msgid "Gaim was unable to load your plugin."
@@ -4594,21 +4508,23 @@ msgstr "%s პლაკინის ჩატვირთვა შეუძლ�
 #: src/protocols/oscar/oscar.c:5064 src/protocols/yahoo/yahoo.c:2635
 #: src/protocols/yahoo/yahoo_profile.c:660
 msgid "Idle"
-msgstr ""
+msgstr "უმოქმედო"
 
 #: src/protocols/bonjour/bonjour.c:303
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Status:</b> %s"
-msgstr "<b>პაროლი:</b>"
+msgstr ""
+"\n"
+"<b>სტატუსი:</b> %s"
 
 #: src/protocols/bonjour/bonjour.c:305
 #, fuzzy, c-format
 msgid ""
 "\n"
 "<b>Message:</b> %s"
-msgstr "<b>წევრი:</b>"
+msgstr "<b>%s:</b> "
 
 #. *< type
 #. *< ui_requirement
@@ -4629,23 +4545,20 @@ msgstr "AIM/ICQ პროტოკოლის პლაგინი"
 #: src/protocols/bonjour/bonjour.c:417
 #, fuzzy
 msgid "Host name"
-msgstr "გვარი"
+msgstr "Host საზელი"
 
 #. Creating the options for the protocol
 #: src/protocols/bonjour/bonjour.c:421 src/protocols/irc/irc.c:822
 #: src/protocols/msn/msn.c:1968 src/protocols/napster/napster.c:712
 #: src/protocols/silc/silc.c:1597
-#, fuzzy
 msgid "Port"
-msgstr "პორტები"
+msgstr "პორტი"
 
 #: src/protocols/bonjour/bonjour.c:424 src/protocols/gg/gg.c:405
-#, fuzzy
 msgid "First name"
 msgstr "სახელი"
 
 #: src/protocols/bonjour/bonjour.c:427 src/protocols/gg/gg.c:401
-#, fuzzy
 msgid "Last name"
 msgstr "გვარი"
 
@@ -4663,7 +4576,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:136 src/protocols/gg/gg.c:155
 #, fuzzy
 msgid "Save Buddylist..."
-msgstr "სინონიმი"
+msgstr "მეგობრის _მეტსახელი..."
 
 #: src/protocols/gg/gg.c:137
 msgid "Your buddylist is empty, nothing was written to the file."
@@ -4671,32 +4584,29 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:143 src/protocols/gg/gg.c:145
 #: src/protocols/gg/gg.c:176
-#, fuzzy
 msgid "Couldn't open file"
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr "ვერ გავხსენი ფაილი"
 
 #: src/protocols/gg/gg.c:156
 msgid "Buddylist saved successfully!"
 msgstr ""
 
 #: src/protocols/gg/gg.c:178
-#, fuzzy
 msgid "Could't open file"
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr "ვერ გავხსენი ფაილი"
 
 #: src/protocols/gg/gg.c:199
 #, fuzzy
 msgid "Load Buddylist..."
-msgstr "სინონიმი"
+msgstr "მეგობრის _მეტსახელი..."
 
 #: src/protocols/gg/gg.c:200
 msgid "Buddylist loaded successfully!"
 msgstr ""
 
 #: src/protocols/gg/gg.c:211
-#, fuzzy
 msgid "Save buddylist..."
-msgstr "ფაილის შენახვა..."
+msgstr "მეგობრების სიის შენახვა..."
 
 #: src/protocols/gg/gg.c:254
 msgid "Fill in the registration fields."
@@ -4719,7 +4629,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:280
 #, fuzzy
 msgid "Registration completed successfully!"
-msgstr "რეგისტრაციის შეცდომა"
+msgstr "რეგისტრაცია მოხერხდა"
 
 #: src/protocols/gg/gg.c:409 src/protocols/gg/gg.c:1665
 #: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:698
@@ -4733,11 +4643,11 @@ msgstr "მეტსახელი"
 #: src/protocols/gg/gg.c:413 src/protocols/jabber/jabber.c:668
 #: src/protocols/oscar/oscar.c:6006 src/protocols/oscar/oscar.c:6014
 msgid "City"
-msgstr ""
+msgstr "ქალაქი"
 
 #: src/protocols/gg/gg.c:417
 msgid "Year of birth"
-msgstr ""
+msgstr "დაბადების წელი"
 
 #: src/protocols/gg/gg.c:426
 #, fuzzy
@@ -4747,12 +4657,12 @@ msgstr "ხაზზე"
 #: src/protocols/gg/gg.c:430 src/protocols/gg/gg.c:431
 #: src/protocols/gg/gg.c:1510
 msgid "Find buddies"
-msgstr ""
+msgstr "იპოვე მეგობრები"
 
 #: src/protocols/gg/gg.c:432
 #, fuzzy
 msgid "Please, enter your search criteria below"
-msgstr "შეიყვანეთ თქვენი არსებული და ახალი პაროლი"
+msgstr "გთხოვთ შეიყვანოთ თქვენი ახალი პაროლი"
 
 #: src/protocols/gg/gg.c:465
 msgid "Fill in the fields."
@@ -4774,7 +4684,7 @@ msgstr "პაროლის შეცვლა %s -თვის"
 #: src/protocols/gg/gg.c:501
 #, fuzzy
 msgid "Password was changed successfully!"
-msgstr "პაროლი გაგზავნილია"
+msgstr "პაროლი შეიცვალა"
 
 #: src/protocols/gg/gg.c:535
 #, fuzzy
@@ -4793,7 +4703,6 @@ msgstr "არასწორია მეტსახელი ან პარ
 
 #: src/protocols/gg/gg.c:555 src/protocols/gg/gg.c:1476
 #: src/protocols/jabber/jabber.c:632 src/protocols/jabber/jabber.c:1150
-#, fuzzy
 msgid "Password"
 msgstr "პაროლი"
 
@@ -4818,9 +4727,8 @@ msgid "Please, enter your current password and your new password for UIN: "
 msgstr "შეიყვანეთ თქვენი არსებული და ახალი პაროლი"
 
 #: src/protocols/gg/gg.c:578 src/protocols/gg/gg.c:579
-#, fuzzy
 msgid "Change Gadu-Gadu Password"
-msgstr "პაროლის შეცვლა..."
+msgstr "შეცვალე Gadu-Gadu პაროლი"
 
 #: src/protocols/gg/gg.c:649
 #, c-format
@@ -4829,7 +4737,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:651 src/protocols/gg/gg.c:652
 msgid "Add to chat..."
-msgstr ""
+msgstr "დაამატე chat-ს..."
 
 #: src/protocols/gg/gg.c:812
 msgid "Unable to read socket"
@@ -4840,7 +4748,6 @@ msgid "Gadu-Gadu Public Directory"
 msgstr ""
 
 #: src/protocols/gg/gg.c:960
-#, fuzzy
 msgid "Search results"
 msgstr "ძებნის შედეგები"
 
@@ -4873,21 +4780,20 @@ msgstr "ხაზზე"
 #: src/protocols/silc/buddy.c:1421 src/protocols/silc/silc.c:54
 #: src/protocols/yahoo/yahoo.c:2617 src/protocols/yahoo/yahoo.c:3233
 msgid "Busy"
-msgstr ""
+msgstr "დაკავებული"
 
 #: src/protocols/gg/gg.c:1111 src/protocols/msn/msn.c:554
-#, fuzzy
 msgid "Blocked"
-msgstr "ბლოკირება"
+msgstr "დაბლოკილია"
 
 #: src/protocols/gg/gg.c:1129
+#, fuzzy
 msgid "Add to chat"
-msgstr ""
+msgstr "C_hat ის დამატება"
 
 #: src/protocols/gg/gg.c:1133
-#, fuzzy
 msgid "Unblock"
-msgstr "ბლოკირება"
+msgstr "ბლოკირების გაუქმება"
 
 #: src/protocols/gg/gg.c:1149
 #, fuzzy
@@ -4900,9 +4806,8 @@ msgid "Connection failed."
 msgstr "აუტენტიფიკაცია შეუძლებელია"
 
 #: src/protocols/gg/gg.c:1357
-#, fuzzy
 msgid "Chat error"
-msgstr "კითხვის შეცდომა"
+msgstr "Chat შეცდომა"
 
 #: src/protocols/gg/gg.c:1358
 #, fuzzy
@@ -4910,18 +4815,16 @@ msgid "This chat name is already in use"
 msgstr "ფალი უკვე არსებობს"
 
 #: src/protocols/gg/gg.c:1435
-#, fuzzy
 msgid "Not connected to the server."
-msgstr "შეუძლებელია სერვერთან დაკავშირება"
+msgstr "არ ვარ დაკავშირებული სერვერთან."
 
 #: src/protocols/gg/gg.c:1456
 msgid "Token Error: Unable to fetch the token.\n"
 msgstr ""
 
 #: src/protocols/gg/gg.c:1472
-#, fuzzy
 msgid "e-Mail"
-msgstr "ელ-ფოსტა"
+msgstr "e-Mail"
 
 #: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 msgid "Register New Gadu-Gadu Account"
@@ -4934,7 +4837,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:1515
 #, fuzzy
 msgid "Change password"
-msgstr "პაროლის შეცვლა..."
+msgstr "შეცვალე პაროლი"
 
 #: src/protocols/gg/gg.c:1520
 msgid "Upload buddylist to Server"
@@ -4950,7 +4853,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:1529
 msgid "Save buddylist to file"
-msgstr ""
+msgstr "შეინახე მეგობრების სია ფაილში"
 
 #: src/protocols/gg/gg.c:1532
 msgid "Load buddylist from file"
@@ -4968,9 +4871,8 @@ msgstr ""
 #. name
 #. version
 #: src/protocols/gg/gg.c:1617
-#, fuzzy
 msgid "Gadu-Gadu Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "Gadu-Gadu პროტოკოლის პლაგინი"
 
 #. summary
 #: src/protocols/gg/gg.c:1618
@@ -5003,7 +4905,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo_filexfer.c:191
 #, fuzzy
 msgid "File Transfer Failed"
-msgstr "ფაილების გადაგზავნა"
+msgstr "ფაილის გადაგზავნა შეწყვეტილია"
 
 #: src/protocols/irc/dcc_send.c:273
 msgid "Gaim could not open a listening port."
@@ -5037,14 +4939,12 @@ msgid "View MOTD"
 msgstr ""
 
 #: src/protocols/irc/irc.c:200 src/protocols/silc/chat.c:32
-#, fuzzy
 msgid "_Channel:"
-msgstr "გაუქმება"
+msgstr "_არხი:"
 
 #: src/protocols/irc/irc.c:206 src/protocols/jabber/chat.c:59
-#, fuzzy
 msgid "_Password:"
-msgstr "პაროლი"
+msgstr "_პაროლი:"
 
 #: src/protocols/irc/irc.c:238
 msgid "IRC nicks may not contain whitespace"
@@ -5098,9 +4998,8 @@ msgstr "თემა"
 #. *< name
 #. *< version
 #: src/protocols/irc/irc.c:799
-#, fuzzy
 msgid "IRC Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "IRC პროტოკოლის პლაგინი"
 
 #. *  summary
 #: src/protocols/irc/irc.c:800
@@ -5111,9 +5010,8 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1708 src/protocols/napster/napster.c:707
 #: src/protocols/simple/simple.c:1428 src/protocols/silc/ops.c:1028
 #: src/protocols/silc/ops.c:1130
-#, fuzzy
 msgid "Server"
-msgstr "არასოდეს"
+msgstr "სერვერი"
 
 #: src/protocols/irc/irc.c:825
 #, fuzzy
@@ -5129,9 +5027,8 @@ msgid "Username"
 msgstr "მომხმარებელი"
 
 #: src/protocols/irc/irc.c:831
-#, fuzzy
 msgid "Real name"
-msgstr "სახელის შეცვლა"
+msgstr "ნამდვილი სახელი"
 
 #.
 #. option = gaim_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
@@ -5139,7 +5036,7 @@ msgstr "სახელის შეცვლა"
 #.
 #: src/protocols/irc/irc.c:839
 msgid "Use SSL"
-msgstr ""
+msgstr "გამოიყენე SSL"
 
 #: src/protocols/irc/msgs.c:105
 msgid "Bad mode"
@@ -5167,9 +5064,8 @@ msgstr ""
 
 #: src/protocols/irc/msgs.c:213 src/protocols/oscar/oscar.c:5952
 #: src/protocols/silc/ops.c:1198
-#, fuzzy
 msgid "Nick"
-msgstr "მეტსახელი:"
+msgstr "მეტსახელი"
 
 #: src/protocols/irc/msgs.c:216
 msgid " <i>(ircop)</i>"
@@ -5188,9 +5084,8 @@ msgstr ""
 
 #: src/protocols/irc/msgs.c:228 src/protocols/silc/ops.c:969
 #: src/protocols/silc/ops.c:1118 src/protocols/yahoo/yahoo_profile.c:1005
-#, fuzzy
 msgid "Realname"
-msgstr "სახელის შეცვლა"
+msgstr "ნამდვილი სახელი"
 
 #: src/protocols/irc/msgs.c:239 src/protocols/silc/ops.c:1041
 msgid "Currently on"
@@ -5221,14 +5116,13 @@ msgid "The topic for %s is: %s"
 msgstr "ელ.ფოსტის მისამართი %s-თვის არის  %s"
 
 #: src/protocols/irc/msgs.c:339
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown message '%s'"
-msgstr "უცნობი მიზეზი."
+msgstr "უცნობი შეტყობინება '%s'"
 
 #: src/protocols/irc/msgs.c:340
-#, fuzzy
 msgid "Unknown message"
-msgstr "შეტყობინების გაგზავნა"
+msgstr "უცნობი შეტყობინება"
 
 #: src/protocols/irc/msgs.c:340
 msgid "Gaim has sent a message the IRC server did not understand."
@@ -5240,9 +5134,8 @@ msgid "Users on %s: %s"
 msgstr ""
 
 #: src/protocols/irc/msgs.c:482
-#, fuzzy
 msgid "Time Response"
-msgstr "ტელეფონი"
+msgstr ""
 
 #: src/protocols/irc/msgs.c:483
 msgid "The IRC server's local time is:"
@@ -5266,9 +5159,8 @@ msgid "No such nick or channel"
 msgstr ""
 
 #: src/protocols/irc/msgs.c:533
-#, fuzzy
 msgid "Could not send"
-msgstr "ვერ ვუკავშირდები"
+msgstr "ვერ ვაგზავნი"
 
 #: src/protocols/irc/msgs.c:589
 #, c-format
@@ -5555,7 +5447,7 @@ msgstr "სერვერის არასწორი პასუხი"
 #: src/protocols/jabber/buddy.c:249 src/protocols/jabber/buddy.c:667
 #: src/protocols/silc/ops.c:806
 msgid "Full Name"
-msgstr "სრული სახელი\t"
+msgstr "სრული სახელი"
 
 #: src/protocols/jabber/buddy.c:250 src/protocols/jabber/buddy.c:680
 #: src/protocols/silc/ops.c:818
@@ -5603,7 +5495,7 @@ msgstr "ტელეფონი"
 
 #: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:795
 msgid "Organization Name"
-msgstr "ორგანიზაცია"
+msgstr "ორგანიზაციის სახელი"
 
 #: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:799
 msgid "Organization Unit"
@@ -5633,35 +5525,30 @@ msgid "Jabber ID"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
-#, fuzzy
 msgid "Resource"
-msgstr "გაგრძელება"
+msgstr "რესურსი"
 
 #: src/protocols/jabber/buddy.c:688 src/protocols/silc/ops.c:814
-#, fuzzy
 msgid "Middle Name"
 msgstr "ოჯახური სახელი"
 
 #: src/protocols/jabber/buddy.c:706 src/protocols/jabber/jabber.c:663
 #: src/protocols/oscar/oscar.c:6005 src/protocols/oscar/oscar.c:6013
 #: src/protocols/silc/ops.c:850
-#, fuzzy
 msgid "Address"
-msgstr "IP მისამართი"
+msgstr "მისამართი"
 
 #: src/protocols/jabber/buddy.c:718
 msgid "P.O. Box"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:832
-#, fuzzy
 msgid "Photo"
-msgstr "თანამდებობა"
+msgstr "სურათი"
 
 #: src/protocols/jabber/buddy.c:832
-#, fuzzy
 msgid "Logo"
-msgstr "შესვლა"
+msgstr "ლოგო"
 
 #: src/protocols/jabber/buddy.c:1035
 msgid "Un-hide From"
@@ -5677,9 +5564,8 @@ msgid "Cancel Presence Notification"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1051
-#, fuzzy
 msgid "(Re-)Request authorization"
-msgstr "დადასტურების მოთხოვნა"
+msgstr "მოითხოვე აცტორიზაცია"
 
 #. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
@@ -5720,20 +5606,17 @@ msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
 #: src/protocols/oscar/oscar.c:5962 src/protocols/silc/ops.c:810
-#, fuzzy
 msgid "First Name"
 msgstr "სახელი"
 
 #: src/protocols/jabber/buddy.c:1336 src/protocols/jabber/jabber.c:658
 #: src/protocols/oscar/oscar.c:5963
-#, fuzzy
 msgid "Last Name"
 msgstr "გვარი"
 
 #: src/protocols/jabber/buddy.c:1346
-#, fuzzy
 msgid "E-Mail Address"
-msgstr "IP მისამართი"
+msgstr "E-Mail მისამართი"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 msgid "Search for Jabber users"
@@ -5745,8 +5628,9 @@ msgid "Invalid Directory"
 msgstr "კითხვის შეცდომა"
 
 #: src/protocols/jabber/buddy.c:1387
+#, fuzzy
 msgid "Enter a User Directory"
-msgstr ""
+msgstr "დირექტორიის გაგზავნა არ შემიძლია."
 
 #: src/protocols/jabber/buddy.c:1388
 #, fuzzy
@@ -5756,17 +5640,16 @@ msgstr "ფონტის ფერის არჩევა"
 #: src/protocols/jabber/buddy.c:1391
 #, fuzzy
 msgid "Search Directory"
-msgstr "ძებნა"
+msgstr "_მოძებნე:"
 
 #: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7318
 #: src/protocols/yahoo/yahoochat.c:979
 msgid "_Room:"
-msgstr ""
+msgstr "_ოთახი:"
 
 #: src/protocols/jabber/chat.c:47
-#, fuzzy
 msgid "_Server:"
-msgstr "ელ.ფოსტის სერვერი"
+msgstr "_სერვერი:"
 
 #: src/protocols/jabber/chat.c:53
 msgid "_Handle:"
@@ -5779,7 +5662,7 @@ msgstr ""
 
 #: src/protocols/jabber/chat.c:224
 msgid "Invalid Room Name"
-msgstr ""
+msgstr "არასწორი ოთახის სახელი"
 
 #: src/protocols/jabber/chat.c:229
 #, c-format
@@ -5800,26 +5683,22 @@ msgid "Invalid Room Handle"
 msgstr ""
 
 #: src/protocols/jabber/chat.c:395
-#, fuzzy
 msgid "Configuration error"
-msgstr "კავშირის შეცდომა"
+msgstr "კონფიგურაციის შეცდომა"
 
 #: src/protocols/jabber/chat.c:404 src/protocols/jabber/chat.c:549
-#, fuzzy
 msgid "Unable to configure"
-msgstr "დაკავშირება შეუძლებელია"
+msgstr "ვერ ვაკონფიგურირებ"
 
 #: src/protocols/jabber/chat.c:420
-#, fuzzy
 msgid "Room Configuration Error"
-msgstr "რეგისტრაციის შეცდომა"
+msgstr "ოთახის კონფიგურაციის შეცდომა"
 
 #: src/protocols/jabber/chat.c:421
 msgid "This room is not capable of being configured"
 msgstr ""
 
 #: src/protocols/jabber/chat.c:471 src/protocols/jabber/chat.c:540
-#, fuzzy
 msgid "Registration error"
 msgstr "რეგისტრაციის შეცდომა"
 
@@ -5840,7 +5719,7 @@ msgstr "ელ.ფოსტის სერვერი"
 
 #: src/protocols/jabber/chat.c:775
 msgid "Enter a Conference Server"
-msgstr ""
+msgstr "შეიყვანეთ კონფერენციების სერვერი"
 
 #: src/protocols/jabber/chat.c:776
 msgid "Select a conference server to query"
@@ -5848,19 +5727,17 @@ msgstr ""
 
 #: src/protocols/jabber/chat.c:779
 msgid "Find Rooms"
-msgstr ""
+msgstr "იპოვე ოთახები"
 
 #: src/protocols/jabber/jabber.c:79
 msgid "Error initializing session"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:215
-#, fuzzy
 msgid "Write error"
-msgstr "კითხვის შეცდომა"
+msgstr "წერის შეცდომა"
 
 #: src/protocols/jabber/jabber.c:253 src/protocols/jabber/jabber.c:273
-#, fuzzy
 msgid "Read Error"
 msgstr "კითხვის შეცდომა"
 
@@ -5870,9 +5747,8 @@ msgid "Unable to create socket"
 msgstr "ვერ ვკითხულობ სოკეტს"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-#, fuzzy
 msgid "Invalid Jabber ID"
-msgstr "არასწორი AIM URI"
+msgstr "არასწორი Jabber ID"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -5880,19 +5756,16 @@ msgid "Registration of %s@%s successful"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:475 src/protocols/jabber/jabber.c:476
-#, fuzzy
 msgid "Registration Successful"
-msgstr "რეგისტრაციის შეცდომა"
+msgstr "რეგისტრაცია მოხერხდა"
 
 #: src/protocols/jabber/jabber.c:482 src/protocols/jabber/jabber.c:1299
-#, fuzzy
 msgid "Unknown Error"
 msgstr "უცნობი შეცდომა"
 
 #: src/protocols/jabber/jabber.c:484 src/protocols/jabber/jabber.c:485
-#, fuzzy
 msgid "Registration Failed"
-msgstr "რეგისტრაციის შეცდომა"
+msgstr "რეგისტრაცია ვერ მოხერხდა"
 
 #: src/protocols/jabber/jabber.c:596 src/protocols/jabber/jabber.c:597
 #, fuzzy
@@ -5900,9 +5773,8 @@ msgid "Already Registered"
 msgstr "რესგისტრაცია"
 
 #: src/protocols/jabber/jabber.c:643
-#, fuzzy
 msgid "E-Mail"
-msgstr "ელ-ფოსტა"
+msgstr "E-Mail"
 
 #: src/protocols/jabber/jabber.c:673 src/protocols/oscar/oscar.c:6007
 #: src/protocols/oscar/oscar.c:6015
@@ -5912,13 +5784,12 @@ msgstr "შენახვა"
 
 #: src/protocols/jabber/jabber.c:683 src/protocols/silc/ops.c:855
 #: src/protocols/silc/silc.c:663 src/protocols/silc/util.c:513
-#, fuzzy
 msgid "Phone"
-msgstr "არა"
+msgstr "ტელეფონი"
 
 #: src/protocols/jabber/jabber.c:693
 msgid "Date"
-msgstr ""
+msgstr "თარიღი"
 
 #: src/protocols/jabber/jabber.c:701
 msgid "Please fill out the information below to register your new account."
@@ -5933,9 +5804,8 @@ msgid "Initializing Stream"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:848 src/protocols/msn/session.c:368
-#, fuzzy
 msgid "Authenticating"
-msgstr "აუტენტიფიკაცია შეუძლებელია"
+msgstr "მიმდენარეობს აუტენტიფიკაცია"
 
 #: src/protocols/jabber/jabber.c:857
 msgid "Re-initializing Stream"
@@ -5950,7 +5820,7 @@ msgstr "ავტორიზაცია"
 
 #: src/protocols/jabber/jabber.c:971
 msgid "Both"
-msgstr ""
+msgstr "ორივე"
 
 #: src/protocols/jabber/jabber.c:973
 msgid "From (To pending)"
@@ -5961,9 +5831,8 @@ msgid "From"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:978
-#, fuzzy
 msgid "To"
-msgstr "ზემოთ"
+msgstr "ვის"
 
 #: src/protocols/jabber/jabber.c:980
 msgid "None (To pending)"
@@ -5971,7 +5840,7 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:982 src/protocols/yahoo/yahoo.c:2780
 msgid "None"
-msgstr "არა"
+msgstr "არაფერი"
 
 #: src/protocols/jabber/jabber.c:984
 #, fuzzy
@@ -5981,38 +5850,32 @@ msgstr "აღწერილობა"
 #: src/protocols/jabber/jabber.c:1039 src/protocols/jabber/jabber.c:1047
 #: src/protocols/jabber/jabber.c:1055 src/protocols/jabber/jabber.c:1063
 #: src/protocols/jabber/jabber.c:1071
-#, fuzzy
 msgid "Priority"
-msgstr "პორტები"
+msgstr "პრიორიტეტი"
 
 #: src/protocols/jabber/jabber.c:1093
-#, fuzzy
 msgid "Password Changed"
-msgstr "პაროლი გაგზავნილია"
+msgstr "პაროლი შეიცვალა"
 
 #: src/protocols/jabber/jabber.c:1094
 msgid "Your password has been changed."
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1098 src/protocols/jabber/jabber.c:1099
-#, fuzzy
 msgid "Error changing password"
-msgstr "არსებული პაროლი"
+msgstr "შეცდომა პაროლის შეცვლისას"
 
 #: src/protocols/jabber/jabber.c:1155
-#, fuzzy
 msgid "Password (again)"
-msgstr "ახალი პაროლი(თავიდან)"
+msgstr "პაროლი (კიდევ ერთხელ)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-#, fuzzy
 msgid "Change Jabber Password"
-msgstr "პაროლის შეცვლა..."
+msgstr "შეცვალე Jabber პაროლი"
 
 #: src/protocols/jabber/jabber.c:1161
-#, fuzzy
 msgid "Please enter your new password"
-msgstr "შეიყვანეთ თქვენი არსებული და ახალი პაროლი"
+msgstr "გთხოვთ შეიყვანოთ თქვენი ახალი პაროლი"
 
 #: src/protocols/jabber/jabber.c:1171 src/protocols/toc/toc.c:1684
 #, fuzzy
@@ -6021,24 +5884,22 @@ msgstr "მომხმარებლის ინფორმაციის �
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
 #: src/protocols/jabber/jabber.c:1176 src/protocols/toc/toc.c:1694
-#, fuzzy
 msgid "Change Password"
-msgstr "პაროლის შეცვლა..."
+msgstr "შეცვალე პაროლი"
 
 #. }
 #: src/protocols/jabber/jabber.c:1181
 #, fuzzy
 msgid "Search for users"
-msgstr "ძებნა"
+msgstr "_მოძებნე:"
 
 #: src/protocols/jabber/jabber.c:1257
 msgid "Bad Request"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1259
-#, fuzzy
 msgid "Conflict"
-msgstr "დაკავშირება"
+msgstr "კონფლიქტი"
 
 #: src/protocols/jabber/jabber.c:1261
 msgid "Feature Not Implemented"
@@ -6049,9 +5910,8 @@ msgid "Forbidden"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1265
-#, fuzzy
 msgid "Gone"
-msgstr "არა"
+msgstr "წავიდა"
 
 #: src/protocols/jabber/jabber.c:1267 src/protocols/jabber/jabber.c:1341
 #, fuzzy
@@ -6069,7 +5929,7 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1273
 #, fuzzy
 msgid "Not Acceptable"
-msgstr "ხელმიუწვდომელია"
+msgstr "მიუღებელი"
 
 #: src/protocols/jabber/jabber.c:1275
 #, fuzzy
@@ -6099,14 +5959,12 @@ msgid "Remote Server Timeout"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1291
-#, fuzzy
 msgid "Server Overloaded"
-msgstr "ICQ-ზე სერვერზე დაყრდნობა"
+msgstr "სერვერი გადატვირთულია"
 
 #: src/protocols/jabber/jabber.c:1293
-#, fuzzy
 msgid "Service Unavailable"
-msgstr "მიუწვდომელია"
+msgstr "სერვისი მიუწვდომელია"
 
 #: src/protocols/jabber/jabber.c:1295
 msgid "Subscription Required"
@@ -6117,28 +5975,24 @@ msgid "Unexpected Request"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1304
-#, fuzzy
 msgid "Authorization Aborted"
-msgstr "ავტორიზაცია მიღებულია"
+msgstr "ავტორიზაცია შეწყვეტილია"
 
 #: src/protocols/jabber/jabber.c:1306
-#, fuzzy
 msgid "Incorrect encoding in authorization"
-msgstr "ავტორიზაცია მიღებულია"
+msgstr "არასწორი კოდირება ავტორიზაციაში"
 
 #: src/protocols/jabber/jabber.c:1309
 msgid "Invalid authzid"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1312
-#, fuzzy
 msgid "Invalid Authorization Mechanism"
-msgstr "ავტორიზაცია მიღებულია"
+msgstr "ავტორიზაციის მექანიზმი არასწორია"
 
 #: src/protocols/jabber/jabber.c:1315
-#, fuzzy
 msgid "Authorization mechanism too weak"
-msgstr "ავტორიზაციის უარყოფის შეტყობინება"
+msgstr "ავტორიზაციის მექანიზმი ძაან სუსტია"
 
 #: src/protocols/jabber/jabber.c:1320
 #, fuzzy
@@ -6146,22 +6000,20 @@ msgid "Temporary Authentication Failure"
 msgstr "აუტენტიფიკაცია შეუძლებელია"
 
 #: src/protocols/jabber/jabber.c:1322
-#, fuzzy
 msgid "Authentication Failure"
-msgstr "აუტენტიფიკაცია შეუძლებელია"
+msgstr "აუტენტიფიკაციის შეცდომა"
 
 #: src/protocols/jabber/jabber.c:1326
 msgid "Bad Format"
-msgstr ""
+msgstr "ცუდი ფორმატი"
 
 #: src/protocols/jabber/jabber.c:1328
 msgid "Bad Namespace Prefix"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1331
-#, fuzzy
 msgid "Resource Conflict"
-msgstr "კონტატის წაშლა"
+msgstr "რესურსების კონფლიქტი"
 
 #: src/protocols/jabber/jabber.c:1333 src/protocols/silc/ops.c:1514
 #, fuzzy
@@ -6183,9 +6035,8 @@ msgid "Improper Addressing"
 msgstr "სახლის მისამართი"
 
 #: src/protocols/jabber/jabber.c:1343
-#, fuzzy
 msgid "Invalid ID"
-msgstr "არასწორი AIM URI"
+msgstr "არასწორი ID"
 
 #: src/protocols/jabber/jabber.c:1345
 msgid "Invalid Namespace"
@@ -6249,7 +6100,7 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1375
 #, fuzzy
 msgid "Stream Error"
-msgstr "შიგანის შეცდომა"
+msgstr "სტრიმ შეცდომა"
 
 #: src/protocols/jabber/jabber.c:1442
 #, fuzzy, c-format
@@ -6329,14 +6180,12 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-#, fuzzy
 msgid "Jabber Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "Jabber პროტოკოლის პლაგინი"
 
 #: src/protocols/jabber/jabber.c:1714
-#, fuzzy
 msgid "Use TLS if available"
-msgstr "მიუწვდომელია"
+msgstr "გამოიყენე TLS თუ·შესაძლებელია"
 
 #: src/protocols/jabber/jabber.c:1719
 msgid "Require TLS"
@@ -6362,9 +6211,9 @@ msgid "Connect server"
 msgstr "დაკავშირება"
 
 #: src/protocols/jabber/message.c:114
-#, fuzzy, c-format
+#, c-format
 msgid "Message from %s"
-msgstr "შეტყობინება გაგზავნილია"
+msgstr "შეტყობინება %s -გან"
 
 #: src/protocols/jabber/message.c:178
 #, c-format
@@ -6418,7 +6267,7 @@ msgstr "უარყოფა"
 
 #: src/protocols/jabber/presence.c:345 src/protocols/jabber/presence.c:346
 msgid "Create New Room"
-msgstr ""
+msgstr "შექმენი ახალი ოთახი"
 
 #: src/protocols/jabber/presence.c:347
 msgid ""
@@ -6428,16 +6277,16 @@ msgstr ""
 
 #: src/protocols/jabber/presence.c:349
 msgid "Configure Room"
-msgstr ""
+msgstr "დააკონფიგურირე ოთახი"
 
 #: src/protocols/jabber/presence.c:351
 msgid "Accept Defaults"
 msgstr ""
 
 #: src/protocols/jabber/presence.c:388
-#, fuzzy, c-format
+#, c-format
 msgid "Error in chat %s"
-msgstr "%s სურათის შენახვის შეცდომა"
+msgstr ""
 
 #: src/protocols/jabber/presence.c:391
 #, fuzzy, c-format
@@ -6448,11 +6297,11 @@ msgstr "%s სურათის შენახვის შეცდომა"
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
+"ვერ ვეგზავნი ფაილს %s -თან. მომხმარებლის პროგრამას არ შეუძლია ფაილების მიღება"
 
 #: src/protocols/jabber/si.c:592 src/protocols/jabber/si.c:593
-#, fuzzy
 msgid "File Send Failed"
-msgstr "ფაილის გაგზავნა"
+msgstr "ფაილის გაგზავნა ვერ მოხერხდა"
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
@@ -6509,7 +6358,7 @@ msgstr ""
 
 #: src/protocols/msn/error.c:61
 msgid "List Full"
-msgstr ""
+msgstr "სია სავსეა"
 
 #: src/protocols/msn/error.c:64
 msgid "Already there"
@@ -6517,12 +6366,11 @@ msgstr ""
 
 #: src/protocols/msn/error.c:67
 msgid "Not on list"
-msgstr ""
+msgstr "არარი სიაში"
 
 #: src/protocols/msn/error.c:70 src/protocols/zephyr/zephyr.c:690
-#, fuzzy
 msgid "User is offline"
-msgstr "მომხმარებელი კრიფას..."
+msgstr "მომხმარებელი გასულია ქსელიდან"
 
 #: src/protocols/msn/error.c:73
 msgid "Already in the mode"
@@ -6545,9 +6393,8 @@ msgid "User not in group"
 msgstr ""
 
 #: src/protocols/msn/error.c:88
-#, fuzzy
 msgid "Group name too long"
-msgstr "პროფილი ძალიან გრძელია"
+msgstr "ჯგუფის სახელი ნამეტანი გრძელია"
 
 #: src/protocols/msn/error.c:91
 msgid "Cannot remove group zero"
@@ -6587,9 +6434,8 @@ msgid "Database server error"
 msgstr ""
 
 #: src/protocols/msn/error.c:122
-#, fuzzy
 msgid "Command disabled"
-msgstr "ბრძანება"
+msgstr "ბრძანება გაუქმებულია"
 
 #: src/protocols/msn/error.c:125
 #, fuzzy
@@ -6630,16 +6476,15 @@ msgstr ""
 #: src/protocols/msn/error.c:155
 #, fuzzy
 msgid "Error creating connection"
-msgstr "კავშირის შეცდომა.\n"
+msgstr "კავშირის შეცდომა."
 
 #: src/protocols/msn/error.c:159
 msgid "CVR parameters are either unknown or not allowed"
 msgstr ""
 
 #: src/protocols/msn/error.c:162
-#, fuzzy
 msgid "Unable to write"
-msgstr "დაკავშირება შეუძლებელია"
+msgstr "ვერ ვწერ"
 
 #: src/protocols/msn/error.c:165
 msgid "Session overload"
@@ -6662,9 +6507,8 @@ msgid "Bad friend file"
 msgstr ""
 
 #: src/protocols/msn/error.c:180
-#, fuzzy
 msgid "Not expected"
-msgstr "არაა მითითებული"
+msgstr "მოულოდნელი"
 
 #: src/protocols/msn/error.c:185
 msgid "Friendly name changes too rapidly"
@@ -6701,14 +6545,14 @@ msgid "Bad ticket"
 msgstr ""
 
 #: src/protocols/msn/error.c:224
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown Error Code %d"
-msgstr "უცნობი შეცდომა"
+msgstr ""
 
 #: src/protocols/msn/error.c:236
 #, c-format
 msgid "MSN Error: %s\n"
-msgstr ""
+msgstr "MSN შეცდომა: %s\n"
 
 #: src/protocols/msn/msn.c:113
 msgid "You have just sent a Nudge!"
@@ -6750,11 +6594,11 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:311
 msgid "Allow"
-msgstr ""
+msgstr "დაუშვი"
 
 #: src/protocols/msn/msn.c:312
 msgid "Disallow"
-msgstr ""
+msgstr "არ დაუშვა"
 
 #: src/protocols/msn/msn.c:328
 msgid "This Hotmail account may not be active."
@@ -6766,9 +6610,8 @@ msgid "Send a mobile message."
 msgstr "შეტყობინების გაგზავნა"
 
 #: src/protocols/msn/msn.c:356
-#, fuzzy
 msgid "Page"
-msgstr "პაუზა"
+msgstr "გვერდი"
 
 #: src/protocols/msn/msn.c:544 src/protocols/msn/msn.c:551
 #: src/protocols/msn/msn.c:554 src/protocols/yahoo/yahoo.c:2787
@@ -6778,20 +6621,23 @@ msgid ""
 "\n"
 "<b>%s:</b> %s"
 msgstr ""
+"\n"
+"<b>%s:</b> %s"
 
 #: src/protocols/msn/msn.c:551
+#, fuzzy
 msgid "Has you"
-msgstr ""
+msgstr "მის სიაში ხართ"
 
 #: src/protocols/msn/msn.c:581 src/protocols/msn/state.c:33
 #: src/protocols/yahoo/yahoo.c:2615 src/protocols/yahoo/yahoo.c:3230
 msgid "Be Right Back"
-msgstr ""
+msgstr "მალე დავბრუნდები"
 
 #: src/protocols/msn/msn.c:589 src/protocols/msn/state.c:35
 #: src/protocols/yahoo/yahoo.c:2625 src/protocols/yahoo/yahoo.c:3245
 msgid "On The Phone"
-msgstr ""
+msgstr "ლაპარაკობს ტელეფონზე"
 
 #: src/protocols/msn/msn.c:593 src/protocols/msn/state.c:36
 #: src/protocols/yahoo/yahoo.c:2629 src/protocols/yahoo/yahoo.c:3251
@@ -6862,9 +6708,9 @@ msgstr ""
 #. put a link to the actual profile URL
 #: src/protocols/msn/msn.c:1394 src/protocols/msn/msn.c:1740
 #: src/protocols/yahoo/yahoo_profile.c:1167 src/util.c:801
-#, fuzzy, c-format
+#, c-format
 msgid "<b>%s:</b> "
-msgstr "<b>პაროლი:</b>"
+msgstr "<b>%s:</b> "
 
 #: src/protocols/msn/msn.c:1471
 msgid "MSN Profile"
@@ -6878,7 +6724,7 @@ msgstr ""
 #: src/protocols/msn/msn.c:1546 src/protocols/oscar/oscar.c:5992
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
-msgstr ""
+msgstr "ასაკი"
 
 #: src/protocols/msn/msn.c:1553 src/protocols/oscar/oscar.c:5979
 #: src/protocols/yahoo/yahoo_profile.c:1025
@@ -6887,18 +6733,16 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1562 src/protocols/yahoo/yahoo_profile.c:1020
 msgid "Marital Status"
-msgstr ""
+msgstr "ოჯახური მდგომარეობა"
 
 #: src/protocols/msn/msn.c:1569 src/protocols/novell/novell.c:1454
 #: src/protocols/yahoo/yahoo_profile.c:1010
-#, fuzzy
 msgid "Location"
-msgstr "ინფორმაცია"
+msgstr "ადგილმდებარეობა"
 
 #: src/protocols/msn/msn.c:1577 src/protocols/yahoo/yahoo_profile.c:1030
-#, fuzzy
 msgid "Occupation"
-msgstr "დაკავებულია"
+msgstr "პროფესია"
 
 #: src/protocols/msn/msn.c:1594 src/protocols/msn/msn.c:1600
 #: src/protocols/msn/msn.c:1607 src/protocols/msn/msn.c:1615
@@ -6928,7 +6772,7 @@ msgstr "გვარი"
 
 #: src/protocols/msn/msn.c:1707 src/protocols/silc/ops.c:846
 msgid "Homepage"
-msgstr ""
+msgstr "Homepage"
 
 #: src/protocols/msn/msn.c:1729
 msgid "The user has not created a public profile."
@@ -6962,9 +6806,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/msn/msn.c:1942 src/protocols/msn/msn.c:1944
-#, fuzzy
 msgid "MSN Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "MSN პროტოკოლის პლაგინი"
 
 #: src/protocols/msn/msn.c:1963
 #, fuzzy
@@ -6981,7 +6824,6 @@ msgstr ""
 
 #: src/protocols/msn/nexus.c:103 src/protocols/msn/servconn.c:127
 #: src/protocols/yahoo/yahoochat.c:1326
-#, fuzzy
 msgid "Unable to connect"
 msgstr "დაკავშირება შეუძლებელია"
 
@@ -6992,9 +6834,8 @@ msgstr ""
 
 #: src/protocols/msn/notification.c:184 src/protocols/msn/notification.c:528
 #: src/protocols/msn/session.c:347
-#, fuzzy
 msgid "Unknown error."
-msgstr "უცნობი შეცდომა"
+msgstr "უცნობი შეცდომა."
 
 #: src/protocols/msn/notification.c:187
 #, c-format
@@ -7002,9 +6843,9 @@ msgid "%s on %s (%s)"
 msgstr ""
 
 #: src/protocols/msn/notification.c:498
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add user on %s (%s)"
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr ""
 
 #: src/protocols/msn/notification.c:502
 #, c-format
@@ -7012,9 +6853,9 @@ msgid "Unable to block user on %s (%s)"
 msgstr ""
 
 #: src/protocols/msn/notification.c:506
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to permit user on %s (%s)"
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr ""
 
 #: src/protocols/msn/notification.c:514
 #, c-format
@@ -7027,14 +6868,12 @@ msgid "%s is not a valid passport account."
 msgstr ""
 
 #: src/protocols/msn/notification.c:815
-#, fuzzy
 msgid "Unable to rename group"
-msgstr "ვერ ვკითხულობ სოკეტს"
+msgstr "ვერ ვცვლი ჯგუფის სახელს"
 
 #: src/protocols/msn/notification.c:870
-#, fuzzy
 msgid "Unable to delete group"
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr "ვერ ვშლი ჯგუფს"
 
 #: src/protocols/msn/notification.c:1303
 #, c-format
@@ -7044,29 +6883,24 @@ msgid ""
 "in progress.\n"
 "\n"
 "After the maintenance has been completed, you will be able to successfully "
-"sign in."
-msgid_plural ""
-"The MSN server will shut down for maintenance in %d minutes. You will "
-"automatically be signed out at that time.  Please finish any conversations "
-"in progress.\n"
+"sign in.The MSN server will shut down for maintenance in %d minutes. You "
+"will automatically be signed out at that time.  Please finish any "
+"conversations in progress.\n"
 "\n"
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/protocols/msn/servconn.c:129
 msgid "Writing error"
 msgstr ""
 
 #: src/protocols/msn/servconn.c:131
-#, fuzzy
 msgid "Reading error"
 msgstr "კითხვის შეცდომა"
 
 #: src/protocols/msn/servconn.c:133 src/protocols/msn/session.c:339
 #: src/protocols/oscar/oscar.c:4925
-#, fuzzy
 msgid "Unknown error"
 msgstr "უცნობი შეცდომა"
 
@@ -7103,7 +6937,7 @@ msgstr ""
 #: src/protocols/msn/session.c:337
 #, c-format
 msgid "Unable to authenticate: %s"
-msgstr "დადასტურება შეუძლებელ იქნა: %s"
+msgstr "ავთენტურობის დადგენა ვერ მოხერხდა: %s"
 
 #: src/protocols/msn/session.c:342
 msgid ""
@@ -7120,7 +6954,7 @@ msgstr "გადაგზავნა"
 
 #: src/protocols/msn/session.c:366
 msgid "Starting authentication"
-msgstr "დადასტურების დაწყება"
+msgstr "ვიწყებ ავთენტურობის დადგენას"
 
 #: src/protocols/msn/session.c:367
 msgid "Getting cookie"
@@ -7164,14 +6998,14 @@ msgid "Message may have not been sent because an unknown error occurred:"
 msgstr ""
 
 #: src/protocols/msn/switchboard.c:952
-#, c-format
+#, fuzzy, c-format
 msgid "%s just sent you a Nudge!"
-msgstr ""
+msgstr "%s სურს გამოგიგზავნოთ ფაილი"
 
 #: src/protocols/msn/userlist.c:85
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
-msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს დადასტურებას თქვენგან  "
+msgstr ""
 
 #: src/protocols/msn/userlist.c:275
 #, fuzzy, c-format
@@ -7184,9 +7018,9 @@ msgid "%s has removed you from his or her contact list."
 msgstr ""
 
 #: src/protocols/msn/userlist.c:659
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add \"%s\"."
-msgstr "ვერ ვკითხულობ სოკეტს"
+msgstr "ვერ ვამატებ \"%s\"-ს"
 
 #: src/protocols/msn/userlist.c:661
 msgid "The screen name specified is invalid."
@@ -7205,7 +7039,7 @@ msgstr ""
 #: src/protocols/napster/napster.c:290
 #, fuzzy
 msgid "Unknown server error."
-msgstr "უცნობი შეცდომა"
+msgstr "უცნობი შეცდომა."
 
 #: src/protocols/napster/napster.c:339
 #, c-format
@@ -7226,9 +7060,9 @@ msgstr ""
 
 #. MSG_CLIENT_WHOIS
 #: src/protocols/napster/napster.c:414
-#, fuzzy, c-format
+#, c-format
 msgid "%s requested your information"
-msgstr "მომხმარებლის შესახებ ინფორმაცია"
+msgstr ""
 
 #. MSG_CLIENT_PING
 #: src/protocols/napster/napster.c:454
@@ -7246,9 +7080,8 @@ msgid "Unable to connect."
 msgstr "დაკავშირება შეუძლებელია"
 
 #: src/protocols/napster/napster.c:590 src/protocols/toc/toc.c:1367
-#, fuzzy
 msgid "_Group:"
-msgstr "ჯგუფი:"
+msgstr "_ჯგუფი:"
 
 #. *< type
 #. *< ui_requirement
@@ -7261,9 +7094,8 @@ msgstr "ჯგუფი:"
 #. *  summary
 #. *  description
 #: src/protocols/napster/napster.c:687 src/protocols/napster/napster.c:689
-#, fuzzy
 msgid "NAPSTER Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "NAPSTER პროტოკოლის პლაგინი"
 
 #: src/protocols/novell/nmuser.c:1868
 msgid "Required parameters not passed in"
@@ -7302,19 +7134,16 @@ msgid "Not supported"
 msgstr "არაა მითითებული"
 
 #: src/protocols/novell/nmuser.c:1895
-#, fuzzy
 msgid "Password has expired"
-msgstr "პაროლი გაგზავნილია"
+msgstr "პაროლს ვადა გაუვიდა"
 
 #: src/protocols/novell/nmuser.c:1898
-#, fuzzy
 msgid "Invalid password"
-msgstr "არსებული პაროლი"
+msgstr "არასწორი პაროლი"
 
 #: src/protocols/novell/nmuser.c:1901
-#, fuzzy
 msgid "User not found"
-msgstr "მომხმარებლის პარამეტრები"
+msgstr "ვერ ვიპოვე მომხმარებელი"
 
 #: src/protocols/novell/nmuser.c:1904
 msgid "Account has been disabled"
@@ -7345,9 +7174,8 @@ msgid "Master archive is misconfigured"
 msgstr ""
 
 #: src/protocols/novell/nmuser.c:1926
-#, fuzzy
 msgid "Invalid username or password"
-msgstr "არასწორია მეტსახელი ან პაროლი"
+msgstr "არასწორია მომხმარებელი ან პაროლი"
 
 #: src/protocols/novell/nmuser.c:1929
 msgid "Could not recognize the host of the username you entered"
@@ -7394,9 +7222,9 @@ msgid "The user is either offline or you are blocked"
 msgstr ""
 
 #: src/protocols/novell/nmuser.c:1960
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown error: 0x%X"
-msgstr "უცნობი შეცდომა"
+msgstr "უცნობი შეცდომა: 0x%X"
 
 #: src/protocols/novell/novell.c:117
 #, c-format
@@ -7404,9 +7232,9 @@ msgid "Login failed (%s)."
 msgstr ""
 
 #: src/protocols/novell/novell.c:232
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
-msgstr "შეუძლებელია შეტყობინების გაგზავნა მისი სიდიდის გამო."
+msgstr ""
 
 #: src/protocols/novell/novell.c:381
 #, c-format
@@ -7415,14 +7243,14 @@ msgstr ""
 
 #. TODO: Improve this! message to who or for what conference?
 #: src/protocols/novell/novell.c:407
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message (%s)."
-msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+msgstr "ვერ გავაგზავნე შეტყობინება (%s)."
 
 #: src/protocols/novell/novell.c:478 src/protocols/novell/novell.c:972
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to invite user (%s)."
-msgstr "დადასტურება შეუძლებელ იქნა: %s"
+msgstr ""
 
 #: src/protocols/novell/novell.c:517
 #, c-format
@@ -7430,9 +7258,9 @@ msgid "Unable to send message to %s. Could not create the conference (%s)."
 msgstr ""
 
 #: src/protocols/novell/novell.c:522
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა. ვერ ვქმნი კონფერენციას (%s)."
 
 #: src/protocols/novell/novell.c:569
 #, c-format
@@ -7454,19 +7282,19 @@ msgid "Could not get details for user %s (%s)."
 msgstr ""
 
 #: src/protocols/novell/novell.c:736 src/protocols/novell/novell.c:882
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add user to privacy list (%s)."
-msgstr "დადასტურება შეუძლებელ იქნა: %s"
+msgstr ""
 
 #: src/protocols/novell/novell.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr "დადასტურება შეუძლებელ იქნა: %s"
+msgstr ""
 
 #: src/protocols/novell/novell.c:836
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add %s to permit list (%s)."
-msgstr "დადასტურება შეუძლებელ იქნა: %s"
+msgstr ""
 
 #: src/protocols/novell/novell.c:904
 #, c-format
@@ -7479,22 +7307,22 @@ msgid "Unable to change server side privacy settings (%s)."
 msgstr ""
 
 #: src/protocols/novell/novell.c:999
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to create conference (%s)."
-msgstr "ახალი კავშირის დამყარება შეუძლებელია"
+msgstr "ვერ ვქმნი კონფერენციას (%s)."
 
 #: src/protocols/novell/novell.c:1110 src/protocols/novell/novell.c:1667
 msgid "Error communicating with server. Closing connection."
 msgstr ""
 
 #: src/protocols/novell/novell.c:1452
-#, fuzzy
 msgid "Telephone Number"
-msgstr "ტელეფონი"
+msgstr "ტელეფონის ნომერი"
 
 #: src/protocols/novell/novell.c:1456
+#, fuzzy
 msgid "Department"
-msgstr ""
+msgstr "დეპარტამენტი"
 
 #: src/protocols/novell/novell.c:1458
 msgid "Personal Title"
@@ -7506,14 +7334,12 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:1464 src/protocols/oscar/oscar.c:5965
 #: src/protocols/oscar/oscar.c:5972
-#, fuzzy
 msgid "Email Address"
-msgstr "სახლის მისამართი"
+msgstr "Email მისამართი"
 
 #: src/protocols/novell/novell.c:1480
-#, fuzzy
 msgid "User ID"
-msgstr "მომხმარებლები"
+msgstr "მომხმარებლის ID"
 
 #. tag = _("DN");
 #. value = nm_user_record_get_dn(user_record);
@@ -7523,9 +7349,8 @@ msgstr "მომხმარებლები"
 #. }
 #.
 #: src/protocols/novell/novell.c:1494
-#, fuzzy
 msgid "Full name"
-msgstr "სრული სახელი\t"
+msgstr "სრული სახელი"
 
 #: src/protocols/novell/novell.c:1618
 #, c-format
@@ -7626,23 +7451,20 @@ msgid "Novell GroupWise Messenger Protocol Plugin"
 msgstr ""
 
 #: src/protocols/novell/novell.c:3561
-#, fuzzy
 msgid "Server address"
-msgstr "ქუჩის მისამართი"
+msgstr "სერვერის მისამართი"
 
 #: src/protocols/novell/novell.c:3565
 msgid "Server port"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:202
-#, fuzzy
 msgid "Invalid error"
-msgstr "კითხვის შეცდომა"
+msgstr "უცნობი შეცდომა"
 
 #: src/protocols/oscar/oscar.c:203
-#, fuzzy
 msgid "Invalid SNAC"
-msgstr "არასწორი AIM URI"
+msgstr "არასწორი SNAC"
 
 #: src/protocols/oscar/oscar.c:204
 msgid "Rate to host"
@@ -7653,9 +7475,8 @@ msgid "Rate to client"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:207
-#, fuzzy
 msgid "Service unavailable"
-msgstr "მიუწვდომელია"
+msgstr "სერვისი მიუწვდომელია"
 
 #: src/protocols/oscar/oscar.c:208
 msgid "Service not defined"
@@ -7769,19 +7590,16 @@ msgid "Send Buddy List"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:641
-#, fuzzy
 msgid "ICQ Direct Connect"
-msgstr "ვერ ვუკავშირდები"
+msgstr "ICQ პირდაპირი კავშირი"
 
 #: src/protocols/oscar/oscar.c:644
-#, fuzzy
 msgid "AP User"
-msgstr "მომხმარებლები"
+msgstr "AP მომხმარებლები"
 
 #: src/protocols/oscar/oscar.c:647
-#, fuzzy
 msgid "ICQ RTF"
-msgstr "ძველი ICQ UTF8"
+msgstr "ICQ·RTF"
 
 #: src/protocols/oscar/oscar.c:650
 msgid "Nihilist"
@@ -7800,14 +7618,12 @@ msgid "Trillian Encryption"
 msgstr "Trillian შიფრი"
 
 #: src/protocols/oscar/oscar.c:662
-#, fuzzy
 msgid "ICQ UTF8"
-msgstr "ძველი ICQ UTF8"
+msgstr "ICQ·UTF8"
 
 #: src/protocols/oscar/oscar.c:665
-#, fuzzy
 msgid "Hiptop"
-msgstr "ისტორია"
+msgstr "Hiptop"
 
 #: src/protocols/oscar/oscar.c:668
 msgid "Security Enabled"
@@ -7851,7 +7667,7 @@ msgstr "შენშვნის დონე"
 
 #: src/protocols/oscar/oscar.c:792
 msgid "Capabilities"
-msgstr ""
+msgstr "შეუძლია"
 
 #: src/protocols/oscar/oscar.c:801
 msgid "Buddy Comment"
@@ -7887,9 +7703,8 @@ msgid "Asking %s to connect to us at %s:%hu for Direct IM."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:1552
-#, fuzzy
 msgid "Unable to open Direct IM"
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:1587
 #, c-format
@@ -7928,9 +7743,8 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:1799
-#, fuzzy
 msgid "Unable to login to AIM"
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:1903 src/protocols/oscar/oscar.c:2846
 msgid "Could Not Connect"
@@ -7979,7 +7793,7 @@ msgstr "დადასტურება შეუძლებელ იქნ�
 #: src/protocols/oscar/oscar.c:2532
 #, fuzzy
 msgid "Unable to establish listener socket or no AOL proxy connection present."
-msgstr "სოკეტის გახსნა შეუძლებელია"
+msgstr "მსმენელი სოკეტის გახსნა შეუძლებელია."
 
 #: src/protocols/oscar/oscar.c:2733 src/protocols/toc/toc.c:543
 msgid "Incorrect nickname or password."
@@ -8011,7 +7825,7 @@ msgstr "შიგანის შეცდომა"
 
 #: src/protocols/oscar/oscar.c:2853
 msgid "Received authorization"
-msgstr "ავტორიზაცია მიღებულია"
+msgstr "მივიღე ავტორიზაცია"
 
 #: src/protocols/oscar/oscar.c:2877
 msgid "The SecurID key entered is invalid."
@@ -8061,7 +7875,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:4394
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
+msgstr "გთხოვთ მომცეთ ავტორიზაცია თქვენი ჩემ მეგობრების სიაში დასამატებლად."
 
 #: src/protocols/oscar/oscar.c:4402
 msgid "Authorization Request Message:"
@@ -8069,7 +7883,7 @@ msgstr "ავტორიზაციის მოთხოვნის შე�
 
 #: src/protocols/oscar/oscar.c:4403
 msgid "Please authorize me!"
-msgstr "გთხოვთ დამიდასტუროთ ჩამატება!"
+msgstr "გთხოვთ გამიკეთოთ ავტორიზაცია!"
 
 #: src/protocols/oscar/oscar.c:4433
 #, c-format
@@ -8097,7 +7911,7 @@ msgstr "ავტორიზაციის უარყოფის შეტ�
 msgid ""
 "The user %u wants to add %s to their buddy list for the following reason:\n"
 "%s"
-msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს დადასტურებას თქვენგან  "
+msgstr "მომხმარებელ %s -ს სურს შეგიტანოთ თავის მეგობრების სიაში."
 
 #: src/protocols/oscar/oscar.c:4600 src/protocols/oscar/oscar.c:7246
 #, fuzzy
@@ -8113,9 +7927,8 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:4613
-#, fuzzy
 msgid "ICQ authorization denied."
-msgstr "ავტორიზაცია მიღებულია"
+msgstr "ICQ ავტორიზაცია ვერ მოხერხდა."
 
 #. Someone has granted you authorization
 #: src/protocols/oscar/oscar.c:4620
@@ -8167,9 +7980,7 @@ msgstr "ხაზგასმული"
 #: src/protocols/oscar/oscar.c:4759
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
-msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:4768
 #, fuzzy, c-format
@@ -8181,32 +7992,24 @@ msgstr[1] "შეუძლებელია შეტყობინები�
 #: src/protocols/oscar/oscar.c:4777
 #, c-format
 msgid ""
-"You missed %hu message from %s because the rate limit has been exceeded."
-msgid_plural ""
-"You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] ""
-msgstr[1] ""
+"You missed %hu message from %s because the rate limit has been exceeded.You "
+"missed %hu messages from %s because the rate limit has been exceeded."
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:4786
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
-msgid_plural "You missed %hu messages from %s because he/she was too evil."
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:4795
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
-msgid_plural "You missed %hu messages from %s because you are too evil."
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:4804
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
-msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:4863
 #, c-format
@@ -8220,9 +8023,9 @@ msgstr ""
 
 #. Data is assumed to be the destination sn
 #: src/protocols/oscar/oscar.c:4961
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message: %s"
-msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა: %s"
 
 #: src/protocols/oscar/oscar.c:4961 src/protocols/oscar/oscar.c:4966
 #: src/protocols/oscar/oscar.c:5024 src/protocols/oscar/oscar.c:5028
@@ -8318,7 +8121,7 @@ msgstr "სახლის მისამართი"
 
 #: src/protocols/oscar/oscar.c:6008 src/protocols/oscar/oscar.c:6016
 msgid "Zip Code"
-msgstr ""
+msgstr "საფოსტო ინდექსი"
 
 #: src/protocols/oscar/oscar.c:6012
 msgid "Work Address"
@@ -8342,7 +8145,7 @@ msgstr "თანამდებობა"
 
 #: src/protocols/oscar/oscar.c:6025
 msgid "Web Page"
-msgstr ""
+msgstr "ვებ გვერდი"
 
 #: src/protocols/oscar/oscar.c:6082
 #, fuzzy
@@ -8358,7 +8161,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6140
 #, c-format
 msgid "No results found for email address %s"
-msgstr "ელ.ფოსტის ძიების შედეგები %s-თვის არაა ნაპოვნი "
+msgstr "ელ.ფოსტის ძიების შედეგები %s-თვის არაა ნაპოვნი"
 
 #: src/protocols/oscar/oscar.c:6161
 #, c-format
@@ -8429,7 +8232,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6226 src/protocols/oscar/oscar.c:6233
 msgid "Account Info"
-msgstr "ინფორმაცია წევრის შესახებ"
+msgstr "ინფორმაცია ანგარიშის შესახებ"
 
 #: src/protocols/oscar/oscar.c:6231
 #, c-format
@@ -8457,12 +8260,9 @@ msgstr ""
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
-"it for you."
-msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
-"truncated it for you."
-msgstr[0] ""
-msgstr[1] ""
+"it for you.The maximum profile length of %d bytes has been exceeded.  Gaim "
+"has truncated it for you."
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:6500
 msgid "Profile too long."
@@ -8472,12 +8272,9 @@ msgstr "პროფილი ძალიან გრძელია"
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
-"truncated it for you."
-msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
-"truncated it for you."
-msgstr[0] ""
-msgstr[1] ""
+"truncated it for you.The maximum away message length of %d bytes has been "
+"exceeded.  Gaim has truncated it for you."
+msgstr ""
 
 #: src/protocols/oscar/oscar.c:6528 src/protocols/oscar/oscar.c:6601
 #, fuzzy
@@ -8557,11 +8354,12 @@ msgid "Authorization Given"
 msgstr "ავტორიზაცია მიღებულია"
 
 #: src/protocols/oscar/oscar.c:7237
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %s wants to add %s to their buddy list for the following reason:\n"
 "%s"
-msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს დადასტურებას თქვენგან  "
+msgstr "მომხმარებელ %s -ს სურს შეიტანოს %s თავის მეგობრების სიაში. მიზეზი:\n"
+"%s"
 
 #. Granted
 #: src/protocols/oscar/oscar.c:7282
@@ -8570,7 +8368,6 @@ msgid "The user %s has granted your request to add them to your buddy list."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:7283
-#, fuzzy
 msgid "Authorization Granted"
 msgstr "ავტორიზაცია მიღებულია"
 
@@ -8586,7 +8383,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7287
 #, fuzzy
 msgid "Authorization Denied"
-msgstr "ავტორიზაცია მიღებულია"
+msgstr "ავტორიზაცია არარი მიღებული"
 
 #: src/protocols/oscar/oscar.c:7324 src/protocols/toc/toc.c:1372
 msgid "_Exchange:"
@@ -8601,7 +8398,6 @@ msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:7565
-#, fuzzy
 msgid "Away Message"
 msgstr "გასულობის შეტყობინება"
 
@@ -8621,7 +8417,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7880
 #, fuzzy
 msgid "Get Status Msg"
-msgstr "%s-ს სტატუსი "
+msgstr "%s-ს სტატუსი"
 
 #: src/protocols/oscar/oscar.c:7892
 msgid "Direct IM"
@@ -8633,14 +8429,12 @@ msgid "Re-request Authorization"
 msgstr "დადასტურების მოთხოვნა"
 
 #: src/protocols/oscar/oscar.c:7969
-#, fuzzy
 msgid "Require authorization"
 msgstr "დადასტურების მოთხოვნა"
 
 #: src/protocols/oscar/oscar.c:7972
-#, fuzzy
 msgid "Hide IP address"
-msgstr "IP მისამართი"
+msgstr "დამალე IP მისამართი"
 
 #: src/protocols/oscar/oscar.c:7975
 #, fuzzy
@@ -8670,11 +8464,11 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:8102
 msgid "<i>you are not waiting for authorization</i>"
-msgstr ""
+msgstr "<i>თქვენ ახლა ელოდებით ავტორიზაციას</i>"
 
 #: src/protocols/oscar/oscar.c:8105
 msgid "You are awaiting authorization from the following buddies"
-msgstr ""
+msgstr "თქვენ ელოდებით ავტორიზაციას ამ მეგობრებისაგან"
 
 #: src/protocols/oscar/oscar.c:8106
 msgid ""
@@ -8727,7 +8521,7 @@ msgstr "ეკრანული სახელი ფორმატირე�
 
 #: src/protocols/oscar/oscar.c:8254
 msgid "Confirm Account"
-msgstr "წევრის დადასტურება"
+msgstr "ანგარიშის დადასტურება"
 
 #: src/protocols/oscar/oscar.c:8258
 msgid "Display Currently Registered Address"
@@ -8794,8 +8588,9 @@ msgid "Sending Handshake"
 msgstr "ქუკის გაგზავნა"
 
 #: src/protocols/sametime/sametime.c:1139
+#, fuzzy
 msgid "Waiting for Handshake Acknowledgement"
-msgstr ""
+msgstr "ველოდები გადატანის დაწყებას"
 
 #: src/protocols/sametime/sametime.c:1144
 msgid "Handshake Acknowledged, Sending Login"
@@ -8813,7 +8608,7 @@ msgstr "ელ.ფოსტის სერვერი"
 #: src/protocols/sametime/sametime.c:1159
 #, fuzzy
 msgid "Forcing Login"
-msgstr "შესვლის პარამეტრები\t"
+msgstr "შესვლის პარამეტრები"
 
 #: src/protocols/sametime/sametime.c:1163
 msgid "Login Acknowledged"
@@ -8833,7 +8628,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:2758
 msgid "Active"
-msgstr ""
+msgstr "აქტიური"
 
 #: src/protocols/simple/simple.c:202
 #, c-format
@@ -8860,9 +8655,8 @@ msgstr ""
 #. *< name
 #. *< version
 #: src/protocols/simple/simple.c:1408
-#, fuzzy
 msgid "SIP/SIMPLE Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "SIP/SIMPLE პროტოკოლის პლაგინი"
 
 #. *  summary
 #: src/protocols/simple/simple.c:1409
@@ -8880,19 +8674,16 @@ msgid "Publish Status (note: everyone may watch you)"
 msgstr ""
 
 #: src/protocols/simple/simple.c:1434
-#, fuzzy
 msgid "Use UDP"
-msgstr "მომხმარებლები"
+msgstr "გამოიყენე UDP"
 
 #: src/protocols/simple/simple.c:1436
-#, fuzzy
 msgid "Use Proxy"
-msgstr "უპროქსიოდ"
+msgstr "გამოიყენე პროქსი"
 
 #: src/protocols/simple/simple.c:1438
-#, fuzzy
 msgid "Proxy"
-msgstr "უპროქსიოდ"
+msgstr "პროქსი"
 
 #: src/protocols/silc/buddy.c:51 src/protocols/silc/buddy.c:419
 #: src/protocols/silc/buddy.c:544 src/protocols/silc/buddy.c:711
@@ -8997,9 +8788,8 @@ msgstr ""
 #: src/protocols/silc/buddy.c:712 src/protocols/silc/ops.c:873
 #: src/protocols/silc/ops.c:945 src/protocols/silc/ops.c:1080
 #: src/protocols/silc/ops.c:1081 src/protocols/silc/ops.c:1099
-#, fuzzy
 msgid "User Information"
-msgstr "ინფორმაცია"
+msgstr "ინფორმაცია მომხმარებელძე"
 
 #: src/protocols/silc/buddy.c:713 src/protocols/silc/ops.c:946
 #: src/protocols/silc/ops.c:1100
@@ -9036,7 +8826,7 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1043
 msgid "Import..."
-msgstr ""
+msgstr "იმპორტირება..."
 
 #: src/protocols/silc/buddy.c:1130
 #, fuzzy
@@ -9065,30 +8855,31 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1423 src/protocols/silc/silc.c:58
 msgid "Wake Me Up"
-msgstr ""
+msgstr "გამაღვიძე"
 
 #: src/protocols/silc/buddy.c:1425 src/protocols/silc/silc.c:50
 msgid "Hyper Active"
-msgstr ""
+msgstr "ჰიპერ აქტიური"
 
 #: src/protocols/silc/buddy.c:1427
 msgid "Robot"
-msgstr ""
+msgstr "რობოტი"
 
 #: src/protocols/silc/buddy.c:1434 src/protocols/silc/silc.c:634
 #: src/protocols/silc/util.c:472
+#, fuzzy
 msgid "Happy"
-msgstr ""
+msgstr "ბედნიერი"
 
 #: src/protocols/silc/buddy.c:1436 src/protocols/silc/silc.c:636
 #: src/protocols/silc/util.c:474
 msgid "Sad"
-msgstr ""
+msgstr "მოწყენილი"
 
 #: src/protocols/silc/buddy.c:1438 src/protocols/silc/silc.c:638
 #: src/protocols/silc/util.c:476
 msgid "Angry"
-msgstr ""
+msgstr "გაბრაზებული"
 
 #: src/protocols/silc/buddy.c:1440 src/protocols/silc/silc.c:640
 #: src/protocols/silc/util.c:478
@@ -9108,9 +8899,8 @@ msgstr "უხილავია"
 
 #: src/protocols/silc/buddy.c:1446 src/protocols/silc/silc.c:646
 #: src/protocols/silc/util.c:484
-#, fuzzy
 msgid "In Love"
-msgstr "იგნორირება"
+msgstr "შეყვარებული"
 
 #: src/protocols/silc/buddy.c:1448 src/protocols/silc/silc.c:648
 #: src/protocols/silc/util.c:486
@@ -9126,7 +8916,7 @@ msgstr "მუქი"
 #: src/protocols/silc/buddy.c:1452 src/protocols/silc/silc.c:652
 #: src/protocols/silc/util.c:490
 msgid "Excited"
-msgstr ""
+msgstr "აღფრთოვანებული"
 
 #: src/protocols/silc/buddy.c:1454 src/protocols/silc/silc.c:654
 #: src/protocols/silc/util.c:492
@@ -9143,9 +8933,8 @@ msgid "Mood"
 msgstr ""
 
 #: src/protocols/silc/buddy.c:1499 src/protocols/silc/ops.c:997
-#, fuzzy
 msgid "Status Text"
-msgstr "სტატუსი"
+msgstr "სტატუსის ტექსტი"
 
 #: src/protocols/silc/buddy.c:1504 src/protocols/silc/ops.c:1003
 #, fuzzy
@@ -9159,13 +8948,12 @@ msgstr "პარამეტრები"
 
 #: src/protocols/silc/buddy.c:1514 src/protocols/silc/ops.c:1013
 msgid "Device"
-msgstr ""
+msgstr "მოწყობილობა"
 
 #: src/protocols/silc/buddy.c:1519 src/protocols/silc/ops.c:1018
 #: src/protocols/silc/silc.c:702 src/protocols/silc/silc.c:704
-#, fuzzy
 msgid "Timezone"
-msgstr "დრო"
+msgstr "დროის ზონა"
 
 #: src/protocols/silc/buddy.c:1524 src/protocols/silc/ops.c:1023
 msgid "Geolocation"
@@ -9189,9 +8977,8 @@ msgid "Get Public Key..."
 msgstr ""
 
 #: src/protocols/silc/buddy.c:1595 src/protocols/silc/ops.c:1409
-#, fuzzy
 msgid "Kill User"
-msgstr "Gaim-ის მომხმარებელი"
+msgstr "მოკალი მომხმარებელი"
 
 #: src/protocols/silc/chat.c:38
 msgid "_Passphrase:"
@@ -9215,17 +9002,17 @@ msgstr "ინფორმაციის შეცვლა %s მომხმ�
 #: src/protocols/silc/chat.c:118
 #, c-format
 msgid "<b>Channel Name:</b> %s"
-msgstr ""
+msgstr "<b>არხის სახელი:</b>·%s"
 
 #: src/protocols/silc/chat.c:121
-#, c-format
+#, fuzzy, c-format
 msgid "<br><b>User Count:</b> %d"
-msgstr ""
+msgstr "<br><b>იუზერების რაოდენობა:</b>·%d"
 
 #: src/protocols/silc/chat.c:128
 #, c-format
 msgid "<br><b>Channel Founder:</b> %s"
-msgstr ""
+msgstr "<br><b>არხის დამაარსებელი:</b> %s"
 
 #: src/protocols/silc/chat.c:137
 #, c-format
@@ -9296,9 +9083,8 @@ msgid "Add / Remove"
 msgstr "ჩამატება / წაშლა"
 
 #: src/protocols/silc/chat.c:576
-#, fuzzy
 msgid "Group Name"
-msgstr "სრული სახელი\t"
+msgstr "ჯგუფის სახელი"
 
 #: src/protocols/silc/chat.c:580 src/protocols/silc/ops.c:1694
 #, fuzzy
@@ -9306,9 +9092,9 @@ msgid "Passphrase"
 msgstr "პაროლი გაგზავნილია"
 
 #: src/protocols/silc/chat.c:591
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter the %s channel private group name and passphrase."
-msgstr "ჩასამატებელი ჯგუფის სახელი"
+msgstr ""
 
 #: src/protocols/silc/chat.c:593
 msgid "Add Channel Private Group"
@@ -9324,9 +9110,8 @@ msgid "Set user limit on channel. Set to zero to reset user limit."
 msgstr ""
 
 #: src/protocols/silc/chat.c:863
-#, fuzzy
 msgid "Get Info"
-msgstr "ინფორმაცია"
+msgstr "გამოიძახე ინფორმაცია"
 
 #: src/protocols/silc/chat.c:871
 #, fuzzy
@@ -9407,9 +9192,8 @@ msgid "Cannot call command"
 msgstr ""
 
 #: src/protocols/silc/chat.c:1268 src/protocols/silc/silc.c:918
-#, fuzzy
 msgid "Unknown command"
-msgstr "უცნობი მიზეზი."
+msgstr "უცნობი ბრძანება"
 
 #: src/protocols/silc/ft.c:89 src/protocols/silc/ft.c:92
 #: src/protocols/silc/ft.c:96 src/protocols/silc/ft.c:100
@@ -9437,7 +9221,7 @@ msgstr ""
 #: src/protocols/silc/ft.c:102
 #, fuzzy
 msgid "File transfer session does not exist"
-msgstr "ფაილების გადაგზავნა"
+msgstr "ფაილის გადატანა %s-თან შეწყვეტილია.\n"
 
 #: src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
@@ -9458,7 +9242,7 @@ msgstr ""
 
 #: src/protocols/silc/ft.c:341
 msgid "Cannot send file"
-msgstr ""
+msgstr "ვერ ვაგზავნი ფაილს"
 
 #: src/protocols/silc/ops.c:341 src/protocols/silc/ops.c:350
 #: src/protocols/silc/ops.c:359
@@ -9514,7 +9298,6 @@ msgid "Personal Information"
 msgstr "დამატებითი ინფორმაცია"
 
 #: src/protocols/silc/ops.c:826
-#, fuzzy
 msgid "Birth Day"
 msgstr "დაბადების დღე"
 
@@ -9538,19 +9321,16 @@ msgid "Unit"
 msgstr ""
 
 #: src/protocols/silc/ops.c:861
-#, fuzzy
 msgid "EMail"
 msgstr "ელ.ფოსტა"
 
 #: src/protocols/silc/ops.c:866
-#, fuzzy
 msgid "Note"
-msgstr "არა"
+msgstr "შენიშვნა"
 
 #: src/protocols/silc/ops.c:914
-#, fuzzy
 msgid "Join Chat"
-msgstr "საუბარში ჩართვა"
+msgstr "ჩაერთე საუბარში"
 
 #: src/protocols/silc/ops.c:1070 src/protocols/silc/ops.c:1140
 msgid "Public Key Fingerprint"
@@ -9561,9 +9341,8 @@ msgid "Public Key Babbleprint"
 msgstr ""
 
 #: src/protocols/silc/ops.c:1084
-#, fuzzy
 msgid "More..."
-msgstr "აირჩიეთ..."
+msgstr "მეტი..."
 
 #: src/protocols/silc/ops.c:1155 src/protocols/silc/silc.c:805
 msgid "Detach From Server"
@@ -9582,7 +9361,6 @@ msgid "Failed to change nickname"
 msgstr ""
 
 #: src/protocols/silc/ops.c:1246
-#, fuzzy
 msgid "Roomlist"
 msgstr "ოთახების სია"
 
@@ -9595,9 +9373,8 @@ msgid "No public key was received"
 msgstr ""
 
 #: src/protocols/silc/ops.c:1304 src/protocols/silc/ops.c:1317
-#, fuzzy
 msgid "Server Information"
-msgstr "ინფორმაცია სამსახურის შესახებ"
+msgstr "ინფორმაცია სერვერის შესახებ"
 
 #: src/protocols/silc/ops.c:1305
 #, fuzzy
@@ -9643,7 +9420,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1397 src/protocols/silc/ops.c:1402
 msgid "Ping"
-msgstr ""
+msgstr "Ping"
 
 #: src/protocols/silc/ops.c:1397
 msgid "Ping failed"
@@ -9798,7 +9575,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:632
 msgid "Normal"
-msgstr ""
+msgstr "ნორმალური"
 
 #: src/protocols/silc/silc.c:657
 msgid ""
@@ -9808,15 +9585,15 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:665 src/protocols/silc/util.c:517
 msgid "SMS"
-msgstr ""
+msgstr "SMS"
 
 #: src/protocols/silc/silc.c:667 src/protocols/silc/util.c:519
 msgid "MMS"
-msgstr ""
+msgstr "MMS"
 
 #: src/protocols/silc/silc.c:669 src/protocols/silc/util.c:521
 msgid "Video Conferencing"
-msgstr ""
+msgstr "ვიდეო კონფერენცია"
 
 #: src/protocols/silc/silc.c:674
 msgid "Your Current Status"
@@ -9836,7 +9613,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:697
 msgid "Your VCard File"
-msgstr ""
+msgstr "თქვენი VCard ფაილი"
 
 #: src/protocols/silc/silc.c:710 src/protocols/silc/silc.c:711
 msgid "User Online Status Attributes"
@@ -10066,9 +9843,8 @@ msgstr ""
 #. *< version
 #. *  summary
 #: src/protocols/silc/silc.c:1564
-#, fuzzy
 msgid "SILC Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "SILC პროტოკოლის პლაგინი"
 
 #. *  description
 #: src/protocols/silc/silc.c:1566
@@ -10084,9 +9860,8 @@ msgid "Private Key file"
 msgstr ""
 
 #: src/protocols/silc/silc.c:1607
-#, fuzzy
 msgid "Public key authentication"
-msgstr "ტექსტური დადასტურება"
+msgstr "ავთენტურობის დადგენა ღია გასაღებით"
 
 #: src/protocols/silc/silc.c:1611
 msgid "Reject watching by other users"
@@ -10118,9 +9893,9 @@ msgid "Real Name: \t%s\n"
 msgstr ""
 
 #: src/protocols/silc/util.c:315
-#, fuzzy, c-format
+#, c-format
 msgid "User Name: \t%s\n"
-msgstr "მომხმარებელი"
+msgstr ""
 
 #: src/protocols/silc/util.c:317
 #, c-format
@@ -10133,14 +9908,14 @@ msgid "Host Name: \t%s\n"
 msgstr ""
 
 #: src/protocols/silc/util.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Organization: \t%s\n"
-msgstr "ორგანიზაცია"
+msgstr ""
 
 #: src/protocols/silc/util.c:323
-#, fuzzy, c-format
+#, c-format
 msgid "Country: \t%s\n"
-msgstr "ქვეყანა"
+msgstr "ქვეყანა: \t%s\n"
 
 #: src/protocols/silc/util.c:324
 #, c-format
@@ -10178,9 +9953,8 @@ msgid "Paging"
 msgstr "პლაგინები"
 
 #: src/protocols/silc/util.c:539
-#, fuzzy
 msgid "Computer"
-msgstr "ქვეყანა"
+msgstr "კომპიუტერი"
 
 #: src/protocols/silc/util.c:543
 msgid "PDA"
@@ -10201,9 +9975,9 @@ msgid "Connect to %s failed"
 msgstr ""
 
 #: src/protocols/toc/toc.c:200
-#, fuzzy, c-format
+#, c-format
 msgid "Signon: %s"
-msgstr "შესვლა: "
+msgstr ""
 
 #: src/protocols/toc/toc.c:482
 #, fuzzy, c-format
@@ -10211,9 +9985,9 @@ msgid "Unable to write file %s."
 msgstr "დადასტურება შეუძლებელ იქნა: %s"
 
 #: src/protocols/toc/toc.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to read file %s."
-msgstr "ვერ ვკითხულობ სოკეტს"
+msgstr "ვერ ვკითხულობ ფაილს %s."
 
 #: src/protocols/toc/toc.c:488
 #, c-format
@@ -10235,9 +10009,9 @@ msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr ""
 
 #: src/protocols/toc/toc.c:500
-#, fuzzy, c-format
+#, c-format
 msgid "Chat in %s is not available."
-msgstr "მოქმედებები მიუღებელია"
+msgstr ""
 
 #: src/protocols/toc/toc.c:503
 #, fuzzy, c-format
@@ -10255,8 +10029,9 @@ msgid "You missed an IM from %s because it was sent too fast."
 msgstr ""
 
 #: src/protocols/toc/toc.c:512
+#, fuzzy
 msgid "Failure."
-msgstr ""
+msgstr "შეცდომა."
 
 #: src/protocols/toc/toc.c:515
 msgid "Too many matches."
@@ -10331,7 +10106,7 @@ msgstr "კავშირის შეცდომა"
 
 #: src/protocols/toc/toc.c:708
 msgid "Waiting for reply..."
-msgstr ""
+msgstr "ველოდები პასუხს..."
 
 #: src/protocols/toc/toc.c:786
 msgid "TOC has come back from its pause. You may now send messages again."
@@ -10383,14 +10158,12 @@ msgstr ""
 
 #: src/protocols/toc/toc.c:2189
 msgid "Gaim - Save As..."
-msgstr ""
+msgstr "Gaim - შეინახე როგორც..."
 
 #: src/protocols/toc/toc.c:2223
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: src/protocols/toc/toc.c:2230
 #, c-format
@@ -10437,9 +10210,9 @@ msgstr "შეუძლებელია შეტყობინების �
 #. * this should probably be moved to the core.
 #.
 #: src/protocols/yahoo/yahoo.c:887
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s wants to add %s to his or her buddy list%s%s."
-msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს დადასტურებას თქვენგან  "
+msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:893
 #, fuzzy
@@ -10493,9 +10266,8 @@ msgid "Invalid username."
 msgstr "სერვერის არასწორი პასუხი"
 
 #: src/protocols/yahoo/yahoo.c:1808
-#, fuzzy
 msgid "Normal authentication failed!"
-msgstr "აუტენტიფიკაცია შეუძლებელია"
+msgstr "ჩვეულებრივი ავთენტურობის დადგენა ვერ მოხერხდა!"
 
 #: src/protocols/yahoo/yahoo.c:1809
 msgid ""
@@ -10506,9 +10278,8 @@ msgid ""
 msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:1817
-#, fuzzy
 msgid "Incorrect password."
-msgstr "არასწორია მეტსახელი ან პაროლი"
+msgstr "არასწორი პაროლი."
 
 #: src/protocols/yahoo/yahoo.c:1820
 msgid "Your account is locked, please log in to the Yahoo! website."
@@ -10641,9 +10412,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/yahoo/yahoo.c:3639 src/protocols/yahoo/yahoo.c:3641
-#, fuzzy
 msgid "Yahoo Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "Yahoo პროტოკოლის პლაგინი"
 
 #: src/protocols/yahoo/yahoo.c:3658
 msgid "Yahoo Japan"
@@ -10681,9 +10451,8 @@ msgid "Chat Room Locale"
 msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:3682
-#, fuzzy
 msgid "Chat Room List Url"
-msgstr "ოთახების სია"
+msgstr "Chat ოთახების სიის Url"
 
 #: src/protocols/yahoo/yahoo.c:3685
 msgid "YCHT Host"
@@ -10817,13 +10586,12 @@ msgid "Fetching the room list failed."
 msgstr ""
 
 #: src/protocols/yahoo/yahoochat.c:1379
-#, fuzzy
 msgid "Voices"
-msgstr "ხმა"
+msgstr "ხმები"
 
 #: src/protocols/yahoo/yahoochat.c:1382
 msgid "Webcams"
-msgstr ""
+msgstr "ვებ კამერები"
 
 #: src/protocols/yahoo/yahoochat.c:1393 src/protocols/yahoo/yahoochat.c:1460
 #, fuzzy
@@ -10831,9 +10599,8 @@ msgid "Unable to fetch room list."
 msgstr "დაკავშირება შეუძლებელია"
 
 #: src/protocols/yahoo/yahoochat.c:1453
-#, fuzzy
 msgid "User Rooms"
-msgstr "მომხმარებლები"
+msgstr "მომხმარებლის ოთახები"
 
 #: src/protocols/yahoo/ycht.c:400
 msgid "Connection problem with the YCHT server."
@@ -10959,9 +10726,8 @@ msgstr "სერვერის არასწორი პასუხი"
 #. *  summary
 #. *  description
 #: src/protocols/zephyr/zephyr.c:2847 src/protocols/zephyr/zephyr.c:2849
-#, fuzzy
 msgid "Zephyr Protocol Plugin"
-msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+msgstr "Zephyr პროტოკოლის პლაგინი"
 
 #: src/protocols/zephyr/zephyr.c:2874
 msgid "Export to .anyone"
@@ -10982,7 +10748,7 @@ msgstr ""
 #: src/protocols/zephyr/zephyr.c:2886
 #, fuzzy
 msgid "Realm"
-msgstr "სახელის შეცვლა"
+msgstr "ნამდვილი სახელი"
 
 #: src/protocols/zephyr/zephyr.c:2889
 msgid "Exposure"
@@ -10996,9 +10762,9 @@ msgid "Access denied: proxy server forbids port %d tunnelling."
 msgstr ""
 
 #: src/proxy.c:1040
-#, fuzzy, c-format
+#, c-format
 msgid "Proxy connection error %d"
-msgstr "კავშირის შეცდომა"
+msgstr ""
 
 #: src/proxy.c:1874
 #, fuzzy
@@ -11015,9 +10781,8 @@ msgstr ""
 #. * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
 #.
 #: src/request.h:1341
-#, fuzzy
 msgid "Accept"
-msgstr "წევრი"
+msgstr "მიიღე"
 
 #: src/server.c:243
 #, c-format
@@ -11032,9 +10797,8 @@ msgstr[0] "შეტყობინების გაგზავნა"
 msgstr[1] "შეტყობინების გაგზავნა"
 
 #: src/server.c:639
-#, fuzzy
 msgid "(1 message)"
-msgstr "შეტყობინების გაგზავნა"
+msgstr "(1 შეტყობინება)"
 
 #: src/server.c:859
 #, c-format
@@ -11064,12 +10828,12 @@ msgstr "მიუწვდომელია"
 #: src/status.c:621
 #, c-format
 msgid "%s came back"
-msgstr ""
+msgstr "%s დაბრუნდა"
 
 #: src/status.c:626
-#, fuzzy, c-format
+#, c-format
 msgid "%s went away"
-msgstr "როდესაც გასულია"
+msgstr ""
 
 #: src/status.c:1308
 #, c-format
@@ -11089,7 +10853,9 @@ msgstr "თვითგასვლა"
 #: src/util.c:2121
 #, fuzzy, c-format
 msgid "Error Reading %s"
-msgstr "%s სურათის შენახვის შეცდომა"
+msgstr ""
+"შეცდომა %s -ის წაკითხვისას: \n"
+"%s.\n"
 
 #: src/util.c:2122
 #, c-format
@@ -11134,521 +10900,562 @@ msgstr[1] "წუთი"
 msgid "g003: Error opening connection.\n"
 msgstr "კავშირის შეცდომა.\n"
 
-#~ msgid "_Sorting:"
-#~ msgstr "დალაგება"
+msgid "_Sorting:"
+msgstr "დალაგება"
 
 #, fuzzy
-#~ msgid "Buddy Display"
-#~ msgstr "დისპლეი"
+msgid "Buddy Display"
+msgstr "დისპლეი"
 
-#~ msgid "Away m_essage:"
-#~ msgstr "გასულობის შეტყობინება"
+msgid "Away m_essage:"
+msgstr "გასულობის შეტყობინება"
+
+msgid "Quit message"
+msgstr "ტექსტი გასვლისას"
+
+msgid "Restore Away State On Reconnect"
+msgstr "აღადგინოს გასულია-ს სტატუსი გადაკავშირებისას"
+
+msgid "Mail Server"
+msgstr "ელ.ფოსტის სერვერი"
+
+msgid "%s (%d new/%d total)"
+msgstr "%s (%d ახალი/%d სულ)"
+
+msgid "Check Mail"
+msgstr "ფოსტის შემოწმება"
+
+msgid "Check email every X seconds.\n"
+msgstr "ფოსტის შემოწმება ყოველ  X წამში.\n"
+
+msgid "Auto-login"
+msgstr "თვითშესვლა"
+
+msgid "New..."
+msgstr "ახალი..."
+
+msgid "Back"
+msgstr "დაბრუნება"
+
+msgid "Signoff"
+msgstr "გამოსვლა"
+
+msgid "Not connected to AIM"
+msgstr "არაა კავშირი AIM-თან"
+
+msgid "No screenname given."
+msgstr "ოთახის სახელი არაა მითითებული."
+
+msgid "No roomname given."
+msgstr "ოთახის სახელი არაა მითითებული."
+
+msgid "Invalid AIM URI"
+msgstr "არასწორი AIM URI"
+
+msgid "Unable to open socket"
+msgstr "სოკეტის გახსნა შეუძლებელია"
+
+msgid "Remote Control"
+msgstr "დისტანციური კონტროლი"
+
+msgid "Provides remote control for gaim applications."
+msgstr "უზრუნველყოფს gaim-ის აპლიკაციების დისტანციურ კონტროლს"
+
+msgid ""
+"Gives Gaim the ability to be remote-controlled through third-party "
+"applications or through the gaim-remote tool."
+msgstr ""
+"აძლევს Gaim-ს საშუალებას გაკონტროლდეს დისტანციური მართვის სხვა პროგრამებითან "
+"დისტანციური Gaim ინსტრუმენტით"
+
+msgid "GTK Signals Test"
+msgstr "GTK-ს სიგნალების ტესტი"
+
+msgid "_Apply"
+msgstr "გამოყენება"
+
+msgid "Away!"
+msgstr "გასულია!"
+
+msgid "Edit This Message"
+msgstr "დაარედატირეთ ეს შეტყობინება"
+
+msgid "I'm Back!"
+msgstr "დავბრუნდი!"
+
+msgid "Are you sure you want to remove the away message \"%s\"?"
+msgstr "დარწმუნებული ხართ რომ გსურთ \"%s\" გასულობის შეტყობინების წაშლა?"
+
+msgid "Remove Away Message"
+msgstr "გამორთე გასულობის შეტყობინება"
+
+msgid "New away message"
+msgstr "ახალი გასულობის შეტყობინება"
+
+msgid "_Save"
+msgstr "შენახვა"
+
+msgid "Sa_ve & Use"
+msgstr "შენახვა და გამოყენება"
+
+msgid "Show fewer options"
+msgstr "ნაკლები პარამეტრის ჩვენება"
+
+msgid "Information"
+msgstr "ინფორმაცია"
+
+msgid "/Tools/_Away"
+msgstr "/ხელსაწყოები/გასული"
+
+msgid "/Tools/Pl_ugin Actions"
+msgstr "/ხელსაწყოები/პლაგინ-მოქმედებები"
+
+msgid "Rename Group"
+msgstr "ჯგუფის გადარქმევა"
+
+msgid "Please enter a new name for the selected group."
+msgstr "შეიყვანეთ ახალი სახელი ამორჩეული ჯგუფისთვის."
+
+msgid ""
+"\n"
+"<b>Account:</b>"
+msgstr ""
+"\n"
+"<b>ანგარიში:</b>"
+
+msgid ""
+"\n"
+"<b>Warned:</b>"
+msgstr ""
+"\n"
+"<b>გაფრთხილებული:</b>"
+
+msgid "/Tools/Away"
+msgstr "/ხელსაწყოები/გასული"
+
+msgid "Send a message to the selected buddy"
+msgstr "გააგზავნე შეტყობინება ამორჩეულ მეგობართან"
+
+msgid "_Away"
+msgstr "_გასული"
+
+msgid "Set an away message"
+msgstr ""
+
+msgid "Done."
+msgstr "შესრულებულია."
+
+msgid "Signon: "
+msgstr "შესვლა: "
+
+msgid "Signon"
+msgstr "შესვლა"
+
+msgid "Cancel All"
+msgstr "ყველას გაუქმება"
+
+msgid "_Reconnect"
+msgstr "გადაკავშირება"
+
+msgid ""
+"<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n"
+"\n"
+"%s\n"
+"%s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
+"\n"
+"%s\n"
+"%s"
+
+msgid "Reason Unknown."
+msgstr "მიზეზი უცნობია"
+
+msgid "Reconnect _All"
+msgstr "ყველას გადაკავშირება"
+
+msgid "Time"
+msgstr "დრო"
+
+msgid "/Conversation/_Warn..."
+msgstr "/საუბარი/გააფრთხილე..."
 
 #, fuzzy
-#~ msgid "Quit message"
-#~ msgstr "შეტყობინების გაგზავნა"
+msgid "/Conversation/A_lias..."
+msgstr "საუბარი %s-თან"
 
-#~ msgid "Restore Away State On Reconnect"
-#~ msgstr "აღადგინოს გასულია-ს სტატუსი გადაკავშირებისას"
+msgid "/Conversation/Warn..."
+msgstr "/საუბარი/გააფრთხილე..."
 
-#~ msgid "Mail Server"
-#~ msgstr "ელ.ფოსტის სერვერი"
+msgid "Warn"
+msgstr "გაფრთხილება"
 
-#~ msgid "%s (%d new/%d total)"
-#~ msgstr "%s (%d ახალი/%d სულ)"
+msgid "Warn the user"
+msgstr "მომხმარებლის გაფრთხილება"
 
-#~ msgid "Check Mail"
-#~ msgstr "ფოსტის შემოწმება"
+msgid "Block the user"
+msgstr "მომხმარებლის ბლოკირება"
 
-#~ msgid "Check email every X seconds.\n"
-#~ msgstr "ფოსტის შემოწმება ყოველ  X წამში.\n"
+msgid "Send a file to the user"
+msgstr "ფაილის გაგზავნს მომხმარებლისთვის"
 
-#~ msgid "Auto-login"
-#~ msgstr "თვითშესვლა"
+msgid "Send"
+msgstr "გაგზავნა"
 
-#~ msgid "New..."
-#~ msgstr "ახალი..."
+msgid "Invite"
+msgstr "დაპატიჟება"
 
-#~ msgid "Back"
-#~ msgstr "დაბრუნება"
-
-#~ msgid "Signoff"
-#~ msgstr "გამოსვლა"
-
-#~ msgid "Not connected to AIM"
-#~ msgstr "არაა კავშირი AIM-თან"
+msgid "Invite a user"
+msgstr "მომხმარებლის დაპატიჟება"
 
 #, fuzzy
-#~ msgid "No screenname given."
-#~ msgstr "ოთახის სახელი არაა მითითებული."
+msgid "<main>/Conversation/Close"
+msgstr "საუბრის შენახვა"
 
-#~ msgid "No roomname given."
-#~ msgstr "ოთახის სახელი არაა მითითებული."
+msgid "Azerbaijani"
+msgstr "აზერბაიჯანული"
 
-#~ msgid "Invalid AIM URI"
-#~ msgstr "არასწორი AIM URI"
+msgid "Norwegian (Nynorsk)"
+msgstr ""
 
-#~ msgid "Unable to open socket"
-#~ msgstr "სოკეტის გახსნა შეუძლებელია"
+msgid "Albanian"
+msgstr "ალბანური"
 
-#~ msgid "Remote Control"
-#~ msgstr "დისტანციური კონტროლი"
+msgid "Turkish"
+msgstr "თურქული"
 
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "უზრუნველყოფს gaim-ის აპლიკაციების დისტანციურ კონტროლს"
+msgid "Ukrainian"
+msgstr "უკრაინული"
 
-#~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
+msgid "Chinese"
+msgstr "ჩინური"
+
+msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+
+msgid "_Screen name"
+msgstr "ეკრანული სახელი"
+
+msgid "Warn User"
+msgstr "მომხმარებლის გაფრთხილება"
+
+msgid "Show transfer details"
+msgstr "გადაცემის დეტალების ჩვენება"
+
+msgid "D_isplay remote nicknames if no alias is set"
+msgstr "აჩვენოს დისტანციური მეტსახელები თუ სინონიმები არაა მითითებული"
+
+msgid "Display"
+msgstr "დისპლეი"
+
+msgid "Ignore c_olors"
+msgstr "ფერის იგნორირება"
+
+msgid "Ignore font _faces"
+msgstr "ფონტის სახის იგნორირება"
+
+msgid "Ignore font si_zes"
+msgstr "ფონტის ზომის იგნორირება"
+
+msgid "Default Formatting"
+msgstr ""
+
+msgid "Send Message"
+msgstr "შეტყობინების გაგზავნა"
+
+msgid "Enter _sends message"
+msgstr "დააჭირეთ Enter-ს შეტყობინების გასაგზავნათ"
+
+#, fuzzy
+msgid "C_ontrol-Enter sends message"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+
+msgid "Window Closing"
+msgstr "ფანჯრის დახურვა"
+
+msgid "Insertions"
+msgstr "ჩასმა"
+
+msgid "Pictures"
+msgstr "სურათები"
+
+msgid "Text"
+msgstr "ტექსტი"
+
+msgid "Pictures and text"
+msgstr "სურათები და ტექსტი"
+
+msgid "Show _warning levels"
+msgstr "აჩვენე _გაფრთხილების დონეები"
+
+#, fuzzy
+msgid "Message Logs"
+msgstr "შეტყობინება გაგზავნილია"
+
+#, fuzzy
+msgid "Gaim usage"
+msgstr "Gaim-ის მომხმარებელი"
+
+#, fuzzy
+msgid "Windows usage"
+msgstr "ფანჯრის დახურვა"
+
+msgid "Load"
+msgstr "ჩატვირთვა"
+
+msgid "Summary"
+msgstr "ჯამური"
+
+msgid "Details"
+msgstr "დეტალები"
+
+msgid "_Edit"
+msgstr "ჩამატება"
+
+msgid "Interface"
+msgstr "ინტერფეისი"
+
+msgid "Message Text"
+msgstr "შეტყობინების ტექსტი"
+
+msgid "Shortcuts"
+msgstr "მალმხმობები"
+
+msgid "Away Messages"
+msgstr "გასულობის შეტყობინებები"
+
+msgid "Plugins"
+msgstr "პლაგინები"
+
+msgid "Plain text"
+msgstr "ტექსტი"
+
+msgid "Please create an account."
+msgstr "გთხოვთ შექმნათ ანგარიში."
+
+msgid "Login"
+msgstr "შესვლა"
+
+msgid "<b>_Account:</b>"
+msgstr "<b>_ანგარიში:</b>"
+
+msgid "<b>_Password:</b>"
+msgstr "<b>_პაროლი:</b>"
+
+msgid "A_ccounts"
+msgstr "_ანგარიშები"
+
+msgid "P_references"
+msgstr "პარამეტრები"
+
+msgid "_Sign on"
+msgstr "_შესვლა"
+
+msgid "Unable to load preferences"
+msgstr "პარამეტრების ჩატვირთვა შუძლებელია"
+
+msgid "Available for friends only"
+msgstr "ხელმისაწვდომია მხოლოდ მეგობრებისთვის"
+
+msgid "Away for friends only"
+msgstr "გასულია მხოლოდ მეგობრებისთვის"
+
+msgid "Invisible for friends only"
+msgstr "უხილავია მხოლოდ მეგობრებისათვის"
+
+#, fuzzy
+msgid "Unable to resolve hostname."
+msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+
+msgid "Error while reading from socket."
+msgstr "სოკეტის კითხვისას შეცდომაა."
+
+msgid "Error while writing to socket."
+msgstr "სოკეტში წერისას შეცდომაა"
+
+msgid "Authentication failed."
+msgstr "აუტენტიფიკაცია შეუძლებელია"
+
+msgid "Unknown Error Code."
+msgstr "უცნობი შეცდომა"
+
+msgid "Status: %s"
+msgstr "სტატუსი: %s"
+
+msgid "Could not connect"
+msgstr "ვერ ვუკავშირდები"
+
+msgid "Reading data"
+msgstr "მონაცემების წაკითხვა"
+
+msgid "Balancer handshake"
+msgstr "დაბალანსებული მისალმება"
+
+msgid "Reading server key"
+msgstr "სერვერის გასაღების კითხვა"
+
+msgid "Exchanging key hash"
+msgstr "ჰეშ-გასაღების გაცვლა"
+
+msgid "Unable to ping server"
+msgstr "სერვერი არ იპინგება"
+
+msgid "Send as message"
+msgstr "შეტყობინების გაგზავნა"
+
+#, fuzzy
+msgid "Couldn't get search results"
+msgstr "შეუძლებელია სოკეტის შექმნა"
+
+msgid "Birth Year"
+msgstr "დაბადების წელი"
+
+#, fuzzy
+msgid "Unable to access directory"
+msgstr "დაკავშირება შეუძლებელია"
+
+#, fuzzy
+msgid "Unable to access user profile."
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
+msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს თქვენგან ავტორიზაციას."
+
+msgid "Send message through server"
+msgstr "შეტყობინების გაგზავნა სერვერის გავლით"
+
+msgid "Connecting..."
+msgstr "ვუკავშირდები..."
+
+msgid "Nick:"
+msgstr "მეტსახელი:"
+
+msgid "File Transfer Aborted"
+msgstr "ფაილის გადაგზავნა შეწყვეტილია"
+
+#, fuzzy
+msgid "Buddy Information for %s"
+msgstr "ინფორმაციის შეცვლა %s მომხმარებლისათვის"
+
+msgid "Roomlist Error"
+msgstr "ოთახების სიის შეცდომა"
+
+msgid "User Properties"
+msgstr "მომხმარებლის პარამეტრები"
+
+msgid "Not specified"
+msgstr "არაა მითითებული"
+
+msgid "ICQ Info for %s"
+msgstr "ICQ ინფორმაცია %s-თვის"
+
+msgid "Visible"
+msgstr "გამოსაჩენი"
+
+#, fuzzy
+msgid "Available Message:"
+msgstr "მისაწვდომია"
+
+#, fuzzy
+msgid "Set Available Message..."
+msgstr "ახალი შეტყობინება"
+
+#, fuzzy
+msgid "Profile Information"
+msgstr "ინფორმაცია სამსახურის შესახებ"
+
+#, fuzzy
+msgid "Instant Messagers"
+msgstr "შეტყობინების გაგზავნა"
+
+#, fuzzy
+msgid "Set Profile"
+msgstr "ფაილის არჩევა"
+
+msgid "Local Users"
+msgstr "ლოკალური მომხმარებლები"
+
+msgid "Trepia Protocol Plugin"
+msgstr "Trepia პროტოკოლის პლაგინი"
+
+msgid "Please enter your password"
+msgstr "გთხოვთ შეიყვანოთ თქვენი პაროლი"
+
+msgid "%s signed off"
+msgstr "%s გავიდა ქსელიდან"
+
+#~ msgid "Tray Icon Configuration"
+#~ msgstr "პანელის ნახატის კონფიგურირება"
+
+#~ msgid "_Hide new messages until tray icon is clicked"
 #~ msgstr ""
-#~ "აძლევს Gaim-ს საშუალებას გაკონტროლდეს დისტანციური მართვის სხვა "
-#~ "პროგრამებითან დისტანციური Gaim ინსტრუმენტით"
+#~ "_დამალე ახალი სისტემური შეტყობინება სანამ პანელის ნახატს არ დააჭერენ"
 
-#~ msgid "GTK Signals Test"
-#~ msgstr "GTK-ს სიგნალების ტესტი"
+#~ msgid "Orientation"
+#~ msgstr "ორიენტაცია"
 
-#~ msgid "_Apply"
-#~ msgstr "გამოყენება"
-
-#~ msgid "Away!"
-#~ msgstr "გასულია!"
-
-#~ msgid "Edit This Message"
-#~ msgstr "დაარედატირეთ ეს შეტყობინება"
-
-#~ msgid "I'm Back!"
-#~ msgstr "დავბრუნდი!"
-
-#, fuzzy
-#~ msgid "Are you sure you want to remove the away message \"%s\"?"
-#~ msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
-
-#, fuzzy
-#~ msgid "Remove Away Message"
-#~ msgstr "გასულობის შეტყობინება"
-
-#, fuzzy
-#~ msgid "New away message"
-#~ msgstr "გასულობის შეტყობინება"
-
-#~ msgid "_Save"
-#~ msgstr "შენახვა"
-
-#~ msgid "Sa_ve & Use"
-#~ msgstr "შენახვა და გამოყენება"
-
-#~ msgid "Show fewer options"
-#~ msgstr "ნაკლები პარამეტრის ჩვენება"
-
-#~ msgid "Information"
-#~ msgstr "ინფორმაცია"
-
-#~ msgid "/Tools/_Away"
-#~ msgstr "/ხელსაწყოები/გასული"
-
-#, fuzzy
-#~ msgid "/Tools/Pl_ugin Actions"
-#~ msgstr "/ხელსაწყოები/წევრები"
-
-#, fuzzy
-#~ msgid "Rename Group"
-#~ msgstr "ჯგუფის წაშლა"
-
-#, fuzzy
-#~ msgid "Please enter a new name for the selected group."
-#~ msgstr "ჩასამატებელი ჯგუფის სახელი"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "<b>Account:</b>"
-#~ msgstr "<b>წევრი:</b>"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "<b>Warned:</b>"
-#~ msgstr "<b>პაროლი:</b>"
-
-#, fuzzy
-#~ msgid "/Tools/Away"
-#~ msgstr "/ხელსაწყოები/გასული"
-
-#, fuzzy
-#~ msgid "Send a message to the selected buddy"
-#~ msgstr "შეტყობინების გაგზავნა სერვერის გავლით"
-
-#, fuzzy
-#~ msgid "_Away"
-#~ msgstr "გასული"
-
-#, fuzzy
-#~ msgid "Set an away message"
-#~ msgstr "შეტყობინების გაგზავნა"
-
-#~ msgid "Done."
-#~ msgstr "შესრულებულია."
-
-#~ msgid "Signon: "
-#~ msgstr "შესვლა: "
-
-#~ msgid "Signon"
-#~ msgstr "შესვლა"
-
-#~ msgid "Cancel All"
-#~ msgstr "ყველას გაუქმება"
-
-#~ msgid "_Reconnect"
-#~ msgstr "გადაკავშირება"
+#~ msgid "The orientation of the tray."
+#~ msgstr "პანელური ნახატის ორიენტაცია."
 
 #~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n"
-#~ "\n"
-#~ "%s\n"
+#~ "Failed to assign %s to a socket:\n"
 #~ "%s"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
-#~ "\n"
-#~ "%s\n"
+#~ "ვერ მივანიჭე %s სიკეტს:\n"
 #~ "%s"
 
-#~ msgid "Reason Unknown."
-#~ msgstr "მიზეზი უცნობია"
+#~ msgid "Show user details"
+#~ msgstr "მომხმარებლის მონაცემების ჩვენება"
 
-#~ msgid "Reconnect _All"
-#~ msgstr "ყველას გადაკავშირება"
-
-#~ msgid "Time"
-#~ msgstr "დრო"
-
-#, fuzzy
-#~ msgid "/Conversation/_Warn..."
-#~ msgstr "IMის საუბრის ფანჯარა"
-
-#, fuzzy
-#~ msgid "/Conversation/A_lias..."
-#~ msgstr "საუბარი %s-თან"
-
-#, fuzzy
-#~ msgid "/Conversation/Warn..."
-#~ msgstr "IMის საუბრის ფანჯარა"
-
-#, fuzzy
-#~ msgid "Warn"
-#~ msgstr "გაფრთხილება"
-
-#, fuzzy
-#~ msgid "Warn the user"
-#~ msgstr "მომხმარებლის გაფრთხილება"
-
-#~ msgid "Block the user"
-#~ msgstr "მომხმარებლის ბლოკირება"
-
-#~ msgid "Send a file to the user"
-#~ msgstr "ფაილის გაგზავნს მომხმარებლისთვის"
-
-#~ msgid "Send"
-#~ msgstr "გაგზავნა"
-
-#~ msgid "Invite"
-#~ msgstr "დაპატიჟება"
-
-#~ msgid "Invite a user"
-#~ msgstr "მომხმარებლის დაპატიჟება"
-
-#, fuzzy
-#~ msgid "<main>/Conversation/Close"
-#~ msgstr "საუბრის შენახვა"
-
-#, fuzzy
-#~ msgid "Azerbaijani"
-#~ msgstr "სერბული"
-
-#, fuzzy
-#~ msgid "Norwegian (Nynorsk)"
-#~ msgstr "ნორვეგიული"
-
-#~ msgid "Albanian"
-#~ msgstr "ალბანური"
-
-#~ msgid "Turkish"
-#~ msgstr "თურქული"
-
-#~ msgid "Ukrainian"
-#~ msgstr "უკრაინული"
-
-#~ msgid "Chinese"
-#~ msgstr "ჩინური"
-
-#, fuzzy
-#~ msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+#~ msgid ""
+#~ "When a new conversation is opened this plugin will insert the last "
+#~ "conversation into the current conversation."
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
+#~ "პლაგინი, ახალი საუბრის ჩართვისას გიჩვენებთ ბოლო საუბრარს მოცემულ "
+#~ "ფანჯარაში."
+
+#~ msgid "Set All Away"
+#~ msgstr "ყველაში გასულად მომნიშნე"
+
+#~ msgid "Buddy List Error"
+#~ msgstr "მეგობრების სიის შეცდომა"
+
+#~ msgid ""
 #~ "\n"
-#~ "%s\n"
-#~ "%s"
+#~ "Close running copy of Gaim\n"
+#~ msgstr ""
+#~ "\n"
+#~ "გამორთე ჩართული Gaim-ის კოპია\n"
 
-#~ msgid "_Screen name"
-#~ msgstr "ეკრანული სახელი"
+#~ msgid "/Buddies/_Signoff"
+#~ msgstr "/მეგობრები/_გასვლა"
 
-#~ msgid "Warn User"
-#~ msgstr "მომხმარებლის გაფრთხილება"
+#~ msgid "New group name"
+#~ msgstr "ახალი ჯგუფის სახელი"
 
-#~ msgid "Show transfer details"
-#~ msgstr "გადაცემის დეტალების ჩვენება"
+#~ msgid "%d%%"
+#~ msgstr "%d%%"
 
-#~ msgid "D_isplay remote nicknames if no alias is set"
-#~ msgstr "აჩვენოს დისტანციური მეტსახელები თუ სინონიმები არაა მითითებული"
+#~ msgid "Get information on the selected buddy"
+#~ msgstr "მიჩვენე ინფორმაცია ამორჩეულ მეგობარზე"
 
-#~ msgid "Display"
-#~ msgstr "დისპლეი"
+#~ msgid "_Chat"
+#~ msgstr "_Chat"
 
-#~ msgid "Ignore c_olors"
-#~ msgstr "ფერის იგნორირება"
+#~ msgid "Join a chat room"
+#~ msgstr "შედი სასაუბრო ოთახში"
 
-#~ msgid "Ignore font _faces"
-#~ msgstr "ფონტის სახის იგნორირება"
+#~ msgid "Add the user to your buddy list"
+#~ msgstr "დაამატე მომხმარებელი მეგობრების სიას"
 
-#~ msgid "Ignore font si_zes"
-#~ msgstr "ფონტის ზომის იგნორირება"
+#~ msgid "Remove the user from your buddy list"
+#~ msgstr "ამოშალე მომხმარებელი მეგობრების სიიდან"
 
-#, fuzzy
-#~ msgid "Default Formatting"
-#~ msgstr "ფორმატირების წაშლა"
+#~ msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
+#~ msgstr "Vladimira Girginova და Vladimir (Kaladan) Petkov"
 
-#~ msgid "Send Message"
-#~ msgstr "შეტყობინების გაგზავნა"
+#~ msgid "Estonian"
+#~ msgstr "ესტონიური"
 
-#, fuzzy
-#~ msgid "Enter _sends message"
-#~ msgstr "შეუძლებელია შეტყობინების გაგზავნა."
-
-#, fuzzy
-#~ msgid "C_ontrol-Enter sends message"
-#~ msgstr "შეუძლებელია შეტყობინების გაგზავნა."
-
-#~ msgid "Window Closing"
-#~ msgstr "ფანჯრის დახურვა"
-
-#~ msgid "Insertions"
-#~ msgstr "ჩასმა"
-
-#~ msgid "Pictures"
-#~ msgstr "სურათები"
-
-#~ msgid "Text"
-#~ msgstr "ტექსტი"
-
-#~ msgid "Pictures and text"
-#~ msgstr "სურათები და ტექსტი"
-
-#, fuzzy
-#~ msgid "Show _warning levels"
-#~ msgstr "შენშვნის დონე"
-
-#, fuzzy
-#~ msgid "Message Logs"
-#~ msgstr "შეტყობინება გაგზავნილია"
-
-#, fuzzy
-#~ msgid "Gaim usage"
-#~ msgstr "Gaim-ის მომხმარებელი"
-
-#, fuzzy
-#~ msgid "Windows usage"
-#~ msgstr "ფანჯრის დახურვა"
-
-#~ msgid "Load"
-#~ msgstr "ჩატვირთვა"
-
-#~ msgid "Summary"
-#~ msgstr "ჯამური"
-
-#~ msgid "Details"
-#~ msgstr "დეტალები"
-
-#~ msgid "_Edit"
-#~ msgstr "ჩამატება"
-
-#~ msgid "Interface"
-#~ msgstr "ინტერფეისი"
-
-#~ msgid "Message Text"
-#~ msgstr "შეტყობინების ტექსტი"
-
-#~ msgid "Shortcuts"
-#~ msgstr "მალმხმობები"
-
-#, fuzzy
-#~ msgid "Away Messages"
-#~ msgstr "გასულობის შეტყობინება"
-
-#~ msgid "Plugins"
-#~ msgstr "პლაგინები"
-
-#~ msgid "Plain text"
-#~ msgstr "ტექსტი"
-
-#~ msgid "Please create an account."
-#~ msgstr "გთხოვთ შექმნათ წევრი"
-
-#~ msgid "Login"
-#~ msgstr "შესვლა"
-
-#~ msgid "<b>_Account:</b>"
-#~ msgstr "<b>წევრი:</b>"
-
-#~ msgid "<b>_Password:</b>"
-#~ msgstr "<b>პაროლი:</b>"
-
-#~ msgid "A_ccounts"
-#~ msgstr "წევრები"
-
-#~ msgid "P_references"
-#~ msgstr "პარამეტრები"
-
-#~ msgid "_Sign on"
-#~ msgstr "შესვლა"
-
-#~ msgid "Unable to load preferences"
-#~ msgstr "პარამეტრების ჩატვირთვა შუძლებელია"
-
-#~ msgid "Available for friends only"
-#~ msgstr "ხელმისაწვდომია მხოლოდ მეგობრებისთვის"
-
-#~ msgid "Away for friends only"
-#~ msgstr "გასულია მხოლოდ მეგობრებისთვის"
-
-#~ msgid "Invisible for friends only"
-#~ msgstr "უხილავია მხოლოდ მეგობრებისათვის"
-
-#, fuzzy
-#~ msgid "Unable to resolve hostname."
-#~ msgstr "შეუძლებელია შეტყობინების გაგზავნა."
-
-#~ msgid "Error while reading from socket."
-#~ msgstr "სოკეტის კითხვისას შეცდომაა."
-
-#~ msgid "Error while writing to socket."
-#~ msgstr "სოკეტში წერისას შეცდომაა"
-
-#~ msgid "Authentication failed."
-#~ msgstr "აუტენტიფიკაცია შეუძლებელია"
-
-#~ msgid "Unknown Error Code."
-#~ msgstr "უცნობი შეცდომა"
-
-#~ msgid "Status: %s"
-#~ msgstr "%s-ს სტატუსი "
-
-#~ msgid "Could not connect"
-#~ msgstr "ვერ ვუკავშირდები"
-
-#~ msgid "Reading data"
-#~ msgstr "მონაცემების წაკითხვა"
-
-#~ msgid "Balancer handshake"
-#~ msgstr "დაბალანსებული მისალმება"
-
-#~ msgid "Reading server key"
-#~ msgstr "სერვერის გასაღების კითხვა"
-
-#~ msgid "Exchanging key hash"
-#~ msgstr "ჰეშ-გასაღების გაცვლა"
-
-#, fuzzy
-#~ msgid "Unable to ping server"
-#~ msgstr "შეუძლებელია სერვერთან დაკავშირება"
-
-#, fuzzy
-#~ msgid "Send as message"
-#~ msgstr "შეტყობინების გაგზავნა"
-
-#, fuzzy
-#~ msgid "Couldn't get search results"
-#~ msgstr "შეუძლებელია სოკეტის შექმნა"
-
-#, fuzzy
-#~ msgid "Birth Year"
-#~ msgstr "დაბადების დღე"
-
-#, fuzzy
-#~ msgid "Unable to access directory"
-#~ msgstr "დაკავშირება შეუძლებელია"
-
-#, fuzzy
-#~ msgid "Unable to access user profile."
-#~ msgstr "შეუძლებელია სერვერთან დაკავშირება"
-
-#~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
-#~ msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს დადასტურებას თქვენგან  "
-
-#~ msgid "Send message through server"
-#~ msgstr "შეტყობინების გაგზავნა სერვერის გავლით"
-
-#~ msgid "Connecting..."
-#~ msgstr "დაკავშირება..."
-
-#~ msgid "Nick:"
-#~ msgstr "მეტსახელი:"
-
-#, fuzzy
-#~ msgid "File Transfer Aborted"
-#~ msgstr "ფაილების გადაგზავნა"
-
-#, fuzzy
-#~ msgid "Buddy Information for %s"
-#~ msgstr "ინფორმაციის შეცვლა %s მომხმარებლისათვის"
-
-#, fuzzy
-#~ msgid "Roomlist Error"
-#~ msgstr "რეგისტრაციის შეცდომა"
-
-#, fuzzy
-#~ msgid "User Properties"
-#~ msgstr "მომხმარებლის პარამეტრები"
-
-#~ msgid "Not specified"
-#~ msgstr "არაა მითითებული"
-
-#~ msgid "ICQ Info for %s"
-#~ msgstr "ICQ ინფორმაცია %s-თვის"
-
-#~ msgid "Visible"
-#~ msgstr "გამოსაჩენი"
-
-#, fuzzy
-#~ msgid "Available Message:"
-#~ msgstr "მისაწვდომია"
-
-#, fuzzy
-#~ msgid "Set Available Message..."
-#~ msgstr "ახალი შეტყობინება"
-
-#, fuzzy
-#~ msgid "Profile Information"
-#~ msgstr "ინფორმაცია სამსახურის შესახებ"
-
-#, fuzzy
-#~ msgid "Instant Messagers"
-#~ msgstr "შეტყობინების გაგზავნა"
-
-#, fuzzy
-#~ msgid "Set Profile"
-#~ msgstr "ფაილის არჩევა"
-
-#, fuzzy
-#~ msgid "Local Users"
-#~ msgstr "მომხმარებლები"
-
-#, fuzzy
-#~ msgid "Trepia Protocol Plugin"
-#~ msgstr "AIM/ICQ პროტოკოლის პლაგინი"
-
-#, fuzzy
-#~ msgid "Please enter your password"
-#~ msgstr "შეიყვანეთ თქვენი არსებული და ახალი პაროლი"
-
-#, fuzzy
-#~ msgid "%s signed off"
-#~ msgstr "Gaim - გათიშულია"
+#~ msgid "Show _buttons as:"
+#~ msgstr "აჩვენე _ღილაკები როგორც:"

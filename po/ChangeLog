@@ -1,6 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 2.0.0:
+	* Bengali translation added (INDRANIL DAS GUPTA and Samia Nimatullah)
 	* Bosnian translation added (Lejla Hadzialic)
 	* Catalan translation updated (Josep Puigdemont)
 	* Chinese (Simplified) translation updated (Funda Wang)
@@ -13,6 +14,7 @@ version 2.0.0:
 	* Finnish translation updated (Timo Jyrinki)
 	* Galician translation updated (Ignacio Casal Quinteiro)
 	* Galician win32 installer translation updated (Ignacio Casal Quinteiro)
+	* Georgian translation updated (Ubuntu Georgian Translators Team)
 	* German win32 translation updated (Bjoern Voigt)
 	* Greek translation added (Bouklis Panos)
 	* Hebrew translation updated (Shalom Craimer)
