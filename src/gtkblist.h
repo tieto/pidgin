@@ -88,8 +88,6 @@ struct _GaimGtkBuddyList {
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
         GtkWidget *statusbox;            /**< The status selector dropdown */
-	GtkWidget *statusboxbox;       /**< A box to hold per account status boxes */
-	GList *statusboxes;            /**< A list of the per account status boxes */
 	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
 	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
 

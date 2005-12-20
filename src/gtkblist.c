@@ -3437,45 +3437,6 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	return result;
 }
 
-static void account_enabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
-{
-	GtkWidget *box;
-	
-	if (!gtkblist)
-		return;
-	
-	box = gtk_gaim_status_box_new_with_account(account);
-	gtkblist->statusboxes = g_list_append(gtkblist->statusboxes, box);
-	gtk_box_pack_start(GTK_BOX(gtkblist->statusboxbox), box, FALSE, TRUE, 0);
-	gtk_widget_show(box);
-
-	update_menu_bar(gtkblist);
-}
-
-static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
-{
-	GList *iter;
-
-	if (!gtkblist)
-		return;
-
-	for (iter = gtkblist->statusboxes; iter; iter = iter->next)
-	{
-		GtkWidget *box = iter->data;
-		GaimAccount *ac = NULL;
-
-		g_object_get(G_OBJECT(box), "account", &ac, NULL);
-		if (ac == account)
-		{
-			gtkblist->statusboxes = g_list_remove_link(gtkblist->statusboxes, iter);
-			gtk_widget_destroy(box);
-			break;
-		}
-	}
-
-	update_menu_bar(gtkblist);
-}
-
 static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 {
 	if (!gtkblist)
@@ -3515,7 +3476,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
 	GtkWidget *sw;
-	GtkWidget *vpane;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -3570,15 +3530,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
 	accountmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts"));
-
-	/****************************** GtkVPaned ************************************/
-	vpane = gtk_vpaned_new();
-	gtk_widget_show(vpane);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), vpane, TRUE, TRUE, 0);
-	gtk_paned_set_position(GTK_PANED(vpane),
-	                       gaim_prefs_get_int("/gaim/gtk/blist/pane"));
-	g_signal_connect(G_OBJECT(vpane), "notify::position",
-	                 G_CALLBACK(pane_position_cb), NULL);
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -3664,39 +3615,15 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(gtkblist->treeview), NAME_COLUMN);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview), _search_func, NULL, NULL);
 
-	gtk_paned_pack1(GTK_PANED(vpane), sw, TRUE, FALSE);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
-	/* TODO: functionize this */
-	{
-		GList *accounts, *l;
-		GtkWidget *sw2 = gtk_scrolled_window_new(NULL, NULL);
-
-		/* Set up some per account status boxes */
-		gtkblist->statusboxbox = gtk_vbox_new(FALSE, 0);
-		gtkblist->statusboxes = NULL;
-
-		for (l = accounts = gaim_accounts_get_all_active(); l; l = l->next) {
-			GtkWidget *statusbox = gtk_gaim_status_box_new_with_account(l->data);
-			gtkblist->statusboxes = g_list_append(gtkblist->statusboxes, statusbox);
-			gtk_box_pack_start(GTK_BOX(gtkblist->statusboxbox), statusbox, FALSE, TRUE, 0);
-			gtk_widget_show(statusbox);
-		}
-		g_list_free(accounts);
-
-		gtk_widget_show(gtkblist->statusboxbox);
-		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), gtkblist->statusboxbox);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-		gtk_widget_show(sw2);
-		gtk_paned_pack2(GTK_PANED(vpane), sw2, FALSE, TRUE);
-
-		gtkblist->statusbox = gtk_gaim_status_box_new();
-
-		gtk_widget_show(gtkblist->statusbox);
-		gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
-
-	}
+	gtkblist->statusbox = gtk_gaim_status_box_new();
+	
+	gtk_widget_show(gtkblist->statusbox);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
+	
 
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
@@ -3752,11 +3679,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Setup some gaim signal handlers. */
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
-			gtkblist, GAIM_CALLBACK(account_enabled), gtkblist);
+			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
-			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
+			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
-			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
+			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
 
 	gaim_signal_connect(gaim_gtk_account_get_handle(), "account-modified",
 			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
