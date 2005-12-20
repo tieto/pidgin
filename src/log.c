@@ -329,7 +329,7 @@ void gaim_log_logger_add (GaimLogLogger *logger)
 void gaim_log_logger_remove (GaimLogLogger *logger)
 {
 	g_return_if_fail(logger);
-	g_slist_remove(loggers, logger);
+	loggers = g_slist_remove(loggers, logger);
 }
 
 void gaim_log_logger_set (GaimLogLogger *logger)
