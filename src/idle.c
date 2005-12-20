@@ -176,16 +176,31 @@ check_idleness()
 {
 	time_t time_idle;
 	gboolean auto_away;
+	const gchar *idle_reporting;
 	gboolean report_idle;
 	GList *l;
 
 	gaim_signal_emit(gaim_blist_get_handle(), "update-idle");
 
-	if (idle_ui_ops != NULL && idle_ui_ops->get_time_idle != NULL)
+	idle_reporting = gaim_prefs_get_string("/core/away/idle_reporting");
+	report_idle = TRUE;
+	if (!strcmp(idle_reporting, "system") &&
+		(idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
+	{
+		/* Use system idle time (mouse or keyboard movement, etc.) */
 		time_idle = idle_ui_ops->get_time_idle();
-	else
+	}
+	else if (!strcmp(idle_reporting, "gaim"))
+	{
 		/* Use 'Gaim idle' */
 		time_idle = time(NULL) - last_active_time;
+	}
+	else
+	{
+		/* Don't report idle time */
+		time_idle = 0;
+		report_idle = FALSE;
+	}
 
 	/* Auto-away stuff */
 	auto_away = gaim_prefs_get_bool("/core/away/away_when_idle");
@@ -202,7 +217,6 @@ check_idleness()
 	}
 
 	/* Idle reporting stuff */
-	report_idle = gaim_prefs_get_bool("/core/away/report_idle");
 	if (report_idle && (time_idle >= IDLEMARK) && !have_set_idle)
 	{
 		for (l = gaim_connections_get_all(); l != NULL; l = l->next)

@@ -1660,7 +1660,20 @@ away_page()
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	vbox = gaim_gtk_make_frame (ret, _("Away"));
+	/* Idle stuff */
+	vbox = gaim_gtk_make_frame(ret, _("Idle"));
+
+	gaim_gtk_prefs_dropdown(vbox, _("Idle time _reporting:"),
+		GAIM_PREF_STRING, "/core/away/idle_reporting",
+		_("None"), "none",
+		_("Gaim usage"), "gaim",
+#ifdef USE_SCREENSAVER
+		_("Mouse movement"), "system",
+#endif
+		NULL);
+
+	/* Away stuff */
+	vbox = gaim_gtk_make_frame(ret, _("Away"));
 
 	label = gaim_gtk_prefs_dropdown(vbox, _("_Auto-reply:"),
 		GAIM_PREF_STRING, "/core/away/auto_reply",
@@ -1669,10 +1682,9 @@ away_page()
 		_("When both away and idle"), "awayidle",
 		NULL);
 
-	button = gaim_gtk_prefs_checkbox(_("_Report idle time"),
-			"/core/away/report_idle", vbox);
+	/* Auto-away stuff */
+	vbox = gaim_gtk_make_frame(ret, _("Auto-away"));
 
-	vbox = gaim_gtk_make_frame (ret, _("Auto-away"));
 	button = gaim_gtk_prefs_checkbox(_("Change status when _idle"),
 						   "/core/away/away_when_idle", vbox);
 
@@ -1695,15 +1707,6 @@ away_page()
 	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(gaim_gtk_toggle_sensitive), menu);
-
-	/*
-	 * TODO: Need to allow users to choose a GaimSavedStatus
-	 *       to use when going idle-away.  Or figure out a
-	 *       better UI for this.  Set the preference
-	 *       "/core/savedstatus/idleaway" to the name of the
-	 *       GaimSavedStatus to use.
-	 *
-	 */
 
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
@@ -1889,7 +1892,6 @@ gaim_gtk_prefs_init(void)
 }
 
 void gaim_gtk_prefs_update_old() {
-	const char *tmp;
 	/* Rename some old prefs */
 	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
 	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
@@ -1906,13 +1908,8 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_formatting",
 									 "/gaim/gtk/conversations/show_incoming_formatting");
 
-	/* this string pref turned into a boolean, try to be friendly */
-	if (gaim_prefs_exists("/gaim/gtk/idle/reporting_method"))
-	{
-		tmp = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
-		if (tmp != NULL && !strcmp(tmp, "none"))
-			gaim_prefs_set_bool("/core/away/report_idle", FALSE);
-	}
+	/* this string pref moved into the core, try to be friendly */
+	gaim_prefs_rename("/gaim/gtk/idle/reporting_method", "/core/away/idle_reporting");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");

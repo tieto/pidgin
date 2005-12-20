@@ -1097,7 +1097,7 @@ gaim_prefs_init(void)
 
 	/* Away */
 	gaim_prefs_add_none("/core/away");
-	gaim_prefs_add_bool("/core/away/report_idle", TRUE);
+	gaim_prefs_add_string("/core/away/idle_reporting", "system");
 	gaim_prefs_add_bool("/core/away/away_when_idle", TRUE);
 	gaim_prefs_add_int("/core/away/mins_before_away", 5);
 
