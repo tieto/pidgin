@@ -1667,7 +1667,7 @@ away_page()
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle time _reporting:"),
 		GAIM_PREF_STRING, "/core/away/idle_reporting",
 		_("None"), "none",
-		_("Gaim usage"), "gaim",
+		_("Account usage"), "gaim",
 #ifdef USE_SCREENSAVER
 		_("Mouse movement"), "system",
 #endif
