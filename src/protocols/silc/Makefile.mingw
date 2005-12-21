@@ -13,7 +13,7 @@ GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
 SILC_TOP :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-SILC_TOOLKIT :=		../../../../win32-dev/silc-toolkit-0.9.12
+SILC_TOOLKIT :=		../../../../win32-dev/silc-toolkit-1.0.2
 
 ##
 ## VARIABLE DEFINITIONS
@@ -53,12 +53,8 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS +=	-I$(SILC_TOP) \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
 			-I$(GAIM_TOP) \
@@ -91,11 +87,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS = \
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim \

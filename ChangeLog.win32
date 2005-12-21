@@ -2,6 +2,7 @@ version 2.0.0:
 	* Updated GTK+ to 2.6.10 (rev.a)
 	* The transparency plugin has been rewritten and enhanced.
 	* MSN open email bug fixed.
+	* Update SILC to use the 1.0.2 toolkit
 	* Lots of other things that I can't remember right now.
 
 version 1.5.0 (8/11/2005):
