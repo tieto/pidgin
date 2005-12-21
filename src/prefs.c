@@ -620,9 +620,10 @@ remove_pref(struct gaim_pref *pref)
 		pref->parent->first_child = pref->sibling;
 	} else {
 		struct gaim_pref *sib = pref->parent->first_child;
-		while(sib->sibling != pref)
+		while(sib && sib->sibling != pref)
 			sib = sib->sibling;
-		sib->sibling = pref->sibling;
+		if(sib)
+			sib->sibling = pref->sibling;
 	}
 
 	name = pref_full_name(pref);
