@@ -280,8 +280,8 @@ static void gtk_blist_join_chat(GaimChat *chat)
 
 	if (conv != NULL)
 		gaim_gtkconv_present_conversation(conv);
-	else
-		serv_join_chat(chat->account->gc, chat->components);
+
+	serv_join_chat(chat->account->gc, chat->components);
 }
 
 static void gtk_blist_menu_join_cb(GtkWidget *w, GaimChat *chat)
@@ -3611,6 +3611,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_blist_update_columns();
 
 	gtkblist->statusbox = gtk_gaim_status_box_new();
+	gtk_widget_set_name(gtkblist->statusbox, "gaim_gtkblist_statusbox");
 	
 	gtk_widget_show(gtkblist->statusbox);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
