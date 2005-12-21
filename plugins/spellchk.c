@@ -79,9 +79,12 @@ static gboolean
 is_word_uppercase(const gchar *word)
 {
 	for (; word[0] != '\0'; word = g_utf8_find_next_char (word, NULL)) {
-		if (!g_unichar_isupper(g_utf8_get_char(word)) &&
-			!g_unichar_ispunct(g_utf8_get_char(word)))
-				return FALSE;
+		gunichar c = g_utf8_get_char(word);
+
+		if (!(g_unichar_isupper(c) ||
+		      g_unichar_ispunct(c) ||
+		      g_unichar_isspace(c)))
+			return FALSE;
 	}
 
 	return TRUE;
@@ -91,9 +94,12 @@ static gboolean
 is_word_lowercase(const gchar *word)
 {
 	for (; word[0] != '\0'; word = g_utf8_find_next_char(word, NULL)) {
-		if (!g_unichar_islower(g_utf8_get_char(word)) &&
-			!g_unichar_ispunct(g_utf8_get_char(word)))
-				return FALSE;
+		gunichar c = g_utf8_get_char(word);
+
+		if (!(g_unichar_islower(c) ||
+		      g_unichar_ispunct(c) ||
+		      g_unichar_isspace(c)))
+			return FALSE;
 	}
 
 	return TRUE;
@@ -189,72 +195,68 @@ substitute_word(gchar *word)
 	GtkTreeIter iter;
 	gchar *outword;
 	gchar *lowerword;
+	gchar *foldedword;
 
 	if (word == NULL)
 		return NULL;
 
 	lowerword = g_utf8_strdown(word, -1);
+	foldedword = g_utf8_casefold(word, -1);
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
 		do {
-			GValue val0 = {0, };
 			GValue val1 = {0, };
-			GValue val2 = {0, };
 			const char *bad;
-			const char *good;
-			gchar *tmpbad;
-			gchar *tmpword;
+			gchar *tmpbad = NULL;
 			gboolean word_only;
 
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val1);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, WORD_ONLY_COLUMN, &val2);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, WORD_ONLY_COLUMN, &val1);
+			if (!g_value_get_boolean(&val1)) {
+				g_value_unset(&val1);
+				continue;
+			}
+			g_value_unset(&val1);
 
-			bad = g_value_get_string(&val0);
-			good = g_value_get_string(&val1);
-			word_only = g_value_get_boolean(&val2);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val1);
+			bad = g_value_get_string(&val1);
 
-			tmpbad = g_utf8_casefold(bad, -1);
-			tmpword = g_utf8_casefold(word, -1);
+			if (!strcmp(bad, lowerword) ||
+			    (!is_word_lowercase(bad) &&
+			     !strcmp((tmpbad = g_utf8_casefold(bad, -1)), foldedword)))
+			{
+				GValue val2 = {0, };
+				const char *good;
 
-			if (word_only && (!strcmp(bad, lowerword) || (!is_word_lowercase(bad) && !strcmp(tmpbad, tmpword)))) {
 				g_free(tmpbad);
-				g_free(tmpword);
 
-				outword = g_strdup(good);
+				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val2);
+				good = g_value_get_string(&val2);
 
-				if (is_word_lowercase(bad) && is_word_lowercase(good)) {
-
-					if (is_word_uppercase (word)) {
-						char *tmp;
-						tmp = g_utf8_strup(outword, -1);
-						g_free(outword);
-						outword = tmp;
-					}
-
-					if (is_word_proper (word)) {
-						char *tmp;
-						tmp = make_word_proper(outword);
-						g_free(outword);
-						outword = tmp;
-					}
+				if (is_word_lowercase(bad) && is_word_lowercase(good))
+				{
+					if (is_word_uppercase(word))
+						outword = g_utf8_strup(good, -1);
+					else if (is_word_proper(word))
+						outword = make_word_proper(good);
+					else
+						outword = g_strdup(good);
 				}
+				else
+					outword = g_strdup(good);
 
-				g_value_unset(&val0);
 				g_value_unset(&val1);
 				g_value_unset(&val2);
 
+				g_free(foldedword);
 				return outword;
 			}
 
-			g_value_unset(&val0);
 			g_value_unset(&val1);
-			g_value_unset(&val2);
 			g_free(tmpbad);
-			g_free(tmpword);
 
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
+	g_free(foldedword);
 
 	return NULL;
 }
