@@ -61,6 +61,10 @@ static struct GaimContactPriorityStatuses
 	{ "idle",          N_("Buddy is idle") },
 	{ "away",          N_("Buddy is away") },
 	{ "extended_away", N_("Buddy is \"extended\" away") },
+#if 0
+	/* Not used yet. */
+	{ "mobile",        N_("Buddy is mobile") },
+#endif
 	{ "offline",       N_("Buddy is offline") },
 	{ NULL, NULL }
 };

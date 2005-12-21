@@ -7,7 +7,7 @@ EXTRA_DIST = \
 	blocked.png \
 	bonjour.png \
 	dnd.png \
-	extendedaway.png \
+	extended_away.png \
 	external.png \
 	female.png \
 	founder.png \
@@ -26,7 +26,6 @@ EXTRA_DIST = \
 	male.png \
 	meanwhile.png \
 	msn.png \
-	na.png \
 	napster.png \
 	notauthorized.png \
 	novell.png \
@@ -37,6 +36,7 @@ EXTRA_DIST = \
 	secure.png \
 	silc.png \
 	simple.png \
+	unavailable.png \
 	voice.png \
 	wireless.png \
 	yahoo.png \

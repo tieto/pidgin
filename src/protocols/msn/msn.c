@@ -574,35 +574,35 @@ msn_status_types(GaimAccount *account)
 	GList *types = NULL;
 
 	status = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
-			"offline", _("Offline"), FALSE, TRUE, FALSE);
+			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-			"available", _("Available"), FALSE, TRUE, FALSE);
+			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away",
-			_("Away"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
+			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "brb",
-			_("Be Right Back"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
+			"brb", _("Be Right Back"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "busy",
-			_("Busy"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
+			"busy", _("Busy"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "phone",
-			_("On the Phone"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
+			"phone", _("On the Phone"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "lunch",
-			_("Out to Lunch"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
+			"lunch", _("Out to Lunch"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "invisible",
-			_("Hidden"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE,
+			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	return types;

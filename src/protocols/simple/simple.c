@@ -247,13 +247,13 @@ static GList *simple_status_types(GaimAccount *acc) {
 	GList *types = NULL;
 
 	type = gaim_status_type_new_full(
-		GAIM_STATUS_OFFLINE, "offline", _("Offline"), TRUE, TRUE, FALSE);
+		GAIM_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
-		GAIM_STATUS_AVAILABLE, "available", _("Available"),
-		TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
+		GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
 	return types;

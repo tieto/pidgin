@@ -2199,17 +2199,17 @@ static void zephyr_zloc(GaimConnection *gc, const char *who)
 
 static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
 	zephyr_account *zephyr = gaim_account_get_connection(account)->proto_data;
-	const char *status_id = gaim_status_get_id(status);
+	GaimStatusPrimitive primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
 
 	if (zephyr->away) {
 		g_free(zephyr->away);
 		zephyr->away=NULL;
 	}
 
-	if (!strcmp(status_id,"away")) {
+	if (primitive == GAIM_STATUS_AWAY) {
 		zephyr->away = g_strdup(gaim_status_get_attr_string(status,"message"));
 	} 
-	else if (!strcmp(status_id,"available")) {
+	else if (primitive == GAIM_STATUS_AVAILABLE) {
 		if (use_zeph02(zephyr)) {
 			ZSetLocation(zephyr->exposure);
 		}
@@ -2219,7 +2219,7 @@ static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
 			g_free(zexpstr);
 		}
 	} 
-	else if (!strcmp(status_id,"hidden")) {
+	else if (primitive == GAIM_STATUS_INVISIBLE) {
 		/* XXX handle errors */
 		if (use_zeph02(zephyr)) {
 			ZSetLocation(EXPOSE_OPSTAFF);
@@ -2250,15 +2250,16 @@ static GList *zephyr_status_types(GaimAccount *account)
 	   Away won't change their exposure but will set an auto away message (for IMs only)
 	*/
 	
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available", _("Available"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, NULL, NULL, FALSE);
 	types = g_list_append(types,type);
 
-	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, "hidden", _("Hidden"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, NULL, NULL, FALSE);
 	types = g_list_append(types,type);
 
 	type = gaim_status_type_new_with_attrs(
-					       GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE,
-					       "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
+					       GAIM_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
+					       "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+					       NULL);
 	types = g_list_append(types, type);
 
 	return types;

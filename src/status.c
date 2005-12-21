@@ -126,9 +126,10 @@ static int primitive_scores[] =
 	-500,   /* offline                  */
 	100,    /* available                */
 	-75,    /* unavailable              */
-	-50,    /* hidden                   */
+	-50,    /* invisible                */
 	-100,   /* away                     */
 	-200,   /* extended away            */
+	-400,   /* mobile                   */
 	-10,    /* idle, special case.      */
 	-5      /* idle time, special case. */
 };
@@ -153,9 +154,10 @@ static struct GaimStatusPrimitiveMap
 	{ GAIM_STATUS_OFFLINE,         "offline",         N_("Offline")         },
 	{ GAIM_STATUS_AVAILABLE,       "available",       N_("Available")       },
 	{ GAIM_STATUS_UNAVAILABLE,     "unavailable",     N_("Unavailable")     },
-	{ GAIM_STATUS_HIDDEN,          "hidden",          N_("Hidden")          },
+	{ GAIM_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
 	{ GAIM_STATUS_AWAY,            "away",            N_("Away")            },
-	{ GAIM_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended Away")   }
+	{ GAIM_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended Away")   },
+	{ GAIM_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
 };
 
 const char *
@@ -179,8 +181,8 @@ gaim_primitive_get_name_from_type(GaimStatusPrimitive type)
 
     for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
     {
-		if (type == status_primitive_map[i].type)
-			return status_primitive_map[i].name;
+	if (type == status_primitive_map[i].type)
+		return status_primitive_map[i].name;
     }
 
     return status_primitive_map[0].name;
@@ -214,18 +216,24 @@ gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
 	GaimStatusType *status_type;
 
 	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, NULL);
-	g_return_val_if_fail(id        != NULL,              NULL);
-	g_return_val_if_fail(name      != NULL,              NULL);
 
 	status_type = g_new0(GaimStatusType, 1);
 	GAIM_DBUS_REGISTER_POINTER(status_type, GaimStatusType);
 
 	status_type->primitive     = primitive;
-	status_type->id            = g_strdup(id);
-	status_type->name          = g_strdup(name);
 	status_type->saveable      = saveable;
 	status_type->user_settable = user_settable;
 	status_type->independent   = independent;
+
+	if (id != NULL)
+		status_type->id = g_strdup(id);
+	else
+		status_type->id = g_strdup(gaim_primitive_get_id_from_type(primitive));
+
+	if (name != NULL)
+		status_type->name = g_strdup(name);
+	else
+		status_type->name = g_strdup(_(gaim_primitive_get_name_from_type(primitive)));
 
 	return status_type;
 }
@@ -235,8 +243,6 @@ gaim_status_type_new(GaimStatusPrimitive primitive, const char *id,
 					 const char *name, gboolean user_settable)
 {
 	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, NULL);
-	g_return_val_if_fail(id        != NULL,              NULL);
-	g_return_val_if_fail(name      != NULL,              NULL);
 
 	return gaim_status_type_new_full(primitive, id, name, FALSE,
 			user_settable, FALSE);
@@ -254,8 +260,6 @@ gaim_status_type_new_with_attrs(GaimStatusPrimitive primitive,
 	va_list args;
 
 	g_return_val_if_fail(primitive  != GAIM_STATUS_UNSET, NULL);
-	g_return_val_if_fail(id         != NULL,              NULL);
-	g_return_val_if_fail(name       != NULL,              NULL);
 	g_return_val_if_fail(attr_id    != NULL,              NULL);
 	g_return_val_if_fail(attr_name  != NULL,              NULL);
 	g_return_val_if_fail(attr_value != NULL,              NULL);
@@ -1696,8 +1700,8 @@ gaim_status_init(void)
 			primitive_scores[GAIM_STATUS_OFFLINE]);
 	gaim_prefs_add_int("/core/status/scores/available",
 			primitive_scores[GAIM_STATUS_AVAILABLE]);
-	gaim_prefs_add_int("/core/status/scores/hidden",
-			primitive_scores[GAIM_STATUS_HIDDEN]);
+	gaim_prefs_add_int("/core/status/scores/invisible",
+			primitive_scores[GAIM_STATUS_INVISIBLE]);
 	gaim_prefs_add_int("/core/status/scores/away",
 			primitive_scores[GAIM_STATUS_AWAY]);
 	gaim_prefs_add_int("/core/status/scores/extended_away",
@@ -1711,9 +1715,9 @@ gaim_status_init(void)
 	gaim_prefs_connect_callback(handle, "/core/status/scores/available",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
-	gaim_prefs_connect_callback(handle, "/core/status/scores/hidden",
+	gaim_prefs_connect_callback(handle, "/core/status/scores/invisible",
 			score_pref_changed_cb,
-			GINT_TO_POINTER(GAIM_STATUS_HIDDEN));
+			GINT_TO_POINTER(GAIM_STATUS_INVISIBLE));
 	gaim_prefs_connect_callback(handle, "/core/status/scores/away",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(GAIM_STATUS_AWAY));

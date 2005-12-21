@@ -3234,7 +3234,7 @@ static GList *mw_prpl_status_types(GaimAccount *acct) {
   GaimStatusType *type;
 
   type = gaim_status_type_new(GAIM_STATUS_OFFLINE, MW_STATE_OFFLINE,
-			      _("Offline"), TRUE);
+			      NULL, TRUE);
   types = g_list_append(types, type);
 
   type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, MW_STATE_ACTIVE,
@@ -3244,7 +3244,7 @@ static GList *mw_prpl_status_types(GaimAccount *acct) {
   types = g_list_append(types, type);
 
   type = gaim_status_type_new(GAIM_STATUS_AWAY, MW_STATE_AWAY,
-			      _("Away"), TRUE);
+			      NULL, TRUE);
   gaim_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
 			    gaim_value_new(GAIM_TYPE_STRING));
   types = g_list_append(types, type);

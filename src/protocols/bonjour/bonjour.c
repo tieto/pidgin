@@ -243,19 +243,19 @@ bonjour_status_types(GaimAccount *account)
 
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 BONJOUR_STATUS_ID_OFFLINE,
-									 _("Offline"), TRUE, TRUE, FALSE);
+									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
 										   BONJOUR_STATUS_ID_AVAILABLE,
-										   _("Available"), TRUE, TRUE, FALSE,
+										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
 										   BONJOUR_STATUS_ID_AWAY,
-										   _("Away"), TRUE, TRUE, FALSE,
+										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
@@ -269,11 +269,13 @@ bonjour_convo_closed(GaimConnection *connection, const char *who)
 	GaimBuddy *buddy = gaim_find_buddy(connection->account, who);
 
 	if (buddy == NULL)
+	{
 		/*
 		 * This buddy is not in our buddy list, and therefore does not really
 		 * exist, so we won't have any data about them.
 		 */
 		return;
+	}
 
 	bonjour_jabber_close_conversation(((BonjourData*)(connection->proto_data))->jabber_data, buddy);
 }
@@ -281,7 +283,7 @@ bonjour_convo_closed(GaimConnection *connection, const char *who)
 static void
 bonjour_list_emblems(GaimBuddy *buddy,
 								 const char **se, const char **sw,
-								 const char **nw,const char **ne)
+								 const char **nw, const char **ne)
 {
 	GaimPresence *presence;
 

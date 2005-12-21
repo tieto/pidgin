@@ -6527,7 +6527,7 @@ oscar_set_extendedstatus(GaimConnection *gc)
 	od = gc->proto_data;
 	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
-	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_HIDDEN);
+	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE);
 
 	if (invisible)
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
@@ -6561,7 +6561,7 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 	status_type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(status_type);
 	presence = gaim_account_get_presence(account);
-	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_HIDDEN);
+	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE);
 
 	if (!setinfo)
 	{
@@ -6656,7 +6656,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	if (!od)
 		return;
 
-	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_HIDDEN)
+	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_INVISIBLE)
 		account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
 	else
 		account->perm_deny = GAIM_PRIVACY_DENY_USERS;
@@ -7539,7 +7539,7 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 		else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
 			emblems[i++] = "dnd";
 		else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
-			emblems[i++] = "na";
+			emblems[i++] = "unavailable";
 		else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
 			emblems[i++] = "occupied";
 		else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
@@ -7819,26 +7819,26 @@ oscar_status_types(GaimAccount *account)
 	/* Oscar-common status types */
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
-									 _("Offline"), TRUE, TRUE, FALSE);
+									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
 										   OSCAR_STATUS_ID_AVAILABLE,
-										   _("Available"), TRUE, TRUE, FALSE,
+										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
 										   OSCAR_STATUS_ID_AWAY,
-										   _("Away"), TRUE, TRUE, FALSE,
+										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN,
+	type = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE,
 									 OSCAR_STATUS_ID_INVISIBLE,
-									 _("Invisible"), TRUE, TRUE, FALSE);
+									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	if (aim_sn_is_icq(gaim_account_get_username(account)) == FALSE )

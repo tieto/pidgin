@@ -2972,29 +2972,29 @@ novell_status_types(GaimAccount *account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, NULL, NULL, FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, NOVELL_STATUS_TYPE_AVAILABLE, _("Available"),
-										   TRUE, TRUE, FALSE,
-										   "message", _("Message"),	gaim_value_new(GAIM_TYPE_STRING),
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, NOVELL_STATUS_TYPE_AVAILABLE,
+										   NULL, TRUE, TRUE, FALSE,
+										   "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, NOVELL_STATUS_TYPE_AWAY, _("Away"),
-										   TRUE, TRUE, FALSE,
-										   "message", _("Message"),	gaim_value_new(GAIM_TYPE_STRING),
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, NOVELL_STATUS_TYPE_AWAY,
+										   NULL, TRUE, TRUE, FALSE,
+										   "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, NOVELL_STATUS_TYPE_BUSY, _("Busy"),
-										   TRUE, TRUE, FALSE,
-										   "message", _("Message"),	gaim_value_new(GAIM_TYPE_STRING),
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, NOVELL_STATUS_TYPE_BUSY,
+										   _("Busy"), TRUE, TRUE, FALSE,
+										   "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, NOVELL_STATUS_TYPE_APPEAR_OFFLINE, _("Appear Offline"),
-									 TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE, NOVELL_STATUS_TYPE_APPEAR_OFFLINE,
+										   NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;
@@ -3041,7 +3041,7 @@ novell_set_status(GaimAccount *account, GaimStatus *status)
 		novellstatus = NM_STATUS_AWAY;
 	} else if (primitive == GAIM_STATUS_UNAVAILABLE) {
 		novellstatus = NM_STATUS_BUSY;
-	} else if (primitive == GAIM_STATUS_HIDDEN) {
+	} else if (primitive == GAIM_STATUS_INVISIBLE) {
 		novellstatus = NM_STATUS_OFFLINE;
 	} else if (gaim_presence_is_idle(presence)) {
 		novellstatus = NM_STATUS_AWAY_IDLE;

@@ -163,17 +163,16 @@ static GList *irc_status_types(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline",
-								_("Offline"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, NULL, NULL, TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available",
-								_("Available"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
-		GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, FALSE,
-		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
+		GAIM_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+		NULL);
 	types = g_list_append(types, type);
 
 	return types;

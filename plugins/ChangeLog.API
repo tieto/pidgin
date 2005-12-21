@@ -25,6 +25,8 @@ version 2.0.0:
 	* gaim_conv_window_remove_conversation()'s last argument to be a
 	  GaimConversation.
 	* A new blocked icon: pixmaps/status/default/blocked.png
+	* In pixmaps/status/default: extendedaway.png renamed to extended_away.png
+	* In pixmaps/status/default: na.png renamed to unavailable.png
 	* gtk_imhtml_toggle_bold(): No longer returns a value
 	* gtk_imhtml_toggle_italic(): No longer returns a value
 	* gtk_imhtml_toggle_underline(): No longer returns a value

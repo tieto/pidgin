@@ -1343,23 +1343,19 @@ static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	 * 	The only valid status types are those defined
 	 * 	in prpl_info->status_types.
 	 *
-	 * Usable icons: away, blocked, dnd, extendedaway,
+	 * Usable icons: away, blocked, dnd, extended_away,
 	 * freeforchat, ignored, invisible, na, offline.
 	 */
 
 	if (!GAIM_BUDDY_IS_ONLINE(b)) {
 		*se = "offline";
-	} else if (gaim_presence_is_status_active(presence, "away")) {
+	} else if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)) {
 		*se = "away";
-	} else if (gaim_presence_is_status_active(presence, "available")) {
-		*se = "online";
-	} else if (gaim_presence_is_status_active(presence, "offline")) {
-		*se = "offline";
 	} else if (gaim_presence_is_status_active(presence, "blocked")) {
 		*se = "blocked";
 	} else {
 		*se = "offline";
-		gaim_debug_info("gg", "ggp_list_emblems: unknown status\n");
+		gaim_debug_error("gg", "ggp_list_emblems: unknown status\n");
 	}
 }
 /* }}} */
@@ -1428,33 +1424,38 @@ static GList *ggp_status_types(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline",
-			_("Offline"), TRUE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available",
-			_("Available"), TRUE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	/*
 	 * Without this selecting Invisible as own status doesn't
 	 * work. It's not used and not needed to show status of buddies.
 	 */
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_HIDDEN, "invisible",
-			_("Invisible"), TRUE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_INVISIBLE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
-			_("Busy"), TRUE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AWAY, "busy", _("Busy"), TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_HIDDEN, "blocked",
-			_("Blocked"), TRUE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	/* Why is blocked a status??? -- rlaager */
+	type = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	return types;

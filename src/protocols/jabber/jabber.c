@@ -964,11 +964,10 @@ static void jabber_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 			*se = "offline";
 	} else {
 		GaimStatusType *status_type = gaim_status_get_type(gaim_presence_get_active_status(gaim_buddy_get_presence(b)));
+		GaimStatusPrimitive primitive = gaim_status_type_get_primitive(status_type);
 
-		if(gaim_status_type_get_primitive(status_type) > GAIM_STATUS_AVAILABLE) {
+		if(primitive > GAIM_STATUS_AVAILABLE) {
 			*se = gaim_status_type_get_id(status_type);
-			if(!strcmp(*se, "xa"))
-				*se = "extendedaway";
 		}
 	}
 }
@@ -1083,49 +1082,61 @@ static GList *jabber_status_types(GaimAccount *account)
 	GList *types = NULL;
 	GaimValue *priority_value;
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline",
-			_("Offline"), FALSE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
+			NULL, FALSE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = gaim_value_new(GAIM_TYPE_INT);
 	gaim_value_set_int(priority_value, 1);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available",
-			_("Available"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			priority_value, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_ONLINE),
+			NULL, TRUE, TRUE, FALSE,
+			"priority", _("Priority"), priority_value,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = gaim_value_new(GAIM_TYPE_INT);
 	gaim_value_set_int(priority_value, 1);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "chat",
-			_("Chatty"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			priority_value, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_CHAT),
+			_("Chatty"), TRUE, TRUE, FALSE,
+			"priority", _("Priority"), priority_value,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = gaim_value_new(GAIM_TYPE_INT);
 	gaim_value_set_int(priority_value, 0);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
-			_("Away"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			priority_value, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_AWAY),
+			NULL, TRUE, TRUE, FALSE,
+			"priority", _("Priority"), priority_value,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = gaim_value_new(GAIM_TYPE_INT);
 	gaim_value_set_int(priority_value, 0);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY, "xa",
-			_("Extended Away"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			priority_value, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_XA),
+			NULL, TRUE, TRUE, FALSE,
+			"priority", _("Priority"), priority_value,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	priority_value = gaim_value_new(GAIM_TYPE_INT);
 	gaim_value_set_int(priority_value, 0);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, "dnd",
-			_("Do Not Disturb"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			priority_value, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_DND),
+			_("Do Not Disturb"), TRUE, TRUE, FALSE,
+			"priority", _("Priority"), priority_value,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, type);
 
 	/*

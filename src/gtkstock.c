@@ -272,6 +272,9 @@ gaim_gtk_stock_init(void)
 	gtk_icon_size_register(GAIM_ICON_SIZE_LOGO, 330, 90);
 	gtk_icon_size_register(GAIM_ICON_SIZE_DIALOG_COOL, 40, 60);
 	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS, 30, 30);
+	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_TWO_LINE, 30, 30);
+	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_SMALL, 16, 16);
+	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE, 24, 24);
 
 	g_object_unref(G_OBJECT(icon_factory));
 

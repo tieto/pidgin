@@ -1599,10 +1599,7 @@ gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *stat
 	/* TODO: let the prpl pick the emblem on a per status basis, and only
 	 * use the primitive as a fallback */
 	type_name = gaim_primitive_get_id_from_type(gaim_status_type_get_primitive(status_type));
-	if (!strcmp(type_name, "hidden"))
-		type_name = "invisible";
-	else if (!strcmp(type_name, "unavailable"))
-		type_name = "na";
+
 	g_snprintf(basename2, sizeof(basename2), "%s.png",
 	           type_name);
 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default",

@@ -100,9 +100,10 @@ typedef enum
 	GAIM_STATUS_OFFLINE,
 	GAIM_STATUS_AVAILABLE,
 	GAIM_STATUS_UNAVAILABLE,
-	GAIM_STATUS_HIDDEN,
+	GAIM_STATUS_INVISIBLE,
 	GAIM_STATUS_AWAY,
 	GAIM_STATUS_EXTENDED_AWAY,
+	GAIM_STATUS_MOBILE,
 	GAIM_STATUS_NUM_PRIMITIVES
 
 } GaimStatusPrimitive;
@@ -113,7 +114,7 @@ typedef enum
 #include "value.h"
 
 /**************************************************************************/
-/** @name GaimStatusPrimtive API                                          */
+/** @name GaimStatusPrimitive API                                         */
 /**************************************************************************/
 /*@{*/
 
@@ -159,8 +160,10 @@ GaimStatusPrimitive gaim_primitive_get_type_from_id(const char *id);
  * Creates a new status type.
  *
  * @param primitive     The primitive status type.
- * @param id            The ID of the status type.
- * @param name          The name presented to the user.
+ * @param id            The ID of the status type, or @c NULL to use the id of
+ *                      the primitive status type.
+ * @param name          The name presented to the user, or @c NULL to use the
+ *                      name of the primitive status type.
  * @param saveable      TRUE if the information set for this status by the
  *                      user can be saved for future sessions.
  * @param user_settable TRUE if this is a status the user can manually set.
@@ -180,8 +183,10 @@ GaimStatusType *gaim_status_type_new_full(GaimStatusPrimitive primitive,
  * savable and not independent).
  *
  * @param primitive     The primitive status type.
- * @param id            The ID of the status type.
- * @param name          The name presented to the user.
+ * @param id            The ID of the status type, or @c NULL to use the id of
+ *                      the primitive status type.
+ * @param name          The name presented to the user, or @c NULL to use the
+ *                      name of the primitive status type.
  * @param user_settable TRUE if this is a status the user can manually set.
  *
  * @return A new status type.
@@ -194,8 +199,10 @@ GaimStatusType *gaim_status_type_new(GaimStatusPrimitive primitive,
  * Creates a new status type with attributes.
  *
  * @param primitive     The primitive status type.
- * @param id            The ID of the status type.
- * @param name          The name presented to the user.
+ * @param id            The ID of the status type, or @c NULL to use the id of
+ *                      the primitive status type.
+ * @param name          The name presented to the user, or @c NULL to use the
+ *                      name of the primitive status type.
  * @param saveable      TRUE if the information set for this status by the
  *                      user can be saved for future sessions.
  * @param user_settable TRUE if this is a status the user can manually set.
@@ -343,7 +350,7 @@ gboolean gaim_status_type_is_exclusive(const GaimStatusType *status_type);
 /**
  * Returns whether or not a status type is available.
  *
- * Available status types are online and possibly hidden, but not away.
+ * Available status types are online and possibly invisible, but not away.
  *
  * @param status_type The status type.
  *
@@ -608,7 +615,7 @@ gboolean gaim_status_is_exclusive(const GaimStatus *status);
 /**
  * Returns whether or not a status is available.
  *
- * Available statuses are online and possibly hidden, but not away or idle.
+ * Available statuses are online and possibly invisible, but not away or idle.
  *
  * This is a convenience method for
  * gaim_status_type_is_available(gaim_status_get_type(status)).
@@ -898,7 +905,7 @@ GaimStatus *gaim_presence_get_active_status(const GaimPresence *presence);
 /**
  * Returns whether or not a presence is available.
  *
- * Available presences are online and possibly hidden, but not away or idle.
+ * Available presences are online and possibly invisible, but not away or idle.
  *
  * @param presence The presence.
  *

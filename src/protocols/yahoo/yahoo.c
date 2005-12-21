@@ -3199,17 +3199,17 @@ static GList *yahoo_status_types(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, _("Offline"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, NULL, TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE,
-	                                       "Available", TRUE, TRUE, FALSE,
+	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
 	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
-	                                       _("Away"), TRUE, TRUE, FALSE,
+	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
 	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
@@ -3217,7 +3217,7 @@ static GList *yahoo_status_types(GaimAccount *account)
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not at Home"), TRUE);
@@ -3229,10 +3229,10 @@ static GList *yahoo_status_types(GaimAccount *account)
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTINOFFICE, _("Not in Office"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONPHONE, _("On the Phone"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_ONPHONE, _("On the Phone"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_EXTENDED_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_OUTTOLUNCH, _("Out to Lunch"), TRUE);
@@ -3242,7 +3242,7 @@ static GList *yahoo_status_types(GaimAccount *account)
 	types = g_list_append(types, type);
 
 
-	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, YAHOO_STATUS_TYPE_INVISIBLE, _("Invisible"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, YAHOO_STATUS_TYPE_INVISIBLE, NULL, TRUE);
 	types = g_list_append(types, type);
 
 	return types;
