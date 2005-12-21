@@ -429,9 +429,7 @@ gaim_status_type_is_available(const GaimStatusType *status_type)
 
 	primitive = gaim_status_type_get_primitive(status_type);
 
-	/* Why does "hidden" mean the person is available? */
-	return (primitive == GAIM_STATUS_AVAILABLE ||
-			primitive == GAIM_STATUS_HIDDEN);
+	return (primitive == GAIM_STATUS_AVAILABLE);
 }
 
 const char *
