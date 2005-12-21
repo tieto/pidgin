@@ -591,7 +591,7 @@ gaim_gtk_request_add_permit(GaimAccount *account, const char *name)
 			_("Please enter the name of the user you wish to be "
 			  "able to contact you."),
 			NULL, FALSE, FALSE, NULL,
-			_("Permit"), G_CALLBACK(add_permit_block_cb),
+			_("_Permit"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
 			data);
 	}
@@ -604,7 +604,7 @@ gaim_gtk_request_add_permit(GaimAccount *account, const char *name)
 
 		gaim_request_action(account, _("Permit User"), primary, secondary,
 							0, data, 2,
-							_("Permit"), G_CALLBACK(confirm_permit_block_cb),
+							_("_Permit"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
 
 		g_free(primary);
@@ -629,7 +629,7 @@ gaim_gtk_request_add_block(GaimAccount *account, const char *name)
 			_("Type a user to block."),
 			_("Please enter the name of the user you wish to block."),
 			NULL, FALSE, FALSE, NULL,
-			_("Block"), G_CALLBACK(add_permit_block_cb),
+			_("_Block"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
 			data);
 	}
@@ -640,7 +640,7 @@ gaim_gtk_request_add_block(GaimAccount *account, const char *name)
 
 		gaim_request_action(account, _("Block User"), primary, secondary,
 							0, data, 2,
-							_("Block"), G_CALLBACK(confirm_permit_block_cb),
+							_("_Block"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
 
 		g_free(primary);

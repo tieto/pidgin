@@ -316,8 +316,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE,
 				jap, 2,
-				_("Authorize"), G_CALLBACK(authorize_add_cb),
-				_("Deny"), G_CALLBACK(deny_add_cb));
+				_("_Authorize"), G_CALLBACK(authorize_add_cb),
+				_("_Deny"), G_CALLBACK(deny_add_cb));
 		g_free(msg);
 		jabber_id_free(jid);
 		return;
@@ -377,9 +377,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 								_("Create New Room"),
 								_("You are creating a new room.  Would you like to "
 									"configure it, or accept the default settings?"),
-								1, chat, 2, _("Configure Room"),
+								1, chat, 2, _("_Configure Room"),
 								G_CALLBACK(jabber_chat_request_room_configure),
-								_("Accept Defaults"),
+								_("_Accept Defaults"),
 								G_CALLBACK(jabber_chat_create_instant_room));
 					}
 				}

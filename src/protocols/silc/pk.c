@@ -116,7 +116,7 @@ static void silcgaim_verify_ask(const char *entity,
 						GAIM_DEFAULT_ACTION_NONE, verify, 3,
 			    _("Yes"), G_CALLBACK(silcgaim_verify_cb),
 			    _("No"), G_CALLBACK(silcgaim_verify_cb),
-			    _("View..."), G_CALLBACK(silcgaim_verify_details));
+			    _("_View..."), G_CALLBACK(silcgaim_verify_details));
 }
 
 void silcgaim_verify_public_key(SilcClient client, SilcClientConnection conn,

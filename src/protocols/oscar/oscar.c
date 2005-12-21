@@ -1580,7 +1580,7 @@ static void oscar_ask_direct_im(GaimBlistNode *node, gpointer ignored) {
 			  "may be considered a privacy risk.  Do you "
 			  "wish to continue?"),
 			0, data, 2,
-			_("Connect"), G_CALLBACK(oscar_direct_im),
+			_("_Connect"), G_CALLBACK(oscar_direct_im),
 			_("Cancel"), G_CALLBACK(oscar_cancel_direct_im));
 	g_free(buf);
 }
@@ -4345,8 +4345,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 							  "Images.  Because your IP address will be "
 							  "revealed, this may be considered a privacy "
 							    "risk."),
--							GAIM_DEFAULT_ACTION_NONE, d, 2,
-							_("Connect"), G_CALLBACK(accept_direct_im_request),
+							GAIM_DEFAULT_ACTION_NONE, d, 2,
+							_("_Connect"), G_CALLBACK(accept_direct_im_request),
 							_("Cancel"), G_CALLBACK(destroy_direct_im_request));
 							/* FIXME: we should actually send a packet on cancel */
 		}
@@ -4425,7 +4425,7 @@ static void gaim_auth_sendrequest(GaimConnection *gc, char *name) {
 
 	gaim_request_action(gc, NULL, _("Request Authorization"), dialog_msg,
 						0, data, 2,
-						_("Request Authorization"),
+						_("_Request Authorization"),
 						G_CALLBACK(gaim_auth_request_msgprompt),
 						_("Cancel"), G_CALLBACK(gaim_auth_dontrequest));
 
@@ -4587,9 +4587,9 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 				gaim_request_action(gc, NULL, _("Authorization Request"),
 									dialog_msg, GAIM_DEFAULT_ACTION_NONE, data,
-									2, _("Authorize"),
+									2, _("_Authorize"),
 									G_CALLBACK(gaim_auth_grant),
-									_("Deny"),
+									_("_Deny"),
 									G_CALLBACK(gaim_auth_dontgrant_msgprompt));
 				g_free(dialog_msg);
 			}
@@ -4660,7 +4660,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 										  "to your buddy list?"),
 										GAIM_DEFAULT_ACTION_NONE, data, 2,
 										_("Add"), G_CALLBACK(gaim_icq_buddyadd),
-										_("Decline"), G_CALLBACK(oscar_free_name_data));
+										_("_Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
 				}
 				g_strfreev(text);
@@ -7277,8 +7277,8 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	gaim_request_action(gc, NULL, _("Authorization Request"), dialog_msg,
 						GAIM_DEFAULT_ACTION_NONE, data, 2,
-						_("Authorize"), G_CALLBACK(gaim_auth_grant),
-						_("Deny"), G_CALLBACK(gaim_auth_dontgrant_msgprompt));
+						_("_Authorize"), G_CALLBACK(gaim_auth_grant),
+						_("_Deny"), G_CALLBACK(gaim_auth_dontgrant_msgprompt));
 
 	g_free(dialog_msg);
 	g_free(nombre);

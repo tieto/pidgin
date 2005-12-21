@@ -1041,7 +1041,7 @@ silcgaim_add_buddy_ask_pk(SilcGaimBuddyRes r)
 			    _("To add the buddy you must import his/her public key. "
 			      "Press Import to import a public key."), 0, r, 2,
 			    _("Cancel"), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb),
-			    _("Import..."), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb));
+			    _("_Import..."), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb));
 }
 
 static void

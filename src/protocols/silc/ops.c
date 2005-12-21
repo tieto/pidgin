@@ -1295,7 +1295,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("User Information"),
 						buf, 1, client_entry, 2,
 						_("OK"), G_CALLBACK(silcgaim_whois_more),
-						_("More..."), G_CALLBACK(silcgaim_whois_more));
+						_("_More..."), G_CALLBACK(silcgaim_whois_more));
 			else
 #endif
 			gaim_notify_userinfo(gc, client_entry->nickname, buf, NULL, NULL);
