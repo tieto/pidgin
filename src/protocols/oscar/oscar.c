@@ -1636,8 +1636,8 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					!(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS)))
 				{
-					gaim_debug_error("oscar", "Major connection error.  i.e. "
-						"invalid data was received on the oscar TCP stream\n");
+					gaim_debug_error("oscar", "Major connection error "
+						"(invalid data was received on the oscar TCP stream).\n");
 					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *cc = find_oscar_chat_by_conn(gc, conn);
