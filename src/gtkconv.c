@@ -5506,10 +5506,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
+	gdk_pixbuf_loader_close(loader, &err);
 	anim = gdk_pixbuf_loader_get_animation(loader);
 	if (anim)
 		g_object_ref(G_OBJECT(anim));
-	gdk_pixbuf_loader_close(loader, &err);
 	g_object_unref(loader);
 
 	if (!anim)

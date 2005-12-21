@@ -573,11 +573,11 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		gdk_pixbuf_loader_write(loader, data, st.st_size, NULL);
 		g_free(data);
 	}
+	gdk_pixbuf_loader_close(loader, NULL);
 	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
 	width = gdk_pixbuf_get_width(pixbuf);
 	height = gdk_pixbuf_get_height(pixbuf);
 	format = gdk_pixbuf_loader_get_format(loader);
-	gdk_pixbuf_loader_close(loader, NULL);
 	g_object_unref(G_OBJECT(loader));
 #endif
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
