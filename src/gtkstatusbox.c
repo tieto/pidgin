@@ -593,6 +593,7 @@ buddy_list_details_pref_changed_cb(const char *name, GaimPrefType type,
 
 	cache_pixbufs(status_box);
 	gtk_gaim_status_box_regenerate(status_box);
+	update_size(status_box);
 }
 
 #if 0
