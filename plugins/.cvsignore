@@ -6,3 +6,4 @@ Makefile.in
 *.dll
 *.la
 *.lo
+dbus-example-bindings.c

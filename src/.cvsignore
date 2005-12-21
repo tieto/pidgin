@@ -9,8 +9,10 @@ gaim
 gaim.def
 gaim.lib
 gaim.dll
+gaim.service
 gaim-client-bindings.*
 gaim-client-example
 .*.swp
+*.la
 *.lo
 *.o
