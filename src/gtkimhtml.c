@@ -4034,6 +4034,17 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 	g_slist_free(tags);
 }
 
+static void imhtml_emit_signal_for_format(GtkIMHtml *imhtml, GtkIMHtmlButtons button)
+{
+	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button);
+	g_object_unref(object);
+}
+
 static void imhtml_toggle_bold(GtkIMHtml *imhtml)
 {
 	GtkTextIter start, end;
@@ -4057,13 +4068,7 @@ static void imhtml_toggle_bold(GtkIMHtml *imhtml)
 
 void gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 {
-	GObject *object;
-
-	g_return_if_fail(imhtml != NULL);
-
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
-	g_object_unref(object);
+	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_BOLD);
 }
 
 static void imhtml_toggle_italic(GtkIMHtml *imhtml)
@@ -4088,13 +4093,8 @@ static void imhtml_toggle_italic(GtkIMHtml *imhtml)
 
 void gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 {
-	GObject *object;
-
-	g_return_if_fail(imhtml != NULL);
-
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_ITALIC);
-	g_object_unref(object);}
+	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_ITALIC);
+}
 
 static void imhtml_toggle_underline(GtkIMHtml *imhtml)
 {
@@ -4118,13 +4118,7 @@ static void imhtml_toggle_underline(GtkIMHtml *imhtml)
 
 void gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 {
-	GObject *object;
-
-	g_return_if_fail(imhtml != NULL);
-
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_UNDERLINE);
-	g_object_unref(object);
+	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_UNDERLINE);
 }
 
 static void imhtml_toggle_strike(GtkIMHtml *imhtml)
@@ -4149,13 +4143,7 @@ static void imhtml_toggle_strike(GtkIMHtml *imhtml)
 
 void gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
 {
-	GObject *object;
-
-	g_return_if_fail(imhtml != NULL);
-
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_STRIKE);
-	g_object_unref(object);
+	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_STRIKE);
 }
 
 void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
@@ -4207,13 +4195,7 @@ static void imhtml_font_shrink(GtkIMHtml *imhtml)
 
 void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
 {
-	GObject *object;
-
-	g_return_if_fail(imhtml != NULL);
-
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK);
-	g_object_unref(object);
+	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_SHRINK);
 }
 
 static void imhtml_font_grow(GtkIMHtml *imhtml)
@@ -4242,13 +4224,7 @@ static void imhtml_font_grow(GtkIMHtml *imhtml)
 
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 {
-	GObject *object;
-
-	g_return_if_fail(imhtml != NULL);
-
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_GROW);
-	g_object_unref(object);
+	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_GROW);
 }
 
 #define gtk_imhtml_toggle_str_tag(imhtml, color, edit_field, remove_func, find_func, button) { \
