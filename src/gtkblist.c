@@ -3441,17 +3441,8 @@ static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 {
 	if (!gtkblist)
 		return;
-	
+
 	update_menu_bar(gtkblist);
-}
-
-static gboolean
-pane_position_cb(GtkPaned *paned, GParamSpec *param_spec, gpointer data)
-{
-	gaim_prefs_set_int("/gaim/gtk/blist/pane",
-	                   gtk_paned_get_position(paned));
-
-	return FALSE;
 }
 
 static gboolean
@@ -4991,7 +4982,6 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/width", 309); /* Golden ratio, baby */
 	gaim_prefs_add_int("/gaim/gtk/blist/height", 500); /* Golden ratio, baby */
-	gaim_prefs_add_int("/gaim/gtk/blist/pane", 300);
 	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */
