@@ -1044,7 +1044,8 @@ static void update_size(GtkGaimStatusBox *status_box)
 
 	if (!status_box->imhtml_visible)
 	{
-		gtk_widget_set_size_request(status_box->vbox, -1, -1);
+		if (status_box->vbox != NULL)
+			gtk_widget_set_size_request(status_box->vbox, -1, -1);
 		return;
 	}
 
@@ -1078,7 +1079,7 @@ static void update_size(GtkGaimStatusBox *status_box)
 		height += requisition.height;
 	}
 
-	gtk_widget_set_size_request(GTK_WIDGET(status_box->vbox), -1, height);
+	gtk_widget_set_size_request(status_box->vbox, -1, height);
 }
 
 static void remove_typing_cb(GtkGaimStatusBox *status_box)
