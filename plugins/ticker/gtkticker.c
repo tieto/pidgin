@@ -65,7 +65,8 @@ GType gtk_ticker_get_type (void)
 			NULL,
 			sizeof(GtkTicker),
 			0,
-			(GInstanceInitFunc) gtk_ticker_init
+			(GInstanceInitFunc) gtk_ticker_init,
+			NULL
 		};
 
 		ticker_type = g_type_register_static (GTK_TYPE_CONTAINER, "GtkTicker",

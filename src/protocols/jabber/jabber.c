@@ -1733,7 +1733,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* can_receive_file */
 	jabber_si_xfer_send,			/* send_file */
 	jabber_si_new_xfer,				/* new_xfer */
-	NULL							/* whiteboard operations */
+	NULL,							/* whiteboard_prpl_ops */
+	NULL,							/* media_prpl_ops */
 };
 
 static GaimPluginInfo info =

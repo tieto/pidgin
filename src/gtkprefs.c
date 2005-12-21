@@ -366,7 +366,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	const char *themename;
 	char *description;
-	GValue val = { 0, };
+	GValue val;
 	GtkTreePath *path, *oldpath;
 	struct smiley_theme *new_theme, *old_theme;
 
@@ -374,6 +374,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 		return;
 
 	old_theme = current_smiley_theme;
+	val.g_type = 0;
 	gtk_tree_model_get_value(model, &iter, 3, &val);
 	path = gtk_tree_model_get_path(model, &iter);
 	themename = g_value_get_string(&val);
@@ -1430,12 +1431,14 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
-	GValue val = { 0, };
+	GValue val;
 	const char *file;
 	char *pref;
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
+
+	val.g_type = 0;
 	gtk_tree_model_get_value (model, &iter, 3, &val);
 	sound_row_sel = g_value_get_uint(&val);
 

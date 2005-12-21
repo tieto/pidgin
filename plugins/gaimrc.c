@@ -545,7 +545,8 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 
 static GaimGtkPluginUiInfo gaimrc_ui_info =
 {
-	gaimrc_get_config_frame
+	gaimrc_get_config_frame,
+	0 /* page_num (Reserved) */
 };
 
 static GaimPluginInfo gaimrc_info =

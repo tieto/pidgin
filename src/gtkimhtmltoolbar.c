@@ -1086,7 +1086,8 @@ GType gtk_imhtmltoolbar_get_type()
 			NULL,
 			sizeof (GtkIMHtmlToolbar),
 			0,
-			(GInstanceInitFunc) gtk_imhtmltoolbar_init
+			(GInstanceInitFunc) gtk_imhtmltoolbar_init,
+			NULL
 		};
 
 		imhtmltoolbar_type = g_type_register_static(GTK_TYPE_HBOX,

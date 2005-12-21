@@ -8519,12 +8519,14 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_can_receive_file,	/* can_receive_file */
 	oscar_send_file,		/* send_file */
 	oscar_new_xfer,			/* new_xfer */
-	NULL,					/* whiteboard ops */
- 	NULL					/* media ops */
+	NULL,					/* whiteboard_prpl_ops */
+ 	NULL,					/* media_prpl_ops */
 };
 
 static GaimPluginUiInfo prefs_info = {
-	get_plugin_pref_frame
+	get_plugin_pref_frame,
+	0,   /* page_num (Reserved) */
+	NULL /* frame (Reserved) */
 };
 
 static GaimPluginInfo info =

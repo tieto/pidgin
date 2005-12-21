@@ -236,7 +236,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	gchar *buf, *pname, *pdesc, *pauth, *pweb;
 	GtkTreeIter  iter;
-	GValue val = { 0, };
+	GValue val;
 	GaimPlugin *plug;
 
 	if (!gtk_tree_selection_get_selected (sel, &model, &iter))
@@ -254,6 +254,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 	gtk_widget_set_sensitive(expander, TRUE);
 
+	val.g_type = 0;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
 
@@ -298,7 +299,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	GaimPlugin *plug;
 	GtkWidget *dialog, *box;
 	GtkTreeModel *model;
-	GValue val = { 0, };
+	GValue val;
 	GtkTreeIter iter;
 
 	switch (response) {
@@ -314,7 +315,8 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	case GAIM_RESPONSE_CONFIGURE:
 		if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 			return;
-		gtk_tree_model_get_value (model, &iter, 2, &val);
+		val.g_type = 0;
+		gtk_tree_model_get_value(model, &iter, 2, &val);
 		plug = g_value_get_pointer(&val);
 		if (plug == NULL)
 			break;

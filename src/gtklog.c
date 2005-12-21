@@ -175,7 +175,7 @@ static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeView
 
 static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	GtkTreeIter   iter;
-	GValue val = { 0, };
+	GValue val;
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
 	GaimLog *log = NULL;
 	GdkCursor *cursor;
@@ -185,6 +185,8 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 
 	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
 		return;
+
+	val.g_type = 0;
 	gtk_tree_model_get_value (model, &iter, 1, &val);
 	log = g_value_get_pointer(&val);
 	g_value_unset(&val);

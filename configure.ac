@@ -329,7 +329,7 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
-AC_ARG_ENABLE(mono,    [  --enable-mono          compile with Mono runtime support],,enable_mono=no)
+AC_ARG_ENABLE(mono,    [  --enable-mono           compile with Mono runtime support],,enable_mono=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(tcl,     [  --disable-tcl           compile without Tcl scripting],,enable_tcl=yes)
@@ -338,12 +338,14 @@ AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support fo
 AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
+AC_ARG_ENABLE(fatal-asserts,   [  --enable-fatal-asserts  make assertions fatal (useful for debugging)],,enable_fatal_asserts=no)
 dnl We know Gaim won't compile with deprecated APIs disabled.
 dnl We have no desire to support two different versions of the
 dnl same code when it's not necessary, so we're sticking with
 dnl the deprecated APIs in many cases.
 dnl This option is being left in case things change.
 dnl AC_ARG_ENABLE(deprecated,    [  --disable-deprecated    compile without deprecated API usage],,enable_deprecated=yes)
+AC_ARG_ENABLE(fortify, [  --disable-fortify       compile without FORTIFY_SOURCE support],,enable_fortify=yes)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
@@ -353,72 +355,69 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
-if test "$enable_debug" = yes ; then
+if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+fi
 
-	if test "x$GCC" = "xyes"; then
+if test "x$enable_fatal_asserts" = "xyes" ; then
+	AC_DEFINE(GAIM_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
+fi
 
-		dnl We enable -Wall later, regardless of --enable-debug.
-		dnl If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.
-		dnl This leads to warnings we don't want.
-		CFLAGS=`echo $CFLAGS |$sedpath 's/-Wall//'`
+if test "x$enable_deprecated" = "xno"; then
+	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+fi
 
-		dnl ENABLE WARNINGS SUPPORTED BY THE VERSION OF GCC IN USE
-		dnl
-		dnl Future Possibilities
-		dnl
-		dnl Consider adding -Wbad-function-cast.
-		dnl	This leads to spurious warnings using GPOINTER_TO_INT(), et al. directly on a function call.
-		dnl		We'd need an intermediate variable.
-		dnl
-		dnl Consider adding -Wfloat-equal.
-		dnl	This leads to warnings with Perl.
-		dnl 		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
-		dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
-		dnl
-		dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
-		dnl	This is likely non-trivial.
-		dnl
-		dnl Remove -Wno-missing-field-initializers (from the -Wextra set)
-		dnl	This leads to warnings with: GValue v = {0,}; that must be worked around.
-		dnl		Basically, instead of:
-		dnl			GValue v = {0,};
-		dnl			...
-		dnl			g_value_init(&v, G_TYPE_FOO);
-		dnl		We'd need to do:
-		dnl			GValue v;
-		dnl			...
-		dnl			v.g_type = 0;
-		dnl			g_value_init(&v, G_TYPE_FOO);
-		dnl
-		for newflag in \
-				"-Waggregate-return" \
-				"-Wcast-align" \
-				"-Wdeclaration-after-statement" \
-				"-Werror-implicit-function-declaration" \
-				"-Wextra -Wno-sign-compare -Wno-missing-field-initializers -Wno-unused-parameter" \
-				"-Winit-self" \
-				"-Wmissing-declarations" \
-				"-Wmissing-prototypes" \
-				"-Wnested-externs" \
-				"-Wpointer-arith" \
-				"-Wundef" \
-		; do
-			orig_CFLAGS="$CFLAGS"
-			CFLAGS="$CFLAGS $newflag"
-			AC_MSG_CHECKING(for $newflag option to gcc)
-			AC_TRY_COMPILE([], [
-				int main() {return 0;}
-			], [
-				AC_MSG_RESULT(yes)
-				CFLAGS="$orig_CFLAGS"
-				DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
-			], [
-				AC_MSG_RESULT(no)
-				CFLAGS="$orig_CFLAGS"
-			])
-		done
+if test "x$GCC" = "xyes"; then
+	dnl We enable -Wall later.
+	dnl If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.
+	dnl This leads to warnings we don't want.
+	CFLAGS=`echo $CFLAGS |$sedpath 's/-Wall//'`
 
+	dnl ENABLE WARNINGS SUPPORTED BY THE VERSION OF GCC IN USE
+	dnl
+	dnl Future Possibilities
+	dnl
+	dnl Consider adding -Wbad-function-cast.
+	dnl	This leads to spurious warnings using GPOINTER_TO_INT(), et al. directly on a function call.
+	dnl		We'd need an intermediate variable.
+	dnl
+	dnl Consider adding -Wfloat-equal.
+	dnl	This leads to warnings with Perl.
+	dnl 		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
+	dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
+	dnl
+	dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
+	dnl	This is likely non-trivial.
+	dnl
+	for newflag in \
+			"-Waggregate-return" \
+			"-Wcast-align" \
+			"-Wdeclaration-after-statement" \
+			"-Werror-implicit-function-declaration" \
+			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
+			"-Winit-self" \
+			"-Wmissing-declarations" \
+			"-Wmissing-prototypes" \
+			"-Wnested-externs" \
+			"-Wpointer-arith" \
+			"-Wundef" \
+	; do
+		orig_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $newflag"
+		AC_MSG_CHECKING(for $newflag option to gcc)
+		AC_TRY_COMPILE([], [
+			int main() {return 0;}
+		], [
+			AC_MSG_RESULT(yes)
+			CFLAGS="$orig_CFLAGS"
+			DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
+		], [
+			AC_MSG_RESULT(no)
+			CFLAGS="$orig_CFLAGS"
+		])
+	done
+
+	if test "x$enable_fortify" = "xyes"; then
 		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
 		AC_TRY_COMPILE([#include <features.h>], [
 			int main() {
@@ -438,15 +437,8 @@ if test "$enable_debug" = yes ; then
 		], [
 			AC_MSG_RESULT(no)
 		])
-
 	fi
-fi
 
-if test "x$enable_deprecated" = "xno"; then
-	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
-fi
-
-if test "x$GCC" = "xyes"; then
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
@@ -1410,7 +1402,7 @@ dnl checks for jabber
 dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
 AC_SUBST(SASL_LIBS)
-AC_ARG_ENABLE(cyrus-sasl, AC_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd (no)]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
+AC_ARG_ENABLE(cyrus-sasl, AC_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
 if test "x-$enable_cyrus_sasl" = "x-yes" ; then
   AC_CHECK_LIB(sasl2, sasl_client_init, [AC_DEFINE(HAVE_CYRUS_SASL, [1], [Define to 1 if Cyrus SASL is present]) SASL_LIBS=-"lsasl2"], [AC_ERROR(Cyrus SASL library not found)])
 fi

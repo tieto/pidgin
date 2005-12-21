@@ -1947,7 +1947,7 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
 		GaimAccount *account = NULL;
-		GValue val = {0};
+		GValue val;
 
 		ref = g_object_get_data(G_OBJECT(ctx), "gtk-tree-view-source-row");
 		source_row = gtk_tree_row_reference_get_path(ref);
@@ -1957,6 +1957,7 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter,
 								source_row);
+		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model), &iter,
 								 COLUMN_DATA, &val);
 
@@ -2025,9 +2026,10 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 
 			GtkTreeIter iter;
 			GaimAccount *account;
-			GValue val = {0};
+			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
+			val.g_type = 0;
 			gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model), &iter,
 									 COLUMN_DATA, &val);
 

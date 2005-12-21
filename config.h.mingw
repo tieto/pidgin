@@ -25,6 +25,9 @@
    language is requested. */
 #define ENABLE_NLS 1
 
+/* Define to make assertions fatal (useful for debugging). */
+/* #undef GAIM_FATAL_ASSERTS */
+
 /* Define if plugins are enabled. */
 #define GAIM_PLUGINS 1
 

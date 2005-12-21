@@ -166,7 +166,7 @@ join_button_data_change_cb(gpointer data) {
 static void
 selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 	GtkTreeIter iter;
-	GValue val = { 0, };
+	GValue val;
 	GaimRoomlistRoom *room;
 	static struct _menu_cb_info *info;
 	GaimGtkRoomlistDialog *dialog;
@@ -174,6 +174,7 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 	dialog = grl->dialog;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
+		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 		room = g_value_get_pointer(&val);
 		if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM)) {
@@ -217,10 +218,11 @@ static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColu
 	GaimGtkRoomlist *grl = list->ui_data;
 	GtkTreeIter iter;
 	GaimRoomlistRoom *room;
-	GValue val = { 0, };
+	GValue val;
 	struct _menu_cb_info info;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(grl->model), &iter, path);
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
 	if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM))
@@ -236,7 +238,7 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 {
 	GtkTreePath *path;
 	GaimGtkRoomlist *grl = list->ui_data;
-	GValue val = { 0, };
+	GValue val;
 	GaimRoomlistRoom *room;
 	GtkTreeIter iter;
 	GtkWidget *menu;
@@ -250,6 +252,7 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(grl->model), &iter, path);
 	gtk_tree_path_free(path);
+	val.g_type = 0;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
 
@@ -275,8 +278,9 @@ static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePat
 {
 	GaimRoomlist *list = user_data;
 	GaimRoomlistRoom *category;
-	GValue val = { 0, };
+	GValue val;
 
+	val.g_type = 0;
 	gtk_tree_model_get_value(gtk_tree_view_get_model(treeview), arg1, ROOM_COLUMN, &val);
 	category = g_value_get_pointer(&val);
 

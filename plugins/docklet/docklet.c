@@ -589,7 +589,8 @@ plugin_config_frame(GaimPlugin *plugin)
 
 static GaimGtkPluginUiInfo ui_info =
 {
-	plugin_config_frame
+	plugin_config_frame,
+	0 /* page_num (Reserved) */
 };
 
 static GaimPluginInfo info =

@@ -1896,7 +1896,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* roomlist_expand_category */
 	msn_can_receive_file,	/* can_receive_file */
 	msn_send_file,			/* send_file */
-	msn_new_xfer			/* new_xfer */
+	msn_new_xfer,			/* new_xfer */
+	NULL,					/* whiteboard_prpl_ops */
+	NULL,					/* media_prpl_ops */
 };
 
 static GaimPluginInfo info =

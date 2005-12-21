@@ -294,12 +294,13 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 {
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	GValue val = {0,};
+	GValue val;
 	GaimBlistNode *node;
 
 	path = gtk_tree_path_new_from_string (arg1);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_path_free (path);
+	val.g_type = 0;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), TRUE);
@@ -737,8 +738,9 @@ gaim_gtk_blist_joinchat_show(void)
 
 static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
 	GaimBlistNode *node;
-	GValue val = {0,};
+	GValue val;
 
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
 
 	node = g_value_get_pointer(&val);
@@ -750,8 +752,9 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 
 static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
 	GaimBlistNode *node;
-	GValue val = {0,};
+	GValue val;
 
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), iter, NODE_COLUMN, &val);
 
 	node = g_value_get_pointer(&val);
@@ -766,10 +769,11 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
 	GaimBlistNode *node;
 	GtkTreeIter iter;
-	GValue val = { 0, };
+	GValue val;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 
+	val.g_type = 0;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
@@ -1076,7 +1080,7 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 static gboolean
 gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 	GaimBlistNode *node;
-	GValue val = { 0, };
+	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 
@@ -1084,6 +1088,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
 			NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
@@ -1309,7 +1314,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 {
 	GtkTreePath *path;
 	GaimBlistNode *node;
-	GValue val = { 0, };
+	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 	GaimPlugin *prpl = NULL;
@@ -1321,6 +1326,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 	gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
@@ -1381,7 +1387,7 @@ static gboolean
 gaim_gtk_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 {
 	GaimBlistNode *node;
-	GValue val = { 0, };
+	GValue val;
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
 	gboolean handled = FALSE;
@@ -1390,6 +1396,7 @@ gaim_gtk_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 	if (!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel),
 							 &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
@@ -1639,10 +1646,11 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 		GtkTreePath *sourcerow = gtk_tree_row_reference_get_path(ref);
 		GtkTreeIter iter;
 		GaimBlistNode *node = NULL;
-		GValue val = {0};
+		GValue val;
 		if(!sourcerow)
 			return;
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, sourcerow);
+		val.g_type = 0;
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 		node = g_value_get_pointer(&val);
 		gtk_selection_data_set (data,
@@ -1661,7 +1669,7 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 		GaimBlistNode *node = NULL;
 		GaimBuddy *buddy;
 		GaimConnection *gc;
-		GValue val = {0};
+		GValue val;
 		GString *str;
 		const char *protocol;
 		char *mime_str;
@@ -1674,6 +1682,7 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
 								sourcerow);
+		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
 								 NODE_COLUMN, &val);
 
@@ -1748,11 +1757,12 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
 			GaimBlistNode *node;
-			GValue val = {0};
+			GValue val;
 			struct _gaim_gtk_blist_node *gtknode;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 					&iter, path);
+			val.g_type = 0;
 			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
 					&iter, NODE_COLUMN, &val);
 			node = g_value_get_pointer(&val);
@@ -1903,10 +1913,11 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		{
 			GtkTreeIter iter;
 			GaimBlistNode *node;
-			GValue val = {0};
+			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 									&iter, path);
+			val.g_type = 0;
 			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
 									  &iter, NODE_COLUMN, &val);
 			node = g_value_get_pointer(&val);
@@ -1964,10 +1975,11 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		{
 			GtkTreeIter iter;
 			GaimBlistNode *node;
-			GValue val = {0};
+			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 									&iter, path);
+			val.g_type = 0;
 			gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
 									  &iter, NODE_COLUMN, &val);
 			node = g_value_get_pointer(&val);
@@ -1999,10 +2011,11 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			{
 				GtkTreeIter iter;
 				GaimBlistNode *node;
-				GValue val = {0};
+				GValue val;
 
 				gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel),
 							&iter, path);
+				val.g_type = 0;
 				gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel),
 							  &iter, NODE_COLUMN, &val);
 				node = g_value_get_pointer(&val);
@@ -2212,12 +2225,13 @@ static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	GaimBlistNode *node;
-	GValue val = {0};
+	GValue val;
 	struct _gaim_gtk_blist_node *gtknode;
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	val.g_type = 0;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
@@ -2269,7 +2283,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreePath *path;
 	GtkTreeIter iter;
 	GaimBlistNode *node;
-	GValue val = {0};
+	GValue val;
 	int scr_w, scr_h, w, h, x, y;
 #if GTK_CHECK_VERSION(2,2,0)
 	int mon_num;
@@ -2288,6 +2302,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	val.g_type = 0;
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
@@ -2497,42 +2512,42 @@ toggle_debug(void)
 static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
-	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", gaim_gtkdialogs_im, 0, "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_joinchat_show, 0, "<StockItem>", GAIM_STOCK_CHAT },
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", gaim_gtkdialogs_info, 0, "<StockItem>", GAIM_STOCK_INFO },
 	{ N_("/Buddies/View User _Log..."), "<CTL>L", gaim_gtkdialogs_log, 0, "<StockItem>", GAIM_STOCK_LOG },
-	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
-	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
-	{ N_("/Buddies/Show Buddy _Details"), NULL, gaim_gtk_blist_buddy_details_cb, 1, "<CheckItem>"},
-	{ N_("/Buddies/_Sort Buddies"), NULL, NULL, 0, "<Branch>" },
-	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
+	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
+	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show Buddy _Details"), NULL, gaim_gtk_blist_buddy_details_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/_Sort Buddies"), NULL, NULL, 0, "<Branch>", NULL },
+	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, gaim_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
+	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT }, 
 
 	/* Accounts menu */
-	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
 
 	/* Tools */
-	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, "<StockItem>", GAIM_STOCK_POUNCE },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", gaim_gtk_plugin_dialog_show, 0, "<StockItem>", GAIM_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
-	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
+	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
-	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
+	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
+	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 
 	/* Help */
-	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
 	{ N_("/Help/_About"), NULL, gaim_gtkdialogs_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
@@ -5096,8 +5111,6 @@ static void sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeI
 static void sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
 	GtkTreeIter more_z;
-	GaimBlistNode *n;
-	GValue val = {0,};
 
 	const char *my_name;
 
@@ -5117,9 +5130,12 @@ static void sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, 
 	}
 
 	do {
+		GValue val;
+		GaimBlistNode *n;
 		const char *this_name;
 		int cmp;
 
+		val.g_type = 0;
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
 		n = g_value_get_pointer(&val);
 
@@ -5160,8 +5176,6 @@ static void sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, 
 static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
 	GtkTreeIter more_z;
-	GaimBlistNode *n;
-	GValue val = {0,};
 
 	GaimBuddy *my_buddy, *this_buddy;
 
@@ -5187,9 +5201,12 @@ static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTre
 	}
 
 	do {
+		GValue val;
+		GaimBlistNode *n;
 		gint name_cmp;
 		gint presence_cmp;
 
+		val.g_type = 0;
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
 		n = g_value_get_pointer(&val);
 
@@ -5248,8 +5265,6 @@ static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTre
 static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
 	GtkTreeIter more_z;
-	GaimBlistNode *n = NULL, *n2;
-	GValue val = {0,};
 
 	int log_size = 0, this_log_size = 0;
 	const char *buddy_name, *this_buddy_name;
@@ -5260,6 +5275,7 @@ static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIt
 	}
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		GaimBlistNode *n;
 		for (n = node->child; n; n = n->next)
 			log_size += gaim_log_get_total_size(GAIM_LOG_IM, ((GaimBuddy*)(n))->name, ((GaimBuddy*)(n))->account);
 		buddy_name = gaim_contact_get_alias((GaimContact*)node);
@@ -5285,8 +5301,12 @@ static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIt
 	}
 
 	do {
+		GValue val;
+		GaimBlistNode *n;
+		GaimBlistNode *n2;
 		int cmp;
 
+		val.g_type = 0;
 		gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &more_z, NODE_COLUMN, &val);
 		n = g_value_get_pointer(&val);
 		this_log_size = 0;

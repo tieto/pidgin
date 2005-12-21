@@ -1446,7 +1446,8 @@ GType gtk_imhtml_get_type()
 			NULL,
 			sizeof (GtkIMHtml),
 			0,
-			(GInstanceInitFunc) gtk_imhtml_init
+			(GInstanceInitFunc) gtk_imhtml_init,
+			NULL
 		};
 
 		imhtml_type = g_type_register_static(gtk_text_view_get_type(),

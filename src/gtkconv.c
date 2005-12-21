@@ -2504,12 +2504,12 @@ gaim_gtkconv_get_window(GaimGtkConversation *gtkconv)
 static GtkItemFactoryEntry menu_items[] =
 {
 	/* Conversation menu */
-	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>", NULL },
 
 	{ N_("/Conversation/New Instant _Message..."), "<CTL>M", menu_new_conv_cb,
 			0, "<StockItem>", GAIM_STOCK_IM },
 
-	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/_Find..."), NULL, menu_find_cb, 0,
 			"<StockItem>", GTK_STOCK_FIND },
@@ -2518,7 +2518,7 @@ static GtkItemFactoryEntry menu_items[] =
 			"<StockItem>", GTK_STOCK_SAVE_AS },
 	{ N_("/Conversation/Clea_r"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
 
-	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
@@ -2528,7 +2528,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
 			"<StockItem>", GAIM_STOCK_INVITE },
 
-	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Al_ias..."), NULL, menu_alias_cb, 0,
 			"<StockItem>", GAIM_STOCK_EDIT },
@@ -2539,26 +2539,26 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/_Remove..."), NULL, menu_add_remove_cb, 0,
 			"<StockItem>", GTK_STOCK_REMOVE },
 
-	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
 			"<StockItem>", GAIM_STOCK_LINK },
 	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
 			"<StockItem>", GAIM_STOCK_IMAGE },
 
-	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>" },
+	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
 
 	/* Options */
-	{ N_("/_Options"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>" },
-	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
-	{ N_("/Options/Show Buddy _Icon"), NULL, menu_buddyicon_cb, 0, "<CheckItem>" },
-	{ "/Options/sep0", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
-	{ N_("/Options/Show Ti_mestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>" },
+	{ N_("/_Options"), NULL, NULL, 0, "<Branch>", NULL },
+	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Options/Show Buddy _Icon"), NULL, menu_buddyicon_cb, 0, "<CheckItem>", NULL },
+	{ "/Options/sep0", NULL, NULL, 0, "<Separator>", NULL },
+	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Options/Show Ti_mestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>", NULL },
 };
 
 static const int menu_item_count =

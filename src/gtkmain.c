@@ -466,6 +466,11 @@ int main(int argc, char *argv[])
 	debug_enabled = FALSE;
 #endif
 
+#ifdef GAIM_FATAL_ASSERTS
+	/* Make g_return_... functions fatal. */
+	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
+#endif
+
 #ifndef _WIN32
 	br_set_locate_fallback_func(gaim_find_binary_location, argv[0]);
 #endif

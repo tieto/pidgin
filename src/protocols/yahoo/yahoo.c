@@ -3610,7 +3610,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* can_receive_file */
 	yahoo_send_file,
 	yahoo_new_xfer,
-	&yahoo_whiteboard_prpl_ops
+	&yahoo_whiteboard_prpl_ops,
+	NULL, /* media_prpl_ops */
 };
 
 static GaimPluginInfo info =

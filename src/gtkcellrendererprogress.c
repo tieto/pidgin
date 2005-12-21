@@ -96,6 +96,7 @@ GType  gaim_gtk_cell_renderer_progress_get_type (void)
 					sizeof (GaimGtkCellRendererProgress),
 					0,              /* n_preallocs */
 					(GInstanceInitFunc) gaim_gtk_cell_renderer_progress_init,
+					NULL		/* value_table */
 				};
 			
 			cell_progress_type =

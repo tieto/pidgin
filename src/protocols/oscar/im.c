@@ -113,7 +113,7 @@ faim_export fu16_t aim_im_fingerprint(const fu8_t *msghdr, int len)
 		{ AIM_CLIENTTYPE_AOL_TOC,
 		  1, {0x01}},
 
-		{ 0, 0}
+		{ 0, 0, {0x00}}
 	};
 	int i;
 

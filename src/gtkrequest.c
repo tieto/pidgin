@@ -763,12 +763,13 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 		const gchar *key, GtkTreeIter *iter, gpointer user_data)
 {
 	GtkTreeModel *model;
-	GValue val1 = { 0, };
-	GValue val2 = { 0, };
+	GValue val1;
+	GValue val2;
 	const char *tmp;
 
 	model = gtk_entry_completion_get_model (completion);
 
+	val1.g_type = 0;
 	gtk_tree_model_get_value(model, iter, 2, &val1);
 	tmp = g_value_get_string(&val1);
 	if (tmp != NULL && gaim_str_has_prefix(tmp, key))
@@ -778,6 +779,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 	}
 	g_value_unset(&val1);
 
+	val2.g_type = 0;
 	gtk_tree_model_get_value(model, iter, 3, &val2);
 	tmp = g_value_get_string(&val2);
 	if (tmp != NULL && gaim_str_has_prefix(tmp, key))
@@ -793,11 +795,12 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
 		GtkTreeModel *model, GtkTreeIter *iter, gpointer *user_data)
 {
-	GValue val = { 0, };
+	GValue val;
 	GaimRequestField *screen_field = user_data[1];
 	GList *fields = screen_field->group->fields;
 	GaimAccount *account;
 
+	val.g_type = 0;
 	gtk_tree_model_get_value(model, iter, 1, &val);
 	gtk_entry_set_text(GTK_ENTRY(user_data[0]), g_value_get_string(&val));
 	g_value_unset(&val);

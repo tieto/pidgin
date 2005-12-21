@@ -142,27 +142,34 @@ substitute_simple_buffer(GtkTextBuffer *buffer)
 	text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &treeiter) && text) {
-		do{
-			GValue val0 = {0, };
-			GValue val1 = {0, };
-			GValue val2 = {0, };
+		do {
+			GValue val1;
 			const gchar *bad;
-			const gchar *good;
 			gchar *cursor;
-			gboolean word_only;
 			glong char_pos;
 
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, BAD_COLUMN, &val0);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, GOOD_COLUMN, &val1);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, WORD_ONLY_COLUMN, &val2);
+			val1.g_type = 0;
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, WORD_ONLY_COLUMN, &val1);
+			if (g_value_get_boolean(&val1))
+			{
+				g_value_unset(&val1);
+				continue;
+			}
+			g_value_unset(&val1);
 
-			bad = g_value_get_string(&val0);
-			good = g_value_get_string(&val1);
-			word_only = g_value_get_boolean(&val2);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, BAD_COLUMN, &val1);
+			bad = g_value_get_string(&val1);
 
 			/* using g_utf8_* to get /character/ offsets instead of byte offsets for buffer */
-			if (!word_only && (cursor = g_strrstr(text, bad)))
+			if ((cursor = g_strrstr(text, bad)))
 			{
+				GValue val2;
+				const gchar *good;
+
+				val2.g_type = 0;
+				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, GOOD_COLUMN, &val2);
+				good = g_value_get_string(&val2);
+
 				char_pos = g_utf8_pointer_to_offset(text, cursor);
 				gtk_text_buffer_get_iter_at_offset(buffer, &start, char_pos);
 				gtk_text_buffer_get_iter_at_offset(buffer, &end, char_pos + g_utf8_strlen(bad, -1));
@@ -171,17 +178,14 @@ substitute_simple_buffer(GtkTextBuffer *buffer)
 				gtk_text_buffer_get_iter_at_offset(buffer, &start, char_pos);
 				gtk_text_buffer_insert(buffer, &start, good, -1);
 
-				g_value_unset(&val0);
-				g_value_unset(&val1);
 				g_value_unset(&val2);
 				g_free(text);
 
+				g_value_unset(&val1);
 				return TRUE;
 			}
 
-			g_value_unset(&val0);
 			g_value_unset(&val1);
-			g_value_unset(&val2);
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &treeiter));
 	}
 
@@ -205,11 +209,11 @@ substitute_word(gchar *word)
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
 		do {
-			GValue val1 = {0, };
+			GValue val1;
 			const char *bad;
 			gchar *tmpbad = NULL;
-			gboolean word_only;
 
+			val1.g_type = 0;
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, WORD_ONLY_COLUMN, &val1);
 			if (!g_value_get_boolean(&val1)) {
 				g_value_unset(&val1);
@@ -224,11 +228,12 @@ substitute_word(gchar *word)
 			    (!is_word_lowercase(bad) &&
 			     !strcmp((tmpbad = g_utf8_casefold(bad, -1)), foldedword)))
 			{
-				GValue val2 = {0, };
+				GValue val2;
 				const char *good;
 
 				g_free(tmpbad);
 
+				val2.g_type = 0;
 				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val2);
 				good = g_value_get_string(&val2);
 
@@ -1745,7 +1750,7 @@ static void on_edited(GtkCellRendererText *cellrenderertext,
 					  gchar *path, gchar *arg2, gpointer data)
 {
 	GtkTreeIter iter;
-	GValue val = {0, };
+	GValue val;
 
 	if (arg2[0] == '\0') {
 		gdk_beep();
@@ -1753,6 +1758,7 @@ static void on_edited(GtkCellRendererText *cellrenderertext,
 	}
 
 	g_return_if_fail(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(model), &iter, path));
+	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GPOINTER_TO_INT(data), &val);
 
 	if (strcmp(arg2, g_value_get_string(&val))) {
@@ -1788,9 +1794,10 @@ static void list_add_new()
 		char *tmpword = g_utf8_casefold(gtk_entry_get_text(GTK_ENTRY(bad_entry)), -1);
 
 		do {
-			GValue val0 = {0, };
+			GValue val0;
 			char *bad;
 
+			val0.g_type = 0;
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
 			bad = g_utf8_casefold(g_value_get_string(&val0), -1);
 
@@ -1877,9 +1884,13 @@ static void save_list()
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
 		do {
-			GValue val0 = {0, };
-			GValue val1 = {0, };
-			GValue val2 = {0, };
+			GValue val0;
+			GValue val1;
+			GValue val2;
+
+			val0.g_type = 0;
+			val1.g_type = 0;
+			val2.g_type = 0;
 
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val1);
@@ -2115,7 +2126,8 @@ get_config_frame(GaimPlugin *plugin)
 
 static GaimGtkPluginUiInfo ui_info =
 {
-	get_config_frame
+	get_config_frame,
+	0 /* page_num (Reserved) */
 };
 
 static GaimPluginInfo info =

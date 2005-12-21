@@ -622,7 +622,29 @@ static const profile_strings_node_t profile_strings[] = {
 		"推薦網站連結 3:", /* TODO */
 		NULL
 	},
-	{ XX, NULL, NULL, NULL, NULL, NULL, NULL },
+	{ XX, NULL, NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	},
 };
 
 static char *yahoo_remove_nonbreaking_spaces(char *str)

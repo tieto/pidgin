@@ -383,10 +383,11 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 	GaimXfer *xfer = NULL;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
-		GValue val = {0, };
+		GValue val;
 
 		gtk_widget_set_sensitive(dialog->expander, TRUE);
 
+		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model),
 								 &iter, COLUMN_DATA, &val);
 
