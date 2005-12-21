@@ -87,6 +87,7 @@
 #include "gtkgaim.h"
 #include "gtkprefs.h"
 
+#include "conversation.h"
 #include "prefs.h"
 #include "signals.h"
 #include "version.h"
@@ -238,22 +239,10 @@ unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv)
 }
 
 static gboolean
-im_recv_im(GaimAccount *account, char *sender, char *message,
-           GaimConversation *conv, int *flags)
+message_displayed_cb(GaimAccount *account, GaimConversation *conv, const char *message, GaimMessageFlags flags)
 {
-	notify(conv, TRUE);
-
-	return FALSE;
-}
-
-static gboolean
-chat_recv_im(GaimAccount *account, char *sender, char *message,
-             GaimConversation *conv, int *flags)
-{
-	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), sender))
-			return FALSE;
-
-	notify(conv, TRUE);
+	if ((flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_DELAYED))
+		notify(conv, TRUE);
 
 	return FALSE;
 }
@@ -766,16 +755,14 @@ plugin_load(GaimPlugin *plugin)
 {
 	GList *convs = gaim_get_conversations();
 	void *conv_handle = gaim_conversations_get_handle();
-	/*
 	void *gtk_conv_handle = gaim_gtk_conversations_get_handle();
-	*/
 
 	my_plugin = plugin;
 
-	gaim_signal_connect(conv_handle, "received-im-msg", plugin,
-	                    GAIM_CALLBACK(im_recv_im), NULL);
-	gaim_signal_connect(conv_handle, "received-chat-msg", plugin,
-	                    GAIM_CALLBACK(chat_recv_im), NULL);
+	gaim_signal_connect(gtk_conv_handle, "displayed-im-msg", plugin,
+						GAIM_CALLBACK(message_displayed_cb), NULL);
+	gaim_signal_connect(gtk_conv_handle, "displayed-chat-msg", plugin,
+						GAIM_CALLBACK(message_displayed_cb), NULL);
 	gaim_signal_connect(conv_handle, "sent-im-msg", plugin,
 	                    GAIM_CALLBACK(im_sent_im), NULL);
 	gaim_signal_connect(conv_handle, "sent-chat-msg", plugin,

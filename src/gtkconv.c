@@ -4366,7 +4366,10 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	char *str;
 	char *with_font_tag;
 	char *sml_attrib = NULL;
-	size_t length = strlen(message) + 1;
+	size_t length;
+	GaimConversationType type;
+	char *displaying;
+	gboolean plugin_return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -4376,9 +4379,24 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	/* Set the active conversation to the one that just messaged us. */
 	/* TODO: consider not doing this if the account is offline or something */
 	gaim_gtkconv_set_active_conversation(conv);
+	type = gaim_conversation_get_type(conv);
 
 	gc = gaim_conversation_get_gc(conv);
 	account = gaim_conversation_get_account(conv);
+
+	displaying = g_strdup(message);
+	plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
+							gaim_gtk_conversations_get_handle(), (type == GAIM_CONV_TYPE_IM ?
+							"displaying-im-msg" : "displaying-chat-msg"),
+							account, conv, &displaying, flags));
+	if (plugin_return)
+	{
+		g_free(displaying);
+		return;
+	}
+	message = displaying;
+	length = strlen(message) + 1;
+
 	win = gtkconv->win;
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
@@ -4604,6 +4622,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	if(sml_attrib)
 		g_free(sml_attrib);
+
+	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
+		(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
+		account, conv, message, flags);
+	g_free(displaying);
 
 	/* Tab highlighting stuff */
 	if (!gaim_gtkconv_has_focus(conv))
@@ -6036,6 +6059,46 @@ gaim_gtk_conversations_init(void)
 	                                    GAIM_SUBTYPE_CONV_WINDOW),
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_CONV_WINDOW));
+
+	gaim_signal_register(handle, "displaying-im-msg",
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new(G_TYPE_INT));
+
+	gaim_signal_register(handle, "displayed-im-msg",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(G_TYPE_INT));
+
+	gaim_signal_register(handle, "displaying-chat-msg",
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
+						 gaim_value_new(G_TYPE_INT));
+
+	gaim_signal_register(handle, "displayed-chat-msg",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT,
+						 NULL, 4,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(G_TYPE_INT));
 
 	/**********************************************************************
 	 * Register commands

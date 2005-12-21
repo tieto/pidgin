@@ -83,7 +83,7 @@ do_timestamp(gpointer data)
 
 static gboolean
 timestamp_displaying_conv_msg(GaimAccount *account, GaimConversation *conv,
-							  char **buffer, void *data)
+							  char **buffer, GaimMessageFlags flags, void *data)
 {
 	int is_timestamp_enabled;
 
@@ -102,16 +102,6 @@ timestamp_displaying_conv_msg(GaimAccount *account, GaimConversation *conv,
 
 	return FALSE;
 }
-
-static gboolean
-timestamp_receiving_msg(GaimAccount *account, char **sender, char **buffer,
-						GaimConversation *conv, int *flags, void *data)
-{
-	g_return_val_if_fail(conv != NULL, FALSE);
-
-	return timestamp_displaying_conv_msg(account, conv, buffer, data);
-}
-
 
 static void timestamp_new_convo(GaimConversation *conv)
 {
@@ -227,8 +217,6 @@ plugin_load(GaimPlugin *plugin)
 					plugin, GAIM_CALLBACK(timestamp_new_convo), NULL);
 
 	/* record IM display events for each conversation */
-	gaim_signal_connect(conv_handle, "receiving-im-msg",
-					plugin, GAIM_CALLBACK(timestamp_receiving_msg), NULL);
 	gaim_signal_connect(conv_handle, "displaying-im-msg",
 					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
 

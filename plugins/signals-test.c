@@ -200,23 +200,6 @@ signed_off_cb(GaimConnection *gc, void *data)
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static gboolean
-displaying_im_msg_cb(GaimAccount *account, GaimConversation *conv,
-		     char **buffer, void *data)
-{
-	gaim_debug_misc("signals test", "displaying-im-msg (%s, %s)\n",
-					gaim_conversation_get_name(conv), *buffer);
-
-	return FALSE;
-}
-
-static void
-displayed_im_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
-{
-	gaim_debug_misc("signals test", "displayed-im-msg (%s, %s)\n",
-					gaim_conversation_get_name(conv), buffer);
-}
-
-static gboolean
 writing_im_msg_cb(GaimAccount *account, GaimConversation  *conv, char **buffer, void *data)
 {
 	gaim_debug_misc("signals test", "writing-im-msg (%s, %s, %s)\n",
@@ -266,23 +249,6 @@ received_im_msg_cb(GaimAccount *account, char *sender, char *buffer,
 	gaim_debug_misc("signals test", "received-im-msg (%s, %s, %s, %s, %d)\n",
 					gaim_account_get_username(account), sender, buffer,
 					(conv != NULL) ? gaim_conversation_get_name(conv) : "(null)", flags);
-}
-
-static gboolean
-displaying_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
-		       char **buffer, void *data)
-{
-	gaim_debug_misc("signals test", "displaying-chat-msg (%s, %s)\n",
-					gaim_conversation_get_name(conv), *buffer);
-
-	return FALSE;
-}
-
-static void
-displayed_chat_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
-{
-	gaim_debug_misc("signals test", "displayed-chat-msg (%s, %s)\n",
-					gaim_conversation_get_name(conv), buffer);
 }
 
 static gboolean
@@ -615,10 +581,6 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(signed_off_cb), NULL);
 
 	/* Conversations subsystem signals */
-	gaim_signal_connect(conv_handle, "displaying-im-msg",
-						plugin, GAIM_CALLBACK(displaying_im_msg_cb), NULL);
-	gaim_signal_connect(conv_handle, "displayed-im-msg",
-						plugin, GAIM_CALLBACK(displayed_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "writing-im-msg",
 						plugin, GAIM_CALLBACK(writing_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "wrote-im-msg",
@@ -631,10 +593,6 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(receiving_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-im-msg",
 						plugin, GAIM_CALLBACK(received_im_msg_cb), NULL);
-	gaim_signal_connect(conv_handle, "displaying-chat-msg",
-						plugin, GAIM_CALLBACK(displaying_chat_msg_cb), NULL);
-	gaim_signal_connect(conv_handle, "displayed-chat-msg",
-						plugin, GAIM_CALLBACK(displayed_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "writing-chat-msg",
 						plugin, GAIM_CALLBACK(writing_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "wrote-chat-msg",

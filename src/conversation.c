@@ -135,21 +135,6 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 
 	sent = g_strdup(displayed);
 
-	plugin_return =
-		GPOINTER_TO_INT(gaim_signal_emit_return_1(
-			gaim_conversations_get_handle(), (type == GAIM_CONV_TYPE_IM ?
-			"displaying-im-msg" : "displaying-chat-msg"),
-			account, conv, &displayed));
-
-	if (plugin_return) {
-		g_free(displayed);
-		displayed = NULL;
-	} else {
-		gaim_signal_emit(gaim_conversations_get_handle(),
-			(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-			account, conv, displayed);
-	}
-
 	msgflags |= GAIM_MESSAGE_SEND;
 
 	if (type == GAIM_CONV_TYPE_IM) {
@@ -2015,24 +2000,6 @@ gaim_conversations_init(void)
 										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING));
 
-	gaim_signal_register(handle, "displaying-im-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT),
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
-
-	gaim_signal_register(handle, "displayed-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
-						 NULL, 3,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT),
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new(GAIM_TYPE_STRING));
-
 	gaim_signal_register(handle, "sending-im-msg",
 						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
 						 NULL, 3,
@@ -2081,24 +2048,6 @@ gaim_conversations_init(void)
 						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
 
 	gaim_signal_register(handle, "wrote-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
-						 NULL, 3,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT),
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new(GAIM_TYPE_STRING));
-
-	gaim_signal_register(handle, "displaying-chat-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-						 gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT),
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
-
-	gaim_signal_register(handle, "displayed-chat-msg",
 						 gaim_marshal_VOID__POINTER_POINTER_POINTER,
 						 NULL, 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,

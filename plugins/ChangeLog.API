@@ -73,6 +73,13 @@ version 2.0.0:
 	                             See the documentation for this function and
 	                             gaim_account_request_add.
 	* gaim_accounts_reorder: new_index is now a gint instead of a size_t
+	* displaying-message signals: displaying-[im|chat]-msg and
+	                              displayed-[im|chat]-msg signals are emitted
+								  for all messages (ie, for received messages,
+								  sent messages, system messages, error
+								  messages etc.), and the signals now have
+								  gaim_gtk_conversations_get_handle() for their
+								  handle.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

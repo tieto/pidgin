@@ -281,7 +281,7 @@ plugin_load(GaimPlugin *plugin) {
 					plugin, GAIM_CALLBACK(conv_destroyed), NULL);
 					
 	/* Listen for sending/receiving messages to replace tags */
-	gaim_signal_connect(conv_list_handle, "displaying-im-msg",
+	gaim_signal_connect(conv_list_handle, "writing-im-msg",
 					plugin, GAIM_CALLBACK(intercept_sent), NULL);
 	gaim_signal_connect(conv_list_handle, "receiving-im-msg",
 					plugin, GAIM_CALLBACK(intercept_received), NULL);

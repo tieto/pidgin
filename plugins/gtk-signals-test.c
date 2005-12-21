@@ -60,6 +60,40 @@ conversation_dragging_cb(GaimGtkWindow *source, GaimGtkWindow *destination) {
 	gaim_debug_info("gtk-signal-test", "conversation dragging cb\n");
 }
 
+static gboolean
+displaying_im_msg_cb(GaimAccount *account, GaimConversation *conv,
+		     char **buffer, int flags, void *data)
+{
+	gaim_debug_misc("gtk-signals test", "displaying-im-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+}
+
+static void
+displayed_im_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, int flags, void *data)
+{
+	gaim_debug_misc("gtk-signals test", "displayed-im-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+displaying_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
+		       char **buffer, int flags, void *data)
+{
+	gaim_debug_misc("gtk-signals test", "displaying-chat-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+}
+
+static void
+displayed_chat_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, int flags, void *data)
+{
+	gaim_debug_misc("gtk-signals test", "displayed-chat-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), buffer);
+}
+
 /**************************************************************************
  * Plugin stuff
  **************************************************************************/
@@ -83,6 +117,14 @@ plugin_load(GaimPlugin *plugin)
 	/* Conversations subsystem signals */
 	gaim_signal_connect(conv_handle, "conversation-dragging",
 						plugin, GAIM_CALLBACK(conversation_dragging_cb), NULL);
+	gaim_signal_connect(conv_handle, "displaying-im-msg",
+						plugin, GAIM_CALLBACK(displaying_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "displayed-im-msg",
+						plugin, GAIM_CALLBACK(displayed_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "displaying-chat-msg",
+						plugin, GAIM_CALLBACK(displaying_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "displayed-chat-msg",
+						plugin, GAIM_CALLBACK(displayed_chat_msg_cb), NULL);
 
 	return TRUE;
 }
