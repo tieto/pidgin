@@ -740,11 +740,11 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 {
 	GtkRequisition box_req;
 	combo_box_size_request(widget, requisition);
-	requisition->height += 6;
+	requisition->height += 3;
 
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
-		requisition->height = requisition->height + box_req.height + 6;
+		requisition->height = requisition->height + box_req.height + 3;
 
 	if (GTK_GAIM_STATUS_BOX(widget)->typing) {
 		gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toolbar, &box_req);
@@ -765,8 +765,8 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	box_alc = *allocation;
 	combo_box_size_request(widget, &req);
 
-	box_alc.height = MAX(1, (allocation->height - req.height - 12));
-	box_alc.y = box_alc.y + req.height + 9;
+	box_alc.height = MAX(1, (allocation->height - req.height - 6));
+	box_alc.y = box_alc.y + req.height + 6;
 
 	box_alc.width -= 6;
 	box_alc.x += 3;
