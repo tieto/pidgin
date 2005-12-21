@@ -43,6 +43,7 @@
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
+static void update_size (GtkGaimStatusBox *box);
 
 static void gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box);
@@ -328,6 +329,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	gtk_tree_path_free(path);
 
 	g_free(text);
+	update_size(status_box);
 }
 
 /**
@@ -1028,6 +1030,55 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 	g_free(title);
 	g_free(message);
+}
+
+static void update_size(GtkGaimStatusBox *status_box)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter iter;
+	int wrapped_lines;
+	int lines;
+	GdkRectangle oneline;
+	int height;
+	int pad_top, pad_inside, pad_bottom;
+
+	if (!status_box->imhtml_visible)
+	{
+		gtk_widget_set_size_request(status_box->vbox, -1, -1);
+		return;
+	}
+
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+
+	wrapped_lines = 1;
+	gtk_text_buffer_get_start_iter(buffer, &iter);
+	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter))
+		wrapped_lines++;
+
+	lines = gtk_text_buffer_get_line_count(buffer);
+
+	/* Show a maximum of 4 lines */
+	lines = MIN(lines, 4);
+	wrapped_lines = MIN(wrapped_lines, 4);
+
+	gtk_text_buffer_get_start_iter(buffer, &iter);
+	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
+
+	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(status_box->imhtml));
+	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(status_box->imhtml));
+	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(status_box->imhtml));
+
+	height = (oneline.height + pad_top + pad_bottom) * lines;
+	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+
+	if (status_box->typing) {
+		GtkRequisition requisition;
+
+		gtk_widget_size_request(status_box->toolbar, &requisition);
+		height += requisition.height;
+	}
+
+	gtk_widget_set_size_request(GTK_WIDGET(status_box->vbox), -1, height);
 }
 
 static void remove_typing_cb(GtkGaimStatusBox *status_box)
