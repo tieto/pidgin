@@ -57,6 +57,7 @@ enum {
 	BAD_COLUMN,
 	GOOD_COLUMN,
 	WORD_ONLY_COLUMN,
+	CASE_SENSITIVE_COLUMN,
 	N_COLUMNS
 };
 
@@ -210,6 +211,7 @@ substitute_word(gchar *word)
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
 		do {
 			GValue val1;
+			gboolean case_sensitive;
 			const char *bad;
 			gchar *tmpbad = NULL;
 
@@ -221,12 +223,17 @@ substitute_word(gchar *word)
 			}
 			g_value_unset(&val1);
 
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, CASE_SENSITIVE_COLUMN, &val1);
+			case_sensitive = g_value_get_boolean(&val1);
+			g_value_unset(&val1);
+
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val1);
 			bad = g_value_get_string(&val1);
 
-			if (!strcmp(bad, lowerword) ||
-			    (!is_word_lowercase(bad) &&
-			     !strcmp((tmpbad = g_utf8_casefold(bad, -1)), foldedword)))
+			if ((case_sensitive && !strcmp(bad, word)) ||
+			    (!case_sensitive && (!strcmp(bad, lowerword) ||
+			                        (!is_word_lowercase(bad) &&
+			                         !strcmp((tmpbad = g_utf8_casefold(bad, -1)), foldedword)))))
 			{
 				GValue val2;
 				const char *good;
@@ -237,7 +244,7 @@ substitute_word(gchar *word)
 				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val2);
 				good = g_value_get_string(&val2);
 
-				if (is_word_lowercase(bad) && is_word_lowercase(good))
+				if (!case_sensitive && is_word_lowercase(bad) && is_word_lowercase(good))
 				{
 					if (is_word_uppercase(word))
 						outword = g_utf8_strup(good, -1);
@@ -1685,6 +1692,7 @@ static void load_conf()
 	int pnt = 0;
 	gsize size;
 	gboolean complete = TRUE;
+	gboolean case_sensitive = FALSE;
 
 	buf = g_build_filename(gaim_user_dir(), "dict", NULL);
 	g_file_get_contents(buf, &ibuf, &size, NULL);
@@ -1694,7 +1702,7 @@ static void load_conf()
 		size = strlen(defaultconf);
 	}
 
-	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
+	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN);
 	hashes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	while (buf_get_line(ibuf, &buf, &pnt, size)) {
@@ -1702,6 +1710,10 @@ static void load_conf()
 			if (!strncasecmp(buf, "BAD ", 4))
 			{
 				strncpy(bad, buf + 4, 81);
+			}
+			else if(!strncasecmp(buf, "CASE ", 5))
+			{
+				case_sensitive = *(buf+5) == '0' ? FALSE : TRUE;
 			}
 			else if(!strncasecmp(buf, "COMPLETE ", 9))
 			{
@@ -1720,15 +1732,20 @@ static void load_conf()
 					 */
 					g_hash_table_insert(hashes, g_strdup(bad), GINT_TO_POINTER(1));
 
+					if (!complete)
+						case_sensitive = TRUE;
+
 					gtk_list_store_append(model, &iter);
 					gtk_list_store_set(model, &iter,
-						0, bad,
-						1, good,
-						2, complete,
+						BAD_COLUMN, bad,
+						GOOD_COLUMN, good,
+						WORD_ONLY_COLUMN, complete,
+						CASE_SENSITIVE_COLUMN, case_sensitive,
 						-1);
 				}
 				bad[0] = '\0';
 				complete = TRUE;
+				case_sensitive = FALSE;
 			}
 		}
 	}
@@ -1743,6 +1760,7 @@ static GtkWidget *tree;
 static GtkWidget *bad_entry;
 static GtkWidget *good_entry;
 static GtkWidget *complete_toggle;
+static GtkWidget *case_toggle;
 
 static void save_list(void);
 
@@ -1769,7 +1787,7 @@ static void on_edited(GtkCellRendererText *cellrenderertext,
 }
 
 
-static void on_toggled(GtkCellRendererToggle *cellrenderertoggle,
+static void word_only_toggled(GtkCellRendererToggle *cellrenderertoggle,
 						gchar *path, gpointer data){
 	GtkTreeIter iter;
 	gboolean enabled;
@@ -1781,6 +1799,37 @@ static void on_toggled(GtkCellRendererToggle *cellrenderertoggle,
 
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
 					   WORD_ONLY_COLUMN, !enabled,
+					   -1);
+
+	/* I want to be sure that the above change has happened to the GtkTreeView first. */
+	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+					   CASE_SENSITIVE_COLUMN, enabled,
+					   -1);
+
+	save_list();
+}
+
+static void case_sensitive_toggled(GtkCellRendererToggle *cellrenderertoggle,
+						gchar *path, gpointer data){
+	GtkTreeIter iter;
+	gboolean enabled;
+
+	g_return_if_fail(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(model), &iter, path));
+
+	/* Prevent the case sensitive column from changing on non-whole word replacements.
+	 * Ideally, the column would be set insensitive in the word_only_toggled callback. */
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+					   WORD_ONLY_COLUMN, &enabled,
+					   -1);
+	if (!enabled)
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
+					   CASE_SENSITIVE_COLUMN, &enabled,
+					   -1);
+
+	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+					   CASE_SENSITIVE_COLUMN, !enabled,
 					   -1);
 
 	save_list();
@@ -1826,11 +1875,13 @@ static void list_add_new()
 		BAD_COLUMN, gtk_entry_get_text(GTK_ENTRY(bad_entry)),
 		GOOD_COLUMN, gtk_entry_get_text(GTK_ENTRY(good_entry)),
 		WORD_ONLY_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(complete_toggle)),
+		CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(case_toggle)),
 		-1);
 
 	gtk_editable_delete_text(GTK_EDITABLE(bad_entry), 0, -1);
 	gtk_editable_delete_text(GTK_EDITABLE(good_entry), 0, -1);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), TRUE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), FALSE);
 	gtk_widget_grab_focus(bad_entry);
 
 	save_list();
@@ -1887,20 +1938,28 @@ static void save_list()
 			GValue val0;
 			GValue val1;
 			GValue val2;
+			GValue val3;
 
 			val0.g_type = 0;
 			val1.g_type = 0;
 			val2.g_type = 0;
+			val3.g_type = 0;
 
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val1);
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, WORD_ONLY_COLUMN, &val2);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, CASE_SENSITIVE_COLUMN, &val3);
 
-			g_string_append_printf(data, "COMPLETE %d\nBAD %s\nGOOD %s\n\n", g_value_get_boolean(&val2), g_value_get_string(&val0), g_value_get_string(&val1));
+			g_string_append_printf(data, "COMPLETE %d\nCASE %d\nBAD %s\nGOOD %s\n\n",
+								   g_value_get_boolean(&val2),
+								   g_value_get_boolean(&val3),
+								   g_value_get_string(&val0),
+								   g_value_get_string(&val1));
 
 			g_value_unset(&val0);
 			g_value_unset(&val1);
 			g_value_unset(&val2);
+			g_value_unset(&val3);
 
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
@@ -1977,6 +2036,14 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
+static void whole_words_button_toggled(GtkToggleButton *complete_toggle, GtkToggleButton *case_toggle)
+{
+	gboolean enabled = gtk_toggle_button_get_active(complete_toggle);
+
+	gtk_toggle_button_set_active(case_toggle, !enabled);
+	gtk_widget_set_sensitive(GTK_WIDGET(case_toggle), enabled);
+}
+
 static GtkWidget *
 get_config_frame(GaimPlugin *plugin)
 {
@@ -1993,21 +2060,20 @@ get_config_frame(GaimPlugin *plugin)
 
 	vbox = gaim_gtk_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
-	gtk_widget_set_size_request(vbox, 445, -1);
 	gtk_widget_show(vbox);
 
 	win = gtk_scrolled_window_new(0, 0);
-	gtk_container_add(GTK_CONTAINER(vbox), win);
+	gtk_box_pack_start(GTK_BOX(vbox), win, TRUE, TRUE, 0);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(win),
 										GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win),
-			GTK_POLICY_AUTOMATIC,
-			GTK_POLICY_AUTOMATIC);
+			GTK_POLICY_NEVER,
+			GTK_POLICY_ALWAYS);
 	gtk_widget_show(win);
 
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
-	/* gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE); */
-	gtk_widget_set_size_request(tree, 445, 200);
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE);
+	gtk_widget_set_size_request(tree, -1, 200);
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(G_OBJECT(renderer),
@@ -2015,36 +2081,52 @@ get_config_frame(GaimPlugin *plugin)
 		NULL);
 	g_signal_connect(G_OBJECT(renderer), "edited",
 		G_CALLBACK(on_edited), GINT_TO_POINTER(0));
-	column = gtk_tree_view_column_new_with_attributes(_("You type"),
-		renderer, "text", BAD_COLUMN, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("You type"), renderer,
+													  "text", BAD_COLUMN,
+													  NULL);
 	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width(column, 130);
-	/* gtk_tree_view_column_set_resizable(column, TRUE); */
+	gtk_tree_view_column_set_fixed_width(column, 150);
+	gtk_tree_view_column_set_resizable(column, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
+
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(G_OBJECT(renderer),
 		"editable", TRUE,
 		NULL);
 	g_signal_connect(G_OBJECT(renderer), "edited",
 		G_CALLBACK(on_edited), GINT_TO_POINTER(1));
-	column = gtk_tree_view_column_new_with_attributes(_("You send"),
-		renderer, "text", GOOD_COLUMN, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("You send"), renderer,
+													  "text", GOOD_COLUMN,
+													  NULL);
 	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_fixed_width(column, 150);
-	/* gtk_tree_view_column_set_resizable(column, TRUE); */
+	gtk_tree_view_column_set_resizable(column, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
+
 	renderer = gtk_cell_renderer_toggle_new();
 	g_object_set(G_OBJECT(renderer),
 		"activatable", TRUE,
 		NULL);
 	g_signal_connect(G_OBJECT(renderer), "toggled",
-		G_CALLBACK(on_toggled), GINT_TO_POINTER(2));
-	column = gtk_tree_view_column_new_with_attributes(_("Whole words only"),
-		renderer, "active", WORD_ONLY_COLUMN, NULL);
-	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width(column, 130);
-	/* gtk_tree_view_column_set_resizable(column, TRUE); */
+		G_CALLBACK(word_only_toggled), NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Whole words only"), renderer,
+													  "active", WORD_ONLY_COLUMN,
+													  NULL);
+	gtk_tree_view_column_set_resizable(column, TRUE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
+
+	renderer = gtk_cell_renderer_toggle_new();
+	g_object_set(G_OBJECT(renderer),
+		"activatable", TRUE,
+		NULL);
+	g_signal_connect(G_OBJECT(renderer), "toggled",
+		G_CALLBACK(case_sensitive_toggled), NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Case sensitive"), renderer,
+													  "active", CASE_SENSITIVE_COLUMN,
+													  NULL);
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
+
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree)),
 		 GTK_SELECTION_MULTIPLE);
 	gtk_container_add(GTK_CONTAINER(win), tree);
@@ -2066,7 +2148,6 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_widget_show(button);
 
 	vbox = gaim_gtk_make_frame(ret, _("Add a new text replacement"));
-	gtk_widget_set_size_request(vbox, 300, -1);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	sg2 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -2081,7 +2162,8 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	bad_entry = gtk_entry_new();
-	gtk_entry_set_max_length(GTK_ENTRY(bad_entry), 40);
+	/* Set a minimum size. Since they're in a size group, the other entry will match up. */
+	gtk_widget_set_size_request(bad_entry, 350, -1);
 	gtk_box_pack_start(GTK_BOX(hbox), bad_entry, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(sg2, bad_entry);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), bad_entry);
@@ -2097,16 +2179,25 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	good_entry = gtk_entry_new();
-	gtk_entry_set_max_length(GTK_ENTRY(good_entry), 255);
 	gtk_box_pack_start(GTK_BOX(hbox), good_entry, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(sg2, good_entry);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), good_entry);
 	gtk_widget_show(good_entry);
 
+	/* Created here so it can be passed to whole_words_button_toggled. */
+	case_toggle = gtk_check_button_new_with_mnemonic(_("_Exact case match (uncheck for automatic case handling)"));
+
 	complete_toggle = gtk_check_button_new_with_mnemonic(_("Only replace _whole words"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), TRUE);
+	g_signal_connect(G_OBJECT(complete_toggle), "clicked",
+                         G_CALLBACK(whole_words_button_toggled), case_toggle);
 	gtk_widget_show(complete_toggle);
 	gtk_box_pack_start(GTK_BOX(vbox), complete_toggle, FALSE, FALSE, 0);
+
+	/* The button is created above so it can be passed to whole_words_button_toggled. */
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(case_toggle), FALSE);
+	gtk_widget_show(case_toggle);
+	gtk_box_pack_start(GTK_BOX(vbox), case_toggle, FALSE, FALSE, 0);
 
 	hbox = gtk_hbutton_box_new();
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
