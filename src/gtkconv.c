@@ -2570,10 +2570,60 @@ item_factory_translate_func (const char *path, gpointer func_data)
 	return _((char *)path);
 }
 
+static void
+sound_method_pref_changed_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+{
+	GaimGtkWindow *win = data;
+	const char *method = value;
+
+	if (!strcmp(method, "none"))
+	{
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
+		                               FALSE);
+		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
+	}
+	else
+	{
+		GaimGtkConversation *gtkconv = gaim_gtk_conv_window_get_active_gtkconv(win);
+
+		if (gtkconv != NULL)
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
+			                               TRUE);
+		gtk_widget_set_sensitive(win->menu.sounds, TRUE);
+
+	}
+}
+
+static void
+show_buddy_icons_pref_changed_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+{
+	GaimGtkWindow *win = data;
+	gboolean show_icons = GPOINTER_TO_INT(value);
+
+	if (!show_icons)
+	{
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
+		                               FALSE);
+		gtk_widget_set_sensitive(win->menu.show_icon, FALSE);
+	}
+	else
+	{
+		GaimGtkConversation *gtkconv = gaim_gtk_conv_window_get_active_gtkconv(win);
+
+		if (gtkconv != NULL)
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
+			                               TRUE);
+		gtk_widget_set_sensitive(win->menu.show_icon, TRUE);
+
+	}
+}
+
+
 static GtkWidget *
 setup_menubar(GaimGtkWindow *win)
 {
 	GtkAccelGroup *accel_group;
+	const char *method;
 
 	accel_group = gtk_accel_group_new ();
 	gtk_window_add_accel_group(GTK_WINDOW(win->window), accel_group);
@@ -2656,6 +2706,16 @@ setup_menubar(GaimGtkWindow *win)
 	win->menu.sounds =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Enable Sounds"));
+	method = gaim_prefs_get_string("/gaim/gtk/sound/method");
+	if (!strcmp(method, "none"))
+	{
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
+		                               FALSE);
+		gtk_widget_set_sensitive(win->menu.sounds, FALSE);
+	}
+	gaim_prefs_connect_callback(win, "/gaim/gtk/sound/method",
+				    sound_method_pref_changed_cb, win);
+
 	win->menu.show_formatting_toolbar =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Show Formatting Toolbars"));
@@ -2665,7 +2725,14 @@ setup_menubar(GaimGtkWindow *win)
 	win->menu.show_icon =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Show Buddy Icon"));
-
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
+	{
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
+		                               FALSE);
+		gtk_widget_set_sensitive(win->menu.show_icon, FALSE);
+	}
+	gaim_prefs_connect_callback(win, "/gaim/gtk/conversations/im/show_buddy_icons",
+				    show_buddy_icons_pref_changed_cb, win);
 
 	win->menu.tray = gaim_gtk_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(win->menu.menubar),
@@ -6713,6 +6780,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	GaimGtkWindow *win;
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
+	const char *sound_method;
 
 	win = user_data;
 	gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, page_num);
@@ -6735,8 +6803,10 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gaim_gtkconv_switch_active_conversation(conv);
 
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
-	                               gtkconv->make_sound);
+	sound_method = gaim_prefs_get_string("/gaim/gtk/sound/method");
+	if (strcmp(sound_method, "none") != 0)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
+		                               gtkconv->make_sound);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_formatting_toolbar),
 	                               gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"));
@@ -6744,9 +6814,12 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 	                               gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM &&
+	    gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
+	{
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
 		                               gtkconv->u.im->show_icon);
+	}
 
 	/*
 	 * We pause icons when they are not visible.  If this icon should
@@ -6843,6 +6916,7 @@ gaim_gtk_conv_window_new()
 void
 gaim_gtk_conv_window_destroy(GaimGtkWindow *win)
 {
+	gaim_prefs_disconnect_by_handle(win);
 	window_list = g_list_remove(window_list, win);
 
 	if (win->gtkconvs) {
