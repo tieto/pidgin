@@ -422,6 +422,23 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	return utf8;
 }
 
+static gchar *oscar_utf8_try_convert(GaimAccount *account, const gchar *msg)
+{
+	const char *charset = NULL;
+	char *ret = NULL;
+
+	if(aim_sn_is_icq(gaim_account_get_username(account)))
+		charset = gaim_account_get_string(account, "encoding", NULL);
+
+	if(charset && *charset)
+		ret = g_convert(msg, -1, "UTF-8", charset, NULL, NULL, NULL);
+
+	if(!ret)
+		ret = gaim_utf8_try_convert(msg);
+
+	return ret;
+}
+
 static gchar *
 gaim_plugin_oscar_convert_to_utf8(const gchar *data, gsize datalen, const char *charsetstr, gboolean fallback)
 {
@@ -714,11 +731,12 @@ static char *oscar_icqstatus(int state) {
 }
 
 static void
-oscar_string_append(GString *str, const char *newline, const char *name, const char *value)
+oscar_string_append(GaimAccount *account, GString *str, const char *newline,
+					const char *name, const char *value)
 {
 	gchar *utf8;
 
-	if (value && value[0] && (utf8 = gaim_utf8_try_convert(value))) {
+	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, value))) {
 		g_string_append_printf(str, "%s<b>%s:</b> %s", newline, name, utf8);
 		g_free(utf8);
 	}
@@ -759,14 +777,17 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		if (gaim_presence_is_online(presence)) {
 			if (aim_sn_is_icq(b->name)) {
 				GaimStatus *status = gaim_presence_get_active_status(presence);
-				oscar_string_append(str, newline, _("Status"), gaim_status_get_name(status));
+				oscar_string_append(gc->account, str, newline, _("Status"),
+									gaim_status_get_name(status));
 			}
 		} else {
 			tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 			if (aim_ssi_waitingforauth(od->sess->ssi.local, tmp, b->name))
-				oscar_string_append(str, newline, _("Status"), _("Not Authorized"));
+				oscar_string_append(gc->account, str, newline, _("Status"),
+									_("Not Authorized"));
 			else
-				oscar_string_append(str, newline, _("Status"), _("Offline"));
+				oscar_string_append(gc->account, str, newline, _("Status"),
+									_("Offline"));
 		}
 	}
 
@@ -776,14 +797,14 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(str, newline, _("IP Address"), tmp);
+		oscar_string_append(gc->account, str, newline, _("IP Address"), tmp);
 		g_free(tmp);
 	}
 
 
 	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
 		tmp = g_strdup_printf("%d", (int)(userinfo->warnlevel/10.0 + .5));
-		oscar_string_append(str, newline, _("Warning Level"), tmp);
+		oscar_string_append(gc->account, str, newline, _("Warning Level"), tmp);
 		g_free(tmp);
 	}
 
@@ -792,7 +813,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		if (tmp != NULL) {
 			char *tmp2 = g_markup_escape_text(tmp, strlen(tmp));
 			g_free(tmp);
-			oscar_string_append(str, newline, _("Buddy Comment"), tmp2);
+			oscar_string_append(gc->account, str, newline, _("Buddy Comment"), tmp2);
 			g_free(tmp2);
 		}
 	}
@@ -5039,23 +5060,23 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		time_t t = userinfo->onlinesince - od->timeoffset;
-		oscar_string_append(str, "\n<br>", _("Online Since"), ctime(&t));
+		oscar_string_append(gc->account, str, "\n<br>", _("Online Since"), ctime(&t));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince - od->timeoffset;
-		oscar_string_append(str, "\n<br>", _("Member Since"), ctime(&t));
+		oscar_string_append(gc->account, str, "\n<br>", _("Member Since"), ctime(&t));
 	}
 
 	if (userinfo->capabilities != 0) {
 		tmp = oscar_caps_to_string(userinfo->capabilities);
-		oscar_string_append(str, "\n<br>", _("Capabilities"), tmp);
+		oscar_string_append(gc->account, str, "\n<br>", _("Capabilities"), tmp);
 		g_free(tmp);
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = gaim_str_seconds_to_string(userinfo->idletime*60);
-		oscar_string_append(str, "\n<br>", _("Idle"), tmp);
+		oscar_string_append(gc->account, str, "\n<br>", _("Idle"), tmp);
 		g_free(tmp);
 	}
 
@@ -5967,6 +5988,7 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimBuddy *buddy;
 	struct buddyinfo *bi = NULL;
@@ -5991,34 +6013,34 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(buddy->account, buddy->name));
 
 	g_string_append_printf(str, "<b>%s:</b> %s", _("UIN"), who);
-	oscar_string_append(str, "\n<br>", _("Nick"), info->nick);
+	oscar_string_append(gc->account, str, "\n<br>", _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 						(bi->ipaddr & 0xff000000) >> 24,
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(str, "\n<br>", _("IP Address"), tstr);
+		oscar_string_append(gc->account, str, "\n<br>", _("IP Address"), tstr);
 		g_free(tstr);
 	}
-	oscar_string_append(str, "\n<br>", _("First Name"), info->first);
-	oscar_string_append(str, "\n<br>", _("Last Name"), info->last);
-	if (info->email && info->email[0] && (utf8 = gaim_utf8_try_convert(info->email))) {
+	oscar_string_append(gc->account, str, "\n<br>", _("First Name"), info->first);
+	oscar_string_append(gc->account, str, "\n<br>", _("Last Name"), info->last);
+	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email))) {
 		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
 		g_free(utf8);
 	}
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
-			if (info->email2[i] && info->email2[i][0] && (utf8 = gaim_utf8_try_convert(info->email2[i]))) {
+			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email2[i]))) {
 				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
 				g_free(utf8);
 			}
 		}
 	}
-	oscar_string_append(str, "\n<br>", _("Mobile Phone"), info->mobile);
+	oscar_string_append(gc->account, str, "\n<br>", _("Mobile Phone"), info->mobile);
 	if (info->gender != 0)
-		oscar_string_append(str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
+		oscar_string_append(gc->account, str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
 		char date[30];
 		struct tm tm;
@@ -6026,44 +6048,44 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
 		gaim_strftime(date, sizeof(date), "%x", &tm);
-		oscar_string_append(str, "\n<br>", _("Birthday"), date);
+		oscar_string_append(gc->account, str, "\n<br>", _("Birthday"), date);
 	}
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		oscar_string_append(str, "\n<br>", _("Age"), age);
+		oscar_string_append(gc->account, str, "\n<br>", _("Age"), age);
 	}
-	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = gaim_utf8_try_convert(info->personalwebpage))) {
+	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->personalwebpage))) {
 		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Personal Web Page"), utf8, utf8);
 		g_free(utf8);
 	}
-	if (info->info && info->info[0] && (utf8 = gaim_utf8_try_convert(info->info))) {
+	if (info->info && info->info[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->info))) {
 		g_string_append_printf(str, "<hr><b>%s:</b><br>%s", _("Additional Information"), utf8);
 		g_free(utf8);
 	}
 	g_string_append_printf(str, "<hr>");
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Home Address"));
-		oscar_string_append(str, "\n<br>", _("Address"), info->homeaddr);
-		oscar_string_append(str, "\n<br>", _("City"), info->homecity);
-		oscar_string_append(str, "\n<br>", _("State"), info->homestate);
-		oscar_string_append(str, "\n<br>", _("Zip Code"), info->homezip);
+		oscar_string_append(gc->account, str, "\n<br>", _("Address"), info->homeaddr);
+		oscar_string_append(gc->account, str, "\n<br>", _("City"), info->homecity);
+		oscar_string_append(gc->account, str, "\n<br>", _("State"), info->homestate);
+		oscar_string_append(gc->account, str, "\n<br>", _("Zip Code"), info->homezip);
 		g_string_append_printf(str, "\n<hr>");
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Address"));
-		oscar_string_append(str, "\n<br>", _("Address"), info->workaddr);
-		oscar_string_append(str, "\n<br>", _("City"), info->workcity);
-		oscar_string_append(str, "\n<br>", _("State"), info->workstate);
-		oscar_string_append(str, "\n<br>", _("Zip Code"), info->workzip);
+		oscar_string_append(gc->account, str, "\n<br>", _("Address"), info->workaddr);
+		oscar_string_append(gc->account, str, "\n<br>", _("City"), info->workcity);
+		oscar_string_append(gc->account, str, "\n<br>", _("State"), info->workstate);
+		oscar_string_append(gc->account, str, "\n<br>", _("Zip Code"), info->workzip);
 		g_string_append_printf(str, "\n<hr>");
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Information"));
-		oscar_string_append(str, "\n<br>", _("Company"), info->workcompany);
-		oscar_string_append(str, "\n<br>", _("Division"), info->workdivision);
-		oscar_string_append(str, "\n<br>", _("Position"), info->workposition);
-		if (info->workwebpage && info->workwebpage[0] && (utf8 = gaim_utf8_try_convert(info->workwebpage))) {
+		oscar_string_append(gc->account, str, "\n<br>", _("Company"), info->workcompany);
+		oscar_string_append(gc->account, str, "\n<br>", _("Division"), info->workdivision);
+		oscar_string_append(gc->account, str, "\n<br>", _("Position"), info->workposition);
+		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->workwebpage))) {
 			g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
 			g_free(utf8);
 		}
@@ -6083,6 +6105,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	gchar who[16], *utf8;
 	GaimBuddy *b;
 	va_list ap;
@@ -6092,7 +6115,7 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
 
-	if (info->uin && info->nick && info->nick[0] && (utf8 = gaim_utf8_try_convert(info->nick))) {
+	if (info->uin && info->nick && info->nick[0] && (utf8 = oscar_utf8_try_convert(account, info->nick))) {
 		g_snprintf(who, sizeof(who), "%u", info->uin);
 		serv_got_alias(gc, who, utf8);
 		if ((b = gaim_find_buddy(gc->account, who))) {
@@ -7003,9 +7026,9 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...)
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
 					char *gname = aim_ssi_itemlist_findparentname(sess->ssi.local, curitem->name);
-					char *gname_utf8 = gname ? gaim_utf8_try_convert(gname) : NULL;
+					char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
 					char *alias = aim_ssi_getalias(sess->ssi.local, gname, curitem->name);
-					char *alias_utf8 = alias ? gaim_utf8_try_convert(alias) : NULL;
+					char *alias_utf8 = alias ? oscar_utf8_try_convert(gc->account, alias) : NULL;
 					b = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					/* Not with the current code, but that might be cleaner -- med */
@@ -7164,9 +7187,9 @@ static int gaim_ssi_parseadd(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	gname = aim_ssi_itemlist_findparentname(sess->ssi.local, name);
-	gname_utf8 = gname ? gaim_utf8_try_convert(gname) : NULL;
+	gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
 	alias = aim_ssi_getalias(sess->ssi.local, gname, name);
-	alias_utf8 = alias ? gaim_utf8_try_convert(alias) : NULL;
+	alias_utf8 = alias ? oscar_utf8_try_convert(gc->account, alias) : NULL;
 	b = gaim_find_buddy(gc->account, name);
 	free(alias);
 
@@ -7915,7 +7938,7 @@ static void oscar_buddycb_edit_comment(GaimBlistNode *node, gpointer ignore) {
 	if (!(g = gaim_buddy_get_group(buddy)))
 		return;
 	comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, buddy->name);
-	comment_utf8 = comment ? gaim_utf8_try_convert(comment) : NULL;
+	comment_utf8 = comment ? oscar_utf8_try_convert(gc->account, comment) : NULL;
 
 	data->gc = gc;
 	data->name = g_strdup(buddy->name);
