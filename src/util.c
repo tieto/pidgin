@@ -2098,12 +2098,14 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 		return FALSE;
 	}
 
+#ifndef _WIN32
 	/* Set file permissions */
 	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
 	{
 		gaim_debug_error("util", "Error setting permissions of file %s: %s\n",
 						 filename_temp, strerror(errno));
 	}
+#endif
 
 	/* Remove the old file, if it exists */
 	if (g_file_test(filename_full, G_FILE_TEST_EXISTS))
