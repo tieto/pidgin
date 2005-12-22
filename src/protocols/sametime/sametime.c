@@ -295,16 +295,12 @@ static void convo_features(struct mwConversation *conv);
 static GaimConversation *convo_get_gconv(struct mwConversation *conv);
 
 
-/* resolved id */
+/* name and  id */
 
-struct resolved_id {
+struct named_id {
   char *id;
   char *name;
 };
-
-static struct resolved_id *resolved_id_new(const char *id, const char *name);
-
-static void resolved_id_free(struct resolved_id *rid);
 
 
 /* connection functions */
@@ -4197,156 +4193,59 @@ static void mw_prpl_set_idle(GaimConnection *gc, int t) {
 
   mwSession_setUserStatus(session, &stat);
   mwUserStatus_clear(&stat);
- }
-
-
-static struct resolved_id *resolved_id_new(const char *id,
-					   const char *name) {
-
-  struct resolved_id *rid = g_new0(struct resolved_id, 1);
-  rid->id = g_strdup(id);
-  rid->name = g_strdup(name);
-  return rid;
 }
 
 
-static void resolved_id_free(struct resolved_id *rid) {
-  if(rid) {
-    g_free(rid->id);
-    g_free(rid->name);
-    g_free(rid);
-  }
-}
-
-
-static void add_resolved_done(const char *id, const char *name,
-			      GaimBuddy *buddy) {
+static void notify_im(GaimConnection *gc, GList *row) {
   GaimAccount *acct;
-  GaimConnection *gc;
-  struct mwGaimPluginData *pd;
+  GaimConversation *conv;
+  char *id;
 
-  g_return_if_fail(id != NULL);
-
-  g_return_if_fail(buddy != NULL);
-  acct = buddy->account;
-
-  g_return_if_fail(acct != NULL);
-  gc = gaim_account_get_connection(acct);
-
-  g_return_if_fail(gc != NULL);
-  pd = gc->proto_data;
-
-  gaim_blist_rename_buddy(buddy, id);
-  
-  gaim_blist_server_alias_buddy(buddy, name);
-  gaim_blist_node_set_string((GaimBlistNode *) buddy, BUDDY_KEY_NAME, name);
-  
-  buddy_add(pd, buddy);
+  acct = gaim_connection_get_account(gc);
+  id = g_list_nth_data(row, 0);
+  conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, id, acct);
+  if(! conv) conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, id);
+  gaim_conversation_present(conv);
 }
 
 
-static void multi_resolved_cleanup(GaimRequestFields *fields) {
-  GaimRequestField *f;
-  const GList *l;
-
-  f = gaim_request_fields_get_field(fields, "user");
-  l = gaim_request_field_list_get_items(f);
-
-  for(; l; l = l->next) {
-    const char *i = l->data;
-    struct resolved_id *res;
-
-    res = gaim_request_field_list_get_data(f, i);
-    resolved_id_free(res);
-  }
+static void notify_add(GaimConnection *gc, GList *row) {
+  gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
+			       g_list_nth_data(row, 1), NULL,
+			       g_list_nth_data(row, 0));
 }
 
 
-static void multi_resolved_cancel(GaimBuddy *buddy,
-				  GaimRequestFields *fields) {
-  GaimConnection *gc;
-  struct mwGaimPluginData *pd;
-
-  gc = gaim_account_get_connection(buddy->account);
-  pd = gc->proto_data;
-
-  gaim_blist_remove_buddy(buddy);
-  multi_resolved_cleanup(fields);
-
-  blist_schedule(pd);
-}
-
-
-static void multi_resolved_cb(GaimBuddy *buddy,
-			      GaimRequestFields *fields) {
-  GaimRequestField *f;
-  const GList *l;
-
-  f = gaim_request_fields_get_field(fields, "user");
-  l = gaim_request_field_list_get_selected(f);
-
-  if(l) {
-    const char *i = l->data;
-    struct resolved_id *res;
-
-    res = gaim_request_field_list_get_data(f, i);
-
-    add_resolved_done(res->id, res->name, buddy);
-    multi_resolved_cleanup(fields);
-
-  } else {
-    multi_resolved_cancel(buddy, fields);
-  }
-}
-
-
-static void foreach_resolved_id(char *key, char *val, GList **l) {
-  struct resolved_id *res = resolved_id_new(key, val);
-  *l = g_list_prepend(*l, res);
-}
-
-
-static gint resolved_id_comp(struct resolved_id *a, struct resolved_id *b) {
-  return g_ascii_strcasecmp(a->name, b->name);
+static void notify_close(gpointer data) {
+  ;
 }
 
 
 static void multi_resolved_query(struct mwResolveResult *result,
-				 GaimBuddy *buddy) {
-  GaimRequestFields *fields;
-  GaimRequestFieldGroup *g;
-  GaimRequestField *f;
-  GHashTable *hash;
+				 GaimConnection *gc) {
   GList *l;
   char *msgA, *msgB;
 
-  GaimAccount *acct;
-  GaimConnection *gc;
+  GaimNotifySearchResults *sres;
+  GaimNotifySearchColumn *scol;
 
-  g_return_if_fail(buddy != NULL);
+  sres = gaim_notify_searchresults_new();
 
-  acct = buddy->account;
-  g_return_if_fail(acct != NULL);
+  scol = gaim_notify_searchresults_column_new(_("User Name"));
+  gaim_notify_searchresults_column_add(sres, scol);
 
-  gc = gaim_account_get_connection(acct);
-  g_return_if_fail(gc != NULL);
+  scol = gaim_notify_searchresults_column_new(_("Sametime ID"));
+  gaim_notify_searchresults_column_add(sres, scol);
 
-  fields = gaim_request_fields_new();
+  gaim_notify_searchresults_button_add(sres, GAIM_NOTIFY_BUTTON_IM,
+				       notify_im);
 
-  g = gaim_request_field_group_new(NULL);
+  gaim_notify_searchresults_button_add(sres, GAIM_NOTIFY_BUTTON_ADD,
+				       notify_add);
 
-  /* note that Gaim segfaults if you don't add the group to the fields
-     before you add a required field to the group. Feh. */
-  gaim_request_fields_add_group(fields, g);
-
-  f = gaim_request_field_list_new("user", _("Possible Matches"));
-  gaim_request_field_list_set_multi_select(f, FALSE);
-  gaim_request_field_set_required(f, TRUE);
-
-  /* collect results into a set of identities */
-  hash = g_hash_table_new(g_str_hash, g_str_equal);
   for(l = result->matches; l; l = l->next) {
     struct mwResolveMatch *match = l->data;
+    GList *row = NULL;
         
     DEBUG_INFO("multi resolve: %s, %s\n",
 	       NSTR(match->id), NSTR(match->name));
@@ -4354,31 +4253,10 @@ static void multi_resolved_query(struct mwResolveResult *result,
     if(!match->id || !match->name)
       continue;
     
-    g_hash_table_insert(hash, match->id, match->name);
+    row = g_list_append(row, g_strdup(match->name));
+    row = g_list_append(row, g_strdup(match->id));
+    gaim_notify_searchresults_row_add(sres, row);
   }
-  
-  /* collect set into a list of structures */
-  l = NULL;
-  g_hash_table_foreach(hash, (GHFunc) foreach_resolved_id, &l);
-  g_hash_table_destroy(hash);
-  g_list_sort(l, (GCompareFunc) resolved_id_comp);
-
-  /* populate choices in request field */
-  for(; l; l = l->next) {
-    struct resolved_id *res = l->data;
-    char *label;
-    
-    /* fixes bug 1178603 by making the selection label a combination
-       of the full name and the user id. Problems arrise when multiple
-       entries have identical labels */
-    label = g_strdup_printf("%s (%s)", NSTR(res->name), NSTR(res->id));
-    gaim_request_field_list_add(f, label, res);
-    g_free(label);
-  }
-
-  g_list_free(l);
-
-  gaim_request_field_group_add_field(g, f);
 
   msgA = _("An ambiguous user ID was entered");
   msgB = _("The identifier '%s' may possibly refer to any of the following"
@@ -4386,12 +4264,8 @@ static void multi_resolved_query(struct mwResolveResult *result,
 	   " add them to your buddy list.");
   msgB = g_strdup_printf(msgB, result->name);
 
-  gaim_request_fields(gc, _("Select User to Add"),
-		      msgA, msgB, fields,
-		      _("Add User"), G_CALLBACK(multi_resolved_cb),
-		      _("Cancel"), G_CALLBACK(multi_resolved_cancel),
-		      buddy);
-  g_free(msgB);
+  gaim_notify_searchresults(gc, _("Select User"),
+			    msgA, msgB, sres, notify_close, NULL);
 }
 
 
@@ -4414,24 +4288,26 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
     if(g_list_length(res->matches) == 1) {
       struct mwResolveMatch *match = res->matches->data;
       
-      DEBUG_INFO("searched for %s, got only %s\n",
-		 NSTR(res->name), NSTR(match->id));
-      
       /* only one? that might be the right one! */
       if(strcmp(res->name, match->id)) {
 	/* uh oh, the single result isn't identical to the search
 	   term, better safe then sorry, so let's make sure it's who
 	   the user meant to add */
-	multi_resolved_query(res, buddy);
+	gaim_blist_remove_buddy(buddy);
+	multi_resolved_query(res, gc);
 	
       } else {
-	/* same person, add 'em */
-	add_resolved_done(match->id, match->name, buddy);
+	/* same person, set the server alias */
+	gaim_blist_server_alias_buddy(buddy, match->name);
+	gaim_blist_node_set_string((GaimBlistNode *) buddy,
+				   BUDDY_KEY_NAME, match->name);
+	blist_schedule(pd);
       }
       
     } else {
       /* prompt user if more than one match was returned */
-      multi_resolved_query(res, buddy);
+      gaim_blist_remove_buddy(buddy);
+      multi_resolved_query(res, gc);
     }
     
     return;
@@ -5276,7 +5152,7 @@ static void remote_group_multi_cleanup(gpointer ignore,
 
   for(; l; l = l->next) {
     const char *i = l->data;
-    struct resolved_id *res;
+    struct named_id *res;
 
     res = gaim_request_field_list_get_data(f, i);
 
@@ -5340,7 +5216,7 @@ static void remote_group_multi_cb(struct mwGaimPluginData *pd,
 
   if(l) {
     const char *i = l->data;
-    struct resolved_id *res;
+    struct named_id *res;
 
     res = gaim_request_field_list_get_data(f, i);
     remote_group_done(pd, res->id, res->name);
@@ -5372,7 +5248,7 @@ static void remote_group_multi(struct mwResolveResult *result,
 
   for(l = result->matches; l; l = l->next) {
     struct mwResolveMatch *match = l->data;
-    struct resolved_id *res = g_new0(struct resolved_id, 1);
+    struct named_id *res = g_new0(struct named_id, 1);
 
     res->id = g_strdup(match->id);
     res->name = g_strdup(match->name);

@@ -1028,7 +1028,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 
 	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_CONTINUE,
 					     ggp_callback_show_next);
-	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY,
+	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD,
 					     ggp_callback_add_buddy);
 	if (info->searchresults_window == NULL) {
 		void *h = gaim_notify_searchresults(gc,

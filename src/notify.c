@@ -193,41 +193,33 @@ gaim_notify_searchresults(GaimConnection *gc, const char *title,
 void
 gaim_notify_searchresults_free(GaimNotifySearchResults *results)
 {
-	GList *l, *m;
+	GList *l;
 
 	g_return_if_fail(results != NULL);
 
-	for (l = results->buttons; l != NULL; l = l->next) {
+	for (l = results->buttons; l; l = g_list_delete_link(l, l)) {
 		GaimNotifySearchButton *button = l->data;
-
-		results->buttons = g_list_remove(results->buttons, button);
 		g_free(button);
 	}
-	g_list_free(results->buttons);
+	results->buttons = NULL;
 
-	for (l = results->rows; l != NULL; l = l->next) {
+	for (l = results->rows; l; l = g_list_delete_link(l, l)) {
 		GList *row = l->data;
-
-		for (m = row; m != NULL; m = m->next) {
-			gchar *str = m->data;
-
-			m = g_list_remove(m, str);
+		for (; row; row = g_list_delete_link(row, row)) {
+			gchar *str = row->data;
 			g_free(str);
 		}
-
-		results->rows = g_list_remove(results->rows, row);
-		g_list_free(row);
 	}
-	g_list_free(results->rows);
+	results->rows = NULL;
 
-	for (l = results->columns; l != NULL; l = l->next) {
+	for (l = results->columns; l; l = g_list_delete_link(l, l)) {
 		GaimNotifySearchColumn *column = l->data;
-
-		results->columns = g_list_remove(results->columns, column);
 		g_free(column->title);
 		g_free(column);
 	}
-	g_list_free(results->columns);
+	results->columns = NULL;
+
+	g_free(results);
 }
 
 void
@@ -260,6 +252,27 @@ gaim_notify_searchresults_button_add(GaimNotifySearchResults *results,
 
 	results->buttons = g_list_append(results->buttons, button);
 }
+
+
+void
+gaim_notify_searchresults_button_add_labeled(GaimNotifySearchResults *results,
+                                             const char *label,
+                                             GaimNotifySearchResultsCallback cb) {
+	GaimNotifySearchButton *button;
+
+	g_return_if_fail(results != NULL);
+	g_return_if_fail(cb != NULL);
+	g_return_if_fail(label != NULL);
+	g_return_if_fail(*label != '\0');
+
+	button = g_new0(GaimNotifySearchButton, 1);
+	button->callback = cb;
+	button->type = GAIM_NOTIFY_BUTTON_LABELED;
+	button->label = g_strdup(label);
+
+	results->buttons = g_list_append(results->buttons, button);
+}
+
 
 GaimNotifySearchResults *
 gaim_notify_searchresults_new()

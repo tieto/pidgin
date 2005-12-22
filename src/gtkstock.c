@@ -137,11 +137,13 @@ static const GtkStockItem stock_items[] =
 {
 	{ GAIM_STOCK_ALIAS,     N_("_Alias"),     0, 0, NULL },
 	{ GAIM_STOCK_CHAT,      N_("_Join"),      0, 0, NULL },
+	{ GAIM_STOCK_IM,	N_("I_M"),        0, 0, NULL },
+	{ GAIM_STOCK_INFO,      N_("_Get Info"),  0, 0, NULL },
 	{ GAIM_STOCK_INVITE,    N_("_Invite"),    0, 0, NULL },
 	{ GAIM_STOCK_MODIFY,    N_("_Modify"),    0, 0, NULL },
 	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL },
 	{ GAIM_STOCK_PAUSE,     N_("_Pause"),     0, 0, NULL },
-	{ GAIM_STOCK_WARN,      N_("_Warn"),      0, 0, NULL }
+	{ GAIM_STOCK_WARN,      N_("_Warn"),      0, 0, NULL },
 };
 
 static gchar *

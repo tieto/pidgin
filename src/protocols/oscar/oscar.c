@@ -6197,7 +6197,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 		row = g_list_append(row, g_strdup(&SNs[i * (MAXSNLEN + 1)]));
 		gaim_notify_searchresults_row_add(results, row);
 	}
-	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY,
+	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD,
 										 oscar_searchresults_add_buddy_cb);
 	gaim_notify_searchresults(gc, NULL, NULL, secondary, results, NULL, NULL);
 

@@ -5473,8 +5473,9 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_chat_remove_user,   /* chat_remove_user     */
 	gaim_gtkconv_chat_remove_users,  /* chat_remove_users    */
 	gaim_gtkconv_chat_update_user,   /* chat_update_user     */
+	gaim_gtkconv_present_conversation, /* present            */
 	gaim_gtkconv_has_focus,          /* has_focus            */
-	gaim_gtkconv_custom_smiley_add,  /* custom_smiley_add */
+	gaim_gtkconv_custom_smiley_add,  /* custom_smiley_add    */
 	gaim_gtkconv_custom_smiley_write, /* custom_smiley_write */
 	gaim_gtkconv_custom_smiley_close, /* custom_smiley_close */
 	gaim_gtkconv_updated             /* updated              */

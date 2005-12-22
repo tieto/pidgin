@@ -511,6 +511,18 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 
 void
+gaim_conversation_present(GaimConversation *conv) {
+	GaimConversationUiOps *ops;
+
+	g_return_if_fail(conv != NULL);
+
+	ops  = gaim_conversation_get_ui_ops(conv);
+	if(ops && ops->present)
+		ops->present(conv);
+}
+
+
+void
 gaim_conversation_set_features(GaimConversation *conv, GaimConnectionFlags features)
 {
 	g_return_if_fail(conv != NULL);

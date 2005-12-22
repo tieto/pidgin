@@ -475,13 +475,12 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 {
 	GtkWidget *window;
 	GtkWidget *treeview;
-	GtkWidget *button, *close_button;
+	GtkWidget *close_button;
 	GType *col_types;
 	GtkListStore *model;
 	GtkCellRenderer *renderer;
 	guint col_num;
 	guint i;
-	GList *buttons = NULL;
 
 	GtkWidget *vbox;
 	GtkWidget *button_area;
@@ -581,21 +580,48 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 	for (i = 0; i < g_list_length(results->buttons); i++) {
 		GaimNotifySearchButton *b = g_list_nth_data(results->buttons, i);
-		button = NULL;
+		GtkWidget *button = NULL;
 		switch (b->type) {
+			case GAIM_NOTIFY_BUTTON_LABELED:
+				if(b->label) {
+					button = gtk_button_new_with_label(b->label);
+				} else {
+					gaim_debug_warning("gtknotify", "Missing button label");
+				}
+				break;
 			case GAIM_NOTIFY_BUTTON_CONTINUE:
 				button = gtk_button_new_from_stock(GTK_STOCK_GO_FORWARD);
 				break;
-			case GAIM_NOTIFY_BUTTON_ADD_BUDDY:
+			case GAIM_NOTIFY_BUTTON_ADD:
 				button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+				break;
+			case GAIM_NOTIFY_BUTTON_INFO:
+				button = gtk_button_new_from_stock(GAIM_STOCK_INFO);
+				break;
+			case GAIM_NOTIFY_BUTTON_IM:
+				button = gtk_button_new_from_stock(GAIM_STOCK_IM);
+				break;
+			case GAIM_NOTIFY_BUTTON_JOIN:
+				button = gtk_button_new_from_stock(GAIM_STOCK_CHAT);
+				break;
+			case GAIM_NOTIFY_BUTTON_INVITE:
+				button = gtk_button_new_from_stock(GAIM_STOCK_INVITE);
 				break;
 			default:
 				gaim_debug_warning("gtknotify", "Incorrect button type: %d\n", b->type);
 		}
 		if (button != NULL) {
+			GaimNotifySearchResultsButtonData *bd;
+
 			gtk_box_pack_start(GTK_BOX(button_area), button, FALSE, FALSE, 0);
 			gtk_widget_show(button);
-			buttons = g_list_append(buttons, button);
+
+			bd = g_new0(GaimNotifySearchResultsButtonData, 1);
+			bd->button = b;
+			bd->data = data;
+
+			g_signal_connect(G_OBJECT(button), "clicked",
+			                 G_CALLBACK(searchresults_callback_wrapper_cb), bd);
 		}
 	}
 
@@ -604,6 +630,9 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	gtk_box_pack_start(GTK_BOX(button_area), close_button, FALSE, FALSE, 0);
 	gtk_widget_show(close_button);
 
+	g_signal_connect_swapped(G_OBJECT(close_button), "clicked",
+	                         G_CALLBACK(searchresults_close_cb), data);
+
 	data->account = gc->account;
 	data->model = model;
 	data->treeview = treeview;
@@ -611,18 +640,6 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 	/* Insert rows. */
 	gaim_gtk_notify_searchresults_new_rows(gc, results, data, NULL);
-
-	/* Connect Signals */
-	for (i = 0; i < g_list_length(results->buttons); i++) {
-		GaimNotifySearchResultsButtonData *bd = g_new0(GaimNotifySearchResultsButtonData, 1);
-		bd->button = g_list_nth_data(results->buttons, i);
-		bd->data = data;
-		g_signal_connect(G_OBJECT(g_list_nth_data(buttons, i)), "clicked",
-						 G_CALLBACK(searchresults_callback_wrapper_cb), bd);
-	}
-
-	g_signal_connect_swapped(G_OBJECT(close_button), "clicked",
-							 G_CALLBACK(searchresults_close_cb), data);
 
 	/* Show the window */
 	gtk_widget_show(window);

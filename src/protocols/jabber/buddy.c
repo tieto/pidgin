@@ -1229,7 +1229,7 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 		}
 	}
 
-	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY,
+	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD,
 			user_search_result_add_buddy_cb);
 
 	gaim_notify_searchresults(js->gc, NULL, NULL, _("The following are the results of your search"), results, NULL, NULL);

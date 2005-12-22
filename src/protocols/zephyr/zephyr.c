@@ -744,7 +744,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 		char *send_inst;
 		GaimConversation *gconv1;
 		GaimConvChat *gcc;
-		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
+		char *ptr = (char *) notice.z_message + (strlen(notice.z_message) + 1);
 		int len; 
 		char *sendertmp = g_strdup_printf("%s", zephyr->username);
 		int signature_length = strlen(notice.z_message);

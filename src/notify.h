@@ -31,10 +31,12 @@
 
 #include "connection.h"
 
+
 /**
  * Notification close callbacks.
  */
 typedef void  (*GaimNotifyCloseCallback) (gpointer user_data);
+
 
 /**
  * Notification types.
@@ -51,6 +53,7 @@ typedef enum
 
 } GaimNotifyType;
 
+
 /**
  * Notification message types.
  */
@@ -62,15 +65,21 @@ typedef enum
 
 } GaimNotifyMsgType;
 
+
 /**
  * The types of buttons
  */
 typedef enum
 {
-	GAIM_NOTIFY_BUTTON_CONTINUE = 0,
-	GAIM_NOTIFY_BUTTON_ADD_BUDDY
-
+	GAIM_NOTIFY_BUTTON_LABELED = 0,  /**< special use, see _button_add_labeled */
+	GAIM_NOTIFY_BUTTON_CONTINUE = 1,
+	GAIM_NOTIFY_BUTTON_ADD,
+	GAIM_NOTIFY_BUTTON_INFO,
+	GAIM_NOTIFY_BUTTON_IM,
+	GAIM_NOTIFY_BUTTON_JOIN,
+	GAIM_NOTIFY_BUTTON_INVITE
 } GaimNotifySearchButtonType;
+
 
 /**
  * Search results object.
@@ -83,6 +92,7 @@ typedef struct
 
 } GaimNotifySearchResults;
 
+
 /**
  * Single column of a search result.
  */
@@ -92,7 +102,14 @@ typedef struct
 
 } GaimNotifySearchColumn;
 
-typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *, GList *);
+
+/**
+ * Callback for a button in a search result.
+ *
+ * @param c  the GaimConnection passed to gaim_notify_searchresults
+ * @param c  the list of selected rows, each a GList in itself.
+ */
+typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *c, GList *l);
 
 
 /**
@@ -102,8 +119,9 @@ typedef struct
 {
 	GaimNotifySearchButtonType type;
 	GaimNotifySearchResultsCallback callback; /**< Function to be called when clicked. */
-
+	char *label;                              /**< only for GAIM_NOTIFY_BUTTON_LABELED */
 } GaimNotifySearchButton;
+
 
 /**
  * Notification UI operations.
@@ -111,31 +129,40 @@ typedef struct
 typedef struct
 {
 	void *(*notify_message)(GaimNotifyMsgType type, const char *title,
-							const char *primary, const char *secondary);
+	                        const char *primary, const char *secondary);
+
 	void *(*notify_email)(const char *subject, const char *from,
-						  const char *to, const char *url);
+	                      const char *to, const char *url);
+
 	void *(*notify_emails)(size_t count, gboolean detailed,
-						   const char **subjects, const char **froms,
-						   const char **tos, const char **urls);
+	                       const char **subjects, const char **froms,
+	                       const char **tos, const char **urls);
+
 	void *(*notify_formatted)(const char *title, const char *primary,
-							  const char *secondary, const char *text);
+	                          const char *secondary, const char *text);
+
 	void *(*notify_searchresults)(GaimConnection *gc, const char *title,
-								  const char *primary, const char *secondary,
-								  GaimNotifySearchResults *results);
+	                              const char *primary, const char *secondary,
+	                              GaimNotifySearchResults *results);
+
 	void (*notify_searchresults_new_rows)(GaimConnection *gc,
-										  GaimNotifySearchResults *results,
-										  void *data, gpointer user_data);
+	                                      GaimNotifySearchResults *results,
+	                                      void *data, gpointer user_data);
+
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
-							  const char *text);
+	                         const char *text);
+
 	void *(*notify_uri)(const char *uri);
 
 	void (*close_notify)(GaimNotifyType type, void *ui_handle);
 
 } GaimNotifyUiOps;
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 /**************************************************************************/
 /** Search results notification API                                       */
@@ -178,8 +205,9 @@ void gaim_notify_searchresults_new_rows(GaimConnection *gc,
 										GaimNotifySearchResults *results,
 										void *data, gpointer user_data);
 
+
 /**
- * Adds a button that will be displayed in the search results dialog.
+ * Adds a stock button that will be displayed in the search results dialog.
  *
  * @param results The search results object.
  * @param type    Type of the button. (TODO: Only one button of a given type can be displayed.)
@@ -188,6 +216,19 @@ void gaim_notify_searchresults_new_rows(GaimConnection *gc,
 void gaim_notify_searchresults_button_add(GaimNotifySearchResults *results,
 										  GaimNotifySearchButtonType type,
 										  GaimNotifySearchResultsCallback cb);
+
+
+/**
+ * Adds a plain labelled button that will be displayed in the search results dialog.
+ * 
+ * @param results The search results object
+ * @param label   The label to display
+ * @param cb      Function that will be called on the click event
+ */
+void gaim_notify_searchresults_button_add_labeled(GaimNotifySearchResults *results,
+                                                  const char *label,
+                                                  GaimNotifySearchResultsCallback cb);
+
 
 /**
  * Returns a newly created search results object.

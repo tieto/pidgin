@@ -160,6 +160,7 @@ struct _GaimConversationUiOps
 	void (*chat_remove_users)(GaimConversation *conv, GList *users);
 	void (*chat_update_user)(GaimConversation *conv, const char *user);
 
+	void (*present)(GaimConversation *conv);
 
 	gboolean (*has_focus)(GaimConversation *conv);
 
@@ -286,6 +287,15 @@ GaimConversation *gaim_conversation_new(GaimConversationType type,
  * @param conv The conversation to destroy.
  */
 void gaim_conversation_destroy(GaimConversation *conv);
+
+
+/**
+ * Present a conversation to the user. This allows core code to initiate a
+ * conversation by displaying the IM dialog.
+ * @param conv The conversation to present
+ */
+void gaim_conversation_present(GaimConversation *conv);
+
 
 /**
  * Returns the specified conversation's type.
