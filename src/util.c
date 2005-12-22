@@ -1254,6 +1254,8 @@ gaim_markup_strip_html(const char *str)
 	gboolean closing_td_p = FALSE;
 	gchar *str2;
 	const gchar *cdata_close_tag = NULL;
+	gchar *href = NULL;
+	int href_st = 0;
 
 	if(!str)
 		return NULL;
@@ -1306,8 +1308,70 @@ gaim_markup_strip_html(const char *str)
 					k++;
 				}
 
+				/* If we've got an <a> tag with an href, save the address
+				 * to print later. */
+				if (strncasecmp(str2 + i, "<a", 2) == 0 &&
+				    g_ascii_isspace(str2[i+2]))
+				{
+					int st; /* start of href, inclusive [ */
+					int end; /* end of href, exclusive ) */
+					char delim = ' ';
+					/* Find start of href */
+					for (st = i + 3; st < k; st++)
+					{
+						if (strncasecmp(str2+st, "href=", 5) == 0)
+						{
+							st += 5;
+							if (str2[st] == '"')
+							{
+								delim = '"';
+								st++;
+							}
+							break;
+						}
+					}
+					/* find end of address */
+					for (end = st; end < k && str2[end] != delim; end++)
+					{
+						/* All the work is done in the loop construct above. */
+					}
+
+					/* If there's an address, save it.  If there was
+					 * already one saved, kill it. */
+					if (st < k)
+					{
+						char *tmp;
+						g_free(href);
+						tmp = g_strndup(str2 + st, end - st);
+						href = gaim_unescape_html(tmp);
+						g_free(tmp);
+						href_st = j;
+					}
+				}
+
+				/* Replace </a> with an ascii representation of the
+				 * address the link was pointing to. */
+				else if (href != NULL && strncasecmp(str2 + i, "</a>", 4) == 0)
+				{
+
+					size_t hrlen = strlen(href);
+
+					/* Only insert the href if it's different from the CDATA. */
+					if (hrlen != j - href_st  ||
+					    strncmp(str2 + href_st, href, hrlen))
+					{
+						str2[j++] = ' ';
+						str2[j++] = '<';
+						g_memmove(str2 + j, href, hrlen);
+						j += hrlen;
+						str2[j++] = '>';
+						g_free(href);
+						href = NULL;
+					}
+				}
+
 				/* Check for tags which should be mapped to newline */
-				if (strncasecmp(str2 + i, "<p>", 3) == 0
+				else if (strncasecmp(str2 + i, "<p>", 3) == 0
 				 || strncasecmp(str2 + i, "<tr", 3) == 0
 				 || strncasecmp(str2 + i, "<br", 3) == 0
 				 || strncasecmp(str2 + i, "<li", 3) == 0
@@ -1387,6 +1451,8 @@ gaim_markup_strip_html(const char *str)
 		if (visible)
 			str2[j++] = g_ascii_isspace(str2[i])? ' ': str2[i];
 	}
+
+	g_free(href);
 
 	str2[j] = '\0';
 
