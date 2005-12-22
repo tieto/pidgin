@@ -514,7 +514,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * Don't autorespond if:
 		 *
 		 *  - it's not supported on this connection
-		 *  - or the away message is empty
+		 *  - we are available
 		 *  - or it's disabled
 		 *  - or we're not idle and the 'only auto respond if idle' pref
 		 *    is set
