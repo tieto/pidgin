@@ -170,9 +170,11 @@ CLEANFILES = \
 	dbus-bindings.c \
 	dbus-client-binding.c \
 	dbus-client-binding.h \
-	gaim.service \
 	dbus-types.c \
-	dbus-types.h
+	dbus-types.h \
+	gaim-client-bindings.c \
+	gaim-client-bindings.h \
+	gaim.service
 
 # gaim dbus server
 

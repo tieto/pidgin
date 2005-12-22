@@ -143,6 +143,12 @@ void gaim_dbus_signal_emit_gaim(const char *name, int num_values,
 gboolean gaim_dbus_init(void);
 
 
+/**
+ * Returns the dbus subsystem handle.
+ *
+ * @return The dbus subsystem handle.
+ */
+void *gaim_dbus_get_handle(void);
 
 /**
 

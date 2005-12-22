@@ -97,12 +97,20 @@ GaimVoiceChat *gaim_voice_chat_new(GaimConnection *gc, const char *name);
 void gaim_voice_chat_destroy(GaimVoiceChat *vc);
 
 /**
- * Acessor function of the name of the other user on the voice chat
+ * Acessor function to get the name of the other user on the voice chat
  *
  * @param vc  The voice chat
  * @return    The name
  */
 const char *gaim_voice_chat_get_name(GaimVoiceChat *vc);
+
+/**
+ * Acessor function to set the name of the other user on the voice chat
+ *
+ * @param vc  The voice chat
+ * @return    The name
+ */
+void gaim_voice_chat_set_name(GaimVoiceChat *vc, const char *name);
 
 /**
  * Accessor for the GaimConnection of the voice chat
@@ -197,6 +205,13 @@ void gaim_voice_chat_get_filters(GaimVoiceChat *vc, struct _MSFilter **microphon
  * @return          The timer
  */
 struct _MSSync *gaim_voice_chat_get_timer(GaimVoiceChat *vc);
+
+/**
+ * Start the streams
+ *
+ * @param vc		The voice chat
+ */
+void gaim_voice_chat_start_streams(GaimVoiceChat *vc);
 
 /*@}*/
 

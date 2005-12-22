@@ -487,7 +487,7 @@ class ServerBindingSet (BindingSet):
             print '{"%s", "%s", %s_DBUS},' % \
                   (ctopascal(function), params, function)
 
-        print "{NULL, NULL}"
+        print "{NULL, NULL, NULL}"
         print "};"
 
         print "#define GAIM_DBUS_REGISTER_BINDINGS(handle) gaim_dbus_register_bindings(handle, bindings_DBUS)"

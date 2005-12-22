@@ -533,9 +533,9 @@ void gaim_dbus_register_bindings(void *handle, GaimDBusBinding *bindings) {
 
 
 
-gboolean gaim_dbus_dispatch_init(void) 
+static gboolean gaim_dbus_dispatch_init(void) 
 {
-    static DBusObjectPathVTable vtable = {NULL, &gaim_dbus_dispatch};
+    static DBusObjectPathVTable vtable = {NULL, &gaim_dbus_dispatch, NULL, NULL, NULL, NULL};
 
     DBusError error;
     int result;

@@ -1,5 +1,5 @@
-#ifndef _LIBGAIM_H_INCLUDED_
-#define _LIBGAIM_H_INCLUDED_
+#ifndef _GAIM_CLIENT_H_INCLUDED_
+#define _GAIM_CLIENT_H_INCLUDED_
 
 #include <glib.h>
 #include "gaim-client-bindings.h"
