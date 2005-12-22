@@ -1950,6 +1950,22 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
+
+	/* Convert old queuing prefs to hide_new 3-way pref. */
+	if (gaim_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
+	    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))     
+	{
+		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "always");
+	}
+	else if (gaim_prefs_exists("/gaim/gtk/away/queue_messages") &&
+	         gaim_prefs_get_bool("/gaim/gtk/away/queue_messages"))
+	{
+		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "away");
+	}
+	else
+	{
+		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "never");
+	}
 	gaim_prefs_remove("/gaim/gtk/away/queue_messages");
 	gaim_prefs_remove("/gaim/gtk/away");
 	gaim_prefs_remove("/plugins/gtk/docklet/queue_messages");

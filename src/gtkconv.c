@@ -6008,18 +6008,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/im/entry_height", 50);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/show_buddy_icons", TRUE);
 
-	/* convert old queuing prefs to hide_new 3-way pref */
-    if(gaim_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
-            gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages")) {
-		gaim_prefs_add_string("/gaim/gtk/conversations/im/hide_new", "always");
-    }
-    else if(gaim_prefs_exists("/gaim/gtk/away/queue_messages") &&
-            gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
-		gaim_prefs_add_string("/gaim/gtk/conversations/im/hide_new", "away");
-    }
-    else {
-		gaim_prefs_add_string("/gaim/gtk/conversations/im/hide_new", "never");
-    }
+	gaim_prefs_add_string("/gaim/gtk/conversations/im/hide_new", "never");
 
 	/* Connect callbacks. */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/close_on_tabs",
