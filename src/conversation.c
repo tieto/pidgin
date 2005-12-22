@@ -1139,7 +1139,8 @@ gaim_conv_im_send_with_flags(GaimConvIm *im, const char *message, GaimMessageFla
 
 gboolean
 gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
-                            const char *cksum_type, const char *chksum)
+                            const char *cksum_type, const char *chksum,
+							gboolean remote)
 {
 	if (conv == NULL || smile == NULL || !*smile) {
 		return FALSE;
@@ -1148,7 +1149,7 @@ gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
 	/* TODO: check if the icon is in the cache and return false if so */
 	/* TODO: add an icon cache (that doesn't suck) */
 	if (conv->ui_ops != NULL && conv->ui_ops->custom_smiley_add !=NULL) {
-		return conv->ui_ops->custom_smiley_add(conv, smile);
+		return conv->ui_ops->custom_smiley_add(conv, smile, remote);
 	} else {
 		gaim_debug_info("conversation", "Could not find add custom smiley function");
 		return FALSE;

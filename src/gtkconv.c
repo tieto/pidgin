@@ -4473,6 +4473,20 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		 * escaped entities making the string longer */
 		int tag_start_offset = alias ? (strlen(alias_escaped) - strlen(alias)) : 0;
 		int tag_end_offset = 0;
+		GtkSmileyTree *tree = NULL;
+		GHashTable *smiley_data = NULL;
+
+		if (flags & GAIM_MESSAGE_SEND)
+		{
+			/* Temporarily revert to the original smiley-data to avoid showing up
+			 * custom smileys of the buddy when sending message
+			 */
+			tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
+			GTK_IMHTML(gtkconv->imhtml)->default_smilies =
+									GTK_IMHTML(gtkconv->entry)->default_smilies;
+			smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
+			GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
+		}
 
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
@@ -4615,6 +4629,13 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
 							 with_font_tag, gtk_font_options | gtk_font_options_all);
+
+		if (flags & GAIM_MESSAGE_SEND)
+		{
+			/* Restore the smiley-data */
+			GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
+			GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
+		}
 
 		g_free(with_font_tag);
 		g_free(new_message);
@@ -4959,35 +4980,12 @@ static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer 
 }
 
 static gboolean
-gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
+add_custom_smiley_for_imhtml(GtkIMHtml *imhtml, const char *sml, const char *smile)
 {
-	GaimGtkConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
 	GdkPixbufLoader *loader;
-	struct smiley_list *list;
-	const char *sml = NULL, *conv_sml;
 
-	if (!conv || !smile || !*smile) {
-		return FALSE;
-	}
-
-	/* If smileys are off, return false */
-	if (gaim_gtkthemes_smileys_disabled())
-		return FALSE;
-
-	/* If possible add this smiley to the current theme.
-	 * The addition is only temporary: custom smilies aren't saved to disk. */
-	conv_sml = gaim_account_get_protocol_name(conv->account);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
-		if (!strcmp(list->sml, conv_sml)) {
-			sml = list->sml;
-			break;
-		}
-	}
-
-	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
+	smiley = gtk_imhtml_smiley_get(imhtml, sml, smile);
 
 	if (smiley) {
 
@@ -4999,6 +4997,7 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 		 * the smiley we are about to receive */
 		g_object_unref(G_OBJECT(smiley->icon));
 
+		/* XXX: Is it necessary to _unref the loader first? */
 		smiley->loader = gdk_pixbuf_loader_new();
 		smiley->icon = NULL;
 
@@ -5022,7 +5021,44 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 	g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(gaim_gtkconv_custom_smiley_allocated), smiley);
 	g_signal_connect(smiley->loader, "closed", G_CALLBACK(gaim_gtkconv_custom_smiley_closed), smiley);
 
-	gtk_imhtml_associate_smiley(GTK_IMHTML(gtkconv->imhtml), sml, smiley);
+	gtk_imhtml_associate_smiley(imhtml, sml, smiley);
+ 
+	return TRUE;
+}
+ 
+static gboolean
+gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile, gboolean remote)
+{
+	GaimGtkConversation *gtkconv;
+	struct smiley_list *list;
+	const char *sml = NULL, *conv_sml;
+
+	if (!conv || !smile || !*smile) {
+		return FALSE;
+	}
+ 
+	/* If smileys are off, return false */
+	if (gaim_gtkthemes_smileys_disabled())
+		return FALSE;
+ 
+	/* If possible add this smiley to the current theme.
+	 * The addition is only temporary: custom smilies aren't saved to disk. */
+	conv_sml = gaim_account_get_protocol_name(conv->account);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+ 
+	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
+		if (!strcmp(list->sml, conv_sml)) {
+			sml = list->sml;
+			break;
+		}
+	}
+ 
+	if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->imhtml), sml, smile))
+		return FALSE;
+ 
+	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
+		if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->entry), sml, smile))
+			return FALSE;
 
 	return TRUE;
 }

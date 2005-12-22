@@ -831,7 +831,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, session->account, who);
 		}
 
-		if (gaim_conv_custom_smiley_add(conv, smile, "sha1", sha1c)) {
+		if (gaim_conv_custom_smiley_add(conv, smile, "sha1", sha1c, TRUE)) {
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 

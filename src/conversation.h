@@ -164,7 +164,7 @@ struct _GaimConversationUiOps
 	gboolean (*has_focus)(GaimConversation *conv);
 
 	/* Custom Smileys */
-	gboolean (*custom_smiley_add)(GaimConversation *conv, const char *smile);
+	gboolean (*custom_smiley_add)(GaimConversation *conv, const char *smile, gboolean remote);
 	void (*custom_smiley_write)(GaimConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(GaimConversation *conv, const char *smile);
@@ -769,6 +769,7 @@ void gaim_conv_im_send_with_flags(GaimConvIm *im, const char *message, GaimMessa
  * @param smile The text associated with the smiley
  * @param cksum_type The type of checksum.
  * @param chksum The checksum, as a NUL terminated base64 string.
+ * @param remote @c TRUE if the custom smiley is set by the remote user (buddy).
  * @return      @c TRUE if an icon is expected, else FALSE. Note that
  *              it is an error to never call gaim_conv_custom_smiley_close if
  *              this function returns @c TRUE, but an error to call it if
@@ -776,7 +777,8 @@ void gaim_conv_im_send_with_flags(GaimConvIm *im, const char *message, GaimMessa
  */
 
 gboolean gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
-                                      const char *cksum_type, const char *chksum);
+                                      const char *cksum_type, const char *chksum,
+									  gboolean remote);
 
 
 /**
