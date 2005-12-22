@@ -1361,10 +1361,10 @@ gaim_markup_strip_html(const char *str)
 					    strncmp(str2 + href_st, href, hrlen))
 					{
 						str2[j++] = ' ';
-						str2[j++] = '<';
+						str2[j++] = '(';
 						g_memmove(str2 + j, href, hrlen);
 						j += hrlen;
-						str2[j++] = '>';
+						str2[j++] = ')';
 						g_free(href);
 						href = NULL;
 					}
