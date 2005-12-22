@@ -52,7 +52,6 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-	GtkGaimStatusBox *box;
 	if (!gtkblist)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
@@ -63,14 +62,13 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 static void gaim_gtk_connection_connected(GaimConnection *gc)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-	GtkGaimStatusBox *box;
 	GaimAccount *account = NULL;
 	if (!gtkblist)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 	account = gaim_connection_get_account(gc);
-	
+
 	if (hash != NULL)
 		g_hash_table_remove(hash, account);
 	if (accountReconnecting == NULL)
