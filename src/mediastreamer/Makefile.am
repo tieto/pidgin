@@ -35,9 +35,7 @@ libmediastreamer_la_SOURCES=msfilter.c msfilter.h msutils.h waveheader.h\
 							alsacard.c alsacard.h \
 							jackcard.c jackcard.h \
 							audiostream.c mediastream.h \
-							msspeexenc.c msspeexenc.h msspeexdec.c msspeexdec.h \
-							msilbcdec.c msilbcdec.h msilbcenc.c msilbcenc.h 
-
+							msspeexenc.c msspeexenc.h msspeexdec.c msspeexdec.h
 #							msGSMdecoder.c msGSMdecoder.h 
 #							msGSMencoder.c msGSMencoder.h
 #							msLPC10encoder.c msLPC10encoder.h 

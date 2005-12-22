@@ -1575,11 +1575,6 @@ if test "x$enable_vv" = xyes; then
 	VV_CFLAGS="$VV_CFLAGS $SPEEX_CFLAGS"
 	VV_LIBS="$VV_LIBS   $SPEEX_LIBS"
 
-	dnl check for installed ilbc codec
-	LP_CHECK_ILBC
-	VV_CFLAGS="$VV_CFLAGS $ILBC_CFLAGS"
-	VV_LIBS="$VV_LIBS   $ILBC_LIBS"
-
 	PKG_CHECK_MODULES(ORTP, ortp >= 0.7.1, enable_ortp=yes, enable_ortp=no)
 	VV_CFLAGS="$VV_CFLAGS $ORTP_CFLAGS"
 	VV_LIBS="$VV_LIBS   $ORTP_LIBS"
