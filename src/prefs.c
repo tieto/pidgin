@@ -1104,15 +1104,24 @@ gaim_prefs_init(void)
 
 	/* Away -> Auto-Reply */
 	if (!gaim_prefs_exists("/core/away/auto_response/enabled") ||
-		!gaim_prefs_exists("/core/away/auto_response/idle_only")) {
+	    !gaim_prefs_exists("/core/away/auto_response/idle_only"))
+	{
 		gaim_prefs_add_string("/core/away/auto_reply", "awayidle");
-	} else {
-		if (!gaim_prefs_get_bool("/core/away/auto_response/enabled")) {
+	}
+	else
+	{
+		if (!gaim_prefs_get_bool("/core/away/auto_response/enabled"))
+		{
 			gaim_prefs_add_string("/core/away/auto_reply", "never");
-		} else {
-			if (gaim_prefs_get_bool("/core/away/auto_response/idle_only")) {
+		}
+		else
+		{
+			if (gaim_prefs_get_bool("/core/away/auto_response/idle_only"))
+			{
 				gaim_prefs_add_string("/core/away/auto_reply", "awayidle");
-			} else {
+			}
+			else
+			{
 				gaim_prefs_add_string("/core/away/auto_reply", "away");
 			}
 		}
