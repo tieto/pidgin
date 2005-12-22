@@ -1674,9 +1674,9 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					else
 						gaim_notify_error(gc, NULL, buf, NULL);
 					g_free(buf);
-					
+
 					oscar_chat_kill(gc, cc);
-					
+
 				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
 					if (od->cnpa > 0)
 						gaim_input_remove(od->cnpa);
@@ -5896,6 +5896,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(sess);
+		/* TODO: Need to also call aim_setextstatus()!!! */
 		aim_icq_setsecurity(sess,
 			gaim_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
 			gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE),
@@ -5988,7 +5989,6 @@ static size_t my_strftime(char *s, size_t max, const char  *fmt,
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimBuddy *buddy;
 	struct buddyinfo *bi = NULL;
@@ -6630,6 +6630,12 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 		if (status_html != NULL)
 		{
 			status_text = gaim_markup_strip_html(status_html);
+			/* If the status_text is longer than 60 character then truncate it */
+			if (strlen(status_text) > 60)
+			{
+				char *tmp = g_utf8_find_prev_char(status_text, &status_text[58]);
+				strcpy(tmp, "...");
+			}
 			aim_srv_setstatusmsg(od->sess, status_text);
 			g_free(status_text);
 		}
@@ -7637,7 +7643,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			}
 			else
 			{
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), _("(pending)"));
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), _("(retrieving...)"));
 			}
 		}
 	}
@@ -8038,6 +8044,7 @@ oscar_icq_privacy_opts(GaimConnection *gc, GaimRequestFields *fields)
 	gaim_account_set_bool(account, "hide_ip", hide_ip);
 	gaim_account_set_bool(account, "web_aware", web_aware);
 
+	/* TODO: Need to also call aim_setextstatus()!!! */
 	aim_icq_setsecurity(od->sess, auth, web_aware, hide_ip);
 }
 
@@ -8065,7 +8072,7 @@ oscar_show_icq_privacy_opts(GaimPluginAction *action)
 	f = gaim_request_field_bool_new("hide_ip", _("Hide IP address"), hide_ip);
 	gaim_request_field_group_add_field(g, f);
 
-	f = gaim_request_field_bool_new("web_aware", _("Web aware"), web_aware);
+	f = gaim_request_field_bool_new("web_aware", _("Web aware (enabling this will cause you to receive SPAM!)"), web_aware);
 	gaim_request_field_group_add_field(g, f);
 
 	gaim_request_fields_add_group(fields, g);
@@ -8543,7 +8550,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_send_file,		/* send_file */
 	oscar_new_xfer,			/* new_xfer */
 	NULL,					/* whiteboard_prpl_ops */
- 	NULL,					/* media_prpl_ops */
+	NULL,					/* media_prpl_ops */
 };
 
 static GaimPluginUiInfo prefs_info = {
