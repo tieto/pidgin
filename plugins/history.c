@@ -187,12 +187,7 @@ static GaimPluginInfo info =
 	VERSION,
 	N_("Shows recently logged conversations in new conversations."),
 	N_("When a new conversation is opened this plugin will insert "
-	   "the last conversation into the current conversation.\n\n"
-       "The history plugin requires logging be enabled. Logging can "
-	   "be enabled from Tools -> Preferences -> Logging. Enabling logs "
-	   "for instant messages and/or chats will activate history for "
-	   "the same conversation type(s)."
-	),
+	   "the last conversation into the current conversation."),
 	"Sean Egan <seanegan@gmail.com>",
 	GAIM_WEBSITE,
 	plugin_load,
