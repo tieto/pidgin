@@ -106,10 +106,10 @@ typedef struct
 /**
  * Callback for a button in a search result.
  *
- * @param c  the GaimConnection passed to gaim_notify_searchresults
- * @param c  the list of selected rows, each a GList in itself.
+ * @param c   the GaimConnection passed to gaim_notify_searchresults
+ * @param row the contents of the selected row
  */
-typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *c, GList *l);
+typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *c, GList *row);
 
 
 /**
