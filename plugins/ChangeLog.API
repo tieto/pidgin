@@ -2,7 +2,7 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 2.0.0:
 	Changed:
-	* All the status stuff. Yay!
+	* All the status stuff.  Yay!
 	* gaim_prefs_connect_callback(), added handle parameter
 	* gtk_imhtml_toolbar now descends from GtkHBox making it easier to add your
 	  own widgets to it
@@ -33,7 +33,7 @@ version 2.0.0:
 	* gtk_imhtml_toggle_strike(): No longer returns a value
 	* gtk_imhtml_scroll_to_end(): Added the smooth paramter
 	* gaim_log_new(), added conv parameter
-	* gaim_buddy_icon_new(), leaves a reference which the caller owns. Use
+	* gaim_buddy_icon_new(), leaves a reference which the caller owns.  Use
 	  gaim_buddy_icon_unref() immediately if you don't want a reference (the
 	  old behavior).
 	* GAIM_CONV_UNKNOWN to GAIM_CONV_TYPE_UNKNOWN.
@@ -61,15 +61,15 @@ version 2.0.0:
 	  Changed ssize_t to gssize
 	* serv_got_im, serv_got_chat_in, serv_send_im and serv_chat_send all use
 	  GaimMessageFlags instead of GaimConvImFlags / GaimConvChatFlags
-	* All core<->prpl message passing now uses html. This was previously true
-	  for receiving messages, it's now also true for sending them. prpls that
+	* All core<->prpl message passing now uses html.  This was previously true
+	  for receiving messages, it's now also true for sending them.  prpls that
 	  don't support html need to gaim_unescape_html() the message.
 	* Notify API: GCallback -> GaimNotifyCloseCallback,
 	              void *user_data -> gpointer user_data
 	* gaim_notify_searchresults_get_rows_count,
 	  gaim_notify_searchresults_get_columns_count: return type now guint
 	* gaim_account_notify_added: No longer checks if there is a
-	  GaimBuddy for the added user, that's left up to the prpls.See the
+	  GaimBuddy for the added user, that's left up to the prpls.  See the
 	  documentation for this function and gaim_account_request_add.
 	* gaim_accounts_reorder: new_index is now a gint instead of a size_t
 	* displaying-message signals: displaying-[im|chat]-msg and
@@ -155,7 +155,7 @@ version 2.0.0:
 	* gaim_account_remove_buddies()
 	* gaim_account_change_password()
 	* gaim_conversation_close_logs(), to force a conversation's log(s) to
-	  be closed. New logs will be opened as necessary.
+	  be closed.  New logs will be opened as necessary.
 	* gaim_plugin_get_id()
 	* gaim_plugin_get_name()
 	* gaim_plugin_get_version()
@@ -200,7 +200,7 @@ version 2.0.0:
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
-	  This value is now returned. Previously, all registered handlers were
+	  This value is now returned.  Previously, all registered handlers were
 	  called and the value from the last handler was used.
 	* "received-im-msg" and "received-chat-msg" to match, both now pass a
 	  conversation pointer and flags

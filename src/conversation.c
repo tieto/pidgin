@@ -516,7 +516,7 @@ gaim_conversation_present(GaimConversation *conv) {
 
 	g_return_if_fail(conv != NULL);
 
-	ops  = gaim_conversation_get_ui_ops(conv);
+	ops = gaim_conversation_get_ui_ops(conv);
 	if(ops && ops->present)
 		ops->present(conv);
 }

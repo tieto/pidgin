@@ -97,7 +97,7 @@ GaimVoiceChat *gaim_voice_chat_new(GaimConnection *gc, const char *name);
 void gaim_voice_chat_destroy(GaimVoiceChat *vc);
 
 /**
- * Acessor function to get the name of the other user on the voice chat
+ * Accessor function to get the name of the other user on the voice chat
  *
  * @param vc  The voice chat
  * @return    The name
@@ -105,7 +105,7 @@ void gaim_voice_chat_destroy(GaimVoiceChat *vc);
 const char *gaim_voice_chat_get_name(GaimVoiceChat *vc);
 
 /**
- * Acessor function to set the name of the other user on the voice chat
+ * Accessor function to set the name of the other user on the voice chat
  *
  * @param vc  The voice chat
  * @return    The name

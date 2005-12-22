@@ -295,7 +295,7 @@ static void convo_features(struct mwConversation *conv);
 static GaimConversation *convo_get_gconv(struct mwConversation *conv);
 
 
-/* name and  id */
+/* name and id */
 
 struct named_id {
   char *id;
