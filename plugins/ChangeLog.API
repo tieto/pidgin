@@ -68,18 +68,16 @@ version 2.0.0:
 	              void *user_data -> gpointer user_data
 	* gaim_notify_searchresults_get_rows_count,
 	  gaim_notify_searchresults_get_columns_count: return type now guint
-	* gaim_account_notify_added: No longer checks if there is a GaimBuddy for
-	                             the added user, that's left up to the prpls.
-	                             See the documentation for this function and
-	                             gaim_account_request_add.
+	* gaim_account_notify_added: No longer checks if there is a
+	  GaimBuddy for the added user, that's left up to the prpls.See the
+	  documentation for this function and gaim_account_request_add.
 	* gaim_accounts_reorder: new_index is now a gint instead of a size_t
 	* displaying-message signals: displaying-[im|chat]-msg and
-	                              displayed-[im|chat]-msg signals are emitted
-								  for all messages (ie, for received messages,
-								  sent messages, system messages, error
-								  messages etc.), and the signals now have
-								  gaim_gtk_conversations_get_handle() for their
-								  handle.
+	  displayed-[im|chat]-msg signals are emitted for all messages
+	  (ie, for received messages, sent messages, system messages, error
+	  messages etc.), and the signals now have
+	  gaim_gtk_conversations_get_handle() for their handle.
+	* GAIM_NOTIFY_BUTTON_ADD_BUDDY to GAIM_NOTIFY_BUTTON_ADD
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -192,6 +190,13 @@ version 2.0.0:
 	* gaim_blist_alias_contact()
 	* gaim_cipher_http_digest_calculate_session_key()
 	* gaim_cipher_http_digest_calculate_response()
+	* gaim_notify_searchresults_labeled()
+	* GAIM_NOTIFY_BUTTON_LABELED, GAIM_NOTIFY_BUTTON_INFO,
+	  GAIM_NOTIFY_BUTTON_IM, GAIM_NOTIFY_BUTTON_JOIN,
+	  GAIM_NOTIFY_BUTTON_INVITE
+	* stock buttons GAIM_STOCK_IM, GAIM_STOCK_INFO
+	* gaim_conversation_present()
+	* GaimConversationUiOps->present(GaimConversation *)
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
