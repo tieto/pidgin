@@ -38,6 +38,7 @@
 #include "gtkft.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
+#include "gtksavedstatuses.h"
 #include "gtksound.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
@@ -356,7 +357,13 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 }
 #endif
 
-static void 
+static void
+show_custom_status_editor_cb()
+{
+	gaim_gtk_status_editor_show(NULL);
+}
+
+static void
 docklet_menu() {
 	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
@@ -397,8 +404,8 @@ docklet_menu() {
 	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
-	menuitem = gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
-	gtk_widget_set_sensitive(menuitem, enable_join_chat);
+	gaim_new_item_from_stock(menu, _("Custom Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Saved Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
 
@@ -407,8 +414,6 @@ docklet_menu() {
 	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
-
-	gaim_new_item_from_stock(menu, _("File Transfers"), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
