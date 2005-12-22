@@ -1911,11 +1911,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
 	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
 
-	/* I'm leaving both of these to support people that were running 2.0.0cvs before this change.
-	 * The latter can be removed before 2.0.0 is released, or after that if it's forgotten. */
 	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_colors",
-									 "/gaim/gtk/conversations/show_incoming_formatting");
-	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_formatting",
 									 "/gaim/gtk/conversations/show_incoming_formatting");
 
 	/* this string pref moved into the core, try to be friendly */
