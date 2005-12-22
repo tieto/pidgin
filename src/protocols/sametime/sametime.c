@@ -4266,6 +4266,8 @@ static void multi_resolved_query(struct mwResolveResult *result,
 
   gaim_notify_searchresults(gc, _("Select User"),
 			    msgA, msgB, sres, notify_close, NULL);
+
+  g_free(msgB);
 }
 
 
@@ -5358,6 +5360,123 @@ static void remote_group_action(GaimPluginAction *act) {
 }
 
 
+static void search_notify(struct mwResolveResult *result,
+			  GaimConnection *gc) {
+  GList *l;
+  char *msgA, *msgB;
+
+  GaimNotifySearchResults *sres;
+  GaimNotifySearchColumn *scol;
+
+  sres = gaim_notify_searchresults_new();
+
+  scol = gaim_notify_searchresults_column_new(_("User Name"));
+  gaim_notify_searchresults_column_add(sres, scol);
+
+  scol = gaim_notify_searchresults_column_new(_("Sametime ID"));
+  gaim_notify_searchresults_column_add(sres, scol);
+
+  gaim_notify_searchresults_button_add(sres, GAIM_NOTIFY_BUTTON_IM,
+				       notify_im);
+
+  gaim_notify_searchresults_button_add(sres, GAIM_NOTIFY_BUTTON_ADD,
+				       notify_add);
+
+  for(l = result->matches; l; l = l->next) {
+    struct mwResolveMatch *match = l->data;
+    GList *row = NULL;
+
+    if(!match->id || !match->name)
+      continue;
+    
+    row = g_list_append(row, g_strdup(match->name));
+    row = g_list_append(row, g_strdup(match->id));
+    gaim_notify_searchresults_row_add(sres, row);
+  }
+
+  msgA = _("Search results for '%s'");
+  msgB = _("The identifier '%s' may possibly refer to any of the following"
+	   " users. You may add these users to your buddy list or send them"
+	   " messages with the action buttons below.");
+
+  msgA = g_strdup_printf(msgA, result->name);
+  msgB = g_strdup_printf(msgB, result->name);
+
+  gaim_notify_searchresults(gc, _("Search Results"),
+			    msgA, msgB, sres, notify_close, NULL);
+
+  g_free(msgA);
+  g_free(msgB);
+}
+
+
+static void search_resolved(struct mwServiceResolve *srvc,
+			    guint32 id, guint32 code, GList *results,
+			    gpointer b) {
+
+  GaimConnection *gc = b;
+  struct mwResolveResult *res = NULL;
+
+  if(results) res = results->data;
+
+  if(!code && res && res->matches) {
+    search_notify(res, gc);
+
+  } else {
+    char *msgA, *msgB;
+    msgA = _("No matches");
+    msgB = _("The identifier '%s' did not match and users in your"
+	     " Sametime community.");
+    msgB = g_strdup_printf(msgB, NSTR(res->name));
+
+    gaim_notify_error(gc, _("No Matches"), msgA, msgB);
+
+    g_free(msgB);
+  }
+}
+
+
+static void search_action_cb(GaimConnection *gc, const char *name) {
+  struct mwGaimPluginData *pd;
+  struct mwServiceResolve *srvc;
+  GList *query;
+  enum mwResolveFlag flags;
+  guint32 req;
+
+  pd = gc->proto_data;
+  srvc = pd->srvc_resolve;
+  
+  query = g_list_prepend(NULL, (char *) name);
+  flags = mwResolveFlag_FIRST | mwResolveFlag_USERS;
+
+  req = mwServiceResolve_resolve(srvc, query, flags, search_resolved,
+				 gc, NULL);
+  g_list_free(query);
+
+  if(req == SEARCH_ERROR) {
+    /** @todo display error */
+  }
+}
+
+
+static void search_action(GaimPluginAction *act) {
+  GaimConnection *gc;
+  const char *msgA, *msgB;
+
+  gc = act->context;
+
+  msgA = _("Search for a user");
+  msgB = _("Enter a name or partial ID in the field below to search"
+	   " for matching users in your Sametime community.");
+
+  gaim_request_input(gc, _("User Search"), msgA, msgB, NULL,
+		     FALSE, FALSE, NULL,
+		     _("Search"), G_CALLBACK(search_action_cb),
+		     _("Cancel"), NULL,
+		     gc);
+}
+
+
 static GList *mw_plugin_actions(GaimPlugin *plugin, gpointer context) {
   GaimPluginAction *act;
   GList *l = NULL;
@@ -5372,6 +5491,10 @@ static GList *mw_plugin_actions(GaimPlugin *plugin, gpointer context) {
 
   act = gaim_plugin_action_new(_("Add Notes Address Book Group..."),
 			       remote_group_action);
+  l = g_list_append(l, act);
+
+  act = gaim_plugin_action_new(_("User Search..."),
+			       search_action);
   l = g_list_append(l, act);
 
   return l;
