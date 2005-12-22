@@ -4202,7 +4202,7 @@ static void notify_im(GaimConnection *gc, GList *row) {
   char *id;
 
   acct = gaim_connection_get_account(gc);
-  id = g_list_nth_data(row, 0);
+  id = g_list_nth_data(row, 1);
   conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, id, acct);
   if(! conv) conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, id);
   gaim_conversation_present(conv);
