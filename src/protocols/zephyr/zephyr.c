@@ -1598,7 +1598,7 @@ static void zephyr_login(GaimAccount * account)
 			   fsh username@hostname pathtotzc -e %s
 			*/
 			while(tzc_cmd_array[i] != NULL){
-				if (!g_strncasecmp(tzc_cmd_array[i],"%s",2)) {
+				if (!g_ascii_strncasecmp(tzc_cmd_array[i],"%s",2)) {
 					/*					fprintf(stderr,"replacing %%s with %s\n",zephyr->exposure); */
 					tzc_cmd_array[i] = g_strdup(zephyr->exposure);
 					found_ps = TRUE;
@@ -1733,7 +1733,7 @@ static void zephyr_login(GaimAccount * account)
 							zephyr->realm = g_strdup_printf("%s",realm+1);
 						else {
 							realm = (gchar *)gaim_account_get_string(gc->account,"realm","");
-							if (!g_strcasecmp(realm,"")) {
+							if (!*realm) {
 								realm = "local-realm";
 							}
 							zephyr->realm = g_strdup(realm);
@@ -1769,16 +1769,16 @@ static void zephyr_login(GaimAccount * account)
 		z_call_s(ZSetLocation((char *)zephyr->exposure), "Couldn't set location");
 
 		realm = (gchar *)gaim_account_get_string(gc->account,"realm","");
-		if (!g_strcasecmp(realm,"")) {
+		if (!*realm) {
 			realm = ZGetRealm();
-		} 
+		}
 		zephyr->realm = g_strdup(realm);
 		g_strlcpy(__Zephyr_realm, (const char*)zephyr->realm, REALM_SZ-1);
 		zephyr->username = g_strdup(ZGetSender());
 
 		/*		zephyr->realm = g_strdup(ZGetRealm()); */
 		gaim_debug_info("zephyr","realm: %s\n",zephyr->realm);
-	} 
+	}
 	else {
 		gaim_connection_error(gc,"Only ZEPH0.2 supported currently");
 		return;
