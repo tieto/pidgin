@@ -1946,7 +1946,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
-	gaim_prefs_remove("/gaim/gtk/idle/reporting_method");
 	gaim_prefs_remove("/gaim/gtk/idle");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
