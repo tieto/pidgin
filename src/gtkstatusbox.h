@@ -108,15 +108,12 @@ struct _GtkGaimStatusBox
 	char *error;
 
 	gulong status_changed_signal;
-	
+
 	/* Widgets for renderin' */
 	GtkWidget *hbox;
 	GtkWidget *toggle_button;
 	GtkWidget *vsep;
 	GtkWidget *arrow;
-
-	GtkWidget *toolbar;
-	GtkWidget *hsep;
 };
 
 struct _GtkGaimStatusBoxClass

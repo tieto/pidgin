@@ -32,7 +32,6 @@
 #include "debug.h"
 
 #include "gtkgaim.h"
-#include "gtkimhtmltoolbar.h"
 #include "gtksavedstatuses.h"
 #include "gtkstock.h"
 #include "gtkstatusbox.h"
@@ -162,8 +161,6 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 			gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
 			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-			gtk_widget_hide(status_box->toolbar);
-			gtk_widget_hide(status_box->hsep);
 		}
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
 		gtk_gaim_status_box_refresh(status_box);
@@ -406,8 +403,6 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
 		gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-		gtk_widget_hide(status_box->toolbar);
-		gtk_widget_hide(status_box->hsep);
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 	}
 
@@ -687,9 +682,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->vbox = gtk_vbox_new(0, FALSE);
 	vbox = gtk_vbox_new(0,FALSE);
 	status_box->imhtml = gtk_imhtml_new(NULL, NULL);
-	status_box->toolbar = gtk_imhtmltoolbar_new();
-	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(status_box->toolbar), status_box->imhtml);
-	status_box->hsep = gtk_hseparator_new();
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 #if 0
@@ -714,8 +706,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(status_box->sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(status_box->sw), vbox);
-	gtk_box_pack_start(GTK_BOX(vbox), status_box->toolbar, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), status_box->hsep, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), status_box->imhtml, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
@@ -748,11 +738,6 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
 		requisition->height = requisition->height + box_req.height + 3;
-
-	if (GTK_GAIM_STATUS_BOX(widget)->typing) {
-		gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toolbar, &box_req);
-		requisition->height = requisition->height + box_req.height;
-	}
 
 	requisition->width = 1;
 }
@@ -1073,13 +1058,6 @@ static void update_size(GtkGaimStatusBox *status_box)
 	height = (oneline.height + pad_top + pad_bottom) * lines;
 	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
-	if (status_box->typing) {
-		GtkRequisition requisition;
-
-		gtk_widget_size_request(status_box->toolbar, &requisition);
-		height += requisition.height;
-	}
-
 	gtk_widget_set_size_request(status_box->vbox, -1, height);
 }
 
@@ -1122,8 +1100,6 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	if (status_box->typing)
 		g_source_remove(status_box->typing);
 	status_box->typing = 0;
-	gtk_widget_hide(status_box->hsep);
-	gtk_widget_hide(status_box->toolbar);
 
 	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
 	{
@@ -1175,11 +1151,8 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		gtk_widget_show_all(status_box->vbox);
 		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
 			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
-		} else {
-			gtk_widget_hide(status_box->toolbar);
-			gtk_widget_hide(status_box->hsep);
 		}
-	gtk_widget_grab_focus(status_box->imhtml);	
+	gtk_widget_grab_focus(status_box->imhtml);
 	buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 		gtk_text_buffer_get_start_iter(buf, &start);
 		gtk_text_buffer_get_end_iter(buf, &end);
@@ -1205,8 +1178,6 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 			g_source_remove(box->typing);
 		}
 		box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, box);
-		gtk_widget_show(box->hsep);
-		gtk_widget_show(box->toolbar);
 	}
 	gtk_gaim_status_box_refresh(box);
 }
