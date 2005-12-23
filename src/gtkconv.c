@@ -2876,9 +2876,8 @@ update_send_to_selection(GaimGtkWindow *win)
 }
 
 static void
-create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy *bud)
+create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy *buddy, GaimAccount *account, const char *name)
 {
-	GaimAccount *account;
 	GtkWidget *box;
 	GtkWidget *label;
 	GtkWidget *image;
@@ -2886,10 +2885,19 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	GdkPixbuf *pixbuf;
 	gchar *text;
 
-	account = bud->account;
-
 	/* Create a pixmap for the protocol icon. */
-	pixbuf = gaim_gtk_blist_get_status_icon((GaimBlistNode*)bud, GAIM_STATUS_ICON_SMALL);
+	if (buddy != NULL)
+		pixbuf = gaim_gtk_blist_get_status_icon((GaimBlistNode*)buddy, GAIM_STATUS_ICON_SMALL);
+	else
+	{
+		GdkPixbuf *unscaled = gaim_gtk_create_prpl_icon(account);
+
+		/* XXX: 15 is the size for GAIM_STATUS_ICON_SMALL in gtkblist.c */
+		pixbuf = gdk_pixbuf_scale_simple(unscaled, 15, 15,
+						 GDK_INTERP_BILINEAR);
+		g_object_unref(G_OBJECT(unscaled));
+	}
+
 	/* Now convert it to GtkImage */
 	if (pixbuf == NULL)
 		image = gtk_image_new();
@@ -2901,7 +2909,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	g_object_unref(G_OBJECT(pixbuf));
 
 	/* Make our menu item */
-	text = g_strdup_printf("%s (%s)", gaim_buddy_get_name(bud), gaim_account_get_username(bud->account));
+	text = g_strdup_printf("%s (%s)", name, gaim_account_get_username(account));
 	menuitem = gtk_radio_menu_item_new_with_label(*group, text);
 	g_free(text);
 	*group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
@@ -2926,7 +2934,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 
 	/* Set our data and callbacks. */
 	g_object_set_data(G_OBJECT(menuitem), "gaim_account", account);
-	g_object_set_data_full(G_OBJECT(menuitem), "gaim_buddy_name", g_strdup(gaim_buddy_get_name(bud)), g_free);
+	g_object_set_data_full(G_OBJECT(menuitem), "gaim_buddy_name", g_strdup(name), g_free);
 
 	g_signal_connect(G_OBJECT(menuitem), "activate",
 	                 G_CALLBACK(menu_conv_sel_send_cb), NULL);
@@ -2966,19 +2974,36 @@ generate_send_to_items(GaimGtkWindow *win)
 
 	if (gtkconv->active_conv->type == GAIM_CONV_TYPE_IM) {
 		buds = gaim_find_buddies(gtkconv->active_conv->account, gtkconv->active_conv->name);
-		for (l = buds; l != NULL; l = l->next) {
-			GaimBuddy *b;
-			GaimBlistNode *node;
 
-			b = l->data;
-			node =  (GaimBlistNode *) gaim_buddy_get_contact(b);
-
-			for (node = node->child; node != NULL; node = node->next)
-				if (GAIM_BLIST_NODE_IS_BUDDY(node) && gaim_account_is_connected(((GaimBuddy *)node)->account))
-					create_sendto_item(menu, sg, &group, (GaimBuddy *) node);
+		if (buds == NULL)
+		{
+			/* The user isn't on the buddy list. */
+			create_sendto_item(menu, sg, &group, NULL, gtkconv->active_conv->account, gtkconv->active_conv->name);
 		}
+		else
+		{
+			for (l = buds; l != NULL; l = l->next)
+			{
+				GaimBlistNode *node;
 
-		g_slist_free(buds);
+				node = (GaimBlistNode *) gaim_buddy_get_contact((GaimBuddy *)l->data);
+
+				for (node = node->child; node != NULL; node = node->next)
+				{
+					GaimBuddy *buddy = node;
+					GaimAccount *account;
+
+					if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+						continue;
+
+					account = gaim_buddy_get_account(buddy);
+					if (gaim_account_is_connected(account))
+						create_sendto_item(menu, sg, &group, buddy, account, gaim_buddy_get_name(buddy));
+				}
+			}
+
+			g_slist_free(buds);
+		}
 	}
 
 	g_object_unref(sg);
