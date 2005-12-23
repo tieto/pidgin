@@ -1605,7 +1605,7 @@ static GaimCmdRet jabber_cmd_chat_msg(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
-static gboolean jabber_offline_message(GaimBuddy *buddy)
+static gboolean jabber_offline_message(const GaimBuddy *buddy)
 {
 	return TRUE;
 }
