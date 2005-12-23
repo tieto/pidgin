@@ -1357,8 +1357,10 @@ gaim_markup_strip_html(const char *str)
 					size_t hrlen = strlen(href);
 
 					/* Only insert the href if it's different from the CDATA. */
-					if (hrlen != j - href_st  ||
-					    strncmp(str2 + href_st, href, hrlen))
+					if ((hrlen != j - href_st ||
+					     strncmp(str2 + href_st, href, hrlen)) &&
+					    (hrlen != j - href_st + 7 || /* 7 == strlen("http://") */
+					     strncmp(str2 + href_st, href + 7, hrlen - 7)))
 					{
 						str2[j++] = ' ';
 						str2[j++] = '(';
