@@ -406,6 +406,8 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 	}
 
+	update_size(status_box);
+
 	/* Stop suppressing the "changed" signal. */
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
 }
