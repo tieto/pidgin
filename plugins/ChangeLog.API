@@ -81,6 +81,9 @@ version 2.0.0:
 	* conversation-switched: This signal has been moved from conversation to
 	                         the UI and the signal-handlers only receive the
 	                         conversation that has been switched to.
+	* GaimPluginProtocolInfo: Added offline_message
+	* GaimPluginProtocolInfo: Added whiteboard_prpl_ops
+	* GaimPluginProtocolInfo: Added media_prpl_ops
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -158,6 +161,7 @@ version 2.0.0:
 	* gaim_account_remove_buddy()
 	* gaim_account_remove_buddies()
 	* gaim_account_change_password()
+	* gaim_account_supports_offline_message()
 	* gaim_conversation_close_logs(), to force a conversation's log(s) to
 	  be closed.  New logs will be opened as necessary.
 	* gaim_plugin_get_id()

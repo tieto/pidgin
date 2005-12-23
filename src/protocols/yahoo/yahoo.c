@@ -3518,6 +3518,12 @@ yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
 	g_hash_table_destroy(comp);
 	return GAIM_CMD_RET_OK;
 }
+
+static gboolean yahoo_offline_message(const GaimBuddy *buddy)
+{
+	return TRUE;
+}
+
 /************************** Plugin Initialization ****************************/
 static void
 yahoogaim_register_commands(void)
@@ -3610,6 +3616,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* can_receive_file */
 	yahoo_send_file,
 	yahoo_new_xfer,
+	yahoo_offline_message, /* offline_message */
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* media_prpl_ops */
 };

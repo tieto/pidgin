@@ -296,6 +296,7 @@ struct _GaimPluginProtocolInfo
 	gboolean (*can_receive_file)(GaimConnection *, const char *who);
 	void (*send_file)(GaimConnection *, const char *who, const char *filename);
 	GaimXfer *(*new_xfer)(GaimConnection *, const char *who);
+ 	gboolean (*offline_message)(const GaimBuddy *buddy);
 
 	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
 	GaimMediaPrplOps *media_prpl_ops;

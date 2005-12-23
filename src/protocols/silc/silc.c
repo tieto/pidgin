@@ -1779,6 +1779,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* can_receive_file */
 	silcgaim_ftp_send_file,		/* send_file */
 	silcgaim_ftp_new_xfer,		/* new_xfer */
+	NULL,						/* offline_message */
 	&silcgaim_wb_ops,			/* whiteboard_prpl_ops */
 	NULL,						/* media_prpl_ops */
 };

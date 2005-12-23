@@ -2065,6 +2065,25 @@ gaim_account_change_password(GaimAccount *account, const char *orig_pw,
 		prpl_info->change_passwd(gc, orig_pw, new_pw);
 }
 
+gboolean gaim_account_supports_offline_message(GaimAccount *account, GaimBuddy *buddy)
+{
+	GaimConnection *gc;
+	GaimPluginProtocolInfo *prpl_info;
+
+	g_return_val_if_fail(account, FALSE);
+	g_return_val_if_fail(buddy, FALSE);
+
+	gc = gaim_account_get_connection(account);
+	if (gc == NULL)
+		return FALSE;
+	
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (!prpl_info || !prpl_info->offline_message)
+		return FALSE;
+	return prpl_info->offline_message(buddy);
+}
+
 void
 gaim_accounts_add(GaimAccount *account)
 {

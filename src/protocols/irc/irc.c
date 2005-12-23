@@ -776,6 +776,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* can_receive_file */
 	irc_dccsend_send_file,	/* send_file */
 	irc_dccsend_new_xfer,	/* new_xfer */
+	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* media_prpl_ops */
 };

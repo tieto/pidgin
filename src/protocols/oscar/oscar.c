@@ -8488,6 +8488,26 @@ oscar_normalize(const GaimAccount *account, const char *str)
 	return buf;
 }
 
+static gboolean oscar_offline_message(const GaimBuddy *buddy)
+{
+	OscarData *od;
+	GaimAccount *account;
+	GaimConnection *gc;
+
+	g_return_val_if_fail(buddy, FALSE);
+
+	account = gaim_buddy_get_account(buddy);
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	gc = gaim_account_get_connection(account);
+	g_return_val_if_fail(gc != NULL, FALSE);
+
+	od = (OscarData *)gc->proto_data;
+	g_return_val_if_fail(od != NULL, FALSE);
+
+	return (od->icq && aim_sn_is_icq(gaim_account_get_username(account)));
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
@@ -8549,6 +8569,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_can_receive_file,	/* can_receive_file */
 	oscar_send_file,		/* send_file */
 	oscar_new_xfer,			/* new_xfer */
+	oscar_offline_message,	/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* media_prpl_ops */
 };

@@ -2877,6 +2877,20 @@ update_send_to_selection(GaimGtkWindow *win)
 	return FALSE;
 }
 
+static gboolean
+send_to_item_enter_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWidget *label)
+{
+	gtk_widget_set_sensitive(GTK_WIDGET(label), TRUE);
+	return FALSE;
+}
+
+static gboolean
+send_to_item_leave_notify_cb(GtkWidget *menuitem, GdkEventCrossing *event, GtkWidget *label)
+{
+	gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
+	return FALSE;
+}
+
 static void
 create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy *buddy, GaimAccount *account, const char *name)
 {
@@ -2925,6 +2939,22 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 
 	gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+
+	if (buddy != NULL &&
+	    !gaim_presence_is_online(gaim_buddy_get_presence(buddy)) &&
+	    !gaim_account_supports_offline_message(account, buddy))
+	{
+		gtk_widget_set_sensitive(label, FALSE);
+
+		/* Set the label sensitive when the menuitem is highlighted and
+		 * insensitive again when the mouse leaves it. This way, it
+		 * doesn't appear weird from the highlighting of the embossed
+		 * (insensitive style) text.*/
+		g_signal_connect(menuitem, "enter-notify-event",
+				 G_CALLBACK(send_to_item_enter_notify_cb), label);
+		g_signal_connect(menuitem, "leave-notify-event",
+				 G_CALLBACK(send_to_item_leave_notify_cb), label);
+	}
 
 	g_object_unref(label);
 

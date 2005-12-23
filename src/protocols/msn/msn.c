@@ -1897,6 +1897,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_can_receive_file,	/* can_receive_file */
 	msn_send_file,			/* send_file */
 	msn_new_xfer,			/* new_xfer */
+	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* media_prpl_ops */
 };

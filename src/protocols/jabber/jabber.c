@@ -1605,6 +1605,11 @@ static GaimCmdRet jabber_cmd_chat_msg(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
+static gboolean jabber_offline_message(GaimBuddy *buddy)
+{
+	return TRUE;
+}
+
 static void jabber_register_commands(void)
 {
 	gaim_cmd_register("config", "", GAIM_CMD_P_PRPL,
@@ -1733,6 +1738,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* can_receive_file */
 	jabber_si_xfer_send,			/* send_file */
 	jabber_si_new_xfer,				/* new_xfer */
+	jabber_offline_message,			/* offline_message */
 	NULL,							/* whiteboard_prpl_ops */
 	NULL,							/* media_prpl_ops */
 };
