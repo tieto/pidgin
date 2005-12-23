@@ -1594,6 +1594,7 @@ Function GetWindowsVersion
   Push $R0
   Push $R1
 
+  ClearErrors
   ReadRegStr $R0 HKLM \
   "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
 
