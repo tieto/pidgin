@@ -8,8 +8,9 @@
 # PATHS
 #
 
-SAMETIME_ROOT :=		.
+SAMETIME_ROOT :=	.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
+MEANWHILE_TOP:=		../../../../win32-dev/libmeanwhile-1.0.0
 GAIM_TOP :=		../../..
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
@@ -18,6 +19,8 @@ GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 ##
 
 TARGET = libsametime
+
+NEEDED_DLLS = $(MEANWHILE_TOP)/bin/libmeanwhile-1.dll
 
 # Compiler Options
 
@@ -29,7 +32,7 @@ DEFINES =
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
   DLL_INSTALL_DIR = 	$(GAIM_INSTALL_DIR)
-else 
+else
   ifeq ($(TYPE),PLUGIN)
     DLL_INSTALL_DIR = 	$(GAIM_INSTALL_DIR)/plugins
   endif
@@ -47,15 +50,16 @@ include $(GAIM_TOP)/src/win32/global.mak
 ##
 
 INCLUDE_PATHS +=	-I$(SAMETIME_ROOT) \
+			-I$(MEANWHILE_TOP)/include/meanwhile \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
-			-I$(GAIM_TOP) \
-			$(MEANWHILE_CFLAGS)
+			-I$(GAIM_TOP)
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(MEANWHILE_TOP)/lib \
 			-L$(GAIM_TOP)/src
 
 
@@ -74,11 +78,10 @@ OBJECTS = $(C_SRC:%.c=%.o)
 
 LIBS =		\
 		-lglib-2.0 \
-		-lgobject-2.0 \
 		-lintl \
 		-lws2_32 \
+		-lmeanwhile \
 		-lgaim \
-		$(MEANWHILE_LIBS)
 
 ##
 ## RULES
@@ -99,6 +102,7 @@ all: $(TARGET).dll
 
 install:
 	cp $(SAMETIME_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
 
 ##
