@@ -736,6 +736,7 @@ Section Uninstall
     Delete "$INSTDIR\gaim.exe"
     Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libgtkspell.dll"
+    Delete "$INSTDIR\libmeanwhile-1.dll"
     Delete "$INSTDIR\nspr4.dll"
     Delete "$INSTDIR\nss3.dll"
     Delete "$INSTDIR\nssckbi.dll"
