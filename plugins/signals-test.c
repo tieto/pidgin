@@ -307,24 +307,6 @@ received_chat_msg_cb(GaimAccount *account, char *sender, char *buffer,
 }
 
 static void
-conversation_switching_cb(GaimConversation *old_conv,
-						  GaimConversation *new_conv, void *data)
-{
-	gaim_debug_misc("signals test", "conversation-switching (%s, %s)\n",
-					gaim_conversation_get_name(old_conv),
-					gaim_conversation_get_name(new_conv));
-}
-
-static void
-conversation_switched_cb(GaimConversation *old_conv,
-						 GaimConversation *new_conv, void *data)
-{
-	gaim_debug_misc("signals test", "conversation-switched (%s, %s)\n",
-					gaim_conversation_get_name(old_conv),
-					gaim_conversation_get_name(new_conv));
-}
-
-static void
 conversation_created_cb(GaimConversation *conv, void *data)
 {
 	gaim_debug_misc("signals test", "conversation-created (%s)\n",
@@ -605,10 +587,6 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(receiving_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-chat-msg",
 						plugin, GAIM_CALLBACK(received_chat_msg_cb), NULL);
-	gaim_signal_connect(conv_handle, "conversation-switching",
-						plugin, GAIM_CALLBACK(conversation_switching_cb), NULL);
-	gaim_signal_connect(conv_handle, "conversation-switched",
-						plugin, GAIM_CALLBACK(conversation_switched_cb), NULL);
 	gaim_signal_connect(conv_handle, "conversation-created",
 						plugin, GAIM_CALLBACK(conversation_created_cb), NULL);
 	gaim_signal_connect(conv_handle, "deleting-conversation",

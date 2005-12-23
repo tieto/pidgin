@@ -1985,6 +1985,8 @@ gaim_gtkconv_set_active_conversation(GaimConversation *conv)
 
 	gaim_conversation_set_logging(conv,
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
+
+	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-switched", conv);
 }
 
 void
@@ -2990,7 +2992,7 @@ generate_send_to_items(GaimGtkWindow *win)
 
 				for (node = node->child; node != NULL; node = node->next)
 				{
-					GaimBuddy *buddy = node;
+					GaimBuddy *buddy = (GaimBuddy *)node;
 					GaimAccount *account;
 
 					if (!GAIM_BLIST_NODE_IS_BUDDY(node))
@@ -6178,6 +6180,11 @@ gaim_gtk_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_STRING),
 						 gaim_value_new(G_TYPE_INT));
 
+	gaim_signal_register(handle, "conversation-switched",
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_CONVERSATION));
+
 	/**********************************************************************
 	 * Register commands
 	 **********************************************************************/
@@ -6969,6 +6976,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
 	    (gtkconv->u.im->animate))
 		start_anim(NULL, gtkconv);
+
+	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-switched", conv);
 }
 
 /**************************************************************************

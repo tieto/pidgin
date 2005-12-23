@@ -78,6 +78,9 @@ version 2.0.0:
 	  messages etc.), and the signals now have
 	  gaim_gtk_conversations_get_handle() for their handle.
 	* GAIM_NOTIFY_BUTTON_ADD_BUDDY to GAIM_NOTIFY_BUTTON_ADD
+	* conversation-switched: This signal has been moved from conversation to
+	                         the UI and the signal-handlers only receive the
+	                         conversation that has been switched to.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -123,6 +126,7 @@ version 2.0.0:
 	* GaimConvImFlags and GaimConvChatFlags; use GaimMessageFlags instead
 	* cb and user_data from the ops in GaimNotifyUiOps: This is now handled
 	  by the notify API in the core.
+	* conversation-switching signal has been removed.
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

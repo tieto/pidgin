@@ -94,6 +94,13 @@ displayed_chat_msg_cb(GaimAccount *account, GaimConversation *conv, const char *
 					gaim_conversation_get_name(conv), buffer);
 }
 
+static void
+conversation_switched_cb(GaimConversation *conv, void *data)
+{
+	gaim_debug_misc("gtk-signals test", "conversation-switched (%s)\n",
+					gaim_conversation_get_name(conv));
+}
+
 /**************************************************************************
  * Plugin stuff
  **************************************************************************/
@@ -125,6 +132,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(displaying_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "displayed-chat-msg",
 						plugin, GAIM_CALLBACK(displayed_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "conversation-switched",
+						plugin, GAIM_CALLBACK(conversation_switched_cb), NULL);
 
 	return TRUE;
 }

@@ -2,6 +2,11 @@
 
  @signals
   @signal conversation-dragging
+  @signal displaying-im-msg
+  @signal displayed-im-msg
+  @signal displaying-chat-msg
+  @signal displayed-chat-msg
+  @signal conversation-switched
  @endsignals
 
  <hr>
@@ -15,5 +20,79 @@ void (*conversation_dragging)(GaimGtkWindow *source, GaimGtkWindow *destination)
   @param source The window where the conversation is.
   @param destination The window where the conversation will be moved to.
  @endsignaldef
+
+ @signaldef displaying-im-msg
+  @signalproto
+gboolean (*displaying_im_msg)(GaimAccount *account, GaimConversation *conv,
+                              char **message, GaimMessageFlags flags);
+  @endsignalproto
+  @signaldesc
+   Emitted just before a message is displayed in an IM conversation.
+   @a message is a pointer to a string, so the plugin can replace the
+   message that will be displayed. This can also be used to cancel displaying
+   a message by returning @c TRUE.
+  @note
+   Make sure to free @a *message before you replace it!
+  @param account The account the message is being displayed on.
+  @param conv    The conversation the message is being displayed on.
+  @param message A pointer to the message that will be displayed.
+  @param flags   The message flags.
+  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
+ @endsignaldef
+
+ @signaldef displayed-im-msg
+  @signalproto
+void (*displayed_im_msg)(GaimAccount *account, GaimConversation *conv,
+                         const char *message, GaimMessageFlags flags);
+  @endsignalproto
+  @signaldesc
+   Emitted after a message is displayed in an IM conversation.
+  @param account The account the message was displayed on.
+  @param conv    The conversation the message was displayed on.
+  @param message The message that was displayed.
+  @param flags   The message flags.
+ @endsignaldef
+
+ @signaldef displaying-chat-msg
+  @signalproto
+gboolean (*displaying_chat_msg)(GaimAccount *account, GaimConversation *conv,
+                                char **message, GaimMessageFlags flags);
+  @endsignalproto
+  @signaldesc
+   Emitted just before a message is displayed in a chat.
+   @a message is a pointer to a string, so the plugin can replace the
+   message that will be displayed. This can also be used to cancel displaying
+   a message by returning @c TRUE.
+  @note
+   Make sure to free @a *message before you replace it!
+  @param account The account the message is being displayed on.
+  @param conv    The conversation the message is being displayed on.
+  @param message A pointer to the message that will be displayed.
+  @param flags   The message flags.
+  @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
+ @endsignaldef
+
+ @signaldef displayed-chat-msg
+  @signalproto
+void (*displayed_chat_msg)(GaimAccount *account, GaimConversation *conv,
+                           const char *message, GaimMessageFlags flags);
+  @endsignalproto
+  @signaldesc
+   Emitted after a message is displayed in a chat conversation.
+  @param account The account the message was displayed on.
+  @param conv    The conversation the message was displayed on.
+  @param message The message that was displayed.
+  @param flags   The message flags.
+ @endsignaldef
+
+ @signaldef conversation-switched
+  @signalproto
+void (*conversation_switched)(GaimConversation *conv);
+  @endsignalproto
+  @signaldesc
+   Emitted when a window switched from one conversation to another.
+  @param new_conv The now active conversation.
+ @endsignaldef
+
 */
 // vim: syntax=c tw=75 et
