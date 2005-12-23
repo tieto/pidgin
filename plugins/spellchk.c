@@ -282,10 +282,6 @@ spellchk_free(spellchk *spell)
 
 	buffer = gtk_text_view_get_buffer(spell->view);
 
-	g_signal_handlers_disconnect_matched(spell->view,
-			G_SIGNAL_MATCH_DATA,
-			0, 0, NULL, NULL,
-			spell);
 	g_signal_handlers_disconnect_matched(buffer,
 			G_SIGNAL_MATCH_DATA,
 			0, 0, NULL, NULL,
@@ -548,14 +544,15 @@ delete_range_after(GtkTextBuffer *buffer,
 }
 
 static void
-spellchk_new_attach(GaimConversation *c) {
+spellchk_new_attach(GaimConversation *conv)
+{
 	spellchk *spell;
 	GtkTextBuffer *buffer;
 	GtkTextIter start, end;
 	GaimGtkConversation *gtkconv;
 	GtkTextView *view;
 
-	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	view = GTK_TEXT_VIEW(gtkconv->entry);
 
@@ -567,10 +564,8 @@ spellchk_new_attach(GaimConversation *c) {
 	spell = g_new0(spellchk, 1);
 	spell->view = view;
 
-	g_object_set_data(G_OBJECT(view), SPELLCHK_OBJECT_KEY, spell);
-
-	g_signal_connect_swapped(G_OBJECT(view), "destroy",
-			G_CALLBACK(spellchk_free), spell);
+	g_object_set_data_full(G_OBJECT(view), SPELLCHK_OBJECT_KEY, spell,
+			(GDestroyNotify)spellchk_free);
 
 	buffer = gtk_text_view_get_buffer(view);
 
@@ -595,17 +590,6 @@ spellchk_new_attach(GaimConversation *c) {
 			G_CALLBACK(insert_text_after), spell);
 
 	return;
-}
-
-static void
-spellchk_detach(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-	spellchk *spell;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	spell = g_object_steal_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
-	spellchk_free(spell);
 }
 
 static int buf_get_line(char *ibuf, char **buf, int *position, int len)
@@ -2030,7 +2014,8 @@ plugin_unload(GaimPlugin *plugin)
 	/* Detach from existing conversations */
 	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
 	{
-		spellchk_detach((GaimConversation *)convs->data);
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
+		g_object_set_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY, NULL);
 	}
 
 	return TRUE;
