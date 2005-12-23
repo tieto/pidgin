@@ -131,10 +131,12 @@ typedef struct
 	void *(*notify_message)(GaimNotifyMsgType type, const char *title,
 	                        const char *primary, const char *secondary);
 
-	void *(*notify_email)(const char *subject, const char *from,
+	void *(*notify_email)(GaimConnection *gc,
+	                      const char *subject, const char *from,
 	                      const char *to, const char *url);
 
-	void *(*notify_emails)(size_t count, gboolean detailed,
+	void *(*notify_emails)(GaimConnection *gc,
+	                       size_t count, gboolean detailed,
 	                       const char **subjects, const char **froms,
 	                       const char **tos, const char **urls);
 

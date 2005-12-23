@@ -81,7 +81,7 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_EMAIL;
 		info->handle    = handle;
-		info->ui_handle = ops->notify_email(subject, from, to, url);
+		info->ui_handle = ops->notify_email(handle, subject, from, to, url);
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
@@ -120,7 +120,7 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_EMAILS;
 		info->handle    = handle;
-		info->ui_handle = ops->notify_emails(count, detailed, subjects,
+		info->ui_handle = ops->notify_emails(handle, count, detailed, subjects,
 											 froms, tos, urls);
 		info->cb = cb;
 		info->cb_user_data = user_data;
