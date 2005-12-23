@@ -664,8 +664,6 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 	GaimBuddy *b;
 	YahooFriend *f;
 
-	g_string_printf(s, "<span style=\"font-size: larger\"><b>%s</b></span><br>",
-			info_data->name);
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
 			info_data->name);
 

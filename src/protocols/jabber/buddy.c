@@ -613,9 +613,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 	info_text = g_string_new("");
 
-	g_string_append_printf(info_text, "<b>%s:</b> %s<br/>", _("Jabber ID"),
-			from);
-
 	if(resource_name) {
 		jbr = jabber_buddy_find_resource(jb, resource_name);
 		if(jbr) {
