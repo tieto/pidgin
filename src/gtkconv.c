@@ -3559,6 +3559,27 @@ buddy_removed_cb(GaimBuddy *buddy, GaimConversation *conv)
 	buddy_cb_common(buddy, conv, FALSE);
 }
 
+static void
+entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
+{
+	GtkWidget *menuitem;
+	GaimGtkConversation *gtkconv = data;
+
+	g_return_if_fail(menu != NULL);
+	g_return_if_fail(gtkconv != NULL);
+
+	menuitem = gaim_new_item_from_stock(NULL, _("_Send"), GAIM_STOCK_SEND,
+										G_CALLBACK(send_cb), gtkconv,
+										0, 0, NULL);
+	if (gtk_text_buffer_get_char_count(imhtml->text_buffer) == 0)
+		gtk_widget_set_sensitive(menuitem, FALSE);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 0);
+
+	menuitem = gtk_separator_menu_item_new();
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 1);
+}
+
 static GtkWidget *
 setup_chat_pane(GaimGtkConversation *gtkconv)
 {
@@ -3776,6 +3797,9 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
+	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
+					 G_CALLBACK(entry_popup_menu_cb), gtkconv);
+
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
@@ -3863,6 +3887,9 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
+
+	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
+					 G_CALLBACK(entry_popup_menu_cb), gtkconv);
 
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
