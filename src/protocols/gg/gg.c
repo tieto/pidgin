@@ -1452,9 +1452,10 @@ static GList *ggp_status_types(GaimAccount *account)
 			NULL);
 	types = g_list_append(types, type);
 
-	/* Why is blocked a status??? -- rlaager */
+	/* This status is wrong.  It shouldn't exist.  This prpl must not be
+	 * using the privacy stuff correctly. -- rlaager */
 	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, TRUE, FALSE,
+			GAIM_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
 			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
@@ -1475,6 +1476,9 @@ static GList *ggp_blist_node_menu(GaimBlistNode *node)
 					 ggp_bmenu_add_to_chat, NULL, NULL);
 	m = g_list_append(m, act);
 
+	/* Using a blist node boolean here is also wrong.
+	 * Once the Block and Unblock actions are added to the core,
+	 * this will have to go. -- rlaager */
 	if (gaim_blist_node_get_bool(node, "blocked")) {
 		act = gaim_blist_node_action_new(_("Unblock"),
 						 ggp_bmenu_block, NULL, NULL);
