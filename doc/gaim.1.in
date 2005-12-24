@@ -38,10 +38,6 @@ affiliated with America Online, ICQ, Microsoft, or Yahoo.
 The following options are provided by \fBgaim\fR using the standard GNU
 command line syntax:
 .TP
-.B \-a, \-\-acct
-Launch the \fBAccount Editor\fR rather than the \fBLogin\fR window on
-start.
-.TP
 .B \-d, \-\-debug
 Print debugging messages to stdout.  These are the same debugging messages
 that are displayed in the \fBDebug\fR window.
@@ -52,23 +48,12 @@ Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
 .B \-h, \-\-help
 Print this help and exit.
 .TP
-.B \-l, \-\-login[=\fINAME\fB]
-Automatically login on start using the default account or the account
-specified by the \fINAME\fR parameter.
-.TP
 .B \-n, \-\-loginwin
 Don't automatically login when \fBgaim\fR starts.  Show the \fBLogin\fR
 window instead.
 .TP
-.B \-u, \-\-user=\fINAME\fB
-Use account \fINAME\fR as default.
-.TP
 .B \-v, \-\-version
 Display the version information window.
-.TP
-.B \-w, \-\-away[=\fIMESG\fB]
-Automatically go away on signon.  You may optionally use the \fIMESG\fR
-parameter to set the away message.
 
 .SH BUDDY LIST
 The \fBBuddy List\fR window is \fBgaim\fR's main interface window.  Using
