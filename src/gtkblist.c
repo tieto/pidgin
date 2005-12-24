@@ -2145,6 +2145,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 		td->height = MAX(td->height, gdk_pixbuf_get_height(td->avatar) + 8);
 	}
 
+	g_free(tooltip_text);
 	return td;
 }
 
