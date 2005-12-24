@@ -5020,6 +5020,9 @@ static GaimPluginProtocolInfo mw_prpl_info = {
   .can_receive_file          = mw_prpl_can_receive_file,
   .send_file                 = mw_prpl_send_file,
   .new_xfer                  = mw_prpl_new_xfer,
+  .offline_message           = NULL,
+  .whiteboard_prpl_ops       = NULL,
+  .media_prpl_ops            = NULL,
 };
 
 
