@@ -1712,6 +1712,8 @@ away_page()
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	/* TODO: Show something useful if we don't have any saved statuses. */
 	menu = gaim_gtk_status_menu(gaim_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
 	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -1923,7 +1925,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/blist/grey_idle_buddies");
 	gaim_prefs_remove("/gaim/gtk/blist/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
-	gaim_prefs_remove("/gaim/gtk/blist/show_idle_time");
 	gaim_prefs_remove("/gaim/gtk/blist/show_warning_level");
 	gaim_prefs_remove("/gaim/gtk/conversations/button_type");
 	gaim_prefs_remove("/gaim/gtk/conversations/ctrl_enter_sends");

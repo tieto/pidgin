@@ -1425,6 +1425,24 @@ static void gaim_gtk_blist_buddy_details_cb(gpointer data, guint action, GtkWidg
 		gdk_window_set_cursor(gtkblist->window->window, NULL);
 }
 
+static void gaim_gtk_blist_show_idle_time_cb(gpointer data, guint action, GtkWidget *item)
+{
+	if (gtkblist->window->window)
+	{
+		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+		gdk_cursor_unref(cursor);
+	}
+
+	gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
+			    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
+
+	if (gtkblist->window->window)
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
+}
+
 static void gaim_gtk_blist_show_empty_groups_cb(gpointer data, guint action, GtkWidget *item)
 {
 	if (gtkblist->window->window)
@@ -2522,6 +2540,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show Buddy _Details"), NULL, gaim_gtk_blist_buddy_details_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show Idle _Times"), NULL, gaim_gtk_blist_show_idle_time_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/_Sort Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
@@ -2621,7 +2640,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		GaimBuddy *b;
 		GaimPresence *presence;
 		char *tmp;
-		gboolean idle;
 		time_t idle_secs, signon;
 
 		if (GAIM_BLIST_NODE_IS_CONTACT(node))
@@ -2689,8 +2707,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		}
 
 		/* Idle */
-		idle = gaim_presence_is_idle(presence);
-		if (idle)
+		if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
+			gaim_presence_is_idle(presence))
 		{
 			idle_secs = gaim_presence_get_idle_time(presence);
 			if (idle_secs > 0)
@@ -3023,7 +3041,9 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 #endif
 	}
 
-	if (gaim_presence_is_idle(presence)) {
+	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
+		gaim_presence_is_idle(presence))
+	{
 		time_t idle_secs = gaim_presence_get_idle_time(presence);
 
 		if (idle_secs > 0) {
@@ -3069,12 +3089,10 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 					       (idletime != NULL && statustext != NULL) ? " - " : "",
 					       statustext != NULL ? statustext :  "");
 	}
-	if (idletime)
-		g_free(idletime);
-	if (statustext)
-		g_free(statustext);
-	if (esc)
-		g_free(esc);
+
+	g_free(idletime);
+	g_free(statustext);
+	g_free(esc);
 
 	return text;
 }
@@ -3363,7 +3381,8 @@ void gaim_gtk_blist_update_columns()
 		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
 		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
 	} else {
-		gtk_tree_view_column_set_visible(gtkblist->idle_column, TRUE);
+		gtk_tree_view_column_set_visible(gtkblist->idle_column,
+			gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time"));
 		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
 	}
 }
@@ -3628,22 +3647,29 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtkblist->statusbox = gtk_gaim_status_box_new();
 	gtk_widget_set_name(gtkblist->statusbox, "gaim_gtkblist_statusbox");
-	
+
 	gtk_widget_show(gtkblist->statusbox);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
-	
+
 
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
 	 */
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Offline Buddies"))),
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies"));
+
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Empty Groups"))),
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups"));
+
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Tools/Mute Sounds"))),
 			gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
+
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Buddy Details"))),
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"));
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Idle Times"))),
+			gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time"));
+
 	if(!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
 		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE);
 
@@ -3666,6 +3692,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	/* things that affect how buddies are displayed */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
 			_prefs_change_redo_list, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
+			_prefs_change_redo_list, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_empty_groups",
 			_prefs_change_redo_list, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_offline_buddies",
@@ -3677,6 +3705,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* things that affect what columns are displayed */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
+			show_buddy_icons_pref_cb, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
 			show_buddy_icons_pref_cb, NULL);
 
 	/* menus */
@@ -3969,7 +3999,8 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	avatar = gaim_gtk_blist_get_buddy_icon((GaimBlistNode *)buddy, TRUE, TRUE);
 	mark = gaim_gtk_blist_get_name_markup(buddy, selected);
 
-	if (gaim_presence_is_idle(presence))
+	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
+		gaim_presence_is_idle(presence))
 	{
 		time_t idle_secs = gaim_presence_get_idle_time(presence);
 
@@ -4007,8 +4038,7 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			-1);
 
 	g_free(mark);
-	if(idle)
-		g_free(idle);
+	g_free(idle);
 	if(status)
 		g_object_unref(status);
 	if(avatar)
@@ -4991,6 +5021,7 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_none("/gaim/gtk/blist");
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/show_idle_time", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/list_visible", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/list_maximized", FALSE);
