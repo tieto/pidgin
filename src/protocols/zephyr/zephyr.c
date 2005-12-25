@@ -2243,17 +2243,17 @@ static GList *zephyr_status_types(GaimAccount *account)
 	   REALM-ANNOUNCED REALM-VISIBLE+ plus your logins/logouts are announced to <login,username,*>
 	   NET-VISIBLE REALM-ANNOUNCED, plus visible to people in foreign realm
 	   NET-ANNOUNCED NET-VISIBLE, plus logins/logouts are announced	 to <login,username,*>
-	   
+
 	   Online will set the user to the exposure they have in their options (defaulting to REALM-VISIBLE),
 	   Hidden, will set the user's exposure to OPSTAFF
 
 	   Away won't change their exposure but will set an auto away message (for IMs only)
 	*/
-	
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, NULL, NULL, FALSE);
+
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE);
 	types = g_list_append(types,type);
 
-	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, NULL, NULL, FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, NULL, NULL, TRUE);
 	types = g_list_append(types,type);
 
 	type = gaim_status_type_new_with_attrs(
@@ -2261,6 +2261,9 @@ static GList *zephyr_status_types(GaimAccount *account)
 					       "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
 					       NULL);
 	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, NULL, NULL, TRUE);
+	types = g_list_append(types,type);
 
 	return types;
 }

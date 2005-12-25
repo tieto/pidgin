@@ -1024,10 +1024,10 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
 		aimbs_put16(&fr->data, 0x0036);
 		{ /* V */
 			aimbs_putle16(&fr->data, 0x001b); /* L */
-			aimbs_putle16(&fr->data, 0x0008); /* XXX - Protocol version */
+			aimbs_putle16(&fr->data, 0x0009); /* Protocol version */
 			aimbs_putcaps(&fr->data, AIM_CAPS_EMPTY);
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
-			aimbs_putle16(&fr->data, 0x0003); /* Client features? */
+			aimbs_putle16(&fr->data, 0x0001); /* Client features? */
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
 			aimbs_putle8(&fr->data, 0x00); /* Unkizown */
 			aimbs_putle16(&fr->data, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
@@ -1050,7 +1050,7 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
 			else if(type & AIM_ICQ_STATE_AWAY)
 				aimbs_putle16(&fr->data, 0x03e8);
 
-			aimbs_putle16(&fr->data, 0x0000); /* Status? */
+			aimbs_putle16(&fr->data, 0x0001); /* Status? */
 			aimbs_putle16(&fr->data, 0x0001); /* Priority of this message? */
 			aimbs_putle16(&fr->data, 0x0001); /* L */
 			aimbs_putle8(&fr->data, 0x00); /* String of length L */

@@ -7841,11 +7841,6 @@ oscar_status_types(GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	/* Oscar-common status types */
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
-									 OSCAR_STATUS_ID_OFFLINE,
-									 NULL, TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
-
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
 										   OSCAR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
@@ -7865,29 +7860,33 @@ oscar_status_types(GaimAccount *account)
 									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	if (aim_sn_is_icq(gaim_account_get_username(account)) == FALSE )
-		return status_types;
-
 	/* ICQ-specific status types */
+	if (aim_sn_is_icq(gaim_account_get_username(account)))
+	{
+		type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+										 OSCAR_STATUS_ID_FREE4CHAT,
+										 _("Free For Chat"), TRUE, TRUE, FALSE);
+		status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-									 OSCAR_STATUS_ID_FREE4CHAT,
-									 _("Free For Chat"), TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
+		type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
+										 OSCAR_STATUS_ID_OCCUPIED,
+										 _("Occupied"), TRUE, TRUE, FALSE);
+		status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
-									 OSCAR_STATUS_ID_OCCUPIED,
-									 _("Occupied"), TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
+		type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
+										 OSCAR_STATUS_ID_DND,
+										 _("Do Not Disturb"), TRUE, TRUE, FALSE);
+		status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
-									 OSCAR_STATUS_ID_DND,
-									 _("Do Not Disturb"), TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
+		type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
+										 OSCAR_STATUS_ID_NA,
+										 _("Not Available"), TRUE, TRUE, FALSE);
+		status_types = g_list_append(status_types, type);
+	}
 
-	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
-									 OSCAR_STATUS_ID_NA,
-									 _("Not Available"), TRUE, TRUE, FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+									 OSCAR_STATUS_ID_OFFLINE,
+									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;

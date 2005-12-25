@@ -574,11 +574,11 @@ static GList *nap_status_types(GaimAccount *account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
 									 NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 NULL, NULL, TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 

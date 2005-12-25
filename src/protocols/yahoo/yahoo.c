@@ -3199,9 +3199,6 @@ static GList *yahoo_status_types(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, NULL, TRUE);
-	types = g_list_append(types, type);
-
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE,
 	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
@@ -3243,6 +3240,9 @@ static GList *yahoo_status_types(GaimAccount *account)
 
 
 	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, YAHOO_STATUS_TYPE_INVISIBLE, NULL, TRUE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, NULL, TRUE);
 	types = g_list_append(types, type);
 
 	return types;

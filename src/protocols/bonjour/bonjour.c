@@ -241,11 +241,6 @@ bonjour_status_types(GaimAccount *account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
-									 BONJOUR_STATUS_ID_OFFLINE,
-									 NULL, TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
-
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
 										   BONJOUR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
@@ -258,6 +253,11 @@ bonjour_status_types(GaimAccount *account)
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+									 BONJOUR_STATUS_ID_OFFLINE,
+									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;

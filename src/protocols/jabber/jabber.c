@@ -1082,13 +1082,6 @@ static GList *jabber_status_types(GaimAccount *account)
 	GList *types = NULL;
 	GaimValue *priority_value;
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE,
-			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
-			NULL, FALSE, TRUE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
-			NULL);
-	types = g_list_append(types, type);
-
 	priority_value = gaim_value_new(GAIM_TYPE_INT);
 	gaim_value_set_int(priority_value, 1);
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
@@ -1143,6 +1136,13 @@ static GList *jabber_status_types(GaimAccount *account)
 	if(js->protocol_version == JABBER_PROTO_0_9)
 		m = g_list_append(m, _("Invisible"));
 	*/
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE,
+			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
+			NULL, FALSE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
+	types = g_list_append(types, type);
 
 	return types;
 }
