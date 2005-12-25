@@ -1906,7 +1906,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 	od = gc->proto_data;
 	sess = od->sess;
-	bosconn = od->conn;	
+	bosconn = od->conn;
 	bosconn->fd = source;
 
 	if (source < 0) {
@@ -1924,31 +1924,31 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 /* BBB */
 /*
- * This little area in oscar.c is the nexus of file transfer code, 
- * so I wrote a little explanation of what happens.  I am such a 
+ * This little area in oscar.c is the nexus of file transfer code,
+ * so I wrote a little explanation of what happens.  I am such a
  * ninja.
  *
  * The series of events for a file send is:
  *  -Create xfer and call gaim_xfer_request (this happens in oscar_ask_sendfile)
- *  -User chooses a file and oscar_xfer_init is called.  It establishes a 
- *   listening socket, then asks the remote user to connect to us (and 
+ *  -User chooses a file and oscar_xfer_init is called.  It establishes a
+ *   listening socket, then asks the remote user to connect to us (and
  *   gives them the file name, port, IP, etc.)
- *  -They connect to us and we send them an AIM_CB_OFT_PROMPT (this happens 
+ *  -They connect to us and we send them an AIM_CB_OFT_PROMPT (this happens
  *   in oscar_sendfile_estblsh)
  *  -They send us an AIM_CB_OFT_ACK and then we start sending data
- *  -When we finish, they send us an AIM_CB_OFT_DONE and they close the 
+ *  -When we finish, they send us an AIM_CB_OFT_DONE and they close the
  *   connection.
  *  -We get drunk because file transfer kicks ass.
  *
  * The series of events for a file receive is:
  *  -Create xfer and call gaim_xfer request (this happens in incomingim_chan2)
- *  -Gaim user selects file to name and location to save file to and 
+ *  -Gaim user selects file to name and location to save file to and
  *   oscar_xfer_init is called
  *  -It connects to the remote user using the IP they gave us earlier
- *  -After connecting, they send us an AIM_CB_OFT_PROMPT.  In reply, we send 
+ *  -After connecting, they send us an AIM_CB_OFT_PROMPT.  In reply, we send
  *   them an AIM_CB_OFT_ACK.
  *  -They begin to send us lots of raw data.
- *  -When they finish sending data we send an AIM_CB_OFT_DONE and then close 
+ *  -When they finish sending data we send an AIM_CB_OFT_DONE and then close
  *   the connection.
  *
  * Update August 2005:
@@ -2041,13 +2041,13 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	char *msg = NULL;
-	
+
 	gaim_debug_info("oscar","AAA - in oscar_xfer_ip_timeout\n");
 
 	xfer = (GaimXfer*) data;
 	if(xfer->data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
-			
+
 		/* Check to see if the clientip has produced any results */
 		if(!oft_info->success) {
 			/* This connection has worn out its welcome. Goodbye. */
@@ -2055,8 +2055,8 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 				close(oft_info->conn->fd);
 				aim_conn_kill(oft_info->sess, &oft_info->conn);
 			}
-		
-			if(oft_info->method == AIM_XFER_DIRECT || oft_info->method == AIM_XFER_REDIR) {		
+
+			if(oft_info->method == AIM_XFER_DIRECT || oft_info->method == AIM_XFER_REDIR) {
 				/* If (we're currently using the verified ip)
 				* In case clientip & verifiedip are the same,
 				* we must prevent an infinite loop */
@@ -2068,12 +2068,12 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 					if(oft_info->method == AIM_XFER_DIRECT) {
 						/* clientip & verifiedip failed, request a redirect
 						* that is, we want the sender to connect to us */
-						
+
 						/* Let the user not to lose hope quite yet*/
 						msg = g_strdup_printf(_("Attempting connection redirect..."));
 						gaim_xfer_conversation_write(xfer, msg, FALSE);
 						g_free(msg);
-						
+
 						gaim_timeout_add(FT_REDIR_TIMEOUT,
 							oscar_xfer_ip_timeout, xfer);
 						oft_info->method = AIM_XFER_REDIR;
@@ -2086,11 +2086,11 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 						/* clientip, verifiedip, and redirect all failed. */
 						gaim_debug_info("oscar",
 							"redirect timed out. requesting stg3 proxy\n");
-							
+
 						/* Kill our listener */
 						gaim_input_remove(xfer->watcher);
 						aim_conn_kill(oft_info->sess, &oft_info->conn);
-				
+
 						/* Instead of failing here, request a stage 3 proxy */
 						g_free(oft_info->clientip);
 						g_free(oft_info->verifiedip);
@@ -2100,7 +2100,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 						oft_info->conn->type = AIM_CONN_TYPE_RENDEZVOUS;
 						oft_info->method = AIM_XFER_PROXY;
 						oft_info->stage = AIM_XFER_PROXY_STG3;
-						
+
 						aim_im_sendch2_sendfile_ask(oft_info->sess, oft_info);
 					}
 				} else {
@@ -2266,7 +2266,7 @@ static void oscar_xfer_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t siz
 static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 	struct aim_oft_info *oft_info;
 	struct aim_rv_proxy_info *proxy_info;
-	
+
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_ready\n");
 	if (!(oft_info = xfer->data)) {
 		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
@@ -2278,21 +2278,21 @@ static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	
+
 	/* Remove the rv proxy watcher and put the connection type back the way we found it */
 	gaim_input_remove(xfer->watcher);
 	xfer->watcher = 0;
 	oft_info->conn->type = AIM_CONN_TYPE_RENDEZVOUS;
 
 	if(oft_info->send_or_recv == AIM_XFER_SEND) {
-	
+
 		if(oft_info->stage == AIM_XFER_PROXY_STG2) {
 			aim_im_sendch2_sendfile_accept(oft_info->sess, oft_info);
-			
+
 			/* For stage 2, both file headers are filled in */
 			memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
 		}
-		
+
 		/* The following is taken from oscar_sendfile_estblsh */
 		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ACK,
 			oscar_sendfile_ack, 0);
@@ -2300,7 +2300,7 @@ static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 			oscar_sendfile_done, 0);
 		xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback,
 			oft_info->conn);
-		
+
 		/* Inform the other user that we are connected and ready to transfer */
 		aim_oft_sendheader(oft_info->sess, AIM_CB_OFT_PROMPT, oft_info);
 	} else if(oft_info->send_or_recv == AIM_XFER_RECV) {
@@ -2308,7 +2308,7 @@ static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 	} else {
 		gaim_debug_warning("oscar","no value for send_or_recv; aborting transfer\n");
 		gaim_xfer_cancel_local(xfer);
-	}	
+	}
 }
 
 /*
@@ -2318,7 +2318,7 @@ static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
 	struct aim_oft_info *oft_info;
 	struct aim_rv_proxy_info *proxy_info;
-	
+
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_ack\n");
 	if (!(oft_info = xfer->data)) {
 		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
@@ -2330,13 +2330,13 @@ static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	
+
 	/* Use the proxy "port" we just ACK-quired (hah) so that the proxy will love us */
 	oft_info->port = proxy_info->port;
 	oft_info->proxyip = g_strdup(proxy_info->ip);
 	gaim_debug_info("oscar","received client ip and port: %s:%d\n",
 		oft_info->proxyip, oft_info->port);
-		
+
 	if(oft_info->send_or_recv == AIM_XFER_SEND) {
 		oscar_send_file_request(xfer);
 	} else if(oft_info->send_or_recv == AIM_XFER_RECV) {
@@ -2344,12 +2344,12 @@ static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
 		oft_info->fh.name[63] = '\0';
 		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
 		oft_info->fh.size = gaim_xfer_get_size(xfer);
-		
+
 		/* Calculating the checksum can take a very long time for large files */
 		gaim_debug_info("oscar","calculating file checksum\n");
- 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
 		gaim_debug_info("oscar","checksum calculated\n");
-	
+
 		aim_im_sendch2_sendfile_ask(oft_info->sess, oft_info);
 	} else {
 		gaim_debug_warning("oscar","no value for send_or_recv; aborting transfer\n");
@@ -2364,21 +2364,21 @@ static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
 static void oscar_xfer_proxylogin_cb(gpointer data, gint source, GaimInputCondition condition) {
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
-	
+
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_cb\n");
 	if (!(xfer = data)) {
 		gaim_debug_warning("oscar","NULL xfer; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
-	}	
+	}
 	if (!(oft_info = xfer->data)) {
 		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	
+
 	if( (oft_info->proxy_info = aim_rv_proxy_read(oft_info->sess, oft_info->conn)) ) {
-		
+
 		switch(oft_info->proxy_info->cmd_type) {
 			case AIM_RV_PROXY_READY:
 				oscar_xfer_proxylogin_ready(xfer, source);
@@ -2418,13 +2418,13 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 	struct aim_oft_info *oft_info;
 	struct aim_rv_proxy_info *proxy_info;
 	int err;
-	
+
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin\n");
 	if (!(xfer = data)) {
 		gaim_debug_warning("oscar","NULL xfer; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
-	}	
+	}
 	if (!(oft_info = xfer->data)) {
 		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
 		gaim_xfer_cancel_local(xfer);
@@ -2442,11 +2442,11 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 
 	xfer->fd = source;
 	oft_info->conn->fd = source;
-		
+
 	proxy_info->conn = oft_info->conn;
 	proxy_info->flags = AIM_RV_PROXY_CLIENT_FLAGS;
 	memcpy(proxy_info->cookie, oft_info->cookie, 8);
-	
+
 	if(oft_info->send_or_recv == AIM_XFER_SEND) {
 		if(oft_info->stage == AIM_XFER_PROXY_STG1 || oft_info->stage == AIM_XFER_PROXY_STG3) {
 			gaim_debug_info("oscar","sending INIT SEND for stage 1/3 rv proxied send\n");
@@ -2500,11 +2500,11 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 	}
 	free(proxy_info);
 	oft_info->proxy_info = NULL;
-	
+
 	xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_xfer_proxylogin_cb, xfer);
 }
 
- 
+
  /*
  * xfer functions used when sending files
  */
@@ -2514,19 +2514,19 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
  */
 static void oscar_send_file_request(GaimXfer *xfer)
 {
- 	struct aim_oft_info *oft_info = xfer->data;
+	struct aim_oft_info *oft_info = xfer->data;
 	GaimConnection *gc = oft_info->sess->aux_data;
- 	OscarData *od = gc->proto_data;
-	
+	OscarData *od = gc->proto_data;
+
 	gaim_debug_info("oscar", "AAA - in oscar_send_file_request\n");
-	
+
 	if (oft_info->conn) {
 		xfer->filename = g_path_get_basename(xfer->local_filename);
 		strncpy(oft_info->fh.name, xfer->filename, 64);
 		oft_info->fh.name[63] = '\0';
 		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
 		oft_info->fh.size = gaim_xfer_get_size(xfer);
-		
+
 		/* Calculating the checksum can take a very long time for large files */
 		gaim_debug_info("oscar","calculating file checksum\n");
 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
@@ -2557,7 +2557,7 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 	int listenfd;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_init_send\n");
-	
+
 	/* Create a listening socket and an associated libfaim conn */
 	if ((listenfd = gaim_network_listen_range(5190, 5199)) < 0) {
 		gaim_xfer_cancel_local(xfer);
@@ -2572,13 +2572,13 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 	gaim_debug_misc("oscar",
 			   "port is %hu, ip is %s\n",
 			   xfer->local_port, oft_info->clientip);
-			   
+
 	if(oft_info->conn)
 		xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback,
 			oft_info->conn);
 	else
 		gaim_debug_info("oscar","NULL oft_info->conn; not adding watcher\n");
-		
+
 	oscar_send_file_request(xfer);
 }
 
@@ -3527,7 +3527,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	} else {
-		if (buddy_is_away == TRUE)
+		if (buddy_is_away)
 			status_id = OSCAR_STATUS_ID_AWAY;
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
@@ -5030,7 +5030,7 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (destn == NULL)
 		return 1;
-	
+
 	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	if (!gaim_conv_present_error(destn, gaim_connection_get_account((GaimConnection*)sess->aux_data), buf)) {
 		g_free(buf);
@@ -6544,25 +6544,35 @@ oscar_set_extendedstatus(GaimConnection *gc)
 {
 	OscarData *od;
 	GaimAccount *account;
-	GaimPresence *presence;
-	gboolean invisible;
+	GaimStatus *status;
+	const gchar *status_id;
 	fu32_t data = 0x00000000;
 
 	od = gc->proto_data;
 	account = gaim_connection_get_account(gc);
-	presence = gaim_account_get_presence(account);
-	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE);
+	status = gaim_account_get_active_status(account);
+	status_id = gaim_status_get_id(status);
 
 	data |= AIM_ICQ_STATE_HIDEIP;
 	if (gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE))
 		data |= AIM_ICQ_STATE_WEBAWARE;
 
-	if (invisible)
-		data |= AIM_ICQ_STATE_INVISIBLE;
-	else if (!gaim_presence_is_available(presence))
-		data |= AIM_ICQ_STATE_AWAY;
-	else
+	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) || !strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
 		data |= AIM_ICQ_STATE_NORMAL;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
+		data |= AIM_ICQ_STATE_AWAY;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
+		data |= AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
+		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
+		data |= AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_FREE4CHAT))
+		data |= AIM_ICQ_STATE_CHAT;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
+		data |= AIM_ICQ_STATE_INVISIBLE;
+	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
+		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
 	aim_setextstatus(od->sess, data);
 }
@@ -6685,7 +6695,6 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	OscarData *od = NULL;
-	const gchar *status_id = gaim_status_get_id(status);
 
 	if (gc)
 		od = (OscarData *)gc->proto_data;
@@ -6700,29 +6709,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
 		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) || !strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_FREE4CHAT))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_CHAT);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
-
-	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY);
+	oscar_set_extendedstatus(gc);
 }
 
 static void
@@ -6736,11 +6723,12 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 	if (!gaim_account_is_connected(account))
 		return;
 
+	/* Set the AIM-style away message for both AIM and ICQ accounts */
+	oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
+
+	/* Set the ICQ status for ICQ accounts only */
 	if (aim_sn_is_icq(gaim_account_get_username(account)))
 		oscar_set_status_icq(account, status);
-	else
-		/* QQQ - Should probably also set this for ICQ */
-		oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
 }
 
 #ifdef CRAZY_WARN
@@ -7650,7 +7638,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			}
 			else
 			{
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), _("(retrieving...)"));
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), _("<i>(retrieving)</i>"));
 			}
 		}
 	}
