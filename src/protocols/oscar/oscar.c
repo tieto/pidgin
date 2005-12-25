@@ -310,6 +310,7 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
 static void oscar_set_info(GaimConnection *gc, const char *info);
 static void oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, GaimStatus *status);
+static void oscar_set_extendedstatus(GaimConnection *gc);
 
 static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
@@ -5896,11 +5897,10 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(sess);
-		/* TODO: Need to also call aim_setextstatus()!!! */
+		oscar_set_extendedstatus(gc);
 		aim_icq_setsecurity(sess,
 			gaim_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
-			gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE),
-			gaim_account_get_bool(account, "hide_ip", OSCAR_DEFAULT_HIDE_IP));
+			gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE));
 	}
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
@@ -6546,18 +6546,25 @@ oscar_set_extendedstatus(GaimConnection *gc)
 	GaimAccount *account;
 	GaimPresence *presence;
 	gboolean invisible;
+	fu32_t data = 0x00000000;
 
 	od = gc->proto_data;
 	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
 	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE);
 
+	data |= AIM_ICQ_STATE_HIDEIP;
+	if (gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE))
+		data |= AIM_ICQ_STATE_WEBAWARE;
+
 	if (invisible)
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
+		data |= AIM_ICQ_STATE_INVISIBLE;
 	else if (!gaim_presence_is_available(presence))
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
+		data |= AIM_ICQ_STATE_AWAY;
 	else
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+		data |= AIM_ICQ_STATE_NORMAL;
+
+	aim_setextstatus(od->sess, data);
 }
 
 static void
@@ -8029,23 +8036,19 @@ oscar_icq_privacy_opts(GaimConnection *gc, GaimRequestFields *fields)
 	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimRequestField *f;
-	gboolean auth, hide_ip, web_aware;
+	gboolean auth, web_aware;
 
 	f = gaim_request_fields_get_field(fields, "authorization");
 	auth = gaim_request_field_bool_get_value(f);
-
-	f = gaim_request_fields_get_field(fields, "hide_ip");
-	hide_ip = gaim_request_field_bool_get_value(f);
 
 	f = gaim_request_fields_get_field(fields, "web_aware");
 	web_aware = gaim_request_field_bool_get_value(f);
 
 	gaim_account_set_bool(account, "authorization", auth);
-	gaim_account_set_bool(account, "hide_ip", hide_ip);
 	gaim_account_set_bool(account, "web_aware", web_aware);
 
-	/* TODO: Need to also call aim_setextstatus()!!! */
-	aim_icq_setsecurity(od->sess, auth, web_aware, hide_ip);
+	oscar_set_extendedstatus(gc);
+	aim_icq_setsecurity(od->sess, auth, web_aware);
 }
 
 static void
@@ -8056,10 +8059,9 @@ oscar_show_icq_privacy_opts(GaimPluginAction *action)
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *g;
 	GaimRequestField *f;
-	gboolean auth, hide_ip, web_aware;
+	gboolean auth, web_aware;
 
 	auth = gaim_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION);
-	hide_ip = gaim_account_get_bool(account, "hide_ip", OSCAR_DEFAULT_HIDE_IP);
 	web_aware = gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE);
 
 	fields = gaim_request_fields_new();
@@ -8067,9 +8069,6 @@ oscar_show_icq_privacy_opts(GaimPluginAction *action)
 	g = gaim_request_field_group_new(NULL);
 
 	f = gaim_request_field_bool_new("authorization", _("Require authorization"), auth);
-	gaim_request_field_group_add_field(g, f);
-
-	f = gaim_request_field_bool_new("hide_ip", _("Hide IP address"), hide_ip);
 	gaim_request_field_group_add_field(g, f);
 
 	f = gaim_request_field_bool_new("web_aware", _("Web aware (enabling this will cause you to receive SPAM!)"), web_aware);
@@ -8340,7 +8339,7 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 	if (od->icq)
 	{
 		/* ICQ actions */
-		act = gaim_plugin_action_new(_("Show Privacy Options..."),
+		act = gaim_plugin_action_new(_("Set Privacy Options..."),
 				oscar_show_icq_privacy_opts);
 		m = g_list_append(m, act);
 	}

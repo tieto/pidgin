@@ -1412,8 +1412,7 @@ struct aim_icq_info {
 
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
-faim_export int aim_icq_setsecurity(aim_session_t *sess, const int auth, const int web, const int hide);
-faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required);
+faim_export int aim_icq_setsecurity(aim_session_t *sess, gboolean auth_required, gboolean webaware);
 faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd);
 faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin);
 faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin);

@@ -70,16 +70,8 @@ faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess)
 	return 0;
 }
 
-/**
- * Set your ICQ security.
- *
- * @param sess The oscar session.
- * @param auth Ask authorization when a buddy adds us?
- * @param web  Show our presence on the ICQ web site.
- * @param hide Hide our IP address.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-faim_export int aim_icq_setsecurity(aim_session_t *sess, const int auth, const int web, const int hide)
+faim_export int
+aim_icq_setsecurity(aim_session_t *sess, gboolean auth_required, gboolean webaware)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -89,48 +81,7 @@ faim_export int aim_icq_setsecurity(aim_session_t *sess, const int auth, const i
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
 		return -EINVAL;
 
-	bslen = 2+4+2+2+2+4;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
-
-	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
-
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x0424); /* shrug. */
-	aimbs_putle8(&fr->data, (auth == TRUE) ? 0x00 : 0x01);
-	aimbs_putle8(&fr->data, (web  == TRUE) ? 0x00 : 0x01);
-	aimbs_putle8(&fr->data, (hide == TRUE) ? 0x00 : 0x01);
-	aimbs_putle8(&fr->data, 0x00);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/**
- * I'm not really sure what the difference is between this function
- * and the one above.  They both definitely exist.
- */
-faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required)
-{
-	aim_conn_t *conn;
-	aim_frame_t *fr;
-	aim_snacid_t snacid;
-	int bslen;
-
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
-		return -EINVAL;
-
-	bslen = 2+4+2+2+2+4;
+	bslen = 2+4+2+2+2+2+2+1+1+1+1+1+1;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
@@ -147,12 +98,14 @@ faim_export int aim_icq_setauthsetting(aim_session_t *sess, int auth_required)
 	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
 	aimbs_putle16(&fr->data, snacid); /* eh. */
 	aimbs_putle16(&fr->data, 0x0c3a); /* shrug. */
-	aimbs_putle16(&fr->data, 0x02f8);
+	aimbs_putle16(&fr->data, 0x030c);
 	aimbs_putle16(&fr->data, 0x0001);
-	aimbs_putle8(&fr->data, auth_required);
-	aimbs_putle8(&fr->data, 0x0c);
-	aimbs_putle16(&fr->data, 0x0103);
-	aimbs_putle16(&fr->data, 0x0000); /* web enabled or not! */
+	aimbs_putle8(&fr->data, webaware);
+	aimbs_putle8(&fr->data, 0xf8);
+	aimbs_putle8(&fr->data, 0x02);
+	aimbs_putle8(&fr->data, 0x01);
+	aimbs_putle8(&fr->data, 0x00);
+	aimbs_putle8(&fr->data, !auth_required);
 
 	aim_tx_enqueue(sess, fr);
 
