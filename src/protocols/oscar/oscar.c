@@ -8481,16 +8481,9 @@ static gboolean oscar_offline_message(const GaimBuddy *buddy)
 	GaimAccount *account;
 	GaimConnection *gc;
 
-	g_return_val_if_fail(buddy, FALSE);
-
 	account = gaim_buddy_get_account(buddy);
-	g_return_val_if_fail(account != NULL, FALSE);
-
 	gc = gaim_account_get_connection(account);
-	g_return_val_if_fail(gc != NULL, FALSE);
-
 	od = (OscarData *)gc->proto_data;
-	g_return_val_if_fail(od != NULL, FALSE);
 
 	return (od->icq && aim_sn_is_icq(gaim_account_get_username(account)));
 }
