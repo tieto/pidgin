@@ -273,6 +273,9 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		gaim_blist_update_buddy_status(buddy, old_status);
 	}
 	g_slist_free(list);
+
+	if (!gaim_status_is_online(status))
+		serv_got_typing_stopped(gaim_account_get_connection(account), name);
 }
 
 static void
