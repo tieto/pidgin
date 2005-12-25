@@ -146,8 +146,10 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), editable);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
+#ifdef USE_GTKSPELL
 	if (editable && gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(imhtml));
+#endif
 	gtk_widget_show(imhtml);
 
 	if (editable) {

@@ -37,6 +37,13 @@
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 
+#ifdef USE_GTKSPELL
+#  include <gtkspell/gtkspell.h>
+#  ifdef _WIN32
+#    include "wspell.h"
+#  endif
+#endif
+
 #define TYPING_TIMEOUT 4000
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
@@ -72,7 +79,7 @@ enum {
 };
 
 GtkComboBoxClass *parent_class = NULL;
-	
+
 static void gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass);
 static void gtk_gaim_status_box_init (GtkGaimStatusBox *status_box);
 
@@ -213,7 +220,7 @@ gtk_gaim_status_box_finalize(GObject *obj)
 								statusbox, GAIM_CALLBACK(account_status_changed_cb));
 		statusbox->status_changed_signal = 0;
 	}
-	gaim_prefs_disconnect_by_handle(statusbox); 
+	gaim_prefs_disconnect_by_handle(statusbox);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -227,7 +234,7 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	combo_class = (GtkComboBoxClass*)klass;
 	combo_class->changed = gtk_gaim_status_box_changed;
 
@@ -593,6 +600,24 @@ buddy_list_details_pref_changed_cb(const char *name, GaimPrefType type,
 	update_size(status_box);
 }
 
+static void
+spellcheck_prefs_cb(const char *name, GaimPrefType type,
+					 gpointer value, gpointer data)
+{
+#ifdef USE_GTKSPELL
+	GtkGaimStatusBox *status_box = (GtkGaimStatusBox *)data;
+
+	if (value)
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
+	else
+	{
+		GtkSpell *spell;
+		spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(status_box->imhtml));
+		gtkspell_detach(spell);
+	}
+#endif
+}
+
 #if 0
 static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
@@ -701,6 +726,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 			 G_CALLBACK(imhtml_remove_focus), status_box);
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
+#ifdef USE_GTKSPELL
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
+#endif
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
 	GTK_BIN(status_box)->child = status_box->toggle_button;
@@ -726,7 +755,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 								current_status_pref_changed_cb, status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/blist/show_buddy_icons",
 								buddy_list_details_pref_changed_cb, status_box);
-
+	gaim_prefs_connect_callback(status_box, "/gaim/gtk/conversations/spellcheck",
+								spellcheck_prefs_cb, status_box);
 }
 
 static void
