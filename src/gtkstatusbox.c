@@ -972,16 +972,9 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
 		return;
-	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
-					   TYPE_COLUMN, &type,
-					   TITLE_COLUMN, &title, -1);
-	message = gtk_gaim_status_box_get_message(status_box);
 
-	if (!message || !*message)
-	{
-		gtk_widget_hide_all(status_box->vbox);
-		status_box->imhtml_visible = FALSE;
-	}
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+					   TYPE_COLUMN, &type, -1);
 
 	/*
 	 * If the currently selected status is "Custom..." or
@@ -993,6 +986,16 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	 */
 	if (type >= GAIM_STATUS_NUM_PRIMITIVES)
 		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+					   TITLE_COLUMN, &title, -1);
+
+	message = gtk_gaim_status_box_get_message(status_box);
+	if (!message || !*message)
+	{
+		gtk_widget_hide_all(status_box->vbox);
+		status_box->imhtml_visible = FALSE;
+	}
 
 	if (status_box->account) {
 		gint active;
