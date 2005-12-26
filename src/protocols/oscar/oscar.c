@@ -311,6 +311,7 @@ static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer valu
 static void oscar_set_info(GaimConnection *gc, const char *info);
 static void oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, GaimStatus *status);
 static void oscar_set_extendedstatus(GaimConnection *gc);
+static gboolean gaim_ssi_rerequestdata(gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
@@ -1884,7 +1885,7 @@ static void oscar_close(GaimConnection *gc) {
 	if (od->getinfotimer > 0)
 		gaim_timeout_remove(od->getinfotimer);
 	gaim_prefs_disconnect_by_handle(gc);
-		
+
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;
@@ -5714,12 +5715,16 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
+	OscarData *od = gc->proto_data;
 
 	aim_reqpersonalinfo(sess, fr->conn);
 
 	gaim_debug_info("oscar", "ssi: requesting rights and list\n");
 	aim_ssi_reqrights(sess);
 	aim_ssi_reqdata(sess);
+	if (od->getblisttimer > 0)
+		gaim_timeout_remove(od->getblisttimer);
+	od->getblisttimer = gaim_timeout_add(30000, gaim_ssi_rerequestdata, od->sess);
 
 	aim_locate_reqrights(sess);
 	aim_buddylist_reqrights(sess, fr->conn);
@@ -6835,7 +6840,12 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 
 static gboolean gaim_ssi_rerequestdata(gpointer data) {
 	aim_session_t *sess = data;
+	GaimConnection *gc = sess->aux_data;
+	OscarData *od = gc->proto_data;
+
 	aim_ssi_reqdata(sess);
+	od->getblisttimer = 0;
+
 	return FALSE;
 }
 
@@ -6854,7 +6864,9 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
 						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
-		od->getblisttimer = gaim_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
+		if (od->getblisttimer > 0)
+			gaim_timeout_remove(od->getblisttimer);
+		od->getblisttimer = gaim_timeout_add(30000, gaim_ssi_rerequestdata, od->sess);
 	}
 
 	oscar_set_extendedstatus(gc);
@@ -6925,6 +6937,11 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...)
 	items = va_arg(ap, struct aim_ssi_item *);
 	timestamp = va_arg(ap, fu32_t);
 	va_end(ap);
+
+	/* Don't attempt to re-request our buddy list later */
+	if (od->getblisttimer != 0)
+		gaim_timeout_remove(od->getblisttimer);
+	od->getblisttimer = 0;
 
 	gaim_debug_info("oscar",
 			   "ssi: syncing local list and server list\n");
