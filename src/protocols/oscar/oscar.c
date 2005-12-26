@@ -7835,18 +7835,37 @@ static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 static GList *
 oscar_status_types(GaimAccount *account)
 {
+	gboolean is_icq;
 	GList *status_types = NULL;
 	GaimStatusType *type;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
+	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
+
 	/* Oscar-common status types */
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
-										   OSCAR_STATUS_ID_AVAILABLE,
-										   NULL, TRUE, TRUE, FALSE,
-										   "message", _("Message"),
-										   gaim_value_new(GAIM_TYPE_STRING), NULL);
-	status_types = g_list_append(status_types, type);
+	if (is_icq)
+	{
+		type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+										 OSCAR_STATUS_ID_AVAILABLE,
+										 NULL, TRUE, TRUE, FALSE);
+		status_types = g_list_append(status_types, type);
+
+		type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+										 OSCAR_STATUS_ID_FREE4CHAT,
+										 _("Free For Chat"), TRUE, TRUE, FALSE);
+		status_types = g_list_append(status_types, type);
+	}
+	else
+	{
+		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+											   OSCAR_STATUS_ID_AVAILABLE,
+											   NULL, TRUE, TRUE, FALSE,
+											   "message", _("Message"),
+											   gaim_value_new(GAIM_TYPE_STRING), NULL);
+		status_types = g_list_append(status_types, type);
+	}
+
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
 										   OSCAR_STATUS_ID_AWAY,
@@ -7861,13 +7880,8 @@ oscar_status_types(GaimAccount *account)
 	status_types = g_list_append(status_types, type);
 
 	/* ICQ-specific status types */
-	if (aim_sn_is_icq(gaim_account_get_username(account)))
+	if (is_icq)
 	{
-		type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-										 OSCAR_STATUS_ID_FREE4CHAT,
-										 _("Free For Chat"), TRUE, TRUE, FALSE);
-		status_types = g_list_append(status_types, type);
-
 		type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
 										 OSCAR_STATUS_ID_OCCUPIED,
 										 _("Occupied"), TRUE, TRUE, FALSE);
