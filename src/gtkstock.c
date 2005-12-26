@@ -48,6 +48,7 @@ static struct StockIcon
 	{ GAIM_STOCK_BLOCK,           NULL,      GTK_STOCK_STOP             },
 	{ GAIM_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
+	{ GAIM_STOCK_CLOSE_TABS,      NULL,      GTK_STOCK_CLOSE            },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ GAIM_STOCK_CONNECT,         NULL,      GTK_STOCK_CONNECT          },
 #else
@@ -135,15 +136,16 @@ static struct StockIcon
 
 static const GtkStockItem stock_items[] =
 {
-	{ GAIM_STOCK_ALIAS,     N_("_Alias"),     0, 0, NULL },
-	{ GAIM_STOCK_CHAT,      N_("_Join"),      0, 0, NULL },
-	{ GAIM_STOCK_IM,	N_("I_M"),        0, 0, NULL },
-	{ GAIM_STOCK_INFO,      N_("_Get Info"),  0, 0, NULL },
-	{ GAIM_STOCK_INVITE,    N_("_Invite"),    0, 0, NULL },
-	{ GAIM_STOCK_MODIFY,    N_("_Modify"),    0, 0, NULL },
-	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL },
-	{ GAIM_STOCK_PAUSE,     N_("_Pause"),     0, 0, NULL },
-	{ GAIM_STOCK_WARN,      N_("_Warn"),      0, 0, NULL },
+	{ GAIM_STOCK_ALIAS,      N_("_Alias"),      0, 0, NULL },
+	{ GAIM_STOCK_CHAT,       N_("_Join"),       0, 0, NULL },
+	{ GAIM_STOCK_CLOSE_TABS, N_("Close _tabs"), 0, 0, NULL },
+	{ GAIM_STOCK_IM,         N_("I_M"),         0, 0, NULL },
+	{ GAIM_STOCK_INFO,       N_("_Get Info"),   0, 0, NULL },
+	{ GAIM_STOCK_INVITE,     N_("_Invite"),     0, 0, NULL },
+	{ GAIM_STOCK_MODIFY,     N_("_Modify"),     0, 0, NULL },
+	{ GAIM_STOCK_OPEN_MAIL,  N_("_Open Mail"),  0, 0, NULL },
+	{ GAIM_STOCK_PAUSE,      N_("_Pause"),      0, 0, NULL },
+	{ GAIM_STOCK_WARN,       N_("_Warn"),       0, 0, NULL },
 };
 
 static gchar *

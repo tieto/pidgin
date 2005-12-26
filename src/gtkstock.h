@@ -38,6 +38,7 @@
 #define GAIM_STOCK_BLOCK           "gaim-block"
 #define GAIM_STOCK_CHAT            "gaim-chat"
 #define GAIM_STOCK_CLEAR           "gaim-clear"
+#define GAIM_STOCK_CLOSE_TABS      "gaim-close-tab"
 #define GAIM_STOCK_CONNECT         "gaim-connect"
 #define GAIM_STOCK_DEBUG           "gaim-debug"
 #define GAIM_STOCK_DIALOG_AUTH     "gaim-dialog-auth"
