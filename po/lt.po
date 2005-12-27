@@ -2,7 +2,8 @@
 # Copyright (C) 2004-2005 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gaim package.
 # Marius Karnauskas <marius@akl.lt>, 2005,
-# Gediminas Čičinskas. <gediminas@parok.lt>, 2004-2005.
+# Gediminas Čičinskas. <gediminas@parok.lt>, 2004-2005,
+# Andrius tikonas <a.stikonas@gmail.com>, 2005.
 #
 #
 msgid ""
@@ -10,13 +11,14 @@ msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-12-17 16:48-0500\n"
-"PO-Revision-Date: 2005-12-20 23:17+0200\n"
-"Last-Translator: Andrius Štikonas <stikonas2@gmail.com>\n"
+"PO-Revision-Date: 2005-12-24 10:38+0200\n"
+"Last-Translator: Andrius Štikonas <a.stikonas@gmail.com>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\\n\n"
+"X-Poedit-Bookmarks: -1,-1,174,-1,-1,-1,-1,-1,-1,-1\n"
 
 #. *< type
 #. *< ui_requirement
@@ -137,14 +139,14 @@ msgstr "UDP Prievadas"
 #: plugins/crazychat/cc_gaim_plugin.c:329
 #, fuzzy
 msgid "Feature Calibration"
-msgstr "Prašyti įgaliojimų"
+msgstr "Galimybių kalibravimas"
 
 #. add enabled / disabled
 #: plugins/crazychat/cc_gaim_plugin.c:345
 #: src/gtkaccount.c:2236
 #: src/gtkplugin.c:414
 msgid "Enabled"
-msgstr "Įgalinta"
+msgstr "Įgalintas"
 
 #: plugins/crazychat/cc_gaim_plugin.c:350
 msgid "Disabled"
@@ -157,9 +159,8 @@ msgstr "Uždraustas"
 #. *< priority
 #. *< id
 #: plugins/dbus-example.c:135
-#, fuzzy
 msgid "DBus"
-msgstr "Užsiėmęs"
+msgstr "DBus"
 
 #. *< name
 #. *< version
@@ -168,7 +169,7 @@ msgstr "Užsiėmęs"
 #: plugins/dbus-example.c:138
 #: plugins/dbus-example.c:140
 msgid "DBus Plugin Example"
-msgstr ""
+msgstr "DBus įskiepio pavyzdys"
 
 #: plugins/docklet/docklet.c:153
 #, fuzzy
@@ -185,9 +186,8 @@ msgstr[1] "%d neperskaitytos žinutės nuo %s\n"
 msgstr[2] "%d neperskaitytų žinučių nuo %s\n"
 
 #: plugins/docklet/docklet.c:370
-#, fuzzy
 msgid "Show Buddy List"
-msgstr "Draugų sąrašas"
+msgstr "Rodyti draugų sąrašą"
 
 #: plugins/docklet/docklet.c:375
 msgid "Unread Messages"
@@ -235,12 +235,11 @@ msgstr "Išeiti"
 
 #: plugins/docklet/docklet.c:567
 msgid "Blink tray icon for unread..."
-msgstr ""
+msgstr "Mirkčioti skydelio įkoną neskaitytoms..."
 
 #: plugins/docklet/docklet.c:570
-#, fuzzy
 msgid "_Instant Messages:"
-msgstr "Nauja žinutė"
+msgstr "_Skubios Žinutės"
 
 #: plugins/docklet/docklet.c:572
 #: plugins/docklet/docklet.c:580
@@ -263,9 +262,8 @@ msgid "Always"
 msgstr "Visada"
 
 #: plugins/docklet/docklet.c:578
-#, fuzzy
 msgid "C_hat Messages:"
-msgstr "Ž_inutė:"
+msgstr "_Pokalbio žinutės:"
 
 #: plugins/docklet/docklet.c:581
 msgid "When my nick is said"
@@ -301,14 +299,12 @@ msgstr "Rodo Gaim ikoną sistemos skydelyje."
 #  *  description
 #. *  description
 #: plugins/docklet/docklet.c:612
-#, fuzzy
 msgid "Displays a system tray icon (in GNOME, KDE, or Windows for example) to show the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list. Also provides options to blink for unread messages."
-msgstr "Nukelia Gaim'ą į sistemos skydelį (pvz. KDE, GNOME ar Windows aplinkoje), leidžia pasiekti dažniausiai naudojamas funkcijas, rodo Gaim būseną. Taip pat nerodo žinučių, kol nepaspaudžiama ikona, panašiai kaip ICQ."
+msgstr "Nukelia Gaim'ą į sistemos skydelį (pvz. KDE, GNOME ar Windows aplinkoje), leidžia pasiekti dažniausiai naudojamas funkcijas, rodo Gaim būseną ir persijungti į draugų sąrašą. Be to, leidžia įjungti mirkčiojimą, kai yra neperskaitytų žinučių."
 
 #: plugins/docklet/eggtrayicon.c:122
-#, fuzzy
 msgid "Orientation"
-msgstr "Organizacija"
+msgstr "Orientacija"
 
 #: plugins/docklet/eggtrayicon.c:123
 msgid "The orientation of the tray."
@@ -433,7 +429,6 @@ msgid "Secondary Cursor Color"
 msgstr "Antrinė žymeklio spalva"
 
 #: plugins/gaimrc.c:43
-#, fuzzy
 msgid "Hyperlink Color"
 msgstr "Nuorodų spalva"
 
@@ -455,7 +450,6 @@ msgid "Conversation Entry"
 msgstr "Pokalbiai"
 
 #: plugins/gaimrc.c:80
-#, fuzzy
 msgid "Conversation History"
 msgstr "Pokalbio istorija"
 
@@ -479,9 +473,8 @@ msgid "Select Color for %s"
 msgstr "Pasirinkti teksto spalvą"
 
 #: plugins/gaimrc.c:288
-#, fuzzy
 msgid "Select Color"
-msgstr "Pasirinkti teksto spalvą"
+msgstr "Pasirinkti spalvą"
 
 #: plugins/gaimrc.c:323
 #, fuzzy, c-format
@@ -499,7 +492,7 @@ msgstr "GTK+ sąsajos šriftas"
 
 #: plugins/gaimrc.c:440
 msgid "GTK+ Text Shortcut Theme"
-msgstr ""
+msgstr "GTK+ teksto nuorodų tema"
 
 #: plugins/gaimrc.c:523
 #, c-format
@@ -724,7 +717,7 @@ msgstr ""
 
 #: plugins/gevolution/new_person_dialog.c:266
 msgid "Please enter the person's information below."
-msgstr ""
+msgstr "Prašome žemiau įvesti informaciją apie asmenį"
 
 #: plugins/gevolution/new_person_dialog.c:270
 msgid "Please enter the buddy's screen name and account type below."
@@ -799,7 +792,7 @@ msgstr "Testas skirtas nustatyti ar visi signalai veikia."
 
 #: plugins/history.c:146
 msgid "History Plugin Requires Logging"
-msgstr ""
+msgstr "Istorijos įskiepis reikalauja žurnalų"
 
 #: plugins/history.c:147
 msgid ""
@@ -974,9 +967,9 @@ msgstr "Automatiškai prisijungti"
 
 #: plugins/log_reader.c:1419
 #: plugins/log_reader.c:1422
-#, fuzzy, c-format
+#, c-format
 msgid "%s logged out."
-msgstr "%s prisijungė"
+msgstr "%s atsijungė"
 
 #: plugins/log_reader.c:1436
 msgid "One or more messages may have been undeliverable."
@@ -995,7 +988,7 @@ msgstr ""
 
 #: plugins/log_reader.c:1469
 msgid "Message could not be sent because the maximum length was exceeded."
-msgstr ""
+msgstr "Pranešimas negali būti išsiųstas, nes maksimalus ilgis buvo viršytas."
 
 #: plugins/log_reader.c:1474
 msgid "Message could not be sent."
@@ -1017,9 +1010,8 @@ msgstr ""
 
 #. Add Log Directory preferences.
 #: plugins/log_reader.c:1922
-#, fuzzy
 msgid "Log Directory"
-msgstr "_Ieškoti:"
+msgstr "Žurnalų katalogas"
 
 #: plugins/log_reader.c:1926
 msgid "Adium"
@@ -1111,7 +1103,7 @@ msgstr "_Pokalbio langai"
 
 #: plugins/notify.c:657
 msgid "_Focused windows"
-msgstr ""
+msgstr "_Pažymėti langai"
 
 #  ---------- "Notification Methods" ----------
 #. ---------- "Notification Methods" ----------
@@ -1624,7 +1616,6 @@ msgid "_Show slider bar in IM window"
 msgstr "_Rodyti slinkties juostą PŽ lange"
 
 #: plugins/win32/transparency/win2ktrans.c:555
-#, fuzzy
 msgid "Remove IM window transparency on focus"
 msgstr "Nuimti _PŽ lango permatomumą pažymėjus"
 
@@ -1671,15 +1662,14 @@ msgstr ""
 #  *  description
 #. *  description
 #: plugins/win32/transparency/win2ktrans.c:662
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and the buddy list.\n"
 "\n"
 "* Note: This plugin requires Win2000 or greater."
 msgstr ""
-"Šis įskiepis leidžia reguliuoti permatomumą pokalbių ir draugų sąrašo languose.\n"
+"Šis įskiepis leidžia reguliuoti alpha permatomumą pokalbių ir draugų sąrašo languose.\n"
 "\n"
-"* Pastaba: Šis įskiepis veikia tik su Win2000 ir WinXP."
+"* Pastaba: Šis įskiepis reikalauja Win2000 ir WinXP."
 
 #: plugins/win32/winprefs/winprefs.c:385
 msgid "GTK+ Runtime Version"
@@ -1748,7 +1738,7 @@ msgstr "Abonentai"
 
 #: src/account.c:923
 msgid "Password is required to sign on."
-msgstr ""
+msgstr "Kad prisijungtumėte, reikalingas slaptažodis."
 
 #: src/account.c:948
 #, c-format
@@ -1878,7 +1868,7 @@ msgstr "Atšaukti"
 #: src/connection.c:96
 #, c-format
 msgid "Missing protocol plugin for %s"
-msgstr ""
+msgstr "Trūksta protokolo %s įskiepio"
 
 #: src/account.c:996
 #: src/connection.c:99
@@ -1971,15 +1961,14 @@ msgid "+++ %s signed off"
 msgstr "+++ %s atsijungė"
 
 #: src/conversation.c:196
-#, fuzzy
 msgid "Unable to send message: The message is too large."
-msgstr "Negalima išsiųsti žinutės: Žinutė per ilga."
+msgstr "Negalima išsiųsti žinutės: žinutė per ilga."
 
 #: src/conversation.c:199
 #: src/conversation.c:212
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s."
-msgstr "Negalima išsiųsti žinutės %s:"
+msgstr "Nepavyko išsiųsti žinutės %s:"
 
 #: src/conversation.c:200
 msgid "The message is too large."
@@ -2031,9 +2020,8 @@ msgstr "paliko kanalą (%s)."
 
 #: src/desktopitem.c:286
 #: src/desktopitem.c:875
-#, fuzzy
 msgid "No name"
-msgstr "Pavardė:"
+msgstr "Nėra vardo"
 
 #: src/ft.c:189
 #: src/protocols/msn/msn.c:412
@@ -2100,14 +2088,14 @@ msgid ""
 msgstr ""
 
 #: src/ft.c:383
-#, fuzzy, c-format
+#, c-format
 msgid "%s is offering to send file %s"
-msgstr "%s tapo neveiklus (%s)"
+msgstr "%s siūlo siųsti bylą %s"
 
 #: src/ft.c:427
 #, c-format
 msgid "%s is not a valid filename.\n"
-msgstr ""
+msgstr "%s nėra bylos vardas.\n"
 
 #: src/ft.c:448
 #, c-format
@@ -2115,9 +2103,9 @@ msgid "Offering to send %s to %s"
 msgstr ""
 
 #: src/ft.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "Starting transfer of %s from %s"
-msgstr "Priimti siuntimą iš %s?"
+msgstr "Pradedamas %s siuntimas iš %s"
 
 #: src/ft.c:613
 #, c-format
@@ -2148,14 +2136,14 @@ msgid "%s canceled the file transfer"
 msgstr "%s nutraukė siųntimą"
 
 #: src/ft.c:1124
-#, fuzzy, c-format
+#, c-format
 msgid "File transfer to %s failed."
-msgstr "Bylos siuntimas %s nutrauktas.\n"
+msgstr "Bylos siuntimas %s nepavyko."
 
 #: src/ft.c:1126
-#, fuzzy, c-format
+#, c-format
 msgid "File transfer from %s failed."
-msgstr "Bylos siųntimas %s nutrauktas.\n"
+msgstr "Bylos siųntimas iš %s nepavyko."
 
 #: src/gtkaccount.c:357
 #, c-format
@@ -2211,15 +2199,13 @@ msgstr "Draugo ikona:"
 msgid "%s Options"
 msgstr "%s nustatymai"
 
-#  Use Global Proxy Settings
-#  Use Global Proxy Settings
 #: src/gtkaccount.c:1214
 msgid "Use Global Proxy Settings"
-msgstr "Naudoti visuotinius proxy nustatymus"
+msgstr "Naudoti visuotinius tarpinio serverio nustatymus"
 
 #: src/gtkaccount.c:1220
 msgid "No Proxy"
-msgstr "Be proxy"
+msgstr "Be tarpinio serverio"
 
 #: src/gtkaccount.c:1226
 msgid "HTTP"
@@ -2249,12 +2235,12 @@ msgstr ""
 
 #: src/gtkaccount.c:1298
 msgid "Proxy Options"
-msgstr "Proxy nustatymai"
+msgstr "Tarpinio serverio nustatymai"
 
 #: src/gtkaccount.c:1312
 #: src/gtkprefs.c:1024
 msgid "Proxy _type:"
-msgstr "Proxy _tipas:"
+msgstr "Tarpinio serverio _tipas:"
 
 #: src/gtkaccount.c:1321
 #: src/gtkprefs.c:1045
@@ -2382,9 +2368,8 @@ msgid "View _Log"
 msgstr "_Peržiūrėti žurnalą"
 
 #: src/gtkblist.c:1044
-#, fuzzy
 msgid "Alias..."
-msgstr "_Sinonimas..."
+msgstr "Sinonimas..."
 
 #: src/gtkblist.c:1047
 #: src/gtkconv.c:1571
@@ -2446,9 +2431,8 @@ msgstr "_Išplėsti"
 #: src/gtkblist.c:1436
 #: src/gtkblist.c:3668
 #: src/gtkblist.c:3673
-#, fuzzy
 msgid "/Tools/Mute Sounds"
-msgstr "Nutildyti garsus"
+msgstr "/Įrankiai/Nutildyti garsus"
 
 #: src/gtkblist.c:1895
 #: src/gtkconv.c:3909
@@ -2591,49 +2575,49 @@ msgstr ""
 "<b>Abonentas:</b> %s"
 
 #: src/gtkblist.c:2606
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Contact Alias:</b> %s"
 msgstr ""
 "\n"
-"<b>Sinonimas:</b>"
+"<b>Kontakto sinonimas:</b> %s"
 
 #: src/gtkblist.c:2614
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Alias:</b> %s"
 msgstr ""
 "\n"
-"<b>Sinonimas:</b>"
+"<b>Sinonimas:</b> %s"
 
 #: src/gtkblist.c:2622
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Nickname:</b> %s"
 msgstr ""
 "\n"
-"<b>Slapyvardis:</b>"
+"<b>Slapyvardis:</b>%s"
 
 #: src/gtkblist.c:2631
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Logged In:</b> %s"
 msgstr ""
 "\n"
-"<b>Prisijungęs:</b>"
+"<b>Prisijungęs:</b> %s"
 
 #: src/gtkblist.c:2643
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Idle:</b> %s"
 msgstr ""
 "\n"
-"<b>Neveiklus:</b>"
+"<b>Neveiklus:</b> %s"
 
 #: src/gtkblist.c:2678
 #, fuzzy, c-format
@@ -2659,13 +2643,12 @@ msgid ""
 msgstr ""
 
 #: src/gtkblist.c:2711
-#, fuzzy
 msgid ""
 "\n"
 "<b>Status:</b> Awesome"
 msgstr ""
 "\n"
-"<b>Busena</b>:·Awesome"
+"<b>Busena:</b>:stulbinanti"
 
 #: src/gtkblist.c:2713
 #, fuzzy
@@ -2677,14 +2660,14 @@ msgstr ""
 "<b>Būsena</b>:·Rockin'"
 
 #: src/gtkblist.c:2981
-#, fuzzy, c-format
+#, c-format
 msgid "Idle %dh %02dm"
-msgstr "Neveiklus (%dh%02dm"
+msgstr "Neveiklus %dh %02dm"
 
 #: src/gtkblist.c:2983
-#, fuzzy, c-format
+#, c-format
 msgid "Idle %dm"
-msgstr "Neveiklus (%dm) "
+msgstr "Neveiklus %dm"
 
 #: src/gtkblist.c:2986
 #: src/protocols/bonjour/bonjour.c:323
@@ -2725,12 +2708,10 @@ msgid "/Buddies/Add Chat..."
 msgstr "/Draugai/Naujas pokalbių kambarys..."
 
 #: src/gtkblist.c:3113
-#, fuzzy
 msgid "/Buddies/Add Group..."
 msgstr "/Draugai/Nauja grupė..."
 
 #: src/gtkblist.c:3148
-#, fuzzy
 msgid "/Tools/Buddy Pounces"
 msgstr "/Įrankiai/Draugų stebykla"
 
@@ -2743,14 +2724,12 @@ msgid "/Tools/Room List"
 msgstr "/Įrankiai/Kambarių sąrašas"
 
 #: src/gtkblist.c:3339
-#, fuzzy
 msgid "Manually"
-msgstr "Rankinis"
+msgstr "Rankiniu būdu"
 
 #: src/gtkblist.c:3341
-#, fuzzy
 msgid "Alphabetically"
-msgstr "Abėcėlinis"
+msgstr "Pagal abėcėlę"
 
 #: src/gtkblist.c:3342
 msgid "By status"
@@ -2780,9 +2759,8 @@ msgstr "/Draugai/Rodyti tuščias grupes"
 #  set the Show Offline Buddies option. must be done
 #  * after the treeview or faceprint gets mad. -Robot101
 #: src/gtkblist.c:3670
-#, fuzzy
 msgid "/Buddies/Show Buddy Details"
-msgstr "/Draugai/Rodyti atsijungusius draugus"
+msgstr "/Draugai/Rodyti draugų detales"
 
 #: src/gtkblist.c:4369
 #: src/protocols/silc/buddy.c:737
@@ -2853,26 +2831,22 @@ msgstr "Įgalinti abonentą"
 
 #  Tools
 #: src/gtkblist.c:5609
-#, fuzzy
 msgid "/Tools"
 msgstr "/Į_rankiai"
 
 #  set the Show Offline Buddies option. must be done
 #  * after the treeview or faceprint gets mad. -Robot101
 #: src/gtkblist.c:5704
-#, fuzzy
 msgid "/Buddies/Sort Buddies"
-msgstr "/Draugai/Rodyti atsijungusius draugus"
+msgstr "/Draugai/Rikiuoti draugus"
 
 #: src/gtkcellview.c:198
-#, fuzzy
 msgid "Background color name"
-msgstr "Fono spalva"
+msgstr "Fono spalvos vardas"
 
 #: src/gtkcellview.c:199
-#, fuzzy
 msgid "Background color as a string"
-msgstr "Fono spalva"
+msgstr "Fono spalva kaip tekstas"
 
 #: src/gtkcellview.c:205
 #: src/gtkimhtmltoolbar.c:1007
@@ -2880,9 +2854,8 @@ msgid "Background color"
 msgstr "Fono spalva"
 
 #: src/gtkcellview.c:206
-#, fuzzy
 msgid "Background color as a GdkColor"
-msgstr "Fono spalva"
+msgstr "Fono spalva kaip GdkColor"
 
 #: src/gtkcellview.c:213
 msgid "Background set"
@@ -2925,9 +2898,8 @@ msgid "TreeModel column containing the column span values"
 msgstr ""
 
 #: src/gtkcombobox.c:529
-#, fuzzy
 msgid "Active item"
-msgstr "Aktyvus"
+msgstr "Aktyvus elementas"
 
 #: src/gtkcombobox.c:530
 msgid "The item which is currently active"
@@ -2943,9 +2915,9 @@ msgid "Whether combobox dropdowns should look like lists rather than menus"
 msgstr ""
 
 #: src/gtkconn.c:226
-#, fuzzy, c-format
+#, c-format
 msgid "%s disconnected"
-msgstr "Atsijungta."
+msgstr "%s atsijungė"
 
 #: src/gtkconn.c:227
 #, c-format
@@ -3083,9 +3055,8 @@ msgid "Info"
 msgstr "Informacija"
 
 #: src/gtkconv.c:1564
-#, fuzzy
 msgid "Get Away Message"
-msgstr "Nauja nebuvimo žinutė"
+msgstr "Gauti nebuvimo žinutę"
 
 #: src/gtkconv.c:2283
 msgid "Unable to save icon file to disk."
@@ -3167,7 +3138,7 @@ msgstr "/Pokalbiai/_Pašalinti..."
 
 #: src/gtkconv.c:2544
 msgid "/Conversation/Insert Lin_k..."
-msgstr "/Pokalbiai/_Nuoroda..."
+msgstr "/Pokalbiai/Įdėti _nuorodą..."
 
 #: src/gtkconv.c:2546
 msgid "/Conversation/Insert Imag_e..."
@@ -3196,14 +3167,12 @@ msgid "/Options/Show Buddy _Icon"
 msgstr "/Nustatymai/Rodyti draugo _ikoną"
 
 #: src/gtkconv.c:2560
-#, fuzzy
 msgid "/Options/Show Formatting _Toolbars"
-msgstr "/Nustatymai/Rodyti _teksto formatavimo įrankius"
+msgstr "/Nustatymai/Rodyti _formatavimo įrankinę"
 
 #: src/gtkconv.c:2561
-#, fuzzy
 msgid "/Options/Show Ti_mestamps"
-msgstr "/Nustatymai/Rodyti laiką"
+msgstr "/Nustatymai/Rodyti _laiko žymes"
 
 #: src/gtkconv.c:2601
 msgid "/Conversation/View Log"
@@ -3258,13 +3227,12 @@ msgid "/Options/Enable Sounds"
 msgstr "/Nustatymai/Įjungti garsus"
 
 #: src/gtkconv.c:2661
-#, fuzzy
 msgid "/Options/Show Formatting Toolbars"
-msgstr "/Nustatymai/Rodyti laiką"
+msgstr "/Nustatymai/Rodyti formatavimo įrankinę"
 
 #: src/gtkconv.c:2664
 msgid "/Options/Show Timestamps"
-msgstr "/Nustatymai/Rodyti laiką"
+msgstr "/Nustatymai/Rodyti laiko žymes"
 
 #: src/gtkconv.c:2667
 msgid "/Options/Show Buddy Icon"
@@ -3281,9 +3249,8 @@ msgstr "Vartotojas kažka rašė ir sustojo"
 #  Build the Send As menu
 #. Build the Send To menu
 #: src/gtkconv.c:2890
-#, fuzzy
 msgid "_Send To"
-msgstr "Naudoti"
+msgstr "_Siųsti į"
 
 #: src/gtkconv.c:3537
 #: src/protocols/sametime/sametime.c:3490
@@ -3374,7 +3341,7 @@ msgstr "Pagal abonentą"
 
 #: src/gtkdebug.c:232
 msgid "Save Debug Log"
-msgstr ""
+msgstr "Išsaugoti derinimo žurnalą"
 
 #: src/gtkdebug.c:586
 #, fuzzy
@@ -3387,7 +3354,7 @@ msgstr ""
 
 #: src/gtkdebug.c:636
 msgid "Debug Window"
-msgstr "Klaidų langas"
+msgstr "Derinimo langas"
 
 #: src/gtkdebug.c:689
 msgid "Clear"
@@ -3447,9 +3414,8 @@ msgid "maintainer"
 msgstr "prižiūrėtojas"
 
 #: src/gtkdialogs.c:95
-#, fuzzy
 msgid "libfaim maintainer"
-msgstr "prižiūrėtojas"
+msgstr "libfaim prižiūrėtojas"
 
 #: src/gtkdialogs.c:96
 msgid "hacker and designated driver [lazy bum]"
@@ -3654,14 +3620,12 @@ msgid "About Gaim"
 msgstr "Apie Gaim"
 
 #: src/gtkdialogs.c:236
-#, fuzzy
 msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
-msgstr "Gaim yra modulinis susirašinėjimo klientas palaikantis AIM, MSN, Yahoo!, Jabber, ICQ, IRC, Novrll GroupWise, Napster, Zephyr, ir Gadu-Gadu protokolus. Naudoja Gtk+ bei platinamas pagal GPL licenziją.<BR><BR>"
+msgstr "Gaim yra modulinis susirašinėjimo klientas palaikantis AIM, MSN, Yahoo!, Jabber, ICQ, IRC, Novell GroupWise, Lotus Sametime,  Napster, Zephyr, ir Gadu-Gadu protokolus vienu metu. Parašytas naudojant GTK+ bei platinamas pagal GNU GPL licenciją.<BR><BR>"
 
 #: src/gtkdialogs.c:245
-#, fuzzy
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim  irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim, esantis irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:248
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
@@ -3688,9 +3652,8 @@ msgid "Past Translators"
 msgstr "Buvę vertėjai"
 
 #: src/gtkdialogs.c:337
-#, fuzzy
 msgid "Debugging Information"
-msgstr "Naudotojo informacija"
+msgstr "Derinimo informacija"
 
 #: src/gtkdialogs.c:527
 #: src/gtkdialogs.c:664
@@ -3765,12 +3728,12 @@ msgid "Enter an alias for this chat."
 msgstr "Įveskite sinonimą šiam pokalbiui."
 
 #: src/gtkdialogs.c:846
-#, fuzzy, c-format
+#, c-format
 msgid "You are about to remove the contact containing %s and %d other buddy from your buddy list.  Do you want to continue?"
 msgid_plural "You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"
-msgstr[0] "Jūs norite pašalinti %s iš savo draugų sąrašo. Ar norite tęsti?"
-msgstr[1] "Jūs norite pašalinti %s iš savo draugų sąrašo. Ar norite tęsti?"
-msgstr[2] "Jūs norite pašalinti %s iš savo draugų sąrašo. Ar norite tęsti?"
+msgstr[0] "Jūs norite pašalinti %s ir %d kitą draugą iš savo draugų sąrašo. Ar norite tęsti?"
+msgstr[1] "Jūs norite pašalinti %s ir %d kitus draugus iš savo draugų sąrašo. Ar norite tęsti?"
+msgstr[2] "Jūs norite pašalinti %s ir %d kitų draugų iš savo draugų sąrašo. Ar norite tęsti?"
 
 #: src/gtkdialogs.c:854
 #: src/gtkdialogs.c:855
@@ -3852,16 +3815,14 @@ msgid "An error occurred while opening the file."
 msgstr "Klaida atidarant failą."
 
 #: src/gtkft.c:484
-#, fuzzy, c-format
+#, c-format
 msgid "Error launching %s: %s"
-msgstr "Klaida paleidžiant <b>%s</b>: %s"
+msgstr "Klaida paleidžiant %s: %s"
 
 #: src/gtkft.c:493
-#, fuzzy, c-format
+#, c-format
 msgid "Error running %s"
-msgstr ""
-"Klaida rašant %s: \n"
-"%s.\n"
+msgstr "Klaida vykdant %s"
 
 #: src/gtkft.c:494
 #, c-format
@@ -3889,9 +3850,8 @@ msgid "Filename:"
 msgstr "Bylos pavadinimas"
 
 #: src/gtkft.c:641
-#, fuzzy
 msgid "Local File:"
-msgstr "Vietiniai naudotojai"
+msgstr "Vietinė byla:"
 
 #: src/gtkft.c:642
 msgid "Status:"
@@ -3937,12 +3897,11 @@ msgstr "_Tęsti"
 
 #: src/gtkft.c:1005
 msgid "Failed"
-msgstr ""
+msgstr "Nepavyko"
 
 #: src/gtkimhtml.c:816
-#, fuzzy
 msgid "Pa_ste as Plain Text"
-msgstr "Į_dėti kaip tekstą"
+msgstr "Į_klijuoti kaip tekstą"
 
 #: src/gtkimhtml.c:1313
 msgid "Hyperlink color"
@@ -3999,12 +3958,15 @@ msgstr ""
 "%s"
 
 #: src/gtkimhtml.c:3262
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error saving image\n"
 "\n"
 "%s"
-msgstr "Klaida išsaugant paveiksliuką: %s"
+msgstr ""
+"Klaida išsaugant paveiksliuką\n"
+"\n"
+"%s"
 
 #: src/gtkimhtml.c:3342
 #: src/gtkimhtml.c:3354
@@ -4142,9 +4104,8 @@ msgid "No logs were found"
 msgstr "Žurnalų nerasta"
 
 #: src/gtklog.c:411
-#, fuzzy
 msgid "Total log size:"
-msgstr "Pagal žurnalo dydį"
+msgstr "Bendras žurnalo dydis:"
 
 #: src/gtklog.c:487
 #, fuzzy, c-format
@@ -4184,14 +4145,12 @@ msgstr ""
 
 #: src/gtkmain.c:687
 #: src/gtkmain.c:689
-#, fuzzy
 msgid "Default"
-msgstr "Gnome įprasta"
+msgstr "Numatytas"
 
 #: src/gtkmedia.c:52
-#, fuzzy
 msgid "Call ended."
-msgstr "Pokalbis baigtas."
+msgstr "Skambutis baigtas."
 
 #: src/gtkmedia.c:69
 #, c-format
@@ -4200,9 +4159,8 @@ msgstr "Skambinama %s"
 
 #: src/gtkmedia.c:73
 #: src/gtkmedia.c:108
-#, fuzzy
 msgid "End Call"
-msgstr "Baigti pokalbį"
+msgstr "Baigti skambinimą"
 
 #: src/gtkmedia.c:81
 #, c-format
@@ -4210,21 +4168,19 @@ msgid "Receiving call from %s"
 msgstr ""
 
 #: src/gtkmedia.c:89
-#, fuzzy
 msgid "Reject Call"
 msgstr "Atmesti skambutį"
 
 #  *
 #  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
 #: src/gtkmedia.c:95
-#, fuzzy
 msgid "Accept call"
 msgstr "Priimti skambutį"
 
 #: src/gtkmedia.c:102
-#, fuzzy, c-format
+#, c-format
 msgid "Connected to %s"
-msgstr "Nepavyko prisijungti prie %s"
+msgstr "Prisijungta prie %s"
 
 #: src/gtkmedia.c:113
 msgid "_Mute"
@@ -4323,9 +4279,8 @@ msgstr ""
 "<span weight=\"bold\">Byla:</span>\t%s"
 
 #: src/gtkplugin.c:388
-#, fuzzy
 msgid "Configure Pl_ugin"
-msgstr "Derinti kanalą"
+msgstr "Derinti įskiepį"
 
 #: src/gtkplugin.c:437
 msgid "<b>Plugin Details</b>"
@@ -4361,9 +4316,8 @@ msgstr "_Draugo vardas:"
 #  Create the "Pounce When" frame.
 #. Create the "Pounce When" frame.
 #: src/gtkpounce.c:544
-#, fuzzy
 msgid "Pounce When Buddy..."
-msgstr "Stebėti veiksmus"
+msgstr "Stebėti, kai draugas..."
 
 #: src/gtkpounce.c:552
 msgid "Si_gns on"
@@ -4374,19 +4328,16 @@ msgid "Signs o_ff"
 msgstr "_Atsijungia"
 
 #: src/gtkpounce.c:556
-#, fuzzy
 msgid "Goes a_way"
-msgstr "Draugas išėjo"
+msgstr "_Išeina"
 
 #: src/gtkpounce.c:558
-#, fuzzy
 msgid "Ret_urns from away"
 msgstr "G_rįžta"
 
 #: src/gtkpounce.c:560
-#, fuzzy
 msgid "Becomes _idle"
-msgstr "%s tapo neveiklus"
+msgstr "Tampa _neveiklus"
 
 #: src/gtkpounce.c:562
 #, fuzzy
@@ -4394,14 +4345,12 @@ msgid "Is no longer i_dle"
 msgstr "%s jau čia."
 
 #: src/gtkpounce.c:564
-#, fuzzy
 msgid "Starts _typing"
 msgstr "_Pradeda rašyti"
 
 #: src/gtkpounce.c:566
-#, fuzzy
 msgid "Stops t_yping"
-msgstr "_Sustoja rašyti"
+msgstr "_Liaunasi rašyti"
 
 #  Create the "Pounce Action" frame.
 #. Create the "Pounce Action" frame.
@@ -4414,7 +4363,6 @@ msgid "Ope_n an IM window"
 msgstr "_Atidaryti PŽ langą"
 
 #: src/gtkpounce.c:605
-#, fuzzy
 msgid "_Pop up a notification"
 msgstr "_Išokantis perspėjimas"
 
@@ -4453,9 +4401,8 @@ msgstr "Ar Jūs tikrai norite ištrinti %s?"
 
 #  Create the "Pounce When" frame.
 #: src/gtkpounce.c:1145
-#, fuzzy
 msgid "Pounce Target"
-msgstr "Stebėti veiksmus"
+msgstr "Stebėjimo objektas"
 
 #: src/gtkpounce.c:1180
 msgid "Recurring"
@@ -4463,9 +4410,8 @@ msgstr "Pasikartojantis"
 
 #  "New Buddy Pounce"
 #: src/gtkpounce.c:1227
-#, fuzzy
 msgid "Buddy Pounces"
-msgstr "Naujas stebėjimas"
+msgstr "Draugų stebykla"
 
 #: src/gtkpounce.c:1345
 #, c-format
@@ -4531,9 +4477,8 @@ msgid "Description"
 msgstr "Aprašymas"
 
 #: src/gtkprefs.c:814
-#, fuzzy
 msgid "_Hide new IM conversations"
-msgstr "Uždaryti pokalbio langą"
+msgstr "Slėpti naujus PŽ pokalbius"
 
 #: src/gtkprefs.c:817
 #: src/gtkprefs.c:1666
@@ -4542,7 +4487,7 @@ msgstr "Tiktai kai išėjęs"
 
 #: src/gtkprefs.c:821
 msgid "Send unknown \"_slash\" commands as messages"
-msgstr ""
+msgstr "Nežinomas \"_slash\" komandas siųsti kaip pranešimus"
 
 #: src/gtkprefs.c:823
 #, fuzzy
@@ -4559,7 +4504,7 @@ msgstr ""
 
 #: src/gtkprefs.c:835
 msgid "_Notify buddies that you are typing to them"
-msgstr "_Pranešti bičiulius kai tu jiems rašai"
+msgstr "_Pranešti bičiulius, kai tu jiems rašai"
 
 #: src/gtkprefs.c:838
 msgid "Highlight _misspelled words"
@@ -4622,14 +4567,12 @@ msgid "IP Address"
 msgstr "IP adresas"
 
 #: src/gtkprefs.c:966
-#, fuzzy
 msgid "ST_UN server:"
-msgstr "_Serveris:"
+msgstr "ST_UN serveris:"
 
 #: src/gtkprefs.c:968
-#, fuzzy
 msgid "_Autodetect IP address"
-msgstr "_Automatiškai nustatyti IP"
+msgstr "_Automatiškai nustatyti IP adresą"
 
 #: src/gtkprefs.c:977
 msgid "Public _IP:"
@@ -4644,22 +4587,20 @@ msgid "_Manually specify range of ports to listen on"
 msgstr "_Rankiniu būdų nustatyti prievadus"
 
 #: src/gtkprefs.c:1007
-#, fuzzy
 msgid "_Start port:"
 msgstr "_Pradinis prievadas:"
 
 #: src/gtkprefs.c:1014
-#, fuzzy
 msgid "_End port:"
-msgstr "_Paskutinis prievadas:"
+msgstr "Pas_kutinis prievadas:"
 
 #: src/gtkprefs.c:1022
 msgid "Proxy Server"
-msgstr "Proxy serveris"
+msgstr "Tarpinis serveris"
 
 #: src/gtkprefs.c:1026
 msgid "No proxy"
-msgstr "Nėra proxy"
+msgstr "Nėra tarpinio serverio"
 
 #: src/gtkprefs.c:1082
 msgid "_User:"
@@ -4682,9 +4623,8 @@ msgid "Galeon"
 msgstr "Galeon"
 
 #: src/gtkprefs.c:1148
-#, fuzzy
 msgid "GNOME Default"
-msgstr "Gnome įprasta"
+msgstr "GNOME numatytoji"
 
 #: src/gtkprefs.c:1149
 msgid "Konqueror"
@@ -4745,9 +4685,8 @@ msgid "Logging"
 msgstr "Žurnalai"
 
 #: src/gtkprefs.c:1284
-#, fuzzy
 msgid "Log _format:"
-msgstr "Žurnalų formatas:"
+msgstr "Žurnalų _formatas:"
 
 #: src/gtkprefs.c:1289
 #, fuzzy
@@ -4787,9 +4726,8 @@ msgid "Command"
 msgstr "Komanda"
 
 #: src/gtkprefs.c:1490
-#, fuzzy
 msgid "No sounds"
-msgstr "Garsai"
+msgstr "Be garsų"
 
 #: src/gtkprefs.c:1498
 #, c-format
@@ -4881,14 +4819,12 @@ msgid "Change status when _idle"
 msgstr "_Nustatyti manęs nėra, kai aš neveiklus"
 
 #: src/gtkprefs.c:1678
-#, fuzzy
 msgid "_Minutes before changing status:"
-msgstr "_Laikas prieš nustatant manęs nėra:"
+msgstr "_Minutės, prieš nustatant manęs nėra:"
 
 #: src/gtkprefs.c:1686
-#, fuzzy
 msgid "Change _status to:"
-msgstr "Keisti adresą į:"
+msgstr "Keisti _būseną į:"
 
 #: src/gtkprefs.c:1744
 msgid "Smiley Themes"
@@ -4914,15 +4850,15 @@ msgstr "Manęs nėra / Neveiklus"
 
 #: src/gtkprivacy.c:79
 msgid "Allow all users to contact me"
-msgstr ""
+msgstr "Leisti visiems vartotojams pasiekti mane"
 
 #: src/gtkprivacy.c:80
 msgid "Allow only the users on my buddy list"
-msgstr ""
+msgstr "Leisti tik esantiems mano draugų sąraše"
 
 #: src/gtkprivacy.c:81
 msgid "Allow only the users below"
-msgstr ""
+msgstr "Leisti tik žemiau esantiems vartotojams"
 
 #: src/gtkprivacy.c:82
 msgid "Block all users"
@@ -4930,7 +4866,7 @@ msgstr "Blokuoti visus vartotojus"
 
 #: src/gtkprivacy.c:83
 msgid "Block only the users below"
-msgstr ""
+msgstr "Blokuoti žemiau esančius vartotojus"
 
 #: src/gtkprivacy.c:398
 msgid "Privacy"
@@ -4947,8 +4883,9 @@ msgstr "Nustatyti privatumą:"
 
 #: src/gtkprivacy.c:589
 #: src/gtkprivacy.c:605
+#, fuzzy
 msgid "Permit User"
-msgstr ""
+msgstr "Leisti vartotoją"
 
 #: src/gtkprivacy.c:590
 msgid "Type a user you permit to contact you."
@@ -4956,7 +4893,7 @@ msgstr ""
 
 #: src/gtkprivacy.c:591
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr ""
+msgstr "Įveskite vartotojo, kuris galėtų su jumis susisiekti, vardą."
 
 #: src/gtkprivacy.c:594
 #: src/gtkprivacy.c:607
@@ -4984,7 +4921,7 @@ msgstr "Kurį vartotoją blokuoti."
 
 #: src/gtkprivacy.c:630
 msgid "Please enter the name of the user you wish to block."
-msgstr ""
+msgstr "Įveskite asmens, kurį norite blokuoti, vardą."
 
 #  Block button
 #: src/gtkprivacy.c:632
@@ -5001,7 +4938,7 @@ msgstr "Blokuoti %s?"
 #: src/gtkprivacy.c:639
 #, c-format
 msgid "Are you sure you want to block %s?"
-msgstr ""
+msgstr "Ar tikrai norite užblokuoti %s?"
 
 #  *
 #  * A wrapper for gaim_request_action() that uses Yes and No buttons.
@@ -5079,7 +5016,7 @@ msgstr "Laipsnis"
 
 #: src/gtksavedstatuses.c:451
 msgid "Type"
-msgstr ""
+msgstr "Tipas"
 
 #: src/gtksavedstatuses.c:462
 #: src/gtksavedstatuses.c:903
@@ -5153,7 +5090,7 @@ msgstr "Statusas"
 #: src/gtksavedstatuses.c:1038
 #, fuzzy
 msgid "_Title:"
-msgstr "'Laipsnis"
+msgstr "Laipsnis"
 
 #: src/gtksavedstatuses.c:1058
 #: src/gtksavedstatuses.c:1360
@@ -5185,7 +5122,7 @@ msgstr "Draugas atsijungia"
 
 #: src/gtksound.c:63
 msgid "Message received"
-msgstr ""
+msgstr "Gautas pranešimas"
 
 #: src/gtksound.c:64
 msgid "Message received begins conversation"
@@ -5193,7 +5130,7 @@ msgstr ""
 
 #: src/gtksound.c:65
 msgid "Message sent"
-msgstr ""
+msgstr "Pranešimas išsiųstas"
 
 #: src/gtksound.c:66
 msgid "Person enters chat"
@@ -5318,7 +5255,7 @@ msgstr "Nematomas"
 #: src/protocols/yahoo/yahoo.c:3202
 #: src/status.c:153
 msgid "Offline"
-msgstr "Neprisijungęs"
+msgstr "Atsijungęs"
 
 #: src/gtkstatusbox.c:443
 msgid "Custom..."
@@ -5357,9 +5294,8 @@ msgstr "Ši klaida įvyko pakraunant %s: %s"
 
 #: src/gtkutils.c:1311
 #: src/gtkutils.c:1336
-#, fuzzy
 msgid "Failed to load image"
-msgstr "Nepavyko išsaugoti paveiksliuko: %s\n"
+msgstr "Nepavyko pakrauti paveiksliuko"
 
 #: src/gtkutils.c:1411
 #, fuzzy, c-format
@@ -5374,7 +5310,7 @@ msgstr ""
 #: src/gtkutils.c:1450
 #: src/gtkutils.c:1455
 msgid "You have dragged an image"
-msgstr ""
+msgstr "Nutempėte paveikslėlį"
 
 #: src/gtkutils.c:1442
 msgid "You can send this image as a file transfer, embed it into this message, or use it as the buddy icon for this user."
@@ -5382,21 +5318,18 @@ msgstr ""
 
 #: src/gtkutils.c:1446
 #: src/gtkutils.c:1461
-#, fuzzy
 msgid "Set as buddy icon"
-msgstr "Rodyti draugų _ikonas"
+msgstr "Nustatyti kaip ikoną"
 
 #: src/gtkutils.c:1447
 #: src/gtkutils.c:1462
-#, fuzzy
 msgid "Send image file"
-msgstr "Siųsti žinutę"
+msgstr "Siųsti paveiksliuką"
 
 #: src/gtkutils.c:1448
 #: src/gtkutils.c:1462
-#, fuzzy
 msgid "Insert in message"
-msgstr "Įdėti paveiksliuką"
+msgstr "Įterpti į pranešimą"
 
 #: src/gtkutils.c:1451
 msgid "Would you like to set it as the buddy icon for this user?"
@@ -5430,7 +5363,7 @@ msgstr ""
 #: src/gtkwhiteboard.c:344
 #: src/protocols/yahoo/yahoo_doodle.c:96
 msgid "Sent Doodle request."
-msgstr ""
+msgstr "Siųsti piešimo užklausą"
 
 #: src/log.c:129
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -5445,9 +5378,8 @@ msgid "Plain text"
 msgstr "Tekstas"
 
 #: src/log.c:519
-#, fuzzy
 msgid "Old Gaim"
-msgstr "Gaim"
+msgstr "Senas Gaim"
 
 #: src/log.c:577
 msgid "Logging of this conversation failed."
@@ -5508,22 +5440,22 @@ msgid "Unable to establish connection with the local mDNS server.  Is it running
 msgstr ""
 
 #: src/protocols/bonjour/bonjour.c:328
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Status:</b> %s"
 msgstr ""
 "\n"
-"<b>Busena</b>:·Awesome"
+"<b>Busena:</b> %s"
 
 #: src/protocols/bonjour/bonjour.c:330
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Message:</b> %s"
 msgstr ""
 "\n"
-"<b>%s:</b> %s"
+"<b>Pranešimas:</b> %s"
 
 #. *< type
 #. *< ui_requirement
@@ -5566,15 +5498,13 @@ msgstr "Prievadas"
 #: src/protocols/bonjour/bonjour.c:560
 #: src/protocols/gg/gg.c:571
 #: src/protocols/gg/gg.c:986
-#, fuzzy
 msgid "First name"
-msgstr "Vardas:"
+msgstr "Vardas"
 
 #: src/protocols/bonjour/bonjour.c:563
 #: src/protocols/gg/gg.c:566
-#, fuzzy
 msgid "Last name"
-msgstr "Pavardė:"
+msgstr "Pavardė"
 
 #: src/protocols/bonjour/bonjour.c:566
 #: src/protocols/jabber/buddy.c:261
@@ -5607,9 +5537,8 @@ msgstr "Neįmanoma išsaugoti ikonos bylos į diską."
 
 #: src/protocols/gg/gg.c:235
 #: src/protocols/gg/gg.c:254
-#, fuzzy
 msgid "Save Buddylist..."
-msgstr "Siųsti draugų sąrašą"
+msgstr "Išsaugoti draugų sąrašą"
 
 #: src/protocols/gg/gg.c:236
 msgid "Your buddylist is empty, nothing was written to the file."
@@ -5617,14 +5546,12 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:242
 #: src/protocols/gg/gg.c:244
-#, fuzzy
 msgid "Couldn't open file"
-msgstr "Neįmanoma atidaryti bylos."
+msgstr "Neįmanoma atidaryti bylos"
 
 #: src/protocols/gg/gg.c:255
-#, fuzzy
 msgid "Buddylist saved successfully!"
-msgstr "Slaptažodis pakeistas"
+msgstr "Draugų  sąrašas sėkmingai išsaugotas!"
 
 #: src/protocols/gg/gg.c:273
 #: src/protocols/gg/gg.c:274
@@ -5643,16 +5570,14 @@ msgid "Buddylist loaded successfully!"
 msgstr "Slaptažodis pakeistas"
 
 #: src/protocols/gg/gg.c:302
-#, fuzzy
 msgid "Save buddylist..."
-msgstr "Siųsti draugų sąrašą"
+msgstr "Išsaugoti draugų sąrašą..."
 
 #: src/protocols/gg/gg.c:346
 msgid "Fill in the registration fields."
 msgstr "Užpildykite registracijos laukus."
 
 #: src/protocols/gg/gg.c:351
-#, fuzzy
 msgid "Passwords do not match."
 msgstr "Nauji slaptažodžiai nesutampa."
 
@@ -5669,7 +5594,6 @@ msgid "Registration completed successfully!"
 msgstr "Registracija sėkmingai užbaigta!"
 
 #: src/protocols/gg/gg.c:434
-#, fuzzy
 msgid "e-Mail"
 msgstr "El. paštas"
 
@@ -5682,9 +5606,8 @@ msgstr "Slaptažodis"
 
 #: src/protocols/gg/gg.c:444
 #: src/protocols/gg/gg.c:718
-#, fuzzy
 msgid "Password (retype)"
-msgstr "Slaptažodis išsiųstas"
+msgstr "Slaptažodis (pakartokite)"
 
 #: src/protocols/gg/gg.c:449
 #: src/protocols/gg/gg.c:723
@@ -5699,9 +5622,8 @@ msgstr "Kanaluose"
 
 #: src/protocols/gg/gg.c:459
 #: src/protocols/gg/gg.c:460
-#, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Registruoti naują Jabber abonentą"
+msgstr "Registruoti naują Gadu-Gadu abonentą"
 
 #: src/protocols/gg/gg.c:461
 msgid "Please, fill in the following fields"
@@ -5771,13 +5693,12 @@ msgstr "Moteris"
 #: src/protocols/gg/gg.c:596
 #, fuzzy
 msgid "Only online"
-msgstr "Prisijungęs"
+msgstr "Tik prisijungęs"
 
 #: src/protocols/gg/gg.c:600
 #: src/protocols/gg/gg.c:601
-#, fuzzy
 msgid "Find buddies"
-msgstr "Draugai"
+msgstr "Ieškoti draugų"
 
 #: src/protocols/gg/gg.c:602
 #, fuzzy
@@ -5797,19 +5718,16 @@ msgid "Unable to change password. Error occured.\n"
 msgstr "Neįmanoma pakeisti slaptažodžio. Įvyko klaida.\n"
 
 #: src/protocols/gg/gg.c:674
-#, fuzzy
 msgid "Change password for the Gadu-Gadu account"
-msgstr "Keisti %s slaptažodį"
+msgstr "Keisti slaptažodį Gadu-Gadu abonentui"
 
 #: src/protocols/gg/gg.c:675
-#, fuzzy
 msgid "Password was changed successfully!"
-msgstr "Slaptažodis pakeistas"
+msgstr "Slaptažodis pakeistas sėkmingai!"
 
 #: src/protocols/gg/gg.c:708
-#, fuzzy
 msgid "Current password"
-msgstr "Neteisingas slaptažodis."
+msgstr "Dabartinis slaptažodis"
 
 #: src/protocols/gg/gg.c:733
 #, fuzzy
@@ -5828,9 +5746,8 @@ msgstr "Pašalinti kanalą iš draugų sąrašo"
 
 #: src/protocols/gg/gg.c:825
 #: src/protocols/gg/gg.c:826
-#, fuzzy
 msgid "Add to chat..."
-msgstr "Įv_esti kanalą"
+msgstr "Pridėti į pokalbį..."
 
 #: src/protocols/gg/gg.c:965
 msgid "No matching users found"
@@ -5854,7 +5771,6 @@ msgid "UIN"
 msgstr "UIN"
 
 #: src/protocols/gg/gg.c:995
-#, fuzzy
 msgid "Birth year"
 msgstr "Gimimo metai"
 
@@ -5863,7 +5779,6 @@ msgid "Gadu-Gadu Public Directory"
 msgstr "Gadu-Gadu viešas katalogas"
 
 #: src/protocols/gg/gg.c:1036
-#, fuzzy
 msgid "Search results"
 msgstr "Paieškos rezultatai"
 
@@ -5873,18 +5788,16 @@ msgid "Unable to read socket"
 msgstr ""
 
 #: src/protocols/gg/gg.c:1215
-#, fuzzy
 msgid "Buddy list downloaded"
-msgstr "Draugas neveiklus:"
+msgstr "Draugų sąrašas atsiųstas"
 
 #: src/protocols/gg/gg.c:1216
 msgid "Your buddy list was downloaded from the server."
 msgstr "Jūsų draugų sąrašas atsiųstas iš serverio."
 
 #: src/protocols/gg/gg.c:1223
-#, fuzzy
 msgid "Buddy list uploaded"
-msgstr "Draugas neveiklus:"
+msgstr "Draugų sąrašas nusiųstas"
 
 #: src/protocols/gg/gg.c:1224
 msgid "Your buddy list was stored on the server."
@@ -5892,9 +5805,8 @@ msgstr "Jūsų draugų sąrašas išsaugotas serveryje."
 
 #: src/protocols/gg/gg.c:1313
 #: src/protocols/gg/gg.c:1531
-#, fuzzy
 msgid "Connection failed."
-msgstr "Prisijungimas uždarytas"
+msgstr "Prisijungimas nepavyko"
 
 #: src/protocols/gg/gg.c:1451
 #: src/protocols/msn/msn.c:593
@@ -5915,34 +5827,29 @@ msgid "Blocked"
 msgstr "Blokuota"
 
 #: src/protocols/gg/gg.c:1473
-#, fuzzy
 msgid "Add to chat"
-msgstr "Įkelti pokalbį"
+msgstr "Pridėti į pokalbį..."
 
 #  Block button
 #: src/protocols/gg/gg.c:1478
-#, fuzzy
 msgid "Unblock"
-msgstr "Blokuoti"
+msgstr "Nebeblokuoti"
 
 #: src/protocols/gg/gg.c:1497
-#, fuzzy
 msgid "Chat _name:"
-msgstr "Pavardė:"
+msgstr "Pokalbio _vardas"
 
 #: src/protocols/gg/gg.c:1716
-#, fuzzy
 msgid "Chat error"
-msgstr "Klaida rašant"
+msgstr "Pokalbio klaida"
 
 #: src/protocols/gg/gg.c:1717
 msgid "This chat name is already in use"
 msgstr ""
 
 #: src/protocols/gg/gg.c:1799
-#, fuzzy
 msgid "Not connected to the server."
-msgstr "Neįmanoma prisijungti naudojant SSL."
+msgstr "Neprisijungęs prie serverio."
 
 #: src/protocols/gg/gg.c:1822
 msgid "Find buddies..."
@@ -5965,9 +5872,8 @@ msgid "Delete buddylist from Server"
 msgstr "Ištrinti draugų sąrašą iš serverio"
 
 #: src/protocols/gg/gg.c:1846
-#, fuzzy
 msgid "Save buddylist to file..."
-msgstr "Siųsti draugų sąrašą"
+msgstr "Išsaugoti draugų sąrašą į bylą..."
 
 #: src/protocols/gg/gg.c:1850
 #, fuzzy
@@ -5992,7 +5898,7 @@ msgstr "Gadu-Gadu protololo įskiepis"
 #. summary
 #: src/protocols/gg/gg.c:1938
 msgid "Polish popular IM"
-msgstr ""
+msgstr "Populiarus lenkų pranešimų tinklas"
 
 #: src/protocols/gg/gg.c:1986
 msgid "Gadu-Gadu User"
@@ -6390,6 +6296,7 @@ msgid "action &lt;action to perform&gt;:  Perform an action."
 msgstr "action &lt;veiksmas&gt;: Atlieką veiksmą."
 
 #: src/protocols/irc/parse.c:115
+#, fuzzy
 msgid "away [message]:  Set an away message, or use no message to return from being away."
 msgstr "away [žinutė]:  Nustato nebuvimo žinutė."
 
@@ -6768,7 +6675,7 @@ msgstr "Noriu kalbėtis"
 #: src/protocols/jabber/jabber.c:1118
 #: src/status.c:158
 msgid "Extended Away"
-msgstr "Įšpėstas nebuvimo pasiaiškinimas"
+msgstr "Išėjau ilgam"
 
 #: src/protocols/jabber/buddy.c:1097
 #: src/protocols/jabber/jabber.c:1126
@@ -6809,14 +6716,12 @@ msgid "Search for Jabber users"
 msgstr "Ieškoti Jabber vartotojų"
 
 #: src/protocols/jabber/buddy.c:1370
-#, fuzzy
 msgid "Invalid Directory"
-msgstr "Bloga grupė"
+msgstr "neteisingas katalogas"
 
 #: src/protocols/jabber/buddy.c:1387
-#, fuzzy
 msgid "Enter a User Directory"
-msgstr "Negalima siųsti katalogo."
+msgstr "Įveskite vartotojo katalogą"
 
 #: src/protocols/jabber/buddy.c:1388
 #, fuzzy
@@ -6824,9 +6729,8 @@ msgid "Select a user directory to search"
 msgstr "Pasirinkite teisingą naudotojo vardą"
 
 #: src/protocols/jabber/buddy.c:1391
-#, fuzzy
 msgid "Search Directory"
-msgstr "_Ieškoti:"
+msgstr "Ieškoti kataloge"
 
 #: src/protocols/jabber/chat.c:41
 #: src/protocols/oscar/oscar.c:7350
@@ -6845,11 +6749,11 @@ msgstr ""
 #: src/protocols/jabber/chat.c:223
 #, c-format
 msgid "%s is not a valid room name"
-msgstr ""
+msgstr "%s yra neteisingas kambario vardas"
 
 #: src/protocols/jabber/chat.c:224
 msgid "Invalid Room Name"
-msgstr ""
+msgstr "Neteisingas kambario vardas"
 
 #: src/protocols/jabber/chat.c:229
 #, c-format
@@ -7094,7 +6998,7 @@ msgstr "Pakeisti slaptažodį..."
 #. }
 #: src/protocols/jabber/jabber.c:1236
 msgid "Search for Users..."
-msgstr "_Ieškoti vartotojų..."
+msgstr "Ieškoti vartotojų..."
 
 #: src/protocols/jabber/jabber.c:1312
 msgid "Bad Request"
@@ -7127,7 +7031,7 @@ msgstr "Nerasta"
 
 #: src/protocols/jabber/jabber.c:1326
 msgid "Malformed Jabber ID"
-msgstr ""
+msgstr "Blogai suformuotas Jabber ID"
 
 #: src/protocols/jabber/jabber.c:1328
 msgid "Not Acceptable"
@@ -7135,7 +7039,7 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:1330
 msgid "Not Allowed"
-msgstr ""
+msgstr "Neleidžiama"
 
 #: src/protocols/jabber/jabber.c:1334
 msgid "Payment Required"
@@ -7532,7 +7436,7 @@ msgstr ""
 
 #: src/protocols/msn/error.c:52
 msgid "Already Logged In"
-msgstr ""
+msgstr "Jau prisijungęs"
 
 #: src/protocols/msn/error.c:55
 msgid "Invalid Username"
@@ -7540,7 +7444,7 @@ msgstr "Blogas vartotojo vardas"
 
 #: src/protocols/msn/error.c:58
 msgid "Invalid Friendly Name"
-msgstr ""
+msgstr "Klaidingas draugiškas vardas"
 
 #: src/protocols/msn/error.c:61
 msgid "List Full"
@@ -7732,7 +7636,7 @@ msgstr ""
 #: src/protocols/msn/error.c:224
 #, c-format
 msgid "Unknown Error Code %d"
-msgstr ""
+msgstr "Nežinomos klaidos kodas %d"
 
 #: src/protocols/msn/error.c:236
 #, c-format
@@ -7745,7 +7649,7 @@ msgstr "\"Jūs ką tik stumtelėjote!\""
 
 #: src/protocols/msn/msn.c:138
 msgid "Your new MSN friendly name is too long."
-msgstr ""
+msgstr "Jūsų naujas MSN draugiškas vardas yra per ilgas."
 
 #: src/protocols/msn/msn.c:246
 msgid "Set your friendly name."
@@ -7789,7 +7693,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:354
 msgid "Send a mobile message."
-msgstr ""
+msgstr "Siųsti mobilią žinutę."
 
 #: src/protocols/msn/msn.c:356
 msgid "Page"
@@ -7828,9 +7732,8 @@ msgstr "Kalbu telefonu"
 #: src/protocols/msn/msn.c:601
 #: src/protocols/yahoo/yahoo.c:2654
 #: src/protocols/yahoo/yahoo.c:3238
-#, fuzzy
 msgid "Out to Lunch"
-msgstr "Pietauju"
+msgstr "Užkandžiauju"
 
 #: src/protocols/msn/msn.c:605
 #: src/protocols/zephyr/zephyr.c:2256
@@ -7856,11 +7759,11 @@ msgstr "Nurodykite savo mobilaus telefono numerį."
 
 #: src/protocols/msn/msn.c:640
 msgid "Enable/Disable Mobile Devices..."
-msgstr ""
+msgstr "Leisti/neleisti mobiliuosius įrenginius..."
 
 #: src/protocols/msn/msn.c:645
 msgid "Allow/Disallow Mobile Pages..."
-msgstr ""
+msgstr "Leisti/Neleisti mobiliuosius puslapius..."
 
 #: src/protocols/msn/msn.c:655
 msgid "Open Hotmail Inbox"
@@ -8002,11 +7905,11 @@ msgstr "MSN protokolo įskiepis"
 
 #: src/protocols/msn/msn.c:1938
 msgid "Login server"
-msgstr ""
+msgstr "Prisijungimo serveris"
 
 #: src/protocols/msn/msn.c:1947
 msgid "Use HTTP Method"
-msgstr "Naudoti·HTTP·būdą"
+msgstr "Naudoti HTTP būdą"
 
 #: src/protocols/msn/msn.c:1955
 msgid "nudge: nudge a user to get their attention"
@@ -8058,7 +7961,7 @@ msgstr ""
 #: src/protocols/msn/notification.c:523
 #, c-format
 msgid "%s is not a valid passport account."
-msgstr ""
+msgstr "%s yra blogas abonentas"
 
 #: src/protocols/msn/notification.c:528
 msgid "Service Temporarily Unavailable."
@@ -8161,7 +8064,7 @@ msgstr "Gaunamas slapukas"
 
 #: src/protocols/msn/session.c:356
 msgid "Sending cookie"
-msgstr "Siųsti sausainiuką"
+msgstr "Siųsti slapuką"
 
 #: src/protocols/msn/session.c:357
 msgid "Retrieving buddy list"
@@ -8185,15 +8088,15 @@ msgstr ""
 
 #: src/protocols/msn/switchboard.c:413
 msgid "Message could not be sent, not allowed while invisible:"
-msgstr ""
+msgstr "Pranešimas negali būti išsiųstas, tai neleidžiama esant nematomam:"
 
 #: src/protocols/msn/switchboard.c:417
 msgid "Message could not be sent because the user is offline:"
-msgstr ""
+msgstr "Pranešimas negali būti išsiųstas, nes vartotojas atsijungęs:"
 
 #: src/protocols/msn/switchboard.c:421
 msgid "Message could not be sent because a connection error occurred:"
-msgstr ""
+msgstr "Pranešimas negali būti išsiųstas dėl ryšio klaidos:"
 
 #: src/protocols/msn/switchboard.c:425
 msgid "Message could not be sent because an error with the switchboard occurred:"
@@ -8224,9 +8127,9 @@ msgid "%s has removed you from his or her buddy list."
 msgstr "%s%s%s%s padarė %s jos arba jo bičiuliu%s%s%s"
 
 #: src/protocols/msn/userlist.c:670
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add \"%s\"."
-msgstr "Neįmanoma perskaityti bylos %s."
+msgstr "Neįmanoma pridėti \"%s\"."
 
 #: src/protocols/msn/userlist.c:672
 msgid "The screen name specified is invalid."
@@ -8242,9 +8145,8 @@ msgid "Unable to read message from server: %s.  Command is %hd, length is %hd."
 msgstr ""
 
 #: src/protocols/napster/napster.c:296
-#, fuzzy
 msgid "Unknown server error."
-msgstr "Nežinoma klaida."
+msgstr "Nežinoma serverio klaida."
 
 #: src/protocols/napster/napster.c:345
 #, c-format
@@ -8417,7 +8319,7 @@ msgstr ""
 
 #: src/protocols/novell/nmuser.c:1957
 msgid "The user is either offline or you are blocked"
-msgstr ""
+msgstr "Vartotojas arba atsijungęs, arba užblokuotas."
 
 #: src/protocols/novell/nmuser.c:1960
 #, c-format
@@ -8443,13 +8345,13 @@ msgstr ""
 #: src/protocols/novell/novell.c:422
 #, c-format
 msgid "Unable to send message (%s)."
-msgstr ""
+msgstr "Nepavyko išsiųsti žinutės (%s)."
 
 #: src/protocols/novell/novell.c:493
 #: src/protocols/novell/novell.c:987
 #, c-format
 msgid "Unable to invite user (%s)."
-msgstr ""
+msgstr "Nepavyko pakviesti vartotojo (%s)."
 
 #: src/protocols/novell/novell.c:532
 #, c-format
@@ -8485,7 +8387,7 @@ msgstr ""
 #: src/protocols/novell/novell.c:798
 #, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr ""
+msgstr "Neįmanoma pridėti %s į blokuojamų sąrašą (%s)."
 
 #: src/protocols/novell/novell.c:851
 #, c-format
@@ -8506,7 +8408,7 @@ msgstr ""
 #: src/protocols/novell/novell.c:1014
 #, c-format
 msgid "Unable to create conference (%s)."
-msgstr ""
+msgstr "Negaliu sukurti konferencijos (%s)."
 
 #: src/protocols/novell/novell.c:1123
 #: src/protocols/novell/novell.c:1693
@@ -8519,7 +8421,7 @@ msgstr "Telefonas"
 
 #: src/protocols/novell/novell.c:1482
 msgid "Department"
-msgstr ""
+msgstr "Departamentas"
 
 #: src/protocols/novell/novell.c:1484
 msgid "Personal Title"
@@ -8548,7 +8450,7 @@ msgstr "Naudotojo ID"
 #.
 #: src/protocols/novell/novell.c:1520
 msgid "Full name"
-msgstr ""
+msgstr "Pilnas vardas"
 
 #: src/protocols/novell/novell.c:1644
 #, c-format
@@ -8666,7 +8568,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:206
 msgid "Service unavailable"
-msgstr ""
+msgstr "Paslauga neprieinama"
 
 #: src/protocols/oscar/oscar.c:207
 msgid "Service not defined"
@@ -8722,7 +8624,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:220
 msgid "User temporarily unavailable"
-msgstr ""
+msgstr "Vartotojas laikinai neprieinamas"
 
 #: src/protocols/oscar/oscar.c:221
 msgid "No match"
@@ -8755,7 +8657,7 @@ msgstr "Balsas"
 
 #: src/protocols/oscar/oscar.c:619
 msgid "AIM Direct IM"
-msgstr ""
+msgstr "AIM tiesioginė PŽ"
 
 #: src/protocols/oscar/oscar.c:622
 #: src/protocols/silc/silc.c:683
@@ -8782,19 +8684,20 @@ msgstr "Siųsti draugų sąrašą"
 
 #: src/protocols/oscar/oscar.c:641
 msgid "ICQ Direct Connect"
-msgstr ""
+msgstr "ICQ tiesioginis prisijungimas"
 
 #: src/protocols/oscar/oscar.c:644
 msgid "AP User"
-msgstr ""
+msgstr "AP vartotojas"
 
 #: src/protocols/oscar/oscar.c:647
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
 #: src/protocols/oscar/oscar.c:650
+#, fuzzy
 msgid "Nihilist"
-msgstr ""
+msgstr "Nihilistas"
 
 #: src/protocols/oscar/oscar.c:653
 msgid "ICQ Server Relay"
@@ -8818,7 +8721,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:668
 msgid "Security Enabled"
-msgstr ""
+msgstr "Saugumas įgalintas"
 
 #: src/protocols/oscar/oscar.c:671
 msgid "Video Chat"
@@ -8830,7 +8733,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:678
 msgid "Live Video"
-msgstr ""
+msgstr "Gyvas video"
 
 #: src/protocols/oscar/oscar.c:681
 msgid "Camera"
@@ -8844,7 +8747,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:703
 #: src/protocols/oscar/oscar.c:7866
 msgid "Not Available"
-msgstr ""
+msgstr "Neprieinama"
 
 #: src/protocols/oscar/oscar.c:705
 #: src/protocols/oscar/oscar.c:7856
@@ -8900,7 +8803,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:1540
 msgid "Unable to open Direct IM"
-msgstr ""
+msgstr "Neįmanoma atidaryti tiesioginės PŽ"
 
 #: src/protocols/oscar/oscar.c:1575
 #, c-format
@@ -8992,7 +8895,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:2728
 #: src/protocols/toc/toc.c:543
 msgid "Incorrect nickname or password."
-msgstr ""
+msgstr "Neteisingas slapyvardis arba slaptažodis."
 
 #: src/protocols/oscar/oscar.c:2733
 msgid "Your account is currently suspended."
@@ -9001,7 +8904,7 @@ msgstr ""
 #. service temporarily unavailable
 #: src/protocols/oscar/oscar.c:2737
 msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr ""
+msgstr "AOL pranešimų paslauga laikinai nepasiekiama."
 
 #: src/protocols/oscar/oscar.c:2742
 msgid "You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."
@@ -9014,7 +8917,6 @@ msgstr ""
 
 # Vidinė klaida/Vidaus klaida
 #: src/protocols/oscar/oscar.c:2778
-#, fuzzy
 msgid "Internal Error"
 msgstr "Vidinė klaida"
 
@@ -9028,7 +8930,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:2887
 msgid "Enter SecurID"
-msgstr ""
+msgstr "Įveskite SecurID"
 
 #: src/protocols/oscar/oscar.c:2888
 msgid "Enter the 6 digit number from the digital display."
@@ -9219,7 +9121,7 @@ msgstr "<B>UIN:</B>·%s<BR><B>Būsena:</B>·%s<HR>%s"
 #: src/protocols/oscar/oscar.c:4912
 #, c-format
 msgid "SNAC threw error: %s\n"
-msgstr ""
+msgstr "SNAC išmetė klaidą: %s\n"
 
 #  Data is assumed to be the destination sn
 #. Data is assumed to be the destination sn
@@ -9295,7 +9197,7 @@ msgstr ""
 #. XXX - Don't call this with ssi
 #: src/protocols/oscar/oscar.c:5707
 msgid "Finalizing connection"
-msgstr ""
+msgstr "Užbaigiamas prisijungimas"
 
 #: src/protocols/oscar/oscar.c:6019
 #: src/protocols/silc/util.c:542
@@ -9333,11 +9235,11 @@ msgstr "Kompanija"
 
 #: src/protocols/oscar/oscar.c:6064
 msgid "Division"
-msgstr ""
+msgstr "Dalijimas"
 
 #: src/protocols/oscar/oscar.c:6065
 msgid "Position"
-msgstr ""
+msgstr "Pozicija"
 
 #: src/protocols/oscar/oscar.c:6067
 msgid "Web Page"
@@ -9345,7 +9247,7 @@ msgstr "Svetainė"
 
 #: src/protocols/oscar/oscar.c:6124
 msgid "Pop-Up Message"
-msgstr ""
+msgstr "Iššokanti žinutė"
 
 #: src/protocols/oscar/oscar.c:6164
 #, c-format
@@ -9371,7 +9273,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6249
 msgid "Error Changing Account Info"
-msgstr ""
+msgstr "Klaida keičiant abonento informaciją"
 
 #: src/protocols/oscar/oscar.c:6252
 #, c-format
@@ -9406,7 +9308,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6270
 #, c-format
 msgid "Error 0x%04x: Unknown error."
-msgstr ""
+msgstr "Klaida 0x%04x: Nežinoma klaida."
 
 #: src/protocols/oscar/oscar.c:6280
 #, c-format
@@ -9423,7 +9325,7 @@ msgstr "Abonento informacija"
 #: src/protocols/oscar/oscar.c:6286
 #, c-format
 msgid "The email address for %s is %s"
-msgstr ""
+msgstr "%s pašto adresas yra %s"
 
 #: src/protocols/oscar/oscar.c:6353
 msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
@@ -9452,12 +9354,13 @@ msgstr "Profilis per ilgas."
 #, c-format
 msgid "The maximum away message length of %d byte has been exceeded.  Gaim has truncated it for you."
 msgid_plural "The maximum away message length of %d bytes has been exceeded.  Gaim has truncated it for you."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Maksimalus nebuvimo žinutės ilgis %d baitas buvo viršytas.  Gaim sutrumpino ją."
+msgstr[1] "Maksimalus nebuvimo žinutės ilgis %d baitai buvo viršytas.  Gaim sutrumpino ją."
+msgstr[2] "Maksimalus nebuvimo žinutės ilgis %d baitų buvo viršytas.  Gaim sutrumpino ją."
 
 #: src/protocols/oscar/oscar.c:6633
 msgid "Away message too long."
-msgstr ""
+msgstr "Nebuvimo žinutė per ilga"
 
 #: src/protocols/oscar/oscar.c:6724
 #, c-format
@@ -9473,7 +9376,7 @@ msgstr "Nepavyksta pridėti"
 
 #: src/protocols/oscar/oscar.c:6831
 msgid "Unable To Retrieve Buddy List"
-msgstr ""
+msgstr "Negaliu atsisiųst draugų sąrašo"
 
 #: src/protocols/oscar/oscar.c:6832
 msgid "Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."
@@ -9486,7 +9389,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7183
 #: src/protocols/oscar/oscar.c:7188
 msgid "Orphans"
-msgstr ""
+msgstr "Našlaičiai"
 
 #: src/protocols/oscar/oscar.c:7122
 #, c-format
@@ -9496,7 +9399,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7122
 #: src/protocols/oscar/oscar.c:7136
 msgid "(no name)"
-msgstr ""
+msgstr "(nėra vardo)"
 
 #: src/protocols/oscar/oscar.c:7136
 #, c-format
@@ -9544,7 +9447,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7356
 #: src/protocols/toc/toc.c:1372
 msgid "_Exchange:"
-msgstr ""
+msgstr "_Apsikeisti:"
 
 #: src/protocols/oscar/oscar.c:7392
 msgid "Invalid chat name specified."
@@ -9563,11 +9466,11 @@ msgstr "Pasiekiamumo žinutė:"
 #: src/protocols/oscar/oscar.c:7612
 #: src/protocols/oscar/oscar.c:7617
 msgid "Away Message"
-msgstr ""
+msgstr "Nebuvimo žinutė"
 
 #: src/protocols/oscar/oscar.c:7617
 msgid "(pending)"
-msgstr ""
+msgstr "(laukiama)"
 
 #: src/protocols/oscar/oscar.c:7924
 #, c-format
@@ -9584,11 +9487,11 @@ msgstr "Redaguoti draugo komentarą"
 
 #: src/protocols/oscar/oscar.c:7950
 msgid "Get Status Msg"
-msgstr ""
+msgstr "Gauti būsenos pranešimą"
 
 #: src/protocols/oscar/oscar.c:7962
 msgid "Direct IM"
-msgstr ""
+msgstr "Tiesioginė PŽ"
 
 #: src/protocols/oscar/oscar.c:7979
 msgid "Re-request Authorization"
@@ -9614,7 +9517,7 @@ msgstr "ICQ privatumo nustatymai"
 
 #: src/protocols/oscar/oscar.c:8067
 msgid "The new formatting is invalid."
-msgstr ""
+msgstr "Naujas formatavimas yra neteisingas."
 
 #: src/protocols/oscar/oscar.c:8068
 msgid "Screen name formatting can change only capitalization and whitespace."
@@ -9676,7 +9579,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:8324
 msgid "Confirm Account"
-msgstr ""
+msgstr "Patvirtinti abonentą"
 
 #: src/protocols/oscar/oscar.c:8328
 msgid "Display Currently Registered Address"
@@ -9696,7 +9599,7 @@ msgstr "Ieškoti draugą pagal el.paštą..."
 
 #: src/protocols/oscar/oscar.c:8350
 msgid "Search for Buddy by Information"
-msgstr ""
+msgstr "Ieškoti draugo informacijos"
 
 #: src/protocols/oscar/oscar.c:8416
 msgid "Use recent buddies group"
@@ -9709,7 +9612,7 @@ msgstr "Leidžia rankiniu būdų nustatyti jūsų neveiklumo laiką"
 
 #: src/protocols/oscar/oscar.c:8428
 msgid "Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"
-msgstr ""
+msgstr "Naudoti AIM/ICQ tarpinį serverį (Lėčiau/Saugiau/Dažniausiai veikia)"
 
 #  *< api_version
 #  *< type
@@ -9756,9 +9659,9 @@ msgid "Connection closed (writing)"
 msgstr "Prisijungimas uždarytas"
 
 #: src/protocols/sametime/sametime.c:1208
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Group Title:</b> %s<br>"
-msgstr "<b>Vartotojas:</b> %s<br>"
+msgstr "<b>Grupės vardas:</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:1209
 #, fuzzy, c-format
@@ -9766,9 +9669,9 @@ msgid "<b>Notes Group ID:</b> %s<br>"
 msgstr "<b>Vartotojas:</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:1211
-#, fuzzy, c-format
+#, c-format
 msgid "Info for Group %s"
-msgstr "ICQ %s informacija"
+msgstr "Grupės %s informacija"
 
 #: src/protocols/sametime/sametime.c:1213
 #, fuzzy
@@ -9777,7 +9680,7 @@ msgstr "Darbovietės informacija"
 
 #: src/protocols/sametime/sametime.c:1245
 msgid "Invite Group to Conference..."
-msgstr ""
+msgstr "Pakviesti grupę į konferenciją..."
 
 #: src/protocols/sametime/sametime.c:1254
 #, fuzzy
@@ -9785,9 +9688,8 @@ msgid "Get Notes Address Book Info"
 msgstr "Įtraukti į adresų knygelę"
 
 #: src/protocols/sametime/sametime.c:1406
-#, fuzzy
 msgid "Sending Handshake"
-msgstr "Siųsti sausainiuką"
+msgstr "Siunčiamas rankos paspaudimas"
 
 #: src/protocols/sametime/sametime.c:1411
 msgid "Waiting for Handshake Acknowledgement"
@@ -9824,7 +9726,7 @@ msgstr "Neįmanoma prisijungti naudojant SSL."
 #. dialog, or something.
 #: src/protocols/sametime/sametime.c:1535
 msgid "Admin Alert"
-msgstr ""
+msgstr "Administratoriaus įspėjimas"
 
 #: src/protocols/sametime/sametime.c:1592
 #, fuzzy
@@ -9856,9 +9758,8 @@ msgstr "Konferencija uždaryta"
 
 #  Data is assumed to be the destination sn
 #: src/protocols/sametime/sametime.c:2297
-#, fuzzy
 msgid "Unable to send message: "
-msgstr "Negalima išsiųsti žinutės: %s"
+msgstr "Nepavyko išsiųsti žinutės: "
 
 #: src/protocols/sametime/sametime.c:2893
 #, fuzzy
@@ -9878,42 +9779,43 @@ msgid "Video Camera"
 msgstr "Video kamera"
 
 #: src/protocols/sametime/sametime.c:3186
-#, fuzzy
 msgid "File Transfer"
-msgstr "Bylų perdavimas"
+msgstr "Bylų siuntimas"
 
 #: src/protocols/sametime/sametime.c:3207
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Status</b>: %s"
 msgstr ""
 "\n"
-"<b>Busena</b>:·Awesome"
+"<b>Busena</b>: %s"
 
 #: src/protocols/sametime/sametime.c:3212
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Message</b>: %s"
 msgstr ""
 "\n"
-"<b>%s:</b> %s"
+"<b>Pranešimas</b>: %s"
 
 #: src/protocols/sametime/sametime.c:3218
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Supports</b>: %s"
 msgstr ""
 "\n"
-"<b>Busena</b>:·Awesome"
+"<b>Palaiko</b>: %s"
 
 #: src/protocols/sametime/sametime.c:3223
 msgid ""
 "\n"
 "<b>External User</b>"
 msgstr ""
+"\n"
+"<b>Išorinis vartotojas</b>"
 
 #: src/protocols/sametime/sametime.c:3241
 msgid "Active"
@@ -9938,14 +9840,12 @@ msgid "Create"
 msgstr "Sukurti"
 
 #: src/protocols/sametime/sametime.c:3399
-#, fuzzy
 msgid "Available Conferences"
-msgstr "Yra tik draugams"
+msgstr "Prieinamos konferencijos"
 
 #: src/protocols/sametime/sametime.c:3405
-#, fuzzy
 msgid "Create New Conference..."
-msgstr "Sukurti naują kambarį"
+msgstr "Sukurti naują konferenciją..."
 
 #: src/protocols/sametime/sametime.c:3412
 msgid "Invite user to a conference"
@@ -9989,19 +9889,18 @@ msgid "No Sametime Community Server Specified"
 msgstr "Neįmanoma prisijungti naudojant SSL."
 
 #: src/protocols/sametime/sametime.c:4061
-#, fuzzy
 msgid "<b>External User</b><br>"
-msgstr "<b>Vartotojas:</b> %s<br>"
+msgstr "<b>Išorinis vartotojas</b><br>"
 
 #: src/protocols/sametime/sametime.c:4064
-#, fuzzy, c-format
+#, c-format
 msgid "<b>User ID:</b> %s<br>"
-msgstr "<b>Vartotojas:</b> %s<br>"
+msgstr "<b>Vartotojo ID:</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:4070
 #, fuzzy, c-format
 msgid "<b>Full Name:</b> %s<br>"
-msgstr "<b>Sinonimas:</b> %s<br>"
+msgstr "<b>Pilnas vardas:</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:4076
 #, fuzzy
@@ -10013,24 +9912,22 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:4084
 #, c-format
 msgid "Unknown (0x%04x)<br>"
-msgstr ""
+msgstr "Nežinoma (0x%04x)<br>"
 
 #: src/protocols/sametime/sametime.c:4091
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Supports:</b> %s<br>"
-msgstr "<b>%s:</b> %s<br>"
+msgstr "<b>Palaiko:</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:4097
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Status:</b> %s"
-msgstr ""
-"\n"
-"<b>Busena</b>:·Awesome"
+msgstr "<b>Busena:</b> %s"
 
 #: src/protocols/sametime/sametime.c:4342
 #: src/protocols/sametime/sametime.c:5369
 msgid "Possible Matches"
-msgstr ""
+msgstr "Galimi atitikimai"
 
 #: src/protocols/sametime/sametime.c:4383
 msgid "An ambiguous user ID was entered"
@@ -10042,18 +9939,16 @@ msgid "The identifier '%s' may possibly refer to any of the following users. Ple
 msgstr ""
 
 #: src/protocols/sametime/sametime.c:4389
-#, fuzzy
 msgid "Select User to Add"
-msgstr "Pasirinkti draugą"
+msgstr "Pasirinkti draugą, kurį norite pridėti"
 
 #: src/protocols/sametime/sametime.c:4391
 msgid "Add User"
 msgstr "Pridėti vartotoją"
 
 #: src/protocols/sametime/sametime.c:4452
-#, fuzzy
 msgid "Unable to add user: user not found"
-msgstr "Negalima ištrinti grupės"
+msgstr "Neįmanoma pridėti vartotojo: vartotojas nerastas"
 
 #: src/protocols/sametime/sametime.c:4454
 #, c-format
@@ -10061,17 +9956,16 @@ msgid "The identifier '%s' did not match any users in your Sametime community. T
 msgstr ""
 
 #: src/protocols/sametime/sametime.c:4459
-#, fuzzy
 msgid "Unable to add user"
-msgstr "Neįmanoma perskaityti bylos %s."
+msgstr "Neįmanoma pridėti vartotojo"
 
 #: src/protocols/sametime/sametime.c:5029
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading file %s: \n"
 "%s\n"
 msgstr ""
-"Klaida skaitant %s: \n"
+"Klaida skaitant bylą %s: \n"
 "%s.\n"
 
 #: src/protocols/sametime/sametime.c:5155
@@ -10099,7 +9993,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5169
 msgid "Synchronize List with Server"
-msgstr ""
+msgstr "Sinchronizuoti sąrašą su serveriu"
 
 #: src/protocols/sametime/sametime.c:5218
 #, c-format
@@ -10112,9 +10006,8 @@ msgid "Export Sametime List for Account %s"
 msgstr ""
 
 #: src/protocols/sametime/sametime.c:5308
-#, fuzzy
 msgid "Unable to add group: group exists"
-msgstr "Negalima ištrinti grupės"
+msgstr "Negalima pridėti grupės: grupė jau egzistuoja"
 
 #: src/protocols/sametime/sametime.c:5309
 #, c-format
@@ -10142,7 +10035,7 @@ msgstr "Įtraukti į adresų knygelę"
 
 #: src/protocols/sametime/sametime.c:5431
 msgid "Unable to add group: group not found"
-msgstr ""
+msgstr "Neįmanoma pridėti grupės: grupė nerasta"
 
 #: src/protocols/sametime/sametime.c:5433
 #, c-format
@@ -10194,7 +10087,7 @@ msgstr ""
 #: src/protocols/silc/ft.c:338
 #, c-format
 msgid "User %s is not present in the network"
-msgstr ""
+msgstr "Vartotojo %s nėra tinkle"
 
 #: src/protocols/silc/buddy.c:53
 #: src/protocols/silc/buddy.c:115
@@ -10239,7 +10132,7 @@ msgstr ""
 #: src/protocols/silc/buddy.c:388
 #: src/protocols/silc/buddy.c:513
 msgid "The remote user is not present in the network any more"
-msgstr ""
+msgstr "Nutolusio vartotojo nebėra tinkle"
 
 #: src/protocols/silc/buddy.c:294
 #, c-format
@@ -10269,7 +10162,7 @@ msgstr "PŽ su slaptažodžiu"
 
 #: src/protocols/silc/buddy.c:423
 msgid "Cannot set IM key"
-msgstr ""
+msgstr "Negaliu nustatyti PŽ rakto"
 
 #: src/protocols/silc/buddy.c:465
 msgid "Set IM Password"
@@ -10286,7 +10179,7 @@ msgstr "Gauti viešąjį raktą"
 #: src/protocols/silc/ops.c:1493
 #: src/protocols/silc/ops.c:1504
 msgid "Cannot fetch the public key"
-msgstr ""
+msgstr "Negaliu gauti viešojo rakto"
 
 #: src/protocols/silc/buddy.c:635
 #: src/protocols/silc/buddy.c:1610
@@ -10297,7 +10190,7 @@ msgstr "Rodyti viešąjį raktą"
 #: src/protocols/silc/buddy.c:995
 #: src/protocols/silc/chat.c:236
 msgid "Could not load public key"
-msgstr ""
+msgstr "Nepavyko pakrauti viešojo rakto"
 
 #: src/protocols/silc/buddy.c:713
 #: src/protocols/silc/ops.c:1087
@@ -10312,12 +10205,12 @@ msgstr "Naudotojo informacija"
 #: src/protocols/silc/ops.c:1160
 #: src/protocols/silc/ops.c:1314
 msgid "Cannot get user information"
-msgstr ""
+msgstr "Nepavyko gauti vartotojo informacijos"
 
 #: src/protocols/silc/buddy.c:735
 #, c-format
 msgid "The %s buddy is not trusted"
-msgstr ""
+msgstr "%s draugas yra nepatikimas"
 
 #: src/protocols/silc/buddy.c:738
 msgid "You cannot receive buddy notifications until you import his/her public key.  You can use the Get Public Key command to get the public key."
@@ -10355,7 +10248,7 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1429
 msgid "Detached"
-msgstr ""
+msgstr "Atskirtas"
 
 #: src/protocols/silc/buddy.c:1433
 #: src/protocols/silc/silc.c:57
@@ -10455,7 +10348,7 @@ msgstr "Nuotaika"
 #: src/protocols/silc/buddy.c:1513
 #: src/protocols/silc/ops.c:1211
 msgid "Status Text"
-msgstr ""
+msgstr "Būsenos tekstas"
 
 #: src/protocols/silc/buddy.c:1518
 #: src/protocols/silc/ops.c:1217
@@ -10465,7 +10358,7 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1523
 #: src/protocols/silc/ops.c:1222
 msgid "Preferred Language"
-msgstr ""
+msgstr "Privilegijuota kalba"
 
 #: src/protocols/silc/buddy.c:1528
 #: src/protocols/silc/ops.c:1227
@@ -10482,15 +10375,15 @@ msgstr "Laiko zona"
 #: src/protocols/silc/buddy.c:1538
 #: src/protocols/silc/ops.c:1237
 msgid "Geolocation"
-msgstr ""
+msgstr "Geolokacija"
 
 #: src/protocols/silc/buddy.c:1594
 msgid "Reset IM Key"
-msgstr ""
+msgstr "Iš naujo nustatyti PŽ raktą"
 
 #: src/protocols/silc/buddy.c:1599
 msgid "IM with Key Exchange"
-msgstr ""
+msgstr "PŽ su raktų apsikeitimu"
 
 #: src/protocols/silc/buddy.c:1603
 msgid "IM with Password"
@@ -10503,12 +10396,12 @@ msgstr "Gauti viešą raktą..."
 #: src/protocols/silc/buddy.c:1622
 #: src/protocols/silc/ops.c:1623
 msgid "Kill User"
-msgstr ""
+msgstr "Užmušti vartotoją"
 
 #: src/protocols/silc/buddy.c:1631
 #: src/protocols/silc/chat.c:971
 msgid "Draw On Whiteboard"
-msgstr ""
+msgstr "Piešti ant Baltosios lentos"
 
 #: src/protocols/silc/chat.c:39
 msgid "_Passphrase:"
@@ -10546,7 +10439,7 @@ msgstr "<br><b>Kanalo įkūrėjas</b> %s"
 #: src/protocols/silc/chat.c:138
 #, c-format
 msgid "<br><b>Channel Cipher:</b> %s"
-msgstr ""
+msgstr "<br><b>Kanalo šifras:</b> %s"
 
 #: src/protocols/silc/chat.c:141
 #, c-format
@@ -10574,7 +10467,7 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:235
 msgid "Add Channel Public Key"
-msgstr ""
+msgstr "Pridėti kanalo viešąjį raktą"
 
 #. Add new public key
 #: src/protocols/silc/chat.c:290
@@ -10583,11 +10476,11 @@ msgstr "Atidaryti viešą raktą..."
 
 #: src/protocols/silc/chat.c:399
 msgid "Channel Passphrase"
-msgstr ""
+msgstr "Kanalo slaptažodis"
 
 #: src/protocols/silc/chat.c:406
 msgid "Channel Public Keys List"
-msgstr ""
+msgstr "Kanalo viešųjų raktų sąrašas"
 
 #: src/protocols/silc/chat.c:411
 msgid "Channel authentication is used to secure the channel from unauthorized access. The authentication may be based on passphrase and digital signatures. If passphrase is set, it is required to be able to join. If channel public keys are set then only users whose public keys are listed are able to join."
@@ -10627,11 +10520,11 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:721
 msgid "User Limit"
-msgstr "Naudotojų limitas"
+msgstr "Maksimalus vartotojų kiekis"
 
 #: src/protocols/silc/chat.c:722
 msgid "Set user limit on channel. Set to zero to reset user limit."
-msgstr ""
+msgstr "Nustatyti vartotojų ribą kanale. Nustatykite nulį neribotam kiekiui."
 
 #: src/protocols/silc/chat.c:877
 msgid "Get Info"
@@ -10639,7 +10532,7 @@ msgstr "Gauti informaciją"
 
 #: src/protocols/silc/chat.c:885
 msgid "Invite List"
-msgstr ""
+msgstr "Kvietimų sąrašas"
 
 #: src/protocols/silc/chat.c:890
 msgid "Ban List"
@@ -10659,7 +10552,7 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:924
 msgid "Set User Limit"
-msgstr "Nustatyti vartotojų limitą"
+msgstr "Nustatyti maksimalų vartotojų kiekį"
 
 #: src/protocols/silc/chat.c:930
 msgid "Reset Topic Restriction"
@@ -10671,19 +10564,19 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:942
 msgid "Reset Private Channel"
-msgstr ""
+msgstr "Iš naujo nustatyti privatų kanalą"
 
 #: src/protocols/silc/chat.c:947
 msgid "Set Private Channel"
-msgstr ""
+msgstr "Nustatyti privatų kanalą"
 
 #: src/protocols/silc/chat.c:954
 msgid "Reset Secret Channel"
-msgstr ""
+msgstr "Iš naujo nustatyti saugų kanalą"
 
 #: src/protocols/silc/chat.c:959
 msgid "Set Secret Channel"
-msgstr ""
+msgstr "Nustatyti saugų kanalą"
 
 #: src/protocols/silc/chat.c:1032
 #, c-format
@@ -10706,7 +10599,7 @@ msgstr "Prisijungti prie privačios grupės"
 
 #: src/protocols/silc/chat.c:1098
 msgid "Cannot join private group"
-msgstr ""
+msgstr "Neįmanoma prisijungti prie privačios grupės"
 
 #: src/protocols/silc/chat.c:1292
 #: src/protocols/silc/silc.c:1142
@@ -10754,7 +10647,7 @@ msgstr "Bylos siuntimo sesija neegzistuoja"
 
 #: src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
-msgstr ""
+msgstr "Jokia bylų siuntimo sesija nėra aktyvi"
 
 #: src/protocols/silc/ft.c:211
 msgid "File transfer already started"
@@ -10766,7 +10659,7 @@ msgstr ""
 
 #: src/protocols/silc/ft.c:222
 msgid "Could not start the file transfer"
-msgstr ""
+msgstr "Negaliu pradėti bylų persiuntimo"
 
 #: src/protocols/silc/ft.c:341
 msgid "Cannot send file"
@@ -10809,7 +10702,7 @@ msgstr ""
 #: src/protocols/silc/ops.c:753
 #, c-format
 msgid "You have been killed by %s (%s)"
-msgstr ""
+msgstr "%s jus užmušė (%s)"
 
 #: src/protocols/silc/ops.c:774
 #: src/protocols/silc/ops.c:779
@@ -10862,12 +10755,12 @@ msgstr "Prisijungti prie pokalbio"
 #: src/protocols/silc/ops.c:1284
 #: src/protocols/silc/ops.c:1354
 msgid "Public Key Fingerprint"
-msgstr ""
+msgstr "Viešo rakto pirštų atspaudai"
 
 #: src/protocols/silc/ops.c:1285
 #: src/protocols/silc/ops.c:1355
 msgid "Public Key Babbleprint"
-msgstr ""
+msgstr "Viešojo rakto žodžių atspaudai"
 
 #: src/protocols/silc/ops.c:1298
 msgid "More..."
@@ -10880,7 +10773,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1369
 msgid "Cannot detach"
-msgstr ""
+msgstr "Negaliu atskirti"
 
 #: src/protocols/silc/ops.c:1380
 msgid "Cannot set topic"
@@ -10888,7 +10781,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1412
 msgid "Failed to change nickname"
-msgstr ""
+msgstr "Nepavyko pakeisti slapyvardžio"
 
 #: src/protocols/silc/ops.c:1460
 msgid "Roomlist"
@@ -10900,7 +10793,7 @@ msgstr "Nepavyksta gauti kambarių sąrašo"
 
 #: src/protocols/silc/ops.c:1505
 msgid "No public key was received"
-msgstr ""
+msgstr "Negautas viešasis raktas"
 
 #: src/protocols/silc/ops.c:1518
 #: src/protocols/silc/ops.c:1531
@@ -10909,7 +10802,7 @@ msgstr "Serverio informacija"
 
 #: src/protocols/silc/ops.c:1519
 msgid "Cannot get server information"
-msgstr ""
+msgstr "Negaliu gauti serverio informacijos"
 
 #: src/protocols/silc/ops.c:1548
 #: src/protocols/silc/ops.c:1557
@@ -10918,11 +10811,11 @@ msgstr "Serverio statistika"
 
 #: src/protocols/silc/ops.c:1549
 msgid "Cannot get server statistics"
-msgstr ""
+msgstr "Negaliu gauti serverio statistikos"
 
 #: src/protocols/silc/ops.c:1558
 msgid "No server statistics available"
-msgstr ""
+msgstr "Serverio statistika neprieinama"
 
 #: src/protocols/silc/ops.c:1580
 #, c-format
@@ -10959,11 +10852,11 @@ msgstr "Ping komanda nepavyko"
 
 #: src/protocols/silc/ops.c:1616
 msgid "Ping reply received from server"
-msgstr ""
+msgstr "Ping atsakymas gautas iš serverio"
 
 #: src/protocols/silc/ops.c:1624
 msgid "Could not kill user"
-msgstr ""
+msgstr "Negaliu užmušti vartotojo"
 
 #: src/protocols/silc/ops.c:1708
 msgid "Error during connecting to SILC Server"
@@ -10993,7 +10886,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1868
 msgid "Verifying server public key"
-msgstr "Patikrinamas serverio viešas raktas"
+msgstr "Patikrinamas serverio viešasis raktas"
 
 #: src/protocols/silc/ops.c:1909
 msgid "Passphrase required"
@@ -11001,7 +10894,7 @@ msgstr "Reikalinga slapta frazė"
 
 #: src/protocols/silc/ops.c:1938
 msgid "Failure: Version mismatch, upgrade your client"
-msgstr ""
+msgstr "Gedimas: versijų neatitikimas, atnaujinkite savo programą"
 
 #: src/protocols/silc/ops.c:1941
 msgid "Failure: Remote does not trust/support your public key"
@@ -11029,11 +10922,11 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1958
 msgid "Failure: Incorrect signature"
-msgstr ""
+msgstr "Gedimas: neteisingas parašas"
 
 #: src/protocols/silc/ops.c:1960
 msgid "Failure: Invalid cookie"
-msgstr ""
+msgstr "Gedimas: klaidingas slapukas"
 
 #: src/protocols/silc/ops.c:1971
 msgid "Failure: Authentication failed"
@@ -11042,12 +10935,12 @@ msgstr ""
 #: src/protocols/silc/pk.c:103
 #, c-format
 msgid "Received %s's public key. Your local copy does not match this key. Would you still like to accept this public key?"
-msgstr ""
+msgstr "Gautas %s višasis raktas. Jūsų vietinė kopija neatitinka šio rakto. Ar vis tiek norėtumėte priimti šį viešąjį raktą?"
 
 #: src/protocols/silc/pk.c:108
 #, c-format
 msgid "Received %s's public key. Would you like to accept this public key?"
-msgstr ""
+msgstr "Gautas %s višasis raktas. Ar norėtumėte priimti šį viešąjį raktą?"
 
 #: src/protocols/silc/pk.c:112
 #, c-format
@@ -11057,6 +10950,10 @@ msgid ""
 "%s\n"
 "%s\n"
 msgstr ""
+"Pirštų ir žodžių atspaudai raktui %s yra:\n"
+"\n"
+"%s\n"
+"%s\n"
 
 #: src/protocols/silc/pk.c:115
 #: src/protocols/silc/pk.c:140
@@ -11069,7 +10966,7 @@ msgstr "Rodyti..."
 
 #: src/protocols/silc/pk.c:141
 msgid "Unsupported public key type"
-msgstr ""
+msgstr "Nepalaikomas viešojo rakto tipas"
 
 #: src/protocols/silc/silc.c:155
 msgid "Connection failed"
@@ -11158,7 +11055,7 @@ msgstr "MOTD"
 
 #: src/protocols/silc/silc.c:775
 msgid "No Message of the Day available"
-msgstr ""
+msgstr "Dienos pranešimo nėra"
 
 #: src/protocols/silc/silc.c:776
 #: src/protocols/silc/silc.c:1416
@@ -11169,31 +11066,26 @@ msgstr ""
 #: src/protocols/silc/silc.c:871
 #: src/protocols/silc/silc.c:942
 #: src/protocols/silc/silc.c:943
-#, fuzzy
 msgid "Create New SILC Key Pair"
-msgstr "Kuriama SILC raktų pora..."
+msgstr "Sukurti naują SILC raktų porą"
 
 #: src/protocols/silc/silc.c:827
-#, fuzzy
 msgid "Passphrases do not match"
-msgstr "Nauji slaptažodžiai nesutampa."
+msgstr "Slaptažodžiai nesutampa."
 
 #: src/protocols/silc/silc.c:871
 msgid "Key Pair Generation failed"
-msgstr ""
+msgstr "Raktų poros generavimas nepavyko"
 
 #: src/protocols/silc/silc.c:910
-#, fuzzy
 msgid "Key Length"
-msgstr "Rakto ilgis: \t%d bitų\n"
+msgstr "Rakto ilgis"
 
 #: src/protocols/silc/silc.c:912
-#, fuzzy
 msgid "Public Key File"
 msgstr "Viešo rakto byla"
 
 #: src/protocols/silc/silc.c:914
-#, fuzzy
 msgid "Private Key File"
 msgstr "Privataus rakto byla"
 
@@ -11202,14 +11094,12 @@ msgid "Real Name"
 msgstr "Tikras vardas"
 
 #: src/protocols/silc/silc.c:937
-#, fuzzy
 msgid "Re-type Passphrase"
-msgstr "Slapta frazė"
+msgstr "Pakartokite slaptažodį"
 
 #: src/protocols/silc/silc.c:944
-#, fuzzy
 msgid "Generate Key Pair"
-msgstr "Privataus rakto byla"
+msgstr "Generuoti raktų porą"
 
 #: src/protocols/silc/silc.c:988
 msgid "Online Status"
@@ -11220,9 +11110,8 @@ msgid "View Message of the Day"
 msgstr "Peržiurėti MOTD"
 
 #: src/protocols/silc/silc.c:1001
-#, fuzzy
 msgid "Create SILC Key Pair..."
-msgstr "Kuriama SILC raktų pora..."
+msgstr "Sukurti SILC raktų porą..."
 
 #: src/protocols/silc/silc.c:1100
 #, c-format
@@ -11235,7 +11124,7 @@ msgstr "Tema per ilga"
 
 #: src/protocols/silc/silc.c:1373
 msgid "You must specify a nick"
-msgstr ""
+msgstr "Turite nurodyti slapyvardį"
 
 #: src/protocols/silc/silc.c:1475
 #, c-format
@@ -11260,7 +11149,7 @@ msgstr ""
 #: src/protocols/silc/silc.c:1525
 #, c-format
 msgid "Unknown command: %s, (may be a Gaim bug)"
-msgstr ""
+msgstr "Nežinoma komanda: %s, (gali būti Gaim klaida)"
 
 #: src/protocols/silc/silc.c:1588
 msgid "part [channel]:  Leave the chat"
@@ -11272,7 +11161,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1596
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
-msgstr ""
+msgstr "tema [&lt;nauja tema&gt;]:  Žiūrėti arba keisti temą"
 
 #: src/protocols/silc/silc.c:1601
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
@@ -11317,7 +11206,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1643
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr ""
+msgstr "nick &lt;naujas slapyvardis&gt;:  Pasikeiskite savo slapyvardį"
 
 #: src/protocols/silc/silc.c:1647
 msgid "whowas &lt;nick&gt;:  View nick's information"
@@ -11405,12 +11294,10 @@ msgid "Secure Internet Live Conferencing (SILC) Protocol"
 msgstr "Saugios interneto konferencijos (SILC) protokolas"
 
 #: src/protocols/silc/silc.c:1839
-#, fuzzy
 msgid "Public Key file"
 msgstr "Viešo rakto byla"
 
 #: src/protocols/silc/silc.c:1843
-#, fuzzy
 msgid "Private Key file"
 msgstr "Privataus rakto byla"
 
@@ -11444,15 +11331,15 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1881
 msgid "Block messages to whiteboard"
-msgstr ""
+msgstr "Blokuoti pranešimus į baltąją lentą"
 
 #: src/protocols/silc/silc.c:1884
 msgid "Automatically open whiteboard"
-msgstr ""
+msgstr "Automatiškai atidaryti baltąją lentą"
 
 #: src/protocols/silc/silc.c:1887
 msgid "Digitally sign and verify all messages"
-msgstr ""
+msgstr "Skaitmeniškai pasirašyti ir tikrinti visus pranešimus"
 
 #: src/protocols/silc/util.c:206
 #: src/protocols/silc/util.c:231
@@ -11509,6 +11396,9 @@ msgid ""
 "%s\n"
 "\n"
 msgstr ""
+"Viešo rakto pirštų atspaudai:\n"
+"%s\n"
+"\n"
 
 #: src/protocols/silc/util.c:329
 #, c-format
@@ -11516,6 +11406,8 @@ msgid ""
 "Public Key Babbleprint:\n"
 "%s"
 msgstr ""
+"Viešo rakto žodžių atspaudai:\n"
+"%s"
 
 #: src/protocols/silc/util.c:333
 #: src/protocols/silc/util.c:334
@@ -11523,8 +11415,9 @@ msgid "Public Key Information"
 msgstr "Viešo rakto informacija"
 
 #: src/protocols/silc/util.c:516
+#, fuzzy
 msgid "Paging"
-msgstr ""
+msgstr "Puslapių kaita"
 
 #: src/protocols/silc/util.c:540
 msgid "Computer"
@@ -11541,7 +11434,7 @@ msgstr "Terminalas"
 #: src/protocols/silc/wb.c:284
 #, c-format
 msgid "%s sent message to whiteboard. Would you like to open the whiteboard?"
-msgstr ""
+msgstr "%s nusiuntė pranešimą į baltąją lentą. Ar norėtumėte atidaryti baltąją lentą?"
 
 #: src/protocols/silc/wb.c:288
 #, c-format
@@ -11601,18 +11494,16 @@ msgstr "SILC protokolo įskiepis"
 #  *  summary
 #. *  summary
 #: src/protocols/simple/simple.c:1429
-#, fuzzy
 msgid "The SIP/SIMPLE Protocol Plugin"
-msgstr "SILC protokolo įskiepis"
+msgstr "SIP/SIMPLE protokolo įskiepis"
 
 #: src/protocols/simple/simple.c:1451
 msgid "Publish status (note: everyone may watch you)"
 msgstr ""
 
 #: src/protocols/simple/simple.c:1454
-#, fuzzy
 msgid "Use UDP"
-msgstr "Naudotojo ID"
+msgstr "Naudototi UDP"
 
 #: src/protocols/simple/simple.c:1456
 msgid "Use proxy"
@@ -11655,7 +11546,7 @@ msgstr "Žinutė per ilga, nerodomi paskutiniai %s baitai."
 #: src/protocols/toc/toc.c:491
 #, c-format
 msgid "%s not currently logged in."
-msgstr ""
+msgstr "%s dabar neprisijungęs."
 
 #: src/protocols/toc/toc.c:494
 #, c-format
@@ -11729,7 +11620,7 @@ msgstr "Nežinoma klaida: %s."
 
 #: src/protocols/toc/toc.c:546
 msgid "The service is temporarily unavailable."
-msgstr ""
+msgstr "Paslauga laikinai nepasiekiama."
 
 #: src/protocols/toc/toc.c:549
 msgid "Your warning level is currently too high to log in."
@@ -11750,9 +11641,8 @@ msgid "An unknown error, %d, has occurred.  Info: %s"
 msgstr ""
 
 #: src/protocols/toc/toc.c:584
-#, fuzzy
 msgid "Invalid Groupname"
-msgstr "Bloga grupė"
+msgstr "Klaidingas grupės vardas"
 
 #: src/protocols/toc/toc.c:668
 msgid "Connection Closed"
@@ -11772,7 +11662,7 @@ msgstr "Slaptažodis pakeistas"
 
 #: src/protocols/toc/toc.c:993
 msgid "TOC has sent a PAUSE command."
-msgstr ""
+msgstr "TOC nusiuntė PAUSE komandą"
 
 #: src/protocols/toc/toc.c:994
 msgid "When this happens, TOC ignores any messages sent to it, and may kick you off if you send a message. Gaim will prevent anything from going through. This is only temporary, please be patient."
@@ -11780,15 +11670,15 @@ msgstr ""
 
 #: src/protocols/toc/toc.c:1549
 msgid "Get Dir Info"
-msgstr ""
+msgstr "Gauti katalogo informaciją"
 
 #: src/protocols/toc/toc.c:1684
 msgid "Set User Info"
-msgstr ""
+msgstr "Nustayti vartotojo informaciją"
 
 #: src/protocols/toc/toc.c:1689
 msgid "Set Dir Info"
-msgstr ""
+msgstr "Nustatyti katalogo informaciją"
 
 #: src/protocols/toc/toc.c:1694
 msgid "Change Password"
@@ -11866,7 +11756,7 @@ msgstr "Bzz!!"
 #: src/protocols/yahoo/yahoo.c:803
 #, c-format
 msgid "Yahoo! system message for %s:"
-msgstr ""
+msgstr "Yahoo! sistemos pranešimas %s:"
 
 #. TODO: this is almost exactly the same as what MSN does,
 #. * this should probably be moved to the core.
@@ -11878,7 +11768,7 @@ msgstr "%s%s%s%s padarė %s jos arba jo bičiuliu%s%s%s"
 
 #: src/protocols/yahoo/yahoo.c:905
 msgid "Message (optional) :"
-msgstr ""
+msgstr "Pranešimas (nebūtina) :"
 
 #: src/protocols/yahoo/yahoo.c:947
 #, c-format
@@ -11985,7 +11875,7 @@ msgstr "Atostogauja"
 #: src/protocols/yahoo/yahoo.c:2656
 #: src/protocols/yahoo/yahoo.c:3241
 msgid "Stepped Out"
-msgstr ""
+msgstr "Išėjo"
 
 #: src/protocols/yahoo/yahoo.c:2749
 #: src/protocols/yahoo/yahoo.c:2778
@@ -12028,7 +11918,7 @@ msgstr "Naudoti aplinkos nustatymus"
 
 #: src/protocols/yahoo/yahoo.c:2954
 msgid "Start Doodling"
-msgstr ""
+msgstr "Pradėti piešimą"
 
 #: src/protocols/yahoo/yahoo.c:2985
 msgid "Active which ID?"
@@ -12040,7 +11930,7 @@ msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:3004
 msgid "Activate ID..."
-msgstr "Aktivuoti ID..."
+msgstr "Aktyvuoti ID..."
 
 #: src/protocols/yahoo/yahoo.c:3008
 #, fuzzy
@@ -12117,9 +12007,8 @@ msgid "YCHT host"
 msgstr "TOC adresas"
 
 #: src/protocols/yahoo/yahoo.c:3679
-#, fuzzy
 msgid "YCHT port"
-msgstr "TOC prievadas"
+msgstr "YCHT prievadas"
 
 #: src/protocols/yahoo/yahoo_profile.c:676
 #, c-format
@@ -12211,7 +12100,7 @@ msgstr "Pakvietimas atmestas"
 
 #: src/protocols/yahoo/yahoochat.c:358
 msgid "Failed to join chat"
-msgstr ""
+msgstr "Nepavyko prisijungti prie pokalbio"
 
 #: src/protocols/yahoo/yahoochat.c:358
 msgid "Maybe the room is full?"
@@ -12380,14 +12269,12 @@ msgid "Export to .zephyr.subs"
 msgstr "Eksportuoti į .zephyr.subs"
 
 #: src/protocols/zephyr/zephyr.c:2882
-#, fuzzy
 msgid "Import from .anyone"
-msgstr "Eksportuoti į .anyone"
+msgstr "Importuoti iš .anyone"
 
 #: src/protocols/zephyr/zephyr.c:2885
-#, fuzzy
 msgid "Import from .zephyr.subs"
-msgstr "Eksportuoti į .zephyr.subs"
+msgstr "Importuoti iš .zephyr.subs"
 
 #: src/protocols/zephyr/zephyr.c:2888
 #, fuzzy
@@ -12414,7 +12301,7 @@ msgstr ""
 
 #: src/proxy.c:2019
 msgid "Invalid proxy settings"
-msgstr "Neteisingi proxy nustatymai"
+msgstr "Neteisingi tarpinio serverio nustatymai"
 
 #: src/proxy.c:2019
 msgid "Either the host name or port number specified for your given proxy type is invalid."
