@@ -30,47 +30,28 @@
 
 #define ICONAWAY_PLUGIN_ID "gtk-iconaway"
 
-#ifdef _WIN32
-__declspec(dllimport) GtkWidget *imaway;
-#else
-G_MODULE_IMPORT GtkWidget *imaway;
-#endif
-
-#ifdef USE_APPLET
-extern void applet_destroy_buddy();
-#endif
-
 static void
-iconify_windows(GaimAccount *account, char *state, char *message, void *data)
+iconify_windows(GaimAccount *account, GaimStatus *old, GaimStatus *newstatus)
 {
-#if 0 /* XXX TODO STATUS */
-	GaimConvWindow *win;
+	GaimPresence *presence;
+	GaimGtkWindow *win;
 	GList *windows;
-	GaimConnection *gc;
 
-	gc = gaim_account_get_connection(account);
+	presence = gaim_status_get_presence(newstatus);
 
-	if (!imaway || !gc->away)
+	if (gaim_presence_is_available(presence))
 		return;
 
-	gtk_window_iconify(GTK_WINDOW(imaway));
 	gaim_blist_set_visible(FALSE);
 
-	for (windows = gaim_get_windows();
+	for (windows = gaim_gtk_conv_windows_get_list();
 		 windows != NULL;
 		 windows = windows->next) {
 
-		win = (GaimConvWindow *)windows->data;
+		win = (GaimGtkWindow *)windows->data;
 
-		if (GAIM_IS_GTK_WINDOW(win)) {
-			GaimGtkWindow *gtkwin;
-
-			gtkwin = GAIM_GTK_WINDOW(win);
-
-			gtk_window_iconify(GTK_WINDOW(gtkwin->window));
-		}
+		gtk_window_iconify(GTK_WINDOW(win->window));
 	}
-#endif /* XXX TODO STATUS */
 }
 
 /*
@@ -80,7 +61,7 @@ iconify_windows(GaimAccount *account, char *state, char *message, void *data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-away",
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
 						plugin, GAIM_CALLBACK(iconify_windows), NULL);
 
 	return TRUE;
