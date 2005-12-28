@@ -1609,6 +1609,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 				GaimRequestFieldType type;
 				GtkWidget *widget = NULL;
 
+				label = NULL;
 				field = fl->data;
 
 				if (!gaim_request_field_is_visible(field)) {
@@ -1675,6 +1676,11 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					widget = create_account_field(field);
 				else
 					continue;
+
+#if GTK_CHECK_VERSION(2,4,0)
+				if (label)
+					gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+#endif
 
 				if (type == GAIM_REQUEST_FIELD_STRING &&
 					gaim_request_field_string_is_multiline(field))
