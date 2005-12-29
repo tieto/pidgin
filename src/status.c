@@ -616,15 +616,27 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 		const char *buddy_alias = gaim_buddy_get_alias(buddy);
 		char *tmp = NULL;
 
-		if (((old_status == NULL) || !gaim_status_is_available(old_status)) &&
-				gaim_status_is_available(new_status))
+		if (gaim_status_is_available(new_status))
 		{
-			tmp = g_strdup_printf(_("%s came back"), buddy_alias);
+			if (((old_status == NULL) || !gaim_status_is_online(old_status)))
+			{
+				tmp = g_strdup_printf(_("%s signed on"), buddy_alias);
+			}
+			else if (!gaim_status_is_available(old_status))
+			{
+				tmp = g_strdup_printf(_("%s came back"), buddy_alias);
+			}
 		}
-		else if ((old_status != NULL) && gaim_status_is_available(old_status) &&
-				!gaim_status_is_available(new_status))
+		else if ((old_status != NULL) && gaim_status_is_available(old_status))
 		{
-			tmp = g_strdup_printf(_("%s went away"), buddy_alias);
+			if (!gaim_status_is_online(new_status))
+			{
+				tmp = g_strdup_printf(_("%s signed off"), buddy_alias);
+			}
+			else if (!gaim_status_is_available(new_status))
+			{
+				tmp = g_strdup_printf(_("%s went away"), buddy_alias);
+			}
 		}
 
 		if (tmp != NULL)
