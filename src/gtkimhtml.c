@@ -97,6 +97,7 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 
 static void preinsert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml);
+static void delete_cb(GtkTextBuffer *buffer, GtkTextIter *iter, GtkTextIter *end, GtkIMHtml *imhtml);
 static void insert_ca_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextChildAnchor *arg2, gpointer user_data);
 static void gtk_imhtml_apply_tags_on_insert(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
 static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, gint *length);
@@ -1380,6 +1381,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 #endif
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
+	g_signal_connect(G_OBJECT(imhtml->text_buffer), "delete_range", G_CALLBACK(delete_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-child-anchor", G_CALLBACK(insert_ca_cb), imhtml);
 	gtk_drag_dest_set(GTK_WIDGET(imhtml), 0,
@@ -3793,6 +3795,29 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *end, gchar *text, gint
 	gtk_text_iter_set_offset(&start, imhtml->insert_offset);
 
 	gtk_imhtml_apply_tags_on_insert(imhtml, &start, end);
+}
+
+static void delete_cb(GtkTextBuffer *buffer, GtkTextIter *start, GtkTextIter *end, GtkIMHtml *imhtml)
+{
+	GSList *tags, *l;
+
+	tags = gtk_text_iter_get_tags(start);
+	for (l = tags; l != NULL; l = l->next) {
+		GtkTextTag *tag = GTK_TEXT_TAG(l->data);
+
+		if (tag &&							/* Remove the formatting only if */
+				gtk_text_iter_starts_word(start) &&				/* beginning of a word */
+				gtk_text_iter_begins_tag(start, tag) &&			/* the tag starts with the selection */
+				(!gtk_text_iter_has_tag(end, tag) ||			/* the tag ends within the selection */
+					gtk_text_iter_ends_tag(end, tag))) {
+			gtk_text_buffer_remove_tag(imhtml->text_buffer, tag, start, end);
+			if (tag->name &&
+					strncmp(tag->name, "LINK ", 5) == 0 && imhtml->edit.link) {
+				gtk_imhtml_toggle_link(imhtml, NULL);
+			}
+		}			
+	}
+	g_slist_free(tags);
 }
 
 static void gtk_imhtml_apply_tags_on_insert(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
