@@ -3907,6 +3907,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GString *message;
 	gchar *tmp;
 	aim_mpmsg_section_t *curpart;
+	const char *start;
+	const char *end;
+	GData *attribs;
 
 	gaim_debug_misc("oscar", "Received IM from %s with %d parts\n",
 					userinfo->sn, args->mpmsg.numparts);
@@ -3972,7 +3975,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	curpart = args->mpmsg.parts;
 	while (curpart != NULL) {
 		tmp = gaim_plugin_oscar_decode_im_part(account, userinfo->sn, curpart->charset,
--				curpart->charsubset, curpart->data, curpart->datalen);
+				curpart->charsubset, curpart->data, curpart->datalen);
 		if (tmp != NULL) {
 			g_string_append(message, tmp);
 			g_free(tmp);
@@ -3999,6 +4002,34 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		tmp2 = gaim_strreplace(tmp, "\r\n", "<br>");
 		g_free(tmp);
 		tmp = tmp2;
+	}
+
+	/*
+	 * Convert iChat color tags to normal font tags.
+	 */
+	if (gaim_markup_find_tag("body", tmp, &start, &end, &attribs))
+	{
+		const char *ichattextcolor, *ichatballooncolor;
+
+		ichattextcolor = g_datalist_get_data(&attribs, "ichattextcolor");
+		if (ichattextcolor != NULL)
+		{
+			gchar *tmp2;
+			tmp2 = g_strdup_printf("<font color=\"%s\">%s</font>", ichattextcolor, tmp);
+			g_free(tmp);
+			tmp = tmp2;
+		}
+
+		ichatballooncolor = g_datalist_get_data(&attribs, "ichatballooncolor");
+		if (ichatballooncolor != NULL)
+		{
+			gchar *tmp2;
+			tmp2 = g_strdup_printf("<font back=\"%s\">%s</font>", ichatballooncolor, tmp);
+			g_free(tmp);
+			tmp = tmp2;
+		}
+
+		g_datalist_clear(&attribs);
 	}
 
 	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
