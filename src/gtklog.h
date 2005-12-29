@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#ifndef _GAIM_GTKLOG_H_
+#define _GAIM_GTKLOG_H_
 
 #include "gtkgaim.h"
 #include "log.h"
@@ -53,3 +55,5 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 void gaim_gtk_log_show_contact(GaimContact *contact);
 
 void gaim_gtk_syslog_show(void);
+
+#endif
