@@ -256,6 +256,12 @@ gstroke_enable (GtkWidget *widget)
   last_mouse_position.invalid = TRUE;
 }
 
+void
+gstroke_disable(GtkWidget *widget)
+{
+  g_signal_handlers_disconnect_by_func(G_OBJECT(widget), G_CALLBACK(process_event), NULL);
+}
+
 guint
 gstroke_signal_connect (GtkWidget *widget,
                         const gchar *name,

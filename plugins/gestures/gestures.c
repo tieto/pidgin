@@ -219,6 +219,7 @@ plugin_unload(GaimPlugin *plugin)
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		gstroke_cleanup(gtkconv->imhtml);
+		gstroke_disable(gtkconv->imhtml);
 	}
 
 	return TRUE;
