@@ -499,8 +499,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	if (!gaim_presence_is_available(presence))
 	{
 		time_t t = time(NULL);
-		GaimBuddy *b = gaim_find_buddy(gc->account, name);
-		const char *alias = b ? gaim_buddy_get_alias(b) : name;
 		struct last_auto_response *lar;
 		const gchar *auto_reply_pref;
 		const char *away_msg;
@@ -559,15 +557,11 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		if ((away_msg == NULL) || (*away_msg == '\0'))
 			return;
 
-		/* Move this to oscar.c! */
-		buffy = gaim_str_sub_away_formatters(away_msg, alias);
-		serv_send_im(gc, name, buffy, GAIM_MESSAGE_AUTO_RESP);
+		serv_send_im(gc, name, away_msg, GAIM_MESSAGE_AUTO_RESP);
 
-		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, buffy,
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, away_msg,
 						   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
 						   mtime);
-
-		g_free(buffy);
 	}
 	else
 	{

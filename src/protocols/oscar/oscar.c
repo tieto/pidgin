@@ -6393,11 +6393,16 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	struct oscar_direct_im *dim = oscar_direct_im_find(od, name);
 	int ret = 0;
 	char *iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
-	char *tmpmsg = NULL;
+	char *tmp1, *tmp2;
+
+	if (imflags & GAIM_MESSAGE_AUTO_RESP)
+		tmp1 = gaim_str_sub_away_formatters(message, name);
+	else
+		tmp1 = g_strdup(message);
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
-		ret = gaim_odc_send_im(od->sess, dim->conn, message, imflags);
+		ret = gaim_odc_send_im(od->sess, dim->conn, tmp1, imflags);
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
@@ -6407,7 +6412,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
 
-		if (strstr(message, "<IMG "))
+		if (strstr(tmp1, "<IMG "))
 			gaim_conversation_write(conv, "",
 			                        _("Your IM Image was not sent. "
 			                        "You must be Direct Connected to send IM Images."),
@@ -6493,24 +6498,26 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		if (aim_sn_is_icq(gaim_account_get_username(account))) {
 			if (aim_sn_is_icq(name))
 				/* From ICQ to ICQ */
-				tmpmsg = gaim_unescape_html(message);
+				tmp2 = gaim_unescape_html(tmp1);
 			else
 				/* From ICQ to AIM */
-				tmpmsg = g_strdup(message);
+				tmp2 = g_strdup(tmp1);
 		} else {
 			/* From AIM to AIM and AIM to ICQ */
-			tmpmsg = g_strdup(message);
+			tmp2 = g_strdup(tmp1);
 		}
-		len = strlen(tmpmsg);
+		g_free(tmp1);
+		tmp1 = tmp2;
+		len = strlen(tmp1);
 
-		gaim_plugin_oscar_convert_to_best_encoding(gc, name, tmpmsg, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+		gaim_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 		gaim_debug_info("oscar", "Sending IM, charset=0x%04hx, charsubset=0x%04hx, length=%d\n",
 						args.charset, args.charsubset, args.msglen);
 		ret = aim_im_sendch1_ext(od->sess, &args);
 		g_free((char *)args.msg);
 	}
 
-	g_free(tmpmsg);
+	g_free(tmp1);
 
 	if (ret >= 0)
 		return 1;
