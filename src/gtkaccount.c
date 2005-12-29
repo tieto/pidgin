@@ -2346,7 +2346,9 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, &column, NULL, NULL))
 		return FALSE;
 	title = gtk_tree_view_column_get_title(column);
-	column = gtk_tree_view_get_column(treeview, COLUMN_ENABLED-1); /* -1 required by weirdness in GtkTreeView */
+	/* The -1 is required because the first two columns of the list
+	 * store are displayed as only one column in the tree view. */
+	column = gtk_tree_view_get_column(treeview, COLUMN_ENABLED-1);
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
