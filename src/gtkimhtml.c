@@ -114,6 +114,7 @@ static void imhtml_toggle_strike(GtkIMHtml *imhtml);
 static void imhtml_toggle_underline(GtkIMHtml *imhtml);
 static void imhtml_font_grow(GtkIMHtml *imhtml);
 static void imhtml_font_shrink(GtkIMHtml *imhtml);
+static void imhtml_clear_formatting(GtkIMHtml *imhtml);
 
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
@@ -1305,6 +1306,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 	klass->toggle_format = imhtml_toggle_format;
 	klass->message_send = imhtml_message_send;
+	klass->clear_format = imhtml_clear_formatting;
 
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
@@ -3719,6 +3721,51 @@ static void remove_font_link(GtkIMHtml *imhtml, GtkTextIter *i, GtkTextIter *e, 
 	remove_tag_by_prefix(imhtml, i, e, "LINK ", 5, homo);
 }
 
+static void
+imhtml_clear_formatting(GtkIMHtml *imhtml)
+{
+	GtkTextIter start, end;
+
+	gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+
+	/* Move the selection bounds (to select everything), so the format functions
+	 * will know we want to manipulate the formatting on the entire buffer. */
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &start);
+#else
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &start);
+#endif
+
+	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
+	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
+	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
+	remove_font_size(imhtml, &start, &end, TRUE);
+	remove_font_face(imhtml, &start, &end, TRUE);
+	remove_font_forecolor(imhtml, &start, &end, TRUE);
+	remove_font_backcolor(imhtml, &start, &end, TRUE);
+	remove_font_background(imhtml, &start, &end, TRUE);
+	remove_font_link(imhtml, &start, &end, TRUE);
+
+	imhtml->edit.bold = 0;
+	imhtml->edit.italic = 0;
+	imhtml->edit.underline = 0;
+	imhtml->edit.strike = 0;
+	imhtml->edit.fontsize = 0;
+	imhtml->edit.forecolor = NULL;
+	imhtml->edit.backcolor = NULL;
+	imhtml->edit.background = NULL;
+
+	/* Remove the selection, placing the cursor at the end. */
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &end);
+#else
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &end);
+#endif
+}
+
 /* Editable stuff */
 static void preinsert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml)
 {
@@ -3909,49 +3956,10 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
 void
 gtk_imhtml_clear_formatting(GtkIMHtml *imhtml)
 {
-	GtkTextIter start, end;
 	GObject *object;
-
-	gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
-	/* Move the selection bounds (to select everything), so the format functions
-	 * will know we want to manipulate the formatting on the entire buffer. */
-#if GTK_CHECK_VERSION(2,4,0)
-	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &start);
-#else
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &start);
-#endif
-
-	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
-	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-	remove_font_size(imhtml, &start, &end, TRUE);
-	remove_font_face(imhtml, &start, &end, TRUE);
-	remove_font_forecolor(imhtml, &start, &end, TRUE);
-	remove_font_backcolor(imhtml, &start, &end, TRUE);
-	remove_font_background(imhtml, &start, &end, TRUE);
-
-	imhtml->edit.bold = 0;
-	imhtml->edit.italic = 0;
-	imhtml->edit.underline = 0;
-	imhtml->edit.strike = 0;
-	imhtml->edit.fontsize = 0;
-	imhtml->edit.forecolor = NULL;
-	imhtml->edit.backcolor = NULL;
-	imhtml->edit.background = NULL;
 
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
-
-	/* Remove the selection, placing the cursor at the end. */
-#if GTK_CHECK_VERSION(2,4,0)
-	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &end);
-#else
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &end);
-#endif
 
 	gtk_widget_grab_focus(GTK_WIDGET(imhtml));
 
