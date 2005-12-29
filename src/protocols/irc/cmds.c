@@ -52,14 +52,11 @@ int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, c
 
 int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
-	char *buf, *message, *cur;
+	char *buf, *message;
 
 	if (args[0] && strcmp(cmd, "back")) {
-		message = strdup(args[0]);
-		for (cur = message; *cur; cur++) {
-			if (*cur == '\n')
-				*cur = ' ';
-		}
+		message = gaim_markup_strip_html(args[0]);
+		gaim_util_chrreplace(message, '\n', ' ');
 		buf = irc_format(irc, "v:", "AWAY", message);
 		g_free(message);
 	} else {
