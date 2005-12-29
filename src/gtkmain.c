@@ -507,9 +507,9 @@ int main(int argc, char *argv[])
 			"Hi, user.  We need to talk.\n"
 			"I think something's gone wrong here.  It's probably my fault.\n"
 			"No, really, it's not you... it's me... no no no, I think we get along well\n"
-			"it's just that.... well, I want to see other people.  I... what?!?  NO!  I haven't\n"
-			"been cheating on you!!  How many times do you want me to tell you?!  And for the\n"
-			"last time, it's just a rash!\n"
+			"it's just that.... well, I want to see other people.  I... what?!?  NO!  I \n"
+			"haven't been cheating on you!!  How many times do you want me to tell you?!  And\n"
+			"for the last time, it's just a rash!\n"
 		);
 #endif
 
