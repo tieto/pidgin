@@ -2433,7 +2433,11 @@ static gboolean gaim_gtk_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *dra
 	GtkTreePath *path;
 	int delay;
 
-	delay = 500;
+	/*
+	 * When dragging a buddy into a contact, this is the delay before
+	 * the contact auto-expands.
+	 */
+	delay = 900;
 
 	if (gtkblist->drag_timeout) {
 		if ((y > gtkblist->tip_rect.y) && ((y - gtkblist->tip_rect.height) < gtkblist->tip_rect.y))
