@@ -5006,14 +5006,14 @@ gaim_gtkconv_has_focus(GaimConversation *conv)
 static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
 {
 	GtkIMHtmlSmiley *smiley;
-	
+
 	smiley = (GtkIMHtmlSmiley *)user_data;
 	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
-	
+
 	if (smiley->icon)
 		g_object_ref(G_OBJECT(smiley->icon));
-#ifdef DEBUG_CUSTOM_SMILEY	
-	gaim_debug_info("custom-smiley", "%s(): got GdkPixbufAnimation %p for smiley '%s'\n", __FUNCTION__, smiley->icon, smiley->smile);
+#ifdef DEBUG_CUSTOM_SMILEY
+	gaim_debug_info("custom-smiley", "gaim_gtkconv_custom_smiley_allocated(): got GdkPixbufAnimation %p for smiley '%s'\n", smiley->icon, smiley->smile);
 #endif
 }
 
@@ -5023,11 +5023,11 @@ static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer 
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor = NULL;
 	GSList *current = NULL;
-	
+
 	smiley = (GtkIMHtmlSmiley *)user_data;
 	if (!smiley->imhtml) {
 #ifdef DEBUG_CUSTOM_SMILEY
-		gaim_debug_error("custom-smiley", "%s(): orphan smiley found: %p\n", __FUNCTION__, smiley);
+		gaim_debug_error("custom-smiley", "gaim_gtkconv_custom_smiley_closed(): orphan smiley found: %p\n", smiley);
 #endif
 		g_object_unref(G_OBJECT(loader));
 		smiley->loader = NULL;
@@ -5038,18 +5038,18 @@ static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer 
 
 		icon = gtk_image_new_from_animation(smiley->icon);
 
-#ifdef DEBUG_CUSTOM_SMILEY		
-		gaim_debug_info("custom-smiley", "%s(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n", 
-				__FUNCTION__, icon, smiley->icon, smiley->smile);
+#ifdef DEBUG_CUSTOM_SMILEY
+		gaim_debug_info("custom-smiley", "gaim_gtkconv_custom_smiley_closed(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n",
+				icon, smiley->icon, smiley->smile);
 #endif
 		if (icon) {
 			gtk_widget_show(icon);
-			
+
 			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
 
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(gaim_unescape_html(smiley->smile)), g_free);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
-			
+
 			if (smiley->imhtml)
 				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
 		}
@@ -5058,7 +5058,7 @@ static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer 
 
 	g_slist_free(smiley->anchors);
 	smiley->anchors = NULL;
-	
+
 	g_object_unref(G_OBJECT(loader));
 	smiley->loader = NULL;
 }
