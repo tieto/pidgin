@@ -886,7 +886,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None"
+msg_ssl="None (MSN will not work without SSL!)"
 
 dnl #
 dnl # Check for GNUTLS if it's specified.
