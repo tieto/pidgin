@@ -38,11 +38,7 @@
 		  or define sounds on a per-group basis.
 		* we could look at replacing the UI ops with signals/call backs
 	* bugs
-		* buddy shows as group on add until gaim restart
-		* buddy shows as online when offline
-		* buddy shows as offline when online
 		* wrong buddy given priority
-		* so on and so forth
 }}}
 * build targets {{{
   * this is not a blocker
@@ -51,26 +47,10 @@
   * due to the limitations of cvs, this cannot accompany moving files to other directories at this time.
 }}}
 * status {{{
-	* Sean's segment of the UI needs to be finished.  We need to have support for the (new) default case
-	  of one global status at all times.  we currently do not, unless that happens to be "online/present"
-	* Tim's modifications to Sean's ui should be included to allow exceptions. refer to gaim-devel
-	  archives for this.
-}}}
-* account editor {{{
-	* this is not a blocker for 2.0.0
-	* account editor is not intuitive, users do not find it.
-	* Luke: my temptation is to get rid of this entirely, in favor of deryni's account menu. {{{
-		* at this point, tools->accounts is only used for add/delete account, modify account, and
-		  enable account.
-		* most users do not have the 15+ accounts that some gaim developers do. a menu scales well for
-		  anything from 2 to n, n "small" accounts.
-		* this would allow ready access to the buddy icon stuff, and account actions could go here
-		* status is handled as per the new api, status stuff need not go here beyond enabled.
-		* the account modify dialog is already too big.  this would let us split it, for instance
-		  buddy icon need not be in it this way.  Similarly, alias need not be in it.
-			* splitting the account modify dialog to tabs seems to work nicely.  Still, I think
-			  that the menu would be nicer.
-	}}}
+	* Error messages aren't particularly usable currently.  we need to be able to see the full text of
+	  the error, and what account is in that error condition.
+	* No way to see accounts not in the global state.
+	* Easier access to saved states is needed.
 }}}
 * Privacy {{{
 	* this is not a blocker for 2.0.0
@@ -86,29 +66,11 @@
 }}}
 * Perl {{{
 	* Block for 2.0.0 or remove perl:
-		* Summer of Code seems to have largely solved this.
 		* Extended testing and resolving the inevitable bugs remains.
 		* Test each call to make sure it actually works
 		* Make it work with G_MODULE_BIND_LOCAL
 }}}
 * Prefs {{{
-	* this blocks for 2.0.0
-	* Prefs cannot stay as-is.  the dialog is far too wide and not at all usable.
-	* The biggest problem is that each new plugin creates horizontal space. {{{
-		* I do not see it as a solution to remove the posability of plugin preferences.
-		* In the past, we had a separate plugin management dialog.  People never found it,
-		  and were often surprised to learn that gaim had plugins at all.  I am unsure that
-		  people find the current plugin page of preferences any more frequently, but I
-		  *suspect* that it is the case.  This leads to a conundrum, how do plugins
-		  display preferences?
-		}}}
-	* Currently the window is, at my font size, 1129x505 (or should that be 505x1129?).  It *should* fit
-	  in 800x600 at worst, I'm unsure that 480x640 is a reasonable goal.  still, this leaves us with
-	  something either considerably wider or considerably taller than we are currently using (on any
-	  given pane, the tabs force the width, not the contents).  Further, taking "Message Text" as an
-	  example, it has 3 preferences and a text area, each in its own category (the text area sharing a
-	  category with 1 preference). obvious waste of space here.  All 3 could clearly be uncategorised
-	  without loss of meaning, categories only make sense for groups of preferences.  It may even be
-	  possible to combine this with "Conversations" entirely.
+	* on upgrade from 1.x, the timestamp preference often gets lost.
 }}}
 
