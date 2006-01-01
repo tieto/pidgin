@@ -148,7 +148,7 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 	else if(state != JABBER_BUDDY_STATE_ONLINE &&
 			state != JABBER_BUDDY_STATE_UNKNOWN &&
 			state != JABBER_BUDDY_STATE_ERROR)
-		show_string = jabber_buddy_state_get_status_id(state);
+		show_string = jabber_buddy_state_get_show(state);
 
 	if(show_string) {
 		show = xmlnode_new_child(presence, "show");
@@ -337,7 +337,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	} else {
 		if((y = xmlnode_get_child(packet, "show"))) {
 			char *show = xmlnode_get_data(y);
-			state = jabber_buddy_status_id_get_state(show);
+			state = jabber_buddy_show_get_state(show);
 			g_free(show);
 		} else {
 			state = JABBER_BUDDY_STATE_ONLINE;

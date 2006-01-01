@@ -85,7 +85,9 @@ void jabber_set_buddy_icon(GaimConnection *gc, const char *iconfile);
 
 const char *jabber_buddy_state_get_name(JabberBuddyState state);
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
+const char *jabber_buddy_state_get_show(JabberBuddyState state);
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
+JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
 void jabber_user_search_begin(GaimPluginAction *);
 

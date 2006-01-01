@@ -1102,6 +1102,27 @@ JabberBuddyState jabber_buddy_status_id_get_state(const char *id) {
 		return JABBER_BUDDY_STATE_UNKNOWN;
 	if(!strcmp(id, "available"))
 		return JABBER_BUDDY_STATE_ONLINE;
+	if(!strcmp(id, "freeforchat"))
+		return JABBER_BUDDY_STATE_CHAT;
+	if(!strcmp(id, "away"))
+		return JABBER_BUDDY_STATE_AWAY;
+	if(!strcmp(id, "extended_away"))
+		return JABBER_BUDDY_STATE_XA;
+	if(!strcmp(id, "dnd"))
+		return JABBER_BUDDY_STATE_DND;
+	if(!strcmp(id, "offline"))
+		return JABBER_BUDDY_STATE_UNAVAILABLE;
+	if(!strcmp(id, "error"))
+		return JABBER_BUDDY_STATE_ERROR;
+
+	return JABBER_BUDDY_STATE_UNKNOWN;
+}
+
+JabberBuddyState jabber_buddy_show_get_state(const char *id) {
+	if(!id)
+		return JABBER_BUDDY_STATE_UNKNOWN;
+	if(!strcmp(id, "available"))
+		return JABBER_BUDDY_STATE_ONLINE;
 	if(!strcmp(id, "chat"))
 		return JABBER_BUDDY_STATE_CHAT;
 	if(!strcmp(id, "away"))
@@ -1118,7 +1139,7 @@ JabberBuddyState jabber_buddy_status_id_get_state(const char *id) {
 	return JABBER_BUDDY_STATE_UNKNOWN;
 }
 
-const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
+const char *jabber_buddy_state_get_show(JabberBuddyState state) {
 	switch(state) {
 		case JABBER_BUDDY_STATE_CHAT:
 			return "chat";
@@ -1126,6 +1147,27 @@ const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
 			return "away";
 		case JABBER_BUDDY_STATE_XA:
 			return "xa";
+		case JABBER_BUDDY_STATE_DND:
+			return "dnd";
+		case JABBER_BUDDY_STATE_ONLINE:
+			return "available";
+		case JABBER_BUDDY_STATE_UNKNOWN:
+		case JABBER_BUDDY_STATE_ERROR:
+			return NULL;
+		case JABBER_BUDDY_STATE_UNAVAILABLE:
+			return "offline";
+	}
+	return NULL;
+}
+
+const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
+	switch(state) {
+		case JABBER_BUDDY_STATE_CHAT:
+			return "freeforchat";
+		case JABBER_BUDDY_STATE_AWAY:
+			return "away";
+		case JABBER_BUDDY_STATE_XA:
+			return "extended_away";
 		case JABBER_BUDDY_STATE_DND:
 			return "dnd";
 		case JABBER_BUDDY_STATE_ONLINE:
