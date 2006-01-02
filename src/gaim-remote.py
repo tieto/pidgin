@@ -63,6 +63,8 @@ def findaccount(accountname, protocolname):
 def execute(uri):
     match = re.match(urlregexp, uri)
     protocol = match.group(2)
+    if protocol == "aim" or protocol == "icq":
+        protocol = "oscar"
     if protocol is not None:
         protocol = "prpl-" + protocol
     command = match.group(5)
