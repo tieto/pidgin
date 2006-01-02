@@ -21,10 +21,12 @@ AC_PROG_INSTALL
 # before gettexting, in case iconv matters
 case "$host_os" in
 darwin*)
+	AC_CHECK_LIB(resolv, res_query)
 	AC_MSG_CHECKING([for fink])
 	if test -d /sw; then
 		AC_MSG_RESULT([found, adding /sw to search paths])
 		CFLAGS="$CFLAGS -I/sw/include"
+		LDFLAGS="$LDFLAGS -L/sw/lib"
 	else
 		AC_MSG_RESULT([not found])
 	fi
