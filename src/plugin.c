@@ -238,12 +238,13 @@ gaim_plugin_probe(const char *filename)
 
 	plugin = gaim_plugin_new(has_file_extension(filename, G_MODULE_SUFFIX), filename);
 
-	if (plugin->native_plugin) {
-		const char *error;
 #ifdef _WIN32
 		/* Suppress error popups for failing to load plugins */
 		UINT old_error_mode = SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
+
+	if (plugin->native_plugin) {
+		const char *error;
 		/*
 		 * We pass G_MODULE_BIND_LOCAL here to prevent symbols from
 		 * plugins being added to the global name space.
