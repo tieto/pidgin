@@ -218,21 +218,21 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 	g_free(html_body);
 }
 
-static gboolean
-_check_buddy_by_address(gpointer key, gpointer value, gpointer address)
+struct _check_buddy_by_address_t {
+	char *address;
+	GaimBuddy **gb;
+};
+
+static void
+_check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 {
 	GaimBuddy *gb = (GaimBuddy*)value;
 	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
+	struct _check_buddy_by_address_t *d = (struct _check_buddy_by_address_t *)data; 
 
-	if (bb != NULL)
-	{
-		if (g_strcasecmp(bb->ip, (char*)address) == 0) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	} else {
-		return FALSE;
+	if (bb != NULL) {
+		if (g_strcasecmp(bb->ip, (char*)d->address) == 0) 
+			*(d->gb) = gb;      
 	}
 }
 
@@ -386,7 +386,11 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 
 	/* Look for the buddy that has open the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
-	gb = (GaimBuddy*)g_hash_table_find(bl->buddies, _check_buddy_by_address, address_text);
+	struct _check_buddy_by_address_t *cbba = g_new0(struct _check_buddy_by_address_t, 1);
+	cbba->address = address_text;
+	cbba->gb = &gb;
+	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, address_text);
+	g_free(cbba);
 	if (gb == NULL)
 	{
 		gaim_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
