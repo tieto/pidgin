@@ -354,8 +354,79 @@ gaim_plugin_probe(const char *filename)
 		return NULL;
 	}
 
-	if (plugin->info->magic != GAIM_PLUGIN_MAGIC ||
-			plugin->info->major_version != GAIM_MAJOR_VERSION ||
+	/* Really old plugins. */
+	if (plugin->info->magic != GAIM_PLUGIN_MAGIC)
+	{
+		gaim_debug_error("plugins", "%s is unloadable: plugin magic mismatch %d (need %d)\n",
+						 plugin->path, plugin->info->magic, GAIM_PLUGIN_MAGIC);
+
+		if (plugin->info->magic >= 2 && plugin->info->magic <= 4)
+		{
+			struct _GaimPluginInfo2
+			{
+				unsigned int api_version;
+				GaimPluginType type;
+				char *ui_requirement;
+				unsigned long flags;
+				GList *dependencies;
+				GaimPluginPriority priority;
+				
+				char *id;
+				char *name;
+				char *version;
+				char *summary;
+				char *description;
+				char *author;
+				char *homepage;
+
+				gboolean (*load)(GaimPlugin *plugin);
+				gboolean (*unload)(GaimPlugin *plugin);
+				void (*destroy)(GaimPlugin *plugin);
+
+				void *ui_info;
+				void *extra_info;
+				GaimPluginUiInfo *prefs_info;
+				GList *(*actions)(GaimPlugin *plugin, gpointer context);
+			} *info2 = (struct _GaimPluginInfo2 *)plugin->info;
+
+			/* This leaks... but only for ancient plugins, so deal with it. */
+			plugin->info = g_new0(GaimPluginInfo, 1);
+
+			/* We don't really need all these to display the plugin info, but
+			 * I'm copying them all for good measure. */
+			plugin->info->magic          = info2->api_version;
+			plugin->info->type           = info2->type;
+			plugin->info->ui_requirement = info2->ui_requirement;
+			plugin->info->flags          = info2->flags;
+			plugin->info->dependencies   = info2->dependencies;
+			plugin->info->id             = info2->id;
+			plugin->info->name           = info2->name;
+			plugin->info->version        = info2->version;
+			plugin->info->summary        = info2->summary;
+			plugin->info->description    = info2->description;
+			plugin->info->author         = info2->author;
+			plugin->info->homepage       = info2->homepage;
+			plugin->info->load           = info2->load;
+			plugin->info->unload         = info2->unload;
+			plugin->info->destroy        = info2->destroy;
+			plugin->info->ui_info        = info2->ui_info;
+			plugin->info->extra_info     = info2->extra_info;
+
+			if (info2->api_version >= 3)
+				plugin->info->prefs_info = info2->prefs_info;
+
+			if (info2->api_version >= 4)
+				plugin->info->actions    = info2->actions;
+
+			plugin->unloadable = TRUE;
+			return plugin;
+		}
+
+		gaim_plugin_destroy(plugin);
+		return NULL;
+	}
+
+	if (plugin->info->major_version != GAIM_MAJOR_VERSION ||
 			plugin->info->minor_version > GAIM_MINOR_VERSION)
 	{
 		plugin->error = g_strdup_printf("ABI version mismatch %d.%d.x (need %d.%d.x)",
