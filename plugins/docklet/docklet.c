@@ -420,9 +420,9 @@ docklet_menu() {
 	gaim_new_item_from_stock(menu, _("Custom Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Saved Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
 
-	gaim_separator(menu);
-
 	popular_statuses = gaim_savedstatuses_get_popular(6);
+	if (popular_statuses != NULL)
+		gaim_separator(menu);
 	for (cur = popular_statuses; cur != NULL; cur = cur->next)
 	{
 		GaimSavedStatus *saved_status = cur->data;
