@@ -788,6 +788,22 @@ gaim_savedstatus_find(const char *title)
 	return NULL;
 }
 
+GaimSavedStatus *
+gaim_savedstatus_find_by_creation_time(time_t creation_time)
+{
+	GList *iter;
+	GaimSavedStatus *status;
+
+	for (iter = saved_statuses; iter != NULL; iter = iter->next)
+	{
+		status = (GaimSavedStatus *)iter->data;
+		if (status->creation_time == creation_time)
+			return status;
+	}
+
+	return NULL;
+}
+
 gboolean
 gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
 {
@@ -799,35 +815,40 @@ gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
 const char *
 gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 {
+	const char *message;
+
 	g_return_val_if_fail(saved_status != NULL, NULL);
 
-	/* If transient then make up a title on the fly */
-	if (saved_status->title == NULL)
+	/* If we have a title then return it */
+	if (saved_status->title != NULL)
+		return saved_status->title;
+
+	/* Otherwise, this is a transient status and we make up a title on the fly */
+	message = gaim_savedstatus_get_message(saved_status);
+
+	if (message == NULL)
 	{
-		const char *message = gaim_savedstatus_get_message(saved_status);
-
-		if (message == NULL)
-		{
-			GaimStatusPrimitive primitive;
-			primitive = gaim_savedstatus_get_type(saved_status);
-			return gaim_primitive_get_id_from_type(primitive);
-		}
-		else
-		{
-			static char buf[64];
-			strncpy(buf, message, sizeof(buf));
-			buf[sizeof(buf) - 1] = '\0';
-			if ((strlen(message) + 1) > sizeof(buf))
-			{
-				/* Truncate and ellipsize */
-				char *tmp = g_utf8_find_prev_char(buf, &buf[sizeof(buf) - 4]);
-				strcpy(tmp, "...");
-			}
-			return buf;
-		}
+		GaimStatusPrimitive primitive;
+		primitive = gaim_savedstatus_get_type(saved_status);
+		return gaim_primitive_get_id_from_type(primitive);
 	}
-
-	return saved_status->title;
+	else
+	{
+		char *stripped;
+		static char buf[64];
+		stripped = gaim_markup_strip_html(message);
+		gaim_util_chrreplace(stripped, '\n', ' ');
+		strncpy(buf, stripped, sizeof(buf));
+		buf[sizeof(buf) - 1] = '\0';
+		if ((strlen(stripped) + 1) > sizeof(buf))
+		{
+			/* Truncate and ellipsize */
+			char *tmp = g_utf8_find_prev_char(buf, &buf[sizeof(buf) - 4]);
+			strcpy(tmp, "...");
+		}
+		g_free(stripped);
+		return buf;
+	}
 }
 
 GaimStatusPrimitive

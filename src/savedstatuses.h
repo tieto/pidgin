@@ -191,6 +191,16 @@ GaimSavedStatus *gaim_savedstatus_get_idleaway(void);
 GaimSavedStatus *gaim_savedstatus_find(const char *title);
 
 /**
+ * Finds a saved status with the specified creation time.
+ *
+ * @param creation_time The timestamp when the saved
+ *        status was created.
+ *
+ * @return The saved status if found, or NULL.
+ */
+GaimSavedStatus *gaim_savedstatus_find_by_creation_time(time_t creation_time);
+
+/**
  * Determines if a given saved status is "transient."
  * A transient saved status is one that was not
  * explicitly added by the user.  Transient statuses
@@ -214,7 +224,10 @@ gboolean gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status);
  *
  * @param saved_status The saved status.
  *
- * @return The title.
+ * @return The title.  This value may be a static buffer which may
+ *         be overwritten on subsequent calls to this function.  If
+ *         you need a reference to the title for prolonged use then
+ *         you should make a copy of it.
  */
 const char *gaim_savedstatus_get_title(const GaimSavedStatus *saved_status);
 

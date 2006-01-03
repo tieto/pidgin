@@ -358,9 +358,21 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 #endif
 
 static void
-show_custom_status_editor_cb()
+show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
 	gaim_gtk_status_editor_show(NULL);
+}
+
+static void
+activate_saved_status_cb(GtkMenuItem *menuitem, gpointer user_data)
+{
+	time_t creation_time;
+	GaimSavedStatus *saved_status;
+
+	creation_time = GPOINTER_TO_INT(user_data);
+	saved_status = gaim_savedstatus_find_by_creation_time(creation_time);
+	if (saved_status != NULL)
+		gaim_savedstatus_activate(saved_status);
 }
 
 static void
@@ -414,9 +426,11 @@ docklet_menu() {
 	for (cur = popular_statuses; cur != NULL; cur = cur->next)
 	{
 		GaimSavedStatus *saved_status = cur->data;
+		time_t creation_time = gaim_savedstatus_get_creation_time(saved_status);
 		gaim_new_item_from_stock(menu,
 			gaim_savedstatus_get_title(saved_status),
-			GAIM_STOCK_ICON_AWAY, NULL /* TODO */, NULL, 0, 0, NULL);
+			GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_saved_status_cb),
+			GINT_TO_POINTER(creation_time), 0, 0, NULL);
 	}
 	g_list_free(popular_statuses);
 
