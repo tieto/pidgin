@@ -287,8 +287,8 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	buf = g_strdup_printf(
 		   _("%s%s"
 		     "<span weight=\"bold\">Written by:</span>\t%s\n"
-		     "<span weight=\"bold\">Web site:</span>\t\t%s\n"
-		     "<span weight=\"bold\">File name:</span>\t%s"),
+		     "<span weight=\"bold\">Website:</span>\t\t%s\n"
+		     "<span weight=\"bold\">Filename:</span>\t\t%s"),
 		   pdesc ? pdesc : "", pdesc ? "\n\n" : "",
 		   pauth ? pauth : "", pweb ? pweb : "", plug->path);
 
@@ -296,7 +296,10 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	{
 		char *tmp = g_strdup_printf(
 			_("%s\n"
-			  "<span foreground=\"#ff0000\" weight=\"bold\">Error: %s</span>"),
+			  "<span foreground=\"#ff0000\" weight=\"bold\">"
+			  "Error: %s\n"
+			  "Check the plugin website for an update."
+			  "</span>"),
 			buf, plug->error);
 		g_free(buf);
 		buf = tmp;
