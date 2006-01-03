@@ -121,11 +121,15 @@ is_word_proper(const gchar *word)
 static gchar *
 make_word_proper(const gchar *word)
 {
-	gchar *state = g_utf8_strdown(word, -1);
+	char buf[7];
+	gchar *lower = g_utf8_strdown(word, -1);
+	gchar *ret;
 
-	state[0] = g_unichar_toupper(g_utf8_get_char(word));
+	g_unichar_to_utf8(g_unichar_toupper(g_utf8_get_char(word)), buf);
+	ret = g_strconcat(buf, g_utf8_offset_to_pointer(lower, 1), NULL);
+	g_free(lower);
 
-	return state;
+	return ret;
 }
 
 static gboolean
