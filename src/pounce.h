@@ -43,9 +43,16 @@ typedef enum
 	GAIM_POUNCE_IDLE           = 0x10, /**< The buddy became idle.        */
 	GAIM_POUNCE_IDLE_RETURN    = 0x20, /**< The buddy is no longer idle.  */
 	GAIM_POUNCE_TYPING         = 0x40, /**< The buddy started typing.     */
-	GAIM_POUNCE_TYPING_STOPPED = 0x80  /**< The buddy stopped typing.     */
+	GAIM_POUNCE_TYPING_STOPPED = 0x80, /**< The buddy stopped typing.     */
+	GAIM_POUNCE_MESSAGE_RECEIVED = 0x100 /**< The buddy sent a message    */
 
 } GaimPounceEvent;
+
+typedef enum
+{
+	GAIM_POUNCE_OPTION_NONE		= 0x00, /**< No Option                */
+	GAIM_POUNCE_OPTION_AWAY		= 0x01  /**< Pounce only when away    */
+} GaimPounceOption;
 
 /** A pounce callback. */
 typedef void (*GaimPounceCb)(GaimPounce *, GaimPounceEvent, void *);
@@ -63,6 +70,7 @@ struct _GaimPounce
 	char *ui_type;                /**< The type of UI.            */
 
 	GaimPounceEvent events;       /**< The event(s) to pounce on. */
+	GaimPounceOption options;     /**< The pounce options         */
 	GaimAccount *pouncer;         /**< The user who is pouncing.  */
 
 	char *pouncee;                /**< The buddy to pounce on.    */
@@ -94,7 +102,8 @@ extern "C" {
  * @return The new buddy pounce structure.
  */
 GaimPounce *gaim_pounce_new(const char *ui_type, GaimAccount *pouncer,
-							const char *pouncee, GaimPounceEvent event);
+							const char *pouncee, GaimPounceEvent event,
+							GaimPounceOption option);
 
 /**
  * Destroys a buddy pounce.
@@ -117,6 +126,14 @@ void gaim_pounce_destroy_all_by_account(GaimAccount *account);
  * @param events The events to watch for.
  */
 void gaim_pounce_set_events(GaimPounce *pounce, GaimPounceEvent events);
+
+/**
+ * Sets the options for a pounce.
+ *
+ * @param pounce  The buddy pounce.
+ * @param options The options for the pounce.
+ */
+void gaim_pounce_set_options(GaimPounce *pounce, GaimPounceOption options);
 
 /**
  * Sets the account that will do the pouncing.
@@ -189,6 +206,15 @@ void gaim_pounce_set_data(GaimPounce *pounce, void *data);
  * @return The events the pounce is watching for.
  */
 GaimPounceEvent gaim_pounce_get_events(const GaimPounce *pounce);
+
+/**
+ * Returns the options for a pounce.
+ *
+ * @param pounce The buddy pounce.
+ *
+ * @return The options for the pounce.
+ */
+GaimPounceOption gaim_pounce_get_options(const GaimPounce *pounce);
 
 /**
  * Returns the account that will do the pouncing.

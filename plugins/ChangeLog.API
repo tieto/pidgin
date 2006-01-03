@@ -84,6 +84,7 @@ version 2.0.0:
 	* GaimPluginProtocolInfo: Added offline_message
 	* GaimPluginProtocolInfo: Added whiteboard_prpl_ops
 	* GaimPluginProtocolInfo: Added media_prpl_ops
+	* gaim_pounce_new(): Added option argument for pounce options
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -129,7 +130,6 @@ version 2.0.0:
 	* GaimConvImFlags and GaimConvChatFlags; use GaimMessageFlags instead
 	* cb and user_data from the ops in GaimNotifyUiOps: This is now handled
 	  by the notify API in the core.
-	* conversation-switching signal has been removed.
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -190,6 +190,10 @@ version 2.0.0:
 	* gaim_gtk_pounces_manager_show()
 	* gaim_gtk_pounces_manager_hide()
 	* gaim_gtk_pounce_editor_show()
+	* GAIM_POUNCE_MESSAGE_RECEIVED
+	* GaimPounceOption
+	* gaim_pounce_set_options()
+	* gaim_pounce_set_options()
 	* GAIM_STOCK_CONNECT, GAIM_STOCK_DISCONNECT
 	* GAIM_STOCK_PLUGIN
 	* gaim_account_request_add: Notifies the user that they were added to
@@ -259,6 +263,7 @@ version 2.0.0:
 	* "buddy-unidle": replaced by buddy-idle-changed
 	* "buddy-icon-cached": replaced by buddy-icon-changed
 	* "conversation-drag-end": replaced by "conversation-dragging"
+	* "conversation-switching"
 
 version 1.5.0 (8/11/2005):
 	* Added: gaim_xfer_conversation_write

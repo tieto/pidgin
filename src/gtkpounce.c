@@ -66,11 +66,14 @@ typedef struct
 	/* The window */
 	GtkWidget *window;
 
-	/* Pounce Who */
+	/* Pounce on Whom */
 	GtkWidget *account_menu;
 	GtkWidget *buddy_entry;
 
-	/* Pounce When */
+	/* Pounce options */
+	GtkWidget *on_away;
+
+	/* Pounce When Buddy... */
 	GtkWidget *signon;
 	GtkWidget *signoff;
 	GtkWidget *away;
@@ -79,8 +82,9 @@ typedef struct
 	GtkWidget *idle_return;
 	GtkWidget *typing;
 	GtkWidget *stop_typing;
+	GtkWidget *message_recv;
 
-	/* Pounce Action */
+	/* Action */
 	GtkWidget *open_win;
 	GtkWidget *popup;
 	GtkWidget *send_msg;
@@ -244,7 +248,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	const char *name;
 	const char *message, *command, *sound;
-	GaimPounceEvent events = GAIM_POUNCE_NONE;
+	GaimPounceEvent events   = GAIM_POUNCE_NONE;
+	GaimPounceOption options = GAIM_POUNCE_OPTION_NONE;
 
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
 
@@ -254,6 +259,10 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 						  _("Please enter a buddy to pounce."), NULL);
 		return;
 	}
+
+	/* Options */
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->on_away)))
+		options |= GAIM_POUNCE_OPTION_AWAY;
 
 	/* Events */
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->signon)))
@@ -280,6 +289,9 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->stop_typing)))
 		events |= GAIM_POUNCE_TYPING_STOPPED;
 
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->message_recv)))
+		events |= GAIM_POUNCE_MESSAGE_RECEIVED;
+
 	/* Data fields */
 	message = gtk_entry_get_text(GTK_ENTRY(dialog->send_msg_entry));
 	command = gtk_entry_get_text(GTK_ENTRY(dialog->exec_cmd_entry));
@@ -292,10 +304,11 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	if (dialog->pounce == NULL)
 	{
 		dialog->pounce = gaim_pounce_new(GAIM_GTK_UI, dialog->account,
-										 name, events);
+										 name, events, options);
 	}
 	else {
 		gaim_pounce_set_events(dialog->pounce, events);
+		gaim_pounce_set_options(dialog->pounce, options);
 		gaim_pounce_set_pouncer(dialog->pounce, dialog->account);
 		gaim_pounce_set_pouncee(dialog->pounce, name);
 	}
@@ -354,6 +367,16 @@ buddy_changed_cb(GtkEntry *entry, GaimGtkPounceDialog *dialog)
 
 	gtk_widget_set_sensitive(dialog->save_button,
 		*gtk_entry_get_text(entry) != '\0');
+}
+
+static void
+message_recv_toggle(GtkButton *message_recv, GtkWidget *send_msg)
+{
+	gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(message_recv));
+
+	gtk_widget_set_sensitive(send_msg, !active);
+	if (active)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(send_msg), FALSE);
 }
 
 static void
@@ -489,8 +512,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, TRUE, TRUE, 0);
 
-	/* Create the "Pounce Who" frame. */
-	frame = gaim_gtk_make_frame(vbox2, _("Pounce Who"));
+	/* Create the "Pounce on Whom" frame. */
+	frame = gaim_gtk_make_frame(vbox2, _("Pounce on Whom"));
 
 	/* Account: */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
@@ -540,7 +563,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), name);
 	}
 
-	/* Create the "Pounce When" frame. */
+	/* Create the "Pounce When Buddy..." frame. */
 	frame = gaim_gtk_make_frame(vbox2, _("Pounce When Buddy..."));
 
 	table = gtk_table_new(2, 4, FALSE);
@@ -564,22 +587,26 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 		gtk_check_button_new_with_mnemonic(_("Starts _typing"));
 	dialog->stop_typing =
 		gtk_check_button_new_with_mnemonic(_("Stops t_yping"));
+	dialog->message_recv =
+		gtk_check_button_new_with_mnemonic(_("Sends a _message"));
 
-	gtk_table_attach(GTK_TABLE(table), dialog->signon,      0, 1, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->signon,       0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->signoff,     1, 2, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      1, 2, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away,        0, 1, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->away,         0, 1, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away_return, 1, 2, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  1, 2, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle,        0, 1, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle,         0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle_return, 1, 2, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  1, 2, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typing,      0, 1, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->typing,       0, 1, 3, 4,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing, 1, 2, 3, 5,
+	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  1, 2, 3, 4,
+					 GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), dialog->message_recv, 0, 1, 4, 5,
 					 GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
@@ -590,9 +617,10 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_widget_show(dialog->idle_return);
 	gtk_widget_show(dialog->typing);
 	gtk_widget_show(dialog->stop_typing);
+	gtk_widget_show(dialog->message_recv);
 
-	/* Create the "Pounce Action" frame. */
-	frame = gaim_gtk_make_frame(vbox2, _("Pounce Action"));
+	/* Create the "Action" frame. */
+	frame = gaim_gtk_make_frame(vbox2, _("Action"));
 
 	table = gtk_table_new(3, 5, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
@@ -617,12 +645,25 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Br_owse..."));
 	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
 
-	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
-	gtk_widget_set_sensitive(dialog->exec_cmd_entry,   FALSE);
-	gtk_widget_set_sensitive(dialog->exec_cmd_browse, FALSE);
-	gtk_widget_set_sensitive(dialog->play_sound_entry, FALSE);
-	gtk_widget_set_sensitive(dialog->play_sound_browse,   FALSE);
-	gtk_widget_set_sensitive(dialog->play_sound_test, FALSE);
+	gtk_widget_set_sensitive(dialog->send_msg_entry,    FALSE);
+	gtk_widget_set_sensitive(dialog->exec_cmd_entry,    FALSE);
+	gtk_widget_set_sensitive(dialog->exec_cmd_browse,   FALSE);
+	gtk_widget_set_sensitive(dialog->play_sound_entry,  FALSE);
+	gtk_widget_set_sensitive(dialog->play_sound_browse, FALSE);
+	gtk_widget_set_sensitive(dialog->play_sound_test,   FALSE);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
+	gtk_size_group_add_widget(sg, dialog->open_win);
+	gtk_size_group_add_widget(sg, dialog->popup);
+	gtk_size_group_add_widget(sg, dialog->send_msg);
+	gtk_size_group_add_widget(sg, dialog->send_msg_entry);
+	gtk_size_group_add_widget(sg, dialog->exec_cmd);
+	gtk_size_group_add_widget(sg, dialog->exec_cmd_entry);
+	gtk_size_group_add_widget(sg, dialog->exec_cmd_browse);
+	gtk_size_group_add_widget(sg, dialog->play_sound);
+	gtk_size_group_add_widget(sg, dialog->play_sound_entry);
+	gtk_size_group_add_widget(sg, dialog->play_sound_browse);
+	gtk_size_group_add_widget(sg, dialog->play_sound_test);
 
 	gtk_table_attach(GTK_TABLE(table), dialog->open_win,         0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
@@ -647,6 +688,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_test, 3, 4, 4, 5,
 					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
+	gtk_table_set_row_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE / 2);
+
 	gtk_widget_show(dialog->open_win);
 	gtk_widget_show(dialog->popup);
 	gtk_widget_show(dialog->send_msg);
@@ -658,6 +701,10 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_widget_show(dialog->play_sound_entry);
 	gtk_widget_show(dialog->play_sound_browse);
 	gtk_widget_show(dialog->play_sound_test);
+
+	g_signal_connect(G_OBJECT(dialog->message_recv), "clicked",
+					 G_CALLBACK(message_recv_toggle),
+					 dialog->send_msg);
 
 	g_signal_connect(G_OBJECT(dialog->send_msg), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive),
@@ -696,11 +743,26 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(dialog->play_sound_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 
-	/* Now the last part, where we have the Save checkbox */
+	/* Create the "Options" frame. */
+	frame = gaim_gtk_make_frame(vbox2, _("Options"));
+
+	table = gtk_table_new(2, 1, FALSE);
+	gtk_container_add(GTK_CONTAINER(frame), table);
+	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
+	gtk_widget_show(table);
+
+	dialog->on_away =
+		gtk_check_button_new_with_mnemonic(_("P_ounce only when my status is not available"));
+	gtk_table_attach(GTK_TABLE(table), dialog->on_away, 0, 1, 0, 1,
+					 GTK_FILL, 0, 0, 0);
+
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
 		_("_Recurring"));
+	gtk_table_attach(GTK_TABLE(table), dialog->save_pounce, 0, 1, 1, 2,
+					 GTK_FILL, 0, 0, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox2), dialog->save_pounce, FALSE, FALSE, 0);
+	gtk_widget_show(dialog->on_away);
+	gtk_widget_show(dialog->save_pounce);
 
 	/* Now the button box! */
 	bbox = gtk_hbutton_box_new();
@@ -760,8 +822,13 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	/* Set the values of stuff. */
 	if (cur_pounce != NULL)
 	{
-		GaimPounceEvent events = gaim_pounce_get_events(cur_pounce);
+		GaimPounceEvent events   = gaim_pounce_get_events(cur_pounce);
+		GaimPounceOption options = gaim_pounce_get_options(cur_pounce);
 		const char *value;
+
+		/* Options */
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->on_away),
+									(options & GAIM_POUNCE_OPTION_AWAY));
 
 		/* Events */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->signon),
@@ -780,6 +847,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 									(events & GAIM_POUNCE_TYPING));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->stop_typing),
 									(events & GAIM_POUNCE_TYPING_STOPPED));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->message_recv),
+									(events & GAIM_POUNCE_MESSAGE_RECEIVED));
 
 		/* Actions */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->open_win),
@@ -1357,6 +1426,8 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				   _("%s has become idle (%s)") :
 				   (events & GAIM_POUNCE_AWAY) ?
 				   _("%s has gone away. (%s)") :
+				   (events & GAIM_POUNCE_MESSAGE_RECEIVED) ?
+				   _("%s has sent you a message. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
 				   alias, gaim_account_get_protocol_name(account));
 
