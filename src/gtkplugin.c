@@ -114,6 +114,9 @@ update_plugin_list(void *data)
 		 probes != NULL;
 		 probes = probes->next)
 	{
+		char *name;
+		char *version;
+		char *summary;
 		char *desc;
 		plug = probes->data;
 
@@ -124,9 +127,18 @@ update_plugin_list(void *data)
 		}
 
 		gtk_list_store_append (ls, &iter);
-		desc = g_strdup_printf("<b>%s</b> %s\n%s", plug->info->name ? _(plug->info->name) : g_basename(plug->path),
-				       plug->info->version,
-				       _(plug->info->summary));
+
+		name = g_markup_escape_text(plug->info->name ? _(plug->info->name) : g_basename(plug->path), -1);
+		version = g_markup_escape_text(plug->info->version, -1);
+		summary = g_markup_escape_text(_(plug->info->summary), -1);
+
+		desc = g_strdup_printf("<b>%s</b> %s\n%s", name,
+				       version,
+				       summary);
+		g_free(name);
+		g_free(version);
+		g_free(summary);
+
 		gtk_list_store_set(ls, &iter,
 				   0, gaim_plugin_is_loaded(plug),
 				   1, desc,
