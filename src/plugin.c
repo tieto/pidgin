@@ -261,9 +261,7 @@ gaim_plugin_probe(const char *filename)
 		if (plugin->handle == NULL)
 		{
 			const char *error = g_module_error();
-			if (error == NULL)
-				error = "Unknown error";
-			else if (gaim_str_has_prefix(error, filename))
+			if (error != NULL && gaim_str_has_prefix(error, filename))
 			{
 				error = error + strlen(filename);
 
@@ -273,16 +271,20 @@ gaim_plugin_probe(const char *filename)
 					error++;
 				if (*error == ' ')
 					error++;
-
-				/* This shouldn't ever be necessary. */
-				if (!*error)
-					error = "Unknown error";
 			}
-			plugin->error = g_strdup(error);
 
-			gaim_debug_error("plugins", "%s is unloadable: %s\n",
-							 plugin->path, plugin->error);
-
+			if (error == NULL || !*error)
+			{
+				plugin->error = g_strdup(_("Unknown error"));
+				gaim_debug_error("plugins", "%s is unloadable: Unknown error\n",
+						 plugin->path);
+			}
+			else
+			{
+				plugin->error = g_strdup(error);
+				gaim_debug_error("plugins", "%s is unloadable: %s\n",
+						 plugin->path, plugin->error);
+			}
 #if GLIB_CHECK_VERSION(2,3,3)
 			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
 #else
@@ -357,9 +359,6 @@ gaim_plugin_probe(const char *filename)
 	/* Really old plugins. */
 	if (plugin->info->magic != GAIM_PLUGIN_MAGIC)
 	{
-		gaim_debug_error("plugins", "%s is unloadable: plugin magic mismatch %d (need %d)\n",
-						 plugin->path, plugin->info->magic, GAIM_PLUGIN_MAGIC);
-
 		if (plugin->info->magic >= 2 && plugin->info->magic <= 4)
 		{
 			struct _GaimPluginInfo2
@@ -418,10 +417,17 @@ gaim_plugin_probe(const char *filename)
 			if (info2->api_version >= 4)
 				plugin->info->actions    = info2->actions;
 
+
+			plugin->error = g_strdup_printf(_("Plugin magic mismatch %d (need %d)"),
+							 plugin->info->magic, GAIM_PLUGIN_MAGIC);
+			gaim_debug_error("plugins", "%s is unloadable: Plugin magic mismatch %d (need %d)\n",
+					  plugin->path, plugin->info->magic, GAIM_PLUGIN_MAGIC);
 			plugin->unloadable = TRUE;
 			return plugin;
 		}
 
+		gaim_debug_error("plugins", "%s is unloadable: Plugin magic mismatch %d (need %d)\n",
+				 plugin->path, plugin->info->magic, GAIM_PLUGIN_MAGIC);
 		gaim_plugin_destroy(plugin);
 		return NULL;
 	}
@@ -429,10 +435,12 @@ gaim_plugin_probe(const char *filename)
 	if (plugin->info->major_version != GAIM_MAJOR_VERSION ||
 			plugin->info->minor_version > GAIM_MINOR_VERSION)
 	{
-		plugin->error = g_strdup_printf("ABI version mismatch %d.%d.x (need %d.%d.x)",
+		plugin->error = g_strdup_printf(_("ABI version mismatch %d.%d.x (need %d.%d.x)"),
 						 plugin->info->major_version, plugin->info->minor_version,
 						 GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION);
-		gaim_debug_error("plugins", "%s is unloadable: %s\n", plugin->path, plugin->error);
+		gaim_debug_error("plugins", "%s is unloadable: ABI version mismatch %d.%d.x (need %d.%d.x)\n",
+				 plugin->path, plugin->info->major_version, plugin->info->minor_version,
+				 GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION);
 		plugin->unloadable = TRUE;
 		return plugin;
 	}
@@ -443,8 +451,9 @@ gaim_plugin_probe(const char *filename)
 		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
 		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL)))
 	{
-		plugin->error = g_strdup("Does not implement all required functions");
-		gaim_debug_error("plugins", "%s is unloadable: %s\n", plugin->path, plugin->error);
+		plugin->error = g_strdup(_("Plugin does not implement all required functions"));
+		gaim_debug_error("plugins", "%s is unloadable: Plugin does not implement all required functions\n",
+				 plugin->path);
 		plugin->unloadable = TRUE;
 		return plugin;
 	}
