@@ -33,6 +33,11 @@
 #include <sys/ioctl.h>
 #endif
 
+/* Solaris */
+#if defined (__SVR4) && defined (__sun)
+#include <sys/sockio.h>
+#endif
+
 #include "debug.h"
 #include "account.h"
 #include "dnssrv.h"
