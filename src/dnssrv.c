@@ -234,7 +234,9 @@ static gpointer res_thread(gpointer data) {
 
 	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
-		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. Error = %d\n", (int) ds);
+		gchar *msg = g_win32_error_message(ds);
+		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. %s (%lu).\n", msg, ds);
+		g_free(msg);
 	} else {
 		PDNS_RECORD dr_tmp;
 		GSList *lst = NULL;
@@ -265,7 +267,8 @@ static gpointer res_thread(gpointer data) {
 	/* back to main thread */
 	g_idle_add(res_main_thread_cb, rdata);
 
-	return 0;
+	g_thread_exit(NULL);
+	return NULL;
 }
 
 #endif
