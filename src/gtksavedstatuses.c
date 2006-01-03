@@ -783,14 +783,14 @@ create_status_type_menu(GaimStatusPrimitive type)
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
-	for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+	for (i = GAIM_STATUS_UNSET + 1; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
 	{
 		item = gtk_menu_item_new_with_label(gaim_primitive_get_name_from_type(i));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
 	}
 
-	gtk_menu_set_active(GTK_MENU(menu), type);
+	gtk_menu_set_active(GTK_MENU(menu), type - (GAIM_STATUS_UNSET + 1));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 	gtk_widget_show(menu);
 
