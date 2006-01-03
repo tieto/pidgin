@@ -367,6 +367,7 @@ static void
 docklet_menu() {
 	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
+	GList *popular_statuses, *cur;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
@@ -406,6 +407,18 @@ docklet_menu() {
 
 	gaim_new_item_from_stock(menu, _("Custom Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Saved Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
+
+	gaim_separator(menu);
+
+	popular_statuses = gaim_savedstatuses_get_popular(6);
+	for (cur = popular_statuses; cur != NULL; cur = cur->next)
+	{
+		GaimSavedStatus *saved_status = cur->data;
+		gaim_new_item_from_stock(menu,
+			gaim_savedstatus_get_title(saved_status),
+			GAIM_STOCK_ICON_AWAY, NULL /* TODO */, NULL, 0, 0, NULL);
+	}
+	g_list_free(popular_statuses);
 
 	gaim_separator(menu);
 

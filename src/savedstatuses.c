@@ -60,6 +60,8 @@ struct _GaimSavedStatus
 
 	time_t lastused;
 
+	unsigned int usage_count;
+
 	GList *substatuses;      /**< A list of GaimSavedStatusSub's. */
 };
 
@@ -75,6 +77,7 @@ struct _GaimSavedStatusSub
 };
 
 static GList      *saved_statuses = NULL;
+static GList      *popular_statuses = NULL;
 static guint       save_timer = 0;
 static gboolean    statuses_loaded = FALSE;
 
@@ -272,6 +275,9 @@ status_to_xmlnode(GaimSavedStatus *status)
 	snprintf(buf, sizeof(buf), "%lu", status->lastused);
 	xmlnode_set_attrib(node, "lastused", buf);
 
+	snprintf(buf, sizeof(buf), "%u", status->usage_count);
+	xmlnode_set_attrib(node, "usage_count", buf);
+
 	child = xmlnode_new_child(node, "state");
 	xmlnode_insert_data(child, gaim_primitive_get_id_from_type(status->type), -1);
 
@@ -457,6 +463,10 @@ parse_status(xmlnode *status)
 	/* Read the last used time */
 	attrib = xmlnode_get_attrib(status, "lastused");
 	ret->lastused = (attrib != NULL ? atol(attrib) : 0);
+
+	/* Read the usage count */
+	attrib = xmlnode_get_attrib(status, "usage_count");
+	ret->usage_count = (attrib != NULL ? atol(attrib) : 0);
 
 	/* Read the primitive status type */
 	node = xmlnode_get_child(status, "state");
@@ -665,6 +675,50 @@ gaim_savedstatuses_get_all(void)
 	return saved_statuses;
 }
 
+/**
+ * A magic number is calcuated for each status, and then the
+ * statuses are ordered by the magic number.  The magic number
+ * is the date the status was last used offset by one day for
+ * each time the status has been used (but only by 10 days at
+ * the most).
+ *
+ * The goal is to have recently used statuses at the top of
+ * the list, but to also keep frequently used statuses near
+ * the top.
+ */
+static gint
+popular_statuses_compare_func(gconstpointer a, gconstpointer b)
+{
+	const GaimSavedStatus *saved_status_a = a;
+	const GaimSavedStatus *saved_status_b = b;
+	time_t time_a = saved_status_a->lastused +
+						(MIN(saved_status_a->usage_count, 10) * 86400);
+	time_t time_b = saved_status_b->lastused +
+						(MIN(saved_status_b->usage_count, 10) * 86400);
+	if (time_a > time_b)
+		return -1;
+	if (time_a < time_b)
+		return 1;
+	return 0;
+}
+
+GList *
+gaim_savedstatuses_get_popular(unsigned int how_many)
+{
+	GList *truncated = NULL;
+	GList *cur;
+	int i;
+
+	/* Copy 'how_many' elements to a new list */
+	for (i = 0, cur = popular_statuses; (i < how_many) && (cur != NULL); i++)
+	{
+		truncated = g_list_append(truncated, cur->data);
+		cur = cur->next;
+	}
+
+	return truncated;
+}
+
 GaimSavedStatus *
 gaim_savedstatus_get_current()
 {
@@ -746,6 +800,32 @@ const char *
 gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 {
 	g_return_val_if_fail(saved_status != NULL, NULL);
+
+	/* If transient then make up a title on the fly */
+	if (saved_status->title == NULL)
+	{
+		const char *message = gaim_savedstatus_get_message(saved_status);
+
+		if (message == NULL)
+		{
+			GaimStatusPrimitive primitive;
+			primitive = gaim_savedstatus_get_type(saved_status);
+			return gaim_primitive_get_id_from_type(primitive);
+		}
+		else
+		{
+			static char buf[64];
+			strncpy(buf, message, sizeof(buf));
+			buf[sizeof(buf) - 1] = '\0';
+			if ((strlen(message) + 1) > sizeof(buf))
+			{
+				/* Truncate and ellipsize */
+				char *tmp = g_utf8_find_prev_char(buf, &buf[sizeof(buf) - 4]);
+				strcpy(tmp, "...");
+			}
+			return buf;
+		}
+	}
 
 	return saved_status->title;
 }
@@ -840,6 +920,14 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 	saved_status->lastused = time(NULL);
 	gaim_prefs_set_int("/core/savedstatus/current",
 					   gaim_savedstatus_get_creation_time(saved_status));
+
+	/* Update our list of popular statuses */
+	saved_status->usage_count++;
+	g_list_free(popular_statuses);
+	popular_statuses = g_list_copy(saved_statuses);
+	popular_statuses = g_list_sort(popular_statuses,
+		popular_statuses_compare_func);
+
 }
 
 void

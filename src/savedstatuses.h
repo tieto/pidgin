@@ -152,6 +152,21 @@ gboolean gaim_savedstatus_delete(const char *title);
 const GList *gaim_savedstatuses_get_all(void);
 
 /**
+ * Returns the n most popular saved statuses.  "Popularity" is
+ * determined by when the last time a saved_status was used and
+ * how many times it has been used.
+ *
+ * @param how_many The maximum number of saved statuses
+ *                 to return, or '0' to get all saved
+ *                 statuses sorted by popularity.
+ * @return A linked list containing at most how_many
+ *         GaimSavedStatuses.  This list should be
+ *         g_list_free'd by the caller (but the
+ *         GaimSavedStatuses must not be free'd).
+ */
+GList *gaim_savedstatuses_get_popular(unsigned int how_many);
+
+/**
  * Returns the currently selected saved status.
  *
  * @return A pointer to the in-use GaimSavedStatus.
