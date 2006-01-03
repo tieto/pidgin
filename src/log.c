@@ -493,6 +493,7 @@ void gaim_log_init(void)
 	gaim_prefs_add_bool("/core/logging/log_system", FALSE);
 
 	gaim_prefs_add_string("/core/logging/format", "txt");
+	gaim_prefs_add_bool("/core/logging/include_date_timestamps", FALSE);
 
 	html_logger = gaim_log_logger_new("html", _("HTML"), 8,
 									  NULL,
@@ -803,7 +804,11 @@ static void xml_logger_write(GaimLog *log,
 	if(!data->file)
 		return;
 
-	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+	if (gaim_prefs_get_bool("/core/logging/include_date_timestamps"))
+		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
+	else
+		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+
 	gaim_markup_html_to_xhtml(message, &xhtml, NULL);
 	if (from)
 		fprintf(log->logger_data, "<message %s %s from='%s' time='%s'>%s</message>\n",
@@ -893,7 +898,11 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
 		fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
 	} else {
-		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+		if (gaim_prefs_get_bool("/core/logging/include_date_timestamps"))
+			strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
+		else
+			strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+
 		if (type & GAIM_MESSAGE_SYSTEM)
 			fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
 		else if (type & GAIM_MESSAGE_WHISPER)
@@ -1012,7 +1021,11 @@ static void txt_logger_write(GaimLog *log,
  		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
  		fprintf(data->file, "---- %s @ %s ----\n", stripped, date);
  	} else {
- 		strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+		if (gaim_prefs_get_bool("/core/logging/include_date_timestamps"))
+			strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&time));
+		else
+ 			strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
+
  		if (type & GAIM_MESSAGE_SEND ||
  			type & GAIM_MESSAGE_RECV) {
  			if (type & GAIM_MESSAGE_AUTO_RESP) {

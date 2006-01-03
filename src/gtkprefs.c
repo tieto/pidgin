@@ -1296,6 +1296,9 @@ logging_page()
 	gaim_gtk_prefs_checkbox(_("Log all _status changes to system log"),
 				  "/core/logging/log_system", vbox);
 
+	gaim_gtk_prefs_checkbox(_("Include _date in timestamps"),
+				  "/core/logging/include_date_timestamps", vbox);
+
 	gtk_widget_show_all(ret);
 
 	return ret;
