@@ -23,14 +23,16 @@
 #ifndef _GAIM_DNSSRV_H
 #define _GAIM_DNSSRV_H
 
-struct srv_response {
+typedef struct _GaimSrvResponse GaimSrvResponse;
+
+struct _GaimSrvResponse {
 	char hostname[256];
 	int port;
 	int weight;
 	int pref;
 };
 
-typedef void (*SRVCallback)(struct srv_response *resp, int results, gpointer data);
+typedef void (*GaimSRVCallback)(GaimSrvResponse *resp, int results, gpointer data);
 
 /**
  * Queries an SRV record.
@@ -41,6 +43,6 @@ typedef void (*SRVCallback)(struct srv_response *resp, int results, gpointer dat
  * @param cb A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
  */
-void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, SRVCallback cb, gpointer extradata);
+void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSRVCallback cb, gpointer extradata);
 
 #endif /* _GAIM_DNSSRV_H */

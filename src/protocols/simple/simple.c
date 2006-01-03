@@ -1194,7 +1194,7 @@ static gboolean simple_ht_equals_nick(const char *nick1, const char *nick2) {
 	return (gaim_utf8_strcasecmp(nick1, nick2) == 0);
 }
 
-static void srvresolved(struct srv_response *resp, int results, gpointer data) {
+static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 
 	gchar *hostname;

@@ -69,14 +69,14 @@ const char *
 gaim_network_get_public_ip(void)
 {
 	const char *ip;
-	struct stun_nattype *stun;
+	GaimStunNatDiscovery *stun;
 
 	ip = gaim_prefs_get_string("/core/network/public_ip");
 
 	if (ip == NULL || *ip == '\0') {
 		/* Check if STUN discovery was already done */
 		stun = gaim_stun_discover(NULL);
-		if(stun && stun->status>1)
+		if (stun != NULL && stun->status == GAIM_STUN_STATUS_DISCOVERED)
 			return stun->publicip;
 		return NULL;
 	}	
@@ -142,9 +142,9 @@ gaim_network_get_local_system_ip(int fd)
 const char *
 gaim_network_get_my_ip(int fd)
 {
-  const char *ip = NULL;
-  GaimUPnPControlInfo* controlInfo = NULL;
-	struct stun_nattype *stun;
+	const char *ip = NULL;
+	GaimUPnPControlInfo* controlInfo = NULL;
+	GaimStunNatDiscovery *stun;
 
 	/* Check if the user specified an IP manually */
 	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
@@ -156,21 +156,22 @@ gaim_network_get_my_ip(int fd)
 	if (ip == NULL || *ip == '\0') {
 		/* Check if STUN discovery was already done */
 		stun = gaim_stun_discover(NULL);
-		if(stun && stun->status>1)
+		if (stun != NULL && stun->status == GAIM_STUN_STATUS_DISCOVERED)
 			return stun->publicip;
 	}	
 
 
-  /* attempt to get the ip from a NAT device */
-  if ((controlInfo = gaim_upnp_discover()) != NULL) {
-    ip = gaim_upnp_get_public_ip(controlInfo);
-    g_free(controlInfo->controlURL);
-    g_free(controlInfo->serviceType);
-    g_free(controlInfo);
-    if (ip != NULL) {
-      return ip;
-    }
-  }
+	/* attempt to get the ip from a NAT device */
+	if ((controlInfo = gaim_upnp_discover()) != NULL) {
+		ip = gaim_upnp_get_public_ip(controlInfo);
+
+		g_free(controlInfo->controlURL);
+		g_free(controlInfo->serviceType);
+		g_free(controlInfo);
+
+		if (ip != NULL)
+		  return ip;
+	}
 
 	/* Just fetch the IP of the local system */
 	return gaim_network_get_local_system_ip(fd);

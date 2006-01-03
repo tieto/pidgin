@@ -407,7 +407,7 @@ static void jabber_login_connect(JabberStream *js, const char *server, int port)
 		gaim_connection_error(js->gc, _("Unable to create socket"));
 }
 
-static void srv_resolved_cb(struct srv_response *resp, int results, gpointer data)
+static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
 {
 	JabberStream *js = (JabberStream*)data;
 	int config_port = gaim_account_get_int(js->gc->account, "port", 0);

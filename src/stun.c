@@ -40,7 +40,24 @@
 #include "stun.h"
 #include "prefs.h"
 
-static struct stun_nattype nattype = {-1, 0, "\0"};
+struct stun_header {
+	short	type;
+	short	len;
+	int	transid[4];
+};
+
+struct stun_attrib {
+	short type;
+	short len;
+};
+
+struct stun_change {
+	struct stun_header hdr;
+	struct stun_attrib attrib;
+	char value[4];
+};
+
+static GaimStunNatDiscovery nattype = {-1, 0, "\0"};
 
 static GSList *callbacks = 0;
 static int fd = -1;
@@ -63,12 +80,14 @@ static void do_callbacks() {
 
 static gboolean timeoutfunc(void *blah) {
 	if(retry > 2) {
-		if(test == 2) nattype.type = 5;
+		if(test == 2)
+			nattype.type = GAIM_STUN_NAT_TYPE_SYMMETRIC;
+
 		/* remove input */
 		gaim_input_remove(incb);
 
 		/* set unknown */
-		nattype.status = 0;
+		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
 
 		/* callbacks */
 		do_callbacks();
@@ -131,8 +150,8 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 			tmp += sizeof(struct stun_attrib) + attrib->len;
 		}
 		gaim_debug_info("stun", "got public ip %s\n", nattype.publicip);
-		nattype.status = 2;
-		nattype.type = 1;
+		nattype.status = GAIM_STUN_STATUS_DISCOVERED;
+		nattype.type = GAIM_STUN_NAT_TYPE_UNKNOWN_NAT;
 
 		/* is it a NAT? */
 
@@ -152,7 +171,7 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 				if(sinptr->sin_addr.s_addr == in.s_addr) {
 					/* no NAT */
 					gaim_debug_info("stun", "no nat");
-					nattype.type = 0;
+					nattype.type = GAIM_STUN_NAT_TYPE_PUBLIC_IP;
 				}
 			}
 		}
@@ -166,7 +185,7 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 		do_callbacks();
 		gaim_input_remove(incb);
 		gaim_timeout_remove(timeout);
-		nattype.type = 2;
+		nattype.type = GAIM_STUN_NAT_TYPE_FULL_CONE;
 	}
 }
 
@@ -178,7 +197,7 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 	if(!hosts->data) return;
 
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		nattype.status = 0;
+		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
 		do_callbacks();
 		return;
 	}
@@ -190,7 +209,7 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 		addr.sin_port = htons(ntohs(addr.sin_port)+1);
 	}
 	if( ret < 0 ) {
-		nattype.status = 0;
+		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
 		do_callbacks();
 		return;
 	}
@@ -214,8 +233,8 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 	data.transid[2] = rand();
 	data.transid[3] = rand();
 
-	if( sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
-		nattype.status = 0;
+	if(sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
+		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
 		do_callbacks();
 		return;
 	}
@@ -225,7 +244,7 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
 }
 
-static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
+static void do_test1(GaimSrvResponse *resp, int results, gpointer sdata) {
 	const char *servername = sdata;
 	int port = 3478;
 
@@ -239,26 +258,31 @@ static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
 	g_free(resp);
 }
 
-struct stun_nattype *gaim_stun_discover(StunCallback cb) {
+GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb) {
 	const char *servername = gaim_prefs_get_string("/core/network/stun_server");
 
 	gaim_debug_info("stun", "using server %s\n", servername);
-	if(nattype.status == 1) { /* currently discovering */
-		if(cb) callbacks = g_slist_append(callbacks, cb);
+
+	if(nattype.status == GAIM_STUN_STATUS_DISCOVERING) {
+		if(cb)
+			callbacks = g_slist_append(callbacks, cb);
 		return NULL;
 	}
-	if(nattype.status != -1) { /* already discovered */
-		if(cb) cb(&nattype);
+
+	if(nattype.status != GAIM_STUN_STATUS_UNDISCOVERED) {
+		if(cb)
+			cb(&nattype);
 		return &nattype;
 	}
 
-	if(!servername || (strlen(servername)<2)) {
-		nattype.status = 0;
-		if(cb) cb(&nattype);
+	if(!servername || (strlen(servername) < 2)) {
+		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
+		if(cb)
+			cb(&nattype);
 		return &nattype;
 	}
 	callbacks = g_slist_append(callbacks, cb);
-	gaim_srv_resolve("stun","udp",servername, do_test1,
+	gaim_srv_resolve("stun", "udp", servername, do_test1,
 		(gpointer) servername);
 	return &nattype;
 }

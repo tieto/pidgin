@@ -58,7 +58,7 @@ static void (*MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 #endif
 
 struct resdata {
-	SRVCallback cb;
+	GaimSRVCallback cb;
 	gpointer extradata;
 #ifndef _WIN32
 	guint handle;
@@ -70,8 +70,8 @@ struct resdata {
 };
 
 static gint responsecompare(gconstpointer ar, gconstpointer br) {
-	struct srv_response *a = (struct srv_response*)ar;
-	struct srv_response *b = (struct srv_response*)br;
+	GaimSrvResponse *a = (GaimSrvResponse*)ar;
+	GaimSrvResponse *b = (GaimSrvResponse*)br;
 
 	if(a->pref == b->pref) {
 		if(a->weight == b->weight)
@@ -87,7 +87,7 @@ static gint responsecompare(gconstpointer ar, gconstpointer br) {
 #ifndef _WIN32
 static void resolve(int in, int out) {
 	GList *ret = NULL;
-	struct srv_response *srvres;
+	GaimSrvResponse *srvres;
 	queryans answer;
 	int size;
 	int qdcount;
@@ -142,7 +142,7 @@ static void resolve(int in, int out) {
 
 			cp += size;
 
-			srvres = g_new0(struct srv_response,1);
+			srvres = g_new0(GaimSrvResponse, 1);
 			strcpy(srvres->hostname, name);
 			srvres->pref = pref;
 			srvres->port = port;
@@ -156,7 +156,7 @@ static void resolve(int in, int out) {
 end:	size = g_list_length(ret);
 	write(out, &size, sizeof(int));
 	while(g_list_first(ret)) {
-		write(out, g_list_first(ret)->data, sizeof(struct srv_response));
+		write(out, g_list_first(ret)->data, sizeof(GaimSrvResponse));
 		g_free(g_list_first(ret)->data);
 		ret = g_list_remove(ret, g_list_first(ret)->data);
 	}
@@ -170,17 +170,17 @@ end:	size = g_list_length(ret);
 static void resolved(gpointer data, gint source, GaimInputCondition cond) {
 	int size;
 	struct resdata *rdata = (struct resdata*)data;
-	struct srv_response *res;
-	struct srv_response *tmp;
+	GaimSrvResponse *res;
+	GaimSrvResponse *tmp;
 	int i;
-	SRVCallback cb = rdata->cb;
+	GaimSRVCallback cb = rdata->cb;
 
 	read(source, &size, sizeof(int));
 	gaim_debug_info("srv","found %d SRV entries\n", size);
-	tmp = res = g_malloc0(sizeof(struct srv_response)*size);
+	tmp = res = g_new0(GaimSrvResponse, size);
 	i = size;
 	while(i) {
-		read(source, tmp++, sizeof(struct srv_response));
+		read(source, tmp++, sizeof(GaimSrvResponse));
 		i--;
 	}
 	cb(res, size, rdata->extradata);
@@ -193,7 +193,7 @@ static void resolved(gpointer data, gint source, GaimInputCondition cond) {
 /** The Jabber Server code was inspiration for parts of this. */
 
 static gboolean res_main_thread_cb(gpointer data) {
-	struct srv_response *srvres = NULL;
+	GaimSrvResponse *srvres = NULL;
 	int size = 0;
 	struct resdata *rdata = data;
 
@@ -201,14 +201,14 @@ static gboolean res_main_thread_cb(gpointer data) {
 		gaim_debug_error("srv", rdata->errmsg);
 		g_free(rdata->errmsg);
 	} else {
-		struct srv_response *srvres_tmp;
+		GaimSrvResponse *srvres_tmp;
 		GSList *lst = rdata->results;
 
 		size = g_slist_length(rdata->results);
 
-		srvres_tmp = srvres = g_malloc0(sizeof(struct srv_response) * size);
+		srvres_tmp = srvres = g_new0(GaimSrvResponse, size);
 		while (lst) {
-			memcpy(srvres_tmp++, lst->data, sizeof(struct srv_response));
+			memcpy(srvres_tmp++, lst->data, sizeof(GaimSrvResponse));
 			g_free(lst->data);
 			lst = g_slist_remove(lst, lst->data);
 		}
@@ -239,7 +239,7 @@ static gpointer res_thread(gpointer data) {
 		PDNS_RECORD dr_tmp;
 		GSList *lst = NULL;
 		DNS_SRV_DATA *srv_data;
-		struct srv_response *srvres;
+		GaimSrvResponse *srvres;
 
 		for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
 			/* Discard any incorrect entries. I'm not sure if this is necessary */
@@ -248,7 +248,7 @@ static gpointer res_thread(gpointer data) {
 			}
 
 			srv_data = &dr_tmp->Data.SRV;
-			srvres = g_new0(struct srv_response, 1);
+			srvres = g_new0(GaimSrvResponse, 1);
 			strncpy(srvres->hostname, srv_data->pNameTarget, 255);
 			srvres->hostname[255] = '\0';
 			srvres->pref = srv_data->wPriority;
@@ -270,7 +270,7 @@ static gpointer res_thread(gpointer data) {
 
 #endif
 
-void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, SRVCallback cb, gpointer extradata) {
+void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSRVCallback cb, gpointer extradata) {
 	char *query = g_strdup_printf("_%s._%s.%s",protocol, transport, domain);
 	struct resdata *rdata;
 #ifndef _WIN32

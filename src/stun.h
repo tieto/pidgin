@@ -30,55 +30,48 @@
 /**************************************************************************/
 /*@{*/
 
-struct stun_nattype {
-	gint status;	/* 0 - unknown (no STUN server reachable) */
-			/* 1 - discovering                        */
-			/* 2 - discovered                         */
+typedef struct _GaimStunNatDiscovery GaimStunNatDiscovery;
 
-	gint type;	/* 0 - public ip                          */
-			/* 1 - NAT (unknown type)                 */
-			/* 2 - full cone                          */
-			/* 3 - restricted cone                    */
-			/* 4 - port restricted cone               */
-			/* 5 - symmetric                          */
+typedef enum {
+	GAIM_STUN_STATUS_UNDISCOVERED = -1,
+	GAIM_STUN_STATUS_UNKNOWN, /* no STUN server reachable */
+	GAIM_STUN_STATUS_DISCOVERING,
+	GAIM_STUN_STATUS_DISCOVERED
+} GaimStunStatus;
 
+typedef enum {
+	GAIM_STUN_NAT_TYPE_PUBLIC_IP,
+	GAIM_STUN_NAT_TYPE_UNKNOWN_NAT,
+	GAIM_STUN_NAT_TYPE_FULL_CONE,
+	GAIM_STUN_NAT_TYPE_RESTRICTED_CONE,
+	GAIM_STUN_NAT_TYPE_PORT_RESTRICTED_CONE,
+	GAIM_STUN_NAT_TYPE_SYMMETRIC
+} GaimStunNatType;
+
+struct _GaimStunNatDiscovery {
+	GaimStunStatus status;
+	GaimStunNatType type;
 	char publicip[16];
 };
 
-struct stun_header {
-	short	type;
-	short	len;
-	int	transid[4];
-};
-
-struct stun_attrib {
-	short type;
-	short len;
-};
-
-struct stun_change {
-	struct stun_header hdr;
-	struct stun_attrib attrib;
-	char value[4];
-};
-
-typedef void (*StunCallback) (struct stun_nattype *);
+typedef void (*StunCallback) (GaimStunNatDiscovery *);
 
 /**
- * Starts a NAT discovery. It returns a struct stun_nattype if the discovery
+ * Starts a NAT discovery. It returns a GaimStunNatDiscovery if the discovery
  * is already done. Otherwise the callback is called when the discovery is over
  * and NULL is returned.
  *
- * @param cb A callback
+ * @param cb The callback to call when the STUN discovery is finished if the
+ *           discovery would block.  If the discovery is done, this is NOT
+ *           called.
  *
- * @return a struct stun_nattype which includes the public IP and the type
+ * @return a GaimStunNatDiscovery which includes the public IP and the type
  *         of NAT or NULL is discovery would block
  */
-struct stun_nattype *gaim_stun_discover(StunCallback cb);
+GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb);
 
 void gaim_stun_init(void);
 
 /*@}*/
 
 #endif /* _GAIM_STUN_H_ */
-
