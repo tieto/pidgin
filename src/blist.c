@@ -427,8 +427,7 @@ parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 	}
 
 	g_free(name);
-	if (alias)
-		g_free(alias);
+	g_free(alias);
 }
 
 static void
@@ -503,8 +502,7 @@ parse_chat(GaimGroup *group, xmlnode *cnode)
 		parse_setting((GaimBlistNode*)chat, x);
 	}
 
-	if (alias)
-		g_free(alias);
+	g_free(alias);
 }
 
 static void
