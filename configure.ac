@@ -25,7 +25,7 @@ darwin*)
 	AC_MSG_CHECKING([for fink])
 	if test -d /sw; then
 		AC_MSG_RESULT([found, adding /sw to search paths])
-		CFLAGS="$CFLAGS -I/sw/include"
+		CPPFLAGS="$CPPFLAGS -I/sw/include"
 		LDFLAGS="$LDFLAGS -L/sw/lib"
 	else
 		AC_MSG_RESULT([not found])
