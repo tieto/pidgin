@@ -1257,7 +1257,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 		sip->listenport = ntohs(addr.sin_port);
 		sip->listenfd = sip->fd;
 
-		gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
+		sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
 		sip->serveraddr.sin_family = AF_INET;
 		sip->serveraddr.sin_port = htons(port);
 
