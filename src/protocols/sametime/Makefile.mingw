@@ -109,15 +109,15 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.dll.a:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.dll.a
+$(GAIM_TOP)/src/gaim.lib:
+	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.dll.a
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
@@ -126,4 +126,4 @@ $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.dll.a
 clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).dll.a
+	rm -rf $(TARGET).lib
