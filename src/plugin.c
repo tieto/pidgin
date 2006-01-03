@@ -238,13 +238,13 @@ gaim_plugin_probe(const char *filename)
 
 	plugin = gaim_plugin_new(has_file_extension(filename, G_MODULE_SUFFIX), filename);
 
+	if (plugin->native_plugin) {
+		const char *error;
 #ifdef _WIN32
 		/* Suppress error popups for failing to load plugins */
 		UINT old_error_mode = SetErrorMode(SEM_FAILCRITICALERRORS);
 #endif
 
-	if (plugin->native_plugin) {
-		const char *error;
 		/*
 		 * We pass G_MODULE_BIND_LOCAL here to prevent symbols from
 		 * plugins being added to the global name space.
@@ -291,6 +291,10 @@ gaim_plugin_probe(const char *filename)
 
 			if (plugin->handle == NULL)
 			{
+#ifdef _WIN32
+				/* Restore the original error mode */
+				SetErrorMode(old_error_mode);
+#endif
 				gaim_plugin_destroy(plugin);
 				return NULL;
 			}
@@ -319,10 +323,19 @@ gaim_plugin_probe(const char *filename)
 								 plugin->path, error);
 			plugin->handle = NULL;
 
+#ifdef _WIN32
+			/* Restore the original error mode */
+			SetErrorMode(old_error_mode);
+#endif
 			gaim_plugin_destroy(plugin);
 			return NULL;
 		}
 		gaim_init_plugin = unpunned;
+
+#ifdef _WIN32
+		/* Restore the original error mode */
+		SetErrorMode(old_error_mode);
+#endif
 	}
 	else {
 		loader = find_loader_for_plugin(plugin);
@@ -334,11 +347,6 @@ gaim_plugin_probe(const char *filename)
 
 		gaim_init_plugin = GAIM_PLUGIN_LOADER_INFO(loader)->probe;
 	}
-
-#ifdef _WIN32
-		/* Restore the original error mode */
-		SetErrorMode(old_error_mode);
-#endif
 
 	if (!gaim_init_plugin(plugin) || plugin->info == NULL)
 	{
