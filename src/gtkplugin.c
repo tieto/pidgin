@@ -130,7 +130,9 @@ update_plugin_list(void *data)
 		gtk_list_store_set(ls, &iter,
 				   0, gaim_plugin_is_loaded(plug),
 				   1, desc,
-				   2, plug, -1);
+				   2, plug,
+				   3, gaim_plugin_is_unloadable(plug),
+				   -1);
 		g_free(desc);
 	}
 }
@@ -159,13 +161,18 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gchar buf[1024];
 	gchar *name = NULL, *description = NULL;
 	GtkWidget *dialog = NULL;
-
-	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
-	gdk_window_set_cursor(plugin_dialog->window, wait);
-	gdk_cursor_unref(wait);
+	GdkCursor *wait;
 
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, 2, &plug, -1);
+
+	/* Apparently, GTK+ won't honor the sensitive flag on cell renderers for booleans. */
+	if (gaim_plugin_is_unloadable(plug))
+		return;
+
+	wait = gdk_cursor_new (GDK_WATCH);
+	gdk_window_set_cursor(plugin_dialog->window, wait);
+	gdk_cursor_unref(wait);
 
 	if (!gaim_plugin_is_loaded(plug))
 		gaim_plugin_load(plug);
@@ -272,6 +279,16 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		     "<span weight=\"bold\">File name:</span>\t%s"),
 		   pdesc ? pdesc : "", pdesc ? "\n\n" : "",
 		   pauth ? pauth : "", pweb ? pweb : "", plug->path);
+
+	if (plug->error != NULL)
+	{
+		char *tmp = g_strdup_printf(
+			_("%s\n"
+			  "<span foreground=\"#ff0000\" weight=\"bold\">Error: %s</span>"),
+			buf, plug->error);
+		g_free(buf);
+		buf = tmp;
+	}
 
 	gtk_widget_set_sensitive(pref_button,
 		gaim_plugin_is_loaded(plug)
@@ -399,7 +416,7 @@ void gaim_gtk_plugin_dialog_show()
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), sw, TRUE, TRUE, 0);
 
-	ls = gtk_list_store_new (3, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER);
+	ls = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
 					     1, GTK_SORT_ASCENDING);
 
@@ -423,9 +440,13 @@ void gaim_gtk_plugin_dialog_show()
 			  G_CALLBACK(plugin_load), ls);
 
 	rendt = gtk_cell_renderer_text_new();
+	g_object_set(rendt,
+		     "foreground", "#c0c0c0",
+		     NULL);
 	col = gtk_tree_view_column_new_with_attributes (_("Name"),
 							rendt,
 							"markup", 1,
+							"foreground-set", 3,
 							NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand (col, TRUE);

@@ -28,6 +28,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "signals.h"
+#include "util.h"
 #include "version.h"
 
 typedef struct
@@ -215,11 +216,24 @@ gaim_plugin_probe(const char *filename)
 	g_free(basename);
 	if (plugin != NULL)
 	{
-		if (strcmp(filename, plugin->path))
-			gaim_debug_info("plugins", "Not loading %s."
+		if (!strcmp(filename, plugin->path))
+			return plugin;
+		else if (!gaim_plugin_is_unloadable(plugin))
+		{
+			gaim_debug_info("plugins", "Not loading %s. "
 							"Another plugin with the same name (%s) has already been loaded.\n",
 							filename, plugin->path);
-		return plugin;
+			return plugin;
+		}
+		else
+		{
+			/* The old plugin was a different file and it was unloadable.
+			 * There's no guarantee that this new file with the same name
+			 * will be loadable, but unless it fails in one of the silent
+			 * ways and the first one didn't, it's not any worse.  The user
+			 * will still see a greyed-out plugin, which is what we want. */
+			gaim_plugin_destroy(plugin);
+		}
 	}
 
 	plugin = gaim_plugin_new(has_file_extension(filename, G_MODULE_SUFFIX), filename);
@@ -243,20 +257,50 @@ gaim_plugin_probe(const char *filename)
 		plugin->handle = g_module_open(filename, 0);
 #endif
 
-#ifdef _WIN32
-		/* Restore the original error mode */
-		SetErrorMode(old_error_mode);
-#endif
-
 		if (plugin->handle == NULL)
 		{
-			error = g_module_error();
+			const char *error = g_module_error();
+			if (error == NULL)
+				error = "Unknown error";
+			else if (gaim_str_has_prefix(error, filename))
+			{
+				error = error + strlen(filename);
+
+				/* These are just so we don't crash.  If we
+				 * got this far, they should always be true. */
+				if (*error == ':')
+					error++;
+				if (*error == ' ')
+					error++;
+
+				/* This shouldn't ever be necessary. */
+				if (!*error)
+					error = "Unknown error";
+			}
+			plugin->error = g_strdup(error);
+
 			gaim_debug_error("plugins", "%s is unloadable: %s\n",
-							 plugin->path, error ? error : "Unknown error.");
+							 plugin->path, plugin->error);
 
-			gaim_plugin_destroy(plugin);
+#if GLIB_CHECK_VERSION(2,3,3)
+			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+#else
+			plugin->handle = g_module_open(filename, G_MODULE_BIND_LAZY);
+#endif
 
-			return NULL;
+			if (plugin->handle == NULL)
+			{
+				gaim_plugin_destroy(plugin);
+				return NULL;
+			}
+			else
+			{
+				/* We were able to load the plugin with lazy symbol binding.
+				 * This means we're missing some symbol.  Mark it as
+				 * unloadable and keep going so we get the info to display
+				 * to the user so they know to rebuild this plugin. */
+				plugin->unloadable = TRUE;
+			}
 		}
 
 		if (!g_module_symbol(plugin->handle, "gaim_init_plugin",
@@ -275,7 +319,6 @@ gaim_plugin_probe(const char *filename)
 			plugin->handle = NULL;
 
 			gaim_plugin_destroy(plugin);
-
 			return NULL;
 		}
 		gaim_init_plugin = unpunned;
@@ -285,18 +328,20 @@ gaim_plugin_probe(const char *filename)
 
 		if (loader == NULL) {
 			gaim_plugin_destroy(plugin);
-
 			return NULL;
 		}
 
 		gaim_init_plugin = GAIM_PLUGIN_LOADER_INFO(loader)->probe;
 	}
 
-	plugin->error = NULL;
+#ifdef _WIN32
+		/* Restore the original error mode */
+		SetErrorMode(old_error_mode);
+#endif
 
-	if (!gaim_init_plugin(plugin) || plugin->info == NULL) {
+	if (!gaim_init_plugin(plugin) || plugin->info == NULL)
+	{
 		gaim_plugin_destroy(plugin);
-
 		return NULL;
 	}
 
@@ -304,11 +349,12 @@ gaim_plugin_probe(const char *filename)
 			plugin->info->major_version != GAIM_MAJOR_VERSION ||
 			plugin->info->minor_version > GAIM_MINOR_VERSION)
 	{
-		gaim_debug_error("plugins", "%s is unloadable: API version mismatch %d.%d.x (need %d.%d.x)\n",
-						 plugin->path, plugin->info->major_version, plugin->info->minor_version,
+		plugin->error = g_strdup_printf("ABI version mismatch %d.%d.x (need %d.%d.x)",
+						 plugin->info->major_version, plugin->info->minor_version,
 						 GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION);
-		gaim_plugin_destroy(plugin);
-		return NULL;
+		gaim_debug_error("plugins", "%s is unloadable: %s\n", plugin->path, plugin->error);
+		plugin->unloadable = TRUE;
+		return plugin;
 	}
 
 	/* If plugin is a PRPL, make sure it implements the required functions */
@@ -317,10 +363,10 @@ gaim_plugin_probe(const char *filename)
 		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
 		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL)))
 	{
-		gaim_debug_error("plugins", "%s is unloadable: Does not implement all required functions\n",
-						 plugin->path);
-		gaim_plugin_destroy(plugin);
-		return NULL;
+		plugin->error = g_strdup("Does not implement all required functions");
+		gaim_debug_error("plugins", "%s is unloadable: %s\n", plugin->path, plugin->error);
+		plugin->unloadable = TRUE;
+		return plugin;
 	}
 
 	return plugin;
@@ -346,10 +392,14 @@ gaim_plugin_load(GaimPlugin *plugin)
 	GList *l;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
-	g_return_val_if_fail(plugin->error == NULL, FALSE);
 
 	if (gaim_plugin_is_loaded(plugin))
 		return TRUE;
+
+	if (gaim_plugin_is_unloadable(plugin))
+		return FALSE;
+
+	g_return_val_if_fail(plugin->error == NULL, FALSE);
 
 	/*
 	 * Go through the list of the plugin's dependencies.
@@ -655,6 +705,14 @@ gaim_plugin_is_loaded(const GaimPlugin *plugin)
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	return plugin->loaded;
+}
+
+gboolean
+gaim_plugin_is_unloadable(const GaimPlugin *plugin)
+{
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	return plugin->unloadable;
 }
 
 const gchar *

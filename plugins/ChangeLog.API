@@ -209,6 +209,8 @@ version 2.0.0:
 	* stock buttons GAIM_STOCK_IM, GAIM_STOCK_INFO
 	* gaim_conversation_present()
 	* GaimConversationUiOps->present(GaimConversation *)
+	* GaimPlugin.unloadable
+	* gaim_plugin_is_unloadable()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

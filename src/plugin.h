@@ -125,6 +125,7 @@ struct _GaimPlugin
 	char *error;
 	void *ipc_data;                        /**< IPC data.                 */
 	void *extra;                           /**< Plugin-specific data.     */
+	gboolean unloadable;                   /**< Unloadable                */
 };
 
 #define GAIM_PLUGIN_LOADER_INFO(plugin) \
@@ -285,9 +286,23 @@ void gaim_plugin_destroy(GaimPlugin *plugin);
  *
  * @param plugin The plugin.
  *
- * @return TRUE if loaded, or FALSE otherwise.
+ * @return @c TRUE if loaded, or @c FALSE otherwise.
  */
 gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
+
+/**
+ * Returns whether or not a plugin is unloadable.
+ *
+ * If this returns @c TRUE, the plugin is guaranteed to not
+ * be loadable. However, a return value of @c FALSE does not
+ * guarantee the plugin is loadable.
+ *
+ * @param plugin The plugin.
+ *
+ * @return @c TRUE if the plugin is known to be unloadable,\
+ *         @c FALSE otherwise
+ */
+gboolean gaim_plugin_is_unloadable(const GaimPlugin *plugin);
 
 /**
  * Returns a plugin's id.
