@@ -1966,10 +1966,6 @@ void gaim_gtk_prefs_update_old() {
 	{
 		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "away");
 	}
-	else
-	{
-		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "never");
-	}
 	gaim_prefs_remove("/gaim/gtk/away/queue_messages");
 	gaim_prefs_remove("/gaim/gtk/away");
 	gaim_prefs_remove("/plugins/gtk/docklet/queue_messages");
