@@ -2643,17 +2643,24 @@ static void oscar_xfer_ack_send(GaimXfer *xfer, const guchar *buffer, size_t siz
  * to this user.
  */
 static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
-	gboolean can_receive = FALSE;
 	OscarData *od = gc->proto_data;
 
 	if (od != NULL) {
 		aim_userinfo_t *userinfo;
 		userinfo = aim_locate_finduserinfo(od->sess, who);
-		if (userinfo && userinfo->capabilities & AIM_CAPS_SENDFILE)
-			can_receive = TRUE;
+
+		/*
+		 * Don't allowing sending a file to a user that does not support
+		 * file transfer, and don't allow sending to ourselves.
+		 */
+		if (userinfo && (userinfo->capabilities & AIM_CAPS_SENDFILE) &&
+			strcmp(who, gc->display_name))
+		{
+			return TRUE;
+		}
 	}
 
-	return can_receive;
+	return FALSE;
 }
 
 static GaimXfer*
