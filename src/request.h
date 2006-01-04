@@ -1347,7 +1347,7 @@ void gaim_request_close_with_handle(void *handle);
 								   cancel_cb) \
 	gaim_request_action((handle), (title), (primary), (secondary), \
 						(default_action), (user_data), 2, \
-						_("Accept"), (accept_cb), _("Cancel"), (cancel_cb))
+						_("_Accept"), (accept_cb), _("Cancel"), (cancel_cb))
 
 /**
  * Displays a file selector request dialog.  Returns the selected filename into
