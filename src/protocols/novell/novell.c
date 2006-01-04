@@ -1098,7 +1098,7 @@ _user_agent_string()
 		sysname = "Windows";
 	}
 
-	return g_strdup_printf("Gaim/%s (%s; %d.%d)", VERSION, sysname,
+	return g_strdup_printf("Gaim/%s (%s; %ld.%ld)", VERSION, sysname,
 						   os_info.dwMajorVersion, os_info.dwMinorVersion);
 
 #endif
