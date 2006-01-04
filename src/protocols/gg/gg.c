@@ -896,7 +896,7 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin,
 			break;
 		case GG_STATUS_BUSY:
 		case GG_STATUS_BUSY_DESCR:
-			st = "busy";
+			st = "away";
 			break;
 		case GG_STATUS_BLOCKED:
 			/* user is blocking us.... */
@@ -1441,7 +1441,7 @@ static GList *ggp_status_types(GaimAccount *account)
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE,
+			GAIM_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
