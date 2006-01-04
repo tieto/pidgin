@@ -2792,7 +2792,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 	}
 
 	gaim_signal_emit(gaim_gtk_blist_get_handle(),
-			 "drawing-tooltip", node, str);
+			 "drawing-tooltip", node, str, full);
 
 	return g_string_free(str, FALSE);
 }
@@ -5051,9 +5051,10 @@ void gaim_gtk_blist_init(void)
 						 GAIM_SUBTYPE_BLIST));
 
 	gaim_signal_register(gtk_blist_handle, "drawing-tooltip",
-						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
-						 gaim_value_new_outgoing(GAIM_TYPE_BOXED, "GString *"));
+						 gaim_value_new_outgoing(GAIM_TYPE_BOXED, "GString *"),
+						 gaim_value_new(GAIM_TYPE_BOOLEAN));
 
 
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, GAIM_CALLBACK(buddy_signonoff_cb), NULL);

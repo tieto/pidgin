@@ -226,6 +226,7 @@ version 2.0.0:
 	  conversation pointer and a pointer to the flags.
 	* "drawing-tooltip": the second argument is now a GString* instead of
 	  a char**
+	* "drawing-tooltip": added the "full" argument
 	* "chat-invited" handlers can now return a value to control what happens
 	  to the invite (accept, reject, prompt the user).
 	* "buddy-typing" and "buddy-typing-stopped": replaced the GaimConversation*
