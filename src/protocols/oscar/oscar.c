@@ -2654,7 +2654,7 @@ static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
 		 * file transfer, and don't allow sending to ourselves.
 		 */
 		if (userinfo && (userinfo->capabilities & AIM_CAPS_SENDFILE) &&
-			strcmp(who, gc->display_name))
+			aim_sncmp(who, gaim_account_get_username(gaim_connection_get_account(gc))))
 		{
 			return TRUE;
 		}
