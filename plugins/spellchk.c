@@ -40,6 +40,7 @@
 #include "version.h"
 
 #include "gtkplugin.h"
+#include "gtkprefs.h"
 #include "gtkutils.h"
 
 #include <stdio.h>
@@ -69,6 +70,7 @@ struct _spellchk {
 	const gchar *word;
 	gboolean inserting;
 	gboolean ignore_correction;
+	gboolean ignore_correction_on_send;
 	gint pos;
 };
 
@@ -370,10 +372,11 @@ spellchk_backward_word_start(GtkTextIter *iter)
 	return TRUE;
 }
 
-static void
+static gboolean
 check_range(spellchk *spell, GtkTextBuffer *buffer,
-				GtkTextIter start, GtkTextIter end) {
-
+				GtkTextIter start, GtkTextIter end, gboolean sending)
+{
+	gboolean replaced;
 	gboolean result;
 	gchar *tmp;
 	int period_count = 0;
@@ -381,7 +384,7 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 	GtkTextMark *mark;
 	GtkTextIter pos;
 
-	if (substitute_simple_buffer(buffer))
+	if ((replaced = substitute_simple_buffer(buffer)))
 	{
 		mark = gtk_text_buffer_get_insert(buffer);
 		gtk_text_buffer_get_iter_at_mark(buffer, &pos, mark);
@@ -391,21 +394,26 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 		gtk_text_buffer_get_iter_at_mark(buffer, &end, mark);
 	}
 
-	/* We need to go backwords to find out if we are inside a word or not. */
-	gtk_text_iter_backward_char(&end);
+	if (!sending)
+	{
+		/* We need to go backwords to find out if we are inside a word or not. */
+		gtk_text_iter_backward_char(&end);
 
-	if (spellchk_inside_word(&end)) {
-		gtk_text_iter_forward_char(&end);
-		return;  /* We only pay attention to whole words. */
+		if (spellchk_inside_word(&end))
+		{
+			gtk_text_iter_forward_char(&end);
+			return replaced;  /* We only pay attention to whole words. */
+		}
 	}
 
 	/* We could be in the middle of a whitespace block.  Check for that. */
 	result = gtk_text_iter_backward_char(&end);
 
-	if (!spellchk_inside_word(&end)) {
+	if (!spellchk_inside_word(&end))
+	{
 		if (result)
 			gtk_text_iter_forward_char(&end);
-		return;
+		return replaced;
 	}
 
 	if (result)
@@ -454,12 +462,13 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 
 		g_free(word);
 		g_free(tmp);
-		return;
+		return TRUE;
 	}
 	g_free(tmp);
 
 	spell->word = NULL;
 
+	return replaced;
 }
 
 /* insertion works like this:
@@ -489,6 +498,8 @@ insert_text_after(GtkTextBuffer *buffer, GtkTextIter *iter,
 	GtkTextIter start, end;
 	GtkTextMark *mark;
 
+	spell->ignore_correction_on_send = FALSE;
+
 	if (spell->ignore_correction) {
 		spell->ignore_correction = FALSE;
 		return;
@@ -498,7 +509,7 @@ insert_text_after(GtkTextBuffer *buffer, GtkTextIter *iter,
 	gtk_text_buffer_get_iter_at_mark(buffer, &start, spell->mark_insert_start);
 
 	if (len == 1)
-	  check_range(spell, buffer, start, *iter);
+		check_range(spell, buffer, start, *iter, FALSE);
 
 	/* if check_range modified the buffer, iter has been invalidated */
 	mark = gtk_text_buffer_get_insert(buffer);
@@ -506,7 +517,6 @@ insert_text_after(GtkTextBuffer *buffer, GtkTextIter *iter,
 	gtk_text_buffer_move_mark(buffer, spell->mark_insert_end, &end);
 
 	spell->inserting = FALSE;
-
 }
 
 static void
@@ -518,12 +528,13 @@ delete_range_after(GtkTextBuffer *buffer,
 	GtkTextIter pos;
 	gint place;
 
+	spell->ignore_correction_on_send = FALSE;
+
 	if (!spell->word)
 		return;
 
 	if (spell->inserting == TRUE)
 		return;
-
 
 	spell->inserting = TRUE;
 
@@ -542,9 +553,49 @@ delete_range_after(GtkTextBuffer *buffer,
 	gtk_text_buffer_delete(buffer, &start2, &end2);
 	gtk_text_buffer_insert(buffer, &start2, spell->word, -1);
 	spell->ignore_correction = TRUE;
+	spell->ignore_correction_on_send = TRUE;
 
 	spell->inserting = FALSE;
 	spell->word = NULL;
+}
+
+static void
+message_send_cb(GtkWidget *widget, spellchk *spell)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter start, end;
+	GtkTextMark *mark;
+	gboolean replaced;
+
+	if (spell->ignore_correction_on_send)
+	{
+		spell->ignore_correction_on_send = FALSE;
+		return;
+	}
+
+#if 0
+	if (!gaim_prefs_get_bool("/plugins/gtk/spellchk/last_word_replace"))
+		return;
+#endif
+
+	buffer = gtk_text_view_get_buffer(spell->view);
+
+	gtk_text_buffer_get_end_iter(buffer, &start);
+	gtk_text_buffer_get_end_iter(buffer, &end);
+	spell->inserting = TRUE;
+	replaced = check_range(spell, buffer, start, end, TRUE);
+	spell->inserting = FALSE;
+
+	/* if check_range modified the buffer, iter has been invalidated */
+	mark = gtk_text_buffer_get_insert(buffer);
+	gtk_text_buffer_get_iter_at_mark(buffer, &end, mark);
+	gtk_text_buffer_move_mark(buffer, spell->mark_insert_end, &end);
+
+	if (replaced)
+	{
+		g_signal_stop_emission_by_name(widget, "message_send");
+		spell->ignore_correction_on_send = TRUE;
+	}
 }
 
 static void
@@ -593,6 +644,8 @@ spellchk_new_attach(GaimConversation *conv)
 			"insert-text",
 			G_CALLBACK(insert_text_after), spell);
 
+	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send",
+	                 G_CALLBACK(message_send_cb), spell);
 	return;
 }
 
@@ -2043,9 +2096,12 @@ get_config_frame(GaimPlugin *plugin)
 	GtkSizeGroup *sg2;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
+	GtkWidget *vbox2;
+	GtkWidget *hbox2;
+	GtkWidget *vbox3;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER(ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
 	vbox = gaim_gtk_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
@@ -2138,37 +2194,44 @@ get_config_frame(GaimPlugin *plugin)
 
 	vbox = gaim_gtk_make_frame(ret, _("Add a new text replacement"));
 
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	gtk_widget_show(hbox);
+	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
+	gtk_widget_show(vbox2);
+
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	sg2 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	hbox = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
+	hbox2 = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 0);
+	gtk_widget_show(hbox2);
 
 	label = gtk_label_new_with_mnemonic(_("You _type:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	bad_entry = gtk_entry_new();
 	/* Set a minimum size. Since they're in a size group, the other entry will match up. */
 	gtk_widget_set_size_request(bad_entry, 350, -1);
-	gtk_box_pack_start(GTK_BOX(hbox), bad_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), bad_entry, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(sg2, bad_entry);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), bad_entry);
 	gtk_widget_show(bad_entry);
 
-	hbox = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
+	hbox2 = gtk_hbox_new(FALSE, 2);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 0);
+	gtk_widget_show(hbox2);
 
 	label = gtk_label_new_with_mnemonic(_("You _send:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	good_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), good_entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), good_entry, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(sg2, good_entry);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), good_entry);
 	gtk_widget_show(good_entry);
@@ -2181,24 +2244,30 @@ get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(complete_toggle), "clicked",
                          G_CALLBACK(whole_words_button_toggled), case_toggle);
 	gtk_widget_show(complete_toggle);
-	gtk_box_pack_start(GTK_BOX(vbox), complete_toggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), complete_toggle, FALSE, FALSE, 0);
 
 	/* The button is created above so it can be passed to whole_words_button_toggled. */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(case_toggle), FALSE);
 	gtk_widget_show(case_toggle);
-	gtk_box_pack_start(GTK_BOX(vbox), case_toggle, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), case_toggle, FALSE, FALSE, 0);
 
-	hbox = gtk_hbutton_box_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			   G_CALLBACK(list_add_new), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	vbox3 = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox3, TRUE, FALSE, 0);
+	gtk_widget_show(vbox3);
+	gtk_box_pack_end(GTK_BOX(vbox3), button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(bad_entry), "changed", G_CALLBACK(on_entry_changed), button);
 	g_signal_connect(G_OBJECT(good_entry), "changed", G_CALLBACK(on_entry_changed), button);
 	gtk_widget_set_sensitive(button, FALSE);
 	gtk_widget_show(button);
 
+#if 0
+	vbox = gaim_gtk_make_frame(ret, _("General Text Replacement Options"));
+	gaim_gtk_prefs_checkbox(_("Enable replacement of last word on send"),
+	                        "/plugins/gtk/spellchk/last_word_replace", vbox);
+#endif
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -2239,6 +2308,12 @@ static GaimPluginInfo info =
 static void
 init_plugin(GaimPlugin *plugin)
 {
+#if 0
+	gaim_prefs_add_none("/plugins");
+	gaim_prefs_add_none("/plugins/gtk");
+	gaim_prefs_add_none("/plugins/gtk/spellchk");
+	gaim_prefs_add_bool("/plugins/gtk/spellchk/last_word_replace", TRUE);
+#endif
 }
 
 GAIM_INIT_PLUGIN(spellcheck, init_plugin, info)
