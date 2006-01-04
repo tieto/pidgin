@@ -7854,9 +7854,6 @@ generate_nick_colors(guint numcolors, GdkColor background)
 	{
 		GdkColor color = nick_seed_colors[j];
 
-		gaim_debug(GAIM_DEBUG_INFO, NULL,
-				   "Looking for colors from safe list, I have found %i so far.\n",i);
-
 		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
