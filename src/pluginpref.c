@@ -45,6 +45,7 @@ struct _GaimPluginPref {
 	GList *choices;
 	unsigned int max_length;
 	gboolean masked;
+	GaimStringFormatType format;
 };
 
 GaimPluginPrefFrame *
@@ -293,3 +294,24 @@ gaim_plugin_pref_get_masked(GaimPluginPref *pref) {
 
 	return pref->masked;
 }
+
+void
+gaim_plugin_pref_set_format_type(GaimPluginPref *pref, GaimStringFormatType format)
+{
+	g_return_if_fail(pref);
+	g_return_if_fail(pref->type == GAIM_PLUGIN_PREF_STRING_FORMAT);
+
+	pref->format = format;
+}
+
+GaimStringFormatType
+gaim_plugin_pref_get_format_type(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref, 0);
+
+	if (pref->type != GAIM_PLUGIN_PREF_STRING_FORMAT)
+		return GAIM_STRING_FORMAT_TYPE_NONE;
+	
+	return pref->format;
+}
+

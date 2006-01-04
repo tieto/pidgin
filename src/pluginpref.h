@@ -33,6 +33,7 @@ typedef enum {
 	GAIM_PLUGIN_PREF_NONE,
 	GAIM_PLUGIN_PREF_CHOICE,
 	GAIM_PLUGIN_PREF_INFO,   /**< no-value label */
+	GAIM_PLUGIN_PREF_STRING_FORMAT
 } GaimPluginPrefType;
 
 #include <glib.h>
@@ -230,6 +231,23 @@ void gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean mask);
  * @return The masking
  */
 gboolean gaim_plugin_pref_get_masked(GaimPluginPref *pref);
+
+/**
+ * Sets the format type for a formattable-string plugin pref. You need to set the
+ * pref type to GAIM_PLUGIN_PREF_STRING_FORMAT first before setting the format.
+ *
+ * @param pref	 The plugin pref
+ * @param format The format of the string
+ */
+void gaim_plugin_pref_set_format_type(GaimPluginPref *pref, GaimStringFormatType format);
+
+/**
+ * Gets the format type of the formattable-string plugin pref.
+ *
+ * @param pref The plugin pref
+ * @return The format of the pref
+ */
+GaimStringFormatType gaim_plugin_pref_get_format_type(GaimPluginPref *pref);
 
 /*@}*/
 

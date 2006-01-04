@@ -211,6 +211,10 @@ version 2.0.0:
 	* GaimConversationUiOps->present(GaimConversation *)
 	* GaimPlugin.unloadable
 	* gaim_plugin_is_unloadable()
+	* GAIM_PLUGIN_PREF_STRING_FORMAT
+	* gaim_plugin_pref_get_format_type()
+	* gaim_plugin_pref_set_format_type()
+	* GaimStringFormatType
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

@@ -31,6 +31,7 @@
 #include "pluginpref.h"
 #include "prefs.h"
 
+#include "gtkimhtml.h"
 #include "gtkpluginpref.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
@@ -44,13 +45,34 @@ entry_cb(GtkWidget *entry, gpointer data) {
 	return FALSE;
 }
 
+
+static void
+imhtml_cb(GtkTextBuffer *buffer, gpointer data)
+{
+	char *pref;
+	char *text;
+	GtkIMHtml *imhtml = data;
+
+	pref = g_object_get_data(G_OBJECT(imhtml), "pref-key");
+	g_return_if_fail(pref);
+
+	text = gtk_imhtml_get_markup(imhtml);
+
+	if (!text)
+		text = "";
+	gaim_prefs_set_string(pref, text);
+	g_free(text);
+}
+
 static void
 make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 	GtkWidget *hbox, *gtk_label, *entry;
 	gchar *pref_name, *pref_label;
+	GaimStringFormatType format;
 
 	pref_name = gaim_plugin_pref_get_name(pref);
 	pref_label = gaim_plugin_pref_get_label(pref);
+	format = gaim_plugin_pref_get_format_type(pref);
 
 	switch(gaim_plugin_pref_get_type(pref)) {
 		case GAIM_PLUGIN_PREF_CHOICE:
@@ -77,21 +99,41 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 			if(sg)
 				gtk_size_group_add_widget(sg, gtk_label);
 
-			entry = gtk_entry_new();
-			gtk_entry_set_text(GTK_ENTRY(entry), gaim_prefs_get_string(pref_name));
-			gtk_entry_set_max_length(GTK_ENTRY(entry),
+			if (format == GAIM_STRING_FORMAT_TYPE_NONE)
+			{				
+				entry = gtk_entry_new();
+				gtk_entry_set_text(GTK_ENTRY(entry), gaim_prefs_get_string(pref_name));
+				gtk_entry_set_max_length(GTK_ENTRY(entry),
 									 gaim_plugin_pref_get_max_length(pref));
-			if (gaim_plugin_pref_get_masked(pref))
-			{
-				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-				gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+				if (gaim_plugin_pref_get_masked(pref))
+				{
+					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+					gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+				}
+				g_signal_connect(G_OBJECT(entry), "changed",
+								 G_CALLBACK(entry_cb),
+								 (gpointer)pref_name);
+				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), entry);
+				gtk_widget_show(entry);
+				gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 			}
-			g_signal_connect(G_OBJECT(entry), "changed",
-							 G_CALLBACK(entry_cb),
-							 (gpointer)pref_name);
-			gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), entry);
-			gtk_widget_show(entry);
-			gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+			else
+			{
+				GtkWidget *imhtml, *toolbar, *frame;
+
+				frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
+				if (!(format & GAIM_STRING_FORMAT_TYPE_HTML))
+					gtk_widget_destroy(toolbar);
+
+				gtk_imhtml_append_text(GTK_IMHTML(imhtml), gaim_prefs_get_string(pref_name),
+						(format & GAIM_STRING_FORMAT_TYPE_MULTILINE) ? 0 : GTK_IMHTML_NO_NEWLINE);
+				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), imhtml);
+				gtk_widget_show_all(frame);
+				g_object_set_data(G_OBJECT(imhtml), "pref-key", pref_name);
+				g_signal_connect(G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml))),
+								"changed", G_CALLBACK(imhtml_cb), imhtml);
+				gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+			}
 
 			break;
 	}
