@@ -4272,11 +4272,12 @@ received_im_msg_cb(GaimAccount *account, char *sender, char *message,
 				   GaimConversation *conv, int flags)
 {
 	GaimConversationUiOps *ui_ops = gaim_gtk_conversations_get_conv_ui_ops();
-	if(conv)
+	if (conv != NULL)
 		return;
 
 	/* create hidden conv if hide_new pref is always */
-	if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "always")==0) {
+	if (strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "always") == 0)
+	{
 		ui_ops->create_conversation = gaim_gtkconv_new_hidden;
 		gaim_conversation_new(GAIM_CONV_TYPE_IM, account, sender);
 		ui_ops->create_conversation = gaim_gtkconv_new;
@@ -4284,8 +4285,9 @@ received_im_msg_cb(GaimAccount *account, char *sender, char *message,
 	}
 
 	/* create hidden conv if hide_new pref is away and account is away */
-	if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "away")==0
-			&& !gaim_status_is_available(gaim_account_get_active_status(account))) {
+	if (strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "away") == 0 &&
+	    !gaim_status_is_available(gaim_account_get_active_status(account)))
+	{
 		ui_ops->create_conversation = gaim_gtkconv_new_hidden;
 		gaim_conversation_new(GAIM_CONV_TYPE_IM, account, sender);
 		ui_ops->create_conversation = gaim_gtkconv_new;
