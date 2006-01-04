@@ -71,7 +71,7 @@
 
 /*
  * Spacings between components, as defined by the
- * Gnome Human Interface Guidelines.
+ * GNOME Human Interface Guidelines.
  */
 #define GAIM_HIG_CAT_SPACE     18
 #define GAIM_HIG_BORDER        12
