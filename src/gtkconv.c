@@ -3616,6 +3616,11 @@ buddy_removed_cb(GaimBuddy *buddy, GaimConversation *conv)
 	buddy_cb_common(buddy, conv, FALSE);
 }
 
+static void send_menu_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
+{
+	g_signal_emit_by_name(gtkconv->entry, "message_send");
+}
+
 static void
 entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
@@ -3626,7 +3631,7 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	g_return_if_fail(gtkconv != NULL);
 
 	menuitem = gaim_new_item_from_stock(NULL, _("_Send"), GAIM_STOCK_SEND,
-										G_CALLBACK(send_cb), gtkconv,
+										G_CALLBACK(send_menu_cb), gtkconv,
 										0, 0, NULL);
 	if (gtk_text_buffer_get_char_count(imhtml->text_buffer) == 0)
 		gtk_widget_set_sensitive(menuitem, FALSE);
@@ -3868,8 +3873,8 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 	                 G_CALLBACK(entry_key_press_cb), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send",
-	                 G_CALLBACK(send_cb), gtkconv);
+	g_signal_connect_after(G_OBJECT(gtkconv->entry), "message_send",
+	                       G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
@@ -3959,7 +3964,8 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 	                 G_CALLBACK(entry_key_press_cb), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send", G_CALLBACK(send_cb), gtkconv);
+	g_signal_connect_after(G_OBJECT(gtkconv->entry), "message_send",
+	                       G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
