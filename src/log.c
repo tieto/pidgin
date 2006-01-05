@@ -933,7 +933,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 		fprintf(data->file, "</title></head><body>");
 		fprintf(data->file,
 			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
-			log->name, date, gaim_account_get_username(log->account), prpl);
+			log->name, buf, gaim_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
