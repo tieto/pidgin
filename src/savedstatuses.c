@@ -897,8 +897,13 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 
 	g_return_if_fail(saved_status != NULL);
 
-	accounts = gaim_accounts_get_all_active();
+	/* Make sure our list of saved statuses remains sorted */
+	saved_status->lastused = time(NULL);
+	saved_status->usage_count++;
+	saved_statuses = g_list_remove(saved_statuses, saved_status);
+	saved_statuses = g_list_insert_sorted(saved_statuses, saved_status, saved_statuses_sort_func);
 
+	accounts = gaim_accounts_get_all_active();
 	for (node = accounts; node != NULL; node = node->next)
 	{
 		GaimAccount *account;
@@ -909,15 +914,8 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	saved_status->lastused = time(NULL);
 	gaim_prefs_set_int("/core/savedstatus/current",
 					   gaim_savedstatus_get_creation_time(saved_status));
-
-	/* Make sure our list of saved statuses remains sorted */
-	saved_status->usage_count++;
-	saved_statuses = g_list_remove(saved_statuses, saved_status);
-	saved_statuses = g_list_insert_sorted(saved_statuses, saved_status, saved_statuses_sort_func);
-
 }
 
 void
