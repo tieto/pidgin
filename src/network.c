@@ -183,7 +183,7 @@ gaim_network_do_listen(unsigned short port)
 {
 	int listenfd = -1;
 	const int on = 1;
-  GaimUPnPControlInfo* controlInfo = NULL;
+	GaimUPnPControlInfo* controlInfo = NULL;
 #if HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
@@ -258,20 +258,20 @@ gaim_network_do_listen(unsigned short port)
 	}
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
-  if((controlInfo = gaim_upnp_discover()) != NULL) {
-    if(!gaim_upnp_set_port_mapping(controlInfo, 
-                    gaim_network_get_port_from_fd(listenfd), 
-                    "TCP")) {
-      gaim_upnp_remove_port_mapping(controlInfo, 
-                gaim_network_get_port_from_fd(listenfd), "TCP");
-      gaim_upnp_set_port_mapping(controlInfo, 
-                gaim_network_get_port_from_fd(listenfd), "TCP");
+	if ((controlInfo = gaim_upnp_discover()) != NULL) {
+		if (!gaim_upnp_set_port_mapping(controlInfo,
+				gaim_network_get_port_from_fd(listenfd),
+				"TCP")) {
+			gaim_upnp_remove_port_mapping(controlInfo,
+				gaim_network_get_port_from_fd(listenfd), "TCP");
+			gaim_upnp_set_port_mapping(controlInfo,
+				gaim_network_get_port_from_fd(listenfd), "TCP");
 
-    } 
-    g_free(controlInfo->serviceType);
-    g_free(controlInfo->controlURL);
-    g_free(controlInfo);
-  }
+		}
+		g_free(controlInfo->serviceType);
+		g_free(controlInfo->controlURL);
+		g_free(controlInfo);
+	}
 
 	gaim_debug_info("network", "Listening on port: %hu\n", gaim_network_get_port_from_fd(listenfd));
 	return listenfd;
