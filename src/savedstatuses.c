@@ -77,7 +77,6 @@ struct _GaimSavedStatusSub
 };
 
 static GList      *saved_statuses = NULL;
-static GList      *popular_statuses = NULL;
 static guint       save_timer = 0;
 static gboolean    statuses_loaded = FALSE;
 
@@ -99,7 +98,7 @@ static void schedule_save(void);
  *********************************************************************/
 
 static void
-free_statussavedsub(GaimSavedStatusSub *substatus)
+free_saved_status_sub(GaimSavedStatusSub *substatus)
 {
 	g_return_if_fail(substatus != NULL);
 
@@ -108,7 +107,7 @@ free_statussavedsub(GaimSavedStatusSub *substatus)
 }
 
 static void
-free_statussaved(GaimSavedStatus *status)
+free_saved_status(GaimSavedStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
@@ -119,7 +118,7 @@ free_statussaved(GaimSavedStatus *status)
 	{
 		GaimSavedStatusSub *substatus = status->substatuses->data;
 		status->substatuses = g_list_remove(status->substatuses, substatus);
-		free_statussavedsub(substatus);
+		free_saved_status_sub(substatus);
 	}
 
 	g_free(status);
@@ -145,14 +144,29 @@ set_creation_time(GaimSavedStatus *status, time_t creation_time)
 						status);
 }
 
+/**
+ * A magic number is calcuated for each status, and then the
+ * statuses are ordered by the magic number.  The magic number
+ * is the date the status was last used offset by one day for
+ * each time the status has been used (but only by 10 days at
+ * the most).
+ *
+ * The goal is to have recently used statuses at the top of
+ * the list, but to also keep frequently used statuses near
+ * the top.
+ */
 static gint
-compare_times(gconstpointer a, gconstpointer b)
+saved_statuses_sort_func(gconstpointer a, gconstpointer b)
 {
-	const time_t timea = *((time_t *)a);
-	const time_t timeb = *((time_t *)b);
-	if (timea > timeb)
+	const GaimSavedStatus *saved_status_a = a;
+	const GaimSavedStatus *saved_status_b = b;
+	time_t time_a = saved_status_a->lastused +
+						(MIN(saved_status_a->usage_count, 10) * 86400);
+	time_t time_b = saved_status_b->lastused +
+						(MIN(saved_status_b->usage_count, 10) * 86400);
+	if (time_a > time_b)
 		return -1;
-	if (timea < timeb)
+	if (time_a < time_b)
 		return 1;
 	return 0;
 }
@@ -166,54 +180,37 @@ compare_times(gconstpointer a, gconstpointer b)
 static void
 remove_old_transient_statuses()
 {
-	GList *lastused;
-	time_t threshold;
-	time_t creation_time;
 	GList *l, *next;
 	GaimSavedStatus *saved_status;
-	int i;
+	int count;
+	time_t creation_time;
 
-	/* Construct a GList containing the lastused times from each transient status */
-	lastused = NULL;
-	for (l = saved_statuses; l != NULL; l = l->next)
-	{
-		saved_status = l->data;
-		if (gaim_savedstatus_is_transient(saved_status))
-			lastused = g_list_insert_sorted(lastused, &saved_status->lastused, compare_times);
-	}
-
-	/* Find the 5th most recently used transient status */
-	l = lastused;
-	i = 0;
-	while ((l != NULL) && (i < MAX_TRANSIENTS))
-	{
-		l = l->next;
-		i++;
-	}
-	if (l != NULL)
-		threshold = *((time_t *)l->data);
-	else
-		threshold = 0;
-	g_list_free(lastused);
-
-	if (threshold == 0)
-		/* We have 5 or fewer transient statuses, so there is nothing to delete */
-		return;
-
-	/* Delete all transient statuses older than the threshold */
+	/*
+	 * Iterate through the list of saved statuses.  Delete all
+	 * transient statuses except for the first MAX_TRANSIENTS
+	 * (remember, the saved statuses are already sorted by popularity).
+	 */
+	count = 0;
 	for (l = saved_statuses; l != NULL; l = next)
 	{
 		next = l->next;
 		saved_status = l->data;
-		if (gaim_savedstatus_is_transient(saved_status) && (saved_status->lastused <= threshold))
+		if (gaim_savedstatus_is_transient(saved_status))
 		{
-			saved_statuses = g_list_remove(saved_statuses, saved_status);
-			creation_time = gaim_savedstatus_get_creation_time(saved_status);
-			g_hash_table_remove(creation_times, &creation_time);
-			free_statussaved(saved_status);
+			if (count == MAX_TRANSIENTS)
+			{
+				saved_statuses = g_list_remove(saved_statuses, saved_status);
+				creation_time = gaim_savedstatus_get_creation_time(saved_status);
+				g_hash_table_remove(creation_times, &creation_time);
+				free_saved_status(saved_status);
+			}
+			else
+				count++;
 		}
 	}
-	schedule_save();
+
+	if (count == MAX_TRANSIENTS)
+		schedule_save();
 }
 
 /*********************************************************************
@@ -521,6 +518,7 @@ load_statuses(void)
 		new = parse_status(status);
 		saved_statuses = g_list_prepend(saved_statuses, new);
 	}
+	saved_statuses = g_list_sort(saved_statuses, saved_statuses_sort_func);
 
 	xmlnode_free(statuses);
 }
@@ -543,7 +541,7 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 	status->type = type;
 	set_creation_time(status, time(NULL));
 
-	saved_statuses = g_list_prepend(saved_statuses, status);
+	saved_statuses = g_list_insert_sorted(saved_statuses, status, saved_statuses_sort_func);
 
 	schedule_save();
 
@@ -650,7 +648,7 @@ gaim_savedstatus_delete(const char *title)
 	saved_statuses = g_list_remove(saved_statuses, status);
 	creation_time = gaim_savedstatus_get_creation_time(status);
 	g_hash_table_remove(creation_times, &creation_time);
-	free_statussaved(status);
+	free_saved_status(status);
 
 	schedule_save();
 
@@ -675,33 +673,6 @@ gaim_savedstatuses_get_all(void)
 	return saved_statuses;
 }
 
-/**
- * A magic number is calcuated for each status, and then the
- * statuses are ordered by the magic number.  The magic number
- * is the date the status was last used offset by one day for
- * each time the status has been used (but only by 10 days at
- * the most).
- *
- * The goal is to have recently used statuses at the top of
- * the list, but to also keep frequently used statuses near
- * the top.
- */
-static gint
-popular_statuses_compare_func(gconstpointer a, gconstpointer b)
-{
-	const GaimSavedStatus *saved_status_a = a;
-	const GaimSavedStatus *saved_status_b = b;
-	time_t time_a = saved_status_a->lastused +
-						(MIN(saved_status_a->usage_count, 10) * 86400);
-	time_t time_b = saved_status_b->lastused +
-						(MIN(saved_status_b->usage_count, 10) * 86400);
-	if (time_a > time_b)
-		return -1;
-	if (time_a < time_b)
-		return 1;
-	return 0;
-}
-
 GList *
 gaim_savedstatuses_get_popular(unsigned int how_many)
 {
@@ -710,7 +681,7 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 	int i;
 
 	/* Copy 'how_many' elements to a new list */
-	for (i = 0, cur = popular_statuses; (i < how_many) && (cur != NULL); i++)
+	for (i = 0, cur = saved_statuses; (i < how_many) && (cur != NULL); i++)
 	{
 		truncated = g_list_append(truncated, cur->data);
 		cur = cur->next;
@@ -942,12 +913,10 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 	gaim_prefs_set_int("/core/savedstatus/current",
 					   gaim_savedstatus_get_creation_time(saved_status));
 
-	/* Update our list of popular statuses */
+	/* Make sure our list of saved statuses remains sorted */
 	saved_status->usage_count++;
-	g_list_free(popular_statuses);
-	popular_statuses = g_list_copy(saved_statuses);
-	popular_statuses = g_list_sort(popular_statuses,
-		popular_statuses_compare_func);
+	saved_statuses = g_list_remove(saved_statuses, saved_status);
+	saved_statuses = g_list_insert_sorted(saved_statuses, saved_status, saved_statuses_sort_func);
 
 }
 
@@ -1031,7 +1000,7 @@ gaim_savedstatuses_uninit(void)
 	while (saved_statuses != NULL) {
 		GaimSavedStatus *saved_status = saved_statuses->data;
 		saved_statuses = g_list_remove(saved_statuses, saved_status);
-		free_statussaved(saved_status);
+		free_saved_status(saved_status);
 	}
 
 	g_hash_table_destroy(creation_times);
