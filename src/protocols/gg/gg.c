@@ -1353,9 +1353,6 @@ static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 		*se = "away";
 	} else if (gaim_presence_is_status_active(presence, "blocked")) {
 		*se = "blocked";
-	} else {
-		*se = "offline";
-		gaim_debug_error("gg", "ggp_list_emblems: unknown status\n");
 	}
 }
 /* }}} */
