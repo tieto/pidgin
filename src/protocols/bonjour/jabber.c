@@ -372,6 +372,7 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	BonjourBuddy *bb = NULL;
 	char *address_text = NULL;
 	GaimBuddyList *bl = gaim_get_blist();
+	struct _check_buddy_by_address_t *cbba;
 
 	/* Check that it is a read condition */
 	if (condition != GAIM_INPUT_READ) {
@@ -386,7 +387,7 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 
 	/* Look for the buddy that has open the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
-	struct _check_buddy_by_address_t *cbba = g_new0(struct _check_buddy_by_address_t, 1);
+	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
 	cbba->gb = &gb;
 	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, address_text);
