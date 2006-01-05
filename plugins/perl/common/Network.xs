@@ -28,13 +28,15 @@ gaim_network_ip_atoi(ip)
 	const char *ip
 
 int 
-gaim_network_listen(port)
+gaim_network_listen(port, socket_type)
 	unsigned short port
+	int socket_type
 
 int 
-gaim_network_listen_range(start, end)
+gaim_network_listen_range(start, end, socket_type)
 	unsigned short start
 	unsigned short end
+	int socket_type
 
 void 
 gaim_network_set_public_ip(ip)

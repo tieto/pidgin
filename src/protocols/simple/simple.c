@@ -1198,15 +1198,16 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 
 	gchar *hostname;
-	int port = 5060;
+	int port = gaim_account_get_int(sip->account, "port", 0);
 
 	int error = 0;
-	struct sockaddr_in addr;
 	struct hostent *h;
 
 	/* find the host to connect to */
 	if(results) {
 		hostname = g_strdup(resp->hostname);
+		/* TODO: Should this work more like Jabber where the SRV value will be ignored
+		 * if there is one manually specified? */
 		port = resp->port;
 		g_free(resp);
 	} else {
@@ -1222,7 +1223,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	/* TCP case */
 	if(! sip->udp) {
 		/* create socket for incoming connections */
-		sip->listenfd = gaim_network_listen_range(5060, 5160);
+		sip->listenfd = gaim_network_listen_range(5060, 5160, SOCK_STREAM);
 		if(sip->listenfd == -1) {
 			gaim_connection_error(sip->gc, _("Could not create listen socket"));
 			return;
@@ -1246,15 +1247,14 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 			return;
 		}
 
-		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
+		/* create socket for incoming connections */
+		sip->fd = gaim_network_listen_range(5060, 5160, SOCK_DGRAM);
 
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(5060);
-		addr.sin_addr.s_addr = INADDR_ANY;
-		while((bind(sip->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) <0) && ntohs(addr.sin_port)<5160) {
-			addr.sin_port = htons(ntohs(addr.sin_port)+1);
+		if(sip->fd == -1) {
+			gaim_connection_error(sip->gc, _("Could not create listen socket"));
+			return;
 		}
-		sip->listenport = ntohs(addr.sin_port);
+
 		sip->listenfd = sip->fd;
 
 		sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
@@ -1460,6 +1460,10 @@ static void _init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_bool_new(_("Publish status (note: everyone may watch you)"), "dopublish", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_int_new(_("Connect port"), "port", 5060);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 
 	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

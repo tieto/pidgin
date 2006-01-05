@@ -179,7 +179,7 @@ gaim_network_get_my_ip(int fd)
 
 
 static int
-gaim_network_do_listen(unsigned short port)
+gaim_network_do_listen(unsigned short port, int socket_type)
 {
 	int listenfd = -1;
 	const int on = 1;
@@ -196,7 +196,7 @@ gaim_network_do_listen(unsigned short port)
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_socktype = socket_type;
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
 #ifndef _WIN32
@@ -222,6 +222,8 @@ gaim_network_do_listen(unsigned short port)
 			gaim_debug_warning("network", "setsockopt: %s\n", strerror(errno));
 		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
+		/* XXX - It is unclear to me (datallah) whether we need to be
+		   using a new socket each time */
 		close(listenfd);
 	}
 
@@ -232,7 +234,7 @@ gaim_network_do_listen(unsigned short port)
 #else
 	struct sockaddr_in sockin;
 
-	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
 		gaim_debug_warning("network", "socket: %s\n", strerror(errno));
 		return -1;
 	}
@@ -251,7 +253,7 @@ gaim_network_do_listen(unsigned short port)
 	}
 #endif
 
-	if (listen(listenfd, 4) != 0) {
+	if (socket_type == SOCK_STREAM && listen(listenfd, 4) != 0) {
 		gaim_debug_warning("network", "listen: %s\n", strerror(errno));
 		close(listenfd);
 		return -1;
@@ -259,13 +261,16 @@ gaim_network_do_listen(unsigned short port)
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
 	if ((controlInfo = gaim_upnp_discover()) != NULL) {
+		char *type_desc = (socket_type == SOCK_STREAM) ? "TCP" : "UDP";
 		if (!gaim_upnp_set_port_mapping(controlInfo,
 				gaim_network_get_port_from_fd(listenfd),
-				"TCP")) {
+				type_desc)) {
 			gaim_upnp_remove_port_mapping(controlInfo,
-				gaim_network_get_port_from_fd(listenfd), "TCP");
+				gaim_network_get_port_from_fd(listenfd),
+				type_desc);
 			gaim_upnp_set_port_mapping(controlInfo,
-				gaim_network_get_port_from_fd(listenfd), "TCP");
+				gaim_network_get_port_from_fd(listenfd),
+				type_desc);
 
 		}
 		g_free(controlInfo->serviceType);
@@ -278,15 +283,16 @@ gaim_network_do_listen(unsigned short port)
 }
 
 int
-gaim_network_listen(unsigned short port)
+gaim_network_listen(unsigned short port, int socket_type)
 {
 	g_return_val_if_fail(port != 0, -1);
 
-	return gaim_network_do_listen(port);
+	return gaim_network_do_listen(port, socket_type);
 }
 
 int
-gaim_network_listen_range(unsigned short start, unsigned short end)
+gaim_network_listen_range(unsigned short start, unsigned short end,
+		int socket_type)
 {
 	int ret = -1;
 
@@ -299,7 +305,7 @@ gaim_network_listen_range(unsigned short start, unsigned short end)
 	}
 
 	for (; start <= end; start++) {
-		ret = gaim_network_do_listen(start);
+		ret = gaim_network_do_listen(start, socket_type);
 		if (ret >= 0)
 			break;
 	}

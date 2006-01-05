@@ -474,7 +474,8 @@ bonjour_jabber_start(BonjourJabber *data)
 	}
 
 #if 0
-	data->socket = gaim_network_listen(data->port);
+	/* TODO: Why isn't this being used? */
+	data->socket = gaim_network_listen(data->port, SOCK_STREAM);
 
 	if (data->socket == -1)
 	{

@@ -85,6 +85,8 @@ version 2.0.0:
 	* GaimPluginProtocolInfo: Added whiteboard_prpl_ops
 	* GaimPluginProtocolInfo: Added media_prpl_ops
 	* gaim_pounce_new(): Added option argument for pounce options
+	* gaim_network_listen() and gaim_network_listen_range(): Added
+	  socket_type parameter to allow creation of UDP listening.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

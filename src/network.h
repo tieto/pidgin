@@ -115,11 +115,13 @@ const char *gaim_network_get_my_ip(int fd);
  * returned.
  *
  * @param port The port number to bind to.  Must be greater than 0.
+ * @param socket_type The type of socket to open for listening.
+ *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
  *
  * @return The file descriptor of the listening socket, or -1 if
  *         no socket could be established.
  */
-int gaim_network_listen(unsigned short port);
+int gaim_network_listen(unsigned short port, int socket_type);
 
 /**
  * Opens a listening port selected from a range of ports.  The range of
@@ -140,11 +142,14 @@ int gaim_network_listen(unsigned short port);
  * @param end The highest possible port in the range of ports to listen on,
  *            or 0 to pick a random port.  Users are allowed to override this
  *            arg in prefs.
+ * @param socket_type The type of socket to open for listening.
+ *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
  *
  * @return The file descriptor of the listening socket, or -1 if
  *         no socket could be established.
  */
-int gaim_network_listen_range(unsigned short start, unsigned short end);
+int gaim_network_listen_range(unsigned short start, unsigned short end,
+	int socket_type);
 
 /**
  * Gets a port number from a file descriptor.

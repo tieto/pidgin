@@ -266,7 +266,7 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 	xfer->filename = g_path_get_basename(xfer->local_filename);
 
 	/* Create a listening socket */
-	sock = gaim_network_listen_range(0, 0);
+	sock = gaim_network_listen_range(0, 0, SOCK_STREAM);
 
 	if (sock < 0) {
 		gaim_notify_error(gc, NULL, _("File Transfer Failed"),

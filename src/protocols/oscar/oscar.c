@@ -1540,7 +1540,7 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", who);
 
-	listenfd = gaim_network_listen_range(5190, 5199);
+	listenfd = gaim_network_listen_range(5190, 5199, SOCK_STREAM);
 	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
 	if (listenfd >= 0)
 		dim->conn = aim_odc_initiate(od->sess, who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), cookie);
@@ -2560,7 +2560,7 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_init_send\n");
 
 	/* Create a listening socket and an associated libfaim conn */
-	if ((listenfd = gaim_network_listen_range(5190, 5199)) < 0) {
+	if ((listenfd = gaim_network_listen_range(5190, 5199, SOCK_STREAM)) < 0) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}

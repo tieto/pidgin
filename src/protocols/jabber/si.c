@@ -436,7 +436,7 @@ jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
 	xmlnode_set_attrib(streamhost, "jid", jid);
 	g_free(jid);
 
-	if((fd = gaim_network_listen_range(0, 0)) < 0) {
+	if((fd = gaim_network_listen_range(0, 0, SOCK_STREAM)) < 0) {
 		/* XXX: couldn't open a port, we're fscked */
 		return;
 	}
