@@ -364,6 +364,22 @@ show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 }
 
 static void
+activate_status_primitive_cb(GtkMenuItem *menuitem, gpointer user_data)
+{
+	GaimStatusPrimitive primitive;
+	GaimSavedStatus *saved_status;
+
+	primitive = GPOINTER_TO_INT(user_data);
+
+	/* Create a new transient saved status */
+	saved_status = gaim_savedstatus_new(NULL, primitive);
+	gaim_savedstatus_set_type(saved_status, primitive);
+
+	/* Set the status for each account */
+	gaim_savedstatus_activate(saved_status);
+}
+
+static void
 activate_saved_status_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
 	time_t creation_time;
@@ -375,11 +391,58 @@ activate_saved_status_cb(GtkMenuItem *menuitem, gpointer user_data)
 		gaim_savedstatus_activate(saved_status);
 }
 
+static GtkWidget *
+docklet_status_submenu()
+{
+	GtkWidget *submenu, *menuitem;
+	GList *popular_statuses, *cur;
+
+	submenu = gtk_menu_new();
+	menuitem = gtk_menu_item_new_with_label(_("Change Status"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+	gaim_new_item_from_stock(submenu, _("Available"),
+		GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(GAIM_STATUS_AVAILABLE), 0, 0, NULL);
+
+	gaim_new_item_from_stock(submenu, _("Away"),
+		GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(GAIM_STATUS_AWAY), 0, 0, NULL);
+
+	gaim_new_item_from_stock(submenu, _("Invisible"),
+		GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(GAIM_STATUS_INVISIBLE), 0, 0, NULL);
+
+	gaim_new_item_from_stock(submenu, _("Offline"),
+		GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(GAIM_STATUS_OFFLINE), 0, 0, NULL);
+
+	popular_statuses = gaim_savedstatuses_get_popular(6);
+	if (popular_statuses != NULL)
+		gaim_separator(submenu);
+	for (cur = popular_statuses; cur != NULL; cur = cur->next)
+	{
+		GaimSavedStatus *saved_status = cur->data;
+		time_t creation_time = gaim_savedstatus_get_creation_time(saved_status);
+		gaim_new_item_from_stock(submenu,
+			gaim_savedstatus_get_title(saved_status),
+			GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_saved_status_cb),
+			GINT_TO_POINTER(creation_time), 0, 0, NULL);
+	}
+	g_list_free(popular_statuses);
+
+	gaim_separator(submenu);
+
+	gaim_new_item_from_stock(submenu, _("Custom Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(submenu, _("Saved Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
+
+	return menuitem;
+}
+
 static void
 docklet_menu() {
 	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
-	GList *popular_statuses, *cur;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
@@ -417,22 +480,8 @@ docklet_menu() {
 	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
-	gaim_new_item_from_stock(menu, _("Custom Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Saved Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
-
-	gaim_separator(menu);
-
-	popular_statuses = gaim_savedstatuses_get_popular(6);
-	for (cur = popular_statuses; cur != NULL; cur = cur->next)
-	{
-		GaimSavedStatus *saved_status = cur->data;
-		time_t creation_time = gaim_savedstatus_get_creation_time(saved_status);
-		gaim_new_item_from_stock(menu,
-			gaim_savedstatus_get_title(saved_status),
-			GAIM_STOCK_ICON_AWAY, G_CALLBACK(activate_saved_status_cb),
-			GINT_TO_POINTER(creation_time), 0, 0, NULL);
-	}
-	g_list_free(popular_statuses);
+	menuitem = docklet_status_submenu();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gaim_separator(menu);
 
