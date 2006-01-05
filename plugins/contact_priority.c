@@ -163,7 +163,8 @@ get_config_frame(GaimPlugin *plugin)
 
 static GaimGtkPluginUiInfo ui_info =
 {
-	get_config_frame
+	get_config_frame,
+	0 /* page_num (Reserved) */
 };
 
 static GaimPluginInfo info =
@@ -191,7 +192,9 @@ static GaimPluginInfo info =
 	NULL,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 	&ui_info,                                         /**< ui_info        */
-	NULL                                              /**< extra_info     */
+	NULL,                                             /**< extra_info     */
+	NULL,                                             /**< prefs_info     */
+	NULL                                              /**< actions        */
 };
 
 static void
