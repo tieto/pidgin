@@ -662,7 +662,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		return;
 	}
 
-	type = gtk_option_menu_get_history(dialog->type);
+	type = gtk_option_menu_get_history(dialog->type) + (GAIM_STATUS_UNSET + 1);
 	message = gtk_imhtml_get_markup(dialog->message);
 	unformatted = gaim_markup_strip_html(message);
 
