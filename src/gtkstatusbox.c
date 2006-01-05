@@ -1041,7 +1041,6 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 		{
 			/* Create a new transient saved status */
 			saved_status = gaim_savedstatus_new(NULL, type);
-			gaim_savedstatus_set_type(saved_status, type);
 			gaim_savedstatus_set_message(saved_status, message);
 
 			/* Set the status for each account */
