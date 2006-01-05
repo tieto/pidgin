@@ -22,6 +22,9 @@ version 2.0.0:
 	* Improved buddy list searching with CTRL+F
 
 	Conversations and Chats:
+	* Timestamps honor the locale.  To use the traditional style,
+	  enable the "Message Timestamp Formats" plugin.  The plugin
+	  also provides options to show dates in timestamps.
 	* Messages from buddies in the same "Person" will automatically
 	  use the same conversation window.
 	* The "Send As" menu has been replaced with a more appropriate
@@ -29,8 +32,7 @@ version 2.0.0:
 	* Message formatting persists between messages (Igor Belyi)
 	* Full message background colors are now supported
 	* Smooth scrolling when receiving a new message
-	* Screenname colors in chats now chosen intelligently from GNOME
-	  color palette
+	* Screenname colors in chats now chosen intelligently
 	* Conversation buffer scrollback limited to avoid large memory
 	  usage in active conversations
 	* Control-Shift-Tab will reverse cycle through the conversation tabs
@@ -49,7 +51,7 @@ version 2.0.0:
 	* Use libao for playing sounds via NAS instead of accessing NAS directly
 
 	Log Viewer:
-	* Log viewer aggregates logs from the same Contact (Richard Laager)
+	* Log viewer aggregates logs from the same "Person" (Richard Laager)
 	* When opening the log viewer, show the most recent log by default
 	  (Peter McCurdy)
 
