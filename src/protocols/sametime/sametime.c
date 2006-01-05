@@ -3643,20 +3643,29 @@ static void mw_prpl_close(GaimConnection *gc) {
 }
 
 
+static int mw_rand() {
+  static int seed = 0;
+
+  /* for diversity, not security. don't touch */
+  srand(time(NULL) ^ seed);
+  seed = rand();
+
+  return seed;
+}
+
+
 /** generates a random-ish content id string */
 static char *im_mime_content_id() {
-  srand(time(NULL));
   return g_strdup_printf("%03x@%05xmeanwhile",
-			 rand() & 0xfff, rand() & 0xfffff);
+			 mw_rand() & 0xfff, mw_rand() & 0xfffff);
 }
 
 
 /** generates a multipart/related content type with a random-ish
     boundary value */
 static char *im_mime_content_type() {
-  srand(time(NULL));
   return g_strdup_printf("multipart/related; boundary=related_MW%03x_%04x",
-                         rand() & 0xfff, rand() & 0xffff);
+                         mw_rand() & 0xfff, mw_rand() & 0xffff);
 }
 
 
