@@ -945,3 +945,17 @@ gaim_marshal_BOOLEAN__INT_POINTER(GaimCallback cb, va_list args, void *data,
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
 }
+
+void
+gaim_marshal_POINTER__POINTER_POINTER(GaimCallback cb, va_list args, void *data,
+                                      void **return_val)
+{
+	gpointer ret_val;
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+
+	ret_val = ((gpointer (*)(void *, void *, void *))cb)(arg1, arg2, data);
+
+	if (return_val != NULL)
+		*return_val = ret_val;
+}

@@ -4453,7 +4453,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		"/gaim/gtk/conversations/scrollback_lines");
 	int line_count;
 	char buf2[BUF_LONG];
-	char mdate[64];
+	char *mdate;
 	char color[10];
 	char *str;
 	char *with_font_tag;
@@ -4462,6 +4462,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimConversationType type;
 	char *displaying;
 	gboolean plugin_return;
+	struct tm tm = *(localtime(&mtime));
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -4513,10 +4514,20 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
 
-	if(time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
-		strftime(mdate, sizeof(mdate), "%Y-%m-%d %H:%M:%S", localtime(&mtime));
-	else
-		strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+	mdate = gaim_signal_emit_return_1(gaim_gtk_conversations_get_handle(),
+	                                  "conversation-timestamp",
+	                                  conv, &tm);
+	if (mdate == NULL)
+	{
+		char buf[64];
+
+		if (time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
+			strftime(buf, sizeof(buf), "%x %X", &tm);
+		else
+			strftime(buf, sizeof(buf), "%X", &tm);
+
+		mdate = g_strdup(buf);
+	}
 
 	if(gc)
 		sml_attrib = g_strdup_printf("sml=\"%s\"",
@@ -4733,8 +4744,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		g_free(new_message);
 	}
 
-	if(sml_attrib)
-		g_free(sml_attrib);
+	g_free(mdate);
+	g_free(sml_attrib);
 
 	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
 		(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
@@ -6177,6 +6188,13 @@ gaim_gtk_conversations_init(void)
 	                                    GAIM_SUBTYPE_CONV_WINDOW),
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_CONV_WINDOW));
+
+	gaim_signal_register(handle, "conversation-timestamp",
+	                     gaim_marshal_POINTER__POINTER_POINTER,
+	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_CONVERSATION),
+	                     gaim_value_new(GAIM_TYPE_POINTER));
 
 	gaim_signal_register(handle, "displaying-im-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,

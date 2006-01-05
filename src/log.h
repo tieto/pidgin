@@ -423,10 +423,28 @@ GaimLogLogger *gaim_log_logger_get (void);
  */
 GList *gaim_log_logger_get_options(void);
 
+/**************************************************************************/
+/** @name Conversations Subsystem                                         */
+/**************************************************************************/
+/*@{*/
+
 /**
  * Initializes the log subsystem.
  */
 void gaim_log_init(void);
+
+/**
+ * Returns the log subsystem handle.
+ *
+ * @return The log subsystem handle.
+ */
+void *gaim_log_get_handle(void);
+
+/**
+ * Uninitializes the log subsystem.
+ */
+void gaim_log_uninit(void);
+
 /*@}*/
 
 

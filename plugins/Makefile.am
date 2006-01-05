@@ -36,46 +36,49 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-extplacement_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
-gaimrc_la_LDFLAGS       = -module -avoid-version $(GTK_LIBS)
-history_la_LDFLAGS      = -module -avoid-version $(GTK_LIBS)
-iconaway_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
-idle_la_LDFLAGS         = -module -avoid-version $(GLIB_LIBS)
-notify_la_LDFLAGS       = -module -avoid-version $(GTK_LIBS)
-relnot_la_LDFLAGS       = -module -avoid-version $(GLIB_LIBS)
-spellchk_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
-statenotify_la_LDFLAGS  = -module -avoid-version $(GLIB_LIBS)
-timestamp_la_LDFLAGS    = -module -avoid-version $(GTK_LIBS)
+extplacement_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS)
+gaimrc_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
+history_la_LDFLAGS          = -module -avoid-version $(GTK_LIBS)
+iconaway_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
+idle_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
+notify_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
+relnot_la_LDFLAGS           = -module -avoid-version $(GLIB_LIBS)
+spellchk_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
+statenotify_la_LDFLAGS      = -module -avoid-version $(GLIB_LIBS)
+timestamp_la_LDFLAGS        = -module -avoid-version $(GTK_LIBS)
+timestamp_format_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 # this can't be in a conditional otherwise automake 1.4 yells
-dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
+dbus_example_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
 
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	extplacement.la  \
-	gaimrc.la        \
-	history.la       \
-	iconaway.la      \
-	idle.la          \
-	notify.la        \
-	relnot.la        \
-	spellchk.la      \
-	statenotify.la   \
-	timestamp.la     \
+	extplacement.la     \
+	gaimrc.la           \
+	history.la          \
+	iconaway.la         \
+	idle.la             \
+	notify.la           \
+	relnot.la           \
+	spellchk.la         \
+	statenotify.la      \
+	timestamp.la        \
+	timestamp_format.la \
 	$(DBUS_LTLIB)
 
 
-extplacement_la_SOURCES = extplacement.c
-gaimrc_la_SOURCES       = gaimrc.c
-history_la_SOURCES      = history.c
-iconaway_la_SOURCES     = iconaway.c
-idle_la_SOURCES         = idle.c
-notify_la_SOURCES       = notify.c
-relnot_la_SOURCES       = relnot.c
-spellchk_la_SOURCES     = spellchk.c
-statenotify_la_SOURCES  = statenotify.c
-timestamp_la_SOURCES    = timestamp.c
+extplacement_la_SOURCES     = extplacement.c
+gaimrc_la_SOURCES           = gaimrc.c
+history_la_SOURCES          = history.c
+iconaway_la_SOURCES         = iconaway.c
+idle_la_SOURCES             = idle.c
+notify_la_SOURCES           = notify.c
+relnot_la_SOURCES           = relnot.c
+spellchk_la_SOURCES         = spellchk.c
+statenotify_la_SOURCES      = statenotify.c
+timestamp_la_SOURCES        = timestamp.c
+timestamp_format_la_SOURCES = timestamp_format.c
 
 if ENABLE_DBUS
 
