@@ -299,10 +299,23 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	return ret;
 }
 
+static char * parse_attribute(const char *attrname, char *source) {
+	char *tmp, *tmp2, *retval = NULL;
+	int len = strlen(attrname);
+
+	if(!strncmp(source, attrname, len)) {
+		tmp = source + len;
+		tmp2 = g_strstr_len(tmp, strlen(tmp), "\"");
+		if(tmp2)
+			retval = g_strndup(tmp, tmp2 - tmp);
+	}
+
+	return retval;
+}
+
 static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
 	int i=0;
 	char *tmp;
-	char *tmp2;
 	gchar **parts;
 	if(!hdr) {
 		gaim_debug_error("simple", "fill_auth: hdr==NULL\n");
@@ -315,16 +328,13 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		if(!auth->nonce && !auth->nc) {
 			parts = g_strsplit(hdr, " ", 0);
 			while(parts[i]) {
-				if(!strncmp(parts[i],"targetname",10)) {
-					auth->target = g_strndup(parts[i]+12,strlen(parts[i]+12)-1);
+				if((tmp = parse_attribute("targetname=\"",
+						parts[i]))) {
+					auth->target = tmp;
 				}
-				if(!strncmp(parts[i],"realm",5)) {
-					tmp = strstr(hdr, "realm=");
-					tmp += 7;
-					tmp2 = strchr(tmp, '"');
-					*tmp2 = 0;
-					auth->realm = g_strdup(tmp);
-					*tmp2 = '"';
+				else if((tmp = parse_attribute("realm=\"",
+						parts[i]))) {
+					auth->realm = tmp;
 				}
 				i++;
 			}
@@ -342,21 +352,11 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	auth->type = 1;
 	parts = g_strsplit(hdr, " ", 0);
 	while(parts[i]) {
-		if(!strncmp(parts[i], "nonce", 5)) {
-			tmp = g_strstr_len(parts[i] + 7,
-				strlen(parts[i] + 7), "\"");
-			if (tmp) {
-				auth->nonce = g_strndup(parts[i] + 7,
-					tmp - (parts[i] + 7));
-			}
+		if((tmp = parse_attribute("nonce=\"", parts[i]))) {
+			auth->nonce = tmp;
 		}
-		else if(!strncmp(parts[i], "realm", 5)) {
-			tmp = g_strstr_len(parts[i] + 7,
-				strlen(parts[i] + 7), "\"");
-			if (tmp) {
-				auth->realm = g_strndup(parts[i] + 7,
-					tmp - (parts[i] + 7));
-			}
+		else if((tmp = parse_attribute("realm=\"", parts[i]))) {
+			auth->realm = tmp;
 		}
 		i++;
 	}
@@ -1054,7 +1054,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 		}
 	}
 	if(!found) {
-		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a unknown sip message with method %sand response %d\n",msg->method, msg->response);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a unknown sip message with method %s and response %d\n",msg->method, msg->response);
 	}
 }
 
