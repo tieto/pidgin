@@ -1741,6 +1741,8 @@ static void mw_conf_invited(struct mwConference *conf,
 	     NSTR(c_inviter), NSTR(c_name),
 	     NSTR(c_topic), NSTR(c_invitation));
 
+  if(! c_topic) c_topic = "(no title)";
+  if(! c_invitation) c_invitation = "(no message)";
   serv_got_chat_invite(gc, c_topic, c_inviter, c_invitation, ht);
 }
 
@@ -1789,6 +1791,7 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
   GaimConversation *g_conf;
 
   const char *n = mwConference_getName(conf);
+  const char *t = mwConference_getTitle(conf);
 
   DEBUG_INFO("conf %s opened, %u initial members\n",
 	     NSTR(n), g_list_length(members));
@@ -1798,8 +1801,8 @@ static void mw_conf_opened(struct mwConference *conf, GList *members) {
   pd = mwSession_getClientData(session);
   gc = pd->gc;
 
-  g_conf = serv_got_joined_chat(gc, CONF_TO_ID(conf),
-				mwConference_getTitle(conf));
+  if(! t) t = "(no title)";
+  g_conf = serv_got_joined_chat(gc, CONF_TO_ID(conf), t);
 
   mwConference_setClientData(conf, GAIM_CONV_CHAT(g_conf), NULL);
 
@@ -2772,6 +2775,8 @@ static void mw_place_invite(struct mwConversation *conv,
   g_hash_table_insert(ht, CHAT_KEY_INVITE, g_strdup(message));
   g_hash_table_insert(ht, CHAT_KEY_IS_PLACE, g_strdup("")); /* ugh */
 
+  if(! title) title = "(no title)";
+  if(! message) message = "(no message)";
   serv_got_chat_invite(pd->gc, title, idb->user, message, ht);
 
   mwConversation_close(conv, ERR_SUCCESS);
@@ -2843,6 +2848,7 @@ static void mw_place_opened(struct mwPlace *place) {
   GList *members, *l;
 
   const char *n = mwPlace_getName(place);
+  const char *t = mwPlace_getTitle(place);
 
   srvc = mwPlace_getService(place);
   session = mwService_getSession(MW_SERVICE(srvc));
@@ -2854,8 +2860,8 @@ static void mw_place_opened(struct mwPlace *place) {
   DEBUG_INFO("place %s opened, %u initial members\n",
 	     NSTR(n), g_list_length(members));
 
-  gconf = serv_got_joined_chat(gc, PLACE_TO_ID(place),
-			       mwPlace_getTitle(place));
+  if(! t) t = "(no title)";
+  gconf = serv_got_joined_chat(gc, PLACE_TO_ID(place), t);
 
   mwPlace_setClientData(place, gconf, NULL);
 
