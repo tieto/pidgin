@@ -164,9 +164,9 @@ void sipmsg_free(struct sipmsg *msg) {
 		g_free(elem->value);
 		g_free(elem);
 	}
-	if(msg->method) g_free(msg->method);
-	if(msg->target) g_free(msg->target);
-	if(msg->body) g_free(msg->body);
+	g_free(msg->method);
+	g_free(msg->target);
+	g_free(msg->body);
 	g_free(msg);
 }
 
