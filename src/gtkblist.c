@@ -2859,6 +2859,25 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		}
 	}
 
+	if(buddy) {
+		GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+																	 gaim_buddy_get_name(buddy),
+																	 gaim_buddy_get_account(buddy));
+		if(conv != NULL) {
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+			if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv)) {
+				/* add pending emblem */
+				if(size == GAIM_STATUS_ICON_SMALL) {
+					emblems[0].filename="pending";
+				}
+				else {
+					emblems[3].filename=emblems[2].filename;
+					emblems[2].filename="pending";
+				}
+			}
+		}
+	}
+
 	if(size == GAIM_STATUS_ICON_SMALL) {
 		scalesize = 15;
 		/* So that only the se icon will composite */
@@ -3301,6 +3320,12 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 
 	if (type != GAIM_CONV_UPDATE_UNSEEN)
 		return;
+
+	if(conv->account != NULL && conv->name != NULL) {
+		GaimBuddy *buddy = gaim_find_buddy(conv->account, conv->name);
+		if(buddy != NULL)
+			gaim_gtk_blist_update_buddy(NULL, (GaimBlistNode *)buddy);
+	}
 
 	if (gtkblist->menutrayicon) {
 		gtk_widget_destroy(gtkblist->menutrayicon);

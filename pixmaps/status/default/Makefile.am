@@ -33,6 +33,7 @@ EXTRA_DIST = \
 	occupied.png \
 	offline.png \
 	op.png \
+	pending.png \
 	secure.png \
 	silc.png \
 	simple.png \
