@@ -343,16 +343,26 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	parts = g_strsplit(hdr, " ", 0);
 	while(parts[i]) {
 		if(!strncmp(parts[i], "nonce", 5)) {
-			auth->nonce = g_strndup(parts[i]+7,strlen(parts[i]+7)-2);
+			tmp = g_strstr_len(parts[i] + 7,
+				strlen(parts[i] + 7), "\"");
+			if (tmp) {
+				auth->nonce = g_strndup(parts[i] + 7,
+					tmp - (parts[i] + 7));
+			}
 		}
 		else if(!strncmp(parts[i], "realm", 5)) {
-			auth->realm = g_strndup(parts[i]+7,strlen(parts[i]+7)-2);
+			tmp = g_strstr_len(parts[i] + 7,
+				strlen(parts[i] + 7), "\"");
+			if (tmp) {
+				auth->realm = g_strndup(parts[i] + 7,
+					tmp - (parts[i] + 7));
+			}
 		}
 		i++;
 	}
 	g_strfreev(parts);
 
-	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce, auth->realm);
+	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce ? auth->nonce : "(null)", auth->realm ? auth->realm : "(null)");
 
 	auth->digest_session_key = gaim_cipher_http_digest_calculate_session_key(
 			"md5", sip->username, auth->realm, sip->password, auth->nonce, NULL);
@@ -446,11 +456,20 @@ static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, 
 	GSList *tmp = msg->headers;
 	gchar *name;
 	gchar *value;
+	gchar zero[2] = {'0', '\0'};
 	GString *outstr = g_string_new("");
 	g_string_append_printf(outstr, "SIP/2.0 %d %s\r\n", code, text);
 	while(tmp) {
 		name = ((struct siphdrelement*) (tmp->data))->name;
 		value = ((struct siphdrelement*) (tmp->data))->value;
+
+		/* When sending the acknowlegements and errors, the content length from the original
+		   message is still here, but there is no body; we need to make sure we're sending the
+		   correct content length */
+		if(strcmp(name, "Content-Length") == 0 && !body) {
+			value = zero;
+		}
+
 		g_string_append_printf(outstr, "%s: %s\r\n", name, value);
 		tmp = g_slist_next(tmp);
 	}
@@ -979,21 +998,18 @@ privend:
 }
 
 static void process_input_message(struct simple_account_data *sip, struct sipmsg *msg) {
-	int found = 0;
-	if( msg->response == 0 ) { /* request */
+	gboolean found = FALSE;
+	if(msg->response == 0) { /* request */
 		if(!strcmp(msg->method, "MESSAGE")) {
 			process_incoming_message(sip, msg);
-			found = 1;
-		}
-		if(!strcmp(msg->method, "NOTIFY")) {
+			found = TRUE;
+		} else if(!strcmp(msg->method, "NOTIFY")) {
 			process_incoming_notify(sip, msg);
-			found = 1;
-		}
-		if(!strcmp(msg->method, "SUBSCRIBE")) {
+			found = TRUE;
+		} else if(!strcmp(msg->method, "SUBSCRIBE")) {
 			process_incoming_subscribe(sip, msg);
-			found = 1;
-		}
-		if(!found) {
+			found = TRUE;
+		} else {
 			send_sip_response(sip->gc, msg, 501, "Not implemented", NULL);
 		}
 	} else { /* response */
@@ -1032,7 +1048,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 					transactions_remove(sip, trans);
 				}
 			}
-			found = 1;
+			found = TRUE;
 		} else {
 			gaim_debug(GAIM_DEBUG_MISC, "simple", "received response to unknown transaction");
 		}
