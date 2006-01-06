@@ -426,47 +426,37 @@ static int sendout_pkt(GaimConnection *gc, const char *buf) {
 }
 
 static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) {
-	gchar *oldstr;
-	gchar *outstr = g_strdup_printf("%s %s SIP/2.0\r\n", msg->method, msg->target);
+	GSList *tmp = msg->headers;
 	gchar *name;
 	gchar *value;
-	GSList *tmp = msg->headers;
+	GString *outstr = g_string_new("");
+	g_string_append_printf(outstr, "%s %s SIP/2.0\r\n", msg->method, msg->target);
 	while(tmp) {
-		oldstr = outstr;
-		name = ((struct siphdrelement*)(tmp->data))->name;
-		value = ((struct siphdrelement*)(tmp->data))->value;
-		outstr = g_strdup_printf("%s%s: %s\r\n",oldstr, name, value);
-		g_free(oldstr);
+		name = ((struct siphdrelement*) (tmp->data))->name;
+		value = ((struct siphdrelement*) (tmp->data))->value;
+		g_string_append_printf(outstr, "%s: %s\r\n", name, value);
 		tmp = g_slist_next(tmp);
 	}
-	oldstr = outstr;
-	if(msg->body) outstr = g_strdup_printf("%s\r\n%s", outstr, msg->body);
-	else outstr = g_strdup_printf("%s\r\n", outstr);
-	g_free(oldstr);
-	sendout_pkt(sip->gc, outstr);
-	g_free(outstr);
+	g_string_append_printf(outstr, "\r\n%s", msg->body ? msg->body : "");
+	sendout_pkt(sip->gc, outstr->str);
+	g_string_free(outstr, TRUE);
 }
 
 static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, char *text, char *body) {
 	GSList *tmp = msg->headers;
-	char *oldstr;
-	char *name;
-	char *value;
-	char *outstr = g_strdup_printf("SIP/2.0 %d %s\r\n",code, text);
+	gchar *name;
+	gchar *value;
+	GString *outstr = g_string_new("");
+	g_string_append_printf(outstr, "SIP/2.0 %d %s\r\n", code, text);
 	while(tmp) {
-		oldstr = outstr;
-		name = ((struct siphdrelement*)(tmp->data))->name;
-		value = ((struct siphdrelement*)(tmp->data))->value;
-		outstr = g_strdup_printf("%s%s: %s\r\n",oldstr, name, value);
-		g_free(oldstr);
+		name = ((struct siphdrelement*) (tmp->data))->name;
+		value = ((struct siphdrelement*) (tmp->data))->value;
+		g_string_append_printf(outstr, "%s: %s\r\n", name, value);
 		tmp = g_slist_next(tmp);
 	}
-	oldstr = outstr;
-	if(body) outstr = g_strdup_printf("%s\r\n%s",outstr,body);
-	else outstr = g_strdup_printf("%s\r\n",outstr);
-	g_free(oldstr);
-	sendout_pkt(gc, outstr);
-	g_free(outstr);
+	g_string_append_printf(outstr, "\r\n%s", body ? body : "");
+	sendout_pkt(gc, outstr->str);
+	g_string_free(outstr, TRUE);
 }
 
 static void transactions_remove(struct simple_account_data *sip, struct transaction *trans) {
