@@ -125,30 +125,28 @@ void sipmsg_print(struct sipmsg *msg) {
 }
 
 char *sipmsg_to_string(struct sipmsg *msg) {
-	gchar *out;
-	gchar *old;
 	GSList *cur;
+	GString *outstr = g_string_new("");
 	struct siphdrelement *elem;
-	if(msg->response) out = g_strdup_printf("SIP/2.0 %d Unknown\r\n", msg->response);
-	else out = g_strdup_printf("%s %s SIP/2.0\r\n",msg->method, msg->target);
+
+	if(msg->response)
+		g_string_append_printf(outstr, "SIP/2.0 %d Unknown\r\n",
+			msg->response);
+	else
+		g_string_append_printf(outstr, "%s %s SIP/2.0\r\n",
+			msg->method, msg->target);
+
 	cur = msg->headers;
 	while(cur) {
 		elem = cur->data;
-		old = out;
-		out = g_strdup_printf("%s%s: %s\r\n", out, elem->name, elem->value);
-		g_free(old);
+		g_string_append_printf(outstr, "%s: %s\r\n", elem->name,
+			elem->value);
 		cur = g_slist_next(cur);
 	}
-	old = out;
-	out = g_strdup_printf("%s\r\n",out);
-	g_free(old);
 
-	if(msg->bodylen) {
-		old = out;
-		out = g_strdup_printf("%s%s",out, msg->body);
-		g_free(old);
-	}
-	return out;
+	g_string_append_printf(outstr, "\r\n%s", msg->bodylen ? msg->body : "");
+
+	return g_string_free(outstr, FALSE);
 }
 void sipmsg_add_header(struct sipmsg *msg, gchar *name, gchar *value) {
 	struct siphdrelement *element = g_new0(struct siphdrelement,1);
