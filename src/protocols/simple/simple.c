@@ -456,19 +456,23 @@ static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, 
 	GSList *tmp = msg->headers;
 	gchar *name;
 	gchar *value;
-	gchar zero[2] = {'0', '\0'};
 	GString *outstr = g_string_new("");
+	
+	/* When sending the acknowlegements and errors, the content length from the original
+	   message is still here, but there is no body; we need to make sure we're sending the
+	   correct content length */
+	sipmsg_remove_header(msg, "Content-Length");
+	if(body) {
+		gchar len[12];
+		sprintf(len, "%" G_GSIZE_FORMAT , strlen(body));
+		sipmsg_add_header(msg, "Content-Length",len);
+	}
+	else
+		sipmsg_add_header(msg, "Content-Length", "0");
 	g_string_append_printf(outstr, "SIP/2.0 %d %s\r\n", code, text);
 	while(tmp) {
 		name = ((struct siphdrelement*) (tmp->data))->name;
 		value = ((struct siphdrelement*) (tmp->data))->value;
-
-		/* When sending the acknowlegements and errors, the content length from the original
-		   message is still here, but there is no body; we need to make sure we're sending the
-		   correct content length */
-		if(strcmp(name, "Content-Length") == 0 && !body) {
-			value = zero;
-		}
 
 		g_string_append_printf(outstr, "%s: %s\r\n", name, value);
 		tmp = g_slist_next(tmp);
