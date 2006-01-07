@@ -311,10 +311,20 @@ int wgaim_write(int fd, const void *buf, unsigned int size) {
 			/* success */
 			return ret;
 		}
-		    
 	}
 	else
 		return write(fd, buf, size);
+}
+
+int wgaim_recv(int fd, void *buf, size_t len, int flags) {
+	int ret;
+
+	if ((ret = recv(fd, buf, len, flags)) == SOCKET_ERROR) {
+			errno = WSAGetLastError();
+			return -1;
+	} else {
+		return ret;
+	}
 }
 
 int wgaim_close(int fd) {

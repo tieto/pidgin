@@ -108,6 +108,10 @@ int wgaim_write(int fd, const void *buf, unsigned int size);
 #define write( socket, buf, buflen ) \
 wgaim_write( socket, buf, buflen )
 
+int wgaim_recv(int fd, void *buf, size_t len, int flags);
+#define recv(fd, buf, len, flags) \
+wgaim_recv(fd, buf, len, flags)
+
 int wgaim_close(int fd);
 #define close( fd ) \
 wgaim_close( fd )
