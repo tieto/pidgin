@@ -537,9 +537,11 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
-	if(!sip->ip || !strcmp(sip->ip,"0.0.0.0")) { /* if there was no known ip retry now */
-		g_free(sip->ip);
-		sip->ip = g_strdup(gaim_network_get_public_ip());
+	if(!sip->ip || !strcmp(sip->ip,"0.0.0.0") || !strcmp(sip->ip,"127.0.0.1")) { /* if there was no known ip retry now */
+                if(gaim_network_get_public_ip()) {
+                        g_free(sip->ip);
+                        sip->ip = g_strdup(gaim_network_get_public_ip());
+                }
 	}
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
@@ -1262,6 +1264,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 			return;
 		}
 
+		sip->listenport = gaim_network_get_port_from_fd(sip->fd);
 		sip->listenfd = sip->fd;
 
 		sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
@@ -1269,7 +1272,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 		sip->serveraddr.sin_port = htons(port);
 
 		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
-		sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
+		sip->ip = g_strdup(gaim_network_get_my_ip(-1));
 		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
 		do_register(sip);
 	}
