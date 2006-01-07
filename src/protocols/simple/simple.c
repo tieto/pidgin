@@ -1111,8 +1111,6 @@ static void simple_udp_process(gpointer data, gint source, GaimInputCondition co
 	int len;
 	time_t currtime;
 
-	/** XXX: eek! What if we can't receive everything right now?
-	         (need to maintain buffer for next read) */
 	static char buffer[65536];
 	if((len = recv(source, buffer, 65536, 0))) {
 		buffer[len] = '\0';
