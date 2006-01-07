@@ -224,7 +224,7 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 					strcpy(nattype.publicip, ip);
 			}
 
-			tmp += attrib->len;
+			tmp += ntohs(attrib->len);
 		}
 		gaim_debug_info("stun", "got public ip %s\n", nattype.publicip);
 		nattype.status = GAIM_STUN_STATUS_DISCOVERED;
