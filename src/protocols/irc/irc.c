@@ -488,6 +488,13 @@ static void read_input(struct irc_conn *irc, int len)
 	irc->inbuf[irc->inbufused] = '\0';
 
 	cur = irc->inbuf;
+	
+	/* This is a hack to work around the fact that marv gets messages
+	 * with null bytes in them while using some weird irc server at work
+	 */
+	while ((cur < (irc->inbuf + irc->inbufused)) && !*cur)
+		cur++;
+	
 	while (cur < irc->inbuf + irc->inbufused &&
 	       ((end = strstr(cur, "\r\n")) || (end = strstr(cur, "\n")))) {
 		int step = (*end == '\r' ? 2 : 1);
