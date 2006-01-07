@@ -1231,7 +1231,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		
 		request_len += g_snprintf(request + request_len,
 					  sizeof(request) - request_len,
-					  "Proxy-Authorization: NTLM %s\r\nProxy-Authorization: Basic %s\r\nProxy-Connection: Keep-Alive\r\n", gaim_ntlm_gen_type1((gchar*)gaim_proxy_info_get_host(phb->gpi),""), t2);
+					  "Proxy-Authorization: Basic %s\r\nProxy-Authorization: NTLM %s\r\nProxy-Connection: Keep-Alive\r\n", t2, gaim_ntlm_gen_type1((gchar*)gaim_proxy_info_get_host(phb->gpi),""));
 		g_free(t2);
 	}
 
