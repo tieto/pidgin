@@ -52,6 +52,8 @@ struct _GaimStunNatDiscovery {
 	GaimStunStatus status;
 	GaimStunNatType type;
 	char publicip[16];
+	char *servername;
+	time_t lookup_time;
 };
 
 typedef void (*StunCallback) (GaimStunNatDiscovery *);

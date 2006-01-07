@@ -41,38 +41,63 @@
 #include "debug.h"
 #include "account.h"
 #include "dnssrv.h"
+#include "network.h"
 #include "proxy.h"
 #include "stun.h"
 #include "prefs.h"
 
+#define MSGTYPE_BINDINGREQUEST 0x0001
+#define MSGTYPE_BINDINGRESPONSE 0x0101
+
+#define ATTRIB_MAPPEDADDRESS 0x0001
+
 struct stun_header {
-	short	type;
-	short	len;
-	int	transid[4];
+	guint16 type;
+	guint16 len;
+	guint32 transid[4];
 };
 
 struct stun_attrib {
-	short type;
-	short len;
+	guint16 type;
+	guint16 len;
 };
 
+#ifdef NOTYET
 struct stun_change {
 	struct stun_header hdr;
 	struct stun_attrib attrib;
 	char value[4];
 };
+#endif
 
-static GaimStunNatDiscovery nattype = {-1, 0, "\0"};
+struct stun_conn {
+	int fd;
+	struct sockaddr_in addr;
+	int test;
+	int retry;
+	guint incb;
+	guint timeout;
+	struct stun_header *packet;
+	size_t packetsize;
+};
+
+static GaimStunNatDiscovery nattype = {-1, 0, "\0", NULL, 0};
 
 static GSList *callbacks = 0;
-static int fd = -1;
-static gint incb = -1;
-static gint timeout = -1;
-static struct stun_header *packet;
-static int packetsize = 0;
-static int test = 0;
-static int retry = 0;
-static struct sockaddr_in addr;
+
+static void close_stun_conn(struct stun_conn *sc) {
+
+	if (sc->incb)
+		gaim_input_remove(sc->incb);
+
+	if (sc->timeout)
+		gaim_timeout_remove(sc->timeout);
+
+	if (sc->fd)
+		close(sc->fd);
+
+	g_free(sc);
+}
 
 static void do_callbacks() {
 	while(callbacks) {
@@ -83,29 +108,36 @@ static void do_callbacks() {
 	}
 }
 
-static gboolean timeoutfunc(void *blah) {
-	if(retry > 2) {
-		if(test == 2)
+static gboolean timeoutfunc(gpointer data) {
+	struct stun_conn *sc = data;
+	if(sc->retry >= 2) {
+		gaim_debug_info("stun", "request timed out, giving up.\n");
+		if(sc->test == 2)
 			nattype.type = GAIM_STUN_NAT_TYPE_SYMMETRIC;
-
-		/* remove input */
-		gaim_input_remove(incb);
 
 		/* set unknown */
 		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
 
+		nattype.lookup_time = time(NULL);
+
 		/* callbacks */
 		do_callbacks();
 
+		/* we don't need to remove the timeout (returning FALSE) */
+		sc->timeout = 0;
+		close_stun_conn(sc);
+
 		return FALSE;
 	}
-	retry++;
-	sendto(fd, packet, packetsize, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+	gaim_debug_info("stun", "request timed out, retrying.\n");
+	sc->retry++;
+	sendto(sc->fd, sc->packet, sc->packetsize, 0,
+		(struct sockaddr *)&(sc->addr), sizeof(struct sockaddr_in));
 	return TRUE;
 }
 
 #ifdef NOTYET
-static void do_test2() {
+static void do_test2(struct stun_conn *sc) {
 	struct stun_change data;
 	data.hdr.type = htons(0x0001);
 	data.hdr.len = 0;
@@ -116,17 +148,18 @@ static void do_test2() {
 	data.attrib.type = htons(0x003);
 	data.attrib.len = htons(4);
 	data.value[3] = 6;
-	packet = (struct stun_header*)&data;
-	packetsize = sizeof(struct stun_change);
-	retry = 0;
-	test = 2;
-	sendto(fd, packet, packetsize, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
-	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
+	sc->packet = (struct stun_header*)&data;
+	sc->packetsize = sizeof(struct stun_change);
+	sc->retry = 0;
+	sc->test = 2;
+	sendto(sc->fd, sc->packet, sc->packetsize, 0, (struct sockaddr *)&(sc->addr), sizeof(struct sockaddr_in));
+	sc->timeout = gaim_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
 }
 #endif
 
 static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
-	char buffer[1024];
+	struct stun_conn *sc = data;
+	char buffer[65536];
 	char *tmp;
 	int len;
 	struct in_addr in;
@@ -136,27 +169,67 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
 
-	len = recv(source, buffer, 1024, 0);
+	len = recv(source, buffer, sizeof(buffer) - 1, 0);
+	if (!len) {
+		gaim_debug_info("stun", "unable to read stun response\n");
+		return;
+	}
+	buffer[len] = '\0';
 
-	hdr = (struct stun_header*)buffer;
-	if(hdr->transid[0]!=packet->transid[0] || hdr->transid[1]!=packet->transid[1] || hdr->transid[2]!=packet->transid[2] || hdr->transid[3]!=packet->transid[3]) { /* wrong transaction */
+	if (len < sizeof(struct stun_header)) {
+		gaim_debug_info("stun", "got invalid response\n");
+		return;
+	}
+
+	hdr = (struct stun_header*) buffer;
+	if (len != (ntohs(hdr->len) + sizeof(struct stun_header))) {
+		gaim_debug_info("stun", "got incomplete response\n");
+		return;
+	}
+
+	/* wrong transaction */
+	if(hdr->transid[0] != sc->packet->transid[0]
+			|| hdr->transid[1] != sc->packet->transid[1]
+			|| hdr->transid[2] != sc->packet->transid[2]
+			|| hdr->transid[3] != sc->packet->transid[3]) {
 		gaim_debug_info("stun", "got wrong transid\n");
 		return;
 	}
-	if(test==1) {
-		tmp = buffer + sizeof(struct stun_header);
-		while(buffer+len > tmp) {
 
+	if(sc->test==1) {
+		if (hdr->type != MSGTYPE_BINDINGRESPONSE) {
+			gaim_debug_info("stun",
+				"Expected Binding Response, got %d\n",
+				hdr->type);
+			return;
+		}
+
+		tmp = buffer + sizeof(struct stun_header);
+		while((buffer + len) > (tmp + sizeof(struct stun_attrib))) {
 			attrib = (struct stun_attrib*) tmp;
-			if(attrib->type == htons(0x0001) && attrib->len == htons(8)) {
-				memcpy(&in.s_addr, tmp+sizeof(struct stun_attrib)+2+2, 4);
-				strcpy(nattype.publicip, inet_ntoa(in));
+			tmp += sizeof(struct stun_attrib);
+
+			if (!((buffer + len) > (tmp + ntohs(attrib->len))))
+				break;
+
+			if(attrib->type == htons(ATTRIB_MAPPEDADDRESS)
+					&& ntohs(attrib->len) == 8) {
+				char *ip;
+				/* Skip the first unused byte,
+				 * the family(1 byte), and the port(2 bytes);
+				 * then read the 4 byte IPv4 address */
+				memcpy(&in.s_addr, tmp + 4, 4);
+				ip = inet_ntoa(in);
+				if(ip)
+					strcpy(nattype.publicip, ip);
 			}
-			tmp += sizeof(struct stun_attrib) + attrib->len;
+
+			tmp += attrib->len;
 		}
 		gaim_debug_info("stun", "got public ip %s\n", nattype.publicip);
 		nattype.status = GAIM_STUN_STATUS_DISCOVERED;
 		nattype.type = GAIM_STUN_NAT_TYPE_UNKNOWN_NAT;
+		nattype.lookup_time = time(NULL);
 
 		/* is it a NAT? */
 
@@ -180,49 +253,57 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 				}
 			}
 		}
-		gaim_timeout_remove(timeout);
 
-#ifdef NOTYET
-		do_test2();
-#endif
-		return;
-	} else if(test == 2) {
+#ifndef NOTYET
+		close_stun_conn(sc);
 		do_callbacks();
-		gaim_input_remove(incb);
-		gaim_timeout_remove(timeout);
+#else
+		gaim_timeout_remove(sc->timeout);
+		sc->timeout = 0;
+
+		do_test2(sc);
+	} else if(sc->test == 2) {
+		close_stun_conn(sc);
 		nattype.type = GAIM_STUN_NAT_TYPE_FULL_CONE;
+		do_callbacks();
+#endif
 	}
 }
 
-static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
-	static struct stun_header data;
-	int ret;
+static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
+	struct stun_conn *sc;
+	static struct stun_header hdr_data;
+	int ret, fd;
 
-	if(!hosts) return;
-	if(!hosts->data) return;
-
-	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
+	if(!hosts || !hosts->data) {
+		nattype.status = GAIM_STUN_STATUS_UNDISCOVERED;
+		nattype.lookup_time = time(NULL);
 		do_callbacks();
 		return;
 	}
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(12108);
-	addr.sin_addr.s_addr = INADDR_ANY;
-	while( ((ret = bind(fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in))) < 0 ) && ntohs(addr.sin_port) < 12208) {
-		addr.sin_port = htons(ntohs(addr.sin_port)+1);
-	}
-	if( ret < 0 ) {
+
+	fd = gaim_network_listen_range(12108, 12208, SOCK_DGRAM);
+
+	if(!fd) {
 		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
+		nattype.lookup_time = time(NULL);
 		do_callbacks();
 		return;
 	}
-	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
+
+	sc = g_new0(struct stun_conn, 1);
+	sc->fd = fd;
+
+	sc->addr.sin_family = AF_INET;
+	sc->addr.sin_port = htons(gaim_network_get_port_from_fd(fd));
+	sc->addr.sin_addr.s_addr = INADDR_ANY;
+
+	sc->incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, sc);
 
 	ret = GPOINTER_TO_INT(hosts->data);
 	hosts = g_slist_remove(hosts, hosts->data);
-	memcpy(&addr, hosts->data, sizeof(struct sockaddr_in));
+	memcpy(&(sc->addr), hosts->data, sizeof(struct sockaddr_in));
 	g_free(hosts->data);
 	hosts = g_slist_remove(hosts, hosts->data);
 	while(hosts) {
@@ -231,22 +312,26 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 		hosts = g_slist_remove(hosts, hosts->data);
 	}
 
-	data.type = htons(0x0001);
-	data.len = 0;
-	data.transid[0] = rand();
-	data.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
-	data.transid[2] = rand();
-	data.transid[3] = rand();
+	hdr_data.type = htons(MSGTYPE_BINDINGREQUEST);
+	hdr_data.len = 0;
+	hdr_data.transid[0] = rand();
+	hdr_data.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
+	hdr_data.transid[2] = rand();
+	hdr_data.transid[3] = rand();
 
-	if(sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
+	if(sendto(sc->fd, &hdr_data, sizeof(struct stun_header), 0,
+			(struct sockaddr *)&(sc->addr),
+			sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
 		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
+		nattype.lookup_time = time(NULL);
 		do_callbacks();
+		close_stun_conn(sc);
 		return;
 	}
-	test = 1;
-	packet = &data;
-	packetsize = sizeof(struct stun_header);
-	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
+	sc->test = 1;
+	sc->packet = &hdr_data;
+	sc->packetsize = sizeof(struct stun_header);
+	sc->timeout = gaim_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
 }
 
 static void do_test1(GaimSrvResponse *resp, int results, gpointer sdata) {
@@ -257,10 +342,17 @@ static void do_test1(GaimSrvResponse *resp, int results, gpointer sdata) {
 		servername = resp[0].hostname;
 		port = resp[0].port;
 	}
-	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n", results, servername, port);
+	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
+		results, servername, port);
 
 	gaim_gethostbyname_async(servername, port, hbn_cb, NULL);
 	g_free(resp);
+}
+
+static gboolean call_callback(gpointer data) {
+	StunCallback cb = data;
+	cb(&nattype);
+	return FALSE;
 }
 
 GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb) {
@@ -271,24 +363,52 @@ GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb) {
 	if(nattype.status == GAIM_STUN_STATUS_DISCOVERING) {
 		if(cb)
 			callbacks = g_slist_append(callbacks, cb);
-		return NULL;
+		return &nattype;
 	}
 
 	if(nattype.status != GAIM_STUN_STATUS_UNDISCOVERED) {
-		if(cb)
-			cb(&nattype);
-		return &nattype;
+		gboolean use_cached_result = TRUE;
+
+		/** Deal with the server name having changed since we did the
+		    lookup */
+		if (servername && strlen(servername) > 1
+				&& ((nattype.servername
+					&& strcmp(servername, nattype.servername))
+				|| !nattype.servername)) {
+			use_cached_result = FALSE;
+		}
+
+		/* If we don't have a successful status and it has been 5
+		   minutes since we last did a lookup, redo the lookup */
+		if (nattype.status != GAIM_STUN_STATUS_DISCOVERED
+				&& (time(NULL) - nattype.lookup_time) > 300) {
+			use_cached_result = FALSE;
+		}
+
+		if (use_cached_result) {
+			if(cb)
+				gaim_timeout_add(10, call_callback, cb);
+			return &nattype;
+		}
 	}
 
 	if(!servername || (strlen(servername) < 2)) {
 		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
+		nattype.lookup_time = time(NULL);
 		if(cb)
-			cb(&nattype);
+			gaim_timeout_add(10, call_callback, cb);
 		return &nattype;
 	}
+
+	nattype.status = GAIM_STUN_STATUS_DISCOVERING;
+	nattype.publicip[0] = '\0';
+	g_free(nattype.servername);
+	nattype.servername = g_strdup(servername);
+
 	callbacks = g_slist_append(callbacks, cb);
 	gaim_srv_resolve("stun", "udp", servername, do_test1,
 		(gpointer) servername);
+
 	return &nattype;
 }
 
