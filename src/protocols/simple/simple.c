@@ -1111,12 +1111,15 @@ static void simple_udp_process(gpointer data, gint source, GaimInputCondition co
 	int len;
 	time_t currtime;
 
+	/** XXX: eek! What if we can't receive everything right now?
+	         (need to maintain buffer for next read) */
 	static char buffer[65536];
-	len = recv(source, buffer, 65536, 0);
-	buffer[len] = 0;
-	gaim_debug_info("simple","\n\nreceived - %s\n######\n%s\n#######\n\n",ctime(&currtime), buffer);
-	msg = sipmsg_parse_msg(buffer);
-	if(msg) process_input_message(sip, msg);
+	if((len = recv(source, buffer, 65536, 0))) {
+		buffer[len] = '\0';
+		gaim_debug_info("simple","\n\nreceived - %s\n######\n%s\n#######\n\n",ctime(&currtime), buffer);
+		msg = sipmsg_parse_msg(buffer);
+		if(msg) process_input_message(sip, msg);
+	}
 }
 
 static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond)
