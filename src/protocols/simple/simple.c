@@ -199,11 +199,9 @@ static void simple_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
 	struct simple_buddy *b;
 	if(strncmp("sip:", buddy->name,4)) {
-		gchar *buf = g_strdup_printf(_("Could not add the buddy %s because every simple user has to start with 'sip:'."), buddy->name);
-		gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
+		gchar *buf = g_strdup_printf("sip:%s",buddy->name);
+		gaim_blist_rename_buddy(buddy, buf);
 		g_free(buf);
-		gaim_blist_remove_buddy(buddy);
-		return;
 	}
 	if(!g_hash_table_lookup(sip->buddies, buddy->name)) {
 		b = g_new0(struct simple_buddy, 1);
