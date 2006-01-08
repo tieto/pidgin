@@ -50,23 +50,15 @@ static char *gentag() {
 
 static char *genbranch() {
 	return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF);
+		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
+		rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
 static char *gencallid() {
 	return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF,
-                        rand() & 0xFFFF);
+		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
+		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
+		rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
 static char *get_my_ip() {
@@ -550,7 +542,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
-	
+
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
 			"From: <sip:%s@%s>;tag=%s\r\n"
@@ -1208,6 +1200,43 @@ static gboolean simple_ht_equals_nick(const char *nick1, const char *nick2) {
 	return (gaim_utf8_strcasecmp(nick1, nick2) == 0);
 }
 
+static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *error_message) {
+	struct simple_account_data *sip = (struct simple_account_data*) data;
+	int addr_size;
+
+	if (!hosts || !hosts->data) {
+		gaim_connection_error(sip->gc, _("Couldn't resolve host"));
+		return;
+	}
+
+	addr_size = GPOINTER_TO_INT(hosts->data);
+	hosts = g_slist_remove(hosts, hosts->data);
+	memcpy(&(sip->serveraddr), hosts->data, addr_size);
+	g_free(hosts->data);
+	hosts = g_slist_remove(hosts, hosts->data);
+	while(hosts) {
+		hosts = g_slist_remove(hosts, hosts->data);
+		g_free(hosts->data);
+		hosts = g_slist_remove(hosts, hosts->data);
+	}
+
+	/* create socket for incoming connections */
+	sip->fd = gaim_network_listen_range(5060, 5160, SOCK_DGRAM);
+
+	if(sip->fd == -1) {
+		gaim_connection_error(sip->gc, _("Could not create listen socket"));
+		return;
+	}
+
+	sip->listenport = gaim_network_get_port_from_fd(sip->fd);
+	sip->listenfd = sip->fd;
+
+	sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
+
+	sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
+	do_register(sip);
+}
+
 static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 
@@ -1215,7 +1244,6 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	int port = gaim_account_get_int(sip->account, "port", 0);
 
 	int error = 0;
-	struct hostent *h;
 
 	/* find the host to connect to */
 	if(results) {
@@ -1255,30 +1283,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		/** TODO: this should probably be async, right? */
-		if (!(h = gethostbyname(hostname))) {
-			gaim_connection_error(sip->gc, _("Couldn't resolve host"));
-			return;
-		}
-
-		/* create socket for incoming connections */
-		sip->fd = gaim_network_listen_range(5060, 5160, SOCK_DGRAM);
-
-		if(sip->fd == -1) {
-			gaim_connection_error(sip->gc, _("Could not create listen socket"));
-			return;
-		}
-
-		sip->listenport = gaim_network_get_port_from_fd(sip->fd);
-		sip->listenfd = sip->fd;
-
-		sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
-		sip->serveraddr.sin_family = AF_INET;
-		sip->serveraddr.sin_port = htons(port);
-
-		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
-		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
-		do_register(sip);
+		gaim_gethostbyname_async(hostname, port, simple_udp_host_resolved, sip);
 	}
 }
 
