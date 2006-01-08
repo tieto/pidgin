@@ -465,6 +465,7 @@ pref_full_name(struct gaim_pref *pref)
 		name = g_string_prepend_c(name, '/');
 		name = g_string_prepend(name, parent->name);
 	}
+	name = g_string_prepend_c(name, '/');
 	ret = name->str;
 	g_string_free(name, FALSE);
 	return ret;
