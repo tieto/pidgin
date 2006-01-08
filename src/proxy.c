@@ -1558,25 +1558,23 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 	unsigned char Kxoripad[65];
 	unsigned char Kxoropad[65];
 	int pwlen;
-	char * pwinput;
-	guchar md5buf[16];
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	ctx = gaim_cipher_context_new(cipher, NULL);
 
-	pwinput=(char *)passwd;
+	memset(Kxoripad,0,sizeof(Kxoripad));
+	memset(Kxoropad,0,sizeof(Kxoropad));
+
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
 		gaim_cipher_context_append(ctx, (const guchar *)passwd, strlen(passwd));
-		gaim_cipher_context_digest(ctx, sizeof(md5buf), md5buf, NULL);
-		pwinput=(char *)md5buf;
+		gaim_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
 		pwlen=16;
+	} else {
+		memcpy(Kxoripad, passwd, pwlen);
 	}
+	memcpy(Kxoropad,Kxoripad,pwlen);
 
-	memset(Kxoripad,0,sizeof(Kxoripad));
-	memset(Kxoropad,0,sizeof(Kxoropad));
-	memcpy(Kxoripad,pwinput,pwlen);
-	memcpy(Kxoropad,pwinput,pwlen);
 	for (i=0;i<64;i++) {
 		Kxoripad[i]^=0x36;
 		Kxoropad[i]^=0x5c;
@@ -1590,7 +1588,7 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 	gaim_cipher_context_reset(ctx, NULL);
 	gaim_cipher_context_append(ctx, Kxoropad, 64);
 	gaim_cipher_context_append(ctx, Kxoripad, 16);
-	gaim_cipher_context_digest(ctx, sizeof(response), response, NULL);
+	gaim_cipher_context_digest(ctx, 16, response, NULL);
 
 	gaim_cipher_context_destroy(ctx);
 }
