@@ -69,6 +69,18 @@ static char *gencallid() {
                         rand() & 0xFFFF);
 }
 
+static char *get_my_ip() {
+	static char my_ip[42];
+	const char *tmp = gaim_network_get_public_ip();
+
+	if(!tmp || !strcmp(tmp,"0.0.0.0")) {
+		tmp = gaim_network_get_my_ip(-1);
+	}
+	if(!tmp) strcpy(my_ip, "0.0.0.0");
+	strcpy(my_ip, tmp);
+	return my_ip;
+}
+
 static const char *simple_list_icon(GaimAccount *a, GaimBuddy *b) {
 	return "simple";
 }
@@ -538,13 +550,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
-
-	if(!sip->ip || !strcmp(sip->ip,"0.0.0.0") || !strcmp(sip->ip,"127.0.0.1")) { /* if there was no known ip retry now */
-                if(gaim_network_get_public_ip()) {
-                        g_free(sip->ip);
-                        sip->ip = g_strdup(gaim_network_get_public_ip());
-                }
-	}
+	
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
 			"From: <sip:%s@%s>;tag=%s\r\n"
@@ -558,7 +564,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 			method,
 			url,
 			sip->udp ? "UDP" : "TCP",
-			sip->ip ? sip->ip : "",
+			get_my_ip(),
 			sip->listenport,
 			branch,
 			sip->username,
@@ -589,7 +595,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 static void do_register_exp(struct simple_account_data *sip, int expire) {
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
-	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, sip->ip ? sip->ip : "", sip->listenport, sip->udp ? "udp" : "tcp", expire);
+	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, get_my_ip(), sip->listenport, sip->udp ? "udp" : "tcp", expire);
 
 	sip->registerstatus = 1;
 
@@ -1185,9 +1191,6 @@ static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
 
 	conn = connection_create(sip, source);
 
-	/* get the local ip */
-	sip->ip = g_strdup(gaim_network_get_my_ip(source));
-
 	do_register(sip);
 
 	conn->inputhandler = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_input_cb, gc);
@@ -1274,7 +1277,6 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 		sip->serveraddr.sin_port = htons(port);
 
 		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
-		sip->ip = g_strdup(gaim_network_get_my_ip(-1));
 		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
 		do_register(sip);
 	}
@@ -1349,12 +1351,11 @@ static void simple_close(GaimConnection *gc)
 		g_free(sip->proxy.nonce);
 		g_free(sip->proxy.realm);
 		g_free(sip->sendlater);
-		g_free(sip->ip);
 		g_free(sip->realhostname);
 		if(sip->listenpa) gaim_input_remove(sip->listenpa);
 		if(sip->resendtimeout) gaim_timeout_remove(sip->resendtimeout);
 		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
-		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = sip->realhostname = NULL;
+		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->realhostname = NULL;
 	}
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;

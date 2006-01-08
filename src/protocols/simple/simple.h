@@ -75,7 +75,6 @@ struct simple_account_data {
 	int listenfd;
 	int listenport;
 	int listenpa;
-	gchar *ip;
 	gchar *status;
 	GHashTable *buddies;
 	guint registertimeout;
