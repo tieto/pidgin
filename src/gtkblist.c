@@ -3509,6 +3509,16 @@ static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 	update_menu_bar(gtkblist);
 }
 
+static void
+account_status_changed(GaimAccount *account, GaimStatus *old,
+					   GaimStatus *new, GaimGtkBuddyList *gtkblist)
+{
+	if (!gtkblist)
+		return;
+
+	update_menu_bar(gtkblist);
+}
+
 static gboolean
 gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, GaimGtkBuddyList *gtkblist)
 {
@@ -3751,6 +3761,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
 			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
+			gtkblist, GAIM_CALLBACK(account_status_changed), gtkblist);
 
 	gaim_signal_connect(gaim_gtk_account_get_handle(), "account-modified",
 			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
