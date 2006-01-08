@@ -1250,9 +1250,8 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	/* find the host to connect to */
 	if(results) {
 		hostname = g_strdup(resp->hostname);
-		/* TODO: Should this work more like Jabber where the SRV value will be ignored
-		 * if there is one manually specified? */
-		port = resp->port;
+		if(!port)
+			port = resp->port;
 		g_free(resp);
 	} else {
 		if(!gaim_account_get_bool(sip->account, "useproxy", FALSE)) {
@@ -1264,6 +1263,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 
 	sip->realhostname = hostname;
 	sip->realport = port;
+	if(!sip->realport) sip->realport = 5060;
 	/* TCP case */
 	if(! sip->udp) {
 		/* create socket for incoming connections */
@@ -1477,7 +1477,7 @@ static void _init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Publish status (note: everyone may watch you)"), "dopublish", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("Connect port"), "port", 5060);
+	option = gaim_account_option_int_new(_("Connect port"), "port", 0);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 
