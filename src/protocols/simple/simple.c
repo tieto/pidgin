@@ -697,14 +697,13 @@ static gboolean resend_timeout(struct simple_account_data *sip) {
 	return TRUE;
 }
 
-static gboolean register_timeout(struct simple_account_data *sip) {
+static gboolean subscribe_timeout(struct simple_account_data *sip) {
 	GSList *tmp;
 	time_t curtime = time(NULL);
 	/* register again if first registration expires */
 	if(sip->reregister < curtime) {
 		do_register(sip);
 	}
-	gaim_debug_info("simple","in register timeout\n");
 	/* check for every subscription if we need to resubscribe */
 	g_hash_table_foreach(sip->buddies, (GHFunc)simple_buddy_resub, (gpointer)sip);
 
@@ -811,7 +810,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			/* get buddies from blist */
 			simple_get_buddies(sip->gc);
 
-			register_timeout(sip);
+			subscribe_timeout(sip);
 			break;
 		case 401:
 			if(sip->registerstatus!=2) {
@@ -1182,6 +1181,8 @@ static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
 	sip->fd = source;
 
 	conn = connection_create(sip, source);
+	
+	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
 
 	do_register(sip);
 
@@ -1234,6 +1235,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
 
 	sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
+	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
 	do_register(sip);
 }
 
@@ -1334,10 +1336,6 @@ static void simple_login(GaimAccount *account)
 		gaim_srv_resolve("sip","udp",hosttoconnect,srvresolved, sip);
 	}
 	g_free(hosttoconnect);
-
-	/* register timeout callback for register / subscribe renewal */
-	/* TODO: What if the timeout is called before gaim_srv_resolve() finishes?! */
-	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)register_timeout, sip);
 }
 
 static void simple_close(GaimConnection *gc)
