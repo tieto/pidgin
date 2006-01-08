@@ -629,7 +629,7 @@ remove_pref(struct gaim_pref *pref)
 
 	name = pref_full_name(pref);
 
-	gaim_debug_info("prefs", "removing pref /%s\n", name);
+	gaim_debug_info("prefs", "removing pref %s\n", name);
 
 	g_hash_table_remove(prefs_hash, name);
 	g_free(name);
