@@ -113,6 +113,7 @@ version 2.0.0:
 	* Whiteboard support (Pekka Riikonen)
 	* Sending/receiving images in IMs (Pekka Riikonen)
 	* Cipher and HMAC selection support (Pekka Riikonen)
+	* Buddy Icon support (Pekka Riikonen)
 
 	Other Protocol Changes:
 	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno, Google

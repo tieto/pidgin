@@ -206,6 +206,9 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 	if (!gaim_account_get_bool(account, "reject-attrs", FALSE)) {
 		SilcUInt32 mask;
 		const char *tmp;
+#ifdef SILC_ATTRIBUTE_USER_ICON
+		char *icon;
+#endif
 #ifdef HAVE_SYS_UTSNAME_H
 		struct utsname u;
 #endif
@@ -240,6 +243,13 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 		silc_client_attribute_add(client, conn,
 					  SILC_ATTRIBUTE_TIMEZONE,
 					  (void *)tmp, strlen(tmp));
+
+#ifdef SILC_ATTRIBUTE_USER_ICON
+		/* Set our buddy icon */
+		icon = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
+		silcgaim_buddy_set_icon(gc, icon);
+		g_free(icon);
+#endif
 	}
 
 	silc_free(params.detach_data);
@@ -1724,7 +1734,11 @@ static GaimPluginProtocolInfo prpl_info =
 #endif
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
-	NO_BUDDY_ICONS,				/* icon_spec */
+#ifdef SILC_ATTRIBUTE_USER_ICON
+	{"jpeg,gif,png,bmp", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
+#else
+	NO_BUDDY_ICONS,
+#endif
 	silcgaim_list_icon,			/* list_icon */
 	silcgaim_list_emblems,		/* list_emblems */
 	silcgaim_status_text,		/* status_text */
@@ -1768,7 +1782,11 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* buddy_free */
 	NULL,						/* convo_closed */
 	NULL,						/* normalize */
-	NULL,						/* set_buddy_icon */
+#ifdef SILC_ATTRIBUTE_USER_ICON
+	silcgaim_buddy_set_icon,			/* set_buddy_icon */
+#else
+	NULL,
+#endif
 	NULL,						/* remove_group */
 	NULL,						/* get_cb_real_name */
 	silcgaim_chat_set_topic,	/* set_chat_topic */

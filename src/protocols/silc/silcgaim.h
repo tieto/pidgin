@@ -144,6 +144,9 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 void silcgaim_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **contactstr, char **langstr, char **devicestr,
 					 char **tzstr, char **geostr);
+#ifdef SILC_ATTRIBUTE_USER_ICON
+void silcgaim_buddy_set_icon(GaimConnection *gc, const char *iconfile);
+#endif
 #ifdef HAVE_SILCMIME_H
 char *silcgaim_file2mime(const char *filename);
 SilcDList silcgaim_image_message(const char *msg, SilcUInt32 *mflags);

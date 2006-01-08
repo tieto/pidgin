@@ -609,8 +609,7 @@ silcgaim_buddy_getkey_menu(GaimBlistNode *node, gpointer data)
 	buddy = (GaimBuddy *) node;
 	gc = gaim_account_get_connection(buddy->account);
 
-	silcgaim_buddy_privkey(gc, buddy->name);
-
+	silcgaim_buddy_getkey(gc, buddy->name);
 }
 
 static void
@@ -752,6 +751,9 @@ silcgaim_add_buddy_save(bool success, void *context)
 	SilcAttribute attribute;
 	SilcVCardStruct vcard;
 	SilcAttributeObjMime message, extension;
+#ifdef SILC_ATTRIBUTE_USER_ICON
+	SilcAttributeObjMime usericon;
+#endif
 	SilcAttributeObjPk serverpk, usersign, serversign;
 	gboolean usign_success = TRUE, ssign_success = TRUE;
 	char filename[512], filename2[512], *fingerprint = NULL, *tmp;
@@ -795,6 +797,9 @@ silcgaim_add_buddy_save(bool success, void *context)
 	memset(&vcard, 0, sizeof(vcard));
 	memset(&message, 0, sizeof(message));
 	memset(&extension, 0, sizeof(extension));
+#ifdef SILC_ATTRIBUTE_USER_ICON
+	memset(&usericon, 0, sizeof(usericon));
+#endif
 	memset(&serverpk, 0, sizeof(serverpk));
 	memset(&usersign, 0, sizeof(usersign));
 	memset(&serversign, 0, sizeof(serversign));
@@ -826,6 +831,14 @@ silcgaim_add_buddy_save(bool success, void *context)
 							       sizeof(extension)))
 					continue;
 				break;
+
+#ifdef SILC_ATTRIBUTE_USER_ICON
+			case SILC_ATTRIBUTE_USER_ICON:
+				if (!silc_attribute_get_object(attr, (void *)&usericon,
+							       sizeof(usericon)))
+					continue;
+				break;
+#endif
 
 			case SILC_ATTRIBUTE_SERVER_PUBLIC_KEY:
 				if (serverpk.type)
@@ -958,6 +971,28 @@ silcgaim_add_buddy_save(bool success, void *context)
 			silc_file_writefile(filename2, (char *)extension.mime,
 					    extension.mime_len);
 		}
+
+#ifdef SILC_ATTRIBUTE_USER_ICON
+		/* Save user icon */
+		if (usericon.mime) {
+			SilcMime m = silc_mime_decode(usericon.mime,
+						      usericon.mime_len);
+			if (m) {
+				const char *type = silc_mime_get_field(m, "Content-Type");
+				if (!strcmp(type, "image/jpeg") ||
+				    !strcmp(type, "image/gif") ||
+				    !strcmp(type, "image/bmp") ||
+				    !strcmp(type, "image/png")) {
+					const unsigned char *data;
+					SilcUInt32 data_len;
+					data = silc_mime_get_data(m, &data_len);
+					if (data)
+						gaim_buddy_icons_set_for_user(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), (void *)data, data_len);
+				}
+				silc_mime_free(m);
+			}
+		}
+#endif
 	}
 
 	/* Save the public key path to buddy properties, as it is used
@@ -1319,6 +1354,9 @@ silcgaim_add_buddy_i(GaimConnection *gc, GaimBuddy *b, gboolean init)
 						       SILC_ATTRIBUTE_PREFERRED_CONTACT,
 						       SILC_ATTRIBUTE_TIMEZONE,
 						       SILC_ATTRIBUTE_GEOLOCATION,
+#ifdef SILC_ATTRIBUTE_USER_ICON
+						       SILC_ATTRIBUTE_USER_ICON,
+#endif
 						       SILC_ATTRIBUTE_DEVICE_INFO, 0);
 		userpk.type = "silc-rsa";
 		userpk.data = silc_pkcs_public_key_encode(public_key, &userpk.data_len);
@@ -1634,3 +1672,66 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 	}
 	return m;
 }
+
+#ifdef SILC_ATTRIBUTE_USER_ICON
+void silcgaim_buddy_set_icon(GaimConnection *gc, const char *iconfile)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	SilcMime mime;
+	GaimBuddyIcon ic;
+	char type[32];
+	unsigned char *icon;
+	const char *t;
+	struct stat st;
+	FILE *fp;
+	SilcAttributeObjMime obj;
+
+	/* Remove */
+	if (!iconfile) {
+		silc_client_attribute_del(client, conn,
+					  SILC_ATTRIBUTE_USER_ICON, NULL);
+		return;
+	}
+
+	/* Add */
+	if (g_stat(iconfile, &st) < 0)
+		return;
+	fp = g_fopen(iconfile, "rb");
+	if (!fp)
+		return;
+	ic.data = g_malloc(st.st_size);
+	if (!ic.data)
+		return;
+	ic.len = fread(ic.data, 1, st.st_size, fp);
+	fclose(fp);
+
+	mime = silc_mime_alloc();
+	if (!mime) {
+		g_free(ic.data);
+		return;
+	}
+
+	t = gaim_buddy_icon_get_type((const GaimBuddyIcon *)&ic);
+	if (!t) {
+		g_free(ic.data);
+		silc_mime_free(mime);
+		return;
+	}
+	if (!strcmp(t, "jpg"))
+		t = "jpeg";
+	g_snprintf(type, sizeof(type), "image/%s", t);
+	silc_mime_add_field(mime, "Content-Type", type);
+	silc_mime_add_data(mime, ic.data, ic.len);
+
+	obj.mime = icon = silc_mime_encode(mime, &obj.mime_len);
+	if (obj.mime)
+		silc_client_attribute_add(client, conn, 
+					  SILC_ATTRIBUTE_USER_ICON, &obj, sizeof(obj));
+
+	silc_free(icon);
+	g_free(ic.data);
+	silc_mime_free(mime);
+}
+#endif
