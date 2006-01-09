@@ -52,14 +52,11 @@ G_BEGIN_DECLS
  */
 typedef enum
 {
-	/*
-	 * The first 0 through GAIM_STATUS_NUM_PRIMITIVES
-	 * correspond to GaimStatusPrimitives.
-	 */
-	GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR = GAIM_STATUS_NUM_PRIMITIVES,
+	GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR,
+	GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE,
+	GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
 	GTK_GAIM_STATUS_BOX_TYPE_CUSTOM,
 	GTK_GAIM_STATUS_BOX_TYPE_SAVED,
-	GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
 	GTK_GAIM_STATUS_BOX_NUM_TYPES
 } GtkGaimStatusBoxItemType;
 
@@ -150,8 +147,6 @@ gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connec
 
 void
 gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box);
-
-GtkGaimStatusBoxItemType gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box);
 
 char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
 
