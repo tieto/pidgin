@@ -59,6 +59,7 @@ typedef enum
 	GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR = GAIM_STATUS_NUM_PRIMITIVES,
 	GTK_GAIM_STATUS_BOX_TYPE_CUSTOM,
 	GTK_GAIM_STATUS_BOX_TYPE_SAVED,
+	GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
 	GTK_GAIM_STATUS_BOX_NUM_TYPES
 } GtkGaimStatusBoxItemType;
 
@@ -136,7 +137,7 @@ GtkWidget    *gtk_gaim_status_box_new              (void);
 GtkWidget    *gtk_gaim_status_box_new_with_account (GaimAccount *);
 
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text);
+gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text, gpointer data);
 
 void
 gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box);

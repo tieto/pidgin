@@ -70,6 +70,7 @@ enum {
 	TEXT_COLUMN,  /* A string */
 	TITLE_COLUMN, /* The plain-English title of this item */
 	DESC_COLUMN,  /* A plain-English description of this item */
+	DATA_COLUMN,  /* Keep track of the creation time of popular statuses here */
 	NUM_COLUMNS
 };
 
@@ -327,6 +328,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 			   TEXT_COLUMN, text,
 			   TITLE_COLUMN, title,
 			   DESC_COLUMN, status_box->desc,
+			   DATA_COLUMN, -1, /* This field is not used in this list store */
 			   -1);
 	path = gtk_tree_path_new_from_string("0");
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
@@ -420,6 +422,39 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 }
 
 static void
+add_popular_statuses(GtkGaimStatusBox *statusbox)
+{
+	GList *list, *cur;
+	GtkIconSize icon_size;
+	GdkPixbuf *pixbuf;
+
+	list = gaim_savedstatuses_get_popular(6);
+	if (list == NULL)
+		/* Odd... oh well, nothing we can do about it. */
+		return;
+
+	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
+	else
+		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+
+	pixbuf = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox), GAIM_STOCK_STATUS_AWAY,
+									icon_size, "GtkGaimStatusBox");
+
+	for (cur = list; cur != NULL; cur = cur->next)
+	{
+		GaimSavedStatus *saved = cur->data;
+		gtk_gaim_status_box_add(statusbox, GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
+				pixbuf,	gaim_savedstatus_get_title(saved), NULL,
+				GINT_TO_POINTER(gaim_savedstatus_get_creation_time(saved)));
+	}
+
+	gtk_gaim_status_box_add_separator(statusbox);
+
+	g_list_free(list);
+}
+
+static void
 gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 {
 	GaimAccount *account;
@@ -448,13 +483,15 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_INVISIBLE,
 		                                  icon_size, "GtkGaimStatusBox");
 		/* hacks */
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_AVAILABLE, pixbuf, _("Available"), NULL);
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_AWAY, pixbuf2, _("Away"), NULL);
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_INVISIBLE, pixbuf4, _("Invisible"), NULL);
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_OFFLINE, pixbuf3, _("Offline"), NULL);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_AVAILABLE, pixbuf, _("Available"), NULL, NULL);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_AWAY, pixbuf2, _("Away"), NULL, NULL);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_INVISIBLE, pixbuf4, _("Invisible"), NULL, NULL);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_OFFLINE, pixbuf3, _("Offline"), NULL, NULL);
 		gtk_gaim_status_box_add_separator(GTK_GAIM_STATUS_BOX(status_box));
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("Custom..."), NULL);
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL);
+		add_popular_statuses(status_box);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("Custom..."), NULL, NULL);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
+
 
 		update_to_reflect_current_status(status_box);
 
@@ -472,7 +509,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 									gaim_status_type_get_primitive(status_type),
 									gaim_gtk_create_prpl_icon_with_status(account, status_type),
 									gaim_status_type_get_name(status_type),
-									NULL);
+									NULL, NULL);
 		}
 		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));
 	}
@@ -582,6 +619,10 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 							   gpointer val, gpointer data)
 {
 	GtkGaimStatusBox *box = data;
+
+	/* Make sure our current status is added to the list of popular statuses */
+	gtk_gaim_status_box_regenerate(box);
+
 	if (box->account)
 		update_to_reflect_account_status(box, box->account,
 						gaim_account_get_active_status(box->account));
@@ -672,8 +713,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
-	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
@@ -844,7 +885,7 @@ gtk_gaim_status_box_new_with_account(GaimAccount *account)
 }
 
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text)
+gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text, gpointer data)
 {
 	GtkTreeIter iter;
 	char *t;
@@ -868,6 +909,7 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 			   TEXT_COLUMN, t,
 			   TITLE_COLUMN, text,
 			   DESC_COLUMN, sec_text,
+			   DATA_COLUMN, data,
 			   -1);
 	g_free(t);
 }
@@ -1111,6 +1153,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	GtkGaimStatusBoxItemType type;
 	char *text, *sec_text;
 	GdkPixbuf *pixbuf;
+	gpointer data;
 	GList *accounts = NULL, *node;
 
 	status_box = GTK_GAIM_STATUS_BOX(box);
@@ -1120,7 +1163,9 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
 			   TITLE_COLUMN, &text,
-			   DESC_COLUMN, &sec_text, ICON_COLUMN, &pixbuf,
+			   DESC_COLUMN, &sec_text,
+			   ICON_COLUMN, &pixbuf,
+			   DATA_COLUMN, &data,
 			   -1);
 	if (status_box->title)
 		g_free(status_box->title);
@@ -1137,6 +1182,15 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 
 	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
 	{
+		if (type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR)
+		{
+			GaimSavedStatus *saved;
+			saved = gaim_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+			g_return_if_fail(saved != NULL);
+			gaim_savedstatus_activate(saved);
+			return;
+		}
+
 		if (type == GTK_GAIM_STATUS_BOX_TYPE_CUSTOM)
 		{
 			gaim_gtk_status_editor_show(NULL);
@@ -1186,8 +1240,8 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
 			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 		}
-	gtk_widget_grab_focus(status_box->imhtml);
-	buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+		gtk_widget_grab_focus(status_box->imhtml);
+		buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 		gtk_text_buffer_get_start_iter(buf, &start);
 		gtk_text_buffer_get_end_iter(buf, &end);
 		gtk_text_buffer_move_mark_by_name(buf, "insert", &end);
