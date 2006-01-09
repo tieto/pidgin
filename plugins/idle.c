@@ -48,14 +48,14 @@ unidle_filter(GaimAccount *acct)
 }
 
 static gboolean
-idleable_filter(GaimAccount *acct)
+idleable_filter(GaimAccount *account)
 {
-	/* LSchiere says we can't control idle time on IRC, so I think we should
-	 * ignore it to avoid some bug reports :) - rekkanoryo */
-	if(!strcmp(gaim_account_get_protocol_id(acct), "prpl-irc"))
-		return FALSE;
+	GaimPlugin *prpl;
 
-	return TRUE;
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	g_return_val_if_fail(prpl != NULL, FALSE);
+
+	return (GAIM_PLUGIN_PROTOCOL_INFO(prpl)->set_idle != NULL);
 }
 
 static void
