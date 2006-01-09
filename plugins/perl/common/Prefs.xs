@@ -3,69 +3,65 @@
 MODULE = Gaim::Prefs  PACKAGE = Gaim::Prefs  PREFIX = gaim_prefs_
 PROTOTYPES: ENABLE
 
-void 
+void
 gaim_prefs_add_bool(name, value)
 	const char *name
 	gboolean value
 
-void 
+void
 gaim_prefs_add_int(name, value)
 	const char *name
 	int value
 
-void 
+void
 gaim_prefs_add_none(name)
 	const char *name
 
-void 
+void
 gaim_prefs_add_string(name, value)
 	const char *name
 	const char *value
 
-void 
+void
 gaim_prefs_add_string_list(name, value)
 	const char *name
 	SV *value
 PREINIT:
-        GList *t_GL;
-        int i, t_len;
+	GList *t_GL;
+	int i, t_len;
 PPCODE:
-        t_GL = NULL;
-        t_len = av_len((AV *)SvRV(value));
+	t_GL = NULL;
+	t_len = av_len((AV *)SvRV(value));
 
-        for (i = 0; i < t_len; i++) {
-                STRLEN t_sl;
-                t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
-        }
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
+	}
 	gaim_prefs_add_string_list(name, t_GL);
 
-
-
-void 
+void
 gaim_prefs_destroy()
 
-
-void 
+void
 gaim_prefs_disconnect_by_handle(handle)
- 	void * handle
+	void * handle
 
-void 
+void
 gaim_prefs_disconnect_callback(callback_id)
 	guint callback_id
 
-gboolean 
+gboolean
 gaim_prefs_exists(name)
 	const char *name
 
-gboolean 
+gboolean
 gaim_prefs_get_bool(name)
 	const char *name
 
 void *
 gaim_prefs_get_handle()
- 
 
-int 
+int
 gaim_prefs_get_int(name)
 	const char *name
 
@@ -77,86 +73,79 @@ void
 gaim_prefs_get_string_list(name)
 	const char *name
 PREINIT:
-        GList *l;
+	GList *l;
 PPCODE:
-        for (l = gaim_prefs_get_string_list(name); l != NULL; l = l->next) {
-                XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::PrefValue")));
-        }
-
-
+	for (l = gaim_prefs_get_string_list(name); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::PrefValue")));
+	}
 
 Gaim::PrefType
 gaim_prefs_get_type(name)
 	const char *name
 
-void 
+void
 gaim_prefs_init()
 
-
-gboolean 
+gboolean
 gaim_prefs_load()
 
-
-void 
+void
 gaim_prefs_remove(name)
 	const char *name
 
-void 
+void
 gaim_prefs_rename(oldname, newname)
 	const char *oldname
 	const char *newname
 
-void 
+void
 gaim_prefs_rename_boolean_toggle(oldname, newname)
 	const char *oldname
 	const char *newname
 
-void 
+void
 gaim_prefs_set_bool(name, value)
 	const char *name
 	gboolean value
 
-void 
+void
 gaim_prefs_set_generic(name, value)
 	const char *name
 	gpointer value
 
-void 
+void
 gaim_prefs_set_int(name, value)
 	const char *name
 	int value
 
-void 
+void
 gaim_prefs_set_string(name, value)
 	const char *name
 	const char *value
 
-void 
+void
 gaim_prefs_set_string_list(name, value)
 	const char *name
 	SV *value
 PREINIT:
-        GList *t_GL;
-        int i, t_len;
+	GList *t_GL;
+	int i, t_len;
 PPCODE:
-        t_GL = NULL;
-        t_len = av_len((AV *)SvRV(value));
+	t_GL = NULL;
+	t_len = av_len((AV *)SvRV(value));
 
-        for (i = 0; i < t_len; i++) {
-                STRLEN t_sl;
-                t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
-        }
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
+	}
 	gaim_prefs_set_string_list(name, t_GL);
 
-void 
+void
 gaim_prefs_trigger_callback(name)
 	const char *name
 
-void 
+void
 gaim_prefs_uninit()
- 
 
-void 
+void
 gaim_prefs_update_old()
-
-
