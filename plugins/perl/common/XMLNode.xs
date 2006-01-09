@@ -3,14 +3,13 @@
 MODULE = Gaim::XMLNode  PACKAGE = Gaim::XMLNode  PREFIX = xmlnode_
 PROTOTYPES: ENABLE
 
-
 Gaim::XMLNode
 xmlnode_copy(class, src)
 	xmlnode *src
     C_ARGS:
 	src
 
-void 
+void
 xmlnode_free(node)
 	xmlnode *node
 
@@ -45,12 +44,12 @@ Gaim::XMLNode
 xmlnode_get_next_twin(node)
 	xmlnode *node
 
-void 
+void
 xmlnode_insert_child(parent, child)
 	xmlnode *parent
 	xmlnode *child
 
-void 
+void
 xmlnode_insert_data(node, data, size)
 	xmlnode *node
 	const char *data
@@ -67,12 +66,12 @@ xmlnode_new_child(parent, name)
 	xmlnode *parent
 	const char *name
 
-void 
+void
 xmlnode_remove_attrib(node, attr)
 	xmlnode *node
 	const char *attr
 
-void 
+void
 xmlnode_set_attrib(node, attr, value)
 	xmlnode *node
 	const char *attr
@@ -87,4 +86,3 @@ char *
 xmlnode_to_str(node, len)
 	xmlnode *node
 	int *len
-

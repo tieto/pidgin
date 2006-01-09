@@ -11,12 +11,10 @@ gaim_ssl_connect(account, host, port, func, error_func, data)
 	GaimSslInputFunction func
 	GaimSslErrorFunction error_func
 
-void 
+void
 gaim_ssl_input_add(gsc, func, data)
 	Gaim::Ssl::Connection gsc
 	Gaim::SslInputFunction func
-
- 
 
 Gaim::Ssl::Connection
 gaim_ssl_connect_fd(account, fd, func, error_func, data)
@@ -24,52 +22,40 @@ gaim_ssl_connect_fd(account, fd, func, error_func, data)
 	int fd
 	GaimSslInputFunction func
 	GaimSslErrorFunction error_func
- 
-
 
 */
 
 MODULE = Gaim::SSL  PACKAGE = Gaim::SSL   PREFIX = gaim_ssl_
 PROTOTYPES: ENABLE
-	
-	
-	
-void 
+
+void
 gaim_ssl_close(gsc)
 	Gaim::Ssl::Connection gsc
 
-
-
 Gaim::Ssl::Ops
 gaim_ssl_get_ops()
- 
 
-void 
+void
 gaim_ssl_init()
- 
- 
 
-gboolean 
+gboolean
 gaim_ssl_is_supported()
- 
 
-size_t 
+size_t
 gaim_ssl_read(gsc, buffer, len)
 	Gaim::Ssl::Connection gsc
 	void * buffer
 	size_t len
 
-void 
+void
 gaim_ssl_set_ops(ops)
 	Gaim::Ssl::Ops ops
 
-void 
+void
 gaim_ssl_uninit()
- 
 
-size_t 
+size_t
 gaim_ssl_write(gsc, buffer, len)
 	Gaim::Ssl::Connection gsc
 	void * buffer
 	size_t len
-

@@ -5,27 +5,23 @@ PROTOTYPES: ENABLE
 
 Gaim::Sound::UiOps
 gaim_sound_get_ui_ops()
- 
 
-void 
+void
 gaim_sound_init()
- 
 
-void 
+void
 gaim_sound_play_event(event, account)
 	Gaim::SoundEventID event
 	Gaim::Account account
 
-void 
+void
 gaim_sound_play_file(filename, account)
 	const char *filename
 	Gaim::Account account
 
-void 
+void
 gaim_sound_set_ui_ops(ops)
 	Gaim::Sound::UiOps ops
 
-void 
+void
 gaim_sound_uninit()
- 
-

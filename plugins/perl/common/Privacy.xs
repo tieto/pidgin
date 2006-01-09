@@ -5,13 +5,10 @@ PROTOTYPES: ENABLE
 
 Gaim::Privacy::UiOps
 gaim_privacy_get_ui_ops()
- 
 
-void 
+void
 gaim_privacy_init()
- 
 
-void 
+void
 gaim_privacy_set_ui_ops(ops)
 	Gaim::Privacy::UiOps ops
-

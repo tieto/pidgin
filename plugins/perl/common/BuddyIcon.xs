@@ -63,23 +63,14 @@ gaim_buddy_icon_get_scale_size(spec, width, height)
 	int *width
 	int *height
 
-
-
-
-
-
-
-
-
 MODULE = Gaim::Buddy::Icon PACKAGE = Gaim::Buddy::Icons   PREFIX = gaim_buddy_icons_
 PROTOTYPES: ENABLE
-
 
 void
 gaim_buddy_icons_set_caching(caching)
 	gboolean caching
 
-gboolean 
+gboolean
 gaim_buddy_icons_is_caching()
 
 void
