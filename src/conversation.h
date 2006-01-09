@@ -169,10 +169,6 @@ struct _GaimConversationUiOps
 	void (*custom_smiley_write)(GaimConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(GaimConversation *conv, const char *smile);
-
-	/* Events */
-	void (*updated)(GaimConversation *conv, GaimConvUpdateType type);
-
 };
 
 /**

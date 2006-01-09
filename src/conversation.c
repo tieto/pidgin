@@ -943,14 +943,7 @@ gaim_conversation_has_focus(GaimConversation *conv)
 void
 gaim_conversation_update(GaimConversation *conv, GaimConvUpdateType type)
 {
-	GaimConversationUiOps *ops;
-
 	g_return_if_fail(conv != NULL);
-
-	ops = gaim_conversation_get_ui_ops(conv);
-
-	if (ops != NULL && ops->updated != NULL)
-		ops->updated(conv, type);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "conversation-updated", conv, type);
@@ -997,7 +990,21 @@ gaim_conv_im_set_typing_state(GaimConvIm *im, GaimTypingState state)
 {
 	g_return_if_fail(im != NULL);
 
-	im->typing_state = state;
+	if (im->typing_state != state)
+	{
+		im->typing_state = state;
+
+		if (state == GAIM_TYPING)
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typing", im->conv->account, im->conv->name);
+		}
+		else
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typing-stopped", im->conv->account, im->conv->name);
+		}
+	}
 }
 
 GaimTypingState

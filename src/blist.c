@@ -741,7 +741,6 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimPresence *presence;
 	GaimStatus *status;
-	GaimConversation *conv;
 
 	g_return_if_fail(buddy != NULL);
 
@@ -785,9 +784,6 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	gaim_contact_invalidate_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
-
-	if ((conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account)))
-		gaim_conversation_update(conv, GAIM_CONV_UPDATE_AWAY);
 }
 
 void gaim_blist_update_buddy_icon(GaimBuddy *buddy)

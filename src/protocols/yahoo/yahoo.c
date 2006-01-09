@@ -1706,7 +1706,6 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 
 static void ignore_buddy(GaimBuddy *buddy) {
 	GaimGroup *group;
-	GaimConversation *conv;
 	GaimAccount *account;
 	gchar *name;
 
@@ -1723,12 +1722,6 @@ static void ignore_buddy(GaimBuddy *buddy) {
 	gaim_blist_remove_buddy(buddy);
 
 	serv_add_deny(account->gc, name);
-
-	/* The follow should really be done by the core... */
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
-
-	if (conv != NULL)
-		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
 
 	g_free(name);
 }

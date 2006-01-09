@@ -132,6 +132,7 @@ version 2.0.0:
 	* GaimConvImFlags and GaimConvChatFlags; use GaimMessageFlags instead
 	* cb and user_data from the ops in GaimNotifyUiOps: This is now handled
 	  by the notify API in the core.
+	* GaimConversationUiOps.updated: use the conversation-updated signal
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -226,19 +227,20 @@ version 2.0.0:
 	* Signal propagation now stops after a handler returns a non-NULL value.
 	  This value is now returned.  Previously, all registered handlers were
 	  called and the value from the last handler was used.
-	* "received-im-msg" and "received-chat-msg" to match, both now pass a
-	  conversation pointer and flags
-	* "receiving-im-msg" and "receving-chat-msg" to match, both now pass a
-	  conversation pointer and a pointer to the flags.
-	* "drawing-tooltip": the second argument is now a GString* instead of
-	  a char**
-	* "drawing-tooltip": added the "full" argument
-	* "chat-invited" handlers can now return a value to control what happens
-	  to the invite (accept, reject, prompt the user).
 	* "buddy-typing" and "buddy-typing-stopped": replaced the GaimConversation*
 	  with GaimAccount*, const char *name.  Also, the signal is now emitted
 	  regardless of whether a conversation exists and regardless of whether
 	  the user is on the buddy list.
+	* "chat-invited" handlers can now return a value to control what happens
+	  to the invite (accept, reject, prompt the user).
+	* "chat-left": Emitted *after* setting chat->left to TRUE.
+	* "drawing-tooltip": the second argument is now a GString* instead of
+	  a char**
+	* "drawing-tooltip": added the "full" argument
+	* "received-im-msg" and "received-chat-msg" to match, both now pass a
+	  conversation pointer and flags
+	* "receiving-im-msg" and "receving-chat-msg" to match, both now pass a
+	  conversation pointer and a pointer to the flags.
 
 	Signals - Added:  (See the Doxygen docs for details on all signals.)
 	* "account-disabled"
@@ -275,7 +277,7 @@ version 2.0.0:
 	* "buddy-idle": replaced by buddy-idle-changed
 	* "buddy-unidle": replaced by buddy-idle-changed
 	* "buddy-icon-cached": replaced by buddy-icon-changed
-	* "conversation-drag-end": replaced by "conversation-dragging"
+	* "conversation-drag-end": replaced by conversation-dragging
 	* "conversation-switching"
 
 version 1.5.0 (8/11/2005):

@@ -1275,7 +1275,6 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
 	GaimBlistUiOps *ops = gaim_get_blist()->ui_ops;
-	GaimConversation *conv;
 
 	if (!old_idle && idle)
 	{
@@ -1316,17 +1315,6 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 
 	if (ops != NULL && ops->update != NULL)
 		ops->update(gaim_get_blist(), (GaimBlistNode *)buddy);
-
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-					gaim_buddy_get_name(buddy),
-					gaim_buddy_get_account(buddy));
-	if (conv)
-	{
-		GaimConversationUiOps *conv_ops;
-		conv_ops = gaim_conversation_get_ui_ops(conv);
-		if (conv_ops && conv_ops->updated)
-			conv_ops->updated(conv, GAIM_CONV_UPDATE_AWAY);
-	}
 }
 
 void

@@ -886,18 +886,11 @@ gaim_gtkdialogs_remove_group_cb(GaimGroup *group)
 			while (bnode) {
 				GaimBuddy *buddy;
 				if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-					GaimConversation *conv;
 					buddy = (GaimBuddy*)bnode;
 					bnode = bnode->next;
-					conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-															   buddy->name,
-															   buddy->account);
 					if (gaim_account_is_connected(buddy->account)) {
 						gaim_account_remove_buddy(buddy->account, buddy, group);
 						gaim_blist_remove_buddy(buddy);
-						if (conv)
-							gaim_conversation_update(conv,
-									GAIM_CONV_UPDATE_REMOVE);
 					}
 				} else {
 					bnode = bnode->next;
@@ -938,7 +931,6 @@ static void
 gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 {
 	GaimGroup *group;
-	GaimConversation *conv;
 	gchar *name;
 	GaimAccount *account;
 
@@ -950,10 +942,6 @@ gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 	/* TODO - Should remove from blist first... then call gaim_account_remove_buddy()? */
 	gaim_account_remove_buddy(buddy->account, buddy, group);
 	gaim_blist_remove_buddy(buddy);
-
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
-	if (conv != NULL)
-		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
 
 	g_free(name);
 }
@@ -978,24 +966,7 @@ gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
 static void
 gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)
 {
-	char *name = NULL;
-	GaimAccount *account;
-	GaimConversation *conv = NULL;
-
-	account = chat->account;
-
-	if (GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl)->get_chat_name != NULL)
-		name = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl)->get_chat_name(chat->components);
-
 	gaim_blist_remove_chat(chat);
-
-	if (name != NULL) {
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, name, account);
-		g_free(name);
-	}
-
-	if (conv != NULL)
-		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
 }
 
 void

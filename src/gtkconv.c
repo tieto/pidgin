@@ -70,6 +70,19 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
+typedef  enum
+{
+	GAIM_GTKCONV_SET_TITLE 			= 1 << 0,
+	GAIM_GTKCONV_BUDDY_ICON			= 1 << 1,
+	GAIM_GTKCONV_MENU				= 1 << 2,
+	GAIM_GTKCONV_TAB_ICON			= 1 << 3,
+	GAIM_GTKCONV_TOPIC				= 1 << 4,
+	GAIM_GTKCONV_SMILEY_THEME		= 1 << 5,
+	GAIM_GTKCONV_COLORIZE_TITLE		= 1 << 6
+}GaimGtkConvFields;
+
+#define	GAIM_GTKCONV_ALL	((1 << 7) - 1)
+
 #define SEND_COLOR "#204a87"
 #define RECV_COLOR "#cc0000"
 #define HIGHLIGHT_COLOR "#AF7F00"
@@ -152,6 +165,7 @@ static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpoint
 static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
 static GdkColor* generate_nick_colors(guint numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
+static void gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -2006,7 +2020,6 @@ gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
 	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 
-	gaim_conversation_update(conv, GAIM_CONV_UPDATE_ACCOUNT);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 	                             gaim_account_get_protocol_name(conv->account));
 }
@@ -2131,6 +2144,9 @@ update_tab_icon(GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	win = gtkconv->win;
+	if (conv != gtkconv->active_conv)
+		return;
+
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
 
@@ -3014,6 +3030,7 @@ generate_send_to_items(GaimGtkWindow *win)
 		}
 		else
 		{
+			GList *list = NULL, *iter;
 			for (l = buds; l != NULL; l = l->next)
 			{
 				GaimBlistNode *node;
@@ -3030,10 +3047,25 @@ generate_send_to_items(GaimGtkWindow *win)
 
 					account = gaim_buddy_get_account(buddy);
 					if (gaim_account_is_connected(account))
-						create_sendto_item(menu, sg, &group, buddy, account, gaim_buddy_get_name(buddy));
+					{
+						/* Use the GaimPresence to get unique buddies. */
+						GaimPresence *presence = gaim_buddy_get_presence(buddy);
+						if (!g_list_find(list, presence))
+							list = g_list_prepend(list, presence);
+					}
 				}
 			}
 
+			/* Loop over the list backwards so we get the items in the right order,
+			 * since we did a g_list_prepend() earlier. */
+			for (iter = g_list_last(list); iter != NULL; iter = iter->prev)
+			{
+				GaimPresence *pre = iter->data;
+				GaimBuddy *buddy = gaim_presence_get_buddies(pre)->data;
+				create_sendto_item(menu, sg, &group, buddy,
+							gaim_buddy_get_account(buddy), gaim_buddy_get_name(buddy));
+			}
+			g_list_free(list);
 			g_slist_free(buds);
 		}
 	}
@@ -4140,7 +4172,7 @@ buddy_update_cb(GaimBlistNode *bnode, gpointer null)
 		if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_IM)
 			continue;
 
-		gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_ONLINE);
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_MENU);
 	}
 }
 
@@ -5417,42 +5449,61 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 	}
 }
 
-
 static void
-gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
+gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 {
-	GaimGtkWindow *win;
 	GaimGtkConversation *gtkconv;
-	GaimGtkChatPane *gtkchat;
-	GaimConvChat *chat;
-
-	g_return_if_fail(conv != NULL);
+	GaimGtkWindow *win;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	win     = gtkconv->win;
-	conv = gtkconv->active_conv; /* Gross hack */
-	/* Maybe we should just ignore it if conv != gtkconv->active_conv,
-	 * instead of the gross hack?
-	*/
-
-	if (type == GAIM_CONV_UPDATE_ACCOUNT)
+	if (!gtkconv)
+		return;
+	win = gaim_gtkconv_get_window(gtkconv);
+	if (!win)
+		return;
+	
+	if (fields & GAIM_GTKCONV_SET_TITLE)
 	{
 		gaim_conversation_autoset_title(conv);
+	}
 
+	if (fields & GAIM_GTKCONV_BUDDY_ICON)
+	{
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 			gaim_gtkconv_update_buddy_icon(conv);
-
-		gaim_gtkconv_update_buttons_by_protocol(conv);
-
-		update_send_to_selection(win);
-
-		gaim_gtkthemes_smiley_themeize(gtkconv->imhtml);
-
-		update_tab_icon(conv);
 	}
-	else if (type == GAIM_CONV_UPDATE_TYPING ||
-	         type == GAIM_CONV_UPDATE_UNSEEN ||
-	         type == GAIM_CONV_UPDATE_TITLE)
+
+	if (fields & GAIM_GTKCONV_MENU)
+	{
+		gray_stuff_out(GAIM_GTK_CONVERSATION(conv));
+		generate_send_to_items(win);
+	}
+
+	if (fields & GAIM_GTKCONV_TAB_ICON)
+	{
+		update_tab_icon(conv);
+		generate_send_to_items(win);		/* To update the icons in SendTo menu */
+	}
+
+	if ((fields & GAIM_GTKCONV_TOPIC) &&
+				gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+	{
+		const char *topic;
+		GaimConvChat *chat = GAIM_CONV_CHAT(conv);
+		GaimGtkChatPane *gtkchat = gtkconv->u.chat;
+
+		topic = gaim_conv_chat_get_topic(chat);
+
+		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
+		gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
+		                     topic ? topic : "", NULL);
+	}
+
+	if (fields & GAIM_GTKCONV_SMILEY_THEME)
+		gaim_gtkthemes_smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
+
+	if ((fields & GAIM_GTKCONV_COLORIZE_TITLE) || 
+			(fields & GAIM_GTKCONV_SET_TITLE))
 	{
 		char *title;
 		GaimConvIm *im = NULL;
@@ -5516,52 +5567,60 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		if (gaim_gtk_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 
-		if (type == GAIM_CONV_UPDATE_TITLE) {
-			gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
-			if (gaim_gtk_conv_window_is_active_conversation(conv))
-				gtk_window_set_title(GTK_WINDOW(win->window), title);
-		}
+		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
+		if (gaim_gtk_conv_window_is_active_conversation(conv))
+			gtk_window_set_title(GTK_WINDOW(win->window), title);
 
 		g_free(title);
 	}
+}
+
+static void
+gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
+{
+	GaimGtkConvFields flags = 0;
+
+	g_return_if_fail(conv != NULL);
+
+	if (type == GAIM_CONV_UPDATE_ACCOUNT)
+	{
+		flags = GAIM_GTKCONV_ALL;
+	}
+	else if (type == GAIM_CONV_UPDATE_TYPING ||
+	         type == GAIM_CONV_UPDATE_UNSEEN ||
+	         type == GAIM_CONV_UPDATE_TITLE)
+	{
+		flags = GAIM_GTKCONV_COLORIZE_TITLE;
+	}
 	else if (type == GAIM_CONV_UPDATE_TOPIC)
 	{
-		const char *topic;
-		chat = GAIM_CONV_CHAT(conv);
-		gtkchat = gtkconv->u.chat;
-
-		topic = gaim_conv_chat_get_topic(chat);
-
-		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
-		                     topic ? topic : "", NULL);
+		flags = GAIM_GTKCONV_TOPIC;
 	}
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
-			 type == GAIM_CONV_ACCOUNT_OFFLINE)
+	         type == GAIM_CONV_ACCOUNT_OFFLINE)
 	{
-		gray_stuff_out(GAIM_GTK_CONVERSATION(gaim_gtk_conv_window_get_active_conversation(win)));
-		generate_send_to_items(win);
-		update_tab_icon(conv);
-		gaim_conversation_autoset_title(conv);
+		flags = GAIM_GTKCONV_MENU | GAIM_GTKCONV_TAB_ICON | GAIM_GTKCONV_SET_TITLE;
 	}
 	else if (type == GAIM_CONV_UPDATE_AWAY)
 	{
-		update_tab_icon(conv);
+		flags = GAIM_GTKCONV_TAB_ICON;
 	}
-	else if (type == GAIM_CONV_UPDATE_ADD || type == GAIM_CONV_UPDATE_REMOVE ||
+	else if (type == GAIM_CONV_UPDATE_ADD ||
+	         type == GAIM_CONV_UPDATE_REMOVE ||
 	         type == GAIM_CONV_UPDATE_CHATLEFT)
 	{
-		gaim_conversation_autoset_title(conv);
-		gray_stuff_out(GAIM_GTK_CONVERSATION(conv));
+		flags = GAIM_GTKCONV_SET_TITLE | GAIM_GTKCONV_MENU;
 	}
 	else if (type == GAIM_CONV_UPDATE_ICON)
 	{
-		gaim_gtkconv_update_buddy_icon(conv);
+		flags = GAIM_GTKCONV_BUDDY_ICON;
 	}
 	else if (type == GAIM_CONV_UPDATE_FEATURES)
 	{
-		gray_stuff_out(GAIM_GTK_CONVERSATION(conv));
+		flags = GAIM_GTKCONV_MENU;
 	}
+
+	gaim_gtkconv_update_fields(conv, flags);
 }
 
 static GaimConversationUiOps conversation_ui_ops =
@@ -5580,8 +5639,7 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_has_focus,          /* has_focus            */
 	gaim_gtkconv_custom_smiley_add,  /* custom_smiley_add    */
 	gaim_gtkconv_custom_smiley_write, /* custom_smiley_write */
-	gaim_gtkconv_custom_smiley_close, /* custom_smiley_close */
-	gaim_gtkconv_updated             /* updated              */
+	gaim_gtkconv_custom_smiley_close  /* custom_smiley_close */
 };
 
 GaimConversationUiOps *
@@ -5626,6 +5684,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	win = gtkconv->win;
+	if (conv != gtkconv->active_conv)
+		return;
 
 	if (!gtkconv->u.im->show_icon)
 		return;
@@ -6082,6 +6142,24 @@ conv_placement_pref_cb(const char *name, GaimPrefType type,
 	gaim_gtkconv_placement_set_current_func(func);
 }
 
+static GaimGtkConversation *
+get_gtkconv_with_contact(GaimContact *contact)
+{
+	GaimBlistNode *node;
+
+	node = ((GaimBlistNode*)contact)->child;
+
+	for (; node; node = node->next)
+	{
+		GaimBuddy *buddy = (GaimBuddy*)node;
+		GaimConversation *conv;
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account);
+		if (conv)
+			return GAIM_GTK_CONVERSATION(conv);
+	}
+	return NULL;
+}
+
 static void
 account_signed_off_cb(GaimConnection *gc, gpointer event)
 {
@@ -6094,9 +6172,119 @@ account_signed_off_cb(GaimConnection *gc, gpointer event)
 	{
 		GaimConversation *conv = iter->data;
 
-		if (gaim_conversation_get_account(conv) == account)
-			gaim_conversation_update(conv, GPOINTER_TO_INT(event));
+		/* This seems fine in theory, but we also need to cover the
+		 * case of this account matching one of the other buddies in
+		 * one of the contacts containing the buddy corresponding to
+		 * a conversation.  It's easier to just update them all. */
+		/* if (gaim_conversation_get_account(conv) == account) */
+			gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON |
+							GAIM_GTKCONV_MENU | GAIM_GTKCONV_COLORIZE_TITLE);
 	}
+}
+
+static gboolean
+update_buddy_status_timeout(GaimBuddy *buddy)
+{
+	/* To remove the signing-on/off door icon */
+	GaimConversation *conv;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account);
+	if (conv)
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON);
+
+	return FALSE;
+}
+
+static void
+update_buddy_status_changed(GaimBuddy *buddy, GaimStatus *old, GaimStatus *newstatus)
+{
+	GaimGtkConversation *gtkconv;
+	GaimConversation *conv;
+
+	gtkconv = get_gtkconv_with_contact(gaim_buddy_get_contact(buddy));
+	if (gtkconv)
+	{
+		conv = gtkconv->active_conv;
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON | GAIM_GTKCONV_COLORIZE_TITLE);
+		if ((gaim_status_is_online(old) ^ gaim_status_is_online(newstatus)) != 0)
+			gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_MENU);
+	}
+
+	/* In case a conversation is started after the buddy has signed-on/off */
+	g_timeout_add(11000, (GSourceFunc)update_buddy_status_timeout, buddy);
+}
+
+static void
+update_buddy_idle_changed(GaimBuddy *buddy, gboolean old, gboolean newidle)
+{
+	GaimConversation *conv;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account);
+	if (conv)
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON);
+}
+	
+static void
+update_buddy_icon(GaimBuddy *buddy)
+{
+	GaimConversation *conv;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account);
+	if (conv)
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_BUDDY_ICON);
+}
+
+static void
+update_buddy_sign(GaimBuddy *buddy, const char *which)
+{
+	GaimPresence *presence;
+	GaimStatus *on, *off;
+
+	presence = gaim_buddy_get_presence(buddy);
+	if (!presence)
+		return;
+	off = gaim_presence_get_status(presence, "offline");
+	on = gaim_presence_get_status(presence, "available");
+
+	if (*(which+1) == 'f')
+		update_buddy_status_changed(buddy, on, off);
+	else
+		update_buddy_status_changed(buddy, off, on);
+}
+
+static void
+update_conversation_switched(GaimConversation *conv)
+{
+	gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON | GAIM_GTKCONV_SET_TITLE |
+					GAIM_GTKCONV_MENU | GAIM_GTKCONV_BUDDY_ICON);
+}
+
+static void
+update_buddy_typing(GaimAccount *account, const char *who)
+{
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, account);
+	if (!conv)
+		return;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	if (gtkconv && gtkconv->active_conv == conv)
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_COLORIZE_TITLE);
+}
+
+static void
+update_chat(GaimConversation *conv)
+{
+	gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TOPIC |
+					GAIM_GTKCONV_MENU | GAIM_GTKCONV_SET_TITLE);
+}
+
+static void
+update_chat_topic(GaimConversation *conv, const char *old, const char *new)
+{
+	gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TOPIC);
 }
 
 void *
@@ -6276,11 +6464,6 @@ gaim_gtk_conversations_init(void)
 						G_CALLBACK(account_signed_off_cb),
 						GINT_TO_POINTER(GAIM_CONV_ACCOUNT_OFFLINE));
 	
-	gaim_signal_connect(blist_handle, "buddy-added", handle,
-						G_CALLBACK(buddy_update_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-removed", handle,
-						G_CALLBACK(buddy_update_cb), NULL);
-
 	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);
 
@@ -6291,6 +6474,36 @@ gaim_gtk_conversations_init(void)
 
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
                         handle, GAIM_CALLBACK(account_status_changed_cb), NULL);
+
+	/* Callbacks to update a conversation */
+	gaim_signal_connect(blist_handle, "buddy-added", handle,
+						G_CALLBACK(buddy_update_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-removed", handle,
+						G_CALLBACK(buddy_update_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						handle, GAIM_CALLBACK(update_buddy_sign), "on");
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						handle, GAIM_CALLBACK(update_buddy_sign), "off");
+	gaim_signal_connect(blist_handle, "buddy-status-changed",
+						handle, GAIM_CALLBACK(update_buddy_status_changed), NULL);
+	gaim_signal_connect(blist_handle, "buddy-idle-changed",
+						handle, GAIM_CALLBACK(update_buddy_idle_changed), NULL);
+	gaim_signal_connect(blist_handle, "buddy-icon-changed",
+						handle, GAIM_CALLBACK(update_buddy_icon), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing",
+						handle, GAIM_CALLBACK(update_buddy_typing), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing-stopped",
+						handle, GAIM_CALLBACK(update_buddy_typing), NULL);
+	gaim_signal_connect(gaim_gtk_conversations_get_handle(), "conversation-switched",
+						handle, GAIM_CALLBACK(update_conversation_switched), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "chat-left", handle,
+						GAIM_CALLBACK(update_chat), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "chat-joined", handle,
+						GAIM_CALLBACK(update_chat), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "chat-topic-changed", handle,
+						GAIM_CALLBACK(update_chat_topic), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "conversation-updated", handle,
+						GAIM_CALLBACK(gaim_gtkconv_updated), NULL);
 }
 
 void
@@ -6487,8 +6700,7 @@ gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
 			gtkconv->unseen_state = state;
 	}
 
-	/* emit update signal to notify of count and possible unseen state change */
-	gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
+	gaim_gtkconv_update_fields(gtkconv->active_conv, GAIM_GTKCONV_COLORIZE_TITLE);
 }
 
 /*

@@ -593,17 +593,17 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 
 		gaim_conv_im_set_typing_state(im, state);
 		gaim_conv_im_update_typing(im);
-	}
-
-	if (state == GAIM_TYPING)
-	{
-		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "buddy-typing", gc->account, name);
-	}
-	else
-	{
-		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "buddy-typing-stopped", gc->account, name);
+	} else {
+		if (state == GAIM_TYPING)
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typing", gc->account, name);
+		}
+		else
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typing-stopped", gc->account, name);
+		}
 	}
 
 	if (conv != NULL && timeout > 0)
@@ -719,7 +719,6 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 
 	gaim_conv_chat_set_id(chat, id);
 
-
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-joined", conv);
 
 	return conv;
@@ -748,14 +747,14 @@ void serv_got_chat_left(GaimConnection *g, int id)
 	if (!conv)
 		return;
 
-	gaim_signal_emit(gaim_conversations_get_handle(), "chat-left", conv);
-
 	gaim_debug(GAIM_DEBUG_INFO, "server", "Leaving room: %s\n",
 			   gaim_conversation_get_name(conv));
 
 	g->buddy_chats = g_slist_remove(g->buddy_chats, conv);
 
 	gaim_conv_chat_left(GAIM_CONV_CHAT(conv));
+
+	gaim_signal_emit(gaim_conversations_get_handle(), "chat-left", conv);
 }
 
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
