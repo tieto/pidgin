@@ -68,8 +68,7 @@ static char *get_my_ip() {
 	if(!tmp || !strcmp(tmp,"0.0.0.0")) {
 		tmp = gaim_network_get_my_ip(-1);
 	}
-	if(!tmp) strcpy(my_ip, "0.0.0.0");
-	strcpy(my_ip, tmp);
+	strcpy(my_ip, tmp ? tmp : "0.0.0.0");
 	return my_ip;
 }
 
@@ -1113,7 +1112,7 @@ static void simple_udp_process(gpointer data, gint source, GaimInputCondition co
 	time_t currtime;
 
 	static char buffer[65536];
-	if((len = recv(source, buffer, 65536, 0)) > 0) {
+	if((len = recv(source, buffer, sizeof(buffer) - 1, 0)) > 0) {
 		buffer[len] = '\0';
 		gaim_debug_info("simple","\n\nreceived - %s\n######\n%s\n#######\n\n",ctime(&currtime), buffer);
 		msg = sipmsg_parse_msg(buffer);
