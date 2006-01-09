@@ -5819,6 +5819,11 @@ gaim_gtkconv_get_tab_at_xy(GaimGtkWindow *win, int x, int y, gboolean *to_right)
 		}
 	}
 
+	if (page_num == -1) {
+		/* Add after the last tab */
+		page_num = count - 1;
+	}
+
 	return page_num;
 }
 
@@ -6606,15 +6611,13 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimGtkWindow *win)
 			}
 
 			arrow1_y = nb_y + tab->allocation.y;
-			arrow2_y = nb_y + tab->allocation.y +
-				tab->allocation.height;
+			arrow2_y = nb_y + tab->allocation.y + tab->allocation.height;
 		} else {
 			arrow1_x = nb_x + tab->allocation.x;
-			arrow2_x = nb_x + tab->allocation.x +
-				tab->allocation.width;
-			arrow1_y = arrow2_y = nb_y + tab->allocation.y + tab->allocation.height/2;
+			arrow2_x = nb_x + tab->allocation.x + tab->allocation.width;
+			arrow1_y = arrow2_y = nb_y + tab->allocation.y;
 
-			if ((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) {
+			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
 				arrow1_y += tab->allocation.height;
 				arrow2_y += tab->allocation.height;
 			}
