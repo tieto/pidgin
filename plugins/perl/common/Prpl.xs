@@ -7,12 +7,10 @@ Gaim::Plugin
 gaim_find_prpl(id)
 	const char *id
 
-
 MODULE = Gaim::Prpl  PACKAGE = Gaim::Prpl  PREFIX = gaim_prpl_
 PROTOTYPES: ENABLE
 
-
-void 
+void
 gaim_prpl_change_account_status(account, old_status, new_status)
 	Gaim::Account account
 	Gaim::Status old_status
@@ -23,35 +21,34 @@ gaim_prpl_get_statuses(account, presence)
 	Gaim::Account account
 	Gaim::Presence presence
 PREINIT:
-        GList *l;
+	GList *l;
 PPCODE:
-        for (l = gaim_prpl_get_statuses(account,presence); l != NULL; l = l->next) {
-                XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
-        }
+	for (l = gaim_prpl_get_statuses(account,presence); l != NULL; l = l->next) {
+		/* XXX Someone please test and make sure this is the right
+		 * type for these things. */
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Status")));
+	}
 
-
-
-void 
+void
 gaim_prpl_got_account_idle(account, idle, idle_time)
 	Gaim::Account account
 	gboolean idle
 	time_t idle_time
 
-void 
+void
 gaim_prpl_got_account_login_time(account, login_time)
 	Gaim::Account account
 	time_t login_time
 
-void 
+void
 gaim_prpl_got_user_idle(account, name, idle, idle_time)
 	Gaim::Account account
 	const char *name
 	gboolean idle
 	time_t idle_time
 
-void 
+void
 gaim_prpl_got_user_login_time(account, name, login_time)
 	Gaim::Account account
 	const char *name
 	time_t login_time
-
