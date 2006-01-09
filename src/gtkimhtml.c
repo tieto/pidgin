@@ -3728,16 +3728,14 @@ imhtml_clear_formatting(GtkIMHtml *imhtml)
 {
 	GtkTextIter start, end;
 
-	gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+	if (!imhtml->editable)
+		return;
 
-	/* Move the selection bounds (to select everything), so the format functions
-	 * will know we want to manipulate the formatting on the entire buffer. */
-#if GTK_CHECK_VERSION(2,4,0)
-	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &start);
-#else
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &start);
-#endif
+	if (imhtml->wbfo)
+		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+	else
+		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
 
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
@@ -3758,14 +3756,6 @@ imhtml_clear_formatting(GtkIMHtml *imhtml)
 	imhtml->edit.forecolor = NULL;
 	imhtml->edit.backcolor = NULL;
 	imhtml->edit.background = NULL;
-
-	/* Remove the selection, placing the cursor at the end. */
-#if GTK_CHECK_VERSION(2,4,0)
-	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &end);
-#else
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &end);
-#endif
 }
 
 /* Editable stuff */
