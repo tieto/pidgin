@@ -43,6 +43,8 @@
 #define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
 #define YAHOOJP_WEBCAM_HOST "wc.yahoo.co.jp"
 
+#define YAHOO_AUDIBLE_URL "http://us.dl1.yimg.com/download.yahoo.com/dl/aud"
+
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
 #define YAHOO_ICON_CHECKSUM_KEY "icon_checksum"

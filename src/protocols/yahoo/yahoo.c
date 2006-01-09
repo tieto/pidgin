@@ -1955,7 +1955,7 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 
 static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 {
-	char *who = NULL, *msg = NULL;
+	char *who = NULL, *msg = NULL, *id = NULL;
 	GSList *l = pkt->hash;
 
 	while (l) {
@@ -1969,7 +1969,9 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 			/* us */
 			break;
 		case 230:
-			/* the audible, in foo.bar.baz format */
+			/* the audible, in foo.locale.bar.baz format
+			   eg: base.tw.smiley.smiley43 */
+			id = pair->value;
 			break;
 		case 231:
 			/* the text of the audible */
@@ -1983,6 +1985,8 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
+	if (!msg)
+		msg = id;
 	if (!who || !msg)
 		return;
 	if (!g_utf8_validate(msg, -1, NULL)) {
@@ -1994,7 +1998,16 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 		      gc->account->username, who);
 		return;
 	}
-	serv_got_im(gc, who, msg, 0, time(NULL));
+	if (id) {
+		/* "http://us.dl1.yimg.com/download.yahoo.com/dl/aud/"+locale+"/"+id+".swf" */
+		char **audible_locale = g_strsplit(id, ".", 0);
+		char *buf = g_strdup_printf(_("[ Audible %s/%s/%s.swf ] %s"), YAHOO_AUDIBLE_URL, audible_locale[1], id, msg);
+		g_strfreev(audible_locale);
+
+		serv_got_im(gc, who, buf, 0, time(NULL));
+		g_free(buf);
+	} else
+		serv_got_im(gc, who, msg, 0, time(NULL));
 }
 
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -2109,6 +2122,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_AUDIBLE:
 		yahoo_process_audible(gc, pkt);
+		break;
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
