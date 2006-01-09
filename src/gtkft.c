@@ -706,7 +706,6 @@ gaim_gtkxfer_dialog_new(void)
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(window), "file transfer");
 	gtk_window_set_title(GTK_WINDOW(window), _("File Transfers"));
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
