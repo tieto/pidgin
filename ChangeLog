@@ -65,6 +65,9 @@ version 2.0.0:
 	  intuitively (Benjamin Kahn with help from Richard Laager)
 	* Entries in the text replacement plugin are now sorted
 	  alphabetically (Richard Laager)
+	* I'dle Ma'ker plugin now has easier an method to unidle accounts, a way
+	  to idle all accounts at once, and a way to unidle all accounts idled by
+	  the plugin (John Bailey, Sadrul Habib Chowdhury)
 	* The Evolution Integration plugin now supports Groupwise contacts
 	* Mono plugin loader (Eoin Coffey)
 	* Perl plugin loader has been rewritten (John Kelm, Google Summer
@@ -172,8 +175,6 @@ version 2.0.0:
 	  by the timestamp plugin
 	* Removed all protocol options pages
 	* Removed "Escape closes windows;" default key binding is now Ctrl-W
-	* Removed "Gaim usage" and "Idle time reporting" preferences; behavior
-	  now always uses mouse/keyboard when available
 	* Removed "Log when buddies sign on/sign off/become idle/become
 	  un-idle/go away/come back" and "Log your own actions;" all of these
 	  will be logged when the system log is enabled

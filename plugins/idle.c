@@ -39,12 +39,23 @@
 static GList *idled_accts = NULL;
 
 static gboolean
-idle_filter(GaimAccount *acct)
+unidle_filter(GaimAccount *acct)
 {
 	if (g_list_find(idled_accts, acct))
 		return TRUE;
 
 	return FALSE;
+}
+
+static gboolean
+idleable_filter(GaimAccount *acct)
+{
+	/* LSchiere says we can't control idle time on IRC, so I think we should
+	 * ignore it to avoid some bug reports :) - rekkanoryo */
+	if(!strcmp(gaim_account_get_protocol_id(acct), "prpl-irc"))
+		return FALSE;
+
+	return TRUE;
 }
 
 static void
@@ -73,7 +84,7 @@ idle_action_ok(void *ignored, GaimRequestFields *fields)
 	GaimAccount *acct = gaim_request_fields_get_account(fields, "acct");
 
 	/* only add the account to the GList if it's not already been idled */
-	if (!idle_filter(acct))
+	if (!unidle_filter(acct))
 	{
 		gaim_debug_misc("idle",
 				"%s hasn't been idled yet; adding to list.\n",
@@ -82,6 +93,32 @@ idle_action_ok(void *ignored, GaimRequestFields *fields)
 	}
 
 	set_idle_time(acct, tm);
+}
+
+static void
+idle_all_action_ok(void *ignored, GaimRequestFields *fields)
+{
+	GaimAccount *acct = NULL;
+	GList *l = gaim_accounts_get_all_active();
+	int tm = gaim_request_fields_get_integer(fields, "mins");
+	const char *prpl_id = NULL;
+
+	for(; l; l = l->next) {
+		acct = (GaimAccount *)(l->data);
+
+		if(acct)
+			prpl_id = gaim_account_get_protocol_id(acct);
+
+		if(acct && idleable_filter(acct)) {
+			gaim_debug_misc("idle", "Idling %s.\n",
+					gaim_account_get_username(acct));
+
+			set_idle_time(acct, tm);
+
+			if(!g_list_find(idled_accts, acct))
+				idled_accts = g_list_append(idled_accts, acct);
+		}
+	}
 }
 
 static void
@@ -108,6 +145,7 @@ idle_action(GaimPluginAction *action)
 	group = gaim_request_field_group_new(NULL);
 
 	field = gaim_request_field_account_new("acct", _("Account"), NULL);
+	gaim_request_field_account_set_filter(field, idleable_filter);
 	gaim_request_field_account_set_show_all(field, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
@@ -143,7 +181,7 @@ unidle_action(GaimPluginAction *action)
 	group = gaim_request_field_group_new(NULL);
 
 	field = gaim_request_field_account_new("acct", _("Account"), NULL);
-	gaim_request_field_account_set_filter(field, idle_filter);
+	gaim_request_field_account_set_filter(field, unidle_filter);
 	gaim_request_field_account_set_show_all(field, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
@@ -156,6 +194,31 @@ unidle_action(GaimPluginAction *action)
 			NULL,
 			request,
 			_("_Unset"), G_CALLBACK(unidle_action_ok),
+			_("_Cancel"), NULL,
+			NULL);
+}
+
+static void
+idle_all_action(GaimPluginAction *action)
+{
+	GaimRequestFields *request;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	group = gaim_request_field_group_new(NULL);
+
+	field = gaim_request_field_int_new("mins", _("Minutes"), 10);
+	gaim_request_field_group_add_field(group, field);
+
+	request = gaim_request_fields_new();
+	gaim_request_fields_add_group(request, group);
+
+	gaim_request_fields(action->plugin,
+			N_("I'dle Mak'er"),
+			_("Set Idle Time for All Accounts"),
+			NULL,
+			request,
+			_("_Set"), G_CALLBACK(idle_all_action_ok),
 			_("_Cancel"), NULL,
 			NULL);
 }
@@ -189,6 +252,10 @@ actions(GaimPlugin *plugin, gpointer context)
 
 	act = gaim_plugin_action_new(_("Unset Account Idle Time"),
 			unidle_action);
+	l = g_list_append(l, act);
+
+	act = gaim_plugin_action_new(_("Set Idle Time for All Accounts"),
+			idle_all_action);
 	l = g_list_append(l, act);
 
 	act = gaim_plugin_action_new(
