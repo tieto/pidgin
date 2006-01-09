@@ -1677,10 +1677,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 				else
 					continue;
 
-#if GTK_CHECK_VERSION(2,4,0)
 				if (label)
 					gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
-#endif
 
 				if (type == GAIM_REQUEST_FIELD_STRING &&
 					gaim_request_field_string_is_multiline(field))
