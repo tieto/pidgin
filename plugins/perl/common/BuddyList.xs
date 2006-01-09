@@ -1,17 +1,20 @@
 #include "module.h"
 #include "../perl-handlers.h"
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList  PREFIX = gaim_
+MODULE = Gaim::BuddyList  PACKAGE = Gaim  PREFIX = gaim_
 PROTOTYPES: ENABLE
 
 Gaim::BuddyList
 gaim_get_blist()
 
+void
+gaim_set_blist(blist)
+	Gaim::BuddyList blist
 
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::Find  PREFIX = gaim_find_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Buddy 
+Gaim::BuddyList::Buddy
 gaim_find_buddy(account, name)
 	Gaim::Account account
 	const char * name
@@ -27,17 +30,14 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::BuddyList::Buddy")));
 	}
 
-gboolean 
+gboolean
 gaim_group_on_account(group, account)
 	Gaim::BuddyList::Group  group
 	Gaim::Account account
 
-Gaim::BuddyList::Group  
+Gaim::BuddyList::Group
 gaim_find_group(name)
 	const char *name
-
-
-
 
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::Contact  PREFIX = gaim_contact_
 PROTOTYPES: ENABLE
@@ -45,7 +45,7 @@ PROTOTYPES: ENABLE
 Gaim::BuddyList::Contact
 gaim_contact_new();
 
-Gaim::BuddyList::Buddy 
+Gaim::BuddyList::Buddy
 gaim_contact_get_priority_buddy(contact)
 	Gaim::BuddyList::Contact contact
 
@@ -58,7 +58,7 @@ const char *
 gaim_contact_get_alias(contact)
 	Gaim::BuddyList::Contact contact
 
-gboolean 
+gboolean
 gaim_contact_on_account(contact, account)
 	Gaim::BuddyList::Contact contact
 	Gaim::Account account
@@ -67,29 +67,27 @@ void
 gaim_contact_invalidate_priority_buddy(contact)
 	Gaim::BuddyList::Contact contact
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::Group  PREFIX = gaim_group_
+MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Group  PREFIX = gaim_group_
 PROTOTYPES: ENABLE
 
-
-Gaim::BuddyList::Group  
+Gaim::BuddyList::Group
 gaim_group_new(name)
 	const char *name
 
-void 
+void
 gaim_group_get_accounts(group)
 	Gaim::BuddyList::Group  group
 PREINIT:
 	GSList *l;
 PPCODE:
 	for (l = gaim_group_get_accounts(group); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Account")));
 	}
 
-gboolean 
+gboolean
 gaim_group_on_account(group, account)
 	Gaim::BuddyList::Group  group
 	Gaim::Account account
-
 
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList  PREFIX = gaim_blist_
 PROTOTYPES: ENABLE
@@ -148,10 +146,6 @@ Gaim::BuddyList
 gaim_blist_new()
 
 void
-gaim_set_blist(blist)
-	Gaim::BuddyList blist
-
-void
 gaim_blist_show()
 
 void
@@ -203,12 +197,12 @@ void
 gaim_blist_remove_account(account)
 	Gaim::Account account
 
-int 
+int
 gaim_blist_get_group_size(group, offline)
 	Gaim::BuddyList::Group  group
 	gboolean offline
 
-int 
+int
 gaim_blist_get_group_online_count(group)
 	Gaim::BuddyList::Group  group
 
@@ -222,12 +216,44 @@ void
 gaim_blist_request_add_group()
 
 void
+gaim_blist_node_get_extended_menu(node)
+	Gaim::BuddyList::Node node
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = gaim_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
+		/* XXX I'm pretty sure this is what should be being used here,
+		 * not that it really matters since perl doesn't really have a
+		 * way to interact with a GaimBlistNodeAction anyway. */
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::BuddyList::Node::Action")));
+	}
+
+void
+gaim_blist_set_ui_ops(ops)
+	Gaim::BuddyList::UiOps ops
+
+Gaim::BuddyList::UiOps
+gaim_blist_get_ui_ops()
+
+void *
+gaim_blist_get_handle()
+
+void
+gaim_blist_init()
+
+void
+gaim_blist_uninit()
+
+MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Node  PREFIX = gaim_blist_node_
+PROTOTYPES: ENABLE
+
+void
 gaim_blist_node_set_bool(node, key, value)
 	Gaim::BuddyList::Node node
 	const char * key
 	gboolean value
 
-gboolean 
+gboolean
 gaim_blist_node_get_bool(node, key)
 	Gaim::BuddyList::Node node
 	const char * key
@@ -238,7 +264,7 @@ gaim_blist_node_set_int(node, key, value)
 	const char * key
 	int value
 
-int 
+int
 gaim_blist_node_get_int(node, key)
 	Gaim::BuddyList::Node node
 	const char * key
@@ -256,46 +282,16 @@ gaim_blist_node_remove_setting(node, key)
 void
 gaim_blist_node_set_flags(node, flags)
 	Gaim::BuddyList::Node node
-	Gaim::BlistNodeFlags flags
+	Gaim::BuddyList::NodeFlags flags
 
-Gaim::BlistNodeFlags 
+Gaim::BuddyList::NodeFlags
 gaim_blist_node_get_flags(node)
 	Gaim::BuddyList::Node node
-
-void
-gaim_blist_node_get_extended_menu(node)
-	Gaim::BuddyList::Node node
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = gaim_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
-	}
-	
-
-void
-gaim_blist_set_ui_ops(ops)
-	Gaim::BuddyList::UiOps ops
-
-
-Gaim::BuddyList::UiOps
-gaim_blist_get_ui_ops()
-
-void *
-gaim_blist_get_handle()
-
-void
-gaim_blist_init()
-
-void
-gaim_blist_uninit()
-
 
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::Chat  PREFIX = gaim_chat_
 PROTOTYPES: ENABLE
 
-
-Gaim::BuddyList::Group  
+Gaim::BuddyList::Group
 gaim_chat_get_group(chat)
 	Gaim::BuddyList::Chat chat
 
@@ -306,7 +302,7 @@ gaim_chat_get_name(chat)
 Gaim::BuddyList::Chat
 gaim_chat_new(account, alias, components)
 	Gaim::Account account
-	const char * alias 
+	const char * alias
 	SV * components
 INIT:
 	HV * t_HV;
@@ -322,7 +318,7 @@ CODE:
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);
 		t_SV = *hv_fetch(t_HV, t_key, len, 0);
- 		t_value = SvPV(t_SV, PL_na);
+		t_value = SvPV(t_SV, PL_na);
 
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
@@ -331,20 +327,10 @@ CODE:
 OUTPUT:
 	RETVAL
 
-
-
-
-
-
-
-
-
-
-
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::Buddy  PREFIX = gaim_buddy_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Buddy 
+Gaim::BuddyList::Buddy
 gaim_buddy_new(account, screenname, alias)
 	Gaim::Account account
 	const char *screenname
@@ -355,7 +341,7 @@ gaim_buddy_set_icon(buddy, icon)
 	Gaim::BuddyList::Buddy buddy
 	Gaim::Buddy::Icon icon
 
-Gaim::Account 
+Gaim::Account
 gaim_buddy_get_account(buddy)
 	Gaim::BuddyList::Buddy buddy
 
@@ -367,7 +353,7 @@ const char *
 gaim_buddy_get_name(buddy)
 	Gaim::BuddyList::Buddy buddy
 
-Gaim::Buddy::Icon 
+Gaim::Buddy::Icon
 gaim_buddy_get_icon(buddy)
 	Gaim::BuddyList::Buddy buddy
 
@@ -375,7 +361,7 @@ Gaim::BuddyList::Contact
 gaim_buddy_get_contact(buddy)
 	Gaim::BuddyList::Buddy buddy
 
-Gaim::Presence  
+Gaim::Presence
 gaim_buddy_get_presence(buddy)
 	Gaim::BuddyList::Buddy buddy
 
@@ -394,4 +380,3 @@ gaim_buddy_get_local_alias(buddy)
 const char *
 gaim_buddy_get_alias(buddy)
 	Gaim::BuddyList::Buddy buddy
-
