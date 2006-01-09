@@ -3,11 +3,11 @@
 MODULE = Gaim::Account::Option  PACKAGE = Gaim::Account::Option  PREFIX = gaim_account_option_
 PROTOTYPES: ENABLE
 
-void 
+void
 gaim_account_option_destroy(option)
 	Gaim::Account::Option option
 
-const char * 
+const char *
 gaim_account_option_get_default_string(option)
 	Gaim::Account::Option option
 
@@ -15,7 +15,7 @@ void
 gaim_account_option_add_list_item(option, key, value)
 	Gaim::Account::Option option
 	const char * key
-	const char * value	
+	const char * value
 
 void
 gaim_account_option_set_default_string(option, value);
@@ -30,7 +30,7 @@ gaim_account_option_set_default_int(option, value);
 void
 gaim_account_option_set_default_bool(option, value);
 	Gaim::Account::Option option
-	gboolean value	 	
+	gboolean value
 
 Gaim::Account::Option
 gaim_account_option_list_new(class, text, pref_name, values)
@@ -91,6 +91,10 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_account_option_get_list(option); l != NULL; l = l->next) {
+		/* XXX These are actually GaimKeyValuePairs but we don't have a
+		 * type for that and even if we did I don't think there's
+		 * anything perl could do with them, so I'm just going to
+		 * leave this as a Gaim::ListEntry for now. */
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
 	}
 
@@ -98,16 +102,15 @@ Gaim::PrefType
 gaim_account_option_get_type(option)
 	Gaim::Account::Option option
 
-gboolean 
+gboolean
 gaim_account_option_get_masked(option)
 	Gaim::Account::Option option
 
-int 
+int
 gaim_account_option_get_default_int(option)
 	Gaim::Account::Option option;
-INIT:
-	
-gboolean 
+
+gboolean
 gaim_account_option_get_default_bool(option)
 	Gaim::Account::Option option;
 
@@ -119,7 +122,7 @@ const char *
 gaim_account_option_get_text(option)
 	Gaim::Account::Option option
 
-void 
+void
 gaim_account_option_set_list(option, values)
 	Gaim::Account::Option option
 	SV * values
@@ -152,7 +155,7 @@ gaim_account_user_split_new(class, text, default_value, sep)
     C_ARGS:
 	text, default_value, sep
 
-char 
+char
 gaim_account_user_split_get_separator(split)
 	Gaim::Account::UserSplit split
 
@@ -160,6 +163,6 @@ const char *
 gaim_account_user_split_get_text(split)
 	Gaim::Account::UserSplit split
 
-void 
+void
 gaim_account_user_split_destroy(split)
 	Gaim::Account::UserSplit split
