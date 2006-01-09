@@ -3,11 +3,7 @@
 MODULE = Gaim::SavedStatus  PACKAGE = Gaim::SavedStatus  PREFIX = gaim_savedstatus_
 PROTOTYPES: ENABLE
 
-void *
-gaim_savedstatuses_get_handle()
-
-
-gboolean 
+gboolean
 gaim_savedstatus_delete(title)
 	const char *title
 
@@ -32,7 +28,7 @@ gaim_savedstatus_new(title, type)
 	const char *title
 	Gaim::StatusPrimitive type
 
-void 
+void
 gaim_savedstatus_set_message(status, message)
 	Gaim::SavedStatus status
 	const char *message
@@ -46,15 +42,14 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_savedstatuses_get_all(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::SavedStatus")));
 	}
 
+void *
+gaim_savedstatuses_get_handle()
 
-void 
+void
 gaim_savedstatuses_init()
- 
 
-void 
+void
 gaim_savedstatuses_uninit()
- 
-
