@@ -1150,6 +1150,10 @@ static void update_size(GtkGaimStatusBox *status_box)
 
 static void remove_typing_cb(GtkGaimStatusBox *status_box)
 {
+	if (status_box->typing == 0)
+		/* Nothing has changed, so we don't need to do anything */
+		return;
+
 	activate_currently_selected_status(status_box);
 
 	g_source_remove(status_box->typing);
