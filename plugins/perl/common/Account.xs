@@ -14,85 +14,84 @@ gaim_account_new(class, username, protocol_id)
     C_ARGS:
 	username, protocol_id
 
-void 
+void
 gaim_account_destroy(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_connect(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_register(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_disconnect(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_request_change_password(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_request_change_user_info(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_set_username(account, username)
 	Gaim::Account account
 	const char * username
 
-void 
+void
 gaim_account_set_password(account, password)
 	Gaim::Account account
 	const char * password
 
-void 
+void
 gaim_account_set_alias(account, alias)
 	Gaim::Account account
 	const char * alias
 
-void 
+void
 gaim_account_set_user_info(account, user_info)
 	Gaim::Account account
 	const char *user_info
 
-void 
+void
 gaim_account_set_buddy_icon(account, icon)
 	Gaim::Account account
 	const char *icon
 
-void 
+void
 gaim_account_set_connection(account, gc)
 	Gaim::Account account
 	Gaim::Connection gc
 
-void 
+void
 gaim_account_set_remember_password(account, value)
 	Gaim::Account account
 	gboolean value
 
-void 
+void
 gaim_account_set_check_mail(account, value)
 	Gaim::Account account
 	gboolean value
 
-void 
+void
 gaim_account_set_proxy_info(account, info)
 	Gaim::Account account
 	Gaim::ProxyInfo info
 
 void
-gaim_account_set_status(account, status_id, active) 
+gaim_account_set_status(account, status_id, active)
 	Gaim::Account account
 	const char *status_id
 	gboolean active
 CODE:
 	gaim_account_set_status(account, status_id, active);
 
-
-void 
+void
 gaim_account_set_status_types(account, status_types)
 	Gaim::Account account
 	SV * status_types
@@ -109,18 +108,17 @@ PPCODE:
 	}
 	gaim_account_set_status_types(account, t_GL);
 
-
-void 
+void
 gaim_account_clear_settings(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_set_int(account, name, value)
 	Gaim::Account account
 	const char *name
 	int value
 
-gboolean 
+gboolean
 gaim_account_is_connected(account)
 	Gaim::Account account
 
@@ -156,11 +154,11 @@ Gaim::Connection
 gaim_account_get_connection(account)
 	Gaim::Account account
 
-gboolean 
+gboolean
 gaim_account_get_remember_password(account)
 	Gaim::Account account
 
-gboolean 
+gboolean
 gaim_account_get_check_mail(account)
 	Gaim::Account account
 
@@ -179,18 +177,18 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Status::Type")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::StatusType")));
 	}
 
 Gaim::Log
 gaim_account_get_log(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_destroy_log(account)
 	Gaim::Account account
 
-void 
+void
 gaim_account_add_buddies(account, list)
 	Gaim::Account account
 	SV * list
@@ -206,19 +204,19 @@ PPCODE:
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(list), i, 0), t_sl));
 	}
 	gaim_account_add_buddies(account, t_GL);
-	
-void 
+
+void
 gaim_account_add_buddy(account, buddy)
 	Gaim::Account account
 	Gaim::BuddyList::Buddy	buddy
 
-void 
+void
 gaim_account_change_password(account, a, b)
 	Gaim::Account account
 	const char *	a
 	const char *	b
 
-void 
+void
 gaim_account_remove_buddies(account, A, B)
 	Gaim::Account account
 	SV * A
@@ -234,7 +232,7 @@ PPCODE:
 		STRLEN t_sl;
 		t_GL1 = g_list_append(t_GL1, SvPV(*av_fetch((AV *)SvRV(A), i, 0), t_sl));
 	}
-	
+
 	t_GL2 = NULL;
 	t_len = av_len((AV *)SvRV(B));
 
@@ -244,36 +242,33 @@ PPCODE:
 	}
 	gaim_account_remove_buddies(account, t_GL1, t_GL2);
 
-void 
+void
 gaim_account_remove_buddy(account, buddy, group)
 	Gaim::Account account
 	Gaim::BuddyList::Buddy buddy
 	Gaim::BuddyList::Group group
 
-void 
+void
 gaim_account_remove_group(account, group)
 	Gaim::Account account
 	Gaim::BuddyList::Group group
 
-
-
-
 MODULE = Gaim::Account  PACKAGE = Gaim::Accounts  PREFIX = gaim_accounts_
 PROTOTYPES: ENABLE
 
-void 
+void
 gaim_accounts_add(account)
 	Gaim::Account account
 
-void 
+void
 gaim_accounts_remove(account)
 	Gaim::Account account
 
-void 
+void
 gaim_accounts_delete(account)
 	Gaim::Account account
 
-void 
+void
 gaim_accounts_reorder(account, new_index)
 	Gaim::Account account
 	size_t new_index
@@ -301,18 +296,18 @@ gaim_accounts_find(name, protocol)
 	const char * name
 	const char * protocol
 
-void 
+void
 gaim_accounts_set_ui_ops(ops)
 	Gaim::Account::UiOps ops
 
-Gaim::Account::UiOps 
+Gaim::Account::UiOps
 gaim_accounts_get_ui_ops()
 
-void 
+void
 gaim_accounts_get_handle()
 
-void 
+void
 gaim_accounts_init()
 
-void 
+void
 gaim_accounts_uninit()
