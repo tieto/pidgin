@@ -797,7 +797,7 @@ gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 	/* Otherwise, this is a transient status and we make up a title on the fly */
 	message = gaim_savedstatus_get_message(saved_status);
 
-	if (message == NULL)
+	if ((message == NULL) || (*message == '\0'))
 	{
 		GaimStatusPrimitive primitive;
 		primitive = gaim_savedstatus_get_type(saved_status);
