@@ -65,6 +65,12 @@ imhtml_cb(GtkTextBuffer *buffer, gpointer data)
 }
 
 static void
+imhtml_format_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, gpointer data)
+{
+	imhtml_cb(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml)), data);
+}
+
+static void
 make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 	GtkWidget *hbox, *gtk_label, *entry;
 	gchar *pref_name, *pref_label;
@@ -132,6 +138,8 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 				g_object_set_data(G_OBJECT(imhtml), "pref-key", pref_name);
 				g_signal_connect(G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml))),
 								"changed", G_CALLBACK(imhtml_cb), imhtml);
+				g_signal_connect(G_OBJECT(imhtml),
+								"format_function_toggle", G_CALLBACK(imhtml_format_cb), imhtml);
 				gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 			}
 
