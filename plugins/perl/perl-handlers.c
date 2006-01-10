@@ -231,14 +231,15 @@ perl_signal_cb(va_list args, void *data)
 	PUSHMARK(sp);
 
 	gaim_signal_get_values(handler->instance, handler->signal,
-						   &ret_value, &value_count, &values);
+	                       &ret_value, &value_count, &values);
 
 	sv_args   = g_new(SV *,    value_count);
 	copy_args = g_new(void **, value_count);
 
 	for (i = 0; i < value_count; i++) {
-		sv_args[i] = sv_2mortal(gaim_perl_sv_from_vargs(values[i],
-														(va_list*)&args, &copy_args[i]));
+		sv_args[i] = gaim_perl_sv_from_vargs(values[i],
+		                                     (va_list*)&args,
+		                                     &copy_args[i]);
 
 		XPUSHs(sv_args[i]);
 	}
