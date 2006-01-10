@@ -3156,7 +3156,6 @@ gaim_url_fetch(const char *url, gboolean full,
 			   void (*cb)(gpointer, const char *, size_t),
 			   void *user_data)
 {
-	int sock;
 	GaimFetchUrlData *gfud;
 
 	g_return_if_fail(url != NULL);
@@ -3178,9 +3177,9 @@ gaim_url_fetch(const char *url, gboolean full,
 	gaim_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
-	if ((sock = gaim_proxy_connect(NULL, gfud->website.address,
+	if (gaim_proxy_connect(NULL, gfud->website.address,
 								   gfud->website.port, url_fetched_cb,
-								   gfud)) < 0)
+								   gfud) != 0)
 	{
 		destroy_fetch_url_data(gfud);
 
