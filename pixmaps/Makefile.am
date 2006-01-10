@@ -9,6 +9,7 @@ EXTRA_DIST = \
 		connect.png			\
 		edit.png			\
 		gaim.png			\
+		gaim.svg			\
 		gaim_auth.png			\
 		gaim_cool.png			\
 		gaim_error.png			\
@@ -84,5 +85,5 @@ gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.png status-online.png status-offline.png status-away.png status-invisible.png status-typing0.png status-typing1.png status-typing2.png status-typing3.png status-connect0.png status-connect1.png status-connect2.png status-connect3.png phone.png
 
 distpixmapdir = $(datadir)/pixmaps
-distpixmap_DATA = gaim.png
+distpixmap_DATA = gaim.png gaim.svg
 
