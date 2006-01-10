@@ -410,13 +410,13 @@ static void jabber_login_connect(JabberStream *js, const char *server, int port)
 static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
 {
 	JabberStream *js = (JabberStream*)data;
-	int config_port = gaim_account_get_int(js->gc->account, "port", 0);
 
 	if(results) {
-		jabber_login_connect(js, resp->hostname, config_port ? config_port : resp->port);
+		jabber_login_connect(js, resp->hostname, resp->port);
 		g_free(resp);
 	} else {
-		jabber_login_connect(js, js->user->domain, config_port);
+		jabber_login_connect(js, js->user->domain,
+			gaim_account_get_int(js->gc->account, "port", 0));
 	}
 }
 
