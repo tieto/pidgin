@@ -6505,8 +6505,9 @@ gaim_gtk_conversations_init(void)
 						GAIM_CALLBACK(update_chat), NULL);
 	gaim_signal_connect(gaim_conversations_get_handle(), "chat-topic-changed", handle,
 						GAIM_CALLBACK(update_chat_topic), NULL);
-	gaim_signal_connect(gaim_conversations_get_handle(), "conversation-updated", handle,
-						GAIM_CALLBACK(gaim_gtkconv_updated), NULL);
+	gaim_signal_connect_priority(gaim_conversations_get_handle(), "conversation-updated", handle,
+						GAIM_CALLBACK(gaim_gtkconv_updated), NULL,
+						GAIM_SIGNAL_PRIORITY_LOWEST);
 }
 
 void
@@ -6703,7 +6704,7 @@ gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
 			gtkconv->unseen_state = state;
 	}
 
-	gaim_gtkconv_update_fields(gtkconv->active_conv, GAIM_GTKCONV_COLORIZE_TITLE);
+	gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
 }
 
 /*
