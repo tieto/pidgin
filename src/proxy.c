@@ -198,8 +198,11 @@ gaim_gnome_proxy_get_info(void)
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_http_proxy", &tmp,
 					       NULL, NULL, NULL))
 			return gaim_global_proxy_get_info();
-		if (strcmp(tmp, "true\n")) {
+		if (!strcmp(tmp, "false\n")) {
 			info.type = GAIM_PROXY_NONE;
+			g_free(tmp);
+			return &info;
+		} else if (strcmp(tmp, "true\n")) {
 			g_free(tmp);
 			return gaim_global_proxy_get_info();
 		}
