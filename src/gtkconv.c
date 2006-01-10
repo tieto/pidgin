@@ -128,6 +128,7 @@ static GdkColor nick_colors[] = {
 
 #define NUM_NICK_COLORS 220
 static GdkColor *nick_colors = NULL;
+static guint nbr_nick_colors;
 
 typedef struct {
 	GtkWidget *window;
@@ -163,7 +164,7 @@ static char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
 static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
 static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
-static GdkColor* generate_nick_colors(guint numcolors, GdkColor background);
+static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 static void gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields);
 
@@ -172,7 +173,7 @@ static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) 
 	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
 	float scale;
 
-	col = nick_colors[g_str_hash(name) % NUM_NICK_COLORS];
+	col = nick_colors[g_str_hash(name) % nbr_nick_colors];
 	scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
 		       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
 
@@ -4283,8 +4284,10 @@ private_gtkconv_new(GaimConversation *conv, gboolean hidden)
 	else
 		gaim_gtkconv_placement_place(gtkconv);
 
-	if (nick_colors == NULL)
-		nick_colors = generate_nick_colors(NUM_NICK_COLORS, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
+	if (nick_colors == NULL) {
+		nbr_nick_colors = NUM_NICK_COLORS;
+		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
+	}
 }
 
 static void
@@ -8067,23 +8070,27 @@ color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, i
 
 
 static GdkColor*
-generate_nick_colors(guint numcolors, GdkColor background)
+generate_nick_colors(guint *color_count, GdkColor background)
 {
+	guint numcolors = *color_count;
 	guint i = 0, j = 0;
 	GdkColor *colors = g_new(GdkColor, numcolors);
 	GdkColor nick_highlight;
 	GdkColor send_color;
+	time_t breakout_time;
 
 	gdk_color_parse(HIGHLIGHT_COLOR, &nick_highlight);
 	gdk_color_parse(SEND_COLOR, &send_color);
 
 	srand(background.red + background.green + background.blue + 1);
 
+	breakout_time = time(NULL) + 3;
+
 	/* first we look through the list of "good" colors: colors that differ from every other color in the
 	 * list.  only some of them will differ from the background color though. lets see if we can find
 	 * numcolors of them that do
 	 */
-	while (i < numcolors && j < NUM_NICK_SEED_COLORS )
+	while (i < numcolors && j < NUM_NICK_SEED_COLORS && time(NULL) < breakout_time)
 	{
 		GdkColor color = nick_seed_colors[j];
 
@@ -8102,7 +8109,7 @@ generate_nick_colors(guint numcolors, GdkColor background)
 	 * expensive to find colors that not only don't conflict with the background, but also do not
 	 * conflict with each other.
 	 */
-	while(i < numcolors )
+	while(i < numcolors && time(NULL) < breakout_time)
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
 
@@ -8116,6 +8123,15 @@ generate_nick_colors(guint numcolors, GdkColor background)
 			colors[i] = color;
 			i++;
 		}
+	}
+
+	if (i < numcolors) {
+		GdkColor *c = colors;
+		gaim_debug(GAIM_DEBUG_WARNING, NULL, "Unable to generate enough random colors before timeout. %u colors found.\n", i);
+		colors = g_memdup(c, i * sizeof(GdkColor));
+		g_free(c);
+		*color_count = i;
+		
 	}
 
 	return colors;
