@@ -4,7 +4,6 @@
 #include "debug.h"
 #include "signals.h"
 
-
 static GList *timeout_handlers = NULL;
 static GList *signal_handlers = NULL;
 static char *perl_plugin_pref_cb;
@@ -17,63 +16,69 @@ extern PerlInterpreter *my_perl;
 #endif
 
 /* For now a plugin can only have one action */
-void gaim_perl_plugin_action_cb(GaimPluginAction * gpa) {
+void
+gaim_perl_plugin_action_cb(GaimPluginAction * gpa)
+{
+	dSP;
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(sp);
 
-        dSP;
-        ENTER;
-        SAVETMPS;
-        PUSHMARK(sp);
-
-	/* We put the plugin handle on the stack so it can pass it along 	*/
-	/* to anythng called from the callback.  It is supposed to pass		*/
-	/* the Action, but there is no way to access the plugin handle from	*/
-	/* the GaimPluginAction in perl...yet.					*/
+	/* We put the plugin handle on the stack so it can pass it along    */
+	/* to anything called from the callback.  It is supposed to pass    */
+	/* the Action, but there is no way to access the plugin handle from */
+	/* the GaimPluginAction in perl...yet.                              */
 
 	XPUSHs(gaim_perl_bless_object(gpa->plugin, "Gaim::Plugin"));
-        PUTBACK;
+	PUTBACK;
 
-	/* gaim_perl_plugin_action_callback_sub defined in the header is set	*/
-	/* in perl.c during plugin probe by a PLUGIN_INFO hash value limiting	*/
-	/* us to only one action for right now even though the action member of	*/
-	/* GaimPluginInfo can take (does take) a GList.				*/
-        call_pv(gaim_perl_plugin_action_callback_sub, G_EVAL | G_SCALAR);
-        SPAGAIN;
+	/* gaim_perl_plugin_action_callback_sub defined in the header is set
+	 * in perl.c during plugin probe by a PLUGIN_INFO hash value limiting
+	 * us to only one action for right now even though the action member
+	 * of GaimPluginInfo can take (does take) a GList. */
+	call_pv(gaim_perl_plugin_action_callback_sub, G_EVAL | G_SCALAR);
+	SPAGAIN;
 
-        PUTBACK;
-        FREETMPS;
-        LEAVE;
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
 }
 
-GList *gaim_perl_plugin_action(GaimPlugin *plugin, gpointer context) {
-        GaimPluginAction *act = NULL;
-        GList *gl = NULL;
+GList *
+gaim_perl_plugin_action(GaimPlugin *plugin, gpointer context)
+{
+	GaimPluginAction *act = NULL;
+	GList *gl = NULL;
 
-	/* TODO: Fix the way we create action handlers so we can have mroe than	*/
-	/* one action in perl.  Maybe there is a clever work around, but so far	*/
-	/* I have not figured it out.  There is no way to tie the perl sub's	*/
-	/* name to the callback function without these global variables and 	*/
-	/* there is no way to create a callback on the fly so each would have	*/
-	/* to be hardcoded--more than one would just be arbitrary.		*/
-        act = gaim_plugin_action_new(gaim_perl_plugin_action_label, gaim_perl_plugin_action_cb);
-        gl = g_list_append(gl, act);
+	/* TODO: Fix the way we create action handlers so we can have more
+	 * than one action in perl.  Maybe there is a clever work around, but
+	 * so far I have not figured it out.  There is no way to tie the perl
+	 * sub's name to the callback function without these global variables
+	 * and there is no way to create a callback on the fly so each would
+	 * have to be hardcoded--more than one would just be arbitrary. */
+	act = gaim_plugin_action_new(gaim_perl_plugin_action_label,
+	                             gaim_perl_plugin_action_cb);
+	gl = g_list_append(gl, act);
 
-        return gl;
+	return gl;
 }
 
 
-GaimGtkPluginUiInfo *gaim_perl_gtk_plugin_pref(const char * frame_cb) {
-
+GaimGtkPluginUiInfo *
+gaim_perl_gtk_plugin_pref(const char * frame_cb)
+{
 	GaimGtkPluginUiInfo *ui_info;
-	
+
 	ui_info = g_new0(GaimGtkPluginUiInfo, 1);
 	perl_gtk_plugin_pref_cb = g_strdup(frame_cb);
 	ui_info->get_config_frame = gaim_perl_gtk_get_plugin_frame;
-	
+
 	return ui_info;
 }
 
-GtkWidget *gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin) {
-	
+GtkWidget *
+gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
+{
 	SV * sv;
 	GtkWidget *ret;
 	MAGIC *mg;
@@ -86,12 +91,12 @@ GtkWidget *gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin) {
 	count = call_pv(perl_gtk_plugin_pref_cb, G_SCALAR | G_NOARGS);
 	if (count != 1)
 		croak("call_pv: Did not return the correct number of values.\n");
-	
+
 	/* the frame was created in a perl sub and is returned */
 	SPAGAIN;
 
 	/* We have a Gtk2::Frame on top of the stack */
-	sv = POPs;	
+	sv = POPs;
 
 	/* The magic field hides the pointer to the actuale GtkWidget */
 	mg = mg_find(SvRV(sv), PERL_MAGIC_ext);
@@ -99,21 +104,20 @@ GtkWidget *gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin) {
 
 	PUTBACK;
 	FREETMPS;
-	LEAVE;		
-	
+	LEAVE;
+
 	return ret;
 }
 
-
-
-
-/* Called to create a pointer to GaimPluginUiInfo for the GaimPluginInfo 	*/
-/*	It will then inturn create ui_info with the C function pointer 		*/
-/*	that will eventually do a call_pv to call a perl functions so users	*/
-/*	can create their own frames in the prefs				*/
-GaimPluginUiInfo *gaim_perl_plugin_pref(const char * frame_cb) {
+/* Called to create a pointer to GaimPluginUiInfo for the GaimPluginInfo */
+/* It will then in turn create ui_info with the C function pointer       */
+/* that will eventually do a call_pv to call a perl functions so users   */
+/* can create their own frames in the prefs                              */
+GaimPluginUiInfo *
+gaim_perl_plugin_pref(const char * frame_cb)
+{
 	GaimPluginUiInfo *ui_info;
-	
+
 	ui_info = g_new0(GaimPluginUiInfo, 1);
 	perl_plugin_pref_cb = g_strdup(frame_cb);
 	ui_info->get_plugin_pref_frame = gaim_perl_get_plugin_frame;
@@ -121,17 +125,19 @@ GaimPluginUiInfo *gaim_perl_plugin_pref(const char * frame_cb) {
 	return ui_info;
 }
 
-GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin) {
-	/* Sets up the Perl Stack for our call back into the script to run the 	*/
-	/*	plugin_pref... sub						*/
+GaimPluginPrefFrame *
+gaim_perl_get_plugin_frame(GaimPlugin *plugin)
+{
+	/* Sets up the Perl Stack for our call back into the script to run the
+	 * plugin_pref... sub */
 	GaimPluginPrefFrame *ret_frame;
 	dSP;
 	int count;
 
 	ENTER;
 	SAVETMPS;
-	/* Some perl magic to run perl_plugin_pref_frame_SV perl sub and return	*/
-	/* 	the frame							*/
+	/* Some perl magic to run perl_plugin_pref_frame_SV perl sub and
+	 * return the frame */
 	PUSHMARK(SP);
 	PUTBACK;
 
@@ -230,8 +236,7 @@ perl_signal_cb(va_list args, void *data)
 	sv_args   = g_new(SV *,    value_count);
 	copy_args = g_new(void **, value_count);
 
-	for (i = 0; i < value_count; i++)
-	{
+	for (i = 0; i < value_count; i++) {
 		sv_args[i] = sv_2mortal(gaim_perl_sv_from_vargs(values[i],
 														(va_list*)&args, &copy_args[i]));
 
@@ -242,8 +247,7 @@ perl_signal_cb(va_list args, void *data)
 
 	PUTBACK;
 
-	if (ret_value != NULL)
-	{
+	if (ret_value != NULL) {
 		count = call_sv(handler->callback, G_EVAL | G_SCALAR);
 
 		SPAGAIN;
@@ -252,27 +256,22 @@ perl_signal_cb(va_list args, void *data)
 			croak("Uh oh! call_sv returned %i != 1", i);
 		else
 			ret_val = gaim_perl_data_from_sv(ret_value, POPs);
-	}
-	else
-	{
+	} else {
 		call_sv(handler->callback, G_SCALAR);
 
 		SPAGAIN;
 	}
 
-	if (SvTRUE(ERRSV))
-	{
-		gaim_debug_error("perl", "Perl function exited abnormally: %s\n",
-						 SvPV(ERRSV, na));
+	if (SvTRUE(ERRSV)) {
+		gaim_debug_error("perl",
+		                 "Perl function exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
 	}
 
 	/* See if any parameters changed. */
-	for (i = 0; i < value_count; i++)
-	{
-		if (gaim_value_is_outgoing(values[i]))
-		{
-			switch (gaim_value_get_type(values[i]))
-			{
+	for (i = 0; i < value_count; i++) {
+		if (gaim_value_is_outgoing(values[i])) {
+			switch (gaim_value_get_type(values[i])) {
 				case GAIM_TYPE_BOOLEAN:
 					*((gboolean *)copy_args[i]) = SvIV(sv_args[i]);
 					break;
@@ -302,8 +301,7 @@ perl_signal_cb(va_list args, void *data)
 					break;
 
 				case GAIM_TYPE_STRING:
-					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i])))
-					{
+					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
 						g_free(*((char **)copy_args[i]));
 						*((char **)copy_args[i]) =
 							g_strdup(SvPV(sv_args[i], na));
@@ -347,14 +345,12 @@ find_signal_handler(GaimPlugin *plugin, void *instance, const char *signal)
 	GaimPerlSignalHandler *handler;
 	GList *l;
 
-	for (l = signal_handlers; l != NULL; l = l->next)
-	{
+	for (l = signal_handlers; l != NULL; l = l->next) {
 		handler = (GaimPerlSignalHandler *)l->data;
 
 		if (handler->plugin == plugin &&
 			handler->instance == instance &&
-			!strcmp(handler->signal, signal))
-		{
+			!strcmp(handler->signal, signal)) {
 			return handler;
 		}
 	}
@@ -367,8 +363,7 @@ gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback, SV *data)
 {
 	GaimPerlTimeoutHandler *handler;
 
-	if (plugin == NULL)
-	{
+	if (plugin == NULL) {
 		croak("Invalid handle in adding perl timeout handler.\n");
 		return;
 	}
@@ -392,8 +387,7 @@ gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin)
 	GaimPerlTimeoutHandler *handler;
 	GList *l, *l_next;
 
-	for (l = timeout_handlers; l != NULL; l = l_next)
-	{
+	for (l = timeout_handlers; l != NULL; l = l_next) {
 		l_next = l->next;
 
 		handler = (GaimPerlTimeoutHandler *)l->data;
@@ -412,7 +406,7 @@ gaim_perl_timeout_clear(void)
 
 void
 gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
-						 const char *signal, SV *callback, SV *data)
+                         const char *signal, SV *callback, SV *data)
 {
 	GaimPerlSignalHandler *handler;
 
@@ -420,29 +414,29 @@ gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
 	handler->plugin   = plugin;
 	handler->instance = instance;
 	handler->signal   = g_strdup(signal);
-	handler->callback = (callback != NULL && callback != &PL_sv_undef
-						 ? newSVsv(callback) : NULL);
-	handler->data     = (data != NULL && data != &PL_sv_undef
-						 ? newSVsv(data) : NULL);
+	handler->callback = (callback != NULL &&
+	                     callback != &PL_sv_undef ? newSVsv(callback)
+	                                              : NULL);
+	handler->data     = (data != NULL &&
+	                     data != &PL_sv_undef ? newSVsv(data) : NULL);
 
 	signal_handlers = g_list_append(signal_handlers, handler);
 
-	gaim_signal_connect_vargs(instance, signal,
-							  plugin, GAIM_CALLBACK(perl_signal_cb), handler);
+	gaim_signal_connect_vargs(instance, signal, plugin,
+	                          GAIM_CALLBACK(perl_signal_cb), handler);
 }
 
 void
 gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
-							const char *signal)
+                            const char *signal)
 {
 	GaimPerlSignalHandler *handler;
 
 	handler = find_signal_handler(plugin, instance, signal);
 
-	if (handler == NULL)
-	{
+	if (handler == NULL) {
 		croak("Invalid signal handler information in "
-			  "disconnecting a perl signal handler.\n");
+		      "disconnecting a perl signal handler.\n");
 		return;
 	}
 
@@ -455,8 +449,7 @@ gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin)
 	GaimPerlSignalHandler *handler;
 	GList *l, *l_next;
 
-	for (l = signal_handlers; l != NULL; l = l_next)
-	{
+	for (l = signal_handlers; l != NULL; l = l_next) {
 		l_next = l->next;
 
 		handler = (GaimPerlSignalHandler *)l->data;
@@ -472,4 +465,3 @@ gaim_perl_signal_clear(void)
 	while (signal_handlers != NULL)
 		destroy_signal_handler(signal_handlers->data);
 }
-
