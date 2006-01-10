@@ -485,7 +485,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_request_field_group_get_fields(group); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Request::Field")));
 	}
 
 const char *
