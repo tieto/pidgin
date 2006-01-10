@@ -8,7 +8,7 @@ gaim_plugin_pref_frame_add(frame, pref)
 	Gaim::PluginPref::Frame frame
 	Gaim::PluginPref pref
 
-void 
+void
 gaim_plugin_pref_frame_destroy(frame)
 	Gaim::PluginPref::Frame frame
 
@@ -19,13 +19,12 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_plugin_pref_frame_get_prefs(frame); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::PluginPref")));
 	}
-	
+
 Gaim::PluginPref::Frame
 gaim_plugin_pref_frame_new(class)
     C_ARGS: /* void */
-
 
 MODULE = Gaim::PluginPref  PACKAGE = Gaim::PluginPref  PREFIX = gaim_plugin_pref_
 PROTOTYPES: ENABLE
@@ -56,16 +55,16 @@ PPCODE:
 	for (l = gaim_plugin_pref_get_choices(pref); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
 	}
-	
+
 char *
 gaim_plugin_pref_get_label(pref)
 	Gaim::PluginPref pref
 
-gboolean 
+gboolean
 gaim_plugin_pref_get_masked(pref)
 	Gaim::PluginPref pref
 
-unsigned int 
+unsigned int
 gaim_plugin_pref_get_max_length(pref)
 	Gaim::PluginPref pref
 
@@ -80,7 +79,6 @@ gaim_plugin_pref_get_type(pref)
 Gaim::PluginPref
 gaim_plugin_pref_new(class)
     C_ARGS: /* void */
-
 
 Gaim::PluginPref
 gaim_plugin_pref_new_with_label(class, label)
@@ -101,38 +99,40 @@ gaim_plugin_pref_new_with_name_and_label(class, name, label)
     C_ARGS:
 	name, label
 
-void 
+void
 gaim_plugin_pref_set_bounds(pref, min, max)
 	Gaim::PluginPref pref
 	int min
 	int max
 
-void 
+void
 gaim_plugin_pref_set_label(pref, label)
 	Gaim::PluginPref pref
 	char *label
 
-void 
+void
 gaim_plugin_pref_set_masked(pref, mask)
 	Gaim::PluginPref pref
 	gboolean mask
 
-void 
+void
 gaim_plugin_pref_set_max_length(pref, max_length)
 	Gaim::PluginPref pref
 	unsigned int max_length
 
-void 
+void
 gaim_plugin_pref_set_name(pref, name)
 	Gaim::PluginPref pref
 	char *name
 
-void 
+void
 gaim_plugin_pref_set_type(pref, type)
 	Gaim::PluginPref pref
 	Gaim::PluginPrefType type
+PREINIT:
+	GaimPluginPrefType gpp_type;
 CODE:
-	GaimPluginPrefType gpp_type = GAIM_PLUGIN_PREF_NONE;
+	gpp_type = GAIM_PLUGIN_PREF_NONE;
 
 	if (type == 1) {
 		gpp_type = GAIM_PLUGIN_PREF_CHOICE;
@@ -140,4 +140,3 @@ CODE:
 		gpp_type = GAIM_PLUGIN_PREF_INFO;
 	}
 	gaim_plugin_pref_set_type(pref, gpp_type);
-
