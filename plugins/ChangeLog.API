@@ -134,6 +134,8 @@ version 2.0.0:
 	* cb and user_data from the ops in GaimNotifyUiOps: This is now handled
 	  by the notify API in the core.
 	* GaimConversationUiOps.updated: use the conversation-updated signal
+	* GAIM_SUBTYPE_CONV_WINDOW: windows are now only represented in the UI,
+	  so GAIM_TYPE_BOXED is used for the signal types
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
