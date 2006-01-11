@@ -520,7 +520,13 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	}
 }
 
-static gboolean scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
+static gboolean combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
+{
+	gtk_combo_box_popup(GTK_COMBO_BOX(w));
+	return TRUE;
+}
+
+static gboolean imhtml_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
 {
 	if (event->direction == GDK_SCROLL_UP)
 		gtk_imhtml_page_up(imhtml);
@@ -787,8 +793,9 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
 
+	g_signal_connect(G_OBJECT(status_box), "scroll_event", G_CALLBACK(combo_box_scroll_event_cb), NULL);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",
-					G_CALLBACK(scroll_event_cb), status_box->imhtml);
+					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
 
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
