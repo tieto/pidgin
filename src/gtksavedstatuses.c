@@ -1505,7 +1505,7 @@ saved_status_sort_alphabetically_func(gconstpointer a, gconstpointer b)
 {
 	const GaimSavedStatus *saved_status_a = a;
 	const GaimSavedStatus *saved_status_b = b;
-	return strcmp(gaim_savedstatus_get_title(saved_status_a),
+	return g_utf8_collate(gaim_savedstatus_get_title(saved_status_a),
 				  gaim_savedstatus_get_title(saved_status_b));
 }
 
