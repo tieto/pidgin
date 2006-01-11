@@ -174,7 +174,7 @@ static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeView
 }
 
 static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
-	GtkTreeIter   iter;
+	GtkTreeIter iter;
 	GValue val;
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
 	GaimLog *log = NULL;
@@ -231,6 +231,9 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(viewer->imhtml),
 	                            gaim_account_get_protocol_name(log->account));
+
+	gaim_signal_emit(gaim_gtk_log_get_handle(), "log-displaying", viewer, log);
+
 	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
@@ -571,4 +574,35 @@ void gaim_gtk_syslog_show()
 	logs = g_list_sort(logs, gaim_log_compare);
 
 	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL, 0);
+}
+
+/****************************************************************************
+ * GTK+ LOG SUBSYSTEM *******************************************************
+ ****************************************************************************/
+
+void *
+gaim_gtk_log_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
+void gaim_gtk_log_init(void)
+{
+	void *handle = gaim_gtk_log_get_handle();
+
+	gaim_signal_register(handle, "log-displaying",
+	                     gaim_marshal_VOID__POINTER_POINTER,
+	                     NULL, 2,
+	                     gaim_value_new(GAIM_TYPE_BOXED,
+	                                    "GaimGtkLogViewer *"),
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_LOG));
+}
+
+void
+gaim_gtk_log_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_gtk_log_get_handle());
 }

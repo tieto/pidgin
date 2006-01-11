@@ -18,6 +18,7 @@ EXTRA_DIST = \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \
+	gtklog-signals.dox \
 	gtkimhtml-signals.dox \
 	gtkrc-2.0 \
 	log-signals.dox \

@@ -1,0 +1,20 @@
+/** @page gtklog-signals GtkLog Signals
+
+ @signals
+  @signal log-displaying
+ @endsignals
+
+ <hr>
+
+ @signaldef log-displaying
+  @signalproto
+void (*log_displaying)(GaimGtkLogViewer *viewer, GaimLog *log);
+  @endsignalproto
+  @signaldesc
+   Emitted when a log is being displayed.
+  @param viewer The log viewer
+  @param log The log being displayed
+ @endsignaldef
+
+*/
+// vim: syntax=c tw=75 et

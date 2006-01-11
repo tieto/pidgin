@@ -56,4 +56,28 @@ void gaim_gtk_log_show_contact(GaimContact *contact);
 
 void gaim_gtk_syslog_show(void);
 
+/**************************************************************************/
+/** @name GTK+ Log Subsystem                                              */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the GTK+ log subsystem.
+ */
+void gaim_gtk_log_init(void);
+
+/**
+ * Returns the GTK+ log subsystem handle.
+ *
+ * @return The GTK+ log subsystem handle.
+ */
+void *gaim_gtk_log_get_handle(void);
+
+/**
+ * Uninitializes the GTK+ log subsystem.
+ */
+void gaim_gtk_log_uninit(void);
+
+/*@}*/
+
 #endif

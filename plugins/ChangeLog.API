@@ -226,6 +226,9 @@ version 2.0.0:
 	* GAIM_SUBTYPE_LOG
 	* gaim_marshal_POINTER__POINTER_POINTER
 	* gaim_utf8_ncr_encode()
+	* gaim_gtk_log_init()
+	* gaim_gtk_log_get_handle()
+	* gaim_gtk_log_uninit()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
@@ -269,9 +272,10 @@ version 2.0.0:
 	* "buddy-status-changed"
 	* "buddy-idle-changed": A buddy's idle status changed.
 	* "buddy-icon-changed"
+	* "displaying-userinfo"
 	* "gtkblist-hiding"
 	* "gtkblist-unhiding"
-	* "displaying-userinfo"
+	* "log-displaying"
 
 	Signals - Removed:
 	* "account-away": replaced by account-status-changed
