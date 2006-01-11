@@ -4351,10 +4351,15 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 	multi_resolved_query(res, gc);
 	
       } else {
+
 	/* same person, set the server alias */
 	gaim_blist_server_alias_buddy(buddy, match->name);
 	gaim_blist_node_set_string((GaimBlistNode *) buddy,
 				   BUDDY_KEY_NAME, match->name);
+
+	/* subscribe to awareness */
+	buddy_add(pd, buddy);
+
 	blist_schedule(pd);
       }
       
