@@ -3893,7 +3893,7 @@ static char *im_mime_convert(GaimConnection *gc,
   tmp = gaim_utf8_ncr_encode(str->str);
   gaim_mime_part_set_field(part, "Content-Type", "text/html");
   gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "7bit");
-  gaim_mime_part_set_data(part, str->str);
+  gaim_mime_part_set_data(part, tmp);
   g_free(tmp);
 #endif
 
