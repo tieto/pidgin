@@ -637,6 +637,20 @@ void gaim_util_chrreplace(char *string, char delimiter,
 gchar *gaim_strreplace(const char *string, const char *delimiter,
 					   const char *replacement);
 
+
+/**
+ * Given a string, this replaces any utf-8 substrings in that string with
+ * the corresponding numerical character reference, and returns a newly
+ * allocated string.
+ *
+ * @param in The string which might contain utf-8 substrings
+ *
+ * @return A new string, with utf-8 replaced with numerical character
+ *         references, free this with g_free()
+*/
+char *gaim_utf8_ncr_encode(const char *in);
+
+
 /**
  * Given a string, this replaces any numerical character references
  * in that string with the corresponding actual utf-8 substrings,
@@ -648,6 +662,7 @@ gchar *gaim_strreplace(const char *string, const char *delimiter,
  *         replaced with actual utf-8, free this with g_free().
  */
 char *gaim_utf8_ncr_decode(const char *in);
+
 
 /**
  * Given a string, this replaces one substring with another

@@ -25,3 +25,9 @@
 #endif
 /* ISO-8859-1 */
 
+
+/** use the notesbuddy encoding hack, or try for NCR encoding */
+#ifndef NB_HACK
+#define NB_HACK 0
+#endif
+/* 0 */

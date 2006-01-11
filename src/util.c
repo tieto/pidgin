@@ -3450,15 +3450,43 @@ gaim_utf8_salvage(const char *str)
 	return g_string_free(workstr, FALSE);
 }
 
+
+char *
+gaim_utf8_ncr_encode(const char *in)
+{
+	GString *out;
+
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
+
+	out = g_string_new("");
+
+	for(; *in; in = g_utf8_next_char(in)) {
+		gunichar wc = g_utf8_get_char(in);
+		
+		if(wc >= 0x80) { /* super simple check. hopefully not too wrong. */
+			g_string_append_printf(out, "&#%u;", (guint32) wc);
+		} else {
+			g_string_append_unichar(out, wc);
+		}
+	}
+
+	return g_string_free(out, FALSE);
+}
+
+
 char *
 gaim_utf8_ncr_decode(const char *in)
 {
-	GString *out = g_string_new("");
+	GString *out;
 	int i;
 
 	g_return_val_if_fail(in != NULL, NULL);
 	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
 
+	out = g_string_new("");
+
+	/** @todo doesn't this break with hex formats? */
 	for (i = 0; in[i]; i += 1) {
 		gboolean ncr_found_p = FALSE;
 		if (in[i] == '&' && in[i + 1] == '#' && isdigit(in[i + 2])) {
