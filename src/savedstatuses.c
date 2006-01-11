@@ -801,7 +801,7 @@ gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 	{
 		GaimStatusPrimitive primitive;
 		primitive = gaim_savedstatus_get_type(saved_status);
-		return gaim_primitive_get_id_from_type(primitive);
+		return gaim_primitive_get_name_from_type(primitive);
 	}
 	else
 	{
