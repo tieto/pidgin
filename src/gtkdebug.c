@@ -267,8 +267,8 @@ timestamps_cb(GtkWidget *w, DebugWindow *win)
 }
 
 static void
-timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+timestamps_pref_cb(const char *name, GaimPrefType type,
+				   gconstpointer value, gpointer data)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), GPOINTER_TO_INT(value));
 }
@@ -458,7 +458,7 @@ regex_compile(DebugWindow *win) {
 
 static void
 regex_pref_filter_cb(const gchar *name, GaimPrefType type,
-					 gpointer val, gpointer data)
+					 gconstpointer val, gpointer data)
 {
 	DebugWindow *win = (DebugWindow *)data;
 	gboolean active = GPOINTER_TO_INT(val), current;
@@ -473,7 +473,7 @@ regex_pref_filter_cb(const gchar *name, GaimPrefType type,
 
 static void
 regex_pref_expression_cb(const gchar *name, GaimPrefType type,
-						 gpointer val, gpointer data)
+						 gconstpointer val, gpointer data)
 {
 	DebugWindow *win = (DebugWindow *)data;
 	const gchar *exp = (const gchar *)val;
@@ -483,7 +483,7 @@ regex_pref_expression_cb(const gchar *name, GaimPrefType type,
 
 static void
 regex_pref_invert_cb(const gchar *name, GaimPrefType type,
-					 gpointer val, gpointer data)
+					 gconstpointer val, gpointer data)
 {
 	DebugWindow *win = (DebugWindow *)data;
 	gboolean active = GPOINTER_TO_INT(val);
@@ -496,7 +496,7 @@ regex_pref_invert_cb(const gchar *name, GaimPrefType type,
 
 static void
 regex_pref_highlight_cb(const gchar *name, GaimPrefType type,
-						gpointer val, gpointer data)
+						gconstpointer val, gpointer data)
 {
 	DebugWindow *win = (DebugWindow *)data;
 	gboolean active = GPOINTER_TO_INT(val);
@@ -789,8 +789,8 @@ debug_window_new(void)
 }
 
 static void
-debug_enabled_cb(const char *name, GaimPrefType type, gpointer value,
-				 gpointer data)
+debug_enabled_cb(const char *name, GaimPrefType type,
+				 gconstpointer value, gpointer data)
 {
 	if (value)
 		gaim_gtk_debug_window_show();

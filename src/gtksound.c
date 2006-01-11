@@ -230,7 +230,8 @@ account_signon_cb(GaimConnection *gc, gpointer data)
 
 static void
 _pref_sound_method_changed(const char *name, GaimPrefType type,
-		gpointer val, gpointer data) {
+						   gconstpointer val, gpointer data)
+{
 	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
 		return;
 

@@ -307,7 +307,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer);
 static void oscar_xfer_init_send(GaimXfer *xfer);
 
 static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const guchar *cookie);
-static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
+static void recent_buddies_cb(const char *name, GaimPrefType type, gconstpointer value, gpointer data);
 static void oscar_set_info(GaimConnection *gc, const char *info);
 static void oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, GaimStatus *status);
 static void oscar_set_extendedstatus(GaimConnection *gc);
@@ -8478,7 +8478,8 @@ static void oscar_convo_closed(GaimConnection *gc, const char *who)
 }
 
 static void
-recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+recent_buddies_cb(const char *name, GaimPrefType type,
+				  gconstpointer value, gpointer data)
 {
 	GaimConnection *gc = data;
 	OscarData *od = gc->proto_data;

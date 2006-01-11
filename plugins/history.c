@@ -150,7 +150,8 @@ history_prefs_check(GaimPlugin *plugin)
 	}
 }
 
-static void history_prefs_cb(const char *name, GaimPrefType type, gpointer val, gpointer data)
+static void history_prefs_cb(const char *name, GaimPrefType type,
+							 gconstpointer val, gpointer data)
 {
 	history_prefs_check((GaimPlugin *)data);
 }

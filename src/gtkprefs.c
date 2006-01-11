@@ -781,8 +781,8 @@ formatting_clear_cb(GtkIMHtml *imhtml, void *data)
 }
 
 static void
-conversation_usetabs_cb(const char *name, GaimPrefType type, gpointer value,
-                          gpointer data)
+conversation_usetabs_cb(const char *name, GaimPrefType type,
+						gconstpointer value, gpointer data)
 {
 	gboolean usetabs = GPOINTER_TO_INT(value);
 
@@ -928,8 +928,8 @@ static void network_ip_changed(GtkEntry *entry, gpointer data)
 }
 
 static void
-proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
+proxy_changed_cb(const char *name, GaimPrefType type,
+				 gconstpointer value, gpointer data)
 {
 	GtkWidget *frame = data;
 	const char *proxy = value;
@@ -1180,8 +1180,8 @@ static GList *get_available_browsers()
 }
 
 static void
-browser_changed1_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+browser_changed1_cb(const char *name, GaimPrefType type,
+					gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
 	const char *browser = value;
@@ -1190,8 +1190,8 @@ browser_changed1_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-browser_changed2_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+browser_changed2_cb(const char *name, GaimPrefType type,
+					gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
 	const char *browser = value;
@@ -1310,8 +1310,8 @@ static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 }
 
 static void
-sound_changed1_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+sound_changed1_cb(const char *name, GaimPrefType type,
+				  gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
 	const char *method = value;
@@ -1320,8 +1320,8 @@ sound_changed1_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-sound_changed2_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+sound_changed2_cb(const char *name, GaimPrefType type,
+				  gconstpointer value, gpointer data)
 {
 	GtkWidget *vbox = data;
 	const char *method = value;
@@ -1330,8 +1330,8 @@ sound_changed2_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-sound_changed3_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+sound_changed3_cb(const char *name, GaimPrefType type,
+				  gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
 	const char *method = value;
@@ -1907,8 +1907,8 @@ gaim_gtk_prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 }
 
 static void
-smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
-					 gpointer data)
+smiley_theme_pref_cb(const char *name, GaimPrefType type,
+					 gconstpointer value, gpointer data)
 {
 	const char *themename = value;
 	GSList *themes;

@@ -1638,8 +1638,8 @@ gaim_presence_compare(const GaimPresence *presence1,
 * Status subsystem
 **************************************************************************/
 static void
-score_pref_changed_cb(const char *name, GaimPrefType type, gpointer value,
-		gpointer data)
+score_pref_changed_cb(const char *name, GaimPrefType type,
+					  gconstpointer value, gpointer data)
 {
 	int index = GPOINTER_TO_INT(data);
 

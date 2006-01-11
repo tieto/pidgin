@@ -2590,7 +2590,8 @@ item_factory_translate_func (const char *path, gpointer func_data)
 }
 
 static void
-sound_method_pref_changed_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+sound_method_pref_changed_cb(const char *name, GaimPrefType type,
+							 gconstpointer value, gpointer data)
 {
 	GaimGtkWindow *win = data;
 	const char *method = value;
@@ -2614,7 +2615,8 @@ sound_method_pref_changed_cb(const char *name, GaimPrefType type, gpointer value
 }
 
 static void
-show_buddy_icons_pref_changed_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+show_buddy_icons_pref_changed_cb(const char *name, GaimPrefType type,
+								 gconstpointer value, gpointer data)
 {
 	GaimGtkWindow *win = data;
 	gboolean show_icons = GPOINTER_TO_INT(value);
@@ -5891,8 +5893,8 @@ gaim_gtkconv_get_tab_at_xy(GaimGtkWindow *win, int x, int y, gboolean *to_right)
 }
 
 static void
-close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
-						gpointer data)
+close_on_tabs_pref_cb(const char *name, GaimPrefType type,
+					  gconstpointer value, gpointer data)
 {
 	GList *l;
 	GaimConversation *conv;
@@ -5914,8 +5916,8 @@ close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
-				   gpointer data)
+spellcheck_pref_cb(const char *name, GaimPrefType type,
+				   gconstpointer value, gpointer data)
 {
 #ifdef USE_GTKSPELL
 	GList *cl;
@@ -5943,8 +5945,8 @@ spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
-tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
-				 gpointer data)
+tab_side_pref_cb(const char *name, GaimPrefType type,
+				 gconstpointer value, gpointer data)
 {
 	GList *l;
 	GtkPositionType pos;
@@ -5961,7 +5963,7 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 static void
 show_timestamps_pref_cb(const char *name, GaimPrefType type,
-								gpointer value, gpointer data)
+						gconstpointer value, gpointer data)
 {
 	GList *l;
 	GaimConversation *conv;
@@ -5989,7 +5991,7 @@ show_timestamps_pref_cb(const char *name, GaimPrefType type,
 
 static void
 show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
-								gpointer value, gpointer data)
+								gconstpointer value, gpointer data)
 {
 	GList *l;
 	GaimConversation *conv;
@@ -6019,7 +6021,7 @@ show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 
 static void
 animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
-							gpointer value, gpointer data)
+							gconstpointer value, gpointer data)
 {
 	GList *l;
 	GaimConversation *conv;
@@ -6045,8 +6047,8 @@ animate_buddy_icons_pref_cb(const char *name, GaimPrefType type,
 }
 
 static void
-show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
-						 gpointer data)
+show_buddy_icons_pref_cb(const char *name, GaimPrefType type,
+						 gconstpointer value, gpointer data)
 {
 	GList *l;
 
@@ -6060,7 +6062,7 @@ show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 static void
 conv_placement_usetabs_cb(const char *name, GaimPrefType type,
-						gpointer value, gpointer data)
+						  gconstpointer value, gpointer data)
 {
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 }
@@ -6095,8 +6097,8 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 }
 
 static void
-hide_new_pref_cb(const char *name, GaimPrefType type, gpointer value,
-				 gpointer data)
+hide_new_pref_cb(const char *name, GaimPrefType type,
+				 gconstpointer value, gpointer data)
 {
 	GList *l;
 	GaimConversation *conv = NULL;
@@ -6130,7 +6132,7 @@ hide_new_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 static void
 conv_placement_pref_cb(const char *name, GaimPrefType type,
-					   gpointer value, gpointer data)
+					   gconstpointer value, gpointer data)
 {
 	GaimConvPlacementFunc func;
 

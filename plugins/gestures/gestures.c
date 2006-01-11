@@ -175,7 +175,7 @@ toggle_draw_cb(GtkToggleButton *toggle, gpointer data)
 }
 
 static void
-visual_pref_cb(const char *name, GaimPrefType type, gpointer value,
+visual_pref_cb(const char *name, GaimPrefType type, gconstpointer value,
 			   gpointer data)
 {
 	gstroke_set_draw_strokes((gboolean) GPOINTER_TO_INT(value) );

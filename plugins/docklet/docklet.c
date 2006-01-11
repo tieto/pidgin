@@ -273,7 +273,7 @@ docklet_update_status_cb(void *data)
 
 static void
 docklet_prefs_cb(const char *name, GaimPrefType type,
-				 gpointer val, gpointer data)
+				 gconstpointer val, gpointer data)
 {
 	docklet_update_status();
 }

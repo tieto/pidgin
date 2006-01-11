@@ -56,7 +56,7 @@ typedef enum _GaimPrefType
  */
 
 typedef void (*GaimPrefCallback) (const char *name, GaimPrefType type,
-		gpointer val, gpointer data);
+		gconstpointer val, gpointer data);
 
 #ifdef __cplusplus
 extern "C" {

@@ -1485,13 +1485,17 @@ static void gaim_gtk_blist_mute_sounds_cb(gpointer data, guint action, GtkWidget
 	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(item)->active);
 }
 
-static void gaim_gtk_blist_mute_pref_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+static void
+gaim_gtk_blist_mute_pref_cb(const char *name, GaimPrefType type,
+							gconstpointer value, gpointer data)
 {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item(gtkblist->ift,
 						N_("/Tools/Mute Sounds"))),	(gboolean)GPOINTER_TO_INT(value));
 }
 
-static void gaim_gtk_blist_sound_method_pref_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
+static void
+gaim_gtk_blist_sound_method_pref_cb(const char *name, GaimPrefType type,
+									gconstpointer value, gpointer data)
 {
 	gboolean sensitive = TRUE;
 
@@ -3418,7 +3422,7 @@ void gaim_gtk_blist_update_columns()
 
 static void
 show_buddy_icons_pref_cb(const char *name, GaimPrefType type,
-						 gpointer val, gpointer data)
+						 gconstpointer val, gpointer data)
 {
 	gaim_gtk_blist_update_columns();
 }
@@ -3455,7 +3459,7 @@ static void _prefs_change_redo_list()
 }
 
 static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
-		gpointer val, gpointer data)
+									  gconstpointer val, gpointer data)
 {
 	if(!strcmp(pref_name, "/gaim/gtk/blist/sort_type"))
 		gaim_gtk_blist_sort_method_set(val);

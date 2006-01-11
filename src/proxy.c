@@ -2065,14 +2065,14 @@ gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 
 
 static void
-proxy_pref_cb(const char *name, GaimPrefType type, gpointer value,
-			  gpointer data)
+proxy_pref_cb(const char *name, GaimPrefType type,
+			  gconstpointer value, gpointer data)
 {
 	GaimProxyInfo *info = gaim_global_proxy_get_info();
 
 	if (!strcmp(name, "/core/proxy/type")) {
 		int proxytype;
-		char *type = value;
+		const char *type = value;
 
 		if (!strcmp(type, "none"))
 			proxytype = GAIM_PROXY_NONE;

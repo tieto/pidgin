@@ -241,7 +241,7 @@ gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account)
 static GaimLogLogger *current_logger = NULL;
 
 static void logger_pref_cb(const char *name, GaimPrefType type,
-			   gpointer value, gpointer data)
+						   gconstpointer value, gpointer data)
 {
 	GaimLogLogger *logger;
 	GSList *l = loggers;

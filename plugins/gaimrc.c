@@ -215,8 +215,8 @@ gaimrc_reread(GtkWidget *widget, gpointer data)
 }
 
 static void
-gaimrc_pref_changed_cb(const char *name, GaimPrefType type, gpointer value,
-                       gpointer data)
+gaimrc_pref_changed_cb(const char *name, GaimPrefType type,
+                       gconstpointer value, gpointer data)
 {
 	GString *style_string = g_string_new("");
 	char *prefbase = NULL;

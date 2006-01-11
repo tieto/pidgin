@@ -219,14 +219,14 @@ winprefs_set_autostart(GtkWidget *w)
 
 static void
 winprefs_set_blist_dockable (const char *pref, GaimPrefType type,
-		gpointer value, gpointer user_data)
+		gconstpointer value, gpointer user_data)
 {
 	blist_set_dockable(GPOINTER_TO_INT(value));
 }
 
 static void
 winprefs_set_blist_ontop (const char *pref, GaimPrefType type,
-		gpointer value, gpointer user_data)
+		gconstpointer value, gpointer user_data)
 {
 	gint setting = gaim_prefs_get_int(PREF_BLIST_ON_TOP);
 	if ((setting == BLIST_TOP_DOCKED && blist_ab && blist_ab->docked)

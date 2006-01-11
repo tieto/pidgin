@@ -621,7 +621,7 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 
 static void
 current_status_pref_changed_cb(const char *name, GaimPrefType type,
-							   gpointer val, gpointer data)
+							   gconstpointer val, gpointer data)
 {
 	GtkGaimStatusBox *box = data;
 
@@ -637,7 +637,7 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 
 static void
 buddy_list_details_pref_changed_cb(const char *name, GaimPrefType type,
-							   gpointer val, gpointer data)
+								   gconstpointer val, gpointer data)
 {
 	GtkGaimStatusBox *status_box = (GtkGaimStatusBox *)data;
 
@@ -648,7 +648,7 @@ buddy_list_details_pref_changed_cb(const char *name, GaimPrefType type,
 
 static void
 spellcheck_prefs_cb(const char *name, GaimPrefType type,
-					 gpointer value, gpointer data)
+					gconstpointer value, gpointer data)
 {
 #ifdef USE_GTKSPELL
 	GtkGaimStatusBox *status_box = (GtkGaimStatusBox *)data;
