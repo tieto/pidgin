@@ -39,7 +39,7 @@ Gaim::BuddyList::Group
 gaim_find_group(name)
 	const char *name
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::Contact  PREFIX = gaim_contact_
+MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Contact  PREFIX = gaim_contact_
 PROTOTYPES: ENABLE
 
 Gaim::BuddyList::Contact
@@ -288,7 +288,7 @@ Gaim::BlistNodeFlags
 gaim_blist_node_get_flags(node)
 	Gaim::BuddyList::Node node
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::Chat  PREFIX = gaim_chat_
+MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddList::Chat  PREFIX = gaim_chat_
 PROTOTYPES: ENABLE
 
 Gaim::BuddyList::Group
@@ -327,7 +327,7 @@ CODE:
 OUTPUT:
 	RETVAL
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::Buddy  PREFIX = gaim_buddy_
+MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyLisy::Buddy  PREFIX = gaim_buddy_
 PROTOTYPES: ENABLE
 
 Gaim::BuddyList::Buddy

@@ -2,16 +2,14 @@
 
 /* TODO
 
-
-void 
+void
 gaim_status_type_add_attrs(status_type, id, name, value, gaim_status_type_add_attrs)
 	Gaim::StatusType status_type
 	const char *id
 	const char *name
 	Gaim::Value value
 	...
-	
-	
+
 Gaim::StatusType
 gaim_status_type_new_with_attrs(primitive, id, name, saveable, user_settable, independent, attr_id, attr_name, attr_value, gaim_status_type_new_with_attrs)
 	Gaim::StatusPrimitive primitive
@@ -41,11 +39,10 @@ gaim_status_set_active_with_attrs(status, active, args)
 
 	*/
 
-
 MODULE = Gaim::Status  PACKAGE = Gaim::Presence  PREFIX = gaim_presence_
 PROTOTYPES: ENABLE
 
-void 
+void
 gaim_presence_add_list(presence, source_list)
 	Gaim::Presence presence
 	SV *source_list
@@ -61,18 +58,18 @@ PPCODE:
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(source_list), i, 0), t_sl));
 	}
 	gaim_presence_add_list(presence, t_GL);
-	
-void 
+
+void
 gaim_presence_add_status(presence, status)
 	Gaim::Presence presence
 	Gaim::Status status
 
-gint 
+gint
 gaim_presence_compare(presence1, presence2)
 	Gaim::Presence presence1
 	Gaim::Presence presence2
 
-void 
+void
 gaim_presence_destroy(presence)
 	Gaim::Presence presence
 
@@ -91,7 +88,7 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_presence_get_buddies(presence); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::BuddyList::Buddy")));
 	}
 
 const char *
@@ -106,11 +103,11 @@ Gaim::Conversation
 gaim_presence_get_conversation(presence)
 	Gaim::Presence presence
 
-time_t 
+time_t
 gaim_presence_get_idle_time(presence)
 	Gaim::Presence presence
 
-time_t 
+time_t
 gaim_presence_get_login_time(presence)
 	Gaim::Presence presence
 
@@ -126,27 +123,27 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Status")));
 	}
 
-gboolean 
+gboolean
 gaim_presence_is_available(presence)
 	Gaim::Presence presence
 
-gboolean 
+gboolean
 gaim_presence_is_idle(presence)
 	Gaim::Presence presence
 
-gboolean 
+gboolean
 gaim_presence_is_online(presence)
 	Gaim::Presence presence
 
-gboolean 
+gboolean
 gaim_presence_is_status_active(presence, status_id)
 	Gaim::Presence presence
 	const char *status_id
 
-gboolean 
+gboolean
 gaim_presence_is_status_primitive_active(presence, primitive)
 	Gaim::Presence presence
 	Gaim::StatusPrimitive primitive
@@ -167,32 +164,35 @@ Gaim::Presence
 gaim_presence_new_for_conv(conv)
 	Gaim::Conversation conv
 
-void 
+void
 gaim_presence_remove_buddy(presence, buddy)
 	Gaim::Presence presence
 	Gaim::BuddyList::Buddy buddy
 
-void 
+void
 gaim_presence_set_idle(presence, idle, idle_time)
 	Gaim::Presence presence
 	gboolean idle
 	time_t idle_time
 
-void 
+void
 gaim_presence_set_login_time(presence, login_time)
 	Gaim::Presence presence
 	time_t login_time
 
-void 
+void
 gaim_presence_set_status_active(presence, status_id, active)
 	Gaim::Presence presence
 	const char *status_id
 	gboolean active
 
-void 
+void
 gaim_presence_switch_status(presence, status_id)
 	Gaim::Presence presence
 	const char *status_id
+
+MODULE = Gaim::Status  PACKAGE = Gaim::Primitive  PREFIX = gaim_primitive_
+PROTOTYPES: ENABLE
 
 const char *
 gaim_primitive_get_id_from_type(type)
@@ -206,10 +206,10 @@ Gaim::StatusPrimitive
 gaim_primitive_get_type_from_id(id)
 	const char *id
 
-MODULE = Gaim::Status  PACKAGE = Gaim::Status PREFIX = gaim_status_
+MODULE = Gaim::Status  PACKAGE = Gaim::StatusAttr PREFIX = gaim_status_attr_
 PROTOTYPES: ENABLE
 
-void 
+void
 gaim_status_attr_destroy(attr)
 	Gaim::StatusAttr attr
 
@@ -231,21 +231,24 @@ gaim_status_attr_new(id, name, value_type)
 	const char *name
 	Gaim::Value value_type
 
-gint 
+MODULE = Gaim::Status  PACKAGE = Gaim::Status  PREFIX = gaim_status_
+PROTOTYPES: ENABLE
+
+gint
 gaim_status_compare(status1, status2)
 	Gaim::Status status1
 	Gaim::Status status2
 
-void 
+void
 gaim_status_destroy(status)
 	Gaim::Status status
 
-gboolean 
+gboolean
 gaim_status_get_attr_boolean(status, id)
 	Gaim::Status status
 	const char *id
 
-int 
+int
 gaim_status_get_attr_int(status, id)
 	Gaim::Status status
 	const char *id
@@ -263,7 +266,6 @@ gaim_status_get_attr_value(status, id)
 void *
 gaim_status_get_handle()
 
-
 const char *
 gaim_status_get_id(status)
 	Gaim::Status status
@@ -280,27 +282,23 @@ Gaim::StatusType
 gaim_status_get_type(status)
 	Gaim::Status status
 
-void 
-gaim_status_init()
- 
-
-gboolean 
+gboolean
 gaim_status_is_active(status)
 	Gaim::Status status
 
-gboolean 
+gboolean
 gaim_status_is_available(status)
 	Gaim::Status status
 
-gboolean 
+gboolean
 gaim_status_is_exclusive(status)
 	Gaim::Status status
 
-gboolean 
+gboolean
 gaim_status_is_independent(status)
 	Gaim::Status status
 
-gboolean 
+gboolean
 gaim_status_is_online(status)
 	Gaim::Status status
 
@@ -309,32 +307,40 @@ gaim_status_new(status_type, presence)
 	Gaim::StatusType status_type
 	Gaim::Presence presence
 
-void 
+void
 gaim_status_set_active(status, active)
 	Gaim::Status status
 	gboolean active
 
-void 
+void
 gaim_status_set_attr_boolean(status, id, value)
 	Gaim::Status status
 	const char *id
 	gboolean value
 
-void 
+void
 gaim_status_set_attr_string(status, id, value)
 	Gaim::Status status
 	const char *id
 	const char *value
 
-void 
+void
+gaim_status_init()
+
+void
+gaim_status_uninit()
+
+MODULE = Gaim::Status  PACKAGE = Gaim::StatusType  PREFIX = gaim_status_type_
+PROTOTYPES: ENABLE
+
+void
 gaim_status_type_add_attr(status_type, id, name, value)
 	Gaim::StatusType status_type
 	const char *id
 	const char *name
 	Gaim::Value value
 
-
-void 
+void
 gaim_status_type_destroy(status_type)
 	Gaim::StatusType status_type
 
@@ -343,6 +349,9 @@ gaim_status_type_find_with_id(status_types, id)
 	SV *status_types
 	const char *id
 PREINIT:
+/* XXX Check that this function actually works, I think it might need a */
+/* status_type as it's first argument to work as $status_type->find_with_id */
+/* properly. */
 	GList *t_GL;
 	int i, t_len;
 CODE:
@@ -356,7 +365,7 @@ CODE:
 	RETVAL = (GaimStatusType *)gaim_status_type_find_with_id(t_GL, id);
 OUTPUT:
 	RETVAL
-	
+
 Gaim::StatusAttr
 gaim_status_type_get_attr(status_type, id)
 	Gaim::StatusType status_type
@@ -369,9 +378,9 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_status_type_get_attrs(status_type); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::StatusAttr")));
 	}
-	
+
 const char *
 gaim_status_type_get_id(status_type)
 	Gaim::StatusType status_type
@@ -381,30 +390,30 @@ gaim_status_type_get_name(status_type)
 	Gaim::StatusType status_type
 
 const char *
-gaim_status_type_get_primary_attr(type)
-	Gaim::StatusType type
+gaim_status_type_get_primary_attr(status_type)
+	Gaim::StatusType status_type
 
 Gaim::StatusPrimitive
 gaim_status_type_get_primitive(status_type)
 	Gaim::StatusType status_type
 
-gboolean 
+gboolean
 gaim_status_type_is_available(status_type)
 	Gaim::StatusType status_type
 
-gboolean 
+gboolean
 gaim_status_type_is_exclusive(status_type)
 	Gaim::StatusType status_type
 
-gboolean 
+gboolean
 gaim_status_type_is_independent(status_type)
 	Gaim::StatusType status_type
 
-gboolean 
+gboolean
 gaim_status_type_is_saveable(status_type)
 	Gaim::StatusType status_type
 
-gboolean 
+gboolean
 gaim_status_type_is_user_settable(status_type)
 	Gaim::StatusType status_type
 
@@ -424,12 +433,7 @@ gaim_status_type_new_full(primitive, id, name, saveable, user_settable, independ
 	gboolean user_settable
 	gboolean independent
 
-void 
+void
 gaim_status_type_set_primary_attr(status_type, attr_id)
 	Gaim::StatusType status_type
 	const char *attr_id
-
-void 
-gaim_status_uninit()
- 
-

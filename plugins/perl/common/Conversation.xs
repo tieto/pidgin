@@ -1,6 +1,36 @@
 #include "module.h"
 
-MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation  PREFIX = gaim_conversation_
+MODULE = Gaim::Conversation  PACKAGE = Gaim  PREFIX = gaim_
+PROTOTYPES: ENABLE
+
+void
+gaim_get_ims()
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = gaim_get_ims(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Conversation")));
+	}
+
+void
+gaim_get_conversations()
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Conversation")));
+	}
+
+void
+gaim_get_chats()
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = gaim_get_chats(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Conversation")));
+	}
+
+MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversations  PREFIX = gaim_conversations_
 PROTOTYPES: ENABLE
 
 void *
@@ -12,32 +42,8 @@ gaim_conversations_init()
 void
 gaim_conversations_uninit()
 
-void
-get_ims()
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = gaim_get_ims(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
-	}
-
-void
-get_conversations()
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
-	}
-
-void
-get_chats()
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = gaim_get_chats(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
-	}
+MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation  PREFIX = gaim_conversation_
+PROTOTYPES: ENABLE
 
 void
 gaim_conversation_get_send_history(conv)
@@ -136,8 +142,6 @@ gaim_conversation_set_account(conv, account);
 	Gaim::Conversation conv
 	Gaim::Account account
 
-
-
 MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation::IM  PREFIX = gaim_conv_im_
 PROTOTYPES: ENABLE
 
@@ -224,17 +228,12 @@ gboolean
 gaim_conv_present_error(who, account, what)
 	const char *who
 	Gaim::Account account
- 	const char *what
+	const char *what
 
 void
 gaim_conv_custom_smiley_close(conv, smile)
 	Gaim::Conversation conv
 	const char *smile
-
-
-
-
-
 
 MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation::Chat  PREFIX = gaim_conv_chat_
 PROTOTYPES: ENABLE
@@ -316,8 +315,6 @@ PPCODE:
 const char *
 gaim_conv_chat_get_topic(chat)
 	Gaim::Conversation::Chat chat
-
-
 
 void
 gaim_conv_chat_set_id(chat, id)
