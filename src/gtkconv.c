@@ -1986,6 +1986,7 @@ static void
 gaim_gtkconv_set_active_conversation(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
+	const char *protocol_name;
 
 	g_return_if_fail(conv != NULL);
 
@@ -2000,6 +2001,10 @@ gaim_gtkconv_set_active_conversation(GaimConversation *conv)
 
 	gaim_conversation_set_logging(conv,
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
+
+	protocol_name = gaim_account_get_protocol_name(conv->account);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry), protocol_name);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name);
 
 	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-switched", conv);
 }
@@ -2020,9 +2025,6 @@ gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 
 	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
 	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
-
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-	                             gaim_account_get_protocol_name(conv->account));
 }
 
 static void
