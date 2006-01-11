@@ -1328,6 +1328,20 @@ sound_changed2_cb(const char *name, GaimPrefType type, gpointer value,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
+
+static void
+sound_changed3_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	GtkWidget *hbox = data;
+	const char *method = value;
+
+	gtk_widget_set_sensitive(hbox,
+				 !strcmp(method, "automatic") ||
+				 !strcmp(method, "arts") ||
+				 !strcmp(method, "esd") ||
+				 !strcmp(method, "nas"));
+}
 #endif
 
 
@@ -1429,6 +1443,27 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 					  G_CALLBACK(sound_chosen_cb), NULL, GINT_TO_POINTER(sound_row_sel));
 }
 
+#ifdef USE_AO
+static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
+{
+	if(val == 0) {
+ 		return g_strdup_printf("Silent");
+	} else if(val < 35) {
+		return g_strdup_printf("Quiet");
+	} else if(val > 65) {
+		return g_strdup_printf("Loud");
+	} else {
+		return g_strdup_printf("Normal");
+	}
+}
+
+static void prefs_sound_volume_changed(GtkRange *range)
+{
+	int val = (int)gtk_range_get_value(GTK_RANGE(range));
+	gaim_prefs_set_int("/gaim/gtk/sound/volume", val);
+}
+#endif
+
 static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	GValue val;
@@ -1497,7 +1532,7 @@ sound_page()
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("Sound c_ommand:\n(%s for filename)"));
@@ -1517,11 +1552,11 @@ sound_page()
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(sound_cmd_yeah), NULL);
 
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+								sound_changed1_cb, hbox);
 	gtk_widget_set_sensitive(hbox,
 			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
 					"custom"));
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
-								sound_changed1_cb, hbox);
 
 	gaim_set_accessible_label (entry, label);
 #endif /* _WIN32 */
@@ -1531,6 +1566,31 @@ sound_page()
 				   "/gaim/gtk/sound/conv_focus", vbox);
 	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
 				   "/core/sound/while_away", vbox);
+
+#ifdef USE_AO
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new_with_mnemonic(_("Volume:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
+	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
+	gtk_range_set_value(GTK_RANGE(sw), gaim_prefs_get_int("/gaim/gtk/sound/volume"));
+	g_signal_connect (G_OBJECT (sw), "format-value",
+			  G_CALLBACK (prefs_sound_volume_format),
+			  NULL);
+	g_signal_connect (G_OBJECT (sw), "value-changed",
+			  G_CALLBACK (prefs_sound_volume_changed),
+			  NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
+
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+								sound_changed3_cb, hbox);
+	sound_changed3_cb("/gaim/gtk/sound/method", GAIM_PREF_STRING,
+			  gaim_prefs_get_string("/gaim/gtk/sound/method"), hbox);
+#endif
 
 #ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
@@ -1614,7 +1674,7 @@ sound_page()
 	g_free(pref);
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
 
 	button = gtk_button_new_with_label(_("Test"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
@@ -1628,13 +1688,6 @@ sound_page()
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 	gtk_widget_show_all(ret);
-
-#ifndef _WIN32
-	gtk_widget_set_sensitive(vbox,
-			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
-								sound_changed2_cb, vbox);
-#endif
 
 	return ret;
 }

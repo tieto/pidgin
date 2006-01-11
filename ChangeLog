@@ -49,6 +49,7 @@ version 2.0.0:
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
 	* Use libao for playing sounds via NAS instead of accessing NAS directly
+	* A volume control in the preferences
 
 	Log Viewer:
 	* Log viewer aggregates logs from the same "Person" (Richard Laager)

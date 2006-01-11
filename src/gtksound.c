@@ -52,6 +52,7 @@ struct gaim_sound_event {
 };
 
 #define PLAY_SOUND_TIMEOUT 15000
+#define SQRT2_2 0.70710678118654752440
 
 static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
@@ -321,6 +322,7 @@ gaim_gtk_sound_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/sound/mute", FALSE);
 	gaim_prefs_add_string("/gaim/gtk/sound/command", "");
 	gaim_prefs_add_string("/gaim/gtk/sound/method", "automatic");
+	gaim_prefs_add_int("/gaim/gtk/sound/volume", 50);
 
 #ifdef USE_AO
 	gaim_debug_info("sound", "Initializing sound output drivers.\n");
@@ -384,7 +386,50 @@ expire_old_child(gpointer data)
 
     return FALSE; /* do not run again */
 }
+
+static void
+scale_pcm_data(char *data, int nframes, ao_sample_format *format,
+			   double intercept, double minclip, double maxclip,
+			   float scale)
+{
+	int i;
+	float v;
+	gint16 *data16 = (gint16*)data;
+	gint32 *data32 = (gint32*)data;
+#ifdef G_HAVE_GINT64
+	gint64 *data64 = (gint64*)data;
 #endif
+
+	switch(format->bits) {
+		case 16:
+			for(i = 0; i < nframes * format->channels; i++) {
+				v = ((data16[i] - intercept) * scale) + intercept;
+				v = CLAMP(v, minclip, maxclip);
+				data16[i]=(gint16)v;
+			}
+			break;
+		case 32:
+			for(i = 0; i < nframes * format->channels; i++) {
+				v = ((data32[i] - intercept) * scale) + intercept;
+				v = CLAMP(v, minclip, maxclip);
+				data32[i]=(gint32)v;
+			}
+			break;
+#ifdef G_HAVE_GINT64
+		case 64:
+			for(i = 0; i < nframes * format->channels; i++) {
+				v = ((data64[i] - intercept) * scale) + intercept;
+				v = CLAMP(v, minclip, maxclip);
+				data64[i]=(gint64)v;
+			}
+			break;
+#endif
+		default:
+			gaim_debug_warning("gtksound", "Cannot scale %d bit pcm data.\n", format->bits);
+			break;
+	}
+}
+#endif /* USE_AO */
 
 static void
 gaim_gtk_sound_play_file(const char *filename)
@@ -393,6 +438,7 @@ gaim_gtk_sound_play_file(const char *filename)
 #ifdef USE_AO
 	pid_t pid;
 	AFfilehandle file;
+	int volume = 50;
 #endif
 
 	if (!sound_initialized)
@@ -449,22 +495,30 @@ gaim_gtk_sound_play_file(const char *filename)
 		return;
 	}
 #ifdef USE_AO
+	volume = gaim_prefs_get_int("/gaim/gtk/sound/volume");
+	volume = CLAMP(volume, 0, 100);
+
 	pid = fork();
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
 		/* Child process */
+		float scale = ((float) volume * volume) / 2500;
 		file = afOpenFile(filename, "rb", NULL);
 		if(file) {
 			ao_device *device;
 			ao_sample_format format;
 			int in_fmt;
 			int bytes_per_frame;
+			double slope, intercept, minclip, maxclip;
 
 			format.rate = afGetRate(file, AF_DEFAULT_TRACK);
 			format.channels = afGetChannels(file, AF_DEFAULT_TRACK);
 			afGetSampleFormat(file, AF_DEFAULT_TRACK, &in_fmt,
 					&format.bits);
+
+			afGetPCMMapping(file, AF_DEFAULT_TRACK, &slope,
+					&intercept, &minclip, &maxclip);
 
 			/* XXX: libao doesn't seem to like 8-bit sounds, so we'll
 			 * let libaudiofile make them a bit better for us */
@@ -497,6 +551,9 @@ gaim_gtk_sound_play_file(const char *filename)
 
 				while((frames_read = afReadFrames(file, AF_DEFAULT_TRACK,
 								buf, buf_frames))) {
+					if(volume != 50)
+						scale_pcm_data(buf, frames_read, &format, intercept,
+									   minclip, maxclip, scale);
 					if(!ao_play(device, buf, frames_read * bytes_per_frame))
 						break;
 				}
