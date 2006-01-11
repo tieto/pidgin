@@ -1500,20 +1500,31 @@ status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 	g_free(title);
 }
 
+static gint
+saved_status_sort_alphabetically_func(gconstpointer a, gconstpointer b)
+{
+	const GaimSavedStatus *saved_status_a = a;
+	const GaimSavedStatus *saved_status_b = b;
+	return strcmp(gaim_savedstatus_get_title(saved_status_a),
+				  gaim_savedstatus_get_title(saved_status_b));
+}
+
 GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callback)
 {
 	GtkWidget *combobox;
-	const GList *saved_statuses;
+	GList *sorted, *cur;
 	int i;
 	int index = -1;
 
 	combobox = gtk_combo_box_new_text();
 
-	for (saved_statuses = gaim_savedstatuses_get_all(), i = 0;
-	     saved_statuses != NULL;
-	     saved_statuses = g_list_next(saved_statuses))
+	sorted = g_list_copy((GList *)gaim_savedstatuses_get_all());
+	sorted = g_list_sort(sorted, saved_status_sort_alphabetically_func);
+	for (cur = sorted, i = 0;
+	     cur != NULL;
+	     cur = g_list_next(cur))
 	{
-		GaimSavedStatus *status = (GaimSavedStatus*)saved_statuses->data;
+		GaimSavedStatus *status = (GaimSavedStatus *)cur->data;
 		if (!gaim_savedstatus_is_transient(status)) {
 			gtk_combo_box_append_text(GTK_COMBO_BOX(combobox),
 						  gaim_savedstatus_get_title(status));
@@ -1522,6 +1533,7 @@ GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callb
 			i++;
 		}
 	}
+	g_list_free(sorted);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
