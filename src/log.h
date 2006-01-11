@@ -424,7 +424,7 @@ GaimLogLogger *gaim_log_logger_get (void);
 GList *gaim_log_logger_get_options(void);
 
 /**************************************************************************/
-/** @name Conversations Subsystem                                         */
+/** @name Log Subsystem                                                   */
 /**************************************************************************/
 /*@{*/
 
