@@ -1667,12 +1667,12 @@ away_page()
 	/* Idle stuff */
 	vbox = gaim_gtk_make_frame(ret, _("Idle"));
 
-	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle time _reporting:"),
+	dd = gaim_gtk_prefs_dropdown(vbox, _("_Report idle time:"),
 		GAIM_PREF_STRING, "/core/away/idle_reporting",
-		_("None"), "none",
-		_("Gaim usage"), "gaim",
+		_("Never"), "none",
+		_("From last sent message"), "gaim",
 #ifdef USE_SCREENSAVER
-		_("Mouse movement"), "system",
+		_("Based on keyboard or mouse use"), "system",
 #endif
 		NULL);
 	gtk_size_group_add_widget(sg, dd);
