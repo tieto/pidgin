@@ -809,42 +809,18 @@ static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 
 }
 
-static void fix_popup_menu_item_cb(GtkWidget *widget, gpointer data)
-{
-	gpointer *more_data = data;
-	int *count = more_data[0];
-	GtkIMHtml *imhtml = more_data[1];
 
-	/* Destroy all items except Copy and Select All, if the text isn't editable. */
-	if (!imhtml->editable && *count != 1 && *count != 5)
-	{
-		gtk_widget_destroy(widget);
-	}
-	else if (*count == 5 && gtk_text_buffer_get_char_count(imhtml->text_buffer) == 0)
-	{
-		/* There is no text in the buffer, so Select All should be insensitive. */
-		gtk_widget_set_sensitive(widget, FALSE);
-	}
-
-	(*count)++;
-}
 
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
-	int count = 0;
-	gpointer more_data[2] = {&count, imhtml};
 	GtkWidget *menuitem;
-
-	gtk_container_foreach(GTK_CONTAINER(menu), fix_popup_menu_item_cb, more_data);
-
-	if (!imhtml->editable)
-		return;
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);
 	gtk_widget_set_sensitive(menuitem,
-	                         (gtk_clipboard_wait_is_text_available(
-	                          gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD))));
+	                        (imhtml->editable &&
+	                        gtk_clipboard_wait_is_text_available(
+	                        gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD))));
 	/* put it after "Paste" */
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 3);
 
