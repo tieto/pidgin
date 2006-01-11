@@ -547,7 +547,8 @@ void gaim_log_init(void)
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_LOG),
-	                     gaim_value_new(GAIM_TYPE_POINTER));
+	                     gaim_value_new(GAIM_TYPE_BOXED,
+	                                    "struct tm *"));
 
 	gaim_prefs_connect_callback(NULL, "/core/logging/format",
 							    logger_pref_cb, NULL);
