@@ -299,10 +299,21 @@ static GaimPluginInfo info =
 	actions
 };
 
+static void
+signing_off_cb(GaimConnection *gc, void *data)
+{
+	GaimAccount *account;
+
+	account = gaim_connection_get_account(gc);
+	idled_accts = g_list_remove(idled_accts, account);
+}
 
 static void
 init_plugin(GaimPlugin *plugin)
 {
+	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
+						plugin,
+						GAIM_CALLBACK(signing_off_cb), NULL);
 }
 
 
