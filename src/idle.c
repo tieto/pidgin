@@ -47,10 +47,11 @@ static GaimIdleUiOps *idle_ui_ops = NULL;
  * This is needed for the I'dle Mak'er plugin to work correctly.  We
  * use it to determine if we're the ones who set our accounts idle
  * or if someone else did it (the I'dle Mak'er plugin, for example).
- * If our accounts are marked as idle and have_set_idle is FALSE and
- * the user moves the mouse, then we will NOT unidle our accounts.
+ * Basically we just keep track of which accounts were set idle by us,
+ * and then we'll only set these specific accounts unidle when the
+ * user returns.
  */
-static gboolean have_set_idle = FALSE;
+static GList *idled_accts = NULL;
 
 static guint idle_timer = 0;
 
@@ -118,12 +119,10 @@ unset_account_autoaway(GaimConnection *gc)
 }
 
 static void
-set_account_idle(GaimConnection *gc, int time_idle)
+set_account_idle(GaimAccount *account, int time_idle)
 {
-	GaimAccount *account;
 	GaimPresence *presence;
 
-	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
 
 	if (gaim_presence_is_idle(presence))
@@ -133,16 +132,17 @@ set_account_idle(GaimConnection *gc, int time_idle)
 	gaim_debug_info("idle", "Setting %s idle %d seconds\n",
 			   gaim_account_get_username(account), time_idle);
 	gaim_presence_set_idle(presence, TRUE, time(NULL) - time_idle);
+	idled_accts = g_list_prepend(idled_accts, account);
 }
 
 static void
-set_account_unidle(GaimConnection *gc)
+set_account_unidle(GaimAccount *account)
 {
-	GaimAccount *account;
 	GaimPresence *presence;
 
-	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
+
+	idled_accts = g_list_remove(idled_accts, account);
 
 	if (!gaim_presence_is_idle(presence))
 		/* This account is already unidle! */
@@ -217,17 +217,18 @@ check_idleness()
 	}
 
 	/* Idle reporting stuff */
-	if (report_idle && (time_idle >= IDLEMARK) && !have_set_idle)
+	if (report_idle && (time_idle >= IDLEMARK))
 	{
 		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-			set_account_idle(l->data, time_idle);
-		have_set_idle = TRUE;
+		{
+			GaimConnection *gc = l->data;
+			set_account_idle(gaim_connection_get_account(gc), time_idle);
+		}
 	}
-	else if ((!report_idle || time_idle < IDLEMARK) && have_set_idle)
+	else if (!report_idle || (time_idle < IDLEMARK))
 	{
-		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-			set_account_unidle(l->data);
-		have_set_idle = FALSE;
+		while (idled_accts != NULL)
+			set_account_unidle(idled_accts->data);
 	}
 
 	return TRUE;
@@ -239,6 +240,15 @@ im_msg_sent_cb(GaimAccount *account, const char *receiver,
 {
 	/* Check our idle time after an IM is sent */
 	check_idleness();
+}
+
+static void
+signing_off_cb(GaimConnection *gc, void *data)
+{
+	GaimAccount *account;
+
+	account = gaim_connection_get_account(gc);
+	idled_accts = g_list_remove(idled_accts, account);
 }
 
 void
@@ -282,6 +292,9 @@ gaim_idle_init()
 	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg",
 						gaim_idle_get_handle(),
 						GAIM_CALLBACK(im_msg_sent_cb), NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
+						gaim_idle_get_handle(),
+						GAIM_CALLBACK(signing_off_cb), NULL);
 
 	gaim_idle_touch();
 }
