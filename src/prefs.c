@@ -397,7 +397,7 @@ gaim_prefs_load()
 
 
 static void
-prefs_save_cb(const char *name, GaimPrefType type, gpointer val,
+prefs_save_cb(const char *name, GaimPrefType type, gconstpointer val,
 			  gpointer user_data)
 {
 
