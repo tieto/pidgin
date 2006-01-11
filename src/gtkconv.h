@@ -246,7 +246,7 @@ gboolean gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv);
 /*@}*/
 
 /**************************************************************************/
-/** @name GTK+ Conversations Subsystem                                     */
+/** @name GTK+ Conversations Subsystem                                    */
 /**************************************************************************/
 /*@{*/
 
