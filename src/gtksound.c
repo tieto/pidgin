@@ -52,7 +52,6 @@ struct gaim_sound_event {
 };
 
 #define PLAY_SOUND_TIMEOUT 15000
-#define SQRT2_2 0.70710678118654752440
 
 static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
