@@ -1614,11 +1614,15 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	    !gaim_conv_chat_is_user_ignored(chat, new_user)) {
 
 		if (is_me) {
+			char *escaped = g_markup_escape_text(new_user, -1);
 			g_snprintf(tmp, sizeof(tmp),
-					_("You are now known as %s"), new_user);
+					_("You are now known as %s"), escaped);
+			g_free(escaped);
 		} else {
 			const char *old_alias = old_user;
 			const char *new_alias = new_user;
+			char *escaped;
+			char *escaped2;
 
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				GaimBuddy *buddy;
@@ -1629,8 +1633,12 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 					new_alias = gaim_buddy_get_contact_alias(buddy);
 			}
 
+			escaped = g_markup_escape_text(old_alias, -1);
+			escaped2 = g_markup_escape_text(new_alias, -1);
 			g_snprintf(tmp, sizeof(tmp),
-					_("%s is now known as %s"), old_alias, new_alias);
+					_("%s is now known as %s"), escaped, escaped2);
+			g_free(escaped);
+			g_free(escaped2);
 		}
 
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -1673,6 +1681,7 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 	if (!quiet) {
 		GaimConnection *gc = gaim_conversation_get_gc(conv);
 		GaimPluginProtocolInfo *prpl_info;
+		char *escaped;
 
 		if (!gc || !(prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)))
 			return;
@@ -1683,12 +1692,19 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 			if ((buddy = gaim_find_buddy(gc->account, user)) != NULL)
 				alias = gaim_buddy_get_contact_alias(buddy);
 		}
+		escaped = g_markup_escape_text(alias, -1);
 
 		if (reason != NULL && *reason != '\0')
+		{
+			char *escaped2 = g_markup_escape_text(reason, -1);
 			g_snprintf(tmp, sizeof(tmp),
-					   _("%s left the room (%s)."), alias, reason);
+					   _("%s left the room (%s)."), escaped, escaped2);
+			g_free(escaped2);
+		}
 		else
-			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), alias);
+			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), escaped);
+
+		g_free(escaped);
 
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
@@ -1745,6 +1761,7 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 		int size = g_list_length(users);
 		int max = MIN(10, size);
 		GList *l;
+		char *escaped;
 
 		*tmp = '\0';
 
@@ -1752,7 +1769,9 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 		{
 			if (!gaim_conv_chat_is_user_ignored(chat, (char *)l->data))
 			{
-				g_strlcat(tmp, (char *)l->data, sizeof(tmp));
+				escaped = g_markup_escape_text((char *)l->data, -1);
+				g_strlcat(tmp, escaped, sizeof(tmp));
+				g_free(escaped);
 
 				if (i < max - 1)
 					g_strlcat(tmp, ", ", sizeof(tmp));
@@ -1767,7 +1786,9 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 			g_snprintf(tmp, sizeof(tmp),
 					   _("(+%d more)"), size - 10);
 
-		g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), reason);
+		escaped = g_markup_escape_text(reason, -1);
+		g_snprintf(tmp, sizeof(tmp), _(" left the room (%s)."), escaped);
+		g_free(escaped);
 
 		gaim_conversation_write(conv, NULL, tmp,
 								GAIM_MESSAGE_SYSTEM, time(NULL));
