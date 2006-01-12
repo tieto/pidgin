@@ -49,11 +49,11 @@ typedef union {
 	u_char buf[1024];
 } queryans;
 #else
-static DNS_STATUS (*MyDnsQuery_UTF8) (
+static DNS_STATUS WINAPI (*MyDnsQuery_UTF8) (
 	PCSTR lpstrName, WORD wType, DWORD fOptions,
 	PIP4_ARRAY aipServers, PDNS_RECORD* ppQueryResultsSet,
 	PVOID* pReserved) = NULL;
-static void (*MyDnsRecordListFree) (PDNS_RECORD pRecordList,
+static void WINAPI (*MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
