@@ -142,6 +142,8 @@ version 2.0.0:
 	* The last used directory is remembered for opening or saving files and
 	  buddy icons
 	* Add an SVG version of our desktop icon, gaim.svg (John Oyler)
+	* If a given protocol don't support privacy, we now handle blocking in
+	  the core. (Jean-Yves Lefort)
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up

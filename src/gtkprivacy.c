@@ -349,33 +349,6 @@ close_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 	gaim_gtk_privacy_dialog_hide();
 }
 
-static gboolean
-check_account_func(GaimAccount *account)
-{
-	GaimConnection *gc = gaim_account_get_connection(account);
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	return (prpl_info->set_permit_deny != NULL);
-}
-
-gboolean
-gaim_gtk_privacy_is_showable()
-{
-	GList *c;
-	GaimConnection *gc;
-
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-		gc = c->data;
-
-		if (check_account_func(gaim_connection_get_account(gc)))
-			return TRUE;
-	}
-
-	return FALSE;
-}
-
 static GaimGtkPrivacyDialog *
 privacy_dialog_new(void)
 {

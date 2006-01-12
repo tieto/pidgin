@@ -27,6 +27,7 @@
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"
+#include "privacy.h"
 #include "prpl.h"
 #include "request.h"
 #include "signals.h"
@@ -440,6 +441,13 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	g_return_if_fail(msg != NULL);
 
 	account  = gaim_connection_get_account(gc);
+
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny == NULL) {
+		/* protocol does not support privacy, handle it ourselves */
+		if (!gaim_privacy_check(account, who))
+			return;
+	}
+
 	presence = gaim_account_get_presence(account);
 
 	/*
@@ -669,6 +677,11 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	int plugin_return;
 
 	account = gaim_connection_get_account(gc);
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny == NULL) {
+		/* protocol does not support privacy, handle it ourselves */
+		if (!gaim_privacy_check(account, who))
+			return;
+	}
 
 	plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
 					gaim_conversations_get_handle(),

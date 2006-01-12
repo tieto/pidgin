@@ -136,6 +136,8 @@ version 2.0.0:
 	* GaimConversationUiOps.updated: use the conversation-updated signal
 	* GAIM_SUBTYPE_CONV_WINDOW: windows are now only represented in the UI,
 	  so GAIM_TYPE_BOXED is used for the signal types
+	* gaim_gtk_privacy_is_showable(): We do fallback privacy in the core
+	  now, so this would always be TRUE now.
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

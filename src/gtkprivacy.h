@@ -33,14 +33,6 @@
 void gaim_gtk_privacy_init(void);
 
 /**
- * Determine if showing the privacy dialog is a valid action.
- *
- * @return TRUE if there are accounts online that support privacy.
- *         Otherwise return FALSE.
- */
-gboolean gaim_gtk_privacy_is_showable(void);
-
-/**
  * Shows the privacy dialog.
  */
 void gaim_gtk_privacy_dialog_show(void);
