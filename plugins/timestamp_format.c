@@ -8,6 +8,8 @@
 #include "gtkconv.h"
 #include "gtkplugin.h"
 
+#include <time.h>
+
 static GaimPluginPrefFrame *
 get_plugin_pref_frame(GaimPlugin *plugin)
 {
@@ -62,7 +64,7 @@ static char *timestamp_cb_common(GaimConversation *conv,
 	if (!strcmp(dates, "always") ||
 	    (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
 	     !strcmp(dates, "chats")) ||
-	    (time(NULL) > (mktime(tm) + 20*60)))
+	    (time(NULL) > (mktime((struct tm *)tm) + 20*60)))
 	{
 		if (force)
 			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", tm);
