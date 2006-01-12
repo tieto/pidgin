@@ -56,15 +56,13 @@ static char *irc_mask_userhost(const char *mask)
 
 static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2])
 {
-	char *escaped, *message;
+	char *message;
 
-	escaped = g_markup_escape_text(data[1], -1);
-	message = g_strdup_printf("quit: %s", escaped);
+	message = g_strdup_printf("quit: %s", data[1]);
 
 	if (gaim_conv_chat_find_user(GAIM_CONV_CHAT(convo), data[0]))
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), data[0], message);
 
-	g_free(escaped);
 	g_free(message);
 }
 
@@ -683,7 +681,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, args[0], irc->account);
-	char *nick = irc_mask_nick(from), *buf, *reason;
+	char *nick = irc_mask_nick(from), *buf;
 
 	if (!gc) {
 		g_free(nick);
@@ -696,19 +694,17 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 	}
 
-	reason = g_markup_escape_text(args[2], -1);
 	if (!gaim_utf8_strcasecmp(gaim_connection_get_display_name(gc), args[1])) {
-		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, reason);
+		buf = g_strdup_printf(_("You have been kicked by %s: (%s)"), nick, args[2]);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
 		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 	} else {
-		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, reason);
+		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, args[2]);
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), args[1], buf);
 		g_free(buf);
 	}
 
-	g_free(reason);
 	g_free(nick);
 	return;
 }
@@ -857,7 +853,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimConversation *convo;
-	char *nick, *msg, *escaped;
+	char *nick, *msg;
 
 	if (!args || !args[0] || !gc)
 		return;
@@ -868,19 +864,19 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 		return;
 	}
 
-	escaped = (args[1] && *args[1]) ? g_markup_escape_text(args[1], -1) : NULL;
 	nick = irc_mask_nick(from);
 	if (!gaim_utf8_strcasecmp(nick, gaim_connection_get_display_name(gc))) {
+		char *escaped = g_markup_escape_text(args[1], -1);
 		msg = g_strdup_printf(_("You have parted the channel%s%s"),
                                       (args[1] && *args[1]) ? ": " : "",
 									  (escaped && *escaped) ? escaped : "");
+		g_free(escaped);
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 		serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 	} else {
-		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), nick, escaped);
+		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo), nick, args[1]);
 	}
-	g_free(escaped);
 	g_free(nick);
 }
 
