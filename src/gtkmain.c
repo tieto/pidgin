@@ -308,6 +308,11 @@ show_usage(const char *name, gboolean terse)
 	char *text_conv;
 	GError *error = NULL;
 
+#ifdef HAVE_SETLOCALE
+	/* Locale initialization is not complete here.  See gtk_init_check() */
+	setlocale(LC_ALL, "");
+#endif
+
 	if (terse) {
 		text = g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
 	} else {
