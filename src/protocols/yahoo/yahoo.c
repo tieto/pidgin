@@ -2567,6 +2567,10 @@ static void yahoo_close(GaimConnection *gc) {
 	}
 	g_slist_free(yd->confs);
 
+	yd->chat_online = 0;
+	if (yd->in_chat)
+		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
+
 	g_hash_table_destroy(yd->friends);
 	if (yd->chat_name)
 		g_free(yd->chat_name);
