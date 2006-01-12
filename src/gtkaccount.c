@@ -714,6 +714,9 @@ update_editable(GaimConnection *gc, AccountPrefsDialog *dialog)
 	gboolean set;
 	GList *l;
 
+	if (dialog->account == NULL)
+		return;
+
 	if (gc != NULL && dialog->account != gaim_connection_get_account(gc))
 		return;
 
