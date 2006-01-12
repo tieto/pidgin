@@ -280,6 +280,8 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
 						plugin,
 						GAIM_CALLBACK(signing_off_cb), NULL);
+
+	return TRUE;
 }
 
 static gboolean
