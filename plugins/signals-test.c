@@ -346,10 +346,10 @@ chat_buddy_joining_cb(GaimConversation *conv, const char *user,
 
 static void
 chat_buddy_joined_cb(GaimConversation *conv, const char *user,
-					 GaimConvChatBuddyFlags flags, void *data)
+					 GaimConvChatBuddyFlags flags, gboolean new_arrival, void *data)
 {
-	gaim_debug_misc("signals test", "chat-buddy-joined (%s, %s, %d)\n",
-					gaim_conversation_get_name(conv), user, flags);
+	gaim_debug_misc("signals test", "chat-buddy-joined (%s, %s, %d, %d)\n",
+					gaim_conversation_get_name(conv), user, flags, new_arrival);
 }
 
 static void
@@ -501,8 +501,11 @@ ft_send_complete_cb(GaimXfer *xfer, gpointer data) {
  **************************************************************************/
 static int
 sound_playing_event_cb(GaimSoundEventID event, const GaimAccount *account) {
-	gaim_debug_misc("signals test", "sound playing event: %d for account: %s\n",
-	                event, gaim_account_get_username(account));
+	if (account != NULL)
+		gaim_debug_misc("signals test", "sound playing event: %d for account: %s\n",
+	    	            event, gaim_account_get_username(account));
+	else
+		gaim_debug_misc("signals test", "sound playing event: %d\n", event);
 
 	return 0;
 }

@@ -148,6 +148,9 @@ im_msg_received_cb(GaimAccount *account, char *sender,
 				   char *message, GaimConversation *conv,
 				   int flags, GaimSoundEventID event)
 {
+	if (flags & GAIM_MESSAGE_DELAYED)
+		return;
+
 	if (conv==NULL)
 		gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE, account);
 	else
@@ -165,9 +168,10 @@ im_msg_sent_cb(GaimAccount *account, const char *receiver,
 
 static void
 chat_buddy_join_cb(GaimConversation *conv, const char *name,
-				   GaimConvChatBuddyFlags flags, GaimSoundEventID event)
+				   GaimConvChatBuddyFlags flags, gboolean new_arrival,
+				   GaimSoundEventID event)
 {
-	if (!chat_nick_matches_name(conv, name))
+	if (new_arrival && !chat_nick_matches_name(conv, name))
 		play_conv_event(conv, event);
 }
 
@@ -198,6 +202,9 @@ chat_msg_received_cb(GaimAccount *account, char *sender,
 					 GaimMessageFlags flags, GaimSoundEventID event)
 {
 	GaimConvChat *chat;
+
+	if (flags & GAIM_MESSAGE_DELAYED)
+		return;
 
 	chat = gaim_conversation_get_chat_data(conv);
 

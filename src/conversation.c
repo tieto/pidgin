@@ -1520,7 +1520,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		}
 
 		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "chat-buddy-joined", conv, user, flags);
+						 "chat-buddy-joined", conv, user, flags, new_arrivals);
 		ul = ul->next;
 		fl = fl->next;
 		if (extra_msgs != NULL)
@@ -2154,11 +2154,12 @@ gaim_conversations_init(void)
 						 gaim_value_new(GAIM_TYPE_UINT));
 
 	gaim_signal_register(handle, "chat-buddy-joined",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
+						 gaim_marshal_VOID__POINTER_POINTER_UINT_UINT, NULL, 4,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
 						 gaim_value_new(GAIM_TYPE_STRING),
-						 gaim_value_new(GAIM_TYPE_UINT));
+						 gaim_value_new(GAIM_TYPE_UINT),
+						 gaim_value_new(GAIM_TYPE_BOOLEAN));
 
 	gaim_signal_register(handle, "chat-buddy-flags",
 						 gaim_marshal_VOID__POINTER_POINTER_UINT_UINT, NULL, 4,

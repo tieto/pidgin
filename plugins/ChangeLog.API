@@ -240,6 +240,7 @@ version 2.0.0:
 	  with GaimAccount*, const char *name.  Also, the signal is now emitted
 	  regardless of whether a conversation exists and regardless of whether
 	  the user is on the buddy list.
+	* "chat-buddy-joined": added the new_arrival argument
 	* "chat-invited" handlers can now return a value to control what happens
 	  to the invite (accept, reject, prompt the user).
 	* "chat-left": Emitted *after* setting chat->left to TRUE.

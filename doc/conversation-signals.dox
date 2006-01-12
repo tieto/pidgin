@@ -279,13 +279,15 @@ gboolean (*chat_buddy_joining)(GaimConversation *conv, const char *name,
  @signaldef chat-buddy-joined
   @signalproto
 void (*chat_buddy_joined)(GaimConversation *conv, const char *name,
-                          GaimConvChatBuddyFlags flags);
+                          GaimConvChatBuddyFlags flags,
+                          gboolean new_arrival);
   @endsignalproto
   @signaldesc
    Emitted when a buddy joined a chat, after the users list is updated.
   @param conv The chat conversation.
   @param name The name of the user that has joined the conversation.
   @param flags The flags of the user that has joined the conversation.
+  @param new_arrival If the buddy is a new arrival.
  @endsignaldef
 
  @signaldef chat-buddy-flags
