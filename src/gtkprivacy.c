@@ -399,8 +399,7 @@ privacy_dialog_new(void)
 
 	/* Accounts drop-down */
 	dropdown = gaim_gtk_account_option_menu_new(NULL, FALSE,
-												G_CALLBACK(select_account_cb),
-												check_account_func, dialog);
+												G_CALLBACK(select_account_cb), NULL, dialog);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
 	gaim_set_accessible_label (dropdown, label);
