@@ -1329,6 +1329,7 @@ sound_changed2_cb(const char *name, GaimPrefType type,
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
 
+#ifdef USE_AO
 static void
 sound_changed3_cb(const char *name, GaimPrefType type,
 				  gconstpointer value, gpointer data)
@@ -1342,7 +1343,8 @@ sound_changed3_cb(const char *name, GaimPrefType type,
 				 !strcmp(method, "esd") ||
 				 !strcmp(method, "nas"));
 }
-#endif
+#endif /* USE_AO */
+#endif /* !_WIN32 */
 
 
 static void
