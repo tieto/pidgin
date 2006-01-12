@@ -1502,13 +1502,18 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		aliases = g_list_prepend(aliases, (char *)alias);
 
 		if (!quiet && new_arrivals) {
+			char *escaped = g_markup_escape_text(alias, -1);
 			char *tmp;
 
 			if (extra_msg == NULL)
-				tmp = g_strdup_printf(_("%s entered the room."), alias);
-			else
+				tmp = g_strdup_printf(_("%s entered the room."), escaped);
+			else {
+				char *escaped2 = g_markup_escape_text(extra_msg, -1);
 				tmp = g_strdup_printf(_("%s [<I>%s</I>] entered the room."),
-									  alias, extra_msg);
+									  escaped, escaped2);
+				g_free(escaped2);
+			}
+			g_free(escaped);
 
 			gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
