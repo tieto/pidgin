@@ -1278,7 +1278,12 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 	char *message = NULL;
 	const char *name = NULL;
 
-	gtk_combo_box_get_active_iter(dialog->box, &iter);
+	if (!gtk_combo_box_get_active_iter(dialog->box, &iter)) {
+		gtk_widget_destroy(dialog->window);
+		g_free(dialog);
+		return;
+	}
+
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
 					   SUBSTATUS_COLUMN_ACCOUNT, &account,
 					   SUBSTATUS_COLUMN_STATUS_ID, &id,
