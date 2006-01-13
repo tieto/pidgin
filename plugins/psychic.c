@@ -47,7 +47,8 @@ buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
     gaim_conversation_present(gconv);
 
     if(gaim_prefs_get_bool(PREF_NOTICE)) {
-      gaim_conversation_write(gconv, NULL, _("Psychic mode"),
+      gaim_conversation_write(gconv, NULL,
+			      _("You feel a disturbance in the force..."),
 			      GAIM_MESSAGE_NO_LOG, time(NULL));
     }
   }
