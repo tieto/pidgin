@@ -2075,6 +2075,9 @@ plugin_unload(GaimPlugin *plugin)
 	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
 	{
 		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
+		spellchk *spell = g_object_get_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
+
+		g_signal_handlers_disconnect_by_func(gtkconv->entry, message_send_cb, spell);
 		g_object_set_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY, NULL);
 	}
 
