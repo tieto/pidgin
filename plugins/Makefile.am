@@ -42,6 +42,7 @@ history_la_LDFLAGS          = -module -avoid-version $(GTK_LIBS)
 iconaway_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
 idle_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
 notify_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
+psychic_la_LDFLAGS          = -module -avoid-version $(GLIB_LIBS)
 relnot_la_LDFLAGS           = -module -avoid-version $(GLIB_LIBS)
 spellchk_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
 statenotify_la_LDFLAGS      = -module -avoid-version $(GLIB_LIBS)
@@ -60,6 +61,7 @@ plugin_LTLIBRARIES = \
 	iconaway.la         \
 	idle.la             \
 	notify.la           \
+	psychic.la          \
 	relnot.la           \
 	spellchk.la         \
 	statenotify.la      \
@@ -74,6 +76,7 @@ history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
 idle_la_SOURCES             = idle.c
 notify_la_SOURCES           = notify.c
+psychic_la_SOURCES          = psychic.c
 relnot_la_SOURCES           = relnot.c
 spellchk_la_SOURCES         = spellchk.c
 statenotify_la_SOURCES      = statenotify.c
