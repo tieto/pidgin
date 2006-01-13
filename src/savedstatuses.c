@@ -691,6 +691,29 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 }
 
 GaimSavedStatus *
+gaim_savedstatus_get_startup()
+{
+	int creation_time;
+	GaimSavedStatus *saved_status = NULL;
+
+	creation_time = gaim_prefs_get_int("/core/savedstatus/startup");
+
+	if (creation_time != 0)
+		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+
+	if (saved_status == NULL)
+	{
+		/* We don't have a status to apply.
+		 * This may be the first login, or the user wants to
+		 * restore the "current" status */
+		saved_status = gaim_savedstatus_get_current();
+	}
+
+	return saved_status;
+}
+
+
+GaimSavedStatus *
 gaim_savedstatus_get_current()
 {
 	int creation_time;
@@ -909,6 +932,7 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 		GaimAccount *account;
 
 		account = node->data;
+
 		gaim_savedstatus_activate_for_account(saved_status, account);
 	}
 
@@ -978,6 +1002,8 @@ gaim_savedstatuses_init(void)
 	 */
 	gaim_prefs_add_none("/core/savedstatus");
 	gaim_prefs_add_int("/core/savedstatus/current", 0);
+	gaim_prefs_add_int("/core/savedstatus/startup", 0);
+	gaim_prefs_add_bool("/core/savedstatus/startup_current_status", TRUE);
 	gaim_prefs_add_int("/core/savedstatus/idleaway", 0);
 
 	load_statuses();

@@ -1701,6 +1701,12 @@ set_idle_away(GaimSavedStatus *status)
 	gaim_prefs_set_int("/core/savedstatus/idleaway", gaim_savedstatus_get_creation_time(status));
 }
 
+static void
+set_startupstatus(GaimSavedStatus *status)
+{
+	gaim_prefs_set_int("/core/savedstatus/startup", gaim_savedstatus_get_creation_time(status));
+}
+
 static GtkWidget *
 away_page()
 {
@@ -1746,7 +1752,6 @@ away_page()
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	/* Auto-away stuff */
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Auto-away"));
 
 	button = gaim_gtk_prefs_checkbox(_("Change status when _idle"),
@@ -1778,6 +1783,34 @@ away_page()
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
+	}
+
+	/* Signon status stuff */
+	vbox = gaim_gtk_make_frame(ret, _("Status at startup"));
+
+	button = gaim_gtk_prefs_checkbox(_("Use status from last _exit at startup"),
+		"/core/savedstatus/startup_current_status", vbox);
+
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+
+	label = gtk_label_new_with_mnemonic(_("Status to a_pply at startup:"));
+	gtk_size_group_add_widget(sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	/* TODO: Show something useful if we don't have any saved statuses. */
+	menu = gaim_gtk_status_menu(gaim_savedstatus_get_startup(), G_CALLBACK(set_startupstatus));
+	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(gaim_gtk_toggle_sensitive), menu);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), menu);
+
+	if (gaim_prefs_get_bool("/core/savedstatus/startup_current_status")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
 

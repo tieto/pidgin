@@ -727,7 +727,9 @@ int main(int argc, char *argv[])
 	else
 	{
 		/* Everything is good to go--sign on already */
-		gaim_accounts_restore_previous_statuses();
+		if (!gaim_prefs_get_bool("/core/savedstatus/startup_current_status"))
+			gaim_savedstatus_activate(gaim_savedstatus_get_startup());
+		gaim_accounts_restore_current_statuses();
 	}
 
 	if (gaim_accounts_get_all_active() == NULL)

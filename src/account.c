@@ -2249,7 +2249,7 @@ gaim_accounts_find(const char *name, const char *protocol_id)
 }
 
 void
-gaim_accounts_restore_previous_statuses()
+gaim_accounts_restore_current_statuses()
 {
 	GList *l;
 	GaimAccount *account;

@@ -854,13 +854,13 @@ GaimAccount *gaim_accounts_find(const char *name, const char *protocol);
 /**
  * This is called by the core after all subsystems and what
  * not have been initialized.  It sets all enabled accounts
- * to their previous status by signing them on, setting them
+ * to their startup status by signing them on, setting them
  * away, etc.
  *
  * You probably shouldn't call this unless you really know
  * what you're doing.
  */
-void gaim_accounts_restore_previous_statuses(void);
+void gaim_accounts_restore_current_statuses(void);
 
 /*@}*/
 
