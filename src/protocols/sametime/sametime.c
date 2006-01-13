@@ -1913,12 +1913,14 @@ static void mw_conf_text(struct mwConference *conf,
   GaimConnection *gc;
   char *esc;
 
+  if(! text) return;
+
   srvc = mwConference_getService(conf);
   session = mwService_getSession(MW_SERVICE(srvc));
   pd = mwSession_getClientData(session);
   gc = pd->gc;
 
-  esc = g_markup_escape_text(text? text: "", -1);
+  esc = g_markup_escape_text(text);
   serv_got_chat_in(gc, CONF_TO_ID(conf), who->user_id, 0, esc, time(NULL));
   g_free(esc);
 }
@@ -2985,12 +2987,14 @@ static void mw_place_message(struct mwPlace *place,
   GaimConnection *gc;
   char *esc;
 
+  if(! msg) return;
+
   srvc = mwPlace_getService(place);
   session = mwService_getSession(MW_SERVICE(srvc));
   pd = mwSession_getClientData(session);
   gc = pd->gc;
 
-  esc = g_markup_escape_text(msg? msg: "", -1);
+  esc = g_markup_escape_text(msg);
   serv_got_chat_in(gc, PLACE_TO_ID(place), who->user, 0, esc, time(NULL));
   g_free(esc);
 }
