@@ -282,9 +282,9 @@ gaim_blist_node_remove_setting(node, key)
 void
 gaim_blist_node_set_flags(node, flags)
 	Gaim::BuddyList::Node node
-	Gaim::BlistNodeFlags flags
+	Gaim::BuddyList::NodeFlags flags
 
-Gaim::BlistNodeFlags
+Gaim::BuddyList::NodeFlags
 gaim_blist_node_get_flags(node)
 	Gaim::BuddyList::Node node
 

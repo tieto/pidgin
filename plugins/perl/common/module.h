@@ -66,7 +66,7 @@ typedef GaimAccountUserSplit *		Gaim__Account__UserSplit;
 /* blist.h */
 typedef GaimBlistNode *			Gaim__BuddyList__Node;
 typedef GaimBlistNodeAction *		Gaim__BuddyList__Node__Action;
-typedef GaimBlistNodeFlags		Gaim__BlistNodeFlags;
+typedef GaimBlistNodeFlags		Gaim__BuddyList__NodeFlags;
 typedef GaimBlistUiOps *		Gaim__BuddyList__UiOps;
 typedef GaimBuddyList *			Gaim__BuddyList;
 typedef GaimBuddy *			Gaim__BuddyList__Buddy;

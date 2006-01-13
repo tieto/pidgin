@@ -186,7 +186,7 @@ gaim_request_field_account_get_value(field)
 	Gaim::Request::Field field
 
 Gaim::Request::Field
-gaim_request_field_account_new(id, text, account)
+gaim_request_field_account_new(id, text, account = NULL)
 	const char *id
 	const char *text
 	Gaim::Account account
@@ -195,7 +195,6 @@ void
 gaim_request_field_account_set_default_value(field, default_value)
 	Gaim::Request::Field field
 	Gaim::Account default_value
-
 
 void
 gaim_request_field_account_set_show_all(field, show_all)
@@ -216,7 +215,7 @@ gaim_request_field_bool_get_value(field)
 	Gaim::Request::Field field
 
 Gaim::Request::Field
-gaim_request_field_bool_new(id, text, default_value)
+gaim_request_field_bool_new(id, text, default_value = TRUE)
 	const char *id
 	const char *text
 	gboolean default_value
@@ -255,7 +254,7 @@ gaim_request_field_choice_get_value(field)
 	Gaim::Request::Field field
 
 Gaim::Request::Field
-gaim_request_field_choice_new(id, text, default_value)
+gaim_request_field_choice_new(id, text, default_value = 0)
 	const char *id
 	const char *text
 	int default_value
@@ -299,7 +298,7 @@ gaim_request_field_int_get_value(field)
 	Gaim::Request::Field field
 
 Gaim::Request::Field
-gaim_request_field_int_new(id, text, default_value)
+gaim_request_field_int_new(id, text, default_value = 0)
 	const char *id
 	const char *text
 	int default_value

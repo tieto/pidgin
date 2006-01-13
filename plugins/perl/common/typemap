@@ -41,7 +41,6 @@ Gaim::Account::Option			T_GaimObj
 Gaim::Account::UiOps			T_GaimObj
 Gaim::Account::UserSplit		T_GaimObj
 
-Gaim::BlistNodeFlags			T_IV
 Gaim::Buddy::Icon			T_GaimObj
 Gaim::Buddy::Icon::Spec			T_GaimObj
 Gaim::BuddyList				T_GaimObj
@@ -50,6 +49,7 @@ Gaim::BuddyList::Chat			T_GaimObj
 Gaim::BuddyList::Contact		T_GaimObj
 Gaim::BuddyList::Group			T_GaimObj
 Gaim::BuddyList::Node			T_GaimObj
+Gaim::BuddyList::NodeFlags		T_IV
 Gaim::BuddyList::Node::Action		T_GaimObj
 Gaim::BuddyList::UiOps			T_GaimObj
 
