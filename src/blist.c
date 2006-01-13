@@ -1807,6 +1807,11 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	GAIM_DBUS_UNREGISTER_POINTER(buddy);
 	g_free(buddy);
 
+	/* FIXME: Once GaimBuddy is a GObject, timeout callbacks can
+	 * g_object_ref() it when connecting the callback and
+	 * g_object_unref() it in the handler.  That way, it won't
+	 * get freed while the timeout is pending and this line can
+	 * be removed. */
 	while (g_source_remove_by_user_data((gpointer *)buddy));
 
 	/* If the contact is empty then remove it */
