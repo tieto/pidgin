@@ -1807,6 +1807,8 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	GAIM_DBUS_UNREGISTER_POINTER(buddy);
 	g_free(buddy);
 
+	while (g_source_remove_by_user_data((gpointer *)buddy));
+
 	/* If the contact is empty then remove it */
 	if (!cnode->child)
 		gaim_blist_remove_contact(contact);
