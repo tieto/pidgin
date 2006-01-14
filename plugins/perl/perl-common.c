@@ -9,20 +9,18 @@ static GHashTable *object_stashes = NULL;
 
 void gaim_perl_normalize_script_name(char *name)
 {
-        char *c;
+	char *c;
 
-        c = strrchr(name, '.');
+	c = strrchr(name, '.');
 
-        if (c != NULL)
-                *c = '\0';
+	if (c != NULL)
+		*c = '\0';
 
-        for (c = name; *c != '\0'; c++)
-        {
-                if (*c != '_' && !g_ascii_isalnum(*c))
-                        *c = '_';
-        }
+	for (c = name; *c != '\0'; c++) {
+		if (*c != '_' && !g_ascii_isalnum(*c))
+			*c = '_';
+	}
 }
-
 
 static int
 magic_free_object(pTHX_ SV *sv, MAGIC *mg)
@@ -75,8 +73,7 @@ gaim_perl_bless_object(void *object, const char *stash_name)
 	if (object == NULL)
 		return NULL;
 
-	if (object_stashes == NULL)
-	{
+	if (object_stashes == NULL) {
 		object_stashes = g_hash_table_new(g_direct_hash, g_direct_equal);
 	}
 
@@ -96,8 +93,7 @@ gaim_perl_is_ref_object(SV *o)
 
 	hv = hvref(o);
 
-	if (hv != NULL)
-	{
+	if (hv != NULL) {
 		sv = hv_fetch(hv, "_gaim", 5, 0);
 
 		if (sv != NULL)
@@ -197,7 +193,7 @@ execute_perl(const char *function, int argc, char **args)
 	}
 
 	PUTBACK;
-        PERL_SET_CONTEXT(my_perl);
+	PERL_SET_CONTEXT(my_perl);
 	count = call_pv(function, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
@@ -210,8 +206,7 @@ execute_perl(const char *function, int argc, char **args)
 				   "Perl function %s exited abnormally: %s\n",
 				   function, SvPV(ERRSV, na));
 		POPs;
-	}
-	else if (count != 1) {
+	} else if (count != 1) {
 		/*
 		 * This should NEVER happen.  G_SCALAR ensures that we WILL
 		 * have 1 parameter.
@@ -219,8 +214,7 @@ execute_perl(const char *function, int argc, char **args)
 		gaim_debug(GAIM_DEBUG_ERROR, "perl",
 				   "Perl error from %s: expected 1 return value, "
 				   "but got %d\n", function, count);
-	}
-	else
+	} else
 		ret_value = POPi;
 
 	/* Check for changed arguments */
@@ -386,8 +380,7 @@ gaim_perl_data_from_sv(GaimValue *value, SV *sv)
 {
 	STRLEN na;
 
-	switch (gaim_value_get_type(value))
-	{
+	switch (gaim_value_get_type(value)) {
 		case GAIM_TYPE_BOOLEAN: return (void *)SvIV(sv);
 		case GAIM_TYPE_INT:     return (void *)SvIV(sv);
 		case GAIM_TYPE_UINT:    return (void *)SvUV(sv);
@@ -411,16 +404,31 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 {
 	const char *stash = NULL;
 
-	switch (gaim_value_get_subtype(value))
-	{
-		case GAIM_SUBTYPE_ACCOUNT:      stash = "Gaim::Account";          break;
-		case GAIM_SUBTYPE_BLIST:        stash = "Gaim::BuddyList";        break;
-		case GAIM_SUBTYPE_BLIST_BUDDY:  stash = "Gaim::BuddyList::Buddy"; break;
-		case GAIM_SUBTYPE_BLIST_GROUP:  stash = "Gaim::BuddyList::Group"; break;
-		case GAIM_SUBTYPE_BLIST_CHAT:   stash = "Gaim::BuddyList::Chat";  break;
-		case GAIM_SUBTYPE_CONNECTION:   stash = "Gaim::Connection";       break;
-		case GAIM_SUBTYPE_CONVERSATION: stash = "Gaim::Conversation";     break;
-		case GAIM_SUBTYPE_PLUGIN:       stash = "Gaim::Plugin";           break;
+	switch (gaim_value_get_subtype(value)) {
+		case GAIM_SUBTYPE_ACCOUNT:
+			stash = "Gaim::Account";
+			break;
+		case GAIM_SUBTYPE_BLIST:
+			stash = "Gaim::BuddyList";
+			break;
+		case GAIM_SUBTYPE_BLIST_BUDDY:
+			stash = "Gaim::BuddyList::Buddy";
+			break;
+		case GAIM_SUBTYPE_BLIST_GROUP:
+			stash = "Gaim::BuddyList::Group";
+			break;
+		case GAIM_SUBTYPE_BLIST_CHAT:
+			stash = "Gaim::BuddyList::Chat";
+			break;
+		case GAIM_SUBTYPE_CONNECTION:
+			stash = "Gaim::Connection";
+			break;
+		case GAIM_SUBTYPE_CONVERSATION:
+			stash = "Gaim::Conversation";
+			break;
+		case GAIM_SUBTYPE_PLUGIN:
+			stash = "Gaim::Plugin";
+			break;
 
 		default:
 			stash = "Gaim"; /* ? */
@@ -430,13 +438,10 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 }
 
 SV *
-gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
-						void ***copy_arg)
+gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args, void ***copy_arg)
 {
-	if (gaim_value_is_outgoing(value))
-	{
-		switch (gaim_value_get_type(value))
-		{
+	if (gaim_value_is_outgoing(value)) {
+		switch (gaim_value_get_type(value)) {
 			case GAIM_TYPE_SUBTYPE:
 				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
@@ -511,11 +516,8 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args,
 				/* If this happens, things are going to get screwed up... */
 				return NULL;
 		}
-	}
-	else
-	{
-		switch (gaim_value_get_type(value))
-		{
+	} else {
+		switch (gaim_value_get_type(value)) {
 			case GAIM_TYPE_SUBTYPE:
 				if ((*copy_arg = va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;

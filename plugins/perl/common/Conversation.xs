@@ -102,7 +102,6 @@ gboolean
 gaim_conversation_is_logging(conv)
 	Gaim::Conversation conv
 
-
 Gaim::Conversation::IM
 gaim_conversation_get_im_data(conv)
 	Gaim::Conversation conv
@@ -201,11 +200,9 @@ guint
 gaim_conv_im_get_type_again_timeout(im)
 	Gaim::Conversation::IM im
 
-
 void
 gaim_conv_im_update_typing(im)
 	Gaim::Conversation::IM im
-
 
 void
 gaim_conv_im_send(im, message)
@@ -219,7 +216,6 @@ gaim_conv_im_write(im, who, message, flags, mtime)
 	const char *message
 	Gaim::MessageFlags flags
 	time_t mtime
-
 
 MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation  PREFIX = gaim_conv_
 PROTOTYPES: ENABLE
@@ -366,7 +362,6 @@ PPCODE:
 	}
 
 	gaim_conv_chat_add_users(chat, t_GL_users, t_GL_extra_msgs, t_GL_flags, new_arrivals);
-
 
 gboolean
 gaim_conv_chat_find_user(chat, user)

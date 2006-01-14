@@ -131,8 +131,8 @@ gaim_perl_get_plugin_frame(GaimPlugin *plugin)
 	/* Sets up the Perl Stack for our call back into the script to run the
 	 * plugin_pref... sub */
 	GaimPluginPrefFrame *ret_frame;
-	dSP;
 	int count;
+	dSP;
 
 	ENTER;
 	SAVETMPS;
@@ -154,7 +154,7 @@ gaim_perl_get_plugin_frame(GaimPlugin *plugin)
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
-	
+
 	return ret_frame;
 }
 

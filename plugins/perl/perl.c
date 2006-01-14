@@ -103,7 +103,6 @@ typedef struct
 	char *unload_sub;
 } GaimPerlScript;
 
-
 PerlInterpreter *my_perl = NULL;
 
 static void
@@ -120,14 +119,13 @@ xs_init(pTHX)
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 }
 
-
 static void
 perl_init(void)
 {
 	/* changed the name of the variable from load_file to
 	   perl_definitions since now it does much more than defining
 	   the load_file sub. Moreover, deplaced the initialisation to
-	   the xs_init function. (TheHobbit)*/
+	   the xs_init function. (TheHobbit) */
 	char *perl_args[] = { "", "-e", "0", "-w" };
 	char perl_definitions[] =
 	{
@@ -174,7 +172,7 @@ perl_init(void)
 	};
 
 	my_perl = perl_alloc();
-        PERL_SET_CONTEXT(my_perl);
+	PERL_SET_CONTEXT(my_perl);
 	PL_perl_destruct_level = 1;
 	perl_construct(my_perl);
 #ifdef DEBUG
@@ -195,7 +193,7 @@ perl_end(void)
 {
 	if (my_perl == NULL)
 		return;
-	
+
 	PL_perl_destruct_level = 1;
         PERL_SET_CONTEXT(my_perl);
 	perl_eval_pv(
@@ -208,7 +206,7 @@ perl_end(void)
 		TRUE);
 
 	PL_perl_destruct_level = 1;
-        PERL_SET_CONTEXT(my_perl);
+	PERL_SET_CONTEXT(my_perl);
 	perl_destruct(my_perl);
 	perl_free(my_perl);
 	my_perl = NULL;
@@ -230,12 +228,12 @@ probe_perl_plugin(GaimPlugin *plugin)
 {
 	/* XXX This would be much faster if I didn't create a new
 	 *     PerlInterpreter every time I probed a plugin */
-	
+
 	PerlInterpreter *prober = perl_alloc();
 	char *argv[] = {"", plugin->path };
 	gboolean status = TRUE;
 	HV *plugin_info;
-        PERL_SET_CONTEXT(prober);
+	PERL_SET_CONTEXT(prober);
 	PL_perl_destruct_level = 1;
 	perl_construct(prober);
 
@@ -248,16 +246,13 @@ probe_perl_plugin(GaimPlugin *plugin)
 	if (plugin_info == NULL)
 		status = FALSE;
 	else if (!hv_exists(plugin_info, "perl_api_version",
-						strlen("perl_api_version")) ||
-			 !hv_exists(plugin_info, "name", strlen("name")) ||
-			 !hv_exists(plugin_info, "load", strlen("load")))
-	{
+	                    strlen("perl_api_version")) ||
+	         !hv_exists(plugin_info, "name", strlen("name")) ||
+	         !hv_exists(plugin_info, "load", strlen("load"))) {
 		/* Not a valid plugin. */
 
 		status = FALSE;
-	}
-	else
-	{
+	} else {
 		SV **key;
 		int perl_api_ver;
 
@@ -268,14 +263,14 @@ probe_perl_plugin(GaimPlugin *plugin)
 
 		if (perl_api_ver != 2)
 			status = FALSE;
-		else
-		{
+		else {
 			GaimPluginInfo *info;
 			GaimPerlScript *gps;
 			char *basename;
 			STRLEN len;
 
-			gaim_debug(GAIM_DEBUG_INFO, "perl", "Found plugin info\n");
+			gaim_debug(GAIM_DEBUG_INFO, "perl",
+			           "Found plugin info\n");
 
 			info = g_new0(GaimPluginInfo, 1);
 			gps  = g_new0(GaimPerlScript, 1);
@@ -286,88 +281,105 @@ probe_perl_plugin(GaimPlugin *plugin)
 			info->type = GAIM_PLUGIN_STANDARD;
 
 			info->dependencies = g_list_append(info->dependencies,
-											   PERL_PLUGIN_ID);
+			                                   PERL_PLUGIN_ID);
 
 			gps->plugin = plugin;
 
 			basename = g_path_get_basename(plugin->path);
 			gaim_perl_normalize_script_name(basename);
-			gps->package = g_strdup_printf("Gaim::Script::%s", basename);
+			gps->package = g_strdup_printf("Gaim::Script::%s",
+			                               basename);
 			g_free(basename);
 
 			/* We know this one exists. */
 			key = hv_fetch(plugin_info, "name", strlen("name"), 0);
 			info->name = g_strdup(SvPV(*key, len));
 
-			if ((key = hv_fetch(plugin_info, "GTK_UI", strlen("GTK_UI"), 0)))
+			if ((key = hv_fetch(plugin_info, "GTK_UI",
+			                    strlen("GTK_UI"), 0)))
 				info->ui_requirement = GAIM_GTK_PLUGIN_TYPE;
 
-			if ((key = hv_fetch(plugin_info, "url", strlen("url"), 0)))
+			if ((key = hv_fetch(plugin_info, "url",
+			                    strlen("url"), 0)))
 				info->homepage = g_strdup(SvPV(*key, len));
 			
-			if ((key = hv_fetch(plugin_info, "author", strlen("author"), 0)))
+			if ((key = hv_fetch(plugin_info, "author",
+			                    strlen("author"), 0)))
 				info->author = g_strdup(SvPV(*key, len));
 
 			if ((key = hv_fetch(plugin_info, "summary",
-								strlen("summary"), 0)))
+			                    strlen("summary"), 0)))
 				info->summary = g_strdup(SvPV(*key, len));
 
 			if ((key = hv_fetch(plugin_info, "description",
-								strlen("description"), 0)))
+			                    strlen("description"), 0)))
 				info->description = g_strdup(SvPV(*key, len));
 
-			if ((key = hv_fetch(plugin_info, "version", strlen("version"), 0)))
+			if ((key = hv_fetch(plugin_info, "version",
+			                    strlen("version"), 0)))
 				info->version = g_strdup(SvPV(*key, len));
 
-			if ((key = hv_fetch(plugin_info, "load", strlen("load"), 0)))
-				gps->load_sub = g_strdup_printf("%s::%s", gps->package,
-												SvPV(*key, len));
+			if ((key = hv_fetch(plugin_info, "load",
+			                    strlen("load"), 0)))
+				gps->load_sub = g_strdup_printf("%s::%s",
+				                                gps->package,
+				                                SvPV(*key, len));
 
-			if ((key = hv_fetch(plugin_info, "unload", strlen("unload"), 0)))
-				gps->unload_sub = g_strdup_printf("%s::%s", gps->package,
-												  SvPV(*key, len));
+			if ((key = hv_fetch(plugin_info, "unload",
+			                    strlen("unload"), 0)))
+				gps->unload_sub = g_strdup_printf("%s::%s",
+				                                  gps->package,
+				                                  SvPV(*key, len));
 
-			/********************************************************/
-			/* Only one of the next two options should be present 	*/
-			/*							*/
-			/* prefs_info - Uses non-GUI (read GTK) gaim API calls	*/
-			/*		and creates a GaimPluginPrefInfo type.	*/
-			/*							*/
-			/* gtk_prefs_info - Requires gtk2-perl be installed by	*/
-			/*		the user and he must create a GtkWidget */
-			/* 		representing the plugin preferences	*/
-			/*		page.					*/
-			/********************************************************/
-			if ((key = hv_fetch(plugin_info, "prefs_info", strlen("prefs_info"), 0))) {
+		/********************************************************/
+		/* Only one of the next two options should be present   */
+		/*                                                      */
+		/* prefs_info - Uses non-GUI (read GTK) gaim API calls  */
+		/*              and creates a GaimPluginPrefInfo type.  */
+		/*                                                      */
+		/* gtk_prefs_info - Requires gtk2-perl be installed by  */
+		/*              the user and he must create a GtkWidget */
+		/*              representing the plugin preferences     */
+		/*              page.                                   */
+		/********************************************************/
+			if ((key = hv_fetch(plugin_info, "prefs_info",
+			                    strlen("prefs_info"), 0))) {
 				char *tmp = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
-				/* key now is the name of the Perl sub that will create a frame for us */
+				/* key now is the name of the Perl sub that
+				 * will create a frame for us */
 				info->prefs_info = gaim_perl_plugin_pref(tmp);
 				g_free(tmp);
 			}
 			
-			if ((key = hv_fetch(plugin_info, "gtk_prefs_info", strlen("gtk_prefs_info"), 0))) {
+			if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
+			                    strlen("gtk_prefs_info"), 0))) {
 				char *tmp = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
-				/* key now is the name of the Perl sub that will create a frame for us */
+				/* key now is the name of the Perl sub that
+				 * will create a frame for us */
 				info->ui_info = gaim_perl_gtk_plugin_pref(tmp);
 				g_free(tmp);
 			}
 
-			/********************************************************/
-			/* 							*/
-			/* plugin_action - This is given to the plugin info	*/		
-			/*	as the action GList.  There are two parts 	*/
-			/*	so the user can set the title as it will appear	*/
-			/*	in the plugin action menu.  The name is 	*/
-			/*	extracted and then the callback perl sub's name	*/
-			/* 	both of which then are handled by an internal	*/
-			/*	gaim_perl function that sets up the single cb	*/
-			/*	function which is then inserted into 'info'.	*/
-			/********************************************************/
-			if ((key = hv_fetch(plugin_info, "plugin_action_label", strlen("plugin_action_label"), 0))) {
+		/********************************************************/
+		/*                                                      */
+		/* plugin_action - This is given to the plugin info     */
+		/*                 as the action GList.  There are two  */
+		/*                 parts so the user can set the title  */
+		/*                 as it will appear in the plugin      */
+		/*                 action menu.  The name is extracted  */
+		/*                 and then the callback perl sub's     */
+		/*                 name both of which then are handled  */
+		/*                 by an internal gaim_perl function    */
+		/*                 that sets up the single cb function  */
+		/*                 which is then inserted into 'info'.  */
+		/********************************************************/
+			if ((key = hv_fetch(plugin_info, "plugin_action_label",
+			                    strlen("plugin_action_label"), 0))) {
 				gaim_perl_plugin_action_label = g_strdup(SvPV(*key, len));
 			}
 
-			if ((key = hv_fetch(plugin_info, "plugin_action", strlen("plugin_action"), 0))) {
+			if ((key = hv_fetch(plugin_info, "plugin_action",
+			                    strlen("plugin_action"), 0))) {
 				gaim_perl_plugin_action_callback_sub = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
 				info->actions = gaim_perl_plugin_action;
 			}
@@ -378,9 +390,9 @@ probe_perl_plugin(GaimPlugin *plugin)
 			status = gaim_plugin_register(plugin);
 		}
 	}
-	
+
 	PL_perl_destruct_level = 1;
-        PERL_SET_CONTEXT(prober);
+	PERL_SET_CONTEXT(prober);
 	perl_destruct(prober);
 	perl_free(prober);
 	return status;
@@ -403,8 +415,8 @@ load_perl_plugin(GaimPlugin *plugin)
 	plugin->handle = gps;
 
 	atmp[1] = gps->package;
-	
-        PERL_SET_CONTEXT(my_perl);
+
+	PERL_SET_CONTEXT(my_perl);
 	execute_perl("Gaim::PerlLoader::load_n_eval", 2, atmp);
 
 	{
@@ -414,7 +426,8 @@ load_perl_plugin(GaimPlugin *plugin)
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(sp);
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin,
+		                                         "Gaim::Plugin")));
 		PUTBACK;
 
 		perl_call_pv(gps->load_sub, G_EVAL | G_SCALAR);
@@ -424,8 +437,8 @@ load_perl_plugin(GaimPlugin *plugin)
 			STRLEN len;
 
 			gaim_debug(GAIM_DEBUG_ERROR, "perl",
-					   "Perl function %s exited abnormally: %s\n",
-					   gps->load_sub, SvPV(ERRSV, len));
+			           "Perl function %s exited abnormally: %s\n",
+			           gps->load_sub, SvPV(ERRSV, len));
 		}
 
 		PUTBACK;
@@ -451,7 +464,7 @@ destroy_package(const char *package)
 	PUTBACK;
 
 	perl_call_pv("Gaim::PerlLoader::destroy_package",
-				 G_VOID | G_EVAL | G_DISCARD);
+	             G_VOID | G_EVAL | G_DISCARD);
 
 	SPAGAIN;
 
@@ -470,15 +483,15 @@ unload_perl_plugin(GaimPlugin *plugin)
 
 	gaim_debug(GAIM_DEBUG_INFO, "perl", "Unloading perl script\n");
 
-	if (gps->unload_sub != NULL)
-	{
+	if (gps->unload_sub != NULL) {
 		dSP;
 		PERL_SET_CONTEXT(my_perl);
 		SPAGAIN;
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(sp);
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin,
+		                                         "Gaim::Plugin")));
 		PUTBACK;
 
 		perl_call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
@@ -488,8 +501,8 @@ unload_perl_plugin(GaimPlugin *plugin)
 			STRLEN len;
 
 			gaim_debug(GAIM_DEBUG_ERROR, "perl",
-					   "Perl function %s exited abnormally: %s\n",
-					   gps->load_sub, SvPV(ERRSV, len));
+			           "Perl function %s exited abnormally: %s\n",
+			           gps->load_sub, SvPV(ERRSV, len));
 		}
 
 		PUTBACK;
@@ -512,37 +525,18 @@ destroy_perl_plugin(GaimPlugin *plugin)
 	{
 		GaimPerlScript *gps;
 
-		if (plugin->info->name != NULL)
-			g_free(plugin->info->name);
-
-		if (plugin->info->version != NULL)
-			g_free(plugin->info->version);
-
-		if (plugin->info->summary != NULL)
-			g_free(plugin->info->summary);
-
-		if (plugin->info->description != NULL)
-			g_free(plugin->info->description);
-
-		if (plugin->info->author != NULL)
-			g_free(plugin->info->author);
-
-		if (plugin->info->homepage != NULL)
-			g_free(plugin->info->homepage);
+		g_free(plugin->info->name);
+		g_free(plugin->info->version);
+		g_free(plugin->info->summary);
+		g_free(plugin->info->description);
+		g_free(plugin->info->author);
+		g_free(plugin->info->homepage);
 
 		gps = (GaimPerlScript *)plugin->info->extra_info;
-
-		if (gps != NULL)
-		{
-			if (gps->load_sub != NULL)
-				g_free(gps->load_sub);
-
-			if (gps->unload_sub != NULL)
-				g_free(gps->unload_sub);
-
-			if (gps->package != NULL)
-				g_free(gps->package);
-
+		if (gps != NULL) {
+			g_free(gps->load_sub);
+			g_free(gps->unload_sub);
+			g_free(gps->package);
 			g_free(gps);
 			plugin->info->extra_info = NULL;
 		}
