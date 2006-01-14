@@ -811,7 +811,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		p = strstr(url_text, "Adult Content Warning"); /* TITLE element */
 	}
 	if (p) {
-		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b><br><br>\n"
+		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b><br><br>"
 					"%s<br><a href=\"%s\">%s</a></body></html>",
 				tooltip_text,
 				_("Sorry, profiles marked as containing adult content "
@@ -1193,14 +1193,14 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 			profile_url_text, profile_url_text);
 
 	/* finish off the html at the end */
-	g_string_append(s, "</body></html>\n");
+	g_string_append(s, "</body></html>");
 	g_free(stripped);
 
 	/* Put the Yahoo! ID, nickname, idle time, and status message in */
 	g_string_prepend(s, tooltip_text);
 
 	/* finish off the html at the beginning */
-	g_string_prepend(s, "<html><body>\n");
+	g_string_prepend(s, "<html><body>");
 
 	/* show it to the user */
 	gaim_notify_userinfo(info_data->gc, info_data->name,
