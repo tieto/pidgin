@@ -81,9 +81,12 @@ struct stun_conn {
 	size_t packetsize;
 };
 
-static GaimStunNatDiscovery nattype = {-1, 0, "\0", NULL, 0};
+static GaimStunNatDiscovery nattype = {
+	GAIM_STUN_STATUS_UNDISCOVERED,
+	GAIM_STUN_NAT_TYPE_PUBLIC_IP,
+	"\0", NULL, 0};
 
-static GSList *callbacks = 0;
+static GSList *callbacks = NULL;
 
 static void close_stun_conn(struct stun_conn *sc) {
 
