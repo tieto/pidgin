@@ -2822,7 +2822,7 @@ char *yahoo_tooltip_text(GaimBuddy *b)
 		g_free(escaped);
 	}
 
-	if (presence != NULL)
+	if (presence != NULL && f->presence != YAHOO_PRESENCE_DEFAULT)
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"),
 				_("Presence"), presence);
 
