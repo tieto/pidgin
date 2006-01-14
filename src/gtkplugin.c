@@ -73,6 +73,8 @@ gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 		frame = plugin->info->prefs_info->get_plugin_pref_frame(plugin);
 
 		config = gaim_gtk_plugin_pref_create_frame(frame);
+
+		gaim_plugin_pref_frame_destroy(frame);
 	}
 
 	return config;
