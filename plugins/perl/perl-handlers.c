@@ -130,9 +130,12 @@ gaim_perl_get_plugin_frame(GaimPlugin *plugin)
 {
 	/* Sets up the Perl Stack for our call back into the script to run the
 	 * plugin_pref... sub */
-	GaimPluginPrefFrame *ret_frame;
 	int count;
+	GaimPerlScript *gps;
+	GaimPluginPrefFrame *ret_frame;
 	dSP;
+
+	gps = (GaimPerlScript *)plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -141,7 +144,7 @@ gaim_perl_get_plugin_frame(GaimPlugin *plugin)
 	PUSHMARK(SP);
 	PUTBACK;
 
-	count = call_pv(perl_plugin_pref_cb, G_SCALAR | G_NOARGS);
+	count = call_pv(gps->prefs_sub, G_SCALAR | G_NOARGS);
 
 	SPAGAIN;
 

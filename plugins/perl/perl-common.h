@@ -9,6 +9,7 @@
 #include <EXTERN.h>
 #include <perl.h>
 
+#include "plugin.h"
 #include "value.h"
 
 #define is_hvref(o) \
@@ -22,6 +23,16 @@
 
 #define GAIM_PERL_BOOT(x) \
 	gaim_perl_callXS(boot_Gaim__##x, cv, mark)
+
+typedef struct
+{
+	GaimPlugin *plugin;
+	char *package;
+	char *load_sub;
+	char *unload_sub;
+	char *prefs_sub;
+	char *gtk_prefs_sub;
+} GaimPerlScript;
 
 void gaim_perl_normalize_script_name(char *name);
 

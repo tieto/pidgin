@@ -95,15 +95,20 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 
 #define PERL_PLUGIN_ID "core-perl"
 
-typedef struct
-{
-	GaimPlugin *plugin;
-	char *package;
-	char *load_sub;
-	char *unload_sub;
-} GaimPerlScript;
-
 PerlInterpreter *my_perl = NULL;
+
+static GaimPluginUiInfo ui_info =
+{
+	gaim_perl_get_plugin_frame,
+	0,   /* page_num (Reserved) */
+	NULL /* frame (Reserved)    */
+};
+
+static GaimGtkPluginUiInfo gtk_ui_info =
+{
+	gaim_perl_gtk_get_plugin_frame,
+	0 /* page_num (Reserved) */
+};
 
 static void
 #ifdef OLD_PERL
@@ -344,20 +349,22 @@ probe_perl_plugin(GaimPlugin *plugin)
 		/********************************************************/
 			if ((key = hv_fetch(plugin_info, "prefs_info",
 			                    strlen("prefs_info"), 0))) {
-				char *tmp = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
 				/* key now is the name of the Perl sub that
 				 * will create a frame for us */
-				info->prefs_info = gaim_perl_plugin_pref(tmp);
-				g_free(tmp);
+				gps->prefs_sub = g_strdup_printf("%s::%s",
+				                                 gps->package,
+				                                 SvPV(*key, len));
+				info->prefs_info = &ui_info;
 			}
 			
 			if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
 			                    strlen("gtk_prefs_info"), 0))) {
-				char *tmp = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
 				/* key now is the name of the Perl sub that
 				 * will create a frame for us */
-				info->ui_info = gaim_perl_gtk_plugin_pref(tmp);
-				g_free(tmp);
+				gps->gtk_prefs_sub = g_strdup_printf("%s::%s",
+				                                     gps->package,
+				                                     SvPV(*key, len));
+				info->ui_info = &gtk_ui_info;
 			}
 
 		/********************************************************/
@@ -537,6 +544,8 @@ destroy_perl_plugin(GaimPlugin *plugin)
 			g_free(gps->load_sub);
 			g_free(gps->unload_sub);
 			g_free(gps->package);
+			g_free(gps->prefs_sub);
+			g_free(gps->gtk_prefs_sub);
 			g_free(gps);
 			plugin->info->extra_info = NULL;
 		}
