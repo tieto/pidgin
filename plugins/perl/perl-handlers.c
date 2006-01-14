@@ -6,8 +6,6 @@
 
 static GList *timeout_handlers = NULL;
 static GList *signal_handlers = NULL;
-static char *perl_plugin_pref_cb;
-static char *perl_gtk_plugin_pref_cb;
 extern PerlInterpreter *my_perl;
 
 /* perl < 5.8.0 doesn't define PERL_MAGIC_ext */
@@ -63,32 +61,22 @@ gaim_perl_plugin_action(GaimPlugin *plugin, gpointer context)
 	return gl;
 }
 
-
-GaimGtkPluginUiInfo *
-gaim_perl_gtk_plugin_pref(const char * frame_cb)
-{
-	GaimGtkPluginUiInfo *ui_info;
-
-	ui_info = g_new0(GaimGtkPluginUiInfo, 1);
-	perl_gtk_plugin_pref_cb = g_strdup(frame_cb);
-	ui_info->get_config_frame = gaim_perl_gtk_get_plugin_frame;
-
-	return ui_info;
-}
-
 GtkWidget *
 gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
 {
 	SV * sv;
-	GtkWidget *ret;
-	MAGIC *mg;
-	dSP;
 	int count;
+	MAGIC *mg;
+	GtkWidget *ret;
+	GaimPerlScript *gps;
+	dSP;
+
+	gps = (GaimPerlScript *)plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
 
-	count = call_pv(perl_gtk_plugin_pref_cb, G_SCALAR | G_NOARGS);
+	count = call_pv(gps->gtk_prefs_sub, G_SCALAR | G_NOARGS);
 	if (count != 1)
 		croak("call_pv: Did not return the correct number of values.\n");
 
@@ -98,7 +86,7 @@ gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
 	/* We have a Gtk2::Frame on top of the stack */
 	sv = POPs;
 
-	/* The magic field hides the pointer to the actuale GtkWidget */
+	/* The magic field hides the pointer to the actual GtkWidget */
 	mg = mg_find(SvRV(sv), PERL_MAGIC_ext);
 	ret = (GtkWidget *)mg->mg_ptr;
 
@@ -107,22 +95,6 @@ gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
 	LEAVE;
 
 	return ret;
-}
-
-/* Called to create a pointer to GaimPluginUiInfo for the GaimPluginInfo */
-/* It will then in turn create ui_info with the C function pointer       */
-/* that will eventually do a call_pv to call a perl functions so users   */
-/* can create their own frames in the prefs                              */
-GaimPluginUiInfo *
-gaim_perl_plugin_pref(const char * frame_cb)
-{
-	GaimPluginUiInfo *ui_info;
-
-	ui_info = g_new0(GaimPluginUiInfo, 1);
-	perl_plugin_pref_cb = g_strdup(frame_cb);
-	ui_info->get_plugin_pref_frame = gaim_perl_get_plugin_frame;
-
-	return ui_info;
 }
 
 GaimPluginPrefFrame *
