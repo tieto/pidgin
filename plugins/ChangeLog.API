@@ -50,7 +50,7 @@ version 2.0.0:
 	* chat_rename_user in GaimConversationUiOps, added new_alias
 	* GaimConversation.log became GList * GaimConversation.logs, so that a
 	  conversation can have multiple logs at once
-	* gaim_conv_chat_add_user, added extra_msgs list
+	* gaim_conv_chat_add_user, added extra_msgs
 	* gaim_notify_userinfo, removed primary and secondary parameters
 	* GaimNotifyUiOps.notify_userinfo: removed title, primary, and
 	  secondary parameters
@@ -114,7 +114,8 @@ version 2.0.0:
 	  operation for conversations.  Use signal "received-im-msg" or similar.
 	* All warning stuff from the core.
 	* gaim_gtkconv_get_dest_tab_at_xy(), instead use gaim_gtkconv_get_tab_at_xy()
-	* chat_add_user from GaimConversationUiOps
+	* chat_add_user from GaimConversationUiOps: only chat_add_users is used
+	* chat_remove_user from GaimConversationUiOps: only chat_remove_users is used
 	* uc from the GaimBuddy struct
 	* gaim_sound_get_handle()
 	* gaim_debug_vargs()

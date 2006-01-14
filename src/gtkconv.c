@@ -4892,56 +4892,6 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 }
 
 static void
-gaim_gtkconv_chat_remove_user(GaimConversation *conv, const char *user)
-{
-	GaimConvChat *chat;
-	GaimGtkConversation *gtkconv;
-	GaimGtkChatPane *gtkchat;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	char tmp[BUF_LONG];
-	int num_users;
-	int f = 1;
-
-	chat    = GAIM_CONV_CHAT(conv);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkchat = gtkconv->u.chat;
-
-	num_users = g_list_length(gaim_conv_chat_get_users(chat)) - 1;
-
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
-
-	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
-		return;
-
-	while (f != 0) {
-		char *val;
-
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
-
-		if (!gaim_utf8_strcasecmp(user, val)) {
-			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-			g_free(val);
-			break;
-		}
-
-		f = gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
-
-		g_free(val);
-	}
-
-	if (!gaim_conv_chat_find_user(chat, user))
-		return;
-
-	g_snprintf(tmp, sizeof(tmp),
-			ngettext("%d person in room", "%d people in room",
-				num_users), num_users);
-
-	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
-
-}
-
-static void
 gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 {
 	GaimConvChat *chat;
@@ -5639,7 +5589,6 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_write_conv,         /* write_conv           */
 	gaim_gtkconv_chat_add_users,     /* chat_add_users       */
 	gaim_gtkconv_chat_rename_user,   /* chat_rename_user     */
-	gaim_gtkconv_chat_remove_user,   /* chat_remove_user     */
 	gaim_gtkconv_chat_remove_users,  /* chat_remove_users    */
 	gaim_gtkconv_chat_update_user,   /* chat_update_user     */
 	gaim_gtkconv_present_conversation, /* present            */
