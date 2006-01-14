@@ -119,26 +119,26 @@ xs_init(pTHX)
 {
 	char *file = __FILE__;
 
-	/* This one allows dynamic loading of perl modules in perl
-           scripts by the 'use perlmod;' construction*/
+	/* This one allows dynamic loading of perl modules in perl scripts by
+	 * the 'use perlmod;' construction */
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 }
 
 static void
 perl_init(void)
 {
-	/* changed the name of the variable from load_file to
-	   perl_definitions since now it does much more than defining
-	   the load_file sub. Moreover, deplaced the initialisation to
-	   the xs_init function. (TheHobbit) */
+	/* changed the name of the variable from load_file to perl_definitions
+	 * since now it does much more than defining the load_file sub.
+	 * Moreover, deplaced the initialisation to the xs_init function.
+	 * (TheHobbit) */
 	char *perl_args[] = { "", "-e", "0", "-w" };
 	char perl_definitions[] =
 	{
-		/* We use to function one to load a file the other to
-		   execute the string obtained from the first and holding
-		   the file contents. This allows to have a really local $/
-		   without introducing temp variables to hold the old
-		   value. Just a question of style:) */
+		/* We use to function one to load a file the other to execute
+		 * the string obtained from the first and holding the file
+		 * contents. This allows to have a really local $/ without
+		 * introducing temp variables to hold the old value. Just a
+		 * question of style:) */
 		"package Gaim::PerlLoader;"
 		"use Symbol;"
 
@@ -200,7 +200,7 @@ perl_end(void)
 		return;
 
 	PL_perl_destruct_level = 1;
-        PERL_SET_CONTEXT(my_perl);
+	PERL_SET_CONTEXT(my_perl);
 	perl_eval_pv(
 		"foreach my $lib (@DynaLoader::dl_modules) {"
 		  "if ($lib =~ /^Gaim\\b/) {"
@@ -262,7 +262,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 		int perl_api_ver;
 
 		key = hv_fetch(plugin_info, "perl_api_version",
-					   strlen("perl_api_version"), 0);
+		               strlen("perl_api_version"), 0);
 
 		perl_api_ver = SvIV(*key);
 
@@ -307,7 +307,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 			if ((key = hv_fetch(plugin_info, "url",
 			                    strlen("url"), 0)))
 				info->homepage = g_strdup(SvPV(*key, len));
-			
+
 			if ((key = hv_fetch(plugin_info, "author",
 			                    strlen("author"), 0)))
 				info->author = g_strdup(SvPV(*key, len));
@@ -343,9 +343,10 @@ probe_perl_plugin(GaimPlugin *plugin)
 		/*              and creates a GaimPluginPrefInfo type.  */
 		/*                                                      */
 		/* gtk_prefs_info - Requires gtk2-perl be installed by  */
-		/*              the user and he must create a GtkWidget */
-		/*              representing the plugin preferences     */
-		/*              page.                                   */
+		/*                  the user and he must create a       */
+		/*                  GtkWidget the user and he must      */
+		/*                  create a GtkWidget representing the */
+		/*                  plugin preferences page.            */
 		/********************************************************/
 			if ((key = hv_fetch(plugin_info, "prefs_info",
 			                    strlen("prefs_info"), 0))) {
@@ -528,8 +529,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 static void
 destroy_perl_plugin(GaimPlugin *plugin)
 {
-	if (plugin->info != NULL)
-	{
+	if (plugin->info != NULL) {
 		GaimPerlScript *gps;
 
 		g_free(plugin->info->name);
