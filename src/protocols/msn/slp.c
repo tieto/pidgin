@@ -796,6 +796,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	session = cmdproc->servconn->session;
 
+	if (!gaim_account_get_bool(session->account, "custom_smileys", TRUE))
+		return;
+
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
 

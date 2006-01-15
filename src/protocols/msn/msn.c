@@ -1952,6 +1952,11 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
+	option = gaim_account_option_bool_new(_("Show custom smileys"),
+										  "custom_smileys", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
 	gaim_cmd_register("nudge", "", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                 "prpl-msn", msn_cmd_nudge,
