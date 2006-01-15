@@ -3,10 +3,12 @@
 %{!?perl_vendorarch: %define perl_vendorarch %(eval "`%{__perl} -V:installvendorarch`"; echo $installvendorarch)}
 %{!?perl_archlib: %define perl_archlib %(eval "`%{__perl} -V:installarchlib`"; echo $installarchlib)}
 
-# When not doing betas set this to 0
+# When not doing betas comment this out
+# NOTE: %defines in spec files are evaluated in comments so the correct
+#       way to comment it out is to replace the % with #
 %define beta 1
 
-%if 0%{beta}
+%if 0%{?beta}
 %define gaimver %(echo "@VERSION@"|sed -e 's/cvs//; s/beta.*//')
 %else
 %define gaimver @VERSION@
