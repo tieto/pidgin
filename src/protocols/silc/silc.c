@@ -321,14 +321,14 @@ silcgaim_login(GaimAccount *account)
 	/* Init SILC client */
 	if (!silc_client_init(client)) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, ("Cannot initialize SILC protocol"));
+		gaim_connection_error(gc, _("Cannot initialize SILC protocol"));
 		return;
 	}
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcgaim_check_silc_dir(gc)) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, ("Cannot find/access ~/.silc directory"));
+		gaim_connection_error(gc, _("Cannot find/access ~/.silc directory"));
 		return;
 	}
 
@@ -342,7 +342,7 @@ silcgaim_login(GaimAccount *account)
 							(char *)gaim_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
-		g_snprintf(pkd, sizeof(pkd), ("Could not load SILC key pair: %s"), strerror(errno));
+		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair: %s"), strerror(errno));
 		gaim_connection_error(gc, pkd);
 		return;
 	}
@@ -362,7 +362,7 @@ silcgaim_login(GaimAccount *account)
 						       "silc.silcnet.org"),
 			       gaim_account_get_int(account, "port", 706),
 			       silcgaim_login_connected, gc)) {
-		gaim_connection_error(gc, ("Unable to create connection"));
+		gaim_connection_error(gc, _("Unable to create connection"));
 		return;
 	}
 
@@ -1149,7 +1149,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 		mflags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
-			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
+			gaim_notify_error(gc, _("Call Command"), _("Cannot call command"),
 					_("Unknown command"));
 		g_free(tmp);
 		return 0;

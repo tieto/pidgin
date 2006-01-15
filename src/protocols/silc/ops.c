@@ -718,7 +718,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			serv_got_chat_left(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)));
 		} else {
 			/* Remove user from channel */
-			g_snprintf(buf, sizeof(buf), ("Kicked by %s (%s)"),
+			g_snprintf(buf, sizeof(buf), _("Kicked by %s (%s)"),
 				   client_entry2->nickname, tmp ? tmp : "");
 			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(convo),
 						   client_entry->nickname,

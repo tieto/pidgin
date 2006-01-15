@@ -1289,7 +1289,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageF
 		flags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
-			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
+			gaim_notify_error(gc, _("Call Command"), _("Cannot call command"),
 							  _("Unknown command"));
 		g_free(tmp);
 		return 0;
