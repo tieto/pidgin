@@ -3452,19 +3452,20 @@ gaim_utf8_salvage(const char *str)
 
 
 char *
-gaim_utf8_ncr_encode(const char *in)
+gaim_utf8_ncr_encode(const char *str)
 {
 	GString *out;
 
-	g_return_val_if_fail(in != NULL, NULL);
-	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
+	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
 
 	out = g_string_new("");
 
-	for(; *in; in = g_utf8_next_char(in)) {
-		gunichar wc = g_utf8_get_char(in);
-		
-		if(wc >= 0x80) { /* super simple check. hopefully not too wrong. */
+	for(; *str; str = g_utf8_next_char(str)) {
+		gunichar wc = g_utf8_get_char(str);
+
+		/* super simple check. hopefully not too wrong. */
+		if(wc >= 0x80) { 
 			g_string_append_printf(out, "&#%u;", (guint32) wc);
 		} else {
 			g_string_append_unichar(out, wc);
@@ -3476,38 +3477,46 @@ gaim_utf8_ncr_encode(const char *in)
 
 
 char *
-gaim_utf8_ncr_decode(const char *in)
+gaim_utf8_ncr_decode(const char *str)
 {
 	GString *out;
-	int i;
+	char *buf, *b;
 
-	g_return_val_if_fail(in != NULL, NULL);
-	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
+	g_return_val_if_fail(str != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(str, -1, NULL), NULL);
 
+	buf = (char *) str;
 	out = g_string_new("");
 
-	/** @todo doesn't this break with hex formats? */
-	for (i = 0; in[i]; i += 1) {
-		gboolean ncr_found_p = FALSE;
-		if (in[i] == '&' && in[i + 1] == '#' && isdigit(in[i + 2])) {
-			gunichar wc;
-			int j;
-			for (wc = 0, j = i + 2; isdigit(in[j]); j += 1) {
-				wc *= 10;
-				wc += in[j] - '0';
-			}
-			if (in[j] == ';') { /* Technically not completely correct */
-				g_string_append_unichar(out, wc);
-				i = j;
-				ncr_found_p = TRUE;
-			}
-		}
-		if (!ncr_found_p) {
-			g_string_append_c(out, in[i]);
+	while( (b = strstr(buf, "&#")) ) {
+		gunichar wc;
+		int base = 0;
+    
+		/* append everything leading up to the &# */
+		g_string_append_len(out, buf, b-buf);
+
+		b += 2; /* skip past the &# */
+    
+		/* strtoul will handle 0x prefix as hex, but not x */
+		if(*b == 'x' || *b == 'X')
+			base = 16;
+
+		/* advances buf to the end of the ncr segment */
+		wc = (gunichar) strtoul(b, &buf, base);
+
+		/* this mimics the previous impl of ncr_decode */
+		if(*buf == ';') {
+			g_string_append_unichar(out, wc);
+			buf++;
 		}
 	}
+
+	/* append whatever's left */
+	g_string_append(out, buf);
+
 	return g_string_free(out, FALSE);
 }
+
 
 int
 gaim_utf8_strcasecmp(const char *a, const char *b)
