@@ -293,7 +293,7 @@ status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 
 	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title);
-	gaim_request_action(NULL, NULL, buf, NULL, 0, title, 2,
+	gaim_request_action(status_window, NULL, buf, NULL, 0, title, 2,
 						_("Delete"), status_window_delete_confirm_cb,
 						_("Cancel"), g_free);
 	g_free(buf);
@@ -605,6 +605,8 @@ gaim_gtk_status_window_hide(void)
 	if (status_window->window != NULL)
 		gtk_widget_destroy(status_window->window);
 
+	gaim_request_close_with_handle(status_window);
+	gaim_notify_close_with_handle(status_window);
 	g_free(status_window);
 	status_window = NULL;
 }
@@ -657,7 +659,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		(gaim_savedstatus_find(title) != NULL) &&
 		((dialog->original_title == NULL) || (strcmp(title, dialog->original_title))))
 	{
-		gaim_notify_error(NULL, NULL, _("Title already in use.  You must "
+		gaim_notify_error(status_window, NULL, _("Title already in use.  You must "
 						  "choose a unique title."), NULL);
 		return;
 	}
