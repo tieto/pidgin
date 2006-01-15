@@ -983,7 +983,7 @@ static void html_logger_finalize(GaimLog *log)
 	GaimLogCommonLoggerData *data = log->logger_data;
 	if (data) {
 		if(data->file) {
-			fprintf(data->file, "</body></html>");
+			fprintf(data->file, "</body></html>\n");
 			fclose(data->file);
 		}
 		g_free(data->path);
