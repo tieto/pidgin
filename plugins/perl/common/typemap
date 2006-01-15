@@ -57,7 +57,10 @@ Gaim::Cipher				T_GaimObj
 Gaim::CipherCaps			T_IV
 Gaim::Cipher::Ops			T_GaimObj
 Gaim::Cipher::Context			T_GaimObj
-Gaim::CmdId				T_IV
+Gaim::Cmd::Flag				T_IV
+Gaim::Cmd::Id				T_IV
+Gaim::Cmd::Priority			T_IV
+Gaim::Cmd::Ret				T_IV
 Gaim::Connection			T_GaimObj
 Gaim::Connection::UiOps			T_GaimObj
 Gaim::Conversation			T_GaimObj

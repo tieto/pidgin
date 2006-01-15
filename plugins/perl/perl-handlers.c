@@ -4,9 +4,10 @@
 #include "debug.h"
 #include "signals.h"
 
-static GList *timeout_handlers = NULL;
-static GList *signal_handlers = NULL;
 extern PerlInterpreter *my_perl;
+static GList *cmd_handlers = NULL;
+static GList *signal_handlers = NULL;
+static GList *timeout_handlers = NULL;
 
 /* perl < 5.8.0 doesn't define PERL_MAGIC_ext */
 #ifndef PERL_MAGIC_ext
@@ -440,4 +441,150 @@ gaim_perl_signal_clear(void)
 {
 	while (signal_handlers != NULL)
 		destroy_signal_handler(signal_handlers->data);
+}
+
+static GaimCmdRet
+perl_cmd_cb(GaimConversation *conv, const gchar *command,
+            gchar **args, gchar **error, void *data)
+{
+	int i = 0, count, ret_value = GAIM_CMD_RET_OK;
+	SV *cmdSV, *tmpSV, *convSV;
+	GaimPerlCmdHandler *handler = (GaimPerlCmdHandler *)data;
+
+	dSP;
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(SP);
+
+	/* Push the conversation onto the perl stack */
+	convSV = sv_2mortal(gaim_perl_bless_object(conv, "Gaim::Conversation"));
+	XPUSHs(convSV);
+
+	/* Push the command string onto the perl stack */
+	cmdSV = newSVpv(command, 0);
+	cmdSV = sv_2mortal(cmdSV);
+	XPUSHs(cmdSV);
+
+	/* Push the data onto the perl stack */
+	XPUSHs((SV *)handler->data);
+
+	/* Push any arguments we may have */
+	for (i = 0; args[i] != NULL; i++) {
+		/* XXX The mortality of these created SV's should prevent
+		 * memory issues, if I read/understood everything correctly...
+		 */
+		tmpSV = newSVpv(args[i], 0);
+		tmpSV = sv_2mortal(tmpSV);
+		XPUSHs(tmpSV);
+	}
+
+	PUTBACK;
+	count = call_sv(handler->callback, G_EVAL|G_SCALAR);
+
+	if (count != 1)
+		croak("call_sv: Did not return the correct number of values.\n");
+
+	SPAGAIN;
+
+	ret_value = POPi;
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+
+	return ret_value;
+}
+
+GaimCmdId
+gaim_perl_cmd_register(GaimPlugin *plugin, const gchar *command,
+                       const gchar *args, GaimCmdPriority priority,
+                       GaimCmdFlag flag, const gchar *prpl_id, SV *callback,
+                       const gchar *helpstr, SV *data)
+{
+	GaimPerlCmdHandler *handler;
+
+	handler          = g_new0(GaimPerlCmdHandler, 1);
+	handler->plugin  = plugin;
+	handler->cmd     = g_strdup(command);
+	handler->prpl_id = g_strdup(prpl_id);
+
+	if (callback != NULL && callback != &PL_sv_undef)
+		handler->callback = newSVsv(callback);
+	else
+		handler->callback = NULL;
+
+	if (data != NULL && data != &PL_sv_undef)
+		handler->data = newSVsv(data);
+	else
+		handler->data = NULL;
+
+	cmd_handlers = g_list_append(cmd_handlers, handler);
+
+	handler->id = gaim_cmd_register(command, args, priority, flag, prpl_id,
+	                                GAIM_CMD_FUNC(perl_cmd_cb), helpstr,
+	                                handler);
+
+	return handler->id;
+}
+
+static void
+destroy_cmd_handler(GaimPerlCmdHandler *handler)
+{
+	cmd_handlers = g_list_remove(cmd_handlers, handler);
+
+	if (handler->callback != NULL)
+		SvREFCNT_dec(handler->callback);
+
+	if (handler->data != NULL)
+		SvREFCNT_dec(handler->data);
+
+	g_free(handler->cmd);
+	g_free(handler->prpl_id);
+	g_free(handler);
+}
+
+void
+gaim_perl_cmd_clear_for_plugin(GaimPlugin *plugin)
+{
+	GList *l, *l_next;
+
+	for (l = cmd_handlers; l != NULL; l = l_next) {
+		GaimPerlCmdHandler *handler = (GaimPerlCmdHandler *)l->data;
+
+		l_next = l->next;
+
+		if (handler->plugin == plugin)
+			destroy_cmd_handler(handler);
+	}
+}
+
+static GaimPerlCmdHandler *
+find_cmd_handler(GaimCmdId id)
+{
+	GList *l;
+
+	for (l = cmd_handlers; l != NULL; l = l->next) {
+		GaimPerlCmdHandler *handler = (GaimPerlCmdHandler *)l->data;
+
+		if (handler->id == id)
+			return handler;
+	}
+
+	return NULL;
+}
+
+void
+gaim_perl_cmd_unregister(GaimCmdId id)
+{
+	GaimPerlCmdHandler *handler;
+
+	handler = find_cmd_handler(id);
+
+	if (handler == NULL) {
+		croak("Invalid command id in removing a perl command handler.\n");
+		return;
+	}
+
+	gaim_cmd_unregister(id);
+	destroy_cmd_handler(handler);
 }

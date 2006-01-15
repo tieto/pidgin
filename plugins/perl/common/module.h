@@ -84,7 +84,10 @@ typedef GaimCipherContext *		Gaim__Cipher__Context;
 typedef GaimCipherOps *			Gaim__Cipher__Ops;
 
 /* cmds.h */
-typedef GaimCmdId			Gaim__CmdId;
+typedef GaimCmdFlag			Gaim__Cmd__Flag;
+typedef GaimCmdId			Gaim__Cmd__Id;
+typedef GaimCmdPriority			Gaim__Cmd__Priority;
+typedef GaimCmdRet			Gaim__Cmd__Ret;
 
 /* connection.h */
 typedef GaimConnection *		Gaim__Connection;

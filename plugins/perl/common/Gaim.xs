@@ -8,7 +8,7 @@ GAIM_PERL_BOOT_PROTO(Account__Option);
 GAIM_PERL_BOOT_PROTO(Buddy__Icon);
 GAIM_PERL_BOOT_PROTO(BuddyList);
 GAIM_PERL_BOOT_PROTO(Cipher);
-GAIM_PERL_BOOT_PROTO(Cmds);
+GAIM_PERL_BOOT_PROTO(Cmd);
 GAIM_PERL_BOOT_PROTO(Connection);
 GAIM_PERL_BOOT_PROTO(Conversation);
 GAIM_PERL_BOOT_PROTO(Xfer);
@@ -33,7 +33,6 @@ GAIM_PERL_BOOT_PROTO(Stringref);
 GAIM_PERL_BOOT_PROTO(Util);
 GAIM_PERL_BOOT_PROTO(XMLNode);
 
-
 MODULE = Gaim  PACKAGE = Gaim  PREFIX = gaim_
 PROTOTYPES: ENABLE
 
@@ -41,11 +40,11 @@ INCLUDE: const-xs.inc
 
 BOOT:
 	GAIM_PERL_BOOT(Account);
-	GAIM_PERL_BOOT(Account__Option); 
+	GAIM_PERL_BOOT(Account__Option);
 	GAIM_PERL_BOOT(Buddy__Icon);
 	GAIM_PERL_BOOT(BuddyList);
 	GAIM_PERL_BOOT(Cipher);
-	GAIM_PERL_BOOT(Cmds);
+	GAIM_PERL_BOOT(Cmd);
 	GAIM_PERL_BOOT(Connection);
 	GAIM_PERL_BOOT(Conversation);
 	GAIM_PERL_BOOT(Xfer);
@@ -54,7 +53,7 @@ BOOT:
 	GAIM_PERL_BOOT(Network);
 	GAIM_PERL_BOOT(Notify);
 	GAIM_PERL_BOOT(Plugin);
-	GAIM_PERL_BOOT(PluginPref); 
+	GAIM_PERL_BOOT(PluginPref);
 	GAIM_PERL_BOOT(Pounce);
 	GAIM_PERL_BOOT(Prefs);
 	GAIM_PERL_BOOT(Privacy);
@@ -68,8 +67,7 @@ BOOT:
 	GAIM_PERL_BOOT(Status);
 	GAIM_PERL_BOOT(Stringref);
 	GAIM_PERL_BOOT(Util);
-	GAIM_PERL_BOOT(XMLNode); 
-
+	GAIM_PERL_BOOT(XMLNode);
 
 void
 timeout_add(plugin, seconds, callback, data = 0)
@@ -143,4 +141,3 @@ void
 deinit()
 CODE:
 	gaim_perl_timeout_clear();
-

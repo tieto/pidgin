@@ -518,6 +518,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 		LEAVE;
 	}
 
+	gaim_perl_cmd_clear_for_plugin(plugin);
 	gaim_perl_signal_clear_for_plugin(plugin);
 	gaim_perl_timeout_clear_for_plugin(plugin);
 
