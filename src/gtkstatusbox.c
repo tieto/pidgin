@@ -704,7 +704,6 @@ toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 {
-	GtkWidget *vbox;
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
 	GtkTextBuffer *buffer;
@@ -759,8 +758,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 6, NULL);
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
-	vbox = gtk_vbox_new(0,FALSE);
-	status_box->imhtml = gtk_imhtml_new(NULL, NULL);
+	status_box->sw = gaim_gtk_create_imhtml(FALSE, &status_box->imhtml, NULL);
+	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 #if 0
@@ -785,11 +784,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
 	GTK_BIN(status_box)->child = status_box->toggle_button;
-	status_box->sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(status_box->sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(status_box->sw), vbox);
-	gtk_box_pack_start(GTK_BOX(vbox), status_box->imhtml, TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
 
