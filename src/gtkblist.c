@@ -2728,7 +2728,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		}
 
 		/* Last Seen */
-		if (!GAIM_BUDDY_IS_ONLINE(b))
+		if (full && !GAIM_BUDDY_IS_ONLINE(b))
 		{
 			struct _gaim_gtk_blist_node *gtknode = ((GaimBlistNode *)c)->ui_data;
 			GaimBlistNode *bnode;
