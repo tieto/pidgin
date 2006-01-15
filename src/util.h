@@ -747,6 +747,8 @@ char *gaim_str_binary_to_ascii(const unsigned char *binary, guint len);
 gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 						char **ret_path, char **ret_user, char **ret_passwd);
 
+typedef void (*GaimURLFetchCallback) (gpointer data, const char *buf, gsize len);
+
 /**
  * Fetches the data from a URL, and passes it to a callback function.
  *
@@ -758,10 +760,30 @@ gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
  * @param cb         The callback function.
  * @param data       The user data to pass to the callback function.
  */
-void gaim_url_fetch(const char *url, gboolean full,
-					const char *user_agent, gboolean http11,
-					void (*cb)(void *, const char *, size_t),
-					void *data);
+#define gaim_url_fetch(url, full, user_agent, http11, cb, data) \
+	gaim_url_fetch_request(url, full, user_agent, http11, NULL, \
+		FALSE, cb, data);
+
+/**
+ * Fetches the data from a URL, and passes it to a callback function.
+ *
+ * @param url        The URL.
+ * @param full       TRUE if this is the full URL, or FALSE if it's a
+ *                   partial URL.
+ * @param user_agent The user agent field to use, or NULL.
+ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ * @param request    A HTTP request to send to the server instead of the
+ *                   standard GET
+ * @param include_headers if TRUE, include the HTTP headers in the
+ *                   response
+ * @param cb         The callback function.
+ * @param data       The user data to pass to the callback function.
+ */
+void gaim_url_fetch_request(const char *url, gboolean full,
+		const char *user_agent, gboolean http11,
+		const char *request, gboolean include_headers,
+		GaimURLFetchCallback cb, void *data);
+
 /**
  * Decodes a URL into a plain string.
  *

@@ -159,7 +159,7 @@ void xmlnode_remove_attrib(xmlnode *node, const char *attr);
  * @param node The starting node to output.
  * @param len  Address for the size of the string.
  *
- * @return The node repersented as a string.  You must
+ * @return The node represented as a string.  You must
  *         g_free this string when finished using it.
  */
 char *xmlnode_to_str(xmlnode *node, int *len);
