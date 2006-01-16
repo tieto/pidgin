@@ -780,6 +780,9 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	char *buffy, *angel;
 	int plugin_return;
 
+	g_return_if_fail(who != NULL);
+	g_return_if_fail(message != NULL);
+
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (GaimConversation *)bcs->data;
 
@@ -812,10 +815,8 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 								  &angel, &buffy, conv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
-		if (buffy)
-			g_free(buffy);
-		if (angel)
-			g_free(angel);
+		g_free(buffy);
+		g_free(angel);
 		return;
 	}
 	who = angel;
