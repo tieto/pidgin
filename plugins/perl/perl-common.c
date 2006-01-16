@@ -433,7 +433,7 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 			stash = "Gaim::Plugin";
 			break;
 		case GAIM_SUBTYPE_BLIST_NODE:
-			stash = "Gaim::BuddtList::Node";
+			stash = "Gaim::BuddyList::Node";
 			break;
 		case GAIM_SUBTYPE_CIPHER:
 			stash = "Gaim::Cipher";
