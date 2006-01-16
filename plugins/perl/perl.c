@@ -357,7 +357,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 				                                 SvPV(*key, len));
 				info->prefs_info = &ui_info;
 			}
-			
+
 			if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
 			                    strlen("gtk_prefs_info"), 0))) {
 				/* key now is the name of the Perl sub that
