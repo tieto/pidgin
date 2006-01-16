@@ -49,7 +49,8 @@ buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
     if(gaim_prefs_get_bool(PREF_NOTICE)) {
       gaim_conversation_write(gconv, NULL,
 			      _("You feel a disturbance in the force..."),
-			      GAIM_MESSAGE_NO_LOG, time(NULL));
+			      GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG,
+			      time(NULL));
     }
   }
 }
@@ -64,7 +65,7 @@ get_plugin_pref_frame(GaimPlugin *plugin) {
   frame = gaim_plugin_pref_frame_new();
   
   pref = gaim_plugin_pref_new_with_name(PREF_BUDDIES);
-  gaim_plugin_pref_set_label(pref, _("Only enable for users in buddy list"));
+  gaim_plugin_pref_set_label(pref, _("Only enable for users on the buddy list"));
   gaim_plugin_pref_frame_add(frame, pref);
 
   pref = gaim_plugin_pref_new_with_name(PREF_NOTICE);
