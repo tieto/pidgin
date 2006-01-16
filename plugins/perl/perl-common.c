@@ -420,6 +420,9 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 		case GAIM_SUBTYPE_BLIST_CHAT:
 			stash = "Gaim::BuddyList::Chat";
 			break;
+		case GAIM_SUBTYPE_BUDDY_ICON:
+			stash = "Gaim::Buddy::Icon";
+			break;
 		case GAIM_SUBTYPE_CONNECTION:
 			stash = "Gaim::Connection";
 			break;
@@ -428,6 +431,18 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 			break;
 		case GAIM_SUBTYPE_PLUGIN:
 			stash = "Gaim::Plugin";
+			break;
+		case GAIM_SUBTYPE_BLIST_NODE:
+			stash = "Gaim::BuddtList::Node";
+			break;
+		case GAIM_SUBTYPE_CIPHER:
+			stash = "Gaim::Cipher";
+			break;
+		case GAIM_SUBTYPE_STATUS:
+			stash = "Gaim::Status";
+			break;
+		case GAIM_SUBTYPE_LOG:
+			stash = "Gaim::Log";
 			break;
 
 		default:
