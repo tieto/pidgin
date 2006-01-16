@@ -74,7 +74,9 @@ gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 
 		config = gaim_gtk_plugin_pref_create_frame(frame);
 
+		/* XXX According to bug #1407047 this broke saving pluging preferences, I'll look at fixing it correctly later.
 		gaim_plugin_pref_frame_destroy(frame);
+		*/
 	}
 
 	return config;
