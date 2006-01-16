@@ -12,7 +12,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_cmd_help(conv, command); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 void
@@ -22,7 +22,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_cmd_list(conv); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 Gaim::Cmd::Id

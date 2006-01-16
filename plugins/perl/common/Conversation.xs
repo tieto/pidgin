@@ -52,7 +52,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_conversation_get_send_history(conv); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 void

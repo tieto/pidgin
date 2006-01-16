@@ -246,7 +246,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_request_field_choice_get_labels(field); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 int
@@ -353,7 +353,7 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_request_field_list_get_items(field); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 gboolean
@@ -367,7 +367,7 @@ PREINIT:
 	const GList *l;
 PPCODE:
 	for (l = gaim_request_field_list_get_selected(field); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 gboolean
