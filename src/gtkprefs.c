@@ -699,7 +699,6 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 {
 	gboolean bold, italic, uline;
 
-	bold = italic = uline = FALSE;
 	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml),
 								  &bold, &italic, &uline);
 

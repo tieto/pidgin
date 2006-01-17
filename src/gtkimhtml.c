@@ -3912,12 +3912,12 @@ GtkIMHtmlButtons gtk_imhtml_get_format_functions(GtkIMHtml *imhtml)
 void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold,
 								   gboolean *italic, gboolean *underline)
 {
-	if (imhtml->edit.bold)
-		(*bold) = TRUE;
-	if (imhtml->edit.italic)
-		(*italic) = TRUE;
-	if (imhtml->edit.underline)
-		(*underline) = TRUE;
+	if (bold != NULL)
+		(*bold) = imhtml->edit.bold;
+	if (italic != NULL)
+		(*italic) = imhtml->edit.italic;
+	if (underline != NULL)
+		(*underline) = imhtml->edit.underline;
 }
 
 char *

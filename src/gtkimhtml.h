@@ -523,13 +523,13 @@ void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons
 GtkIMHtmlButtons gtk_imhtml_get_format_functions(GtkIMHtml *imhtml);
 
 /**
- * Sets each boolean to TRUE if that formatting option is enabled at the
- * current position in a GTK+ IM/HTML.
+ * Sets each boolean to @c TRUE or @c FALSE to indicate if that formatting option
+ * is enabled at the current position in a GTK+ IM/HTML.
  *
  * @param imhtml    The GTK+ IM/HTML.
- * @param bold      A reference to a boolean for bold.
- * @param italic    A reference to a boolean for italic.
- * @param underline A reference to a boolean for underline.
+ * @param bold      The boolean to set for bold or @c NULL.
+ * @param italic    The boolean to set for italic or @c NULL.
+ * @param underline The boolean to set for underline or @c NULL.
  */
 void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold, gboolean *italic, gboolean *underline);
 

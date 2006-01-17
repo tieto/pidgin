@@ -793,7 +793,6 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 	char *tmp;
 	char *tmp2;
 
-	bold = italic = underline = FALSE;
 	gtk_imhtml_get_current_format(GTK_IMHTML(toolbar->imhtml),
 								  &bold, &italic, &underline);
 
@@ -1117,8 +1116,6 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 
 	buttons = gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml));
 	update_buttons_cb(GTK_IMHTML(imhtml), buttons, toolbar);
-
-	bold = italic = underline = FALSE;
 
 	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
 

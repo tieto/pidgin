@@ -88,6 +88,9 @@ version 2.0.0:
 	* gaim_network_listen() and gaim_network_listen_range(): Added
 	  socket_type parameter to allow creation of UDP listening.
 	* GaimPrefCallback: val is now a gconstpointer instead of a gpointer
+	* gtk_imhtml_get_current_format(): the arguments are now set to TRUE or
+	  FALSE.  Previously they were set to TRUE or left alone.  Also, you
+	  may now pass NULL if you're not interested in a specific formatting.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
