@@ -4858,11 +4858,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	g_free(mdate);
 	g_free(sml_attrib);
 
-	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
-		(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-		account, conv, message, flags);
-	g_free(displaying);
-
 	/* Tab highlighting stuff */
 	if (!gaim_gtkconv_has_focus(conv))
 	{
@@ -4880,6 +4875,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 		gtkconv_set_unseen(gtkconv, unseen);
 	}
+
+	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
+		(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
+		account, conv, message, flags);
+	g_free(displaying);
 }
 
 static void

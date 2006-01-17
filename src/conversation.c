@@ -908,15 +908,14 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			log = log->next;
 		}
 	}
-	ops->write_conv(conv, who, alias, message, flags, mtime);
-
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		if ((flags & GAIM_MESSAGE_RECV) == GAIM_MESSAGE_RECV) {
 			gaim_conv_im_set_typing_state(GAIM_CONV_IM(conv), GAIM_NOT_TYPING);
-			gaim_conversation_update(conv, GAIM_CONV_UPDATE_TITLE);
 		}
 	}
+
+	ops->write_conv(conv, who, alias, message, flags, mtime);
 }
 
 gboolean
