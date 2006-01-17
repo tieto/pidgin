@@ -50,7 +50,6 @@ Gaim::BuddyList::Contact		T_GaimObj
 Gaim::BuddyList::Group			T_GaimObj
 Gaim::BuddyList::Node			T_GaimObj
 Gaim::BuddyList::NodeFlags		T_IV
-Gaim::BuddyList::Node::Action		T_GaimObj
 Gaim::BuddyList::UiOps			T_GaimObj
 
 Gaim::Cipher				T_GaimObj
@@ -88,6 +87,8 @@ Gaim::Log::CommonLoggerData		T_GaimObj
 Gaim::Log::Logger			T_GaimObj
 Gaim::Log::ReadFlags			T_GaimObj
 Gaim::Log::Set				T_GaimObj
+
+Gaim::Menu::Action			T_GaimObj
 
 Gaim::NetworkListenCallback		T_PTR
 

@@ -1463,25 +1463,28 @@ static GList *ggp_status_types(GaimAccount *account)
 /* static GList *ggp_blist_node_menu(GaimBlistNode *node) {{{ */
 static GList *ggp_blist_node_menu(GaimBlistNode *node)
 {
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 	GList *m = NULL;
 
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return NULL;
 
-	act = gaim_blist_node_action_new(_("Add to chat"),
-					 ggp_bmenu_add_to_chat, NULL, NULL);
+	act = gaim_menu_action_new(_("Add to chat"),
+	                           GAIM_CALLBACK(ggp_bmenu_add_to_chat),
+	                           NULL, NULL);
 	m = g_list_append(m, act);
 
 	/* Using a blist node boolean here is also wrong.
 	 * Once the Block and Unblock actions are added to the core,
 	 * this will have to go. -- rlaager */
 	if (gaim_blist_node_get_bool(node, "blocked")) {
-		act = gaim_blist_node_action_new(_("Unblock"),
-						 ggp_bmenu_block, NULL, NULL);
+		act = gaim_menu_action_new(_("Unblock"),
+		                           GAIM_CALLBACK(ggp_bmenu_block),
+		                           NULL, NULL);
 	} else {
-		act = gaim_blist_node_action_new(_("Block"),
-						 ggp_bmenu_block, NULL, NULL);
+		act = gaim_menu_action_new(_("Block"),
+		                           GAIM_CALLBACK(ggp_bmenu_block),
+		                           NULL, NULL);
 	}
 	m = g_list_append(m, act);
 

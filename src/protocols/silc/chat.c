@@ -858,7 +858,7 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 	SilcUInt32 mode = 0;
 
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
 	if (components)
 		chname = g_hash_table_lookup(components, "channel");
@@ -874,103 +874,104 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 	if (strstr(chname, "[Private Group]"))
 		return NULL;
 
-	act = gaim_blist_node_action_new(_("Get Info"),
-	                                 silcgaim_chat_getinfo_menu,
-	                                 NULL, NULL);
+	act = gaim_menu_action_new(_("Get Info"),
+	                           GAIM_CALLBACK(silcgaim_chat_getinfo_menu),
+	                           NULL, NULL);
 	m = g_list_append(m, act);
 
 #if 0   /* XXX For now these are not implemented.  We need better
 	   listview dialog from Gaim for these. */
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
-		act = gaim_blist_node_action_new(_("Invite List"),
-		                                 silcgaim_chat_invitelist,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Invite List"),
+		                           GAIM_CALLBACK(silcgaim_chat_invitelist),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-		act = gaim_blist_node_action_new(_("Ban List"),
-		                                 silcgaim_chat_banlist,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Ban List"),
+		                           GAIM_CALLBACK(silcgaim_chat_banlist),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 #endif
 
 	if (chu) {
-		act = gaim_blist_node_action_new(_("Add Private Group"),
-		                                 silcgaim_chat_prv,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Add Private Group"),
+		                           GAIM_CALLBACK(silcgaim_chat_prv),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANFO) {
-		act = gaim_blist_node_action_new(_("Channel Authentication"),
-		                                 silcgaim_chat_chauth,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Channel Authentication"),
+		                           GAIM_CALLBACK(silcgaim_chat_chauth),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_FOUNDER_AUTH) {
-			act = gaim_blist_node_action_new(_("Reset Permanent"),
-			                                 silcgaim_chat_permanent_reset,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Reset Permanent"),
+			                           GAIM_CALLBACK(silcgaim_chat_permanent_reset),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_blist_node_action_new(_("Set Permanent"),
-			                                 silcgaim_chat_permanent,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Set Permanent"),
+			                           GAIM_CALLBACK(silcgaim_chat_permanent),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
-		act = gaim_blist_node_action_new(_("Set User Limit"),
-		                                 silcgaim_chat_ulimit,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Set User Limit"),
+		                           GAIM_CALLBACK(silcgaim_chat_ulimit),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_TOPIC) {
-			act = gaim_blist_node_action_new(_("Reset Topic Restriction"),
-			                                 silcgaim_chat_resettopic,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Reset Topic Restriction"),
+			                           GAIM_CALLBACK(silcgaim_chat_resettopic),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_blist_node_action_new(_("Set Topic Restriction"),
-			                                 silcgaim_chat_settopic,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Set Topic Restriction"),
+			                           GAIM_CALLBACK(silcgaim_chat_settopic),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_PRIVATE) {
-			act = gaim_blist_node_action_new(_("Reset Private Channel"),
-			                                 silcgaim_chat_resetprivate,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Reset Private Channel"),
+			                           GAIM_CALLBACK(silcgaim_chat_resetprivate),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_blist_node_action_new(_("Set Private Channel"),
-			                                 silcgaim_chat_setprivate,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Set Private Channel"),
+			                           GAIM_CALLBACK(silcgaim_chat_setprivate),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_SECRET) {
-			act = gaim_blist_node_action_new(_("Reset Secret Channel"),
-			                                 silcgaim_chat_resetsecret,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Reset Secret Channel"),
+			                           GAIM_CALLBACK(silcgaim_chat_resetsecret),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_blist_node_action_new(_("Set Secret Channel"),
-			                                 silcgaim_chat_setsecret,
-			                                 NULL, NULL);
+			act = gaim_menu_action_new(_("Set Secret Channel"),
+			                           GAIM_CALLBACK(silcgaim_chat_setsecret),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
 	if (channel) {
 		SilcGaimChatWb wb;
-	        wb = silc_calloc(1, sizeof(*wb));
-        	wb->sg = sg;
-        	wb->channel = channel;
-        	act = gaim_blist_node_action_new(_("Draw On Whiteboard"),
-                                         silcgaim_chat_wb, (void *)wb, NULL);
-	        m = g_list_append(m, act);
+		wb = silc_calloc(1, sizeof(*wb));
+		wb->sg = sg;
+		wb->channel = channel;
+		act = gaim_menu_action_new(_("Draw On Whiteboard"),
+		                           GAIM_CALLBACK(silcgaim_chat_wb),
+		                           (void *)wb, NULL);
+		m = g_list_append(m, act);
 	}
 
 	return m;

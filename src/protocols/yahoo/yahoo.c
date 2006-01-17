@@ -2858,19 +2858,19 @@ static void yahoo_chat_goto_menu(GaimBlistNode *node, gpointer data)
 
 static GList *build_presence_submenu(YahooFriend *f, GaimConnection *gc) {
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 
 	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
 		if (f->presence != YAHOO_PRESENCE_ONLINE) {
-			act = gaim_blist_node_action_new(_("Appear Online"),
-					yahoo_presence_settings,
+			act = gaim_menu_action_new(_("Appear Online"),
+					GAIM_CALLBACK(yahoo_presence_settings),
 					GINT_TO_POINTER(YAHOO_PRESENCE_ONLINE),
 					NULL);
 			m = g_list_append(m, act);
 		} else if (f->presence != YAHOO_PRESENCE_DEFAULT) {
-			act = gaim_blist_node_action_new(_("Appear Offline"),
-					yahoo_presence_settings,
+			act = gaim_menu_action_new(_("Appear Offline"),
+					GAIM_CALLBACK(yahoo_presence_settings),
 					GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT),
 					NULL);
 			m = g_list_append(m, act);
@@ -2878,15 +2878,14 @@ static GList *build_presence_submenu(YahooFriend *f, GaimConnection *gc) {
 	}
 
 	if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
-		act = gaim_blist_node_action_new(
+		act = gaim_menu_action_new(
 				_("Don't Appear Permanently Offline"),
-				yahoo_presence_settings,
+				GAIM_CALLBACK(yahoo_presence_settings),
 				GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT), NULL);
 		m = g_list_append(m, act);
 	} else {
-		act = gaim_blist_node_action_new(
-				_("Appear Permanently Offline"),
-				yahoo_presence_settings,
+		act = gaim_menu_action_new(_("Appear Permanently Offline"),
+				GAIM_CALLBACK(yahoo_presence_settings),
 				GINT_TO_POINTER(YAHOO_PRESENCE_PERM_OFFLINE),
 				NULL);
 		m = g_list_append(m, act);
@@ -2906,7 +2905,7 @@ static void yahoo_doodle_blist_node(GaimBlistNode *node, gpointer data)
 static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 {
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	struct yahoo_data *yd = gc->proto_data;
@@ -2916,8 +2915,9 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	f = yahoo_friend_find(gc, buddy->name);
 
 	if (!f && !yd->wm) {
-		act = gaim_blist_node_action_new(_("Add Buddy"),
-				yahoo_addbuddyfrommenu_cb, NULL, NULL);
+		act = gaim_menu_action_new(_("Add Buddy"),
+		                           GAIM_CALLBACK(yahoo_addbuddyfrommenu_cb),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 		return m;
@@ -2926,13 +2926,15 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 
 	if (f && f->status != YAHOO_STATUS_OFFLINE) {
 		if (!yd->wm) {
-			act = gaim_blist_node_action_new(_("Join in Chat"),
-				yahoo_chat_goto_menu, NULL, NULL);
+			act = gaim_menu_action_new(_("Join in Chat"),
+			                           GAIM_CALLBACK(yahoo_chat_goto_menu),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
-		act = gaim_blist_node_action_new(_("Initiate Conference"),
-			yahoo_initiate_conference, NULL, NULL);
+		act = gaim_menu_action_new(_("Initiate Conference"),
+		                           GAIM_CALLBACK(yahoo_initiate_conference),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (yahoo_friend_get_game(f)) {
@@ -2949,21 +2951,24 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 				*t = ' ';
 				g_snprintf(buf2, sizeof buf2, "%s", room);
 
-				act = gaim_blist_node_action_new(buf2, yahoo_game, NULL, NULL);
+				act = gaim_menu_action_new(buf2,
+				                           GAIM_CALLBACK(yahoo_game),
+				                           NULL, NULL);
 				m = g_list_append(m, act);
 			}
 		}
 	}
 
 	if (f) {
-		act = gaim_blist_node_action_new(_("Presence Settings"),
-				NULL, NULL, build_presence_submenu(f, gc));
+		act = gaim_menu_action_new(_("Presence Settings"), NULL, NULL,
+		                           build_presence_submenu(f, gc));
 		m = g_list_append(m, act);
 	}
 
 	if (f) {
-		act = gaim_blist_node_action_new(_("Start Doodling"),
-				yahoo_doodle_blist_node, NULL, NULL);
+		act = gaim_menu_action_new(_("Start Doodling"),
+		                           GAIM_CALLBACK(yahoo_doodle_blist_node),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

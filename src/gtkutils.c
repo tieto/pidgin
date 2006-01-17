@@ -1623,3 +1623,70 @@ gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *stat
 	return scale;
 }
 
+static void
+menu_action_cb(GtkMenuItem *item, gpointer object)
+{
+	gpointer data;
+	void (*callback)(gpointer, gpointer);
+
+	callback = g_object_get_data(G_OBJECT(item), "gaimcallback");
+	data = g_object_get_data(G_OBJECT(item), "gaimcallbackdata");
+
+	if (callback)
+		callback(object, data);
+}
+
+void
+gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
+                            gpointer object)
+{
+	if (act == NULL) {
+		gaim_separator(menu);
+	} else {
+		GtkWidget *menuitem, *label;
+
+		if (act->children == NULL) {
+			menuitem = gtk_menu_item_new();
+			label = gtk_label_new("");
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+			gtk_label_set_pattern(GTK_LABEL(label), "_");
+			gtk_label_set_markup_with_mnemonic(GTK_LABEL(label),
+			                                   act->label);
+			gtk_container_add(GTK_CONTAINER(menuitem), label);
+
+			if (act->callback != NULL) {
+				g_object_set_data(G_OBJECT(menuitem),
+				                  "gaimcallback",
+				                  act->callback);
+				g_object_set_data(G_OBJECT(menuitem),
+				                  "gaimcallbackdata",
+				                  act->data);
+				g_signal_connect(G_OBJECT(menuitem), "activate",
+				                 G_CALLBACK(menu_action_cb),
+				                 object);
+			} else {
+				gtk_widget_set_sensitive(menuitem, FALSE);
+			}
+
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		} else {
+			GList *l = NULL;
+			GtkWidget *submenu = NULL;
+
+			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+			submenu = gtk_menu_new();
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+			for (l = act->children; l; l = l->next) {
+				GaimMenuAction *act = (GaimMenuAction *)l->data;
+
+				gaim_gtk_append_menu_action(submenu, act, object);
+			}
+			g_list_free(act->children);
+			act->children = NULL;
+		}
+		g_free(act);
+	}
+}

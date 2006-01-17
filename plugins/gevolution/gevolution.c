@@ -273,7 +273,7 @@ menu_item_send_mail_activate_cb(GaimBlistNode *node, gpointer user_data)
 static void
 blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 {
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 	GaimBuddy *buddy;
 
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
@@ -283,13 +283,13 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 
 	if (gevo_prpl_is_supported(buddy->account, buddy))
 	{
-		act = gaim_blist_node_action_new(_("Add to Address Book"),
-		                                 menu_item_activate_cb,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Add to Address Book"),
+		                           GAIM_CALLBACK(menu_item_activate_cb),
+		                           NULL, NULL);
 		*menu = g_list_append(*menu, act);
-		act = gaim_blist_node_action_new(_("Send E-Mail"),
-		                                 menu_item_send_mail_activate_cb,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Send E-Mail"),
+		                           GAIM_CALLBACK(menu_item_send_mail_activate_cb),
+		                           NULL, NULL);
 		*menu = g_list_append(*menu, act);
 	}
 }

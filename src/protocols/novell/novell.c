@@ -3438,11 +3438,11 @@ static GList *
 novell_blist_node_menu(GaimBlistNode *node)
 {
 	GList *list = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		act = gaim_blist_node_action_new(_("Initiate _Chat"),
-		                                _initiate_conference_cb, NULL, NULL);
+		act = gaim_menu_action_new(_("Initiate _Chat"),
+		                           _initiate_conference_cb, NULL, NULL);
 		list = g_list_append(list, act);
 	}
 

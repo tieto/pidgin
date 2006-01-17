@@ -8094,16 +8094,18 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 	OscarData *od = gc->proto_data;
 
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
-	act = gaim_blist_node_action_new(_("Edit Buddy Comment"),
-			oscar_buddycb_edit_comment, NULL, NULL);
+	act = gaim_menu_action_new(_("Edit Buddy Comment"),
+	                           GAIM_CALLBACK(oscar_buddycb_edit_comment),
+	                           NULL, NULL);
 	m = g_list_append(m, act);
 
 	if (od->icq) {
 #if 0
-		act = gaim_blist_node_action_new(_("Get Status Msg"),
-				oscar_get_icqstatusmsg, NULL, NULL);
+		act = gaim_menu_action_new(_("Get Status Msg"),
+		                           GAIM_CALLBACK(oscar_get_icqstatusmsg),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 #endif
 	} else {
@@ -8114,14 +8116,16 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 				GAIM_BUDDY_IS_ONLINE(buddy)) {
 
 			if (userinfo->capabilities & AIM_CAPS_DIRECTIM) {
-				act = gaim_blist_node_action_new(_("Direct IM"),
-						oscar_ask_direct_im, NULL, NULL);
+				act = gaim_menu_action_new(_("Direct IM"),
+				                           GAIM_CALLBACK(oscar_ask_direct_im),
+				                           NULL, NULL);
 				m = g_list_append(m, act);
 			}
 #if 0
 			if (userinfo->capabilities & AIM_CAPS_GETFILE) {
-				act = gaim_blist_node_action_new(_("Get File"),
-						oscar_ask_getfile, NULL, NULL);
+				act = gaim_menu_action_new(_("Get File"),
+				                           GAIM_CALLBACK(oscar_ask_getfile),
+				                           NULL, NULL);
 				m = g_list_append(m, act);
 			}
 #endif
@@ -8131,8 +8135,9 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 	if (od->sess->ssi.received_data) {
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, buddy->name);
 		if (gname && aim_ssi_waitingforauth(od->sess->ssi.local, gname, buddy->name)) {
-			act = gaim_blist_node_action_new(_("Re-request Authorization"),
-					gaim_auth_sendrequest_menu, NULL, NULL);
+			act = gaim_menu_action_new(_("Re-request Authorization"),
+			                           GAIM_CALLBACK(gaim_auth_sendrequest_menu),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}

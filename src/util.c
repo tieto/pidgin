@@ -65,6 +65,18 @@ typedef struct
 static char custom_home_dir[MAXPATHLEN];
 static char home_dir[MAXPATHLEN];
 
+GaimMenuAction *
+gaim_menu_action_new(char *label, GaimCallback callback, gpointer data,
+                     GList *children)
+{
+	GaimMenuAction *act = g_new0(GaimMenuAction, 1);
+	act->label = label;
+	act->callback = callback;
+	act->data = data;
+	act->children = children;
+	return act;
+}
+
 /**************************************************************************
  * Base16 Functions
  **************************************************************************/

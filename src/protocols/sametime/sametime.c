@@ -1222,7 +1222,7 @@ static void blist_node_menu_cb(GaimBlistNode *node,
   const char *owner;
   GaimGroup *group;
   GaimAccount *acct;
-  GaimBlistNodeAction *act;
+  GaimMenuAction *act;
 
   /* we only want groups */
   if(! GAIM_BLIST_NODE_IS_GROUP(node)) return;
@@ -1238,8 +1238,8 @@ static void blist_node_menu_cb(GaimBlistNode *node,
   /* if there's anyone in the group for this acct, offer to invite
      them all to a conference */
   if(gaim_group_on_account(group, acct)) {
-    act = gaim_blist_node_action_new(_("Invite Group to Conference..."),
-				     blist_menu_group_invite, pd, NULL);
+    act = gaim_menu_action_new(_("Invite Group to Conference..."),
+                               blist_menu_group_invite, pd, NULL);
     *menu = g_list_append(*menu, NULL);
   }
 #endif
@@ -1247,8 +1247,8 @@ static void blist_node_menu_cb(GaimBlistNode *node,
   /* check if it's a NAB group for this account */
   owner = gaim_blist_node_get_string(node, GROUP_KEY_OWNER);
   if(owner && !strcmp(owner, gaim_account_get_username(acct))) {
-    act = gaim_blist_node_action_new(_("Get Notes Address Book Info"),
-				     blist_menu_nab, pd, NULL);
+    act = gaim_menu_action_new(_("Get Notes Address Book Info"),
+                               blist_menu_nab, pd, NULL);
     *menu = g_list_append(*menu, act);
   }
 }
@@ -3484,15 +3484,15 @@ static void blist_menu_conf(GaimBlistNode *node, gpointer data) {
 
 static GList *mw_prpl_blist_node_menu(GaimBlistNode *node) {
   GList *l = NULL;
-  GaimBlistNodeAction *act;
+  GaimMenuAction *act;
 
   if(! GAIM_BLIST_NODE_IS_BUDDY(node))
     return l;
 
   l = g_list_append(l, NULL);
 
-  act = gaim_blist_node_action_new(_("Invite to Conference..."),
-				   blist_menu_conf, NULL, NULL);
+  act = gaim_menu_action_new(_("Invite to Conference..."),
+                             blist_menu_conf, NULL, NULL);
   l = g_list_append(l, act);
 
   /** note: this never gets called for a GaimGroup, have to use the

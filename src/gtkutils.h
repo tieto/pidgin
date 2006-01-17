@@ -28,6 +28,7 @@
 #include "gtkconv.h"
 #include "gtkgaim.h"
 #include "prpl.h"
+#include "util.h"
 
 typedef enum
 {
@@ -369,5 +370,17 @@ GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account);
  * @return The icon.
  */
 GdkPixbuf * gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type);
+
+/**
+ * Append a GaimMenuAction to a menu.
+ *
+ * @param menu   The menu to append to.
+ * @param act    The GaimMenuAction to append.
+ * @param object The object to be passed to the action callback.
+ *
+ * @return The menu.
+ */
+void gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
+                                 gpointer gobject);
 
 #endif /* _GAIM_GTKUTILS_H_ */

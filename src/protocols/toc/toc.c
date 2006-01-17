@@ -1543,11 +1543,11 @@ static void toc_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
 static GList *toc_blist_node_menu(GaimBlistNode *node)
 {
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		act = gaim_blist_node_action_new(_("Get Dir Info"),
-		                                 toc_get_dir, NULL, NULL);
+		act = gaim_menu_action_new(_("Get Dir Info"),
+		                           toc_get_dir, NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

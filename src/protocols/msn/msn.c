@@ -666,7 +666,7 @@ msn_buddy_menu(GaimBuddy *buddy)
 	MsnUser *user;
 
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
@@ -676,8 +676,9 @@ msn_buddy_menu(GaimBuddy *buddy)
 	{
 		if (user->mobile)
 		{
-			act = gaim_blist_node_action_new(_("Send to Mobile"),
-											 show_send_to_mobile_cb, NULL, NULL);
+			act = gaim_menu_action_new(_("Send to Mobile"),
+			                           GAIM_CALLBACK(show_send_to_mobile_cb),
+			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
@@ -685,8 +686,9 @@ msn_buddy_menu(GaimBuddy *buddy)
 	if (g_ascii_strcasecmp(buddy->name,
 						   gaim_account_get_username(buddy->account)))
 	{
-		act = gaim_blist_node_action_new(_("Initiate _Chat"),
-										 initiate_chat_cb, NULL, NULL);
+		act = gaim_menu_action_new(_("Initiate _Chat"),
+		                           GAIM_CALLBACK(initiate_chat_cb),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

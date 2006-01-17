@@ -1619,7 +1619,7 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 	SilcClientConnection conn = sg->conn;
 	const char *pkfile = NULL;
 	SilcClientEntry client_entry = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 	GList *m = NULL;
 	SilcGaimBuddyWb wb;
 
@@ -1629,36 +1629,40 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 						    buddy->proto_data);
 
 	if (client_entry && client_entry->send_key) {
-		act = gaim_blist_node_action_new(_("Reset IM Key"),
-		                                 silcgaim_buddy_resetkey, NULL, NULL);
+		act = gaim_menu_action_new(_("Reset IM Key"),
+		                           GAIM_CALLBACK(silcgaim_buddy_resetkey),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else {
-		act = gaim_blist_node_action_new(_("IM with Key Exchange"),
-		                                 silcgaim_buddy_keyagr, NULL, NULL);
+		act = gaim_menu_action_new(_("IM with Key Exchange"),
+		                           GAIM_CALLBACK(silcgaim_buddy_keyagr),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-		act = gaim_blist_node_action_new(_("IM with Password"),
-		                                 silcgaim_buddy_privkey_menu,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("IM with Password"),
+		                           GAIM_CALLBACK(silcgaim_buddy_privkey_menu),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (pkfile) {
-		act = gaim_blist_node_action_new(_("Show Public Key"),
-		                                 silcgaim_buddy_showkey, NULL, NULL);
+		act = gaim_menu_action_new(_("Show Public Key"),
+		                           GAIM_CALLBACK(silcgaim_buddy_showkey),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else {
-		act = gaim_blist_node_action_new(_("Get Public Key..."),
-		                                 silcgaim_buddy_getkey_menu,
-		                                 NULL, NULL);
+		act = gaim_menu_action_new(_("Get Public Key..."),
+		                           GAIM_CALLBACK(silcgaim_buddy_getkey_menu),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (conn && conn->local_entry->mode & SILC_UMODE_ROUTER_OPERATOR) {
-		act = gaim_blist_node_action_new(_("Kill User"),
-		                                 silcgaim_buddy_kill, NULL, NULL);
+		act = gaim_menu_action_new(_("Kill User"),
+		                           GAIM_CALLBACK(silcgaim_buddy_kill),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
@@ -1666,8 +1670,9 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 		wb = silc_calloc(1, sizeof(*wb));
 		wb->sg = sg;
 		wb->client_entry = client_entry;
-		act = gaim_blist_node_action_new(_("Draw On Whiteboard"),
-		                                 silcgaim_buddy_wb, (void *)wb, NULL);
+		act = gaim_menu_action_new(_("Draw On Whiteboard"),
+		                           GAIM_CALLBACK(silcgaim_buddy_wb),
+		                           (void *)wb, NULL);
 		m = g_list_append(m, act);
 	}
 	return m;

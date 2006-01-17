@@ -37,6 +37,13 @@
 extern "C" {
 #endif
 
+typedef struct _GaimMenuAction
+{
+	char *label;
+	GaimCallback callback;
+	gpointer data;
+	GList *children;
+} GaimMenuAction;
 
 /**
  * A key-value pair.
@@ -51,7 +58,18 @@ typedef struct _GaimKeyValuePair
 
 } GaimKeyValuePair;
 
-
+/**
+ * Creates a new GaimMenuAction.
+ * @param label    The text label to display for this action.
+ * @param callback The function to be called when the action is used on
+ *                 the selected item.
+ * @param data     Additional data to be passed to the callback.
+ * @param children A GList of GaimMenuActions to be added as a submenu
+ *                 of the action.
+ * @return The GaimMenuAction.
+ */
+GaimMenuAction *gaim_menu_action_new(char *label, GaimCallback callback,
+                                     gpointer data, GList *children);
 
 /**************************************************************************/
 /** @name Base16 Functions                                                */
@@ -89,7 +107,6 @@ gchar *gaim_base16_encode(const guchar *data, gsize len);
 guchar *gaim_base16_decode(const char *str, gsize *ret_len);
 
 /*@}*/
-
 
 /**************************************************************************/
 /** @name Base64 Functions                                                */

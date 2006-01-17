@@ -33,8 +33,6 @@ typedef struct _GaimBuddyList GaimBuddyList;
 typedef struct _GaimBlistUiOps GaimBlistUiOps;
 typedef struct _GaimBlistNode GaimBlistNode;
 
-typedef struct _GaimBlistNodeAction GaimBlistNodeAction;
-
 typedef struct _GaimChat GaimChat;
 typedef struct _GaimGroup GaimGroup;
 typedef struct _GaimContact GaimContact;
@@ -183,15 +181,6 @@ struct _GaimBlistUiOps
 							 const char *alias, const char *name);
 	void (*request_add_group)(void);
 };
-
-
-struct _GaimBlistNodeAction {
-	char *label;
-	void (*callback)(GaimBlistNode *, gpointer);
-	gpointer data;
-	GList *children;
-};
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -848,30 +837,13 @@ GaimBlistNodeFlags gaim_blist_node_get_flags(GaimBlistNode *node);
 
 /*@}*/
 
-
 /**
  * Retrieves the extended menu items for a buddy list node.
  * @param n The blist node for which to obtain the extended menu items.
- * @return  A list of GaimBlistNodeAction items, as harvested by the
+ * @return  A list of GaimMenuAction items, as harvested by the
  *          blist-node-extended-menu signal.
  */
 GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n);
-
-
-/**
- * Creates a new GaimBlistNodeAction.
- * @param label         The text label to display for this action.
- * @param callback      The function to be called when the action is used on
- *                      a selected GaimBlistNode.
- * @param data          Additional data, to be passed to the callback
- * @param children      A GList of GaimBlistNodeActions to be added as a
- *                      submenu of the action.
- * @return              The GaimBlistNodeAction.
- */
-GaimBlistNodeAction *gaim_blist_node_action_new(char *label,
-		void (*callback)(GaimBlistNode *, gpointer), gpointer data,
-		GList *children);
-
 
 /**************************************************************************/
 /** @name UI Registration Functions                                       */

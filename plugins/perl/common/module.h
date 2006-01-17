@@ -65,7 +65,6 @@ typedef GaimAccountUserSplit *		Gaim__Account__UserSplit;
 
 /* blist.h */
 typedef GaimBlistNode *			Gaim__BuddyList__Node;
-typedef GaimBlistNodeAction *		Gaim__BuddyList__Node__Action;
 typedef GaimBlistNodeFlags		Gaim__BuddyList__NodeFlags;
 typedef GaimBlistUiOps *		Gaim__BuddyList__UiOps;
 typedef GaimBuddyList *			Gaim__BuddyList;
@@ -245,6 +244,9 @@ typedef GaimStatusPrimitive		Gaim__StatusPrimitive;
 typedef GaimStatusType *		Gaim__StatusType;
 
 typedef GaimStringref *			Gaim__Stringref;
+
+/* util.h */
+typedef GaimMenuAction *		Gaim__Menu__Action;
 
 /* value.h */
 typedef GaimValue *			Gaim__Value;

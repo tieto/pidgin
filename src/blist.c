@@ -2566,19 +2566,6 @@ gaim_blist_node_get_extended_menu(GaimBlistNode *n)
 	return menu;
 }
 
-GaimBlistNodeAction *
-gaim_blist_node_action_new(char *label,
-                           void (*callback)(GaimBlistNode *, gpointer),
-                           gpointer data, GList *children)
-{
-	GaimBlistNodeAction *act = g_new0(GaimBlistNodeAction, 1);
-	act->label = label;
-	act->callback = callback;
-	act->data = data;
-	act->children = children;
-	return act;
-}
-
 int gaim_blist_get_group_size(GaimGroup *group, gboolean offline)
 {
 	if (!group)

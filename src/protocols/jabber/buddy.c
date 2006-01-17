@@ -1020,7 +1020,7 @@ static GList *jabber_buddy_menu(GaimBuddy *buddy)
 	JabberBuddy *jb = jabber_buddy_find(js, buddy->name, TRUE);
 
 	GList *m = NULL;
-	GaimBlistNodeAction *act;
+	GaimMenuAction *act;
 
 	if(!jb)
 		return m;
@@ -1029,32 +1029,37 @@ static GList *jabber_buddy_menu(GaimBuddy *buddy)
 
 	if(js->protocol_version == JABBER_PROTO_0_9 /* && NOT ME */) {
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
-			act = gaim_blist_node_action_new(_("Un-hide From"),
-					jabber_buddy_make_visible, NULL, NULL);
+			act = gaim_menu_action_new(_("Un-hide From"),
+			                           GAIM_CALLBACK(jabber_buddy_make_visible),
+			                           NULL, NULL);
 		} else {
-			act = gaim_blist_node_action_new(_("Temporarily Hide From"),
-					jabber_buddy_make_invisible, NULL, NULL);
+			act = gaim_menu_action_new(_("Temporarily Hide From"),
+			                GAIM_CALLBACK(jabber_buddy_make_invisible),
+			                NULL, NULL);
 		}
 		m = g_list_append(m, act);
 	}
 
 	if(jb->subscription & JABBER_SUB_FROM /* && NOT ME */) {
-		act = gaim_blist_node_action_new(_("Cancel Presence Notification"),
-				jabber_buddy_cancel_presence_notification, NULL, NULL);
+		act = gaim_menu_action_new(_("Cancel Presence Notification"),
+		                           GAIM_CALLBACK(jabber_buddy_cancel_presence_notification),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if(!(jb->subscription & JABBER_SUB_TO)) {
-		act = gaim_blist_node_action_new(_("(Re-)Request authorization"),
-				jabber_buddy_rerequest_auth, NULL, NULL);
+		act = gaim_menu_action_new(_("(Re-)Request authorization"),
+		                           GAIM_CALLBACK(jabber_buddy_rerequest_auth),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else /* if(NOT ME) */{
 
 		/* shouldn't this just happen automatically when the buddy is
 		   removed? */
-		act = gaim_blist_node_action_new(_("Unsubscribe"),
-				jabber_buddy_unsubscribe, NULL, NULL);
+		act = gaim_menu_action_new(_("Unsubscribe"),
+		                           GAIM_CALLBACK(jabber_buddy_unsubscribe),
+		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 

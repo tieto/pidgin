@@ -144,6 +144,7 @@ version 2.0.0:
 	  so GAIM_TYPE_BOXED is used for the signal types
 	* gaim_gtk_privacy_is_showable(): We do fallback privacy in the core
 	  now, so this would always be TRUE now.
+	* gaim_blist_node_action_new9); use gaim_menu_action_new() instead
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -238,6 +239,7 @@ version 2.0.0:
 	* gaim_gtk_log_get_handle()
 	* gaim_gtk_log_uninit()
 	* gaim_url_fetch_request()
+	* gaim_menu_action_new()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

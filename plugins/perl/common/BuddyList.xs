@@ -222,10 +222,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
-		/* XXX I'm pretty sure this is what should be being used here,
-		 * not that it really matters since perl doesn't really have a
-		 * way to interact with a GaimBlistNodeAction anyway. */
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::BuddyList::Node::Action")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Menu::Action")));
 	}
 
 void
