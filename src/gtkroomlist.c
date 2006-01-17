@@ -50,6 +50,7 @@ struct _GaimGtkRoomlistDialog {
 
 	GtkWidget *stop_button;
 	GtkWidget *list_button;
+	GtkWidget *add_button;
 	GtkWidget *join_button;
 	GtkWidget *close_button;
 
@@ -130,6 +131,7 @@ static void list_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 
 	gtk_widget_set_sensitive(dialog->stop_button, TRUE);
 	gtk_widget_set_sensitive(dialog->list_button, FALSE);
+	gtk_widget_set_sensitive(dialog->add_button, FALSE);
 	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
 
@@ -142,6 +144,7 @@ static void stop_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 
 	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 	gtk_widget_set_sensitive(dialog->list_button, TRUE);
+	gtk_widget_set_sensitive(dialog->add_button, FALSE);
 	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
 
@@ -159,11 +162,6 @@ struct _menu_cb_info {
 };
 
 static void
-join_button_data_change_cb(gpointer data) {
-	g_free(data);
-}
-
-static void
 selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 	GtkTreeIter iter;
 	GValue val;
@@ -179,6 +177,7 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 		room = g_value_get_pointer(&val);
 		if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM)) {
 			gtk_widget_set_sensitive(dialog->join_button, FALSE);
+			gtk_widget_set_sensitive(dialog->add_button, FALSE);
 			return;
 		}
 
@@ -187,12 +186,32 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 		info->room = room;
 
 		g_object_set_data_full(G_OBJECT(dialog->join_button), "room-info",
-							   info, join_button_data_change_cb);
+							   info, g_free);
+		g_object_set_data(G_OBJECT(dialog->add_button), "room-info", info);
 
+		gtk_widget_set_sensitive(dialog->add_button, TRUE);
 		gtk_widget_set_sensitive(dialog->join_button, TRUE);
 	} else {
+		gtk_widget_set_sensitive(dialog->add_button, FALSE);
 		gtk_widget_set_sensitive(dialog->join_button, FALSE);
 	}
+}
+
+static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
+{
+	gaim_blist_request_add_chat(info->list->account, NULL, NULL, info->room->name);
+}
+
+static void add_room_to_blist_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+{
+	GaimRoomlist *rl = dialog->roomlist;
+	GaimGtkRoomlist *grl = rl->ui_data;
+	struct _menu_cb_info *info;
+
+	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
+
+	if(info != NULL)
+		do_add_room_cb(grl->tree, info);
 }
 
 static void do_join_cb(GtkWidget *w, struct _menu_cb_info *info)
@@ -205,9 +224,9 @@ static void join_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 	GaimRoomlist *rl = dialog->roomlist;
 	GaimGtkRoomlist *grl = rl->ui_data;
 	struct _menu_cb_info *info;
-		
+
 	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
-	
+
 	if(info != NULL)
 		do_join_cb(grl->tree, info);
 }
@@ -262,11 +281,11 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 	info.list = list;
 	info.room = room;
 
-
 	menu = gtk_menu_new();
 	gaim_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
 		                         G_CALLBACK(do_join_cb), &info, 0, 0, NULL);
-
+	gaim_new_item_from_stock(menu, _("_Add"), GTK_STOCK_ADD,
+		                         G_CALLBACK(do_add_room_cb), &info, 0, 0, NULL);
 
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3, event->time);
@@ -386,7 +405,6 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	gtk_box_pack_start(GTK_BOX(vbox2), dialog->progress, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->progress);
 
-
 	/* button box */
 	bbox = gtk_hbutton_box_new();
 	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
@@ -403,11 +421,21 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	gtk_widget_show(dialog->stop_button);
 
 	/* list button */
-	dialog->list_button = gtk_button_new_with_mnemonic(_("_Get List"));
+	dialog->list_button = gaim_pixbuf_button_from_stock(_("_Get List"), GTK_STOCK_REFRESH,
+	                                                    GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->list_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->list_button), "clicked",
 	                 G_CALLBACK(list_button_cb), dialog);
 	gtk_widget_show(dialog->list_button);
+
+	/* add button */
+	dialog->add_button = gaim_pixbuf_button_from_stock(_("_Add Chat"), GTK_STOCK_ADD,
+	                                                    GAIM_BUTTON_HORIZONTAL);
+	gtk_box_pack_start(GTK_BOX(bbox), dialog->add_button, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(dialog->add_button), "clicked",
+	                 G_CALLBACK(add_room_to_blist_cb), dialog);
+	gtk_widget_set_sensitive(dialog->add_button, FALSE);
+	gtk_widget_show(dialog->add_button);
 
 	/* join button */
 	dialog->join_button = gaim_pixbuf_button_from_stock(_("_Join"), GAIM_STOCK_CHAT,
