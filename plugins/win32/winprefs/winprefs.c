@@ -280,15 +280,14 @@ halt_flash_filter (GtkWidget *widget, GdkEventFocus *event, gpointer data)
 /* FlashWindowEx is only supported by Win98+ and WinNT5+. If it's
    not supported we do it our own way */
 static void
-wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flags)
+wgaim_conv_im_blink (GaimAccount *account, char *sender, char *buffer,
+					 GaimConversation *conv, int flags, void * data)
 {
-	GaimConversation *conv;
 	GaimGtkWindow *win;
 	GtkWidget *window;
 	if (gaim_prefs_get_bool(PREF_IM_BLINK) == FALSE)
 		return;
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, sender, account);
 	if (conv == NULL) {
 	  gaim_debug_info("winprefs", "gar!\n");
 	  return;
