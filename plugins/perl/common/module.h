@@ -159,6 +159,9 @@ typedef GaimLogReadFlags *		Gaim__Log__ReadFlags;
 typedef GaimLogSet *			Gaim__LogSet;
 typedef GaimLogType			Gaim__LogType;
 
+/* network.h */
+typedef GaimNetworkListenCallback	Gaim__NetworkListenCallback;
+
 /* notify.h */
 typedef GaimNotifyCloseCallback		Gaim__NotifyCloseCallback;
 typedef GaimNotifyMsgType		Gaim__NotifyMsgType;

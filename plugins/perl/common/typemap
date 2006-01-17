@@ -89,6 +89,8 @@ Gaim::Log::Logger			T_GaimObj
 Gaim::Log::ReadFlags			T_GaimObj
 Gaim::Log::Set				T_GaimObj
 
+Gaim::NetworkListenCallback		T_PTR
+
 Gaim::NotifyCloseCallback		T_PTR
 Gaim::NotifyMsgType			T_IV
 Gaim::NotifySearchButtonType		T_IV
