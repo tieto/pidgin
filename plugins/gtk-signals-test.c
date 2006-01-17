@@ -48,7 +48,7 @@ blist_created_cb(GaimBuddyList *blist, void *data) {
 }
 
 static void
-blist_drawing_tooltip_cb(GaimBlistNode *node, char **text, void *data) {
+blist_drawing_tooltip_cb(GaimBlistNode *node, GString *str, gboolean full, void *data) {
 	gaim_debug_info("gtk-signal-test", "drawing tooltip cb\n");
 }
 
