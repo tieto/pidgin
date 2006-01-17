@@ -285,8 +285,8 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 					   const char **tos, const char **urls)
 {
 	GaimNotifyMailData *data = NULL;
-	GtkWidget *dialog;
-	GtkWidget *vbox;
+	GtkWidget *dialog = NULL;
+	GtkWidget *vbox = NULL;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *img;
