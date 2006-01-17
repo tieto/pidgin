@@ -1986,25 +1986,97 @@ static void
 gaim_gtkconv_set_active_conversation(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
+	GaimConversation *old_conv;
+	GtkIMHtml *entry;
 	const char *protocol_name;
 
 	g_return_if_fail(conv != NULL);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	old_conv = gtkconv->active_conv;
 
-	if (gtkconv->active_conv == conv)
+	if (old_conv == conv)
 		return;
 
-	gaim_conversation_close_logs(gtkconv->active_conv);
-
+	gaim_conversation_close_logs(old_conv);
 	gtkconv->active_conv = conv;
 
 	gaim_conversation_set_logging(conv,
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
 
+	entry = GTK_IMHTML(gtkconv->entry);
 	protocol_name = gaim_account_get_protocol_name(conv->account);
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry), protocol_name);
+	gtk_imhtml_set_protocol_name(entry, protocol_name);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol_name);
+
+	if (!(conv->features & GAIM_CONNECTION_HTML))
+		gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
+	else if (conv->features & GAIM_CONNECTION_FORMATTING_WBFO &&
+	         !(old_conv->features & GAIM_CONNECTION_FORMATTING_WBFO))
+	{
+		/* The old conversation allowed formatting on parts of the
+		 * buffer, but the new one only allows it on the whole
+		 * buffer.  This code saves the formatting from the current
+		 * position of the cursor, clears the formatting, then
+		 * applies the saved formatting to the entire buffer. */
+
+		gboolean bold;
+		gboolean italic;
+		gboolean underline;
+		char *fontface   = gtk_imhtml_get_current_fontface(entry);
+		char *forecolor  = gtk_imhtml_get_current_forecolor(entry);
+		char *backcolor  = gtk_imhtml_get_current_backcolor(entry);
+		char *background = gtk_imhtml_get_current_background(entry);
+		gint fontsize    = gtk_imhtml_get_current_fontsize(entry);
+		gboolean bold2;
+		gboolean italic2;
+		gboolean underline2;
+
+		gtk_imhtml_get_current_format(entry, &bold, &italic, &underline);
+
+		/* Clear existing formatting */
+		gtk_imhtml_clear_formatting(entry);
+
+		/* Apply saved formatting to the whole buffer. */
+
+		gtk_imhtml_get_current_format(entry, &bold2, &italic2, &underline2);
+
+		if (bold != bold2)
+			gtk_imhtml_toggle_bold(entry);
+
+		if (italic != italic2)
+			gtk_imhtml_toggle_italic(entry);
+
+		if (underline != underline2)
+			gtk_imhtml_toggle_underline(entry);
+
+		gtk_imhtml_toggle_fontface(entry, fontface);
+
+		if (!(conv->features & GAIM_CONNECTION_NO_FONTSIZE))
+			gtk_imhtml_font_set_size(entry, fontsize);
+
+		gtk_imhtml_toggle_forecolor(entry, forecolor);
+
+		if (!(conv->features & GAIM_CONNECTION_NO_BGCOLOR))
+		{
+			gtk_imhtml_toggle_backcolor(entry, backcolor);
+			gtk_imhtml_toggle_background(entry, background);
+		}
+
+		g_free(fontface);
+		g_free(forecolor);
+		g_free(backcolor);
+		g_free(background);
+	}
+	else
+	{
+		/* This is done in default_formatize, which is called from clear_formatting_cb,
+		 * which is (obviously) a clear_formatting signal handler.  However, if we're
+		 * here, we didn't call gtk_imhtml_clear_formatting() (because we want to
+		 * preserve the formatting exactly as it is), so we have to do this now. */
+		gtk_imhtml_set_whole_buffer_formatting_only(entry,
+			(conv->features & GAIM_CONNECTION_FORMATTING_WBFO));
+	}
 
 	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-switched", conv);
 }
