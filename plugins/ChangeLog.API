@@ -144,7 +144,7 @@ version 2.0.0:
 	  so GAIM_TYPE_BOXED is used for the signal types
 	* gaim_gtk_privacy_is_showable(): We do fallback privacy in the core
 	  now, so this would always be TRUE now.
-	* gaim_blist_node_action_new9); use gaim_menu_action_new() instead
+	* gaim_blist_node_action_new(); use gaim_menu_action_new() instead
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
