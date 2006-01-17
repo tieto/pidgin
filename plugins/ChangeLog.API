@@ -92,6 +92,7 @@ version 2.0.0:
 	* gtk_imhtml_get_current_format(): the arguments are now set to TRUE or
 	  FALSE.  Previously they were set to TRUE or left alone.  Also, you
 	  may now pass NULL if you're not interested in a specific formatting.
+	* Smiley Themes: Backslashes must be backslash-escaped.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

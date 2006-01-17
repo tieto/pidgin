@@ -172,8 +172,11 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 			while  (*i) {
 				char l[64];
 				int li = 0;
-				while (!isspace(*i))
+				while (!isspace(*i)) {
+					if (*i == '\\' && *(i+1) != '\0' )
+						i++;
 					l[li++] = *(i++);
+				}
 				if (!sfile) {
 					l[li] = 0;
 					sfile = g_build_filename(dirname, l, NULL);
