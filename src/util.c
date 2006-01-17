@@ -3106,39 +3106,39 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 				/* If we're returning the headers too, we don't need to clean them out */
 				if (gfud->include_headers) {
 					gfud->data_len = content_len + header_len;
-					return;
+				} else {
+
+					if (gfud->len > (header_len + 1))
+						body_len = (gfud->len - header_len);
+
+
+					new_data = g_try_malloc(content_len);
+					if (new_data == NULL) {
+						gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n",
+							content_len, strerror(errno));
+						gaim_input_remove(gfud->inpa);
+						close(sock);
+						gfud->callback(gfud->user_data, NULL, 0);
+						destroy_fetch_url_data(gfud);
+
+						return;
+					}
+
+					/* We may have read part of the body when reading the headers, don't lose it */
+					if (body_len > 0) {
+						tmp += 4;
+						memcpy(new_data, tmp, body_len);
+					}
+
+					/* Out with the old... */
+					g_free(gfud->webdata);
+					gfud->webdata = NULL;
+
+					/* In with the new. */
+					gfud->len = body_len;
+					gfud->data_len = content_len;
+					gfud->webdata = new_data;
 				}
-
-				if (gfud->len > (header_len + 1))
-					body_len = (gfud->len - header_len);
-
-
-				new_data = g_try_malloc(content_len);
-				if (new_data == NULL) {
-					gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n",
-						content_len, strerror(errno));
-					gaim_input_remove(gfud->inpa);
-					close(sock);
-					gfud->callback(gfud->user_data, NULL, 0);
-					destroy_fetch_url_data(gfud);
-
-					return;
-				}
-
-				/* We may have read part of the body when reading the headers, don't lose it */
-				if (body_len > 0) {
-					tmp += 4;
-					memcpy(new_data, tmp, body_len);
-				}
-
-				/* Out with the old... */
-				g_free(gfud->webdata);
-				gfud->webdata = NULL;
-
-				/* In with the new. */
-				gfud->len = body_len;
-				gfud->data_len = content_len;
-				gfud->webdata = new_data;
 			}
 		}
 
