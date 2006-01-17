@@ -1571,6 +1571,8 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 
 	dim = oscar_direct_im_find(od, who);
 	if (dim) {
+		/* TODO: we need to somehow not do this if we're waiting
+		   for the gaim_network_listen_range() call to finish */
 		if (!(dim->connected)) {  /* We'll free the old, unconnected dim, and start over */
 			oscar_direct_im_disconnect(od, dim);
 			gaim_debug_info("oscar",
@@ -1588,7 +1590,8 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 	dim_l->dim = dim;
 	dim_l->cookie = cookie;
 
-	if(!gaim_network_listen_range(5190, 5199, SOCK_STREAM, oscar_direct_im_listen_cb, dim)) {
+	if(!gaim_network_listen_range(5190, 5199, SOCK_STREAM,
+			oscar_direct_im_listen_cb, dim_l)) {
 		gaim_notify_error(gc, NULL, _("Unable to open Direct IM"), NULL);
 		oscar_direct_im_destroy(od, dim);
 		g_free(dim_l);
