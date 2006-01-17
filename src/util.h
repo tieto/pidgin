@@ -870,7 +870,7 @@ gchar *gaim_utf8_try_convert(const char *str);
 gchar *gaim_utf8_salvage(const char *str);
 
 /**
- * Compares two UTF-8 strings.
+ * Compares two UTF-8 strings case-insensitively.
  *
  * @param a The first string.
  * @param b The second string.
