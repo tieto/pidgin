@@ -869,6 +869,14 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
 	close_link_dialog(toolbar);
+	if (toolbar->imhtml) {
+		g_signal_handlers_disconnect_matched(toolbar->imhtml,
+				G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,
+				toolbar);
+		g_signal_handlers_disconnect_matched(GTK_IMHTML(toolbar->imhtml)->text_buffer,
+				G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,
+				toolbar);
+	}
 
 	if (toolbar->sml)
 		free(toolbar->sml);
