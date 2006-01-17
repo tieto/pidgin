@@ -32,6 +32,14 @@
 #include "stun.h"
 #include "upnp.h"
 
+typedef struct {
+	int listenfd;
+	int socket_type;
+	gboolean retry;
+	gboolean adding;
+	GaimNetworkListenCallback cb;
+	gpointer cb_data;
+} ListenUPnPData;
 
 const unsigned char *
 gaim_network_ip_atoi(const char *ip)
@@ -143,7 +151,6 @@ const char *
 gaim_network_get_my_ip(int fd)
 {
 	const char *ip = NULL;
-	GaimUPnPControlInfo* controlInfo = NULL;
 	GaimStunNatDiscovery *stun;
 
 	/* Check if the user specified an IP manually */
@@ -158,16 +165,9 @@ gaim_network_get_my_ip(int fd)
 		stun = gaim_stun_discover(NULL);
 		if (stun != NULL && stun->status == GAIM_STUN_STATUS_DISCOVERED)
 			return stun->publicip;
-	}	
 
-
-	/* attempt to get the ip from a NAT device */
-	if ((controlInfo = gaim_upnp_discover()) != NULL) {
-		ip = gaim_upnp_get_public_ip(controlInfo);
-
-		g_free(controlInfo->controlURL);
-		g_free(controlInfo->serviceType);
-		g_free(controlInfo);
+		/* attempt to get the ip from a NAT device */
+		ip = gaim_upnp_get_public_ip();
 
 		if (ip != NULL)
 		  return ip;
@@ -178,16 +178,50 @@ gaim_network_get_my_ip(int fd)
 }
 
 
-static int
-gaim_network_do_listen(unsigned short port, int socket_type)
+static void
+gaim_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
+{
+	ListenUPnPData *ldata = data;
+
+	if (!success) {
+		gaim_debug_warning("network", "Couldn't create UPnP mapping for...\n");
+		if (ldata->retry) {
+			ldata->retry = FALSE;
+			ldata->adding = FALSE;
+			gaim_upnp_remove_port_mapping(
+				gaim_network_get_port_from_fd(ldata->listenfd),
+				(ldata->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+				gaim_network_set_upnp_port_mapping_cb, ldata);
+			return;
+		}
+	} else if (!ldata->adding) {
+		/* We've tried successfully to remove the port mapping.
+		 * Try to add it again */
+		ldata->adding = TRUE;
+		gaim_upnp_set_port_mapping(
+			gaim_network_get_port_from_fd(ldata->listenfd),
+			(ldata->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+			gaim_network_set_upnp_port_mapping_cb, ldata);
+		return;
+	}
+
+	if (ldata->cb)
+		ldata->cb(ldata->listenfd, ldata->cb_data);
+
+	g_free(ldata);
+}
+
+
+static gboolean
+gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
 	const int on = 1;
-	GaimUPnPControlInfo* controlInfo = NULL;
 #if HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
 	char serv[6];
+	ListenUPnPData *ld;
 
 	/*
 	 * Get a list of addresses on this machine.
@@ -204,9 +238,9 @@ gaim_network_do_listen(unsigned short port, int socket_type)
 		if (errnum == EAI_SYSTEM)
 			gaim_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
 #else
-	gaim_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
+		gaim_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
 #endif
-		return -1;
+		return FALSE;
 	}
 
 	/*
@@ -230,13 +264,13 @@ gaim_network_do_listen(unsigned short port, int socket_type)
 	freeaddrinfo(res);
 
 	if (next == NULL)
-		return -1;
+		return FALSE;
 #else
 	struct sockaddr_in sockin;
 
 	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
 		gaim_debug_warning("network", "socket: %s\n", strerror(errno));
-		return -1;
+		return FALSE;
 	}
 
 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
@@ -249,52 +283,48 @@ gaim_network_do_listen(unsigned short port, int socket_type)
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
 		gaim_debug_warning("network", "bind: %s\n", strerror(errno));
 		close(listenfd);
-		return -1;
+		return FALSE;
 	}
 #endif
 
 	if (socket_type == SOCK_STREAM && listen(listenfd, 4) != 0) {
 		gaim_debug_warning("network", "listen: %s\n", strerror(errno));
 		close(listenfd);
-		return -1;
+		return FALSE;
 	}
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
-	if ((controlInfo = gaim_upnp_discover()) != NULL) {
-		char *type_desc = (socket_type == SOCK_STREAM) ? "TCP" : "UDP";
-		if (!gaim_upnp_set_port_mapping(controlInfo,
-				gaim_network_get_port_from_fd(listenfd),
-				type_desc)) {
-			gaim_upnp_remove_port_mapping(controlInfo,
-				gaim_network_get_port_from_fd(listenfd),
-				type_desc);
-			gaim_upnp_set_port_mapping(controlInfo,
-				gaim_network_get_port_from_fd(listenfd),
-				type_desc);
-
-		}
-		g_free(controlInfo->serviceType);
-		g_free(controlInfo->controlURL);
-		g_free(controlInfo);
-	}
-
 	gaim_debug_info("network", "Listening on port: %hu\n", gaim_network_get_port_from_fd(listenfd));
-	return listenfd;
+
+	ld = g_new0(ListenUPnPData, 1);
+	ld->listenfd = listenfd;
+	ld->adding = TRUE;
+	ld->retry = TRUE;
+	ld->cb = cb;
+	ld->cb_data = cb_data;
+
+	gaim_upnp_set_port_mapping(
+			gaim_network_get_port_from_fd(listenfd),
+			(socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+			gaim_network_set_upnp_port_mapping_cb, ld);
+
+	return TRUE;
 }
 
-int
-gaim_network_listen(unsigned short port, int socket_type)
+gboolean
+gaim_network_listen(unsigned short port, int socket_type,
+		GaimNetworkListenCallback cb, gpointer cb_data)
 {
 	g_return_val_if_fail(port != 0, -1);
 
-	return gaim_network_do_listen(port, socket_type);
+	return gaim_network_do_listen(port, socket_type, cb, cb_data);
 }
 
-int
+gboolean
 gaim_network_listen_range(unsigned short start, unsigned short end,
-		int socket_type)
+		int socket_type, GaimNetworkListenCallback cb, gpointer cb_data)
 {
-	int ret = -1;
+	gboolean ret = FALSE;
 
 	if (gaim_prefs_get_bool("/core/network/ports_range_use")) {
 		start = gaim_prefs_get_int("/core/network/ports_range_start");
@@ -305,8 +335,8 @@ gaim_network_listen_range(unsigned short start, unsigned short end,
 	}
 
 	for (; start <= end; start++) {
-		ret = gaim_network_do_listen(start, socket_type);
-		if (ret >= 0)
+		ret = gaim_network_do_listen(start, socket_type, cb, cb_data);
+		if (ret)
 			break;
 	}
 
@@ -339,4 +369,6 @@ gaim_network_init(void)
 	gaim_prefs_add_bool  ("/core/network/ports_range_use", FALSE);
 	gaim_prefs_add_int   ("/core/network/ports_range_start", 1024);
 	gaim_prefs_add_int   ("/core/network/ports_range_end", 2048);
+
+	gaim_upnp_discover(NULL, NULL);
 }

@@ -1507,6 +1507,51 @@ static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
 	g_free(data);
 }
 
+struct dir_im_listen {
+	struct oscar_direct_im *dim;
+	const guchar *cookie;
+};
+
+static void
+oscar_direct_im_listen_cb(int listenfd, gpointer data) {
+	struct dir_im_listen *dim_l = data;
+	const char *ip;
+	OscarData *od;
+	struct oscar_direct_im *dim = dim_l->dim;
+
+	od = (OscarData *)dim->gc->proto_data;
+
+	/* XXX: shouldn't this be your public IP or something? */
+	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
+
+	if (listenfd >= 0)
+		dim->conn = aim_odc_initiate(od->sess, dim->name, listenfd,
+				gaim_network_ip_atoi(ip),
+				gaim_network_get_port_from_fd(listenfd), dim_l->cookie);
+
+	if (dim->conn != NULL) {
+		char *tmp;
+		GaimConversation *conv;
+
+		od->direct_ims = g_slist_append(od->direct_ims, dim);
+		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
+						oscar_callback, dim->conn);
+		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
+					gaim_odc_initiate, 0);
+
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, dim->name);
+		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), dim->name, ip,
+		                      gaim_network_get_port_from_fd(listenfd));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		g_free(tmp);
+	} else {
+		gaim_notify_error(dim->gc, NULL, _("Unable to open Direct IM"), NULL);
+		oscar_direct_im_destroy(od, dim);
+	}
+
+	g_free(dim_l);
+}
+
 /* this function is used to initiate a direct im session with someone.
  * we start listening on a port and send a request. they either connect
  * or send some kind of reply. If they can't connect, they ask us to
@@ -1520,8 +1565,7 @@ static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
 static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const guchar *cookie) {
 	OscarData *od;
 	struct oscar_direct_im *dim;
-	int listenfd;
-	const char *ip;
+	struct dir_im_listen *dim_l;
 
 	od = (OscarData *)gc->proto_data;
 
@@ -1540,28 +1584,14 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 	dim->gc = gc;
 	g_snprintf(dim->name, sizeof dim->name, "%s", who);
 
-	listenfd = gaim_network_listen_range(5190, 5199, SOCK_STREAM);
-	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
-	if (listenfd >= 0)
-		dim->conn = aim_odc_initiate(od->sess, who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), cookie);
-	if (dim->conn != NULL) {
-		char *tmp;
-		GaimConversation *conv;
+	dim_l = g_new0(struct dir_im_listen, 1);
+	dim_l->dim = dim;
+	dim_l->cookie = cookie;
 
-		od->direct_ims = g_slist_append(od->direct_ims, dim);
-		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
-						oscar_callback, dim->conn);
-		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
-					gaim_odc_initiate, 0);
-
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, who);
-		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), who, ip,
-		                      gaim_network_get_port_from_fd(listenfd));
-		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
-		g_free(tmp);
-	} else {
+	if(!gaim_network_listen_range(5190, 5199, SOCK_STREAM, oscar_direct_im_listen_cb, dim)) {
 		gaim_notify_error(gc, NULL, _("Unable to open Direct IM"), NULL);
 		oscar_direct_im_destroy(od, dim);
+		g_free(dim_l);
 	}
 }
 
@@ -2545,25 +2575,28 @@ static void oscar_send_file_request(GaimXfer *xfer)
 	}
 }
 
+static void
+oscar_xfer_init_listen_cb(int listenfd, gpointer data) {
+	GaimXfer *xfer = data;
+	struct aim_oft_info *oft_info;
+	GaimConnection *gc;
+	OscarData *od;
 
-/*
- * Opens a listener socket in preparation for sending a file
- * This is not called if we are using a rendezvous proxy server
- */
-static void oscar_xfer_init_send(GaimXfer *xfer)
-{
-	struct aim_oft_info *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
-	OscarData *od = gc->proto_data;
-	int listenfd;
+	/* If the ft was canceled before we get here, don't continue */
+	if(gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) {
+		gaim_xfer_unref(xfer);
+		return;
+	}
 
-	gaim_debug_info("oscar", "AAA - in oscar_xfer_init_send\n");
+	oft_info = xfer->data;
+	gc = oft_info->sess->aux_data;
+	od = gc->proto_data;
 
-	/* Create a listening socket and an associated libfaim conn */
-	if ((listenfd = gaim_network_listen_range(5190, 5199, SOCK_STREAM)) < 0) {
+	if (listenfd < 0) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
+
 	xfer->local_port = gaim_network_get_port_from_fd(listenfd);
 	oft_info->port = xfer->local_port;
 	if (aim_sendfile_listen(od->sess, oft_info, listenfd) != 0) {
@@ -2581,6 +2614,26 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
 		gaim_debug_info("oscar","NULL oft_info->conn; not adding watcher\n");
 
 	oscar_send_file_request(xfer);
+}
+
+
+/*
+ * Opens a listener socket in preparation for sending a file
+ * This is not called if we are using a rendezvous proxy server
+ */
+static void oscar_xfer_init_send(GaimXfer *xfer)
+{
+	gaim_debug_info("oscar", "AAA - in oscar_xfer_init_send\n");
+
+	gaim_xfer_ref(xfer);
+
+	/* Create a listening socket and an associated libfaim conn */
+	if (!gaim_network_listen_range(5190, 5199, SOCK_STREAM,
+				oscar_xfer_init_listen_cb, xfer)) {
+		gaim_xfer_unref(xfer);
+		gaim_xfer_cancel_local(xfer);
+		return;
+	}
 }
 
 /*

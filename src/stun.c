@@ -273,22 +273,14 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	}
 }
 
-static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
+
+static void hbn_listen_cb(int fd, gpointer data) {
+	GSList *hosts = data;
 	struct stun_conn *sc;
 	static struct stun_header hdr_data;
-	int ret, fd;
+	int ret;
 
-	if(!hosts || !hosts->data) {
-		nattype.status = GAIM_STUN_STATUS_UNDISCOVERED;
-		nattype.lookup_time = time(NULL);
-		do_callbacks();
-		return;
-	}
-
-
-	fd = gaim_network_listen_range(12108, 12208, SOCK_DGRAM);
-
-	if(!fd) {
+	if(fd < 0) {
 		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
 		nattype.lookup_time = time(NULL);
 		do_callbacks();
@@ -335,6 +327,25 @@ static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
 	sc->packet = &hdr_data;
 	sc->packetsize = sizeof(struct stun_header);
 	sc->timeout = gaim_timeout_add(500, (GSourceFunc) timeoutfunc, sc);
+}
+
+static void hbn_cb(GSList *hosts, gpointer data, const char *error_message) {
+
+	if(!hosts || !hosts->data) {
+		nattype.status = GAIM_STUN_STATUS_UNDISCOVERED;
+		nattype.lookup_time = time(NULL);
+		do_callbacks();
+		return;
+	}
+
+	if (!gaim_network_listen_range(12108, 12208, SOCK_DGRAM, hbn_listen_cb, hosts)) {
+		nattype.status = GAIM_STUN_STATUS_UNKNOWN;
+		nattype.lookup_time = time(NULL);
+		do_callbacks();
+		return;
+	}
+
+
 }
 
 static void do_test1(GaimSrvResponse *resp, int results, gpointer sdata) {
@@ -417,4 +428,5 @@ GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb) {
 
 void gaim_stun_init() {
 	gaim_prefs_add_string("/core/network/stun_server", "");
+	gaim_stun_discover(NULL);
 }

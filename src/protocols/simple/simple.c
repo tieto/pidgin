@@ -1200,6 +1200,26 @@ static gboolean simple_ht_equals_nick(const char *nick1, const char *nick2) {
 	return (gaim_utf8_strcasecmp(nick1, nick2) == 0);
 }
 
+static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
+	struct simple_account_data *sip = (struct simple_account_data*) data;
+
+	if(listenfd == -1) {
+		gaim_connection_error(sip->gc, _("Could not create listen socket"));
+		return;
+	}
+
+	sip->fd = listenfd;
+
+	sip->listenport = gaim_network_get_port_from_fd(sip->fd);
+	sip->listenfd = sip->fd;
+
+	sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
+
+	sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
+	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
+	do_register(sip);
+}
+
 static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *error_message) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 	int addr_size;
@@ -1221,21 +1241,36 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	}
 
 	/* create socket for incoming connections */
-	sip->fd = gaim_network_listen_range(5060, 5160, SOCK_DGRAM);
+	if(!gaim_network_listen_range(5060, 5160, SOCK_DGRAM,
+				simple_udp_host_resolved_listen_cb, sip)) {
+		gaim_connection_error(sip->gc, _("Could not create listen socket"));
+		return;
+	}
+}
 
-	if(sip->fd == -1) {
+static void
+simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
+	struct simple_account_data *sip = (struct simple_account_data*) data;
+	int error = 0;
+
+	sip->listenfd = listenfd;
+	if(sip->listenfd == -1) {
 		gaim_connection_error(sip->gc, _("Could not create listen socket"));
 		return;
 	}
 
-	sip->listenport = gaim_network_get_port_from_fd(sip->fd);
-	sip->listenfd = sip->fd;
-
-	sip->listenpa = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
-
-	sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
-	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
-	do_register(sip);
+	gaim_debug_info("simple", "listenfd: %d\n", sip->listenfd);
+	sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
+	sip->listenpa = gaim_input_add(sip->listenfd, GAIM_INPUT_READ,
+			simple_newconn_cb, sip->gc);
+	gaim_debug_info("simple","connecting to %s port %d\n",
+			sip->realhostname, sip->realport);
+	/* open tcp connection to the server */
+	error = gaim_proxy_connect(sip->account, sip->realhostname,
+			sip->realport, login_cb, sip->gc);
+	if(error) {
+		gaim_connection_error(sip->gc, _("Couldn't create socket"));
+	}
 }
 
 static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
@@ -1244,7 +1279,6 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	gchar *hostname;
 	int port = gaim_account_get_int(sip->account, "port", 0);
 
-	int error = 0;
 
 	/* find the host to connect to */
 	if(results) {
@@ -1266,21 +1300,11 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	/* TCP case */
 	if(! sip->udp) {
 		/* create socket for incoming connections */
-		sip->listenfd = gaim_network_listen_range(5060, 5160, SOCK_STREAM);
-		if(sip->listenfd == -1) {
+		if(!gaim_network_listen_range(5060, 5160, SOCK_STREAM,
+					simple_tcp_connect_listen_cb, sip)) {
 			gaim_connection_error(sip->gc, _("Could not create listen socket"));
 			return;
 		}
-		gaim_debug_info("simple", "listenfd: %d\n", sip->listenfd);
-		sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
-		sip->listenpa = gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, sip->gc);
-		gaim_debug_info("simple","connecting to %s port %d\n", hostname, port);
-		/* open tcp connection to the server */
-		error = gaim_proxy_connect(sip->account, hostname, port, login_cb, sip->gc);
-		if(error) {
-			gaim_connection_error(sip->gc, _("Couldn't create socket"));
-		}
-
 	} else { /* UDP */
 		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 

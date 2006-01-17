@@ -34,6 +34,8 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
+typedef void (*GaimNetworkListenCallback) (int listenfd, gpointer data);
+
 /**
  * Converts a dot-decimal IP address to an array of unsigned
  * chars.  For example, converts 192.168.0.1 to a 4 byte
@@ -109,19 +111,24 @@ const char *gaim_network_get_my_ip(int fd);
  * would want to do that is beyond me.
  *
  * This opens a listening port. The caller will want to set up a watcher
- * of type GAIM_INPUT_READ on the returned fd. It will probably call
- * accept in the callback, and then possibly remove the watcher and close
+ * of type GAIM_INPUT_READ on the fd returned in cb. It will probably call
+ * accept in the watcher callback, and then possibly remove the watcher and close
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
  * @param port The port number to bind to.  Must be greater than 0.
  * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
+ * @param cb The callback to be invoked when the port to listen on is available.
+ *           The file descriptor of the listening socket will be specified in
+ *           this callback, or -1 if no socket could be established.
+ * @param cb_data extra data to be returned when cb is called
  *
- * @return The file descriptor of the listening socket, or -1 if
- *         no socket could be established.
+ * @return TRUE if the callback will be invoked, or FALSE if unable to obtain
+ *              a local socket to listen on.
  */
-int gaim_network_listen(unsigned short port, int socket_type);
+gboolean gaim_network_listen(unsigned short port, int socket_type,
+	GaimNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * Opens a listening port selected from a range of ports.  The range of
@@ -132,8 +139,8 @@ int gaim_network_listen(unsigned short port, int socket_type);
  * Otherwise a port is chosen at random by the kernel.
  *
  * This opens a listening port. The caller will want to set up a watcher
- * of type GAIM_INPUT_READ on the returned fd. It will probably call
- * accept in the callback, and then possibly remove the watcher and close
+ * of type GAIM_INPUT_READ on the fd returned in cb. It will probably call
+ * accept in the watcher callback, and then possibly remove the watcher and close
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
  *
@@ -144,12 +151,16 @@ int gaim_network_listen(unsigned short port, int socket_type);
  *            arg in prefs.
  * @param socket_type The type of socket to open for listening.
  *   This will be either SOCK_STREAM for TCP or SOCK_DGRAM for UDP.
+ * @param cb The callback to be invoked when the port to listen on is available.
+ *           The file descriptor of the listening socket will be specified in
+ *           this callback, or -1 if no socket could be established.
+ * @param cb_data extra data to be returned when cb is called
  *
- * @return The file descriptor of the listening socket, or -1 if
- *         no socket could be established.
+ * @return TRUE if the callback will be invoked, or FALSE if unable to obtain
+ *              a local socket to listen on.
  */
-int gaim_network_listen_range(unsigned short start, unsigned short end,
-	int socket_type);
+gboolean gaim_network_listen_range(unsigned short start, unsigned short end,
+	int socket_type, GaimNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * Gets a port number from a file descriptor.

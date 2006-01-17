@@ -250,23 +250,29 @@ static void irc_dccsend_send_connected(gpointer data, int source, GaimInputCondi
 	gaim_xfer_start(xfer, conn, NULL, 0);
 }
 
-/*
- * This function is called after the user has selected a file to send.
- */
-static void irc_dccsend_send_init(GaimXfer *xfer) {
-	struct irc_xfer_send_data *xd = xfer->data;
-	GaimConnection *gc = gaim_account_get_connection(gaim_xfer_get_account(xfer));
-	struct irc_conn *irc = gc->proto_data;
-	int sock;
+static void
+irc_dccsend_network_listen_cb(int sock, gpointer data)
+{
+	GaimXfer *xfer = data;
+	struct irc_xfer_send_data *xd;
+	GaimConnection *gc;
+	struct irc_conn *irc;
 	const char *arg[2];
 	char *tmp;
 	struct in_addr addr;
 	unsigned short int port;
 
-	xfer->filename = g_path_get_basename(xfer->local_filename);
+	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL
+			|| gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_REMOTE) {
+		gaim_xfer_unref(xfer);
+		return;
+	}
 
-	/* Create a listening socket */
-	sock = gaim_network_listen_range(0, 0, SOCK_STREAM);
+	xd = xfer->data;
+	gc = gaim_account_get_connection(gaim_xfer_get_account(xfer));
+	irc = gc->proto_data;
+
+	gaim_xfer_unref(xfer);
 
 	if (sock < 0) {
 		gaim_notify_error(gc, NULL, _("File Transfer Failed"),
@@ -292,6 +298,27 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 
 	irc_cmd_privmsg(gc->proto_data, "msg", NULL, arg);
 	g_free(tmp);
+}
+
+/*
+ * This function is called after the user has selected a file to send.
+ */
+static void irc_dccsend_send_init(GaimXfer *xfer) {
+	GaimConnection *gc = gaim_account_get_connection(gaim_xfer_get_account(xfer));
+
+	xfer->filename = g_path_get_basename(xfer->local_filename);
+
+	gaim_xfer_ref(xfer);
+
+	/* Create a listening socket */
+	if (!gaim_network_listen_range(0, 0, SOCK_STREAM,
+			irc_dccsend_network_listen_cb, xfer)) {
+		gaim_xfer_unref(xfer);
+		gaim_notify_error(gc, NULL, _("File Transfer Failed"),
+		                  _("Gaim could not open a listening port."));
+		gaim_xfer_cancel_local(xfer);
+	}
+
 }
 
 GaimXfer *irc_dccsend_new_xfer(GaimConnection *gc, const char *who) {

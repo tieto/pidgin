@@ -11,6 +11,7 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -414,15 +415,28 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 			jabber_si_xfer_bytestreams_send_read_cb, xfer);
 }
 
-
 static void
-jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
+jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 {
-	JabberSIXfer *jsx = xfer->data;
+	GaimXfer *xfer = data;
+	JabberSIXfer *jsx;
 	JabberIq *iq;
 	xmlnode *query, *streamhost;
 	char *jid, *port;
-	int fd;
+
+	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) {
+		gaim_xfer_unref(xfer);
+		return;
+	}
+
+	jsx = xfer->data;
+
+	gaim_xfer_unref(xfer);
+
+	if (sock < 0) {
+		gaim_xfer_cancel_local(xfer);
+		return;
+	}
 
 	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET,
 			"http://jabber.org/protocol/bytestreams");
@@ -432,22 +446,20 @@ jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
 	xmlnode_set_attrib(query, "sid", jsx->stream_id);
 
 	streamhost = xmlnode_new_child(query, "streamhost");
-	jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node, jsx->js->user->domain, jsx->js->user->resource);
+	jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
+			jsx->js->user->domain, jsx->js->user->resource);
 	xmlnode_set_attrib(streamhost, "jid", jid);
 	g_free(jid);
 
-	if((fd = gaim_network_listen_range(0, 0, SOCK_STREAM)) < 0) {
-		/* XXX: couldn't open a port, we're fscked */
-		return;
-	}
-
-	xmlnode_set_attrib(streamhost, "host",  gaim_network_get_my_ip(jsx->js->fd));
-	xfer->local_port = gaim_network_get_port_from_fd(fd);
+	/* XXX: shouldn't we use the public IP or something? here */
+	xmlnode_set_attrib(streamhost, "host",
+			gaim_network_get_my_ip(jsx->js->fd));
+	xfer->local_port = gaim_network_get_port_from_fd(sock);
 	port = g_strdup_printf("%hu", xfer->local_port);
 	xmlnode_set_attrib(streamhost, "port", port);
 	g_free(port);
 
-	xfer->watcher = gaim_input_add(fd, GAIM_INPUT_READ,
+	xfer->watcher = gaim_input_add(sock, GAIM_INPUT_READ,
 			jabber_si_xfer_bytestreams_send_connected_cb, xfer);
 
 	/* XXX: insert proxies here */
@@ -455,6 +467,22 @@ jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
 	/* XXX: callback to find out which streamhost they used, or see if they
 	 * screwed it up */
 	jabber_iq_send(iq);
+
+}
+
+static void
+jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
+{
+	gaim_xfer_ref(xfer);
+
+	if(!gaim_network_listen_range(0, 0, SOCK_STREAM,
+				jabber_si_xfer_bytestreams_listen_cb, xfer)) {
+		gaim_xfer_unref(xfer);
+		/* XXX: couldn't open a port, we're fscked */
+		gaim_xfer_cancel_local(xfer);
+		return;
+	}
+
 }
 
 static void jabber_si_xfer_send_method_cb(JabberStream *js, xmlnode *packet,
