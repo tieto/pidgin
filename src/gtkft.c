@@ -398,7 +398,7 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 		dialog->selected_xfer = xfer;
 	}
 	else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->expander),
+		gtk_expander_set_expanded(GTK_EXPANDER(dialog->expander),
 									 FALSE);
 
 		gtk_widget_set_sensitive(dialog->expander, FALSE);
