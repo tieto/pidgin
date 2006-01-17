@@ -15,7 +15,7 @@ version 2.0.0:
 	* Buddy icons are now shown in tooltips (Felipe Contreras)
 	* Tooltips now contain additional information about a "Person" that
 	  contains multiple online buddies
-	* Added a "Last Seen" field to buddy tooltips (Richard Laager)
+	* Added a "Last Seen" field to buddy tooltips
 	* Contacts will auto-expand when buddies are dragged around
 	* If Gaim is exited with the buddy list hidden in the docklet, it
 	  will remain hidden when Gaim is started again (Scott Shedden)
@@ -52,7 +52,7 @@ version 2.0.0:
 	* A volume control in the preferences
 
 	Log Viewer:
-	* Log viewer aggregates logs from the same "Person" (Richard Laager)
+	* Log viewer aggregates logs from the same "Person"
 	* When opening the log viewer, show the most recent log by default
 	  (Peter McCurdy)
 
@@ -63,9 +63,13 @@ version 2.0.0:
 	  Gaim (Sadrul Habib Chowdhury)
 	* Overhauled the system tray/docklet plugin (Casey Harkins)
 	* Text Replacement Plugin rewritten, works in real time and far more
-	  intuitively (Benjamin Kahn with help from Richard Laager)
+	  intuitively (Benjamin Kahn)
 	* Entries in the text replacement plugin are now sorted
-	  alphabetically (Richard Laager)
+	  alphabetically
+	* The text replacement plugin allows non-whole-word replacement rules
+	  (Levi Bard)
+	* The text replacement plugin offers both case sensitive matching and
+	  automatic case handling
 	* I'dle Ma'ker plugin now has easier an method to unidle accounts, a way
 	  to idle all accounts at once, and a way to unidle all accounts idled by
 	  the plugin (John Bailey, Sadrul Habib Chowdhury)
@@ -104,7 +108,7 @@ version 2.0.0:
 	IRC Features:
 	* SSL support for IRC connections (Daniel Atallah)
 	* Show an error message when temporarily unable to join an IRC
-	  channel or change your nick (Richard Laager)
+	  channel or change your nick
 	* Added /nickserv, /memoserv, /chanserv and /operserv
 	  commands (Joao Luís Marques Pinto)
 
@@ -144,6 +148,11 @@ version 2.0.0:
 	* Add an SVG version of our desktop icon, gaim.svg (John Oyler)
 	* If a given protocol don't support privacy, we now handle blocking in
 	  the core. (Jean-Yves Lefort)
+	* Smiley themes can now include spaces in the smiley definitions.
+	  The spaces (and now backslashes) must be backslash-escaped.
+	  (Sadrul Habib Chowdhury)
+	* New e-mail notices are now grouped into one dialog.
+	  (Sadrul Habib Chowdhury)
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
