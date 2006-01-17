@@ -107,13 +107,16 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 	type = gaim_conversation_get_type(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
+	/* Always linkfy the text for display */
+	displayed = gaim_markup_linkify(message);
+
 	if ((conv->features & GAIM_CONNECTION_HTML) &&
 		!(msgflags & GAIM_MESSAGE_RAW))
 	{
-		displayed = gaim_markup_linkify(message);
+		sent = g_strdup(displayed);
 	}
 	else
-		displayed = g_strdup(message);
+		sent = g_strdup(message);
 
 	plugin_return =
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
@@ -132,8 +135,6 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 	gaim_signal_emit(gaim_conversations_get_handle(),
 		(type == GAIM_CONV_TYPE_IM ? "wrote-im-msg" : "wrote-chat-msg"),
 		account, conv, displayed);
-
-	sent = g_strdup(displayed);
 
 	msgflags |= GAIM_MESSAGE_SEND;
 
