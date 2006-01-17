@@ -53,34 +53,42 @@ stroke_close(GtkWidget *widget, void *data)
 }
 
 static void
+switch_page(GaimGtkWindow *win, GtkDirectionType dir)
+{
+	int count, current;
+
+#if GTK_CHECK_VERSION(2,2,0)
+	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(win->notebook));
+#else
+	count = g_list_length(GTK_NOTEBOOK(win->notebook)->children);
+#endif
+	current = gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook));
+
+	if (dir == GTK_DIR_LEFT)
+	{
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), current - 1);
+	}
+	else if (dir == GTK_DIR_RIGHT)
+	{
+		if (current == count - 1)
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
+		else
+			gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), current + 1);
+	}
+}
+
+static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *win;
-	GList *conversations;
 
 	conv  = (GaimConversation *)data;
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	win   = gtkconv->win;
 
-	for (conversations = win->gtkconvs;
-			conversations != NULL;
-			conversations = conversations->next)
-	{
-		if (conversations->data == gtkconv)
-		{
-			if (conversations->prev != NULL) {
-				gaim_gtk_conv_window_switch_gtkconv(win,
-						conversations->prev->data);
-			} else {
-				gaim_gtk_conv_window_switch_gtkconv(win,
-						g_list_last(conversations)->data);
-			}
-
-			return;
-		}
-	}
+	switch_page(win, GTK_DIR_LEFT);
 }
 
 static void
@@ -88,28 +96,11 @@ stroke_next_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
 	GaimGtkWindow *win;
-	GList *conversations;
 
 	conv  = (GaimConversation *)data;
 	win   = GAIM_GTK_CONVERSATION(conv)->win;
 
-	for (conversations = win->gtkconvs;
-			conversations != NULL;
-			conversations = conversations->next)
-	{
-		if (((GaimGtkConversation *)conversations->data)->active_conv == conv)
-		{
-			if (conversations->next != NULL) {
-				gaim_gtk_conv_window_switch_gtkconv(win,
-						conversations->next->data);
-			} else {
-				gaim_gtk_conv_window_switch_gtkconv(win,
-						g_list_first(conversations)->data);
-			}
-
-			return;
-		}
-	}
+	switch_page(win, GTK_DIR_RIGHT);
 }
 
 static void
