@@ -28,10 +28,14 @@
 #include "gtkpluginpref.h"
 #include "debug.h"
 #include "prefs.h"
+#include "request.h"
 
 #include <string.h>
 
 #define GAIM_RESPONSE_CONFIGURE 98121
+
+static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model,
+                                  GtkTreeIter *iter, gboolean unload);
 
 static GtkWidget *expander = NULL;
 static GtkWidget *plugin_dialog = NULL;
@@ -153,6 +157,57 @@ update_plugin_list(void *data)
 	}
 }
 
+static void plugin_loading_common(GaimPlugin *plugin, GtkTreeView *view, gboolean loaded)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_tree_view_get_model(view);
+
+	if (gtk_tree_model_get_iter_first(model, &iter)) {
+		do {
+			GaimPlugin *plug;
+			GtkTreeSelection *sel;
+
+			gtk_tree_model_get(model, &iter, 2, &plug, -1);
+
+			if (plug != plugin)
+				continue;
+
+			gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, loaded, -1);
+
+			/* If the loaded/unloaded plugin is the selected row,
+			 * update the pref_button. */
+			sel = gtk_tree_view_get_selection(view);
+			if (gtk_tree_selection_get_selected(sel, &model, &iter))
+			{
+				gtk_tree_model_get(model, &iter, 2, &plug, -1);
+				if (plug == plugin)
+				{
+					gtk_widget_set_sensitive(pref_button,
+						loaded
+						&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
+							&& GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame)
+						 || (plug->info->prefs_info
+							&& plug->info->prefs_info->get_plugin_pref_frame)));
+				}
+			}
+
+			break;
+		} while (gtk_tree_model_iter_next(model, &iter));
+	}
+}
+
+static void plugin_load_cb(GaimPlugin *plugin, gpointer data)
+{
+	GtkTreeView *view = (GtkTreeView *)data;
+	plugin_loading_common(plugin, view, TRUE);
+}
+
+static void plugin_unload_cb(GaimPlugin *plugin, gpointer data)
+{
+	GtkTreeView *view = (GtkTreeView *)data;
+	plugin_loading_common(plugin, view, FALSE);
+}
+
 static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug)
 {
 	switch (response) {
@@ -168,35 +223,99 @@ static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug
 	}
 }
 
-static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
+static void plugin_unload_confirm_cb(gpointer *data)
+{
+	GaimPlugin *plugin = (GaimPlugin *)data[0];
+	GtkTreeModel *model = (GtkTreeModel *)data[1];
+	GtkTreeIter *iter = (GtkTreeIter *)data[2];
+
+	plugin_toggled_stage_two(plugin, model, iter, TRUE);
+
+	g_free(data);
+}
+
+static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 {
 	GtkTreeModel *model = (GtkTreeModel *)data;
-	GtkTreeIter iter;
+	GtkTreeIter *iter = g_new(GtkTreeIter, 1);
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
 	GaimPlugin *plug;
-	gchar buf[1024];
-	gchar *name = NULL, *description = NULL;
 	GtkWidget *dialog = NULL;
-	GdkCursor *wait;
 
-	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter, 2, &plug, -1);
+	gtk_tree_model_get_iter(model, iter, path);
+	gtk_tree_path_free(path);
+	gtk_tree_model_get(model, iter, 2, &plug, -1);
 
 	/* Apparently, GTK+ won't honor the sensitive flag on cell renderers for booleans. */
 	if (gaim_plugin_is_unloadable(plug))
+	{
+		g_free(iter);
 		return;
-
-	wait = gdk_cursor_new (GDK_WATCH);
-	gdk_window_set_cursor(plugin_dialog->window, wait);
-	gdk_cursor_unref(wait);
+	}
 
 	if (!gaim_plugin_is_loaded(plug))
+	{
+		GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
+		gdk_window_set_cursor(plugin_dialog->window, wait);
+		gdk_cursor_unref(wait);
+
 		gaim_plugin_load(plug);
-	else {
+		plugin_toggled_stage_two(plug, model, iter, FALSE);
+
+		gdk_window_set_cursor(plugin_dialog->window, NULL);
+	}
+	else
+	{
 		if (plugin_pref_dialogs != NULL &&
 			(dialog = g_hash_table_lookup(plugin_pref_dialogs, plug)))
 			pref_dialog_response_cb(dialog, GTK_RESPONSE_DELETE_EVENT, plug);
+
+		if (plug->dependent_plugins != NULL)
+		{
+			GString *tmp = g_string_new(_("The following plugins will be unloaded."));
+			GList *l;
+			gpointer *cb_data;
+
+			for (l = plug->dependent_plugins ; l != NULL ; l = l->next)
+			{
+				const char *dep_name = (const char *)l->data;
+				GaimPlugin *dep_plugin = gaim_plugins_find_with_id(dep_name);
+				g_return_if_fail(dep_plugin != NULL);
+
+				g_string_append_printf(tmp, "\n\t%s\n", _(dep_plugin->info->name));
+			}
+
+			cb_data = g_new(gpointer, 3);
+			cb_data[0] = plug;
+			cb_data[1] = model;
+			cb_data[2] = iter;
+
+			gaim_request_action(plugin_dialog, NULL,
+			                    _("Multiple plugins will be unloaded."),
+			                    tmp->str, 0, cb_data, 2,
+			                    _("Unload Plugins"), G_CALLBACK(plugin_unload_confirm_cb),
+			                    _("Cancel"), NULL);
+			g_string_free(tmp, TRUE);
+		}
+		else
+			plugin_toggled_stage_two(plug, model, iter, TRUE);
+	}
+}
+
+static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, gboolean unload)
+{
+	gchar *name = NULL;
+	gchar *description = NULL;
+
+	if (unload)
+	{
+		GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
+		gdk_window_set_cursor(plugin_dialog->window, wait);
+		gdk_cursor_unref(wait);
+
 		gaim_plugin_unload(plug);
+
+		gdk_window_set_cursor(plugin_dialog->window, NULL);
 	}
 
 	gtk_widget_set_sensitive(pref_button,
@@ -206,37 +325,36 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
-	gdk_window_set_cursor(plugin_dialog->window, NULL);
-
 	name = g_markup_escape_text(_(plug->info->name), -1);
 	description = g_markup_escape_text(_(plug->info->description), -1);
 
 	if (plug->error != NULL) {
 		gchar *error = g_markup_escape_text(plug->error, -1);
 		gchar *desc;
-		g_snprintf(buf, sizeof(buf),
+		gchar *text = g_strdup_printf(
 				   "<span size=\"larger\">%s %s</span>\n\n"
 				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
 				   "%s",
 				   name, plug->info->version, error, description);
 		desc = g_strdup_printf("<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
 			       plug->info->name, plug->info->version, error);
-		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-				    1, desc,
-				    -1);
+		gtk_list_store_set(GTK_LIST_STORE (model), iter,
+				   1, desc,
+				   -1);
 		g_free(desc);
 		g_free(error);
-		gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
+		gtk_label_set_markup(GTK_LABEL(plugin_details), text);
+		g_free(text);
 	}
 	g_free(name);
 	g_free(description);
 
 
-	gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-			    0, gaim_plugin_is_loaded(plug),
-			    -1);
+	gtk_list_store_set(GTK_LIST_STORE (model), iter,
+	                   0, gaim_plugin_is_loaded(plug),
+	                   -1);
+	g_free(iter);
 
-	gtk_tree_path_free(path);
 	gaim_gtk_plugins_save();
 }
 
@@ -341,6 +459,8 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
+		gaim_request_close_with_handle(plugin_dialog);
+		gaim_signals_disconnect_by_handle(plugin_dialog);
 		gtk_widget_destroy(d);
 		if (plugin_pref_dialogs != NULL) {
 			g_hash_table_destroy(plugin_pref_dialogs);
@@ -435,16 +555,21 @@ void gaim_gtk_plugin_dialog_show()
 
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), sw, TRUE, TRUE, 0);
 
-	ls = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
+	ls = gtk_list_store_new(4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
 					     1, GTK_SORT_ASCENDING);
 
 	update_plugin_list(ls);
 
-	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ls));
+	event_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
 
 	g_signal_connect(G_OBJECT(event_view), "row-activated",
 				G_CALLBACK(show_plugin_prefs_cb), event_view);
+
+	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-load", plugin_dialog,
+	                    GAIM_CALLBACK(plugin_load_cb), event_view);
+	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-unload", plugin_dialog,
+	                    GAIM_CALLBACK(plugin_unload_cb), event_view);
 
 	rend = gtk_cell_renderer_toggle_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
@@ -455,8 +580,8 @@ void gaim_gtk_plugin_dialog_show()
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
 	gtk_tree_view_column_set_sort_column_id(col, 0);
-	g_signal_connect (G_OBJECT(rend), "toggled",
-			  G_CALLBACK(plugin_load), ls);
+	g_signal_connect(G_OBJECT(rend), "toggled",
+			 G_CALLBACK(plugin_toggled), ls);
 
 	rendt = gtk_cell_renderer_text_new();
 	g_object_set(rendt,
