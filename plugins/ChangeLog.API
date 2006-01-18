@@ -14,8 +14,6 @@ version 2.0.0:
 	* the add_buddy perl sub.  The sub now takes the account as the first
 	  argument, and buddy and group as the second and third.  It also adds
 	  the buddy to the server-side buddy list of the given account.
-	* gaim_blist_node_action_new, added a fourth argument, a GList of
-	  GaimBlistNodeActions to be created as a submenu of the item.
 	* gaim_connection_new, gaim_account_connect and gaim_account_register no
 	  longer return a GaimConnection
 	* keep_alive in GaimConnection is renamed to keepalive
