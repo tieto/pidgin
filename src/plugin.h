@@ -126,6 +126,7 @@ struct _GaimPlugin
 	void *ipc_data;                        /**< IPC data.                 */
 	void *extra;                           /**< Plugin-specific data.     */
 	gboolean unloadable;                   /**< Unloadable                */
+	GList *dependent_plugins;              /**< Plugins depending on this */
 };
 
 #define GAIM_PLUGIN_LOADER_INFO(plugin) \

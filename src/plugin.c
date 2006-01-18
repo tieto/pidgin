@@ -504,16 +504,16 @@ gaim_plugin_load(GaimPlugin *plugin)
 
 		if (dep_plugin == NULL)
 		{
-			char buf[BUFSIZ];
+			char *tmp;
 
-			g_snprintf(buf, sizeof(buf),
-					   _("The required plugin %s was not found. "
-						 "Please install this plugin and try again."),
-					   dep_name);
+			tmp = g_strdup_printf(
+			                      _("The required plugin %s was not found. "
+			                        "Please install this plugin and try again."),
+			                      dep_name);
 
 			gaim_notify_error(NULL, NULL,
-							  _("Gaim was unable to load your plugin."),
-							  buf);
+			                  _("Gaim encountered errors loading the plugin."), tmp);
+			g_free(tmp);
 
 			if (dep_list != NULL)
 				g_list_free(dep_list);
@@ -533,15 +533,14 @@ gaim_plugin_load(GaimPlugin *plugin)
 		{
 			if (!gaim_plugin_load(dep_plugin))
 			{
-				char buf[BUFSIZ];
+				char *tmp;
 
-				g_snprintf(buf, sizeof(buf),
-						   _("The required plugin %s was unable to load."),
-						   plugin->info->name);
+				tmp = g_strdup_printf(_("The required plugin %s was unable to load."),
+				                      plugin->info->name);
 
 				gaim_notify_error(NULL, NULL,
-								  _("Gaim was unable to load your plugin."),
-								  buf);
+				                 _("Gaim was unable to load your plugin."), tmp);
+				g_free(tmp);
 
 				if (dep_list != NULL)
 					g_list_free(dep_list);
@@ -549,6 +548,14 @@ gaim_plugin_load(GaimPlugin *plugin)
 				return FALSE;
 			}
 		}
+	}
+
+	/* Third pass: note that other plugins are dependencies of this plugin.
+	 * This is done separately in case we had to bail out earlier. */
+	for (l = dep_list; l != NULL; l = l->next)
+	{
+		GaimPlugin *dep_plugin = (GaimPlugin *)l->data;
+		dep_plugin->dependent_plugins = g_list_prepend(dep_plugin->dependent_plugins, plugin->info->id);
 	}
 
 	if (dep_list != NULL)
@@ -601,6 +608,8 @@ gboolean
 gaim_plugin_unload(GaimPlugin *plugin)
 {
 #ifdef GAIM_PLUGINS
+	GList *l;
+	
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	loaded_plugins = g_list_remove(loaded_plugins, plugin);
@@ -616,6 +625,43 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	gaim_notify_close_with_handle(plugin);
 
 	plugin->loaded = FALSE;
+
+	/* Unload all plugins that depend on this plugin. */
+	for (l = plugin->dependent_plugins; l != NULL; l = l->next)
+	{
+		const char * dep_name = (const char *)l->data;
+		GaimPlugin *dep_plugin;
+
+		dep_plugin = gaim_plugins_find_with_id(dep_name);
+
+		if (dep_plugin != NULL && gaim_plugin_is_loaded(dep_plugin))
+		{
+			if (!gaim_plugin_unload(dep_plugin))
+			{
+				char *translated_name = g_strdup(_(dep_plugin->info->name));
+				char *tmp;
+
+				tmp = g_strdup_printf(_("The dependent plugin %s failed to unload."),
+				                      translated_name);
+				g_free(translated_name);
+
+				gaim_notify_error(NULL, NULL,
+				                  _("Gaim encountered errors unloading the plugin."), tmp);
+				g_free(tmp);
+			}
+		}
+	}
+
+	/* Remove this plugin from each dependency's dependent_plugins list. */
+	for (l = plugin->info->dependencies; l != NULL; l = l->next)
+	{
+		const char *dep_name = (const char *)l->data;
+		GaimPlugin *dependency;
+
+		dependency = gaim_plugins_find_with_id(dep_name);
+
+		dependency->dependent_plugins = g_list_remove(dependency->dependent_plugins, plugin->info->id);
+	}
 
 	if (plugin->native_plugin) {
 		if (plugin->info->unload != NULL)
