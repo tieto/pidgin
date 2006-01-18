@@ -2,10 +2,12 @@
 
 #include "internal.h"
 
+#include "account.h"
 #include "blist.h"
 #include "conversation.h"
 #include "debug.h"
 #include "signals.h"
+#include "status.h"
 #include "version.h"
 
 #include "plugin.h"
@@ -27,17 +29,23 @@
 #define PREFS_BASE    "/plugins/core/psychic"
 #define PREF_BUDDIES  PREFS_BASE "/buddies_only"
 #define PREF_NOTICE   PREFS_BASE "/show_notice"
+#define PREF_STATUS   PREFS_BASE "/activate_online"
 
 
 static void
 buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
   GaimConversation *gconv;
 
-  if(gaim_prefs_get_bool(PREF_BUDDIES)) {
-    if(! gaim_find_buddy(acct, name)) {
-      DEBUG_INFO("not in blist, doing nothing\n");
-      return;
-    }
+  if(gaim_prefs_get_bool(PREF_STATUS) &&
+     gaim_status_is_available(gaim_account_get_active_status(acct))) {
+    DEBUG_INFO("not available, doing nothing\n");
+    return;
+  }
+
+  if(gaim_prefs_get_bool(PREF_BUDDIES) &&
+     ! gaim_find_buddy(acct, name)) {
+    DEBUG_INFO("not in blist, doing nothing\n");
+    return;
   }
 
   gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, acct);
@@ -65,7 +73,12 @@ get_plugin_pref_frame(GaimPlugin *plugin) {
   frame = gaim_plugin_pref_frame_new();
   
   pref = gaim_plugin_pref_new_with_name(PREF_BUDDIES);
-  gaim_plugin_pref_set_label(pref, _("Only enable for users on the buddy list"));
+  gaim_plugin_pref_set_label(pref, _("Only enable for users on"
+				     " the buddy list"));
+  gaim_plugin_pref_frame_add(frame, pref);
+
+  pref = gaim_plugin_pref_new_with_name(PREF_STATUS);
+  gaim_plugin_pref_set_label(pref, _("Disable when away"));
   gaim_plugin_pref_frame_add(frame, pref);
 
   pref = gaim_plugin_pref_new_with_name(PREF_NOTICE);
@@ -131,6 +144,7 @@ init_plugin(GaimPlugin *plugin) {
   gaim_prefs_add_none(PREFS_BASE);
   gaim_prefs_add_bool(PREF_BUDDIES, FALSE);
   gaim_prefs_add_bool(PREF_NOTICE, TRUE);
+  gaim_prefs_add_bool(PREF_STATUS, TRUE);
 }
 
 
