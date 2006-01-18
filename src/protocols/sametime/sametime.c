@@ -1239,7 +1239,8 @@ static void blist_node_menu_cb(GaimBlistNode *node,
      them all to a conference */
   if(gaim_group_on_account(group, acct)) {
     act = gaim_menu_action_new(_("Invite Group to Conference..."),
-                               GAIM_CALLBACK(blist_menu_group_invite), pd, NULL);
+                               GAIM_CALLBACK(blist_menu_group_invite),
+			       pd, NULL);
     *menu = g_list_append(*menu, NULL);
   }
 #endif
@@ -3492,7 +3493,7 @@ static GList *mw_prpl_blist_node_menu(GaimBlistNode *node) {
   l = g_list_append(l, NULL);
 
   act = gaim_menu_action_new(_("Invite to Conference..."),
-                             blist_menu_conf, NULL, NULL);
+                             GAIM_CALLBACK(blist_menu_conf), NULL, NULL);
   l = g_list_append(l, act);
 
   /** note: this never gets called for a GaimGroup, have to use the
