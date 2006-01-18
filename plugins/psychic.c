@@ -37,7 +37,7 @@ buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
   GaimConversation *gconv;
 
   if(gaim_prefs_get_bool(PREF_STATUS) &&
-     gaim_status_is_available(gaim_account_get_active_status(acct))) {
+     ! gaim_status_is_available(gaim_account_get_active_status(acct))) {
     DEBUG_INFO("not available, doing nothing\n");
     return;
   }
