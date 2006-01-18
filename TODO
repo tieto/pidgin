@@ -73,4 +73,26 @@
 * Prefs {{{
 	* on upgrade from 1.x, the timestamp preference often gets lost.
 }}}
-
+* system log {{{
+	* The system log minimally should tell me what _I_ do in gaim.  It should (minimally) tell me about
+	  my accounts and actions.  It should thus list
+	  * gaim start and quit
+	  * Account connection
+	  * account disconnection, and reason if caused by error.
+	  * account state changes, IFF we are logging that for buddies.
+		* This might include the state message(s).
+	  * This might be done using one or more files.
+	* historically, the system log has also functioned to log things about buddies that do not relate
+	  to a specific conversation.  While I(luke) do not at all object to this, it could be argued that
+	  such functionality more properly belongs in a plugin, such as the buddy state notification plugin.
+	  if we continue to implement such functionality, it could include:
+	  * logging when a buddy signs on, including in some form what account sees that change.
+	  * logging when a buddy signs off, including in some form what account sees that change.
+	  * "		"	 " "	 goes idle, "		  "  "	  "    "    "       "    "    "
+	  * "		"	 " "	 goes away, "		  "  "	  "    "    "       "    "    "
+	  * "		"	 " "	 becomes available, " "    "  "    "    "       "    "    "
+	  * like the logging of my own accounts, this could be done in one or more files.
+	    * one potential downside of using multiple files is the idea that either the file's contents
+		  duplicate information contained in the file's location/name, or that we need to manipulate
+		  the display so as to convey that information to the user from the graphical viewer
+}}}
