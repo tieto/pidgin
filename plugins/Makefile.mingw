@@ -122,6 +122,7 @@ plugins: \
 		relnot.dll \
 		spellchk.dll \
 		statenotify.dll \
+		timestamp_format.dll \
 		timestamp.dll
 
 

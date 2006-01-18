@@ -722,6 +722,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\tcl.dll"
     Delete "$INSTDIR\plugins\ticker.dll"
     Delete "$INSTDIR\plugins\timestamp.dll"
+    Delete "$INSTDIR\plugins\timestamp_format.dll"
     Delete "$INSTDIR\plugins\win2ktrans.dll"
     Delete "$INSTDIR\plugins\winprefs.dll"
     RMDir "$INSTDIR\plugins"
