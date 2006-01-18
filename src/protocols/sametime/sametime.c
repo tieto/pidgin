@@ -1239,7 +1239,7 @@ static void blist_node_menu_cb(GaimBlistNode *node,
      them all to a conference */
   if(gaim_group_on_account(group, acct)) {
     act = gaim_menu_action_new(_("Invite Group to Conference..."),
-                               blist_menu_group_invite, pd, NULL);
+                               GAIM_CALLBACK(blist_menu_group_invite), pd, NULL);
     *menu = g_list_append(*menu, NULL);
   }
 #endif
@@ -1248,7 +1248,7 @@ static void blist_node_menu_cb(GaimBlistNode *node,
   owner = gaim_blist_node_get_string(node, GROUP_KEY_OWNER);
   if(owner && !strcmp(owner, gaim_account_get_username(acct))) {
     act = gaim_menu_action_new(_("Get Notes Address Book Info"),
-                               blist_menu_nab, pd, NULL);
+                               GAIM_CALLBACK(blist_menu_nab), pd, NULL);
     *menu = g_list_append(*menu, act);
   }
 }
