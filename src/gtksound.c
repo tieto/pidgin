@@ -394,6 +394,9 @@ expire_old_child(gpointer data)
     return FALSE; /* do not run again */
 }
 
+/* Uncomment the following line to enable debugging of clipping in the scaling. */
+/* #define DEBUG_CLIPPING */
+
 static void
 scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 			   double intercept, double minclip, double maxclip,
@@ -411,6 +414,10 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 		case 16:
 			for(i = 0; i < nframes * format->channels; i++) {
 				v = ((data16[i] - intercept) * scale) + intercept;
+#ifdef DEBUG_CLIPPING
+				if (v > maxclip)
+					printf("Clipping detected!\n");
+#endif
 				v = CLAMP(v, minclip, maxclip);
 				data16[i]=(gint16)v;
 			}
@@ -418,6 +425,10 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 		case 32:
 			for(i = 0; i < nframes * format->channels; i++) {
 				v = ((data32[i] - intercept) * scale) + intercept;
+#ifdef DEBUG_CLIPPING
+				if (v > maxclip)
+					printf("Clipping detected!\n");
+#endif
 				v = CLAMP(v, minclip, maxclip);
 				data32[i]=(gint32)v;
 			}
@@ -426,6 +437,10 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 		case 64:
 			for(i = 0; i < nframes * format->channels; i++) {
 				v = ((data64[i] - intercept) * scale) + intercept;
+#ifdef DEBUG_CLIPPING
+				if (v > maxclip)
+					printf("Clipping detected!\n");
+#endif
 				v = CLAMP(v, minclip, maxclip);
 				data64[i]=(gint64)v;
 			}
@@ -510,7 +525,10 @@ gaim_gtk_sound_play_file(const char *filename)
 		return;
 	else if (pid == 0) {
 		/* Child process */
-		float scale = ((float) volume * volume) / 2500;
+
+		/* 0.6561 = 0.81 ^ 2, because the sounds we ship clip if the
+		 * volume is greater than 81 (without this scale factor). */
+		float scale = ((float) volume * volume) * 0.6561 / 2500;
 		file = afOpenFile(filename, "rb", NULL);
 		if(file) {
 			ao_device *device;
