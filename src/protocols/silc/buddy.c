@@ -1548,7 +1548,7 @@ char *silcgaim_tooltip_text(GaimBuddy *b, gboolean full)
 			g_free(moodstr);
 		}
 	if (statusstr) {
-		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Status Text"), statusstr);
+		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Message"), statusstr);
 		g_free(statusstr);
 	}
 
