@@ -697,10 +697,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 						_("Birthday"), text);
 			} else if(!strcmp(child->name, "ADR")) {
-				/* show which address it is */
-				if(child->child)
-					g_string_append_printf(info_text, "<b>%s:</b><br/>",
-							_("Address"));
+				gboolean address_line_added = FALSE;
+
 				for(child2 = child->child; child2; child2 = child2->next)
 				{
 					char *text2;
@@ -709,32 +707,44 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 						continue;
 
 					text2 = xmlnode_get_data(child2);
-					if(text2 && !strcmp(child2->name, "POBOX")) {
+					if (text2 == NULL)
+						continue;
+
+					/* We do this here so that it's not added if all the child
+					 * elements are empty. */
+					if (!address_line_added)
+					{
+						g_string_append_printf(info_text, "<b>%s:</b><br/>",
+								_("Address"));
+						address_line_added = TRUE;
+					}
+
+					if(!strcmp(child2->name, "POBOX")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("P.O. Box"), text2);
-					} else if(text2 && !strcmp(child2->name, "EXTADR")) {
+					} else if(!strcmp(child2->name, "EXTADR")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Extended Address"), text2);
-					} else if(text2 && !strcmp(child2->name, "STREET")) {
+					} else if(!strcmp(child2->name, "STREET")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Street Address"), text2);
-					} else if(text2 && !strcmp(child2->name, "LOCALITY")) {
+					} else if(!strcmp(child2->name, "LOCALITY")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Locality"), text2);
-					} else if(text2 && !strcmp(child2->name, "REGION")) {
+					} else if(!strcmp(child2->name, "REGION")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Region"), text2);
-					} else if(text2 && !strcmp(child2->name, "PCODE")) {
+					} else if(!strcmp(child2->name, "PCODE")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Postal Code"), text2);
-					} else if(text2 && (!strcmp(child2->name, "CTRY")
-								|| !strcmp(child2->name, "COUNTRY"))) {
+					} else if(!strcmp(child2->name, "CTRY")
+								|| !strcmp(child2->name, "COUNTRY")) {
 						g_string_append_printf(info_text,
 								"&nbsp;<b>%s:</b> %s<br/>",
 								_("Country"), text2);
