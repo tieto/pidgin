@@ -2399,46 +2399,6 @@ static void convo_features(struct mwConversation *conv) {
 }
 
 
-#if 0
-/** triggered from mw_conversation_opened if the appropriate plugin
-    preference is set. This will open a window for the conversation
-    before the first message is sent. */
-static void convo_do_psychic(struct mwConversation *conv) {
-  struct mwServiceIm *srvc;
-  struct mwSession *session;
-  struct mwGaimPluginData *pd;
-  GaimConnection *gc;
-  GaimAccount *acct;
-
-  struct mwIdBlock *idb;
-
-  GaimConversation *gconv;
-  GaimConvWindow *win;
-
-  srvc = mwConversation_getService(conv);
-  session = mwService_getSession(MW_SERVICE(srvc));
-  pd = mwSession_getClientData(session);
-  gc = pd->gc;
-  acct = gaim_connection_get_account(gc);
-
-  idb = mwConversation_getTarget(conv);
-
-  gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-					      idb->user, acct);
-  if(! gconv) {
-    gconv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, idb->user);
-  }
-
-  g_return_if_fail(gconv != NULL);
-
-  win = gaim_conversation_get_window(gconv);
-  g_return_if_fail(win != NULL);
-
-  gaim_conv_window_show(win);
-}
-#endif
-
-
 static void mw_conversation_opened(struct mwConversation *conv) {
   struct mwServiceIm *srvc;
   struct mwSession *session;
@@ -3732,56 +3692,6 @@ static char *im_mime_img_content_disp(GaimStoredImage *img) {
 }
 
 
-#if NB_HACK
-static char *nb_im_encode(GaimConnection *gc, const char *message) {
-  GaimAccount *acct;
-  const char *enc;
-  char *ret;
-  GError *error = NULL;
-
-  acct = gaim_connection_get_account(gc);
-  g_return_val_if_fail(acct != NULL, NULL);
-
-  enc = gaim_account_get_string(acct, MW_KEY_ENCODING,
-				MW_PLUGIN_DEFAULT_ENCODING);
-  g_return_val_if_fail(enc != NULL, NULL);
-
-  ret = g_convert_with_fallback(message, strlen(message),
-				enc, "UTF-8", "?",
-				NULL, NULL, &error);
- 
- if(error) {
-    DEBUG_INFO("problem converting to %s: %s\n",
-	       enc, NSTR(error->message));
-    g_error_free(error);
- }
- 
- /* something went so wrong that not even the fallback worked */
- if(! ret) ret = g_strdup(message);
-
- return ret;
-}
-#endif
-
-
-#if NB_HACK
-static gboolean is_nb(struct mwConversation *conv) {
-  struct mwLoginInfo *info;
-
-  info = mwConversation_getTargetInfo(conv);
-  if(! info) return FALSE;
-
-  /* NotesBuddy can be at least three different type IDs (all in the
-     0x1400 range), or it can show up as 0x1000. However, if we're
-     calling this check, then we're already in HTML or MIME mode, so
-     we can discount the real 0x1000 */
-  /* I tried to avoid having any client-type-dependant code in here, I
-     really did. Oh well. CURSE YOU NOTESBUDDY */
-  return ((info->type == 0x1000) || ((info->type & 0xff00) == 0x1400));
-}
-#endif
-
-
 /** turn an IM with embedded images into a multi-part mime document */
 static char *im_mime_convert(GaimConnection *gc,
 			     struct mwConversation *conv,
@@ -3872,35 +3782,11 @@ static char *im_mime_convert(GaimConnection *gc,
   part = gaim_mime_part_new(doc);
   gaim_mime_part_set_field(part, "Content-Disposition", "inline");
 
-#if NB_HACK
-  if(is_nb(conv)) {
-    GaimAccount *acct = gaim_connection_get_account(gc);
-
-    tmp = (char *) gaim_account_get_string(acct, MW_KEY_ENCODING,
-					   MW_PLUGIN_DEFAULT_ENCODING);
-    tmp = g_strdup_printf("text/html; charset=\"%s\"", tmp);
-    gaim_mime_part_set_field(part, "Content-Type", tmp);
-    g_free(tmp);
-    
-    gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "7bit");
-
-    tmp = nb_im_encode(gc, str->str);
-    gaim_mime_part_set_data(part, tmp);
-    g_free(tmp);
-
-  } else {
-    gaim_mime_part_set_field(part, "Content-Type", "text/html");
-    gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "8bit");
-    gaim_mime_part_set_data(part, str->str);
-  }
-
-#else
   tmp = gaim_utf8_ncr_encode(str->str);
   gaim_mime_part_set_field(part, "Content-Type", "text/html");
   gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "7bit");
   gaim_mime_part_set_data(part, tmp);
   g_free(tmp);
-#endif
 
   g_string_free(str, TRUE);
 
@@ -3955,25 +3841,10 @@ static int mw_prpl_send_im(GaimConnection *gc,
     } else if(mwConversation_supports(conv, mwImSend_HTML)) {
       /* send an HTML message */
 
-#if NB_HACK
-      if(is_nb(conv)) {
-
-	/* html messages need the notesbuddy hack */
-	char *msg = nb_im_encode(gc, message);
-	tmp = gaim_strdup_withhtml(msg);	
-	g_free(msg);
-
-      } else {
-	/* need to do this to get the \n to <br> conversion */
-	tmp = gaim_strdup_withhtml(message);
-      }
-
-#else
       char *ncr;
       ncr = gaim_utf8_ncr_encode(message);
       tmp = gaim_strdup_withhtml(ncr);
       g_free(ncr);
-#endif
 
       ret = mwConversation_send(conv, mwImSend_HTML, tmp);
       g_free(tmp);
@@ -5650,14 +5521,6 @@ static void mw_plugin_init(GaimPlugin *plugin) {
   opt = gaim_account_option_int_new(_("Port"), MW_KEY_PORT,
 				    MW_PLUGIN_DEFAULT_PORT);
   l = g_list_append(l, opt);
-
-#if NB_HACK
-  /* notesbuddy hack encoding */
-  opt = gaim_account_option_string_new(_("NotesBuddy encoding"),
-				       MW_KEY_ENCODING,
-				       MW_PLUGIN_DEFAULT_ENCODING);
-  l = g_list_append(l, opt);
-#endif
 
   { /* copy the old force login setting from prefs if it's
        there. Don't delete the preference, since there may be more
