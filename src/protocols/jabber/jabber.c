@@ -1020,22 +1020,24 @@ static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 		const char *sub;
 		GList *l;
 
-		if(jb->subscription & JABBER_SUB_FROM) {
-			if(jb->subscription & JABBER_SUB_TO)
-				sub = _("Both");
-			else if(jb->subscription & JABBER_SUB_PENDING)
-				sub = _("From (To pending)");
-			else
-				sub = _("From");
-		} else {
-			if(jb->subscription & JABBER_SUB_TO)
-				sub = _("To");
-			else if(jb->subscription & JABBER_SUB_PENDING)
-				sub = _("None (To pending)");
-			else
-				sub = _("None");
+		if (full) {
+			if(jb->subscription & JABBER_SUB_FROM) {
+				if(jb->subscription & JABBER_SUB_TO)
+					sub = _("Both");
+				else if(jb->subscription & JABBER_SUB_PENDING)
+					sub = _("From (To pending)");
+				else
+					sub = _("From");
+			} else {
+				if(jb->subscription & JABBER_SUB_TO)
+					sub = _("To");
+				else if(jb->subscription & JABBER_SUB_PENDING)
+					sub = _("None (To pending)");
+				else
+					sub = _("None");
+			}
+			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Subscription"), sub);
 		}
-		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Subscription"), sub);
 
 		for(l=jb->resources; l; l = l->next) {
 			char *text = NULL;

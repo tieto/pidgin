@@ -1543,38 +1543,42 @@ char *silcgaim_tooltip_text(GaimBuddy *b, gboolean full)
 	}
 
 	silcgaim_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
-		if (moodstr) {
-			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Mood"), moodstr);
-			g_free(moodstr);
-		}
+
 	if (statusstr) {
 		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Message"), statusstr);
 		g_free(statusstr);
 	}
+
+	if (full) {
+		if (moodstr) {
+			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Mood"), moodstr);
+			g_free(moodstr);
+		}
 
 		if (contactstr) {
 			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Preferred Contact"), contactstr);
 			g_free(contactstr);
 		}
 
-	if (langstr) {
-		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Preferred Language"), langstr);
-		g_free(langstr);
-	}
+		if (langstr) {
+			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Preferred Language"), langstr);
+			g_free(langstr);
+		}
 
-	if (devicestr) {
-		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Device"), devicestr);
-		g_free(devicestr);
-	}
+		if (devicestr) {
+			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Device"), devicestr);
+			g_free(devicestr);
+		}
 
-	if (tzstr) {
-		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Timezone"), tzstr);
-		g_free(tzstr);
-	}
+		if (tzstr) {
+			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Timezone"), tzstr);
+			g_free(tzstr);
+		}
 
-	if (geostr) {
-		g_string_append_printf(s, "\n<b>%s:</b> %s", _("Geolocation"), geostr);
-		g_free(geostr);
+		if (geostr) {
+			g_string_append_printf(s, "\n<b>%s:</b> %s", _("Geolocation"), geostr);
+			g_free(geostr);
+		}
 	}
 
 	buf = g_string_free(s, FALSE);

@@ -554,11 +554,17 @@ msn_tooltip_text(GaimBuddy *buddy, gboolean full)
 							   _("Idle") : gaim_status_get_name(status));
 	}
 
-	if (user)
+	if (full && user)
 	{
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
 							   (user->list_op & (1 << MSN_LIST_RL)) ?
 							   _("Yes") : _("No"));
+
+	/* XXX: This is being shown in non-full tooltips because the
+	 * XXX: blocked icon overlay isn't always accurate for MSN.
+	 * XXX: This can die as soon as gaim_privacy_check() knows that
+	 * XXX: this prpl always honors both the allow and deny lists. */
+	if (user)
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Blocked"),
 							   (user->list_op & (1 << MSN_LIST_BL)) ?
 							   _("Yes") : _("No"));

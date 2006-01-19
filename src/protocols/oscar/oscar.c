@@ -7726,7 +7726,8 @@ static char *oscar_tooltip_text(GaimBuddy *b, gboolean full) {
 		GaimStatus *status;
 		const char *message;
 
-		oscar_string_append_info(gc, str, "\n", b, userinfo);
+		if (full)
+			oscar_string_append_info(gc, str, "\n", b, userinfo);
 
 		presence = gaim_buddy_get_presence(b);
 		status = gaim_presence_get_active_status(presence);
