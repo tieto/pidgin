@@ -3180,8 +3180,8 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
 
   GString *str;
   const char *message;
-  char *tmp = NULL;
   const char *status;
+  char *tmp;
 
   gc = b->account->gc;
   pd = gc->proto_data;
@@ -3193,12 +3193,11 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
 
   if(message != NULL && gaim_utf8_strcasecmp(status, message)) {
     tmp = g_markup_escape_text(message, -1);
-  }
-
-  g_string_append_printf(str, _("\n<b>Status:</b> %s"), status);
-  if(tmp != NULL) {
-    g_string_append_printf(str, _("\n<b>Message:</b> %s"), tmp);
+    g_string_append_printf(str, _("\n<b>%s:</b> %s"), status, tmp);
     g_free(tmp);
+
+  } else {
+    g_string_append_printf(str, _("\n<b>Status:</b> %s"), status);
   }
 
   if(full) {
