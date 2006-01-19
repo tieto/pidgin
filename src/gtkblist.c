@@ -2577,6 +2577,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 	}
 	else if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
+		/* NOTE: THIS FUNCTION IS NO LONGER CALLED FOR CONTACTS
+		 * See create_tip_for_node(). */
+
 		GaimContact *c;
 		GaimBuddy *b;
 		GaimPresence *presence;
@@ -2613,25 +2616,23 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 			g_free(tmp);
 		}
 
-		/* Contact Alias */
-		if (full && GAIM_BLIST_NODE_IS_CONTACT(node) &&
-			(c->alias != NULL))
-		{
-			tmp = g_markup_escape_text(c->alias, -1);
-			g_string_append_printf(str, _("\n<b>Contact Alias:</b> %s"), tmp);
-			g_free(tmp);
-		}
-
 		/* Alias */
-		if (full && (b->alias != NULL) && (b->alias[0] != '\0'))
+		/* If there's not a contact alias, the node is being displayed with
+		 * this alias, so there's no point in showing it in the tooltip. */
+		if (full && b->alias != NULL && b->alias[0] != '\0' &&
+		    (c->alias != NULL && c->alias[0] != '\0'))
 		{
 			tmp = g_markup_escape_text(b->alias, -1);
-			g_string_append_printf(str, _("\n<b>Alias:</b> %s"), tmp);
+			g_string_append_printf(str, _("\n<b>Buddy Alias:</b> %s"), tmp);
 			g_free(tmp);
 		}
 
 		/* Nickname/Server Alias */
-		if (full && b->server_alias != NULL)
+		/* Likewise, only show this if there's a contact or buddy alias. */
+		if (full &&
+		    b->server_alias != NULL && b->server_alias[0] != '\0' &&
+		    ((b->alias != NULL && b->alias[0] != '\0') ||
+		     (c->alias != NULL && c->alias[0] != '\0')))
 		{
 			tmp = g_markup_escape_text(b->server_alias, -1);
 			g_string_append_printf(str, _("\n<b>Nickname:</b> %s"), tmp);
