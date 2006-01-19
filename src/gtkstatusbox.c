@@ -50,6 +50,7 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 static void update_size (GtkGaimStatusBox *box);
+static gint get_statusbox_index(GtkGaimStatusBox *box, GaimSavedStatus *saved_status);
 
 static void gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box);
@@ -353,8 +354,9 @@ static void
 update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 {
 	GaimSavedStatus *saved_status;
-	guint index;
+	gint index;
 	const char *message;
+	GList *list;
 
 	/* this function is inappropriate for ones with accounts */
 	if (status_box->account)
@@ -368,29 +370,19 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	 */
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 
-	if (gaim_savedstatus_has_substatuses(saved_status))
-		index = 5;
+	list = gaim_savedstatuses_get_popular(6);
+	if ((index = g_list_index(list, saved_status)) > -1)
+		index += 5;
 	else
 	{
-		switch (gaim_savedstatus_get_type(saved_status))
+		if (gaim_savedstatus_has_substatuses(saved_status))
+			index = GTK_LIST_STORE(status_box->dropdown_store)->length - 2;
+		else
 		{
-			case GAIM_STATUS_AVAILABLE:
-				index = 0;
-				break;
-			case GAIM_STATUS_AWAY:
-				index = 1;
-				break;
-			case GAIM_STATUS_INVISIBLE:
-				index = 2;
-				break;
-			case GAIM_STATUS_OFFLINE:
-				index = 3;
-				break;
-			default:
-				index = 5;
-				break;
+			index = get_statusbox_index(status_box, saved_status);
 		}
 	}
+	g_list_free(list);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
 
 	message = gaim_savedstatus_get_message(saved_status);
@@ -427,7 +419,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GtkIconSize icon_size;
-	GdkPixbuf *pixbuf;
+	GdkPixbuf *away_pix, *avl_pix, *pixbuf;
 
 	list = gaim_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -439,7 +431,9 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	else
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
 
-	pixbuf = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox), GAIM_STOCK_STATUS_AWAY,
+	away_pix = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox), GAIM_STOCK_STATUS_AWAY,
+									icon_size, "GtkGaimStatusBox");
+	avl_pix = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox), GAIM_STOCK_STATUS_ONLINE,
 									icon_size, "GtkGaimStatusBox");
 
 	gtk_gaim_status_box_add_separator(statusbox);
@@ -447,6 +441,16 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	for (cur = list; cur != NULL; cur = cur->next)
 	{
 		GaimSavedStatus *saved = cur->data;
+
+		switch (gaim_savedstatus_get_type(saved))
+		{
+			case GAIM_STATUS_AVAILABLE:
+				pixbuf = avl_pix;
+				break;
+			default:
+				pixbuf = away_pix;
+				break;
+		}
 		gtk_gaim_status_box_add(statusbox, GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
 				pixbuf,	gaim_savedstatus_get_title(saved), NULL,
 				GINT_TO_POINTER(gaim_savedstatus_get_creation_time(saved)));
@@ -1152,8 +1156,11 @@ static void update_size(GtkGaimStatusBox *status_box)
 static void remove_typing_cb(GtkGaimStatusBox *status_box)
 {
 	if (status_box->typing == 0)
+	{
 		/* Nothing has changed, so we don't need to do anything */
+		update_to_reflect_current_status(status_box);
 		return;
+	}
 
 	activate_currently_selected_status(status_box);
 
@@ -1248,28 +1255,58 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	}
 	g_list_free(accounts);
 
-	if (status_box->imhtml_visible)
+	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
 	{
-		GtkTextBuffer *buf;
-		GtkTextIter start, end;
-		gtk_widget_show_all(status_box->vbox);
-		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
-			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+		if (status_box->imhtml_visible)
+		{
+			GtkTextBuffer *buf;
+			GtkTextIter start, end;
+			gtk_widget_show_all(status_box->vbox);
+			if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
+				status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
+			}
+			gtk_widget_grab_focus(status_box->imhtml);
+			buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+			gtk_text_buffer_get_start_iter(buf, &start);
+			gtk_text_buffer_get_end_iter(buf, &end);
+			gtk_text_buffer_move_mark_by_name(buf, "insert", &end);
+			gtk_text_buffer_move_mark_by_name(buf, "selection_bound", &start);
 		}
-		gtk_widget_grab_focus(status_box->imhtml);
-		buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
-		gtk_text_buffer_get_start_iter(buf, &start);
-		gtk_text_buffer_get_end_iter(buf, &end);
-		gtk_text_buffer_move_mark_by_name(buf, "insert", &end);
-		gtk_text_buffer_move_mark_by_name(buf, "selection_bound", &start);
-	}
-	else
-	{
-		gtk_widget_hide_all(status_box->vbox);
-		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
-			activate_currently_selected_status(status_box); /* This is where we actually set the status */
+		else
+		{
+			gtk_widget_hide_all(status_box->vbox);
+			if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+				activate_currently_selected_status(status_box); /* This is where we actually set the status */
+		}
 	}
 	gtk_gaim_status_box_refresh(status_box);
+}
+
+static gint
+get_statusbox_index(GtkGaimStatusBox *box, GaimSavedStatus *saved_status)
+{
+	gint index;
+
+	switch (gaim_savedstatus_get_type(saved_status))
+	{
+		case GAIM_STATUS_AVAILABLE:
+			index = 0;
+			break;
+		case GAIM_STATUS_AWAY:
+			index = 1;
+			break;
+		case GAIM_STATUS_INVISIBLE:
+			index = 2;
+			break;
+		case GAIM_STATUS_OFFLINE:
+			index = 3;
+			break;
+		default:
+			index = GTK_LIST_STORE(box->dropdown_store)->length - 2;
+			break;
+	}
+
+	return index;
 }
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
@@ -1280,6 +1317,16 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 		if (box->typing) {
 			gtk_gaim_status_box_pulse_typing(box);
 			g_source_remove(box->typing);
+		} else {
+			gint index;
+			GaimSavedStatus *saved = gaim_savedstatus_get_current();
+
+			index = get_statusbox_index(box, saved);
+
+			gtk_widget_set_sensitive(GTK_WIDGET(box), FALSE);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(box), index);
+			gtk_widget_set_sensitive(GTK_WIDGET(box), TRUE);
+			gtk_widget_grab_focus(box->imhtml);
 		}
 		box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, box);
 	}
