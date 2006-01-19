@@ -2270,7 +2270,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 		w = td->width;
-		h = td->height + 8;
+		h = td->height;
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBlistNode *child;
 		GaimBuddy *b = gaim_contact_get_priority_buddy((GaimContact *)node);
