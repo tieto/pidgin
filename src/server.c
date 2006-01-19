@@ -498,96 +498,70 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 */
 	flags |= GAIM_MESSAGE_RECV;
 
+	if (cnv == NULL)
+		cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
+
+	gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, flags, mtime);
+	g_free(message);
+
 	/*
-	 * Alright. Two cases for how to handle this. Either we're away or
-	 * we're not. If we're not, then it's easy. If we are, then there
-	 * are three or four different ways of handling it and different
-	 * things we have to do for each.
+	 * Don't autorespond if:
+	 *
+	 *  - it's not supported on this connection
+	 *  - we are available
+	 *  - or it's disabled
+	 *  - or we're not idle and the 'only auto respond if idle' pref
+	 *    is set
 	 */
-	if (!gaim_presence_is_available(presence))
+	if (gc->flags & GAIM_CONNECTION_AUTO_RESP)
 	{
-		time_t t = time(NULL);
-		struct last_auto_response *lar;
 		const gchar *auto_reply_pref;
-		const char *away_msg;
+		const char *away_msg = NULL;
 
-		if (cnv == NULL)
-			cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
-
-		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, flags, mtime);
-
-		/*
-		 * Don't autorespond if:
-		 *
-		 *  - it's not supported on this connection
-		 *  - we are available
-		 *  - or it's disabled
-		 *  - or we're not idle and the 'only auto respond if idle' pref
-		 *    is set
-		 */
 		auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
 
-		if (!(gc->flags & GAIM_CONNECTION_AUTO_RESP) ||
-				gaim_presence_is_available(presence) ||
-				!strcmp(auto_reply_pref, "never") ||
-				(!gaim_presence_is_idle(presence) &&
-				!strcmp(auto_reply_pref, "awayidle"))) {
-
+		if (gaim_presence_is_available(presence) ||
+		    !strcmp(auto_reply_pref, "never") ||
+		    (!gaim_presence_is_idle(presence) &&
+		     !strcmp(auto_reply_pref, "awayidle")))
+		{
 			g_free(name);
-			g_free(message);
 			return;
 		}
-
-		/*
-		 * This used to be based on the conversation window. But um, if
-		 * you went away, and someone sent you a message and got your
-		 * auto-response, and then you closed the window, and then the
-		 * sent you another one, they'd get the auto-response back too
-		 * soon. Besides that, we need to keep track of this even if we've
-		 * got a queue. So the rest of this block is just the auto-response,
-		 * if necessary.
-		 */
-		lar = get_last_auto_response(gc, name);
-		if ((t - lar->sent) < SECS_BEFORE_RESENDING_AUTORESPONSE) {
-			g_free(name);
-			g_free(message);
-			return;
-		}
-		lar->sent = t;
 
 		status = gaim_presence_get_active_status(presence);
-		if (status == NULL)
-			return;
+		if (status != NULL)
+			away_msg = gaim_value_get_string(
+				gaim_status_get_attr_value(status, "message"));
 
-		away_msg = gaim_value_get_string(
-			gaim_status_get_attr_value(status, "message"));
+		if ((away_msg != NULL) && (*away_msg != '\0')) {
+			struct last_auto_response *lar;
+			time_t now = time(NULL);
 
-		if ((away_msg == NULL) || (*away_msg == '\0'))
-			return;
+			/*
+			 * This used to be based on the conversation window. But um, if
+			 * you went away, and someone sent you a message and got your
+			 * auto-response, and then you closed the window, and then they
+			 * sent you another one, they'd get the auto-response back too
+			 * soon. Besides that, we need to keep track of this even if we've
+			 * got a queue. So the rest of this block is just the auto-response,
+			 * if necessary.
+			 */
+			lar = get_last_auto_response(gc, name);
+			if ((now - lar->sent) >= SECS_BEFORE_RESENDING_AUTORESPONSE)
+			{
+				lar->sent = now;
 
-		serv_send_im(gc, name, away_msg, GAIM_MESSAGE_AUTO_RESP);
+				serv_send_im(gc, name, away_msg, GAIM_MESSAGE_AUTO_RESP);
 
-		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, away_msg,
-						   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
-						   mtime);
-	}
-	else
-	{
-		/*
-		 * We're not away. This is easy. If the convo window doesn't
-		 * exist, create and update it (if it does exist it was updated
-		 * earlier), then play a sound indicating we've received it and
-		 * then display it. Easy.
-		 */
-
-		if (cnv == NULL)
-			cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gc->account, name);
-
-		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, flags, mtime);
+				gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, away_msg,
+				                   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
+				                   mtime);
+			}
+		}
 	}
 
 	g_free(name);
-	g_free(message);
 }
 
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
