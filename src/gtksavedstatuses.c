@@ -702,7 +702,9 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		gaim_savedstatus_set_type(saved_status, type);
 	}
 
-	if (*unformatted != '\0')
+	if (*unformatted == '\0')
+		gaim_savedstatus_set_message(saved_status, NULL);
+	else
 		gaim_savedstatus_set_message(saved_status, message);
 
 	/* Set any substatuses */
