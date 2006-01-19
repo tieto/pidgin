@@ -3226,29 +3226,29 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
 
   str = g_string_new(NULL);
 
-  tmp = status_text(b);
-  g_string_append_printf(str, _("\n<b>Status</b>: %s"), tmp);
-
   tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
   if(tmp) {
     tmp = g_markup_escape_text(tmp, -1);
-    g_string_append_printf(str, _("\n<b>Message</b>: %s"), tmp);
+    g_string_append_printf(str, _("\n<b>%s</b>: %s"), status_text(b), tmp);
     g_free((char *) tmp);
+
+  } else {
+    g_string_append_printf(str, _("\n<b>Status</b>: %s"), status_text(b));
   }
 
-  tmp = user_supports_text(pd->srvc_aware, b->name);
-  if(tmp) {
-    g_string_append_printf(str, _("\n<b>Supports</b>: %s"), tmp);
-    g_free((char *) tmp);
+  if(full) {
+    tmp = user_supports_text(pd->srvc_aware, b->name);
+    if(tmp) {
+      g_string_append_printf(str, _("\n<b>Supports</b>: %s"), tmp);
+      g_free((char *) tmp);
+    }
+
+    if(buddy_is_external(b)) {
+      g_string_append(str, _("\n<b>External User</b>"));
+    }
   }
 
-  if(buddy_is_external(b)) {
-    g_string_append(str, _("\n<b>External User</b>"));
-  }
-
-  tmp = str->str;
-  g_string_free(str, FALSE);
-  return (char *) tmp;
+  return g_string_free(str, FALSE);
 }
 
 
@@ -3257,7 +3257,7 @@ static GList *mw_prpl_status_types(GaimAccount *acct) {
   GaimStatusType *type;
 
   type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, MW_STATE_ACTIVE,
-			      _("Available"), TRUE);
+			      NULL, TRUE);
   gaim_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
 			    gaim_value_new(GAIM_TYPE_STRING));
   types = g_list_append(types, type);
