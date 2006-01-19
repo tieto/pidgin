@@ -1040,6 +1040,7 @@ static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 		for(l=jb->resources; l; l = l->next) {
 			char *text = NULL;
 			char *res = NULL;
+			const char *state;
 
 			jbr = l->data;
 
@@ -1055,16 +1056,21 @@ static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 			if(jbr->name)
 				res = g_strdup_printf(" (%s)", jbr->name);
 
+			state = jabber_buddy_state_get_name(jbr->state);
+			if (text != NULL && !gaim_utf8_strcasecmp(state, text)) {
+				g_free(text);
+				text = NULL;
+			}
+
 			g_string_append_printf(ret, "\n<b>%s%s:</b> %s%s%s",
 					_("Status"),
 					res ? res : "",
-					jabber_buddy_state_get_name(jbr->state),
+					state,
 					text ? ": " : "",
 					text ? text : "");
-			if(text)
-				g_free(text);
-			if(res)
-				g_free(res);
+
+			g_free(text);
+			g_free(res);
 		}
 
 		if(!GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
