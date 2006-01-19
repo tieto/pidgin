@@ -87,6 +87,7 @@ typedef struct
 	/* Action */
 	GtkWidget *open_win;
 	GtkWidget *popup;
+	GtkWidget *popup_entry;
 	GtkWidget *send_msg;
 	GtkWidget *send_msg_entry;
 	GtkWidget *exec_cmd;
@@ -247,7 +248,7 @@ static void
 save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	const char *name;
-	const char *message, *command, *sound;
+	const char *message, *command, *sound, *reason;
 	GaimPounceEvent events   = GAIM_POUNCE_NONE;
 	GaimPounceOption options = GAIM_POUNCE_OPTION_NONE;
 
@@ -296,7 +297,9 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	message = gtk_entry_get_text(GTK_ENTRY(dialog->send_msg_entry));
 	command = gtk_entry_get_text(GTK_ENTRY(dialog->exec_cmd_entry));
 	sound   = gtk_entry_get_text(GTK_ENTRY(dialog->play_sound_entry));
+	reason  = gtk_entry_get_text(GTK_ENTRY(dialog->popup_entry));
 
+	if (*reason == '\0') reason = NULL;
 	if (*message == '\0') message = NULL;
 	if (*command == '\0') command = NULL;
 	if (*sound   == '\0') sound   = NULL;
@@ -331,6 +334,8 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 									 "command", command);
 	gaim_pounce_action_set_attribute(dialog->pounce, "play-sound",
 									 "filename", sound);
+	gaim_pounce_action_set_attribute(dialog->pounce, "popup-notify",
+									 "reason", reason);
 
 	/* Set the defaults for next time. */
 	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/open-window",
@@ -640,6 +645,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	dialog->send_msg_entry    = gtk_entry_new();
 	dialog->exec_cmd_entry    = gtk_entry_new();
+	dialog->popup_entry       = gtk_entry_new();
 	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("Brows_e..."));
 	dialog->play_sound_entry  = gtk_entry_new();
 	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Br_owse..."));
@@ -647,6 +653,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	gtk_widget_set_sensitive(dialog->send_msg_entry,    FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_entry,    FALSE);
+	gtk_widget_set_sensitive(dialog->popup_entry,       FALSE);
 	gtk_widget_set_sensitive(dialog->exec_cmd_browse,   FALSE);
 	gtk_widget_set_sensitive(dialog->play_sound_entry,  FALSE);
 	gtk_widget_set_sensitive(dialog->play_sound_browse, FALSE);
@@ -655,6 +662,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
 	gtk_size_group_add_widget(sg, dialog->open_win);
 	gtk_size_group_add_widget(sg, dialog->popup);
+	gtk_size_group_add_widget(sg, dialog->popup_entry);
 	gtk_size_group_add_widget(sg, dialog->send_msg);
 	gtk_size_group_add_widget(sg, dialog->send_msg_entry);
 	gtk_size_group_add_widget(sg, dialog->exec_cmd);
@@ -668,6 +676,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_table_attach(GTK_TABLE(table), dialog->open_win,         0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->popup,            0, 1, 1, 2,
+					 GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), dialog->popup_entry,      1, 4, 1, 2,
 					 GTK_FILL, 0, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), dialog->send_msg,         0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
@@ -692,6 +702,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	gtk_widget_show(dialog->open_win);
 	gtk_widget_show(dialog->popup);
+	gtk_widget_show(dialog->popup_entry);
 	gtk_widget_show(dialog->send_msg);
 	gtk_widget_show(dialog->send_msg_entry);
 	gtk_widget_show(dialog->exec_cmd);
@@ -709,6 +720,10 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(dialog->send_msg), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive),
 					 dialog->send_msg_entry);
+
+	g_signal_connect(G_OBJECT(dialog->popup), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive),
+					 dialog->popup_entry);
 
 	exec_widgets = g_ptr_array_new();
 	g_ptr_array_add(exec_widgets,dialog->exec_cmd_entry);
@@ -737,6 +752,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 					 dialog->play_sound_entry);
 
 	g_signal_connect(G_OBJECT(dialog->send_msg_entry), "activate",
+					 G_CALLBACK(save_pounce_cb), dialog);
+	g_signal_connect(G_OBJECT(dialog->popup_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
@@ -870,6 +887,13 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 													  "message")) != NULL)
 		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry), value);
+		}
+
+		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+													  "popup-notify",
+													  "reason")) != NULL)
+		{
+			gtk_entry_set_text(GTK_ENTRY(dialog->popup_entry), value);
 		}
 
 		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
@@ -1389,8 +1413,14 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	account = gaim_pounce_get_pouncer(pounce);
 
 	buddy = gaim_find_buddy(account, pouncee);
-
-	alias = gaim_buddy_get_alias(buddy);
+	if (buddy != NULL)
+	{
+		alias = gaim_buddy_get_alias(buddy);
+		if (alias == NULL)
+			alias = pouncee;
+	}
+	else
+		alias = pouncee;
 
 	if (gaim_pounce_action_is_enabled(pounce, "open-window"))
 	{
@@ -1402,14 +1432,17 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 	if (gaim_pounce_action_is_enabled(pounce, "popup-notify"))
 	{
-		char tmp[1024];
+		char *tmp;
 		const char *name_shown;
+		const char *reason;
+		reason = gaim_pounce_action_get_attribute(pounce, "popup-notify",
+														  "reason");
 
 		/*
 		 * Here we place the protocol name in the pounce dialog to lessen
 		 * confusion about what protocol a pounce is for.
 		 */
-		g_snprintf(tmp, sizeof(tmp),
+		tmp = g_strdup_printf(
 				   (events & GAIM_POUNCE_TYPING) ?
 				   _("%s has started typing to you (%s)") :
 				   (events & GAIM_POUNCE_SIGNON) ?
@@ -1433,13 +1466,21 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 		/*
 		 * Ok here is where I change the second argument, title, from
-		 * NULL to the account name if that's all we have or the account
-		 * alias if we have that
+		 * NULL to the account alias if we have it or the account
+		 * name if that's all we have
 		 */
 		if ((name_shown = gaim_account_get_alias(account)) == NULL)
 			name_shown = gaim_account_get_username(account);
 
-		gaim_notify_info(NULL, name_shown, tmp, gaim_date_full());
+		if (reason == NULL)
+			gaim_notify_info(NULL, name_shown, tmp, gaim_date_full());
+		else
+		{
+			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, gaim_date_full());
+			gaim_notify_info(NULL, name_shown, tmp, tmp2);
+			g_free(tmp2);
+		}
+		g_free(tmp);
 	}
 
 	if (gaim_pounce_action_is_enabled(pounce, "send-message"))
