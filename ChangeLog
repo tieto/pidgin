@@ -45,11 +45,13 @@ version 2.0.0:
 	* Added tab management options to the tab right-click menu (Sadrul Habib
 	  Chowdhury)
 	* Brand new message queueing system (Casey Harkins)
+	* Ability to find the last message from a user in a chat (Levi Bard
+	  and Sadrul Habib Chowdhury)
 
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
 	* Use libao for playing sounds via NAS instead of accessing NAS directly
-	* A volume control in the preferences
+	* A volume control in the preferences (Casey Harkins)
 
 	Log Viewer:
 	* Log viewer aggregates logs from the same "Person"

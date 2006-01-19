@@ -1526,6 +1526,32 @@ menu_chat_add_remove_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
 
+static GtkTextMark *
+get_mark_for_user(GaimGtkConversation *gtkconv, const char *who)
+{
+	GtkTextBuffer *buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
+	char *tmp = g_strconcat("user:", who, NULL);
+	GtkTextMark *mark = gtk_text_buffer_get_mark(buf, tmp);
+
+	g_free(tmp);
+	return mark;
+}
+
+static void
+menu_last_said_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
+{
+	GtkTextMark *mark;
+	const char *who;
+
+	who = g_object_get_data(G_OBJECT(w), "user_data");
+	mark = get_mark_for_user(gtkconv, who);
+	
+	if (mark != NULL)
+		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
+	else
+		g_return_if_reached();
+}
+
 static GtkWidget *
 create_chat_menu(GaimConversation *conv, const char *who,
 				 GaimPluginProtocolInfo *prpl_info, GaimConnection *gc)
@@ -1590,6 +1616,12 @@ create_chat_menu(GaimConversation *conv, const char *who,
 						G_CALLBACK(menu_chat_add_remove_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
+
+	button = gaim_new_item_from_stock(menu, _("Last said"), GTK_STOCK_INDEX,
+						G_CALLBACK(menu_last_said_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
+	if (!get_mark_for_user(GAIM_GTK_CONVERSATION(conv), who))
+		gtk_widget_set_sensitive(button, FALSE);
 
 	return menu;
 }
@@ -1673,6 +1705,12 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(gtkconv, who);
+	} else if (event->button == 2 && event->type == GDK_BUTTON_PRESS) {
+		/* Move to user's anchor */
+		GtkTextMark *mark = get_mark_for_user(gtkconv, who);
+
+		if(mark != NULL)
+			gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, prpl_info, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -4620,6 +4658,18 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		gtk_text_buffer_get_iter_at_line(text_buffer, &end,
 			(line_count - max_scrollback_lines));
 		gtk_imhtml_delete(GTK_IMHTML(gtkconv->imhtml), &start, &end);
+	}
+
+	if (type == GAIM_CONV_TYPE_CHAT)
+	{
+		/* Create anchor for user */
+		GtkTextIter iter;
+		char *tmp = g_strconcat("user:", name, NULL);
+
+		gtk_text_buffer_get_end_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml)), &iter);
+		gtk_text_buffer_create_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml)),
+								tmp, &iter, TRUE);
+		g_free(tmp);
 	}
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
