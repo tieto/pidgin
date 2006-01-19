@@ -252,7 +252,7 @@ void gaim_gtkdialogs_about()
 		  "Novell GroupWise, Lotus Sametime, Napster, Zephyr, and Gadu-Gadu "
 		  "all at once.  It is written using GTK+.  "
 		  "You may modify and redistribute the program under "
-		  "the terms of the GPL.  A copy of the GPL is "
+		  "the terms of the GPL (version 2 or later).  A copy of the GPL is "
 		  "contained in the 'COPYING' file distributed with Gaim.  "
 		  "Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' "
 		  "file for the complete list of contributors.  We provide no "
