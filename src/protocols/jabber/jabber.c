@@ -1001,7 +1001,7 @@ static char *jabber_status_text(GaimBuddy *b)
 	return ret;
 }
 
-static char *jabber_tooltip_text(GaimBuddy *b)
+static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 {
 	JabberBuddy *jb;
 	GString *ret;

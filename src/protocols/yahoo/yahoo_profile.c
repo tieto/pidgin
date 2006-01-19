@@ -668,7 +668,7 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 			info_data->name);
 
 	if (b) {
-		char *statustext = yahoo_tooltip_text(b);
+		char *statustext = yahoo_tooltip_text(b, TRUE);
 		if(b->alias && b->alias[0]) {
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);

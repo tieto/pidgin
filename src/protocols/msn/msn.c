@@ -537,7 +537,7 @@ msn_status_text(GaimBuddy *buddy)
 }
 
 static char *
-msn_tooltip_text(GaimBuddy *buddy)
+msn_tooltip_text(GaimBuddy *buddy, gboolean full)
 {
 	MsnUser *user;
 	GaimPresence *presence = gaim_buddy_get_presence(buddy);
@@ -1353,7 +1353,7 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 	if (b)
 	{
 		GaimPresence *presence;
-		char *statustext = msn_tooltip_text(b);
+		char *statustext = msn_tooltip_text(b, TRUE);
 
 		presence = gaim_buddy_get_presence(b);
 

@@ -2818,7 +2818,7 @@ novell_list_icon(GaimAccount * account, GaimBuddy * buddy)
 }
 
 static char *
-novell_tooltip_text(GaimBuddy * buddy)
+novell_tooltip_text(GaimBuddy * buddy, gboolean full)
 {
 	NMUserRecord *user_record = NULL;
 	GaimConnection *gc;

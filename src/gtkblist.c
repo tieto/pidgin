@@ -2706,7 +2706,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		{
 			/* Additional text from the PRPL */
 			const char *end;
-			tmp = prpl_info->tooltip_text(b);
+			tmp = prpl_info->tooltip_text(b, full);
 
 			if (tmp && !g_utf8_validate(tmp, -1, &end))
 			{

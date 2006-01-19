@@ -2778,7 +2778,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 	}
 }
 
-char *yahoo_tooltip_text(GaimBuddy *b)
+char *yahoo_tooltip_text(GaimBuddy *b, gboolean full)
 {
 	YahooFriend *f;
 	char *escaped, *status = NULL, *presence = NULL;

@@ -307,7 +307,7 @@ bonjour_status_text(GaimBuddy *buddy)
 }
 
 static char *
-bonjour_tooltip_text(GaimBuddy *buddy)
+bonjour_tooltip_text(GaimBuddy *buddy, gboolean full)
 {
 	GString *ret;
 	GaimPresence *presence;

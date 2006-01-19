@@ -191,7 +191,7 @@ struct _GaimPluginProtocolInfo
 	/**
 	 * Gets a string to put in the buddy list tooltip.
 	 */
-	char *(*tooltip_text)(GaimBuddy *buddy);
+	char *(*tooltip_text)(GaimBuddy *buddy, gboolean full);
 
 	/**
 	 * This must be implemented, and must add at least the offline

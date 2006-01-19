@@ -1509,7 +1509,7 @@ char *silcgaim_status_text(GaimBuddy *b)
 	return NULL;
 }
 
-char *silcgaim_tooltip_text(GaimBuddy *b)
+char *silcgaim_tooltip_text(GaimBuddy *b, gboolean full)
 {
 	SilcGaim sg = b->account->gc->proto_data;
 	SilcClient client = sg->client;

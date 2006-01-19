@@ -1385,8 +1385,8 @@ static char *ggp_status_text(GaimBuddy *b)
 }
 /* }}} */
 
-/* static char *ggp_tooltip_text(GaimBuddy *b) {{{ */
-static char *ggp_tooltip_text(GaimBuddy *b)
+/* static char *ggp_tooltip_text(GaimBuddy *b, gboolean full) {{{ */
+static char *ggp_tooltip_text(GaimBuddy *b, gboolean full)
 {
 	GaimStatus *status;
 	char *text;

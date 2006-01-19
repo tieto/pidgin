@@ -3213,7 +3213,7 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
 }
 
 
-static char *mw_prpl_tooltip_text(GaimBuddy *b) {
+static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
   GaimConnection *gc;
   struct mwGaimPluginData *pd;
   struct mwAwareIdBlock idb = { mwAware_USER, b->name, NULL };

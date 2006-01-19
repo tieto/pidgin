@@ -82,6 +82,7 @@ version 2.0.0:
 	* GaimPluginProtocolInfo: Added offline_message
 	* GaimPluginProtocolInfo: Added whiteboard_prpl_ops
 	* GaimPluginProtocolInfo: Added media_prpl_ops
+	* GaimPluginProtocolInfo: Added "full" argument to tooltip_text
 	* gaim_pounce_new(): Added option argument for pounce options
 	* gaim_network_listen() and gaim_network_listen_range(): Added
 	  socket_type parameter to allow creation of UDP listening. Modified
