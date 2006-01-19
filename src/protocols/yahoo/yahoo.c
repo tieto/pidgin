@@ -2809,8 +2809,9 @@ char *yahoo_tooltip_text(GaimBuddy *b, gboolean full)
 				presence = _("Appear Permanently Offline");
 				break;
 			case YAHOO_PRESENCE_DEFAULT:
+				break;
 			default:
-				presence = _("None");
+				gaim_debug_error("yahoo", "Unknown presence in yahoo_tooltip_text\n");
 				break;
 		}
 	}
@@ -2822,7 +2823,7 @@ char *yahoo_tooltip_text(GaimBuddy *b, gboolean full)
 		g_free(escaped);
 	}
 
-	if (presence != NULL && f->presence != YAHOO_PRESENCE_DEFAULT)
+	if (presence != NULL)
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"),
 				_("Presence"), presence);
 
