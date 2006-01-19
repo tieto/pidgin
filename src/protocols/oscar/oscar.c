@@ -7737,7 +7737,7 @@ static char *oscar_tooltip_text(GaimBuddy *b, gboolean full) {
 			if (message != NULL)
 			{
 				/* Available status messages are plain text */
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Available Message"), message);
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), message);
 			}
 		}
 		else
@@ -7751,12 +7751,12 @@ static char *oscar_tooltip_text(GaimBuddy *b, gboolean full) {
 				g_free(tmp2);
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), tmp2);
 				g_free(tmp2);
 			}
 			else
 			{
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), _("<i>(retrieving)</i>"));
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), _("<i>(retrieving)</i>"));
 			}
 		}
 	}
