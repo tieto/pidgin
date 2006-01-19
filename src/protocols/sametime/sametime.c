@@ -3179,28 +3179,33 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
   struct mwAwareIdBlock idb = { mwAware_USER, b->name, NULL };
 
   GString *str;
-  const char *tmp;
+  const char *message;
+  char *tmp = NULL;
+  const char *status;
 
   gc = b->account->gc;
   pd = gc->proto_data;
 
   str = g_string_new(NULL);
 
-  tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
-  if(tmp) {
-    tmp = g_markup_escape_text(tmp, -1);
-    g_string_append_printf(str, _("\n<b>%s</b>: %s"), status_text(b), tmp);
-    g_free((char *) tmp);
+  message = mwServiceAware_getText(pd->srvc_aware, &idb);
+  status = status_text(b);
 
-  } else {
-    g_string_append_printf(str, _("\n<b>Status</b>: %s"), status_text(b));
+  if(message != NULL && gaim_utf8_strcasecmp(status, message)) {
+    tmp = g_markup_escape_text(message, -1);
+  }
+
+  g_string_append_printf(str, _("\n<b>Status:</b> %s"), status);
+  if(tmp != NULL) {
+    g_string_append_printf(str, _("\n<b>Message:</b> %s"), tmp);
+    g_free(tmp);
   }
 
   if(full) {
     tmp = user_supports_text(pd->srvc_aware, b->name);
     if(tmp) {
-      g_string_append_printf(str, _("\n<b>Supports</b>: %s"), tmp);
-      g_free((char *) tmp);
+      g_string_append_printf(str, _("\n<b>Supports:</b> %s"), tmp);
+      g_free(tmp);
     }
 
     if(buddy_is_external(b)) {
