@@ -38,7 +38,7 @@
  * they are hardcoded, they do not need to be saved to any XML file.
  *
  * A GaimStatus can be thought of as an "instance" of a GaimStatusType.
- * If you've familiar with object-oriented programming languages
+ * If you're familiar with object-oriented programming languages
  * then this should be immediately clear.  Say, for example, that
  * one of your AIM buddies has set himself as "away."  You have a
  * GaimBuddy node for this person in your buddy list.  Gaim wants
