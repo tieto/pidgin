@@ -25,15 +25,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-/*
- * NOTES
- *
- * I don't like automatic updates of the buddylist stored on the server, so not
- * going to implement this. Maybe some kind of option to enable/disable this
- * feature.
- */
-
 #include "internal.h"
 
 #include "plugin.h"
@@ -764,22 +755,13 @@ static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *f
 {
 	GGPInfo *info = gc->proto_data;
 	GaimRequestField *field;
-	const GList *sel, *l;
+	const GList *sel;
 
 	field = gaim_request_fields_get_field(fields, "name");
 	sel = gaim_request_field_list_get_selected(field);
-	gaim_debug_info("gg", "selected chat %s for buddy %s\n",
-			sel->data, info->tmp_buddy);
 
-	for (l = info->chats; l != NULL; l = l->next) {
-		GGPChat *chat = l->data;
-
-		if (g_utf8_collate(chat->name, sel->data) == 0) {
-			chat->participants = g_list_append(chat->participants,
-							   info->tmp_buddy);
-			break;
-		}
-	}
+	ggp_confer_participants_add_uin(gc, sel->data, info->tmp_buddy);
+	info->tmp_buddy = 0;
 }
 /* }}} */
 
@@ -803,8 +785,8 @@ static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
 	gc = gaim_account_get_connection(gaim_buddy_get_account(buddy));
 	info = gc->proto_data;
 
-	/* TODO: It tmp_buddy != NULL then stop! */
-	info->tmp_buddy = g_strdup(gaim_buddy_get_name(buddy));
+	/* TODO: It tmp_buddy != 0 then stop! */
+	info->tmp_buddy = ggp_str_to_uin(gaim_buddy_get_name(buddy));
 
 	fields = gaim_request_fields_new();
 	group = gaim_request_field_group_new(NULL);
@@ -813,12 +795,12 @@ static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
 	field = gaim_request_field_list_new("name", "Chat name");
 	for (l = info->chats; l != NULL; l = l->next) {
 		GGPChat *chat = l->data;
-		gaim_debug_info("gg", "adding chat %s\n", chat->name);
 		gaim_request_field_list_add(field, g_strdup(chat->name),
 					    g_strdup(chat->name));
 	}
 	gaim_request_field_group_add_field(group, field);
 
+	/* TODO: s/screenname/alias/ */
 	msg = g_strdup_printf(_("Select a chat for buddy: %s"),
 			      gaim_buddy_get_name(buddy));
 	gaim_request_fields(gc,
@@ -1072,18 +1054,18 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
-	msg = charset_convert((const char *)ev->event.msg.message,
+	tmp = charset_convert((const char *)ev->event.msg.message,
 			      "CP1250", "UTF-8");
-	gaim_str_strip_char(msg, '\r');
-	tmp = g_markup_escape_text(msg, -1);
-	g_free(msg);
+	gaim_str_strip_char(tmp, '\r');
+	msg = g_markup_escape_text(tmp, -1);
+	g_free(tmp);
 
 	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
-			from, tmp, ev->event.msg.msgclass,
+			from, msg, ev->event.msg.msgclass,
 			ev->event.msg.recipients_count);
 
 	if (ev->event.msg.recipients_count == 0) {
-		serv_got_im(gc, from, tmp, 0, ev->event.msg.time);
+		serv_got_im(gc, from, msg, 0, ev->event.msg.time);
 	} else {
 		const char *chat_name;
 		int chat_id;
@@ -1092,6 +1074,7 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 		chat_name = ggp_confer_find_by_participants(gc,
 				ev->event.msg.recipients,
 				ev->event.msg.recipients_count);
+
 		if (chat_name == NULL) {
 			chat_name = ggp_confer_add_new(gc, NULL);
 			serv_got_joined_chat(gc, info->chats_count, chat_name);
@@ -1108,10 +1091,10 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 
 		buddy_name = ggp_buddy_get_name(gc, ev->event.msg.sender);
 		serv_got_chat_in(gc, chat_id, buddy_name,
-				 0, msg, ev->event.msg.time);
+				 GAIM_MESSAGE_RECV, msg, ev->event.msg.time);
 		g_free(buddy_name);
 	}
-	g_free(tmp);
+	g_free(msg);
 	g_free(from);
 }
 /* }}} */
@@ -1706,6 +1689,8 @@ static void ggp_join_chat(GaimConnection *gc, GHashTable *data)
 	GGPChat *chat;
 	char *chat_name;
 	GList *l;
+	GaimConversation *conv;
+	GaimAccount *account = gaim_connection_get_account(gc);
 
 	chat_name = g_hash_table_lookup(data, "name");
 
@@ -1725,7 +1710,10 @@ static void ggp_join_chat(GaimConnection *gc, GHashTable *data)
 	}
 
 	ggp_confer_add_new(gc, chat_name);
-	serv_got_joined_chat(gc, info->chats_count, chat_name);
+	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
+	gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+				gaim_account_get_username(account), NULL,
+				GAIM_CBFLAGS_NONE, TRUE);
 }
 /* }}} */
 
@@ -1753,7 +1741,6 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMe
 		chat = l->data;
 
 		if (g_utf8_collate(chat->name, conv->name) == 0) {
-			gaim_debug_info("gg", "found conv!\n");
 			break;
 		}
 
@@ -1767,19 +1754,18 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMe
 	}
 
 	uins = g_new0(uin_t, g_list_length(chat->participants));
-	for (l = chat->participants; l != NULL; l = l->next) {
-		gchar *name = l->data;
-		uin_t uin;
 
-		if ((uin = ggp_str_to_uin(name)) != 0)
-			uins[count++] = uin;
+	for (l = chat->participants; l != NULL; l = l->next) {
+		uin_t uin = GPOINTER_TO_INT(l->data);
+
+		uins[count++] = uin;
 	}
 
 	plain = gaim_unescape_html(message);
 	msg = charset_convert(plain, "UTF-8", "CP1250");
 	g_free(plain);
 	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins,
-			       (unsigned char *)msg);
+				(unsigned char *)msg);
 	g_free(msg);
 	g_free(uins);
 

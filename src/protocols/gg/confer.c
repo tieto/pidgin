@@ -47,37 +47,25 @@ void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
 	GList *l;
 	gchar *str_uin;
 
-	str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
-
 	for (l = info->chats; l != NULL; l = l->next) {
 		chat = l->data;
 
 		if (g_utf8_collate(chat->name, chat_name) != 0)
 			continue;
 
-		if (g_list_find(chat->participants, str_uin) == NULL) {
-			GaimBuddy *buddy;
-
+		if (g_list_find(chat->participants, GINT_TO_POINTER(uin)) == NULL) {
 			chat->participants = g_list_append(
-						chat->participants, str_uin);
+						chat->participants, GINT_TO_POINTER(uin));
 
+			str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
 			conv = ggp_confer_find_by_name(gc, chat_name);
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv), str_uin, NULL,
+						GAIM_CBFLAGS_NONE, TRUE);
 
-			buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
-			if (buddy != NULL) {
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-							gaim_buddy_get_alias(buddy), NULL,
-							GAIM_CBFLAGS_NONE, TRUE);
-			} else {
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-							str_uin, NULL,
-							GAIM_CBFLAGS_NONE, TRUE);
-			}
+			g_free(str_uin);
 		}
 		break;
 	}
-
-	g_free(str_uin);
 }
 /* }}} */
 
@@ -87,6 +75,7 @@ void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 {
 	GGPInfo *info = gc->proto_data;
 	GList *l;
+	gchar *str_uin;
 
 	for (l = info->chats; l != NULL; l = l->next) {
 		GGPChat *chat = l->data;
@@ -96,28 +85,21 @@ void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 			continue;
 
 		for (i = 0; i < count; i++) {
-			gchar *str_uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
 			GaimConversation *conv;
-			GaimBuddy *buddy;
 
-			if (g_list_find(chat->participants, str_uin) != NULL) {
-				g_free(str_uin);
+			if (g_list_find(chat->participants,
+					GINT_TO_POINTER(recipients[i])) != NULL) {
 				continue;
 			}
 
-			chat->participants = g_list_append(chat->participants, str_uin);
-			conv = ggp_confer_find_by_name(gc, chat_name);
+			chat->participants = g_list_append(chat->participants,
+							   GINT_TO_POINTER(recipients[i]));
 
-			buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
-			if (buddy != NULL) {
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-							gaim_buddy_get_alias(buddy), NULL,
-							GAIM_CBFLAGS_NONE, TRUE);
-			} else {
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-							str_uin, NULL,
-							GAIM_CBFLAGS_NONE, TRUE);
-			}
+			str_uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
+			conv = ggp_confer_find_by_name(gc, chat_name);
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+						str_uin, NULL,
+						GAIM_CBFLAGS_NONE, TRUE);
 			g_free(str_uin);
 		}
 		break;
@@ -143,11 +125,11 @@ const char *ggp_confer_find_by_participants(GaimConnection *gc,
 		matches = 0;
 
 		for (m = chat->participants; m != NULL; m = m->next) {
-			uin_t p = ggp_str_to_uin(m->data);
+			uin_t uin = GPOINTER_TO_INT(m->data);
 			int i;
 
 			for (i = 0; i < count; i++)
-				if (p == recipients[i])
+				if (uin == recipients[i])
 					matches++;
 		}
 

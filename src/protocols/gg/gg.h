@@ -58,7 +58,7 @@ typedef struct {
 	GList *chats;
 	void *searchresults_window;
 
-	char *tmp_buddy;
+	uin_t tmp_buddy;
 	int chats_count;
 
 } GGPInfo;
