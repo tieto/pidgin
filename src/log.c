@@ -1003,18 +1003,20 @@ static GList *html_logger_list_syslog(GaimAccount *account)
 
 static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 {
-	char *read, *minus_header;
+	char *read;
 	GaimLogCommonLoggerData *data = log->logger_data;
 	*flags = GAIM_LOG_READ_NO_NEWLINE;
 	if (!data || !data->path)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
 	if (g_file_get_contents(data->path, &read, NULL, NULL)) {
-		minus_header = strchr(read, '\n');
+		char *minus_header = strchr(read, '\n');
+
 		if (!minus_header)
-			minus_header = g_strdup(read);
-		else
-			minus_header = g_strdup(minus_header + 1);
+			return read;
+
+		minus_header = g_strdup(minus_header + 1);
 		g_free(read);
+
 		return minus_header;
 	}
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
