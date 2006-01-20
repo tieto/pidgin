@@ -2578,6 +2578,9 @@ static char *
 make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
           const char *id, const char *alias, const char *msg)
 {
+	if (*msg == '\0')
+		msg = NULL;
+
 	return g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s"),
 	                       remote_user,
 	                       (alias != NULL ? " ("  : ""),
