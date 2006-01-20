@@ -2083,7 +2083,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
 
 	td->status_icon = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
-	td->avatar = gaim_gtk_blist_get_buddy_icon(node, FALSE, FALSE);
+	td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE);
 	tooltip_text = gaim_get_tooltip_text(node, full);
 	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	pango_layout_set_markup(td->layout, tooltip_text, -1);
