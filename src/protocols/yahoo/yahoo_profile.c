@@ -668,7 +668,9 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 			info_data->name);
 
 	if (b) {
-		char *statustext = yahoo_tooltip_text(b, TRUE);
+		GString *str = g_string_new("");
+		char *tmp;
+
 		if(b->alias && b->alias[0]) {
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
@@ -682,14 +684,14 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 			g_free(idletime);
 		}
 		#endif
-		if (statustext) {
-			char *tmp;
-			g_strstrip(statustext);
-			tmp = gaim_strreplace(statustext, "\n", "<br>");
-			g_free(statustext);
-			g_string_append_printf(s, "%s<br>", tmp);
-			g_free(tmp);
-		}
+
+		yahoo_tooltip_text(b, str, TRUE);
+		tmp = gaim_strreplace((*str->str == '\n' ? str->str + 1 : str->str),
+							  "\n", "<br>");
+		g_string_free(str, TRUE);
+		g_string_append_printf(s, "%s<br>", tmp);
+		g_free(tmp);
+
 		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))

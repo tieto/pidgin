@@ -536,27 +536,25 @@ msn_status_text(GaimBuddy *buddy)
 	return NULL;
 }
 
-static char *
-msn_tooltip_text(GaimBuddy *buddy, gboolean full)
+static void
+msn_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
 {
 	MsnUser *user;
 	GaimPresence *presence = gaim_buddy_get_presence(buddy);
 	GaimStatus *status = gaim_presence_get_active_status(presence);
-	GString *s;
 
 	user = buddy->proto_data;
 
-	s = g_string_new("");
 	if (gaim_presence_is_online(presence))
 	{
-		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"),
+		g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Status"),
 							   gaim_presence_is_idle(presence) ?
 							   _("Idle") : gaim_status_get_name(status));
 	}
 
 	if (full && user)
 	{
-		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
+		g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Has you"),
 							   (user->list_op & (1 << MSN_LIST_RL)) ?
 							   _("Yes") : _("No"));
 
@@ -565,12 +563,10 @@ msn_tooltip_text(GaimBuddy *buddy, gboolean full)
 	 * XXX: This can die as soon as gaim_privacy_check() knows that
 	 * XXX: this prpl always honors both the allow and deny lists. */
 	if (user)
-		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Blocked"),
+		g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Blocked"),
 							   (user->list_op & (1 << MSN_LIST_BL)) ?
 							   _("Yes") : _("No"));
 	}
-
-	return g_string_free(s, FALSE);
 }
 
 static GList *
@@ -1359,7 +1355,8 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 	if (b)
 	{
 		GaimPresence *presence;
-		char *statustext = msn_tooltip_text(b, TRUE);
+		GString *str = g_string_new("");
+		char *tmp;
 
 		presence = gaim_buddy_get_presence(b);
 
@@ -1379,15 +1376,12 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 			g_free(nicktext);
 		}
 
-		if (statustext)
-		{
-			char *tmp;
-			tmp = gaim_strreplace((*statustext == '\n' ? statustext + 1 : statustext),
-								  "\n", "<br>");
-			g_free(statustext);
-			g_string_append_printf(s, "%s<br>", tmp);
-			g_free(tmp);
-		}
+		msn_tooltip_text(b, str, TRUE);
+		tmp = gaim_strreplace((*str->str == '\n' ? str->str + 1 : str->str),
+							  "\n", "<br>");
+		g_string_free(str, TRUE);
+		g_string_append_printf(s, "%s<br>", tmp);
+		g_free(tmp);
 	}
 
 	return g_string_free(s, FALSE);

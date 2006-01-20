@@ -189,9 +189,9 @@ struct _GaimPluginProtocolInfo
 	char *(*status_text)(GaimBuddy *buddy);
 
 	/**
-	 * Gets a string to put in the buddy list tooltip.
+	 * Allows the prpl to add text to a buddy's tooltip.
 	 */
-	char *(*tooltip_text)(GaimBuddy *buddy, gboolean full);
+	void (*tooltip_text)(GaimBuddy *buddy, GString *str, gboolean full);
 
 	/**
 	 * This must be implemented, and must add at least the offline

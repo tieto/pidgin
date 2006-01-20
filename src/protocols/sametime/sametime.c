@@ -3173,20 +3173,17 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
 }
 
 
-static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
+static void mw_prpl_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
   GaimConnection *gc;
   struct mwGaimPluginData *pd;
   struct mwAwareIdBlock idb = { mwAware_USER, b->name, NULL };
 
-  GString *str;
   const char *message;
   const char *status;
   char *tmp;
 
   gc = b->account->gc;
   pd = gc->proto_data;
-
-  str = g_string_new(NULL);
 
   message = mwServiceAware_getText(pd->srvc_aware, &idb);
   status = status_text(b);
@@ -3211,8 +3208,6 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b, gboolean full) {
       g_string_append(str, _("\n<b>External User</b>"));
     }
   }
-
-  return g_string_free(str, FALSE);
 }
 
 

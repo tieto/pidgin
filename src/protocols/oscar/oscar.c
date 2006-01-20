@@ -7715,11 +7715,10 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	*ne = emblems[3];
 }
 
-static char *oscar_tooltip_text(GaimBuddy *b, gboolean full) {
+static void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 	GaimConnection *gc = b->account->gc;
 	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
-	GString *str = g_string_new("");
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
 		GaimPresence *presence;
@@ -7761,8 +7760,6 @@ static char *oscar_tooltip_text(GaimBuddy *b, gboolean full) {
 			}
 		}
 	}
-
-	return g_string_free(str, FALSE);
 }
 
 static char *oscar_status_text(GaimBuddy *b)

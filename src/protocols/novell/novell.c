@@ -2817,8 +2817,8 @@ novell_list_icon(GaimAccount * account, GaimBuddy * buddy)
 	return "novell";
 }
 
-static char *
-novell_tooltip_text(GaimBuddy * buddy, gboolean full)
+static void
+novell_tooltip_text(GaimBuddy * buddy, GString * str, gboolean full)
 {
 	NMUserRecord *user_record = NULL;
 	GaimConnection *gc;
@@ -2829,11 +2829,11 @@ novell_tooltip_text(GaimBuddy * buddy, gboolean full)
 	const char *text = NULL;
 
 	if (buddy == NULL)
-		return "";
+		return; 
 
 	gc = gaim_account_get_connection(buddy->account);
 	if (gc == NULL || (user = gc->proto_data) == NULL)
-		return "";
+		return;
 
 	if (GAIM_BUDDY_IS_ONLINE(buddy)) {
 		user_record = nm_find_user_record(user, buddy->name);
@@ -2863,17 +2863,15 @@ novell_tooltip_text(GaimBuddy * buddy, gboolean full)
 			}
 
 			if (text)
-				ret_text = g_strdup_printf("\n<b>%s:</b> %s"
-										   "\n<b>%s:</b> %s",
-										   _("Status"), status_str,
-										   _("Message"), text);
+				g_string_append_printf(str, "\n<b>%s:</b> %s"
+										    "\n<b>%s:</b> %s",
+										    _("Status"), status_str,
+										    _("Message"), text);
 			else
-				ret_text = g_strdup_printf("\n<b>%s:</b> %s",
-										   _("Status"), status_str);
+				g_string_append_printf(str, "\n<b>%s:</b> %s",
+										    _("Status"), status_str);
 		}
 	}
-
-	return ret_text;
 }
 
 static void

@@ -2778,11 +2778,10 @@ static char *yahoo_status_text(GaimBuddy *b)
 	}
 }
 
-char *yahoo_tooltip_text(GaimBuddy *b, gboolean full)
+void yahoo_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 {
 	YahooFriend *f;
 	char *escaped, *status = NULL, *presence = NULL;
-	GString *s = g_string_new("");
 
 	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)
@@ -2791,7 +2790,7 @@ char *yahoo_tooltip_text(GaimBuddy *b, gboolean full)
 		switch (f->status) {
 		case YAHOO_STATUS_CUSTOM:
 			if (!yahoo_friend_get_status_message(f))
-				return NULL;
+				return;
 			status = g_strdup(yahoo_friend_get_status_message(f));
 			break;
 		case YAHOO_STATUS_OFFLINE:
@@ -2818,16 +2817,14 @@ char *yahoo_tooltip_text(GaimBuddy *b, gboolean full)
 
 	if (status != NULL) {
 		escaped = g_markup_escape_text(status, strlen(status));
-		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"), escaped);
+		g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Status"), escaped);
 		g_free(status);
 		g_free(escaped);
 	}
 
 	if (presence != NULL)
-		g_string_append_printf(s, _("\n<b>%s:</b> %s"),
+		g_string_append_printf(str, _("\n<b>%s:</b> %s"),
 				_("Presence"), presence);
-
-	return g_string_free(s, FALSE);
 }
 
 static void yahoo_addbuddyfrommenu_cb(GaimBlistNode *node, gpointer data)

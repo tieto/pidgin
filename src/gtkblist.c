@@ -2698,6 +2698,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 
 
 		/* Offline? */
+		/* FIXME: Why is this status special-cased by the core? -- rlaager */
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
 			g_string_append_printf(str, _("\n<b>Status:</b> Offline"));
 		}
@@ -2705,19 +2706,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		if (prpl_info && prpl_info->tooltip_text)
 		{
 			/* Additional text from the PRPL */
-			const char *end;
-			tmp = prpl_info->tooltip_text(b, full);
-
-			if (tmp && !g_utf8_validate(tmp, -1, &end))
-			{
-				char *new = g_strndup(tmp, g_utf8_pointer_to_offset(tmp, end));
-				g_free(tmp);
-				tmp = new;
-			}
-
-			if (tmp != NULL)
-				g_string_append(str, tmp);
-			g_free(tmp);
+			prpl_info->tooltip_text(b, str, full);
 		}
 
 		/* These are Easter Eggs.  Patches to remove them will be rejected. */

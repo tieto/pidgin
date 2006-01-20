@@ -1001,19 +1001,17 @@ static char *jabber_status_text(GaimBuddy *b)
 	return ret;
 }
 
-static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
+static void jabber_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 {
 	JabberBuddy *jb;
-	GString *ret;
 
-	g_return_val_if_fail(b != NULL, NULL);
-	g_return_val_if_fail(b->account != NULL, NULL);
-	g_return_val_if_fail(b->account->gc != NULL, NULL);
-	g_return_val_if_fail(b->account->gc->proto_data != NULL, NULL);
+	g_return_if_fail(b != NULL);
+	g_return_if_fail(b->account != NULL);
+	g_return_if_fail(b->account->gc != NULL);
+	g_return_if_fail(b->account->gc->proto_data != NULL);
 
 	jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
 			FALSE);
-	ret = g_string_new("");
 
 	if(jb) {
 		JabberBuddyResource *jbr = NULL;
@@ -1036,7 +1034,7 @@ static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 				else
 					sub = _("None");
 			}
-			g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Subscription"), sub);
+			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Subscription"), sub);
 		}
 
 		for(l=jb->resources; l; l = l->next) {
@@ -1064,7 +1062,7 @@ static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 				text = NULL;
 			}
 
-			g_string_append_printf(ret, "\n<b>%s%s:</b> %s%s%s",
+			g_string_append_printf(str, "\n<b>%s%s:</b> %s%s%s",
 					_("Status"),
 					res ? res : "",
 					state,
@@ -1076,12 +1074,10 @@ static char *jabber_tooltip_text(GaimBuddy *b, gboolean full)
 		}
 
 		if(!GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
-			g_string_append_printf(ret, "\n<b>%s:</b> %s",
+			g_string_append_printf(str, "\n<b>%s:</b> %s",
 					_("Error"), jb->error_msg);
 		}
 	}
-
-	return g_string_free(ret, FALSE);
 }
 
 static GList *jabber_status_types(GaimAccount *account)

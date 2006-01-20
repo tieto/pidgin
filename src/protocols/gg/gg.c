@@ -1383,12 +1383,11 @@ static char *ggp_status_text(GaimBuddy *b)
 }
 /* }}} */
 
-/* static char *ggp_tooltip_text(GaimBuddy *b, gboolean full) {{{ */
-static char *ggp_tooltip_text(GaimBuddy *b, gboolean full)
+/* static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {{{ */
+static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 {
 	GaimStatus *status;
 	char *text;
-	gchar *ret;
 	const char *msg, *name;
 
 	status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
@@ -1400,16 +1399,14 @@ static char *ggp_tooltip_text(GaimBuddy *b, gboolean full)
 		text = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
 
-		ret = g_strdup_printf("\n<b>%s:</b> %s: %s",
-				      _("Status"), name, text);
+		g_string_append_printf(str, "\n<b>%s:</b> %s: %s",
+				       _("Status"), name, text);
 
 		g_free(text);
 	} else {
-		ret = g_strdup_printf("\n<b>%s:</b> %s",
-				      _("Status"), name);
+		g_string_append_printf(str, "\n<b>%s:</b> %s",
+				       _("Status"), name);
 	}
-
-	return ret;
 }
 /* }}} */
 

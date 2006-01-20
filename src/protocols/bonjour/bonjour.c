@@ -306,10 +306,9 @@ bonjour_status_text(GaimBuddy *buddy)
 	return NULL;
 }
 
-static char *
-bonjour_tooltip_text(GaimBuddy *buddy, gboolean full)
+static void
+bonjour_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
 {
-	GString *ret;
 	GaimPresence *presence;
 	GaimStatus *status;
 	const char *status_description;
@@ -326,12 +325,9 @@ bonjour_tooltip_text(GaimBuddy *buddy, gboolean full)
 	else
 		status_description = gaim_status_get_name(status);
 
-	ret = g_string_new("");
-	g_string_append_printf(ret, _("\n<b>Status:</b> %s"), status_description);
+	g_string_append_printf(str, _("\n<b>Status:</b> %s"), status_description);
 	if (message != NULL)
-		g_string_append_printf(ret, _("\n<b>Message:</b> %s"), message);
-
-	return g_string_free(ret, FALSE);
+		g_string_append_printf(str, _("\n<b>Message:</b> %s"), message);
 }
 
 static gboolean
