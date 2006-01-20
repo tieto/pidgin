@@ -649,14 +649,17 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 	if (path == NULL)
 		return NULL;
 
-	if (!(dir = g_dir_open(path, 0, NULL))) {
+	if (!(dir = g_dir_open(path, 0, NULL)))
+	{
 		g_free(path);
 		return NULL;
 	}
 
-	while ((filename = g_dir_read_name(dir))) {
+	while ((filename = g_dir_read_name(dir)))
+	{
 		if (gaim_str_has_suffix(filename, ext) &&
-				strlen(filename) == 17 + strlen(ext)) {
+		    strlen(filename) >= (17 + strlen(ext)))
+		{
 			GaimLog *log;
 			GaimLogCommonLoggerData *data;
 			time_t stamp = gaim_str_to_time(filename, FALSE);
