@@ -850,6 +850,9 @@ static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored)
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
+/* just a prototype */
+static void ggp_set_status(GaimAccount *account, GaimStatus *status);
+
 /**
  * Handle change of the status of the buddy.
  *
@@ -1280,15 +1283,27 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, GaimInputCondition co
 			gaim_debug_info("gg", "GG_EVENT_NONE\n");
 			break;
 		case GG_EVENT_CONN_SUCCESS:
-			gaim_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
-			gaim_input_remove(gc->inpa);
-			gc->inpa = gaim_input_add(info->session->fd,
-						  GAIM_INPUT_READ,
-						  ggp_callback_recv, gc);
+			{
+				GaimAccount *account;
+				GaimPresence *presence;
+				GaimStatus *status;
 
-			/* gg_change_status(info->session, GG_STATUS_AVAIL); */
-			gaim_connection_set_state(gc, GAIM_CONNECTED);
-			ggp_buddylist_send(gc);
+				gaim_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
+				gaim_input_remove(gc->inpa);
+				gc->inpa = gaim_input_add(info->session->fd,
+							  GAIM_INPUT_READ,
+							  ggp_callback_recv, gc);
+
+				/* gg_change_status(info->session, GG_STATUS_AVAIL); */
+
+				account = gaim_connection_get_account(gc);
+				presence = gaim_account_get_presence(account);
+				status = gaim_presence_get_active_status(presence);
+
+				ggp_set_status(account, status);
+				gaim_connection_set_state(gc, GAIM_CONNECTED);
+				ggp_buddylist_send(gc);
+			}
 			break;
 		case GG_EVENT_CONN_FAILED:
 			gaim_input_remove(gc->inpa);
@@ -1426,8 +1441,9 @@ static GList *ggp_status_types(GaimAccount *account)
 			NULL);
 	types = g_list_append(types, type);
 
-	/* This status is wrong.  It shouldn't exist.  This prpl must not be
-	 * using the privacy stuff correctly. -- rlaager */
+	/*
+	 * This status is necessary to display guys who are blocking *us*.
+	 */
 	type = gaim_status_type_new_with_attrs(
 			GAIM_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
 			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
@@ -1535,10 +1551,14 @@ static void ggp_close(GaimConnection *gc)
 	}
 
 	if (gc->proto_data) {
+		GaimAccount *account = gaim_connection_get_account(gc);
+		GaimStatus *status;
 		GGPInfo *info = gc->proto_data;
-		/* XXX: Any way to pass description here? */
+
+		status = gaim_account_get_active_status(account);
+
 		if (info->session != NULL) {
-			gg_change_status(info->session, GG_STATUS_NOT_AVAIL);
+			ggp_set_status(account, status);
 			gg_logoff(info->session);
 			gg_free_session(info->session);
 		}
@@ -1609,13 +1629,10 @@ static void ggp_get_info(GaimConnection *gc, const char *name)
 /* static void ggp_set_status(GaimAccount *account, GaimStatus *status) {{{ */
 static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 {
-	GaimStatusPrimitive prim;
 	GaimConnection *gc;
 	GGPInfo *info;
 	const char *status_id, *msg;
 	int new_status, new_status_descr;
-
-	prim = gaim_status_type_get_primitive(gaim_status_get_type(status));
 
 	if (!gaim_status_is_active(status))
 		return;
@@ -1637,6 +1654,9 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 	} else if (strcmp(status_id, "invisible") == 0) {
 		new_status = GG_STATUS_INVISIBLE;
 		new_status_descr = GG_STATUS_INVISIBLE_DESCR;
+	} else if (strcmp(status_id, "offline") == 0) {
+		new_status = GG_STATUS_NOT_AVAIL;
+		new_status_descr = GG_STATUS_NOT_AVAIL_DESCR;
 	} else {
 		new_status = GG_STATUS_AVAIL;
 		new_status_descr = GG_STATUS_AVAIL_DESCR;
@@ -1648,18 +1668,19 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 	msg = gaim_status_get_attr_string(status, "message");
 
 	if (msg == NULL) {
-		gaim_debug_info("gg", "ggp_set_status: msg == NULL\n");
 		gg_change_status(info->session, new_status);
 	} else {
-		char *tmp = charset_convert(msg, "UTF-8", "CP1250");
-		gaim_debug_info("gg",
-			"ggp_set_status: msg != NULL. msg = %s\n", tmp);
-		gaim_debug_info("gg",
-			"ggp_set_status: gg_change_status_descr() = %d\n",
-			gg_change_status_descr(info->session, new_status_descr, tmp));
+		gchar *tmp, *new_msg;
+
+		tmp = gaim_markup_strip_html(msg);
+		new_msg = g_markup_escape_text(tmp, -1);
+		g_free(tmp);
+
+		tmp = charset_convert(new_msg, "UTF-8", "CP1250");
+		gg_change_status_descr(info->session, new_status_descr, tmp);
+		g_free(new_msg);
 		g_free(tmp);
 	}
-
 }
 /* }}} */
 
