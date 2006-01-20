@@ -250,7 +250,7 @@ message_displayed_cb(GaimAccount *account, GaimConversation *conv, const char *m
 }
 
 static void
-im_sent_im(GaimAccount *account, char *receiver, const char *message) {
+im_sent_im(GaimAccount *account, const char *receiver, const char *message) {
 	GaimConversation *conv = NULL;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
@@ -364,7 +364,7 @@ conv_created(GaimConversation *conv)
 }
 
 static void
-conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
+conv_switched(GaimConversation *conv)
 {
 #if 0
 	GaimGtkWindow *gaimwin = gaim_conversation_get_window(new_conv);
@@ -374,7 +374,7 @@ conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
 	 * If the conversation was switched, then make sure we re-notify
 	 * because Gaim will have overwritten our custom window title.
 	 */
-	notify(new_conv, FALSE);
+	notify(conv, FALSE);
 
 #if 0
 	printf("conv_switched - %p - %p\n", old_conv, new_conv);
@@ -766,9 +766,11 @@ plugin_load(GaimPlugin *plugin)
 	my_plugin = plugin;
 
 	gaim_signal_connect(gtk_conv_handle, "displayed-im-msg", plugin,
-						GAIM_CALLBACK(message_displayed_cb), NULL);
+	                    GAIM_CALLBACK(message_displayed_cb), NULL);
 	gaim_signal_connect(gtk_conv_handle, "displayed-chat-msg", plugin,
-						GAIM_CALLBACK(message_displayed_cb), NULL);
+	                    GAIM_CALLBACK(message_displayed_cb), NULL);
+	gaim_signal_connect(gtk_conv_handle, "conversation-switched", plugin,
+	                    GAIM_CALLBACK(conv_switched), NULL);
 	gaim_signal_connect(conv_handle, "sent-im-msg", plugin,
 	                    GAIM_CALLBACK(im_sent_im), NULL);
 	gaim_signal_connect(conv_handle, "sent-chat-msg", plugin,
@@ -779,8 +781,6 @@ plugin_load(GaimPlugin *plugin)
 	                    GAIM_CALLBACK(conv_created), NULL);
 	gaim_signal_connect(conv_handle, "deleting-conversation", plugin,
 	                    GAIM_CALLBACK(deleting_conv), NULL);
-	gaim_signal_connect(conv_handle, "conversation-switched", plugin,
-	                    GAIM_CALLBACK(conv_switched), NULL);
 #if 0
 	gaim_signal_connect(gtk_conv_handle, "conversation-dragging", plugin,
 	                    GAIM_CALLBACK(conversation_dragging), NULL);
