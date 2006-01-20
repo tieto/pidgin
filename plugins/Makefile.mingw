@@ -119,6 +119,7 @@ plugins: \
 		history.dll \
 	 	iconaway.dll \
 		idle.dll \
+		notify.dll \
 		relnot.dll \
 		spellchk.dll \
 		statenotify.dll \

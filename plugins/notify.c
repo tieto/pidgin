@@ -96,9 +96,11 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
+#ifndef _WIN32
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#endif
 
 #define NOTIFY_PLUGIN_ID "gtk-x11-notify"
 
@@ -494,6 +496,7 @@ handle_count(GaimGtkWindow *gaimwin)
 static void
 handle_urgent(GaimGtkWindow *win, gboolean add)
 {
+#ifndef _WIN32
 	XWMHints *hints;
 
 	g_return_if_fail(win != NULL);
@@ -512,6 +515,7 @@ handle_urgent(GaimGtkWindow *win, gboolean add)
 	XSetWMHints(GDK_WINDOW_XDISPLAY(win->window->window),
 	            GDK_WINDOW_XWINDOW(win->window->window), hints);
 	XFree(hints);
+#endif
 }
 
 static void
@@ -684,6 +688,7 @@ get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(method_toggle_cb), "method_count");
 
+#ifndef _WIN32
 	/* Urgent method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Set window manager \"_URGENT\" hint"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
@@ -691,6 +696,7 @@ get_config_frame(GaimPlugin *plugin)
 	                             gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(method_toggle_cb), "method_urgent");
+#endif
 
 	/* Raise window method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("R_aise conversation window"));
