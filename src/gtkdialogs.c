@@ -398,6 +398,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 
 #ifndef _WIN32
+#ifdef HAVE_DBUS
+	g_string_append_printf(str, "    <b>D-BUS:</b> Enabled<br/>");
+#else
+	g_string_append_printf(str, "    <b>D-BUS:</b> Disabled<br/>");
+#endif
+
 #ifdef HAVE_EVOLUTION_ADDRESSBOOK
 	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Enabled<br/>");
 #else
