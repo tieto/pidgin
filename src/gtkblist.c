@@ -2628,11 +2628,11 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		}
 
 		/* Nickname/Server Alias */
-		/* Likewise, only show this if there's a contact or buddy alias. */
-		if (full &&
-		    b->server_alias != NULL && b->server_alias[0] != '\0' &&
-		    ((b->alias != NULL && b->alias[0] != '\0') ||
-		     (c->alias != NULL && c->alias[0] != '\0')))
+		/* I'd like to only show this if there's a contact or buddy
+		 * alias, but many people on MSN set long nicknames, which
+		 * get ellipsized, so the only way to see the whole thing is
+		 * to look at the tooltip. */
+		if (full && b->server_alias != NULL && b->server_alias[0] != '\0')
 		{
 			tmp = g_markup_escape_text(b->server_alias, -1);
 			g_string_append_printf(str, _("\n<b>Nickname:</b> %s"), tmp);
