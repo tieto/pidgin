@@ -735,6 +735,11 @@ gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback
 		}
 
 		req = gaim_dns_new_resolverthread(show_debug);
+		if (req == NULL)
+		{
+			gaim_debug_error("proxy", "oh dear, this is going to explode, I give up\n");
+			return -1;
+		}
 		send_dns_request_to_child(req, &dns_params);
 	}
 
