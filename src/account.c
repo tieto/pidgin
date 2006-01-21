@@ -1151,7 +1151,7 @@ set_user_info_cb(GaimAccount *account, const char *user_info)
 	gc = gaim_account_get_connection(account);
 
 	if (gc != NULL)
-		serv_set_info(gaim_account_get_connection(account), user_info);
+		serv_set_info(gc, user_info);
 }
 
 void
@@ -1169,8 +1169,7 @@ gaim_account_request_change_user_info(GaimAccount *account)
 			   _("Change user information for %s"),
 			   gaim_account_get_username(account));
 
-	gaim_request_input(gaim_account_get_connection(account),
-					   NULL, primary, NULL,
+	gaim_request_input(gc, NULL, primary, NULL,
 					   gaim_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
 					   (gc->flags & GAIM_CONNECTION_HTML) ? "html" : NULL),
@@ -2076,7 +2075,7 @@ gboolean gaim_account_supports_offline_message(GaimAccount *account, GaimBuddy *
 	gc = gaim_account_get_connection(account);
 	if (gc == NULL)
 		return FALSE;
-	
+
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (!prpl_info || !prpl_info->offline_message)
