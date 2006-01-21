@@ -432,8 +432,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 {
 	GaimAccount *account;
 	GaimConversation *cnv;
-	GaimPresence *presence;
-	GaimStatus *status;
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
@@ -447,8 +445,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		if (!gaim_privacy_check(account, who))
 			return;
 	}
-
-	presence = gaim_account_get_presence(account);
 
 	/*
 	 * We should update the conversation window buttons and menu,
@@ -515,16 +511,24 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 */
 	if (gc->flags & GAIM_CONNECTION_AUTO_RESP)
 	{
+		GaimPresence *presence;
+		GaimStatus *status;
+		GaimStatusType *status_type;
+		GaimStatusPrimitive primitive;
 		const gchar *auto_reply_pref;
 		const char *away_msg = NULL;
 
 		auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
 
+		presence = gaim_account_get_presence(account);
 		status = gaim_presence_get_active_status(presence);
-		if (gaim_status_is_available(status) ||
+		status_type = gaim_status_get_type(status);
+		primitive = gaim_status_type_get_primitive(status_type);
+		if ((primitive == GAIM_STATUS_AVAILABLE) ||
+			(primitive == GAIM_STATUS_INVISIBLE) ||
+			(primitive == GAIM_STATUS_MOBILE) ||
 		    !strcmp(auto_reply_pref, "never") ||
-		    (!gaim_presence_is_idle(presence) &&
-		     !strcmp(auto_reply_pref, "awayidle")))
+		    (!gaim_presence_is_idle(presence) && !strcmp(auto_reply_pref, "awayidle")))
 		{
 			g_free(name);
 			return;
