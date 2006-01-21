@@ -2824,7 +2824,6 @@ novell_tooltip_text(GaimBuddy * buddy, GString * str, gboolean full)
 	GaimConnection *gc;
 	NMUser *user;
 	int status = 0;
-	char *ret_text = NULL;
 	const char *status_str = NULL;
 	const char *text = NULL;
 
