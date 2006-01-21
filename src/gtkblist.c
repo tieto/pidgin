@@ -2649,8 +2649,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		}
 
 		/* Idle */
-		if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
-			gaim_presence_is_idle(presence))
+		if (gaim_presence_is_idle(presence))
 		{
 			idle_secs = gaim_presence_get_idle_time(presence);
 			if (idle_secs > 0)
