@@ -46,17 +46,14 @@ static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
 static const char *widget_size_prefs[] = {
 	"/plugins/gtk/gaimrc/size/GtkTreeView::expander_size",
-	"/plugins/gtk/gaimrc/size/GtkTreeView::indent_expanders",
 	"/plugins/gtk/gaimrc/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_prefs_set[] = {
 	"/plugins/gtk/gaimrc/set/size/GtkTreeView::expander_size",
-	"/plugins/gtk/gaimrc/set/size/GtkTreeView::indent_expanders",
 	"/plugins/gtk/gaimrc/set/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_names[] = {
 	N_("GtkTreeView Expander Size"),
-	N_("GtkTreeView Expander Indentation"),
 	N_("GtkTreeView Horizontal Separation")
 };
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
@@ -84,12 +81,26 @@ static const char *font_names[] = {
 };
 static GtkWidget *font_widgets[G_N_ELEMENTS(font_prefs)];
 
+static const char *widget_bool_prefs[] = {
+	"/plugins/gtk/gaimrc/bool/GtkTreeView::indent_expanders",
+};
+static const char *widget_bool_prefs_set[] = {
+	"/plugins/gtk/gaimrc/set/bool/GtkTreeView::indent_expanders",
+};
+static const char *widget_bool_names[] = {
+	N_("GtkTreeView Indent Expanders"),
+};
+static GtkWidget *widget_bool_widgets[G_N_ELEMENTS(widget_bool_prefs)];
+
 static void
 gaimrc_make_changes()
 {
 	int i;
-	GString *style_string = g_string_new("");
 	char *prefbase = NULL;
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkSettings *setting = NULL;
+#endif
+	GString *style_string = g_string_new("");
 
 	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-font-name")) {
 		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
@@ -123,6 +134,16 @@ gaimrc_make_changes()
 		}
 	}
 
+	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
+		if (gaim_prefs_get_bool(widget_bool_prefs_set[i])) {
+			prefbase = g_path_get_basename(widget_bool_prefs[i]);
+			g_string_append_printf(style_string,
+			                       "%s = %d\n", prefbase,
+			                       gaim_prefs_get_bool(widget_bool_prefs[i]));
+			g_free(prefbase);
+		}
+	}
+
 	g_string_append(style_string, "}");
 	g_string_append(style_string, "widget_class \"*\" style \"gaimrc_style\"\n");
 
@@ -141,8 +162,12 @@ gaimrc_make_changes()
 	}
 
 	gtk_rc_parse_string(style_string->str);
-
 	g_string_free(style_string, TRUE);
+
+#if GTK_CHECK_VERSION(2,4,0)
+	setting = gtk_settings_get_default();
+	gtk_rc_reset_styles(setting);
+#endif
 }
 
 static void
@@ -184,6 +209,16 @@ gaimrc_write(GtkWidget *widget, gpointer data)
 		}
 	}
 
+	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
+		if (gaim_prefs_get_bool(widget_bool_prefs_set[i])) {
+			prefbase = g_path_get_basename(widget_bool_prefs[i]);
+			g_string_append_printf(style_string,
+			                       "%s = %d\n", prefbase,
+			                       gaim_prefs_get_bool(widget_bool_prefs[i]));
+			g_free(prefbase);
+		}
+	}
+
 	g_string_append(style_string, "}");
 	g_string_append(style_string, "widget_class \"*\" style \"gaimrc_style\"\n");
 
@@ -210,7 +245,7 @@ static void
 gaimrc_reread(GtkWidget *widget, gpointer data)
 {
 	gtk_rc_reparse_all();
-	/* I don't know if this is necessary but it shouldn't hurt. */
+	/* I don't know if this is necessary but if not it shouldn't hurt. */
 	gaimrc_make_changes();
 }
 
@@ -218,41 +253,7 @@ static void
 gaimrc_pref_changed_cb(const char *name, GaimPrefType type,
                        gconstpointer value, gpointer data)
 {
-	GString *style_string = g_string_new("");
-	char *prefbase = NULL;
-
-	prefbase = g_path_get_basename(name);
-
-	if (strncmp(name, "/plugins/gtk/gaimrc/color", 25) == 0) {
-		g_string_printf(style_string,
-		                "style \"gaimrc_style\" { %s = \"%s\" }"
-		                "widget_class \"*\" style \"gaimrc_style\"",
-		                prefbase, (char *)value);
-	} else if (strncmp(name, "/plugins/gtk/gaimrc/size", 24) == 0) {
-		g_string_printf(style_string,
-		                "style \"gaimrc_style\" { %s = \"%d\" }"
-		                "widget_class \"*\" style \"gaimrc_style\"",
-		                prefbase, GPOINTER_TO_INT(value));
-	} else if (strncmp(name, "/plugins/gtk/gaimrc/font", 24) == 0) {
-		g_string_printf(style_string, "style \"%s_style\""
-		                "{ font_name = \"%s\" } widget \"%s\""
-		                "style \"%s_style\"",
-		                prefbase, (char *)value, prefbase, prefbase);
-	} else if (strncmp(name, "/plugins/gtk/gaimrc/set", 23) == 0) {
-		if (value)
-			gaimrc_make_changes();
-		g_string_free(style_string, TRUE);
-		g_free(prefbase);
-
-		return;
-	} else {
-		g_string_printf(style_string, "%s = \"%s\"",
-		                prefbase, (char *)value);
-	}
-	gtk_rc_parse_string(style_string->str);
-
-	g_string_free(style_string, TRUE);
-	g_free(prefbase);
+	gaimrc_make_changes();
 }
 
 static void
@@ -452,6 +453,25 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(check), "toggled",
 	                 G_CALLBACK(gaim_gtk_toggle_sensitive), widget);
 
+	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
+		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
+
+		check = gaim_gtk_prefs_checkbox(_(widget_bool_names[i]),
+		                                widget_bool_prefs_set[i], hbox);
+		gtk_size_group_add_widget(labelsg, check);
+
+		widget_bool_widgets[i] = gaim_gtk_prefs_checkbox("", widget_bool_prefs[i], hbox);
+		/*
+		gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
+		*/
+		gtk_widget_set_sensitive(widget_bool_widgets[i],
+		                         gaim_prefs_get_bool(widget_bool_prefs_set[i]));
+		g_signal_connect(G_OBJECT(check), "toggled",
+		                 G_CALLBACK(gaim_gtk_toggle_sensitive),
+		                 widget_bool_widgets[i]);
+	}
+
 	frame = gaim_gtk_make_frame(ret, "Interface colors");
 	/* imhtml stuff */
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
@@ -520,7 +540,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		                 G_CALLBACK(gaimrc_set_font), GINT_TO_POINTER(i));
 	}
 
-	frame = gaim_gtk_make_frame(ret, "General");
+	frame = gaim_gtk_make_frame(ret, _("Tools"));
 
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
@@ -610,6 +630,13 @@ gaimrc_init(GaimPlugin *plugin)
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
 		gaim_prefs_add_string(font_prefs[i], "");
 		gaim_prefs_add_bool(font_prefs_set[i], FALSE);
+	}
+
+	gaim_prefs_add_none("/plugins/gtk/gaimrc/bool");
+	gaim_prefs_add_none("/plugins/gtk/gaimrc/set/bool");
+	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
+		gaim_prefs_add_bool(widget_bool_prefs[i], TRUE);
+		gaim_prefs_add_bool(widget_bool_prefs_set[i], FALSE);
 	}
 }
 
