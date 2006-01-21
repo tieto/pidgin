@@ -520,7 +520,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		auto_reply_pref = gaim_prefs_get_string("/core/away/auto_reply");
 
-		if (gaim_presence_is_available(presence) ||
+		status = gaim_presence_get_active_status(presence);
+		if (gaim_status_is_available(status) ||
 		    !strcmp(auto_reply_pref, "never") ||
 		    (!gaim_presence_is_idle(presence) &&
 		     !strcmp(auto_reply_pref, "awayidle")))
@@ -529,10 +530,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			return;
 		}
 
-		status = gaim_presence_get_active_status(presence);
-		if (status != NULL)
-			away_msg = gaim_value_get_string(
-				gaim_status_get_attr_value(status, "message"));
+		away_msg = gaim_value_get_string(
+			gaim_status_get_attr_value(status, "message"));
 
 		if ((away_msg != NULL) && (*away_msg != '\0')) {
 			struct last_auto_response *lar;
