@@ -750,7 +750,14 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 
 		m = yahoo_string_decode(gc, im->msg, im->utf8);
-		gaim_str_strip_char(m, '\r');
+		/* This may actually not be necessary, but it appears
+		 * that at least at one point some clients were sending
+		 * "\r\n" as line delimiters, so we want to avoid double
+		 * lines. */
+		m2 = gaim_strreplace(m, "\r\n", "\n");
+		g_free(m);
+		m = m2;
+		gaim_util_chrreplace(m, '\r', '\n');
 
 		if (!strcmp(m, "<ding>")) {
 			GaimConversation *c = gaim_conversation_new(GAIM_CONV_TYPE_IM,
