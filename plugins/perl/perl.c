@@ -299,6 +299,8 @@ probe_perl_plugin(GaimPlugin *plugin)
 			/* We know this one exists. */
 			key = hv_fetch(plugin_info, "name", strlen("name"), 0);
 			info->name = g_strdup(SvPV(*key, len));
+			/* Set id here in case we don't find one later. */
+			info->id = g_strdup(SvPV(*key, len));
 
 			if ((key = hv_fetch(plugin_info, "GTK_UI",
 			                    strlen("GTK_UI"), 0)))
@@ -324,17 +326,23 @@ probe_perl_plugin(GaimPlugin *plugin)
 			                    strlen("version"), 0)))
 				info->version = g_strdup(SvPV(*key, len));
 
-			if ((key = hv_fetch(plugin_info, "load",
-			                    strlen("load"), 0)))
-				gps->load_sub = g_strdup_printf("%s::%s",
-				                                gps->package,
-				                                SvPV(*key, len));
+			/* We know this one exists. */
+			key = hv_fetch(plugin_info, "load", strlen("load"), 0);
+			gps->load_sub = g_strdup_printf("%s::%s", gps->package,
+			                                SvPV(*key, len));
 
 			if ((key = hv_fetch(plugin_info, "unload",
 			                    strlen("unload"), 0)))
 				gps->unload_sub = g_strdup_printf("%s::%s",
 				                                  gps->package,
 				                                  SvPV(*key, len));
+
+			if ((key = hv_fetch(plugin_info, "id",
+			                    strlen("id"), 0))) {
+				g_free(info->id);
+				info->id = g_strdup_printf("perl-%s",
+				                           SvPV(*key, len));
+			}
 
 		/********************************************************/
 		/* Only one of the next two options should be present   */
