@@ -14,28 +14,38 @@ static GList *timeout_handlers = NULL;
 #define PERL_MAGIC_ext '~'
 #endif
 
-/* For now a plugin can only have one action */
 void
-gaim_perl_plugin_action_cb(GaimPluginAction * gpa)
+gaim_perl_plugin_action_cb(GaimPluginAction *action)
 {
+	SV **callback;
+	HV *hv = NULL;
+	gchar *hvname;
+	GaimPlugin *plugin;
+	GaimPerlScript *gps;
 	dSP;
+
+	plugin = action->plugin;
+	gps = (GaimPerlScript *)plugin->info->extra_info;
+	hvname = g_strdup_printf("%s::plugin_actions", gps->package);
+	hv = get_hv(hvname, FALSE);
+	g_free(hvname);
+
+	if (hv == NULL)
+		croak("No plugin_actions hash found in \"%s\" plugin.", gaim_plugin_get_name(plugin));
+
 	ENTER;
 	SAVETMPS;
+
+	callback = hv_fetch(hv, action->label, strlen(action->label), 0);
+
+	if (callback == NULL || *callback == NULL)
+		croak("No plugin_action function named \"%s\" in \"%s\" plugin.", action->label, gaim_plugin_get_name(plugin));
+
 	PUSHMARK(sp);
-
-	/* We put the plugin handle on the stack so it can pass it along    */
-	/* to anything called from the callback.  It is supposed to pass    */
-	/* the Action, but there is no way to access the plugin handle from */
-	/* the GaimPluginAction in perl...yet.                              */
-
-	XPUSHs(gaim_perl_bless_object(gpa->plugin, "Gaim::Plugin"));
+	XPUSHs(gaim_perl_bless_object(gps->plugin, "Gaim::Plugin"));
 	PUTBACK;
 
-	/* gaim_perl_plugin_action_callback_sub defined in the header is set
-	 * in perl.c during plugin probe by a PLUGIN_INFO hash value limiting
-	 * us to only one action for right now even though the action member
-	 * of GaimPluginInfo can take (does take) a GList. */
-	call_pv(gaim_perl_plugin_action_callback_sub, G_EVAL | G_SCALAR);
+	call_sv(*callback, G_VOID | G_DISCARD);
 	SPAGAIN;
 
 	PUTBACK;
@@ -44,22 +54,53 @@ gaim_perl_plugin_action_cb(GaimPluginAction * gpa)
 }
 
 GList *
-gaim_perl_plugin_action(GaimPlugin *plugin, gpointer context)
+gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
 {
-	GaimPluginAction *act = NULL;
-	GList *gl = NULL;
+	GList *l = NULL;
+	GaimPerlScript *gps;
+	int i = 0, count = 0;
+	dSP;
 
-	/* TODO: Fix the way we create action handlers so we can have more
-	 * than one action in perl.  Maybe there is a clever work around, but
-	 * so far I have not figured it out.  There is no way to tie the perl
-	 * sub's name to the callback function without these global variables
-	 * and there is no way to create a callback on the fly so each would
-	 * have to be hardcoded--more than one would just be arbitrary. */
-	act = gaim_plugin_action_new(gaim_perl_plugin_action_label,
-	                             gaim_perl_plugin_action_cb);
-	gl = g_list_append(gl, act);
+	gps = (GaimPerlScript *)plugin->info->extra_info;
 
-	return gl;
+	ENTER;
+	SAVETMPS;
+
+	PUSHMARK(SP);
+	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
+	/* XXX This *will* cease working correctly if context gets changed to
+	 * ever be able to hold anything other than a GaimConnection */
+	if (context != NULL)
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(context, "Gaim::Connection")));
+	else
+		XPUSHs(&PL_sv_undef);
+	PUTBACK;
+
+	count = call_pv(gps->plugin_action_sub, G_ARRAY);
+
+	SPAGAIN;
+
+	if (count == 0)
+		croak("The plugin_actions sub didn't return anything.\n");
+
+	for (i = 0; i < count; i++) {
+		SV *sv;
+		gchar *label;
+		GaimPluginAction *act = NULL;
+
+		sv = POPs;
+		label = SvPV_nolen(sv);
+		/* XXX I think this leaks, but doing it without the strdup
+		 * just showed garbage */
+		act = gaim_plugin_action_new(g_strdup(label), gaim_perl_plugin_action_cb);
+		l = g_list_append(l, act);
+	}
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+
+	return l;
 }
 
 GtkWidget *

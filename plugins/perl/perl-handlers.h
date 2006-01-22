@@ -8,11 +8,6 @@
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
-/* TODO: Find a better way to access the perl names from the plugin prober */
-/* and store them for gaim_perl_plugin_action_* functions.                 */
-char * gaim_perl_plugin_action_callback_sub;
-char * gaim_perl_plugin_action_label;
-
 typedef struct
 {
 	GaimCmdId id;
@@ -43,7 +38,7 @@ typedef struct
 } GaimPerlSignalHandler;
 
 void gaim_perl_plugin_action_cb(GaimPluginAction * gpa);
-GList *gaim_perl_plugin_action(GaimPlugin *plugin, gpointer context); 
+GList *gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context); 
 
 GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin);
 

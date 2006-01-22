@@ -32,6 +32,7 @@ typedef struct
 	char *unload_sub;
 	char *prefs_sub;
 	char *gtk_prefs_sub;
+	char *plugin_action_sub;
 } GaimPerlScript;
 
 void gaim_perl_normalize_script_name(char *name);

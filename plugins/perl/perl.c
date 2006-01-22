@@ -376,28 +376,12 @@ probe_perl_plugin(GaimPlugin *plugin)
 				info->ui_info = &gtk_ui_info;
 			}
 
-		/********************************************************/
-		/*                                                      */
-		/* plugin_action - This is given to the plugin info     */
-		/*                 as the action GList.  There are two  */
-		/*                 parts so the user can set the title  */
-		/*                 as it will appear in the plugin      */
-		/*                 action menu.  The name is extracted  */
-		/*                 and then the callback perl sub's     */
-		/*                 name both of which then are handled  */
-		/*                 by an internal gaim_perl function    */
-		/*                 that sets up the single cb function  */
-		/*                 which is then inserted into 'info'.  */
-		/********************************************************/
-			if ((key = hv_fetch(plugin_info, "plugin_action_label",
-			                    strlen("plugin_action_label"), 0))) {
-				gaim_perl_plugin_action_label = g_strdup(SvPV(*key, len));
-			}
-
-			if ((key = hv_fetch(plugin_info, "plugin_action",
-			                    strlen("plugin_action"), 0))) {
-				gaim_perl_plugin_action_callback_sub = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
-				info->actions = gaim_perl_plugin_action;
+			if ((key = hv_fetch(plugin_info, "plugin_action_sub",
+			                    strlen("plugin_action_sub"), 0))) {
+				gps->plugin_action_sub = g_strdup_printf("%s::%s",
+				                                         gps->package,
+				                                         SvPV(*key, len));
+				info->actions = gaim_perl_plugin_actions;
 			}
 
 			plugin->info = info;
