@@ -923,7 +923,7 @@ static void
 no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
-	unsigned int len;
+	socklen_t len;
 	int error=0, ret;
 
 	gaim_debug_info("proxy", "Connected.\n");
@@ -1018,7 +1018,7 @@ proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		}
 	}
 	else {
-		unsigned int len;
+		socklen_t len;
 		int error = ETIMEDOUT;
 		gaim_debug_misc("proxy", "Connect didn't block.\n");
 		len = sizeof(error);
@@ -1205,7 +1205,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	char request[8192];
 	int request_len = 0;
 	struct PHB *phb = data;
-	unsigned int len;
+	socklen_t len;
 	int error = ETIMEDOUT;
 
 	gaim_debug_info("http proxy", "Connected.\n");
@@ -1296,7 +1296,7 @@ proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		}
 	}
 	else {
-		unsigned int len;
+		socklen_t len;
 		int error = ETIMEDOUT;
 
 		gaim_debug_misc("http proxy",
@@ -1347,7 +1347,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned char packet[12];
 	struct hostent *hp;
 	struct PHB *phb = data;
-	unsigned int len;
+	socklen_t len;
 	int error = ETIMEDOUT;
 
 	gaim_debug_info("socks4 proxy", "Connected.\n");
@@ -1430,7 +1430,7 @@ proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 			return -1;
 		}
 	} else {
-		unsigned int len;
+		socklen_t len;
 		int error = ETIMEDOUT;
 
 		gaim_debug_misc("socks4 proxy",
@@ -1778,7 +1778,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned char buf[512];
 	int i;
 	struct PHB *phb = data;
-	unsigned int len;
+	socklen_t len;
 	int error = ETIMEDOUT;
 
 	gaim_debug_info("socks5 proxy", "Connected.\n");
@@ -1854,7 +1854,7 @@ proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		}
 	}
 	else {
-		unsigned int len;
+		socklen_t len;
 		int error = ETIMEDOUT;
 
 		gaim_debug_misc("socks5 proxy",
