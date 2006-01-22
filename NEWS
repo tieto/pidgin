@@ -14,6 +14,16 @@
 	I can commit it.  See http://gaim.sf.net/contact.info.php for my
 	contact information.
 
+	Etan: So I did a bunch of work on the perl plugin since beta1, so
+	anyone who uses perl plugins would do well to expect some things to
+	need updating (I'm not certain everything works yet, so please send me
+	any reports of things that don't). Most of the work was correcting
+	some namespace issues, but I also improved the support for perl
+	plugins having plugin_pref frames, and plugin actions. Multiple perl
+	plugins can now have plugin_pref frames at the same time, and every
+	perl plugin can have multiple plugin actions now. Like Mark said
+	above, let us know how this beta works out.
+
 2.0.0beta1 (12/17/2005):
 	Sean: I think Nathan sums everything up really well below. There's still
 	a bunch we want to add (and remove) before the official release, but we
