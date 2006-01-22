@@ -607,7 +607,7 @@ gboolean
 gaim_plugin_unload(GaimPlugin *plugin)
 {
 #ifdef GAIM_PLUGINS
-	GList *l, *l_next;
+	GList *l;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
@@ -626,16 +626,10 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	plugin->loaded = FALSE;
 
 	/* Unload all plugins that depend on this plugin. */
-	/* XXX Does this want to be while (plugin->dependent_plugins != NULL)
-	 * instead of this loop? I fixed it to get l->next before calling
-	 * gaim_plugin_unload (which can change the list here). This worked
-	 * much better for me but I'm not 100% sure it will always work. */
-	for (l = plugin->dependent_plugins; l != NULL; l = l_next)
+	while ((l = plugin->dependent_plugins) != NULL)
 	{
 		const char * dep_name = (const char *)l->data;
 		GaimPlugin *dep_plugin;
-
-		l_next = l->next;
 
 		dep_plugin = gaim_plugins_find_with_id(dep_name);
 
