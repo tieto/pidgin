@@ -506,8 +506,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 		{
 			char *tmp;
 
-			tmp = g_strdup_printf(
-			                      _("The required plugin %s was not found. "
+			tmp = g_strdup_printf(_("The required plugin %s was not found. "
 			                        "Please install this plugin and try again."),
 			                      dep_name);
 
