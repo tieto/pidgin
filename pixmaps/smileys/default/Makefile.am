@@ -17,7 +17,6 @@ AIM_SMILEYS = \
 	sad.png			\
 	scream.png		\
 	smile.png		\
-	theme			\
 	think.png		\
 	tongue.png		\
 	wink.png		\
