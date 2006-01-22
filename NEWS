@@ -6,6 +6,14 @@
 	we release the final version of 2.0.0.  As before, please shower us
 	in feedback!
 
+	Richard: I'm proud to say a lot of bugs have been squashed in this
+	version.  If you filed a bug against beta1, please test to see if
+	it's fixed now and update your bug report accordingly (by either
+	closing it or setting the version to 2.0.0beta2).  I'm also looking
+	for someone who uses Gaim on MacOS X to test a patch for me before
+	I can commit it.  See http://gaim.sf.net/contact.info.php for my
+	contact information.
+
 2.0.0beta1 (12/17/2005):
 	Sean: I think Nathan sums everything up really well below. There's still
 	a bunch we want to add (and remove) before the official release, but we
