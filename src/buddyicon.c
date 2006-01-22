@@ -213,6 +213,7 @@ delete_icon_cache_file(const char *dirname, const char *old_icon)
 			g_unlink(filename);
 		g_free(filename);
 	}
+	gaim_debug_info("buddyicon", "Uncached file %s\n", old_icon);
 }
 
 void
@@ -241,11 +242,11 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR))
 	{
-		gaim_debug_info("buddy icons", "Creating icon cache directory.\n");
+		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
 
 		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
 		{
-			gaim_debug_error("buddy icons",
+			gaim_debug_error("buddyicon",
 							 "Unable to create directory %s: %s\n",
 							 dirname, strerror(errno));
 		}
@@ -255,10 +256,11 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	{
 		fwrite(data, 1, len, file);
 		fclose(file);
+		gaim_debug_info("buddyicon", "Wrote file %s\n", filename);
 	}
 	else
 	{
-		gaim_debug_error("buddy icons", "Unable to create file %s: %s\n",
+		gaim_debug_error("buddyicon", "Unable to create file %s: %s\n",
 						 filename, strerror(errno));
 	}
 
