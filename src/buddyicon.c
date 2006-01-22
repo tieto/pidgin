@@ -223,7 +223,7 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	char *random;
 	char *filename;
 	const char *old_icon;
-	size_t len;
+	size_t len = 0;
 	FILE *file = NULL;
 
 	g_return_if_fail(icon  != NULL);
