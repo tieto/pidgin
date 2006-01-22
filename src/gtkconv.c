@@ -5030,8 +5030,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length(gaim_conv_chat_get_users(chat)) -
-	            g_list_length(users);
+	num_users = g_list_length(gaim_conv_chat_get_users(chat));
 
 	for (l = users; l != NULL; l = l->next) {
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -5106,7 +5105,10 @@ gaim_gtkconv_chat_update_user(GaimConversation *conv, const char *user)
 	}
 
 	if (!gaim_conv_chat_find_user(chat, user))
+	{
+		g_free(alias);
 		return;
+	}
 
 	g_return_if_fail(alias != NULL);
 
