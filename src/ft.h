@@ -264,7 +264,7 @@ const char *gaim_xfer_get_filename(const GaimXfer *xfer);
 const char *gaim_xfer_get_local_filename(const GaimXfer *xfer);
 
 /**
- * Returns the number of bytes sent so far.
+ * Returns the number of bytes sent (or received) so far.
  *
  * @param xfer The file transfer.
  *
@@ -273,11 +273,11 @@ const char *gaim_xfer_get_local_filename(const GaimXfer *xfer);
 size_t gaim_xfer_get_bytes_sent(const GaimXfer *xfer);
 
 /**
- * Returns the number of bytes received so far.
+ * Returns the number of bytes remaining to send or receive.
  *
  * @param xfer The file transfer.
  *
- * @return The number of bytes received.
+ * @return The number of bytes remaining.
  */
 size_t gaim_xfer_get_bytes_remaining(const GaimXfer *xfer);
 
