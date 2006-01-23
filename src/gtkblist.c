@@ -3512,7 +3512,7 @@ gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *text
 {
 	GList *l;
 
-	if (message == NULL)
+	if (text == NULL)
 		g_hash_table_remove(gtkblist->connection_errors, account);
 	else
 		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
