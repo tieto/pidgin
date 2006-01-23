@@ -97,6 +97,8 @@ version 2.0.0:
 	* Doodle is now supported (Andrew Dieffenbach, Google Summer of Code)
 	* Buddies' requests to add you to their lists now prompt for
 	  authorization
+	* Account option to ignore chat and conference invitations (Peter
+	  Lawler)
 
 	AIM/ICQ Features:
 	* ICQ file transfer support with newer ICQ clients (Jonathan Clark,
