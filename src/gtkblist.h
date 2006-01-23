@@ -71,6 +71,8 @@ struct _GaimGtkBuddyList {
 	GtkWidget *menutray;            /**< The menu tray widget. */
 	GtkWidget *menutrayicon;        /**< The menu tray icon. */
 
+	GHashTable *connection_errors;  /**< Caches connection error messages and accounts. */
+
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
 	guint      timeout;              /**< The timeout for the tooltip. */
@@ -86,8 +88,9 @@ struct _GaimGtkBuddyList {
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 	GList *tooltipdata;              /**< The data for each "chunk" of the tooltip */
 
-	GaimBlistNode *selected_node;   /**< The currently selected node */
-        GtkWidget *statusbox;            /**< The status selector dropdown */
+	GaimBlistNode *selected_node;    /**< The currently selected node */
+	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
+	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
 	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
 
@@ -283,12 +286,25 @@ void gaim_gtk_blist_joinchat_show(void);
 
 /**
  * Appends the protocol specific menu items for a GaimBlistNode
+ * TODO: Rename these.
  */
 void gaim_gtk_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node);
 
 /**
  * Appends the extended menu items for a GaimBlistNode
+ * TODO: Rename these.
  */
 void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node);
+
+/**
+ * Used by the connection API to tell the blist if an account
+ * has a connection error or no longer has a connection error.
+ *
+ * @param account The account that either has a connection error
+ *        or no longer has a connection error.
+ * @param message The connection error message, or NULL if this
+ *        account is no longer in an error state.
+ */
+void gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *message);
 
 #endif /* _GAIM_GTKBLIST_H_ */

@@ -3309,6 +3309,8 @@ static void gaim_gtk_blist_new_list(GaimBuddyList *blist)
 	GaimGtkBuddyList *gtkblist;
 
 	gtkblist = g_new0(GaimGtkBuddyList, 1);
+	gtkblist->connection_errors = g_hash_table_new_full(g_direct_hash,
+												g_direct_equal, NULL, g_free);
 	blist->ui_data = gtkblist;
 }
 
@@ -3460,6 +3462,78 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, GaimGtkBuddyList
 	return FALSE;
 }
 
+/***********************************/
+/* Connection error handling stuff */
+/***********************************/
+
+static void
+connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
+{
+	GaimAccount *account;
+	char *text;
+
+	account = user_data;
+	text = g_hash_table_lookup(gtkblist->connection_errors, account);
+	gaim_notify_formatted(NULL, _("Connection Error"),
+						  _("Connection Error"), NULL, text, NULL, NULL);
+	gtk_widget_destroy(GTK_WIDGET(widget));
+	g_hash_table_remove(gtkblist->connection_errors, account);
+}
+
+/* Add some buttons that show connection errors */
+static void
+create_connection_error_buttons(gpointer key, gpointer value, gpointer user_data)
+{
+	GaimAccount *account;
+	gchar *text;
+	GtkWidget *button;
+
+	account = key;
+	text = value;
+
+	/*
+	 * TODO: The text needs to be bold and red.  And it would probably
+	 *       be better if we displayed something like
+	 *       "MarkDoliner disconnected: Invalid passw..."
+	 *       And we DEFINITELY need to show an icon on the left side.
+	 *       It should be the PRPL icon overlayed with something that
+	 *       will signal to the user that the account had an error.
+	 */
+	button = gtk_button_new_with_label(text);
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(connection_error_button_clicked_cb),
+					 account);
+	gtk_widget_show(button);
+	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button, FALSE, FALSE, 0);
+}
+
+void
+gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *text)
+{
+	GList *l;
+
+	if (message == NULL)
+		g_hash_table_remove(gtkblist->connection_errors, account);
+	else
+		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
+
+	/* Remove the old error buttons */
+	for (l = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
+			l != NULL;
+			l = l->next)
+	{
+		gtk_widget_destroy(GTK_WIDGET(l->data));
+	}
+
+	/* Add new error buttons */
+	g_hash_table_foreach(gtkblist->connection_errors,
+			create_connection_error_buttons, NULL);
+}
+
+/******************************************/
+/* End of connection error handling stuff */
+/******************************************/
+
 static void gaim_gtk_blist_show(GaimBuddyList *list)
 {
 	void *handle;
@@ -3610,6 +3684,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
+	/* Create an empty vbox used for showing connection errors */
+	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
+
+	/* Add the statusbox */
 	gtkblist->statusbox = gtk_gaim_status_box_new();
 	gtk_widget_set_name(gtkblist->statusbox, "gaim_gtkblist_statusbox");
 
@@ -4184,6 +4263,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	if (gtkblist->drag_timeout)
 		g_source_remove(gtkblist->drag_timeout);
 
+	g_hash_table_destroy(gtkblist->connection_errors);
 	gtkblist->refresh_timer = 0;
 	gtkblist->timeout = 0;
 	gtkblist->drag_timeout = 0;
@@ -4192,6 +4272,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	gtkblist->idle_column = NULL;
 	gtkblist->buddy_icon_column = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
+	g_free(gtkblist);
 	accountmenu = NULL;
 	gtkblist = NULL;
 
