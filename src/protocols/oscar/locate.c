@@ -255,6 +255,21 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 		cur->info_len = userinfo->info_len;
 	}
 
+	if (userinfo->status != NULL) {
+		free(cur->status);
+		free(cur->status_encoding);
+		if (userinfo->status_len > 0) {
+			cur->status = (char *)malloc(userinfo->status_len);
+			memcpy(cur->status, userinfo->status, userinfo->status_len);
+		} else
+			cur->status = NULL;
+		if (userinfo->status_encoding != NULL)
+			cur->status_encoding = strdup(userinfo->status_encoding);
+		else
+			cur->status_encoding = NULL;
+		cur->status_len = userinfo->status_len;
+	}
+
 	if (userinfo->away != NULL) {
 		free(cur->away);
 		free(cur->away_encoding);
@@ -757,7 +772,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 							aim_bstream_advance(bs, length2);
 					} break;
 
-					case 0x0002: { /* An status/available message */
+					case 0x0002: { /* A status/available message */
 						free(outinfo->status);
 						free(outinfo->status_encoding);
 						if (length2 >= 4) {

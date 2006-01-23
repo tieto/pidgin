@@ -5178,11 +5178,19 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	oscar_string_append_info(gc, str, "\n<br>", NULL, userinfo);
 
-	/*
-	 * TODO: Need to duplicate what oscar_tooltip_text() does here so that
-	 *       we show the available message in the buddy info.
-	 */
+	/* Available message */
+	// QQQQQQQQQQ
+printf("          userinfo->status=%s\n", userinfo->status);
+	if ((userinfo->status != NULL) && !(userinfo->flags & AIM_FLAG_AWAY))
+	{
+		if (userinfo->status[0] != '\0')
+			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
+											 userinfo->status, userinfo->status_len);
+		oscar_string_append(gc->account, str, "\n<br>", _("Available Message"), tmp);
+		g_free(tmp);
+	}
 
+	/* Away message */
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->away_encoding);
 		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
@@ -5193,6 +5201,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
+	/* Info */
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->info_encoding);
 		info_utf8 = oscar_encoding_to_utf8(tmp, userinfo->info, userinfo->info_len);
@@ -7957,31 +7966,22 @@ oscar_status_types(GaimAccount *account)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
+	/* Used to flag some statuses as "user settable" or not */
 	is_icq = aim_sn_is_icq(gaim_account_get_username(account));
 
-	/* Oscar-common status types */
-	if (is_icq)
-	{
-		type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-										 OSCAR_STATUS_ID_AVAILABLE,
-										 NULL, TRUE, TRUE, FALSE);
-		status_types = g_list_append(status_types, type);
+	/* Common status types */
+	/* Really the available message should only be settable for AIM accounts */
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+										   OSCAR_STATUS_ID_AVAILABLE,
+										   NULL, TRUE, TRUE, FALSE,
+										   "message", _("Message"),
+										   gaim_value_new(GAIM_TYPE_STRING), NULL);
+	status_types = g_list_append(status_types, type);
 
-		type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-										 OSCAR_STATUS_ID_FREE4CHAT,
-										 _("Free For Chat"), TRUE, TRUE, FALSE);
-		status_types = g_list_append(status_types, type);
-	}
-	else
-	{
-		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
-											   OSCAR_STATUS_ID_AVAILABLE,
-											   NULL, TRUE, TRUE, FALSE,
-											   "message", _("Message"),
-											   gaim_value_new(GAIM_TYPE_STRING), NULL);
-		status_types = g_list_append(status_types, type);
-	}
-
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
+									 OSCAR_STATUS_ID_FREE4CHAT,
+									 _("Free For Chat"), TRUE, is_icq, FALSE);
+	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
 										   OSCAR_STATUS_ID_AWAY,
@@ -7996,23 +7996,20 @@ oscar_status_types(GaimAccount *account)
 	status_types = g_list_append(status_types, type);
 
 	/* ICQ-specific status types */
-	if (is_icq)
-	{
-		type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
-										 OSCAR_STATUS_ID_OCCUPIED,
-										 _("Occupied"), TRUE, TRUE, FALSE);
-		status_types = g_list_append(status_types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
+									 OSCAR_STATUS_ID_OCCUPIED,
+									 _("Occupied"), TRUE, is_icq, FALSE);
+	status_types = g_list_append(status_types, type);
 
-		type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
-										 OSCAR_STATUS_ID_DND,
-										 _("Do Not Disturb"), TRUE, TRUE, FALSE);
-		status_types = g_list_append(status_types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
+									 OSCAR_STATUS_ID_DND,
+									 _("Do Not Disturb"), TRUE, is_icq, FALSE);
+	status_types = g_list_append(status_types, type);
 
-		type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
-										 OSCAR_STATUS_ID_NA,
-										 _("Not Available"), TRUE, TRUE, FALSE);
-		status_types = g_list_append(status_types, type);
-	}
+	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
+									 OSCAR_STATUS_ID_NA,
+									 _("Not Available"), TRUE, is_icq, FALSE);
+	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
