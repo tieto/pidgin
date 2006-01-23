@@ -759,8 +759,8 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	if (status_window != NULL)
 	  add_status_to_saved_status_list(status_window->model, saved_status);
 
-	if ((button == dialog->saveanduse_button)
-			|| (button != dialog->save_button))
+	/* If they clicked on "Save & Use" or "Use," then activate the status */
+	if (button != dialog->save_button)
 		gaim_savedstatus_activate(saved_status);
 }
 
@@ -1463,6 +1463,11 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 		const char *id, *name;
 
 		status_type = list->data;
+
+		/* Only allow users to select statuses that are flagged as "user settable" */
+		if (!gaim_status_type_is_user_settable(status_type))
+			continue;
+
 		id = gaim_status_type_get_id(status_type);
 		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type);
 		if (pixbuf != NULL)
