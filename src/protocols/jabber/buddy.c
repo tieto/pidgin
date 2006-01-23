@@ -1044,8 +1044,8 @@ static GList *jabber_buddy_menu(GaimBuddy *buddy)
 			                           NULL, NULL);
 		} else {
 			act = gaim_menu_action_new(_("Temporarily Hide From"),
-			                GAIM_CALLBACK(jabber_buddy_make_invisible),
-			                NULL, NULL);
+			                           GAIM_CALLBACK(jabber_buddy_make_invisible),
+			                           NULL, NULL);
 		}
 		m = g_list_append(m, act);
 	}
