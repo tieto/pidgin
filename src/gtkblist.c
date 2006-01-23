@@ -3482,14 +3482,18 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 
 /* Add some buttons that show connection errors */
 static void
-create_connection_error_buttons(gpointer key, gpointer value, gpointer user_data)
+create_connection_error_buttons(gpointer key, gpointer value,
+                                gpointer user_data)
 {
 	GaimAccount *account;
-	gchar *text;
-	GtkWidget *button;
+	gchar *text, *filename;
+	GtkWidget *button, *label, *image, *hbox;
+	GdkPixbuf *pixbuf, *emblem, *scale;
 
 	account = key;
-	text = value;
+	text = g_strdup_printf("<span color=\"red\">%s disconnected: %s</span>",
+	                       gaim_account_get_username(account),
+	                       (gchar *)value);
 
 	/*
 	 * TODO: The text needs to be bold and red.  And it would probably
@@ -3499,12 +3503,55 @@ create_connection_error_buttons(gpointer key, gpointer value, gpointer user_data
 	 *       It should be the PRPL icon overlayed with something that
 	 *       will signal to the user that the account had an error.
 	 */
-	button = gtk_button_new_with_label(text);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_widget_show(hbox);
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "blocked.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+	if (pixbuf != NULL) {
+		scale = gdk_pixbuf_scale_simple(pixbuf, 10, 10,
+		                                GDK_INTERP_BILINEAR);
+		g_object_unref(pixbuf);
+		emblem = scale;
+		scale = NULL;
+	}
+
+	pixbuf = gaim_gtk_create_prpl_icon(account);
+	if (pixbuf != NULL) {
+		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+		                                GDK_INTERP_BILINEAR);
+		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
+		g_object_unref(G_OBJECT(pixbuf));
+	}
+
+	gdk_pixbuf_composite(emblem, scale, 6, 6, 10, 10, 6, 6, 1, 1,
+	                     GDK_INTERP_BILINEAR, 255);
+	g_object_unref(emblem);
+	image = gtk_image_new_from_pixbuf(scale);
+	g_object_unref(scale);
+	gtk_widget_show(image);
+	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
+	                   GAIM_HIG_BOX_SPACE);
+
+	label = gtk_label_new("");
+	gtk_label_set_markup(GTK_LABEL(label), text);
+	g_free(text);
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
+	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE,
+	                   GAIM_HIG_BOX_SPACE);
+
+	button = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(button), hbox);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(connection_error_button_clicked_cb),
-					 account);
+	                 G_CALLBACK(connection_error_button_clicked_cb),
+	                 account);
 	gtk_widget_show(button);
-	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button,
+	                 FALSE, FALSE, 0);
 }
 
 void
