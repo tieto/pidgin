@@ -46,7 +46,10 @@ typedef struct {
 } GaimAutoRecon;
 
 static GHashTable *hash = NULL;
-static GSList *accountReconnecting = NULL;
+/*
+ * TODO: Remove an account from this list if the account is deleted.
+ */
+static GSList *errored_accounts = NULL;
 
 static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
@@ -71,10 +74,10 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 
 	if (hash != NULL)
 		g_hash_table_remove(hash, account);
-	if (accountReconnecting == NULL)
+	if (errored_accounts == NULL)
 		return;
-	accountReconnecting = g_slist_remove(accountReconnecting, account);
-	if (accountReconnecting == NULL)
+	errored_accounts = g_slist_remove(errored_accounts, account);
+	if (errored_accounts == NULL)
 		gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
 }
 
@@ -137,7 +140,7 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
 	GaimAccount *account = NULL;
 	GaimAutoRecon *info;
-	GSList* listAccount;
+	GSList* errored_account;
 
 	if (hash == NULL) {
 		hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
@@ -145,15 +148,15 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 	}
 	account = gaim_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
-	if (accountReconnecting)
-		listAccount = g_slist_find(accountReconnecting, account);
+	if (errored_accounts)
+		errored_account = g_slist_find(errored_accounts, account);
 	else
-		listAccount = NULL;
+		errored_account = NULL;
 
 	if (!gc->wants_to_die) {
 		if (gtkblist != NULL)
 			gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), text);
-		
+
 		if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
@@ -165,15 +168,15 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 		}
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
 
-		if (!listAccount)
-			accountReconnecting = g_slist_prepend(accountReconnecting, account);
+		if (!errored_account)
+			errored_accounts = g_slist_prepend(errored_accounts, account);
 	} else {
 	  char *p, *s, *n=NULL ;
 	  if (info != NULL)
 	    g_hash_table_remove(hash, account);
 
-	  if (listAccount)
-	      accountReconnecting = g_slist_delete_link(accountReconnecting, listAccount);
+	  if (errored_account)
+	      errored_accounts = g_slist_delete_link(errored_accounts, errored_account);
 
 	  if (gaim_account_get_alias(account)) {
 	    n = g_strdup_printf("%s (%s) (%s)",
