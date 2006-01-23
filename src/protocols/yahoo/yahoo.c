@@ -2869,30 +2869,30 @@ static GList *build_presence_submenu(YahooFriend *f, GaimConnection *gc) {
 	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
 		if (f->presence != YAHOO_PRESENCE_ONLINE) {
 			act = gaim_menu_action_new(_("Appear Online"),
-					GAIM_CALLBACK(yahoo_presence_settings),
-					GINT_TO_POINTER(YAHOO_PRESENCE_ONLINE),
-					NULL);
+			                           GAIM_CALLBACK(yahoo_presence_settings),
+			                           GINT_TO_POINTER(YAHOO_PRESENCE_ONLINE),
+			                           NULL);
 			m = g_list_append(m, act);
 		} else if (f->presence != YAHOO_PRESENCE_DEFAULT) {
 			act = gaim_menu_action_new(_("Appear Offline"),
-					GAIM_CALLBACK(yahoo_presence_settings),
-					GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT),
-					NULL);
+			                           GAIM_CALLBACK(yahoo_presence_settings),
+			                           GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT),
+			                           NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
 	if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
-		act = gaim_menu_action_new(
-				_("Don't Appear Permanently Offline"),
-				GAIM_CALLBACK(yahoo_presence_settings),
-				GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT), NULL);
+		act = gaim_menu_action_new(_("Don't Appear Permanently Offline"),
+		                           GAIM_CALLBACK(yahoo_presence_settings),
+		                           GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT),
+		                           NULL);
 		m = g_list_append(m, act);
 	} else {
 		act = gaim_menu_action_new(_("Appear Permanently Offline"),
-				GAIM_CALLBACK(yahoo_presence_settings),
-				GINT_TO_POINTER(YAHOO_PRESENCE_PERM_OFFLINE),
-				NULL);
+		                           GAIM_CALLBACK(yahoo_presence_settings),
+		                           GINT_TO_POINTER(YAHOO_PRESENCE_PERM_OFFLINE),
+		                           NULL);
 		m = g_list_append(m, act);
 	}
 

@@ -1218,7 +1218,7 @@ static void blist_menu_nab(GaimBlistNode *node, gpointer data) {
     so we use the blist-node-extended-menu signal to trigger this
     handler */
 static void blist_node_menu_cb(GaimBlistNode *node,
-			       GList **menu, struct mwGaimPluginData *pd) {
+                               GList **menu, struct mwGaimPluginData *pd) {
   const char *owner;
   GaimGroup *group;
   GaimAccount *acct;
@@ -1240,7 +1240,7 @@ static void blist_node_menu_cb(GaimBlistNode *node,
   if(gaim_group_on_account(group, acct)) {
     act = gaim_menu_action_new(_("Invite Group to Conference..."),
                                GAIM_CALLBACK(blist_menu_group_invite),
-			       pd, NULL);
+                               pd, NULL);
     *menu = g_list_append(*menu, NULL);
   }
 #endif
