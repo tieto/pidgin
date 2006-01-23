@@ -228,11 +228,11 @@ _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 {
 	GaimBuddy *gb = (GaimBuddy*)value;
 	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
-	struct _check_buddy_by_address_t *d = (struct _check_buddy_by_address_t *)data; 
+	struct _check_buddy_by_address_t *d = (struct _check_buddy_by_address_t *)data;
 
 	if (bb != NULL) {
-		if (g_strcasecmp(bb->ip, (char*)d->address) == 0) 
-			*(d->gb) = gb;      
+		if (g_strcasecmp(bb->ip, (char*)d->address) == 0)
+			*(d->gb) = gb;
 	}
 }
 
@@ -240,18 +240,18 @@ static gint
 _read_data(gint socket, char **message)
 {
 	GString *data = g_string_new("");
-	char parcial_data[512];
+	char partial_data[512];
 	gint total_message_length = 0;
-	gint parcial_message_length = 0;
+	gint partial_message_length = 0;
 
 	/* Read chunks of 512 bytes till the end of the data */
-	while ((parcial_message_length = recv(socket, parcial_data, 512, 0)) > 0)
+	while ((partial_message_length = recv(socket, partial_data, 512, 0)) > 0)
 	{
-			g_string_append_len(data, parcial_data, parcial_message_length);
-			total_message_length += parcial_message_length;
+			g_string_append_len(data, partial_data, partial_message_length);
+			total_message_length += partial_message_length;
 	}
 
-	if (parcial_message_length == -1)
+	if (partial_message_length == -1)
 	{
 		gaim_debug_warning("bonjour", "receive error: %s\n", strerror(errno));
 		if (total_message_length == 0) {
@@ -271,14 +271,14 @@ static gint
 _send_data(gint socket, char *message)
 {
 	gint message_len = strlen(message);
-	gint parcial_sent = 0;
-	gchar *parcial_message = message;
+	gint partial_sent = 0;
+	gchar *partial_message = message;
 
-	while ((parcial_sent = send(socket, parcial_message, message_len, 0)) < message_len)
+	while ((partial_sent = send(socket, partial_message, message_len, 0)) < message_len)
 	{
-		if (parcial_sent != -1) {
-			parcial_message += parcial_sent;
-			message_len -= parcial_sent;
+		if (partial_sent != -1) {
+			partial_message += partial_sent;
+			message_len -= partial_sent;
 		} else {
 			return -1;
 		}
@@ -547,7 +547,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	if (bb->conversation == NULL)
 	{
 		bb->conversation = g_new(BonjourJabberConversation, 1);
-		bb->conversation->socket = _connect_to_buddy(gb);;
+		bb->conversation->socket = _connect_to_buddy(gb);
 		bb->conversation->start_step_one = FALSE;
 		bb->conversation->start_step_two = FALSE;
 		bb->conversation->stream_started = FALSE;
