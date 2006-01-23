@@ -745,15 +745,8 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	struct yahoo_packet *pkt;
 	GaimConversation *c;
 
-#if 0
-/* Bleeter, 12th Jan 2006:
- * After comparing to native YIM6, it would appear all we need to do is send the
- * YAHOO_SERVICE_CHATLOGOUT, because the YAHOO_SERVICE_CHATEXIT is the response
- * from the server. Leaving this in causes double room-left messages to be generated.
- */
 	char *eroom;
 	gboolean utf8 = 1;
-#endif
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
@@ -762,14 +755,12 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 		return;
 	}
 
-#if 0
 	eroom = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sss", 104, eroom, 109, dn, 108, "1");
 	yahoo_packet_hash_str(pkt, 112, "0"); /* what does this one mean? */
 	yahoo_packet_send_and_free(pkt, yd);
-#endif
 
 	yd->in_chat = 0;
 	if (yd->chat_name) {
@@ -789,9 +780,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	yahoo_packet_send_and_free(pkt, yd);
 
 	yd->chat_online = 0;
-#if 0
 	g_free(eroom);
-#endif
 }
 
 /* borrowed from gtkconv.c */
