@@ -945,8 +945,10 @@ gtk_gaim_status_box_set_error(GtkGaimStatusBox *status_box, const gchar *error)
 	if (status_box->error)
 		g_free(status_box->error);
 	status_box->error = NULL;
+#if 0
 	if (error != NULL)
 		status_box->error = g_strdup(error);
+#endif
 	gtk_gaim_status_box_refresh(status_box);
 }
 

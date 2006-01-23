@@ -3470,12 +3470,15 @@ static void
 connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 {
 	GaimAccount *account;
-	char *text;
+	char *primary;
+	const char *text;
 
 	account = user_data;
+	primary = g_strdup_printf(_("%s disconnected"),
+							  gaim_account_get_username(account));
 	text = g_hash_table_lookup(gtkblist->connection_errors, account);
 	gaim_notify_formatted(NULL, _("Connection Error"),
-						  _("Connection Error"), NULL, text, NULL, NULL);
+						  primary, NULL, text, NULL, NULL);
 	gtk_widget_destroy(GTK_WIDGET(widget));
 	g_hash_table_remove(gtkblist->connection_errors, account);
 }
@@ -3491,7 +3494,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	GdkPixbuf *pixbuf, *emblem, *scale;
 
 	account = key;
-	text = g_strdup_printf("<span color=\"red\">%s disconnected: %s</span>",
+	text = g_strdup_printf(_("<span color=\"red\">%s disconnected: %s</span>"),
 	                       gaim_account_get_username(account),
 	                       (gchar *)value);
 

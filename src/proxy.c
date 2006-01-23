@@ -624,7 +624,7 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	struct sockaddr *addr = NULL;
 	size_t addrlen;
 
-	gaim_debug_info("dns", "Host '%s' resolved\n", req->host);
+	gaim_debug_info("dns", "Got response for '%s'\n", req->host);
 	gaim_input_remove(req->inpa);
 
 	rc = read(req->fd_out, &err, sizeof(err));
