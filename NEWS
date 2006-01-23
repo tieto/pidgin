@@ -11,7 +11,7 @@
 	it's fixed now and update your bug report accordingly (by either
 	closing it or setting the version to 2.0.0beta2).  I'm also looking
 	for someone who uses Gaim on MacOS X to test a patch for me before
-	I can commit it.  See http://gaim.sf.net/contact.info.php for my
+	I can commit it.  See http://gaim.sf.net/contactinfo.php for my
 	contact information.
 
 	Etan: So I did a bunch of work on the perl plugin since beta1, so
