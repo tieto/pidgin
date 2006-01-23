@@ -770,11 +770,13 @@ gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 		*buffer = g_malloc0(s);
 
 		r = read(xfer->fd, *buffer, s);
-		if ((gaim_xfer_get_size(xfer) > 0) &&
+		if (r < 0 && errno == EAGAIN)
+			r = 0;
+		else if (r < 0)
+			r = -1;
+		else if ((gaim_xfer_get_size(xfer) > 0) &&
 			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
-		else if(r <= 0)
-			r = -1;
 	}
 
 	return r;
@@ -795,6 +797,8 @@ gaim_xfer_write(GaimXfer *xfer, const guchar *buffer, size_t size)
 		r = (xfer->ops.write)(buffer, s, xfer);
 	} else {
 		r = write(xfer->fd, buffer, s);
+		if (r < 0 && errno == EAGAIN)
+			r = 0;
 		if ((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer))
 			gaim_xfer_set_completed(xfer, TRUE);
 	}
@@ -817,7 +821,8 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		} else if(r < 0) {
 			gaim_xfer_cancel_remote(xfer);
 			return;
-		}
+		} else if(r == 0)
+			return;
 	}
 
 	if (condition & GAIM_INPUT_WRITE) {
