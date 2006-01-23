@@ -3172,6 +3172,7 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 	gtk_widget_set_sensitive(widget, (gaim_connections_get_all() != NULL));
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
+	gtk_widget_set_sensitive(widget, (gaim_connections_get_all() != NULL));
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
 	gtk_widget_set_sensitive(widget, gaim_gtk_roomlist_is_showable());
