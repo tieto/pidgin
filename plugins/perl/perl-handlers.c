@@ -390,9 +390,9 @@ gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback, SV *data)
 
 	handler->plugin   = plugin;
 	handler->callback = (callback != NULL && callback != &PL_sv_undef
-						 ? newSVsv(callback) : NULL);
+	                     ? newSVsv(callback) : NULL);
 	handler->data     = (data != NULL && data != &PL_sv_undef
-						 ? newSVsv(data) : NULL);
+	                     ? newSVsv(data) : NULL);
 
 	timeout_handlers = g_list_append(timeout_handlers, handler);
 
