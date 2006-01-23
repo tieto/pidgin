@@ -444,7 +444,6 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 			buf = irc_format(irc, "vt:", "NOTICE", from, msg);
 			irc_send(irc, buf);
 			g_free(buf);
-			gc = gaim_account_get_connection(irc->account);
 		}
 	} else if (!strncmp(cur, "VERSION", 7) && !notice) {
 		buf = irc_format(irc, "vt:", "NOTICE", from, "\001VERSION Gaim IRC\001");
