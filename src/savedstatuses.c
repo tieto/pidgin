@@ -798,6 +798,27 @@ gaim_savedstatus_find_by_creation_time(time_t creation_time)
 	return NULL;
 }
 
+GaimSavedStatus *
+gaim_savedstatus_find_by_type_and_message(GaimStatusPrimitive type,
+										  const char *message)
+{
+	GList *iter;
+	GaimSavedStatus *status;
+
+	for (iter = saved_statuses; iter != NULL; iter = iter->next)
+	{
+		status = (GaimSavedStatus *)iter->data;
+		if ((status->type == type) &&
+			(((status->message == NULL) && (message == NULL)) ||
+			((status->message != NULL) && (message != NULL) && !strcmp(status->message, message))))
+		{
+			return status;
+		}
+	}
+
+	return NULL;
+}
+
 gboolean
 gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
 {

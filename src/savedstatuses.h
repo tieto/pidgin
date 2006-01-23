@@ -208,6 +208,18 @@ GaimSavedStatus *gaim_savedstatus_find(const char *title);
 GaimSavedStatus *gaim_savedstatus_find_by_creation_time(time_t creation_time);
 
 /**
+ * Finds a saved status with the specified primitive and message.
+ *
+ * @param type The GaimStatusPrimitive for the status you're trying
+ *        to find.
+ * @param message The message for the status you're trying
+ *        to find.
+ *
+ * @return The saved status if found, or NULL.
+ */
+GaimSavedStatus *gaim_savedstatus_find_by_type_and_message(GaimStatusPrimitive type, const char *message);
+
+/**
  * Determines if a given saved status is "transient."
  * A transient saved status is one that was not
  * explicitly added by the user.  Transient statuses
