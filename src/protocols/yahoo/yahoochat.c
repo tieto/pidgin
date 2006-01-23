@@ -355,7 +355,23 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *someid, *someotherid, *somebase64orhashosomething, *somenegativenumber;
 
 	if (pkt->status == -1) {
-		gaim_notify_error(gc, NULL, _("Failed to join chat"), _("Maybe the room is full?"));
+		/* We can't join */
+		struct yahoo_pair *pair = pkt->hash->data;
+		gchar const *failed_to_join = _("Failed to join chat");
+		switch (atoi(pair->value)) {
+			case 0xFFFFFFFA: /* -6 */
+				gaim_notify_error(gc, NULL, failed_to_join, _("Unknown room"));
+				break;
+			case 0xFFFFFFF1: /* -15 */
+				gaim_notify_error(gc, NULL, failed_to_join, _("Maybe the room is full"));
+				break;
+			case 0xFFFFFFDD: /* -35 */
+				gaim_notify_error(gc, NULL, failed_to_join, _("Not available"));
+				break;
+			default:
+				gaim_notify_error(gc, NULL, failed_to_join,
+						_("Unknown error. You may need to logout and wait five minutes before being able to rejoin a chatroom"));
+		}
 		return;
 	}
 
