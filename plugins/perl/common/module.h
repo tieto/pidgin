@@ -243,6 +243,7 @@ typedef GaimStatusAttr *		Gaim__StatusAttr;
 typedef GaimStatusPrimitive		Gaim__StatusPrimitive;
 typedef GaimStatusType *		Gaim__StatusType;
 
+/* stringref.h */
 typedef GaimStringref *			Gaim__Stringref;
 
 /* util.h */
