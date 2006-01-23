@@ -686,7 +686,7 @@ msn_buddy_menu(GaimBuddy *buddy)
 	}
 
 	if (g_ascii_strcasecmp(buddy->name,
-						   gaim_account_get_username(buddy->account)))
+	                       gaim_account_get_username(buddy->account)))
 	{
 		act = gaim_menu_action_new(_("Initiate _Chat"),
 		                           GAIM_CALLBACK(initiate_chat_cb),
