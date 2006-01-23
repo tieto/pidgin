@@ -48,7 +48,17 @@ void gaim_gtk_status_window_hide(void);
 void gaim_gtk_status_editor_show(GaimSavedStatus *status);
 
 /**
- * Returns the gtkstatus handle.
+ * Creates a dropdown menu of saved statuses and calls a callback
+ * when one is selected
+ *
+ * @param status   The default saved_status to show as 'selected'
+ * @param callback The callback to call when the selection changes
+ * @return         The menu widget
+ */
+GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *status, GCallback callback);
+
+/**
+ * Returns the GTK+ status handle.
  *
  * @return The handle to the GTK+ status system.
  */
@@ -63,15 +73,5 @@ void gaim_gtk_status_init(void);
  * Uninitializes the GTK+ status system.
  */
 void gaim_gtk_status_uninit(void);
-
-/**
- * Creates a dropdown menu of saved statuses and calls a callback
- * when one is selected
- *
- * @param status   The default saved_status to show as 'selected'
- * @param callback The callback to call when the selection changes
- * @return         The menu widget
- */
-GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *status, GCallback callback);
 
 #endif /* _GAIM_GTKSAVEDSTATUSES_H_ */

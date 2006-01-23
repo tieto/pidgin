@@ -38,4 +38,21 @@ GaimConnectionUiOps *gaim_gtk_connections_get_ui_ops(void);
 
 /*@}*/
 
+/**
+ * Returns the GTK+ connection handle.
+ *
+ * @return The handle to the GTK+ connection system.
+ */
+void *gaim_gtk_connection_get_handle(void);
+
+/**
+ * Initializes the GTK+ connection system.
+ */
+void gaim_gtk_connection_init(void);
+
+/**
+ * Uninitializes the GTK+ connection system.
+ */
+void gaim_gtk_connection_uninit(void);
+
 #endif /* _GAIM_GTKCONN_H_ */

@@ -45,13 +45,16 @@ typedef struct {
 	guint timeout;
 } GaimAutoRecon;
 
-static GHashTable *hash = NULL;
-/*
- * TODO: Remove an account from this list if the account is deleted.
+/**
+ * Contains accounts that are auto-reconnecting.
+ * The key is a pointer to the GaimAccount and the
+ * value is a pointer to a GaimAutoRecon.
  */
-static GSList *errored_accounts = NULL;
+static GHashTable *hash = NULL;
+static GHashTable *errored_accounts = NULL;
 
-static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
+static void
+gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
@@ -62,26 +65,32 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 	gtk_gaim_status_box_pulse_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
 }
 
-static void gaim_gtk_connection_connected(GaimConnection *gc)
+static void
+gaim_gtk_connection_connected(GaimConnection *gc)
 {
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-	GaimAccount *account = NULL;
-	if (!gtkblist)
-		return;
-	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+	GaimAccount *account;
+	GaimGtkBuddyList *gtkblist;
+
+	account  = gaim_connection_get_account(gc);
+	gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+
+	if (gtkblist != NULL)
+		gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
-	account = gaim_connection_get_account(gc);
 
 	if (hash != NULL)
 		g_hash_table_remove(hash, account);
-	if (errored_accounts == NULL)
-		return;
-	errored_accounts = g_slist_remove(errored_accounts, account);
-	if (errored_accounts == NULL)
-		gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
+
+	if (g_hash_table_size(errored_accounts) > 0)
+	{
+		g_hash_table_remove(errored_accounts, account);
+		if (g_hash_table_size(errored_accounts) == 0)
+			gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
+	}
 }
 
-static void gaim_gtk_connection_disconnected(GaimConnection *gc)
+static void
+gaim_gtk_connection_disconnected(GaimConnection *gc)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
 	if (!gtkblist)
@@ -95,7 +104,8 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 	gaim_gtkdialogs_destroy_all();
 }
 
-static void gaim_gtk_connection_notice(GaimConnection *gc,
+static void
+gaim_gtk_connection_notice(GaimConnection *gc,
 		const char *text)
 {
 }
@@ -118,40 +128,31 @@ do_signon(gpointer data)
 	GaimAccount *account = data;
 	GaimAutoRecon *info;
 
-	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "do_signon called\n");
+	gaim_debug_info("autorecon", "do_signon called\n");
 	g_return_val_if_fail(account != NULL, FALSE);
 	info = g_hash_table_lookup(hash, account);
-
-	if (g_list_index(gaim_accounts_get_all(), account) < 0)
-		return FALSE;
 
 	if (info)
 		info->timeout = 0;
 
-	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "calling gaim_account_connect\n");
+	gaim_debug_info("autorecon", "calling gaim_account_connect\n");
 	gaim_account_connect(account);
-	gaim_debug(GAIM_DEBUG_INFO, "autorecon", "done calling gaim_account_connect\n");
+	gaim_debug_info("autorecon", "done calling gaim_account_connect\n");
 
 	return FALSE;
 }
 
-static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
+static void
+gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
 	GaimAccount *account = NULL;
 	GaimAutoRecon *info;
 	GSList* errored_account;
 
-	if (hash == NULL) {
-		hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
-		free_auto_recon);
-	}
 	account = gaim_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
-	if (errored_accounts)
-		errored_account = g_slist_find(errored_accounts, account);
-	else
-		errored_account = NULL;
+	errored_account = g_hash_table_lookup(errored_accounts, account);
 
 	if (!gc->wants_to_die) {
 		if (gtkblist != NULL)
@@ -168,37 +169,43 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 		}
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
 
-		if (!errored_account)
-			errored_accounts = g_slist_prepend(errored_accounts, account);
+		g_hash_table_insert(errored_accounts, account, NULL);
 	} else {
-	  char *p, *s, *n=NULL ;
-	  if (info != NULL)
-	    g_hash_table_remove(hash, account);
+		char *p, *s, *n=NULL ;
+		if (info != NULL)
+			g_hash_table_remove(hash, account);
 
-	  if (errored_account)
-	      errored_accounts = g_slist_delete_link(errored_accounts, errored_account);
+		if (errored_account != NULL)
+			g_hash_table_remove(errored_accounts, errored_account);
 
-	  if (gaim_account_get_alias(account)) {
-	    n = g_strdup_printf("%s (%s) (%s)",
-				  gaim_account_get_username(account),
-				  gaim_account_get_alias(account),
-				  gaim_account_get_protocol_name(account));
-	    } else {
-	      n = g_strdup_printf("%s (%s)",
-				  gaim_account_get_username(account),
-				  gaim_account_get_protocol_name(account));
-	    }
+		if (gaim_account_get_alias(account))
+		{
+			n = g_strdup_printf("%s (%s) (%s)",
+					gaim_account_get_username(account),
+					gaim_account_get_alias(account),
+					gaim_account_get_protocol_name(account));
+		}
+		else
+		{
+			n = g_strdup_printf("%s (%s)",
+					gaim_account_get_username(account),
+					gaim_account_get_protocol_name(account));
+		}
 
-	    p = g_strdup_printf(_("%s disconnected"), n);
-	    s = g_strdup_printf(_("%s was disconnected due to an error. %s The account has been disabled. "
-				  "Correct the error and reenable the account to connect."), n, text);
-	    gaim_notify_error(NULL, NULL, p, s);
-	    g_free(p);
-	    g_free(s);
-	    g_free(n);
-		/* XXX: do we really want to disable the account when it's disconnected by wants_to_die?
-		 *      This normally happens when you sign on from somewhere else. */
-	    gaim_account_set_enabled(account, GAIM_GTK_UI, FALSE);
+		p = g_strdup_printf(_("%s disconnected"), n);
+		s = g_strdup_printf(_("%s was disconnected due to an error. %s The account has been disabled. "
+				"Correct the error and reenable the account to connect."), n, text);
+		gaim_notify_error(NULL, NULL, p, s);
+		g_free(p);
+		g_free(s);
+		g_free(n);
+
+		/*
+		 * TODO: Do we really want to disable the account when it's
+		 * disconnected by wants_to_die?  This happens when you sign
+		 * on from somewhere else, or when you enter an invalid password.
+		 */
+		gaim_account_set_enabled(account, GAIM_GTK_UI, FALSE);
 	}
 }
 
@@ -215,4 +222,60 @@ GaimConnectionUiOps *
 gaim_gtk_connections_get_ui_ops(void)
 {
 	return &conn_ui_ops;
+}
+
+static void
+account_removed_cb(GaimAccount *account, gpointer user_data)
+{
+	g_hash_table_remove(hash, account);
+
+	if (g_hash_table_size(errored_accounts) > 0)
+	{
+		g_hash_table_remove(errored_accounts, account);
+		if (g_hash_table_size(errored_accounts) == 0)
+		{
+			GaimGtkBuddyList *gtkblist;
+
+			gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+			if (gtkblist != NULL)
+				gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
+		}
+	}
+}
+
+
+/**************************************************************************
+* GTK+ connection glue
+**************************************************************************/
+
+void *
+gaim_gtk_connection_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_gtk_connection_init(void)
+{
+	hash = g_hash_table_new_full(
+							g_direct_hash, g_direct_equal,
+							NULL, free_auto_recon);
+	errored_accounts = g_hash_table_new_full(
+							g_direct_hash, g_direct_equal,
+							NULL, NULL);
+
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+						gaim_gtk_connection_get_handle(),
+						GAIM_CALLBACK(account_removed_cb), NULL);
+}
+
+void
+gaim_gtk_connection_uninit(void)
+{
+	gaim_signals_disconnect_by_handle(gaim_gtk_connection_get_handle());
+
+	g_hash_table_destroy(hash);
+	g_hash_table_destroy(errored_accounts);
 }

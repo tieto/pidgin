@@ -2652,7 +2652,7 @@ gaim_gtk_accounts_get_ui_ops(void)
 }
 
 void *
-gaim_gtk_account_get_handle() {
+gaim_gtk_account_get_handle(void) {
 	static int handle;
 
 	return &handle;

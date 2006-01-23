@@ -1561,7 +1561,7 @@ GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callb
 **************************************************************************/
 
 void *
-gaim_gtk_status_get_handle()
+gaim_gtk_status_get_handle(void)
 {
 	static int handle;
 

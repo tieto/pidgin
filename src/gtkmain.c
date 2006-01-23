@@ -251,6 +251,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_stock_init();
 	gaim_gtk_prefs_init();
 	gaim_gtk_account_init();
+	gaim_gtk_connection_init();
 	gaim_gtk_blist_init();
 	gaim_gtk_status_init();
 	gaim_gtk_conversations_init();
@@ -279,6 +280,7 @@ gaim_gtk_quit(void)
 	gaim_gtk_conversations_uninit();
 	gaim_gtk_status_uninit();
 	gaim_gtk_blist_uninit();
+	gaim_gtk_connection_uninit();
 	gaim_gtk_account_uninit();
 	gaim_gtk_xfers_uninit();
 	gaim_gtk_debug_uninit();
