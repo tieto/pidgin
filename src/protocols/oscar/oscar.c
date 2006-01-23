@@ -5179,8 +5179,6 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	oscar_string_append_info(gc, str, "\n<br>", NULL, userinfo);
 
 	/* Available message */
-	// QQQQQQQQQQ
-printf("          userinfo->status=%s\n", userinfo->status);
 	if ((userinfo->status != NULL) && !(userinfo->flags & AIM_FLAG_AWAY))
 	{
 		if (userinfo->status[0] != '\0')
