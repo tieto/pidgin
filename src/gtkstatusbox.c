@@ -345,7 +345,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
  * we are currently using.  It is used when the current state is
  * updated from somewhere other than the GtkStatusBox (from a plugin,
  * or when signing on with the "-n" option, for example).  It is
- * also used when the user selects the "Custom..." option.
+ * also used when the user selects the "New..." option.
  *
  * Maybe we could accomplish this by triggering off the mouse and
  * keyboard signals instead of the changed signal?
@@ -497,7 +497,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		add_popular_statuses(status_box);
 
 		gtk_gaim_status_box_add_separator(GTK_GAIM_STATUS_BOX(status_box));
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("Custom..."), NULL, NULL);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("New..."), NULL, NULL);
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
 
 		update_to_reflect_current_status(status_box);
@@ -1034,7 +1034,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 					   -1);
 
 	/*
-	 * If the currently selected status is "Custom..." or
+	 * If the currently selected status is "New..." or
 	 * "Saved..." or a popular status then do nothing.
 	 * Custom statuses are
 	 * activated elsewhere, and we update the status_box
