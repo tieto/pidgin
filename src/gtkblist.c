@@ -3518,24 +3518,28 @@ create_connection_error_buttons(gpointer key, gpointer value,
 		g_object_unref(pixbuf);
 		emblem = scale;
 		scale = NULL;
-	}
 
-	pixbuf = gaim_gtk_create_prpl_icon(account);
-	if (pixbuf != NULL) {
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+		pixbuf = gaim_gtk_create_prpl_icon(account);
+		if (pixbuf != NULL) {
+			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 		                                GDK_INTERP_BILINEAR);
-		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-		g_object_unref(G_OBJECT(pixbuf));
-	}
+			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
+			g_object_unref(G_OBJECT(pixbuf));
 
-	gdk_pixbuf_composite(emblem, scale, 6, 6, 10, 10, 6, 6, 1, 1,
-	                     GDK_INTERP_BILINEAR, 255);
-	g_object_unref(emblem);
-	image = gtk_image_new_from_pixbuf(scale);
-	g_object_unref(scale);
-	gtk_widget_show(image);
-	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
-	                   GAIM_HIG_BOX_SPACE);
+			gdk_pixbuf_composite(emblem, scale, 6, 6, 10, 10, 6, 6, 1, 1,
+			                     GDK_INTERP_BILINEAR, 255);
+			g_object_unref(emblem);
+
+			emblem = scale;
+		}
+
+		image = gtk_image_new_from_pixbuf(emblem);
+		g_object_unref(emblem);
+
+		gtk_widget_show(image);
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
+		                   GAIM_HIG_BOX_SPACE);
+	}
 
 	label = gtk_label_new("");
 	gtk_label_set_markup(GTK_LABEL(label), text);
