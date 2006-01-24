@@ -719,11 +719,8 @@ int main(int argc, char *argv[])
 	{
 		/* Set all accounts to "offline" */
 		GaimSavedStatus *saved_status;
-		saved_status = gaim_savedstatus_find(_("Default"));
-		if (saved_status == NULL)
-			saved_status = gaim_savedstatus_new(_("Default"), GAIM_STATUS_OFFLINE);
-		else
-			gaim_savedstatus_set_type(saved_status, GAIM_STATUS_OFFLINE);
+		saved_status = gaim_savedstatus_get_current();
+		gaim_savedstatus_set_type(saved_status, GAIM_STATUS_OFFLINE);
 		gaim_savedstatus_activate(saved_status);
 	}
 	else
