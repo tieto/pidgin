@@ -576,9 +576,8 @@ gaim_gtk_sound_play_file(const char *filename)
 
 				while((frames_read = afReadFrames(file, AF_DEFAULT_TRACK,
 								buf, buf_frames))) {
-					if(volume != 50)
-						scale_pcm_data(buf, frames_read, &format, intercept,
-									   minclip, maxclip, scale);
+					scale_pcm_data(buf, frames_read, &format, intercept,
+								   minclip, maxclip, scale);
 					if(!ao_play(device, buf, frames_read * bytes_per_frame))
 						break;
 				}
