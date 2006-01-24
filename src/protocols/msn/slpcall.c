@@ -112,10 +112,11 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		}
 	}
 
-	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
-
+	/* Call the end_cb before removing the slpcall, as the end_cb may need the slplink */
 	if (slpcall->end_cb != NULL)
 		slpcall->end_cb(slpcall);
+
+	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
 
 	g_free(slpcall);
 }
