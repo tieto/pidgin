@@ -907,7 +907,7 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		userlist->buddy_icon_window--;
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "buddy_icon_window=%d\n",
+		gaim_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
 						userlist->buddy_icon_window);
 #endif
 	}
@@ -961,7 +961,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		g_queue_push_tail(queue, user);
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "buddy_icon_window=%d\n",
+		gaim_debug_info("msn", "msn_queue_buddy_icon_request(): buddy_icon_window=%d\n",
 						userlist->buddy_icon_window);
 #endif
 
@@ -1006,7 +1006,7 @@ got_user_display(MsnSlpCall *slpcall,
 	/* Free one window slot */
 	userlist->buddy_icon_window++;
 
-	gaim_debug_info("msn", "buddy_icon_window=%d\n",
+	gaim_debug_info("msn", "got_user_display(): buddy_icon_window++ yields =%d\n",
 					userlist->buddy_icon_window);
 
 	msn_release_buddy_icon_request(userlist);
@@ -1025,20 +1025,28 @@ end_user_display(MsnSlpCall *slpcall)
 #endif
 
 	/* Maybe the slplink was destroyed. */
-	if (slpcall->slplink == NULL)
+	if (slpcall->slplink == NULL) {
+		#ifdef MSN_DEBUG_UD
+			gaim_debug_info("msn", "end_user_display(): returning because slpcall->slplink is NULL\n");
+		#endif
 		return;
+	}
 
 	userlist = slpcall->slplink->session->userlist;
 
 	/* If the session is being destroyed we better stop doing anything. */
-	if (slpcall->slplink->session->destroying)
+	if (slpcall->slplink->session->destroying) {
+		#ifdef MSN_DEBUG_UD
+			gaim_debug_info("msn", "end_user_display(): returning because slpcall->slplink->session->destroying is TRUE\n");
+		#endif
 		return;
+	}
 
 	/* Free one window slot */
 	userlist->buddy_icon_window++;
 
 #ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "buddy_icon_window=%d\n",
+	gaim_debug_info("msn", "end_user_display(): buddy_icon_window++ yields =%d\n",
 					userlist->buddy_icon_window);
 #endif
 
@@ -1110,7 +1118,7 @@ msn_request_user_display(MsnUser *user)
 		session->userlist->buddy_icon_window++;
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "buddy_icon_window=%d\n",
+		gaim_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
 						session->userlist->buddy_icon_window);
 #endif
 
