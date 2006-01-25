@@ -2929,9 +2929,9 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 
 	presence = gaim_buddy_get_presence(b);
 
-	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
-
-		if ((gaim_presence_is_idle(presence) || !GAIM_BUDDY_IS_ONLINE(b)) && !selected)
+	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+	{
+		if (!selected && (gaim_presence_is_idle(presence) || !gaim_presence_is_online(presence)))
 		{
 			text = g_strdup_printf("<span color='%s'>%s</span>",
 					       dim_grey(), esc);
@@ -3011,32 +3011,35 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			idletime = g_strdup(_("Idle"));
 	}
 
-	if(!GAIM_BUDDY_IS_ONLINE(b) && !statustext)
-		statustext = g_strdup(_("Offline "));
+	if(!gaim_presence_is_online(presence) && !statustext)
+		statustext = g_strdup(_("Offline"));
 
-	if (gaim_presence_is_idle(presence) && !selected) {
-		text =  g_strdup_printf("<span color='%s'>%s</span>\n"
-					"<span color='%s' size='smaller'>%s%s%s</span>",
-					dim_grey(), esc, dim_grey(),
-					idletime != NULL ? idletime : "",
-					(idletime != NULL && statustext != NULL) ? " - " : "",
-					statustext != NULL ? statustext : "");
-	} else if (statustext == NULL && idletime == NULL && GAIM_BUDDY_IS_ONLINE(b)) {
-		text = g_strdup(esc);
-	} else {
-		if (selected)
+	if (statustext == NULL && idletime == NULL)
+	{
+		if (!selected && gaim_presence_is_idle(presence))
+			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
+		else
+			text = g_strdup(esc);
+	}
+	else
+	{
+		if (!selected && (gaim_presence_is_idle(presence) || !gaim_presence_is_online(presence)))
+		{
+			text = g_strdup_printf("<span color='%s'>%s</span>\n"
+						"<span color='%s' size='smaller'>%s%s%s</span>",
+						dim_grey(), esc, dim_grey(),
+						idletime != NULL ? idletime : "",
+						(idletime != NULL && statustext != NULL) ? " - " : "",
+						statustext != NULL ? statustext : "");
+		}
+		else
+		{
 			text = g_strdup_printf("%s\n"
 					       "<span size='smaller'>%s%s%s</span>", esc,
 					       idletime != NULL ? idletime : "",
 					       (idletime != NULL && statustext != NULL) ? " - " : "",
 					       statustext != NULL ? statustext :  "");
-		else
-			text = g_strdup_printf("%s\n"
-					       "<span color='%s' size='smaller'>%s%s%s</span>", esc,
-					       dim_grey(),
-					       idletime != NULL ? idletime : "",
-					       (idletime != NULL && statustext != NULL) ? " - " : "",
-					       statustext != NULL ? statustext :  "");
+		}
 	}
 
 	g_free(idletime);
