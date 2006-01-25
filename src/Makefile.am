@@ -339,8 +339,10 @@ gaim_headers = \
 	gtkstock.h \
 	gtkthemes.h \
 	gtkutils.h \
-	internal.h \
 	gtkwhiteboard.h
+
+EXTRA_DIST = \
+	internal.h
 
 gaimincludedir=$(includedir)/gaim
 gaiminclude_HEADERS = \
