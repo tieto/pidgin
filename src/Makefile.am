@@ -341,7 +341,7 @@ gaim_headers = \
 	gtkutils.h \
 	gtkwhiteboard.h
 
-EXTRA_DIST = \
+noinst_HEADERS= \
 	internal.h
 
 gaimincludedir=$(includedir)/gaim
