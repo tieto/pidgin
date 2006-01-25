@@ -212,6 +212,8 @@ save_writefile_cb(void *user_data, const char *filename)
 	DebugWindow *win = (DebugWindow *)user_data;
 	FILE *fp;
 	char *tmp;
+	time_t now = time(NULL);
+	char date[64];
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
 		gaim_notify_error(win, NULL, _("Unable to open file."), NULL);
@@ -219,7 +221,8 @@ save_writefile_cb(void *user_data, const char *filename)
 	}
 
 	tmp = gtk_imhtml_get_text(GTK_IMHTML(win->text), NULL, NULL);
-	fprintf(fp, "Gaim Debug log : %s\n", gaim_date_full());
+	strftime(date, sizeof(date), "%c", localtime(&now));
+	fprintf(fp, "Gaim Debug Log : %s\n", date);
 	fprintf(fp, "%s", tmp);
 	g_free(tmp);
 

@@ -51,12 +51,6 @@ gaim_build_dir(path, mode)
 	const char *path
 	int mode
 
-const char *
-gaim_date()
-
-const char *
-gaim_date_full()
-
 gboolean
 gaim_email_is_valid(address)
 	const char *address

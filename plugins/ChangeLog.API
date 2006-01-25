@@ -147,6 +147,8 @@ version 2.0.0:
 	* gaim_gtk_privacy_is_showable(): We do fallback privacy in the core
 	  now, so this would always be TRUE now.
 	* gaim_blist_node_action_new(); use gaim_menu_action_new() instead
+	* gaim_date()
+	* gaim_date_full()
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

@@ -475,30 +475,6 @@ gaim_mime_decode_field(const char *str)
 /**************************************************************************
  * Date/Time Functions
  **************************************************************************/
-const char *
-gaim_date(void)
-{
-	static char date[80];
-	time_t tme;
-
-	time(&tme);
-	strftime(date, sizeof(date), "%H:%M:%S", localtime(&tme));
-
-	return date;
-}
-
-const char *
-gaim_date_full(void)
-{
-	char *date;
-	time_t tme;
-
-	time(&tme);
-	date = ctime(&tme);
-	date[strlen(date) - 1] = '\0';
-
-	return date;
-}
 
 time_t
 gaim_time_build(int year, int month, int day, int hour, int min, int sec)

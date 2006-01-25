@@ -201,30 +201,6 @@ char *gaim_mime_decode_field(const char *str);
 /*@{*/
 
 /**
- * Returns the current local time in hour:minute:second form.
- *
- * The returned string is stored in a static buffer, so the result
- * should be g_strdup()'d if it's intended to be used for long.
- *
- * @return The current local time.
- *
- * @see gaim_date_full()
- */
-const char *gaim_date(void);
-
-/**
- * Returns the date and time in human-readable form.
- *
- * The returned string is stored in a static buffer, so the result
- * should be g_strdup()'d if it's intended to be used for long.
- *
- * @return The date and time in human-readable form.
- *
- * @see gaim_date()
- */
-const char *gaim_date_full(void);
-
-/**
  * Builds a time_t from the supplied information.
  *
  * @param year  The year.
