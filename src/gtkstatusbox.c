@@ -790,6 +790,9 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), text_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), text_rend, "markup", TEXT_COLUMN, NULL);
+#if GTK_CHECK_VERSION(2, 6, 0)
+	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
@@ -797,6 +800,9 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, "markup", TEXT_COLUMN, NULL);
+#if GTK_CHECK_VERSION(2, 6, 0)
+	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
 
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 6, NULL);
 
