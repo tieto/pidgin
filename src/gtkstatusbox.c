@@ -23,6 +23,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+ * The status box is made up of two main pieces:
+ *   - The box that displays the current status, which is made
+ *     of a GtkListStore ("status_box->store") and GtkCellView
+ *     ("status_box->cell_view").  There is always exactly 1 row
+ *     in this list store.  Only the TYPE_ICON and TYPE_TEXT
+ *     columns are used in this list store.
+ *   - The dropdown menu that lets users select a status, which
+ *     is made of a GtkComboBox ("status_box") and GtkListStore
+ *     ("status_box->dropdown_store").  This dropdown is shown
+ *     when the user clicks on the box that displays the current
+ *     status.  This list store contains one row for Available,
+ *     one row for Away, etc., a few rows for popular statuses,
+ *     and the "New..." and "Saved..." options.
+ */
+
 #include <gdk/gdkkeysyms.h>
 
 #include "account.h"
@@ -66,13 +82,31 @@ static void (*combo_box_size_allocate)(GtkWidget *widget, GtkAllocation *allocat
 static void (*combo_box_forall) (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 
 enum {
-	TYPE_COLUMN,  /* A GtkGaimStatusBoxItemType */
-	ICON_COLUMN,  /* This is a GdkPixbuf (the other columns are strings) */
-	TEXT_COLUMN,  /* A string */
-	TITLE_COLUMN, /* The plain-English title of this item */
-	DESC_COLUMN,  /* A plain-English description of this item */
-	DATA_COLUMN,  /* Keep track of the creation time of popular
-						statuses, and also the GaimStatusPrimitive */
+	/** A GtkGaimStatusBoxItemType */
+	TYPE_COLUMN,
+
+	/**
+	 * This is a GdkPixbuf (the other columns are strings).
+	 * This column is visible.
+	 */
+	ICON_COLUMN,
+
+	/** The text displayed on the status box.  This column is visible. */
+	TEXT_COLUMN,
+
+	/** The plain-English title of this item */
+	TITLE_COLUMN,
+
+	/** A plain-English description of this item */
+	DESC_COLUMN,
+
+	/*
+	 * This value depends on TYPE_COLUMN.  For POPULAR types,
+	 * this is the creation time.  For PRIMITIVE types,
+	 * this is the GaimStatusPrimitive.
+	 */
+	DATA_COLUMN,
+
 	NUM_COLUMNS
 };
 
@@ -268,6 +302,10 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 	                               );
 }
 
+/**
+ * This updates the text displayed on the status box so that it shows
+ * the current status.
+ */
 static void
 gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 {
@@ -283,13 +321,16 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		 style->text_aa[GTK_STATE_NORMAL].green >> 8,
 		 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
 
-	title = status_box->title;
-	if (!title)
-		title = "";
+	if (status_box->title != NULL)
+		title = g_markup_escape_text(status_box->title, -1);
+	else
+		title = g_strdup("");
 
 	if (status_box->error) {
+		gchar *tmp = g_markup_escape_text(status_box->error, -1);
 		text = g_strdup_printf("<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>",
-							   status_box->error);
+							   tmp);
+		g_free(tmp);
 	} else if (status_box->typing) {
 		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
 							   aa_color, _("Typing"));
@@ -297,8 +338,10 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
 							   aa_color, _("Connecting"));
 	} else if (status_box->desc) {
+		gchar *tmp = g_markup_escape_text(status_box->desc, -1);
 		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
-							   aa_color, status_box->desc);
+							   aa_color, tmp);
+		g_free(tmp);
 	}
 
 	if (status_box->account) {
@@ -314,6 +357,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	} else {
 		text = g_strdup(title);
 	}
+	g_free(title);
 
 	if (status_box->connecting)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
@@ -324,13 +368,13 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	else
 		pixbuf = status_box->pixbuf;
 
+	/*
+	 * Only two columns are used in this list store (does it
+	 * really need to be a list store?)
+	 */
 	gtk_list_store_set(status_box->store, &(status_box->iter),
-			   TYPE_COLUMN, -1, /* This field is not used in this list store */
 			   ICON_COLUMN, pixbuf,
 			   TEXT_COLUMN, text,
-			   TITLE_COLUMN, title,
-			   DESC_COLUMN, status_box->desc,
-			   DATA_COLUMN, -1, /* This field is not used in this list store */
 			   -1);
 	path = gtk_tree_path_new_from_string("0");
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
@@ -711,10 +755,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
 	GtkTextBuffer *buffer;
-	GtkTreePath *path;
-
-	text_rend = gtk_cell_renderer_text_new();
-	icon_rend = gtk_cell_renderer_pixbuf_new();
 
 	status_box->imhtml_visible = FALSE;
 	status_box->connecting = FALSE;
@@ -734,9 +774,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
 	gtk_list_store_append(status_box->store, &(status_box->iter));
 	gtk_gaim_status_box_refresh(status_box);
-	path = gtk_tree_path_new_from_string("0");
-	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
-	gtk_tree_path_free(path);
 
 	gtk_container_add(GTK_CONTAINER(status_box->toggle_button), status_box->hbox);
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->cell_view, TRUE, TRUE, 0);
@@ -746,14 +783,16 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 #if GTK_CHECK_VERSION(2,4,0)
 	gtk_button_set_focus_on_click(GTK_BUTTON(status_box->toggle_button), FALSE);
 #endif
-	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
-	status_box->text_rend = gtk_cell_renderer_text_new();
 
+	text_rend = gtk_cell_renderer_text_new();
+	icon_rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), icon_rend, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), text_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), text_rend, "markup", TEXT_COLUMN, NULL);
 
+	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
+	status_box->text_rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "pixbuf", ICON_COLUMN, NULL);
@@ -902,14 +941,17 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 
 	if (sec_text) {
 		char aa_color[8];
+		gchar *escaped;
 		GtkStyle *style = gtk_widget_get_style(GTK_WIDGET(status_box));
 		snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
 			 style->text_aa[GTK_STATE_NORMAL].green >> 8,
 			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
-		t = g_strdup_printf("%s\n<span color=\"%s\">%s</span>", text, aa_color, sec_text);
+		escaped = g_markup_escape_text(sec_text, -1);
+		t = g_strdup_printf("%s\n<span color=\"%s\">%s</span>", text, aa_color, escaped);
+		g_free(escaped);
 	} else {
-		t = g_strdup(text);
+		t = g_markup_escape_text(text, -1);
 	}
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
