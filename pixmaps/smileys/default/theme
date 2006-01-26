@@ -30,85 +30,84 @@ bigsmile.png		:-D :-d
 angel.png			O:-)
 
 [MSN]
-msn_angel.png		(a)	(A)
-msn_angry.png		:-@	:@
-msn_bat.gif			:-[	:[
-msn_beer.png		(B)	(b)
-msn_bowl.png		(||)
-msn_boy.png			(Z)	(z)
-msn_brb.png			(brb)
-msn_brheart.png		(U)	(u)
-msn_cake.gif		(^)
-msn_car.png			(au)
-msn_cat.png			(@)
-msn_cellphone.png	(mp)
-msn_cigarette.gif	(ci)
-msn_clock.png		(o)	(O)
-msn_coffee.png		(C)	(c)
-msn_coins.png		(mo)
-msn_computer.png	(co)
-msn_cry.gif			:'(
-msn_deadflower.png	(W)	(w)
-msn_devil.png		(6)
-msn_dog.png			(&)
-msn_dontknow.gif	:^)
-msn_donttell.png	:-#
-msn_drink.png		(D)	(d)
-msn_email.png		(e)	(E)
-msn_embarrassed.png	:$	:-$
-msn_eyeroll.gif		8-)
-msn_film.png		(~)
+msn_smiley.png			:)	:-)
+msn_laugh.png			:D	:-D	:-d	:d	:->	:>
+msn_wink.gif			;)	;-)
+msn_ooooh.png			:-O	:O	:-o	:o
+msn_tongue.png			:p	:-P	:P	:-p	
+msn_hot.png				(h)	(H)
+msn_angry.png			:@	:-@
+msn_weird.png			:s	:-S	:-s	:S
+msn_embarrassed.png		:$	:-$
+msn_sad.png				:(	:-(	:-<
+msn_cry.gif				:'(
+msn_dontknow.gif		:^)
+msn_angel.png			(a)	(A)
+msn_teeth.png			8o|
+msn_nerd.png			8-|
+msn_sick.png			+o(
+msn_party.gif			<:o)
+msn_sleepy.gif			|-)
+msn_think.gif			*-)
+msn_donttell.png		:-#
+msn_secret.png			:-*
+msn_sarcastic.png		^o)
+msn_eyeroll.gif			8-)
+msn_heart.png			(L)	(l)
+msn_brheart.png			(u)	(U)
+msn_icon.png			(m)	(M)
+msn_cat.png				(@)
+msn_dog.png				(&)
+msn_snail.png			(sn)
+msn_turtle.png			(tu)
+msn_sheep.png			(bah)
+msn_sleep.png			(S)
+msn_star.png			(*)
+msn_sun.png				(#)
+msn_rainbow.png			(r)	(R)
+msn_run.png				({)
+msn_runback.png			(})
+msn_kiss.png			(k)	(K)
+msn_flower.png			(f)	(F)
+msn_deadflower.png		(w)	(W)
+msn_clock.png			(O)	(o)
+msn_gift.png			(g)	(G)
+msn_cake.gif			(^)
+msn_photo.png			(P)	(p)
+msn_idea.png			(i)	(I)
+msn_coffee.png			(c)	(C)
+msn_phone.png			(t)	(T)
+msn_cellphone.png		(mp)
+msn_car.png				(au)
+msn_plane.png			(ap)
+msn_computer.png		(co)
+msn_coins.png			(mo)
+msn_film.png			(~)
+msn_note.png			(8)
+msn_pizza.png			(pi)
+msn_soccer.png			(so)
+msn_email.png			(e)	(E)
+msn_boy.png				(z)	(Z)
+msn_girl.png			(x)	(X)
+msn_island.png			(ip)
+msn_umbrella.png		(um)
+msn_bat.gif				:-[	:[
+msn_beer.png			(B)	(b)
+msn_devil.png			(6)
+msn_drink.png			(D)	(d)
+msn_handcuffs.png		(%)
+msn_question.png		(?)
+msn_thumbdown.png		(N)	(n)
+msn_thumbup.png			(Y)	(y)
+msn_bowl.png			(||)
+msn_plate.png			(pl)
+msn_stormy.png			(st)
+msn_lightning.gif		(li)
+msn_brb.png				(brb)
 msn_fingerscrossed.png	(yn)
-msn_flower.png		(F)	(f)
-msn_gift.png		(g)	(G)
-msn_girl.png		(X)	(x)
-msn_handcuffs.png	(%)
-msn_heart.png		(L)	(l)
-msn_highfive.png	(h5)
-msn_hot.png			(H)	(h)
-msn_icon.png		(M)	(m)
-msn_idea.png		(I)	(i)
-msn_island.png		(ip)
-msn_kiss.png		(K)	(k)
-msn_laugh.png		:-D	:-d	:d	:D	:->	:>
-msn_lightning.gif	(li)
-msn_nerd.png		8-|
-msn_neutral.png		:-|	:|
-msn_note.png		(8)
-msn_ooooh.png		:-O	:O	:-o	:o
-msn_party.gif		<:o)
-msn_phone.png		(T)	(t)
-msn_photo.png		(P)	(p)
-msn_pizza.png		(pi)
-msn_plane.png		(ap)
-msn_plate.png		(pl)
-msn_question.png	(?)
-msn_rainbow.png		(r)	(R)
-msn_run.png			({)
-msn_runback.png		(})
-msn_sad.png			:-(	:(	:-<
-msn_sarcastic.png	^o)
-msn_secret.png		:-*
-msn_sheep.png		(bah)
-msn_sick.png		+o(
-msn_sleep.png		(S)
-msn_sleepy.gif		|-)
-msn_smiley.png		:-)	:)
-msn_snail.png		(sn)
-msn_soccer.png		(so)
-msn_star.png		(*)
-msn_stormy.png		(st)
-msn_sun.png			(#)
-msn_teeth.png		8o|
-msn_think.gif		*-)
-msn_thumbdown.png	(N)	(n)
-msn_thumbup.png		(Y)	(y)
-msn_tongue.png		:-P	:P	:-p	:p
-msn_turtle.png		(tu)
-msn_umbrella.png	(um)
-msn_weird.png		:-S	:-s	:s	:S
-msn_wink.gif		;)	;-)
-msn_xbox.png		(xx)
+msn_highfive.png		(h5)
+msn_xbox.png			(xx)
+msn_cigarette.gif		(ci)
 
 [Yahoo]
 yahoo_angel.gif		o:-) O:-) 0:-)
