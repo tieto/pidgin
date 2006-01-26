@@ -398,7 +398,7 @@ expire_old_child(gpointer data)
 /* #define DEBUG_CLIPPING */
 
 static void
-scale_pcm_data(char *data, int nframes, ao_sample_format *format,
+scale_pcm_data(char *data, int nframes, int bits, int channels,
 			   double intercept, double minclip, double maxclip,
 			   float scale)
 {
@@ -410,12 +410,14 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 	gint64 *data64 = (gint64*)data;
 #endif
 
-	switch(format->bits) {
+	switch(bits) {
 		case 16:
-			for(i = 0; i < nframes * format->channels; i++) {
+			for(i = 0; i < nframes * channels; i++) {
 				v = ((data16[i] - intercept) * scale) + intercept;
 #ifdef DEBUG_CLIPPING
 				if (v > maxclip)
+					printf("Clipping detected!\n");
+				else if (v < minclip)
 					printf("Clipping detected!\n");
 #endif
 				v = CLAMP(v, minclip, maxclip);
@@ -423,10 +425,12 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 			}
 			break;
 		case 32:
-			for(i = 0; i < nframes * format->channels; i++) {
+			for(i = 0; i < nframes * channels; i++) {
 				v = ((data32[i] - intercept) * scale) + intercept;
 #ifdef DEBUG_CLIPPING
 				if (v > maxclip)
+					printf("Clipping detected!\n");
+				else if (v < minclip)
 					printf("Clipping detected!\n");
 #endif
 				v = CLAMP(v, minclip, maxclip);
@@ -435,10 +439,12 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 			break;
 #ifdef G_HAVE_GINT64
 		case 64:
-			for(i = 0; i < nframes * format->channels; i++) {
+			for(i = 0; i < nframes * channels; i++) {
 				v = ((data64[i] - intercept) * scale) + intercept;
 #ifdef DEBUG_CLIPPING
 				if (v > maxclip)
+					printf("Clipping detected!\n");
+				else if (v < minclip)
 					printf("Clipping detected!\n");
 #endif
 				v = CLAMP(v, minclip, maxclip);
@@ -447,7 +453,7 @@ scale_pcm_data(char *data, int nframes, ao_sample_format *format,
 			break;
 #endif
 		default:
-			gaim_debug_warning("gtksound", "Cannot scale %d bit pcm data.\n", format->bits);
+			gaim_debug_warning("gtksound", "Scaling of %d bit pcm data not supported.\n", bits);
 			break;
 	}
 }
@@ -526,9 +532,13 @@ gaim_gtk_sound_play_file(const char *filename)
 	else if (pid == 0) {
 		/* Child process */
 
-		/* 0.6561 = 0.81 ^ 2, because the sounds we ship clip if the
-		 * volume is greater than 81 (without this scale factor). */
-		float scale = ((float) volume * volume) * 0.6561 / 2500;
+		/* calculating the scaling factor:
+		 *   scale(x)   = (x+30)^2 / 6400
+		 *   scale(0)   = 0.1406   (quiet)
+		 *   scale(50)  = 1.0      (no scaling, normal volume)
+		 *   scale(100) = 2.6406   (roughly maximized without clipping)
+		 */
+		float scale = ( ((float)volume + 30) * ((float)volume + 30) ) / 6400;
 		file = afOpenFile(filename, "rb", NULL);
 		if(file) {
 			ao_device *device;
@@ -576,8 +586,10 @@ gaim_gtk_sound_play_file(const char *filename)
 
 				while((frames_read = afReadFrames(file, AF_DEFAULT_TRACK,
 								buf, buf_frames))) {
-					scale_pcm_data(buf, frames_read, &format, intercept,
-								   minclip, maxclip, scale);
+					/* no need to scale at volume == 50 */
+					if(volume != 50)
+						scale_pcm_data(buf, frames_read, format.bits, format.channels,
+									   intercept, minclip, maxclip, scale);
 					if(!ao_play(device, buf, frames_read * bytes_per_frame))
 						break;
 				}
