@@ -136,8 +136,8 @@ static int primitive_scores[] =
 
 static GHashTable *buddy_presences = NULL;
 
-#define SCORE_IDLE      7
-#define SCORE_IDLE_TIME 8
+#define SCORE_IDLE      8
+#define SCORE_IDLE_TIME 9
 
 /**************************************************************************
  * GaimStatusPrimitive API
