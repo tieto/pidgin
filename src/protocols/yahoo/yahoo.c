@@ -3540,6 +3540,17 @@ yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
 	return GAIM_CMD_RET_OK;
 }
 
+static GaimCmdRet
+yahoogaim_cmd_chat_list(GaimConversation *conv, const char *cmd,
+                        char **args, char **error, void *data)
+{
+	GaimAccount *account = gaim_conversation_get_account(conv);
+	if (*args && args[0])
+		return GAIM_CMD_RET_FAILED;
+	gaim_roomlist_show_with_account(account);
+	return GAIM_CMD_RET_OK;
+}
+
 static gboolean yahoo_offline_message(const GaimBuddy *buddy)
 {
 	return TRUE;
@@ -3554,15 +3565,19 @@ yahoogaim_register_commands(void)
 	                  GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
+	gaim_cmd_register("list", "", GAIM_CMD_P_PRPL,
+	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
+	                  GAIM_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoogaim_cmd_chat_list,
+	                  _("list: List rooms on the Yahoo network"), NULL);
 	gaim_cmd_register("buzz", "", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
-
 	gaim_cmd_register("doodle", "", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
-			  "prpl-yahoo", yahoo_doodle_gaim_cmd_start,
-			  _("doodle: Request user to start a Doodle session"), NULL);
+	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoo_doodle_gaim_cmd_start,
+	                 _("doodle: Request user to start a Doodle session"), NULL);
 }
 
 static GaimWhiteboardPrplOps yahoo_whiteboard_prpl_ops =

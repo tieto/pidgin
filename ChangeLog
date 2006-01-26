@@ -99,6 +99,7 @@ version 2.0.0:
 	  authorization
 	* Account option to ignore chat and conference invitations (Peter
 	  Lawler)
+	* Added a /list command to bring up the room list (Peter Lawler)
 
 	AIM/ICQ Features:
 	* ICQ file transfer support with newer ICQ clients (Jonathan Clark,
