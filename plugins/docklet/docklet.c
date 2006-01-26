@@ -398,7 +398,7 @@ docklet_status_submenu()
 	GList *popular_statuses, *cur;
 
 	submenu = gtk_menu_new();
-	menuitem = gtk_menu_item_new_with_label(_("New Status"));
+	menuitem = gtk_menu_item_new_with_label(_("Change Status"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
 	gaim_new_item_from_stock(submenu, _("Available"),
@@ -433,7 +433,7 @@ docklet_status_submenu()
 
 	gaim_separator(submenu);
 
-	gaim_new_item_from_stock(submenu, _("Custom Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(submenu, _("New Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(submenu, _("Saved Status..."), GAIM_STOCK_ICON_AWAY, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
 
 	return menuitem;
