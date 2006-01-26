@@ -1067,6 +1067,7 @@ gaim_prefs_update_old()
 	gaim_prefs_remove("/core/logging/log_idle_state");
 	gaim_prefs_remove("/core/logging/log_away_state");
 	gaim_prefs_remove("/core/logging/log_own_states");
+	gaim_prefs_remove("/core/status/scores/hidden");
 	gaim_prefs_remove("/plugins/core/autorecon/hide_connected_error");
 	gaim_prefs_remove("/plugins/core/autorecon/hide_connecting_error");
 	gaim_prefs_remove("/plugins/core/autorecon/hide_reconnecting_dialog");
