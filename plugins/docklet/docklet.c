@@ -398,7 +398,7 @@ docklet_status_submenu()
 	GList *popular_statuses, *cur;
 
 	submenu = gtk_menu_new();
-	menuitem = gtk_menu_item_new_with_label(_("Change Status"));
+	menuitem = gtk_menu_item_new_with_label(_("New Status"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
 	gaim_new_item_from_stock(submenu, _("Available"),
