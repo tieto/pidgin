@@ -2931,7 +2931,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
 	{
-		if (!selected && (gaim_presence_is_idle(presence) || !gaim_presence_is_online(presence)))
+		if (!selected && gaim_presence_is_idle(presence))
 		{
 			text = g_strdup_printf("<span color='%s'>%s</span>",
 					       dim_grey(), esc);
@@ -3023,7 +3023,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	}
 	else
 	{
-		if (!selected && (gaim_presence_is_idle(presence) || !gaim_presence_is_online(presence)))
+		if (!selected && gaim_presence_is_idle(presence))
 		{
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
 						"<span color='%s' size='smaller'>%s%s%s</span>",
