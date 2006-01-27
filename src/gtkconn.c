@@ -195,7 +195,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		}
 
 		p = g_strdup_printf(_("%s disconnected"), n);
-		s = g_strdup_printf(_("%s was disconnected due to an error. %s The account has been disabled. "
+		s = g_strdup_printf(_("%s was disconnected due to an error: %s\nThe account has been disabled. "
 				"Correct the error and reenable the account to connect."), n, text);
 		gaim_notify_error(NULL, NULL, p, s);
 		g_free(p);
