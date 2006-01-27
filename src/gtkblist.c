@@ -3492,27 +3492,21 @@ create_connection_error_buttons(gpointer key, gpointer value,
                                 gpointer user_data)
 {
 	GaimAccount *account;
-	gchar *text, *filename;
+	gchar *escaped, *text, *filename;
 	GtkWidget *button, *label, *image, *hbox;
 	GdkPixbuf *pixbuf, *emblem, *scale;
 
 	account = key;
+	escaped = g_markup_escape_text((const gchar *)value, -1);
 	text = g_strdup_printf(_("<span color=\"red\">%s disconnected: %s</span>"),
 	                       gaim_account_get_username(account),
-	                       (gchar *)value);
+	                       escaped);
+	g_free(escaped);
 
-	/*
-	 * TODO: The text needs to be bold and red.  And it would probably
-	 *       be better if we displayed something like
-	 *       "MarkDoliner disconnected: Invalid passw..."
-	 *       And we DEFINITELY need to show an icon on the left side.
-	 *       It should be the PRPL icon overlayed with something that
-	 *       will signal to the user that the account had an error.
-	 */
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_widget_show(hbox);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "blocked.png", NULL);
+	/* Create the icon */
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "offline.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 	if (pixbuf != NULL) {
@@ -3539,27 +3533,27 @@ create_connection_error_buttons(gpointer key, gpointer value,
 		image = gtk_image_new_from_pixbuf(emblem);
 		g_object_unref(emblem);
 
-		gtk_widget_show(image);
 		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
 		                   GAIM_HIG_BOX_SPACE);
 	}
 
+	/* Create the text */
 	label = gtk_label_new("");
 	gtk_label_set_markup(GTK_LABEL(label), text);
 	g_free(text);
 #if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
-	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE,
 	                   GAIM_HIG_BOX_SPACE);
 
+	/* Create the actual button and put the icon and text on it */
 	button = gtk_button_new();
 	gtk_container_add(GTK_CONTAINER(button), hbox);
 	g_signal_connect(G_OBJECT(button), "clicked",
 	                 G_CALLBACK(connection_error_button_clicked_cb),
 	                 account);
-	gtk_widget_show(button);
+	gtk_widget_show_all(button);
 	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button,
 	                 FALSE, FALSE, 0);
 }
