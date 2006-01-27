@@ -1389,6 +1389,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 		} else if(xmlnode_get_child(error, "temporary-auth-failure")) {
 			text = _("Temporary Authentication Failure");
 		} else {
+			js->gc->wants_to_die = TRUE;
 			text = _("Authentication Failure");
 		}
 	} else if(!strcmp(packet->name, "stream:error")) {
