@@ -398,6 +398,7 @@ static void
 update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 {
 	GaimSavedStatus *saved_status;
+	GaimStatusPrimitive primitive;
 	gint index;
 	const char *message;
 	GList *list;
@@ -414,23 +415,38 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	 */
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 
-	list = gaim_savedstatuses_get_popular(6);
-	if ((index = g_list_index(list, saved_status)) > -1)
-		index += 5;
+	/*
+	 * If the saved_status is transient, is Available, Away, Invisible
+	 * or Offline, and it does not have an substatuses, then select
+	 * the primitive in the dropdown menu.  Otherwise select the
+	 * popular status in the dropdown menu.
+	 */
+	primitive = gaim_savedstatus_get_type(saved_status);
+	if (gaim_savedstatus_is_transient(saved_status) &&
+		((primitive == GAIM_STATUS_AVAILABLE) || (primitive == GAIM_STATUS_AWAY) ||
+		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
+		(!gaim_savedstatus_has_substatuses(saved_status)))
+	{
+		index = get_statusbox_index(status_box, saved_status);
+	}
 	else
 	{
-		if (gaim_savedstatus_has_substatuses(saved_status))
-			index = GTK_LIST_STORE(status_box->dropdown_store)->length - 2;
+		/*
+		 * TODO: This code is really bad.  We need to look at the DATA
+		 * column of the saved statuses, instead.
+		 */
+		list = gaim_savedstatuses_get_popular(6);
+		if ((index = g_list_index(list, saved_status)) > -1)
+			index += 5; /* Skip over the primitives and a spacer that may or may not exist! (Fix this) */
 		else
-		{
-			index = get_statusbox_index(status_box, saved_status);
-		}
+			index = 0; /* TODO: Need to do something better here */
+		g_list_free(list);
 	}
-	g_list_free(list);
+
 	gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
 
 	message = gaim_savedstatus_get_message(saved_status);
-	if (!message || !*message)
+	if (!gaim_savedstatus_is_transient(saved_status) || !message || !*message)
 	{
 		status_box->imhtml_visible = FALSE;
 		gtk_widget_hide_all(status_box->vbox);
@@ -463,7 +479,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GtkIconSize icon_size;
-	GdkPixbuf *away_pix, *avl_pix, *pixbuf;
+	GdkPixbuf *pixbuf, *emblem, *scale;
 
 	list = gaim_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -475,29 +491,52 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	else
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
 
-	away_pix = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox), GAIM_STOCK_STATUS_AWAY,
-									icon_size, "GtkGaimStatusBox");
-	avl_pix = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox), GAIM_STOCK_STATUS_ONLINE,
-									icon_size, "GtkGaimStatusBox");
+	/* Create the icon to use for non-transient saved-statuses */
+	pixbuf = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
+				GAIM_STOCK_STATUS_ONLINE, icon_size, "GtkGaimStatusBox");
+	scale = gdk_pixbuf_scale_simple(pixbuf, 32, 32, GDK_INTERP_BILINEAR);
+	g_object_unref(G_OBJECT(pixbuf));
+	pixbuf = scale;
+
+	emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
+				GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
+	scale = gdk_pixbuf_scale_simple(emblem, 15, 15, GDK_INTERP_BILINEAR);
+	g_object_unref(G_OBJECT(emblem));
+	emblem = scale;
+
+	gdk_pixbuf_composite(emblem, pixbuf, 32-15, 32-15, 15, 15, 17, 17, 1, 1,
+				GDK_INTERP_BILINEAR, 255);
+	g_object_unref(G_OBJECT(emblem));
 
 	gtk_gaim_status_box_add_separator(statusbox);
 
 	for (cur = list; cur != NULL; cur = cur->next)
 	{
 		GaimSavedStatus *saved = cur->data;
+		const gchar *message;
+		gchar *stripped;
 
-		switch (gaim_savedstatus_get_type(saved))
+		/* TODO: For transient saved-statuses, make a new icon showing the primitive */
+
+		if (gaim_savedstatus_is_transient(saved))
 		{
-			case GAIM_STATUS_AVAILABLE:
-				pixbuf = avl_pix;
-				break;
-			default:
-				pixbuf = away_pix;
-				break;
+			/*
+			 * Transient statuses do not have a title, so the savedstatus
+			 * API returns the message when gaim_savedstatus_get_title() is
+			 * called, so we don't need to get the message a second time.
+			 */
+			stripped = NULL;
+		}
+		else
+		{
+			message = gaim_savedstatus_get_message(saved);
+			stripped = gaim_markup_strip_html(message);
+			gaim_util_chrreplace(stripped, '\n', ' ');
 		}
 		gtk_gaim_status_box_add(statusbox, GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
-				pixbuf,	gaim_savedstatus_get_title(saved), NULL,
+				pixbuf,	gaim_savedstatus_get_title(saved), stripped,
 				GINT_TO_POINTER(gaim_savedstatus_get_creation_time(saved)));
+		g_free(stripped);
 	}
 
 	g_list_free(list);
@@ -939,37 +978,66 @@ gtk_gaim_status_box_new_with_account(GaimAccount *account)
 	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, "account", account, NULL);
 }
 
+/**
+ * Add a row to the dropdown menu.
+ *
+ * @param status_box The status box itself.
+ * @param type       A GtkGaimStatusBoxItemType.
+ * @param pixbuf     The icon to associate with this row in the menu.
+ * @param title      The title of this item.  For the primitive entries,
+ *                   this is something like "Available" or "Away."  For
+ *                   the saved statuses, this is something like
+ *                   "My favorite away message!"  This should be
+ *                   plaintext (non-markedup) (this function escapes it).
+ * @param desc       The secondary text for this item.  This will be
+ *                   placed on the row below the title, in a dimmer
+ *                   font (generally gray).  This text should be plaintext
+ *                   (non-markedup) (this function escapes it).
+ * @param data       Data to be associated with this row in the dropdown
+ *                   menu.  For primitives this is the value of the
+ *                   GaimStatusPrimitive.  For saved statuses this is the
+ *                   creation timestamp.
+ */
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text, gpointer data)
+gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *title, const char *desc, gpointer data)
 {
 	GtkTreeIter iter;
-	char *t;
+	char *text;
 
-	if (sec_text) {
+	if (desc == NULL)
+	{
+		text = g_markup_escape_text(title, -1);
+	}
+	else
+	{
 		char aa_color[8];
-		gchar *escaped;
-		GtkStyle *style = gtk_widget_get_style(GTK_WIDGET(status_box));
+		gchar *escaped_title, *escaped_desc;
+		GtkStyle *style;
+
+		style = gtk_widget_get_style(GTK_WIDGET(status_box));
 		snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
 			 style->text_aa[GTK_STATE_NORMAL].green >> 8,
 			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
-		escaped = g_markup_escape_text(sec_text, -1);
-		t = g_strdup_printf("%s\n<span color=\"%s\">%s</span>", text, aa_color, escaped);
-		g_free(escaped);
-	} else {
-		t = g_markup_escape_text(text, -1);
+
+		escaped_title = g_markup_escape_text(title, -1);
+		escaped_desc = g_markup_escape_text(desc, -1);
+		text = g_strdup_printf("%s\n<span color=\"%s\" size=\"smaller\">%s</span>",
+					escaped_title, aa_color, escaped_desc);
+		g_free(escaped_title);
+		g_free(escaped_desc);
 	}
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
 	gtk_list_store_set(status_box->dropdown_store, &iter,
-			   TYPE_COLUMN, type,
-			   ICON_COLUMN, pixbuf,
-			   TEXT_COLUMN, t,
-			   TITLE_COLUMN, text,
-			   DESC_COLUMN, sec_text,
-			   DATA_COLUMN, data,
-			   -1);
-	g_free(t);
+			TYPE_COLUMN, type,
+			ICON_COLUMN, pixbuf,
+			TEXT_COLUMN, text,
+			TITLE_COLUMN, title,
+			DESC_COLUMN, desc,
+			DATA_COLUMN, data,
+			-1);
+	g_free(text);
 }
 
 void
@@ -1031,8 +1099,8 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
-static GaimStatusType
-*find_status_type_by_index(const GaimAccount *account, gint active)
+static GaimStatusType *
+find_status_type_by_index(const GaimAccount *account, gint active)
 {
 	const GList *l = gaim_account_get_status_types(account);
 	gint i;
@@ -1232,7 +1300,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	GtkGaimStatusBox *status_box;
 	GtkTreeIter iter;
 	GtkGaimStatusBoxItemType type;
-	char *text, *sec_text;
+	char *text, *desc;
 	GdkPixbuf *pixbuf;
 	gpointer data;
 	GList *accounts = NULL, *node;
@@ -1244,16 +1312,16 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
 			   TITLE_COLUMN, &text,
-			   DESC_COLUMN, &sec_text,
+			   DESC_COLUMN, &desc,
 			   ICON_COLUMN, &pixbuf,
 			   DATA_COLUMN, &data,
 			   -1);
 	if (status_box->title)
 		g_free(status_box->title);
 	status_box->title = text;
-	if (status_box->desc && sec_text)
+	if (status_box->desc && desc)
 		g_free(status_box->desc);
-	status_box->desc = sec_text;
+	status_box->desc = desc;
 	if (status_box->pixbuf)
 		g_object_unref(status_box->pixbuf);
 	status_box->pixbuf = pixbuf;
@@ -1360,7 +1428,12 @@ get_statusbox_index(GtkGaimStatusBox *box, GaimSavedStatus *saved_status)
 			index = 3;
 			break;
 		default:
-			index = GTK_LIST_STORE(box->dropdown_store)->length - 2;
+			/*
+			 * TODO: This is very bad!  I believe it's causing the infinite
+			 *       windows bug.  Need to do something better here.
+			 */
+			/* index = GTK_LIST_STORE(box->dropdown_store)->length - 2; */
+			index = 0;
 			break;
 	}
 
