@@ -90,6 +90,10 @@ static char *conversation_timestamp_cb(GaimConversation *conv,
 				"/plugins/gtk/timestamp_format/force_24hr");
 	const char *dates = gaim_prefs_get_string(
 				"/plugins/gtk/timestamp_format/use_dates/conversation");
+
+	g_return_val_if_fail(conv != NULL, NULL);
+	g_return_val_if_fail(tm != NULL, NULL);
+
 	return timestamp_cb_common(conv, tm, force, dates);
 }
 
@@ -100,6 +104,9 @@ static char *log_timestamp_cb(GaimLog *log,
 				"/plugins/gtk/timestamp_format/force_24hr");
 	const char *dates = gaim_prefs_get_string(
 				"/plugins/gtk/timestamp_format/use_dates/log");
+
+	g_return_val_if_fail(log != NULL, NULL);
+	g_return_val_if_fail(tm != NULL, NULL);
 
 	if (log->type == GAIM_LOG_SYSTEM)
 	{
