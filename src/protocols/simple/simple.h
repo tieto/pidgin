@@ -79,7 +79,7 @@ struct simple_account_data {
 	GHashTable *buddies;
 	guint registertimeout;
 	guint resendtimeout;
-	int connecting;
+	gboolean connecting;
 	GaimAccount *account;
 	gchar *sendlater;
 	gchar *regcallid;

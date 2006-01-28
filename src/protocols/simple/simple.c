@@ -384,12 +384,12 @@ static void send_later_cb(gpointer data, gint source, GaimInputCondition cond) {
 	}
 
 	sip->fd = source;
-	sip->connecting = 0;
+	sip->connecting = FALSE;
 	write(sip->fd, sip->sendlater, strlen(sip->sendlater));
 	conn = connection_create(sip, source);
 	conn->inputhandler = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_input_cb, gc);
 	g_free(sip->sendlater);
-	sip->sendlater = 0;
+	sip->sendlater = NULL;
 }
 
 
@@ -402,11 +402,12 @@ static void sendlater(GaimConnection *gc, const char *buf) {
 		if(error) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 		}
-		sip->connecting = 1;
+		sip->connecting = TRUE;
 	}
 	if(sip->sendlater) {
 		gchar *old = sip->sendlater;
 		sip->sendlater = g_strdup_printf("%s\r\n%s",old, buf);
+		g_free(old);
 	} else {
 		sip->sendlater = g_strdup(buf);
 	}
