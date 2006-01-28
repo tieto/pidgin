@@ -45,7 +45,7 @@ static GHashTable *logsize_users = NULL;
 
 static void log_get_log_sets_common(GHashTable *sets);
 
-static void html_logger_write(GaimLog *log, GaimMessageFlags type,
+static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 							  const char *from, time_t time, const char *message);
 static void html_logger_finalize(GaimLog *log);
 static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
@@ -59,7 +59,7 @@ static int old_logger_size (GaimLog *log);
 static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets);
 static void old_logger_finalize(GaimLog *log);
 
-static void txt_logger_write(GaimLog *log,
+static gsize txt_logger_write(GaimLog *log,
 							 GaimMessageFlags type,
 							 const char *from, time_t time, const char *message);
 static void txt_logger_finalize(GaimLog *log);
@@ -100,18 +100,26 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 		    const char *from, time_t time, const char *message)
 {
 	struct _gaim_logsize_user *lu;
+	gsize written, total = 0;
+	gpointer ptrsize;
 
 	g_return_if_fail(log);
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
 
-	(log->logger->write)(log, type, from, time, message);
+	written = (log->logger->write)(log, type, from, time, message);
 
 	lu = g_new(struct _gaim_logsize_user, 1);
 
 	lu->name = g_strdup(gaim_normalize(log->account, log->name));
 	lu->account = log->account;
-	g_hash_table_remove(logsize_users, lu);
+
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		total = GPOINTER_TO_INT(ptrsize);
+		total += written;
+		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+	}
+
 	g_free(lu->name);
 	g_free(lu);
 
@@ -908,13 +916,14 @@ static GaimLogLogger xml_logger =  {
  ** HTML LOGGER *************
  ****************************/
 
-static void html_logger_write(GaimLog *log, GaimMessageFlags type,
+static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 							  const char *from, time_t time, const char *message)
 {
 	char *msg_fixed;
 	char *date;
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
 	GaimLogCommonLoggerData *data = log->logger_data;
+	gsize written = 0;
 
 	if(!data) {
 		char buf[64];
@@ -926,59 +935,61 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 		/* if we can't write to the file, give up before we hurt ourselves */
 		if(!data->file)
-			return;
+			return 0;
 
 		strftime(buf, sizeof(buf), "%c", localtime(&log->time));
-		fprintf(data->file, "<html><head>");
-		fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
-		fprintf(data->file, "<title>");
-		fprintf(data->file, "Conversation with %s at %s on %s (%s)",
+		written += fprintf(data->file, "<html><head>");
+		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+		written += fprintf(data->file, "<title>");
+		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)",
 			log->name, buf, gaim_account_get_username(log->account), prpl);
-		fprintf(data->file, "</title></head><body>");
-		fprintf(data->file,
+		written += fprintf(data->file, "</title></head><body>");
+		written += fprintf(data->file,
 			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
 			log->name, buf, gaim_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
 	if(!data->file)
-		return;
+		return 0;
 
 	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
 	date = log_get_timestamp(log, time);
 
 	if(log->type == GAIM_LOG_SYSTEM){
-		fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
+		written += fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
 	} else {
 		if (type & GAIM_MESSAGE_SYSTEM)
-			fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
+			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
 		else if (type & GAIM_MESSAGE_WHISPER)
-			fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
+			written += fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
 					date, from, msg_fixed);
 		else if (type & GAIM_MESSAGE_AUTO_RESP) {
 			if (type & GAIM_MESSAGE_SEND)
-				fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+				written += fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 			else if (type & GAIM_MESSAGE_RECV)
-				fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+				written += fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 		} else if (type & GAIM_MESSAGE_RECV) {
 			if(gaim_message_meify(msg_fixed, -1))
-				fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
+				written += fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 			else
-				fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
+				written += fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		} else if (type & GAIM_MESSAGE_SEND) {
 			if(gaim_message_meify(msg_fixed, -1))
-				fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
+				written += fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 			else
-				fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
+				written += fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		}
 	}
 	g_free(date);
 	g_free(msg_fixed);
 	fflush(data->file);
+
+	return written;
 }
 
 static void html_logger_finalize(GaimLog *log)
@@ -1031,7 +1042,7 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
  ** PLAIN TEXT LOGGER *******
  ****************************/
 
-static void txt_logger_write(GaimLog *log,
+static gsize txt_logger_write(GaimLog *log,
 							 GaimMessageFlags type,
 							 const char *from, time_t time, const char *message)
 {
@@ -1039,6 +1050,8 @@ static void txt_logger_write(GaimLog *log,
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
 	GaimLogCommonLoggerData *data = log->logger_data;
 	char *stripped = NULL;
+
+	gsize written = 0;
 
 	if (data == NULL) {
 		/* This log is new.  We could use the loggers 'new' function, but
@@ -1054,51 +1067,53 @@ static void txt_logger_write(GaimLog *log,
 
 		/* if we can't write to the file, give up before we hurt ourselves */
 		if(!data->file)
-			return;
+			return 0;
 
 		strftime(buf, sizeof(buf), "%c", localtime(&log->time));
-		fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
+		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
 			log->name, buf, gaim_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
 	if(!data->file)
-		return;
+		return 0;
 
 	stripped = gaim_markup_strip_html(message);
 	date = log_get_timestamp(log, time);
 
 	if(log->type == GAIM_LOG_SYSTEM){
-		fprintf(data->file, "---- %s @ %s ----\n", stripped, date);
+		written += fprintf(data->file, "---- %s @ %s ----\n", stripped, date);
 	} else {
 		if (type & GAIM_MESSAGE_SEND ||
 			type & GAIM_MESSAGE_RECV) {
 			if (type & GAIM_MESSAGE_AUTO_RESP) {
-				fprintf(data->file, _("(%s) %s <AUTO-REPLY>: %s\n"), date,
+				written += fprintf(data->file, _("(%s) %s <AUTO-REPLY>: %s\n"), date,
 						from, stripped);
 			} else {
 				if(gaim_message_meify(stripped, -1))
-					fprintf(data->file, "(%s) ***%s %s\n", date, from,
+					written += fprintf(data->file, "(%s) ***%s %s\n", date, from,
 							stripped);
 				else
-					fprintf(data->file, "(%s) %s: %s\n", date, from,
+					written += fprintf(data->file, "(%s) %s: %s\n", date, from,
 							stripped);
 			}
 		} else if (type & GAIM_MESSAGE_SYSTEM)
-			fprintf(data->file, "(%s) %s\n", date, stripped);
+			written += fprintf(data->file, "(%s) %s\n", date, stripped);
 		else if (type & GAIM_MESSAGE_NO_LOG) {
 			/* This shouldn't happen */
 			g_free(stripped);
-			return;
+			return written;
 		} else if (type & GAIM_MESSAGE_WHISPER)
-			fprintf(data->file, "(%s) *%s* %s", date, from, stripped);
+			written += fprintf(data->file, "(%s) *%s* %s", date, from, stripped);
 		else
-			fprintf(data->file, "(%s) %s%s %s\n", date, from ? from : "",
+			written += fprintf(data->file, "(%s) %s%s %s\n", date, from ? from : "",
 					from ? ":" : "", stripped);
 	}
 	g_free(date);
 	g_free(stripped);
 	fflush(data->file);
+
+	return written;
 }
 
 static void txt_logger_finalize(GaimLog *log)

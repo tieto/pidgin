@@ -67,7 +67,7 @@ struct _GaimLogLogger {
 	void (*create)(GaimLog *log);
 
 	/** This is used to write to the log file */
-	void (*write)(GaimLog *log,
+	gsize (*write)(GaimLog *log,
 		     GaimMessageFlags type,
 		     const char *from,
 		     time_t time,
