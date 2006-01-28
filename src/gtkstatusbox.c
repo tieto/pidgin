@@ -479,7 +479,8 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GtkIconSize icon_size;
-	GdkPixbuf *pixbuf, *emblem, *scale;
+	GdkPixbuf *pixbuf, *emblem;
+	int width, height;
 
 	list = gaim_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -494,18 +495,15 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	/* Create the icon to use for non-transient saved-statuses */
 	pixbuf = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
 				GAIM_STOCK_STATUS_ONLINE, icon_size, "GtkGaimStatusBox");
-	scale = gdk_pixbuf_scale_simple(pixbuf, 32, 32, GDK_INTERP_BILINEAR);
-	g_object_unref(G_OBJECT(pixbuf));
-	pixbuf = scale;
 
 	emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
 				GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
-	scale = gdk_pixbuf_scale_simple(emblem, 15, 15, GDK_INTERP_BILINEAR);
-	g_object_unref(G_OBJECT(emblem));
-	emblem = scale;
+	width = gdk_pixbuf_get_width(pixbuf) / 2;
+	height = gdk_pixbuf_get_height(pixbuf) / 2;
 
-	gdk_pixbuf_composite(emblem, pixbuf, 32-15, 32-15, 15, 15, 17, 17, 1, 1,
-				GDK_INTERP_BILINEAR, 255);
+	gdk_pixbuf_composite(emblem, pixbuf, width, height,
+				width, height, width, height,
+				0.5, 0.5, GDK_INTERP_BILINEAR, 255);
 	g_object_unref(G_OBJECT(emblem));
 
 	gtk_gaim_status_box_add_separator(statusbox);
