@@ -6954,7 +6954,7 @@ static gboolean gaim_ssi_rerequestdata(gpointer data) {
 	aim_ssi_reqdata(sess);
 	od->getblisttimer = 0;
 
-	return FALSE;
+	return TRUE;
 }
 
 static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
