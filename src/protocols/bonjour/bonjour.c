@@ -29,10 +29,12 @@
 #endif
 
 #include "internal.h"
+
 #include "account.h"
 #include "accountopt.h"
-#include "version.h"
 #include "debug.h"
+#include "util.h"
+#include "version.h"
 
 #include "bonjour.h"
 #include "dns_sd.h"
@@ -42,7 +44,9 @@
 /*
  * TODO: Should implement an add_buddy callback that removes the buddy
  *       from the local list.  Bonjour manages buddies for you, and
- *       adding someone locally by hand is stupid.
+ *       adding someone locally by hand is stupid.  Or, maybe even better,
+ *       if a PRPL does not have an add_buddy callback then do not allow
+ *       users to add buddies.
  */
 
 static char *default_firstname;
@@ -204,6 +208,7 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	int primitive;
 	GaimPresence *presence;
 	const char *message, *bonjour_status;
+	gchar *stripped;
 
 	gc = gaim_account_get_connection(account);
 	bd = gc->proto_data;
@@ -215,6 +220,7 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	message = gaim_status_get_attr_string(status, "message");
 	if (message == NULL)
 		message = "";
+	stripped = gaim_markup_strip_html(message);
 
 	/*
 	 * The three possible status for Bonjour are
@@ -230,7 +236,8 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	else
 		bonjour_status = "dnd";
 
-	bonjour_dns_sd_send_status(bd->dns_sd_data, bonjour_status, message);
+	bonjour_dns_sd_send_status(bd->dns_sd_data, bonjour_status, stripped);
+	g_free(stripped);
 }
 
 static GList *
