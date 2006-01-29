@@ -401,7 +401,6 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	GaimStatusPrimitive primitive;
 	gint index;
 	const char *message;
-	GList *list;
 
 	/* this function is inappropriate for ones with accounts */
 	if (status_box->account)
@@ -428,22 +427,35 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		(!gaim_savedstatus_has_substatuses(saved_status)))
 	{
 		index = get_statusbox_index(status_box, saved_status);
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
+
 	}
 	else
 	{
-		/*
-		 * TODO: This code is really bad.  We need to look at the DATA
-		 * column of the saved statuses, instead.
-		 */
-		list = gaim_savedstatuses_get_popular(6);
-		if ((index = g_list_index(list, saved_status)) > -1)
-			index += 5; /* Skip over the primitives and a spacer that may or may not exist! (Fix this) */
-		else
-			index = 0; /* TODO: Need to do something better here */
-		g_list_free(list);
-	}
+		GtkTreeIter iter;
+			gpointer data;
 
-	gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
+		/* Unset the active item */
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), -1);
+
+		/* If this saved status is in the list store, then set it as the active item */
+		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(status_box->dropdown_store), &iter))
+		{
+			do
+			{
+				gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+							DATA_COLUMN, &data,
+							-1);
+				if (GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status))
+				{
+					/* Found! */
+					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+					break;
+				}
+			}
+			while (gtk_tree_model_iter_next(GTK_TREE_MODEL(status_box->dropdown_store), &iter));
+		}
+	}
 
 	message = gaim_savedstatus_get_message(saved_status);
 	if (!gaim_savedstatus_is_transient(saved_status) || !message || !*message)
