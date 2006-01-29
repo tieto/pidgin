@@ -158,7 +158,7 @@ bonjour_login(GaimAccount *account)
 static void
 bonjour_close(GaimConnection *connection)
 {
-	GaimGroup *bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
+	GaimGroup *bonjour_group;
 	BonjourData *bd = (BonjourData*)connection->proto_data;
 
 	/* Stop looking for buddies in the LAN */
@@ -179,7 +179,9 @@ bonjour_close(GaimConnection *connection)
 	bonjour_removeallfromlocal(connection);
 
 	/* Delete the bonjour group */
-	gaim_blist_remove_group(bonjour_group);
+	bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
+	if (bonjour_group != NULL)
+		gaim_blist_remove_group(bonjour_group);
 
 }
 

@@ -347,6 +347,10 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	if (sw_discovery_init(&data->session) != SW_OKAY)
 	{
 		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
+
+		/* In Avahi, sw_discovery_init frees data->session but doesn't clear it */
+		data->session = NULL;
+
 		return FALSE;
 	}
 
