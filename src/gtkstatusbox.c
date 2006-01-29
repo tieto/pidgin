@@ -662,9 +662,13 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 	GtkIconSize icon_size;
 
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+	{
+		g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 6, NULL);
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_TWO_LINE);
-	else
+	} else {
+		g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE);
+	}
 
 	if (status_box->error_pixbuf != NULL)
 		gdk_pixbuf_unref(status_box->error_pixbuf);
@@ -841,8 +845,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
 
-	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 6, NULL);
-
 	status_box->vbox = gtk_vbox_new(0, FALSE);
 	status_box->sw = gaim_gtk_create_imhtml(FALSE, &status_box->imhtml, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
@@ -900,9 +902,10 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	combo_box_size_request(widget, requisition);
 	requisition->height += 3;
 
+	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
-		requisition->height = requisition->height + box_req.height + 3;
+		requisition->height += box_req.height + 3;
 
 	requisition->width = 1;
 }
@@ -914,23 +917,16 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	GtkRequisition req = {0,0};
 	GtkAllocation parent_alc, box_alc;
 
-	parent_alc = *allocation;
-	box_alc = *allocation;
 	combo_box_size_request(widget, &req);
 
+	box_alc = *allocation;
 	box_alc.height = MAX(1, (allocation->height - req.height - 6));
-	box_alc.y = box_alc.y + req.height + 6;
-
-	box_alc.width -= 6;
-	box_alc.x += 3;
-
+	box_alc.y += req.height + 6;
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
 
+	parent_alc = *allocation;
 	parent_alc.height = MAX(1,req.height);
-	parent_alc.width -= 6;
-	parent_alc.x += 3;
 	parent_alc.y += 3;
-
 	combo_box_size_allocate(widget, &parent_alc);
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->toggle_button, &parent_alc);
 	widget->allocation = *allocation;
