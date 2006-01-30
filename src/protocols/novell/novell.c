@@ -124,13 +124,13 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 		char *err = g_strdup_printf(_("Login failed (%s)."),
 					    nm_error_to_string (ret_code));
 
-		/* Clear the password if it was invalid ... don't want to retry
-		 * and get ourselves locked out.
+		/* Don't attempt to auto-reconnect if our password
+		 * was invalid.
 		 */
 		if (ret_code == NMERR_AUTHENTICATION_FAILED ||
 			ret_code == NMERR_CREDENTIALS_MISSING ||
 			ret_code == NMERR_PASSWORD_INVALID) {
-			gaim_account_set_password((GaimAccount*)user->client_data, NULL);
+			gc->wants_to_die = TRUE;
 		}
 		gaim_connection_error(gc, err);
 		g_free(err);
