@@ -4178,9 +4178,9 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			int proxy_stage;
 			int xfer_method;
 			const char *proxy_ip = NULL;
-			
+
 			if (!args->cookie || !args->port ||
-			    !args->info.sendfile.filename || !args->info.sendfile.totsize || 
+			    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
 			    !args->info.sendfile.totfiles || !args->reqclass) {
 				gaim_debug_warning("oscar",
 						   "%s tried to send you a file with incomplete "
@@ -4204,9 +4204,9 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 			/* Build the file transfer handle */
 			xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, userinfo->sn);
-			
+
 			use_rv_proxy = gaim_prefs_get_bool("/plugins/prpl/oscar/use_rv_proxy");
-			
+
 			if(args->info.sendfile.use_proxy) {
 				/* The sender requested (stage 1) that we use a rendezvous proxy */
 				xfer_method = AIM_XFER_PROXY;
@@ -8742,9 +8742,9 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	
+
 	option = gaim_account_option_bool_new(
-		_("Use AIM/ICQ proxy server\nSlower/More Secure/Usually Works)"), "use_rv_proxy",
+		_("Use AIM/ICQ proxy server\n(slower, but usually works)"), "use_rv_proxy",
 		OSCAR_DEFAULT_USE_RV_PROXY);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
