@@ -269,7 +269,7 @@ GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functio
 {
 #if 0
 				void(*create)(GaimLog *),
-				void(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
+				gsize(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
 				void(*finalize)(GaimLog *),
 				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
 				char*(*read)(GaimLog*, GaimLogReadFlags*),
