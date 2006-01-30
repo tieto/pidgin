@@ -2074,12 +2074,14 @@ static void oscar_xfer_end(GaimXfer *xfer)
 */
 static gboolean oscar_xfer_ip_timeout(gpointer data) {
 	GaimXfer *xfer;
+	GaimAccount *account;
 	struct aim_oft_info *oft_info;
 	char *msg = NULL;
 
 	gaim_debug_info("oscar","AAA - in oscar_xfer_ip_timeout\n");
 
 	xfer = (GaimXfer*) data;
+	account = gaim_xfer_get_account(xfer);
 	if(xfer->data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
 
@@ -2156,8 +2158,8 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 				 * Yes, it's a bit odd to ask the user to enable proxied file transfers
 				 * when it's a proxied transfer that timed out. It is possible that a
 				 * stage 1 or 2 proxied transfer might work when a stage 3 will not. */
-				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Accounts->Your Account->Edit Account->Advanced."),
-					gaim_xfer_get_filename(xfer));
+				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Accounts->%s->Edit Account->Advanced."),
+					gaim_xfer_get_filename(xfer), gaim_account_get_username(account));
 				gaim_xfer_conversation_write(xfer, msg, TRUE);
 				g_free(msg);
 				gaim_xfer_cancel_local(xfer);
@@ -2204,7 +2206,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_init_recv\n");
-	
+
 	/* Start a timer for this ip address
 	 * If the clientip fails, try the verifiedip
 	 * If that fails, wait for the transfer to redirect
@@ -2213,7 +2215,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 		oft_info->xfer_reffed = TRUE;
 		gaim_xfer_ref(xfer);
 	}
-	
+
 	if(oft_info->method != AIM_XFER_PROXY) {
 		/* If (we're currently using the verified ip)
 		 * In case clientip & verifiedip are the same, we must prevent an infinite loop */
@@ -2228,7 +2230,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 		gaim_timeout_add(FT_PROXYIP_TIMEOUT, oscar_xfer_ip_timeout, xfer);
 	}
 	oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS);
-	
+
 	/* If we're routing this transfer through a AOL proxy server, do the special login
 	 * before telling the other client we're ready for action.
 	 * Note, firststop_cb is the first function called after gaim has made a connection
@@ -2245,7 +2247,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	} else {
 		nextstop_cb = oscar_sendfile_connected;
 	}
-	
+
 	if (oft_info->conn) {
 		oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
 		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT,
