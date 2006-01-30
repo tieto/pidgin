@@ -467,6 +467,15 @@ initialize_default_account_values()
 	else
 		fullname = _("Gaim User");
 
+	/* Make sure fullname is valid UTF-8.  If not, try to convert it. */
+	if (!g_utf8_validate(fullname, -1, NULL))
+	{
+		gchar *tmp;
+		tmp = g_locale_to_utf8(fullname, -1, NULL, NULL, NULL);
+		if ((tmp == NULL) || (*tmp == '\0'))
+			fullname = _("Gaim User");
+	}
+
 #else
 	FARPROC myNetUserGetInfo = wgaim_find_and_loadproc("Netapi32.dll",
 		"NetUserGetInfo");
