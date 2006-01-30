@@ -961,6 +961,8 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 	} else {
 		if (type & GAIM_MESSAGE_SYSTEM)
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
+		else if (type & GAIM_MESSAGE_ERROR)
+			written += fprintf(data->file, "<font color=\"#FF0000\"><font size=\"2\">(%s)</font><b> %s</b></font><br/>\n", date, msg_fixed);
 		else if (type & GAIM_MESSAGE_WHISPER)
 			written += fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
 					date, from, msg_fixed);
@@ -983,6 +985,10 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 			else
 				written += fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
+		} else {
+			gaim_debug_error("log", "Unhandled message type.");
+			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
+                        		date, from, msg_fixed);
 		}
 	}
 	g_free(date);
