@@ -66,6 +66,7 @@
 #define OSCAR_DEFAULT_AUTHORIZATION TRUE
 #define OSCAR_DEFAULT_HIDE_IP TRUE
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
+#define OSCAR_DEFAULT_USE_RV_PROXY TRUE
 
 /* Milliseconds each file transfer ip address will be given to make a connection. */
 #define FT_CLIENTIP_TIMEOUT	1000	/* 5000 */
@@ -2099,9 +2100,14 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 					&& g_ascii_strcasecmp(oft_info->clientip, oft_info->verifiedip) != 0 )
 				{
 					/* The verifiedip timed out */
-					if(oft_info->method == AIM_XFER_DIRECT) {
+					if (oft_info->method == AIM_XFER_DIRECT && !oft_info->redir_attempted)
+					{
 						/* clientip & verifiedip failed, request a redirect
-						* that is, we want the sender to connect to us */
+						 * that is, we want the sender to connect to us
+						 *
+						 * Above, we checked if we had previously attempted a connection
+						 * redirect to prevent a conflict with the joscar library
+						 */
 
 						/* Let the user not to lose hope quite yet*/
 						msg = g_strdup_printf(_("Attempting connection redirect..."));
@@ -2111,6 +2117,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 						gaim_timeout_add(FT_REDIR_TIMEOUT,
 							oscar_xfer_ip_timeout, xfer);
 						oft_info->method = AIM_XFER_REDIR;
+						oft_info->redir_attempted = TRUE;
 						g_free(oft_info->proxyip);
 						oft_info->proxyip = NULL;
 						oft_info->clientip = g_strdup( gaim_network_get_my_ip(
@@ -2148,8 +2155,8 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 				/* proxyip timed out
 				 * Yes, it's a bit odd to ask the user to enable proxied file transfers
 				 * when it's a proxied transfer that timed out. It is possible that a
-				 * stage 1/2 proxied transfer might work when a stage 3 will not. */
-				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Tools->Preferences->AIM/ICQ."),
+				 * stage 1 or 2 proxied transfer might work when a stage 3 will not. */
+				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Accounts->Your Account->Edit Account->Advanced."),
 					gaim_xfer_get_filename(xfer));
 				gaim_xfer_conversation_write(xfer, msg, TRUE);
 				g_free(msg);
@@ -2714,6 +2721,7 @@ static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
 		{
 			return TRUE;
 		}
+
 	}
 
 	return FALSE;
@@ -8566,13 +8574,13 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/show_idle", _("Show how long you have been idle"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 #endif
-	
+
 	ppref = gaim_plugin_pref_new_with_label(_("File Transfers"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 			    "/plugins/prpl/oscar/use_rv_proxy",
-			    _("Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"));
+			    _("Use AIM/ICQ proxy server (slower, but usually works)"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
@@ -8733,6 +8741,11 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	
+	option = gaim_account_option_bool_new(
+		_("Use AIM/ICQ proxy server\nSlower/More Secure/Usually Works)"), "use_rv_proxy",
+		OSCAR_DEFAULT_USE_RV_PROXY);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	/* Preferences */

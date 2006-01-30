@@ -990,6 +990,7 @@ struct aim_oft_info {
 	int method; /* What method is being used to transfer this file? DIRECT, REDIR, or PROXY */
 	int stage; /* At what stage was a proxy requested? NONE, STG1, STG2*/
 	int xfer_reffed; /* There are many timers, but we should only ref the xfer once */
+	int redir_attempted; /* Have we previously attempted to redirect the connection? */
 	fu32_t res_bytes; /* The bytes already received for resuming a transfer */
 
 	aim_conn_t *conn;
