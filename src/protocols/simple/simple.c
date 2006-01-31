@@ -655,7 +655,7 @@ static void simple_subscribe(struct simple_account_data *sip, struct simple_budd
 	gchar *to;
 	if(strstr(buddy->name,"sip:")) to = g_strdup(buddy->name);
 	else to = g_strdup_printf("sip:%s",buddy->name);
-	contact = g_strdup_printf("%sContact: <%s@%s>\r\n", contact, sip->username, sip->servername);
+	contact = g_strdup_printf("%sContact: <sip:%s@%s>\r\n", contact, sip->username, sip->servername);
 	/* subscribe to buddy presence
 	 * we dont need to know the status so we do not need a callback */
 
@@ -984,7 +984,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	else
 		watcher->expire = time(NULL) + 600;
 	sipmsg_remove_header(msg, "Contact");
-	tmp = g_strdup_printf("<%s@%s>",sip->username, sip->servername);
+	tmp = g_strdup_printf("<sip:%s@%s>",sip->username, sip->servername);
 	sipmsg_add_header(msg, "Contact", tmp);
 	gaim_debug_info("simple","got subscribe: name %s ourtag %s theirtag %s callid %s\n", watcher->name, watcher->dialog.ourtag, watcher->dialog.theirtag, watcher->dialog.callid);
 	send_sip_response(sip->gc, msg, 200, "Ok", NULL);
