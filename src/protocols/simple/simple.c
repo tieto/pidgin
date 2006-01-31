@@ -45,7 +45,6 @@
 #include "ntlm.h"
 
 static char *gentag() {
-//	return g_strdup("0e3f151");
 	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
@@ -313,6 +312,8 @@ static char * parse_attribute(const char *attrname, char *source) {
 		tmp2 = g_strstr_len(tmp, strlen(tmp), "\"");
 		if(tmp2)
 			retval = g_strndup(tmp, tmp2 - tmp);
+		else
+			retval = g_strdup(tmp);
 	}
 
 	return retval;
@@ -338,9 +339,8 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		auth->type = 2;
 		if(!strstr(hdr, "gssapi-data")) {
 			gaim_debug_info("simple","here");
-			parts = g_strsplit(hdr, " ", 0);
+			parts = g_strsplit(hdr+5, "\", ", 0);
 			i = 0;
-			auth->realm = "SIP Communications Service";
 			while(parts[i]) {
 			gaim_debug_info("simple","parts[i] %s\n",parts[i]);
 				if((tmp = parse_attribute("targetname=\"",
