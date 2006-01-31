@@ -53,8 +53,10 @@ struct simple_buddy {
 struct sip_auth {
 	int type; /* 1 = Digest / 2 = NTLM */
 	gchar *nonce;
+	gchar *opaque;
 	gchar *realm;
 	gchar *target;
+	guint32 flags;
 	int nc;
 	gchar *digest_session_key;
 	int retries;

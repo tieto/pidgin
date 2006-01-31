@@ -1136,8 +1136,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				ntlm += strlen("Proxy-Authenticate: NTLM ");
 				while(*nonce != '\r' && *nonce != '\0') nonce ++;
 				*nonce = 0;
-				nonce = gaim_ntlm_parse_type2(ntlm);
-				response = gaim_ntlm_gen_type3(username, (gchar*)gaim_proxy_info_get_password(phb->gpi), (gchar*)gaim_proxy_info_get_host(phb->gpi), domain, nonce);
+				nonce = gaim_ntlm_parse_type2(ntlm, NULL);
+				response = gaim_ntlm_gen_type3(username, (gchar*)gaim_proxy_info_get_password(phb->gpi), (gchar*)gaim_proxy_info_get_host(phb->gpi), domain, nonce, NULL);
 				username--;
 				*username = '\\';
 				request = g_strdup_printf("CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\nProxy-Authorization: NTLM %s\r\nProxy-Connection: Keep-Alive\r\n\r\n",

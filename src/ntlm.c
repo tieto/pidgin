@@ -30,6 +30,8 @@
 #include "cipher.h"
 #include <string.h>
 
+#define NTLM_NEGOTIATE_NTLM2_KEY 0x00080000
+
 struct type1_message {
 	guint8  protocol[8];     /* 'N', 'T', 'L', 'M', 'S', 'S', 'P', '\0' */
 	guint8  type;            /* 0x01 */
@@ -59,8 +61,7 @@ struct type2_message {
 	guint8  zero1[7];
 	short   msg_len;         /* 0x28 */
 	guint8  zero2[2];
-	short   flags;           /* 0x8201 */
-	guint8  zero3[2];
+	guint32   flags;           /* 0x8201 */
 
 	guint8  nonce[8];        /* nonce */
 	guint8  zero[8];
@@ -94,13 +95,16 @@ struct type3_message {
 	short   host_len1;       /* host string length */
 	short   host_len2;       /* host string length */
 	short   host_off;        /* host string offset */
-	guint8  zero6[6];
+	guint8  zero6[2];
 
-	short   msg_len;         /* message length */
+	short   sess_len1;
+	short	sess_len2;
+	short   sess_off;         /* message length */
 	guint8  zero7[2];
 
-	short   flags;           /* 0x8201 */
-	guint8  zero8[2];
+	guint32   flags;           /* 0x8201 */
+/*	guint32  flags2;  unknown, used in windows messenger
+	guint32  flags3; */
 
 #if 0
 	guint8  dom[*];          /* domain string (unicode UTF-16LE) */
@@ -134,11 +138,12 @@ gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain) {
 	return gaim_base64_encode((guchar*)msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
 }
 
-gchar *gaim_ntlm_parse_type2(gchar *type2) {
+gchar *gaim_ntlm_parse_type2(gchar *type2, guint32 *flags) {
 	gsize retlen;
 	static gchar nonce[8];
 	struct type2_message *tmsg = (struct type2_message*)gaim_base64_decode((char*)type2, &retlen);
 	memcpy(nonce, tmsg->nonce, 8);
+	if(flags) *flags = tmsg->flags;
 	g_free(tmsg);
 	return nonce;
 }
@@ -188,12 +193,22 @@ static void calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned ch
 	des_ecb_encrypt((char*)plaintext, (char*)(results+16), (char*)key);
 }
 
-gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar *domain, gchar *nonce) {
+char sesskey[16] = { (char) 0xff, (char) 0xff, (char) 0xad,
+	                (char) 0xf5, (char) 0xc8, (char) 0xff,
+	                (char) 0x67, (char) 0x66, (char) 0xf6,
+	                (char) 0x80, (char) 0xe8, (char) 0x34,
+	                (char) 0xd7, (char) 0x8d, (char) 0x28,
+	                (char) 0x2b };
+
+gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar *domain, gchar *nonce, guint32 *flags) {
 	char  lm_pw[14];
 	unsigned char lm_hpw[21];
+	gchar *sessionnonce = nonce;
 	gchar key[8];
-	struct type3_message *tmsg = g_malloc0(sizeof(struct type3_message)+
-		strlen(domain) + strlen(username) + strlen(hostname) + 24 +24);
+	int msglen = sizeof(struct type3_message)+
+		strlen(domain) + strlen(username)+
+		strlen(hostname) + 24 +24 + ((flags) ? 16 : 0);
+	struct type3_message *tmsg = g_malloc0(msglen);
 	int   len = strlen(passw);
 	unsigned char lm_resp[24], nt_resp[24];
 	unsigned char magic[] = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
@@ -228,7 +243,11 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	tmsg->host_len1 = tmsg->host_len2 = strlen(hostname);
 	tmsg->host_off = sizeof(struct type3_message) + strlen(domain) + strlen(username);
 
-	tmsg->msg_len = sizeof(struct type3_message) + strlen(domain) + strlen(username) + strlen(hostname) + 0x18 + 0x18;
+	if(flags) {
+		tmsg->sess_off = sizeof(struct type3_message) + strlen(domain) + strlen(username) + strlen(hostname) + 0x18 + 0x18;
+		tmsg->sess_len1 = tmsg->sess_len2 = 0x10;
+	}
+
 	tmsg->flags = 0x8200;
 
 	tmp = ((char*) tmsg) + sizeof(struct type3_message);
@@ -239,8 +258,9 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	strcpy(tmp, hostname);
 	tmp += strlen(hostname);
 	
+	/* LM */
 	if (len > 14)  len = 14;
-	
+
 	for (idx=0; idx<len; idx++)
 		lm_pw[idx] = g_ascii_toupper(passw[idx]);
 	for (; idx<14; idx++)
@@ -253,8 +273,9 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	des_ecb_encrypt((char*)magic, (char*)lm_hpw+8, (char*)key);
 
 	memset(lm_hpw+16, 0, 5);
+	calc_resp(lm_hpw, (guchar*)sessionnonce, lm_resp);
 
-
+	/* NTLM */
 	lennt = strlen(passw);
 	for (idx=0; idx<lennt; idx++)
 	{
@@ -271,11 +292,23 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	memset(nt_hpw+16, 0, 5);
 
 
-	calc_resp(lm_hpw, (guchar*)nonce, lm_resp);
-	calc_resp(nt_hpw, (guchar*)nonce, nt_resp);
+	calc_resp(nt_hpw, (guchar*)sessionnonce, nt_resp);
 	memcpy(tmp, lm_resp, 0x18);
-	memcpy(tmp+0x18, nt_resp, 0x18);
-	tmp = gaim_base64_encode((guchar*) tmsg, tmsg->msg_len);
+	tmp += 0x18;
+	memcpy(tmp, nt_resp, 0x18);
+	tmp += 0x18;
+
+
+	/* LCS Stuff */
+	if(flags) {
+		tmsg->flags = 0x409082d4;
+		memcpy(tmp, sesskey, 0x10);
+	}
+
+	/*tmsg->flags2 = 0x0a280105;
+	tmsg->flags3 = 0x0f000000;*/
+	
+	tmp = gaim_base64_encode((guchar*) tmsg, msglen);
 	g_free(tmsg);
 	return tmp;
 }

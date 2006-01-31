@@ -45,6 +45,7 @@
 #include "ntlm.h"
 
 static char *gentag() {
+//	return g_strdup("0e3f151");
 	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
@@ -265,6 +266,11 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	gchar *response;
 	gchar *ret;
 	gchar *tmp;
+	char *authdomain = gaim_account_get_string(sip->account, "authdomain", "");
+	char *authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
+	if(!authuser || strlen(authuser)<1) {
+		authuser = sip->username;
+	}
 
 	if(auth->type == 1) { /* Digest */
 		sprintf(noncecount, "%08d", auth->nc++);
@@ -273,19 +279,17 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 							auth->nonce, noncecount, NULL, auth->digest_session_key);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
 
-		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", sip->username, auth->realm, auth->nonce, target, noncecount, response);
+		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", authuser, auth->realm, auth->nonce, target, noncecount, response);
 		g_free(response);
 		return ret;
 	} else if(auth->type == 2) { /* NTLM */
-		if(auth->nc == 3) {
-			ret = gaim_ntlm_gen_type3(sip->username, sip->password, "gaim", sip->servername, auth->nonce);
-			tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n", auth->realm, auth->target, ret);
+		if(auth->nc == 3 && auth->nonce) {
+			ret = gaim_ntlm_gen_type3(authuser, sip->password, "gaim", authdomain, auth->nonce, &auth->flags);
+			tmp = g_strdup_printf("NTLM qop=\"auth\", opaque=\"%s\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"%s\"\r\n", auth->opaque, auth->realm, auth->target, ret);
 			g_free(ret);
 			return tmp;
 		}
-		ret = gaim_ntlm_gen_type1("gaim", sip->servername);
-		tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n", auth->realm, auth->target, ret);
-		g_free(ret);
+		tmp = g_strdup_printf("NTLM qop=\"auth\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"\"\r\n", auth->realm, auth->target);
 		return tmp;
 	}
 
@@ -295,7 +299,7 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 						auth->nonce, noncecount, NULL, auth->digest_session_key);
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
 
-	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", sip->username, auth->realm, auth->nonce, target, noncecount, response);
+	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", authuser, auth->realm, auth->nonce, target, noncecount, response);
 	g_free(response);
 	return ret;
 }
@@ -316,8 +320,14 @@ static char * parse_attribute(const char *attrname, char *source) {
 
 static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
 	int i=0;
+	char *authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
 	char *tmp;
 	gchar **parts;
+
+	if(!authuser || strlen(authuser)<1) {
+		authuser = sip->username;
+	}
+	
 	if(!hdr) {
 		gaim_debug_error("simple", "fill_auth: hdr==NULL\n");
 		return;
@@ -326,9 +336,13 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	if(!g_strncasecmp(hdr, "NTLM", 4)) {
 		gaim_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
-		if(!auth->nonce && !auth->nc) {
+		if(!strstr(hdr, "gssapi-data")) {
+			gaim_debug_info("simple","here");
 			parts = g_strsplit(hdr, " ", 0);
+			i = 0;
+			auth->realm = "SIP Communications Service";
 			while(parts[i]) {
+			gaim_debug_info("simple","parts[i] %s\n",parts[i]);
 				if((tmp = parse_attribute("targetname=\"",
 						parts[i]))) {
 					auth->target = tmp;
@@ -340,12 +354,22 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 				i++;
 			}
 			g_strfreev(parts);
-			parts = NULL;
 			auth->nc = 1;
-		}
-		if(!auth->nonce && auth->nc==2) {
+		} else {
 			auth->nc = 3;
-			auth->nonce = gaim_ntlm_parse_type2(hdr+5);
+			i = 0;
+			parts = g_strsplit(hdr, " ", 0);
+			while(parts[i]) {
+				if((tmp = parse_attribute("gssapi-data=\"", parts[i]))) {
+					auth->nonce = g_strdup(gaim_ntlm_parse_type2(tmp, &auth->flags));
+					g_free(tmp);
+				}
+				if((tmp = parse_attribute("opaque=\"", parts[i]))) {
+					auth->opaque = tmp;
+				}
+				i++;
+			}
+			g_strfreev(parts);
 		}
 		return;
 	}
@@ -366,7 +390,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce ? auth->nonce : "(null)", auth->realm ? auth->realm : "(null)");
 
 	auth->digest_session_key = gaim_cipher_http_digest_calculate_session_key(
-			"md5", sip->username, auth->realm, sip->password, auth->nonce, NULL);
+			"md5", authuser, auth->realm, sip->password, auth->nonce, NULL);
 
 	auth->nc=1;
 }
@@ -545,7 +569,8 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
-			"From: <sip:%s@%s>;tag=%s\r\n"
+			/* Don't know what epid is, but LCS wants it */
+			"From: <sip:%s@%s>;tag=%s;epid=1234567890\r\n"
 			"To: <%s>%s%s\r\n"
 			"Max-Forwards: 10\r\n"
 			"CSeq: %d %s\r\n"
@@ -1374,9 +1399,15 @@ static void simple_close(GaimConnection *gc)
 		g_free(sip->username);
 		g_free(sip->password);
 		g_free(sip->registrar.nonce);
+		g_free(sip->registrar.opaque);
+		g_free(sip->registrar.target);
 		g_free(sip->registrar.realm);
+		g_free(sip->registrar.digest_session_key);
 		g_free(sip->proxy.nonce);
+		g_free(sip->proxy.opaque);
+		g_free(sip->proxy.target);
 		g_free(sip->proxy.realm);
+		g_free(sip->proxy.digest_session_key);
 		g_free(sip->sendlater);
 		g_free(sip->realhostname);
 		if(sip->listenpa) gaim_input_remove(sip->listenpa);
@@ -1510,6 +1541,10 @@ static void _init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Use proxy"), "useproxy", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	option = gaim_account_option_string_new(_("Proxy"), "proxy", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_string_new(_("Auth User"), "authuser", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_string_new(_("Auth Domain"), "authdomain", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 }
 
