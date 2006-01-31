@@ -1092,7 +1092,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 			dummy[msg->bodylen]='\0';
 			msg->body = dummy;
 			cur+=msg->bodylen;
-			memmove(conn->inbuf, cur, conn->inbuflen);
+			memmove(conn->inbuf, cur, conn->inbufused-(cur-conn->inbuf));
 			conn->inbufused=strlen(conn->inbuf);
 		} else {
 			sipmsg_free(msg);
