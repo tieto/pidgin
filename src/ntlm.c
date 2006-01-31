@@ -193,16 +193,21 @@ static void calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned ch
 	des_ecb_encrypt((char*)plaintext, (char*)(results+16), (char*)key);
 }
 
-char sesskey[16] = { (char) 0xff, (char) 0xff, (char) 0xad,
-	                (char) 0xf5, (char) 0xc8, (char) 0xff,
-	                (char) 0x67, (char) 0x66, (char) 0xf6,
-	                (char) 0x80, (char) 0xe8, (char) 0x34,
-	                (char) 0xd7, (char) 0x8d, (char) 0x28,
-	                (char) 0x2b };
+static void gensesskey(char *buffer, char *oldkey) {
+	int i = 0;
+	if(oldkey == NULL) {
+		for(i=0; i<16; i++) {
+			buffer[i] = (char)(rand() & 0xff);
+		}
+	} else {
+		memcpy(buffer, oldkey, 16);
+	}
+}
 
 gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar *domain, gchar *nonce, guint32 *flags) {
 	char  lm_pw[14];
 	unsigned char lm_hpw[21];
+	char sesskey[16];
 	gchar *sessionnonce = nonce;
 	gchar key[8];
 	int msglen = sizeof(struct type3_message)+
@@ -302,6 +307,7 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	/* LCS Stuff */
 	if(flags) {
 		tmsg->flags = 0x409082d4;
+		gensesskey(sesskey, NULL);
 		memcpy(tmp, sesskey, 0x10);
 	}
 
