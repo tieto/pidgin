@@ -137,7 +137,7 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 	wgaim_nid.uFlags=NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	wgaim_nid.uCallbackMessage=WM_TRAYMESSAGE;
 	wgaim_nid.hIcon=icon;
-	lstrcpy(wgaim_nid.szTip, "");
+	lstrcpy(wgaim_nid.szTip, "Gaim");
 	Shell_NotifyIcon(NIM_ADD,&wgaim_nid);
 	docklet_embedded();
 }
@@ -184,7 +184,7 @@ static void wgaim_tray_set_tooltip(gchar *tooltip) {
 		lstrcpyn(wgaim_nid.szTip, locenc, sizeof(wgaim_nid.szTip)/sizeof(TCHAR));
 		g_free(locenc);
 	} else {
-		lstrcpy(wgaim_nid.szTip, "");
+		lstrcpy(wgaim_nid.szTip, "Gaim");
 	}
 	Shell_NotifyIcon(NIM_MODIFY, &wgaim_nid);
 }
@@ -207,7 +207,7 @@ static void wgaim_tray_create() {
 	GetVersionEx(&osinfo);
 
 	/* Load icons, and init systray notify icon
-	 * NOTE: Windows > XP only supports displaying 4-bit images in the Systray,
+	 * NOTE: Windows < XP only supports displaying 4-bit images in the Systray,
 	 *  2K and ME will use the highest color depth that the desktop will support,
 	 *  but will scale it back to 4-bits for display.
 	 * That is why we use custom 4-bit icons for pre XP Windowses */
