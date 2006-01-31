@@ -154,7 +154,7 @@ static guint _gaim_logsize_user_hash(struct _gaim_logsize_user *lu)
 static guint _gaim_logsize_user_equal(struct _gaim_logsize_user *lu1,
 		struct _gaim_logsize_user *lu2)
 {
-	return ((!strcmp(lu1->name, lu2->name)) && lu1->account == lu2->account);
+	return (lu1->account == lu2->account && (!strcmp(lu1->name, lu2->name)));
 }
 
 static void _gaim_logsize_user_free_key(struct _gaim_logsize_user *lu)
