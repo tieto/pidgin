@@ -118,10 +118,10 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 		total = GPOINTER_TO_INT(ptrsize);
 		total += written;
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+	} else {
+		g_free(lu->name);
+		g_free(lu);
 	}
-
-	g_free(lu->name);
-	g_free(lu);
 
 }
 
