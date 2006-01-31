@@ -1583,7 +1583,7 @@ gaim_gtk_create_prpl_icon(GaimAccount *account)
 GdkPixbuf *
 gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type)
 {
-	char basename2[BUFSIZ];
+	char basename2[256];
 	char *filename;
 	const char *type_name;
 	GdkPixbuf *pixbuf, *scale = NULL, *emblem;
