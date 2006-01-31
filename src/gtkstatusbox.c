@@ -428,7 +428,6 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	{
 		index = get_statusbox_index(status_box, saved_status);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
-
 	}
 	else
 	{
@@ -491,6 +490,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GtkIconSize icon_size;
+	const GdkPixbuf *orig;
 	GdkPixbuf *pixbuf, *emblem;
 	int width, height;
 
@@ -505,8 +505,10 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
 
 	/* Create the icon to use for non-transient saved-statuses */
-	pixbuf = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
+	orig = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
 				GAIM_STOCK_STATUS_ONLINE, icon_size, "GtkGaimStatusBox");
+	pixbuf = gdk_pixbuf_copy(orig);
+	g_object_unref(G_OBJECT(orig));
 
 	emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
 				GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
@@ -544,7 +546,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 			gaim_util_chrreplace(stripped, '\n', ' ');
 		}
 		gtk_gaim_status_box_add(statusbox, GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
-				pixbuf,	gaim_savedstatus_get_title(saved), stripped,
+				pixbuf, gaim_savedstatus_get_title(saved), stripped,
 				GINT_TO_POINTER(gaim_savedstatus_get_creation_time(saved)));
 		g_free(stripped);
 	}
@@ -1434,12 +1436,7 @@ get_statusbox_index(GtkGaimStatusBox *box, GaimSavedStatus *saved_status)
 			index = 3;
 			break;
 		default:
-			/*
-			 * TODO: This is very bad!  I believe it's causing the infinite
-			 *       windows bug.  Need to do something better here.
-			 */
-			/* index = GTK_LIST_STORE(box->dropdown_store)->length - 2; */
-			index = 0;
+			index = -1;
 			break;
 	}
 
