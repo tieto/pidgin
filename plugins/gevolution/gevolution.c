@@ -405,7 +405,7 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *treeview;
 	GtkTreeViewColumn *column;
 	GtkCellRenderer *renderer;
-	GdkPixbuf *pixbuf, *scale = NULL;
+	GdkPixbuf *pixbuf;
 	GtkListStore *model;
 	GList *l;
 
@@ -483,29 +483,22 @@ get_config_frame(GaimPlugin *plugin)
 
 		gtk_list_store_append(model, &iter);
 
-		pixbuf = gaim_gtk_create_prpl_icon(account);
-
-		if (pixbuf != NULL)
-		{
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-											GDK_INTERP_BILINEAR);
-
-			if (!gaim_account_is_connected(account))
-				gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-		}
+		pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+		if ((pixbuf != NULL) && (!gaim_account_is_connected(account)))
+			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 		gtk_list_store_set(model, &iter,
 						   COLUMN_AUTOADD,
 						   gaim_account_get_bool(account, "gevo-autoadd",
 												 FALSE),
-						   COLUMN_ICON, scale,
+						   COLUMN_ICON, pixbuf,
 						   COLUMN_SCREENNAME,
 						   gaim_account_get_username(account),
 						   COLUMN_DATA, account,
 						   -1);
 
-		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
-		if (scale  != NULL) g_object_unref(G_OBJECT(scale));
+		if (pixbuf != NULL)
+			g_object_unref(G_OBJECT(pixbuf));
 	}
 
 	gtk_widget_show_all(ret);

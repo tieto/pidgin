@@ -488,9 +488,9 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 static void
 add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
+	gboolean show_buddy_icons;
 	GList *list, *cur;
 	GtkIconSize icon_size;
-	const GdkPixbuf *orig;
 	GdkPixbuf *pixbuf, *emblem;
 	int width, height;
 
@@ -499,26 +499,11 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		/* Odd... oh well, nothing we can do about it. */
 		return;
 
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
+	if (show_buddy_icons)
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
 	else
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
-
-	/* Create the icon to use for non-transient saved-statuses */
-	orig = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
-				GAIM_STOCK_STATUS_ONLINE, icon_size, "GtkGaimStatusBox");
-	pixbuf = gdk_pixbuf_copy(orig);
-	g_object_unref(G_OBJECT(orig));
-
-	emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
-				GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
-	width = gdk_pixbuf_get_width(pixbuf) / 2;
-	height = gdk_pixbuf_get_height(pixbuf) / 2;
-
-	gdk_pixbuf_composite(emblem, pixbuf, width, height,
-				width, height, width, height,
-				0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-	g_object_unref(G_OBJECT(emblem));
 
 	gtk_gaim_status_box_add_separator(statusbox);
 
@@ -528,7 +513,9 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		const gchar *message;
 		gchar *stripped;
 
-		/* TODO: For transient saved-statuses, make a new icon showing the primitive */
+		/* Get an appropriate status icon */
+		pixbuf = gaim_gtk_create_gaim_icon_with_status(gaim_savedstatus_get_type(saved),
+					show_buddy_icons ? 1.0 : 0.5);
 
 		if (gaim_savedstatus_is_transient(saved))
 		{
@@ -544,11 +531,27 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 			message = gaim_savedstatus_get_message(saved);
 			stripped = gaim_markup_strip_html(message);
 			gaim_util_chrreplace(stripped, '\n', ' ');
+
+			/* Overlay a disk in the bottom left corner */
+			emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
+						GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
+			if (emblem != NULL)
+			{
+				width = gdk_pixbuf_get_width(pixbuf) / 2;
+				height = gdk_pixbuf_get_height(pixbuf) / 2;
+				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
+							width, height, 0, height,
+							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
+				g_object_unref(G_OBJECT(emblem));
+			}
 		}
+
 		gtk_gaim_status_box_add(statusbox, GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
 				pixbuf, gaim_savedstatus_get_title(saved), stripped,
 				GINT_TO_POINTER(gaim_savedstatus_get_creation_time(saved)));
 		g_free(stripped);
+		if (pixbuf != NULL)
+			g_object_unref(G_OBJECT(pixbuf));
 	}
 
 	g_list_free(list);
@@ -557,11 +560,13 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 static void
 gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 {
+	gboolean show_buddy_icons;
 	GaimAccount *account;
-	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
+	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4, *tmp;
 	GtkIconSize icon_size;
 
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
+	if (show_buddy_icons)
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
 	else
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
@@ -608,11 +613,15 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			if (!gaim_status_type_is_user_settable(status_type))
 				continue;
 
+			tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type,
+					show_buddy_icons ? 1.0 : 0.5);
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
 									gaim_status_type_get_primitive(status_type),
-									gaim_gtk_create_prpl_icon_with_status(account, status_type),
+									tmp,
 									gaim_status_type_get_name(status_type),
 									NULL, NULL);
+			if (tmp != NULL)
+				g_object_unref(tmp);
 		}
 
 		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));

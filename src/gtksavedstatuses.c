@@ -921,19 +921,12 @@ status_editor_set_account(GtkListStore *store, GaimAccount *account,
 						  GtkTreeIter *iter, GaimSavedStatusSub *substatus)
 {
 	GdkPixbuf *pixbuf;
-	GdkPixbuf *scale;
 	const char *id = NULL, *name = NULL, *message = NULL;
 
-	scale = NULL;
-
-	pixbuf = gaim_gtk_create_prpl_icon(account);
-
-	if (pixbuf != NULL)
+	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+	if ((pixbuf != NULL) && !gaim_account_is_connected(account))
 	{
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
-		if (gaim_account_is_disconnected(account))
-			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
+		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 	}
 
 	if (substatus != NULL)
@@ -950,15 +943,15 @@ status_editor_set_account(GtkListStore *store, GaimAccount *account,
 	gtk_list_store_set(store, iter,
 			STATUS_EDITOR_COLUMN_ACCOUNT, account,
 			STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, (substatus != NULL),
-			STATUS_EDITOR_COLUMN_ICON, scale,
+			STATUS_EDITOR_COLUMN_ICON, pixbuf,
 			STATUS_EDITOR_COLUMN_SCREENNAME, gaim_account_get_username(account),
 			STATUS_EDITOR_COLUMN_STATUS_ID, id,
 			STATUS_EDITOR_COLUMN_STATUS_NAME, name,
 			STATUS_EDITOR_COLUMN_STATUS_MESSAGE, message,
 			-1);
 
-	if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
-	if (scale  != NULL) g_object_unref(G_OBJECT(scale));
+	if (pixbuf != NULL)
+		g_object_unref(G_OBJECT(pixbuf));
 }
 
 static void
@@ -1459,7 +1452,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	for (list = gaim_account_get_status_types(account); list; list = list->next)
 	{
 		GaimStatusType *status_type;
-		GdkPixbuf *pixbuf, *scale = NULL;
+		GdkPixbuf *pixbuf;
 		const char *id, *name;
 
 		status_type = list->data;
@@ -1469,18 +1462,18 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 			continue;
 
 		id = gaim_status_type_get_id(status_type);
-		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type);
-		if (pixbuf != NULL)
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
 		name = gaim_status_type_get_name(status_type);
 
 		gtk_list_store_append(dialog->model, &iter);
 		gtk_list_store_set(dialog->model, &iter,
 						   SUBSTATUS_COLUMN_ACCOUNT, account,
-						   SUBSTATUS_COLUMN_ICON, scale,
+						   SUBSTATUS_COLUMN_ICON, pixbuf,
 						   SUBSTATUS_COLUMN_STATUS_ID, id,
 						   SUBSTATUS_COLUMN_STATUS_NAME, name,
 						   -1);
+		if (pixbuf != NULL)
+			g_object_unref(pixbuf);
 		if (id && !strcmp(id, gaim_status_type_get_id(status_type)))
 		{
 			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);

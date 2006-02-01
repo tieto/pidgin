@@ -1828,7 +1828,7 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 	GaimGtkPulseData *pulse_data;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	GdkPixbuf *pixbuf, *scale = NULL;
+	GdkPixbuf *pixbuf;
 	size_t index;
 
 	/* Don't need to do anything if the accounts window is not visible */
@@ -1854,24 +1854,18 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 			g_free(pulse_data);
 		}
 
-		pixbuf = gaim_gtk_create_prpl_icon(account);
+		pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+		if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
+			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-		if (pixbuf != NULL)
-		{
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-											GDK_INTERP_BILINEAR);
-
-			if (gaim_account_is_disconnected(account))
-				gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-		}
 		gtk_list_store_set(accounts_window->model, &iter,
-				   COLUMN_ICON, scale,
+				   COLUMN_ICON, pixbuf,
 				   COLUMN_PULSE_DATA, NULL,
 				   -1);
 
 
-		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
-		if (scale  != NULL) g_object_unref(G_OBJECT(scale));
+		if (pixbuf != NULL)
+			g_object_unref(G_OBJECT(pixbuf));
 	}
 }
 
@@ -2259,30 +2253,21 @@ static void
 set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 {
 	GdkPixbuf *pixbuf;
-	GdkPixbuf *scale;
 
-	scale = NULL;
-
-	pixbuf = gaim_gtk_create_prpl_icon(account);
-
-	if (pixbuf != NULL)
-	{
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
-		if (gaim_account_is_disconnected(account))
-			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-	}
+	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
+		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 	gtk_list_store_set(store, iter,
-			COLUMN_ICON, scale,
+			COLUMN_ICON, pixbuf,
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
 			COLUMN_ENABLED, gaim_account_get_enabled(account, GAIM_GTK_UI),
 			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
 			COLUMN_DATA, account,
 			-1);
 
-	if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
-	if (scale  != NULL) g_object_unref(G_OBJECT(scale));
+	if (pixbuf != NULL)
+		g_object_unref(G_OBJECT(pixbuf));
 }
 
 static void

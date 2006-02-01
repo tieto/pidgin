@@ -2220,6 +2220,7 @@ gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
+	/* Use the buddy icon, if possible */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		GaimBuddy *b = gaim_find_buddy(account, name);
 		if (b != NULL) {
@@ -2228,19 +2229,10 @@ gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 		}
 	}
 
-	if (!status) {
-		GdkPixbuf *pixbuf;
-		pixbuf = gaim_gtk_create_prpl_icon(account);
+	/* If they don't have a buddy icon, then use the PRPL icon */
+	if (status == NULL)
+		status = gaim_gtk_create_prpl_icon(account, small_icon ? 0.5 : 1.0);
 
-		if (small_icon && pixbuf != NULL)
-		{
-			status = gdk_pixbuf_scale_simple(pixbuf, 15, 15,
-					GDK_INTERP_BILINEAR);
-			g_object_unref(pixbuf);
-		}
-		else
-			status = pixbuf;
-	}
 	return status;
 }
 
@@ -3036,24 +3028,18 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	if (buddy != NULL)
 		pixbuf = gaim_gtk_blist_get_status_icon((GaimBlistNode*)buddy, GAIM_STATUS_ICON_SMALL);
 	else
-	{
-		GdkPixbuf *unscaled = gaim_gtk_create_prpl_icon(account);
-
-		/* XXX: 15 is the size for GAIM_STATUS_ICON_SMALL in gtkblist.c */
-		pixbuf = gdk_pixbuf_scale_simple(unscaled, 15, 15,
-						 GDK_INTERP_BILINEAR);
-		g_object_unref(G_OBJECT(unscaled));
-	}
+		pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
 
 	/* Now convert it to GtkImage */
 	if (pixbuf == NULL)
 		image = gtk_image_new();
 	else
+	{
 		image = gtk_image_new_from_pixbuf(pixbuf);
+		g_object_unref(G_OBJECT(pixbuf));
+	}
 
 	gtk_size_group_add_widget(sg, image);
-
-	g_object_unref(G_OBJECT(pixbuf));
 
 	/* Make our menu item */
 	text = g_strdup_printf("%s (%s)", name, gaim_account_get_username(account));
@@ -5542,7 +5528,7 @@ gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 	win = gaim_gtkconv_get_window(gtkconv);
 	if (!win)
 		return;
-	
+
 	if (fields & GAIM_GTKCONV_SET_TITLE)
 	{
 		gaim_conversation_autoset_title(conv);

@@ -185,7 +185,7 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
-	GdkPixbuf *pixbuf, *scale = NULL;
+	GdkPixbuf *pixbuf;
 
 	account = gaim_pounce_get_pouncer(pounce);
 
@@ -194,11 +194,7 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 
 	events = gaim_pounce_get_events(pounce);
 
-	pixbuf = gaim_gtk_create_prpl_icon(account);
-
-	if (pixbuf != NULL)
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-										GDK_INTERP_BILINEAR);
+	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
 
 	pouncer = gaim_account_get_username(account);
 	pouncee = gaim_pounce_get_pouncee(pounce);
@@ -207,11 +203,14 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 					   POUNCES_MANAGER_COLUMN_POUNCE, pounce,
-					   POUNCES_MANAGER_COLUMN_ICON, scale,
+					   POUNCES_MANAGER_COLUMN_ICON, pixbuf,
 					   POUNCES_MANAGER_COLUMN_TARGET, pouncee,
 					   POUNCES_MANAGER_COLUMN_ACCOUNT, pouncer,
 					   POUNCES_MANAGER_COLUMN_RECURRING, recurring,
 					   -1);
+
+	if (pixbuf != NULL)
+		g_object_unref(pixbuf);
 }
 
 static void

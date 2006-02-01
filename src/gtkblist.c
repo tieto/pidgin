@@ -3492,9 +3492,10 @@ create_connection_error_buttons(gpointer key, gpointer value,
                                 gpointer user_data)
 {
 	GaimAccount *account;
-	gchar *escaped, *text, *filename;
+	GaimStatusType *status_type;
+	gchar *escaped, *text;
 	GtkWidget *button, *label, *image, *hbox;
-	GdkPixbuf *pixbuf, *emblem, *scale;
+	GdkPixbuf *pixbuf;
 
 	account = key;
 	escaped = g_markup_escape_text((const gchar *)value, -1);
@@ -3506,32 +3507,12 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	hbox = gtk_hbox_new(FALSE, 0);
 
 	/* Create the icon */
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "offline.png", NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
+	status_type = gaim_account_get_status_type_with_primitive(account,
+							GAIM_STATUS_OFFLINE);
+	pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
 	if (pixbuf != NULL) {
-		scale = gdk_pixbuf_scale_simple(pixbuf, 10, 10,
-		                                GDK_INTERP_BILINEAR);
+		image = gtk_image_new_from_pixbuf(pixbuf);
 		g_object_unref(pixbuf);
-		emblem = scale;
-		scale = NULL;
-
-		pixbuf = gaim_gtk_create_prpl_icon(account);
-		if (pixbuf != NULL) {
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-		                                GDK_INTERP_BILINEAR);
-			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-			g_object_unref(G_OBJECT(pixbuf));
-
-			gdk_pixbuf_composite(emblem, scale, 6, 6, 10, 10, 6, 6, 1, 1,
-			                     GDK_INTERP_BILINEAR, 255);
-			g_object_unref(emblem);
-
-			emblem = scale;
-		}
-
-		image = gtk_image_new_from_pixbuf(emblem);
-		g_object_unref(emblem);
 
 		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
 		                   GAIM_HIG_BOX_SPACE);
@@ -5545,7 +5526,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 		GaimConnection *gc = NULL;
 		GaimAccount *account = NULL;
 		GaimStatus *status = NULL;
-		GdkPixbuf *pixbuf = NULL, *scale = NULL;
+		GdkPixbuf *pixbuf = NULL;
 
 		account = accounts->data;
 
@@ -5555,16 +5536,14 @@ gaim_gtk_blist_update_accounts_menu(void)
 			menuitem = gtk_image_menu_item_new_with_label(buf);
 			g_free(buf);
 			status = gaim_account_get_active_status(account);
-			pixbuf = gaim_gtk_create_prpl_icon_with_status(account, gaim_status_get_type(status));
-			if (pixbuf) {
-				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-						GDK_INTERP_BILINEAR);
+			pixbuf = gaim_gtk_create_prpl_icon_with_status(account, gaim_status_get_type(status), 0.5);
+			if (pixbuf != NULL)
+			{
 				if (!gaim_account_is_connected(account))
-					gdk_pixbuf_saturate_and_pixelate(scale, scale,
+					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
 							0.0, FALSE);
-				image = gtk_image_new_from_pixbuf(scale);
+				image = gtk_image_new_from_pixbuf(pixbuf);
 				g_object_unref(G_OBJECT(pixbuf));
-				g_object_unref(G_OBJECT(scale));
 				gtk_widget_show(image);
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 			}
@@ -5647,7 +5626,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 			char *buf = NULL;
 			GtkWidget *image = NULL;
 			GaimAccount *account = NULL;
-			GdkPixbuf *pixbuf = NULL, *scale = NULL;
+			GdkPixbuf *pixbuf = NULL;
 
 			account = accounts->data;
 
@@ -5659,15 +5638,13 @@ gaim_gtk_blist_update_accounts_menu(void)
 						gaim_account_get_protocol_name(account), ")", NULL);
 				menuitem = gtk_image_menu_item_new_with_label(buf);
 				g_free(buf);
-				pixbuf = gaim_gtk_create_prpl_icon(account);
-				if (pixbuf) {
-					scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-							GDK_INTERP_BILINEAR);
-					if (gaim_account_is_disconnected(account))
-						gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.00, FALSE);
-					image = gtk_image_new_from_pixbuf(scale);
+				pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+				if (pixbuf != NULL)
+				{
+					if (!gaim_account_is_connected(account))
+						gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
+					image = gtk_image_new_from_pixbuf(pixbuf);
 					g_object_unref(G_OBJECT(pixbuf));
-					g_object_unref(G_OBJECT(scale));
 					gtk_widget_show(image);
 					gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 				}

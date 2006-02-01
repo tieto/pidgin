@@ -392,7 +392,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			gtk_tree_view_column_pack_start(column, rend, TRUE);
 			gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_SUBJECT, NULL);
 			gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
-			
+
 			gtk_container_add(GTK_CONTAINER(sw), mail_dialog->treeview);
 
 			label = gtk_label_new(NULL);
@@ -410,7 +410,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		while (count--)
 		{
 			char *from_text = NULL, *subject_text = NULL;
-			GdkPixbuf *pixbuf, *scale = NULL;
+			GdkPixbuf *pixbuf;
 
 			if (froms != NULL)
 				from_text = g_markup_escape_text(*froms, -1);
@@ -421,22 +421,18 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			data = g_new0(GaimNotifyMailData, 1);
 			data->url = g_strdup(*urls);
 
-			pixbuf = gaim_gtk_create_prpl_icon(account);
-			if (pixbuf != NULL)
-			{
-				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-												GDK_INTERP_BILINEAR);
-				g_object_unref(pixbuf);
-			}
+			pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
 
 			gtk_tree_store_append(mail_dialog->treemodel, &iter, NULL);
 			gtk_tree_store_set(mail_dialog->treemodel, &iter,
-									GAIM_MAIL_ICON, scale,
+									GAIM_MAIL_ICON, pixbuf,
 									GAIM_MAIL_TO, *tos,
 									GAIM_MAIL_FROM, from_text,
 									GAIM_MAIL_SUBJECT, subject_text,
 									GAIM_MAIL_DATA, data,
 									-1);
+			if (pixbuf != NULL)
+				g_object_unref(pixbuf);
 			data->iter = iter;
 			urls++;
 			froms++;
@@ -581,15 +577,14 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 	GaimNotifySearchResultsData *data = data_;
 	GtkListStore *model = data->model;
 	GtkTreeIter iter;
-	GdkPixbuf *icon, *scaled;
+	GdkPixbuf *pixbuf;
 	guint col_num;
 	guint i;
 	guint j;
-	
+
 	gtk_list_store_clear(data->model);
 
-	icon = gaim_gtk_create_prpl_icon(gaim_connection_get_account(gc));
-	scaled = gdk_pixbuf_scale_simple(icon, 16, 16, GDK_INTERP_BILINEAR);
+	pixbuf = gaim_gtk_create_prpl_icon(gaim_connection_get_account(gc), 0.5);
 
 	/* +1 is for the automagically created Status column. */
 	col_num = gaim_notify_searchresults_get_columns_count(results) + 1;
@@ -598,7 +593,7 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 		GList *row = gaim_notify_searchresults_row_get(results, i);
 
 		gtk_list_store_append(model, &iter);
-		gtk_list_store_set(model, &iter, 0, scaled, -1);
+		gtk_list_store_set(model, &iter, 0, pixbuf, -1);
 
 		for (j = 1; j < col_num; j++) {
 			GValue v;
@@ -611,6 +606,9 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 			g_free(escaped);
 		}
 	}
+
+	if (pixbuf != NULL)
+		g_object_unref(pixbuf);
 }
 
 static void *

@@ -355,21 +355,63 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
  * Returns the base image to represent the account, based on
  * the currently selected theme.
  *
- * @param account The account.
+ * @param account      The account.
+ * @param scale_factor The amount to scale to the original image.
+ *                     The default size is 30x30 pixels.  A scale
+ *                     factor of 1 means no scaling will be done.
+ *                     A scale factor of 0.5 means the length
+ *                     and width will be 15 pixels each.
  *
- * @return The icon.
+ * @return A newly-created pixbuf with a reference count of 1,
+ *         or NULL if any of several error conditions occurred:
+ *         the file could not be opened, there was no loader
+ *         for the file's format, there was not enough memory
+ *         to allocate the image buffer, or the image file
+ *         contained invalid data.
  */
-GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account);
+GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account, double scale_factor);
 
 /**
- * Create a protocol-icon with the status emblem.
+ * Create a protocol icon with the status emblem overlayed in
+ * the lower right corner.
  *
- * @param account     The account.
- * @param status_type The status type to set the emblem for.
+ * @param account      The account.
+ * @param status_type  The status type of the emblem to overlay.
+ * @param scale_factor The amount to scale to the original image.
+ *                     The default size is 30x30 pixels.  A scale
+ *                     factor of 1 means no scaling will be done.
+ *                     A scale factor of 0.5 means the length
+ *                     and width will be 15 pixels each.
  *
- * @return The icon.
+ * @return A newly-created pixbuf with a reference count of 1,
+ *         or NULL if any of several error conditions occurred:
+ *         the file could not be opened, there was no loader
+ *         for the file's format, there was not enough memory
+ *         to allocate the image buffer, or the image file
+ *         contained invalid data.
  */
-GdkPixbuf * gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type);
+GdkPixbuf *gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type, double scale_factor);
+
+/**
+ * Create a Gaim running-man icon with the status emblem overlayed
+ * in the lower right corner.
+ *
+ * @param status_type  The status type to set the emblem for.
+ * @param scale_factor The amount to scale to the original image.
+ *                     The default size is 30x30 pixels.  A scale
+ *                     factor of 1 means no scaling will be done.
+ *                     A scale factor of 0.5 means the length
+ *                     and width will be 15 pixels each.
+ *
+ * @return A newly-created pixbuf with a reference count of 1,
+ *         or NULL if any of several error conditions occurred:
+ *         the file could not be opened, there was no loader for
+ *         the file's format, there was not enough memory to
+ *         allocate the image buffer, or the image file contained
+ *         invalid data.
+ */
+GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitve, double scale_factor);
+
 
 /**
  * Append a GaimMenuAction to a menu.
