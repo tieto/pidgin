@@ -265,8 +265,12 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	gchar *response;
 	gchar *ret;
 	gchar *tmp;
-	char *authdomain = gaim_account_get_string(sip->account, "authdomain", "");
-	char *authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
+	const char *authdomain;
+	const char *authuser;
+
+	authdomain = gaim_account_get_string(sip->account, "authdomain", "");
+	authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
+
 	if(!authuser || strlen(authuser)<1) {
 		authuser = sip->username;
 	}
@@ -321,14 +325,16 @@ static char * parse_attribute(const char *attrname, char *source) {
 
 static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
 	int i=0;
-	char *authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
+	const char *authuser;
 	char *tmp;
 	gchar **parts;
+
+	authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
 
 	if(!authuser || strlen(authuser)<1) {
 		authuser = sip->username;
 	}
-	
+
 	if(!hdr) {
 		gaim_debug_error("simple", "fill_auth: hdr==NULL\n");
 		return;

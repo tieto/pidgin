@@ -54,6 +54,6 @@ gchar *gaim_ntlm_parse_type2(gchar *type2, guint32 *flags);
  * @param flags Pointer to the flags returned by gaim_ntlm_parse_type2
  * @return A base64 encoded type3 message
  */
-gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar *domain, gchar *nonce, guint32 *flags);
+gchar *gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, gchar *nonce, guint32 *flags);
 
 #endif /* _GAIM_NTLM_H */

@@ -204,7 +204,9 @@ static void gensesskey(char *buffer, char *oldkey) {
 	}
 }
 
-gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar *domain, gchar *nonce, guint32 *flags) {
+gchar *
+gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, gchar *nonce, guint32 *flags)
+{
 	char  lm_pw[14];
 	unsigned char lm_hpw[21];
 	char sesskey[16];
@@ -225,7 +227,7 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	char *tmp = 0;
 	int idx = 0;
 
-	/* type3 message initialization */	
+	/* type3 message initialization */
 	tmsg->protocol[0] = 'N';
 	tmsg->protocol[1] = 'T';
 	tmsg->protocol[2] = 'L';
@@ -262,7 +264,7 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	tmp += strlen(username);
 	strcpy(tmp, hostname);
 	tmp += strlen(hostname);
-	
+
 	/* LM */
 	if (len > 14)  len = 14;
 
@@ -313,7 +315,7 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 
 	/*tmsg->flags2 = 0x0a280105;
 	tmsg->flags3 = 0x0f000000;*/
-	
+
 	tmp = gaim_base64_encode((guchar*) tmsg, msglen);
 	g_free(tmsg);
 	return tmp;
