@@ -887,6 +887,16 @@ int gaim_utf8_strcasecmp(const char *a, const char *b);
 gboolean gaim_utf8_has_word(const char *haystack, const char *needle);
 
 /**
+ * Prints a UTF-8 message to the given file stream. The function
+ * tries to convert the UTF-8 message to user's locale. If this
+ * is not possible, the original UTF-8 text will be printed.
+ *
+ * @param filestream The file stream (e.g. STDOUT or STDERR)
+ * @param message    The message to print.
+ */
+void gaim_print_utf8_to_console(FILE *filestream, char *message);
+
+/**
  * Checks for messages starting with "/me "
  *
  * @param message The message to check

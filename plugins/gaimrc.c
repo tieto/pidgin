@@ -412,7 +412,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	labelsg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	widgetsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	frame = gaim_gtk_make_frame(ret, "General");
+	frame = gaim_gtk_make_frame(ret, _("General"));
 	/* interface font */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
@@ -472,7 +472,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		                 widget_bool_widgets[i]);
 	}
 
-	frame = gaim_gtk_make_frame(ret, "Interface colors");
+	frame = gaim_gtk_make_frame(ret, _("Interface colors"));
 	/* imhtml stuff */
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
@@ -496,7 +496,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		                 GINT_TO_POINTER(i));
 	}
 
-	frame = gaim_gtk_make_frame(ret, "Widget Sizes");
+	frame = gaim_gtk_make_frame(ret, _("Widget Sizes"));
 	/* widget size stuff */
 	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
@@ -517,7 +517,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		                 widget_size_widgets[i]);
 	}
 
-	frame = gaim_gtk_make_frame(ret, "Fonts");
+	frame = gaim_gtk_make_frame(ret, _("Fonts"));
 	/* imhtml font stuff */
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);

@@ -172,7 +172,7 @@ sighandler(int sig)
 		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
-		fprintf(stderr, segfault_message);
+		gaim_print_utf8_to_console(stderr, segfault_message);
 		abort();
 		break;
 	case SIGCHLD:
@@ -307,13 +307,6 @@ static void
 show_usage(const char *name, gboolean terse)
 {
 	char *text;
-	char *text_conv;
-	GError *error = NULL;
-
-#ifdef HAVE_SETLOCALE
-	/* Locale initialization is not complete here.  See gtk_init_check() */
-	setlocale(LC_ALL, "");
-#endif
 
 	if (terse) {
 		text = g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
@@ -329,18 +322,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
-	/* tries to convert 'text' to users locale */
-	text_conv = g_locale_from_utf8(text, -1, NULL, NULL, &error);
-	if (text_conv != NULL) {
-		puts(text_conv);
-		g_free(text_conv);
-	}
-	/* use 'text' as a fallback */
-	else {
-		g_warning("%s\n", error->message);
-		g_error_free(error);
-		puts(text);
-	}
+	gaim_print_utf8_to_console(stdout, text);
 	g_free(text);
 }
 
@@ -489,27 +471,32 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 #endif
 
+#ifdef HAVE_SETLOCALE
+	/* Locale initialization is not complete here.  See gtk_init_check() */
+	setlocale(LC_ALL, "");
+#endif
 
 #if HAVE_SIGNAL_H
 
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
-		segfault_message = g_strdup(_(
+		segfault_message = g_strdup_printf(_(
 			"Gaim has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"It is possible that this bug is already fixed in CVS.\n"
 			"If you can reproduce the crash, please notify the gaim\n"
 			"developers by reporting a bug at\n"
-			GAIM_WEBSITE "bug.php\n\n"
+			"%sbug.php\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
-			GAIM_WEBSITE "gdb.php.  If you need further\n"
+			"%sgdb.php.  If you need further\n"
 			"assistance, please IM either SeanEgn or LSchiere (via AIM).\n"
 			"Contact information for Sean and Luke on other protocols is at\n"
-			GAIM_WEBSITE "contactinfo.php.\n"
-		));
+			"%scontactinfo.php.\n"),
+			GAIM_WEBSITE, GAIM_WEBSITE, GAIM_WEBSITE
+		);
 #else
 		/* Don't mark this for translation. */
 		segfault_message = g_strdup(

@@ -41,8 +41,8 @@
 
 #define MUSICMESSAGING_PLUGIN_ID "gtk-hazure-musicmessaging"
 #define MUSICMESSAGING_PREFIX "##MM##"
-#define MUSICMESSAGING_START_MSG "A music messaging session has been requested. Please click the MM icon to accept."
-#define MUSICMESSAGING_CONFIRM_MSG "Music messaging session confirmed."
+#define MUSICMESSAGING_START_MSG _("A music messaging session has been requested. Please click the MM icon to accept.")
+#define MUSICMESSAGING_CONFIRM_MSG _("Music messaging session confirmed.")
 
 typedef struct {
 	GaimConversation *conv; /* pointer to the conversation */
@@ -410,8 +410,9 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 				
 				if ((mmconv->conv)->name == id)
 				{
-					gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_ERROR, "Music Messaging",
-						"There was a conflict in running the command:", command, NULL, NULL);
+					gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_ERROR, 
+							    _("Music Messaging"),
+							    _("There was a conflict in running the command:"), command, NULL, NULL);
 				}
 			}
 		}
@@ -519,8 +520,8 @@ static void run_editor (MMConversation *mmconv)
 	
 	if (!(g_spawn_async (".", args, NULL, 4, NULL, NULL, &(mmconv->pid), &spawn_error)))
 	{
-		gaim_notify_error(plugin_pointer, "Error Running Editor",
-						"The following error has occured:", spawn_error->message);
+		gaim_notify_error(plugin_pointer, _("Error Running Editor"),
+				  _("The following error has occured:"), spawn_error->message);
 		mmconv->started = FALSE;
 	}
 	else
@@ -623,7 +624,7 @@ get_config_frame(GaimPlugin *plugin)
 	
 	/* Path to the score editor */
 	editor_path = gtk_entry_new();
-	editor_path_label = gtk_label_new("Score Editor Path");
+	editor_path_label = gtk_label_new(_("Score Editor Path"));
 	editor_path_button = gtk_button_new_with_mnemonic(_("_Apply"));
 	
 	gtk_entry_set_text((GtkEntry*)editor_path, "/usr/local/bin/gscore");
@@ -650,24 +651,26 @@ static GaimPluginInfo info = {
     GAIM_PLUGIN_MAGIC,
     GAIM_MAJOR_VERSION,
     GAIM_MINOR_VERSION,
-    GAIM_PLUGIN_STANDARD,
-    GAIM_GTK_PLUGIN_TYPE,
-    0,
-    NULL,
-    GAIM_PRIORITY_DEFAULT,
+    GAIM_PLUGIN_STANDARD,                                /**< type           */
+    GAIM_GTK_PLUGIN_TYPE,                                /**< ui_requirement */
+    0,                                                   /**< flags          */
+    NULL,                                                /**< dependencies   */
+    GAIM_PRIORITY_DEFAULT,                               /**< priority       */
 
-    MUSICMESSAGING_PLUGIN_ID,
-    "Music Messaging",
-    VERSION,
-    "Music Messaging Plugin for collabrative composition.",
-    "The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time.",
-    "Christian Muise <christian.muise@gmail.com>",
-    GAIM_WEBSITE,
-    plugin_load,
-    plugin_unload,
-    NULL,
-    &ui_info,
-    NULL,
+    MUSICMESSAGING_PLUGIN_ID,                            /**< id             */
+    "Music Messaging",	                                 /**< name           */
+    VERSION,                                             /**< version        */
+    N_("Music Messaging Plugin for collaborative composition."),
+                                                         /**  summary        */
+    N_("The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time."),
+	                                                 /**  description    */
+    "Christian Muise <christian.muise@gmail.com>",       /**< author         */
+    GAIM_WEBSITE,                                        /**< homepage       */
+    plugin_load,                                         /**< load           */
+    plugin_unload,                                       /**< unload         */
+    NULL,                                                /**< destroy        */
+    &ui_info,                                            /**< ui_info        */
+    NULL,                                                /**< extra_info     */
     NULL,
     NULL
 };

@@ -3593,6 +3593,27 @@ gaim_utf8_has_word(const char *haystack, const char *needle)
 	return ret;
 }
 
+void
+gaim_print_utf8_to_console(FILE *filestream, char *message)
+{
+	gchar *message_conv;
+	GError *error = NULL;
+
+	/* Try to convert 'message' to user's locale */
+	message_conv = g_locale_from_utf8(message, -1, NULL, NULL, &error);
+	if (message_conv != NULL) {
+		fputs(message_conv, filestream);
+		g_free(message_conv);
+	}
+	else
+	{
+		/* use 'message' as a fallback */
+		g_warning("%s\n", error->message);
+		g_error_free(error);
+		fputs(message, filestream);
+	}
+}
+
 gboolean gaim_message_meify(char *message, size_t len)
 {
 	char *c;

@@ -27,6 +27,7 @@ plugins/mono/loader/mono.c
 plugins/musicmessaging/musicmessaging.c
 plugins/notify.c
 plugins/perl/perl.c
+plugins/psychic.c
 plugins/raw.c
 plugins/relnot.c
 plugins/signals-test.c
@@ -39,6 +40,7 @@ plugins/statenotify.c
 plugins/tcl/tcl.c
 plugins/ticker/ticker.c
 plugins/timestamp.c
+plugins/timestamp_format.c
 plugins/win32/transparency/win2ktrans.c
 plugins/win32/winprefs/winprefs.c
 src/account.c

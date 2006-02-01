@@ -33,18 +33,18 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 			"/plugins/gtk/timestamp_format/use_dates/conversation",
 			_("Co_nversations:"));
         gaim_plugin_pref_set_type(ppref, GAIM_PLUGIN_PREF_CHOICE);
-        gaim_plugin_pref_add_choice(ppref, "For delayed messages", "automatic");
-        gaim_plugin_pref_add_choice(ppref, "For delayed messages and in chats", "chats");
-        gaim_plugin_pref_add_choice(ppref, "Always", "always");
+        gaim_plugin_pref_add_choice(ppref, _("For delayed messages"), "automatic");
+        gaim_plugin_pref_add_choice(ppref, _("For delayed messages and in chats"), "chats");
+        gaim_plugin_pref_add_choice(ppref, _("Always"), "always");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 			"/plugins/gtk/timestamp_format/use_dates/log",
 			_("_Message Logs:"));
         gaim_plugin_pref_set_type(ppref, GAIM_PLUGIN_PREF_CHOICE);
-        gaim_plugin_pref_add_choice(ppref, "For delayed messages", "automatic");
-        gaim_plugin_pref_add_choice(ppref, "For delayed messages and in chats", "chats");
-        gaim_plugin_pref_add_choice(ppref, "Always", "always");
+        gaim_plugin_pref_add_choice(ppref, _("For delayed messages"), "automatic");
+        gaim_plugin_pref_add_choice(ppref, _("For delayed messages and in chats"), "chats");
+        gaim_plugin_pref_add_choice(ppref, _("Always"), "always");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
