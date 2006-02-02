@@ -153,7 +153,7 @@ static struct simple_watcher *watcher_find(struct simple_account_data *sip, gcha
 }
 
 static struct simple_watcher *watcher_create(struct simple_account_data *sip, gchar *name, gchar *callid, gchar *ourtag, gchar *theirtag) {
-	struct simple_watcher *watcher = g_new0(struct simple_watcher,1);
+	struct simple_watcher *watcher = g_new0(struct simple_watcher, 1);
 	watcher->name = g_strdup(name);
 	watcher->dialog.callid = g_strdup(callid);
 	watcher->dialog.ourtag = g_strdup(ourtag);
@@ -489,7 +489,7 @@ static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, 
 	gchar *name;
 	gchar *value;
 	GString *outstr = g_string_new("");
-	
+
 	/* When sending the acknowlegements and errors, the content length from the original
 	   message is still here, but there is no body; we need to make sure we're sending the
 	   correct content length */
@@ -547,18 +547,21 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 
 static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gchar *to, gchar *addheaders, gchar *body, struct sip_dialog *dialog, TransCallback tc) {
 	struct simple_account_data *sip = gc->proto_data;
-	char *callid= dialog ? g_strdup(dialog->callid) : gencallid();
-	char *auth="";
-	char *addh="";
+	char *callid = dialog ? g_strdup(dialog->callid) : gencallid();
+	char *auth = "";
+	char *addh = "";
 	gchar *branch = genbranch();
 	char *buf;
 
 	if(!strcmp(method,"REGISTER")) {
-		if(sip->regcallid) callid = g_strdup(sip->regcallid);
+		if(sip->regcallid) {
+			g_free(callid);
+			callid = g_strdup(sip->regcallid);
+		}
 		else sip->regcallid = g_strdup(callid);
 	}
 
-	if(addheaders) addh=addheaders;
+	if(addheaders) addh = addheaders;
 	if(sip->registrar.type && !strcmp(method,"REGISTER")) {
 		buf = auth_header(sip, &sip->registrar, method, url);
 		auth = g_strdup_printf("Authorization: %s", buf);
@@ -1212,7 +1215,7 @@ static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
 	sip->fd = source;
 
 	conn = connection_create(sip, source);
-	
+
 	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
 
 	do_register(sip);
