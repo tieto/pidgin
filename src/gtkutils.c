@@ -1602,13 +1602,25 @@ overlay_status_onto_icon(GdkPixbuf *pixbuf, GaimStatusPrimitive primitive)
 	g_free(filename);
 
 	if (emblem != NULL) {
-		int width, height, emblem_width, emblem_height, new_emblem_width, new_emblem_height;
+		int width, height, emblem_width, emblem_height;
+		int new_emblem_width, new_emblem_height;
+
 		width = gdk_pixbuf_get_width(pixbuf);
 		height = gdk_pixbuf_get_height(pixbuf);
 		emblem_width = gdk_pixbuf_get_width(emblem);
 		emblem_height = gdk_pixbuf_get_height(emblem);
-		new_emblem_width = width / 2;
-		new_emblem_height = height / 2;
+
+		/*
+		 * Figure out how big to make the emblem.  Normally the emblem
+		 * will have half the width of the pixbuf.  But we don't make
+		 * an emblem any smaller than 10 pixels because it becomes
+		 * unrecognizable, unless the width of the pixbuf is less than
+		 * 10 pixels, in which case we make the emblem width the same
+		 * as the pixbuf width.
+		 */
+		new_emblem_width = MAX(width / 2, MIN(width, 10));
+		new_emblem_height = MAX(height / 2, MIN(height, 10));
+
 		/* Overlay emblem onto the bottom right corner of pixbuf */
 		gdk_pixbuf_composite(emblem, pixbuf,
 				width - new_emblem_width, height - new_emblem_height,
