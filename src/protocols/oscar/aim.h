@@ -1297,8 +1297,8 @@ struct aim_ssi_tmp {
 /* 0x0011 */ faim_export int aim_ssi_modbegin(aim_session_t *sess);
 /* 0x0012 */ faim_export int aim_ssi_modend(aim_session_t *sess);
 /* 0x0014 */ faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg);
-/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, char *msg);
-/* 0x001a */ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, char *msg);
+/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, const char *msg);
+/* 0x001a */ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, const char *msg);
 
 /* Client functions for retrieving SSI data */
 faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, fu16_t gid, fu16_t bid);

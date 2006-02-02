@@ -1759,7 +1759,7 @@ static int receiveauthgrant(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  * granted, denied, or dropped.
  *
  */
-faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, char *msg)
+faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, const char *msg)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -1837,7 +1837,7 @@ static int receiveauthrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_
  * if reply=0x01 then grant
  *
  */
-faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, char *msg)
+faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, const char *msg)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;

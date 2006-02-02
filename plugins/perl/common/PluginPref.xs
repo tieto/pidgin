@@ -32,7 +32,7 @@ PROTOTYPES: ENABLE
 void
 gaim_plugin_pref_add_choice(pref, label, choice)
 	Gaim::PluginPref pref
-	char *label
+	const char *label
 	gpointer choice
 
 void
@@ -56,7 +56,7 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
 	}
 
-char *
+const char *
 gaim_plugin_pref_get_label(pref)
 	Gaim::PluginPref pref
 
@@ -68,7 +68,7 @@ unsigned int
 gaim_plugin_pref_get_max_length(pref)
 	Gaim::PluginPref pref
 
-char *
+const char *
 gaim_plugin_pref_get_name(pref)
 	Gaim::PluginPref pref
 
@@ -82,20 +82,20 @@ gaim_plugin_pref_new(class)
 
 Gaim::PluginPref
 gaim_plugin_pref_new_with_label(class, label)
-	char *label
+	const char *label
     C_ARGS:
 	label
 
 Gaim::PluginPref
 gaim_plugin_pref_new_with_name(class, name)
-	char *name
+	const char *name
     C_ARGS:
 	name
 
 Gaim::PluginPref
 gaim_plugin_pref_new_with_name_and_label(class, name, label)
-	char *name
-	char *label
+	const char *name
+	const char *label
     C_ARGS:
 	name, label
 
@@ -108,7 +108,7 @@ gaim_plugin_pref_set_bounds(pref, min, max)
 void
 gaim_plugin_pref_set_label(pref, label)
 	Gaim::PluginPref pref
-	char *label
+	const char *label
 
 void
 gaim_plugin_pref_set_masked(pref, mask)
@@ -123,7 +123,7 @@ gaim_plugin_pref_set_max_length(pref, max_length)
 void
 gaim_plugin_pref_set_name(pref, name)
 	Gaim::PluginPref pref
-	char *name
+	const char *name
 
 void
 gaim_plugin_pref_set_type(pref, type)

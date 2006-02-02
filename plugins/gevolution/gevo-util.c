@@ -61,7 +61,7 @@ gevo_get_groups(void)
 
 	if (gaim_get_blist()->root == NULL)
 	{
-		list  = g_list_append(list, _("Buddies"));
+		list  = g_list_append(list, (gpointer)_("Buddies"));
 	}
 	else
 	{

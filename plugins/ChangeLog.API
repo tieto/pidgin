@@ -97,6 +97,18 @@ version 2.0.0:
 	* Plugins: Depedencies are now honored when unloading plugins.
 	* gaim_markup_extract_info_field(): Added format_cb parameter.
 	* gaim_str_to_time(): Added support for parsing the MM/DD/YYYY format.
+	* gaim_plugin_action_new(): label is now const char *
+	* gaim_plugin_pref_new_with_name(): name is now const char *
+	* gaim_plugin_pref_new_with_label(): label is now const char *
+	* gaim_plugin_pref_new_with_name_and_label(): name and label are
+	  now const char *
+	* gaim_plugin_pref_set_name(): name is now const char *
+	* gaim_plugin_pref_get_name(): return type is now const char *
+	* gaim_plugin_pref_set_label(): label is now const char *
+	* gaim_plugin_pref_get_label(): return type is now const char *
+	* gaim_plugin_pref_add_choice(): label is now const char *
+	* struct proto_chat_entry: label is now const char *
+	* struct proto_chat_entry: identifier is now const char *
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -254,6 +266,7 @@ version 2.0.0:
 	* gaim_date_format_long()
 	* gaim_date_format_full()
 	* gaim_time_format()
+	* gaim_plugin_action_free()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

@@ -43,7 +43,7 @@
 #ifdef ENABLE_NLS
 #  include <locale.h>
 #  include <libintl.h>
-#  define _(x) gettext(x)
+#  define _(x) ((const char *)gettext(x))
 #  ifdef gettext_noop
 #    define N_(String) gettext_noop (String)
 #  else
@@ -53,9 +53,9 @@
 #  include <locale.h>
 #  define N_(String) (String)
 #  ifndef _
-#    define _(x) (x)
+#    define _(x) ((const char *)x)
 #  endif
-#  define ngettext(Singular, Plural, Number) ((Number == 1) ? (Singular) : (Plural))
+#  define ngettext(Singular, Plural, Number) ((Number == 1) ? ((const char *)Singular) : ((const char *)Plural))
 #endif
 
 #ifdef HAVE_ENDIAN_H

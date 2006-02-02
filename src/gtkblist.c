@@ -122,7 +122,7 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full);
-static char *item_factory_translate_func (const char *path, gpointer func_data);
+static const char *item_factory_translate_func (const char *path, gpointer func_data);
 static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove);
 static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node);
@@ -600,7 +600,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 		}
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
 		gaim_set_accessible_label(input, label);
-		g_object_set_data(G_OBJECT(input), "identifier", pce->identifier);
+		g_object_set_data(G_OBJECT(input), "identifier", (gpointer)pce->identifier);
 		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
 		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
 		data->entries = g_list_append(data->entries, input);
@@ -3363,7 +3363,7 @@ enum {
 	NUM_TARGETS
 };
 
-static char *
+static const char *
 item_factory_translate_func (const char *path, gpointer func_data)
 {
 	return _((char *)path);
@@ -3612,7 +3612,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_object_unref(accel_group);
 	gtkblist->ift = gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<GaimMain>", accel_group);
 	gtk_item_factory_set_translate_func(gtkblist->ift,
-										item_factory_translate_func,
+										(GtkTranslateFunc)item_factory_translate_func,
 										NULL, NULL);
 	gtk_item_factory_create_items(gtkblist->ift, sizeof(blist_menu) / sizeof(*blist_menu),
 								  blist_menu, NULL);
@@ -4745,7 +4745,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 		}
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
 		gaim_set_accessible_label(input, label);
-		g_object_set_data(G_OBJECT(input), "identifier", pce->identifier);
+		g_object_set_data(G_OBJECT(input), "identifier", (gpointer)pce->identifier);
 		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
 		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
 		data->entries = g_list_append(data->entries, input);
@@ -5467,6 +5467,8 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin)
 					G_CALLBACK(plugin_act), action);
 			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
 			gtk_widget_show(menuitem);
+
+			gaim_plugin_action_free(action);
 		}
 		else
 			gaim_separator(menu);

@@ -74,8 +74,8 @@ typedef struct {
 #include "whiteboard.h"
 
 struct proto_chat_entry {
-	char *label;
-	char *identifier;
+	const char *label;
+	const char *identifier;
 	gboolean required;
 	gboolean is_int;
 	int min;

@@ -72,8 +72,9 @@ imhtml_format_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, gpointer data)
 
 static void
 make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
-	GtkWidget *hbox, *gtk_label, *entry;
-	gchar *pref_name, *pref_label;
+	GtkWidget *box, *gtk_label, *entry;
+	const gchar *pref_name;
+	const gchar *pref_label;
 	GaimStringFormatType format;
 
 	pref_name = gaim_plugin_pref_get_name(pref);
@@ -93,14 +94,18 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 			break;
 		case GAIM_PLUGIN_PREF_NONE:
 		default:
-			hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-			gtk_widget_show(hbox);
-			gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
+			if (format == GAIM_STRING_FORMAT_TYPE_NONE)
+				box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+			else
+				box = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+
+			gtk_widget_show(box);
+			gtk_box_pack_start(GTK_BOX(parent), box, FALSE, FALSE, 0);
 
 			gtk_label = gtk_label_new_with_mnemonic(pref_label);
 			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
 			gtk_widget_show(gtk_label);
-			gtk_box_pack_start(GTK_BOX(hbox), gtk_label, FALSE, FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(box), gtk_label, FALSE, FALSE, 0);
 
 			if(sg)
 				gtk_size_group_add_widget(sg, gtk_label);
@@ -121,11 +126,23 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 								 (gpointer)pref_name);
 				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), entry);
 				gtk_widget_show(entry);
-				gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+				gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
 			}
 			else
 			{
-				GtkWidget *imhtml, *toolbar, *frame;
+				GtkWidget *hbox;
+				GtkWidget *spacer;
+				GtkWidget *imhtml;
+				GtkWidget *toolbar;
+				GtkWidget *frame;
+
+				hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+				gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+				gtk_widget_show(hbox);
+
+				spacer = gtk_label_new("    ");
+				gtk_box_pack_start(GTK_BOX(hbox), spacer, FALSE, FALSE, 0);
+				gtk_widget_show(spacer);
 
 				frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
 				if (!(format & GAIM_STRING_FORMAT_TYPE_HTML))
@@ -135,7 +152,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 						(format & GAIM_STRING_FORMAT_TYPE_MULTILINE) ? 0 : GTK_IMHTML_NO_NEWLINE);
 				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), imhtml);
 				gtk_widget_show_all(frame);
-				g_object_set_data(G_OBJECT(imhtml), "pref-key", pref_name);
+				g_object_set_data(G_OBJECT(imhtml), "pref-key", (gpointer)pref_name);
 				g_signal_connect(G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml))),
 								"changed", G_CALLBACK(imhtml_cb), imhtml);
 				g_signal_connect(G_OBJECT(imhtml),
@@ -150,7 +167,8 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 static void
 make_int_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 	GtkWidget *gtk_label;
-	gchar *pref_name, *pref_label;
+	const gchar *pref_name;
+	const gchar *pref_label;
 	gint max, min;
 
 	pref_name = gaim_plugin_pref_get_name(pref);
@@ -188,11 +206,9 @@ make_info_pref(GtkWidget *parent, GaimPluginPref *pref) {
 
 GtkWidget *
 gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
-	GaimPluginPref *pref;
 	GtkWidget *ret, *parent;
 	GtkSizeGroup *sg;
 	GList *pp;
-	gchar *name, *label;
 
 	g_return_val_if_fail(frame, NULL);
 
@@ -206,10 +222,10 @@ gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
 		pp != NULL;
 		pp = pp->next)
 	{
-		pref = (GaimPluginPref *)pp->data;
+		GaimPluginPref *pref = (GaimPluginPref *)pp->data;
 
-		name = gaim_plugin_pref_get_name(pref);
-		label = gaim_plugin_pref_get_label(pref);
+		const char *name = gaim_plugin_pref_get_name(pref);
+		const char *label = gaim_plugin_pref_get_label(pref);
 
 		if(name == NULL) {
 			if(label == NULL)

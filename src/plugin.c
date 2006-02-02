@@ -1545,12 +1545,21 @@ gaim_plugins_get_all(void)
 
 
 GaimPluginAction *
-gaim_plugin_action_new(char* label, void (*callback)(GaimPluginAction *))
+gaim_plugin_action_new(const char* label, void (*callback)(GaimPluginAction *))
 {
 	GaimPluginAction *act = g_new0(GaimPluginAction, 1);
 
-	act->label = label;
+	act->label = g_strdup(label);
 	act->callback = callback;
 
 	return act;
+}
+
+void
+gaim_plugin_action_free(GaimPluginAction *action)
+{
+	g_return_if_fail(action != NULL);
+
+	g_free(action->label);
+	g_free(action);
 }

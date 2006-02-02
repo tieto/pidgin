@@ -1159,14 +1159,14 @@ static GList *get_available_browsers()
 	int i = 0;
 	char *browser_setting = (char *)gaim_prefs_get_string("/gaim/gtk/browsers/browser");
 
-	browsers = g_list_prepend(browsers, "custom");
-	browsers = g_list_prepend(browsers, _("Manual"));
+	browsers = g_list_prepend(browsers, (gpointer)"custom");
+	browsers = g_list_prepend(browsers, (gpointer)_("Manual"));
 
 	for (i = 0; i < num_possible_browsers; i++) {
 		if (gaim_program_is_valid(possible_browsers[i].command)) {
 			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
-			browsers = g_list_prepend(browsers, _(possible_browsers[i].name));
+			browsers = g_list_prepend(browsers, (gpointer)_(possible_browsers[i].name));
 			if(browser_setting && !strcmp(possible_browsers[i].command, browser_setting))
 				browser_setting = NULL;
 		}

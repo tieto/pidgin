@@ -2651,7 +2651,7 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	*ne = emblems[3];
 }
 
-static char *yahoo_get_status_string(enum yahoo_status a)
+static const char *yahoo_get_status_string(enum yahoo_status a)
 {
 	switch (a) {
 	case YAHOO_STATUS_BRB:
@@ -2788,7 +2788,9 @@ static char *yahoo_status_text(GaimBuddy *b)
 void yahoo_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 {
 	YahooFriend *f;
-	char *escaped, *status = NULL, *presence = NULL;
+	char *escaped;
+	char *status = NULL;
+	const char *presence = NULL;
 
 	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)

@@ -102,7 +102,7 @@ gaim_plugin_pref_new() {
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new_with_name(char *name) {
+gaim_plugin_pref_new_with_name(const char *name) {
 	GaimPluginPref *pref;
 
 	g_return_val_if_fail(name, NULL);
@@ -114,7 +114,7 @@ gaim_plugin_pref_new_with_name(char *name) {
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new_with_label(char *label) {
+gaim_plugin_pref_new_with_label(const char *label) {
 	GaimPluginPref *pref;
 
 	g_return_val_if_fail(label, NULL);
@@ -126,7 +126,7 @@ gaim_plugin_pref_new_with_label(char *label) {
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new_with_name_and_label(char *name, char *label) {
+gaim_plugin_pref_new_with_name_and_label(const char *name, const char *label) {
 	GaimPluginPref *pref;
 
 	g_return_val_if_fail(name, NULL);
@@ -162,7 +162,7 @@ gaim_plugin_pref_destroy(GaimPluginPref *pref) {
 }
 
 void
-gaim_plugin_pref_set_name(GaimPluginPref *pref, char *name) {
+gaim_plugin_pref_set_name(GaimPluginPref *pref, const char *name) {
 	g_return_if_fail(pref);
 	g_return_if_fail(name);
 
@@ -172,7 +172,7 @@ gaim_plugin_pref_set_name(GaimPluginPref *pref, char *name) {
 	pref->name = g_strdup(name);
 }
 
-char *
+const char *
 gaim_plugin_pref_get_name(GaimPluginPref *pref) {
 	g_return_val_if_fail(pref, NULL);
 
@@ -180,7 +180,7 @@ gaim_plugin_pref_get_name(GaimPluginPref *pref) {
 }
 
 void
-gaim_plugin_pref_set_label(GaimPluginPref *pref, char *label) {
+gaim_plugin_pref_set_label(GaimPluginPref *pref, const char *label) {
 	g_return_if_fail(pref);
 	g_return_if_fail(label);
 
@@ -190,7 +190,7 @@ gaim_plugin_pref_set_label(GaimPluginPref *pref, char *label) {
 	pref->label = g_strdup(label);
 }
 
-char *
+const char *
 gaim_plugin_pref_get_label(GaimPluginPref *pref) {
 	g_return_val_if_fail(pref, NULL);
 
@@ -251,12 +251,12 @@ gaim_plugin_pref_get_type(GaimPluginPref *pref) {
 }
 
 void
-gaim_plugin_pref_add_choice(GaimPluginPref *pref, char *label, gpointer choice) {
+gaim_plugin_pref_add_choice(GaimPluginPref *pref, const char *label, gpointer choice) {
 	g_return_if_fail(pref);
 	g_return_if_fail(label);
 	g_return_if_fail(choice);
 
-	pref->choices = g_list_append(pref->choices, label);
+	pref->choices = g_list_append(pref->choices, (gpointer)label);
 	pref->choices = g_list_append(pref->choices, choice);
 }
 

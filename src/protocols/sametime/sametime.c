@@ -1394,7 +1394,7 @@ static void mw_session_stateChange(struct mwSession *session,
 				   gpointer info) {
   struct mwGaimPluginData *pd;
   GaimConnection *gc;
-  char *msg = NULL;
+  const char *msg = NULL;
 
   pd = mwSession_getClientData(session);
   gc = pd->gc;
@@ -1448,9 +1448,9 @@ static void mw_session_stateChange(struct mwSession *session,
 
   case mwSession_STOPPING:
     if(GPOINTER_TO_UINT(info) & ERR_FAILURE) {
-      msg = mwError(GPOINTER_TO_UINT(info));
-      gaim_connection_error(gc, msg);
-      g_free(msg);
+      char *err = mwError(GPOINTER_TO_UINT(info));
+      gaim_connection_error(gc, err);
+      g_free(err);
     }
     break;
 
@@ -1528,6 +1528,7 @@ static void mw_session_admin(struct mwSession *session,
   GaimConnection *gc;
   GaimAccount *acct;
   const char *host;
+  const char *msg;
   char *prim;
 
   gc = session_to_gc(session);
@@ -1538,9 +1539,9 @@ static void mw_session_admin(struct mwSession *session,
 
   host = gaim_account_get_string(acct, MW_KEY_HOST, NULL);
 
-  prim = _("A Sametime administrator has issued the following announcement"
+  msg = _("A Sametime administrator has issued the following announcement"
 	   " on server %s");
-  prim = g_strdup_printf(prim, NSTR(host));
+  prim = g_strdup_printf(msg, NSTR(host));
 
   gaim_notify_message(gc, GAIM_NOTIFY_MSG_INFO,
 		      _("Sametime Administrator Announcement"),
@@ -3150,8 +3151,8 @@ static gboolean user_supports(struct mwServiceAware *srvc,
 
 
 static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
-  char *feat[] = {NULL, NULL, NULL, NULL, NULL};
-  char **f = feat;
+  const char *feat[] = {NULL, NULL, NULL, NULL, NULL};
+  const char **f = feat;
   
   if(user_supports(srvc, who, mwAttribute_AV_PREFS_SET)) {
     gboolean mic, speak, video;
@@ -3168,7 +3169,7 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
   if(user_supports(srvc, who, mwAttribute_FILE_TRANSFER))
     *f++ = _("File Transfer");
   
-  return (*feat)? g_strjoinv(", ", feat): NULL;
+  return (*feat)? g_strjoinv(", ", (char **)feat): NULL;
   /* jenni loves siege */
 }
 
@@ -3288,7 +3289,9 @@ static void blist_menu_conf_create(GaimBuddy *buddy, const char *msg) {
   GaimAccount *acct;
   GaimConnection *gc;
 
-  char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
+  char *msg1;
   
   g_return_if_fail(buddy != NULL);
 
@@ -3312,14 +3315,14 @@ static void blist_menu_conf_create(GaimBuddy *buddy, const char *msg) {
   msgA = _("Create conference with user");
   msgB = _("Please enter a topic for the new conference, and an invitation"
 	   " message to be sent to %s");
-  msgB = g_strdup_printf(msgB, buddy->name);
+  msg1 = g_strdup_printf(msgB, buddy->name);
 
   gaim_request_fields(gc, _("New Conference"),
-		      msgA, msgB, fields,
+		      msgA, msg1, fields,
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
 		      buddy);
-  g_free(msgB);
+  g_free(msg1);
 }
 
 
@@ -3365,7 +3368,9 @@ static void blist_menu_conf_list(GaimBuddy *buddy,
   GaimAccount *acct;
   GaimConnection *gc;
 
-  char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
+  char *msg;
 
   acct = buddy->account;
   g_return_if_fail(acct != NULL);
@@ -3395,14 +3400,14 @@ static void blist_menu_conf_list(GaimBuddy *buddy,
   msgB = _("Select a conference from the list below to send an invite to"
 	   " user %s. Select \"Create New Conference\" if you'd like to"
 	   " create a new conference to invite this user to.");
-  msgB = g_strdup_printf(msgB, buddy->name);
+  msg = g_strdup_printf(msgB, buddy->name);
 
   gaim_request_fields(gc, _("Invite to Conference"),
-		      msgA, msgB, fields,
+		      msgA, msg, fields,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
 		      buddy);
-  g_free(msgB);
+  g_free(msg);
 }
 
 
@@ -3515,13 +3520,14 @@ static void prompt_host_ok_cb(GaimConnection *gc, const char *host) {
 
 static void prompt_host(GaimConnection *gc) {
   GaimAccount *acct;
+  const char *msgA;
   char *msg;
   
   acct = gaim_connection_get_account(gc);
-  msg = _("No host or IP address has been configured for the"
+  msgA = _("No host or IP address has been configured for the"
 	  " Meanwhile account %s. Please enter one below to"
 	  " continue logging in.");
-  msg = g_strdup_printf(msg, NSTR(gaim_account_get_username(acct)));
+  msg = g_strdup_printf(msgA, NSTR(gaim_account_get_username(acct)));
   
   gaim_request_input(gc, _("Meanwhile Connection Setup"),
 		     _("No Sametime Community Server Specified"), msg,
@@ -4151,7 +4157,9 @@ static void notify_close(gpointer data) {
 static void multi_resolved_query(struct mwResolveResult *result,
 				 GaimConnection *gc) {
   GList *l;
-  char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
+  char *msg;
 
   GaimNotifySearchResults *sres;
   GaimNotifySearchColumn *scol;
@@ -4189,12 +4197,12 @@ static void multi_resolved_query(struct mwResolveResult *result,
   msgB = _("The identifier '%s' may possibly refer to any of the following"
 	   " users. Please select the correct user from the list below to"
 	   " add them to your buddy list.");
-  msgB = g_strdup_printf(msgB, result->name);
+  msg = g_strdup_printf(msgB, result->name);
 
   gaim_notify_searchresults(gc, _("Select User"),
-			    msgA, msgB, sres, notify_close, NULL);
+			    msgA, msg, sres, notify_close, NULL);
 
-  g_free(msgB);
+  g_free(msg);
 }
 
 
@@ -4257,18 +4265,20 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 
   if(res && res->name) {
     /* compose and display an error message */
-    char *msgA, *msgB;
+    const char *msgA;
+    const char *msgB;
+    char *msg;
 
     msgA = _("Unable to add user: user not found");
 
     msgB = _("The identifier '%s' did not match any users in your"
 	     " Sametime community. This entry has been removed from"
 	     " your buddy list.");
-    msgB = g_strdup_printf(msgB, NSTR(res->name));
+    msg = g_strdup_printf(msgB, NSTR(res->name));
 
-    gaim_notify_error(gc, _("Unable to add user"), msgA, msgB);
+    gaim_notify_error(gc, _("Unable to add user"), msgA, msg);
 
-    g_free(msgB);
+    g_free(msg);
   }
 }
 
@@ -5116,15 +5126,17 @@ static void remote_group_done(struct mwGaimPluginData *pd,
   /* collision checking */
   group = gaim_find_group(name);
   if(group) {
-    char *msgA, *msgB;
+    const char *msgA;
+    const char *msgB;
+    char *msg;
 
     msgA = _("Unable to add group: group exists");
     msgB = _("A group named '%s' already exists in your buddy list.");
-    msgB = g_strdup_printf(msgB, name);
+    msg = g_strdup_printf(msgB, name);
 
-    gaim_notify_error(gc, _("Unable to add group"), msgA, msgB);
+    gaim_notify_error(gc, _("Unable to add group"), msgA, msg);
 
-    g_free(msgB);
+    g_free(msg);
     return;
   }
 
@@ -5170,7 +5182,9 @@ static void remote_group_multi(struct mwResolveResult *result,
   GaimRequestFieldGroup *g;
   GaimRequestField *f;
   GList *l;
-  char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
+  char *msg;
 
   GaimConnection *gc = pd->gc;
 
@@ -5199,15 +5213,15 @@ static void remote_group_multi(struct mwResolveResult *result,
   msgB = _("The identifier '%s' may possibly refer to any of the following"
 	  " Notes Address Book groups. Please select the correct group from"
 	  " the list below to add it to your buddy list.");
-  msgB = g_strdup_printf(msgB, result->name);
+  msg = g_strdup_printf(msgB, result->name);
 
   gaim_request_fields(gc, _("Select Notes Address Book"),
-		      msgA, msgB, fields,
+		      msgA, msg, fields,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
 		      pd);
 
-  g_free(msgB);
+  g_free(msg);
 }
 
 
@@ -5239,17 +5253,19 @@ static void remote_group_resolved(struct mwServiceResolve *srvc,
   }
 
   if(res && res->name) {
-    char *msgA, *msgB;
+    const char *msgA;
+    const char *msgB;
+    char *msg;
 
     msgA = _("Unable to add group: group not found");
 
     msgB = _("The identifier '%s' did not match any Notes Address Book"
 	    " groups in your Sametime community.");
-    msgB = g_strdup_printf(msgB, res->name);
+    msg = g_strdup_printf(msgB, res->name);
 
-    gaim_notify_error(gc, _("Unable to add group"), msgA, msgB);
+    gaim_notify_error(gc, _("Unable to add group"), msgA, msg);
 
-    g_free(msgB);
+    g_free(msg);
   }
 }
 
@@ -5279,7 +5295,8 @@ static void remote_group_action_cb(GaimConnection *gc, const char *name) {
 
 static void remote_group_action(GaimPluginAction *act) {
   GaimConnection *gc;
-  const char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
 
   gc = act->context;
 
@@ -5298,7 +5315,10 @@ static void remote_group_action(GaimPluginAction *act) {
 static void search_notify(struct mwResolveResult *result,
 			  GaimConnection *gc) {
   GList *l;
-  char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
+  char *msg1;
+  char *msg2;
 
   GaimNotifySearchResults *sres;
   GaimNotifySearchColumn *scol;
@@ -5334,14 +5354,14 @@ static void search_notify(struct mwResolveResult *result,
 	   " users. You may add these users to your buddy list or send them"
 	   " messages with the action buttons below.");
 
-  msgA = g_strdup_printf(msgA, result->name);
-  msgB = g_strdup_printf(msgB, result->name);
+  msg1 = g_strdup_printf(msgA, result->name);
+  msg2 = g_strdup_printf(msgB, result->name);
 
   gaim_notify_searchresults(gc, _("Search Results"),
-			    msgA, msgB, sres, notify_close, NULL);
+			    msg1, msg2, sres, notify_close, NULL);
 
-  g_free(msgA);
-  g_free(msgB);
+  g_free(msg1);
+  g_free(msg2);
 }
 
 
@@ -5358,15 +5378,18 @@ static void search_resolved(struct mwServiceResolve *srvc,
     search_notify(res, gc);
 
   } else {
-    char *msgA, *msgB;
+    const char *msgA;
+    const char *msgB;
+    char *msg;
+
     msgA = _("No matches");
     msgB = _("The identifier '%s' did not match and users in your"
 	     " Sametime community.");
-    msgB = g_strdup_printf(msgB, NSTR(res->name));
+    msg = g_strdup_printf(msgB, NSTR(res->name));
 
-    gaim_notify_error(gc, _("No Matches"), msgA, msgB);
+    gaim_notify_error(gc, _("No Matches"), msgA, msg);
 
-    g_free(msgB);
+    g_free(msg);
   }
 }
 
@@ -5396,7 +5419,8 @@ static void search_action_cb(GaimConnection *gc, const char *name) {
 
 static void search_action(GaimPluginAction *act) {
   GaimConnection *gc;
-  const char *msgA, *msgB;
+  const char *msgA;
+  const char *msgB;
 
   gc = act->context;
 

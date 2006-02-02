@@ -174,7 +174,7 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 
 	if (err < 0) {
 		const char *who;
-		char *msg;
+		const char *msg;
 
 		who = gaim_conversation_get_name(conv);
 
@@ -182,9 +182,9 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 			msg = _("Unable to send message: The message is too large.");
 
 			if (!gaim_conv_present_error(who, account, msg)) {
-				msg = g_strdup_printf(_("Unable to send message to %s."), who);
-				gaim_notify_error(gc, NULL, msg, _("The message is too large."));
-				g_free(msg);
+				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
+				gaim_notify_error(gc, NULL, msg2, _("The message is too large."));
+				g_free(msg2);
 			}
 		}
 		else if (err == -ENOTCONN) {
@@ -195,9 +195,9 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 			msg = _("Unable to send message.");
 
 			if (!gaim_conv_present_error(who, account, msg)) {
-				msg = g_strdup_printf(_("Unable to send message to %s."), who);
-				gaim_notify_error(gc, NULL, msg, NULL);
-				g_free(msg);
+				char *msg2 = g_strdup_printf(_("Unable to send message to %s."), who);
+				gaim_notify_error(gc, NULL, msg2, NULL);
+				g_free(msg2);
 			}
 		}
 	}

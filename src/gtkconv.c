@@ -160,7 +160,7 @@ static gboolean tab_complete(GaimConversation *conv);
 static void gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type);
 static void gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state);
 static void update_typing_icon(GaimGtkConversation *gtkconv);
-static char *item_factory_translate_func (const char *path, gpointer func_data);
+static const char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
 static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
 static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
@@ -2687,10 +2687,10 @@ static GtkItemFactoryEntry menu_items[] =
 static const int menu_item_count =
 sizeof(menu_items) / sizeof(*menu_items);
 
-static char *
+static const char *
 item_factory_translate_func (const char *path, gpointer func_data)
 {
-	return _((char *)path);
+	return _(path);
 }
 
 static void
@@ -2758,7 +2758,7 @@ setup_menubar(GaimGtkWindow *win)
 		gtk_item_factory_new(GTK_TYPE_MENU_BAR, "<main>", accel_group);
 
 	gtk_item_factory_set_translate_func(win->menu.item_factory,
-	                                    item_factory_translate_func,
+	                                    (GtkTranslateFunc)item_factory_translate_func,
 	                                    NULL, NULL);
 
 	gtk_item_factory_create_items(win->menu.item_factory, menu_item_count,
@@ -2912,7 +2912,8 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 	GaimGtkWindow *gtkwin;
 	GaimConvIm *im = NULL;
 	GaimConversation *conv = gtkconv->active_conv;
-	char *stock_id, *tooltip;
+	char *stock_id;
+	const char *tooltip;
 
 	gtkwin = gtkconv->win;
 

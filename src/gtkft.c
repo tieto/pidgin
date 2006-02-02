@@ -973,7 +973,7 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 {
 	GaimGtkXferUiData *data;
 	GdkPixbuf *pixbuf;
-	gchar *status;
+	const gchar *status;
 
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
