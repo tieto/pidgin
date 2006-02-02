@@ -1739,6 +1739,6 @@ gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
 			g_list_free(act->children);
 			act->children = NULL;
 		}
-		g_free(act);
+		gaim_menu_action_free(act);
 	}
 }

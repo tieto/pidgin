@@ -60,6 +60,7 @@ typedef struct _GaimKeyValuePair
 
 /**
  * Creates a new GaimMenuAction.
+ *
  * @param label    The text label to display for this action.
  * @param callback The function to be called when the action is used on
  *                 the selected item.
@@ -68,8 +69,15 @@ typedef struct _GaimKeyValuePair
  *                 of the action.
  * @return The GaimMenuAction.
  */
-GaimMenuAction *gaim_menu_action_new(char *label, GaimCallback callback,
+GaimMenuAction *gaim_menu_action_new(const char *label, GaimCallback callback,
                                      gpointer data, GList *children);
+
+/**
+ * Frees a GaimMenuAction
+ *
+ * @param act The GaimMenuAction to free.
+ */
+void gaim_menu_action_free(GaimMenuAction *act);
 
 /**************************************************************************/
 /** @name Base16 Functions                                                */

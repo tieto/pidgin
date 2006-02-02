@@ -66,15 +66,24 @@ static char custom_home_dir[MAXPATHLEN];
 static char home_dir[MAXPATHLEN];
 
 GaimMenuAction *
-gaim_menu_action_new(char *label, GaimCallback callback, gpointer data,
+gaim_menu_action_new(const char *label, GaimCallback callback, gpointer data,
                      GList *children)
 {
 	GaimMenuAction *act = g_new0(GaimMenuAction, 1);
-	act->label = label;
+	act->label = g_strdup(label);
 	act->callback = callback;
 	act->data = data;
 	act->children = children;
 	return act;
+}
+
+void
+gaim_menu_action_free(GaimMenuAction *act)
+{
+	g_return_if_fail(act != NULL);
+
+	g_free(act->label);
+	g_free(act);
 }
 
 /**************************************************************************

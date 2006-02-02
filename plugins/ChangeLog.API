@@ -244,6 +244,7 @@ version 2.0.0:
 	* gaim_gtk_log_uninit()
 	* gaim_url_fetch_request()
 	* gaim_menu_action_new()
+	* gaim_menu_action_free()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
