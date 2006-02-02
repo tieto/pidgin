@@ -511,7 +511,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	{
 		GaimSavedStatus *saved = cur->data;
 		const gchar *message;
-		gchar *stripped;
+		gchar *stripped = NULL;
 
 		/* Get an appropriate status icon */
 		pixbuf = gaim_gtk_create_gaim_icon_with_status(gaim_savedstatus_get_type(saved),
@@ -524,13 +524,15 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 			 * API returns the message when gaim_savedstatus_get_title() is
 			 * called, so we don't need to get the message a second time.
 			 */
-			stripped = NULL;
 		}
 		else
 		{
 			message = gaim_savedstatus_get_message(saved);
-			stripped = gaim_markup_strip_html(message);
-			gaim_util_chrreplace(stripped, '\n', ' ');
+			if (message != NULL)
+			{
+				stripped = gaim_markup_strip_html(message);
+				gaim_util_chrreplace(stripped, '\n', ' ');
+			}
 
 			/* Overlay a disk in the bottom left corner */
 			emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
