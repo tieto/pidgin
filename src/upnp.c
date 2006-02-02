@@ -39,7 +39,6 @@
 ****************************************************************/
 #define HTTP_OK "200 OK"
 #define DEFAULT_HTTP_PORT 80
-#define SIZEOF_HTTP 7         /* size of "http://" string */
 #define DISCOVERY_TIMEOUT 1000
 
 /***************************************************************
@@ -329,10 +328,8 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 		return NULL;
 	}
 
-	if(g_strstr_len(xmlnode_get_data(controlURLNode),
-			SIZEOF_HTTP, "http://") == NULL &&
-			g_strstr_len(xmlnode_get_data(controlURLNode),
-				SIZEOF_HTTP, "HTTP://") == NULL) {
+	if(!gaim_str_has_prefix(xmlnode_get_data(controlURLNode), "http://") &&
+	   !gaim_str_has_prefix(xmlnode_get_data(controlURLNode), "HTTP://")) {
 		controlURL = g_strdup_printf("%s%s", baseURL,
 			xmlnode_get_data(controlURLNode));
 	}else{
