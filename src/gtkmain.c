@@ -387,8 +387,17 @@ static char *gaim_find_binary_location(void *symbol, void *data)
 	/* But we still need to deal with symbolic links */
 	g_lstat(basebuf, &st);
 	while ((st.st_mode & S_IFLNK) == S_IFLNK) {
+		int written;
 		linkbuf = g_malloc(1024);
-		readlink(basebuf, linkbuf, 1024);
+		written = readlink(basebuf, linkbuf, 1024 - 1);
+		if (written == -1)
+		{
+			/* This really shouldn't happen, but do we
+			 * need something better here? */
+			g_free(linkbuf);
+			continue;
+		}
+		linkbuf[written] = '\0';
 		if (linkbuf[0] == G_DIR_SEPARATOR) {
 			/* an absolute path */
 			fullbuf = g_strdup(linkbuf);
