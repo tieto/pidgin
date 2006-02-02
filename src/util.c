@@ -2698,17 +2698,12 @@ gaim_str_size_to_units(size_t size)
 char *
 gaim_str_seconds_to_string(guint secs)
 {
-	GString *gstr;
-	const char *prefix = "";
+	char *ret = NULL;
 	guint days, hrs, mins;
-
-	gstr = g_string_new("");
 
 	if (secs < 60)
 	{
-		g_string_append_printf(gstr, "%d %s", secs,
-							   ngettext("second", "seconds", secs));
-		return g_string_free(gstr, FALSE);
+		return g_strdup_printf(ngettext("%d second", "%d seconds", secs), secs);
 	}
 
 	days = secs / (60 * 60 * 24);
@@ -2720,27 +2715,38 @@ gaim_str_seconds_to_string(guint secs)
 
 	if (days > 0)
 	{
-		g_string_append_printf(gstr, "%d %s", days,
-							   ngettext("day", "days", days));
-
-		prefix = ", ";
+		ret = g_strdup_printf(ngettext("%d day", "%d days", days), days);
 	}
 
 	if (hrs > 0)
 	{
-		g_string_append_printf(gstr, "%s%d %s", prefix, hrs,
-							   ngettext("hour", "hours", hrs));
-
-		prefix = ", ";
+		if (ret != NULL)
+		{
+			char *tmp = g_strdup_printf(
+					ngettext("%s, %d hour", "%s, %d hours", hrs),
+							ret, hrs);
+			g_free(ret);
+			ret = tmp;
+		}
+		else
+			ret = g_strdup_printf(ngettext("%d hour", "%d hours", hrs), hrs);
 	}
 
 	if (mins > 0)
 	{
-		g_string_append_printf(gstr, "%s%d %s", prefix, mins,
-							   ngettext("minute", "minutes", mins));
+		if (ret != NULL)
+		{
+			char *tmp = g_strdup_printf(
+					ngettext("%s, %d minute", "%s, %d minutes", mins),
+							ret, mins);
+			g_free(ret);
+			ret = tmp;
+		}
+		else
+			ret = g_strdup_printf(ngettext("%d minute", "%d minutes", mins), mins);
 	}
 
-	return g_string_free(gstr, FALSE);
+	return ret;
 }
 
 
