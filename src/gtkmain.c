@@ -484,7 +484,6 @@ int main(int argc, char *argv[])
 			"Gaim has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
-			"It is possible that this bug is already fixed in CVS.\n"
 			"If you can reproduce the crash, please notify the gaim\n"
 			"developers by reporting a bug at\n"
 			"%sbug.php\n\n"
