@@ -2484,10 +2484,10 @@ gaim_str_has_prefix(const char *s, const char *p)
 #if GLIB_CHECK_VERSION(2,2,0)
 	return g_str_has_prefix(s, p);
 #else
-	if (!strncmp(s, p, strlen(p)))
-		return TRUE;
+	g_return_val_if_fail(s != NULL, FALSE);
+	g_return_val_if_fail(p != NULL, FALSE);
 
-	return FALSE;
+	return (!strncmp(s, p, strlen(p)));
 #endif
 }
 
@@ -2497,12 +2497,13 @@ gaim_str_has_suffix(const char *s, const char *x)
 #if GLIB_CHECK_VERSION(2,2,0)
 	return g_str_has_suffix(s, x);
 #else
-	int off = strlen(s) - strlen(x);
+	int off;
 
-	if (off >= 0 && !strcmp(s + off, x))
-		return TRUE;
+	g_return_val_if_fail(s != NULL, FALSE);
+	g_return_val_if_fail(x != NULL, FALSE);
 
-	return FALSE;
+	off = strlen(s) - strlen(x);
+	return (off >= 0 && !strcmp(s + off, x));
 #endif
 }
 
