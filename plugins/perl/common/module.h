@@ -247,6 +247,7 @@ typedef GaimStatusType *		Gaim__StatusType;
 typedef GaimStringref *			Gaim__Stringref;
 
 /* util.h */
+typedef GaimInfoFieldFormatCallback	Gaim__Util__InfoFieldFormatCallback;
 typedef GaimMenuAction *		Gaim__Menu__Action;
 
 /* value.h */

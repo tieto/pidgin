@@ -585,30 +585,26 @@ static char *log_get_timestamp(GaimLog *log, time_t when)
 	date = gaim_signal_emit_return_1(gaim_log_get_handle(),
 	                          "log-timestamp",
 	                          log, &tm);
-	if (date == NULL)
-	{
-		char buf[64];
+	if (date != NULL)
+		return date;
 
-		if (log->type == GAIM_LOG_SYSTEM || time(NULL) > when + 20*60)
-			strftime(buf, sizeof(buf), "%x %X", &tm);
-		else
-			strftime(buf, sizeof(buf), "%X", &tm);
-
-		date = g_strdup(buf);
-	}
-
-	return date;
+	if (log->type == GAIM_LOG_SYSTEM || time(NULL) > when + 20*60)
+		return g_strdup(gaim_date_format_long(&tm));
+	else
+		return g_strdup(gaim_time_format(&tm));
 }
 
 void gaim_log_common_writer(GaimLog *log, const char *ext)
 {
-	char date[64];
 	GaimLogCommonLoggerData *data = log->logger_data;
 
 	if (data == NULL)
 	{
 		/* This log is new */
-		char *dir, *filename, *path;
+		char *dir;
+		const char *date;
+		char *filename;
+		char *path;
 
 		dir = gaim_log_get_log_dir(log->type, log->name, log->account);
 		if (dir == NULL)
@@ -616,7 +612,7 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		strftime(date, sizeof(date), "%Y-%m-%d.%H%M%S", localtime(&log->time));
+		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S", localtime(&log->time));
 
 		filename = g_strdup_printf("%s%s", date, ext ? ext : "");
 
@@ -825,7 +821,6 @@ static void xml_logger_write(GaimLog *log,
 			     GaimMessageFlags type,
 			     const char *from, time_t time, const char *message)
 {
-	char *date;
 	char *xhtml = NULL;
 
 	if (!log->logger_data) {
@@ -833,18 +828,18 @@ static void xml_logger_write(GaimLog *log,
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
 		 */
-		char buf[64];
+		const char *date;
 		char *dir = gaim_log_get_log_dir(log->type, log->name, log->account);
 		FILE *file;
 
 		if (dir == NULL)
 			return;
 
-		strftime(buf, sizeof(buf), "%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
+		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		char *filename = g_build_filename(dir, buf, NULL);
+		char *filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
 		log->logger_data = g_fopen(filename, "a");
@@ -857,7 +852,7 @@ static void xml_logger_write(GaimLog *log,
 		fprintf(log->logger_data, "<?xml version='1.0' encoding='UTF-8' ?>\n"
 			"<?xml-stylesheet href='file:///usr/src/web/htdocs/log-stylesheet.xsl' type='text/xml' ?>\n");
 
-		strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
+		date = gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(log->logger_data, "<conversation time='%s' screenname='%s' protocol='%s'>\n",
 			date, log->name, prpl);
 	}
@@ -926,9 +921,9 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 	gsize written = 0;
 
 	if(!data) {
-		char buf[64];
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
+		const char *date;
 		gaim_log_common_writer(log, ".html");
 
 		data = log->logger_data;
@@ -937,16 +932,17 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 		if(!data->file)
 			return 0;
 
-		strftime(buf, sizeof(buf), "%c", localtime(&log->time));
+		date = gaim_date_format_full(log->time);
+
 		written += fprintf(data->file, "<html><head>");
 		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
 		written += fprintf(data->file, "<title>");
 		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)",
-			log->name, buf, gaim_account_get_username(log->account), prpl);
+			log->name, date, gaim_account_get_username(log->account), prpl);
 		written += fprintf(data->file, "</title></head><body>");
 		written += fprintf(data->file,
 			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
-			log->name, buf, gaim_account_get_username(log->account), prpl);
+			log->name, date, gaim_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
@@ -1064,7 +1060,6 @@ static gsize txt_logger_write(GaimLog *log,
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
 		 */
-		char buf[64];
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
 		gaim_log_common_writer(log, ".txt");
@@ -1075,9 +1070,9 @@ static gsize txt_logger_write(GaimLog *log,
 		if(!data->file)
 			return 0;
 
-		strftime(buf, sizeof(buf), "%c", localtime(&log->time));
 		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
-			log->name, buf, gaim_account_get_username(log->account), prpl);
+			log->name, gaim_date_format_full(log->time),
+			gaim_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */

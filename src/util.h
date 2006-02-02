@@ -45,6 +45,8 @@ typedef struct _GaimMenuAction
 	GList *children;
 } GaimMenuAction;
 
+typedef char *(*GaimInfoFieldFormatCallback)(const char *field, size_t len);
+
 /**
  * A key-value pair.
  *
@@ -209,6 +211,62 @@ char *gaim_mime_decode_field(const char *str);
 /*@{*/
 
 /**
+ * Formats a time into the specified format.
+ *
+ * This is essentially strftime(), but it has a static buffer
+ * and handles the UTF-8 conversion for the caller.
+ */
+const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
+
+/**
+ * Formats a time into the user's preferred short date format.
+ *
+ * The returned string is stored in a static buffer, so the result
+ * should be g_strdup()'d if it's going to be kept.
+ *
+ * @param time The time value to format (in local time).
+ *
+ * @return The date, formatted as per the user's settings.
+ */
+const char *gaim_date_format_short(const struct tm *tm);
+
+/**
+ * Formats a time into the user's preferred short date plus time format.
+ *
+ * The returned string is stored in a static buffer, so the result
+ * should be g_strdup()'d if it's going to be kept.
+ *
+ * @param time The time value to format (in local time).
+ *
+ * @return The timestamp, formatted as per the user's settings.
+ */
+const char *gaim_date_format_long(const struct tm *tm);
+
+/**
+ * Formats a time into the user's preferred full date and time format.
+ *
+ * The returned string is stored in a static buffer, so the result
+ * should be g_strdup()'d if it's going to be kept.
+ *
+ * @param time The time value to format (in local time).
+ *
+ * @return The date and time, formatted as per the user's settings.
+ */
+const char *gaim_date_format_full(time_t time);
+
+/**
+ * Formats a time into the user's preferred time format.
+ *
+ * The returned string is stored in a static buffer, so the result
+ * should be g_strdup()'d if it's going to be kept.
+ *
+ * @param time The time value to format (in local time).
+ *
+ * @return The time, formatted as per the user's settings.
+ */
+const char *gaim_time_format(const struct tm *tm);
+
+/**
  * Builds a time_t from the supplied information.
  *
  * @param year  The year.
@@ -224,7 +282,8 @@ time_t gaim_time_build(int year, int month, int day, int hour,
 					   int min, int sec);
 
 /**
- * Parses a timestamp in jabber or ISO8601 format and returns a time_t.
+ * Parses a timestamp in jabber, ISO8601, or MM/DD/YYYY format and returns
+ * a time_t.
  *
  * @param timestamp The timestamp
  * @param utc Assume UTC if no timezone specified
@@ -232,17 +291,6 @@ time_t gaim_time_build(int year, int month, int day, int hour,
  * @return A time_t.
  */
 time_t gaim_str_to_time(const char *timestamp, gboolean utc);
-
-/**
- * Creates a string according to a time and format string
- *
- * This function just calls strftime. The only advantage to using it
- * is that gcc won't give a warning if you use %c
- *
- * TODO: The warning is gone in gcc4, and this function can
- *       eventually be removed.
- */
-size_t gaim_strftime(char *s, size_t max, const char *format, const struct tm *tm);
 
 /*@}*/
 
@@ -289,6 +337,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  * @param display_name   The short descriptive name to display for this token.
  * @param is_link        TRUE if this should be a link, or FALSE otherwise.
  * @param link_prefix    The prefix for the link.
+ * @param format_cb      A callback to format the value before adding it.
  *
  * @return TRUE if successful, or FALSE otherwise.
  */
@@ -297,7 +346,8 @@ gboolean gaim_markup_extract_info_field(const char *str, int len, GString *dest,
                                         const char *end_token, char check_value,
                                         const char *no_value_token,
                                         const char *display_name, gboolean is_link,
-                                        const char *link_prefix);
+                                        const char *link_prefix,
+					GaimInfoFieldFormatCallback format_cb);
 
 /**
  * Converts HTML markup to XHTML.

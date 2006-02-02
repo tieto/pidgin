@@ -484,6 +484,46 @@ gaim_mime_decode_field(const char *str)
 /**************************************************************************
  * Date/Time Functions
  **************************************************************************/
+const char *
+gaim_utf8_strftime(const char *format, const struct tm *tm)
+{
+	static char buf[128];
+	char *utf8;
+
+	strftime(buf, sizeof(buf), format, tm);
+
+	if ((utf8 = gaim_utf8_try_convert(buf)))
+	{
+		gaim_strlcpy(buf, utf8);
+		g_free(utf8);
+	}
+
+	return buf;
+}
+
+const char *
+gaim_date_format_short(const struct tm *tm)
+{
+	return gaim_utf8_strftime("%x", tm);
+}
+
+const char *
+gaim_date_format_long(const struct tm *tm)
+{
+	return gaim_utf8_strftime(_("%x %X"), tm);
+}
+
+const char *
+gaim_date_format_full(time_t time)
+{
+	return gaim_utf8_strftime("%c", localtime(&time));
+}
+
+const char *
+gaim_time_format(const struct tm *tm)
+{
+	return gaim_utf8_strftime("%X", tm);
+}
 
 time_t
 gaim_time_build(int year, int month, int day, int hour, int min, int sec)
@@ -507,6 +547,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 	struct tm *t;
 	char buf[32];
 	char *c;
+	int year = 0;
 	int tzoff = 0;
 
 	time(&retval);
@@ -516,25 +557,35 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 	c = buf;
 
 	/* 4 digit year */
-	if (!sscanf(c, "%04d", &t->tm_year)) return 0;
-	c += 4;
-	if (*c == '-')
-		c++;
-
-	t->tm_year -= 1900;
+	if (sscanf(c, "%04d", &year) && year > 1900)
+	{
+		c += 4;
+		if (*c == '-')
+			c++;
+		t->tm_year -= 1900;
+	}
 
 	/* 2 digit month */
-	if (!sscanf(c, "%02d", &t->tm_mon)) return 0;
+	if (!sscanf(c, "%02d", &t->tm_mon))
+		return 0;
 	c += 2;
-	if (*c == '-')
+	if (*c == '-' || *c == '/')
 		c++;
-
 	t->tm_mon -= 1;
 
 	/* 2 digit day */
-	if (!sscanf(c, "%02d", &t->tm_mday)) return 0;
+	if (!sscanf(c, "%02d", &t->tm_mday))
+		return 0;
 	c += 2;
-	if (*c == 'T' || *c == '.') { /* we have more than a date, keep going */
+	if (*c == '/')
+	{
+		c++;
+
+		if (!sscanf(c, "%04d", &t->tm_year))
+			return 0;
+		t->tm_year -= 1900;
+	}
+	else if (*c == 'T' || *c == '.') { /* we have more than a date, keep going */
 		c++; /* skip the "T" */
 
 		/* 2 digit hour */
@@ -585,10 +636,6 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 	return retval;
 }
 
-size_t gaim_strftime(char *s, size_t max, const char *format, const struct tm *tm)
-{
-	return strftime(s, max, format, tm);
-}
 
 /**************************************************************************
  * Markup Functions
@@ -753,7 +800,8 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 							   const char *end_token, char check_value,
 							   const char *no_value_token,
 							   const char *display_name, gboolean is_link,
-							   const char *link_prefix)
+							   const char *link_prefix,
+							   GaimInfoFieldFormatCallback format_cb)
 {
 	const char *p, *q;
 
@@ -805,7 +853,14 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 			if (link_prefix)
 				g_string_append(dest, link_prefix);
 
-			g_string_append_len(dest, p, q - p);
+			if (format_cb != NULL)
+			{
+				char *reformatted = format_cb(p, q - p);
+				g_string_append(dest, reformatted);
+				g_free(reformatted);
+			}
+			else
+				g_string_append_len(dest, p, q - p);
 			g_string_append(dest, "\">");
 
 			if (link_prefix)
@@ -816,7 +871,14 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 		}
 		else
 		{
-			g_string_append_len(dest, p, q - p);
+			if (format_cb != NULL)
+			{
+				char *reformatted = format_cb(p, q - p);
+				g_string_append(dest, reformatted);
+				g_free(reformatted);
+			}
+			else
+				g_string_append_len(dest, p, q - p);
 		}
 
 		g_string_append(dest, "<br>\n");

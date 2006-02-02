@@ -354,7 +354,8 @@ faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const cha
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	int bslen, xmllen;
-	char *xml, timestr[30];
+	char *xml;
+	const char *timestr;
 	time_t t;
 	struct tm *tm;
 
@@ -366,7 +367,7 @@ faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const cha
 
 	time(&t);
 	tm = gmtime(&t);
-	strftime(timestr, 30, "%a, %d %b %Y %T %Z", tm);
+	timestr = gaim_utf8_strftime("%a, %d %b %Y %T %Z", tm);
 
 	/* The length of xml included the null terminating character */
 	xmllen = 225 + strlen(name) + strlen(msg) + strlen(sess->sn) + strlen(alias) + strlen(timestr) + 1;

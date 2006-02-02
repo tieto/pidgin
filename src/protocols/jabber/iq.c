@@ -167,7 +167,6 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *type, *from, *id;
 	JabberIq *iq;
-	char buf[1024];
 	xmlnode *query;
 	time_t now_t;
 	struct tm *now;
@@ -180,7 +179,7 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	id = xmlnode_get_attrib(packet, "id");
 
 	if(type && !strcmp(type, "get")) {
-		char *utf8;
+		const char *date;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:time");
 		jabber_iq_set_id(iq, id);
@@ -188,20 +187,14 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		strftime(buf, sizeof(buf), "%Y%m%dT%T", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
+		date = gaim_utf8_strftime("%Y%m%dT%T", now);
+		xmlnode_insert_data(xmlnode_new_child(query, "utc"), date, -1);
 
-		strftime(buf, sizeof(buf), "%Z", now);
-		if((utf8 = gaim_utf8_try_convert(buf))) {
-			xmlnode_insert_data(xmlnode_new_child(query, "tz"), utf8, -1);
-			g_free(utf8);
-		}
+		date = gaim_utf8_strftime("%Z", now);
+		xmlnode_insert_data(xmlnode_new_child(query, "tz"), date, -1);
 
-		strftime(buf, sizeof(buf), "%d %b %Y %T", now);
-		if((utf8 = gaim_utf8_try_convert(buf))) {
-			xmlnode_insert_data(xmlnode_new_child(query, "display"), utf8, -1);
-			g_free(utf8);
-		}
+		date = gaim_utf8_strftime("%d %b %Y %T", now);
+		xmlnode_insert_data(xmlnode_new_child(query, "display"), date, -1);
 
 		jabber_iq_send(iq);
 	}

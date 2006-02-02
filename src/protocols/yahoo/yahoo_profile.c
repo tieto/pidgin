@@ -647,6 +647,15 @@ static const profile_strings_node_t profile_strings[] = {
 	},
 };
 
+static char *yahoo_info_date_reformat(const char *field, size_t len)
+{
+	char *tmp = g_strndup(field, len);
+	time_t t = gaim_str_to_time(tmp, FALSE);
+
+	g_free(tmp);
+	return g_strdup(gaim_date_format_short(localtime(&t)));
+}
+
 static char *yahoo_remove_nonbreaking_spaces(char *str)
 {
 	char *p;
@@ -994,7 +1003,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	 * true, since the Yahoo! ID will always be there */
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->yahoo_id_string, 10, "\n", 0,
-			NULL, _("Yahoo! ID"), 0, NULL))
+			NULL, _("Yahoo! ID"), 0, NULL, NULL))
 		;
 #endif
 
@@ -1018,42 +1027,42 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* extract their Email address and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->my_email_string, 1, " ", 0,
-			strings->private_string, _("Email"), 0, NULL);
+			strings->private_string, _("Email"), 0, NULL, NULL);
 
 	/* extract the Nickname if it exists */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			"Nickname:", 1, "\n", '\n',
-			NULL, _("Nickname"), 0, NULL);
+			NULL, _("Nickname"), 0, NULL, NULL);
 
 	/* extract their RealName and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->realname_string, 1, "\n", '\n',
-			NULL, _("Realname"), 0, NULL);
+			NULL, _("Realname"), 0, NULL, NULL);
 
 	/* extract their Location and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->location_string, 2, "\n", '\n',
-			NULL, _("Location"), 0, NULL);
+			NULL, _("Location"), 0, NULL, NULL);
 
 	/* extract their Age and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->age_string, 3, "\n", '\n',
-			NULL, _("Age"), 0, NULL);
+			NULL, _("Age"), 0, NULL, NULL);
 
 	/* extract their MaritalStatus and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->maritalstatus_string, 3, "\n", '\n',
-			strings->no_answer_string, _("Marital Status"), 0, NULL);
+			strings->no_answer_string, _("Marital Status"), 0, NULL, NULL);
 
 	/* extract their Gender and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->gender_string, 3, "\n", '\n',
-			strings->no_answer_string, _("Gender"), 0, NULL);
+			strings->no_answer_string, _("Gender"), 0, NULL, NULL);
 
 	/* extract their Occupation and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->occupation_string, 2, "\n", '\n',
-			NULL, _("Occupation"), 0, NULL);
+			NULL, _("Occupation"), 0, NULL, NULL);
 
 	/* Hobbies, Latest News, and Favorite Quote are a bit different, since
 	 * the values can contain embedded newlines... but any or all of them
@@ -1066,15 +1075,15 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->hobbies_string, 1, strings->latest_news_string,
-			'\n', "\n", _("Hobbies"), 0, NULL))
+			'\n', "\n", _("Hobbies"), 0, NULL, NULL))
 	{
 		if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 				strings->hobbies_string, 1, strings->favorite_quote_string,
-				'\n', "\n", _("Hobbies"), 0, NULL))
+				'\n', "\n", _("Hobbies"), 0, NULL, NULL))
 		{
 			found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 					strings->hobbies_string, 1, strings->links_string,
-					'\n', "\n", _("Hobbies"), 0, NULL);
+					'\n', "\n", _("Hobbies"), 0, NULL, NULL);
 		}
 		else
 			found = TRUE;
@@ -1084,18 +1093,18 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->latest_news_string, 1, strings->favorite_quote_string,
-			'\n', "\n", _("Latest News"), 0, NULL))
+			'\n', "\n", _("Latest News"), 0, NULL, NULL))
 	{
 		found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 				strings->latest_news_string, 1, strings->links_string,
-				'\n', "\n", _("Latest News"), 0, NULL);
+				'\n', "\n", _("Latest News"), 0, NULL, NULL);
 	}
 	else
 		found = TRUE;
 
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->favorite_quote_string, 1, strings->links_string,
-			'\n', "\n", _("Favorite Quote"), 0, NULL);
+			'\n', "\n", _("Favorite Quote"), 0, NULL, NULL);
 
 	/* Home Page will either be "No home page specified",
 	 * or "Home Page: " and a link.
@@ -1109,7 +1118,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 		{
 			found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 					strings->home_page_string, 1, "\n", 0, NULL,
-					_("Home Page"), 1, NULL);
+					_("Home Page"), 1, NULL, NULL);
 		}
 	}
 
@@ -1124,16 +1133,16 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	{
 		if (gaim_markup_extract_info_field(stripped, stripped_len, s,
 				strings->cool_link_1_string, 1, "\n", 0, NULL,
-				_("Cool Link 1"), 1, NULL))
+				_("Cool Link 1"), 1, NULL, NULL))
 		{
 			found = TRUE;
 			if (gaim_markup_extract_info_field(stripped, stripped_len, s,
 					strings->cool_link_2_string, 1, "\n", 0, NULL,
-					_("Cool Link 2"), 1, NULL))
+					_("Cool Link 2"), 1, NULL, NULL))
 			{
 				gaim_markup_extract_info_field(stripped, stripped_len, s,
 						strings->cool_link_3_string, 1, "\n", 0, NULL,
-						_("Cool Link 3"), 1, NULL);
+						_("Cool Link 3"), 1, NULL, NULL);
 			}
 		}
 	}
@@ -1141,12 +1150,12 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* see if Member Since is there, and if so, extract it. */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			"Member Since:", 1, last_updated_utf8_string,
-			'\n', NULL, _("Member Since"), 0, NULL);
+			'\n', NULL, _("Member Since"), 0, NULL, yahoo_info_date_reformat);
 
 	/* extract the Last Updated date and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			last_updated_utf8_string, 1, " ", '\n', NULL,
-			_("Last Update"), 0, NULL);
+			_("Last Update"), 0, NULL, yahoo_info_date_reformat);
 	} /* if (profile_state == PROFILE_STATE_DEFAULT) */
 
 	if(!found)

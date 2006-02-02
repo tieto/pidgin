@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "log.h"
 #include "plugin.h"
+#include "util.h"
 #include "version.h"
 
 #include "gtkconv.h"
@@ -55,8 +56,6 @@ static char *timestamp_cb_common(GaimConversation *conv,
                                  gboolean force,
                                  const char *dates)
 {
-	char buf[64];
-
 	g_return_val_if_fail(conv != NULL, NULL);
 	g_return_val_if_fail(tm != NULL, NULL);
 	g_return_val_if_fail(dates != NULL, NULL);
@@ -67,18 +66,13 @@ static char *timestamp_cb_common(GaimConversation *conv,
 	    (time(NULL) > (mktime((struct tm *)tm) + 20*60)))
 	{
 		if (force)
-			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", tm);
+			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
 		else
-			strftime(buf, sizeof(buf), "%x %X", tm);
-
-		return g_strdup(buf);
+			return g_strdup(gaim_date_format_long(tm));
 	}
 
 	if (force)
-	{
-		strftime(buf, sizeof(buf), "%H:%M:%S", tm);
-		return g_strdup(buf);
-	}
+		return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
 
 	return NULL;
 }
@@ -111,11 +105,7 @@ static char *log_timestamp_cb(GaimLog *log,
 	if (log->type == GAIM_LOG_SYSTEM)
 	{
 		if (force)
-		{
-			char buf[64];
-			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", tm);
-			return g_strdup(buf);
-		}
+			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
 		else
 			return NULL;
 	}

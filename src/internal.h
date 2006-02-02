@@ -162,6 +162,12 @@
 #	endif
 #endif
 
+/* Safer ways to work with static buffers. When using non-static
+ * buffers, either use g_strdup_* functions (preferred) or use
+ * g_strlcpy/g_strlcpy directly. */
+#define gaim_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
+#define gaim_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
+
 #define GAIM_WEBSITE "http://gaim.sourceforge.net/"
 
 #ifndef _WIN32

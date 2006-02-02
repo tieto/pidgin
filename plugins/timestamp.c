@@ -45,7 +45,7 @@ do_timestamp(gpointer data)
 	GaimConversation *c = (GaimConversation *)data;
 	GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
 	GtkTextIter iter;
-	char mdate[7];
+	const char *mdate;
 	int is_conversation_active;
 	time_t tim = time(NULL);
 
@@ -63,7 +63,7 @@ do_timestamp(gpointer data)
 		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml));
 		gtk_text_buffer_get_end_iter(buffer, &iter);
 		gaim_conversation_set_data(c, "timestamp-conv-active", GINT_TO_POINTER(FALSE));
-		strftime(mdate, sizeof(mdate), "\n%H:%M", localtime(&tim));
+		mdate = gaim_utf8_strftime("\n%H:%M", localtime(&tim));
 		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 		if(((y + height) - (rect.y + rect.height)) > height

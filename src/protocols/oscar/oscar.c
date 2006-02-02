@@ -619,7 +619,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 static gchar *oscar_caps_to_string(guint caps)
 {
 	GString *str;
-	gchar *tmp;
+	const gchar *tmp;
 	guint bit = 1;
 
 	str = g_string_new("");
@@ -5166,12 +5166,12 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		time_t t = userinfo->onlinesince - od->timeoffset;
-		oscar_string_append(gc->account, str, "\n<br>", _("Online Since"), ctime(&t));
+		oscar_string_append(gc->account, str, "\n<br>", _("Online Since"), gaim_date_format_full(t));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince - od->timeoffset;
-		oscar_string_append(gc->account, str, "\n<br>", _("Member Since"), ctime(&t));
+		oscar_string_append(gc->account, str, "\n<br>", _("Member Since"), gaim_date_format_full(t));
 	}
 
 	if (userinfo->capabilities != 0) {
@@ -6055,53 +6055,6 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
-#if 0
-/*
- * Update, 2003-11-09:
- * Joseph S. Myers, a gcc dude, fixed this for gcc 3.4!  Rock on!
- *
- * It may not be my place to do this, but...
- * I feel pretty strongly that the "last 2 digits" warning is ridiculously 
- * stupid, and should not exist for % switches (%x in our case) that request 
- * a year in the preferred representation for the current locale.  For that 
- * reason I've chosen to not use this workaround (n., see kluge).
- *
- * I have a date.  I want to show it to the user in the "preferred" way.  
- * Whether that displays a 2 digit year is perfectly fine--after all, it's 
- * what the locale wanted.
- * 
- * If I have a necessity for a full representation of the year in the current 
- * locale, then I'll use a switch that returns a full representation of the 
- * year.
- *
- * If you think the preferred locale should show 4 digits instead of 2 digits 
- * (because you're anal, or whatever), then change the f***ing locale.
- *
- * I guess the bottom line is--I'm trying to show a date to the user how they 
- * prefer to see it, why the hell does gcc want me to change that?
- *
- * See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=3190
- * See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=8714
- */
-
-/*
- * This function was recommended by the STRFTIME(3) man page to remove the
- * "last 2 digits" warning.
- */
-static size_t my_strftime(char *s, size_t max, const char  *fmt,
-			const struct tm *tm)
-{
-	return strftime(s, max, fmt, tm);
-}
-
-/*
- * Before even realizing this was here, I went and did the same thing in util.c.
- *
- * Use gaim_strftime()
- */
-
-#endif
-
 static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
@@ -6158,13 +6111,12 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (info->gender != 0)
 		oscar_string_append(gc->account, str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
-		char date[30];
 		struct tm tm;
 		tm.tm_mday = (int)info->birthday;
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
-		gaim_strftime(date, sizeof(date), "%x", &tm);
-		oscar_string_append(gc->account, str, "\n<br>", _("Birthday"), date);
+		oscar_string_append(gc->account, str, "\n<br>", _("Birthday"),
+				    gaim_date_format_short(&tm));
 	}
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];

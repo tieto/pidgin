@@ -4666,14 +4666,10 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	                                  conv, &tm);
 	if (mdate == NULL)
 	{
-		char buf[64];
-
 		if (time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
-			strftime(buf, sizeof(buf), "%x %X", &tm);
+			mdate = g_strdup(gaim_date_format_long(&tm));
 		else
-			strftime(buf, sizeof(buf), "%X", &tm);
-
-		mdate = g_strdup(buf);
+			mdate = g_strdup(gaim_time_format(&tm));
 	}
 
 	if(gc)

@@ -95,6 +95,8 @@ version 2.0.0:
 	  may now pass NULL if you're not interested in a specific formatting.
 	* Smiley Themes: Backslashes must be backslash-escaped.
 	* Plugins: Depedencies are now honored when unloading plugins.
+	* gaim_markup_extract_info_field(): Added format_cb parameter.
+	* gaim_str_to_time(): Added support for parsing the MM/DD/YYYY format.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -148,7 +150,8 @@ version 2.0.0:
 	  now, so this would always be TRUE now.
 	* gaim_blist_node_action_new(); use gaim_menu_action_new() instead
 	* gaim_date()
-	* gaim_date_full()
+	* gaim_date_full(): See gaim_date_format_full()
+	* gaim_strftime(): See gaim_utf8_strftime()
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -245,6 +248,12 @@ version 2.0.0:
 	* gaim_url_fetch_request()
 	* gaim_menu_action_new()
 	* gaim_menu_action_free()
+	* GaimInfoFieldFormatCallback
+	* gaim_utf8_strftime()
+	* gaim_date_format_short()
+	* gaim_date_format_long()
+	* gaim_date_format_full()
+	* gaim_time_format()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

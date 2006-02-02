@@ -1431,8 +1431,6 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 	if (gaim_pounce_action_is_enabled(pounce, "popup-notify"))
 	{
-		time_t now = time(NULL);
-		char date[64];
 		char *tmp;
 		const char *name_shown;
 		const char *reason;
@@ -1473,12 +1471,11 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		if ((name_shown = gaim_account_get_alias(account)) == NULL)
 			name_shown = gaim_account_get_username(account);
 
-		strftime(date, sizeof(date), "%c", localtime(&now));
 		if (reason == NULL)
-			gaim_notify_info(NULL, name_shown, tmp, date);
+			gaim_notify_info(NULL, name_shown, tmp, gaim_date_format_full(time(NULL)));
 		else
 		{
-			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, date);
+			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, gaim_date_format_full(time(NULL)));
 			gaim_notify_info(NULL, name_shown, tmp, tmp2);
 			g_free(tmp2);
 		}

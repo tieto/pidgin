@@ -212,8 +212,6 @@ save_writefile_cb(void *user_data, const char *filename)
 	DebugWindow *win = (DebugWindow *)user_data;
 	FILE *fp;
 	char *tmp;
-	time_t now = time(NULL);
-	char date[64];
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
 		gaim_notify_error(win, NULL, _("Unable to open file."), NULL);
@@ -221,8 +219,7 @@ save_writefile_cb(void *user_data, const char *filename)
 	}
 
 	tmp = gtk_imhtml_get_text(GTK_IMHTML(win->text), NULL, NULL);
-	strftime(date, sizeof(date), "%c", localtime(&now));
-	fprintf(fp, "Gaim Debug Log : %s\n", date);
+	fprintf(fp, "Gaim Debug Log : %s\n", gaim_date_format_full(time(NULL)));
 	fprintf(fp, "%s", tmp);
 	g_free(tmp);
 
@@ -958,10 +955,10 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 	 * not NULL.  Why the hell do we do that?  --Mark
 	 */
 	if ((category != NULL) && (timestamps)) {
-		gchar mdate[64];
+		const char *mdate;
 
 		time_t mtime = time(NULL);
-		strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+		mdate = gaim_utf8_strftime("%H:%M:%S", localtime(&mtime));
 		ts_s = g_strdup_printf("(%s) ", mdate);
 	} else {
 		ts_s = g_strdup("");

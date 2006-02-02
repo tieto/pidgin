@@ -51,6 +51,18 @@ gaim_build_dir(path, mode)
 	const char *path
 	int mode
 
+const char *
+gaim_date_format_full(time)
+	time_t time
+
+const char *
+gaim_date_format_long(tm)
+	const struct tm *tm
+
+const char *
+gaim_date_format_short(tm)
+	const struct tm *tm
+
 gboolean
 gaim_email_is_valid(address)
 	const char *address
@@ -67,7 +79,7 @@ const gchar *
 gaim_home_dir()
 
 gboolean
-gaim_markup_extract_info_field(str, len, dest, start_token, skip, end_token, check_value, no_value_token, display_name, is_link, link_prefix)
+gaim_markup_extract_info_field(str, len, dest, start_token, skip, end_token, check_value, no_value_token, display_name, is_link, link_prefix, format_cb)
 	const char *str
 	int len
 	GString *dest
@@ -79,6 +91,7 @@ gaim_markup_extract_info_field(str, len, dest, start_token, skip, end_token, che
 	const char *display_name
 	gboolean is_link
 	const char *link_prefix
+	Gaim::Util::InfoFieldFormatCallback format_cb
 
 gboolean
 gaim_markup_find_tag(needle, haystack, start, end, attributes)
@@ -188,13 +201,6 @@ gchar *
 gaim_strdup_withhtml(src)
 	const gchar *src
 
-size_t
-gaim_strftime(s, max, format, tm)
-	char *s
-	size_t max
-	const char *format
-	const struct tm *tm
-
 gchar *
 gaim_strreplace(string, delimiter, replacement)
 	const char *string
@@ -213,6 +219,10 @@ gaim_time_build(year, month, day, hour, min, sec)
 	int hour
 	int min
 	int sec
+
+const char *
+gaim_time_format(tm)
+	const struct tm *tm
 
 const char *
 gaim_unescape_filename(str)
@@ -241,6 +251,9 @@ gaim_url_parse(url, ret_host, ret_port, ret_path, ret_user, ret_passwd)
 
 const char *
 gaim_user_dir()
+
+const char *
+gaim_utf8_strftime(const char *format, const struct tm *tm);
 
 void
 gaim_util_set_user_dir(dir)
