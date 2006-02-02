@@ -382,17 +382,18 @@ GtkWidget *
 gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 {
 	GtkWidget *vbox, *label, *hbox;
-	char labeltitle[256];
+	char *labeltitle;
 
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
 	label = gtk_label_new(NULL);
-	g_snprintf(labeltitle, sizeof(labeltitle),
-			   "<span weight=\"bold\">%s</span>", title);
 
+	labeltitle = g_strdup_printf("<span weight=\"bold\">%s</span>", title);
 	gtk_label_set_markup(GTK_LABEL(label), labeltitle);
+	g_free(labeltitle);
+
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
