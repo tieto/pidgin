@@ -357,10 +357,10 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
  *
  * @param account      The account.
  * @param scale_factor The amount to scale to the original image.
- *                     The default size is 30x30 pixels.  A scale
+ *                     The default size is 32x32 pixels.  A scale
  *                     factor of 1 means no scaling will be done.
  *                     A scale factor of 0.5 means the length
- *                     and width will be 15 pixels each.
+ *                     and width will be 16 pixels each.
  *
  * @return A newly-created pixbuf with a reference count of 1,
  *         or NULL if any of several error conditions occurred:
@@ -378,10 +378,10 @@ GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account, double scale_factor);
  * @param account      The account.
  * @param status_type  The status type of the emblem to overlay.
  * @param scale_factor The amount to scale to the original image.
- *                     The default size is 30x30 pixels.  A scale
+ *                     The default size is 32x32 pixels.  A scale
  *                     factor of 1 means no scaling will be done.
  *                     A scale factor of 0.5 means the length
- *                     and width will be 15 pixels each.
+ *                     and width will be 16 pixels each.
  *
  * @return A newly-created pixbuf with a reference count of 1,
  *         or NULL if any of several error conditions occurred:
@@ -398,10 +398,10 @@ GdkPixbuf *gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatu
  *
  * @param status_type  The status type to set the emblem for.
  * @param scale_factor The amount to scale to the original image.
- *                     The default size is 30x30 pixels.  A scale
+ *                     The default size is 32x32 pixels.  A scale
  *                     factor of 1 means no scaling will be done.
  *                     A scale factor of 0.5 means the length
- *                     and width will be 15 pixels each.
+ *                     and width will be 16 pixels each.
  *
  * @return A newly-created pixbuf with a reference count of 1,
  *         or NULL if any of several error conditions occurred:

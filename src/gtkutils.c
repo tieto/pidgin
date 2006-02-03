@@ -1579,8 +1579,8 @@ gaim_gtk_create_prpl_icon(GaimAccount *account, double scale_factor)
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
-	scaled = gdk_pixbuf_scale_simple(pixbuf, 30*scale_factor,
-				30*scale_factor, GDK_INTERP_BILINEAR);
+	scaled = gdk_pixbuf_scale_simple(pixbuf, 32*scale_factor,
+				32*scale_factor, GDK_INTERP_BILINEAR);
 	g_object_unref(pixbuf);
 
 	return scaled;
@@ -1668,8 +1668,8 @@ gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitive, double scal
 	if (orig == NULL)
 		return NULL;
 
-	pixbuf = gdk_pixbuf_scale_simple(orig, 30*scale_factor,
-					30*scale_factor, GDK_INTERP_BILINEAR);
+	pixbuf = gdk_pixbuf_scale_simple(orig, 32*scale_factor,
+					32*scale_factor, GDK_INTERP_BILINEAR);
 	g_object_unref(G_OBJECT(orig));
 
 	return overlay_status_onto_icon(pixbuf, primitive);
