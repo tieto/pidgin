@@ -432,7 +432,8 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	else
 	{
 		GtkTreeIter iter;
-			gpointer data;
+		GtkGaimStatusBoxItemType type;
+		gpointer data;
 
 		/* Unset the active item */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), -1);
@@ -443,9 +444,11 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 			do
 			{
 				gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+							TYPE_COLUMN, &type,
 							DATA_COLUMN, &data,
 							-1);
-				if (GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status))
+				if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
+					(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
 				{
 					/* Found! */
 					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
@@ -1194,7 +1197,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 		/* Global */
 		/* Save the newly selected status to prefs.xml and status.xml */
 
-		/* Has the status been really changed? */
+		/* Has the status really been changed? */
 		saved_status = gaim_savedstatus_get_current();
 		if (gaim_savedstatus_get_type(saved_status) == GPOINTER_TO_INT(data))
 		{
