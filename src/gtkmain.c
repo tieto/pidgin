@@ -714,8 +714,16 @@ int main(int argc, char *argv[])
 	{
 		/* Set all accounts to "offline" */
 		GaimSavedStatus *saved_status;
-		saved_status = gaim_savedstatus_get_current();
-		gaim_savedstatus_set_type(saved_status, GAIM_STATUS_OFFLINE);
+
+		/* If we've used this type+message before, lookup the transient status */
+		saved_status = gaim_savedstatus_find_by_type_and_message(
+							GAIM_STATUS_OFFLINE, NULL);
+
+		/* If this type+message is unique then create a new transient saved status */
+		if (saved_status == NULL)
+			saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_OFFLINE);
+
+		/* Set the status for each account */
 		gaim_savedstatus_activate(saved_status);
 	}
 	else
