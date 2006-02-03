@@ -1590,16 +1590,15 @@ static GdkPixbuf *
 overlay_status_onto_icon(GdkPixbuf *pixbuf, GaimStatusPrimitive primitive)
 {
 	const char *type_name;
-	char *basename;
+	char basename[256];
 	char *filename;
 	GdkPixbuf *emblem;
 
 	type_name = gaim_primitive_get_id_from_type(primitive);
 
-	basename = g_strdup_printf("%s.png", type_name);
+	g_snprintf(basename, sizeof(basename), "%s.png", type_name);
 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
 								"default", basename, NULL);
-	g_free(basename);
 	emblem = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
