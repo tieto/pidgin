@@ -821,8 +821,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		} else if(r < 0) {
 			gaim_xfer_cancel_remote(xfer);
 			return;
-		} else if(r == 0)
-			return;
+		}
 	}
 
 	if (condition & GAIM_INPUT_WRITE) {
