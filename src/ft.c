@@ -855,20 +855,23 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		}
 	}
 
-	if (gaim_xfer_get_size(xfer) > 0)
-		xfer->bytes_remaining -= r;
+	if (r > 0) {
+		if (gaim_xfer_get_size(xfer) > 0)
+			xfer->bytes_remaining -= r;
 
-	xfer->bytes_sent += r;
+		xfer->bytes_sent += r;
 
-	if (xfer->ops.ack != NULL)
-		xfer->ops.ack(xfer, buffer, r);
+		if (xfer->ops.ack != NULL)
+			xfer->ops.ack(xfer, buffer, r);
 
-	g_free(buffer);
+		g_free(buffer);
 
-	ui_ops = gaim_xfer_get_ui_ops(xfer);
+		ui_ops = gaim_xfer_get_ui_ops(xfer);
 
-	if (ui_ops != NULL && ui_ops->update_progress != NULL)
-		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
+		if (ui_ops != NULL && ui_ops->update_progress != NULL)
+			ui_ops->update_progress(xfer,
+				gaim_xfer_get_progress(xfer));
+	}
 
 	if (gaim_xfer_is_completed(xfer))
 		gaim_xfer_end(xfer);
