@@ -72,7 +72,7 @@ static char *timestamp_cb_common(GaimConversation *conv,
 	}
 
 	if (force)
-		return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
+		return g_strdup(gaim_utf8_strftime("%H:%M:%S", tm));
 
 	return NULL;
 }
