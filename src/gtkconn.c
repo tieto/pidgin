@@ -85,8 +85,6 @@ gaim_gtk_connection_connected(GaimConnection *gc)
 	{
 		g_hash_table_remove(errored_accounts, account);
 		gaim_gtk_blist_update_account_error_state(account, NULL);
-		if (g_hash_table_size(errored_accounts) == 0)
-			gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
 	}
 }
 
@@ -146,7 +144,6 @@ do_signon(gpointer data)
 static void
 gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
 	GaimAccount *account = NULL;
 	GaimAutoRecon *info;
 	GSList* errored_account;
@@ -157,9 +154,6 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 
 	gaim_gtk_blist_update_account_error_state(account, text);
 	if (!gc->wants_to_die) {
-		if (gtkblist != NULL)
-			gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), text);
-
 		if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
@@ -235,14 +229,6 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 	{
 		g_hash_table_remove(errored_accounts, account);
 		gaim_gtk_blist_update_account_error_state(account, NULL);
-		if (g_hash_table_size(errored_accounts) == 0)
-		{
-			GaimGtkBuddyList *gtkblist;
-
-			gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-			if (gtkblist != NULL)
-				gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
-		}
 	}
 }
 

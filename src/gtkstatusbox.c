@@ -328,28 +328,17 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 
 	title = g_markup_escape_text(gaim_savedstatus_get_title(saved_status), -1);
 
-	if (status_box->error) {
-		gchar *tmp = g_markup_escape_text(status_box->error, -1);
-		text = g_strdup_printf("<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>",
-							   tmp);
-		g_free(tmp);
-	} else if (status_box->typing) {
-		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
-							   aa_color, _("Typing"));
+	if (status_box->typing) {
+		text = g_strdup(_("Typing"));
 	} else if (status_box->connecting) {
-		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
-							   aa_color, _("Connecting"));
+		text = g_strdup(_("Connecting"));
 	} else if (!gaim_savedstatus_is_transient(saved_status)) {
 		const gchar *message;
 		message = gaim_savedstatus_get_message(saved_status);
 		if (message != NULL)
 		{
-			gchar *stripped;
-			stripped = gaim_markup_strip_html(message);
-			gaim_util_chrreplace(stripped, '\n', ' ');
-			text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
-								   aa_color, stripped);
-			g_free(stripped);
+			text = gaim_markup_strip_html(message);
+			gaim_util_chrreplace(text, '\n', ' ');
 		}
 	}
 
@@ -363,7 +352,8 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		char *separator;
 		char *tmp;
 		separator = show_buddy_icons ? "\n" : " - ";
-		tmp = g_strdup_printf("%s%s%s", title, separator, text);
+		tmp = g_strdup_printf("%s%s<span size=\"smaller\" color=\"%s\">%s</span>",
+							  title, separator, aa_color, text);
 		g_free(text);
 		text = tmp;
 	} else {
@@ -374,8 +364,6 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	/* Figure out what pixbuf to use */
 	if (status_box->connecting)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
-	else if (status_box->error)
-		pixbuf = status_box->error_pixbuf;
 	else if (status_box->typing)
 		pixbuf = status_box->typing_pixbufs[status_box->typing_index];
 	else
@@ -714,11 +702,6 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE);
 	}
 
-	if (status_box->error_pixbuf != NULL)
-		gdk_pixbuf_unref(status_box->error_pixbuf);
-
-	status_box->error_pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
-							   icon_size, "GtkGaimStatusBox");
 	if (status_box->connecting_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);
 	if (status_box->connecting_pixbufs[1] != NULL)
@@ -1092,19 +1075,6 @@ gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box)
 			   TYPE_COLUMN, GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR,
 			   -1);
 #endif
-}
-
-void
-gtk_gaim_status_box_set_error(GtkGaimStatusBox *status_box, const gchar *error)
-{
-	if (status_box->error)
-		g_free(status_box->error);
-	status_box->error = NULL;
-#if 0
-	if (error != NULL)
-		status_box->error = g_strdup(error);
-#endif
-	gtk_gaim_status_box_refresh(status_box);
 }
 
 void

@@ -143,9 +143,6 @@ void
 gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box);
 
 void
-gtk_gaim_status_box_set_error(GtkGaimStatusBox *status_box, const gchar *error);
-
-void
 gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connecting);
 
 void
