@@ -2560,12 +2560,12 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 					break;
 				case 'd':
 					/* append date */
-					g_string_append(cpy, gaim_utf8_strftime("%m/%d/%Y", tme));
+					g_string_append(cpy, gaim_date_format_short(tme));
 					c++;
 					break;
 				case 't':
 					/* append time */
-					g_string_append(cpy, gaim_utf8_strftime("%I:%M:%S %p", tme));
+					g_string_append(cpy, gaim_time_format(tme));
 					c++;
 					break;
 				default:
