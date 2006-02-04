@@ -496,7 +496,7 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	 * case, no harm is done here). */
 	if (strftime(buf, sizeof(buf), format, tm) == 0)
 	{
-		buf = '\0';
+		buf[0] = '\0';
 		return buf;
 	}
 
@@ -2477,7 +2477,6 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 	GString *cpy;
 	time_t t;
 	struct tm *tme;
-	char tmp[20];
 
 	g_return_val_if_fail(str  != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
@@ -2501,14 +2500,12 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 					break;
 				case 'd':
 					/* append date */
-					strftime(tmp, 20, "%m/%d/%Y", tme);
-					g_string_append(cpy, tmp);
+					g_string_append(cpy, gaim_utf8_strftime("%m/%d/%Y", tme));
 					c++;
 					break;
 				case 't':
 					/* append time */
-					strftime(tmp, 20, "%I:%M:%S %p", tme);
-					g_string_append(cpy, tmp);
+					g_string_append(cpy, gaim_utf8_strftime("%I:%M:%S %p", tme));
 					c++;
 					break;
 				default:
