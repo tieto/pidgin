@@ -52,8 +52,8 @@ gaim_build_dir(path, mode)
 	int mode
 
 const char *
-gaim_date_format_full(time)
-	time_t time
+gaim_date_format_full(tm)
+	const struct tm *tm
 
 const char *
 gaim_date_format_long(tm)
@@ -182,9 +182,12 @@ gaim_str_sub_away_formatters(str, name)
 	const char *name
 
 time_t
-gaim_str_to_time(timestamp, utc)
+gaim_str_to_time(timestamp, utc = FALSE, tm = NULL, tz_off = NULL, rest = NULL)
 	const char *timestamp
 	gboolean utc
+	struct tm *tm
+	long *tz_off
+	const char **rest
 
 gchar *
 gaim_strcasereplace(string, delimiter, replacement)

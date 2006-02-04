@@ -490,6 +490,14 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	static char buf[128];
 	char *utf8;
 
+	g_return_val_if_fail(format != NULL, NULL);
+
+	if (tm == NULL)
+	{
+		time_t now = time(NULL);
+		tm = localtime(&now);
+	}
+
 	/* A return value of 0 is either an error (in
 	 * which case, the contents of the buffer are
 	 * undefined) or the empty string (in which
@@ -522,9 +530,9 @@ gaim_date_format_long(const struct tm *tm)
 }
 
 const char *
-gaim_date_format_full(time_t time)
+gaim_date_format_full(const struct tm *tm)
 {
-	return gaim_utf8_strftime("%c", localtime(&time));
+	return gaim_utf8_strftime("%c", tm);
 }
 
 const char *
@@ -549,20 +557,17 @@ gaim_time_build(int year, int month, int day, int hour, int min, int sec)
 }
 
 time_t
-gaim_str_to_time(const char *timestamp, gboolean utc)
+gaim_str_to_time(const char *timestamp, gboolean utc,
+                 struct tm *tm, long *tz_off, const char **rest)
 {
 	time_t retval = 0;
 	struct tm *t;
-	char buf[32];
-	char *c;
+	const char *c = timestamp;
 	int year = 0;
-	int tzoff = 0;
+	long tzoff = GAIM_NO_TZ_OFF;
 
 	time(&retval);
 	t = localtime(&retval);
-
-	snprintf(buf, sizeof(buf), "%s", timestamp);
-	c = buf;
 
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
@@ -575,7 +580,11 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 
 	/* 2 digit month */
 	if (!sscanf(c, "%02d", &t->tm_mon))
+	{
+		if (rest != NULL && *c != '\0')
+			*rest = c;
 		return 0;
+	}
 	c += 2;
 	if (*c == '-' || *c == '/')
 		c++;
@@ -583,46 +592,83 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 
 	/* 2 digit day */
 	if (!sscanf(c, "%02d", &t->tm_mday))
+	{
+		if (rest != NULL && *c != '\0')
+			*rest = c;
 		return 0;
+	}
 	c += 2;
 	if (*c == '/')
 	{
 		c++;
 
 		if (!sscanf(c, "%04d", &t->tm_year))
-			return 0;
+		{
+			if (rest != NULL && *c != '\0')
+				*rest = c;
+				return 0;
+		}
 		t->tm_year -= 1900;
 	}
-	else if (*c == 'T' || *c == '.') { /* we have more than a date, keep going */
-		c++; /* skip the "T" */
+	else if (*c == 'T' || *c == '.')
+	{
+		c++;
+		/* we have more than a date, keep going */
 
 		/* 2 digit hour */
-		if (sscanf(c, "%02d:%02d:%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 ||
-			sscanf(c, "%02d%02d%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3) {
-			int tzhrs, tzmins;
-			c += 8;
-			if (*c == '.') /* dealing with precision we don't care about */
-				c += 4;
-			if ((*c == '+' || *c == '-') &&
-				sscanf(c+1, "%02d:%02d", &tzhrs, &tzmins)) {
-				tzoff = tzhrs*60*60 + tzmins*60;
-				if (*c == '+')
-					tzoff *= -1;
-			}
+		if ((sscanf(c, "%02d:%02d:%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 && (c = c + 8)) ||
+		    (sscanf(c, "%02d%02d%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 && (c = c + 6)))
+		{
+			gboolean offset_positive = FALSE;
+			int tzhrs;
+			int tzmins;
 
 			t->tm_isdst = -1;
 
-			if (tzoff || utc) {
+			if (*c == '.' && *(c+1) >= '0' && *(c+1) <= '9') /* dealing with precision we don't care about */
+				c += 4;
+			if (*c == '+')
+				offset_positive = TRUE;
+			if (((*c == '+' || *c == '-') && (c = c + 1)) &&
+			    ((sscanf(c, "%02d:%02d", &tzhrs, &tzmins) == 2 && (c = c + 5)) ||
+			     (sscanf(c, "%02d%02d", &tzhrs, &tzmins) == 2 && (c = c + 4))))
+			{
+				tzoff = tzhrs*60*60 + tzmins*60;
+				if (offset_positive)
+					tzoff *= -1;
+				/* We don't want the C library doing DST calculations
+				 * if we know the UTC offset already. */
+				t->tm_isdst = 0;
+			}
+
+			if (rest != NULL && *c != '\0')
+			{
+				if (*c == ' ')
+					c++;
+				if (*c != '\0')
+					*rest = c;
+			}
+
+			if (tzoff != GAIM_NO_TZ_OFF || utc)
+			{
+#if defined(_WIN32) || defined(HAVE_TM_GMTOFF) || defined (HAVE_TIMEZONE)
+				if (tzoff == GAIM_NO_TZ_OFF)
+					tzoff = 0;
+#endif
+
 #ifdef _WIN32
 				TIME_ZONE_INFORMATION tzi;
 				DWORD ret;
-				if ((ret = GetTimeZoneInformation(&tzi))
-						!= TIME_ZONE_ID_INVALID) {
+				if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
+				{
 					tzoff -= tzi.Bias * 60;
-					if (ret == TIME_ZONE_ID_DAYLIGHT) {
+					if (ret == TIME_ZONE_ID_DAYLIGHT)
+					{
 						tzoff -= tzi.DaylightBias * 60;
 					}
 				}
+				else
+					tzoff = GAIM_NO_TZ_OFF;
 #else
 #ifdef HAVE_TM_GMTOFF
 				tzoff += t->tm_gmtoff;
@@ -630,20 +676,34 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 #	ifdef HAVE_TIMEZONE
 				tzset();    /* making sure */
 				tzoff -= timezone;
-				t->tm_isdst = 0; /* I think this might fix it */
 #	endif
 #endif
 #endif /* _WIN32 */
 			}
 		}
+		else
+		{
+			if (*rest != NULL && *c != '\0')
+				*rest = c;
+		}
+	}
+
+	if (tm != NULL)
+	{
+		*tm = *t;
+		tm->tm_isdst = -1;
+		mktime(tm);
 	}
 
 	retval = mktime(t);
-	retval += tzoff;
+	if (tzoff != GAIM_NO_TZ_OFF)
+		retval += tzoff;
+
+	if (tz_off != NULL)
+		*tz_off = tzoff;
 
 	return retval;
 }
-
 
 /**************************************************************************
  * Markup Functions

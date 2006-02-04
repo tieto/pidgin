@@ -311,7 +311,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
-					jm->sent = gaim_str_to_time(timestamp, TRUE);
+					jm->sent = gaim_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {

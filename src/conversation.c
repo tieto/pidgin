@@ -211,7 +211,7 @@ open_log(GaimConversation *conv)
 {
 	conv->logs = g_list_append(NULL, gaim_log_new(conv->type == GAIM_CONV_TYPE_CHAT ? GAIM_LOG_CHAT :
 							   GAIM_LOG_IM, conv->name, conv->account,
-							   conv, time(NULL)));
+							   conv, time(NULL), NULL));
 }
 
 

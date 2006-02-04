@@ -1472,10 +1472,12 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 			name_shown = gaim_account_get_username(account);
 
 		if (reason == NULL)
-			gaim_notify_info(NULL, name_shown, tmp, gaim_date_format_full(time(NULL)));
+		{
+			gaim_notify_info(NULL, name_shown, tmp, gaim_date_format_full(NULL));
+		}
 		else
 		{
-			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, gaim_date_format_full(time(NULL)));
+			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, gaim_date_format_full(NULL));
 			gaim_notify_info(NULL, name_shown, tmp, tmp2);
 			g_free(tmp2);
 		}

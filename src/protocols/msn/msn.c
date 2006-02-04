@@ -1425,7 +1425,7 @@ static void msn_got_photo(void *data, const char *url_text, size_t len);
 static char *msn_info_date_reformat(const char *field, size_t len)
 {
 	char *tmp = g_strndup(field, len);
-	time_t t = gaim_str_to_time(tmp, FALSE);
+	time_t t = gaim_str_to_time(tmp, FALSE, NULL, NULL, NULL);
 
 	g_free(tmp);
 	return g_strdup(gaim_date_format_short(localtime(&t)));

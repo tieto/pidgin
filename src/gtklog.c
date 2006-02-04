@@ -117,7 +117,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
-					   0, gaim_date_format_full(log->time),
+					   0, gaim_date_format_full(localtime(&log->time)),
 					   1, log, -1);
 		}
 		g_free(read);
@@ -200,10 +200,14 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 		char *title;
 		if (log->type == GAIM_LOG_CHAT)
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation in %s on %s</span>"),
-									log->name, gaim_date_format_full(log->time));
+									log->name,
+									log->tm ? gaim_date_format_full(log->tm) :
+									          gaim_date_format_full(localtime(&log->time)));
 		else
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation with %s on %s</span>"),
-									log->name, gaim_date_format_full(log->time));
+									log->name,
+									log->tm ? gaim_date_format_full(log->tm) :
+									          gaim_date_format_full(localtime(&log->time)));
 
 		gtk_label_set_markup(GTK_LABEL(viewer->label), title);
 		g_free(title);
@@ -251,7 +255,8 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 	while (logs != NULL) {
 		GaimLog *log = logs->data;
 
-		month = gaim_utf8_strftime(_("%B %Y"), localtime(&log->time));
+		month = gaim_utf8_strftime(_("%B %Y"),
+		                           log->tm ? log->tm : localtime(&log->time));
 
 		if (strcmp(month, prev_top_month) != 0)
 		{
@@ -265,7 +270,7 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 		/* sub */
 		gtk_tree_store_append(lv->treestore, &child, &toplevel);
 		gtk_tree_store_set(lv->treestore, &child,
-						   0, gaim_date_format_full(log->time),
+						   0, log->tm ? gaim_date_format_full(log->tm) : gaim_date_format_full(localtime(&log->time)),
 						   1, log,
 						   -1);
 

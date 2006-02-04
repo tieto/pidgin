@@ -112,13 +112,20 @@ struct _GaimLog {
 	GaimLogType type;                     /**< The type of log this is */
 	char *name;                           /**< The name of this log */
 	GaimAccount *account;                 /**< The account this log is taking
-											   place on */
+	                                           place on */
 	GaimConversation *conv;               /**< The conversation being logged */
 	time_t time;                          /**< The time this conversation
-											   started */
+	                                           started, converted to the local timezone */
+
 	GaimLogLogger *logger;                /**< The logging mechanism this log
-											   is to use */
+	                                           is to use */
 	void *logger_data;                    /**< Data used by the log logger */
+	struct tm *tm;                        /**< The time this conversation
+	                                           started, saved with original
+	                                           timezone data, if available and
+	                                           if struct tm has the BSD
+	                                           timezone fields, else @c NULL.
+	                                           Do NOT modify anything in this struct.*/
 };
 
 /**
@@ -173,10 +180,12 @@ extern "C" {
  * @param account     The account the conversation is occurring on
  * @param conv        The conversation being logged
  * @param time        The time this conversation started
+ * @param tm          The time this conversation started, with timezone data,
+ *                    if available and if struct tm has the BSD timezone fields.
  * @return            The new log
  */
 GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
-					  GaimConversation *conv, time_t time);
+                      GaimConversation *conv, time_t time, const struct tm *tm);
 
 /**
  * Frees a log

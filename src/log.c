@@ -72,7 +72,7 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags);
  **************************************************************************/
 
 GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
-					  GaimConversation *conv, time_t time)
+                      GaimConversation *conv, time_t time, const struct tm *tm)
 {
 	GaimLog *log = g_new0(GaimLog, 1);
 	log->name = g_strdup(gaim_normalize(account, name));
@@ -81,6 +81,17 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 	log->time = time;
 	log->type = type;
 	log->logger_data = NULL;
+	if (tm != NULL)
+	{
+		log->tm = g_new0(struct tm, 1);
+		*(log->tm) = *tm;
+
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+		/* XXX: This is so wrong... */
+		if (log->tm->tm_zone != NULL)
+			log->tm->tm_zone = (const char *)g_strdup(log->tm->tm_zone);
+#endif
+	}
 	log->logger = gaim_log_logger_get();
 	if (log->logger && log->logger->create)
 		log->logger->create(log);
@@ -93,6 +104,16 @@ void gaim_log_free(GaimLog *log)
 	if (log->logger && log->logger->finalize)
 		log->logger->finalize(log);
 	g_free(log->name);
+
+	if (log->tm != NULL)
+	{
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+		/* XXX: This is so wrong... */
+		g_free((char *)log->tm->tm_zone);
+#endif
+		g_free(log->tm);
+	}
+
 	g_free(log);
 }
 
@@ -666,9 +687,35 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 		{
 			GaimLog *log;
 			GaimLogCommonLoggerData *data;
-			time_t stamp = gaim_str_to_time(filename, FALSE);
+#if defined (HAVE_TM_GMTOFF) && defined (HAVE_STRUCT_TM_TM_ZONE)
+			struct tm tm;
+			long tz_off;
+			const char *rest;
+			time_t stamp = gaim_str_to_time(filename, FALSE, &tm, &tz_off, &rest);
+			char *end;
 
-			log = gaim_log_new(type, name, account, NULL, stamp);
+			/* As zero is a valid offset, GAIM_NO_TZ_OFF means no offset was
+			 * provided. See util.h. Yes, it's kinda ugly. */
+			if (tz_off != GAIM_NO_TZ_OFF)
+				tm.tm_gmtoff = tz_off - tm.tm_gmtoff;
+
+			if (rest == NULL || (end = strchr(rest, '.')) == NULL)
+			{
+				log = gaim_log_new(type, name, account, NULL, stamp, NULL);
+			}
+			else
+			{
+				char *tmp = g_strndup(rest, end - rest);
+				tm.tm_zone = tmp;
+				log = gaim_log_new(type, name, account, NULL, stamp, &tm);
+				g_free(tmp);
+			}
+#else
+			time_t stamp = gaim_str_to_time(filename, FALSE, NULL, NULL, NULL);
+
+			log = gaim_log_new(type, name, account, NULL, stamp, NULL);
+#endif
+
 			log->logger = logger;
 			log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
 			data->path = g_build_filename(path, filename, NULL);
@@ -932,7 +979,7 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 		if(!data->file)
 			return 0;
 
-		date = gaim_date_format_full(log->time);
+		date = gaim_date_format_full(localtime(&log->time));
 
 		written += fprintf(data->file, "<html><head>");
 		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
@@ -1071,7 +1118,7 @@ static gsize txt_logger_write(GaimLog *log,
 			return 0;
 
 		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
-			log->name, gaim_date_format_full(log->time),
+			log->name, gaim_date_format_full(localtime(&log->time)),
 			gaim_account_get_username(log->account), prpl);
 	}
 
@@ -1234,7 +1281,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					newlen--;
 
 				if (newlen != 0) {
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1);
+					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
 					log->logger = old_logger;
 					log->time = lasttime;
 					data = g_new0(struct old_logger_data, 1);
@@ -1285,7 +1332,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 	if (logfound) {
 		if ((newlen = ftell(file) - lastoff) != 0) {
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1);
+			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
 			log->logger = old_logger;
 			log->time = lasttime;
 			data = g_new0(struct old_logger_data, 1);

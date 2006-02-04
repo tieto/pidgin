@@ -215,6 +215,11 @@ char *gaim_mime_decode_field(const char *str);
  *
  * This is essentially strftime(), but it has a static buffer
  * and handles the UTF-8 conversion for the caller.
+ *
+ * @param format The format string
+ * @param tm     The time to format, or @c NULL to use the current local time
+ *
+ * @return The formatted time, in UTF-8.
  */
 const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
 
@@ -224,7 +229,7 @@ const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time value to format (in local time).
+ * @param time The time to format, or @c NULL to use the current local time
  *
  * @return The date, formatted as per the user's settings.
  */
@@ -236,7 +241,7 @@ const char *gaim_date_format_short(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time value to format (in local time).
+ * @param time The time to format, or @c NULL to use the current local time
  *
  * @return The timestamp, formatted as per the user's settings.
  */
@@ -248,11 +253,11 @@ const char *gaim_date_format_long(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time value to format (in local time).
+ * @param time The time to format, or @c NULL to use the current local time
  *
  * @return The date and time, formatted as per the user's settings.
  */
-const char *gaim_date_format_full(time_t time);
+const char *gaim_date_format_full(const struct tm *tm);
 
 /**
  * Formats a time into the user's preferred time format.
@@ -260,7 +265,8 @@ const char *gaim_date_format_full(time_t time);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time value to format (in local time).
+ * @param time The time value to format.
+ * @param time The time to format, or @c NULL to use the current local time
  *
  * @return The time, formatted as per the user's settings.
  */
@@ -281,16 +287,32 @@ const char *gaim_time_format(const struct tm *tm);
 time_t gaim_time_build(int year, int month, int day, int hour,
 					   int min, int sec);
 
+/** Used by gaim_str_to_time to indicate no timezone offset was
+  * specified in the timestamp string. */
+#define GAIM_NO_TZ_OFF -500000
+
 /**
  * Parses a timestamp in jabber, ISO8601, or MM/DD/YYYY format and returns
  * a time_t.
  *
  * @param timestamp The timestamp
- * @param utc Assume UTC if no timezone specified
+ * @param utc       Assume UTC if no timezone specified
+ * @param tm        If not @c NULL, the caller can get a copy of the
+ *                  struct tm used to calculate the time_t return value.
+ * @param tz_off    If not @c NULL, the caller can get a copy of the
+ *                  timezone offset (from UTC) used to calculate the time_t
+ *                  return value. Note: Zero is a valid offset. As such,
+ *                  the value of the macro @c GAIM_NO_TZ_OFF indicates no
+ *                  offset was specified (which means that the local
+ *                  timezone was used in the calculation).
+ * @param rest      If not @c NULL, the caller can get a pointer to the
+ *                  part of @a timestamp left over after parsing is
+ *                  completed, if it's not the end of @a timestamp.
  *
  * @return A time_t.
  */
-time_t gaim_str_to_time(const char *timestamp, gboolean utc);
+time_t gaim_str_to_time(const char *timestamp, gboolean utc,
+                        struct tm *tm, long *tz_off, const char **rest);
 
 /*@}*/
 

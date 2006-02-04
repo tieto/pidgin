@@ -1903,7 +1903,7 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	gmt = nm_event_get_gmt(event);
 	title = _("Invitation to Conversation");
 	primary = g_strdup_printf(_("Invitation from: %s\n\nSent: %s"),
-							  name, gaim_date_format_full(gmt));
+							  name, gaim_date_format_full(localtime(&gmt)));
 	secondary = _("Would you like to join the conversation?");
 
 	/* Set up parms list for the callbacks

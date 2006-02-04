@@ -1929,7 +1929,7 @@ gaim_account_get_log(GaimAccount *account)
 
 		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM,
 				gaim_account_get_username(account), account, NULL,
-				(login_time != 0) ? login_time : time(NULL));
+				(login_time != 0) ? login_time : time(NULL), NULL);
 	}
 
 	return account->system_log;

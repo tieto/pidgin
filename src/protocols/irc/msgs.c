@@ -241,7 +241,8 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		gchar *timex = gaim_str_seconds_to_string(irc->whois.idle);
 		g_string_append_printf(info, _("<b>Idle for:</b> %s<br>"), timex);
 		g_free(timex);
-		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Online since"), gaim_date_format_full(irc->whois.signon));
+		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Online since"),
+		                       gaim_date_format_full(localtime(&irc->whois.signon)));
 	}
 	if (!strcmp(irc->whois.nick, "Paco-Paco")) {
 		g_string_append_printf(info, _("<br><b>Defining adjective:</b> Glorious<br>"));

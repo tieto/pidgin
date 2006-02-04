@@ -5166,12 +5166,12 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		time_t t = userinfo->onlinesince - od->timeoffset;
-		oscar_string_append(gc->account, str, "\n<br>", _("Online Since"), gaim_date_format_full(t));
+		oscar_string_append(gc->account, str, "\n<br>", _("Online Since"), gaim_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince - od->timeoffset;
-		oscar_string_append(gc->account, str, "\n<br>", _("Member Since"), gaim_date_format_full(t));
+		oscar_string_append(gc->account, str, "\n<br>", _("Member Since"), gaim_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->capabilities != 0) {

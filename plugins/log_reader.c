@@ -156,7 +156,8 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					tm.tm_year -= 1900;
 					tm.tm_mon  -= 1;
 
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm));
+					/* XXX: Look into this later... Should we pass in a struct tm? */
+					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
 					log->logger = adium_logger;
 					log->logger_data = data;
 
@@ -216,7 +217,8 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					data->path = filename;
 					data->type = ADIUM_TEXT;
 
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm));
+					/* XXX: Look into this later... Should we pass in a struct tm? */
+					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
 					log->logger = adium_logger;
 					log->logger_data = data;
 
@@ -730,7 +732,8 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			data->text = NULL;
 			data->last_log = FALSE;
 
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, msn_logger_parse_timestamp(message));
+			/* XXX: Look into this later... Should we pass in a struct tm? */
+			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, msn_logger_parse_timestamp(message), NULL);
 			log->logger = msn_logger;
 			log->logger_data = data;
 
@@ -1244,8 +1247,9 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 						data->their_nickname =
 							g_strdup(their_nickname);
 
+						/* XXX: Look into this later... Should we pass in a struct tm? */
 						log = gaim_log_new(GAIM_LOG_IM,
-							sn, account, NULL, mktime(&tm));
+							sn, account, NULL, mktime(&tm), NULL);
 						log->logger = trillian_logger;
 						log->logger_data = data;
 
