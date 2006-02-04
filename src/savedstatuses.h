@@ -264,7 +264,10 @@ GaimStatusPrimitive gaim_savedstatus_get_type(const GaimSavedStatus *saved_statu
  *
  * @param saved_status The saved status.
  *
- * @return The name.
+ * @return The message.  This will return NULL if the saved
+ *         status does not have a message.  This will
+ *         contain the normal markup that is created by
+ *         Gaim's IMHTML (basically HTML markup).
  */
 const char *gaim_savedstatus_get_message(const GaimSavedStatus *saved_status);
 

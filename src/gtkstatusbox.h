@@ -101,13 +101,16 @@ struct _GtkGaimStatusBox
 
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
-	char *title;
-	char *desc;
 	char *error;
 
 	gulong status_changed_signal;
 
-	/* Widgets for renderin' */
+	/*
+	 * These widgets are made for renderin'
+	 * That's just what they'll do
+	 * One of these days these widgets
+	 * Are gonna render all over you
+	 */
 	GtkWidget *hbox;
 	GtkWidget *toggle_button;
 	GtkWidget *vsep;
