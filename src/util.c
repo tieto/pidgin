@@ -570,7 +570,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 		c += 4;
 		if (*c == '-')
 			c++;
-		t->tm_year -= 1900;
+		t->tm_year = year - 1900;
 	}
 
 	/* 2 digit month */
