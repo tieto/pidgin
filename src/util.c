@@ -490,7 +490,15 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	static char buf[128];
 	char *utf8;
 
-	strftime(buf, sizeof(buf), format, tm);
+	/* A return value of 0 is either an error (in
+	 * which case, the contents of the buffer are
+	 * undefined) or the empty string (in which
+	 * case, no harm is done here). */
+	if (strftime(buf, sizeof(buf), format, tm) == 0)
+	{
+		buf = '\0';
+		return buf;
+	}
 
 	if ((utf8 = gaim_utf8_try_convert(buf)))
 	{
