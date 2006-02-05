@@ -26,7 +26,6 @@
 
 typedef struct _MsnSlpLink MsnSlpLink;
 
-#include "session.h"
 #include "directconn.h"
 #include "slpcall.h"
 #include "slpmsg.h"
@@ -34,6 +33,12 @@ typedef struct _MsnSlpLink MsnSlpLink;
 #include "switchboard.h"
 
 #include "ft.h"
+
+#include "session.h"
+
+typedef void (*MsnSlpCb)(MsnSlpCall *slpcall,
+						 const guchar *data, gsize size);
+typedef void (*MsnSlpEndCb)(MsnSlpCall *slpcall, MsnSession *session);
 
 struct _MsnSlpLink
 {

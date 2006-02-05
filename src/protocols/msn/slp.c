@@ -31,6 +31,9 @@
 #include "user.h"
 #include "switchboard.h"
 
+/* ms to delay between sending buddy icon requests to the server. */
+#define BUDDY_ICON_DELAY 20000
+
 static void send_ok(MsnSlpCall *slpcall, const char *branch,
 					const char *type, const char *content);
 
@@ -141,7 +144,7 @@ msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize o
 }
 
 void
-msn_xfer_end_cb(MsnSlpCall *slpcall)
+msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session)
 {
 	if ((gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_DONE) &&
 		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE) &&
@@ -887,7 +890,7 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 	gaim_debug_info("msn", "Releasing buddy icon request\n");
 #endif
 
-	while (userlist->buddy_icon_window > 0)
+	if (userlist->buddy_icon_window > 0)
 	{
 		GQueue *queue;
 		GaimAccount *account;
@@ -896,21 +899,41 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		queue = userlist->buddy_icon_requests;
 
 		if (g_queue_is_empty(userlist->buddy_icon_requests))
-			break;
+			return;
 
 		user = g_queue_pop_head(queue);
 
 		account  = userlist->session->account;
 		username = user->passport;
 
-		msn_request_user_display(user);
 		userlist->buddy_icon_window--;
+		msn_request_user_display(user);
 
 #ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
 						userlist->buddy_icon_window);
 #endif
 	}
+}
+
+/*
+ * Called on a timeout from end_user_display(). Frees a buddy icon window slow and dequeues the next
+ * buddy icon request if there is one.
+ */
+static gboolean
+msn_release_buddy_icon_request_timeout(gpointer data)
+{
+	MsnUserList *userlist = (MsnUserList *)data;
+	
+	/* Free one window slot */
+	userlist->buddy_icon_window++;	
+	
+	/* Clear the tag for our former request timer */
+	userlist->buddy_icon_request_timer = 0;
+	
+	msn_release_buddy_icon_request(userlist);
+	
+	return FALSE;
 }
 
 void
@@ -954,16 +977,11 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		queue = userlist->buddy_icon_requests;
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "Queueing buddy icon request: %s\n",
-						user->passport);
+		gaim_debug_info("msn", "Queueing buddy icon request for %s (buddy_icon_window = %i)\n",
+						user->passport, userlist->buddy_icon_window);
 #endif
 
 		g_queue_push_tail(queue, user);
-
-#ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "msn_queue_buddy_icon_request(): buddy_icon_window=%d\n",
-						userlist->buddy_icon_window);
-#endif
 
 		if (userlist->buddy_icon_window > 0)
 			msn_release_buddy_icon_request(userlist);
@@ -983,7 +1001,7 @@ got_user_display(MsnSlpCall *slpcall,
 
 	info = slpcall->data_info;
 #ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "Got User Display: %s\n", info);
+	gaim_debug_info("msn", "Got User Display: %s\n", slpcall->slplink->remote_user);
 #endif
 
 	userlist = slpcall->slplink->session->userlist;
@@ -1014,43 +1032,40 @@ got_user_display(MsnSlpCall *slpcall,
 }
 
 static void
-end_user_display(MsnSlpCall *slpcall)
+end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 {
 	MsnUserList *userlist;
 
-	g_return_if_fail(slpcall != NULL);
+	g_return_if_fail(session != NULL);
 
 #ifdef MSN_DEBUG_UD
 	gaim_debug_info("msn", "End User Display\n");
 #endif
 
-	/* Maybe the slplink was destroyed. */
-	if (slpcall->slplink == NULL) {
-		#ifdef MSN_DEBUG_UD
-			gaim_debug_info("msn", "end_user_display(): returning because slpcall->slplink is NULL\n");
-		#endif
-		return;
-	}
-
-	userlist = slpcall->slplink->session->userlist;
+	userlist = session->userlist;
 
 	/* If the session is being destroyed we better stop doing anything. */
-	if (slpcall->slplink->session->destroying) {
-		#ifdef MSN_DEBUG_UD
-			gaim_debug_info("msn", "end_user_display(): returning because slpcall->slplink->session->destroying is TRUE\n");
-		#endif
+	if (session->destroying)
 		return;
+
+	/* Delay before freeing a buddy icon window slot and requesting the next icon, if appropriate.
+	 * If we don't delay, we'll rapidly hit the MSN equivalent of AIM's rate limiting; the server will
+	 * send us an error 800 like so:
+	 *
+	 * C: NS 000: XFR 21 SB
+	 * S: NS 000: 800 21
+	 */
+	if (userlist->buddy_icon_request_timer) {
+		/* Free the window slot used by this previous request */
+		userlist->buddy_icon_window++;
+
+		/* Clear our pending timeout */
+		gaim_timeout_remove(userlist->buddy_icon_request_timer);
 	}
 
-	/* Free one window slot */
-	userlist->buddy_icon_window++;
-
-#ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "end_user_display(): buddy_icon_window++ yields =%d\n",
-					userlist->buddy_icon_window);
-#endif
-
-	msn_release_buddy_icon_request(userlist);
+	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
+	userlist->buddy_icon_request_timer = gaim_timeout_add(BUDDY_ICON_DELAY, 
+														  msn_release_buddy_icon_request_timeout, userlist);
 }
 
 void

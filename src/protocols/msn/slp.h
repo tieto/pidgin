@@ -25,7 +25,7 @@
 #define _MSN_SLP_H_
 
 #include "slpcall.h"
-
+#include "session.h"
 #include "internal.h"
 #include "ft.h"
 
@@ -41,7 +41,7 @@ void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 						   const guchar *body, gsize size);
 
 void msn_xfer_cancel(GaimXfer *xfer);
-void msn_xfer_end_cb(MsnSlpCall *slpcall);
+void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 void msn_queue_buddy_icon_request(MsnUser *user);
 

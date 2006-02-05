@@ -77,6 +77,7 @@ void
 msn_slp_call_destroy(MsnSlpCall *slpcall)
 {
 	GList *e;
+	MsnSession *session;
 
 #ifdef MSN_DEBUG_SLPCALL
 	gaim_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
@@ -112,11 +113,12 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		}
 	}
 
-	/* Call the end_cb before removing the slpcall, as the end_cb may need the slplink */
-	if (slpcall->end_cb != NULL)
-		slpcall->end_cb(slpcall);
+	session = slpcall->slplink->session;
 
 	msn_slplink_remove_slpcall(slpcall->slplink, slpcall);
+
+	if (slpcall->end_cb != NULL)
+		slpcall->end_cb(slpcall, session);
 
 	g_free(slpcall);
 }

@@ -45,6 +45,7 @@ typedef enum
 	MSN_SB_ERROR_OFFLINE, /**< The account is offline. */
 	MSN_SB_ERROR_USER_OFFLINE, /**< The user to call is offline. */
 	MSN_SB_ERROR_CONNECTION, /**< There was a connection error. */
+	MSN_SB_ERROR_TOO_FAST, /**< We are sending too fast */
 	MSN_SB_ERROR_UNKNOWN /**< An unknown error occurred. */
 
 } MsnSBErrorType;

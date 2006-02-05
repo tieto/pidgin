@@ -58,6 +58,7 @@ struct _MsnUserList
 
 	GQueue *buddy_icon_requests;
 	int buddy_icon_window;
+	guint buddy_icon_request_timer;
 
 	int fl_users_count;
 
