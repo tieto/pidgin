@@ -96,11 +96,9 @@ struct _GtkGaimStatusBox
 	GdkPixbuf *typing_pixbufs[4];
 
 	gboolean connecting;
-	gboolean typing;
-
+	guint typing;
 
 	GtkTreeIter iter;
-	GdkPixbuf *pixbuf;
 	char *error;
 
 	gulong status_changed_signal;
