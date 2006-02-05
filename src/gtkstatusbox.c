@@ -310,15 +310,21 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 static void
 gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 {
-	char *primary, *secondary, *text;
+	gboolean show_buddy_icons;
+	GtkIconSize icon_size;
+	GtkStyle *style;
 	char aa_color[8];
+	GaimSavedStatus *saved_status;
+	char *primary, *secondary, *text;
 	GdkPixbuf *pixbuf;
 	GtkTreePath *path;
-	GtkStyle *style;
-	GaimSavedStatus *saved_status;
-	gboolean show_buddy_icons;
 
 	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
+	if (show_buddy_icons)
+		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
+	else
+		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+
 	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 		 style->text_aa[GTK_STATE_NORMAL].red >> 8,
@@ -327,7 +333,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 
 	saved_status = gaim_savedstatus_get_current();
 
-	/* Determine the primary text, secondary text, and pixbuf to use */
+	/* Primary */
 	if (status_box->typing != 0)
 	{
 		GtkTreeIter iter;
@@ -341,53 +347,68 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 						   DATA_COLUMN, &data,
 						   -1);
 		if (type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE)
-			primary = g_strdup(gaim_primitive_get_name_from_type((GaimStatusPrimitive)GPOINTER_TO_INT(data)));
-		else if (gaim_savedstatus_is_transient(saved_status))
-			primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
+			primary = g_strdup(gaim_primitive_get_name_from_type(GPOINTER_TO_INT(data)));
 		else
-			primary = g_markup_escape_text(gaim_savedstatus_get_title(saved_status), -1);
+			/* This should never happen, but just in case... */
+			primary = g_strdup("New status");
+	}
+	else if (gaim_savedstatus_is_transient(saved_status))
+		primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
+	else
+		primary = g_markup_escape_text(gaim_savedstatus_get_title(saved_status), -1);
 
+	/* Secondary */
+	if (status_box->typing != 0)
 		secondary = g_strdup(_("Typing"));
-		pixbuf = status_box->typing_pixbufs[status_box->typing_index];
-	}
 	else if (status_box->connecting)
-	{
-		/* Primary */
-		if (gaim_savedstatus_is_transient(saved_status))
-			primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
-		else
-			primary = g_markup_escape_text(gaim_savedstatus_get_title(saved_status), -1);
-
 		secondary = g_strdup(_("Connecting"));
-		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
-	}
+	else if (gaim_savedstatus_is_transient(saved_status))
+		secondary = NULL;
 	else
 	{
-		/* Primary and secondary */
-		if (gaim_savedstatus_is_transient(saved_status))
+		const char *message;
+		char *tmp;
+		message = gaim_savedstatus_get_message(saved_status);
+		if (message != NULL)
 		{
-			primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
-			secondary = NULL;
+			tmp = gaim_markup_strip_html(message);
+			gaim_util_chrreplace(tmp, '\n', ' ');
+			secondary = g_markup_escape_text(tmp, -1);
+			g_free(tmp);
 		}
 		else
-		{
-			const gchar *message;
-			primary = g_markup_escape_text(gaim_savedstatus_get_title(saved_status), -1);
+			secondary = NULL;
+	}
 
-			message = gaim_savedstatus_get_message(saved_status);
-			if (message != NULL)
-			{
-				secondary = gaim_markup_strip_html(message);
-				gaim_util_chrreplace(secondary, '\n', ' ');
-			}
-			else
-				secondary = NULL;
-		}
-
-		/* Pixbuf */
+	/* Pixbuf */
+	if (status_box->typing != 0)
+		pixbuf = status_box->typing_pixbufs[status_box->typing_index];
+	else if (status_box->connecting)
+		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
+	else
+	{
 		pixbuf = gaim_gtk_create_gaim_icon_with_status(
 					gaim_savedstatus_get_type(saved_status),
 					show_buddy_icons ? 1.0 : 0.5);
+
+		if (!gaim_savedstatus_is_transient(saved_status))
+		{
+			GdkPixbuf *emblem;
+
+			/* Overlay a disk in the bottom left corner */
+			emblem = gtk_widget_render_icon(GTK_WIDGET(status_box->vbox),
+						GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
+			if (emblem != NULL)
+			{
+				int width, height;
+				width = gdk_pixbuf_get_width(pixbuf) / 2;
+				height = gdk_pixbuf_get_height(pixbuf) / 2;
+				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
+							width, height, 0, height,
+							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
+				g_object_unref(G_OBJECT(emblem));
+			}
+		}
 	}
 
 	if (status_box->account != NULL) {
@@ -413,6 +434,8 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 			   ICON_COLUMN, pixbuf,
 			   TEXT_COLUMN, text,
 			   -1);
+	if ((status_box->typing == 0) && (!status_box->connecting))
+		g_object_unref(pixbuf);
 	g_free(text);
 
 	/* Make sure to activate the only row in the tree view */
@@ -434,7 +457,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
  * keyboard signals instead of the changed signal?
  */
 static void
-update_to_reflect_current_status(GtkGaimStatusBox *status_box)
+status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 {
 	GaimSavedStatus *saved_status;
 	GaimStatusPrimitive primitive;
@@ -531,8 +554,8 @@ static void
 add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
 	gboolean show_buddy_icons;
-	GList *list, *cur;
 	GtkIconSize icon_size;
+	GList *list, *cur;
 	GdkPixbuf *pixbuf, *emblem;
 	int width, height;
 
@@ -645,7 +668,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("New..."), NULL, NULL);
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
 
-		update_to_reflect_current_status(status_box);
+		status_menu_refresh_iter(status_box);
 
 	} else {
 		/* Per-account */
@@ -790,7 +813,7 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 		update_to_reflect_account_status(status_box, status_box->account,
 						gaim_account_get_active_status(status_box->account));
 	else
-		update_to_reflect_current_status(status_box);
+		status_menu_refresh_iter(status_box);
 
 	gtk_gaim_status_box_refresh(status_box);
 }
@@ -1196,11 +1219,11 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	/*
 	 * If the currently selected status is "New..." or
 	 * "Saved..." or a popular status then do nothing.
-	 * Custom statuses are
+	 * Popular statuses are
 	 * activated elsewhere, and we update the status_box
 	 * accordingly by monitoring the preference
 	 * "/core/savedstatus/current" and then calling
-	 * update_to_reflect_current_status()
+	 * status_menu_refresh_iter()
 	 */
 	if (type != GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE)
 		return;
@@ -1328,7 +1351,7 @@ static void remove_typing_cb(GtkGaimStatusBox *status_box)
 	if (status_box->typing == 0)
 	{
 		/* Nothing has changed, so we don't need to do anything */
-		update_to_reflect_current_status(status_box);
+		status_menu_refresh_iter(status_box);
 		return;
 	}
 
@@ -1378,16 +1401,14 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		if (type == GTK_GAIM_STATUS_BOX_TYPE_CUSTOM)
 		{
 			gaim_gtk_status_editor_show(NULL);
-			// TODO: This shouldn't be neccessary?
-			update_to_reflect_current_status(status_box);
+			status_menu_refresh_iter(status_box);
 			return;
 		}
 
 		if (type == GTK_GAIM_STATUS_BOX_TYPE_SAVED)
 		{
 			gaim_gtk_status_window_show();
-			// TODO: This shouldn't be neccessary?
-			update_to_reflect_current_status(status_box);
+			status_menu_refresh_iter(status_box);
 			return;
 		}
 	}
