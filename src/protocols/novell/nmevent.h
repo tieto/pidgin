@@ -24,6 +24,7 @@
 typedef struct _NMEvent NMEvent;
 
 #include "nmuser.h"
+#include <sys/types.h>
 
 /**
  * Defines for the event types
