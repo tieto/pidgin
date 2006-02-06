@@ -986,9 +986,13 @@ network_page()
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(network_ip_changed), NULL);
 
-	if (gaim_network_get_public_ip() != NULL)
+	/*
+	 * TODO: This could be better by showing the autodeteced
+	 * IP separately from the user-specified IP.
+	 */
+	if (gaim_network_get_my_ip(-1) != NULL)
 		gtk_entry_set_text(GTK_ENTRY(entry),
-		                   gaim_network_get_public_ip());
+		                   gaim_network_get_my_ip(-1));
 
 	gaim_set_accessible_label (entry, label);
 

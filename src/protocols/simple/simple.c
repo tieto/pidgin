@@ -61,17 +61,6 @@ static char *gencallid() {
 		rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
-static char *get_my_ip() {
-	static char my_ip[42];
-	const char *tmp = gaim_network_get_public_ip();
-
-	if(!tmp || !strcmp(tmp,"0.0.0.0")) {
-		tmp = gaim_network_get_my_ip(-1);
-	}
-	strcpy(my_ip, tmp ? tmp : "0.0.0.0");
-	return my_ip;
-}
-
 static const char *simple_list_icon(GaimAccount *a, GaimBuddy *b) {
 	return "simple";
 }
@@ -590,7 +579,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 			method,
 			url,
 			sip->udp ? "UDP" : "TCP",
-			get_my_ip(),
+			gaim_network_get_my_ip(-1),
 			sip->listenport,
 			branch,
 			sip->username,
@@ -621,7 +610,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 static void do_register_exp(struct simple_account_data *sip, int expire) {
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
-	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, get_my_ip(), sip->listenport, sip->udp ? "udp" : "tcp", expire);
+	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, gaim_network_get_my_ip(-1), sip->listenport, sip->udp ? "udp" : "tcp", expire);
 
 	sip->registerstatus = 1;
 
