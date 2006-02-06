@@ -2951,8 +2951,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				}
 			c += tlen;
 			pos += tlen;
-			if(tag)
-				g_free(tag); /* This was allocated back in VALID_TAG() */
+			g_free(tag); /* This was allocated back in VALID_TAG() */
 		} else if (gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
 
@@ -3036,8 +3035,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	}
 
 	g_free(ws);
-	if (bg)
-		g_free(bg);
+	g_free(bg);
 
 	if (!imhtml->wbfo)
 		gtk_imhtml_close_tags(imhtml, iter);
@@ -4034,21 +4032,21 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 		if (tag->name) {
 			if (strcmp(tag->name, "BOLD") == 0)
 				imhtml->edit.bold = TRUE;
-			if (strcmp(tag->name, "ITALICS") == 0)
+			else if (strcmp(tag->name, "ITALICS") == 0)
 				imhtml->edit.italic = TRUE;
-			if (strcmp(tag->name, "UNDERLINE") == 0)
+			else if (strcmp(tag->name, "UNDERLINE") == 0)
 				imhtml->edit.underline = TRUE;
-			if (strcmp(tag->name, "STRIKE") == 0)
+			else if (strcmp(tag->name, "STRIKE") == 0)
 				imhtml->edit.strike = TRUE;
-			if (strncmp(tag->name, "FORECOLOR ", 10) == 0)
+			else if (strncmp(tag->name, "FORECOLOR ", 10) == 0)
 				imhtml->edit.forecolor = g_strdup(&(tag->name)[10]);
-			if (strncmp(tag->name, "BACKCOLOR ", 10) == 0)
+			else if (strncmp(tag->name, "BACKCOLOR ", 10) == 0)
 				imhtml->edit.backcolor = g_strdup(&(tag->name)[10]);
-			if (strncmp(tag->name, "FONT FACE ", 10) == 0)
+			else if (strncmp(tag->name, "FONT FACE ", 10) == 0)
 				imhtml->edit.fontface = g_strdup(&(tag->name)[10]);
-			if (strncmp(tag->name, "FONT SIZE ", 10) == 0)
+			else if (strncmp(tag->name, "FONT SIZE ", 10) == 0)
 				imhtml->edit.fontsize = strtol(&(tag->name)[10], NULL, 10);
-			if ((strncmp(tag->name, "LINK ", 5) == 0) && !gtk_text_iter_is_end(&iter))
+			else if ((strncmp(tag->name, "LINK ", 5) == 0) && !gtk_text_iter_is_end(&iter))
 				imhtml->edit.link = tag;
 		}
 	}
