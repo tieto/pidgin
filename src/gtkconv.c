@@ -4895,7 +4895,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	g_free(sml_attrib);
 
 	/* Tab highlighting stuff */
-	if (!gaim_gtkconv_has_focus(conv))
+	if (!(flags & GAIM_MESSAGE_SEND) && !gaim_gtkconv_has_focus(conv))
 	{
 		GaimUnseenState unseen = GAIM_UNSEEN_NONE;
 
