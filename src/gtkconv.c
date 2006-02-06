@@ -6146,7 +6146,8 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 	if(gaim_status_is_available(oldstatus) || !gaim_status_is_available(newstatus))
 		return;
 
-	for (l = hidden_convwin->gtkconvs; l != NULL; l = l->next) {
+	while ((l = hidden_convwin->gtkconvs) != NULL)
+	{
 		gtkconv = l->data;
 
 		conv = gtkconv->active_conv;
@@ -6179,7 +6180,8 @@ hide_new_pref_cb(const char *name, GaimPrefType type,
 	if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "away")==0)
 		when_away = TRUE;
 
-	for (l = hidden_convwin->gtkconvs; l != NULL; l = l->next) {
+	while ((l = hidden_convwin->gtkconvs) != NULL)
+	{
 		gtkconv = l->data;
 
 		conv = gtkconv->active_conv;
