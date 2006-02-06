@@ -106,7 +106,7 @@ gaim_network_get_local_system_ip(int fd)
 {
 	struct hostent *host;
 	char localhost[129];
-	long unsigned add;
+	int i;
 	static char ip[46];
 	const char *tmp = NULL;
 
@@ -116,23 +116,28 @@ gaim_network_get_local_system_ip(int fd)
 	if (tmp)
 		return tmp;
 
-	/* TODO: Make this avoid using localhost/127.0.0.1 */
 	if (gethostname(localhost, 128) < 0)
 		return NULL;
 
 	if ((host = gethostbyname(localhost)) == NULL)
 		return NULL;
 
-	memcpy(&add, host->h_addr_list[0], 4);
-	add = htonl(add);
+	/* Avoid using 127.0.0.1 */
+	for (i = 0; (host->h_addr_list[i] != NULL); i++)
+	{
+		if ((host->h_addr_list[i][0] != 127) ||
+			(host->h_addr_list[i][1] != 0) ||
+			(host->h_addr_list[i][2] != 0) ||
+			(host->h_addr_list[i][3] != 1))
+		{
+			g_snprintf(ip, 16, "%hhu.%hhu.%hhu.%hhu",
+				host->h_addr_list[i][0], host->h_addr_list[i][1],
+				host->h_addr_list[i][2], host->h_addr_list[i][3]);
+			return ip;
+		}
+	}
 
-	g_snprintf(ip, 16, "%lu.%lu.%lu.%lu",
-			   ((add >> 24) & 255),
-			   ((add >> 16) & 255),
-			   ((add >>  8) & 255),
-			   add & 255);
-
-	return ip;
+	return "127.0.0.1";
 }
 
 const char *
