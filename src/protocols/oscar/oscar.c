@@ -6524,10 +6524,12 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		args.destsn = name;
 
 		/*
-		 * If we're IMing an ICQ user from an ICQ account, then strip HTML
-		 * and use \r\n as the newline character.
-		 */
-		if (aim_sn_is_icq(gaim_account_get_username(account))) {
+		 * If we're IMing an SMS user or an ICQ user from an ICQ account, then strip HTML.
+ 		 */
+		if (aim_snvalid_sms(name)) {
+			/* Messaging an SMS (mobile) user */
+			tmp2 = gaim_unescape_html(tmp1);			
+		} else if (aim_sn_is_icq(gaim_account_get_username(account))) {
 			if (aim_sn_is_icq(name))
 				/* From ICQ to ICQ */
 				tmp2 = gaim_unescape_html(tmp1);
