@@ -124,24 +124,19 @@ static void resolve(int in, int out) {
 
 		cp += size;
 
-		type = GUINT16_FROM_BE(*cp);
-		cp += 2;
+		GETSHORT(type,cp);
 
 		/* skip ttl and class since we already know it */
 		cp += 6;
 
-		dlen = GUINT16_FROM_BE(*cp);
-		cp += 2;
+		GETSHORT(dlen,cp);
 
 		if (type == T_SRV) {
-			pref = GUINT16_FROM_BE(*cp);
-			cp += 2;
+			GETSHORT(pref,cp);
 
-			weight = GUINT16_FROM_BE(*cp);
-			cp += 2;
+			GETSHORT(weight,cp);
 
-			port = GUINT16_FROM_BE(*cp);
-			cp += 2;
+			GETSHORT(port,cp);
 
 			size = dn_expand( (unsigned char*)&answer, end, cp, name, 256);
 			if(size < 0 )
