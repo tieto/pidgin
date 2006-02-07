@@ -55,6 +55,8 @@ enum
 	STATUS_WINDOW_COLUMN_TITLE,
 	STATUS_WINDOW_COLUMN_TYPE,
 	STATUS_WINDOW_COLUMN_MESSAGE,
+	/** pointer to open window for this saved status */
+	STATUS_WINDOW_COLUMN_WINDOW,
 	STATUS_WINDOW_NUM_COLUMNS
 };
 
@@ -67,6 +69,8 @@ enum
 {
 	/** A hidden column containing a pointer to the GaimAccount */
 	STATUS_EDITOR_COLUMN_ACCOUNT,
+	/** A hidden column containing a pointer to the substatus dialog */
+	STATUS_EDITOR_COLUMN_WINDOW,
 	STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS,
 	STATUS_EDITOR_COLUMN_ICON,
 	STATUS_EDITOR_COLUMN_SCREENNAME,
@@ -139,8 +143,13 @@ static StatusWindow *status_window = NULL;
 static gboolean
 status_window_find_savedstatus(GtkTreeIter *iter, const char *title)
 {
-	GtkTreeModel *model = GTK_TREE_MODEL(status_window->model);
+	GtkTreeModel *model;
 	char *cur;
+
+	if (status_window == NULL)
+		return FALSE;
+
+	model = GTK_TREE_MODEL(status_window->model);
 
 	if (!gtk_tree_model_get_iter_first(model, iter))
 		return FALSE;
@@ -414,7 +423,8 @@ create_saved_status_list(StatusWindow *dialog)
 	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
 									   G_TYPE_STRING,
 									   G_TYPE_STRING,
-									   G_TYPE_STRING);
+									   G_TYPE_STRING,
+									   G_TYPE_POINTER);
 
 	/* Create the treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
@@ -616,10 +626,24 @@ gaim_gtk_status_window_hide(void)
 * Status editor
 **************************************************************************/
 
+static void
+status_editor_remove_dialog(StatusEditor *dialog)
+{
+	GtkTreeIter iter;
+	if (status_window_find_savedstatus(&iter, dialog->original_title)) {
+		gtk_list_store_set(status_window->model, &iter,
+							STATUS_WINDOW_COLUMN_WINDOW, NULL,
+							-1);
+	}
+}
+
+
 static gboolean
 status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
+
+	status_editor_remove_dialog(dialog);
 
 	g_free(dialog->original_title);
 	g_free(dialog);
@@ -631,6 +655,8 @@ static void
 status_editor_cancel_cb(GtkButton *button, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
+
+	status_editor_remove_dialog(dialog);
 
 	gtk_widget_destroy(dialog->window);
 
@@ -709,30 +735,14 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 
 	/* Set any substatuses */
 	model = GTK_TREE_MODEL(dialog->model);
-	if (gtk_tree_model_get_iter_first(model, &iter))
-	{
-		GaimAccount *account;
-		gboolean enabled;
-		char *id;
-		char *message;
-		GaimStatusType *type;
+	if (gtk_tree_model_get_iter_first(model, &iter)) {
+		do {
+			GaimAccount *account;
+			gboolean enabled;
+			char *id;
+			char *message;
+			GaimStatusType *type;
 
-		gtk_tree_model_get(model, &iter,
-						   STATUS_EDITOR_COLUMN_ACCOUNT, &account,
-						   STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, &enabled,
-						   STATUS_EDITOR_COLUMN_STATUS_ID, &id,
-						   STATUS_EDITOR_COLUMN_STATUS_MESSAGE, &message,
-						   -1);
-		if (enabled)
-		{
-			type = gaim_account_get_status_type(account, id);
-			gaim_savedstatus_set_substatus(saved_status, account, type, message);
-		}
-		g_free(id);
-		g_free(message);
-
-		while (gtk_tree_model_iter_next(model, &iter))
-		{
 			gtk_tree_model_get(model, &iter,
 							   STATUS_EDITOR_COLUMN_ACCOUNT, &account,
 							   STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, &enabled,
@@ -746,7 +756,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 			}
 			g_free(id);
 			g_free(message);
-		}
+		} while (gtk_tree_model_iter_next(model, &iter));
 	}
 
 	g_free(message);
@@ -989,6 +999,7 @@ status_editor_populate_list(StatusEditor *dialog, GaimSavedStatus *saved_status)
 void
 gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 {
+	GtkTreeIter iter;
 	StatusEditor *dialog;
 	GtkSizeGroup *sg;
 	GtkWidget *bbox;
@@ -1007,7 +1018,23 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 	GtkWidget *win;
 	GList *focus_chain = NULL;
 
+	/* Find a possible window for this saved status and present it */
+	if (status_window) {
+		status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status));
+		gtk_tree_model_get(GTK_TREE_MODEL(status_window->model), &iter,
+							STATUS_WINDOW_COLUMN_WINDOW, &dialog,
+							-1);
+		if (dialog) {
+			gtk_window_present(GTK_WINDOW(dialog->window));
+			return;
+		}
+	}
+
 	dialog = g_new0(StatusEditor, 1);
+	if (status_window)
+		gtk_list_store_set(status_window->model, &iter,
+							STATUS_WINDOW_COLUMN_WINDOW, dialog,
+							-1);
 
 	if (saved_status != NULL)
 		dialog->original_title = g_strdup(gaim_savedstatus_get_title(saved_status));
@@ -1110,6 +1137,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_EDITOR_NUM_COLUMNS,
+									   G_TYPE_POINTER,
 									   G_TYPE_POINTER,
 									   G_TYPE_BOOLEAN,
 									   GDK_TYPE_PIXBUF,
@@ -1217,26 +1245,6 @@ substatus_selection_changed_cb(GtkComboBox *box, gpointer user_data)
 }
 
 static gboolean
-substatus_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-	SubStatusEditor *dialog = user_data;
-
-	g_free(dialog);
-
-	return FALSE;
-}
-
-static void
-substatus_editor_cancel_cb(GtkButton *button, gpointer user_data)
-{
-	SubStatusEditor *dialog = user_data;
-
-	gtk_widget_destroy(dialog->window);
-
-	g_free(dialog);
-}
-
-static gboolean
 status_editor_find_account_in_treemodel(GtkTreeIter *iter,
 										StatusEditor *status_editor,
 										GaimAccount *account)
@@ -1265,6 +1273,48 @@ status_editor_find_account_in_treemodel(GtkTreeIter *iter,
 
 	return FALSE;
 }
+
+static void
+substatus_editor_remove_dialog(SubStatusEditor *dialog)
+{
+	GtkTreeIter iter;
+	GaimAccount *account;
+
+	gtk_combo_box_get_active_iter(dialog->box, &iter);
+
+	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
+					   SUBSTATUS_COLUMN_ACCOUNT, &account,
+					   -1);
+
+	if (status_editor_find_account_in_treemodel(&iter, dialog->status_editor, account))	{
+		gtk_list_store_set(dialog->status_editor->model, &iter,
+						   STATUS_EDITOR_COLUMN_WINDOW, NULL,
+						   -1);
+	}
+}
+
+static gboolean
+substatus_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	SubStatusEditor *dialog = user_data;
+	substatus_editor_remove_dialog(dialog);
+
+	g_free(dialog);
+
+	return FALSE;
+}
+
+static void
+substatus_editor_cancel_cb(GtkButton *button, gpointer user_data)
+{
+	SubStatusEditor *dialog = user_data;
+	substatus_editor_remove_dialog(dialog);
+
+	gtk_widget_destroy(dialog->window);
+
+	g_free(dialog);
+}
+
 
 static void
 substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
@@ -1302,6 +1352,7 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 						   STATUS_EDITOR_COLUMN_STATUS_ID, id,
 						   STATUS_EDITOR_COLUMN_STATUS_NAME, name,
 						   STATUS_EDITOR_COLUMN_STATUS_MESSAGE, message,
+						   STATUS_EDITOR_COLUMN_WINDOW, NULL,
 						   -1);
 	}
 
@@ -1336,7 +1387,19 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	g_return_if_fail(status_editor != NULL);
 	g_return_if_fail(account       != NULL);
 
+	status_editor_find_account_in_treemodel(&iter, status_editor, account);
+	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
+						STATUS_EDITOR_COLUMN_WINDOW, &dialog,
+						-1);
+	if (dialog) {
+		gtk_window_present(GTK_WINDOW(dialog->window));
+		return;
+	}
+
 	dialog = g_new0(SubStatusEditor, 1);
+	gtk_list_store_set(status_editor->model, &iter,
+						STATUS_EDITOR_COLUMN_WINDOW, dialog,
+						-1);
 	dialog->status_editor = status_editor;
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1349,6 +1412,8 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(substatus_editor_destroy_cb), dialog);
+	g_signal_connect(G_OBJECT(status_editor->window), "destroy",
+					 G_CALLBACK(substatus_editor_cancel_cb), dialog);
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
