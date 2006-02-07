@@ -633,7 +633,7 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S", localtime(&log->time));
+		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z%Z", localtime(&log->time));
 
 		filename = g_strdup_printf("%s%s", date, ext ? ext : "");
 
@@ -877,16 +877,16 @@ static void xml_logger_write(GaimLog *log,
 		 */
 		const char *date;
 		char *dir = gaim_log_get_log_dir(log->type, log->name, log->account);
-		FILE *file;
+		char *filename;
 
 		if (dir == NULL)
 			return;
 
-		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S.xml", localtime(&log->time));
+		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z%Z.xml", localtime(&log->time));
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		char *filename = g_build_filename(dir, date, NULL);
+		filename = g_build_filename(dir, date, NULL);
 		g_free(dir);
 
 		log->logger_data = g_fopen(filename, "a");
