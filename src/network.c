@@ -89,28 +89,6 @@ gaim_network_get_public_ip(void)
 	return gaim_prefs_get_string("/core/network/public_ip");
 }
 
-static const char *
-gaim_network_get_local_ip_from_fd(int fd)
-{
-	struct sockaddr_in addr;
-	socklen_t len;
-	static char ip[16];
-	const char *tmp;
-
-	g_return_val_if_fail(fd >= 0, NULL);
-
-	len = sizeof(addr);
-	if (getsockname(fd, (struct sockaddr *) &addr, &len) == -1) {
-		gaim_debug_warning("network", "getsockname: %s\n", strerror(errno));
-		return NULL;
-	}
-
-	tmp = inet_ntoa(addr.sin_addr);
-	strncpy(ip, tmp, sizeof(ip));
-
-	return ip;
-}
-
 const char *
 gaim_network_get_local_system_ip(int fd)
 {
