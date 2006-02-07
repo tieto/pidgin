@@ -184,6 +184,7 @@ struct _GaimPluginAction {
 		GaimPlugin *plugin = gaim_plugin_new(TRUE, NULL); \
 		plugin->info = &(plugininfo); \
 		initfunc((plugin)); \
+		gaim_plugin_load((plugin)); \
 		return gaim_plugin_register(plugin); \
 	}
 #else /* GAIM_PLUGINS  && !GAIM_STATIC_PRPL */
