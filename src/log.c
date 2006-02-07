@@ -89,7 +89,14 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 #ifdef HAVE_STRUCT_TM_TM_ZONE
 		/* XXX: This is so wrong... */
 		if (log->tm->tm_zone != NULL)
-			log->tm->tm_zone = (const char *)g_strdup(log->tm->tm_zone);
+		{
+			char *tmp = g_locale_from_utf8(log->tm->tm_zone, -1, NULL, NULL, NULL);
+			if (tmp != NULL)
+				log->tm->tm_zone = (const char *)tmp;
+			else
+				/* Just shove the UTF-8 bytes in and hope... */
+				log->tm->tm_zone = (const char *)g_strdup(log->tm->tm_zone);
+		}
 #endif
 	}
 	log->logger = gaim_log_logger_get();
