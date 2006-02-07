@@ -3384,6 +3384,9 @@ void gaim_gtk_blist_setup_sort_methods()
 static void _prefs_change_redo_list()
 {
 	redo_buddy_list(gaim_get_blist(), TRUE);
+#if GTK_CHECK_VERSION(2,6,0)
+	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
+#endif
 }
 
 static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
