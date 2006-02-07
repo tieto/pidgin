@@ -4271,7 +4271,9 @@ static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node)
 			return;
 	}
 
+#if !GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
+#endif
 }
 
 
