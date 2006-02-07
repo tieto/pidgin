@@ -25,6 +25,16 @@
 
 #include "internal.h"
 
+#ifndef _WIN32
+#include <net/if.h>
+#include <sys/ioctl.h>
+#endif
+
+/* Solaris */
+#if defined (__SVR4) && defined (__sun)
+#include <sys/sockio.h>
+#endif
+
 #include "debug.h"
 #include "account.h"
 #include "network.h"
@@ -104,40 +114,46 @@ gaim_network_get_local_ip_from_fd(int fd)
 const char *
 gaim_network_get_local_system_ip(int fd)
 {
-	struct hostent *host;
-	char localhost[129];
-	int i;
-	static char ip[46];
-	const char *tmp = NULL;
+       char buffer[1024];
+       static char ip[16];
+       char *tmp;
+       struct ifconf ifc;
+       struct ifreq *ifr;
+       struct sockaddr_in *sinptr;
+       guint32 lhost = htonl(127*256*256*256+1);
+       long unsigned int add;
+       int source = fd;
 
-	if (fd >= 0)
-		tmp = gaim_network_get_local_ip_from_fd(fd);
+       if(source <= 0)
+           source = socket(PF_INET,SOCK_STREAM,0);
 
-	if (tmp)
-		return tmp;
+       ifc.ifc_len = sizeof(buffer);
+       ifc.ifc_req = (struct ifreq*) buffer;
+       ioctl(source, SIOCGIFCONF, &ifc);
 
-	if (gethostname(localhost, 128) < 0)
-		return NULL;
+       if(fd <= 0)
+               close(source);
 
-	if ((host = gethostbyname(localhost)) == NULL)
-		return NULL;
+       tmp = buffer;
+       while(tmp < buffer + ifc.ifc_len) {
+               ifr = (struct ifreq *) tmp;
+               tmp += sizeof(struct ifreq);
 
-	/* Avoid using 127.0.0.1 */
-	for (i = 0; (host->h_addr_list[i] != NULL); i++)
-	{
-		if ((host->h_addr_list[i][0] != 127) ||
-			(host->h_addr_list[i][1] != 0) ||
-			(host->h_addr_list[i][2] != 0) ||
-			(host->h_addr_list[i][3] != 1))
-		{
-			g_snprintf(ip, 16, "%hhu.%hhu.%hhu.%hhu",
-				host->h_addr_list[i][0], host->h_addr_list[i][1],
-				host->h_addr_list[i][2], host->h_addr_list[i][3]);
-			return ip;
-		}
-	}
+               if(ifr->ifr_addr.sa_family == AF_INET) {
+                       sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+                       if(sinptr->sin_addr.s_addr != lhost) {
+                               add = ntohl(sinptr->sin_addr.s_addr);
+                               g_snprintf(ip, 16, "%lu.%lu.%lu.%lu",
+                                          ((add >> 24) & 255),
+                                          ((add >> 16) & 255),
+                                          ((add >> 8) & 255),
+                                          add & 255);
 
-	return "127.0.0.1";
+                               return ip;
+                       }
+               }
+       }
+       return "0.0.0.0";
 }
 
 const char *
