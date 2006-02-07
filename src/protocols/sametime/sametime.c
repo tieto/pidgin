@@ -5012,7 +5012,7 @@ static void st_import_action_cb(GaimConnection *gc, char *filename) {
 
   GString *str;
 
-  file = fopen(filename, "r");
+  file = g_fopen(filename, "r");
   g_return_if_fail(file != NULL);
 
   str = g_string_new(NULL);
@@ -5054,7 +5054,7 @@ static void st_export_action_cb(GaimConnection *gc, char *filename) {
   char *str;
   FILE *file;
 
-  file = fopen(filename, "w");
+  file = g_fopen(filename, "w");
   g_return_if_fail(file != NULL);
 
   l = mwSametimeList_new();

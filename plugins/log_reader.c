@@ -110,7 +110,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 							"Filename timestamp parsing error\n");
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
-					FILE *handle = fopen(filename, "rb");
+					FILE *handle = g_fopen(filename, "rb");
 					char *contents;
 					char *contents2;
 					struct adium_logger_data *data;
@@ -175,7 +175,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 							"Filename timestamp parsing error\n");
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
-					FILE *handle = fopen(filename, "rb");
+					FILE *handle = g_fopen(filename, "rb");
 					char *contents;
 					char *contents2;
 					struct adium_logger_data *data;
@@ -1295,7 +1295,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 	read = g_malloc(data->length + 2);
 
-	file = fopen(data->path, "rb");
+	file = g_fopen(data->path, "rb");
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
 	fclose(file);
