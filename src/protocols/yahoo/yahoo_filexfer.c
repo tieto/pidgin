@@ -64,7 +64,7 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 		return;
 	if (!(xd = xfer->data))
 		return;
-	if (source < 0) {
+	if ((source < 0) || (xd->path == NULL) || (xd->host == NULL)) {
 		gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer),
 				xfer->who, _("Unable to connect."));
 		gaim_xfer_cancel_remote(xfer);
