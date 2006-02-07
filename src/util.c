@@ -504,7 +504,7 @@ static const char *get_tmoff(const struct tm *tm)
 	DWORD ret;
 	if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
 	{
-			off = tzi.Bias * 60;
+			off = -(tzi.Bias * 60);
 			if (ret == TIME_ZONE_ID_DAYLIGHT)
 					off -= tzi.DaylightBias * 60;
 	}
