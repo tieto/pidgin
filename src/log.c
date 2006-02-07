@@ -637,7 +637,7 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 
 		filename = g_strdup_printf("%s%s", date, ext ? ext : "");
 
-		path = g_build_filename(dir, filename, NULL);
+		path = g_build_filename(dir, gaim_escape_filename(filename), NULL);
 		g_free(dir);
 		g_free(filename);
 
@@ -664,7 +664,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 {
 	GDir *dir;
 	GList *list = NULL;
-	const char *filename;
+	const char *fname;
 	char *path;
 
 	if(!account)
@@ -680,8 +680,10 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 		return NULL;
 	}
 
-	while ((filename = g_dir_read_name(dir)))
+	while ((fname = g_dir_read_name(dir)))
 	{
+		const char *filename = gaim_unescape_filename(fname);
+
 		if (gaim_str_has_suffix(filename, ext) &&
 		    strlen(filename) >= (17 + strlen(ext)))
 		{
@@ -886,7 +888,7 @@ static void xml_logger_write(GaimLog *log,
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		filename = g_build_filename(dir, date, NULL);
+		filename = g_build_filename(dir, gaim_escape_filename(date), NULL);
 		g_free(dir);
 
 		log->logger_data = g_fopen(filename, "a");
