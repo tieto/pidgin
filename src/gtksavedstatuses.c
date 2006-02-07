@@ -1005,6 +1005,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 	GtkWidget *toolbar;
 	GtkWidget *vbox;
 	GtkWidget *win;
+	GList *focus_chain = NULL;
 
 	dialog = g_new0(StatusEditor, 1);
 
@@ -1081,6 +1082,8 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 	dialog->message = GTK_IMHTML(text);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
+	focus_chain = g_list_prepend(focus_chain, dialog->message);
+	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 
 	if ((saved_status != NULL) && (gaim_savedstatus_get_message(saved_status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
