@@ -1569,6 +1569,7 @@ faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
 faim_export int aim_snvalid(const char *sn);
 faim_export int aim_sn_is_icq(const char *sn);
+faim_export int aim_sn_is_sms(const char *sn);
 faim_export int aim_snlen(const char *sn);
 faim_export int aim_sncmp(const char *sn1, const char *sn2);
 

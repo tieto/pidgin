@@ -218,6 +218,21 @@ faim_export int aim_sn_is_icq(const char *sn)
 	return 1;
 }
 
+/**
+ * Determine if a given screen name is an SMS number
+ * (i.e. it begins with a +).
+ *
+ * @sn A valid AIM or ICQ screen name.
+ * @return 1 if the screen name is an SMS number.  Otherwise 0
+ *         is returned.
+ */
+faim_export int aim_sn_is_sms(const char *sn)
+{
+	if (sn[0] != '+')
+		return 0;
+	return 1;
+}
+
 /*
 * int snlen(const char *)
 * 
