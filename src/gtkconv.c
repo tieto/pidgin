@@ -740,7 +740,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 		if (strcmp(convprotocol, gaim_account_get_protocol_id(buddy->account)))
 		{
-			gaim_notify_error(NULL, NULL,
+			gaim_notify_error(GAIM_GTK_CONVERSATION(info->conv), NULL,
 							  _("That buddy is not on the same protocol as this "
 								"chat."), NULL);
 		}
@@ -760,13 +760,13 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		{
 			if (account == NULL)
 			{
-				gaim_notify_error(NULL, NULL,
+				gaim_notify_error(GAIM_GTK_CONVERSATION(info->conv), NULL,
 					_("You are not currently signed on with an account that "
 					  "can invite that buddy."), NULL);
 			}
 			else if (strcmp(convprotocol, gaim_account_get_protocol_id(account)))
 			{
-				gaim_notify_error(NULL, NULL,
+				gaim_notify_error(GAIM_GTK_CONVERSATION(info->conv), NULL,
 								  _("That buddy is not on the same protocol as this "
 									"chat."), NULL);
 			}
@@ -942,7 +942,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
-		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
+		gaim_notify_error(GAIM_GTK_CONVERSATION(conv), NULL, _("Unable to open file."), NULL);
 		return;
 	}
 
@@ -972,7 +972,8 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 
 	buf = g_strdup_printf("%s.html", gaim_normalize(conv->account, conv->name));
 
-	gaim_request_file(conv, _("Save Conversation"), gaim_escape_filename(buf),
+	gaim_request_file(GAIM_GTK_CONVERSATION(conv), _("Save Conversation"),
+					  gaim_escape_filename(buf),
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL, conv);
 
 	g_free(buf);
@@ -2395,7 +2396,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	size_t len;
 
 	if ((fp = g_fopen(filename, "wb")) == NULL) {
-		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
+		gaim_notify_error(gtkconv, NULL, _("Unable to open file."), NULL);
 		return;
 	}
 
@@ -2403,7 +2404,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	data = gaim_buddy_icon_get_data(icon, &len);
 
 	if ((len <= 0) || (data == NULL)) {
-		gaim_notify_error(conv, NULL, _("Unable to save icon file to disk."), NULL);
+		gaim_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL);
 		return;
 	}
 
@@ -2426,7 +2427,7 @@ icon_menu_save_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 
 	buf = g_strdup_printf("%s.%s", gaim_normalize(conv->account, conv->name), ext);
 
-	gaim_request_file(conv, _("Save Icon"), buf, TRUE,
+	gaim_request_file(gtkconv, _("Save Icon"), buf, TRUE,
 					 G_CALLBACK(saveicon_writefile_cb), NULL, gtkconv);
 
 	g_free(buf);
@@ -4198,7 +4199,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		{
 			if (account == NULL)
 			{
-				gaim_notify_error(NULL, NULL,
+				gaim_notify_error(win, NULL,
 					_("You are not currently signed on with an account that "
 					  "can add that buddy."), NULL);
 			}
@@ -4447,7 +4448,8 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	gaim_gtk_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
 
 	/* If the "Save Conversation" or "Save Icon" dialogs are open then close them */
-	gaim_request_close_with_handle(conv);
+	gaim_request_close_with_handle(gtkconv);
+	gaim_notify_close_with_handle(gtkconv);
 
 	gtk_widget_destroy(gtkconv->tab_cont);
 	g_object_unref(gtkconv->tab_cont);
@@ -7430,6 +7432,8 @@ gaim_gtk_conv_window_destroy(GaimGtkWindow *win)
 	gtk_widget_destroy(win->window);
 
 	g_object_unref(G_OBJECT(win->menu.item_factory));
+
+	gaim_notify_close_with_handle(win);
 
 	g_free(win);
 }
