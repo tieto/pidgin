@@ -158,6 +158,9 @@ version 2.0.0:
 	  (Sadrul Habib Chowdhury)
 	* New e-mail notices are now grouped into one dialog.
 	  (Sadrul Habib Chowdhury)
+	* "Open" in the File Transfer window integrates with KDE now (in
+	  addition to existing GNOME and Windows integration) and falls back to
+	  the browser in other environments.
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
