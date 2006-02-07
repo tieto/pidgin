@@ -320,6 +320,7 @@ remove_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 		if (find_permit_block_by_name(dialog->account->deny, name))
 			gaim_privacy_deny_remove(dialog->account, name, FALSE);
 	}
+	g_free(name);
 }
 
 static void
