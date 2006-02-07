@@ -630,6 +630,8 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 	{
 		/* This log is new */
 		char *dir;
+		struct tm *tm;
+		const char *tz;
 		const char *date;
 		char *filename;
 		char *path;
@@ -640,11 +642,13 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z%Z", localtime(&log->time));
+		tm = localtime(&log->time);
+		tz = gaim_escape_filename(gaim_utf8_strftime("%Z", tm));
+		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
 
-		filename = g_strdup_printf("%s%s", date, ext ? ext : "");
+		filename = g_strdup_printf("%s%s%s", date, tz, ext ? ext : "");
 
-		path = g_build_filename(dir, gaim_escape_filename(filename), NULL);
+		path = g_build_filename(dir, filename, NULL);
 		g_free(dir);
 		g_free(filename);
 
@@ -706,7 +710,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 			if (tz_off != GAIM_NO_TZ_OFF)
 				tm.tm_gmtoff = tz_off - tm.tm_gmtoff;
 
-			if (rest == NULL || (end = strchr(rest, '.')) == NULL)
+			if (rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
 			{
 				log = gaim_log_new(type, name, account, NULL, stamp, NULL);
 			}
@@ -882,19 +886,27 @@ static void xml_logger_write(GaimLog *log,
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
 		 */
+		struct tm *tm;
+		const char *tz;
 		const char *date;
 		char *dir = gaim_log_get_log_dir(log->type, log->name, log->account);
+		char *name;
 		char *filename;
 
 		if (dir == NULL)
 			return;
 
-		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z%Z.xml", localtime(&log->time));
+		tm = localtime(&log->time);
+		tz = gaim_escape_filename(gaim_utf8_strftime("%Z", tm);
+		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
+
+		name = g_strdup_printf("%s%s%s", date, tz, ext ? ext : "");
 
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
-		filename = g_build_filename(dir, gaim_escape_filename(date), NULL);
+		filename = g_build_filename(dir, name, NULL);
 		g_free(dir);
+		g_free(name);
 
 		log->logger_data = g_fopen(filename, "a");
 		if (!log->logger_data) {
