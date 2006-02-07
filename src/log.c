@@ -664,7 +664,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 {
 	GDir *dir;
 	GList *list = NULL;
-	const char *fname;
+	const char *filename;
 	char *path;
 
 	if(!account)
@@ -680,10 +680,8 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 		return NULL;
 	}
 
-	while ((fname = g_dir_read_name(dir)))
+	while ((filename = g_dir_read_name(dir)))
 	{
-		const char *filename = gaim_unescape_filename(fname);
-
 		if (gaim_str_has_suffix(filename, ext) &&
 		    strlen(filename) >= (17 + strlen(ext)))
 		{
@@ -693,7 +691,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 			struct tm tm;
 			long tz_off;
 			const char *rest;
-			time_t stamp = gaim_str_to_time(filename, FALSE, &tm, &tz_off, &rest);
+			time_t stamp = gaim_str_to_time(gaim_unescape_filename(filename), FALSE, &tm, &tz_off, &rest);
 			char *end;
 
 			/* As zero is a valid offset, GAIM_NO_TZ_OFF means no offset was
