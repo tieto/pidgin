@@ -6910,11 +6910,8 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 
 static gboolean gaim_ssi_rerequestdata(gpointer data) {
 	aim_session_t *sess = data;
-	GaimConnection *gc = sess->aux_data;
-	OscarData *od = gc->proto_data;
 
 	aim_ssi_reqdata(sess);
-	od->getblisttimer = 0;
 
 	return TRUE;
 }
