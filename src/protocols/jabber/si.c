@@ -595,6 +595,13 @@ static void jabber_si_xfer_cancel_send(GaimXfer *xfer)
 }
 
 
+static void jabber_si_xfer_request_denied(GaimXfer *xfer)
+{
+	jabber_si_xfer_free(xfer);
+	gaim_debug(GAIM_DEBUG_INFO, "jabber", "in jabber_si_xfer_request_denied\n");
+}
+
+
 static void jabber_si_xfer_cancel_recv(GaimXfer *xfer)
 {
 	jabber_si_xfer_free(xfer);
@@ -811,6 +818,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 		gaim_xfer_set_size(xfer, filesize);
 
 	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+	gaim_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
