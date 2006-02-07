@@ -108,6 +108,41 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
+AC_MSG_CHECKING(for the %z format string in strftime())
+AC_TRY_RUN([
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#include <time.h>
+#include <stdio.h>
+
+int main()
+{
+	char buf[6];
+	time_t t = time(NULL);
+	
+	if (strftime(buf, sizeof(buf), "%z", localtime(&t)) != 5)
+		return 1;
+	
+	fprintf(stderr, "strftime(\"%%z\") yields: \"%s\"\n", buf);
+	
+	return !((buf[0] == '-' || buf[0] == '+') &&
+	         (buf[1] >= '0' && buf[1] <= '9') &&
+	         (buf[2] >= '0' && buf[2] <= '9') &&
+	         (buf[3] >= '0' && buf[3] <= '9') &&
+	         (buf[4] >= '0' && buf[4] <= '9')
+	        );
+}
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE([HAVE_STRFTIME_Z_FORMAT], [1],
+                                      [Define to 1 if you have a strftime() that supports the %z format string.])
+],
+[
+	AC_MSG_RESULT(no)
+]
+)
 
 
 dnl #######################################################################

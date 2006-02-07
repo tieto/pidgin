@@ -373,6 +373,9 @@
 /* Define to 1 if you have the `strftime' function. */
 #define HAVE_STRFTIME 1
 
+/* Define to 1 if you have a strftime() that supports the %z format string. */
+/* #undef HAVE_STRFTIME_Z_FORMAT */
+
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
 

@@ -216,6 +216,13 @@ char *gaim_mime_decode_field(const char *str);
  * This is essentially strftime(), but it has a static buffer
  * and handles the UTF-8 conversion for the caller.
  *
+ * This function also provides the GNU %z formatter if the underlying C
+ * library doesn't.  However, the format string parser is very naive, which
+ * means that conversions specifiers to %z cannot be guaranteed.  The GNU
+ * strftime(3) man page describes %z as: 'The time-zone as hour offset from
+ * GMT.  Required to emit RFC822-conformant dates
+ * (using "%a, %d %b %Y %H:%M:%S %z"). (GNU)'
+ *
  * @param format The format string
  * @param tm     The time to format, or @c NULL to use the current local time
  *

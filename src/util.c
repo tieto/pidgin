@@ -484,6 +484,109 @@ gaim_mime_decode_field(const char *str)
 /**************************************************************************
  * Date/Time Functions
  **************************************************************************/
+
+#ifndef HAVE_STRFTIME_Z_FORMAT
+static const char *get_tmoff(const struct tm *tm)
+{
+	static char buf[6];
+	long off;
+	gint8 min;
+	gint8 hrs;
+	struct tm new_tm = *tm;
+
+	mktime(&new_tm);
+
+	if (new_tm.tm_isdst < 0)
+		g_return_val_if_reached("");
+
+#ifdef _WIN32
+	TIME_ZONE_INFORMATION tzi;
+	DWORD ret;
+	if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
+	{
+			off = tzi.Bias * 60;
+			if (ret == TIME_ZONE_ID_DAYLIGHT)
+					off -= tzi.DaylightBias * 60;
+	}
+	else
+			return "";
+#else
+# ifdef HAVE_TM_GMTOFF
+	off = new_tm.tm_gmtoff;
+# else
+#  ifdef HAVE_TIMEZONE
+	tzset();
+	off = -timezone;
+#  endif /* HAVE_TIMEZONE */
+# endif /* !HAVE_TM_GMTOFF */
+#endif /* _WIN32 */
+
+	min = (off / 60) % 60;
+	hrs = ((off / 60) - min) / 60;
+
+	if (g_snprintf(buf, sizeof(buf), "%+03d%02d", hrs, ABS(min)) > 5)
+		g_return_val_if_reached("");
+
+	return buf;
+}
+
+static size_t gaim_internal_strftime(char *s, size_t max, const char *format, const struct tm *tm)
+{
+	const char *start;
+	const char *c;
+	char *fmt = NULL;
+
+	/* Yes, this is checked in gaim_utf8_strftime(),
+	 * but better safe than sorry. -- rlaager */
+	g_return_val_if_fail(format != NULL, 0);
+
+	/* This is fairly efficient, and it only gets
+	 * executed if the underlying system doesn't
+	 * support the %z format string for strftime(),
+	 * so I think it's good enough. -- rlaager */
+	for (c = start = format; *c ; c++)
+	{
+		if (*c != '%')
+			continue;
+
+		c++;
+
+		if (*c == 'z')
+		{
+			char *tmp = g_strdup_printf("%s%.*s%s",
+			                            fmt ? fmt : "",
+			                            c - start - 1,
+			                            start,
+			                            get_tmoff(tm));
+			g_free(fmt);
+			fmt = tmp;
+			start = c + 1;
+		}
+	}
+
+	if (fmt != NULL)
+	{
+		size_t ret;
+
+		if (*start)
+		{
+			char *tmp = g_strconcat(fmt, start, NULL);
+			g_free(fmt);
+			fmt = tmp;
+		}
+
+		ret = strftime(s, max, fmt, tm);
+		g_free(fmt);
+
+		return ret;
+	}
+
+	return strftime(s, max, format, tm);
+}
+#else /* !HAVE_STRFTIME_Z_FORMAT */
+#define gaim_internal_strftime strftime
+#endif
+
 const char *
 gaim_utf8_strftime(const char *format, const struct tm *tm)
 {
@@ -502,7 +605,7 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	 * which case, the contents of the buffer are
 	 * undefined) or the empty string (in which
 	 * case, no harm is done here). */
-	if (strftime(buf, sizeof(buf), format, tm) == 0)
+	if (gaim_internal_strftime(buf, sizeof(buf), format, tm) == 0)
 	{
 		buf[0] = '\0';
 		return buf;
