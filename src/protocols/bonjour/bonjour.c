@@ -450,12 +450,16 @@ static GaimPluginInfo info =
 static void
 initialize_default_account_values()
 {
+#ifdef _WIN32
 	char *fullname = NULL;
+#else
+	struct passwd *info;
+	const char *fullname = NULL;
+#endif
 	char *splitpoint = NULL;
 	char hostname[255];
-#ifndef _WIN32
-	struct passwd *info;
 
+#ifndef _WIN32
 	/* Try to figure out the user's real name */
 	info = getpwuid(getuid());
 	if ((info != NULL) && (info->pw_gecos != NULL) && (info->pw_gecos[0] != '\0'))
