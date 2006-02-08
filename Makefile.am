@@ -11,7 +11,6 @@ EXTRA_DIST = \
 		intltool-merge.in \
 		intltool-update.in \
 		PROGRAMMING_NOTES \
-		setup-gettext \
 		ChangeLog.win32 \
 		config.h.mingw \
 		Makefile.mingw \
