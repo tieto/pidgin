@@ -1038,7 +1038,7 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	}
 
 	dialog = g_new0(StatusEditor, 1);
-	if (edit && (status_window != NULL) && status_window_find_savedstatus(&iter, gaim_saveds        tatus_get_title(saved_status)))
+	if (edit && (status_window != NULL) && status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status)))
 	{
 		gtk_list_store_set(status_window->model, &iter,
 							STATUS_WINDOW_COLUMN_WINDOW, dialog,
