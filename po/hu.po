@@ -19,6 +19,18 @@ msgstr ""
 "Plural-Forms:  nplurals=1; plural=0;\n"
 "X-Generator: KBabel 1.10.2\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Gaim azonnali üzenetküldő"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "Azonnali üzenetküldő"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "Azonnali üzenetküldés többféle protokoll használatával"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "Hibaüzenetek elnyomása"

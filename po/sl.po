@@ -12672,3 +12672,15 @@ msgstr[3] "%d minut"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Napaka pri vzpostavljanju povezave.\n"
 
+
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Gaim - spletni sel"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "Spletni sel"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "Pošiljajte neposredna sporočila prek različnih protokolovs"

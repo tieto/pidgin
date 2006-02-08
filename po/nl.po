@@ -12437,3 +12437,15 @@ msgstr "g003: Fout: Kan geen verbinding maken.\n"
 
 #~ msgid "/Options/Show T_imestamps"
 #~ msgstr "/Opties/Berichttijd _weergeven"
+
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Gaim - Expresberichten"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "Expresberichten"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "Multi-protocol programma voor expresberichten"

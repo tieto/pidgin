@@ -18,6 +18,18 @@ msgstr ""
 "X-Poedit-Language: Albanian\n"
 "X-Poedit-Country: ALBANIA\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Lajmësjellësi Internet Gaim"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "Lajmësjellës Internet"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "Dërgoni mesazhe të atypëratyshëm protokollesh të ndryshëm"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "Gabim Ndalimi Mesazhi"

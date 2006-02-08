@@ -18,6 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "게임 메신저"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "메신저"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "다중 프로토콜 메신저"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "오류 메시지 막기"

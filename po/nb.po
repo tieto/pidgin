@@ -26,6 +26,18 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: KBabel 1.3.1\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Gaim lynmeldingsklient"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "Lynmeldingsklient"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "Send lynmeldinger over flere protokoller"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "Undertrykking av feilmeldinger"

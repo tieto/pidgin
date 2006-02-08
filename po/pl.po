@@ -27,6 +27,18 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Komunikator Internetowy Gaim"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "Komunikator Internetowy"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "Komunikator internetowy obsÅ‚ugujÄ…cy kilka protokoÅ‚Ã³w"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "Ukrywanie komunikatów o b³êdach"

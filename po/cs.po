@@ -18,6 +18,18 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Gaim Internet Messenger"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "Internet Messenger"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "Posílat instant message různými protokoly"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "Potlačování zpráv o chybách"

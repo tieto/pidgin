@@ -12300,3 +12300,15 @@ msgstr[1] "分"
 #: ../src/util.c:3187
 msgid "g003: Error opening connection.\n"
 msgstr "g003: 接続を開始する際にエラー\n"
+
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Gaim インターネット・メッセンジャー"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "インターネット・メッセンジャー"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "複数のプロトコルを介してインスタント・メッセージを送信します"

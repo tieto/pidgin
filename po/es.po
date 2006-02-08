@@ -13593,3 +13593,15 @@ msgstr "g003: Error abriendo la conexión.\n"
 
 #~ msgid "C_ancel"
 #~ msgstr "C_ancelar"
+
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Gaim - cliente de mensajería de Internet"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "Cliente de mensajería de Internet"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "Cliente de mensajería instantánea multiprotocolo"

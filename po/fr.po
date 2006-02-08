@@ -27,6 +27,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Gaim Messagerie Internet"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "Messagerie internet"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "Envoie des messages instantanés en utilisant divers protocoles"
+
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
 msgstr "Supprimer les messages d'erreur"

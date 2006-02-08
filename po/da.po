@@ -12219,3 +12219,15 @@ msgstr[1] "minutter"
 #: src/util.c:3117
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Fejl ved oprettelse af forbindelse\n"
+
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Gaim - internet beskeder"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "Internet beskeder"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "Send beskeder over flere protokoller"

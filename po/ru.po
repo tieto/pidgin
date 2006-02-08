@@ -18,6 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Gaim - клиент обмена мгновенными сообщениями"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "Клиент обмена мгновенными сообщениями"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "Обмен мгновенными сообщениями с использованием множества протоколов"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags

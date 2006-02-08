@@ -53,6 +53,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
+#: ../gaim.desktop.in.h:1
+msgid "Gaim Internet Messenger"
+msgstr "Gaim 網路即時通"
+
+#: ../gaim.desktop.in.h:2
+msgid "Internet Messenger"
+msgstr "網路即時通"
+
+#: ../gaim.desktop.in.h:3
+msgid "Send instant messages over multiple protocols"
+msgstr "透過多種通訊協定發送即時訊息"
+
 #. *< type
 #. *< ui_requirement
 #. *< flags

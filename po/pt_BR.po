@@ -11735,3 +11735,15 @@ msgstr[1] "minutos"
 #: src/util.c:3098
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Erro ao abrir conexão.\n"
+
+#: gaim.desktop.in:11
+msgid "Gaim Internet Messenger"
+msgstr "Mensageiro via Internet Gaim"
+
+#: gaim.desktop.in:13
+msgid "Internet Messenger"
+msgstr "Mensageiro via Internet"
+
+#: gaim.desktop.in:15
+msgid "Send instant messages over multiple protocols"
+msgstr "Mande mensagens instantâneas por múltiplos protocolos"
