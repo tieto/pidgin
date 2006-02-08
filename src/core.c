@@ -99,8 +99,6 @@ gaim_core_init(const char *ui)
 	gaim_dbus_init();
 #endif
 
-	/* Call this early on to try to auto-detect our IP address */
-	gaim_network_get_my_ip(-1);
 
 	/* Initialize all static protocols. */
 	static_proto_init();
@@ -133,6 +131,9 @@ gaim_core_init(const char *ui)
 	gaim_stun_init();
 	gaim_xfers_init();
 	gaim_idle_init();
+
+	/* Call this early on to try to auto-detect our IP address */
+	gaim_network_get_my_ip(-1);
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
