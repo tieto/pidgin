@@ -764,7 +764,6 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 
 	gtk_widget_destroy(dialog->window);
 	g_free(dialog->original_title);
-	g_free(dialog);
 
 	if (status_window != NULL)
 	  add_status_to_saved_status_list(status_window->model, saved_status);
@@ -772,6 +771,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	/* If they clicked on "Save & Use" or "Use," then activate the status */
 	if (button != dialog->save_button)
 		gaim_savedstatus_activate(saved_status);
+	g_free(dialog);
 }
 
 static void
