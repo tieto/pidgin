@@ -1414,8 +1414,7 @@ fi
 
 dnl Thanks, Evan.
 if test "$enable_gtkspell" = yes ; then
-	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, [
-	], [
+	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, [], [
 		AC_MSG_RESULT(no)
 		enable_gtkspell=no
 	])
