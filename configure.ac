@@ -149,9 +149,12 @@ dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
 PKG_CHECK_MODULES(MEANWHILE,
-	[meanwhile >= 1.0.0 meanwhile < 2.0.0],
-	[have_meanwhile="yes"],
-	[have_meanwhile="no"])
+	[meanwhile >= 1.0.0 meanwhile < 2.0.0], [
+		have_meanwhile="yes"
+	], [
+		AC_MSG_RESULT(no)
+		have_meanwhile="no"
+	])
 AC_SUBST(MEANWHILE_CFLAGS)
 AC_SUBST(MEANWHILE_LIBS)
 
@@ -166,9 +169,14 @@ HOWL_CFLAGS=""
 HOWL_LIBS=""
 
 dnl Attempt to autodetect Howl
-PKG_CHECK_MODULES(HOWL, howl,
-	[howlincludes="yes" howllibs="yes"],
-	[howlincludes="no" howllibs="no"])
+PKG_CHECK_MODULES(HOWL, howl, [
+		howlincludes="yes"
+		howllibs="yes"
+	], [
+		AC_MSG_RESULT(no)
+		howlincludes="no"
+		howllibs="no"
+	])
 
 dnl Override HOWL_CFLAGS if the user specified an include dir
 if test "$ac_howl_includes" != "no"; then
@@ -207,14 +215,20 @@ if test "x$silc_manual_check" = "xno"; then
 		have_silc="yes"
 		silcincludes="yes"
 		silcclient="yes"
-	], have_silc="no")
+	], [
+		AC_MSG_RESULT(no)
+		have_silc="no"
+	])
 	dnl If silcclient.pc wasn't found, check for just silc.pc
 	if test "x$have_silc" = "xno"; then
 		PKG_CHECK_MODULES(SILC, silc, [
 			have_silc="yes"
 			silcincludes="yes"
 			silcclient="yes"
-		], have_silc="no")
+		], [
+			AC_MSG_RESULT(no)
+			have_silc="no"
+		])
 	fi
 else
 	if test "$ac_silc_includes" != "no"; then
@@ -527,6 +541,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		enable_dbus=yes
 	],
 	[
+		AC_MSG_RESULT(no)
 		enable_dbus=no
 	])
 fi
@@ -625,11 +640,10 @@ if test "x$enable_startup_notification" = "xyes"; then
 	PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
 	[
 		AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
-		echo "Building with libstartup-notification"
 		enable_startup_notification=yes
 	],
 	[
-		echo "Building without libstartup-notification"
+		AC_MSG_RESULT(no)
 		enable_startup_notification=no
 	])
 
@@ -649,13 +663,19 @@ if test "x$enable_gevolution" = "xyes"; then
 	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 		AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 		build_gevo=yes
-	], build_gevo=no)
+	], [
+		AC_MSG_RESULT(yes)
+		build_gevo=no
+	])
 	if test "x$build_gevo" = "xno"; then
 		evo_deps="libebook-1.0 libedata-book-1.0"
 		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 			build_gevo=yes
-		], build_gevo=no)
+		], [
+			AC_MSG_RESULT(yes)
+			build_gevo=no
+		])
 	fi
 
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
@@ -1044,12 +1064,21 @@ if test "x$enable_nss" != "xno"; then
 
 	if test "x$nss_manual_check" = "xno"; then
 		if `$PKG_CONFIG --exists mozilla-nss`; then
-			PKG_CHECK_MODULES(NSS, mozilla-nss, have_nss="yes", have_nss="no")
+			PKG_CHECK_MODULES(NSS, mozilla-nss, [
+				have_nss="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_nss="no"
+			])
 			mozilla_nspr="mozilla-nspr"
 			mozilla_nss="mozilla-nss"
 		else
 			if `$PKG_CONFIG --exists nss`; then
-				PKG_CHECK_MODULES(NSS, nss, have_nss="yes")
+				PKG_CHECK_MODULES(NSS, nss, [
+					have_nss="yes"
+				], [
+					AC_MSG_RESULT(no)
+				])
 				mozilla_nspr="nspr"
 				mozilla_nss="nss"
 			fi
@@ -1385,7 +1414,11 @@ fi
 
 dnl Thanks, Evan.
 if test "$enable_gtkspell" = yes ; then
-	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , enable_gtkspell=no)
+	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, [
+	], [
+		AC_MSG_RESULT(no)
+		enable_gtkspell=no
+	])
 	if test "$enable_gtkspell" = "yes" ; then
 		AC_SUBST(GTKSPELL_CFLAGS)
 		AC_SUBST(GTKSPELL_LIBS)
@@ -1597,10 +1630,14 @@ if test "x$enable_vv" = xyes; then
 	dnl Check for jack libraries (sound output plugin)
 	PKG_CHECK_MODULES(JACK,jack >= 0.15.0,
 	[
-		 dnl we've found jack devel files
-		 PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.13, [AC_DEFINE(__JACK_ENABLED__,1,[Jack support])] ,
-				  [echo "libsamplerate not found, jack support disabled."])
-		 VV_CFLAGS="$VV_CFLAGS $SAMPLERATE_CFLAGS"
+		dnl we've found jack devel files
+		PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.13, [
+			AC_DEFINE(__JACK_ENABLED__,1,[Jack support])
+		], [
+			AC_MSG_RESULT(no)
+			echo "libsamplerate not found, jack support disabled."
+		])
+		VV_CFLAGS="$VV_CFLAGS $SAMPLERATE_CFLAGS"
 	 VV_LIBS="$VV_LIBS   $SAMPLERATE_LIBS"
 	],
 	[echo "No jack support."] )
@@ -1612,7 +1649,12 @@ if test "x$enable_vv" = xyes; then
 	VV_CFLAGS="$VV_CFLAGS $SPEEX_CFLAGS"
 	VV_LIBS="$VV_LIBS   $SPEEX_LIBS"
 
-	PKG_CHECK_MODULES(ORTP, ortp >= 0.7.1, enable_ortp=yes, enable_ortp=no)
+	PKG_CHECK_MODULES(ORTP, ortp >= 0.7.1, [
+		enable_ortp=yes,
+	], [
+		AC_MSG_RESULT(no)
+		enable_ortp=no
+	])
 	VV_CFLAGS="$VV_CFLAGS $ORTP_CFLAGS"
 	VV_LIBS="$VV_LIBS   $ORTP_LIBS"
 	if test x$enable_ortp = xno; then
