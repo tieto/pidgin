@@ -144,6 +144,7 @@ static struct translator current_translators[] = {
 	{N_("Swedish"),             "sv", "Tore Lundqvist", "tlt@mima.x.se"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
+	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", "prf_q@users.sf.net"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
 	{N_("Traditional Chinese"), "zh_TW", "Ambrose C. Li", "acli@ada.dhs.org"},

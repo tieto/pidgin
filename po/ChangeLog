@@ -3,12 +3,13 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 2.0.0:
 	* Bengali translation added (INDRANIL DAS GUPTA and Samia Nimatullah)
 	* Bosnian translation added (Lejla Hadzialic)
+	* Bulgarian translation updated (Vladimir "Kaladan" Petkov)
 	* Catalan translation updated (Josep Puigdemont)
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Paladin R. Liu)
 	* Danish translation updated (Morten (mbrix) Brix Pedersen)
 	* Dutch translation updated (Roy Spliet)
-	* English (British) translation updated (Stu Tomlinson)
+	* English (British) translation updated (Stu Tomlinson and Luke Ross)
 	* English (Canadian) translation updated (Adam Weinberger)
 	* Estonian translation updated (Ivar Smolin)
 	* Finnish translation updated (Timo Jyrinki)
@@ -21,13 +22,16 @@ version 2.0.0:
 	* Hebrew translation updated (Shalom Craimer)
 	* Japanese translation updated (Takeshi Aihana)
 	* Kurdish translation added (Erdal Ronahi and Amed Ç. Jiyan)
+	* Kurdish win32 installer translation added (Erdal Ronahi)
 	* Lithuanian translation updated (Andrius Štikonas)
 	* Portuguese (Brazilian) translation updated (Rodrigo Torres,  Mauricio de
 	  L R Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
 	* Slovenian translation updated (Martin Srebotnjak)
 	* Spanish gaim.desktop translation updated (Javier Fernandez-Sanguino Peña)	
 	* Tamil translation updated (Viveka Nathan K)
 	* Telugu translation added (Mr. Subbaramaih)
+	* Turkish translation updated (Ahmet Alp BALKAN)
 	* Ukrainian translation updated (Maxim V. Dziumanenko)
 
 version 1.5.1:

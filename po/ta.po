@@ -5,16 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: GAIM\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-23 00:00-0500\n"
-"PO-Revision-Date: 2005-12-05 21:04+0900\n"
+"PO-Revision-Date: 2006-01-26 16:33+0900\n"
 "Last-Translator: Viveka Nathan K <vivekanathan@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Poedit-Language: Tamil\n"
+"X-Poedit-Country: INDIA\n"
 
 #. *< type
 #. *< ui_requirement
@@ -1053,7 +1055,7 @@ msgstr "எழுத்தை அடிப்படையாக கொண்ட 
 
 #: plugins/raw.c:178
 msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr ""
+msgstr "எழுத்து முறை வரைமுறைக்கு உள்ளீடுகளை அப்படியே அனுப்ப அனுமதிக்கிறது (Jabber, MSN, IRC, TOC). நுழைவு பெட்டியில்  'Enter' ஐ சொடுக்குவதன் மூலம் அனுப்பலாம். பிழையறிக்கை சாளரத்தை கவனிக்கவும்."
 
 #: plugins/relnot.c:63
 #, c-format
@@ -1072,7 +1074,7 @@ msgstr ""
 #: plugins/relnot.c:74
 #, c-format
 msgid "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
-msgstr ""
+msgstr "நீங்கள் பதிப்பு %s ஐ இங்கே பெறலாம்:<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
 
 #: plugins/relnot.c:78
 #: plugins/relnot.c:79
@@ -1099,7 +1101,7 @@ msgstr "புதிய வெளியீடுகளை தவறாமல் 
 #. *  description
 #: plugins/relnot.c:142
 msgid "Checks periodically for new releases and notifies the user with the ChangeLog."
-msgstr ""
+msgstr "புதிய வெளியீடுகளை தொடர்ந்து கவனித்து மற்றும் பயனாளருக்கு மாற்றப்பதிவு மூலம் அறிவிக்கிறது."
 
 #. *< type
 #. *< ui_requirement
@@ -1109,7 +1111,7 @@ msgstr ""
 #. *< id
 #: plugins/signals-test.c:716
 msgid "Signals Test"
-msgstr ""
+msgstr "சமிக்ஞைகள் சோதனை"
 
 #. *< name
 #. *< version
@@ -1118,7 +1120,7 @@ msgstr ""
 #: plugins/signals-test.c:719
 #: plugins/signals-test.c:721
 msgid "Test to see that all signals are working properly."
-msgstr ""
+msgstr "அனைத்து சமிக்ஞைகளும் சரியாக இயங்குகின்றனவா என்பதற்கான சோதனை."
 
 #. *< type
 #. *< ui_requirement
@@ -1128,7 +1130,7 @@ msgstr ""
 #. *< id
 #: plugins/simple.c:34
 msgid "Simple Plugin"
-msgstr ""
+msgstr "சுருக்கமான சொருகுபொருள்"
 
 #. *< name
 #. *< version
@@ -1137,56 +1139,56 @@ msgstr ""
 #: plugins/simple.c:37
 #: plugins/simple.c:39
 msgid "Tests to see that most things are working."
-msgstr ""
+msgstr "அதிகமான பொருள்கள் இயங்குகின்றனவா என்பதற்கான சோதனைகள்"
 
 #: plugins/spellchk.c:1800
 msgid "Duplicate Correction"
-msgstr ""
+msgstr "நகல் சரிசெய்தல்"
 
 #: plugins/spellchk.c:1801
 msgid "The specified word already exists in the correction list."
-msgstr ""
+msgstr "குறிப்பிட்ட வார்த்தை ஏற்கனவே சரிபார்க்கும் பட்டியலில் உள்ளது."
 
 #: plugins/spellchk.c:1981
 msgid "Text Replacements"
-msgstr ""
+msgstr "வார்த்தை மாற்றுகள்"
 
 #: plugins/spellchk.c:2005
 msgid "You type"
-msgstr ""
+msgstr "நீங்கள் தட்டச்சுசெய்க"
 
 #: plugins/spellchk.c:2017
 msgid "You send"
-msgstr ""
+msgstr "நீங்கள் அனுப்ப"
 
 #: plugins/spellchk.c:2029
 msgid "Whole words only"
-msgstr ""
+msgstr "முழு வார்த்தைகள் மட்டும்"
 
 #: plugins/spellchk.c:2055
 msgid "Add a new text replacement"
-msgstr ""
+msgstr "புதிய மாற்று வார்த்தையை சேர்"
 
 #: plugins/spellchk.c:2065
 msgid "You _type:"
-msgstr ""
+msgstr "நீங்கள் தட்டச்சு செய்க:"
 
 #: plugins/spellchk.c:2081
 msgid "You _send:"
-msgstr ""
+msgstr "நீங்கள் அனுப்ப:"
 
 #: plugins/spellchk.c:2093
 msgid "Only replace _whole words"
-msgstr ""
+msgstr "முழு வார்த்தையை மட்டும் மாற்ற"
 
 #: plugins/spellchk.c:2130
 msgid "Text replacement"
-msgstr ""
+msgstr "வார்த்தை மாற்றல்கள்"
 
 #: plugins/spellchk.c:2132
 #: plugins/spellchk.c:2133
 msgid "Replaces text in outgoing messages according to user-defined rules."
-msgstr ""
+msgstr "பயனாளர் விதித்த முறைப்படி வெளிச்செல்லும் தகவல்களில் வார்த்தையை மாற்றுகிறது."
 
 #. *< type
 #. *< ui_requirement
@@ -1196,7 +1198,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-gnutls.c:227
 msgid "GNUTLS"
-msgstr ""
+msgstr "GNUTLS"
 
 #. *< name
 #. *< version
@@ -1205,7 +1207,7 @@ msgstr ""
 #: plugins/ssl/ssl-gnutls.c:230
 #: plugins/ssl/ssl-gnutls.c:232
 msgid "Provides SSL support through GNUTLS."
-msgstr ""
+msgstr "GNUTLS மூலம் SSL ஆதரவை அளிக்கிறது."
 
 #. *< type
 #. *< ui_requirement
@@ -1215,7 +1217,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl-nss.c:319
 msgid "NSS"
-msgstr ""
+msgstr "NSS"
 
 #. *< name
 #. *< version
@@ -1224,7 +1226,7 @@ msgstr ""
 #: plugins/ssl/ssl-nss.c:322
 #: plugins/ssl/ssl-nss.c:324
 msgid "Provides SSL support through Mozilla NSS."
-msgstr ""
+msgstr "மோஸில்லா NSS மூலம் SSL ஆதரவை அளிக்கிறது."
 
 #. *< type
 #. *< ui_requirement
@@ -1234,7 +1236,7 @@ msgstr ""
 #. *< id
 #: plugins/ssl/ssl.c:94
 msgid "SSL"
-msgstr ""
+msgstr "SSL"
 
 #. *< name
 #. *< version
@@ -1243,53 +1245,53 @@ msgstr ""
 #: plugins/ssl/ssl.c:97
 #: plugins/ssl/ssl.c:99
 msgid "Provides a wrapper around SSL support libraries."
-msgstr ""
+msgstr "SSL ஆதரவு நூலகங்களைச்சுற்றி ஒரு உறையை அளிக்கிறது."
 
 #: plugins/statenotify.c:49
 #, c-format
 msgid "%s is no longer away."
-msgstr ""
+msgstr "%s மேலும் வெளியில் இல்லை."
 
 #: plugins/statenotify.c:51
 #, c-format
 msgid "%s has gone away."
-msgstr ""
+msgstr "%s வெளியே சென்றிருக்கிறார்."
 
 #: plugins/statenotify.c:61
 #, c-format
 msgid "%s has become idle."
-msgstr ""
+msgstr "%s சும்மா இருக்கிறார்."
 
 #: plugins/statenotify.c:63
 #, c-format
 msgid "%s is no longer idle."
-msgstr ""
+msgstr "%s மேலும் சும்மா இல்லை."
 
 #: plugins/statenotify.c:72
 #, c-format
 msgid "%s has signed on."
-msgstr ""
+msgstr "%s உள்ளே நுழைந்துள்ளார்."
 
 #: plugins/statenotify.c:79
 #, c-format
 msgid "%s has signed off."
-msgstr ""
+msgstr "%s வெளியேறிவிட்டார்."
 
 #: plugins/statenotify.c:90
 msgid "Notify When"
-msgstr ""
+msgstr "அப்பொழுது தெரிவி"
 
 #: plugins/statenotify.c:93
 msgid "Buddy Goes _Away"
-msgstr ""
+msgstr "தோழர் வெளியே செல்கிறார்"
 
 #: plugins/statenotify.c:96
 msgid "Buddy Goes _Idle"
-msgstr ""
+msgstr "தோழர் சும்மா இருக்கப்போகிறார்"
 
 #: plugins/statenotify.c:99
 msgid "Buddy _Signs On/Off"
-msgstr ""
+msgstr "தோழர் நுழைய/வெளியேற"
 
 #. *< type
 #. *< ui_requirement
@@ -1299,7 +1301,7 @@ msgstr ""
 #. *< id
 #: plugins/statenotify.c:139
 msgid "Buddy State Notification"
-msgstr ""
+msgstr "தோழர் நிலை அறிவிப்பு"
 
 #. *< name
 #. *< version
@@ -1308,16 +1310,16 @@ msgstr ""
 #: plugins/statenotify.c:142
 #: plugins/statenotify.c:145
 msgid "Notifies in a conversation window when a buddy goes or returns from away or idle."
-msgstr ""
+msgstr "தோழர் வெளியே அல்லது சும்மா இருக்க அல்லது இல்லாமல் இருப்பதை உரையாடல் சாளரத்தில் அறிவிக்கிறது."
 
 #: plugins/tcl/tcl.c:363
 msgid "Tcl Plugin Loader"
-msgstr ""
+msgstr "Tcl சொருகுபொருள் ஏற்பாளர்"
 
 #: plugins/tcl/tcl.c:365
 #: plugins/tcl/tcl.c:366
 msgid "Provides support for loading Tcl plugins"
-msgstr ""
+msgstr "Tcl சொருகுபொருள்களை ஏற்றுவதற்கான ஆதரவை அளிக்கிறது"
 
 #. *< type
 #. *< ui_requirement
@@ -1328,7 +1330,7 @@ msgstr ""
 #: plugins/ticker/ticker.c:75
 #: plugins/ticker/ticker.c:324
 msgid "Buddy Ticker"
-msgstr ""
+msgstr "தோழர் டிக்கர்"
 
 #. *< name
 #. *< version
@@ -1337,19 +1339,19 @@ msgstr ""
 #: plugins/ticker/ticker.c:327
 #: plugins/ticker/ticker.c:329
 msgid "A horizontal scrolling version of the buddy list."
-msgstr ""
+msgstr "தோழர் பட்டியலின் படுகிடை உருளை பதிப்பு."
 
 #: plugins/timestamp.c:202
 msgid "iChat Timestamp"
-msgstr ""
+msgstr "iChat காலச்சுவடு"
 
 #: plugins/timestamp.c:209
 msgid "Delay"
-msgstr ""
+msgstr "தாமதம்"
 
 #: plugins/timestamp.c:216
 msgid "minutes."
-msgstr ""
+msgstr "நிமிடங்கள்."
 
 #. *< type
 #. *< ui_requirement
@@ -1359,7 +1361,7 @@ msgstr ""
 #. *< id
 #: plugins/timestamp.c:279
 msgid "Timestamp"
-msgstr ""
+msgstr "காலச்சுவடு"
 
 #. *< name
 #. *< version
@@ -1368,48 +1370,48 @@ msgstr ""
 #: plugins/timestamp.c:282
 #: plugins/timestamp.c:284
 msgid "Adds iChat-style timestamps to conversations every N minutes."
-msgstr ""
+msgstr "ஒவ்வொரு N நிமிடங்களுக்கும் iChat-வகை காலச்சுவடுகளை உரையாடல்களுடன் சேர்க்கிறது."
 
 #: plugins/win32/transparency/win2ktrans.c:183
 #: plugins/win32/transparency/win2ktrans.c:569
 #: plugins/win32/transparency/win2ktrans.c:616
 msgid "Opacity:"
-msgstr ""
+msgstr "ஊடுருவாதன்மை:"
 
 #. IM Convo trans options
 #: plugins/win32/transparency/win2ktrans.c:533
 msgid "IM Conversation Windows"
-msgstr ""
+msgstr "IM உரையாடல் சாளரங்கள்"
 
 #: plugins/win32/transparency/win2ktrans.c:534
 msgid "_IM window transparency"
-msgstr ""
+msgstr "_IM சாளர ஊடுருவல்"
 
 #: plugins/win32/transparency/win2ktrans.c:548
 msgid "_Show slider bar in IM window"
-msgstr ""
+msgstr "IM சாளரத்தில் நகர்த்தல் பட்டியை காட்டு"
 
 #: plugins/win32/transparency/win2ktrans.c:555
 msgid "Remove IM window transparency on focus"
-msgstr ""
+msgstr "குவிக்கும்பொழுது IM சாளர ஊடுருவல் தன்மையை நீக்கு"
 
 #: plugins/win32/transparency/win2ktrans.c:558
 #: plugins/win32/transparency/win2ktrans.c:606
 msgid "Always on top"
-msgstr ""
+msgstr "எப்பொழுதம் மேலே"
 
 #. Buddy List trans options
 #: plugins/win32/transparency/win2ktrans.c:590
 msgid "Buddy List Window"
-msgstr ""
+msgstr "தோழர் பட்டியல் சாளரம்"
 
 #: plugins/win32/transparency/win2ktrans.c:591
 msgid "_Buddy List window transparency"
-msgstr ""
+msgstr "தோழர் பட்டியல் சாளர ஊடுருவல் தன்மை"
 
 #: plugins/win32/transparency/win2ktrans.c:604
 msgid "Remove Buddy List window transparency on focus"
-msgstr ""
+msgstr "குவிக்கும்பொழுது தோழர் பட்டியல் சாளர ஊடுருவல் தன்மையை நீக்கு"
 
 #. *< type
 #. *< ui_requirement
@@ -1419,14 +1421,14 @@ msgstr ""
 #. *< id
 #: plugins/win32/transparency/win2ktrans.c:657
 msgid "Transparency"
-msgstr ""
+msgstr "ஊடுருவல் தன்மை"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/win32/transparency/win2ktrans.c:660
 msgid "Variable Transparency for the buddy list and conversations."
-msgstr ""
+msgstr "தோழர் பட்டியல் மற்றும் உரையாடல்களுக்கான  மாறுபட்ட ஊடுருவல் தன்மை"
 
 #. *  description
 #: plugins/win32/transparency/win2ktrans.c:662
@@ -1435,94 +1437,97 @@ msgid ""
 "\n"
 "* Note: This plugin requires Win2000 or greater."
 msgstr ""
+"இந்த சொருகுபொருள் உரையாடல் சாளரங்களில் மற்றும் தோழர் பட்டியலில் மாறுபட்ட ஆல்பா ஊடுருவல் தன்மையை இயலுமைபடுத்துகிறது.\n"
+"\n"
+"*குறிப்பு: இச்சொருகுபொருளிற்கு Win2000 அல்லது அதற்கு மேலும் தேவைப்படும்."
 
 #: plugins/win32/winprefs/winprefs.c:385
 msgid "GTK+ Runtime Version"
-msgstr ""
+msgstr "GTK+ ஒடும் நேரம் பதிப்பு"
 
 #. Autostart
 #: plugins/win32/winprefs/winprefs.c:393
 msgid "Startup"
-msgstr ""
+msgstr "ஆரம்பம்"
 
 #: plugins/win32/winprefs/winprefs.c:394
 msgid "_Start Gaim on Windows startup"
-msgstr ""
+msgstr "சாளரங்களின் ஆரம்பத்தில் கெய்மை துவக்கு"
 
 #. Buddy List
 #: plugins/win32/winprefs/winprefs.c:405
 #: src/gtkblist.c:3396
 msgid "Buddy List"
-msgstr ""
+msgstr "தோழர் பட்டியல்"
 
 #: plugins/win32/winprefs/winprefs.c:406
 msgid "_Dockable Buddy List"
-msgstr ""
+msgstr "_Dockable தோழர் பட்டியல்"
 
 #. Blist On Top
 #: plugins/win32/winprefs/winprefs.c:410
 msgid "_Keep Buddy List window on top:"
-msgstr ""
+msgstr "தோழர் பட்டியல் சாளரத்தை மேலே வை"
 
 #: plugins/win32/winprefs/winprefs.c:412
 #: src/gtkprefs.c:816
 #: src/gtkprefs.c:1665
 msgid "Never"
-msgstr ""
+msgstr "ஒருபோதுமில்லை"
 
 #: plugins/win32/winprefs/winprefs.c:413
 #: src/gtkprefs.c:818
 msgid "Always"
-msgstr ""
+msgstr "எப்பொழுதும்"
 
 #. XXX: Did this ever work?
 #: plugins/win32/winprefs/winprefs.c:415
 msgid "Only when docked"
-msgstr ""
+msgstr "இணைப்பின் பொழுது மட்டும்"
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:419
 #: src/gtkprefs.c:812
 #: src/gtkprefs.c:1743
 msgid "Conversations"
-msgstr ""
+msgstr "உரையாடல்கள்"
 
 #: plugins/win32/winprefs/winprefs.c:420
 msgid "_Flash window when messages are received"
-msgstr ""
+msgstr "தகவல்கள் பெறப்படும்பொழுது சாளரத்தை ஒளிக்கச்செய்"
 
 #: plugins/win32/winprefs/winprefs.c:443
 msgid "WinGaim Options"
-msgstr ""
+msgstr "WinGaim விருப்பங்கள்"
 
 #: plugins/win32/winprefs/winprefs.c:445
 msgid "Options specific to Windows Gaim."
-msgstr ""
+msgstr "விண்டோஸ் கெய்மிற்காக மட்டும் உள்ள விருப்பங்கள்."
 
 #: plugins/win32/winprefs/winprefs.c:446
 msgid "Provides options specific to Windows Gaim, such as buddy list docking and conversation flashing."
-msgstr ""
+msgstr "விண்டோஸ் கெய்மிற்கான விருப்பங்களை கொடுக்கிறது, அதாவது தோழர் பட்டியல் இணைப்பு மற்றும் உரையாடல் ஒளித்தல்."
 
 #: src/account.c:773
 msgid "accounts"
-msgstr ""
+msgstr "கணக்குகள்"
 
 #: src/account.c:923
 msgid "Password is required to sign on."
-msgstr ""
+msgstr "உள்ளே நுழைய கடவுச்சொல் தேவை."
 
 #: src/account.c:948
 #, c-format
 msgid "Enter password for %s (%s)"
-msgstr ""
+msgstr "%s ற்கு கடவுச்சொல்லை கொடுக்கவும்  (%s)"
 
 #: src/account.c:955
 msgid "Enter Password"
-msgstr ""
+msgstr "கடவுச்சொல்லை கொடுக்கவும்"
 
 #: src/account.c:960
 msgid "Save password"
-msgstr ""
+msgstr "கடவுச்சொல்லை சேமிக்கவும்"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
@@ -1562,7 +1567,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2993
 #: src/request.h:1331
 msgid "OK"
-msgstr ""
+msgstr "சரி"
 
 #: src/account.c:969
 #: src/account.c:1124
@@ -1635,61 +1640,61 @@ msgstr ""
 #: src/request.h:1331
 #: src/request.h:1341
 msgid "Cancel"
-msgstr ""
+msgstr "நீக்கு"
 
 #: src/account.c:994
 #: src/connection.c:96
 #, c-format
 msgid "Missing protocol plugin for %s"
-msgstr ""
+msgstr "%s ற்கான தவறிய வரைமுறை சொருகுபொருள்"
 
 #: src/account.c:996
 #: src/connection.c:99
 msgid "Connection Error"
-msgstr ""
+msgstr "இணைப்பில் பிழை"
 
 #: src/account.c:1060
 #: src/protocols/gg/gg.c:641
 #: src/protocols/jabber/jabber.c:1115
 msgid "New passwords do not match."
-msgstr ""
+msgstr "புதிய கடவுச்சொற்கள் பொருந்தவில்லை."
 
 #: src/account.c:1069
 msgid "Fill out all fields completely."
-msgstr ""
+msgstr "அனைத்து கட்டங்களையும் முழுமையாக பூர்த்தி செய்க."
 
 #: src/account.c:1092
 msgid "Original password"
-msgstr ""
+msgstr "அசல் கடவுச்சொல்"
 
 #: src/account.c:1099
 msgid "New password"
-msgstr ""
+msgstr "புதிய கடவுச்சொல்"
 
 #: src/account.c:1106
 msgid "New password (again)"
-msgstr ""
+msgstr "புதிய கடவுச்சொல் (மீண்டும்)"
 
 #: src/account.c:1112
 #, c-format
 msgid "Change password for %s"
-msgstr ""
+msgstr "%s ற்கான கடவுச்சொல்லை மாற்று"
 
 #: src/account.c:1120
 msgid "Please enter your current password and your new password."
-msgstr ""
+msgstr "தயவுசெய்து உங்களது தற்போதைய மற்றும் புதிய கடவுச்சொற்களை கொடுக்கவும்."
 
 #: src/account.c:1153
 #, c-format
 msgid "Change user information for %s"
-msgstr ""
+msgstr "%s ற்கான பயனாளர் தகவல்களை மாற்று"
 
 #: src/account.c:1161
 #: src/gtkdebug.c:684
 #: src/gtkrequest.c:268
 #: src/protocols/jabber/buddy.c:572
 msgid "Save"
-msgstr ""
+msgstr "சேமி"
 
 #: src/account.c:1656
 #: src/gtkft.c:157
@@ -1698,15 +1703,15 @@ msgstr ""
 #: src/protocols/jabber/buddy.c:1100
 #: src/protocols/novell/novell.c:2842
 msgid "Unknown"
-msgstr ""
+msgstr "தெரியாத"
 
 #: src/blist.c:545
 msgid "buddy list"
-msgstr ""
+msgstr "தோழர் பட்டியல்"
 
 #: src/blist.c:1146
 msgid "Chats"
-msgstr ""
+msgstr "அரட்டைகள்"
 
 #: src/blist.c:1845
 #, c-format
@@ -1717,84 +1722,84 @@ msgstr[1] ""
 
 #: src/blist.c:1854
 msgid "Group not removed"
-msgstr ""
+msgstr "குழு நீக்கப்படவில்லை"
 
 #: src/connection.c:98
 msgid "Registration Error"
-msgstr ""
+msgstr "பதிவு பிழை"
 
 #: src/connection.c:280
 #, c-format
 msgid "+++ %s signed on"
-msgstr ""
+msgstr "+++ %s நுழைந்துள்ளார்"
 
 #: src/connection.c:323
 #, c-format
 msgid "+++ %s signed off"
-msgstr ""
+msgstr "+++ %s வெளியேறிவிட்டார்"
 
 #: src/conversation.c:213
 msgid "Unable to send message: The message is too large."
-msgstr ""
+msgstr "தகவல் அனுப்ப இயலவில்லை: தகவல் மிக நீளமாக உள்ளது."
 
 #: src/conversation.c:216
 #: src/conversation.c:229
 #, c-format
 msgid "Unable to send message to %s."
-msgstr ""
+msgstr "%s ற்கு தகவல் அனுப்ப இயலவில்லை."
 
 #: src/conversation.c:217
 msgid "The message is too large."
-msgstr ""
+msgstr "தகவல் மிக நீளமாக உள்ளது."
 
 #: src/conversation.c:226
 msgid "Unable to send message."
-msgstr ""
+msgstr "தகவல் அனுப்ப இயலவில்லை."
 
 #: src/conversation.c:1520
 #, c-format
 msgid "%s entered the room."
-msgstr ""
+msgstr "%s அறையில் நுழைந்துள்ளார்."
 
 #: src/conversation.c:1522
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
-msgstr ""
+msgstr "%s [<I>%s</I>] அறையில் நுழைந்தார்."
 
 #: src/conversation.c:1625
 #, c-format
 msgid "You are now known as %s"
-msgstr ""
+msgstr "நீங்கள் %s ஆக தெரிகிறீர்கள்"
 
 #: src/conversation.c:1640
 #, c-format
 msgid "%s is now known as %s"
-msgstr ""
+msgstr "%s இப்பொழுது %s ஆக தெரிகிறார்"
 
 #: src/conversation.c:1696
 #, c-format
 msgid "%s left the room (%s)."
-msgstr ""
+msgstr "%s அறையை விட்டு வெளியேறினார் (%s)."
 
 #: src/conversation.c:1698
 #, c-format
 msgid "%s left the room."
-msgstr ""
+msgstr "%s அறையை விட்டு வெளியேறினார்."
 
 #: src/conversation.c:1775
 #, c-format
 msgid "(+%d more)"
-msgstr ""
+msgstr "(+%d மேலும்)"
 
 #: src/conversation.c:1777
 #, c-format
 msgid " left the room (%s)."
-msgstr ""
+msgstr "அறையை விட்டு வெளியேற்றம் (%s)."
 
 #: src/desktopitem.c:286
 #: src/desktopitem.c:875
 msgid "No name"
-msgstr ""
+msgstr "பெயரற்ற"
 
 #: src/ft.c:188
 #: src/protocols/msn/msn.c:412
@@ -1803,6 +1808,8 @@ msgid ""
 "Error reading %s: \n"
 "%s.\n"
 msgstr ""
+"%s வாசிப்பதில் பிழை: \n"
+"%s.\n"
 
 #: src/ft.c:192
 #, c-format
@@ -1810,6 +1817,8 @@ msgid ""
 "Error writing %s: \n"
 "%s.\n"
 msgstr ""
+"%s யை எழுதுவதில் பிழை: \n"
+"%s.\n"
 
 #: src/ft.c:196
 #, c-format
@@ -1817,34 +1826,36 @@ msgid ""
 "Error accessing %s: \n"
 "%s.\n"
 msgstr ""
+"%s யை ஏற்பதில் பிழை: \n"
+"%s.\n"
 
 #: src/ft.c:229
 msgid "Cannot send a file of 0 bytes."
-msgstr ""
+msgstr "0 பைட்டுகள் கொண்ட கோப்பை அனுப்ப முடியாது."
 
 #: src/ft.c:239
 msgid "Cannot send a directory."
-msgstr ""
+msgstr "கோப்பை அனுப்ப முடியாது."
 
 #: src/ft.c:248
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr ""
+msgstr "%s முறையான கோப்பு அல்ல. பயத்தினால் மேலெழுத மறுக்கிறது.\n"
 
 #: src/ft.c:306
 #, c-format
 msgid "%s wants to send you %s (%s)"
-msgstr ""
+msgstr "%s உங்களுக்கு %s யை அனுப்ப விரும்புகிறார் (%s)"
 
 #: src/ft.c:313
 #, c-format
 msgid "%s wants to send you a file"
-msgstr ""
+msgstr "%s உங்களுக்கு கோப்பை அனுப்ப விரும்புகிறார்"
 
 #: src/ft.c:354
 #, c-format
 msgid "Accept file transfer request from %s?"
-msgstr ""
+msgstr "%s இடமிருந்து கோப்பு பரிமாற்றத்தை ஏற்கவா?"
 
 #: src/ft.c:358
 #, c-format
@@ -1853,64 +1864,67 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
+"ஒரு கோப்பு இறக்குமதி செய்ய ஏதுவாக உள்ளது இங்கே:\n"
+"தொலைவு புரவலர்: %s\n"
+"தொலைவு தளம்: %d"
 
 #: src/ft.c:382
 #, c-format
 msgid "%s is offering to send file %s"
-msgstr ""
+msgstr "%s கோப்பு %s யை அனுப்ப வேண்டுகிறார்"
 
 #: src/ft.c:426
 #, c-format
 msgid "%s is not a valid filename.\n"
-msgstr ""
+msgstr "%s முறையான கோப்பு பெயர் அல்ல.\n"
 
 #: src/ft.c:447
 #, c-format
 msgid "Offering to send %s to %s"
-msgstr ""
+msgstr "%s லிருந்து %s க்கு அனுப்ப கோருகிறது"
 
 #: src/ft.c:458
 #, c-format
 msgid "Starting transfer of %s from %s"
-msgstr ""
+msgstr "%s லிருந்து %s க்கு பரிமாற்றம் ஆரம்பம்"
 
 #: src/ft.c:612
 #, c-format
 msgid "Transfer of file %s complete"
-msgstr ""
+msgstr "%s கோப்பு பரிமாற்றம் முடிந்தது"
 
 #: src/ft.c:615
 msgid "File transfer complete"
-msgstr ""
+msgstr "கோப்பு பரிமாற்றம் முடிந்தது"
 
 #: src/ft.c:999
 #, c-format
 msgid "You canceled the transfer of %s"
-msgstr ""
+msgstr "%s பரிமாற்றத்தை நீங்கள் நீக்கிவிட்டீர்கள்"
 
 #: src/ft.c:1004
 msgid "File transfer cancelled"
-msgstr ""
+msgstr "கோப்பு பரிமாற்றம் நீக்கப்பட்டது"
 
 #: src/ft.c:1061
 #, c-format
 msgid "%s canceled the transfer of %s"
-msgstr ""
+msgstr "%s %s பரிமாற்றத்தை நீக்கினார்"
 
 #: src/ft.c:1066
 #, c-format
 msgid "%s canceled the file transfer"
-msgstr ""
+msgstr "%s கோப்பு பரிமாற்றத்தை நீக்கினார்"
 
 #: src/ft.c:1123
 #, c-format
 msgid "File transfer to %s failed."
-msgstr ""
+msgstr "%s ற்கு கோப்பு பரிமாற்றம் தவறியது."
 
 #: src/ft.c:1125
 #, c-format
 msgid "File transfer from %s failed."
-msgstr ""
+msgstr "%s லிருந்து கோப்பு பரிமாற்றம் தவறியது."
 
 #: src/gtkaccount.c:357
 #, c-format
@@ -1919,156 +1933,159 @@ msgid ""
 "<b>File size:</b> %s\n"
 "<b>Image size:</b> %dx%d"
 msgstr ""
+"<b>கோப்பு:</b> %s\n"
+"<b>கோப்பு அளவு:</b> %s\n"
+"<b>பிம்ப அளவு:</b> %dx%d"
 
 #. Build the login options frame.
 #: src/gtkaccount.c:725
 msgid "Login Options"
-msgstr ""
+msgstr "நுழையும் விருப்பங்கள்"
 
 #: src/gtkaccount.c:742
 #: src/gtkft.c:625
 msgid "Protocol:"
-msgstr ""
+msgstr "நெறிமுறை:"
 
 #: src/gtkaccount.c:747
 msgid "Screen name:"
-msgstr ""
+msgstr "திரைப்பெயர்:"
 
 #: src/gtkaccount.c:821
 msgid "Password:"
-msgstr ""
+msgstr "கடவுச்சொல்:"
 
 #: src/gtkaccount.c:826
 #: src/gtkblist.c:4304
 #: src/gtkblist.c:4686
 msgid "Alias:"
-msgstr ""
+msgstr "புனைப்பெயர்:"
 
 #: src/gtkaccount.c:830
 msgid "Remember password"
-msgstr ""
+msgstr "கடவுச்சொல்லை நினைவுகொள்"
 
 #. Build the user options frame.
 #: src/gtkaccount.c:875
 msgid "User Options"
-msgstr ""
+msgstr "பயனாளர் விருப்பங்கள்"
 
 #: src/gtkaccount.c:888
 msgid "New mail notifications"
-msgstr ""
+msgstr "புதிய அஞ்சல் அறவிப்புகள்"
 
 #: src/gtkaccount.c:897
 msgid "Buddy icon:"
-msgstr ""
+msgstr "தோழர் குறும்படம்:"
 
 #. Build the protocol options frame.
 #: src/gtkaccount.c:988
 #, c-format
 msgid "%s Options"
-msgstr ""
+msgstr "%s விருப்பங்கள்"
 
 #: src/gtkaccount.c:1189
 msgid "Use Global Proxy Settings"
-msgstr ""
+msgstr "உலகளாவிய பதிலாள் அமைப்புகளை பயன்படுத்து"
 
 #: src/gtkaccount.c:1195
 msgid "No Proxy"
-msgstr ""
+msgstr "பதிலாள் இல்லை"
 
 #: src/gtkaccount.c:1201
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: src/gtkaccount.c:1207
 msgid "SOCKS 4"
-msgstr ""
+msgstr "SOCKS 4"
 
 #: src/gtkaccount.c:1213
 msgid "SOCKS 5"
-msgstr ""
+msgstr "SOCKS 5"
 
 #: src/gtkaccount.c:1219
 #: src/gtkprefs.c:1030
 msgid "Use Environmental Settings"
-msgstr ""
+msgstr "சுற்றுப்புற அமைப்புகளை பயன்படுத்து"
 
 #: src/gtkaccount.c:1253
 msgid "you can see the butterflies mating"
-msgstr ""
+msgstr "பட்டுப்பூச்சிகள் உறவாடுவதை உங்களால் பார்க்க இயலும்"
 
 #: src/gtkaccount.c:1257
 msgid "If you look real closely"
-msgstr ""
+msgstr "நீங்கள் மெய்யாக கூர்ந்து கவனித்தால்"
 
 #: src/gtkaccount.c:1273
 msgid "Proxy Options"
-msgstr ""
+msgstr "பதிலாள் விருப்பங்கள்"
 
 #: src/gtkaccount.c:1287
 #: src/gtkprefs.c:1024
 msgid "Proxy _type:"
-msgstr ""
+msgstr "பதிலாள் வகை:"
 
 #: src/gtkaccount.c:1296
 #: src/gtkprefs.c:1045
 msgid "_Host:"
-msgstr ""
+msgstr "புரவலர்:"
 
 #: src/gtkaccount.c:1300
 #: src/gtkprefs.c:1063
 msgid "_Port:"
-msgstr ""
+msgstr "தளம்:"
 
 #: src/gtkaccount.c:1308
 msgid "_Username:"
-msgstr ""
+msgstr "பயனாளர்:"
 
 #: src/gtkaccount.c:1314
 #: src/gtkprefs.c:1100
 msgid "Pa_ssword:"
-msgstr ""
+msgstr "கடவுச்சொல்:"
 
 #: src/gtkaccount.c:1690
 msgid "Add Account"
-msgstr ""
+msgstr "கணக்கை சேர்"
 
 #: src/gtkaccount.c:1692
 msgid "Modify Account"
-msgstr ""
+msgstr "கணக்கை மாற்று"
 
 #. Register button
 #: src/gtkaccount.c:1740
 #: src/protocols/jabber/jabber.c:706
 msgid "Register"
-msgstr ""
+msgstr "பதிவு"
 
 #: src/gtkaccount.c:2123
 #: src/gtksavedstatuses.c:295
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr ""
+msgstr "உறுதியாக %s யை அழிக்கலாமா?"
 
 #: src/gtkaccount.c:2128
 #: src/gtkpounce.c:999
 #: src/gtkrequest.c:265
 #: src/gtksavedstatuses.c:298
 msgid "Delete"
-msgstr ""
+msgstr "அழி"
 
 #: src/gtkaccount.c:2186
 #: src/gtksavedstatuses.c:864
 #: src/protocols/oscar/oscar.c:5051
 msgid "Screen Name"
-msgstr ""
+msgstr "திரைப்பெயர்"
 
 #: src/gtkaccount.c:2217
 msgid "Protocol"
-msgstr ""
+msgstr "நெறிமுறை"
 
 #: src/gtkaccount.c:2549
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
-msgstr ""
+msgstr "%s%s%s%s ஆனவர் %s யை அவர் அல்லது அவள் தோழர் %s%s%s ஆக செய்துள்ளார்"
 
 #: src/gtkaccount.c:2563
 msgid ""
@@ -2076,10 +2093,13 @@ msgid ""
 "\n"
 "Do you wish to add him or her to your buddy list?"
 msgstr ""
+"\n"
+"\n"
+"அவர் அல்லது அவளை உங்களது தோழர் பட்டியலில் சேர்க்க விருப்பமா?"
 
 #: src/gtkaccount.c:2571
 msgid "Add buddy to your list?"
-msgstr ""
+msgstr "தோழரை உங்களது பட்டியலில் சேர்க்கவா?"
 
 #: src/gtkaccount.c:2573
 #: src/gtkblist.c:4738
@@ -2090,94 +2110,94 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:5554
 #: src/protocols/silc/chat.c:595
 msgid "Add"
-msgstr ""
+msgstr "சேர்"
 
 #: src/gtkblist.c:621
 msgid "Join a Chat"
-msgstr ""
+msgstr "அரட்டையில் இணை"
 
 #: src/gtkblist.c:642
 msgid "Please enter the appropriate information about the chat you would like to join.\n"
-msgstr ""
+msgstr "நீங்கள் இணைய விரும்பும் அரட்டை பற்றிய சரியான குறிப்புகளை தயவுசெய்து கொடுக்கவும்.\n"
 
 #: src/gtkblist.c:653
 #: src/gtkpounce.c:500
 #: src/gtkroomlist.c:354
 msgid "_Account:"
-msgstr ""
+msgstr "கணக்கு:"
 
 #: src/gtkblist.c:961
 msgid "Get _Info"
-msgstr ""
+msgstr "தகவல் பெறு"
 
 #: src/gtkblist.c:964
 msgid "I_M"
-msgstr ""
+msgstr "I_M"
 
 #: src/gtkblist.c:970
 msgid "_Send File"
-msgstr ""
+msgstr "கோப்பு அனுப்பு"
 
 #: src/gtkblist.c:978
 msgid "Start _Voice Chat"
-msgstr ""
+msgstr "குரல் அரட்டையை துவங்கு"
 
 #: src/gtkblist.c:984
 msgid "Add Buddy _Pounce"
-msgstr ""
+msgstr "தோழர் இறஞ்சுதலை சேர்"
 
 #: src/gtkblist.c:988
 #: src/gtkblist.c:992
 #: src/gtkblist.c:1092
 #: src/gtkblist.c:1115
 msgid "View _Log"
-msgstr ""
+msgstr "பதிவை காண்"
 
 #: src/gtkblist.c:1003
 msgid "_Alias Buddy..."
-msgstr ""
+msgstr "தோழர் புனைப்பெயர்..."
 
 #: src/gtkblist.c:1005
 msgid "_Remove Buddy"
-msgstr ""
+msgstr "தோழரை நீக்கு"
 
 #: src/gtkblist.c:1007
 msgid "Alias Contact..."
-msgstr ""
+msgstr "புனைப்பெயர் முகவரி..."
 
 #: src/gtkblist.c:1010
 #: src/gtkdialogs.c:823
 #: src/gtkdialogs.c:824
 msgid "Remove Contact"
-msgstr ""
+msgstr "முகவரியை நீக்கு..."
 
 #: src/gtkblist.c:1014
 #: src/gtkblist.c:1100
 #: src/gtkblist.c:1121
 msgid "_Alias..."
-msgstr ""
+msgstr "புனைப்பெயர்..."
 
 #: src/gtkblist.c:1016
 #: src/gtkblist.c:1102
 #: src/gtkblist.c:1123
 msgid "_Remove"
-msgstr ""
+msgstr "நீக்கு"
 
 #: src/gtkblist.c:1063
 msgid "Add a _Buddy"
-msgstr ""
+msgstr "தோழரை சேர்"
 
 #: src/gtkblist.c:1065
 msgid "Add a C_hat"
-msgstr ""
+msgstr "அரட்டையை சேர்"
 
 #: src/gtkblist.c:1068
 msgid "_Delete Group"
-msgstr ""
+msgstr "குழுவை நீக்கு"
 
 #: src/gtkblist.c:1070
 msgid "_Rename"
-msgstr ""
+msgstr "பெயர்மாற்று"
 
 #. join button
 #: src/gtkblist.c:1088
@@ -2185,149 +2205,149 @@ msgstr ""
 #: src/gtkroomlist.c:409
 #: src/gtkstock.c:139
 msgid "_Join"
-msgstr ""
+msgstr "இணை"
 
 #: src/gtkblist.c:1090
 msgid "Auto-Join"
-msgstr ""
+msgstr "சுய-இணைப்பு"
 
 #: src/gtkblist.c:1128
 #: src/gtkblist.c:1151
 msgid "_Collapse"
-msgstr ""
+msgstr "சுருங்கு"
 
 #: src/gtkblist.c:1156
 msgid "_Expand"
-msgstr ""
+msgstr "விரிவு"
 
 #: src/gtkblist.c:1389
 #: src/gtkblist.c:1399
 #: src/gtkblist.c:3566
 #: src/gtkblist.c:3571
 msgid "/Tools/Mute Sounds"
-msgstr ""
+msgstr "/கருவிகள்/ஒலியை ஊமையாக்கு"
 
 #: src/gtkblist.c:1858
 #: src/gtkconv.c:3848
 #: src/gtkpounce.c:399
 msgid "You are not currently signed on with an account that can add that buddy."
-msgstr ""
+msgstr "தோழரை சேர்ப்பதற்கு ஏதுவான கணக்கில் நீங்கள் நுழையவில்லை."
 
 #. Buddies menu
 #: src/gtkblist.c:2422
 msgid "/_Buddies"
-msgstr ""
+msgstr "/தோழர்கள்"
 
 #: src/gtkblist.c:2423
 msgid "/Buddies/New Instant _Message..."
-msgstr ""
+msgstr "/தோழர்கள்/புதிய உடனடி தகவல்..."
 
 #: src/gtkblist.c:2424
 msgid "/Buddies/Join a _Chat..."
-msgstr ""
+msgstr "/தோழர்கள்/அரட்டையில் இணை..."
 
 #: src/gtkblist.c:2425
 msgid "/Buddies/Get User _Info..."
-msgstr ""
+msgstr "/தோழர்கள்/பயனாளர் தகவலை பெறு..."
 
 #: src/gtkblist.c:2426
 msgid "/Buddies/View User _Log..."
-msgstr ""
+msgstr "/தோழர்கள்/பயனாளர் பதிவை காண்..."
 
 #: src/gtkblist.c:2428
 msgid "/Buddies/Show _Offline Buddies"
-msgstr ""
+msgstr "/தோழர்கள்/இணைப்பில் இல்லா தோழர்களைக்காட்டு"
 
 #: src/gtkblist.c:2429
 msgid "/Buddies/Show _Empty Groups"
-msgstr ""
+msgstr "/தோழர்கள்/காலியான குழுக்களை காட்டு"
 
 #: src/gtkblist.c:2430
 msgid "/Buddies/Show Buddy _Details"
-msgstr ""
+msgstr "/தோழர்கள்/தோழர் குறிப்புகளைக்காட்டு"
 
 #: src/gtkblist.c:2431
 #: src/gtkblist.c:5439
 msgid "/Buddies/Sort Buddies"
-msgstr ""
+msgstr "/தோழர்கள்/தோழர்களை வரிசைப்படுத்து"
 
 #: src/gtkblist.c:2433
 msgid "/Buddies/_Add Buddy..."
-msgstr ""
+msgstr "/தோழர்கள்/தோழரை சேர்..."
 
 #: src/gtkblist.c:2434
 msgid "/Buddies/Add C_hat..."
-msgstr ""
+msgstr "/தோழர்கள்/அரட்டையை சேர்..."
 
 #: src/gtkblist.c:2435
 msgid "/Buddies/Add _Group..."
-msgstr ""
+msgstr "/தோழர்கள்/குழுவை சேர்..."
 
 #: src/gtkblist.c:2437
 msgid "/Buddies/_Quit"
-msgstr ""
+msgstr "/தோழர்கள்/வெளியே"
 
 #. Tools
 #: src/gtkblist.c:2440
 msgid "/_Tools"
-msgstr ""
+msgstr "/கருவிகள்"
 
 #: src/gtkblist.c:2441
 msgid "/Tools/Account Ac_tions"
-msgstr ""
+msgstr "/கருவிகள்/கணக்கின் செயல்பாடுகள்"
 
 #: src/gtkblist.c:2443
 msgid "/Tools/A_ccounts"
-msgstr ""
+msgstr "/கருவிகள்/கணக்குகள்"
 
 #: src/gtkblist.c:2444
 msgid "/Tools/Buddy _Pounces"
-msgstr ""
+msgstr "/கருவிகள்/தோழர் இறஞ்சுதல்கள்"
 
 #: src/gtkblist.c:2445
 msgid "/Tools/Plu_gins"
-msgstr ""
+msgstr "/கருவிகள்/சொருகுபொருள்கள்"
 
 #: src/gtkblist.c:2446
 msgid "/Tools/Pr_eferences"
-msgstr ""
+msgstr "/கருவிகள்/முன்னுரிமைகள்"
 
 #: src/gtkblist.c:2447
 msgid "/Tools/Pr_ivacy"
-msgstr ""
+msgstr "/கருவிகள்/தனிமை"
 
 #: src/gtkblist.c:2449
 msgid "/Tools/_File Transfers"
-msgstr ""
+msgstr "/கருவிகள்/கோப்பு பரிமாற்றங்கள்"
 
 #: src/gtkblist.c:2450
 msgid "/Tools/R_oom List"
-msgstr ""
+msgstr "/கருவிகள்/அறை பட்டியல்"
 
 #: src/gtkblist.c:2451
 msgid "/Tools/View System _Log"
-msgstr ""
+msgstr "/கருவிகள்/கணினி பதிவை காண்"
 
 #: src/gtkblist.c:2453
 msgid "/Tools/Mute _Sounds"
-msgstr ""
+msgstr "/கருவிகள்/ஒலிகளை ஊமையாக்கு"
 
 #. Help
 #: src/gtkblist.c:2456
 msgid "/_Help"
-msgstr ""
+msgstr "/_உதவி"
 
 #: src/gtkblist.c:2457
 msgid "/Help/Online _Help"
-msgstr ""
+msgstr "/உதவி/இணைப்புடன் உதவி"
 
 #: src/gtkblist.c:2458
 msgid "/Help/_Debug Window"
-msgstr ""
+msgstr "/உதவி/பிழையறிதல் சாளரம்"
 
 #: src/gtkblist.c:2459
 msgid "/Help/_About"
-msgstr ""
+msgstr "/உதவி/பற்றி"
 
 #: src/gtkblist.c:2491
 #: src/gtkblist.c:2558
@@ -2336,6 +2356,8 @@ msgid ""
 "\n"
 "<b>Account:</b> %s"
 msgstr ""
+"\n"
+"<b>கணக்கு:</b> %s"
 
 #: src/gtkblist.c:2567
 #, c-format
@@ -2343,6 +2365,8 @@ msgid ""
 "\n"
 "<b>Contact Alias:</b> %s"
 msgstr ""
+"\n"
+"<b>தொடர்புகொள்ள புனைப்பெயர்:</b> %s"
 
 #: src/gtkblist.c:2575
 #, c-format
@@ -2350,6 +2374,8 @@ msgid ""
 "\n"
 "<b>Alias:</b> %s"
 msgstr ""
+"\n"
+"<b>புனைப்பெயர்:</b> %s"
 
 #: src/gtkblist.c:2583
 #, c-format
@@ -2357,6 +2383,8 @@ msgid ""
 "\n"
 "<b>Nickname:</b> %s"
 msgstr ""
+"\n"
+"<b>குறும்பெயர்:</b> %s"
 
 #: src/gtkblist.c:2592
 #, c-format
@@ -2364,6 +2392,8 @@ msgid ""
 "\n"
 "<b>Logged In:</b> %s"
 msgstr ""
+"\n"
+"<b>நுழைந்துள்ளார்:</b> %s"
 
 #: src/gtkblist.c:2604
 #, c-format
@@ -2371,6 +2401,8 @@ msgid ""
 "\n"
 "<b>Idle:</b> %s"
 msgstr ""
+"\n"
+"<b>எதுவும் செய்யாமல்:</b> %s"
 
 #: src/gtkblist.c:2639
 #, c-format
@@ -2378,126 +2410,136 @@ msgid ""
 "\n"
 "<b>Last Seen:</b> %s ago"
 msgstr ""
+"\n"
+"<b>கடைசியாக காணப்பட்டது:</b> %s முன்"
 
 #: src/gtkblist.c:2647
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
 msgstr ""
+"\n"
+"<b>நிலை:</b> இணைப்பற்ற"
 
 #: src/gtkblist.c:2670
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
 msgstr ""
+"\n"
+"<b>விரிவாக:</b> சொல்லமுடியாத"
 
 #: src/gtkblist.c:2672
 msgid ""
 "\n"
 "<b>Status:</b> Awesome"
 msgstr ""
+"\n"
+"<b>நிலை:</b> சிறப்பான"
 
 #: src/gtkblist.c:2674
 msgid ""
 "\n"
 "<b>Status:</b> Rockin'"
 msgstr ""
+"\n"
+"<b>நிலை:</b> கரடுமுரடான"
 
 #: src/gtkblist.c:2940
 #, c-format
 msgid "Idle (%dh %02dm) "
-msgstr ""
+msgstr "சும்மா (%dh %02dm) "
 
 #: src/gtkblist.c:2942
 #, c-format
 msgid "Idle (%dm) "
-msgstr ""
+msgstr "சும்மா (%dm) "
 
 #: src/gtkblist.c:2945
 msgid "Idle "
-msgstr ""
+msgstr "சும்மா"
 
 #: src/gtkblist.c:2949
 msgid "Offline "
-msgstr ""
+msgstr "இணைப்பற்ற"
 
 #: src/gtkblist.c:3065
 msgid "/Buddies/New Instant Message..."
-msgstr ""
+msgstr "/தோழர்கள்/புதிய உடனடி தகவல்..."
 
 #: src/gtkblist.c:3066
 #: src/gtkblist.c:3099
 msgid "/Buddies/Join a Chat..."
-msgstr ""
+msgstr "/தோழர்கள்/அரட்டையில் இணை..."
 
 #: src/gtkblist.c:3067
 msgid "/Buddies/Get User Info..."
-msgstr ""
+msgstr "/தோழர்கள்/பயனாளர் குறிப்பு பெறு..."
 
 #: src/gtkblist.c:3068
 msgid "/Buddies/Add Buddy..."
-msgstr ""
+msgstr "/தோழர்கள்/தோழரை சேர்..."
 
 #: src/gtkblist.c:3069
 #: src/gtkblist.c:3102
 msgid "/Buddies/Add Chat..."
-msgstr ""
+msgstr "/தோழர்கள்/அரட்டையை சேர்..."
 
 #: src/gtkblist.c:3070
 msgid "/Buddies/Add Group..."
-msgstr ""
+msgstr "/தோழர்கள்/குழுவை சேர்"
 
 #: src/gtkblist.c:3105
 msgid "/Tools/Buddy Pounces"
-msgstr ""
+msgstr "/கருவிகள்/தோழர் இறஞ்சுதல்கள்"
 
 #: src/gtkblist.c:3108
 msgid "/Tools/Privacy"
-msgstr ""
+msgstr "/கருவிகள்/தனிமை"
 
 #: src/gtkblist.c:3111
 msgid "/Tools/Room List"
-msgstr ""
+msgstr "/கருவிகள்/அறை பட்டியல்"
 
 #: src/gtkblist.c:3186
 #, c-format
 msgid "%d unread message(s) from %s\n"
-msgstr ""
+msgstr "%d வாசிக்காத தகவல்கள் %s லிருந்து\n"
 
 #: src/gtkblist.c:3263
 msgid "Manually"
-msgstr ""
+msgstr "கைமுறையாக"
 
 #: src/gtkblist.c:3265
 msgid "Alphabetically"
-msgstr ""
+msgstr "எழுத்துமுறையாக"
 
 #: src/gtkblist.c:3266
 msgid "By status"
-msgstr ""
+msgstr "நிலையை கொண்டு"
 
 #: src/gtkblist.c:3267
 msgid "By log size"
-msgstr ""
+msgstr "பதிவுகள் அளவைக்கொண்டு"
 
 #: src/gtkblist.c:3429
 msgid "/Tools/Account Actions"
-msgstr ""
+msgstr "/கருவிகள்/கணக்கின் செயல்பாடுகள்"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
 #: src/gtkblist.c:3562
 msgid "/Buddies/Show Offline Buddies"
-msgstr ""
+msgstr "/தோழர்கள்/இணைப்பற்ற தோழர்களை காட்டு"
 
 #: src/gtkblist.c:3564
 msgid "/Buddies/Show Empty Groups"
-msgstr ""
+msgstr "/தோழர்கள்/காலியான குழுக்களை காட்டு"
 
 #: src/gtkblist.c:3568
 msgid "/Buddies/Show Buddy Details"
-msgstr ""
+msgstr "/தோழர்கள்/தோழர் விபரங்களைக்காட்டு"
 
 #: src/gtkblist.c:4244
 #: src/protocols/silc/buddy.c:737
@@ -2506,487 +2548,489 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1139
 #: src/protocols/yahoo/yahoo.c:2905
 msgid "Add Buddy"
-msgstr ""
+msgstr "தோழரை சேர்"
 
 #: src/gtkblist.c:4268
 msgid "Please enter the screen name of the person you would like to add to your buddy list. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"
-msgstr ""
+msgstr "உங்கள் தோழர் பட்டியலில் சேர்க்க விரும்பும் நபரின் திரைப்பெயரை தயவுசெய்து கொடுக்கவும். நீங்கள் விருப்பமாக புனைப்பெயர் அல்லது குறும்பெயரை கொடுக்கலாம். எங்கெல்லாம் இயலுமோ அங்கெல்லாம் திரைப்பெயருக்கு பதிலாக புனைப்பெயர் காண்பிக்கப்படும்.\n"
 
 #: src/gtkblist.c:4290
 msgid "Screen Name:"
-msgstr ""
+msgstr "திரைப்பெயர்:"
 
 #. Set up stuff for the account box
 #: src/gtkblist.c:4331
 #: src/gtkblist.c:4666
 msgid "Account:"
-msgstr ""
+msgstr "கணக்கு:"
 
 #: src/gtkblist.c:4599
 msgid "This protocol does not support chat rooms."
-msgstr ""
+msgstr "இந்த நெறிமுறை அரட்டை அறைகளை ஆதரிக்கவில்லை."
 
 #: src/gtkblist.c:4615
 msgid "You are not currently signed on with any protocols that have the ability to chat."
-msgstr ""
+msgstr "அரட்டை அடிக்கக்கூடிய எந்த நெறிமுறை மூலமும் நீங்கள் தற்போது நுழைந்திருக்கவில்லை."
 
 #: src/gtkblist.c:4632
 msgid "Add Chat"
-msgstr ""
+msgstr "அரட்டையை சேர்"
 
 #: src/gtkblist.c:4656
 msgid "Please enter an alias, and the appropriate information about the chat you would like to add to your buddy list.\n"
-msgstr ""
+msgstr "புனைப்பெயரை கொடுங்கள், மற்றும் உங்கள் தோழர் பட்டியலில் சேர்க்க விரும்பும் அரட்டை பற்றிய சரியான தகவலையும் கொடுக்கவும்.\n"
 
 #: src/gtkblist.c:4735
 #: src/protocols/sametime/sametime.c:5468
 #: src/protocols/sametime/sametime.c:5552
 msgid "Add Group"
-msgstr ""
+msgstr "குழுவை சேர்"
 
 #: src/gtkblist.c:4736
 msgid "Please enter the name of the group to be added."
-msgstr ""
+msgstr "சேர்க்க வேண்டிய குழுவின் பெயரை உள்ளீடு செய்க."
 
 #: src/gtkblist.c:5304
 msgid "No actions available"
-msgstr ""
+msgstr "எந்த செயல்பாடும் இல்லை"
 
 #: src/gtkblist.c:5373
 msgid "/Tools"
-msgstr ""
+msgstr "/கருவிகள்"
 
 #: src/gtkcellview.c:198
 msgid "Background color name"
-msgstr ""
+msgstr "பிண்ணனி நிறப் பெயர்"
 
 #: src/gtkcellview.c:199
 msgid "Background color as a string"
-msgstr ""
+msgstr "பிண்ணனி நிறம் வார்த்தையாக"
 
 #: src/gtkcellview.c:205
 #: src/gtkimhtmltoolbar.c:1007
 msgid "Background color"
-msgstr ""
+msgstr "பிண்ணனி நிறம்"
 
 #: src/gtkcellview.c:206
 msgid "Background color as a GdkColor"
-msgstr ""
+msgstr "பிண்ணனி நிறம் GdkColor ஆக"
 
 #: src/gtkcellview.c:213
 msgid "Background set"
-msgstr ""
+msgstr "பிண்ணனி அமை"
 
 #: src/gtkcellview.c:214
 msgid "Whether this tag affects the background color"
-msgstr ""
+msgstr "இந்த tag பிண்ணனி நிறத்தை பாதிக்குமா"
 
 #: src/gtkcombobox.c:491
 msgid "ComboBox model"
-msgstr ""
+msgstr "ComboBox மாதிரி"
 
 #: src/gtkcombobox.c:492
 msgid "The model for the combo box"
-msgstr ""
+msgstr "குழு பெட்டிக்கான மாதிரி"
 
 #: src/gtkcombobox.c:499
 msgid "Wrap width"
-msgstr ""
+msgstr "மடக்க வேண்டிய அகலம்"
 
 #: src/gtkcombobox.c:500
 msgid "Wrap width for layouting the items in a grid"
-msgstr ""
+msgstr "பொருள்களை கட்டங்களில் பொருத்தும்பொழுது மடக்கவேண்டிய அகலம்"
 
 #: src/gtkcombobox.c:509
 msgid "Row span column"
-msgstr ""
+msgstr "குறுக்கு வரிசைக்கான இடைப்பட்ட அளவு"
 
 #: src/gtkcombobox.c:510
 msgid "TreeModel column containing the row span values"
-msgstr ""
+msgstr "குறுக்கு வரிசை இடைப்பட்ட அளவைக்கொண்ட TreeModel நெடுவரிசை"
 
 #: src/gtkcombobox.c:519
 msgid "Column span column"
-msgstr ""
+msgstr "நெடுவரிசை இடைப்பட்ட அளவுள்ள நெடுவரிசை"
 
 #: src/gtkcombobox.c:521
 msgid "TreeModel column containing the column span values"
-msgstr ""
+msgstr "நெடுவரிசை இடைப்பட்ட அளவைக்கொண்ட TreeModel நெடுவரிசை"
 
 #: src/gtkcombobox.c:530
 msgid "Active item"
-msgstr ""
+msgstr "இயங்கும் பொருள்"
 
 #: src/gtkcombobox.c:531
 msgid "The item which is currently active"
-msgstr ""
+msgstr "தற்போது இயங்கிக்கொண்டிருக்கும் பொருள்"
 
 #: src/gtkcombobox.c:539
 msgid "Appears as list"
-msgstr ""
+msgstr "பட்டியலாக தோன்றுகிறது"
 
 #: src/gtkcombobox.c:540
 msgid "Whether combobox dropdowns should look like lists rather than menus"
-msgstr ""
+msgstr "combobox கீழிழுப்பு அட்டவணையாக தெரிவதை விட பட்டியலாக தெரியவேண்டுமா"
 
 #: src/gtkconn.c:191
 #, c-format
 msgid "%s disconnected"
-msgstr ""
+msgstr "%s துண்டிக்கப்பட்டது"
 
 #: src/gtkconn.c:192
 #, c-format
 msgid "%s was disconnected due to an error. %s The account has been disabled. Correct the error and reenable the account to connect."
-msgstr ""
+msgstr "பிழையால் %s துண்டிக்கப்பட்டது. %s இந்த கணக்கு இயலாமைபடுத்தப்பட்டது. இணைக்க, பிழையை சரிசெய்து கணக்கை மறு இயலுமை படுத்தவும்."
 
 #: src/gtkconv.c:331
 #, c-format
 msgid "me is using Gaim v%s."
-msgstr ""
+msgstr "நான் கெய்ம் v%s பயன்படுத்துகிறேன்."
 
 #: src/gtkconv.c:340
 msgid "Supported debug options are:  version"
-msgstr ""
+msgstr "ஆதரிக்கப்பட்ட பிழையறி விருப்பங்களாவன:  பதிப்பு"
 
 #: src/gtkconv.c:376
 msgid "No such command (in this context)."
-msgstr ""
+msgstr "கட்டளை ஏதுமில்லை (இந்த முறையில்)."
 
 #: src/gtkconv.c:379
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
+"ஒரு குறிப்பிட்ட கட்டளை பற்றிய உதவிக்கு \"/உதவி &lt;கட்டளை&gt;\" யை பயன்படுத்தவும்.\n"
+" இந்த பொருளில் கீழ்க்கண்ட கட்டளைகள் உள்ளன:\n"
 
 #: src/gtkconv.c:451
 msgid "No such command."
-msgstr ""
+msgstr "அப்படிக்கட்டளை ஏதுமில்லை."
 
 #: src/gtkconv.c:458
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
-msgstr ""
+msgstr "இலக்கணப்பிழை: அந்த கட்டளைக்கு தவறான எண்ணிக்கை உள்ளீடுகளை கொடுத்திருக்கிறீர்கள்."
 
 #: src/gtkconv.c:463
 msgid "Your command failed for an unknown reason."
-msgstr ""
+msgstr "உங்களது கட்டளை தெரியாத காரணத்தினால் தவறியது."
 
 #: src/gtkconv.c:470
 msgid "That command only works in chats, not IMs."
-msgstr ""
+msgstr "அந்த கட்டளை அரட்டையில் மட்டும் இயங்கும், IMs ல் அல்ல."
 
 #: src/gtkconv.c:473
 msgid "That command only works in IMs, not chats."
-msgstr ""
+msgstr "அந்த கட்டளை IMs ல் மட்டும் இயங்கும், அரட்டையில் அல்ல."
 
 #: src/gtkconv.c:477
 msgid "That command doesn't work on this protocol."
-msgstr ""
+msgstr "அந்த கட்டளை இந்த நெறிமுறையில் இயங்காது."
 
 #: src/gtkconv.c:704
 #: src/gtkconv.c:730
 msgid "That buddy is not on the same protocol as this chat."
-msgstr ""
+msgstr "அந்த தோழர் இந்த அரட்டையைப்போன்ற நெறிமுறையில் இல்லை."
 
 #: src/gtkconv.c:724
 msgid "You are not currently signed on with an account that can invite that buddy."
-msgstr ""
+msgstr "நீங்கள் அந்த தோழரை அழைப்பதற்கான கணக்கில் நுழைந்திருக்கவில்லை."
 
 #: src/gtkconv.c:777
 msgid "Invite Buddy Into Chat Room"
-msgstr ""
+msgstr "தோழரை அரட்டை அரைக்கு அழை"
 
 #. Put our happy label in it.
 #: src/gtkconv.c:807
 msgid "Please enter the name of the user you wish to invite, along with an optional invite message."
-msgstr ""
+msgstr "நீங்கள் அழைக்க விரும்பும் தோழரின் பெயர் மற்றும், விருப்பப்பட்ட அழைப்பு தகவலையும் தயவுசெய்து கொடுக்கவும்."
 
 #: src/gtkconv.c:828
 msgid "_Buddy:"
-msgstr ""
+msgstr "தோழர்:"
 
 #: src/gtkconv.c:848
 #: src/gtksavedstatuses.c:1068
 #: src/gtksavedstatuses.c:1365
 msgid "_Message:"
-msgstr ""
+msgstr "தகவல்:"
 
 #: src/gtkconv.c:905
 #: src/gtkconv.c:2233
 #: src/gtkdebug.c:217
 #: src/gtkft.c:472
 msgid "Unable to open file."
-msgstr ""
+msgstr "கோப்பை திற்க்க இயலவில்லை."
 
 #: src/gtkconv.c:911
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
-msgstr ""
+msgstr "<h1>%s உடன் உரையாடல்</h1>\n"
 
 #: src/gtkconv.c:935
 msgid "Save Conversation"
-msgstr ""
+msgstr "உரையாடலை சேமி"
 
 #: src/gtkconv.c:1035
 #: src/gtkdebug.c:165
 #: src/gtkdebug.c:678
 msgid "Find"
-msgstr ""
+msgstr "தேடு"
 
 #: src/gtkconv.c:1061
 #: src/gtkdebug.c:193
 msgid "_Search for:"
-msgstr ""
+msgstr "இதற்காக தேடு:"
 
 #: src/gtkconv.c:1232
 msgid "Logging started. Future messages in this conversation will be logged."
-msgstr ""
+msgstr "பதிவேடு ஆரம்பித்தது. இந்த உரையாடலில் எதிர்வரும் தகவல்கள் பதிவுசெய்யப்படும்."
 
 #: src/gtkconv.c:1240
 msgid "Logging stopped. Future messages in this conversation will not be logged."
-msgstr ""
+msgstr "பதிவுகள் நிறுத்தப்பட்டது. இந்த உரையாடலில் எதிர்வரும் தகவல்கள் பதிவுசெய்யப்படமாட்டாது."
 
 #: src/gtkconv.c:1494
 msgid "IM"
-msgstr ""
+msgstr "IM"
 
 #: src/gtkconv.c:1500
 #: src/protocols/oscar/oscar.c:630
 msgid "Send File"
-msgstr ""
+msgstr "கோப்பை அனுப்பு"
 
 #: src/gtkconv.c:1507
 msgid "Un-Ignore"
-msgstr ""
+msgstr "தவிர்க்காதே"
 
 #: src/gtkconv.c:1510
 msgid "Ignore"
-msgstr ""
+msgstr "தவிர்"
 
 #: src/gtkconv.c:1516
 msgid "Info"
-msgstr ""
+msgstr "தகவல்"
 
 #: src/gtkconv.c:1522
 msgid "Get Away Message"
-msgstr ""
+msgstr "வெளியேற்ற தகவல்"
 
 #: src/gtkconv.c:1529
 #: src/gtkrequest.c:267
 msgid "Remove"
-msgstr ""
+msgstr "நீக்கு"
 
 #: src/gtkconv.c:2241
 msgid "Unable to save icon file to disk."
-msgstr ""
+msgstr "குறும்பட கோப்பை வன்தட்டில் சேமிக்க இயலவில்லை."
 
 #: src/gtkconv.c:2264
 msgid "Save Icon"
-msgstr ""
+msgstr "குறும்படத்தை சேமி"
 
 #: src/gtkconv.c:2313
 msgid "Animate"
-msgstr ""
+msgstr "அசை"
 
 #: src/gtkconv.c:2318
 msgid "Hide Icon"
-msgstr ""
+msgstr "குறும்படத்தை மறை"
 
 #: src/gtkconv.c:2324
 msgid "Save Icon As..."
-msgstr ""
+msgstr "குறும்படத்தை இப்படிச்சேமி..."
 
 #. Conversation menu
 #: src/gtkconv.c:2462
 msgid "/_Conversation"
-msgstr ""
+msgstr "/_உரையாடல்"
 
 #: src/gtkconv.c:2464
 msgid "/Conversation/New Instant _Message..."
-msgstr ""
+msgstr "/உரையாடல்/புதிய உடனடி தகவல்..."
 
 #: src/gtkconv.c:2469
 msgid "/Conversation/_Find..."
-msgstr ""
+msgstr "/உரையாடல்/தேடு..."
 
 #: src/gtkconv.c:2471
 msgid "/Conversation/View _Log"
-msgstr ""
+msgstr "/உரையாடல்/பதிவை காண்"
 
 #: src/gtkconv.c:2472
 msgid "/Conversation/_Save As..."
-msgstr ""
+msgstr "/உரையாடல்/இப்படிச்சேமி..."
 
 #: src/gtkconv.c:2474
 msgid "/Conversation/Clear"
-msgstr ""
+msgstr "/உரையாடல்/சுத்தமாக்கு"
 
 #: src/gtkconv.c:2478
 msgid "/Conversation/Se_nd File..."
-msgstr ""
+msgstr "/உரையாடல்/கோப்பை அனுப்பு..."
 
 #: src/gtkconv.c:2479
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr ""
+msgstr "/உரையாடல்/தோழர் இறைஞ்சுதலை சேர்"
 
 #: src/gtkconv.c:2481
 msgid "/Conversation/_Get Info"
-msgstr ""
+msgstr "/உரையாடல்/தகவல் பெறு"
 
 #: src/gtkconv.c:2483
 msgid "/Conversation/In_vite..."
-msgstr ""
+msgstr "/உரையாடல்/அழை"
 
 #: src/gtkconv.c:2488
 msgid "/Conversation/Al_ias..."
-msgstr ""
+msgstr "/உரையாடல்/புனைப்பெயர்..."
 
 #: src/gtkconv.c:2490
 msgid "/Conversation/_Block..."
-msgstr ""
+msgstr "/உரையாடல்/தடு..."
 
 #: src/gtkconv.c:2492
 msgid "/Conversation/_Add..."
-msgstr ""
+msgstr "/உரையாடல்/சேர்..."
 
 #: src/gtkconv.c:2494
 msgid "/Conversation/_Remove..."
-msgstr ""
+msgstr "/உரையாடல்/நீக்கு..."
 
 #: src/gtkconv.c:2499
 msgid "/Conversation/Insert Lin_k..."
-msgstr ""
+msgstr "/உரையாடல்/இணைப்பை நுழை..."
 
 #: src/gtkconv.c:2501
 msgid "/Conversation/Insert Imag_e..."
-msgstr ""
+msgstr "/உரையாடல்/படத்தை நுழை..."
 
 #: src/gtkconv.c:2506
 msgid "/Conversation/_Close"
-msgstr ""
+msgstr "/உரையாடல்/மூடு"
 
 #. Options
 #: src/gtkconv.c:2510
 msgid "/_Options"
-msgstr ""
+msgstr "/விருப்பங்கள்"
 
 #: src/gtkconv.c:2511
 msgid "/Options/Enable _Logging"
-msgstr ""
+msgstr "/விருப்பங்கள்/பதிவை இயலுமைபடுத்து"
 
 #: src/gtkconv.c:2512
 msgid "/Options/Enable _Sounds"
-msgstr ""
+msgstr "/விருப்பங்கள்/ஒலியை இயலுமைபடுத்து"
 
 #: src/gtkconv.c:2513
 msgid "/Options/Show Formatting _Toolbars"
-msgstr ""
+msgstr "/விருப்பங்கள்/சீரமைப்பு கருவிகளை காட்டு"
 
 #: src/gtkconv.c:2514
 msgid "/Options/Show Ti_mestamps"
-msgstr ""
+msgstr "/விருப்பங்கள்/காலச்சுவடுகளை காட்டு"
 
 #: src/gtkconv.c:2515
 msgid "/Options/Show Buddy _Icon"
-msgstr ""
+msgstr "/விருப்பங்கள்/தோழர் குறும்படத்தை காட்டு"
 
 #: src/gtkconv.c:2555
 msgid "/Conversation/View Log"
-msgstr ""
+msgstr "/உரையாடல்/பதிவை காண்"
 
 #: src/gtkconv.c:2561
 msgid "/Conversation/Send File..."
-msgstr ""
+msgstr "/உரையாடல்/கோப்பை அனுப்பு"
 
 #: src/gtkconv.c:2565
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr ""
+msgstr "/உரையாடல்/தோழர் இறைஞ்சுதலை சேர்..."
 
 #: src/gtkconv.c:2571
 msgid "/Conversation/Get Info"
-msgstr ""
+msgstr "/உரையாடல்/தகவல் பெறு"
 
 #: src/gtkconv.c:2575
 msgid "/Conversation/Invite..."
-msgstr ""
+msgstr "/உரையாடல்/அழை..."
 
 #: src/gtkconv.c:2581
 msgid "/Conversation/Alias..."
-msgstr ""
+msgstr "/உரையாடல்/புனைப்பெயர்..."
 
 #: src/gtkconv.c:2585
 msgid "/Conversation/Block..."
-msgstr ""
+msgstr "/உரையாடல்/தடு..."
 
 #: src/gtkconv.c:2589
 msgid "/Conversation/Add..."
-msgstr ""
+msgstr "/உரையாடல்/சேர்"
 
 #: src/gtkconv.c:2593
 msgid "/Conversation/Remove..."
-msgstr ""
+msgstr "/உரையாடல்/நீக்கு..."
 
 #: src/gtkconv.c:2599
 msgid "/Conversation/Insert Link..."
-msgstr ""
+msgstr "/உரையாடல்/இணைப்பை நுழை..."
 
 #: src/gtkconv.c:2603
 msgid "/Conversation/Insert Image..."
-msgstr ""
+msgstr "/உரையாடல்/படத்தை நுழை..."
 
 #: src/gtkconv.c:2609
 msgid "/Options/Enable Logging"
-msgstr ""
+msgstr "/விருப்பங்கள்/பதிவுசெய்தல்"
 
 #: src/gtkconv.c:2612
 msgid "/Options/Enable Sounds"
-msgstr ""
+msgstr "/விருப்பங்கள்/ஒலிகளை இயலுமைபடுத்து"
 
 #: src/gtkconv.c:2615
 msgid "/Options/Show Formatting Toolbars"
-msgstr ""
+msgstr "/விருப்பங்கள்/சீரமைப்பு கருவிகளை காட்டு"
 
 #: src/gtkconv.c:2618
 msgid "/Options/Show Timestamps"
-msgstr ""
+msgstr "/விருப்பங்கள்/காலச்சுவடுகளை காட்டு"
 
 #: src/gtkconv.c:2621
 msgid "/Options/Show Buddy Icon"
-msgstr ""
+msgstr "/விருப்பங்கள்/தோழர் குறும்படத்தை காட்டு"
 
 #: src/gtkconv.c:2693
 msgid "User is typing..."
-msgstr ""
+msgstr "தோழர் தட்டச்சுசெய்கிறார்..."
 
 #: src/gtkconv.c:2696
 msgid "User has typed something and stopped"
-msgstr ""
+msgstr "தோழர் ஏதோ தட்டச்சு செய்துவிட்டு நிறுத்திவிட்டார்"
 
 #. Build the Send As menu
 #: src/gtkconv.c:2845
 msgid "_Send To"
-msgstr ""
+msgstr "இதற்கு அனுப்பு"
 
 #: src/gtkconv.c:3476
 #: src/protocols/sametime/sametime.c:3534
 msgid "Topic:"
-msgstr ""
+msgstr "தலைப்பு:"
 
 #. Setup the label telling how many people are in the room.
 #: src/gtkconv.c:3524
 msgid "0 people in room"
-msgstr ""
+msgstr "அறையில் 0 மக்கள்"
 
 #: src/gtkconv.c:3603
 msgid "IM the user"
-msgstr ""
+msgstr "IM ஒரு பயனாளர்"
 
 #: src/gtkconv.c:3616
 msgid "Ignore the user"
-msgstr ""
+msgstr "பயனாளரை தவிர்"
 
 #: src/gtkconv.c:3628
 msgid "Get the user's information"
-msgstr ""
+msgstr "பயனாளரின் தகவலை பெறு"
 
 #: src/gtkconv.c:4487
 #: src/gtkconv.c:4592
@@ -2999,98 +3043,98 @@ msgstr[1] ""
 
 #: src/gtkconv.c:5863
 msgid "say &lt;message&gt;:  Send a message normally as if you weren't using a command."
-msgstr ""
+msgstr "கூறு &lt;தகவல்&gt;: நீங்கள் கட்டளையை உபயோகப்படுத்தாதபோது சாதாரணமாக தகவலை அனுப்புகிறது."
 
 #: src/gtkconv.c:5866
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
-msgstr ""
+msgstr "நான் &lt;செயல்&gt;: IRC வகை செயல்பாட்டை தோழர் அல்லது அரட்டைக்கு அனுப்புகிறது."
 
 #: src/gtkconv.c:5869
 msgid "debug &lt;option&gt;:  Send various debug information to the current conversation."
-msgstr ""
+msgstr "பிழையறி &lt;விருப்பம்&gt;: தற்போதைய உரையாடலுக்கு பலதரப்பட்ட பிழையறி தகவலை அனுப்புகிறது."
 
 #: src/gtkconv.c:5872
 msgid "clear: Clears the conversation scrollback."
-msgstr ""
+msgstr "clear: உரையாடலை சுத்தமாக்குகிறது."
 
 #: src/gtkconv.c:5875
 msgid "help &lt;command&gt;:  Help on a specific command."
-msgstr ""
+msgstr "உதவி &lt;கட்டளை&gt;: குறிப்பிட்ட கட்டளைக்கான உதவி."
 
 #: src/gtkconv.c:6005
 msgid "Confirm close"
-msgstr ""
+msgstr "மூடல் உறுதி"
 
 #: src/gtkconv.c:6037
 msgid "You have unread messages. Are you sure you want to close the window?"
-msgstr ""
+msgstr "நீங்கள் வாசிக்காத தகவல்கள் உள்ளன. சாளரத்தை உறுதியாக மூடவேண்டுமா?"
 
 #: src/gtkconv.c:6832
 msgid "Close conversation"
-msgstr ""
+msgstr "உரையாடலை மூடு"
 
 #: src/gtkconv.c:7301
 msgid "Last created window"
-msgstr ""
+msgstr "கடைசியாக உருவாக்கிய சாளரம்"
 
 #: src/gtkconv.c:7303
 msgid "Separate IM and Chat windows"
-msgstr ""
+msgstr "IM மற்றும் அரட்டை சாளரங்களை பிரி"
 
 #: src/gtkconv.c:7305
 #: src/gtkprefs.c:1230
 msgid "New window"
-msgstr ""
+msgstr "புதிய சாளரம்"
 
 #: src/gtkconv.c:7307
 msgid "By group"
-msgstr ""
+msgstr "குழுவால்"
 
 #: src/gtkconv.c:7309
 msgid "By account"
-msgstr ""
+msgstr "கணக்கால்"
 
 #: src/gtkdebug.c:232
 msgid "Save Debug Log"
-msgstr ""
+msgstr "பிழையறி பதிவை சேமி"
 
 #: src/gtkdebug.c:586
 msgid "Invert"
-msgstr ""
+msgstr "நேர்மாறு"
 
 #: src/gtkdebug.c:589
 msgid "Highlight matches"
-msgstr ""
+msgstr "மேற்கோளிட்டது பொருந்துகிறது"
 
 #: src/gtkdebug.c:636
 msgid "Debug Window"
-msgstr ""
+msgstr "பிழையறி சாளரம்"
 
 #: src/gtkdebug.c:689
 msgid "Clear"
-msgstr ""
+msgstr "சுத்தம்"
 
 #: src/gtkdebug.c:698
 msgid "Pause"
-msgstr ""
+msgstr "நிலுவை"
 
 #: src/gtkdebug.c:705
 #: src/gtkdebug.c:706
 msgid "Timestamps"
-msgstr ""
+msgstr "காலச்சுவடுகள்"
 
 #: src/gtkdebug.c:724
 msgid "Filter"
-msgstr ""
+msgstr "வடிகட்டி"
 
 #: src/gtkdebug.c:743
 msgid "Right click for more options."
-msgstr ""
+msgstr "மேலும் விருப்பங்களுக்கு வலது சொடுக்கியை அழுத்தவும்."
 
 #: src/gtkdialogs.c:60
 #: src/gtkdialogs.c:97
 msgid "lead developer"
-msgstr ""
+msgstr "முன்னணி உருவாக்குபவர்"
 
 #: src/gtkdialogs.c:61
 #: src/gtkdialogs.c:62
@@ -3102,306 +3146,306 @@ msgstr ""
 #: src/gtkdialogs.c:71
 #: src/gtkdialogs.c:72
 msgid "developer"
-msgstr ""
+msgstr "உருவாக்குபவர்"
 
 #: src/gtkdialogs.c:63
 msgid "win32 port"
-msgstr ""
+msgstr "win32 தளம்"
 
 #: src/gtkdialogs.c:65
 msgid "developer & webmaster"
-msgstr ""
+msgstr "உருவாக்குபவர் & வலைமேலாளர்"
 
 #: src/gtkdialogs.c:70
 msgid "support"
-msgstr ""
+msgstr "ஆதரவு"
 
 #: src/gtkdialogs.c:91
 #: src/gtkdialogs.c:92
 msgid "maintainer"
-msgstr ""
+msgstr "பராமரிப்பாளர்"
 
 #: src/gtkdialogs.c:93
 msgid "libfaim maintainer"
-msgstr ""
+msgstr "libfaim பராமரிப்பாளர்"
 
 #: src/gtkdialogs.c:94
 msgid "hacker and designated driver [lazy bum]"
-msgstr ""
+msgstr "அத்துமீறர் மற்றும் நிலையுள்ள இயக்குநர் [lazy bum]"
 
 #: src/gtkdialogs.c:95
 msgid "Jabber developer"
-msgstr ""
+msgstr "Jabber உருவாக்குபவர்"
 
 #: src/gtkdialogs.c:96
 msgid "original author"
-msgstr ""
+msgstr "இயற் உரிமையாளர்"
 
 #: src/gtkdialogs.c:103
 #: src/gtkdialogs.c:104
 #: src/gtkdialogs.c:151
 msgid "Bulgarian"
-msgstr ""
+msgstr "பல்கேரியன்"
 
 #: src/gtkdialogs.c:105
 msgid "Bosnian"
-msgstr ""
+msgstr "போஸ்னியன்"
 
 #: src/gtkdialogs.c:106
 #: src/gtkdialogs.c:152
 #: src/gtkdialogs.c:153
 msgid "Catalan"
-msgstr ""
+msgstr "கேடலான்"
 
 #: src/gtkdialogs.c:107
 #: src/gtkdialogs.c:154
 msgid "Czech"
-msgstr ""
+msgstr "க்ஸெக்"
 
 #: src/gtkdialogs.c:108
 msgid "Danish"
-msgstr ""
+msgstr "டானிஷ்"
 
 #: src/gtkdialogs.c:109
 #: src/gtkdialogs.c:155
 msgid "German"
-msgstr ""
+msgstr "ஜெர்மன்"
 
 #: src/gtkdialogs.c:110
 #: src/gtkdialogs.c:111
 msgid "Greek"
-msgstr ""
+msgstr "க்ரீக்"
 
 #: src/gtkdialogs.c:112
 msgid "Australian English"
-msgstr ""
+msgstr "ஆஸ்திரேலியன் ஆங்கிலம்"
 
 #: src/gtkdialogs.c:113
 msgid "Canadian English"
-msgstr ""
+msgstr "கனடியன் ஆங்கிலம்"
 
 #: src/gtkdialogs.c:114
 msgid "British English"
-msgstr ""
+msgstr "பிரிட்டிஷ் ஆங்கிலம்"
 
 #: src/gtkdialogs.c:115
 #: src/gtkdialogs.c:156
 msgid "Spanish"
-msgstr ""
+msgstr "ஸ்பானிஷ்"
 
 #: src/gtkdialogs.c:116
 #: src/gtkdialogs.c:157
 msgid "Finnish"
-msgstr ""
+msgstr "பின்னிஷ்"
 
 #: src/gtkdialogs.c:117
 #: src/gtkdialogs.c:158
 msgid "French"
-msgstr ""
+msgstr "பிரெஞ்சு"
 
 #: src/gtkdialogs.c:118
 msgid "Hebrew"
-msgstr ""
+msgstr "ஹெப்ரூ"
 
 #: src/gtkdialogs.c:119
 msgid "Hindi"
-msgstr ""
+msgstr "ஹிந்தி"
 
 #: src/gtkdialogs.c:120
 msgid "Hungarian"
-msgstr ""
+msgstr "ஹங்கேரியன்"
 
 #: src/gtkdialogs.c:121
 #: src/gtkdialogs.c:159
 msgid "Italian"
-msgstr ""
+msgstr "இத்தாலியன்"
 
 #: src/gtkdialogs.c:122
 #: src/gtkdialogs.c:160
 msgid "Japanese"
-msgstr ""
+msgstr "ஜப்பானிஷ்"
 
 #: src/gtkdialogs.c:123
 msgid "Georgian"
-msgstr ""
+msgstr "ஜியார்ஜியன்"
 
 #: src/gtkdialogs.c:124
 #: src/gtkdialogs.c:161
 msgid "Korean"
-msgstr ""
+msgstr "கொரியன்"
 
 #: src/gtkdialogs.c:125
 msgid "Kurdish"
-msgstr ""
+msgstr "குர்தீஷ்"
 
 #: src/gtkdialogs.c:126
 msgid "Lithuanian"
-msgstr ""
+msgstr "லித்துனியன்"
 
 #: src/gtkdialogs.c:127
 msgid "Macedonian"
-msgstr ""
+msgstr "மெர்ஸிடோனியன்"
 
 #: src/gtkdialogs.c:128
 msgid "Dutch, Flemish"
-msgstr ""
+msgstr "டச்சு, பிளெமிஷ்"
 
 #: src/gtkdialogs.c:129
 msgid "Norwegian"
-msgstr ""
+msgstr "நார்வேஜியன்"
 
 #: src/gtkdialogs.c:130
 #: src/gtkdialogs.c:131
 #: src/gtkdialogs.c:162
 msgid "Polish"
-msgstr ""
+msgstr "பொலிஷ்"
 
 #: src/gtkdialogs.c:132
 msgid "Portuguese"
-msgstr ""
+msgstr "போர்ச்சுகீஸ்"
 
 #: src/gtkdialogs.c:133
 msgid "Portuguese-Brazil"
-msgstr ""
+msgstr "போர்ச்சுகீஸ்-பிரேசில்"
 
 #: src/gtkdialogs.c:134
 msgid "Romanian"
-msgstr ""
+msgstr "ரோமானியன்"
 
 #: src/gtkdialogs.c:135
 #: src/gtkdialogs.c:163
 #: src/gtkdialogs.c:164
 msgid "Russian"
-msgstr ""
+msgstr "ரஷ்யன்"
 
 #: src/gtkdialogs.c:136
 #: src/gtkdialogs.c:137
 msgid "Serbian"
-msgstr ""
+msgstr "ஸெர்பியன்"
 
 #: src/gtkdialogs.c:138
 msgid "Slovenian"
-msgstr ""
+msgstr "ஸ்லோவேனியன்"
 
 #: src/gtkdialogs.c:139
 #: src/gtkdialogs.c:166
 msgid "Swedish"
-msgstr ""
+msgstr "ஸ்வேதிஷ்"
 
 #: src/gtkdialogs.c:140
 msgid "Telugu"
-msgstr ""
+msgstr "தெலுங்கு"
 
 #: src/gtkdialogs.c:141
 msgid "Vietnamese"
-msgstr ""
+msgstr "வியட்நாமிஸ்"
 
 #: src/gtkdialogs.c:141
 msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr ""
+msgstr "டி.எம். தான்ஹ் மற்றும் க்னோம்-Vi குழு"
 
 #: src/gtkdialogs.c:142
 #: src/gtkdialogs.c:167
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "சுருக்கிய சைனீஸ்"
 
 #: src/gtkdialogs.c:143
 #: src/gtkdialogs.c:144
 #: src/gtkdialogs.c:168
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "பாரம்பரிய சைனீஸ்"
 
 #: src/gtkdialogs.c:150
 msgid "Amharic"
-msgstr ""
+msgstr "அம்ஹாரிக்"
 
 #: src/gtkdialogs.c:165
 msgid "Slovak"
-msgstr ""
+msgstr "ஸ்லோவாக்"
 
 #: src/gtkdialogs.c:209
 msgid "About Gaim"
-msgstr ""
+msgstr "கெய்ம் பற்றி"
 
 #: src/gtkdialogs.c:233
 msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
-msgstr ""
+msgstr "கெய்ம் AIM, MSN, யாஹூ!, Jabber, ICQ, IRC, SILC, நாவெல் குழுவாரி, Napster, Zephyr, மற்றும் Gadu-Gadu போன்றவற்றிற்கான ஒரு தகவல் சேவகர். அது GTK+ ல் எழுதப்பட்டது மற்றும் GNU GPL அனுமதியை கொண்டது.<BR><BR>"
 
 #: src/gtkdialogs.c:242
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-msgstr ""
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:245
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
-msgstr ""
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:251
 msgid "Active Developers"
-msgstr ""
+msgstr "சுறுசுறுப்பான உருவாக்காளர்கள்"
 
 #: src/gtkdialogs.c:266
 msgid "Crazy Patch Writers"
-msgstr ""
+msgstr "பித்துப்பிடித்த பேட்ச் எழுத்தாளர்கள்"
 
 #: src/gtkdialogs.c:281
 msgid "Retired Developers"
-msgstr ""
+msgstr "ஒய்வுபெற்ற உருவாக்காளர்கள்"
 
 #: src/gtkdialogs.c:296
 msgid "Current Translators"
-msgstr ""
+msgstr "தற்போதைய மொழிபெயர்ப்பாளர்கள்"
 
 #: src/gtkdialogs.c:316
 msgid "Past Translators"
-msgstr ""
+msgstr "முந்தைய மொழிபெயர்ப்பாளர்கள்"
 
 #: src/gtkdialogs.c:334
 msgid "Debugging Information"
-msgstr ""
+msgstr "பிழையறிதல் தகவல்"
 
 #: src/gtkdialogs.c:508
 #: src/gtkdialogs.c:645
 #: src/gtkdialogs.c:700
 msgid "_Name"
-msgstr ""
+msgstr "பெயர்"
 
 #: src/gtkdialogs.c:513
 #: src/gtkdialogs.c:650
 #: src/gtkdialogs.c:705
 msgid "_Account"
-msgstr ""
+msgstr "கணக்கு"
 
 #: src/gtkdialogs.c:521
 msgid "New Instant Message"
-msgstr ""
+msgstr "புதிய உடனடி தகவல்"
 
 #: src/gtkdialogs.c:523
 msgid "Please enter the screen name or alias of the person you would like to IM."
-msgstr ""
+msgstr "நீங்கள் IM செய்ய விரும்பும் நபரின் திரைப்பெயர் அல்லது புனைப்பெயரை தயவுசெய்து கொடுக்கவும்."
 
 #: src/gtkdialogs.c:658
 msgid "Get User Info"
-msgstr ""
+msgstr "பயனாளர் தகவலை பெறு"
 
 #: src/gtkdialogs.c:660
 msgid "Please enter the screen name or alias of the person whose info you would like to view."
-msgstr ""
+msgstr "நீங்கள் காண விரும்பும் நபரின் திரைப்பெயர் அல்லது புனைப்பெயரை தயவுசெய்து கொடுக்கவும்."
 
 #: src/gtkdialogs.c:714
 msgid "View User Log"
-msgstr ""
+msgstr "பயனாளர் பதிவை காண்க"
 
 #: src/gtkdialogs.c:716
 msgid "Please enter the screen name or alias of the person whose log you would like to view."
-msgstr ""
+msgstr "நீங்கள் காண செய்ய விரும்பும் நபரின் திரைப்பெயர் அல்லது புனைப்பெயரை தயவுசெய்து கொடுக்கவும்."
 
 #: src/gtkdialogs.c:735
 msgid "Alias Contact"
-msgstr ""
+msgstr "புனைப்பெயர் தொடர்பு"
 
 #: src/gtkdialogs.c:736
 msgid "Enter an alias for this contact."
-msgstr ""
+msgstr "இந்த தொடர்பிற்கு ஒரு புனைப்பெயர் கொடுக்கவும்."
 
 #: src/gtkdialogs.c:738
 #: src/gtkdialogs.c:760
@@ -3409,24 +3453,24 @@ msgstr ""
 #: src/gtkrequest.c:269
 #: src/protocols/silc/chat.c:586
 msgid "Alias"
-msgstr ""
+msgstr "புனைப்பெயர்"
 
 #: src/gtkdialogs.c:756
 #, c-format
 msgid "Enter an alias for %s."
-msgstr ""
+msgstr "%s ற்கு ஒரு புனைப்பெயர் கொடுக்கவும்."
 
 #: src/gtkdialogs.c:758
 msgid "Alias Buddy"
-msgstr ""
+msgstr "தோழர் புனைப்பெயர்"
 
 #: src/gtkdialogs.c:777
 msgid "Alias Chat"
-msgstr ""
+msgstr "அரட்டை புனைப்பெயர்"
 
 #: src/gtkdialogs.c:778
 msgid "Enter an alias for this chat."
-msgstr ""
+msgstr "இந்த அரட்டைக்கு ஒரு புனைப்பெயர் கொடுக்கவும்."
 
 #: src/gtkdialogs.c:815
 #, c-format
@@ -3438,191 +3482,191 @@ msgstr[1] ""
 #: src/gtkdialogs.c:882
 #, c-format
 msgid "You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"
-msgstr ""
+msgstr "நீங்கள் குழு %s மற்றும் அதன் அனைத்து உறுப்பினர்களையும் தோழர் பட்டியலிலிருந்து நீக்க விழைகிறீர்கள்.  தொடரலாமா?"
 
 #: src/gtkdialogs.c:885
 #: src/gtkdialogs.c:886
 msgid "Remove Group"
-msgstr ""
+msgstr "குழுவை நீக்கு"
 
 #: src/gtkdialogs.c:924
 #, c-format
 msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
-msgstr ""
+msgstr "நீங்கள் %s ஐ தோழர் பட்டியலிலிருந்து நீக்க விழைகிறீர்கள்.  தொடரலாமா?"
 
 #: src/gtkdialogs.c:927
 #: src/gtkdialogs.c:928
 msgid "Remove Buddy"
-msgstr ""
+msgstr "தோழரை நீக்கு"
 
 #: src/gtkdialogs.c:966
 #, c-format
 msgid "You are about to remove the chat %s from your buddy list.  Do you want to continue?"
-msgstr ""
+msgstr "நீங்கள் அரட்டை %s ஐ உங்கள் தோழர் பட்டியலிலிருந்து நீக்க விழைகிறீர்கள்.  தொடரலாமா?"
 
 #: src/gtkdialogs.c:969
 #: src/gtkdialogs.c:970
 msgid "Remove Chat"
-msgstr ""
+msgstr "அரட்டையை நீக்கு"
 
 #: src/gtkft.c:139
 #, c-format
 msgid "%.2f KB/s"
-msgstr ""
+msgstr "%.2f கிபை/நொ"
 
 #: src/gtkft.c:160
 #: src/gtkft.c:1049
 msgid "Finished"
-msgstr ""
+msgstr "முடிந்தது"
 
 #: src/gtkft.c:163
 #: src/gtkft.c:989
 msgid "Canceled"
-msgstr ""
+msgstr "நீக்கப்பட்டது"
 
 #: src/gtkft.c:166
 #: src/gtkft.c:908
 msgid "Waiting for transfer to begin"
-msgstr ""
+msgstr "பரிமாற்றம் ஆரம்பமாவதற்காக காத்திருக்கிறது"
 
 #: src/gtkft.c:220
 msgid "<b>Receiving As:</b>"
-msgstr ""
+msgstr "<b>இப்படி பெறப்படுகிறது:</b>"
 
 #: src/gtkft.c:222
 msgid "<b>Receiving From:</b>"
-msgstr ""
+msgstr "<b>இதிலிருந்து பெறுகிறது:</b>"
 
 #: src/gtkft.c:226
 msgid "<b>Sending To:</b>"
-msgstr ""
+msgstr "<b>இதற்கு அனுப்புகிறது:</b>"
 
 #: src/gtkft.c:228
 msgid "<b>Sending As:</b>"
-msgstr ""
+msgstr "<b>இப்படி அனுப்புகிறது:</b>"
 
 #: src/gtkft.c:444
 msgid "There is no application configured to open this type of file."
-msgstr ""
+msgstr "இவ்வகை கோப்புகளை திறப்பதற்கான மென்பொருள் ஏதும் வரையறுக்கவில்லை."
 
 #: src/gtkft.c:449
 msgid "An error occurred while opening the file."
-msgstr ""
+msgstr "கோப்பை திறக்கும்பொழுது பிழை ஏற்பட்டது."
 
 #: src/gtkft.c:469
 #, c-format
 msgid "Error launching %s: %s"
-msgstr ""
+msgstr "வெளியீடும்போது பிழை %s: %s"
 
 #: src/gtkft.c:478
 #, c-format
 msgid "Error running %s"
-msgstr ""
+msgstr "இயக்கும்போது பிழை %s"
 
 #: src/gtkft.c:479
 #, c-format
 msgid "Process returned error code %d"
-msgstr ""
+msgstr "இயக்கம் பிழை எண் %d யை கொடுத்தது"
 
 #: src/gtkft.c:574
 msgid "Progress"
-msgstr ""
+msgstr "முன்னேற்றம்"
 
 #: src/gtkft.c:581
 msgid "Filename"
-msgstr ""
+msgstr "கோப்புப்பெயர்"
 
 #: src/gtkft.c:588
 msgid "Size"
-msgstr ""
+msgstr "அளவு"
 
 #: src/gtkft.c:595
 msgid "Remaining"
-msgstr ""
+msgstr "மீதம்"
 
 #: src/gtkft.c:626
 msgid "Filename:"
-msgstr ""
+msgstr "கோப்புப்பெயர்:"
 
 #: src/gtkft.c:627
 msgid "Local File:"
-msgstr ""
+msgstr "இங்கேயுள்ள கோப்பு:"
 
 #: src/gtkft.c:628
 msgid "Status:"
-msgstr ""
+msgstr "நிலை:"
 
 #: src/gtkft.c:629
 msgid "Speed:"
-msgstr ""
+msgstr "வேகம்:"
 
 #: src/gtkft.c:630
 msgid "Time Elapsed:"
-msgstr ""
+msgstr "முடிந்த காலம்:"
 
 #: src/gtkft.c:631
 msgid "Time Remaining:"
-msgstr ""
+msgstr "மீதமுள்ள காலம்:"
 
 #: src/gtkft.c:717
 msgid "_Close this window when all transfers finish"
-msgstr ""
+msgstr "அனைத்து பரிமாற்றங்களும் முடிந்தபின் இந்த சாளரத்தை மூடு"
 
 #: src/gtkft.c:727
 msgid "C_lear finished transfers"
-msgstr ""
+msgstr "முடிந்துவிட்ட பரிமாற்றங்களை சுத்தம் செய்"
 
 #. "Download Details" arrow
 #: src/gtkft.c:736
 msgid "File transfer _details"
-msgstr ""
+msgstr "கோப்பு பரிமாற்ற தகவல்கள்"
 
 #. Pause button
 #: src/gtkft.c:766
 #: src/gtkstock.c:143
 msgid "_Pause"
-msgstr ""
+msgstr "நிலுவை"
 
 #. Resume button
 #: src/gtkft.c:776
 msgid "_Resume"
-msgstr ""
+msgstr "தொடர்"
 
 #: src/gtkft.c:991
 msgid "Failed"
-msgstr ""
+msgstr "பிழைத்தது"
 
 #: src/gtkimhtml.c:816
 msgid "Pa_ste as Plain Text"
-msgstr ""
+msgstr "சாதாரண வாக்கியமாக ஒட்டு"
 
 #: src/gtkimhtml.c:1313
 msgid "Hyperlink color"
-msgstr ""
+msgstr "மீத்தொடர்பு நிறம்"
 
 #: src/gtkimhtml.c:1314
 msgid "Color to draw hyperlinks."
-msgstr ""
+msgstr "மீத்தொடர்பை வரைவதற்கான நிறம்"
 
 #: src/gtkimhtml.c:1317
 msgid "Hyperlink prelight color"
-msgstr ""
+msgstr "மீத்தொடர்பு முன்ஒளி நிறம்"
 
 #: src/gtkimhtml.c:1318
 msgid "Color to draw hyperlinks when mouse is over them."
-msgstr ""
+msgstr "சுட்டி மீத்தொடர்பின் மீது இருக்கும்பொழுது மீத்தொடர்பை வரைவதற்கான நிறம்"
 
 #: src/gtkimhtml.c:1537
 msgid "_Copy E-Mail Address"
-msgstr ""
+msgstr "மின்னஞ்சல் முகவரியை நகலெடு"
 
 #: src/gtkimhtml.c:1549
 msgid "_Open Link in Browser"
-msgstr ""
+msgstr "தொடர்பை உலாவலில் திற"
 
 #: src/gtkimhtml.c:1559
 msgid "_Copy Link Location"
-msgstr ""
+msgstr "தொடர்பு பகுதியை நகல் செய்"
 
 #: src/gtkimhtml.c:3241
 msgid ""
@@ -3630,6 +3674,9 @@ msgid ""
 "\n"
 "Defaulting to PNG."
 msgstr ""
+"<span size='larger' weight='bold'>அறியமுடியாத கோப்பு வகை</span>\n"
+"\n"
+"PNGக்கு மாற்றுகிறது."
 
 #: src/gtkimhtml.c:3244
 msgid ""
@@ -3637,6 +3684,9 @@ msgid ""
 "\n"
 "Defaulting to PNG."
 msgstr ""
+"அறியமுடியாத கோப்பு வகை\n"
+"\n"
+"PNGக்கு மாற்றுகிறது."
 
 #: src/gtkimhtml.c:3257
 #, c-format
@@ -3645,6 +3695,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"<span size='larger' weight='bold'>படத்தை சேமிப்பதில் பிழை</span>\n"
+"\n"
+"%s"
 
 #: src/gtkimhtml.c:3260
 #, c-format
@@ -3653,164 +3706,167 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"படத்தை சேமிப்பதில் பிழை\n"
+"\n"
+"%s"
 
 #: src/gtkimhtml.c:3340
 #: src/gtkimhtml.c:3352
 msgid "Save Image"
-msgstr ""
+msgstr "படத்தை சேமி"
 
 #: src/gtkimhtml.c:3380
 msgid "_Save Image..."
-msgstr ""
+msgstr "படத்தை சேமி..."
 
 #: src/gtkimhtmltoolbar.c:147
 msgid "Select Font"
-msgstr ""
+msgstr "எழுத்துருவை தேர்வுசெய்"
 
 #: src/gtkimhtmltoolbar.c:226
 msgid "Select Text Color"
-msgstr ""
+msgstr "எழுத்து நிறத்தை தேர்வுசெய்"
 
 #: src/gtkimhtmltoolbar.c:305
 msgid "Select Background Color"
-msgstr ""
+msgstr "பின்னணி நிறத்தை தேர்வுசெய்"
 
 #: src/gtkimhtmltoolbar.c:394
 msgid "_URL"
-msgstr ""
+msgstr "_URL"
 
 #: src/gtkimhtmltoolbar.c:402
 msgid "_Description"
-msgstr ""
+msgstr "குறிப்புரை"
 
 #: src/gtkimhtmltoolbar.c:405
 msgid "Please enter the URL and description of the link that you want to insert. The description is optional."
-msgstr ""
+msgstr "தயவுசெய்து நீங்கள் நுழைக்க விரும்பும் இணைப்பின் URL மற்றும் அதன் குறிப்பை கொடுக்கவும். குறிப்பு விருப்பத்திற்கணங்க"
 
 #: src/gtkimhtmltoolbar.c:409
 msgid "Please enter the URL of the link that you want to insert."
-msgstr ""
+msgstr "நீங்கள் நுழைக்க விரும்பும் இணைப்பின் URL ஐ தயவுசெய்து கொடுக்கவும்."
 
 #: src/gtkimhtmltoolbar.c:414
 msgid "Insert Link"
-msgstr ""
+msgstr "இணைப்பை நுழைக்கவும்"
 
 #: src/gtkimhtmltoolbar.c:418
 msgid "_Insert"
-msgstr ""
+msgstr "நுழைக்க"
 
 #: src/gtkimhtmltoolbar.c:487
 #, c-format
 msgid "Failed to store image: %s\n"
-msgstr ""
+msgstr "படத்தை சேமிக்க தவறியது: %s\n"
 
 #: src/gtkimhtmltoolbar.c:513
 #: src/gtkimhtmltoolbar.c:523
 msgid "Insert Image"
-msgstr ""
+msgstr "படத்தை நுழை"
 
 #: src/gtkimhtmltoolbar.c:721
 msgid "This theme has no available smileys."
-msgstr ""
+msgstr "இதில் முகபாவனைகள் இல்லை."
 
 #. show everything
 #: src/gtkimhtmltoolbar.c:735
 msgid "Smile!"
-msgstr ""
+msgstr "சிரி!"
 
 #: src/gtkimhtmltoolbar.c:916
 msgid "Bold"
-msgstr ""
+msgstr "தடிமனான"
 
 #: src/gtkimhtmltoolbar.c:927
 msgid "Italic"
-msgstr ""
+msgstr "சாய்வான"
 
 #: src/gtkimhtmltoolbar.c:938
 msgid "Underline"
-msgstr ""
+msgstr "அடிக்கோடிட்ட"
 
 #: src/gtkimhtmltoolbar.c:954
 msgid "Larger font size"
-msgstr ""
+msgstr "பெரிய எழுத்துரு அளவு"
 
 #: src/gtkimhtmltoolbar.c:966
 msgid "Smaller font size"
-msgstr ""
+msgstr "சிறிய எழுத்துரு அளவு"
 
 #: src/gtkimhtmltoolbar.c:983
 msgid "Font Face"
-msgstr ""
+msgstr "எழுத்துரு முகம்"
 
 #: src/gtkimhtmltoolbar.c:995
 msgid "Foreground font color"
-msgstr ""
+msgstr "முன்னணி எழுத்துரு நிறம்"
 
 #: src/gtkimhtmltoolbar.c:1023
 msgid "Clear formatting"
-msgstr ""
+msgstr "முறைப்படுத்தலை சுத்தம் செய்"
 
 #: src/gtkimhtmltoolbar.c:1038
 msgid "Insert link"
-msgstr ""
+msgstr "இணைப்பை நுழை"
 
 #: src/gtkimhtmltoolbar.c:1048
 msgid "Insert image"
-msgstr ""
+msgstr "படத்தை நுழை"
 
 #: src/gtkimhtmltoolbar.c:1059
 msgid "Insert smiley"
-msgstr ""
+msgstr "முகபாவனையை நுழை"
 
 #: src/gtklog.c:200
 #, c-format
 msgid "Conversation in %s on %s"
-msgstr ""
+msgstr "உரையாடல் %s ல் %s ன் மீது"
 
 #: src/gtklog.c:202
 #, c-format
 msgid "Conversation with %s on %s"
-msgstr ""
+msgstr "உரையாடல் %s உடன் %s மீது"
 
 #: src/gtklog.c:309
 msgid "System events will only be logged if the \"Log all status changes to system log\" preference is enabled."
-msgstr ""
+msgstr "\"அனைத்து நிலை மாற்றங்களையும் கணினி பதிவில் பதிவு செய்\" விருப்பம் இயலுமைபடுத்தியிருந்தால் மட்டுமே கணினி நிகழ்வுகள் பதியப்படும்."
 
 #: src/gtklog.c:313
 msgid "Instant messages will only be logged if the \"Log all instant messages\" preference is enabled."
-msgstr ""
+msgstr "\"அனைத்து உடனடி தகவல்களயும் பதிவு செய்\" விருப்பம் இயலுமைபடுத்தியிருந்தால் மட்டுமே உடனடி தகவல்கள் பதியப்படும்."
 
 #: src/gtklog.c:316
 msgid "Chats will only be logged if the \"Log all chats\" preference is enabled."
-msgstr ""
+msgstr "\"அனைத்து அரட்டைகளயும் பதிவு செய்\" விருப்பம் இயலுமைபடுத்தியிருந்தால் மட்டுமே அரட்டைகள் பதியப்படும்."
 
 #: src/gtklog.c:320
 msgid "No logs were found"
-msgstr ""
+msgstr "எந்தப்பதிவும் காணப்படவில்லை"
 
 #: src/gtklog.c:396
 msgid "Total log size:"
-msgstr ""
+msgstr "மொத்த பதிவு அளவு:"
 
 #: src/gtklog.c:472
 #, c-format
 msgid "Conversations in %s"
-msgstr ""
+msgstr "%s ல் உரையாடல்கள்"
 
 #: src/gtklog.c:480
 #: src/gtklog.c:531
 #, c-format
 msgid "Conversations with %s"
-msgstr ""
+msgstr "%s உடன் உரையாடல்கள்"
 
 #: src/gtklog.c:556
 msgid "System Log"
-msgstr ""
+msgstr "கணினி பதிவு"
 
 #: src/gtkmain.c:324
 #, c-format
 msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr ""
+msgstr "கெய்ம் %s. மேலும் தகவல்களுக்கு `%s -h' யை முயற்சி செய்க.\n"
 
 #: src/gtkmain.c:326
 #, c-format
@@ -3826,47 +3882,51 @@ msgid ""
 "                      account(s) to use, separated by commas)\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+"கெய்ம் %s\n"
+"பயன்பாடு: %s [விருப்பம்]...\n"
+"\n"
+"  -c, --config=DIR    use DIR for config files\n"
 
 #: src/gtkmain.c:678
 #: src/gtkmain.c:680
 msgid "Default"
-msgstr ""
+msgstr "கொடாநிலை"
 
 #: src/gtkmedia.c:52
 msgid "Call ended."
-msgstr ""
+msgstr "அழைப்பு முடிவுற்றது."
 
 #: src/gtkmedia.c:69
 #, c-format
 msgid "Calling %s"
-msgstr ""
+msgstr "%s யை அழைக்கிறது "
 
 #: src/gtkmedia.c:73
 #: src/gtkmedia.c:108
 msgid "End Call"
-msgstr ""
+msgstr "அழைப்பு முடிவு"
 
 #: src/gtkmedia.c:81
 #, c-format
 msgid "Receiving call from %s"
-msgstr ""
+msgstr "%s லிருந்து அழைப்பை பெறுகிறது"
 
 #: src/gtkmedia.c:89
 msgid "Reject Call"
-msgstr ""
+msgstr "அழைப்பை மறு"
 
 #: src/gtkmedia.c:95
 msgid "Accept call"
-msgstr ""
+msgstr "அழைப்பை ஏற்றுக்கொள்"
 
 #: src/gtkmedia.c:102
 #, c-format
 msgid "Connected to %s"
-msgstr ""
+msgstr "%s உடன் இணைக்கப்பட்டது"
 
 #: src/gtkmedia.c:113
 msgid "_Mute"
-msgstr ""
+msgstr "ஊமையாக்கு"
 
 #. Descriptive label
 #: src/gtknotify.c:275
@@ -3879,12 +3939,12 @@ msgstr[1] ""
 #: src/gtknotify.c:289
 #, c-format
 msgid "<span weight=\"bold\">From:</span> %s\n"
-msgstr ""
+msgstr "<span weight=\"bold\">அனுப்புநர்:</span> %s\n"
 
 #: src/gtknotify.c:298
 #, c-format
 msgid "<span weight=\"bold\">Subject:</span> %s\n"
-msgstr ""
+msgstr "<span weight=\"bold\">பொருள்:</span> %s\n"
 
 #: src/gtknotify.c:303
 #, c-format
@@ -3893,6 +3953,9 @@ msgid ""
 "\n"
 "%s%s%s%s"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">உங்களுக்கு மின்னஞ்சல்!</span>\n"
+"\n"
+"%s%s%s%s"
 
 #: src/gtknotify.c:319
 #, c-format
@@ -3901,43 +3964,46 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">உங்களுக்கு மின்னஞ்சல்!</span>\n"
+"\n"
+"%s"
 
 #: src/gtknotify.c:504
 msgid "Search Results"
-msgstr ""
+msgstr "தேடல் முடிவுகள்"
 
 #: src/gtknotify.c:643
 #: src/protocols/oscar/oscar.c:4860
 #, c-format
 msgid "Info for %s"
-msgstr ""
+msgstr "%s ற்கான தகவல்கள்"
 
 #: src/gtknotify.c:644
 #: src/protocols/toc/toc.c:470
 msgid "Buddy Information"
-msgstr ""
+msgstr "தோழர் பற்றிய தகவல்"
 
 #: src/gtknotify.c:687
 #, c-format
 msgid "The browser command <b>%s</b> is invalid."
-msgstr ""
+msgstr "உலாவலர் கட்டளை <b>%s</b> செல்லாதது."
 
 #: src/gtknotify.c:689
 #: src/gtknotify.c:701
 #: src/gtknotify.c:714
 #: src/gtknotify.c:838
 msgid "Unable to open URL"
-msgstr ""
+msgstr "URL ஐ திறக்க இயலவில்லை"
 
 #: src/gtknotify.c:699
 #: src/gtknotify.c:712
 #, c-format
 msgid "Error launching <b>%s</b>: %s"
-msgstr ""
+msgstr "<b>%s</b> வெளியிடுவதில் பிழை: %s"
 
 #: src/gtknotify.c:839
 msgid "The 'Manual' browser command has been chosen, but no command has been set."
-msgstr ""
+msgstr "உலாவலர் கட்டளை  'கைமுறை' தேர்வு செய்யப்பட்டுள்ளது, ஆனால் எந்த கட்டளையும் அமைக்கப்படவில்லை."
 
 #: src/gtkplugin.c:258
 #, c-format
@@ -3946,385 +4012,388 @@ msgid ""
 "<span weight=\"bold\">Web site:</span>\t\t%s\n"
 "<span weight=\"bold\">File name:</span>\t%s"
 msgstr ""
+"%s%s<span weight=\"bold\">எழுதியவர்:</span>\t%s\n"
+"<span weight=\"bold\">வலை:</span>\t\t%s\n"
+"<span weight=\"bold\">கோப்பு:</span>\t%s"
 
 #: src/gtkplugin.c:426
 msgid "<b>Plugin Details</b>"
-msgstr ""
+msgstr "<b>சொருகுபொருள் விளக்கம்</b>"
 
 #: src/gtkpounce.c:157
 msgid "Select a file"
-msgstr ""
+msgstr "கோப்பை தேர்வு செய்க"
 
 #: src/gtkpounce.c:254
 msgid "Please enter a buddy to pounce."
-msgstr ""
+msgstr "தோழரை இறைஞ்ச தயவுசெய்து உள்ளீடு செய்க"
 
 #: src/gtkpounce.c:476
 msgid "New Buddy Pounce"
-msgstr ""
+msgstr "புதிய தோழர் இறைஞ்சுதல்"
 
 #: src/gtkpounce.c:476
 msgid "Edit Buddy Pounce"
-msgstr ""
+msgstr "தோழர் இறைஞ்சுதலை தொகு"
 
 #. Create the "Pounce Who" frame.
 #: src/gtkpounce.c:493
 msgid "Pounce Who"
-msgstr ""
+msgstr "யார் இறைஞ்ச"
 
 #: src/gtkpounce.c:520
 msgid "_Buddy name:"
-msgstr ""
+msgstr "தோழர் பெயர்:"
 
 #. Create the "Pounce When" frame.
 #: src/gtkpounce.c:544
 msgid "Pounce When Buddy..."
-msgstr ""
+msgstr "தோழர் எப்பொழுது இறைஞ்சவேண்டுமெனில்..."
 
 #: src/gtkpounce.c:552
 msgid "Si_gns on"
-msgstr ""
+msgstr "நுழைகிறார்"
 
 #: src/gtkpounce.c:554
 msgid "Signs o_ff"
-msgstr ""
+msgstr "வெளியேற்றம்"
 
 #: src/gtkpounce.c:556
 msgid "Goes a_way"
-msgstr ""
+msgstr "வெளியே செல்கிறார்"
 
 #: src/gtkpounce.c:558
 msgid "Ret_urns from away"
-msgstr ""
+msgstr "வெளியிலிருந்து திரும்புகிறார்"
 
 #: src/gtkpounce.c:560
 msgid "Becomes _idle"
-msgstr ""
+msgstr "சும்மா இருக்கிறார்"
 
 #: src/gtkpounce.c:562
 msgid "Is no longer i_dle"
-msgstr ""
+msgstr "மேலும் சும்மா இல்லை"
 
 #: src/gtkpounce.c:564
 msgid "Starts _typing"
-msgstr ""
+msgstr "தட்டச்சிட ஆரம்பிக்கிறார்"
 
 #: src/gtkpounce.c:566
 msgid "Stops t_yping"
-msgstr ""
+msgstr "தட்டச்சிடுவதை நிறுத்துகிறார்"
 
 #. Create the "Pounce Action" frame.
 #: src/gtkpounce.c:595
 msgid "Pounce Action"
-msgstr ""
+msgstr "இறைஞ்சுதல் செயல்பாடு"
 
 #: src/gtkpounce.c:603
 msgid "Ope_n an IM window"
-msgstr ""
+msgstr "IM சாளரத்தை திற"
 
 #: src/gtkpounce.c:605
 msgid "_Pop up a notification"
-msgstr ""
+msgstr "அறிவிப்பை மேலெடு"
 
 #: src/gtkpounce.c:607
 msgid "Send a _message"
-msgstr ""
+msgstr "தகவல் அனுப்பு"
 
 #: src/gtkpounce.c:609
 msgid "E_xecute a command"
-msgstr ""
+msgstr "கட்டளையை இயக்கு"
 
 #: src/gtkpounce.c:611
 msgid "P_lay a sound"
-msgstr ""
+msgstr "ஒலியை இயக்கு"
 
 #: src/gtkpounce.c:615
 msgid "Brows_e..."
-msgstr ""
+msgstr "உலாவு..."
 
 #: src/gtkpounce.c:617
 msgid "Br_owse..."
-msgstr ""
+msgstr "உலாவு..."
 
 #: src/gtkpounce.c:618
 msgid "Pre_view"
-msgstr ""
+msgstr "முன்னோட்டம்"
 
 #: src/gtkpounce.c:701
 msgid "_Recurring"
-msgstr ""
+msgstr "மீண்டும் மீண்டும் நிகழ்"
 
 #: src/gtkpounce.c:997
 #, c-format
 msgid "Are you sure you want to delete the pounce on %s for %s?"
-msgstr ""
+msgstr "%s மீதான இறைஞ்சுதலை %s க்காக நீக்குவதில் நீங்கள் உறுதியாக இருக்கிறீர்களா?"
 
 #: src/gtkpounce.c:1145
 msgid "Pounce Target"
-msgstr ""
+msgstr "இறைஞ்சுதலின் இலக்கு"
 
 #: src/gtkpounce.c:1180
 msgid "Recurring"
-msgstr ""
+msgstr "மீண்டும் மீண்டும் நிகழ்"
 
 #: src/gtkpounce.c:1227
 msgid "Buddy Pounces"
-msgstr ""
+msgstr "தோழர் இறைஞ்சுகிறார்"
 
 #: src/gtkpounce.c:1345
 #, c-format
 msgid "%s has started typing to you (%s)"
-msgstr ""
+msgstr "%s உங்களுக்கு தட்டச்சிட ஆரம்பித்திருக்கிறார் (%s)"
 
 #: src/gtkpounce.c:1347
 #, c-format
 msgid "%s has signed on (%s)"
-msgstr ""
+msgstr "%s நுழைந்திருக்கிறார் (%s) ல்"
 
 #: src/gtkpounce.c:1349
 #, c-format
 msgid "%s has returned from being idle (%s)"
-msgstr ""
+msgstr "%s சும்மா நிலையிலிருந்து திரும்பி இருக்கிறார் (%s) "
 
 #: src/gtkpounce.c:1351
 #, c-format
 msgid "%s has returned from being away (%s)"
-msgstr ""
+msgstr "%s வெளியிலிருந்து திரும்பி இருக்கிறார் (%s) "
 
 #: src/gtkpounce.c:1353
 #, c-format
 msgid "%s has stopped typing to you (%s)"
-msgstr ""
+msgstr "%s உங்களுக்கு தட்டச்சிடுவதை நிறுத்தியுள்ளார் (%s) "
 
 #: src/gtkpounce.c:1355
 #, c-format
 msgid "%s has signed off (%s)"
-msgstr ""
+msgstr "%s வெளியேறியிருக்கிறார் (%s) "
 
 #: src/gtkpounce.c:1357
 #, c-format
 msgid "%s has become idle (%s)"
-msgstr ""
+msgstr "%s சும்மா இருக்கிறார் (%s) "
 
 #: src/gtkpounce.c:1359
 #, c-format
 msgid "%s has gone away. (%s)"
-msgstr ""
+msgstr "%s வெளியே சென்றுள்ளார் (%s) "
 
 #: src/gtkpounce.c:1360
 msgid "Unknown pounce event. Please report this!"
-msgstr ""
+msgstr "தெரியாத இறைஞ்சல் நிகழ்வு"
 
 #: src/gtkprefs.c:511
 msgid "Smiley theme failed to unpack."
-msgstr ""
+msgstr "முகபாவனை உரைபொருளை கட்டுப்பிரிக்க தவறியது."
 
 #: src/gtkprefs.c:630
 msgid "Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."
-msgstr ""
+msgstr "கீழ்க்ண்ட பட்டியலில் நீங்கள் உபயோகிக்க விரும்பும் முகபாவனை உரைபொருளை தேர்வு செய்க. புதிய உரைபொருள்கள் இந்த உரைபொருள் பட்டியலில் இழுத்து போடுவதன் மூலம் நிறுவப்படும்."
 
 #: src/gtkprefs.c:665
 msgid "Icon"
-msgstr ""
+msgstr "குறும்படம்"
 
 #: src/gtkprefs.c:672
 #: src/protocols/jabber/buddy.c:267
 #: src/protocols/jabber/buddy.c:811
 #: src/protocols/jabber/chat.c:769
 msgid "Description"
-msgstr ""
+msgstr "விரிவுரை"
 
 #: src/gtkprefs.c:814
 msgid "_Hide new IM conversations"
-msgstr ""
+msgstr "புதிய IM உரையாடல்களை மறை"
 
 #: src/gtkprefs.c:817
 #: src/gtkprefs.c:1666
 msgid "When away"
-msgstr ""
+msgstr "வெளிச்செல்லும் பொழுது"
 
 #: src/gtkprefs.c:821
 msgid "Send unknown \"_slash\" commands as messages"
-msgstr ""
+msgstr "தெரியாத \"_slash\" கட்டளைகளை தகவல்களாக அனுப்பு"
 
 #: src/gtkprefs.c:823
 msgid "Show _formatting on incoming messages"
-msgstr ""
+msgstr "உள்வரும் தகவல்களில் முறைப்படுத்துமையை காட்டு"
 
 #: src/gtkprefs.c:826
 msgid "Show buddy _icons"
-msgstr ""
+msgstr "தோழர் குறும்படங்களை காட்டு"
 
 #: src/gtkprefs.c:828
 msgid "Enable buddy ic_on animation"
-msgstr ""
+msgstr "தோழர் குறும்பட அசைவுகளை இயலுமைபடுத்து"
 
 #: src/gtkprefs.c:835
 msgid "_Notify buddies that you are typing to them"
-msgstr ""
+msgstr "நீங்கள் தோழருக்கு தட்டச்சு செய்கிறீர்கள் என்பதை அவருக்கு அறிவிக்கிறது"
 
 #: src/gtkprefs.c:838
 msgid "_Highlight misspelled words"
-msgstr ""
+msgstr "தவறாக உச்சரிக்கப்பட்ட வார்த்தைகளை மேற்கோள் காட்டு"
 
 #: src/gtkprefs.c:856
 msgid "This is how your outgoing message text will appear when you use protocols that support formatting. :)"
-msgstr ""
+msgstr "இது நீங்கள் முறைப்படுத்தல் ஆதரவுள்ள நெறிமுறைகளை பயன்படுத்தும்போது தோன்றக்கூடிய வெளிச்செல் தகவல்களின் மாதிரி. :)"
 
 #. All the tab options!
 #: src/gtkprefs.c:878
 msgid "Tab Options"
-msgstr ""
+msgstr "Tab விருப்பங்கள்"
 
 #: src/gtkprefs.c:880
 msgid "Show IMs and chats in _tabbed windows"
-msgstr ""
+msgstr "IM மற்றும் அரட்டைகளை _tabbed சாளரங்களில் காட்டு"
 
 #: src/gtkprefs.c:894
 msgid "Show close b_utton on tabs"
-msgstr ""
+msgstr "மூடு பொத்தான்களை tab ல் காட்டு"
 
 #: src/gtkprefs.c:900
 msgid "_Placement:"
-msgstr ""
+msgstr "பெயர்ச்சி:"
 
 #: src/gtkprefs.c:902
 msgid "Top"
-msgstr ""
+msgstr "மேலே"
 
 #: src/gtkprefs.c:903
 msgid "Bottom"
-msgstr ""
+msgstr "கீழே"
 
 #: src/gtkprefs.c:904
 msgid "Left"
-msgstr ""
+msgstr "இடது"
 
 #: src/gtkprefs.c:905
 msgid "Right"
-msgstr ""
+msgstr "வலது"
 
 #: src/gtkprefs.c:907
 msgid "Left Vertical"
-msgstr ""
+msgstr "இடது செங்குத்து"
 
 #: src/gtkprefs.c:908
 msgid "Right Vertical"
-msgstr ""
+msgstr "வலது செங்குத்து"
 
 #: src/gtkprefs.c:913
 msgid "N_ew conversations:"
-msgstr ""
+msgstr "புதிய உரையாடல்கள்:"
 
 #: src/gtkprefs.c:964
 #: src/protocols/oscar/oscar.c:781
 #: src/protocols/oscar/oscar.c:6008
 msgid "IP Address"
-msgstr ""
+msgstr "IP முகவரிகள்"
 
 #: src/gtkprefs.c:966
 msgid "ST_UN server:"
-msgstr ""
+msgstr "ST_UN  சேவகர்:"
 
 #: src/gtkprefs.c:968
 msgid "_Autodetect IP address"
-msgstr ""
+msgstr "IP முகவரி சுயதேடல்"
 
 #: src/gtkprefs.c:977
 msgid "Public _IP:"
-msgstr ""
+msgstr "பொது _IP:"
 
 #: src/gtkprefs.c:1001
 msgid "Ports"
-msgstr ""
+msgstr "தளங்கள்"
 
 #: src/gtkprefs.c:1004
 msgid "_Manually specify range of ports to listen on"
-msgstr ""
+msgstr "கவனிக்க வேண்டிய தளங்களை கைமுறையாக குறிப்பிடு"
 
 #: src/gtkprefs.c:1007
 msgid "_Start port:"
-msgstr ""
+msgstr "ஆரம்ப தளம்:"
 
 #: src/gtkprefs.c:1014
 msgid "_End port:"
-msgstr ""
+msgstr "முடிவு தளம்:"
 
 #: src/gtkprefs.c:1022
 msgid "Proxy Server"
-msgstr ""
+msgstr "பதிலாள் சேவகர்"
 
 #: src/gtkprefs.c:1026
 msgid "No proxy"
-msgstr ""
+msgstr "பதிலாள் இல்லை"
 
 #: src/gtkprefs.c:1082
 msgid "_User:"
-msgstr ""
+msgstr "பயனாளர்:"
 
 #: src/gtkprefs.c:1144
 msgid "Epiphany"
-msgstr ""
+msgstr "எபிபனி"
 
 #: src/gtkprefs.c:1145
 msgid "Firebird"
-msgstr ""
+msgstr "பயர்பேர்ட்"
 
 #: src/gtkprefs.c:1146
 msgid "Firefox"
-msgstr ""
+msgstr "பயர்பாக்ஸ்"
 
 #: src/gtkprefs.c:1147
 msgid "Galeon"
-msgstr ""
+msgstr "கேலியன்"
 
 #: src/gtkprefs.c:1148
 msgid "GNOME Default"
-msgstr ""
+msgstr "க்னோம் கொடாநிலை"
 
 #: src/gtkprefs.c:1149
 msgid "Konqueror"
-msgstr ""
+msgstr "கான்கொரர்"
 
 #: src/gtkprefs.c:1150
 msgid "Mozilla"
-msgstr ""
+msgstr "மோஸில்லா"
 
 #: src/gtkprefs.c:1151
 msgid "Netscape"
-msgstr ""
+msgstr "நெட்ஸ்கேப்"
 
 #: src/gtkprefs.c:1152
 msgid "Opera"
-msgstr ""
+msgstr "ஒபேரா"
 
 #: src/gtkprefs.c:1161
 msgid "Manual"
-msgstr ""
+msgstr "கைமுறை"
 
 #: src/gtkprefs.c:1214
 msgid "Browser Selection"
-msgstr ""
+msgstr "உலாவலர் தேர்வு"
 
 #: src/gtkprefs.c:1218
 msgid "_Browser:"
-msgstr ""
+msgstr "உலாவலர்:"
 
 #: src/gtkprefs.c:1226
 msgid "_Open link in:"
-msgstr ""
+msgstr "தொடர்பை இதில் திற:"
 
 #: src/gtkprefs.c:1228
 msgid "Browser default"
-msgstr ""
+msgstr "உலாவலர் கொடாநிலை"
 
 #: src/gtkprefs.c:1229
 msgid "Existing window"
-msgstr ""
+msgstr "இருக்கும் சாளரம்"
 
 #: src/gtkprefs.c:1231
 msgid "New tab"
-msgstr ""
+msgstr "புதிய tab"
 
 #: src/gtkprefs.c:1245
 #, c-format
@@ -4332,55 +4401,57 @@ msgid ""
 "_Manual:\n"
 "(%s for URL)"
 msgstr ""
+"கைமுறை:\n"
+"(%s URL க்காக)"
 
 #: src/gtkprefs.c:1281
 #: src/gtkprefs.c:1754
 msgid "Logging"
-msgstr ""
+msgstr "பதிவுறுதல்"
 
 #: src/gtkprefs.c:1284
 msgid "Log _format:"
-msgstr ""
+msgstr "பதிவு முறை:"
 
 #: src/gtkprefs.c:1289
 msgid "Log all _instant messages"
-msgstr ""
+msgstr "அனைத்து உடனடி தகவல்களையும் பதிவு செய்"
 
 #: src/gtkprefs.c:1291
 msgid "Log all c_hats"
-msgstr ""
+msgstr "அனைத்து அரட்டைகளையும் பதிவு செய்"
 
 #: src/gtkprefs.c:1293
 msgid "Log all _status changes to system log"
-msgstr ""
+msgstr "அனைத்து நிலை மாற்றங்களையும் கணினி பதிவேட்டில் பதிவு செய்"
 
 #: src/gtkprefs.c:1425
 msgid "Sound Selection"
-msgstr ""
+msgstr "ஒலி தேர்வு"
 
 #: src/gtkprefs.c:1479
 msgid "Sound Method"
-msgstr ""
+msgstr "ஒலி வகை"
 
 #: src/gtkprefs.c:1480
 msgid "_Method:"
-msgstr ""
+msgstr "வகை:"
 
 #: src/gtkprefs.c:1482
 msgid "Console beep"
-msgstr ""
+msgstr "கன்ஸோல் பீப்"
 
 #: src/gtkprefs.c:1484
 msgid "Automatic"
-msgstr ""
+msgstr "தானியங்கி"
 
 #: src/gtkprefs.c:1489
 msgid "Command"
-msgstr ""
+msgstr "கட்டளை"
 
 #: src/gtkprefs.c:1490
 msgid "No sounds"
-msgstr ""
+msgstr "ஒலிகள் இல்லை"
 
 #: src/gtkprefs.c:1498
 #, c-format
@@ -4388,42 +4459,44 @@ msgid ""
 "Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
+"ஒலி கட்டளை:\n"
+"(%s கோப்புக்காக)"
 
 #: src/gtkprefs.c:1524
 msgid "Sound Options"
-msgstr ""
+msgstr "ஒலி விருப்பங்கள்"
 
 #: src/gtkprefs.c:1525
 msgid "Sounds when conversation has _focus"
-msgstr ""
+msgstr "உரையாடல் குவிக்கப்படும்போது ஒலியிடுகிறது"
 
 #: src/gtkprefs.c:1527
 msgid "_Sounds while away"
-msgstr ""
+msgstr "வெளியே செல்லும்போது ஒலியிடுகிறது"
 
 #: src/gtkprefs.c:1537
 msgid "Sound Events"
-msgstr ""
+msgstr "நிகழ்வுகளில் ஒலியிடுகிறது"
 
 #: src/gtkprefs.c:1588
 msgid "Play"
-msgstr ""
+msgstr "இயக்கு"
 
 #: src/gtkprefs.c:1595
 msgid "Event"
-msgstr ""
+msgstr "நிகழ்வு"
 
 #: src/gtkprefs.c:1614
 msgid "Test"
-msgstr ""
+msgstr "சோதனை"
 
 #: src/gtkprefs.c:1618
 msgid "Reset"
-msgstr ""
+msgstr "மீண்டும் அமை"
 
 #: src/gtkprefs.c:1622
 msgid "Choose..."
-msgstr ""
+msgstr "தேர்வு செய்..."
 
 #: src/gtkprefs.c:1661
 #: src/gtkstatusbox.c:396
@@ -4448,146 +4521,146 @@ msgstr ""
 #: src/protocols/zephyr/zephyr.c:2259
 #: src/status.c:157
 msgid "Away"
-msgstr ""
+msgstr "வெளியே"
 
 #: src/gtkprefs.c:1663
 msgid "_Auto-reply:"
-msgstr ""
+msgstr "சுய-பதில்:"
 
 #: src/gtkprefs.c:1667
 msgid "When both away and idle"
-msgstr ""
+msgstr "இருவரும் வெளியே மற்றும் சும்மா இருக்கும்பொழுது"
 
 #: src/gtkprefs.c:1670
 msgid "_Report idle time"
-msgstr ""
+msgstr "சும்மா இருக்கும் காலத்தை தெரிவி"
 
 #: src/gtkprefs.c:1673
 msgid "Auto-away"
-msgstr ""
+msgstr "சுய-வெளியே செல்"
 
 #: src/gtkprefs.c:1674
 msgid "Change status when _idle"
-msgstr ""
+msgstr "சும்மா இருக்கும்பொழுது நிலையை மாற்று"
 
 #: src/gtkprefs.c:1678
 msgid "_Minutes before changing status:"
-msgstr ""
+msgstr "நிலையை மாற்றுவதற்கு முன் நிமிடங்கள்:"
 
 #: src/gtkprefs.c:1686
 msgid "Change _status to:"
-msgstr ""
+msgstr "நிலையை இதற்கு மாற்று:"
 
 #: src/gtkprefs.c:1744
 msgid "Smiley Themes"
-msgstr ""
+msgstr "முகபாவனை உரைபொருள்"
 
 #: src/gtkprefs.c:1745
 msgid "Sounds"
-msgstr ""
+msgstr "ஒலிகள்"
 
 #: src/gtkprefs.c:1746
 #: src/protocols/silc/silc.c:1733
 msgid "Network"
-msgstr ""
+msgstr "வலையமைப்பு"
 
 #: src/gtkprefs.c:1751
 msgid "Browser"
-msgstr ""
+msgstr "உலாவல்"
 
 #: src/gtkprefs.c:1755
 msgid "Away / Idle"
-msgstr ""
+msgstr "வெளியே / சும்மா"
 
 #: src/gtkprivacy.c:79
 msgid "Allow all users to contact me"
-msgstr ""
+msgstr "அனைத்து பயனாளர்களும் என்னை தொடர்பு கொள்ள அனுமதி"
 
 #: src/gtkprivacy.c:80
 msgid "Allow only the users on my buddy list"
-msgstr ""
+msgstr "எனது தோழர் பட்டியலில் உள்ளவர்களை மட்டும் அனுமதி"
 
 #: src/gtkprivacy.c:81
 msgid "Allow only the users below"
-msgstr ""
+msgstr "கீழ்க்கண்ட பயனாளர்களை மட்டும் அனுமதி"
 
 #: src/gtkprivacy.c:82
 msgid "Block all users"
-msgstr ""
+msgstr "அனைத்து பயனாளர்களையும் தடு"
 
 #: src/gtkprivacy.c:83
 msgid "Block only the users below"
-msgstr ""
+msgstr "கீழ்க்கண்ட பயனாளர்களை மட்டும் தடு"
 
 #: src/gtkprivacy.c:398
 msgid "Privacy"
-msgstr ""
+msgstr "தனிமை"
 
 #: src/gtkprivacy.c:411
 msgid "Changes to privacy settings take effect immediately."
-msgstr ""
+msgstr "தனிமை அமைப்புகளின் மாற்றங்கள் உடனடியாக அமுலுக்கு வரும்."
 
 #. "Set privacy for:" label
 #: src/gtkprivacy.c:423
 msgid "Set privacy for:"
-msgstr ""
+msgstr "தனிமையை இதற்காக அமை:"
 
 #: src/gtkprivacy.c:589
 #: src/gtkprivacy.c:605
 msgid "Permit User"
-msgstr ""
+msgstr "பயனாளரை அனுமதி"
 
 #: src/gtkprivacy.c:590
 msgid "Type a user you permit to contact you."
-msgstr ""
+msgstr "நீங்கள் தொடர்பு கொள்ள அனுமதிக்கும் பயனாளரை தட்டச்சு செய்க."
 
 #: src/gtkprivacy.c:591
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr ""
+msgstr "நீங்கள் தொடர்பு கொள்ள விரும்பக்கூடிய பயனாளர் பெயரை கொடுக்கவும்."
 
 #: src/gtkprivacy.c:594
 #: src/gtkprivacy.c:607
 msgid "Permit"
-msgstr ""
+msgstr "அனுமதி"
 
 #: src/gtkprivacy.c:599
 #, c-format
 msgid "Allow %s to contact you?"
-msgstr ""
+msgstr "%s உங்களை தொடர்பு கொள்ள அனுமதிக்கலாமா?"
 
 #: src/gtkprivacy.c:601
 #, c-format
 msgid "Are you sure you wish to allow %s to contact you?"
-msgstr ""
+msgstr "%s உங்களை தொடர்பு கொள்ள அனுமதிப்பதில் நீங்கள் உறுதியாக உள்ளீர்களா?"
 
 #: src/gtkprivacy.c:628
 #: src/gtkprivacy.c:641
 msgid "Block User"
-msgstr ""
+msgstr "பயனாளரை தடு"
 
 #: src/gtkprivacy.c:629
 msgid "Type a user to block."
-msgstr ""
+msgstr "தடுக்க வேண்டிய பயனாளரை தட்டச்சு செய்க."
 
 #: src/gtkprivacy.c:630
 msgid "Please enter the name of the user you wish to block."
-msgstr ""
+msgstr "நீங்கள் தடுக்க விரும்பும் பயனாளர் பெயரை கொடுக்கவும்."
 
 #: src/gtkprivacy.c:632
 #: src/gtkprivacy.c:643
 #: src/protocols/gg/gg.c:1415
 msgid "Block"
-msgstr ""
+msgstr "தடு"
 
 #: src/gtkprivacy.c:637
 #, c-format
 msgid "Block %s?"
-msgstr ""
+msgstr "%s தடுக்கவா?"
 
 #: src/gtkprivacy.c:639
 #, c-format
 msgid "Are you sure you want to block %s?"
-msgstr ""
+msgstr "%s ஐ தடுப்பதில் நீங்கள் உறுதியாக உள்ளீர்களா ?"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
@@ -4602,7 +4675,7 @@ msgstr ""
 #: src/protocols/silc/wb.c:303
 #: src/request.h:1322
 msgid "Yes"
-msgstr ""
+msgstr "ஆம்"
 
 #: src/gtkrequest.c:260
 #: src/protocols/msn/dialog.c:114
@@ -4614,55 +4687,55 @@ msgstr ""
 #: src/protocols/silc/wb.c:304
 #: src/request.h:1322
 msgid "No"
-msgstr ""
+msgstr "இல்லை"
 
 #: src/gtkrequest.c:263
 msgid "Apply"
-msgstr ""
+msgstr "ஏற்று"
 
 #: src/gtkrequest.c:264
 #: src/protocols/msn/msn.c:357
 #: src/protocols/silc/util.c:335
 msgid "Close"
-msgstr ""
+msgstr "மூடு"
 
 #: src/gtkrequest.c:1802
 msgid "That file already exists"
-msgstr ""
+msgstr "அந்த கோப்பு ஏற்கனவே உள்ளது"
 
 #: src/gtkrequest.c:1803
 msgid "Would you like to overwrite it?"
-msgstr ""
+msgstr "அதன் மேலெழுத விரும்புகிறீர்களா?"
 
 #: src/gtkrequest.c:1845
 #: src/gtkrequest.c:1886
 msgid "Save File..."
-msgstr ""
+msgstr "கோப்பை சேமி..."
 
 #: src/gtkrequest.c:1846
 #: src/gtkrequest.c:1887
 msgid "Open File..."
-msgstr ""
+msgstr "கோப்பை திற..."
 
 #: src/gtkroomlist.c:331
 msgid "Room List"
-msgstr ""
+msgstr "அறை பட்டியல்"
 
 #. list button
 #: src/gtkroomlist.c:402
 msgid "_Get List"
-msgstr ""
+msgstr "பட்டியலை பெறு"
 
 #: src/gtksavedstatuses.c:437
 #: src/protocols/jabber/buddy.c:264
 #: src/protocols/jabber/buddy.c:805
 #: src/protocols/novell/novell.c:1465
 msgid "Title"
-msgstr ""
+msgstr "தலைப்பு"
 
 #: src/gtksavedstatuses.c:452
 msgid "Type"
-msgstr ""
+msgstr "வகை"
 
 #: src/gtksavedstatuses.c:463
 #: src/gtksavedstatuses.c:894
@@ -4693,24 +4766,24 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:3210
 #: src/protocols/zephyr/zephyr.c:2260
 msgid "Message"
-msgstr ""
+msgstr "தகவல்"
 
 #: src/gtksavedstatuses.c:526
 msgid "Saved Statuses"
-msgstr ""
+msgstr "சேமித்த நிலைகள்"
 
 #. Use button
 #: src/gtksavedstatuses.c:551
 msgid "_Use"
-msgstr ""
+msgstr "உபயோகி"
 
 #: src/gtksavedstatuses.c:660
 msgid "Title already in use.  You must choose a unique title."
-msgstr ""
+msgstr "தலைப்பு ஏற்கனவே உபயோகத்தில் உள்ளது. நீங்கள் தனிப்பட்ட தலைப்பை தேர்வு செய்ய வேண்டும்."
 
 #: src/gtksavedstatuses.c:853
 msgid "Different"
-msgstr ""
+msgstr "வேறுபாடு"
 
 #: src/gtksavedstatuses.c:883
 #: src/gtksavedstatuses.c:1010
@@ -4728,84 +4801,84 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:771
 #: src/protocols/yahoo/yahoo.c:2806
 msgid "Status"
-msgstr ""
+msgstr "நிலை"
 
 #: src/gtksavedstatuses.c:1029
 msgid "_Title:"
-msgstr ""
+msgstr "தலைப்பு:"
 
 #: src/gtksavedstatuses.c:1049
 #: src/gtksavedstatuses.c:1330
 msgid "_Status:"
-msgstr ""
+msgstr "நிலை:"
 
 #. Different status message expander
 #: src/gtksavedstatuses.c:1084
 msgid "Use a _different status for some accounts"
-msgstr ""
+msgstr "சில கணக்குகளுக்கு வேறுபாடான நிலைகளை பயன்படுத்து"
 
 #: src/gtksavedstatuses.c:1309
 #, c-format
 msgid "Status for %s"
-msgstr ""
+msgstr "%s ற்கான நிலை"
 
 #: src/gtksound.c:61
 msgid "Buddy logs in"
-msgstr ""
+msgstr "தோழர் உள் நுழைகிறார்"
 
 #: src/gtksound.c:62
 msgid "Buddy logs out"
-msgstr ""
+msgstr "தோழர் வெளியேறுகிறார்"
 
 #: src/gtksound.c:63
 msgid "Message received"
-msgstr ""
+msgstr "தகவல் பெறப்பட்டது"
 
 #: src/gtksound.c:64
 msgid "Message received begins conversation"
-msgstr ""
+msgstr "தகவல் பெறப்பட்டது உரையாடல் தொடங்குகிறது"
 
 #: src/gtksound.c:65
 msgid "Message sent"
-msgstr ""
+msgstr "தகவல் அனுப்பப்பட்டது"
 
 #: src/gtksound.c:66
 msgid "Person enters chat"
-msgstr ""
+msgstr "நபர் அரட்டையில் நுழைகிறார்"
 
 #: src/gtksound.c:67
 msgid "Person leaves chat"
-msgstr ""
+msgstr "நபர் அரட்டையிலிருந்து வெளியேறுகிறார்"
 
 #: src/gtksound.c:68
 msgid "You talk in chat"
-msgstr ""
+msgstr "நீங்கள் அரட்டையில் பேசுகிறீர்கள்"
 
 #: src/gtksound.c:69
 msgid "Others talk in chat"
-msgstr ""
+msgstr "மற்றவர்கள் அரட்டையில் பேசுகிறார்கள்"
 
 #: src/gtksound.c:72
 msgid "Someone says your name in chat"
-msgstr ""
+msgstr "யாரோ உங்களது பெயரை அரட்டையில் கூறுகிறார்கள்"
 
 #: src/gtksound.c:414
 #, c-format
 msgid "Unable to play sound because the chosen file (%s) does not exist."
-msgstr ""
+msgstr "ஒலி கொடுக்க இயலவில்லை ஏனென்றால் தேர்ந்தெடுத்த கோப்பு (%s) இல்லை."
 
 #: src/gtksound.c:430
 msgid "Unable to play sound because the 'Command' sound method has been chosen, but no command has been set."
-msgstr ""
+msgstr "ஒலி கொடுக்க இயலவில்லை ஏனென்றால் 'கட்டளை' ஒலி வகை தேர்ந்தெடுக்கப்பட்டது, ஆனால் கட்டளை ஏதும் அமைக்கப்பட்டிருக்கவில்லை."
 
 #: src/gtksound.c:442
 #, c-format
 msgid "Unable to play sound because the configured sound command could not be launched: %s"
-msgstr ""
+msgstr "ஒலி கொடுக்க இயலவில்லை ஏனென்றால் வரையறுத்த ஒலி கட்டளையை வெளியிட முடியவில்லை: %s"
 
 #: src/gtkstatusbox.c:255
 msgid "Typing"
-msgstr ""
+msgstr "தட்டச்சிடல்"
 
 #. connect to the server
 #: src/gtkstatusbox.c:258
@@ -4820,7 +4893,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2501
 #: src/protocols/zephyr/zephyr.c:1546
 msgid "Connecting"
-msgstr ""
+msgstr "இணைத்தல்"
 
 #. hacks
 #: src/gtkstatusbox.c:395
@@ -4840,7 +4913,7 @@ msgstr ""
 #: src/protocols/simple/simple.c:253
 #: src/status.c:154
 msgid "Available"
-msgstr ""
+msgstr "உள்ளது"
 
 #: src/gtkstatusbox.c:397
 #: src/protocols/gg/gg.c:1380
@@ -4849,7 +4922,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2649
 #: src/protocols/yahoo/yahoo.c:3241
 msgid "Invisible"
-msgstr ""
+msgstr "காணமுடியாத"
 
 #: src/gtkstatusbox.c:398
 #: src/protocols/bonjour/bonjour.c:240
@@ -4871,92 +4944,92 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:3199
 #: src/status.c:153
 msgid "Offline"
-msgstr ""
+msgstr "இணைப்பில்லாத"
 
 #: src/gtkstatusbox.c:400
 msgid "Custom..."
-msgstr ""
+msgstr "வழிமுறை..."
 
 #: src/gtkstatusbox.c:401
 msgid "Saved..."
-msgstr ""
+msgstr "சேமிக்கப்பட்டது..."
 
 #: src/gtkstock.c:138
 msgid "_Alias"
-msgstr ""
+msgstr "புனைப்பெயர்"
 
 #: src/gtkstock.c:140
 msgid "_Invite"
-msgstr ""
+msgstr "அழை"
 
 #: src/gtkstock.c:141
 msgid "_Modify"
-msgstr ""
+msgstr "மாற்று"
 
 #: src/gtkstock.c:142
 msgid "_Open Mail"
-msgstr ""
+msgstr "அஞ்சலை திற"
 
 #: src/gtkstock.c:144
 msgid "_Warn"
-msgstr ""
+msgstr "எச்சரி"
 
 #: src/gtkutils.c:1309
 #: src/gtkutils.c:1334
 #, c-format
 msgid "The following error has occurred loading %s: %s"
-msgstr ""
+msgstr "%s ஐ ஏற்றும்பொழுது கீழ்க்கண்ட பிழை நேர்ந்தது: %s"
 
 #: src/gtkutils.c:1311
 #: src/gtkutils.c:1336
 msgid "Failed to load image"
-msgstr ""
+msgstr "படத்தை ஏற்ற தவறியது"
 
 #: src/gtkutils.c:1411
 #, c-format
 msgid "Cannot send folder %s."
-msgstr ""
+msgstr "%s அடைவை அனுப்ப முடியவில்லை."
 
 #: src/gtkutils.c:1413
 msgid "Gaim cannot transfer a folder. You will need to send the files within individually"
-msgstr ""
+msgstr "கெய்மால் அடைவை பரிமாற்ற முடியவில்லை. நீங்கள் கோப்பை தனித்தனியாக தான் அனுப்ப வேண்டும்"
 
 #: src/gtkutils.c:1441
 #: src/gtkutils.c:1450
 #: src/gtkutils.c:1455
 msgid "You have dragged an image"
-msgstr ""
+msgstr "நீங்கள் ஒரு படத்தை இழுத்துள்ளீர்கள்"
 
 #: src/gtkutils.c:1442
 msgid "You can send this image as a file transfer, embed it into this message, or use it as the buddy icon for this user."
-msgstr ""
+msgstr "நீங்கள் இந்த படத்தை கோப்பு பரிமாற்றத்தில் அனுப்பலாம், இந்த தகவலில் கோர்க்கலாம், அல்லது இந்த பயனாளருக்கான தோழர் குறும்படமாக பயன்படுத்தலாம்."
 
 #: src/gtkutils.c:1446
 #: src/gtkutils.c:1461
 msgid "Set as buddy icon"
-msgstr ""
+msgstr "தோழர் குறும்படமாக அமை"
 
 #: src/gtkutils.c:1447
 #: src/gtkutils.c:1462
 msgid "Send image file"
-msgstr ""
+msgstr "பட கோப்பை அனுப்பு"
 
 #: src/gtkutils.c:1448
 #: src/gtkutils.c:1462
 msgid "Insert in message"
-msgstr ""
+msgstr "தகவலில் சேர்"
 
 #: src/gtkutils.c:1451
 msgid "Would you like to set it as the buddy icon for this user?"
-msgstr ""
+msgstr "நீங்கள் இதை இந்த பயனாளருக்கு தோழர் குறும்படமாக அமைக்க விரும்புகிறீர்களா?"
 
 #: src/gtkutils.c:1456
 msgid "You can send this image as a file transfer or embed it into this message, or use it as the buddy icon for this user."
-msgstr ""
+msgstr "நீங்கள் இந்த படத்தை கோப்பு பரிமாற்றத்தில் அனுப்பலாம் அல்லது இந்த தகவலில் கோர்க்கலாம், அல்லது இந்த பயனாளருக்கான தோழர் குறும்படமாக பயன்படுத்தலாம்."
 
 #: src/gtkutils.c:1458
 msgid "You can insert this image into this message, or use it as the buddy icon for this user"
-msgstr ""
+msgstr "நீங்கள் இந்த படத்தை இந்த தகவலில் கோர்க்கலாம், அல்லது இந்த பயனாளருக்கான தோழர் குறும்படமாக பயன்படுத்தலாம்."
 
 #. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
 #. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
@@ -4965,7 +5038,7 @@ msgstr ""
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 #: src/gtkutils.c:1512
 msgid "Cannot send launcher"
-msgstr ""
+msgstr "வெளியீட்டாளரை அனுப்ப முடியவில்லை"
 
 #: src/gtkutils.c:1512
 msgid "You dragged a desktop launcher. Most likely you wanted to send whatever this launcher points to instead of this launcher itself."
@@ -4977,69 +5050,69 @@ msgstr ""
 #: src/gtkwhiteboard.c:344
 #: src/protocols/yahoo/yahoo_doodle.c:96
 msgid "Sent Doodle request."
-msgstr ""
+msgstr "கிறுக்கலான கோரிக்கை அனுப்பப்பட்டது."
 
 #: src/log.c:129
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
-msgstr ""
+msgstr "<b><font color=\"red\">பதிவேட்டில் வாசிக்கும் அமைப்பு இல்லை </font></b>"
 
 #: src/log.c:577
 msgid "Logging of this conversation failed."
-msgstr ""
+msgstr "இந்த உரையாடலை பதிய தவரியது."
 
 #: src/log.c:839
 msgid "XML"
-msgstr ""
+msgstr "XML"
 
 #: src/log.c:904
 #, c-format
 msgid "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
-msgstr ""
+msgstr "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;சுய-பதில்&gt;:</b></font> %s<br/>\n"
 
 #: src/log.c:906
 #, c-format
 msgid "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
-msgstr ""
+msgstr "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;சுய-பதில்&gt;:</b></font> %s<br/>\n"
 
 #: src/log.c:957
 #: src/log.c:1074
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
-msgstr ""
+msgstr "<font color=\"red\"><b>பதிவிற்கான பாதையை கண்டுபிடிக்க இயலவில்லை!</b></font>"
 
 #: src/log.c:967
 #: src/log.c:1086
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
-msgstr ""
+msgstr "<font color=\"red\"><b>கோப்பை வாசிக்க முடியவில்லை: %s</b></font>"
 
 #: src/log.c:1019
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
-msgstr ""
+msgstr "(%s) %s <சுய-பதில்>: %s\n"
 
 #: src/plugin.c:344
 #, c-format
 msgid "The required plugin %s was not found. Please install this plugin and try again."
-msgstr ""
+msgstr "தேவைப்பட்ட சொருகுபொருள் %s காணப்படவில்லை. தயவுசெய்து அதை நிறுவி பின் மீண்டும் முயற்சி செய்க."
 
 #: src/plugin.c:349
 #: src/plugin.c:377
 msgid "Gaim was unable to load your plugin."
-msgstr ""
+msgstr "கெய்மால் உங்களது சொருகுபொருளை ஏற்ற இயலவில்லை."
 
 #: src/plugin.c:373
 #, c-format
 msgid "The required plugin %s was unable to load."
-msgstr ""
+msgstr "அந்த தேவைப்பட்ட சொருகுபொருள் %s ஐ ஏற்ற முடியவில்லை."
 
 #. Send a message about the connection error
 #: src/protocols/bonjour/bonjour.c:101
 msgid "Unable to listen for incoming IM connections\n"
-msgstr ""
+msgstr "உள்வரும் IM இணைப்புகளை கவனிக்க இயலவில்லை\n"
 
 #: src/protocols/bonjour/bonjour.c:136
 msgid "Unable to establish connection with the local mDNS server.  Is it running?"
-msgstr ""
+msgstr "எல்லைக்குள் உள்ள mDNS சேவகருடன் இணைப்பை தொடங்க இயலவில்லை. அது இயங்குகிறதா?"
 
 #: src/protocols/bonjour/bonjour.c:317
 #: src/protocols/msn/msn.c:554
@@ -5049,7 +5122,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2651
 #: src/protocols/yahoo/yahoo_profile.c:660
 msgid "Idle"
-msgstr ""
+msgstr "சும்மா"
 
 #: src/protocols/bonjour/bonjour.c:322
 #, c-format
@@ -5057,6 +5130,8 @@ msgid ""
 "\n"
 "<b>Status:</b> %s"
 msgstr ""
+"\n"
+"<b>நிலை:</b> %s"
 
 #: src/protocols/bonjour/bonjour.c:324
 #, c-format
@@ -5064,6 +5139,8 @@ msgid ""
 "\n"
 "<b>Message:</b> %s"
 msgstr ""
+"\n"
+"<b>தகவல்:</b> %s"
 
 #. *< type
 #. *< ui_requirement
@@ -5078,17 +5155,17 @@ msgstr ""
 #: src/protocols/bonjour/bonjour.c:418
 #: src/protocols/bonjour/bonjour.c:420
 msgid "Bonjour Protocol Plugin"
-msgstr ""
+msgstr "Bonjour நெறிமுறை சொருகுபொருள்"
 
 #: src/protocols/bonjour/bonjour.c:452
 #: src/protocols/bonjour/bonjour.c:509
 msgid "Gaim User"
-msgstr ""
+msgstr "கெய்ம் பயனாளர்"
 
 #. Creating the user splits
 #: src/protocols/bonjour/bonjour.c:547
 msgid "Host name"
-msgstr ""
+msgstr "புரவலர் பெயர்"
 
 #. Creating the options for the protocol
 #. port to connect to
@@ -5099,17 +5176,17 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:5665
 #: src/protocols/silc/silc.c:1741
 msgid "Port"
-msgstr ""
+msgstr "தளம்"
 
 #: src/protocols/bonjour/bonjour.c:554
 #: src/protocols/gg/gg.c:567
 msgid "First name"
-msgstr ""
+msgstr "முதற் பெயர்"
 
 #: src/protocols/bonjour/bonjour.c:557
 #: src/protocols/gg/gg.c:562
 msgid "Last name"
-msgstr ""
+msgstr "கடைசிப்பெயர்"
 
 #: src/protocols/bonjour/bonjour.c:560
 #: src/protocols/jabber/buddy.c:261
@@ -5120,113 +5197,113 @@ msgstr ""
 #: src/protocols/silc/util.c:511
 #: src/protocols/yahoo/yahoo_profile.c:995
 msgid "Email"
-msgstr ""
+msgstr "மின்னஞ்சல்"
 
 #: src/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
-msgstr ""
+msgstr "Bonjour"
 
 #: src/protocols/gg/gg.c:89
 #: src/protocols/gg/gg.c:111
 #: src/protocols/gg/gg.c:146
 msgid "Token Error"
-msgstr ""
+msgstr "டோக்கன் பிழை"
 
 #: src/protocols/gg/gg.c:90
 #: src/protocols/gg/gg.c:112
 #: src/protocols/gg/gg.c:147
 msgid "Unable to fetch the token.\n"
-msgstr ""
+msgstr "டோக்கனை பெற முடியவில்லை.\n"
 
 #: src/protocols/gg/gg.c:235
 #: src/protocols/gg/gg.c:254
 msgid "Save Buddylist..."
-msgstr ""
+msgstr "தோழர் பட்டியலை சேமி..."
 
 #: src/protocols/gg/gg.c:236
 msgid "Your buddylist is empty, nothing was written to the file."
-msgstr ""
+msgstr "உங்களது தோழர் பட்டியல் காலி, கோப்பில் ஏதும் எழுதப்படவில்லை."
 
 #: src/protocols/gg/gg.c:242
 #: src/protocols/gg/gg.c:244
 msgid "Couldn't open file"
-msgstr ""
+msgstr "கோப்பை திறக்க முடியவில்லை"
 
 #: src/protocols/gg/gg.c:255
 msgid "Buddylist saved successfully!"
-msgstr ""
+msgstr "தோழர் பட்டியல் வெற்றிகரமாக சேமிக்கப்பட்டது!"
 
 #: src/protocols/gg/gg.c:273
 #: src/protocols/gg/gg.c:274
 msgid "Couldn't load buddylist"
-msgstr ""
+msgstr "தோழர் பட்டியலை ஏற்ற முடியவில்லை"
 
 #: src/protocols/gg/gg.c:290
 msgid "Load Buddylist..."
-msgstr ""
+msgstr "தோழர் பட்டியல் ஏற்றம்..."
 
 #: src/protocols/gg/gg.c:291
 msgid "Buddylist loaded successfully!"
-msgstr ""
+msgstr "தோழர் பட்டியல் வெற்றிகரமாக ஏற்றப்பட்டது!"
 
 #: src/protocols/gg/gg.c:302
 msgid "Save buddylist..."
-msgstr ""
+msgstr "தோழர் பட்டியலை சேமி..."
 
 #: src/protocols/gg/gg.c:346
 msgid "Fill in the registration fields."
-msgstr ""
+msgstr "பதிவு கட்டங்களை நிரப்புக."
 
 #: src/protocols/gg/gg.c:351
 msgid "Passwords do not match."
-msgstr ""
+msgstr "கடவுச்சொல் பொருந்தவில்லை."
 
 #: src/protocols/gg/gg.c:360
 msgid "Unable to register new account. Error occurred.\n"
-msgstr ""
+msgstr "புதிய கணக்கை பதிய இயலவில்லை. பிழை ஏற்பட்டது.\n"
 
 #: src/protocols/gg/gg.c:373
 msgid "New Gadu-Gadu Account Registered"
-msgstr ""
+msgstr "புதிய Gadu-Gadu கணக்கு பதியப்பட்டது"
 
 #: src/protocols/gg/gg.c:374
 msgid "Registration completed successfully!"
-msgstr ""
+msgstr "பதிவு வெற்றிகரமாக முடிந்தது!"
 
 #: src/protocols/gg/gg.c:434
 msgid "e-Mail"
-msgstr ""
+msgstr "மின்னஞ்சல்"
 
 #: src/protocols/gg/gg.c:439
 #: src/protocols/gg/gg.c:710
 #: src/protocols/jabber/jabber.c:632
 #: src/protocols/jabber/jabber.c:1150
 msgid "Password"
-msgstr ""
+msgstr "கடவுச்சொல்"
 
 #: src/protocols/gg/gg.c:444
 #: src/protocols/gg/gg.c:715
 msgid "Password (retype)"
-msgstr ""
+msgstr "கடவுச்சொல் (மீண்டும்)"
 
 #: src/protocols/gg/gg.c:449
 #: src/protocols/gg/gg.c:720
 msgid "Enter current token"
-msgstr ""
+msgstr "தற்போதைய டோக்கனை கொடுக்கவும்"
 
 #: src/protocols/gg/gg.c:455
 #: src/protocols/gg/gg.c:726
 msgid "Current token"
-msgstr ""
+msgstr "தற்போதைய டோக்கன்"
 
 #: src/protocols/gg/gg.c:459
 #: src/protocols/gg/gg.c:460
 msgid "Register New Gadu-Gadu Account"
-msgstr ""
+msgstr "புதிய Gadu-Gadu கணக்கு பதிவு"
 
 #: src/protocols/gg/gg.c:461
 msgid "Please, fill in the following fields"
-msgstr ""
+msgstr "தயவுசெய்து, கீழ்க்கண்ட இடங்களை நிரப்புக"
 
 #: src/protocols/gg/gg.c:572
 #: src/protocols/gg/gg.c:1908
@@ -5241,114 +5318,114 @@ msgstr ""
 #: src/protocols/silc/ops.c:1149
 #: src/protocols/yahoo/yahoo_profile.c:1000
 msgid "Nickname"
-msgstr ""
+msgstr "புனைப்பெயர்"
 
 #: src/protocols/gg/gg.c:577
 #: src/protocols/jabber/jabber.c:668
 #: src/protocols/oscar/oscar.c:6055
 #: src/protocols/oscar/oscar.c:6063
 msgid "City"
-msgstr ""
+msgstr "நகரம்"
 
 #: src/protocols/gg/gg.c:582
 msgid "Year of birth"
-msgstr ""
+msgstr "பிறந்த ஆண்டு"
 
 #: src/protocols/gg/gg.c:585
 #: src/protocols/msn/msn.c:1545
 #: src/protocols/oscar/oscar.c:6028
 #: src/protocols/yahoo/yahoo_profile.c:1025
 msgid "Gender"
-msgstr ""
+msgstr "பாலினம்"
 
 #: src/protocols/gg/gg.c:586
 msgid "Male or female"
-msgstr ""
+msgstr "ஆண் அல்லது பெண்"
 
 #: src/protocols/gg/gg.c:587
 #: src/protocols/oscar/oscar.c:6028
 msgid "Male"
-msgstr ""
+msgstr "ஆண்"
 
 #: src/protocols/gg/gg.c:588
 #: src/protocols/oscar/oscar.c:6028
 msgid "Female"
-msgstr ""
+msgstr "பெண்"
 
 #: src/protocols/gg/gg.c:592
 msgid "Only online"
-msgstr ""
+msgstr "இணைப்பில் மட்டும்"
 
 #: src/protocols/gg/gg.c:596
 #: src/protocols/gg/gg.c:597
 #: src/protocols/gg/gg.c:1745
 msgid "Find buddies"
-msgstr ""
+msgstr "தோழர்களை தேடு"
 
 #: src/protocols/gg/gg.c:598
 msgid "Please, enter your search criteria below"
-msgstr ""
+msgstr "தயவுசெய்து, உங்களது தேடல் வகைகளை கீழை கொடுக்கவும்"
 
 #: src/protocols/gg/gg.c:635
 msgid "Fill in the fields."
-msgstr ""
+msgstr "இந்த இடங்களை நிரப்பவும்."
 
 #: src/protocols/gg/gg.c:647
 msgid "Your current password is different from the one that you specified."
-msgstr ""
+msgstr "உங்களது தற்போதைய கடவுச்சொல் நீங்கள் குறிப்பிட்டதிலிருந்து வேறுபடுகிறது."
 
 #: src/protocols/gg/gg.c:662
 msgid "Unable to change password. Error occured.\n"
-msgstr ""
+msgstr "கடவுச்சொல்லை மாற்ற இயலவில்லை. பிழை ஏற்பட்டது.\n"
 
 #: src/protocols/gg/gg.c:671
 msgid "Change password for the Gadu-Gadu account"
-msgstr ""
+msgstr "Gadu-Gadu கணக்கிற்கு கடவுச்சொல் மாற்று"
 
 #: src/protocols/gg/gg.c:672
 msgid "Password was changed successfully!"
-msgstr ""
+msgstr "கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது!"
 
 #: src/protocols/gg/gg.c:705
 msgid "Current password"
-msgstr ""
+msgstr "தற்போதைய கடவுச்சொல்"
 
 #: src/protocols/gg/gg.c:730
 msgid "Please, enter your current password and your new password for UIN: "
-msgstr ""
+msgstr "தயவுசெய்து UIN ற்கான தங்களது தற்போதைய மற்றும் புதிய கடவுச்சொல்லை கொடுக்கவும்:"
 
 #: src/protocols/gg/gg.c:734
 #: src/protocols/gg/gg.c:735
 msgid "Change Gadu-Gadu Password"
-msgstr ""
+msgstr "Gadu-Gadu கடவுச்சொல் மாற்று"
 
 #: src/protocols/gg/gg.c:819
 #, c-format
 msgid "Select a chat for buddy: %s"
-msgstr ""
+msgstr "தோழருக்காக ஒரு அரட்டையை தேர்வு செய்க: %s"
 
 #: src/protocols/gg/gg.c:822
 #: src/protocols/gg/gg.c:823
 msgid "Add to chat..."
-msgstr ""
+msgstr "அரட்டையுடன் சேர்..."
 
 #: src/protocols/gg/gg.c:991
 msgid "Gadu-Gadu Public Directory"
-msgstr ""
+msgstr "Gadu-Gadu பொது அடைவு"
 
 #: src/protocols/gg/gg.c:992
 msgid "Search results"
-msgstr ""
+msgstr "தேடல் முடிவுகள்"
 
 #: src/protocols/gg/gg.c:1071
 #: src/protocols/gg/gg.c:1213
 msgid "Unable to read socket"
-msgstr ""
+msgstr "சாக்கெட்டை வாசிக்க இயலவில்லை"
 
 #: src/protocols/gg/gg.c:1247
 #: src/protocols/gg/gg.c:1465
 msgid "Connection failed."
-msgstr ""
+msgstr "இணைப்பு தவறியது."
 
 #. zephyr has several exposures
 #. NONE (where you are hidden, and zephyrs to you are in practice silently dropped -- yes this is wrong)
@@ -5370,7 +5447,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2655
 #: src/protocols/zephyr/zephyr.c:2252
 msgid "Online"
-msgstr ""
+msgstr "இணைப்புடன்"
 
 #: src/protocols/gg/gg.c:1385
 #: src/protocols/msn/msn.c:593
@@ -5382,60 +5459,60 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:2633
 #: src/protocols/yahoo/yahoo.c:3217
 msgid "Busy"
-msgstr ""
+msgstr "காரியமாயிருக்க"
 
 #: src/protocols/gg/gg.c:1390
 #: src/protocols/msn/msn.c:562
 msgid "Blocked"
-msgstr ""
+msgstr "தடுக்கப்பட்டது"
 
 #: src/protocols/gg/gg.c:1407
 msgid "Add to chat"
-msgstr ""
+msgstr "அரட்டையில் சேர்க்க"
 
 #: src/protocols/gg/gg.c:1412
 msgid "Unblock"
-msgstr ""
+msgstr "தடையை நீக்கு"
 
 #: src/protocols/gg/gg.c:1431
 msgid "Chat _name:"
-msgstr ""
+msgstr "அரட்டை பெயர்:"
 
 #: src/protocols/gg/gg.c:1641
 msgid "Chat error"
-msgstr ""
+msgstr "அரட்டை பிழை"
 
 #: src/protocols/gg/gg.c:1642
 msgid "This chat name is already in use"
-msgstr ""
+msgstr "இந்த அரட்டை பெயர் ஏற்கனவே உபயோகத்தில் உள்ளது."
 
 #: src/protocols/gg/gg.c:1722
 msgid "Not connected to the server."
-msgstr ""
+msgstr "சேவகருடன் இணைக்கப்படவில்லை."
 
 #: src/protocols/gg/gg.c:1751
 msgid "Change password"
-msgstr ""
+msgstr "கடவுச்சொல்லை மாற்று"
 
 #: src/protocols/gg/gg.c:1757
 msgid "Upload buddylist to Server"
-msgstr ""
+msgstr "தோழர் பட்டியலை சேவகருக்கு ஏற்று"
 
 #: src/protocols/gg/gg.c:1761
 msgid "Download buddylist from Server"
-msgstr ""
+msgstr "தோழர் பட்டியலை சேவகரிலிருந்து இறக்கு"
 
 #: src/protocols/gg/gg.c:1765
 msgid "Delete buddylist from Server"
-msgstr ""
+msgstr "தோழர் பட்டியலை சேவகரிலிருந்து நீக்கு"
 
 #: src/protocols/gg/gg.c:1769
 msgid "Save buddylist to file"
-msgstr ""
+msgstr "தோழர் பட்டியலை கோப்பில் சேமி"
 
 #: src/protocols/gg/gg.c:1773
 msgid "Load buddylist from file"
-msgstr ""
+msgstr "தோழர் பட்டியலை கோப்பிலிருந்து ஏற்று"
 
 #. magic
 #. major_version
@@ -5450,127 +5527,127 @@ msgstr ""
 #. version
 #: src/protocols/gg/gg.c:1860
 msgid "Gadu-Gadu Protocol Plugin"
-msgstr ""
+msgstr "Gadu-Gadu நெறிமுறை சொருகுபொருள்"
 
 #. summary
 #: src/protocols/gg/gg.c:1861
 msgid "Polish popular IM"
-msgstr ""
+msgstr "பொலிஷ் பிரபலமான IM"
 
 #: src/protocols/gg/gg.c:1909
 msgid "Gadu-Gadu User"
-msgstr ""
+msgstr "Gadu-Gadu பயனாளர்"
 
 #: src/protocols/irc/cmds.c:43
 #: src/protocols/silc/silc.c:1485
 #, c-format
 msgid "Unknown command: %s"
-msgstr ""
+msgstr "தெரியாத கட்டளை: %s"
 
 #: src/protocols/irc/cmds.c:485
 #: src/protocols/jabber/chat.c:592
 #: src/protocols/silc/silc.c:1193
 #, c-format
 msgid "current topic is: %s"
-msgstr ""
+msgstr "தற்போதைய தலைப்பு: %s"
 
 #: src/protocols/irc/cmds.c:489
 #: src/protocols/jabber/chat.c:596
 #: src/protocols/silc/silc.c:1197
 msgid "No topic is set"
-msgstr ""
+msgstr "எந்த தலைப்பும் அமைக்கப்படவில்லை"
 
 #: src/protocols/irc/dcc_send.c:272
 #: src/protocols/yahoo/yahoo_filexfer.c:173
 #: src/protocols/yahoo/yahoo_filexfer.c:182
 #: src/protocols/yahoo/yahoo_filexfer.c:191
 msgid "File Transfer Failed"
-msgstr ""
+msgstr "கோப்பு பரிமாற்றம் தவறியது"
 
 #: src/protocols/irc/dcc_send.c:273
 msgid "Gaim could not open a listening port."
-msgstr ""
+msgstr "கெய்மால் கவனிக்கக்கூடிய தளத்தை திறக்க முடியவில்லை."
 
 #: src/protocols/irc/irc.c:78
 msgid "Error displaying MOTD"
-msgstr ""
+msgstr "MOTD காண்பிப்பதில் பிழை"
 
 #: src/protocols/irc/irc.c:78
 msgid "No MOTD available"
-msgstr ""
+msgstr "MOTD இல்லை"
 
 #: src/protocols/irc/irc.c:79
 msgid "There is no MOTD associated with this connection."
-msgstr ""
+msgstr "இந்த இணைப்புடன் MOTD இல்லை"
 
 #: src/protocols/irc/irc.c:82
 #, c-format
 msgid "MOTD for %s"
-msgstr ""
+msgstr "%s க்கான MOTD"
 
 #: src/protocols/irc/irc.c:102
 #: src/protocols/irc/irc.c:523
 #: src/protocols/irc/irc.c:545
 msgid "Server has disconnected"
-msgstr ""
+msgstr "சேவகர் இணைப்பு துண்டிக்கப்பட்டது"
 
 #: src/protocols/irc/irc.c:187
 msgid "View MOTD"
-msgstr ""
+msgstr "MOTD காண்"
 
 #: src/protocols/irc/irc.c:199
 #: src/protocols/silc/chat.c:33
 msgid "_Channel:"
-msgstr ""
+msgstr "கால்வாய்:"
 
 #: src/protocols/irc/irc.c:205
 #: src/protocols/jabber/chat.c:59
 msgid "_Password:"
-msgstr ""
+msgstr "கடவுச்சொல்:"
 
 #: src/protocols/irc/irc.c:237
 msgid "IRC nicks may not contain whitespace"
-msgstr ""
+msgstr "IRC புனைப்பெயரில் வெற்றிடமிருக்காது"
 
 #: src/protocols/irc/irc.c:265
 #: src/protocols/jabber/jabber.c:433
 #: src/protocols/jabber/jabber.c:770
 msgid "SSL support unavailable"
-msgstr ""
+msgstr "SSL ஆதரவு கிடைக்கவில்லை"
 
 #: src/protocols/irc/irc.c:276
 #: src/protocols/simple/simple.c:383
 #: src/protocols/simple/simple.c:1227
 msgid "Couldn't create socket"
-msgstr ""
+msgstr "சாக்கெட்டை உருவாக்க முடியவில்லை"
 
 #: src/protocols/irc/irc.c:347
 #: src/protocols/jabber/jabber.c:306
 #: src/protocols/oscar/oscar.c:1746
 #: src/protocols/oscar/oscar.c:1814
 msgid "Couldn't connect to host"
-msgstr ""
+msgstr "புரவலருடன் இணைக்க முடியவில்லை"
 
 #: src/protocols/irc/irc.c:372
 #: src/protocols/jabber/jabber.c:333
 msgid "Connection Failed"
-msgstr ""
+msgstr "இணைப்பு தவறியது"
 
 #: src/protocols/irc/irc.c:375
 #: src/protocols/jabber/jabber.c:336
 msgid "SSL Handshake Failed"
-msgstr ""
+msgstr "SSL கைகுலுக்கல் தவறியது"
 
 #: src/protocols/irc/irc.c:520
 #: src/protocols/irc/irc.c:542
 msgid "Read error"
-msgstr ""
+msgstr "வாசிப்பதில் பிழை"
 
 #: src/protocols/irc/irc.c:681
 #: src/protocols/silc/chat.c:1412
 #: src/protocols/yahoo/yahoochat.c:1376
 msgid "Users"
-msgstr ""
+msgstr "பயனாளர்கள்"
 
 #: src/protocols/irc/irc.c:684
 #: src/protocols/sametime/sametime.c:3368
@@ -5578,7 +5655,7 @@ msgstr ""
 #: src/protocols/silc/ops.c:1201
 #: src/protocols/yahoo/yahoochat.c:1385
 msgid "Topic"
-msgstr ""
+msgstr "தலைப்பு"
 
 #. *< type
 #. *< ui_requirement
@@ -5590,12 +5667,12 @@ msgstr ""
 #. *< version
 #: src/protocols/irc/irc.c:791
 msgid "IRC Protocol Plugin"
-msgstr ""
+msgstr "IRC நெறிமுறை சொருகுபொருள்"
 
 #. *  summary
 #: src/protocols/irc/irc.c:792
 msgid "The IRC Protocol Plugin that Sucks Less"
-msgstr ""
+msgstr "கொஞ்சமாக உறிஞ்சும் IRC நெறிமுறை சொருகுபொருள்"
 
 #. host to connect to
 #: src/protocols/irc/irc.c:811
@@ -5607,7 +5684,7 @@ msgstr ""
 #: src/protocols/silc/ops.c:1165
 #: src/protocols/simple/simple.c:1437
 msgid "Server"
-msgstr ""
+msgstr "சேவகர்"
 
 #: src/protocols/irc/irc.c:817
 msgid "Encodings"
@@ -5623,11 +5700,11 @@ msgstr ""
 #: src/protocols/silc/ops.c:1161
 #: src/protocols/silc/silc.c:899
 msgid "Username"
-msgstr ""
+msgstr "பயனாளர் பெயர்"
 
 #: src/protocols/irc/irc.c:823
 msgid "Real name"
-msgstr ""
+msgstr "இயற் பெயர்"
 
 #.
 #. option = gaim_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
@@ -5635,46 +5712,46 @@ msgstr ""
 #.
 #: src/protocols/irc/irc.c:831
 msgid "Use SSL"
-msgstr ""
+msgstr "SSL பயன்படுத்து"
 
 #: src/protocols/irc/msgs.c:105
 msgid "Bad mode"
-msgstr ""
+msgstr "கெட்ட வகை"
 
 #: src/protocols/irc/msgs.c:116
 #, c-format
 msgid "You are banned from %s."
-msgstr ""
+msgstr "நீங்கள் %s லிருந்து தடுக்கப்படுகிறீர்கள்."
 
 #: src/protocols/irc/msgs.c:117
 msgid "Banned"
-msgstr ""
+msgstr "தடுக்கப்பட்ட"
 
 #: src/protocols/irc/msgs.c:134
 #, c-format
 msgid "Cannot ban %s: banlist is full"
-msgstr ""
+msgstr "%s ஐ தடுக்க முடியவில்லை: தடைப்பட்டியல் நிரம்பிவிட்டது"
 
 #: src/protocols/irc/msgs.c:213
 #: src/protocols/irc/msgs.c:233
 #: src/protocols/irc/msgs.c:246
 #, c-format
 msgid "<b>%s:</b> %s"
-msgstr ""
+msgstr "<b>%s:</b> %s"
 
 #: src/protocols/irc/msgs.c:213
 #: src/protocols/oscar/oscar.c:6001
 #: src/protocols/silc/ops.c:1233
 msgid "Nick"
-msgstr ""
+msgstr "குறும்பெயர்"
 
 #: src/protocols/irc/msgs.c:216
 msgid " <i>(ircop)</i>"
-msgstr ""
+msgstr " <i>(ircop)</i>"
 
 #: src/protocols/irc/msgs.c:217
 msgid " <i>(identified)</i>"
-msgstr ""
+msgstr " <i>(தெரிந்த)</i>"
 
 #: src/protocols/irc/msgs.c:221
 #: src/protocols/irc/msgs.c:227
@@ -5683,28 +5760,28 @@ msgstr ""
 #: src/protocols/yahoo/yahoo_profile.c:660
 #, c-format
 msgid "<b>%s:</b> %s<br>"
-msgstr ""
+msgstr "<b>%s:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:228
 #: src/protocols/silc/ops.c:1004
 #: src/protocols/silc/ops.c:1153
 #: src/protocols/yahoo/yahoo_profile.c:1005
 msgid "Realname"
-msgstr ""
+msgstr "இயற்பெயர்"
 
 #: src/protocols/irc/msgs.c:239
 #: src/protocols/silc/ops.c:1076
 msgid "Currently on"
-msgstr ""
+msgstr "தற்போது இயலும்"
 
 #: src/protocols/irc/msgs.c:244
 #, c-format
 msgid "<b>Idle for:</b> %s<br>"
-msgstr ""
+msgstr "<b>இவ்வளவு நேரம் சும்மா:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:246
 msgid "Online since"
-msgstr ""
+msgstr "இன்னும் இணைப்பில்"
 
 #: src/protocols/irc/msgs.c:249
 msgid "<br><b>Defining adjective:</b> Glorious<br>"
@@ -5713,100 +5790,100 @@ msgstr ""
 #: src/protocols/irc/msgs.c:317
 #, c-format
 msgid "%s has changed the topic to: %s"
-msgstr ""
+msgstr "%s தலைப்பை இதற்கு மாற்றியுள்ளார்: %s"
 
 #: src/protocols/irc/msgs.c:322
 #, c-format
 msgid "The topic for %s is: %s"
-msgstr ""
+msgstr "%s க்கான தலைப்பு: %s"
 
 #: src/protocols/irc/msgs.c:339
 #, c-format
 msgid "Unknown message '%s'"
-msgstr ""
+msgstr "தெரியாத தகவல் '%s'"
 
 #: src/protocols/irc/msgs.c:340
 msgid "Unknown message"
-msgstr ""
+msgstr "தெரியாத தகவல்"
 
 #: src/protocols/irc/msgs.c:340
 msgid "Gaim has sent a message the IRC server did not understand."
-msgstr ""
+msgstr "IRC சேவகரால் புரிந்துகொள்ள முடியாத தகவலை கெய்ம் அனுப்பியுள்ளது."
 
 #: src/protocols/irc/msgs.c:363
 #, c-format
 msgid "Users on %s: %s"
-msgstr ""
+msgstr "%s ல் உள்ள பயனாளர்கள்: %s"
 
 #: src/protocols/irc/msgs.c:491
 msgid "Time Response"
-msgstr ""
+msgstr "காலத்தில் பதில்"
 
 #: src/protocols/irc/msgs.c:492
 msgid "The IRC server's local time is:"
-msgstr ""
+msgstr "IRC சேவகரின் மண்டல நேரம்:"
 
 #: src/protocols/irc/msgs.c:503
 msgid "No such channel"
-msgstr ""
+msgstr "அதுபோன்ற கால்வாய் இல்லை"
 
 #. does this happen?
 #: src/protocols/irc/msgs.c:514
 msgid "no such channel"
-msgstr ""
+msgstr "அதுபோன்ற கால்வாய் இல்லை"
 
 #: src/protocols/irc/msgs.c:517
 msgid "User is not logged in"
-msgstr ""
+msgstr "பயனாளர் நுழைந்திருக்கவில்லை"
 
 #: src/protocols/irc/msgs.c:522
 msgid "No such nick or channel"
-msgstr ""
+msgstr "அதுபோன்ற குறும்பெயர் அல்லது கால்வாய் இல்லை"
 
 #: src/protocols/irc/msgs.c:542
 msgid "Could not send"
-msgstr ""
+msgstr "அனுப்ப முடியாது"
 
 #: src/protocols/irc/msgs.c:598
 #, c-format
 msgid "Joining %s requires an invitation."
-msgstr ""
+msgstr "%s ல் சேர அழைப்பிதழ் தேவை."
 
 #: src/protocols/irc/msgs.c:599
 msgid "Invitation only"
-msgstr ""
+msgstr "அழைப்பிதழ் மட்டும்"
 
 #: src/protocols/irc/msgs.c:701
 #, c-format
 msgid "You have been kicked by %s: (%s)"
-msgstr ""
+msgstr "நீங்கள் %s ஆல் உதைக்கப்பட்டீர்கள்: (%s)"
 
 #: src/protocols/irc/msgs.c:706
 #, c-format
 msgid "Kicked by %s (%s)"
-msgstr ""
+msgstr "%s ஆல் உதைக்கப்பட்டது (%s)"
 
 #: src/protocols/irc/msgs.c:730
 #, c-format
 msgid "mode (%s %s) by %s"
-msgstr ""
+msgstr "வகை (%s %s)  %s ஆல்"
 
 #: src/protocols/irc/msgs.c:814
 msgid "Your selected account name was rejected by the server.  It probably contains invalid characters."
-msgstr ""
+msgstr "சேவகரால் மறுக்கப்பட்ட கணக்கு பெயரை நீங்கள் தேர்வு செய்துள்ளீர்கள். அது அநேகமாக செல்லாத எழுத்துக்களை கொண்டிருக்கிறது."
 
 #: src/protocols/irc/msgs.c:853
 msgid "Cannot change nick"
-msgstr ""
+msgstr "குறும்பெயரை மாற்ற முடியாது"
 
 #: src/protocols/irc/msgs.c:853
 msgid "Could not change nick"
-msgstr ""
+msgstr "குறும்பெயரை மாற்ற முடியாது"
 
 #: src/protocols/irc/msgs.c:874
 #, c-format
 msgid "You have parted the channel%s%s"
-msgstr ""
+msgstr "நீங்கள் கால்வாய் %s%s லிருந்து பிரிந்துள்ளீர்கள்"
 
 #: src/protocols/irc/msgs.c:916
 msgid "Error: invalid PONG from server"
@@ -5820,45 +5897,45 @@ msgstr ""
 #: src/protocols/irc/msgs.c:993
 #, c-format
 msgid "Cannot join %s:"
-msgstr ""
+msgstr "%s ஐ சேர்க்க முடியாது:"
 
 #: src/protocols/irc/msgs.c:994
 #: src/protocols/silc/ops.c:949
 msgid "Cannot join channel"
-msgstr ""
+msgstr "கால்வாயில் சேர முடியாது"
 
 #: src/protocols/irc/msgs.c:1028
 msgid "Nick or channel is temporarily unavailable."
-msgstr ""
+msgstr "குறும்பெயர் அல்லது கால்வாய் தற்காலிகமாக கிடைக்கவில்லை."
 
 #: src/protocols/irc/msgs.c:1040
 #, c-format
 msgid "Wallops from %s"
-msgstr ""
+msgstr "Wallops %s லிருந்து"
 
 #: src/protocols/irc/parse.c:114
 msgid "action &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "செயல் &lt; செய்யவேண்டிய செயல்&gt;: செயலை செய்"
 
 #: src/protocols/irc/parse.c:115
 msgid "away [message]:  Set an away message, or use no message to return from being away."
-msgstr ""
+msgstr "வெளியேசெல் [தகவல்]: வெளியே செல்லும் தகவலை அமை, அல்லது வெளியிலிருந்து திரும்ப தகவல் ஏதுமில்லை."
 
 #: src/protocols/irc/parse.c:116
 msgid "chanserv: Send a command to chanserv"
-msgstr ""
+msgstr "chanserv: chanserv க்கு கட்டளையை அனுப்பு"
 
 #: src/protocols/irc/parse.c:117
 msgid "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from someone. You must be a channel operator to do this."
-msgstr ""
+msgstr "deop &lt;புனைப்பெயர்1&gt; [புனைப்பெயர்2] ...: யாரோவிலிருந்து கால்வாய் இயக்குநர் நிலையை நீக்கு. இதைச்செய்ய நீங்கள் ஒரு கால்வாய் இயக்குநராக இருக்கவேண்டியது அவசியம்."
 
 #: src/protocols/irc/parse.c:118
 msgid "devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from someone, preventing them from speaking if the channel is moderated (+m). You must be a channel operator to do this."
-msgstr ""
+msgstr "devoice &lt;புனைப்பெயர்1&gt; [புனைப்பெயர்2] ...: யாரோவிலிருந்து கால்வாய் குரல் நிலையை நீக்கு,  கால்வாய் குறைந்த அளவாக(+m) இருக்கும் பட்சத்தில் அவர்கள் பேசுவதை தடுக்கிறது. இதைச்செய்ய நீங்கள் ஒரு கால்வாய் இயக்குநராக இருக்கவேண்டியது அவசியம்."
 
 #: src/protocols/irc/parse.c:119
 msgid "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified channel, or the current channel."
-msgstr ""
+msgstr "அழை &lt;புனைப்பெயர்&gt; [அறை]: தற்போதைய அல்லது குறிப்பிட்ட கால்வாயில் இணைய யாரையாவது அழைக்க."
 
 #: src/protocols/irc/parse.c:120
 msgid "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more channels, optionally providing a channel key for each if needed."
@@ -5986,15 +6063,15 @@ msgstr ""
 #: src/protocols/toc/toc.c:704
 #: src/protocols/toc/toc.c:780
 msgid "Disconnected."
-msgstr ""
+msgstr "இணைப்பு துண்டிக்கப்பட்டது."
 
 #: src/protocols/jabber/auth.c:51
 msgid "Server requires TLS/SSL for login.  Select \"Use TLS if available\" in account properties"
-msgstr ""
+msgstr "உள்ளே நுழைய சேவகருக்கு TLS/SSL தேவை. கணக்கு தன்மைகளில் \"TLS இருந்தால் பயன்படுத்து\" வை தேர்வு செய்க"
 
 #: src/protocols/jabber/auth.c:53
 msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
-msgstr ""
+msgstr "உள்ளே நுழைய சேவகருக்கு TLS/SSL தேவை. TLS/SSL ஆதரவு ஏதுமில்லை."
 
 #: src/protocols/jabber/auth.c:114
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -6007,14 +6084,14 @@ msgstr ""
 #: src/protocols/jabber/auth.c:485
 #: src/protocols/jabber/jabber.c:110
 msgid "Invalid response from server."
-msgstr ""
+msgstr "சேவகரிலிருந்து செல்லாத பதில்."
 
 #: src/protocols/jabber/auth.c:163
 #: src/protocols/jabber/auth.c:164
 #: src/protocols/jabber/auth.c:244
 #: src/protocols/jabber/auth.c:245
 msgid "Plaintext Authentication"
-msgstr ""
+msgstr "சாதாரண வாக்கிய உறுதியாக்கல்"
 
 #: src/protocols/jabber/auth.c:165
 #: src/protocols/jabber/auth.c:246
@@ -6024,65 +6101,65 @@ msgstr ""
 #: src/protocols/jabber/auth.c:173
 #: src/protocols/jabber/auth.c:254
 msgid "Server does not use any supported authentication method"
-msgstr ""
+msgstr "சேவகர் எந்த ஆதரவுள்ள உறுதிபடுத்தல் முறையையும் பயன்படுத்தவில்லை."
 
 #: src/protocols/jabber/auth.c:396
 msgid "Invalid challenge from server"
-msgstr ""
+msgstr "சேவகரிலிருந்து செல்லாத கூவல்"
 
 #: src/protocols/jabber/buddy.c:249
 #: src/protocols/jabber/buddy.c:667
 #: src/protocols/silc/ops.c:841
 msgid "Full Name"
-msgstr ""
+msgstr "முழுப்பெயர்"
 
 #: src/protocols/jabber/buddy.c:250
 #: src/protocols/jabber/buddy.c:680
 #: src/protocols/silc/ops.c:853
 msgid "Family Name"
-msgstr ""
+msgstr "குடும்பப்பெயர்"
 
 #: src/protocols/jabber/buddy.c:251
 #: src/protocols/jabber/buddy.c:684
 msgid "Given Name"
-msgstr ""
+msgstr "கொடுக்கப்பட்ட பெயர்"
 
 #: src/protocols/jabber/buddy.c:253
 #: src/protocols/jabber/jabber.c:688
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/protocols/jabber/buddy.c:254
 #: src/protocols/jabber/buddy.c:726
 msgid "Street Address"
-msgstr ""
+msgstr "தெரு முகவரி"
 
 #: src/protocols/jabber/buddy.c:255
 #: src/protocols/jabber/buddy.c:722
 msgid "Extended Address"
-msgstr ""
+msgstr "நீட்டித்த முகவரி"
 
 #: src/protocols/jabber/buddy.c:256
 #: src/protocols/jabber/buddy.c:730
 msgid "Locality"
-msgstr ""
+msgstr "எல்லை"
 
 #: src/protocols/jabber/buddy.c:257
 #: src/protocols/jabber/buddy.c:734
 msgid "Region"
-msgstr ""
+msgstr "மண்டலம்"
 
 #: src/protocols/jabber/buddy.c:258
 #: src/protocols/jabber/buddy.c:738
 #: src/protocols/jabber/jabber.c:678
 msgid "Postal Code"
-msgstr ""
+msgstr "அஞ்சல் குறியீடு"
 
 #: src/protocols/jabber/buddy.c:259
 #: src/protocols/jabber/buddy.c:743
 #: src/protocols/silc/silc.c:909
 msgid "Country"
-msgstr ""
+msgstr "நாடு"
 
 #: src/protocols/jabber/buddy.c:260
 #: src/protocols/jabber/buddy.c:754
@@ -11048,7 +11125,7 @@ msgstr ""
 
 #: src/protocols/toc/toc.c:552
 msgid "You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."
-msgstr ""
+msgstr "நீங்கள் அடிக்கடி இணைப்பை பெற்று மற்றும் துண்டித்துள்ளீர்கள். பத்து நிமிடங்கள் பொறுத்து மீண்டும் தொடங்கவும். தொடர்ந்து முயன்றால் மேலும் அதிக நேரம் காக்க வேண்டியிருக்கும்."
 
 #: src/protocols/toc/toc.c:554
 #, c-format
