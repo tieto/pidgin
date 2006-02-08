@@ -43,7 +43,7 @@ closedir DIR;
 
 $now = `date`;
 
-system("./update.pl --pot > /dev/null");
+system("intltool-update --pot > /dev/null");
 
 $_ = `msgfmt --statistics $PACKAGE.pot -o /dev/null 2>&1`;
 
