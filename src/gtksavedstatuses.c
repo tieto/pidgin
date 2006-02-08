@@ -1181,6 +1181,10 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	/* Populate list */
 	status_editor_populate_list(dialog, saved_status);
 
+	/* Expand the treeview if we have substatuses */
+	gtk_expander_set_expanded(GTK_EXPANDER(expander),
+		(saved_status != NULL) && gaim_savedstatus_has_substatuses(saved_status));
+
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
 	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
