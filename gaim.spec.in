@@ -145,11 +145,6 @@ and plugins.
 %setup -q -n %{name}-@VERSION@
 
 %build
-libtoolize -c -f --automake
-intltoolize --force --copy
-aclocal $ACLOCAL_FLAGS
-automake -a -c -f
-autoconf
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --bindir=%{_bindir} \
                                     --datadir=%{_datadir} \
