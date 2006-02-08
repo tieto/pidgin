@@ -757,13 +757,20 @@ static gboolean subscribe_timeout(struct simple_account_data *sip) {
 
 static void simple_send_message(struct simple_account_data *sip, char *to, char *msg, char *type) {
 	gchar *hdr;
+	gchar *fullto;
+	if(strncmp("sip:",to,4)) {
+		fullto = g_strdup_printf("sip:%s",to);
+	} else {
+		fullto = g_strdup(to);
+	}
 	if(type) {
 		hdr = g_strdup_printf("Content-Type: %s\r\n",type);
 	} else {
 		hdr = g_strdup("Content-Type: text/plain\r\n");
 	}
-	send_sip_request(sip->gc, "MESSAGE", to, to, hdr, msg, NULL, NULL);
+	send_sip_request(sip->gc, "MESSAGE", fullto, fullto, hdr, msg, NULL, NULL);
 	g_free(hdr);
+	g_free(fullto);
 }
 
 static int simple_im_send(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags) {
