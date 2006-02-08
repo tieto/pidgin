@@ -713,7 +713,7 @@ status_has_changed(GaimStatus *status)
 void
 gaim_status_set_active(GaimStatus *status, gboolean active)
 {
-	gaim_status_set_active_with_attrs(status, active, NULL);
+	gaim_status_set_active_with_attrs_list(status, active, NULL);
 }
 
 /*
