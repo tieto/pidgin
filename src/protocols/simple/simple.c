@@ -141,12 +141,13 @@ static struct simple_watcher *watcher_find(struct simple_account_data *sip, gcha
 	return NULL;
 }
 
-static struct simple_watcher *watcher_create(struct simple_account_data *sip, gchar *name, gchar *callid, gchar *ourtag, gchar *theirtag) {
+static struct simple_watcher *watcher_create(struct simple_account_data *sip, gchar *name, gchar *callid, gchar *ourtag, gchar *theirtag, int needsxpidf) {
 	struct simple_watcher *watcher = g_new0(struct simple_watcher, 1);
 	watcher->name = g_strdup(name);
 	watcher->dialog.callid = g_strdup(callid);
 	watcher->dialog.ourtag = g_strdup(ourtag);
 	watcher->dialog.theirtag = g_strdup(theirtag);
+	watcher->needsxpidf = needsxpidf;
 	sip->watcher = g_slist_append(sip->watcher, watcher);
 	return watcher;
 }
@@ -607,10 +608,16 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	g_free(buf);
 }
 
+static char *get_contact(struct simple_account_data  *sip) {
+	return g_strdup_printf("<sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"", sip->username, gaim_network_get_my_ip(-1), sip->listenport, sip->udp ? "udp" : "tcp");
+}
+
 static void do_register_exp(struct simple_account_data *sip, int expire) {
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
-	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, gaim_network_get_my_ip(-1), sip->listenport, sip->udp ? "udp" : "tcp", expire);
+	char *contact = get_contact(sip);
+	char *hdr = g_strdup_printf("Contact: %s\r\nExpires: %d\r\n", contact, expire);
+	g_free(contact);
 
 	sip->registerstatus = 1;
 
@@ -619,8 +626,8 @@ static void do_register_exp(struct simple_account_data *sip, int expire) {
 	} else {
 		sip->reregister = time(NULL) + 600;
 	}
-	send_sip_request(sip->gc,"REGISTER",uri,to, contact, "", NULL, process_register_response);
-	g_free(contact);
+	send_sip_request(sip->gc,"REGISTER",uri,to, hdr, "", NULL, process_register_response);
+	g_free(hdr);
 	g_free(uri);
 	g_free(to);
 }
@@ -674,11 +681,14 @@ static gboolean process_subscribe_response(struct simple_account_data *sip, stru
 }
 
 static void simple_subscribe(struct simple_account_data *sip, struct simple_buddy *buddy) {
-	gchar *contact = "Expires: 300\r\nAccept: application/pidf+xml\r\nEvent: presence\r\n";
+	gchar *contact = "Expires: 300\r\nAccept: application/pidf+xml, application/xpidf+xml\r\nEvent: presence\r\n";
 	gchar *to;
+	gchar *tmp;
 	if(strstr(buddy->name,"sip:")) to = g_strdup(buddy->name);
 	else to = g_strdup_printf("sip:%s",buddy->name);
-	contact = g_strdup_printf("%sContact: <sip:%s@%s>\r\n", contact, sip->username, sip->servername);
+	tmp = get_contact(sip);
+	contact = g_strdup_printf("%sContact: %s\r\n", contact, tmp);
+	g_free(tmp);
 	/* subscribe to buddy presence
 	 * we dont need to know the status so we do not need a callback */
 
@@ -937,6 +947,29 @@ static gchar *find_tag(gchar *hdr) {
 	return g_strdup(tmp);
 }
 
+static gchar* gen_xpidf(struct simple_account_data *sip) {
+	gchar *doc = g_strdup_printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<presence>\n"
+			"<presentity uri=\"sip:%s@%s;method=SUBSCRIBE\"/>\n"
+			"<display name=\"sip:%s@%s\"/>\n"
+			"<atom id=\"1234\">\n"
+			"<address uri=\"sip:%s@%s\">\n"
+			"<status status=\"%s\"/>\n"
+			"</address>\n"
+			"</atom>\n"
+			"</presence>\n",
+			sip->username,
+			sip->servername,
+			sip->username,
+			sip->servername,
+			sip->username,
+			sip->servername,
+			sip->status);
+	return doc;
+}
+
+
+
 static gchar* gen_pidf(struct simple_account_data *sip) {
 	gchar *doc = g_strdup_printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			"<presence xmlns=\"urn:ietf:params:xml:ns:pidf\"\n"
@@ -956,8 +989,9 @@ static gchar* gen_pidf(struct simple_account_data *sip) {
 }
 
 static void send_notify(struct simple_account_data *sip, struct simple_watcher *watcher) {
-	gchar *doc = gen_pidf(sip);
-	send_sip_request(sip->gc, "NOTIFY", watcher->name, watcher->name, "Event: presence\r\nContent-Type: application/pidf+xml\r\n", doc, &watcher->dialog, NULL);
+	gchar *doc = watcher->needsxpidf ? gen_xpidf(sip) : gen_pidf(sip);
+	gchar *hdr = watcher->needsxpidf ? "Event: presence\r\nContent-Type: application/xpidf+xml\r\n" : "Event: presence\r\nContent-Type: application/pidf+xml\r\n";
+	send_sip_request(sip->gc, "NOTIFY", watcher->name, watcher->name, hdr, doc, &watcher->dialog, NULL);
 	g_free(doc);
 }
 
@@ -991,11 +1025,34 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 		ourtag = gentag();
 	}
 	if(!watcher) { /* new subscription */
+		gchar *acceptheader = sipmsg_find_header(msg, "Accept");
+		int needsxpidf = 0;
 		if(!gaim_privacy_check(sip->account, from)) {
 			send_sip_response(sip->gc, msg, 202, "Ok", NULL);
 			goto privend;
 		}
-		watcher = watcher_create(sip, from, callid, ourtag, theirtag);
+		if(acceptheader) {
+			gchar *tmp = acceptheader;
+			int foundpidf = 0;
+			int foundxpidf = 0;
+			while(tmp && tmp < acceptheader + strlen(acceptheader)) {
+				gchar *tmp2 = strchr(tmp, ',');
+				if(tmp2) *tmp2 = '\0';
+				if(!strcmp("application/pidf+xml",tmp))
+					foundpidf = 1;
+				if(!strcmp("application/xpidf+xml",tmp))
+					foundxpidf = 1;
+				if(tmp2) {
+					*tmp2 = ',';
+					tmp = tmp2;
+					while(*tmp == ' ') tmp++;
+				} else
+					tmp = 0;
+			}
+			if(!foundpidf && foundxpidf) needsxpidf = 1;
+			g_free(acceptheader);
+		}
+		watcher = watcher_create(sip, from, callid, ourtag, theirtag, needsxpidf);
 	}
 	if(tagadded) {
 		gchar *to = g_strdup_printf("%s;tag=%s", sipmsg_find_header(msg, "To"), ourtag);
@@ -1007,11 +1064,11 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	else
 		watcher->expire = time(NULL) + 600;
 	sipmsg_remove_header(msg, "Contact");
-	tmp = g_strdup_printf("<sip:%s@%s>",sip->username, sip->servername);
+	tmp = get_contact(sip);
 	sipmsg_add_header(msg, "Contact", tmp);
+	g_free(tmp);
 	gaim_debug_info("simple","got subscribe: name %s ourtag %s theirtag %s callid %s\n", watcher->name, watcher->dialog.ourtag, watcher->dialog.theirtag, watcher->dialog.callid);
 	send_sip_response(sip->gc, msg, 200, "Ok", NULL);
-	g_free(tmp);
 	send_notify(sip, watcher);
 privend:
 	g_free(from);
