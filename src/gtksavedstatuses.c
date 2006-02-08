@@ -146,7 +146,7 @@ status_window_find_savedstatus(GtkTreeIter *iter, const char *title)
 	GtkTreeModel *model;
 	char *cur;
 
-	if (status_window == NULL)
+	if (status_window == NULL || title == NULL)
 		return FALSE;
 
 	model = GTK_TREE_MODEL(status_window->model);
@@ -1020,13 +1020,14 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 
 	/* Find a possible window for this saved status and present it */
 	if (status_window) {
-		status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status));
-		gtk_tree_model_get(GTK_TREE_MODEL(status_window->model), &iter,
-							STATUS_WINDOW_COLUMN_WINDOW, &dialog,
-							-1);
-		if (dialog) {
-			gtk_window_present(GTK_WINDOW(dialog->window));
-			return;
+		if (status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status))) {
+			gtk_tree_model_get(GTK_TREE_MODEL(status_window->model), &iter,
+								STATUS_WINDOW_COLUMN_WINDOW, &dialog,
+								-1);
+			if (dialog) {
+				gtk_window_present(GTK_WINDOW(dialog->window));
+				return;
+			}
 		}
 	}
 
