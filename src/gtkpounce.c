@@ -1066,9 +1066,10 @@ pounces_manager_delete_confirm_cb(GaimPounce *pounce)
 {
 	GtkTreeIter iter;
 
-	if (pounces_manager_find_pounce(&iter, pounce))
+	if (pounces_manager && pounces_manager_find_pounce(&iter, pounce))
 		gtk_list_store_remove(pounces_manager->model, &iter);
 
+	gaim_request_close_with_handle(pounce);
 	gaim_pounce_destroy(pounce);
 }
 
@@ -1087,7 +1088,7 @@ pounces_manager_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 	pouncee = gaim_pounce_get_pouncee(pounce);
 
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	gaim_request_action(NULL, NULL, buf, NULL, 0, pounce, 2,
+	gaim_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), g_free);
 	g_free(buf);
