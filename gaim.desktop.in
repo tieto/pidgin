@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Gaim Internet Messenger
-GenericName=Internet Messenger
-Comment=Send instant messages over multiple protocols
+_Name=Gaim Internet Messenger
+_GenericName=Internet Messenger
+_Comment=Send instant messages over multiple protocols
 Exec=gaim
 Icon=gaim.png
 StartupNotify=true

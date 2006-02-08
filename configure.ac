@@ -17,6 +17,9 @@ AC_DISABLE_STATIC
 AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
+AC_PROG_INTLTOOL
+GETTEXT_PACKAGE=gaim
+AC_SUBST(GETTEXT_PACKAGE)
 
 # before gettexting, in case iconv matters
 case "$host_os" in
@@ -36,8 +39,7 @@ darwin*)
 esac
 
 ALL_LINGUAS="am az bg bn bs ca cs da de el en_AU en_CA en_GB es et fi fr gl gu he hi hu it ja ka ko ku lt mk my_MM nb nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv ta te tr uk vi xh zh_CN zh_TW"
-AM_GNU_GETTEXT_VERSION(0.10.40)
-AM_GNU_GETTEXT
+AM_GLIB_GNU_GETTEXT
 
 dnl we don't use autobreak on cygwin!!
 dnl AC_CYGWIN
@@ -1689,7 +1691,6 @@ AC_OUTPUT([Makefile
 		   gaim.apspec
 		   doc/Makefile
 		   doc/gaim.1
-		   intl/Makefile
 		   m4macros/Makefile
 		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile

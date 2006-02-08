@@ -58,6 +58,8 @@ do
 	fi
 done
 
+libtoolize -c -f --automake
+intltoolize --force --copy
 aclocal $ACLOCAL_FLAGS -I ./m4 || exit;
 autoheader || exit;
 automake --add-missing --copy;

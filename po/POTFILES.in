@@ -1,3 +1,4 @@
+gaim.desktop.in
 plugins/ciphertest.c
 plugins/contact_priority.c
 plugins/crazychat/cc_gaim_plugin.c
@@ -57,6 +58,7 @@ src/gtkconn.c
 src/gtkconv.c
 src/gtkdebug.c
 src/gtkdialogs.c
+src/gtkexpander.c
 src/gtkft.c
 src/gtkimhtml.c
 src/gtkimhtmltoolbar.c
@@ -79,7 +81,6 @@ src/gtkwhiteboard.c
 src/log.c
 src/plugin.c
 src/protocols/bonjour/bonjour.c
-src/protocols/bonjour/bonjour.h
 src/protocols/gg/gg.c
 src/protocols/irc/cmds.c
 src/protocols/irc/dcc_send.c
@@ -129,7 +130,6 @@ src/protocols/yahoo/yahoochat.c
 src/protocols/yahoo/ycht.c
 src/protocols/zephyr/zephyr.c
 src/proxy.c
-src/request.h
 src/savedstatuses.c
 src/server.c
 src/status.c

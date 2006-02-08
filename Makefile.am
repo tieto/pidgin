@@ -4,9 +4,12 @@ EXTRA_DIST = \
 		gaim.pc.in \
 		gaim.spec.in \
 		gaim.apspec.in \
-		gaim.desktop \
+		gaim.desktop.in \
 		gaim-installer.nsi \
 		HACKING \
+		intltool-extract.in \
+		intltool-merge.in \
+		intltool-update.in \
 		PROGRAMMING_NOTES \
 		setup-gettext \
 		ChangeLog.win32 \
@@ -36,9 +39,11 @@ distcheck-hook: plugins/perl/common/Gaim.pm
 #	cp plugins/perl/common/Gaim.pm $(distdir)/plugins/perl/common
 
 appsdir = $(datadir)/applications
-apps_DATA = gaim.desktop
+apps_in_files = gaim.desktop.in
+apps_DATA = $(apps_in_files:.desktop.in=.desktop)
+@INTLTOOL_DESKTOP_RULE@
 
-SUBDIRS = doc intl m4macros pixmaps plugins po sounds src
+SUBDIRS = doc m4macros pixmaps plugins po sounds src
 
 docs: Doxyfile
 if HAVE_DOXYGEN

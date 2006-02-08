@@ -3,9 +3,6 @@ Makefile.in
 Makefile.in.in
 ChangeLog
 POTFILES
-POTFILES.in.missing
-POTFILES.in.noi18n
-POTFILES.ignore
 Rules-quot
 cat-id-tbl.c
 stamp-cat-id
@@ -17,3 +14,5 @@ Makevars
 *.header
 *.sin
 ChangeLog.save
+.intltool-merge-cache
+missing

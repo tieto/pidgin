@@ -31,3 +31,9 @@ win32-install-dir
 .temp-gettextize
 gaim.pc
 *.apspec
+intltool-extract
+intltool-extract.in
+intltool-merge
+intltool-merge.in
+intltool-update
+intltool-update.in
