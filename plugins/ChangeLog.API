@@ -160,6 +160,7 @@ version 2.0.0:
 	  so GAIM_TYPE_BOXED is used for the signal types
 	* gaim_gtk_privacy_is_showable(): We do fallback privacy in the core
 	  now, so this would always be TRUE now.
+	* GaimBlistNodeAction: See GaimMenuAction
 	* gaim_blist_node_action_new(); use gaim_menu_action_new() instead
 	* gaim_date()
 	* gaim_date_full(): See gaim_date_format_full()
@@ -258,6 +259,7 @@ version 2.0.0:
 	* gaim_gtk_log_get_handle()
 	* gaim_gtk_log_uninit()
 	* gaim_url_fetch_request()
+	* GaimMenuAction
 	* gaim_menu_action_new()
 	* gaim_menu_action_free()
 	* GaimInfoFieldFormatCallback
