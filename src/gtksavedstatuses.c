@@ -252,7 +252,7 @@ status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 static void
 status_window_add_cb(GtkButton *button, gpointer user_data)
 {
-	gaim_gtk_status_editor_show(NULL);
+	gaim_gtk_status_editor_show(FALSE, NULL);
 }
 
 static void
@@ -265,7 +265,7 @@ status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 	saved_status = gaim_savedstatus_find(title);
 	g_free(title);
-	gaim_gtk_status_editor_show(saved_status);
+	gaim_gtk_status_editor_show(TRUE, saved_status);
 }
 
 static void
@@ -695,9 +695,9 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	unformatted = gaim_markup_strip_html(message);
 
 	/*
-	 * If we're editing an old status, then lookup the old status (it's
-	 * possible that it has been deleted or renamed or something, and
-	 * no longer exists).
+	 * If we're editing an old status, then lookup the old status.
+	 * Note: It is possible that it has been deleted or renamed
+	 *       or something, and no longer exists.
 	 */
 	if (dialog->original_title != NULL)
 	{
@@ -997,7 +997,7 @@ status_editor_populate_list(StatusEditor *dialog, GaimSavedStatus *saved_status)
 }
 
 void
-gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
+gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 {
 	GtkTreeIter iter;
 	StatusEditor *dialog;
@@ -1018,26 +1018,34 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 	GtkWidget *win;
 	GList *focus_chain = NULL;
 
+	if (edit)
+	{
+		g_return_if_fail(saved_status != NULL);
+		g_return_if_fail(!gaim_savedstatus_is_transient(saved_status));
+	}
+
 	/* Find a possible window for this saved status and present it */
-	if (status_window) {
-		if (status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status))) {
-			gtk_tree_model_get(GTK_TREE_MODEL(status_window->model), &iter,
-								STATUS_WINDOW_COLUMN_WINDOW, &dialog,
-								-1);
-			if (dialog) {
-				gtk_window_present(GTK_WINDOW(dialog->window));
-				return;
-			}
+	if (edit && (status_window != NULL) && status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status)))
+	{
+		gtk_tree_model_get(GTK_TREE_MODEL(status_window->model), &iter,
+							STATUS_WINDOW_COLUMN_WINDOW, &dialog,
+							-1);
+		if (dialog != NULL)
+		{
+			gtk_window_present(GTK_WINDOW(dialog->window));
+			return;
 		}
 	}
 
 	dialog = g_new0(StatusEditor, 1);
-	if (status_window)
+	if (edit && (status_window != NULL) && status_window_find_savedstatus(&iter, gaim_saveds        tatus_get_title(saved_status)))
+	{
 		gtk_list_store_set(status_window->model, &iter,
 							STATUS_WINDOW_COLUMN_WINDOW, dialog,
 							-1);
+	}
 
-	if (saved_status != NULL)
+	if (edit)
 		dialog->original_title = g_strdup(gaim_savedstatus_get_title(saved_status));
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1069,8 +1077,10 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 
 	entry = gtk_entry_new();
 	dialog->title = GTK_ENTRY(entry);
-	if (dialog->original_title != NULL)
-		gtk_entry_set_text(GTK_ENTRY(entry), dialog->original_title);
+	if ((saved_status != NULL)
+			&& !gaim_savedstatus_is_transient(saved_status)
+			&& (gaim_savedstatus_get_title(saved_status) != NULL))
+		gtk_entry_set_text(GTK_ENTRY(entry), gaim_savedstatus_get_title(saved_status));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
 	g_signal_connect(G_OBJECT(entry), "changed",

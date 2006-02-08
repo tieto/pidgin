@@ -42,10 +42,20 @@ void gaim_gtk_status_window_hide(void);
  * Shows a status editor (used for adding a new saved status or
  * editing an already existing saved status).
  *
- * @param status The saved status to edit, or @c NULL if you
- *               want to add a new saved status.
+ * @param edit   TRUE if we want to edit an existing saved
+ *               status or FALSE to create a new one.  You
+ *               can not edit transient statuses--they don't
+ *               have titles.  If you want to edit a transient
+ *               status, set this to FALSE and seed the dialog
+ *               with the transient status using the status
+ *               parameter to this function.
+ * @param status If edit is TRUE then this should be a
+ *               pointer to the GaimSavedStatus to edit.
+ *               If edit is FALSE then this can be NULL,
+ *               or you can pass in a saved status to
+ *               seed the initial values of the new status.
  */
-void gaim_gtk_status_editor_show(GaimSavedStatus *status);
+void gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *status);
 
 /**
  * Creates a dropdown menu of saved statuses and calls a callback

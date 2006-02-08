@@ -1400,7 +1400,11 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 
 		if (type == GTK_GAIM_STATUS_BOX_TYPE_CUSTOM)
 		{
-			gaim_gtk_status_editor_show(NULL);
+			GaimSavedStatus *saved_status;
+			saved_status = gaim_savedstatus_get_current();
+			gaim_gtk_status_editor_show(FALSE,
+				gaim_savedstatus_is_transient(saved_status)
+					? saved_status : NULL);
 			status_menu_refresh_iter(status_box);
 			return;
 		}

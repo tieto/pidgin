@@ -360,7 +360,10 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 static void
 show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
-	gaim_gtk_status_editor_show(NULL);
+	GaimSavedStatus *saved_status;
+	saved_status = gaim_savedstatus_get_current();
+	gaim_gtk_status_editor_show(FALSE,
+		gaim_savedstatus_is_transient(saved_status) ? saved_status : NULL);
 }
 
 static void
@@ -458,8 +461,8 @@ docklet_status_submenu()
 
 	gaim_separator(submenu);
 
-	new_menu_item_with_gaim_icon(submenu, _("New Status..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
-	new_menu_item_with_gaim_icon(submenu, _("Saved Status..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
+	new_menu_item_with_gaim_icon(submenu, _("New..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
+	new_menu_item_with_gaim_icon(submenu, _("Saved..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
 
 	return menuitem;
 }
