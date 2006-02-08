@@ -424,7 +424,8 @@ gaim_perl_timeout_clear(void)
 
 void
 gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
-                         const char *signal, SV *callback, SV *data)
+                         const char *signal, SV *callback, SV *data,
+                         int priority)
 {
 	GaimPerlSignalHandler *handler;
 
@@ -440,8 +441,9 @@ gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
 
 	signal_handlers = g_list_append(signal_handlers, handler);
 
-	gaim_signal_connect_vargs(instance, signal, plugin,
-	                          GAIM_CALLBACK(perl_signal_cb), handler);
+	gaim_signal_connect_priority_vargs(instance, signal, plugin,
+	                                   GAIM_CALLBACK(perl_signal_cb),
+	                                   handler, priority);
 }
 
 void

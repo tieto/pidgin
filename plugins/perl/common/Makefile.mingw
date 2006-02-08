@@ -57,6 +57,7 @@ XS_FILES =		Account.xs \
 				Cmds.xs \
 				Connection.xs \
 				Conversation.xs \
+				Debug.xs \
 				FT.xs \
 				Gaim.xs \
 				ImgStore.xs \
@@ -74,6 +75,7 @@ XS_FILES =		Account.xs \
 				Roomlist.xs \
 				SSLConn.xs \
 				SavedStatuses.xs \
+				Signal.xs \
 				Server.xs \
 				Sound.xs \
 				Status.xs \

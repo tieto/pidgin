@@ -51,7 +51,7 @@ void gaim_perl_timeout_clear(void);
 
 void gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
                               const char *signal, SV *callback,
-                              SV *data);
+                              SV *data, int priority);
 void gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
                                  const char *signal);
 void gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin);
