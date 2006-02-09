@@ -5446,9 +5446,9 @@ static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIt
 #endif
 
 static void
-plugin_act(GtkObject *obk, GaimPluginAction *pam)
+plugin_act(GtkObject *obj, GaimPluginAction *pam)
 {
-	if (pam->callback)
+	if (pam && pam->callback)
 		pam->callback(pam);
 }
 
@@ -5474,10 +5474,10 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin)
 
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 					G_CALLBACK(plugin_act), action);
-			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
+			g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+								   action,
+								   (GDestroyNotify)gaim_plugin_action_free);
 			gtk_widget_show(menuitem);
-
-			gaim_plugin_action_free(action);
 		}
 		else
 			gaim_separator(menu);
