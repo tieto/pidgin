@@ -994,6 +994,7 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 		/* Make a copy of the old group name and then delete the old group */
 		old_name = g_strdup(source->name);
 		gaim_blist_remove_group(source);
+		source = dest;
 	} else {
 		/* A simple rename */
 		GaimBlistNode *cnode, *bnode;
@@ -1007,7 +1008,6 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 
 		old_name = source->name;
 		source->name = g_strdup(new_name);
-
 	}
 
 	/* Save our changes */
@@ -1018,6 +1018,7 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 		ops->update(gaimbuddylist, (GaimBlistNode*)source);
 
 	/* Notify all PRPLs */
+	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
 	if(old_name && source && strcmp(source->name, old_name)) {
 		for (accts = gaim_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
 			GaimAccount *account = accts->data;

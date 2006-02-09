@@ -4022,7 +4022,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		count = gaim_blist_get_group_size(group, FALSE);
 	else
 		count = gaim_blist_get_group_online_count(group);
-	
+
 	if (count > 0 || gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups"))
 		show = TRUE;
 	else {
@@ -4033,7 +4033,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 				if (buddy_is_displayable((GaimBuddy*)n)) {
 					show = TRUE;
 					break;
-				}					
+				}
 			}
 			n = gaim_blist_node_next(n, FALSE);
 		}
@@ -4256,6 +4256,9 @@ static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node)
 {
 	if(!gtkblist || !node)
 		return;
+
+	if (node->ui_data == NULL)
+		gaim_gtk_blist_new_node(node);
 
 	switch(node->type) {
 		case GAIM_BLIST_GROUP_NODE:
