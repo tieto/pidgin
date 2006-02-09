@@ -1317,6 +1317,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				g_free(phb->read_buffer);
 				g_free(phb->host);
 				g_free(phb);
+				return;
 			}
 		}
 		if(status == 403 /* Forbidden */ ) {
