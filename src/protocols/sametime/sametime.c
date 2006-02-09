@@ -41,6 +41,7 @@
 #include <conversation.h>
 #include <debug.h>
 #include <ft.h>
+#include <gaim_buffer.h>
 #include <imgstore.h>
 #include <mime.h>
 #include <notify.h>
@@ -224,6 +225,10 @@ struct mwGaimPluginData {
 
   /** socket fd */
   int socket;
+  gint outpa;  /* like inpa, but the other way */
+
+  /** circular buffer for outgoing data */
+  GaimCircBuffer *sock_buf;
 
   GaimConnection *gc;
 };
@@ -337,10 +342,42 @@ static GaimConnection *session_to_gc(struct mwSession *session) {
 }
 
 
+static void write_cb(gpointer data, gint source, GaimInputCondition cond) {
+  struct mwGaimPluginData *pd = data;
+  GaimCircBuffer *circ = pd->sock_buf;
+  gsize avail;
+  int ret;
+
+  DEBUG_INFO("write_cb\n");
+
+  g_return_if_fail(circ != NULL);
+
+  avail = gaim_circ_buffer_get_max_read(circ);
+  if(BUF_LONG < avail) avail = BUF_LONG;
+
+  while(avail) {
+    ret = write(pd->socket, circ->outptr, avail);
+    
+    if(ret <= 0)
+      break;
+
+    gaim_circ_buffer_mark_read(circ, ret);
+    avail = gaim_circ_buffer_get_max_read(circ);
+    if(BUF_LONG < avail) avail = BUF_LONG;
+  }
+
+  if(! avail) {
+    gaim_input_remove(pd->outpa);
+    pd->outpa = 0;
+  }
+}
+
+
 static int mw_session_io_write(struct mwSession *session,
 			       const guchar *buf, gsize len) {
   struct mwGaimPluginData *pd;
   int ret = 0;
+  int err = 0;
 
   pd = mwSession_getClientData(session);
 
@@ -348,13 +385,33 @@ static int mw_session_io_write(struct mwSession *session,
   if(pd->socket == 0)
     return 1;
 
-  while(len) {
-    ret = write(pd->socket, buf, len);
-    if(ret <= 0) break;
-    len -= ret;
+  if(pd->outpa) {
+    DEBUG_INFO("already pending INPUT_WRITE, buffering\n");
+    gaim_circ_buffer_append(pd->sock_buf, buf, len);
+    return 0;
   }
 
-  if(len > 0) {
+  while(len) {
+    ret = write(pd->socket, buf, (len > BUF_LEN)? BUF_LEN: len);
+    DEBUG_INFO("wrote %i bytes in one turn\n", ret);
+
+    if(ret <= 0)
+      break;
+
+    len -= ret;
+    buf += ret;
+  }
+
+  if(ret <= 0)
+    err = errno;
+
+  if(err == EAGAIN) {
+    /* append remainder to circular buffer */
+    DEBUG_INFO("EAGAIN\n");
+    gaim_circ_buffer_append(pd->sock_buf, buf, len);
+    pd->outpa = gaim_input_add(pd->socket, GAIM_INPUT_WRITE, write_cb, pd);
+
+  } else if(len > 0) {
     DEBUG_ERROR("write returned %i, %i bytes left unwritten\n", ret, len);
     gaim_connection_error(pd->gc, _("Connection closed (writing)"));
 
@@ -379,11 +436,16 @@ static void mw_session_io_close(struct mwSession *session) {
 
   gc = pd->gc;
   
+  if(pd->outpa) {
+    gaim_input_remove(pd->outpa);
+    pd->outpa = 0;
+  }
+
   if(pd->socket) {
     close(pd->socket);
     pd->socket = 0;
   }
-    
+  
   if(gc->inpa) {
     gaim_input_remove(gc->inpa);
     gc->inpa = 0;
@@ -1567,19 +1629,12 @@ static int read_recv(struct mwSession *session, int sock) {
 
 /** callback triggered from gaim_input_add, watches the socked for
     available data to be processed by the session */
-static void read_cb(gpointer data, gint source,
-		    GaimInputCondition cond) {
-
+static void read_cb(gpointer data, gint source, GaimInputCondition cond) {
   struct mwGaimPluginData *pd = data;
   int ret = 0, err = 0;
 
-  /* How the heck can this happen? Fix submitted to Gaim so that it
-     won't happen anymore. */
-  if(! cond) return;
-
   g_return_if_fail(pd != NULL);
-  g_return_if_fail(cond & GAIM_INPUT_READ);
-
+ 
   ret = read_recv(pd->session, pd->socket);
 
   /* normal operation ends here */
@@ -1651,7 +1706,8 @@ static void connect_cb(gpointer data, gint source,
   }
 
   pd->socket = source;
-  gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, read_cb, pd);
+  gc->inpa = gaim_input_add(source, GAIM_INPUT_READ,
+			    read_cb, pd);
 
   mwSession_start(pd->session);
 }
@@ -3017,6 +3073,7 @@ static struct mwGaimPluginData *mwGaimPluginData_new(GaimConnection *gc) {
   pd->srvc_resolve = mw_srvc_resolve_new(pd->session);
   pd->srvc_store = mw_srvc_store_new(pd->session);
   pd->group_list_map = g_hash_table_new(g_direct_hash, g_direct_equal);
+  pd->sock_buf = gaim_circ_buffer_new(0);
 
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_aware));
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_conf));
@@ -3063,6 +3120,7 @@ static void mwGaimPluginData_free(struct mwGaimPluginData *pd) {
   mwSession_free(pd->session);
 
   g_hash_table_destroy(pd->group_list_map);
+  gaim_circ_buffer_destroy(pd->sock_buf);
 
   g_free(pd);
 }
@@ -3447,6 +3505,42 @@ static void blist_menu_conf(GaimBlistNode *node, gpointer data) {
 }
 
 
+#if 0
+static void blist_menu_announce(GaimBlistNode *node, gpointer data) {
+  GaimBuddy *buddy = (GaimBuddy *) node;
+  GaimAccount *acct;
+  GaimConnection *gc;
+  struct mwGaimPluginData *pd;
+  struct mwSession *session;
+  char *rcpt_name;
+  GList *rcpt;
+
+  g_return_if_fail(node != NULL);
+  g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+  acct = buddy->account;
+  g_return_if_fail(acct != NULL);
+
+  gc = gaim_account_get_connection(acct);
+  g_return_if_fail(gc != NULL);
+
+  pd = gc->proto_data;
+  g_return_if_fail(pd != NULL);
+
+  rcpt_name = g_strdup_printf("@U %s", buddy->name);
+  rcpt = g_list_prepend(NULL, rcpt_name);
+
+  session = pd->session;
+  mwSession_sendAnnounce(session, FALSE,
+			 "This is a TEST announcement. Please ignore.",
+			 rcpt);
+
+  g_list_free(rcpt);
+  g_free(rcpt_name);
+}
+#endif
+
+
 static GList *mw_prpl_blist_node_menu(GaimBlistNode *node) {
   GList *l = NULL;
   GaimMenuAction *act;
@@ -3459,6 +3553,12 @@ static GList *mw_prpl_blist_node_menu(GaimBlistNode *node) {
   act = gaim_menu_action_new(_("Invite to Conference..."),
                              GAIM_CALLBACK(blist_menu_conf), NULL, NULL);
   l = g_list_append(l, act);
+
+#if 0
+  act = gaim_menu_action_new(_("Send TEST Announcement"),
+			     GAIM_CALLBACK(blist_menu_announce), NULL, NULL);
+  l = g_list_append(l, act);
+#endif
 
   /** note: this never gets called for a GaimGroup, have to use the
       blist-node-extended-menu signal for that. The function
