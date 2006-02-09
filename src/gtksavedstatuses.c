@@ -1392,7 +1392,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	GtkWidget *win;
 	GtkTreeIter iter;
 	GtkCellRenderer *rend;
-	const char *id = NULL;
+	const char *status_id = NULL;
 	const GList *list;
 	gboolean select = FALSE;
 
@@ -1524,8 +1524,9 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 			gtk_imhtml_append_text(dialog->message,
 								   gaim_savedstatus_substatus_get_message(substatus),
 								   0);
-			id = gaim_status_type_get_id(gaim_savedstatus_substatus_get_type(substatus));
+			status_id = gaim_status_type_get_id(gaim_savedstatus_substatus_get_type(substatus));
 		}
+		/* TODO: Else get the generic status type from our parent */
 	}
 
 	for (list = gaim_account_get_status_types(account); list; list = list->next)
@@ -1552,7 +1553,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 						   -1);
 		if (pixbuf != NULL)
 			g_object_unref(pixbuf);
-		if (id && !strcmp(id, gaim_status_type_get_id(status_type)))
+		if ((status_id != NULL) && !strcmp(status_id, id))
 		{
 			gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo), &iter);
 			select = TRUE;
