@@ -192,14 +192,16 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	/* Set up security properties and options */
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
-	secprops.max_ssf = -1;
-	secprops.maxbufsize = -1;
 
 	if (!js->gsc) {
+		secprops.max_ssf = -1;
+		secprops.maxbufsize = 4096;
 		plaintext = gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
 		if (!plaintext)
 			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
 	} else {
+		secprops.max_ssf = 0;
+		secprops.maxbufsize = 0;
 		plaintext = TRUE;
 	}
 	secprops.property_names = 0;
