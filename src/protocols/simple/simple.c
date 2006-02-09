@@ -69,7 +69,7 @@ static void simple_keep_alive(GaimConnection *gc) {
 	struct simple_account_data *sip = gc->proto_data;
 	if(sip->udp) { /* in case of UDP send a packet only with a 0 byte to
 			 remain in the NAT table */
-		gchar buf[2]={0,0};
+		gchar buf[2] = {0, 0};
 		gaim_debug_info("simple", "sending keep alive\n");
 		sendto(sip->fd, buf, 1, 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in));
 	}
@@ -163,7 +163,7 @@ static void watcher_remove(struct simple_account_data *sip, gchar *name) {
 }
 
 static struct sip_connection *connection_create(struct simple_account_data *sip, int fd) {
-	struct sip_connection *ret = g_new0(struct sip_connection,1);
+	struct sip_connection *ret = g_new0(struct sip_connection, 1);
 	ret->fd = fd;
 	sip->openconns = g_slist_append(sip->openconns, ret);
 	return ret;
@@ -191,25 +191,25 @@ static void simple_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 {
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
 	struct simple_buddy *b;
-	if(strncmp("sip:", buddy->name,4)) {
-		gchar *buf = g_strdup_printf("sip:%s",buddy->name);
+	if(strncmp("sip:", buddy->name, 4)) {
+		gchar *buf = g_strdup_printf("sip:%s", buddy->name);
 		gaim_blist_rename_buddy(buddy, buf);
 		g_free(buf);
 	}
 	if(!g_hash_table_lookup(sip->buddies, buddy->name)) {
 		b = g_new0(struct simple_buddy, 1);
-		gaim_debug_info("simple","simple_add_buddy %s\n",buddy->name);
+		gaim_debug_info("simple", "simple_add_buddy %s\n", buddy->name);
 		b->name = g_strdup(buddy->name);
 		g_hash_table_insert(sip->buddies, b->name, b);
 	} else {
-		gaim_debug_info("simple","buddy %s already in internal list\n", buddy->name);
+		gaim_debug_info("simple", "buddy %s already in internal list\n", buddy->name);
 	}
 }
 
 static void simple_get_buddies(GaimConnection *gc) {
 	GaimBlistNode *gnode, *cnode, *bnode;
 
-	gaim_debug_info("simple","simple_get_buddies\n");
+	gaim_debug_info("simple", "simple_get_buddies\n");
 
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode)) continue;
@@ -250,7 +250,8 @@ static GList *simple_status_types(GaimAccount *acc) {
 	return types;
 }
 
-static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth, gchar *method, gchar *target) {
+static gchar *auth_header(struct simple_account_data *sip,
+		struct sip_auth *auth, const gchar *method, const gchar *target) {
 	gchar noncecount[9];
 	gchar *response;
 	gchar *ret;
@@ -261,7 +262,7 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	authdomain = gaim_account_get_string(sip->account, "authdomain", "");
 	authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
 
-	if(!authuser || strlen(authuser)<1) {
+	if(!authuser || strlen(authuser) < 1) {
 		authuser = sip->username;
 	}
 
@@ -297,7 +298,7 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	return ret;
 }
 
-static char * parse_attribute(const char *attrname, char *source) {
+static char *parse_attribute(const char *attrname, char *source) {
 	char *tmp, *tmp2, *retval = NULL;
 	int len = strlen(attrname);
 
@@ -314,14 +315,14 @@ static char * parse_attribute(const char *attrname, char *source) {
 }
 
 static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
-	int i=0;
+	int i = 0;
 	const char *authuser;
 	char *tmp;
 	gchar **parts;
 
 	authuser = gaim_account_get_string(sip->account, "authuser", sip->username);
 
-	if(!authuser || strlen(authuser)<1) {
+	if(!authuser || strlen(authuser) < 1) {
 		authuser = sip->username;
 	}
 
@@ -334,11 +335,11 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		gaim_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
 		if(!strstr(hdr, "gssapi-data")) {
-			gaim_debug_info("simple","here");
+			gaim_debug_info("simple", "here");
 			parts = g_strsplit(hdr+5, "\", ", 0);
 			i = 0;
 			while(parts[i]) {
-			gaim_debug_info("simple","parts[i] %s\n",parts[i]);
+			gaim_debug_info("simple", "parts[i] %s\n", parts[i]);
 				if((tmp = parse_attribute("targetname=\"",
 						parts[i]))) {
 					auth->target = tmp;
@@ -388,7 +389,34 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	auth->digest_session_key = gaim_cipher_http_digest_calculate_session_key(
 			"md5", authuser, auth->realm, sip->password, auth->nonce, NULL);
 
-	auth->nc=1;
+	auth->nc = 1;
+}
+
+static void simple_canwrite_cb(gpointer data, gint source, GaimInputCondition cond) {
+	GaimConnection *gc = data;
+	struct simple_account_data *sip = gc->proto_data;
+	gsize max_write;
+	gssize written;
+
+	max_write = gaim_circ_buffer_get_max_read(sip->txbuf);
+
+	if(max_write == 0) {
+		gaim_input_remove(sip->tx_handler);
+		sip->tx_handler = 0;
+		return;
+	}
+
+	written = write(sip->fd, sip->txbuf->outptr, max_write);
+
+	if(written < 0 && errno == EAGAIN)
+		written = 0;
+	else if(written <= 0) {
+		/*TODO: do we really want to disconnect on a failure to write?*/
+		gaim_connection_error(gc, _("Could not write"));
+		return;
+	}
+
+	gaim_circ_buffer_mark_read(sip->txbuf, written);
 }
 
 static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond);
@@ -398,18 +426,23 @@ static void send_later_cb(gpointer data, gint source, GaimInputCondition cond) {
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
 
-	if( source < 0 ) {
-		gaim_connection_error(gc,"Could not connect");
+	if(source < 0) {
+		gaim_connection_error(gc, _("Could not connect"));
 		return;
 	}
 
 	sip->fd = source;
 	sip->connecting = FALSE;
-	write(sip->fd, sip->sendlater, strlen(sip->sendlater));
+
+	simple_canwrite_cb(gc, sip->fd, GAIM_INPUT_WRITE);
+
+	/* If there is more to write now, we need to register a handler */
+	if(sip->txbuf->bufused > 0)
+		sip->tx_handler = gaim_input_add(sip->fd, GAIM_INPUT_WRITE,
+			simple_canwrite_cb, gc);
+
 	conn = connection_create(sip, source);
 	conn->inputhandler = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_input_cb, gc);
-	g_free(sip->sendlater);
-	sip->sendlater = NULL;
 }
 
 
@@ -417,44 +450,65 @@ static void sendlater(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
 	int error = 0;
 	if(!sip->connecting) {
-		gaim_debug_info("simple","connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
+		gaim_debug_info("simple", "connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
 		error = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
 		if(error) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 		}
 		sip->connecting = TRUE;
 	}
-	if(sip->sendlater) {
-		gchar *old = sip->sendlater;
-		sip->sendlater = g_strdup_printf("%s\r\n%s",old, buf);
-		g_free(old);
-	} else {
-		sip->sendlater = g_strdup(buf);
-	}
+
+	if(gaim_circ_buffer_get_max_read(sip->txbuf) > 0)
+		gaim_circ_buffer_append(sip->txbuf, "\r\n", 2);
+
+	gaim_circ_buffer_append(sip->txbuf, buf, strlen(buf));
 }
 
-static int sendout_pkt(GaimConnection *gc, const char *buf) {
+static void sendout_pkt(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
 	time_t currtime = time(NULL);
-	int ret = 0;
+	int writelen = strlen(buf);
 
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "\n\nsending - %s\n######\n%s\n######\n\n", ctime(&currtime), buf);
 	if(sip->udp) {
-		if(sendto(sip->fd, buf, strlen(buf), 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in)) < strlen(buf)) {
+		if(sendto(sip->fd, buf, writelen, 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in)) < writelen) {
 			gaim_debug_info("simple", "could not send packet\n");
 		}
 	} else {
-		if(sip->fd <0 ) {
+		int ret;
+		if(sip->fd < 0) {
 			sendlater(gc, buf);
-			return 0;
+			return;
 		}
-		ret = write(sip->fd, buf, strlen(buf));
-		if(ret < 0) {
-			sendlater(gc,buf);
-			return 0;
+
+		if(sip->tx_handler) {
+			ret = -1;
+			errno = EAGAIN;
+		} else
+			ret = write(sip->fd, buf, writelen);
+
+		if (ret < 0 && errno == EAGAIN)
+			ret = 0;
+		else if(ret <= 0) { /* XXX: When does this happen legitimately? */
+			sendlater(gc, buf);
+			return;
+		}
+
+		if (ret < writelen) {
+			if(!sip->tx_handler)
+				sip->tx_handler = gaim_input_add(sip->fd,
+					GAIM_INPUT_WRITE, simple_canwrite_cb,
+					gc);
+
+			/* XXX: is it OK to do this? You might get part of a request sent
+			   with part of another. */
+			if(sip->txbuf->bufused > 0)
+				gaim_circ_buffer_append(sip->txbuf, "\r\n", 2);
+
+			gaim_circ_buffer_append(sip->txbuf, buf + ret,
+				writelen - ret);
 		}
 	}
-	return ret;
 }
 
 static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) {
@@ -487,7 +541,7 @@ static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, 
 	if(body) {
 		gchar len[12];
 		sprintf(len, "%" G_GSIZE_FORMAT , strlen(body));
-		sipmsg_add_header(msg, "Content-Length",len);
+		sipmsg_add_header(msg, "Content-Length", len);
 	}
 	else
 		sipmsg_add_header(msg, "Content-Length", "0");
@@ -532,18 +586,20 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 		transactions = transactions->next;
 	}
 
-	return (struct transaction *)NULL;
+	return NULL;
 }
 
-static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gchar *to, gchar *addheaders, gchar *body, struct sip_dialog *dialog, TransCallback tc) {
+static void send_sip_request(GaimConnection *gc, const gchar *method,
+		const gchar *url, const gchar *to, const gchar *addheaders,
+		const gchar *body, struct sip_dialog *dialog, TransCallback tc) {
 	struct simple_account_data *sip = gc->proto_data;
 	char *callid = dialog ? g_strdup(dialog->callid) : gencallid();
 	char *auth = "";
-	char *addh = "";
+	const char *addh = "";
 	gchar *branch = genbranch();
 	char *buf;
 
-	if(!strcmp(method,"REGISTER")) {
+	if(!strcmp(method, "REGISTER")) {
 		if(sip->regcallid) {
 			g_free(callid);
 			callid = g_strdup(sip->regcallid);
@@ -552,14 +608,14 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	}
 
 	if(addheaders) addh = addheaders;
-	if(sip->registrar.type && !strcmp(method,"REGISTER")) {
+	if(sip->registrar.type && !strcmp(method, "REGISTER")) {
 		buf = auth_header(sip, &sip->registrar, method, url);
 		auth = g_strdup_printf("Authorization: %s", buf);
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
-	if(sip->proxy.type && strcmp(method,"REGISTER")) {
+	if(sip->proxy.type && strcmp(method, "REGISTER")) {
 		buf = auth_header(sip, &sip->proxy, method, url);
 		auth = g_strdup_printf("Proxy-Authorization: %s", buf);
 		g_free(buf);
@@ -603,7 +659,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 
 	transactions_add_buf(sip, buf, tc);
 
-	sendout_pkt(gc,buf);
+	sendout_pkt(gc, buf);
 
 	g_free(buf);
 }
@@ -613,8 +669,8 @@ static char *get_contact(struct simple_account_data  *sip) {
 }
 
 static void do_register_exp(struct simple_account_data *sip, int expire) {
-	char *uri = g_strdup_printf("sip:%s",sip->servername);
-	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
+	char *uri = g_strdup_printf("sip:%s", sip->servername);
+	char *to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
 	char *contact = get_contact(sip);
 	char *hdr = g_strdup_printf("Contact: %s\r\nExpires: %d\r\n", contact, expire);
 	g_free(contact);
@@ -626,7 +682,10 @@ static void do_register_exp(struct simple_account_data *sip, int expire) {
 	} else {
 		sip->reregister = time(NULL) + 600;
 	}
-	send_sip_request(sip->gc,"REGISTER",uri,to, hdr, "", NULL, process_register_response);
+
+	send_sip_request(sip->gc, "REGISTER", uri, to, hdr, "", NULL,
+		process_register_response);
+
 	g_free(hdr);
 	g_free(uri);
 	g_free(to);
@@ -641,15 +700,15 @@ static gchar *parse_from(gchar *hdr) {
 	gchar *tmp;
 
 	if(!from) return NULL;
-	gaim_debug_info("simple", "parsing address out of %s\n",from);
+	gaim_debug_info("simple", "parsing address out of %s\n", from);
 	tmp = strchr(from, '<');
 
 	/* i hate the different SIP UA behaviours... */
 	if(tmp) { /* sip address in <...> */
 		from = tmp+1;
-		tmp = strchr(from,'>');
+		tmp = strchr(from, '>');
 		if(tmp) {
-			from = g_strndup(from,tmp-from);
+			from = g_strndup(from, tmp-from);
 		} else {
 			gaim_debug_info("simple", "found < without > in From\n");
 			return NULL;
@@ -657,19 +716,19 @@ static gchar *parse_from(gchar *hdr) {
 	} else {
 		tmp = strchr(from, ';');
 		if(tmp) {
-			from = g_strndup(from,tmp-from);
+			from = g_strndup(from, tmp-from);
 		} else {
 			from = g_strdup(from);
 		}
 	}
-	gaim_debug_info("simple", "got %s\n",from);
+	gaim_debug_info("simple", "got %s\n", from);
 	return from;
 }
 
 static gboolean process_subscribe_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
-	gchar *to = parse_from(sipmsg_find_header(tc->msg,"To")); /* cant be NULL since it is our own msg */
+	gchar *to = parse_from(sipmsg_find_header(tc->msg, "To")); /* cant be NULL since it is our own msg */
 
-	if(msg->response==200 || msg->response==202) {
+	if(msg->response == 200 || msg->response == 202) {
 		return TRUE;
 	}
 
@@ -684,15 +743,21 @@ static void simple_subscribe(struct simple_account_data *sip, struct simple_budd
 	gchar *contact = "Expires: 300\r\nAccept: application/pidf+xml, application/xpidf+xml\r\nEvent: presence\r\n";
 	gchar *to;
 	gchar *tmp;
-	if(strstr(buddy->name,"sip:")) to = g_strdup(buddy->name);
-	else to = g_strdup_printf("sip:%s",buddy->name);
+
+	if(strstr(buddy->name,"sip:"))
+		to = g_strdup(buddy->name);
+	else
+		to = g_strdup_printf("sip:%s", buddy->name);
+
 	tmp = get_contact(sip);
 	contact = g_strdup_printf("%sContact: %s\r\n", contact, tmp);
 	g_free(tmp);
+
 	/* subscribe to buddy presence
 	 * we dont need to know the status so we do not need a callback */
 
-	send_sip_request(sip->gc, "SUBSCRIBE",to, to, contact, "", NULL, process_subscribe_response);
+	send_sip_request(sip->gc, "SUBSCRIBE", to, to, contact, "", NULL,
+		process_subscribe_response);
 
 	g_free(to);
 	g_free(contact);
@@ -704,9 +769,9 @@ static void simple_subscribe(struct simple_account_data *sip, struct simple_budd
 
 static void simple_buddy_resub(char *name, struct simple_buddy *buddy, struct simple_account_data *sip) {
 	time_t curtime = time(NULL);
-	gaim_debug_info("simple","buddy resub\n");
+	gaim_debug_info("simple", "buddy resub\n");
 	if(buddy->resubscribe < curtime) {
-		gaim_debug(GAIM_DEBUG_MISC, "simple", "simple_buddy_resub %s\n",name);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "simple_buddy_resub %s\n", name);
 		simple_subscribe(sip, buddy);
 	}
 }
@@ -755,16 +820,16 @@ static gboolean subscribe_timeout(struct simple_account_data *sip) {
 	return TRUE;
 }
 
-static void simple_send_message(struct simple_account_data *sip, char *to, char *msg, char *type) {
+static void simple_send_message(struct simple_account_data *sip, const char *to, const char *msg, const char *type) {
 	gchar *hdr;
 	gchar *fullto;
-	if(strncmp("sip:",to,4)) {
-		fullto = g_strdup_printf("sip:%s",to);
+	if(strncmp("sip:", to, 4)) {
+		fullto = g_strdup_printf("sip:%s", to);
 	} else {
 		fullto = g_strdup(to);
 	}
 	if(type) {
-		hdr = g_strdup_printf("Content-Type: %s\r\n",type);
+		hdr = g_strdup_printf("Content-Type: %s\r\n", type);
 	} else {
 		hdr = g_strdup("Content-Type: text/plain\r\n");
 	}
@@ -800,26 +865,26 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
-	if(!strncmp(contenttype, "application/im-iscomposing+xml",30)) {
+	if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
 		xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
 		xmlnode *state;
 		gchar *statedata;
 
 		if(!isc) {
-			gaim_debug_info("simple","process_incoming_message: can not parse iscomposing\n");
+			gaim_debug_info("simple", "process_incoming_message: can not parse iscomposing\n");
 			return;
 		}
 
 		state = xmlnode_get_child(isc, "state");
 
 		if(!state) {
-			gaim_debug_info("simple","process_incoming_message: no state found\n");
+			gaim_debug_info("simple", "process_incoming_message: no state found\n");
 			return;
 		}
 
 		statedata = xmlnode_get_data(state);
 		if(statedata) {
-			if(strstr(statedata,"active")) serv_got_typing(sip->gc, from, 0, GAIM_TYPING);
+			if(strstr(statedata, "active")) serv_got_typing(sip->gc, from, 0, GAIM_TYPING);
 			else serv_got_typing_stopped(sip->gc, from);
 		}
 		xmlnode_free(isc);
@@ -839,12 +904,12 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "in process register response response: %d\n", msg->response);
 	switch (msg->response) {
 		case 200:
-			if(sip->registerstatus<3) { /* registered */
+			if(sip->registerstatus < 3) { /* registered */
 				if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
 					send_publish(sip);
 				}
 			}
-			sip->registerstatus=3;
+			sip->registerstatus = 3;
 			gaim_connection_set_state(sip->gc, GAIM_CONNECTED);
 
 			/* get buddies from blist */
@@ -853,15 +918,15 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			subscribe_timeout(sip);
 			break;
 		case 401:
-			if(sip->registerstatus!=2) {
-				gaim_debug_info("simple","REGISTER retries %d\n",sip->registrar.retries);
-				if(sip->registrar.retries>3) {
-					gaim_connection_error(sip->gc,"Wrong Password");
+			if(sip->registerstatus != 2) {
+				gaim_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
+				if(sip->registrar.retries > 3) {
+					gaim_connection_error(sip->gc, _("Wrong Password"));
 					return TRUE;
 				}
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");
 				fill_auth(sip, tmp, &sip->registrar);
-				sip->registerstatus=2;
+				sip->registerstatus = 2;
 				do_register(sip);
 			}
 			break;
@@ -877,28 +942,28 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	xmlnode *basicstatus;
 	gboolean isonline = FALSE;
 
-	fromhdr = sipmsg_find_header(msg,"From");
+	fromhdr = sipmsg_find_header(msg, "From");
 	from = parse_from(fromhdr);
 	if(!from) return;
 
 	pidf = xmlnode_from_str(msg->body, msg->bodylen);
 
 	if(!pidf) {
-		gaim_debug_info("simple","process_incoming_notify: no parseable pidf\n");
+		gaim_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
 		return;
 	}
 
-	basicstatus = xmlnode_get_child(xmlnode_get_child(xmlnode_get_child(pidf,"tuple"),"status"), "basic");
+	basicstatus = xmlnode_get_child(xmlnode_get_child(xmlnode_get_child(pidf, "tuple"), "status"), "basic");
 
 	if(!basicstatus) {
-		gaim_debug_info("simple","process_incoming_notify: no basic found\n");
+		gaim_debug_info("simple", "process_incoming_notify: no basic found\n");
 		return;
 	}
 
 	tmp2 = xmlnode_get_data(basicstatus);
 
 	if(!tmp2) {
-		gaim_debug_info("simple","process_incoming_notify: no basic data found\n");
+		gaim_debug_info("simple", "process_incoming_notify: no basic data found\n");
 		return;
 	}
 
@@ -1013,7 +1078,10 @@ static gboolean process_publish_response(struct simple_account_data *sip, struct
 static void send_publish(struct simple_account_data *sip) {
 	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
 	gchar *doc = gen_pidf(sip);
-	send_sip_request(sip->gc, "PUBLISH", uri, uri, "Expires: 600\r\nEvent: presence\r\nContent-Type: application/pidf+xml\r\n", doc, NULL, process_publish_response);
+	send_sip_request(sip->gc, "PUBLISH", uri, uri,
+		"Expires: 600\r\nEvent: presence\r\n"
+		"Content-Type: application/pidf+xml\r\n",
+		doc, NULL, process_publish_response);
 	sip->republish = time(NULL) + 500;
 	g_free(doc);
 }
@@ -1106,7 +1174,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 			if(msg->response == 407) {
 				gchar *resend, *auth, *ptmp;
 
-				if(sip->proxy.retries>3) return;
+				if(sip->proxy.retries > 3) return;
 				sip->proxy.retries++;
 				/* do proxy authentication */
 
@@ -1124,7 +1192,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 			} else {
 				if(msg->response == 100) {
 					/* ignore provisional response */
-					gaim_debug_info("simple","got trying response\n");
+					gaim_debug_info("simple", "got trying response\n");
 				} else {
 					sip->proxy.retries = 0;
 					if(msg->response == 401) sip->registrar.retries++;
@@ -1142,7 +1210,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 		}
 	}
 	if(!found) {
-		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a unknown sip message with method %s and response %d\n",msg->method, msg->response);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a unknown sip message with method %s and response %d\n", msg->method, msg->response);
 	}
 }
 
@@ -1160,33 +1228,33 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 	}
 	if(cur != conn->inbuf) {
 		memmove(conn->inbuf, cur, conn->inbufused-(cur-conn->inbuf));
-		conn->inbufused=strlen(conn->inbuf);
+		conn->inbufused = strlen(conn->inbuf);
 	}
 
 	/* Received a full Header? */
-	if((cur = strstr(conn->inbuf, "\r\n\r\n"))!=NULL) {
+	if((cur = strstr(conn->inbuf, "\r\n\r\n")) != NULL) {
 		time_t currtime = time(NULL);
 		cur += 2;
 		cur[0] = '\0';
-		gaim_debug_info("simple","\n\nreceived - %s\n######\n%s\n#######\n\n",ctime(&currtime), conn->inbuf);
+		gaim_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), conn->inbuf);
 		msg = sipmsg_parse_header(conn->inbuf);
 		cur[0] = '\r';
 		cur += 2;
 		restlen = conn->inbufused - (cur-conn->inbuf);
-		if(restlen>=msg->bodylen) {
-			dummy = g_malloc(msg->bodylen+1);
+		if(restlen >= msg->bodylen) {
+			dummy = g_malloc(msg->bodylen + 1);
 			memcpy(dummy, cur, msg->bodylen);
-			dummy[msg->bodylen]='\0';
+			dummy[msg->bodylen] = '\0';
 			msg->body = dummy;
-			cur+=msg->bodylen;
-			memmove(conn->inbuf, cur, conn->inbuflen-(cur-conn->inbuf));
-			conn->inbufused=strlen(conn->inbuf);
+			cur += msg->bodylen;
+			memmove(conn->inbuf, cur, conn->inbuflen - (cur - conn->inbuf));
+			conn->inbufused = strlen(conn->inbuf);
 		} else {
 			sipmsg_free(msg);
 			return;
 		}
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
-		process_input_message(sip,msg);
+		process_input_message(sip, msg);
 	} else {
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a incomplete sip msg: %s\n", conn->inbuf);
 	}
@@ -1202,7 +1270,7 @@ static void simple_udp_process(gpointer data, gint source, GaimInputCondition co
 	static char buffer[65536];
 	if((len = recv(source, buffer, sizeof(buffer) - 1, 0)) > 0) {
 		buffer[len] = '\0';
-		gaim_debug_info("simple","\n\nreceived - %s\n######\n%s\n#######\n\n",ctime(&currtime), buffer);
+		gaim_debug_info("simple", "\n\nreceived - %s\n######\n%s\n#######\n\n", ctime(&currtime), buffer);
 		msg = sipmsg_parse_msg(buffer);
 		if(msg) process_input_message(sip, msg);
 	}
@@ -1219,25 +1287,24 @@ static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	if (conn->inbuflen < conn->inbufused + SIMPLE_BUF_INC) {
+	if(conn->inbuflen < conn->inbufused + SIMPLE_BUF_INC) {
 		conn->inbuflen += SIMPLE_BUF_INC;
 		conn->inbuf = g_realloc(conn->inbuf, conn->inbuflen);
 	}
 
-	if ((len = read(source, conn->inbuf + conn->inbufused, SIMPLE_BUF_INC - 1)) <= 0) {
-		gaim_debug_info("simple","simple_input_cb: read error\n");
+	len = read(source, conn->inbuf + conn->inbufused, SIMPLE_BUF_INC - 1);
+
+	if(len < 0 && errno == EAGAIN)
+		return;
+	else if(len <= 0) {
+		gaim_debug_info("simple", "simple_input_cb: read error\n");
 		connection_remove(sip, source);
 		if(sip->fd == source) sip->fd = -1;
 		return;
 	}
-	if(len == 0) {
-		/* connection was closed */
-		connection_remove(sip, source);
-		if(sip->fd == source) sip->fd = -1;
-	}
 
 	conn->inbufused += len;
-	conn->inbuf[conn->inbufused]='\0';
+	conn->inbuf[conn->inbufused] = '\0';
 
 	process_input(sip, conn);
 }
@@ -1260,8 +1327,8 @@ static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
 
-	if( source < 0 ) {
-		gaim_connection_error(gc,"Could not connect");
+	if(source < 0) {
+		gaim_connection_error(gc, _("Could not connect"));
 		return;
 	}
 
@@ -1351,7 +1418,7 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
 	sip->listenpa = gaim_input_add(sip->listenfd, GAIM_INPUT_READ,
 			simple_newconn_cb, sip->gc);
-	gaim_debug_info("simple","connecting to %s port %d\n",
+	gaim_debug_info("simple", "connecting to %s port %d\n",
 			sip->realhostname, sip->realport);
 	/* open tcp connection to the server */
 	error = gaim_proxy_connect(sip->account, sip->realhostname,
@@ -1366,7 +1433,6 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 
 	gchar *hostname;
 	int port = gaim_account_get_int(sip->account, "port", 0);
-
 
 	/* find the host to connect to */
 	if(results) {
@@ -1385,8 +1451,9 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	sip->realhostname = hostname;
 	sip->realport = port;
 	if(!sip->realport) sip->realport = 5060;
+
 	/* TCP case */
-	if(! sip->udp) {
+	if(!sip->udp) {
 		/* create socket for incoming connections */
 		if(!gaim_network_listen_range(5060, 5160, SOCK_STREAM,
 					simple_tcp_connect_listen_cb, sip)) {
@@ -1408,20 +1475,24 @@ static void simple_login(GaimAccount *account)
 	gchar *hosttoconnect;
 
 	const char *username = gaim_account_get_username(account);
-
 	gc = gaim_account_get_connection(account);
-	gc->proto_data = sip = g_new0(struct simple_account_data,1);
-	sip->gc=gc;
-	sip->account = account;
-	sip->registerexpire = 900;
-	sip->udp = gaim_account_get_bool(account, "udp", FALSE);
+
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
 		return;
 	}
 
+	gc->proto_data = sip = g_new0(struct simple_account_data, 1);
+	sip->gc = gc;
+	sip->account = account;
+	sip->registerexpire = 900;
+	sip->udp = gaim_account_get_bool(account, "udp", FALSE);
+	/* TODO: is there a good default grow size? */
+	if(!sip->udp)
+		sip->txbuf = gaim_circ_buffer_new(0);
+
 	userserver = g_strsplit(username, "@", 2);
-	gaim_connection_set_display_name(gc,userserver[0]);
+	gaim_connection_set_display_name(gc, userserver[0]);
 	sip->username = g_strdup(userserver[0]);
 	sip->servername = g_strdup(userserver[1]);
 	sip->password = g_strdup(gaim_connection_get_password(gc));
@@ -1441,10 +1512,10 @@ static void simple_login(GaimAccount *account)
 	}
 
 	/* TCP case */
-	if(! sip->udp) {
-		gaim_srv_resolve("sip","tcp",hosttoconnect,srvresolved, sip);
+	if(!sip->udp) {
+		gaim_srv_resolve("sip", "tcp", hosttoconnect, srvresolved, sip);
 	} else { /* UDP */
-		gaim_srv_resolve("sip","udp",hosttoconnect,srvresolved, sip);
+		gaim_srv_resolve("sip", "udp", hosttoconnect, srvresolved, sip);
 	}
 	g_free(hosttoconnect);
 }
@@ -1470,12 +1541,13 @@ static void simple_close(GaimConnection *gc)
 		g_free(sip->proxy.target);
 		g_free(sip->proxy.realm);
 		g_free(sip->proxy.digest_session_key);
-		g_free(sip->sendlater);
+		if(sip->txbuf)
+			gaim_circ_buffer_destroy(sip->txbuf);
 		g_free(sip->realhostname);
 		if(sip->listenpa) gaim_input_remove(sip->listenpa);
+		if(sip->tx_handler) gaim_input_remove(sip->tx_handler);
 		if(sip->resendtimeout) gaim_timeout_remove(sip->resendtimeout);
 		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
-		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->realhostname = NULL;
 	}
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;
@@ -1596,7 +1668,6 @@ static void _init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_int_new(_("Connect port"), "port", 0);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 
 	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

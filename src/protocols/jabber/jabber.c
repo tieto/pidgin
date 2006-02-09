@@ -194,6 +194,42 @@ void jabber_process_packet(JabberStream *js, xmlnode *packet)
 	}
 }
 
+static int jabber_do_send(JabberStream *js, const char *data, int len)
+{
+	int ret;
+
+	if (js->gsc)
+		ret = gaim_ssl_write(js->gsc, data, len);
+	else
+		ret = write(js->fd, data, len);
+
+	return ret;
+}
+
+static void jabber_send_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	JabberStream *js = data;
+	int ret, writelen;
+	writelen = gaim_circ_buffer_get_max_read(js->write_buffer);
+
+	if (writelen == 0) {
+		gaim_input_remove(js->writeh);
+		js->writeh = -1;
+		return;
+	}
+
+	ret = jabber_do_send(js, js->write_buffer->outptr, writelen);
+
+	if (ret < 0 && errno == EAGAIN)
+		return;
+	else if (ret <= 0) {
+		gaim_connection_error(js->gc, _("Write error"));
+		return;
+	}
+
+	gaim_circ_buffer_mark_read(js->write_buffer, ret);
+}
+
 void jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 	int ret;
@@ -228,27 +264,53 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
 			pos += towrite;
 
-			if (js->gsc)
-				ret = gaim_ssl_write(js->gsc, out, olen);
-			else
-				ret = write(js->fd, out, olen);
-			if (ret < 0)
+			if (js->writeh != -1)
+				ret = jabber_do_send(js, out, olen);
+			else {
+				ret = -1;
+				errno = EAGAIN;
+			}
+
+			if (ret < 0 && errno != EAGAIN)
 				gaim_connection_error(js->gc, _("Write error"));
+			else if (ret < olen) {
+				if (ret < 0)
+					ret = 0;
+				if (js->writeh == -1)
+					js->writeh = gaim_input_add(
+						js->gsc ? js->gsc->fd : js->fd,
+						GAIM_INPUT_WRITE,
+						jabber_send_cb, js);
+				gaim_circ_buffer_append(js->write_buffer,
+					out + ret, olen - ret);
+			}
 		}
 		return;
 	}
 #endif
-	
-	if(js->gsc) {
-		ret = gaim_ssl_write(js->gsc, data, len == -1 ? strlen(data) : len);
-	} else {
-		if(js->fd < 0)
-			return;
-		ret = write(js->fd, data, len == -1 ? strlen(data) : len);
+
+	if (len == -1)
+		len = strlen(data);
+
+	if (js->writeh == -1)
+		ret = jabber_do_send(js, data, len);
+	else {
+		ret = -1;
+		errno = EAGAIN;
 	}
 
-	if(ret < 0)
+	if (ret < 0 && errno != EAGAIN)
 		gaim_connection_error(js->gc, _("Write error"));
+	else if (ret < len) {
+		if (ret < 0)
+			ret = 0;
+		if (js->writeh == -1)
+			js->writeh = gaim_input_add(
+				js->gsc ? js->gsc->fd : js->fd,
+				GAIM_INPUT_WRITE, jabber_send_cb, js);
+		gaim_circ_buffer_append(js->write_buffer,
+			data + ret, len - ret);
+	}
 
 }
 
@@ -285,7 +347,9 @@ jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
-	} else {
+	} else if(errno == EAGAIN)
+		return;
+	else {
 		gaim_connection_error(gc, _("Read Error"));
 	}
 }
@@ -317,6 +381,8 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
+	} else if(errno == EAGAIN) {
+		return;
 	} else {
 		gaim_connection_error(gc, _("Read Error"));
 	}
@@ -446,6 +512,8 @@ jabber_login(GaimAccount *account)
 	js->chat_servers = g_list_append(NULL, g_strdup("conference.jabber.org"));
 	js->user = jabber_id_new(gaim_account_get_username(account));
 	js->next_id = g_random_int();
+	js->write_buffer = gaim_circ_buffer_new(512);
+	js->writeh = -1;
 
 	if(!js->user) {
 		gaim_connection_error(gc, _("Invalid Jabber ID"));
@@ -789,6 +857,9 @@ static void jabber_register_account(GaimAccount *account)
 		return;
 	}
 
+	js->write_buffer = gaim_circ_buffer_new(512);
+	js->writeh = -1;
+
 	if(!js->user->resource) {
 		char *me;
 		js->user->resource = g_strdup("Home");
@@ -871,6 +942,9 @@ static void jabber_close(GaimConnection *gc)
 		jabber_id_free(js->user);
 	if(js->avatar_hash)
 		g_free(js->avatar_hash);
+	gaim_circ_buffer_destroy(js->write_buffer);
+	if(js->writeh)
+		gaim_input_remove(js->writeh);
 #ifdef HAVE_CYRUS_SASL
 	if(js->sasl)
 		sasl_dispose(&js->sasl);

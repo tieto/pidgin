@@ -36,8 +36,8 @@ msn_nexus_new(MsnSession *session)
 
 	nexus = g_new0(MsnNexus, 1);
 	nexus->session = session;
-	nexus->challenge_data = g_hash_table_new_full(g_str_hash, g_str_equal,
-												  g_free, g_free);
+	nexus->challenge_data = g_hash_table_new_full(g_str_hash,
+		g_str_equal, g_free, g_free);
 
 	return nexus;
 }
@@ -45,14 +45,17 @@ msn_nexus_new(MsnSession *session)
 void
 msn_nexus_destroy(MsnNexus *nexus)
 {
-	if (nexus->login_host != NULL)
-		g_free(nexus->login_host);
+	g_free(nexus->login_host);
 
-	if (nexus->login_path != NULL)
-		g_free(nexus->login_path);
+	g_free(nexus->login_path);
 
 	if (nexus->challenge_data != NULL)
 		g_hash_table_destroy(nexus->challenge_data);
+
+	if (nexus->input_handler > 0)
+		gaim_input_remove(nexus->input_handler);
+	g_free(nexus->write_buf);
+	g_free(nexus->read_buf);
 
 	g_free(nexus);
 }
@@ -61,32 +64,67 @@ msn_nexus_destroy(MsnNexus *nexus)
  * Util
  **************************************************************************/
 
-static size_t
-msn_ssl_read(GaimSslConnection *gsc, char **dest_buffer)
+static gssize
+msn_ssl_read(MsnNexus *nexus)
 {
-	gssize size = 0, s;
-	char *buffer = NULL;
+	gssize len;
 	char temp_buf[4096];
 
-	while ((s = gaim_ssl_read(gsc, temp_buf, sizeof(temp_buf))) > 0)
+	if ((len = gaim_ssl_read(nexus->gsc, temp_buf,
+			sizeof(temp_buf))) > 0)
 	{
-		buffer = g_realloc(buffer, size + s + 1);
-
-		strncpy(buffer + size, temp_buf, s);
-
-		buffer[size + s] = '\0';
-
-		size += s;
+		nexus->read_buf = g_realloc(nexus->read_buf,
+			nexus->read_len + len + 1);
+		strncpy(nexus->read_buf + nexus->read_len, temp_buf, len);
+		nexus->read_len += len;
+		nexus->read_buf[nexus->read_len] = '\0';
 	}
 
-	*dest_buffer = buffer;
+	return len;
+}
 
-	return size;
+static void
+nexus_write_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnNexus *nexus = data;
+	int len, total_len;
+
+	total_len = strlen(nexus->write_buf);
+
+	len = gaim_ssl_write(nexus->gsc,
+		nexus->write_buf + nexus->written_len,
+		total_len - nexus->written_len);
+
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len <= 0) {
+		gaim_input_remove(nexus->input_handler);
+		nexus->input_handler = -1;
+		/* TODO: notify of the error */
+		return;
+	}
+	nexus->written_len += len;
+
+	if (nexus->written_len < total_len)
+		return;
+
+	gaim_input_remove(nexus->input_handler);
+	nexus->input_handler = -1;
+
+	g_free(nexus->write_buf);
+	nexus->write_buf = NULL;
+	nexus->written_len = 0;
+
+	nexus->written_cb(nexus, source, 0);
 }
 
 /**************************************************************************
  * Login
  **************************************************************************/
+
+static void
+login_connect_cb(gpointer data, GaimSslConnection *gsc,
+				 GaimInputCondition cond);
 
 static void
 login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
@@ -106,6 +144,157 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 }
 
 static void
+nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnNexus *nexus = data;
+	MsnSession *session;
+	int len;
+
+	session = nexus->session;
+	g_return_if_fail(session != NULL);
+
+	if (nexus->input_handler == -1)
+		nexus->input_handler = gaim_input_add(nexus->gsc->fd,
+			GAIM_INPUT_READ, nexus_login_written_cb, nexus);
+
+
+	len = msn_ssl_read(nexus);
+
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		gaim_input_remove(nexus->input_handler);
+		nexus->input_handler = -1;
+		g_free(nexus->read_buf);
+		nexus->read_buf = NULL;
+		nexus->read_len = 0;
+		/* TODO: error handling */
+		return;
+	}
+
+	if (g_strstr_len(nexus->read_buf, nexus->read_len,
+			"\r\n\r\n") == NULL)
+		return;
+
+	gaim_input_remove(nexus->input_handler);
+	nexus->input_handler = -1;
+
+	gaim_ssl_close(nexus->gsc);
+	nexus->gsc = NULL;
+
+	gaim_debug_misc("msn", "ssl buffer: {%s}", nexus->read_buf);
+
+	if (strstr(nexus->read_buf, "HTTP/1.1 302") != NULL)
+	{
+		/* Redirect. */
+		char *location, *c;
+
+		location = strstr(nexus->read_buf, "Location: ");
+		if (location == NULL)
+		{
+			g_free(nexus->read_buf);
+			nexus->read_buf = NULL;
+			nexus->read_len = 0;
+
+			return;
+		}
+		location = strchr(location, ' ') + 1;
+
+		if ((c = strchr(location, '\r')) != NULL)
+			*c = '\0';
+
+		/* Skip the http:// */
+		if ((c = strchr(location, '/')) != NULL)
+			location = c + 2;
+
+		if ((c = strchr(location, '/')) != NULL)
+		{
+			g_free(nexus->login_path);
+			nexus->login_path = g_strdup(c);
+
+			*c = '\0';
+		}
+
+		g_free(nexus->login_host);
+		nexus->login_host = g_strdup(location);
+
+		gaim_ssl_connect(session->account, nexus->login_host,
+			GAIM_SSL_DEFAULT_PORT, login_connect_cb,
+			login_error_cb, nexus);
+	}
+	else if (strstr(nexus->read_buf, "HTTP/1.1 401 Unauthorized") != NULL)
+	{
+		const char *error;
+
+		if ((error = strstr(nexus->read_buf, "WWW-Authenticate")) != NULL)
+		{
+			if ((error = strstr(error, "cbtxt=")) != NULL)
+			{
+				const char *c;
+				char *temp;
+
+				error += strlen("cbtxt=");
+
+				if ((c = strchr(error, '\n')) == NULL)
+					c = error + strlen(error);
+
+				temp = g_strndup(error, c - error);
+				error = gaim_url_decode(temp);
+				g_free(temp);
+			}
+		}
+
+		msn_session_set_error(session, MSN_ERROR_AUTH, error);
+	}
+	else if (strstr(nexus->read_buf, "HTTP/1.1 200 OK"))
+	{
+		char *base, *c;
+		char *login_params;
+
+#if 0
+		/* All your base are belong to us. */
+		base = buffer;
+
+		/* For great cookie! */
+		while ((base = strstr(base, "Set-Cookie: ")) != NULL)
+		{
+			base += strlen("Set-Cookie: ");
+
+			c = strchr(base, ';');
+
+			session->login_cookies =
+				g_list_append(session->login_cookies,
+							  g_strndup(base, c - base));
+		}
+#endif
+
+		base  = strstr(nexus->read_buf, "Authentication-Info: ");
+
+		g_return_if_fail(base != NULL);
+
+		base  = strstr(base, "from-PP='");
+		base += strlen("from-PP='");
+		c     = strchr(base, '\'');
+
+		login_params = g_strndup(base, c - base);
+
+		msn_got_login_params(session, login_params);
+
+		g_free(login_params);
+
+		msn_nexus_destroy(nexus);
+		session->nexus = NULL;
+		return;
+	}
+
+	g_free(nexus->read_buf);
+	nexus->read_buf = NULL;
+	nexus->read_len = 0;
+
+}
+
+
+void
 login_connect_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
@@ -115,13 +304,14 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	char *request_str, *head, *tail;
 	char *buffer = NULL;
 	guint32 ctint;
-	size_t s;
 
 	nexus = data;
 	g_return_if_fail(nexus != NULL);
 
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
+
+	nexus->gsc = gsc;
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
@@ -169,168 +359,64 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_free(username);
 	g_free(password);
 
-	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
-	{
-		g_free(request_str);
+	nexus->write_buf = request_str;
+	nexus->written_len = 0;
 
-		return;
-	}
+	nexus->read_len = 0;
 
-	g_free(request_str);
+	nexus->written_cb = nexus_login_written_cb;
 
-	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)
-		return;
+	nexus->input_handler = gaim_input_add(gsc->fd, GAIM_INPUT_WRITE,
+		nexus_write_cb, nexus);
 
-	gaim_ssl_close(gsc);
+	nexus_write_cb(nexus, gsc->fd, GAIM_INPUT_WRITE);
 
-	gaim_debug_misc("msn", "ssl buffer: {%s}", buffer);
+	return;
 
-	if (strstr(buffer, "HTTP/1.1 302") != NULL)
-	{
-		/* Redirect. */
-		char *location, *c;
 
-		location = strstr(buffer, "Location: ");
-		if (location == NULL)
-		{
-			g_free(buffer);
-
-			return;
-		}
-		location = strchr(location, ' ') + 1;
-
-		if ((c = strchr(location, '\r')) != NULL)
-			*c = '\0';
-
-		/* Skip the http:// */
-		if ((c = strchr(location, '/')) != NULL)
-			location = c + 2;
-
-		if ((c = strchr(location, '/')) != NULL)
-		{
-			g_free(nexus->login_path);
-			nexus->login_path = g_strdup(c);
-
-			*c = '\0';
-		}
-
-		g_free(nexus->login_host);
-		nexus->login_host = g_strdup(location);
-
-		gaim_ssl_connect(session->account, nexus->login_host,
-						 GAIM_SSL_DEFAULT_PORT, login_connect_cb,
-						 login_error_cb, nexus);
-	}
-	else if (strstr(buffer, "HTTP/1.1 401 Unauthorized") != NULL)
-	{
-		const char *error;
-
-		if ((error = strstr(buffer, "WWW-Authenticate")) != NULL)
-		{
-			if ((error = strstr(error, "cbtxt=")) != NULL)
-			{
-				const char *c;
-				char *temp;
-
-				error += strlen("cbtxt=");
-
-				if ((c = strchr(error, '\n')) == NULL)
-					c = error + strlen(error);
-
-				temp = g_strndup(error, c - error);
-				error = gaim_url_decode(temp);
-				g_free(temp);
-			}
-		}
-
-		msn_session_set_error(session, MSN_ERROR_AUTH, error);
-	}
-	else if (strstr(buffer, "HTTP/1.1 200 OK"))
-	{
-		char *base, *c;
-		char *login_params;
-
-#if 0
-		/* All your base are belong to us. */
-		base = buffer;
-
-		/* For great cookie! */
-		while ((base = strstr(base, "Set-Cookie: ")) != NULL)
-		{
-			base += strlen("Set-Cookie: ");
-
-			c = strchr(base, ';');
-
-			session->login_cookies =
-				g_list_append(session->login_cookies,
-							  g_strndup(base, c - base));
-		}
-#endif
-
-		base  = strstr(buffer, "Authentication-Info: ");
-
-		g_return_if_fail(base != NULL);
-
-		base  = strstr(base, "from-PP='");
-		base += strlen("from-PP='");
-		c     = strchr(base, '\'');
-
-		login_params = g_strndup(base, c - base);
-
-		msn_got_login_params(session, login_params);
-
-		g_free(login_params);
-
-		msn_nexus_destroy(nexus);
-		session->nexus = NULL;
-	}
-
-	g_free(buffer);
 }
 
-/**************************************************************************
- * Connect
- **************************************************************************/
-
 static void
-nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	MsnNexus *nexus;
-	MsnSession *session;
-	char *request_str;
+	MsnNexus *nexus = data;
+	int len;
 	char *da_login;
 	char *base, *c;
-	char *buffer = NULL;
-	size_t s;
 
-	nexus = data;
-	g_return_if_fail(nexus != NULL);
+	if (nexus->input_handler == -1)
+		nexus->input_handler = gaim_input_add(nexus->gsc->fd,
+			GAIM_INPUT_READ, nexus_connect_written_cb, nexus);
 
-	session = nexus->session;
-	g_return_if_fail(session != NULL);
+	/* Get the PassportURLs line. */
+	len = msn_ssl_read(nexus);
 
-	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
-
-	request_str = g_strdup_printf("GET /rdr/pprdr.asp\r\n\r\n");
-
-	if ((s = gaim_ssl_write(gsc, request_str, strlen(request_str))) <= 0)
-	{
-		g_free(request_str);
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		gaim_input_remove(nexus->input_handler);
+		nexus->input_handler = -1;
+		g_free(nexus->read_buf);
+		nexus->read_buf = NULL;
+		nexus->read_len = 0;
+		/* TODO: error handling */
 		return;
 	}
 
-	g_free(request_str);
-
-	/* Get the PassportURLs line. */
-	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)
+	if (g_strstr_len(nexus->read_buf, nexus->read_len,
+			"\r\n\r\n") == NULL)
 		return;
 
-	base = strstr(buffer, "PassportURLs");
+	gaim_input_remove(nexus->input_handler);
+	nexus->input_handler = -1;
+
+	base = strstr(nexus->read_buf, "PassportURLs");
 
 	if (base == NULL)
 	{
-		g_free(buffer);
+		g_free(nexus->read_buf);
+		nexus->read_buf = NULL;
+		nexus->read_len = 0;
 		return;
 	}
 
@@ -345,27 +431,64 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 		if ((c = strchr(da_login, '/')) != NULL)
 		{
 			nexus->login_path = g_strdup(c);
-
 			*c = '\0';
 		}
 
 		nexus->login_host = g_strdup(da_login);
 	}
 
-	g_free(buffer);
+	g_free(nexus->read_buf);
+	nexus->read_buf = NULL;
+	nexus->read_len = 0;
 
-	gaim_ssl_close(gsc);
+	gaim_ssl_close(nexus->gsc);
+	nexus->gsc = NULL;
 
 	/* Now begin the connection to the login server. */
-	gaim_ssl_connect(session->account, nexus->login_host,
-					 GAIM_SSL_DEFAULT_PORT, login_connect_cb,
-					 login_error_cb, nexus);
+	gaim_ssl_connect(nexus->session->account, nexus->login_host,
+		GAIM_SSL_DEFAULT_PORT, login_connect_cb, login_error_cb,
+		nexus);
+}
+
+
+/**************************************************************************
+ * Connect
+ **************************************************************************/
+
+static void
+nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
+				 GaimInputCondition cond)
+{
+	MsnNexus *nexus;
+	MsnSession *session;
+
+	nexus = data;
+	g_return_if_fail(nexus != NULL);
+
+	session = nexus->session;
+	g_return_if_fail(session != NULL);
+
+	nexus->gsc = gsc;
+
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
+
+	nexus->write_buf = g_strdup("GET /rdr/pprdr.asp\r\n\r\n");
+	nexus->written_len = 0;
+
+	nexus->read_len = 0;
+
+	nexus->written_cb = nexus_connect_written_cb;
+
+	nexus->input_handler = gaim_input_add(gsc->fd, GAIM_INPUT_WRITE,
+		nexus_write_cb, nexus);
+
+	nexus_write_cb(nexus, gsc->fd, GAIM_INPUT_WRITE);
 }
 
 void
 msn_nexus_connect(MsnNexus *nexus)
 {
 	gaim_ssl_connect(nexus->session->account, "nexus.passport.com",
-					 GAIM_SSL_DEFAULT_PORT, nexus_connect_cb,
-					 login_error_cb, nexus);
+		GAIM_SSL_DEFAULT_PORT, nexus_connect_cb,
+		login_error_cb, nexus);
 }

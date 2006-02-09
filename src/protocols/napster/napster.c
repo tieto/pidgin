@@ -508,6 +508,11 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
+	/* Clear the nonblocking flag
+	   This protocol should be updated to support nonblocking I/O if
+	   anyone is going to actually use it */
+	fcntl(source, F_SETFL, 0);
+
 	ndata->fd = source;
 
 	/* Update the login progress status display */

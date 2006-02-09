@@ -73,6 +73,8 @@ typedef struct _YchtConn {
 	gboolean changing_rooms;
 	guchar *rxqueue;
 	guint rxlen;
+	GaimCircBuffer *txbuf;
+	guint tx_handler;
 } YchtConn;
 
 typedef struct {

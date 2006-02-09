@@ -51,8 +51,8 @@
 #define OSCAR_STATUS_ID_OFFLINE		"offline"
 #define OSCAR_STATUS_ID_AVAILABLE	"available"
 #define OSCAR_STATUS_ID_AWAY		"away"
-#define OSCAR_STATUS_ID_DND			"dnd"
-#define OSCAR_STATUS_ID_NA			"na"
+#define OSCAR_STATUS_ID_DND		"dnd"
+#define OSCAR_STATUS_ID_NA		"na"
 #define OSCAR_STATUS_ID_OCCUPIED	"occupied"
 #define OSCAR_STATUS_ID_FREE4CHAT	"free4chat"
 #define OSCAR_STATUS_ID_CUSTOM		"custom"
@@ -1018,6 +1018,9 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 
 	g_return_if_fail(gc != NULL);
 
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
+
 	dim->gpc_pend = FALSE;
 	if (dim->killme) {
 		oscar_direct_im_destroy(od, dim);
@@ -1780,6 +1783,9 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 		return;
 	}
 
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
+
 	od = gc->proto_data;
 	sess = od->sess;
 	conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH);
@@ -1948,6 +1954,9 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 		gaim_connection_error(gc, _("Could Not Connect"));
 		return;
 	}
+
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
 
 	aim_conn_completeconnect(sess, bosconn);
 	gc->inpa = gaim_input_add(bosconn->fd, GAIM_INPUT_READ, oscar_callback, bosconn);
@@ -2309,6 +2318,9 @@ static void oscar_xfer_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t siz
 static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 	struct aim_oft_info *oft_info;
 	struct aim_rv_proxy_info *proxy_info;
+
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(fd, F_SETFL, 0);
 
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_ready\n");
 	if (!(oft_info = xfer->data)) {
@@ -3063,6 +3075,9 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 		return;
 	}
 
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
+
 	buf = g_strdup_printf("GET " AIMHASHDATA "?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
 	write(pos->fd, buf, strlen(buf));
@@ -3256,6 +3271,9 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 		return;
 	}
 
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
+
 	aim_conn_completeconnect(sess, tstconn);
 	od->cnpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
 	gaim_debug_info("oscar", "chatnav: connected\n");
@@ -3284,6 +3302,9 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 				   "unable to connect to authorizer\n");
 		return;
 	}
+
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->paspa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
@@ -3319,6 +3340,9 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 		return;
 	}
 
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
+
 	aim_conn_completeconnect(sess, ccon->conn);
 	ccon->inpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
 	od->oscar_chats = g_slist_append(od->oscar_chats, ccon);
@@ -3346,6 +3370,9 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 				   "unable to connect to email server\n");
 		return;
 	}
+
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->emlpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
@@ -3375,6 +3402,9 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 				   "unable to connect to icon server\n");
 		return;
 	}
+
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->icopa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
@@ -3817,14 +3847,18 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	if(oft_info->success) {
 		gaim_debug_info("oscar","connection already successful; ignoring 2nd conn\n");
 		return;
-	}		
+	}
+
 	if (source < 0) {
 		gaim_debug_info("oscar","received fd of %d; aborting transfer\n", source);
 		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
 	oft_info->success = TRUE; /* Mark this connection as successful before it times out */
-	
+
+	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
+	fcntl(source, F_SETFL, 0);
+
 	/* We might have already set these in oscar_sendfile_proxylogin, but it won't
 	 * hurt to do it again since it is rather necessary */
 	xfer->fd = source;

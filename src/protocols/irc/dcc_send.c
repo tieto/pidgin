@@ -174,7 +174,12 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 	char *buffer[16];
 	int len;
 
-	if ((len = read(source, buffer, sizeof(buffer))) <= 0) {
+	len = read(source, buffer, sizeof(buffer));
+
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		/* XXX: Shouldn't this be canceling the transfer? */
 		gaim_input_remove(xd->inpa);
 		xd->inpa = 0;
 		return;
@@ -209,20 +214,24 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 			gaim_xfer_end(xfer);
 			return;
 		}
-
-
 	}
 }
 
 static gssize irc_dccsend_send_write(const guchar *buffer, size_t size, GaimXfer *xfer)
 {
 	gssize s;
+	int ret;
 
 	s = MIN(gaim_xfer_get_bytes_remaining(xfer), size);
 	if (!s)
 		return 0;
 
-	return write(xfer->fd, buffer, s);
+	ret = write(xfer->fd, buffer, s);
+
+	if (ret < 0 && errno == EAGAIN)
+		ret = 0;
+
+	return ret;
 }
 
 static void irc_dccsend_send_connected(gpointer data, int source, GaimInputCondition cond) {

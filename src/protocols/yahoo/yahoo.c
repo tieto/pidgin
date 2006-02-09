@@ -2286,19 +2286,34 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	char buf[2048], *i = buf;
+	char bufread[2048], *i = bufread, *buf = bufread;
 	int len;
 	GString *s;
 
-	len = read(source, buf, sizeof(buf)-1);
-	if (len <= 0  || (strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
+	len = read(source, bufread, sizeof(bufread) - 1);
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len <= 0) {
+		gaim_connection_error(gc, _("Unable to read"));
+		return;
+	}
+
+	if (yd->rxlen > 0 || !g_strstr_len(buf, len, "\r\n\r\n")) {
+		yd->rxqueue = g_realloc(yd->rxqueue, yd->rxlen + len + 1);
+		memcpy(yd->rxqueue + yd->rxlen, buf, len);
+		yd->rxlen += len;
+		i = buf = yd->rxqueue;
+		len = yd->rxlen;
+	}
+	buf[len] = '\0';
+
+	if ((strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
 		gaim_connection_error(gc, _("Unable to read"));
 		return;
 	}
 
 	s = g_string_sized_new(len);
-	buf[sizeof(buf)-1] = '\0';
 
 	while ((i = strstr(i, "Set-Cookie: "))) {
 		i += strlen("Set-Cookie: ");
@@ -2311,6 +2326,9 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	yd->auth = g_string_free(s, FALSE);
 	gaim_input_remove(gc->inpa);
 	close(source);
+	g_free(yd->rxqueue);
+	yd->rxqueue = NULL;
+	yd->rxlen = 0;
 	/* Now we have our cookies to login with.  I'll go get the milk. */
 	if (gaim_proxy_connect(account, "wcs2.msg.dcn.yahoo.com",
 			       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
@@ -2324,12 +2342,41 @@ static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition con
 {
 	GaimConnection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
+	int written, total_len;
+
 	if (source < 0) {
 		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
-	write(source, yd->auth, strlen(yd->auth));
+
+	total_len = strlen(yd->auth) - yd->auth_written;
+	written = write(source, yd->auth + yd->auth_written, total_len);
+
+	if (written < 0 && errno == EAGAIN)
+		written = 0;
+	else if (written <= 0) {
+		g_free(yd->auth);
+		yd->auth = NULL;
+		if (gc->inpa)
+			gaim_input_remove(gc->inpa);
+		gc->inpa = 0;
+		gaim_connection_error(gc, _("Unable to connect."));
+		return;
+	}
+
+	if (written < total_len) {
+		yd->auth_written += written;
+		if (!gc->inpa)
+			gc->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
+				yahoo_got_cookies, gc);
+		return;
+	}
+
 	g_free(yd->auth);
+	yd->auth = NULL;
+	yd->auth_written = 0;
+	if (gc->inpa)
+		gaim_input_remove(gc->inpa);
 	gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, yahoo_web_pending, gc);
 }
 
@@ -2526,6 +2573,9 @@ static void yahoo_login(GaimAccount *account) {
 	gaim_connection_set_display_name(gc, gaim_account_get_username(account));
 
 	yd->fd = -1;
+	yd->txhandler = -1;
+	/* TODO: Is there a good grow size for the buffer? */
+	yd->txbuf = gaim_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
@@ -2579,22 +2629,23 @@ static void yahoo_close(GaimConnection *gc) {
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
 	g_hash_table_destroy(yd->friends);
-	if (yd->chat_name)
-		g_free(yd->chat_name);
+	g_free(yd->chat_name);
 
-	if (yd->cookie_y)
-		g_free(yd->cookie_y);
-	if (yd->cookie_t)
-		g_free(yd->cookie_t);
+	g_free(yd->cookie_y);
+	g_free(yd->cookie_t);
+
+	if (yd->txhandler)
+		gaim_input_remove(yd->txhandler);
+
+	gaim_circ_buffer_destroy(yd->txbuf);
 
 	if (yd->fd >= 0)
 		close(yd->fd);
 
-	if (yd->rxqueue)
-		g_free(yd->rxqueue);
+	g_free(yd->rxqueue);
 	yd->rxlen = 0;
-	if (yd->picture_url)
-		g_free(yd->picture_url);
+	g_free(yd->picture_url);
+
 	if (yd->picture_upload_todo)
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (yd->ycht)

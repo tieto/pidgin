@@ -26,8 +26,6 @@
 
 typedef struct _MsnNexus MsnNexus;
 
-#include "nexus.h"
-
 struct _MsnNexus
 {
 	MsnSession *session;
@@ -35,6 +33,16 @@ struct _MsnNexus
 	char *login_host;
 	char *login_path;
 	GHashTable *challenge_data;
+	GaimSslConnection *gsc;
+
+	guint input_handler;
+
+	char *write_buf;
+	gsize written_len;
+	GaimInputFunction written_cb;
+
+	char *read_buf;
+	gsize read_len;
 };
 
 void msn_nexus_connect(MsnNexus *nexus);

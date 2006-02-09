@@ -242,39 +242,97 @@ void yahoo_packet_dump(guchar *data, int len)
 #endif
 }
 
-int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
+static void
+yahoo_packet_send_can_write(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct yahoo_data *yd = data;
+	int ret, writelen;
+
+	writelen = gaim_circ_buffer_get_max_read(yd->txbuf);
+
+	if (writelen == 0) {
+		gaim_input_remove(yd->txhandler);
+		yd->txhandler = -1;
+		return;
+	}
+
+	ret = write(yd->fd, yd->txbuf->outptr, writelen);
+
+	if (ret < 0 && errno == EAGAIN)
+		return;
+	else if (ret < 0) {
+		/* TODO: what to do here - do we really have to disconnect? */
+		gaim_connection_error(yd->gc, _("Write Error"));
+		return;
+	}
+
+	gaim_circ_buffer_mark_read(yd->txbuf, ret);
+}
+
+
+gsize yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
+			 guchar **buf)
 {
 	int pktlen = yahoo_packet_length(pkt);
 	int len = YAHOO_PACKET_HDRLEN + pktlen;
-	int ret;
-
 	guchar *data;
 	int pos = 0;
-
-	if (yd->fd < 0)
-		return -1;
 
 	data = g_malloc0(len + 1);
 
 	memcpy(data + pos, "YMSG", 4); pos += 4;
 
-	if (yd->wm)
+	if (wm)
 		pos += yahoo_put16(data + pos, YAHOO_WEBMESSENGER_PROTO_VER);
 	else
 		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
-
 	pos += yahoo_put16(data + pos, 0x0000);
-	pos += yahoo_put16(data + pos, pktlen);
+	pos += yahoo_put16(data + pos, pktlen + pad);
 	pos += yahoo_put16(data + pos, pkt->service);
 	pos += yahoo_put32(data + pos, pkt->status);
 	pos += yahoo_put32(data + pos, pkt->id);
 
 	yahoo_packet_write(pkt, data + pos);
 
+	*buf = data;
+
+	return len;
+}
+
+int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
+{
+	gsize len;
+	int ret;
+	guchar *data;
+
+	if (yd->fd < 0)
+		return -1;
+
+	len = yahoo_packet_build(pkt, 0, yd->wm, &data);
+
 	yahoo_packet_dump(data, len);
-	ret = write(yd->fd, data, len);
-	if (ret != len)
+	if (yd->txhandler == -1)
+		ret = write(yd->fd, data, len);
+	else {
+		ret = -1;
+		errno = EAGAIN;
+	}
+
+	if (ret < 0 && errno == EAGAIN)
+		ret = 0;
+	else if (ret <= 0) {
 		gaim_debug_warning("yahoo", "Only wrote %d of %d bytes!", ret, len);
+		g_free(data);
+		return ret;
+	}
+
+	if (ret < len) {
+		if (yd->txhandler == -1)
+			yd->txhandler = gaim_input_add(yd->fd, GAIM_INPUT_WRITE,
+				yahoo_packet_send_can_write, yd);
+		gaim_circ_buffer_append(yd->txbuf, data + ret, len - ret);
+	}
+
 	g_free(data);
 
 	return ret;
@@ -286,37 +344,6 @@ int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd)
 
 	ret = yahoo_packet_send(pkt, yd);
 	yahoo_packet_free(pkt);
-	return ret;
-}
-
-int yahoo_packet_send_special(struct yahoo_packet *pkt, int fd, int pad)
-{
-	int pktlen = yahoo_packet_length(pkt);
-	int len = YAHOO_PACKET_HDRLEN + pktlen;
-	int ret;
-
-	guchar *data;
-	int pos = 0;
-
-	if (fd < 0)
-		return -1;
-
-	data = g_malloc0(len + 1);
-
-	memcpy(data + pos, "YMSG", 4); pos += 4;
-
-	pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
-	pos += yahoo_put16(data + pos, 0x0000);
-	pos += yahoo_put16(data + pos, pktlen + pad);
-	pos += yahoo_put16(data + pos, pkt->service);
-	pos += yahoo_put32(data + pos, pkt->status);
-	pos += yahoo_put32(data + pos, pkt->id);
-
-	yahoo_packet_write(pkt, data + pos);
-
-	ret = write(fd, data, len);
-	g_free(data);
-
 	return ret;
 }
 

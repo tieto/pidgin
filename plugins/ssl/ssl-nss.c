@@ -46,6 +46,7 @@ typedef struct
 {
 	PRFileDesc *fd;
 	PRFileDesc *in;
+	guint handshake_handler;
 
 } GaimSslNssData;
 
@@ -53,6 +54,54 @@ typedef struct
 
 static const PRIOMethods *_nss_methods = NULL;
 static PRDescIdentity _identity;
+
+/* Thank you, Evolution */
+static void
+set_errno(int code)
+{
+	/* FIXME: this should handle more. */
+	switch (code) {
+	case PR_INVALID_ARGUMENT_ERROR:
+		errno = EINVAL;
+		break;
+	case PR_PENDING_INTERRUPT_ERROR:
+		errno = EINTR;
+		break;
+	case PR_IO_PENDING_ERROR:
+		errno = EAGAIN;
+		break;
+	case PR_WOULD_BLOCK_ERROR:
+		errno = EAGAIN;
+		/*errno = EWOULDBLOCK; */
+		break;
+	case PR_IN_PROGRESS_ERROR:
+		errno = EINPROGRESS;
+		break;
+	case PR_ALREADY_INITIATED_ERROR:
+		errno = EALREADY;
+		break;
+	case PR_NETWORK_UNREACHABLE_ERROR:
+		errno = EHOSTUNREACH;
+		break;
+	case PR_CONNECT_REFUSED_ERROR:
+		errno = ECONNREFUSED;
+		break;
+	case PR_CONNECT_TIMEOUT_ERROR:
+	case PR_IO_TIMEOUT_ERROR:
+		errno = ETIMEDOUT;
+		break;
+	case PR_NOT_CONNECTED_ERROR:
+		errno = ENOTCONN;
+		break;
+	case PR_CONNECT_RESET_ERROR:
+		errno = ECONNRESET;
+		break;
+	case PR_IO_ERROR:
+	default:
+		errno = EIO;
+		break;
+	}
+}
 
 static void
 ssl_nss_init_nss(void)
@@ -158,6 +207,36 @@ ssl_nss_uninit(void)
 }
 
 static void
+ssl_nss_handshake_cb(gpointer data, int fd, GaimInputCondition cond)
+{
+	GaimSslConnection *gsc = (GaimSslConnection *)data;
+	GaimSslNssData *nss_data = gsc->private_data;
+
+	/* I don't think this the best way to do this...
+	 * It seems to work because it'll eventually use the cached value
+	 */
+	if(SSL_ForceHandshake(nss_data->in) != SECSuccess) {
+		set_errno(PR_GetError());
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			return;
+
+		gaim_debug_error("nss", "Handshake failed %u\n", PR_GetError());
+
+		if (gsc->error_cb != NULL)
+			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
+
+		gaim_ssl_close(gsc);
+
+		return;
+	}
+
+	gaim_input_remove(nss_data->handshake_handler);
+	nss_data->handshake_handler = 0;
+
+	gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
+}
+
+static void
 ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimSslConnection *gsc = (GaimSslConnection *)data;
@@ -183,9 +262,10 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	socket_opt.option = PR_SockOpt_Nonblocking;
-	socket_opt.value.non_blocking = PR_FALSE;
+	socket_opt.value.non_blocking = PR_TRUE;
 
-	PR_SetSocketOption(nss_data->fd, &socket_opt);
+	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS)
+		gaim_debug_warning("nss", "unable to set socket into non-blocking mode: %u\n", PR_GetError());
 
 	nss_data->in = SSL_ImportFD(NULL, nss_data->fd);
 
@@ -212,21 +292,17 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	if(gsc->host)
 		SSL_SetURL(nss_data->in, gsc->host);
 
+#if 0 /* This seems like it'd the be the correct way to implement the nonblocking stuff,
+	 but it doesn't seem to work */
+	SSL_HandshakeCallback(nss_data->in,
+		(SSLHandshakeCallback) ssl_nss_handshake_cb, gsc);
+#endif
 	SSL_ResetHandshake(nss_data->in, PR_FALSE);
 
-	if (SSL_ForceHandshake(nss_data->in))
-	{
-		gaim_debug_error("nss", "Handshake failed\n");
+	nss_data->handshake_handler = gaim_input_add(gsc->fd,
+		GAIM_INPUT_READ, ssl_nss_handshake_cb, gsc);
 
-		if (gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
-
-		gaim_ssl_close(gsc);
-
-		return;
-	}
-
-	gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
+	ssl_nss_handshake_cb(gsc, gsc->fd, GAIM_INPUT_READ);
 }
 
 static void
@@ -240,26 +316,42 @@ ssl_nss_close(GaimSslConnection *gsc)
 	if (nss_data->in) PR_Close(nss_data->in);
 	/* if (nss_data->fd) PR_Close(nss_data->fd); */
 
+	if (nss_data->handshake_handler)
+		gaim_input_remove(nss_data->handshake_handler);
+
 	g_free(nss_data);
+	gsc->private_data = NULL;
 }
 
 static size_t
 ssl_nss_read(GaimSslConnection *gsc, void *data, size_t len)
 {
+	ssize_t ret;
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
 
-	return PR_Read(nss_data->in, data, len);
+	ret = PR_Read(nss_data->in, data, len);
+
+	if (ret == -1)
+		set_errno(PR_GetError());
+
+	return ret;
 }
 
 static size_t
 ssl_nss_write(GaimSslConnection *gsc, const void *data, size_t len)
 {
+	ssize_t ret;
 	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
 
 	if(!nss_data)
 		return 0;
 
-	return PR_Write(nss_data->in, data, len);
+	ret = PR_Write(nss_data->in, data, len);
+
+	if (ret == -1)
+		set_errno(PR_GetError());
+
+	return ret;
 }
 
 static GaimSslOps ssl_ops =

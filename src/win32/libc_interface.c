@@ -276,9 +276,11 @@ char* wgaim_strerror( int errornum ) {
 int wgaim_read(int fd, void *buf, unsigned int size) {
 	int ret;
 
-	if( wgaim_is_socket(fd) ) {
-		if( (ret = recv(fd, buf, size, 0)) == SOCKET_ERROR ) {
+	if(wgaim_is_socket(fd)) {
+		if((ret = recv(fd, buf, size, 0)) == SOCKET_ERROR) {
 			errno = WSAGetLastError();
+			if(errno == WSAEWOULDBLOCK)
+				errno = EAGAIN;
 			return -1;
 		}
 #if 0
@@ -292,8 +294,7 @@ int wgaim_read(int fd, void *buf, unsigned int size) {
 			/* success reading socket */
 			return ret;
 		}
-	}
-	else {
+	} else {
 		/* fd is not a socket handle.. pass it off to read */
 		return read(fd, buf, size);
 	}
@@ -302,25 +303,27 @@ int wgaim_read(int fd, void *buf, unsigned int size) {
 int wgaim_write(int fd, const void *buf, unsigned int size) {
 	int ret;
 
-	if( wgaim_is_socket(fd) ) {
-		if( (ret = send(fd, buf, size, 0)) == SOCKET_ERROR ) {
+	if(wgaim_is_socket(fd)) {
+		if((ret = send(fd, buf, size, 0)) == SOCKET_ERROR) {
 			errno = WSAGetLastError();
+			if(errno == WSAEWOULDBLOCK)
+				errno = EAGAIN;
 			return -1;
-		}
-		else {
+		} else {
 			/* success */
 			return ret;
 		}
-	}
-	else
+	} else
 		return write(fd, buf, size);
 }
 
 int wgaim_recv(int fd, void *buf, size_t len, int flags) {
 	int ret;
 
-	if ((ret = recv(fd, buf, len, flags)) == SOCKET_ERROR) {
+	if((ret = recv(fd, buf, len, flags)) == SOCKET_ERROR) {
 			errno = WSAGetLastError();
+			if(errno == WSAEWOULDBLOCK)
+				errno = EAGAIN;
 			return -1;
 	} else {
 		return ret;

@@ -83,23 +83,79 @@ static void irc_view_motd(GaimPluginAction *action)
 	gaim_notify_formatted(gc, title, title, NULL, irc->motd->str, NULL, NULL);
 }
 
-int irc_send(struct irc_conn *irc, const char *buf)
+static int do_send(struct irc_conn *irc, const char *buf, gsize len)
 {
 	int ret;
 
 	if (irc->gsc) {
-		ret = gaim_ssl_write(irc->gsc, buf, strlen(buf));
+		ret = gaim_ssl_write(irc->gsc, buf, len);
 	} else {
-		if (irc->fd < 0)
-			return -1;
-		ret = write(irc->fd, buf, strlen(buf));
+		ret = write(irc->fd, buf, len);
+	}
+
+	return ret;
+}
+
+static void
+irc_send_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct irc_conn *irc = data;
+	int ret, writelen;
+
+	writelen = gaim_circ_buffer_get_max_read(irc->outbuf);
+
+	if (writelen == 0) {
+		gaim_input_remove(irc->writeh);
+		irc->writeh = 0;
+		return;
+	}
+
+	ret = do_send(irc, irc->outbuf->outptr, writelen);
+
+	if (ret < 0 && errno == EAGAIN)
+		return;
+	else if (ret <= 0) {
+		gaim_connection_error(gaim_account_get_connection(irc->account),
+			      _("Server has disconnected"));
+		return;
+	}
+
+	gaim_circ_buffer_mark_read(irc->outbuf, ret);
+
+#if 0
+	/* We *could* try to write more if we wrote it all */
+	if (ret == write_len) {
+		irc_send_cb(data, source, cond);
+	}
+#endif
+}
+
+int irc_send(struct irc_conn *irc, const char *buf)
+{
+	int ret, buflen = strlen(buf);
+
+	/* If we're not buffering writes, try to send immediately */
+	if (!irc->writeh)
+		ret = do_send(irc, buf, buflen);
+	else {
+		ret = -1;
+		errno = EAGAIN;
 	}
 
 	/* gaim_debug(GAIM_DEBUG_MISC, "irc", "sent%s: %s",
 		irc->gsc ? " (ssl)" : "", buf); */
-	if (ret < 0) {
+	if (ret <= 0 && errno != EAGAIN) {
 		gaim_connection_error(gaim_account_get_connection(irc->account),
 				      _("Server has disconnected"));
+	} else if (ret < buflen) {
+		if (ret < 0)
+			ret = 0;
+		if (!irc->writeh)
+			irc->writeh = gaim_input_add(
+				irc->gsc ? irc->gsc->fd : irc->fd,
+				GAIM_INPUT_WRITE, irc_send_cb, irc);
+		gaim_circ_buffer_append(irc->outbuf, buf + ret,
+			buflen - ret);
 	}
 
 	return ret;
@@ -240,6 +296,7 @@ static void irc_login(GaimAccount *account)
 	gc->proto_data = irc = g_new0(struct irc_conn, 1);
 	irc->fd = -1;
 	irc->account = account;
+	irc->outbuf = gaim_circ_buffer_new(512);
 
 	userparts = g_strsplit(username, "@", 2);
 	gaim_connection_set_display_name(gc, userparts[0]);
@@ -262,6 +319,7 @@ static void irc_login(GaimAccount *account)
 					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
 		} else {
 			gaim_connection_error(gc, _("SSL support unavailable"));
+			return;
 		}
 	}
 
@@ -288,7 +346,7 @@ static gboolean do_login(GaimConnection *gc) {
 	if (pass && *pass) {
 		buf = irc_format(irc, "vv", "PASS", pass);
 		if (irc_send(irc, buf) < 0) {
-			gaim_connection_error(gc, "Error sending password");
+/*			gaim_connection_error(gc, "Error sending password"); */
 			g_free(buf);
 			return FALSE;
 		}
@@ -302,14 +360,14 @@ static gboolean do_login(GaimConnection *gc) {
 	buf = irc_format(irc, "vvvv:", "USER", strlen(username) ? username : g_get_user_name(), hostname, irc->server,
 			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	if (irc_send(irc, buf) < 0) {
-		gaim_connection_error(gc, "Error registering with server");
+/*		gaim_connection_error(gc, "Error registering with server");*/
 		g_free(buf);
 		return FALSE;
 	}
 	g_free(buf);
 	buf = irc_format(irc, "vn", "NICK", gaim_connection_get_display_name(gc));
 	if (irc_send(irc, buf) < 0) {
-		gaim_connection_error(gc, "Error sending nickname");
+/*		gaim_connection_error(gc, "Error sending nickname");*/
 		g_free(buf);
 		return FALSE;
 	}
@@ -404,6 +462,12 @@ static void irc_close(GaimConnection *gc)
 	if (irc->motd)
 		g_string_free(irc->motd, TRUE);
 	g_free(irc->server);
+
+	if (irc->writeh)
+		gaim_input_remove(irc->writeh);
+
+	gaim_circ_buffer_destroy(irc->outbuf);
+
 	g_free(irc);
 }
 
@@ -443,7 +507,7 @@ static void irc_set_status(GaimAccount *account, GaimStatus *status)
 	const char *status_id = gaim_status_get_id(status);
 
 	if (gc)
-	  irc = gc->proto_data;
+		irc = gc->proto_data;
 
 	if (!gaim_status_is_active(status))
 		return;
@@ -527,8 +591,13 @@ static void irc_input_cb_ssl(gpointer data, GaimSslConnection *gsc,
 		irc->inbuflen += IRC_INITIAL_BUFSIZE;
 		irc->inbuf = g_realloc(irc->inbuf, irc->inbuflen);
 	}
-	
-	if ((len = gaim_ssl_read(gsc, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1)) < 0) {
+
+	len = gaim_ssl_read(gsc, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1);
+
+	if (len < 0 && errno == EAGAIN) {
+		/* Try again later */
+		return;
+	} else if (len < 0) {
 		gaim_connection_error(gc, _("Read error"));
 		return;
 	} else if (len == 0) {
@@ -550,7 +619,10 @@ static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
 		irc->inbuf = g_realloc(irc->inbuf, irc->inbuflen);
 	}
 
-	if ((len = read(irc->fd, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1)) < 0) {
+	len = read(irc->fd, irc->inbuf + irc->inbufused, IRC_INITIAL_BUFSIZE - 1);
+	if (len < 0 && errno == EAGAIN) {
+		return;
+	} else if (len < 0) {
 		gaim_connection_error(gc, _("Read error"));
 		return;
 	} else if (len == 0) {

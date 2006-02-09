@@ -1,10 +1,10 @@
 /**
  * @file irc.h
- * 
+ *
  * gaim
  *
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include "ft.h"
+#include "gaim_buffer.h"
 #include "roomlist.h"
 #include "sslconn.h"
 
@@ -77,6 +78,9 @@ struct irc_conn {
 	GaimSslConnection *gsc;
 
 	gboolean quitting;
+
+	GaimCircBuffer *outbuf;
+	guint writeh;
 };
 
 struct irc_buddy {

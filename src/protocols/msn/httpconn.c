@@ -25,16 +25,7 @@
 #include "debug.h"
 #include "httpconn.h"
 
-typedef struct
-{
-	MsnHttpConn *httpconn;
-	char *data;
-	size_t size;
-
-} MsnHttpQueueData;
-
 static void read_cb(gpointer data, gint source, GaimInputCondition cond);
-void msn_httpconn_process_queue(MsnHttpConn *httpconn);
 gboolean msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 								 size_t size, char **ret_buf, size_t *ret_size,
 								 gboolean *error);
@@ -55,6 +46,9 @@ msn_httpconn_new(MsnServConn *servconn)
 
 	httpconn->servconn = servconn;
 
+	httpconn->tx_buf = gaim_circ_buffer_new(MSN_BUF_LEN);
+	httpconn->tx_handler = -1;
+
 	return httpconn;
 }
 
@@ -68,14 +62,15 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
 
-	if (httpconn->full_session_id != NULL)
-		g_free(httpconn->full_session_id);
+	g_free(httpconn->full_session_id);
 
-	if (httpconn->session_id != NULL)
-		g_free(httpconn->session_id);
+	g_free(httpconn->session_id);
 
-	if (httpconn->host != NULL)
-		g_free(httpconn->host);
+	g_free(httpconn->host);
+
+	gaim_circ_buffer_destroy(httpconn->tx_buf);
+	if (httpconn->tx_handler > 0)
+		gaim_input_remove(httpconn->tx_handler);
 
 	g_free(httpconn);
 }
@@ -114,49 +109,70 @@ msn_httpconn_proxy_auth(MsnHttpConn *httpconn)
 	return auth;
 }
 
-static ssize_t
-write_raw(MsnHttpConn *httpconn, const char *header,
-		  const char *body, size_t body_len)
+static void
+httpconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	char *buf;
-	size_t buf_len;
+	MsnHttpConn *httpconn = data;
+	int ret, writelen;
 
-	ssize_t s;
+	if (httpconn->waiting_response)
+		return;
+
+	writelen = gaim_circ_buffer_get_max_read(httpconn->tx_buf);
+
+	if (writelen == 0) {
+		gaim_input_remove(httpconn->tx_handler);
+		httpconn->tx_handler = -1;
+		return;
+	}
+
+	ret = write(httpconn->fd, httpconn->tx_buf->outptr, writelen);
+
+	if (ret < 0 && errno == EAGAIN)
+		return;
+	else if (ret <= 0) {
+		msn_servconn_got_error(httpconn->servconn,
+			MSN_SERVCONN_ERROR_WRITE);
+		return;
+	}
+
+	gaim_circ_buffer_mark_read(httpconn->tx_buf, ret);
+}
+
+static ssize_t
+write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
+{
 	ssize_t res; /* result of the write operation */
 
 #ifdef MSN_DEBUG_HTTP
 	gaim_debug_misc("msn", "Writing HTTP (header): {%s}\n", header);
 #endif
 
-	buf = g_strdup_printf("%s\r\n", header);
-	buf_len = strlen(buf);
 
-	if (body != NULL)
+	if (httpconn->tx_handler == -1 && !httpconn->waiting_response)
+		res = write(httpconn->fd, data, data_len);
+	else
 	{
-		buf = g_realloc(buf, buf_len + body_len);
-		memcpy(buf + buf_len, body, body_len);
-		buf_len += body_len;
+		res = -1;
+		errno = EAGAIN;
 	}
 
-	s = 0;
-
-	do
+	if (res <= 0 && errno != EAGAIN)
 	{
-		res = write(httpconn->fd, buf + s, buf_len - s);
-		if (res >= 0)
-		{
-			s += res;
-		}
-		else if (errno != EAGAIN)
-		{
-			msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_WRITE);
-			return -1;
-		}
-	} while (s < buf_len);
+		msn_servconn_got_error(httpconn->servconn,
+			MSN_SERVCONN_ERROR_WRITE);
+		return -1;
+	} else if (res < data_len) {
+		if (res < 0)
+			res = 0;
+		if (httpconn->tx_handler == -1)
+			httpconn->tx_handler = gaim_input_add(httpconn->fd,
+				GAIM_INPUT_WRITE, httpconn_write_cb, httpconn);
+		gaim_circ_buffer_append(httpconn->tx_buf, data + res,
+			data_len - res);
+	}
 
-	g_free(buf);
-
-	return s;
+	return res;
 }
 
 static void
@@ -169,10 +185,13 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 	g_return_if_fail(httpconn != NULL);
 
 	if (httpconn->waiting_response ||
-		httpconn->queue != NULL)
+		httpconn->tx_handler > 0)
 	{
 		return;
 	}
+
+	/* It is OK if this is buffered because it will only be buffered if
+	   nothing else is in the buffer */
 
 	auth = msn_httpconn_proxy_auth(httpconn);
 
@@ -187,20 +206,19 @@ msn_httpconn_poll(MsnHttpConn *httpconn)
 		"Connection: Keep-Alive\r\n"
 		"Pragma: no-cache\r\n"
 		"Content-Type: application/x-msn-messenger\r\n"
-		"Content-Length: 0\r\n",
+		"Content-Length: 0\r\n\r\n",
 		httpconn->host,
 		httpconn->full_session_id,
 		httpconn->host,
 		auth ? auth : "");
 
-	if (auth != NULL)
-		g_free(auth);
+	g_free(auth);
 
-	r = write_raw(httpconn, header, NULL, -1);
+	r = write_raw(httpconn, header, strlen(header));
 
 	g_free(header);
 
-	if (r > 0)
+	if (r >= 0)
 	{
 		httpconn->waiting_response = TRUE;
 		httpconn->dirty = FALSE;
@@ -242,12 +260,13 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (source > 0)
 	{
 		httpconn->inpa = gaim_input_add(httpconn->fd, GAIM_INPUT_READ,
-										read_cb, data);
+			read_cb, data);
 
 		httpconn->timer = gaim_timeout_add(2000, do_poll, httpconn);
 
 		httpconn->waiting_response = FALSE;
-		msn_httpconn_process_queue(httpconn);
+		if (httpconn->tx_handler > 0)
+			httpconn_write_cb(httpconn, source, GAIM_INPUT_WRITE);
 	}
 	else
 	{
@@ -269,8 +288,7 @@ msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 		msn_httpconn_disconnect(httpconn);
 
 	r = gaim_proxy_connect(httpconn->session->account,
-						   "gateway.messenger.hotmail.com", 80, connect_cb,
-						   httpconn);
+		"gateway.messenger.hotmail.com", 80, connect_cb, httpconn);
 
 	if (r == 0)
 	{
@@ -329,7 +347,9 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	len = read(httpconn->fd, buf, sizeof(buf) - 1);
 
-	if (len <= 0)
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len <= 0)
 	{
 		gaim_debug_error("msn", "HTTP: Read error\n");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
@@ -444,37 +464,12 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	g_free(old_rx_buf);
 }
 
-void
-msn_httpconn_process_queue(MsnHttpConn *httpconn)
-{
-	if (httpconn->queue != NULL)
-	{
-		MsnHttpQueueData *queue_data;
-
-		queue_data = (MsnHttpQueueData *)httpconn->queue->data;
-
-		httpconn->queue = g_list_remove(httpconn->queue, queue_data);
-
-		msn_httpconn_write(queue_data->httpconn,
-						   queue_data->data,
-						   queue_data->size);
-
-		g_free(queue_data->data);
-		g_free(queue_data);
-	}
-	else
-	{
-		httpconn->dirty = TRUE;
-	}
-}
-
 size_t
-msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
+msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t size)
 {
 	char *params;
-	char *header;
+	char *data;
 	char *auth;
-	gboolean first;
 	const char *server_types[] = { "NS", "SB" };
 	const char *server_type;
 	size_t r; /* result of the write operation */
@@ -484,31 +479,14 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 	/* TODO: remove http data from servconn */
 
 	g_return_val_if_fail(httpconn != NULL, 0);
-	g_return_val_if_fail(data     != NULL, 0);
-	g_return_val_if_fail(size      > 0,    0);
+	g_return_val_if_fail(body != NULL, 0);
+	g_return_val_if_fail(size > 0, 0);
 
 	servconn = httpconn->servconn;
 
-	if (httpconn->waiting_response)
-	{
-		MsnHttpQueueData *queue_data = g_new0(MsnHttpQueueData, 1);
-
-		queue_data->httpconn = httpconn;
-		queue_data->data     = g_memdup(data, size);
-		queue_data->size     = size;
-
-		httpconn->queue = g_list_append(httpconn->queue, queue_data);
-		/* httpconn->dirty = TRUE; */
-
-		/* servconn->processing = TRUE; */
-
-		return size;
-	}
-
-	first = httpconn->virgin;
 	server_type = server_types[servconn->type];
 
-	if (first)
+	if (httpconn->virgin)
 	{
 		host = "gateway.messenger.hotmail.com";
 
@@ -516,6 +494,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 		params = g_strdup_printf("Action=open&Server=%s&IP=%s",
 								 server_type,
 								 servconn->host);
+		httpconn->virgin = FALSE;
 	}
 	else
 	{
@@ -529,12 +508,12 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 		}
 
 		params = g_strdup_printf("SessionID=%s",
-								 httpconn->full_session_id);
+			httpconn->full_session_id);
 	}
 
 	auth = msn_httpconn_proxy_auth(httpconn);
 
-	header = g_strdup_printf(
+	data = g_strdup_printf(
 		"POST http://%s/gateway/gateway.dll?%s HTTP/1.1\r\n"
 		"Accept: */*\r\n"
 		"Accept-Language: en-us\r\n"
@@ -545,25 +524,26 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size)
 		"Connection: Keep-Alive\r\n"
 		"Pragma: no-cache\r\n"
 		"Content-Type: application/x-msn-messenger\r\n"
-		"Content-Length: %d\r\n",
+		"Content-Length: %d\r\n\r\n"
+		"%s",
 		host,
 		params,
 		host,
 		auth ? auth : "",
-		(int)size);
+		(int) size,
+		body ? body : "");
+
 
 	g_free(params);
 
-	if (auth != NULL)
-		g_free(auth);
+	g_free(auth);
 
-	r = write_raw(httpconn, header, data, size);
+	r = write_raw(httpconn, data, strlen(data));
 
-	g_free(header);
+	g_free(data);
 
-	if (r > 0)
+	if (r >= 0)
 	{
-		httpconn->virgin = FALSE;
 		httpconn->waiting_response = TRUE;
 		httpconn->dirty = FALSE;
 	}
@@ -629,7 +609,9 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			*ret_buf = g_strdup("");
 			*ret_size = 0;
 
-			msn_httpconn_process_queue(httpconn);
+			if (httpconn->tx_handler > 0)
+				httpconn_write_cb(httpconn, httpconn->fd,
+					GAIM_INPUT_WRITE);
 
 			return TRUE;
 		}
@@ -781,7 +763,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	*ret_buf  = body;
 	*ret_size = body_len;
 
-	msn_httpconn_process_queue(httpconn);
+	if (httpconn->tx_handler > 0)
+		httpconn_write_cb(httpconn, httpconn->fd, GAIM_INPUT_WRITE);
 
 	return TRUE;
 }

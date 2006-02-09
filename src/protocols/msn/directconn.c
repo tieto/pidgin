@@ -460,8 +460,8 @@ msn_directconn_listen(MsnDirectConn *directconn)
 
 	directconn->fd = fd;
 
-	directconn->inpa = gaim_input_add(fd, GAIM_INPUT_READ,
-									  connect_cb, directconn);
+	directconn->inpa = gaim_input_add(fd, GAIM_INPUT_READ, connect_cb,
+		directconn);
 
 	directconn->port = port;
 	directconn->c = 0;

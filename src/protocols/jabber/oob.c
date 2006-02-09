@@ -33,11 +33,14 @@ typedef struct _JabberOOBXfer {
 	char *page;
 
 	GString *headers;
-	gboolean newline;
 
 	char *iq_id;
 
 	JabberStream *js;
+
+	gchar *write_buffer;
+	gsize written_len;
+	guint writeh;
 
 } JabberOOBXfer;
 
@@ -57,6 +60,9 @@ static void jabber_oob_xfer_free(GaimXfer *xfer)
 	g_free(jox->address);
 	g_free(jox->page);
 	g_free(jox->iq_id);
+	g_free(jox->write_buffer);
+	if(jox->writeh)
+		gaim_input_remove(jox->writeh);
 	g_free(jox);
 
 	xfer->data = NULL;
@@ -76,41 +82,72 @@ static void jabber_oob_xfer_end(GaimXfer *xfer)
 	jabber_oob_xfer_free(xfer);
 }
 
+static void jabber_oob_xfer_request_send(gpointer data, gint source, GaimInputCondition cond) {
+	GaimXfer *xfer = data;
+	JabberOOBXfer *jox = xfer->data;
+	int len, total_len = strlen(jox->write_buffer);
+
+	len = write(xfer->fd, jox->write_buffer + jox->written_len,
+		total_len - jox->written_len);
+
+	if(len < 0 && errno == EAGAIN)
+		return;
+	else if(len < 0) {
+		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "Write error on oob xfer!\n");
+		gaim_input_remove(jox->writeh);
+		gaim_xfer_cancel_local(xfer);
+	}
+	jox->written_len += len;
+
+	if(jox->written_len == total_len) {
+		gaim_input_remove(jox->writeh);
+		g_free(jox->write_buffer);
+		jox->write_buffer = NULL;
+	}
+}
+
 static void jabber_oob_xfer_start(GaimXfer *xfer)
 {
 	JabberOOBXfer *jox = xfer->data;
 
-	char *buf = g_strdup_printf("GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n",
+	if(jox->write_buffer == NULL) {
+		jox->write_buffer = g_strdup_printf(
+			"GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n",
 			jox->page, jox->address);
-	write(xfer->fd, buf, strlen(buf));
-	g_free(buf);
+		jox->written_len = 0;
+	}
+
+	jox->writeh = gaim_input_add(xfer->fd, GAIM_INPUT_WRITE,
+		jabber_oob_xfer_request_send, xfer);
+
+	jabber_oob_xfer_request_send(xfer, xfer->fd, GAIM_INPUT_WRITE);
 }
 
 static gssize jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
 	JabberOOBXfer *jox = xfer->data;
-	char test;
-	int size;
+	char test[2048];
+	char *tmp, *lenstr;
+	int len;
 
-	if(read(xfer->fd, &test, sizeof(test)) > 0) {
-		jox->headers = g_string_append_c(jox->headers, test);
-		if(test == '\r')
-			return 0;
-		if(test == '\n') {
-			if(jox->newline) {
-				gchar *lenstr = strstr(jox->headers->str, "Content-Length: ");
-				if(lenstr) {
-					sscanf(lenstr, "Content-Length: %d", &size);
-					gaim_xfer_set_size(xfer, size);
-				}
-				gaim_xfer_set_read_fnc(xfer, NULL);
-				return 0;
-			} else
-				jox->newline = TRUE;
-				return 0;
+	if((len = read(xfer->fd, test, sizeof(test))) > 0) {
+		jox->headers = g_string_append_len(jox->headers, test, len);
+		if((tmp = strstr(jox->headers->str, "\r\n\r\n"))) {
+			*tmp = '\0';
+			lenstr = strstr(jox->headers->str, "Content-Length: ");
+			if(lenstr) {
+				int size;
+				sscanf(lenstr, "Content-Length: %d", &size);
+				gaim_xfer_set_size(xfer, size);
 			}
-		jox->newline = FALSE;
+			gaim_xfer_set_read_fnc(xfer, NULL);
+
+			tmp += 4;
+
+			*buffer = g_strdup(tmp);
+			return strlen(tmp);
+		}
 		return 0;
-	} else {
+	} else if (errno != EAGAIN) {
 		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "Read error on oob xfer!\n");
 		gaim_xfer_cancel_local(xfer);
 	}

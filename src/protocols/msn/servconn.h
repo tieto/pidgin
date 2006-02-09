@@ -84,6 +84,9 @@ struct _MsnServConn
 						  It's only set when we've received a command that
 						  has a payload. */
 
+	GaimCircBuffer *tx_buf;
+	guint tx_handler;
+
 	void (*connect_cb)(MsnServConn *); /**< The callback to call when connecting. */
 	void (*disconnect_cb)(MsnServConn *); /**< The callback to call when disconnecting. */
 	void (*destroy_cb)(MsnServConn *); /**< The callback to call when destroying. */

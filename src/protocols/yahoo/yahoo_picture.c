@@ -307,8 +307,7 @@ void yahoo_buddy_icon_upload_data_free(struct yahoo_buddy_icon_upload_data *d)
 
 	if (d->str)
 		g_string_free(d->str, TRUE);
-	if (d->filename)
-		g_free(d->filename);
+	g_free(d->filename);
 	if (d->watcher)
 		gaim_input_remove(d->watcher);
 	if (d->fd != -1)
@@ -316,19 +315,24 @@ void yahoo_buddy_icon_upload_data_free(struct yahoo_buddy_icon_upload_data *d)
 	g_free(d);
 }
 
-/* we could care less about the server's responce, but yahoo gets grumpy if we close before it sends it */
+/* we couldn't care less about the server's response, but yahoo gets grumpy if we close before it sends it */
 static void yahoo_buddy_icon_upload_reading(gpointer data, gint source, GaimInputCondition condition)
 {
 	struct yahoo_buddy_icon_upload_data *d = data;
 	GaimConnection *gc = d->gc;
 	char buf[1024];
+	int ret;
 
 	if (!GAIM_CONNECTION_IS_VALID(gc)) {
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
 	}
 
-	if (read(d->fd, buf, sizeof(buf)) <= 0)
+	ret = read(d->fd, buf, sizeof(buf));
+
+	if (ret < 0 && errno == EAGAIN)
+		return;
+	else if (ret <= 0)
 		yahoo_buddy_icon_upload_data_free(d);
 }
 
@@ -344,6 +348,8 @@ static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, GaimInpu
 	}
 
 	wrote = write(d->fd, d->str->str + d->pos, d->str->len - d->pos);
+	if (wrote < 0 && errno == EAGAIN)
+		return;
 	if (wrote <= 0) {
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
@@ -360,9 +366,10 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 {
 	struct yahoo_buddy_icon_upload_data *d = data;
 	struct yahoo_packet *pkt;
-	gchar *size, *post, *buf;
+	gchar *size, *header;
+	guchar *pkt_buf;
 	const char *host;
-	int content_length, port;
+	gsize content_length, port, pkt_buf_len;
 	GaimConnection *gc;
 	GaimAccount *account;
 	struct yahoo_data *yd;
@@ -380,8 +387,6 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 		return;
 	}
 
-	d->fd = source;
-	d->watcher = gaim_input_add(d->fd, GAIM_INPUT_WRITE, yahoo_buddy_icon_upload_pending, d);
 
 	pkt = yahoo_packet_new(0xc2, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
@@ -392,30 +397,38 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 	gaim_account_set_int(account, YAHOO_PICEXPIRE_SETTING, time(NULL) + 604800);
 	yahoo_packet_hash_str(pkt, 0, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash_str(pkt, 28, size);
+	g_free(size);
 	yahoo_packet_hash_str(pkt, 27, d->filename);
 	yahoo_packet_hash_str(pkt, 14, "");
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
-	buf = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
 
-	host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST); 
+	host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST);
 	port = gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
-	post = g_strdup_printf("POST http://%s:%d/notifyft HTTP/1.0\r\n"
-	                       "Content-length: %" G_GSIZE_FORMAT "\r\n"
-	                       "Host: %s:%d\r\n"
-	                       "Cookie: %s\r\n"
-	                       "\r\n",
-	                       host, port, content_length + 4 + d->str->len, host, port, buf);
-	write(d->fd, post, strlen(post));
+	header = g_strdup_printf(
+		"POST http://%s:%d/notifyft HTTP/1.0\r\n"
+		"Content-length: %" G_GSIZE_FORMAT "\r\n"
+		"Host: %s:%d\r\n"
+		"Cookie: Y=%s; T=%s\r\n"
+		"\r\n",
+		host, port, content_length + 4 + d->str->len,
+		host, port, yd->cookie_y, yd->cookie_t);
 
-	yahoo_packet_send_special(pkt, d->fd, 8);
+	/* There's no magic here, we just need to prepend in reverse order */
+	g_string_prepend(d->str, "29\xc0\x80");
+
+	pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, &pkt_buf);
 	yahoo_packet_free(pkt);
+	g_string_prepend_len(d->str, pkt_buf, pkt_buf_len);
+	g_free(pkt_buf);
 
-	write(d->fd, "29\xc0\x80", 4);
+	g_string_prepend(d->str, header);
+	g_free(header);
 
-	g_free(size);
-	g_free(post);
-	g_free(buf);
+	d->fd = source;
+	d->watcher = gaim_input_add(d->fd, GAIM_INPUT_WRITE, yahoo_buddy_icon_upload_pending, d);
+
+	yahoo_buddy_icon_upload_pending(d, d->fd, GAIM_INPUT_WRITE);
 }
 
 void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_data *d)

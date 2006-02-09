@@ -27,6 +27,7 @@
 #include <time.h>
 
 #include <cipher.h>
+#include <gaim_buffer.h>
 #include <prpl.h>
 
 #include "sipmsg.h"
@@ -84,7 +85,8 @@ struct simple_account_data {
 	guint resendtimeout;
 	gboolean connecting;
 	GaimAccount *account;
-	gchar *sendlater;
+	GaimCircBuffer *txbuf;
+	guint tx_handler;
 	gchar *regcallid;
 	GSList *transactions;
 	GSList *watcher;

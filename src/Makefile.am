@@ -80,6 +80,7 @@ gaim_coresources = \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	gaim_buffer.c \
 	idle.c \
 	imgstore.c \
 	log.c \
@@ -128,6 +129,7 @@ gaim_coreheaders = \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
+	gaim_buffer.h \
 	idle.h \
 	imgstore.h \
 	log.h \

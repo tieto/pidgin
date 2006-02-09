@@ -109,6 +109,9 @@ version 2.0.0:
 	* gaim_plugin_pref_add_choice(): label is now const char *
 	* struct proto_chat_entry: label is now const char *
 	* struct proto_chat_entry: identifier is now const char *
+	* All network activity has been updated to use non-blocking sockets.
+	  This means that plugins must be updated to expect such a socket from
+	  gaim_proxy_connect() and gaim_network_listen*().
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
