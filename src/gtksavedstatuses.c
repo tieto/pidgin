@@ -406,7 +406,6 @@ create_saved_status_list(StatusWindow *dialog)
 								   GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
-	gtk_widget_show(sw);
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
@@ -428,7 +427,6 @@ create_saved_status_list(StatusWindow *dialog)
 					 G_CALLBACK(status_selected_cb), dialog);
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
-	gtk_widget_show(treeview);
 
 	/* Add columns */
 	column = gtk_tree_view_column_new();
@@ -483,6 +481,8 @@ create_saved_status_list(StatusWindow *dialog)
 	/* Populate list */
 	populate_saved_status_list(dialog);
 
+	gtk_widget_show_all(sw);
+
 	return sw;
 }
 
@@ -534,7 +534,6 @@ gaim_gtk_status_window_show(void)
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
 
 	/* List of saved status states */
 	list = create_saved_status_list(dialog);
@@ -545,7 +544,6 @@ gaim_gtk_status_window_show(void)
 	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
 
 	/* Use button */
 	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
@@ -553,7 +551,6 @@ gaim_gtk_status_window_show(void)
 	dialog->use_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_window_use_cb), dialog);
@@ -561,7 +558,6 @@ gaim_gtk_status_window_show(void)
 	/* Add button */
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_window_add_cb), dialog);
@@ -571,7 +567,6 @@ gaim_gtk_status_window_show(void)
 	dialog->modify_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_window_modify_cb), dialog);
@@ -581,7 +576,6 @@ gaim_gtk_status_window_show(void)
 	dialog->delete_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_window_delete_cb), dialog);
@@ -589,12 +583,11 @@ gaim_gtk_status_window_show(void)
 	/* Close button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_window_close_cb), dialog);
 
-	gtk_widget_show(win);
+	gtk_widget_show_all(win);
 }
 
 void
@@ -816,12 +809,11 @@ create_status_type_menu(GaimStatusPrimitive type)
 	{
 		item = gtk_menu_item_new_with_label(gaim_primitive_get_name_from_type(i));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
 	}
 
 	gtk_menu_set_active(GTK_MENU(menu), type - (GAIM_STATUS_UNSET + 1));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
-	gtk_widget_show(menu);
+	gtk_widget_show_all(menu);
 
 	return dropdown;
 }
@@ -1071,19 +1063,16 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Title */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Title:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
 	entry = gtk_entry_new();
@@ -1093,19 +1082,16 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 			&& (gaim_savedstatus_get_title(saved_status) != NULL))
 		gtk_entry_set_text(GTK_ENTRY(entry), gaim_savedstatus_get_title(saved_status));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
-	gtk_widget_show(entry);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(editor_title_changed_cb), dialog);
 
 	/* Status type */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Status:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
 	if (saved_status != NULL)
@@ -1114,23 +1100,19 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 		dropdown = create_status_type_menu(GAIM_STATUS_AWAY);
 	dialog->type = GTK_OPTION_MENU(dropdown);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, TRUE, TRUE, 0);
-	gtk_widget_show(dropdown);
 
 	/* Status message */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
 	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar);
 	dialog->message = GTK_IMHTML(text);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 
@@ -1141,12 +1123,10 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	/* Different status message expander */
 	expander = gtk_expander_new_with_mnemonic(_("Use a _different status for some accounts"));
 	gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
-	gtk_widget_show(expander);
 
 	/* Setup the box that the expander will cover */
 	dbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_add(GTK_CONTAINER(expander), dbox);
-	gtk_widget_show(dbox);
 
 	/* Different status message treeview */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1155,7 +1135,6 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(dbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_EDITOR_NUM_COLUMNS,
@@ -1173,7 +1152,6 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
 	gtk_widget_set_size_request(dialog->treeview, 400, 250);
 	gtk_container_add(GTK_CONTAINER(sw), dialog->treeview);
-	gtk_widget_show(dialog->treeview);
 
 	/* Add columns */
 	status_editor_add_columns(dialog);
@@ -1190,12 +1168,10 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_cancel_cb), dialog);
@@ -1204,7 +1180,6 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
 										   GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_ok_cb), dialog);
@@ -1216,7 +1191,6 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	if (dialog->original_title == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_ok_cb), dialog);
@@ -1227,12 +1201,11 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	if (dialog->original_title == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_ok_cb), dialog);
 
-	gtk_widget_show(win);
+	gtk_widget_show_all(win);
 }
 
 
@@ -1430,19 +1403,16 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Status type */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Status:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
 	dialog->model = gtk_list_store_new(SUBSTATUS_NUM_COLUMNS,
@@ -1466,36 +1436,30 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 					 G_CALLBACK(substatus_selection_changed_cb), dialog);
 
 	gtk_box_pack_start(GTK_BOX(hbox), combo, FALSE, FALSE, 0);
-	gtk_widget_show(combo);
 
 	/* Status mesage */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
 	gtk_size_group_add_widget(sg, label);
 
 	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar);
 	dialog->message = GTK_IMHTML(text);
 	dialog->toolbar = GTK_IMHTMLTOOLBAR(toolbar);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
 
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
 	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(substatus_editor_cancel_cb), dialog);
@@ -1503,7 +1467,6 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	/* OK button */
 	button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(substatus_editor_ok_cb), dialog);
@@ -1563,7 +1526,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	if (!select)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 0);
 
-	gtk_widget_show(win);
+	gtk_widget_show_all(win);
 }
 
 
