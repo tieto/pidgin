@@ -393,7 +393,6 @@ static int mw_session_io_write(struct mwSession *session,
 
   while(len) {
     ret = write(pd->socket, buf, (len > BUF_LEN)? BUF_LEN: len);
-    DEBUG_INFO("wrote %i bytes in one turn\n", ret);
 
     if(ret <= 0)
       break;
@@ -2025,6 +2024,10 @@ static struct mwServiceConference *mw_srvc_conf_new(struct mwSession *s) {
 }
 
 
+/** size of an outgoing file transfer chunk */
+#define MW_FT_LEN  (BUF_LONG * 2)
+
+
 static void ft_incoming_cancel(GaimXfer *xfer) {
   /* incoming transfer rejected or canceled in-progress */
   struct mwFileTransfer *ft = xfer->data;
@@ -2104,43 +2107,32 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
 
 
 static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
-  guchar buf[BUF_LONG];
-  struct mwOpaque o = { .data = buf, .len = BUF_LONG };
+  guchar buf[MW_FT_LEN];
+  struct mwOpaque o = { .data = buf, .len = MW_FT_LEN };
   guint32 rem;
   GaimXfer *xfer;
 
   xfer = mwFileTransfer_getClientData(ft);
 
   rem = mwFileTransfer_getRemaining(ft);
-  if(rem < BUF_LONG) o.len = rem;
+  if(rem < MW_FT_LEN) o.len = rem;
   
   if(fread(buf, (size_t) o.len, 1, fp)) {
 
-    /* calculate progress first. update is displayed upon ack */
+    /* calculate progress and display it */
     xfer->bytes_sent += o.len;
     xfer->bytes_remaining -= o.len;
+    gaim_xfer_update_progress(xfer);
 
-    /* ... send data second */
     mwFileTransfer_send(ft, &o);
 
   } else {
     int err = errno;
-    DEBUG_WARN("problem reading from file %s: %s",
+    DEBUG_WARN("problem reading from file %s: %s\n",
 	       NSTR(mwFileTransfer_getFileName(ft)), strerror(err));
 
     mwFileTransfer_cancel(ft);
   }
-}
-
-
-static gboolean ft_idle_cb(struct mwFileTransfer *ft) {
-  GaimXfer *xfer = mwFileTransfer_getClientData(ft);
-  g_return_val_if_fail(xfer != NULL, FALSE);
-  
-  xfer->watcher = 0;
-  ft_send(ft, xfer->dest_fp);
-
-  return FALSE;
 }
 
 
@@ -2160,11 +2152,9 @@ static void mw_ft_opened(struct mwFileTransfer *ft) {
     g_return_if_reached();
   }
 
-  gaim_xfer_update_progress(xfer);
-
   if(gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-    xfer->watcher = g_idle_add((GSourceFunc)ft_idle_cb, ft);
     xfer->dest_fp = g_fopen(xfer->local_filename, "rb");
+    ft_send(ft, xfer->dest_fp);
   }  
 }
 
@@ -2182,7 +2172,7 @@ static void mw_ft_closed(struct mwFileTransfer *ft, guint32 code) {
   if(xfer) {
     xfer->data = NULL;
 
-    if(mwFileTransfer_isDone(ft)) {
+    if(! mwFileTransfer_getRemaining(ft)) {
       gaim_xfer_set_completed(xfer, TRUE);
       gaim_xfer_end(xfer);
 
@@ -2243,10 +2233,13 @@ static void mw_ft_ack(struct mwFileTransfer *ft) {
   g_return_if_fail(xfer != NULL);
   g_return_if_fail(xfer->watcher == 0);
 
-  gaim_xfer_update_progress(xfer);
+  if(! mwFileTransfer_getRemaining(ft)) {
+    gaim_xfer_set_completed(xfer, TRUE);
+    gaim_xfer_end(xfer);
 
-  if(mwFileTransfer_isOpen(ft))
-    xfer->watcher = g_idle_add((GSourceFunc)ft_idle_cb, ft);
+  } else if(mwFileTransfer_isOpen(ft)) {
+    ft_send(ft, xfer->dest_fp);
+  }
 }
 
 
@@ -4943,6 +4936,8 @@ static void ft_outgoing_init(GaimXfer *xfer) {
   filesize = gaim_xfer_get_size(xfer);
   idb.user = xfer->who;
 
+  gaim_xfer_update_progress(xfer);
+
   /* test that we can actually send the file */
   fp = g_fopen(filename, "rb");
   if(! fp) {
@@ -4971,6 +4966,9 @@ static void ft_outgoing_init(GaimXfer *xfer) {
 
 static void ft_outgoing_cancel(GaimXfer *xfer) {
   struct mwFileTransfer *ft = xfer->data;
+  
+  DEBUG_INFO("ft_outgoing_cancel called\n");
+
   if(ft) mwFileTransfer_cancel(ft);
 }
 
@@ -4984,7 +4982,7 @@ static GaimXfer *mw_prpl_new_xfer(GaimConnection *gc, const char *who) {
   xfer = gaim_xfer_new(acct, GAIM_XFER_SEND, who);
   gaim_xfer_set_init_fnc(xfer, ft_outgoing_init);
   gaim_xfer_set_cancel_send_fnc(xfer, ft_outgoing_cancel);
-
+  
   return xfer;
 }
 
