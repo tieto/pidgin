@@ -3021,9 +3021,9 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		else
 			text = g_strdup(esc);
 	}
-	else
+	else if (!selected)
 	{
-		if (!selected && gaim_presence_is_idle(presence))
+		if (gaim_presence_is_idle(presence))
 		{
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
 						"<span color='%s' size='smaller'>%s%s%s</span>",
@@ -3042,6 +3042,14 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 					       statustext != NULL ? statustext :  "");
 		}
 	}
+	else
+		text = g_strdup_printf("%s\n"
+				       "<span size='smaller'>%s%s%s</span>",
+				       esc,
+				       idletime != NULL ? idletime : "",
+				       (idletime != NULL && statustext != NULL) ? " - " : "",
+				       statustext != NULL ? statustext :  "");
+
 
 	g_free(idletime);
 	g_free(statustext);
