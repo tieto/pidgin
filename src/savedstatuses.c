@@ -181,9 +181,11 @@ static void
 remove_old_transient_statuses()
 {
 	GList *l, *next;
-	GaimSavedStatus *saved_status;
+	GaimSavedStatus *saved_status, *current_status;
 	int count;
 	time_t creation_time;
+
+	current_status = gaim_savedstatus_get_current();
 
 	/*
 	 * Iterate through the list of saved statuses.  Delete all
@@ -199,10 +201,13 @@ remove_old_transient_statuses()
 		{
 			if (count == MAX_TRANSIENTS)
 			{
-				saved_statuses = g_list_remove(saved_statuses, saved_status);
-				creation_time = gaim_savedstatus_get_creation_time(saved_status);
-				g_hash_table_remove(creation_times, &creation_time);
-				free_saved_status(saved_status);
+				if (saved_status != current_status)
+				{
+					saved_statuses = g_list_remove(saved_statuses, saved_status);
+					creation_time = gaim_savedstatus_get_creation_time(saved_status);
+					g_hash_table_remove(creation_times, &creation_time);
+					free_saved_status(saved_status);
+				}
 			}
 			else
 				count++;
