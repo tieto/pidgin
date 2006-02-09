@@ -70,7 +70,7 @@ static void grow_circ_buffer(GaimCircBuffer *buf, gsize len) {
 		/* If we couldn't fit the wrapped read buffer
 		 * at the end */
 		if (shift_n < in_offset) {
-			memcpy(buf->buffer,
+			memmove(buf->buffer,
 				buf->buffer + shift_n,
 				in_offset - shift_n);
 			buf->inptr = buf->buffer +
