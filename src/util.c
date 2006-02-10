@@ -583,7 +583,7 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 
 	return strftime(s, max, format, tm);
 }
-#else /* !HAVE_STRFTIME_Z_FORMAT */
+#else /* HAVE_STRFTIME_Z_FORMAT */
 #define gaim_internal_strftime strftime
 #endif
 
@@ -591,6 +591,9 @@ const char *
 gaim_utf8_strftime(const char *format, const struct tm *tm)
 {
 	static char buf[128];
+	char *locale;
+	GError *err = NULL;
+	int len;
 	char *utf8;
 
 	g_return_val_if_fail(format != NULL, NULL);
@@ -601,17 +604,31 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 		tm = localtime(&now);
 	}
 
+	locale = g_locale_from_utf8(format, -1, NULL, NULL, &err);
+	if (err != NULL)
+	{
+		gaim_debug_error("util", "Format conversion failed in gaim_utf8_strftime(): %s", err->message);
+		g_error_free(err);
+		locale = g_strdup(format);
+	}
+
 	/* A return value of 0 is either an error (in
 	 * which case, the contents of the buffer are
 	 * undefined) or the empty string (in which
 	 * case, no harm is done here). */
-	if (gaim_internal_strftime(buf, sizeof(buf), format, tm) == 0)
+	if ((len = gaim_internal_strftime(buf, sizeof(buf), locale, tm)) == 0)
 	{
-		buf[0] = '\0';
-		return buf;
+		g_free(locale);
+		return "";
 	}
 
-	if ((utf8 = gaim_utf8_try_convert(buf)))
+	utf8 = g_locale_to_utf8(buf, len, NULL, NULL, &err);
+	if (err != NULL)
+	{
+		gaim_debug_error("util", "Result conversion failed in gaim_utf8_strftime(): %s", err->message);
+		g_error_free(err);
+	}
+	else
 	{
 		gaim_strlcpy(buf, utf8);
 		g_free(utf8);

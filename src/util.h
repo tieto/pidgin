@@ -223,10 +223,13 @@ char *gaim_mime_decode_field(const char *str);
  * GMT.  Required to emit RFC822-conformant dates
  * (using "%a, %d %b %Y %H:%M:%S %z"). (GNU)'
  *
- * @param format The format string
+ * @param format The format string, in UTF-8
  * @param tm     The time to format, or @c NULL to use the current local time
  *
  * @return The formatted time, in UTF-8.
+ *
+ * @note @a format is required to be in UTF-8.  This differs from strftime(),
+ *       where the format is provided in the locale charset.
  */
 const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
 
