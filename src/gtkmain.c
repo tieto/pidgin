@@ -172,7 +172,7 @@ sighandler(int sig)
 		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
-		gaim_print_utf8_to_console(stderr, segfault_message);
+		fprintf(stderr, "%s", segfault_message);
 		abort();
 		break;
 	case SIGCHLD:
@@ -447,6 +447,10 @@ int main(int argc, char *argv[])
 	gboolean debug_enabled;
 #if HAVE_SIGNAL_H
 	char errmsg[BUFSIZ];
+#ifndef DEBUG
+	char *segfault_message_tmp;
+	GError *error = NULL;
+#endif
 #endif
 
 	struct option long_options[] = {
@@ -489,7 +493,7 @@ int main(int argc, char *argv[])
 
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
-		segfault_message = g_strdup_printf(_(
+		segfault_message_tmp = g_strdup_printf(_(
 			"Gaim has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
@@ -499,12 +503,28 @@ int main(int argc, char *argv[])
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
-			"%sgdb.php.  If you need further\n"
-			"assistance, please IM either SeanEgn or LSchiere (via AIM).\n"
-			"Contact information for Sean and Luke on other protocols is at\n"
-			"%scontactinfo.php.\n"),
+			"%sgdb.php\n\n"
+			"If you need further assistance, please IM either SeanEgn or \n"
+			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
+			"on other protocols is at\n"
+			"%scontactinfo.php\n"),
 			GAIM_WEBSITE, GAIM_WEBSITE, GAIM_WEBSITE
 		);
+		
+		/* we have to convert the message (UTF-8 to console
+		   charset) early because after a segmentation fault
+		   it's not a good practice to allocate memory */
+		segfault_message = g_locale_from_utf8(segfault_message_tmp, 
+						      -1, NULL, NULL, &error);
+		if (segfault_message != NULL) {
+			g_free(segfault_message_tmp);
+		}
+		else {
+			/* use 'segfault_message_tmp' (UTF-8) as a fallback */
+			g_warning("%s\n", error->message);
+			g_error_free(error);
+			segfault_message = segfault_message_tmp;
+		}
 #else
 		/* Don't mark this for translation. */
 		segfault_message = g_strdup(
