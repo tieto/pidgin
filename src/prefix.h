@@ -55,7 +55,7 @@ extern "C" {
 #define br_prepend_prefix BR_NAMESPACE(br_prepend_prefix)
 
 #ifndef BR_NO_MACROS
-	/* These are convience macros that replace the ones usually used
+	/* These are convenience macros that replace the ones usually used
 	   in Autoconf/Automake projects */
 	#undef SELFPATH
 	#undef PREFIX

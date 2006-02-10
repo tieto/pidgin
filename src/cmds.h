@@ -69,7 +69,7 @@ enum _GaimCmdPriority {
 enum _GaimCmdFlag {
 	GAIM_CMD_FLAG_IM               = 0x01,
 	GAIM_CMD_FLAG_CHAT             = 0x02,
-	GAIM_CMD_FLAG_PRPL_ONLY         = 0x04,
+	GAIM_CMD_FLAG_PRPL_ONLY        = 0x04,
 	GAIM_CMD_FLAG_ALLOW_WRONG_ARGS = 0x08,
 };
 
