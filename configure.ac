@@ -58,7 +58,7 @@ AC_C_BIGENDIAN
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(strdup strstr atexit)
+AC_CHECK_FUNCS(strdup strstr atexit setlocale)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long,,
 [
