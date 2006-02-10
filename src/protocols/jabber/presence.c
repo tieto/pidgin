@@ -171,8 +171,8 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 }
 
 struct _jabber_add_permit {
-	JabberStream *js;
 	GaimConnection *gc;
+	JabberStream *js;
 	char *who;
 };
 
