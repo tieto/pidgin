@@ -40,8 +40,9 @@ typedef struct _GaimCircBuffer {
  * Creates a new circular buffer.  This will not allocate any memory for the
  * actual buffer until data is appended to it.
  *
- * @param growsize The size that the buffer should grow by the first time data
- *                 is appended and every time more space is needed.
+ * @param growsize The amount that the buffer should grow the first time data
+ *                 is appended and every time more space is needed.  Pass in
+ *                 "0" to use the default of 256 bytes.
  *
  * @return The new GaimCircBuffer. This should be freed with
  *         gaim_circ_buffer_destroy when you are done with it
@@ -57,8 +58,8 @@ GaimCircBuffer *gaim_circ_buffer_new(gsize growsize);
 void gaim_circ_buffer_destroy(GaimCircBuffer *buf);
 
 /**
- * Append data to the GaimCircBuffer.  This will automatically grow the internal
- * buffer to fit the added data.
+ * Append data to the GaimCircBuffer.  This will grow the internal
+ * buffer to fit the added data, if needed.
  *
  * @param buf The GaimCircBuffer to which to append the data
  * @param src pointer to the data to copy into the buffer

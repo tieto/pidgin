@@ -90,8 +90,11 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) 
 	if ((buf->buflen - buf->bufused) < len)
 		grow_circ_buffer(buf, len);
 
-	/* If we may need to wrap */
-	if ((buf->inptr - buf->outptr) >= 0)
+	/* If there is not enough room to copy all of src before hitting
+	 * the end of the buffer then we will need to do two copies.
+	 * One copy from inptr to the end of the buffer, and the
+	 * second copy from the start of the buffer to the end of src. */
+	if (buf->inptr >= buf->outptr)
 		len_stored = MIN(len, buf->buflen
 			- (buf->inptr - buf->buffer));
 	else
