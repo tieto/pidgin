@@ -77,7 +77,7 @@ struct MD5Context {
 }
 #define MD5_PUT_GUINT32(n,b,i) {			\
 	(b)[(i)    ] = (guchar)((n)      );		\
-    (b)[(i) + 1] = (guchar)((n) >>  8);		\
+	(b)[(i) + 1] = (guchar)((n) >>  8);		\
 	(b)[(i) + 2] = (guchar)((n) >> 16);		\
 	(b)[(i) + 3] = (guchar)((n) >> 24);		\
 }
@@ -472,10 +472,10 @@ static inline void md4_transform_helper(struct MD4_Context *ctx)
 
 static void
 md4_init(GaimCipherContext *context, gpointer extra) {
-        struct MD4_Context *mctx;
-        mctx = g_new0(struct MD4_Context, 1);
-        gaim_cipher_context_set_data(context, mctx);
-        gaim_cipher_context_reset(context, extra);
+	struct MD4_Context *mctx;
+	mctx = g_new0(struct MD4_Context, 1);
+	gaim_cipher_context_set_data(context, mctx);
+	gaim_cipher_context_reset(context, extra);
 
 	mctx->hash[0] = 0x67452301;
 	mctx->hash[1] = 0xefcdab89;
@@ -486,11 +486,11 @@ md4_init(GaimCipherContext *context, gpointer extra) {
 
 static void
 md4_reset(GaimCipherContext *context, gpointer extra) {
-        struct MD4_Context *mctx;
+	struct MD4_Context *mctx;
 
-        mctx = gaim_cipher_context_get_data(context);
+	mctx = gaim_cipher_context_get_data(context);
 
-        mctx->hash[0] = 0x67452301;
+	mctx->hash[0] = 0x67452301;
 	mctx->hash[1] = 0xefcdab89;
 	mctx->hash[2] = 0x98badcfe;
 	mctx->hash[3] = 0x10325476;
@@ -564,9 +564,9 @@ static void
 md4_uninit(GaimCipherContext *context) {
 	struct MD4_Context *md4_context;
 
-        gaim_cipher_context_reset(context, NULL);
+	gaim_cipher_context_reset(context, NULL);
 
-        md4_context = gaim_cipher_context_get_data(context);
+	md4_context = gaim_cipher_context_get_data(context);
 	memset(md4_context, 0, sizeof(md4_context));
 
 	g_free(md4_context);
@@ -984,7 +984,7 @@ static void
 des_uninit(GaimCipherContext *context) {
 	struct _des_ctx *des_context;
 
-        des_context = gaim_cipher_context_get_data(context);
+	des_context = gaim_cipher_context_get_data(context);
 	memset(des_context, 0, sizeof(des_context));
 
 	g_free(des_context);
@@ -1018,7 +1018,7 @@ struct SHA1Context {
 	guint32 H[5];
 	guint32 W[80];
 
-    gint lenW;
+	gint lenW;
 
 	guint32 sizeHi;
 	guint32 sizeLo;
