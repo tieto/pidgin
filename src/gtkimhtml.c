@@ -4256,67 +4256,89 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 	imhtml_emit_signal_for_format(imhtml, GTK_IMHTML_GROW);
 }
 
-#define gtk_imhtml_toggle_str_tag(imhtml, color, edit_field, remove_func, find_func, button) { \
-	GObject *object; \
-	GtkTextIter start, end; \
-\
-	g_free(edit_field); \
-	edit_field = NULL; \
-\
-	if (color && strcmp(color, "") != 0) { \
-		edit_field = g_strdup(color); \
-\
-		if (imhtml->wbfo) { \
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end); \
-			remove_func(imhtml, &start, &end, TRUE); \
-			gtk_text_buffer_apply_tag(imhtml->text_buffer, \
-		                                  find_func(imhtml, edit_field), &start, &end); \
-		} else { \
-			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, \
-							 gtk_text_buffer_get_mark(imhtml->text_buffer, "insert")); \
-			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) { \
-				remove_func(imhtml, &start, &end, FALSE); \
-				gtk_text_buffer_apply_tag(imhtml->text_buffer, \
-							  find_func(imhtml, \
-				                                   edit_field), \
-				                                   &start, &end); \
-			} \
-		} \
-	} else { \
-		if (imhtml->wbfo) { \
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end); \
-			remove_func(imhtml, &start, &end, TRUE); \
-		} else { \
-			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) \
-				remove_func(imhtml, &start, &end, TRUE); \
-		} \
-	} \
-\
-	object = g_object_ref(G_OBJECT(imhtml)); \
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button); \
-	g_object_unref(object); \
-\
-	return edit_field != NULL; \
+static gboolean gtk_imhtml_toggle_str_tag(GtkIMHtml *imhtml, const char *value, char **edit_field,
+				void (*remove_func)(GtkIMHtml *imhtml, GtkTextIter *i, GtkTextIter *e, gboolean homo),
+				GtkTextTag *(find_func)(GtkIMHtml *imhtml, gchar *color), GtkIMHtmlButtons button)
+{
+	GObject *object;
+	GtkTextIter start;
+	GtkTextIter end;
+
+	g_free(*edit_field);
+	*edit_field = NULL;
+
+	if (value && strcmp(value, "") != 0)
+	{
+		*edit_field = g_strdup(value);
+
+		if (imhtml->wbfo)
+		{
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_func(imhtml, &start, &end, TRUE);
+			gtk_text_buffer_apply_tag(imhtml->text_buffer,
+		                              find_func(imhtml, *edit_field), &start, &end);
+		}
+		else
+		{
+			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start,
+			                                 gtk_text_buffer_get_mark(imhtml->text_buffer, "insert"));
+			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+			{
+				remove_func(imhtml, &start, &end, FALSE);
+				gtk_text_buffer_apply_tag(imhtml->text_buffer,
+				                          find_func(imhtml,
+				                                    *edit_field),
+				                                    &start, &end);
+			}
+		}
+	}
+	else
+	{
+		if (imhtml->wbfo)
+		{
+			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
+			remove_func(imhtml, &start, &end, TRUE);
+		}
+		else
+		{
+			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+				remove_func(imhtml, &start, &end, TRUE);
+		}
+	}
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button);
+	g_object_unref(object);
+
+	return *edit_field != NULL;
 }
 
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.forecolor, remove_font_forecolor, find_font_forecolor_tag, GTK_IMHTML_FORECOLOR);
+	return gtk_imhtml_toggle_str_tag(imhtml, color, &imhtml->edit.forecolor,
+	                                 remove_font_forecolor, find_font_forecolor_tag,
+	                                 GTK_IMHTML_FORECOLOR);
 }
 
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.backcolor, remove_font_backcolor, find_font_backcolor_tag, GTK_IMHTML_BACKCOLOR);
+	return gtk_imhtml_toggle_str_tag(imhtml, color, &imhtml->edit.backcolor,
+	                                 remove_font_backcolor, find_font_backcolor_tag,
+	                                 GTK_IMHTML_BACKCOLOR);
 }
 
 gboolean gtk_imhtml_toggle_background(GtkIMHtml *imhtml, const char *color)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.background, remove_font_background, find_font_background_tag, GTK_IMHTML_BACKGROUND);
+	return gtk_imhtml_toggle_str_tag(imhtml, color, &imhtml->edit.background,
+	                                 remove_font_background, find_font_background_tag,
+	                                 GTK_IMHTML_BACKGROUND);
 }
 
 gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, face, imhtml->edit.fontface, remove_font_face, find_font_face_tag, GTK_IMHTML_FACE);
+	return gtk_imhtml_toggle_str_tag(imhtml, face, &imhtml->edit.fontface,
+	                                 remove_font_face, find_font_face_tag,
+	                                 GTK_IMHTML_FACE);
 }
 
 void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
