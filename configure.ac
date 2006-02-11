@@ -143,6 +143,11 @@ int main()
 ],
 [
 	AC_MSG_RESULT(no)
+],
+[
+	# Fallback for Cross Compiling...
+	# This will enable the compatibility code.
+	AC_MSG_RESULT(no)
 ]
 )
 
