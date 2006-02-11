@@ -47,7 +47,7 @@ typedef struct _GaimCircBuffer {
 	gchar *inptr;
 
 	/** A pointer to the next byte of buffered data that should be
-	 *  by the consumer. */
+	 *  read by the consumer. */
 	gchar *outptr;
 
 } GaimCircBuffer;
