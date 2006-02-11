@@ -287,14 +287,14 @@ free_parser_data(gpointer user_data)
 	if (data->buffer != NULL)
 		g_string_free(data->buffer, TRUE);
 
-	if (data->ui_name      != NULL) g_free(data->ui_name);
-	if (data->pouncee      != NULL) g_free(data->pouncee);
-	if (data->protocol_id  != NULL) g_free(data->protocol_id);
-	if (data->event_type   != NULL) g_free(data->event_type);
-	if (data->option_type  != NULL) g_free(data->option_type);
-	if (data->action_name  != NULL) g_free(data->action_name);
-	if (data->param_name   != NULL) g_free(data->param_name);
-	if (data->account_name != NULL) g_free(data->account_name);
+	g_free(data->ui_name);
+	g_free(data->pouncee);
+	g_free(data->protocol_id);
+	g_free(data->event_type);
+	g_free(data->option_type);
+	g_free(data->action_name);
+	g_free(data->param_name);
+	g_free(data->account_name);
 
 	g_free(data);
 }
@@ -498,14 +498,14 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->events  = 0;
 		data->options = 0;
 
-		if (data->ui_name      != NULL) g_free(data->ui_name);
-		if (data->pouncee      != NULL) g_free(data->pouncee);
-		if (data->protocol_id  != NULL) g_free(data->protocol_id);
-		if (data->event_type   != NULL) g_free(data->event_type);
-		if (data->option_type  != NULL) g_free(data->option_type);
-		if (data->action_name  != NULL) g_free(data->action_name);
-		if (data->param_name   != NULL) g_free(data->param_name);
-		if (data->account_name != NULL) g_free(data->account_name);
+		g_free(data->ui_name);
+		g_free(data->pouncee);
+		g_free(data->protocol_id);
+		g_free(data->event_type);
+		g_free(data->option_type);
+		g_free(data->action_name);
+		g_free(data->param_name);
+		g_free(data->account_name);
 
 		data->ui_name      = NULL;
 		data->pounce       = NULL;
@@ -652,8 +652,8 @@ gaim_pounce_destroy(GaimPounce *pounce)
 
 	pounces = g_list_remove(pounces, pounce);
 
-	if (pounce->ui_type != NULL) g_free(pounce->ui_type);
-	if (pounce->pouncee != NULL) g_free(pounce->pouncee);
+	g_free(pounce->ui_type);
+	g_free(pounce->pouncee);
 
 	g_hash_table_destroy(pounce->actions);
 
@@ -723,8 +723,7 @@ gaim_pounce_set_pouncee(GaimPounce *pounce, const char *pouncee)
 	g_return_if_fail(pounce  != NULL);
 	g_return_if_fail(pouncee != NULL);
 
-	if (pounce->pouncee != NULL)
-		g_free(pounce->pouncee);
+	g_free(pounce->pouncee);
 
 	pounce->pouncee = (pouncee == NULL ? NULL : g_strdup(pouncee));
 
