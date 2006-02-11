@@ -28,12 +28,28 @@ extern "C" {
 #endif
 
 typedef struct _GaimCircBuffer {
+
+	/** A pointer to the starting address of our chunk of memory. */
 	gchar *buffer;
+
+	/** The incremental amount to increase this buffer by when
+	 *  the buffer is not big enough to hold incoming data, in bytes. */
 	gsize growsize;
+
+	/** The length of this buffer, in bytes. */
 	gsize buflen;
+
+	/** The number of bytes of this buffer that contain unread data. */
 	gsize bufused;
+
+	/** A pointer to the next byte where new incoming data is
+	 *  buffered to. */
 	gchar *inptr;
+
+	/** A pointer to the next byte of buffered data that should be
+	 *  by the consumer. */
 	gchar *outptr;
+
 } GaimCircBuffer;
 
 /**
