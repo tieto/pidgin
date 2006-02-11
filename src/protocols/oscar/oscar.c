@@ -330,8 +330,8 @@ static fu32_t oscar_charset_check(const char *utf8)
 	int i = 0;
 	int charset = AIM_CHARSET_ASCII;
 
-	/* Determine how we can send this message.  Per the warnings elsewhere 
-	 * in this file, these little checks determine the simplest encoding 
+	/* Determine how we can send this message.  Per the warnings elsewhere
+	 * in this file, these little checks determine the simplest encoding
 	 * we can use for a given message send using it. */
 	while (utf8[i]) {
 		if ((unsigned char)utf8[i] > 0x7f) {
@@ -348,7 +348,7 @@ static fu32_t oscar_charset_check(const char *utf8)
 			i++;
 			continue;
 		} else if (((unsigned char)utf8[i] & 0xfc) == 0xc0 &&
-			   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
+				   ((unsigned char)utf8[i + 1] & 0xc0) == 0x80) {
 			i += 2;
 			continue;
 		}
@@ -361,7 +361,7 @@ static fu32_t oscar_charset_check(const char *utf8)
 
 /*
  * Take a string of the form charset="bleh" where bleh is
- * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and 
+ * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and
  * return a newly allocated string containing bleh.
  */
 static gchar *oscar_encoding_extract(const char *encoding)
@@ -416,7 +416,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	 */
 	if (utf8 == NULL) {
 		if (textlen != 0 && *text != '\0'
-                    && !g_utf8_validate(text, textlen, NULL))
+				&& !g_utf8_validate(text, textlen, NULL))
 			utf8 = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking to most likely has a buggy client.)"));
 		else
 			utf8 = g_strndup(text, textlen);
@@ -528,9 +528,10 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
  * Figure out what encoding to use when sending a given outgoing message.
  */
 static void
-gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *destsn, const gchar *from,
-										   gchar **msg, int *msglen_int,
-										   fu16_t *charset, fu16_t *charsubset)
+gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc,
+				const char *destsn, const gchar *from,
+				gchar **msg, int *msglen_int,
+				fu16_t *charset, fu16_t *charsubset)
 {
 	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
@@ -941,7 +942,7 @@ static struct oscar_direct_im *oscar_direct_im_find(OscarData *od, const char *w
 static void oscar_direct_im_destroy(OscarData *od, struct oscar_direct_im *dim)
 {
 	gaim_debug_info("oscar",
-			   "destroying Direct IM for %s.\n", dim->name);
+			"destroying Direct IM for %s.\n", dim->name);
 
 	od->direct_ims = g_slist_remove(od->direct_ims, dim);
 	if (dim->gpc_pend) {
@@ -964,7 +965,7 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
 	char buf[256];
 
 	gaim_debug_info("oscar",
-			   "%s disconnected Direct IM.\n", dim->name);
+			"%s disconnected Direct IM.\n", dim->name);
 
 	if (dim->connected)
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), dim->name);
@@ -973,7 +974,7 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, dim->name,
 		gaim_connection_get_account(dim->gc));
-        
+
 	if (conv) {
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 	} else {
@@ -1118,12 +1119,12 @@ static void accept_direct_im_request(struct ask_direct *d) {
 		return;
 	}
 
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING,
-				gaim_odc_incoming, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
-				gaim_odc_typing, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER,
-			        gaim_odc_update_ui, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT,
+						AIM_CB_OFT_DIRECTIMINCOMING, gaim_odc_incoming, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT,
+						AIM_CB_OFT_DIRECTIMTYPING, gaim_odc_typing, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL,
+						AIM_CB_SPECIAL_IMAGETRANSFER, gaim_odc_update_ui, 0);
 
 	gaim_debug_info("oscar", "ip is %s.\n", d->ip);
 	for (i = 0; i < (int)strlen(d->ip); i++) {
@@ -1138,8 +1139,8 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	rc = gaim_proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
 
 	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, d->sn);
-	tmp = g_strdup_printf(_("Attempting to connect to %s at %s:%hu for Direct IM."), d->sn, host,
-	                      port);
+	tmp = g_strdup_printf(_("Attempting to connect to %s at %s:%hu for Direct IM."),
+						  d->sn, host, port);
 	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	g_free(tmp);
 
@@ -1179,8 +1180,7 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	sn = g_strdup(aim_odc_getsn(newconn));
 
-	gaim_debug_info("oscar",
-			   "DirectIM: initiate success to %s\n", sn);
+	gaim_debug_info("oscar", "DirectIM: initiate success to %s\n", sn);
 	dim = oscar_direct_im_find(od, sn);
 
 	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, sn);
@@ -1220,13 +1220,13 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (!sn || !(dim = oscar_direct_im_find(od, sn)))
 		return 1;
 	if (dim->watcher) {
-		gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
+		gaim_input_remove(dim->watcher); /* Otherwise, the callback will callback */
 		/* The callback will callback? I don't get how that would happen here. */
 		dim->watcher = 0;
 	}
 
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
-				      oscar_callback, dim->conn);
+								  oscar_callback, dim->conn);
 
 	return 1;
 }
@@ -1280,8 +1280,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 	msgend = msg + len;
 
-	gaim_debug_info("oscar",
-			   "Got DirectIM message from %s\n", sn);
+	gaim_debug_info("oscar", "Got DirectIM message from %s\n", sn);
 
 	if (isawaymsg)
 		imflags |= GAIM_MESSAGE_AUTO_RESP;
@@ -1544,8 +1543,8 @@ oscar_direct_im_listen_cb(int listenfd, gpointer data) {
 					gaim_odc_initiate, 0);
 
 		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, dim->name);
-		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), dim->name, ip,
-		                      gaim_network_get_port_from_fd(listenfd));
+		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."),
+					dim->name, ip, gaim_network_get_port_from_fd(listenfd));
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	} else {
@@ -1660,14 +1659,14 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				   "oscar callback for closed connection (1).\n");
 		return;
 	}
-      
+
 	if( !(od = (OscarData *)gc->proto_data) ) {
 		gaim_debug_warning("oscar","NULL od in oscar_callback; conn closed?\n");
 		return;
 	}
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
-		/* oh boy. this is probably bad. i guess the only thing we 
+		/* oh boy. this is probably bad. i guess the only thing we
 		 * can really do is return? */
 		gaim_debug_info("oscar",
 				   "oscar callback for closed connection (2).\n");
@@ -2627,9 +2626,8 @@ oscar_xfer_init_listen_cb(int listenfd, gpointer data) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	gaim_debug_misc("oscar",
-			   "port is %hu, ip is %s\n",
-			   xfer->local_port, oft_info->clientip);
+	gaim_debug_misc("oscar", "port is %hu, ip is %s\n",
+					xfer->local_port, oft_info->clientip);
 
 	if(oft_info->conn)
 		xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback,
@@ -2859,10 +2857,8 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_connection_error(gc, _("Authentication failed"));
 			break;
 		}
-		gaim_debug_error("oscar",
-				   "Login Error Code 0x%04hx\n", info->errorcode);
-		gaim_debug_error("oscar",
-				   "Error URL: %s\n", info->errorurl);
+		gaim_debug_error("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
+		gaim_debug_error("oscar", "Error URL: %s\n", info->errorurl);
 		od->killme = TRUE;
 		return 1;
 	}
@@ -2875,10 +2871,9 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} else {
 		gaim_debug_misc("oscar", "Email is NULL\n");
 	}
-	
+
 	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
-	gaim_debug_info("oscar",
-			   "Closing auth connection...\n");
+	gaim_debug_info("oscar", "Closing auth connection...\n");
 	aim_conn_kill(sess, &fr->conn);
 
 	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS);
@@ -3103,9 +3098,8 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	modname = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug_misc("oscar",
-			   "offset: %u, len: %u, file: %s\n",
-			   offset, len, (modname ? modname : "aim.exe"));
+	gaim_debug_misc("oscar", "offset: %u, len: %u, file: %s\n",
+					offset, len, (modname ? modname : "aim.exe"));
 
 	if (len == 0) {
 		gaim_debug_misc("oscar", "len is 0, hashing NULL\n");
@@ -3266,8 +3260,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug_error("oscar",
-				   "unable to connect to chatnav server\n");
+		gaim_debug_error("oscar", "unable to connect to chatnav server\n");
 		return;
 	}
 
@@ -3298,8 +3291,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug_error("oscar",
-				   "unable to connect to authorizer\n");
+		gaim_debug_error("oscar", "unable to connect to authorizer\n");
 		return;
 	}
 
@@ -3366,8 +3358,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug_error("oscar",
-				   "unable to connect to email server\n");
+		gaim_debug_error("oscar", "unable to connect to email server\n");
 		return;
 	}
 
@@ -3376,8 +3367,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 
 	aim_conn_completeconnect(sess, tstconn);
 	od->emlpa = gaim_input_add(tstconn->fd, GAIM_INPUT_READ, oscar_callback, tstconn);
-	gaim_debug_info("oscar",
-			   "email: connected\n");
+	gaim_debug_info("oscar", "email: connected\n");
 }
 
 static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition cond) {
@@ -3398,8 +3388,7 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
-		gaim_debug_error("oscar",
-				   "unable to connect to icon server\n");
+		gaim_debug_error("oscar", "unable to connect to icon server\n");
 		return;
 	}
 
@@ -3438,8 +3427,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	switch(redir->group) {
 	case 0x7: /* Authorizer */
-		gaim_debug_info("oscar",
-				   "Reconnecting with authorizor...\n");
+		gaim_debug_info("oscar", "Reconnecting with authorizor...\n");
 		tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH);
 		if (tstconn == NULL) {
 			gaim_debug_error("oscar",
@@ -3777,7 +3765,7 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_t *conn, *listenerconn;
 
 	gaim_debug_info("oscar", "AAA - in oscar_sendfile_estblsh\n");
-	
+
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	listenerconn = va_arg(ap, aim_conn_t *);
@@ -3795,7 +3783,7 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gaim_debug_warning("oscar","NULL data\n");
 		return 1;
 	}
-		
+
 	/* Mark connection as success so further connections aren't attempted
 	 * This is important here since some receive file code paths pass through here */
 	oft_info->success = TRUE;
@@ -3803,15 +3791,15 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if(oft_info->method != AIM_XFER_PROXY) {
 		/* Stop watching listener conn; watch transfer conn instead */
 		gaim_input_remove(xfer->watcher);
-		
+
 		aim_conn_kill(sess, &listenerconn);
-	
+
 		oft_info->conn = conn;
 		xfer->fd = oft_info->conn->fd;
 	}
-	
+
 	xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
-	
+
 	if(oft_info->send_or_recv == AIM_XFER_SEND) {
 		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ACK,
 			oscar_sendfile_ack, 0);
@@ -3821,25 +3809,24 @@ static int oscar_sendfile_estblsh(aim_session_t *sess, aim_frame_t *fr, ...) {
 		/* Inform the other user that we are connected and ready to transfer */
 		aim_oft_sendheader(sess, AIM_CB_OFT_PROMPT, oft_info);
 	}
-	
+
 	/* For a file send, we'll hopefully end up in oscar_sendfile_ack next
 	 * For a file receive, oscar_sendfile_prompt */
-	
+
 	return 0;
 }
 
 /*
- * This is the gaim callback passed to gaim_proxy_connect when connecting to another AIM 
- * user in order to transfer a file
- * Takes xfer as data and fd as source 
+ * This is the gaim callback passed to gaim_proxy_connect when
+ * connecting to another AIM user in order to transfer a file
+ * Takes xfer as data and fd as source
  * BBB
  */
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition) {
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 
-	gaim_debug_info("oscar",
-			   "AAA - in oscar_sendfile_connected\n");
+	gaim_debug_info("oscar", "AAA - in oscar_sendfile_connected\n");
 	if (!(xfer = data))
 		return;
 	if (!(oft_info = xfer->data))
@@ -3863,16 +3850,16 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	 * hurt to do it again since it is rather necessary */
 	xfer->fd = source;
 	oft_info->conn->fd = source;
-	
+
 	aim_conn_completeconnect(oft_info->sess, oft_info->conn);
-	
+
 	xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
 
 	/* Inform the other user that we are connected and accept the transfer
 	 * Except for a stage 2 receive, then we'll be the ones receiving this accept message */
 	if(oft_info->stage != AIM_XFER_PROXY_STG2)
 		aim_im_sendch2_sendfile_accept(oft_info->sess, oft_info);
-		
+
 	/* Don't wait around if this is a redirected send */
 	if(oft_info->send_or_recv == AIM_XFER_SEND) {
 		/* We should only get here if this is a redirected file send */
@@ -3880,16 +3867,16 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 			oscar_sendfile_ack, 0);
 		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DONE,
 			oscar_sendfile_done, 0);
-		
+
 		/* Inform the other user that we are ready to transfer */
 		aim_oft_sendheader(oft_info->sess, AIM_CB_OFT_PROMPT, oft_info);
 	}
 }
 
 /*
- * This is called when a buddy sends us some file info.  This happens when they 
+ * This is called when a buddy sends us some file info.  This happens when they
  * are sending a file to you, and you have just established a connection to them.
- * You should send them the exact same info except use the real cookie.  We also 
+ * You should send them the exact same info except use the real cookie.  We also
  * get like totally ready to like, receive the file, kay?
  */
 static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -3901,10 +3888,9 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_t *conn;
 	fu8_t *cookie;
 	struct aim_fileheader_t *fh;
-	
-	gaim_debug_info("oscar",
-			   "AAA - in oscar_sendfile_prompt\n");
-			   
+
+	gaim_debug_info("oscar", "AAA - in oscar_sendfile_prompt\n");
+
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	cookie = va_arg(ap, fu8_t *);
@@ -3935,7 +3921,7 @@ static int oscar_sendfile_prompt(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 /*
- * We are sending a file to someone else.  They have just acknowledged our 
+ * We are sending a file to someone else.  They have just acknowledged our
  * prompt, so we want to start sending data like there's no tomorrow.
  */
 static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -3967,7 +3953,7 @@ static int oscar_sendfile_ack(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 /*
- * We just sent a file to someone.  They said they got it and everything, 
+ * We just sent a file to someone.  They said they got it and everything,
  * so we can close our direct connection and what not.
  */
 static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -4039,8 +4025,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		bi->typingnot = FALSE;
 
 	if ((args->icbmflags & AIM_IMFLAGS_HASICON) && (args->iconlen) && (args->iconsum) && (args->iconstamp)) {
-		gaim_debug_misc("oscar",
-				   "%s has an icon\n", userinfo->sn);
+		gaim_debug_misc("oscar", "%s has an icon\n", userinfo->sn);
 		if ((args->iconlen != bi->ico_len) || (args->iconsum != bi->ico_csum) || (args->iconstamp != bi->ico_time)) {
 			bi->ico_need = TRUE;
 			bi->ico_len = args->iconlen;
@@ -4069,12 +4054,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					st.st_mtime, aimutil_iconsum(buf, st.st_size));
 				fclose(file);
 			} else
-				gaim_debug_error("oscar",
-						   "Can't open buddy icon file!\n");
+				gaim_debug_error("oscar", "Can't open buddy icon file!\n");
 			g_free(buf);
 		} else
-			gaim_debug_error("oscar",
-					   "Can't stat buddy icon file!\n");
+			gaim_debug_error("oscar", "Can't stat buddy icon file!\n");
 	}
 	g_free(iconfile);
 
@@ -4269,7 +4252,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				xfer->remote_ip = g_strdup(args->clientip);
 				xfer->remote_port = args->port;
 			}
-			
+
 			/* Use UTF8 so that the world will be a happier place */
 			if (g_utf8_validate(args->info.sendfile.filename, -1,
 						NULL)) {
@@ -4283,7 +4266,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			}
 
 			gaim_xfer_set_size(xfer, args->info.sendfile.totsize);
-			
+
 			/* Ignore messages that start with <ICQ_COOL_FT> (XML that is sent along
 			 * with ICQ sendfile requests) & <HTML> message that is sent with AOL file
 			 * transfers (Note: this latter message is ignored only if whole message
@@ -4319,7 +4302,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 			/* Keep track of this transfer for later */
 			od->file_transfers = g_slist_append(od->file_transfers, xfer);
-			
+
 			/* Now perform the request */
 			gaim_xfer_request(xfer);
 		/* A secondary request has been sent to negotiate the connection method */
@@ -4328,10 +4311,10 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			 * asking us to use an alternative method of connecting */
 			GaimXfer *xfer;
 			struct aim_oft_info *oft_info;
-			
+
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie))) {
 				oft_info = xfer->data;
-				
+
 				/* Stop the listener connection */
 				gaim_input_remove(xfer->watcher);
 				aim_conn_kill(sess, &oft_info->conn); /* This is currently the listener */
@@ -4342,7 +4325,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 						args->proxyip);
 					oft_info->method = AIM_XFER_PROXY;
 					oft_info->stage = AIM_XFER_PROXY_STG2;
-										
+
 					oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess,
 						args->cookie, args->port);
 					if(args->proxyip) {
@@ -4362,15 +4345,15 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 						"other client wants us to send stage 3 proxy info\n");
 					oft_info->method = AIM_XFER_PROXY;
 					oft_info->stage = AIM_XFER_PROXY_STG3;
-					
+
 					/* Clean useless data from oft_info */
 					oft_info->clientip = NULL;
 					oft_info->verifiedip = NULL;
-					
+
 					/* This hostname will be resolved in gaim_proxy_connect */
 					xfer->remote_ip = g_strdup(AIM_RV_PROXY_SERVER_URL);
 					xfer->remote_port = AIM_RV_PROXY_CONNECT_PORT;
-					
+
 					oft_info->proxy_info
 						= aim_rv_proxy_createinfo(od->sess, args->cookie, 0);
 					oscar_xfer_init_recv(xfer);
@@ -4385,7 +4368,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 						xfer->remote_ip = g_strdup(args->clientip);
 					}
 					xfer->remote_port = args->port;
-						
+
 					/* This file send will briefly follow file receive codepaths */
 					oscar_xfer_init_recv(xfer);
 				}
@@ -4400,20 +4383,20 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			 * third file transfer request. */
 			GaimXfer *xfer;
 			struct aim_oft_info *oft_info;
-			
+
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie))) {
 				oft_info = xfer->data;
 
 				/* We are receiving a file */
 				gaim_debug_info("oscar",
 					"other client sent us stage 3 proxy info\n");
-				
+
 				/* The following pieces of information should already have
 				 * been set in oscar_xfer_ip_timeout, but we'll list them
 				 * again just for clarity. */
 				oft_info->method = AIM_XFER_PROXY;
 				oft_info->stage = AIM_XFER_PROXY_STG3;
-				
+
 				oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess,
 					args->cookie, args->port);
 				if(args->proxyip) {
@@ -4438,13 +4421,13 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				gaim_xfer_cancel_remote(xfer);
 		} else if (args->status == AIM_RENDEZVOUS_ACCEPT) {
 			/*
-			 * This gets sent by the receiver of a file 
-			 * as they connect directly to us.  If we don't 
-			 * get this, then maybe a third party connected 
+			 * This gets sent by the receiver of a file
+			 * as they connect directly to us.  If we don't
+			 * get this, then maybe a third party connected
 			 * to us, and we shouldn't send them anything.
 			 */
 			 gaim_debug_info("oscar",
-			 	"AAA - received chan 2 AIM_RENDEZVOUS_ACCEPT; ignoring\n");
+				"AAA - received chan 2 AIM_RENDEZVOUS_ACCEPT; ignoring\n");
 		} else {
 			gaim_debug_error("oscar",
 					   "unknown rendezvous status!\n");
@@ -4489,15 +4472,15 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->verifiedip, args->port?args->port:5190);
 		memcpy(d->cookie, args->cookie, 8);
 		if (dim && !dim->connected && aim_odc_getcookie(dim->conn) && args->cookie &&
-		    (!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
+			(!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
 
 			oscar_direct_im_destroy(od, dim);
 			d->donttryagain = TRUE;
 			accept_direct_im_request(d);
 		} else {
 			if (dim && !dim->connected)
-				gaim_debug_warning("oscar", "DirectIM: received direct im request while "
-				                   "already connected to that buddy!");
+				gaim_debug_warning("oscar", "DirectIM: received direct im request "
+						"while already connected to that buddy!");
 		g_snprintf(buf, sizeof buf, _("%s has just asked to directly connect to %s"), userinfo->sn, username);
 
 		gaim_request_action(gc, NULL, buf,
@@ -4505,7 +4488,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 							  "the two computers and is necessary for IM "
 							  "Images.  Because your IP address will be "
 							  "revealed, this may be considered a privacy "
-							    "risk."),
+							  "risk."),
 							GAIM_DEFAULT_ACTION_NONE, d, 2,
 							_("_Connect"), G_CALLBACK(accept_direct_im_request),
 							_("Cancel"), G_CALLBACK(destroy_direct_im_request));
@@ -4525,7 +4508,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 /*
  * Authorization Functions
- * Most of these are callbacks from dialogs.  They're used by both 
+ * Most of these are callbacks from dialogs.  They're used by both
  * methods of authorization (SSI and old-school channel 4 ICBM)
  */
 /* When you ask other people for authorization */
@@ -5560,7 +5543,7 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 			gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
 		g_free(to);
 	}
-	
+
 	if (alertitle)
 		gaim_debug_misc("oscar", "Got an alert '%s' %s\n", alertitle, alerturl ? alerturl : "");
 
@@ -5728,7 +5711,7 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t code, rateclass;
 	fu32_t windowsize, clear, alert, limit, disconnect, currentavg, maxavg;
 
-	va_start(ap, fr); 
+	va_start(ap, fr);
 	code = (fu16_t)va_arg(ap, unsigned int);
 	rateclass= (fu16_t)va_arg(ap, unsigned int);
 	windowsize = va_arg(ap, fu32_t);
@@ -6408,7 +6391,7 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if (email != NULL) {
-		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"), 
+		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"),
 						   gaim_account_get_username(gaim_connection_get_account(gc)), email);
 		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
 		g_free(dialog_msg);
@@ -6559,10 +6542,10 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		/*
 		 * If we're IMing an SMS user or an ICQ user from an ICQ account, then strip HTML.
- 		 */
+		 */
 		if (aim_sn_is_sms(name)) {
 			/* Messaging an SMS (mobile) user */
-			tmp2 = gaim_unescape_html(tmp1);			
+			tmp2 = gaim_unescape_html(tmp1);
 		} else if (aim_sn_is_icq(gaim_account_get_username(account))) {
 			if (aim_sn_is_icq(name))
 				/* From ICQ to ICQ */
@@ -7603,9 +7586,9 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message, Gaim
 
 	if (strstr(buf, "<IMG "))
 		gaim_conversation_write(conv, "",
-		                        _("Your IM Image was not sent. "
-		                        "You cannot send IM Images in AIM chats."),
-		                        GAIM_MESSAGE_ERROR, time(NULL));
+			_("Your IM Image was not sent. "
+			  "You cannot send IM Images in AIM chats."),
+			GAIM_MESSAGE_ERROR, time(NULL));
 
 	gaim_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
 	if ((len > c->maxlen) || (len > c->maxvis)) {
@@ -7666,8 +7649,8 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 
 	if (gaim_presence_is_online(presence) == FALSE) {
 		char *gname;
-		if ((b->name) && (od) && (od->sess->ssi.received_data) && 
-			(gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name)) && 
+		if ((b->name) && (od) && (od->sess->ssi.received_data) &&
+			(gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name)) &&
 			(aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))) {
 			emblems[i++] = "notauthorized";
 		} else {
