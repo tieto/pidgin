@@ -259,6 +259,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			case GAIM_SUBTYPE_CONNECTION:
 			case GAIM_SUBTYPE_CONVERSATION:
 			case GAIM_SUBTYPE_PLUGIN:
+			case GAIM_SUBTYPE_XFER:
 				/* pointers again */
 				if (gaim_value_is_outgoing(handler->argtypes[i])) {
 					vals[i] = va_arg(args, void **);

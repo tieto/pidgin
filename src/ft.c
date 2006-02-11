@@ -219,7 +219,7 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 			gaim_xfer_request_accepted(xfer, filename);
 		}
 		else {
-		  	gaim_xfer_show_file_error(xfer, filename);
+			gaim_xfer_show_file_error(xfer, filename);
 			gaim_xfer_request_denied(xfer);
 		}
 	}
@@ -305,8 +305,8 @@ gaim_xfer_ask_recv(GaimXfer *xfer)
 			size = gaim_xfer_get_size(xfer);
 			size_buf = gaim_str_size_to_units(size);
 			buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
-					      buddy ? gaim_buddy_get_alias(buddy) : xfer->who,
-					      gaim_xfer_get_filename(xfer), size_buf);
+						  buddy ? gaim_buddy_get_alias(buddy) : xfer->who,
+						  gaim_xfer_get_filename(xfer), size_buf);
 			g_free(size_buf);
 		}
 		else
@@ -353,13 +353,13 @@ gaim_xfer_ask_accept(GaimXfer *xfer)
 	GaimBuddy *buddy = gaim_find_buddy(xfer->account, xfer->who);
 
 	buf = g_strdup_printf(_("Accept file transfer request from %s?"),
-			      buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
+				  buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
 	if (gaim_xfer_get_remote_ip(xfer) &&
-	    gaim_xfer_get_remote_port(xfer))
+		gaim_xfer_get_remote_port(xfer))
 		buf2 = g_strdup_printf(_("A file is available for download from:\n"
 					 "Remote host: %s\nRemote port: %d"),
-				       gaim_xfer_get_remote_ip(xfer),
-				       gaim_xfer_get_remote_port(xfer));
+					   gaim_xfer_get_remote_ip(xfer),
+					   gaim_xfer_get_remote_port(xfer));
 	gaim_request_accept_cancel(xfer, NULL, buf, buf2,
 							   GAIM_DEFAULT_ACTION_NONE, xfer,
 							   G_CALLBACK(ask_accept_ok),
@@ -376,20 +376,35 @@ gaim_xfer_request(GaimXfer *xfer)
 
 	gaim_xfer_ref(xfer);
 
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		if (gaim_xfer_get_filename(xfer) ||
-		    gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED) {
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE)
+	{
+		gaim_signal_emit(gaim_xfers_get_handle(), "file-recv-request", xfer);
+		if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL)
+		{
+			/* The file-transfer was cancelled by a plugin */
+			gaim_xfer_cancel_local(xfer);
+		}
+		else if (gaim_xfer_get_filename(xfer) ||
+		           gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED)
+		{
 			gchar* message = NULL;
 			message = g_strdup_printf(_("%s is offering to send file %s"),
 				xfer->who, gaim_xfer_get_filename(xfer));
 			gaim_xfer_conversation_write(xfer, message, FALSE);
 			g_free(message);
-			gaim_xfer_ask_recv(xfer);
-		} else {
+			/* Ask for a filename to save to if it's not already given by a plugin */
+			if (xfer->local_filename == NULL)
+				gaim_xfer_ask_recv(xfer);
+		}
+		else
+		{
 			gaim_xfer_ask_accept(xfer);
 		}
-	} else
+	}
+	else
+	{
 		gaim_xfer_choose_file(xfer);
+	}
 }
 
 void
@@ -1168,35 +1183,39 @@ gaim_xfers_init(void) {
 	gaim_signal_register(handle, "file-recv-accept",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-accept",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-start",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-start",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-cancel",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-cancel",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-complete",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-complete",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	gaim_signal_register(handle, "file-recv-request",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
 }
 
 void

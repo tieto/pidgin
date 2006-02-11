@@ -306,6 +306,7 @@ version 2.0.0:
 	* "file-recv-start"
 	* "file-recv-cancel"
 	* "file-recv-complete"
+	* "file-recv-request"
 	* "file-send-accept"
 	* "file-send-start"
 	* "file-send-cancel"
