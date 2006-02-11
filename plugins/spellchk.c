@@ -1925,7 +1925,7 @@ static void list_add_new()
 	gtk_editable_delete_text(GTK_EDITABLE(bad_entry), 0, -1);
 	gtk_editable_delete_text(GTK_EDITABLE(good_entry), 0, -1);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), TRUE);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(case_toggle), FALSE);
 	gtk_widget_grab_focus(bad_entry);
 
 	save_list();
