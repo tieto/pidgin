@@ -2620,7 +2620,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		/* If there's not a contact alias, the node is being displayed with
 		 * this alias, so there's no point in showing it in the tooltip. */
 		if (full && b->alias != NULL && b->alias[0] != '\0' &&
-		    (c->alias != NULL && c->alias[0] != '\0'))
+		    (c->alias != NULL && c->alias[0] != '\0') &&
+		    strcmp(c->alias, b->alias) != 0)
 		{
 			tmp = g_markup_escape_text(b->alias, -1);
 			g_string_append_printf(str, _("\n<b>Buddy Alias:</b> %s"), tmp);
