@@ -77,7 +77,7 @@ faim_internal void aim_frame_destroy(aim_frame_t *frame)
 }
 
 /*
- * Read a FLAP header from conn into fr, and return the number of 
+ * Read a FLAP header from conn into fr, and return the number of
  * bytes in the payload.
  *
  * @return -1 on error, otherwise return the length of the payload.
@@ -156,10 +156,12 @@ static int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *conn, aim
 }
 
 /*
- * Grab a single command sequence off the socket, and enqueue it in the incoming event queue 
- * in a separate struct.
+ * Grab a single command sequence off the socket, and enqueue it in
+ * the incoming event queue in a separate struct.
  *
  * @return 0 on success, otherwise return the error number.
+ *         "Success" doesn't mean we have new data, it just means
+ *         the connection isn't dead.
  */
 faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 {

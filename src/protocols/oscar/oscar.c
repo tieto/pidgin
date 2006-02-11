@@ -1648,24 +1648,33 @@ static void oscar_ask_direct_im(GaimBlistNode *node, gpointer ignored) {
  * End scary direct im stuff
  *****************************************************************************/
 
-static void oscar_callback(gpointer data, gint source, GaimInputCondition condition) {
-	aim_conn_t *conn = (aim_conn_t *)data;
-	aim_session_t *sess = aim_conn_getsess(conn);
-	GaimConnection *gc = sess ? sess->aux_data : NULL;
+static void
+oscar_callback(gpointer data, gint source, GaimInputCondition condition)
+{
+	aim_conn_t *conn;
+	aim_session_t *sess;
+	GaimConnection *gc;
 	OscarData *od;
 
-	if (!gc) {
-		gaim_debug_info("oscar",
-				   "oscar callback for closed connection (1).\n");
+	conn = (aim_conn_t *)data;
+	sess = aim_conn_getsess(conn);
+	gc = sess ? sess->aux_data : NULL;
+
+	if (gc == NULL)
+	{
+		gaim_debug_info("oscar", "oscar callback for closed connection (1).\n");
 		return;
 	}
 
-	if( !(od = (OscarData *)gc->proto_data) ) {
+	od = gc->proto_data;
+	if (od == NULL)
+	{
 		gaim_debug_warning("oscar","NULL od in oscar_callback; conn closed?\n");
 		return;
 	}
 
-	if (!g_list_find(gaim_connections_get_all(), gc)) {
+	if (!g_list_find(gaim_connections_get_all(), gc))
+	{
 		/* oh boy. this is probably bad. i guess the only thing we
 		 * can really do is return? */
 		gaim_debug_info("oscar",
@@ -1674,97 +1683,99 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 		return;
 	}
 
-	if (condition & GAIM_INPUT_READ) {
-		if (conn->type == AIM_CONN_TYPE_LISTENER) {
-			gaim_debug_info("oscar",
-					   "got information on rendezvous listener\n");
-			if (aim_handlerendconnect(od->sess, conn) < 0) {
-				gaim_debug_error("oscar",
-						   "connection error (rendezvous listener)\n");
-				aim_conn_kill(od->sess, &conn);
-				/* AAA - Don't we need to gaim_xfer_cancel here? --marv */
+	/* We only care about READ conditions */
+	if (!(condition & GAIM_INPUT_READ))
+		return;
+
+	if (conn->type == AIM_CONN_TYPE_LISTENER) {
+		gaim_debug_info("oscar",
+				   "got information on rendezvous listener\n");
+		if (aim_handlerendconnect(od->sess, conn) < 0) {
+			gaim_debug_error("oscar",
+					   "connection error (rendezvous listener)\n");
+			aim_conn_kill(od->sess, &conn);
+			/* AAA - Don't we need to gaim_xfer_cancel here? --marv */
+		}
+	} else {
+		if (aim_get_command(od->sess, conn) >= 0) {
+			aim_rxdispatch(od->sess);
+			if (od->killme) {
+				gaim_debug_error("oscar", "Waiting to be destroyed\n");
+				return;
 			}
 		} else {
-			if (aim_get_command(od->sess, conn) >= 0) {
-				aim_rxdispatch(od->sess);
-				if (od->killme) {
-					gaim_debug_error("oscar", "Waiting to be destroyed\n");
-					return;
+			if ((conn->type == AIM_CONN_TYPE_BOS) ||
+				!(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS)))
+			{
+				gaim_debug_error("oscar", "Major connection error "
+					"(invalid data was received on the oscar TCP stream).\n");
+				gaim_connection_error(gc, _("Disconnected."));
+			} else if (conn->type == AIM_CONN_TYPE_CHAT) {
+				struct chat_connection *cc = find_oscar_chat_by_conn(gc, conn);
+				GaimConversation *conv = gaim_find_chat(gc, cc->id);
+				char *buf;
+				gaim_debug_info("oscar", "Lost connection "
+								"to chat room %s\n", cc->name);
+
+				buf = g_strdup_printf(_("You have lost your connection "
+										"to chat room %s."), cc->name);
+				if (conv != NULL)
+					gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
+				else
+					gaim_notify_error(gc, NULL, buf, NULL);
+				g_free(buf);
+
+				oscar_chat_kill(gc, cc);
+
+			} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
+				if (od->cnpa > 0)
+					gaim_input_remove(od->cnpa);
+				od->cnpa = 0;
+				gaim_debug_info("oscar",
+						   "removing chatnav input watcher\n");
+				while (od->create_rooms) {
+					struct create_room *cr = od->create_rooms->data;
+					g_free(cr->name);
+					od->create_rooms =
+						g_slist_remove(od->create_rooms, cr);
+					g_free(cr);
+					gaim_notify_error(gc, NULL,
+									  _("Chat is currently unavailable"),
+									  NULL);
 				}
+				gaim_debug_info("oscar","killing rendezvous connection\n");
+				aim_conn_kill(od->sess, &conn);
+			} else if (conn->type == AIM_CONN_TYPE_AUTH) {
+				if (od->paspa > 0)
+					gaim_input_remove(od->paspa);
+				od->paspa = 0;
+				gaim_debug_info("oscar",
+						   "removing authconn input watcher\n");
+				aim_conn_kill(od->sess, &conn);
+			} else if (conn->type == AIM_CONN_TYPE_EMAIL) {
+				if (od->emlpa > 0)
+					gaim_input_remove(od->emlpa);
+				od->emlpa = 0;
+				gaim_debug_info("oscar",
+						   "removing email input watcher\n");
+				aim_conn_kill(od->sess, &conn);
+			} else if (conn->type == AIM_CONN_TYPE_ICON) {
+				if (od->icopa > 0)
+					gaim_input_remove(od->icopa);
+				od->icopa = 0;
+				gaim_debug_info("oscar",
+						   "removing icon input watcher\n");
+				aim_conn_kill(od->sess, &conn);
+			} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
+				if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
+					gaim_odc_disconnect(od->sess, conn);
+				gaim_debug_info("oscar","killing rendezvous connection\n");
+				aim_conn_kill(od->sess, &conn);
 			} else {
-				if ((conn->type == AIM_CONN_TYPE_BOS) ||
-					!(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS)))
-				{
-					gaim_debug_error("oscar", "Major connection error "
-						"(invalid data was received on the oscar TCP stream).\n");
-					gaim_connection_error(gc, _("Disconnected."));
-				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
-					struct chat_connection *cc = find_oscar_chat_by_conn(gc, conn);
-					GaimConversation *conv = gaim_find_chat(gc, cc->id);
-					char *buf;
-					gaim_debug_info("oscar", "Lost connection "
-									"to chat room %s\n", cc->name);
-
-					buf = g_strdup_printf(_("You have lost your connection "
-											"to chat room %s."), cc->name);
-					if (conv != NULL)
-						gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
-					else
-						gaim_notify_error(gc, NULL, buf, NULL);
-					g_free(buf);
-
-					oscar_chat_kill(gc, cc);
-
-				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
-					if (od->cnpa > 0)
-						gaim_input_remove(od->cnpa);
-					od->cnpa = 0;
-					gaim_debug_info("oscar",
-							   "removing chatnav input watcher\n");
-					while (od->create_rooms) {
-						struct create_room *cr = od->create_rooms->data;
-						g_free(cr->name);
-						od->create_rooms =
-							g_slist_remove(od->create_rooms, cr);
-						g_free(cr);
-						gaim_notify_error(gc, NULL,
-										  _("Chat is currently unavailable"),
-										  NULL);
-					}
-					gaim_debug_info("oscar","killing rendezvous connection\n");
-					aim_conn_kill(od->sess, &conn);
-				} else if (conn->type == AIM_CONN_TYPE_AUTH) {
-					if (od->paspa > 0)
-						gaim_input_remove(od->paspa);
-					od->paspa = 0;
-					gaim_debug_info("oscar",
-							   "removing authconn input watcher\n");
-					aim_conn_kill(od->sess, &conn);
-				} else if (conn->type == AIM_CONN_TYPE_EMAIL) {
-					if (od->emlpa > 0)
-						gaim_input_remove(od->emlpa);
-					od->emlpa = 0;
-					gaim_debug_info("oscar",
-							   "removing email input watcher\n");
-					aim_conn_kill(od->sess, &conn);
-				} else if (conn->type == AIM_CONN_TYPE_ICON) {
-					if (od->icopa > 0)
-						gaim_input_remove(od->icopa);
-					od->icopa = 0;
-					gaim_debug_info("oscar",
-							   "removing icon input watcher\n");
-					aim_conn_kill(od->sess, &conn);
-				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
-					if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
-						gaim_odc_disconnect(od->sess, conn);
-					gaim_debug_info("oscar","killing rendezvous connection\n");
-					aim_conn_kill(od->sess, &conn);
-				} else {
-					gaim_debug_error("oscar",
-							   "holy crap! generic connection error! %hu\n",
-							   conn->type);
-					aim_conn_kill(od->sess, &conn);
-				}
+				gaim_debug_error("oscar",
+						   "holy crap! generic connection error! %hu\n",
+						   conn->type);
+				aim_conn_kill(od->sess, &conn);
 			}
 		}
 	}
