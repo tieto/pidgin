@@ -82,8 +82,8 @@ do_timestamp(gpointer data)
 
 
 static gboolean
-timestamp_displaying_conv_msg(GaimAccount *account, GaimConversation *conv,
-							  char **buffer, GaimMessageFlags flags, void *data)
+timestamp_displaying_conv_msg(GaimAccount *account, const char *who, char **buffer,
+				GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	int is_timestamp_enabled;
 

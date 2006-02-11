@@ -241,7 +241,8 @@ unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv)
 }
 
 static gboolean
-message_displayed_cb(GaimAccount *account, GaimConversation *conv, const char *message, GaimMessageFlags flags)
+message_displayed_cb(GaimAccount *account, const char *who, char *message,
+				GaimConversation *conv, GaimMessageFlags flags)
 {
 	if ((flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_DELAYED))
 		notify(conv, TRUE);

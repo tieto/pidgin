@@ -63,7 +63,7 @@ static void add_button (MMConversation *mmconv);
 static void remove_widget (GtkWidget *button);
 static void init_conversation (GaimConversation *conv);
 static void conv_destroyed(GaimConversation *conv);
-static gboolean intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, void* pData);
+static gboolean intercept_sent(GaimAccount *account, const char *who, char **message, void* pData);
 static gboolean intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags);
 static gboolean send_change_request (const int session, const char *id, const char *command, const char *parameters);
 static gboolean send_change_confirmed (const int session, const char *command, const char *parameters);
@@ -281,7 +281,7 @@ plugin_load(GaimPlugin *plugin) {
 					plugin, GAIM_CALLBACK(conv_destroyed), NULL);
 					
 	/* Listen for sending/receiving messages to replace tags */
-	gaim_signal_connect(conv_list_handle, "writing-im-msg",
+	gaim_signal_connect(conv_list_handle, "sending-im-msg",
 					plugin, GAIM_CALLBACK(intercept_sent), NULL);
 	gaim_signal_connect(conv_list_handle, "receiving-im-msg",
 					plugin, GAIM_CALLBACK(intercept_received), NULL);
@@ -304,7 +304,7 @@ plugin_unload(GaimPlugin *plugin) {
 
 
 static gboolean
-intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, void* pData)
+intercept_sent(GaimAccount *account, const char *who, char **message, void* pData)
 {
 	
 	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))

@@ -33,32 +33,37 @@
 
  @signaldef writing-im-msg
   @signalproto
-gboolean (*writing_im_msg)(GaimAccount *account, GaimConversation *conv, char **message);
+gboolean (*writing_im_msg)(GaimAccount *account, const char *who,
+                           char **message, GaimConversation *conv,
+                           GaimMessageFlags flags);
   @endsignalproto
   @signaldesc
-   Emitted before a message is displayed in an IM conversation or sent to a remote user.
-   @a message is a pointer to a string, so the plugin can replace the
-   message that will be displayed along with the message that will be sent.
-   This can also be used to cancel an outgoing message by returning @c TRUE.
+   Emitted before a message is written in an IM conversation. If the
+   message is changed, then the changed message is displayed and logged
+   instead of the original message.
   @note
    Make sure to free @a *message before you replace it!
-  @param account The account the message is being displayed and sent on.
-  @param conv    The conversation the message is being displayed and sent on.
-  @param message A pointer to the message that will be displayed and sent.
+  @param account The account.
+  @param who     The name of the user.
+  @param message A pointer to the message.
+  @param conv    The conversation.
+  @param flags   Flags for this message.
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
  @endsignaldef
 
  @signaldef wrote-im-msg
   @signalproto
-void (*wrote_im_msg)(GaimAccount *account, GaimConversation *conv, const char *message);
+void (*wrote_im_msg)(GaimAccount *account, const char *who,
+                     char *message, GaimConversation *conv,
+                     GaimMessageFlags flags);
   @endsignalproto
   @signaldesc
-   Emitted after a message is entered by the user, but before it is sent and displyed.
-   When sending an IM, the order that the im-msg callbacks will be called is:
-   writing-im-msg, wrote-im-msg, sending-im-msg, and finally sent-im-msg.
-  @param account The account the message was displayed on.
-  @param conv    The conversation the message was displayed on.
-  @param message The message that was displayed.
+   Emitted after a message is written and possibly displayed in a conversation.
+  @param account The account.
+  @param who     The name of the user.
+  @param message The message.
+  @param conv    The conversation.
+  @param flags   Flags for this message.
  @endsignaldef
 
  @signaldef sending-im-msg
@@ -91,7 +96,8 @@ void (*sent_im_msg)(GaimAccount *account, const char *receiver,
  @signaldef receiving-im-msg
   @signalproto
 gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
-                            char **message, GaimConversation *conv, int *flags);
+                             char **message, GaimConversation *conv,
+                             GaimMessageFlags *flags);
   @endsignalproto
   @signaldesc
    Emitted when an IM is received. The callback can replace the name of the
@@ -111,7 +117,7 @@ gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
  @signaldef received-im-msg
   @signalproto
 void (*received_im_msg)(GaimAccount *account, char *sender, char *message,
-                            GaimConversation *conv, int flags);
+                        GaimConversation *conv, GaimMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after an IM is received.
@@ -124,34 +130,37 @@ void (*received_im_msg)(GaimAccount *account, char *sender, char *message,
 
  @signaldef writing-chat-msg
   @signalproto
-gboolean (*writing_chat_msg)(GaimAccount *account, GaimConversation *conv, char **message);
+gboolean (*writing_chat_msg)(GaimAccount *account, const char *who,
+                             char **message, GaimConversation *conv,
+                             GaimMessageFlags flags);
   @endsignalproto
   @signaldesc
-   Emitted before a message is displayed in a chat conversation or sent to
-   a remote chat.  @a message is a pointer to a string, so the plugin can
-   replace the message that will be displayed along with the message that
-   will be sent.  This can also be used to cancel an outgoing message by
-   returning @c TRUE.
+   Emitted before a message is written in a chat conversation. If the
+   message is changed, then the changed message is displayed and logged
+   instead of the original message.
   @note
    Make sure to free @a *message before you replace it!
-  @param account The account the message is being displayed and sent on.
-  @param conv    The conversation the message is being displayed and sent on.
-  @param message A pointer to the message that will be displayed and sent.
+  @param account The account.
+  @param who     The name of the user.
+  @param message A pointer to the message.
+  @param conv    The conversation.
+  @param flags   Flags for this message.
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
  @endsignaldef
 
  @signaldef wrote-chat-msg
   @signalproto
-void (*wrote_chat_msg)(GaimAccount *account, GaimConversation *conv, const char *message);
+void (*wrote_chat_msg)(GaimAccount *account, const char *who,
+                       char *message, GaimConversation *conv,
+                       GaimMessageFlags flags);
   @endsignalproto
   @signaldesc
-   Emitted after a message is entered by the user, but before it is sent and displyed.
-   When sending an IM, the order that the im-msg callbacks will be called is:
-   writing-chat-msg, wrote-chat-msg, sending-chat-msg, and finally
-   sent-chat-msg.
-  @param account The account the message was displayed on.
-  @param conv    The conversation the message was displayed on.
-  @param message The message that was displayed.
+   Emitted after a message is written and possibly displayed in a chat.
+  @param account The account.
+  @param who     The name of the user.
+  @param message The message.
+  @param conv    The conversation.
+  @param flags   Flags for this message.
  @endsignaldef
 
  @signaldef sending-chat-msg

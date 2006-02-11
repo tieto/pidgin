@@ -30,7 +30,8 @@
 
 GaimPlugin *plugin_handle = NULL;
 
-static gboolean outgoing_msg_cb(GaimAccount *account, GaimConversation *conv, char **message)
+static gboolean outgoing_msg_cb(GaimAccount *account, const char *who, char **message,
+					GaimConversation *conv, GaimMessageFlags flags, gpointer null)
 {
   char *m;
   char **ms = g_strsplit(*message, "<u>", -1);

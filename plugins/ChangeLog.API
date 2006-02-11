@@ -292,6 +292,12 @@ version 2.0.0:
 	  conversation pointer and flags
 	* "receiving-im-msg" and "receving-chat-msg" to match, both now pass a
 	  conversation pointer and a pointer to the flags.
+	* "writing-im-msg", "wrote-im-msg", "writing-chat-msg", "wrote-chat-msg":
+	  Now emitted from a difference place in the message handling code.
+	  The arguments also changed.
+	* "displaying-im-msg", "displayed-im-msg", "displaying-chat-msg",
+	  "displayed-chat-msg": Added "who" argument, which changes the order
+	  of the existing arguments.
 
 	Signals - Added:  (See the Doxygen docs for details on all signals.)
 	* "account-disabled"

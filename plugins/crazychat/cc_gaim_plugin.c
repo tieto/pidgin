@@ -71,8 +71,8 @@ static gboolean receive_im_cb(GaimAccount *account, char **sender,
  * @param message	the message we are displaying
  * @param data		user data
  */
-static gboolean display_im_cb(GaimAccount *account, GaimConversation *conv,
-		char **message, void *data);
+static gboolean display_im_cb(GaimAccount *account, const char *who, char **message,
+			GaimConnection *conv, GaimMessageFlags flags, void *data);
 
 /**
  * Callback for CrazyChat plugin configuration frame

@@ -4622,7 +4622,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
 							gaim_gtk_conversations_get_handle(), (type == GAIM_CONV_TYPE_IM ?
 							"displaying-im-msg" : "displaying-chat-msg"),
-							account, conv, &displaying, flags));
+							account, name, &displaying, conv, flags));
 	if (plugin_return)
 	{
 		g_free(displaying);
@@ -4916,7 +4916,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
 		(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-		account, conv, message, flags);
+		account, name, message, conv, flags);
 	g_free(displaying);
 }
 
@@ -5843,7 +5843,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	g_object_unref(G_OBJECT(scale));
 
-
 	gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
 
 	frame = gtk_frame_new(NULL);
@@ -5875,9 +5874,11 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gtk_widget_show(frame);
 
 	/* The buddy icon code needs badly to be fixed. */
-	buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 	if(gaim_gtk_conv_window_is_active_conversation(conv))
+	{
+		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 		gtk_window_set_icon(GTK_WINDOW(win->window), buf);
+	}
 }
 
 void
@@ -6464,44 +6465,48 @@ gaim_gtk_conversations_init(void)
 	                     gaim_value_new(GAIM_TYPE_POINTER));
 
 	gaim_signal_register(handle, "displaying-im-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,
-						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 5,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
-						 gaim_value_new(G_TYPE_INT));
+						 gaim_value_new(GAIM_TYPE_INT));
 
 	gaim_signal_register(handle, "displayed-im-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT,
-						 NULL, 4,
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
+						 NULL, 5,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new(GAIM_TYPE_STRING),
-						 gaim_value_new(G_TYPE_INT));
+						 gaim_value_new(GAIM_TYPE_INT));
 
 	gaim_signal_register(handle, "displaying-chat-msg",
-						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT,
-						 gaim_value_new(GAIM_TYPE_BOOLEAN), 4,
+						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 gaim_value_new(GAIM_TYPE_BOOLEAN), 5,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new_outgoing(GAIM_TYPE_STRING),
-						 gaim_value_new(G_TYPE_INT));
+						 gaim_value_new(GAIM_TYPE_INT));
 
 	gaim_signal_register(handle, "displayed-chat-msg",
-						 gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT,
-						 NULL, 4,
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
+						 NULL, 5,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_CONVERSATION),
-						 gaim_value_new(GAIM_TYPE_STRING),
-						 gaim_value_new(G_TYPE_INT));
+						 gaim_value_new(GAIM_TYPE_INT));
 
 	gaim_signal_register(handle, "conversation-switched",
 						 gaim_marshal_VOID__POINTER_POINTER, NULL, 1,

@@ -200,7 +200,8 @@ signed_off_cb(GaimConnection *gc, void *data)
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static gboolean
-writing_im_msg_cb(GaimAccount *account, GaimConversation  *conv, char **buffer, void *data)
+writing_im_msg_cb(GaimAccount *account, const char *who, char **buffer,
+				GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	gaim_debug_misc("signals test", "writing-im-msg (%s, %s, %s)\n",
 					gaim_account_get_username(account), gaim_conversation_get_name(conv), *buffer);
@@ -210,7 +211,8 @@ writing_im_msg_cb(GaimAccount *account, GaimConversation  *conv, char **buffer, 
 }
 
 static void
-wrote_im_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
+wrote_im_msg_cb(GaimAccount *account, const char *who, const char *buffer,
+				GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	gaim_debug_misc("signals test", "wrote-im-msg (%s, %s, %s)\n",
 					gaim_account_get_username(account), gaim_conversation_get_name(conv), buffer);
@@ -252,8 +254,8 @@ received_im_msg_cb(GaimAccount *account, char *sender, char *buffer,
 }
 
 static gboolean
-writing_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
-		       char **buffer, void *data)
+writing_chat_msg_cb(GaimAccount *account, const char *who, char **buffer,
+				GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	gaim_debug_misc("signals test", "writing-chat-msg (%s, %s)\n",
 					gaim_conversation_get_name(conv), *buffer);
@@ -262,7 +264,8 @@ writing_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
 }
 
 static void
-wrote_chat_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
+wrote_chat_msg_cb(GaimAccount *account, const char *who, const char *buffer,
+				GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	gaim_debug_misc("signals test", "wrote-chat-msg (%s, %s)\n",
 					gaim_conversation_get_name(conv), buffer);

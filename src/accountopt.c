@@ -114,16 +114,12 @@ gaim_account_option_destroy(GaimAccountOption *option)
 {
 	g_return_if_fail(option != NULL);
 
-	if (option->text != NULL)
-		g_free(option->text);
-
-	if (option->pref_name != NULL)
-		g_free(option->pref_name);
+	g_free(option->text);
+	g_free(option->pref_name);
 
 	if (option->type == GAIM_PREF_STRING)
 	{
-		if (option->default_value.string != NULL)
-			g_free(option->default_value.string);
+		g_free(option->default_value.string);
 	}
 	else if (option->type == GAIM_PREF_STRING_LIST)
 	{
