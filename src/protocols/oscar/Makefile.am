@@ -6,41 +6,42 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 OSCARSOURCES = \
-	admin.c        \
-	adverts.c      \
-	aim.h          \
-	aim_cbtypes.h  \
-	aim_internal.h \
-	auth.c         \
-	bart.c         \
-	bos.c          \
-	bstream.c      \
-	buddylist.c    \
-	chat.c         \
-	chatnav.c      \
-	conn.c         \
-	email.c        \
-	ft.c           \
-	icq.c          \
-	im.c           \
-	invite.c       \
-	locate.c       \
+	bstream.c           \
+	conn.c              \
+	family_admin.c      \
+	family_advert.c     \
+	family_alert.c      \
+	family_auth.c       \
+	family_bart.c       \
+	family_bos.c        \
+	family_buddy.c      \
+	family_chat.c       \
+	family_chatnav.c    \
+	family_icq.c        \
+	family_icbm.c       \
+	family_invite.c     \
+	family_locate.c     \
+	family_odir.c       \
+	family_oservice.c   \
+	family_popup.c      \
+	family_feedbag.c    \
+	family_stats.c      \
+	family_translate.c  \
+	family_userlookup.c \
 	misc.c         \
-	msgcookie.c    \
-	odir.c         \
-	popups.c       \
-	rxhandlers.c   \
-	rxqueue.c      \
-	search.c       \
-	service.c      \
-	snac.c         \
-	ssi.c          \
-	stats.c        \
-	tlv.c          \
-	translate.c    \
-	txqueue.c      \
-	util.c         \
-	oscar.c
+	msgcookie.c         \
+	oscar.c             \
+	oscar.h             \
+	oscar_internal.h    \
+	peer.c              \
+	peer.h              \
+	rxhandlers.c        \
+	rxqueue.c           \
+	snac.c              \
+	snactypes.h         \
+	tlv.c               \
+	txqueue.c           \
+	util.c
 
 AM_CFLAGS = $(st)
 

@@ -1,13 +1,32 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0007 - Account Administration.
  *
- * Used for stuff like changing the formating of your screen name, changing your 
- * email address, requesting an account confirmation email, getting account info, 
+ * Used for stuff like changing the formating of your screen name, changing your
+ * email address, requesting an account confirmation email, getting account info,
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /*
  * Subtype 0x0002 - Request a bit of account info.
@@ -18,7 +37,7 @@
  * 0x0013 - Unknown
  *
  */
-faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t info)
+faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, guint16 info)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -40,7 +59,7 @@ faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, fu16_t 
 /*
  * Subtypes 0x0003 and 0x0005 - Parse account info.
  *
- * Called in reply to both an information request (subtype 0x0002) and 
+ * Called in reply to both an information request (subtype 0x0002) and
  * an information change (subtype 0x0004).
  *
  */
@@ -48,13 +67,13 @@ static int infochange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 {
 	aim_rxcallback_t userfunc;
 	char *url=NULL, *sn=NULL, *email=NULL;
-	fu16_t perms, tlvcount, err=0;
+	guint16 perms, tlvcount, err=0;
 
 	perms = aimbs_get16(bs);
 	tlvcount = aimbs_get16(bs);
 
 	while (tlvcount && aim_bstream_empty(bs)) {
-		fu16_t type, length;
+		guint16 type, length;
 
 		type = aimbs_get16(bs);
 		length = aimbs_get16(bs);
@@ -87,9 +106,9 @@ static int infochange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		userfunc(sess, rx, (snac->subtype == 0x0005) ? 1 : 0, perms, err, url, sn, email);
 
-	if (sn) free(sn);
-	if (url) free(url);
-	if (email) free(email);
+	free(sn);
+	free(url);
+	free(email);
 
 	return 1;
 }
@@ -168,10 +187,10 @@ faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const 
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tl, 0x0011, newemail);
-	
+
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
-	
+
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
@@ -198,7 +217,7 @@ static int accountconfirm(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t status;
+	guint16 status;
 	aim_tlvlist_t *tl;
 
 	status = aimbs_get16(bs);

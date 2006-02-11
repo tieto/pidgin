@@ -1,13 +1,32 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * misc.c
  *
- * Random stuff.  Basically just a few functions for sending 
+ * Random stuff.  Basically just a few functions for sending
  * simple SNACs, and then the generic error handler.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h> 
+#include "oscar.h"
 
 /*
  * Generic routine for sending commands.
@@ -20,7 +39,7 @@
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-faim_internal int aim_genericreq_n(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype)
+faim_internal int aim_genericreq_n(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid = 0x00000000;
@@ -35,7 +54,7 @@ faim_internal int aim_genericreq_n(aim_session_t *sess, aim_conn_t *conn, fu16_t
 	return 0;
 }
 
-faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype)
+faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -51,7 +70,7 @@ faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn,
 	return 0;
 }
 
-faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype, fu32_t *longdata)
+faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype, guint32 *longdata)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -72,7 +91,7 @@ faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, fu16_t
 	return 0;
 }
 
-faim_internal int aim_genericreq_s(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t subtype, fu16_t *shortdata)
+faim_internal int aim_genericreq_s(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype, guint16 *shortdata)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;

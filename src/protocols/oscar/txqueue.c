@@ -1,12 +1,32 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * txqueue.c
  *
  * Herein lies all the management routines for the transmit (Tx) queue.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
+#include "peer.h"
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -26,7 +46,7 @@
  * chan = channel for FLAP, hdrtype for OFT
  *
  */
-faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8_t framing, fu16_t chan, int datalen)
+faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, guint8 framing, guint16 chan, int datalen)
 {
 	aim_frame_t *fr;
 
@@ -61,7 +81,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 		gaim_debug_misc("oscar", "tx_new: unknown framing\n");
 
 	if (datalen > 0) {
-		fu8_t *data;
+		guint8 *data;
 
 		if (!(data = (unsigned char *)malloc(datalen))) {
 			aim_frame_destroy(fr);
@@ -262,7 +282,7 @@ faim_internal int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t c
 static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 {
 	aim_bstream_t bs;
-	fu8_t *bs_raw;
+	guint8 *bs_raw;
 	int payloadlen, err = 0, bslen;
 
 	payloadlen = aim_bstream_curpos(&fr->data);
@@ -298,7 +318,7 @@ static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 static int sendframe_rendezvous(aim_session_t *sess, aim_frame_t *fr)
 {
 	aim_bstream_t bs;
-	fu8_t *bs_raw;
+	guint8 *bs_raw;
 	int payloadlen, err = 0, bslen;
 
 	payloadlen = aim_bstream_curpos(&fr->data);

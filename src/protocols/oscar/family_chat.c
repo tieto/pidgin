@@ -1,18 +1,37 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x000e - Routines for the Chat service.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 #include <string.h>
 
 /* Stored in the ->internal of chat connections */
 struct chatconnpriv {
-	fu16_t exchange;
+	guint16 exchange;
 	char *name;
-	fu16_t instance;
+	guint16 instance;
 };
 
 faim_internal void aim_conn_kill_chat(aim_session_t *sess, aim_conn_t *conn)
@@ -63,7 +82,7 @@ faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 	return cur;
 }
 
-faim_export int aim_chat_attachname(aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance)
+faim_export int aim_chat_attachname(aim_conn_t *conn, guint16 exchange, const char *roomname, guint16 instance)
 {
 	struct chatconnpriv *ccp;
 
@@ -126,16 +145,16 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	aim_rxcallback_t userfunc;
 	int ret = 0;
 	int usercount = 0;
-	fu8_t detaillevel = 0;
+	guint8 detaillevel = 0;
 	char *roomname = NULL;
 	struct aim_chat_roominfo roominfo;
-	fu16_t tlvcount = 0;
+	guint16 tlvcount = 0;
 	aim_tlvlist_t *tlvlist;
 	char *roomdesc = NULL;
-	fu16_t flags = 0;
-	fu32_t creationtime = 0;
-	fu16_t maxmsglen = 0, maxvisiblemsglen = 0;
-	fu16_t unknown_d2 = 0, unknown_d5 = 0;
+	guint16 flags = 0;
+	guint32 creationtime = 0;
+	guint16 maxmsglen = 0, maxvisiblemsglen = 0;
+	guint16 unknown_d2 = 0, unknown_d5 = 0;
 
 	aim_chat_readroominfo(bs, &roominfo);
 
@@ -150,7 +169,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	/*
 	 * Everything else are TLVs.
-	 */ 
+	 */
 	tlvlist = aim_tlvlist_read(bs);
 
 	/*
@@ -168,7 +187,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	/*
 	 * Type 0x0073:  Occupant list.
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0073, 1)) {	
+	if (aim_tlv_gettlv(tlvlist, 0x0073, 1)) {
 		int curoccupant = 0;
 		aim_tlv_t *tmptlv;
 		aim_bstream_t occbs;
@@ -184,31 +203,31 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 			aim_info_extract(sess, &occbs, &userinfo[curoccupant++]);
 	}
 
-	/* 
+	/*
 	 * Type 0x00c9: Flags. (AIM_CHATROOM_FLAG)
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x00c9, 1))
 		flags = aim_tlv_get16(tlvlist, 0x00c9, 1);
 
-	/* 
+	/*
 	 * Type 0x00ca: Creation time (4 bytes)
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x00ca, 1))
 		creationtime = aim_tlv_get32(tlvlist, 0x00ca, 1);
 
-	/* 
+	/*
 	 * Type 0x00d1: Maximum Message Length
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x00d1, 1))
 		maxmsglen = aim_tlv_get16(tlvlist, 0x00d1, 1);
 
-	/* 
+	/*
 	 * Type 0x00d2: Unknown. (2 bytes)
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x00d2, 1))
 		unknown_d2 = aim_tlv_get16(tlvlist, 0x00d2, 1);
 
-	/* 
+	/*
 	 * Type 0x00d3: Room Description
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x00d3, 1))
@@ -223,7 +242,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	}
 #endif
 
-	/* 
+	/*
 	 * Type 0x00d5: Unknown. (1 byte)
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x00d5, 1))
@@ -250,7 +269,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	if (aim_tlv_gettlv(tlvlist, 0x000d8, 1)) {
 		/* Unhandled */
 	}
-	
+
 	/*
 	 * Type 0x00d9: Language 2 ("en")
 	 */
@@ -326,15 +345,15 @@ static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  *                                 (Note that WinAIM does not honor this,
  *                                 and displays the message as normal.)
  *
- * XXX convert this to use tlvchains 
+ * XXX convert this to use tlvchains
  */
-faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const gchar *msg, int msglen, const char *encoding, const char *language)
+faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language)
 {
 	int i;
 	aim_frame_t *fr;
 	aim_msgcookie_t *cookie;
 	aim_snacid_t snacid;
-	fu8_t ckstr[8];
+	guint8 ckstr[8];
 	aim_tlvlist_t *otl = NULL, *itl = NULL;
 
 	if (!sess || !conn || !msg || (msglen <= 0))
@@ -353,7 +372,7 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	 * operation to preserve uniqueness.
 	 */
 	for (i = 0; i < 8; i++)
-		ckstr[i] = (fu8_t)rand();
+		ckstr[i] = (guint8)rand();
 
 	cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_CHAT, NULL);
 	cookie->data = NULL; /* XXX store something useful here */
@@ -402,16 +421,16 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	 * Type 5: Message block.  Contains more TLVs.
 	 *
 	 * This could include other information... We just
-	 * put in a message TLV however.  
-	 * 
+	 * put in a message TLV however.
+	 *
 	 */
 	aim_tlvlist_add_frozentlvlist(&otl, 0x0005, &itl);
 
 	aim_tlvlist_write(&fr->data, &otl);
-	
+
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&otl);
-	
+
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
@@ -420,7 +439,7 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 /*
  * Subtype 0x0006
  *
- * We could probably include this in the normal ICBM parsing 
+ * We could probably include this in the normal ICBM parsing
  * code as channel 0x0003, however, since only the start
  * would be the same, we might as well do it here.
  *
@@ -440,15 +459,15 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
  *       message tlv
  *         message string
  *       possibly others
- *  
+ *
  */
 static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	int ret = 0, i;
-	aim_rxcallback_t userfunc;	
+	aim_rxcallback_t userfunc;
 	aim_userinfo_t userinfo;
-	fu8_t cookie[8];
-	fu16_t channel;
+	guint8 cookie[8];
+	guint16 channel;
 	aim_tlvlist_t *otl;
 	char *msg = NULL;
 	int len = 0;
@@ -482,7 +501,7 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	}
 
 	/*
-	 * Start parsing TLVs right away. 
+	 * Start parsing TLVs right away.
 	 */
 	otl = aim_tlvlist_read(bs);
 
@@ -501,7 +520,7 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 #if 0
 	/*
-	 * Type 0x0001: If present, it means it was a message to the 
+	 * Type 0x0001: If present, it means it was a message to the
 	 * room (as opposed to a whisper).
 	 */
 	if (aim_tlv_gettlv(otl, 0x0001, 1)) {
@@ -521,9 +540,9 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		aim_bstream_init(&tbs, msgblock->value, msgblock->length);
 		itl = aim_tlvlist_read(&tbs);
 
-		/* 
+		/*
 		 * Type 0x0001: Message.
-		 */	
+		 */
 		if (aim_tlv_gettlv(itl, 0x0001, 1)) {
 			msg = aim_tlv_getstr(itl, 0x0001, 1);
 			len = aim_tlv_gettlv(itl, 0x0001, 1)->length;
@@ -531,17 +550,17 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		/*
 		 * Type 0x0002: Encoding.
-		 */	
+		 */
 		if (aim_tlv_gettlv(itl, 0x0002, 1))
 			encoding = aim_tlv_getstr(itl, 0x0002, 1);
 
 		/*
 		 * Type 0x0003: Language.
-		 */	
+		 */
 		if (aim_tlv_gettlv(itl, 0x0003, 1))
 			language = aim_tlv_getstr(itl, 0x0003, 1);
 
-		aim_tlvlist_free(&itl); 
+		aim_tlvlist_free(&itl);
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))

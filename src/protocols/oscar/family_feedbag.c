@@ -1,21 +1,41 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0013 - Server-Side/Stored Information.
  *
- * Relatively new facility that allows certain types of information, such as 
- * a user's buddy list, permit/deny list, and permit/deny preferences, to be 
+ * Relatively new facility that allows certain types of information, such as
+ * a user's buddy list, permit/deny list, and permit/deny preferences, to be
  * stored on the server, so that they can be accessed from any client.
  *
  * We keep 2 copies of SSI data:
  * 1) An exact copy of what is stored on the AIM servers.
- * 2) A local copy that we make changes to, and then send diffs 
+ * 2) A local copy that we make changes to, and then send diffs
  *    between this and the exact copy to keep them in sync.
  *
- * All the "aim_ssi_itemlist_bleh" functions near the top just modify the list 
+ * All the "aim_ssi_itemlist_bleh" functions near the top just modify the list
  * that is given to them (i.e. they don't send SNACs).
  *
- * The SNAC sending and receiving functions are lower down in the file, and 
- * they're simpler.  They are in the order of the subtypes they deal with, 
- * starting with the request rights function (subtype 0x0002), then parse 
+ * The SNAC sending and receiving functions are lower down in the file, and
+ * they're simpler.  They are in the order of the subtypes they deal with,
+ * starting with the request rights function (subtype 0x0002), then parse
  * rights (subtype 0x0003), then--well, you get the idea.
  *
  * This is entirely too complicated.
@@ -23,14 +43,13 @@
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /**
  * Locally rebuild the 0x00c8 TLV in the additional data of the given group.
  *
  * @param list A pointer to a pointer to the current list of items.
- * @param name A null terminated string containing the group name, or NULL 
+ * @param name A null terminated string containing the group name, or NULL
  *        if you want to modify the master group.
  * @return Return a pointer to the modified item.
  */
@@ -60,9 +79,9 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
 
 	/* Build the new TLV list */
 	if (newlen > 0) {
-		fu8_t *newdata;
+		guint8 *newdata;
 
-		if (!(newdata = (fu8_t *)malloc((newlen)*sizeof(fu8_t))))
+		if (!(newdata = (guint8 *)malloc((newlen)*sizeof(guint8))))
 			return NULL;
 		newlen = 0;
 		if (group->gid == 0x0000) {
@@ -94,7 +113,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
  * @param data The additional data for the new item.
  * @return A pointer to the newly created item.
  */
-static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, const char *name, fu16_t gid, fu16_t bid, fu16_t type, aim_tlvlist_t *data)
+static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, const char *name, guint16 gid, guint16 bid, guint16 type, aim_tlvlist_t *data)
 {
 	int i;
 	struct aim_ssi_item *cur, *new;
@@ -249,7 +268,7 @@ static int aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item
  * @param bid The buddy ID# of the desired item.
  * @return Return a pointer to the item if found, else return NULL;
  */
-faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, fu16_t gid, fu16_t bid)
+faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gid, guint16 bid)
 {
 	struct aim_ssi_item *cur;
 	for (cur=list; cur; cur=cur->next)
@@ -268,7 +287,7 @@ faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list
  * @param type The type of the desired item.
  * @return Return a pointer to the item if found, else return NULL.
  */
-faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, fu16_t type)
+faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, guint16 type)
 {
 	struct aim_ssi_item *cur;
 	if (!list)
@@ -363,12 +382,12 @@ faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list)
 /**
  * Locally find the presence flag item, and return the setting.  The returned setting is a 
  * bitmask of the user flags that you are visible to.  See the AIM_FLAG_* #defines 
- * in aim.h
+ * in oscar.h
  *
  * @param list A pointer to the current list of items.
  * @return Return the current visibility mask.
  */
-faim_export fu32_t aim_ssi_getpresence(struct aim_ssi_item *list)
+faim_export guint32 aim_ssi_getpresence(struct aim_ssi_item *list)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS);
 	if (cur) {
@@ -480,7 +499,7 @@ static int aim_ssi_sync(aim_session_t *sess)
 		for (cur1=sess->ssi.local; cur1; cur1=cur1->next) {
 			if (!aim_ssi_itemlist_find(sess->ssi.official, cur1->gid, cur1->bid)) {
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
-				new->action = AIM_CB_SSI_ADD;
+				new->action = OSCAR_SUBTYPE_FEEDBAG_ADD;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;
@@ -499,7 +518,7 @@ static int aim_ssi_sync(aim_session_t *sess)
 		for (cur1=sess->ssi.official; cur1; cur1=cur1->next) {
 			if (!aim_ssi_itemlist_find(sess->ssi.local, cur1->gid, cur1->bid)) {
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
-				new->action = AIM_CB_SSI_DEL;
+				new->action = OSCAR_SUBTYPE_FEEDBAG_DEL;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;
@@ -519,7 +538,7 @@ static int aim_ssi_sync(aim_session_t *sess)
 			cur2 = aim_ssi_itemlist_find(sess->ssi.official, cur1->gid, cur1->bid);
 			if (cur2 && (aim_ssi_itemlist_cmp(cur1, cur2))) {
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
-				new->action = AIM_CB_SSI_MOD;
+				new->action = OSCAR_SUBTYPE_FEEDBAG_MOD;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;
@@ -1025,11 +1044,11 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, con
  *        3 - Allow only the users below
  *        4 - Block only the users below
  *        5 - Allow only users on my buddy list
- * @param vismask A bitmask of the class of users to whom you want to be 
- *        visible.  See the AIM_FLAG_BLEH #defines in aim.h
+ * @param vismask A bitmask of the class of users to whom you want to be
+ *        visible.  See the AIM_FLAG_BLEH #defines in oscar.h
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t vismask)
+faim_export int aim_ssi_setpermdeny(aim_session_t *sess, guint8 permdeny, guint32 vismask)
 {
 	struct aim_ssi_item *tmp;
 
@@ -1060,10 +1079,10 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, fu8_t permdeny, fu32_t 
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 0x10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t iconsumlen)
+faim_export int aim_ssi_seticon(aim_session_t *sess, guint8 *iconsum, guint16 iconsumlen)
 {
 	struct aim_ssi_item *tmp;
-	fu8_t *csumdata;
+	guint8 *csumdata;
 
 	if (!sess || !iconsum || !iconsumlen)
 		return -EINVAL;
@@ -1074,12 +1093,12 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
 	}
 
 	/* Need to add the 0x00d5 TLV to the TLV chain */
-	if (!(csumdata = (fu8_t *)malloc((iconsumlen+2)*sizeof(fu8_t))))
+	if (!(csumdata = (guint8 *)malloc((iconsumlen+2)*sizeof(guint8))))
 		return -ENOMEM;
 	csumdata[0] = 0x00;
 	csumdata[1] = 0x10;
 	memcpy(&csumdata[2], iconsum, iconsumlen);
-	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(fu8_t), csumdata);
+	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(guint8), csumdata);
 	free(csumdata);
 
 	/* Need to add the 0x0131 TLV to the TLV chain, used to cache the icon */
@@ -1123,7 +1142,7 @@ faim_export int aim_ssi_delicon(aim_session_t *sess)
  *        0x00000400 - Allow others to see your idle time
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpresence(aim_session_t *sess, fu32_t presence) {
+faim_export int aim_ssi_setpresence(aim_session_t *sess, guint32 presence) {
 	struct aim_ssi_item *tmp;
 
 	if (!sess)
@@ -1149,10 +1168,10 @@ faim_export int aim_ssi_reqrights(aim_session_t *sess)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n_snacid(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_REQRIGHTS);
+	return aim_genericreq_n_snacid(sess, conn, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_REQRIGHTS);
 }
 
 /*
@@ -1165,7 +1184,7 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	aim_tlvlist_t *tlvlist;
 	aim_tlv_t *tlv;
 	aim_bstream_t bstream;
-	fu16_t *maxitems;
+	guint16 *maxitems;
 
 	/* This SNAC is made up of a bunch of TLVs */
 	tlvlist = aim_tlvlist_read(bs);
@@ -1178,7 +1197,7 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 
 	aim_bstream_init(&bstream, tlv->value, tlv->length);
 
-	if (!(maxitems = (fu16_t *)malloc((tlv->length/2)*sizeof(fu16_t)))) {
+	if (!(maxitems = (guint16 *)malloc((tlv->length/2)*sizeof(guint16)))) {
 		aim_tlvlist_free(&tlvlist);
 		return 0;
 	}
@@ -1204,13 +1223,13 @@ faim_export int aim_ssi_reqdata(aim_session_t *sess)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
 	/* Free any current data, just in case */
 	aim_ssi_freelist(sess);
 
-	return aim_genericreq_n_snacid(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_REQDATA);
+	return aim_genericreq_n_snacid(sess, conn, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_REQDATA);
 }
 
 /*
@@ -1223,21 +1242,21 @@ faim_export int aim_ssi_reqdata(aim_session_t *sess)
  * Note that the client should never increment the revision, only the server.
  * 
  */
-faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t timestamp, fu16_t numitems)
+faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t timestamp, guint16 numitems)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+2)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_REQIFCHANGED, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_REQIFCHANGED, 0x0000, snacid);
+	aim_putsnac(&fr->data, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, snacid);
 	aimbs_put32(&fr->data, timestamp);
 	aimbs_put16(&fr->data, numitems);
 
@@ -1256,8 +1275,8 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu8_t fmtver; /* guess */
-	fu16_t namelen, gid, bid, type;
+	guint8 fmtver; /* guess */
+	guint16 namelen, gid, bid, type;
 	char *name;
 	aim_tlvlist_t *data;
 
@@ -1310,10 +1329,10 @@ faim_export int aim_ssi_enable(aim_session_t *sess)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, 0x0007);
+	return aim_genericreq_n(sess, conn, OSCAR_FAMILY_FEEDBAG, 0x0007);
 }
 
 /*
@@ -1332,7 +1351,7 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 	int snaclen;
 	struct aim_ssi_tmp *cur;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sess->ssi.pending || !sess->ssi.pending->item)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sess->ssi.pending || !sess->ssi.pending->item)
 		return -EINVAL;
 
 	/* Calculate total SNAC size */
@@ -1348,8 +1367,8 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, snaclen)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, sess->ssi.pending->action, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, sess->ssi.pending->action, 0x0000, snacid);
+	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, sess->ssi.pending->action, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, OSCAR_FAMILY_FEEDBAG, sess->ssi.pending->action, 0x0000, snacid);
 
 	for (cur=sess->ssi.pending; cur; cur=cur->next) {
 		aimbs_put16(&fr->data, cur->item->name ? strlen(cur->item->name) : 0);
@@ -1379,7 +1398,7 @@ static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	char *name;
-	fu16_t len, gid, bid, type;
+	guint16 len, gid, bid, type;
 	aim_tlvlist_t *data;
 
 	while (aim_bstream_empty(bs)) {
@@ -1418,7 +1437,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	char *name;
-	fu16_t len, gid, bid, type;
+	guint16 len, gid, bid, type;
 	aim_tlvlist_t *data;
 	struct aim_ssi_item *item;
 
@@ -1479,7 +1498,7 @@ static int parsedel(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t gid, bid;
+	guint16 gid, bid;
 	struct aim_ssi_item *del;
 
 	while (aim_bstream_empty(bs)) {
@@ -1529,7 +1548,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	if (cur->item) {
 		if (cur->ack) {
 			/* Our action was unsuccessful, so change the local list back to how it was */
-			if (cur->action == AIM_CB_SSI_ADD) {
+			if (cur->action == OSCAR_SUBTYPE_FEEDBAG_ADD) {
 				/* Remove the item from the local list */
 				/* Make sure cur->item is still valid memory */
 				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
@@ -1541,7 +1560,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				}
 				cur->item = NULL;
 
-			} else if (cur->action == AIM_CB_SSI_MOD) {
+			} else if (cur->action == OSCAR_SUBTYPE_FEEDBAG_MOD) {
 				/* Replace the local item with the item from the official list */
 				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
 					struct aim_ssi_item *cur1;
@@ -1558,7 +1577,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				} else
 					cur->item = NULL;
 
-			} else if (cur->action == AIM_CB_SSI_DEL) {
+			} else if (cur->action == OSCAR_SUBTYPE_FEEDBAG_DEL) {
 				/* Add the item back into the local list */
 				if (aim_ssi_itemlist_valid(sess->ssi.official, cur->item)) {
 					aim_ssi_itemlist_add(&sess->ssi.local, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
@@ -1568,14 +1587,14 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 		} else {
 			/* Do the exact opposite */
-			if (cur->action == AIM_CB_SSI_ADD) {
+			if (cur->action == OSCAR_SUBTYPE_FEEDBAG_ADD) {
 			/* Add the local item to the official list */
 				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
 					aim_ssi_itemlist_add(&sess->ssi.official, cur->item->name, cur->item->gid, cur->item->bid, cur->item->type, cur->item->data);
 				} else
 					cur->item = NULL;
 
-			} else if (cur->action == AIM_CB_SSI_MOD) {
+			} else if (cur->action == OSCAR_SUBTYPE_FEEDBAG_MOD) {
 				/* Replace the official item with the item from the local list */
 				if (aim_ssi_itemlist_valid(sess->ssi.local, cur->item)) {
 					struct aim_ssi_item *cur1;
@@ -1592,7 +1611,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 				} else
 					cur->item = NULL;
 
-			} else if (cur->action == AIM_CB_SSI_DEL) {
+			} else if (cur->action == OSCAR_SUBTYPE_FEEDBAG_DEL) {
 				/* Remove the item from the official list */
 				if (aim_ssi_itemlist_valid(sess->ssi.official, cur->item))
 					aim_ssi_itemlist_del(&sess->ssi.official, cur->item);
@@ -1656,10 +1675,10 @@ faim_export int aim_ssi_modbegin(aim_session_t *sess)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_EDITSTART);
+	return aim_genericreq_n(sess, conn, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_EDITSTART);
 }
 
 /*
@@ -1672,10 +1691,10 @@ faim_export int aim_ssi_modend(aim_session_t *sess)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n(sess, conn, AIM_CB_FAM_SSI, AIM_CB_SSI_EDITSTOP);
+	return aim_genericreq_n(sess, conn, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_EDITSTOP);
 }
 
 /*
@@ -1690,14 +1709,14 @@ faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg)
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_SENDAUTH, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_SENDAUTH, 0x0000, snacid);
+	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, snacid);
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
@@ -1725,7 +1744,7 @@ static int receiveauthgrant(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t tmp;
+	guint16 tmp;
 	char *sn, *msg;
 
 	/* Read screen name */
@@ -1765,14 +1784,14 @@ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, const cha
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_SENDAUTHREQ, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_SENDAUTHREQ, 0x0000, snacid);
+	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, snacid);
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
@@ -1800,7 +1819,7 @@ static int receiveauthrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t tmp;
+	guint16 tmp;
 	char *sn, *msg;
 
 	/* Read screen name */
@@ -1837,20 +1856,20 @@ static int receiveauthrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_
  * if reply=0x01 then grant
  *
  */
-faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply, const char *msg)
+faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, guint8 reply, const char *msg)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_SSI)) || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 1 + 2+(msg ? strlen(msg)+1 : 0) + 2)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_SSI, AIM_CB_SSI_SENDAUTHREP, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, AIM_CB_FAM_SSI, AIM_CB_SSI_SENDAUTHREP, 0x0000, snacid);
+	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, snacid);
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
@@ -1883,8 +1902,8 @@ static int receiveauthreply(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t tmp;
-	fu8_t reply;
+	guint16 tmp;
+	guint8 reply;
 	char *sn, *msg;
 
 	/* Read screen name */
@@ -1921,7 +1940,7 @@ static int receiveadded(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t tmp;
+	guint16 tmp;
 	char *sn;
 
 	/* Read screen name */
@@ -1941,27 +1960,27 @@ static int receiveadded(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 
-	if (snac->subtype == AIM_CB_SSI_RIGHTSINFO)
+	if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_RIGHTSINFO)
 		return parserights(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_LIST)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_LIST)
 		return parsedata(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_ADD)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_ADD)
 		return parseadd(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_MOD)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_MOD)
 		return parsemod(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_DEL)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_DEL)
 		return parsedel(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_SRVACK)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_SRVACK)
 		return parseack(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_NOLIST)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_NOLIST)
 		return parsedataunchanged(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_RECVAUTH)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_RECVAUTH)
 		return receiveauthgrant(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_RECVAUTHREQ)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_RECVAUTHREQ)
 		return receiveauthrequest(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_RECVAUTHREP)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_RECVAUTHREP)
 		return receiveauthreply(sess, mod, rx, snac, bs);
-	else if (snac->subtype == AIM_CB_SSI_ADDED)
+	else if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_ADDED)
 		return receiveadded(sess, mod, rx, snac, bs);
 
 	return 0;
@@ -1975,12 +1994,12 @@ static void ssi_shutdown(aim_session_t *sess, aim_module_t *mod)
 faim_internal int ssi_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
-	mod->family = AIM_CB_FAM_SSI;
+	mod->family = OSCAR_FAMILY_FEEDBAG;
 	mod->version = 0x0004;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "ssi", sizeof(mod->name));
+	strncpy(mod->name, "feedbag", sizeof(mod->name));
 	mod->snachandler = snachandler;
 	mod->shutdown = ssi_shutdown;
 

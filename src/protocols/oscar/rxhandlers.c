@@ -1,4 +1,24 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * rxhandlers.c
  *
  * This file contains most all of the incoming packet handlers, along
@@ -7,18 +27,18 @@
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
+#include "peer.h"
 
 struct aim_rxcblist_s {
-	fu16_t family;
-	fu16_t type;
+	guint16 family;
+	guint16 type;
 	aim_rxcallback_t handler;
-	fu16_t flags;
+	guint16 flags;
 	struct aim_rxcblist_s *next;
 };
 
-faim_internal aim_module_t *aim__findmodulebygroup(aim_session_t *sess, fu16_t group)
+faim_internal aim_module_t *aim__findmodulebygroup(aim_session_t *sess, guint16 group)
 {
 	aim_module_t *cur;
 
@@ -143,7 +163,7 @@ static int consumesnac(aim_session_t *sess, aim_frame_t *rx)
 	return 0;
 }
 
-static int consumenonsnac(aim_session_t *sess, aim_frame_t *rx, fu16_t family, fu16_t subtype)
+static int consumenonsnac(aim_session_t *sess, aim_frame_t *rx, guint16 family, guint16 subtype)
 {
 	aim_module_t *cur;
 	aim_modsnac_t snac;
@@ -170,7 +190,7 @@ static int negchan_middle(aim_session_t *sess, aim_frame_t *fr)
 {
 	aim_tlvlist_t *tlvlist;
 	char *msg = NULL;
-	fu16_t code = 0;
+	guint16 code = 0;
 	aim_rxcallback_t userfunc;
 	int ret = 1;
 
@@ -208,8 +228,8 @@ static int negchan_middle(aim_session_t *sess, aim_frame_t *fr)
  */
 static int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
 {
-	fu16_t family, subtype;
-	fu16_t maxf, maxs;
+	guint16 family, subtype;
+	guint16 maxf, maxs;
 
 	static const char *channels[6] = {
 		"Invalid (0)",
@@ -391,7 +411,7 @@ static int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
 	return 1;
 }
 
-faim_export int aim_conn_addhandler(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t type, aim_rxcallback_t newhandler, fu16_t flags)
+faim_export int aim_conn_addhandler(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags)
 {
 	struct aim_rxcblist_s *newcb;
 
@@ -441,7 +461,7 @@ faim_export int aim_clearhandlers(aim_conn_t *conn)
 	return 0;
 }
 
-faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t type)
+faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 type)
 {
 	struct aim_rxcblist_s *cur;
 
@@ -477,7 +497,7 @@ faim_internal void aim_clonehandlers(aim_session_t *sess, aim_conn_t *dest, aim_
 	return;
 }
 
-faim_internal int aim_callhandler_noparam(aim_session_t *sess, aim_conn_t *conn,fu16_t family, fu16_t type, aim_frame_t *ptr)
+faim_internal int aim_callhandler_noparam(aim_session_t *sess, aim_conn_t *conn,guint16 family, guint16 type, aim_frame_t *ptr)
 {
 	aim_rxcallback_t userfunc;
 

@@ -1,10 +1,29 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0015 - Encapsulated ICQ.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess)
 {
@@ -116,7 +135,7 @@ aim_icq_setsecurity(aim_session_t *sess, gboolean auth_required, gboolean webawa
  * Change your ICQ password.
  *
  * @param sess The oscar session
- * @param passwd The new password.  If this is longer than 8 characters it 
+ * @param passwd The new password.  If this is longer than 8 characters it
  *        will be truncated.
  * @return Return 0 if no errors, otherwise return the error number.
  */
@@ -321,7 +340,7 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 	aimbs_putle16(&fr->data, snacid); /* eh. */
 	aimbs_putle16(&fr->data, 0x0998); /* shrug. */
 	aimbs_putle16(&fr->data, strlen(xml) + 1);
-	aimbs_putraw(&fr->data, (fu8_t *)xml, strlen(xml) + 1);
+	aimbs_putraw(&fr->data, (guint8 *)xml, strlen(xml) + 1);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -331,7 +350,7 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 
 #if 0
 /*
- * Send an SMS message.  This is the non-US way.  The US-way is to IM 
+ * Send an SMS message.  This is the non-US way.  The US-way is to IM
  * their cell phone number (+19195551234).
  *
  * We basically construct and send an XML message.  The format is:
@@ -345,7 +364,7 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
  *   <time>Wkd, DD Mmm YYYY HH:MM:SS TMZ</time>
  * </icq_sms_message>
  *
- * Yeah hi Peter, whaaaat's happening.  If there's any way to use 
+ * Yeah hi Peter, whaaaat's happening.  If there's any way to use
  * a codepage other than 1252 that would be great.  Thaaaanks.
  */
 faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const char *msg, const char *alias)
@@ -469,8 +488,8 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	aim_tlvlist_t *tl;
 	aim_tlv_t *datatlv;
 	aim_bstream_t qbs;
-	fu32_t ouruin;
-	fu16_t cmdlen, cmd, reqid;
+	guint32 ouruin;
+	guint16 cmdlen, cmd, reqid;
 
 	if (!(tl = aim_tlvlist_read(bs)) || !(datatlv = aim_tlv_gettlv(tl, 0x0001, 1))) {
 		aim_tlvlist_free(&tl);
@@ -504,7 +523,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 		msg.msglen = aimbs_getle16(&qbs);
 		msg.msg = aimbs_getstr(&qbs, msg.msglen);
 
-		if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG)))
+		if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_OFFLINEMSG)))
 			ret = userfunc(sess, rx, &msg);
 
 		free(msg.msg);
@@ -512,11 +531,11 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	} else if (cmd == 0x0042) {
 		aim_rxcallback_t userfunc;
 
-		if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE)))
+		if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE)))
 			ret = userfunc(sess, rx);
 
 	} else if (cmd == 0x07da) { /* information */
-		fu16_t subtype;
+		guint16 subtype;
 		struct aim_icq_info *info;
 		aim_rxcallback_t userfunc;
 
@@ -634,11 +653,11 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 
 		if (!(snac->flags & 0x0001)) {
 			if (subtype != 0x0104)
-				if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO)))
+				if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_INFO)))
 					ret = userfunc(sess, rx, info);
 
 			if (info->uin && info->nick)
-				if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALIAS)))
+				if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_ALIAS)))
 					ret = userfunc(sess, rx, info);
 
 			if (sess->icq_info == info) {

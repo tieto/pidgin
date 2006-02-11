@@ -1,15 +1,34 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0018 - Email notification
  *
- * Used for being alerted when the email address(es) associated with 
- * your screen name get new electronic-m.  For normal AIM accounts, you 
- * get the email address screenname@netscape.net.  AOL accounts have 
+ * Used for being alerted when the email address(es) associated with
+ * your screen name get new electronic-m.  For normal AIM accounts, you
+ * get the email address screenname@netscape.net.  AOL accounts have
  * screenname@aol.com, and can also activate a netscape.net account.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /**
  * Subtype 0x0006 - Request information about your email account
@@ -24,7 +43,7 @@ faim_export int aim_email_sendcookies(aim_session_t *sess)
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_EML)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16+16)))
@@ -64,13 +83,13 @@ faim_export int aim_email_sendcookies(aim_session_t *sess)
 /**
  * Subtype 0x0007 - Receive information about your email account
  *
- * So I don't even know if you can have multiple 16 byte keys, 
+ * So I don't even know if you can have multiple 16 byte keys,
  * but this is coded so it will handle that, and handle it well.
- * This tells you if you have unread mail or not, the URL you 
- * should use to access that mail, and the domain name for the 
- * email account (screenname@domainname.com).  If this is the 
- * first 0x0007 SNAC you've received since you signed on, or if 
- * this is just a periodic status update, this will also contain 
+ * This tells you if you have unread mail or not, the URL you
+ * should use to access that mail, and the domain name for the
+ * email account (screenname@domainname.com).  If this is the
+ * first 0x0007 SNAC you've received since you signed on, or if
+ * this is just a periodic status update, this will also contain
  * the number of unread emails that you have.
  */
 static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
@@ -79,7 +98,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	aim_rxcallback_t userfunc;
 	struct aim_emailinfo *new;
 	aim_tlvlist_t *tlvlist;
-	fu8_t *cookie8, *cookie16;
+	guint8 *cookie8, *cookie16;
 	int tmp, havenewmail = 0; /* Used to tell the client we have _new_ mail */
 
 	char *alertitle = NULL, *alerturl = NULL;
@@ -130,7 +149,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 
 	alertitle = aim_tlv_getstr(tlvlist, 0x0005, 1);
 	alerturl  = aim_tlv_getstr(tlvlist, 0x000d, 1);
-	
+
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, new, havenewmail, alertitle, (alerturl ? alerturl + 2 : NULL));
 
@@ -155,7 +174,7 @@ faim_export int aim_email_activate(aim_session_t *sess)
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_EML)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+16)))
@@ -208,7 +227,7 @@ faim_internal int email_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "email", sizeof(mod->name));
+	strncpy(mod->name, "alert", sizeof(mod->name));
 	mod->snachandler = snachandler;
 	mod->shutdown = email_shutdown;
 

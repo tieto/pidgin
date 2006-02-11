@@ -1,11 +1,30 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0009 - Basic Oscar Service.
  *
  * The functionality of this family has been replaced by SSI.
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 #include <string.h>
 
@@ -20,11 +39,11 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
-	fu16_t maxpermits = 0, maxdenies = 0;
+	guint16 maxpermits = 0, maxdenies = 0;
 	int ret = 0;
 
-	/* 
-	 * TLVs follow 
+	/*
+	 * TLVs follow
 	 */
 	tlvlist = aim_tlvlist_read(bs);
 
@@ -37,7 +56,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	/*
 	 * TLV type 0x0002: Maximum number of buddies on deny list.
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0002, 1)) 
+	if (aim_tlv_gettlv(tlvlist, 0x0002, 1))
 		maxdenies = aim_tlv_get16(tlvlist, 0x0002, 1);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
@@ -45,10 +64,10 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 
 	aim_tlvlist_free(&tlvlist);
 
-	return ret;  
+	return ret;
 }
 
-/* 
+/*
  * Subtype 0x0004 - Set group permission mask.
  *
  * Normally 0x1f (all classes).
@@ -58,7 +77,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * a bitwise OR of all the user classes you want to see you.
  *
  */
-faim_export int aim_bos_setgroupperm(aim_session_t *sess, aim_conn_t *conn, fu32_t mask)
+faim_export int aim_bos_setgroupperm(aim_session_t *sess, aim_conn_t *conn, guint32 mask)
 {
 	return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
 }
@@ -73,18 +92,18 @@ faim_export int aim_bos_setgroupperm(aim_session_t *sess, aim_conn_t *conn, fu32
  *  AIM_VISIBILITYCHANGE_DENYADD: Hides you from provided list of names
  *  AIM_VISIBILITYCHANGE_DENYREMOVE: Lets list see you again
  *
- * list should be a list of 
+ * list should be a list of
  * screen names in the form "Screen Name One&ScreenNameTwo&" etc.
  *
  * Equivelents to options in WinAIM:
  *   - Allow all users to contact me: Send an AIM_VISIBILITYCHANGE_DENYADD
  *      with only your name on it.
- *   - Allow only users on my Buddy List: Send an 
+ *   - Allow only users on my Buddy List: Send an
  *      AIM_VISIBILITYCHANGE_PERMITADD with the list the same as your
  *      buddy list
- *   - Allow only the uesrs below: Send an AIM_VISIBILITYCHANGE_PERMITADD 
+ *   - Allow only the uesrs below: Send an AIM_VISIBILITYCHANGE_PERMITADD
  *      with everyone listed that you want to see you.
- *   - Block all users: Send an AIM_VISIBILITYCHANGE_PERMITADD with only 
+ *   - Block all users: Send an AIM_VISIBILITYCHANGE_PERMITADD with only
  *      yourself in the list
  *   - Block the users below: Send an AIM_VISIBILITYCHANGE_DENYADD with
  *      the list of users to be blocked
@@ -95,7 +114,7 @@ faim_export int aim_bos_changevisibility(aim_session_t *sess, aim_conn_t *conn, 
 {
 	aim_frame_t *fr;
 	int packlen = 0;
-	fu16_t subtype;
+	guint16 subtype;
 	char *localcpy = NULL, *tmpptr = NULL;
 	int i;
 	int listcount;

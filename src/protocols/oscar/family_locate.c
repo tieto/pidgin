@@ -1,4 +1,24 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0002 - Locate.
  *
  * The functions here are responsible for requesting and parsing information-
@@ -6,8 +26,7 @@
  * for getting and setting info, away messages, directory profile thingy, etc.
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
@@ -23,8 +42,8 @@
  * But, eh.
  */
 static const struct {
-	fu32_t flag;
-	fu8_t data[16];
+	guint32 flag;
+	guint8 data[16];
 } aim_caps[] = {
 
 	/*
@@ -238,7 +257,7 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 
 	if (userinfo->iconcsumlen > 0) {
 		free(cur->iconcsum);
-		cur->iconcsum = (fu8_t *)malloc(userinfo->iconcsumlen);
+		cur->iconcsum = (guint8 *)malloc(userinfo->iconcsumlen);
 		memcpy(cur->iconcsum, userinfo->iconcsum, userinfo->iconcsumlen);
 		cur->iconcsumlen = userinfo->iconcsumlen;
 	}
@@ -288,8 +307,8 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 	 * messages in its buddy list, then it would need to know if a user's
 	 * away message changes.
 	 */
-	conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC);
-	if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_GOTINFOBLOCK)))
+	conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE);
+	if ((userfunc = aim_callhandler(sess, conn, OSCAR_FAMILY_LOCATE, OSCAR_SUBTYPE_LOCATE_GOTINFOBLOCK)))
 		userfunc(sess, NULL, cur);
 }
 
@@ -345,12 +364,12 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 	}
 
 	if (!was_explicit) {
-		aim_conn_t *conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC);
+		aim_conn_t *conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE);
 		aim_rxcallback_t userfunc;
 
 		sess->locate.waiting_for_response = FALSE;
 
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQUESTINFOTIMEOUT)))
+		if ((userfunc = aim_callhandler(sess, conn, OSCAR_FAMILY_LOCATE, OSCAR_SUBTYPE_LOCATE_REQUESTINFOTIMEOUT)))
 			userfunc(sess, NULL);
 		else
 			aim_locate_dorequest(sess);
@@ -397,13 +416,13 @@ faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const c
 	return NULL;
 }
 
-faim_internal fu32_t aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len)
+faim_internal guint32 aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len)
 {
-	fu32_t flags = 0;
+	guint32 flags = 0;
 	int offset;
 
 	for (offset = 0; aim_bstream_empty(bs) && (offset < len); offset += 0x10) {
-		fu8_t *cap;
+		guint8 *cap;
 		int i, identified;
 
 		cap = aimbs_getraw(bs, 0x10);
@@ -431,13 +450,13 @@ faim_internal fu32_t aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, 
 	return flags;
 }
 
-faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len)
+faim_internal guint32 aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len)
 {
-	fu32_t flags = 0;
+	guint32 flags = 0;
 	int offset;
 
 	for (offset = 0; aim_bstream_empty(bs) && (offset < len); offset += 0x02) {
-		fu8_t *cap;
+		guint8 *cap;
 		int i, identified;
 
 		cap = aimbs_getraw(bs, 0x02);
@@ -459,7 +478,7 @@ faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t
 	return flags;
 }
 
-faim_internal int aimbs_putcaps(aim_bstream_t *bs, fu32_t caps)
+faim_internal int aimbs_putcaps(aim_bstream_t *bs, guint32 caps)
 {
 	int i;
 
@@ -479,7 +498,7 @@ faim_internal int aimbs_putcaps(aim_bstream_t *bs, fu32_t caps)
 	return 0;
 }
 
-static void dumptlv(aim_session_t *sess, fu16_t type, aim_bstream_t *bs, fu8_t len)
+static void dumptlv(aim_session_t *sess, guint16 type, aim_bstream_t *bs, guint8 len)
 {
 	int i;
 
@@ -520,7 +539,7 @@ faim_internal void aim_info_free(aim_userinfo_t *info)
 faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
-	fu8_t snlen;
+	guint8 snlen;
 
 	if (!bs || !outinfo)
 		return -EINVAL;
@@ -551,7 +570,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 	 */
 	for (curtlv = 0; curtlv < tlvcnt; curtlv++) {
 		int endpos;
-		fu16_t type, length;
+		guint16 type, length;
 
 		type = aimbs_get16(bs);
 		length = aimbs_get16(bs);
@@ -877,7 +896,7 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 		aim_tlvlist_add_caps(&tlvlist, 0x000d, info->capabilities);
 
 	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
-		aim_tlvlist_add_32(&tlvlist, (fu16_t)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
+		aim_tlvlist_add_32(&tlvlist, (guint16)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
 
 	aimbs_put16(bs, aim_tlvlist_count(&tlvlist));
 	aim_tlvlist_write(bs, &tlvlist);
@@ -894,7 +913,7 @@ static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
-	fu16_t reason;
+	guint16 reason;
 	char *sn;
 	int was_explicit;
 
@@ -942,10 +961,10 @@ faim_export int aim_locate_reqrights(aim_session_t *sess)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
 		return -EINVAL;
 
-	return aim_genericreq_n_snacid(sess, conn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQRIGHTS);
+	return aim_genericreq_n_snacid(sess, conn, OSCAR_FAMILY_LOCATE, OSCAR_SUBTYPE_LOCATE_REQRIGHTS);
 }
 
 /*
@@ -962,7 +981,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	aim_tlvlist_t *tlvlist;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
-	fu16_t maxsiglen = 0;
+	guint16 maxsiglen = 0;
 
 	tlvlist = aim_tlvlist_read(bs);
 
@@ -1008,7 +1027,7 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 	char *encoding;
 	static const char defencoding[] = {"text/aolrtf; charset=\"%s\""};
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	if (!profile && !awaymsg)
@@ -1070,14 +1089,14 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 /*
  * Subtype 0x0004 - Set your client's capabilities.
  */
-faim_export int aim_locate_setcaps(aim_session_t *sess, fu32_t caps)
+faim_export int aim_locate_setcaps(aim_session_t *sess, guint32 caps)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	aim_tlvlist_add_caps(&tl, 0x0005, caps);
@@ -1105,13 +1124,13 @@ faim_export int aim_locate_setcaps(aim_session_t *sess, fu32_t caps)
  *        0x0003 - Away message
  *        0x0004 - Capabilities
  */
-faim_export int aim_locate_getinfo(aim_session_t *sess, const char *sn, fu16_t infotype)
+faim_export int aim_locate_getinfo(aim_session_t *sess, const char *sn, guint16 infotype)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)) || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 12+1+strlen(sn))))
@@ -1193,14 +1212,14 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  * privacy: 1 to allow searching, 0 to disallow.
  *
  */
-faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy)
+faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	aim_tlvlist_add_16(&tl, 0x000a, privacy);
@@ -1252,7 +1271,7 @@ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
 
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)) || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
@@ -1275,14 +1294,14 @@ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
  * XXX pass these in better
  *
  */
-faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy)
+faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	/* ?? privacy ?? */
@@ -1325,13 +1344,13 @@ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interes
  *        0x00000008 - Certification.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, fu32_t flags)
+faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, guint32 flags)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)) || !sn)
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+1+strlen(sn))))
@@ -1377,7 +1396,7 @@ static void locate_shutdown(aim_session_t *sess, aim_module_t *mod)
 faim_internal int locate_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
-	mod->family = AIM_CB_FAM_LOC;
+	mod->family = OSCAR_FAMILY_LOCATE;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;

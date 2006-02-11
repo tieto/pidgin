@@ -1,11 +1,29 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0001 - This is a very special group.  All connections support
  * this group, as it does some particularly good things (like rate limiting).
  */
 
-#define FAIM_INTERNAL
-#define FAIM_NEED_CONN_INTERNAL
-#include "aim.h"
+#include "oscar.h"
 
 #include "cipher.h"
 
@@ -63,7 +81,7 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
  */
 static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
-	fu16_t *families;
+	guint16 *families;
 	int famcount;
 
 
@@ -92,7 +110,7 @@ static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 }
 
 /* Subtype 0x0004 - Service request */
-faim_export int aim_reqservice(aim_session_t *sess, aim_conn_t *conn, fu16_t serviceid)
+faim_export int aim_reqservice(aim_session_t *sess, aim_conn_t *conn, guint16 serviceid)
 {
 	return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
 }
@@ -103,7 +121,7 @@ faim_export int aim_reqservice(aim_session_t *sess, aim_conn_t *conn, fu16_t ser
  * family 0x000e, with a little added on to specify the exchange and room 
  * name.
  */
-faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, fu16_t exchange, const char *roomname, fu16_t instance)
+faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, guint16 exchange, const char *roomname, guint16 instance)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -264,7 +282,7 @@ static void rc_addclass(struct rateclass **head, struct rateclass *inrc)
 	return;
 }
 
-static struct rateclass *rc_findclass(struct rateclass **head, fu16_t id)
+static struct rateclass *rc_findclass(struct rateclass **head, guint16 id)
 {
 	struct rateclass *rc;
 
@@ -276,7 +294,7 @@ static struct rateclass *rc_findclass(struct rateclass **head, fu16_t id)
 	return NULL;
 }
 
-static void rc_addpair(struct rateclass *rc, fu16_t group, fu16_t type)
+static void rc_addpair(struct rateclass *rc, guint16 group, guint16 type)
 {
 	struct snacpair *sp, *sp2;
 
@@ -303,7 +321,7 @@ static void rc_addpair(struct rateclass *rc, fu16_t group, fu16_t type)
 static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)rx->conn->inside;
-	fu16_t numclasses, i;
+	guint16 numclasses, i;
 	aim_rxcallback_t userfunc;
 
 
@@ -344,7 +362,7 @@ static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	 * Then the members of each class.
 	 */
 	for (i = 0; i < numclasses; i++) {
-		fu16_t classid, count;
+		guint16 classid, count;
 		struct rateclass *rc;
 		int j;
 
@@ -354,7 +372,7 @@ static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		rc = rc_findclass(&ins->rates, classid);
 
 		for (j = 0; j < count; j++) {
-			fu16_t group, subtype;
+			guint16 group, subtype;
 
 			group = aimbs_get16(bs);
 			subtype = aimbs_get16(bs);
@@ -435,8 +453,8 @@ static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t code, rateclass;
-	fu32_t currentavg, maxavg, windowsize, clear, alert, limit, disconnect;
+	guint16 code, rateclass;
+	guint32 currentavg, maxavg, windowsize, clear, alert, limit, disconnect;
 
 	code = aimbs_get16(bs);
 	rateclass = aimbs_get16(bs);
@@ -557,7 +575,7 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t newevil;
+	guint16 newevil;
 	aim_userinfo_t userinfo;
 
 	memset(&userinfo, 0, sizeof(aim_userinfo_t));
@@ -584,11 +602,11 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  * call it again with zero when you're back.
  *
  */
-faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime)
+faim_export int aim_srv_setidle(aim_session_t *sess, guint32 idletime)
 {
 	aim_conn_t *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_BOS)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_BOS)))
 		return -EINVAL;
 
 	return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
@@ -606,7 +624,7 @@ static int migrate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
-	fu16_t groupcount, i;
+	guint16 groupcount, i;
 	aim_tlvlist_t *tl;
 	char *ip = NULL;
 	aim_tlv_t *cktlv;
@@ -624,7 +642,7 @@ static int migrate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_
 	 */
 	groupcount = aimbs_get16(bs);
 	for (i = 0; i < groupcount; i++) {
-		fu16_t group;
+		guint16 group;
 
 		group = aimbs_get16(bs);
 
@@ -654,7 +672,7 @@ static int motd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mod
 	char *msg = NULL;
 	int ret = 0;
 	aim_tlvlist_t *tlvlist;
-	fu16_t id;
+	guint16 id;
 
 	/*
 	 * Code.
@@ -695,7 +713,7 @@ static int motd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mod
  *  Bit 2:  Allows other AIM users to see how long you've been a member.
  *
  */
-faim_export int aim_bos_setprivacyflags(aim_session_t *sess, aim_conn_t *conn, fu32_t flags)
+faim_export int aim_bos_setprivacyflags(aim_session_t *sess, aim_conn_t *conn, guint32 flags)
 {
 	return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
 }
@@ -766,7 +784,7 @@ faim_internal int aim_setversions(aim_session_t *sess, aim_conn_t *conn)
 static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
 	int vercount;
-	fu8_t *versions;
+	guint8 *versions;
 
 	/* This is frivolous. (Thank you SmarterChild.) */
 	vercount = aim_bstream_empty(bs)/4;
@@ -796,15 +814,15 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
  */
-faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
+faim_export int aim_setextstatus(aim_session_t *sess, guint32 status)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
-	fu32_t data;
+	guint32 data;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_MSG)))
+	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ICBM)))
 		return -EINVAL;
 
 	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH | status;
@@ -924,7 +942,7 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu32_t offset, len;
+	guint32 offset, len;
 	aim_tlvlist_t *list;
 	char *modname;
 
@@ -946,7 +964,7 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 }
 
 /* Subtype 0x0020 - Client verification reply */
-faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t offset, fu32_t len, const fu8_t *buf, fu8_t flag)
+faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag)
 {
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
@@ -984,7 +1002,7 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
 		GaimCipher *cipher;
 		GaimCipherContext *context;
 		guchar digest[16];
-		fu8_t nil = '\0';
+		guint8 nil = '\0';
 
 		/*
 		 * I'm not sure if we really need the empty append with the
@@ -1050,8 +1068,8 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t type;
-	fu8_t flags, length;
+	guint16 type;
+	guint8 flags, length;
 
 	type = aimbs_get16(bs);
 	flags = aimbs_get8(bs);
@@ -1062,7 +1080,7 @@ static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame
 		case 0x0000:
 		case 0x0001: { /* buddy icon checksum */
 			/* not sure what the difference between 1 and 0 is */
-			fu8_t *md5 = aimbs_getraw(bs, length);
+			guint8 *md5 = aimbs_getraw(bs, length);
 			ret = userfunc(sess, rx, type, flags, length, md5);
 			free(md5);
 			} break;
@@ -1119,7 +1137,7 @@ faim_internal int service_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "service", sizeof(mod->name));
+	strncpy(mod->name, "oservice", sizeof(mod->name));
 	mod->snachandler = snachandler;
 
 	return 0;

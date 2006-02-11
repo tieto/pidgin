@@ -1,4 +1,24 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x000d - Handle ChatNav.
  *
  * The ChatNav(igation) service does various things to keep chat
@@ -7,8 +27,7 @@
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /*
  * Subtype 0x0002
@@ -24,7 +43,7 @@ faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn)
 /*
  * Subtype 0x0008
  */
-faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, fu16_t exchange)
+faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, guint16 exchange)
 {
 	static const char ck[] = {"create"};
 	static const char lang[] = {"en"};
@@ -89,7 +108,7 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 	struct aim_chat_exchangeinfo *exchanges = NULL;
 	int curexchange;
 	aim_tlv_t *exchangetlv;
-	fu8_t maxrooms = 0;
+	guint8 maxrooms = 0;
 	aim_tlvlist_t *tlvlist, *innerlist;
 
 	tlvlist = aim_tlvlist_read(bs);
@@ -150,7 +169,7 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		 * Type 0x0002: Unknown
 		 */
 		if (aim_tlv_gettlv(innerlist, 0x0002, 1)) {
-			fu16_t classperms;
+			guint16 classperms;
 
 			classperms = aim_tlv_get16(innerlist, 0x0002, 1);
 
@@ -225,7 +244,7 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		 * 
 		 */
 		if (aim_tlv_gettlv(innerlist, 0x00d5, 1)) {
-			fu8_t createperms;
+			guint8 createperms;
 
 			createperms = aim_tlv_get8(innerlist, 0x00d5, 1);
 		}
@@ -298,9 +317,9 @@ static int parseinfo_create(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist, *innerlist;
 	char *ck = NULL, *fqcn = NULL, *name = NULL;
-	fu16_t exchange = 0, instance = 0, unknown = 0, flags = 0, maxmsglen = 0, maxoccupancy = 0;
-	fu32_t createtime = 0;
-	fu8_t createperms = 0, detaillevel;
+	guint16 exchange = 0, instance = 0, unknown = 0, flags = 0, maxmsglen = 0, maxoccupancy = 0;
+	guint32 createtime = 0;
+	guint8 createperms = 0, detaillevel;
 	int cklen;
 	aim_tlv_t *bigblock;
 	int ret = 0;

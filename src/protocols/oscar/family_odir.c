@@ -1,13 +1,32 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x000f - Newer Search Method
  *
- * Used for searching for other AIM users by email address, name, 
+ * Used for searching for other AIM users by email address, name,
  * location, commmon interests, and a few other similar things.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /**
  * Subtype 0x0002 - Submit a User Search Request
@@ -51,7 +70,7 @@ faim_export int aim_odir_email(aim_session_t *sess, const char *region, const ch
 /**
  * Subtype 0x0002 - Submit a User Search Request
  *
- * Search for an AIM screen name based on various info 
+ * Search for an AIM screen name based on various info
  * about the person.
  *
  * @param sess The oscar session.
@@ -161,7 +180,7 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t tmp, numresults;
+	guint16 tmp, numresults;
 	struct aim_odir *results = NULL;
 
 	tmp = aimbs_get16(bs); /* Unknown */

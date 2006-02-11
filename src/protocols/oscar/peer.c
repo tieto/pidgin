@@ -1,4 +1,24 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Oscar File transfer (OFT) and Oscar Direct Connect (ODC).
  * (ODC is also referred to as DirectIM and IM Image.)
  *
@@ -39,12 +59,12 @@
  *      "received" checksum and size) and closes the connection.
  */
 
-#define FAIM_INTERNAL
 #ifdef HAVE_CONFIG_H
 #include  <config.h>
 #endif
 
-#include <aim.h>
+#include "oscar.h"
+#include "peer.h"
 
 #ifndef _WIN32
 #include <stdio.h>
@@ -76,7 +96,7 @@
 #endif
 
 struct aim_odc_intdata {
-	fu8_t cookie[8];
+	guint8 cookie[8];
 	char sn[MAXSNLEN+1];
 	char ip[22];
 };
@@ -130,9 +150,9 @@ static void aim_oft_dirconvert_fromstupid(char *name)
  * @param bufsize Size of buffer.
  * @param prevcheck Previous checksum.
  */
-faim_export fu32_t aim_oft_checksum_chunk(const fu8_t *buffer, int bufferlen, fu32_t prevcheck)
+faim_export guint32 aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevcheck)
 {
-	fu32_t check = (prevcheck >> 16) & 0xffff, oldcheck;
+	guint32 check = (prevcheck >> 16) & 0xffff, oldcheck;
 	int i;
 	unsigned short val;
 
@@ -155,13 +175,13 @@ faim_export fu32_t aim_oft_checksum_chunk(const fu8_t *buffer, int bufferlen, fu
 	return check << 16;
 }
 
-faim_export fu32_t aim_oft_checksum_file(char *filename) {
+faim_export guint32 aim_oft_checksum_file(char *filename) {
 	FILE *fd;
-	fu32_t checksum = 0xffff0000;
+	guint32 checksum = 0xffff0000;
 
 	if ((fd = fopen(filename, "rb"))) {
 		int bytes;
-		fu8_t buffer[1024];
+		guint8 buffer[1024];
 
 		while ((bytes = fread(buffer, 1, 1024, fd)))
 			checksum = aim_oft_checksum_chunk(buffer, bytes, checksum);
@@ -220,14 +240,14 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 		cur->internal = NULL;
 		snprintf(priv->ip, sizeof(priv->ip), "%s:%hu", ip, port);
 
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED)))
+		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIM_ESTABLISHED)))
 			ret = userfunc(sess, NULL, newconn, cur);
 
 	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_GETFILE) {
 	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
 		aim_rxcallback_t userfunc;
 
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED)))
+		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, OFT_TYPE_ESTABLISHED)))
 			ret = userfunc(sess, NULL, newconn, cur);
 
 	} else {
@@ -253,7 +273,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 	struct aim_odc_intdata *intdata = (struct aim_odc_intdata *)conn->internal;
 	aim_frame_t *fr;
 	aim_bstream_t *hdrbs;
-	fu8_t *hdr;
+	guint8 *hdr;
 	int hdrlen = 0x44;
 
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS))
@@ -322,7 +342,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
  * @param conn The already-connected ODC connection.
  * @param msg Null-terminated string to send.
  * @param len The length of the message to send, including binary data.
- * @param encoding See the AIM_CHARSET_* defines in aim.h
+ * @param encoding See the AIM_CHARSET_* defines in oscar.h
  * @param isawaymsg 0 if this is not an auto-response, 1 if it is.
  * @return Return 0 if no errors, otherwise return the error number.
  */
@@ -332,7 +352,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 	aim_bstream_t *hdrbs;
 	struct aim_odc_intdata *intdata = (struct aim_odc_intdata *)conn->internal;
 	int hdrlen = 0x44;
-	fu8_t *hdr;
+	guint8 *hdr;
 
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS) || !msg)
 		return -EINVAL;
@@ -481,12 +501,12 @@ faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn)
  * @return The new connection.
  */
 faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd,
-                                         const fu8_t *localip, fu16_t port, const fu8_t *mycookie)
+                                         const guint8 *localip, guint16 port, const guint8 *mycookie)
 {
 	aim_conn_t *newconn;
 	aim_msgcookie_t *cookie;
 	struct aim_odc_intdata *priv;
-	fu8_t ck[8];
+	guint8 ck[8];
 
 	if (!localip)
 		return NULL;
@@ -542,7 +562,7 @@ faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, in
  * @param addr Address to connect to.
  * @return The new connection.
  */
-faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie)
+faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const guint8 *cookie)
 {
 	aim_conn_t *newconn;
 	struct aim_odc_intdata *intdata;
@@ -583,8 +603,8 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	aim_frame_t fr;
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu32_t payloadlength;
-	fu16_t flags, encoding;
+	guint32 payloadlength;
+	guint16 flags, encoding;
 	char *snptr = NULL;
 
 	fr.conn = conn;
@@ -606,13 +626,13 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	gaim_debug_misc("oscar", "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
 
 	if (flags & 0x0008) {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 2);
 	} else if (flags & 0x0004) {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 1);
 	} else {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 0);
 	}
 
@@ -643,7 +663,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 				ret = userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
 		}
 		
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMINCOMING)))
 			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding, isawaymsg);
 
 		free(msg);
@@ -654,7 +674,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	return ret;
 }
 
-faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename, int send_or_recv, int method, int stage)
+faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const guint8 *cookie, const char *sn, const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv, int method, int stage)
 {
 	struct aim_oft_info *new;
 
@@ -706,8 +726,8 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const f
 	return new;
 }
 
-faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const fu8_t *cookie,
-	fu16_t port)
+faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const guint8 *cookie,
+	guint16 port)
 {
 	struct aim_rv_proxy_info *proxy_info;
 	
@@ -842,7 +862,7 @@ static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
  */
 static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
 { 
-	fu8_t *hdr;
+	guint8 *hdr;
 
 	if (!bs || !fh)
 		return -EINVAL;
@@ -890,7 +910,7 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
  *        info we're sending.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info)
+faim_export int aim_oft_sendheader(aim_session_t *sess, guint16 type, struct aim_oft_info *oft_info)
 {
 	aim_frame_t *fr;
 
@@ -944,9 +964,9 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
 	aim_tlvlist_t *tlvlist_sendfile;
 #endif
 	aim_bstream_t bs;
-	fu8_t *bs_raw;
-	fu16_t packet_len;
-	fu8_t sn_len;
+	guint8 *bs_raw;
+	guint16 packet_len;
+	guint8 sn_len;
 	int err;
 
 	err = 0;
@@ -1017,9 +1037,9 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 	aim_tlvlist_t *tlvlist_sendfile;
 #endif
 	aim_bstream_t bs;
-	fu8_t *bs_raw;
-	fu16_t packet_len;
-	fu8_t sn_len;
+	guint8 *bs_raw;
+	guint16 packet_len;
+	guint8 sn_len;
 	int err;
 
 	err = 0;
@@ -1121,15 +1141,15 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
 faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_bstream_t bs_hdr;
-	fu8_t hdr_buf[AIM_RV_PROXY_HDR_LEN];
+	guint8 hdr_buf[AIM_RV_PROXY_HDR_LEN];
 	aim_bstream_t bs_body; /* The body (everything but the header) of the packet */
-	fu8_t *body_buf = NULL;
-	fu8_t body_len;
+	guint8 *body_buf = NULL;
+	guint8 body_len;
 	
 	char str_ip[30] = {""};
-	fu8_t ip_temp[4];
+	guint8 ip_temp[4];
 	
-	fu16_t len;
+	guint16 len;
 	struct aim_rv_proxy_info *proxy_info;
 	
 	if(!(proxy_info = malloc(sizeof(struct aim_rv_proxy_info))))

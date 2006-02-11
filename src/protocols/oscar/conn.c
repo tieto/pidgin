@@ -1,3 +1,23 @@
+/*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 /**
  * Low-level connection handling.
  *
@@ -5,11 +25,9 @@
  *
  */
 
-#define FAIM_INTERNAL
-#define FAIM_NEED_CONN_INTERNAL
-#include <aim.h> 
+#include "oscar.h"
 
-/* This is defined in aim.h, but only when !FAIM_INTERNAL, since the rest of
+/* This is defined in oscar.h, but only when !FAIM_INTERNAL, since the rest of
  * the library is not allowed to call it. */
 faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
 
@@ -78,7 +96,7 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
  * about such inane things.
  *
  */
-faim_internal void aim_conn_addgroup(aim_conn_t *conn, fu16_t group)
+faim_internal void aim_conn_addgroup(aim_conn_t *conn, guint16 group)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
@@ -95,7 +113,7 @@ faim_internal void aim_conn_addgroup(aim_conn_t *conn, fu16_t group)
 	return;
 }
 
-faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group)
+faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, guint16 group)
 {
 	aim_conn_t *cur;
 
@@ -519,7 +537,7 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
  * @param sess Session to initialize.
  * @param nonblocking Set to true if you want connections to be non-blocking.
  */
-faim_export void aim_session_init(aim_session_t *sess, fu8_t nonblocking)
+faim_export void aim_session_init(aim_session_t *sess, guint8 nonblocking)
 {
 
 	if (!sess)

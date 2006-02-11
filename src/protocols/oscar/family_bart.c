@@ -1,13 +1,32 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0010 - Server stored buddy art
  *
- * Used for storing and retrieving your cute little buddy icon 
+ * Used for storing and retrieving your cute little buddy icon
  * from the AIM servers.
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /**
  * Subtype 0x0002 - Upload your icon.
@@ -18,7 +37,7 @@
  * @param iconlen Length of the raw data of the icon image file.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen)
+faim_export int aim_bart_upload(aim_session_t *sess, const guint8 *icon, guint16 iconlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -53,8 +72,8 @@ static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	fu16_t something, somethingelse;
-	fu8_t onemorething;
+	guint16 something, somethingelse;
+	guint8 onemorething;
 
 	something = aimbs_get16(bs);
 	somethingelse = aimbs_get16(bs);
@@ -76,7 +95,7 @@ static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_request(aim_session_t *sess, const char *sn, fu8_t iconcsumtype, const fu8_t *iconcsum, fu16_t iconcsumlen)
+faim_export int aim_bart_request(aim_session_t *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -118,8 +137,8 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	char *sn;
-	fu16_t flags, iconlen;
-	fu8_t iconcsumtype, iconcsumlen, *iconcsum, *icon;
+	guint16 flags, iconlen;
+	guint8 iconcsumtype, iconcsumlen, *iconcsum, *icon;
 
 	sn = aimbs_getstr(bs, aimbs_get8(bs));
 	flags = aimbs_get16(bs);

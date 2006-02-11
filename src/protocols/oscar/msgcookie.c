@@ -1,4 +1,24 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Cookie Caching stuff. Adam wrote this, apparently just some
  * derivatives of n's SNAC work. I cleaned it up, added comments.
  *
@@ -11,8 +31,7 @@
  * wrong, we get quirky behavior when cookies step on each others' toes.
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 /**
  * aim_cachecookie - appends a cookie to the cookie list
@@ -59,7 +78,7 @@ faim_internal int aim_cachecookie(aim_session_t *sess, aim_msgcookie_t *cookie)
  * @param type cookie type to look for
  * @return if found, returns the struct; if none found (or on error), returns NULL:
  */
-faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, fu8_t *cookie, int type)
+faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, guint8 *cookie, int type)
 {
 	aim_msgcookie_t *cur, **prev;
 
@@ -87,7 +106,7 @@ faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, fu8_t *coo
  * @return returns NULL on error, a pointer to the newly-allocated
  *         cookie on success.
  */
-faim_internal aim_msgcookie_t *aim_mkcookie(fu8_t *c, int type, void *data)
+faim_internal aim_msgcookie_t *aim_mkcookie(guint8 *c, int type, void *data)
 {
 	aim_msgcookie_t *cookie;
 
@@ -114,7 +133,7 @@ faim_internal aim_msgcookie_t *aim_mkcookie(fu8_t *c, int type, void *data)
  *         on success; returns NULL on error/not found
  */
 
-faim_internal aim_msgcookie_t *aim_checkcookie(aim_session_t *sess, const fu8_t *cookie, int type)
+faim_internal aim_msgcookie_t *aim_checkcookie(aim_session_t *sess, const guint8 *cookie, int type)
 {
 	aim_msgcookie_t *cur;
 

@@ -1,4 +1,24 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0017 - Authentication.
  *
  * Deals with the authorizer for SNAC-based login, and also old-style
@@ -6,8 +26,7 @@
  *
  */
 
-#define FAIM_INTERNAL
-#include "aim.h"
+#include "oscar.h"
 
 #include "cipher.h"
 
@@ -33,9 +52,9 @@
  * @param password Incoming password.
  * @param encoded Buffer to put encoded password.
  */
-static int aim_encode_password(const char *password, fu8_t *encoded)
+static int aim_encode_password(const char *password, guint8 *encoded)
 {
-	fu8_t encoding_table[] = {
+	guint8 encoding_table[] = {
 #if 0 /* old v1 table */
 		0xf3, 0xb3, 0x6c, 0x99,
 		0x95, 0x3f, 0xac, 0xb6,
@@ -58,7 +77,7 @@ static int aim_encode_password(const char *password, fu8_t *encoded)
 #endif
 
 #ifdef USE_OLD_MD5
-static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
+static int aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -75,7 +94,7 @@ static int aim_encode_password_md5(const char *password, const char *key, fu8_t 
 	return 0;
 }
 #else
-static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
+static int aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -126,7 +145,7 @@ faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)
  * be the first thing you send.
  *
  */
-faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16_t length, const fu8_t *chipsahoy)
+faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const guint16 length, const guint8 *chipsahoy)
 {
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
@@ -153,10 +172,10 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
 	int passwdlen;
-	fu8_t *password_encoded;
+	guint8 *password_encoded;
 
 	passwdlen = strlen(password);
-	if (!(password_encoded = (fu8_t *)malloc(passwdlen+1)))
+	if (!(password_encoded = (guint8 *)malloc(passwdlen+1)))
 		return -ENOMEM;
 	if (passwdlen > MAXICQPASSLEN)
 		passwdlen = MAXICQPASSLEN;
@@ -174,12 +193,12 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 
 	if (ci->clientstring)
 		aim_tlvlist_add_str(&tl, 0x0003, ci->clientstring);
-	aim_tlvlist_add_16(&tl, 0x0016, (fu16_t)ci->clientid);
-	aim_tlvlist_add_16(&tl, 0x0017, (fu16_t)ci->major);
-	aim_tlvlist_add_16(&tl, 0x0018, (fu16_t)ci->minor);
-	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
-	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
-	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib); /* distribution chan */
+	aim_tlvlist_add_16(&tl, 0x0016, (guint16)ci->clientid);
+	aim_tlvlist_add_16(&tl, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tl, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tl, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tl, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_32(&tl, 0x0014, (guint32)ci->distrib); /* distribution chan */
 	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
 
@@ -227,7 +246,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 {
 	aim_frame_t *fr;
 	aim_tlvlist_t *tl = NULL;
-	fu8_t digest[16];
+	guint8 digest[16];
 	aim_snacid_t snacid;
 
 	if (!ci || !sn || !password)
@@ -268,12 +287,12 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 
 	if (ci->clientstring)
 		aim_tlvlist_add_str(&tl, 0x0003, ci->clientstring);
-	aim_tlvlist_add_16(&tl, 0x0016, (fu16_t)ci->clientid);
-	aim_tlvlist_add_16(&tl, 0x0017, (fu16_t)ci->major);
-	aim_tlvlist_add_16(&tl, 0x0018, (fu16_t)ci->minor);
-	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
-	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
-	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib);
+	aim_tlvlist_add_16(&tl, 0x0016, (guint16)ci->clientid);
+	aim_tlvlist_add_16(&tl, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tl, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tl, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tl, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_32(&tl, 0x0014, (guint32)ci->distrib);
 	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
 
@@ -598,8 +617,8 @@ faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid)
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+len)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_RESPONSE, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_RESPONSE, 0x0000, 0);
+	snacid = aim_cachesnac(sess, OSCAR_FAMILY_AUTH, OSCAR_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, OSCAR_FAMILY_AUTH, OSCAR_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, 0);
 
 	aimbs_put16(&fr->data, len);
 	aimbs_putstr(&fr->data, securid);

@@ -1,10 +1,29 @@
 /*
+ * Gaim's oscar protocol plugin
+ * This file is the legal property of its developers.
+ * Please see the AUTHORS file distributed alongside this file.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*
  * Family 0x0003 - Old-style Buddylist Management (non-SSI).
  *
  */
 
-#define FAIM_INTERNAL
-#include <aim.h>
+#include "oscar.h"
 
 #include <string.h>
 
@@ -27,11 +46,11 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
-	fu16_t maxbuddies = 0, maxwatchers = 0;
+	guint16 maxbuddies = 0, maxwatchers = 0;
 	int ret = 0;
 
-	/* 
-	 * TLVs follow 
+	/*
+	 * TLVs follow
 	 */
 	tlvlist = aim_tlvlist_read(bs);
 
@@ -47,7 +66,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 	 * Watchers are other users who have you on their buddy
 	 * list.  (This is called the "reverse list" by a certain
 	 * other IM protocol.)
-	 * 
+	 *
 	 */
 	if (aim_tlv_gettlv(tlvlist, 0x0002, 1))
 		maxwatchers = aim_tlv_get16(tlvlist, 0x0002, 1);
@@ -102,7 +121,7 @@ faim_export int aim_buddylist_addbuddy(aim_session_t *sess, aim_conn_t *conn, co
  *
  * buddy_list = "Screen Name One&ScreenNameTwo&";
  *
- * XXX Clean this up.  
+ * XXX Clean this up.
  *
  */
 faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const char *buddy_list)
@@ -113,7 +132,7 @@ faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const c
 	char *localcpy = NULL;
 	char *tmpptr = NULL;
 
-	if (!buddy_list || !(localcpy = strdup(buddy_list))) 
+	if (!buddy_list || !(localcpy = strdup(buddy_list)))
 		return -EINVAL;
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
@@ -175,7 +194,7 @@ faim_export int aim_buddylist_removebuddy(aim_session_t *sess, aim_conn_t *conn,
 	return 0;
 }
 
-/* 
+/*
  * Subtype 0x000b
  *
  * XXX Why would we send this?
@@ -278,7 +297,7 @@ faim_internal int buddylist_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;
 	mod->flags = 0;
-	strncpy(mod->name, "buddylist", sizeof(mod->name));
+	strncpy(mod->name, "buddy", sizeof(mod->name));
 	mod->snachandler = snachandler;
 
 	return 0;
