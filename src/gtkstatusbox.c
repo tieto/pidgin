@@ -1236,6 +1236,11 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	{
 		gtk_widget_hide_all(status_box->vbox);
 		status_box->imhtml_visible = FALSE;
+		if (message != NULL)
+		{
+			g_free(message);
+			message = NULL;
+		}
 	}
 
 	if (status_box->account == NULL) {
@@ -1255,7 +1260,6 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 			/* If we've used this type+message before, lookup the transient status */
 			saved_status = gaim_savedstatus_find_by_type_and_message(
 										GPOINTER_TO_INT(data), message);
-
 
 			/* If this type+message is unique then create a new transient saved status */
 			if (saved_status == NULL)
