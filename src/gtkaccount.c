@@ -193,7 +193,24 @@ static void
 set_dialog_icon(AccountPrefsDialog *dialog)
 {
 	char *filename = gaim_buddy_icons_get_full_path(dialog->icon_path);
-	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), filename);
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+
+	if (pixbuf && dialog->prpl_info &&
+	    (dialog->prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY))
+	{
+		int width, height;
+		GdkPixbuf *scale;
+
+		gaim_gtk_buddy_icon_get_scale_size(pixbuf,
+							&dialog->prpl_info->icon_spec, &width, &height);
+		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
+		
+		g_object_unref(G_OBJECT(pixbuf));
+		pixbuf = scale;
+	}
+
+	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_entry), pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
 	g_free(filename);
 }
 
@@ -627,7 +644,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		fclose(image);
 
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
+		g_object_unref(G_OBJECT(pixbuf));
 #endif
 
 		g_free(filename);
