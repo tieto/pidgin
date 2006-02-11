@@ -3738,20 +3738,29 @@ imhtml_clear_formatting(GtkIMHtml *imhtml)
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-	remove_font_size(imhtml, &start, &end, TRUE);
-	remove_font_face(imhtml, &start, &end, TRUE);
-	remove_font_forecolor(imhtml, &start, &end, TRUE);
-	remove_font_backcolor(imhtml, &start, &end, TRUE);
-	remove_font_background(imhtml, &start, &end, TRUE);
-	remove_font_link(imhtml, &start, &end, TRUE);
+	remove_font_size(imhtml, &start, &end, FALSE);
+	remove_font_face(imhtml, &start, &end, FALSE);
+	remove_font_forecolor(imhtml, &start, &end, FALSE);
+	remove_font_backcolor(imhtml, &start, &end, FALSE);
+	remove_font_background(imhtml, &start, &end, FALSE);
+	remove_font_link(imhtml, &start, &end, FALSE);
 
 	imhtml->edit.bold = 0;
 	imhtml->edit.italic = 0;
 	imhtml->edit.underline = 0;
 	imhtml->edit.strike = 0;
 	imhtml->edit.fontsize = 0;
+
+	g_free(imhtml->edit.fontface);
+	imhtml->edit.fontface = NULL;
+
+	g_free(imhtml->edit.forecolor);
 	imhtml->edit.forecolor = NULL;
+
+	g_free(imhtml->edit.backcolor);
 	imhtml->edit.backcolor = NULL;
+
+	g_free(imhtml->edit.background);
 	imhtml->edit.background = NULL;
 }
 
