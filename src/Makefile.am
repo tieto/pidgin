@@ -241,7 +241,7 @@ bin_SCRIPTS = gaim-remote.py gaim-notifications-example.py gaim-send gaim-send-a
 
 gaim.service:
 	echo "[Gaim]" > $@
-	echo "Name=org.gaim.GaimService" >> $@
+	echo "Name=net.sf.gaim.GaimService" >> $@
 	echo "Exec=$(bindir)/gaim" >> $@
 
 #Ideally, this directory should be autodetected, and the user should

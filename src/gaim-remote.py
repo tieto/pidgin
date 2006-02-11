@@ -9,8 +9,8 @@ import xml.dom.minidom
 
 xml.dom.minidom.Element.all   = xml.dom.minidom.Element.getElementsByTagName
 
-obj = dbus.SessionBus().get_object("org.gaim.GaimService", "/org/gaim/GaimObject")
-gaim = dbus.Interface(obj, "org.gaim.GaimInterface")
+obj = dbus.SessionBus().get_object("net.sf.gaim.GaimService", "/net/sf/gaim/GaimObject")
+gaim = dbus.Interface(obj, "net.sf.gaim.GaimInterface")
 
 class CheckedObject:
     def __init__(self, obj):

@@ -66,15 +66,15 @@ def buddysignedon(buddyid):
     
 
 bus = dbus.SessionBus()
-obj = bus.get_object("org.gaim.GaimService", "/org/gaim/GaimObject")
-gaim = dbus.Interface(obj, "org.gaim.GaimInterface")
+obj = bus.get_object("net.sf.gaim.GaimService", "/net/sf/gaim/GaimObject")
+gaim = dbus.Interface(obj, "net.sf.gaim.GaimInterface")
 
 bus.add_signal_receiver(receivedimmsg,
-                        dbus_interface = "org.gaim.GaimInterface",
+                        dbus_interface = "net.sf.gaim.GaimInterface",
                         signal_name = "ReceivedImMsg")
 
 bus.add_signal_receiver(buddysignedon,
-                        dbus_interface = "org.gaim.GaimInterface",
+                        dbus_interface = "net.sf.gaim.GaimInterface",
                         signal_name = "BuddySignedOn")
 
 print """This is a simple gaim notification server.

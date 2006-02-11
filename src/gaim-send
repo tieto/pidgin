@@ -27,6 +27,6 @@ EOF
 fi
 
 shift
-dbus-send --dest=org.gaim.GaimService --print-reply --type=method_call /org/gaim/GaimObject org.gaim.GaimInterface.$METHOD_NAME "$@"
+dbus-send --dest=net.sf.gaim.GaimService --print-reply --type=method_call /net/sf/gaim/GaimObject net.sf.gaim.GaimInterface.$METHOD_NAME "$@"
 
 echo 

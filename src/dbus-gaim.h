@@ -24,8 +24,8 @@
 #ifndef _DBUS_GAIM_H_
 #define _DBUS_GAIM_H_
 
-#define DBUS_SERVICE_GAIM      "org.gaim.GaimService"
-#define DBUS_PATH_GAIM         "/org/gaim/GaimObject"
-#define DBUS_INTERFACE_GAIM    "org.gaim.GaimInterface"
+#define DBUS_SERVICE_GAIM      "net.sf.gaim.GaimService"
+#define DBUS_PATH_GAIM         "/net/sf/gaim/GaimObject"
+#define DBUS_INTERFACE_GAIM    "net.sf.gaim.GaimInterface"
 
 #endif /* _DBUS_GAIM_H_ */
