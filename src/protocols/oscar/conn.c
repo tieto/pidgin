@@ -98,7 +98,7 @@ aim_conn_addgroup(OscarConnection *conn, guint16 group)
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 
-	sg = malloc(sizeof(struct snacgroup));
+	sg = g_new(struct snacgroup, 1);
 
 	gaim_debug_misc("oscar", "adding group 0x%04x\n", group);
 	sg->group = group;
@@ -135,7 +135,6 @@ static void
 connkill_snacgroups(struct snacgroup *head)
 {
 	struct snacgroup *sg;
-
 	for (sg = head; sg; )
 	{
 		struct snacgroup *tmp;
@@ -186,7 +185,7 @@ oscar_connection_destroy(OscarSession *sess, OscarConnection *conn)
 	if (conn->type == AIM_CONN_TYPE_CHAT)
 		aim_conn_kill_chat(sess, conn);
 
-	if (conn->inside)
+	if (conn->inside != NULL)
 	{
 		aim_conn_inside_t *inside = (aim_conn_inside_t *)conn->inside;
 
@@ -198,6 +197,8 @@ oscar_connection_destroy(OscarSession *sess, OscarConnection *conn)
 
 	gaim_circ_buffer_destroy(conn->buffer_outgoing);
 	g_free(conn);
+
+	sess->oscar_connections = g_list_remove(sess->oscar_connections, conn);
 }
 
 /**
@@ -260,8 +261,6 @@ aim_conn_kill(OscarSession *sess, OscarConnection *conn)
 {
 	if (!conn)
 		return;
-
-	sess->oscar_connections = g_list_remove(sess->oscar_connections, conn);
 
 	oscar_connection_destroy(sess, conn);
 }
