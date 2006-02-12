@@ -1262,7 +1262,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 		if (changed)
 		{
 			/* If we've used this type+message before, lookup the transient status */
-			saved_status = gaim_savedstatus_find_by_type_and_message(
+			saved_status = gaim_savedstatus_find_transient_by_type_and_message(
 										GPOINTER_TO_INT(data), message);
 
 			/* If this type+message is unique then create a new transient saved status */

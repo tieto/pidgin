@@ -217,7 +217,7 @@ GaimSavedStatus *gaim_savedstatus_find_by_creation_time(time_t creation_time);
  *
  * @return The saved status if found, or NULL.
  */
-GaimSavedStatus *gaim_savedstatus_find_by_type_and_message(GaimStatusPrimitive type, const char *message);
+GaimSavedStatus *gaim_savedstatus_find_transient_by_type_and_message(GaimStatusPrimitive type, const char *message);
 
 /**
  * Determines if a given saved status is "transient."

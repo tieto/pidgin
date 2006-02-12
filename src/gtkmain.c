@@ -736,7 +736,7 @@ int main(int argc, char *argv[])
 		GaimSavedStatus *saved_status;
 
 		/* If we've used this type+message before, lookup the transient status */
-		saved_status = gaim_savedstatus_find_by_type_and_message(
+		saved_status = gaim_savedstatus_find_transient_by_type_and_message(
 							GAIM_STATUS_OFFLINE, NULL);
 
 		/* If this type+message is unique then create a new transient saved status */

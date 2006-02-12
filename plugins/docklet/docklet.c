@@ -374,9 +374,12 @@ activate_status_primitive_cb(GtkMenuItem *menuitem, gpointer user_data)
 
 	primitive = GPOINTER_TO_INT(user_data);
 
-	/* Create a new transient saved status */
-	saved_status = gaim_savedstatus_new(NULL, primitive);
-	gaim_savedstatus_set_type(saved_status, primitive);
+	/* Try to lookup an already existing transient saved status */
+	saved_status = gaim_savedstatus_find_transient_by_type_and_message(primitive, NULL);
+
+	/* Create a new transient saved status if we weren't able to find one */
+	if (saved_status == NULL)
+		saved_status = gaim_savedstatus_new(NULL, primitive);
 
 	/* Set the status for each account */
 	gaim_savedstatus_activate(saved_status);

@@ -804,8 +804,8 @@ gaim_savedstatus_find_by_creation_time(time_t creation_time)
 }
 
 GaimSavedStatus *
-gaim_savedstatus_find_by_type_and_message(GaimStatusPrimitive type,
-										  const char *message)
+gaim_savedstatus_find_transient_by_type_and_message(GaimStatusPrimitive type,
+													const char *message)
 {
 	GList *iter;
 	GaimSavedStatus *status;
@@ -813,7 +813,7 @@ gaim_savedstatus_find_by_type_and_message(GaimStatusPrimitive type,
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
 		status = (GaimSavedStatus *)iter->data;
-		if ((status->type == type) &&
+		if ((status->type == type) && gaim_savedstatus_is_transient(status) &&
 			(((status->message == NULL) && (message == NULL)) ||
 			((status->message != NULL) && (message != NULL) && !strcmp(status->message, message))))
 		{
