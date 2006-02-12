@@ -327,6 +327,7 @@ aim_getconn_type_all(OscarSession *sess, int type)
 	for (cur = sess->oscar_connections; cur; cur = cur->next)
 	{
 		OscarConnection *conn;
+		conn = cur->data;
 		if (conn->type == type)
 			return conn;
 	}
