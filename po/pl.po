@@ -37,7 +37,7 @@ msgstr "Komunikator Internetowy"
 
 #: ../gaim.desktop.in.h:3
 msgid "Send instant messages over multiple protocols"
-msgstr "Komunikator internetowy obs≈ÇugujƒÖcy kilka protoko≈Ç√≥w"
+msgstr "Komunikator internetowy obs≥uguj±cy kilka protoko≥Ûw"
 
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
