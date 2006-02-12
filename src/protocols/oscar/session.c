@@ -28,7 +28,7 @@ oscar_session_new(void)
 {
 	OscarSession *sess;
 
-	sess = g_new(OscarSession, 1);
+	sess = g_new0(OscarSession, 1);
 
 	sess->queue_outgoing = NULL;
 	sess->queue_incoming = NULL;
