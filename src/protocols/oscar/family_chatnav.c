@@ -35,7 +35,7 @@
  * conn must be a chatnav connection!
  *
  */
-faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_chatnav_reqrights(OscarSession *sess, OscarConnection *conn)
 {
 	return aim_genericreq_n_snacid(sess, conn, 0x000d, 0x0002);
 }
@@ -43,12 +43,12 @@ faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn)
 /*
  * Subtype 0x0008
  */
-faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, guint16 exchange)
+faim_export int aim_chatnav_createroom(OscarSession *sess, OscarConnection *conn, const char *name, guint16 exchange)
 {
 	static const char ck[] = {"create"};
 	static const char lang[] = {"en"};
 	static const char charset[] = {"us-ascii"};
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -101,7 +101,7 @@ faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, co
 	return 0;
 }
 
-static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs, aim_snac_t *snac2)
+static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
@@ -127,7 +127,7 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 	 * 
 	 */
 	for (curexchange = 0; ((exchangetlv = aim_tlv_gettlv(tlvlist, 0x0003, curexchange+1))); ) {
-		aim_bstream_t tbs;
+		ByteStream tbs;
 
 		aim_bstream_init(&tbs, exchangetlv->value, exchangetlv->length);
 
@@ -312,7 +312,7 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 	return ret;
 }
 
-static int parseinfo_create(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs, aim_snac_t *snac2)
+static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist, *innerlist;
@@ -323,7 +323,7 @@ static int parseinfo_create(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 	int cklen;
 	aim_tlv_t *bigblock;
 	int ret = 0;
-	aim_bstream_t bbbs;
+	ByteStream bbbs;
 
 	tlvlist = aim_tlvlist_read(bs);
 
@@ -404,7 +404,7 @@ static int parseinfo_create(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  * the room yields no different a response than requesting the room's info.
  *
  */
-static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_snac_t *snac2;
 	int ret = 0;
@@ -446,7 +446,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0009)
@@ -455,7 +455,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int chatnav_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int chatnav_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000d;

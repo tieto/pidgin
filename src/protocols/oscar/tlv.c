@@ -64,7 +64,7 @@ static void freetlv(aim_tlv_t **oldtlv)
  * @param bs Input bstream
  * @return Return the TLV chain read
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
+faim_internal aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 
@@ -149,7 +149,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
  *        preceded by the number of TLVs.  So you can limit that with this.
  * @return Return the TLV chain read
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, guint16 num)
+faim_internal aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 
@@ -218,7 +218,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, guint16 num)
  *        preceded by the length of the TLVs.  So you can limit that with this.
  * @return Return the TLV chain read
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_readlen(aim_bstream_t *bs, guint16 len)
+faim_internal aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 
@@ -294,7 +294,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
  */
 faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 {
-	aim_bstream_t bs1, bs2;
+	ByteStream bs1, bs2;
 
 	if (aim_tlvlist_size(&one) != aim_tlvlist_size(&two))
 		return 1;
@@ -513,7 +513,7 @@ faim_internal int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, 
 faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type, const guint32 caps)
 {
 	guint8 buf[16*16]; /* XXX icky fixed length buffer */
-	aim_bstream_t bs;
+	ByteStream bs;
 
 	if (!caps)
 		return 0; /* nothing there anyway */
@@ -535,7 +535,7 @@ faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type,
 faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t *userinfo)
 {
 	guint8 buf[1024]; /* bleh */
-	aim_bstream_t bs;
+	ByteStream bs;
 
 	aim_bstream_init(&bs, buf, sizeof(buf));
 
@@ -557,7 +557,7 @@ faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, g
 {
 	guint8 *buf;
 	int len;
-	aim_bstream_t bs;
+	ByteStream bs;
 
 	len = 2 + 1 + strlen(roomname) + 2;
 
@@ -610,7 +610,7 @@ faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 ty
 {
 	guint8 *buf;
 	int buflen;
-	aim_bstream_t bs;
+	ByteStream bs;
 
 	buflen = aim_tlvlist_size(tl);
 
@@ -778,7 +778,7 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type)
  * @param list Source TLV chain
  * @return Return 0 if the destination bstream is too small.
  */
-faim_internal int aim_tlvlist_write(aim_bstream_t *bs, aim_tlvlist_t **list)
+faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list)
 {
 	int goodbuflen;
 	aim_tlvlist_t *cur;

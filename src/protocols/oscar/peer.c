@@ -22,40 +22,40 @@
  * Oscar File transfer (OFT) and Oscar Direct Connect (ODC).
  * (ODC is also referred to as DirectIM and IM Image.)
  *
- * There are a few static helper functions at the top, then 
+ * There are a few static helper functions at the top, then
  * ODC stuff, then ft stuff.
  *
- * I feel like this is a good place to explain OFT, so I'm going to 
- * do just that.  Each OFT packet has a header type.  I guess this 
- * is pretty similar to the subtype of a SNAC packet.  The type 
- * basically tells the other client the meaning of the OFT packet.  
- * There are two distinct types of file transfer, which I usually 
- * call "sendfile" and "getfile."  Sendfile is when you send a file 
- * to another AIM user.  Getfile is when you share a group of files, 
+ * I feel like this is a good place to explain OFT, so I'm going to
+ * do just that.  Each OFT packet has a header type.  I guess this
+ * is pretty similar to the subtype of a SNAC packet.  The type
+ * basically tells the other client the meaning of the OFT packet.
+ * There are two distinct types of file transfer, which I usually
+ * call "sendfile" and "getfile."  Sendfile is when you send a file
+ * to another AIM user.  Getfile is when you share a group of files,
  * and other users request that you send them the files.
  *
  * A typical sendfile file transfer goes like this:
- *   1) Sender sends a channel 2 ICBM telling the other user that 
- *      we want to send them a file.  At the same time, we open a 
- *      listener socket (this should be done before sending the 
- *      ICBM) on some port, and wait for them to connect to us.  
- *      The ICBM we sent should contain our IP address and the port 
+ *   1) Sender sends a channel 2 ICBM telling the other user that
+ *      we want to send them a file.  At the same time, we open a
+ *      listener socket (this should be done before sending the
+ *      ICBM) on some port, and wait for them to connect to us.
+ *      The ICBM we sent should contain our IP address and the port
  *      number that we're listening on.
- *   2) The receiver connects to the sender on the given IP address 
- *      and port.  After the connection is established, the receiver 
+ *   2) The receiver connects to the sender on the given IP address
+ *      and port.  After the connection is established, the receiver
  *      sends an ICBM signifying that we are ready and waiting.
- *   3) The sender sends an OFT PROMPT message over the OFT 
+ *   3) The sender sends an OFT PROMPT message over the OFT
  *      connection.
- *   4) The receiver of the file sends back an exact copy of this 
- *      OFT packet, except the cookie is filled in with the cookie 
- *      from the ICBM.  I think this might be an attempt to verify 
- *      that the user that is connected is actually the guy that 
+ *   4) The receiver of the file sends back an exact copy of this
+ *      OFT packet, except the cookie is filled in with the cookie
+ *      from the ICBM.  I think this might be an attempt to verify
+ *      that the user that is connected is actually the guy that
  *      we sent the ICBM to.  Oh, I've been calling this the ACK.
- *   5) The sender starts sending raw data across the connection 
+ *   5) The sender starts sending raw data across the connection
  *      until the entire file has been sent.
- *   6) The receiver knows the file is finished because the sender 
- *      sent the file size in an earlier OFT packet.  So then the 
- *      receiver sends the DONE thingy (after filling in the 
+ *   6) The receiver knows the file is finished because the sender
+ *      sent the file size in an earlier OFT packet.  So then the
+ *      receiver sends the DONE thingy (after filling in the
  *      "received" checksum and size) and closes the connection.
  */
 
@@ -106,7 +106,8 @@ struct aim_odc_intdata {
  *
  * @param name The filename to convert.
  */
-static void aim_oft_dirconvert_tostupid(char *name)
+static void
+aim_oft_dirconvert_tostupid(char *name)
 {
 	while (name[0]) {
 		if (name[0] == 0x01)
@@ -120,7 +121,8 @@ static void aim_oft_dirconvert_tostupid(char *name)
  *
  * @param name The filename to convert.
  */
-static void aim_oft_dirconvert_fromstupid(char *name)
+static void
+aim_oft_dirconvert_fromstupid(char *name)
 {
 	while (name[0]) {
 		if (name[0] == G_DIR_SEPARATOR)
@@ -132,25 +134,26 @@ static void aim_oft_dirconvert_fromstupid(char *name)
 /**
  * Calculate oft checksum of buffer
  *
- * Prevcheck should be 0xFFFF0000 when starting a checksum of a file.  The 
- * checksum is kind of a rolling checksum thing, so each time you get bytes 
- * of a file you just call this puppy and it updates the checksum.  You can 
- * calculate the checksum of an entire file by calling this in a while or a 
+ * Prevcheck should be 0xFFFF0000 when starting a checksum of a file.  The
+ * checksum is kind of a rolling checksum thing, so each time you get bytes
+ * of a file you just call this puppy and it updates the checksum.  You can
+ * calculate the checksum of an entire file by calling this in a while or a
  * for loop, or something.
  *
- * Thanks to Graham Booker for providing this improved checksum routine, 
- * which is simpler and should be more accurate than Josh Myer's original 
+ * Thanks to Graham Booker for providing this improved checksum routine,
+ * which is simpler and should be more accurate than Josh Myer's original
  * code. -- wtm
  *
- * This algorithm works every time I have tried it.  The other fails 
- * sometimes.  So, AOL who thought this up?  It has got to be the weirdest 
+ * This algorithm works every time I have tried it.  The other fails
+ * sometimes.  So, AOL who thought this up?  It has got to be the weirdest
  * checksum I have ever seen.
  *
  * @param buffer Buffer of data to checksum.  Man I'd like to buff her...
  * @param bufsize Size of buffer.
  * @param prevcheck Previous checksum.
  */
-faim_export guint32 aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevcheck)
+guint32
+aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevcheck)
 {
 	guint32 check = (prevcheck >> 16) & 0xffff, oldcheck;
 	int i;
@@ -164,7 +167,7 @@ faim_export guint32 aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, 
 			val = buffer[i] << 8;
 		check -= val;
 		/*
-		 * The following appears to be necessary.... It happens 
+		 * The following appears to be necessary.... It happens
 		 * every once in a while and the checksum doesn't fail.
 		 */
 		if (check > oldcheck)
@@ -175,7 +178,9 @@ faim_export guint32 aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, 
 	return check << 16;
 }
 
-faim_export guint32 aim_oft_checksum_file(char *filename) {
+guint32
+aim_oft_checksum_file(char *filename)
+{
 	FILE *fd;
 	guint32 checksum = 0xffff0000;
 
@@ -201,13 +206,14 @@ faim_export guint32 aim_oft_checksum_file(char *filename) {
  * @param cur The conn the incoming connection is on.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
+int
+aim_handlerendconnect(OscarSession *sess, OscarConnection *cur)
 {
 	int acceptfd = 0;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
 	int ret = 0;
-	aim_conn_t *newconn;
+	OscarConnection *newconn;
 	char ip[20];
 	unsigned short port;
 
@@ -240,14 +246,14 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 		cur->internal = NULL;
 		snprintf(priv->ip, sizeof(priv->ip), "%s:%hu", ip, port);
 
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIM_ESTABLISHED)))
+		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIM_ESTABLISHED)))
 			ret = userfunc(sess, NULL, newconn, cur);
 
 	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_GETFILE) {
 	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
 		aim_rxcallback_t userfunc;
 
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, OFT_TYPE_ESTABLISHED)))
+		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, PEER_TYPE_ESTABLISHED)))
 			ret = userfunc(sess, NULL, newconn, cur);
 
 	} else {
@@ -264,15 +270,16 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
  *
  * @param sess The session.
  * @param conn The already-connected ODC connection.
- * @param typing If 0x0002, sends a "typing" message, 0x0001 sends "typed," and 
+ * @param typing If 0x0002, sends a "typing" message, 0x0001 sends "typed," and
  *        0x0000 sends "stopped."
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing)
+int
+aim_odc_send_typing(OscarSession *sess, OscarConnection *conn, int typing)
 {
 	struct aim_odc_intdata *intdata = (struct aim_odc_intdata *)conn->internal;
-	aim_frame_t *fr;
-	aim_bstream_t *hdrbs;
+	FlapFrame *fr;
+	ByteStream *hdrbs;
 	guint8 *hdr;
 	int hdrlen = 0x44;
 
@@ -337,7 +344,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 /**
  * Send client-to-client IM over an established direct connection.
  * Call this just like you would aim_send_im, to send a directim.
- * 
+ *
  * @param sess The session.
  * @param conn The already-connected ODC connection.
  * @param msg Null-terminated string to send.
@@ -346,10 +353,11 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
  * @param isawaymsg 0 if this is not an auto-response, 1 if it is.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len, int encoding, int isawaymsg)
+int
+aim_odc_send_im(OscarSession *sess, OscarConnection *conn, const char *msg, int len, int encoding, int isawaymsg)
 {
-	aim_frame_t *fr;
-	aim_bstream_t *hdrbs;
+	FlapFrame *fr;
+	ByteStream *hdrbs;
 	struct aim_odc_intdata *intdata = (struct aim_odc_intdata *)conn->internal;
 	int hdrlen = 0x44;
 	guint8 *hdr;
@@ -404,7 +412,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 
 	/* end of hdr2 */
 
-#if 0 /* XXX - this is how you send buddy icon info... */	
+#if 0 /* XXX - this is how you send buddy icon info... */
 	aimbs_put16(hdrbs, 0x0008);
 	aimbs_put16(hdrbs, 0x000c);
 	aimbs_put16(hdrbs, 0x0000);
@@ -427,7 +435,8 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
  * @param conn The ODC connection.
  * @return The screen name of the dude, or NULL if there was an anomaly.
  */
-faim_export const char *aim_odc_getsn(aim_conn_t *conn)
+const char *
+aim_odc_getsn(OscarConnection *conn)
 {
 	struct aim_odc_intdata *intdata;
 
@@ -449,7 +458,8 @@ faim_export const char *aim_odc_getsn(aim_conn_t *conn)
  * @param conn The ODC connection.
  * @return The cookie, an 8 byte unterminated string, or NULL if there was an anomaly.
  */
-faim_export const guchar *aim_odc_getcookie(aim_conn_t *conn)
+const guchar *
+aim_odc_getcookie(OscarConnection *conn)
 {
 	struct aim_odc_intdata *intdata;
 
@@ -466,12 +476,13 @@ faim_export const guchar *aim_odc_getcookie(aim_conn_t *conn)
  *
  * @param sess The session.
  * @param sn The screen name of the buddy whose direct connection you want to find.
- * @return The conn for the direct connection with the given buddy, or NULL if no 
+ * @return The conn for the direct connection with the given buddy, or NULL if no
  *         connection was found.
  */
-faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn)
+OscarConnection *
+aim_odc_getconn(OscarSession *sess, const char *sn)
 {
-	aim_conn_t *cur;
+	OscarConnection *cur;
 	struct aim_odc_intdata *intdata;
 
 	if (!sess || !sn || !strlen(sn))
@@ -500,11 +511,12 @@ faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn)
  * @param sn The screen name to connect to.
  * @return The new connection.
  */
-faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd,
-                                         const guint8 *localip, guint16 port, const guint8 *mycookie)
+OscarConnection *
+aim_odc_initiate(OscarSession *sess, const char *sn, int listenfd,
+                 const guint8 *localip, guint16 port, const guint8 *mycookie)
 {
-	aim_conn_t *newconn;
-	aim_msgcookie_t *cookie;
+	OscarConnection *newconn;
+	IcbmCookie *cookie;
 	struct aim_odc_intdata *priv;
 	guint8 ck[8];
 
@@ -517,7 +529,7 @@ faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, in
 	} else
 		aim_im_sendch2_odcrequest(sess, ck, FALSE, sn, localip, port);
 
-	cookie = (aim_msgcookie_t *)calloc(1, sizeof(aim_msgcookie_t));
+	cookie = (IcbmCookie *)calloc(1, sizeof(IcbmCookie));
 	memcpy(cookie->cookie, ck, 8);
 	cookie->type = AIM_COOKIETYPE_OFTIM;
 
@@ -554,7 +566,7 @@ faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, in
  *
  * This is a wrapper for aim_newconn.
  *
- * If addr is NULL, the socket is not created, but the connection is 
+ * If addr is NULL, the socket is not created, but the connection is
  * allocated and setup to connect.
  *
  * @param sess The Godly session.
@@ -562,9 +574,10 @@ faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, in
  * @param addr Address to connect to.
  * @return The new connection.
  */
-faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const guint8 *cookie)
+OscarConnection *
+aim_odc_connect(OscarSession *sess, const char *sn, const char *addr, const guint8 *cookie)
 {
-	aim_conn_t *newconn;
+	OscarConnection *newconn;
 	struct aim_odc_intdata *intdata;
 
 	if (!sess || !sn)
@@ -598,9 +611,10 @@ faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, con
  * @param bs It stands for "bologna sandwich."
  * @return Return 0 if no errors, otherwise return the error number.
  */
-static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr, aim_bstream_t *bs)
+static int
+handlehdr_odc(OscarSession *sess, OscarConnection *conn, FlapFrame *frr, ByteStream *bs)
 {
-	aim_frame_t fr;
+	FlapFrame fr;
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint32 payloadlength;
@@ -626,13 +640,13 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	gaim_debug_misc("oscar", "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
 
 	if (flags & 0x0008) {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMTYPING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 2);
 	} else if (flags & 0x0004) {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMTYPING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 1);
 	} else {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMTYPING)))
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMTYPING)))
 			ret = userfunc(sess, &fr, snptr, 0);
 	}
 
@@ -651,7 +665,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 		while (payloadlength - recvd) {
 			if (payloadlength - recvd >= 1024)
 				i = aim_recv(conn->fd, &msg[recvd], 1024);
-			else 
+			else
 				i = aim_recv(conn->fd, &msg[recvd], payloadlength - recvd);
 			if (i <= 0) {
 				free(msg);
@@ -662,8 +676,8 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
 				ret = userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
 		}
-		
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, OFT_TYPE_DIRECTIMINCOMING)))
+
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMINCOMING)))
 			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding, isawaymsg);
 
 		free(msg);
@@ -674,14 +688,15 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	return ret;
 }
 
-faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const guint8 *cookie, const char *sn, const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv, int method, int stage)
+PeerInfo *
+aim_oft_createinfo(OscarSession *sess, const guint8 *cookie, const char *sn, const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv, int method, int stage)
 {
-	struct aim_oft_info *new;
+	PeerInfo *new;
 
 	if (!sess)
 		return NULL;
 
-	if (!(new = (struct aim_oft_info *)calloc(1, sizeof(struct aim_oft_info))))
+	if (!(new = (PeerInfo *)calloc(1, sizeof(PeerInfo))))
 		return NULL;
 
 	new->sess = sess;
@@ -726,36 +741,37 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const g
 	return new;
 }
 
-faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const guint8 *cookie,
+PeerProxyInfo *aim_rv_proxy_createinfo(OscarSession *sess, const guint8 *cookie,
 	guint16 port)
 {
-	struct aim_rv_proxy_info *proxy_info;
-	
-	if (!(proxy_info = (struct aim_rv_proxy_info*)calloc(1, sizeof(struct aim_rv_proxy_info))))
+	PeerProxyInfo *proxy_info;
+
+	if (!(proxy_info = (PeerProxyInfo*)calloc(1, sizeof(PeerProxyInfo))))
 		return NULL;
-	
+
 	proxy_info->sess = sess;
 	proxy_info->port = port;
 	proxy_info->packet_ver = AIM_RV_PROXY_PACKETVER_DFLT;
 	proxy_info->unknownA = AIM_RV_PROXY_UNKNOWNA_DFLT;
-	
+
 	if (cookie)
 		memcpy(proxy_info->cookie, cookie, 8);
-	
+
 	return proxy_info;
 }
 
 /**
- * Remove the given oft_info struct from the oft_info linked list, and 
+ * Remove the given oft_info struct from the oft_info linked list, and
  * then free its memory.
  *
  * @param sess The session.
- * @param oft_info The aim_oft_info struct that we're destroying.
+ * @param oft_info The PeerInfo that we're destroying.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info)
+int
+aim_oft_destroyinfo(PeerInfo *oft_info)
 {
-	aim_session_t *sess;
+	OscarSession *sess;
 
 	if (!oft_info || !(sess = oft_info->sess))
 		return -EINVAL;
@@ -763,7 +779,7 @@ faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info)
 	if (sess->oft_info && (sess->oft_info == oft_info)) {
 		sess->oft_info = sess->oft_info->next;
 	} else {
-		struct aim_oft_info *cur;
+		PeerInfo *cur;
 		for (cur=sess->oft_info; (cur->next && (cur->next!=oft_info)); cur=cur->next);
 		if (cur->next)
 			cur->next = cur->next->next;
@@ -781,17 +797,18 @@ faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info)
 /**
  * Creates a listener socket so the other dude can connect to us.
  *
- * You'll want to set up some kind of watcher on this socket.  
- * When the state changes, call aim_handlerendconnection with 
- * the connection returned by this.  aim_handlerendconnection 
+ * You'll want to set up some kind of watcher on this socket.
+ * When the state changes, call aim_handlerendconnection with
+ * the connection returned by this.  aim_handlerendconnection
  * will accept the pending connection and stop listening.
  *
  * @param sess The session.
- * @param oft_info File transfer information associated with this 
+ * @param oft_info File transfer information associated with this
  *        connection.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd)
+int
+aim_sendfile_listen(OscarSession *sess, PeerInfo *oft_info, int listenfd)
 {
 	if (!oft_info)
 		return -EINVAL;
@@ -814,11 +831,12 @@ faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *of
  * @param bs The should be from an incoming rendezvous packet.
  * @return A pointer to new struct on success, or NULL on error.
  */
-static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
+static PeerFrame *
+aim_oft_getheader(ByteStream *bs)
 {
-	struct aim_fileheader_t *fh;
+	PeerFrame *fh;
 
-	if (!(fh = calloc(1, sizeof(struct aim_fileheader_t))))
+	if (!(fh = calloc(1, sizeof(PeerFrame))))
 		return NULL;
 
 	/* The bstream should be positioned after the hdrtype. */
@@ -851,17 +869,18 @@ static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
 	fh->name[63] = '\0';
 
 	return fh;
-} 
+}
 
 /**
  * Fills a buffer with network-order fh data
  *
  * @param bs A bstream to fill -- automatically initialized
- * @param fh A struct aim_fileheader_t to get data from.
+ * @param fh A PeerFrame to get data from.
  * @return Return non-zero on error.
  */
-static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
-{ 
+static int
+aim_oft_buildheader(ByteStream *bs, PeerFrame *fh)
+{
 	guint8 *hdr;
 
 	if (!bs || !fh)
@@ -906,21 +925,21 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
  *
  * @param sess The session.
  * @param type The subtype of the OFT packet we're sending.
- * @param oft_info The aim_oft_info struct with the connection and OFT 
+ * @param oft_info The PeerInfo with the connection and OFT
  *        info we're sending.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_oft_sendheader(aim_session_t *sess, guint16 type, struct aim_oft_info *oft_info)
+int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerInfo *oft_info)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 
 	if (!sess || !oft_info || !oft_info->conn || (oft_info->conn->type != AIM_CONN_TYPE_RENDEZVOUS))
 		return -EINVAL;
 
 #if 0
 	/*
-	 * If you are receiving a file, the cookie should be null, if you are sending a 
-	 * file, the cookie should be the same as the one used in the ICBM negotiation 
+	 * If you are receiving a file, the cookie should be null, if you are sending a
+	 * file, the cookie should be the same as the one used in the ICBM negotiation
 	 * SNACs.
 	 */
 	fh->lnameoffset = 0x1a;
@@ -958,12 +977,13 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, guint16 type, struct aim
  * @param proxy_info Changable pieces of data for this packet
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
+int
+aim_rv_proxy_init_recv(PeerProxyInfo *proxy_info)
 {
 #if 0
 	aim_tlvlist_t *tlvlist_sendfile;
 #endif
-	aim_bstream_t bs;
+	ByteStream bs;
 	guint8 *bs_raw;
 	guint16 packet_len;
 	guint8 sn_len;
@@ -1031,12 +1051,13 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
  * @param proxy_info Changable pieces of data for this packet
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
+int
+aim_rv_proxy_init_send(PeerProxyInfo *proxy_info)
 {
 #if 0
 	aim_tlvlist_t *tlvlist_sendfile;
 #endif
-	aim_bstream_t bs;
+	ByteStream bs;
 	guint8 *bs_raw;
 	guint16 packet_len;
 	guint8 sn_len;
@@ -1101,9 +1122,10 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
  * @return Return 0 if the packet was handled correctly, otherwise return the
  *         error number.
  */
-faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr)
+int
+aim_rxdispatch_rendezvous(OscarSession *sess, FlapFrame *fr)
 {
-	aim_conn_t *conn = fr->conn;
+	OscarConnection *conn = fr->conn;
 	int ret = 1;
 
 	if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
@@ -1114,7 +1136,7 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
 
 	} else {
 		aim_rxcallback_t userfunc;
-		struct aim_fileheader_t *header = aim_oft_getheader(&fr->data);
+		PeerFrame *header = aim_oft_getheader(&fr->data);
 		aim_oft_dirconvert_fromstupid(header->name); /* XXX - This should be client-side */
 
 		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, fr->hdr.rend.type)))
@@ -1135,24 +1157,25 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
  *
  * @param sess The session.
  * @param fr The frame allocated for the incoming data.
- * @return Return 0 if the packet was handled correctly, otherwise return the 
+ * @return Return 0 if the packet was handled correctly, otherwise return the
  *         error number.
  */
-faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, aim_conn_t *conn)
+PeerProxyInfo *
+aim_rv_proxy_read(OscarSession *sess, OscarConnection *conn)
 {
-	aim_bstream_t bs_hdr;
+	ByteStream bs_hdr;
 	guint8 hdr_buf[AIM_RV_PROXY_HDR_LEN];
-	aim_bstream_t bs_body; /* The body (everything but the header) of the packet */
+	ByteStream bs_body; /* The body (everything but the header) of the packet */
 	guint8 *body_buf = NULL;
 	guint8 body_len;
-	
+
 	char str_ip[30] = {""};
 	guint8 ip_temp[4];
-	
+
 	guint16 len;
-	struct aim_rv_proxy_info *proxy_info;
-	
-	if(!(proxy_info = malloc(sizeof(struct aim_rv_proxy_info))))
+	PeerProxyInfo *proxy_info;
+
+	if(!(proxy_info = malloc(sizeof(PeerProxyInfo))))
 		return NULL;
 
 	aim_bstream_init(&bs_hdr, hdr_buf, AIM_RV_PROXY_HDR_LEN);
@@ -1213,7 +1236,7 @@ faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, a
 			}
 		} else {
 			gaim_debug_warning("oscar","unknown type for aim rendezvous proxy packet\n");
-		}	
+		}
 	} else {
 		gaim_debug_warning("oscar","error reading header of rv proxy packet\n");
 		aim_conn_close(conn);

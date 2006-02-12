@@ -24,7 +24,7 @@
 
 #include "oscar.h"
 
-faim_internal int aim_bstream_init(aim_bstream_t *bs, guint8 *data, int len)
+faim_internal int aim_bstream_init(ByteStream *bs, guint8 *data, int len)
 {
 
 	if (!bs)
@@ -37,17 +37,17 @@ faim_internal int aim_bstream_init(aim_bstream_t *bs, guint8 *data, int len)
 	return 0;
 }
 
-faim_internal int aim_bstream_empty(aim_bstream_t *bs)
+faim_internal int aim_bstream_empty(ByteStream *bs)
 {
 	return bs->len - bs->offset;
 }
 
-faim_internal int aim_bstream_curpos(aim_bstream_t *bs)
+faim_internal int aim_bstream_curpos(ByteStream *bs)
 {
 	return bs->offset;
 }
 
-faim_internal int aim_bstream_setpos(aim_bstream_t *bs, unsigned int off)
+faim_internal int aim_bstream_setpos(ByteStream *bs, unsigned int off)
 {
 
 	if (off > bs->len)
@@ -58,7 +58,7 @@ faim_internal int aim_bstream_setpos(aim_bstream_t *bs, unsigned int off)
 	return off;
 }
 
-faim_internal void aim_bstream_rewind(aim_bstream_t *bs)
+faim_internal void aim_bstream_rewind(ByteStream *bs)
 {
 
 	aim_bstream_setpos(bs, 0);
@@ -71,7 +71,7 @@ faim_internal void aim_bstream_rewind(aim_bstream_t *bs)
  * in a bstream.  I'm not sure if libfaim actually does
  * this anywhere...
  */
-faim_internal int aim_bstream_advance(aim_bstream_t *bs, int n)
+faim_internal int aim_bstream_advance(ByteStream *bs, int n)
 {
 
 	if ((aim_bstream_curpos(bs) + n < 0) || (aim_bstream_empty(bs) < n))
@@ -82,7 +82,7 @@ faim_internal int aim_bstream_advance(aim_bstream_t *bs, int n)
 	return n;
 }
 
-faim_internal guint8 aimbs_get8(aim_bstream_t *bs)
+faim_internal guint8 aimbs_get8(ByteStream *bs)
 {
 
 	if (aim_bstream_empty(bs) < 1)
@@ -93,7 +93,7 @@ faim_internal guint8 aimbs_get8(aim_bstream_t *bs)
 	return aimutil_get8(bs->data + bs->offset - 1);
 }
 
-faim_internal guint16 aimbs_get16(aim_bstream_t *bs)
+faim_internal guint16 aimbs_get16(ByteStream *bs)
 {
 
 	if (aim_bstream_empty(bs) < 2)
@@ -104,7 +104,7 @@ faim_internal guint16 aimbs_get16(aim_bstream_t *bs)
 	return aimutil_get16(bs->data + bs->offset - 2);
 }
 
-faim_internal guint32 aimbs_get32(aim_bstream_t *bs)
+faim_internal guint32 aimbs_get32(ByteStream *bs)
 {
 
 	if (aim_bstream_empty(bs) < 4)
@@ -115,7 +115,7 @@ faim_internal guint32 aimbs_get32(aim_bstream_t *bs)
 	return aimutil_get32(bs->data + bs->offset - 4);
 }
 
-faim_internal guint8 aimbs_getle8(aim_bstream_t *bs)
+faim_internal guint8 aimbs_getle8(ByteStream *bs)
 {
 
 	if (aim_bstream_empty(bs) < 1)
@@ -126,7 +126,7 @@ faim_internal guint8 aimbs_getle8(aim_bstream_t *bs)
 	return aimutil_getle8(bs->data + bs->offset - 1);
 }
 
-faim_internal guint16 aimbs_getle16(aim_bstream_t *bs)
+faim_internal guint16 aimbs_getle16(ByteStream *bs)
 {
 
 	if (aim_bstream_empty(bs) < 2)
@@ -137,7 +137,7 @@ faim_internal guint16 aimbs_getle16(aim_bstream_t *bs)
 	return aimutil_getle16(bs->data + bs->offset - 2);
 }
 
-faim_internal guint32 aimbs_getle32(aim_bstream_t *bs)
+faim_internal guint32 aimbs_getle32(ByteStream *bs)
 {
 
 	if (aim_bstream_empty(bs) < 4)
@@ -148,7 +148,7 @@ faim_internal guint32 aimbs_getle32(aim_bstream_t *bs)
 	return aimutil_getle32(bs->data + bs->offset - 4);
 }
 
-faim_internal int aimbs_getrawbuf(aim_bstream_t *bs, guint8 *buf, int len)
+faim_internal int aimbs_getrawbuf(ByteStream *bs, guint8 *buf, int len)
 {
 
 	if (aim_bstream_empty(bs) < len)
@@ -160,7 +160,7 @@ faim_internal int aimbs_getrawbuf(aim_bstream_t *bs, guint8 *buf, int len)
 	return len;
 }
 
-faim_internal guint8 *aimbs_getraw(aim_bstream_t *bs, int len)
+faim_internal guint8 *aimbs_getraw(ByteStream *bs, int len)
 {
 	guint8 *ob;
 
@@ -175,7 +175,7 @@ faim_internal guint8 *aimbs_getraw(aim_bstream_t *bs, int len)
 	return ob;
 }
 
-faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
+faim_internal char *aimbs_getstr(ByteStream *bs, int len)
 {
 	char *ob;
 
@@ -192,7 +192,7 @@ faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
 	return ob;
 }
 
-faim_internal int aimbs_put8(aim_bstream_t *bs, guint8 v)
+faim_internal int aimbs_put8(ByteStream *bs, guint8 v)
 {
 
 	if (aim_bstream_empty(bs) < 1)
@@ -203,7 +203,7 @@ faim_internal int aimbs_put8(aim_bstream_t *bs, guint8 v)
 	return 1;
 }
 
-faim_internal int aimbs_put16(aim_bstream_t *bs, guint16 v)
+faim_internal int aimbs_put16(ByteStream *bs, guint16 v)
 {
 
 	if (aim_bstream_empty(bs) < 2)
@@ -214,7 +214,7 @@ faim_internal int aimbs_put16(aim_bstream_t *bs, guint16 v)
 	return 2;
 }
 
-faim_internal int aimbs_put32(aim_bstream_t *bs, guint32 v)
+faim_internal int aimbs_put32(ByteStream *bs, guint32 v)
 {
 
 	if (aim_bstream_empty(bs) < 4)
@@ -225,7 +225,7 @@ faim_internal int aimbs_put32(aim_bstream_t *bs, guint32 v)
 	return 1;
 }
 
-faim_internal int aimbs_putle8(aim_bstream_t *bs, guint8 v)
+faim_internal int aimbs_putle8(ByteStream *bs, guint8 v)
 {
 
 	if (aim_bstream_empty(bs) < 1)
@@ -236,7 +236,7 @@ faim_internal int aimbs_putle8(aim_bstream_t *bs, guint8 v)
 	return 1;
 }
 
-faim_internal int aimbs_putle16(aim_bstream_t *bs, guint16 v)
+faim_internal int aimbs_putle16(ByteStream *bs, guint16 v)
 {
 
 	if (aim_bstream_empty(bs) < 2)
@@ -247,7 +247,7 @@ faim_internal int aimbs_putle16(aim_bstream_t *bs, guint16 v)
 	return 2;
 }
 
-faim_internal int aimbs_putle32(aim_bstream_t *bs, guint32 v)
+faim_internal int aimbs_putle32(ByteStream *bs, guint32 v)
 {
 
 	if (aim_bstream_empty(bs) < 4)
@@ -259,7 +259,7 @@ faim_internal int aimbs_putle32(aim_bstream_t *bs, guint32 v)
 }
 
 
-faim_internal int aimbs_putraw(aim_bstream_t *bs, const guint8 *v, int len)
+faim_internal int aimbs_putraw(ByteStream *bs, const guint8 *v, int len)
 {
 
 	if (aim_bstream_empty(bs) < len)
@@ -271,12 +271,12 @@ faim_internal int aimbs_putraw(aim_bstream_t *bs, const guint8 *v, int len)
 	return len;
 }
 
-faim_internal int aimbs_putstr(aim_bstream_t *bs, const char *str)
+faim_internal int aimbs_putstr(ByteStream *bs, const char *str)
 {
 	return aimbs_putraw(bs, (guint8 *)str, strlen(str));
 }
 
-faim_internal int aimbs_putbs(aim_bstream_t *bs, aim_bstream_t *srcbs, int len)
+faim_internal int aimbs_putbs(ByteStream *bs, ByteStream *srcbs, int len)
 {
 
 	if (aim_bstream_empty(srcbs) < len)

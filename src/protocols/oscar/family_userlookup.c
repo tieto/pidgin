@@ -32,7 +32,7 @@
  *
  * XXX can this be integrated with the rest of the error handling?
  */
-static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -59,9 +59,9 @@ static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
  * Subtype 0x0002
  *
  */
-faim_export int aim_search_address(aim_session_t *sess, aim_conn_t *conn, const char *address)
+faim_export int aim_search_address(OscarSession *sess, OscarConnection *conn, const char *address)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !conn || !address)
@@ -84,7 +84,7 @@ faim_export int aim_search_address(aim_session_t *sess, aim_conn_t *conn, const 
  * Subtype 0x0003
  *
  */
-static int reply(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int reply(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int j = 0, m, ret = 0;
 	aim_tlvlist_t *tlvlist;
@@ -127,7 +127,7 @@ static int reply(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0001)
@@ -138,7 +138,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int search_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int search_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000a;

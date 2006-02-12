@@ -37,10 +37,10 @@
  * @param iconlen Length of the raw data of the icon image file.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_upload(aim_session_t *sess, const guint8 *icon, guint16 iconlen)
+faim_export int aim_bart_upload(OscarSession *sess, const guint8 *icon, guint16 iconlen)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !icon || !iconlen)
@@ -68,7 +68,7 @@ faim_export int aim_bart_upload(aim_session_t *sess, const guint8 *icon, guint16
  *
  * You get this honky after you upload a buddy icon.
  */
-static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int uploadack(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -95,10 +95,10 @@ static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_request(aim_session_t *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
+faim_export int aim_bart_request(OscarSession *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
@@ -132,7 +132,7 @@ faim_export int aim_bart_request(aim_session_t *sess, const char *sn, guint8 ico
  *
  * This is sent in response to a buddy icon request.
  */
-static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parseicon(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -158,7 +158,7 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0003)
@@ -169,7 +169,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int bart_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int bart_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0010;

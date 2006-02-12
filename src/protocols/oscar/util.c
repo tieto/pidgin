@@ -32,12 +32,6 @@
 #include "win32dep.h"
 #endif
 
-faim_export int aimutil_putstr(char *dest, const char *src, int len)
-{
-	memcpy(dest, src, len);
-	return len;
-}
-
 /*
  * Tokenizing functions.  Used to portably replace strtok/sep.
  *   -- DMP.

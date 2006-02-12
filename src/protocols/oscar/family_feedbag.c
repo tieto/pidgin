@@ -473,7 +473,7 @@ faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn
  * @param sess The oscar session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-static int aim_ssi_sync(aim_session_t *sess)
+static int aim_ssi_sync(OscarSession *sess)
 {
 	struct aim_ssi_item *cur1, *cur2;
 	struct aim_ssi_tmp *cur, *new;
@@ -576,7 +576,7 @@ static int aim_ssi_sync(aim_session_t *sess)
  * @param sess The oscar session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-static int aim_ssi_freelist(aim_session_t *sess)
+static int aim_ssi_freelist(OscarSession *sess)
 {
 	struct aim_ssi_item *cur, *del;
 	struct aim_ssi_tmp *curtmp, *deltmp;
@@ -621,7 +621,7 @@ static int aim_ssi_freelist(aim_session_t *sess)
  * @param sess The oscar session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_deletelist(aim_session_t *sess)
+faim_export int aim_ssi_deletelist(OscarSession *sess)
 {
 	struct aim_ssi_item *cur, *del;
 
@@ -654,7 +654,7 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess)
  * @param sess The oscar session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_cleanlist(aim_session_t *sess)
+faim_export int aim_ssi_cleanlist(OscarSession *sess)
 {
 	struct aim_ssi_item *cur, *next;
 
@@ -736,7 +736,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
  * @param smsnum The locally assigned SMS number, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth)
+faim_export int aim_ssi_addbuddy(OscarSession *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth)
 {
 	struct aim_ssi_item *parent;
 	aim_tlvlist_t *data = NULL;
@@ -788,7 +788,7 @@ faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const ch
  * @param name The name of the item..
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_addpermit(aim_session_t *sess, const char *name)
+faim_export int aim_ssi_addpermit(OscarSession *sess, const char *name)
 {
 
 	if (!sess || !name)
@@ -810,7 +810,7 @@ faim_export int aim_ssi_addpermit(aim_session_t *sess, const char *name)
  * @param name The name of the item..
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_adddeny(aim_session_t *sess, const char *name)
+faim_export int aim_ssi_adddeny(OscarSession *sess, const char *name)
 {
 
 	if (!sess || !name)
@@ -833,7 +833,7 @@ faim_export int aim_ssi_adddeny(aim_session_t *sess, const char *name)
  * @param group The group of the item, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delbuddy(aim_session_t *sess, const char *name, const char *group)
+faim_export int aim_ssi_delbuddy(OscarSession *sess, const char *name, const char *group)
 {
 	struct aim_ssi_item *del;
 
@@ -876,7 +876,7 @@ faim_export int aim_ssi_delbuddy(aim_session_t *sess, const char *name, const ch
  * @param name The name of the item, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delpermit(aim_session_t *sess, const char *name)
+faim_export int aim_ssi_delpermit(OscarSession *sess, const char *name)
 {
 	struct aim_ssi_item *del;
 
@@ -903,7 +903,7 @@ faim_export int aim_ssi_delpermit(aim_session_t *sess, const char *name)
  * @param name The name of the item, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name)
+faim_export int aim_ssi_deldeny(OscarSession *sess, const char *name)
 {
 	struct aim_ssi_item *del;
 
@@ -933,7 +933,7 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name)
  * @param sn The name of the buddy to be moved.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const char *newgn, const char *sn)
+faim_export int aim_ssi_movebuddy(OscarSession *sess, const char *oldgn, const char *newgn, const char *sn)
 {
 	char *alias = aim_ssi_getalias(sess->ssi.local, oldgn, sn);
 	aim_ssi_addbuddy(sess, sn, newgn, alias, NULL, NULL, aim_ssi_waitingforauth(sess->ssi.local, oldgn, sn));
@@ -952,7 +952,7 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const 
  *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias)
+faim_export int aim_ssi_aliasbuddy(OscarSession *sess, const char *gn, const char *sn, const char *alias)
 {
 	struct aim_ssi_item *tmp;
 
@@ -984,7 +984,7 @@ faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const ch
  *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_editcomment(aim_session_t *sess, const char *gn, const char *sn, const char *comment)
+faim_export int aim_ssi_editcomment(OscarSession *sess, const char *gn, const char *sn, const char *comment)
 {
 	struct aim_ssi_item *tmp;
 
@@ -1014,7 +1014,7 @@ faim_export int aim_ssi_editcomment(aim_session_t *sess, const char *gn, const c
  * @param newgn The new group name.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, const char *newgn)
+faim_export int aim_ssi_rename_group(OscarSession *sess, const char *oldgn, const char *newgn)
 {
 	struct aim_ssi_item *group;
 
@@ -1048,7 +1048,7 @@ faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, con
  *        visible.  See the AIM_FLAG_BLEH #defines in oscar.h
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, guint8 permdeny, guint32 vismask)
+faim_export int aim_ssi_setpermdeny(OscarSession *sess, guint8 permdeny, guint32 vismask)
 {
 	struct aim_ssi_item *tmp;
 
@@ -1079,7 +1079,7 @@ faim_export int aim_ssi_setpermdeny(aim_session_t *sess, guint8 permdeny, guint3
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 0x10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_seticon(aim_session_t *sess, guint8 *iconsum, guint16 iconsumlen)
+faim_export int aim_ssi_seticon(OscarSession *sess, guint8 *iconsum, guint16 iconsumlen)
 {
 	struct aim_ssi_item *tmp;
 	guint8 *csumdata;
@@ -1116,7 +1116,7 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, guint8 *iconsum, guint16 ic
  * @param sess The oscar session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_delicon(aim_session_t *sess)
+faim_export int aim_ssi_delicon(OscarSession *sess)
 {
 	struct aim_ssi_item *tmp;
 
@@ -1142,7 +1142,7 @@ faim_export int aim_ssi_delicon(aim_session_t *sess)
  *        0x00000400 - Allow others to see your idle time
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_ssi_setpresence(aim_session_t *sess, guint32 presence) {
+faim_export int aim_ssi_setpresence(OscarSession *sess, guint32 presence) {
 	struct aim_ssi_item *tmp;
 
 	if (!sess)
@@ -1164,9 +1164,9 @@ faim_export int aim_ssi_setpresence(aim_session_t *sess, guint32 presence) {
 /*
  * Subtype 0x0002 - Request SSI Rights.
  */
-faim_export int aim_ssi_reqrights(aim_session_t *sess)
+faim_export int aim_ssi_reqrights(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
@@ -1177,13 +1177,13 @@ faim_export int aim_ssi_reqrights(aim_session_t *sess)
 /*
  * Subtype 0x0003 - SSI Rights Information.
  */
-static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parserights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0, i;
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
 	aim_tlv_t *tlv;
-	aim_bstream_t bstream;
+	ByteStream bstream;
 	guint16 *maxitems;
 
 	/* This SNAC is made up of a bunch of TLVs */
@@ -1219,9 +1219,9 @@ static int parserights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
  * revision number.
  * 
  */
-faim_export int aim_ssi_reqdata(aim_session_t *sess)
+faim_export int aim_ssi_reqdata(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
@@ -1242,10 +1242,10 @@ faim_export int aim_ssi_reqdata(aim_session_t *sess)
  * Note that the client should never increment the revision, only the server.
  * 
  */
-faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t timestamp, guint16 numitems)
+faim_export int aim_ssi_reqifchanged(OscarSession *sess, time_t timestamp, guint16 numitems)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
@@ -1271,7 +1271,7 @@ faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t timestamp, guin
 /*
  * Subtype 0x0006 - SSI Data.
  */
-static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parsedata(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1325,9 +1325,9 @@ static int parsedata(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * settings into effect.
  * 
  */
-faim_export int aim_ssi_enable(aim_session_t *sess)
+faim_export int aim_ssi_enable(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
@@ -1343,10 +1343,10 @@ faim_export int aim_ssi_enable(aim_session_t *sess)
  * difference is the subtype that is set for the SNAC.
  * 
  */
-faim_export int aim_ssi_addmoddel(aim_session_t *sess)
+faim_export int aim_ssi_addmoddel(OscarSession *sess)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int snaclen;
 	struct aim_ssi_tmp *cur;
@@ -1393,7 +1393,7 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
  * Sent by the server, for example, when someone is added to 
  * your "Recent Buddies" group.
  */
-static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parseadd(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1432,7 +1432,7 @@ static int parseadd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  *
  * XXX - It would probably be good for the client to actually do something when it gets this.
  */
-static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parsemod(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1494,7 +1494,7 @@ static int parsemod(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  *
  * XXX - It would probably be good for the client to actually do something when it gets this.
  */
-static int parsedel(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parsedel(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1526,7 +1526,7 @@ static int parsedel(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  * Response to add, modify, or delete SNAC (sent with aim_ssi_addmoddel).
  *
  */
-static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parseack(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1652,7 +1652,7 @@ static int parseack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  * posted local stamp/revision.
  *
  */
-static int parsedataunchanged(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parsedataunchanged(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1671,9 +1671,9 @@ static int parsedataunchanged(aim_session_t *sess, aim_module_t *mod, aim_frame_
  * Tells the server you're going to start modifying data.
  * 
  */
-faim_export int aim_ssi_modbegin(aim_session_t *sess)
+faim_export int aim_ssi_modbegin(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
@@ -1687,9 +1687,9 @@ faim_export int aim_ssi_modbegin(aim_session_t *sess)
  * Tells the server you're finished modifying data.
  *
  */
-faim_export int aim_ssi_modend(aim_session_t *sess)
+faim_export int aim_ssi_modend(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
@@ -1703,10 +1703,10 @@ faim_export int aim_ssi_modend(aim_session_t *sess)
  * Authorizes a contact so they can add you to their contact list.
  *
  */
-faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg)
+faim_export int aim_ssi_sendauth(OscarSession *sess, char *sn, char *msg)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
@@ -1740,7 +1740,7 @@ faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg)
 /*
  * Subtype 0x0015 - Receive an authorization grant
  */
-static int receiveauthgrant(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int receiveauthgrant(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1778,10 +1778,10 @@ static int receiveauthgrant(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  * granted, denied, or dropped.
  *
  */
-faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, const char *msg)
+faim_export int aim_ssi_sendauthrequest(OscarSession *sess, char *sn, const char *msg)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
@@ -1815,7 +1815,7 @@ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, const cha
 /*
  * Subtype 0x0019 - Receive an authorization request
  */
-static int receiveauthrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int receiveauthrequest(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1856,10 +1856,10 @@ static int receiveauthrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_
  * if reply=0x01 then grant
  *
  */
-faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, guint8 reply, const char *msg)
+faim_export int aim_ssi_sendauthreply(OscarSession *sess, char *sn, guint8 reply, const char *msg)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
@@ -1898,7 +1898,7 @@ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, guint8 repl
  * You get this bad boy when other people respond to the authorization 
  * request that you have previously sent them.
  */
-static int receiveauthreply(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int receiveauthreply(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1936,7 +1936,7 @@ static int receiveauthreply(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 /*
  * Subtype 0x001c - Receive a message telling you someone added you to their list.
  */
-static int receiveadded(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int receiveadded(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1957,7 +1957,7 @@ static int receiveadded(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == OSCAR_SUBTYPE_FEEDBAG_RIGHTSINFO)
@@ -1986,12 +1986,12 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-static void ssi_shutdown(aim_session_t *sess, aim_module_t *mod)
+static void ssi_shutdown(OscarSession *sess, aim_module_t *mod)
 {
 	aim_ssi_freelist(sess);
 }
 
-faim_internal int ssi_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int ssi_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = OSCAR_FAMILY_FEEDBAG;

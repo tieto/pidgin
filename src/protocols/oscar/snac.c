@@ -37,7 +37,7 @@
 /*
  * Called from aim_session_init() to initialize the hash.
  */
-faim_internal void aim_initsnachash(aim_session_t *sess)
+faim_internal void aim_initsnachash(OscarSession *sess)
 {
 	int i;
 
@@ -47,7 +47,7 @@ faim_internal void aim_initsnachash(aim_session_t *sess)
 	return;
 }
 
-faim_internal aim_snacid_t aim_cachesnac(aim_session_t *sess, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen)
+faim_internal aim_snacid_t aim_cachesnac(OscarSession *sess, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen)
 {
 	aim_snac_t snac;
 
@@ -70,7 +70,7 @@ faim_internal aim_snacid_t aim_cachesnac(aim_session_t *sess, const guint16 fami
  * Clones the passed snac structure and caches it in the
  * list/hash.
  */
-faim_internal aim_snacid_t aim_newsnac(aim_session_t *sess, aim_snac_t *newsnac)
+faim_internal aim_snacid_t aim_newsnac(OscarSession *sess, aim_snac_t *newsnac)
 {
 	aim_snac_t *snac;
 	int index;
@@ -98,7 +98,7 @@ faim_internal aim_snacid_t aim_newsnac(aim_session_t *sess, aim_snac_t *newsnac)
  * The returned structure must be freed by the caller.
  *
  */
-faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id) 
+faim_internal aim_snac_t *aim_remsnac(OscarSession *sess, aim_snacid_t id) 
 {
 	aim_snac_t *cur, **prev;
 	int index;
@@ -127,7 +127,7 @@ faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id)
  * maxage is the _minimum_ age in seconds to keep SNACs.
  *
  */
-faim_export void aim_cleansnacs(aim_session_t *sess, int maxage)
+faim_export void aim_cleansnacs(OscarSession *sess, int maxage)
 {
 	int i;
 
@@ -155,7 +155,7 @@ faim_export void aim_cleansnacs(aim_session_t *sess, int maxage)
 	return;
 }
 
-faim_internal int aim_putsnac(aim_bstream_t *bs, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid)
+faim_internal int aim_putsnac(ByteStream *bs, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid)
 {
 
 	aimbs_put16(bs, family);

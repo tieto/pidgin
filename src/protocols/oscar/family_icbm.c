@@ -63,7 +63,7 @@
  * @param sn Null-terminated scrizeen nizame.
  * @return The number of bytes written.  It's really not useful.
  */
-static int aim_im_puticbm(aim_bstream_t *bs, const guchar *c, guint16 channel, const char *sn)
+static int aim_im_puticbm(ByteStream *bs, const guchar *c, guint16 channel, const char *sn)
 {
 	aimbs_putraw(bs, c, 8);
 	aimbs_put16(bs, channel);
@@ -157,10 +157,10 @@ faim_export guint16 aim_im_fingerprint(const guint8 *msghdr, int len)
  * with the rather unreasonable defaults.
  *
  */
-faim_export int aim_im_setparams(aim_session_t *sess, struct aim_icbmparameters *params)
+faim_export int aim_im_setparams(OscarSession *sess, struct aim_icbmparameters *params)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
@@ -194,9 +194,9 @@ faim_export int aim_im_setparams(aim_session_t *sess, struct aim_icbmparameters 
  * Subtype 0x0004 - Request ICBM parameter information.
  *
  */
-faim_export int aim_im_reqparams(aim_session_t *sess)
+faim_export int aim_im_reqparams(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
@@ -208,7 +208,7 @@ faim_export int aim_im_reqparams(aim_session_t *sess)
  * Subtype 0x0005 - Receive parameter information.
  *
  */
-static int aim_im_paraminfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int aim_im_paraminfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	struct aim_icbmparameters params;
@@ -267,10 +267,10 @@ static int aim_im_paraminfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  * XXX - check SNAC size for multipart
  *
  */
-faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_args *args)
+faim_export int aim_im_sendch1_ext(OscarSession *sess, struct aim_sendimext_args *args)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 	int msgtlvlen;
@@ -425,7 +425,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
  * that requires an explicit message length.  Use aim_im_sendch1_ext().
  *
  */
-faim_export int aim_im_sendch1(aim_session_t *sess, const char *sn, guint16 flags, const char *msg)
+faim_export int aim_im_sendch1(OscarSession *sess, const char *sn, guint16 flags, const char *msg)
 {
 	struct aim_sendimext_args args;
 
@@ -445,18 +445,18 @@ faim_export int aim_im_sendch1(aim_session_t *sess, const char *sn, guint16 flag
 /*
  * Subtype 0x0006 - Send a chat invitation.
  */
-faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance)
+faim_export int aim_im_sendch2_chatinvite(OscarSession *sess, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
-	aim_msgcookie_t *msgcookie;
+	IcbmCookie *msgcookie;
 	struct aim_invite_priv *priv;
 	guchar cookie[8];
 	aim_tlvlist_t *otl = NULL, *itl = NULL;
 	guint8 *hdr;
 	int hdrlen;
-	aim_bstream_t hdrbs;
+	ByteStream hdrbs;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
@@ -531,10 +531,10 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
  * This is also performance sensitive. (If you can believe it...)
  *
  */
-faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum)
+faim_export int aim_im_sendch2_icon(OscarSession *sess, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
@@ -610,10 +610,10 @@ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const g
  * make an interface similar to what AOL actually uses.  But I'm not using COM.
  *
  */
-faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args)
+faim_export int aim_im_sendch2_rtfmsg(OscarSession *sess, struct aim_sendrtfmsg_args *args)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 	const char rtfcap[] = {"{97B12751-243C-4334-AD22-D6ABF73F1492}"}; /* AIM_CAPS_ICQRTF capability in string form */
@@ -692,16 +692,16 @@ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg
  * Subtype 0x0006 - Send an "I want to directly connect to you" message
  *
  */
-faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, guchar *usercookie, gboolean usecookie, const char *sn, const guint8 *ip, guint16 port)
+faim_export int aim_im_sendch2_odcrequest(OscarSession *sess, guchar *usercookie, gboolean usecookie, const char *sn, const guint8 *ip, guint16 port)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 	aim_tlvlist_t *tl = NULL, *itl = NULL;
 	int hdrlen;
 	guint8 *hdr;
-	aim_bstream_t hdrbs;
+	ByteStream hdrbs;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
@@ -768,10 +768,10 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, guchar *usercooki
  * Subtype 0x0006 - Send an "I want to send you this file" message
  *
  */
-faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info)
+faim_export int aim_im_sendch2_sendfile_ask(OscarSession *sess, PeerInfo *oft_info)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl=NULL, *subtl=NULL;
 
@@ -783,7 +783,7 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_
 	{ /* Create the subTLV chain */
 		guint8 *buf;
 		int buflen;
-		aim_bstream_t bs;
+		ByteStream bs;
 		guint8 ip[4];
 		guint8 ip_comp[4]; /* The bitwise complement of the ip */
 		char *nexttoken;
@@ -885,7 +885,7 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_
 	{ /* Create the main TLV chain */
 		guint8 *buf;
 		int buflen;
-		aim_bstream_t bs;
+		ByteStream bs;
 
 		/* TLV t(0005) - Encompasses everything from above. Gee. */
 		buflen = 2+8+16+aim_tlvlist_size(&subtl);
@@ -926,10 +926,10 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_
  *
  * @param rendid Capability type (AIM_CAPS_GETFILE or AIM_CAPS_SENDFILE)
  */
-faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *oft_info)
+faim_export int aim_im_sendch2_sendfile_accept(OscarSession *sess, PeerInfo *oft_info)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !oft_info)
@@ -959,10 +959,10 @@ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_o
  * Subtype 0x0006 - Send a "cancel this file transfer" message?
  *
  */
-faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info)
+faim_export int aim_im_sendch2_sendfile_cancel(OscarSession *sess, PeerInfo *oft_info)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !oft_info)
@@ -997,10 +997,10 @@ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_o
  *        state of the user, as one of the AIM_ICQ_STATE_* defines.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, int type)
+faim_export int aim_im_sendch2_geticqaway(OscarSession *sess, const char *sn, int type)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
@@ -1100,10 +1100,10 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
  * @param message The message you want to send, it should be null terminated.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_im_sendch4(aim_session_t *sess, const char *sn, guint16 type, const char *message)
+faim_export int aim_im_sendch4(OscarSession *sess, const char *sn, guint16 type, const char *message)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
@@ -1158,7 +1158,7 @@ faim_export int aim_im_sendch4(aim_session_t *sess, const char *sn, guint16 type
 /*
  * XXX - I don't see when this would ever get called...
  */
-static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int outgoingim(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1194,7 +1194,7 @@ static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		icbmflags |= AIM_IMFLAGS_AWAY;
 
 	if ((msgblock = aim_tlv_gettlv(tlvlist, 0x0002, 1))) {
-		aim_bstream_t mbs;
+		ByteStream mbs;
 		int featurelen, msglen;
 
 		aim_bstream_init(&mbs, msgblock->value, msgblock->length);
@@ -1260,7 +1260,7 @@ static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  * know what you are doing, and/or you have something neat to do with it.
  *
  */
-faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm)
+faim_export int aim_mpmsg_init(OscarSession *sess, aim_mpmsg_t *mpm)
 {
 
 	memset(mpm, 0, sizeof(aim_mpmsg_t));
@@ -1268,7 +1268,7 @@ faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm)
 	return 0;
 }
 
-static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, gchar *data, guint16 datalen)
+static int mpmsg_addsection(OscarSession *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, gchar *data, guint16 datalen)
 {
 	aim_mpmsg_section_t *sec;
 
@@ -1296,7 +1296,7 @@ static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, guint16 chars
 	return 0;
 }
 
-faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen)
+faim_export int aim_mpmsg_addraw(OscarSession *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen)
 {
 	gchar *dup;
 
@@ -1313,7 +1313,7 @@ faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, guint16 
 }
 
 /* XXX - should provide a way of saying ISO-8859-1 specifically */
-faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const char *ascii)
+faim_export int aim_mpmsg_addascii(OscarSession *sess, aim_mpmsg_t *mpm, const char *ascii)
 {
 	gchar *dup;
 
@@ -1328,10 +1328,10 @@ faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const 
 	return 0;
 }
 
-faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen)
+faim_export int aim_mpmsg_addunicode(OscarSession *sess, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen)
 {
 	gchar *buf;
-	aim_bstream_t bs;
+	ByteStream bs;
 	int i;
 
 	if (!(buf = malloc(unicodelen * 2)))
@@ -1351,7 +1351,7 @@ faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, cons
 	return 0;
 }
 
-faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm)
+faim_export void aim_mpmsg_free(OscarSession *sess, aim_mpmsg_t *mpm)
 {
 	aim_mpmsg_section_t *cur;
 
@@ -1376,7 +1376,7 @@ faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm)
  * suspicious.
  *
  */
-static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinfo, guint8 *data, int len, struct aim_incomingim_ch1_args *args)
+static int incomingim_ch1_parsemsgs(OscarSession *sess, aim_userinfo_t *userinfo, guint8 *data, int len, struct aim_incomingim_ch1_args *args)
 {
 	/* Should this be ASCII -> UNICODE -> Custom */
 	static const guint16 charsetpri[] = {
@@ -1386,7 +1386,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 	};
 	static const int charsetpricount = 3;
 	int i;
-	aim_bstream_t mbs;
+	ByteStream mbs;
 	aim_mpmsg_section_t *sec;
 
 	aim_bstream_init(&mbs, data, len);
@@ -1486,7 +1486,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 	return 0;
 }
 
-static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, aim_bstream_t *bs, guint8 *cookie)
+static int incomingim_ch1(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, ByteStream *bs, guint8 *cookie)
 {
 	guint16 type, length;
 	aim_rxcallback_t userfunc;
@@ -1633,7 +1633,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	return ret;
 }
 
-static void incomingim_ch2_buddylist(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
+static void incomingim_ch2_buddylist(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, ByteStream *servdata)
 {
 
 	/*
@@ -1682,7 +1682,7 @@ static void incomingim_ch2_buddylist(aim_session_t *sess, aim_module_t *mod, aim
 	return;
 }
 
-static void incomingim_ch2_buddyicon_free(aim_session_t *sess, struct aim_incomingim_ch2_args *args)
+static void incomingim_ch2_buddyicon_free(OscarSession *sess, struct aim_incomingim_ch2_args *args)
 {
 
 	free(args->info.icon.icon);
@@ -1690,7 +1690,7 @@ static void incomingim_ch2_buddyicon_free(aim_session_t *sess, struct aim_incomi
 	return;
 }
 
-static void incomingim_ch2_buddyicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
+static void incomingim_ch2_buddyicon(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, ByteStream *servdata)
 {
 
 	if (servdata) {
@@ -1705,7 +1705,7 @@ static void incomingim_ch2_buddyicon(aim_session_t *sess, aim_module_t *mod, aim
 	return;
 }
 
-static void incomingim_ch2_chat_free(aim_session_t *sess, struct aim_incomingim_ch2_args *args)
+static void incomingim_ch2_chat_free(OscarSession *sess, struct aim_incomingim_ch2_args *args)
 {
 
 	/* XXX - aim_chat_roominfo_free() */
@@ -1714,7 +1714,7 @@ static void incomingim_ch2_chat_free(aim_session_t *sess, struct aim_incomingim_
 	return;
 }
 
-static void incomingim_ch2_chat(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
+static void incomingim_ch2_chat(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, ByteStream *servdata)
 {
 
 	/*
@@ -1728,7 +1728,7 @@ static void incomingim_ch2_chat(aim_session_t *sess, aim_module_t *mod, aim_fram
 	return;
 }
 
-static void incomingim_ch2_icqserverrelay_free(aim_session_t *sess, struct aim_incomingim_ch2_args *args)
+static void incomingim_ch2_icqserverrelay_free(OscarSession *sess, struct aim_incomingim_ch2_args *args)
 {
 
 	free((char *)args->info.rtfmsg.rtfmsg);
@@ -1744,7 +1744,7 @@ static void incomingim_ch2_icqserverrelay_free(aim_session_t *sess, struct aim_i
  * Note that this is all little-endian.  Cringe.
  *
  */
-static void incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
+static void incomingim_ch2_icqserverrelay(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, ByteStream *servdata)
 {
 	guint16 hdrlen, anslen, msglen;
 
@@ -1773,12 +1773,12 @@ static void incomingim_ch2_icqserverrelay(aim_session_t *sess, aim_module_t *mod
 	return;
 }
 
-static void incomingim_ch2_sendfile_free(aim_session_t *sess, struct aim_incomingim_ch2_args *args)
+static void incomingim_ch2_sendfile_free(OscarSession *sess, struct aim_incomingim_ch2_args *args)
 {
 	free(args->info.sendfile.filename);
 }
 
-static void incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, aim_bstream_t *servdata)
+static void incomingim_ch2_sendfile(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args, ByteStream *servdata)
 {
 
 	args->destructor = (void *)incomingim_ch2_sendfile_free;
@@ -1817,15 +1817,15 @@ static void incomingim_ch2_sendfile(aim_session_t *sess, aim_module_t *mod, aim_
 	return;
 }
 
-typedef void (*ch2_args_destructor_t)(aim_session_t *sess, struct aim_incomingim_ch2_args *args);
+typedef void (*ch2_args_destructor_t)(OscarSession *sess, struct aim_incomingim_ch2_args *args);
 
-static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, guint8 *cookie)
+static int incomingim_ch2(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, guint8 *cookie)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlv_t *block1, *servdatatlv;
 	aim_tlvlist_t *list2;
 	struct aim_incomingim_ch2_args args;
-	aim_bstream_t bbs, sdbs, *sdbsptr = NULL;
+	ByteStream bbs, sdbs, *sdbsptr = NULL;
 	guint8 *cookie2;
 	int ret = 0;
 
@@ -2036,9 +2036,9 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	return ret;
 }
 
-static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, guint8 *cookie)
+static int incomingim_ch4(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, guint16 channel, aim_userinfo_t *userinfo, aim_tlvlist_t *tlvlist, guint8 *cookie)
 {
-	aim_bstream_t meat;
+	ByteStream meat;
 	aim_rxcallback_t userfunc;
 	aim_tlv_t *block;
 	struct aim_incomingim_ch4_args args;
@@ -2078,7 +2078,7 @@ static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  * I have access to.  Its not fast, its not clean.  But it works.
  *
  */
-static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int incomingim(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	guchar *cookie;
@@ -2177,9 +2177,9 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  * returns -1 on error (couldn't alloc packet), 0 on success.
  *
  */
-faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *sn, guint32 flags)
+faim_export int aim_im_warn(OscarSession *sess, OscarConnection *conn, const char *sn, guint32 flags)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !conn || !sn)
@@ -2201,7 +2201,7 @@ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *s
 }
 
 /* Subtype 0x000a */
-static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int missedcall(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -2233,10 +2233,10 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  *
  */
-faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const guchar *cookie, guint16 code)
+faim_export int aim_im_denytransfer(OscarSession *sess, const char *sender, const guchar *cookie, guint16 code)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -2270,7 +2270,7 @@ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, con
  * This contains the ICQ status message.  Go figure.
  *
  */
-static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int clientautoresp(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -2359,7 +2359,7 @@ static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  * sent.
  *
  */
-static int msgack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int msgack(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	guint16 ch;
@@ -2387,10 +2387,10 @@ static int msgack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * and Gaim 0.60 and newer.
  *
  */
-faim_export int aim_im_sendmtn(aim_session_t *sess, guint16 type1, const char *sn, guint16 type2)
+faim_export int aim_im_sendmtn(OscarSession *sess, guint16 type1, const char *sn, guint16 type2)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0002)))
@@ -2442,7 +2442,7 @@ faim_export int aim_im_sendmtn(aim_session_t *sess, guint16 type1, const char *s
  * and Gaim 0.60 and newer.
  *
  */
-static int mtn_receive(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int mtn_receive(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -2464,7 +2464,7 @@ static int mtn_receive(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0005)
@@ -2485,7 +2485,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int msg_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int msg_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0004;

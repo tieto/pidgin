@@ -31,7 +31,7 @@
 
 #include "oscar.h"
 
-faim_internal int translate_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int translate_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000c;

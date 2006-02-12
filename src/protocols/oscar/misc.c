@@ -39,9 +39,9 @@
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-faim_internal int aim_genericreq_n(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype)
+faim_internal int aim_genericreq_n(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid = 0x00000000;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
@@ -54,9 +54,9 @@ faim_internal int aim_genericreq_n(aim_session_t *sess, aim_conn_t *conn, guint1
 	return 0;
 }
 
-faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype)
+faim_internal int aim_genericreq_n_snacid(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
@@ -70,9 +70,9 @@ faim_internal int aim_genericreq_n_snacid(aim_session_t *sess, aim_conn_t *conn,
 	return 0;
 }
 
-faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype, guint32 *longdata)
+faim_internal int aim_genericreq_l(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype, guint32 *longdata)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!longdata)
@@ -91,9 +91,9 @@ faim_internal int aim_genericreq_l(aim_session_t *sess, aim_conn_t *conn, guint1
 	return 0;
 }
 
-faim_internal int aim_genericreq_s(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 subtype, guint16 *shortdata)
+faim_internal int aim_genericreq_s(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype, guint16 *shortdata)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!shortdata)
@@ -116,7 +116,7 @@ faim_internal int aim_genericreq_s(aim_session_t *sess, aim_conn_t *conn, guint1
  * Should be generic enough to handle the errors for all groups.
  *
  */
-static int generror(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int generror(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	int error = 0;
@@ -138,7 +138,7 @@ static int generror(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0001)
@@ -153,7 +153,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int misc_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int misc_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0xffff;

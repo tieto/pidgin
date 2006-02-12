@@ -46,9 +46,9 @@
  * chan = channel for FLAP, hdrtype for OFT
  *
  */
-faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, guint8 framing, guint16 chan, int datalen)
+faim_internal FlapFrame *aim_tx_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint16 chan, int datalen)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 
 	if (!sess || !conn) {
 		gaim_debug_misc("oscar", "aim_tx_new: No session or no connection specified!\n");
@@ -68,7 +68,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, gui
 		}
 	}
 
-	if (!(fr = (aim_frame_t *)calloc(1, sizeof(aim_frame_t))))
+	if (!(fr = (FlapFrame *)calloc(1, sizeof(FlapFrame))))
 		return NULL;
 
 	fr->conn = conn;
@@ -100,7 +100,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, gui
  * normally called during the final step of packet preparation
  * before enqueuement (in aim_tx_enqueue()).
  */
-static flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
+static flap_seqnum_t aim_get_next_txseqnum(OscarConnection *conn)
 {
 	flap_seqnum_t ret;
 
@@ -121,7 +121,7 @@ static flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
  * that is, when sess->tx_enqueue is set to &aim_tx_enqueue__queuebased.
  *
  */
-static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
+static int aim_tx_enqueue__queuebased(OscarSession *sess, FlapFrame *fr)
 {
 
 	if (!fr->conn) {
@@ -140,7 +140,7 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
 	if (!sess->queue_outgoing)
 		sess->queue_outgoing = fr;
 	else {
-		aim_frame_t *cur;
+		FlapFrame *cur;
 		for (cur = sess->queue_outgoing; cur->next; cur = cur->next);
 		cur->next = fr;
 	}
@@ -157,7 +157,7 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
  * right here.
  *
  */
-static int aim_tx_enqueue__immediate(aim_session_t *sess, aim_frame_t *fr)
+static int aim_tx_enqueue__immediate(OscarSession *sess, FlapFrame *fr)
 {
 	int ret;
 
@@ -179,7 +179,7 @@ static int aim_tx_enqueue__immediate(aim_session_t *sess, aim_frame_t *fr)
 	return ret;
 }
 
-faim_export int aim_tx_setenqueue(aim_session_t *sess, int what, int (*func)(aim_session_t *, aim_frame_t *))
+faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *))
 {
 
 	if (what == AIM_TX_QUEUED)
@@ -196,7 +196,7 @@ faim_export int aim_tx_setenqueue(aim_session_t *sess, int what, int (*func)(aim
 	return 0;
 }
 
-faim_internal int aim_tx_enqueue(aim_session_t *sess, aim_frame_t *fr)
+faim_internal int aim_tx_enqueue(OscarSession *sess, FlapFrame *fr)
 {
 
 	/*
@@ -233,7 +233,7 @@ static int aim_send(int fd, const void *buf, size_t count)
 	return cur;
 }
 
-faim_internal int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
+faim_internal int aim_bstream_send(ByteStream *bs, OscarConnection *conn, size_t count)
 {
 	int wrote = 0;
 
@@ -279,9 +279,9 @@ faim_internal int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t c
 	return wrote;
 }
 
-static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
+static int sendframe_flap(OscarSession *sess, FlapFrame *fr)
 {
-	aim_bstream_t bs;
+	ByteStream bs;
 	guint8 *bs_raw;
 	int payloadlen, err = 0, bslen;
 
@@ -315,9 +315,9 @@ static int sendframe_flap(aim_session_t *sess, aim_frame_t *fr)
 	return err;
 }
 
-static int sendframe_rendezvous(aim_session_t *sess, aim_frame_t *fr)
+static int sendframe_rendezvous(OscarSession *sess, FlapFrame *fr)
 {
-	aim_bstream_t bs;
+	ByteStream bs;
 	guint8 *bs_raw;
 	int payloadlen, err = 0, bslen;
 
@@ -350,7 +350,7 @@ static int sendframe_rendezvous(aim_session_t *sess, aim_frame_t *fr)
 	return err;
 }
 
-faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *fr)
+faim_internal int aim_tx_sendframe(OscarSession *sess, FlapFrame *fr)
 {
 	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
 		return sendframe_flap(sess, fr);
@@ -360,9 +360,9 @@ faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *fr)
 	return -1;
 }
 
-faim_export int aim_tx_flushqueue(aim_session_t *sess)
+faim_export int aim_tx_flushqueue(OscarSession *sess)
 {
-	aim_frame_t *cur;
+	FlapFrame *cur;
 
 	for (cur = sess->queue_outgoing; cur; cur = cur->next) {
 
@@ -402,9 +402,9 @@ faim_export int aim_tx_flushqueue(aim_session_t *sess)
  * queue. This is not a required operation, but it of course helps
  * reduce memory footprint at run time!  
  */
-faim_export void aim_tx_purgequeue(aim_session_t *sess)
+faim_export void aim_tx_purgequeue(OscarSession *sess)
 {
-	aim_frame_t *cur, **prev;
+	FlapFrame *cur, **prev;
 
 	for (prev = &sess->queue_outgoing; (cur = *prev); ) {
 		if (cur->handled) {
@@ -425,9 +425,9 @@ faim_export void aim_tx_purgequeue(aim_session_t *sess)
  * @param sess A session.
  * @param conn Connection that's dying.
  */
-faim_internal void aim_tx_cleanqueue(aim_session_t *sess, aim_conn_t *conn)
+faim_internal void aim_tx_cleanqueue(OscarSession *sess, OscarConnection *conn)
 {
-	aim_frame_t *cur;
+	FlapFrame *cur;
 
 	for (cur = sess->queue_outgoing; cur; cur = cur->next) {
 		if (cur->conn == conn)

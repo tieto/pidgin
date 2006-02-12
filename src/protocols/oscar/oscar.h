@@ -29,8 +29,6 @@
 #ifndef _OSCAR_H_
 #define _OSCAR_H_
 
-#include "snactypes.h"
-
 #include "debug.h"
 #include "internal.h"
 
@@ -53,12 +51,22 @@
 #include "libc_interface.h"
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef struct _ByteStream         ByteStream;
+typedef struct _ClientInfo         ClientInfo;
+typedef struct _FlapFrame          FlapFrame;
+typedef struct _IcbmCookie         IcbmCookie;
+typedef struct _OscarConnection    OscarConnection;
+typedef struct _OscarSession       OscarSession;
 
 typedef guint32 aim_snacid_t;
 typedef guint16 flap_seqnum_t;
+
+#include "peer.h"
+#include "snactypes.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define WIN32_STATIC
 #if defined(_WIN32) && !defined(WIN32_STATIC)
@@ -80,14 +88,6 @@ typedef guint16 flap_seqnum_t;
  */
 #define faim_export
 #define faim_internal
-#endif
-
-#ifndef FALSE
-#define FALSE (0)
-#endif
-
-#ifndef TRUE
-#define TRUE (!FALSE)
 #endif
 
 #define FAIM_SNAC_HASH_SIZE 16
@@ -127,7 +127,7 @@ typedef guint16 flap_seqnum_t;
  * Current Maximum Length for Chat Room Messages
  *
  * This is actually defined by the protocol to be
- * dynamic, but I have yet to see due cause to 
+ * dynamic, but I have yet to see due cause to
  * define it dynamically here.  Maybe later.
  *
  */
@@ -141,12 +141,13 @@ typedef guint16 flap_seqnum_t;
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
 /*
- * Client info.  Filled in by the client and passed in to 
+ * Client info.  Filled in by the client and passed in to
  * aim_send_login().  The information ends up getting passed to OSCAR
  * through the initial login command.
  *
  */
-struct client_info_s {
+struct _ClientInfo
+{
 	const char *clientstring;
 	guint16 clientid;
 	guint16 major;
@@ -386,7 +387,8 @@ struct client_info_s {
 #define AIM_FRAMETYPE_FLAP		0x0000
 #define AIM_FRAMETYPE_OFT		0x0001
 
-typedef struct aim_conn_s {
+struct _OscarConnection
+{
 	int fd;
 	guint16 type;
 	guint16 subtype;
@@ -399,8 +401,8 @@ typedef struct aim_conn_s {
 	void *handlerlist;
 	void *sessv; /* pointer to parent session */
 	void *inside; /* only accessible from inside libfaim */
-	struct aim_conn_s *next;
-} aim_conn_t;
+	struct _OscarConnection *next;
+};
 
 /*
  * Byte Stream type. Sort of.
@@ -416,13 +418,15 @@ typedef struct aim_conn_s {
  * Don't touch the insides of this struct.  Or I'll have to kill you.
  *
  */
-typedef struct aim_bstream_s {
+struct _ByteStream
+{
 	guint8 *data;
 	guint32 len;
 	guint32 offset;
-} aim_bstream_t;
+};
 
-typedef struct aim_frame_s {
+struct _FlapFrame
+{
 	guint8 hdrtype; /* defines which piece of the union to use */
 	union {
 		struct {
@@ -435,25 +439,27 @@ typedef struct aim_frame_s {
 			guint16 type;
 		} rend;
 	} hdr;
-	aim_bstream_t data;		/* payload stream */
-	aim_conn_t *conn;		/* the connection it came in on/is going out on */
+	ByteStream data;		/* payload stream */
+	OscarConnection *conn;		/* the connection it came in on/is going out on */
 	guint8 handled;			/* 0 = new, !0 = been handled */
-	struct aim_frame_s *next;
-} aim_frame_t;
+	struct _FlapFrame *next;
+};
 
-typedef struct aim_msgcookie_s {
+struct _IcbmCookie
+{
 	guchar cookie[8];
 	int type;
 	void *data;
 	time_t addtime;
-	struct aim_msgcookie_s *next;
-} aim_msgcookie_t;
+	struct _IcbmCookie *next;
+};
 
 /*
  * AIM Session: The main client-data interface.
  *
  */
-typedef struct aim_session_s {
+struct _OscarSession
+{
 
 	/* ---- Client Accessible ------------------------ */
 
@@ -461,7 +467,7 @@ typedef struct aim_session_s {
 	char sn[MAXSNLEN+1];
 
 	/*
-	 * Pointer to anything the client wants to 
+	 * Pointer to anything the client wants to
 	 * explicitly associate with this session.
 	 *
 	 * This is for use in the callbacks mainly. In any
@@ -473,7 +479,7 @@ typedef struct aim_session_s {
 	/* ---- Internal Use Only ------------------------ */
 
 	/* Connection information */
-	aim_conn_t *connlist;
+	OscarConnection *connlist;
 
 	/*
 	 * Transmit/receive queues.
@@ -481,10 +487,10 @@ typedef struct aim_session_s {
 	 * These are only used when you don't use your own lowlevel
 	 * I/O.  I don't suggest that you use libfaim's internal I/O.
 	 * Its really bad and the API/event model is quirky at best.
-	 *  
+	 *
 	 */
-	aim_frame_t *queue_outgoing;
-	aim_frame_t *queue_incoming;
+	FlapFrame *queue_outgoing;
+	FlapFrame *queue_incoming;
 
 	/*
 	 * Tx Enqueuing function.
@@ -494,7 +500,7 @@ typedef struct aim_session_s {
 	 * to send something.
 	 *
 	 */
-	int (*tx_enqueue)(struct aim_session_s *, aim_frame_t *);
+	int (*tx_enqueue)(OscarSession *, FlapFrame *);
 
 	void *modlistv;
 
@@ -514,9 +520,9 @@ typedef struct aim_session_s {
 	void *snac_hash[FAIM_SNAC_HASH_SIZE];
 	aim_snacid_t snacid_next;
 
-	aim_msgcookie_t *msgcookies;
+	IcbmCookie *msgcookies;
 	struct aim_icq_info *icq_info;
-	struct aim_oft_info *oft_info;
+	PeerInfo *oft_info;
 	struct aim_authresp_info *authinfo;
 	struct aim_emailinfo *emailinfo;
 
@@ -537,7 +543,7 @@ typedef struct aim_session_s {
 		time_t timestamp;
 		int waiting_for_ack;
 	} ssi;
-} aim_session_t;
+};
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
 #define AIM_ICQ_STATE_NORMAL		0x00000000
@@ -562,32 +568,34 @@ typedef struct aim_session_s {
  * XXX Make this easily overridable.
  *
  */
-faim_export int aim_get_command(aim_session_t *, aim_conn_t *);
+faim_export int aim_get_command(OscarSession *, OscarConnection *);
 
 /*
  * Dispatch commands that are in the rx queue.
  */
-faim_export void aim_rxdispatch(aim_session_t *);
+faim_export void aim_rxdispatch(OscarSession *);
 
-faim_export int aim_debugconn_sendconnect(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_debugconn_sendconnect(OscarSession *sess, OscarConnection *conn);
 
-faim_export int aim_logoff(aim_session_t *);
+faim_export int aim_logoff(OscarSession *);
 
 /* the library should never call aim_conn_kill */
-faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
+faim_export void aim_conn_kill(OscarSession *sess, OscarConnection **deadconn);
 
-typedef int (*aim_rxcallback_t)(aim_session_t *, aim_frame_t *, ...);
+typedef int (*aim_rxcallback_t)(OscarSession *, FlapFrame *, ...);
 
 
-/* auth.c */
-struct aim_clientrelease {
+/* family_auth.c */
+struct aim_clientrelease
+{
 	char *name;
 	guint32 build;
 	char *url;
 	char *info;
 };
 
-struct aim_authresp_info {
+struct aim_authresp_info
+{
 	char *sn;
 	guint16 errorcode;
 	char *errorurl;
@@ -602,7 +610,8 @@ struct aim_authresp_info {
 };
 
 /* Callback data for redirect. */
-struct aim_redirect_data {
+struct aim_redirect_data
+{
 	guint16 group;
 	const char *ip;
 	guint16 cookielen;
@@ -614,47 +623,47 @@ struct aim_redirect_data {
 	} chat;
 };
 
-faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn);
-faim_export int aim_send_login(aim_session_t *, aim_conn_t *, const char *, const char *, struct client_info_s *, const char *key);
-/* 0x000b */ faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid);
+faim_export int aim_clientready(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_sendflapver(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, const char *sn);
+faim_export int aim_send_login(OscarSession *, OscarConnection *, const char *, const char *, ClientInfo *, const char *key);
+/* 0x000b */ faim_export int aim_auth_securid_send(OscarSession *sess, const char *securid);
 
-faim_export void aim_purge_rxqueue(aim_session_t *);
-faim_export void aim_cleansnacs(aim_session_t *, int maxage);
+faim_export void aim_purge_rxqueue(OscarSession *);
+faim_export void aim_cleansnacs(OscarSession *, int maxage);
 
 #define AIM_TX_QUEUED    0 /* default */
 #define AIM_TX_IMMEDIATE 1
 #define AIM_TX_USER      2
-faim_export int aim_tx_setenqueue(aim_session_t *sess, int what, int (*func)(aim_session_t *, aim_frame_t *));
+faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *));
 
-faim_export int aim_tx_flushqueue(aim_session_t *);
-faim_export void aim_tx_purgequeue(aim_session_t *);
+faim_export int aim_tx_flushqueue(OscarSession *);
+faim_export void aim_tx_purgequeue(OscarSession *);
 
-faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval);
+faim_export int aim_conn_setlatency(OscarConnection *conn, int newval);
 
-faim_export int aim_conn_addhandler(aim_session_t *, aim_conn_t *conn, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
-faim_export int aim_clearhandlers(aim_conn_t *conn);
+faim_export int aim_conn_addhandler(OscarSession *, OscarConnection *conn, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
+faim_export int aim_clearhandlers(OscarConnection *conn);
 
-faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, guint16 group);
-faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn);
-faim_export void aim_conn_close(aim_conn_t *deadconn);
-faim_export aim_conn_t *aim_newconn(aim_session_t *, int type);
-faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_conn_isready(aim_conn_t *);
-faim_export int aim_conn_setstatus(aim_conn_t *, int);
-faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_conn_isconnecting(aim_conn_t *conn);
+faim_export OscarConnection *aim_conn_findbygroup(OscarSession *sess, guint16 group);
+faim_export OscarSession *aim_conn_getsess(OscarConnection *conn);
+faim_export void aim_conn_close(OscarConnection *deadconn);
+faim_export OscarConnection *aim_newconn(OscarSession *, int type);
+faim_export int aim_conn_in_sess(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_conn_isready(OscarConnection *);
+faim_export int aim_conn_setstatus(OscarConnection *, int);
+faim_export int aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_conn_isconnecting(OscarConnection *conn);
 
-faim_export void aim_session_init(aim_session_t *, guint8 nonblocking);
-faim_export void aim_session_kill(aim_session_t *);
-faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
-faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *, int type);
-faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
+faim_export void aim_session_init(OscarSession *, guint8 nonblocking);
+faim_export void aim_session_kill(OscarSession *);
+faim_export OscarConnection *aim_getconn_type(OscarSession *, int type);
+faim_export OscarConnection *aim_getconn_type_all(OscarSession *, int type);
+faim_export OscarConnection *aim_getconn_fd(OscarSession *, int fd);
 
-/* 0x0001 - service.c */
-faim_export int aim_srv_setstatusmsg(aim_session_t *sess, const char *msg);
-faim_export int aim_srv_setidle(aim_session_t *sess, guint32 idletime);
+/* 0x0001 - family_oservice.c */
+faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg);
+faim_export int aim_srv_setidle(OscarSession *sess, guint32 idletime);
 
 /* misc.c */
 
@@ -668,16 +677,16 @@ faim_export int aim_srv_setidle(aim_session_t *sess, guint32 idletime);
 
 #define AIM_WARN_ANON                     0x01
 
-faim_export int aim_sendpauseack(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_nop(aim_session_t *, aim_conn_t *);
-faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, const char *);
-faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, guint32 mask);
-faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, guint32);
-faim_export int aim_reqpersonalinfo(aim_session_t *, aim_conn_t *);
-faim_export int aim_reqservice(aim_session_t *, aim_conn_t *, guint16);
-faim_export int aim_bos_reqrights(aim_session_t *, aim_conn_t *);
-faim_export int aim_setextstatus(aim_session_t *sess, guint32 status);
+faim_export int aim_sendpauseack(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_nop(OscarSession *, OscarConnection *);
+faim_export int aim_flap_nop(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_bos_changevisibility(OscarSession *, OscarConnection *, int, const char *);
+faim_export int aim_bos_setgroupperm(OscarSession *, OscarConnection *, guint32 mask);
+faim_export int aim_bos_setprivacyflags(OscarSession *, OscarConnection *, guint32);
+faim_export int aim_reqpersonalinfo(OscarSession *, OscarConnection *);
+faim_export int aim_reqservice(OscarSession *, OscarConnection *, guint16);
+faim_export int aim_bos_reqrights(OscarSession *, OscarConnection *);
+faim_export int aim_setextstatus(OscarSession *sess, guint32 status);
 
 #define AIM_CLIENTTYPE_UNKNOWN  0x0000
 #define AIM_CLIENTTYPE_MC       0x0001
@@ -690,11 +699,11 @@ faim_export guint16 aim_im_fingerprint(const guint8 *msghdr, int len);
 #define AIM_RATE_CODE_WARNING    0x0002
 #define AIM_RATE_CODE_LIMIT      0x0003
 #define AIM_RATE_CODE_CLEARLIMIT 0x0004
-faim_export int aim_ads_requestads(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_ads_requestads(OscarSession *sess, OscarConnection *conn);
 
 
 
-/* im.c */
+/* family_icbm.c */
 #define AIM_OFT_SUBTYPE_SEND_FILE	0x0001
 #define AIM_OFT_SUBTYPE_SEND_DIR	0x0002
 #define AIM_OFT_SUBTYPE_GET_FILE	0x0011
@@ -725,7 +734,8 @@ faim_export int aim_ads_requestads(aim_session_t *sess, aim_conn_t *conn);
 	0 \
 }
 
-struct aim_icbmparameters {
+struct aim_icbmparameters
+{
 	guint16 maxchan;
 	guint32 flags; /* AIM_IMPARAM_FLAG_ */
 	guint16 maxmsglen; /* message size that you will accept */
@@ -734,7 +744,8 @@ struct aim_icbmparameters {
 	guint32 minmsginterval; /* in milliseconds? */
 };
 
-struct aim_chat_roominfo {
+struct aim_chat_roominfo
+{
 	guint16 exchange;
 	char *name;
 	guint16 instance;
@@ -759,7 +770,8 @@ struct aim_chat_roominfo {
 /*
  * Multipart message structures.
  */
-typedef struct aim_mpmsg_section_s {
+typedef struct aim_mpmsg_section_s
+{
 	guint16 charset;
 	guint16 charsubset;
 	gchar *data;
@@ -767,16 +779,17 @@ typedef struct aim_mpmsg_section_s {
 	struct aim_mpmsg_section_s *next;
 } aim_mpmsg_section_t;
 
-typedef struct aim_mpmsg_s {
+typedef struct aim_mpmsg_s
+{
 	unsigned int numparts;
 	aim_mpmsg_section_t *parts;
 } aim_mpmsg_t;
 
-faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm);
-faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen);
-faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const char *ascii);
-faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen);
-faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm);
+faim_export int aim_mpmsg_init(OscarSession *sess, aim_mpmsg_t *mpm);
+faim_export int aim_mpmsg_addraw(OscarSession *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen);
+faim_export int aim_mpmsg_addascii(OscarSession *sess, aim_mpmsg_t *mpm, const char *ascii);
+faim_export int aim_mpmsg_addunicode(OscarSession *sess, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen);
+faim_export void aim_mpmsg_free(OscarSession *sess, aim_mpmsg_t *mpm);
 
 /*
  * Arguments to aim_send_im_ext().
@@ -784,7 +797,8 @@ faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm);
  * This is really complicated.  But immensely versatile.
  *
  */
-struct aim_sendimext_args {
+struct aim_sendimext_args
+{
 
 	/* These are _required_ */
 	const char *destsn;
@@ -814,7 +828,8 @@ struct aim_sendimext_args {
 /*
  * Arguments to aim_send_rtfmsg().
  */
-struct aim_sendrtfmsg_args {
+struct aim_sendrtfmsg_args
+{
 	const char *destsn;
 	guint32 fgcolor;
 	guint32 bgcolor;
@@ -823,7 +838,7 @@ struct aim_sendrtfmsg_args {
 
 /*
  * This information is provided in the Incoming ICBM callback for
- * Channel 1 ICBM's.  
+ * Channel 1 ICBM's.
  *
  * Note that although CUSTOMFEATURES and CUSTOMCHARSET say they
  * are optional, both are always set by the current libfaim code.
@@ -831,15 +846,16 @@ struct aim_sendrtfmsg_args {
  * consistency with aim_sendimext_args.
  *
  * Multipart messages require some explanation. If you want to use them,
- * I suggest you read all the comments in im.c.
+ * I suggest you read all the comments in family_icbm.c.
  *
  */
-struct aim_incomingim_ch1_args {
+struct aim_incomingim_ch1_args
+{
 
 	/* Always provided */
 	aim_mpmsg_t mpmsg;
 	guint32 icbmflags; /* some flags apply only to ->msg, not all mpmsg */
-	
+
 	/* Only provided if message has a human-readable section */
 	gchar *msg;
 	int msglen;
@@ -867,7 +883,8 @@ struct aim_incomingim_ch1_args {
 #define AIM_RENDEZVOUS_CANCEL	0x0001
 #define AIM_RENDEZVOUS_ACCEPT	0x0002
 
-struct aim_incomingim_ch2_args {
+struct aim_incomingim_ch2_args
+{
 	guint16 status;
 	guchar cookie[8];
 	int reqclass;
@@ -914,7 +931,8 @@ struct aim_incomingim_ch2_args {
 #define AIM_ICQMSG_AUTHDENIED	0x0007
 #define AIM_ICQMSG_AUTHGRANTED	0x0008
 
-struct aim_incomingim_ch4_args {
+struct aim_incomingim_ch4_args
+{
 	guint32 uin; /* Of the sender of the ICBM */
 	guint8 type;
 	guint8 flags;
@@ -923,26 +941,26 @@ struct aim_incomingim_ch4_args {
 };
 
 /* SNAC sending functions */
-/* 0x0002 */ faim_export int aim_im_setparams(aim_session_t *sess, struct aim_icbmparameters *params);
-/* 0x0004 */ faim_export int aim_im_reqparams(aim_session_t *sess);
-/* 0x0006 */ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch1(aim_session_t *, const char *destsn, guint16 flags, const char *msg);
-/* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance);
-/* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
-/* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, guchar *cookie, gboolean usecookie, const char *sn, const guint8 *ip, guint16 port);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *info);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info);
-/* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, int type);
-/* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, const char *sn, guint16 type, const char *message);
-/* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, guint32 flags);
-/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const guchar *cookie, guint16 code);
-/* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, guint16 type1, const char *sn, guint16 type2);
+/* 0x0002 */ faim_export int aim_im_setparams(OscarSession *sess, struct aim_icbmparameters *params);
+/* 0x0004 */ faim_export int aim_im_reqparams(OscarSession *sess);
+/* 0x0006 */ faim_export int aim_im_sendch1_ext(OscarSession *sess, struct aim_sendimext_args *args);
+/* 0x0006 */ faim_export int aim_im_sendch1(OscarSession *, const char *destsn, guint16 flags, const char *msg);
+/* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(OscarSession *sess, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance);
+/* 0x0006 */ faim_export int aim_im_sendch2_icon(OscarSession *sess, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
+/* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(OscarSession *sess, struct aim_sendrtfmsg_args *args);
+/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(OscarSession *sess, guchar *cookie, gboolean usecookie, const char *sn, const guint8 *ip, guint16 port);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(OscarSession *sess, PeerInfo *oft_info);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(OscarSession *sess, PeerInfo *info);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(OscarSession *sess, PeerInfo *oft_info);
+/* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(OscarSession *sess, const char *sn, int type);
+/* 0x0006 */ faim_export int aim_im_sendch4(OscarSession *sess, const char *sn, guint16 type, const char *message);
+/* 0x0008 */ faim_export int aim_im_warn(OscarSession *sess, OscarConnection *conn, const char *destsn, guint32 flags);
+/* 0x000b */ faim_export int aim_im_denytransfer(OscarSession *sess, const char *sender, const guchar *cookie, guint16 code);
+/* 0x0014 */ faim_export int aim_im_sendmtn(OscarSession *sess, guint16 type1, const char *sn, guint16 type2);
 faim_export void aim_icbm_makecookie(guchar* cookie);
 
 
-/* 0x0002 - locate.c */
+/* 0x0002 - family_locate.c */
 /*
  * AIM User Info, Standard Form.
  */
@@ -950,7 +968,7 @@ faim_export void aim_icbm_makecookie(guchar* cookie);
 #define AIM_FLAG_ADMINISTRATOR	0x0002
 #define AIM_FLAG_AOL			0x0004
 #define AIM_FLAG_OSCAR_PAY		0x0008
-#define AIM_FLAG_FREE 			0x0010
+#define AIM_FLAG_FREE			0x0010
 #define AIM_FLAG_AWAY			0x0020
 #define AIM_FLAG_ICQ			0x0040
 #define AIM_FLAG_WIRELESS		0x0080
@@ -972,12 +990,14 @@ faim_export void aim_icbm_makecookie(guchar* cookie);
 #define AIM_USERINFO_PRESENT_SESSIONLEN   0x00000100
 #define AIM_USERINFO_PRESENT_CREATETIME   0x00000200
 
-struct userinfo_node {
+struct userinfo_node
+{
 	char *sn;
 	struct userinfo_node *next;
 };
 
-typedef struct aim_userinfo_s {
+typedef struct aim_userinfo_s
+{
 	char *sn;
 	guint16 warnlevel; /* evil percent * 10 (999 = 99.9%) */
 	guint16 idletime; /* in seconds */
@@ -1046,9 +1066,10 @@ typedef struct aim_userinfo_s {
 #define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
 #define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
 
-faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag);
+faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag);
 
-struct aim_invite_priv {
+struct aim_invite_priv
+{
 	char *sn;
 	char *roomname;
 	guint16 exchange;
@@ -1072,44 +1093,45 @@ struct aim_invite_priv {
 #define AIM_COOKIETYPE_OFTIMAGE 0x14
 #define AIM_COOKIETYPE_OFTICON  0x15
 
-faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const char *sn);
-faim_export void aim_locate_dorequest(aim_session_t *sess);
+faim_export aim_userinfo_t *aim_locate_finduserinfo(OscarSession *sess, const char *sn);
+faim_export void aim_locate_dorequest(OscarSession *sess);
 
-/* 0x0002 */ faim_export int aim_locate_reqrights(aim_session_t *sess);
-/* 0x0004 */ faim_export int aim_locate_setcaps(aim_session_t *sess, guint32 caps);
-/* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
-/* 0x0005 */ faim_export int aim_locate_getinfo(aim_session_t *sess, const char *, guint16);
-/* 0x0009 */ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy);
-/* 0x000b */ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn);
-/* 0x000f */ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
-/* 0x0015 */ faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, guint32 flags);
-
-
-
-/* 0x0003 - buddylist.c */
-/* 0x0002 */ faim_export int aim_buddylist_reqrights(aim_session_t *, aim_conn_t *);
-/* 0x0004 */ faim_export int aim_buddylist_set(aim_session_t *, aim_conn_t *, const char *);
-/* 0x0004 */ faim_export int aim_buddylist_addbuddy(aim_session_t *, aim_conn_t *, const char *);
-/* 0x0005 */ faim_export int aim_buddylist_removebuddy(aim_session_t *, aim_conn_t *, const char *);
-/* 0x000b */ faim_export int aim_buddylist_oncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info);
-/* 0x000c */ faim_export int aim_buddylist_offgoing(aim_session_t *sess, aim_conn_t *conn, const char *sn);
+/* 0x0002 */ faim_export int aim_locate_reqrights(OscarSession *sess);
+/* 0x0004 */ faim_export int aim_locate_setcaps(OscarSession *sess, guint32 caps);
+/* 0x0004 */ faim_export int aim_locate_setprofile(OscarSession *sess, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
+/* 0x0005 */ faim_export int aim_locate_getinfo(OscarSession *sess, const char *, guint16);
+/* 0x0009 */ faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy);
+/* 0x000b */ faim_export int aim_locate_000b(OscarSession *sess, const char *sn);
+/* 0x000f */ faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
+/* 0x0015 */ faim_export int aim_locate_getinfoshort(OscarSession *sess, const char *sn, guint32 flags);
 
 
 
-/* 0x000a - search.c */
-faim_export int aim_search_address(aim_session_t *, aim_conn_t *, const char *);
+/* 0x0003 - family_buddy.c */
+/* 0x0002 */ faim_export int aim_buddylist_reqrights(OscarSession *, OscarConnection *);
+/* 0x0004 */ faim_export int aim_buddylist_set(OscarSession *, OscarConnection *, const char *);
+/* 0x0004 */ faim_export int aim_buddylist_addbuddy(OscarSession *, OscarConnection *, const char *);
+/* 0x0005 */ faim_export int aim_buddylist_removebuddy(OscarSession *, OscarConnection *, const char *);
+/* 0x000b */ faim_export int aim_buddylist_oncoming(OscarSession *sess, OscarConnection *conn, aim_userinfo_t *info);
+/* 0x000c */ faim_export int aim_buddylist_offgoing(OscarSession *sess, OscarConnection *conn, const char *sn);
 
 
 
-/* 0x000d - chatnav.c */
-/* 0x000e - chat.c */
+/* 0x000a - family_userlookup.c */
+faim_export int aim_search_address(OscarSession *, OscarConnection *, const char *);
+
+
+
+/* 0x000d - family_chatnav.c */
+/* 0x000e - family_chat.c */
 /* These apply to exchanges as well. */
 #define AIM_CHATROOM_FLAG_EVILABLE 0x0001
 #define AIM_CHATROOM_FLAG_NAV_ONLY 0x0002
 #define AIM_CHATROOM_FLAG_INSTANCING_ALLOWED 0x0004
 #define AIM_CHATROOM_FLAG_OCCUPANT_PEEK_ALLOWED 0x0008
 
-struct aim_chat_exchangeinfo {
+struct aim_chat_exchangeinfo
+{
 	guint16 number;
 	guint16 flags;
 	char *name;
@@ -1121,21 +1143,22 @@ struct aim_chat_exchangeinfo {
 
 #define AIM_CHATFLAGS_NOREFLECT 0x0001
 #define AIM_CHATFLAGS_AWAY      0x0002
-faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
-faim_export int aim_chat_join(aim_session_t *sess, aim_conn_t *conn, guint16 exchange, const char *roomname, guint16 instance);
-faim_export int aim_chat_attachname(aim_conn_t *conn, guint16 exchange, const char *roomname, guint16 instance);
-faim_export char *aim_chat_getname(aim_conn_t *conn);
-faim_export aim_conn_t *aim_chat_getconn(aim_session_t *, const char *name);
+faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
+faim_export int aim_chat_join(OscarSession *sess, OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
+faim_export int aim_chat_attachname(OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
+faim_export char *aim_chat_getname(OscarConnection *conn);
+faim_export OscarConnection *aim_chat_getconn(OscarSession *, const char *name);
 
-faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn);
+faim_export int aim_chatnav_reqrights(OscarSession *sess, OscarConnection *conn);
 
-faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, guint16 exchange);
-faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name);
+faim_export int aim_chatnav_createroom(OscarSession *sess, OscarConnection *conn, const char *name, guint16 exchange);
+faim_export int aim_chat_leaveroom(OscarSession *sess, const char *name);
 
 
 
-/* 0x000f - odir.c */
-struct aim_odir {
+/* 0x000f - family_odir.c */
+struct aim_odir
+{
 	char *first;
 	char *last;
 	char *middle;
@@ -1153,19 +1176,19 @@ struct aim_odir {
 	struct aim_odir *next;
 };
 
-faim_export int aim_odir_email(aim_session_t *, const char *, const char *);
-faim_export int aim_odir_name(aim_session_t *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-faim_export int aim_odir_interest(aim_session_t *, const char *, const char *);
+faim_export int aim_odir_email(OscarSession *, const char *, const char *);
+faim_export int aim_odir_name(OscarSession *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
+faim_export int aim_odir_interest(OscarSession *, const char *, const char *);
 
 
 
-/* 0x0010 - icon.c */
-faim_export int aim_bart_upload(aim_session_t *sess, const guint8 *icon, guint16 iconlen);
-faim_export int aim_bart_request(aim_session_t *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconstr, guint16 iconstrlen);
+/* 0x0010 - family_bart.c */
+faim_export int aim_bart_upload(OscarSession *sess, const guint8 *icon, guint16 iconlen);
+faim_export int aim_bart_request(OscarSession *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconstr, guint16 iconstrlen);
 
 
 
-/* 0x0013 - ssi.c */
+/* 0x0013 - family_feedbag.c */
 #define AIM_SSI_TYPE_BUDDY		0x0000
 #define AIM_SSI_TYPE_GROUP		0x0001
 #define AIM_SSI_TYPE_PERMIT		0x0002
@@ -1185,7 +1208,8 @@ faim_export int aim_bart_request(aim_session_t *sess, const char *sn, guint8 ico
 #define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
 #define AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES 0x00020000
 
-struct aim_ssi_item {
+struct aim_ssi_item
+{
 	char *name;
 	guint16 gid;
 	guint16 bid;
@@ -1194,7 +1218,8 @@ struct aim_ssi_item {
 	struct aim_ssi_item *next;
 };
 
-struct aim_ssi_tmp {
+struct aim_ssi_tmp
+{
 	guint16 action;
 	guint16 ack;
 	char *name;
@@ -1203,16 +1228,16 @@ struct aim_ssi_tmp {
 };
 
 /* These build the actual SNACs and queue them to be sent */
-/* 0x0002 */ faim_export int aim_ssi_reqrights(aim_session_t *sess);
-/* 0x0004 */ faim_export int aim_ssi_reqdata(aim_session_t *sess);
-/* 0x0005 */ faim_export int aim_ssi_reqifchanged(aim_session_t *sess, time_t localstamp, guint16 localrev);
-/* 0x0007 */ faim_export int aim_ssi_enable(aim_session_t *sess);
-/* 0x0008 */ faim_export int aim_ssi_addmoddel(aim_session_t *sess);
-/* 0x0011 */ faim_export int aim_ssi_modbegin(aim_session_t *sess);
-/* 0x0012 */ faim_export int aim_ssi_modend(aim_session_t *sess);
-/* 0x0014 */ faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg);
-/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, const char *msg);
-/* 0x001a */ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, guint8 reply, const char *msg);
+/* 0x0002 */ faim_export int aim_ssi_reqrights(OscarSession *sess);
+/* 0x0004 */ faim_export int aim_ssi_reqdata(OscarSession *sess);
+/* 0x0005 */ faim_export int aim_ssi_reqifchanged(OscarSession *sess, time_t localstamp, guint16 localrev);
+/* 0x0007 */ faim_export int aim_ssi_enable(OscarSession *sess);
+/* 0x0008 */ faim_export int aim_ssi_addmoddel(OscarSession *sess);
+/* 0x0011 */ faim_export int aim_ssi_modbegin(OscarSession *sess);
+/* 0x0012 */ faim_export int aim_ssi_modend(OscarSession *sess);
+/* 0x0014 */ faim_export int aim_ssi_sendauth(OscarSession *sess, char *sn, char *msg);
+/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(OscarSession *sess, char *sn, const char *msg);
+/* 0x001a */ faim_export int aim_ssi_sendauthreply(OscarSession *sess, char *sn, guint8 reply, const char *msg);
 
 /* Client functions for retrieving SSI data */
 faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gid, guint16 bid);
@@ -1226,26 +1251,26 @@ faim_export char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, 
 faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
-faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
-faim_export int aim_ssi_addpermit(aim_session_t *sess, const char *name);
-faim_export int aim_ssi_adddeny(aim_session_t *sess, const char *name);
-faim_export int aim_ssi_delbuddy(aim_session_t *sess, const char *name, const char *group);
-faim_export int aim_ssi_delpermit(aim_session_t *sess, const char *name);
-faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name);
-faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const char *newgn, const char *sn);
-faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const char *sn, const char *alias);
-faim_export int aim_ssi_editcomment(aim_session_t *sess, const char *gn, const char *sn, const char *alias);
-faim_export int aim_ssi_rename_group(aim_session_t *sess, const char *oldgn, const char *newgn);
-faim_export int aim_ssi_cleanlist(aim_session_t *sess);
-faim_export int aim_ssi_deletelist(aim_session_t *sess);
-faim_export int aim_ssi_setpermdeny(aim_session_t *sess, guint8 permdeny, guint32 vismask);
-faim_export int aim_ssi_setpresence(aim_session_t *sess, guint32 presence);
-faim_export int aim_ssi_seticon(aim_session_t *sess, guint8 *iconsum, guint16 iconsumlen);
-faim_export int aim_ssi_delicon(aim_session_t *sess);
+faim_export int aim_ssi_addbuddy(OscarSession *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
+faim_export int aim_ssi_addpermit(OscarSession *sess, const char *name);
+faim_export int aim_ssi_adddeny(OscarSession *sess, const char *name);
+faim_export int aim_ssi_delbuddy(OscarSession *sess, const char *name, const char *group);
+faim_export int aim_ssi_delpermit(OscarSession *sess, const char *name);
+faim_export int aim_ssi_deldeny(OscarSession *sess, const char *name);
+faim_export int aim_ssi_movebuddy(OscarSession *sess, const char *oldgn, const char *newgn, const char *sn);
+faim_export int aim_ssi_aliasbuddy(OscarSession *sess, const char *gn, const char *sn, const char *alias);
+faim_export int aim_ssi_editcomment(OscarSession *sess, const char *gn, const char *sn, const char *alias);
+faim_export int aim_ssi_rename_group(OscarSession *sess, const char *oldgn, const char *newgn);
+faim_export int aim_ssi_cleanlist(OscarSession *sess);
+faim_export int aim_ssi_deletelist(OscarSession *sess);
+faim_export int aim_ssi_setpermdeny(OscarSession *sess, guint8 permdeny, guint32 vismask);
+faim_export int aim_ssi_setpresence(OscarSession *sess, guint32 presence);
+faim_export int aim_ssi_seticon(OscarSession *sess, guint8 *iconsum, guint16 iconsumlen);
+faim_export int aim_ssi_delicon(OscarSession *sess);
 
 
 
-/* 0x0015 - icq.c */
+/* 0x0015 - family_icq.c */
 #define AIM_ICQ_INFO_SIMPLE	0x001
 #define AIM_ICQ_INFO_SUMMARY	0x002
 #define AIM_ICQ_INFO_EMAIL	0x004
@@ -1257,7 +1282,8 @@ faim_export int aim_ssi_delicon(aim_session_t *sess);
 #define AIM_ICQ_INFO_UNKNOWN	0x100
 #define AIM_ICQ_INFO_HAVEALL	0x1ff
 
-struct aim_icq_offlinemsg {
+struct aim_icq_offlinemsg
+{
 	guint32 sender;
 	guint16 year;
 	guint8 month, day, hour, minute;
@@ -1267,7 +1293,8 @@ struct aim_icq_offlinemsg {
 	int msglen;
 };
 
-struct aim_icq_info {
+struct aim_icq_info
+{
 	guint16 reqid;
 
 	/* simple */
@@ -1325,28 +1352,29 @@ struct aim_icq_info {
 	struct aim_icq_info *next;
 };
 
-faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
-faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
-faim_export int aim_icq_setsecurity(aim_session_t *sess, gboolean auth_required, gboolean webaware);
-faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd);
-faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin);
-faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin);
-faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin);
+faim_export int aim_icq_reqofflinemsgs(OscarSession *sess);
+faim_export int aim_icq_ackofflinemsgs(OscarSession *sess);
+faim_export int aim_icq_setsecurity(OscarSession *sess, gboolean auth_required, gboolean webaware);
+faim_export int aim_icq_changepasswd(OscarSession *sess, const char *passwd);
+faim_export int aim_icq_getsimpleinfo(OscarSession *sess, const char *uin);
+faim_export int aim_icq_getalias(OscarSession *sess, const char *uin);
+faim_export int aim_icq_getallinfo(OscarSession *sess, const char *uin);
 
 
 
-/* 0x0017 - auth.c */
-faim_export int aim_sendcookie(aim_session_t *, aim_conn_t *, const guint16 length, const guint8 *);
-faim_export int aim_admin_changepasswd(aim_session_t *, aim_conn_t *, const char *newpw, const char *curpw);
-faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn);
-faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, guint16 info);
-faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail);
-faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const char *newnick);
+/* 0x0017 - family_auth.c */
+faim_export int aim_sendcookie(OscarSession *, OscarConnection *, const guint16 length, const guint8 *);
+faim_export int aim_admin_changepasswd(OscarSession *, OscarConnection *, const char *newpw, const char *curpw);
+faim_export int aim_admin_reqconfirm(OscarSession *sess, OscarConnection *conn);
+faim_export int aim_admin_getinfo(OscarSession *sess, OscarConnection *conn, guint16 info);
+faim_export int aim_admin_setemail(OscarSession *sess, OscarConnection *conn, const char *newemail);
+faim_export int aim_admin_setnick(OscarSession *sess, OscarConnection *conn, const char *newnick);
 
 
 
-/* 0x0018 - email.c */
-struct aim_emailinfo {
+/* 0x0018 - family_alert.c */
+struct aim_emailinfo
+{
 	guint8 *cookie16;
 	guint8 *cookie8;
 	char *url;
@@ -1357,22 +1385,24 @@ struct aim_emailinfo {
 	struct aim_emailinfo *next;
 };
 
-faim_export int aim_email_sendcookies(aim_session_t *sess);
-faim_export int aim_email_activate(aim_session_t *sess);
+faim_export int aim_email_sendcookies(OscarSession *sess);
+faim_export int aim_email_activate(OscarSession *sess);
 
 
 
 /* tlv.c - TLV handling */
 
 /* TLV structure */
-typedef struct aim_tlv_s {
+typedef struct aim_tlv_s
+{
 	guint16 type;
 	guint16 length;
 	guint8 *value;
 } aim_tlv_t;
 
 /* TLV List structure */
-typedef struct aim_tlvlist_s {
+typedef struct aim_tlvlist_s
+{
 	aim_tlv_t *tlv;
 	struct aim_tlvlist_s *next;
 } aim_tlvlist_t;
@@ -1386,15 +1416,15 @@ faim_internal guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, con
 faim_internal guint32 aim_tlv_get32(aim_tlvlist_t *list, const guint16 type, const int nth);
 
 /* TLV list handling functions */
-faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs);
-faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, guint16 num);
-faim_internal aim_tlvlist_t *aim_tlvlist_readlen(aim_bstream_t *bs, guint16 len);
+faim_internal aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs);
+faim_internal aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num);
+faim_internal aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len);
 faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig);
 
 faim_internal int aim_tlvlist_count(aim_tlvlist_t **list);
 faim_internal int aim_tlvlist_size(aim_tlvlist_t **list);
 faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two);
-faim_internal int aim_tlvlist_write(aim_bstream_t *bs, aim_tlvlist_t **list);
+faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list);
 faim_internal void aim_tlvlist_free(aim_tlvlist_t **list);
 
 faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value);
@@ -1472,8 +1502,6 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type);
 		(((*((buf)+2)) << 16) & 0x00ff0000) + \
 		(((*((buf)+3)) << 24) & 0xff000000))
 
-
-faim_export int aimutil_putstr(char *, const char *, int);
 faim_export guint16 aimutil_iconsum(const guint8 *buf, int buflen);
 faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl);
 faim_export int aimutil_itemcnt(char *toSearch, char dl);

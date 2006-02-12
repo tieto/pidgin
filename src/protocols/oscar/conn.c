@@ -29,7 +29,7 @@
 
 /* This is defined in oscar.h, but only when !FAIM_INTERNAL, since the rest of
  * the library is not allowed to call it. */
-faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
+faim_export void aim_conn_kill(OscarSession *sess, OscarConnection **deadconn);
 
 #ifndef _WIN32
 #include <netdb.h>
@@ -96,7 +96,7 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
  * about such inane things.
  *
  */
-faim_internal void aim_conn_addgroup(aim_conn_t *conn, guint16 group)
+faim_internal void aim_conn_addgroup(OscarConnection *conn, guint16 group)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
@@ -113,9 +113,9 @@ faim_internal void aim_conn_addgroup(aim_conn_t *conn, guint16 group)
 	return;
 }
 
-faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, guint16 group)
+faim_export OscarConnection *aim_conn_findbygroup(OscarSession *sess, guint16 group)
 {
-	aim_conn_t *cur;
+	OscarConnection *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		aim_conn_inside_t *ins = (aim_conn_inside_t *)cur->inside;
@@ -174,7 +174,7 @@ static void connkill_rates(struct rateclass **head)
 	return;
 }
 
-static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
+static void connkill_real(OscarSession *sess, OscarConnection **deadconn)
 {
 
 	aim_rxqueue_cleanbyconn(sess, *deadconn);
@@ -211,9 +211,9 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
  * been destroyed.
  */
 static int
-aim_flap_close(aim_session_t *sess, aim_conn_t *conn)
+aim_flap_close(OscarSession *sess, OscarConnection *conn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 
 	if (!sess || !conn)
 		return -EINVAL;
@@ -231,11 +231,11 @@ aim_flap_close(aim_session_t *sess, aim_conn_t *conn)
  *
  * @param sess Session to be cleared.
  */
-static void aim_connrst(aim_session_t *sess)
+static void aim_connrst(OscarSession *sess)
 {
 
 	if (sess->connlist) {
-		aim_conn_t *cur = sess->connlist, *tmp;
+		OscarConnection *cur = sess->connlist, *tmp;
 
 		/* Attempt to send the log-off packet */
 		if (cur->type == AIM_CONN_TYPE_BOS)
@@ -259,7 +259,7 @@ static void aim_connrst(aim_session_t *sess)
  *
  * @param deadconn Connection to be reset.
  */
-static void aim_conn_init(aim_conn_t *deadconn)
+static void aim_conn_init(OscarConnection *deadconn)
 {
 
 	if (!deadconn)
@@ -284,13 +284,13 @@ static void aim_conn_init(aim_conn_t *deadconn)
  * @param sess Session
  * @return Returns the new connection structure.
  */
-static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
+static OscarConnection *aim_conn_getnext(OscarSession *sess)
 {
-	aim_conn_t *newconn;
+	OscarConnection *newconn;
 
-	if (!(newconn = malloc(sizeof(aim_conn_t))))
+	if (!(newconn = malloc(sizeof(OscarConnection))))
 		return NULL;
-	memset(newconn, 0, sizeof(aim_conn_t));
+	memset(newconn, 0, sizeof(OscarConnection));
 
 	if (!(newconn->inside = malloc(sizeof(aim_conn_inside_t)))) {
 		free(newconn);
@@ -313,9 +313,9 @@ static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
  * @param sess Session for the connection.
  * @param deadconn Connection to be freed.
  */
-faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
+faim_export void aim_conn_kill(OscarSession *sess, OscarConnection **deadconn)
 {
-	aim_conn_t *cur, **prev;
+	OscarConnection *cur, **prev;
 
 	if (!deadconn || !*deadconn)
 		return;
@@ -348,7 +348,7 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
  *
  * @param deadconn The connection to close.
  */
-faim_export void aim_conn_close(aim_conn_t *deadconn)
+faim_export void aim_conn_close(OscarConnection *deadconn)
 {
 	aim_rxcallback_t userfunc;
 
@@ -378,9 +378,9 @@ faim_export void aim_conn_close(aim_conn_t *deadconn)
  * @return Returns the first connection found of the given target type,
  *         or NULL if none could be found.
  */
-faim_export aim_conn_t *aim_getconn_type(aim_session_t *sess, int type)
+faim_export OscarConnection *aim_getconn_type(OscarSession *sess, int type)
 {
-	aim_conn_t *cur;
+	OscarConnection *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if ((cur->type == type) &&
@@ -391,9 +391,9 @@ faim_export aim_conn_t *aim_getconn_type(aim_session_t *sess, int type)
 	return cur;
 }
 
-faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *sess, int type)
+faim_export OscarConnection *aim_getconn_type_all(OscarSession *sess, int type)
 {
-	aim_conn_t *cur;
+	OscarConnection *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if (cur->type == type)
@@ -404,9 +404,9 @@ faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *sess, int type)
 }
 
 /* If you pass -1 for the fd, you'll get what you ask for.  Gibberish. */
-faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
+faim_export OscarConnection *aim_getconn_fd(OscarSession *sess, int fd)
 {
-	aim_conn_t *cur;
+	OscarConnection *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if (cur->fd == fd)
@@ -417,7 +417,7 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
 }
 
 /**
- * Clone an aim_conn_t.
+ * Clone an OscarConnection.
  *
  * A new connection is allocated, and the values are filled in
  * appropriately. Note that this function sets the new connnection's
@@ -426,11 +426,11 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
  *
  * @param sess The session containing this connection.
  * @param src The connection to clone.
- * @return Returns a pointer to the new aim_conn_t, or %NULL on error.
+ * @return Returns a pointer to the new OscarConnection, or %NULL on error.
  */
-faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
+faim_internal OscarConnection *aim_cloneconn(OscarSession *sess, OscarConnection *src)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!(conn = aim_conn_getnext(sess)))
 		return NULL;
@@ -470,9 +470,9 @@ faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
  * @param sess Session to create connection in
  * @param type Type of connection to create
  */
-faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type)
+faim_export OscarConnection *aim_newconn(OscarSession *sess, int type)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!(conn = aim_conn_getnext(sess)))
 		return NULL;
@@ -492,9 +492,9 @@ faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type)
  * @param conn Connection to look for.
  * @return Returns 1 if the passed connection is present, zero otherwise.
  */
-faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_conn_in_sess(OscarSession *sess, OscarConnection *conn)
 {
-	aim_conn_t *cur;
+	OscarConnection *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
 		if (cur == conn)
@@ -518,7 +518,7 @@ faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
  * @param newval Number of seconds to force between transmits.
  * @return Returns -1 if the connection does not exist, zero otherwise.
  */
-faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
+faim_export int aim_conn_setlatency(OscarConnection *conn, int newval)
 {
 
 	if (!conn)
@@ -532,18 +532,18 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 
 /**
  * Initializes a session structure by setting the initial values
- * stuff in the aim_session_t struct.
+ * stuff in the OscarSession struct.
  *
  * @param sess Session to initialize.
  * @param nonblocking Set to true if you want connections to be non-blocking.
  */
-faim_export void aim_session_init(aim_session_t *sess, guint8 nonblocking)
+faim_export void aim_session_init(OscarSession *sess, guint8 nonblocking)
 {
 
 	if (!sess)
 		return;
 
-	memset(sess, 0, sizeof(aim_session_t));
+	memset(sess, 0, sizeof(OscarSession));
 	aim_connrst(sess);
 	sess->queue_outgoing = NULL;
 	sess->queue_incoming = NULL;
@@ -611,7 +611,7 @@ faim_export void aim_session_init(aim_session_t *sess, guint8 nonblocking)
  *
  * @param sess Session to kill
  */
-faim_export void aim_session_kill(aim_session_t *sess)
+faim_export void aim_session_kill(OscarSession *sess)
 {
 	aim_cleansnacs(sess, -1);
 
@@ -630,7 +630,7 @@ faim_export void aim_session_kill(aim_session_t *sess)
  *         connecting (or if it just completed and
  *         aim_conn_completeconnect() has yet to be called on it).
  */
-faim_export int aim_conn_isconnecting(aim_conn_t *conn)
+faim_export int aim_conn_isconnecting(OscarConnection *conn)
 {
 
 	if (!conn)
@@ -642,7 +642,7 @@ faim_export int aim_conn_isconnecting(aim_conn_t *conn)
 /*
  * XXX this is nearly as ugly as proxyconnect().
  */
-faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn)
 {
 	aim_rxcallback_t userfunc;
 
@@ -665,13 +665,13 @@ faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn)
 	return 0;
 }
 
-faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn)
+faim_export OscarSession *aim_conn_getsess(OscarConnection *conn)
 {
 
 	if (!conn)
 		return NULL;
 
-	return (aim_session_t *)conn->sessv;
+	return (OscarSession *)conn->sessv;
 }
 
 /**
@@ -680,7 +680,7 @@ faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn)
  * @param sess The session.
  * @return Zero.
  */
-faim_export int aim_logoff(aim_session_t *sess)
+faim_export int aim_logoff(OscarSession *sess)
 {
 	aim_connrst(sess);  /* in case we want to connect again */
 
@@ -691,9 +691,9 @@ faim_export int aim_logoff(aim_session_t *sess)
  * No-op.  This sends an empty channel 5 SNAC.  WinAIM 4.x and higher
  * sends these _every minute_ to keep the connection alive.
  */
-faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_flap_nop(OscarSession *sess, OscarConnection *conn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x05, 0)))
 		return -ENOMEM;

@@ -225,9 +225,9 @@ static const struct {
  *
  * @param userinfo Contains the new information for the buddy.
  */
-static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo) {
+static void aim_locate_adduserinfo(OscarSession *sess, aim_userinfo_t *userinfo) {
 	aim_userinfo_t *cur;
-	aim_conn_t *conn;
+	OscarConnection *conn;
 	aim_rxcallback_t userfunc;
 
 	cur = aim_locate_finduserinfo(sess, userinfo->sn);
@@ -312,7 +312,7 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 		userfunc(sess, NULL, cur);
 }
 
-faim_export void aim_locate_dorequest(aim_session_t *sess) {
+faim_export void aim_locate_dorequest(OscarSession *sess) {
 	struct userinfo_node *cur = sess->locate.torequest;
 
 	if (cur == NULL)
@@ -339,7 +339,7 @@ faim_export void aim_locate_dorequest(aim_session_t *sess) {
  * @return True if the request was explicit (client requested the info),
  *         false if the request was implicit (libfaim request the info).
  */
-static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
+static int aim_locate_gotuserinfo(OscarSession *sess, const char *sn) {
 	struct userinfo_node *cur, *del;
 	int was_explicit = TRUE;
 
@@ -364,7 +364,7 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 	}
 
 	if (!was_explicit) {
-		aim_conn_t *conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE);
+		OscarConnection *conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE);
 		aim_rxcallback_t userfunc;
 
 		sess->locate.waiting_for_response = FALSE;
@@ -378,7 +378,7 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 	return was_explicit;
 }
 
-faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn) {
+faim_internal void aim_locate_requestuserinfo(OscarSession *sess, const char *sn) {
 	struct userinfo_node *cur;
 
 	/* Make sure we aren't already requesting info for this buddy */
@@ -399,7 +399,7 @@ faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *s
 	aim_locate_dorequest(sess);
 }
 
-faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const char *sn) {
+faim_export aim_userinfo_t *aim_locate_finduserinfo(OscarSession *sess, const char *sn) {
 	aim_userinfo_t *cur = NULL;
 
 	if (sn == NULL)
@@ -416,7 +416,7 @@ faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const c
 	return NULL;
 }
 
-faim_internal guint32 aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len)
+faim_internal guint32 aim_locate_getcaps(OscarSession *sess, ByteStream *bs, int len)
 {
 	guint32 flags = 0;
 	int offset;
@@ -450,7 +450,7 @@ faim_internal guint32 aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs,
 	return flags;
 }
 
-faim_internal guint32 aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len)
+faim_internal guint32 aim_locate_getcaps_short(OscarSession *sess, ByteStream *bs, int len)
 {
 	guint32 flags = 0;
 	int offset;
@@ -478,7 +478,7 @@ faim_internal guint32 aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_
 	return flags;
 }
 
-faim_internal int aimbs_putcaps(aim_bstream_t *bs, guint32 caps)
+faim_internal int aimbs_putcaps(ByteStream *bs, guint32 caps)
 {
 	int i;
 
@@ -498,7 +498,7 @@ faim_internal int aimbs_putcaps(aim_bstream_t *bs, guint32 caps)
 	return 0;
 }
 
-static void dumptlv(aim_session_t *sess, guint16 type, aim_bstream_t *bs, guint8 len)
+static void dumptlv(OscarSession *sess, guint16 type, ByteStream *bs, guint8 len)
 {
 	int i;
 
@@ -536,7 +536,7 @@ faim_internal void aim_info_free(aim_userinfo_t *info)
  * AIM is fairly regular about providing user info.  This is a generic
  * routine to extract it in its standard form.
  */
-faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *outinfo)
+faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
 	guint8 snlen;
@@ -861,7 +861,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 /*
  * Inverse of aim_info_extract()
  */
-faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
+faim_internal int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 {
 	aim_tlvlist_t *tlvlist = NULL;
 
@@ -908,7 +908,7 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 /*
  * Subtype 0x0001
  */
-static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -957,9 +957,9 @@ static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
  * Request Location services rights.
  *
  */
-faim_export int aim_locate_reqrights(aim_session_t *sess)
+faim_export int aim_locate_reqrights(OscarSession *sess)
 {
-	aim_conn_t *conn;
+	OscarConnection *conn;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
 		return -EINVAL;
@@ -976,7 +976,7 @@ faim_export int aim_locate_reqrights(aim_session_t *sess)
  *   t(0003)  - short - unknown (value = 10)
  *   t(0004)  - short - unknown (value = 2048) [ICQ only?]
  */
-static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_tlvlist_t *tlvlist;
 	aim_rxcallback_t userfunc;
@@ -1016,12 +1016,12 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * obvious equivalent).
  *
  */
-faim_export int aim_locate_setprofile(aim_session_t *sess,
+faim_export int aim_locate_setprofile(OscarSession *sess,
 				  const char *profile_encoding, const gchar *profile, const int profile_len,
 				  const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	char *encoding;
@@ -1089,10 +1089,10 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 /*
  * Subtype 0x0004 - Set your client's capabilities.
  */
-faim_export int aim_locate_setcaps(aim_session_t *sess, guint32 caps)
+faim_export int aim_locate_setcaps(OscarSession *sess, guint32 caps)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -1124,10 +1124,10 @@ faim_export int aim_locate_setcaps(aim_session_t *sess, guint32 caps)
  *        0x0003 - Away message
  *        0x0004 - Capabilities
  */
-faim_export int aim_locate_getinfo(aim_session_t *sess, const char *sn, guint16 infotype)
+faim_export int aim_locate_getinfo(OscarSession *sess, const char *sn, guint16 infotype)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
@@ -1149,7 +1149,7 @@ faim_export int aim_locate_getinfo(aim_session_t *sess, const char *sn, guint16 
 }
 
 /* Subtype 0x0006 */
-static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int userinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1180,7 +1180,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 
 	/* Caps will be 5 */
 	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1))) {
-		aim_bstream_t cbs;
+		ByteStream cbs;
 		aim_bstream_init(&cbs, tlv->value, tlv->length);
 		userinfo->capabilities = aim_locate_getcaps(sess, &cbs, tlv->length);
 		userinfo->present = AIM_USERINFO_PRESENT_CAPABILITIES;
@@ -1212,10 +1212,10 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  * privacy: 1 to allow searching, 0 to disallow.
  *
  */
-faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
+faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -1263,10 +1263,10 @@ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, co
 /*
  * Subtype 0x000b - Huh? What is this?
  */
-faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
+faim_export int aim_locate_000b(OscarSession *sess, const char *sn)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 		return -EINVAL;
@@ -1294,10 +1294,10 @@ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
  * XXX pass these in better
  *
  */
-faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
+faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -1344,10 +1344,10 @@ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interes
  *        0x00000008 - Certification.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, guint32 flags)
+faim_export int aim_locate_getinfoshort(OscarSession *sess, const char *sn, guint32 flags)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
@@ -1368,7 +1368,7 @@ faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, gui
 	return 0;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0001)
@@ -1381,7 +1381,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-static void locate_shutdown(aim_session_t *sess, aim_module_t *mod)
+static void locate_shutdown(OscarSession *sess, aim_module_t *mod)
 {
 	aim_userinfo_t *del;
 
@@ -1393,7 +1393,7 @@ static void locate_shutdown(aim_session_t *sess, aim_module_t *mod)
 	}
 }
 
-faim_internal int locate_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int locate_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = OSCAR_FAMILY_LOCATE;

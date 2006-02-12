@@ -38,7 +38,7 @@
 
 #include "oscar.h"
 
-faim_internal int invite_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int invite_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0006;

@@ -37,10 +37,10 @@
  * @param conn The email connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_email_sendcookies(aim_session_t *sess)
+faim_export int aim_email_sendcookies(OscarSession *sess)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
@@ -92,7 +92,7 @@ faim_export int aim_email_sendcookies(aim_session_t *sess)
  * this is just a periodic status update, this will also contain
  * the number of unread emails that you have.
  */
-static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -168,10 +168,10 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * @param conn The email connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_email_activate(aim_session_t *sess)
+faim_export int aim_email_activate(OscarSession *sess)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
@@ -195,7 +195,7 @@ faim_export int aim_email_activate(aim_session_t *sess)
 	return 0;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0007)
@@ -204,7 +204,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-static void email_shutdown(aim_session_t *sess, aim_module_t *mod)
+static void email_shutdown(OscarSession *sess, aim_module_t *mod)
 {
 	while (sess->emailinfo) {
 		struct aim_emailinfo *tmp = sess->emailinfo;
@@ -219,7 +219,7 @@ static void email_shutdown(aim_session_t *sess, aim_module_t *mod)
 	return;
 }
 
-faim_internal int email_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int email_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0018;

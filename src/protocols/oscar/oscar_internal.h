@@ -42,95 +42,95 @@ typedef struct aim_module_s {
 	guint16 toolversion;
 	guint16 flags;
 	char name[AIM_MODULENAME_MAXLEN+1];
-	int (*snachandler)(aim_session_t *sess, struct aim_module_s *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs);
+	int (*snachandler)(OscarSession *sess, struct aim_module_s *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs);
 
-	void (*shutdown)(aim_session_t *sess, struct aim_module_s *mod);
+	void (*shutdown)(OscarSession *sess, struct aim_module_s *mod);
 	void *priv;
 	struct aim_module_s *next;
 } aim_module_t;
 
-faim_internal int aim__registermodule(aim_session_t *sess, int (*modfirst)(aim_session_t *, aim_module_t *));
-faim_internal void aim__shutdownmodules(aim_session_t *sess);
-faim_internal aim_module_t *aim__findmodulebygroup(aim_session_t *sess, guint16 group);
-faim_internal aim_module_t *aim__findmodule(aim_session_t *sess, const char *name);
+faim_internal int aim__registermodule(OscarSession *sess, int (*modfirst)(OscarSession *, aim_module_t *));
+faim_internal void aim__shutdownmodules(OscarSession *sess);
+faim_internal aim_module_t *aim__findmodulebygroup(OscarSession *sess, guint16 group);
+faim_internal aim_module_t *aim__findmodule(OscarSession *sess, const char *name);
 
-faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int buddylist_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int bos_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int search_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int stats_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int auth_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int msg_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int misc_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int chatnav_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int chat_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int locate_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int service_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int invite_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int translate_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int popups_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int adverts_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int odir_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int bart_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int ssi_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int icq_modfirst(aim_session_t *sess, aim_module_t *mod);
-faim_internal int email_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int admin_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int buddylist_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int bos_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int search_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int stats_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int auth_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int msg_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int misc_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int chatnav_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int chat_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int locate_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int service_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int invite_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int translate_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int popups_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int adverts_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int odir_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int bart_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int ssi_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int icq_modfirst(OscarSession *sess, aim_module_t *mod);
+faim_internal int email_modfirst(OscarSession *sess, aim_module_t *mod);
 
-faim_internal int aim_genericreq_n(aim_session_t *, aim_conn_t *conn, guint16 family, guint16 subtype);
-faim_internal int aim_genericreq_n_snacid(aim_session_t *, aim_conn_t *conn, guint16 family, guint16 subtype);
-faim_internal int aim_genericreq_l(aim_session_t *, aim_conn_t *conn, guint16 family, guint16 subtype, guint32 *);
-faim_internal int aim_genericreq_s(aim_session_t *, aim_conn_t *conn, guint16 family, guint16 subtype, guint16 *);
+faim_internal int aim_genericreq_n(OscarSession *, OscarConnection *conn, guint16 family, guint16 subtype);
+faim_internal int aim_genericreq_n_snacid(OscarSession *, OscarConnection *conn, guint16 family, guint16 subtype);
+faim_internal int aim_genericreq_l(OscarSession *, OscarConnection *conn, guint16 family, guint16 subtype, guint32 *);
+faim_internal int aim_genericreq_s(OscarSession *, OscarConnection *conn, guint16 family, guint16 subtype, guint16 *);
 
 #define AIMBS_CURPOSPAIR(x) ((x)->data + (x)->offset), ((x)->len - (x)->offset)
 
 /* bstream.c */
-faim_internal int aim_bstream_init(aim_bstream_t *bs, guint8 *data, int len);
-faim_internal int aim_bstream_empty(aim_bstream_t *bs);
-faim_internal int aim_bstream_curpos(aim_bstream_t *bs);
-faim_internal int aim_bstream_setpos(aim_bstream_t *bs, unsigned int off);
-faim_internal void aim_bstream_rewind(aim_bstream_t *bs);
-faim_internal int aim_bstream_advance(aim_bstream_t *bs, int n);
-faim_internal guint8 aimbs_get8(aim_bstream_t *bs);
-faim_internal guint16 aimbs_get16(aim_bstream_t *bs);
-faim_internal guint32 aimbs_get32(aim_bstream_t *bs);
-faim_internal guint8 aimbs_getle8(aim_bstream_t *bs);
-faim_internal guint16 aimbs_getle16(aim_bstream_t *bs);
-faim_internal guint32 aimbs_getle32(aim_bstream_t *bs);
-faim_internal int aimbs_getrawbuf(aim_bstream_t *bs, guint8 *buf, int len);
-faim_internal guint8 *aimbs_getraw(aim_bstream_t *bs, int len);
-faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len);
-faim_internal int aimbs_put8(aim_bstream_t *bs, guint8 v);
-faim_internal int aimbs_put16(aim_bstream_t *bs, guint16 v);
-faim_internal int aimbs_put32(aim_bstream_t *bs, guint32 v);
-faim_internal int aimbs_putle8(aim_bstream_t *bs, guint8 v);
-faim_internal int aimbs_putle16(aim_bstream_t *bs, guint16 v);
-faim_internal int aimbs_putle32(aim_bstream_t *bs, guint32 v);
-faim_internal int aimbs_putraw(aim_bstream_t *bs, const guint8 *v, int len);
-faim_internal int aimbs_putstr(aim_bstream_t *bs, const char *str);
-faim_internal int aimbs_putbs(aim_bstream_t *bs, aim_bstream_t *srcbs, int len);
-faim_internal int aimbs_putcaps(aim_bstream_t *bs, guint32 caps);
+faim_internal int aim_bstream_init(ByteStream *bs, guint8 *data, int len);
+faim_internal int aim_bstream_empty(ByteStream *bs);
+faim_internal int aim_bstream_curpos(ByteStream *bs);
+faim_internal int aim_bstream_setpos(ByteStream *bs, unsigned int off);
+faim_internal void aim_bstream_rewind(ByteStream *bs);
+faim_internal int aim_bstream_advance(ByteStream *bs, int n);
+faim_internal guint8 aimbs_get8(ByteStream *bs);
+faim_internal guint16 aimbs_get16(ByteStream *bs);
+faim_internal guint32 aimbs_get32(ByteStream *bs);
+faim_internal guint8 aimbs_getle8(ByteStream *bs);
+faim_internal guint16 aimbs_getle16(ByteStream *bs);
+faim_internal guint32 aimbs_getle32(ByteStream *bs);
+faim_internal int aimbs_getrawbuf(ByteStream *bs, guint8 *buf, int len);
+faim_internal guint8 *aimbs_getraw(ByteStream *bs, int len);
+faim_internal char *aimbs_getstr(ByteStream *bs, int len);
+faim_internal int aimbs_put8(ByteStream *bs, guint8 v);
+faim_internal int aimbs_put16(ByteStream *bs, guint16 v);
+faim_internal int aimbs_put32(ByteStream *bs, guint32 v);
+faim_internal int aimbs_putle8(ByteStream *bs, guint8 v);
+faim_internal int aimbs_putle16(ByteStream *bs, guint16 v);
+faim_internal int aimbs_putle32(ByteStream *bs, guint32 v);
+faim_internal int aimbs_putraw(ByteStream *bs, const guint8 *v, int len);
+faim_internal int aimbs_putstr(ByteStream *bs, const char *str);
+faim_internal int aimbs_putbs(ByteStream *bs, ByteStream *srcbs, int len);
+faim_internal int aimbs_putcaps(ByteStream *bs, guint32 caps);
 
 /* conn.c */
-faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src);
+faim_internal OscarConnection *aim_cloneconn(OscarSession *sess, OscarConnection *src);
 
 /* rxhandlers.c */
-faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 type);
-faim_internal int aim_callhandler_noparam(aim_session_t *sess, aim_conn_t *conn, guint16 family, guint16 type, aim_frame_t *ptr);
-faim_internal int aim_parse_unknown(aim_session_t *, aim_frame_t *, ...);
-faim_internal void aim_clonehandlers(aim_session_t *sess, aim_conn_t *dest, aim_conn_t *src);
+faim_internal aim_rxcallback_t aim_callhandler(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 type);
+faim_internal int aim_callhandler_noparam(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 type, FlapFrame *ptr);
+faim_internal int aim_parse_unknown(OscarSession *, FlapFrame *, ...);
+faim_internal void aim_clonehandlers(OscarSession *sess, OscarConnection *dest, OscarConnection *src);
 
 /* rxqueue.c */
 faim_internal int aim_recv(int fd, void *buf, size_t count);
-faim_internal int aim_bstream_recv(aim_bstream_t *bs, int fd, size_t count);
-faim_internal void aim_rxqueue_cleanbyconn(aim_session_t *sess, aim_conn_t *conn);
-faim_internal void aim_frame_destroy(aim_frame_t *);
+faim_internal int aim_bstream_recv(ByteStream *bs, int fd, size_t count);
+faim_internal void aim_rxqueue_cleanbyconn(OscarSession *sess, OscarConnection *conn);
+faim_internal void aim_frame_destroy(FlapFrame *);
 
 /* txqueue.c */
-faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, guint8 framing, guint16 chan, int datalen);
-faim_internal int aim_tx_enqueue(aim_session_t *, aim_frame_t *);
-faim_internal int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count);
-faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *cur);
-faim_internal void aim_tx_cleanqueue(aim_session_t *, aim_conn_t *);
+faim_internal FlapFrame *aim_tx_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint16 chan, int datalen);
+faim_internal int aim_tx_enqueue(OscarSession *, FlapFrame *);
+faim_internal int aim_bstream_send(ByteStream *bs, OscarConnection *conn, size_t count);
+faim_internal int aim_tx_sendframe(OscarSession *sess, FlapFrame *cur);
+faim_internal void aim_tx_cleanqueue(OscarSession *, OscarConnection *);
 
 /*
  * Generic SNAC structure.  Rarely if ever used.
@@ -146,11 +146,11 @@ typedef struct aim_snac_s {
 } aim_snac_t;
 
 /* snac.c */
-faim_internal void aim_initsnachash(aim_session_t *sess);
-faim_internal aim_snacid_t aim_newsnac(aim_session_t *, aim_snac_t *newsnac);
-faim_internal aim_snacid_t aim_cachesnac(aim_session_t *sess, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen);
-faim_internal aim_snac_t *aim_remsnac(aim_session_t *, aim_snacid_t id);
-faim_internal int aim_putsnac(aim_bstream_t *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
+faim_internal void aim_initsnachash(OscarSession *sess);
+faim_internal aim_snacid_t aim_newsnac(OscarSession *, aim_snac_t *newsnac);
+faim_internal aim_snacid_t aim_cachesnac(OscarSession *sess, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen);
+faim_internal aim_snac_t *aim_remsnac(OscarSession *, aim_snacid_t id);
+faim_internal int aim_putsnac(ByteStream *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
 
 /* Stored in ->priv of the service request SNAC for chats. */
 struct chatsnacinfo {
@@ -200,32 +200,32 @@ typedef struct aim_conn_inside_s {
 	struct rateclass *rates;
 } aim_conn_inside_t;
 
-faim_internal void aim_conn_addgroup(aim_conn_t *conn, guint16 group);
+faim_internal void aim_conn_addgroup(OscarConnection *conn, guint16 group);
 
-faim_internal int aim_cachecookie(aim_session_t *sess, aim_msgcookie_t *cookie);
-faim_internal aim_msgcookie_t *aim_uncachecookie(aim_session_t *sess, guint8 *cookie, int type);
-faim_internal aim_msgcookie_t *aim_mkcookie(guint8 *, int, void *);
-faim_internal aim_msgcookie_t *aim_checkcookie(aim_session_t *, const unsigned char *, const int);
-faim_internal int aim_freecookie(aim_session_t *sess, aim_msgcookie_t *cookie);
+faim_internal int aim_cachecookie(OscarSession *sess, IcbmCookie *cookie);
+faim_internal IcbmCookie *aim_uncachecookie(OscarSession *sess, guint8 *cookie, int type);
+faim_internal IcbmCookie *aim_mkcookie(guint8 *, int, void *);
+faim_internal IcbmCookie *aim_checkcookie(OscarSession *, const unsigned char *, const int);
+faim_internal int aim_freecookie(OscarSession *sess, IcbmCookie *cookie);
 faim_internal int aim_msgcookie_gettype(int reqclass);
-faim_internal int aim_cookie_free(aim_session_t *sess, aim_msgcookie_t *cookie);
+faim_internal int aim_cookie_free(OscarSession *sess, IcbmCookie *cookie);
 
 /* 0x0002 - locate.c */
-faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn);
-faim_internal guint32 aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len);
-faim_internal guint32 aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len);
+faim_internal void aim_locate_requestuserinfo(OscarSession *sess, const char *sn);
+faim_internal guint32 aim_locate_getcaps(OscarSession *sess, ByteStream *bs, int len);
+faim_internal guint32 aim_locate_getcaps_short(OscarSession *sess, ByteStream *bs, int len);
 faim_internal void aim_info_free(aim_userinfo_t *);
-faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *);
-faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info);
+faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_userinfo_t *);
+faim_internal int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
 
-faim_internal int aim_chat_readroominfo(aim_bstream_t *bs, struct aim_chat_roominfo *outinfo);
+faim_internal int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);
 
-faim_internal void aim_conn_kill_chat(aim_session_t *sess, aim_conn_t *conn);
+faim_internal void aim_conn_kill_chat(OscarSession *sess, OscarConnection *conn);
 
 /* These are all handled internally now. */
-faim_internal int aim_setversions(aim_session_t *sess, aim_conn_t *conn);
-faim_internal int aim_reqrates(aim_session_t *, aim_conn_t *);
-faim_internal int aim_rates_addparam(aim_session_t *, aim_conn_t *);
-faim_internal int aim_rates_delparam(aim_session_t *, aim_conn_t *);
+faim_internal int aim_setversions(OscarSession *sess, OscarConnection *conn);
+faim_internal int aim_reqrates(OscarSession *, OscarConnection *);
+faim_internal int aim_rates_addparam(OscarSession *, OscarConnection *);
+faim_internal int aim_rates_delparam(OscarSession *, OscarConnection *);
 
 #endif /* _OSCAR_INTERNAL_H_ */

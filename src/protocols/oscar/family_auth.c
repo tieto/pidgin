@@ -123,9 +123,9 @@ static int aim_encode_password_md5(const char *password, const char *key, guint8
  * connections.  The FLAP version is also sent before the cookie when connecting
  * for other services (BOS, chatnav, chat, etc.).
  */
-faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_sendflapver(OscarSession *sess, OscarConnection *conn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4)))
 		return -ENOMEM;
@@ -145,9 +145,9 @@ faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)
  * be the first thing you send.
  *
  */
-faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const guint16 length, const guint8 *chipsahoy)
+faim_export int aim_sendcookie(OscarSession *sess, OscarConnection *conn, const guint16 length, const guint8 *chipsahoy)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_tlvlist_t *tl = NULL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4+2+2+length)))
@@ -167,9 +167,9 @@ faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const guin
 /*
  * Part two of the ICQ hack.  Note the ignoring of the key.
  */
-static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *password, struct client_info_s *ci)
+static int goddamnicq2(OscarSession *sess, OscarConnection *conn, const char *sn, const char *password, ClientInfo *ci)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_tlvlist_t *tl = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
@@ -230,7 +230,7 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
  *   point = (not sent)
  *   build  = 0x0013
  *   unknown= (not sent)
- *   
+ *
  * AIM for Linux 1.1.112:
  *   clientstring = "AOL Instant Messenger (SM)"
  *   clientid = 0x1d09
@@ -242,9 +242,9 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
  *   serverstore = 0x01
  *
  */
-faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char *sn, const char *password, struct client_info_s *ci, const char *key)
+faim_export int aim_send_login(OscarSession *sess, OscarConnection *conn, const char *sn, const char *password, ClientInfo *ci, const char *key)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_tlvlist_t *tl = NULL;
 	guint8 digest[16];
 	aim_snacid_t snacid;
@@ -319,7 +319,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
  * The client should check the value passed as errorcode. If
  * its nonzero, there was an error.
  */
-static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_tlvlist_t *tlvlist;
 	aim_rxcallback_t userfunc;
@@ -489,9 +489,9 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
  * being called from the context of aim_rxdispatch()...
  *
  */
-static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+static int goddamnicq(OscarSession *sess, OscarConnection *conn, const char *sn)
 {
-	aim_frame_t fr;
+	FlapFrame fr;
 	aim_rxcallback_t userfunc;
 
 	fr.conn = conn;
@@ -513,9 +513,9 @@ static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
  * login command (0017/0002). 
  *
  */
-faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, const char *sn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -560,7 +560,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
  * Calls the client, which should then use the value to call aim_send_login.
  *
  */
-static int keyparse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int keyparse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int keylen, ret = 1;
 	aim_rxcallback_t userfunc;
@@ -586,7 +586,7 @@ static int keyparse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
  *
  * Receive SecurID request.
  */
-static int got_securid_request(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int got_securid_request(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -602,10 +602,10 @@ static int got_securid_request(aim_session_t *sess, aim_module_t *mod, aim_frame
  *
  * Send SecurID response.
  */
-faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid)
+faim_export int aim_auth_securid_send(OscarSession *sess, const char *securid)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int len;
 
@@ -628,7 +628,7 @@ faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid)
 	return 0;
 }
 
-static void auth_shutdown(aim_session_t *sess, aim_module_t *mod)
+static void auth_shutdown(OscarSession *sess, aim_module_t *mod)
 {
 	if (sess->authinfo) {
 		free(sess->authinfo->sn);
@@ -646,7 +646,7 @@ static void auth_shutdown(aim_session_t *sess, aim_module_t *mod)
 	}
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0003)
@@ -659,7 +659,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int auth_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int auth_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0017;

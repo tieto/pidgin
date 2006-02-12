@@ -38,10 +38,10 @@
  * @param email The email address you want to search for.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_odir_email(aim_session_t *sess, const char *region, const char *email)
+faim_export int aim_odir_email(OscarSession *sess, const char *region, const char *email)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -87,10 +87,10 @@ faim_export int aim_odir_email(aim_session_t *sess, const char *region, const ch
  * @param address The street address where the person you want to seach for resides.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_odir_name(aim_session_t *sess, const char *region, const char *first, const char *middle, const char *last, const char *maiden, const char *nick, const char *city, const char *state, const char *country, const char *zip, const char *address)
+faim_export int aim_odir_name(OscarSession *sess, const char *region, const char *first, const char *middle, const char *last, const char *maiden, const char *nick, const char *city, const char *state, const char *country, const char *zip, const char *address)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -142,10 +142,10 @@ faim_export int aim_odir_name(aim_session_t *sess, const char *region, const cha
  * @param interest1 An interest you want to search for.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_odir_interest(aim_session_t *sess, const char *region, const char *interest)
+faim_export int aim_odir_interest(OscarSession *sess, const char *region, const char *interest)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -176,7 +176,7 @@ faim_export int aim_odir_interest(aim_session_t *sess, const char *region, const
  * Subtype 0x0003 - Receive Reply From a User Search
  *
  */
-static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int parseresults(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -240,7 +240,7 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0003)
@@ -249,7 +249,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int odir_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int odir_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000f;

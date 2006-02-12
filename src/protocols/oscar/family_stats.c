@@ -25,7 +25,7 @@
 
 #include <oscar.h>
 
-static int reportinterval(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int reportinterval(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -39,7 +39,7 @@ static int reportinterval(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0002)
@@ -48,7 +48,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int stats_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int stats_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000b;

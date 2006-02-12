@@ -57,7 +57,7 @@ faim_internal int aim_recv(int fd, void *buf, size_t count)
  * Read into a byte stream.  Will not read more than count, but may read
  * less if there is not enough room in the stream buffer.
  */
-faim_internal int aim_bstream_recv(aim_bstream_t *bs, int fd, size_t count)
+faim_internal int aim_bstream_recv(ByteStream *bs, int fd, size_t count)
 {
 	int red = 0;
 
@@ -81,12 +81,12 @@ faim_internal int aim_bstream_recv(aim_bstream_t *bs, int fd, size_t count)
 }
 
 /**
- * Free an aim_frame_t
+ * Free an FlapFrame
  *
  * @param frame The frame to free.
  * @return -1 on error; 0 on success.
  */
-faim_internal void aim_frame_destroy(aim_frame_t *frame)
+faim_internal void aim_frame_destroy(FlapFrame *frame)
 {
 
 	free(frame->data.data); /* XXX aim_bstream_free */
@@ -101,10 +101,10 @@ faim_internal void aim_frame_destroy(aim_frame_t *frame)
  *
  * @return -1 on error, otherwise return the length of the payload.
  */
-static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *fr)
+static int aim_get_command_flap(OscarSession *sess, OscarConnection *conn, FlapFrame *fr)
 {
 	guint8 hdr_raw[6];
-	aim_bstream_t hdr;
+	ByteStream hdr;
 
 	fr->hdrtype = AIM_FRAMETYPE_FLAP;
 
@@ -149,10 +149,10 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
  *
  * @return -1 on error, otherwise return the length of the payload.
  */
-static int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *fr)
+static int aim_get_command_rendezvous(OscarSession *sess, OscarConnection *conn, FlapFrame *fr)
 {
 	guint8 hdr_raw[8];
-	aim_bstream_t hdr;
+	ByteStream hdr;
 
 	fr->hdrtype = AIM_FRAMETYPE_OFT;
 
@@ -182,9 +182,9 @@ static int aim_get_command_rendezvous(aim_session_t *sess, aim_conn_t *conn, aim
  *         "Success" doesn't mean we have new data, it just means
  *         the connection isn't dead.
  */
-faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_get_command(OscarSession *sess, OscarConnection *conn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	int payloadlen;
 
 	if (!sess || !conn)
@@ -201,7 +201,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	if (conn->status & AIM_CONN_STATUS_INPROGRESS)
 		return aim_conn_completeconnect(sess, conn);
 
-	if (!(fr = (aim_frame_t *)calloc(sizeof(aim_frame_t), 1)))
+	if (!(fr = (FlapFrame *)calloc(sizeof(FlapFrame), 1)))
 		return -ENOMEM;
 
 	/*
@@ -250,7 +250,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	if (sess->queue_incoming == NULL)
 		sess->queue_incoming = fr;
 	else {
-		aim_frame_t *cur;
+		FlapFrame *cur;
 		for (cur = sess->queue_incoming; cur->next; cur = cur->next);
 		cur->next = fr;
 	}
@@ -264,9 +264,9 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
  * Purge receive queue of all handled commands (->handled==1).
  *
  */
-faim_export void aim_purge_rxqueue(aim_session_t *sess)
+faim_export void aim_purge_rxqueue(OscarSession *sess)
 {
-	aim_frame_t *cur, **prev;
+	FlapFrame *cur, **prev;
 
 	for (prev = &sess->queue_incoming; (cur = *prev); ) {
 		if (cur->handled) {
@@ -286,9 +286,9 @@ faim_export void aim_purge_rxqueue(aim_session_t *sess)
  * XXX: this is something that was handled better in the old connection
  * handling method, but eh.
  */
-faim_internal void aim_rxqueue_cleanbyconn(aim_session_t *sess, aim_conn_t *conn)
+faim_internal void aim_rxqueue_cleanbyconn(OscarSession *sess, OscarConnection *conn)
 {
-	aim_frame_t *currx;
+	FlapFrame *currx;
 
 	for (currx = sess->queue_incoming; currx; currx = currx->next) {
 		if ((!currx->handled) && (currx->conn == conn))

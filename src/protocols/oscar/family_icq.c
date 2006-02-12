@@ -25,10 +25,10 @@
 
 #include "oscar.h"
 
-faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess)
+faim_export int aim_icq_reqofflinemsgs(OscarSession *sess)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 
@@ -57,10 +57,10 @@ faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess)
 	return 0;
 }
 
-faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess)
+faim_export int aim_icq_ackofflinemsgs(OscarSession *sess)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 
@@ -90,10 +90,10 @@ faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess)
 }
 
 faim_export int
-aim_icq_setsecurity(aim_session_t *sess, gboolean auth_required, gboolean webaware)
+aim_icq_setsecurity(OscarSession *sess, gboolean auth_required, gboolean webaware)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 
@@ -139,10 +139,10 @@ aim_icq_setsecurity(aim_session_t *sess, gboolean auth_required, gboolean webawa
  *        will be truncated.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd)
+faim_export int aim_icq_changepasswd(OscarSession *sess, const char *passwd)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen, passwdlen;
 
@@ -181,10 +181,10 @@ faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd)
 	return 0;
 }
 
-faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin)
+faim_export int aim_icq_getallinfo(OscarSession *sess, const char *uin)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 	struct aim_icq_info *info;
@@ -226,10 +226,10 @@ faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin)
 	return 0;
 }
 
-faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin)
+faim_export int aim_icq_getalias(OscarSession *sess, const char *uin)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 	struct aim_icq_info *info;
@@ -271,10 +271,10 @@ faim_export int aim_icq_getalias(aim_session_t *sess, const char *uin)
 	return 0;
 }
 
-faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin)
+faim_export int aim_icq_getsimpleinfo(OscarSession *sess, const char *uin)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 
@@ -309,10 +309,10 @@ faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin)
 }
 
 #if 0
-faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
+faim_export int aim_icq_sendxmlreq(OscarSession *sess, const char *xml)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen;
 
@@ -367,10 +367,10 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
  * Yeah hi Peter, whaaaat's happening.  If there's any way to use
  * a codepage other than 1252 that would be great.  Thaaaanks.
  */
-faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const char *msg, const char *alias)
+faim_export int aim_icq_sendsms(OscarSession *sess, const char *name, const char *msg, const char *alias)
 {
-	aim_conn_t *conn;
-	aim_frame_t *fr;
+	OscarConnection *conn;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int bslen, xmllen;
 	char *xml;
@@ -482,12 +482,12 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 /**
  * Subtype 0x0003 - Response to 0x0015/0x002, contains an ICQesque packet.
  */
-static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_tlvlist_t *tl;
 	aim_tlv_t *datatlv;
-	aim_bstream_t qbs;
+	ByteStream qbs;
 	guint32 ouruin;
 	guint16 cmdlen, cmd, reqid;
 
@@ -677,7 +677,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0003)
@@ -686,7 +686,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-static void icq_shutdown(aim_session_t *sess, aim_module_t *mod)
+static void icq_shutdown(OscarSession *sess, aim_module_t *mod)
 {
 	struct aim_icq_info *del;
 
@@ -699,7 +699,7 @@ static void icq_shutdown(aim_session_t *sess, aim_module_t *mod)
 	return;
 }
 
-faim_internal int icq_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int icq_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0015;

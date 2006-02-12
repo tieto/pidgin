@@ -29,13 +29,13 @@
 #include <string.h>
 
 /* Subtype 0x0002 - Request BOS rights. */
-faim_export int aim_bos_reqrights(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_bos_reqrights(OscarSession *sess, OscarConnection *conn)
 {
 	return aim_genericreq_n_snacid(sess, conn, 0x0009, 0x0002);
 }
 
 /* Subtype 0x0003 - BOS Rights. */
-static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
@@ -77,7 +77,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * a bitwise OR of all the user classes you want to see you.
  *
  */
-faim_export int aim_bos_setgroupperm(aim_session_t *sess, aim_conn_t *conn, guint32 mask)
+faim_export int aim_bos_setgroupperm(OscarSession *sess, OscarConnection *conn, guint32 mask)
 {
 	return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
 }
@@ -110,9 +110,9 @@ faim_export int aim_bos_setgroupperm(aim_session_t *sess, aim_conn_t *conn, guin
  *
  * XXX ye gods.
  */
-faim_export int aim_bos_changevisibility(aim_session_t *sess, aim_conn_t *conn, int changetype, const char *denylist)
+faim_export int aim_bos_changevisibility(OscarSession *sess, OscarConnection *conn, int changetype, const char *denylist)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	int packlen = 0;
 	guint16 subtype;
 	char *localcpy = NULL, *tmpptr = NULL;
@@ -162,7 +162,7 @@ faim_export int aim_bos_changevisibility(aim_session_t *sess, aim_conn_t *conn, 
 	return 0;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0003)
@@ -171,7 +171,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int bos_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int bos_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0009;

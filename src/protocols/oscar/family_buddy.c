@@ -33,7 +33,7 @@
  * Request Buddy List rights.
  *
  */
-faim_export int aim_buddylist_reqrights(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_buddylist_reqrights(OscarSession *sess, OscarConnection *conn)
 {
 	return aim_genericreq_n_snacid(sess, conn, 0x0003, 0x0002);
 }
@@ -42,7 +42,7 @@ faim_export int aim_buddylist_reqrights(aim_session_t *sess, aim_conn_t *conn)
  * Subtype 0x0003 - Rights.
  *
  */
-static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
@@ -92,9 +92,9 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * XXX This should just be an extension of setbuddylist()
  *
  */
-faim_export int aim_buddylist_addbuddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_buddylist_addbuddy(OscarSession *sess, OscarConnection *conn, const char *sn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sn || !strlen(sn))
@@ -124,9 +124,9 @@ faim_export int aim_buddylist_addbuddy(aim_session_t *sess, aim_conn_t *conn, co
  * XXX Clean this up.
  *
  */
-faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const char *buddy_list)
+faim_export int aim_buddylist_set(OscarSession *sess, OscarConnection *conn, const char *buddy_list)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	int len = 0;
 	char *localcpy = NULL;
@@ -172,9 +172,9 @@ faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const c
  * the same as setbuddylist() but with a different snac subtype).
  *
  */
-faim_export int aim_buddylist_removebuddy(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_buddylist_removebuddy(OscarSession *sess, OscarConnection *conn, const char *sn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sn || !strlen(sn))
@@ -200,9 +200,9 @@ faim_export int aim_buddylist_removebuddy(aim_session_t *sess, aim_conn_t *conn,
  * XXX Why would we send this?
  *
  */
-faim_export int aim_buddylist_oncoming(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *info)
+faim_export int aim_buddylist_oncoming(OscarSession *sess, OscarConnection *conn, aim_userinfo_t *info)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !conn || !info)
@@ -227,9 +227,9 @@ faim_export int aim_buddylist_oncoming(aim_session_t *sess, aim_conn_t *conn, ai
  * XXX Why would we send this?
  *
  */
-faim_export int aim_buddylist_offgoing(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_buddylist_offgoing(OscarSession *sess, OscarConnection *conn, const char *sn)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!sess || !conn || !sn)
@@ -260,7 +260,7 @@ faim_export int aim_buddylist_offgoing(aim_session_t *sess, aim_conn_t *conn, co
  * it is still in a format parsable by aim_info_extract().
  *
  */
-static int buddychange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int buddychange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_userinfo_t userinfo;
@@ -278,7 +278,7 @@ static int buddychange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if (snac->subtype == 0x0003)
@@ -289,7 +289,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int buddylist_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int buddylist_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0003;

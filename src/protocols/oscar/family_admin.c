@@ -37,9 +37,9 @@
  * 0x0013 - Unknown
  *
  */
-faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, guint16 info)
+faim_export int aim_admin_getinfo(OscarSession *sess, OscarConnection *conn, guint16 info)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 14)))
@@ -63,7 +63,7 @@ faim_export int aim_admin_getinfo(aim_session_t *sess, aim_conn_t *conn, guint16
  * an information change (subtype 0x0004).
  *
  */
-static int infochange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int infochange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	char *url=NULL, *sn=NULL, *email=NULL;
@@ -117,9 +117,9 @@ static int infochange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  * Subtype 0x0004 - Set screenname formatting.
  *
  */
-faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const char *newnick)
+faim_export int aim_admin_setnick(OscarSession *sess, OscarConnection *conn, const char *newnick)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -144,9 +144,9 @@ faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const c
  * Subtype 0x0004 - Change password.
  *
  */
-faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, const char *newpw, const char *curpw)
+faim_export int aim_admin_changepasswd(OscarSession *sess, OscarConnection *conn, const char *newpw, const char *curpw)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_tlvlist_t *tl = NULL;
 	aim_snacid_t snacid;
 
@@ -174,9 +174,9 @@ faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, co
  * Subtype 0x0004 - Change email address.
  *
  */
-faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const char *newemail)
+faim_export int aim_admin_setemail(OscarSession *sess, OscarConnection *conn, const char *newemail)
 {
-	aim_frame_t *fr;
+	FlapFrame *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
@@ -204,7 +204,7 @@ faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const 
  * get the TRIAL flag removed from your account.
  *
  */
-faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_admin_reqconfirm(OscarSession *sess, OscarConnection *conn)
 {
 	return aim_genericreq_n(sess, conn, 0x0007, 0x0006);
 }
@@ -213,7 +213,7 @@ faim_export int aim_admin_reqconfirm(aim_session_t *sess, aim_conn_t *conn)
  * Subtype 0x0007 - Account confirmation request acknowledgement.
  *
  */
-static int accountconfirm(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int accountconfirm(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -231,7 +231,7 @@ static int accountconfirm(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	return ret;
 }
 
-static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
+static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 
 	if ((snac->subtype == 0x0003) || (snac->subtype == 0x0005))
@@ -242,7 +242,7 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
-faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod)
+faim_internal int admin_modfirst(OscarSession *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0007;
