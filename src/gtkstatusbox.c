@@ -642,7 +642,10 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	/* Unset the model while clearing it */
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), NULL);
 	gtk_list_store_clear(status_box->dropdown_store);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
+	/* Don't set the model until the new statuses have been added to the box.
+	 * What is presumably a bug in Gtk < 2.4 causes things to get all confused
+	 * if we do this here. */
+	/* gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store)); */
 
 	account = GTK_GAIM_STATUS_BOX(status_box)->account;
 	if (account == NULL)
@@ -668,6 +671,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("New..."), NULL, NULL);
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
 
+		gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 		status_menu_refresh_iter(status_box);
 
 	} else {
@@ -691,7 +695,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			if (tmp != NULL)
 				g_object_unref(tmp);
 		}
-
+		gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));
 	}
 }
