@@ -52,7 +52,7 @@ faim_export int aim_chatnav_createroom(OscarSession *sess, OscarConnection *conn
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x000d, 0x0008, 0x0000, NULL, 0);

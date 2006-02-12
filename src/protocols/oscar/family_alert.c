@@ -46,7 +46,7 @@ faim_export int aim_email_sendcookies(OscarSession *sess)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16+16)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16+16)))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x0018, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0018, 0x0006, 0x0000, snacid);
@@ -177,7 +177,7 @@ faim_export int aim_email_activate(OscarSession *sess)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+16)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+16)))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x0018, 0x0016, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0018, 0x0016, 0x0000, snacid);

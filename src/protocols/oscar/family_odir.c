@@ -53,7 +53,7 @@ faim_export int aim_odir_email(OscarSession *sess, const char *region, const cha
 	aim_tlvlist_add_16(&tl, 0x000a, 0x0001); /* Type of search */
 	aim_tlvlist_add_str(&tl, 0x0005, email);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x000f, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x000f, 0x0002, 0x0000, snacid);
@@ -121,7 +121,7 @@ faim_export int aim_odir_name(OscarSession *sess, const char *region, const char
 	if (address)
 		aim_tlvlist_add_str(&tl, 0x0021, address);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x000f, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x000f, 0x0002, 0x0000, snacid);
@@ -158,7 +158,7 @@ faim_export int aim_odir_interest(OscarSession *sess, const char *region, const 
 	if (interest)
 		aim_tlvlist_add_str(&tl, 0x0001, interest);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x000f, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x000f, 0x0002, 0x0000, snacid);

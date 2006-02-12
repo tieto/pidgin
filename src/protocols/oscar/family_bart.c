@@ -46,7 +46,7 @@ faim_export int aim_bart_upload(OscarSession *sess, const guint8 *icon, guint16 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !icon || !iconlen)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 2 + 2+iconlen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 2 + 2+iconlen)))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x0010, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0010, 0x0002, 0x0000, snacid);
@@ -104,7 +104,7 @@ faim_export int aim_bart_request(OscarSession *sess, const char *sn, guint8 icon
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 4 + 1+iconcsumlen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 4 + 1+iconcsumlen)))
 		return -ENOMEM;
 	snacid = aim_cachesnac(sess, 0x0010, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0010, 0x0004, 0x0000, snacid);

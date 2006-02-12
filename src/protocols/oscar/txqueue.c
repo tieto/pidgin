@@ -46,31 +46,30 @@
  * chan = channel for FLAP, hdrtype for OFT
  *
  */
-faim_internal FlapFrame *aim_tx_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint16 chan, int datalen)
+FlapFrame *
+flap_frame_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint16 chan, int datalen)
 {
 	FlapFrame *fr;
 
 	if (!sess || !conn) {
-		gaim_debug_misc("oscar", "aim_tx_new: No session or no connection specified!\n");
+		gaim_debug_misc("oscar", "flap_frame_new: No session or no connection specified!\n");
 		return NULL;
 	}
 
 	/* For sanity... */
 	if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) || (conn->type == AIM_CONN_TYPE_LISTENER)) {
 		if (framing != AIM_FRAMETYPE_OFT) {
-			gaim_debug_misc("oscar", "aim_tx_new: attempted to allocate inappropriate frame type for rendezvous connection\n");
+			gaim_debug_misc("oscar", "flap_frame_new: attempted to allocate inappropriate frame type for rendezvous connection\n");
 			return NULL;
 		}
 	} else {
 		if (framing != AIM_FRAMETYPE_FLAP) {
-			gaim_debug_misc("oscar", "aim_tx_new: attempted to allocate inappropriate frame type for FLAP connection\n");
+			gaim_debug_misc("oscar", "flap_frame_new: attempted to allocate inappropriate frame type for FLAP connection\n");
 			return NULL;
 		}
 	}
 
-	if (!(fr = (FlapFrame *)calloc(1, sizeof(FlapFrame))))
-		return NULL;
-
+	fr = g_new0(FlapFrame, 1);
 	fr->conn = conn;
 	fr->hdrtype = framing;
 	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
@@ -94,125 +93,8 @@ faim_internal FlapFrame *aim_tx_new(OscarSession *sess, OscarConnection *conn, g
 	return fr;
 }
 
-/* 
- * This increments the tx command count, and returns the seqnum
- * that should be stamped on the next FLAP packet sent.  This is
- * normally called during the final step of packet preparation
- * before enqueuement (in aim_tx_enqueue()).
- */
-static flap_seqnum_t aim_get_next_txseqnum(OscarConnection *conn)
-{
-	flap_seqnum_t ret;
-
-	ret = ++conn->seqnum;
-
-	return ret;
-}
-
-/*
- * The overall purpose here is to enqueue the passed in command struct
- * into the outgoing (tx) queue.  Basically...
- *   1) Make a scope-irrelevant copy of the struct
- *   3) Mark as not-sent-yet
- *   4) Enqueue the struct into the list
- *   6) Return
- *
- * Note that this is only used when doing queue-based transmitting;
- * that is, when sess->tx_enqueue is set to &aim_tx_enqueue__queuebased.
- *
- */
-static int aim_tx_enqueue__queuebased(OscarSession *sess, FlapFrame *fr)
-{
-
-	if (!fr->conn) {
-		gaim_debug_warning("oscar", "aim_tx_enqueue: enqueueing packet with no connecetion\n");
-		fr->conn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
-	}
-
-	if (fr->hdrtype == AIM_FRAMETYPE_FLAP) {
-		/* assign seqnum -- XXX should really not assign until hardxmit */
-		fr->hdr.flap.seqnum = aim_get_next_txseqnum(fr->conn);
-	}
-
-	fr->handled = 0; /* not sent yet */
-
-	/* see overhead note in aim_rxqueue counterpart */
-	if (!sess->queue_outgoing)
-		sess->queue_outgoing = fr;
-	else {
-		FlapFrame *cur;
-		for (cur = sess->queue_outgoing; cur->next; cur = cur->next);
-		cur->next = fr;
-	}
-
-	return 0;
-}
-
-/*
- * Parallel to aim_tx_enqueue__queuebased, however, this bypasses
- * the whole queue mess when you want immediate writes to happen.
- *
- * Basically the same as its __queuebased couterpart, however
- * instead of doing a list append, it just calls aim_tx_sendframe()
- * right here.
- *
- */
-static int aim_tx_enqueue__immediate(OscarSession *sess, FlapFrame *fr)
-{
-	int ret;
-
-	if (!fr->conn) {
-		gaim_debug_error("oscar", "aim_tx_enqueue: packet has no connection\n");
-		aim_frame_destroy(fr);
-		return 0;
-	}
-
-	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
-		fr->hdr.flap.seqnum = aim_get_next_txseqnum(fr->conn);
-
-	fr->handled = 0; /* not sent yet */
-
-	ret = aim_tx_sendframe(sess, fr);
-
-	aim_frame_destroy(fr);
-
-	return ret;
-}
-
-faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *))
-{
-
-	if (what == AIM_TX_QUEUED)
-		sess->tx_enqueue = &aim_tx_enqueue__queuebased;
-	else if (what == AIM_TX_IMMEDIATE) 
-		sess->tx_enqueue = &aim_tx_enqueue__immediate;
-	else if (what == AIM_TX_USER) {
-		if (!func)
-			return -EINVAL;
-		sess->tx_enqueue = func;
-	} else
-		return -EINVAL; /* unknown action */
-
-	return 0;
-}
-
-faim_internal int aim_tx_enqueue(OscarSession *sess, FlapFrame *fr)
-{
-
-	/*
-	 * If we want to send on a connection that is in progress, we have to force
-	 * them to use the queue based version. Otherwise, use whatever they
-	 * want.
-	 */
-	if (fr && fr->conn &&
-			(fr->conn->status & AIM_CONN_STATUS_INPROGRESS)) {
-		return aim_tx_enqueue__queuebased(sess, fr);
-	}
-
-	return (*sess->tx_enqueue)(sess, fr);
-}
-
-static int aim_send(int fd, const void *buf, size_t count)
+static int
+aim_send(int fd, const void *buf, size_t count)
 {
 	int left, cur;
 
@@ -233,7 +115,8 @@ static int aim_send(int fd, const void *buf, size_t count)
 	return cur;
 }
 
-faim_internal int aim_bstream_send(ByteStream *bs, OscarConnection *conn, size_t count)
+int
+aim_bstream_send(ByteStream *bs, OscarConnection *conn, size_t count)
 {
 	int wrote = 0;
 
@@ -279,7 +162,8 @@ faim_internal int aim_bstream_send(ByteStream *bs, OscarConnection *conn, size_t
 	return wrote;
 }
 
-static int sendframe_flap(OscarSession *sess, FlapFrame *fr)
+static int
+sendframe_flap(OscarSession *sess, FlapFrame *fr)
 {
 	ByteStream bs;
 	guint8 *bs_raw;
@@ -315,7 +199,8 @@ static int sendframe_flap(OscarSession *sess, FlapFrame *fr)
 	return err;
 }
 
-static int sendframe_rendezvous(OscarSession *sess, FlapFrame *fr)
+static int
+sendframe_rendezvous(OscarSession *sess, FlapFrame *fr)
 {
 	ByteStream bs;
 	guint8 *bs_raw;
@@ -350,7 +235,8 @@ static int sendframe_rendezvous(OscarSession *sess, FlapFrame *fr)
 	return err;
 }
 
-faim_internal int aim_tx_sendframe(OscarSession *sess, FlapFrame *fr)
+static int
+aim_tx_sendframe(OscarSession *sess, FlapFrame *fr)
 {
 	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
 		return sendframe_flap(sess, fr);
@@ -360,7 +246,8 @@ faim_internal int aim_tx_sendframe(OscarSession *sess, FlapFrame *fr)
 	return -1;
 }
 
-faim_export int aim_tx_flushqueue(OscarSession *sess)
+int
+aim_tx_flushqueue(OscarSession *sess)
 {
 	FlapFrame *cur;
 
@@ -398,11 +285,12 @@ faim_export int aim_tx_flushqueue(OscarSession *sess)
 }
 
 /*
- * This is responsible for removing sent commands from the transmit 
+ * This is responsible for removing sent commands from the transmit
  * queue. This is not a required operation, but it of course helps
- * reduce memory footprint at run time!  
+ * reduce memory footprint at run time!
  */
-faim_export void aim_tx_purgequeue(OscarSession *sess)
+void
+aim_tx_purgequeue(OscarSession *sess)
 {
 	FlapFrame *cur, **prev;
 
@@ -418,14 +306,15 @@ faim_export void aim_tx_purgequeue(OscarSession *sess)
 }
 
 /**
- * Get rid of packets waiting for tx on a dying conn.  For now this 
- * simply marks all packets as sent and lets them disappear without 
+ * Get rid of packets waiting for tx on a dying conn.  For now this
+ * simply marks all packets as sent and lets them disappear without
  * warning.
  *
  * @param sess A session.
  * @param conn Connection that's dying.
  */
-faim_internal void aim_tx_cleanqueue(OscarSession *sess, OscarConnection *conn)
+void
+aim_tx_cleanqueue(OscarSession *sess, OscarConnection *conn)
 {
 	FlapFrame *cur;
 
@@ -435,4 +324,122 @@ faim_internal void aim_tx_cleanqueue(OscarSession *sess, OscarConnection *conn)
 	}
 
 	return;
+}
+
+/*
+ * This increments the tx command count, and returns the seqnum
+ * that should be stamped on the next FLAP packet sent.  This is
+ * normally called during the final step of packet preparation
+ * before enqueuement (in aim_tx_enqueue()).
+ */
+static flap_seqnum_t
+aim_get_next_txseqnum(OscarConnection *conn)
+{
+	flap_seqnum_t ret;
+
+	ret = ++conn->seqnum;
+
+	return ret;
+}
+
+/*
+ * The overall purpose here is to enqueue the passed in command struct
+ * into the outgoing (tx) queue.  Basically...
+ *   1) Make a scope-irrelevant copy of the struct
+ *   3) Mark as not-sent-yet
+ *   4) Enqueue the struct into the list
+ *   6) Return
+ *
+ * Note that this is only used when doing queue-based transmitting;
+ * that is, when sess->tx_enqueue is set to &aim_tx_enqueue__queuebased.
+ *
+ */
+static int
+aim_tx_enqueue__queuebased(OscarSession *sess, FlapFrame *fr)
+{
+
+	if (!fr->conn) {
+		gaim_debug_warning("oscar", "aim_tx_enqueue: enqueueing packet with no connecetion\n");
+		fr->conn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
+	}
+
+	if (fr->hdrtype == AIM_FRAMETYPE_FLAP) {
+		/* assign seqnum -- XXX should really not assign until hardxmit */
+		fr->hdr.flap.seqnum = aim_get_next_txseqnum(fr->conn);
+	}
+
+	fr->handled = 0; /* not sent yet */
+
+	/* see overhead note in aim_rxqueue counterpart */
+	if (!sess->queue_outgoing)
+		sess->queue_outgoing = fr;
+	else {
+		FlapFrame *cur;
+		for (cur = sess->queue_outgoing; cur->next; cur = cur->next);
+		cur->next = fr;
+	}
+
+	return 0;
+}
+
+/*
+ * Parallel to aim_tx_enqueue__queuebased, however, this bypasses
+ * the whole queue mess when you want immediate writes to happen.
+ *
+ * Basically the same as its __queuebased couterpart, however
+ * instead of doing a list append, it just calls aim_tx_sendframe()
+ * right here.
+ *
+ */
+static int
+aim_tx_enqueue__immediate(OscarSession *sess, FlapFrame *fr)
+{
+	int ret;
+
+	if (!fr->conn) {
+		gaim_debug_error("oscar", "aim_tx_enqueue: packet has no connection\n");
+		aim_frame_destroy(fr);
+		return 0;
+	}
+
+	if (fr->hdrtype == AIM_FRAMETYPE_FLAP)
+		fr->hdr.flap.seqnum = aim_get_next_txseqnum(fr->conn);
+
+	fr->handled = 0; /* not sent yet */
+
+	ret = aim_tx_sendframe(sess, fr);
+
+	aim_frame_destroy(fr);
+
+	return ret;
+}
+
+int
+aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *))
+{
+
+	if (what == AIM_TX_QUEUED)
+		sess->tx_enqueue = &aim_tx_enqueue__queuebased;
+	else if (what == AIM_TX_IMMEDIATE)
+		sess->tx_enqueue = &aim_tx_enqueue__immediate;
+	else
+		return -EINVAL; /* unknown action */
+
+	return 0;
+}
+
+int
+aim_tx_enqueue(OscarSession *sess, FlapFrame *fr)
+{
+	/*
+	 * If we want to send on a connection that is in progress, we have to force
+	 * them to use the queue based version. Otherwise, use whatever they
+	 * want.
+	 */
+	if (fr && fr->conn &&
+			(fr->conn->status & AIM_CONN_STATUS_INPROGRESS)) {
+		return aim_tx_enqueue__queuebased(sess, fr);
+	}
+
+	return (*sess->tx_enqueue)(sess, fr);
 }

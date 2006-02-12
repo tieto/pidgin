@@ -100,7 +100,7 @@ faim_export int aim_buddylist_addbuddy(OscarSession *sess, OscarConnection *conn
 	if (!sn || !strlen(sn))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
@@ -141,7 +141,7 @@ faim_export int aim_buddylist_set(OscarSession *sess, OscarConnection *conn, con
 		tmpptr = strtok(NULL, "&");
 	}
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+len)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+len)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, NULL, 0);
@@ -180,7 +180,7 @@ faim_export int aim_buddylist_removebuddy(OscarSession *sess, OscarConnection *c
 	if (!sn || !strlen(sn))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
@@ -208,7 +208,7 @@ faim_export int aim_buddylist_oncoming(OscarSession *sess, OscarConnection *conn
 	if (!sess || !conn || !info)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x000b, 0x0000, NULL, 0);
@@ -235,7 +235,7 @@ faim_export int aim_buddylist_offgoing(OscarSession *sess, OscarConnection *conn
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x000c, 0x0000, NULL, 0);

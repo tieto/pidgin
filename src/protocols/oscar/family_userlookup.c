@@ -67,7 +67,7 @@ faim_export int aim_search_address(OscarSession *sess, OscarConnection *conn, co
 	if (!sess || !conn || !address)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+strlen(address))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+strlen(address))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x000a, 0x0002, 0x0000, strdup(address), strlen(address)+1);

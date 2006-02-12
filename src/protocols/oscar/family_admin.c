@@ -42,7 +42,7 @@ faim_export int aim_admin_getinfo(OscarSession *sess, OscarConnection *conn, gui
 	FlapFrame *fr;
 	aim_snacid_t snacid;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 14)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 14)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0002, 0x0000, NULL, 0);
@@ -123,7 +123,7 @@ faim_export int aim_admin_setnick(OscarSession *sess, OscarConnection *conn, con
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newnick))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newnick))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
@@ -150,7 +150,7 @@ faim_export int aim_admin_changepasswd(OscarSession *sess, OscarConnection *conn
 	aim_tlvlist_t *tl = NULL;
 	aim_snacid_t snacid;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+strlen(curpw)+4+strlen(newpw))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+strlen(curpw)+4+strlen(newpw))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
@@ -180,7 +180,7 @@ faim_export int aim_admin_setemail(OscarSession *sess, OscarConnection *conn, co
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newemail))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(newemail))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);

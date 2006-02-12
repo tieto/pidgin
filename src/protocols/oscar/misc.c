@@ -44,7 +44,7 @@ faim_internal int aim_genericreq_n(OscarSession *sess, OscarConnection *conn, gu
 	FlapFrame *fr;
 	aim_snacid_t snacid = 0x00000000;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
 		return -ENOMEM;
 
 	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
@@ -59,7 +59,7 @@ faim_internal int aim_genericreq_n_snacid(OscarSession *sess, OscarConnection *c
 	FlapFrame *fr;
 	aim_snacid_t snacid;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
@@ -78,7 +78,7 @@ faim_internal int aim_genericreq_l(OscarSession *sess, OscarConnection *conn, gu
 	if (!longdata)
 		return aim_genericreq_n(sess, conn, family, subtype);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4)))
 		return -ENOMEM; 
 
 	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
@@ -99,7 +99,7 @@ faim_internal int aim_genericreq_s(OscarSession *sess, OscarConnection *conn, gu
 	if (!shortdata)
 		return aim_genericreq_n(sess, conn, family, subtype);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2)))
 		return -ENOMEM; 
 
 	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);

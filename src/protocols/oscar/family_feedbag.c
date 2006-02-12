@@ -1251,7 +1251,7 @@ faim_export int aim_ssi_reqifchanged(OscarSession *sess, time_t timestamp, guint
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+2)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, NULL, 0);
@@ -1364,7 +1364,7 @@ faim_export int aim_ssi_addmoddel(OscarSession *sess)
 			snaclen += aim_tlvlist_size(&cur->item->data);
 	}
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, snaclen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, snaclen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, sess->ssi.pending->action, 0x0000, NULL, 0);
@@ -1712,7 +1712,7 @@ faim_export int aim_ssi_sendauth(OscarSession *sess, char *sn, char *msg)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, NULL, 0);
@@ -1787,7 +1787,7 @@ faim_export int aim_ssi_sendauthrequest(OscarSession *sess, char *sn, const char
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, NULL, 0);
@@ -1865,7 +1865,7 @@ faim_export int aim_ssi_sendauthreply(OscarSession *sess, char *sn, guint8 reply
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 1 + 2+(msg ? strlen(msg)+1 : 0) + 2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 1 + 2+(msg ? strlen(msg)+1 : 0) + 2)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, OSCAR_FAMILY_FEEDBAG, OSCAR_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, NULL, 0);

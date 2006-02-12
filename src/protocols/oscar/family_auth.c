@@ -127,7 +127,7 @@ faim_export int aim_sendflapver(OscarSession *sess, OscarConnection *conn)
 {
 	FlapFrame *fr;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4)))
 		return -ENOMEM;
 
 	aimbs_put32(&fr->data, 0x00000001);
@@ -150,7 +150,7 @@ faim_export int aim_sendcookie(OscarSession *sess, OscarConnection *conn, const 
 	FlapFrame *fr;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4+2+2+length)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4+2+2+length)))
 		return -ENOMEM;
 
 	aimbs_put32(&fr->data, 0x00000001);
@@ -180,7 +180,7 @@ static int goddamnicq2(OscarSession *sess, OscarConnection *conn, const char *sn
 	if (passwdlen > MAXICQPASSLEN)
 		passwdlen = MAXICQPASSLEN;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 1152))) {
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 1152))) {
 		free(password_encoded);
 		return -ENOMEM;
 	}
@@ -258,7 +258,7 @@ faim_export int aim_send_login(OscarSession *sess, OscarConnection *conn, const 
 		return goddamnicq2(sess, conn, sn, password, ci);
 #endif
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0017, 0x0002, 0x0000, NULL, 0);
@@ -529,7 +529,7 @@ faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, con
 
 	aim_sendflapver(sess, conn);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn)+8 )))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn)+8 )))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
@@ -614,7 +614,7 @@ faim_export int aim_auth_securid_send(OscarSession *sess, const char *securid)
 
 	len = strlen(securid);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+len)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+len)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, OSCAR_FAMILY_AUTH, OSCAR_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);

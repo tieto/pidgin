@@ -35,7 +35,7 @@
 #include "oscar.h"
 
 /*
- * Called from aim_session_init() to initialize the hash.
+ * Called from oscar_session_new() to initialize the hash.
  */
 faim_internal void aim_initsnachash(OscarSession *sess)
 {

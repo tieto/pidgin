@@ -285,7 +285,7 @@ aim_odc_send_typing(OscarSession *sess, OscarConnection *conn, int typing)
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0001, 0)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0001, 0)))
 		return -ENOMEM;
 	memcpy(fr->hdr.rend.magic, "ODC2", 4);
 	fr->hdr.rend.hdrlen = hdrlen + 8;
@@ -364,7 +364,7 @@ aim_odc_send_im(OscarSession *sess, OscarConnection *conn, const char *msg, int 
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS) || !msg)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, 0)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, 0)))
 		return -ENOMEM;
 
 	memcpy(fr->hdr.rend.magic, "ODC2", 4);
@@ -943,7 +943,7 @@ int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerConnection *peer_co
 
 	aim_oft_dirconvert_tostupid(peer_connection->fh.name);
 
-	if (!(fr = aim_tx_new(sess, peer_connection->conn, AIM_FRAMETYPE_OFT, type, 0)))
+	if (!(fr = flap_frame_new(sess, peer_connection->conn, AIM_FRAMETYPE_OFT, type, 0)))
 		return -ENOMEM;
 
 	if (aim_oft_buildheader(&fr->data, &peer_connection->fh) == -1) {

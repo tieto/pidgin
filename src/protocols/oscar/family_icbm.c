@@ -169,7 +169,7 @@ faim_export int aim_im_setparams(OscarSession *sess, struct aim_icbmparameters *
 	if (!params)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+16)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+16)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0002, 0x0000, NULL, 0);
@@ -314,7 +314,7 @@ faim_export int aim_im_sendch1_ext(OscarSession *sess, struct aim_sendimext_args
 		msgtlvlen += 4 /* charset */ + args->msglen;
 	}
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, msgtlvlen+128)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, msgtlvlen+128)))
 		return -ENOMEM;
 
 	/* XXX - should be optional */
@@ -466,7 +466,7 @@ faim_export int aim_im_sendch2_chatinvite(OscarSession *sess, const char *sn, co
 
 	aim_icbm_makecookie(cookie);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152+strlen(sn)+strlen(roomname)+strlen(msg))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, sn, strlen(sn)+1);
@@ -546,7 +546,7 @@ faim_export int aim_im_sendch2_icon(OscarSession *sess, const char *sn, const gu
 
 	aim_icbm_makecookie(cookie);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -629,7 +629,7 @@ faim_export int aim_im_sendch2_rtfmsg(OscarSession *sess, struct aim_sendrtfmsg_
 
 	aim_icbm_makecookie(cookie);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+128+servdatalen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+128+servdatalen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -706,7 +706,7 @@ faim_export int aim_im_sendch2_odcrequest(OscarSession *sess, guchar *usercookie
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 256+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 256+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -903,7 +903,7 @@ faim_export int aim_im_sendch2_sendfile_ask(OscarSession *sess, PeerConnection *
 		aim_tlvlist_add_noval(&tl, 0x0003);
 	}
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(peer_connection->sn) + aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(peer_connection->sn) + aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, AIM_SNACFLAGS_DESTRUCTOR, peer_connection->cookie, sizeof(peer_connection->cookie));
@@ -935,7 +935,7 @@ faim_export int aim_im_sendch2_sendfile_accept(OscarSession *sess, PeerConnectio
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !peer_connection)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(peer_connection->sn) + 4+2+8+16)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(peer_connection->sn) + 4+2+8+16)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -968,7 +968,7 @@ faim_export int aim_im_sendch2_sendfile_cancel(OscarSession *sess, PeerConnectio
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)) || !peer_connection)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(peer_connection->sn) + 4+2+8+16)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 11+strlen(peer_connection->sn) + 4+2+8+16)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -1009,7 +1009,7 @@ faim_export int aim_im_sendch2_geticqaway(OscarSession *sess, const char *sn, in
 
 	aim_icbm_makecookie(cookie);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn) + 4+0x5e + 4)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn) + 4+0x5e + 4)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -1113,7 +1113,7 @@ faim_export int aim_im_sendch4(OscarSession *sess, const char *sn, guint16 type,
 	if (!sn || !type || !message)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+3+strlen(sn)+12+strlen(message)+1+4)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+3+strlen(sn)+12+strlen(message)+1+4)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
@@ -2185,7 +2185,7 @@ faim_export int aim_im_warn(OscarSession *sess, OscarConnection *conn, const cha
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, strlen(sn)+13)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, strlen(sn)+13)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0008, 0x0000, sn, strlen(sn)+1);
@@ -2243,7 +2243,7 @@ faim_export int aim_im_denytransfer(OscarSession *sess, const char *sender, cons
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sender)+6)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sender)+6)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x000b, 0x0000, NULL, 0);
@@ -2399,7 +2399,7 @@ faim_export int aim_im_sendmtn(OscarSession *sess, guint16 type1, const char *sn
 	if (!sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+11+strlen(sn)+2)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+11+strlen(sn)+2)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x0014, 0x0000, NULL, 0);

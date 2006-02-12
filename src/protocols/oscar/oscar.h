@@ -30,6 +30,7 @@
 #define _OSCAR_H_
 
 #include "debug.h"
+#include "gaim_buffer.h"
 #include "internal.h"
 
 #include <stdio.h>
@@ -390,16 +391,16 @@ struct _ClientInfo
 struct _OscarConnection
 {
 	int fd;
+	GaimCircBuffer *buffer_outgoing;
 	guint16 type;
 	guint16 subtype;
 	flap_seqnum_t seqnum;
 	guint32 status;
-	void *priv; /* misc data the client may want to store */
 	void *internal; /* internal conn-specific libfaim data */
 	time_t lastactivity; /* time of last transmit */
 	int forcedlatency;
 	void *handlerlist;
-	void *sessv; /* pointer to parent session */
+	OscarSession *sessv; /* pointer to parent session */
 	void *inside; /* only accessible from inside libfaim */
 	struct _OscarConnection *next;
 };
@@ -510,8 +511,6 @@ struct _OscarSession
 		char password[128];
 	} socksproxy;
 
-	guint8 nonblocking;
-
 	/*
 	 * Outstanding snac handling
 	 *
@@ -579,8 +578,6 @@ faim_export void aim_rxdispatch(OscarSession *);
 
 faim_export int aim_debugconn_sendconnect(OscarSession *sess, OscarConnection *conn);
 
-faim_export int aim_logoff(OscarSession *);
-
 /* the library should never call aim_conn_kill */
 faim_export void aim_conn_kill(OscarSession *sess, OscarConnection **deadconn);
 
@@ -636,7 +633,6 @@ faim_export void aim_cleansnacs(OscarSession *, int maxage);
 
 #define AIM_TX_QUEUED    0 /* default */
 #define AIM_TX_IMMEDIATE 1
-#define AIM_TX_USER      2
 faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *));
 
 faim_export int aim_tx_flushqueue(OscarSession *);
@@ -657,8 +653,9 @@ faim_export int aim_conn_setstatus(OscarConnection *, int);
 faim_export int aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn);
 faim_export int aim_conn_isconnecting(OscarConnection *conn);
 
-faim_export void aim_session_init(OscarSession *, guint8 nonblocking);
-faim_export void aim_session_kill(OscarSession *);
+OscarSession *oscar_session_new(void);
+void oscar_session_destroy(OscarSession *);
+
 faim_export OscarConnection *aim_getconn_type(OscarSession *, int type);
 faim_export OscarConnection *aim_getconn_type_all(OscarSession *, int type);
 faim_export OscarConnection *aim_getconn_fd(OscarSession *, int fd);

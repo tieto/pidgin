@@ -1072,7 +1072,7 @@ faim_export int aim_locate_setprofile(OscarSession *sess,
 			aim_tlvlist_add_noval(&tl, 0x0004);
 	}
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
@@ -1101,7 +1101,7 @@ faim_export int aim_locate_setcaps(OscarSession *sess, guint32 caps)
 
 	aim_tlvlist_add_caps(&tl, 0x0005, caps);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
@@ -1133,7 +1133,7 @@ faim_export int aim_locate_getinfo(OscarSession *sess, const char *sn, guint16 i
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 12+1+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 12+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0005, 0x0000, NULL, 0);
@@ -1246,7 +1246,7 @@ faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, con
 	if (street)
 		aim_tlvlist_add_str(&tl, 0x0021, street);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0009, 0x0000, NULL, 0);
@@ -1274,7 +1274,7 @@ faim_export int aim_locate_000b(OscarSession *sess, const char *sn)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x000b, 0x0000, NULL, 0);
@@ -1318,7 +1318,7 @@ faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest
 	if (interest5)
 		aim_tlvlist_add_str(&tl, 0x0000b, interest5);
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x000f, 0x0000, NULL, 0);
@@ -1353,7 +1353,7 @@ faim_export int aim_locate_getinfoshort(OscarSession *sess, const char *sn, guin
 	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+1+strlen(sn))))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);

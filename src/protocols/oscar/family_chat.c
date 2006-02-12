@@ -359,7 +359,7 @@ faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guin
 	if (!sess || !conn || !msg || (msglen <= 0))
 		return 0;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x000e, 0x0005, 0x0000, NULL, 0);

@@ -126,10 +126,9 @@ faim_internal void aim_rxqueue_cleanbyconn(OscarSession *sess, OscarConnection *
 faim_internal void aim_frame_destroy(FlapFrame *);
 
 /* txqueue.c */
-faim_internal FlapFrame *aim_tx_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint16 chan, int datalen);
+faim_internal FlapFrame *flap_frame_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint16 chan, int datalen);
 faim_internal int aim_tx_enqueue(OscarSession *, FlapFrame *);
 faim_internal int aim_bstream_send(ByteStream *bs, OscarConnection *conn, size_t count);
-faim_internal int aim_tx_sendframe(OscarSession *sess, FlapFrame *cur);
 faim_internal void aim_tx_cleanqueue(OscarSession *, OscarConnection *);
 
 /*
@@ -152,7 +151,6 @@ faim_internal aim_snacid_t aim_cachesnac(OscarSession *sess, const guint16 famil
 faim_internal aim_snac_t *aim_remsnac(OscarSession *, aim_snacid_t id);
 faim_internal int aim_putsnac(ByteStream *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
 
-/* Stored in ->priv of the service request SNAC for chats. */
 struct chatsnacinfo {
 	guint16 exchange;
 	char name[128];

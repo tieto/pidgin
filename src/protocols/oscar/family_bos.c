@@ -139,7 +139,7 @@ faim_export int aim_bos_changevisibility(OscarSession *sess, OscarConnection *co
 	listcount = aimutil_itemcnt(localcpy, '&');
 	packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, packlen))) {
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, packlen))) {
 		free(localcpy);
 		return -ENOMEM;
 	}

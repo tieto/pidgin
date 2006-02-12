@@ -1842,8 +1842,7 @@ oscar_login(GaimAccount *account)
 	}
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
-	sess = g_new0(OscarSession, 1);
-	aim_session_init(sess, TRUE);
+	sess = oscar_session_new();
 	/*
 	 * We need an immediate queue because we don't use a while-loop
 	 * to see if things need to be sent.
@@ -1937,8 +1936,7 @@ static void oscar_close(GaimConnection *gc) {
 		gaim_timeout_remove(od->getinfotimer);
 	gaim_prefs_disconnect_by_handle(gc);
 
-	aim_session_kill(od->sess);
-	g_free(od->sess);
+	oscar_session_destroy(od->sess);
 	od->sess = NULL;
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;

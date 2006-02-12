@@ -37,7 +37,7 @@ faim_export int aim_icq_reqofflinemsgs(OscarSession *sess)
 
 	bslen = 2 + 4 + 2 + 2;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -69,7 +69,7 @@ faim_export int aim_icq_ackofflinemsgs(OscarSession *sess)
 
 	bslen = 2 + 4 + 2 + 2;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -102,7 +102,7 @@ aim_icq_setsecurity(OscarSession *sess, gboolean auth_required, gboolean webawar
 
 	bslen = 2+4+2+2+2+2+2+1+1+1+1+1+1;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -157,7 +157,7 @@ faim_export int aim_icq_changepasswd(OscarSession *sess, const char *passwd)
 		passwdlen = MAXICQPASSLEN;
 	bslen = 2+4+2+2+2+2+passwdlen+1;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -197,7 +197,7 @@ faim_export int aim_icq_getallinfo(OscarSession *sess, const char *uin)
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -242,7 +242,7 @@ faim_export int aim_icq_getalias(OscarSession *sess, const char *uin)
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -286,7 +286,7 @@ faim_export int aim_icq_getsimpleinfo(OscarSession *sess, const char *uin)
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -324,7 +324,7 @@ faim_export int aim_icq_sendxmlreq(OscarSession *sess, const char *xml)
 
 	bslen = 2 + 10 + 2 + strlen(xml) + 1;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
@@ -406,7 +406,7 @@ faim_export int aim_icq_sendsms(OscarSession *sess, const char *name, const char
 
 	bslen = 37 + xmllen;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen))) {
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen))) {
 		free(xml);
 		return -ENOMEM;
 	}

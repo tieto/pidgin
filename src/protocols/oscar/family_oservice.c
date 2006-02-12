@@ -38,7 +38,7 @@ faim_export int aim_clientready(OscarSession *sess, OscarConnection *conn)
 	if (!ins)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
@@ -131,7 +131,7 @@ faim_export int aim_chat_join(OscarSession *sess, OscarConnection *conn, guint16
 	if (!sess || !conn || !roomname || !strlen(roomname))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
 		return -ENOMEM;
 
 	memset(&csi, 0, sizeof(csi));
@@ -412,7 +412,7 @@ faim_internal int aim_rates_addparam(OscarSession *sess, OscarConnection *conn)
 	aim_snacid_t snacid;
 	struct rateclass *rc;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0008, 0x0000, NULL, 0);
@@ -434,7 +434,7 @@ faim_internal int aim_rates_delparam(OscarSession *sess, OscarConnection *conn)
 	aim_snacid_t snacid;
 	struct rateclass *rc;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0009, 0x0000, NULL, 0);
@@ -516,7 +516,7 @@ faim_export int aim_sendpauseack(OscarSession *sess, OscarConnection *conn)
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1024)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1024)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x000c, 0x0000, NULL, 0);
@@ -755,7 +755,7 @@ faim_internal int aim_setversions(OscarSession *sess, OscarConnection *conn)
 	if (!ins)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
@@ -827,7 +827,7 @@ faim_export int aim_setextstatus(OscarSession *sess, guint32 status)
 
 	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH | status;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
@@ -866,7 +866,7 @@ faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg)
 		return -EINVAL;
 
 	if ((msg != NULL) && *msg != '\0') {
-		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 8)))
+		if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 8)))
 			return -ENOMEM;
 
 		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
@@ -881,7 +881,7 @@ faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg)
 		aimbs_putstr(&fr->data, msg);
 		aimbs_put16(&fr->data, 0x0000);
 	} else {
-		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + 8)))
+		if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + 8)))
 			return -ENOMEM;
 
 		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
@@ -972,7 +972,7 @@ faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guin
 	if (!sess || !conn)
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16)))
+	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0020, 0x0000, NULL, 0);
