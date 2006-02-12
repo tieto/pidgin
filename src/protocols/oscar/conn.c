@@ -241,7 +241,6 @@ aim_conn_getnext(OscarSession *sess)
 	conn->type = -1;
 	conn->seqnum = 0;
 	conn->lastactivity = 0;
-	conn->forcedlatency = 0;
 	conn->handlerlist = NULL;
 
 	sess->oscar_connections = g_list_prepend(sess->oscar_connections, conn);
@@ -359,7 +358,6 @@ aim_cloneconn(OscarSession *sess, OscarConnection *src)
 	conn->seqnum = src->seqnum;
 	conn->internal = src->internal;
 	conn->lastactivity = src->lastactivity;
-	conn->forcedlatency = src->forcedlatency;
 	conn->sessv = src->sessv;
 	aim_clonehandlers(sess, conn, src);
 
@@ -401,33 +399,6 @@ oscar_connection_new(OscarSession *sess, int type)
 	conn->fd = -1;
 	conn->status = 0;
 	return conn;
-}
-
-/**
- * Set a forced latency value for connection.  Basically causes
- * @newval seconds to be spent between transmits on a connection.
- *
- * This is my lame attempt at overcoming not understanding the rate
- * limiting.
- *
- * XXX: This should really be replaced with something that scales and
- * backs off like the real rate limiting does.
- *
- * @param conn Conn to set latency for.
- * @param newval Number of seconds to force between transmits.
- * @return Returns -1 if the connection does not exist, zero otherwise.
- */
-int
-aim_conn_setlatency(OscarConnection *conn, int newval)
-{
-
-	if (!conn)
-		return -1;
-
-	conn->forcedlatency = newval;
-	conn->lastactivity = 0; /* reset this just to make sure */
-
-	return 0;
 }
 
 /**

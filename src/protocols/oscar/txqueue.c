@@ -259,21 +259,6 @@ aim_tx_flushqueue(OscarSession *sess)
 		if (cur->conn && (cur->conn->status & AIM_CONN_STATUS_INPROGRESS))
 			continue;
 
-		/*
-		 * And now for the meager attempt to force transmit
-		 * latency and avoid missed messages.
-		 */
-		if ((cur->conn->lastactivity + cur->conn->forcedlatency) >= time(NULL)) {
-			/*
-			 * XXX should be a break! we don't want to block the
-			 * upper layers
-			 *
-			 * XXX or better, just do this right.
-			 *
-			 */
-			sleep((cur->conn->lastactivity + cur->conn->forcedlatency) - time(NULL));
-		}
-
 		/* XXX this should call the custom "queuing" function!! */
 		aim_tx_sendframe(sess, cur);
 	}

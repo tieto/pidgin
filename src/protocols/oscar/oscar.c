@@ -5742,20 +5742,12 @@ static int gaim_parse_ratechange(OscarSession *sess, FlapFrame *fr, ...) {
 		     limit, disconnect,
 		     windowsize);
 
-	/* XXX fix these values */
-	if (code == AIM_RATE_CODE_CHANGE) {
-		if (currentavg >= clear)
-			aim_conn_setlatency(fr->conn, 0);
-	} else if (code == AIM_RATE_CODE_WARNING) {
-		aim_conn_setlatency(fr->conn, windowsize/4);
-	} else if (code == AIM_RATE_CODE_LIMIT) {
+	if (code == AIM_RATE_CODE_LIMIT)
+	{
 		gaim_notify_error(sess->aux_data, NULL, _("Rate limiting error."),
 						  _("The last action you attempted could not be "
 							"performed because you are over the rate limit. "
 							"Please wait 10 seconds and try again."));
-		aim_conn_setlatency(fr->conn, windowsize/2);
-	} else if (code == AIM_RATE_CODE_CLEARLIMIT) {
-		aim_conn_setlatency(fr->conn, 0);
 	}
 
 	return 1;

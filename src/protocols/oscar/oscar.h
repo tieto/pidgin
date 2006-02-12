@@ -398,7 +398,6 @@ struct _OscarConnection
 	guint32 status;
 	void *internal; /* internal conn-specific libfaim data */
 	time_t lastactivity; /* time of last transmit */
-	int forcedlatency;
 	void *handlerlist;
 	OscarSession *sessv; /* pointer to parent session */
 	void *inside; /* only accessible from inside libfaim */
@@ -636,8 +635,6 @@ faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(Osca
 
 faim_export int aim_tx_flushqueue(OscarSession *);
 faim_export void aim_tx_purgequeue(OscarSession *);
-
-faim_export int aim_conn_setlatency(OscarConnection *conn, int newval);
 
 faim_export int aim_conn_addhandler(OscarSession *, OscarConnection *conn, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
 faim_export int aim_clearhandlers(OscarConnection *conn);
