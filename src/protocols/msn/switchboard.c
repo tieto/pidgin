@@ -1138,7 +1138,8 @@ xfr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	swboard = trans->data;
 
 	gaim_debug_info("msn", "xfr_error %i for %s: trans %x, command %s, reason %i\n",
-					error, swboard->im_user, trans, trans->command, reason);
+					error, (swboard->im_user ? swboard->im_user : "(null)"), trans,
+					(trans->command ? trans->command : "(null)"), reason);
 
 	swboard_error_helper(swboard, reason, swboard->im_user);
 }
