@@ -79,6 +79,8 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who,
 		const char *why);
 gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who,
 		const char *affiliation);
+gboolean jabber_chat_role_user(JabberChat *chat, const char *who,
+		const char *role);
 gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
 		const char *why);
 

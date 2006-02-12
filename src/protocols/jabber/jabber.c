@@ -1603,19 +1603,44 @@ static GaimCmdRet jabber_cmd_chat_affiliate(GaimConversation *conv,
 	if (!args || !args[0] || !args[1])
 		return GAIM_CMD_RET_FAILED;
 
-	if (
-		strcmp(args[1], "owner") != 0 && 
-		strcmp(args[1], "admin") != 0 &&
-		strcmp(args[1], "member") != 0 &&
-		strcmp(args[1], "outcast") != 0 &&
-		strcmp(args[1], "none") != 0
-	) {
+	if (strcmp(args[1], "owner") != 0 && 
+	    strcmp(args[1], "admin") != 0 &&
+	    strcmp(args[1], "member") != 0 &&
+	    strcmp(args[1], "outcast") != 0 &&
+	    strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown affiliation: \"%s\""), args[1]);
 		return GAIM_CMD_RET_FAILED;
 	}
 
 	if (!jabber_chat_affiliate_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to affiliate user %s as \"%s\""), args[0], args[1]);
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet jabber_cmd_chat_role(GaimConversation *conv,
+		const char *cmd, char **args, char **error, void *data)
+{
+	JabberChat *chat;
+
+	if (!args || !args[0] || !args[1])
+		return GAIM_CMD_RET_FAILED;
+
+	if (strcmp(args[1], "moderator") != 0 &&
+	    strcmp(args[1], "participant") != 0 &&
+	    strcmp(args[1], "visitor") != 0 &&
+	    strcmp(args[1], "none") != 0) {
+		*error = g_strdup_printf(_("Unknown role: \"%s\""), args[1]);
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	chat = jabber_chat_find_by_conv(conv);
+
+	if (!jabber_chat_role_user(chat, args[0], args[1])) {
+		*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),
+		                         args[1], args[0]);
 		return GAIM_CMD_RET_FAILED;
 	}
 
@@ -1731,11 +1756,17 @@ static void jabber_register_commands(void)
 	                  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
 	                  NULL);
 	gaim_cmd_register("affiliate", "ws", GAIM_CMD_P_PRPL,
-					  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-					  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_affiliate,
-					  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
-					  NULL);
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_affiliate,
+	                  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
+	                  NULL);
+	gaim_cmd_register("role", "ws", GAIM_CMD_P_PRPL,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_role,
+	                  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
+	                  NULL);
 	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
