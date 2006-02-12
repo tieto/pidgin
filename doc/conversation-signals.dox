@@ -211,7 +211,7 @@ gboolean (*receiving_chat_msg)(GaimAccount *account, char **sender,
  @signaldef received-chat-msg
   @signalproto
 void (*received_chat_msg)(GaimAccount *account, char *sender, char *message,
-                              GaimConversation *conv, int flags);
+                              GaimConversation *conv, GaimMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after a chat message is received.
