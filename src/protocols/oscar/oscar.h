@@ -347,12 +347,12 @@ struct _ClientInfo
 #define AIM_RV_PROXY_CONNECT_PORT	5190		/* The port we should always connect to */
 
 /* What is the purpose of this transfer? (Who will end up with a new file?)
- * These values are used in oft_info->send_or_recv */
+ * These values are used in peer_connection->send_or_recv */
 #define AIM_XFER_SEND			0x0001
 #define AIM_XFER_RECV			0x0002
 
 /* Via what method is the data getting routed?
- * These values are used in oft_info->method */
+ * These values are used in peer_connection->method */
 #define AIM_XFER_DIRECT			0x0001	/* Direct connection; receiver connects to sender */
 #define AIM_XFER_REDIR			0x0002	/* Redirected connection; sender connects to receiver */
 #define AIM_XFER_PROXY			0x0003	/* Proxied connection */
@@ -360,7 +360,7 @@ struct _ClientInfo
 /* Who requested the proxy?
  * The difference between a stage 2 and stage 3 proxied transfer is that the receiver does the
  * initial login for a stage 2, but the sender must do it for a stage 3.
- * These values are used in oft_info->stage */
+ * These values are used in peer_connection->stage */
 #define AIM_XFER_PROXY_NONE		0x0001
 #define AIM_XFER_PROXY_STG1		0x0002	/* Sender requested a proxy be used (stage1) */
 #define AIM_XFER_PROXY_STG2		0x0003	/* Receiver requested a proxy be used (stage2) */
@@ -522,7 +522,6 @@ struct _OscarSession
 
 	IcbmCookie *msgcookies;
 	struct aim_icq_info *icq_info;
-	PeerInfo *oft_info;
 	struct aim_authresp_info *authinfo;
 	struct aim_emailinfo *emailinfo;
 
@@ -543,6 +542,9 @@ struct _OscarSession
 		time_t timestamp;
 		int waiting_for_ack;
 	} ssi;
+
+	/** A linked list containing PeerConnections. */
+	GList *peer_connections;
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
@@ -949,9 +951,9 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(OscarSession *sess, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(OscarSession *sess, struct aim_sendrtfmsg_args *args);
 /* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(OscarSession *sess, guchar *cookie, gboolean usecookie, const char *sn, const guint8 *ip, guint16 port);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(OscarSession *sess, PeerInfo *oft_info);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(OscarSession *sess, PeerInfo *info);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(OscarSession *sess, PeerInfo *oft_info);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(OscarSession *sess, PeerConnection *peer_connection);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(OscarSession *sess, PeerConnection *info);
+/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(OscarSession *sess, PeerConnection *peer_connection);
 /* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(OscarSession *sess, const char *sn, int type);
 /* 0x0006 */ faim_export int aim_im_sendch4(OscarSession *sess, const char *sn, guint16 type, const char *message);
 /* 0x0008 */ faim_export int aim_im_warn(OscarSession *sess, OscarConnection *conn, const char *destsn, guint32 flags);

@@ -33,8 +33,8 @@
 #ifndef _PEER_H_
 #define _PEER_H_
 
+typedef struct _PeerConnection     PeerConnection;
 typedef struct _PeerFrame          PeerFrame;
-typedef struct _PeerInfo           PeerInfo;
 typedef struct _PeerProxyInfo      PeerProxyInfo;
 
 #define AIM_CB_FAM_OFT 0xfffe /* OFT/Rvous */
@@ -64,8 +64,8 @@ struct _PeerFrame
 {
 #if 0
 	char magic[4];           /* 0 */
-	guint16 hdrlen;          /* 4 */
-	guint16 hdrtype;         /* 6 */
+	guint16 length;          /* 4 */
+	guint16 type;            /* 6 */
 #endif
 	guchar bcookie[8];       /* 8 */
 	guint16 encrypt;         /* 16 */
@@ -109,7 +109,7 @@ struct _PeerProxyInfo {
 	OscarSession *sess;
 };
 
-struct _PeerInfo {
+struct _PeerConnection {
 	guchar cookie[8];
 	char *sn;
 	char *proxyip;
@@ -128,7 +128,6 @@ struct _PeerInfo {
 	OscarSession *sess;
 	int success; /* Was the connection successful? Used for timing out the transfer. */
 	PeerFrame fh;
-	struct _PeerInfo *next;
 	PeerProxyInfo *proxy_info;
 };
 
@@ -138,15 +137,15 @@ int aim_rxdispatch_rendezvous(OscarSession *sess, FlapFrame *fr);
 /*
  * OFT
  */
-int aim_sendfile_listen(OscarSession *sess, PeerInfo *oft_info, int listenfd);
-int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerInfo *oft_info);
+int aim_sendfile_listen(OscarSession *sess, PeerConnection *peer_connection, int listenfd);
+int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerConnection *peer_connection);
 guint32 aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevcheck);
 guint32 aim_oft_checksum_file(char *filename);
-int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerInfo *oft_info);
-PeerInfo *aim_oft_createinfo(OscarSession *sess, const guchar *cookie, const char *sn,
+int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerConnection *peer_connection);
+PeerConnection *aim_oft_createinfo(OscarSession *sess, const guchar *cookie, const char *sn,
 	const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv,
 	int method, int stage);
-int aim_oft_destroyinfo(PeerInfo *oft_info);
+int aim_oft_destroyinfo(PeerConnection *peer_connection);
 
 /*
  * ODC

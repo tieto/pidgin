@@ -74,7 +74,6 @@
 #include <sys/utsname.h> /* for aim_odc_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
 #include <limits.h> /* for UINT_MAX */
-#define G_DIR_SEPARATOR '/'
 #endif
 
 #ifdef _WIN32
@@ -688,15 +687,15 @@ handlehdr_odc(OscarSession *sess, OscarConnection *conn, FlapFrame *frr, ByteStr
 	return ret;
 }
 
-PeerInfo *
+PeerConnection *
 aim_oft_createinfo(OscarSession *sess, const guint8 *cookie, const char *sn, const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv, int method, int stage)
 {
-	PeerInfo *new;
+	PeerConnection *new;
 
 	if (!sess)
 		return NULL;
 
-	if (!(new = (PeerInfo *)calloc(1, sizeof(PeerInfo))))
+	if (!(new = (PeerConnection *)calloc(1, sizeof(PeerConnection))))
 		return NULL;
 
 	new->sess = sess;
@@ -735,8 +734,7 @@ aim_oft_createinfo(OscarSession *sess, const guint8 *cookie, const char *sn, con
 		new->fh.name[63] = '\0';
 	}
 
-	new->next = sess->oft_info;
-	sess->oft_info = new;
+	sess->peer_connections = g_list_prepend(sess->peer_connections, new);
 
 	return new;
 }
@@ -761,35 +759,28 @@ PeerProxyInfo *aim_rv_proxy_createinfo(OscarSession *sess, const guint8 *cookie,
 }
 
 /**
- * Remove the given oft_info struct from the oft_info linked list, and
+ * Remove the given PeerConnection from the PeerConnection linked list, and
  * then free its memory.
  *
  * @param sess The session.
- * @param oft_info The PeerInfo that we're destroying.
+ * @param peer_connection The PeerConnection that we're destroying.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int
-aim_oft_destroyinfo(PeerInfo *oft_info)
+aim_oft_destroyinfo(PeerConnection *peer_connection)
 {
 	OscarSession *sess;
 
-	if (!oft_info || !(sess = oft_info->sess))
+	if (!peer_connection || !(sess = peer_connection->sess))
 		return -EINVAL;
 
-	if (sess->oft_info && (sess->oft_info == oft_info)) {
-		sess->oft_info = sess->oft_info->next;
-	} else {
-		PeerInfo *cur;
-		for (cur=sess->oft_info; (cur->next && (cur->next!=oft_info)); cur=cur->next);
-		if (cur->next)
-			cur->next = cur->next->next;
-	}
+	sess->peer_connections = g_list_remove(sess->peer_connections, peer_connection);
 
-	free(oft_info->sn);
-	free(oft_info->proxyip);
-	free(oft_info->clientip);
-	free(oft_info->verifiedip);
-	free(oft_info);
+	free(peer_connection->sn);
+	free(peer_connection->proxyip);
+	free(peer_connection->clientip);
+	free(peer_connection->verifiedip);
+	free(peer_connection);
 
 	return 0;
 }
@@ -803,24 +794,24 @@ aim_oft_destroyinfo(PeerInfo *oft_info)
  * will accept the pending connection and stop listening.
  *
  * @param sess The session.
- * @param oft_info File transfer information associated with this
+ * @param peer_connection File transfer information associated with this
  *        connection.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int
-aim_sendfile_listen(OscarSession *sess, PeerInfo *oft_info, int listenfd)
+aim_sendfile_listen(OscarSession *sess, PeerConnection *peer_connection, int listenfd)
 {
-	if (!oft_info)
+	if (!peer_connection)
 		return -EINVAL;
 
-	if (!(oft_info->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER))) {
+	if (!(peer_connection->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER))) {
 		close(listenfd);
 		return -ENOMEM;
 	}
 
-	oft_info->conn->fd = listenfd;
-	oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-	oft_info->conn->lastactivity = time(NULL);
+	peer_connection->conn->fd = listenfd;
+	peer_connection->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+	peer_connection->conn->lastactivity = time(NULL);
 
 	return 0;
 }
@@ -925,15 +916,15 @@ aim_oft_buildheader(ByteStream *bs, PeerFrame *fh)
  *
  * @param sess The session.
  * @param type The subtype of the OFT packet we're sending.
- * @param oft_info The PeerInfo with the connection and OFT
+ * @param peer_connection The PeerConnection with the connection and OFT
  *        info we're sending.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerInfo *oft_info)
+int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerConnection *peer_connection)
 {
 	FlapFrame *fr;
 
-	if (!sess || !oft_info || !oft_info->conn || (oft_info->conn->type != AIM_CONN_TYPE_RENDEZVOUS))
+	if (!sess || !peer_connection || !peer_connection->conn || (peer_connection->conn->type != AIM_CONN_TYPE_RENDEZVOUS))
 		return -EINVAL;
 
 #if 0
@@ -950,12 +941,12 @@ int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerInfo *oft_info)
 	fh->nlanguage = 0x0000;
 #endif
 
-	aim_oft_dirconvert_tostupid(oft_info->fh.name);
+	aim_oft_dirconvert_tostupid(peer_connection->fh.name);
 
-	if (!(fr = aim_tx_new(sess, oft_info->conn, AIM_FRAMETYPE_OFT, type, 0)))
+	if (!(fr = aim_tx_new(sess, peer_connection->conn, AIM_FRAMETYPE_OFT, type, 0)))
 		return -ENOMEM;
 
-	if (aim_oft_buildheader(&fr->data, &oft_info->fh) == -1) {
+	if (aim_oft_buildheader(&fr->data, &peer_connection->fh) == -1) {
 		aim_frame_destroy(fr);
 		return -ENOMEM;
 	}

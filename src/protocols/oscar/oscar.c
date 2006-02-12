@@ -2023,13 +2023,13 @@ static void oscar_send_file_request(GaimXfer *xfer);
 static GaimXfer *oscar_find_xfer_by_cookie(GSList *fts, const guint8 *ck)
 {
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 
 	while (fts) {
 		xfer = fts->data;
-		oft_info = xfer->data;
+		peer_connection = xfer->data;
 
-		if (oft_info && !memcmp(ck, oft_info->cookie, 8))
+		if (peer_connection && !memcmp(ck, peer_connection->cookie, 8))
 			return xfer;
 
 		fts = g_slist_next(fts);
@@ -2041,13 +2041,13 @@ static GaimXfer *oscar_find_xfer_by_cookie(GSList *fts, const guint8 *ck)
 static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, OscarConnection *conn)
 {
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 
 	while (fts) {
 		xfer = fts->data;
-		oft_info = xfer->data;
+		peer_connection = xfer->data;
 
-		if (oft_info && (conn == oft_info->conn))
+		if (peer_connection && (conn == peer_connection->conn))
 			return xfer;
 
 		fts = g_slist_next(fts);
@@ -2063,19 +2063,19 @@ static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, OscarConnection *conn)
  */
 static void oscar_xfer_end(GaimXfer *xfer)
 {
-	PeerInfo *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
+	PeerConnection *peer_connection = xfer->data;
+	GaimConnection *gc = peer_connection->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_end\n");
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		oft_info->fh.nrecvd = gaim_xfer_get_bytes_sent(xfer);
-		aim_oft_sendheader(oft_info->sess, PEER_TYPE_DONE, oft_info);
+		peer_connection->fh.nrecvd = gaim_xfer_get_bytes_sent(xfer);
+		aim_oft_sendheader(peer_connection->sess, PEER_TYPE_DONE, peer_connection);
 	}
 
-	aim_conn_kill(oft_info->sess, &oft_info->conn);
-	aim_oft_destroyinfo(oft_info);
+	aim_conn_kill(peer_connection->sess, &peer_connection->conn);
+	aim_oft_destroyinfo(peer_connection);
 	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
@@ -2095,7 +2095,7 @@ static void oscar_xfer_end(GaimXfer *xfer)
 static gboolean oscar_xfer_ip_timeout(gpointer data) {
 	GaimXfer *xfer;
 	GaimAccount *account;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	char *msg = NULL;
 
 	gaim_debug_info("oscar","AAA - in oscar_xfer_ip_timeout\n");
@@ -2103,26 +2103,26 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 	xfer = (GaimXfer*) data;
 	account = gaim_xfer_get_account(xfer);
 	if(xfer->data) {
-		oft_info = (PeerInfo*) xfer->data;
+		peer_connection = (PeerConnection*) xfer->data;
 
 		/* Check to see if the clientip has produced any results */
-		if(!oft_info->success) {
+		if(!peer_connection->success) {
 			/* This connection has worn out its welcome. Goodbye. */
-			if(oft_info->conn) {
-				close(oft_info->conn->fd);
-				aim_conn_kill(oft_info->sess, &oft_info->conn);
+			if(peer_connection->conn) {
+				close(peer_connection->conn->fd);
+				aim_conn_kill(peer_connection->sess, &peer_connection->conn);
 			}
 
-			if(oft_info->method == AIM_XFER_DIRECT || oft_info->method == AIM_XFER_REDIR) {
+			if(peer_connection->method == AIM_XFER_DIRECT || peer_connection->method == AIM_XFER_REDIR) {
 				/* If (we're currently using the verified ip)
 				* In case clientip & verifiedip are the same,
 				* we must prevent an infinite loop */
-				if(xfer->remote_ip && oft_info->verifiedip
-					&& g_ascii_strcasecmp(xfer->remote_ip, oft_info->verifiedip) == 0
-					&& g_ascii_strcasecmp(oft_info->clientip, oft_info->verifiedip) != 0 )
+				if(xfer->remote_ip && peer_connection->verifiedip
+					&& g_ascii_strcasecmp(xfer->remote_ip, peer_connection->verifiedip) == 0
+					&& g_ascii_strcasecmp(peer_connection->clientip, peer_connection->verifiedip) != 0 )
 				{
 					/* The verifiedip timed out */
-					if (oft_info->method == AIM_XFER_DIRECT && !oft_info->redir_attempted)
+					if (peer_connection->method == AIM_XFER_DIRECT && !peer_connection->redir_attempted)
 					{
 						/* clientip & verifiedip failed, request a redirect
 						 * that is, we want the sender to connect to us
@@ -2138,12 +2138,12 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 
 						gaim_timeout_add(FT_REDIR_TIMEOUT,
 							oscar_xfer_ip_timeout, xfer);
-						oft_info->method = AIM_XFER_REDIR;
-						oft_info->redir_attempted = TRUE;
-						g_free(oft_info->proxyip);
-						oft_info->proxyip = NULL;
-						oft_info->clientip = g_strdup( gaim_network_get_my_ip(
-							oft_info->conn ? oft_info->conn->fd : -1));
+						peer_connection->method = AIM_XFER_REDIR;
+						peer_connection->redir_attempted = TRUE;
+						g_free(peer_connection->proxyip);
+						peer_connection->proxyip = NULL;
+						peer_connection->clientip = g_strdup( gaim_network_get_my_ip(
+							peer_connection->conn ? peer_connection->conn->fd : -1));
 						oscar_xfer_init_send(xfer);
 					} else {
 						/* clientip, verifiedip, and redirect all failed. */
@@ -2152,28 +2152,28 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 
 						/* Kill our listener */
 						gaim_input_remove(xfer->watcher);
-						aim_conn_kill(oft_info->sess, &oft_info->conn);
+						aim_conn_kill(peer_connection->sess, &peer_connection->conn);
 
 						/* Instead of failing here, request a stage 3 proxy */
-						g_free(oft_info->clientip);
-						g_free(oft_info->verifiedip);
-						oft_info->clientip = NULL;
-						oft_info->verifiedip = NULL;
-						oft_info->port = 0;
-						oft_info->conn->type = AIM_CONN_TYPE_RENDEZVOUS;
-						oft_info->method = AIM_XFER_PROXY;
-						oft_info->stage = AIM_XFER_PROXY_STG3;
+						g_free(peer_connection->clientip);
+						g_free(peer_connection->verifiedip);
+						peer_connection->clientip = NULL;
+						peer_connection->verifiedip = NULL;
+						peer_connection->port = 0;
+						peer_connection->conn->type = AIM_CONN_TYPE_RENDEZVOUS;
+						peer_connection->method = AIM_XFER_PROXY;
+						peer_connection->stage = AIM_XFER_PROXY_STG3;
 
-						aim_im_sendch2_sendfile_ask(oft_info->sess, oft_info);
+						aim_im_sendch2_sendfile_ask(peer_connection->sess, peer_connection);
 					}
 				} else {
 					/* clientip timed out, now try verifiedip */
 					g_free(xfer->remote_ip);
-					xfer->remote_ip = g_strdup(oft_info->verifiedip);
+					xfer->remote_ip = g_strdup(peer_connection->verifiedip);
 					gaim_debug_info("oscar","attempting connection using verifiedip\n");
 					oscar_xfer_init_recv(xfer);
 				}
-			} else if(oft_info->method == AIM_XFER_PROXY) {
+			} else if(peer_connection->method == AIM_XFER_PROXY) {
 				/* proxyip timed out
 				 * Yes, it's a bit odd to ask the user to enable proxied file transfers
 				 * when it's a proxied transfer that timed out. It is possible that a
@@ -2183,16 +2183,16 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 				gaim_xfer_conversation_write(xfer, msg, TRUE);
 				g_free(msg);
 				gaim_xfer_cancel_local(xfer);
-				if(oft_info->xfer_reffed) {
-					oft_info->xfer_reffed = FALSE;
+				if(peer_connection->xfer_reffed) {
+					peer_connection->xfer_reffed = FALSE;
 					gaim_xfer_unref(xfer);
 				}
 			} else {
 				gaim_debug_warning("oscar","unknown xfer method encountered in timout\n");
 			}
 		} else {
-			if(oft_info->xfer_reffed) {
-				oft_info->xfer_reffed = FALSE;
+			if(peer_connection->xfer_reffed) {
+				peer_connection->xfer_reffed = FALSE;
 				gaim_xfer_unref(xfer);
 			}
 			gaim_debug_info("oscar","connection successful; timeout off\n");
@@ -2210,7 +2210,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
  */
 static void oscar_xfer_init_recv(GaimXfer *xfer)
 {
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	PeerProxyInfo *proxy_info;
 	GaimConnection *gc;
 	OscarData *od;
@@ -2220,9 +2220,9 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(xfer->data != NULL);
 
-	oft_info = xfer->data;
-	proxy_info = oft_info->proxy_info;
-	gc = oft_info->sess->aux_data;
+	peer_connection = xfer->data;
+	proxy_info = peer_connection->proxy_info;
+	gc = peer_connection->sess->aux_data;
 	od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_init_recv\n");
@@ -2231,17 +2231,17 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	 * If the clientip fails, try the verifiedip
 	 * If that fails, wait for the transfer to redirect
 	 * This xfer reference will be released in oscar_xfer_ip_timeout */
-	if(!oft_info->xfer_reffed) {
-		oft_info->xfer_reffed = TRUE;
+	if(!peer_connection->xfer_reffed) {
+		peer_connection->xfer_reffed = TRUE;
 		gaim_xfer_ref(xfer);
 	}
 
-	if(oft_info->method != AIM_XFER_PROXY) {
+	if(peer_connection->method != AIM_XFER_PROXY) {
 		/* If (we're currently using the verified ip)
 		 * In case clientip & verifiedip are the same, we must prevent an infinite loop */
-		if(xfer->remote_ip && oft_info->verifiedip
-			&& g_ascii_strcasecmp(xfer->remote_ip, oft_info->verifiedip) == 0
-			&& g_ascii_strcasecmp(oft_info->clientip, oft_info->verifiedip) != 0 ) {
+		if(xfer->remote_ip && peer_connection->verifiedip
+			&& g_ascii_strcasecmp(xfer->remote_ip, peer_connection->verifiedip) == 0
+			&& g_ascii_strcasecmp(peer_connection->clientip, peer_connection->verifiedip) != 0 ) {
 			gaim_timeout_add(FT_VERIFIEDIP_TIMEOUT, oscar_xfer_ip_timeout, xfer);
 		} else {
 			gaim_timeout_add(FT_CLIENTIP_TIMEOUT, oscar_xfer_ip_timeout, xfer);
@@ -2249,28 +2249,28 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	} else {
 		gaim_timeout_add(FT_PROXYIP_TIMEOUT, oscar_xfer_ip_timeout, xfer);
 	}
-	oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS);
+	peer_connection->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS);
 
 	/* If we're routing this transfer through a AOL proxy server, do the special login
 	 * before telling the other client we're ready for action.
 	 * Note, firststop_cb is the first function called after gaim has made a connection
 	 * Also, the connection type is changed until the proxy login is complete */
-	if(oft_info->method == AIM_XFER_PROXY) {
+	if(peer_connection->method == AIM_XFER_PROXY) {
 		if(proxy_info)
-			proxy_info->conn = oft_info->conn;
+			proxy_info->conn = peer_connection->conn;
 		else {
 			gaim_debug_warning("oscar","NULL proxy_info\n");
 			gaim_xfer_cancel_local(xfer);
 		}
 		nextstop_cb = oscar_xfer_proxylogin;
-		oft_info->conn->type = AIM_CONN_TYPE_RENDEZVOUS_PROXY;
+		peer_connection->conn->type = AIM_CONN_TYPE_RENDEZVOUS_PROXY;
 	} else {
 		nextstop_cb = oscar_sendfile_connected;
 	}
 
-	if (oft_info->conn) {
-		oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_PROMPT,
+	if (peer_connection->conn) {
+		peer_connection->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+		aim_conn_addhandler(od->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_PROMPT,
 			oscar_sendfile_prompt, 0);
 		rc = gaim_proxy_connect(gaim_connection_get_account(gc),
 					xfer->remote_ip, xfer->remote_port, nextstop_cb, xfer);
@@ -2292,17 +2292,17 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
  */
 static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 {
-	PeerInfo *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
+	PeerConnection *peer_connection = xfer->data;
+	GaimConnection *gc = peer_connection->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_cancel_recv\n");
 
 	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE)
-		aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
+		aim_im_sendch2_sendfile_cancel(peer_connection->sess, peer_connection);
 
-	aim_conn_kill(oft_info->sess, &oft_info->conn);
-	aim_oft_destroyinfo(oft_info);
+	aim_conn_kill(peer_connection->sess, &peer_connection->conn);
+	aim_oft_destroyinfo(peer_connection);
 	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
@@ -2312,10 +2312,10 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
  */
 static void oscar_xfer_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t size)
 {
-	PeerInfo *oft_info = xfer->data;
+	PeerConnection *peer_connection = xfer->data;
 
 	/* Update our rolling checksum.  Like Walmart, yo. */
-	oft_info->fh.recvcsum = aim_oft_checksum_chunk(buffer, size, oft_info->fh.recvcsum);
+	peer_connection->fh.recvcsum = aim_oft_checksum_chunk(buffer, size, peer_connection->fh.recvcsum);
 }
 
 /*
@@ -2327,19 +2327,19 @@ static void oscar_xfer_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t siz
  * BBB
  */
 static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	PeerProxyInfo *proxy_info;
 
 	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
 	fcntl(fd, F_SETFL, 0);
 
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_ready\n");
-	if (!(oft_info = xfer->data)) {
-		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
+	if (!(peer_connection = xfer->data)) {
+		gaim_debug_warning("oscar","NULL peer_connection; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	if (!(proxy_info = oft_info->proxy_info)) {
+	if (!(proxy_info = peer_connection->proxy_info)) {
 		gaim_debug_warning("oscar","NULL proxy_info; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
@@ -2348,28 +2348,28 @@ static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 	/* Remove the rv proxy watcher and put the connection type back the way we found it */
 	gaim_input_remove(xfer->watcher);
 	xfer->watcher = 0;
-	oft_info->conn->type = AIM_CONN_TYPE_RENDEZVOUS;
+	peer_connection->conn->type = AIM_CONN_TYPE_RENDEZVOUS;
 
-	if(oft_info->send_or_recv == AIM_XFER_SEND) {
+	if(peer_connection->send_or_recv == AIM_XFER_SEND) {
 
-		if(oft_info->stage == AIM_XFER_PROXY_STG2) {
-			aim_im_sendch2_sendfile_accept(oft_info->sess, oft_info);
+		if(peer_connection->stage == AIM_XFER_PROXY_STG2) {
+			aim_im_sendch2_sendfile_accept(peer_connection->sess, peer_connection);
 
 			/* For stage 2, both file headers are filled in */
-			memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
+			memcpy(&peer_connection->fh.bcookie, peer_connection->cookie, 8);
 		}
 
 		/* The following is taken from oscar_sendfile_estblsh */
-		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_ACK,
+		aim_conn_addhandler(peer_connection->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_ACK,
 			oscar_sendfile_ack, 0);
-		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_DONE,
+		aim_conn_addhandler(peer_connection->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_DONE,
 			oscar_sendfile_done, 0);
-		xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback,
-			oft_info->conn);
+		xfer->watcher = gaim_input_add(peer_connection->conn->fd, GAIM_INPUT_READ, oscar_callback,
+			peer_connection->conn);
 
 		/* Inform the other user that we are connected and ready to transfer */
-		aim_oft_sendheader(oft_info->sess, PEER_TYPE_PROMPT, oft_info);
-	} else if(oft_info->send_or_recv == AIM_XFER_RECV) {
+		aim_oft_sendheader(peer_connection->sess, PEER_TYPE_PROMPT, peer_connection);
+	} else if(peer_connection->send_or_recv == AIM_XFER_RECV) {
 		oscar_sendfile_connected(xfer, fd, GAIM_INPUT_READ);
 	} else {
 		gaim_debug_warning("oscar","no value for send_or_recv; aborting transfer\n");
@@ -2382,41 +2382,41 @@ static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
  * BBB
  */
 static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	PeerProxyInfo *proxy_info;
 
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_ack\n");
-	if (!(oft_info = xfer->data)) {
-		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
+	if (!(peer_connection = xfer->data)) {
+		gaim_debug_warning("oscar","NULL peer_connection; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	if (!(proxy_info = oft_info->proxy_info)) {
+	if (!(proxy_info = peer_connection->proxy_info)) {
 		gaim_debug_warning("oscar","NULL proxy_info; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
 
 	/* Use the proxy "port" we just ACK-quired (hah) so that the proxy will love us */
-	oft_info->port = proxy_info->port;
-	oft_info->proxyip = g_strdup(proxy_info->ip);
+	peer_connection->port = proxy_info->port;
+	peer_connection->proxyip = g_strdup(proxy_info->ip);
 	gaim_debug_info("oscar","received client ip and port: %s:%d\n",
-		oft_info->proxyip, oft_info->port);
+		peer_connection->proxyip, peer_connection->port);
 
-	if(oft_info->send_or_recv == AIM_XFER_SEND) {
+	if(peer_connection->send_or_recv == AIM_XFER_SEND) {
 		oscar_send_file_request(xfer);
-	} else if(oft_info->send_or_recv == AIM_XFER_RECV) {
-		strncpy(oft_info->fh.name, xfer->filename, 64);
-		oft_info->fh.name[63] = '\0';
-		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
-		oft_info->fh.size = gaim_xfer_get_size(xfer);
+	} else if(peer_connection->send_or_recv == AIM_XFER_RECV) {
+		strncpy(peer_connection->fh.name, xfer->filename, 64);
+		peer_connection->fh.name[63] = '\0';
+		peer_connection->fh.totsize = gaim_xfer_get_size(xfer);
+		peer_connection->fh.size = gaim_xfer_get_size(xfer);
 
 		/* Calculating the checksum can take a very long time for large files */
 		gaim_debug_info("oscar","calculating file checksum\n");
-		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+		peer_connection->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
 		gaim_debug_info("oscar","checksum calculated\n");
 
-		aim_im_sendch2_sendfile_ask(oft_info->sess, oft_info);
+		aim_im_sendch2_sendfile_ask(peer_connection->sess, peer_connection);
 	} else {
 		gaim_debug_warning("oscar","no value for send_or_recv; aborting transfer\n");
 		gaim_xfer_cancel_local(xfer);
@@ -2429,7 +2429,7 @@ static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
  */
 static void oscar_xfer_proxylogin_cb(gpointer data, gint source, GaimInputCondition condition) {
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 
 	gaim_debug_info("oscar","AAA - in oscar_xfer_proxylogin_cb\n");
 	if (!(xfer = data)) {
@@ -2437,32 +2437,32 @@ static void oscar_xfer_proxylogin_cb(gpointer data, gint source, GaimInputCondit
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	if (!(oft_info = xfer->data)) {
-		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
+	if (!(peer_connection = xfer->data)) {
+		gaim_debug_warning("oscar","NULL peer_connection; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
 
-	if( (oft_info->proxy_info = aim_rv_proxy_read(oft_info->sess, oft_info->conn)) ) {
+	if( (peer_connection->proxy_info = aim_rv_proxy_read(peer_connection->sess, peer_connection->conn)) ) {
 
-		switch(oft_info->proxy_info->cmd_type) {
+		switch(peer_connection->proxy_info->cmd_type) {
 			case AIM_RV_PROXY_READY:
 				oscar_xfer_proxylogin_ready(xfer, source);
-				free(oft_info->proxy_info);
-				oft_info->proxy_info = NULL;
+				free(peer_connection->proxy_info);
+				peer_connection->proxy_info = NULL;
 				break;
 			case AIM_RV_PROXY_ACK:
 				oscar_xfer_proxylogin_ack(xfer);
-				free(oft_info->proxy_info);
-				oft_info->proxy_info = NULL;
+				free(peer_connection->proxy_info);
+				peer_connection->proxy_info = NULL;
 				break;
 			case AIM_RV_PROXY_ERROR:
 				gaim_debug_info("oscar","error logging into rendezvous proxy; err code is %x\n",
-					oft_info->proxy_info->err_code);
+					peer_connection->proxy_info->err_code);
 				gaim_input_remove(xfer->watcher);
 				xfer->watcher = 0;
-				free(oft_info->proxy_info);
-				oft_info->proxy_info = NULL;
+				free(peer_connection->proxy_info);
+				peer_connection->proxy_info = NULL;
 				gaim_xfer_cancel_remote(xfer);
 				break;
 			/* We should never get here */
@@ -2481,7 +2481,7 @@ static void oscar_xfer_proxylogin_cb(gpointer data, gint source, GaimInputCondit
 static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	PeerProxyInfo *proxy_info;
 	int err;
 
@@ -2491,30 +2491,30 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	if (!(oft_info = xfer->data)) {
-		gaim_debug_warning("oscar","NULL oft_info; aborting\n");
+	if (!(peer_connection = xfer->data)) {
+		gaim_debug_warning("oscar","NULL peer_connection; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	if (!(proxy_info = oft_info->proxy_info)) {
+	if (!(proxy_info = peer_connection->proxy_info)) {
 		gaim_debug_warning("oscar","NULL proxy_info; aborting\n");
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
-	if(oft_info->success) {
+	if(peer_connection->success) {
 		gaim_debug_info("oscar","connection already successful, ignoring 2nd conn\n");
 		return;
 	}
 
 	xfer->fd = source;
-	oft_info->conn->fd = source;
+	peer_connection->conn->fd = source;
 
-	proxy_info->conn = oft_info->conn;
+	proxy_info->conn = peer_connection->conn;
 	proxy_info->flags = AIM_RV_PROXY_CLIENT_FLAGS;
-	memcpy(proxy_info->cookie, oft_info->cookie, 8);
+	memcpy(proxy_info->cookie, peer_connection->cookie, 8);
 
-	if(oft_info->send_or_recv == AIM_XFER_SEND) {
-		if(oft_info->stage == AIM_XFER_PROXY_STG1 || oft_info->stage == AIM_XFER_PROXY_STG3) {
+	if(peer_connection->send_or_recv == AIM_XFER_SEND) {
+		if(peer_connection->stage == AIM_XFER_PROXY_STG1 || peer_connection->stage == AIM_XFER_PROXY_STG3) {
 			gaim_debug_info("oscar","sending INIT SEND for stage 1/3 rv proxied send\n");
 			if( (err = aim_rv_proxy_init_send(proxy_info)) ) {
 				gaim_xfer_error(GAIM_XFER_SEND, gaim_xfer_get_account(xfer), xfer->who,
@@ -2523,7 +2523,7 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 					strerror(err));
 				gaim_xfer_cancel_local(xfer);
 			}
-		} else if(oft_info->stage == AIM_XFER_PROXY_STG2) {
+		} else if(peer_connection->stage == AIM_XFER_PROXY_STG2) {
 			gaim_debug_info("oscar","sending INIT RECV for stage 2 rv proxied send\n");
 			if( (err = aim_rv_proxy_init_recv(proxy_info)) ) {
 				gaim_xfer_error(GAIM_XFER_SEND, gaim_xfer_get_account(xfer), xfer->who,
@@ -2536,8 +2536,8 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 			gaim_debug_warning("oscar","no proxy type specified; aborting transfer\n");
 			gaim_xfer_cancel_local(xfer);
 		}
-	} else if(oft_info->send_or_recv == AIM_XFER_RECV) {
-		if(oft_info->stage == AIM_XFER_PROXY_STG2) {
+	} else if(peer_connection->send_or_recv == AIM_XFER_RECV) {
+		if(peer_connection->stage == AIM_XFER_PROXY_STG2) {
 			gaim_debug_info("oscar","sending INIT SEND for stage 2 rv proxied receive\n");
 			if( (err = aim_rv_proxy_init_send(proxy_info)) ) {
 				gaim_xfer_error(GAIM_XFER_SEND, gaim_xfer_get_account(xfer), xfer->who,
@@ -2546,8 +2546,8 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 					strerror(err));
 				gaim_xfer_cancel_local(xfer);
 			}
-		} else if(oft_info->stage == AIM_XFER_PROXY_STG1
-				|| oft_info->stage == AIM_XFER_PROXY_STG3) {
+		} else if(peer_connection->stage == AIM_XFER_PROXY_STG1
+				|| peer_connection->stage == AIM_XFER_PROXY_STG3) {
 			gaim_debug_info("oscar","sending INIT RECV for stage 1/3 rv proxied receive\n");
 			if( (err = aim_rv_proxy_init_recv(proxy_info)) ) {
 				gaim_xfer_error(GAIM_XFER_SEND, gaim_xfer_get_account(xfer), xfer->who,
@@ -2565,7 +2565,7 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 		gaim_xfer_cancel_local(xfer);
 	}
 	free(proxy_info);
-	oft_info->proxy_info = NULL;
+	peer_connection->proxy_info = NULL;
 
 	xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_xfer_proxylogin_cb, xfer);
 }
@@ -2580,28 +2580,28 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
  */
 static void oscar_send_file_request(GaimXfer *xfer)
 {
-	PeerInfo *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
+	PeerConnection *peer_connection = xfer->data;
+	GaimConnection *gc = peer_connection->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_send_file_request\n");
 
-	if (oft_info->conn) {
+	if (peer_connection->conn) {
 		xfer->filename = g_path_get_basename(xfer->local_filename);
-		strncpy(oft_info->fh.name, xfer->filename, 64);
-		oft_info->fh.name[63] = '\0';
-		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
-		oft_info->fh.size = gaim_xfer_get_size(xfer);
+		strncpy(peer_connection->fh.name, xfer->filename, 64);
+		peer_connection->fh.name[63] = '\0';
+		peer_connection->fh.totsize = gaim_xfer_get_size(xfer);
+		peer_connection->fh.size = gaim_xfer_get_size(xfer);
 
 		/* Calculating the checksum can take a very long time for large files */
 		gaim_debug_info("oscar","calculating file checksum\n");
-		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+		peer_connection->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
 		gaim_debug_info("oscar","checksum calculated\n");
 
-		memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
+		memcpy(&peer_connection->fh.bcookie, peer_connection->cookie, 8);
 
-		aim_im_sendch2_sendfile_ask(od->sess, oft_info);
-		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT,
+		aim_im_sendch2_sendfile_ask(od->sess, peer_connection);
+		aim_conn_addhandler(od->sess, peer_connection->conn, AIM_CB_FAM_OFT,
 			PEER_TYPE_ESTABLISHED, oscar_sendfile_estblsh, 0);
 	} else {
 		gaim_xfer_error(GAIM_XFER_SEND, gaim_xfer_get_account(xfer), xfer->who,
@@ -2613,7 +2613,7 @@ static void oscar_send_file_request(GaimXfer *xfer)
 static void
 oscar_xfer_init_listen_cb(int listenfd, gpointer data) {
 	GaimXfer *xfer = data;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	GaimConnection *gc;
 	OscarData *od;
 
@@ -2623,8 +2623,8 @@ oscar_xfer_init_listen_cb(int listenfd, gpointer data) {
 		return;
 	}
 
-	oft_info = xfer->data;
-	gc = oft_info->sess->aux_data;
+	peer_connection = xfer->data;
+	gc = peer_connection->sess->aux_data;
 	od = gc->proto_data;
 
 	if (listenfd < 0) {
@@ -2633,19 +2633,19 @@ oscar_xfer_init_listen_cb(int listenfd, gpointer data) {
 	}
 
 	xfer->local_port = gaim_network_get_port_from_fd(listenfd);
-	oft_info->port = xfer->local_port;
-	if (aim_sendfile_listen(od->sess, oft_info, listenfd) != 0) {
+	peer_connection->port = xfer->local_port;
+	if (aim_sendfile_listen(od->sess, peer_connection, listenfd) != 0) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
 	gaim_debug_misc("oscar", "port is %hu, ip is %s\n",
-					xfer->local_port, oft_info->clientip);
+					xfer->local_port, peer_connection->clientip);
 
-	if(oft_info->conn)
-		xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback,
-			oft_info->conn);
+	if(peer_connection->conn)
+		xfer->watcher = gaim_input_add(peer_connection->conn->fd, GAIM_INPUT_READ, oscar_callback,
+			peer_connection->conn);
 	else
-		gaim_debug_info("oscar","NULL oft_info->conn; not adding watcher\n");
+		gaim_debug_info("oscar","NULL peer_connection->conn; not adding watcher\n");
 
 	oscar_send_file_request(xfer);
 }
@@ -2675,20 +2675,20 @@ static void oscar_xfer_init_send(GaimXfer *xfer)
  */
 static void oscar_xfer_cancel_send(GaimXfer *xfer)
 {
-	PeerInfo *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
+	PeerConnection *peer_connection = xfer->data;
+	GaimConnection *gc = peer_connection->sess->aux_data;
 	OscarData *od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_cancel_send\n");
 
 	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE)
-		aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
+		aim_im_sendch2_sendfile_cancel(peer_connection->sess, peer_connection);
 
 	/* Added a few sanity checks to prevent segfaulting */
-	if(oft_info) {
-		if(oft_info->sess && oft_info->conn)
-			aim_conn_kill(oft_info->sess, &oft_info->conn);
-		aim_oft_destroyinfo(oft_info);
+	if(peer_connection) {
+		if(peer_connection->sess && peer_connection->conn)
+			aim_conn_kill(peer_connection->sess, &peer_connection->conn);
+		aim_oft_destroyinfo(peer_connection);
 	}
 	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
@@ -2699,7 +2699,7 @@ static void oscar_xfer_cancel_send(GaimXfer *xfer)
  */
 static void oscar_xfer_ack_send(GaimXfer *xfer, const guchar *buffer, size_t size)
 {
-	PeerInfo *oft_info = xfer->data;
+	PeerConnection *peer_connection = xfer->data;
 
 	/* I'm not sure I like how we do this. --marv
 	 * I do.  AIM file transfers aren't really meant to be thought
@@ -2719,7 +2719,7 @@ static void oscar_xfer_ack_send(GaimXfer *xfer, const guchar *buffer, size_t siz
 	 */
 	if (gaim_xfer_get_bytes_remaining(xfer) <= 0) {
 		gaim_input_remove(xfer->watcher);
-		xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
+		xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, peer_connection->conn);
 		xfer->fd = 0;
 		gaim_xfer_set_completed(xfer, TRUE);
 	}
@@ -2755,7 +2755,7 @@ static GaimXfer*
 oscar_new_xfer(GaimConnection *gc, const char *who) {
 	OscarData *od;
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	const char *ip;
 	gboolean use_rv_proxy;
 
@@ -2775,18 +2775,18 @@ oscar_new_xfer(GaimConnection *gc, const char *who) {
 		/* This hostname will be resolved by gaim_proxy_connect */
 		xfer->remote_ip = g_strdup(AIM_RV_PROXY_SERVER_URL);
 		xfer->remote_port = AIM_RV_PROXY_CONNECT_PORT;
-		oft_info = aim_oft_createinfo(od->sess, NULL /*cookie*/, who, 0 /*ip*/, 0, 0, 0, NULL,
+		peer_connection = aim_oft_createinfo(od->sess, NULL /*cookie*/, who, 0 /*ip*/, 0, 0, 0, NULL,
 			AIM_XFER_SEND, AIM_XFER_PROXY, AIM_XFER_PROXY_STG1);
-		oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess, NULL, 0);
+		peer_connection->proxy_info = aim_rv_proxy_createinfo(peer_connection->sess, NULL, 0);
 		/* We must create a cookie before the request is sent
 		 * so that it can be sent to the proxy */
-		aim_icbm_makecookie(oft_info->cookie);
+		aim_icbm_makecookie(peer_connection->cookie);
 	} else {
 		ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
-		oft_info = aim_oft_createinfo(od->sess, NULL, who, ip, 0, 0, 0, NULL,
+		peer_connection = aim_oft_createinfo(od->sess, NULL, who, ip, 0, 0, 0, NULL,
 			AIM_XFER_SEND, AIM_XFER_DIRECT, AIM_XFER_PROXY_NONE);
 	}
-	xfer->data = oft_info;
+	xfer->data = peer_connection;
 
 	/* Setup our I/O op functions */
 	if (use_rv_proxy)
@@ -3772,7 +3772,7 @@ static int oscar_sendfile_estblsh(OscarSession *sess, FlapFrame *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	va_list ap;
 	OscarConnection *conn, *listenerconn;
 
@@ -3791,35 +3791,35 @@ static int oscar_sendfile_estblsh(OscarSession *sess, FlapFrame *fr, ...) {
 			return 1;
 		}
 	}
-	if (!(oft_info = xfer->data)) {
+	if (!(peer_connection = xfer->data)) {
 		gaim_debug_warning("oscar","NULL data\n");
 		return 1;
 	}
 
 	/* Mark connection as success so further connections aren't attempted
 	 * This is important here since some receive file code paths pass through here */
-	oft_info->success = TRUE;
+	peer_connection->success = TRUE;
 
-	if(oft_info->method != AIM_XFER_PROXY) {
+	if(peer_connection->method != AIM_XFER_PROXY) {
 		/* Stop watching listener conn; watch transfer conn instead */
 		gaim_input_remove(xfer->watcher);
 
 		aim_conn_kill(sess, &listenerconn);
 
-		oft_info->conn = conn;
-		xfer->fd = oft_info->conn->fd;
+		peer_connection->conn = conn;
+		xfer->fd = peer_connection->conn->fd;
 	}
 
-	xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
+	xfer->watcher = gaim_input_add(peer_connection->conn->fd, GAIM_INPUT_READ, oscar_callback, peer_connection->conn);
 
-	if(oft_info->send_or_recv == AIM_XFER_SEND) {
-		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_ACK,
+	if(peer_connection->send_or_recv == AIM_XFER_SEND) {
+		aim_conn_addhandler(peer_connection->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_ACK,
 			oscar_sendfile_ack, 0);
-		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_DONE,
+		aim_conn_addhandler(peer_connection->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_DONE,
 			oscar_sendfile_done, 0);
 
 		/* Inform the other user that we are connected and ready to transfer */
-		aim_oft_sendheader(sess, PEER_TYPE_PROMPT, oft_info);
+		aim_oft_sendheader(sess, PEER_TYPE_PROMPT, peer_connection);
 	}
 
 	/* For a file send, we'll hopefully end up in oscar_sendfile_ack next
@@ -3836,14 +3836,14 @@ static int oscar_sendfile_estblsh(OscarSession *sess, FlapFrame *fr, ...) {
  */
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition) {
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 
 	gaim_debug_info("oscar", "AAA - in oscar_sendfile_connected\n");
 	if (!(xfer = data))
 		return;
-	if (!(oft_info = xfer->data))
+	if (!(peer_connection = xfer->data))
 		return;
-	if(oft_info->success) {
+	if(peer_connection->success) {
 		gaim_debug_info("oscar","connection already successful; ignoring 2nd conn\n");
 		return;
 	}
@@ -3853,7 +3853,7 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 		gaim_xfer_cancel_remote(xfer);
 		return;
 	}
-	oft_info->success = TRUE; /* Mark this connection as successful before it times out */
+	peer_connection->success = TRUE; /* Mark this connection as successful before it times out */
 
 	/* XXX:NBIO remove when nonblocking I/O implemented for oscar */
 	fcntl(source, F_SETFL, 0);
@@ -3861,27 +3861,27 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	/* We might have already set these in oscar_sendfile_proxylogin, but it won't
 	 * hurt to do it again since it is rather necessary */
 	xfer->fd = source;
-	oft_info->conn->fd = source;
+	peer_connection->conn->fd = source;
 
-	aim_conn_completeconnect(oft_info->sess, oft_info->conn);
+	aim_conn_completeconnect(peer_connection->sess, peer_connection->conn);
 
-	xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
+	xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, peer_connection->conn);
 
 	/* Inform the other user that we are connected and accept the transfer
 	 * Except for a stage 2 receive, then we'll be the ones receiving this accept message */
-	if(oft_info->stage != AIM_XFER_PROXY_STG2)
-		aim_im_sendch2_sendfile_accept(oft_info->sess, oft_info);
+	if(peer_connection->stage != AIM_XFER_PROXY_STG2)
+		aim_im_sendch2_sendfile_accept(peer_connection->sess, peer_connection);
 
 	/* Don't wait around if this is a redirected send */
-	if(oft_info->send_or_recv == AIM_XFER_SEND) {
+	if(peer_connection->send_or_recv == AIM_XFER_SEND) {
 		/* We should only get here if this is a redirected file send */
-		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_ACK,
+		aim_conn_addhandler(peer_connection->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_ACK,
 			oscar_sendfile_ack, 0);
-		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, PEER_TYPE_DONE,
+		aim_conn_addhandler(peer_connection->sess, peer_connection->conn, AIM_CB_FAM_OFT, PEER_TYPE_DONE,
 			oscar_sendfile_done, 0);
 
 		/* Inform the other user that we are ready to transfer */
-		aim_oft_sendheader(oft_info->sess, PEER_TYPE_PROMPT, oft_info);
+		aim_oft_sendheader(peer_connection->sess, PEER_TYPE_PROMPT, peer_connection);
 	}
 }
 
@@ -3895,7 +3895,7 @@ static int oscar_sendfile_prompt(OscarSession *sess, FlapFrame *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
 	GaimXfer *xfer;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 	va_list ap;
 	OscarConnection *conn;
 	guint8 *cookie;
@@ -3912,7 +3912,7 @@ static int oscar_sendfile_prompt(OscarSession *sess, FlapFrame *fr, ...) {
 	if (!(xfer = oscar_find_xfer_by_conn(od->file_transfers, conn)))
 		return 1;
 
-	if (!(oft_info = xfer->data))
+	if (!(peer_connection = xfer->data))
 		return 1;
 
 	/* We want to stop listening with a normal thingy */
@@ -3920,13 +3920,13 @@ static int oscar_sendfile_prompt(OscarSession *sess, FlapFrame *fr, ...) {
 	xfer->watcher = 0;
 
 	/* They sent us some information about the file they're sending */
-	memcpy(&oft_info->fh, fh, sizeof(*fh));
+	memcpy(&peer_connection->fh, fh, sizeof(*fh));
 
 	/* Fill in the cookie */
-	memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
+	memcpy(&peer_connection->fh.bcookie, peer_connection->cookie, 8);
 
 	/* XXX - convert the name from UTF-8 to UCS-2 if necessary, and pass the encoding to the call below */
-	aim_oft_sendheader(oft_info->sess, PEER_TYPE_ACK, oft_info);
+	aim_oft_sendheader(peer_connection->sess, PEER_TYPE_ACK, peer_connection);
 	gaim_xfer_start(xfer, xfer->fd, NULL, 0);
 
 	return 0;
@@ -3976,7 +3976,7 @@ static int oscar_sendfile_done(OscarSession *sess, FlapFrame *fr, ...) {
 	OscarConnection *conn;
 	guint8 *cookie;
 	PeerFrame *fh;
-	PeerInfo *oft_info;
+	PeerConnection *peer_connection;
 
 	gaim_debug_info("oscar", "AAA - in oscar_sendfile_done\n");
 	va_start(ap, fr);
@@ -3989,8 +3989,8 @@ static int oscar_sendfile_done(OscarSession *sess, FlapFrame *fr, ...) {
 		gaim_debug_warning("oscar","xfer not found\n");
 		return 1;
 	}
-	if(!(oft_info = xfer->data)) {
-		gaim_debug_warning("oscar","NULL oft_info\n");
+	if(!(peer_connection = xfer->data)) {
+		gaim_debug_warning("oscar","NULL peer_connection\n");
 		return 1;
 	}
 	if(fh->nrecvd == fh->size)
@@ -4203,7 +4203,7 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 			&& (args->info.sendfile.reqnum == 0x0001)) {
 			/* Someone wants to send a file (or files) to us */
 			GaimXfer *xfer;
-			PeerInfo *oft_info;
+			PeerConnection *peer_connection;
 			PeerProxyInfo *proxy_info = NULL;
 			gboolean use_rv_proxy;
 			int proxy_stage;
@@ -4292,18 +4292,18 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 			gaim_xfer_set_message(xfer, message);
 
 			/* Create the oscar-specific data */
-			oft_info = aim_oft_createinfo(od->sess, args->cookie, userinfo->sn, args->clientip,
+			peer_connection = aim_oft_createinfo(od->sess, args->cookie, userinfo->sn, args->clientip,
 				xfer->remote_port, 0, 0, NULL, AIM_XFER_RECV, xfer_method, proxy_stage);
 			if(proxy_stage == AIM_XFER_PROXY_STG2 && proxy_ip) {
-				oft_info->proxyip = g_strdup(proxy_ip);
+				peer_connection->proxyip = g_strdup(proxy_ip);
 			} else {
 				if (args->proxyip)
-					oft_info->proxyip = g_strdup(args->proxyip);
+					peer_connection->proxyip = g_strdup(args->proxyip);
 				if (args->verifiedip)
-					oft_info->verifiedip = g_strdup(args->verifiedip);
+					peer_connection->verifiedip = g_strdup(args->verifiedip);
 			}
-			oft_info->proxy_info = proxy_info;
-			xfer->data = oft_info;
+			peer_connection->proxy_info = proxy_info;
+			xfer->data = peer_connection;
 
 			 /* Setup our I/O op functions */
 			gaim_xfer_set_init_fnc(xfer, oscar_xfer_init_recv);
@@ -4322,23 +4322,23 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 			/* We have asked to send a file to someone else, but they sent us a reply request
 			 * asking us to use an alternative method of connecting */
 			GaimXfer *xfer;
-			PeerInfo *oft_info;
+			PeerConnection *peer_connection;
 
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie))) {
-				oft_info = xfer->data;
+				peer_connection = xfer->data;
 
 				/* Stop the listener connection */
 				gaim_input_remove(xfer->watcher);
-				aim_conn_kill(sess, &oft_info->conn); /* This is currently the listener */
+				aim_conn_kill(sess, &peer_connection->conn); /* This is currently the listener */
 
 				if(args->info.sendfile.use_proxy) {
 					gaim_debug_info("oscar",
 						"received request for stage 2 rv proxy with ip: %s\n",
 						args->proxyip);
-					oft_info->method = AIM_XFER_PROXY;
-					oft_info->stage = AIM_XFER_PROXY_STG2;
+					peer_connection->method = AIM_XFER_PROXY;
+					peer_connection->stage = AIM_XFER_PROXY_STG2;
 
-					oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess,
+					peer_connection->proxy_info = aim_rv_proxy_createinfo(peer_connection->sess,
 						args->cookie, args->port);
 					if(args->proxyip) {
 						if(xfer->remote_ip)
@@ -4355,28 +4355,28 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 				{
 					gaim_debug_warning("oscar",
 						"other client wants us to send stage 3 proxy info\n");
-					oft_info->method = AIM_XFER_PROXY;
-					oft_info->stage = AIM_XFER_PROXY_STG3;
+					peer_connection->method = AIM_XFER_PROXY;
+					peer_connection->stage = AIM_XFER_PROXY_STG3;
 
-					/* Clean useless data from oft_info */
-					oft_info->clientip = NULL;
-					oft_info->verifiedip = NULL;
+					/* Clean useless data from peer_connection */
+					peer_connection->clientip = NULL;
+					peer_connection->verifiedip = NULL;
 
 					/* This hostname will be resolved in gaim_proxy_connect */
 					xfer->remote_ip = g_strdup(AIM_RV_PROXY_SERVER_URL);
 					xfer->remote_port = AIM_RV_PROXY_CONNECT_PORT;
 
-					oft_info->proxy_info
+					peer_connection->proxy_info
 						= aim_rv_proxy_createinfo(od->sess, args->cookie, 0);
 					oscar_xfer_init_recv(xfer);
 				} else {
 					gaim_debug_info("oscar","received request to redirect transfer; clientip/verifiedip: %s / %s\n",
 						args->clientip, args->verifiedip);
-					oft_info->method = AIM_XFER_REDIR;
+					peer_connection->method = AIM_XFER_REDIR;
 					if (args->verifiedip)
-						oft_info->verifiedip = g_strdup(args->verifiedip);
+						peer_connection->verifiedip = g_strdup(args->verifiedip);
 					if (args->clientip) {
-						oft_info->clientip = g_strdup(args->clientip);
+						peer_connection->clientip = g_strdup(args->clientip);
 						xfer->remote_ip = g_strdup(args->clientip);
 					}
 					xfer->remote_port = args->port;
@@ -4394,10 +4394,10 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 			 * proxy. They did the initial proxy login and have sent us the info in a
 			 * third file transfer request. */
 			GaimXfer *xfer;
-			PeerInfo *oft_info;
+			PeerConnection *peer_connection;
 
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, args->cookie))) {
-				oft_info = xfer->data;
+				peer_connection = xfer->data;
 
 				/* We are receiving a file */
 				gaim_debug_info("oscar",
@@ -4406,10 +4406,10 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 				/* The following pieces of information should already have
 				 * been set in oscar_xfer_ip_timeout, but we'll list them
 				 * again just for clarity. */
-				oft_info->method = AIM_XFER_PROXY;
-				oft_info->stage = AIM_XFER_PROXY_STG3;
+				peer_connection->method = AIM_XFER_PROXY;
+				peer_connection->stage = AIM_XFER_PROXY_STG3;
 
-				oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess,
+				peer_connection->proxy_info = aim_rv_proxy_createinfo(peer_connection->sess,
 					args->cookie, args->port);
 				if(args->proxyip) {
 					if(xfer->remote_ip)

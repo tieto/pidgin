@@ -567,11 +567,11 @@ faim_export void aim_session_init(OscarSession *sess, guint8 nonblocking)
 	sess->icq_info = NULL;
 	sess->authinfo = NULL;
 	sess->emailinfo = NULL;
-	sess->oft_info = NULL;
+	sess->peer_connections = NULL;
 
 	/*
 	 * This must always be set.  Default to the queue-based
-	 * version for back-compatibility.  
+	 * version for back-compatibility.
 	 */
 	aim_tx_setenqueue(sess, AIM_TX_QUEUED, NULL);
 
