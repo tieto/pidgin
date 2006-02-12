@@ -182,10 +182,10 @@ gaim_primitive_get_name_from_type(GaimStatusPrimitive type)
     for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
     {
 	if (type == status_primitive_map[i].type)
-		return status_primitive_map[i].name;
+		return _(status_primitive_map[i].name);
     }
 
-    return status_primitive_map[0].name;
+    return _(status_primitive_map[0].name);
 }
 
 GaimStatusPrimitive
@@ -233,7 +233,7 @@ gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
 	if (name != NULL)
 		status_type->name = g_strdup(name);
 	else
-		status_type->name = g_strdup(_(gaim_primitive_get_name_from_type(primitive)));
+		status_type->name = g_strdup(gaim_primitive_get_name_from_type(primitive));
 
 	return status_type;
 }
