@@ -467,6 +467,7 @@ gaim_plugin_probe(const char *filename)
 #endif /* !GAIM_PLUGINS */
 }
 
+#ifdef GAIM_PLUGINS
 static gint
 compare_plugins(gconstpointer a, gconstpointer b)
 {
@@ -475,6 +476,7 @@ compare_plugins(gconstpointer a, gconstpointer b)
 
 	return strcmp(plugina->info->name, pluginb->info->name);
 }
+#endif /* GAIM_PLUGINS */
 
 gboolean
 gaim_plugin_load(GaimPlugin *plugin)
