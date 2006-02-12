@@ -110,17 +110,21 @@ aim_conn_addgroup(OscarConnection *conn, guint16 group)
 OscarConnection *
 aim_conn_findbygroup(OscarSession *sess, guint16 group)
 {
-	OscarConnection *cur;
+	GList *cur;;
 
-	for (cur = sess->connlist; cur; cur = cur->next)
+	for (cur = sess->oscar_connections; cur; cur = cur->next)
 	{
-		aim_conn_inside_t *ins = (aim_conn_inside_t *)cur->inside;
+		OscarConnection *conn;
+		aim_conn_inside_t *ins;
 		struct snacgroup *sg;
+
+		conn = cur->data;
+		ins = (aim_conn_inside_t *)conn->inside;
 
 		for (sg = ins->groups; sg; sg = sg->next)
 		{
 			if (sg->group == group)
-				return cur;
+				return conn;
 		}
 	}
 
@@ -167,15 +171,14 @@ connkill_rates(struct rateclass *head)
 	}
 }
 
-static void
-connkill_real(OscarSession *sess, OscarConnection *conn)
+void
+oscar_connection_destroy(OscarSession *sess, OscarConnection *conn)
 {
-
 	aim_rxqueue_cleanbyconn(sess, conn);
 	aim_tx_cleanqueue(sess, conn);
 
 	if (conn->fd != -1)
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 
 	/*
 	 * This will free ->internal if it necessary...
@@ -194,7 +197,7 @@ connkill_real(OscarSession *sess, OscarConnection *conn)
 	}
 
 	gaim_circ_buffer_destroy(conn->buffer_outgoing);
-	free(conn);
+	g_free(conn);
 }
 
 /**
@@ -241,8 +244,7 @@ aim_conn_getnext(OscarSession *sess)
 	conn->forcedlatency = 0;
 	conn->handlerlist = NULL;
 
-	conn->next = sess->connlist;
-	sess->connlist = conn;
+	sess->oscar_connections = g_list_prepend(sess->oscar_connections, conn);
 
 	return conn;
 }
@@ -255,25 +257,14 @@ aim_conn_getnext(OscarSession *sess)
  * @param deadconn Connection to be freed.
  */
 void
-aim_conn_kill(OscarSession *sess, OscarConnection **deadconn)
+aim_conn_kill(OscarSession *sess, OscarConnection *conn)
 {
-	OscarConnection *cur, **prev;
-
-	if (!deadconn || !*deadconn)
+	if (!conn)
 		return;
 
-	for (prev = &sess->connlist; (cur = *prev); ) {
-		if (cur == *deadconn) {
-			*prev = cur->next;
-			break;
-		}
-		prev = &cur->next;
-	}
+	sess->oscar_connections = g_list_remove(sess->oscar_connections, conn);
 
-	if (!cur)
-		return; /* oops */
-
-	connkill_real(sess, cur);
+	oscar_connection_destroy(sess, conn);
 }
 
 /**
@@ -283,26 +274,21 @@ aim_conn_kill(OscarSession *sess, OscarConnection **deadconn)
  * handler list and setting the fd to -1 (used to recognize
  * dead connections).  It will also remove cookies if necessary.
  *
- * Why only if fd >= 3?  Seems rather implementation specific...
- * fd's do not have to be distributed in a particular order, do they?
- *
- * @param deadconn The connection to close.
+ * @param conn The connection to close.
  */
 void
-aim_conn_close(OscarConnection *deadconn)
+aim_conn_close(OscarSession *sess, OscarConnection *conn)
 {
-	aim_rxcallback_t userfunc;
+	if (conn->type == AIM_CONN_TYPE_BOS)
+		aim_flap_close(sess, conn);
 
-	if (deadconn->fd >= 0)
-		close(deadconn->fd);
+	if (conn->fd >= 0)
+		close(conn->fd);
 
-	deadconn->fd = -1;
+	conn->fd = -1;
 
-	if ((userfunc = aim_callhandler(deadconn->sessv, deadconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNDEAD)))
-		userfunc(deadconn->sessv, NULL, deadconn);
-
-	if (deadconn->handlerlist)
-		aim_clearhandlers(deadconn);
+	if (conn->handlerlist)
+		aim_clearhandlers(conn);
 }
 
 /**
@@ -320,42 +306,33 @@ aim_conn_close(OscarConnection *deadconn)
 OscarConnection *
 aim_getconn_type(OscarSession *sess, int type)
 {
-	OscarConnection *cur;
+	GList *cur;
 
-	for (cur = sess->connlist; cur; cur = cur->next) {
-		if ((cur->type == type) &&
-				!(cur->status & AIM_CONN_STATUS_INPROGRESS))
-			break;
+	for (cur = sess->oscar_connections; cur; cur = cur->next)
+	{
+		OscarConnection *conn;
+		conn = cur->data;
+		if ((conn->type == type) &&
+				!(conn->status & AIM_CONN_STATUS_INPROGRESS))
+			return conn;
 	}
 
-	return cur;
+	return NULL;
 }
 
 OscarConnection *
 aim_getconn_type_all(OscarSession *sess, int type)
 {
-	OscarConnection *cur;
+	GList *cur;
 
-	for (cur = sess->connlist; cur; cur = cur->next) {
-		if (cur->type == type)
-			break;
+	for (cur = sess->oscar_connections; cur; cur = cur->next)
+	{
+		OscarConnection *conn;
+		if (conn->type == type)
+			return conn;
 	}
 
-	return cur;
-}
-
-/* If you pass -1 for the fd, you'll get what you ask for.  Gibberish. */
-OscarConnection *
-aim_getconn_fd(OscarSession *sess, int fd)
-{
-	OscarConnection *cur;
-
-	for (cur = sess->connlist; cur; cur = cur->next) {
-		if (cur->fd == fd)
-			break;
-	}
-
-	return cur;
+	return NULL;
 }
 
 /**
@@ -411,7 +388,7 @@ aim_cloneconn(OscarSession *sess, OscarConnection *src)
  * @param type Type of connection to create
  */
 OscarConnection *
-aim_newconn(OscarSession *sess, int type)
+oscar_connection_new(OscarSession *sess, int type)
 {
 	OscarConnection *conn;
 
@@ -424,25 +401,6 @@ aim_newconn(OscarSession *sess, int type)
 	conn->fd = -1;
 	conn->status = 0;
 	return conn;
-}
-
-/**
- * Searches @sess for the passed connection.
- *
- * @param sess Session in which to look.
- * @param conn Connection to look for.
- * @return Returns 1 if the passed connection is present, zero otherwise.
- */
-faim_export int aim_conn_in_sess(OscarSession *sess, OscarConnection *conn)
-{
-	OscarConnection *cur;
-
-	for (cur = sess->connlist; cur; cur = cur->next) {
-		if (cur == conn)
-			return 1;
-	}
-
-	return 0;
 }
 
 /**
@@ -473,107 +431,6 @@ aim_conn_setlatency(OscarConnection *conn, int newval)
 }
 
 /**
- * Allocates a new OscarSession and initializes it with default values.
- */
-OscarSession *
-oscar_session_new(void)
-{
-	OscarSession *sess;
-
-	sess = g_new(OscarSession, 1);
-
-	sess->queue_outgoing = NULL;
-	sess->queue_incoming = NULL;
-	aim_initsnachash(sess);
-	sess->msgcookies = NULL;
-	sess->modlistv = NULL;
-	sess->snacid_next = 0x00000001;
-
-	sess->locate.userinfo = NULL;
-	sess->locate.torequest = NULL;
-	sess->locate.requested = NULL;
-	sess->locate.waiting_for_response = FALSE;
-	sess->ssi.received_data = 0;
-	sess->ssi.numitems = 0;
-	sess->ssi.official = NULL;
-	sess->ssi.local = NULL;
-	sess->ssi.pending = NULL;
-	sess->ssi.timestamp = (time_t)0;
-	sess->ssi.waiting_for_ack = 0;
-	sess->icq_info = NULL;
-	sess->authinfo = NULL;
-	sess->emailinfo = NULL;
-	sess->peer_connections = NULL;
-
-	/*
-	 * This must always be set.  Default to the queue-based
-	 * version for back-compatibility.
-	 */
-	aim_tx_setenqueue(sess, AIM_TX_QUEUED, NULL);
-
-	/*
-	 * Register all the modules for this session...
-	 */
-	aim__registermodule(sess, misc_modfirst); /* load the catch-all first */
-	aim__registermodule(sess, service_modfirst);
-	aim__registermodule(sess, locate_modfirst);
-	aim__registermodule(sess, buddylist_modfirst);
-	aim__registermodule(sess, msg_modfirst);
-	aim__registermodule(sess, adverts_modfirst);
-	aim__registermodule(sess, invite_modfirst);
-	aim__registermodule(sess, admin_modfirst);
-	aim__registermodule(sess, popups_modfirst);
-	aim__registermodule(sess, bos_modfirst);
-	aim__registermodule(sess, search_modfirst);
-	aim__registermodule(sess, stats_modfirst);
-	aim__registermodule(sess, translate_modfirst);
-	aim__registermodule(sess, chatnav_modfirst);
-	aim__registermodule(sess, chat_modfirst);
-	aim__registermodule(sess, odir_modfirst);
-	aim__registermodule(sess, bart_modfirst);
-	/* missing 0x11 - 0x12 */
-	aim__registermodule(sess, ssi_modfirst);
-	/* missing 0x14 */
-	aim__registermodule(sess, icq_modfirst); /* XXX - Make sure this isn't sent for AIM */
-	/* missing 0x16 */
-	aim__registermodule(sess, auth_modfirst);
-	aim__registermodule(sess, email_modfirst);
-
-	return sess;
-}
-
-/**
- * Logoff and deallocate a session.
- *
- * @param sess Session to kill
- */
-void
-oscar_session_destroy(OscarSession *sess)
-{
-	aim_cleansnacs(sess, -1);
-
-	if (sess->connlist) {
-		OscarConnection *cur = sess->connlist, *tmp;
-
-		/* Attempt to send the log-off packet */
-		if (cur->type == AIM_CONN_TYPE_BOS)
-			aim_flap_close(sess, cur);
-
-		while (cur) {
-			tmp = cur->next;
-			aim_conn_close(cur);
-			connkill_real(sess, cur);
-			cur = tmp;
-		}
-	}
-	sess->connlist = NULL;
-
-	aim__shutdownmodules(sess);
-
-	g_free(sess);
-}
-
-/**
  * Determine if a connection is connecting.
  *
  * @param conn Connection to examine.
@@ -597,8 +454,6 @@ aim_conn_isconnecting(OscarConnection *conn)
 int
 aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn)
 {
-	aim_rxcallback_t userfunc;
-
 	if (!conn || (conn->fd == -1))
 		return -1;
 
@@ -608,9 +463,6 @@ aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn)
 	fcntl(conn->fd, F_SETFL, 0);
 
 	conn->status &= ~AIM_CONN_STATUS_INPROGRESS;
-
-	if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNCOMPLETE)))
-		userfunc(sess, NULL, conn);
 
 	/* Flush out the queues if there was something waiting for this conn  */
 	aim_tx_flushqueue(sess);

@@ -63,23 +63,28 @@ faim_export char *aim_chat_getname(OscarConnection *conn)
 /* XXX get this into conn.c -- evil!! */
 faim_export OscarConnection *aim_chat_getconn(OscarSession *sess, const char *name)
 {
-	OscarConnection *cur;
+	GList *cur;
 
-	for (cur = sess->connlist; cur; cur = cur->next) {
-		struct chatconnpriv *ccp = (struct chatconnpriv *)cur->internal;
+	for (cur = sess->oscar_connections; cur; cur = cur->next)
+	{
+		OscarConnection *conn;
+		struct chatconnpriv *ccp;
 
-		if (cur->type != AIM_CONN_TYPE_CHAT)
+		conn = cur->data;
+		ccp = (struct chatconnpriv *)conn->internal;
+
+		if (conn->type != AIM_CONN_TYPE_CHAT)
 			continue;
-		if (!cur->internal) {
-			gaim_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
+		if (!conn->internal) {
+			gaim_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", conn->fd);
 			continue;
 		}
 
 		if (strcmp(ccp->name, name) == 0)
-			break;
+			return conn;;
 	}
 
-	return cur;
+	return NULL;
 }
 
 faim_export int aim_chat_attachname(OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance)
@@ -126,7 +131,7 @@ faim_export int aim_chat_leaveroom(OscarSession *sess, const char *name)
 	if (!(conn = aim_chat_getconn(sess, name)))
 		return -ENOENT;
 
-	aim_conn_close(conn);
+	aim_conn_close(sess, conn);
 
 	return 0;
 }

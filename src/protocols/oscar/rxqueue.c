@@ -121,7 +121,7 @@ static int aim_get_command_flap(OscarSession *sess, OscarConnection *conn, FlapF
 	 */
 	aim_bstream_init(&hdr, hdr_raw, sizeof(hdr_raw));
 	if (aim_bstream_recv(&hdr, conn->fd, 6) < 6) {
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		return -1;
 	}
 
@@ -133,7 +133,7 @@ static int aim_get_command_flap(OscarSession *sess, OscarConnection *conn, FlapF
 	 */
 	if (aimbs_get8(&hdr) != 0x2a) {
 		gaim_debug_misc("oscar", "Invalid FLAP frame received on FLAP connection!");
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		return -1;
 	}
 
@@ -144,7 +144,7 @@ static int aim_get_command_flap(OscarSession *sess, OscarConnection *conn, FlapF
 }
 
 /*
- * Read a rendezvous header from conn into fr, and return the number of 
+ * Read a rendezvous header from conn into fr, and return the number of
  * bytes in the payload.
  *
  * @return -1 on error, otherwise return the length of the payload.
@@ -161,7 +161,7 @@ static int aim_get_command_rendezvous(OscarSession *sess, OscarConnection *conn,
 	 */
 	aim_bstream_init(&hdr, hdr_raw, sizeof(hdr_raw));
 	if (aim_bstream_recv(&hdr, conn->fd, 8) < 8) {
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		return -1;
 	}
 
@@ -205,7 +205,7 @@ faim_export int aim_get_command(OscarSession *sess, OscarConnection *conn)
 		return -ENOMEM;
 
 	/*
-	 * Rendezvous (client to client) connections do not speak FLAP, so this 
+	 * Rendezvous (client to client) connections do not speak FLAP, so this
 	 * function will break on them.
 	 */
 	if (conn->type == AIM_CONN_TYPE_RENDEZVOUS)
@@ -235,7 +235,7 @@ faim_export int aim_get_command(OscarSession *sess, OscarConnection *conn)
 		/* read the payload */
 		if (aim_bstream_recv(&fr->data, conn->fd, payloadlen) < payloadlen) {
 			aim_frame_destroy(fr); /* free's payload */
-			aim_conn_close(conn);
+			aim_conn_close(sess, conn);
 			return -1;
 		}
 	} else

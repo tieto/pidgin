@@ -475,14 +475,7 @@ faim_internal aim_rxcallback_t aim_callhandler(OscarSession *sess, OscarConnecti
 			return cur->handler;
 	}
 
-	if (type == AIM_CB_SPECIAL_DEFAULT) {
-		/* gaim_debug_misc("oscar", "aim_callhandler: no default handler for family 0x%04x\n", family); */
-		return NULL; /* prevent infinite recursion */
-	}
-
-	/* gaim_debug_misc("oscar", "aim_callhandler: no handler for  0x%04x/0x%04x\n", family, type); */
-
-	return aim_callhandler(sess, conn, family, AIM_CB_SPECIAL_DEFAULT);
+	return NULL;
 }
 
 faim_internal void aim_clonehandlers(OscarSession *sess, OscarConnection *dest, OscarConnection *src)
@@ -490,7 +483,7 @@ faim_internal void aim_clonehandlers(OscarSession *sess, OscarConnection *dest, 
 	struct aim_rxcblist_s *cur;
 
 	for (cur = (struct aim_rxcblist_s *)src->handlerlist; cur; cur = cur->next) {
-		aim_conn_addhandler(sess, dest, cur->family, cur->type, 
+		aim_conn_addhandler(sess, dest, cur->family, cur->type,
 						cur->handler, cur->flags);
 	}
 

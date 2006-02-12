@@ -37,6 +37,7 @@ OSCARSOURCES = \
 	peer.h              \
 	rxhandlers.c        \
 	rxqueue.c           \
+	session.c           \
 	snac.c              \
 	snactypes.h         \
 	tlv.c               \

@@ -221,7 +221,7 @@ aim_handlerendconnect(OscarSession *sess, OscarConnection *cur)
 
 	if ((addr.sa_family != PF_INET) && (addr.sa_family != PF_INET6)) {
 		close(acceptfd);
-		aim_conn_close(cur);
+		aim_conn_close(sess, cur);
 		return -1;
 	}
 
@@ -230,7 +230,7 @@ aim_handlerendconnect(OscarSession *sess, OscarConnection *cur)
 
 	if (!(newconn = aim_cloneconn(sess, cur))) {
 		close(acceptfd);
-		aim_conn_close(cur);
+		aim_conn_close(sess, cur);
 		return -ENOMEM;
 	}
 
@@ -257,7 +257,7 @@ aim_handlerendconnect(OscarSession *sess, OscarConnection *cur)
 
 	} else {
 		gaim_debug_warning("oscar", "Got a connection on a listener that's not rendezvous.  Closing connection.\n");
-		aim_conn_close(newconn);
+		aim_conn_close(sess, newconn);
 		ret = -1;
 	}
 
@@ -481,17 +481,20 @@ aim_odc_getcookie(OscarConnection *conn)
 OscarConnection *
 aim_odc_getconn(OscarSession *sess, const char *sn)
 {
-	OscarConnection *cur;
+	GList *cur;
 	struct aim_odc_intdata *intdata;
 
 	if (!sess || !sn || !strlen(sn))
 		return NULL;
 
-	for (cur = sess->connlist; cur; cur = cur->next) {
-		if ((cur->type == AIM_CONN_TYPE_RENDEZVOUS) && (cur->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
-			intdata = cur->internal;
+	for (cur = sess->oscar_connections; cur; cur = cur->next)
+	{
+		OscarConnection *conn;
+		conn = cur->data;
+		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) && (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
+			intdata = conn->internal;
 			if (!aim_sncmp(intdata->sn, sn))
-				return cur;
+				return conn;
 		}
 	}
 
@@ -541,7 +544,7 @@ aim_odc_initiate(OscarSession *sess, const char *sn, int listenfd,
 	aim_cachecookie(sess, cookie);
 
 	/* XXX - switch to aim_cloneconn()? */
-	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER))) {
+	if (!(newconn = oscar_connection_new(sess, AIM_CONN_TYPE_LISTENER))) {
 		close(listenfd);
 		return NULL;
 	}
@@ -563,7 +566,7 @@ aim_odc_initiate(OscarSession *sess, const char *sn, int listenfd,
 /**
  * Connect directly to the given buddy for directim.
  *
- * This is a wrapper for aim_newconn.
+ * This is a wrapper for oscar_connection_new.
  *
  * If addr is NULL, the socket is not created, but the connection is
  * allocated and setup to connect.
@@ -590,7 +593,7 @@ aim_odc_connect(OscarSession *sess, const char *sn, const char *addr, const guin
 		strncpy(intdata->ip, addr, sizeof(intdata->ip));
 
 	/* XXX - verify that non-blocking connects actually work */
-	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS))) {
+	if (!(newconn = oscar_connection_new(sess, AIM_CONN_TYPE_RENDEZVOUS))) {
 		free(intdata);
 		return NULL;
 	}
@@ -804,7 +807,7 @@ aim_sendfile_listen(OscarSession *sess, PeerConnection *peer_connection, int lis
 	if (!peer_connection)
 		return -EINVAL;
 
-	if (!(peer_connection->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER))) {
+	if (!(peer_connection->conn = oscar_connection_new(sess, AIM_CONN_TYPE_LISTENER))) {
 		close(listenfd);
 		return -ENOMEM;
 	}
@@ -1137,7 +1140,7 @@ aim_rxdispatch_rendezvous(OscarSession *sess, FlapFrame *fr)
 	}
 
 	if (ret == -1)
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 
 	return ret;
 }
@@ -1190,7 +1193,7 @@ aim_rv_proxy_read(OscarSession *sess, OscarConnection *conn)
 					proxy_info->err_code = aimbs_get16(&bs_body);
 				} else {
 					gaim_debug_warning("oscar","error reading rv proxy error packet\n");
-					aim_conn_close(conn);
+					aim_conn_close(sess, conn);
 					free(proxy_info);
 					proxy_info = NULL;
 				}
@@ -1216,7 +1219,7 @@ aim_rv_proxy_read(OscarSession *sess, OscarConnection *conn)
 					proxy_info->ip = strdup(str_ip);
 				} else {
 					gaim_debug_warning("oscar","error reading rv proxy error packet\n");
-					aim_conn_close(conn);
+					aim_conn_close(sess, conn);
 					free(proxy_info);
 					proxy_info = NULL;
 				}
@@ -1230,7 +1233,7 @@ aim_rv_proxy_read(OscarSession *sess, OscarConnection *conn)
 		}
 	} else {
 		gaim_debug_warning("oscar","error reading header of rv proxy packet\n");
-		aim_conn_close(conn);
+		aim_conn_close(sess, conn);
 		free(proxy_info);
 		proxy_info = NULL;
 	}

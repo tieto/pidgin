@@ -479,9 +479,6 @@ struct _OscarSession
 
 	/* ---- Internal Use Only ------------------------ */
 
-	/* Connection information */
-	OscarConnection *connlist;
-
 	/*
 	 * Transmit/receive queues.
 	 *
@@ -542,6 +539,9 @@ struct _OscarSession
 		int waiting_for_ack;
 	} ssi;
 
+	/** A linked list containing OscarConnections. */
+	GList *oscar_connections;
+
 	/** A linked list containing PeerConnections. */
 	GList *peer_connections;
 };
@@ -578,8 +578,7 @@ faim_export void aim_rxdispatch(OscarSession *);
 
 faim_export int aim_debugconn_sendconnect(OscarSession *sess, OscarConnection *conn);
 
-/* the library should never call aim_conn_kill */
-faim_export void aim_conn_kill(OscarSession *sess, OscarConnection **deadconn);
+void aim_conn_kill(OscarSession *sess, OscarConnection *deadconn);
 
 typedef int (*aim_rxcallback_t)(OscarSession *, FlapFrame *, ...);
 
@@ -645,9 +644,9 @@ faim_export int aim_clearhandlers(OscarConnection *conn);
 
 faim_export OscarConnection *aim_conn_findbygroup(OscarSession *sess, guint16 group);
 faim_export OscarSession *aim_conn_getsess(OscarConnection *conn);
-faim_export void aim_conn_close(OscarConnection *deadconn);
-faim_export OscarConnection *aim_newconn(OscarSession *, int type);
-faim_export int aim_conn_in_sess(OscarSession *sess, OscarConnection *conn);
+void oscar_connection_destroy(OscarSession *sess, OscarConnection *conn);
+faim_export void aim_conn_close(OscarSession *sess, OscarConnection *conn);
+faim_export OscarConnection *oscar_connection_new(OscarSession *, int type);
 faim_export int aim_conn_isready(OscarConnection *);
 faim_export int aim_conn_setstatus(OscarConnection *, int);
 faim_export int aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn);
@@ -658,7 +657,6 @@ void oscar_session_destroy(OscarSession *);
 
 faim_export OscarConnection *aim_getconn_type(OscarSession *, int type);
 faim_export OscarConnection *aim_getconn_type_all(OscarSession *, int type);
-faim_export OscarConnection *aim_getconn_fd(OscarSession *, int fd);
 
 /* 0x0001 - family_oservice.c */
 faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg);

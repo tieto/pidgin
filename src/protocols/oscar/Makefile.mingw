@@ -96,6 +96,7 @@ C_SRC = \
 	peer.c				\
 	rxhandlers.c		\
 	rxqueue.c			\
+	session.c			\
 	snac.c				\
 	tlv.c				\
 	txqueue.c			\
