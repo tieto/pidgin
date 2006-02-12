@@ -85,6 +85,8 @@ version 2.0.0:
 	* The functionality of the auto-reconnect plugin has been
 	  moved into the Gaim core, and the plugin itself has been
 	  removed.
+	* 'Highlight when nick said' option added to Message Notification
+	  plugin.
 
 	MSN Features:
 	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)

@@ -244,6 +244,11 @@ static gboolean
 message_displayed_cb(GaimAccount *account, const char *who, char *message,
 				GaimConversation *conv, GaimMessageFlags flags)
 {
+	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
+	     gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
+	     !(flags & GAIM_MESSAGE_NICK)))
+	    return FALSE;
+
 	if ((flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_DELAYED))
 		notify(conv, TRUE);
 
@@ -624,7 +629,7 @@ get_config_frame(GaimPlugin *plugin)
 {
 	GtkWidget *ret = NULL, *frame = NULL;
 	GtkWidget *vbox = NULL, *hbox = NULL;
-	GtkWidget *toggle = NULL, *entry = NULL;
+	GtkWidget *toggle = NULL, *entry = NULL, *ref;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER (ret), 12);
@@ -647,6 +652,17 @@ get_config_frame(GaimPlugin *plugin)
 	                             gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 	                 G_CALLBACK(type_toggle_cb), "type_chat");
+
+	ref = toggle;
+	toggle = gtk_check_button_new_with_mnemonic(_("\t_Only when someone says your nick"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
+	                            gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick"));
+	g_signal_connect(G_OBJECT(toggle), "toggled",
+	                 G_CALLBACK(type_toggle_cb), "type_chat_nick");
+	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
+	g_signal_connect(G_OBJECT(ref), "toggled",
+	                 G_CALLBACK(gaim_gtk_toggle_sensitive), toggle);
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_Focused windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
@@ -863,6 +879,7 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_im", TRUE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_chat", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_chat_nick", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/type_focused", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_string", FALSE);
 	gaim_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
