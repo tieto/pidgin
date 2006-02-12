@@ -390,7 +390,7 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
 	cbba->gb = &gb;
-	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, address_text);
+	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, cbba);
 	g_free(cbba);
 	if (gb == NULL)
 	{
