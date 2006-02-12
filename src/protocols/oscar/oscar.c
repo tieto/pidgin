@@ -916,7 +916,7 @@ oscar_chat_kill(GaimConnection *gc, struct chat_connection *cc)
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
 	if (cc->inpa > 0)
 		gaim_input_remove(cc->inpa);
-	aim_conn_kill(od->sess, cc->conn);
+	oscar_connection_destroy(od->sess, cc->conn);
 	g_free(cc->name);
 	g_free(cc->show);
 	g_free(cc);
@@ -952,10 +952,8 @@ static void oscar_direct_im_destroy(OscarData *od, struct oscar_direct_im *dim)
 	}
 	if (dim->watcher)
 	gaim_input_remove(dim->watcher);
-	if (dim->conn) {
-		aim_conn_close(od->sess, dim->conn);
-		aim_conn_kill(od->sess, dim->conn);
-	}
+	if (dim->conn)
+		oscar_connection_destroy(od->sess, dim->conn);
 	g_free(dim);
 }
 
@@ -1176,8 +1174,7 @@ static int gaim_odc_initiate(OscarSession *sess, FlapFrame *fr, ...) {
 	listenerconn = va_arg(ap, OscarConnection *);
 	va_end(ap);
 
-	aim_conn_close(sess, listenerconn);
-	aim_conn_kill(sess, listenerconn);
+	oscar_connection_destroy(sess, listenerconn);
 
 	sn = g_strdup(aim_odc_getsn(newconn));
 
@@ -1694,7 +1691,7 @@ oscar_callback(gpointer data, gint source, GaimInputCondition condition)
 		if (aim_handlerendconnect(od->sess, conn) < 0) {
 			gaim_debug_error("oscar",
 					   "connection error (rendezvous listener)\n");
-			aim_conn_kill(od->sess, conn);
+			oscar_connection_destroy(od->sess, conn);
 			/* AAA - Don't we need to gaim_xfer_cancel here? --marv */
 		}
 	} else {
@@ -1745,38 +1742,38 @@ oscar_callback(gpointer data, gint source, GaimInputCondition condition)
 									  NULL);
 				}
 				gaim_debug_info("oscar","killing rendezvous connection\n");
-				aim_conn_kill(od->sess, conn);
+				oscar_connection_destroy(od->sess, conn);
 			} else if (conn->type == AIM_CONN_TYPE_AUTH) {
 				if (od->paspa > 0)
 					gaim_input_remove(od->paspa);
 				od->paspa = 0;
 				gaim_debug_info("oscar",
 						   "removing authconn input watcher\n");
-				aim_conn_kill(od->sess, conn);
+				oscar_connection_destroy(od->sess, conn);
 			} else if (conn->type == AIM_CONN_TYPE_EMAIL) {
 				if (od->emlpa > 0)
 					gaim_input_remove(od->emlpa);
 				od->emlpa = 0;
 				gaim_debug_info("oscar",
 						   "removing email input watcher\n");
-				aim_conn_kill(od->sess, conn);
+				oscar_connection_destroy(od->sess, conn);
 			} else if (conn->type == AIM_CONN_TYPE_ICON) {
 				if (od->icopa > 0)
 					gaim_input_remove(od->icopa);
 				od->icopa = 0;
 				gaim_debug_info("oscar",
 						   "removing icon input watcher\n");
-				aim_conn_kill(od->sess, conn);
+				oscar_connection_destroy(od->sess, conn);
 			} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 				if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
 					gaim_odc_disconnect(od->sess, conn);
 				gaim_debug_info("oscar","killing rendezvous connection\n");
-				aim_conn_kill(od->sess, conn);
+				oscar_connection_destroy(od->sess, conn);
 			} else {
 				gaim_debug_error("oscar",
 						   "holy crap! generic connection error! %hu\n",
 						   conn->type);
-				aim_conn_kill(od->sess, conn);
+				oscar_connection_destroy(od->sess, conn);
 			}
 		}
 	}
@@ -2072,7 +2069,7 @@ static void oscar_xfer_end(GaimXfer *xfer)
 		aim_oft_sendheader(peer_connection->sess, PEER_TYPE_DONE, peer_connection);
 	}
 
-	aim_conn_kill(peer_connection->sess, peer_connection->conn);
+	oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
 	aim_oft_destroyinfo(peer_connection);
 	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
@@ -2108,7 +2105,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 			/* This connection has worn out its welcome. Goodbye. */
 			if(peer_connection->conn) {
 				close(peer_connection->conn->fd);
-				aim_conn_kill(peer_connection->sess, peer_connection->conn);
+				oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
 			}
 
 			if(peer_connection->method == AIM_XFER_DIRECT || peer_connection->method == AIM_XFER_REDIR) {
@@ -2150,7 +2147,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 
 						/* Kill our listener */
 						gaim_input_remove(xfer->watcher);
-						aim_conn_kill(peer_connection->sess, peer_connection->conn);
+						oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
 
 						/* Instead of failing here, request a stage 3 proxy */
 						g_free(peer_connection->clientip);
@@ -2299,7 +2296,7 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE)
 		aim_im_sendch2_sendfile_cancel(peer_connection->sess, peer_connection);
 
-	aim_conn_kill(peer_connection->sess, peer_connection->conn);
+	oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
 	aim_oft_destroyinfo(peer_connection);
 	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
@@ -2685,7 +2682,7 @@ static void oscar_xfer_cancel_send(GaimXfer *xfer)
 	/* Added a few sanity checks to prevent segfaulting */
 	if(peer_connection) {
 		if(peer_connection->sess && peer_connection->conn)
-			aim_conn_kill(peer_connection->sess, peer_connection->conn);
+			oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
 		aim_oft_destroyinfo(peer_connection);
 	}
 	xfer->data = NULL;
@@ -2884,7 +2881,7 @@ static int gaim_parse_auth_resp(OscarSession *sess, FlapFrame *fr, ...) {
 
 	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
 	gaim_debug_info("oscar", "Closing auth connection...\n");
-	aim_conn_kill(sess, fr->conn);
+	oscar_connection_destroy(sess, fr->conn);
 
 	bosconn = oscar_connection_new(sess, AIM_CONN_TYPE_BOS);
 	if (bosconn == NULL) {
@@ -3268,7 +3265,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GaimInputCondition
 	tstconn->fd = source;
 
 	if (source < 0) {
-		aim_conn_kill(sess, tstconn);
+		oscar_connection_destroy(sess, tstconn);
 		gaim_debug_error("oscar", "unable to connect to chatnav server\n");
 		return;
 	}
@@ -3299,7 +3296,7 @@ static void oscar_auth_connect(gpointer data, gint source, GaimInputCondition co
 	tstconn->fd = source;
 
 	if (source < 0) {
-		aim_conn_kill(sess, tstconn);
+		oscar_connection_destroy(sess, tstconn);
 		gaim_debug_error("oscar", "unable to connect to authorizer\n");
 		return;
 	}
@@ -3334,7 +3331,7 @@ static void oscar_chat_connect(gpointer data, gint source, GaimInputCondition co
 	tstconn->fd = source;
 
 	if (source < 0) {
-		aim_conn_kill(sess, tstconn);
+		oscar_connection_destroy(sess, tstconn);
 		g_free(ccon->show);
 		g_free(ccon->name);
 		g_free(ccon);
@@ -3366,7 +3363,7 @@ static void oscar_email_connect(gpointer data, gint source, GaimInputCondition c
 	tstconn->fd = source;
 
 	if (source < 0) {
-		aim_conn_kill(sess, tstconn);
+		oscar_connection_destroy(sess, tstconn);
 		gaim_debug_error("oscar", "unable to connect to email server\n");
 		return;
 	}
@@ -3396,7 +3393,7 @@ static void oscar_icon_connect(gpointer data, gint source, GaimInputCondition co
 	tstconn->fd = source;
 
 	if (source < 0) {
-		aim_conn_kill(sess, tstconn);
+		oscar_connection_destroy(sess, tstconn);
 		gaim_debug_error("oscar", "unable to connect to icon server\n");
 		return;
 	}
@@ -3449,7 +3446,7 @@ static int gaim_handle_redirect(OscarSession *sess, FlapFrame *fr, ...) {
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_auth_connect, gc) != 0) {
-			aim_conn_kill(sess, tstconn);
+			oscar_connection_destroy(sess, tstconn);
 			gaim_debug_error("oscar",
 					   "unable to reconnect with authorizer\n");
 			g_free(host);
@@ -3471,7 +3468,7 @@ static int gaim_handle_redirect(OscarSession *sess, FlapFrame *fr, ...) {
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_chatnav_connect, gc) != 0) {
-			aim_conn_kill(sess, tstconn);
+			oscar_connection_destroy(sess, tstconn);
 			gaim_debug_error("oscar",
 					   "unable to connect to chatnav server\n");
 			g_free(host);
@@ -3504,7 +3501,7 @@ static int gaim_handle_redirect(OscarSession *sess, FlapFrame *fr, ...) {
 
 		ccon->conn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_chat_connect, ccon) != 0) {
-			aim_conn_kill(sess, tstconn);
+			oscar_connection_destroy(sess, tstconn);
 			gaim_debug_error("oscar",
 					   "unable to connect to chat server\n");
 			g_free(host);
@@ -3531,7 +3528,7 @@ static int gaim_handle_redirect(OscarSession *sess, FlapFrame *fr, ...) {
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_icon_connect, gc) != 0) {
-			aim_conn_kill(sess, tstconn);
+			oscar_connection_destroy(sess, tstconn);
 			gaim_debug_error("oscar",
 					   "unable to connect to icon server\n");
 			g_free(host);
@@ -3552,7 +3549,7 @@ static int gaim_handle_redirect(OscarSession *sess, FlapFrame *fr, ...) {
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		if (gaim_proxy_connect(account, host, port, oscar_email_connect, gc) != 0) {
-			aim_conn_kill(sess, tstconn);
+			oscar_connection_destroy(sess, tstconn);
 			gaim_debug_error("oscar",
 					   "unable to connect to email server\n");
 			g_free(host);
@@ -3801,7 +3798,7 @@ static int oscar_sendfile_estblsh(OscarSession *sess, FlapFrame *fr, ...) {
 		/* Stop watching listener conn; watch transfer conn instead */
 		gaim_input_remove(xfer->watcher);
 
-		aim_conn_kill(sess, listenerconn);
+		oscar_connection_destroy(sess, listenerconn);
 
 		peer_connection->conn = conn;
 		xfer->fd = peer_connection->conn->fd;
@@ -4326,7 +4323,7 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 
 				/* Stop the listener connection */
 				gaim_input_remove(xfer->watcher);
-				aim_conn_kill(sess, peer_connection->conn); /* This is currently the listener */
+				oscar_connection_destroy(sess, peer_connection->conn); /* This is currently the listener */
 
 				if(args->info.sendfile.use_proxy) {
 					gaim_debug_info("oscar",
@@ -4561,7 +4558,7 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 
 
 static void gaim_auth_sendrequest(GaimConnection *gc, char *name) {
-	struct name_data *data = g_new(struct name_data, 1);
+	struct name_data *data = g_new0(struct name_data, 1);
 	GaimBuddy *buddy;
 	gchar *dialog_msg, *nombre;
 

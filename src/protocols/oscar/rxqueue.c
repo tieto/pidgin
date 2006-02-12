@@ -280,7 +280,7 @@ faim_export void aim_purge_rxqueue(OscarSession *sess)
 }
 
 /*
- * Since aim_get_command will aim_conn_kill dead connections, we need
+ * Since aim_get_command will oscar_connection_destroy dead connections, we need
  * to clean up the rxqueue of unprocessed connections on that socket.
  *
  * XXX: this is something that was handled better in the old connection

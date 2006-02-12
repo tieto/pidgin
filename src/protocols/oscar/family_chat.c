@@ -34,7 +34,7 @@ struct chatconnpriv {
 	guint16 instance;
 };
 
-faim_internal void aim_conn_kill_chat(OscarSession *sess, OscarConnection *conn)
+faim_internal void oscar_connection_destroy_chat(OscarSession *sess, OscarConnection *conn)
 {
 	struct chatconnpriv *ccp = (struct chatconnpriv *)conn->internal;
 

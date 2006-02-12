@@ -81,8 +81,6 @@ faim_internal int aim_genericreq_n_snacid(OscarSession *, OscarConnection *conn,
 faim_internal int aim_genericreq_l(OscarSession *, OscarConnection *conn, guint16 family, guint16 subtype, guint32 *);
 faim_internal int aim_genericreq_s(OscarSession *, OscarConnection *conn, guint16 family, guint16 subtype, guint16 *);
 
-#define AIMBS_CURPOSPAIR(x) ((x)->data + (x)->offset), ((x)->len - (x)->offset)
-
 /* bstream.c */
 faim_internal int aim_bstream_init(ByteStream *bs, guint8 *data, int len);
 faim_internal int aim_bstream_empty(ByteStream *bs);
@@ -218,7 +216,7 @@ faim_internal int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
 
 faim_internal int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);
 
-faim_internal void aim_conn_kill_chat(OscarSession *sess, OscarConnection *conn);
+faim_internal void oscar_connection_destroy_chat(OscarSession *sess, OscarConnection *conn);
 
 /* These are all handled internally now. */
 faim_internal int aim_setversions(OscarSession *sess, OscarConnection *conn);

@@ -30,28 +30,8 @@ oscar_session_new(void)
 
 	sess = g_new0(OscarSession, 1);
 
-	sess->queue_outgoing = NULL;
-	sess->queue_incoming = NULL;
 	aim_initsnachash(sess);
-	sess->msgcookies = NULL;
-	sess->modlistv = NULL;
 	sess->snacid_next = 0x00000001;
-
-	sess->locate.userinfo = NULL;
-	sess->locate.torequest = NULL;
-	sess->locate.requested = NULL;
-	sess->locate.waiting_for_response = FALSE;
-	sess->ssi.received_data = 0;
-	sess->ssi.numitems = 0;
-	sess->ssi.official = NULL;
-	sess->ssi.local = NULL;
-	sess->ssi.pending = NULL;
-	sess->ssi.timestamp = (time_t)0;
-	sess->ssi.waiting_for_ack = 0;
-	sess->icq_info = NULL;
-	sess->authinfo = NULL;
-	sess->emailinfo = NULL;
-	sess->peer_connections = NULL;
 
 	/*
 	 * This must always be set.  Default to the queue-based

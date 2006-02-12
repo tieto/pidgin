@@ -98,7 +98,7 @@ aim_conn_addgroup(OscarConnection *conn, guint16 group)
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 
-	sg = g_new(struct snacgroup, 1);
+	sg = g_new0(struct snacgroup, 1);
 
 	gaim_debug_misc("oscar", "adding group 0x%04x\n", group);
 	sg->group = group;
@@ -183,7 +183,7 @@ oscar_connection_destroy(OscarSession *sess, OscarConnection *conn)
 	 * This will free ->internal if it necessary...
 	 */
 	if (conn->type == AIM_CONN_TYPE_CHAT)
-		aim_conn_kill_chat(sess, conn);
+		oscar_connection_destroy_chat(sess, conn);
 
 	if (conn->inside != NULL)
 	{
@@ -247,22 +247,6 @@ aim_conn_getnext(OscarSession *sess)
 	sess->oscar_connections = g_list_prepend(sess->oscar_connections, conn);
 
 	return conn;
-}
-
-/**
- * Close, clear, and free a connection structure. Should never be
- * called from within libfaim.
- *
- * @param sess Session for the connection.
- * @param deadconn Connection to be freed.
- */
-void
-aim_conn_kill(OscarSession *sess, OscarConnection *conn)
-{
-	if (!conn)
-		return;
-
-	oscar_connection_destroy(sess, conn);
 }
 
 /**
@@ -349,9 +333,7 @@ aim_cloneconn(OscarSession *sess, OscarConnection *src)
 {
 	OscarConnection *conn;
 
-	if (!(conn = aim_conn_getnext(sess)))
-		return NULL;
-
+	conn = aim_conn_getnext(sess);
 	conn->fd = src->fd;
 	conn->type = src->type;
 	conn->subtype = src->subtype;
@@ -390,14 +372,12 @@ oscar_connection_new(OscarSession *sess, int type)
 {
 	OscarConnection *conn;
 
-	if (!(conn = aim_conn_getnext(sess)))
-		return NULL;
-
-	conn->sessv = (void *)sess;
+	conn = aim_conn_getnext(sess);
+	conn->sessv = sess;
 	conn->type = type;
-
 	conn->fd = -1;
 	conn->status = 0;
+
 	return conn;
 }
 

@@ -577,7 +577,7 @@ faim_export void aim_rxdispatch(OscarSession *);
 
 faim_export int aim_debugconn_sendconnect(OscarSession *sess, OscarConnection *conn);
 
-void aim_conn_kill(OscarSession *sess, OscarConnection *deadconn);
+void oscar_connection_destroy(OscarSession *sess, OscarConnection *deadconn);
 
 typedef int (*aim_rxcallback_t)(OscarSession *, FlapFrame *, ...);
 
@@ -634,7 +634,6 @@ faim_export void aim_cleansnacs(OscarSession *, int maxage);
 faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *));
 
 faim_export int aim_tx_flushqueue(OscarSession *);
-faim_export void aim_tx_purgequeue(OscarSession *);
 
 faim_export int aim_conn_addhandler(OscarSession *, OscarConnection *conn, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
 faim_export int aim_clearhandlers(OscarConnection *conn);

@@ -81,12 +81,7 @@ flap_frame_new(OscarSession *sess, OscarConnection *conn, guint8 framing, guint1
 
 	if (datalen > 0) {
 		guint8 *data;
-
-		if (!(data = (unsigned char *)malloc(datalen))) {
-			aim_frame_destroy(fr);
-			return NULL;
-		}
-
+		data = malloc(datalen);
 		aim_bstream_init(&fr->data, data, datalen);
 	}
 
@@ -171,8 +166,7 @@ sendframe_flap(OscarSession *sess, FlapFrame *fr)
 
 	payloadlen = aim_bstream_curpos(&fr->data);
 
-	if (!(bs_raw = malloc(6 + payloadlen)))
-		return -ENOMEM;
+	bs_raw = malloc(6 + payloadlen);
 
 	aim_bstream_init(&bs, bs_raw, 6 + payloadlen);
 
@@ -208,8 +202,7 @@ sendframe_rendezvous(OscarSession *sess, FlapFrame *fr)
 
 	payloadlen = aim_bstream_curpos(&fr->data);
 
-	if (!(bs_raw = malloc(8 + payloadlen)))
-		return -ENOMEM;
+	bs_raw = malloc(8 + payloadlen);
 
 	aim_bstream_init(&bs, bs_raw, 8 + payloadlen);
 
@@ -246,6 +239,27 @@ aim_tx_sendframe(OscarSession *sess, FlapFrame *fr)
 	return -1;
 }
 
+/*
+ * This is responsible for removing sent commands from the transmit
+ * queue. This is not a required operation, but it of course helps
+ * reduce memory footprint at run time!
+ */
+static void
+aim_tx_purgequeue(OscarSession *sess)
+{
+	FlapFrame *cur, **prev;
+
+	for (prev = &sess->queue_outgoing; (cur = *prev); ) {
+		if (cur->handled) {
+			*prev = cur->next;
+			aim_frame_destroy(cur);
+		} else
+			prev = &cur->next;
+	}
+
+	return;
+}
+
 int
 aim_tx_flushqueue(OscarSession *sess)
 {
@@ -267,27 +281,6 @@ aim_tx_flushqueue(OscarSession *sess)
 	aim_tx_purgequeue(sess);
 
 	return 0;
-}
-
-/*
- * This is responsible for removing sent commands from the transmit
- * queue. This is not a required operation, but it of course helps
- * reduce memory footprint at run time!
- */
-void
-aim_tx_purgequeue(OscarSession *sess)
-{
-	FlapFrame *cur, **prev;
-
-	for (prev = &sess->queue_outgoing; (cur = *prev); ) {
-		if (cur->handled) {
-			*prev = cur->next;
-			aim_frame_destroy(cur);
-		} else
-			prev = &cur->next;
-	}
-
-	return;
 }
 
 /**
