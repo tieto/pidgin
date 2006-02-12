@@ -340,7 +340,8 @@ swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 {
 	g_return_if_fail(swboard != NULL);
 
-	gaim_debug_warning("msg", "Error: Unable to call the user %s for reason %i\n", passport, reason);
+	gaim_debug_warning("msg", "Error: Unable to call the user %s for reason %i\n",
+					   passport ? passport : "(null)", reason);
 
 	/* TODO: if current_users > 0, this is probably a chat and an invite failed,
 	 * we should report that in the chat or something */
