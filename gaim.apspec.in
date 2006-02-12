@@ -26,7 +26,9 @@ Gaim is NOT affiliated with or endorsed by America Online, Inc., Microsoft
 Corporation, Yahoo! Inc., or ICQ Inc.
 
 [BuildPrepare]
-prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-gtktest
+APBUILD_STATIC="Xss startup-notification-1" prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-gtktest --disable-glibtest --disable-vv  --disable-fortify
+#APBUILD_STATIC="Xss startup-notification-1" prepareBuild --enable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl --disable-vv
+
 
 [BuildUnprepare]
 unprepareBuild
@@ -48,6 +50,7 @@ require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @moz
 [Install]
 # Put your installation script here
 installExe ./bin/*
+installLib ./lib/libgaim-remote.so.0.0.0
 # do the plugins
 copyFiles ./lib/gaim "$PREFIX/lib"
 installMan 1 ./man/man1/gaim.1
