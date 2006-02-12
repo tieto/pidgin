@@ -583,7 +583,10 @@ gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
 	g_return_if_fail(status != NULL);
 
 	g_free(status->message);
-	status->message = g_strdup(message);
+	if ((message != NULL) && (*message == '\0'))
+		status->message = NULL;
+	else
+		status->message = g_strdup(message);
 
 	schedule_save();
 }
@@ -738,6 +741,8 @@ gaim_savedstatus_get_current()
 		 * using?  In any case, add a default status.
 		 */
 		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AVAILABLE);
+		gaim_prefs_set_int("/core/savedstatus/current",
+						   gaim_savedstatus_get_creation_time(saved_status));
 	}
 
 	return saved_status;
@@ -760,6 +765,8 @@ gaim_savedstatus_get_idleaway()
 		 */
 		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AWAY);
 		gaim_savedstatus_set_message(saved_status, _("I'm not here right now"));
+		gaim_prefs_set_int("/core/savedstatus/idleaway",
+						   gaim_savedstatus_get_creation_time(saved_status));
 	}
 	else
 	{
