@@ -76,7 +76,7 @@ C_SRC = \
 	family_auth.c		\
 	family_bart.c		\
 	family_bos.c		\
-	family_buddylist.c	\
+	family_buddy.c		\
 	family_chat.c		\
 	family_chatnav.c	\
 	family_icq.c		\
