@@ -162,7 +162,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 		msn_servconn_got_error(httpconn->servconn,
 			MSN_SERVCONN_ERROR_WRITE);
 		return -1;
-	} else if (res < data_len) {
+	} else if (res < 0 || res < data_len) {
 		if (res < 0)
 			res = 0;
 		if (httpconn->tx_handler == -1)
