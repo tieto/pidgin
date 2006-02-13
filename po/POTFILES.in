@@ -81,6 +81,7 @@ src/gtkwhiteboard.c
 src/log.c
 src/plugin.c
 src/protocols/bonjour/bonjour.c
+src/protocols/bonjour/jabber.c
 src/protocols/gg/gg.c
 src/protocols/irc/cmds.c
 src/protocols/irc/dcc_send.c
