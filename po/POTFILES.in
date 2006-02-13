@@ -125,6 +125,7 @@ src/protocols/toc/toc.c
 src/protocols/yahoo/yahoo.c
 src/protocols/yahoo/yahoo_doodle.c
 src/protocols/yahoo/yahoo_filexfer.c
+src/protocols/yahoo/yahoo_packet.c
 src/protocols/yahoo/yahoo_profile.c
 src/protocols/yahoo/yahoochat.c
 src/protocols/yahoo/ycht.c
