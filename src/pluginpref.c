@@ -254,7 +254,7 @@ void
 gaim_plugin_pref_add_choice(GaimPluginPref *pref, const char *label, gpointer choice) {
 	g_return_if_fail(pref);
 	g_return_if_fail(label);
-	g_return_if_fail(choice);
+	g_return_if_fail(choice || gaim_prefs_get_type(pref->name) == GAIM_PREF_INT);
 
 	pref->choices = g_list_append(pref->choices, (gpointer)label);
 	pref->choices = g_list_append(pref->choices, choice);
