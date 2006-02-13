@@ -343,15 +343,16 @@ jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
 		return;
 	}
 
-	if((len = gaim_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
+	while((len = gaim_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
-	} else if(errno == EAGAIN)
-		return;
-	else {
-		gaim_connection_error(gc, _("Read Error"));
 	}
+
+	if(errno == EAGAIN)
+		return;
+	else
+		gaim_connection_error(gc, _("Read Error"));
 }
 
 static void
