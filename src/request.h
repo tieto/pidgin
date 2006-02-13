@@ -42,7 +42,8 @@ typedef enum
 	GAIM_REQUEST_CHOICE,     /**< Multiple-choice request.   */
 	GAIM_REQUEST_ACTION,     /**< Action request.            */
 	GAIM_REQUEST_FIELDS,     /**< Multiple fields request.   */
-	GAIM_REQUEST_FILE        /**< File open or save request. */
+	GAIM_REQUEST_FILE,       /**< File open or save request. */
+	GAIM_REQUEST_FOLDER      /**< Folder selection request.  */
 
 } GaimRequestType;
 
@@ -205,6 +206,9 @@ typedef struct
 						  gboolean savedialog, GCallback ok_cb,
 						  GCallback cancel_cb, void *user_data);
 	void (*close_request)(GaimRequestType type, void *ui_handle);
+	void *(*request_folder)(const char *title, const char *dirname,
+							GCallback ok_cb, GCallback cancel_cb,
+							void *user_data);
 } GaimRequestUiOps;
 
 typedef void (*GaimRequestInputCb)(void *, const char *);
@@ -1164,10 +1168,10 @@ GaimFilterAccountFunc gaim_request_field_account_get_filter(
  * @param hint          Optionally suggest how the input box should appear.
  *                      Use "html," for example, to allow the user to enter
  *                      HTML.
- * @param ok_text       The text for the OK button.
- * @param ok_cb         The callback for the OK button.
- * @param cancel_text   The text for the cancel button.
- * @param cancel_cb     The callback for the cancel button.
+ * @param ok_text       The text for the @c OK button.
+ * @param ok_cb         The callback for the @c OK button.
+ * @param cancel_text   The text for the @c Cancel button.
+ * @param cancel_cb     The callback for the @c Cancel button.
  * @param user_data     The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1190,10 +1194,10 @@ void *gaim_request_input(void *handle, const char *title,
  * @param primary       The main point of the message.
  * @param secondary     The secondary information.
  * @param default_value The default value.
- * @param ok_text       The text for the OK button.
- * @param ok_cb         The callback for the OK button.
- * @param cancel_text   The text for the cancel button.
- * @param cancel_cb     The callback for the cancel button.
+ * @param ok_text       The text for the @c OK button.
+ * @param ok_cb         The callback for the @c OK button.
+ * @param cancel_text   The text for the @c Cancel button.
+ * @param cancel_cb     The callback for the @c Cancel button.
  * @param user_data     The data to pass to the callback.
  * @param ...           The choices.  This argument list should be
  *                      terminated with a NULL parameter.
@@ -1217,13 +1221,13 @@ void *gaim_request_choice(void *handle, const char *title,
  * @param primary       The main point of the message.
  * @param secondary     The secondary information.
  * @param default_value The default value.
- * @param ok_text       The text for the OK button.
- * @param ok_cb         The callback for the OK button.
- * @param cancel_text   The text for the cancel button.
- * @param cancel_cb     The callback for the cancel button.
+ * @param ok_text       The text for the @c OK button.
+ * @param ok_cb         The callback for the @c OK button.
+ * @param cancel_text   The text for the @c Cancel button.
+ * @param cancel_cb     The callback for the @c Cancel button.
  * @param user_data     The data to pass to the callback.
  * @param choices       The choices.  This argument list should be
- *                      terminated with a NULL parameter.
+ *                      terminated with a @c NULL parameter.
  *
  * @return A UI-specific handle.
  */
@@ -1291,10 +1295,10 @@ void *gaim_request_action_varg(void *handle, const char *title,
  * @param primary     The main point of the message.
  * @param secondary   The secondary information.
  * @param fields      The list of fields.
- * @param ok_text     The text for the OK button.
- * @param ok_cb       The callback for the OK button.
- * @param cancel_text The text for the cancel button.
- * @param cancel_cb   The callback for the cancel button.
+ * @param ok_text     The text for the @c OK button.
+ * @param ok_cb       The callback for the @c OK button.
+ * @param cancel_text The text for the @c Cancel button.
+ * @param cancel_cb   The callback for the @c Cancel button.
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1322,7 +1326,7 @@ void gaim_request_close(GaimRequestType type, void *uihandle);
 void gaim_request_close_with_handle(void *handle);
 
 /**
- * A wrapper for gaim_request_action() that uses Yes and No buttons.
+ * A wrapper for gaim_request_action() that uses @c Yes and @c No buttons.
  */
 #define gaim_request_yes_no(handle, title, primary, secondary, \
 							default_action, user_data, yes_cb, no_cb) \
@@ -1331,7 +1335,7 @@ void gaim_request_close_with_handle(void *handle);
 						_("Yes"), (yes_cb), _("No"), (no_cb))
 
 /**
- * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
+ * A wrapper for gaim_request_action() that uses @c OK and @c Cancel buttons.
  */
 #define gaim_request_ok_cancel(handle, title, primary, secondary, \
 							default_action, user_data, ok_cb, cancel_cb) \
@@ -1350,18 +1354,18 @@ void gaim_request_close_with_handle(void *handle);
 						_("_Accept"), (accept_cb), _("Cancel"), (cancel_cb))
 
 /**
- * Displays a file selector request dialog.  Returns the selected filename into
+ * Displays a file selector request dialog.  Returns the selected filename to
  * the callback.  Can be used for either opening a file or saving a file.
  *
  * @param handle      The plugin or connection handle.  For some
  *                    things this is EXTREMELY important.  See
  *                    the comments on gaim_request_input.
- * @param title       The title for the dialog (may be NULL)
- * @param filename    The default filename (may be NULL)
+ * @param title       The title for the dialog (may be @c NULL)
+ * @param filename    The default filename (may be @c NULL)
  * @param savedialog  True if this dialog is being used to save a file.
  *                    False if it is being used to open a file.
- * @param ok_cb       The callback for the OK button.
- * @param cancel_cb   The callback for the cancel button.
+ * @param ok_cb       The callback for the @c OK button.
+ * @param cancel_cb   The callback for the @c Cancel button.
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1370,6 +1374,25 @@ void *gaim_request_file(void *handle, const char *title, const char *filename,
 						gboolean savedialog,
 						GCallback ok_cb, GCallback cancel_cb,
 						void *user_data);
+
+/**
+ * Displays a folder select dialog. Returns the selected filename to
+ * the callback.
+ *
+ * @param handle      The plugin or connection handle.  For some
+ *                    things this is EXTREMELY important.  See
+ *                    the comments on gaim_request_input.
+ * @param title       The title for the dialog (may be @c NULL)
+ * @param dirname     The default directory name (may be @c NULL)
+ * @param ok_cb       The callback for the @c OK button.
+ * @param cancel_cb   The callback for the @c Cancel button.
+ * @param user_data   The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_request_folder(void *handle, const char *title, const char *dirname,
+						  GCallback ok_cb, GCallback cancel_cb,
+						  void *user_data);
 
 /*@}*/
 
