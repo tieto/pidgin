@@ -130,7 +130,7 @@ guchar **buf);
 void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len);
 void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data);
 void yahoo_packet_dump(guchar *data, int len);
-int yahoo_packet_length(struct yahoo_packet *pkt);
+gsize yahoo_packet_length(struct yahoo_packet *pkt);
 void yahoo_packet_free(struct yahoo_packet *pkt);
 
 #endif /* _YAHOO_PACKET_H_ */
