@@ -904,9 +904,11 @@ static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
+/* This is for Adium.  Gaim never uses OpenSSL, because of licensing issues,
+ * and our configure doesn't check for it. -- rlaager */
 #ifdef HAVE_OPENSSL
-	/* If using OpenSSL, don't perform any actions on the ssl connection if we were forcibly disconnected
-	 * because it will crash.
+	/* If using OpenSSL, don't perform any actions on the ssl connection
+	 * if we were forcibly disconnected because it will crash. -- evands
 	 */
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
