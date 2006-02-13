@@ -1182,7 +1182,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 
 				fill_auth(sip, ptmp, &sip->proxy);
 				auth = auth_header(sip, &sip->proxy, trans->msg->method, trans->msg->target);
-				sipmsg_remove_header(msg, "Proxy-Authorization");
+				sipmsg_remove_header(trans->msg, "Proxy-Authorization");
 				sipmsg_add_header(trans->msg, "Proxy-Authorization", auth);
 				g_free(auth);
 				resend = sipmsg_to_string(trans->msg);
