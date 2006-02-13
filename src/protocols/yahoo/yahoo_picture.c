@@ -370,7 +370,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 	guchar *pkt_buf;
 	const char *host;
 	int port;
-	gsize content_length, pkt_buf_len;
+	size_t content_length, pkt_buf_len;
 	GaimConnection *gc;
 	GaimAccount *account;
 	struct yahoo_data *yd;

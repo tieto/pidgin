@@ -125,12 +125,12 @@ void yahoo_packet_hash_str(struct yahoo_packet *pkt, int key, const char *value)
 void yahoo_packet_hash_int(struct yahoo_packet *pkt, int key, int value);
 int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd);
 int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd);
-gsize yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
+size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 guchar **buf);
 void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len);
 void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data);
 void yahoo_packet_dump(guchar *data, int len);
-gsize yahoo_packet_length(struct yahoo_packet *pkt);
+size_t yahoo_packet_length(struct yahoo_packet *pkt);
 void yahoo_packet_free(struct yahoo_packet *pkt);
 
 #endif /* _YAHOO_PACKET_H_ */

@@ -82,11 +82,11 @@ void yahoo_packet_hash(struct yahoo_packet *pkt, const char *fmt, ...)
 	va_end(ap);
 }
 
-gsize yahoo_packet_length(struct yahoo_packet *pkt)
+size_t yahoo_packet_length(struct yahoo_packet *pkt)
 {
 	GSList *l;
 
-	gsize len = 0;
+	size_t len = 0;
 
 	l = pkt->hash;
 	while (l) {
@@ -270,11 +270,11 @@ yahoo_packet_send_can_write(gpointer data, gint source, GaimInputCondition cond)
 }
 
 
-gsize yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
+size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 			 guchar **buf)
 {
-	gsize pktlen = yahoo_packet_length(pkt);
-	gsize len = YAHOO_PACKET_HDRLEN + pktlen;
+	size_t pktlen = yahoo_packet_length(pkt);
+	size_t len = YAHOO_PACKET_HDRLEN + pktlen;
 	guchar *data;
 	int pos = 0;
 
@@ -301,7 +301,7 @@ gsize yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 
 int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 {
-	gsize len;
+	size_t len;
 	int ret;
 	guchar *data;
 

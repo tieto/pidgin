@@ -146,7 +146,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 		guchar *pkt_buf;
 		const char *host;
 		int port;
-		gsize content_length, header_len, pkt_buf_len;
+		size_t content_length, header_len, pkt_buf_len;
 		GaimConnection *gc;
 		GaimAccount *account;
 		struct yahoo_data *yd;
