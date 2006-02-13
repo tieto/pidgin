@@ -400,8 +400,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	if (servconn->rx_buf != NULL)
-		g_free(servconn->rx_buf);
+	g_free(servconn->rx_buf);
 	servconn->rx_buf = result_msg;
 	servconn->rx_len = result_len;
 
@@ -464,7 +463,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	g_free(old_rx_buf);
 }
 
-size_t
+ssize_t
 msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t size)
 {
 	char *params;
@@ -472,7 +471,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t size)
 	char *auth;
 	const char *server_types[] = { "NS", "SB" };
 	const char *server_type;
-	size_t r; /* result of the write operation */
+	ssize_t r; /* result of the write operation */
 	char *host;
 	MsnServConn *servconn;
 

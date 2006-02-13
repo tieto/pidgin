@@ -311,10 +311,10 @@ servconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	gaim_circ_buffer_mark_read(servconn->tx_buf, ret);
 }
 
-size_t
+ssize_t
 msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 {
-	size_t ret = 0;
+	ssize_t ret = 0;
 
 	g_return_val_if_fail(servconn != NULL, 0);
 
