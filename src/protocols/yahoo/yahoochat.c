@@ -1080,7 +1080,7 @@ void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *nam
 struct yahoo_roomlist {
 	int fd;
 	int inpa;
-	guchar *txbuf;
+	gchar *txbuf;
 	gsize tx_written;
 	guchar *rxqueue;
 	int rxlen;

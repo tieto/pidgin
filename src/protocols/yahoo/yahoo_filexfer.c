@@ -39,7 +39,7 @@ struct yahoo_xfer_data {
 	GaimConnection *gc;
 	long expires;
 	gboolean started;
-	guchar *txbuf;
+	gchar *txbuf;
 	gsize txbuflen;
 	gsize txbuf_written;
 	guint tx_handler;
