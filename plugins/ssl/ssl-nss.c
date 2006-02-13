@@ -292,8 +292,9 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	if(gsc->host)
 		SSL_SetURL(nss_data->in, gsc->host);
 
-#if 0 /* This seems like it'd the be the correct way to implement the nonblocking stuff,
-	 but it doesn't seem to work */
+#if 0
+	/* This seems like it'd the be the correct way to implement the
+	nonblocking stuff, but it doesn't seem to work */
 	SSL_HandshakeCallback(nss_data->in,
 		(SSLHandshakeCallback) ssl_nss_handshake_cb, gsc);
 #endif
