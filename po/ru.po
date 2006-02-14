@@ -10147,7 +10147,7 @@ msgstr "Нет совпадений"
 
 #: src/protocols/sametime/sametime.c:5386
 #, c-format
-msgid "The identifier '%s' did not match and users in your Sametime community."
+msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
 
 #: src/protocols/sametime/sametime.c:5390

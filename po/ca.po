@@ -9909,7 +9909,7 @@ msgstr "Cap coincidència"
 
 #: ../src/protocols/sametime/sametime.c:5431
 #, c-format
-msgid "The identifier '%s' did not match and users in your Sametime community."
+msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
 "L'identificador «%s» no ha coincidit amb que dels usuaris de la vostra "
 "comunitat Sametime."

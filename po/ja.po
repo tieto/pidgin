@@ -9845,7 +9845,7 @@ msgstr "見つかりません"
 
 #: ../src/protocols/sametime/sametime.c:5431
 #, c-format
-msgid "The identifier '%s' did not match and users in your Sametime community."
+msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr "Sametime コミュニティには ID '%s' に一致するユーザはいませんでした"
 
 #: ../src/protocols/sametime/sametime.c:5435
