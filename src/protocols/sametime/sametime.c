@@ -5483,7 +5483,7 @@ static void search_resolved(struct mwServiceResolve *srvc,
     char *msg;
 
     msgA = _("No matches");
-    msgB = _("The identifier '%s' did not match and users in your"
+    msgB = _("The identifier '%s' did not match any users in your"
 	     " Sametime community.");
     msg = g_strdup_printf(msgB, NSTR(res->name));
 
