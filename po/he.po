@@ -1,6 +1,6 @@
 # Gaim Hebrew translation
 # Copyright (C) 2003, Pavel Bibergal cyberkm@barak-online.net
-# Fixed & Updated 2005, Shalom Craimer <scraimer at softhome dot net>
+# Fixed & Updated 2006, Shalom Craimer <scraimer at gmail dot com>
 #
 # This file is distributed under the same license as the Gaim package.
 #
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-13 00:14-0500\n"
+"POT-Creation-Date: 2006-02-14 00:00-0500\n"
 "PO-Revision-Date: 2005-11-22 11:00+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at gmail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -76,8 +76,7 @@ msgstr "ערכי ניקוד שיש להשתמש בהם כאשר..."
 msgid ""
 "The buddy with the <i>largest score</i> is the buddy who will have priority "
 "in the contact.\n"
-msgstr ""
-"איש הקשר עם הניקוד <i>הגבוה</i> יהיה איש הקשר עם העדיפות.\n"
+msgstr "איש הקשר עם הניקוד <i>הגבוה</i> יהיה איש הקשר עם העדיפות.\n"
 
 #: ../plugins/contact_priority.c:125
 msgid "Use last buddy when scores are equal"
@@ -592,7 +591,7 @@ msgstr ""
 
 #: ../plugins/gevolution/add_buddy_dialog.c:131
 #: ../plugins/gevolution/assoc-buddy.c:119 ../src/gtkplugin.c:590
-#: ../src/gtkroomlist.c:604 ../src/protocols/jabber/jabber.c:754
+#: ../src/gtkroomlist.c:604 ../src/protocols/jabber/jabber.c:755
 #: ../src/protocols/msn/msn.c:1524
 msgid "Name"
 msgstr "שם"
@@ -651,7 +650,7 @@ msgid "_Associate Buddy"
 msgstr "שייך איש _קשר"
 
 #: ../plugins/gevolution/eds-utils.c:73 ../plugins/gevolution/eds-utils.c:86
-#: ../src/protocols/jabber/jabber.c:1122
+#: ../src/protocols/jabber/jabber.c:1125
 msgid "None"
 msgstr "ללא"
 
@@ -940,8 +939,7 @@ msgstr "נותקת מהשרת."
 msgid ""
 "You are currently disconnected. Messages will not be received unless you are "
 "logged in."
-msgstr ""
-"את/ה כרגע מנותק/ת. הודעות לא יתקבלו אלא רק בזמן שאת/ה מחובר/ת."
+msgstr "את/ה כרגע מנותק/ת. הודעות לא יתקבלו אלא רק בזמן שאת/ה מחובר/ת."
 
 #: ../plugins/log_reader.c:1473
 msgid "Message could not be sent because the maximum length was exceeded."
@@ -1013,8 +1011,8 @@ msgid ""
 "Currently, this includes Adium, Fire, Messenger Plus!, MSN Messenger, and "
 "Trillian."
 msgstr ""
-"בעת צפייה ביומני-שיחה, תוסף זה יכלול יומנים מתוכנות צ'אט אחרות. "
-"כרגע, זה כולל Adium, Fire, Messenger Plus!, MSN Messenger, Trillian."
+"בעת צפייה ביומני-שיחה, תוסף זה יכלול יומנים מתוכנות צ'אט אחרות. כרגע, זה "
+"כולל Adium, Fire, Messenger Plus!, MSN Messenger, Trillian."
 
 #: ../plugins/mailchk.c:160
 msgid "Mail Checker"
@@ -1040,8 +1038,7 @@ msgstr "טוען תוספי .NET עם Mono."
 msgid ""
 "A music messaging session has been requested. Please click the MM icon to "
 "accept."
-msgstr ""
-"התקבלה בקשה לשיחת מוזיקה. נא ללחוץ על כפתור ה-MM להסכים."
+msgstr "התקבלה בקשה לשיחת מוזיקה. נא ללחוץ על כפתור ה-MM להסכים."
 
 #: ../plugins/musicmessaging/musicmessaging.c:45
 msgid "Music messaging session confirmed."
@@ -1094,8 +1091,7 @@ msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
 "on a piece of music by editting a common score in real-time."
 msgstr ""
-"התוסף להודעות מוזיקה מאפשר למספר משתמשים לעבוד יחד על הלחנת יצירה "
-"בזמן אמת."
+"התוסף להודעות מוזיקה מאפשר למספר משתמשים לעבוד יחד על הלחנת יצירה בזמן אמת."
 
 #. ---------- "Notify For" ----------
 #: ../plugins/notify.c:638
@@ -1220,8 +1216,8 @@ msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
-"גורם לחלונות-שיחה להופיע כבר כאשר אנשי קשר מתחילים לכתוב הודעה.  "
-"זה עובד עבור AIM, ICQ, Jabber, Sametime, Yahoo!"
+"גורם לחלונות-שיחה להופיע כבר כאשר אנשי קשר מתחילים לכתוב הודעה.  זה עובד "
+"עבור AIM, ICQ, Jabber, Sametime, Yahoo!"
 
 #: ../plugins/psychic.c:60
 msgid "You feel a disturbance in the force..."
@@ -1636,8 +1632,7 @@ msgstr "מגדיר את פורמט חותמות-הזמן בהודעות."
 msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
-msgstr ""
-"תוסף זה מאפשר למשתמש לקבוע אפשרויות שיחה וחותמות-זמן ליומני שיחה."
+msgstr "תוסף זה מאפשר למשתמש לקבוע אפשרויות שיחה וחותמות-זמן ליומני שיחה."
 
 #: ../plugins/win32/transparency/win2ktrans.c:183
 #: ../plugins/win32/transparency/win2ktrans.c:569
@@ -1791,7 +1786,7 @@ msgstr "שמור חדשה"
 #: ../src/account.c:968 ../src/account.c:1139 ../src/gtkdialogs.c:571
 #: ../src/gtkdialogs.c:708 ../src/gtkdialogs.c:776 ../src/gtkrequest.c:287
 #: ../src/protocols/gg/gg.c:454 ../src/protocols/gg/gg.c:595
-#: ../src/protocols/gg/gg.c:731 ../src/protocols/jabber/jabber.c:1319
+#: ../src/protocols/gg/gg.c:731 ../src/protocols/jabber/jabber.c:1322
 #: ../src/protocols/jabber/xdata.c:337 ../src/protocols/msn/msn.c:250
 #: ../src/protocols/msn/msn.c:265 ../src/protocols/msn/msn.c:280
 #: ../src/protocols/msn/msn.c:295 ../src/protocols/oscar/oscar.c:2999
@@ -1819,7 +1814,7 @@ msgstr "אישור"
 #: ../src/protocols/gg/gg.c:732 ../src/protocols/gg/gg.c:812
 #: ../src/protocols/jabber/buddy.c:573 ../src/protocols/jabber/buddy.c:1412
 #: ../src/protocols/jabber/buddy.c:1446 ../src/protocols/jabber/chat.c:780
-#: ../src/protocols/jabber/jabber.c:823 ../src/protocols/jabber/jabber.c:1320
+#: ../src/protocols/jabber/jabber.c:824 ../src/protocols/jabber/jabber.c:1323
 #: ../src/protocols/jabber/xdata.c:338 ../src/protocols/msn/msn.c:251
 #: ../src/protocols/msn/msn.c:266 ../src/protocols/msn/msn.c:281
 #: ../src/protocols/msn/msn.c:296 ../src/protocols/msn/msn.c:313
@@ -1853,7 +1848,7 @@ msgid "Connection Error"
 msgstr "שגיעת התחברות"
 
 #: ../src/account.c:1076 ../src/protocols/gg/gg.c:636
-#: ../src/protocols/jabber/jabber.c:1272
+#: ../src/protocols/jabber/jabber.c:1275
 msgid "New passwords do not match."
 msgstr "הסיסמה החדשה ווידואה אינם תואמים."
 
@@ -1916,11 +1911,11 @@ msgid_plural ""
 "which are currently disabled or offline.  These buddies and the group were "
 "not removed.\n"
 msgstr[0] ""
-"%d איש קשר מהקבוצה %s לא הוסר מכיוון שהחשבון אליו הוא שייך.אנשי "
-"לא מחובר. איש קשר זה והקבוצה לא הוסר.\n"
+"%d איש קשר מהקבוצה %s לא הוסר מכיוון שהחשבון אליו הוא שייך.אנשי לא מחובר. "
+"איש קשר זה והקבוצה לא הוסר.\n"
 msgstr[1] ""
-"%d אנשי קשר מהקבוצה %s לא הוסרו מכיוון שהחשבונות אליהם הם שייכים.אנשי "
-"לא מחוברים. אנשי קשר אלו והקבוצה לא הוסרו.\n"
+"%d אנשי קשר מהקבוצה %s לא הוסרו מכיוון שהחשבונות אליהם הם שייכים.אנשי לא "
+"מחוברים. אנשי קשר אלו והקבוצה לא הוסרו.\n"
 
 #: ../src/blist.c:1896
 msgid "Group not removed"
@@ -2239,7 +2234,7 @@ msgid "_Advanced"
 msgstr "_מתקדם"
 
 #. Register button
-#: ../src/gtkaccount.c:1786 ../src/protocols/jabber/jabber.c:822
+#: ../src/gtkaccount.c:1786 ../src/protocols/jabber/jabber.c:823
 msgid "Register"
 msgstr "הרשם"
 
@@ -2686,7 +2681,6 @@ msgstr "/אנשי קשר/הצג פרטי אנשי-קשר"
 #: ../src/gtkblist.c:3759
 msgid "/Buddies/Show Idle Times"
 msgstr "/אנשי קשר/הצג זמני חוסר פעילות"
-
 
 #: ../src/gtkblist.c:4471 ../src/protocols/silc/buddy.c:736
 #: ../src/protocols/silc/buddy.c:1030 ../src/protocols/silc/buddy.c:1075
@@ -3529,15 +3523,13 @@ msgid ""
 "file for the complete list of contributors.  We provide no warranty for this "
 "program.<BR><BR>"
 msgstr ""
-"גיים הינה תוכנת שליחת הודעות מיידיות מודולרית המאפשרת שימוש ב "
-"AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novel GroupWise, Lotus Sametime, "
-"Napster, Zephyr, Gadu-Gadu "
-"ובכולם בו-זמנית. התוכנה נכתבה בעזרת GTK+.<BR><BR> "
-"מותר לך לערוך שינויים ולהפיץ את התוכנה תחת הנחיות רישיון ה-GPL "
-"(גירסה 2 או מאוחר יותר). "
-"העתק של ה-GPL מוכל בתוך הקובץ 'COPYING' המופץ עם גיים. גיים היא תחת זכויות "
-"המפתחים והתורמים לפיתוח. ראה את הקובץ 'COPYRIGHT' לרשימה מלאה של התורמים. "
-"איננו מספקים שום אחריות לתוכנה זו.<BR><BR>"
+"גיים הינה תוכנת שליחת הודעות מיידיות מודולרית המאפשרת שימוש ב AIM, MSN, "
+"Yahoo!, Jabber, ICQ, IRC, SILC, Novel GroupWise, Lotus Sametime, Napster, "
+"Zephyr, Gadu-Gadu ובכולם בו-זמנית. התוכנה נכתבה בעזרת GTK+.<BR><BR> מותר לך "
+"לערוך שינויים ולהפיץ את התוכנה תחת הנחיות רישיון ה-GPL (גירסה 2 או מאוחר "
+"יותר). העתק של ה-GPL מוכל בתוך הקובץ 'COPYING' המופץ עם גיים. גיים היא תחת "
+"זכויות המפתחים והתורמים לפיתוח. ראה את הקובץ 'COPYRIGHT' לרשימה מלאה של "
+"התורמים. איננו מספקים שום אחריות לתוכנה זו.<BR><BR>"
 
 #: ../src/gtkdialogs.c:265
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -4033,21 +4025,18 @@ msgstr "%B %Y"
 msgid ""
 "System events will only be logged if the \"Log all status changes to system "
 "log\" preference is enabled."
-msgstr ""
-"אירועי מערכת רק יירשמו אם סומן \"רשום כל שינויי סטטוס ליומן המערכת\"."
- 
+msgstr "אירועי מערכת רק יירשמו אם סומן \"רשום כל שינויי סטטוס ליומן המערכת\"."
+
 #: ../src/gtklog.c:315
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
 "preference is enabled."
-msgstr ""
-"הודעות רק יירשמו אם סומן \"רשום את כל ההודעות\"."
+msgstr "הודעות רק יירשמו אם סומן \"רשום את כל ההודעות\"."
 
 #: ../src/gtklog.c:318
 msgid ""
 "Chats will only be logged if the \"Log all chats\" preference is enabled."
-msgstr ""
-"צ'אטים רק יירשמו אם סומן \"רשום את כל הצ'אטים\"."
+msgstr "צ'אטים רק יירשמו אם סומן \"רשום את כל הצ'אטים\"."
 
 #: ../src/gtklog.c:322
 msgid "No logs were found"
@@ -4128,14 +4117,14 @@ msgstr ""
 "אם באפשרותך לגרום לנפילה לקרות שוב, אנא הודע על כך למפתחי גיים דרך:\n"
 "%sbug.php\n"
 "\n"
-"יש לפרט בדיוק מה עשית בזמן הנפילה, ולשלוח את הודעות ה-backtrace מהקובץ core.\n"
+"יש לפרט בדיוק מה עשית בזמן הנפילה, ולשלוח את הודעות ה-backtrace מהקובץ "
+"core.\n"
 "אם אינך יודע/ת להוציא את ה-backtrace, אנא קרא את ההוראות ב:\n"
 "%sgdb.php\n"
 "\n"
 "אם יש צורך בעזרה נוספת, אנא פנה בהודעה אל SeanEgn או LSchiere דרך AIM.\n"
 "מידע ליצור קשר עם שון ולוק בפרוטוקולים אחרים נמצא ב:\n"
 "%scontactinfo.php\n"
-
 
 #: ../src/gtkmedia.c:52
 msgid "Call ended."
@@ -4180,7 +4169,7 @@ msgstr "דוא\"ל חדש"
 msgid "Open All Messages"
 msgstr "פתח את כל ההודעות"
 
-#: ../src/gtknotify.c:382 ../src/protocols/jabber/jabber.c:1115
+#: ../src/gtknotify.c:382 ../src/protocols/jabber/jabber.c:1118
 msgid "From"
 msgstr "מאת"
 
@@ -4475,8 +4464,8 @@ msgid ""
 "Select a smiley theme that you would like to use from the list below. New "
 "themes can be installed by dragging and dropping them onto the theme list."
 msgstr ""
-"בחר ערכת החיוכים מרשימה למטה. ערכות חדשות ניתן להתקין ע\"י גרירתם על "
-"רשימת הערכות."
+"בחר ערכת החיוכים מרשימה למטה. ערכות חדשות ניתן להתקין ע\"י גרירתם על רשימת "
+"הערכות."
 
 #: ../src/gtkprefs.c:673
 msgid "Icon"
@@ -5046,10 +5035,10 @@ msgstr "סוג"
 #: ../src/protocols/bonjour/bonjour.c:263 ../src/protocols/gg/gg.c:1421
 #: ../src/protocols/gg/gg.c:1431 ../src/protocols/gg/gg.c:1437
 #: ../src/protocols/gg/gg.c:1446 ../src/protocols/gg/gg.c:1451
-#: ../src/protocols/irc/irc.c:227 ../src/protocols/jabber/jabber.c:1182
-#: ../src/protocols/jabber/jabber.c:1192 ../src/protocols/jabber/jabber.c:1202
-#: ../src/protocols/jabber/jabber.c:1212 ../src/protocols/jabber/jabber.c:1222
-#: ../src/protocols/jabber/jabber.c:1234 ../src/protocols/novell/novell.c:2868
+#: ../src/protocols/irc/irc.c:227 ../src/protocols/jabber/jabber.c:1185
+#: ../src/protocols/jabber/jabber.c:1195 ../src/protocols/jabber/jabber.c:1205
+#: ../src/protocols/jabber/jabber.c:1215 ../src/protocols/jabber/jabber.c:1225
+#: ../src/protocols/jabber/jabber.c:1237 ../src/protocols/novell/novell.c:2868
 #: ../src/protocols/novell/novell.c:2974 ../src/protocols/novell/novell.c:2980
 #: ../src/protocols/novell/novell.c:2986 ../src/protocols/oscar/oscar.c:7723
 #: ../src/protocols/oscar/oscar.c:7737 ../src/protocols/oscar/oscar.c:7742
@@ -5084,7 +5073,7 @@ msgstr "שונה"
 #: ../src/gtksavedstatuses.c:909 ../src/gtksavedstatuses.c:1056
 #: ../src/protocols/gg/gg.c:1403 ../src/protocols/gg/gg.c:1408
 #: ../src/protocols/jabber/buddy.c:623 ../src/protocols/jabber/buddy.c:630
-#: ../src/protocols/jabber/buddy.c:641 ../src/protocols/jabber/jabber.c:1153
+#: ../src/protocols/jabber/buddy.c:641 ../src/protocols/jabber/jabber.c:1156
 #: ../src/protocols/msn/msn.c:550 ../src/protocols/novell/novell.c:2867
 #: ../src/protocols/novell/novell.c:2871 ../src/protocols/oscar/oscar.c:785
 #: ../src/protocols/oscar/oscar.c:791 ../src/protocols/oscar/oscar.c:794
@@ -5181,7 +5170,7 @@ msgstr "מקליד/ה"
 
 #. connect to the server
 #: ../src/gtkstatusbox.c:364 ../src/protocols/irc/irc.c:313
-#: ../src/protocols/jabber/jabber.c:980 ../src/protocols/msn/session.c:349
+#: ../src/protocols/jabber/jabber.c:983 ../src/protocols/msn/session.c:349
 #: ../src/protocols/napster/napster.c:536
 #: ../src/protocols/novell/novell.c:2183 ../src/protocols/oscar/oscar.c:1874
 #: ../src/protocols/sametime/sametime.c:3693
@@ -5412,8 +5401,7 @@ msgstr "לא ניתן להקשיב לתקשורת-הודעות נכנסת.\n"
 #: ../src/protocols/bonjour/bonjour.c:146
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
-msgstr ""
-"לא מצליח לתקשר עם שרת ה-mDNS המקומי. האם הוא כבר רץ?"
+msgstr "לא מצליח לתקשר עם שרת ה-mDNS המקומי. האם הוא כבר רץ?"
 
 #: ../src/protocols/bonjour/bonjour.c:337
 #: ../src/protocols/sametime/sametime.c:3251
@@ -5485,6 +5473,31 @@ msgstr "שם משפחה"
 msgid "Email"
 msgstr "דוא\"ל"
 
+#: ../src/protocols/bonjour/jabber.c:357
+#, c-format
+msgid "%s has closed the conversation."
+msgstr "%s סגר את חלון השיחה."
+
+#: ../src/protocols/bonjour/jabber.c:439
+msgid "Cannot open socket"
+msgstr "אין אפשרות לפתוח שקע"
+
+#: ../src/protocols/bonjour/jabber.c:447
+msgid "Error setting socket options"
+msgstr "שגיאה בקביעת הגדרות השקע"
+
+#: ../src/protocols/bonjour/jabber.c:458
+msgid "Cannot bind socket to port"
+msgstr "לא ניתן לקבע את השקע ליציאה"
+
+#: ../src/protocols/bonjour/jabber.c:465
+msgid "Cannot listen on socket"
+msgstr "אין אפשרות להקשיב בשקע זה"
+
+#: ../src/protocols/bonjour/jabber.c:559
+msgid "Unable to send the message, the conversation couldn't be started."
+msgstr "לא ניתן לשלוח את ההודעה, לא היה אפשר להתחיל את השיחה."
+
 #: ../src/protocols/gg/gg.c:80 ../src/protocols/gg/gg.c:102
 #: ../src/protocols/gg/gg.c:137
 msgid "Token Error"
@@ -5552,7 +5565,7 @@ msgid "e-Mail"
 msgstr "דוא\"ל"
 
 #: ../src/protocols/gg/gg.c:430 ../src/protocols/gg/gg.c:704
-#: ../src/protocols/jabber/jabber.c:748 ../src/protocols/jabber/jabber.c:1307
+#: ../src/protocols/jabber/jabber.c:749 ../src/protocols/jabber/jabber.c:1310
 msgid "Password"
 msgstr "סיסמה"
 
@@ -5587,7 +5600,7 @@ msgstr "יש לך חיפוש בפעולה. יש לחכות לסיומו."
 #: ../src/protocols/gg/gg.c:567 ../src/protocols/gg/gg.c:974
 #: ../src/protocols/gg/gg.c:1997 ../src/protocols/jabber/buddy.c:252
 #: ../src/protocols/jabber/buddy.c:695 ../src/protocols/jabber/buddy.c:1395
-#: ../src/protocols/jabber/jabber.c:764 ../src/protocols/msn/msn.c:1373
+#: ../src/protocols/jabber/jabber.c:765 ../src/protocols/msn/msn.c:1373
 #: ../src/protocols/silc/buddy.c:1528 ../src/protocols/silc/ops.c:1036
 #: ../src/protocols/silc/ops.c:1179 ../src/protocols/silc/ops.c:1328
 #: ../src/protocols/yahoo/yahoo_profile.c:1035
@@ -5595,7 +5608,7 @@ msgid "Nickname"
 msgstr "כינוי"
 
 #: ../src/protocols/gg/gg.c:572 ../src/protocols/gg/gg.c:977
-#: ../src/protocols/jabber/jabber.c:784 ../src/protocols/oscar/oscar.c:6153
+#: ../src/protocols/jabber/jabber.c:785 ../src/protocols/oscar/oscar.c:6153
 #: ../src/protocols/oscar/oscar.c:6161
 msgid "City"
 msgstr "עיר"
@@ -5878,8 +5891,8 @@ msgstr "_סיסמא:"
 msgid "IRC nicks may not contain whitespace"
 msgstr "אסור לשמות ב-IRC להכיל רווחים"
 
-#: ../src/protocols/irc/irc.c:321 ../src/protocols/jabber/jabber.c:549
-#: ../src/protocols/jabber/jabber.c:889
+#: ../src/protocols/irc/irc.c:321 ../src/protocols/jabber/jabber.c:550
+#: ../src/protocols/jabber/jabber.c:890
 msgid "SSL support unavailable"
 msgstr "אין תמיכה ב-SSL."
 
@@ -5888,16 +5901,16 @@ msgstr "אין תמיכה ב-SSL."
 msgid "Couldn't create socket"
 msgstr "אין אפשרות ליצור שקע "
 
-#: ../src/protocols/irc/irc.c:404 ../src/protocols/jabber/jabber.c:420
+#: ../src/protocols/irc/irc.c:404 ../src/protocols/jabber/jabber.c:421
 #: ../src/protocols/oscar/oscar.c:1803 ../src/protocols/oscar/oscar.c:1870
 msgid "Couldn't connect to host"
 msgstr "לא ניתן להתחבר לשרת"
 
-#: ../src/protocols/irc/irc.c:429 ../src/protocols/jabber/jabber.c:447
+#: ../src/protocols/irc/irc.c:429 ../src/protocols/jabber/jabber.c:448
 msgid "Connection Failed"
 msgstr "ההתחברות נכשלה"
 
-#: ../src/protocols/irc/irc.c:432 ../src/protocols/jabber/jabber.c:450
+#: ../src/protocols/irc/irc.c:432 ../src/protocols/jabber/jabber.c:451
 msgid "SSL Handshake Failed"
 msgstr "כשל בלחיצת היד של SSL"
 
@@ -5935,7 +5948,7 @@ msgstr "תוסף פרוטוקול IRC שפחות מבאס"
 
 #. host to connect to
 #: ../src/protocols/irc/irc.c:898 ../src/protocols/irc/msgs.c:231
-#: ../src/protocols/jabber/jabber.c:1906
+#: ../src/protocols/jabber/jabber.c:1909
 #: ../src/protocols/napster/napster.c:720
 #: ../src/protocols/sametime/sametime.c:5639 ../src/protocols/silc/ops.c:1242
 #: ../src/protocols/silc/ops.c:1344 ../src/protocols/simple/simple.c:1663
@@ -5947,7 +5960,7 @@ msgid "Encodings"
 msgstr "קידוד"
 
 #: ../src/protocols/irc/irc.c:907 ../src/protocols/irc/msgs.c:225
-#: ../src/protocols/jabber/jabber.c:744 ../src/protocols/silc/buddy.c:1531
+#: ../src/protocols/jabber/jabber.c:745 ../src/protocols/silc/buddy.c:1531
 #: ../src/protocols/silc/ops.c:1189 ../src/protocols/silc/ops.c:1191
 #: ../src/protocols/silc/ops.c:1338 ../src/protocols/silc/ops.c:1340
 #: ../src/protocols/silc/silc.c:929
@@ -6271,7 +6284,7 @@ msgstr ""
 msgid "names [channel]:  List the users currently in a channel."
 msgstr "names [ערוץ]:  הצג את רשימת המשתמשים שכרגע בערוץ."
 
-#: ../src/protocols/irc/parse.c:129 ../src/protocols/jabber/jabber.c:1743
+#: ../src/protocols/irc/parse.c:129 ../src/protocols/jabber/jabber.c:1746
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;כינוי חדש&gt;:  שינוי שם הכינוי שלך."
 
@@ -6455,7 +6468,7 @@ msgstr "שם משפחה"
 msgid "Given Name"
 msgstr "שם פרטי"
 
-#: ../src/protocols/jabber/buddy.c:253 ../src/protocols/jabber/jabber.c:804
+#: ../src/protocols/jabber/buddy.c:253 ../src/protocols/jabber/jabber.c:805
 msgid "URL"
 msgstr "קישור"
 
@@ -6476,7 +6489,7 @@ msgid "Region"
 msgstr "איזור"
 
 #: ../src/protocols/jabber/buddy.c:258 ../src/protocols/jabber/buddy.c:745
-#: ../src/protocols/jabber/jabber.c:794
+#: ../src/protocols/jabber/jabber.c:795
 msgid "Postal Code"
 msgstr "מיקוד"
 
@@ -6517,7 +6530,7 @@ msgid ""
 "comfortable."
 msgstr "כל הפריטים להלן הם בחירה. יש להזין רק את המידע שאת/ה מרגיש/ה נוח לתת."
 
-#: ../src/protocols/jabber/buddy.c:639 ../src/protocols/jabber/jabber.c:1909
+#: ../src/protocols/jabber/buddy.c:639 ../src/protocols/jabber/jabber.c:1912
 msgid "Resource"
 msgstr "משאב"
 
@@ -6525,7 +6538,7 @@ msgstr "משאב"
 msgid "Middle Name"
 msgstr "שם אמצעי"
 
-#: ../src/protocols/jabber/buddy.c:718 ../src/protocols/jabber/jabber.c:779
+#: ../src/protocols/jabber/buddy.c:718 ../src/protocols/jabber/jabber.c:780
 #: ../src/protocols/oscar/oscar.c:6152 ../src/protocols/oscar/oscar.c:6160
 #: ../src/protocols/silc/ops.c:1064
 msgid "Address"
@@ -6568,12 +6581,12 @@ msgid "Unsubscribe"
 msgstr "בטל את המנוי "
 
 #: ../src/protocols/jabber/buddy.c:1097 ../src/protocols/jabber/chat.c:677
-#: ../src/protocols/jabber/chat.c:688 ../src/protocols/jabber/jabber.c:1165
+#: ../src/protocols/jabber/chat.c:688 ../src/protocols/jabber/jabber.c:1168
 #: ../src/protocols/silc/ops.c:1449
 msgid "Error"
 msgstr "שגיאה"
 
-#: ../src/protocols/jabber/buddy.c:1103 ../src/protocols/jabber/jabber.c:1190
+#: ../src/protocols/jabber/buddy.c:1103 ../src/protocols/jabber/jabber.c:1193
 msgid "Chatty"
 msgstr "פטפטן"
 
@@ -6581,7 +6594,7 @@ msgstr "פטפטן"
 msgid "Extended Away"
 msgstr "העדרות ממושכת"
 
-#: ../src/protocols/jabber/buddy.c:1109 ../src/protocols/jabber/jabber.c:1220
+#: ../src/protocols/jabber/buddy.c:1109 ../src/protocols/jabber/jabber.c:1223
 #: ../src/protocols/oscar/oscar.c:723 ../src/protocols/oscar/oscar.c:7980
 #: ../src/protocols/sametime/sametime.c:3285
 msgid "Do Not Disturb"
@@ -6595,12 +6608,12 @@ msgstr "להלן תוצאות החיפוש שלך"
 msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr "יש להזין אחד או יותר מן השדות לביצוע חיפוש של משתמשי Jabber מתאימים."
 
-#: ../src/protocols/jabber/buddy.c:1385 ../src/protocols/jabber/jabber.c:769
+#: ../src/protocols/jabber/buddy.c:1385 ../src/protocols/jabber/jabber.c:770
 #: ../src/protocols/oscar/oscar.c:6110 ../src/protocols/silc/ops.c:1024
 msgid "First Name"
 msgstr "שם פרטי"
 
-#: ../src/protocols/jabber/buddy.c:1390 ../src/protocols/jabber/jabber.c:774
+#: ../src/protocols/jabber/buddy.c:1390 ../src/protocols/jabber/jabber.c:775
 #: ../src/protocols/oscar/oscar.c:6111
 msgid "Last Name"
 msgstr "שם משפחה"
@@ -6723,400 +6736,400 @@ msgstr "שגיאה בעת איתחול התקשורת"
 msgid "Write error"
 msgstr "שגיאה בכתיבה"
 
-#: ../src/protocols/jabber/jabber.c:353 ../src/protocols/jabber/jabber.c:387
+#: ../src/protocols/jabber/jabber.c:355 ../src/protocols/jabber/jabber.c:388
 msgid "Read Error"
 msgstr "שגיאה בקריאה"
 
-#: ../src/protocols/jabber/jabber.c:473 ../src/protocols/jabber/jabber.c:899
+#: ../src/protocols/jabber/jabber.c:474 ../src/protocols/jabber/jabber.c:900
 msgid "Unable to create socket"
 msgstr "אין אפשרות ליצור שקע"
 
-#: ../src/protocols/jabber/jabber.c:519 ../src/protocols/jabber/jabber.c:856
+#: ../src/protocols/jabber/jabber.c:520 ../src/protocols/jabber/jabber.c:857
 msgid "Invalid Jabber ID"
 msgstr "זיהוי משתמש Jabber לא תקין"
 
-#: ../src/protocols/jabber/jabber.c:589
+#: ../src/protocols/jabber/jabber.c:590
 #, c-format
 msgid "Registration of %s@%s successful"
 msgstr "הרישום של %s@%s בוצע בהצלחה"
 
-#: ../src/protocols/jabber/jabber.c:591 ../src/protocols/jabber/jabber.c:592
+#: ../src/protocols/jabber/jabber.c:592 ../src/protocols/jabber/jabber.c:593
 msgid "Registration Successful"
 msgstr "רישום בוצע בהצלחה"
 
-#: ../src/protocols/jabber/jabber.c:598 ../src/protocols/jabber/jabber.c:1456
+#: ../src/protocols/jabber/jabber.c:599 ../src/protocols/jabber/jabber.c:1459
 msgid "Unknown Error"
 msgstr "שגיאה לא ידועה"
 
-#: ../src/protocols/jabber/jabber.c:600 ../src/protocols/jabber/jabber.c:601
+#: ../src/protocols/jabber/jabber.c:601 ../src/protocols/jabber/jabber.c:602
 msgid "Registration Failed"
 msgstr "הרישום נכשל"
 
-#: ../src/protocols/jabber/jabber.c:712 ../src/protocols/jabber/jabber.c:713
+#: ../src/protocols/jabber/jabber.c:713 ../src/protocols/jabber/jabber.c:714
 msgid "Already Registered"
 msgstr "הכינוי כבר רשום."
 
-#: ../src/protocols/jabber/jabber.c:759
+#: ../src/protocols/jabber/jabber.c:760
 msgid "E-Mail"
 msgstr "דואר"
 
-#: ../src/protocols/jabber/jabber.c:789 ../src/protocols/oscar/oscar.c:6154
+#: ../src/protocols/jabber/jabber.c:790 ../src/protocols/oscar/oscar.c:6154
 #: ../src/protocols/oscar/oscar.c:6162
 msgid "State"
 msgstr "מחוז"
 
-#: ../src/protocols/jabber/jabber.c:799 ../src/protocols/silc/ops.c:1069
+#: ../src/protocols/jabber/jabber.c:800 ../src/protocols/silc/ops.c:1069
 #: ../src/protocols/silc/silc.c:697 ../src/protocols/silc/util.c:514
 msgid "Phone"
 msgstr "טלפון"
 
-#: ../src/protocols/jabber/jabber.c:809
+#: ../src/protocols/jabber/jabber.c:810
 msgid "Date"
 msgstr "תאריך"
 
-#: ../src/protocols/jabber/jabber.c:817
+#: ../src/protocols/jabber/jabber.c:818
 msgid "Please fill out the information below to register your new account."
 msgstr ".יש להזין את המידע להלן כדי לרשום את החשבון החדש שלך"
 
-#: ../src/protocols/jabber/jabber.c:820 ../src/protocols/jabber/jabber.c:821
+#: ../src/protocols/jabber/jabber.c:821 ../src/protocols/jabber/jabber.c:822
 msgid "Register New Jabber Account"
 msgstr "רשום חשבון Jabber חדש"
 
-#: ../src/protocols/jabber/jabber.c:984
+#: ../src/protocols/jabber/jabber.c:987
 msgid "Initializing Stream"
 msgstr "מאתחל זרם"
 
-#: ../src/protocols/jabber/jabber.c:990 ../src/protocols/msn/session.c:355
+#: ../src/protocols/jabber/jabber.c:993 ../src/protocols/msn/session.c:355
 msgid "Authenticating"
 msgstr "מאמת"
 
-#: ../src/protocols/jabber/jabber.c:999
+#: ../src/protocols/jabber/jabber.c:1002
 msgid "Re-initializing Stream"
 msgstr "מאתחל את הזרם מחדש"
 
-#: ../src/protocols/jabber/jabber.c:1069 ../src/protocols/jabber/jabber.c:1434
-#: ../src/protocols/jabber/jabber.c:1475 ../src/protocols/jabber/jabber.c:1509
+#: ../src/protocols/jabber/jabber.c:1072 ../src/protocols/jabber/jabber.c:1437
+#: ../src/protocols/jabber/jabber.c:1478 ../src/protocols/jabber/jabber.c:1512
 #: ../src/protocols/oscar/oscar.c:792 ../src/protocols/oscar/oscar.c:7770
 msgid "Not Authorized"
 msgstr "לא מורשה"
 
-#: ../src/protocols/jabber/jabber.c:1111
+#: ../src/protocols/jabber/jabber.c:1114
 msgid "Both"
 msgstr "שניהם"
 
-#: ../src/protocols/jabber/jabber.c:1113
+#: ../src/protocols/jabber/jabber.c:1116
 msgid "From (To pending)"
 msgstr "מאת (אל מושהה)"
 
-#: ../src/protocols/jabber/jabber.c:1118
+#: ../src/protocols/jabber/jabber.c:1121
 msgid "To"
 msgstr "אל"
 
-#: ../src/protocols/jabber/jabber.c:1120
+#: ../src/protocols/jabber/jabber.c:1123
 msgid "None (To pending)"
 msgstr "אין (אל מושהה)"
 
-#: ../src/protocols/jabber/jabber.c:1124
+#: ../src/protocols/jabber/jabber.c:1127
 msgid "Subscription"
 msgstr "מנוי"
 
-#: ../src/protocols/jabber/jabber.c:1181 ../src/protocols/jabber/jabber.c:1191
-#: ../src/protocols/jabber/jabber.c:1201 ../src/protocols/jabber/jabber.c:1211
-#: ../src/protocols/jabber/jabber.c:1221
+#: ../src/protocols/jabber/jabber.c:1184 ../src/protocols/jabber/jabber.c:1194
+#: ../src/protocols/jabber/jabber.c:1204 ../src/protocols/jabber/jabber.c:1214
+#: ../src/protocols/jabber/jabber.c:1224
 msgid "Priority"
 msgstr "עדיפות"
 
-#: ../src/protocols/jabber/jabber.c:1250
+#: ../src/protocols/jabber/jabber.c:1253
 msgid "Password Changed"
 msgstr "סיסמה שונתה"
 
-#: ../src/protocols/jabber/jabber.c:1251
+#: ../src/protocols/jabber/jabber.c:1254
 msgid "Your password has been changed."
 msgstr "הסיסמה שלך שונתה."
 
-#: ../src/protocols/jabber/jabber.c:1255 ../src/protocols/jabber/jabber.c:1256
+#: ../src/protocols/jabber/jabber.c:1258 ../src/protocols/jabber/jabber.c:1259
 msgid "Error changing password"
 msgstr "שגיאה במהלך שינוי הסיסמה"
 
-#: ../src/protocols/jabber/jabber.c:1312
+#: ../src/protocols/jabber/jabber.c:1315
 msgid "Password (again)"
 msgstr "סיסמא (שנית)"
 
-#: ../src/protocols/jabber/jabber.c:1317 ../src/protocols/jabber/jabber.c:1318
+#: ../src/protocols/jabber/jabber.c:1320 ../src/protocols/jabber/jabber.c:1321
 msgid "Change Jabber Password"
 msgstr "הסיסמה שלך שונתה בהצלחה"
 
-#: ../src/protocols/jabber/jabber.c:1318
+#: ../src/protocols/jabber/jabber.c:1321
 msgid "Please enter your new password"
 msgstr "הזן את הסיסמה החדשה שלך."
 
-#: ../src/protocols/jabber/jabber.c:1328 ../src/protocols/oscar/oscar.c:8404
+#: ../src/protocols/jabber/jabber.c:1331 ../src/protocols/oscar/oscar.c:8404
 #: ../src/protocols/silc/silc.c:1019
 msgid "Set User Info..."
 msgstr "קבע את המידע על המשתמש..."
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
-#: ../src/protocols/jabber/jabber.c:1333 ../src/protocols/oscar/oscar.c:8415
+#: ../src/protocols/jabber/jabber.c:1336 ../src/protocols/oscar/oscar.c:8415
 #: ../src/protocols/silc/silc.c:1015
 msgid "Change Password..."
 msgstr "שנה סיסמא..."
 
 #. }
-#: ../src/protocols/jabber/jabber.c:1338
+#: ../src/protocols/jabber/jabber.c:1341
 msgid "Search for Users..."
 msgstr "_חפש משתמשים..."
 
-#: ../src/protocols/jabber/jabber.c:1414
+#: ../src/protocols/jabber/jabber.c:1417
 msgid "Bad Request"
 msgstr "בקשה שגויה"
 
-#: ../src/protocols/jabber/jabber.c:1416
+#: ../src/protocols/jabber/jabber.c:1419
 msgid "Conflict"
 msgstr "התנגשות"
 
-#: ../src/protocols/jabber/jabber.c:1418
+#: ../src/protocols/jabber/jabber.c:1421
 msgid "Feature Not Implemented"
 msgstr "טרם יושם."
 
-#: ../src/protocols/jabber/jabber.c:1420
+#: ../src/protocols/jabber/jabber.c:1423
 msgid "Forbidden"
 msgstr "אסור"
 
-#: ../src/protocols/jabber/jabber.c:1422
+#: ../src/protocols/jabber/jabber.c:1425
 msgid "Gone"
 msgstr "לא-נמצא"
 
-#: ../src/protocols/jabber/jabber.c:1424 ../src/protocols/jabber/jabber.c:1499
+#: ../src/protocols/jabber/jabber.c:1427 ../src/protocols/jabber/jabber.c:1502
 msgid "Internal Server Error"
 msgstr "שגיאה פנימית בשרת"
 
-#: ../src/protocols/jabber/jabber.c:1426
+#: ../src/protocols/jabber/jabber.c:1429
 msgid "Item Not Found"
 msgstr "פריט לא נמצא"
 
-#: ../src/protocols/jabber/jabber.c:1428
+#: ../src/protocols/jabber/jabber.c:1431
 msgid "Malformed Jabber ID"
 msgstr "זיהוי משתמש Jabber לא תקין"
 
-#: ../src/protocols/jabber/jabber.c:1430
+#: ../src/protocols/jabber/jabber.c:1433
 msgid "Not Acceptable"
 msgstr "לא קביל"
 
-#: ../src/protocols/jabber/jabber.c:1432
+#: ../src/protocols/jabber/jabber.c:1435
 msgid "Not Allowed"
 msgstr "לא מורשה"
 
-#: ../src/protocols/jabber/jabber.c:1436
+#: ../src/protocols/jabber/jabber.c:1439
 msgid "Payment Required"
 msgstr "נדרש תשלום"
 
-#: ../src/protocols/jabber/jabber.c:1438
+#: ../src/protocols/jabber/jabber.c:1441
 msgid "Recipient Unavailable"
 msgstr "נמען לא זמין"
 
-#: ../src/protocols/jabber/jabber.c:1442
+#: ../src/protocols/jabber/jabber.c:1445
 msgid "Registration Required"
 msgstr "נדרשת הרשמה"
 
-#: ../src/protocols/jabber/jabber.c:1444
+#: ../src/protocols/jabber/jabber.c:1447
 msgid "Remote Server Not Found"
 msgstr "שרת לא נמצא"
 
-#: ../src/protocols/jabber/jabber.c:1446
+#: ../src/protocols/jabber/jabber.c:1449
 msgid "Remote Server Timeout"
 msgstr "תם הזמן המוקצב לתקשורת שרת"
 
-#: ../src/protocols/jabber/jabber.c:1448
+#: ../src/protocols/jabber/jabber.c:1451
 msgid "Server Overloaded"
 msgstr "עומס יתר על השרת"
 
-#: ../src/protocols/jabber/jabber.c:1450
+#: ../src/protocols/jabber/jabber.c:1453
 msgid "Service Unavailable"
 msgstr "השירות אינו זמין"
 
-#: ../src/protocols/jabber/jabber.c:1452
+#: ../src/protocols/jabber/jabber.c:1455
 msgid "Subscription Required"
 msgstr "נדרש מנוי"
 
-#: ../src/protocols/jabber/jabber.c:1454
+#: ../src/protocols/jabber/jabber.c:1457
 msgid "Unexpected Request"
 msgstr "בקשה לא צפוייה"
 
-#: ../src/protocols/jabber/jabber.c:1461
+#: ../src/protocols/jabber/jabber.c:1464
 msgid "Authorization Aborted"
 msgstr "אימות בוטל"
 
-#: ../src/protocols/jabber/jabber.c:1463
+#: ../src/protocols/jabber/jabber.c:1466
 msgid "Incorrect encoding in authorization"
 msgstr "קידוד שגוי באימות"
 
-#: ../src/protocols/jabber/jabber.c:1466
+#: ../src/protocols/jabber/jabber.c:1469
 msgid "Invalid authzid"
 msgstr "authzid לא תקף"
 
-#: ../src/protocols/jabber/jabber.c:1469
+#: ../src/protocols/jabber/jabber.c:1472
 msgid "Invalid Authorization Mechanism"
 msgstr "מנגנון האימות לא תקף"
 
-#: ../src/protocols/jabber/jabber.c:1472
+#: ../src/protocols/jabber/jabber.c:1475
 msgid "Authorization mechanism too weak"
 msgstr "מנגנון האימות חלש מדי"
 
-#: ../src/protocols/jabber/jabber.c:1477
+#: ../src/protocols/jabber/jabber.c:1480
 msgid "Temporary Authentication Failure"
 msgstr "כשל זמני באימות"
 
-#: ../src/protocols/jabber/jabber.c:1480
+#: ../src/protocols/jabber/jabber.c:1483
 msgid "Authentication Failure"
 msgstr "כשל באימות"
 
-#: ../src/protocols/jabber/jabber.c:1484
+#: ../src/protocols/jabber/jabber.c:1487
 msgid "Bad Format"
 msgstr "מבנה לא תקין"
 
-#: ../src/protocols/jabber/jabber.c:1486
+#: ../src/protocols/jabber/jabber.c:1489
 msgid "Bad Namespace Prefix"
 msgstr "נתיב הקשר-שם שגוי"
 
-#: ../src/protocols/jabber/jabber.c:1489
+#: ../src/protocols/jabber/jabber.c:1492
 msgid "Resource Conflict"
 msgstr "התנגשויות משאבים"
 
-#: ../src/protocols/jabber/jabber.c:1491 ../src/protocols/silc/ops.c:1728
+#: ../src/protocols/jabber/jabber.c:1494 ../src/protocols/silc/ops.c:1728
 msgid "Connection Timeout"
 msgstr "אזל הזמן המוקצב לחיבור"
 
-#: ../src/protocols/jabber/jabber.c:1493
+#: ../src/protocols/jabber/jabber.c:1496
 msgid "Host Gone"
 msgstr "המארח נעלם"
 
-#: ../src/protocols/jabber/jabber.c:1495
+#: ../src/protocols/jabber/jabber.c:1498
 msgid "Host Unknown"
 msgstr "מארח לא מוכר"
 
-#: ../src/protocols/jabber/jabber.c:1497
+#: ../src/protocols/jabber/jabber.c:1500
 msgid "Improper Addressing"
 msgstr "כיתובת לא נכונה"
 
-#: ../src/protocols/jabber/jabber.c:1501
+#: ../src/protocols/jabber/jabber.c:1504
 msgid "Invalid ID"
 msgstr "זיהוי לא תקין"
 
-#: ../src/protocols/jabber/jabber.c:1503
+#: ../src/protocols/jabber/jabber.c:1506
 msgid "Invalid Namespace"
 msgstr "הקשר-שם לא תקף"
 
-#: ../src/protocols/jabber/jabber.c:1505
+#: ../src/protocols/jabber/jabber.c:1508
 msgid "Invalid XML"
 msgstr "XML שגוי"
 
-#: ../src/protocols/jabber/jabber.c:1507
+#: ../src/protocols/jabber/jabber.c:1510
 msgid "Non-matching Hosts"
 msgstr "מארחים לא תואמים"
 
-#: ../src/protocols/jabber/jabber.c:1511
+#: ../src/protocols/jabber/jabber.c:1514
 msgid "Policy Violation"
 msgstr "חילול ההסכם"
 
-#: ../src/protocols/jabber/jabber.c:1513
+#: ../src/protocols/jabber/jabber.c:1516
 msgid "Remote Connection Failed"
 msgstr "שגיאת תקשורת בצד המרוחק"
 
-#: ../src/protocols/jabber/jabber.c:1515
+#: ../src/protocols/jabber/jabber.c:1518
 msgid "Resource Constraint"
 msgstr "הגבלת משאבים"
 
-#: ../src/protocols/jabber/jabber.c:1517
+#: ../src/protocols/jabber/jabber.c:1520
 msgid "Restricted XML"
 msgstr "XML מוגבל"
 
-#: ../src/protocols/jabber/jabber.c:1519
+#: ../src/protocols/jabber/jabber.c:1522
 msgid "See Other Host"
 msgstr "צפה במארח אחר"
 
-#: ../src/protocols/jabber/jabber.c:1521
+#: ../src/protocols/jabber/jabber.c:1524
 msgid "System Shutdown"
 msgstr "כיבוי המערכת"
 
-#: ../src/protocols/jabber/jabber.c:1523
+#: ../src/protocols/jabber/jabber.c:1526
 msgid "Undefined Condition"
 msgstr "מקרה לא מוגדר מראש"
 
-#: ../src/protocols/jabber/jabber.c:1525
+#: ../src/protocols/jabber/jabber.c:1528
 msgid "Unsupported Encoding"
 msgstr "קידוד שלא נתמך"
 
-#: ../src/protocols/jabber/jabber.c:1527
+#: ../src/protocols/jabber/jabber.c:1530
 msgid "Unsupported Stanza Type"
 msgstr "סוג סטנזה שלא נתמכת"
 
-#: ../src/protocols/jabber/jabber.c:1529
+#: ../src/protocols/jabber/jabber.c:1532
 msgid "Unsupported Version"
 msgstr "גירסא ללא תמיכה"
 
-#: ../src/protocols/jabber/jabber.c:1531
+#: ../src/protocols/jabber/jabber.c:1534
 msgid "XML Not Well Formed"
 msgstr "XML לא מובנה נכון"
 
-#: ../src/protocols/jabber/jabber.c:1533
+#: ../src/protocols/jabber/jabber.c:1536
 msgid "Stream Error"
 msgstr "שגיאה בזרם"
 
-#: ../src/protocols/jabber/jabber.c:1600
+#: ../src/protocols/jabber/jabber.c:1603
 #, c-format
 msgid "Unable to ban user %s"
 msgstr "לא ניתן לחסום משתמש %s"
 
-#: ../src/protocols/jabber/jabber.c:1620
+#: ../src/protocols/jabber/jabber.c:1623
 #, c-format
 msgid "Unknown affiliation: \"%s\""
 msgstr "ייחוס לא מוכר: %s"
 
-#: ../src/protocols/jabber/jabber.c:1625
+#: ../src/protocols/jabber/jabber.c:1628
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
 msgstr "לא ניתן לייחס את משתמש %s בתור \"%s\""
 
-#: ../src/protocols/jabber/jabber.c:1644
+#: ../src/protocols/jabber/jabber.c:1647
 #, c-format
 msgid "Unknown role: \"%s\""
 msgstr "תפקיד לא מוכר: \"%s\""
 
-#: ../src/protocols/jabber/jabber.c:1651
+#: ../src/protocols/jabber/jabber.c:1654
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
 msgstr "לא ניתן לקבוע תפקיד \"%s\" עבור משתמש: %s"
 
-#: ../src/protocols/jabber/jabber.c:1704
+#: ../src/protocols/jabber/jabber.c:1707
 #, c-format
 msgid "Unable to kick user %s"
 msgstr "לא ניתן לבעוט במשתמש %s"
 
-#: ../src/protocols/jabber/jabber.c:1735
+#: ../src/protocols/jabber/jabber.c:1738
 msgid "config:  Configure a chat room."
 msgstr "config:  קבע הגדרות חדר צ'אט."
 
-#: ../src/protocols/jabber/jabber.c:1739
+#: ../src/protocols/jabber/jabber.c:1742
 msgid "configure:  Configure a chat room."
 msgstr "configure:  קבע הגדרות חדר צ'אט."
 
-#: ../src/protocols/jabber/jabber.c:1748
+#: ../src/protocols/jabber/jabber.c:1751
 msgid "part [room]:  Leave the room."
 msgstr "part [חדר]:  עזוב את החדר."
 
-#: ../src/protocols/jabber/jabber.c:1753
+#: ../src/protocols/jabber/jabber.c:1756
 msgid "register:  Register with a chat room."
 msgstr "register:  הרשם בחדר צ'אט."
 
-#: ../src/protocols/jabber/jabber.c:1759
+#: ../src/protocols/jabber/jabber.c:1762
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [נושא חדש]:  הצג או שנה את הנושא."
 
-#: ../src/protocols/jabber/jabber.c:1765
+#: ../src/protocols/jabber/jabber.c:1768
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
 msgstr "ban &lt;משתמש&gt; [חדר]:  חסום משתמש מן החדר."
 
-#: ../src/protocols/jabber/jabber.c:1771
+#: ../src/protocols/jabber/jabber.c:1774
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
 "affiliation with the room."
@@ -7124,27 +7137,27 @@ msgstr ""
 "affiliate &lt;משתמש&gt; &lt;בעלים|מפעיל|חבר|בגלות|ללא&gt;: קביעת ייחוס משתמש "
 "עם החדר."
 
-#: ../src/protocols/jabber/jabber.c:1777
+#: ../src/protocols/jabber/jabber.c:1780
 msgid ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
 "role in the room."
 msgstr ""
-"role &lt;משתמש&gt; &lt;בעלים|מפעיל|חבר|בגלות|ללא&gt;: קביעת ייחוס משתמש "
-"עם החדר."
+"role &lt;משתמש&gt; &lt;בעלים|מפעיל|חבר|בגלות|ללא&gt;: קביעת ייחוס משתמש עם "
+"החדר."
 
-#: ../src/protocols/jabber/jabber.c:1783
+#: ../src/protocols/jabber/jabber.c:1786
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;משתמש&gt; [חדר]:  הזמן משתמש לחדר."
 
-#: ../src/protocols/jabber/jabber.c:1789
+#: ../src/protocols/jabber/jabber.c:1792
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
 msgstr "join: &lt;חדר&gt; [שרת]:  הצטרף לצ'אט בשרת זה."
 
-#: ../src/protocols/jabber/jabber.c:1795
+#: ../src/protocols/jabber/jabber.c:1798
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;משתמש&gt; [חדר]:  בעט משתמש מהחדר."
 
-#: ../src/protocols/jabber/jabber.c:1800
+#: ../src/protocols/jabber/jabber.c:1803
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr "msg &lt;משתמש&gt; &lt;הודעה&gt;:  שלח הודעה פרטית למשתמש אחר."
@@ -7159,32 +7172,32 @@ msgstr "msg &lt;משתמש&gt; &lt;הודעה&gt;:  שלח הודעה פרטית
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/jabber/jabber.c:1884 ../src/protocols/jabber/jabber.c:1886
+#: ../src/protocols/jabber/jabber.c:1887 ../src/protocols/jabber/jabber.c:1889
 msgid "Jabber Protocol Plugin"
 msgstr "תוסף פרוטוקול Jabber"
 
-#: ../src/protocols/jabber/jabber.c:1912
+#: ../src/protocols/jabber/jabber.c:1915
 msgid "Use TLS if available"
 msgstr "השתמש ב-TLS במידה וזמין"
 
-#: ../src/protocols/jabber/jabber.c:1917
+#: ../src/protocols/jabber/jabber.c:1920
 msgid "Require TLS"
 msgstr "דרוש TLS"
 
-#: ../src/protocols/jabber/jabber.c:1920
+#: ../src/protocols/jabber/jabber.c:1923
 msgid "Force old (port 5223) SSL"
 msgstr "אלץ שימוש ב-SSL ישן )יציאה 5223("
 
-#: ../src/protocols/jabber/jabber.c:1925
+#: ../src/protocols/jabber/jabber.c:1928
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "אפשר אישרור לא מוצפן בתקשורת לא מוצפנת"
 
-#: ../src/protocols/jabber/jabber.c:1930 ../src/protocols/simple/simple.c:1669
+#: ../src/protocols/jabber/jabber.c:1933 ../src/protocols/simple/simple.c:1669
 msgid "Connect port"
 msgstr "יציאת ההתחברות"
 
 #. Account options
-#: ../src/protocols/jabber/jabber.c:1934 ../src/protocols/silc/silc.c:1852
+#: ../src/protocols/jabber/jabber.c:1937 ../src/protocols/silc/silc.c:1852
 msgid "Connect server"
 msgstr "שרת ההתחברות"
 
@@ -8767,8 +8780,8 @@ msgid ""
 ">Advanced."
 msgstr ""
 "הזמן המוקצב להעברת הקובץ %s אזל.\n"
-" יש לנסות להפעיל שימוש בשרתי תיווך עבור העברת קבצים תחת חשבונות->%s"
-"->ערוך חשבון->מתקדם."
+" יש לנסות להפעיל שימוש בשרתי תיווך עבור העברת קבצים תחת חשבונות->%s->ערוך "
+"חשבון->מתקדם."
 
 #: ../src/protocols/oscar/oscar.c:2274
 #: ../src/protocols/yahoo/yahoo_filexfer.c:253
@@ -9613,7 +9626,7 @@ msgstr "קידוד"
 msgid ""
 "Use AIM/ICQ proxy server\n"
 "(slower, but usually works)"
-msgstr 
+msgstr ""
 "השתמש בשרת התיווך של AIM/ICQ\n"
 ")יותר איטי, אבל בד\"כ עובד("
 
@@ -9688,8 +9701,7 @@ msgstr "מחובר"
 #, c-format
 msgid ""
 "A Sametime administrator has issued the following announcement on server %s"
-msgstr ""
-"אדמיניסטרטור Sametime שם את ההודעה להלן על השרת %s"
+msgstr "אדמיניסטרטור Sametime שם את ההודעה להלן על השרת %s"
 
 #: ../src/protocols/sametime/sametime.c:1610
 msgid "Sametime Administrator Announcement"
@@ -9769,8 +9781,7 @@ msgstr "צור שיחת ועידה עם המשתמש"
 msgid ""
 "Please enter a topic for the new conference, and an invitation message to be "
 "sent to %s"
-msgstr ""
-"יש להזין נושא עבוד שיחת הועידה, והודעת הזמנה שתישלח אל %s"
+msgstr "יש להזין נושא עבוד שיחת הועידה, והודעת הזמנה שתישלח אל %s"
 
 #: ../src/protocols/sametime/sametime.c:3373
 msgid "New Conference"
@@ -9799,8 +9810,8 @@ msgid ""
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
 msgstr ""
-"בחר שיחת ועידה מהרשימה להלן לשלוח הזמנה למשתמש %s."
-"בחר \"צור ועידה חדשה\" אם ברצונך ליצור ועידה חדשה להזמין אליה משתמש זה."
+"בחר שיחת ועידה מהרשימה להלן לשלוח הזמנה למשתמש %s.בחר \"צור ועידה חדשה\" אם "
+"ברצונך ליצור ועידה חדשה להזמין אליה משתמש זה."
 
 #: ../src/protocols/sametime/sametime.c:3458
 msgid "Invite to Conference"
@@ -9828,8 +9839,8 @@ msgid ""
 "No host or IP address has been configured for the Meanwhile account %s. "
 "Please enter one below to continue logging in."
 msgstr ""
-"לא הוגדר שם או כתובת IP עבור חשבון ה-Meanwhile %s. "
-"יש להזין אחת להלן כדי להמשיך בכניסה למערכת."
+"לא הוגדר שם או כתובת IP עבור חשבון ה-Meanwhile %s. יש להזין אחת להלן כדי "
+"להמשיך בכניסה למערכת."
 
 #: ../src/protocols/sametime/sametime.c:3627
 msgid "Meanwhile Connection Setup"
@@ -9896,8 +9907,8 @@ msgid ""
 "The identifier '%s' may possibly refer to any of the following users. Please "
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
-"המזהה '%s' יכול להתכוון אל כל אחד מן המשתמשים להלן. אנא בחר/י את המשתמש"
-"הנכון מן הרשימה כדי להוסיף אותם לרשימת אנשי הקשר שלך."
+"המזהה '%s' יכול להתכוון אל כל אחד מן המשתמשים להלן. אנא בחר/י את המשתמשהנכון "
+"מן הרשימה כדי להוסיף אותם לרשימת אנשי הקשר שלך."
 
 #: ../src/protocols/sametime/sametime.c:4297
 msgid "Select User"
@@ -9913,8 +9924,8 @@ msgid ""
 "The identifier '%s' did not match any users in your Sametime community. This "
 "entry has been removed from your buddy list."
 msgstr ""
-"המזהה '%s' לא תואם לאף משתמש בקהילה ה-Sametime שלך."
-"והוא הוסר מרשימת אנשי הקשר שלך."
+"המזהה '%s' לא תואם לאף משתמש בקהילה ה-Sametime שלך.והוא הוסר מרשימת אנשי "
+"הקשר שלך."
 
 #: ../src/protocols/sametime/sametime.c:4374
 msgid "Unable to add user"
@@ -9992,8 +10003,8 @@ msgid ""
 "Book groups. Please select the correct group from the list below to add it "
 "to your buddy list."
 msgstr ""
-"המזהה '%s' יכול להתכוון לכל אחד מקבוצות ספרי הכתובות של Notes שלהלן."
-"אנא בחר/י את הקבוצה הנכונה מתוך הרשימה כדי להוסיף אותה לרשימת אנשי הקשר שלך."
+"המזהה '%s' יכול להתכוון לכל אחד מקבוצות ספרי הכתובות של Notes שלהלן.אנא בחר/"
+"י את הקבוצה הנכונה מתוך הרשימה כדי להוסיף אותה לרשימת אנשי הקשר שלך."
 
 #: ../src/protocols/sametime/sametime.c:5318
 msgid "Select Notes Address Book"
@@ -10008,8 +10019,7 @@ msgstr "לא ניתן להוסיף קבוצה: הקבוצה לא נמצאה"
 msgid ""
 "The identifier '%s' did not match any Notes Address Book groups in your "
 "Sametime community."
-msgstr ""
-"המזהה '%s' לא תואם לאף קבוצת ספרי הכתובות של Notes בקהילה שלך."
+msgstr "המזהה '%s' לא תואם לאף קבוצת ספרי הכתובות של Notes בקהילה שלך."
 
 #: ../src/protocols/sametime/sametime.c:5403
 msgid "Notes Address Book Group"
@@ -10060,8 +10070,8 @@ msgid ""
 "Enter a name or partial ID in the field below to search for matching users "
 "in your Sametime community."
 msgstr ""
-"יש להזין שם או מזהה חלקי בשדה להלן כדי לחפש משתמשים תואמים בקהילת ב-Sametime"
-"שלך."
+"יש להזין שם או מזהה חלקי בשדה להלן כדי לחפש משתמשים תואמים בקהילת ב-"
+"Sametimeשלך."
 
 #: ../src/protocols/sametime/sametime.c:5531
 msgid "User Search"
@@ -11448,9 +11458,7 @@ msgstr "%s שלח הודעה אל הלוח הלבן. האם ברצונך לפת�
 msgid ""
 "%s sent message to whiteboard on %s channel. Would you like to open the "
 "whiteboard?"
-msgstr ""
-"%s שלח הודעה אל הלוח הלבן בערוץ %s."
-"האם ברצונך לפתוח את הלוח הלבן?"
+msgstr "%s שלח הודעה אל הלוח הלבן בערוץ %s.האם ברצונך לפתוח את הלוח הלבן?"
 
 #: ../src/protocols/silc/wb.c:302
 msgid "Whiteboard"
@@ -12115,9 +12123,7 @@ msgstr "פרטי המשתמש %sאינם זמינים "
 msgid ""
 "Sorry, this profile seems to be in a language or format that is not "
 "supported at this time."
-msgstr ""
-"סליחה, אך נראה כי פרופיל זה הוא בשפה או פורמט "
-"שלא נתמכים כרגע."
+msgstr "סליחה, אך נראה כי פרופיל זה הוא בשפה או פורמט שלא נתמכים כרגע."
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1186
 msgid ""
@@ -12174,8 +12180,8 @@ msgid ""
 "Unknown error. You may need to logout and wait five minutes before being "
 "able to rejoin a chatroom"
 msgstr ""
-"שגיאה לא מוכרת. עליך להתנתק ולחכות כחמש דקות לפני שיהיה אפשר "
-"להצטרף שוב לחדר-צ'אט"
+"שגיאה לא מוכרת. עליך להתנתק ולחכות כחמש דקות לפני שיהיה אפשר להצטרף שוב לחדר-"
+"צ'אט"
 
 #: ../src/protocols/yahoo/yahoochat.c:452
 #, c-format
@@ -13044,9 +13050,6 @@ msgstr "g003: שגיאה בעת פתיחת חיבור תקשורת.\n"
 #~ "כישלון בעת השמת %s לשקע:\n"
 #~ "%s"
 
-#~ msgid "Unable to open socket"
-#~ msgstr "אין אפשרות לפתוח שקע"
-
 #~ msgid "Remote Control"
 #~ msgstr "שליטה מרוחקת"
 
@@ -13749,9 +13752,6 @@ msgstr "g003: שגיאה בעת פתיחת חיבור תקשורת.\n"
 
 #~ msgid "The conversation has become inactive and timed out."
 #~ msgstr "השיחה הפכה ללא-פעילה ונותקה בשל חוסר פעילות לאורך זמן."
-
-#~ msgid "%s has closed the conversation window."
-#~ msgstr "%s סגר את חלון השיחה."
 
 #~ msgid "Transfer of file %s timed out."
 #~ msgstr "משלוח הקובץ %s בוטל מפאת חוסר פעילות."
