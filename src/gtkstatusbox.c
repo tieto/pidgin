@@ -1375,8 +1375,6 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	GtkGaimStatusBox *status_box;
 	GtkTreeIter iter;
 	GtkGaimStatusBoxItemType type;
-	char *text, *desc;
-	GdkPixbuf *pixbuf;
 	gpointer data;
 	GList *accounts = NULL, *node;
 
@@ -1386,9 +1384,6 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
-			   TITLE_COLUMN, &text,
-			   DESC_COLUMN, &desc,
-			   ICON_COLUMN, &pixbuf,
 			   DATA_COLUMN, &data,
 			   -1);
 	if (status_box->typing != 0)
