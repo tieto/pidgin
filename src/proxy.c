@@ -1104,8 +1104,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		phb->read_len = 0;
 	}
 
-	p = phb->read_buffer + phb->read_len - 1;
-	max_read = phb->read_buf_len - phb->read_len;
+	p = phb->read_buffer + phb->read_len;
+	max_read = phb->read_buf_len - phb->read_len - 1;
 
 	len = read(source, p, max_read);
 	if(len < 0 && errno == EAGAIN)
@@ -1484,7 +1484,7 @@ s4_canread(gpointer data, gint source, GaimInputCondition cond)
 		phb->read_len = 0;
 	}
 
-	buf = phb->read_buffer + phb->read_len - 1;
+	buf = phb->read_buffer + phb->read_len;
 	max_read = phb->read_buf_len - phb->read_len;
 
 	len = read(source, buf, max_read);
