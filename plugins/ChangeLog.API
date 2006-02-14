@@ -303,6 +303,7 @@ version 2.0.0:
 	Signals - Added:  (See the Doxygen docs for details on all signals.)
 	* "account-disabled"
 	* "account-status-changed"
+	* "account-alias-changed"
 	* "cipher-added"
 	* "cipher-removed"
 	* "conversation-dragging"

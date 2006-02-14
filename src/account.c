@@ -1205,10 +1205,18 @@ gaim_account_set_alias(GaimAccount *account, const char *alias)
 {
 	g_return_if_fail(account != NULL);
 
-	g_free(account->alias);
-	account->alias = (alias == NULL ? NULL : g_strdup(alias));
+	if ((!alias && account->alias) || (alias && !account->alias) ||
+			g_utf8_collate(account->alias, alias))
+	{
+		char *old = account->alias;
 
-	schedule_accounts_save();
+		account->alias = (alias == NULL ? NULL : g_strdup(alias));
+		gaim_signal_emit(gaim_accounts_get_handle(), "account-alias-changed",
+						 account, old);
+		g_free(old);
+
+		schedule_accounts_save();
+	}
 }
 
 void
@@ -2332,6 +2340,12 @@ gaim_accounts_init(void)
 										GAIM_SUBTYPE_STATUS),
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_STATUS));
+
+	gaim_signal_register(handle, "account-alias-changed",
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+							 			GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING));
 	
 	load_accounts();
 

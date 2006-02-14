@@ -68,6 +68,14 @@ account_status_changed(GaimAccount *account, GaimStatus *old, GaimStatus *new,
 					gaim_status_get_name(new));
 }
 
+static void
+account_alias_changed(GaimAccount *account, const char *old, gpointer data)
+{
+	gaim_debug_misc("signals test", "account-alias-changed (%s, %s, %s)\n",
+					gaim_account_get_username(account),
+					old, gaim_account_get_alias(account));
+}
+
 /**************************************************************************
  * Buddy Icons signal callbacks
  **************************************************************************/
@@ -537,6 +545,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(account_set_info_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-status-changed",
 						plugin, GAIM_CALLBACK(account_status_changed), NULL);
+	gaim_signal_connect(accounts_handle, "account-alias-changed",
+						plugin, GAIM_CALLBACK(account_alias_changed), NULL);
 
 	/* Buddy List subsystem signals */
 	gaim_signal_connect(blist_handle, "buddy-status-changed",
