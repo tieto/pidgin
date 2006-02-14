@@ -241,7 +241,7 @@ void gaim_gtkdialogs_about()
 	atk_object_set_description(obj, "Gaim " VERSION);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = gaim_gtk_create_imhtml(FALSE, &text, NULL);
+	frame = gaim_gtk_create_imhtml(FALSE, &text, NULL, NULL);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 

@@ -1110,7 +1110,7 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar);
+	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar, NULL);
 	dialog->message = GTK_IMHTML(text);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
@@ -1446,7 +1446,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar);
+	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar, NULL);
 	dialog->message = GTK_IMHTML(text);
 	dialog->toolbar = GTK_IMHTMLTOOLBAR(toolbar);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);

@@ -388,7 +388,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 		GtkWidget *frame;
 
 		/* imhtml */
-		frame = gaim_gtk_create_imhtml(TRUE, &entry, &toolbar);
+		frame = gaim_gtk_create_imhtml(TRUE, &entry, &toolbar, NULL);
 		gtk_widget_set_size_request(entry, 320, 130);
 		gtk_widget_set_name(entry, "gaim_gtkrequest_imhtml");
 		if (default_value != NULL)

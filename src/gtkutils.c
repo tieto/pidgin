@@ -101,7 +101,7 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 }
 
 GtkWidget *
-gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret)
+gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret)
 {
 	GtkWidget *frame;
 	GtkWidget *imhtml;
@@ -156,6 +156,9 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 
 	if (editable && (toolbar_ret != NULL))
 		*toolbar_ret = toolbar;
+
+	if (sw_ret != NULL)
+		*sw_ret = sw;
 
 	return frame;
 }

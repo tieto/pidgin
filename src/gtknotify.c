@@ -532,7 +532,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(label);
 
 	/* Add the imhtml */
-	frame = gaim_gtk_create_imhtml(FALSE, &imhtml, NULL);
+	frame = gaim_gtk_create_imhtml(FALSE, &imhtml, NULL, NULL);
 	gtk_widget_set_name(imhtml, "gaim_gtknotify_imhtml");
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 			gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml)) | GTK_IMHTML_IMAGE);

@@ -112,6 +112,7 @@ version 2.0.0:
 	* All network activity has been updated to use non-blocking sockets.
 	  This means that plugins must be updated to expect such a socket from
 	  gaim_proxy_connect() and gaim_network_listen*().
+	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

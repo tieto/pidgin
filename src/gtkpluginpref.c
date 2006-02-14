@@ -144,7 +144,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 				gtk_box_pack_start(GTK_BOX(hbox), spacer, FALSE, FALSE, 0);
 				gtk_widget_show(spacer);
 
-				frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
+				frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 				if (!(format & GAIM_STRING_FORMAT_TYPE_HTML))
 					gtk_widget_destroy(toolbar);
 

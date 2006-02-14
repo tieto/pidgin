@@ -70,18 +70,20 @@ void gaim_setup_imhtml(GtkWidget *imhtml);
  * functions puts both widgets in a nice GtkFrame.  They're separate by an
  * attractive GtkSeparator.
  *
- * @param editable TRUE if this imhtml should be editable.  If this is FALSE,
+ * @param editable @c TRUE if this imhtml should be editable.  If this is @c FALSE,
  *        then the toolbar will NOT be created.  If this imthml should be
  *        read-only at first, but may become editable later, then pass in
- *        TRUE here and then manually call gtk_imhtml_set_editable() later.
+ *        @c TRUE here and then manually call gtk_imhtml_set_editable() later.
  * @param imhtml_ret A pointer to a pointer to a GtkWidget.  This pointer
  *        will be set to the imhtml when this function exits.
  * @param toolbar_ret A pointer to a pointer to a GtkWidget.  If editable is
  *        TRUE then this will be set to the toolbar when this function exits.
- *        Otherwise this will be set to NULL.
+ *        Otherwise this will be set to @c NULL.
+ * @param sw_ret This will be filled with a pointer to the scrolled window
+ *        widget which contains the imhtml.
  * @return The GtkFrame containing the toolbar and imhtml.
  */
-GtkWidget *gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret);
+GtkWidget *gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
  * Toggles the sensitivity of a widget.

@@ -936,7 +936,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 #endif
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
-	status_box->sw = gaim_gtk_create_imhtml(FALSE, &status_box->imhtml, NULL);
+	status_box->sw = gaim_gtk_create_imhtml(FALSE, &status_box->imhtml, NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));

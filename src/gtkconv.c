@@ -3789,6 +3789,8 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	GaimConnection *gc;
 	GtkWidget *vpaned, *hpaned;
 	GtkWidget *vbox, *hbox, *frame;
+	GtkWidget *imhtml_sw;
+	GtkPolicyType imhtml_sw_hscroll;
 	GtkWidget *lbox, *bbox;
 	GtkWidget *label;
 	GtkWidget *list;
@@ -3844,11 +3846,15 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_show(hpaned);
 
 	/* Setup gtkihmtml. */
-	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
+	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
 	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
 	gtk_widget_show(frame);
+	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
+	                               &imhtml_sw_hscroll, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
+	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
 
 	gtk_widget_set_size_request(gtkconv->imhtml,
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_width"),
@@ -3993,7 +3999,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_show(vbox);
 
 	/* Setup the toolbar, entry widget and all signals */
-	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar);
+	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar, NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
@@ -4036,6 +4042,8 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
 	GtkWidget *frame;
+	GtkWidget *imhtml_sw;
+	GtkPolicyType imhtml_sw_hscroll;
 	GtkWidget *paned;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -4051,11 +4059,15 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_show(vbox);
 
 	/* Setup the gtkimhtml widget */
-	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
+	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
+	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
+	                               &imhtml_sw_hscroll, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
+	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
 
 	gtk_widget_set_size_request(gtkconv->imhtml,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_width"),
@@ -4084,7 +4096,7 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_show(vbox2);
 
 	/* Setup the toolbar, entry widget and all signals */
-	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar);
+	frame = gaim_gtk_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar, NULL);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
