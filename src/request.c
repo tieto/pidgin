@@ -1363,6 +1363,29 @@ gaim_request_file(void *handle, const char *title, const char *filename,
 	return NULL;
 }
 
+void *
+gaim_request_folder(void *handle, const char *title, const char *dirname,
+				  GCallback ok_cb, GCallback cancel_cb, void *user_data)
+{
+	GaimRequestUiOps *ops;
+
+	ops = gaim_request_get_ui_ops();
+
+	if (ops != NULL && ops->request_file != NULL) {
+		GaimRequestInfo *info;
+
+		info            = g_new0(GaimRequestInfo, 1);
+		info->type      = GAIM_REQUEST_FOLDER;
+		info->handle    = handle;
+		info->ui_handle = ops->request_folder(title, dirname,
+											ok_cb, cancel_cb, user_data);
+		handles = g_list_append(handles, info);
+		return info->ui_handle;
+	}
+
+	return NULL;
+}
+
 static void
 gaim_request_close_info(GaimRequestInfo *info)
 {

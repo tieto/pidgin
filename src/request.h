@@ -42,7 +42,8 @@ typedef enum
 	GAIM_REQUEST_CHOICE,     /**< Multiple-choice request.   */
 	GAIM_REQUEST_ACTION,     /**< Action request.            */
 	GAIM_REQUEST_FIELDS,     /**< Multiple fields request.   */
-	GAIM_REQUEST_FILE        /**< File open or save request. */
+	GAIM_REQUEST_FILE,       /**< File open or save request. */
+	GAIM_REQUEST_FOLDER      /**< Folder selection request.  */
 
 } GaimRequestType;
 
@@ -205,6 +206,9 @@ typedef struct
 						  gboolean savedialog, GCallback ok_cb,
 						  GCallback cancel_cb, void *user_data);
 	void (*close_request)(GaimRequestType type, void *ui_handle);
+	void *(*request_folder)(const char *title, const char *dirname,
+						  GCallback ok_cb, GCallback cancel_cb,
+						  void *user_data);
 } GaimRequestUiOps;
 
 typedef void (*GaimRequestInputCb)(void *, const char *);
@@ -1368,6 +1372,25 @@ void gaim_request_close_with_handle(void *handle);
  */
 void *gaim_request_file(void *handle, const char *title, const char *filename,
 						gboolean savedialog,
+						GCallback ok_cb, GCallback cancel_cb,
+						void *user_data);
+
+/**
+ * Displays a folder select dialog. Returns the selected filename to
+ * the callback.
+ *
+ * @param handle      The plugin or connection handle.  For some
+ *                    things this is EXTREMELY important.  See
+ *                    the comments on gaim_request_input.
+ * @param title       The title for the dialog (may be @c NULL)
+ * @param dirname     The default directory name (may be @c NULL)
+ * @param ok_cb       The callback for the @c OK button.
+ * @param cancel_cb   The callback for the @c Cancel button.
+ * @param user_data   The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_request_folder(void *handle, const char *title, const char *dirname,
 						GCallback ok_cb, GCallback cancel_cb,
 						void *user_data);
 

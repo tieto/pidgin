@@ -1774,7 +1774,7 @@ file_yes_no_cb(GaimGtkRequestData *data, gint id)
 	if (id == 1) {
 		if (data->cbs[1] != NULL)
 			((GaimRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
-		gaim_request_close(GAIM_REQUEST_FILE, data);
+		gaim_request_close(data->type, data);
 	}
 }
 
@@ -1789,7 +1789,7 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		if (data->cbs[0] != NULL)
 			((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
-		gaim_request_close(GAIM_REQUEST_FILE, data);
+		gaim_request_close(data->type, data);
 		return;
 	}
 
@@ -1817,10 +1817,24 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
 
 	/* If name is a directory then change directories */
-	if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
-		return;
+	if (data->type == GAIM_REQUEST_FILE) {
+		if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
+			return;
+	}
 
 	current_folder = g_path_get_dirname(name);
+
+	g_free(data->u.file.name);
+	if (data->type == GAIM_REQUEST_FILE)
+		data->u.file.name = g_strdup(name);
+	else
+	{
+		if (g_file_test(name, G_FILE_TEST_IS_DIR))
+			data->u.file.name = g_strdup(name);
+		else
+			data->u.file.name = g_strdup(current_folder);
+	}
+
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
 			gaim_prefs_set_string("/gaim/gtk/filelocations/last_save_folder", current_folder);
@@ -1829,8 +1843,6 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 		}
 		g_free(current_folder);
 	}
-
-	data->u.file.name = g_strdup(name);
 
 #endif /* FILECHOOSER */
 
@@ -1853,7 +1865,7 @@ file_cancel_cb(GaimGtkRequestData *data)
 	if (data->cbs[0] != NULL)
 		((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
 
-	gaim_request_close(GAIM_REQUEST_FILE, data);
+	gaim_request_close(data->type, data);
 }
 #endif /* FILECHOOSER */
 
@@ -1951,6 +1963,57 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	return (void *)data;
 }
 
+static void *
+gaim_gtk_request_folder(const char *title, const char *dirname,
+					  GCallback ok_cb, GCallback cancel_cb,
+					  void *user_data)
+{
+	GaimGtkRequestData *data;
+	GtkWidget *dirsel;
+	
+	data = g_new0(GaimGtkRequestData, 1);
+	data->type = GAIM_REQUEST_FOLDER;
+	data->user_data = user_data;
+	data->cb_count = 2;
+	data->cbs = g_new0(GCallback, 2);
+	data->cbs[0] = cancel_cb;
+	data->cbs[1] = ok_cb;
+	data->u.file.savedialog = FALSE;
+	
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	/* Use a translated "Select Folder..." in place of NULL after strings thaw. */
+	dirsel = gtk_file_chooser_dialog_new(
+						title ? title : NULL,
+						NULL,
+						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+						NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(dirsel), GTK_RESPONSE_ACCEPT);
+
+	if ((dirname != NULL) && (*dirname != '\0'))
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dirsel), dirname);
+
+	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(dirsel)), "response",
+						G_CALLBACK(file_ok_check_if_exists_cb), data);
+#else
+	/* Use a translated "Select Folder..." in place of NULL after strings thaw. */
+	dirsel = gtk_file_selection_new(title ? title : NULL);
+
+	g_signal_connect_swapped(G_OBJECT(dirsel), "delete_event",
+							 G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(dirsel)->cancel_button),
+					 "clicked", G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dirsel)->ok_button), "clicked",
+					 G_CALLBACK(file_ok_check_if_exists_cb), data);
+#endif
+
+	data->dialog = dirsel;
+	gtk_widget_show(dirsel);
+
+	return (void *)data;
+}
+
 static void
 gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 {
@@ -1976,7 +2039,8 @@ static GaimRequestUiOps ops =
 	gaim_gtk_request_action,
 	gaim_gtk_request_fields,
 	gaim_gtk_request_file,
-	gaim_gtk_close_request
+	gaim_gtk_close_request,
+	gaim_gtk_request_folder
 };
 
 GaimRequestUiOps *
