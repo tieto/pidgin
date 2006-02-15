@@ -41,19 +41,20 @@
 /*
  *  MACROS & DEFINES
  */
-#define WINPREFS_PLUGIN_ID               "gtk-win-prefs"
+#define WINPREFS_PLUGIN_ID "gtk-win-prefs"
 
 /*
  *  LOCALS
  */
 static const char *PREF_DBLIST_DOCKABLE = "/plugins/gtk/win32/winprefs/dblist_dockable";
-static const char *PREF_DBLIST_DOCKED =   "/plugins/gtk/win32/winprefs/dblist_docked";
-static const char *PREF_DBLIST_HEIGHT =   "/plugins/gtk/win32/winprefs/dblist_height";
-static const char *PREF_DBLIST_SIDE =     "/plugins/gtk/win32/winprefs/dblist_side";
-static const char *PREF_BLIST_ON_TOP =    "/plugins/gtk/win32/winprefs/blist_on_top";
-static const char *PREF_IM_BLINK =        "/plugins/gtk/win32/winprefs/im_blink";
+static const char *PREF_DBLIST_DOCKED = "/plugins/gtk/win32/winprefs/dblist_docked";
+static const char *PREF_DBLIST_HEIGHT = "/plugins/gtk/win32/winprefs/dblist_height";
+static const char *PREF_DBLIST_SIDE = "/plugins/gtk/win32/winprefs/dblist_side";
+static const char *PREF_BLIST_ON_TOP = "/plugins/gtk/win32/winprefs/blist_on_top";
+static const char *PREF_IM_BLINK = "/plugins/gtk/win32/winprefs/im_blink";
+
 /* Deprecated */
-static const char *PREF_DBLIST_ON_TOP =   "/plugins/gtk/win32/winprefs/dblist_on_top";
+static const char *PREF_DBLIST_ON_TOP = "/plugins/gtk/win32/winprefs/dblist_on_top";
 
 static GaimPlugin *handle = NULL;
 static GtkAppBar *blist_ab = NULL;
@@ -96,10 +97,10 @@ static void blist_save_state() {
 }
 
 static void blist_set_ontop(gboolean val) {
-	if (!blist)
+	if(!blist)
 		return;
 
-	if (val == TRUE)
+	if(val)
 		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	else
 		SetWindowPos(GDK_WINDOW_HWND(blist->window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -107,13 +108,13 @@ static void blist_set_ontop(gboolean val) {
 }
 
 static void blist_dock_cb(gboolean val) {
-	if (val == TRUE) {
+	if(val) {
 		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Docking..\n");
-		if (gaim_prefs_get_int(PREF_BLIST_ON_TOP) != BLIST_TOP_NEVER)
+		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) != BLIST_TOP_NEVER)
 			blist_set_ontop(TRUE);
 	} else {
 		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking..\n");
-		if (gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 			blist_set_ontop(TRUE);
 		else
 			blist_set_ontop(FALSE);
@@ -121,18 +122,18 @@ static void blist_dock_cb(gboolean val) {
 }
 
 static void blist_set_dockable(gboolean val) {
-	if (val == TRUE) {
-		if (blist_ab == NULL && blist != NULL) {
+	if(val) {
+		if(blist_ab == NULL && blist != NULL) {
 			blist_ab = gtk_appbar_add(blist);
 			gtk_appbar_add_dock_cb(blist_ab, blist_dock_cb);
 		}
 	} else {
-		if (blist_ab != NULL) {
+		if(blist_ab != NULL) {
 			gtk_appbar_remove(blist_ab);
 			blist_ab = NULL;
 		}
 
-		if (gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 			blist_set_ontop(TRUE);
 		else
 			blist_set_ontop(FALSE);
@@ -154,37 +155,37 @@ static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
 
 	blist = GAIM_GTK_BLIST(gaim_blist)->window;
 
-	if (gaim_prefs_get_bool(PREF_DBLIST_DOCKABLE)) {
+	if(gaim_prefs_get_bool(PREF_DBLIST_DOCKABLE)) {
 		blist_set_dockable(TRUE);
-		if (gaim_prefs_get_bool(PREF_DBLIST_DOCKED)) {
+		if(gaim_prefs_get_bool(PREF_DBLIST_DOCKED)) {
 			blist_ab->undocked_height = gaim_prefs_get_int(PREF_DBLIST_HEIGHT);
 			gtk_appbar_dock(blist_ab,
-							gaim_prefs_get_int(PREF_DBLIST_SIDE));
-			if (gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_DOCKED)
+				gaim_prefs_get_int(PREF_DBLIST_SIDE));
+			if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_DOCKED)
 				blist_set_ontop(TRUE);
 		}
 	}
 
-	if (gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+	if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 		blist_set_ontop(TRUE);
 
 }
 
 /* AUTOSTART */
 
-static int open_run_key(PHKEY phKey, REGSAM samDesired) {
+static gboolean open_run_key(PHKEY phKey, REGSAM samDesired) {
 	/* First try current user key (for WinNT & Win2k +), fall back to local machine */
-	if (ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER,
-					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-					0,  samDesired,  phKey));
-	else if (ERROR_SUCCESS == RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-					0,  samDesired,  phKey));
+	if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER,
+		"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+		0, samDesired, phKey));
+	else if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+		"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+		0, samDesired, phKey));
 	else {
 		gaim_debug_error(WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
-		return 0;
+		return FALSE;
 	}
-	return 1;
+	return TRUE;
 }
 
 /* WIN PREFS GENERAL */
@@ -194,67 +195,67 @@ winprefs_set_autostart(GtkWidget *w)
 {
 	HKEY hKey;
 
-	if (!open_run_key(&hKey, KEY_SET_VALUE))
+	if(!open_run_key(&hKey, KEY_SET_VALUE))
 		return;
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
 		char buffer[1024];
 		DWORD size;
 
-		if ((size = GetModuleFileName(wgaim_hinstance(),
-									  (LPBYTE)buffer, sizeof(buffer)))==0) {
-			gaim_debug_error(WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
+		if((size = GetModuleFileName(wgaim_hinstance(),
+				(LPBYTE) buffer , sizeof(buffer))) == 0) {
+			gaim_debug_error(WINPREFS_PLUGIN_ID, "GetModuleFileName Error. Could not set Gaim autostart.\n");
 			RegCloseKey(hKey);
 			return;
 		}
 
 		/* Now set value of new key */
-		if (ERROR_SUCCESS != RegSetValueEx(hKey, "Gaim", 0, REG_SZ, buffer, size))
+		if(ERROR_SUCCESS != RegSetValueEx(hKey, "Gaim", 0, REG_SZ, buffer, size))
 			gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
 	} else {
-		if (ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
+		if(ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
 			gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
 	}
 	RegCloseKey(hKey);
 }
 
 static void
-winprefs_set_blist_dockable (const char *pref, GaimPrefType type,
+winprefs_set_blist_dockable(const char *pref, GaimPrefType type,
 		gconstpointer value, gpointer user_data)
 {
 	blist_set_dockable(GPOINTER_TO_INT(value));
 }
 
 static void
-winprefs_set_blist_ontop (const char *pref, GaimPrefType type,
+winprefs_set_blist_ontop(const char *pref, GaimPrefType type,
 		gconstpointer value, gpointer user_data)
 {
 	gint setting = gaim_prefs_get_int(PREF_BLIST_ON_TOP);
-	if ((setting == BLIST_TOP_DOCKED && blist_ab && blist_ab->docked)
+	if((setting == BLIST_TOP_DOCKED && blist_ab && blist_ab->docked)
 		|| setting == BLIST_TOP_ALWAYS)
 		blist_set_ontop(TRUE);
 	else
 		blist_set_ontop(FALSE);
 }
 
-static void load_winver_specific_procs (void) {
+static void load_winver_specific_procs(void) {
 	/* Used for Win98+ and WinNT5+ */
-	MyFlashWindowEx = (LPFNFLASHWINDOWEX)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
+	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wgaim_find_and_loadproc("user32.dll", "FlashWindowEx");
 }
 
 /* Window flasher */
-static gboolean flash_window_cb (gpointer data) {
-	FlashWindow((HWND)data, TRUE);
+static gboolean flash_window_cb(gpointer data) {
+	FlashWindow((HWND) data, TRUE);
 	return TRUE;
 }
 
 static int
-halt_flash_filter (GtkWidget *widget, GdkEventFocus *event, gpointer data)
+halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data)
 {
-	if (MyFlashWindowEx) {
+	if(MyFlashWindowEx) {
 		HWND hWnd = data;
 		FLASHWINFO info;
 
-		if (!IsWindow(hWnd))
+		if(!IsWindow(hWnd))
 			return 0;
 
 		memset(&info, 0, sizeof(FLASHWINFO));
@@ -270,7 +271,8 @@ halt_flash_filter (GtkWidget *widget, GdkEventFocus *event, gpointer data)
 		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
 		gaim_timeout_remove(finfo->t_handle);
 		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
-		g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
+		g_signal_handler_disconnect(G_OBJECT(widget),
+			finfo->sig_handler);
 		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
 		g_free(finfo);
 	}
@@ -279,30 +281,35 @@ halt_flash_filter (GtkWidget *widget, GdkEventFocus *event, gpointer data)
 
 /* FlashWindowEx is only supported by Win98+ and WinNT5+. If it's
    not supported we do it our own way */
-static void
-wgaim_conv_im_blink (GaimAccount *account, char *sender, char *buffer,
-					 GaimConversation *conv, int flags, void * data)
+static gboolean
+wgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
+		GaimConversation *conv, int flags, void *data)
 {
 	GaimGtkWindow *win;
 	GtkWidget *window;
-	if (gaim_prefs_get_bool(PREF_IM_BLINK) == FALSE)
-		return;
 
-	if (conv == NULL) {
-	  gaim_debug_info("winprefs", "gar!\n");
-	  return;
+	/* Don't flash for our own messages */
+	if(flags & GAIM_MESSAGE_SEND)
+		return FALSE;
+
+	if(!gaim_prefs_get_bool(PREF_IM_BLINK))
+		return FALSE;
+
+	if(conv == NULL) {
+		gaim_debug_info("winprefs", "gar!\n");
+		return FALSE;
 	}
 	win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(conv));
-	if (win == NULL) {
-	  gaim_debug_info("winprefs", "gar2!\n");
-	  return;
+	if(win == NULL) {
+		gaim_debug_info("winprefs", "gar2!\n");
+		return FALSE;
 	}
 	window = win->window;
 
-	if (MyFlashWindowEx) {
+	if(MyFlashWindowEx) {
 		FLASHWINFO info;
-		if (GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
-			return;
+		if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
+			return FALSE;
 
 		memset(&info, 0, sizeof(FLASHWINFO));
 		info.cbSize = sizeof(FLASHWINFO);
@@ -312,17 +319,18 @@ wgaim_conv_im_blink (GaimAccount *account, char *sender, char *buffer,
 		MyFlashWindowEx(&info);
 		/* Stop flashing when window receives focus */
 		g_signal_connect(G_OBJECT(window), "focus-in-event",
-						 G_CALLBACK(halt_flash_filter), info.hwnd);
+			G_CALLBACK(halt_flash_filter), info.hwnd);
 	} else {
 		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
 
 		/* Start Flashing window */
 		finfo->t_handle = gaim_timeout_add(1000, flash_window_cb,
-										   GDK_WINDOW_HWND(window->window));
+			GDK_WINDOW_HWND(window->window));
 		finfo->sig_handler = g_signal_connect(G_OBJECT(window),
-									"focus-in-event",
-									G_CALLBACK(halt_flash_filter), finfo);
+			"focus-in-event", G_CALLBACK(halt_flash_filter), finfo);
 	}
+
+	return FALSE;
 }
 
 
@@ -330,34 +338,39 @@ wgaim_conv_im_blink (GaimAccount *account, char *sender, char *buffer,
  *  EXPORTED FUNCTIONS
  */
 
-gboolean plugin_load(GaimPlugin *plugin) {
+static gboolean plugin_load(GaimPlugin *plugin) {
 	/* Find out how to go blinky */
 	load_winver_specific_procs();
 
 	handle = plugin;
 
 	/* blist docking init */
-	if (gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist()) && GAIM_GTK_BLIST(gaim_get_blist())->window) {
+	if(gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist())
+			&& GAIM_GTK_BLIST(gaim_get_blist())->window) {
 		blist_create_cb(gaim_get_blist(), NULL);
 	}
 
 	/* This really shouldn't happen anymore generally, but if for some strange
 	   reason, the blist is recreated, we need to set it up again. */
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-created", plugin, GAIM_CALLBACK(blist_create_cb), NULL);
+	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-created",
+		plugin, GAIM_CALLBACK(blist_create_cb), NULL);
 
-	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg", plugin, GAIM_CALLBACK(wgaim_conv_im_blink), NULL);
+	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+		"displaying-im-msg", plugin, GAIM_CALLBACK(wgaim_conv_im_blink),
+		NULL);
 
-	gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
+	gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin,
+		GAIM_CALLBACK(gaim_quit_cb), NULL);
 
 	gaim_prefs_connect_callback(handle, PREF_BLIST_ON_TOP,
-								winprefs_set_blist_ontop, NULL);
+		winprefs_set_blist_ontop, NULL);
 	gaim_prefs_connect_callback(handle, PREF_DBLIST_DOCKABLE,
-								winprefs_set_blist_dockable, NULL);
+		winprefs_set_blist_dockable, NULL);
 
 	return TRUE;
 }
 
-gboolean plugin_unload(GaimPlugin *plugin) {
+static gboolean plugin_unload(GaimPlugin *plugin) {
 	blist_set_dockable(FALSE);
 	blist_set_ontop(FALSE);
 
@@ -372,9 +385,9 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	HKEY hKey = HKEY_CURRENT_USER;
 
 	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
-	gtk_version = g_strdup_printf("GTK+ %u.%u.%u\nGlib %u.%u.%u",
+	gtk_version = g_strdup_printf("GTK+\t%u.%u.%u\nGlib\t%u.%u.%u",
 		gtk_major_version, gtk_minor_version, gtk_micro_version,
 		glib_major_version, glib_minor_version, glib_micro_version);
 
@@ -389,7 +402,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	}
 
 	/* Autostart */
-	vbox = gaim_gtk_make_frame (ret, _("Startup"));
+	vbox = gaim_gtk_make_frame(ret, _("Startup"));
 	button = gtk_check_button_new_with_mnemonic(_("_Start Gaim on Windows startup"));
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 	if(open_run_key(&hKey, KEY_QUERY_VALUE)) {
@@ -401,21 +414,21 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	gtk_widget_show(button);
 
 	/* Buddy List */
-	vbox = gaim_gtk_make_frame (ret, _("Buddy List"));
+	vbox = gaim_gtk_make_frame(ret, _("Buddy List"));
 	gaim_gtk_prefs_checkbox(_("_Dockable Buddy List"),
 							PREF_DBLIST_DOCKABLE, vbox);
 
 	/* Blist On Top */
 	gaim_gtk_prefs_dropdown(vbox, _("_Keep Buddy List window on top:"),
-							GAIM_PREF_INT, PREF_BLIST_ON_TOP,
-							_("Never"),             BLIST_TOP_NEVER,
-							_("Always"),            BLIST_TOP_ALWAYS,
-							/* XXX: Did this ever work? */
-							_("Only when docked"),  BLIST_TOP_DOCKED,
-							NULL);
+		GAIM_PREF_INT, PREF_BLIST_ON_TOP,
+		_("Never"), BLIST_TOP_NEVER,
+		_("Always"), BLIST_TOP_ALWAYS,
+		/* XXX: Did this ever work? */
+		_("Only when docked"), BLIST_TOP_DOCKED,
+		NULL);
 
 	/* Conversations */
-	vbox = gaim_gtk_make_frame (ret, _("Conversations"));
+	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 	gaim_gtk_prefs_checkbox(_("_Flash window when messages are received"),
 							PREF_IM_BLINK, vbox);
 
@@ -425,7 +438,8 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
 static GaimGtkPluginUiInfo ui_info =
 {
-	get_config_frame
+	get_config_frame,
+	0
 };
 
 static GaimPluginInfo info =
@@ -457,27 +471,27 @@ static GaimPluginInfo info =
 static void
 init_plugin(GaimPlugin *plugin)
 {
-        gaim_prefs_add_none("/plugins/gtk");
-        gaim_prefs_add_none("/plugins/gtk/win32");
-        gaim_prefs_add_none("/plugins/gtk/win32/winprefs");
-        gaim_prefs_add_bool(PREF_DBLIST_DOCKABLE, FALSE);
-        gaim_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
-        gaim_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
-        gaim_prefs_add_int(PREF_DBLIST_SIDE, 0);
-        gaim_prefs_add_bool(PREF_IM_BLINK, TRUE);
+	gaim_prefs_add_none("/plugins/gtk");
+	gaim_prefs_add_none("/plugins/gtk/win32");
+	gaim_prefs_add_none("/plugins/gtk/win32/winprefs");
+	gaim_prefs_add_bool(PREF_DBLIST_DOCKABLE, FALSE);
+	gaim_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
+	gaim_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
+	gaim_prefs_add_int(PREF_DBLIST_SIDE, 0);
+	gaim_prefs_add_bool(PREF_IM_BLINK, TRUE);
 
-		/* Convert old preferences */
-		if (gaim_prefs_exists(PREF_DBLIST_ON_TOP)) {
-			gint blist_top = BLIST_TOP_NEVER;
-			if (gaim_prefs_get_bool(PREF_BLIST_ON_TOP))
-				blist_top = BLIST_TOP_ALWAYS;
-			else if (gaim_prefs_get_bool(PREF_DBLIST_ON_TOP))
-				blist_top = BLIST_TOP_DOCKED;
-			gaim_prefs_remove(PREF_BLIST_ON_TOP);
-			gaim_prefs_remove(PREF_DBLIST_ON_TOP);
-			gaim_prefs_add_int(PREF_BLIST_ON_TOP, blist_top);
-		} else
-			gaim_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
+	/* Convert old preferences */
+	if(gaim_prefs_exists(PREF_DBLIST_ON_TOP)) {
+		gint blist_top = BLIST_TOP_NEVER;
+		if(gaim_prefs_get_bool(PREF_BLIST_ON_TOP))
+			blist_top = BLIST_TOP_ALWAYS;
+		else if(gaim_prefs_get_bool(PREF_DBLIST_ON_TOP))
+			blist_top = BLIST_TOP_DOCKED;
+		gaim_prefs_remove(PREF_BLIST_ON_TOP);
+		gaim_prefs_remove(PREF_DBLIST_ON_TOP);
+		gaim_prefs_add_int(PREF_BLIST_ON_TOP, blist_top);
+	} else
+		gaim_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
 }
 
 GAIM_INIT_PLUGIN(winprefs, init_plugin, info)
