@@ -327,6 +327,14 @@ gaim_conv_chat_send(chat, message)
 	const char * message
 
 void
+gaim_conv_chat_write(chat, who, message, flags, mtime)
+	Gaim::Conversation::Chat chat
+	const char *who
+	const char *message
+	Gaim::MessageFlags flags
+	time_t mtime
+
+void
 gaim_conv_chat_add_users(chat, users, extra_msgs, flags, new_arrivals)
 	Gaim::Conversation::Chat chat
 	SV * users
