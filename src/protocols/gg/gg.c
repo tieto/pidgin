@@ -1864,6 +1864,13 @@ static GList *ggp_actions(GaimPlugin *plugin, gpointer context)
 }
 /* }}} */
 
+/* static gboolean ggp_offline message(const GaimBuddy *buddy) {{{ */
+static gboolean ggp_offline message(const GaimBuddy *buddy)
+{
+	return TRUE;
+}
+/* }}} */
+
 /* prpl_info setup {{{ */
 static GaimPluginProtocolInfo prpl_info =
 {
@@ -1925,7 +1932,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,				/* can_receive_file */
 	NULL,				/* send_file */
 	NULL,				/* new_xfer */
-	NULL,				/* offline_message */
+	ggp_offline_message,		/* offline_message */
 	NULL,				/* whiteboard_prpl_ops */
 };
 /* }}} */
