@@ -15,13 +15,13 @@ Updated: 19-April-2003
 To supply a new translation, you first need a copy of gaim.pot.
 This can be built by typing:
 
-./update.pl --pot
+intltool-update --pot
 
 from the gaim/po/ directory.
 
 To update an exsting translation, type:
 
-./update.pl LANG
+intltool-update -m LANG
 
 where LANG is the language code to update, such as fr or ja. This will build
 a new gaim.pot and update the translation with the changes. You may then
