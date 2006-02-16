@@ -73,10 +73,10 @@ static void handle_chat(JabberMessage *jm)
 			GaimConversation *conv;
 
 			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = jabber_find_unnormalized_conv(from, jm->js->gc->account);
+			conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, from, jm->js->gc->account);
 			if(conv) {
 				gaim_conversation_set_name(conv, jm->from);
-			}
+				}
 			g_free(from);
 		}
 		from = g_strdup(jm->from);
