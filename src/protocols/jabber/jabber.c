@@ -1866,7 +1866,6 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
 	NULL,							/* whiteboard_prpl_ops */
-	NULL,							/* media_prpl_ops */
 };
 
 static GaimPluginInfo info =

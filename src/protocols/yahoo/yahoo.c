@@ -3707,7 +3707,6 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_new_xfer,
 	yahoo_offline_message, /* offline_message */
 	&yahoo_whiteboard_prpl_ops,
-	NULL, /* media_prpl_ops */
 };
 
 static GaimPluginInfo info =
