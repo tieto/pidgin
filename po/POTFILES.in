@@ -64,7 +64,6 @@ src/gtkimhtml.c
 src/gtkimhtmltoolbar.c
 src/gtklog.c
 src/gtkmain.c
-src/gtkmedia.c
 src/gtknotify.c
 src/gtkplugin.c
 src/gtkpounce.c
