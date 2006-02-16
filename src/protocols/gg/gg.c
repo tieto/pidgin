@@ -1864,8 +1864,8 @@ static GList *ggp_actions(GaimPlugin *plugin, gpointer context)
 }
 /* }}} */
 
-/* static gboolean ggp_offline message(const GaimBuddy *buddy) {{{ */
-static gboolean ggp_offline message(const GaimBuddy *buddy)
+/* static gboolean ggp_offline_message(const GaimBuddy *buddy) {{{ */
+static gboolean ggp_offline_message(const GaimBuddy *buddy)
 {
 	return TRUE;
 }
