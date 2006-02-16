@@ -1,17 +1,5 @@
 Translation README
 
-Updated: 04-October-2003
-------------------
-
-Translated .po files may be submitted in whatever native encoding is
-most convenient (and hopefully canonical).  Please ensure that the
-Content-type: line reflects the proper character set.
-
-
-
-Updated: 19-April-2003
-------------------
-
 To supply a new translation, you first need a copy of gaim.pot.
 This can be built by typing:
 
@@ -23,21 +11,20 @@ To update an exsting translation, type:
 
 intltool-update -m LANG
 
-where LANG is the language code to update, such as fr or ja. This will build
-a new gaim.pot and update the translation with the changes. You may then
+where LANG is the language code to update, such as fr or ja.  This will build
+a new gaim.pot and update the translation with the changes.  You may then
 begin editing the updated file.
 
-New or updated translations should be sent to the gaim-devel listserv
-(see http://lists.sourceforge.net/lists/listinfo/gaim-devel)
+Translated .po files may be submitted in whatever native encoding is
+most convenient (and hopefully canonical).  Please ensure that the
+Content-type: line reflects the proper character set.
 
-Please check your translations carefully. Make sure you have the same
+New or updated translations should be sent to the translation tracker:
+https://sourceforge.net/tracker/?group_id=235&atid=713922
+
+Please check your translations carefully.  Make sure you have the same
 number of newlines and %s or other formatting codes in the translation as
-you have in the original.
-
-
-
-Updated: 05-August-2003
-------------------
+you have in the original.  The po/check_po.pl script can help with this.
 
 Before submitting updated or new translations, please run the following 
 command to ensure the file does not contain errors:
