@@ -66,7 +66,6 @@ void serv_got_chat_left(GaimConnection *g, int id);
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 					  GaimMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(GaimConnection *gc, const char *who, const char *file);
-void serv_voice_chat(GaimConnection *gc, const char *who);
 
 #ifdef __cplusplus
 }
