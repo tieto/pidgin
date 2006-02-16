@@ -68,7 +68,6 @@ typedef struct {
 #include "ft.h"
 #include "proxy.h"
 #include "plugin.h"
-#include "media.h"
 #include "roomlist.h"
 #include "status.h"
 #include "whiteboard.h"
@@ -299,7 +298,6 @@ struct _GaimPluginProtocolInfo
  	gboolean (*offline_message)(const GaimBuddy *buddy);
 
 	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
-	GaimMediaPrplOps *media_prpl_ops;
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

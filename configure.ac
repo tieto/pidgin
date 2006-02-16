@@ -1599,87 +1599,6 @@ fi
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
 
-dnl ##############################################################################
-dnl ## Mediastreamer stuff #######################################################
-dnl ##############################################################################
-AC_ARG_ENABLE(vv,     [  --enable-vv         enable Voice and Video support],,enable_vv=no)
-if test "x$enable_vv" = xyes; then
-	AC_DEFINE(HAVE_GLIB, 1, [Gaim always has GLib, but Linphone can be built without it])
-
-	dnl enable truespeech codec support
-	AC_ARG_ENABLE(truespeech, [  --enable-truespeech       Turn on TrueSpeech support (x86 only)],,enable_truespeech=no)
-	TRUESPEECH_CFLAGS=
-	if test x$enable_truespeech = xyes ; then
-	TRUESPEECH_CFLAGS=-DTRUESPEECH
-	fi
-	VV_CFLAGS="$VV_CFLAGS $TRUESPEECH_CFLAGS"
-
-	found_sound=no
-	AC_CHECK_HEADERS(soundcard.h sys/soundcard.h machine/soundcard.h sys/audio.h)
-		if test "${ac_cv_header_sys_soundcard_h}" = "yes" || \
-		test "${ac_cv_header_soundcard_h}" = "yes" || \
-			  test "${ac_cv_header_sys_audio_h}" = "yes" || \
-		test "${ac_cv_header_machine_soundcard_h}" = "yes"; then
-		found_sound=yes
-		fi
-	if test "$found_sound" = "no"; then
-		   AC_MSG_ERROR([Could not find a support sound driver])
-	fi
-	if test "$alsa" = "true"; then
-		AC_CHECK_HEADERS(alsa/asoundlib.h,
-				[ AC_CHECK_LIB(asound,snd_pcm_open,
-			[ALSA_LIBS="-lasound" ; AC_DEFINE(__ALSA_ENABLED__,1,[Defined when alsa support is enabled]) ])
-			]
-		  )
-	fi
-	dnl Check for samplerate libraries
-	dnl Check for jack libraries (sound output plugin)
-	PKG_CHECK_MODULES(JACK,jack >= 0.15.0,
-	[
-		dnl we've found jack devel files
-		PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.13, [
-			AC_DEFINE(__JACK_ENABLED__,1,[Jack support])
-		], [
-			AC_MSG_RESULT(no)
-			echo "libsamplerate not found, jack support disabled."
-		])
-		VV_CFLAGS="$VV_CFLAGS $SAMPLERATE_CFLAGS"
-	 VV_LIBS="$VV_LIBS   $SAMPLERATE_LIBS"
-	],
-	[echo "No jack support."] )
-	VV_CFLAGS="$VV_CFLAGS $JACK_CFLAGS"
-	VV_LIBS="$VV_LIBS $JACK_LIBS"
-
-	dnl check for installed version of speex
-	LP_CHECK_SPEEX
-	VV_CFLAGS="$VV_CFLAGS $SPEEX_CFLAGS"
-	VV_LIBS="$VV_LIBS   $SPEEX_LIBS"
-
-	PKG_CHECK_MODULES(ORTP, ortp >= 0.7.1, [
-		enable_ortp=yes,
-	], [
-		AC_MSG_RESULT(no)
-		enable_ortp=no
-	])
-	VV_CFLAGS="$VV_CFLAGS $ORTP_CFLAGS"
-	VV_LIBS="$VV_LIBS   $ORTP_LIBS"
-	if test x$enable_ortp = xno; then
-	AC_MSG_ERROR([Could not find a suitable version of oRTP. Please install oRTP >= 0.7.1])
-	fi
-else
-	enable_vv=no
-fi
-
-if test x$enable_vv = xyes; then
-	AM_CONDITIONAL(HAVE_VV, true)
-	AC_DEFINE(HAVE_VV, [1], [Compile with Voice/Video support])
-else
-	AM_CONDITIONAL(HAVE_VV, false)
-fi
-
-AC_SUBST(VV_CFLAGS)
-AC_SUBST(VV_LIBS)
-
 AC_CONFIG_COMMANDS_PRE([
 	if test -e VERSION; then
 		cp -p VERSION VERSION.ac-save
@@ -1719,7 +1638,6 @@ AC_OUTPUT([Makefile
 		   po/Makefile.in
 		   sounds/Makefile
 		   src/Makefile
-		   src/mediastreamer/Makefile
 		   src/protocols/Makefile
 		   src/protocols/bonjour/Makefile
 		   src/protocols/gg/Makefile
@@ -1757,7 +1675,6 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
-echo Build with Voice/Video support : $enable_vv
 echo Build with DBUS support....... : $enable_dbus
 if test x$enable_dbus = xyes ; then
 echo DBUS session directory........ : $DBUS_SESSION_DIR

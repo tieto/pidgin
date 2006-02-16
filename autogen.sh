@@ -47,7 +47,7 @@ done
 
 libtoolize -c -f --automake
 intltoolize --force --copy
-aclocal $ACLOCAL_FLAGS -I ./m4 || exit;
+aclocal $ACLOCAL_FLAGS || exit;
 autoheader || exit;
 automake --add-missing --copy;
 autoconf || exit;

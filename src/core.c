@@ -119,9 +119,6 @@ gaim_core_init(const char *ui)
 	gaim_blist_init();
 	gaim_log_init();
 	gaim_buddy_icons_init();
-#ifdef HAVE_VV
-	gaim_media_init();
-#endif
 	gaim_network_init();
 	gaim_privacy_init();
 	gaim_pounces_init();
