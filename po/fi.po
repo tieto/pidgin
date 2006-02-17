@@ -10742,7 +10742,7 @@ msgstr "Olet kanavan perustaja kanavalla <I>%s</I>"
 #: ../src/protocols/silc/chat.c:1037
 #, c-format
 msgid "Channel founder on <I>%s</I> is <I>%s</I>"
-msgstr "Kanavan perustaja kanavalla <<I>%s</I> on <I>%s</I>"
+msgstr "Kanavan perustaja kanavalla <I>%s</I> on <I>%s</I>"
 
 #: ../src/protocols/silc/chat.c:1096
 #, c-format
