@@ -622,6 +622,8 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 		return "";
 	}
 
+	g_free(locale);
+
 	utf8 = g_locale_to_utf8(buf, len, NULL, NULL, &err);
 	if (err != NULL)
 	{
