@@ -2754,7 +2754,7 @@ oscar_new_xfer(GaimConnection *gc, const char *who) {
 	const char *ip;
 	gboolean use_rv_proxy;
 
-	use_rv_proxy = gaim_prefs_get_bool("/plugins/prpl/oscar/use_rv_proxy");
+	use_rv_proxy = gaim_account_get_bool(gc->account, "use_rv_proxy", OSCAR_DEFAULT_USE_RV_PROXY);
 	if(use_rv_proxy)
 		gaim_debug_info("oscar","using stage 1 proxied transfer\n");
 
@@ -4230,7 +4230,7 @@ static int incomingim_chan2(OscarSession *sess, OscarConnection *conn, aim_useri
 			/* Build the file transfer handle */
 			xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, userinfo->sn);
 
-			use_rv_proxy = gaim_prefs_get_bool("/plugins/prpl/oscar/use_rv_proxy");
+			use_rv_proxy = gaim_account_get_bool(account, "use_rv_proxy", OSCAR_DEFAULT_USE_RV_PROXY);
 
 			if(args->info.sendfile.use_proxy) {
 				/* The sender requested (stage 1) that we use a rendezvous proxy */
@@ -8527,33 +8527,6 @@ recent_buddies_cb(const char *name, GaimPrefType type,
 	}
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
-{
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
-
-	frame = gaim_plugin_pref_frame_new();
-
-#ifdef USE_PRPL_PREFERENCES
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/recent_buddies", _("Use recent buddies group"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/show_idle", _("Show how long you have been idle"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-#endif
-
-	ppref = gaim_plugin_pref_new_with_label(_("File Transfers"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/oscar/use_rv_proxy",
-			    _("Use AIM/ICQ proxy server (slower, but usually works)"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-
 static const char *
 oscar_normalize(const GaimAccount *account, const char *str)
 {
@@ -8659,12 +8632,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 };
 
-static GaimPluginUiInfo prefs_info = {
-	get_plugin_pref_frame,
-	0,   /* page_num (Reserved) */
-	NULL /* frame (Reserved) */
-};
-
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -8692,7 +8659,7 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
-	&prefs_info,
+	NULL,
 	oscar_actions
 };
 
@@ -8719,7 +8686,8 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/prpl/oscar");
 	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/oscar/use_rv_proxy", FALSE);
+
+	gaim_prefs_remove("/plugins/prpl/oscar/use_rv_proxy");
 }
 
 GAIM_INIT_PLUGIN(oscar, init_plugin, info);
