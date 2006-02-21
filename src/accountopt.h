@@ -225,7 +225,7 @@ GaimPrefType gaim_account_option_get_type(const GaimAccountOption *option);
 /**
  * Returns the text for an account option.
  *
- * @param option The accont option.
+ * @param option The account option.
  *
  * @return The account option's text.
  */
@@ -234,7 +234,7 @@ const char *gaim_account_option_get_text(const GaimAccountOption *option);
 /**
  * Returns the account setting for an account option.
  *
- * @param option The accont option.
+ * @param option The account option.
  *
  * @return The account setting.
  */
