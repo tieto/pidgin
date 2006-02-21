@@ -448,17 +448,26 @@ gaim_plugin_probe(const char *filename)
 		return plugin;
 	}
 
-	/* If plugin is a PRPL, make sure it implements the required functions */
-	if ((plugin->info->type == GAIM_PLUGIN_PROTOCOL) && (
-		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon == NULL) ||
-		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
-		(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL)))
+	if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
 	{
-		plugin->error = g_strdup(_("Plugin does not implement all required functions"));
-		gaim_debug_error("plugins", "%s is unloadable: Plugin does not implement all required functions\n",
-				 plugin->path);
-		plugin->unloadable = TRUE;
-		return plugin;
+		/* If plugin is a PRPL, make sure it implements the required functions */
+		if ((GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon == NULL) ||
+		    (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->login == NULL) ||
+		    (GAIM_PLUGIN_PROTOCOL_INFO(plugin)->close == NULL))
+		{
+			plugin->error = g_strdup(_("Plugin does not implement all required functions"));
+			gaim_debug_error("plugins", "%s is unloadable: Plugin does not implement all required functions\n",
+					 plugin->path);
+			plugin->unloadable = TRUE;
+			return plugin;
+		}
+
+		/* For debugging, let's warn about prpl prefs. */
+		if (plugin->info->prefs_info != NULL)
+		{
+			gaim_debug_error("plugins", "%s has a prefs_info, but is a prpl. This is no longer supported.\n",
+			                 plugin->path);
+		}
 	}
 
 	return plugin;
