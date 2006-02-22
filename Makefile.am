@@ -59,5 +59,3 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Gaim.3pm
 
-ACLOCAL_AMFLAGS = -I m4
-
