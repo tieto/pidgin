@@ -272,6 +272,74 @@ if test "x$silcclient" = "xyes"; then
 fi
 
 
+dnl #######################################################################
+dnl # Check for gadugadu client includes and libraries
+dnl #######################################################################
+AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [Compile the gadugadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
+AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [Compile the gadugadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
+GADU_CFLAGS=""
+GADU_LIBS=""
+if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
+	gadu_manual_check="yes"
+else
+	gadu_manual_check="no"
+fi
+if test "x$gadu_manual_check" = "xno"; then
+	PKG_CHECK_MODULES(GADU, libgadu, [
+		gadu_includes="yes"
+		gadu_libs="yes"
+	], [
+		AC_MSG_RESULT(no)
+	])
+else
+	if test "$ac_gadu_includes" != "no"; then
+		GADU_CFLAGS="-I$ac_gadu_includes"
+	fi
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
+	AC_CHECK_HEADER(libgadu.h, [gadu_includes=yes])
+	CPPFLAGS="$CPPFLAGS_save"
+
+	if test "$ac_gadu_libs" != "no"; then
+		GADU_LIBS="-L$ac_gadu_libs"
+	fi
+	GADU_LIBS="$GADU_LIBS -lgadu"
+	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
+fi
+
+if test "x$gadu_libs" = "xyes"; then
+	AC_MSG_CHECKING(for libgadu GPL compatibility)
+	AC_TRY_COMPILE([], [
+#include <libgadu.h>
+int main()
+{
+#ifdef __GG_LIBGADU_HAVE_OPENSSL
+#error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
+#endif
+	return 0;
+}
+	], [
+		AC_MSG_RESULT(yes)
+	], [
+		AC_MSG_RESULT(no)
+		echo
+		echo
+		echo "libgadu is not compatible with the GPL when compiled with OpenSSL support."
+		echo "Please recompile libgadu using:"
+		echo "./autogen.sh --disable-libgadu-openssl --disable-static --enable-shared"
+		echo "Then rerun this ./configure"
+		echo
+		echo
+		GADU_LIBS=""
+		GADU_CFLAGS=""
+		gadu_libs=no
+	])
+fi
+
+AC_SUBST(GADU_LIBS)
+AC_SUBST(GADU_CFLAGS)
+
+
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
@@ -293,6 +361,9 @@ fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
 fi
+if test "x$gadu_libs" != "xyes"; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/gg//'`
+fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
 extern_init=
@@ -308,7 +379,7 @@ for i in $STATIC_PRPLS ; do
 	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
 		bonjour)	static_bonjour=yes ;;
-		gg)			static_gg=yes ;;
+		gg)		static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
@@ -352,6 +423,9 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
+fi
+if test "x$gadu_libs" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/gg//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do

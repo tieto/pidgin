@@ -26,7 +26,7 @@
 
 #include "connection.h"
 
-#include "lib/libgadu.h"
+#include <libgadu.h>
 #include "gg.h"
 
 

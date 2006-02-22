@@ -24,7 +24,7 @@
 #ifndef _GAIM_GG_H
 #define _GAIM_GG_H
 
-#include "lib/libgadu.h"
+#include <libgadu.h>
 #include "search.h"
 #include "connection.h"
 
