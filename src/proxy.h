@@ -237,7 +237,8 @@ typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
  * @param port A portnumber which is stored in the struct sockaddr
  * @param callback Callback to call after resolving
  * @param data Extra data for the callback function
- * @return a GSList containing the size of followed by the struct sockaddr for any returned IP
+ *
+ * @return Zero indicates the connection is pending. Any other value indicates failure.
  */
 int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback, gpointer data);
 
