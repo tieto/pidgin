@@ -47,6 +47,11 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	c = send ? m_sc++ : m_rc++;
 	tmp = g_strdup_printf("%s/msntest/%s/%03d", g_get_home_dir(), dir, c);
 	tf = g_fopen(tmp, "wb");
+	if (tf == NULL)
+	{
+		gaim_debug_error("msn", "could not open debug file");
+		return;
+	}
 	pload = msn_message_gen_payload(msg, &pload_size);
 	fwrite(pload, 1, pload_size, tf);
 	fclose(tf);
