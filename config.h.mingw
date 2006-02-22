@@ -204,6 +204,9 @@
 /* Define if your <locale.h> file defines LC_MESSAGES. */
 /* #define HAVE_LC_MESSAGES 1 */
 
+/* Define to 1 if you have libgadu. */
+#define HAVE_LIBGADU 1
+
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 /* #define HAVE_LIBNSL 1 */
 

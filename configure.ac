@@ -309,17 +309,14 @@ fi
 
 if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
-	AC_TRY_COMPILE([], [
-#include <libgadu.h>
-int main()
-{
+	AC_TRY_COMPILE([#include <libgadu.h>], [
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
-	return 0;
-}
 	], [
 		AC_MSG_RESULT(yes)
+		AC_DEFINE([HAVE_LIBGADU], [1],
+		          [Define to 1 if you have libgadu.])
 	], [
 		AC_MSG_RESULT(no)
 		echo

@@ -412,6 +412,16 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 #endif
 
+#ifdef HAVE_LIBGADU
+#ifdef _WIN32
+	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Internal<br/>");
+#else
+	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Enabled<br/>");
+#endif
+#else
+	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Disabled<br/>");
+#endif
+
 #ifdef USE_GTKSPELL
 	g_string_append(str, "    <b>GtkSpell:</b> Enabled<br/>");
 #else
