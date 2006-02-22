@@ -1212,7 +1212,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 					char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
 					close(source);
 					source = -1;
-					gaim_connection_error(phb->account->gc, msg);
+					if(phb->account)
+						gaim_connection_error(phb->account->gc, msg);
+					else
+						gaim_debug_error("http proxy", "%s\n", msg);
 					g_free(msg);
 					gaim_input_remove(phb->inpa);
 					g_free(phb->read_buffer);
@@ -1265,7 +1268,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 					char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
 					close(source);
 					source = -1;
-					gaim_connection_error(phb->account->gc, msg);
+					if(phb->account)
+						gaim_connection_error(phb->account->gc, msg);
+					else
+						gaim_debug_error("http proxy", "%s\n", msg);
 					g_free(msg);
 					gaim_input_remove(phb->inpa);
 					g_free(phb->read_buffer);
@@ -1311,7 +1317,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
 				close(source);
 				source = -1;
-				gaim_connection_error(phb->account->gc, msg);
+				if(phb->account)
+					gaim_connection_error(phb->account->gc, msg);
+				else
+					gaim_debug_error("http proxy", "%s\n", msg);
 				g_free(msg);
 				gaim_input_remove(phb->inpa);
 				g_free(phb->read_buffer);
@@ -1322,7 +1331,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		}
 		if(status == 403 /* Forbidden */ ) {
 			gchar *msg = g_strdup_printf(_("Access denied: proxy server forbids port %d tunnelling."), phb->port);
-			gaim_connection_error(phb->account->gc, msg);
+			if(phb->account)
+				gaim_connection_error(phb->account->gc, msg);
+			else
+				gaim_debug_error("http proxy", "%s\n", msg);
 			g_free(msg);
 			gaim_input_remove(phb->inpa);
 			g_free(phb->read_buffer);
@@ -1330,7 +1342,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 			g_free(phb);
 		} else {
 			char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
-			gaim_connection_error(phb->account->gc, msg);
+			if(phb->account)
+				gaim_connection_error(phb->account->gc, msg);
+			else
+				gaim_debug_error("http proxy", "%s\n", msg);
 			g_free(msg);
 			gaim_input_remove(phb->inpa);
 			g_free(phb->read_buffer);
