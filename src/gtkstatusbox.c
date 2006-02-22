@@ -352,6 +352,10 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 			/* This should never happen, but just in case... */
 			primary = g_strdup("New status");
 	}
+	else if (status_box->account != NULL)
+	{
+		primary = g_strdup(gaim_status_get_name(gaim_account_get_active_status(status_box->account)));
+	}
 	else if (gaim_savedstatus_is_transient(saved_status))
 		primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
 	else
@@ -387,9 +391,14 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
 	else
 	{
-		pixbuf = gaim_gtk_create_gaim_icon_with_status(
-					gaim_savedstatus_get_type(saved_status),
-					show_buddy_icons ? 1.0 : 0.5);
+		if (status_box->account != NULL)
+			pixbuf = gaim_gtk_create_prpl_icon_with_status(status_box->account,
+						gaim_status_get_type(gaim_account_get_active_status(status_box->account)),
+						show_buddy_icons ? 1.0 : 0.5);
+		else
+			pixbuf = gaim_gtk_create_gaim_icon_with_status(
+						gaim_savedstatus_get_type(saved_status),
+						show_buddy_icons ? 1.0 : 0.5);
 
 		if (!gaim_savedstatus_is_transient(saved_status))
 		{
@@ -412,8 +421,9 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	}
 
 	if (status_box->account != NULL) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\">%s</span>",
+		text = g_strdup_printf("%s%s<span size=\"smaller\" color=\"%s\">%s</span>",
 						gaim_account_get_username(status_box->account),
+						show_buddy_icons ? "\n" : " - ", aa_color,
 						secondary ? secondary : primary);
 	} else if (secondary != NULL) {
 		char *separator;
@@ -688,10 +698,10 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type,
 					show_buddy_icons ? 1.0 : 0.5);
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
-									gaim_status_type_get_primitive(status_type),
-									tmp,
+									GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, tmp,
 									gaim_status_type_get_name(status_type),
-									NULL, NULL);
+									NULL,
+									GINT_TO_POINTER(gaim_status_type_get_primitive(status_type)));
 			if (tmp != NULL)
 				g_object_unref(tmp);
 		}
