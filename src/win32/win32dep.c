@@ -22,6 +22,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#define _WIN32_IE 0x500
 #include <windows.h>
 #include <io.h>
 #include <stdlib.h>
@@ -57,11 +58,6 @@
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
 
-typedef enum {
-    SHGFP_TYPE_CURRENT  = 0,   /* current value for user, verify it exists */
-    SHGFP_TYPE_DEFAULT  = 1,   /* default value, may not exist */
-} SHGFP_TYPE;
-
 /*
  * LOCALS
  */
@@ -92,11 +88,11 @@ static void wgaim_debug_print(GaimDebugLevel level, const char *category, const 
 	} else {
 		str = g_strdup(format);
 	}
-	printf("%s%s%s", category?category:"", category?": ":"",str);
+	printf("%s%s%s", category ? category : "", category ? ": " : "", str);
 	g_free(str);
 }
 
-static GaimDebugUiOps ops =  {
+static GaimDebugUiOps ops = {
 	wgaim_debug_print
 };
 
@@ -112,10 +108,10 @@ HINSTANCE wgaim_hinstance(void) {
    and on being read back have their '\' chars used as an escape char.
    Returns an allocated string which needs to be freed.
 */
-char* wgaim_escape_dirsep( char* filename ) {
-	int sepcount=0;
-	char* ret=NULL;
-	int cnt=0;
+char* wgaim_escape_dirsep(char* filename) {
+	int sepcount = 0;
+	char* ret = NULL;
+	int cnt = 0;
 
 	ret = filename;
 	while(*ret) {
@@ -137,29 +133,29 @@ char* wgaim_escape_dirsep( char* filename ) {
 
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
-FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
+FARPROC wgaim_find_and_loadproc(char* dllname, char* procedure) {
 	HMODULE hmod;
-	int did_load=0;
+	BOOL did_load = FALSE;
 	FARPROC proc = 0;
 
-	if(!(hmod=GetModuleHandle(dllname))) {
+	if(!(hmod = GetModuleHandle(dllname))) {
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "%s not found. Loading it..\n", dllname);
 		if(!(hmod = LoadLibrary(dllname))) {
 			gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Could not load: %s\n", dllname);
 			return NULL;
 		}
 		else
-			did_load = 1;
- 	}
+			did_load = TRUE;
+	}
 
-	if((proc=GetProcAddress(hmod, procedure))) {
+	if((proc = GetProcAddress(hmod, procedure))) {
 		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "This version of %s contains %s\n",
-			     dllname, procedure);
+			dllname, procedure);
 		return proc;
 	}
 	else {
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Function %s not found in dll %s\n", 
-			     procedure, dllname);
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Function %s not found in dll %s\n",
+			procedure, dllname);
 		if(did_load) {
 			/* unload dll */
 			FreeLibrary(hmod);
@@ -284,23 +280,23 @@ char* wgaim_locale_dir(void) {
 }
 
 char* wgaim_data_dir(void) {
-        return app_data_dir;
+	return app_data_dir;
 }
 
 /* Miscellaneous */
 
 gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
-        HKEY hkey;
-        gboolean ret = FALSE;
+	HKEY hkey;
+	gboolean ret = FALSE;
 
-        if(ERROR_SUCCESS == RegOpenKeyEx(key, 
-                                         sub_key, 
-					 0,  KEY_QUERY_VALUE, &hkey)) {
-                if(ERROR_SUCCESS == RegQueryValueEx(hkey, val_name, 0, NULL, data, data_len))
-                        ret = TRUE;
-                RegCloseKey(key);
-        }
-        return ret;
+	if(ERROR_SUCCESS == RegOpenKeyEx(key, sub_key, 0,  KEY_QUERY_VALUE,
+			&hkey)) {
+		if(ERROR_SUCCESS == RegQueryValueEx(hkey, val_name, 0, NULL,
+				data, data_len))
+			ret = TRUE;
+		RegCloseKey(key);
+	}
+	return ret;
 }
 
 int wgaim_gz_decompress(const char* in, const char* out) {
@@ -321,7 +317,7 @@ int wgaim_gz_decompress(const char* in, const char* out) {
 		return 0;
 	}
 
-	while((ret=gzread(fin, buf, 1024))) {
+	while((ret = gzread(fin, buf, 1024))) {
 		if(fwrite(buf, 1, ret, fout) < ret) {
 			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
@@ -348,10 +344,10 @@ int wgaim_gz_untar(const char* filename, const char* destdir) {
 	if(wgaim_gz_decompress(filename, tmpfile)) {
 		int ret;
 		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
-			ret=1;
+			ret = 1;
 		else {
 			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failure untaring %s\n", tmpfile);
-			ret=0;
+			ret = 0;
 		}
 		g_unlink(tmpfile);
 		return ret;
@@ -366,48 +362,51 @@ void wgaim_notify_uri(const char *uri) {
 	SHELLEXECUTEINFO sinfo;
 
 	memset(&sinfo, 0, sizeof(sinfo));
-    sinfo.cbSize = sizeof(sinfo);
-    sinfo.fMask = SEE_MASK_CLASSNAME;
-    sinfo.lpVerb = "open";
-    sinfo.lpFile = uri; 
-    sinfo.nShow = SW_SHOWNORMAL; 
-    sinfo.lpClass = "http";
+	sinfo.cbSize = sizeof(sinfo);
+	sinfo.fMask = SEE_MASK_CLASSNAME;
+	sinfo.lpVerb = "open";
+	sinfo.lpFile = uri;
+	sinfo.nShow = SW_SHOWNORMAL;
+	sinfo.lpClass = "http";
 
 	/* We'll allow whatever URI schemes are supported by the
 	   default http browser.
 	*/
 	if(!ShellExecuteEx(&sinfo))
-		gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n", uri, (int)sinfo.hInstApp);
+		gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
+			uri, (int) sinfo.hInstApp);
 }
 
 void wgaim_init(HINSTANCE hint) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
-	char *perlenv;
+	const char *perlenv;
 	char *newenv;
 
 	gaim_debug_set_ui_ops(&ops);
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
+	gaim_debug_info("wgaim", "wgaim_init start\n");
+
+	gaim_debug_info("wgaim", "Glib:%u.%u.%u\n",
+		glib_major_version, glib_minor_version, glib_micro_version);
 
 	gaimexe_hInstance = hint;
 
 	/* Winsock init */
-	wVersionRequested = MAKEWORD( 2, 2 );
-	WSAStartup( wVersionRequested, &wsaData );
+	wVersionRequested = MAKEWORD(2, 2);
+	WSAStartup(wVersionRequested, &wsaData);
 
 	/* Confirm that the winsock DLL supports 2.2 */
 	/* Note that if the DLL supports versions greater than
-	   2.2 in addition to 2.2, it will still return 2.2 in 
+	   2.2 in addition to 2.2, it will still return 2.2 in
 	   wVersion since that is the version we requested. */
-	if ( LOBYTE( wsaData.wVersion ) != 2 ||
-             HIBYTE( wsaData.wVersion ) != 2 ) {
+	if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2) {
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
 		WSACleanup();
 	}
 
 	/* Set Environmental Variables */
 	/* Tell perl where to find Gaim's perl modules */
-	perlenv = (char*) g_getenv("PERL5LIB");
+	perlenv = g_getenv("PERL5LIB");
 	newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
 		perlenv ? perlenv : "",
 		perlenv ? ";" : "",
@@ -417,7 +416,7 @@ void wgaim_init(HINSTANCE hint) {
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 	g_free(newenv);
 
-        /* Set app data dir, used by gaim_home_dir */
+	/* Set app data dir, used by gaim_home_dir */
 	newenv = (char*) g_getenv("GAIMHOME");
 	if (newenv) {
 		app_data_dir = g_strdup(newenv);
@@ -426,13 +425,13 @@ void wgaim_init(HINSTANCE hint) {
 		if (!app_data_dir) {
 			app_data_dir = g_strdup("C:");
 		}
-        }
+	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
 
 	/* IdleTracker Initialization */
 	if(!wgaim_set_idlehooks())
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
 
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }

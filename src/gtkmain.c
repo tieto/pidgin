@@ -659,6 +659,9 @@ int main(int argc, char *argv[])
 #ifdef _WIN32
 	/** TODO: Move this to a wgaim_gtk_init() if we need such a thing */
 	wgaim_gtkspell_init();
+	gaim_debug_info("wgaim", "GTK+ :%u.%u.%u\n",
+		gtk_major_version, gtk_minor_version, gtk_micro_version);
+
 #endif
 
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
