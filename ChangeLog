@@ -163,6 +163,8 @@ version 2.0.0:
 	* "Open" in the File Transfer window integrates with KDE now (in
 	  addition to existing GNOME and Windows integration) and falls back to
 	  the browser in other environments.
+	* On Mac OS X, the keyboard/mouse idle time pref now uses system idle
+	  time instead of X11 idle time (Michael Culbertson)
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
