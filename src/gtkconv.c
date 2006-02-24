@@ -1880,7 +1880,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				return TRUE;
 				break;
 
-			case GDK_Page_Down:
+			case GDK_Page_Up:
 			case ']':
 				if (!gaim_gtk_conv_window_get_gtkconv_at_index(win, curconv + 1))
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
@@ -1889,7 +1889,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				return TRUE;
 				break;
 
-			case GDK_Page_Up:
+			case GDK_Page_Down:
 			case '[':
 				if (!gaim_gtk_conv_window_get_gtkconv_at_index(win, curconv - 1))
 					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), -1);
