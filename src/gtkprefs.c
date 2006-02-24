@@ -1748,7 +1748,7 @@ away_page()
 		GAIM_PREF_STRING, "/core/away/idle_reporting",
 		_("Never"), "none",
 		_("From last sent message"), "gaim",
-#ifdef USE_SCREENSAVER
+#ifdef USE_SCREENSAVER || defined(HAVE_IOKIT)
 		_("Based on keyboard or mouse use"), "system",
 #endif
 		NULL);

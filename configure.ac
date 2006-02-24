@@ -25,6 +25,14 @@ AC_SUBST(GETTEXT_PACKAGE)
 case "$host_os" in
 darwin*)
 	AC_CHECK_LIB(resolv, res_query)
+
+	AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h, [
+		AC_CHECK_HEADER(IOKit/IOKitLib.h, [
+			AC_DEFINE(HAVE_IOKIT, 1, [Define if we have IOKit])
+			LIBS="$LIBS -framework IOKit -framework CoreFoundation"
+		], [])
+	], [])
+
 	AC_MSG_CHECKING([for fink])
 	if test -d /sw; then
 		AC_MSG_RESULT([found, adding /sw to search paths])
@@ -264,7 +272,7 @@ if test "x$silcclient" = "xyes"; then
 #include <silcmime.h>
 		], [], [
 		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SILCMIME_H, 1, [define if we have silcmime.h])
+		AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
 		], [
 		AC_MSG_RESULT(no)
 		])

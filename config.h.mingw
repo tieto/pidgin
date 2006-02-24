@@ -183,6 +183,9 @@
    declares uintmax_t. */
 #define HAVE_INTTYPES_H_WITH_UINTMAX 1
 
+/* Define if we have IOKit */
+/* #undef HAVE_IOKIT */
+
 /* Define to 1 if you have the `krb_get_err_text' function. */
 /* #undef HAVE_KRB_GET_ERR_TEXT */
 
@@ -318,7 +321,7 @@
 /* Define to 1 if you have the <signal.h> header file. */
 /* #define HAVE_SIGNAL_H 1 */
 
-/* define if we have silcmime.h */
+/* Define if we have silcmime.h */
 /* #undef HAVE_SILCMIME_H */
 
 /* Define to 1 if you have the <smime.h> header file. */
