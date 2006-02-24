@@ -1,3 +1,4 @@
+EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
 		gaim-notifications-example.py \
