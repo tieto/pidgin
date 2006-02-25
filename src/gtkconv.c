@@ -7255,13 +7255,13 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, GaimGtkWindow 
 	menu = notebook->menu;
 	gaim_separator(GTK_WIDGET(menu));
 
-	item = gtk_menu_item_new_with_label("Close other tabs");
+	item = gtk_menu_item_new_with_label(_("Close other tabs"));
 	gtk_widget_show(item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	g_signal_connect(G_OBJECT(item), "activate",
 					G_CALLBACK(close_others_cb), menu);
 
-	item = gtk_menu_item_new_with_label("Close all tabs");
+	item = gtk_menu_item_new_with_label(_("Close all tabs"));
 	gtk_widget_show(item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	g_signal_connect(G_OBJECT(item), "activate",
@@ -7269,13 +7269,13 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, GaimGtkWindow 
 
 	gaim_separator(menu);
 
-	item = gtk_menu_item_new_with_label("Detach this tab");
+	item = gtk_menu_item_new_with_label(_("Detach this tab"));
 	gtk_widget_show(item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	g_signal_connect(G_OBJECT(item), "activate",
 					G_CALLBACK(detach_tab_cb), menu);
 
-	item = gtk_menu_item_new_with_label("Close this tab");
+	item = gtk_menu_item_new_with_label(_("Close this tab"));
 	gtk_widget_show(item);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	g_signal_connect(G_OBJECT(item), "activate",
