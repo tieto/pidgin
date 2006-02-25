@@ -47,7 +47,7 @@ typedef enum {
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
 typedef struct {
-	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported. 
+	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
 					     * The core nor the prpl will actually check to see if the data it's given matches this, it's entirely
 					     * up to the UI to do what it wants */
 	int min_width;                          /**< The minimum width of this icon  */
@@ -295,7 +295,7 @@ struct _GaimPluginProtocolInfo
 	gboolean (*can_receive_file)(GaimConnection *, const char *who);
 	void (*send_file)(GaimConnection *, const char *who, const char *filename);
 	GaimXfer *(*new_xfer)(GaimConnection *, const char *who);
- 	gboolean (*offline_message)(const GaimBuddy *buddy);
+	gboolean (*offline_message)(const GaimBuddy *buddy);
 
 	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
 };

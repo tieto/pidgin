@@ -25,6 +25,11 @@
 #ifndef _GAIM_NETWORK_H_
 #define _GAIM_NETWORK_H_
 
+/*
+ * TODO: This API needs a way to cancel pending calls to
+ *       gaim_network_listen_range() and company.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -136,7 +141,7 @@ gboolean gaim_network_listen(unsigned short port, int socket_type,
  * If a range is specified in preferences, these values are used.
  * If a non-0 values are passed to the function as parameters, these
  * values are used.
- * Otherwise a port is chosen at random by the kernel.
+ * Otherwise a port is chosen at random by the operating system.
  *
  * This opens a listening port. The caller will want to set up a watcher
  * of type GAIM_INPUT_READ on the fd returned in cb. It will probably call
