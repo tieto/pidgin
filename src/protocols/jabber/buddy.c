@@ -1359,7 +1359,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 	if(!(query = xmlnode_get_child(packet, "query")))
 		return;
 
-	if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:data"))) {
+	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
 		jabber_x_data_request(js, x, user_search_x_data_cb, NULL);
 		return;
 	} else {
