@@ -135,7 +135,6 @@ gaim_coreheaders = \
 	plugin.h \
 	pluginpref.h \
 	pounce.h \
-	prefix.h \
 	prefs.h \
 	privacy.h \
 	proxy.h \
@@ -336,7 +335,8 @@ gaim_headers = \
 	gtkwhiteboard.h
 
 noinst_HEADERS= \
-	internal.h
+	internal.h \
+	prefix.h
 
 gaimincludedir=$(includedir)/gaim
 gaiminclude_HEADERS = \
