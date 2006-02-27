@@ -114,7 +114,7 @@ static void historize(GaimConversation *c)
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
 							      gaim_account_get_protocol_name(((GaimLog*)logs->data)->account));
 
-	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>", alias,
+	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias,
 							 gaim_date_format_full(localtime(&((GaimLog *)logs->data)->time)));
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
 	g_free(header);
