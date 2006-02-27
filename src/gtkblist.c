@@ -5742,7 +5742,7 @@ gaim_gtk_blist_update_plugin_actions(void)
 		if (!GAIM_PLUGIN_HAS_ACTIONS(plugin))
 			continue;
 
-		menuitem = gtk_image_menu_item_new_with_label(plugin->info->name);
+		menuitem = gtk_image_menu_item_new_with_label(_(plugin->info->name));
 		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
 		gtk_widget_show(menuitem);
 
