@@ -456,12 +456,12 @@ ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO
 PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 */
-static const struct
+static struct
 {
-	const char *wstd;		/* Windows name of standard timezone */
-	const char *wdst;		/* Windows name of daylight timezone */
-	const char *ustd;		/* Unix name of standard timezone */
-	const char *udst;		/* Unix name of daylight timezone */
+	char *wstd;		/* Windows name of standard timezone */
+	char *wdst;		/* Windows name of daylight timezone */
+	char *ustd;		/* Unix name of standard timezone */
+	char *udst;		/* Unix name of daylight timezone */
 } win32_tzmap[] =
 {
 	{
@@ -933,7 +933,7 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 				if (win32_tzmap[0].wstd[0] != '\0')
 					g_free(win32_tzmap[0].wstd);
 				win32_tzmap[0].wstd = g_strdup(tzname);
-				win32_tzmap[1].ustd = win32_tzmap[i].ustd;
+				win32_tzmap[0].ustd = win32_tzmap[i].ustd;
 
 				return win32_tzmap[i].ustd;
 			}
@@ -947,7 +947,7 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 					g_free(win32_tzmap[0].wdst);
 
 				win32_tzmap[0].wdst = g_strdup(tzname);
-				win32_tzmap[1].udst = win32_tzmap[i].udst;
+				win32_tzmap[0].udst = win32_tzmap[i].udst;
 
 				return win32_tzmap[i].udst;
 			}
