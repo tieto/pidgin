@@ -464,6 +464,10 @@ static const struct
 	const char *udst;		/* Unix name of daylight timezone */
 } win32_tzmap[] =
 {
+	{
+		"", "",
+		"", "",
+	},
 	/*
 	 * This list was built from the contents of the registry at
 	 * "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones"
@@ -924,12 +928,27 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 			{
 				gaim_debug_info("wgaim", "TZ \"%s\" matches localized Windows timezone \"%s\" (\"%s\")",
 				                win32_tzmap[i].ustd, tzname, localtzname);
+
+				/* Cache the Result */
+				if (win32_tzmap[0].wstd[0] != '\0')
+					g_free(win32_tzmap[0].wstd);
+				win32_tzmap[0].wstd = g_strdup(tzname);
+				win32_tzmap[1].ustd = win32_tzmap[i].ustd;
+
 				return win32_tzmap[i].ustd;
 			}
 			if (strcmp(localtzname, win32_tzmap[i].wdst) == 0)
 			{
 				gaim_debug_info("wgaim", "TZ \"%s\" matches localized Windows timezone \"%s\" (\"%s\")",
 				                win32_tzmap[i].udst, tzname, localtzname);
+
+				/* Cache the Result */
+				if (win32_tzmap[0].wdst[0] != '\0')
+					g_free(win32_tzmap[0].wdst);
+
+				win32_tzmap[0].wdst = g_strdup(tzname);
+				win32_tzmap[1].udst = win32_tzmap[i].udst;
+
 				return win32_tzmap[i].udst;
 			}
 		}
@@ -938,3 +957,4 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 	gaim_debug_warning("wgaim", "could not find a match for Windows timezone \"%s\"", tzname);
 	return "";
 }
+
