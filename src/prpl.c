@@ -308,7 +308,7 @@ do_prpl_change_account_status(GaimAccount *account,
 
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if (prpl_info->set_status != NULL)
+	if (!gaim_account_is_disconnected(account) && prpl_info->set_status != NULL)
 	{
 		prpl_info->set_status(account, new_status);
 	}
