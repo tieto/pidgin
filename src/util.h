@@ -223,6 +223,11 @@ char *gaim_mime_decode_field(const char *str);
  * GMT.  Required to emit RFC822-conformant dates
  * (using "%a, %d %b %Y %H:%M:%S %z"). (GNU)'
  *
+ * On Windows, this function also converts the results for %Z from a timezone
+ * name (as returned by the system strftime() %Z format string) to a timezone
+ * abbreviation (as is the case on Unix).  As with %z, conversion specifiers
+ * should not be used.
+ *
  * @param format The format string, in UTF-8
  * @param tm     The time to format, or @c NULL to use the current local time
  *

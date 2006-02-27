@@ -529,7 +529,10 @@ static const char *get_tmoff(const struct tm *tm)
 
 	return buf;
 }
+#endif
 
+/* Windows doesn't HAVE_STRFTIME_Z_FORMAT, but this seems clearer. -- rlaager */
+#if !defined(HAVE_STRFTIME_Z_FORMAT) || defined(_WIN32)
 static size_t gaim_internal_strftime(char *s, size_t max, const char *format, const struct tm *tm)
 {
 	const char *start;
@@ -541,9 +544,10 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 	g_return_val_if_fail(format != NULL, 0);
 
 	/* This is fairly efficient, and it only gets
-	 * executed if the underlying system doesn't
-	 * support the %z format string for strftime(),
-	 * so I think it's good enough. -- rlaager */
+	 * executed on Windows or if the underlying
+	 * system doesn't support the %z format string,
+	 * for strftime() so I think it's good enough.
+	 * -- rlaager */
 	for (c = start = format; *c ; c++)
 	{
 		if (*c != '%')
@@ -551,6 +555,7 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 
 		c++;
 
+#ifndef HAVE_STRFTIME_Z_FORMAT
 		if (*c == 'z')
 		{
 			char *tmp = g_strdup_printf("%s%.*s%s",
@@ -562,6 +567,20 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 			fmt = tmp;
 			start = c + 1;
 		}
+#endif
+#ifdef _WIN32
+		if (*c == 'Z')
+		{
+			char *tmp = g_strdup_printf("%s%.*s%s",
+			                            fmt ? fmt : "",
+			                            c - start - 1,
+			                            start,
+			                            wgaim_get_timezone_abbreviation(tm));
+			g_free(fmt);
+			fmt = tmp;
+			start = c + 1;
+		}
+#endif
 	}
 
 	if (fmt != NULL)
@@ -583,7 +602,7 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 
 	return strftime(s, max, format, tm);
 }
-#else /* HAVE_STRFTIME_Z_FORMAT */
+#else /* HAVE_STRFTIME_Z_FORMAT && !_WIN32 */
 #define gaim_internal_strftime strftime
 #endif
 

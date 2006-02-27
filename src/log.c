@@ -643,11 +643,7 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
 		tm = localtime(&log->time);
-#ifdef _WIN32
-		tz = "";
-#else
 		tz = gaim_escape_filename(gaim_utf8_strftime("%Z", tm));
-#endif
 		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
 
 		filename = g_strdup_printf("%s%s%s", date, tz, ext ? ext : "");

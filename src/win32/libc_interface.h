@@ -159,4 +159,7 @@ struct tm *wgaim_localtime_r(const time_t *time, struct tm *resultp);
 #define localtime_r( time, resultp ) \
 wgaim_localtime_r( time, resultp )
 
+/* helper for gaim_utf8_strftime() by way of gaim_internal_strftime() in src/util.c */
+const char *wgaim_get_timezone_abbreviation(const struct tm *tm);
+
 #endif /* _LIBC_INTERFACE_H_ */
