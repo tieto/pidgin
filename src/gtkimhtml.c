@@ -833,6 +833,7 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	/* XXX: make this new with mnemonic, and HIG-happy after string thaw */
 	menuitem = gtk_menu_item_new_with_label(_("Clear formatting"));
 	gtk_widget_show(menuitem);
+	gtk_widget_set_sensitive(menuitem, imhtml->editable);
 	/* put it after Delete */
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 5);
 
