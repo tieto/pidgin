@@ -809,7 +809,10 @@ static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 
 }
 
-
+static void clear_formatting_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
+{
+	gtk_imhtml_clear_formatting(imhtml);
+}
 
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
@@ -826,6 +829,14 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 
 	g_signal_connect(G_OBJECT(menuitem), "activate",
 					 G_CALLBACK(paste_unformatted_cb), imhtml);
+
+	/* XXX: make this new with mnemonic, and HIG-happy after string thaw */
+	menuitem = gtk_menu_item_new_with_label(_("Clear formatting"));
+	gtk_widget_show(menuitem);
+	/* put it after Delete */
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 5);
+
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(clear_formatting_cb), imhtml);
 }
 
 static char *
