@@ -334,40 +334,34 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	if(!g_strncasecmp(hdr, "NTLM", 4)) {
 		gaim_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
-		if(!strstr(hdr, "gssapi-data")) {
-			gaim_debug_info("simple", "here");
-			parts = g_strsplit(hdr+5, "\", ", 0);
-			i = 0;
-			while(parts[i]) {
+		parts = g_strsplit(hdr+5, "\", ", 0);
+		i = 0;
+		while(parts[i]) {
 			gaim_debug_info("simple", "parts[i] %s\n", parts[i]);
-				if((tmp = parse_attribute("targetname=\"",
-						parts[i]))) {
-					auth->target = tmp;
-				}
-				else if((tmp = parse_attribute("realm=\"",
-						parts[i]))) {
-					auth->realm = tmp;
-				}
-				i++;
+			if((tmp = parse_attribute("gssapi-data=\"", parts[i]))) {
+				auth->nonce = g_strdup(gaim_ntlm_parse_type2(tmp, &auth->flags));
+				g_free(tmp);
 			}
-			g_strfreev(parts);
+			if((tmp = parse_attribute("targetname=\"",
+					parts[i]))) {
+				auth->target = tmp;
+			}
+			else if((tmp = parse_attribute("realm=\"",
+					parts[i]))) {
+				auth->realm = tmp;
+			}
+			else if((tmp = parse_attribute("opaque=\"", parts[i]))) {
+				auth->opaque = tmp;
+			}
+			i++;
+		}
+		g_strfreev(parts);
+		auth->nc = 1;
+		if(!strstr(hdr, "gssapi-data")) {
 			auth->nc = 1;
 		} else {
 			auth->nc = 3;
-			i = 0;
-			parts = g_strsplit(hdr, " ", 0);
-			while(parts[i]) {
-				if((tmp = parse_attribute("gssapi-data=\"", parts[i]))) {
-					auth->nonce = g_strdup(gaim_ntlm_parse_type2(tmp, &auth->flags));
-					g_free(tmp);
-				}
-				if((tmp = parse_attribute("opaque=\"", parts[i]))) {
-					auth->opaque = tmp;
-				}
-				i++;
-			}
-			g_strfreev(parts);
-		}
+                }
 		return;
 	}
 
@@ -740,7 +734,7 @@ static gboolean process_subscribe_response(struct simple_account_data *sip, stru
 }
 
 static void simple_subscribe(struct simple_account_data *sip, struct simple_buddy *buddy) {
-	gchar *contact = "Expires: 300\r\nAccept: application/pidf+xml, application/xpidf+xml\r\nEvent: presence\r\n";
+	gchar *contact = "Expires: 1200\r\nAccept: application/pidf+xml, application/xpidf+xml\r\nEvent: presence\r\n";
 	gchar *to;
 	gchar *tmp;
 
@@ -764,8 +758,79 @@ static void simple_subscribe(struct simple_account_data *sip, struct simple_budd
 
 	/* resubscribe before subscription expires */
 	/* add some jitter */
-	buddy->resubscribe = time(NULL)+250+(rand()%50);
+	buddy->resubscribe = time(NULL)+1140+(rand()%50);
 }
+
+static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
+	gchar *tmp;
+	xmlnode *item, *group, *isc;
+	const char *name_group;
+	GaimBuddy *b;
+	GaimGroup *g;
+	struct simple_buddy *bs;
+	int len = msg->bodylen;
+
+
+	tmp = sipmsg_find_header(msg, "Event");
+	if(tmp && !strncmp(tmp,"vnd-microsoft-roaming-contacts",30)){
+
+		gaim_debug_info("simple","simple_add_lcs_contacts->%s-%d\n",msg->body, len);
+		/*Convert the contact from XML to Gaim Buddies*/
+		isc = xmlnode_from_str(msg->body, len);  
+
+		/* ToDo. Find for all groups */
+		group = xmlnode_get_child(isc, "group"); 
+		name_group = xmlnode_get_attrib(group, "name");
+		gaim_debug_info("simple","name_group->%s\n",name_group);  
+		g = gaim_find_group(name_group);
+		if(!g) {
+			g = gaim_find_group("Buddies");
+			if(!g){
+				g = gaim_group_new("Buddies");
+			}
+		}else{
+			g = gaim_group_new(name_group);
+		}
+
+		for(item = xmlnode_get_child(isc, "contact"); item; item = xmlnode_get_next_twin(item))
+		{
+			const char *uri, *name, *groups;
+			uri = xmlnode_get_attrib(item, "uri");
+			name = xmlnode_get_attrib(item, "name");
+			groups = xmlnode_get_attrib(item, "groups");
+			gaim_debug_info("simple","URI->%s\n",uri);
+			b = gaim_find_buddy(sip->account, g_strdup_printf("sip:%s",uri));
+			if(!b){
+				b = gaim_buddy_new(sip->account, g_strdup_printf("sip:%s",uri), uri);
+			}
+			gaim_blist_add_buddy(b, NULL, g, NULL);
+			gaim_blist_alias_buddy(b, uri);
+			bs = g_new0(struct simple_buddy, 1);
+			bs->name = g_strdup(b->name);
+			g_hash_table_insert(sip->buddies, bs->name, bs);
+		}
+		xmlnode_free(isc);
+	}
+	return 0;
+}
+
+static void simple_subscribe_buddylist(struct simple_account_data *sip) {
+	gchar *contact = "Event: vnd-microsoft-roaming-contacts\r\nAccept: application/vnd-microsoft-roaming-contacts+xml\r\nSupported: com.microsoft.autoextend\r\nSupported: ms-benotify\r\nProxy-Require: ms-benotify\r\nSupported: ms-piggyback-first-notify\r\n";
+	gchar *to;
+	gchar *tmp;
+	to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+        
+	tmp = get_contact(sip);
+       
+	contact = g_strdup_printf("%sContact: %s\r\n", contact, tmp);
+	g_free(tmp);
+	
+	send_sip_request(sip->gc, "SUBSCRIBE",to, to, contact, "", NULL, simple_add_lcs_contacts);
+
+	g_free(to);
+	g_free(contact);
+}
+
 
 static void simple_buddy_resub(char *name, struct simple_buddy *buddy, struct simple_account_data *sip) {
 	time_t curtime = time(NULL);
@@ -916,6 +981,11 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			simple_get_buddies(sip->gc);
 
 			subscribe_timeout(sip);
+			tmp = sipmsg_find_header(msg, "Allow-Events");
+		        if(tmp && strstr(tmp,"vnd-microsoft-provisioning")){
+				simple_subscribe_buddylist(sip);
+			}
+
 			break;
 		case 401:
 			if(sip->registerstatus != 2) {
@@ -1195,8 +1265,29 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 					gaim_debug_info("simple", "got trying response\n");
 				} else {
 					sip->proxy.retries = 0;
-					if(msg->response == 401) sip->registrar.retries++;
-					else sip->registrar.retries = 0;
+					if(!strcmp(trans->msg->method,"REGISTER")) {
+						if(msg->response == 401) sip->registrar.retries++;
+						else sip->registrar.retries = 0;
+					} else {
+						if(msg->response == 401) {
+							gchar *resend, *auth, *ptmp;
+
+							if(sip->registrar.retries > 4) return;
+							sip->registrar.retries++;
+
+							ptmp = sipmsg_find_header(msg, "WWW-Authenticate");
+
+							fill_auth(sip, ptmp, &sip->registrar);
+							auth = auth_header(sip, &sip->registrar, trans->msg->method, trans->msg->target);
+							sipmsg_remove_header(trans->msg, "Authorization");
+							sipmsg_add_header(trans->msg, "Authorization", auth);
+							g_free(auth);
+							resend = sipmsg_to_string(trans->msg);
+							/* resend request */
+							sendout_pkt(sip->gc, resend);
+							g_free(resend);
+						}
+					}
 					if(trans->callback) {
 						/* call the callback to process response*/
 						(trans->callback)(sip, msg, trans);
