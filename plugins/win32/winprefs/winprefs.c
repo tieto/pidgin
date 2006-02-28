@@ -288,8 +288,8 @@ wgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
 	GaimGtkWindow *win;
 	GtkWidget *window;
 
-	/* Don't flash for our own messages */
-	if(flags & GAIM_MESSAGE_SEND)
+	/* Don't flash for our own messages or system messages */
+	if(flags & GAIM_MESSAGE_SEND || flags & GAIM_MESSAGE_SYSTEM)
 		return FALSE;
 
 	if(!gaim_prefs_get_bool(PREF_IM_BLINK))
