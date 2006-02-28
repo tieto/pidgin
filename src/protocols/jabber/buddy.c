@@ -1235,7 +1235,7 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 			GList *row = NULL;
 			field = xmlnode_get_child(item, "field");
 			while(field) {
-				xmlnode *valuenode = xmlnode_get_child(item, "value");
+				xmlnode *valuenode = xmlnode_get_child(field, "value");
 				if(valuenode) {
 					char *value = xmlnode_get_data(valuenode);
 					row = g_list_append(row, value);
@@ -1293,6 +1293,7 @@ static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer da
 {
 	xmlnode *query;
 	JabberIq *iq;
+	char *dir_server = data;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:search");
 	query = xmlnode_get_child(iq->node, "query");
@@ -1300,7 +1301,9 @@ static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer da
 	xmlnode_insert_child(query, result);
 
 	jabber_iq_set_callback(iq, user_search_result_cb, NULL);
+	xmlnode_set_attrib(iq->node, "to", dir_server);
 	jabber_iq_send(iq);
+	g_free(dir_server);
 }
 
 struct user_search_info {
@@ -1349,18 +1352,22 @@ static void user_search_cb(struct user_search_info *usi, GaimRequestFields *fiel
 static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
-	const char *from;
+	const char *from, *type;
 
-	/* i forget, do i have to check for error? XXX */
 	if(!(from = xmlnode_get_attrib(packet, "from")))
 		return;
+
+	/* XXX: make a pretty error box after the string freeze */
+	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
+		return;
+	}
 
 
 	if(!(query = xmlnode_get_child(packet, "query")))
 		return;
 
 	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
-		jabber_x_data_request(js, x, user_search_x_data_cb, NULL);
+		jabber_x_data_request(js, x, user_search_x_data_cb, g_strdup(from));
 		return;
 	} else {
 		struct user_search_info *usi;
