@@ -92,46 +92,50 @@ gaim_network_get_public_ip(void)
 const char *
 gaim_network_get_local_system_ip(int fd)
 {
-       char buffer[1024];
-       static char ip[16];
-       char *tmp;
-       struct ifconf ifc;
-       struct ifreq *ifr;
-       struct sockaddr_in *sinptr;
-       guint32 lhost = htonl(127*256*256*256+1);
-       long unsigned int add;
-       int source = fd;
+	char buffer[1024];
+	static char ip[16];
+	char *tmp;
+	struct ifconf ifc;
+	struct ifreq *ifr;
+	struct sockaddr_in *sinptr;
+	guint32 lhost = htonl(127 * 256 * 256 * 256 + 1);
+	long unsigned int add;
+	int source = fd;
 
-       if(source <= 0)
-           source = socket(PF_INET,SOCK_STREAM,0);
+	if (fd < 0)
+		source = socket(PF_INET,SOCK_STREAM, 0);
 
-       ifc.ifc_len = sizeof(buffer);
-       ifc.ifc_req = (struct ifreq*) buffer;
-       ioctl(source, SIOCGIFCONF, &ifc);
+	ifc.ifc_len = sizeof(buffer);
+	ifc.ifc_req = (struct ifreq *)buffer;
+	ioctl(source, SIOCGIFCONF, &ifc);
 
-       if(fd <= 0)
-               close(source);
+	if (fd < 0)
+		close(source);
 
-       tmp = buffer;
-       while(tmp < buffer + ifc.ifc_len) {
-               ifr = (struct ifreq *) tmp;
-               tmp += sizeof(struct ifreq);
+	tmp = buffer;
+	while (tmp < buffer + ifc.ifc_len)
+	{
+		ifr = (struct ifreq *)tmp;
+		tmp += sizeof(struct ifreq);
 
-               if(ifr->ifr_addr.sa_family == AF_INET) {
-                       sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
-                       if(sinptr->sin_addr.s_addr != lhost) {
-                               add = ntohl(sinptr->sin_addr.s_addr);
-                               g_snprintf(ip, 16, "%lu.%lu.%lu.%lu",
-                                          ((add >> 24) & 255),
-                                          ((add >> 16) & 255),
-                                          ((add >> 8) & 255),
-                                          add & 255);
+		if (ifr->ifr_addr.sa_family == AF_INET)
+		{
+			sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
+			if (sinptr->sin_addr.s_addr != lhost)
+			{
+				add = ntohl(sinptr->sin_addr.s_addr);
+				g_snprintf(ip, 16, "%lu.%lu.%lu.%lu",
+					((add >> 24) & 255),
+					((add >> 16) & 255),
+					((add >> 8) & 255),
+					add & 255);
 
-                               return ip;
-                       }
-               }
-       }
-       return "0.0.0.0";
+				return ip;
+			}
+		}
+	}
+
+	return "0.0.0.0";
 }
 
 const char *
