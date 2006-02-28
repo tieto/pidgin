@@ -1,41 +1,30 @@
-Translation README
+Translation HowTo
 
-To supply a new translation, you first need a copy of gaim.pot.
-This can be built by typing:
+We are currently very informal and very hands-off when it comes to translating Gaim. What follows is a collection of notes for those who wish to assist.
 
-intltool-update --pot
+    * We try to accept tanslations for a given language only from a single person, the person we are most familiar with getting translations from. If you feel a translation is wrong, produces strings that are too long, or is badly out of date, contact the existing translator first. Work with him or her if possible. If this is not possible, mention this to us as you submit your patch or new translation.
+    * Translations to new languages are always welcome.
+         1. Get the po template (.pot) file from here. Alternately run intltool-update --pot in the gaim/po/ directory.
+         2. Find the two letter language code for your language. If translating to a regional dialect, append the two letter region or country code. Rename the file to match this. For example, Protuguese is pt.po, and Brazilian Portuguese is pt_BR.po.
+         3. Subscribe to gaim-i18n@lists.sf.net via the SF subscribe page
+         4. Open the translation file you downloaded in a text editor
+         5. translate the strings
+                o Translated .po files may be submitted in whatever native encoding is most convenient (and hopefully canonical). Please ensure that the Content-type: line reflects the proper character set.
+                o Please check your translations carefully. Make sure you have the same number of newlines and %s or other formatting codes in the translation as you have in the original. The po/check_po.pl script can help with this.
+                o Before submitting updated or new translations, please run the following command to ensure the file does not contain errors: msgfmt -c --statistics xx.po
+                o The comments at the top of each .po file should appear as follows:
 
-from the gaim/po/ directory.
+                     # Gaim Xxxxx translation
+                     # Copyright (C) 2002, Another Name <email@something.com>
+                     # Copyright (C) 2003, Your Name <email@whatever.com>
+                     #
+                     # This file is distributed under the same license as the Gaim package.
+                     #
 
-To update an exsting translation, type:
+         6. Post partial or completed files to the Translations Tracker
+         7. Along with your first submission, note what name(s) and email address(es) should be put in help->about.
+    * String freezes are announced on gaim-i18n
 
-intltool-update -m LANG
 
-where LANG is the language code to update, such as fr or ja.  This will build
-a new gaim.pot and update the translation with the changes.  You may then
-begin editing the updated file.
-
-Translated .po files may be submitted in whatever native encoding is
-most convenient (and hopefully canonical).  Please ensure that the
-Content-type: line reflects the proper character set.
-
-New or updated translations should be sent to the translation tracker:
-https://sourceforge.net/tracker/?group_id=235&atid=713922
-
-Please check your translations carefully.  Make sure you have the same
-number of newlines and %s or other formatting codes in the translation as
-you have in the original.  The po/check_po.pl script can help with this.
-
-Before submitting updated or new translations, please run the following 
-command to ensure the file does not contain errors:
-> msgfmt -c --statistics xx.po
-
-The comments at the top of each .po file should appear as follows:
-# Gaim Xxxxx translation
-# Copyright (C) 2002, Another Name <email@something.com>
-# Copyright (C) 2003, Your Name <email@whatever.com>
-#
-# This file is distributed under the same license as the Gaim package.
-#
 
 Thank you for flying Valu-Jet.
