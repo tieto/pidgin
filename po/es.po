@@ -60,15 +60,15 @@ msgstr ""
 
 #: ../gaim.desktop.in.h:1
 msgid "Gaim Internet Messenger"
-msgstr "Gaim - cliente de mensajería de Internet"
+msgstr "Gaim - Mensajería en Internet"
 
 #: ../gaim.desktop.in.h:2
 msgid "Internet Messenger"
-msgstr "Cliente de mensajería de Internet"
+msgstr "Mensajería en Internet"
 
 #: ../gaim.desktop.in.h:3
 msgid "Send instant messages over multiple protocols"
-msgstr "Cliente de mensajería instantánea multiprotocolo"
+msgstr "Envía mensajes instantáneos a través de múltiples protocolos"
 
 #. *< type
 #. *< ui_requirement
