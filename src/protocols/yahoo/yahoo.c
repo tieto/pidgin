@@ -2652,6 +2652,7 @@ static void yahoo_close(GaimConnection *gc) {
 		ycht_connection_close(yd->ycht);
 
 	g_free(yd);
+	gc->proto_data = NULL;
 }
 
 static const char *yahoo_list_icon(GaimAccount *a, GaimBuddy *b)
