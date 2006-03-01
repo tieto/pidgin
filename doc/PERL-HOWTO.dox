@@ -44,7 +44,7 @@ It is necessary to load the Gaim perl package with the line @code use Gaim; @end
 
 The Perl subroutine @c plugin_init is executed when the plugin is probed by the plugin subsystem.  What this means is as soon as Gaim is started, this subroutine is run once, regardless of whether the plugin is loaded or not. The other two subroutines present are those defined by the @c \%PLUGIN_INFO hash and take the plugin handle as an argument.  When the plugin is loaded and subsequently unloaded it will print a message to the debug window using the @c Gaim::debug_info() Gaim perl API call.
 
-The last step is to save the script with a .pl file extention in your ~/.gaim/plugins directory.  After restarting gaim the plugin "Perl Test Plugin" should now appear under "Tools->Preferences->Plugins".  To view the messages make sure you run Gaim from the console with the '-d' flag or open the Debug Window from inside Gaim under "Help".  When you enable the checkbox next the plugin you should see a message appear in the Debug Window (or console) and when you disable the checkbox you should see another message appear.  You have now created the framework that will allow you to create almost any kind of Gaim plugin you can imagine.
+The last step is to save the script with a .pl file extention in your ~/.gaim/plugins directory.  After restarting gaim the plugin "Perl Test Plugin" should now appear under "Tools -> Preferences -> Plugins".  To view the messages make sure you run Gaim from the console with the '-d' flag or open the Debug Window from inside Gaim under "Help".  When you enable the checkbox next the plugin you should see a message appear in the Debug Window (or console) and when you disable the checkbox you should see another message appear.  You have now created the framework that will allow you to create almost any kind of Gaim plugin you can imagine.
 
 @section account-api Account and Account Option Functions
 
@@ -483,22 +483,33 @@ sub plugin_load {
 
 @section timeout-cb Misc: Plugin Actions, Timeouts and Callbacks
 
-This section of the manual covers some of the more important features that can be added to Gaim perl Plugins.  Plugin actions are callback functions that are accessible to the user from the Gaim main window under "Tools->Plugin Actions".  Timeouts allow a plugin to exectue a perl subroutine after a given period of time.  Note that timeouts only occur once, so if the timeout must occur periodically just add a new timeout at the end of the timeout callback function.  Callbacks are functions that are called when an event occurs such as a buddy signing-on or a message being received.  These three tools will be discussed in the following three examples.
+This section of the manual covers some of the more important features that can be added to Gaim perl Plugins.  Plugin actions are callback functions that are accessible to the user from the Gaim main window under "Tools -> [Plugin Name]".  Timeouts allow a plugin to exectue a perl subroutine after a given period of time.  Note that timeouts only occur once, so if the timeout must occur periodically just add a new timeout at the end of the timeout callback function.  Callbacks are functions that are called when an event occurs such as a buddy signing-on or a message being received.  These three tools will be discussed in the following three examples.
 
-The Plugin Action requires the @c \%PLUGIN_INFO hash to have two key/value pairs added and a callback perl subroutine defined.  Note the difference between the C API that allows for a GList of actions--only one plugin action is allowed in Gaim perl plugins.
+Plugin actions require the @c \%PLUGIN_INFO hash to have a key/value pair added and a callback perl subroutine defined to list the available actions, as well as one callback subroutine for each action.  Also, a @c \%plugin_actions hash needs to be defined relating the action names returned by the callback to the appropriate callback subroutines for each action.
 
 @code
 %PLUGIN_INFO = {
 	...,
-	# The callback subroutine that is called when "Tools->Plugin Action->Plugin Action Label" is selected
-	plugin_action => "plugin_action_cb",
-	plugin_action_label => "Plugin Action Label"
+	plugin_action_sub => "plugin_actions_cb",
 }
 
-sub plugin_action_cb {
-	# Note the function receives the plugin handle as its argument
-	$plugin = shift;
-	print "Plugin Action Selected.\n";
+sub plugin_actions_cb {
+	my @actions = ("Action 1", "Action 2");
+}
+
+%plugin_actions = (
+	# The callback subroutine that is called when "Tools -> Plugin -> Action 1" is selected
+	"Action 1" => \&action1_cb,
+	# The callback subroutine that is called when "Tools -> Plugin -> Action 2" is selected
+	"Action 2" => \&action2_cb
+);
+
+sub action1_cb {
+	Gaim::debug_info("Test Plugin", "Action 1 activated");
+}
+
+sub action2_cb {
+	Gaim::debug_info("Test Plugin", "Action 2 activated");
 }
 @endcode
 
