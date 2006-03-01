@@ -47,6 +47,10 @@ version 2.0.0:
 	* Brand new message queueing system (Casey Harkins)
 	* Ability to find the last message from a user in a chat (Levi Bard
 	  and Sadrul Habib Chowdhury)
+	* Formatting is preserved across messages
+	  (There are known issues with pasting formatted text.  Either use "Paste
+	   as Plain Text", hit Ctrl-R after pasting, or use the Clear Formatting
+	   button on the toolbar.)
 
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
@@ -57,6 +61,9 @@ version 2.0.0:
 	* Log viewer aggregates logs from the same "Person"
 	* When opening the log viewer, show the most recent log by default
 	  (Peter McCurdy)
+	* Logs are now saved with the current timezone, which is displayed
+	  in the log viewer
+	* Text logs are linkified, so URLs are clickable
 
 	Plugins:
 	* Plugins are now accessed through a separate dialog from the Tools
@@ -134,9 +141,11 @@ version 2.0.0:
 	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno, Google
 	  Summer of Code)
 	* Updated Gadu-Gadu protocol support (Bartosz Oler, Google Summer of
-	  Code)
+	  Code).  This requires the libgadu library.  See
+	  http://gaim.sourceforge.net/faq2.php#libgadu for more information.
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
+	  Requires the meanwhile library: http://meanwhile.sourceforge.net
 
 	Other Noteworthy Changes:
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
@@ -145,8 +154,6 @@ version 2.0.0:
 	  better at lower resolutions (Sadrul Habib Chowdhury)
 	* New "find buddy" results dialog (Alex Converse)
 	* People using input methods can now use Enter again
-	* GNOME users can open received files by clicking on "Open" in the
-	  file transfer window
 	* Mouse-over hyperlink coloring is now themeable
 	* Buddy Pounces now have a proper management window. (Kevin Stange)
 	* Buddy icons maintain aspect ratio when resized
@@ -160,11 +167,12 @@ version 2.0.0:
 	  (Sadrul Habib Chowdhury)
 	* New e-mail notices are now grouped into one dialog.
 	  (Sadrul Habib Chowdhury)
-	* "Open" in the File Transfer window integrates with KDE now (in
-	  addition to existing GNOME and Windows integration) and falls back to
-	  the browser in other environments.
+	* "Open" in the File Transfer window integrates with GNOME, KDE, and
+	  Windows and falls back to the browser in other environments.
 	* On Mac OS X, the keyboard/mouse idle time pref now uses system idle
 	  time instead of X11 idle time (Michael Culbertson)
+	* Autocomplete in the buddy pounce dialog (Sadrul Habib Chowdhury)
+	* Non-blocking socket I/O is used in most protocol plugins
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
