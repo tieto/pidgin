@@ -250,6 +250,17 @@ GaimAccount *gaim_gtk_account_option_menu_get_selected(GtkWidget *optmenu);
 void gaim_gtk_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account);
 
 /**
+ * Add autocompletion of screenames to an entry.
+ *
+ * @param entry     The GtkEntry on which to setup autocomplete.
+ * @param optmenu   A menu for accounts, returned by gaim_gtk_account_option_menu_new().
+ *                  If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
+ *                  from the autocomplete list.
+ * @param all       Whether to include screennames from disconnected accounts.
+ */
+void gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
+
+/**
  * Check if the given path is a directory or not.  If it is, then modify
  * the given GtkFileSelection dialog so that it displays the given path.
  * If the given path is not a directory, then do nothing.

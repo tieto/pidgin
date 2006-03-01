@@ -552,6 +552,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	dialog->buddy_entry = gtk_entry_new();
 
+	gaim_gtk_setup_screenname_autocomplete(dialog->buddy_entry, dialog->account_menu, FALSE);
+
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_entry);
 
