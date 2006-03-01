@@ -1325,11 +1325,12 @@ select_field_list_item(GtkTreeModel *model, GtkTreePath *path,
 					   GtkTreeIter *iter, gpointer data)
 {
 	GaimRequestField *field = (GaimRequestField *)data;
-	const char *text;
+	char *text;
 
 	gtk_tree_model_get(model, iter, 1, &text, -1);
 
 	gaim_request_field_list_add_selected(field, text);
+	g_free(text);
 }
 
 static void
