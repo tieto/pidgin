@@ -1735,7 +1735,6 @@ gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
 	}
 }
 
-
 #if GTK_CHECK_VERSION(2,3,0)
 # define NEW_STYLE_COMPLETION
 #endif
@@ -1746,6 +1745,7 @@ typedef struct
 	GCompletion *completion;
 
 	gboolean completion_started;
+	gboolean all;
 
 } GaimGtkCompletionData;
 #endif
@@ -2000,25 +2000,16 @@ static void get_log_set_name(GaimLogSet *set, gpointer value, gpointer **set_has
 	}
 }
 
-void
-gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all)
-{
 #ifdef NEW_STYLE_COMPLETION
-	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
-	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
-	GtkListStore *store;
-
+static void
+add_completion_list(GtkListStore *store)
+{
 	GaimBlistNode *gnode, *cnode, *bnode;
+	gboolean all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(store), "screenname-all"));
 	GHashTable *sets;
-	gpointer set_hash_data[2];
-	GtkEntryCompletion *completion;
-	gpointer *data;
+	gpointer set_hash_data[] = {store, GINT_TO_POINTER(all)};
 
-	g_return_if_fail(entry != NULL);
-
-	store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	set_hash_data[0] = store;
-	set_hash_data[1] = GINT_TO_POINTER(all);
+	gtk_list_store_clear(store);
 
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
 	{
@@ -2050,7 +2041,86 @@ gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, 
 	sets = gaim_log_get_log_sets();
 	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
 	g_hash_table_destroy(sets);
+}
+#else
+static void
+add_completion_list(GaimGtkCompletionData *data)
+{
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GCompletion *completion;
+	GList *item = g_list_append(NULL, NULL);
+	GHashTable *sets;
+	gpointer set_hash_data[2];
 
+	completion = data->completion;
+
+	g_list_foreach(completion->items, (GFunc)g_free, NULL);
+	g_completion_clear_items(completion);
+
+	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	{
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+
+		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+			{
+				GaimBuddy *buddy = (GaimBuddy *)bnode;
+
+				if (!data->all && !gaim_account_is_connected(buddy->account))
+					continue;
+
+				item->data = g_strdup(buddy->name);
+				g_completion_add_items(data->completion, item);
+			}
+		}
+	}
+	g_list_free(item);
+
+	sets = gaim_log_get_log_sets();
+	item = NULL;
+	set_hash_data[0] = &item;
+	set_hash_data[1] = GINT_TO_POINTER(data->all);
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
+	g_hash_table_destroy(sets);
+	g_completion_add_items(data->completion, item);
+	g_list_free(item);
+}
+#endif
+
+static void
+screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer null)
+{
+	gaim_signals_disconnect_by_handle(widget);
+}
+
+static void
+repopulate_autocomplete(gpointer something, gpointer data)
+{
+	add_completion_list(data);
+}
+
+void
+gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all)
+{
+	gpointer cb_data = NULL;
+
+#ifdef NEW_STYLE_COMPLETION
+	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
+	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
+	GtkListStore *store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+
+	GtkEntryCompletion *completion;
+	gpointer *data;
+
+	g_object_set_data(G_OBJECT(store), "screenname-all", GINT_TO_POINTER(all));
+	add_completion_list(store);
+
+	cb_data = store;
 
 	/* Sort the completion list by screenname. */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
@@ -2075,51 +2145,16 @@ gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, 
 
 #else /* !NEW_STYLE_COMPLETION */
 	GaimGtkCompletionData *data;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GList *item = g_list_append(NULL, NULL);
-	GHashTable *sets;
-	gpointer set_hash_data[2];
-
-	g_return_if_fail(entry != NULL);
 
 	data = g_new0(GaimGtkCompletionData, 1);
 
 	data->completion = g_completion_new(NULL);
+	data->all = all;
 
 	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
 
-	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
-	{
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-		{
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-			{
-				GaimBuddy *buddy = (GaimBuddy *)bnode;
-
-				if (!all && !gaim_account_is_connected(buddy->account))
-					continue;
-
-				item->data = g_strdup(buddy->name);
-				g_completion_add_items(data->completion, item);
-			}
-		}
-	}
-	g_list_free(item);
-
-	sets = gaim_log_get_log_sets();
-	item = NULL;
-	set_hash_data[0] = &item;
-	set_hash_data[1] = GINT_TO_POINTER(all);
-	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
-	g_hash_table_destroy(sets);
-	g_completion_add_items(data->completion, item);
-	g_list_free(item);
+	add_completion_list(data);
+	cb_data = data;
 
 	g_signal_connect(G_OBJECT(entry), "event",
 					 G_CALLBACK(completion_entry_event), data);
@@ -2127,5 +2162,16 @@ gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, 
 					 G_CALLBACK(destroy_completion_data), data);
 
 #endif /* !NEW_STYLE_COMPLETION */
+
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", entry,
+						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", entry,
+						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-added", entry,
+						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed", entry,
+						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+
+	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), NULL);
 }
 
