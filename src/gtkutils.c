@@ -2093,7 +2093,7 @@ add_completion_list(GaimGtkCompletionData *data)
 #endif
 
 static void
-screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer null)
+screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 {
 	gaim_signals_disconnect_by_handle(widget);
 }
