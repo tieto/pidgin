@@ -93,7 +93,7 @@ gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
 		/* XXX I think this leaks, but doing it without the strdup
 		 * just showed garbage */
 		act = gaim_plugin_action_new(g_strdup(label), gaim_perl_plugin_action_cb);
-		l = g_list_append(l, act);
+		l = g_list_prepend(l, act);
 	}
 
 	PUTBACK;
