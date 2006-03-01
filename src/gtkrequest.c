@@ -695,7 +695,7 @@ setup_entry_field(GtkWidget *entry, GaimRequestField *field)
 					if (type_hint != NULL && strcmp(type_hint, "account") == 0)
 					{
 						if (fld->ui_data == NULL)
-							fld->ui_data - create_account_field(fld);
+							fld->ui_data = create_account_field(fld);
 						optmenu = GTK_WIDGET(fld->ui_data);
 						break;
 					}
