@@ -1885,9 +1885,10 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 		return TRUE;
 
 	if (optmenu != NULL) {
-		gaim_gtk_account_option_menu_set_selected(optmenu, account);
-		GList *items = GTK_MENU_SHELL(gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu)))->children;
+		GList *items;
 		guint index = 0;
+		gaim_gtk_account_option_menu_set_selected(optmenu, account);
+		items = GTK_MENU_SHELL(gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu)))->children;
 
 		do {
 			if (account == g_object_get_data(G_OBJECT(items->data), "account")) {
