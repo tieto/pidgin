@@ -3142,7 +3142,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 
 		/* Try again, with this new location. */
 		gaim_url_fetch_request(new_url, full, gfud->user_agent,
-				gfud->http11, gfud->request, gfud->include_headers,
+				gfud->http11, NULL, gfud->include_headers,
 				gfud->callback, gfud->user_data);
 
 		/* Free up. */
