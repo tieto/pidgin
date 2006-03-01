@@ -804,11 +804,11 @@ static struct
 const char *
 wgaim_get_timezone_abbreviation(const struct tm *tm)
 {
-	int			i;
-	char		tzname[128];
-	char		localtzname[256];
-	HKEY		rootKey;
-	int			idx;
+	int i;
+	char tzname[128];
+	char localtzname[256];
+	HKEY rootKey;
+	int idx;
 
 	if (!tm)
 	{
@@ -831,10 +831,12 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 			                win32_tzmap[i].ustd, tzname);
 #endif
 			/* Cache the Result */
-			if (win32_tzmap[0].wstd[0] != '\0')
-				g_free(win32_tzmap[0].wstd);
-			win32_tzmap[0].wstd = g_strdup(tzname);
-			win32_tzmap[0].ustd = win32_tzmap[i].ustd;
+			if (i > 0) {
+				if (win32_tzmap[0].wstd[0] != '\0')
+					g_free(win32_tzmap[0].wstd);
+				win32_tzmap[0].wstd = g_strdup(tzname);
+				win32_tzmap[0].ustd = win32_tzmap[i].ustd;
+			}
 
 			return win32_tzmap[i].ustd;
 		}
@@ -845,10 +847,12 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 			                win32_tzmap[i].udst, tzname);
 #endif
 			/* Cache the Result */
-			if (win32_tzmap[0].wdst[0] != '\0')
-				g_free(win32_tzmap[0].wdst);
-			win32_tzmap[0].wdst = g_strdup(tzname);
-			win32_tzmap[0].udst = win32_tzmap[i].udst;
+			if (i > 0) {
+				if (win32_tzmap[0].wdst[0] != '\0')
+					g_free(win32_tzmap[0].wdst);
+				win32_tzmap[0].wdst = g_strdup(tzname);
+				win32_tzmap[0].udst = win32_tzmap[i].udst;
+			}
 
 			return win32_tzmap[i].udst;
 		}
@@ -872,12 +876,12 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 
 	for (idx = 0;; idx++)
 	{
-		char		keyname[256];
-		char		zonename[256];
-		DWORD		namesize;
-		FILETIME	lastwrite;
-		HKEY		key;
-		LONG		r;
+		char keyname[256];
+		char zonename[256];
+		DWORD namesize;
+		FILETIME lastwrite;
+		HKEY key;
+		LONG r;
 
 		memset(keyname, 0, sizeof(keyname));
 		namesize = sizeof(keyname);
@@ -913,7 +917,7 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		if (strcmp(tzname, zonename) == 0)
 		{
 			/* Matched zone */
-			gaim_strlcpy(localtzname, keyname);
+			strcpy(localtzname, keyname);
 			RegCloseKey(key);
 			break;
 		}
@@ -928,7 +932,7 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		if (strcmp(tzname, zonename) == 0)
 		{
 			/* Matched DST zone */
-			gaim_strlcpy(localtzname, keyname);
+			strcpy(localtzname, keyname);
 			RegCloseKey(key);
 			break;
 		}
