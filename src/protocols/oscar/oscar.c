@@ -618,6 +618,70 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc,
 	return;
 }
 
+/**
+ * Looks for %n, %d, or %t in a string, and replaces them with the
+ * specified name, date, and time, respectively.
+ *
+ * @param str  The string that may contain the special variables.
+ * @param name The sender name.
+ *
+ * @return A newly allocated string where the special variables are
+ *         expanded.  This should be g_free'd by the caller.
+ */
+static gchar *
+gaim_str_sub_away_formatters(const char *str, const char *name)
+{
+	char *c;
+	GString *cpy;
+	time_t t;
+	struct tm *tme;
+
+	g_return_val_if_fail(str  != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	/* Create an empty GString that is hopefully big enough for most messages */
+	cpy = g_string_sized_new(1024);
+
+	t = time(NULL);
+	tme = localtime(&t);
+
+	c = (char *)str;
+	while (*c) {
+		switch (*c) {
+		case '%':
+			if (*(c + 1)) {
+				switch (*(c + 1)) {
+				case 'n':
+					/* append name */
+					g_string_append(cpy, name);
+					c++;
+					break;
+				case 'd':
+					/* append date */
+					g_string_append(cpy, gaim_date_format_short(tme));
+					c++;
+					break;
+				case 't':
+					/* append time */
+					g_string_append(cpy, gaim_time_format(tme));
+					c++;
+					break;
+				default:
+					g_string_append_c(cpy, *c);
+				}
+			} else {
+				g_string_append_c(cpy, *c);
+			}
+			break;
+		default:
+			g_string_append_c(cpy, *c);
+		}
+		c++;
+	}
+
+	return g_string_free(cpy, FALSE);
+}
+
 static gchar *oscar_caps_to_string(guint caps)
 {
 	GString *str;
@@ -6443,6 +6507,12 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	char *tmp1, *tmp2;
 
 	if (imflags & GAIM_MESSAGE_AUTO_RESP)
+		/*
+		 * TODO: Do this earlier in the IM-sending chain of events.
+		 *       We should attach to an IM-sending signal and do it
+		 *       there.  As it is currently implemented, encrypted
+		 *       messages are not substituted.
+		 */
 		tmp1 = gaim_str_sub_away_formatters(message, name);
 	else
 		tmp1 = g_strdup(message);

@@ -176,11 +176,6 @@ gaim_str_strip_char(str, thechar)
 	char *str
 	char thechar
 
-gchar *
-gaim_str_sub_away_formatters(str, name)
-	const char *str
-	const char *name
-
 time_t
 gaim_str_to_time(timestamp, utc = FALSE, tm = NULL, tz_off = NULL, rest = NULL)
 	const char *timestamp

@@ -654,18 +654,6 @@ gboolean gaim_str_has_prefix(const char *s, const char *p);
 gboolean gaim_str_has_suffix(const char *s, const char *x);
 
 /**
- * Looks for %n, %d, or %t in a string, and replaces them with the
- * specified name, date, and time, respectively.
- *
- * @param str  The string that may contain the special variables.
- * @param name The sender name.
- *
- * @return A newly allocated string where the special variables are
- *         expanded.  This should be g_free'd by the caller.
- */
-gchar *gaim_str_sub_away_formatters(const char *str, const char *name);
-
-/**
  * Duplicates a string and replaces all newline characters from the
  * source string with HTML linebreaks.
  *

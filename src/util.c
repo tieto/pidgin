@@ -2672,60 +2672,6 @@ gaim_normalize_nocase(const GaimAccount *account, const char *str)
 }
 
 gchar *
-gaim_str_sub_away_formatters(const char *str, const char *name)
-{
-	char *c;
-	GString *cpy;
-	time_t t;
-	struct tm *tme;
-
-	g_return_val_if_fail(str  != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
-
-	/* Create an empty GString that is hopefully big enough for most messages */
-	cpy = g_string_sized_new(1024);
-
-	t = time(NULL);
-	tme = localtime(&t);
-
-	c = (char *)str;
-	while (*c) {
-		switch (*c) {
-		case '%':
-			if (*(c + 1)) {
-				switch (*(c + 1)) {
-				case 'n':
-					/* append name */
-					g_string_append(cpy, name);
-					c++;
-					break;
-				case 'd':
-					/* append date */
-					g_string_append(cpy, gaim_date_format_short(tme));
-					c++;
-					break;
-				case 't':
-					/* append time */
-					g_string_append(cpy, gaim_time_format(tme));
-					c++;
-					break;
-				default:
-					g_string_append_c(cpy, *c);
-				}
-			} else {
-				g_string_append_c(cpy, *c);
-			}
-			break;
-		default:
-			g_string_append_c(cpy, *c);
-		}
-		c++;
-	}
-
-	return g_string_free(cpy, FALSE);
-}
-
-gchar *
 gaim_strdup_withhtml(const gchar *src)
 {
 	gulong destsize, i, j;
