@@ -2163,10 +2163,14 @@ gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, 
 
 #endif /* !NEW_STYLE_COMPLETION */
 
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", entry,
-						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", entry,
-						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+	if (!all)
+	{
+		gaim_signal_connect(gaim_connections_get_handle(), "signed-on", entry,
+							GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+		gaim_signal_connect(gaim_connections_get_handle(), "signed-off", entry,
+							GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+	}
+
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-added", entry,
 						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed", entry,
