@@ -5576,11 +5576,14 @@ gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 		GaimConvChat *chat = GAIM_CONV_CHAT(conv);
 		GaimGtkChatPane *gtkchat = gtkconv->u.chat;
 
-		topic = gaim_conv_chat_get_topic(chat);
+		if (gtkchat->topic_text != NULL)
+		{
+			topic = gaim_conv_chat_get_topic(chat);
 
-		gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
-		                     topic ? topic : "", NULL);
+			gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), topic ? topic : "");
+			gtk_tooltips_set_tip(gtkconv->tooltips, gtkchat->topic_text,
+			                     topic ? topic : "", NULL);
+		}
 	}
 
 	if (fields & GAIM_GTKCONV_SMILEY_THEME)
