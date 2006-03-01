@@ -4624,7 +4624,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	/* Set the active conversation to the one that just messaged us. */
 	/* TODO: consider not doing this if the account is offline or something */
-	gaim_gtkconv_set_active_conversation(conv);
+	if (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV))
+		gaim_gtkconv_set_active_conversation(conv);
 	type = gaim_conversation_get_type(conv);
 
 	gc = gaim_conversation_get_gc(conv);
