@@ -812,25 +812,44 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 
 	if (!tm)
 	{
-		gaim_debug_warning("wgaim", "could not determine current date/time: localtime failed");
-		return NULL;
+		gaim_debug_warning("wgaim", "could not determine current date/time: localtime failed\n");
+		return "";
 	}
 
-	memset(tzname, 0, sizeof(tzname));
-	strftime(tzname, sizeof(tzname) - 1, "%Z", tm);
+	if (strftime(tzname, sizeof(tzname) - 1, "%Z", tm) == 0)
+	{
+		gaim_debug_error("wgaim", "timezone name is too long for the buffer\n");
+		return "";
+	}
 
 	for (i = 0; win32_tzmap[i].wstd != NULL; i++)
 	{
 		if (strcmp(tzname, win32_tzmap[i].wstd) == 0)
 		{
-			gaim_debug_info("wgaim", "TZ \"%s\" matches Windows timezone \"%s\"",
+#if 0
+			gaim_debug_info("wgaim", "TZ \"%s\" matches Windows timezone \"%s\"\n",
 			                win32_tzmap[i].ustd, tzname);
+#endif
+			/* Cache the Result */
+			if (win32_tzmap[0].wstd[0] != '\0')
+				g_free(win32_tzmap[0].wstd);
+			win32_tzmap[0].wstd = g_strdup(tzname);
+			win32_tzmap[0].ustd = win32_tzmap[i].ustd;
+
 			return win32_tzmap[i].ustd;
 		}
 		if (strcmp(tzname, win32_tzmap[i].wdst) == 0)
 		{
-			gaim_debug_info("wgaim", "TZ \"%s\" matches Windows timezone \"%s\"",
+#if 0
+			gaim_debug_info("wgaim", "TZ \"%s\" matches Windows timezone \"%s\"\n",
 			                win32_tzmap[i].udst, tzname);
+#endif
+			/* Cache the Result */
+			if (win32_tzmap[0].wdst[0] != '\0')
+				g_free(win32_tzmap[0].wdst);
+			win32_tzmap[0].wdst = g_strdup(tzname);
+			win32_tzmap[0].udst = win32_tzmap[i].udst;
+
 			return win32_tzmap[i].udst;
 		}
 	}
@@ -847,8 +866,8 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 					 KEY_READ,
 					 &rootKey) != ERROR_SUCCESS)
 	{
-		gaim_debug_warning("wgaim", "could not open registry key to identify Windows timezone: %i", (int) GetLastError());
-		return NULL;
+		gaim_debug_warning("wgaim", "could not open registry key to identify Windows timezone: %i\n", (int) GetLastError());
+		return "";
 	}
 
 	for (idx = 0;; idx++)
@@ -873,13 +892,13 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		{
 			if (r == ERROR_NO_MORE_ITEMS)
 				break;
-			gaim_debug_warning("wgaim", "could not enumerate registry subkeys to identify Windows timezone: %i", (int) r);
+			gaim_debug_warning("wgaim", "could not enumerate registry subkeys to identify Windows timezone: %i\n", (int) r);
 			break;
 		}
 
 		if ((r = RegOpenKeyEx(rootKey, keyname, 0, KEY_READ, &key)) != ERROR_SUCCESS)
 		{
-			gaim_debug_warning("wgaim", "could not open registry subkey to identify Windows timezone: %i", (int) r);
+			gaim_debug_warning("wgaim", "could not open registry subkey to identify Windows timezone: %i\n", (int) r);
 			break;
 		}
 
@@ -887,14 +906,14 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		namesize = sizeof(zonename);
 		if ((r = RegQueryValueEx(key, "Std", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
 		{
-			gaim_debug_warning("wgaim", "could not query value for 'std' to identify Windows timezone: %i", (int) r);
+			gaim_debug_warning("wgaim", "could not query value for 'std' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
 			break;
 		}
 		if (strcmp(tzname, zonename) == 0)
 		{
 			/* Matched zone */
-			strcpy(localtzname, keyname);
+			gaim_strlcpy(localtzname, keyname);
 			RegCloseKey(key);
 			break;
 		}
@@ -902,14 +921,14 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		namesize = sizeof(zonename);
 		if ((r = RegQueryValueEx(key, "Dlt", NULL, NULL, zonename, &namesize)) != ERROR_SUCCESS)
 		{
-			gaim_debug_warning("wgaim", "could not query value for 'dlt' to identify Windows timezone: %i", (int) r);
+			gaim_debug_warning("wgaim", "could not query value for 'dlt' to identify Windows timezone: %i\n", (int) r);
 			RegCloseKey(key);
 			break;
 		}
 		if (strcmp(tzname, zonename) == 0)
 		{
 			/* Matched DST zone */
-			strcpy(localtzname, keyname);
+			gaim_strlcpy(localtzname, keyname);
 			RegCloseKey(key);
 			break;
 		}
@@ -926,9 +945,10 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		{
 			if (strcmp(localtzname, win32_tzmap[i].wstd) == 0)
 			{
-				gaim_debug_info("wgaim", "TZ \"%s\" matches localized Windows timezone \"%s\" (\"%s\")",
+#if 0
+				gaim_debug_info("wgaim", "TZ \"%s\" matches localized Windows timezone \"%s\" (\"%s\")\n",
 				                win32_tzmap[i].ustd, tzname, localtzname);
-
+#endif
 				/* Cache the Result */
 				if (win32_tzmap[0].wstd[0] != '\0')
 					g_free(win32_tzmap[0].wstd);
@@ -939,9 +959,10 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 			}
 			if (strcmp(localtzname, win32_tzmap[i].wdst) == 0)
 			{
-				gaim_debug_info("wgaim", "TZ \"%s\" matches localized Windows timezone \"%s\" (\"%s\")",
+#if 0
+				gaim_debug_info("wgaim", "TZ \"%s\" matches localized Windows timezone \"%s\" (\"%s\")\n",
 				                win32_tzmap[i].udst, tzname, localtzname);
-
+#endif
 				/* Cache the Result */
 				if (win32_tzmap[0].wdst[0] != '\0')
 					g_free(win32_tzmap[0].wdst);
@@ -954,7 +975,7 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 		}
 	}
 
-	gaim_debug_warning("wgaim", "could not find a match for Windows timezone \"%s\"", tzname);
+	gaim_debug_warning("wgaim", "could not find a match for Windows timezone \"%s\"\n", tzname);
 	return "";
 }
 
