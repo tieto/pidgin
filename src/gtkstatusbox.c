@@ -1518,16 +1518,6 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 		if (status_box->typing != 0) {
 			gtk_gaim_status_box_pulse_typing(status_box);
 			g_source_remove(status_box->typing);
-		} else {
-			gint index;
-			GaimSavedStatus *saved = gaim_savedstatus_get_current();
-
-			index = get_statusbox_index(status_box, saved);
-
-			gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
-			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
-			gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
-			gtk_widget_grab_focus(status_box->imhtml);
 		}
 		status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 	}
