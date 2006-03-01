@@ -1420,10 +1420,10 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 					} else if (strstr(line, " signed off ")) {
 						if (buddy->alias)
 							g_string_append_printf(formatted,
-								_("%s logged out."), buddy->alias);
+								_("%s has signed off."), buddy->alias);
 						else
 							g_string_append_printf(formatted,
-								_("%s logged out."), log->name);
+								_("%s has signed off."), log->name);
 						line = "";
 					} else if (strstr(line, " signed on ")) {
 						if (buddy->alias)
@@ -1927,23 +1927,23 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
+		"/plugins/core/log_reader/adium/log_directory", "Adium");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
+		"/plugins/core/log_reader/fire/log_directory", "Fire");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
+		"/plugins/core/log_reader/messenger_plus/log_directory", "Messenger Plus!");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
+		"/plugins/core/log_reader/msn/log_directory", "MSN Messenger");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
+		"/plugins/core/log_reader/trillian/log_directory", "Trillian");
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
