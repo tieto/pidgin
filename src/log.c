@@ -1221,7 +1221,9 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		g_free(read);
 		minus_header2 = g_markup_escape_text(minus_header, -1);
 		g_free(minus_header);
-		return minus_header2;
+		read = gaim_markup_linkify(minus_header2);
+		g_free(minus_header2);
+		return read;
 	}
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
@@ -1401,7 +1403,8 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	else {
 		tmp = g_markup_escape_text(read, -1);
 		g_free(read);
-		read = tmp;
+		read = gaim_markup_linkify(tmp);
+		g_free(tmp);
 	}
 	return read;
 }
