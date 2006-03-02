@@ -1395,6 +1395,8 @@ file_yes_no_cb(GaimGtkRequestData *data, gint id)
 		if (data->cbs[1] != NULL)
 			((GaimRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
 		gaim_request_close(data->type, data);
+	} else {
+		gdk_window_set_cursor(GTK_WIDGET(data->dialog)->window, NULL);
 	}
 }
 
