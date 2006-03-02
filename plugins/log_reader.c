@@ -98,7 +98,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 		while ((file = g_dir_read_name(dir))) {
 			if (!g_str_has_prefix(file, sn))
 				continue;
-			if (g_str_has_suffix(file, ".html")) {
+			if (g_str_has_suffix(file, ".html") || g_str_has_suffix(file, ".AdiumHTMLLog")) {
 				struct tm tm;
 				const char *date = file;
 
