@@ -126,6 +126,7 @@ do_signon(gpointer data)
 {
 	GaimAccount *account = data;
 	GaimAutoRecon *info;
+	GaimStatus *status;
 
 	gaim_debug_info("autorecon", "do_signon called\n");
 	g_return_val_if_fail(account != NULL, FALSE);
@@ -134,9 +135,13 @@ do_signon(gpointer data)
 	if (info)
 		info->timeout = 0;
 
-	gaim_debug_info("autorecon", "calling gaim_account_connect\n");
-	gaim_account_connect(account);
-	gaim_debug_info("autorecon", "done calling gaim_account_connect\n");
+	status = gaim_account_get_active_status(account);
+	if (gaim_status_is_online(status))
+	{
+		gaim_debug_info("autorecon", "calling gaim_account_connect\n");
+		gaim_account_connect(account);
+		gaim_debug_info("autorecon", "done calling gaim_account_connect\n");
+	}
 
 	return FALSE;
 }
