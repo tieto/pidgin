@@ -747,7 +747,9 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 									   const GList *attrs)
 {
 	gboolean changed = FALSE;
-	const gchar *id;
+	const GList *l;
+	GList *specified_attr_ids = NULL;
+	GaimStatusType *status_type;
 
 	g_return_if_fail(status != NULL);
 
@@ -767,26 +769,30 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 	status->active = active;
 
 	/* Set any attributes */
-	while (attrs)
+	l = attrs;
+	while (l != NULL)
 	{
+		const gchar *id;
 		GaimValue *value;
 
-		id = attrs->data;
-		attrs = attrs->next;
+		id = l->data;
+		l = l->next;
 		value = gaim_status_get_attr_value(status, id);
 		if (value == NULL)
 		{
 			gaim_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
 							   "not supported.\n", id, status->type->name);
 			/* Skip over the data and move on to the next attribute */
-			attrs = attrs->next;
+			l = l->next;
 			continue;
 		}
 
+		specified_attr_ids = g_list_prepend(specified_attr_ids, (gpointer)id);
+
 		if (value->type == GAIM_TYPE_STRING)
 		{
-			const gchar *string_data = attrs->data;
-			attrs = attrs->next;
+			const gchar *string_data = l->data;
+			l = l->next;
 			if (((string_data == NULL) && (value->data.string_data == NULL)) ||
 				((string_data != NULL) && (value->data.string_data != NULL) &&
 				!strcmp(string_data, value->data.string_data)))
@@ -798,8 +804,8 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 		}
 		else if (value->type == GAIM_TYPE_INT)
 		{
-			int int_data = GPOINTER_TO_INT(attrs->data);
-			attrs = attrs->next;
+			int int_data = GPOINTER_TO_INT(l->data);
+			l = l->next;
 			if (int_data == value->data.int_data)
 				continue;
 			gaim_status_set_attr_int(status, id, int_data);
@@ -807,19 +813,47 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 		}
 		else if (value->type == GAIM_TYPE_BOOLEAN)
 		{
-			gboolean boolean_data = GPOINTER_TO_INT(attrs->data);
-			attrs = attrs->next;
+			gboolean boolean_data = GPOINTER_TO_INT(l->data);
+			l = l->next;
 			if (boolean_data == value->data.boolean_data)
 				continue;
-			gaim_status_set_attr_int(status, id, boolean_data);
+			gaim_status_set_attr_boolean(status, id, boolean_data);
 			changed = TRUE;
 		}
 		else
 		{
 			/* We don't know what the data is--skip over it */
-			attrs = attrs->next;
+			l = l->next;
 		}
 	}
+
+	/* Reset any unspecified attributes to their default value */
+	status_type = gaim_status_get_type(status);
+	l = gaim_status_type_get_attrs(status_type);
+	while (l != NULL)
+	{
+		GaimStatusAttr *attr;
+
+		attr = l->data;
+		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp))
+		{
+			GaimValue *default_value;
+			default_value = gaim_status_attr_get_value(attr);
+			if (default_value->type == GAIM_TYPE_STRING)
+				gaim_status_set_attr_string(status, attr->id,
+						gaim_value_get_string(default_value));
+			else if (default_value->type == GAIM_TYPE_INT)
+				gaim_status_set_attr_int(status, attr->id,
+						gaim_value_get_int(default_value));
+			else if (default_value->type == GAIM_TYPE_BOOLEAN)
+				gaim_status_set_attr_boolean(status, attr->id,
+						gaim_value_get_boolean(default_value));
+			changed = TRUE;
+		}
+
+		l = l->next;
+	}
+	g_list_free(specified_attr_ids);
 
 	if (!changed)
 		return;
@@ -889,7 +923,6 @@ gaim_status_set_attr_string(GaimStatus *status, const char *id,
                                  "this!\n", id,
 				 gaim_status_type_get_name(gaim_status_get_type(status)));
 		return;
-				 				 
 	}
 	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_STRING);
 

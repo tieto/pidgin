@@ -58,103 +58,12 @@ gaim_prpl_got_account_login_time(GaimAccount *account, time_t login_time)
 	gaim_presence_set_login_time(presence, login_time);
 }
 
-static gboolean
-set_value_from_arg(GaimStatus *status, const char *id, va_list *args)
-{
-	GaimValue *value;
-
-	value = gaim_status_get_attr_value(status, id);
-
-	if (value == NULL)
-	{
-		gaim_debug_error("prpl",
-						 "Attempted to set an unknown attribute %s on "
-						 "status %s\n",
-						 id, gaim_status_get_id(status));
-		return FALSE;
-	}
-
-	switch (gaim_value_get_type(value))
-	{
-		case GAIM_TYPE_CHAR:
-			gaim_value_set_char(value, (char)va_arg(*args, int));
-			break;
-
-		case GAIM_TYPE_UCHAR:
-			gaim_value_set_uchar(value,
-								 (unsigned char)va_arg(*args, unsigned int));
-			break;
-
-		case GAIM_TYPE_BOOLEAN:
-			gaim_value_set_boolean(value, va_arg(*args, gboolean));
-			break;
-
-		case GAIM_TYPE_SHORT:
-			gaim_value_set_short(value, (short)va_arg(*args, int));
-			break;
-
-		case GAIM_TYPE_USHORT:
-			gaim_value_set_ushort(value,
-					(unsigned short)va_arg(*args, unsigned int));
-			break;
-
-		case GAIM_TYPE_INT:
-			gaim_value_set_int(value, va_arg(*args, int));
-			break;
-
-		case GAIM_TYPE_UINT:
-			gaim_value_set_uint(value, va_arg(*args, unsigned int));
-			break;
-
-		case GAIM_TYPE_LONG:
-			gaim_value_set_long(value, va_arg(*args, long));
-			break;
-
-		case GAIM_TYPE_ULONG:
-			gaim_value_set_ulong(value, va_arg(*args, unsigned long));
-			break;
-
-		case GAIM_TYPE_INT64:
-			gaim_value_set_int64(value, va_arg(*args, gint64));
-			break;
-
-		case GAIM_TYPE_UINT64:
-			gaim_value_set_uint64(value, va_arg(*args, guint64));
-			break;
-
-		case GAIM_TYPE_STRING:
-			gaim_value_set_string(value, va_arg(*args, char *));
-			break;
-
-		case GAIM_TYPE_OBJECT:
-			gaim_value_set_object(value, va_arg(*args, void *));
-			break;
-
-		case GAIM_TYPE_POINTER:
-			gaim_value_set_pointer(value, va_arg(*args, void *));
-			break;
-
-		case GAIM_TYPE_ENUM:
-			gaim_value_set_enum(value, va_arg(*args, int));
-			break;
-
-		case GAIM_TYPE_BOXED:
-			gaim_value_set_boxed(value, va_arg(*args, void *));
-			break;
-
-		default:
-			return FALSE;
-	}
-
-	return TRUE;
-}
-
 void
-gaim_prpl_got_account_status(GaimAccount *account, const char *status_id,
-		const char *attr_id, ...)
+gaim_prpl_got_account_status(GaimAccount *account, const char *status_id, ...)
 {
 	GaimPresence *presence;
 	GaimStatus *status;
+	va_list args;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(status_id != NULL);
@@ -165,23 +74,9 @@ gaim_prpl_got_account_status(GaimAccount *account, const char *status_id,
 
 	g_return_if_fail(status != NULL);
 
-	if (attr_id != NULL)
-	{
-		va_list args;
-
-		va_start(args, attr_id);
-
-		while (attr_id != NULL)
-		{
-			set_value_from_arg(status, attr_id, &args);
-
-			attr_id = va_arg(args, char *);
-		}
-
-		va_end(args);
-	}
-
-	gaim_presence_set_status_active(presence, status_id, TRUE);
+	va_start(args, status_id);
+	gaim_status_set_active_with_attrs(status, TRUE, args);
+	va_end(args);
 }
 
 void
@@ -226,13 +121,14 @@ gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 
 void
 gaim_prpl_got_user_status(GaimAccount *account, const char *name,
-		const char *status_id, const char *attr_id, ...)
+		const char *status_id, ...)
 {
 	GSList *list, *iter;
 	GaimBuddy *buddy;
 	GaimPresence *presence;
 	GaimStatus *status;
 	GaimStatus *old_status;
+	va_list args;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
@@ -247,24 +143,11 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 
 	g_return_if_fail(status != NULL);
 
-	if (attr_id != NULL)
-	{
-		va_list args;
-
-		va_start(args, attr_id);
-
-		while (attr_id != NULL)
-		{
-			set_value_from_arg(status, attr_id, &args);
-
-			attr_id = va_arg(args, char *);
-		}
-
-		va_end(args);
-	}
-
 	old_status = gaim_presence_get_active_status(presence);
-	gaim_presence_set_status_active(presence, status_id, TRUE);
+
+	va_start(args, status_id);
+	gaim_status_set_active_with_attrs(status, TRUE, args);
+	va_end(args);
 
 	list = gaim_find_buddies(account, name);
 	for (iter = list; iter != NULL; iter = iter->next)

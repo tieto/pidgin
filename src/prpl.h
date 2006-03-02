@@ -344,13 +344,11 @@ void gaim_prpl_got_account_login_time(GaimAccount *account, time_t login_time);
  *
  * @param account   The account the user is on.
  * @param status_id The status ID.
- * @param attr_id   The first attribute ID, or NULL for no attribute updates.
  * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
 void gaim_prpl_got_account_status(GaimAccount *account,
-								  const char *status_id, const char *attr_id,
-								  ...);
+								  const char *status_id, ...);
 /**
  * Notifies Gaim that a user's idle state and time have changed.
  *
@@ -386,12 +384,11 @@ void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
  * @param account   The account the user is on.
  * @param name      The screen name of the user.
  * @param status_id The status ID.
- * @param attr_id   The first attribute ID, or NULL for no attribute updates.
  * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
 void gaim_prpl_got_user_status(GaimAccount *account, const char *name,
-							   const char *status_id, const char *attr_id, ...);
+							   const char *status_id, ...);
 /**
  * Informs the server that an account's status changed.
  *
