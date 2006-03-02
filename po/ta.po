@@ -1,22 +1,24 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# translation of 20060218-ta.po to
+# translation of 20060201-ta.po to
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Viveka Nathan K <vivekanathan@gmail.com>, 2006.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GAIM\n"
+"Project-Id-Version: 20060218-ta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-11-23 00:00-0500\n"
-"PO-Revision-Date: 2006-01-26 16:33+0900\n"
+"PO-Revision-Date: 2006-02-24 21:28+0900\n"
 "Last-Translator: Viveka Nathan K <vivekanathan@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "X-Poedit-Language: Tamil\n"
 "X-Poedit-Country: INDIA\n"
+"X-Generator: KBabel 1.10\n"
 
 #. *< type
 #. *< ui_requirement
@@ -5887,7 +5889,7 @@ msgstr "நீங்கள் கால்வாய் %s%s லிருந்�
 
 #: src/protocols/irc/msgs.c:916
 msgid "Error: invalid PONG from server"
-msgstr ""
+msgstr "பிழை: சேவகரிலிருந்து செல்லாத PONG"
 
 #: src/protocols/irc/msgs.c:918
 #, c-format
@@ -5939,64 +5941,64 @@ msgstr "அழை &lt;புனைப்பெயர்&gt; [அறை]: தற�
 
 #: src/protocols/irc/parse.c:120
 msgid "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more channels, optionally providing a channel key for each if needed."
-msgstr ""
+msgstr "j &lt;அறை1&gt;[,அறை2][,...] [சாவி1[,சாவி2][,...]]:  ஒன்று அல்லது மேற்பட்ட கால்வாய்களை கொடுக்கவும், தேவைப்பட்டால் கால்வாய் சாவியும் ஒவ்வொன்றிற்கும் கொடுக்கவும்."
 
 #: src/protocols/irc/parse.c:121
 msgid "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more channels, optionally providing a channel key for each if needed."
-msgstr ""
+msgstr "இணை &lt;அறை1&gt;[,அறை2][,...] [சாவி1[,சாவி2][,...]]:  ஒன்று அல்லது மேற்பட்ட கால்வாய்களை கொடுக்கவும், தேவைப்பட்டால் கால்வாய் சாவியும் ஒவ்வொன்றிற்கும் கொடுக்கவும்."
 
 #: src/protocols/irc/parse.c:122
 msgid "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a channel operator to do this."
-msgstr ""
+msgstr "உதை &lt;புனைப்பெயர்&gt; [தகவல்]:  யாரையாவது கால்வாயிலிருந்து நீக்கு. இதைச்செய்வதற்கு நீங்கள் கால்வாய் இயக்குநராக இருக்க வேண்டும்."
 
 #: src/protocols/irc/parse.c:123
 msgid "list:  Display a list of chat rooms on the network. <i>Warning, some servers may disconnect you upon doing this.</i>"
-msgstr ""
+msgstr "பட்டியல்: வலையில் உள்ள அரட்டை அறைப்பட்டியலை காட்டு. <i>எச்சரிக்கை, இதைச்செய்யும்பொழுது சில சேவகர்கள் இணைப்பை துண்டித்து விடுவர்.</i>"
 
 #: src/protocols/irc/parse.c:124
 msgid "me &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "எனது &lt; செய்யவேண்டிய செயல்&gt;: செயலைச்செய்"
 
 #: src/protocols/irc/parse.c:125
 msgid "memoserv: Send a command to memoserv"
-msgstr ""
+msgstr "memoserv: memoserv க்கு கட்டளையை அனுப்பு"
 
 #: src/protocols/irc/parse.c:126
 msgid "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel or user mode."
-msgstr ""
+msgstr "நிலை &lt;+|-&gt;&lt;A-Za-z&gt; &lt;புனைப்பெயர்|கால்வாய்&gt;:  கால்வாய் அல்லது பயனாளர் நிலையை அமை அல்லது நீக்கு."
 
 #: src/protocols/irc/parse.c:127
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as opposed to a channel)."
-msgstr ""
+msgstr "msg &lt;புனைப்பெயர்&gt; &lt;தகவல்&gt;:  பயனாளருக்கு தனிப்பட்ட தகவல் அனுப்பு (கால்வாய்க்கு எதிராக)."
 
 #: src/protocols/irc/parse.c:128
 msgid "names [channel]:  List the users currently in a channel."
-msgstr ""
+msgstr "பெயர்கள் [கால்வாய்]:  கால்வாயில் தற்போதுள்ள பயனாளர்களை பட்டியலிடு."
 
 #: src/protocols/irc/parse.c:129
 #: src/protocols/jabber/jabber.c:1555
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr ""
+msgstr "nick &lt;புதிய புனைப்பெயர்&gt;:  உங்களது புனைப்பெயரை மாற்றுக."
 
 #: src/protocols/irc/parse.c:130
 msgid "nickserv: Send a command to nickserv"
-msgstr ""
+msgstr "nickserv:  nickserv க்கு கட்டளையை அனுப்பு"
 
 #: src/protocols/irc/parse.c:131
 msgid "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You must be a channel operator to do this."
-msgstr ""
+msgstr "op &lt;புனைப்பெயர்1&gt; [புனைப்பெயர்2] ...:  யாருக்காவது இயக்குநரின் நிலையை கொடு. இதைச்செய்வதற்கு நீங்கள் ஒரு கால்வாய் இயக்குநராக இருக்கவேண்டும்."
 
 #: src/protocols/irc/parse.c:132
 msgid "operwall &lt;message&gt;:  If you don't know what this is, you probably can't use it."
-msgstr ""
+msgstr "operwall &lt;தகவல்&gt;: இது என்னவென்று உங்களுக்கு தெரியாவிட்டால் அனேகமாக உங்களால் உபயோகப்படுத்த முடியாது."
 
 #: src/protocols/irc/parse.c:133
 msgid "operserv: Send a command to operserv"
-msgstr ""
+msgstr "operserv: operserv க்கு கட்டளையை அனுப்பு"
 
 #: src/protocols/irc/parse.c:134
 msgid "part [room] [message]:  Leave the current channel, or a specified channel, with an optional message."
-msgstr ""
+msgstr "part [அறை] [தகவல்]:  தற்போதைய கால்வாய் அல்லது குறிப்பிட்ட கால்வாயை விருப்ப தகவல் கொடுத்து விலகு."
 
 #: src/protocols/irc/parse.c:135
 msgid "ping [nick]:  Asks how much lag a user (or the server if no user specified) has."
@@ -6004,56 +6006,56 @@ msgstr ""
 
 #: src/protocols/irc/parse.c:136
 msgid "query &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as opposed to a channel)."
-msgstr ""
+msgstr "query &lt;புனைப்பெயர்&gt; &lt;தகவல்&gt;:  பயனாளருக்கு தனிப்பட்ட தகவலை அனுப்பு (கால்வாய்க்கு எதிராக)."
 
 #: src/protocols/irc/parse.c:137
 msgid "quit [message]:  Disconnect from the server, with an optional message."
-msgstr ""
+msgstr "quit [தகவல்]:   விருப்ப தகவல் கொடுத்து, சேவகரை விட்டு விலகு."
 
 #: src/protocols/irc/parse.c:138
 msgid "quote [...]:  Send a raw command to the server."
-msgstr ""
+msgstr "quote [...]:  சேவகருக்கு சாதாரண கட்டளையை அனுப்பு."
 
 #: src/protocols/irc/parse.c:139
 msgid "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a channel operator to do this."
-msgstr ""
+msgstr "remove &lt;புனைப்பெயர்&gt; [தகவல்]:  யாரையாவது அறையை விட்டு நீக்கு. இதைச்செய்ய நீங்கள் ஒரு கால்வாய் இயக்குநராக இருக்க வேண்டும்."
 
 #: src/protocols/irc/parse.c:140
 msgid "time: Displays the current local time at the IRC server."
-msgstr ""
+msgstr "time: தற்போதைய எல்லை நேரத்தையும் மற்றும்  IRC சேவகரையும் காட்டுகிறது."
 
 #: src/protocols/irc/parse.c:141
 msgid "topic [new topic]:  View or change the channel topic."
-msgstr ""
+msgstr "topic [புதிய தலைப்பு]:  கால்வாய் தலைப்பை காண்க அல்லது மாற்றுக."
 
 #: src/protocols/irc/parse.c:142
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
-msgstr ""
+msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  பயனாளர் நிலையை அமை அல்லது மாற்று."
 
 #: src/protocols/irc/parse.c:143
 msgid "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this."
-msgstr ""
+msgstr "voice &lt;புனைப்பெயர்1&gt; [புனைப்பெயர்2] ...:  கால்வாய் குரல் நிலையை யாருக்காவது கொடு. இதைச்செய்ய நீங்கள் ஒரு கால்வாய் இயக்குநராக இருத்தல் வேண்டும்."
 
 #: src/protocols/irc/parse.c:144
 msgid "wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it."
-msgstr ""
+msgstr "wallops &lt;தகவல்&gt;:  உங்களுக்கு இது என்னவென்று தெரியாவிட்டால் அநேகமாக நீங்கள் பயன்படுத்த முடியாது."
 
 #: src/protocols/irc/parse.c:145
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr ""
+msgstr "whois [சேவகர்] &lt;புனைப்பெயர்&gt;:  பயனாளரது தகவலை பெறு."
 
 #: src/protocols/irc/parse.c:439
 #, c-format
 msgid "Reply time from %s: %lu seconds"
-msgstr ""
+msgstr "பதில் நேரம் %s லிருந்து: %lu நொடிகள்"
 
 #: src/protocols/irc/parse.c:440
 msgid "PONG"
-msgstr ""
+msgstr "PONG"
 
 #: src/protocols/irc/parse.c:440
 msgid "CTCP PING reply"
-msgstr ""
+msgstr "CTCP PING பதில்"
 
 #: src/protocols/irc/parse.c:543
 #: src/protocols/irc/parse.c:547
@@ -6075,7 +6077,7 @@ msgstr "உள்ளே நுழைய சேவகருக்கு TLS/SSL �
 
 #: src/protocols/jabber/auth.c:114
 msgid "Server requires plaintext authentication over an unencrypted stream"
-msgstr ""
+msgstr "என்கிரிப்டு செய்யப்படாத ஒடையில் சாதாரண வாக்கிய அனுமதியாக்கலை சேவகர் விரும்புகிறார்"
 
 #: src/protocols/jabber/auth.c:133
 #: src/protocols/jabber/auth.c:207
@@ -6165,51 +6167,51 @@ msgstr "நாடு"
 #: src/protocols/jabber/buddy.c:754
 #: src/protocols/jabber/buddy.c:761
 msgid "Telephone"
-msgstr ""
+msgstr "தொலைபேசி"
 
 #: src/protocols/jabber/buddy.c:262
 #: src/protocols/jabber/buddy.c:795
 msgid "Organization Name"
-msgstr ""
+msgstr "நிறுவன பெயர்"
 
 #: src/protocols/jabber/buddy.c:263
 #: src/protocols/jabber/buddy.c:799
 msgid "Organization Unit"
-msgstr ""
+msgstr "நிறுவன அலகு"
 
 #: src/protocols/jabber/buddy.c:265
 #: src/protocols/jabber/buddy.c:808
 msgid "Role"
-msgstr ""
+msgstr "பங்கு"
 
 #: src/protocols/jabber/buddy.c:266
 #: src/protocols/jabber/buddy.c:701
 #: src/protocols/oscar/oscar.c:6036
 msgid "Birthday"
-msgstr ""
+msgstr "பிறந்தநாள்"
 
 #: src/protocols/jabber/buddy.c:567
 #: src/protocols/jabber/buddy.c:568
 msgid "Edit Jabber vCard"
-msgstr ""
+msgstr "Jabber vCard ஐ தொகு"
 
 #: src/protocols/jabber/buddy.c:569
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
-msgstr ""
+msgstr "கீழ்க்கண்ட அனைத்தும் விருப்பத்திற்காக. உங்களுக்கு வசதியான தகவலை மட்டும் கொடுக்கவும்."
 
 #: src/protocols/jabber/buddy.c:616
 msgid "Jabber ID"
-msgstr ""
+msgstr "Jabber அடையாளம்"
 
 #: src/protocols/jabber/buddy.c:642
 #: src/protocols/jabber/jabber.c:1713
 msgid "Resource"
-msgstr ""
+msgstr "வளம்"
 
 #: src/protocols/jabber/buddy.c:688
 #: src/protocols/silc/ops.c:849
 msgid "Middle Name"
-msgstr ""
+msgstr "நடுப் பெயர்"
 
 #: src/protocols/jabber/buddy.c:706
 #: src/protocols/jabber/jabber.c:663
@@ -6217,43 +6219,43 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6062
 #: src/protocols/silc/ops.c:885
 msgid "Address"
-msgstr ""
+msgstr "முகவரி"
 
 #: src/protocols/jabber/buddy.c:718
 msgid "P.O. Box"
-msgstr ""
+msgstr "அஞ்சல் பெட்டி"
 
 #: src/protocols/jabber/buddy.c:832
 msgid "Photo"
-msgstr ""
+msgstr "புகைப்படம்"
 
 #: src/protocols/jabber/buddy.c:832
 msgid "Logo"
-msgstr ""
+msgstr "சின்னம்"
 
 #: src/protocols/jabber/buddy.c:1035
 msgid "Un-hide From"
-msgstr ""
+msgstr "அனுப்பநரை மறைக்காதே"
 
 #: src/protocols/jabber/buddy.c:1038
 msgid "Temporarily Hide From"
-msgstr ""
+msgstr "தற்காலிகமாக அனுப்புநரை மறை"
 
 #. && NOT ME
 #: src/protocols/jabber/buddy.c:1045
 msgid "Cancel Presence Notification"
-msgstr ""
+msgstr "இருக்கும் நிலையை நீக்கு"
 
 #: src/protocols/jabber/buddy.c:1051
 msgid "(Re-)Request authorization"
-msgstr ""
+msgstr "உரிமையாக்கலை (மீண்டும்-)கோரு"
 
 #. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
 #: src/protocols/jabber/buddy.c:1059
 msgid "Unsubscribe"
-msgstr ""
+msgstr "சந்தாவை நிறுத்து"
 
 #: src/protocols/jabber/buddy.c:1085
 #: src/protocols/jabber/chat.c:677
@@ -6261,18 +6263,18 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1018
 #: src/protocols/silc/ops.c:1270
 msgid "Error"
-msgstr ""
+msgstr "பிழை"
 
 #: src/protocols/jabber/buddy.c:1091
 #: src/protocols/jabber/jabber.c:1047
 msgid "Chatty"
-msgstr ""
+msgstr "அரட்டையான"
 
 #: src/protocols/jabber/buddy.c:1095
 #: src/protocols/jabber/jabber.c:1063
 #: src/status.c:158
 msgid "Extended Away"
-msgstr ""
+msgstr "வெளியே சென்றது நீட்டிக்கப்பட்டது"
 
 #: src/protocols/jabber/buddy.c:1097
 #: src/protocols/jabber/jabber.c:1071
@@ -6280,235 +6282,235 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7825
 #: src/protocols/sametime/sametime.c:3297
 msgid "Do Not Disturb"
-msgstr ""
+msgstr "தொந்தரவு செய்ய வேண்டாம்"
 
 #: src/protocols/jabber/buddy.c:1235
 msgid "The following are the results of your search"
-msgstr ""
+msgstr "உங்களது தேடல் முடிவுகள் கீழே"
 
 #: src/protocols/jabber/buddy.c:1327
 msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr ""
+msgstr "Jabber பயனாளர்களை தேட ஒன்று அல்லது மேற்பட்ட கட்டங்களை பூர்த்தி செய்க."
 
 #: src/protocols/jabber/buddy.c:1331
 #: src/protocols/jabber/jabber.c:653
 #: src/protocols/oscar/oscar.c:6011
 #: src/protocols/silc/ops.c:845
 msgid "First Name"
-msgstr ""
+msgstr "முதற்பெயர்"
 
 #: src/protocols/jabber/buddy.c:1336
 #: src/protocols/jabber/jabber.c:658
 #: src/protocols/oscar/oscar.c:6012
 msgid "Last Name"
-msgstr ""
+msgstr "கடைசிப்பெயர்"
 
 #: src/protocols/jabber/buddy.c:1346
 msgid "E-Mail Address"
-msgstr ""
+msgstr "மின்னஞ்சல்"
 
 #: src/protocols/jabber/buddy.c:1355
 #: src/protocols/jabber/buddy.c:1356
 msgid "Search for Jabber users"
-msgstr ""
+msgstr "Jabber பயனாளர்களை தேடுகிறது"
 
 #: src/protocols/jabber/buddy.c:1370
 msgid "Invalid Directory"
-msgstr ""
+msgstr "செல்லாத அடைவு"
 
 #: src/protocols/jabber/buddy.c:1387
 msgid "Enter a User Directory"
-msgstr ""
+msgstr "பயனாளர் அடைவை கொடுக்கவும்"
 
 #: src/protocols/jabber/buddy.c:1388
 msgid "Select a user directory to search"
-msgstr ""
+msgstr "தேடுவதற்கு பயனாளர் அடைவை தேர்வு செய்க"
 
 #: src/protocols/jabber/buddy.c:1391
 msgid "Search Directory"
-msgstr ""
+msgstr "அடைவை தேடு"
 
 #: src/protocols/jabber/chat.c:41
 #: src/protocols/oscar/oscar.c:7344
 #: src/protocols/yahoo/yahoochat.c:979
 msgid "_Room:"
-msgstr ""
+msgstr "அறை:"
 
 #: src/protocols/jabber/chat.c:47
 msgid "_Server:"
-msgstr ""
+msgstr "சேவகர்:"
 
 #: src/protocols/jabber/chat.c:53
 msgid "_Handle:"
-msgstr ""
+msgstr "கைப்பிடி:"
 
 #: src/protocols/jabber/chat.c:223
 #, c-format
 msgid "%s is not a valid room name"
-msgstr ""
+msgstr "%s ஒரு செல்லாத அறைப்பெயர்"
 
 #: src/protocols/jabber/chat.c:224
 msgid "Invalid Room Name"
-msgstr ""
+msgstr "செல்லாத அறைப்பெயர்"
 
 #: src/protocols/jabber/chat.c:229
 #, c-format
 msgid "%s is not a valid server name"
-msgstr ""
+msgstr "%s ஒரு செல்லாத சேவகர் பெயர்"
 
 #: src/protocols/jabber/chat.c:230
 #: src/protocols/jabber/chat.c:231
 msgid "Invalid Server Name"
-msgstr ""
+msgstr "செல்லாத சேவகர் பெயர்"
 
 #: src/protocols/jabber/chat.c:235
 #, c-format
 msgid "%s is not a valid room handle"
-msgstr ""
+msgstr "%s ஒரு செல்லாத அறை கைப்பிடி"
 
 #: src/protocols/jabber/chat.c:236
 #: src/protocols/jabber/chat.c:237
 msgid "Invalid Room Handle"
-msgstr ""
+msgstr "செல்லாத அறை கைப்பிடி"
 
 #: src/protocols/jabber/chat.c:395
 msgid "Configuration error"
-msgstr ""
+msgstr "வரையறுத்தல் பிழை"
 
 #: src/protocols/jabber/chat.c:404
 #: src/protocols/jabber/chat.c:549
 msgid "Unable to configure"
-msgstr ""
+msgstr "வரையறுக்க இயலவில்லை"
 
 #: src/protocols/jabber/chat.c:420
 msgid "Room Configuration Error"
-msgstr ""
+msgstr "அறை வரையறுத்தல் பிழை"
 
 #: src/protocols/jabber/chat.c:421
 msgid "This room is not capable of being configured"
-msgstr ""
+msgstr "இந்த அறை வரையறுக்க ஏதுவாக இல்லை"
 
 #: src/protocols/jabber/chat.c:471
 #: src/protocols/jabber/chat.c:540
 msgid "Registration error"
-msgstr ""
+msgstr "பதிவுறுதல் பிழை"
 
 #: src/protocols/jabber/chat.c:628
 msgid "Nick changing not supported in non-MUC chatrooms"
-msgstr ""
+msgstr "MUC அல்லாத அரட்டை அறைகளில் புனைப்பெயர் மாற்றம் ஆதரிக்கப்படவில்லை"
 
 #: src/protocols/jabber/chat.c:678
 #: src/protocols/jabber/chat.c:689
 #: src/protocols/silc/ops.c:1270
 msgid "Error retrieving room list"
-msgstr ""
+msgstr "அறைப்பட்டியலை பெறுவதில் பிழை"
 
 #: src/protocols/jabber/chat.c:737
 msgid "Invalid Server"
-msgstr ""
+msgstr "செல்லாத சேவகர்"
 
 #: src/protocols/jabber/chat.c:775
 msgid "Enter a Conference Server"
-msgstr ""
+msgstr "கலந்துரையாடல் சேவகரை கொடுக்கவும்"
 
 #: src/protocols/jabber/chat.c:776
 msgid "Select a conference server to query"
-msgstr ""
+msgstr "விசாரிப்பதற்காக ஒரு கலந்துரையாடல் சேவகரை தேர்வு செய்க"
 
 #: src/protocols/jabber/chat.c:779
 msgid "Find Rooms"
-msgstr ""
+msgstr "அறைகளை கண்டுபிடி"
 
 #: src/protocols/jabber/jabber.c:79
 msgid "Error initializing session"
-msgstr ""
+msgstr "நிகழ்ச்சி தொடங்குவதில் பிழை"
 
 #: src/protocols/jabber/jabber.c:215
 msgid "Write error"
-msgstr ""
+msgstr "எழுதுவதில் பிழை"
 
 #: src/protocols/jabber/jabber.c:253
 #: src/protocols/jabber/jabber.c:273
 msgid "Read Error"
-msgstr ""
+msgstr "வாசிப்பதில் பிழை"
 
 #: src/protocols/jabber/jabber.c:359
 #: src/protocols/jabber/jabber.c:780
 msgid "Unable to create socket"
-msgstr ""
+msgstr "சாக்கெட்டை உருவாக்குவதில் பிழை"
 
 #: src/protocols/jabber/jabber.c:403
 #: src/protocols/jabber/jabber.c:740
 msgid "Invalid Jabber ID"
-msgstr ""
+msgstr "செல்லாத Jabber அடையாளம்"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
 msgid "Registration of %s@%s successful"
-msgstr ""
+msgstr "%s@%s பதிவாக்கம் வெற்றி"
 
 #: src/protocols/jabber/jabber.c:475
 #: src/protocols/jabber/jabber.c:476
 msgid "Registration Successful"
-msgstr ""
+msgstr "வெற்றிகரமான பதிவாக்கம்"
 
 #: src/protocols/jabber/jabber.c:482
 #: src/protocols/jabber/jabber.c:1299
 msgid "Unknown Error"
-msgstr ""
+msgstr "தெரியாத பிழை"
 
 #: src/protocols/jabber/jabber.c:484
 #: src/protocols/jabber/jabber.c:485
 msgid "Registration Failed"
-msgstr ""
+msgstr "பதிவாக்கம் தவறியது"
 
 #: src/protocols/jabber/jabber.c:596
 #: src/protocols/jabber/jabber.c:597
 msgid "Already Registered"
-msgstr ""
+msgstr "ஏற்கனவே பதியப்பட்டது"
 
 #: src/protocols/jabber/jabber.c:643
 msgid "E-Mail"
-msgstr ""
+msgstr "மின்னஞ்சல்"
 
 #: src/protocols/jabber/jabber.c:673
 #: src/protocols/oscar/oscar.c:6056
 #: src/protocols/oscar/oscar.c:6064
 msgid "State"
-msgstr ""
+msgstr "மாநிலம்"
 
 #: src/protocols/jabber/jabber.c:683
 #: src/protocols/silc/ops.c:890
 #: src/protocols/silc/silc.c:667
 #: src/protocols/silc/util.c:513
 msgid "Phone"
-msgstr ""
+msgstr "தொலைபேசி"
 
 #: src/protocols/jabber/jabber.c:693
 msgid "Date"
-msgstr ""
+msgstr "நாள்"
 
 #: src/protocols/jabber/jabber.c:701
 msgid "Please fill out the information below to register your new account."
-msgstr ""
+msgstr "உங்களது புதிய கணக்கை பதிவதற்கு கீழ்க்கண்ட தகவல்களை பூர்த்தி செய்க."
 
 #: src/protocols/jabber/jabber.c:704
 #: src/protocols/jabber/jabber.c:705
 msgid "Register New Jabber Account"
-msgstr ""
+msgstr "புதிய Jabber கணக்கை பதிவு செய்"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
-msgstr ""
+msgstr "ஒடையை தொடங்குகிறது"
 
 #: src/protocols/jabber/jabber.c:848
 #: src/protocols/msn/session.c:355
 msgid "Authenticating"
-msgstr ""
+msgstr "உறுதிப்படுத்துகிறது"
 
 #: src/protocols/jabber/jabber.c:857
 msgid "Re-initializing Stream"
-msgstr ""
+msgstr "ஓடையை மீண்டும் தொடங்குகிறது"
 
 #: src/protocols/jabber/jabber.c:928
 #: src/protocols/jabber/jabber.c:1277
@@ -6517,31 +6519,31 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:769
 #: src/protocols/oscar/oscar.c:7623
 msgid "Not Authorized"
-msgstr ""
+msgstr "அனுமதியில்லை"
 
 #: src/protocols/jabber/jabber.c:971
 msgid "Both"
-msgstr ""
+msgstr "இரண்டும்"
 
 #: src/protocols/jabber/jabber.c:973
 msgid "From (To pending)"
-msgstr ""
+msgstr "அனுப்புநர் (நிலுவையிலுள்ளதற்கு)"
 
 #: src/protocols/jabber/jabber.c:975
 msgid "From"
-msgstr ""
+msgstr "அனுப்புநர்"
 
 #: src/protocols/jabber/jabber.c:978
 msgid "To"
-msgstr ""
+msgstr "பெறுநர்"
 
 #: src/protocols/jabber/jabber.c:980
 msgid "None (To pending)"
-msgstr ""
+msgstr "ஒன்றுமில்லை (நிலுவையிலுள்ளதற்கு)"
 
 #: src/protocols/jabber/jabber.c:984
 msgid "Subscription"
-msgstr ""
+msgstr "சந்தா"
 
 #: src/protocols/jabber/jabber.c:1039
 #: src/protocols/jabber/jabber.c:1047
@@ -6549,130 +6551,130 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1063
 #: src/protocols/jabber/jabber.c:1071
 msgid "Priority"
-msgstr ""
+msgstr "முன்னுரிமை"
 
 #: src/protocols/jabber/jabber.c:1093
 msgid "Password Changed"
-msgstr ""
+msgstr "கடவுச்சொல் மாற்றப்பட்டது"
 
 #: src/protocols/jabber/jabber.c:1094
 msgid "Your password has been changed."
-msgstr ""
+msgstr "உங்களது கடவுச்சொல் மாற்றப்பட்டிருக்கிறது."
 
 #: src/protocols/jabber/jabber.c:1098
 #: src/protocols/jabber/jabber.c:1099
 msgid "Error changing password"
-msgstr ""
+msgstr "கடவுச்சொல்லை மாற்றுவதில் பிழை."
 
 #: src/protocols/jabber/jabber.c:1155
 msgid "Password (again)"
-msgstr ""
+msgstr "கடவுச்சொல் (மீண்டும்)"
 
 #: src/protocols/jabber/jabber.c:1160
 #: src/protocols/jabber/jabber.c:1161
 msgid "Change Jabber Password"
-msgstr ""
+msgstr "Jabber கடவுச்சொல்லை மாற்று"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
-msgstr ""
+msgstr "உங்களது புதிய கடவுச்சொல்லை கொடுக்கவும்"
 
 #: src/protocols/jabber/jabber.c:1171
 #: src/protocols/toc/toc.c:1684
 msgid "Set User Info"
-msgstr ""
+msgstr "பயனாளர் தகவலை அமை"
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
 #: src/protocols/jabber/jabber.c:1176
 #: src/protocols/toc/toc.c:1694
 msgid "Change Password"
-msgstr ""
+msgstr "கடவுச்சொல்லை மாற்று"
 
 #. }
 #: src/protocols/jabber/jabber.c:1181
 msgid "Search for users"
-msgstr ""
+msgstr "பயனாளர்களை தேடு"
 
 #: src/protocols/jabber/jabber.c:1257
 msgid "Bad Request"
-msgstr ""
+msgstr "தவறான கோரிக்கை"
 
 #: src/protocols/jabber/jabber.c:1259
 msgid "Conflict"
-msgstr ""
+msgstr "முரண்பாடு"
 
 #: src/protocols/jabber/jabber.c:1261
 msgid "Feature Not Implemented"
-msgstr ""
+msgstr "தோற்றம் இயற்றப்படவில்லை"
 
 #: src/protocols/jabber/jabber.c:1263
 msgid "Forbidden"
-msgstr ""
+msgstr "அடக்கப்பட்ட"
 
 #: src/protocols/jabber/jabber.c:1265
 msgid "Gone"
-msgstr ""
+msgstr "போய்விட்டது"
 
 #: src/protocols/jabber/jabber.c:1267
 #: src/protocols/jabber/jabber.c:1341
 msgid "Internal Server Error"
-msgstr ""
+msgstr "அக சேவகர் பிழை"
 
 #: src/protocols/jabber/jabber.c:1269
 msgid "Item Not Found"
-msgstr ""
+msgstr "உருப்படி காண வில்லை"
 
 #: src/protocols/jabber/jabber.c:1271
 msgid "Malformed Jabber ID"
-msgstr ""
+msgstr "கேடான Jabber அடையாளம்"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
-msgstr ""
+msgstr "ஏற்றுக்கொள்ள இயலாதது"
 
 #: src/protocols/jabber/jabber.c:1275
 msgid "Not Allowed"
-msgstr ""
+msgstr "அனுமதிக்கப்படவில்லை"
 
 #: src/protocols/jabber/jabber.c:1279
 msgid "Payment Required"
-msgstr ""
+msgstr "கட்டணம் தேவைப்படுகிறது"
 
 #: src/protocols/jabber/jabber.c:1281
 msgid "Recipient Unavailable"
-msgstr ""
+msgstr "பெறுபவர் இல்லை"
 
 #: src/protocols/jabber/jabber.c:1285
 msgid "Registration Required"
-msgstr ""
+msgstr "பதிவு தேவைப்படுகிறது"
 
 #: src/protocols/jabber/jabber.c:1287
 msgid "Remote Server Not Found"
-msgstr ""
+msgstr "தொலைவு சேவகர் காணப்படவில்லை"
 
 #: src/protocols/jabber/jabber.c:1289
 msgid "Remote Server Timeout"
-msgstr ""
+msgstr "தொலைவு சேவகர் காலம் முடிந்தது"
 
 #: src/protocols/jabber/jabber.c:1291
 msgid "Server Overloaded"
-msgstr ""
+msgstr "சேவகர் அதிகப்பழுவானது"
 
 #: src/protocols/jabber/jabber.c:1293
 msgid "Service Unavailable"
-msgstr ""
+msgstr "சேவை இல்லை"
 
 #: src/protocols/jabber/jabber.c:1295
 msgid "Subscription Required"
-msgstr ""
+msgstr "சந்தா தேவைப்படுகிறது"
 
 #: src/protocols/jabber/jabber.c:1297
 msgid "Unexpected Request"
-msgstr ""
+msgstr "எதிர்பாரா கோரிக்கை"
 
 #: src/protocols/jabber/jabber.c:1304
 msgid "Authorization Aborted"
-msgstr ""
+msgstr "உரிமையாக்கல் தவறியது"
 
 #: src/protocols/jabber/jabber.c:1306
 msgid "Incorrect encoding in authorization"
@@ -6680,96 +6682,96 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:1309
 msgid "Invalid authzid"
-msgstr ""
+msgstr "செல்லாத authzid"
 
 #: src/protocols/jabber/jabber.c:1312
 msgid "Invalid Authorization Mechanism"
-msgstr ""
+msgstr "செல்லாத உரிமையாக்கல் மெக்கானிஸம்"
 
 #: src/protocols/jabber/jabber.c:1315
 msgid "Authorization mechanism too weak"
-msgstr ""
+msgstr "உரிமையாக்கல் மெக்கானிஸம் மிக ஆரோக்கியமற்றுள்ளது"
 
 #: src/protocols/jabber/jabber.c:1320
 msgid "Temporary Authentication Failure"
-msgstr ""
+msgstr "தற்காலிக உரிமையாக்கல் தவறல்"
 
 #: src/protocols/jabber/jabber.c:1322
 msgid "Authentication Failure"
-msgstr ""
+msgstr "உரிமையாக்கல் தவறல்"
 
 #: src/protocols/jabber/jabber.c:1326
 msgid "Bad Format"
-msgstr ""
+msgstr "தவறான முறை"
 
 #: src/protocols/jabber/jabber.c:1328
 msgid "Bad Namespace Prefix"
-msgstr ""
+msgstr "தவறான Namespace Prefix"
 
 #: src/protocols/jabber/jabber.c:1331
 msgid "Resource Conflict"
-msgstr ""
+msgstr "வளம் முரண்படுகிறது"
 
 #: src/protocols/jabber/jabber.c:1333
 #: src/protocols/silc/ops.c:1549
 msgid "Connection Timeout"
-msgstr ""
+msgstr "இணைப்பு காலம் முடிந்தது"
 
 #: src/protocols/jabber/jabber.c:1335
 msgid "Host Gone"
-msgstr ""
+msgstr "புரவலர் போய்விட்டது"
 
 #: src/protocols/jabber/jabber.c:1337
 msgid "Host Unknown"
-msgstr ""
+msgstr "தெரியாத புரவலர்"
 
 #: src/protocols/jabber/jabber.c:1339
 msgid "Improper Addressing"
-msgstr ""
+msgstr "முறையற்ற முகவரியாக்கம்"
 
 #: src/protocols/jabber/jabber.c:1343
 msgid "Invalid ID"
-msgstr ""
+msgstr "செல்லாத அடையாளம்"
 
 #: src/protocols/jabber/jabber.c:1345
 msgid "Invalid Namespace"
-msgstr ""
+msgstr "செல்லாத Namespace"
 
 #: src/protocols/jabber/jabber.c:1347
 msgid "Invalid XML"
-msgstr ""
+msgstr "செல்லாத XML"
 
 #: src/protocols/jabber/jabber.c:1349
 msgid "Non-matching Hosts"
-msgstr ""
+msgstr "பொருந்தாத புரவலர்கள்"
 
 #: src/protocols/jabber/jabber.c:1353
 msgid "Policy Violation"
-msgstr ""
+msgstr "சாசன மீறல்"
 
 #: src/protocols/jabber/jabber.c:1355
 msgid "Remote Connection Failed"
-msgstr ""
+msgstr "தொலைவு இணைப்பு தவறியுது"
 
 #: src/protocols/jabber/jabber.c:1357
 msgid "Resource Constraint"
-msgstr ""
+msgstr "கட்டாய வளம்"
 
 #: src/protocols/jabber/jabber.c:1359
 msgid "Restricted XML"
-msgstr ""
+msgstr "தடைசெய்யப்பட்ட XML"
 
 #: src/protocols/jabber/jabber.c:1361
 msgid "See Other Host"
-msgstr ""
+msgstr "மற்ற புரவலரை காண்க"
 
 #: src/protocols/jabber/jabber.c:1363
 msgid "System Shutdown"
-msgstr ""
+msgstr "கணினி இயக்க நிறுத்தம்"
 
 #: src/protocols/jabber/jabber.c:1365
 msgid "Undefined Condition"
-msgstr ""
+msgstr "சொல்லப்படாத நிபந்தனை"
 
 #: src/protocols/jabber/jabber.c:1367
 msgid "Unsupported Encoding"
@@ -6777,83 +6779,83 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:1369
 msgid "Unsupported Stanza Type"
-msgstr ""
+msgstr "ஆதரவில்லாத பத்தி வகை"
 
 #: src/protocols/jabber/jabber.c:1371
 msgid "Unsupported Version"
-msgstr ""
+msgstr "ஆதரிக்கப்படாத பதிப்பு"
 
 #: src/protocols/jabber/jabber.c:1373
 msgid "XML Not Well Formed"
-msgstr ""
+msgstr "XML நன்றாக உருவாகவில்லை"
 
 #: src/protocols/jabber/jabber.c:1375
 msgid "Stream Error"
-msgstr ""
+msgstr "ஓடைப் பிழை"
 
 #: src/protocols/jabber/jabber.c:1442
 #, c-format
 msgid "Unable to ban user %s"
-msgstr ""
+msgstr "பயனாளர் %s ஐ தடுக்க இயலவில்லை"
 
 #: src/protocols/jabber/jabber.c:1464
 #, c-format
 msgid "Unknown affiliation: \"%s\""
-msgstr ""
+msgstr "தெரியாத சார்புரிமை: \"%s\""
 
 #: src/protocols/jabber/jabber.c:1469
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr ""
+msgstr "பயனாளர் %s ஐ \"%s\" ஆக சார்பு படுத்த இயலவில்லை"
 
 #: src/protocols/jabber/jabber.c:1521
 #, c-format
 msgid "Unable to kick user %s"
-msgstr ""
+msgstr "பயனாளர் %s ஐ உதைக்க இயலவில்லை"
 
 #: src/protocols/jabber/jabber.c:1547
 msgid "config:  Configure a chat room."
-msgstr ""
+msgstr "config: அரட்டை அறையா வரையறு."
 
 #: src/protocols/jabber/jabber.c:1551
 msgid "configure:  Configure a chat room."
-msgstr ""
+msgstr "வரையறு: அரட்டை அறையா வரையறு."
 
 #: src/protocols/jabber/jabber.c:1560
 msgid "part [room]:  Leave the room."
-msgstr ""
+msgstr "விலகு [அறை]:  அறையை விட்டு விலகு."
 
 #: src/protocols/jabber/jabber.c:1565
 msgid "register:  Register with a chat room."
-msgstr ""
+msgstr "பதிவு: அரட்டை அறையுடன் பதிவு செய்."
 
 #: src/protocols/jabber/jabber.c:1571
 msgid "topic [new topic]:  View or change the topic."
-msgstr ""
+msgstr "தலைப்பு [புதிய தலைப்பு]: தலைப்பை காண் அல்லது மாற்று."
 
 #: src/protocols/jabber/jabber.c:1577
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr ""
+msgstr "தடு &lt;பயனாளர்&gt; [அறை]: பயனாளரை அறையிலிருந்து தடு."
 
 #: src/protocols/jabber/jabber.c:1583
 msgid "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."
-msgstr ""
+msgstr "affiliate &lt;பயனாளர்&gt; &lt;சொந்தக்காரர்|ஆளுநர்|உறுப்பினர்|outcast|ஒன்றுமில்லை&gt;: பயனாளருக்கு அறையுடன் சார்புரிமை அமைக்கிறது."
 
 #: src/protocols/jabber/jabber.c:1589
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
-msgstr ""
+msgstr "invite &lt;பயனாளர்&gt; [தகவல்]: பயனாளரை அறைக்கு அழை"
 
 #: src/protocols/jabber/jabber.c:1595
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr ""
+msgstr "join: &lt;அறை&gt; [சேவகர்]: இந்த சேவகரில் ஒரு அரட்டையில் இணை."
 
 #: src/protocols/jabber/jabber.c:1601
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
-msgstr ""
+msgstr "kick &lt;பயனாளர்&gt; [அறை]: பயனாளரை அறையை விட்டு உதை."
 
 #: src/protocols/jabber/jabber.c:1606
 msgid "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
-msgstr ""
+msgstr "msg &lt;பயனாளர்&gt; &lt;தகவல்&gt;: மற்றொரு பயனாளருக்கு ஒரு தனிப்பட்ட தகவலை அனுப்பு."
 
 #. *< type
 #. *< ui_requirement
@@ -6868,19 +6870,19 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1688
 #: src/protocols/jabber/jabber.c:1690
 msgid "Jabber Protocol Plugin"
-msgstr ""
+msgstr "Jabber நெறிமுறை சொருகுபொருள்"
 
 #: src/protocols/jabber/jabber.c:1716
 msgid "Use TLS if available"
-msgstr ""
+msgstr "TLS இருந்தால் பயன்படுத்து"
 
 #: src/protocols/jabber/jabber.c:1721
 msgid "Require TLS"
-msgstr ""
+msgstr "TLS தேவை"
 
 #: src/protocols/jabber/jabber.c:1724
 msgid "Force old (port 5223) SSL"
-msgstr ""
+msgstr "பழைய (தளம் 5223) SSL ஐ முரண்டுபிடி"
 
 #: src/protocols/jabber/jabber.c:1729
 msgid "Allow plaintext auth over unencrypted streams"
@@ -6888,56 +6890,56 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:1734
 msgid "Connect port"
-msgstr ""
+msgstr "தளத்தை இணை"
 
 #. Account options
 #: src/protocols/jabber/jabber.c:1738
 #: src/protocols/silc/silc.c:1737
 msgid "Connect server"
-msgstr ""
+msgstr "சேவகரை இணை"
 
 #: src/protocols/jabber/message.c:114
 #, c-format
 msgid "Message from %s"
-msgstr ""
+msgstr "%s யிடமிருந்து தகவல்"
 
 #: src/protocols/jabber/message.c:178
 #, c-format
 msgid "%s has set the topic to: %s"
-msgstr ""
+msgstr "%s தலைப்பை இதற்கு அமைத்திருக்கிறார்: %s"
 
 #: src/protocols/jabber/message.c:180
 #, c-format
 msgid "The topic is: %s"
-msgstr ""
+msgstr "தலைப்பு : %s"
 
 #: src/protocols/jabber/message.c:230
 #, c-format
 msgid "Message delivery to %s failed: %s"
-msgstr ""
+msgstr "%s க்கு அனுப்பிய தகவல் பட்டுவாடா செய்யத்தவறியது: %s"
 
 #: src/protocols/jabber/message.c:233
 msgid "Jabber Message Error"
-msgstr ""
+msgstr "Jabber தகவல் பிழை"
 
 #: src/protocols/jabber/message.c:297
 #, c-format
 msgid " (Code %s)"
-msgstr ""
+msgstr " (Code %s)"
 
 #: src/protocols/jabber/parser.c:131
 msgid "XML Parse error"
-msgstr ""
+msgstr "XML பகுப்பதில் பிழை"
 
 #: src/protocols/jabber/presence.c:284
 msgid "Unknown Error in presence"
-msgstr ""
+msgstr "இருப்பில் தெரியாத பிழை"
 
 #: src/protocols/jabber/presence.c:289
 #: src/protocols/msn/userlist.c:93
 #, c-format
 msgid "The user %s wants to add %s to his or her buddy list."
-msgstr ""
+msgstr "பயனாளர் %s அவருடைய தோழர் பட்டியலில் %s யை சேர்க்க விரும்புகிறார்."
 
 #: src/protocols/jabber/presence.c:297
 #: src/protocols/msn/userlist.c:100
@@ -6945,7 +6947,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7274
 #: src/protocols/yahoo/yahoo.c:898
 msgid "Authorize"
-msgstr ""
+msgstr "அனுமதியளி"
 
 #: src/protocols/jabber/presence.c:298
 #: src/protocols/msn/userlist.c:101
@@ -6953,44 +6955,44 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7275
 #: src/protocols/yahoo/yahoo.c:900
 msgid "Deny"
-msgstr ""
+msgstr "மறு"
 
 #: src/protocols/jabber/presence.c:345
 #: src/protocols/jabber/presence.c:346
 msgid "Create New Room"
-msgstr ""
+msgstr "புதிய அறையை உருவாக்கு"
 
 #: src/protocols/jabber/presence.c:347
 msgid "You are creating a new room.  Would you like to configure it, or accept the default settings?"
-msgstr ""
+msgstr "நீங்கள் புதிய அறையை உருவாக்குகிறீர்கள். அதை வரையறுக்க விரும்புகிறீர்களா, அல்லது கொடாநிலை அமைப்பை ஏற்றுக்கொள்ளவா?"
 
 #: src/protocols/jabber/presence.c:349
 msgid "Configure Room"
-msgstr ""
+msgstr "அறையை வரையறு"
 
 #: src/protocols/jabber/presence.c:351
 msgid "Accept Defaults"
-msgstr ""
+msgstr "கொடாநிலையை ஏற்றுக்கொள்"
 
 #: src/protocols/jabber/presence.c:388
 #, c-format
 msgid "Error in chat %s"
-msgstr ""
+msgstr "அரட்டை %s ல் பிழை"
 
 #: src/protocols/jabber/presence.c:391
 #, c-format
 msgid "Error joining chat %s"
-msgstr ""
+msgstr "அரட்டை %s ல் சேர்வதில் பிழை"
 
 #: src/protocols/jabber/si.c:591
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
-msgstr ""
+msgstr "%s ற்கு கோப்பை அனுப்ப இயலவில்லை, பயனாளர் கோப்பு பரிமாற்றத்தை ஆதரிக்கவில்லை"
 
 #: src/protocols/jabber/si.c:592
 #: src/protocols/jabber/si.c:593
 msgid "File Send Failed"
-msgstr ""
+msgstr "கோப்பு அனுப்புதல் தவறியது"
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
@@ -7009,139 +7011,139 @@ msgstr ""
 
 #: src/protocols/msn/error.c:35
 msgid "Unable to parse message"
-msgstr ""
+msgstr "தகவலை பகுக்க இயலவில்லை"
 
 #: src/protocols/msn/error.c:38
 msgid "Syntax Error (probably a Gaim bug)"
-msgstr ""
+msgstr "இலக்கணப்பிழை (அனேகமாக கெய்மின் பிழையாக இருக்கலாம்)"
 
 #: src/protocols/msn/error.c:42
 msgid "Invalid email address"
-msgstr ""
+msgstr "செல்லாத மின்னஞ்சல் முகவரி"
 
 #: src/protocols/msn/error.c:45
 msgid "User does not exist"
-msgstr ""
+msgstr "பயனாளர் இல்லை"
 
 #: src/protocols/msn/error.c:49
 msgid "Fully Qualified Domain Name missing"
-msgstr ""
+msgstr "முழுதும் அங்கீகரிக்கப்பட்ட டொமைன் பெயர் இல்லை யர்"
 
 #: src/protocols/msn/error.c:52
 msgid "Already Logged In"
-msgstr ""
+msgstr "ஏற்கனவே நுழையப்பட்டிருக்கிறது"
 
 #: src/protocols/msn/error.c:55
 msgid "Invalid Username"
-msgstr ""
+msgstr "செல்லாத பயனாளர் பெயர்"
 
 #: src/protocols/msn/error.c:58
 msgid "Invalid Friendly Name"
-msgstr ""
+msgstr "செல்லாத தோழமை பெயர்"
 
 #: src/protocols/msn/error.c:61
 msgid "List Full"
-msgstr ""
+msgstr "பட்டியல் நிரம்பியது"
 
 #: src/protocols/msn/error.c:64
 msgid "Already there"
-msgstr ""
+msgstr "ஏற்கனவே உள்ளது"
 
 #: src/protocols/msn/error.c:67
 msgid "Not on list"
-msgstr ""
+msgstr "பட்டியலில் இல்லை"
 
 #: src/protocols/msn/error.c:70
 #: src/protocols/zephyr/zephyr.c:690
 msgid "User is offline"
-msgstr ""
+msgstr "பயனாளர் தொடர்பற்று உள்ளார்"
 
 #: src/protocols/msn/error.c:73
 msgid "Already in the mode"
-msgstr ""
+msgstr "ஏற்கனவே முறையில்"
 
 #: src/protocols/msn/error.c:76
 msgid "Already in opposite list"
-msgstr ""
+msgstr "ஏற்கனவே எதிர் பட்டியலில்"
 
 #: src/protocols/msn/error.c:79
 msgid "Too many groups"
-msgstr ""
+msgstr "நிறைய குழுக்கள்"
 
 #: src/protocols/msn/error.c:82
 msgid "Invalid group"
-msgstr ""
+msgstr "செல்லாத குழு"
 
 #: src/protocols/msn/error.c:85
 msgid "User not in group"
-msgstr ""
+msgstr "பயனாளர் குழுவில் இல்லை"
 
 #: src/protocols/msn/error.c:88
 msgid "Group name too long"
-msgstr ""
+msgstr "குழுப்பெயர் மிக நீளமானது"
 
 #: src/protocols/msn/error.c:91
 msgid "Cannot remove group zero"
-msgstr ""
+msgstr "குழு பூஜ்ஜியத்தை நீக்க முடியவில்லை"
 
 #: src/protocols/msn/error.c:95
 msgid "Tried to add a contact to a group that doesn't exist"
-msgstr ""
+msgstr "இல்லாத குழுவில் முகவரியை சேர்க்க விழைந்தது"
 
 #: src/protocols/msn/error.c:99
 msgid "Switchboard failed"
-msgstr ""
+msgstr "சுவிட்சுபோர்டு தவறியது"
 
 #: src/protocols/msn/error.c:102
 msgid "Notify Transfer failed"
-msgstr ""
+msgstr "பரிமாற்ற அறிவிப்பு தவறியது"
 
 #: src/protocols/msn/error.c:106
 msgid "Required fields missing"
-msgstr ""
+msgstr "தேவைப்பட்ட இடங்கள் தொலைந்துள்ளன"
 
 #: src/protocols/msn/error.c:109
 msgid "Too many hits to a FND"
-msgstr ""
+msgstr "FND க்கு பல மேற்பட்ட இடிகள்"
 
 #: src/protocols/msn/error.c:112
 #: src/protocols/oscar/oscar.c:206
 msgid "Not logged in"
-msgstr ""
+msgstr "நுழைந்திருக்கவில்லை"
 
 #: src/protocols/msn/error.c:116
 msgid "Service Temporarily Unavailable"
-msgstr ""
+msgstr "சேவை தற்காலிகமாக கிடைக்கவில்லை"
 
 #: src/protocols/msn/error.c:119
 msgid "Database server error"
-msgstr ""
+msgstr "தரவுதள சேவகர் பிழை"
 
 #: src/protocols/msn/error.c:122
 msgid "Command disabled"
-msgstr ""
+msgstr "கட்டளை இயலாமையாக்கப்பட்டது"
 
 #: src/protocols/msn/error.c:125
 msgid "File operation error"
-msgstr ""
+msgstr "கோப்பு இயக்கம் பிழை"
 
 #: src/protocols/msn/error.c:128
 msgid "Memory allocation error"
-msgstr ""
+msgstr "நினைவகம் ஆக்கிரமிப்பில் பிழை"
 
 #: src/protocols/msn/error.c:131
 msgid "Wrong CHL value sent to server"
-msgstr ""
+msgstr "தவறான CHL மதிப்பு சேவகருக்கு அனுப்பப்பட்டது"
 
 #: src/protocols/msn/error.c:135
 msgid "Server busy"
-msgstr ""
+msgstr "சேவகர் மும்முறமாக இருக்கிறது"
 
 #: src/protocols/msn/error.c:138
 #: src/protocols/msn/error.c:151
 #: src/protocols/msn/error.c:206
 msgid "Server unavailable"
-msgstr ""
+msgstr "சேவகர் கிடைக்கவில்லை"
 
 #: src/protocols/msn/error.c:141
 msgid "Peer Notification server down"
@@ -7149,92 +7151,87 @@ msgstr ""
 
 #: src/protocols/msn/error.c:144
 msgid "Database connect error"
-msgstr ""
+msgstr "தரவுதள் இணைப்பு பிழை"
 
 #: src/protocols/msn/error.c:148
 msgid "Server is going down (abandon ship)"
-msgstr ""
+msgstr "சேவகர் நிறுத்தப்படுகிறது (கைவிடப்பட்டது)"
 
 #: src/protocols/msn/error.c:155
 msgid "Error creating connection"
-msgstr ""
+msgstr "இணைப்பை உருவாக்குவதில் பிழை"
 
 #: src/protocols/msn/error.c:159
 msgid "CVR parameters are either unknown or not allowed"
-msgstr ""
+msgstr "CVR பராமீட்டர்கள் தெரியவில்லை அல்லது அனுமதிக்கப்படவில்லை"
 
 #: src/protocols/msn/error.c:162
 msgid "Unable to write"
-msgstr ""
+msgstr "எழுத இயலவில்லை"
 
 #: src/protocols/msn/error.c:165
 msgid "Session overload"
-msgstr ""
+msgstr "நிகழ்வு பழு மிகுதியானது"
 
 #: src/protocols/msn/error.c:168
 msgid "User is too active"
-msgstr ""
+msgstr "பயனாளர் மிக சுறுசுறுப்பாக உள்ளார்"
 
 #: src/protocols/msn/error.c:171
 msgid "Too many sessions"
-msgstr ""
+msgstr "பல நிகழ்வுகள்"
 
 #: src/protocols/msn/error.c:174
 msgid "Passport not verified"
-msgstr ""
+msgstr "பாஸ்போர்ட் சரிபார்க்கப்படவில்லை"
 
 #: src/protocols/msn/error.c:177
 msgid "Bad friend file"
-msgstr ""
+msgstr "கெட்ட நண்பர் கோப்பு"
 
 #: src/protocols/msn/error.c:180
 msgid "Not expected"
-msgstr ""
+msgstr "எதிர்பாராத"
 
 #: src/protocols/msn/error.c:185
 msgid "Friendly name changes too rapidly"
-msgstr ""
+msgstr "நண்பரான பெயர் அடிக்கடி மாறுகிறது"
 
 #: src/protocols/msn/error.c:194
 msgid "Server too busy"
-msgstr ""
+msgstr "சேவகர் மிக மும்முறமாக இருக்கிறது"
 
 #: src/protocols/msn/error.c:198
 #: src/protocols/oscar/oscar.c:2765
 #: src/protocols/silc/ops.c:1538
 #: src/protocols/toc/toc.c:722
 msgid "Authentication failed"
-msgstr ""
+msgstr "அனுமதியாக்கல் தவறியது"
 
 #: src/protocols/msn/error.c:201
 msgid "Not allowed when offline"
-msgstr ""
+msgstr "இணைப்பற்றபொழுது அனுமதிக்கப்படாது"
 
 #: src/protocols/msn/error.c:209
 msgid "Not accepting new users"
-msgstr ""
+msgstr "புதிய பயனாளர்களை ஏற்கமறுக்கிறது"
 
 #: src/protocols/msn/error.c:213
 msgid "Kids Passport without parental consent"
-msgstr ""
+msgstr "பெற்றோர் இசைவற்ற குழந்தையின் பாஸ்போர்ட்"
 
 #: src/protocols/msn/error.c:217
 msgid "Passport account not yet verified"
-msgstr ""
+msgstr "பாஸ்போர்ட் கணக்கு இன்னும் சரிபார்க்கப்படவில்லை"
 
 #: src/protocols/msn/error.c:220
 msgid "Bad ticket"
-msgstr ""
+msgstr "கெட்ட அனுமதிச்சீட்டு"
 
 #: src/protocols/msn/error.c:224
 #, c-format
 msgid "Unknown Error Code %d"
-msgstr ""
-
-#: src/protocols/msn/error.c:236
-#, c-format
-msgid "MSN Error: %s\n"
-msgstr ""
+msgstr "தெரியாத பிழை குறியீடு %d"
 
 #: src/protocols/msn/msn.c:113
 msgid "You have just sent a Nudge!"
@@ -7242,55 +7239,55 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:138
 msgid "Your new MSN friendly name is too long."
-msgstr ""
+msgstr "உங்களது புதிய MSN நண்பரான பெயர் மிக நீளமானது."
 
 #: src/protocols/msn/msn.c:246
 msgid "Set your friendly name."
-msgstr ""
+msgstr "உங்களது நட்பான பெயரை அமைக்க."
 
 #: src/protocols/msn/msn.c:247
 msgid "This is the name that other MSN buddies will see you as."
-msgstr ""
+msgstr "மற்ற MSN தோழர்கள் உங்களை பார்க்கக்கூடிய பெயர்."
 
 #: src/protocols/msn/msn.c:263
 msgid "Set your home phone number."
-msgstr ""
+msgstr "உங்களது வீட்டு தொலைபேசி எண்ணை அமைக்கவும்."
 
 #: src/protocols/msn/msn.c:278
 msgid "Set your work phone number."
-msgstr ""
+msgstr "உங்களது அலுவலக தொலைபேசி எண்ணை அமைக்கவும்."
 
 #: src/protocols/msn/msn.c:293
 msgid "Set your mobile phone number."
-msgstr ""
+msgstr "உங்களது கைபேசி எண்ணை அமைக்கவும்."
 
 #: src/protocols/msn/msn.c:306
 msgid "Allow MSN Mobile pages?"
-msgstr ""
+msgstr "MSN மொபைல் பக்கங்களை அனுமதிக்கவா?"
 
 #: src/protocols/msn/msn.c:307
 msgid "Do you want to allow or disallow people on your buddy list to send you MSN Mobile pages to your cell phone or other mobile device?"
-msgstr ""
+msgstr "உங்களது தோழர் பட்டியலில் உள்ள  மக்கள் உங்களது மொபைல் அல்லது கைபேசிக்கு MSN மொபைல் பக்கங்களை அனுப்புவதை அனுமதிக்க அல்லது அனுமதிக்காமல் இருக்கவேண்டுமா?"
 
 #: src/protocols/msn/msn.c:311
 msgid "Allow"
-msgstr ""
+msgstr "அனுமதி"
 
 #: src/protocols/msn/msn.c:312
 msgid "Disallow"
-msgstr ""
+msgstr "அனுமதியை மறு"
 
 #: src/protocols/msn/msn.c:328
 msgid "This Hotmail account may not be active."
-msgstr ""
+msgstr "இந்த Hotmail கணக்கு இயக்கத்தில் இல்லை."
 
 #: src/protocols/msn/msn.c:354
 msgid "Send a mobile message."
-msgstr ""
+msgstr "மொபைல் தகவலை அனுப்பு."
 
 #: src/protocols/msn/msn.c:356
 msgid "Page"
-msgstr ""
+msgstr "பக்கம்"
 
 #: src/protocols/msn/msn.c:552
 #: src/protocols/msn/msn.c:559
@@ -7302,82 +7299,84 @@ msgid ""
 "\n"
 "<b>%s:</b> %s"
 msgstr ""
+"\n"
+"<b>%s:</b> %s"
 
 #: src/protocols/msn/msn.c:559
 msgid "Has you"
-msgstr ""
+msgstr "நீங்கள்"
 
 #: src/protocols/msn/msn.c:589
 #: src/protocols/msn/state.c:33
 #: src/protocols/yahoo/yahoo.c:2631
 #: src/protocols/yahoo/yahoo.c:3214
 msgid "Be Right Back"
-msgstr ""
+msgstr "திரும்பியுள்ளீர்கள்"
 
 #: src/protocols/msn/msn.c:597
 #: src/protocols/msn/state.c:35
 #: src/protocols/yahoo/yahoo.c:2641
 #: src/protocols/yahoo/yahoo.c:3229
 msgid "On The Phone"
-msgstr ""
+msgstr "தொலைபேசியில்"
 
 #: src/protocols/msn/msn.c:601
 #: src/protocols/msn/state.c:36
 #: src/protocols/yahoo/yahoo.c:2645
 #: src/protocols/yahoo/yahoo.c:3235
 msgid "Out To Lunch"
-msgstr ""
+msgstr "உணவிற்காக வெளியே"
 
 #: src/protocols/msn/msn.c:605
 #: src/protocols/zephyr/zephyr.c:2255
 #: src/status.c:156
 msgid "Hidden"
-msgstr ""
+msgstr "மறைக்கப்பட்ட"
 
 #: src/protocols/msn/msn.c:621
 msgid "Set Friendly Name"
-msgstr ""
+msgstr "நட்பான பெயரை அமை"
 
 #: src/protocols/msn/msn.c:626
 msgid "Set Home Phone Number"
-msgstr ""
+msgstr "வீட்டு தொலைபேசி எண்ணை அமை"
 
 #: src/protocols/msn/msn.c:630
 msgid "Set Work Phone Number"
-msgstr ""
+msgstr "அலுவலக தொலைபேசி எண்ணை அமை"
 
 #: src/protocols/msn/msn.c:634
 msgid "Set Mobile Phone Number"
-msgstr ""
+msgstr "மொபைல் எண்ணை அமை"
 
 #: src/protocols/msn/msn.c:640
 msgid "Enable/Disable Mobile Devices"
-msgstr ""
+msgstr "மொபைல் கருவிகளை இயலுமை/இயலாமைப்படுத்து"
 
 #: src/protocols/msn/msn.c:645
 msgid "Allow/Disallow Mobile Pages"
-msgstr ""
+msgstr "மொபைல் பக்கங்களை அனுமதி/அனுமதிக்காதே"
 
 #: src/protocols/msn/msn.c:655
 msgid "Open Hotmail Inbox"
-msgstr ""
+msgstr "Hotmail உள்பெட்டியை திற"
 
 #: src/protocols/msn/msn.c:679
 msgid "Send to Mobile"
-msgstr ""
+msgstr "மொபைலுக்கு அனுப்பு"
 
 #: src/protocols/msn/msn.c:688
 #: src/protocols/novell/novell.c:3428
 msgid "Initiate _Chat"
-msgstr ""
+msgstr "அரட்டையை தொடங்கு"
 
 #: src/protocols/msn/msn.c:725
 msgid "SSL support is needed for MSN. Please install a supported SSL library. See http://gaim.sf.net/faq-ssl.php for more information."
-msgstr ""
+msgstr "MSN ற்கு SSL ஆதரவு தேவைப்படுகிறது. SSL ஆதரவுள்ள நூலகத்தை தயவுசெய்து நிறுவவும். மேலும் தகவலுக்கு http://gaim.sf.net/faq-ssl.php யை காணவும்."
 
 #: src/protocols/msn/msn.c:753
 msgid "Failed to connect to server."
-msgstr ""
+msgstr "சேவகருடன் இணைக்க தவறியது."
 
 #: src/protocols/msn/msn.c:1379
 #: src/protocols/yahoo/yahoo_profile.c:654
@@ -7385,7 +7384,7 @@ msgstr ""
 #: src/protocols/zephyr/zephyr.c:1135
 #, c-format
 msgid "<b>Alias:</b> %s<br>"
-msgstr ""
+msgstr "<b>புனைப்பெயர்:</b> %s<br>"
 
 #. put a link to the actual profile URL
 #: src/protocols/msn/msn.c:1386
@@ -7394,39 +7393,39 @@ msgstr ""
 #: src/util.c:800
 #, c-format
 msgid "<b>%s:</b> "
-msgstr ""
+msgstr "<b>%s:</b> "
 
 #: src/protocols/msn/msn.c:1463
 msgid "MSN Profile"
-msgstr ""
+msgstr "MSN குறுந்தொகுப்பு"
 
 #: src/protocols/msn/msn.c:1468
 #: src/protocols/msn/msn.c:1719
 #: src/protocols/yahoo/yahoo_profile.c:760
 msgid "Error retrieving profile"
-msgstr ""
+msgstr "குறுந்தொகுப்பை பெறுவதில் பிழை"
 
 #: src/protocols/msn/msn.c:1538
 #: src/protocols/oscar/oscar.c:6041
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
-msgstr ""
+msgstr "வயது"
 
 #: src/protocols/msn/msn.c:1554
 #: src/protocols/yahoo/yahoo_profile.c:1020
 msgid "Marital Status"
-msgstr ""
+msgstr "திருமண நிலை"
 
 #: src/protocols/msn/msn.c:1561
 #: src/protocols/novell/novell.c:1459
 #: src/protocols/yahoo/yahoo_profile.c:1010
 msgid "Location"
-msgstr ""
+msgstr "இடம்"
 
 #: src/protocols/msn/msn.c:1569
 #: src/protocols/yahoo/yahoo_profile.c:1030
 msgid "Occupation"
-msgstr ""
+msgstr "தொழில்"
 
 #: src/protocols/msn/msn.c:1586
 #: src/protocols/msn/msn.c:1592
@@ -7434,52 +7433,52 @@ msgstr ""
 #: src/protocols/msn/msn.c:1607
 #: src/protocols/msn/msn.c:1614
 msgid "A Little About Me"
-msgstr ""
+msgstr "என்னைப்பற்று சுருக்கமாக"
 
 #: src/protocols/msn/msn.c:1623
 #: src/protocols/msn/msn.c:1629
 #: src/protocols/msn/msn.c:1636
 #: src/protocols/msn/msn.c:1643
 msgid "Favorite Things"
-msgstr ""
+msgstr "விரும்பியவைகள்"
 
 #: src/protocols/msn/msn.c:1652
 #: src/protocols/msn/msn.c:1658
 #: src/protocols/msn/msn.c:1665
 msgid "Hobbies and Interests"
-msgstr ""
+msgstr "பொழுதுபோக்கு மற்றும் விருப்பங்கள்"
 
 #: src/protocols/msn/msn.c:1674
 #: src/protocols/msn/msn.c:1680
 #: src/protocols/yahoo/yahoo_profile.c:1072
 msgid "Favorite Quote"
-msgstr ""
+msgstr "விரும்பிய வாக்கியம்"
 
 #: src/protocols/msn/msn.c:1688
 msgid "Last Updated"
-msgstr ""
+msgstr "கடைசியாக புதுப்பித்தது"
 
 #: src/protocols/msn/msn.c:1699
 #: src/protocols/silc/ops.c:881
 msgid "Homepage"
-msgstr ""
+msgstr "இல்லப்பக்கம்"
 
 #: src/protocols/msn/msn.c:1721
 msgid "The user has not created a public profile."
-msgstr ""
+msgstr "பயனாளரர் பொது குறுந்தொகுப்பை உருவாக்கியருக்கவில்லை."
 
 #: src/protocols/msn/msn.c:1722
 msgid "MSN reported not being able to find the user's profile. This either means that the user does not exist, or that the user exists but has not created a public profile."
-msgstr ""
+msgstr "பயனாளரின் குறுந்தொகுப்பை காணவில்லை என MSN புகார்செய்கிறது. இதன் காரணம், ஒன்று பயனாளர் இல்லாமலிருக்க வேண்டும் அல்லது பயனாளர் இருந்து அவர் குறுந்தொகுப்பை உருவாக்காமலிருக்க வேண்டும்."
 
 #: src/protocols/msn/msn.c:1726
 msgid "Gaim could not find any information in the user's profile. The user most likely does not exist."
-msgstr ""
+msgstr "கெய்மால் பயனாளரின் குறுந்தொகுப்பை கண்டுபிடிக்க முடியவில்லை. அநேகமாக பயனாளர் இல்லை."
 
 #: src/protocols/msn/msn.c:1732
 #: src/protocols/yahoo/yahoo_profile.c:1167
 msgid "Profile URL"
-msgstr ""
+msgstr "குறுந்தொகுப்பு URL"
 
 #. *< type
 #. *< ui_requirement
@@ -7494,15 +7493,15 @@ msgstr ""
 #: src/protocols/msn/msn.c:1935
 #: src/protocols/msn/msn.c:1937
 msgid "MSN Protocol Plugin"
-msgstr ""
+msgstr "MSN நெறிமுறை சொருகுபொருள்"
 
 #: src/protocols/msn/msn.c:1956
 msgid "Login server"
-msgstr ""
+msgstr "சேவகரில் நுழை"
 
 #: src/protocols/msn/msn.c:1965
 msgid "Use HTTP Method"
-msgstr ""
+msgstr "HTTP முறையை பயன்படுத்து"
 
 #: src/protocols/msn/msn.c:1973
 msgid "nudge: nudge a contact to get their attention"
@@ -7512,60 +7511,60 @@ msgstr ""
 #: src/protocols/msn/servconn.c:127
 #: src/protocols/yahoo/yahoochat.c:1326
 msgid "Unable to connect"
-msgstr ""
+msgstr "இணைக்க முடியவில்லை"
 
 #: src/protocols/msn/notification.c:178
 #, c-format
 msgid "%s is not a valid group."
-msgstr ""
+msgstr "%s என்பது செல்லாத குழு."
 
 #: src/protocols/msn/notification.c:184
 #: src/protocols/msn/notification.c:532
 #: src/protocols/msn/session.c:334
 msgid "Unknown error."
-msgstr ""
+msgstr "தெரியாத பிழை."
 
 #: src/protocols/msn/notification.c:187
 #, c-format
 msgid "%s on %s (%s)"
-msgstr ""
+msgstr "%s  - இதன் மீது %s (%s)"
 
 #: src/protocols/msn/notification.c:498
 #, c-format
 msgid "Unable to add user on %s (%s)"
-msgstr ""
+msgstr "%s  மீது பயனாளரை சேர்க்க இயலவில்லை (%s)"
 
 #: src/protocols/msn/notification.c:502
 #, c-format
 msgid "Unable to block user on %s (%s)"
-msgstr ""
+msgstr "%s  மீது பயனாளரை தடுக்க இயலவில்லை (%s)"
 
 #: src/protocols/msn/notification.c:506
 #, c-format
 msgid "Unable to permit user on %s (%s)"
-msgstr ""
+msgstr "%s  மீது பயனாளரை அனுமதிக்க இயலவில்லை (%s)"
 
 #: src/protocols/msn/notification.c:514
 #, c-format
 msgid "%s could not be added because your buddy list is full."
-msgstr ""
+msgstr "%s சேர்க்க முடியாது ஏனென்றால் உங்களது தோழர் பட்டியல் நிரம்பியுள்ளது."
 
 #: src/protocols/msn/notification.c:523
 #, c-format
 msgid "%s is not a valid passport account."
-msgstr ""
+msgstr "%s என்பது செல்லாத பாஸ்போர்ட் கணக்கு."
 
 #: src/protocols/msn/notification.c:528
 msgid "Service Temporarily Unavailable."
-msgstr ""
+msgstr "தற்காலிகமாக சேவை இல்லை."
 
 #: src/protocols/msn/notification.c:821
 msgid "Unable to rename group"
-msgstr ""
+msgstr "குழுப்பெயரை மாற்ற இயலவில்லை."
 
 #: src/protocols/msn/notification.c:876
 msgid "Unable to delete group"
-msgstr ""
+msgstr "குழவை நீக்க இயலவில்லை"
 
 #: src/protocols/msn/notification.c:1309
 #, c-format
@@ -7582,17 +7581,17 @@ msgstr[1] ""
 
 #: src/protocols/msn/servconn.c:129
 msgid "Writing error"
-msgstr ""
+msgstr "எழுதுதல் பிழை"
 
 #: src/protocols/msn/servconn.c:131
 msgid "Reading error"
-msgstr ""
+msgstr "வாசித்தல் பிவை"
 
 #: src/protocols/msn/servconn.c:133
 #: src/protocols/msn/session.c:326
 #: src/protocols/oscar/oscar.c:4927
 msgid "Unknown error"
-msgstr ""
+msgstr "தெரியாத பிழை"
 
 #: src/protocols/msn/servconn.c:138
 #, c-format
@@ -7600,14 +7599,16 @@ msgid ""
 "Connection error from %s server:\n"
 "%s"
 msgstr ""
+"%s சேவகரிலிருந்து இணைப்பு பிழை:\n"
+"%s"
 
 #: src/protocols/msn/session.c:304
 msgid "Our protocol is not supported by the server."
-msgstr ""
+msgstr "எங்களது நெறிமுறையை சேவகர் ஆதரிக்கவில்லை."
 
 #: src/protocols/msn/session.c:308
 msgid "Error parsing HTTP."
-msgstr ""
+msgstr "HTTP யை பகுப்பதில் பிழை."
 
 #. MSG_SERVER_GHOST
 #. Looks like someone logged in as us! =-O
@@ -7616,77 +7617,77 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5677
 #: src/protocols/yahoo/yahoo.c:194
 msgid "You have signed on from another location."
-msgstr ""
+msgstr "நீங்கள் மற்றொரு இடத்திலிருந்து நுழைந்திருக்கிறீர்கள்."
 
 #: src/protocols/msn/session.c:315
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
+msgstr "MSN சேவகர்கள் தற்காலிகமாக கிடைக்கவில்லை. தயவுசெய்து காத்திருந்து மீண்டும் முயற்சிக்கவும்."
 
 #: src/protocols/msn/session.c:320
 msgid "The MSN servers are going down temporarily."
-msgstr ""
+msgstr "MSN சேவகர்கள் தற்காலிகமாக செயலிழக்கிறது."
 
 #: src/protocols/msn/session.c:324
 #, c-format
 msgid "Unable to authenticate: %s"
-msgstr ""
+msgstr "அனுமதிக்க இயலவில்லை: %s"
 
 #: src/protocols/msn/session.c:329
 msgid "Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
+msgstr "MSN தோழர் பட்டியல் தற்காலிகமாக கிடைக்கவில்லை. தயவுசெய்து காத்திருந்து மீண்டும் முயற்சிக்கவும்."
 
 #: src/protocols/msn/session.c:350
 #: src/protocols/msn/session.c:352
 msgid "Handshaking"
-msgstr ""
+msgstr "கைகுலுக்கல்"
 
 #: src/protocols/msn/session.c:351
 msgid "Transferring"
-msgstr ""
+msgstr "பரிமாறுகிறது"
 
 #: src/protocols/msn/session.c:353
 msgid "Starting authentication"
-msgstr ""
+msgstr "அனுமதித்தல் ஆரம்பம்"
 
 #: src/protocols/msn/session.c:354
 msgid "Getting cookie"
-msgstr ""
+msgstr "குக்கீயை பெறுகிறது"
 
 #: src/protocols/msn/session.c:356
 msgid "Sending cookie"
-msgstr ""
+msgstr "குக்கீயை அனுப்புகிறது"
 
 #: src/protocols/msn/session.c:357
 msgid "Retrieving buddy list"
-msgstr ""
+msgstr "தோழர் பட்டியலை மீட்டுகிறது"
 
 #: src/protocols/msn/state.c:34
 msgid "Away From Computer"
-msgstr ""
+msgstr "கணினியை விட்டு தொலைவில்"
 
 #: src/protocols/msn/switchboard.c:403
 msgid "Message may have not been sent because a timeout occurred:"
-msgstr ""
+msgstr "காலஎல்லை முடிந்ததால் தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
 #: src/protocols/msn/switchboard.c:411
 msgid "Message could not be sent, not allowed while invisible:"
-msgstr ""
+msgstr "மறைமுக நிலையில் அனுமதி இல்லாததால், தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
 #: src/protocols/msn/switchboard.c:415
 msgid "Message could not be sent because the user is offline:"
-msgstr ""
+msgstr "பயனாளர் இணைப்பற்ற நிலையில் உள்ளதால் தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
 #: src/protocols/msn/switchboard.c:419
 msgid "Message could not be sent because a connection error occurred:"
-msgstr ""
+msgstr "இணைப்பு பிழை நேர்ந்ததால் தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
 #: src/protocols/msn/switchboard.c:423
 msgid "Message could not be sent because an error with the switchboard occurred:"
-msgstr ""
+msgstr "சுவிட்சுபோர்டில் பிழை உள்ளதால் தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
 #: src/protocols/msn/switchboard.c:431
 msgid "Message may have not been sent because an unknown error occurred:"
-msgstr ""
+msgstr "தெரியாத பிழை நேர்ந்ததால் தகவல் அனுப்பப்படாமல் இருக்கலாம்:"
 
 #: src/protocols/msn/switchboard.c:952
 #, c-format
@@ -7696,62 +7697,62 @@ msgstr ""
 #: src/protocols/msn/userlist.c:85
 #, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
-msgstr ""
+msgstr "பயனாளர் %s (%s)  அவரது தோழர் பட்டியலில் %s யை சேர்க்க விரும்புகிறார்."
 
 #: src/protocols/msn/userlist.c:275
 #, c-format
 msgid "%s has added you to his or her contact list."
-msgstr ""
+msgstr "%s அவரது தொடர்பு பட்டியலில் உங்களை சேர்த்துள்ளார்."
 
 #: src/protocols/msn/userlist.c:339
 #, c-format
 msgid "%s has removed you from his or her contact list."
-msgstr ""
+msgstr "%s அவரது தொடர்பு பட்டியலிலிருந்து உங்களை நீக்கியுள்ளார்."
 
 #: src/protocols/msn/userlist.c:659
 #, c-format
 msgid "Unable to add \"%s\"."
-msgstr ""
+msgstr "\"%s\" ஐ சேர்க்க முடியவில்லை."
 
 #: src/protocols/msn/userlist.c:661
 msgid "The screen name specified is invalid."
-msgstr ""
+msgstr "குறிப்பிட்ட திரைப்பெயர் செல்லாதது."
 
 #: src/protocols/napster/napster.c:260
 msgid "Unable to read header from server"
-msgstr ""
+msgstr "சேவகரிலிருந்து தலைப்பை வாசிக்க இயலவில்லை"
 
 #: src/protocols/napster/napster.c:274
 #, c-format
 msgid "Unable to read message from server: %s.  Command is %hd, length is %hd."
-msgstr ""
+msgstr "சேவகரிலிருந்து தகவலை வாசிக்க இயலவில்லை: %s.  கட்டளை %hd, நீளம் %hd."
 
 #: src/protocols/napster/napster.c:290
 msgid "Unknown server error."
-msgstr ""
+msgstr "தெரியாத சேவகர் பிழை."
 
 #: src/protocols/napster/napster.c:339
 #, c-format
 msgid "users: %s, files: %s, size: %sGB"
-msgstr ""
+msgstr "பயனாளர்கள்: %s, கோப்புகள்: %s, அளவு: %s ஜி.பை"
 
 #. MSG_SERVER_HOTLIST_ERROR
 #: src/protocols/napster/napster.c:350
 #, c-format
 msgid "Unable to add \"%s\" to your Napster hotlist"
-msgstr ""
+msgstr "\"%s\" ஐ உங்களது Napster சூடான பட்டியலில் சேர்க்க இயலவில்லை"
 
 #. MSG_CLIENT_WHOIS
 #: src/protocols/napster/napster.c:414
 #, c-format
 msgid "%s requested your information"
-msgstr ""
+msgstr "%s உங்கள் தகவலை கோரினார்"
 
 #. MSG_CLIENT_PING
 #: src/protocols/napster/napster.c:454
 #, c-format
 msgid "%s requested a PING"
-msgstr ""
+msgstr "%s PINGஐ கோரினார்"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/napster/napster.c:501
@@ -7764,12 +7765,12 @@ msgstr ""
 #: src/protocols/yahoo/yahoo_filexfer.c:111
 #: src/protocols/yahoo/ycht.c:481
 msgid "Unable to connect."
-msgstr ""
+msgstr "இணைக்க இயலவில்லை."
 
 #: src/protocols/napster/napster.c:590
 #: src/protocols/toc/toc.c:1367
 msgid "_Group:"
-msgstr ""
+msgstr "குழு:"
 
 #. *< type
 #. *< ui_requirement
@@ -7784,7 +7785,7 @@ msgstr ""
 #: src/protocols/napster/napster.c:688
 #: src/protocols/napster/napster.c:690
 msgid "NAPSTER Protocol Plugin"
-msgstr ""
+msgstr "NAPSTER நெறிமுறை சொருகுபொருள்"
 
 #: src/protocols/novell/nmuser.c:1868
 msgid "Required parameters not passed in"
@@ -7792,75 +7793,75 @@ msgstr ""
 
 #: src/protocols/novell/nmuser.c:1871
 msgid "Unable to write to network"
-msgstr ""
+msgstr "வலையில் எழுத இயலவில்லை"
 
 #: src/protocols/novell/nmuser.c:1874
 msgid "Unable to read from network"
-msgstr ""
+msgstr "வலையில் வாசிக்க இயலவில்லை"
 
 #: src/protocols/novell/nmuser.c:1877
 msgid "Error communicating with server"
-msgstr ""
+msgstr "சேவகருடன் தொடர்பில் பிழை"
 
 #: src/protocols/novell/nmuser.c:1881
 msgid "Conference not found"
-msgstr ""
+msgstr "கலந்துரையாடல் காணவில்லை"
 
 #: src/protocols/novell/nmuser.c:1884
 msgid "Conference does not exist"
-msgstr ""
+msgstr "கலந்துரையாடல் இல்லை"
 
 #: src/protocols/novell/nmuser.c:1888
 msgid "A folder with that name already exists"
-msgstr ""
+msgstr "அதே பெயரில் கோப்பு ஏற்கனவே உள்ளது"
 
 #: src/protocols/novell/nmuser.c:1891
 msgid "Not supported"
-msgstr ""
+msgstr "ஆதரிக்கப்படவில்லை"
 
 #: src/protocols/novell/nmuser.c:1895
 msgid "Password has expired"
-msgstr ""
+msgstr "கடவுச்சொல் காலம் முடிந்தது"
 
 #: src/protocols/novell/nmuser.c:1898
 msgid "Invalid password"
-msgstr ""
+msgstr "செல்லாத கடவுச்சொல்"
 
 #: src/protocols/novell/nmuser.c:1901
 msgid "User not found"
-msgstr ""
+msgstr "பயனாளர் காணப்படவில்லை"
 
 #: src/protocols/novell/nmuser.c:1904
 msgid "Account has been disabled"
-msgstr ""
+msgstr "கணக்கு செயலிழக்கப்பட்டது"
 
 #: src/protocols/novell/nmuser.c:1907
 msgid "The server could not access the directory"
-msgstr ""
+msgstr "சேவகரால் அடைவை ஏற்க முடியவில்லை"
 
 #: src/protocols/novell/nmuser.c:1910
 msgid "Your system administrator has disabled this operation"
-msgstr ""
+msgstr "உங்களது கணினி ஆளுநர் இந்த செயல்பாட்டை இயலாமைபடுத்தியுள்ளார்"
 
 #: src/protocols/novell/nmuser.c:1913
 msgid "The server is unavailable; try again later"
-msgstr ""
+msgstr "சேவகர் கிடைக்கவில்லை; சிறிது நேரம் கழித்து முயற்சி செய்க"
 
 #: src/protocols/novell/nmuser.c:1916
 msgid "Cannot add a contact to the same folder twice"
-msgstr ""
+msgstr "ஒரே அடைவில் இருமுறை தொடர்பை சேர்க்க இயலாது"
 
 #: src/protocols/novell/nmuser.c:1919
 msgid "Cannot add yourself"
-msgstr ""
+msgstr "உங்களை நீங்களே சேர்க்க இயலாது"
 
 #: src/protocols/novell/nmuser.c:1922
 msgid "Master archive is misconfigured"
-msgstr ""
+msgstr "முதன்மை குவியல் தவறாக வரையறுக்கப்பட்டுள்ளது"
 
 #: src/protocols/novell/nmuser.c:1926
 msgid "Invalid username or password"
-msgstr ""
+msgstr "செல்லாத பயனாளர் பெயர் அல்லது கடவுச்சொல்"
 
 #: src/protocols/novell/nmuser.c:1929
 msgid "Could not recognize the host of the username you entered"
@@ -7905,7 +7906,7 @@ msgstr ""
 #: src/protocols/novell/nmuser.c:1960
 #, c-format
 msgid "Unknown error: 0x%X"
-msgstr ""
+msgstr "தெரியாத பிழை: 0x%X"
 
 #: src/protocols/novell/novell.c:117
 #, c-format
@@ -7947,12 +7948,12 @@ msgstr ""
 #: src/protocols/novell/novell.c:570
 #, c-format
 msgid "Unable to move user %s to folder %s in the server side list. Error while creating folder (%s)."
-msgstr ""
+msgstr "பயனாளர் %s ஐ சேவகர் பக்க பட்டியலிலுள்ள அடைவு %s ற்கு நகர்த்த முடியவில்லை.  அடைவை உருவாக்குவதில் பிழை (%s).. "
 
 #: src/protocols/novell/novell.c:618
 #, c-format
 msgid "Unable to add %s to your buddy list. Error creating folder in server side list (%s)."
-msgstr ""
+msgstr "%s ஐ தோழர் பட்டியலில் சேர்க்க இயலவில்லை. சேவகர் பக்க பட்டியலை உருவாக்குவதில் பிழை (%s)."
 
 #: src/protocols/novell/novell.c:691
 #, c-format
@@ -7994,11 +7995,11 @@ msgstr ""
 #: src/protocols/novell/novell.c:1111
 #: src/protocols/novell/novell.c:1672
 msgid "Error communicating with server. Closing connection."
-msgstr ""
+msgstr "சேவகருடன் தொடர்பு கொள்வதில் பிழை. இணைப்பை மூடுகிறது. ழை."
 
 #: src/protocols/novell/novell.c:1457
 msgid "Telephone Number"
-msgstr ""
+msgstr "தொலைபேசி எண் "
 
 #: src/protocols/novell/novell.c:1461
 msgid "Department"
@@ -8006,7 +8007,7 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:1463
 msgid "Personal Title"
-msgstr ""
+msgstr "தனிப்பட்ட தலைப்பு "
 
 #: src/protocols/novell/novell.c:1467
 msgid "Mailstop"
@@ -8016,7 +8017,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6014
 #: src/protocols/oscar/oscar.c:6021
 msgid "Email Address"
-msgstr ""
+msgstr "மின்னஞ்சல் முகவரி "
 
 #: src/protocols/novell/novell.c:1485
 msgid "User ID"
@@ -8040,7 +8041,7 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:1648
 msgid "Unable to make SSL connection to server."
-msgstr ""
+msgstr "சேவகருடன் SSL. இணைப்பை உருவாக்க இயலவில்லை."
 
 #: src/protocols/novell/novell.c:1678
 #, c-format
@@ -8049,7 +8050,7 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:1712
 msgid "Authenticating..."
-msgstr ""
+msgstr "உறுதிப்படுத்துகிறது..."
 
 #: src/protocols/novell/novell.c:1724
 msgid "Unable to connect to server."
@@ -8099,16 +8100,16 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:2176
 msgid "Error. SSL support is not installed."
-msgstr ""
+msgstr "பிழை SSL ஆதரவு நிறுவப்படவில்லை."
 
 #: src/protocols/novell/novell.c:2480
 msgid "This conference has been closed. No more messages can be sent."
-msgstr ""
+msgstr "இந்த உரையாடல் முடிக்கப்பட்டது. மேலும் தகவல் அனுப்ப இயலாது."
 
 #: src/protocols/novell/novell.c:2973
 #: src/protocols/yahoo/yahoo.c:2858
 msgid "Appear Offline"
-msgstr ""
+msgstr "இணைப்பில்லாத நிலையில் இருக்கிறது"
 
 #. *< type
 #. *< ui_requirement
@@ -8123,15 +8124,15 @@ msgstr ""
 #: src/protocols/novell/novell.c:3527
 #: src/protocols/novell/novell.c:3529
 msgid "Novell GroupWise Messenger Protocol Plugin"
-msgstr ""
+msgstr "Novell GroupWise Messenger நெறிமுறை சொருகுபொருள்"
 
 #: src/protocols/novell/novell.c:3548
 msgid "Server address"
-msgstr ""
+msgstr "சேவகர் முகவரி"
 
 #: src/protocols/novell/novell.c:3552
 msgid "Server port"
-msgstr ""
+msgstr "சேவகர் தளம்"
 
 #: src/protocols/oscar/oscar.c:202
 msgid "Invalid error"
@@ -8211,7 +8212,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:222
 msgid "No match"
-msgstr ""
+msgstr "பொருத்தம் இல்லை"
 
 #: src/protocols/oscar/oscar.c:223
 msgid "List overflow"
@@ -8240,7 +8241,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:621
 msgid "AIM Direct IM"
-msgstr ""
+msgstr "AIM நேரடி IM"
 
 #: src/protocols/oscar/oscar.c:624
 #: src/protocols/silc/silc.c:663
@@ -8259,11 +8260,11 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:637
 msgid "Add-Ins"
-msgstr ""
+msgstr "Add-Insர்"
 
 #: src/protocols/oscar/oscar.c:640
 msgid "Send Buddy List"
-msgstr ""
+msgstr "தோழர் பட்டியலை அனுப்பு"
 
 #: src/protocols/oscar/oscar.c:643
 msgid "ICQ Direct Connect"
@@ -8283,7 +8284,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:655
 msgid "ICQ Server Relay"
-msgstr ""
+msgstr "ICQ சேவகர் ஒளிபரப்பு"
 
 #: src/protocols/oscar/oscar.c:658
 msgid "Old ICQ UTF8"
@@ -8291,7 +8292,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:661
 msgid "Trillian Encryption"
-msgstr ""
+msgstr " ட்ரில்லியன் ரகசியமாக்கல்"
 
 #: src/protocols/oscar/oscar.c:664
 msgid "ICQ UTF8"
@@ -8303,7 +8304,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:670
 msgid "Security Enabled"
-msgstr ""
+msgstr "பாதுகாப்பு செயலாக்கப்பட்டது"
 
 #: src/protocols/oscar/oscar.c:673
 msgid "Video Chat"
@@ -8329,7 +8330,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:705
 #: src/protocols/oscar/oscar.c:7830
 msgid "Not Available"
-msgstr ""
+msgstr "இல்லைளது"
 
 #: src/protocols/oscar/oscar.c:707
 #: src/protocols/oscar/oscar.c:7820
@@ -8343,7 +8344,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:788
 #: src/protocols/oscar/oscar.c:5052
 msgid "Warning Level"
-msgstr ""
+msgstr "எச்சரிக்கை நிலை"
 
 #: src/protocols/oscar/oscar.c:794
 msgid "Capabilities"
@@ -8356,12 +8357,12 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:960
 #, c-format
 msgid "Direct IM with %s closed"
-msgstr ""
+msgstr "%s உடனான நேரடி IM மூடப்பட்டது"
 
 #: src/protocols/oscar/oscar.c:962
 #, c-format
 msgid "Direct IM with %s failed"
-msgstr ""
+msgstr "%s உடனான நேரடி IM  செயலிழந்தது"
 
 #: src/protocols/oscar/oscar.c:970
 msgid "Direct Connect failed"
@@ -8371,26 +8372,26 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:1178
 #, c-format
 msgid "Direct IM with %s established"
-msgstr ""
+msgstr "%s உடனான நேரடி IM நிறுவப்பட்டது"
 
 #: src/protocols/oscar/oscar.c:1128
 #, c-format
 msgid "Attempting to connect to %s at %s:%hu for Direct IM."
-msgstr ""
+msgstr "நேரடி IM க்காக  %s உடன் %s:%hu ல் இணைக்க முனைகிறது."
 
 #: src/protocols/oscar/oscar.c:1549
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr ""
+msgstr "நேரடி IM க்காக  %s ஐ் %s:%hu ல்நம்முடன்  இணைக்ககோருகிறதுகிறது."
 
 #: src/protocols/oscar/oscar.c:1554
 msgid "Unable to open Direct IM"
-msgstr ""
+msgstr "நேரடி IM ஐ திறக்க இயலவில்லை"
 
 #: src/protocols/oscar/oscar.c:1589
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
-msgstr ""
+msgstr "%s உடன் நேரடி IM இணைப்பை திறக்க நீங்கள் தேர்ந்துள்ளீர்கள்."
 
 #: src/protocols/oscar/oscar.c:1593
 msgid "Because this reveals your IP address, it may be considered a privacy risk.  Do you wish to continue?"
@@ -8450,6 +8451,8 @@ msgid ""
 "Transfer of file %s timed out.\n"
 " Try enabling proxy servers for file transfers in Tools->Preferences->AIM/ICQ."
 msgstr ""
+"கோப்பு %s பரிமாற்ற காலம் முடிந்தது \n"
+"கோப்பு பரிமாற்றத்திற்கு பதிவாணை சேவகனை  கருவிகள்->விருப்பங்கள்->AIM/ICQ ல் இயலுமை படுத்த முயலுங்கள்."
 
 #: src/protocols/oscar/oscar.c:2208
 #: src/protocols/yahoo/yahoo_filexfer.c:174
@@ -8498,7 +8501,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:2792
 msgid "Internal Error"
-msgstr ""
+msgstr "அகப்பிழை"
 
 #: src/protocols/oscar/oscar.c:2863
 msgid "Received authorization"
@@ -8526,15 +8529,15 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:2945
 #: src/protocols/oscar/oscar.c:2975
 msgid "Gaim was unable to get a valid AIM login hash."
-msgstr ""
+msgstr "முறையான நுழைவு hash ஐ பெற கெய்மால் இயலவில்லை."
 
 #: src/protocols/oscar/oscar.c:3064
 msgid "Gaim was unable to get a valid login hash."
-msgstr ""
+msgstr "முறையான நுழைவு hash ஐ பெற கெய்மால் இயலவில்லை."
 
 #: src/protocols/oscar/oscar.c:3085
 msgid "Password sent"
-msgstr ""
+msgstr "கடவுச்சொல் அனுப்பப்பட்டது"
 
 #: src/protocols/oscar/oscar.c:4354
 #, c-format
@@ -8543,7 +8546,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:4357
 msgid "This requires a direct connection between the two computers and is necessary for IM Images.  Because your IP address will be revealed, this may be considered a privacy risk."
-msgstr ""
+msgstr "இதற்கு இரண்டு கணினிகளுடன் நேரடி இணைப்பு தேவைப்படுகிறது மற்றும் IM பிம்பங்களுக்கு இது தேவை. ஏனென்றால் உங்களது IP முகவரி வெளிப்பட்டது, இது ஒரு பாதுகாப்பு பிரச்னையாக கருதப்படுகிறது."
 
 #: src/protocols/oscar/oscar.c:4396
 msgid "Please authorize me so I can add you to my buddy list."
@@ -8551,7 +8554,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:4404
 msgid "Authorization Request Message:"
-msgstr ""
+msgstr "அனுமதியாக்கல் தகவல் கோரிக்கை:"
 
 #: src/protocols/oscar/oscar.c:4405
 msgid "Please authorize me!"
@@ -8574,11 +8577,11 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7260
 #: src/protocols/oscar/oscar.c:7312
 msgid "No reason given."
-msgstr ""
+msgstr "காரணம் கொடுக்கப்படவில்லை."
 
 #: src/protocols/oscar/oscar.c:4485
 msgid "Authorization Denied Message:"
-msgstr ""
+msgstr "அனுமதியாக்கல் மறுத்தல் தகவல்:க்கை::"
 
 #: src/protocols/oscar/oscar.c:4592
 #, c-format
@@ -8694,7 +8697,7 @@ msgstr[1] ""
 #: src/protocols/oscar/oscar.c:4865
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
-msgstr ""
+msgstr "<B>UIN:</B> %s<BR><B> நிலை</B> %s<HR>%s"
 
 #: src/protocols/oscar/oscar.c:4926
 #, c-format
@@ -8712,7 +8715,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5026
 #: src/protocols/oscar/oscar.c:5030
 msgid "Unknown reason."
-msgstr ""
+msgstr "தெரியாத காரணம்."
 
 #: src/protocols/oscar/oscar.c:4966
 #: src/protocols/sametime/sametime.c:2336
@@ -8732,7 +8735,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:5056
 msgid "Online Since"
-msgstr ""
+msgstr "இன்னும் இணைப்புடன்"
 
 #: src/protocols/oscar/oscar.c:5061
 #: src/protocols/yahoo/yahoo_profile.c:1118
@@ -8778,11 +8781,11 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6026
 #: src/protocols/silc/util.c:541
 msgid "Mobile Phone"
-msgstr ""
+msgstr "கைத்தொலைபேசி"
 
 #: src/protocols/oscar/oscar.c:6044
 msgid "Personal Web Page"
-msgstr ""
+msgstr "தனிப்பட்ட வலை பக்கம்"
 
 #: src/protocols/oscar/oscar.c:6048
 msgid "Additional Information"
@@ -8790,7 +8793,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6053
 msgid "Home Address"
-msgstr ""
+msgstr "வீட்டு முகவரி"
 
 #: src/protocols/oscar/oscar.c:6057
 #: src/protocols/oscar/oscar.c:6065
@@ -8799,7 +8802,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6061
 msgid "Work Address"
-msgstr ""
+msgstr "அலுவலக முகவரி"
 
 #: src/protocols/oscar/oscar.c:6069
 msgid "Work Information"
@@ -8807,7 +8810,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6070
 msgid "Company"
-msgstr ""
+msgstr " நிறுவனம்"
 
 #: src/protocols/oscar/oscar.c:6071
 msgid "Division"
@@ -8819,11 +8822,11 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6074
 msgid "Web Page"
-msgstr ""
+msgstr "வலை பக்கம்"
 
 #: src/protocols/oscar/oscar.c:6131
 msgid "Pop-Up Message"
-msgstr ""
+msgstr "பாப்-அப் தகவல்"
 
 #. TODO: Need to use ngettext() here
 #: src/protocols/oscar/oscar.c:6160
@@ -8834,7 +8837,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6189
 #, c-format
 msgid "No results found for email address %s"
-msgstr ""
+msgstr "மின்னஞ்சல் %s ற்கு எந்த முடிவும் இல்லை"
 
 #: src/protocols/oscar/oscar.c:6210
 #, c-format
@@ -8843,46 +8846,46 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6212
 msgid "Account Confirmation Requested"
-msgstr ""
+msgstr "கணக்கு உறுதியாக்கல் கோரிக்கை்"
 
 #: src/protocols/oscar/oscar.c:6243
 msgid "Error Changing Account Info"
-msgstr ""
+msgstr "ை கணக்கள் தக மாற்றுவதில் பிழைவல்"
 
 #: src/protocols/oscar/oscar.c:6246
 #, c-format
 msgid "Error 0x%04x: Unable to format screen name because the requested screen name differs from the original."
-msgstr ""
+msgstr "பிழை 0x%04x: திரைப்பெயரை முறையாக்குவதில் பிவை ஏனென்றால் கோரப்பட்ட திரைப்பெயர் இயல்பானதை விட்டு மாறுபடுகிறது ."
 
 #: src/protocols/oscar/oscar.c:6249
 #, c-format
 msgid "Error 0x%04x: Unable to format screen name because it is invalid."
-msgstr ""
+msgstr "பிழை 0x%04x: திரைப்பெயரை முறையாக்க இயலவில்லை ஏனென்றால் அது செல்லாதது."
 
 #: src/protocols/oscar/oscar.c:6252
 #, c-format
 msgid "Error 0x%04x: Unable to format screen name because the requested screen name is too long."
-msgstr ""
+msgstr "பிழை 0x%04x: திரைப்பெயரை முறையாக்குவதில் பிவை ஏனென்றால் கோரப்பட்ட திரைப்பெயர் மிக நீளமாக உள்ளது.ை."
 
 #: src/protocols/oscar/oscar.c:6255
 #, c-format
 msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
-msgstr ""
+msgstr "பிழை 0x%04x: மின்னஞ்சலை மாற்ற இயலவில்லை ஏனென்றால் இந்த திரைப்பயருக்கு ஏற்கனவே ஒரு கோரிக்கை கிடப்பில் உள்ளது."
 
 #: src/protocols/oscar/oscar.c:6258
 #, c-format
 msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
-msgstr ""
+msgstr "பிழை 0x%04x: மின்னஞ்சலை மாற்ற இயலவில்லை ஏனென்றால் இந்த மின்னஞ்சலுக்கு நிறைய திரைப்பயர்கள் இணைப்பாக உள்ளது.ை."
 
 #: src/protocols/oscar/oscar.c:6261
 #, c-format
 msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
-msgstr ""
+msgstr "பிழை 0x%04x: மின்னஞ்சலை மாற்ற இயலவில்லை ஏனென்றால் அந்த முகவரி செல்லாதது."
 
 #: src/protocols/oscar/oscar.c:6264
 #, c-format
 msgid "Error 0x%04x: Unknown error."
-msgstr ""
+msgstr "பிழை0x%04x:  தெரியாத.பிழை."
 
 #: src/protocols/oscar/oscar.c:6274
 #, c-format
@@ -8894,7 +8897,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6275
 #: src/protocols/oscar/oscar.c:6282
 msgid "Account Info"
-msgstr ""
+msgstr "கணக்கு் தகவல்"
 
 #: src/protocols/oscar/oscar.c:6280
 #, c-format
@@ -8903,7 +8906,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6347
 msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
-msgstr ""
+msgstr "உங்களது IM பிம்பம் அனுப்பப்படவில்லை.  IM பிம்பங்களை அனுப்ப நீங்கள் நேரடி இணைப்புடன் இருக்கவேண்டும். "
 
 #: src/protocols/oscar/oscar.c:6566
 msgid "Unable to set AIM profile."
@@ -8917,8 +8920,8 @@ msgstr ""
 #, c-format
 msgid "The maximum profile length of %d byte has been exceeded.  Gaim has truncated it for you."
 msgid_plural "The maximum profile length of %d bytes has been exceeded.  Gaim has truncated it for you."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "அதிகபட்ச சுயகுறிப்பின் நீளமான %d பைட்டுகள் மீறப்பட்டது. கெய்ம் உங்களுக்காக அதை சுருக்குகியிருக்கிறது."
+msgstr[1] "கெய்ம்."
 
 #: src/protocols/oscar/oscar.c:6586
 msgid "Profile too long."
@@ -8928,12 +8931,12 @@ msgstr ""
 #, c-format
 msgid "The maximum away message length of %d byte has been exceeded.  Gaim has truncated it for you."
 msgid_plural "The maximum away message length of %d bytes has been exceeded.  Gaim has truncated it for you."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "அதிகபட்ச வெளிச்செல் தகவல்ிப்பின் நீளமான %d பைட்டுகள் மீறப்பட்டது. கெய்ம் உங்களுக்காக அதை சுருக்குகியிருக்கிறது."
+msgstr[1] "கெய்ம்."
 
 #: src/protocols/oscar/oscar.c:6627
 msgid "Away message too long."
-msgstr ""
+msgstr "வெளிச்செல் தகவல் மிக நீளமாக உள்ளது."
 
 #: src/protocols/oscar/oscar.c:6718
 #, c-format
@@ -8945,15 +8948,15 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7132
 #: src/protocols/simple/simple.c:203
 msgid "Unable To Add"
-msgstr ""
+msgstr "சேர்க்க இயலவில்லை"
 
 #: src/protocols/oscar/oscar.c:6825
 msgid "Unable To Retrieve Buddy List"
-msgstr ""
+msgstr "தோழர் பட்டியலை பெற இயலவில்லைநர்"
 
 #: src/protocols/oscar/oscar.c:6826
 msgid "Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."
-msgstr ""
+msgstr "AIM சேவகரிலிருந்து தோழர் பட்டியலை பெற தற்சமயம் கெய்மால் இயலவில்லை. உங்களது தோழர் பட்டியல் தொலைந்து விடவில்லை, மற்றும் அநேகமாக சில மணி நேரத்தில் அது கிடைக்கும்."
 
 #: src/protocols/oscar/oscar.c:7016
 #: src/protocols/oscar/oscar.c:7017
@@ -9028,17 +9031,17 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:7456
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
-msgstr ""
+msgstr "உங்களது IM தகவல் அனுப்பப்படவில்லை. நீங்கள் AIM அரட்டையில் IM தகவல்களை அனுப்ப இயலாது."
 
 #. Available status messages are plain text
 #: src/protocols/oscar/oscar.c:7590
 msgid "Status Message"
-msgstr ""
+msgstr "நிலை தகவல்"
 
 #: src/protocols/oscar/oscar.c:7599
 #: src/protocols/sametime/sametime.c:5237
 msgid "Away Message"
-msgstr ""
+msgstr "வெளியே தகவல்"
 
 #: src/protocols/oscar/oscar.c:7888
 #, c-format
@@ -9055,11 +9058,11 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:7914
 msgid "Get Status Msg"
-msgstr ""
+msgstr "நிலை தகவலை பெறு"
 
 #: src/protocols/oscar/oscar.c:7926
 msgid "Direct IM"
-msgstr ""
+msgstr "நேரடி IM"
 
 #: src/protocols/oscar/oscar.c:7943
 msgid "Re-request Authorization"
@@ -9079,7 +9082,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:8014
 msgid "ICQ Privacy Options"
-msgstr ""
+msgstr "ICQ தனிமை விருப்பங்கள்"
 
 #: src/protocols/oscar/oscar.c:8031
 msgid "The new formatting is invalid."
@@ -9095,7 +9098,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:8091
 msgid "Change Address To:"
-msgstr ""
+msgstr "மாற்றவேண்டிய முகவரி:"
 
 #: src/protocols/oscar/oscar.c:8136
 msgid "<i>you are not waiting for authorization</i>"
@@ -9111,33 +9114,33 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:8157
 msgid "Find Buddy by E-mail"
-msgstr ""
+msgstr "தோழரை மின்னஞ்சல் கொண்டு தேடு"
 
 #: src/protocols/oscar/oscar.c:8158
 msgid "Search for a buddy by e-mail address"
-msgstr ""
+msgstr "மின்னஞ்சல் முகவரி மூலம் தோழரை தேடு"
 
 #: src/protocols/oscar/oscar.c:8159
 msgid "Type the e-mail address of the buddy you are searching for."
-msgstr ""
+msgstr "நீங்கள் தேடும் தோழரின் மின்னஞ்சல் முகவரியை கொடுக்கவும்.."
 
 #: src/protocols/oscar/oscar.c:8246
 #: src/protocols/silc/silc.c:989
 msgid "Set User Info..."
-msgstr ""
+msgstr "பயனாளர் தகவலை அமை..."
 
 #: src/protocols/oscar/oscar.c:8252
 msgid "Set User Info (URL)..."
-msgstr ""
+msgstr "பயனாளர் தகவலை அமை (URL)..."
 
 #: src/protocols/oscar/oscar.c:8257
 #: src/protocols/silc/silc.c:985
 msgid "Change Password..."
-msgstr ""
+msgstr "கடவுச்சொல்லை மாற்று..."
 
 #: src/protocols/oscar/oscar.c:8263
 msgid "Change Password (URL)"
-msgstr ""
+msgstr "கடவுச்சொல்லை மாற்று (URL)"
 
 #: src/protocols/oscar/oscar.c:8267
 msgid "Configure IM Forwarding (URL)"
@@ -9151,31 +9154,31 @@ msgstr ""
 #. AIM actions
 #: src/protocols/oscar/oscar.c:8284
 msgid "Format Screen Name..."
-msgstr ""
+msgstr "திரைப்பெயரை வடிவமை..."
 
 #: src/protocols/oscar/oscar.c:8288
 msgid "Confirm Account"
-msgstr ""
+msgstr "கணக்கை உறுதிப்படுத்து"
 
 #: src/protocols/oscar/oscar.c:8292
 msgid "Display Currently Registered Address"
-msgstr ""
+msgstr "தற்போதைய பதிவுசெய்த முகவரிகளை காட்டு"
 
 #: src/protocols/oscar/oscar.c:8296
 msgid "Change Currently Registered Address..."
-msgstr ""
+msgstr "தற்போது பதியப்பட்ட முகவரிகளை மாற்று..."
 
 #: src/protocols/oscar/oscar.c:8303
 msgid "Show Buddies Awaiting Authorization"
-msgstr ""
+msgstr "உறுதியாக்கலுக்கு காத்திருக்கும் தோழர்களை காட்டு"
 
 #: src/protocols/oscar/oscar.c:8309
 msgid "Search for Buddy by Email..."
-msgstr ""
+msgstr "தோழரைடு மின்னஞ்ச மூலம் தேடு..ல்."
 
 #: src/protocols/oscar/oscar.c:8314
 msgid "Search for Buddy by Information"
-msgstr ""
+msgstr "தோழரை தகவல் மூலம் தேடு"
 
 #: src/protocols/oscar/oscar.c:8384
 msgid "Use recent buddies group"
@@ -9202,7 +9205,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:8513
 #: src/protocols/oscar/oscar.c:8515
 msgid "AIM/ICQ Protocol Plugin"
-msgstr ""
+msgstr "AIM/ICQ நெறிமுறை சொருகுபொருள்"
 
 #: src/protocols/oscar/oscar.c:8534
 msgid "Auth host"
@@ -9224,7 +9227,7 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:1270
 #, c-format
 msgid "<b>Group Title:</b> %s<br>"
-msgstr ""
+msgstr "<b>குழு தலைப்பு</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:1271
 #, c-format
@@ -9234,11 +9237,11 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:1273
 #, c-format
 msgid "Info for Group %s"
-msgstr ""
+msgstr "குழுவிற்கான தகவல் %s"
 
 #: src/protocols/sametime/sametime.c:1275
 msgid "Notes Address Book Information"
-msgstr ""
+msgstr "குறிப்பு முகவரி புத்தக தகவல்"
 
 #: src/protocols/sametime/sametime.c:1307
 msgid "Invite Group to Conference..."
@@ -9246,7 +9249,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:1316
 msgid "Get Notes Address Book Info"
-msgstr ""
+msgstr "குறிப்பு முகவரி புத்தக தகவலை பெறு"
 
 #: src/protocols/sametime/sametime.c:1437
 msgid "Sending Handshake"
@@ -9278,7 +9281,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:1472
 msgid "Connected to Sametime Community Server"
-msgstr ""
+msgstr "Sametime Community சேவகருடன் இணை"
 
 #. * @todo Admin alerts should probably be in a conversation window
 #. rather than a gaim_notify_message. Or in some sort of updating
@@ -9294,7 +9297,7 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:1630
 #, c-format
 msgid "Error reading from socket: %s"
-msgstr ""
+msgstr "சாக்கெட்டிலிருந்து வாசிப்பதில் பிழை : %s"
 
 #. this is a regular connect, error out
 #: src/protocols/sametime/sametime.c:1659
@@ -9341,6 +9344,8 @@ msgid ""
 "\n"
 "<b>Status</b>: %s"
 msgstr ""
+"\n"
+"<b> நிலை</b>: %s"
 
 #: src/protocols/sametime/sametime.c:3256
 #, c-format
@@ -9348,6 +9353,8 @@ msgid ""
 "\n"
 "<b>Message</b>: %s"
 msgstr ""
+"\n"
+"<b> தகவல்</b>: %s"
 
 #: src/protocols/sametime/sametime.c:3262
 #, c-format
@@ -9385,7 +9392,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:3443
 msgid "Available Conferences"
-msgstr ""
+msgstr "இருக்கும் உரையாடல்கள்"
 
 #: src/protocols/sametime/sametime.c:3449
 msgid "Create New Conference..."
@@ -9414,12 +9421,12 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:3562
 msgid "No Sametime Community Server specified"
-msgstr ""
+msgstr "Sametime Community சேவகர் குறிப்பிடப்படவில்லை"
 
 #: src/protocols/sametime/sametime.c:3583
 #, c-format
 msgid "No host or IP address has been configured for the Meanwhile account %s. Please enter one below to continue logging in."
-msgstr ""
+msgstr "கணக்கு %s ற்கு புரவலர் அல்லது IP முகவரி வரையறுக்கப்படவில்லை. தொடர்வதற்கு தயவுசெய்து கீழ்க்கண்ட ஏதேனும் ஒன்றை கொடுக்கவும்."
 
 #: src/protocols/sametime/sametime.c:3588
 msgid "Meanwhile Connection Setup"
@@ -9427,7 +9434,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:3589
 msgid "No Sametime Community Server Specified"
-msgstr ""
+msgstr "Sametime Community சேவகர் குறிப்பிடப்படவில்லை"
 
 #: src/protocols/sametime/sametime.c:4044
 msgid "<b>External User</b><br>"
@@ -9441,7 +9448,7 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:4053
 #, c-format
 msgid "<b>Full Name:</b> %s<br>"
-msgstr ""
+msgstr "<b> பெயர்</b> %s<br>"
 
 #: src/protocols/sametime/sametime.c:4059
 msgid "<b>Last Known Client:</b> "
@@ -9450,7 +9457,7 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:4067
 #, c-format
 msgid "Unknown (0x%04x)<br>"
-msgstr ""
+msgstr "தெரியாத (0x%04x)<br>"
 
 #: src/protocols/sametime/sametime.c:4074
 #, c-format
@@ -9460,7 +9467,7 @@ msgstr ""
 #: src/protocols/sametime/sametime.c:4080
 #, c-format
 msgid "<b>Status:</b> %s"
-msgstr ""
+msgstr "<b> நிலை:</b> %s"
 
 #: src/protocols/sametime/sametime.c:4321
 #: src/protocols/sametime/sametime.c:5444
@@ -9478,11 +9485,11 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:4364
 msgid "Select User to Add"
-msgstr ""
+msgstr "சேர்ப்பதற்கு தோழரை தேர்வு செய்"
 
 #: src/protocols/sametime/sametime.c:4366
 msgid "Add User"
-msgstr ""
+msgstr "தோழரை சேர் "
 
 #: src/protocols/sametime/sametime.c:4427
 msgid "Unable to add user: user not found"
@@ -9495,13 +9502,6 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:4434
 msgid "Unable to add user"
-msgstr ""
-
-#: src/protocols/sametime/sametime.c:5003
-#, c-format
-msgid ""
-"Error reading file %s: \n"
-"%s\n"
 msgstr ""
 
 #: src/protocols/sametime/sametime.c:5129
@@ -9518,41 +9518,41 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5139
 msgid "Merge List from Server"
-msgstr ""
+msgstr "சேவகரிலிருந்து பட்டியலை இணை"
 
 #: src/protocols/sametime/sametime.c:5141
 msgid "Merge and Save List to Server"
-msgstr ""
+msgstr "பட்டியலை இணைத்து சேவகரில் சேமி "
 
 #: src/protocols/sametime/sametime.c:5143
 msgid "Synchronize List with Server"
-msgstr ""
+msgstr "பட்டியலை சேவகருடன் ஒற்றுமையாக்கு"
 
 #: src/protocols/sametime/sametime.c:5231
 msgid "Active Message"
-msgstr ""
+msgstr "நடப்பிலுள்ள தகவல்"
 
 #: src/protocols/sametime/sametime.c:5243
 msgid "Busy Message"
-msgstr ""
+msgstr "காரியமாயிருக்கும் தகவல்"
 
 #: src/protocols/sametime/sametime.c:5247
 msgid "Default status messages"
-msgstr ""
+msgstr "கொடாநிலை நிலை தகவல்கள்"
 
 #: src/protocols/sametime/sametime.c:5250
 msgid "Edit Status Messages"
-msgstr ""
+msgstr "நிலை தகவல்களை தொகு"
 
 #: src/protocols/sametime/sametime.c:5293
 #, c-format
 msgid "Import Sametime List for Account %s"
-msgstr ""
+msgstr "Sametime பட்டியலை %s கணக்கிற்கு இறக்குமதி செய்"
 
 #: src/protocols/sametime/sametime.c:5332
 #, c-format
 msgid "Export Sametime List for Account %s"
-msgstr ""
+msgstr "Sametime பட்டியலை %s கணக்கிற்கு ஏற்றுமதி செய்ுகள்"
 
 #: src/protocols/sametime/sametime.c:5383
 msgid "Unable to add group: group exists"
@@ -9570,7 +9570,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5460
 msgid "Notes Address Book group results"
-msgstr ""
+msgstr "குறிப்புகள் முகவரி புத்தக குழு முடிவுகள்"
 
 #: src/protocols/sametime/sametime.c:5461
 #, c-format
@@ -9579,7 +9579,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5466
 msgid "Select Notes Address Book"
-msgstr ""
+msgstr "குறிப்புகள் முகவரி புத்தகத்தை தேர்வு செய் "
 
 #: src/protocols/sametime/sametime.c:5506
 msgid "Unable to add group: group not found"
@@ -9592,7 +9592,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5548
 msgid "Notes Address Book Group"
-msgstr ""
+msgstr "குறிப்புகள் முகவரி புத்தக குழு"
 
 #: src/protocols/sametime/sametime.c:5549
 msgid "Enter the name of a Notes Address Book group in the field below to add the group and its members to your buddy list."
@@ -9600,7 +9600,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5564
 msgid "Set Status Messages..."
-msgstr ""
+msgstr "நிலைத்தகவலை அமை..."
 
 #: src/protocols/sametime/sametime.c:5568
 msgid "Import Sametime List..."
@@ -9612,7 +9612,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5576
 msgid "Add Notes Address Book Group..."
-msgstr ""
+msgstr "குறிப்புகள் முகவரி புத்தக குழுவை சேர்..."
 
 #. notesbuddy hack encoding
 #: src/protocols/sametime/sametime.c:5670
@@ -9621,7 +9621,7 @@ msgstr ""
 
 #: src/protocols/sametime/sametime.c:5679
 msgid "Force Login (Ignore Server Redirects)"
-msgstr ""
+msgstr "வன்மையான நுழைவு (சேவகர் திசைமாற்றலை தவிர்)"
 
 #: src/protocols/silc/buddy.c:52
 #: src/protocols/silc/buddy.c:420
@@ -9649,7 +9649,7 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:116
 msgid "Error occurred during key agreement"
-msgstr ""
+msgstr "சாவி ஒப்புதலில் பிழை ஏற்ப்பட்டது"
 
 #: src/protocols/silc/buddy.c:120
 msgid "Key Agreement failed"
@@ -9698,15 +9698,15 @@ msgstr ""
 #: src/protocols/silc/buddy.c:422
 #: src/protocols/silc/buddy.c:464
 msgid "IM With Password"
-msgstr ""
+msgstr "IM கடவுச்சொல்லுடன்"
 
 #: src/protocols/silc/buddy.c:423
 msgid "Cannot set IM key"
-msgstr ""
+msgstr "IM சாவியை அமைக்க முடியவில்லை"
 
 #: src/protocols/silc/buddy.c:465
 msgid "Set IM Password"
-msgstr ""
+msgstr "IM கடவுச்சொல்லை அமை"
 
 #: src/protocols/silc/buddy.c:512
 #: src/protocols/silc/buddy.c:547
@@ -9768,7 +9768,7 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1041
 msgid "To add the buddy you must import his/her public key. Press Import to import a public key."
-msgstr ""
+msgstr "தோழரை சேர்க்க அவரது பொதுச்சாவியை இறக்குமதி செய்ய வேண்டும். பொதுச்சாவியை இறக்குமதி செய்ய இறக்குமதி ஐ அழுத்தவும்."
 
 #: src/protocols/silc/buddy.c:1044
 msgid "Import..."
@@ -9776,15 +9776,15 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1140
 msgid "Select correct user"
-msgstr ""
+msgstr "சரியான பயனரை தேர்வு செய்"
 
 #: src/protocols/silc/buddy.c:1142
 msgid "More than one user was found with the same public key. Select the correct user from the list to add to the buddy list."
-msgstr ""
+msgstr "ஒரே பொதுச்சாவிக்கு பல பயனாளர்கள் காணப்படுகின்றனர். சரியான பயனாளரை தோழர் பட்டியலில் சேர்க்க பட்டியலிலுருந்து தேர்வு செய்க."
 
 #: src/protocols/silc/buddy.c:1144
 msgid "More than one user was found with the same name. Select the correct user from the list to add to the buddy list."
-msgstr ""
+msgstr "ஒரே பெயருக்கு சாவிக்கு பல பயனாளர்கள் காணப்படுகின்றனர். சரியான பயனாளரை தோழர் பட்டியலில் சேர்க்க பட்டியலிலுருந்து தேர்வு செய்க. செய்."
 
 #: src/protocols/silc/buddy.c:1429
 msgid "Detached"
@@ -9888,12 +9888,12 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1513
 #: src/protocols/silc/ops.c:1032
 msgid "Status Text"
-msgstr ""
+msgstr "நிலை வார்த்தை"
 
 #: src/protocols/silc/buddy.c:1518
 #: src/protocols/silc/ops.c:1038
 msgid "Preferred Contact"
-msgstr ""
+msgstr "விருப்பப்பட்ட தொடர்பு"
 
 #: src/protocols/silc/buddy.c:1523
 #: src/protocols/silc/ops.c:1043
@@ -9903,7 +9903,7 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1528
 #: src/protocols/silc/ops.c:1048
 msgid "Device"
-msgstr ""
+msgstr "சாதனம்"
 
 #: src/protocols/silc/buddy.c:1533
 #: src/protocols/silc/ops.c:1053
@@ -9919,11 +9919,11 @@ msgstr ""
 
 #: src/protocols/silc/buddy.c:1594
 msgid "Reset IM Key"
-msgstr ""
+msgstr "IM சாவியை மீண்டும் அமை "
 
 #: src/protocols/silc/buddy.c:1599
 msgid "IM with Key Exchange"
-msgstr ""
+msgstr "IM சாவி பரிமாற்றத்துடன்"
 
 #: src/protocols/silc/buddy.c:1603
 msgid "IM with Password"
@@ -9989,7 +9989,7 @@ msgstr ""
 #: src/protocols/silc/chat.c:146
 #, c-format
 msgid "<br><b>Channel Topic:</b><br>%s"
-msgstr ""
+msgstr "<br><b>கால்வாய் தலைப்பு :</b><br>%s"
 
 #: src/protocols/silc/chat.c:151
 msgid "<br><b>Channel Modes:</b> "
@@ -10007,7 +10007,7 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:235
 msgid "Add Channel Public Key"
-msgstr ""
+msgstr "கால்வாய் பொதுச்சாவியை சேர்"
 
 #. Add new public key
 #: src/protocols/silc/chat.c:290
@@ -10037,11 +10037,11 @@ msgstr ""
 #: src/protocols/silc/chat.c:422
 #: src/protocols/silc/chat.c:460
 msgid "Add / Remove"
-msgstr ""
+msgstr "சேர் / நீக்கு"
 
 #: src/protocols/silc/chat.c:577
 msgid "Group Name"
-msgstr ""
+msgstr "குழுப்பெயர்"
 
 #: src/protocols/silc/chat.c:581
 #: src/protocols/silc/ops.c:1729
@@ -10056,7 +10056,7 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:594
 msgid "Add Channel Private Group"
-msgstr ""
+msgstr "கால்வாய் தனிக்குழுவை சேர்"
 
 #: src/protocols/silc/chat.c:721
 msgid "User Limit"
@@ -10068,7 +10068,7 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:877
 msgid "Get Info"
-msgstr ""
+msgstr "தகவல் பெறுக"
 
 #: src/protocols/silc/chat.c:885
 msgid "Invite List"
@@ -10080,11 +10080,11 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:898
 msgid "Add Private Group"
-msgstr ""
+msgstr "தனிக்குழுவைச்சேர்"
 
 #: src/protocols/silc/chat.c:911
 msgid "Reset Permanent"
-msgstr ""
+msgstr "நிரந்தரமாக மீண்டும் அமை"
 
 #: src/protocols/silc/chat.c:916
 msgid "Set Permanent"
@@ -10096,15 +10096,15 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:930
 msgid "Reset Topic Restriction"
-msgstr ""
+msgstr "தலைப்பு கட்டுப்பாட்டை மீண்டும் அமை "
 
 #: src/protocols/silc/chat.c:935
 msgid "Set Topic Restriction"
-msgstr ""
+msgstr "தலைப்பு கட்டுப்பாட்டை அமை ப்பு"
 
 #: src/protocols/silc/chat.c:942
 msgid "Reset Private Channel"
-msgstr ""
+msgstr "தனிக் கால்வாயை மீண்டும் அமை"
 
 #: src/protocols/silc/chat.c:947
 msgid "Set Private Channel"
@@ -10112,7 +10112,7 @@ msgstr ""
 
 #: src/protocols/silc/chat.c:954
 msgid "Reset Secret Channel"
-msgstr ""
+msgstr "ரகசிய கால்வாயை மீண்டும் அமை"
 
 #: src/protocols/silc/chat.c:959
 msgid "Set Secret Channel"
@@ -10149,7 +10149,7 @@ msgstr ""
 #: src/protocols/silc/chat.c:1292
 #: src/protocols/silc/silc.c:1090
 msgid "Unknown command"
-msgstr ""
+msgstr "தெரியாத கட்டளை"
 
 #: src/protocols/silc/ft.c:89
 #: src/protocols/silc/ft.c:92
@@ -10170,7 +10170,7 @@ msgstr ""
 #: src/protocols/silc/ft.c:101
 #: src/protocols/silc/ft.c:105
 msgid "Error during file transfer"
-msgstr ""
+msgstr "கோப்பு பரிமாற்றத்தின்போது பிழை"
 
 #: src/protocols/silc/ft.c:94
 msgid "Permission denied"
@@ -10186,7 +10186,7 @@ msgstr ""
 
 #: src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
-msgstr ""
+msgstr "எந்த கோப்பு பரிமாற்ற நிகழ்வுமில்லை"
 
 #: src/protocols/silc/ft.c:211
 msgid "File transfer already started"
@@ -10252,11 +10252,11 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:651
 msgid "Server signoff"
-msgstr ""
+msgstr "சேவகர் நிறுத்தப்பட்டது"
 
 #: src/protocols/silc/ops.c:838
 msgid "Personal Information"
-msgstr ""
+msgstr "சுய தகவல்"
 
 #: src/protocols/silc/ops.c:861
 msgid "Birth Day"
@@ -10264,16 +10264,16 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:865
 msgid "Job Title"
-msgstr ""
+msgstr "வேலையின் தலைப்பு"
 
 #: src/protocols/silc/ops.c:869
 msgid "Job Role"
-msgstr ""
+msgstr "வேலையின் பங்கு"
 
 #: src/protocols/silc/ops.c:873
 #: src/protocols/silc/silc.c:907
 msgid "Organization"
-msgstr ""
+msgstr "நிறுவனம்"
 
 #: src/protocols/silc/ops.c:877
 msgid "Unit"
@@ -10308,7 +10308,7 @@ msgstr ""
 #: src/protocols/silc/ops.c:1190
 #: src/protocols/silc/silc.c:973
 msgid "Detach From Server"
-msgstr ""
+msgstr "ுநர் ிலிருந்து துண்டிேவகர்"
 
 #: src/protocols/silc/ops.c:1190
 msgid "Cannot detach"
@@ -10320,7 +10320,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1233
 msgid "Failed to change nickname"
-msgstr ""
+msgstr "புனைப்பெயரை மாற்றத்தவறியது"
 
 #: src/protocols/silc/ops.c:1281
 msgid "Roomlist"
@@ -10332,12 +10332,12 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1326
 msgid "No public key was received"
-msgstr ""
+msgstr "எந்த பொதுச்சாவியும் பெறப்படவில்லை"
 
 #: src/protocols/silc/ops.c:1339
 #: src/protocols/silc/ops.c:1352
 msgid "Server Information"
-msgstr ""
+msgstr "சேவகர் தகவல்"
 
 #: src/protocols/silc/ops.c:1340
 msgid "Cannot get server information"
@@ -10346,7 +10346,7 @@ msgstr ""
 #: src/protocols/silc/ops.c:1369
 #: src/protocols/silc/ops.c:1378
 msgid "Server Statistics"
-msgstr ""
+msgstr "சேவகர் நிலைமை"
 
 #: src/protocols/silc/ops.c:1370
 msgid "Cannot get server statistics"
@@ -10354,7 +10354,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1379
 msgid "No server statistics available"
-msgstr ""
+msgstr "சேவகர் நிலைமை கிடைக்கவில்லை"
 
 #: src/protocols/silc/ops.c:1401
 #, c-format
@@ -10378,7 +10378,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1424
 msgid "Network Statistics"
-msgstr ""
+msgstr "வலையமைப்பு நிலைமை"
 
 #: src/protocols/silc/ops.c:1432
 #: src/protocols/silc/ops.c:1437
@@ -10399,7 +10399,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1529
 msgid "Error during connecting to SILC Server"
-msgstr ""
+msgstr "SILC சேவகருடன் இணைக்கும்பொழுது பிழை"
 
 #: src/protocols/silc/ops.c:1534
 msgid "Key Exchange failed"
@@ -10421,7 +10421,7 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1642
 msgid "Authenticating connection"
-msgstr ""
+msgstr "இணைப்பை உறுதிப்படுத்துகிறது"
 
 #: src/protocols/silc/ops.c:1689
 msgid "Verifying server public key"
@@ -10437,27 +10437,27 @@ msgstr ""
 
 #: src/protocols/silc/ops.c:1762
 msgid "Failure: Remote does not trust/support your public key"
-msgstr ""
+msgstr "பிழைத்தது: உங்களது பொதுச்சாவியை தொலைவு ஆதரிக்க/நம்ப வில்லை"
 
 #: src/protocols/silc/ops.c:1765
 msgid "Failure: Remote does not support proposed KE group"
-msgstr ""
+msgstr "பிழைத்தது: முன்மொழிந்த KE குழுவை தொலைவு ஆதரிக்கவில்லை"
 
 #: src/protocols/silc/ops.c:1768
 msgid "Failure: Remote does not support proposed cipher"
-msgstr ""
+msgstr "பிழைத்தது: முன்மொழிந்த சைபரை குழுவை தொலைவு ஆதரிக்கவில்லை"
 
 #: src/protocols/silc/ops.c:1771
 msgid "Failure: Remote does not support proposed PKCS"
-msgstr ""
+msgstr "பிழைத்தது: முன்மொழிந்த PKCS குழுவை தொலைவு ஆதரிக்கவில்லை"
 
 #: src/protocols/silc/ops.c:1774
 msgid "Failure: Remote does not support proposed hash function"
-msgstr ""
+msgstr "பிழைத்தது: முன்மொழிந்த hash function ஐ வை தொலைவு ஆதரிக்கவில்லை"
 
 #: src/protocols/silc/ops.c:1777
 msgid "Failure: Remote does not support proposed HMAC"
-msgstr ""
+msgstr "பிழைத்தது: முன்மொழிந்த HMAC தொலைவு ஆதரிக்கவில்லை"
 
 #: src/protocols/silc/ops.c:1779
 msgid "Failure: Incorrect signature"
@@ -10522,7 +10522,7 @@ msgstr ""
 #. Progress
 #: src/protocols/silc/silc.c:310
 msgid "Connecting to SILC Server"
-msgstr ""
+msgstr "SILC சேவகருடன் இணைக்கிறது"
 
 #: src/protocols/silc/silc.c:634
 msgid "Your Current Mood"
@@ -10537,6 +10537,8 @@ msgid ""
 "\n"
 "Your Preferred Contact Methods"
 msgstr ""
+"\n"
+"உங்களது விருப்பப்பட்ட தொடர்பு முறைகள்"
 
 #: src/protocols/silc/silc.c:669
 #: src/protocols/silc/util.c:517
@@ -10555,11 +10557,11 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:678
 msgid "Your Current Status"
-msgstr ""
+msgstr "உங்களது தற்போதைய நிலை"
 
 #: src/protocols/silc/silc.c:685
 msgid "Online Services"
-msgstr ""
+msgstr "இணைப்புடன் சேவைகள்"
 
 #: src/protocols/silc/silc.c:688
 msgid "Let others see what services you are using"
@@ -10576,7 +10578,7 @@ msgstr ""
 #: src/protocols/silc/silc.c:713
 #: src/protocols/silc/silc.c:714
 msgid "User Online Status Attributes"
-msgstr ""
+msgstr "பயனாளரது இணைப்புடன் கூடிய நிலை தன்மைகள்"
 
 #: src/protocols/silc/silc.c:715
 msgid "You can let other users see your online status information and your personal information. Please fill the information you would like other users to see about yourself."
@@ -10586,16 +10588,16 @@ msgstr ""
 #: src/protocols/silc/silc.c:761
 #: src/protocols/silc/silc.c:1334
 msgid "Message of the Day"
-msgstr ""
+msgstr "இன்று ஒரு தகவல்"
 
 #: src/protocols/silc/silc.c:755
 msgid "No Message of the Day available"
-msgstr ""
+msgstr "இன்று ஒரு தகவல் இல்லை"
 
 #: src/protocols/silc/silc.c:756
 #: src/protocols/silc/silc.c:1329
 msgid "There is no Message of the Day associated with this connection"
-msgstr ""
+msgstr "இந்த இணைப்புடன் தொடர்புள்ள இன்று ஒரு தகவல் இல்லை்"
 
 #: src/protocols/silc/silc.c:807
 #: src/protocols/silc/silc.c:851
@@ -10630,7 +10632,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:903
 msgid "Real Name"
-msgstr ""
+msgstr "இயற்பெயர்"
 
 #: src/protocols/silc/silc.c:917
 msgid "Re-type Passphrase"
@@ -10642,11 +10644,11 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:968
 msgid "Online Status"
-msgstr ""
+msgstr "இணைப்புடன் நிலை"
 
 #: src/protocols/silc/silc.c:977
 msgid "View Message of the Day"
-msgstr ""
+msgstr "இன்று ஒரு தகவலை காண்க்"
 
 #: src/protocols/silc/silc.c:981
 msgid "Create SILC Key Pair..."
@@ -10659,7 +10661,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1205
 msgid "Topic too long"
-msgstr ""
+msgstr "தலைப்பு மிக நீளம்"
 
 #: src/protocols/silc/silc.c:1286
 msgid "You must specify a nick"
@@ -10683,12 +10685,12 @@ msgstr ""
 #: src/protocols/silc/silc.c:1408
 #, c-format
 msgid "Failed to set cmodes for %s"
-msgstr ""
+msgstr "%s ற்கு cmodes அமைக்க பிழைத்தது"
 
 #: src/protocols/silc/silc.c:1438
 #, c-format
 msgid "Unknown command: %s, (may be a Gaim bug)"
-msgstr ""
+msgstr "தெரியாத கட்டளை: %s, (கெய்ம் பிழையாக இருக்கலாம்)"
 
 #: src/protocols/silc/silc.c:1501
 msgid "part [channel]:  Leave the chat"
@@ -10717,15 +10719,15 @@ msgstr ""
 #: src/protocols/silc/silc.c:1526
 #: src/protocols/zephyr/zephyr.c:2597
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
-msgstr ""
+msgstr "msg &lt;nick&gt; &lt;message&gt;:  பயனாளருக்கு தனிப்பட்ட தகவலை அனுப்பு"
 
 #: src/protocols/silc/silc.c:1530
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
-msgstr ""
+msgstr "query &lt;nick&gt; [&lt;message&gt;]:  பயனாளருக்கு தனிப்பட்ட தகவலை அனுப்பு"
 
 #: src/protocols/silc/silc.c:1534
 msgid "motd:  View the server's Message Of The Day"
-msgstr ""
+msgstr "motd: சேவகரின் இன்று ஒரு தகவலை காண்க்"
 
 #: src/protocols/silc/silc.c:1538
 msgid "detach:  Detach this session"
@@ -10793,7 +10795,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1604
 msgid "ping:  Send PING to the connected server"
-msgstr ""
+msgstr "ping:  இணைக்கப்பட்ட சேவகருக்கு PING  ஐ அனுப்பு"
 
 #: src/protocols/silc/silc.c:1609
 msgid "users &lt;channel&gt;:  List users in channel"
@@ -10814,12 +10816,12 @@ msgstr ""
 #. *  summary
 #: src/protocols/silc/silc.c:1708
 msgid "SILC Protocol Plugin"
-msgstr ""
+msgstr "SILC நெறிமுறை சொருகுபொருள்"
 
 #. *  description
 #: src/protocols/silc/silc.c:1710
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
-msgstr ""
+msgstr "Secure Internet Live Conferencing (SILC) நெறிமுறை"
 
 #: src/protocols/silc/silc.c:1744
 msgid "Public Key file"
@@ -10839,11 +10841,11 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1758
 msgid "Block invites"
-msgstr ""
+msgstr "அழைப்புகளை தடு"
 
 #: src/protocols/silc/silc.c:1761
 msgid "Block IMs without Key Exchange"
-msgstr ""
+msgstr "சாவி பரிமாற்றமில்லாத IM களை தடு"
 
 #: src/protocols/silc/silc.c:1764
 msgid "Reject online status attribute requests"
@@ -10851,7 +10853,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1767
 msgid "Block messages to whiteboard"
-msgstr ""
+msgstr "வெண்பலகைக்கான தகவலை தடுு"
 
 #: src/protocols/silc/silc.c:1770
 msgid "Automatically open whiteboard"
@@ -10872,12 +10874,12 @@ msgstr ""
 #: src/protocols/silc/util.c:313
 #, c-format
 msgid "Real Name: \t%s\n"
-msgstr ""
+msgstr "இயற்பெயர்: \t%s\n"
 
 #: src/protocols/silc/util.c:315
 #, c-format
 msgid "User Name: \t%s\n"
-msgstr ""
+msgstr "பயனாளர் பெயர்: \t%s\n"
 
 #: src/protocols/silc/util.c:317
 #, c-format
@@ -10887,17 +10889,17 @@ msgstr ""
 #: src/protocols/silc/util.c:319
 #, c-format
 msgid "Host Name: \t%s\n"
-msgstr ""
+msgstr "புரவலர் பெயர்: \t%s\n"
 
 #: src/protocols/silc/util.c:321
 #, c-format
 msgid "Organization: \t%s\n"
-msgstr ""
+msgstr "நிறுவனம்: \t%s\n"
 
 #: src/protocols/silc/util.c:323
 #, c-format
 msgid "Country: \t%s\n"
-msgstr ""
+msgstr "நாடு: \t%s\n"
 
 #: src/protocols/silc/util.c:324
 #, c-format
@@ -10982,12 +10984,12 @@ msgstr ""
 #. *< version
 #: src/protocols/simple/simple.c:1417
 msgid "SIP/SIMPLE Protocol Plugin"
-msgstr ""
+msgstr "SIP/SIMPLE நெறிமுறை சொருகுபொருள்"
 
 #. *  summary
 #: src/protocols/simple/simple.c:1418
 msgid "The SIP/SIMPLE Protocol Plugin"
-msgstr ""
+msgstr "SIP/SIMPLE நெறிமுறை சொருகுபொருள்"
 
 #. *  description
 #: src/protocols/simple/simple.c:1419
@@ -10996,7 +10998,7 @@ msgstr ""
 
 #: src/protocols/simple/simple.c:1440
 msgid "Publish Status (note: everyone may watch you)"
-msgstr ""
+msgstr "நிலையை வெளியிடு (குறிப்பு ஒவ்வொருவரும் உங்களை கண்காணிக்கலாம்)"
 
 #: src/protocols/simple/simple.c:1443
 msgid "Use UDP"
@@ -11038,7 +11040,7 @@ msgstr ""
 #: src/protocols/toc/toc.c:488
 #, c-format
 msgid "Message too long, last %s bytes truncated."
-msgstr ""
+msgstr "தகவல் மிக நீளம், கடைசி %s பைட்டுகள் நீக்கப்பட்டன."
 
 #: src/protocols/toc/toc.c:491
 #, c-format
@@ -11048,7 +11050,7 @@ msgstr ""
 #: src/protocols/toc/toc.c:494
 #, c-format
 msgid "Warning of %s not allowed."
-msgstr ""
+msgstr "%s எச்சரிக்கைக்கான அனுமதி இல்லை."
 
 #: src/protocols/toc/toc.c:497
 msgid "A message has been dropped, you are exceeding the server speed limit."
@@ -11067,12 +11069,12 @@ msgstr ""
 #: src/protocols/toc/toc.c:506
 #, c-format
 msgid "You missed an IM from %s because it was too big."
-msgstr ""
+msgstr "%s இடமிருந்து IM ஐ நீங்கள் இழந்தீர்கள் ஏனென்றால் அது மிக நீளமானது."
 
 #: src/protocols/toc/toc.c:509
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
-msgstr ""
+msgstr "%s இடமிருந்து IM ஐ நீங்கள் இழந்தீர்கள் ஏனென்றால் அது மிக வேகமாக அனுப்பப்பட்டது."
 
 #: src/protocols/toc/toc.c:512
 msgid "Failure."
@@ -11092,7 +11094,7 @@ msgstr ""
 
 #: src/protocols/toc/toc.c:524
 msgid "Email lookup restricted."
-msgstr ""
+msgstr "மின்னஞ்சலை பார்ப்பது தடைசெய்யப்பட்டது."
 
 #: src/protocols/toc/toc.c:527
 msgid "Keyword ignored."
@@ -11100,7 +11102,7 @@ msgstr ""
 
 #: src/protocols/toc/toc.c:530
 msgid "No keywords."
-msgstr ""
+msgstr "திறவுவார்த்தைகள் இல்லை."
 
 #: src/protocols/toc/toc.c:533
 msgid "User has no directory information."
@@ -11108,7 +11110,7 @@ msgstr ""
 
 #: src/protocols/toc/toc.c:537
 msgid "Country not supported."
-msgstr ""
+msgstr "நாடு ஆதரிக்கப்படவில்லை."
 
 #: src/protocols/toc/toc.c:540
 #, c-format

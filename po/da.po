@@ -15,10 +15,10 @@
 # Ban = Udvis
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 1.5.0\n"
+"Project-Id-Version: gaim 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-22 00:00-0500\n"
-"PO-Revision-Date: 2006-02-22 09:28+0200\n"
+"PO-Revision-Date: 2006-02-24 07:53+0200\n"
 "Last-Translator: Morten Brix Pedersen <morten@wtf.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -388,7 +388,7 @@ msgstr "EkstraPlacering"
 #. *< version
 #: ../plugins/extplacement.c:137
 msgid "Extra conversation placement options."
-msgstr "Ekstra samtale placerings muligheder."
+msgstr "Ekstra placeringsmuligheder for samtaler."
 
 #. *< summary
 #. *  description
@@ -471,7 +471,7 @@ msgstr "GtkTreeView horisontal separering"
 
 #: ../plugins/gaimrc.c:76
 msgid "Conversation Entry"
-msgstr ""
+msgstr "Samtaler"
 
 #: ../plugins/gaimrc.c:77
 msgid "Conversation History"
@@ -483,11 +483,11 @@ msgstr "Loglæser"
 
 #: ../plugins/gaimrc.c:79
 msgid "Request Dialog"
-msgstr "Anmodning dialog"
+msgstr "Anmodnings dialog"
 
 #: ../plugins/gaimrc.c:80
 msgid "Notify Dialog"
-msgstr "Påmind dialog"
+msgstr "Påmindelses dialog"
 
 #: ../plugins/gaimrc.c:91
 msgid "GtkTreeView Indent Expanders"
@@ -884,7 +884,7 @@ msgstr "Fjern inaktiv tid fra alle inaktive konti"
 
 #: ../plugins/idle.c:308 ../plugins/idle.c:309
 msgid "Allows you to hand-configure how long you've been idle"
-msgstr "Tillader dig at sætte op manuelt hvor lang tid du har været inaktiv i."
+msgstr "Tillader dig at manuelt sætte op hvor lang tid du har været inaktiv."
 
 #. *< type
 #. *< ui_requirement
@@ -982,11 +982,11 @@ msgstr "Generel loglæsning opsætning"
 
 #: ../plugins/log_reader.c:1916
 msgid "Fast size calculations"
-msgstr ""
+msgstr "Hurtig beregninger af størrelse"
 
 #: ../plugins/log_reader.c:1920
 msgid "Use name heuristics"
-msgstr ""
+msgstr "Brug navneheuristikker"
 
 #. Add Log Directory preferences.
 #: ../plugins/log_reader.c:1926
@@ -1037,6 +1037,9 @@ msgid ""
 "Currently, this includes Adium, Fire, Messenger Plus!, MSN Messenger, and "
 "Trillian."
 msgstr ""
+"Når der vises logs, vil dette modul inkludere logs fra andre beskedklienter. "
+"På nuværende tidspunkt, er dette Adium, Fire, Messenger Plus!, MSN Messenger "
+"og Trillian."
 
 #: ../plugins/mailchk.c:160
 msgid "Mail Checker"
@@ -1159,7 +1162,7 @@ msgstr "Sæt vindueshåndterings-vinket \"_URGENT\" (\"haster\")"
 #. Raise window method button
 #: ../plugins/notify.c:719
 msgid "R_aise conversation window"
-msgstr ""
+msgstr "H_æv samtalevindue"
 
 #. ---------- "Notification Removals" ----------
 #: ../plugins/notify.c:727
@@ -1229,21 +1232,23 @@ msgstr "Giver understøttelse af Perl-udvidelsesmoduler."
 
 #: ../plugins/psychic.c:22
 msgid "Psychic Mode"
-msgstr ""
+msgstr "Synsk tilstand"
 
 #: ../plugins/psychic.c:23
 msgid "Psychic mode for incoming conversation"
-msgstr ""
+msgstr "Synsk tilstand for indgående samtaler"
 
 #: ../plugins/psychic.c:24
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
+"Får samtalevinduer til at dukke frem når andre brugere begynder at skrive til "
+"dig. Dette virker med AIM, ICQ, Jabber, Sametime og Yahoo!"
 
 #: ../plugins/psychic.c:60
 msgid "You feel a disturbance in the force..."
-msgstr ""
+msgstr "Du føler en ændring i kraften..."
 
 #: ../plugins/psychic.c:79
 msgid "Only enable for users on the buddy list"
@@ -1366,11 +1371,11 @@ msgstr "Test for at se de fleste ting virker."
 
 #: ../plugins/spellchk.c:1917
 msgid "Duplicate Correction"
-msgstr ""
+msgstr "Dublet rettelse"
 
 #: ../plugins/spellchk.c:1918
 msgid "The specified word already exists in the correction list."
-msgstr ""
+msgstr "Det angivne ord findes allerede i rettelseslisten."
 
 #: ../plugins/spellchk.c:2127
 msgid "Text Replacements"
@@ -1390,7 +1395,7 @@ msgstr "Kun hele ord"
 
 #: ../plugins/spellchk.c:2190
 msgid "Case sensitive"
-msgstr ""
+msgstr "Forskel på store og små bogstaver"
 
 #: ../plugins/spellchk.c:2216
 msgid "Add a new text replacement"
@@ -1398,7 +1403,7 @@ msgstr "Tilføj en ny tekst erstatning"
 
 #: ../plugins/spellchk.c:2232
 msgid "You _type:"
-msgstr "Du skriver:"
+msgstr "Du s_kriver:"
 
 #: ../plugins/spellchk.c:2249
 msgid "You _send:"
@@ -1407,7 +1412,7 @@ msgstr "Du _sender:"
 #. Created here so it can be passed to whole_words_button_toggled.
 #: ../plugins/spellchk.c:2261
 msgid "_Exact case match (uncheck for automatic case handling)"
-msgstr ""
+msgstr "_Præcist match på store og små bogstaver"
 
 #: ../plugins/spellchk.c:2263
 msgid "Only replace _whole words"
@@ -1608,11 +1613,11 @@ msgstr "Tilføjer iChat-tidsstempler til samtaler hvert N'te minut."
 
 #: ../plugins/timestamp_format.c:22
 msgid "Timestamp Format Options"
-msgstr ""
+msgstr "Formatteringsindstillinger for tidsstempel"
 
 #: ../plugins/timestamp_format.c:27
 msgid "_Force (traditional Gaim) 24-hour time format"
-msgstr ""
+msgstr "_Tving (traditionel Gaim) 24-timers format"
 
 #: ../plugins/timestamp_format.c:30
 msgid "Show dates in..."
@@ -1642,14 +1647,14 @@ msgstr "_Besked logs:"
 #. *< id
 #: ../plugins/timestamp_format.c:150
 msgid "Message Timestamp Formats"
-msgstr "Besked tidsstempel formatter"
+msgstr "Tidsstempel format for beskeder"
 
 #. *< name
 #. *< version
 #. *  summary
 #: ../plugins/timestamp_format.c:153
 msgid "Customizes the message timestamp formats."
-msgstr ""
+msgstr "Definerer formatet på tidsstempler i beskeder."
 
 #. *  description
 #: ../plugins/timestamp_format.c:155
@@ -1657,6 +1662,8 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
+"Dette modul tillader brugeren selv at definere formatet på tidsstempler i "
+"samtaler og logs."
 
 #: ../plugins/win32/transparency/win2ktrans.c:183
 #: ../plugins/win32/transparency/win2ktrans.c:569
@@ -1679,7 +1686,7 @@ msgstr "Vis rullebjælke i besked-vindue"
 
 #: ../plugins/win32/transparency/win2ktrans.c:555
 msgid "Remove IM window transparency on focus"
-msgstr ""
+msgstr "Fjern samtalevindue gennemsigtighed ved fokus"
 
 #: ../plugins/win32/transparency/win2ktrans.c:558
 #: ../plugins/win32/transparency/win2ktrans.c:606
@@ -1697,7 +1704,7 @@ msgstr "Venneliste vindue gennemsigtighed"
 
 #: ../plugins/win32/transparency/win2ktrans.c:604
 msgid "Remove Buddy List window transparency on focus"
-msgstr ""
+msgstr "Fjern venneliste vindue gennemsigtighed ved fokus"
 
 #. *< type
 #. *< ui_requirement
@@ -2256,7 +2263,7 @@ msgstr "_Basal"
 
 #: ../src/gtkaccount.c:1771
 msgid "_Advanced"
-msgstr "_Advanceret"
+msgstr "_Avanceret"
 
 #. Register button
 #: ../src/gtkaccount.c:1786 ../src/protocols/jabber/jabber.c:823
@@ -2689,7 +2696,7 @@ msgstr "Slå konto til"
 #: ../src/gtkblist.c:3530
 #, c-format
 msgid "<span color=\"red\">%s disconnected: %s</span>"
-msgstr ""
+msgstr "<span color=\"red\">%s afbrudt: %s</span>"
 
 #: ../src/gtkblist.c:3657
 msgid "/Accounts"
@@ -2871,6 +2878,9 @@ msgid ""
 "Gaim will not attempt to reconnect the account until you correct the error "
 "and reenable the account."
 msgstr ""
+"%s blev afbrudt pga. en fejl: %s\n"
+"Gaim vil ikke prøve at forbinde igen til kontoen før du retter fejlen "
+"og re-aktivere kontoen."
 
 #: ../src/gtkconv.c:364
 #, c-format
@@ -3305,7 +3315,7 @@ msgstr "Invertér"
 
 #: ../src/gtkdebug.c:589
 msgid "Highlight matches"
-msgstr ""
+msgstr "Anmærk matches"
 
 #: ../src/gtkdebug.c:636
 msgid "Debug Window"
@@ -3380,7 +3390,7 @@ msgstr "Bulgarsk"
 
 #: ../src/gtkdialogs.c:108 ../src/gtkdialogs.c:109
 msgid "Bengali"
-msgstr ""
+msgstr "Bengali"
 
 #: ../src/gtkdialogs.c:110
 msgid "Bosnian"
@@ -3554,7 +3564,6 @@ msgid "About Gaim"
 msgstr "Om Gaim"
 
 #: ../src/gtkdialogs.c:251
-#, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
@@ -3566,8 +3575,13 @@ msgid ""
 "program.<BR><BR>"
 msgstr ""
 "Gaim er et modulært 'kvikbeskedsprogram', der understøtter AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, Silc, Novell GroupWise, Napster, Zephyr og Gadu-Gadu på "
-"samme tid. Det er skrevet i Gtk+ og er under GPL-licensen.<BR><BR>"
+"Jabber, ICQ, IRC, Silc, Novell GroupWise, Lotus Sametime, Napster, Zephyr og "
+"Gadu-Gadu på samme tid. Det er skrevet i Gtk+<BR><BR>Du må modificere "
+"og redistribuere programmet under de betingelser givet af GPL (version 2 "
+"eller senere). En kopi af GPL er indeholdt i 'COPYING' filen som blev "
+"distribueret med Gaim. Gaim er ophavsret af dens bidragsydere. Se 'COPYRIGHT' "
+"filen for den komplette liste af bidragsydere. Vi giver ingen garanti "
+"for dette program.<BR><BR>"
 
 #: ../src/gtkdialogs.c:265
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -3858,7 +3872,7 @@ msgstr "_Pause"
 #. Resume button
 #: ../src/gtkft.c:790
 msgid "_Resume"
-msgstr "Genoptag"
+msgstr "_Genoptag"
 
 #: ../src/gtkft.c:1005
 msgid "Failed"
@@ -4218,11 +4232,11 @@ msgstr ""
 
 #: ../src/gtkplugin.c:275
 msgid "The following plugins will be unloaded."
-msgstr ""
+msgstr "De følgende moduler kunne ikke udlæses."
 
 #: ../src/gtkplugin.c:294
 msgid "Multiple plugins will be unloaded."
-msgstr ""
+msgstr "Flere moduler kunne ikke udlæses."
 
 #: ../src/gtkplugin.c:296
 msgid "Unload Plugins"
@@ -4246,6 +4260,9 @@ msgid ""
 "<span foreground=\"#ff0000\" weight=\"bold\">Error: %s\n"
 "Check the plugin website for an update.</span>"
 msgstr ""
+"%s\n"
+"<span foreground=\"#ff0000\" weight=\"bold\">Fejl: %s\n"
+"TJek modul websiden for en opdatering.</span>"
 
 #: ../src/gtkplugin.c:546
 msgid "Configure Pl_ugin"
@@ -4369,7 +4386,7 @@ msgstr "Over_våg kun når min status er ikke tilgængelig"
 
 #: ../src/gtkpounce.c:776
 msgid "_Recurring"
-msgstr ""
+msgstr "_Gentages"
 
 #: ../src/gtkpounce.c:1090
 #, c-format
@@ -4382,11 +4399,11 @@ msgstr "Overvåg mål"
 
 #: ../src/gtkpounce.c:1273
 msgid "Recurring"
-msgstr ""
+msgstr "Gentages"
 
 #: ../src/gtkpounce.c:1320
 msgid "Buddy Pounces"
-msgstr "Venne overvågninger"
+msgstr "Venneovervågninger"
 
 #: ../src/gtkpounce.c:1447
 #, c-format
@@ -4492,7 +4509,7 @@ msgstr "Frem_hæv forkert stavede ord"
 
 #: ../src/gtkprefs.c:849
 msgid "Use smooth-scrolling"
-msgstr ""
+msgstr "Brug blød rullebjælke"
 
 #: ../src/gtkprefs.c:865
 msgid ""
@@ -4747,7 +4764,7 @@ msgid ""
 "Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
-"Lyd k_ommando:\n"
+"Lydk_ommando:\n"
 "(%s for filnavn)"
 
 #: ../src/gtkprefs.c:1582
@@ -4764,7 +4781,7 @@ msgstr "Afspil _lyde under fravær"
 
 #: ../src/gtkprefs.c:1592
 msgid "Volume:"
-msgstr ""
+msgstr "Lydstyrke:"
 
 #: ../src/gtkprefs.c:1620
 msgid "Sound Events"
@@ -4990,7 +5007,7 @@ msgstr "_Tilføj"
 
 #: ../src/gtkroomlist.c:354
 msgid "Room List"
-msgstr "Rum liste"
+msgstr "Rumliste"
 
 #. list button
 #: ../src/gtkroomlist.c:424
@@ -5145,7 +5162,7 @@ msgid ""
 "Unable to play sound because the configured sound command could not be "
 "launched: %s"
 msgstr ""
-"Ikke i stand til at afspille lyd fordi den opsatte lyd kommando ikke kunne "
+"Ikke i stand til at afspille lyd fordi den opsatte lydkommando ikke kunne "
 "køres: %s"
 
 #: ../src/gtkstatusbox.c:366
@@ -5209,13 +5226,15 @@ msgstr "Gaim kan ikke overføre en mappe. Du skal sende filerne individuelt"
 
 #: ../src/gtkutils.c:1438 ../src/gtkutils.c:1447 ../src/gtkutils.c:1452
 msgid "You have dragged an image"
-msgstr ""
+msgstr "Du har trukket et billede"
 
 #: ../src/gtkutils.c:1439
 msgid ""
 "You can send this image as a file transfer, embed it into this message, or "
 "use it as the buddy icon for this user."
 msgstr ""
+"Du kan sende dette billede som en filoverførsel, vedlægge det til en besked, "
+"eller bruge det som venneikonet for denne bruger."
 
 #: ../src/gtkutils.c:1443 ../src/gtkutils.c:1458
 msgid "Set as buddy icon"
@@ -5238,12 +5257,16 @@ msgid ""
 "You can send this image as a file transfer or embed it into this message, or "
 "use it as the buddy icon for this user."
 msgstr ""
+"Du kan sende dette billede som en filoverførsel, vedlægge det til en besked, "
+"eller bruge det som venneikonet for denne bruger."
 
 #: ../src/gtkutils.c:1455
 msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
 msgstr ""
+"Du kan indsætte dette billede i beskeden, eller bruge det som venneikon "
+"for denne bruger"
 
 #. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
 #. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
@@ -5265,7 +5288,7 @@ msgstr ""
 #.
 #: ../src/gtkwhiteboard.c:344 ../src/protocols/yahoo/yahoo_doodle.c:96
 msgid "Sent Doodle request."
-msgstr ""
+msgstr "Sendte Doodle anmodning."
 
 #: ../src/log.c:165
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -5331,16 +5354,16 @@ msgstr "Ukendt fejl"
 #: ../src/plugin.c:424
 #, c-format
 msgid "Plugin magic mismatch %d (need %d)"
-msgstr ""
+msgstr "Modul magi fejlede %d (krævede %d)"
 
 #: ../src/plugin.c:441
 #, c-format
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
-msgstr ""
+msgstr "ABI versions fejl %d.%d.x (kræver %d.%d.x)"
 
 #: ../src/plugin.c:458
 msgid "Plugin does not implement all required functions"
-msgstr ""
+msgstr "Modul implementerer ikke alle de krævede funktioner"
 
 #: ../src/plugin.c:523
 #, c-format
@@ -5559,11 +5582,11 @@ msgstr "Adgangskode (tast igen)"
 
 #: ../src/protocols/gg/gg.c:440 ../src/protocols/gg/gg.c:714
 msgid "Enter current token"
-msgstr ""
+msgstr "Indtast nuværende symbol"
 
 #: ../src/protocols/gg/gg.c:446 ../src/protocols/gg/gg.c:720
 msgid "Current token"
-msgstr ""
+msgstr "Nuværende symbol"
 
 #: ../src/protocols/gg/gg.c:450 ../src/protocols/gg/gg.c:451
 msgid "Register New Gadu-Gadu Account"
@@ -5579,7 +5602,7 @@ msgstr "Kunne ikke lave en ny søgning"
 
 #: ../src/protocols/gg/gg.c:548 ../src/protocols/gg/gg.c:1611
 msgid "You have a pending search. Please wait for it to finish."
-msgstr ""
+msgstr "Du har en søgning i gang. Vent til den afslutter."
 
 #: ../src/protocols/gg/gg.c:567 ../src/protocols/gg/gg.c:974
 #: ../src/protocols/gg/gg.c:2003 ../src/protocols/jabber/buddy.c:252
@@ -5629,7 +5652,7 @@ msgstr "Find venner"
 
 #: ../src/protocols/gg/gg.c:593
 msgid "Please, enter your search criteria below"
-msgstr ""
+msgstr "Indtast dine søgekriterier forneden"
 
 #: ../src/protocols/gg/gg.c:630
 msgid "Fill in the fields."
@@ -6630,15 +6653,15 @@ msgstr "Ugyldig mappe"
 
 #: ../src/protocols/jabber/buddy.c:1441
 msgid "Enter a User Directory"
-msgstr ""
+msgstr "Indtast et brugerbibliotek"
 
 #: ../src/protocols/jabber/buddy.c:1442
 msgid "Select a user directory to search"
-msgstr ""
+msgstr "Vælg et brugerbibliotek at søge i"
 
 #: ../src/protocols/jabber/buddy.c:1445
 msgid "Search Directory"
-msgstr ""
+msgstr "Søg i bibliotek"
 
 #: ../src/protocols/jabber/chat.c:41 ../src/protocols/oscar/oscar.c:7475
 #: ../src/protocols/yahoo/yahoochat.c:998
@@ -7556,15 +7579,15 @@ msgstr "Dette er navnet som dine andre MSN venner vil se dig som."
 
 #: ../src/protocols/msn/msn.c:263
 msgid "Set your home phone number."
-msgstr "Sæt hjemmetelefon nummer."
+msgstr "Sæt hjemmetelefonnummer."
 
 #: ../src/protocols/msn/msn.c:278
 msgid "Set your work phone number."
-msgstr "Sæt arbejdstelefon nummer."
+msgstr "Sæt arbejdstelefonnummer."
 
 #: ../src/protocols/msn/msn.c:293
 msgid "Set your mobile phone number."
-msgstr "Sæt mobiltelefon nummer."
+msgstr "Sæt mobiltelefonnummer."
 
 #: ../src/protocols/msn/msn.c:306
 msgid "Allow MSN Mobile pages?"
@@ -7641,15 +7664,15 @@ msgstr "Sæt synligt navn..."
 
 #: ../src/protocols/msn/msn.c:628
 msgid "Set Home Phone Number..."
-msgstr "Sæt hjemmetelefon nummer..."
+msgstr "Sæt hjemmetelefonnummer..."
 
 #: ../src/protocols/msn/msn.c:632
 msgid "Set Work Phone Number..."
-msgstr "Sæt arbejdstelefon nummer..."
+msgstr "Sæt arbejdstelefonnummer..."
 
 #: ../src/protocols/msn/msn.c:636
 msgid "Set Mobile Phone Number..."
-msgstr "Sæt mobiltelefon nummer..."
+msgstr "Sæt mobiltelefonnummer..."
 
 #: ../src/protocols/msn/msn.c:642
 msgid "Enable/Disable Mobile Devices..."
@@ -7802,7 +7825,7 @@ msgstr "Brug HTTP-metode"
 
 #: ../src/protocols/msn/msn.c:1965
 msgid "Show custom smileys"
-msgstr ""
+msgstr "Vis brugerdefinerede smileys"
 
 #: ../src/protocols/msn/msn.c:1973
 msgid "nudge: nudge a user to get their attention"
@@ -8797,6 +8820,9 @@ msgid ""
 " Try enabling proxy servers for file transfers in Accounts->%s->Edit Account-"
 ">Advanced."
 msgstr ""
+"Overførsel af fil %s overløb tidsgrænsen.\n"
+" Prøv at aktivere proxy servere for filoverførsler i Konti->%s->Redigér konto-"
+">Avanceret."
 
 #: ../src/protocols/oscar/oscar.c:2274
 #: ../src/protocols/yahoo/yahoo_filexfer.c:253
@@ -9528,7 +9554,7 @@ msgstr "Kræv godkendelse"
 
 #: ../src/protocols/oscar/oscar.c:8167
 msgid "Web aware (enabling this will cause you to receive SPAM!)"
-msgstr ""
+msgstr "Web tilstedeværelse (hvis dette er slået til vil du modtage SPAM!)"
 
 #: ../src/protocols/oscar/oscar.c:8172
 msgid "ICQ Privacy Options"
@@ -9655,6 +9681,8 @@ msgid ""
 "Use AIM/ICQ proxy server\n"
 "(slower, but usually works)"
 msgstr ""
+"Brug AIM/ICQ proxy server\n"
+"(langsommere, men virker somregel)"
 
 #: ../src/protocols/sametime/sametime.c:415
 msgid "Connection closed (writing)"
@@ -9676,28 +9704,24 @@ msgid "Info for Group %s"
 msgstr "Oplysninger for gruppe %s"
 
 #: ../src/protocols/sametime/sametime.c:1272
-#, fuzzy
 msgid "Notes Address Book Information"
-msgstr "Arbejds information"
+msgstr "Notes adressebog information"
 
 #: ../src/protocols/sametime/sametime.c:1304
-#, fuzzy
 msgid "Invite Group to Conference..."
-msgstr "Start konference"
+msgstr "Invitér gruppe til konference..."
 
 #: ../src/protocols/sametime/sametime.c:1314
-#, fuzzy
 msgid "Get Notes Address Book Info"
-msgstr "Tilføj til adressebog"
+msgstr "Hent Notes adressebogs info"
 
 #: ../src/protocols/sametime/sametime.c:1467
 msgid "Sending Handshake"
 msgstr "Sender håndtryk"
 
 #: ../src/protocols/sametime/sametime.c:1472
-#, fuzzy
 msgid "Waiting for Handshake Acknowledgement"
-msgstr "Venter på at overførsel skal starte"
+msgstr "Venter for håndtryksgodkendelse"
 
 #: ../src/protocols/sametime/sametime.c:1477
 msgid "Handshake Acknowledged, Sending Login"
@@ -9717,7 +9741,7 @@ msgstr "Tvinger login"
 
 #: ../src/protocols/sametime/sametime.c:1497
 msgid "Login Acknowledged"
-msgstr ""
+msgstr "Login godkendt"
 
 #: ../src/protocols/sametime/sametime.c:1502
 msgid "Starting Services"
@@ -9732,10 +9756,11 @@ msgstr "Tilsluttet"
 msgid ""
 "A Sametime administrator has issued the following announcement on server %s"
 msgstr ""
+"En Sametime administrator har sendt den følgende annoncering på server %s"
 
 #: ../src/protocols/sametime/sametime.c:1610
 msgid "Sametime Administrator Announcement"
-msgstr ""
+msgstr "Sametime administrator annoncering"
 
 #: ../src/protocols/sametime/sametime.c:1662
 msgid "Connection reset"
@@ -9803,9 +9828,8 @@ msgstr ""
 "<b>Ekstern bruger</b>"
 
 #: ../src/protocols/sametime/sametime.c:3368
-#, fuzzy
 msgid "Create conference with user"
-msgstr "Vælg en konference-server at slå op"
+msgstr "Opret konference med bruger"
 
 #: ../src/protocols/sametime/sametime.c:3369
 #, c-format
@@ -9813,6 +9837,8 @@ msgid ""
 "Please enter a topic for the new conference, and an invitation message to be "
 "sent to %s"
 msgstr ""
+"Indtast et emne for den nye konference, og en invitationsbesked der "
+"skal sendes til %s"
 
 #: ../src/protocols/sametime/sametime.c:3373
 msgid "New Conference"
@@ -9843,18 +9869,16 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:3458
-#, fuzzy
 msgid "Invite to Conference"
-msgstr "Start konference"
+msgstr "Invitér til konference"
 
 #: ../src/protocols/sametime/sametime.c:3460
 msgid "Invite"
 msgstr "Invitér"
 
 #: ../src/protocols/sametime/sametime.c:3548
-#, fuzzy
 msgid "Invite to Conference..."
-msgstr "Start konference"
+msgstr "Invitér til konference..."
 
 #: ../src/protocols/sametime/sametime.c:3553
 msgid "Send TEST Announcement"
@@ -9862,7 +9886,7 @@ msgstr "Send TEST annoncering"
 
 #: ../src/protocols/sametime/sametime.c:3600
 msgid "No Sametime Community Server specified"
-msgstr ""
+msgstr "Ingen Sametime community server angivet"
 
 #: ../src/protocols/sametime/sametime.c:3622
 #, c-format
@@ -9919,11 +9943,11 @@ msgstr "Brugernavn"
 #: ../src/protocols/sametime/sametime.c:4267
 #: ../src/protocols/sametime/sametime.c:5430
 msgid "Sametime ID"
-msgstr ""
+msgstr "Sametime ID"
 
 #: ../src/protocols/sametime/sametime.c:4291
 msgid "An ambiguous user ID was entered"
-msgstr ""
+msgstr "Et ugyldigt bruger ID blev indtastet"
 
 #: ../src/protocols/sametime/sametime.c:4292
 #, fuzzy, c-format
@@ -9935,9 +9959,8 @@ msgstr ""
 "fra listen, som du vil tilføje til din venneliste."
 
 #: ../src/protocols/sametime/sametime.c:4297
-#, fuzzy
 msgid "Select User"
-msgstr "Ret brugeroplysninger"
+msgstr "Vælg bruger"
 
 #: ../src/protocols/sametime/sametime.c:4367
 #, fuzzy
@@ -9952,18 +9975,17 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:4374
-#, fuzzy
 msgid "Unable to add user"
-msgstr "Ude af stand til at udvise bruger %s"
+msgstr "Kunne ikke tilføje bruger"
 
 #: ../src/protocols/sametime/sametime.c:4946
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading file %s: \n"
 "%s\n"
 msgstr ""
-"Fejl ved læsning af %s: \n"
-"%s.\n"
+"Fejl ved læsning af fil %s: \n"
+"%s\n"
 
 #: ../src/protocols/sametime/sametime.c:5077
 #, fuzzy
@@ -9992,41 +10014,39 @@ msgstr "Forkert CHL værdi sendt til server"
 
 #: ../src/protocols/sametime/sametime.c:5091
 msgid "Synchronize List with Server"
-msgstr ""
+msgstr "Synkroniser liste med server"
 
 #: ../src/protocols/sametime/sametime.c:5140
 #, c-format
 msgid "Import Sametime List for Account %s"
-msgstr ""
+msgstr "Importér Sametime liste for konto %s"
 
 #: ../src/protocols/sametime/sametime.c:5179
 #, c-format
 msgid "Export Sametime List for Account %s"
-msgstr ""
+msgstr "Eksportér Sametime liste for konto %s"
 
 #: ../src/protocols/sametime/sametime.c:5232
-#, fuzzy
 msgid "Unable to add group: group exists"
-msgstr "Kunne ikke tilføje %s til blokeringslisten (%s)."
+msgstr "Kunne ikke tilføje gruppe: gruppe eksisterer"
 
 #: ../src/protocols/sametime/sametime.c:5233
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
-msgstr ""
+msgstr "En gruppe navngivet '%s' eksisterer allerede i din venneliste."
 
 #: ../src/protocols/sametime/sametime.c:5236
 #: ../src/protocols/sametime/sametime.c:5365
-#, fuzzy
 msgid "Unable to add group"
-msgstr "Kunne ikke slette gruppe"
+msgstr "Kunne ikke tilføje gruppe"
 
 #: ../src/protocols/sametime/sametime.c:5295
 msgid "Possible Matches"
-msgstr ""
+msgstr "Mulige matches"
 
 #: ../src/protocols/sametime/sametime.c:5311
 msgid "Notes Address Book group results"
-msgstr ""
+msgstr "Notes adressebog grupperesultater"
 
 #: ../src/protocols/sametime/sametime.c:5312
 #, c-format
@@ -10037,14 +10057,12 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:5317
-#, fuzzy
 msgid "Select Notes Address Book"
-msgstr "Tilføj til adressebog"
+msgstr "Vælg Notes adressebog"
 
 #: ../src/protocols/sametime/sametime.c:5359
-#, fuzzy
 msgid "Unable to add group: group not found"
-msgstr "Kan ikke læse fra netværket"
+msgstr "Kunne ikke tilføje gruppe: gruppe ikke fundet"
 
 #: ../src/protocols/sametime/sametime.c:5361
 #, c-format
@@ -10054,9 +10072,8 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:5402
-#, fuzzy
 msgid "Notes Address Book Group"
-msgstr "Tilføj til adressebog"
+msgstr "Notes adressebogsgruppe"
 
 #: ../src/protocols/sametime/sametime.c:5403
 msgid ""
@@ -10065,22 +10082,19 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:5451
-#, fuzzy, c-format
+#, c-format
 msgid "Search results for '%s'"
-msgstr "Søgeresultater"
+msgstr "Søgeresultater for '%s'"
 
 #: ../src/protocols/sametime/sametime.c:5452
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The identifier '%s' may possibly refer to any of the following users. You "
 "may add these users to your buddy list or send them messages with the action "
 "buttons below."
 msgstr ""
-"Mere end én bruger blev fundet med det samme navn. Vælg den korrekte bruger "
-"fra listen, som du vil tilføje til din venneliste."
 
 #: ../src/protocols/sametime/sametime.c:5484
-#, fuzzy
 msgid "No matches"
 msgstr "Ingen fundne"
 
@@ -10090,14 +10104,12 @@ msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:5489
-#, fuzzy
 msgid "No Matches"
 msgstr "Ingen fundne"
 
 #: ../src/protocols/sametime/sametime.c:5526
-#, fuzzy
 msgid "Search for a user"
-msgstr "Søg efter Jabber brugere"
+msgstr "Søg efter en bruger"
 
 #: ../src/protocols/sametime/sametime.c:5527
 msgid ""
@@ -10106,27 +10118,24 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:5530
-#, fuzzy
 msgid "User Search"
-msgstr "Søg"
+msgstr "Brugersøgning"
 
 #: ../src/protocols/sametime/sametime.c:5542
 msgid "Import Sametime List..."
-msgstr ""
+msgstr "Importér Sametime liste..."
 
 #: ../src/protocols/sametime/sametime.c:5546
 msgid "Export Sametime List..."
-msgstr ""
+msgstr "Eksportér Sametime liste..."
 
 #: ../src/protocols/sametime/sametime.c:5550
-#, fuzzy
 msgid "Add Notes Address Book Group..."
-msgstr "Tilføj til adressebog"
+msgstr ""
 
 #: ../src/protocols/sametime/sametime.c:5554
-#, fuzzy
 msgid "User Search..."
-msgstr "Søg"
+msgstr "Brugersøgning..."
 
 #: ../src/protocols/sametime/sametime.c:5651
 msgid "Force login (ignore server redirects)"
@@ -10432,7 +10441,7 @@ msgstr "Dræb bruger"
 
 #: ../src/protocols/silc/buddy.c:1670 ../src/protocols/silc/chat.c:971
 msgid "Draw On Whiteboard"
-msgstr ""
+msgstr "Tegn på tavle"
 
 #: ../src/protocols/silc/chat.c:39
 msgid "_Passphrase:"
@@ -11385,11 +11394,11 @@ msgstr "Privat nøgle fil"
 
 #: ../src/protocols/silc/silc.c:1872
 msgid "Cipher"
-msgstr ""
+msgstr "Kode"
 
 #: ../src/protocols/silc/silc.c:1882
 msgid "HMAC"
-msgstr ""
+msgstr "HMAC"
 
 #: ../src/protocols/silc/silc.c:1885
 msgid "Public key authentication"
@@ -11413,17 +11422,15 @@ msgstr "Nægt anmodning om online status-attributter"
 
 #: ../src/protocols/silc/silc.c:1900
 msgid "Block messages to whiteboard"
-msgstr ""
+msgstr "Blokér beskeder til tavle"
 
 #: ../src/protocols/silc/silc.c:1903
-#, fuzzy
 msgid "Automatically open whiteboard"
-msgstr "_Udvid automatisk kontakter"
+msgstr "Åbn automatisk tavle"
 
 #: ../src/protocols/silc/silc.c:1906
-#, fuzzy
 msgid "Digitally sign and verify all messages"
-msgstr "Skriv alle kvikbeskeder under med digital signatur"
+msgstr "Skriv alle beskeder under med digital signatur og godkend dem"
 
 #: ../src/protocols/silc/util.c:206 ../src/protocols/silc/util.c:231
 msgid "Creating SILC key pair..."
@@ -11515,7 +11522,7 @@ msgstr "Terminal"
 #: ../src/protocols/silc/wb.c:284
 #, c-format
 msgid "%s sent message to whiteboard. Would you like to open the whiteboard?"
-msgstr ""
+msgstr "%s sendte besked til tavle. Vil du åbne tavlen?"
 
 #: ../src/protocols/silc/wb.c:288
 #, c-format
@@ -11523,42 +11530,37 @@ msgid ""
 "%s sent message to whiteboard on %s channel. Would you like to open the "
 "whiteboard?"
 msgstr ""
+"%s sendte besked til tavle på kanalen %s. Vil du åbne tavlen?"
 
 #: ../src/protocols/silc/wb.c:302
 msgid "Whiteboard"
-msgstr ""
+msgstr "Tavle"
 
 #. TODO: do we really want to disconnect on a failure to write?
 #: ../src/protocols/simple/simple.c:415
-#, fuzzy
 msgid "Could not write"
-msgstr "Kunne ikke sende"
+msgstr "Kunne ikke skrive"
 
 #: ../src/protocols/simple/simple.c:430 ../src/protocols/simple/simple.c:1331
-#, fuzzy
 msgid "Could not connect"
-msgstr "Forbindelse fejlede"
+msgstr "Kunne ikke forbinde"
 
 #: ../src/protocols/simple/simple.c:924
-#, fuzzy
 msgid "Wrong Password"
-msgstr "Skift adgangskode"
+msgstr "Forkert adgangskode"
 
 #: ../src/protocols/simple/simple.c:1362 ../src/protocols/simple/simple.c:1401
 #: ../src/protocols/simple/simple.c:1413 ../src/protocols/simple/simple.c:1460
-#, fuzzy
 msgid "Could not create listen socket"
-msgstr "Kunne ikke oprette sokkel"
+msgstr "Kunne ikke oprette lyttende sokkel"
 
 #: ../src/protocols/simple/simple.c:1383
-#, fuzzy
 msgid "Couldn't resolve host"
-msgstr "Kunne ikke kontakte vært"
+msgstr "Kunne ikke slå vært op"
 
 #: ../src/protocols/simple/simple.c:1481
-#, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
-msgstr "IRC navne må ikke indeholde mellemrum og lignende"
+msgstr "SIP brugernavne må ikke indeholde mellemrum og @-tegn"
 
 #. *< type
 #. *< ui_requirement
@@ -11569,44 +11571,37 @@ msgstr "IRC navne må ikke indeholde mellemrum og lignende"
 #. *< name
 #. *< version
 #: ../src/protocols/simple/simple.c:1642
-#, fuzzy
 msgid "SIP/SIMPLE Protocol Plugin"
-msgstr "SILC prokotolmodul"
+msgstr "SIP/SIMPLE protokol modul"
 
 #. *  summary
 #: ../src/protocols/simple/simple.c:1643
-#, fuzzy
 msgid "The SIP/SIMPLE Protocol Plugin"
-msgstr "SILC prokotolmodul"
+msgstr "SIP/SIMPLE protokol modul"
 
 #: ../src/protocols/simple/simple.c:1665
 msgid "Publish status (note: everyone may watch you)"
-msgstr ""
+msgstr "Annoncer status (bemærk: alle kan se dig)"
 
 #: ../src/protocols/simple/simple.c:1671
-#, fuzzy
 msgid "Use UDP"
-msgstr "Bruger ID"
+msgstr "Brug UDP"
 
 #: ../src/protocols/simple/simple.c:1673
-#, fuzzy
 msgid "Use proxy"
-msgstr "Ingen mellemvært"
+msgstr "Brug mellemvært"
 
 #: ../src/protocols/simple/simple.c:1675
-#, fuzzy
 msgid "Proxy"
-msgstr "Ingen mellemvært"
+msgstr "Mellemvært"
 
 #: ../src/protocols/simple/simple.c:1677
-#, fuzzy
 msgid "Auth User"
-msgstr "AP Bruger"
+msgstr ""
 
 #: ../src/protocols/simple/simple.c:1679
-#, fuzzy
 msgid "Auth Domain"
-msgstr "Automatisk"
+msgstr ""
 
 #: ../src/protocols/toc/toc.c:139
 #, c-format
@@ -12574,7 +12569,7 @@ msgstr "+++ %s returnerede fra inaktivitet"
 #: ../src/util.c:651
 #, c-format
 msgid "%x %X"
-msgstr ""
+msgstr "%x %X"
 
 #: ../src/util.c:2441
 #, c-format

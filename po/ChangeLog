@@ -8,7 +8,7 @@ version 2.0.0:
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Paladin R. Liu)
 	* Danish translation updated (Morten (mbrix) Brix Pedersen)
-	* Dutch translation updated (Roy Spliet)
+	* Dutch translation updated (Roy Spliet, Vincent van Adrighem)
 	* English (British) translation updated (Stu Tomlinson and Luke Ross)
 	* English (Canadian) translation updated (Adam Weinberger)
 	* Estonian translation updated (Ivar Smolin)
@@ -24,7 +24,8 @@ version 2.0.0:
 	* Japanese translation updated (Takeshi Aihana)
 	* Kurdish translation added (Erdal Ronahi and Amed Ç. Jiyan)
 	* Kurdish win32 installer translation added (Erdal Ronahi)
-	* Lithuanian translation updated (Andrius Štikonas)
+	* Lithuanian translation updated (Andrius Štikonas, Laurynas Biveinis)
+	* Persian translation added (Elnaz Sarbar, Meelad Zakaria)
 	* Portuguese translation updated (Duarte Henriques)
 	* Portuguese (Brazilian) translation updated (Rodrigo Torres,  Mauricio de
 	  L R Collares Neto)
