@@ -894,7 +894,7 @@ static char *extract_name(const char *name) {
 
 	if (!name)
 		return NULL;
-	
+
 	x = strchr(name, '-');
 
 	if (!x) return NULL;
@@ -2360,7 +2360,8 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE)
 		aim_im_sendch2_sendfile_cancel(peer_connection->sess, peer_connection);
 
-	oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
+	if(peer_connection->sess && peer_connection->conn)
+		oscar_connection_destroy(peer_connection->sess, peer_connection->conn);
 	aim_oft_destroyinfo(peer_connection);
 	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
@@ -5206,7 +5207,7 @@ static int gaim_parse_mtn(OscarSession *sess, FlapFrame *fr, ...) {
 }
 
 /*
- * We get this error when there was an error in the locate family.  This 
+ * We get this error when there was an error in the locate family.  This
  * happens when you request info of someone who is offline.
  */
 static int gaim_parse_locerr(OscarSession *sess, FlapFrame *fr, ...) {
@@ -7461,7 +7462,7 @@ static int gaim_ssi_authrequest(OscarSession *sess, FlapFrame *fr, ...) {
 		reason = g_strdup(_("No reason given."));
 
 	dialog_msg = g_strdup_printf(
-								 _("The user %s wants to add %s to their buddy list for the following reason:\n%s"), 
+								 _("The user %s wants to add %s to their buddy list for the following reason:\n%s"),
 								 nombre, gaim_account_get_username(account), reason);
 	g_free(reason);
 
