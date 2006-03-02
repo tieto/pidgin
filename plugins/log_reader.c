@@ -1834,7 +1834,7 @@ plugin_load(GaimPlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	adium_logger = gaim_log_logger_new("adium", "Adium", 6,
+	adium_logger = gaim_log_logger_new("adium", _("Adium"), 6,
 									   NULL,
 									   NULL,
 									   adium_logger_finalize,
@@ -1843,7 +1843,7 @@ plugin_load(GaimPlugin *plugin)
 									   adium_logger_size);
 	gaim_log_logger_add(adium_logger);
 
-	fire_logger = gaim_log_logger_new("fire", "Fire", 6,
+	fire_logger = gaim_log_logger_new("fire", _("Fire"), 6,
 									  NULL,
 									  NULL,
 									  fire_logger_finalize,
@@ -1852,7 +1852,7 @@ plugin_load(GaimPlugin *plugin)
 									  fire_logger_size);
 	gaim_log_logger_add(fire_logger);
 
-	messenger_plus_logger = gaim_log_logger_new("messenger_plus", "Messenger Plus!", 6,
+	messenger_plus_logger = gaim_log_logger_new("messenger_plus", _("Messenger Plus!"), 6,
 												NULL,
 												NULL,
 												messenger_plus_logger_finalize,
@@ -1861,7 +1861,7 @@ plugin_load(GaimPlugin *plugin)
 												messenger_plus_logger_size);
 	gaim_log_logger_add(messenger_plus_logger);
 
-	msn_logger = gaim_log_logger_new("msn", "MSN Messenger", 6,
+	msn_logger = gaim_log_logger_new("msn", _("MSN Messenger"), 6,
 									 NULL,
 									 NULL,
 									 msn_logger_finalize,
@@ -1870,7 +1870,7 @@ plugin_load(GaimPlugin *plugin)
 									 msn_logger_size);
 	gaim_log_logger_add(msn_logger);
 
-	trillian_logger = gaim_log_logger_new("trillian", "Trillian", 6,
+	trillian_logger = gaim_log_logger_new("trillian", _("Trillian"), 6,
 										  NULL,
 										  NULL,
 										  trillian_logger_finalize,
@@ -1927,23 +1927,23 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/adium/log_directory", "Adium");
+		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/fire/log_directory", "Fire");
+		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/messenger_plus/log_directory", "Messenger Plus!");
+		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/msn/log_directory", "MSN Messenger");
+		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
-		"/plugins/core/log_reader/trillian/log_directory", "Trillian");
+		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
