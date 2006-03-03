@@ -355,3 +355,8 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (00:29:29) richielaager: Damn!
 (00:29:42) richielaager: Damn to that too. :)
 
+21:26 <An_Idiot> I was considering just making a remote control program
+21:26 <An_Idiot> where you type in a password, send it via gaim, and
+                 gaim becomes a text terminal
+      [time passes ...]
+21:38 <An_Idiot>  I'm terribly conservative when it comes to security
