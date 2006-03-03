@@ -1046,7 +1046,7 @@ static void
 proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
-	const char * request = phb->write_buffer + phb->written_len;
+	const guchar *request = phb->write_buffer + phb->written_len;
 	gsize request_len = phb->write_buf_len - phb->written_len;
 
 	int ret = write(source, request, request_len);
@@ -1124,7 +1124,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 	p[len] = '\0';
 
-	if((p = g_strstr_len(phb->read_buffer, phb->read_len, "\r\n\r\n"))) {
+	if((p = (guchar *)g_strstr_len((const gchar *)phb->read_buffer, phb->read_len, "\r\n\r\n"))) {
 		*p = '\0';
 		headers_len = (p - phb->read_buffer) + 4;
 	} else if(len == max_read)
@@ -1132,42 +1132,35 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	else
 		return;
 
-	error = strncmp(phb->read_buffer, "HTTP/", 5) != 0;
+	error = strncmp((const char *)phb->read_buffer, "HTTP/", 5) != 0;
 	if(!error) {
-		char *c;
 		int major;
 		p = phb->read_buffer + 5;
-		c = p;
-		major = strtol(c, &c, 10);
-		p = c;
+		major = strtol((const char *)p, (char **)&p, 10);
 		error = (major == 0) || (*p != '.');
 		if(!error) {
 			int minor;
 			p++;
-			c = p;
-			minor = strtol(c, &c, 10);
-			p = c;
+			minor = strtol((const char *)p, (char **)&p, 10);
 			error = (*p != ' ');
 			if(!error) {
 				p++;
-				c = p;
-				status = strtol(c, &c, 10);
-				p = c;
+				status = strtol((const char *)p, (char **)&p, 10);
 				error = (*p != ' ');
 			}
 		}
 	}
 
 	/* Read the contents */
-	p = g_strrstr(phb->read_buffer, "Content-Length: ");
+	p = (guchar *)g_strrstr((const gchar *)phb->read_buffer, "Content-Length: ");
 	if(p != NULL) {
 		gchar *tmp;
 		int len = 0;
 		char tmpc;
 		p += strlen("Content-Length: ");
-		tmp = strchr(p, '\r');
+		tmp = strchr((const char *)p, '\r');
 		*tmp = '\0';
-		len = atoi(p);
+		len = atoi((const char *)p);
 		*tmp = '\r';
 
 		/* Compensate for what has already been read */
@@ -1202,7 +1195,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		/* XXX: why in the hell are we calling gaim_connection_error() here? */
 		if(status == 407 /* Proxy Auth */) {
 			gchar *ntlm;
-			if((ntlm = g_strrstr(phb->read_buffer, "Proxy-Authenticate: NTLM "))) { /* Check for Type-2 */
+			if((ntlm = g_strrstr((const gchar *)phb->read_buffer, "Proxy-Authenticate: NTLM "))) { /* Check for Type-2 */
 				gchar *nonce = ntlm;
 				gchar *domain = (gchar*)gaim_proxy_info_get_username(phb->gpi);
 				gchar *username;
@@ -1248,7 +1241,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				g_free(phb->read_buffer);
 				phb->read_buffer = NULL;
 
-				phb->write_buffer = request;
+				phb->write_buffer = (guchar *)request;
 				phb->write_buf_len = strlen(request);
 				phb->written_len = 0;
 
@@ -1259,7 +1252,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 				proxy_do_write(phb, source, cond);
 				return;
-			} else if((ntlm = g_strrstr(phb->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
+			} else if((ntlm = g_strrstr((const char *)phb->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
 				gchar request[2048];
 				gchar *domain = (gchar*) gaim_proxy_info_get_username(phb->gpi);
 				gchar *username;
@@ -1301,8 +1294,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				g_free(phb->read_buffer);
 				phb->read_buffer = NULL;
 
-				phb->write_buffer = g_strndup(request,
-					request_len);
+				phb->write_buffer = g_memdup(request, request_len);
 				phb->write_buf_len = request_len;
 				phb->written_len = 0;
 
@@ -1401,7 +1393,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		t2 = gaim_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
-		
+
 		request_len += g_snprintf(request + request_len,
 			sizeof(request) - request_len,
 			"Proxy-Authorization: Basic %s\r\n"
@@ -1415,7 +1407,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	g_return_if_fail(request_len < sizeof(request));
 	strcpy(request + request_len, "\r\n");
 	request_len += 2;
-	phb->write_buffer = g_strndup(request, request_len);
+	phb->write_buffer = g_memdup(request, request_len);
 	phb->write_buf_len = request_len;
 	phb->written_len = 0;
 
@@ -1487,7 +1479,7 @@ static void
 s4_canread(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
-	char *buf;
+	guchar *buf;
 	int len, max_read;
 
 	/* This is really not going to block under normal circumstances, but to
@@ -1579,7 +1571,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	packet[7] = (unsigned char)(hp->h_addr_list[0])[3];
 	packet[8] = 0;
 
-	phb->write_buffer = g_strndup(packet, sizeof(packet));
+	phb->write_buffer = g_memdup(packet, sizeof(packet));
 	phb->write_buf_len = sizeof(packet);
 	phb->written_len = 0;
 	phb->read_cb = s4_canread;
