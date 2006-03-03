@@ -349,6 +349,25 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name,
 							  GaimLogLogger *logger);
 
 /**
+ * Returns the total size of all the logs for a given user, with
+ * a given extension.  This is the "common" implemention of a
+ * logger's total_size function.
+ * This function should only be used with logs that are written
+ * with gaim_log_common_writer().
+ *
+ * @param type     The type of the logs being sized.
+ * @param name     The name of the logs to size
+ *                 (e.g. the username or chat name).
+ * @param account  The account of the log.
+ * @param ext      The file extension this log format uses.
+ *
+ * @return The size of all the logs with the specified extension
+ *         for the specified user.
+ */
+int gaim_log_common_total_sizer(GaimLogType type, const char *name,
+								GaimAccount *account, const char *ext);
+
+/**
  * Returns the size of a given GaimLog.
  * This function should only be used with logs that are written
  * with gaim_log_common_writer().

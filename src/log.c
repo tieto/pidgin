@@ -51,6 +51,7 @@ static void html_logger_finalize(GaimLog *log);
 static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
 static GList *html_logger_list_syslog(GaimAccount *account);
 static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags);
+static int html_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
 
 static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
 static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
@@ -66,6 +67,7 @@ static void txt_logger_finalize(GaimLog *log);
 static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
 static GList *txt_logger_list_syslog(GaimAccount *account);
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags);
+static int txt_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
 
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
@@ -551,7 +553,7 @@ void gaim_log_init(void)
 									  html_logger_list,
 									  html_logger_read,
 									  gaim_log_common_sizer,
-									  NULL,
+									  html_logger_total_size,
 									  html_logger_list_syslog);
 	gaim_log_logger_add(html_logger);
 
@@ -562,7 +564,7 @@ void gaim_log_init(void)
 									 txt_logger_list,
 									 txt_logger_read,
 									 gaim_log_common_sizer,
-									 NULL,
+									 txt_logger_total_size,
 									 txt_logger_list_syslog);
 	gaim_log_logger_add(txt_logger);
 
@@ -736,6 +738,48 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 	g_dir_close(dir);
 	g_free(path);
 	return list;
+}
+
+int gaim_log_common_total_sizer(GaimLogType type, const char *name, GaimAccount *account, const char *ext)
+{
+	GDir *dir;
+	int size = 0;
+	const char *filename;
+	char *path;
+
+	if(!account)
+		return 0;
+
+	path = gaim_log_get_log_dir(type, name, account);
+	if (path == NULL)
+		return 0;
+
+	if (!(dir = g_dir_open(path, 0, NULL)))
+	{
+		g_free(path);
+		return 0;
+	}
+
+	while ((filename = g_dir_read_name(dir)))
+	{
+		if (gaim_str_has_suffix(filename, ext) &&
+		    strlen(filename) >= (17 + strlen(ext)))
+		{
+			char *tmp = g_build_filename(path, filename, NULL);
+			struct stat st;
+			if (g_stat(tmp, &st))
+			{
+				gaim_debug_error("log", "Error stating log file: %s\n", tmp);
+				g_free(tmp);
+				continue;
+			}
+			g_free(tmp);
+			size += st.st_size;
+		}
+	}
+	g_dir_close(dir);
+	g_free(path);
+	return size;
 }
 
 int gaim_log_common_sizer(GaimLog *log)
@@ -1104,6 +1148,10 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
+static int html_logger_total_size(GaimLogType type, const char *name, GaimAccount *account)
+{
+	return gaim_log_common_total_sizer(type, name, account, ".html");
+}
 
 
 /****************************
@@ -1228,6 +1276,10 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
+static int txt_logger_total_size(GaimLogType type, const char *name, GaimAccount *account)
+{
+	return gaim_log_common_total_sizer(type, name, account, ".txt");
+}
 
 
 /****************
