@@ -906,8 +906,8 @@ Function CanWeInstallATheme
       Exch $1
 FunctionEnd
 
-
-Function CheckUserInstallRights
+!macro CheckUserInstallRightsMacro UN
+Function ${UN}CheckUserInstallRights
   Push $0
   Push $1
   ClearErrors
@@ -941,41 +941,9 @@ Function CheckUserInstallRights
     Exch
     Pop $0
 FunctionEnd
-
-Function un.CheckUserInstallRights
-  Push $0
-  Push $1
-  ClearErrors
-  UserInfo::GetName
-  IfErrors Win9x
-  Pop $0
-  UserInfo::GetAccountType
-  Pop $1
-
-  StrCmp $1 "Admin" 0 +3
-    StrCpy $1 "HKLM"
-    Goto done
-  StrCmp $1 "Power" 0 +3
-    StrCpy $1 "HKLM"
-    Goto done
-  StrCmp $1 "User" 0 +3
-    StrCpy $1 "HKCU"
-    Goto done
-  StrCmp $1 "Guest" 0 +3
-    StrCpy $1 "NONE"
-    Goto done
-  ; Unknown error
-  StrCpy $1 "NONE"
-  Goto done
-
-  Win9x:
-    StrCpy $1 "HKLM"
-
-  done:
-    Exch $1
-    Exch
-    Pop $0
-FunctionEnd
+!macroend
+!insertmacro CheckUserInstallRightsMacro ""
+!insertmacro CheckUserInstallRightsMacro "un."
 
 ;
 ; Usage:
@@ -1230,17 +1198,9 @@ Function DoWeNeedGtk
   Pop $3
 FunctionEnd
 
-Function RunCheck
-  Push $R0
-  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
-  IntCmp $R0 0 done
-  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
-    Abort
-  done:
-  Pop $R0
-FunctionEnd
 
-Function un.RunCheck
+!macro RunCheckMacro UN
+Function ${UN}RunCheck
   Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
@@ -1249,6 +1209,9 @@ Function un.RunCheck
   done:
   Pop $R0
 FunctionEnd
+!macroend
+!insertmacro RunCheckMacro ""
+!insertmacro RunCheckMacro "un."
 
 Function .onInit
   Push $R0
