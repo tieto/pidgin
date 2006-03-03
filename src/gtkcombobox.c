@@ -52,18 +52,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#  define _(x) gettext(x)
-#  ifdef gettext_noop
-#    define N_(String) gettext_noop (String)
-#  else
-#    define N_(String) (String)
-#  endif
-#else
-#  define N_(String) (String)
-#  define _(x) (x)
-#endif
+#define P_(x) (x)
 
 /* WELCOME, to THE house of evil code */
 
@@ -487,16 +476,16 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
   g_object_class_install_property (object_class,
                                    PROP_MODEL,
                                    g_param_spec_object ("model",
-                                                        _("ComboBox model"),
-                                                        _("The model for the combo box"),
+                                                        P_("ComboBox model"),
+                                                        P_("The model for the combo box"),
                                                         GTK_TYPE_TREE_MODEL,
                                                         G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class,
                                    PROP_WRAP_WIDTH,
                                    g_param_spec_int ("wrap_width",
-                                                     _("Wrap width"),
-                                                     _("Wrap width for layouting the items in a grid"),
+                                                     P_("Wrap width"),
+                                                     P_("Wrap width for layouting the items in a grid"),
                                                      0,
                                                      G_MAXINT,
                                                      0,
@@ -505,8 +494,8 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
   g_object_class_install_property (object_class,
                                    PROP_ROW_SPAN_COLUMN,
                                    g_param_spec_int ("row_span_column",
-                                                     _("Row span column"),
-                                                     _("TreeModel column containing the row span values"),
+                                                     P_("Row span column"),
+                                                     P_("TreeModel column containing the row span values"),
                                                      0,
                                                      G_MAXINT,
                                                      0,
@@ -515,9 +504,9 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
   g_object_class_install_property (object_class,
                                    PROP_COLUMN_SPAN_COLUMN,
                                    g_param_spec_int ("column_span_column",
-                                                     _("Column span column"),
+                                                     P_("Column span column"),
 
-                                                     _("TreeModel column containing the column span values"),
+                                                     P_("TreeModel column containing the column span values"),
                                                      0,
                                                      G_MAXINT,
                                                      0,
@@ -526,8 +515,8 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
   g_object_class_install_property (object_class,
                                    PROP_ACTIVE,
                                    g_param_spec_int ("active",
-                                                     _("Active item"),
-                                                     _("The item which is currently active"),
+                                                     P_("Active item"),
+                                                     P_("The item which is currently active"),
                                                      -1,
                                                      G_MAXINT,
                                                      -1,
@@ -535,8 +524,8 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
 
   gtk_widget_class_install_style_property (widget_class,
                                            g_param_spec_boolean ("appears-as-list",
-                                                                 _("Appears as list"),
-                                                                 _("Whether combobox dropdowns should look like lists rather than menus"),
+                                                                 P_("Appears as list"),
+                                                                 P_("Whether combobox dropdowns should look like lists rather than menus"),
                                                                  FALSE,
                                                                  G_PARAM_READABLE));
 }
