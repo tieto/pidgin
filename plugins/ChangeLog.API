@@ -333,6 +333,7 @@ version 2.0.0:
 	* "gtkblist-hiding"
 	* "gtkblist-unhiding"
 	* "log-displaying"
+	* "savedstatus-changed"
 
 	Signals - Removed:
 	* "account-away": replaced by account-status-changed

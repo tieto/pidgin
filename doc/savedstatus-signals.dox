@@ -1,0 +1,18 @@
+/** @page savedstatus-signals Saved Status Signals
+
+ @signals
+  @signal savedstatus-changed
+ @endsignals
+
+ <hr>
+
+ @signaldef savedstatus-changed
+  @signalproto
+void (*savedstatus_changed)(GaimSavedStatus *new, GaimSavedStatus *old);
+  @endsignalproto
+  @signaldesc
+   Emitted when a new saved status is activated.
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et

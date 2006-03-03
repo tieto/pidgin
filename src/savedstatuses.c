@@ -950,6 +950,7 @@ void
 gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 {
 	GList *accounts, *node;
+	GaimSavedStatus *old = gaim_savedstatus_get_current();
 
 	g_return_if_fail(saved_status != NULL);
 
@@ -973,6 +974,10 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 
 	gaim_prefs_set_int("/core/savedstatus/current",
 					   gaim_savedstatus_get_creation_time(saved_status));
+
+	gaim_signal_emit(gaim_savedstatuses_get_handle(), "savedstatus-changed",
+					 saved_status, old);
+
 }
 
 void
@@ -1024,6 +1029,8 @@ gaim_savedstatuses_get_handle(void)
 void
 gaim_savedstatuses_init(void)
 {
+	void *handle = gaim_savedstatuses_get_handle();
+
 	creation_times = g_hash_table_new(g_int_hash, g_int_equal);
 
 	/*
@@ -1040,6 +1047,13 @@ gaim_savedstatuses_init(void)
 	gaim_prefs_add_int("/core/savedstatus/idleaway", 0);
 
 	load_statuses();
+
+	gaim_signal_register(handle, "savedstatus-changed",
+					 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+					 gaim_value_new(GAIM_TYPE_SUBTYPE,
+									GAIM_SUBTYPE_SAVEDSTATUS),
+					 gaim_value_new(GAIM_TYPE_SUBTYPE,
+									GAIM_SUBTYPE_SAVEDSTATUS));
 }
 
 void
@@ -1061,5 +1075,7 @@ gaim_savedstatuses_uninit(void)
 	}
 
 	g_hash_table_destroy(creation_times);
+
+	gaim_signals_unregister_by_instance(gaim_savedstatuses_get_handle());
 }
 
