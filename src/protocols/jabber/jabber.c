@@ -912,18 +912,14 @@ static void jabber_close(GaimConnection *gc)
 	 * if we were forcibly disconnected because it will crash. -- evands
 	 */
 	if (!gc->disconnect_timeout)
-		jabber_send_raw(js, "</stream:stream>", -1);
-#else
-	jabber_send_raw(js, "</stream:stream>", -1);
 #endif
+	jabber_send_raw(js, "</stream:stream>", -1);
 
 	if(js->gsc) {
 #ifdef HAVE_OPENSSL
 		if (!gc->disconnect_timeout)
-			gaim_ssl_close(js->gsc);
-#else
-		gaim_ssl_close(js->gsc);		
 #endif
+			gaim_ssl_close(js->gsc);
 	} else if (js->fd > 0) {
 		if(js->gc->inpa)
 			gaim_input_remove(js->gc->inpa);

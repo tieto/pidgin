@@ -25,6 +25,7 @@
 #include "buddy.h"
 #include "iq.h"
 #include "disco.h"
+#include "jabber.h"
 
 
 struct _jabber_disco_info_cb_data {
@@ -46,7 +47,17 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 
 	if(!strcmp(type, "get")) {
 		xmlnode *query, *identity, *feature;
-		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
+		JabberIq *iq;
+
+		xmlnode *in_query;
+		const char *node = NULL;
+
+		if((in_query = xmlnode_get_child(packet, "query"))) {
+			node = xmlnode_get_attrib(in_query, "node");
+		}
+
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
 				"http://jabber.org/protocol/disco#info");
 
 		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
@@ -54,28 +65,46 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 		xmlnode_set_attrib(iq->node, "to", from);
 		query = xmlnode_get_child(iq->node, "query");
 
-		identity = xmlnode_new_child(query, "identity");
-		xmlnode_set_attrib(identity, "category", "client");
-		xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
-													 * handheld, pc, phone,
-													 * web */
+		if(node)
+			xmlnode_set_attrib(query, "node", node);
 
-		SUPPORT_FEATURE("jabber:iq:last")
-		SUPPORT_FEATURE("jabber:iq:oob")
-		SUPPORT_FEATURE("jabber:iq:time")
-		SUPPORT_FEATURE("jabber:iq:version")
-		SUPPORT_FEATURE("jabber:x:conference")
-		SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
-		SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
-		SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
+		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
+
+			identity = xmlnode_new_child(query, "identity");
+			xmlnode_set_attrib(identity, "category", "client");
+			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
+														 * handheld, pc, phone,
+														 * web */
+
+			SUPPORT_FEATURE("jabber:iq:last")
+			SUPPORT_FEATURE("jabber:iq:oob")
+			SUPPORT_FEATURE("jabber:iq:time")
+			SUPPORT_FEATURE("jabber:iq:version")
+			SUPPORT_FEATURE("jabber:x:conference")
+			SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
+			SUPPORT_FEATURE("http://jabber.org/protocol/disco#info")
+			SUPPORT_FEATURE("http://jabber.org/protocol/disco#items")
 #if 0
-		SUPPORT_FEATURE("http://jabber.org/protocol/ibb")
+				SUPPORT_FEATURE("http://jabber.org/protocol/ibb")
 #endif
-		SUPPORT_FEATURE("http://jabber.org/protocol/muc")
-		SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
-		SUPPORT_FEATURE("http://jabber.org/protocol/si")
-		SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
-		SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
+			SUPPORT_FEATURE("http://jabber.org/protocol/muc")
+			SUPPORT_FEATURE("http://jabber.org/protocol/muc#user")
+			SUPPORT_FEATURE("http://jabber.org/protocol/si")
+			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
+			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
+		} else {
+			xmlnode *error, *inf;
+
+			/* XXX: gross hack, implement jabber_iq_set_type or something */
+			xmlnode_set_attrib(iq->node, "type", "error");
+			iq->type = JABBER_IQ_ERROR;
+
+			error = xmlnode_new_child(query, "error");
+			xmlnode_set_attrib(error, "code", "404");
+			xmlnode_set_attrib(error, "type", "cancel");
+			inf = xmlnode_new_child(error, "item-not-found");
+			xmlnode_set_attrib(inf, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+		}
 
 		jabber_iq_send(iq);
 	} else if(!strcmp(type, "result")) {

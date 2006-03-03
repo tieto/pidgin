@@ -35,6 +35,8 @@
 #include <sasl/sasl.h>
 #endif
 
+#define CAPS0115_NODE "http://gaim.sf.net/caps"
+
 typedef enum {
 	JABBER_CAP_NONE           = 0,
 	JABBER_CAP_XHTML          = 1 << 0,

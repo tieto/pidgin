@@ -136,12 +136,10 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 
 xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority)
 {
-	xmlnode *show, *status, *presence, *pri;
+	xmlnode *show, *status, *presence, *pri, *c;
 	const char *show_string = NULL;
 
-
 	presence = xmlnode_new("presence");
-
 
 	if(state == JABBER_BUDDY_STATE_UNAVAILABLE)
 		xmlnode_set_attrib(presence, "type", "unavailable");
@@ -166,6 +164,12 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 		xmlnode_insert_data(pri, pstr, -1);
 		g_free(pstr);
 	}
+
+	/* JEP-0115 */
+	c = xmlnode_new_child(presence, "c");
+	xmlnode_set_attrib(c, "xmlns",  "http://jabber.org/protocol/caps");
+	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
+	xmlnode_set_attrib(c, "ver", VERSION);
 
 	return presence;
 }

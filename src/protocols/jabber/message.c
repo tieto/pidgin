@@ -283,8 +283,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "body")) {
-			if(!jm->body)
-				jm->body = xmlnode_to_str(child, NULL);
+			if(!jm->body) {
+				char *msg = xmlnode_to_str(child, NULL);
+				jm->body = gaim_strdup_withhtml(msg);
+				g_free(msg);
+			}
 		} else if(!strcmp(child->name, "html")) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body"))
 				jm->xhtml = xmlnode_to_str(child, NULL);
