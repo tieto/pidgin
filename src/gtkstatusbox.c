@@ -1104,10 +1104,12 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 	}
 	else
 	{
+		gboolean show_buddy_icons;
+		GtkStyle *style;
 		char aa_color[8];
 		gchar *escaped_title, *escaped_desc;
-		GtkStyle *style;
 
+		show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
 		style = gtk_widget_get_style(GTK_WIDGET(status_box));
 		snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
@@ -1116,8 +1118,10 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 
 		escaped_title = g_markup_escape_text(title, -1);
 		escaped_desc = g_markup_escape_text(desc, -1);
-		text = g_strdup_printf("%s\n<span color=\"%s\" size=\"smaller\">%s</span>",
-					escaped_title, aa_color, escaped_desc);
+		text = g_strdup_printf("%s%s<span color=\"%s\" size=\"smaller\">%s</span>",
+					escaped_title,
+					show_buddy_icons ? "\n" : " - ",
+					aa_color, escaped_desc);
 		g_free(escaped_title);
 		g_free(escaped_desc);
 	}
