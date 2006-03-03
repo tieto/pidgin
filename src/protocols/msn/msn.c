@@ -1392,27 +1392,17 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 static char *
 msn_get_photo_url(const char *url_text)
 {
-	char *p;
-	char *it = NULL;
+	char *p, *q;
 
-	if ((p = strstr(url_text, " contactparams:photopreauthurl=")) != NULL)
+	if ((p = strstr(url_text, " contactparams:photopreauthurl=\"")) != NULL)
 	{
-		p += strlen(" contactparams:photopreauthurl=");
+		p += strlen(" contactparams:photopreauthurl=\"");
 	}
 
-	if (p && (strncmp(p, "\"http://", 8) == 0))
-	{
-		char *q;
-		p += 1; /* skip only the " */
-		q = strchr(p, '"');
+	if (p && (strncmp(p, "http://", 8) == 0) && ((q = strchr(p, '"')) != NULL))
+			return g_strndup(p, q - p);
 
-		if (q)
-		{
-			it = g_strndup(p, q - p);
-		}
-	}
-
-	return it;
+	return NULL;
 }
 
 static void msn_got_photo(void *data, const char *url_text, size_t len);
@@ -1536,7 +1526,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	/* General */
 #if 0 /* XXX: undo this when strings have thawed */
-	MSN_GOT_INFO_GET_FIELD("Nickname", _("Nickname"));
+	MSN_GOT_INFO_GET_FIELD("Nickname", gX_("Nickname"));
 #endif
 	MSN_GOT_INFO_GET_FIELD("Age", _("Age"));
 	MSN_GOT_INFO_GET_FIELD("Gender", _("Gender"));
@@ -1559,7 +1549,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	    /* trim off the trailing <br> */
 		g_string_truncate(s, strlen(s->str) - 4);
 #if 0 /* XXX: undo this when strings have thawed */
-		g_string_append_printf(s2, _("%s<b>General</b><br>%s"), (tooltip_text != NULL) ? "<hr>" : "", s->str);
+		g_string_append_printf(s2, gX_("%s<b>General</b><br>%s"), (tooltip_text != NULL) ? "<hr>" : "", s->str);
 #else
 		g_string_append(s2, s->str);
 #endif
@@ -1572,20 +1562,20 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	/* Social */
 	MSN_GOT_INFO_GET_FIELD("Marital status", _("Marital Status"));
 #if 0 /* XXX: undo this when strings have thawed */
-	MSN_GOT_INFO_GET_FIELD("Interested in", _("Interested in"));
-	MSN_GOT_INFO_GET_FIELD("Pets", _("Pets"));
-	MSN_GOT_INFO_GET_FIELD("Hometown", _("Hometown"));
-	MSN_GOT_INFO_GET_FIELD("Places lived", _("Places lived"));
-	MSN_GOT_INFO_GET_FIELD("Fashion", _("Fashion"));
-	MSN_GOT_INFO_GET_FIELD("Humor", _("Humor"));
-	MSN_GOT_INFO_GET_FIELD("Music", _("Music"));
+	MSN_GOT_INFO_GET_FIELD("Interested in", gX_("Interested in"));
+	MSN_GOT_INFO_GET_FIELD("Pets", gX_("Pets"));
+	MSN_GOT_INFO_GET_FIELD("Hometown", gX_("Hometown"));
+	MSN_GOT_INFO_GET_FIELD("Places lived", gX_("Places lived"));
+	MSN_GOT_INFO_GET_FIELD("Fashion", gX_("Fashion"));
+	MSN_GOT_INFO_GET_FIELD("Humor", gX_("Humor"));
+	MSN_GOT_INFO_GET_FIELD("Music", gX_("Music"));
 #endif
 	MSN_GOT_INFO_GET_FIELD("Favorite quote", _("Favorite Quote"));
 
 	if (sect_info)
 	{
 #if 0 /* XXX: undo this when strings have thawed */
-		g_string_append_printf(s2, _("%s<b>Social</b><br>%s"), has_info ? "<br><hr>" : "", s->str);
+		g_string_append_printf(s2, gX_("%s<b>Social</b><br>%s"), has_info ? "<br><hr>" : "", s->str);
 #else
 		g_string_append_printf(s2, "%s%s", has_info ? "<br><hr>" : "", s->str);
 #endif
@@ -1597,46 +1587,46 @@ msn_got_info(void *data, const char *url_text, size_t len)
 #if 0 /* XXX: undo this when strings have thawed */
 	/* Contact Info */
 	/* Personal */
-	MSN_GOT_INFO_GET_FIELD("Name", _("Name"));
-	MSN_GOT_INFO_GET_FIELD("Significant other", _("Significant other"));
-	MSN_GOT_INFO_GET_FIELD("Home phone", _("Home phone"));
-	MSN_GOT_INFO_GET_FIELD("Home phone 2", _("Home phone 2"));
-	MSN_GOT_INFO_GET_FIELD("Home address", _("Home address"));
-	MSN_GOT_INFO_GET_FIELD("Personal Mobile", _("Personal Mobile"));
-	MSN_GOT_INFO_GET_FIELD("Home fax", _("Home fax"));
-	MSN_GOT_INFO_GET_FIELD("Personal e-mail", _("Personal e-mail"));
-	MSN_GOT_INFO_GET_FIELD("Personal IM", _("Personal IM"));
-	MSN_GOT_INFO_GET_FIELD("Birthday", _("Birthday"));
-	MSN_GOT_INFO_GET_FIELD("Anniversary", _("Anniversary"));
-	MSN_GOT_INFO_GET_FIELD("Notes", _("Notes"));
+	MSN_GOT_INFO_GET_FIELD("Name", gX_("Name"));
+	MSN_GOT_INFO_GET_FIELD("Significant other", gX_("Significant other"));
+	MSN_GOT_INFO_GET_FIELD("Home phone", gX_("Home phone"));
+	MSN_GOT_INFO_GET_FIELD("Home phone 2", gX_("Home phone 2"));
+	MSN_GOT_INFO_GET_FIELD("Home address", gX_("Home address"));
+	MSN_GOT_INFO_GET_FIELD("Personal Mobile", gX_("Personal Mobile"));
+	MSN_GOT_INFO_GET_FIELD("Home fax", gX_("Home fax"));
+	MSN_GOT_INFO_GET_FIELD("Personal e-mail", gX_("Personal e-mail"));
+	MSN_GOT_INFO_GET_FIELD("Personal IM", gX_("Personal IM"));
+	MSN_GOT_INFO_GET_FIELD("Birthday", gX_("Birthday"));
+	MSN_GOT_INFO_GET_FIELD("Anniversary", gX_("Anniversary"));
+	MSN_GOT_INFO_GET_FIELD("Notes", gX_("Notes"));
 
 	if (sect_info)
 	{
-		personal = g_strdup_printf(_("<br><b>Personal</b><br>%s"), s->str);
+		personal = g_strdup_printf(gX_("<br><b>Personal</b><br>%s"), s->str);
 		s = g_string_truncate(s, 0);
 		sect_info = FALSE;
 	}
 
 	/* Business */
-	MSN_GOT_INFO_GET_FIELD("Name", _("Name"));
-	MSN_GOT_INFO_GET_FIELD("Job title", _("Job title"));
-	MSN_GOT_INFO_GET_FIELD("Company", _("Company"));
-	MSN_GOT_INFO_GET_FIELD("Department", _("Department"));
-	MSN_GOT_INFO_GET_FIELD("Profession", _("Profession"));
-	MSN_GOT_INFO_GET_FIELD("Work phone 1", _("Work phone 1"));
-	MSN_GOT_INFO_GET_FIELD("Work phone 2", _("Work phone 2"));
-	MSN_GOT_INFO_GET_FIELD("Work address", _("Work address"));
-	MSN_GOT_INFO_GET_FIELD("Work mobile", _("Work mobile"));
-	MSN_GOT_INFO_GET_FIELD("Work pager", _("Work pager"));
-	MSN_GOT_INFO_GET_FIELD("Work fax", _("Work fax"));
-	MSN_GOT_INFO_GET_FIELD("Work e-mail", _("Work e-mail"));
-	MSN_GOT_INFO_GET_FIELD("Work IM", _("Work IM"));
-	MSN_GOT_INFO_GET_FIELD("Start date", _("Start date"));
-	MSN_GOT_INFO_GET_FIELD("Notes", _("Notes"));
+	MSN_GOT_INFO_GET_FIELD("Name", gX_("Name"));
+	MSN_GOT_INFO_GET_FIELD("Job title", gX_("Job title"));
+	MSN_GOT_INFO_GET_FIELD("Company", gX_("Company"));
+	MSN_GOT_INFO_GET_FIELD("Department", gX_("Department"));
+	MSN_GOT_INFO_GET_FIELD("Profession", gX_("Profession"));
+	MSN_GOT_INFO_GET_FIELD("Work phone 1", gX_("Work phone 1"));
+	MSN_GOT_INFO_GET_FIELD("Work phone 2", gX_("Work phone 2"));
+	MSN_GOT_INFO_GET_FIELD("Work address", gX_("Work address"));
+	MSN_GOT_INFO_GET_FIELD("Work mobile", gX_("Work mobile"));
+	MSN_GOT_INFO_GET_FIELD("Work pager", gX_("Work pager"));
+	MSN_GOT_INFO_GET_FIELD("Work fax", gX_("Work fax"));
+	MSN_GOT_INFO_GET_FIELD("Work e-mail", gX_("Work e-mail"));
+	MSN_GOT_INFO_GET_FIELD("Work IM", gX_("Work IM"));
+	MSN_GOT_INFO_GET_FIELD("Start date", gX_("Start date"));
+	MSN_GOT_INFO_GET_FIELD("Notes", gX_("Notes"));
 
 	if (sect_info)
 	{
-		business = g_strdup_printf(_("<br><b>Business</b><br>%s"), s->str);
+		business = g_strdup_printf(gX_("<br><b>Business</b><br>%s"), s->str);
 		s = g_string_truncate(s, 0);
 		sect_info = FALSE;
 	}
@@ -1646,7 +1636,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	    /* trim off the trailing <br> */
 		g_string_truncate(s2, strlen(s2->str) - 4);
 		has_info = TRUE;
-		g_string_append_printf(s2, _("%s<b>Contact Info</b>%s%s"),
+		g_string_append_printf(s2, gX_("%s<b>Contact Info</b>%s%s"),
 							   has_info ? "<hr>" : "",
 							   personal ? personal : "",
 							   business ? business : "");
@@ -1820,7 +1810,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	}
 	/* put a link to the actual profile URL */
 #if 0 /* XXX: undo when strings thawed */
-	g_string_append_printf(s, _("<hr><b>%s:</b> "), _("Profile URL"));
+	g_string_append_printf(s, gX_("<hr><b>%s:</b> "), _("Profile URL"));
 #else
 	g_string_append(s, "<hr>");
 	g_string_append_printf(s, _("<b>%s:</b> "), _("Profile URL"));
