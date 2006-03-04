@@ -1308,17 +1308,6 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_toolbar_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	GaimGtkWindow *win = data;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	conv = gaim_gtk_conv_window_get_active_conversation(win);
-
-	if (conv == NULL)
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
 	gaim_prefs_set_bool("/gaim/gtk/conversations/show_formatting_toolbar",
 	                    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
@@ -1344,17 +1333,6 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 static void
 menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	GaimGtkWindow *win = data;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	conv = gaim_gtk_conv_window_get_active_conversation(win);
-
-	if (!conv)
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
 	gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
