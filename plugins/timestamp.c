@@ -110,8 +110,6 @@ static void timestamp_new_convo(GaimConversation *conv)
 	if (!g_list_find(gaim_get_conversations(), conv))
 		return;
 
-	gtk_imhtml_show_comments(GTK_IMHTML(c->imhtml), FALSE);
-
 	/*
 	This if statement stops conversations that have already been initialized for timestamps
 	from being reinitialized.  This prevents every active conversation from immediately being spammed
