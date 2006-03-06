@@ -2383,6 +2383,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 
 	if ((len <= 0) || (data == NULL)) {
 		gaim_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL);
+		fclose(fp);
 		return;
 	}
 
