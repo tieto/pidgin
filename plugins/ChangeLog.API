@@ -313,7 +313,6 @@ version 2.0.0:
 	* "conversation-dragging"
 	* "dbus-method-called"
 	* "dbus-introspect"
-	* "cipher-removed"
 	* "file-recv-accept"
 	* "file-recv-start"
 	* "file-recv-cancel"
