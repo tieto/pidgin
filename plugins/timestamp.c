@@ -228,8 +228,6 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	GList *cnvs;
-
 	destroy_timer_list();
 
 	return TRUE;
