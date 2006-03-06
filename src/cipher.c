@@ -1936,10 +1936,7 @@ gchar *gaim_cipher_http_digest_calculate_response(
 		gaim_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
 		gaim_cipher_context_append(context, (guchar *)":", 1);
 
-		if (qop != NULL)
-			gaim_cipher_context_append(context, (guchar *)qop, strlen(qop));
-		else
-			gaim_cipher_context_append(context, (guchar *)"", 0);
+		gaim_cipher_context_append(context, (guchar *)qop, strlen(qop));
 
 		gaim_cipher_context_append(context, (guchar *)":", 1);
 	}
