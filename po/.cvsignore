@@ -16,3 +16,4 @@ Makevars
 ChangeLog.save
 .intltool-merge-cache
 missing
+stamp-it
