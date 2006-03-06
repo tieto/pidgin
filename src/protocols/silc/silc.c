@@ -144,12 +144,15 @@ static void
 silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
-	SilcGaim sg = gc->proto_data;
+	SilcGaim sg;
 	SilcClient client;
 	SilcClientConnection conn;
-	GaimAccount *account = sg->account;
+	GaimAccount *account;
 	SilcClientConnectionParams params;
 	const char *dfile;
+
+	g_return_if_fail(gc != NULL);
+	sg = gc->proto_data;
 
 	if (source < 0) {
 		gaim_connection_error(gc, _("Connection failed"));
@@ -160,6 +163,7 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 		return;
 
 	client = sg->client;
+	account = sg->account;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
