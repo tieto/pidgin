@@ -1669,14 +1669,14 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 	       SilcClientConnectionStatus status)
 {
 	GaimConnection *gc = client->application;
-	SilcGaim sg = gc->proto_data;
+	SilcGaim sg;
 	gboolean reject_watch, block_invites, block_ims;
 
-	if (!gc) {
-		sg->conn = NULL;
+	if (gc == NULL) {
 		silc_client_close_connection(client, conn);
 		return;
 	}
+	sg = gc->proto_data;
 
 	switch (status) {
 	case SILC_CLIENT_CONN_SUCCESS:
