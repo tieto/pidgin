@@ -1615,10 +1615,11 @@ static void simple_close(GaimConnection *gc)
 {
 	struct simple_account_data *sip = gc->proto_data;
 
-	/* unregister */
-	do_register_exp(sip, 0);
-	connection_free_all(sip);
 	if(sip) {
+		/* unregister */
+		do_register_exp(sip, 0);
+		connection_free_all(sip);
+
 		g_free(sip->servername);
 		g_free(sip->username);
 		g_free(sip->password);
