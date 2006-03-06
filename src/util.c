@@ -824,7 +824,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 		}
 		else
 		{
-			if (*rest != NULL && *c != '\0')
+			if (rest != NULL && *c != '\0')
 				*rest = c;
 		}
 	}
