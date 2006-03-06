@@ -232,12 +232,6 @@ plugin_unload(GaimPlugin *plugin)
 
 	destroy_timer_list();
 
-	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
-		GaimConversation *c = cnvs->data;
-		GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
-		gtk_imhtml_show_comments(GTK_IMHTML(conv->imhtml), TRUE);
-	}
-
 	return TRUE;
 }
 
