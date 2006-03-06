@@ -296,7 +296,10 @@ void gaim_gtk_whiteboard_destroy(GaimWhiteboard *wb)
 void gaim_gtk_whiteboard_exit(GtkWidget *widget, gpointer data)
 {
 	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)data;
-	GaimWhiteboard *wb = gtkwb->wb;
+	GaimWhiteboard *wb;
+
+	g_return_if_fail(gtkwb != NULL);
+	wb = gtkwb->wb;
 
 	if(gtkwb->window && gtkwb->pixmap)
 	{
@@ -307,12 +310,8 @@ void gaim_gtk_whiteboard_exit(GtkWidget *widget, gpointer data)
 	else
 		LocalShutdownRequest = FALSE;
 
-	if(gtkwb)
-	{
-		g_free(gtkwb);
-
-		wb->ui_data = NULL;
-	}
+	g_free(gtkwb);
+	wb->ui_data = NULL;
 
 	/* Destroy whiteboard core, if the local user exited the whiteboard window */
 	if(wb && LocalShutdownRequest)
