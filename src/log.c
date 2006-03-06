@@ -1298,14 +1298,20 @@ struct old_logger_data {
 
 static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
+	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, sn));
+	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
+	GaimStringref *pathref = gaim_stringref_new(pathstr);
+	struct stat st;
+	time_t log_last_modified;
+	FILE *index;
 	FILE *file;
+	GError *error;
+	int index_fd;
+	char *index_tmp;
 	char buf[BUF_LONG];
 	struct tm tm;
 	char month[4];
 	struct old_logger_data *data = NULL;
-	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, sn));
-	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
-	GaimStringref *pathref = gaim_stringref_new(pathstr);
 	char *newlog;
 	int logfound = 0;
 	int lastoff = 0;
@@ -1316,11 +1322,87 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	GList *list = NULL;
 
 	g_free(logfile);
-	g_free(pathstr);
+
+	if (g_stat(gaim_stringref_value(pathref), &st))
+	{
+		gaim_stringref_unref(pathref);
+		g_free(pathstr);
+		return NULL;
+	}
+	else
+		log_last_modified = st.st_mtime;
+
+	/* Change the .log extension to .idx */
+	strcpy(pathstr + strlen(pathstr) - 3, "idx");
+
+	if (g_stat(pathstr, &st) == 0)
+	{
+		if (st.st_mtime < log_last_modified)
+		{
+			gaim_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
+		}
+		else
+		{
+			/* The index file exists and is at least as new as the log, so open it. */
+			if (!(index = g_fopen(pathstr, "rb")))
+			{
+				gaim_debug_error("log", "Failed to open index file \"%s\" for reading: %s\n",
+				                 pathstr, strerror(errno));
+
+				/* Fall through so that we'll parse the log file. */
+			}
+			else
+			{
+				gaim_debug_info("log", "Using index: %s\n", pathstr);
+				g_free(pathstr);
+				while (fgets(buf, BUF_LONG, index))
+				{
+					unsigned long idx_time;
+					if (sscanf(buf, "%d\t%d\t%lu", &lastoff, &newlen, &idx_time) == 3)
+					{
+						log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
+						log->logger = old_logger;
+						log->time = (time_t)idx_time;
+						data = g_new0(struct old_logger_data, 1);
+						data->offset = lastoff;
+						data->length = newlen;
+						data->pathref = gaim_stringref_ref(pathref);
+						log->logger_data = data;
+						list = g_list_prepend(list, log);
+					}
+				}
+
+				return list;
+			}
+		}
+	}
 
 	if (!(file = g_fopen(gaim_stringref_value(pathref), "rb"))) {
+		gaim_debug_error("log", "Failed to open log file \"%s\" for reading: %s\n",
+		                   gaim_stringref_value(pathref), strerror(errno));
 		gaim_stringref_unref(pathref);
+		g_free(pathstr);
 		return NULL;
+	}
+
+	if ((index_fd = g_file_open_tmp(NULL, &index_tmp, &error)) == -1) {
+		gaim_debug_error("log", "Failed to open index temp file: %s\n",
+		                 error->message);
+		g_error_free(error);
+		g_free(pathstr);
+		index = NULL;
+	} else {
+		if ((index = fdopen(index_fd, "wb")) == NULL)
+		{
+			gaim_debug_error("log", "Failed to fdopen() index temp file: %s\n",
+			                 strerror(errno));
+			close(index_fd);
+			if (index_tmp != NULL)
+			{
+				g_unlink(index_tmp);
+				g_free(index_tmp);
+			}
+		}
 	}
 
 	while (fgets(buf, BUF_LONG, file)) {
@@ -1363,6 +1445,10 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					data->pathref = gaim_stringref_ref(pathref);
 					log->logger_data = data;
 					list = g_list_prepend(list, log);
+
+					/* XXX: There is apparently Is there a proper way to print a time_t? */
+					if (index != NULL)
+						fprintf(index, "%d\t%d\t%lu\n", data->offset, data->length, (unsigned long)log->time);
 				}
 			}
 
@@ -1414,11 +1500,37 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			data->pathref = gaim_stringref_ref(pathref);
 			log->logger_data = data;
 			list = g_list_prepend(list, log);
+
+			/* XXX: Is there a proper way to print a time_t? */
+			if (index != NULL)
+				fprintf(index, "%d\t%d\t%d\n", data->offset, data->length, (int)log->time);
 		}
 	}
 
 	gaim_stringref_unref(pathref);
 	fclose(file);
+	if (index != NULL)
+	{
+		fclose(index);
+
+		if (index_tmp == NULL)
+		{
+			g_free(pathstr);
+			g_return_val_if_reached(list);
+		}
+
+		if (g_rename(index_tmp, pathstr))
+		{
+			gaim_debug_warning("log", "Failed to rename index temp file \"%s\" to \"%s\": %s\n",
+			                   index_tmp, pathstr, strerror(errno));
+			g_unlink(index_tmp);
+			g_free(index_tmp);
+		}
+		else
+			gaim_debug_info("log", "Built index: %s\n", pathstr);
+
+		g_free(pathstr);
+	}
 	return list;
 }
 
