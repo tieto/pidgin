@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	gtkrc-2.0 \
 	log-signals.dox \
 	notify-signals.dox \
+	plugin-i18n.dox \
 	plugin-ids.dox \
 	plugin-signals.dox \
 	savedstatus-signals.dox \
