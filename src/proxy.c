@@ -1159,9 +1159,11 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		char tmpc;
 		p += strlen("Content-Length: ");
 		tmp = strchr((const char *)p, '\r');
-		*tmp = '\0';
+		if(tmp)
+			*tmp = '\0';
 		len = atoi((const char *)p);
-		*tmp = '\r';
+		if(tmp)
+			*tmp = '\r';
 
 		/* Compensate for what has already been read */
 		len -= phb->read_len - headers_len;
