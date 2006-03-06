@@ -64,6 +64,9 @@ version 2.0.0:
 	* Logs are now saved with the current timezone, which is displayed
 	  in the log viewer
 	* Text logs are linkified, so URLs are clickable
+	* The old logger now caches file offsets, so opening the log viewer
+	  for buddies with old logs should be much faster now if you have large
+	  log files (except the first time for a log, when the cache is built)
 
 	Plugins:
 	* Plugins are now accessed through a separate dialog from the Tools
