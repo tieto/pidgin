@@ -207,8 +207,9 @@ chat_msg_received_cb(GaimAccount *account, char *sender,
 		return;
 
 	chat = gaim_conversation_get_chat_data(conv);
+	g_return_if_fail(chat != NULL);
 
-	if (chat!=NULL && gaim_conv_chat_is_user_ignored(chat, sender))
+	if (gaim_conv_chat_is_user_ignored(chat, sender))
 		return;
 
 	if (chat_nick_matches_name(conv, sender))
