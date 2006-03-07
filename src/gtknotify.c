@@ -79,6 +79,7 @@ struct _GaimMailDialog
 	GtkWidget *treeview;
 	GtkTreeStore *treemodel;
 	GtkLabel *label;
+	GtkWidget *open_button;
 };
 
 static GaimMailDialog *mail_dialog = NULL;
@@ -268,6 +269,26 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	return dialog;
 }
 
+static void
+selection_changed_cb(GtkTreeSelection *sel, GaimMailDialog *dialog)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GaimNotifyMailData *data;
+	gboolean active = TRUE;
+
+	if (gtk_tree_selection_get_selected(sel, &model, &iter) == FALSE)
+		active = FALSE;
+	else
+	{
+		gtk_tree_model_get(model, &iter, GAIM_MAIL_DATA, &data, -1);
+		if (data->url == NULL)
+			active = FALSE;
+	}
+
+	gtk_widget_set_sensitive(dialog->open_button, active);
+}
+
 static void *
 gaim_gtk_notify_email(GaimConnection *gc, const char *subject, const char *from,
 					  const char *to, const char *url)
@@ -301,6 +322,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	{
 		GtkCellRenderer *rend;
 		GtkTreeViewColumn *column;
+		GtkWidget *button = NULL;
 
 		dialog = gtk_dialog_new_with_buttons(_("New Mail"), NULL, 0,
 											 GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
@@ -320,8 +342,8 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			gtk_dialog_add_button(GTK_DIALOG(dialog),
 					 _("Open All Messages"), GTK_RESPONSE_ACCEPT);
 
-			gtk_dialog_add_button(GTK_DIALOG(dialog),
-					 GAIM_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
+			button = gtk_dialog_add_button(GTK_DIALOG(dialog),
+						 GAIM_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
 		}
 
 		/* Setup the dialog */
@@ -358,6 +380,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 
 			mail_dialog = g_new0(GaimMailDialog, 1);
 			mail_dialog->dialog = dialog;
+			mail_dialog->open_button = button;
 
 			mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_GAIM_MAIL,
 							GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -365,7 +388,10 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 
 			g_signal_connect(G_OBJECT(dialog), "response",
 							 G_CALLBACK(email_response_cb), mail_dialog);
+			g_signal_connect(G_OBJECT(gtk_tree_view_get_selection(GTK_TREE_VIEW(mail_dialog->treeview))),
+							 "changed", G_CALLBACK(selection_changed_cb), mail_dialog);
 
+			/* Account column */
 			column = gtk_tree_view_column_new();
 			gtk_tree_view_column_set_resizable(column, TRUE);
 			gtk_tree_view_column_set_title(column, _("Account"));
@@ -377,6 +403,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_TO, NULL);
 			gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
 
+			/* From column */
 			column = gtk_tree_view_column_new();
 			gtk_tree_view_column_set_resizable(column, TRUE);
 			gtk_tree_view_column_set_title(column, _("From"));
@@ -385,6 +412,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_FROM, NULL);
 			gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
 
+			/* Subject column */
 			column = gtk_tree_view_column_new();
 			gtk_tree_view_column_set_resizable(column, TRUE);
 			gtk_tree_view_column_set_title(column, _("Subject"));
