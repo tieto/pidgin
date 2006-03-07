@@ -409,41 +409,55 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		dialog = mail_dialog->dialog;
 		while (count--)
 		{
-			char *from_text = NULL, *subject_text = NULL;
+			char *to_text = NULL;
+			char *from_text = NULL;
+			char *subject_text = NULL;
 			GdkPixbuf *pixbuf;
 
+			if (tos != NULL)
+				to_text = g_markup_escape_text(*tos, -1);
 			if (froms != NULL)
 				from_text = g_markup_escape_text(*froms, -1);
-
 			if (subjects != NULL)
 				subject_text = g_markup_escape_text(*subjects, -1);
 
 			data = g_new0(GaimNotifyMailData, 1);
-			data->url = g_strdup(*urls);
+			if (urls != NULL)
+				data->url = g_strdup(*urls);
 
 			pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
 
 			gtk_tree_store_append(mail_dialog->treemodel, &iter, NULL);
 			gtk_tree_store_set(mail_dialog->treemodel, &iter,
 									GAIM_MAIL_ICON, pixbuf,
-									GAIM_MAIL_TO, *tos,
+									GAIM_MAIL_TO, to_text,
 									GAIM_MAIL_FROM, from_text,
 									GAIM_MAIL_SUBJECT, subject_text,
 									GAIM_MAIL_DATA, data,
 									-1);
 			if (pixbuf != NULL)
 				g_object_unref(pixbuf);
+			g_free(to_text);
+			g_free(from_text);
+			g_free(subject_text);
 			data->iter = iter;
-			urls++;
-			froms++;
-			subjects++;
-			tos++;
+
+			if (urls != NULL)
+				urls++;
+			if (froms != NULL)
+				froms++;
+			if (subjects != NULL)
+				subjects++;
+			if (tos != NULL)
+				tos++;
 		}
 	}
 	else
 	{
 		data = g_new0(GaimNotifyMailData, 1);
-		data->url = g_strdup(*urls);
+
+		if (urls != NULL)
+			data->url = g_strdup(*urls);
 
 		g_signal_connect(G_OBJECT(dialog), "response",
 						 G_CALLBACK(email_nondetailed_cb), data);
