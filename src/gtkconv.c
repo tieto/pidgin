@@ -1577,19 +1577,19 @@ create_chat_menu(GaimConversation *conv, const char *who,
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	if (prpl_info->get_info || prpl_info->get_cb_info) {
+	if (prpl_info && (prpl_info->get_info || prpl_info->get_cb_info)) {
 		button = gaim_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
 						G_CALLBACK(menu_chat_info_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	if (prpl_info->get_cb_away) {
+	if (prpl_info && prpl_info->get_cb_away) {
 		button = gaim_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
 					G_CALLBACK(menu_chat_get_away_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	if (!is_me && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+	if (!is_me && !(prpl_info && prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if (gaim_find_buddy(gc->account, who))
 			button = gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 						G_CALLBACK(menu_chat_add_remove_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
