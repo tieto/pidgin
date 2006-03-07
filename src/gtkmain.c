@@ -65,7 +65,7 @@
 #include "gtkstock.h"
 #include "gtkwhiteboard.h"
 
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 # include <signal.h>
 #endif
 
@@ -88,7 +88,7 @@ static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
 #endif
 
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 /*
  * Lists of signals we wish to catch and those we wish to ignore.
  * Each list terminated with -1
@@ -142,7 +142,7 @@ dologin_named(const char *name)
 	return ret;
 }
 
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 static void
 clean_pid(void)
 {
@@ -433,7 +433,7 @@ int main(int argc, char *argv[])
 	char *opt_session_arg = NULL;
 	int dologin_ret = -1;
 	char *search_path;
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
 	RETSIGTYPE (*prev_sig_disp)(int);
@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
 	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 	char errmsg[BUFSIZ];
 #ifndef DEBUG
 	char *segfault_message_tmp;
@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 #endif
 
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
@@ -688,8 +688,8 @@ int main(int argc, char *argv[])
 	gaim_blist_load();
 
 	/* TODO: Move prefs loading into gaim_prefs_init() */
-	gaim_prefs_load();
-	gaim_prefs_update_old();
+	/*gaim_prefs_load();*/
+	/*gaim_prefs_update_old();*/
 	gaim_gtk_prefs_update_old();
 
 	/* load plugins we had when we quit */
@@ -764,7 +764,7 @@ int main(int argc, char *argv[])
 
 	gtk_main();
 
-#if HAVE_SIGNAL_H
+#ifdef HAVE_SIGNAL_H
 	g_free(segfault_message);
 #endif
 
