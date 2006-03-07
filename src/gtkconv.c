@@ -4670,9 +4670,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 			mdate = g_strdup(gaim_time_format(&tm));
 	}
 
-	if(gc)
-		sml_attrib = g_strdup_printf("sml=\"%s\"",
-									 gaim_account_get_protocol_name(conv->account));
+	sml_attrib = g_strdup_printf("sml=\"%s\"",
+								 gaim_account_get_protocol_name(account));
 
 	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
 
