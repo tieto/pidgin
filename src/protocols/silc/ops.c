@@ -1359,7 +1359,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			}
 
 			buf = g_string_free(s, FALSE);
-			gaim_notify_userinfo(gc, client_entry->nickname, buf, NULL, NULL);
+			gaim_notify_userinfo(gc, nickname, buf, NULL, NULL);
 			g_free(buf);
 		}
 		break;
