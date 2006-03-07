@@ -485,6 +485,23 @@ gaim_mime_decode_field(const char *str)
  * Date/Time Functions
  **************************************************************************/
 
+#ifdef _WIN32
+static long win32_get_tz_offset() {
+	TIME_ZONE_INFORMATION tzi;
+	DWORD ret;
+	long off = -1;
+
+	if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
+	{
+		off = -(tzi.Bias * 60);
+		if (ret == TIME_ZONE_ID_DAYLIGHT)
+			off -= tzi.DaylightBias * 60;
+	}
+
+	return off;
+}
+#endif
+
 #ifndef HAVE_STRFTIME_Z_FORMAT
 static const char *get_tmoff(const struct tm *tm)
 {
@@ -500,16 +517,8 @@ static const char *get_tmoff(const struct tm *tm)
 		g_return_val_if_reached("");
 
 #ifdef _WIN32
-	TIME_ZONE_INFORMATION tzi;
-	DWORD ret;
-	if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
-	{
-			off = -(tzi.Bias * 60);
-			if (ret == TIME_ZONE_ID_DAYLIGHT)
-					off -= tzi.DaylightBias * 60;
-	}
-	else
-			return "";
+	if ((off = win32_get_tz_offset()) == -1)
+		return "";
 #else
 # ifdef HAVE_TM_GMTOFF
 	off = new_tm.tm_gmtoff;
@@ -798,17 +807,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 #endif
 
 #ifdef _WIN32
-				TIME_ZONE_INFORMATION tzi;
-				DWORD ret;
-				if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
-				{
-					tzoff -= tzi.Bias * 60;
-					if (ret == TIME_ZONE_ID_DAYLIGHT)
-					{
-						tzoff -= tzi.DaylightBias * 60;
-					}
-				}
-				else
+				if ((tzoff = win32_get_tz_offset()) == -1)
 					tzoff = GAIM_NO_TZ_OFF;
 #else
 #ifdef HAVE_TM_GMTOFF
