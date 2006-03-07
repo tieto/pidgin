@@ -3762,7 +3762,7 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 static GtkWidget *
 setup_chat_pane(GaimGtkConversation *gtkconv)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimPluginProtocolInfo *prpl_info;
 	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
@@ -3783,6 +3783,9 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 
 	gtkchat = gtkconv->u.chat;
 	gc      = gaim_conversation_get_gc(conv);
+	g_return_if_fail(gc != NULL);
+	g_return_if_fail(gc->prpl != NULL);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	/* Setup the outer pane. */
 	vpaned = gtk_vpaned_new();
@@ -3792,9 +3795,6 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
-
-	if (gc != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info->options & OPT_PROTO_CHAT_TOPIC)
 	{
@@ -4607,8 +4607,10 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		gaim_gtkconv_set_active_conversation(conv);
 	type = gaim_conversation_get_type(conv);
 
-	gc = gaim_conversation_get_gc(conv);
 	account = gaim_conversation_get_account(conv);
+	g_return_if_fail(account != NULL);
+	gc = gaim_account_get_connection(account);
+	g_return_if_fail(gc != NULL);
 
 	displaying = g_strdup(message);
 	plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
