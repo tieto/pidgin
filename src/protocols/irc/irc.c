@@ -502,12 +502,12 @@ static void irc_get_info(GaimConnection *gc, const char *who)
 static void irc_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	struct irc_conn *irc = NULL;
+	struct irc_conn *irc;
 	const char *args[1];
 	const char *status_id = gaim_status_get_id(status);
 
-	if (gc)
-		irc = gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	irc = gc->proto_data;
 
 	if (!gaim_status_is_active(status))
 		return;
