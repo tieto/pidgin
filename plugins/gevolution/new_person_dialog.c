@@ -104,7 +104,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 	lastname   = gtk_entry_get_text(GTK_ENTRY(dialog->lastname));
 	email      = gtk_entry_get_text(GTK_ENTRY(dialog->email));
 
-	if (*firstname || *lastname)
+	if (firstname != NULL || lastname != NULL)
 	{
 		if (dialog->contact == NULL)
 		{
