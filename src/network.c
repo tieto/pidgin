@@ -206,7 +206,7 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	int listenfd = -1;
 	const int on = 1;
 	ListenUPnPData *ld;
-#if HAVE_GETADDRINFO
+#ifdef HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
 	char serv[6];

@@ -351,7 +351,7 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 	dns_params_t dns_params;
 	const size_t zero = 0;
 	int rc;
-#if HAVE_GETADDRINFO
+#ifdef HAVE_GETADDRINFO
 	struct addrinfo hints, *res, *tmp;
 	char servname[20];
 #else
@@ -408,7 +408,7 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 
 		/* We have the hostname and port, now resolve the IP */
 
-#if HAVE_GETADDRINFO
+#ifdef HAVE_GETADDRINFO
 		g_snprintf(servname, sizeof(servname), "%d", dns_params.port);
 		memset(&hints, 0, sizeof(hints));
 
@@ -638,7 +638,7 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	if ((rc == 4) && (err != 0))
 	{
 		char message[1024];
-#if HAVE_GETADDRINFO
+#ifdef HAVE_GETADDRINFO
 		g_snprintf(message, sizeof(message), "DNS error: %s (pid=%d)",
 				   gai_strerror(err), req->dns_pid);
 #else
@@ -784,7 +784,7 @@ static gboolean dns_main_thread_cb(gpointer data) {
 
 static gpointer dns_thread(gpointer data) {
 
-#if HAVE_GETADDRINFO
+#ifdef HAVE_GETADDRINFO
 	int rc;
 	struct addrinfo hints, *res, *tmp;
 	char servname[20];
@@ -794,7 +794,7 @@ static gpointer dns_thread(gpointer data) {
 #endif
 	dns_tdata *td = (dns_tdata*)data;
 
-#if HAVE_GETADDRINFO
+#ifdef HAVE_GETADDRINFO
 	g_snprintf(servname, sizeof(servname), "%d", td->port);
 	memset(&hints,0,sizeof(hints));
 
