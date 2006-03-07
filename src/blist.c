@@ -1198,7 +1198,8 @@ void gaim_blist_add_chat(GaimChat *chat, GaimGroup *group, GaimBlistNode *node)
 		if (cnode->parent->child == cnode)
 			cnode->parent->child = cnode->next;
 
-		ops->remove(gaimbuddylist, cnode);
+		if (ops && ops->remove)
+			ops->remove(gaimbuddylist, cnode);
 		/* ops->remove() cleaned up the cnode's ui_data, so we need to
 		 * reinitialize it */
 		ops->new_node(cnode);
@@ -1302,7 +1303,8 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 		if (bnode->parent->child == bnode)
 			bnode->parent->child = bnode->next;
 
-		ops->remove(gaimbuddylist, bnode);
+		if (ops && ops->remove)
+			ops->remove(gaimbuddylist, bnode);
 
 		gaim_blist_schedule_save();
 
@@ -1320,7 +1322,8 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 			gaim_blist_remove_contact((GaimContact*)bnode->parent);
 		} else {
 			gaim_contact_invalidate_priority_buddy((GaimContact*)bnode->parent);
-			ops->update(gaimbuddylist, bnode->parent);
+			if (ops && ops->update)
+				ops->update(gaimbuddylist, bnode->parent);
 		}
 	}
 
@@ -1557,7 +1560,8 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 			((GaimGroup*)cnode->parent)->currentsize--;
 		((GaimGroup*)cnode->parent)->totalsize--;
 
-		ops->remove(gaimbuddylist, cnode);
+		if (ops && ops->remove)
+			ops->remove(gaimbuddylist, cnode);
 
 		gaim_blist_schedule_save();
 	}
@@ -1587,11 +1591,14 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 
 	gaim_blist_schedule_save();
 
-	if (ops && cnode->child)
-		ops->update(gaimbuddylist, cnode);
+	if (ops && ops->update)
+	{
+		if (cnode->child)
+			ops->update(gaimbuddylist, cnode);
 
-	for (bnode = cnode->child; bnode; bnode = bnode->next)
-		ops->update(gaimbuddylist, bnode);
+		for (bnode = cnode->child; bnode; bnode = bnode->next)
+			ops->update(gaimbuddylist, bnode);
+	}
 }
 
 void gaim_blist_merge_contact(GaimContact *source, GaimBlistNode *node)
@@ -1652,7 +1659,8 @@ void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 	if (gaim_find_group(group->name)) {
 		/* This is just being moved */
 
-		ops->remove(gaimbuddylist, (GaimBlistNode *)group);
+		if (ops && ops->remove)
+			ops->remove(gaimbuddylist, (GaimBlistNode *)group);
 
 		if (gnode == gaimbuddylist->root)
 			gaimbuddylist->root = gnode->next;
