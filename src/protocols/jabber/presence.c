@@ -374,17 +374,20 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				if((z = xmlnode_get_child(y, "status"))) {
 					const char *code = xmlnode_get_attrib(z, "code");
 					if(code && !strcmp(code, "201")) {
-						chat = jabber_chat_find(js, jid->node, jid->domain);
-						chat->config_dialog_type = GAIM_REQUEST_ACTION;
-						chat->config_dialog_handle =
-							gaim_request_action(js->gc, _("Create New Room"),
-								_("Create New Room"),
-								_("You are creating a new room.  Would you like to "
-									"configure it, or accept the default settings?"),
-								1, chat, 2, _("_Configure Room"),
-								G_CALLBACK(jabber_chat_request_room_configure),
-								_("_Accept Defaults"),
-								G_CALLBACK(jabber_chat_create_instant_room));
+						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							chat->config_dialog_type = GAIM_REQUEST_ACTION;
+							chat->config_dialog_handle =
+								gaim_request_action(js->gc,
+										_("Create New Room"),
+										_("Create New Room"),
+										_("You are creating a new room.  Would"
+											" you like to configure it, or"
+											" accept the default settings?"),
+										1, chat, 2, _("_Configure Room"),
+										G_CALLBACK(jabber_chat_request_room_configure),
+										_("_Accept Defaults"),
+										G_CALLBACK(jabber_chat_create_instant_room));
+						}
 					}
 				}
 				if((z = xmlnode_get_child(y, "item"))) {
