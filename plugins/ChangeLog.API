@@ -277,6 +277,8 @@ version 2.0.0:
 	* GaimRequestUiOps: Added request_folder
 	* gaim_request_folder()
 	* gaim_gtk_setup_screenname_autocomplete()
+	* gaim_gtk_set_cursor()
+	* gaim_gtk_clear_cursor()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

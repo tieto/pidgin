@@ -438,4 +438,28 @@ GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitve, d
 void gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
                                  gpointer gobject);
 
+/**
+ * Sets the mouse pointer for a GtkWidget.
+ *
+ * After setting the cursor, the display is flushed, so the change will
+ * take effect immediately.
+ *
+ * If @a widget is @c NULL, this function simply returns.
+ *
+ * @param widget      The widget for which to set the mouse pointer
+ * @param cursor_type The type of cursor to set
+ */
+void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
+
+/**
+ * Sets the mouse point for a GtkWidget back to that of its parent window.
+ *
+ * If @a widget is @c NULL, this function simply returns.
+ *
+ * @param widget The widget for which to clear the cursor
+ *
+ * @note The display is not flushed from this function.
+ */
+void gaim_gtk_clear_cursor(GtkWidget *widget);
+
 #endif /* _GAIM_GTKUTILS_H_ */

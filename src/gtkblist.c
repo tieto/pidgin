@@ -387,10 +387,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 	GaimAccount *account;
 	char *name = NULL;
 
-	gdk_window_set_cursor(gtkblist->window->window, cursor);
-	gdk_cursor_unref(cursor);
-	while (gtk_events_pending())
-		gtk_main_iteration();
+	gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *b = (GaimBuddy*) node;
@@ -408,10 +405,10 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 		}
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_gtk_log_show_contact((GaimContact *)node);
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+		gaim_gtk_clear_cursor(gtkblist->window);
 		return;
 	} else {
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+		gaim_gtk_clear_cursor(gtkblist->window);
 
 		/* This callback should not have been registered for a node
 		 * that doesn't match the type of one of the blocks above. */
@@ -422,7 +419,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 		gaim_gtk_log_show(type, name, account);
 		g_free(name);
 
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+		gaim_gtk_clear_cursor(gtkblist->window);
 	}
 }
 
@@ -1330,75 +1327,43 @@ gaim_gtk_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 
 static void gaim_gtk_blist_buddy_details_cb(gpointer data, guint action, GtkWidget *item)
 {
-	if (gtkblist->window->window)
-	{
-		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		while (gtk_events_pending())
-			gtk_main_iteration();
-		gdk_cursor_unref(cursor);
-	}
+	gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_buddy_icons",
 			    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
 
-	if (gtkblist->window->window)
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+	gaim_gtk_clear_cursor(gtkblist->window);
 }
 
 static void gaim_gtk_blist_show_idle_time_cb(gpointer data, guint action, GtkWidget *item)
 {
-	if (gtkblist->window->window)
-	{
-		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		while (gtk_events_pending())
-			gtk_main_iteration();
-		gdk_cursor_unref(cursor);
-	}
+	gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
 			    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
 
-	if (gtkblist->window->window)
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+	gaim_gtk_clear_cursor(gtkblist->window);
 }
 
 static void gaim_gtk_blist_show_empty_groups_cb(gpointer data, guint action, GtkWidget *item)
 {
-	if (gtkblist->window->window)
-	{
-		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		while (gtk_events_pending())
-			gtk_main_iteration();
-		gdk_cursor_unref(cursor);
-	}
+	gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_empty_groups",
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
 
-	if (gtkblist->window->window)
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+	gaim_gtk_clear_cursor(gtkblist->window);
 }
 
 static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_action,
 		GtkWidget *checkitem)
 {
-	if (gtkblist->window->window)
-	{
-		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		while (gtk_events_pending())
-			gtk_main_iteration();
-		gdk_cursor_unref(cursor);
-	}
+	gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_offline_buddies",
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(checkitem)));
 
-	if (gtkblist->window->window)
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+	gaim_gtk_clear_cursor(gtkblist->window);
 }
 
 static void gaim_gtk_blist_mute_sounds_cb(gpointer data, guint action, GtkWidget *item)
@@ -5766,21 +5731,12 @@ sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 {
 	if (gtk_check_menu_item_get_active(checkmenuitem))
 	{
-		if (gtkblist->window->window != NULL)
-		{
-			GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
-			gdk_window_set_cursor(gtkblist->window->window, cursor);
-			gdk_cursor_unref(cursor);
-		}
-
-		while (gtk_events_pending())
-			gtk_main_iteration();
+		gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 		gaim_gtk_blist_sort_method_set(id);
 		gaim_prefs_set_string("/gaim/gtk/blist/sort_type", id);
 
-		if (gtkblist->window->window != NULL)
-			gdk_window_set_cursor(gtkblist->window->window, NULL);
+		gaim_gtk_clear_cursor(gtkblist->window);
 	}
 }
 

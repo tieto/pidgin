@@ -81,16 +81,12 @@ typedef struct
 static void
 generic_response_start(GaimGtkRequestData *data)
 {
-	GdkWindow *window = GTK_WIDGET(data->dialog)->window;
 	GdkCursor *cursor;
 
-	/* Tell the user we're doing something. */
-	cursor = gdk_cursor_new(GDK_WATCH);
-	gdk_window_set_cursor(window, cursor);
-	gdk_cursor_unref(cursor);
-	while (gtk_events_pending())
-		gtk_main_iteration();
+	g_return_if_fail(data != NULL);
 
+	/* Tell the user we're doing something. */
+	gaim_gtk_set_cursor(GTK_WIDGET(data->dialog), GDK_WATCH);
 }
 
 static void
@@ -1396,7 +1392,7 @@ file_yes_no_cb(GaimGtkRequestData *data, gint id)
 			((GaimRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
 		gaim_request_close(data->type, data);
 	} else {
-		gdk_window_set_cursor(GTK_WIDGET(data->dialog)->window, NULL);
+		gaim_gtk_clear_cursor(GTK_WIDGET(data->dialog));
 	}
 }
 

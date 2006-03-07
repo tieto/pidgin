@@ -2180,3 +2180,29 @@ gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, 
 	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), NULL);
 }
 
+void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
+{
+	GdkCursor *cursor;
+
+	if (widget == NULL)
+		return;
+
+	cursor = gdk_cursor_new(GDK_WATCH);
+	gdk_window_set_cursor(widget->window, cursor);
+	gdk_cursor_unref(cursor);
+
+#if GTK_CHECK_VERSION(2,4,0)
+	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
+#else
+	gdk_flush();
+#endif
+}
+
+void gaim_gtk_clear_cursor(GtkWidget *widget)
+{
+	if (widget == NULL)
+		return;
+
+	gdk_window_set_cursor(widget->window, NULL);
+}
+

@@ -87,7 +87,6 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 {
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
 	GList *logs;
-	GdkCursor *cursor;
 
 	if (lv->search != NULL)
 		g_free(lv->search);
@@ -103,11 +102,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 
 	lv->search = g_strdup(search_term);
 
-	cursor = gdk_cursor_new(GDK_WATCH);
-	gdk_window_set_cursor(lv->window->window, cursor);
-	gdk_cursor_unref(cursor);
-	while (gtk_events_pending())
-		gtk_main_iteration();
+	gaim_gtk_set_cursor(lv->window, GDK_WATCH);
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
 		char *read = gaim_log_read((GaimLog*)logs->data, NULL);
@@ -123,7 +118,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 		g_free(read);
 	}
 
-	gdk_window_set_cursor(lv->window->window, NULL);
+	gaim_gtk_clear_cursor(lv->window);
 }
 
 static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
@@ -171,7 +166,6 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	GValue val;
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
 	GaimLog *log = NULL;
-	GdkCursor *cursor;
 	GaimLogReadFlags flags;
 	char *read = NULL;
 
@@ -186,15 +180,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	if (log == NULL)
 		return;
 
-	/* When we set the initial log, this gets called and the window is still NULL. */
-	if (viewer->window->window != NULL)
-	{
-		cursor = gdk_cursor_new(GDK_WATCH);
-		gdk_window_set_cursor(viewer->window->window, cursor);
-		gdk_cursor_unref(cursor);
-		while (gtk_events_pending())
-			gtk_main_iteration();
-	}
+	gaim_gtk_set_cursor(viewer->window, GDK_WATCH);
 
 	if (log->type != GAIM_LOG_SYSTEM) {
 		char *title;
@@ -232,9 +218,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 		gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
 	}
 
-	/* When we set the initial log, this gets called and the window is still NULL. */
-	if (viewer->window->window != NULL)
-		gdk_window_set_cursor(viewer->window->window, NULL);
+	gaim_gtk_clear_cursor(viewer->window);
 }
 
 /* I want to make this smarter, but haven't come up with a cool algorithm to do so, yet.

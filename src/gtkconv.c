@@ -1002,13 +1002,16 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 		return;
 
 	gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-	cursor = gdk_cursor_new(GDK_WATCH);
 
+	cursor = gdk_cursor_new(GDK_WATCH);
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
 	gdk_window_set_cursor(win->window->window, cursor);
 	gdk_cursor_unref(cursor);
-	while (gtk_events_pending())
-		gtk_main_iteration();
+#if GTK_CHECK_VERSION(2,4,0)
+	gdk_display_flush(gdk_drawable_get_display(GDK_DRAWABLE(widget->window)));
+#else
+	gdk_flush();
+#endif
 
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);

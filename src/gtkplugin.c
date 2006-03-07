@@ -255,14 +255,12 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 
 	if (!gaim_plugin_is_loaded(plug))
 	{
-		GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
-		gdk_window_set_cursor(plugin_dialog->window, wait);
-		gdk_cursor_unref(wait);
+		gaim_gtk_set_cursor(plugin_dialog, GDK_WATCH);
 
 		gaim_plugin_load(plug);
 		plugin_toggled_stage_two(plug, model, iter, FALSE);
 
-		gdk_window_set_cursor(plugin_dialog->window, NULL);
+		gaim_gtk_clear_cursor(plugin_dialog);
 	}
 	else
 	{
@@ -309,13 +307,11 @@ static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkT
 
 	if (unload)
 	{
-		GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
-		gdk_window_set_cursor(plugin_dialog->window, wait);
-		gdk_cursor_unref(wait);
+		gaim_gtk_set_cursor(plugin_dialog, GDK_WATCH);
 
 		gaim_plugin_unload(plug);
 
-		gdk_window_set_cursor(plugin_dialog->window, NULL);
+		gaim_gtk_clear_cursor(plugin_dialog);
 	}
 
 	gtk_widget_set_sensitive(pref_button,

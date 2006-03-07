@@ -737,16 +737,12 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 	if (username != NULL && *username != '\0' && account != NULL)
 	{
 		GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
 
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		gdk_cursor_unref(cursor);
-		while (gtk_events_pending())
-			gtk_main_iteration();
+		gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
 
 		gaim_gtk_log_show(GAIM_LOG_IM, username, account);
 
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+		gaim_gtk_clear_cursor(gtkblist->window);
 	}
 
 	g_free(username);
