@@ -653,6 +653,7 @@ int tcl_cmd_notify(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	}
 
 	if (objc == 4) {
+		type = 1;			/* Default to warning */
 		title = Tcl_GetString(objv[1]);
 		msg1 = Tcl_GetString(objv[2]);
 		msg2 = Tcl_GetString(objv[3]);
