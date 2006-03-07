@@ -688,8 +688,8 @@ int main(int argc, char *argv[])
 	gaim_blist_load();
 
 	/* TODO: Move prefs loading into gaim_prefs_init() */
-	/*gaim_prefs_load();*/
-	/*gaim_prefs_update_old();*/
+	gaim_prefs_load();
+	gaim_prefs_update_old();
 	gaim_gtk_prefs_update_old();
 
 	/* load plugins we had when we quit */
