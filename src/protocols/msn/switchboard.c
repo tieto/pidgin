@@ -292,8 +292,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else if (swboard->conv == NULL)
 	{
-		/* XXX - I think this should probably be GAIM_CONV_TYPE_CHAT, but I'm hedging */
-		swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY,
+		swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 															user, account);
 	}
 	else
@@ -316,9 +315,8 @@ msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 
 	account = swboard->session->account;
 
-	/* XXX - I think this should probably be GAIM_CONV_TYPE_IM, but I'm hedging */
-	return gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-											   swboard->im_user, account);
+	return (swboard->conv = gaim_conversation_new(GAIM_CONV_TYPE_IM,
+												  account, swboard->im_user));
 }
 
 static void
