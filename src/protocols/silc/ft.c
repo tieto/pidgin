@@ -245,7 +245,7 @@ void silcgaim_ftp_request(SilcClient client, SilcClientConnection conn,
 
 	xfer = silc_calloc(1, sizeof(*xfer));
 	if (!xfer) {
-		silc_client_file_close(sg->client, sg->conn, xfer->session_id);
+		silc_client_file_close(sg->client, sg->conn, session_id);
 		return;
 	}
 
