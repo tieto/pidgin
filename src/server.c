@@ -119,12 +119,14 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	GaimConversation *conv;
 	GaimAccount *account;
 	GaimPresence *presence;
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimPluginProtocolInfo *prpl_info;
 	int val = -EINVAL;
 	const gchar *auto_reply_pref;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	g_return_val_if_fail(gc != NULL, val);
+	g_return_val_if_fail(gc->prpl != NULL, val);
+
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	account  = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
