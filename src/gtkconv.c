@@ -3783,8 +3783,8 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 
 	gtkchat = gtkconv->u.chat;
 	gc      = gaim_conversation_get_gc(conv);
-	g_return_if_fail(gc != NULL);
-	g_return_if_fail(gc->prpl != NULL);
+	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(gc->prpl != NULL, NULL);
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	/* Setup the outer pane. */
