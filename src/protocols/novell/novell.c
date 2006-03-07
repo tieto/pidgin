@@ -339,7 +339,7 @@ _create_contact_resp_cb(NMUser * user, NMERR_T ret_code,
 			folder_name = nm_folder_get_name(folder);
 		}
 
-		if (*folder_name == '\0')
+		if (folder_name == NULL || *folder_name == '\0')
 			folder_name = NM_ROOT_FOLDER_NAME;
 
 		/* Re-add the buddy now that we got the okay from the server */
