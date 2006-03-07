@@ -1395,13 +1395,9 @@ static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 	name = gaim_status_get_name(status);
 
 	if (msg != NULL) {
-		char *tmp = gaim_markup_strip_html(msg);
-		text = g_markup_escape_text(tmp, -1);
-		g_free(tmp);
-
+		text = g_markup_escape_text(msg, -1);
 		g_string_append_printf(str, "\n<b>%s:</b> %s: %s",
 				       _("Status"), name, text);
-
 		g_free(text);
 	} else {
 		g_string_append_printf(str, "\n<b>%s:</b> %s",
@@ -1669,14 +1665,12 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 	} else {
 		gchar *tmp, *new_msg;
 
-		tmp = gaim_markup_strip_html(msg);
-		new_msg = g_markup_escape_text(tmp, -1);
+		tmp = charset_convert(msg, "UTF-8", "CP1250");
+		new_msg = gaim_markup_strip_html(tmp);
 		g_free(tmp);
 
-		tmp = charset_convert(new_msg, "UTF-8", "CP1250");
-		gg_change_status_descr(info->session, new_status_descr, tmp);
+		gg_change_status_descr(info->session, new_status_descr, new_msg);
 		g_free(new_msg);
-		g_free(tmp);
 	}
 }
 /* }}} */
