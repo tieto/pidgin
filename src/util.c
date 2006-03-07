@@ -1828,8 +1828,6 @@ gaim_markup_linkify(const char *text)
 					c = t;
 					break;
 				}
-				if (!t)
-					break;
 				t++;
 
 			}
