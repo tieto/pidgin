@@ -26,6 +26,7 @@
 #include "gtkgaim.h"
 #include "gtkplugin.h"
 #include "gtkpluginpref.h"
+#include "gtkutils.h"
 #include "debug.h"
 #include "prefs.h"
 #include "request.h"
