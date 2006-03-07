@@ -7790,8 +7790,10 @@ static void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 		{
 			if (message != NULL)
 			{
+				char *tmp = g_markup_escape_text(message, -1);
 				/* Available status messages are plain text */
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), message);
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), tmp);
+				g_free(tmp);
 			}
 		}
 		else
