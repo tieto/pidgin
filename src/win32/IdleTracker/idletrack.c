@@ -17,7 +17,7 @@
  *  the code silently falls back onto the old hooking scheme.
  */
 #define _WIN32_WINNT 0x0500
-#include <windows.h>
+#include "idletrack.h"
 
 #define EXPORT __declspec(dllexport)
 
@@ -47,7 +47,7 @@ static DWORD* setup_shared_mem() {
 								   sizeof(DWORD),       /* size: low 32-bits      */
 								   "timermem");         /* name of map object     */
 
-	if (hMapObject == NULL)
+	if(hMapObject == NULL)
 		return NULL;
 
 	/* The first process to attach initializes memory. */
@@ -60,7 +60,7 @@ static DWORD* setup_shared_mem() {
 									  0,              /* low offset:   beginning  */
 									  0);             /* default: map entire file */
 
-	if (lastTime == NULL)
+	if(lastTime == NULL)
 		return NULL;
 
 	*lastTime = GetTickCount();
@@ -69,90 +69,90 @@ static DWORD* setup_shared_mem() {
 }
 
 
-LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
-	if (!(code < 0)) {
-                if (lastTime == NULL)
-                        lastTime = setup_shared_mem();
+static LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
+	if(!(code < 0)) {
+		if(lastTime == NULL)
+			lastTime = setup_shared_mem();
 
-                if (lastTime)
-                        *lastTime = GetTickCount();
-        }
+		if(lastTime)
+			*lastTime = GetTickCount();
+	}
 	return CallNextHookEx(keyHook, code, wParam, lParam);
 }
 
 
-LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
 	/* We need to verify that the Mouse pointer has actually moved. */
-	if(!(code < 0) && 
-           !((g_point.x == ((MOUSEHOOKSTRUCT*)lParam)->pt.x) &&
-             (g_point.y == ((MOUSEHOOKSTRUCT*)lParam)->pt.y))) {
-                g_point.x = ((MOUSEHOOKSTRUCT*)lParam)->pt.x;
-                g_point.y = ((MOUSEHOOKSTRUCT*)lParam)->pt.y;
+	if(!(code < 0) &&
+			!((g_point.x == ((MOUSEHOOKSTRUCT*) lParam)->pt.x) &&
+			(g_point.y == ((MOUSEHOOKSTRUCT*) lParam)->pt.y))) {
+		g_point.x = ((MOUSEHOOKSTRUCT*) lParam)->pt.x;
+		g_point.y = ((MOUSEHOOKSTRUCT*) lParam)->pt.y;
 
-                if (lastTime == NULL)
-                        lastTime = setup_shared_mem();
+		if(lastTime == NULL)
+			lastTime = setup_shared_mem();
 
-                if (lastTime)
-                        *lastTime = GetTickCount();
+		if(lastTime)
+			*lastTime = GetTickCount();
 	}
 	return CallNextHookEx(mouseHook, code, wParam, lParam);
 }
 
 
 EXPORT DWORD wgaim_get_lastactive() {
-        DWORD result = 0;
+	DWORD result = 0;
 
-        /* If we have GetLastInputInfo then use it, otherwise use the hooks*/
-        if (g_GetLastInputInfo != NULL) {
-                LASTINPUTINFO lii;
-                memset(&lii, 0, sizeof(lii));
-                lii.cbSize = sizeof(lii);
-                if (g_GetLastInputInfo(&lii)) {
-                        result = lii.dwTime;
-                }
-        } else {
-	        if (lastTime == NULL)
-		        lastTime = setup_shared_mem();
+	/* If we have GetLastInputInfo then use it, otherwise use the hooks*/
+	if(g_GetLastInputInfo != NULL) {
+		LASTINPUTINFO lii;
+		memset(&lii, 0, sizeof(lii));
+		lii.cbSize = sizeof(lii);
+		if(g_GetLastInputInfo(&lii)) {
+			result = lii.dwTime;
+		}
+	} else {
+		if(lastTime == NULL)
+			lastTime = setup_shared_mem();
 
-	        if (lastTime)
-		        result = *lastTime;
-        }
+		if(lastTime)
+			result = *lastTime;
+	}
 
 	return result;
 }
 
 
 EXPORT BOOL wgaim_set_idlehooks() {
-        /* Is GetLastInputInfo available?*/
-        g_user32 = LoadLibrary("user32.dll");
-        if (g_user32) {
-                g_GetLastInputInfo = (GETLASTINPUTINFO)GetProcAddress(g_user32, "GetLastInputInfo");
-        }
+	/* Is GetLastInputInfo available?*/
+	g_user32 = LoadLibrary("user32.dll");
+	if(g_user32) {
+		g_GetLastInputInfo = (GETLASTINPUTINFO) GetProcAddress(g_user32, "GetLastInputInfo");
+	}
 
-        /* If we couldn't find GetLastInputInfo then fall back onto the hooking scheme*/
-        if (g_GetLastInputInfo == NULL) {
-	        /* Set up the shared memory.*/
-	        lastTime = setup_shared_mem();
-	        if (lastTime == NULL)
-		        return FALSE;
-	        *lastTime = GetTickCount();
+	/* If we couldn't find GetLastInputInfo then fall back onto the hooking scheme*/
+	if(g_GetLastInputInfo == NULL) {
+		/* Set up the shared memory.*/
+		lastTime = setup_shared_mem();
+		if(lastTime == NULL)
+			return FALSE;
+		*lastTime = GetTickCount();
 
-	        /* Set up the keyboard hook.*/
-	        keyHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, g_hInstance, 0);
-	        if (keyHook == NULL) {
-		        UnmapViewOfFile(lastTime);
-		        CloseHandle(hMapObject);
-		        return FALSE;
-	        }
+	/* Set up the keyboard hook.*/
+		keyHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, g_hInstance, 0);
+		if(keyHook == NULL) {
+			UnmapViewOfFile(lastTime);
+			CloseHandle(hMapObject);
+			return FALSE;
+		}
 
-	        /* Set up the mouse hook.*/
-	        mouseHook = SetWindowsHookEx(WH_MOUSE, MouseProc, g_hInstance, 0);
-	        if (mouseHook == NULL) {
-		        UnhookWindowsHookEx(keyHook);
-		        UnmapViewOfFile(lastTime);
-		        CloseHandle(hMapObject);
-		        return FALSE;
-	        }
+		/* Set up the mouse hook.*/
+		mouseHook = SetWindowsHookEx(WH_MOUSE, MouseProc, g_hInstance, 0);
+		if(mouseHook == NULL) {
+			UnhookWindowsHookEx(keyHook);
+			UnmapViewOfFile(lastTime);
+			CloseHandle(hMapObject);
+			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -160,15 +160,15 @@ EXPORT BOOL wgaim_set_idlehooks() {
 
 
 EXPORT void wgaim_remove_idlehooks() {
-        if (g_user32 != NULL)
-                FreeLibrary(g_user32);
-	if (keyHook)
+	if(g_user32 != NULL)
+		FreeLibrary(g_user32);
+	if(keyHook)
 		UnhookWindowsHookEx(keyHook);
-	if (mouseHook)
+	if(mouseHook)
 		UnhookWindowsHookEx(mouseHook);
-	if (lastTime)
+	if(lastTime)
 		UnmapViewOfFile(lastTime);
-	if (hMapObject)
+	if(hMapObject)
 		CloseHandle(hMapObject);
 }
 
