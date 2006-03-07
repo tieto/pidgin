@@ -382,7 +382,6 @@ static void gtk_blist_menu_bp_cb(GtkWidget *w, GaimBuddy *b)
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 {
-	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
 	GaimLogType type;
 	GaimAccount *account;
 	char *name = NULL;
