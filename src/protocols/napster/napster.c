@@ -603,7 +603,7 @@ static GList *nap_chat_info(GaimConnection *gc)
 	return m;
 }
 
-GHashTable *nap_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+static GHashTable *nap_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 
