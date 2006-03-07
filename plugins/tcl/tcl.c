@@ -297,8 +297,8 @@ static gboolean tcl_unload_plugin(GaimPlugin *plugin)
 
 	data = plugin->extra;
 
-	g_hash_table_remove(tcl_plugins, (gpointer)(data->interp));
 	if (data != NULL) {
+		g_hash_table_remove(tcl_plugins, (gpointer)(data->interp));
 		gaim_signals_disconnect_by_handle(data->interp);
 		tcl_signal_cleanup(data->interp);
 		Tcl_Release((ClientData)data->interp);
