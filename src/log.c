@@ -1402,6 +1402,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 				g_unlink(index_tmp);
 				g_free(index_tmp);
 			}
+			g_free(pathstr);
 		}
 	}
 
