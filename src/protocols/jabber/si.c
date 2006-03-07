@@ -238,6 +238,7 @@ jabber_si_xfer_bytestreams_send_read_again_resp_cb(gpointer data, gint source,
 		jsx->rxqueue = NULL;
 		close(source);
 		gaim_xfer_cancel_remote(xfer);
+		return;
 	}
 	jsx->rxlen += len;
 
