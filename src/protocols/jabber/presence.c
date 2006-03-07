@@ -609,12 +609,12 @@ void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, co
 {
 	const char *status_id = NULL;
 
-	*state = JABBER_BUDDY_STATE_UNKNOWN;
-	*msg = NULL;
-	*priority = 0;
+	if(state) *state = JABBER_BUDDY_STATE_UNKNOWN;
+	if(msg) *msg = NULL;
+	if(priority) *priority = 0;
 
 	if(!status) {
-		*state = JABBER_BUDDY_STATE_UNAVAILABLE;
+		if(state) *state = JABBER_BUDDY_STATE_UNAVAILABLE;
 	} else {
 		if(state) {
 			status_id = gaim_status_get_id(status);
@@ -631,5 +631,4 @@ void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, co
 		if(priority)
 			*priority = gaim_status_get_attr_int(status, "priority");
 	}
-
 }

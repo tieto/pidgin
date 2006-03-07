@@ -723,7 +723,7 @@ insert_key (GaimDesktopItem *item,
 			char *p;
 			/* Whack C locale */
 			p = strchr (k, '[');
-			*p = '\0';
+			if(p) *p = '\0';
 			g_free (locale);
 		} else if (locale != NULL) {
 			char *p, *brace;
