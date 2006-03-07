@@ -245,10 +245,14 @@ void serv_move_buddy(GaimBuddy *b, GaimGroup *og, GaimGroup *ng)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
+	g_return_if_fail(b != NULL);
+	g_return_if_fail(og != NULL);
+	g_return_if_fail(ng != NULL);
+
 	if (b->account->gc != NULL && b->account->gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
 
-	if (b && b->account->gc && og && ng) {
+	if (b->account->gc && og && ng) {
 		if (prpl_info && prpl_info->group_buddy) {
 			prpl_info->group_buddy(b->account->gc, b->name, og->name, ng->name);
 		}
