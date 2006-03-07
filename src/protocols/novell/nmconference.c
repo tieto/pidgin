@@ -72,10 +72,12 @@ nm_release_conference(NMConference * conference)
 {
 	GSList *node;
 
+	g_return_if_fail(conference != NULL);
+
 	gaim_debug(GAIM_DEBUG_INFO, "novell",
 			   "In release conference %p, refs=%d\n",
 			   conference, conference->ref_count);
-	if (conference != NULL && (--conference->ref_count == 0)) {
+	if (--conference->ref_count == 0) {
 
 		gaim_debug(GAIM_DEBUG_INFO, "novell",
 				   "Releasing conference %p, total=%d\n",
