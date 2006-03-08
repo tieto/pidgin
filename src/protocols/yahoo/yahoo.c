@@ -676,7 +676,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
 
-	char imv[16];
+	const char *imv = NULL;
 
 	if (pkt->status <= 1 || pkt->status == 5) {
 		while (l != NULL) {
@@ -703,7 +703,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			/* IMV key */
 			if (pair->key == 63)
 			{
-				strcpy(imv, pair->value);
+				imv = pair->value;
 			}
 			l = l->next;
 		}
@@ -712,8 +712,9 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
 
+	/** TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
-	if(!strcmp(imv, "doodle;11"))
+	if(im != NULL && imv != NULL && !strcmp(imv, "doodle;11"))
 	{
 		GaimWhiteboard *wb;
 
