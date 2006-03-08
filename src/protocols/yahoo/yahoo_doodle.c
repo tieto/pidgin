@@ -380,6 +380,8 @@ void yahoo_doodle_command_got_shutdown(GaimConnection *gc, const char *from)
 	GaimAccount *account;
 	GaimWhiteboard *wb;
 
+	g_return_if_fail(from != NULL);
+
 	gaim_debug_info("yahoo", "doodle: Got Shutdown (%s)\n", from);
 
 	account = gaim_connection_get_account(gc);
