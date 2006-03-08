@@ -756,7 +756,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 		{
 			if (rest != NULL && *c != '\0')
 				*rest = c;
-				return 0;
+			return 0;
 		}
 		t->tm_year -= 1900;
 	}
