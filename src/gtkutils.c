@@ -2184,7 +2184,8 @@ void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {
 	GdkCursor *cursor;
 
-	if (widget == NULL)
+	g_return_if_fail(widget != NULL);
+	if (widget->window == NULL)
 		return;
 
 	cursor = gdk_cursor_new(GDK_WATCH);
@@ -2200,7 +2201,8 @@ void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 
 void gaim_gtk_clear_cursor(GtkWidget *widget)
 {
-	if (widget == NULL)
+	g_return_if_fail(widget != NULL);
+	if (widget->window == NULL)
 		return;
 
 	gdk_window_set_cursor(widget->window, NULL);

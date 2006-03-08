@@ -444,7 +444,7 @@ void gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
  * After setting the cursor, the display is flushed, so the change will
  * take effect immediately.
  *
- * If @a widget is @c NULL, this function simply returns.
+ * If the window for @a widget is @c NULL, this function simply returns.
  *
  * @param widget      The widget for which to set the mouse pointer
  * @param cursor_type The type of cursor to set
@@ -456,7 +456,7 @@ void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
  *
  * If @a widget is @c NULL, this function simply returns.
  *
- * @param widget The widget for which to clear the cursor
+ * If the window for @a widget is @c NULL, this function simply returns.
  *
  * @note The display is not flushed from this function.
  */
