@@ -1371,6 +1371,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 						list = g_list_prepend(list, log);
 					}
 				}
+				fclose(index);
 
 				return list;
 			}
