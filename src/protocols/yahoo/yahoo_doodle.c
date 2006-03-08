@@ -254,6 +254,8 @@ void yahoo_doodle_command_got_draw(GaimConnection *gc, const char *from, const c
 	int i;
 	GList *d_list = NULL; /* a local list of drawing info */
 
+	g_return_if_fail(message != NULL);
+
 	gaim_debug_info("yahoo", "doodle: Got Draw (%s)\n", from);
 	gaim_debug_info("yahoo", "doodle: Draw message: %s\n", message);
 
