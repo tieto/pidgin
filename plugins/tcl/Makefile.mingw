@@ -21,8 +21,6 @@ DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
 TARGET = tcl
 
-CC = gcc.exe
-
 # Compiler Options
 
 CFLAGS =
@@ -65,8 +63,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			tcl.c \
 			tcl_cmds.c \
 			tcl_glib.c \
-			tcl_signals.c \
-			tcl_win32.c
+			tcl_signals.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
