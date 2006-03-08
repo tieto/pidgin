@@ -466,7 +466,7 @@ void yahoo_process_p2pfilexfer(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	/* If this packet is an IMVIRONMENT, handle it accordingly */
-	if(!strcmp(service, "IMVIRONMENT"))
+	if(service != NULL && imv != NULL && !strcmp(service, "IMVIRONMENT"))
 	{
 		/* Check for a Doodle packet and handle it accordingly */
 		if(!strcmp(imv, "doodle;11"))
