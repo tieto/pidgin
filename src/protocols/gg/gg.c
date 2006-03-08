@@ -800,9 +800,8 @@ static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
 	}
 	gaim_request_field_group_add_field(group, field);
 
-	/* TODO: s/screenname/alias/ */
 	msg = g_strdup_printf(_("Select a chat for buddy: %s"),
-			      gaim_buddy_get_name(buddy));
+			      gaim_buddy_get_alias(buddy));
 	gaim_request_fields(gc,
 			_("Add to chat..."),
 			_("Add to chat..."),

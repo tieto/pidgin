@@ -317,6 +317,8 @@ fi
 
 if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
 	AC_TRY_COMPILE([#include <libgadu.h>], [
 #ifdef __GG_LIBGADU_HAVE_OPENSSL
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
@@ -339,6 +341,7 @@ if test "x$gadu_libs" = "xyes"; then
 		GADU_CFLAGS=""
 		gadu_libs=no
 	])
+	CPPFLAGS="$CPPFLAGS_save"
 fi
 
 AC_SUBST(GADU_LIBS)
