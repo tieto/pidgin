@@ -1305,8 +1305,6 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	time_t log_last_modified;
 	FILE *index;
 	FILE *file;
-	GError *error;
-	char *index_template;
 	int index_fd;
 	char *index_tmp;
 	char buf[BUF_LONG];
@@ -1387,12 +1385,12 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 		return NULL;
 	}
 
-	index_template = g_strdup_printf("%s.XXXXXX", pathstr);
-	if ((index_fd = g_file_open_tmp(index_template, &index_tmp, &error)) == -1) {
+	index_tmp = g_strdup_printf("%s.XXXXXX", pathstr);
+	if ((index_fd = g_mkstemp(index_tmp)) == -1) {
 		gaim_debug_error("log", "Failed to open index temp file: %s\n",
-		                 error->message);
-		g_error_free(error);
+		                 strerror(errno));
 		g_free(pathstr);
+		g_free(index_tmp);
 		index = NULL;
 	} else {
 		if ((index = fdopen(index_fd, "wb")) == NULL)
