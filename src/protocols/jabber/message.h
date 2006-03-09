@@ -38,6 +38,7 @@ typedef struct _JabberMessage {
 	} type;
 	time_t sent;
 	gboolean delayed;
+	char *id;
 	char *from;
 	char *to;
 	char *subject;
