@@ -62,6 +62,7 @@ static struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
+	{"Thomas Butter",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
@@ -71,6 +72,7 @@ static struct developer developers[] = {
 	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
+	{"Evan Schoenberg",		N_("developer"), NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
 	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
