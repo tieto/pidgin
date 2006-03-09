@@ -81,8 +81,6 @@ typedef struct
 static void
 generic_response_start(GaimGtkRequestData *data)
 {
-	GdkCursor *cursor;
-
 	g_return_if_fail(data != NULL);
 
 	/* Tell the user we're doing something. */
