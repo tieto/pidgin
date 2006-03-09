@@ -25,6 +25,7 @@ write_status(GaimBuddy *buddy, const char *message)
 
 	if (conv == NULL)
 		return;
+	g_return_if_fail(conv->type == GAIM_CONV_TYPE_IM);
 
 	who = gaim_buddy_get_alias(buddy);
 	escaped = g_markup_escape_text(who, -1);
@@ -32,7 +33,7 @@ write_status(GaimBuddy *buddy, const char *message)
 	g_snprintf(buf, sizeof(buf), message, escaped);
 	g_free(escaped);
 
-	gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
+	gaim_conv_im_write(conv->u.im, NULL, buf, GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_ACTIVE_ONLY, time(NULL));
 }
 
 static void

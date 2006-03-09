@@ -97,18 +97,25 @@ typedef enum
  */
 typedef enum
 {
-	GAIM_MESSAGE_SEND      = 0x0001, /**< Outgoing message.        */
-	GAIM_MESSAGE_RECV      = 0x0002, /**< Incoming message.        */
-	GAIM_MESSAGE_SYSTEM    = 0x0004, /**< System message.          */
-	GAIM_MESSAGE_AUTO_RESP = 0x0008, /**< Auto response.           */
-	GAIM_MESSAGE_COLORIZE  = 0x0010, /**< Colorize nicks.          */
-	GAIM_MESSAGE_NICK      = 0x0020, /**< Contains your nick.      */
-	GAIM_MESSAGE_NO_LOG    = 0x0040, /**< Do not log.              */
-	GAIM_MESSAGE_WHISPER   = 0x0080, /**< Whispered message.       */
-	GAIM_MESSAGE_ERROR     = 0x0200, /**< Error message.           */
-	GAIM_MESSAGE_DELAYED   = 0x0400, /**< Delayed message.         */
-	GAIM_MESSAGE_RAW       = 0x0800, /**< "Raw" message - don't apply formatting */
-	GAIM_MESSAGE_IMAGES    = 0x1000  /**< Message contains images  */
+	GAIM_MESSAGE_SEND        = 0x0001, /**< Outgoing message.        */
+	GAIM_MESSAGE_RECV        = 0x0002, /**< Incoming message.        */
+	GAIM_MESSAGE_SYSTEM      = 0x0004, /**< System message.          */
+	GAIM_MESSAGE_AUTO_RESP   = 0x0008, /**< Auto response.           */
+	GAIM_MESSAGE_ACTIVE_ONLY = 0x0010,  /**< Hint to the UI that this
+	                                        message should not be
+	                                        shown in conversations
+	                                        which are only open for
+	                                        internal UI purposes
+	                                        (e.g. for contact-aware
+	                                         conversions).           */
+	GAIM_MESSAGE_NICK        = 0x0020, /**< Contains your nick.      */
+	GAIM_MESSAGE_NO_LOG      = 0x0040, /**< Do not log.              */
+	GAIM_MESSAGE_WHISPER     = 0x0080, /**< Whispered message.       */
+	GAIM_MESSAGE_ERROR       = 0x0200, /**< Error message.           */
+	GAIM_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
+	GAIM_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
+	                                        apply formatting         */
+	GAIM_MESSAGE_IMAGES      = 0x1000  /**< Message contains images  */
 
 } GaimMessageFlags;
 
@@ -123,7 +130,6 @@ typedef enum
 	GAIM_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
 	GAIM_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
 	GAIM_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
-
 
 } GaimConvChatBuddyFlags;
 

@@ -2002,8 +2002,8 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 	return TRUE;
 }
 
-static void
-gaim_gtkconv_set_active_conversation(GaimConversation *conv)
+void
+gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	GaimConversation *old_conv;
@@ -2099,18 +2099,6 @@ gaim_gtkconv_set_active_conversation(GaimConversation *conv)
 	}
 
 	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-switched", conv);
-}
-
-void
-gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
-{
-	GaimGtkConversation *gtkconv;
-
-	g_return_if_fail(conv != NULL);
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gaim_gtkconv_set_active_conversation(conv);
 
 	gray_stuff_out(gtkconv);
 	update_typing_icon(gtkconv);
@@ -2516,7 +2504,7 @@ gaim_gtkconv_present_conversation(GaimConversation *conv)
 		gaim_gtkconv_placement_place(gtkconv);
 	}
 
-	gaim_gtkconv_set_active_conversation(conv);
+	gaim_gtkconv_switch_active_conversation(conv);
 	gaim_gtk_conv_window_switch_gtkconv(gtkconv->win, gtkconv);
 	gaim_gtk_conv_window_raise(gtkconv->win);
 	gtk_window_present(GTK_WINDOW(gtkconv->win->window));
@@ -4466,6 +4454,7 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	g_free(gtkconv);
 }
 
+
 static void
 gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 					  const char *message, GaimMessageFlags flags,
@@ -4474,21 +4463,17 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gaim_gtkconv_set_active_conversation(conv);
 
-	gaim_conversation_write(conv, who, message, flags, mtime);
-}
-
-static void
-gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
-						const char *message, GaimMessageFlags flags, time_t mtime)
-{
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gaim_gtkconv_set_active_conversation(conv);
-
-	flags |= GAIM_MESSAGE_COLORIZE;
+	if (conv != gtkconv->active_conv &&
+	    flags & GAIM_MESSAGE_ACTIVE_ONLY)
+	{
+		/* Plugins that want these messages suppressed should be
+		 * calling gaim_conv_im_write(), so they get suppressed here,
+		 * before being written to the log. */
+		gaim_debug_info("gtkconv",
+		                "Suppressing message for an inactive conversation in gaim_gtkconv_write_im()\n");
+		return;
+	}
 
 	gaim_conversation_write(conv, who, message, flags, mtime);
 }
@@ -4584,8 +4569,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimPluginProtocolInfo *prpl_info;
 	int gtk_font_options = 0;
 	int gtk_font_options_all = 0;
-	int max_scrollback_lines = gaim_prefs_get_int(
-		"/gaim/gtk/conversations/scrollback_lines");
+	int max_scrollback_lines;
 	int line_count;
 	char buf2[BUF_LONG];
 	char *mdate;
@@ -4597,19 +4581,32 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimConversationType type;
 	char *displaying;
 	gboolean plugin_return;
-	struct tm tm = *(localtime(&mtime));
+	struct tm tm;
 
+	g_return_if_fail(conv != NULL);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	g_return_if_fail(gtkconv != NULL);
 
-	if(gaim_prefs_get_bool("/gaim/gtk/conversations/use_smooth_scrolling"))
-		gtk_font_options_all |= GTK_IMHTML_USE_SMOOTHSCROLLING;
+	if (conv != gtkconv->active_conv)
+	{
+		if (flags & GAIM_MESSAGE_ACTIVE_ONLY)
+		{
+			/* Unless this had GAIM_MESSAGE_NO_LOG, this message
+			 * was logged.  Plugin writers: if this isn't what
+			 * you wanted, call gaim_conv_im_write() instead of
+			 * gaim_conversation_write(). */
+			gaim_debug_info("gtkconv",
+			                "Suppressing message for an inactive conversation in gaim_gtkconv_write_conv()\n");
+			return;
+		}
 
-	/* Set the active conversation to the one that just messaged us. */
-	/* TODO: consider not doing this if the account is offline or something */
-	if (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV))
-		gaim_gtkconv_set_active_conversation(conv);
+		/* Set the active conversation to the one that just messaged us. */
+		/* TODO: consider not doing this if the account is offline or something */
+		if (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV))
+			gaim_gtkconv_switch_active_conversation(conv);
+	}
+
 	type = gaim_conversation_get_type(conv);
-
 	account = gaim_conversation_get_account(conv);
 	g_return_if_fail(account != NULL);
 	gc = gaim_account_get_connection(account);
@@ -4635,6 +4632,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
 				gtkconv->imhtml)));
 
+	max_scrollback_lines = gaim_prefs_get_int(
+		"/gaim/gtk/conversations/scrollback_lines");
 	/* If we're sitting at more than 100 lines more than the
 	   max scrollback, trim down to max scrollback */
 	if (max_scrollback_lines > 0
@@ -4661,9 +4660,13 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		g_free(tmp);
 	}
 
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_smooth_scrolling"))
+		gtk_font_options_all |= GTK_IMHTML_USE_SMOOTHSCROLLING;
+
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
 
+	tm = *(localtime(&mtime));
 	mdate = gaim_signal_emit_return_1(gaim_gtk_conversations_get_handle(),
 	                                  "conversation-timestamp",
 	                                  conv, &tm);
@@ -4675,8 +4678,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 			mdate = g_strdup(gaim_time_format(&tm));
 	}
 
-	sml_attrib = g_strdup_printf("sml=\"%s\"",
-								 gaim_account_get_protocol_name(account));
+	sml_attrib = g_strdup_printf("sml=\"%s\"", gaim_account_get_protocol_name(account));
 
 	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
 
@@ -4783,7 +4785,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, HIGHLIGHT_COLOR);
 				else if (flags & GAIM_MESSAGE_RECV) {
-					if (flags & GAIM_MESSAGE_COLORIZE) {
+					if (type == GAIM_CONV_TYPE_CHAT) {
 						GdkColor *col = get_nick_color(gtkconv, name);
 
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
@@ -5698,19 +5700,19 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 static GaimConversationUiOps conversation_ui_ops =
 {
 	gaim_gtkconv_new,
-	gaim_gtkconv_destroy,            /* destroy_conversation */
-	gaim_gtkconv_write_chat,         /* write_chat           */
-	gaim_gtkconv_write_im,           /* write_im             */
-	gaim_gtkconv_write_conv,         /* write_conv           */
-	gaim_gtkconv_chat_add_users,     /* chat_add_users       */
-	gaim_gtkconv_chat_rename_user,   /* chat_rename_user     */
-	gaim_gtkconv_chat_remove_users,  /* chat_remove_users    */
-	gaim_gtkconv_chat_update_user,   /* chat_update_user     */
-	gaim_gtkconv_present_conversation, /* present            */
-	gaim_gtkconv_has_focus,          /* has_focus            */
-	gaim_gtkconv_custom_smiley_add,  /* custom_smiley_add    */
-	gaim_gtkconv_custom_smiley_write, /* custom_smiley_write */
-	gaim_gtkconv_custom_smiley_close  /* custom_smiley_close */
+	gaim_gtkconv_destroy,              /* destroy_conversation */
+	NULL,                              /* write_chat           */
+	gaim_gtkconv_write_im,             /* write_im             */
+	gaim_gtkconv_write_conv,           /* write_conv           */
+	gaim_gtkconv_chat_add_users,       /* chat_add_users       */
+	gaim_gtkconv_chat_rename_user,     /* chat_rename_user     */
+	gaim_gtkconv_chat_remove_users,    /* chat_remove_users    */
+	gaim_gtkconv_chat_update_user,     /* chat_update_user     */
+	gaim_gtkconv_present_conversation, /* present              */
+	gaim_gtkconv_has_focus,            /* has_focus            */
+	gaim_gtkconv_custom_smiley_add,    /* custom_smiley_add    */
+	gaim_gtkconv_custom_smiley_write,  /* custom_smiley_write  */
+	gaim_gtkconv_custom_smiley_close   /* custom_smiley_close  */
 };
 
 GaimConversationUiOps *
