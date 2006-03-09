@@ -1882,10 +1882,9 @@ msn_got_photo(void *data, const char *url_text, size_t len)
 		g_free(tooltip_text);
 		g_free(info_data->name);
 		g_free(info_data);
-#if PHOTO_SUPPORT
 		g_free(photo_url_text);
 		g_free(info2_data);
-#endif		
+
 		return;
 	}
 
