@@ -1452,6 +1452,15 @@ msn_got_info(void *data, const char *url_text, size_t len)
 
 	gaim_debug_info("msn", "In msn_got_info\n");
 
+	/* Make sure the connection is still valid */
+	if (g_list_find(gaim_connections_get_all(), info_data->gc) == NULL)
+	{
+		gaim_debug_warning("msn", "invalid connection. ignoring buddy info.\n");
+		g_free(info_data->name);
+		g_free(info_data);
+		return;
+	}
+
 	tooltip_text = msn_tooltip_info_text(info_data);
 	title = _("MSN Profile");
 
@@ -1861,6 +1870,24 @@ msn_got_photo(void *data, const char *url_text, size_t len)
 	GString *s = info2_data->s;
 	char *photo_url_text = info2_data->photo_url_text;
 	char *tooltip_text = info2_data->tooltip_text;
+
+	/* Make sure the connection is still valid if we got here by fetching a photo url */
+	if (url_text &&
+		g_list_find(gaim_connections_get_all(), info_data->gc) == NULL)
+	{
+		gaim_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
+		g_free(stripped);
+		g_free(url_buffer);
+		g_string_free(s, TRUE);
+		g_free(tooltip_text);
+		g_free(info_data->name);
+		g_free(info_data);
+#if PHOTO_SUPPORT
+		g_free(photo_url_text);
+		g_free(info2_data);
+#endif		
+		return;
+	}
 
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (data && url_text && len != 0)
