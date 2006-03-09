@@ -3375,11 +3375,15 @@ static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
 static gboolean
 _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
 {
-	gboolean result;
 	gchar *enteredstring;
 	gchar *withmarkup;
 	gchar *nomarkup;
 	gchar *normalized;
+	gboolean result;
+	size_t i;
+	size_t len;
+	PangoLogAttr *log_attrs;
+	gchar *word;
 
 	gtk_tree_model_get(model, iter, column, &withmarkup, -1);
 
@@ -3387,7 +3391,56 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	nomarkup = gaim_markup_strip_html(withmarkup);
 	normalized = g_utf8_casefold(gaim_normalize(NULL, nomarkup), -1);
 
-	result = (g_strstr_len(normalized, strlen(normalized), enteredstring) == NULL);
+	if (gaim_str_has_prefix(normalized, enteredstring))
+	{
+		g_free(withmarkup);
+		g_free(enteredstring);
+		g_free(nomarkup);
+		g_free(normalized);
+		return FALSE;
+	}
+
+
+	/* Use Pango to separate by words. */
+	len = g_utf8_strlen(normalized, -1);
+	log_attrs = g_new(PangoLogAttr, len + 1);
+
+	pango_get_log_attrs(normalized, len, -1, NULL, log_attrs, len + 1);
+
+	word = normalized;
+	result = TRUE;
+	for (i = 0; i < (len - 1) ; i++)
+	{
+		if (log_attrs[i].is_word_start &&
+		    gaim_str_has_prefix(word, enteredstring))
+		{
+			result = FALSE;
+			break;
+		}
+		word = g_utf8_next_char(word);
+	}
+	g_free(log_attrs);
+
+/* The non-Pango version. */
+#if 0
+	word = normalized;
+	result = TRUE;
+	while (word[0] != '\0')
+	{
+		gunichar c = g_utf8_get_char(word);
+		if (!g_unichar_isalnum(c))
+		{
+			word = g_utf8_find_next_char(word, NULL);
+			if (gaim_str_has_prefix(word, enteredstring))
+			{
+				result = FALSE;
+				break;
+			}
+		}
+		else
+			word = g_utf8_find_next_char(word, NULL);
+	}
+#endif
 
 	g_free(withmarkup);
 	g_free(enteredstring);
