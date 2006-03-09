@@ -1406,7 +1406,6 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			g_free(pathstr);
 		}
 	}
-	g_free(index_template);
 
 	while (fgets(buf, BUF_LONG, file)) {
 		if ((newlog = strstr(buf, "---- New C"))) {
