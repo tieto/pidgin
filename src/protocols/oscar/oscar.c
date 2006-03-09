@@ -6816,9 +6816,15 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 				char *tmp = g_utf8_find_prev_char(status_text, &status_text[58]);
 				strcpy(tmp, "...");
 			}
-			aim_srv_setstatusmsg(od->sess, status_text);
-			g_free(status_text);
 		}
+		else
+		{
+			/* User did not specify an available message */
+			status_text = NULL;
+		}
+
+		aim_srv_setstatusmsg(od->sess, status_text);
+		g_free(status_text);
 
 		/* This is needed for us to un-set any previous away message. */
 		away = g_strdup("");
