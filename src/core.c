@@ -109,7 +109,10 @@ gaim_core_init(const char *ui)
 	gaim_plugins_init();
 	gaim_plugins_probe(G_MODULE_SUFFIX);
 
+	/* Accounts use status and buddy icons, so initialize these before accounts */
 	gaim_status_init();
+	gaim_buddy_icons_init();
+
 	gaim_accounts_init();
 	gaim_savedstatuses_init();
 	gaim_ciphers_init();
@@ -118,7 +121,6 @@ gaim_core_init(const char *ui)
 	gaim_conversations_init();
 	gaim_blist_init();
 	gaim_log_init();
-	gaim_buddy_icons_init();
 	gaim_network_init();
 	gaim_privacy_init();
 	gaim_pounces_init();
