@@ -301,9 +301,9 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, GaimGtkW
 {
 	GaimWhiteboard *wb;
 
-	g_return_if_fail(gtkwb != NULL);
+	g_return_val_if_fail(gtkwb != NULL, FALSE);
 	wb = gtkwb->wb;
-	g_return_if_fail(wb != NULL);
+	g_return_val_if_fail(wb != NULL, FALSE);
 
 	gaim_whiteboard_destroy(wb);
 
