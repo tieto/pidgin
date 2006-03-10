@@ -642,7 +642,7 @@ static char *zephyr_to_html(char *message)
 			zframe *popped;
 			gboolean last_had_closer;
 
-			if (frames->enclosing) {
+			if (frames && frames->enclosing) {
 				do {
 					popped = frames;
 					frames = frames->enclosing;
