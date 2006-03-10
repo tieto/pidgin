@@ -1032,12 +1032,13 @@ static void jabber_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 		const char **nw, const char **ne)
 {
 	JabberStream *js;
-	JabberBuddy *jb;
+	JabberBuddy *jb = NULL;
 
 	if(!b->account->gc)
 		return;
 	js = b->account->gc->proto_data;
-	jb = jabber_buddy_find(js, b->name, FALSE);
+	if(js)
+		jb = jabber_buddy_find(js, b->name, FALSE);
 
 	if(!GAIM_BUDDY_IS_ONLINE(b)) {
 		if(jb && jb->error_msg)
