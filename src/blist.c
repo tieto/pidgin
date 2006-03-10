@@ -682,6 +682,12 @@ gaim_get_blist()
 	return gaimbuddylist;
 }
 
+GaimBlistNode *
+gaim_blist_get_root()
+{
+	return gaimbuddylist ? gaimbuddylist->root : NULL;
+}
+
 void gaim_blist_show()
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;

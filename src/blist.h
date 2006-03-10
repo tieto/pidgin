@@ -213,6 +213,13 @@ void gaim_set_blist(GaimBuddyList *blist);
 GaimBuddyList *gaim_get_blist(void);
 
 /**
+ * Returns the root node of the main buddy list.
+ *
+ * @return The root node.
+ */
+GaimBlistNode *gaim_blist_get_root(void);
+
+/**
  * Returns the next node of a given node. This function is to be used to iterate
  * over the tree returned by gaim_get_blist.
  *
