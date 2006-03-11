@@ -3752,9 +3752,11 @@ gaim_utf8_ncr_decode(const char *str)
 
 		b += 2; /* skip past the &# */
 
-		/* strtoul will handle 0x prefix as hex, but not x */
-		if(*b == 'x' || *b == 'X')
+		/* strtoul will treat 0x prefix as hex, but not just x */
+		if(*b == 'x' || *b == 'X') {
 			base = 16;
+			b++;
+		}
 
 		/* advances buf to the end of the ncr segment */
 		wc = (gunichar) strtoul(b, &buf, base);

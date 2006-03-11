@@ -120,12 +120,12 @@ plugins: \
 	 	iconaway.dll \
 		idle.dll \
 		notify.dll \
+		psychic.dll \
 		relnot.dll \
 		spellchk.dll \
 		statenotify.dll \
 		timestamp_format.dll \
-		timestamp.dll \
-		psychic.dll
+		timestamp.dll
 
 
 ##
