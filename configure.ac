@@ -671,38 +671,55 @@ if test "x$enable_dbus" = "xyes" ; then
 	fi
 fi
 
-dnl  Here we locate the directory containing DBus .service files for
-dnl  the session bus.  Adapted from the guifications project.
+dnl ###########################################################################
+dnl # Find the D-Bus services dir.
+dnl #
+dnl # This is a 3 step process that
+dnl #
+dnl # 1. checks if --with-dbus-services was set, if so use that.
+dnl # 2. checks if --prefix was given, if so use that.
+dnl # 3. fallbacks to installing into what should be the correct system
+dnl #    directories.
+dnl #
+dnl # This is still prone to error if one of the legacy directories exist
+dnl # although a newer dbus is installed.  But I have tried to order the
+dnl # directory searching to keep this situation at a minimum.
+dnl ###########################################################################
+AC_ARG_WITH(dbus-services, [  --with-dbus-services=<dir>   Where the D-Bus services directory is located.])
 
-AC_ARG_WITH(dbus-session-dir, [  --with-dbus-session-dir=<dir>   Location of the D-BUS session directory.])
-
-if test "x$enable_dbus" = "xyes" ; then
-    AC_MSG_CHECKING([location of the D-BUS session directory])
-    if ! test -z "$with_dbus_session_dir"; then
-		if ! test -d "$with_dbus_session_dir"; then
-			AC_MSG_WARN([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
-			enable_dbus=no
-		fi
-		DBUS_SESSION_DIR="$with_dbus_session_dir"
-    else
-	dnl # add more to this as needed
-	servicesprefixes="$DATADIR $LIBDIR /usr/share /usr/local/share"
-	DBUS_SESSION_DIR=""
-
-	for p in $servicesprefixes; do
-	    dir="$p/dbus-1/services"
-	    if test -d $dir; then
-		DBUS_SESSION_DIR="$dir"
-		break
-	    fi
-	done
-
-	if test -z $DBUS_SESSION_DIR; then
-	    AC_MSG_WARN([D-BUS session directory was not found!  Please use --with-dbus-session-dir and specify its location.])
-	    enable_dbus=no
+AC_MSG_CHECKING([location of the D-Bus services directory])
+if ! test -z "$with_dbus_services" ; then
+	if ! test -d "$with_dbus_services" ; then
+		AC_MSG_ERROR([$with_dbus_services does not exist, if this is the correct location please make sure that it exists.])
 	fi
-    fi
+
+	DBUS_SERVICES_DIR="$with_dbus_services"
+else
+	if test x"$prefix" = x"NONE" ; then
+		dnl # no prefix given, so we look for the correct dbus system paths.
+		dnl # if a prefix is given, we use it.
+
+		serviceprefixes="$datadir $libdir /usr/share /usr/local/share"
+		DBUS_SERVICES_DIR=""
+
+		for d in $serviceprefixes ; do
+			dir="$d/dbus-1/services"
+			if test -d $dir ; then
+				DBUS_SERVICES_DIR="$dir"
+				break
+			fi
+		done
+
+		if test -z $DBUS_SERVICES_DIR ; then
+			AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify it's location.])
+		fi
+	else
+		DBUS_SERVICES_DIR="$datadir/dbus-1/services"
+	fi
 fi
+AC_MSG_RESULT([$DBUS_SERVICES_DIR])
+AC_SUBST(DBUS_SERVICES_DIR)
+
 
 if test "x$enable_dbus" = "xyes" ; then
     AC_MSG_RESULT([$DBUS_SESSION_DIR])
@@ -714,11 +731,6 @@ else
 fi
 
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
-
-
-
-
-
 
 dnl #######################################################################
 dnl # Check for startup notification
@@ -1695,6 +1707,7 @@ AC_CONFIG_COMMANDS_POST([
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   gaim.apspec
+		   gaim.service
 		   doc/Makefile
 		   doc/gaim.1
 		   m4macros/Makefile
@@ -1759,7 +1772,7 @@ echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
 if test x$enable_dbus = xyes ; then
-echo DBUS session directory........ : $DBUS_SESSION_DIR
+echo DBUS servies directory........ : $DBUS_SERVICES_DIR
 fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Has you....................... : yes

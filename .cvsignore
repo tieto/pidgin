@@ -30,6 +30,7 @@ confdefs.h
 win32-install-dir
 .temp-gettextize
 gaim.pc
+gaim.service
 *.apspec
 intltool-extract
 intltool-extract.in

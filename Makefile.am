@@ -5,6 +5,7 @@ EXTRA_DIST = \
 		gaim.spec.in \
 		gaim.apspec.in \
 		gaim.desktop.in \
+		gaim.service.in \
 		gaim-installer.nsi \
 		HACKING \
 		intltool-extract.in \
@@ -30,6 +31,11 @@ gaiminclude_HEADERS = config.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gaim.pc
+
+if ENABLE_DBUS
+dbus_servicedir=$(DBUS_SERVICES_DIR)
+dbus_service_DATA=gaim.service
+endif
 
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)

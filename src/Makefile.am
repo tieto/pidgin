@@ -157,8 +157,6 @@ gaim_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
-
-
 if ENABLE_DBUS
 
 CLEANFILES = \
@@ -208,7 +206,6 @@ gaim-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(gaim_c
 
 $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 
-
 # gaim-client-example
 
 gaim_client_example_SOURCES = gaim-client-example.c
@@ -228,19 +225,6 @@ gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 # scripts
 
 bin_SCRIPTS = gaim-remote.py gaim-notifications-example.py gaim-send gaim-send-async
-
-
-# gaim.service
-
-gaim.service:
-	echo "[Gaim]" > $@
-	echo "Name=net.sf.gaim.GaimService" >> $@
-	echo "Exec=$(bindir)/gaim" >> $@
-
-#Ideally, this directory should be autodetected, and the user should
-#be able to specify it as an option to "configure"
-dbus_sessiondir = $(DBUS_SESSION_DIR)
-dbus_session_DATA = gaim.service
 
 endif
 
