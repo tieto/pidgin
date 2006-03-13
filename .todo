@@ -2,24 +2,6 @@
     <title>
         Gaim TODO List
     </title>
-    <note priority="low" time="1036030063" done="1092939968">
-        i18n/portability stuff
-        <comment>
-            makes more sense to put this in with specific items at this point
-        </comment>
-        <note priority="medium" time="1036028041" done="0">
-            sounds/Makefile needs to use host CC, not target (that's the only part that seems broken for cross-compiling --Disconnect)
-        </note>
-        <note priority="low" time="1035996506" done="1057532505">
-            i18n: icq i18n
-            <comment>
-                I consider this as good as it will get.  utf8 works well.
-            </comment>
-        </note>
-        <note priority="low" time="1035996519" done="0">
-            i18n: info dialog
-        </note>
-    </note>
     <note priority="high" time="1036029816">
         UI stuff
         <note priority="high" time="1053306672" done="1089237474">
@@ -118,12 +100,6 @@
     </note>
     <note priority="high" time="1036029923">
         Prefs stuff
-        <note priority="high" time="1036027042" done="1063207482">
-            check to make sure gaimrc properly unescapes things like a " in a password as the .gaimrc file is read in. (reports indicate this may be a problem, esp. for \ and / )
-            <comment>
-                i think this is fixed by the new prefs
-            </comment>
-        </note>
         <note priority="veryhigh" time="1129562765">
             make sure prefs save
         </note>
@@ -142,12 +118,6 @@
     </note>
     <note priority="high" time="1036030165">
         Core stuff
-        <note priority="medium" time="1036038372" done="1129562842">
-            remember previous state better. both away, and allow start to invisible.
-            <comment>
-                status rewrite
-            </comment>
-        </note>
         <note priority="low" time="1036038499" done="1129562864">
             encryption and hash stuff currently in gaim consolidated to an api
             <comment>
@@ -228,12 +198,6 @@
     </note>
     <note priority="medium" time="1036030336">
         In General (i don't know where this should be)
-        <note priority="veryhigh" time="1037658028" done="1092939805">
-            internal sounds not working now (is this fixed?)
-            <comment>
-                libao fixed this, there is no "internal" option
-            </comment>
-        </note>
         <note priority="medium" time="1036039588" done="1063208189">
             person support
             <comment>
@@ -303,22 +267,10 @@
     </note>
     <note priority="verylow" time="1036026433">
         DISCUSSION: entries here are things i'm not sure are desirable or doable.
-        <note priority="medium" time="1043803233" done="1089237940">
-            make blist.xml and/or .gaim as configureable as .gaimrc
-            <comment>
-                .gaim is now configurable at run time
-            </comment>
-        </note>
         <note priority="low" time="1036026529" done="1089237962">
             do we really need some of the preferences? (Ignore TIK messages. Does anyone use that method of retrieving Away messages anymore? no, but it is small and it would be a piece of history lost ;-))
             <comment>
                 prefsslash04
-            </comment>
-        </note>
-        <note priority="verylow" time="1036026575" done="1063208296">
-            timestamp on debug messages?
-            <comment>
-                done some time ago
             </comment>
         </note>
         <note priority="low" time="1036026508">

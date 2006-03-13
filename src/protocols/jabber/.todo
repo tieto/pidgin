@@ -29,12 +29,6 @@
     <note priority="medium" time="1036045649">
         Permit/Deny buddy support.
     </note>
-    <note priority="medium" time="1036046080" done="1129563019">
-        List of users on Jabber server?
-        <comment>
-            I think Nathan just committed something for this
-        </comment>
-    </note>
     <note priority="medium" time="1036046413">
         a populate roster from local blist. most useful if you want to migrate a blist from one account to another, also useful if something freaky happens and the server blist is lost.
     </note>

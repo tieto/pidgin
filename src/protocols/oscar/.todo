@@ -12,12 +12,6 @@
         </note>
         <note priority="low" time="1036040980">
             direct im
-            <note priority="medium" time="1063208078" done="1089237715">
-                im image currently broke
-                <comment>
-                    marv fixed this i think?
-                </comment>
-            </note>
             <note priority="veryhigh" time="1036040919">
                 some way to close direct connect w/out closing convo.
             </note>
@@ -42,12 +36,6 @@
         </note>
         <note priority="veryhigh" time="1036041223">
             increased authorization support
-            <note priority="low" time="1038877526" done="1048144786">
-                add option to add person who just added you to your own list
-                <comment>
-                    This was done sometime in January.
-                </comment>
-            </note>
             <note priority="medium" time="1038877503">
                 add info to dialog requesting autorization to allow you to check the info of the person who is requesting
             </note>
@@ -75,12 +63,6 @@
         </note>
         <note priority="low" time="1092939688">
             icq i18n without breaking aim
-        </note>
-        <note priority="verylow" time="1036041174" done="1129563140">
-            File Transfer (do we really want this?)
-            <comment>
-                summer of code
-            </comment>
         </note>
     </note>
     <note priority="medium" time="1036040870">
