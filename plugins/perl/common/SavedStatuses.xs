@@ -33,6 +33,9 @@ gaim_savedstatus_set_message(status, message)
 	Gaim::SavedStatus status
 	const char *message
 
+Gaim::SavedStatus
+gaim_savedstatus_get_current()
+
 MODULE = Gaim::SavedStatus  PACKAGE = Gaim::SavedStatuses  PREFIX = gaim_savedstatuses_
 PROTOTYPES: ENABLE
 
