@@ -96,9 +96,9 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 		const gchar *file;
 
 		while ((file = g_dir_read_name(dir))) {
-			if (!g_str_has_prefix(file, sn))
+			if (!gaim_str_has_prefix(file, sn))
 				continue;
-			if (g_str_has_suffix(file, ".html") || g_str_has_suffix(file, ".AdiumHTMLLog")) {
+			if (gaim_str_has_suffix(file, ".html") || gaim_str_has_suffix(file, ".AdiumHTMLLog")) {
 				struct tm tm;
 				const char *date = file;
 
@@ -163,7 +163,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 
 					list = g_list_append(list, log);
 				}
-			} else if (g_str_has_suffix(file, ".adiumLog")) {
+			} else if (gaim_str_has_suffix(file, ".adiumLog")) {
 				struct tm tm;
 				const char *date = file;
 
@@ -268,7 +268,7 @@ static char *adium_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	/* This problem only seems to show up on Windows.
 	 * The BOM is displaying as a space at the beginning of the log.
 	 */
-	if (g_str_has_prefix(read, "\xef\xbb\xbf"))
+	if (gaim_str_has_prefix(read, "\xef\xbb\xbf"))
 	{
 		/* FIXME: This feels so wrong... */
 		char *temp = g_strdup(&(read[3]));
@@ -587,7 +587,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			while ((name = g_dir_read_name(dir))) {
 				const char *c = name;
 
-				if (!g_str_has_prefix(c, username))
+				if (!gaim_str_has_prefix(c, username))
 					continue;
 
 				c += strlen(username);
@@ -641,7 +641,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			while ((name = g_dir_read_name(dir))) {
 				const char *c = name;
 
-				if (!g_str_has_prefix(c, username))
+				if (!gaim_str_has_prefix(c, username))
 					continue;
 
 				c += strlen(username);
@@ -857,9 +857,9 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 				 * ^(friendly_name|alias)([^a-zA-Z0-9].*)?$
 				 */
 				from_name_matches = from_name != NULL && (
-				                     (g_str_has_prefix(from_name, friendly_name) &&
+				                     (gaim_str_has_prefix(from_name, friendly_name) &&
 				                      !isalnum(*(from_name + friendly_name_length))) ||
-				                     (g_str_has_prefix(from_name, log->account->alias) &&
+				                     (gaim_str_has_prefix(from_name, log->account->alias) &&
 				                      !isalnum(*(from_name + alias_length))));
 
 				to_name_matches = to_name != NULL && (
@@ -895,12 +895,12 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						 * matches their alias. For this test, "match" is
 						 * defined as: ^alias([^a-zA-Z0-9].*)?$
 						 */
-						from_name_matches = (g_str_has_prefix(
+						from_name_matches = (gaim_str_has_prefix(
 								from_name, alias) &&
 								!isalnum(*(from_name +
 								alias_length)));
 
-						to_name_matches = (g_str_has_prefix(
+						to_name_matches = (gaim_str_has_prefix(
 								to_name, alias) &&
 								!isalnum(*(to_name +
 								alias_length)));
@@ -923,13 +923,13 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 							 * this test, "match" is defined as:
 							 * ^friendly_name([^a-zA-Z0-9].*)?$
 							 */
-							from_name_matches = (g_str_has_prefix(
+							from_name_matches = (gaim_str_has_prefix(
 									from_name,
 									buddy->server_alias) &&
 									!isalnum(*(from_name +
 									friendly_name_length)));
 
-							to_name_matches = (g_str_has_prefix(
+							to_name_matches = (gaim_str_has_prefix(
 									to_name, buddy->server_alias) &&
 									!isalnum(*(to_name +
 									friendly_name_length)));
@@ -1130,7 +1130,7 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 			}
 
 			*c = '\0';
-			if (g_str_has_prefix(line, "Session Close ")) {
+			if (gaim_str_has_prefix(line, "Session Close ")) {
 				if (data && !data->length)
 					data->length = last_line_offset - data->offset;
 				if (!data->length) {
@@ -1144,7 +1144,7 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 					list = g_list_delete_link(list, last);
 				}
 			} else if (line[0] && line[1] && line [3] &&
-					   g_str_has_prefix(&line[3], "sion Start ")) {
+					   gaim_str_has_prefix(&line[3], "sion Start ")) {
 
 				char *their_nickname = line;
 				char *timestamp;
@@ -1397,17 +1397,17 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						line += 2;
 				}
 
-				if (g_str_has_prefix(line, "*** ")) {
+				if (gaim_str_has_prefix(line, "*** ")) {
 					line += (sizeof("*** ") - 1);
 					g_string_append(formatted, "<b>");
 					footer = "</b>";
-					if (g_str_has_prefix(line, "NOTE: This user is offline.")) {
+					if (gaim_str_has_prefix(line, "NOTE: This user is offline.")) {
 						line = _("User is offline.");
-					} else if (g_str_has_prefix(line,
+					} else if (gaim_str_has_prefix(line,
 							"NOTE: Your status is currently set to ")) {
 
 						line += (sizeof("NOTE: ") - 1);
-					} else if (g_str_has_prefix(line, "Auto-response sent to ")) {
+					} else if (gaim_str_has_prefix(line, "Auto-response sent to ")) {
 						g_string_append(formatted, _("Auto-response sent:"));
 						while (*line && *line != ':')
 							line++;
@@ -1429,7 +1429,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						else
 							g_string_append(formatted, log->name);
 						line = " logged in.";
-					} else if (g_str_has_prefix(line,
+					} else if (gaim_str_has_prefix(line,
 						"One or more messages may have been undeliverable.")) {
 
 						g_string_append(formatted,
@@ -1439,7 +1439,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 							  "undeliverable."));
 						line = "";
 						footer = "</span></b>";
-					} else if (g_str_has_prefix(line,
+					} else if (gaim_str_has_prefix(line,
 							"You have been disconnected.")) {
 
 						g_string_append(formatted,
@@ -1448,7 +1448,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 							_("You were disconnected from the server."));
 						line = "";
 						footer = "</span></b>";
-					} else if (g_str_has_prefix(line,
+					} else if (gaim_str_has_prefix(line,
 							"You are currently disconnected.")) {
 
 						g_string_append(formatted,
@@ -1457,13 +1457,13 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						         "will not be received unless you are "
 						         "logged in.");
 						footer = "</span></b>";
-					} else if (g_str_has_prefix(line,
+					} else if (gaim_str_has_prefix(line,
 							"Your previous message has not been sent.")) {
 
 						g_string_append(formatted,
 							"<span style=\"color: #ff0000;\">");
 						
-						if (g_str_has_prefix(line,
+						if (gaim_str_has_prefix(line,
 							"Your previous message has not been sent.  "
 							"Reason: Maximum length exceeded.")) {
 
@@ -1481,7 +1481,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 						footer = "</span></b>";
 					}
-				} else if (g_str_has_prefix(line, data->their_nickname)) {
+				} else if (gaim_str_has_prefix(line, data->their_nickname)) {
 					if (buddy != NULL && buddy->alias) {
 						line += strlen(data->their_nickname) + 2;
 						g_string_append_printf(formatted,
@@ -1709,7 +1709,7 @@ init_plugin(GaimPlugin *plugin)
 			*temp = '\0';
 
 			/* Set path. */
-			if (g_str_has_suffix(value, "trillian.exe"))
+			if (gaim_str_has_suffix(value, "trillian.exe"))
 			{
 				value[strlen(value) - (sizeof("trillian.exe") - 1)] = '\0';
 				path = g_build_filename(value, "users", "default", "talk.ini", NULL);
@@ -1778,7 +1778,7 @@ init_plugin(GaimPlugin *plugin)
 					*contents = '\0';
 
 					/* XXX: This assumes the first Directory key is under [Logging]. */
-					if (g_str_has_prefix(line, "Directory=")) {
+					if (gaim_str_has_prefix(line, "Directory=")) {
 						line += (sizeof("Directory=") - 1);
 						g_strchomp(line);
 						gaim_prefs_add_string(
