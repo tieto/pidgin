@@ -694,8 +694,6 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	 * then tweak the blist.xml file by hand if need be. This would be the case if two
 	 * buddies have the same username at different domains. One set of logs would get
 	 * detected for both buddies.
-	 *
-	 * I can't think of how buddy would be NULL.
 	 */
 	if (buddy && logfile) {
 		gaim_blist_node_set_string(&buddy->node, "log_reader_msn_log_filename", logfile);
@@ -1418,7 +1416,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						g_string_append(formatted, "</b>");
 						footer = NULL;
 					} else if (strstr(line, " signed off ")) {
-						if (buddy->alias)
+						if (buddy != NULL && buddy->alias)
 							g_string_append_printf(formatted,
 								_("%s has signed off."), buddy->alias);
 						else
@@ -1426,7 +1424,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 								_("%s has signed off."), log->name);
 						line = "";
 					} else if (strstr(line, " signed on ")) {
-						if (buddy->alias)
+						if (buddy != NULL && buddy->alias)
 							g_string_append(formatted, buddy->alias);
 						else
 							g_string_append(formatted, log->name);
@@ -1484,7 +1482,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						footer = "</span></b>";
 					}
 				} else if (g_str_has_prefix(line, data->their_nickname)) {
-					if (buddy->alias) {
+					if (buddy != NULL && buddy->alias) {
 						line += strlen(data->their_nickname) + 2;
 						g_string_append_printf(formatted,
 							"<span style=\"color: #A82F2F;\">"
