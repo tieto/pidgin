@@ -844,13 +844,19 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	/* Check whether the profile is written in a supported language */
 	for (lang = 0;; lang += 1) {
 		last_updated_string = profile_langs[lang].last_updated_string;
-	if (!last_updated_string) break;
+		if (!last_updated_string)
+			break;
+
 		p = strstr(url_text, last_updated_string);
-		if (p && profile_langs[lang].det && !strstr(url_text, profile_langs[lang].det)) {
-			p = NULL;
+
+		if (p) {
+			if (profile_langs[lang].det && !strstr(url_text, profile_langs[lang].det))
+				p = NULL;
+			else
+				break;
 		}
-	if (p) break;
 	}
+
 	if (p) {
 		for (strid = 0; profile_strings[strid].lang != XX; strid += 1) {
 			if (profile_strings[strid].lang == profile_langs[lang].lang) break;
