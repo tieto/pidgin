@@ -1628,10 +1628,11 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	account = gaim_conversation_get_account(conv);
 	gc      = account->gc;
 
+	g_return_if_fail(gc != NULL);
+
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
-	if (gc != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
