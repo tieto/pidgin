@@ -1047,12 +1047,16 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 		written += fprintf(data->file, "<html><head>");
 		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
 		written += fprintf(data->file, "<title>");
-		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)",
-			log->name, date, gaim_account_get_username(log->account), prpl);
+		if (log->type == GAIM_LOG_SYSTEM)
+			written += fprintf(data->file, "System log for account %s (%s) connected at %s",
+					gaim_account_get_username(log->account), prpl, date);
+		else
+			written += fprintf(data->file, "Conversation with %s at %s on %s (%s)",
+					log->name, date, gaim_account_get_username(log->account), prpl);
+
+		written += fprintf(data->file, header);
 		written += fprintf(data->file, "</title></head><body>");
-		written += fprintf(data->file,
-			"<h3>Conversation with %s at %s on %s (%s)</h3>\n",
-			log->name, date, gaim_account_get_username(log->account), prpl);
+		written += fprintf(data->file, "<h3>%s</h3>\n", header);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
@@ -1184,9 +1188,14 @@ static gsize txt_logger_write(GaimLog *log,
 		if(!data->file)
 			return 0;
 
-		written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
-			log->name, gaim_date_format_full(localtime(&log->time)),
-			gaim_account_get_username(log->account), prpl);
+		if (log->type == GAIM_LOG_SYSTEM)
+			written += fprintf(data->file, "System log for account %s (%s) connected at %s\n",
+				gaim_account_get_username(log->account), prpl,
+				gaim_date_format_full(localtime(&log->time)));
+		else
+			written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
+				log->name, gaim_date_format_full(localtime(&log->time)),
+				gaim_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
