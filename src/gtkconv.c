@@ -1535,13 +1535,16 @@ menu_last_said_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 }
 
 static GtkWidget *
-create_chat_menu(GaimConversation *conv, const char *who,
-				 GaimPluginProtocolInfo *prpl_info, GaimConnection *gc)
+create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 {
 	static GtkWidget *menu = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConvChat *chat = GAIM_CONV_CHAT(conv);
 	gboolean is_me = FALSE;
 	GtkWidget *button;
+
+	if (gc != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	/*
 	 * If a menu already exists, destroy it before creating a new one,
@@ -1558,15 +1561,28 @@ create_chat_menu(GaimConversation *conv, const char *who,
 	if (!is_me) {
 		button = gaim_new_item_from_stock(menu, _("IM"), GAIM_STOCK_IM,
 					G_CALLBACK(menu_chat_im_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+
+		if (gc == NULL)
+			gtk_widget_set_sensitive(button, FALSE);
+
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 
-		if (prpl_info && prpl_info->send_file
-				&& (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who))) {
+
+		if (prpl_info && prpl_info->send_file)
+		{
 			button = gaim_new_item_from_stock(menu, _("Send File"),
 				GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
 				GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+
+			if (gc == NULL || prpl_info == NULL ||
+			    !(!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who)))
+			{
+				gtk_widget_set_sensitive(button, FALSE);
+			}
+
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 		}
+
 
 		if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
 			button = gaim_new_item_from_stock(menu, _("Un-Ignore"), GAIM_STOCK_IGNORE,
@@ -1574,28 +1590,44 @@ create_chat_menu(GaimConversation *conv, const char *who,
 		else
 			button = gaim_new_item_from_stock(menu, _("Ignore"), GAIM_STOCK_IGNORE,
 							G_CALLBACK(ignore_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+
+		if (gc == NULL)
+			gtk_widget_set_sensitive(button, FALSE);
+
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
 	if (prpl_info && (prpl_info->get_info || prpl_info->get_cb_info)) {
 		button = gaim_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
 						G_CALLBACK(menu_chat_info_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+
+		if (gc == NULL)
+			gtk_widget_set_sensitive(button, FALSE);
+
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
 	if (prpl_info && prpl_info->get_cb_away) {
 		button = gaim_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
 					G_CALLBACK(menu_chat_get_away_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+
+		if (gc == NULL)
+			gtk_widget_set_sensitive(button, FALSE);
+
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
 	if (!is_me && prpl_info && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-		if (gaim_find_buddy(gc->account, who))
+		if (gaim_find_buddy(conv->account, who))
 			button = gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 						G_CALLBACK(menu_chat_add_remove_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
 		else
 			button = gaim_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
 						G_CALLBACK(menu_chat_add_remove_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
+
+		if (gc == NULL)
+			gtk_widget_set_sensitive(button, FALSE);
+
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
@@ -1613,7 +1645,6 @@ static gint
 gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GaimAccount *account;
@@ -1628,18 +1659,14 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	account = gaim_conversation_get_account(conv);
 	gc      = account->gc;
 
-	g_return_val_if_fail(gc != NULL, FALSE);
-
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
-
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
 	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
 		return FALSE;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
-	menu = create_chat_menu (conv, who, prpl_info, gc);
+	menu = create_chat_menu (conv, who, gc);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 				   gaim_gtk_treeview_popup_menu_position_func, widget,
 				   0, GDK_CURRENT_TIME);
@@ -1654,7 +1681,6 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 					GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GaimAccount *account;
@@ -1677,9 +1703,6 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	if (path == NULL)
 		return FALSE;
 
-	if (gc != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
 	gtk_tree_selection_select_path(GTK_TREE_SELECTION(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list))), path);
 
@@ -1695,7 +1718,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 		if(mark != NULL)
 			gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
-		GtkWidget *menu = create_chat_menu (conv, who, prpl_info, gc);
+		GtkWidget *menu = create_chat_menu (conv, who, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 					   event->button, event->time);
 	}
@@ -4508,18 +4531,12 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 			if (!gtk_text_buffer_get_selection_bounds(
 						gtk_text_iter_get_buffer(arg2),
 						&start, &end)) {
-				GaimPluginProtocolInfo *prpl_info = NULL;
 				GtkWidget *menu = NULL;
 				GaimConnection *gc =
 					gaim_conversation_get_gc(conv);
 
 
-				if (gc != NULL)
-					prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(
-							gc->prpl);
-
-				menu = create_chat_menu(conv, buddyname,
-						prpl_info, gc);
+				menu = create_chat_menu(conv, buddyname, gc);
 				gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 						NULL, GTK_WIDGET(imhtml),
 						btn_event->button,
