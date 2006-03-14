@@ -1026,6 +1026,7 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 {
 	char *msg_fixed;
 	char *date;
+	char *header;
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
 	GaimLogCommonLoggerData *data = log->logger_data;
 	gsize written = 0;
@@ -1048,14 +1049,16 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
 		written += fprintf(data->file, "<title>");
 		if (log->type == GAIM_LOG_SYSTEM)
-			written += fprintf(data->file, "System log for account %s (%s) connected at %s",
+			header = g_strdup_printf("System log for account %s (%s) connected at %s",
 					gaim_account_get_username(log->account), prpl, date);
 		else
-			written += fprintf(data->file, "Conversation with %s at %s on %s (%s)",
+			header = g_strdup_printf("Conversation with %s at %s on %s (%s)",
 					log->name, date, gaim_account_get_username(log->account), prpl);
 
+		written += fprintf(data->file, "%s", header);
 		written += fprintf(data->file, "</title></head><body>");
 		written += fprintf(data->file, "<h3>%s</h3>\n", header);
+		g_free(header);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
