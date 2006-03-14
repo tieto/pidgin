@@ -3347,10 +3347,35 @@ void gaim_gtk_blist_setup_sort_methods()
 
 static void _prefs_change_redo_list()
 {
+	GtkTreeSelection *sel;
+	GtkTreeIter iter;
+	GaimBlistNode *node = NULL;
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
+	if (gtk_tree_selection_get_selected(sel, NULL, &iter))
+	{
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
+	}
+
 	redo_buddy_list(gaim_get_blist(), TRUE);
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
 #endif
+
+	if (node)
+	{
+		struct _gaim_gtk_blist_node *gtknode;
+		GtkTreePath *path;
+
+		gtknode = node->ui_data;
+		if (gtknode && gtknode->row)
+		{
+			path = gtk_tree_row_reference_get_path(gtknode->row);
+			gtk_tree_selection_select_path(sel, path);
+			gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(gtkblist->treeview), path, NULL, FALSE, 0, 0);
+			gtk_tree_path_free(path);
+		}
+	}
 }
 
 static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
