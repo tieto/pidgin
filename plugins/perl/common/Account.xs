@@ -181,8 +181,9 @@ PPCODE:
 	}
 
 Gaim::Log
-gaim_account_get_log(account)
+gaim_account_get_log(account, create)
 	Gaim::Account account
+	gboolean create
 
 void
 gaim_account_destroy_log(account)

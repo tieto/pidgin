@@ -1924,11 +1924,11 @@ gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
 }
 
 GaimLog *
-gaim_account_get_log(GaimAccount *account)
+gaim_account_get_log(GaimAccount *account, gboolean create)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	if(!account->system_log){
+	if(!account->system_log && create){
 		GaimPresence *presence;
 		int login_time;
 

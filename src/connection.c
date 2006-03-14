@@ -262,9 +262,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 	}
 
 	if (gc->state == GAIM_CONNECTED) {
-#if 0
-		GList *wins;
-#endif
 		GaimAccount *account;
 		GaimPresence *presence;
 
@@ -276,14 +273,18 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(account);
-			char *msg = g_strdup_printf(_("+++ %s signed on"),
-										gaim_account_get_username(account));
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-						   gaim_account_get_username(account),
-						   gaim_presence_get_login_time(presence),
-						   msg);
-			g_free(msg);
+			GaimLog *log = gaim_account_get_log(account, TRUE);
+
+			if (log != NULL)
+			{
+				char *msg = g_strdup_printf(_("+++ %s signed on"),
+											gaim_account_get_username(account));
+				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+							   gaim_account_get_username(account),
+							   gaim_presence_get_login_time(presence),
+							   msg);
+				g_free(msg);
+			}
 		}
 
 		if (ops != NULL && ops->connected != NULL)
@@ -291,19 +292,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		gaim_blist_add_account(account);
 
-		/*
-		 * XXX This is a hack! Remove this and replace it with a better event
-		 *     notification system.
-		 */
-#if 0
-		/* This looks like it was horribly broken before I got here... */
-		/* Why is it updating the first tab of each window? */
-		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
-			GaimConvWindow *win = (GaimConvWindow *)wins->data;
-			gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
-									 GAIM_CONV_ACCOUNT_ONLINE);
-		}
-#endif
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
 
 		serv_set_permit_deny(gc);
@@ -318,13 +306,17 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(account);
-			char *msg = g_strdup_printf(_("+++ %s signed off"),
-										gaim_account_get_username(account));
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-						   gaim_account_get_username(account), time(NULL),
-						   msg);
-			g_free(msg);
+			GaimLog *log = gaim_account_get_log(account, FALSE);
+
+			if (log != NULL)
+			{
+				char *msg = g_strdup_printf(_("+++ %s signed off"),
+											gaim_account_get_username(account));
+				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+							   gaim_account_get_username(account), time(NULL),
+							   msg);
+				g_free(msg);
+			}
 		}
 
 		gaim_account_destroy_log(account);

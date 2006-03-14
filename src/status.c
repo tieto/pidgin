@@ -646,10 +646,14 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 
 		if (tmp != NULL)
 		{
-			GaimLog *log = gaim_account_get_log(buddy->account);
+			GaimLog *log = gaim_account_get_log(buddy->account, FALSE);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, tmp);
+			if (log != NULL)
+			{
+				gaim_log_write(log, GAIM_MESSAGE_SYSTEM, buddy_alias,
+				               current_time, tmp);
+			}
+
 			g_free(tmp);
 		}
 	}
@@ -1318,26 +1322,34 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 	{
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(buddy->account);
-			char *tmp = g_strdup_printf(_("%s became idle"),
-			gaim_buddy_get_alias(buddy));
+			GaimLog *log = gaim_account_get_log(buddy->account, FALSE);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-			gaim_buddy_get_alias(buddy), current_time, tmp);
-			g_free(tmp);
+			if (log != NULL)
+			{
+				char *tmp = g_strdup_printf(_("%s became idle"),
+				gaim_buddy_get_alias(buddy));
+
+				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+				gaim_buddy_get_alias(buddy), current_time, tmp);
+				g_free(tmp);
+			}
 		}
 	}
 	else if (old_idle && !idle)
 	{
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(buddy->account);
-			char *tmp = g_strdup_printf(_("%s became unidle"),
-			gaim_buddy_get_alias(buddy));
+			GaimLog *log = gaim_account_get_log(buddy->account, FALSE);
 
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-			gaim_buddy_get_alias(buddy), current_time, tmp);
-			g_free(tmp);
+			if (log != NULL)
+			{
+				char *tmp = g_strdup_printf(_("%s became unidle"),
+				gaim_buddy_get_alias(buddy));
+
+				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+				gaim_buddy_get_alias(buddy), current_time, tmp);
+				g_free(tmp);
+			}
 		}
 	}
 
@@ -1390,17 +1402,21 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(account);
-			char *msg;
+			GaimLog *log = gaim_account_get_log(account, FALSE);
 
-			if (idle)
-				msg = g_strdup_printf(_("+++ %s became idle"), gaim_account_get_username(account));
-			else
-				msg = g_strdup_printf(_("+++ %s became unidle"), gaim_account_get_username(account));
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-						   gaim_account_get_username(account),
-						   idle_time, msg);
-			g_free(msg);
+			if (log != NULL)
+			{
+				char *msg;
+
+				if (idle)
+					msg = g_strdup_printf(_("+++ %s became idle"), gaim_account_get_username(account));
+				else
+					msg = g_strdup_printf(_("+++ %s became unidle"), gaim_account_get_username(account));
+				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+							   gaim_account_get_username(account),
+							   idle_time, msg);
+				g_free(msg);
+			}
 		}
 
 		gc = gaim_account_get_connection(account);

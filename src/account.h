@@ -705,13 +705,18 @@ gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
 
 /**
  * Returns the system log for an account.
- * Create it if it doesn't already exist.
  *
  * @param account The account.
+ * @param create  Should it be created if it doesn't exist?
  *
  * @return The log.
+ *
+ * @note Callers should almost always pass @c FALSE for @a create.
+ *       Passing @c TRUE could result in an existing log being reopened,
+ *       if the log has already been closed, which not all loggers deal
+ *       with appropriately.
  */
-GaimLog *gaim_account_get_log(GaimAccount *account);
+GaimLog *gaim_account_get_log(GaimAccount *account, gboolean create);
 
 /**
  * Frees the system log of an account
