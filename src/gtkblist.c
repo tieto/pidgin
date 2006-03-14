@@ -339,6 +339,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	const char *text = NULL;
+	char *esc;
 
 	if (!(get_iter_from_node(node, &iter))) {
 		/* This is either a bug, or the buddy is in a collapsed contact */
@@ -365,7 +366,9 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 		g_return_if_reached();
 	}
 
-	gtk_tree_store_set(gtkblist->treemodel, &iter, NAME_COLUMN, text, -1);
+	esc = g_markup_escape_text(text, -1);
+	gtk_tree_store_set(gtkblist->treemodel, &iter, NAME_COLUMN, esc, -1);
+	g_free(esc);
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
