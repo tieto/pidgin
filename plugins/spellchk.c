@@ -1224,6 +1224,7 @@ static void load_conf()
 			"BAD konwn\nGOOD known\n"
 			"BAD konws\nGOOD knows\n"
 			"BAD labratory\nGOOD laboratory\n"
+			"BAD labtop\nGOOD laptop\n"
 			"BAD lastyear\nGOOD last year\n"
 			"BAD laterz\nGOOD later\n"
 			"BAD learnign\nGOOD learning\n"
