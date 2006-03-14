@@ -1628,7 +1628,7 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	account = gaim_conversation_get_account(conv);
 	gc      = account->gc;
 
-	g_return_if_fail(gc != NULL);
+	g_return_val_if_fail(gc != NULL, FALSE);
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
