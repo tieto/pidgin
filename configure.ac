@@ -1772,7 +1772,7 @@ echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
 if test x$enable_dbus = xyes ; then
-echo DBUS servies directory........ : $DBUS_SERVICES_DIR
+eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
 fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Has you....................... : yes
