@@ -1054,7 +1054,6 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 			written += fprintf(data->file, "Conversation with %s at %s on %s (%s)",
 					log->name, date, gaim_account_get_username(log->account), prpl);
 
-		written += fprintf(data->file, header);
 		written += fprintf(data->file, "</title></head><body>");
 		written += fprintf(data->file, "<h3>%s</h3>\n", header);
 	}
