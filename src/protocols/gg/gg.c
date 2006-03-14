@@ -54,6 +54,42 @@ static GaimPlugin *my_protocol = NULL;
 
 /* ----- HELPERS -------------------------------------------------------- */
 
+/**
+ * Set up libgadu's proxy.
+ *
+ * @param account Account for which to set up the proxy.
+ *
+ * @return Zero if proxy setup is valid, otherwise -1.
+ */
+/* static int ggp_setup_proxy(GaimAccount *account) {{{ */
+static int ggp_setup_proxy(GaimAccount *account)
+{
+	GaimProxyInfo *gpi;
+
+	gpi = gaim_proxy_get_setup(account);
+
+	if ((gaim_proxy_info_get_type(gpi) != GAIM_PROXY_NONE) &&
+	    (gaim_proxy_info_get_host(gpi) == NULL ||
+	     gaim_proxy_info_get_port(gpi) <= 0)) {
+
+		gg_proxy_enabled = 0;
+		gaim_notify_error(NULL, NULL, _("Invalid proxy settings"),
+				  _("Either the host name or port number specified for your given proxy type is invalid."));
+		return -1;
+	} else if (gaim_proxy_info_get_type(gpi) != GAIM_PROXY_NONE) {
+		gg_proxy_enabled = 1;
+		gg_proxy_host = g_strdup(gaim_proxy_info_get_host(gpi));
+		gg_proxy_port = gaim_proxy_info_get_port(gpi);
+		gg_proxy_username = g_strdup(gaim_proxy_info_get_username(gpi));
+		gg_proxy_password = g_strdup(gaim_proxy_info_get_password(gpi));
+	} else {
+		gg_proxy_enabled = 0;
+	}
+
+	return 0;
+}
+/* }}} */
+
 /*
  */
 /* static void ggp_async_token_handler(gpointer _gc, gint fd, GaimInputCondition cond) {{{ */
@@ -66,7 +102,6 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, GaimInputCondition co
 
 	struct gg_token *t = NULL;
 
-	gaim_debug_info("gg", "token_handler: token->req->fd = %d\n", token->req->fd);
 	gaim_debug_info("gg", "token_handler: token->req: check = %d; state = %d;\n",
 			token->req->check, token->req->state);
 
@@ -129,11 +164,19 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, GaimInputCondition co
 /* static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb) {{{ */
 static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb)
 {
-	GGPInfo *info = gc->proto_data;
+	GaimAccount *account;
 	struct gg_http *req;
+	GGPInfo *info;
+
+	account = gaim_connection_get_account(gc);
+
+	if (ggp_setup_proxy(account) == -1)
+		return;
+
+	info = gc->proto_data;
 
 	if ((req = gg_token(1)) == NULL) {
-		gaim_notify_error(gaim_connection_get_account(gc),
+		gaim_notify_error(account,
 				  _("Token Error"),
 				  _("Unable to fetch the token.\n"), NULL);
 		return;
@@ -1502,9 +1545,16 @@ static GList *ggp_chat_info(GaimConnection *gc)
 /* static void ggp_login(GaimAccount *account) {{{ */
 static void ggp_login(GaimAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	struct gg_login_params *glp = g_new0(struct gg_login_params, 1);
-	GGPInfo *info = g_new0(GGPInfo, 1);
+	GaimConnection *gc;
+	struct gg_login_params *glp;
+	GGPInfo *info;
+
+	if (ggp_setup_proxy(account) == -1)
+		return;
+
+	gc = gaim_account_get_connection(account);
+	glp = g_new0(struct gg_login_params, 1);
+	info = g_new0(GGPInfo, 1);
 
 	/* Probably this should be moved to *_new() function. */
 	info->session = NULL;

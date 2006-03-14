@@ -201,6 +201,15 @@ GaimProxyInfo *gaim_global_proxy_get_info(void);
 void gaim_proxy_init(void);
 
 /**
+ * Returns configuration of a proxy.
+ *
+ * @param account The account for which the configuration is needed.
+ *
+ * @return The configuration of a proxy.
+ */
+GaimProxyInfo *gaim_proxy_get_setup(GaimAccount *account);
+
+/**
  * Makes a connection to the specified host and port.
  *
  * @param account The account making the connection.
