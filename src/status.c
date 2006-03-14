@@ -638,13 +638,18 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 				tmp = g_strdup_printf(_("%s went away"), buddy_alias);
 			}
 		}
+		else
+		{
+			/* XXX: Make this "%s is away" when strings thaw. */
+			tmp = g_strdup_printf(_("%s went away"), buddy_alias);
+		}
 
 		if (tmp != NULL)
 		{
 			GaimLog *log = gaim_account_get_log(buddy->account);
 
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, buddy_alias,
-			current_time, tmp);
+			               current_time, tmp);
 			g_free(tmp);
 		}
 	}
