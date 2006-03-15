@@ -5183,7 +5183,7 @@ static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer 
 
 			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
 
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(gaim_unescape_html(smiley->smile)), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", gaim_unescape_html(smiley->smile), g_free);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
 
 			if (smiley->imhtml)
