@@ -616,33 +616,34 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 		const char *buddy_alias = gaim_buddy_get_alias(buddy);
 		char *tmp = NULL;
 
-		if (gaim_status_is_available(new_status))
+		if ((old_status != NULL) &&
+			!gaim_status_is_online(old_status) &&
+			gaim_status_is_online(new_status))
 		{
-			if (((old_status == NULL) || !gaim_status_is_online(old_status)))
-			{
-				tmp = g_strdup_printf(_("%s signed on"), buddy_alias);
-			}
-			else if (!gaim_status_is_available(old_status))
-			{
-				tmp = g_strdup_printf(_("%s came back"), buddy_alias);
-			}
+			tmp = g_strdup_printf(_("%s signed on"), buddy_alias);
 		}
-		else if ((old_status != NULL) && gaim_status_is_available(old_status))
+		else if ((old_status != NULL) &&
+				 gaim_status_is_online(old_status) &&
+				 !gaim_status_is_online(new_status))
 		{
-			if (!gaim_status_is_online(new_status))
-			{
-				tmp = g_strdup_printf(_("%s signed off"), buddy_alias);
-			}
-			else if (!gaim_status_is_available(new_status))
-			{
-				tmp = g_strdup_printf(_("%s went away"), buddy_alias);
-			}
+			tmp = g_strdup_printf(_("%s signed off"), buddy_alias);
 		}
-		else
+		else if (((old_status == NULL) || !gaim_status_is_available(old_status)) &&
+				 gaim_status_is_available(new_status))
 		{
-			/* XXX: Make this "%s is away" when strings thaw. */
+			tmp = g_strdup_printf(_("%s came back"), buddy_alias);
+		}
+		else if (((old_status == NULL) || gaim_status_is_available(old_status)) &&
+				 !gaim_status_is_available(new_status))
+		{
 			tmp = g_strdup_printf(_("%s went away"), buddy_alias);
 		}
+
+		/* After the string freeze, get rid of the above crap and use this. */
+		/*
+		tmp = g_strdup_printf(_("%s is now %s"), buddy_alias,
+							  gaim_status_get_name(new_status));
+		*/
 
 		if (tmp != NULL)
 		{
