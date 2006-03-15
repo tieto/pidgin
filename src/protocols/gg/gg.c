@@ -978,6 +978,7 @@ static void ggp_sr_close_cb(GaimAccount *account)
 /* static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req) {{{ */
 static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	GGPInfo *info = gc->proto_data;
 	GaimNotifySearchResults *results;
 	GaimNotifySearchColumn *column;
@@ -991,6 +992,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		gaim_notify_error(gc, NULL,
 			_("No matching users found"),
 			_("There are no users matching your search criteria."));
+		ggp_sr_close_cb(account);
 		return;
 	}
 	res_count = (res_count > 20) ? 20 : res_count;
@@ -1003,7 +1005,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		gaim_notify_error(gc, NULL,
 				  _("Unable to display the search results."),
 				  NULL);
-		ggp_sr_close_cb(gaim_connection_get_account(gc));
+		ggp_sr_close_cb(account);
 		return;
 	}
 
@@ -1062,7 +1064,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 				_("Gadu-Gadu Public Directory"),
 				_("Search results"), NULL, results,
 				(GaimNotifyCloseCallback)ggp_sr_close_cb,
-				gaim_connection_get_account(gc));
+				account);
 
 		if (h == NULL) {
 			gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
@@ -1070,7 +1072,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 			gaim_notify_error(gc, NULL,
 					  _("Unable to display the search results."),
 					  NULL);
-			ggp_sr_close_cb(gaim_connection_get_account(gc));
+			ggp_sr_close_cb(account);
 			return;
 		}
 
