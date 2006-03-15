@@ -47,7 +47,7 @@ msn_httpconn_new(MsnServConn *servconn)
 	httpconn->servconn = servconn;
 
 	httpconn->tx_buf = gaim_circ_buffer_new(MSN_BUF_LEN);
-	httpconn->tx_handler = -1;
+	httpconn->tx_handler = 0;
 
 	return httpconn;
 }
@@ -121,8 +121,9 @@ httpconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	writelen = gaim_circ_buffer_get_max_read(httpconn->tx_buf);
 
 	if (writelen == 0) {
+		httpconn->waiting_response = TRUE;
 		gaim_input_remove(httpconn->tx_handler);
-		httpconn->tx_handler = -1;
+		httpconn->tx_handler = 0;
 		return;
 	}
 
@@ -137,6 +138,9 @@ httpconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	gaim_circ_buffer_mark_read(httpconn->tx_buf, ret);
+
+	if (ret == writelen)
+		httpconn_write_cb(data, source, cond);
 }
 
 static ssize_t
@@ -149,7 +153,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 #endif
 
 
-	if (httpconn->tx_handler == -1 && !httpconn->waiting_response)
+	if (httpconn->tx_handler == 0 && !httpconn->waiting_response)
 		res = write(httpconn->fd, data, data_len);
 	else
 	{
@@ -165,7 +169,7 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 	} else if (res < 0 || res < data_len) {
 		if (res < 0)
 			res = 0;
-		if (httpconn->tx_handler == -1)
+		if (httpconn->tx_handler == 0 && httpconn->fd)
 			httpconn->tx_handler = gaim_input_add(httpconn->fd,
 				GAIM_INPUT_WRITE, httpconn_write_cb, httpconn);
 		gaim_circ_buffer_append(httpconn->tx_buf, data + res,
@@ -266,7 +270,12 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 		httpconn->waiting_response = FALSE;
 		if (httpconn->tx_handler > 0)
-			httpconn_write_cb(httpconn, source, GAIM_INPUT_WRITE);
+			gaim_input_remove(httpconn->tx_handler);
+
+		httpconn->tx_handler = gaim_input_add(source,
+			GAIM_INPUT_WRITE, httpconn_write_cb, httpconn);
+
+		httpconn_write_cb(httpconn, source, GAIM_INPUT_WRITE);
 	}
 	else
 	{
@@ -611,6 +620,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			if (httpconn->tx_handler > 0)
 				httpconn_write_cb(httpconn, httpconn->fd,
 					GAIM_INPUT_WRITE);
+			else
+				httpconn->dirty = TRUE;
 
 			return TRUE;
 		}
@@ -764,6 +775,8 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 	if (httpconn->tx_handler > 0)
 		httpconn_write_cb(httpconn, httpconn->fd, GAIM_INPUT_WRITE);
+	else
+		httpconn->dirty = TRUE;
 
 	return TRUE;
 }
