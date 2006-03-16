@@ -1100,7 +1100,7 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 		} else {
 			gaim_debug_error("log", "Unhandled message type.");
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
-                        		date, from, msg_fixed);
+						date, from, msg_fixed);
 		}
 	}
 	g_free(date);

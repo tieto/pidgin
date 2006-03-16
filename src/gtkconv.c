@@ -8211,7 +8211,7 @@ generate_nick_colors(guint *color_count, GdkColor background)
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
 
-		gaim_debug(GAIM_DEBUG_WARNING, NULL,
+		gaim_debug_warning("gtkconv",
 				   "Looking for random colors to fill the list, I have found %i so far.\n",i);
 
 		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
@@ -8225,11 +8225,10 @@ generate_nick_colors(guint *color_count, GdkColor background)
 
 	if (i < numcolors) {
 		GdkColor *c = colors;
-		gaim_debug(GAIM_DEBUG_WARNING, NULL, "Unable to generate enough random colors before timeout. %u colors found.\n", i);
+		gaim_debug_warning("gtkconv", "Unable to generate enough random colors before timeout. %u colors found.\n", i);
 		colors = g_memdup(c, i * sizeof(GdkColor));
 		g_free(c);
 		*color_count = i;
-		
 	}
 
 	return colors;
