@@ -5460,7 +5460,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
-		gtk_widget_set_sensitive(win->menu.block, (prpl_info->add_deny != NULL));
 		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
 		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE) && !(conv->features & GAIM_CONNECTION_NO_IMAGES));
 
@@ -5502,7 +5501,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.get_info, FALSE);
 		gtk_widget_set_sensitive(win->menu.invite, FALSE);
 		gtk_widget_set_sensitive(win->menu.alias, FALSE);
-		gtk_widget_set_sensitive(win->menu.block, FALSE);
 		gtk_widget_set_sensitive(win->menu.add, FALSE);
 		gtk_widget_set_sensitive(win->menu.remove, FALSE);
 		gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
