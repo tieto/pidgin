@@ -5599,6 +5599,7 @@ gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 		char *title;
 		GaimConvIm *im = NULL;
 		GaimAccount *account = gaim_conversation_get_account(conv);
+		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char style[51];
 
@@ -5618,26 +5619,36 @@ gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
+		accessibility_obj = gtk_widget_get_accessible(gtkconv->tab_cont);
 		if (im != NULL &&
 		    gaim_conv_im_get_typing_state(im) == GAIM_TYPING)
 		{
+			atk_object_set_description(accessibility_obj, _("Typing"));
 			strncpy(style, "color=\"#47A046\"", sizeof(style));
 		}
 		else if (im != NULL &&
 		         gaim_conv_im_get_typing_state(im) == GAIM_TYPED)
 		{
+			/* TODO: Post string freeze.
+			atk_object_set_description(accessibility_obj, _("Stopped Typing")); */
 			strncpy(style, "color=\"#D1940C\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_NICK)
 		{
+			/* TODO: Post string freeze.
+			atk_object_set_description(accessibility_obj, _("Nick Said")); */
 			strncpy(style, "color=\"#0D4E91\" style=\"italic\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
 		{
+			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			strncpy(style, "color=\"#DF421E\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_EVENT)
 		{
+			atk_object_set_description(accessibility_obj, _("Event"));
+			/* TODO: Post string freeze
+			atk_object_set_description(accessibility_obj, _("New Event")); */
 			strncpy(style, "color=\"#868272\" style=\"italic\"", sizeof(style));
 		}
 
