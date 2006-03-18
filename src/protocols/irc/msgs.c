@@ -36,6 +36,10 @@ static char *irc_mask_userhost(const char *mask);
 static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2]);
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc);
 
+static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name,
+                                   const char *from, const char *to,
+                                   const char *rawmsg, gboolean notice);
+
 static char *irc_mask_nick(const char *mask)
 {
 	char *end, *buf;
@@ -846,12 +850,10 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 
 void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	char *newargs[3];
+	if (!args || !args[0] || !args[1])
+		return;
 
-	newargs[0] = " notice ";	/* The spaces are magic, leave 'em in! */
-	newargs[1] = args[1];
-	newargs[2] = args[0];
-	irc_msg_privmsg(irc, name, from, newargs);
+	irc_msg_handle_privmsg(irc, name, from, args[0], args[1], TRUE);
 }
 
 void irc_msg_nochangenick(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -949,21 +951,25 @@ void irc_msg_pong(struct irc_conn *irc, const char *name, const char *from, char
 
 void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
+	if (!args || !args[0] || !args[1])
+		return;
+
+	irc_msg_handle_privmsg(irc, name, from, args[0], args[1], FALSE);
+}
+
+static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const char *from, const char *to, const char *rawmsg, gboolean notice)
+{
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
 	GaimConversation *convo;
-	char *nick = irc_mask_nick(from), *tmp, *msg;
-	gboolean notice = FALSE;
+	char *tmp;
+	char *msg;
+	char *nick;
 
-	if (!args || !args[0] || !args[1] || !gc) {
-		g_free(nick);
+	if (!gc)
 		return;
-	}
 
-	notice = !strcmp(args[0], " notice ");
-	if (notice) {
-		args[0] = args[2];
-	}
-	tmp = irc_parse_ctcp(irc, nick, args[0], args[1], notice);
+	nick = irc_mask_nick(from);
+	tmp = irc_parse_ctcp(irc, nick, to, rawmsg, notice);
 	if (!tmp) {
 		g_free(nick);
 		return;
@@ -981,14 +987,15 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 		msg = tmp;
 	}
 
-	if (!gaim_utf8_strcasecmp(args[0], gaim_connection_get_display_name(gc))) {
+	if (!gaim_utf8_strcasecmp(to, gaim_connection_get_display_name(gc))) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
-		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, args[0], irc->account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, to, irc->account);
 		if (convo)
 			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else
-			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a PRIVMSG on %s, which does not exist\n", args[0]);
+			gaim_debug_error("irc", "Got a %s on %s, which does not exist\n",
+			                 notice ? "NOTICE" : "PRIVMSG", to);
 	}
 	g_free(msg);
 	g_free(nick);
