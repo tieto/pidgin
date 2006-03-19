@@ -6183,10 +6183,12 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 
 		conv = gtkconv->active_conv;
 
-		if(!gaim_status_is_available(
+		while(l && !gaim_status_is_available(
 					gaim_account_get_active_status(
 					gaim_conversation_get_account(conv))))
-			continue;
+			l = l->next;
+		if (!l)
+			break;
 
 		gaim_gtk_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
 		gaim_gtkconv_placement_place(gtkconv);
