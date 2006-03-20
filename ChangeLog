@@ -44,7 +44,9 @@ version 2.0.0:
 	  IM/Send File/Get info/ignore the user
 	* Added tab management options to the tab right-click menu (Sadrul Habib
 	  Chowdhury)
-	* Brand new message queueing system (Casey Harkins)
+	* Brand new message queueing system.  Sounds are played when a
+	  message is queued rather than when the message is dequeued
+	  (Casey Harkins)
 	* Ability to find the last message from a user in a chat (Levi Bard
 	  and Sadrul Habib Chowdhury)
 	* Formatting is preserved across messages
