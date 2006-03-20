@@ -1208,6 +1208,7 @@ gaim_plugins_load_saved(const char *key)
 			continue;
 
 		filename = f->data;
+
 		/*
 		 * We don't know if the filename uses Windows or Unix path
 		 * separators (because people might be sharing a prefs.xml
@@ -1219,6 +1220,9 @@ gaim_plugins_load_saved(const char *key)
 			basename = strrchr(filename, '\\');
 		if (basename != NULL)
 			basename++;
+
+		/* Strip the extension */
+		basename = gaim_plugin_get_basename(basename);
 
 		if ((plugin = gaim_plugins_find_with_filename(filename)) != NULL)
 		{
@@ -1237,6 +1241,8 @@ gaim_plugins_load_saved(const char *key)
 			gaim_debug_error("plugins", "Unable to find saved plugin %s\n",
 							 filename);
 		}
+
+		g_free(basename);
 
 		g_free(f->data);
 	}
@@ -1496,12 +1502,9 @@ gaim_plugins_find_with_basename(const char *basename)
 #ifdef GAIM_PLUGINS
 	GaimPlugin *plugin;
 	GList *l;
-	char *basename_no_ext;
 	char *tmp;
 
 	g_return_val_if_fail(basename != NULL, NULL);
-
-	basename_no_ext = gaim_plugin_get_basename(basename);
 
 	for (l = plugins; l != NULL; l = l->next)
 	{
@@ -1509,17 +1512,15 @@ gaim_plugins_find_with_basename(const char *basename)
 
 		if (plugin->path != NULL) {
 			tmp = gaim_plugin_get_basename(plugin->path);
-			if (!strcmp(tmp, basename_no_ext))
+			if (!strcmp(tmp, basename))
 			{
 				g_free(tmp);
-				g_free(basename_no_ext);
 				return plugin;
 			}
 			g_free(tmp);
 		}
 	}
 
-	g_free(basename_no_ext);
 #endif /* GAIM_PLUGINS */
 
 	return NULL;
