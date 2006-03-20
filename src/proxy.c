@@ -544,11 +544,20 @@ send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *dns_params)
 {
 	char ch;
 	int rc;
+	pid_t pid;
 
-	/* Are you alive? */
-	if (kill(req->dns_pid, 0) != 0) {
+	/* This waitpid might return the child's PID if it has recently
+	 * exited, or it might return an error if it exited "long
+	 * enough" ago that it has already been reaped; in either
+	 * instance, we can't use it. */
+	if ((pid = waitpid (req->dns_pid, NULL, WNOHANG)) > 0) {
 		gaim_debug_warning("dns",
 				   "DNS child %d no longer exists\n", req->dns_pid);
+		return -1;
+	} else if (pid < 0) {
+		gaim_debug_warning("dns",
+		                   "Wait for DNS child %d failed: %s\n",
+		                   req->dns_pid, strerror(errno));
 		return -1;
 	}
 
