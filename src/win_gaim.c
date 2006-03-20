@@ -125,6 +125,7 @@ static void dll_prep() {
 
 		snprintf(aspelldir, sizeof(aspelldir), "GAIM_ASPELL_DIR=%s\\Aspell\\bin", path);
 		printf(aspelldir);
+		putenv(aspelldir);
 
 		/* set the GTK+ path to be \\path\to\GTK\bin */
 		strcat(path, "\\GTK\\bin");
