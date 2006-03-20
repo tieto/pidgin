@@ -1,24 +1,26 @@
+# translation of sr.po to
 # Gaim Serbian translation
 # Copyright © 2003, 2004, 2005:
-#   Danilo Segan <dsegan@gmx.net>, 2003, 2004, 2005
-#   Aleksandar Urosevic <urke@users.sourceforge.net>, 2003, 2004
-#   Filip Miletic <f.miletic@ewi.tudelft.nl>, 2004
 #   Prevod.org web site.
 #
+#   Danilo Segan <dsegan@gmx.net>, 2003, 2004, 2005.
+#   Aleksandar Urosevic <urke@users.sourceforge.net>, 2003, 2004.
+#   Filip Miletic <f.miletic@ewi.tudelft.nl>, 2004.
+#   Nikola Kotur <kotnik@ns-linux.org>, 2006.
 # This file is distributed under the same license as the Gaim package.
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 1.4.0\n"
+"Project-Id-Version: sr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-27 16:12-0400\n"
-"PO-Revision-Date: 2005-07-06 19:22+0200\n"
-"Last-Translator: Данило Шеган <danilo@gnome.org>\n"
-"Language-Team: Serbian (sr) <gnom@prevod.org>\n"
+"PO-Revision-Date: 2006-03-15 13:58+0100\n"
+"Last-Translator: \n"
+"Language-Team:  <sr@Latn@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3;    plural=n%10==1 && n%100!=11 ? 0 :    n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: KBabel 1.11.1\n"
 
 #: plugins/autorecon.c:301
 msgid "Error Message Suppression"
@@ -33,9 +35,8 @@ msgid "Hide Login Errors"
 msgstr "Сакриј грешке о пријави"
 
 #: plugins/autorecon.c:313
-#, fuzzy
 msgid "Hide Reconnecting Dialog"
-msgstr "Сакриј поруке о искључењу"
+msgstr "Сакриј прозор очувања везе"
 
 #. *< type
 #. *< ui_requirement
@@ -77,7 +78,6 @@ msgstr "Користи последњег одговарајућег друга�
 
 #. Explanation
 #: plugins/contact_priority.c:141
-#, fuzzy
 msgid ""
 "The buddy with the lowest score is the buddy who will have priority in the "
 "contact.\n"
@@ -88,13 +88,11 @@ msgstr ""
 "Другар са најмањим резултатом је другар који ће имати првенство за ступање у "
 "везу.\n"
 "Подразумеване вредности (неповезан = 4, одсутан = 2 и миран = 1)\n"
-"ће користити оно што је било уграђен распоред активан->миран->одсутан-"
-">одсутан+миран->неповезан."
+"ће користити оно што је било уграђен распоред: активан, миран, одсутан, одсутан+миран, неповезан."
 
 #: plugins/contact_priority.c:144
-#, fuzzy
 msgid "Point values to use for account..."
-msgstr "Вредности поена који се користе за налог..."
+msgstr "Вредности поена за коришћење са налогом..."
 
 #. *< type
 #. *< ui_requirement
@@ -110,8 +108,7 @@ msgstr "Првенство контакта"
 #. *< version
 #. *< summary
 #: plugins/contact_priority.c:198
-msgid ""
-"Allows for controlling the values associated with different buddy states."
+msgid "Allows for controlling the values associated with different buddy states."
 msgstr "Дозвољава управљање вредностима везаним за разна стања другара."
 
 #. *< description
@@ -139,9 +136,8 @@ msgid "Gaim - Away"
 msgstr "Гаим — Одсутан"
 
 #: plugins/docklet/docklet.c:383
-#, fuzzy
 msgid "Show Buddy List"
-msgstr "Списак другара"
+msgstr "Прикажи списак другара"
 
 #: plugins/docklet/docklet.c:390
 msgid "New Message..."
@@ -298,84 +294,73 @@ msgstr ""
 
 #: plugins/gaimrc.c:40
 msgid "Cursor Color"
-msgstr ""
+msgstr "Боја курсора"
 
 #: plugins/gaimrc.c:41
 msgid "Secondary Cursor Color"
-msgstr ""
+msgstr "Секундарна боја курсора"
 
 #: plugins/gaimrc.c:42
-#, fuzzy
 msgid "Hyperlink Color"
 msgstr "Боја над-везе"
 
 #: plugins/gaimrc.c:53
-#, fuzzy
 msgid "GtkTreeView Expander Size"
-msgstr "Величина проширивача"
+msgstr "Величина GtkTreeView проширивача"
 
 #: plugins/gaimrc.c:72
-#, fuzzy
 msgid "Conversation Entry"
-msgstr "Разговори"
+msgstr "Унос разговора"
 
 #: plugins/gaimrc.c:73
-#, fuzzy
 msgid "Conversation History"
-msgstr "Разговори"
+msgstr "Историја разговора"
 
 #: plugins/gaimrc.c:74
-#, fuzzy
 msgid "Log Viewer"
-msgstr "Сервер за пријаву"
+msgstr "Преглед дневника"
 
 #: plugins/gaimrc.c:75
-#, fuzzy
 msgid "Request Dialog"
-msgstr "Захтев је двосмислен"
+msgstr "Прозор захтева"
 
 #: plugins/gaimrc.c:76
-#, fuzzy
 msgid "Notify Dialog"
-msgstr "Обавештавај о"
+msgstr "Прозор обавештења"
 
 #: plugins/gaimrc.c:209
-#, fuzzy, c-format
+#, c-format
 msgid "Select Color for %s"
-msgstr "Изаберите боју текста"
+msgstr "Изаберите боју за %s"
 
 #: plugins/gaimrc.c:211
-#, fuzzy
 msgid "Select Color"
-msgstr "Изаберите боју текста"
+msgstr "Изаберите боју"
 
 #: plugins/gaimrc.c:246
-#, fuzzy, c-format
+#, c-format
 msgid "Select Font for %s"
-msgstr "Изаберите писмо"
+msgstr "Изаберите писмо за %s"
 
 #: plugins/gaimrc.c:284
-#, fuzzy
 msgid "Select Interface Font"
-msgstr "Изаберите писмо"
+msgstr "Изаберите писмо сучеља"
 
 #: plugins/gaimrc.c:343
-#, fuzzy
 msgid "GTK+ Interface Font"
-msgstr "Поставке сучеља"
+msgstr "Писмо GTK+ сучеља"
 
 #: plugins/gaimrc.c:362
 msgid "GTK+ Text Shortcut Theme"
-msgstr ""
+msgstr "Пречице за текст"
 
 #: plugins/gaimrc.c:460
-#, fuzzy
 msgid "Gaim GTK+ Theme Control"
-msgstr "Контрола Гаим-а датотеком"
+msgstr "Контрола GTK+ теме Гаим-а"
 
 #: plugins/gaimrc.c:462 plugins/gaimrc.c:463
 msgid "Provides access to commonly used gtkrc settings."
-msgstr ""
+msgstr "Пружа приступ често коришћеним gtkrc поставкама."
 
 #. Configuration frame
 #: plugins/gestures/gestures.c:243
@@ -479,9 +464,8 @@ msgstr ""
 
 #. Add the expander
 #: plugins/gevolution/assoc-buddy.c:428
-#, fuzzy
 msgid "User _details"
-msgstr "Сакриј детаље о кориснику"
+msgstr "_Детаљи о кориснику"
 
 #. "Associate Buddy" button
 #: plugins/gevolution/assoc-buddy.c:481
@@ -495,26 +479,24 @@ msgid "Buddies"
 msgstr "Другари"
 
 #: plugins/gevolution/gevolution.c:262 plugins/gevolution/gevolution.c:268
-#, fuzzy
 msgid "Unable to send e-mail"
-msgstr "Не могу да пошаљем поруку."
+msgstr "Не могу да пошаљем е-поруку."
 
 #: plugins/gevolution/gevolution.c:263
 msgid "The evolution executable was not found in the PATH."
-msgstr ""
+msgstr "Програм Еволуција није нађен на стази."
 
 #: plugins/gevolution/gevolution.c:269
 msgid "The specified buddy was not found in the Evolution Contacts."
-msgstr ""
+msgstr "Назначени другар није пронађен у контактима Еволуције."
 
 #: plugins/gevolution/gevolution.c:286
 msgid "Add to Address Book"
 msgstr "Додај у адресар"
 
 #: plugins/gevolution/gevolution.c:290
-#, fuzzy
 msgid "Send E-Mail"
-msgstr "Е-пошта"
+msgstr "Пошаљи е-поруку"
 
 #. Configuration frame
 #: plugins/gevolution/gevolution.c:414
@@ -545,9 +527,8 @@ msgstr "Сарадња са Еволуцијом"
 #. *  summary
 #. *  description
 #: plugins/gevolution/gevolution.c:533 plugins/gevolution/gevolution.c:535
-#, fuzzy
 msgid "Provides integration with Evolution."
-msgstr "Омогућава узајамну везу са програмом Гзимијан еволуција."
+msgstr "Омогућава интеграцију са програмом Еволуција."
 
 #: plugins/gevolution/new_person_dialog.c:266
 msgid "Please enter the person's information below."
@@ -590,7 +571,7 @@ msgstr "Е-пошта"
 
 #: plugins/history.c:146
 msgid "History Plugin Requires Logging"
-msgstr ""
+msgstr "Додак захтева памћење разговора"
 
 #: plugins/history.c:147
 msgid ""
@@ -599,6 +580,9 @@ msgid ""
 "Enabling logs for instant messages and/or chats will activate history for "
 "the same conversation type(s)."
 msgstr ""
+"Снимање може бити омогућено у Алати -> Поставке -> Снимање.\n"
+"\n"
+"Омогућавање снимања порука и/или причаоница ће активирати историју за исти тип комуникације."
 
 #: plugins/history.c:186
 msgid "History"
@@ -617,6 +601,9 @@ msgid ""
 "Tools -> Preferences -> Logging. Enabling logs for instant messages and/or "
 "chats will activate history for the same conversation type(s)."
 msgstr ""
+"Када се отвори нова конверзација овај додатак ће унети последњу конверзацију у тренутну.\n"
+"\n"
+"Додатак за исторју захтева да снимање буде омогућено. Снимање може бити омогућено у Алати -> Поставке -> Снимање. Укључивање снимања за поруке или причаонице ће активирати историју за исти тип конверзације."
 
 #. *< type
 #. *< ui_requirement
@@ -657,23 +644,20 @@ msgid "_Cancel"
 msgstr "Откажи"
 
 #: plugins/idle.c:150 plugins/idle.c:185
-#, fuzzy
 msgid "Unset Account Idle Time"
-msgstr "Време неактивности"
+msgstr "Уклони време неактивности налога"
 
 #: plugins/idle.c:153
-#, fuzzy
 msgid "_Unset"
-msgstr "Користи"
+msgstr "_Уклони"
 
 #: plugins/idle.c:190
 msgid "Unset Idle Time For All Idled Accounts"
-msgstr ""
+msgstr "Скини време неактивности за све неактивне налоге"
 
 #: plugins/idle.c:217 plugins/idle.c:218
-#, fuzzy
 msgid "Allows you to hand-configure how long you've been idle"
-msgstr "Омогућава Вам да одредите колико дуго траје период неактивности"
+msgstr "Омогућава Вам да одредите колико дуго сте били неактивни"
 
 #. *< type
 #. *< ui_requirement
@@ -690,8 +674,7 @@ msgstr "Пробни клијент за МПК"
 #. *  summary
 #: plugins/ipc-test-client.c:90
 msgid "Test plugin IPC support, as a client."
-msgstr ""
-"Пробни додатак за подршку за МПК (међупроцесну комуникацију), као клијент."
+msgstr "Пробни додатак за подршку за МПК (међупроцесну комуникацију), као клијент."
 
 #. *  description
 #: plugins/ipc-test-client.c:92
@@ -775,9 +758,8 @@ msgstr "Пошаљи наговештај „_Хитно“ управнику �
 
 #. Raise window method button
 #: plugins/notify.c:706
-#, fuzzy
 msgid "R_aise conversation window"
-msgstr "Прозор разговора"
+msgstr "По_дигни прозор разговора"
 
 #. ---------- "Notification Removals" ----------
 #: plugins/notify.c:714
@@ -910,8 +892,7 @@ msgstr "Проверава повремено за нова издања."
 msgid ""
 "Checks periodically for new releases and notifies the user with the "
 "ChangeLog."
-msgstr ""
-"Проверава повремено за нова издања и обавештава корисника уз дневник промена."
+msgstr "Проверава повремено за нова издања и обавештава корисника уз дневник промена."
 
 #. *< type
 #. *< ui_requirement
@@ -951,11 +932,11 @@ msgstr "Проверава да ли већина ствари ради."
 
 #: plugins/spellchk.c:1788
 msgid "Duplicate Correction"
-msgstr ""
+msgstr "Исправка дупликата"
 
 #: plugins/spellchk.c:1789
 msgid "The specified word already exists in the correction list."
-msgstr ""
+msgstr "Дата реч већ постоји на листи исправки."
 
 #: plugins/spellchk.c:1948
 msgid "Text Replacements"
@@ -971,7 +952,7 @@ msgstr "Пошаље се"
 
 #: plugins/spellchk.c:1996
 msgid "Whole words only"
-msgstr ""
+msgstr "Само целе речи"
 
 #: plugins/spellchk.c:2022
 msgid "Add a new text replacement"
@@ -987,7 +968,7 @@ msgstr "_Пошаље се:"
 
 #: plugins/spellchk.c:2060
 msgid "Only replace _whole words"
-msgstr ""
+msgstr "Замени само _целе речи"
 
 #: plugins/spellchk.c:2097
 msgid "Text replacement"
@@ -1181,15 +1162,13 @@ msgid "_Show slider bar in IM window"
 msgstr "Прикажи _клизач у прозору разговора"
 
 #: plugins/win32/transparency/win2ktrans.c:555
-#, fuzzy
 msgid "Remove IM window transparency on focus"
-msgstr "Провидност прозора разговора"
+msgstr "Уклони провидност прозора разговора при фокусу"
 
 #: plugins/win32/transparency/win2ktrans.c:558
 #: plugins/win32/transparency/win2ktrans.c:606
-#, fuzzy
 msgid "Always on top"
-msgstr "Надени име контакту"
+msgstr "Увек на врху"
 
 #. Buddy List trans options
 #: plugins/win32/transparency/win2ktrans.c:590
@@ -1201,9 +1180,8 @@ msgid "_Buddy List window transparency"
 msgstr "Провиднос_т прозора са списком другара"
 
 #: plugins/win32/transparency/win2ktrans.c:604
-#, fuzzy
 msgid "Remove Buddy List window transparency on focus"
-msgstr "Провиднос_т прозора са списком другара"
+msgstr "Уклони провидност прозора са списком другара при фокусу"
 
 #. *< type
 #. *< ui_requirement
@@ -1224,16 +1202,15 @@ msgstr "Променљива провидност за слисак другар
 
 #. *  description
 #: plugins/win32/transparency/win2ktrans.c:662
-#, fuzzy
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list.\n"
 "\n"
 "* Note: This plugin requires Win2000 or greater."
 msgstr ""
-"Овај додатак омогућава променљиву алфа провидност прозора разговора.\n"
+"Овај додатак омогућава променљиву алфа провидност прозора разговора и списка другара.\n"
 "\n"
-"Напомена: Овај додатак захтева Виндоус 2000 или ИксПе."
+"Напомена: Овај додатак захтева Виндоус 2000 или виши."
 
 #: plugins/win32/winprefs/winprefs.c:385
 msgid "GTK+ Runtime Version"
@@ -1259,7 +1236,6 @@ msgstr "_Лепљиви списак другара"
 
 #. Blist On Top
 #: plugins/win32/winprefs/winprefs.c:410
-#, fuzzy
 msgid "_Keep Buddy List window on top:"
 msgstr "_Одржавај прозор са списком другара на врху"
 
@@ -1268,14 +1244,13 @@ msgid "Never"
 msgstr "Никада"
 
 #: plugins/win32/winprefs/winprefs.c:413
-#, fuzzy
 msgid "Always"
-msgstr "Одсутан"
+msgstr "Увек"
 
 #. XXX: Did this ever work?
 #: plugins/win32/winprefs/winprefs.c:415
 msgid "Only when docked"
-msgstr ""
+msgstr "Само када смо спуштени"
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:419 src/gtkprefs.c:803
@@ -1284,9 +1259,8 @@ msgid "Conversations"
 msgstr "Разговори"
 
 #: plugins/win32/winprefs/winprefs.c:420
-#, fuzzy
 msgid "_Flash window when messages are received"
-msgstr "_Издигни прозор када пристигне нова порука"
+msgstr "_Засијај прозор када пристигне нова порука"
 
 #: plugins/win32/winprefs/winprefs.c:443
 msgid "WinGaim Options"
@@ -1300,17 +1274,15 @@ msgstr "Поставке својствене за Виндоус Гаим."
 msgid ""
 "Provides options specific to Windows Gaim, such as buddy list docking and "
 "conversation flashing."
-msgstr ""
+msgstr "Пружа опције специфичне за Виндоус Гаим, као што је спуштање листе другара и бљескање разговора."
 
 #: src/account.c:773
-#, fuzzy
 msgid "accounts"
-msgstr "Налози"
+msgstr "налози"
 
 #: src/account.c:915
-#, fuzzy
 msgid "Password is required to sign on."
-msgstr "Лозинка је истекла"
+msgstr "Лозинка је потребна за пријављивање."
 
 #: src/account.c:940
 #, c-format
@@ -1318,14 +1290,12 @@ msgid "Enter password for %s (%s)"
 msgstr "Унесите лозинку за %s (%s)"
 
 #: src/account.c:947
-#, fuzzy
 msgid "Enter Password"
-msgstr "Промена лозинке"
+msgstr "Унесите лозинку"
 
 #: src/account.c:952
-#, fuzzy
 msgid "Save password"
-msgstr "Нова лозинка"
+msgstr "Снимите лозинку"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
@@ -1435,9 +1405,8 @@ msgid "Unknown"
 msgstr "Непознато"
 
 #: src/blist.c:545
-#, fuzzy
 msgid "buddy list"
-msgstr "Списак другара"
+msgstr "списак другара"
 
 #: src/blist.c:1162
 msgid "Chats"
@@ -1470,14 +1439,13 @@ msgid "Registration Error"
 msgstr "Грешка при регистрацији"
 
 #: src/conversation.c:205
-#, fuzzy
 msgid "Unable to send message: The message is too large."
 msgstr "Не могу да пошаљем поруку. Порука је превелика."
 
 #: src/conversation.c:208 src/conversation.c:221
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send message to %s."
-msgstr "Не могу да пошаљем поруку за %s:"
+msgstr "Не могу да пошаљем поруку за %s."
 
 #: src/conversation.c:209
 msgid "The message is too large."
@@ -1595,9 +1563,9 @@ msgstr ""
 "на порту: %d"
 
 #: src/ft.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "%s is offering to send file %s"
-msgstr "Понуда слања %s за %s"
+msgstr "%s нуди да пошаље фајл %s"
 
 #: src/ft.c:422
 #, c-format
@@ -1610,9 +1578,9 @@ msgid "Offering to send %s to %s"
 msgstr "Понуда слања %s за %s"
 
 #: src/ft.c:454
-#, fuzzy, c-format
+#, c-format
 msgid "Starting transfer of %s from %s"
-msgstr "Постављам податке у именику за %s:"
+msgstr "Почиње пренос %s од %s"
 
 #: src/ft.c:608
 #, c-format
@@ -1643,14 +1611,14 @@ msgid "%s canceled the file transfer"
 msgstr "%s обустави пренос датотеке"
 
 #: src/ft.c:1119
-#, fuzzy, c-format
+#, c-format
 msgid "File transfer to %s failed."
-msgstr "Пренос датотеке до %s прекинут.\n"
+msgstr "Пренос датотеке до %s прекинут."
 
 #: src/ft.c:1121
-#, fuzzy, c-format
+#, c-format
 msgid "File transfer from %s failed."
-msgstr "Пренос датотеке од %s прекинут.\n"
+msgstr "Пренос датотеке од %s пропао."
 
 #: src/gtkaccount.c:362
 #, c-format
@@ -1797,9 +1765,8 @@ msgid "Screen Name"
 msgstr "Име"
 
 #: src/gtkaccount.c:2210
-#, fuzzy
 msgid "Enabled"
-msgstr "Неуспех"
+msgstr "Омогућено"
 
 #: src/gtkaccount.c:2218
 msgid "Protocol"
@@ -1925,15 +1892,12 @@ msgstr "_Разгранај"
 
 #: src/gtkblist.c:1353 src/gtkblist.c:1363 src/gtkblist.c:3326
 #: src/gtkblist.c:3331
-#, fuzzy
 msgid "/Tools/Mute Sounds"
-msgstr "Искључи звук"
+msgstr "/Алати/Искључи звук"
 
 #: src/gtkblist.c:1822 src/gtkconv.c:3745 src/gtkpounce.c:314
-msgid ""
-"You are not currently signed on with an account that can add that buddy."
-msgstr ""
-"Тренутно нисте пријављени на налог који омогућава додавање тог другара."
+msgid "You are not currently signed on with an account that can add that buddy."
+msgstr "Тренутно нисте пријављени на налог који омогућава додавање тог другара."
 
 #. Buddies menu
 #: src/gtkblist.c:2329
@@ -1965,14 +1929,12 @@ msgid "/Buddies/Show _Empty Groups"
 msgstr "/Другари/Прикажи _празне групе"
 
 #: src/gtkblist.c:2337
-#, fuzzy
 msgid "/Buddies/Show Buddy _Details"
-msgstr "/Другари/Прикажи неповезане другаре"
+msgstr "/Другари/Прикажи детаље о другару"
 
 #: src/gtkblist.c:2338 src/gtkblist.c:5158
-#, fuzzy
 msgid "/Buddies/Sort Buddies"
-msgstr "/Другари/Прикажи неповезане другаре"
+msgstr "/Другари/Сортирај другаре"
 
 #: src/gtkblist.c:2340
 msgid "/Buddies/_Add Buddy..."
@@ -2012,9 +1974,8 @@ msgid "/Tools/Pr_eferences"
 msgstr "/Алати/_Поставке"
 
 #: src/gtkblist.c:2353
-#, fuzzy
 msgid "/Tools/Plu_gins"
-msgstr "/Алати/Акције по протоколу"
+msgstr "/Алати/Прикључци"
 
 #: src/gtkblist.c:2354
 msgid "/Tools/Pr_ivacy"
@@ -2029,9 +1990,8 @@ msgid "/Tools/R_oom List"
 msgstr "/Алати/С_писак соба"
 
 #: src/gtkblist.c:2358
-#, fuzzy
 msgid "/Tools/Mute _Sounds"
-msgstr "Искључи звук"
+msgstr "/Алати/Искључи _звукове"
 
 #: src/gtkblist.c:2359
 msgid "/Tools/View System _Log"
@@ -2064,58 +2024,58 @@ msgstr ""
 "<b>Налог:</b> %s"
 
 #: src/gtkblist.c:2473
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Contact Alias:</b> %s"
 msgstr ""
 "\n"
-"<b>Контакт познат као:</b>"
+"<b>Контакт познат као:</b> %s"
 
 #: src/gtkblist.c:2481
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Alias:</b> %s"
 msgstr ""
 "\n"
-"<b>Познат као:</b>"
+"<b>Познат као:</b> %s"
 
 #: src/gtkblist.c:2489
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Nickname:</b> %s"
 msgstr ""
 "\n"
-"<b>Надимак:</b>"
+"<b>Надимак:</b> %s"
 
 #: src/gtkblist.c:2498
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Logged In:</b> %s"
 msgstr ""
 "\n"
-"<b>Пријављен:</b> "
+"<b>Пријављен:</b> %s"
 
 #: src/gtkblist.c:2510
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Idle:</b> %s"
 msgstr ""
 "\n"
-"<b>Неактиван:</b>"
+"<b>Неактиван:</b> %s"
 
 #: src/gtkblist.c:2546
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Last Seen:</b> %s ago"
 msgstr ""
 "\n"
-"<b>%s:</b> %s"
+"<b>Последњи пут виђен:</b> пре %s"
 
 #: src/gtkblist.c:2554
 msgid ""
@@ -2134,7 +2094,6 @@ msgstr ""
 "<b>Опис:</b> сабласно"
 
 #: src/gtkblist.c:2579
-#, fuzzy
 msgid ""
 "\n"
 "<b>Status:</b> Awesome"
@@ -2143,7 +2102,6 @@ msgstr ""
 "<b>Стање:</b> сјајно"
 
 #: src/gtkblist.c:2581
-#, fuzzy
 msgid ""
 "\n"
 "<b>Status:</b> Rockin'"
@@ -2152,9 +2110,9 @@ msgstr ""
 "<b>Стање:</b> разбија"
 
 #: src/gtkblist.c:2843
-#, fuzzy, c-format
+#, c-format
 msgid "Idle (%dh %02dm) "
-msgstr "Неактиван (%dh%02dm) "
+msgstr "Неактиван (%dh %02dm) "
 
 #: src/gtkblist.c:2845
 #, c-format
@@ -2162,42 +2120,36 @@ msgid "Idle (%dm) "
 msgstr "Неактиван (%dm) "
 
 #: src/gtkblist.c:2848
-#, fuzzy
 msgid "Idle "
-msgstr "Неактиван"
+msgstr "Неактиван "
 
 #: src/gtkblist.c:2852
 msgid "Offline "
 msgstr "Неповезан"
 
 #: src/gtkblist.c:2968
-#, fuzzy
 msgid "/Buddies/New Instant Message..."
-msgstr "/Другари/_Нова брза порука..."
+msgstr "/Другари/Нова брза порука..."
 
 #: src/gtkblist.c:2969 src/gtkblist.c:3003
 msgid "/Buddies/Join a Chat..."
 msgstr "/Другари/_Прикључи се разговору..."
 
 #: src/gtkblist.c:2970
-#, fuzzy
 msgid "/Buddies/Get User Info..."
-msgstr "/Другари/Прибави податке о _кориснику..."
+msgstr "/Другари/Прибави податке о кориснику..."
 
 #: src/gtkblist.c:2971
-#, fuzzy
 msgid "/Buddies/Add Buddy..."
-msgstr "/Другари/_Додај другара..."
+msgstr "/Другари/Додај другара..."
 
 #: src/gtkblist.c:2972
-#, fuzzy
 msgid "/Buddies/Add Chat..."
-msgstr "/Другари/Додај разго_вор..."
+msgstr "/Другари/Додај разговор..."
 
 #: src/gtkblist.c:2973
-#, fuzzy
 msgid "/Buddies/Add Group..."
-msgstr "/Другари/Додај _групу..."
+msgstr "/Другари/Додај групу..."
 
 #: src/gtkblist.c:3006
 msgid "/Tools/Room List"
@@ -2208,14 +2160,12 @@ msgid "/Tools/Privacy"
 msgstr "/Алати/_Приватност"
 
 #: src/gtkblist.c:3085
-#, fuzzy
 msgid "Manually"
-msgstr "Ручна поставка"
+msgstr "Ручно"
 
 #: src/gtkblist.c:3087
-#, fuzzy
 msgid "Alphabetically"
-msgstr "По азбучном реду"
+msgstr "Азбучно"
 
 #: src/gtkblist.c:3088
 msgid "By status"
@@ -2245,9 +2195,8 @@ msgid "/Buddies/Show Empty Groups"
 msgstr "/Другари/Прикажи празне групе"
 
 #: src/gtkblist.c:3328
-#, fuzzy
 msgid "/Buddies/Show Buddy Details"
-msgstr "/Другари/Прикажи неповезане другаре"
+msgstr "/Другари/Прикажи детаље о другару"
 
 #: src/gtkblist.c:4005 src/protocols/silc/buddy.c:736
 #: src/protocols/silc/buddy.c:994 src/protocols/silc/buddy.c:1039
@@ -2278,8 +2227,7 @@ msgstr "Ово издање протокола не подржава собе з
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
-msgstr ""
-"Тренутно нисте повезани нити на један протокол који омогућава разговоре."
+msgstr "Тренутно нисте повезани нити на један протокол који омогућава разговоре."
 
 #: src/gtkblist.c:4390
 msgid "Add Chat"
@@ -2306,21 +2254,20 @@ msgid "No actions available"
 msgstr "Нема доступних акција"
 
 #: src/gtkblist.c:5094
-#, fuzzy
 msgid "/Tools"
-msgstr "/_Алати"
+msgstr "/Алати"
 
 #: src/gtkconn.c:190
-#, fuzzy, c-format
+#, c-format
 msgid "%s disconnected"
-msgstr "Веза је прекинута"
+msgstr "%s је прекинуо"
 
 #: src/gtkconn.c:191
 #, c-format
 msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
 "Correct the error and reenable the account to connect."
-msgstr ""
+msgstr "%s је прекинуо услед грешке %s Налог је онемогућен. Исправите грешку и поново омогућите налогу да се повезује."
 
 #: src/gtkconv.c:325
 #, c-format
@@ -2356,27 +2303,23 @@ msgid "Your command failed for an unknown reason."
 msgstr "Команда није извршена из непознатих разлога."
 
 #: src/gtkconv.c:465
-#, fuzzy
 msgid "That command only works in chats, not IMs."
-msgstr "Ова команда ради само са Разговорима, а не са Брзим порукама."
+msgstr "Та команда ради само са Разговорима, а не са Брзим порукама."
 
 #: src/gtkconv.c:468
-#, fuzzy
 msgid "That command only works in IMs, not chats."
-msgstr "Ова команда ради само са Брзим порукама, а не са Разговорима."
+msgstr "Та команда ради само са Брзим порукама, а не са Разговорима."
 
 #: src/gtkconv.c:472
 msgid "That command doesn't work on this protocol."
 msgstr "Ова команда не постоји у овом протоколу."
 
 #: src/gtkconv.c:699 src/gtkconv.c:725
-#, fuzzy
 msgid "That buddy is not on the same protocol as this chat."
-msgstr "Тај другар не користи исти протокол као овај разговор"
+msgstr "Тај другар не користи исти протокол као овај разговор."
 
 #: src/gtkconv.c:719
-msgid ""
-"You are not currently signed on with an account that can invite that buddy."
+msgid "You are not currently signed on with an account that can invite that buddy."
 msgstr "Тренутно нисте пријављени на налог који омогућава позив тог другара."
 
 #: src/gtkconv.c:772
@@ -2423,12 +2366,11 @@ msgstr "_Тражи израз:"
 
 #: src/gtkconv.c:1227
 msgid "Logging started. Future messages in this conversation will be logged."
-msgstr ""
+msgstr "Снимање је почело. Будуће поруке у овом разговору ће бити снимљене."
 
 #: src/gtkconv.c:1235
-msgid ""
-"Logging stopped. Future messages in this conversation will not be logged."
-msgstr ""
+msgid "Logging stopped. Future messages in this conversation will not be logged."
+msgstr "Снимање је престало. Будуће поруке у овом разговору неће бити снимљене."
 
 #: src/gtkconv.c:1489
 msgid "IM"
@@ -2451,9 +2393,8 @@ msgid "Info"
 msgstr "Подаци"
 
 #: src/gtkconv.c:1517
-#, fuzzy
 msgid "Get Away Message"
-msgstr "Нова порука за одсуство"
+msgstr "Прибави поруку за одсуство"
 
 #: src/gtkconv.c:1524 src/gtkrequest.c:267
 msgid "Remove"
@@ -2521,9 +2462,8 @@ msgid "/Conversation/In_vite..."
 msgstr "/Разговор/_Позови..."
 
 #: src/gtkconv.c:2393
-#, fuzzy
 msgid "/Conversation/Al_ias..."
-msgstr "/Разговор/Надени име..."
+msgstr "/Разговор/Над_имак..."
 
 #: src/gtkconv.c:2395
 msgid "/Conversation/_Block..."
@@ -2563,19 +2503,16 @@ msgid "/Options/Enable _Sounds"
 msgstr "/Избори/Омогући з_вуке"
 
 #: src/gtkconv.c:2418
-#, fuzzy
 msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Избори/Прикажи _алатке за форматирање"
 
 #: src/gtkconv.c:2419
-#, fuzzy
 msgid "/Options/Show Ti_mestamps"
-msgstr "/Избори/Приказуј временске ознаке"
+msgstr "/Избори/Приказуј _временске ознаке"
 
 #: src/gtkconv.c:2420
-#, fuzzy
 msgid "/Options/Show Buddy _Icon"
-msgstr "Прикажи и_конице другара"
+msgstr "/Избори/Прикажи и_коницу другара"
 
 #: src/gtkconv.c:2460
 msgid "/Conversation/View Log"
@@ -2630,7 +2567,6 @@ msgid "/Options/Enable Sounds"
 msgstr "/Избори/Омогући звуке"
 
 #: src/gtkconv.c:2520
-#, fuzzy
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/Избори/Прикажи алатке за форматирање"
 
@@ -2639,9 +2575,8 @@ msgid "/Options/Show Timestamps"
 msgstr "/Избори/Приказуј временске ознаке"
 
 #: src/gtkconv.c:2526
-#, fuzzy
 msgid "/Options/Show Buddy Icon"
-msgstr "Прикажи и_конице другара"
+msgstr "/Избори/Прикажи иконицу другара"
 
 #: src/gtkconv.c:2597
 msgid "User is typing..."
@@ -2653,9 +2588,8 @@ msgstr "Корисник је нешто укуцао и застао"
 
 #. Build the Send As menu
 #: src/gtkconv.c:2740
-#, fuzzy
 msgid "_Send To"
-msgstr "Пошаљи _као"
+msgstr "Пошаљи _за"
 
 #: src/gtkconv.c:3373
 msgid "Topic:"
@@ -2690,13 +2624,11 @@ msgstr[2] "%d особа у причаоници."
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
-msgstr ""
-"say &lt;порука&gt;:  Пошаљи поруку нормално, као да није коришћена команда."
+msgstr "say &lt;порука&gt;:  Пошаљи поруку нормално, као да није коришћена команда."
 
 #: src/gtkconv.c:5585
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
-msgstr ""
-"me &lt;акција&gt;:  Пошаљи другару или у разговор акцију у стилу ИРЦ-а."
+msgstr "me &lt;акција&gt;:  Пошаљи другару или у разговор акцију у стилу ИРЦ-а."
 
 #: src/gtkconv.c:5588
 msgid ""
@@ -2707,23 +2639,20 @@ msgstr ""
 "разговор."
 
 #: src/gtkconv.c:5591
-#, fuzzy
 msgid "clear: Clears the conversation scrollback."
-msgstr "%s затвори прозор разговора."
+msgstr "очисти: чисти прозор разговора."
 
 #: src/gtkconv.c:5594
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;команда&gt;:  Помоћ за одређену команду."
 
 #: src/gtkconv.c:5709
-#, fuzzy
 msgid "Confirm close"
-msgstr "Потврдите налог"
+msgstr "Потврдите затварање"
 
 #: src/gtkconv.c:5741
-#, fuzzy
 msgid "You have unread messages. Are you sure you want to close the window?"
-msgstr "Да ли сте сигурни да желите обрисати %s?"
+msgstr "Имате непрочитане поруке. Сигурно желите да затворите прозор?"
 
 #: src/gtkconv.c:6408
 msgid "Close conversation"
@@ -2754,13 +2683,12 @@ msgid "Save Debug Log"
 msgstr "Сними дневник за исправљање грешака"
 
 #: src/gtkdebug.c:586
-#, fuzzy
 msgid "Invert"
-msgstr "У_метни"
+msgstr "Обрни"
 
 #: src/gtkdebug.c:589
 msgid "Highlight matches"
-msgstr ""
+msgstr "Посветли поклапања"
 
 #: src/gtkdebug.c:636
 msgid "Debug Window"
@@ -2779,14 +2707,12 @@ msgid "Timestamps"
 msgstr "Временска ознака"
 
 #: src/gtkdebug.c:724
-#, fuzzy
 msgid "Filter"
-msgstr "Неуспех"
+msgstr "Филтер"
 
 #: src/gtkdebug.c:743
-#, fuzzy
 msgid "Right click for more options."
-msgstr "Покажи више поставки"
+msgstr "Више избора десним тастером миша."
 
 #: src/gtkdialogs.c:59 src/gtkdialogs.c:90
 msgid "lead developer"
@@ -2815,14 +2741,12 @@ msgid "maintainer"
 msgstr "одржавалац"
 
 #: src/gtkdialogs.c:89
-#, fuzzy
 msgid "libfaim maintainer"
-msgstr "претходни одржавалац libfaim-а"
+msgstr "одржавалац libfaim-а"
 
 #: src/gtkdialogs.c:92
-#, fuzzy
 msgid "Jabber developer"
-msgstr "бивши Џабер програмер"
+msgstr "Џабер програмер"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -2837,9 +2761,8 @@ msgid "Bulgarian"
 msgstr "бугарски"
 
 #: src/gtkdialogs.c:101
-#, fuzzy
 msgid "Bosnian"
-msgstr "естонски"
+msgstr "Босански"
 
 #: src/gtkdialogs.c:102 src/gtkdialogs.c:145 src/gtkdialogs.c:146
 msgid "Catalan"
@@ -2914,9 +2837,8 @@ msgid "Korean"
 msgstr "корејски"
 
 #: src/gtkdialogs.c:120
-#, fuzzy
 msgid "Dutch, Flemish"
-msgstr "холандски; фламански"
+msgstr "Холандски; фламански"
 
 #: src/gtkdialogs.c:121
 msgid "Macedonian"
@@ -2960,7 +2882,7 @@ msgstr "шведски"
 
 #: src/gtkdialogs.c:133
 msgid "Telugu"
-msgstr ""
+msgstr "Телугу"
 
 #: src/gtkdialogs.c:134
 msgid "Vietnamese"
@@ -2991,7 +2913,6 @@ msgid "About Gaim"
 msgstr "О Гаиму"
 
 #: src/gtkdialogs.c:226
-#, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -2999,7 +2920,7 @@ msgid ""
 msgstr ""
 "Гаим је прошириви клијент за брзе поруке који може да користи АИМ, ICQ, "
 "Јаху, МСН, ИРЦ, Џабер, Напстер, Зефир и Гаду-Гаду истовремено. Написан је "
-"помоћу Гтк+ и лиценциран под Гнуовом Општом јавном лиценцом (GPL).<BR><BR>"
+"помоћу Гтк+ и лиценциран под Гнуовом Општом јавном лиценцом (GPL)<BR><BR>"
 
 #: src/gtkdialogs.c:235
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -3030,14 +2951,12 @@ msgid "Past Translators"
 msgstr "Претходни преводиоци"
 
 #: src/gtkdialogs.c:327
-#, fuzzy
 msgid "Debugging Information"
-msgstr "Подаци о кориснику"
+msgstr "Подаци за исправке грешки"
 
 #: src/gtkdialogs.c:489 src/gtkdialogs.c:630 src/gtkdialogs.c:685
-#, fuzzy
 msgid "_Name"
-msgstr "Име"
+msgstr "_Име"
 
 #: src/gtkdialogs.c:494 src/gtkdialogs.c:635 src/gtkdialogs.c:690
 msgid "_Account"
@@ -3048,33 +2967,28 @@ msgid "New Instant Message"
 msgstr "Нова брза порука"
 
 #: src/gtkdialogs.c:504
-#, fuzzy
-msgid ""
-"Please enter the screen name or alias of the person you would like to IM."
-msgstr "Унесите име особе којој желите да упутите брзу поруку."
+msgid "Please enter the screen name or alias of the person you would like to IM."
+msgstr "Молим вас унесите име или надимак особе којој желите да упутите брзу поруку."
 
 #: src/gtkdialogs.c:643
 msgid "Get User Info"
 msgstr "Прибави податке о кориснику"
 
 #: src/gtkdialogs.c:645
-#, fuzzy
 msgid ""
 "Please enter the screen name or alias of the person whose info you would "
 "like to view."
-msgstr "Унесите име особе чије податке желите да видите."
+msgstr "Молим вас унесите име или надимак особе чије податке желите да видите."
 
 #: src/gtkdialogs.c:699
-#, fuzzy
 msgid "View User Log"
-msgstr "Прибави дневник о кориснику"
+msgstr "Погледај дневник о кориснику"
 
 #: src/gtkdialogs.c:701
-#, fuzzy
 msgid ""
 "Please enter the screen name or alias of the person whose log you would like "
 "to view."
-msgstr "Унесите име особе чије податке желите да видите."
+msgstr "Молим вас унесите име или надимак особе чији дневник желите да видите."
 
 #: src/gtkdialogs.c:720
 msgid "Alias Contact"
@@ -3139,8 +3053,7 @@ msgstr "Уклони групу"
 
 #: src/gtkdialogs.c:909
 #, c-format
-msgid ""
-"You are about to remove %s from your buddy list.  Do you want to continue?"
+msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Уклањате %s са списка другара. Да ли желите да наставите?"
 
 #: src/gtkdialogs.c:912 src/gtkdialogs.c:913
@@ -3200,19 +3113,19 @@ msgid "An error occurred while opening the file."
 msgstr "Дошло је до грешке при отварању датотеке."
 
 #: src/gtkft.c:467
-#, fuzzy, c-format
+#, c-format
 msgid "Error launching %s: %s"
-msgstr "Грешка при покретању<b>%s</b>: %s"
+msgstr "Грешка при покретању %s: %s"
 
 #: src/gtkft.c:476
-#, fuzzy, c-format
+#, c-format
 msgid "Error running %s"
-msgstr "Грешка при укључењу у разговор: %s"
+msgstr "Грешка при извршавању %s"
 
 #: src/gtkft.c:477
 #, c-format
 msgid "Process returned error code %d"
-msgstr ""
+msgstr "Процесирај враћени код грешке %d"
 
 #: src/gtkft.c:572
 msgid "Progress"
@@ -3259,15 +3172,13 @@ msgid "_Keep the dialog open"
 msgstr "_Остави прозор отворен"
 
 #: src/gtkft.c:725
-#, fuzzy
 msgid "C_lear finished transfers"
 msgstr "_Избаци завршене преносе"
 
 #. "Download Details" arrow
 #: src/gtkft.c:734
-#, fuzzy
 msgid "File transfer _details"
-msgstr "Сакриј детаље преноса"
+msgstr "_Детаљи преноса датотеке"
 
 #. Pause button
 #: src/gtkft.c:764 src/gtkstock.c:122
@@ -3296,14 +3207,12 @@ msgid "Color to draw hyperlinks."
 msgstr "Боја за исцртавање над-веза."
 
 #: src/gtkimhtml.c:1317
-#, fuzzy
 msgid "Hyperlink prelight color"
 msgstr "Боја над-везе"
 
 #: src/gtkimhtml.c:1318
-#, fuzzy
 msgid "Color to draw hyperlinks when mouse is over them."
-msgstr "Боја за исцртавање над-веза."
+msgstr "Боја за исцртавање над-веза кад је миш изнад њих."
 
 #: src/gtkimhtml.c:1537
 msgid "_Copy E-Mail Address"
@@ -3328,7 +3237,6 @@ msgstr ""
 "Подразумевам PNG."
 
 #: src/gtkimhtml.c:3237
-#, fuzzy
 msgid ""
 "Unrecognized file type\n"
 "\n"
@@ -3350,13 +3258,13 @@ msgstr ""
 "%s"
 
 #: src/gtkimhtml.c:3253
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error saving image\n"
 "\n"
 "%s"
 msgstr ""
-"Грешка при чувању слике\n"
+"Грешка при снимању слике\n"
 "\n"
 "%s"
 
@@ -3459,7 +3367,6 @@ msgid "Background color"
 msgstr "Боја позадине"
 
 #: src/gtkimhtmltoolbar.c:1023
-#, fuzzy
 msgid "Clear formatting"
 msgstr "Очисти форматирање"
 
@@ -3476,45 +3383,43 @@ msgid "Insert smiley"
 msgstr "Убаци смешак"
 
 #: src/gtklog.c:200
-#, fuzzy, c-format
+#, c-format
 msgid "Conversation in %s on %s"
-msgstr "Разговори са %s"
+msgstr "Разговори у %s на %s"
 
 #: src/gtklog.c:202
-#, fuzzy, c-format
+#, c-format
 msgid "Conversation with %s on %s"
-msgstr "Разговори са %s"
+msgstr "Разговори са %s на %s"
 
 #: src/gtklog.c:309
 msgid ""
 "System events will only be logged if the \"Log all status changes to system "
 "log\" preference is enabled."
-msgstr ""
+msgstr "Системски догађаји ће бити снимљени ако је поставка \"Сними све промене статуса у системски лог\" омогућена."
 
 #: src/gtklog.c:313
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
 "preference is enabled."
-msgstr ""
+msgstr "Брзе поруке ће бити снимљене само ако је поставка \"Сними све брзе поруке\" омогућена."
 
 #: src/gtklog.c:316
-msgid ""
-"Chats will only be logged if the \"Log all chats preference\" is enabled."
-msgstr ""
+msgid "Chats will only be logged if the \"Log all chats preference\" is enabled."
+msgstr "Разговори ће бити снимљени само ако је поставка \"Сними све разговоре\" омогућена."
 
 #: src/gtklog.c:320
 msgid "No logs were found"
-msgstr ""
+msgstr "Нису нађени логови"
 
 #: src/gtklog.c:396
-#, fuzzy
 msgid "Total log size:"
-msgstr "По величини дневника"
+msgstr "Укупна величина дневника:"
 
 #: src/gtklog.c:472
-#, fuzzy, c-format
+#, c-format
 msgid "Conversations in %s"
-msgstr "Разговори са %s"
+msgstr "Разговори у %s"
 
 #: src/gtklog.c:480 src/gtklog.c:531
 #, c-format
@@ -3544,15 +3449,24 @@ msgid ""
 "                      account(s) to use, separated by commas)\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+"Гаим %s\n"
+"Коришћење: %s [ОПЦИЈА]...\n"
+"\n"
+"  -c, --config=ДИР    корисити ДИР за фајлове са поставкама\n"
+"  -d, --debug         испиши поруке грешака на stdout\n"
+"  -h, --help          прикажи ову помоћ и изађи\n"
+"  -n, --nologin       немој се аутоматски пријављивати\n"
+"  -l, --login[=ИМЕ]  аутоматски се пријави (опциони аргумент ИМЕ назначава\n"
+"                      налог(е) који ће се користити, раздвојене зарезима)\n"
+"  -v, --version       прикажи тренутну верзију и изађи\n"
 
 #. TODO: Should save the previous status as a transient status?
 #. Save the newly selected status to prefs.xml and status.xml
 #: src/gtkmain.c:676 src/gtkmain.c:678 src/gtkmain.c:681
 #: src/gtkstatusbox.c:663 src/gtkstatusbox.c:665 src/gtkstatusbox.c:668
 #: src/status.c:1696
-#, fuzzy
 msgid "Default"
-msgstr "Гном подразумевано"
+msgstr "Подразумевано"
 
 #. Descriptive label
 #: src/gtknotify.c:275
@@ -3624,8 +3538,7 @@ msgid "Error launching <b>%s</b>: %s"
 msgstr "Грешка при покретању<b>%s</b>: %s"
 
 #: src/gtknotify.c:839
-msgid ""
-"The 'Manual' browser command has been chosen, but no command has been set."
+msgid "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Изабрана је „ручна“ наредба за веб читач, а наредба није постављена."
 
 #: src/gtkpounce.c:130
@@ -3803,9 +3716,8 @@ msgid "Send unknown \"_slash\" commands as messages"
 msgstr "Непрепознате команде \"_са цртом\" шаљи као поруке"
 
 #: src/gtkprefs.c:807
-#, fuzzy
 msgid "Show _formatting on incoming messages"
-msgstr "Прикажи алатке за форматирање"
+msgstr "Прикажи _форматирање за долазеће поруке"
 
 #: src/gtkprefs.c:809
 msgid "Show buddy _icons"
@@ -3845,9 +3757,8 @@ msgid "Show close b_utton on tabs"
 msgstr "Прикажи дугме за затвара_ње на језичцима"
 
 #: src/gtkprefs.c:878
-#, fuzzy
 msgid "_Placement:"
-msgstr "Додатни размештај"
+msgstr "_Размештај:"
 
 #: src/gtkprefs.c:880
 msgid "Top"
@@ -3867,16 +3778,15 @@ msgstr "Десно"
 
 #: src/gtkprefs.c:885
 msgid "Left Vertical"
-msgstr ""
+msgstr "Лево вертикално"
 
 #: src/gtkprefs.c:886
 msgid "Right Vertical"
-msgstr ""
+msgstr "Десно вертикално"
 
 #: src/gtkprefs.c:891
-#, fuzzy
 msgid "N_ew conversations:"
-msgstr "Окончај разговор"
+msgstr "Н_ови разговори:"
 
 # Ovo je svrha ovog polja kod nas, pa neka ostane ovako
 #: src/gtkprefs.c:942 src/protocols/oscar/oscar.c:779
@@ -3885,9 +3795,8 @@ msgid "IP Address"
 msgstr "ИП адреса"
 
 #: src/gtkprefs.c:944
-#, fuzzy
 msgid "STUN Server:"
-msgstr "Се_рвер:"
+msgstr "СТУН Сервер:"
 
 #: src/gtkprefs.c:946
 msgid "_Autodetect IP Address"
@@ -3942,7 +3851,6 @@ msgid "Galeon"
 msgstr "Галеон"
 
 #: src/gtkprefs.c:1123
-#, fuzzy
 msgid "GNOME Default"
 msgstr "Гном подразумевано"
 
@@ -4008,7 +3916,6 @@ msgid "Log _Format:"
 msgstr "Облик _дневника:"
 
 #: src/gtkprefs.c:1264
-#, fuzzy
 msgid "Log all _instant messages"
 msgstr "Бележи све _брзе поруке"
 
@@ -4018,7 +3925,7 @@ msgstr "Бележи све _разговоре"
 
 #: src/gtkprefs.c:1268
 msgid "Log all _status changes to system log"
-msgstr ""
+msgstr "Сними све промене _статуса у системски лог"
 
 #: src/gtkprefs.c:1400
 msgid "Sound Selection"
@@ -4045,9 +3952,8 @@ msgid "Command"
 msgstr "Наредба"
 
 #: src/gtkprefs.c:1465
-#, fuzzy
 msgid "No sounds"
-msgstr "Звук"
+msgstr "Без звукова"
 
 #: src/gtkprefs.c:1473
 #, c-format
@@ -4121,12 +4027,10 @@ msgid "When away"
 msgstr "При одсуству"
 
 #: src/gtkprefs.c:1659
-#, fuzzy
 msgid "When both away and idle"
-msgstr "Када сте одсутни или спавате"
+msgstr "Када сте одсутни или неактивни"
 
 #: src/gtkprefs.c:1662
-#, fuzzy
 msgid "_Report idle time"
 msgstr "Прикажи _трајање неактивности"
 
@@ -4135,19 +4039,16 @@ msgid "Auto-away"
 msgstr "Аутоматско одуство"
 
 #: src/gtkprefs.c:1666
-#, fuzzy
 msgid "Change status when _idle"
-msgstr "Идете на о_дсуство када сте неактивни"
+msgstr "Промени стање када сте не_активни"
 
 #: src/gtkprefs.c:1670
-#, fuzzy
 msgid "_Minutes before changing status:"
-msgstr "Број _минута пре одласка на одсуство:"
+msgstr "Број _минута пре мењања стања:"
 
 #: src/gtkprefs.c:1678
-#, fuzzy
 msgid "Change _status to:"
-msgstr "Промена адресе у:"
+msgstr "Промени _стање у:"
 
 #: src/gtkprefs.c:1728
 msgid "Smiley Themes"
@@ -4312,7 +4213,7 @@ msgstr "Титула"
 
 #: src/gtksavedstatuses.c:377
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: src/gtksavedstatuses.c:388 src/protocols/bonjour/bonjour.c:234
 #: src/protocols/bonjour/bonjour.c:241 src/protocols/gg/gg.c:1083
@@ -4332,25 +4233,22 @@ msgid "Message"
 msgstr "_Порука:"
 
 #: src/gtksavedstatuses.c:451
-#, fuzzy
 msgid "Saved Statuses"
-msgstr "Статистике о серверу"
+msgstr "Сачувана стања"
 
 #. Use button
 #. TODO: It might be better if the button said "Use" or "Activate"
 #: src/gtksavedstatuses.c:477
-#, fuzzy
 msgid "_Use"
-msgstr "Користи"
+msgstr "_Користи"
 
 #: src/gtksavedstatuses.c:584
 msgid "Title already in use.  You must choose a unique title."
-msgstr ""
+msgstr "Наслов је заузет. Морате изабрати јединствен наслов."
 
 #: src/gtksavedstatuses.c:675
-#, fuzzy
 msgid "Custom status"
-msgstr "По стању"
+msgstr "Произвољно стање"
 
 #: src/gtksavedstatuses.c:778 src/protocols/gg/gg.c:1064
 #: src/protocols/gg/gg.c:1069 src/protocols/jabber/buddy.c:626
@@ -4363,19 +4261,17 @@ msgid "Status"
 msgstr "Стање"
 
 #: src/gtksavedstatuses.c:797
-#, fuzzy
 msgid "_Title:"
-msgstr "Титула"
+msgstr "_Наслов:"
 
 #: src/gtksavedstatuses.c:817
-#, fuzzy
 msgid "_Status:"
-msgstr "Стање:"
+msgstr "_Стање:"
 
 #. Custom status message expander
 #: src/gtksavedstatuses.c:852
 msgid "Use a _different status for some accounts"
-msgstr ""
+msgstr "Користи _различит статус за неке налоге"
 
 #: src/gtksound.c:61
 msgid "Buddy logs in"
@@ -4440,9 +4336,8 @@ msgstr ""
 "наредба: %s"
 
 #: src/gtkstatusbox.c:197
-#, fuzzy
 msgid "Typing"
-msgstr "Пинг"
+msgstr "Куца"
 
 #. connect to the server
 #: src/gtkstatusbox.c:200 src/protocols/irc/irc.c:258
@@ -4490,14 +4385,12 @@ msgid "Offline"
 msgstr "Неповезан"
 
 #: src/gtkstatusbox.c:299
-#, fuzzy
 msgid "Custom..."
-msgstr "Прилагођено"
+msgstr "Прилагођено..."
 
 #: src/gtkstatusbox.c:300
-#, fuzzy
 msgid "Saved..."
-msgstr "Сачувај као..."
+msgstr "Сачувано..."
 
 #: src/gtkstock.c:117
 msgid "_Alias"
@@ -4520,68 +4413,62 @@ msgid "_Warn"
 msgstr "_Упозори"
 
 #: src/gtkutils.c:1393 src/gtkutils.c:1418
-#, fuzzy, c-format
+#, c-format
 msgid "The following error has occurred loading %s: %s"
-msgstr "Дошло је до непознате грешке при пријави: %s."
+msgstr "При учитавању %s се десила следећа грешка: %s"
 
 #: src/gtkutils.c:1395 src/gtkutils.c:1420
-#, fuzzy
 msgid "Failed to load image"
-msgstr "Не могу да сачувам слику: %s.\n"
+msgstr "Неуспело учитавање слике"
 
 #: src/gtkutils.c:1495
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot send folder %s."
-msgstr "Не могу да пошаљем датотеку"
+msgstr "Не могу да пошаљем директоријум %s."
 
 #: src/gtkutils.c:1497
 msgid ""
 "Gaim cannot transfer a folder. You will need to send the files within "
 "individually"
-msgstr ""
+msgstr "Гаим не може да пренесе директоријум. Мораћете појединачно послати фајлове у њему."
 
 #: src/gtkutils.c:1525 src/gtkutils.c:1534 src/gtkutils.c:1539
-#, fuzzy
 msgid "You have dragged an image"
-msgstr "Унели сте неисправно корисничко име"
+msgstr "Довукли сте слику"
 
 #: src/gtkutils.c:1526
 msgid ""
 "You can send this image as a file transfer, embed it into this message, or "
 "use it as the buddy icon for this user."
-msgstr ""
+msgstr "Можете послати ову слику као датотеку, укључити је у поруку или је корисити као иконицу другара за овог корисника."
 
 #: src/gtkutils.c:1530 src/gtkutils.c:1545
-#, fuzzy
 msgid "Set as buddy icon"
-msgstr "Прикажи и_конице другара"
+msgstr "Постави као иконицу другара"
 
 #: src/gtkutils.c:1531 src/gtkutils.c:1546
-#, fuzzy
 msgid "Send image file"
-msgstr "Слање поруке"
+msgstr "Пошаљи слику"
 
 #: src/gtkutils.c:1532 src/gtkutils.c:1546
-#, fuzzy
 msgid "Insert in message"
-msgstr "Убаци слику"
+msgstr "Убаци у поруку"
 
 #: src/gtkutils.c:1535
-#, fuzzy
 msgid "Would you like to set it as the buddy icon for this user?"
-msgstr "Да ли желите да се прикључите разговору?"
+msgstr "Да ли желите поставите као иконицу другара за овог корисника?"
 
 #: src/gtkutils.c:1540
 msgid ""
 "You can send this image as a file transfer or embed it into this message, or "
 "use it as the buddy icon for this user."
-msgstr ""
+msgstr "Можете послати ову слику као датотеку или је уметнути у поруку или је користити као иконицу другара за овог корисника."
 
 #: src/gtkutils.c:1542
 msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
-msgstr ""
+msgstr "Можете уметнути ову слику у поруку или је користити као иконицу другара за овог корисника."
 
 #. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
 #. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
@@ -4589,15 +4476,14 @@ msgstr ""
 #. * Probably not.  I'll just give an error and return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 #: src/gtkutils.c:1596
-#, fuzzy
 msgid "Cannot send launcher"
-msgstr "Не могу да пошаљем датотеку"
+msgstr "Не могу да пошаљем извршивач"
 
 #: src/gtkutils.c:1596
 msgid ""
 "You dragged a desktop launcher. Most likely you wanted to send whatever this "
 "launcher points to instead of this launcher itself."
-msgstr ""
+msgstr "Довукли сте покретач. Вероватно желите да пошаљете оно на шта он показује него покретача самог."
 
 #: src/log.c:129
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -4605,7 +4491,7 @@ msgstr "<b><font color=\"red\">Дневник не омогућава читањ
 
 #: src/log.c:577
 msgid "Logging of this conversation failed."
-msgstr ""
+msgstr "Снимање овог разговора није успело."
 
 #: src/log.c:839
 msgid "XML"
@@ -4669,18 +4555,22 @@ msgid "Idle"
 msgstr "Неактиван"
 
 #: src/protocols/bonjour/bonjour.c:303
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Status:</b> %s"
-msgstr "<b>Стање:</b> %s"
+msgstr ""
+"\n"
+"<b>Стање:</b> %s"
 
 #: src/protocols/bonjour/bonjour.c:305
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Message:</b> %s"
-msgstr "<b>Порука за одсуство:</b>"
+msgstr ""
+"\n"
+"<b>Порука:</b> %s"
 
 #. *< type
 #. *< ui_requirement
@@ -4693,15 +4583,13 @@ msgstr "<b>Порука за одсуство:</b>"
 #. *  summary
 #. *  description
 #: src/protocols/bonjour/bonjour.c:388 src/protocols/bonjour/bonjour.c:390
-#, fuzzy
 msgid "Bonjour Protocol Plugin"
-msgstr "Додатак за Јаху протокол"
+msgstr "Додатак за Бонжур протокол"
 
 #. Creating the user splits
 #: src/protocols/bonjour/bonjour.c:417
-#, fuzzy
 msgid "Host name"
-msgstr "Презиме:"
+msgstr "Име домаћина"
 
 #. Creating the options for the protocol
 #: src/protocols/bonjour/bonjour.c:421 src/protocols/irc/irc.c:822
@@ -4711,14 +4599,12 @@ msgid "Port"
 msgstr "Порт"
 
 #: src/protocols/bonjour/bonjour.c:424 src/protocols/gg/gg.c:405
-#, fuzzy
 msgid "First name"
 msgstr "Име"
 
 #: src/protocols/bonjour/bonjour.c:427 src/protocols/gg/gg.c:401
-#, fuzzy
 msgid "Last name"
-msgstr "Презиме:"
+msgstr "Презиме"
 
 #: src/protocols/bonjour/bonjour.c:430 src/protocols/jabber/buddy.c:261
 #: src/protocols/jabber/buddy.c:772 src/protocols/jabber/buddy.c:780
@@ -4729,70 +4615,60 @@ msgstr "Е-пошта"
 
 #: src/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
-msgstr ""
+msgstr "Бонжур"
 
 #: src/protocols/gg/gg.c:136 src/protocols/gg/gg.c:155
-#, fuzzy
 msgid "Save Buddylist..."
-msgstr "Пошаљи списак другара"
+msgstr "Сними списак другара..."
 
 #: src/protocols/gg/gg.c:137
 msgid "Your buddylist is empty, nothing was written to the file."
-msgstr ""
+msgstr "Ваш списак другара је празан, ништа није уписано у датотеку."
 
 #: src/protocols/gg/gg.c:143 src/protocols/gg/gg.c:145
 #: src/protocols/gg/gg.c:176
-#, fuzzy
 msgid "Couldn't open file"
-msgstr "Не могу да отворим датотеку дневника %s"
+msgstr "Не могу да отворим датотеку"
 
 #: src/protocols/gg/gg.c:156
-#, fuzzy
 msgid "Buddylist saved successfully!"
-msgstr "Лозинка је успешно измењена"
+msgstr "Списак другара је успешно сачуван!"
 
 #: src/protocols/gg/gg.c:178
-#, fuzzy
 msgid "Could't open file"
-msgstr "Не могу да отворим датотеку дневника %s"
+msgstr "Не могу да отворим датотеку"
 
 #: src/protocols/gg/gg.c:199
-#, fuzzy
 msgid "Load Buddylist..."
-msgstr "Н_адени име другару..."
+msgstr "Учитај списак другара..."
 
 #: src/protocols/gg/gg.c:200
-#, fuzzy
 msgid "Buddylist loaded successfully!"
-msgstr "Лозинка је успешно измењена"
+msgstr "Списак другара је успешно учитан!"
 
 #: src/protocols/gg/gg.c:211
-#, fuzzy
 msgid "Save buddylist..."
-msgstr "Пошаљи списак другара"
+msgstr "Сачувај списак другара..."
 
 #: src/protocols/gg/gg.c:254
 msgid "Fill in the registration fields."
-msgstr ""
+msgstr "Попуни поља за регистрацију."
 
 #: src/protocols/gg/gg.c:259
-#, fuzzy
 msgid "Passwords do not match."
-msgstr "Нове лозинке се не поклапају."
+msgstr "Лозинке нису исте."
 
 #: src/protocols/gg/gg.c:266
-#, fuzzy
 msgid "Unable to register new account. Error occurred.\n"
-msgstr "Не могу да успоставим нову везу."
+msgstr "Не могу да региструјем нови налог. Десила се грешка.\n"
 
 #: src/protocols/gg/gg.c:279
 msgid "New Gadu-Gadu Account Registered"
-msgstr ""
+msgstr "Регистрован нови Гаду-Гаду налог"
 
 #: src/protocols/gg/gg.c:280
-#, fuzzy
 msgid "Registration completed successfully!"
-msgstr "Регистрација успешна"
+msgstr "Регистрација завршена успешно!"
 
 #: src/protocols/gg/gg.c:409 src/protocols/gg/gg.c:1665
 #: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:698
@@ -4810,61 +4686,52 @@ msgstr "Град"
 
 #: src/protocols/gg/gg.c:417
 msgid "Year of birth"
-msgstr ""
+msgstr "Година рођења"
 
 #: src/protocols/gg/gg.c:426
-#, fuzzy
 msgid "Only online"
-msgstr "На вези"
+msgstr "Само на вези"
 
 #: src/protocols/gg/gg.c:430 src/protocols/gg/gg.c:431
 #: src/protocols/gg/gg.c:1510
-#, fuzzy
 msgid "Find buddies"
-msgstr "_Осенчи неактивне другаре"
+msgstr "Пронађи другаре"
 
 #: src/protocols/gg/gg.c:432
-#, fuzzy
 msgid "Please, enter your search criteria below"
-msgstr "Унесите нову лозинку"
+msgstr "Молим вас унесите испод ваш критеријум"
 
 #: src/protocols/gg/gg.c:465
 msgid "Fill in the fields."
-msgstr ""
+msgstr "Попуни поља."
 
 #: src/protocols/gg/gg.c:476
 msgid "Your current password is different from the one that you specified."
-msgstr ""
+msgstr "Ваша тренутна лозинка је различита од оне коју сте назначили."
 
 #: src/protocols/gg/gg.c:491
-#, fuzzy
 msgid "Unable to change password. Error occured.\n"
-msgstr "Не могу да изменим лозинку."
+msgstr "Не могу да изменим лозинку. Десила се грешка.\n"
 
 #: src/protocols/gg/gg.c:500
-#, fuzzy
 msgid "Change password for the Gadu-Gadu account"
-msgstr "Измена лозинке за %s"
+msgstr "Измени лозинку за Гаду-Гаду налог"
 
 #: src/protocols/gg/gg.c:501
-#, fuzzy
 msgid "Password was changed successfully!"
-msgstr "Лозинка је успешно измењена"
+msgstr "Лозинка је успешно измењена!"
 
 #: src/protocols/gg/gg.c:535
-#, fuzzy
 msgid "Token Error"
-msgstr "Непозната грешка"
+msgstr "Токен грешка"
 
 #: src/protocols/gg/gg.c:536
-#, fuzzy
 msgid "Unable to fetch the token.\n"
-msgstr "Не могу да добавим списак соба."
+msgstr "Не могу да добацим токен.\n"
 
 #: src/protocols/gg/gg.c:551
-#, fuzzy
 msgid "Current password"
-msgstr "Неисправна лозинка."
+msgstr "Тренутна лозинка"
 
 #: src/protocols/gg/gg.c:555 src/protocols/gg/gg.c:1476
 #: src/protocols/jabber/jabber.c:632 src/protocols/jabber/jabber.c:1150
@@ -4872,40 +4739,34 @@ msgid "Password"
 msgstr "Лозинка"
 
 #: src/protocols/gg/gg.c:559 src/protocols/gg/gg.c:1480
-#, fuzzy
 msgid "Password (retype)"
-msgstr "Лозинка послата"
+msgstr "Лозинка (поново откуцајте)"
 
 #: src/protocols/gg/gg.c:563 src/protocols/gg/gg.c:1484
-#, fuzzy
 msgid "Enter current token"
-msgstr "%s није тренутно пријављен."
+msgstr "Унесите тренутни токен"
 
 #. original size: 60x24
 #: src/protocols/gg/gg.c:568 src/protocols/gg/gg.c:1489
-#, fuzzy
 msgid "Current token"
-msgstr "Тренутно присутан"
+msgstr "Тренутни токен"
 
 #: src/protocols/gg/gg.c:574
-#, fuzzy
 msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Унесите текућу лозинку и нову лозинку."
+msgstr "Молим вас унесите текућу лозинку и нову лозинку: "
 
 #: src/protocols/gg/gg.c:578 src/protocols/gg/gg.c:579
-#, fuzzy
 msgid "Change Gadu-Gadu Password"
-msgstr "Не могу да изменим Гаду-Гаду лозинку"
+msgstr "Измени Гаду-Гаду лозинку"
 
 #: src/protocols/gg/gg.c:649
-#, fuzzy, c-format
+#, c-format
 msgid "Select a chat for buddy: %s"
-msgstr "Тражи другара"
+msgstr "Изаберите разговор за другара: %s"
 
 #: src/protocols/gg/gg.c:651 src/protocols/gg/gg.c:652
-#, fuzzy
 msgid "Add to chat..."
-msgstr "Додај _разговор"
+msgstr "Додај у разговор..."
 
 #: src/protocols/gg/gg.c:812
 msgid "Unable to read socket"
@@ -4913,10 +4774,9 @@ msgstr "Не могу да читам сокет"
 
 #: src/protocols/gg/gg.c:959
 msgid "Gadu-Gadu Public Directory"
-msgstr ""
+msgstr "Гаду-Гаду јавни директоријум"
 
 #: src/protocols/gg/gg.c:960
-#, fuzzy
 msgid "Search results"
 msgstr "Резултати претраге"
 
@@ -4956,86 +4816,72 @@ msgid "Blocked"
 msgstr "Блокиран"
 
 #: src/protocols/gg/gg.c:1129
-#, fuzzy
 msgid "Add to chat"
-msgstr "Додај разговор"
+msgstr "Додај у разговор"
 
 #: src/protocols/gg/gg.c:1133
-#, fuzzy
 msgid "Unblock"
-msgstr "Блокирај"
+msgstr "Деблокирај"
 
 #: src/protocols/gg/gg.c:1149
-#, fuzzy
 msgid "Chat _name:"
-msgstr "Презиме:"
+msgstr "_Име разговора:"
 
 #: src/protocols/gg/gg.c:1183
-#, fuzzy
 msgid "Connection failed."
-msgstr "Веза неуспешна"
+msgstr "Повезивање пропало."
 
 #: src/protocols/gg/gg.c:1357
-#, fuzzy
 msgid "Chat error"
-msgstr "Грешка при читању"
+msgstr "Грешка разговора"
 
 #: src/protocols/gg/gg.c:1358
-#, fuzzy
 msgid "This chat name is already in use"
-msgstr "Датотека већ постоји."
+msgstr "Ово име разговора је већ заузето"
 
 #: src/protocols/gg/gg.c:1435
-#, fuzzy
 msgid "Not connected to the server."
-msgstr "Веза са сервером је прекинута."
+msgstr "Нисте у вези са сервером."
 
 #: src/protocols/gg/gg.c:1456
 msgid "Token Error: Unable to fetch the token.\n"
-msgstr ""
+msgstr "Токен грешка: Неуспело добављање токена.\n"
 
 #: src/protocols/gg/gg.c:1472
-#, fuzzy
 msgid "e-Mail"
 msgstr "Е-пошта"
 
 #: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
-#, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Региструј нови Џабер налог"
+msgstr "Региструј нови Гаду-Гаду налог"
 
 #: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
-msgstr ""
+msgstr "Молим вас попуните следећа поља"
 
 #: src/protocols/gg/gg.c:1515
-#, fuzzy
 msgid "Change password"
-msgstr "Промена лозинке"
+msgstr "Промени лозинку"
 
 #: src/protocols/gg/gg.c:1520
-#, fuzzy
 msgid "Upload buddylist to Server"
 msgstr "Извези списак другара на сервер"
 
 #: src/protocols/gg/gg.c:1523
-#, fuzzy
 msgid "Download buddylist from Server"
-msgstr "Уклони списак другара са сервера"
+msgstr "Добави списак другара са сервера"
 
 #: src/protocols/gg/gg.c:1526
-#, fuzzy
 msgid "Delete buddylist from Server"
 msgstr "Уклони списак другара са сервера"
 
 #: src/protocols/gg/gg.c:1529
 msgid "Save buddylist to file"
-msgstr ""
+msgstr "Сними списак другара у датотеку"
 
 #: src/protocols/gg/gg.c:1532
-#, fuzzy
 msgid "Load buddylist from file"
-msgstr "Увези списак другара са сервера"
+msgstr "Добави списак другара из фајла"
 
 #. magic
 #. major_version
@@ -5055,12 +4901,11 @@ msgstr "Додатак за Гаду-Гаду протокол"
 #. summary
 #: src/protocols/gg/gg.c:1618
 msgid "Polish popular IM"
-msgstr ""
+msgstr "Популарни пољски ИМ"
 
 #: src/protocols/gg/gg.c:1665
-#, fuzzy
 msgid "Gadu-Gadu User"
-msgstr "Гаду-Гаду претрага"
+msgstr "Гаду-Гаду корисник"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1313
 #, c-format
@@ -5081,9 +4926,8 @@ msgstr "Тема није постављена"
 #: src/protocols/irc/dcc_send.c:272 src/protocols/yahoo/yahoo_filexfer.c:173
 #: src/protocols/yahoo/yahoo_filexfer.c:182
 #: src/protocols/yahoo/yahoo_filexfer.c:191
-#, fuzzy
 msgid "File Transfer Failed"
-msgstr "Обустављен је пренос"
+msgstr "Пропао пренос датотеке"
 
 #: src/protocols/irc/dcc_send.c:273
 msgid "Gaim could not open a listening port."
@@ -5208,9 +5052,8 @@ msgstr "Право име"
 #. prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #.
 #: src/protocols/irc/irc.c:839
-#, fuzzy
 msgid "Use SSL"
-msgstr "ССЛ"
+msgstr "Користи ССЛ"
 
 #: src/protocols/irc/msgs.c:105
 msgid "Bad mode"
@@ -5399,9 +5242,8 @@ msgid "Cannot join channel"
 msgstr "Не могу да се прикључим каналу"
 
 #: src/protocols/irc/msgs.c:1019
-#, fuzzy
 msgid "Nick or channel is temporarily unavailable."
-msgstr "Услуга је привремено недоступна."
+msgstr "Надимак или канал је привремено недоступан."
 
 #: src/protocols/irc/msgs.c:1031
 #, c-format
@@ -5548,8 +5390,7 @@ msgstr ""
 
 #: src/protocols/irc/parse.c:133
 msgid "quit [message]:  Disconnect from the server, with an optional message."
-msgstr ""
-"quit [порука]:  Искључује се са сервера и по жељи притом оставља поруку."
+msgstr "quit [порука]:  Искључује се са сервера и по жељи притом оставља поруку."
 
 #: src/protocols/irc/parse.c:134
 msgid "quote [...]:  Send a raw command to the server."
@@ -5629,8 +5470,7 @@ msgstr "Сервер захтева TLS/ССЛ за пријаву. Није н�
 
 #: src/protocols/jabber/auth.c:114
 msgid "Server requires plaintext authentication over an unencrypted stream"
-msgstr ""
-"Сервер захтева слање лозинке у обичном тексту преко везе која није шифрована."
+msgstr "Сервер захтева слање лозинке у обичном тексту преко везе која није шифрована."
 
 #: src/protocols/jabber/auth.c:133 src/protocols/jabber/auth.c:207
 #: src/protocols/jabber/auth.c:375 src/protocols/jabber/auth.c:473
@@ -5734,8 +5574,7 @@ msgstr "Уређивање Џабер визит-карте"
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable."
-msgstr ""
-"Све доле наведене опције нису обавезне. Унесите само податке које желите."
+msgstr "Све доле наведене опције нису обавезне. Унесите само податке које желите."
 
 #: src/protocols/jabber/buddy.c:616
 msgid "Jabber ID"
@@ -5819,13 +5658,12 @@ msgid "Do Not Disturb"
 msgstr "Не узнемиравај"
 
 #: src/protocols/jabber/buddy.c:1235
-#, fuzzy
 msgid "The following are the results of your search"
-msgstr "Доле су резултати претраге: "
+msgstr "Доле су резултати ваше претраге"
 
 #: src/protocols/jabber/buddy.c:1327
 msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr ""
+msgstr "Попуните једно или више поља да бисте тражили Џабер кориснике."
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
 #: src/protocols/oscar/oscar.c:5962 src/protocols/silc/ops.c:810
@@ -5842,29 +5680,24 @@ msgid "E-Mail Address"
 msgstr "Адреса е-поште"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
-#, fuzzy
 msgid "Search for Jabber users"
-msgstr "Тражи другара"
+msgstr "Тражи Џабер кориснике"
 
 #: src/protocols/jabber/buddy.c:1370
-#, fuzzy
 msgid "Invalid Directory"
-msgstr "Неисправна грешка (!!!)"
+msgstr "Неисправан директоријум"
 
 #: src/protocols/jabber/buddy.c:1387
-#, fuzzy
 msgid "Enter a User Directory"
-msgstr "Не могу да пошаљем директоријум."
+msgstr "Унесите директоријум корисника"
 
 #: src/protocols/jabber/buddy.c:1388
-#, fuzzy
 msgid "Select a user directory to search"
-msgstr "Изаберите сервер за конференције који се упитује"
+msgstr "Изаберите кориснички директоријум за претрагу"
 
 #: src/protocols/jabber/buddy.c:1391
-#, fuzzy
 msgid "Search Directory"
-msgstr "Постави податке у именику"
+msgstr "Претражи директоријум"
 
 #: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7318
 #: src/protocols/yahoo/yahoochat.c:979
@@ -5932,9 +5765,8 @@ msgstr "Промена надимка није подржана у собама 
 
 #: src/protocols/jabber/chat.c:678 src/protocols/jabber/chat.c:689
 #: src/protocols/silc/ops.c:1235
-#, fuzzy
 msgid "Error retrieving room list"
-msgstr "Грешка при читању списка соба"
+msgstr "Грешка при добављању списка соба"
 
 #: src/protocols/jabber/chat.c:737
 msgid "Invalid Server"
@@ -6068,9 +5900,8 @@ msgstr "Претплата"
 #: src/protocols/jabber/jabber.c:1039 src/protocols/jabber/jabber.c:1047
 #: src/protocols/jabber/jabber.c:1055 src/protocols/jabber/jabber.c:1063
 #: src/protocols/jabber/jabber.c:1071
-#, fuzzy
 msgid "Priority"
-msgstr "Порт"
+msgstr "Приоритет"
 
 #: src/protocols/jabber/jabber.c:1093
 msgid "Password Changed"
@@ -6107,7 +5938,6 @@ msgstr "Промена лозинке"
 
 #. }
 #: src/protocols/jabber/jabber.c:1181
-#, fuzzy
 msgid "Search for users"
 msgstr "Тражи другара"
 
@@ -6314,14 +6144,14 @@ msgid "Unable to ban user %s"
 msgstr "Не могу да забраним корсиника %s"
 
 #: src/protocols/jabber/jabber.c:1464
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown affiliation: \"%s\""
-msgstr "Непозната наредба: %s"
+msgstr "Непозната повезаност: \"%s\""
 
 #: src/protocols/jabber/jabber.c:1469
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr "Не могу да позовем корисника (%s)."
+msgstr "Не могу да позовем корисника %s као \"%s\""
 
 #: src/protocols/jabber/jabber.c:1521
 #, c-format
@@ -6356,12 +6186,11 @@ msgstr "ban &lt;надимак&gt; [соба]:  Брани приступ кор
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
 "affiliation with the room."
-msgstr ""
+msgstr "affiliate &lt;корисник&gt; &lt;owner|admin|member|outcast|none&gt;: Постави повезаност корисника са собом."
 
 #: src/protocols/jabber/jabber.c:1589
-#, fuzzy
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
-msgstr "invite &lt;корисник&gt; [соба]:  Позива корисника у собу."
+msgstr "invite &lt;корисник&gt; [порука]:  Позива корисника у собу."
 
 #: src/protocols/jabber/jabber.c:1595
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
@@ -6372,10 +6201,8 @@ msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;корисник&gt; [соба]:  Избацује корисника из собе."
 
 #: src/protocols/jabber/jabber.c:1606
-msgid ""
-"msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
-msgstr ""
-"msg &lt;надимак&gt; &lt;порука&gt;:  Шаље приватну поруку другом кориснику."
+msgid "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
+msgstr "msg &lt;надимак&gt; &lt;порука&gt;:  Шаље приватну поруку другом кориснику."
 
 #. *< type
 #. *< ui_requirement
@@ -6397,21 +6224,19 @@ msgstr "Користи TLS ако је доступан"
 
 #: src/protocols/jabber/jabber.c:1719
 msgid "Require TLS"
-msgstr ""
+msgstr "Захтевај ТЛС"
 
 #: src/protocols/jabber/jabber.c:1722
-#, fuzzy
 msgid "Force old (port 5223) SSL"
-msgstr "Наметни стари ССЛ"
+msgstr "Наметни стари (порт 5223) ССЛ"
 
 #: src/protocols/jabber/jabber.c:1727
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Дозволи нескривене лозинке на нешифрованим токовима"
 
 #: src/protocols/jabber/jabber.c:1732
-#, fuzzy
 msgid "Connect port"
-msgstr "Успостави везу"
+msgstr "Повежи порт"
 
 #. Account options
 #: src/protocols/jabber/jabber.c:1736 src/protocols/silc/silc.c:1593
@@ -6505,8 +6330,7 @@ msgstr "Грешка при укључењу у разговор: %s"
 #: src/protocols/jabber/si.c:591
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
-msgstr ""
-"Слање датотеке кориснику %s није успело. Корисник не подржава пренос датотека"
+msgstr "Слање датотеке кориснику %s није успело. Корисник не подржава пренос датотека"
 
 #: src/protocols/jabber/si.c:592 src/protocols/jabber/si.c:593
 msgid "File Send Failed"
@@ -6762,7 +6586,7 @@ msgstr "МСН Грешка %s\n"
 
 #: src/protocols/msn/msn.c:113
 msgid "You have just sent a Nudge!"
-msgstr ""
+msgstr "Управо сте послали тапшај!"
 
 #: src/protocols/msn/msn.c:138
 msgid "Your new MSN friendly name is too long."
@@ -6811,7 +6635,7 @@ msgstr "Забрани"
 
 #: src/protocols/msn/msn.c:328
 msgid "This Hotmail account may not be active."
-msgstr ""
+msgstr "Овај Хотмејл налог не мора бити активан."
 
 #: src/protocols/msn/msn.c:354
 msgid "Send a mobile message."
@@ -6882,7 +6706,7 @@ msgstr "Дозволи/забрани мобилне странице"
 
 #: src/protocols/msn/msn.c:647
 msgid "Open Hotmail Inbox"
-msgstr ""
+msgstr "Отвори доспелу пошту на Хотмејлу"
 
 #: src/protocols/msn/msn.c:671
 msgid "Send to Mobile"
@@ -7027,9 +6851,8 @@ msgid "Use HTTP Method"
 msgstr "Користи HTTP режим"
 
 #: src/protocols/msn/msn.c:1980
-#, fuzzy
 msgid "nudge: nudge a contact to get their attention"
-msgstr "buzz: сиреном привуци пажњу контакту"
+msgstr "nudge: привуци пажњу другара"
 
 #: src/protocols/msn/nexus.c:103 src/protocols/msn/servconn.c:127
 #: src/protocols/yahoo/yahoochat.c:1326
@@ -7155,8 +6978,7 @@ msgstr "Пријавили сте се са неког другог места."
 
 #: src/protocols/msn/session.c:328
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-"МСН сервери су привремено недоступни. Сачекајте мало па покушајте поново."
+msgstr "МСН сервери су привремено недоступни. Сачекајте мало па покушајте поново."
 
 #: src/protocols/msn/session.c:333
 msgid "The MSN servers are going down temporarily."
@@ -7168,8 +6990,7 @@ msgid "Unable to authenticate: %s"
 msgstr "Не могу да идентификујем: %s"
 
 #: src/protocols/msn/session.c:342
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+msgid "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 "Ваш списак МСН другара је привремено недоступан. Сачекајте мало па покушајте "
 "поново."
@@ -7219,8 +7040,7 @@ msgid "Message could not be sent because a connection error occurred:"
 msgstr "Порука се не може послати због грешке у вези:"
 
 #: src/protocols/msn/switchboard.c:423
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
+msgid "Message could not be sent because an error with the switchboard occurred:"
 msgstr "Порука се не може послати због грешке са пребацивачем:"
 
 #: src/protocols/msn/switchboard.c:431
@@ -7228,9 +7048,9 @@ msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Порука можда није послата зато што је дошло до непознате грешке:"
 
 #: src/protocols/msn/switchboard.c:952
-#, fuzzy, c-format
+#, c-format
 msgid "%s just sent you a Nudge!"
-msgstr "%s жели да вам пошаље датотеку"
+msgstr "%s вас управо тражи!"
 
 #: src/protocols/msn/userlist.c:85
 #, c-format
@@ -7238,24 +7058,23 @@ msgid "The user %s (%s) wants to add %s to his or her buddy list."
 msgstr "Корисник %s (%s) жели да дода %s у свој списак другара."
 
 #: src/protocols/msn/userlist.c:275
-#, fuzzy, c-format
+#, c-format
 msgid "%s has added you to his or her contact list."
-msgstr "Корисник %s жели да дода %s у свој списак другара."
+msgstr "%s вас је додао у свој списак другара."
 
 #: src/protocols/msn/userlist.c:339
 #, c-format
 msgid "%s has removed you from his or her contact list."
-msgstr ""
+msgstr "%s вас је уклонио са његове или њене листе другара."
 
 #: src/protocols/msn/userlist.c:659
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add \"%s\"."
-msgstr "Не могу да додам другара."
+msgstr "Не могу да додам \"%s\"."
 
 #: src/protocols/msn/userlist.c:661
-#, fuzzy
 msgid "The screen name specified is invalid."
-msgstr "Унети SecurID кључ је неисправан."
+msgstr "Име корисника је неисправно."
 
 #: src/protocols/napster/napster.c:260
 msgid "Unable to read header from server"
@@ -7264,13 +7083,11 @@ msgstr "Не могу учитати заглавље са сервера"
 #: src/protocols/napster/napster.c:274
 #, c-format
 msgid "Unable to read message from server: %s.  Command is %hd, length is %hd."
-msgstr ""
-"Не могу да прочитам поруку са сервера: %s. Команда је %hd, дужина је %hd."
+msgstr "Не могу да прочитам поруку са сервера: %s. Команда је %hd, дужина је %hd."
 
 #: src/protocols/napster/napster.c:290
-#, fuzzy
 msgid "Unknown server error."
-msgstr "Непозната грешка."
+msgstr "Непозната грешка сервера."
 
 #: src/protocols/napster/napster.c:339
 #, c-format
@@ -7463,8 +7280,7 @@ msgstr "Пријава није успела (%s)."
 #: src/protocols/novell/novell.c:232
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
-msgstr ""
-"Не могу да пошаљем поруку. Не могу да добавим податке о кориснику (%s)."
+msgstr "Не могу да пошаљем поруку. Не могу да добавим податке о кориснику (%s)."
 
 #: src/protocols/novell/novell.c:381
 #, c-format
@@ -7644,8 +7460,7 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:2051
 #, c-format
-msgid ""
-"%s appears to be offline and did not receive the message that you just sent."
+msgid "%s appears to be offline and did not receive the message that you just sent."
 msgstr "Изгледа да %s није присутан и да није примио послату поруку."
 
 #. TODO: Would be nice to prompt if not set!
@@ -7963,7 +7778,7 @@ msgid "Connect"
 msgstr "Успостави везу"
 
 #: src/protocols/oscar/oscar.c:1661
-#, fuzzy, c-format
+#, c-format
 msgid "You have lost your connection to chat room %s."
 msgstr "Веза са причаоницом %s је прекинута."
 
@@ -8002,9 +7817,8 @@ msgstr "Веза је успостављена, колачић је послат
 #. * that is, we want the sender to connect to us
 #. Let the user not to lose hope quite yet
 #: src/protocols/oscar/oscar.c:2063
-#, fuzzy
 msgid "Attempting connection redirect..."
-msgstr "Покушавам да се повежем са %s на %s:%hu за непосредне брзе поруке."
+msgstr "Покушавам прослеђивање везе..."
 
 #. proxyip timed out
 #. * Yes, it's a bit odd to ask the user to enable proxied file transfers
@@ -8017,6 +7831,8 @@ msgid ""
 " Try enabling proxy servers for file transfers in Tools->Preferences->AIM/"
 "ICQ."
 msgstr ""
+"Време за пренос датотеке %s је истекло.\n"
+" Покушајте омогућити прокси сервере за пренос датотека у Алати -> Поставке -> АИМ/ICQ."
 
 # Ovo je FD kao broj koji je ekvivalentan "file handle"-u, odnosno, to je jedinstvena oznaka otvorenog fajla za pristup; sta znaci "establish" u ovom kontekstu mi nije jasno
 #: src/protocols/oscar/oscar.c:2206 src/protocols/yahoo/yahoo_filexfer.c:174
@@ -8031,15 +7847,13 @@ msgstr "Не могу да успоставим нову везу."
 
 #: src/protocols/oscar/oscar.c:2445 src/protocols/oscar/oscar.c:2454
 #: src/protocols/oscar/oscar.c:2468 src/protocols/oscar/oscar.c:2478
-#, fuzzy
 msgid "Unable to log into file transfer proxy."
-msgstr "Не могу да пишем у датотеку %s."
+msgstr "Не могу да се пријавим на прокси преноса датотека."
 
 # Mogu reci i "server soket", ali preveliko znacenje mogu ljudi dati "server" delu, i ne razumeti.
 #: src/protocols/oscar/oscar.c:2532
-#, fuzzy
 msgid "Unable to establish listener socket or no AOL proxy connection present."
-msgstr "Не могу да успоставим сокет за везу."
+msgstr "Не могу да успоставим сокет за везу или није присутна АОЛ прокси веза."
 
 #: src/protocols/oscar/oscar.c:2733 src/protocols/toc/toc.c:543
 msgid "Incorrect nickname or password."
@@ -8161,13 +7975,12 @@ msgid "Authorization Denied Message:"
 msgstr "Разлог одбијања овлашћења:"
 
 #: src/protocols/oscar/oscar.c:4590
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %u wants to add %s to their buddy list for the following reason:\n"
 "%s"
 msgstr ""
-"Корисник %u жели да Вас дода у свој списак другара и навео је следећи "
-"разлог:\n"
+"Корисник %u жели да %s дода у свој списак другара и навео је следећи разлог:\n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:4600 src/protocols/oscar/oscar.c:7246
@@ -8265,10 +8078,8 @@ msgstr[2] "Пропустили сте %hu порука од %s зато што 
 
 #: src/protocols/oscar/oscar.c:4777
 #, c-format
-msgid ""
-"You missed %hu message from %s because the rate limit has been exceeded."
-msgid_plural ""
-"You missed %hu messages from %s because the rate limit has been exceeded."
+msgid "You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] "Пропустили сте %hu поруку од %s зато што је ограничење прекорачено."
 msgstr[1] "Пропустили сте %hu поруке од %s зато што је ограничење прекорачено."
 msgstr[2] "Пропустили сте %hu порука од %s зато што је ограничење прекорачено."
@@ -8350,8 +8161,7 @@ msgstr "Можда АИМ веза прекинута."
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
-msgstr ""
-"[Није могуће приказати поруку јер садржи знаке који се не могу приказати.]"
+msgstr "[Није могуће приказати поруку јер садржи знаке који се не могу приказати.]"
 
 #: src/protocols/oscar/oscar.c:5554
 msgid "Rate limiting error."
@@ -8473,11 +8283,9 @@ msgstr ""
 "разликује од оригинала."
 
 #: src/protocols/oscar/oscar.c:6200
-#, fuzzy, c-format
+#, c-format
 msgid "Error 0x%04x: Unable to format screen name because it is invalid."
-msgstr ""
-"Грешка 0x%04x: Не могу да испишем корисничко име зато што је тражено име "
-"предугачко."
+msgstr "Грешка 0x%04x: Не могу да испишем корисничко име зато што је погрешно."
 
 #: src/protocols/oscar/oscar.c:6203
 #, c-format
@@ -8539,8 +8347,7 @@ msgid "The email address for %s is %s"
 msgstr "Адреса е-поште за %s је %s"
 
 #: src/protocols/oscar/oscar.c:6298
-msgid ""
-"Your IM Image was not sent. You must be Direct Connected to send IM Images."
+msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "Слика у брзој поруци није послата. Морате бити непосредно повезани за слање "
 "слика."
@@ -8690,12 +8497,12 @@ msgid "Authorization Given"
 msgstr "Овлашћење је дато"
 
 #: src/protocols/oscar/oscar.c:7237
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %s wants to add %s to their buddy list for the following reason:\n"
 "%s"
 msgstr ""
-"Корисник %s жели да Вас дода у свој списак другара из следећих разлога:\n"
+"Корисник %s жели да дода %s у свој списак другара из следећих разлога:\n"
 "%s"
 
 #. Granted
@@ -8766,25 +8573,21 @@ msgid "Re-request Authorization"
 msgstr "Понови захтев за овлашћење"
 
 #: src/protocols/oscar/oscar.c:7969
-#, fuzzy
 msgid "Require authorization"
 msgstr "Захтевај овлашћење"
 
 # Ovo je svrha ovog polja kod nas, pa neka ostane ovako
 #: src/protocols/oscar/oscar.c:7972
-#, fuzzy
 msgid "Hide IP address"
-msgstr "ИП адреса"
+msgstr "Сакриј ИП адресу"
 
 #: src/protocols/oscar/oscar.c:7975
-#, fuzzy
 msgid "Web aware"
 msgstr "Пратим веб"
 
 #: src/protocols/oscar/oscar.c:7980
-#, fuzzy
 msgid "ICQ Privacy Options"
-msgstr "Поставке проксија"
+msgstr "Поставке приватности за ICQ"
 
 #: src/protocols/oscar/oscar.c:7997
 msgid "The new formatting is invalid."
@@ -8854,9 +8657,8 @@ msgstr "Подеси прослеђивање брзих порука (адре�
 
 #. ICQ actions
 #: src/protocols/oscar/oscar.c:8243
-#, fuzzy
 msgid "Show privacy options..."
-msgstr "Покажи више поставки"
+msgstr "Покажи опције приватности..."
 
 #. AIM actions
 #: src/protocols/oscar/oscar.c:8250
@@ -8888,18 +8690,16 @@ msgid "Search for Buddy by Information"
 msgstr "Пронађи другара према подацима"
 
 #: src/protocols/oscar/oscar.c:8350
-#, fuzzy
 msgid "Use recent buddies group"
-msgstr "Корисник није у групи"
+msgstr "Користи претходну групу"
 
 #: src/protocols/oscar/oscar.c:8353
-#, fuzzy
 msgid "Show how long you have been idle"
-msgstr "Омогућава Вам да одредите колико дуго траје период неактивности"
+msgstr "Покажи колико сте неактивни"
 
 #: src/protocols/oscar/oscar.c:8362
 msgid "Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"
-msgstr ""
+msgstr "Користи АИМ/ICQ прокси сервер (спорије/сигурније/често ради)"
 
 #. *< type
 #. *< ui_requirement
@@ -8928,48 +8728,43 @@ msgid "Encoding"
 msgstr "Начин записа"
 
 #: src/protocols/sametime/sametime.c:1134
-#, fuzzy
 msgid "Sending Handshake"
-msgstr "Шаљем колачић"
+msgstr "Шаљем руковање"
 
 #: src/protocols/sametime/sametime.c:1139
-#, fuzzy
 msgid "Waiting for Handshake Acknowledgement"
-msgstr "Чекам да пренос почне"
+msgstr "Чекам на признавање руковања"
 
 #: src/protocols/sametime/sametime.c:1144
 msgid "Handshake Acknowledged, Sending Login"
-msgstr ""
+msgstr "Руковање препознато, шаљем пријаву"
 
 #: src/protocols/sametime/sametime.c:1149
 msgid "Waiting for Login Acknowledgement"
-msgstr ""
+msgstr "Чекам препознавање пријаве"
 
 #: src/protocols/sametime/sametime.c:1154
-#, fuzzy
 msgid "Login Redirected"
-msgstr "Сервер за пријаву"
+msgstr "Пријава преусмерена"
 
 #: src/protocols/sametime/sametime.c:1159
-#, fuzzy
 msgid "Forcing Login"
-msgstr "Пријава"
+msgstr "Присиљавам пријаву"
 
 #: src/protocols/sametime/sametime.c:1163
 msgid "Login Acknowledged"
-msgstr ""
+msgstr "Пријава препозната"
 
 #: src/protocols/sametime/sametime.c:1168
-#, fuzzy
 msgid "Connected to Sametime Community Server"
-msgstr "Повезивање са SILC сервером"
+msgstr "Повезао се са Sametime Community сервером"
 
 #. * @todo Admin alerts should probably be in a conversation window
 #. rather than a gaim_notify_message. Or in some sort of updating
 #. dialog, or something.
 #: src/protocols/sametime/sametime.c:1263
 msgid "Admin Alert"
-msgstr ""
+msgstr "Упозорење администратора"
 
 #: src/protocols/sametime/sametime.c:2758
 msgid "Active"
@@ -8980,17 +8775,15 @@ msgstr "Активан"
 msgid ""
 "Could not add the buddy %s because every simple user has to start with "
 "'sip:'."
-msgstr ""
+msgstr "Нисам могао додати другара %s зато што сваки једноставни корисник треба да почиње са 'sip:'."
 
 #: src/protocols/simple/simple.c:1209
-#, fuzzy
 msgid "Could not create listen socket"
-msgstr "Не могу да начиним сокет"
+msgstr " е могу да начиним сокет за слушање"
 
 #: src/protocols/simple/simple.c:1263
-#, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
-msgstr "IRC надимци не могу садржати белине"
+msgstr "SIP надимци не могу садржати белине или @ симболе"
 
 #. *< type
 #. *< ui_requirement
@@ -9001,34 +8794,30 @@ msgstr "IRC надимци не могу садржати белине"
 #. *< name
 #. *< version
 #: src/protocols/simple/simple.c:1408
-#, fuzzy
 msgid "SIP/SIMPLE Protocol Plugin"
-msgstr "Додатак за SILC протокол"
+msgstr "SIP/SIMPLE додатак за протокол"
 
 #. *  summary
 #: src/protocols/simple/simple.c:1409
-#, fuzzy
 msgid "The SIP/SIMPLE Protocol Plugin"
-msgstr "Додатак за SILC протокол"
+msgstr "SIP/SIMPLE додатак за протокол"
 
 #. *  description
 #: src/protocols/simple/simple.c:1410
 msgid "Thomas Butter <butter@uni-mannheim.de>"
-msgstr ""
+msgstr "Томас Батер <butter@uni-mannheim.de>"
 
 #: src/protocols/simple/simple.c:1431
 msgid "Publish Status (note: everyone may watch you)"
-msgstr ""
+msgstr "Објави стање (примедба: сви вас могу гледати)"
 
 #: src/protocols/simple/simple.c:1434
-#, fuzzy
 msgid "Use UDP"
-msgstr "Корисников ИД"
+msgstr "Користи УДП"
 
 #: src/protocols/simple/simple.c:1436
-#, fuzzy
 msgid "Use Proxy"
-msgstr "Прокси"
+msgstr "Користи прокси"
 
 #: src/protocols/simple/simple.c:1438
 msgid "Proxy"
@@ -9522,10 +9311,8 @@ msgstr "Оснивач канала <I>%s</I> је <I>%s</I>"
 
 #: src/protocols/silc/chat.c:1071
 #, c-format
-msgid ""
-"You have to join the %s channel before you are able to join the private group"
-msgstr ""
-"Морате се прикључити каналу %s пре него што се прикључите приватној групи"
+msgid "You have to join the %s channel before you are able to join the private group"
+msgstr "Морате се прикључити каналу %s пре него што се прикључите приватној групи"
 
 #: src/protocols/silc/chat.c:1073
 msgid "Join Private Group"
@@ -9566,9 +9353,8 @@ msgid "Key agreement failed"
 msgstr "Преговор о кључевима није успео"
 
 #: src/protocols/silc/ft.c:102
-#, fuzzy
 msgid "File transfer session does not exist"
-msgstr "Сесије преноса датотека не постоје"
+msgstr "Сесија преноса датотека не постоји"
 
 #: src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
@@ -9798,8 +9584,7 @@ msgid "Key Exchange failed"
 msgstr "Размена кључева није успела"
 
 #: src/protocols/silc/ops.c:1508
-msgid ""
-"Resuming detached session failed. Press Reconnect to create new connection."
+msgid "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
 "Настављам прекинуту сесију. Притисните Поновно повезивање да направите нову "
 "везу."
@@ -9877,8 +9662,7 @@ msgstr ""
 #: src/protocols/silc/pk.c:108
 #, c-format
 msgid "Received %s's public key. Would you like to accept this public key?"
-msgstr ""
-"Примљен је јавни кључ за %s. Да ли желите да прихватите овај јавни кључ?"
+msgstr "Примљен је јавни кључ за %s. Да ли желите да прихватите овај јавни кључ?"
 
 #: src/protocols/silc/pk.c:112
 #, c-format
@@ -10061,8 +9845,7 @@ msgstr "topic [&lt;нова тема&gt;]:  Прегледа или мења т�
 
 #: src/protocols/silc/silc.c:1342
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
-msgstr ""
-"join &lt;канал&gt; [&lt;лозинка&gt;]:  Приступа разговору на овој мрежи"
+msgstr "join &lt;канал&gt; [&lt;лозинка&gt;]:  Приступа разговору на овој мрежи"
 
 #: src/protocols/silc/silc.c:1346
 msgid "list:  List channels on this network"
@@ -10078,8 +9861,7 @@ msgstr "msg &lt;надимак&gt; &lt;порука&gt;:  Шаље приват�
 
 #: src/protocols/silc/silc.c:1358
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
-msgstr ""
-"query &lt;надимак&gt; [&lt;порука&gt;]:  Шаље приватну поруку кориснику"
+msgstr "query &lt;надимак&gt; [&lt;порука&gt;]:  Шаље приватну поруку кориснику"
 
 #: src/protocols/silc/silc.c:1362
 msgid "motd:  View the server's Message Of The Day"
@@ -10143,8 +9925,7 @@ msgstr ""
 
 #: src/protocols/silc/silc.c:1412
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
-msgstr ""
-"kick &lt;канал&gt; &lt;надимак&gt; [коментар]:  Одстрани надимак са канала"
+msgstr "kick &lt;канал&gt; &lt;надимак&gt; [коментар]:  Одстрани надимак са канала"
 
 #: src/protocols/silc/silc.c:1416
 msgid "info [server]:  View server administrative details"
@@ -10156,8 +9937,7 @@ msgstr "ban [&lt;канал&gt; +|-&lt;надимак&gt;]:  Забрани пр
 
 #: src/protocols/silc/silc.c:1424
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
-msgstr ""
-"getkey &lt;надимак|сервер&gt;:  Добави корисников или серверов јавни кључ"
+msgstr "getkey &lt;надимак|сервер&gt;:  Добави корисников или серверов јавни кључ"
 
 #: src/protocols/silc/silc.c:1428
 msgid "stats:  View server and network statistics"
@@ -10584,20 +10364,18 @@ msgstr "Јаху! системска порука за %s:"
 #. * this should probably be moved to the core.
 #.
 #: src/protocols/yahoo/yahoo.c:887
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s wants to add %s to his or her buddy list%s%s."
-msgstr "Корисник %s жели да дода %s у свој списак другара."
+msgstr "Корисник %s жели да дода %s у свој списак другара%s%s."
 
 #: src/protocols/yahoo/yahoo.c:893
-#, fuzzy
 msgid "Message (optional) :"
-msgstr "Обавештење о порукама"
+msgstr "Порука (необавезна) :"
 
 #: src/protocols/yahoo/yahoo.c:935
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
-msgstr ""
-"Корисник %s је (накнадно) одбио захтев да га додате у ваш списак другара."
+msgstr "Корисник %s је (накнадно) одбио захтев да га додате у ваш списак другара."
 
 #: src/protocols/yahoo/yahoo.c:938
 #, c-format
@@ -10719,24 +10497,20 @@ msgid "Not on server list"
 msgstr "Није на списку на серверу"
 
 #: src/protocols/yahoo/yahoo.c:2773 src/protocols/yahoo/yahoo.c:2833
-#, fuzzy
 msgid "Appear Online"
-msgstr "Као неповезан"
+msgstr "Прави се повезан"
 
 #: src/protocols/yahoo/yahoo.c:2776 src/protocols/yahoo/yahoo.c:2855
-#, fuzzy
 msgid "Appear Permanently Offline"
-msgstr "Као неповезан"
+msgstr "Прави се потпуно неповезан"
 
 #: src/protocols/yahoo/yahoo.c:2794
-#, fuzzy
 msgid "Stealth"
-msgstr "Област"
+msgstr "Скривен"
 
 #: src/protocols/yahoo/yahoo.c:2849
-#, fuzzy
 msgid "Don't Appear Permanently Offline"
-msgstr "Као неповезан"
+msgstr "Не прави се потпуно неповезан"
 
 #: src/protocols/yahoo/yahoo.c:2896
 msgid "Join in Chat"
@@ -10748,11 +10522,11 @@ msgstr "Покрени разговор"
 
 #: src/protocols/yahoo/yahoo.c:2926
 msgid "Stealth Settings"
-msgstr ""
+msgstr "Поставке скривања"
 
 #: src/protocols/yahoo/yahoo.c:2932
 msgid "Start Doodling"
-msgstr ""
+msgstr "Почни цртати"
 
 #: src/protocols/yahoo/yahoo.c:2963
 msgid "Active which ID?"
@@ -10780,7 +10554,7 @@ msgstr "buzz: сиреном привуци пажњу контакту"
 
 #: src/protocols/yahoo/yahoo.c:3550
 msgid "doodle: Request user to start a Doodle session"
-msgstr ""
+msgstr "цртање: захтевај од корисника да почне сесију цртања"
 
 #. *< type
 #. *< ui_requirement
@@ -10857,8 +10631,7 @@ msgstr "Јаху профил"
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
 "time."
-msgstr ""
-"На жалост, профили који имају садржај за одрасле тренутно нису подржани."
+msgstr "На жалост, профили који имају садржај за одрасле тренутно нису подржани."
 
 #: src/protocols/yahoo/yahoo_profile.c:795
 msgid ""
@@ -10999,7 +10772,7 @@ msgstr ""
 "записа“ у Уреднику налога)"
 
 #: src/protocols/zephyr/zephyr.c:686
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send to chat %s,%s,%s"
 msgstr "Не могу да пошаљем разговор %s,%s,%s"
 
@@ -11048,17 +10821,15 @@ msgstr "zl &lt;надимак&gt;: Лоцирај корисника"
 
 #: src/protocols/zephyr/zephyr.c:2612
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
-"instance &lt;примерак&gt;: Поставља примерак који се користи за ову класу"
+msgstr "instance &lt;примерак&gt;: Поставља примерак који се користи за ову класу"
 
 #: src/protocols/zephyr/zephyr.c:2617
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
 msgstr "inst &lt;примерак&gt;: Поставља примерак који се користи за ову класу"
 
 #: src/protocols/zephyr/zephyr.c:2622
-#, fuzzy
 msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-msgstr "inst &lt;примерак&gt;: Поставља примерак који се користи за ову класу"
+msgstr "topic &lt;примерак&gt;: Поставља примерак који се користи за ову класу"
 
 #: src/protocols/zephyr/zephyr.c:2628
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
@@ -11067,8 +10838,7 @@ msgstr ""
 "разговору"
 
 #: src/protocols/zephyr/zephyr.c:2633
-msgid ""
-"zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
+msgid "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
 msgstr "zi &lt;примерак&gt;: Шаље поруку &lt;порука,<i>примерак</i>,*&gt;"
 
 #: src/protocols/zephyr/zephyr.c:2639
@@ -11130,19 +10900,16 @@ msgid "Export to .zephyr.subs"
 msgstr "Извези у .zephyr.subs"
 
 #: src/protocols/zephyr/zephyr.c:2880
-#, fuzzy
 msgid "Import from .anyone"
-msgstr "Извези у .anyone"
+msgstr "Увези из .anyone"
 
 #: src/protocols/zephyr/zephyr.c:2883
-#, fuzzy
 msgid "Import from .zephyr.subs"
-msgstr "Извези у .zephyr.subs"
+msgstr "Увези из .zephyr.subs"
 
 #: src/protocols/zephyr/zephyr.c:2886
-#, fuzzy
 msgid "Realm"
-msgstr "Име"
+msgstr "Подручје"
 
 # Шта је бре ово?!
 #: src/protocols/zephyr/zephyr.c:2889
@@ -11199,11 +10966,13 @@ msgid "(1 message)"
 msgstr "(1 порука)"
 
 #: src/server.c:859
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
-msgstr "%s позива %s у причаоницу „%s“\n"
+msgstr ""
+"%s је позвао %s у причаоницу %s:\n"
+"%s"
 
 #: src/server.c:864
 #, c-format
@@ -11215,9 +10984,8 @@ msgid "Accept chat invitation?"
 msgstr "Прихвати позив на разговор?"
 
 #: src/status.c:153
-#, fuzzy
 msgid "Unset"
-msgstr "Јединица"
+msgstr "Искључи"
 
 #: src/status.c:156
 msgid "Unavailable"
@@ -11244,25 +11012,20 @@ msgid "%s became unidle"
 msgstr "%s се пробудио(ла)"
 
 #: src/status.c:1697
-#, fuzzy
 msgid "Default auto-away"
-msgstr "Аутоматско одуство"
+msgstr "Подразумевано аутоматско одуство"
 
 #: src/util.c:2121
-#, fuzzy, c-format
+#, c-format
 msgid "Error Reading %s"
-msgstr ""
-"Грешка при читању %s: \n"
-"%s.\n"
+msgstr "Грешка при читању %s"
 
 #: src/util.c:2122
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "An error was encountered reading your %s.  They have not been loaded, and "
 "the old file has been renamed to %s~."
-msgstr ""
-"Дошло је до грешке при обради списка другара. Списак није учитан а стари "
-"списак је померен у blist.xml~."
+msgstr "Дошло је до грешке при обради вашег %s.  Није учитано, а старом фајлу је име промењено у %s~."
 
 #: src/util.c:2567
 msgid "Calculating..."
@@ -11304,1996 +11067,3 @@ msgstr[2] "минута"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Грешка при отварању везе.\n"
 
-#~ msgid "Buddy List Sorting"
-#~ msgstr "Поредак у списку другара"
-
-#~ msgid "_Sorting:"
-#~ msgstr "_Поредак:"
-
-#~ msgid "Buddy Display"
-#~ msgstr "Приказ другара"
-
-#, fuzzy
-#~ msgid "Show more buddy details"
-#~ msgstr "Прикажи детаље о кориснику"
-
-#~ msgid "Gnome Default"
-#~ msgstr "Гном подразумевано"
-
-#~ msgid "Away m_essage:"
-#~ msgstr "_Порука за одсуство:"
-
-# bug: plural-forms
-#, fuzzy
-#~ msgid "Quit message"
-#~ msgstr "(1 порука)"
-
-#~ msgid "Restore Away State On Reconnect"
-#~ msgstr "Врати запамћено стање везе при повезивању"
-
-#~ msgid "Mail Server"
-#~ msgstr "Сервер за е-пошту"
-
-# bug: plural-forms
-#~ msgid "%s (%d new/%d total)"
-#~ msgstr "%s (нових: %d/укупно: %d)"
-
-#~ msgid "Check Mail"
-#~ msgstr "Провери пошту"
-
-#~ msgid "Check email every X seconds.\n"
-#~ msgstr "Проверавај е-пошту сваких Н секунди.\n"
-
-#~ msgid "Auto-login"
-#~ msgstr "Аутоматска пријава"
-
-#~ msgid "New..."
-#~ msgstr "Нова..."
-
-#~ msgid "Back"
-#~ msgstr "Назад"
-
-#~ msgid "Signoff"
-#~ msgstr "Одјави се"
-
-#~ msgid "Tray Icon Configuration"
-#~ msgstr "Подешавања иконице на панелу"
-
-#~ msgid "_Hide new messages until tray icon is clicked"
-#~ msgstr "_Прикриј нове поруке док се не кликне на иконицу на панелу"
-
-#~ msgid "Orientation"
-#~ msgstr "Усмерење"
-
-#~ msgid "The orientation of the tray."
-#~ msgstr "Усмерење фиоке."
-
-#~ msgid "Not connected to AIM"
-#~ msgstr "Неповезан на АИМ"
-
-#~ msgid "No screenname given."
-#~ msgstr "Нисте навели име."
-
-#~ msgid "No roomname given."
-#~ msgstr "Ниста навели собу."
-
-#~ msgid "Invalid AIM URI"
-#~ msgstr "Неисправна АИМ Интернет адреса"
-
-#~ msgid ""
-#~ "Failed to assign %s to a socket:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Не могу да доделим %s за прикључак:\n"
-#~ "%s"
-
-#~ msgid "Unable to open socket"
-#~ msgstr "Не могу да читам сокет"
-
-#~ msgid "Remote Control"
-#~ msgstr "Удаљено управљање"
-
-#~ msgid "Provides remote control for gaim applications."
-#~ msgstr "Омогућава удаљено управљање Гаим програмима."
-
-#~ msgid ""
-#~ "Gives Gaim the ability to be remote-controlled through third-party "
-#~ "applications or through the gaim-remote tool."
-#~ msgstr ""
-#~ "Омогућава Гаиму да се њиме управља са удаљених места помоћу независних "
-#~ "програма, или помоћу gaim-remote алата."
-
-#~ msgid "GTK Signals Test"
-#~ msgstr "Проба Гтк сигнала"
-
-#~ msgid "Test to see that all ui signals are working properly."
-#~ msgstr "Проверава да ли сви сигнали сучеља исправно раде."
-
-#~ msgid ""
-#~ "When a new conversation is opened this plugin will insert the last "
-#~ "conversation into the current conversation."
-#~ msgstr ""
-#~ "Када се покрене нови разговор, овај додатак ће убацити последњи разговор "
-#~ "у текући."
-
-#~ msgid "_Apply"
-#~ msgstr "_Примени"
-
-#~ msgid "Docked _Buddy List is always on top"
-#~ msgstr "Одржавај _лепљиви прозор са списком другара на врху"
-
-#~ msgid "Away!"
-#~ msgstr "Одсутан!"
-
-#~ msgid "Edit This Message"
-#~ msgstr "Уреди ову поруку"
-
-#~ msgid "I'm Back!"
-#~ msgstr "Вратио сам се!"
-
-#~ msgid "Are you sure you want to remove the away message \"%s\"?"
-#~ msgstr "Да ли сте сигурни да желите да уклоните поруку „%s‟?"
-
-#~ msgid "Remove Away Message"
-#~ msgstr "Уклони поруку за одсуство"
-
-#~ msgid "Set All Away"
-#~ msgstr "Постави одсуство за све"
-
-#~ msgid "You cannot save an away message with a blank title"
-#~ msgstr "Не можете снимити поруку за одсуство без наслова"
-
-#~ msgid ""
-#~ "Please give the message a title, or choose \"Use\" to use without saving."
-#~ msgstr ""
-#~ "Наведите и наслов поруке, или изаберите „Користи“ за коришћење без "
-#~ "снимања."
-
-#~ msgid "You cannot create an empty away message"
-#~ msgstr "Не можете направити празну поруку за одсуство"
-
-#~ msgid "New away message"
-#~ msgstr "Нова порука за одсуство"
-
-#~ msgid "Away title: "
-#~ msgstr "Наслов одсуства: "
-
-#~ msgid "_Save"
-#~ msgstr "Сачувај"
-
-#~ msgid "Sa_ve & Use"
-#~ msgstr "Сачувај и користи"
-
-#~ msgid "Buddy List Error"
-#~ msgstr "Грешка у списку другара"
-
-#~ msgid "Size of the expander arrow"
-#~ msgstr "Величина стрелице проширивача"
-
-#~ msgid ""
-#~ "Usage: %s command [OPTIONS] [URI]\n"
-#~ "\n"
-#~ "    COMMANDS:\n"
-#~ "       uri                      Handle AIM: URI\n"
-#~ "       away                     Popup the away dialog with the default "
-#~ "message\n"
-#~ "       back                     Remove the away dialog\n"
-#~ "       quit                     Close running copy of Gaim\n"
-#~ "\n"
-#~ "    OPTIONS:\n"
-#~ "       -h, --help [command]     Show help for command\n"
-#~ msgstr ""
-#~ "Употреба: %s наредба [ИЗБОРИ] [URI]\n"
-#~ "\n"
-#~ "    НАРЕДБЕ:\n"
-#~ "       uri                      Користи АИМ: URI\n"
-#~ "       quit                     Затвори покренуту инстанцу Гаима\n"
-#~ "       back                     Уклони обавештење о одсуству\n"
-#~ "       quit                     Затвори покренути примерак ГАИМ-а\n"
-#~ "    ИЗБОРИ:\n"
-#~ "       -h, --help [наредба]     Прикажи помоћ за наредбу\n"
-
-#~ msgid ""
-#~ "Gaim not running (on session 0)\n"
-#~ "Is the \"Remote Control\" plugin loaded?\n"
-#~ msgstr ""
-#~ "Гаим није покренут (у сесији 0)\n"
-#~ "Да ли је покренут „даљински управљач‟?\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Using AIM: URIs:\n"
-#~ "Sending an IM to a screen name:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
-#~ "In this case, 'Penguin' is the screen name we wish to IM, and 'hello "
-#~ "world'\n"
-#~ "is the message to be sent.  '+' must be used in place of spaces.\n"
-#~ "Please note the quoting used above - if you run this from a shell the "
-#~ "'&'\n"
-#~ "needs to be escaped, or the command will stop at that point.\n"
-#~ "Also,the following will just open a conversation window to a screen "
-#~ "name,\n"
-#~ "with no message:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
-#~ "\n"
-#~ "Joining a chat:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
-#~ "...joins the 'PenguinLounge' chat room.\n"
-#~ "\n"
-#~ "Adding a buddy to your buddy list:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
-#~ "...prompts you to add 'Penguin' to your buddy list.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Употреба АИМ-а: адресе:\n"
-#~ "Слање брзе поруке на име:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Пингвин&message=ГНУ+свет'\n"
-#~ "У овом случају, „Пингвин“ је име корисника коме шаљемо поруку, а \n"
-#~ "„ГНУ свет“ је сама порука. Мора се користити „+“ уместо размака. \n"
-#~ "Обратите пажњу на начин цитирања изнад — уколико ово користите из "
-#~ "љуске, \n"
-#~ "знак „&“ се мора истакнути, или ће наредба стати на том месту.\n"
-#~ "Такође, следеће ће само отворити нови прозор за разговор са корисником, \n"
-#~ "без слања поруке:\n"
-#~ "\tgaim-remote uri 'aim:goim?screenname=Пингвин'\n"
-#~ "\n"
-#~ "Прикључивање разговору:\n"
-#~ "\tgaim-remote uri 'aim:gochat?roomname=ЗемљаГнуа'\n"
-#~ "Помоћу овога се прикључујете соби „ЗемљаГнуа“.\n"
-#~ "\n"
-#~ "Додавање другара у Ваш списак другара:\n"
-#~ "\tgaim-remote uri 'aim:addbuddy?screenname=Пингвин'\n"
-#~ "Бићете упитани да додате „Пингвина“ у Ваш списак другара.\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Close running copy of Gaim\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Затвори покренуту инстанцу Гаима\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Mark all accounts as \"away\" with the default message.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Објави одсуство са свих налога и стави подразумевану поруку.\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Set all accounts as not away.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Врати све налоге са одсуства.\n"
-
-#~ msgid "Show fewer options"
-#~ msgstr "Покажи мање поставки"
-
-#~ msgid "Information"
-#~ msgstr "Подаци"
-
-#~ msgid "/Buddies/_Signoff"
-#~ msgstr "/Другари/_Одјава"
-
-#~ msgid "/Tools/_Away"
-#~ msgstr "/Алати/_Одсутан"
-
-#~ msgid "/Tools/Pl_ugin Actions"
-#~ msgstr "/Алати/Акције по протоколу"
-
-#~ msgid "Rename Group"
-#~ msgstr "Преименуј групу"
-
-#~ msgid "New group name"
-#~ msgstr "Назив нове групе"
-
-#~ msgid "Please enter a new name for the selected group."
-#~ msgstr "Унесите нови назив за изабрану групу."
-
-#~ msgid "%d%%"
-#~ msgstr "%d%%"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Account:</b>"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Налог:</b>"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Warned:</b>"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Упозорен:</b>"
-
-#~ msgid "Warned (%d%%) "
-#~ msgstr "Упозорен (%d%%) "
-
-#~ msgid "/Tools/Away"
-#~ msgstr "/Алати/Одсутан"
-
-#~ msgid "Send a message to the selected buddy"
-#~ msgstr "Пошаљи поруку изабраном другару"
-
-#~ msgid "Get information on the selected buddy"
-#~ msgstr "Прибави податке о изабраном другару"
-
-#~ msgid "_Chat"
-#~ msgstr "Разговор"
-
-#~ msgid "Join a chat room"
-#~ msgstr "Прикључи се причаоници"
-
-#~ msgid "_Away"
-#~ msgstr "Одсутан"
-
-#~ msgid "Set an away message"
-#~ msgstr "Постави поруку за одсуство"
-
-#~ msgid "Done."
-#~ msgstr "Готово."
-
-#~ msgid "Signon: "
-#~ msgstr "Пријава:"
-
-#~ msgid "Signon"
-#~ msgstr "Пријава"
-
-#~ msgid "Cancel All"
-#~ msgstr "Откажи све"
-
-#~ msgid "_Reconnect"
-#~ msgstr "По_ново се повежи"
-
-#~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n"
-#~ "\n"
-#~ "%s\n"
-#~ "%s"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">%s прекину везу.</span>\n"
-#~ "\n"
-#~ "%s\n"
-#~ "%s"
-
-#~ msgid "Reason Unknown."
-#~ msgstr "Разлог непознат."
-
-#~ msgid "Reconnect _All"
-#~ msgstr "Поново повежи _све"
-
-#~ msgid "Time"
-#~ msgstr "Време"
-
-#~ msgid "Get Away Msg"
-#~ msgstr "Прибави поруку за одсуство"
-
-#~ msgid "/Conversation/_Warn..."
-#~ msgstr "/Разговор/_Упозори..."
-
-#~ msgid "/Conversation/A_lias..."
-#~ msgstr "/Разговор/_Надени име..."
-
-#~ msgid "/Options/Show T_imestamps"
-#~ msgstr "/Избори/Приказуј временске ознаке"
-
-#~ msgid "/Conversation/Warn..."
-#~ msgstr "/Разговор/Упозори..."
-
-#~ msgid "Warn"
-#~ msgstr "Упозори"
-
-#~ msgid "Warn the user"
-#~ msgstr "Упозори корисника"
-
-#~ msgid "Block the user"
-#~ msgstr "Блокирај корисника"
-
-#~ msgid "Send a file to the user"
-#~ msgstr "Пошаљи датотеку кориснику"
-
-#~ msgid "Add the user to your buddy list"
-#~ msgstr "Додавање корисника у Ваш списак другара"
-
-#~ msgid "Remove the user from your buddy list"
-#~ msgstr "Уклањање корисника са Вашег списак другара"
-
-#~ msgid "Send"
-#~ msgstr "Пошаљи"
-
-#~ msgid "Invite"
-#~ msgstr "Позови"
-
-#~ msgid "Invite a user"
-#~ msgstr "Позови корисника"
-
-#~ msgid "Add the chat to your buddy list"
-#~ msgstr "Додавање разговора у Ваш списак другара"
-
-#~ msgid "Remove the chat from your buddy list"
-#~ msgstr "Уклањање разговора са Вашег списка другара"
-
-#~ msgid "<main>/Conversation/Close"
-#~ msgstr "<main>/Разговор/Заврши"
-
-#~ msgid "former lead developer"
-#~ msgstr "бивши главни програмер"
-
-#~ msgid "former maintainer"
-#~ msgstr "бивши одржавалац"
-
-#~ msgid "Azerbaijani"
-#~ msgstr "азербејџански"
-
-#~ msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
-#~ msgstr "Владимира Гиргинова и Владимир (Каладан) Петков"
-
-# хм, хм... ово смо имали нешто баш наше
-#~ msgid "Burmese"
-#~ msgstr "бурмски"
-
-#, fuzzy
-#~ msgid "Norwegian (Nynorsk)"
-#~ msgstr "норвешки"
-
-#~ msgid "Punjabi"
-#~ msgstr "панџаби"
-
-#~ msgid "Albanian"
-#~ msgstr "албански"
-
-#~ msgid "Turkish"
-#~ msgstr "турски"
-
-#~ msgid "Ukrainian"
-#~ msgstr "украјински"
-
-#~ msgid "Chinese"
-#~ msgstr "кинески"
-
-#~ msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-#~ msgstr "<span weight=\"bold\" size=\"larger\">Гаим в%s</span>"
-
-#~ msgid "_Screen name"
-#~ msgstr "_Име:"
-
-#~ msgid "Warn User"
-#~ msgstr "Упозори корисника"
-
-#~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
-#~ "\n"
-#~ "This will increase %s's warning level and he or she will be subject to "
-#~ "harsher rate limiting.\n"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Упозорење за %s?</span>\n"
-#~ "\n"
-#~ "Ово ће увећати ниво обазривости за „%s“ и он или она ће имати строжије "
-#~ "ограничење брзине слања порука.\n"
-
-#~ msgid "Warn _anonymously?"
-#~ msgstr "Упозори _анонимно?"
-
-#~ msgid "<b>Anonymous warnings are less severe.</b>"
-#~ msgstr "<b>Анонимна упозорења су мањег утицаја.</b>"
-
-# bug: plural-forms
-#~ msgid ""
-#~ "You are about to remove the contact containing %s and %d other buddies "
-#~ "from your buddy list.  Do you want to continue?"
-#~ msgstr ""
-#~ "Уклањате групу %s и %d осталих чланова из списка другара. Да ли желите да "
-#~ "наставите?"
-
-#~ msgid "Show transfer details"
-#~ msgstr "Прикажи детаље преноса"
-
-#~ msgid "D_isplay remote nicknames if no alias is set"
-#~ msgstr "Прикажи удаљене надимке уколико алијас није постављен"
-
-#~ msgid "Display"
-#~ msgstr "Приказ"
-
-#~ msgid "Show _timestamp on messages"
-#~ msgstr "Прикажи _временске ознаке порука"
-
-#~ msgid "Ignore c_olors"
-#~ msgstr "Занемари _боје"
-
-#~ msgid "Ignore font _faces"
-#~ msgstr "Занемари _писмо"
-
-#~ msgid "Ignore font si_zes"
-#~ msgstr "Занемари величину _слова"
-
-#~ msgid "Default Formatting"
-#~ msgstr "Подразумевано форматирање"
-
-#~ msgid "_Send default formatting with outgoing messages"
-#~ msgstr "Пошаљи подразумевано форматирање са одлазећим порукама"
-
-#~ msgid "Send Message"
-#~ msgstr "Слање поруке"
-
-#~ msgid "Enter _sends message"
-#~ msgstr "Ентер _шаље поруку"
-
-#~ msgid "C_ontrol-Enter sends message"
-#~ msgstr "Control+Ентер ш_аље поруку"
-
-#~ msgid "Window Closing"
-#~ msgstr "Затварање прозора"
-
-#~ msgid "_Escape closes window"
-#~ msgstr "Esc затвара _прозор"
-
-#~ msgid "Insertions"
-#~ msgstr "Убацивање"
-
-#~ msgid "Control-{B/I/U} changes _formatting"
-#~ msgstr "Control-{B/I/U/S} убацује HTML _ознаке"
-
-#~ msgid "Control-(number) _inserts smileys"
-#~ msgstr "Control-(број) убацује _смешак"
-
-#~ msgid "Show _buttons as:"
-#~ msgstr "Прикажи _дугмад као:"
-
-#~ msgid "Pictures"
-#~ msgstr "Слике"
-
-#~ msgid "Text"
-#~ msgstr "Текст"
-
-#~ msgid "Pictures and text"
-#~ msgstr "Слике и текст"
-
-#~ msgid "_Raise window on events"
-#~ msgstr "_Издигни прозор на догађаје"
-
-#~ msgid "Show _warning levels"
-#~ msgstr "Прикажи _нивое упозорења"
-
-#~ msgid "_Automatically expand contacts"
-#~ msgstr "_Сам разгранај контакте"
-
-#~ msgid "Enable \"_slash\" commands"
-#~ msgstr "Дозволи команде \"_са цртом\""
-
-#~ msgid "Show _aliases in tabs/titles"
-#~ msgstr "Прикажи а_лијасе у језичцима/насловима"
-
-#~ msgid "_Raise IM window on events"
-#~ msgstr "_Издигни прозор на догађаје"
-
-#~ msgid "Raise chat _window on events"
-#~ msgstr "_Издигни прозор на догађаје"
-
-#~ msgid "Use _multi-colored screen names in chats"
-#~ msgstr "Користи _вишебојне надимке у разговорима"
-
-#~ msgid "Tab p_lacement:"
-#~ msgstr "Поставка _језичака:"
-
-#~ msgid "New conversation _placement:"
-#~ msgstr "Смештање нових разговора"
-
-#~ msgid "Message Logs"
-#~ msgstr "Дневник порука"
-
-#~ msgid "System Logs"
-#~ msgstr "Системски дневник"
-
-#~ msgid "_Enable system log"
-#~ msgstr "_Омогући системски дневник"
-
-#~ msgid "Log when buddies _sign on/sign off"
-#~ msgstr "Бележи када се другари _пријављују/одјављују"
-
-#~ msgid "Log when buddies become _idle/un-idle"
-#~ msgstr "Бележи када су другари _неактивни/активни"
-
-#~ msgid "Log when buddies go away/come _back"
-#~ msgstr "Бележи када су другари _одсустни/присутни"
-
-#~ msgid "Log your _own signons/idleness/awayness"
-#~ msgstr "Бележи _личне пријаве/неактивност/одсуства"
-
-#~ msgid "Idle _time reporting:"
-#~ msgstr "Пријављивање неак_тивности:"
-
-#~ msgid "Gaim usage"
-#~ msgstr "Активност у Гаиму"
-
-#~ msgid "X usage"
-#~ msgstr "Активност у ИКС-има"
-
-#~ msgid "Windows usage"
-#~ msgstr "Активност у Виндоусу"
-
-#~ msgid ""
-#~ "<span size=\"larger\">%s %s</span>\n"
-#~ "\n"
-#~ "<span weight=\"bold\">Written by:</span>\t%s\n"
-#~ "<span weight=\"bold\">Web site:</span>\t\t%s\n"
-#~ "<span weight=\"bold\">File name:</span>\t%s"
-#~ msgstr ""
-#~ "<span size=\"larger\">%s %s</span>\n"
-#~ "\n"
-#~ "<span weight=\"bold\">Написао:</span>\t%s\n"
-#~ "<span weight=\"bold\">Веб страница:</span>\t\t%s\n"
-#~ "<span weight=\"bold\">Датотека:</span>\t%s"
-
-#~ msgid ""
-#~ "<span size=\"larger\">%s %s</span>\n"
-#~ "\n"
-#~ "<span weight=\"bold\">Written by:</span>  %s\n"
-#~ "<span weight=\"bold\">URL:</span>  %s\n"
-#~ "<span weight=\"bold\">File name:</span>  %s"
-#~ msgstr ""
-#~ "<span size=\"larger\">%s %s</span>\n"
-#~ "\n"
-#~ "<span weight=\"bold\">Написао:</span>  %s\n"
-#~ "<span weight=\"bold\">Интернет адреса:</span>  %s\n"
-#~ "<span weight=\"bold\">Датотека:</span>  %s"
-
-#~ msgid "Load"
-#~ msgstr "Учитај"
-
-#~ msgid "Summary"
-#~ msgstr "Сажетак"
-
-#~ msgid "Details"
-#~ msgstr "Детаљи"
-
-#~ msgid "_Edit"
-#~ msgstr "_Уреди"
-
-#~ msgid "Interface"
-#~ msgstr "Сучеље"
-
-#~ msgid "Message Text"
-#~ msgstr "Текст поруке"
-
-#~ msgid "Shortcuts"
-#~ msgstr "Пречице"
-
-#~ msgid "Away Messages"
-#~ msgstr "Поруке за одсуство"
-
-#~ msgid "Plugins"
-#~ msgstr "Додаци"
-
-#~ msgid "HTML"
-#~ msgstr "HTML"
-
-#~ msgid "Plain text"
-#~ msgstr "Обичан текст"
-
-#~ msgid "Please create an account."
-#~ msgstr "Начините налог."
-
-#~ msgid "Login"
-#~ msgstr "Пријава"
-
-#~ msgid "<b>_Account:</b>"
-#~ msgstr "<b>_Налог:</b>"
-
-#~ msgid "<b>_Password:</b>"
-#~ msgstr "<b>_Лозинка:</b>"
-
-#~ msgid "A_ccounts"
-#~ msgstr "_Налози"
-
-#~ msgid "P_references"
-#~ msgstr "_Поставке"
-
-#~ msgid "_Sign on"
-#~ msgstr "Пријави _се"
-
-#~ msgid ""
-#~ "Gaim %s\n"
-#~ "Usage: %s [OPTION]...\n"
-#~ "\n"
-#~ "  -a, --acct          display account editor window\n"
-#~ "  -w, --away[=MESG]   make away on signon (optional argument MESG "
-#~ "specifies\n"
-#~ "                      name of away message to use)\n"
-#~ "  -l, --login[=NAME]  automatically login (optional argument NAME "
-#~ "specifies\n"
-#~ "                      account(s) to use, seperated by commas)\n"
-#~ "  -n, --loginwin      don't automatically login; show login window\n"
-#~ "  -u, --user=NAME     use account NAME\n"
-#~ "  -c, --config=DIR    use DIR for config files\n"
-#~ "  -d, --debug         print debugging messages to stdout\n"
-#~ "  -v, --version       display the current version and exit\n"
-#~ "  -h, --help          display this help and exit\n"
-#~ msgstr ""
-#~ "Гаим %s\n"
-#~ "Употреба: %s [ОПЦИЈА]...\n"
-#~ "\n"
-#~ "  -a, --acct           приказује уређивач налога\n"
-#~ "  -w, --away[=ПОРУКА]  поставља одсуство по пријави (опциони аргумент "
-#~ "ПОРУКА \n"
-#~ "                       наводи име поруке која ће се користити за "
-#~ "одсуство)\n"
-#~ "  -l, --login[=ИМЕ]    аутоматска пријава (опциони аргумент ИМЕ наводи "
-#~ "које налог(е) \n"
-#~ "                       користити, раздвојене зарезима)\n"
-#~ "  -n, --loginwin       без аутоматске пријаве; приказује прозор за "
-#~ "пријаву\n"
-#~ "  -u, --user=ИМЕ       користи налог ИМЕ\n"
-#~ "  -c, --config=ДИР     користи ДИР за датотеке за подешавања\n"
-#~ "  -d, --debug          исписује поруке за проналажење грешака на "
-#~ "стандардни излаз\n"
-#~ "  -v, --version        приказује текуће издање и изађи\n"
-#~ "  -h, --help           приказује ову помоћ и изађи\n"
-
-#~ msgid "Unable to load preferences"
-#~ msgstr "Не могу да учитам подешавања"
-
-#~ msgid ""
-#~ "Gaim was not able to load your preferences because they are stored in an "
-#~ "old format that is no longer used.  Please reconfigure your settings "
-#~ "using the Preferences window."
-#~ msgstr ""
-#~ "Гаим није успео да учита подешавања која имате, јер су снимљена у старом "
-#~ "формату који се више не користи. Молимо Вас да поновите подешавања "
-#~ "користећи прозор Поставке."
-
-#~ msgid "Slightly less boring default"
-#~ msgstr "Уобичајено али не (тако) досадно"
-
-#~ msgid "Available for friends only"
-#~ msgstr "Доступан само за пријатеље"
-
-#~ msgid "Away for friends only"
-#~ msgstr "Одсутан само за пријатеље"
-
-#~ msgid "Invisible for friends only"
-#~ msgstr "Невидљив само за пријатеље"
-
-#~ msgid "Unable to resolve hostname."
-#~ msgstr "Не могу да растумачим адресу."
-
-#~ msgid "Error while reading from socket."
-#~ msgstr "Грешка при читању сокета."
-
-#~ msgid "Error while writing to socket."
-#~ msgstr "Грешка при писању у сокет."
-
-#~ msgid "Authentication failed."
-#~ msgstr "Неуспешна идентификација."
-
-#~ msgid "Unknown Error Code."
-#~ msgstr "Непозната ознака грешке."
-
-#~ msgid "Status: %s"
-#~ msgstr "Стање: %s"
-
-#~ msgid "Could not connect"
-#~ msgstr "Не могу да се повежем"
-
-#~ msgid "Reading data"
-#~ msgstr "Читање података"
-
-# Rukovanje/usaglasavanje ravnoteznika/balansera?
-#~ msgid "Balancer handshake"
-#~ msgstr "Равнотежно руковање"
-
-#~ msgid "Reading server key"
-#~ msgstr "Читање кључа сервера"
-
-#~ msgid "Exchanging key hash"
-#~ msgstr "Размењивање хеша кључа"
-
-#~ msgid "Critical error in GG library\n"
-#~ msgstr "Критична грешка у ГГ библиотеци\n"
-
-#~ msgid "Unable to ping server"
-#~ msgstr "Немогуће проналажење сервера"
-
-#~ msgid "Send as message"
-#~ msgstr "Пошаљи као поруку"
-
-#~ msgid "Looking up GG server"
-#~ msgstr "Тражење ГГ сервера"
-
-#~ msgid "Invalid Gadu-Gadu UIN specified"
-#~ msgstr "Наведен је неисправан Гаду-Гаду кориснички број"
-
-#~ msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
-#~ msgstr ""
-#~ "Покушавате да пошаљете поруку на неисправан Гаду-Гаду кориснички број."
-
-#~ msgid "Couldn't get search results"
-#~ msgstr "Немогуће преузимање резултата претраге"
-
-#~ msgid "Birth Year"
-#~ msgstr "Година рођења"
-
-#~ msgid "Sex"
-#~ msgstr "Пол"
-
-#~ msgid "There is no Buddy List stored on the Gadu-Gadu server."
-#~ msgstr "Не постоји списак другара ускладиштен на Гаду-Гаду серверу."
-
-#~ msgid "Couldn't Import Buddy List from Server"
-#~ msgstr "Немогућ увоз списка другара са сервера"
-
-#~ msgid "Buddy List successfully transferred to Gadu-Gadu server"
-#~ msgstr "Списак другара успешно пребачен на Гаду-Гаду сервер"
-
-#~ msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
-#~ msgstr "Немогућ пренос списка другара на Гаду-Гаду сервер"
-
-#~ msgid "Buddy List successfully deleted from Gadu-Gadu server"
-#~ msgstr "Списак другара успешно уклоњен са Гаду-Гаду сервера"
-
-#~ msgid "Couldn't delete Buddy List from Gadu-Gadu server"
-#~ msgstr "Немогуће уклањање списка другара са Гаду-Гаду сервера"
-
-#~ msgid "Password couldn't be changed"
-#~ msgstr "Неуспешна измена лозинке"
-
-#~ msgid "Error communicating with Gadu-Gadu server"
-#~ msgstr "Грешка при споразумевању са Гаду-Гаду сервером"
-
-#~ msgid ""
-#~ "Gaim was unable to complete your request due to a problem communicating "
-#~ "with the Gadu-Gadu HTTP server.  Please try again later."
-#~ msgstr ""
-#~ "Гаим није могао да испуни Ваш захтев због проблема у приступању Гаду-Гаду "
-#~ "веб серверу. Покушајте поново касније."
-
-#~ msgid "Unable to import Gadu-Gadu buddy list"
-#~ msgstr "Немогућ увоз Гаду-Гаду списка другара"
-
-#~ msgid ""
-#~ "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please "
-#~ "try again later."
-#~ msgstr ""
-#~ "Гаим није могао да се повеже са Гаду-Гаду сервером са списком другара. "
-#~ "Покушајте поново касније."
-
-#~ msgid "Couldn't export buddy list"
-#~ msgstr "Немогућ извоз списка другара"
-
-#~ msgid ""
-#~ "Gaim was unable to connect to the buddy list server.  Please try again "
-#~ "later."
-#~ msgstr ""
-#~ "Гаим није могао да се повеже на сервер са списком другара. Покушајте "
-#~ "поново касније."
-
-#~ msgid "Unable to delete Gadu-Gadu buddy list"
-#~ msgstr "Не могу да уклоним Гаду-Гаду списак другара"
-
-# Da nije mozda "imeniku" a ne "direktorijumu"?
-#~ msgid "Unable to access directory"
-#~ msgstr "Не могу приступити именику"
-
-#~ msgid ""
-#~ "Gaim was unable to search the Directory because it was unable to connect "
-#~ "to the directory server.  Please try again later."
-#~ msgstr ""
-#~ "Гаим није могао да претражи Именик зато што није успео да се повеже са "
-#~ "сервером. Покушајте поново касније."
-
-#~ msgid ""
-#~ "Gaim was unable to change your password due to an error connecting to the "
-#~ "Gadu-Gadu server.  Please try again later."
-#~ msgstr ""
-#~ "Гаим није успео да измени Вашу лозинку услед грешке при повезивању са "
-#~ "Гаду-Гаду сервером. Покушајте поново касније."
-
-#~ msgid "Directory Search"
-#~ msgstr "Претрага именика"
-
-#~ msgid "Unable to access user profile."
-#~ msgstr "Не могу да приступим подацима о кориснику."
-
-#~ msgid ""
-#~ "Gaim was unable to access this user's profile due to an error connecting "
-#~ "to the directory server.  Please try again later."
-#~ msgstr ""
-#~ "Гаим није успео да приступи подацима овог корисника услед грешке при "
-#~ "повезивању на сервер са имеником. Покушајте поново касније."
-
-#~ msgid "Gaim encountered an error communicating with the ICQ server."
-#~ msgstr "Гаим је наишао на грешку при споразумевању са ICQ сервером."
-
-#~ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
-#~ msgstr ""
-#~ "Корисник %s (%s%s%s%s%s) жели да Вас дода у свој списак другара и тражи "
-#~ "Вашу дозволу за то."
-
-#~ msgid "Send message through server"
-#~ msgstr "Пошаљи поруку кроз сервер"
-
-#~ msgid "Connecting..."
-#~ msgstr "Успостављам везу..."
-
-#~ msgid "Nick:"
-#~ msgstr "Надимак:"
-
-#~ msgid "Gaim User"
-#~ msgstr "Гаим корисник"
-
-#~ msgid "File Transfer Aborted"
-#~ msgstr "Пренос датотеке је обустваљен"
-
-#~ msgid "Buddy Information for %s"
-#~ msgstr "Подаци о другару за %s"
-
-#~ msgid "Invalid nickname '%s'"
-#~ msgstr "Неисправан надимак „%s“"
-
-#~ msgid "Invalid nickname"
-#~ msgstr "Неисправан надимак"
-
-#~ msgid "Jabber Profile"
-#~ msgstr "Џабер профил"
-
-#~ msgid "Roomlist Error"
-#~ msgstr "Грешка у списку соба"
-
-#~ msgid "Logged out"
-#~ msgstr "Одјављен"
-
-#~ msgid "Hide Operating System"
-#~ msgstr "Сакриј име оперативног система"
-
-#~ msgid "The user %s wants to add you to their buddy list."
-#~ msgstr "Корисник %s жели да Вас дода на свој списак другара."
-
-#~ msgid "Display conversation closed notices"
-#~ msgstr "Oбавести о крају разговора."
-
-#~ msgid "Display timeout notices"
-#~ msgstr "Обавести о истеку времена."
-
-#~ msgid "The conversation has become inactive and timed out."
-#~ msgstr "Разговор није вођен, и истекао је."
-
-#~ msgid ""
-#~ "You were disconnected from the server, because you logged on from a "
-#~ "different location"
-#~ msgstr ""
-#~ "Веза са сервером је прекинута, јер сте се пријавили са неког другог места."
-
-#~ msgid "User Properties"
-#~ msgstr "Корисничке поставке"
-
-#, fuzzy
-#~ msgid "Transfer of file %s timed out."
-#~ msgstr "Пренос датотеке %s завршен"
-
-#~ msgid ""
-#~ "You have been disconnected because you have signed on with this screen "
-#~ "name at another location."
-#~ msgstr ""
-#~ "Веза је прекинута зато што сте се пријавили под овим именом са неког "
-#~ "другог места."
-
-#~ msgid "Not specified"
-#~ msgstr "Није назначено"
-
-#~ msgid "ICQ Info for %s"
-#~ msgstr "ICQ подаци за %s"
-
-#~ msgid ""
-#~ "Error 0x%04x: Unable to format screen name because the requested screen "
-#~ "name ends in a space."
-#~ msgstr ""
-#~ "Грешка 0x%04x: Не могу да испишем корисничко име зато што се тражено име "
-#~ "завршава размаком."
-
-#~ msgid "Visible"
-#~ msgstr "Видљив"
-
-#~ msgid "Available Message:"
-#~ msgstr "Порука за доступност:"
-
-#~ msgid "I'm doing work and hoping for a distraction--IM me!"
-#~ msgstr "Обављам посао и надам се ометању — шибни ми поруку!"
-
-#~ msgid "Set Available Message..."
-#~ msgstr "Постави поруку за доступност..."
-
-#~ msgid "Failed to leave channel"
-#~ msgstr "Неуспешна одјава са канала"
-
-#~ msgid "Basic Profile"
-#~ msgstr "Основни профил"
-
-#~ msgid "Profile Information"
-#~ msgstr "Подаци о профилу"
-
-#~ msgid "Instant Messagers"
-#~ msgstr "Брзи пошиљаоци"
-
-#~ msgid "AIM"
-#~ msgstr "АИМ"
-
-#~ msgid "ICQ UIN"
-#~ msgstr "ICQ број"
-
-#~ msgid "MSN"
-#~ msgstr "МСН"
-
-#~ msgid "Yahoo"
-#~ msgstr "Јаху"
-
-#~ msgid "I'm From"
-#~ msgstr "Ја сам из"
-
-#~ msgid "Set your Trepia profile data."
-#~ msgstr "Постави податке у Трепиа профилу."
-
-#~ msgid "Profile"
-#~ msgstr "Профил"
-
-#~ msgid "Set Profile"
-#~ msgstr "Постави профил"
-
-#~ msgid "Visit Homepage"
-#~ msgstr "Посети личну страницу"
-
-#~ msgid "Local Users"
-#~ msgstr "Локални корисници"
-
-#~ msgid "Trepia Protocol Plugin"
-#~ msgstr "Додатак за Трепиа протокол"
-
-#~ msgid ""
-#~ "You have been logged off as you have logged in on a different machine or "
-#~ "device."
-#~ msgstr "Искључени сте јер сте се пријавили са другог рачунара или уређаја."
-
-#~ msgid "Please enter your password"
-#~ msgstr "Унесите Вашу лозинку"
-
-#~ msgid "%s logged in."
-#~ msgstr "%s се пријави."
-
-#~ msgid "%s signed on"
-#~ msgstr "%s се пријавио(ла)"
-
-#~ msgid "%s logged out."
-#~ msgstr "%s се одјави."
-
-#~ msgid "%s signed off"
-#~ msgstr "%s се одјавио(ла)"
-
-#~ msgid ""
-#~ "%s has just been warned by %s.\n"
-#~ "Your new warning level is %d%%"
-#~ msgstr ""
-#~ "%s је управо упозорен од стране %s.\n"
-#~ "Ваш нови ниво обазривости је %d%%"
-
-#~ msgid "an anonymous person"
-#~ msgstr "анонимна особа"
-
-#~ msgid ""
-#~ "%s has invited %s to the chat room %s:\n"
-#~ "<b>%s</b>"
-#~ msgstr ""
-#~ "%s позива %s у причаоницу „%s“\n"
-#~ "<b>%s</b>"
-
-#~ msgid "Sorry, I ran out for a bit!"
-#~ msgstr "Жалим, али мене нема. Вратићу се једног дана, не знам ни ја кад!"
-
-#~ msgid ""
-#~ "Unable to guess the image type based on the file extension supplied.  "
-#~ "Defaulting to PNG."
-#~ msgstr ""
-#~ "Гаим није успео да погоди врсту записа слике на основу наведеног наставка "
-#~ "датотеке. Подразумевано се ради о PNG запису."
-
-#~ msgid "Default SILC Key Pair"
-#~ msgstr "Подразумевани пар кључева за SILC"
-
-#~ msgid "SILC Public Key"
-#~ msgstr "SILC јавни кључ"
-
-#~ msgid "SILC Private Key"
-#~ msgstr "SILC приватни кључ"
-
-#~ msgid "%s (%s/%s)"
-#~ msgstr "%s (%s од %s)"
-
-#~ msgid "%d new"
-#~ msgid_plural "%d new"
-#~ msgstr[0] "%d нова"
-#~ msgstr[1] "%d нове"
-#~ msgstr[2] "%d нових"
-
-#~ msgid "%d total"
-#~ msgid_plural "%d total"
-#~ msgstr[0] "укупно %d"
-#~ msgstr[1] "укупно %d"
-#~ msgstr[2] "укупно %d"
-
-#~ msgid "Miscellaneous error"
-#~ msgstr "Недефинисана грешка"
-
-#~ msgid "Initiate Chat"
-#~ msgstr "Покрени разговор"
-
-#~ msgid "Unable to connect to server"
-#~ msgstr "Не могу да се повежем на сервер"
-
-#~ msgid "Unknown error when attempting to authorize with MSN login server."
-#~ msgstr ""
-#~ "Непозната грешка при покушају идентификације на МСН-овом серверу за "
-#~ "пријаву."
-
-#~ msgid "Requesting to send password"
-#~ msgstr "Захтева се слање лозинке"
-
-#~ msgid "Syncing with server"
-#~ msgstr "Усклађивање са сервером"
-
-#~ msgid "Unable to connect to %s server"
-#~ msgstr "Не могу да се повежем на сервер %s"
-
-#~ msgid "Error writing to %s server"
-#~ msgstr "Грешка при читању са сервера %s"
-
-#~ msgid "Error reading from %s server"
-#~ msgstr "Грешка при читању са сервера %s"
-
-#~ msgid "Received HTTP error. Please report this."
-#~ msgstr "Примио је HTTP грешку. Пријавите ово."
-
-#~ msgid "Message could not be sent for an unknown reason"
-#~ msgstr "Порука се не може послати из непознатих разлога."
-
-#~ msgid ""
-#~ "%s:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "%s:\n"
-#~ "%s"
-
-# bug: plural-forms
-#~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than %d megabytes (%d "
-#~ "bytes)."
-#~ msgstr ""
-#~ "Гаим не може да шаље датотеке веће од %d мегабајта (%d бајтова) преко "
-#~ "сервиса Јаху!."
-
-#~ msgid "%d byte"
-#~ msgid_plural "%d bytes"
-#~ msgstr[0] "%d бајт"
-#~ msgstr[1] "%d бајта"
-#~ msgstr[2] "%d бајтова"
-
-#~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than %d megabyte (%s)."
-#~ msgid_plural ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than %d megabytes (%s)."
-#~ msgstr[0] ""
-#~ "Гаим не може да шаље датотеке веће од %d мегабајта (%s) преко сервиса "
-#~ "Јаху!."
-#~ msgstr[1] ""
-#~ "Гаим не може да шаље датотеке веће од %d мегабајта (%s) преко сервиса "
-#~ "Јаху!."
-#~ msgstr[2] ""
-#~ "Гаим не може да шаље датотеке веће од %d мегабајта (%s) преко сервиса "
-#~ "Јаху!."
-
-#~ msgid ""
-#~ "(There was an error converting this message.  Check the 'Encoding' option "
-#~ "in the Account Editor)"
-#~ msgstr ""
-#~ "(Дошло је до грешке при претварању ове поруке. Проверите опцију „Начин "
-#~ "записа“ у Уреднику налога)"
-
-#~ msgid "MSN error for account %s"
-#~ msgstr "MSN је јавио грешку за налог %s"
-
-# bug: s+..+...+
-#~ msgid "Moving Gaim Settings.."
-#~ msgstr "Премешта подешавања Гаима..."
-
-#~ msgid "Moving Gaim user settings to: "
-#~ msgstr "Премешта подешавања Гаима у: "
-
-#~ msgid "Notification"
-#~ msgstr "Обавештење"
-
-#~ msgid "Local Addressbook"
-#~ msgstr "Локални именик"
-
-#~ msgid "_Accounts"
-#~ msgstr "_Налози:"
-
-#~ msgid "_Preferences"
-#~ msgstr "Поставке"
-
-#~ msgid "(There was an error receiving this message)"
-#~ msgstr "(Дошло је до грешке при пријему ове поруке)"
-
-#~ msgid "Update Buddy Icon"
-#~ msgstr "Обнови сличицу другара"
-
-#~ msgid "That file does not exist."
-#~ msgstr "Датотека не постоји."
-
-#~ msgid "%s was not found.\n"
-#~ msgstr "%s није пронађен.\n"
-
-#~ msgid "Userid"
-#~ msgstr "_Корисник:"
-
-#~ msgid "Your message did not get sent."
-#~ msgstr "Ваша Јаху! порука није послата."
-
-#~ msgid "Your message to %s did not get sent:"
-#~ msgstr "Ваша порука за %s није послата:"
-
-#~ msgid "sorry, i ran out for a while. bbl"
-#~ msgstr "Жалим, али мене нема. Вратићу се једног дана, не знам ни ја кад!"
-
-#~ msgid "boring default"
-#~ msgstr "Подразумевано (не тако) досадно"
-
-#~ msgid "_Send auto-response"
-#~ msgstr "Слање _аутоматског одговор"
-
-#~ msgid "_Only send auto-response when idle"
-#~ msgstr "Слање аутоматског одговора само када сте _неактивни"
-
-#~ msgid "Already logged in with Zephyr"
-#~ msgstr "Већ пријављен помоћу Зефира"
-
-#~ msgid ""
-#~ "Because Zephyr uses your system username, you are unable to have multiple "
-#~ "accounts on it when logged in as the same user."
-#~ msgstr ""
-#~ "Пошто Зефир користи Ваше корисничко име са система, не можете имати више "
-#~ "налога на њему када сте пријављени као исти корисник."
-
-#~ msgid "Set"
-#~ msgstr "Постави"
-
-#~ msgid "idle for"
-#~ msgstr "неактивност након"
-
-#~ msgid "Buddy icon file:"
-#~ msgstr "Датотека иконице другара:"
-
-#~ msgid "_Browse"
-#~ msgstr "_Тражи"
-
-#~ msgid "_Reset"
-#~ msgstr "_Одбаци"
-
-#~ msgid "/Tools/P_rotocol Actions"
-#~ msgstr "/Алати/А_кције по протоколу"
-
-#~ msgid "That file already exists."
-#~ msgstr "Датотека већ постоји."
-
-#~ msgid "Style"
-#~ msgstr "Стил"
-
-#~ msgid "_Bold"
-#~ msgstr "_Масно"
-
-#~ msgid "_Italic"
-#~ msgstr "_Курзивно"
-
-#~ msgid "_Underline"
-#~ msgstr "По_двучено"
-
-#~ msgid "_Strikethrough"
-#~ msgstr "П_рецртано"
-
-#~ msgid "Face"
-#~ msgstr "Писмо"
-
-#~ msgid "Use custo_m face"
-#~ msgstr "Користи _изабрано писмо"
-
-#~ msgid "Use custom si_ze"
-#~ msgstr "Користи изабрану _величину"
-
-#~ msgid "Color"
-#~ msgstr "Боја"
-
-#~ msgid "_Text color"
-#~ msgstr "Боја _текста"
-
-#~ msgid "Bac_kground color"
-#~ msgstr "Боја _позадине"
-
-#~ msgid "Show graphical _smileys"
-#~ msgstr "Прикажи _графички смешак"
-
-#~ msgid "Show _URLs as links"
-#~ msgstr "Прикажи _Интернет адресе као везе"
-
-#~ msgid "Buddy List Toolbar"
-#~ msgstr "Алатке у списку другара"
-
-#~ msgid "Group Display"
-#~ msgstr "Приказ група"
-
-#~ msgid "Show _numbers in groups"
-#~ msgstr "Прикажи _бројеве у групама"
-
-#~ msgid "Show IMs and chats in _same tabbed window"
-#~ msgstr "Прикажи брзе поруке и разговоре у _истом лиснатом прозору"
-
-#~ msgid "Show status _icons on tabs"
-#~ msgstr "Прикажи иконицу стања на језичцима."
-
-#~ msgid "Window"
-#~ msgstr "Прозор"
-
-#~ msgid "New window _width:"
-#~ msgstr "_Ширина новог прозора:"
-
-#~ msgid "New window _height:"
-#~ msgstr "_Висина новог прозора:"
-
-#~ msgid "_Entry field height:"
-#~ msgstr "Висина поља за _унос:"
-
-#~ msgid "Hide window on _send"
-#~ msgstr "_Сакриј прозор при слању"
-
-#~ msgid "Buddy Icons"
-#~ msgstr "Иконице другара"
-
-#~ msgid "Show _logins in window"
-#~ msgstr "Прикажи _пријаве у прозору"
-
-#~ msgid "Typing Notification"
-#~ msgstr "Обавештење о куцању"
-
-#~ msgid "Tab Completion"
-#~ msgstr "Довршавање табулатором"
-
-#~ msgid "_Tab-complete nicks"
-#~ msgstr "Доврши надимке на притисак _табулатора"
-
-#~ msgid "_Old-style tab completion"
-#~ msgstr "_Старомодно довршавање помоћу табулатора"
-
-#~ msgid "_Show people joining in window"
-#~ msgstr "Прикажи у прозору људе који се _прикључују"
-
-#~ msgid "_Show people leaving in window"
-#~ msgstr "Прикажи у прозору људе који _одлазе"
-
-#~ msgid "Proxy Type"
-#~ msgstr "Врста проксија"
-
-#~ msgid "_Sending messages removes away status"
-#~ msgstr "Слање порука Вас враћа са _одсуства"
-
-#~ msgid "Seconds before _resending:"
-#~ msgstr "Број _секунди пре поновног слања:"
-
-#~ msgid "Send auto-response in _active conversations"
-#~ msgstr "Слање аутоматског одговора у а_ктивним разговорима"
-
-#~ msgid "Fonts"
-#~ msgstr "Писма"
-
-#~ msgid "IMs"
-#~ msgstr "Брзе поруке"
-
-#~ msgid "Protocols"
-#~ msgstr "Протоколи"
-
-#~ msgid ""
-#~ "<B>Supported IRC Commands:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG "
-#~ "NAMES<BR>NICK OP DEOP OPERWALL<BR>PART PING QUERY QUIT<BR>QUOTE REMOVE "
-#~ "TOPIC UMODE<BR>VOICE DEVOICE WALLOPS WHOIS<BR>"
-#~ msgstr ""
-#~ "<B>Подржане ИРЦ наредбе:</B><BR>AWAY INVITE JOIN KICK<BR>ME MODE MSG "
-#~ "NAMES<BR>NICK OP DEOP OPERWALL<BR>PART PING QUERY QUIT<BR>QUOTE REMOVE "
-#~ "TOPIC UMODE<BR>VOICE DEVOICE WALLOPS WHOIS<BR>"
-
-#~ msgid ""
-#~ "<B>Supported IRC Commands:</B><BR>AWAY JOIN ME MODE<BR>MSG NICK OPERWALL "
-#~ "PING<BR>QUERY QUIT QUOTE UMODE<BR>WALLOPS WHOIS"
-#~ msgstr ""
-#~ "<B>Подржане ИРЦ наредбе:</B><BR>AWAY JOIN ME MODE<BR>MSG NICK OPERWALL "
-#~ "PING<BR>QUERY QUIT QUOTE UMODE<BR>WALLOPS WHOIS"
-
-#~ msgid "Unable to request USR\n"
-#~ msgstr "Не могу да затражим USR\n"
-
-#~ msgid "Unable to login using MD5"
-#~ msgstr "Не могу да се пријавим помоћу MD5"
-
-#~ msgid "Unable to send USR"
-#~ msgstr "Не могу да пошаљем USR"
-
-#~ msgid "Unable to request CVR\n"
-#~ msgstr "Не могу да затражим CVR\n"
-
-#~ msgid "Unable to request INF\n"
-#~ msgstr "Не могу да затражим INF\n"
-
-#~ msgid "Got invalid XFR"
-#~ msgstr "Примљен неисправан XFR"
-
-# Mozda "razume poruku"
-#~ msgid "Unable to parse message."
-#~ msgstr "Не могу да обрадим поруку."
-
-#~ msgid "<html><body><b>Error retrieving profile</b></body></html>"
-#~ msgstr "<html><body><b>Грешка при преузимању профила</b></body></html>"
-
-#~ msgid "Unable to write to MSN Nexus server."
-#~ msgstr "Не могу да пишем на МСН Нексус сервер"
-
-#~ msgid "MSN Nexus server returned invalid redirect information."
-#~ msgstr "МСН Нексус сервер је вратио неисправне податке о преусмеравању."
-
-#~ msgid "Unable to send password"
-#~ msgstr "Не могу да пошаљем лозинку"
-
-#~ msgid "Protocol not supported"
-#~ msgstr "Прокол није подржан"
-
-#~ msgid "The user %s (%s) wants to add you to their buddy list."
-#~ msgstr "Корисник %s (%s) жели да Вас дода у свој списак другара."
-
-#~ msgid "Unable to transfer to notification server"
-#~ msgstr "Не могу да се споразумем са сервером за обавештења"
-
-#~ msgid "An MSN message may not have been received."
-#~ msgstr "Могуће да није примљена МСН порука."
-
-#~ msgid "ZLocate"
-#~ msgstr "Зефир претрага"
-
-#~ msgid "_Screenname:"
-#~ msgstr "_Име:"
-
-#~ msgid "Could not open config file %s."
-#~ msgstr "Не могу да отворим датотеку %s за поставке."
-
-#~ msgid "_Get Info"
-#~ msgstr "Прибави пода_тке"
-
-#~ msgid "_IM"
-#~ msgstr "_Порука"
-
-#~ msgid "Browser Options"
-#~ msgstr "Поставке веб прегледника"
-
-#~ msgid "Open new _window by default"
-#~ msgstr "Отварање новог _прозора је подразумевано"
-
-#~ msgid "Bad Protocol"
-#~ msgstr "Лош протокол"
-
-#~ msgid "Invalid Realm"
-#~ msgstr "Неисправан домен"
-
-#~ msgid "Mechanism Too Weak"
-#~ msgstr "Механизам је преслаб"
-
-#~ msgid "Registration of %s@%s failed: %s"
-#~ msgstr "Регистрација %s@%s неуспешна: %s"
-
-#~ msgid "Unknown error occurred changing password"
-#~ msgstr "Дошло је до непознате грешке при измени лозинке"
-
-#~ msgid "Unable to join chat"
-#~ msgstr "Не могу приступити разговору"
-
-#~ msgid "Could not send %s to %s, protocol not supported."
-#~ msgstr "Не могу да пошаљем %s за %s, протокол није подржана."
-
-#~ msgid "Invalid Parameter (probably a Gaim bug)"
-#~ msgstr "Неисправан параметар (вероватно недостатак Гаима)"
-
-#~ msgid "Invalid User"
-#~ msgstr "Неисправан корисник"
-
-#~ msgid "Internal server error"
-#~ msgstr "Унутрашња грешка сервера"
-
-#~ msgid "Unable to read from MSN Nexus server."
-#~ msgstr "Не могу да учитам заглавље са МСН Нексус сервера"
-
-#~ msgid "MSN Nexus server returned invalid information."
-#~ msgstr "МСН Нексус сервер је вратио неисправне податке."
-
-#~ msgid "Unable to connect to passport server"
-#~ msgstr "Не могу да се повежем на сервер пасоша"
-
-#~ msgid "Username: <b>%s</b><br>\n"
-#~ msgstr "Корисничко име: <b>%s</b><br>\n"
-
-#~ msgid "Warning Level: <b>%d%%</b><br>\n"
-#~ msgstr "Ниво упозорења: <b>%d%%</b><br>\n"
-
-#~ msgid "Online Since: <b>%s</b><br>\n"
-#~ msgstr "На вези од: <b>%s</b><br>\n"
-
-#~ msgid "Member Since: <b>%s</b><br>\n"
-#~ msgstr "Члан од: <b>%s</b><br>\n"
-
-#~ msgid "Idle: <b>%s</b>"
-#~ msgstr "Неактивност: <b>%s</b>"
-
-#~ msgid "Idle: <b>Active</b>"
-#~ msgstr "Неактивност: <b>активан</b>"
-
-#~ msgid "<b>Status:</b> "
-#~ msgstr "<b>Стање:</b> "
-
-#~ msgid "<b>Buddy Comment:</b> "
-#~ msgstr "<b>Примедба за другара:</b>"
-
-#~ msgid "<b>Available:</b> "
-#~ msgstr "<b>Доступно:</b> "
-
-#~ msgid "<b>Status:</b> Not Authorized"
-#~ msgstr "<b>Стање:</b> Неовлашћен"
-
-#~ msgid "Could not connect for transfer!"
-#~ msgstr "Не могу да успоставим везу за пренос!"
-
-#~ msgid "Gnome Stock Ticker Properties"
-#~ msgstr "Поставке праћења берзе"
-
-#~ msgid "Update Frequency in min"
-#~ msgstr "Учесталост освежавања у минутима"
-
-#~ msgid "Enter symbols delimited with \"+\" in the box below."
-#~ msgstr "Унесите симболе раздвојене помоћу „+“ у поље испод."
-
-#~ msgid "Check this box to display only symbols and price:"
-#~ msgstr "Укључите ову опцију за приказ само симбола и цене:"
-
-#~ msgid "Check this box to scroll left to right:"
-#~ msgstr "Укључите ову опцију за померање с лева на десно:"
-
-#~ msgid "(No"
-#~ msgstr "(Нема"
-
-#~ msgid "Change"
-#~ msgstr "измене"
-
-#~ msgid "Gaim - Away!"
-#~ msgstr "Гаим — Одсутан!"
-
-#~ msgid "Buddy Chat"
-#~ msgstr "Разговор са другаром"
-
-#~ msgid "Join"
-#~ msgstr "Прикључи се"
-
-#~ msgid "New Message"
-#~ msgstr "Нова порука"
-
-#~ msgid "Changing info for %s:"
-#~ msgstr "Мењам податке за %s:"
-
-#~ msgid "Alias chat"
-#~ msgstr "Надени име разговору"
-
-#~ msgid "Alias contact"
-#~ msgstr "Надени име контакту"
-
-#~ msgid "Alias buddy"
-#~ msgstr "Надени име другару"
-
-#~ msgid ""
-#~ "Please enter an aliased name for the person below, or rename this contact "
-#~ "in your buddy list."
-#~ msgstr ""
-#~ "Унесите име које желите да наденете изабраној особи, или преименујте овај "
-#~ "контакт у списку другара."
-
-#~ msgid "Couldn't write to %s."
-#~ msgstr "Не могу да пишем у %s."
-
-#~ msgid "Save Log File"
-#~ msgstr "Сачувај датотеку дневника"
-
-#~ msgid "Couldn't remove file %s."
-#~ msgstr "Не могу да уклоним датотеку %s."
-
-#~ msgid ""
-#~ "You are about to remove the log file for %s.  Do you want to continue?"
-#~ msgstr "Уклањате дневник разговора за %s. Да ли желите да наставите?"
-
-#~ msgid "Remove Log"
-#~ msgstr "Уклони дневник"
-
-#~ msgid "Couldn't open log file %s."
-#~ msgstr "Не могу да отворим датотеку дневника %s."
-
-#~ msgid "Log"
-#~ msgstr "Дневник рада"
-
-#~ msgid "Gaim - Information"
-#~ msgstr "Гаим — подаци"
-
-#~ msgid "Gaim - Insert Image"
-#~ msgstr "Гаим — убаци слику"
-
-#~ msgid ""
-#~ "<span weight='bold' size='larger'>Enter a search phrase\n"
-#~ "</span>"
-#~ msgstr ""
-#~ "<span weight='bold' size='larger'>Унесите израз за претрагу\n"
-#~ "</span>"
-
-#~ msgid "/Conversation/Search..."
-#~ msgstr "/Разговор/Претрага..."
-
-#~ msgid "/Conversation/Insert _URL..."
-#~ msgstr "/Разговор/_Убаци Интернет адресу..."
-
-#~ msgid "/Conversation/Insert _Image..."
-#~ msgstr "/Разговор/Убаци с_лику..."
-
-#~ msgid "Normal font size"
-#~ msgstr "Обична слова"
-
-#~ msgid "_Host"
-#~ msgstr "_Име сервера"
-
-#~ msgid "Pa_ssword"
-#~ msgstr "_Лозинка"
-
-#~ msgid "I_ndividual log file for each buddy's signons"
-#~ msgstr "Појединачна датотека денвника за _сваког другара"
-
-#~ msgid "Gaim - Save Icon"
-#~ msgstr "Гаим — Сачувај иконицу"
-
-#~ msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
-#~ msgstr "<font color=\"red\"><b>log->logger_data је NULL!</b></font>"
-
-#~ msgid "%s (Code %s)"
-#~ msgstr "%s (кôд %s)"
-
-#~ msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
-#~ msgstr "<HR><BR><H3 Align=Center> —— Нови разговор @ %s ——</H3><BR>\n"
-
-#~ msgid "---- New Conversation @ %s ----\n"
-#~ msgstr "—— Нови разговори @  %s ——\n"
-
-#~ msgid "Strip _HTML from logs"
-#~ msgstr "_Избаци HTML из дневника"
-
-#~ msgid "Error in specifying buddy conversation."
-#~ msgstr "Грешка при навођењу другарског разговора."
-
-#~ msgid "Unable to find conversation log"
-#~ msgstr "Не могу пронаћи дневник разговора"
-
-#~ msgid "Unable to make directory %s for logging"
-#~ msgstr "Не могу направити директоријум %s за дневнике."
-
-#~ msgid "IM Sessions with %s\n"
-#~ msgstr "Сесије брзих порука са %s\n"
-
-#~ msgid "IM Sessions with %s"
-#~ msgstr "Сесије брзих порука са %s"
-
-#~ msgid "+++ %s (%s) signed on @ %s"
-#~ msgstr "+++ %s (%s) се пријавио(ла) @ %s"
-
-#~ msgid "+++ %s (%s) signed off @ %s"
-#~ msgstr "+++ %s (%s) се одјавио(ла) @ %s"
-
-#~ msgid "+++ %s (%s) changed away state @ %s"
-#~ msgstr "+++ %s (%s) је променио(ла) стање одсутности @ %s"
-
-#~ msgid "+++ %s (%s) became idle @ %s"
-#~ msgstr "+++ %s (%s) је неактиван(на) @ %s"
-
-#~ msgid "+++ %s (%s) returned from idle @ %s"
-#~ msgstr "+++ %s (%s) се активирао(ла) @ %s"
-
-#~ msgid "+++ Program exit @ %s"
-#~ msgstr "+++ Програм затворен @ %s"
-
-#~ msgid "%s (%s) reported that %s (%s) signed on @ %s"
-#~ msgstr "%s (%s) је известио да се %s (%s) пријавио @ %s"
-
-#~ msgid "%s (%s) reported that %s (%s) signed off @ %s"
-#~ msgstr "%s (%s) је известио да се %s (%s) одјавио @ %s"
-
-#~ msgid "%s (%s) reported that %s (%s) went away @ %s"
-#~ msgstr "%s (%s) је известио да је %s (%s) отишао на одсуство @ %s"
-
-#~ msgid "%s (%s) reported that %s (%s) came back @ %s"
-#~ msgstr "%s (%s) је известио да се %s (%s) вратио @ %s"
-
-#~ msgid "%s (%s) reported that %s (%s) became idle @ %s"
-#~ msgstr "%s (%s) је известио да је %s (%s) неактиван @ %s"
-
-#~ msgid "%s (%s) reported that %s (%s) returned from idle @ %s"
-#~ msgstr "%s (%s) је известио да се %s (%s) активирао @ %s"
-
-#~ msgid "%s (%s) reported that %s signed on @ %s"
-#~ msgstr "%s (%s) је известио да се %s пријавио @ %s"
-
-#~ msgid "%s (%s) reported that %s signed off @ %s"
-#~ msgstr "%s (%s) је известио да се %s одјавио @ %s"
-
-#~ msgid "%s (%s) reported that %s went away @ %s"
-#~ msgstr "%s (%s) је известио да је %s отишао на одсуство @ %s"
-
-#~ msgid "%s (%s) reported that %s came back @ %s"
-#~ msgstr "%s (%s) је известио да се %s вратио @ %s"
-
-#~ msgid "%s (%s) reported that %s became idle @ %s"
-#~ msgstr "%s (%s) је известио да је %s неактиван @ %s"
-
-#~ msgid "%s (%s) reported that %s returned from idle @ %s"
-#~ msgstr "%s (%s) је известио да се %s активирао @ %s"
-
-#~ msgid "Portuguese-Portugal"
-#~ msgstr "Португалски у Португалији"
-
-#~ msgid "Really clear log?"
-#~ msgstr "Заиста желите да очистите дневник?"
-
-#~ msgid "Disable Animation"
-#~ msgstr "Онемогући анимације"
-
-#~ msgid "Enable Animation"
-#~ msgstr "Омогући анимације"
-
-#~ msgid "Secure IM"
-#~ msgstr "Безбедне брзе поруке"
-
-#~ msgid ""
-#~ "Communication with the browser failed. Please close all windows and try "
-#~ "again."
-#~ msgstr ""
-#~ "Неуспешно споразумевање са веб читачем. Затворите све прозоре и покушајте "
-#~ "поново."
-
-#~ msgid "Add To"
-#~ msgstr "Додај у"
-
-#~ msgid "EveryBuddy Bug"
-#~ msgstr "ЕвриБади грешка ;-)"
-
-#~ msgid "_Quote window title"
-#~ msgstr "_Цитирај наслов прозора"
-
-#~ msgid "_Notify even if conversation is in focus"
-#~ msgstr "_Обавести чак и ако је разговор у току"
-
-#~ msgid "Directory Info"
-#~ msgstr "Именик са подацима"
-
-#~ msgid "Allow Web Searches To Find Your Info"
-#~ msgstr "Дозволи да претраге веба пронађу моје податке"
-
-#~ msgid "Maiden Name"
-#~ msgstr "Девојачко презиме"
-
-#~ msgid "Find Buddy By Info"
-#~ msgstr "Пронађи другара према подацима"
-
-#~ msgid ""
-#~ "The current password you entered is incorrect.  Your password has not "
-#~ "been changed."
-#~ msgstr "Тренутно унета лозинка је неисправна. Ваша лозинка није измењена."
-
-#~ msgid ""
-#~ "The new password you entered is the same as your current password.  Your "
-#~ "password remains the same."
-#~ msgstr ""
-#~ "Лозинка коју сте унели је иста као и Ваша садашња лозинка. Ваша лозинка "
-#~ "остаје иста."
-
-#~ msgid "Jabber Error %s"
-#~ msgstr "Џабер грешка %s"
-
-#~ msgid ""
-#~ "The Jabber user %s does not exist and was therefore not added to your "
-#~ "roster."
-#~ msgstr ""
-#~ "Џабер корисник %s не постоји, и зато није додат у Ваш списак другара."
-
-#~ msgid "No such user."
-#~ msgstr "Нема таквог корисника."
-
-#~ msgid "Unknown login error"
-#~ msgstr "Непозната грешка при пријави"
-
-#~ msgid "Password successfully changed."
-#~ msgstr "Лозинка успешно измењена."
-
-#~ msgid "Connected"
-#~ msgstr "Веза успостављена"
-
-#~ msgid "Requesting Authentication Method"
-#~ msgstr "Захтев начина идентификације"
-
-#~ msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
-#~ msgstr "Корисник %s је неисправно Џабер име, и стога није додат."
-
-#~ msgid "View Error Msg"
-#~ msgstr "Прикажи поруке о грешкама"
-
-#~ msgid "Error %d: %s"
-#~ msgstr "Грешка %d: %s"
-
-#~ msgid "Unknown registration error"
-#~ msgstr "Непозната грешка при регистрацији"
-
-#~ msgid ""
-#~ "<i>Unable to display information because it was sent in an unknown "
-#~ "encoding.</i>"
-#~ msgstr ""
-#~ "<i>Не могу да прикажем податке зато што су послати у непознатом начину "
-#~ "записа.</i>"
-
-#~ msgid ""
-#~ "Username : <b>%s</b>  %s <br>\n"
-#~ "Warning Level : <b>%d %%</b><br>\n"
-#~ "%s%s%s\n"
-#~ "<hr>\n"
-#~ msgstr ""
-#~ "Корисничко име: <b>%s</b>  %s <br>\n"
-#~ "Ниво упозорења: <b>%d %%</b><br>\n"
-#~ "%s%s%s\n"
-#~ "<hr>\n"
-
-#~ msgid "<i>User has no away message</i>"
-#~ msgstr "<i>Корисник нема разлог за одсуство</i>"
-
-#~ msgid "Client Capabilities: "
-#~ msgstr "Могућности клијента: "
-
-#~ msgid "<i>No Information Provided</i>"
-#~ msgstr "<i>Подаци нису добављени</i>"
-
-#~ msgid "Please talk to me, I'm lonely! (and single)"
-#~ msgstr "Молим Вас причајте са мном. Усамљен сам! (и слободан)"
-
-#~ msgid "Gaim - Popup"
-#~ msgstr "Гаим — искачући прозор"
-
-#~ msgid "More Info"
-#~ msgstr "Више података"
-
-#~ msgid ""
-#~ "Gaim is converting your old buddy lists to a new format, which will now "
-#~ "be located at %s"
-#~ msgstr ""
-#~ "Гаим преводи Ваш стари списак другара у нови запис, који ће се сада "
-#~ "налазити на %s"
-
-#~ msgid "Converting Buddy List"
-#~ msgstr "Превођење списка другара"
-
-#~ msgid "There was an error launching your chosen browser: %s"
-#~ msgstr "Дошло је до грешке при покретању изабраног веб прегледника: %s"
-
-#~ msgid ""
-#~ "The entered manual browser '%s' is not valid. Hyperlinks will not work."
-#~ msgstr "Ручно унети прегледник „%s“ је неисправан. Надвезе неће радити."
-
-#~ msgid "Unable to request INF"
-#~ msgstr "Не могу да затражим INF"
-
-#~ msgid "ICQ Unknown"
-#~ msgstr "Непознати ICQ"
-
-#~ msgid "<B>%s has the following screen names:</B><BR>"
-#~ msgstr "<B>%s користи следећа имена:</B><BR>"
-
-#~ msgid "No Answer"
-#~ msgstr "Без одговора"
-
-#~ msgid "Event Test"
-#~ msgstr "Проба догађаја"
-
-#~ msgid ""
-#~ "GAIM::register not called with proper arguments.  Consult PERL-HOWTO."
-#~ msgstr ""
-#~ "GAIM::register није позван са одговарајућим аргументима. Погледајте PERL-"
-#~ "HOWTO."
-
-#~ msgid "has gone away."
-#~ msgstr "оде на одсуство."
-
-#~ msgid "has become idle."
-#~ msgstr "је неактиван"
-
-#~ msgid "Second Name"
-#~ msgstr "Презиме"
-
-#~ msgid "Unable to send USR\n"
-#~ msgstr "Не могу да пошаљем USR\n"
-
-#~ msgid "Got invalid XFR\n"
-#~ msgstr "Примљен неисправан XFR\n"
-
-#~ msgid "UIN:"
-#~ msgstr "Кориснички број:"
-
-#~ msgid "Gender:"
-#~ msgstr "Пол:"
-
-#~ msgid "Birthday:"
-#~ msgstr "Рођендан:"
-
-#~ msgid "Age:"
-#~ msgstr "Старост:"
-
-#~ msgid "City:"
-#~ msgstr "Град:"
-
-# I ovo ima vise smisla kod nas!
-#~ msgid "State:"
-#~ msgstr "Област:"
-
-#~ msgid "<FONT SIZE=\"3\">Active Developers:</FONT><BR>"
-#~ msgstr "<FONT SIZE=\"3\">Активни програмери:</FONT><BR>"
-
-#~ msgid ""
-#~ "  Rob Flynn (maintainer) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko."
-#~ "net</A>&gt;<BR>  Sean Egan (lead developer) &lt;<A HREF=\"mailto:"
-#~ "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-#~ "'ChipX86' Hammond (developer & webmaster)<BR>  Herman Bloggs (win32 port) "
-#~ "&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">hermanator12002@yahoo."
-#~ "com</A>&gt;<BR>  Nathan 'faceprint' Walp (developer)<BR>  Mark 'KingAnt' "
-#~ "Doliner (developer)<BR>  Luke 'LSchiere' Schierer (support)<BR><BR>"
-#~ msgstr ""
-#~ "  Rob Flynn (одржава) &lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</"
-#~ "A>&gt;<BR>  Sean Egan (водећи програмер) &lt;<A HREF=\"mailto:"
-#~ "bj91704@binghamton.edu\">bj91704@binghamton.edu</A>&gt;<BR>  Christian "
-#~ "'ChipX86' Hammond (програмер и задужен за веб)<BR>  Herman Bloggs "
-#~ "(Виндоус издање) &lt;<A HREF=\"mailto:hermanator12002@yahoo.com"
-#~ "\">hermanator12002@yahoo.com</A>&gt;<BR>  Nathan 'faceprint' Walp "
-#~ "(програмер)<BR>  Mark 'KingAnt' Doliner (програмер)<BR>  Luke 'LSchiere' "
-#~ "Schierer (подршка)<BR><BR>"
-
-#~ msgid "<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"
-#~ msgstr "<FONT SIZE=\"3\">Писци шашавих допуна:</FONT><BR>"
-
-#~ msgid "<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"
-#~ msgstr "<FONT SIZE=\"3\">Пензионисани програмери:</FONT><BR>"
-
-#~ msgid ""
-#~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
-#~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
-#~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
-#~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
-#~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
-#~ msgstr ""
-#~ "  Adam Fritzler (претходно одржавао libfaim)<BR>  Eric Warmenhoven (бивши "
-#~ "водећи програмер)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
-#~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (претходно одржавао)"
-#~ "<BR>  Jim Seymour (бивши Џабер програмер)<BR>  Mark Spencer (првобитни "
-#~ "аутор) &lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</"
-#~ "A>&gt;<BR>  Syd Logan (хакер и одређени руководилац [ленчуга])<BR><BR>"
-
-#~ msgid "_Raise windows on events"
-#~ msgstr "_Издигни прозоре на догађаје"
-
-#~ msgid "Sign On"
-#~ msgstr "Пријави се"
-
-#~ msgid "The plugin %s did not return any valid plugin information"
-#~ msgstr "Додатак %s није одговорио исправним подацима о додатку"
