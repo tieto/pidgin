@@ -1826,8 +1826,8 @@ Function InstallAspellDictionary
 
   check:
   ClearErrors
-  ReadRegStr $R1 HKLM "${ASPELL_REG_KEY}-$R0" ""
-  StrCmp $R1 "" 0 installed
+  ReadRegStr $R2 HKLM "${ASPELL_REG_KEY}-$R0" ""
+  StrCmp $R2 "" 0 installed
 
   ; If this is the check after installation, don't infinite loop on failure
   StrCmp $R1 "$TEMP\aspell_dict-$R0.exe" 0 +3
