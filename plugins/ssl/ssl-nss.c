@@ -220,7 +220,7 @@ ssl_nss_handshake_cb(gpointer data, int fd, GaimInputCondition cond)
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 
-		gaim_debug_error("nss", "Handshake failed %u\n", PR_GetError());
+		gaim_debug_error("nss", "Handshake failed %d\n", PR_GetError());
 
 		if (gsc->error_cb != NULL)
 			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
@@ -265,7 +265,7 @@ ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	socket_opt.value.non_blocking = PR_TRUE;
 
 	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS)
-		gaim_debug_warning("nss", "unable to set socket into non-blocking mode: %u\n", PR_GetError());
+		gaim_debug_warning("nss", "unable to set socket into non-blocking mode: %d\n", PR_GetError());
 
 	nss_data->in = SSL_ImportFD(NULL, nss_data->fd);
 
