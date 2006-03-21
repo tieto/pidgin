@@ -1022,12 +1022,12 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
-	/* Clear Formatting */
+	/* Reset Formatting */
 	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_CLEAR);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			     _("Clear formatting"), NULL);
+			     _("Reset formatting"), NULL);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(clear_formatting_cb), toolbar);
