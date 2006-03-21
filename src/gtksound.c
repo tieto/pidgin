@@ -407,9 +407,7 @@ scale_pcm_data(char *data, int nframes, int bits, int channels,
 	float v;
 	gint16 *data16 = (gint16*)data;
 	gint32 *data32 = (gint32*)data;
-#ifdef G_HAVE_GINT64
 	gint64 *data64 = (gint64*)data;
-#endif
 
 	switch(bits) {
 		case 16:
@@ -438,7 +436,6 @@ scale_pcm_data(char *data, int nframes, int bits, int channels,
 				data32[i]=(gint32)v;
 			}
 			break;
-#ifdef G_HAVE_GINT64
 		case 64:
 			for(i = 0; i < nframes * channels; i++) {
 				v = ((data64[i] - intercept) * scale) + intercept;
@@ -452,7 +449,6 @@ scale_pcm_data(char *data, int nframes, int bits, int channels,
 				data64[i]=(gint64)v;
 			}
 			break;
-#endif
 		default:
 			gaim_debug_warning("gtksound", "Scaling of %d bit pcm data not supported.\n", bits);
 			break;
