@@ -5627,14 +5627,12 @@ gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 		else if (im != NULL &&
 		         gaim_conv_im_get_typing_state(im) == GAIM_TYPED)
 		{
-			/* TODO: Post string freeze.
-			atk_object_set_description(accessibility_obj, _("Stopped Typing")); */
+			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
 			strncpy(style, "color=\"#D1940C\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_NICK)
 		{
-			/* TODO: Post string freeze.
-			atk_object_set_description(accessibility_obj, _("Nick Said")); */
+			atk_object_set_description(accessibility_obj, _("Nick Said"));
 			strncpy(style, "color=\"#0D4E91\" style=\"italic\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
@@ -5644,9 +5642,7 @@ gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields)
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_EVENT)
 		{
-			atk_object_set_description(accessibility_obj, _("Event"));
-			/* TODO: Post string freeze
-			atk_object_set_description(accessibility_obj, _("New Event")); */
+			atk_object_set_description(accessibility_obj, _("New Event"));
 			strncpy(style, "color=\"#868272\" style=\"italic\"", sizeof(style));
 		}
 
