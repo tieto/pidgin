@@ -1757,14 +1757,11 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 					switch(position) {
 						case GTK_TREE_VIEW_DROP_AFTER:
 						case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
-							gaim_blist_add_chat(chat,
-									(GaimGroup*)node->parent->parent, node);
-							break;
 						case GTK_TREE_VIEW_DROP_BEFORE:
 						case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
 							gaim_blist_add_chat(chat,
 									(GaimGroup*)node->parent->parent,
-									node->prev);
+									node->parent);
 							break;
 					}
 				} else if(GAIM_BLIST_NODE_IS_CONTACT(node) ||
