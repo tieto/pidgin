@@ -614,49 +614,39 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 	{
 		time_t current_time = time(NULL);
 		const char *buddy_alias = gaim_buddy_get_alias(buddy);
-		char *tmp = NULL;
+		char *tmp;
+		GaimLog *log;
 
-		if ((old_status != NULL) &&
-			!gaim_status_is_online(old_status) &&
-			gaim_status_is_online(new_status))
+		if (old_status != NULL)
 		{
-			tmp = g_strdup_printf(_("%s signed on"), buddy_alias);
+			tmp = g_strdup_printf(_("%s changed status from %s to %s"), buddy_alias,
+			                      gaim_status_get_name(old_status),
+			                      gaim_status_get_name(new_status));
 		}
-		else if ((old_status != NULL) &&
-				 gaim_status_is_online(old_status) &&
-				 !gaim_status_is_online(new_status))
+		else
 		{
-			tmp = g_strdup_printf(_("%s signed off"), buddy_alias);
-		}
-		else if (((old_status == NULL) || !gaim_status_is_available(old_status)) &&
-				 gaim_status_is_available(new_status))
-		{
-			tmp = g_strdup_printf(_("%s came back"), buddy_alias);
-		}
-		else if (((old_status == NULL) || gaim_status_is_available(old_status)) &&
-				 !gaim_status_is_available(new_status))
-		{
-			tmp = g_strdup_printf(_("%s went away"), buddy_alias);
-		}
+			/* old_status == NULL when an independent status is toggled. */
 
-		/* After the string freeze, get rid of the above crap and use this. */
-		/*
-		tmp = g_strdup_printf(_("%s is now %s"), buddy_alias,
-							  gaim_status_get_name(new_status));
-		*/
-
-		if (tmp != NULL)
-		{
-			GaimLog *log = gaim_account_get_log(buddy->account, FALSE);
-
-			if (log != NULL)
+			if (gaim_status_is_active(new_status))
 			{
-				gaim_log_write(log, GAIM_MESSAGE_SYSTEM, buddy_alias,
-				               current_time, tmp);
+				tmp = g_strdup_printf(_("%s is now %s"), buddy_alias,
+				                      gaim_status_get_name(new_status));
 			}
-
-			g_free(tmp);
+			else
+			{
+				tmp = g_strdup_printf(_("%s is no longer %s"), buddy_alias,
+				                      gaim_status_get_name(new_status));
+			}
 		}
+
+		log = gaim_account_get_log(buddy->account, FALSE);
+		if (log != NULL)
+		{
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, buddy_alias,
+			               current_time, tmp);
+		}
+
+		g_free(tmp);
 	}
 
 	if (ops != NULL && ops->update != NULL)
