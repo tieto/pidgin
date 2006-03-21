@@ -1597,9 +1597,8 @@ gaim_gtk_request_folder(const char *title, const char *dirname,
 	data->u.file.savedialog = FALSE;
 	
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	/* Use a translated "Select Folder..." in place of NULL after strings thaw. */
 	dirsel = gtk_file_chooser_dialog_new(
-						title ? title : NULL,
+						title ? title : _("Select Folder..."),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -1613,8 +1612,7 @@ gaim_gtk_request_folder(const char *title, const char *dirname,
 	g_signal_connect(G_OBJECT(GTK_FILE_CHOOSER(dirsel)), "response",
 						G_CALLBACK(file_ok_check_if_exists_cb), data);
 #else
-	/* Use a translated "Select Folder..." in place of NULL after strings thaw. */
-	dirsel = gtk_file_selection_new(title ? title : NULL);
+	dirsel = gtk_file_selection_new(title ? title : _("Select Folder..."));
 
 	g_signal_connect_swapped(G_OBJECT(dirsel), "delete_event",
 							 G_CALLBACK(file_cancel_cb), data);
