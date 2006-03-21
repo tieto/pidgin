@@ -1046,11 +1046,11 @@ msgstr ""
 
 #: ../plugins/mailchk.c:160
 msgid "Mail Checker"
-msgstr "Verificador de email"
+msgstr "Verificador de e-mail"
 
 #: ../plugins/mailchk.c:162
 msgid "Checks for new local mail."
-msgstr "Verifica novos emails locais."
+msgstr "Verifica novos e-mails locais."
 
 #: ../plugins/mailchk.c:163
 msgid "Adds a small box to the buddy list that shows if you have new mail."
@@ -2197,7 +2197,7 @@ msgstr "Opções de utilizador"
 
 #: ../src/gtkaccount.c:932
 msgid "New mail notifications"
-msgstr "Novas notificações de email"
+msgstr "Novas notificações de e-mail"
 
 #: ../src/gtkaccount.c:941
 msgid "Buddy icon:"
@@ -2820,7 +2820,7 @@ msgstr "/Contactos/Ordenar Contactos"
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "%s foi desligado devido a um erro: %s\n"
 "O Gaim não vai tentar ligar a conta de novo até que corriga este erro e re-"
@@ -5209,7 +5209,7 @@ msgstr "_Modificar"
 
 #: ../src/gtkstock.c:145
 msgid "_Open Mail"
-msgstr "_Abrir email"
+msgstr "_Abrir e-mail"
 
 #: ../src/gtkutils.c:1306 ../src/gtkutils.c:1331
 #, c-format
@@ -6652,7 +6652,7 @@ msgstr "Último Nome"
 
 #: ../src/protocols/jabber/buddy.c:1407
 msgid "E-Mail Address"
-msgstr "Endereço de email"
+msgstr "Endereço de e-mail"
 
 #: ../src/protocols/jabber/buddy.c:1416 ../src/protocols/jabber/buddy.c:1417
 msgid "Search for Jabber users"
@@ -7359,8 +7359,8 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Erro de sintaxe (provavelmente um bug do Gaim)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
-msgstr "Morada de email inválida"
+msgid "Invalid e-mail address"
+msgstr "Morada de e-mail inválida"
 
 #: ../src/protocols/msn/error.c:45
 msgid "User does not exist"
@@ -8403,7 +8403,7 @@ msgstr "Mailstop"
 #: ../src/protocols/novell/novell.c:1490 ../src/protocols/oscar/oscar.c:6178
 #: ../src/protocols/oscar/oscar.c:6185
 msgid "Email Address"
-msgstr "Endereço de email"
+msgstr "Endereço de e-mail"
 
 #: ../src/protocols/novell/novell.c:1506
 msgid "User ID"
@@ -9060,12 +9060,12 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Recebeu um email do ICQ de %s [%s]\n"
+"Recebeu um e-mail do ICQ de %s [%s]\n"
 "\n"
 "A mensagem é: \n"
 "%s"
@@ -9279,13 +9279,13 @@ msgstr[1] "Os nomes de utilizador seguintes estão associados a %s"
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
-msgstr "Nenhum resultado encontrado para o endereço de email %s"
+msgid "No results found for e-mail address %s"
+msgstr "Nenhum resultado encontrado para o endereço de e-mail %s"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
-msgstr "Deve receber um email pedindo para confirmar %s."
+msgid "You should receive an e-mail asking to confirm %s."
+msgstr "Deve receber um e-mail pedindo para confirmar %s."
 
 #: ../src/protocols/oscar/oscar.c:6389
 msgid "Account Confirmation Requested"
@@ -9321,28 +9321,28 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Erro 0x%04x: Impossível mudar endereço de email porque já existe um pedido "
+"Erro 0x%04x: Impossível mudar endereço de e-mail porque já existe um pedido "
 "pendente para esse nome de utilizador."
 
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Erro 0x%04x: Impossível mudar o endereço de email porque este já possui "
+"Erro 0x%04x: Impossível mudar o endereço de e-mail porque este já possui "
 "muitos nomes de utilizador associados a ele."
 
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
-"Erro 0x%04x: Impossível mudar o endereço de email porque este é inválido."
+"Erro 0x%04x: Impossível mudar o endereço de e-mail porque este é inválido."
 
 #: ../src/protocols/oscar/oscar.c:6441
 #, c-format
@@ -9364,8 +9364,8 @@ msgstr "Informações da conta"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
-msgstr "O endereço de email de %s é %s"
+msgid "The e-mail address for %s is %s"
+msgstr "O endereço de e-mail de %s é %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
 msgid ""
@@ -9626,7 +9626,7 @@ msgstr ""
 "neles e seleccionando \"Re-requisitar autorização.\""
 
 #: ../src/protocols/oscar/oscar.c:8394
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Encontrar Contacto por E-mail"
 
 #: ../src/protocols/oscar/oscar.c:8395
@@ -9676,7 +9676,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Mostrar contactos esperando autorização"
 
 #: ../src/protocols/oscar/oscar.c:8546
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Procurar Contacto por Email..."
 
 #: ../src/protocols/oscar/oscar.c:8551
@@ -11197,15 +11197,15 @@ msgid "Key Pair Generation failed"
 msgstr "Geração de Par de Chaves falhou"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Key Length"
+msgid "Key length"
 msgstr "Comprimento da Chave"
 
 #: ../src/protocols/silc/silc.c:926
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Ficheiro de Chave Pública"
 
 #: ../src/protocols/silc/silc.c:928
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Ficheiro de Chave Privada"
 
 #: ../src/protocols/silc/silc.c:937
@@ -11515,7 +11515,7 @@ msgstr "Algoritmo: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Comprimento da Chave: \t%d bits\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11725,8 +11725,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Serviço de diretorio temporariamente indisponível."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
-msgstr "Pesquisa por email restrita."
+msgid "E-mail lookup restricted."
+msgstr "Pesquisa por e-mail restrita."
 
 #: ../src/protocols/toc/toc.c:527
 msgid "Keyword ignored."

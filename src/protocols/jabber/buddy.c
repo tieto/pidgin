@@ -258,7 +258,7 @@ struct vcard_template {
 	{N_("Postal Code"),        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
 	{N_("Country"),            NULL, TRUE, TRUE, "CTRY",      "ADR", NULL},
 	{N_("Telephone"),          NULL, TRUE, TRUE, "NUMBER",    "TEL",  NULL},
-	{N_("Email"),              NULL, TRUE, TRUE, "USERID",    "EMAIL",  "<A HREF=\"mailto:%s\">%s</A>"},
+	{N_("E-Mail"),             NULL, TRUE, TRUE, "USERID",    "EMAIL",  "<A HREF=\"mailto:%s\">%s</A>"},
 	{N_("Organization Name"),  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
 	{N_("Organization Unit"),  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
 	{N_("Title"),              NULL, TRUE, TRUE, "TITLE",     NULL,  NULL},
@@ -776,7 +776,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					if(userid) {
 						g_string_append_printf(info_text,
 								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>",
-								_("Email"), userid, userid);
+								_("E-Mail"), userid, userid);
 						g_free(userid);
 					}
 				} else if((userid = xmlnode_get_data(child))) {
@@ -784,7 +784,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					 * out of spec */
 						g_string_append_printf(info_text,
 								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>",
-								_("Email"), userid, userid);
+								_("E-Mail"), userid, userid);
 					g_free(userid);
 				}
 			} else if(!strcmp(child->name, "ORG")) {

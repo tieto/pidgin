@@ -1033,7 +1033,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* extract their Email address and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->my_email_string, 1, " ", 0,
-			strings->private_string, _("Email"), 0, NULL, NULL);
+			strings->private_string, _("E-Mail"), 0, NULL, NULL);
 
 	/* extract the Nickname if it exists */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
@@ -1043,7 +1043,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* extract their RealName and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->realname_string, 1, "\n", '\n',
-			NULL, _("Realname"), 0, NULL, NULL);
+			NULL, _("Real Name"), 0, NULL, NULL);
 
 	/* extract their Location and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,

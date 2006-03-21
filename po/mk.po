@@ -2262,7 +2262,7 @@ msgstr ""
 #, c-format
 msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
-"Correct the error and reenable the account to connect."
+"Correct the error and re-enable the account to connect."
 msgstr ""
 
 #: src/gtkconv.c:325
@@ -6351,7 +6351,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr ""
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr ""
 
 #: src/protocols/msn/error.c:45
@@ -7977,7 +7977,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8189,13 +8189,13 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6140
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6161
 #, c-format
-msgid "You should receive an email asking to confirm %s."
-msgstr "Ќе добиете email за потврда на %s"
+msgid "You should receive an e-mail asking to confirm %s."
+msgstr "Ќе добиете e-mail за потврда на %s"
 
 #: src/protocols/oscar/oscar.c:6163
 msgid "Account Confirmation Requested"
@@ -8227,21 +8227,21 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 
@@ -8263,7 +8263,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6231
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6298
@@ -8508,7 +8508,7 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:8123
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:8124
@@ -8567,7 +8567,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:8275
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:8280
@@ -9973,7 +9973,7 @@ msgstr ""
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr ""
 
 #: src/protocols/silc/util.c:327
@@ -10093,7 +10093,7 @@ msgid "Dir service temporarily unavailable."
 msgstr ""
 
 #: src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr ""
 
 #: src/protocols/toc/toc.c:527
@@ -10957,7 +10957,7 @@ msgstr ""
 #~ msgid "Check Mail"
 #~ msgstr "Провери пошта"
 
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "Провери пошта на секои X секунди.\n"
 
 #~ msgid "Auto-login"

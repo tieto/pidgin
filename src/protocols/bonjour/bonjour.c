@@ -585,7 +585,7 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_string_new(_("Last name"), "last", default_lastname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Email"), "email", "");
+	option = gaim_account_option_string_new(_("E-mail"), "email", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;

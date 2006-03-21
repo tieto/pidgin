@@ -66,7 +66,7 @@ msgid "Check Mail"
 msgstr "E-Peyaman kontrol bike"
 
 #: plugins/chkmail.c:203
-msgid "Check email every X seconds.\n"
+msgid "Check e-mail every X seconds.\n"
 msgstr "Di navbera her X çirkeyan de e-peyamê kontrol bike.\n"
 
 #: plugins/contact_priority.c:84
@@ -6249,7 +6249,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr ""
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr ""
 
 #: src/protocols/msn/error.c:45
@@ -7819,7 +7819,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3957
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8036,12 +8036,12 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:5394
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5415
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5417
@@ -8076,21 +8076,21 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5460
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5463
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5466
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 
@@ -8112,7 +8112,7 @@ msgstr "Agahiya hesabê"
 
 #: src/protocols/oscar/oscar.c:5485
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5550
@@ -8336,7 +8336,7 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:7306
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:7307
@@ -8400,7 +8400,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:7466
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:7471
@@ -9630,7 +9630,7 @@ msgstr ""
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr ""
 
 #: src/protocols/silc/util.c:327
@@ -9744,7 +9744,7 @@ msgid "Dir service temporarily unavailable."
 msgstr ""
 
 #: src/protocols/toc/toc.c:522
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr ""
 
 #: src/protocols/toc/toc.c:525

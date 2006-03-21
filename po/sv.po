@@ -2906,7 +2906,7 @@ msgstr "/Kompisar/Sortera kompisar"
 #, c-format
 msgid ""
 "%s was disconnected due to an error: %s\n"
-"Gaim will not attempt to reconnect the account until you correct the error and reenable the account."
+"Gaim will not attempt to reconnect the account until you correct the error and re-enable the account."
 msgstr ""
 "%s kopplades ifrån på grund av ett fel. %s\n"
 "Gaim kommer inte försöka ansluta förrän du har korrekterat felt och återaktiverat kontot."
@@ -7509,7 +7509,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Syntaxfel (antagligen ett bug i Gaim)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "Ogiltig e-postadress"
 
 #: ../src/protocols/msn/error.c:45
@@ -9178,7 +9178,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9390,12 +9390,12 @@ msgstr[1] "Följande skärmnamn är associerat med %s"
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "Inget resultat funnet för e-postadress %s"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Du borde få ett e-postmeddelande som ber dig bekräfta %s."
 
 #: ../src/protocols/oscar/oscar.c:6389
@@ -9423,17 +9423,17 @@ msgstr "Fel 0x%04x: Kan inte formatera användar-ID eftersom det begärda använ
 
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
 msgstr "Fel 0x%04x: Kan inte ändra e-postadressen eftersom det redan finns en begäran om ändring som väntar för detta användar-ID."
 
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
 msgstr "Fel 0x%04x: Kan inte ändra e-postadress eftersom den angivna adressen har för många användar-IDn associerade med sig."
 
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
 msgstr "Fel 0x%04x: Kan inte ändra e-postadress eftersom den angivna adressen inte är giltig."
 
 #: ../src/protocols/oscar/oscar.c:6441
@@ -9457,7 +9457,7 @@ msgstr "Kontoinformation"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "E-postaderssen för %s är %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
@@ -9662,7 +9662,7 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "Du kan begära auktorisering igen från dessa kompisar genom att högerkilcka på dem och välja \"Begär auktorisering igen.\""
 
 #: ../src/protocols/oscar/oscar.c:8386
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Hitta kompis på e-postadress"
 
 #: ../src/protocols/oscar/oscar.c:8387
@@ -9712,7 +9712,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Visa kompisar som väntar på auktorisering"
 
 #: ../src/protocols/oscar/oscar.c:8538
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Sök efter kompis på e-postadress..."
 
 #: ../src/protocols/oscar/oscar.c:8543
@@ -11214,15 +11214,15 @@ msgid "Key Pair Generation failed"
 msgstr "Genrerering av nyckelpar misslyckades"
 
 #: ../src/protocols/silc/silc.c:920
-msgid "Key Length"
+msgid "Key length"
 msgstr "Nyckellängd"
 
 #: ../src/protocols/silc/silc.c:922
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Publik nyckelfil"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Privat nyckelfil"
 
 #: ../src/protocols/silc/silc.c:933
@@ -11511,7 +11511,7 @@ msgstr "Algoritm: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Nyckellängd: \t%d bits\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11720,7 +11720,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Katalogtjänsten är tillfälligt onåbar."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "E-postuppslagning är begränsad."
 
 #: ../src/protocols/toc/toc.c:527
@@ -13123,7 +13123,7 @@ msgstr "g003: Fel vid öppnande av anslutning.\n"
 #~ msgstr "%s (%d nya/%d totalt)"
 #~ msgid "Check Mail"
 #~ msgstr "Kolla e-post"
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "Kolla e-post var X sekund.\n"
 #~ msgid "Auto-login"
 #~ msgstr "Logga in automatiskt"

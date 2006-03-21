@@ -2806,7 +2806,7 @@ msgstr "/Contacte/Sortează contactele"
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "%s a fost deconectat datorită unei erori: %s\n"
 "Pentru a reîncerca reconectarea cu acest cont trebuie să corectaţi eroarea "
@@ -7363,7 +7363,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Eroare de sintaxă (probabil o eroare Gaim)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "Adresă de mail invalidă"
 
 #: ../src/protocols/msn/error.c:45
@@ -9064,7 +9064,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9293,12 +9293,12 @@ msgstr[2] "Următoarele nume alese sunt asociate cu %s:"
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "Nu s-a găsit nici un rezultat pentru adresa de mail %s"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Ar trebui să primiţi un mail care să vă ceară confirmarea %s."
 
 #: ../src/protocols/oscar/oscar.c:6389
@@ -9335,7 +9335,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Eroare 0x%04x: Nu se poate schimba adresa de mail pentru că există deja o "
@@ -9344,7 +9344,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Eroare 0x%04x: Nu se poate schimba adresa de mail pentru că adresa introdusă "
@@ -9353,7 +9353,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "Eroare 0x%04x: Nu se poate schimba adresa de mail pentru că adresa introdusă "
@@ -9379,7 +9379,7 @@ msgstr "Detalii Cont"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "Adresa de mail pentru %s este %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
@@ -9644,7 +9644,7 @@ msgstr ""
 "din nou autorizare” după un click dreapta pe nume în lista contactelor."
 
 #: ../src/protocols/oscar/oscar.c:8394
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Căutare contact după adresa de mail"
 
 #: ../src/protocols/oscar/oscar.c:8395
@@ -9694,7 +9694,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Afişare contacte ce aşteaptă autorizarea"
 
 #: ../src/protocols/oscar/oscar.c:8546
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Căutare contact după adresa de mail..."
 
 #: ../src/protocols/oscar/oscar.c:8551
@@ -11218,15 +11218,15 @@ msgid "Key Pair Generation failed"
 msgstr "Generarea perechii de chei a eşuat"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Key Length"
+msgid "Key length"
 msgstr "Lungime cheie"
 
 #: ../src/protocols/silc/silc.c:926
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Fişier cheie publică"
 
 #: ../src/protocols/silc/silc.c:928
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Fişier cheie privată"
 
 #: ../src/protocols/silc/silc.c:937
@@ -11540,7 +11540,7 @@ msgstr "Algoritm: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Lungime cheie: \t%d octeţi\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11750,7 +11750,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Serviciul „Dir” este temporar indisponibil."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "Căutarea după adresa de mail este restricţionată."
 
 #: ../src/protocols/toc/toc.c:527

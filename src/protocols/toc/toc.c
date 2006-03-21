@@ -521,7 +521,7 @@ static char *show_error_message()
 			g_snprintf(buf, sizeof(buf), _("Dir service temporarily unavailable."));
 			break;
 		case 974:
-			g_snprintf(buf, sizeof(buf), _("Email lookup restricted."));
+			g_snprintf(buf, sizeof(buf), _("E-mail lookup restricted."));
 			break;
 		case 975:
 			g_snprintf(buf, sizeof(buf), _("Keyword ignored."));

@@ -39,7 +39,7 @@ msn_error_get_text(unsigned int type)
 			break;
 		case 201:
 			g_snprintf(msg, sizeof(msg),
-					   _("Invalid email address"));
+					   _("Invalid e-mail address"));
 			break;
 		case 205:
 			g_snprintf(msg, sizeof(msg), _("User does not exist"));

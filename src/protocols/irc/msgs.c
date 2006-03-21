@@ -227,7 +227,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
 		g_free(irc->whois.name);
 		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Username"), irc->whois.userhost);
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Realname"), tmp);
+		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Real name"), tmp);
 		g_free(irc->whois.userhost);
 		g_free(tmp);
 	}

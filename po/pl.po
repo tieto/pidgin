@@ -2891,7 +2891,7 @@ msgstr "Okre¶la czy rozwijany combobox ma wygl±daæ jak lista, a nie jak menu"
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "%s zosta³ roz³±czony z powodu nastêpuj±cego b³êdu: %s\n"
 "Gaim nie bêdzie próbowa³ ponownie nawi±zaæ po³±czenia dopóki nie naprawisz b³êdu i nie w³±czysz ponownego logowania na to konto."
@@ -7376,7 +7376,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "B³±d sk³adni (prawdopodobnie b³±d w Gaim)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "Niepoprawny adres e-mail"
 
 #: ../src/protocols/msn/error.c:45
@@ -9070,7 +9070,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4782
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9284,12 +9284,12 @@ msgstr "Wiadomo¶æ wyskakuj±ca"
 
 #: ../src/protocols/oscar/oscar.c:6301
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "Nie znaleziono ¿adnych wyników dla adresu e-mail %s"
 
 #: ../src/protocols/oscar/oscar.c:6322
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Powinna¶/powiniene¶ otrzymaæ e-mail prosz±cy o potwierdzenie %s."
 
 #: ../src/protocols/oscar/oscar.c:6324
@@ -9326,7 +9326,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6367
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "B³±d 0x%04x: Nie mo¿na zmieniæ adresu e-mail, poniewa¿ w kolejce czeka inna "
@@ -9335,7 +9335,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6370
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "B³±d 0x%04x: Nie mo¿na zmieniæ adresu e-mail, poniewa¿ podany adres jest "
@@ -9344,7 +9344,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6373
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "B³±d 0x%04x: Nie mo¿na zmieniæ adresu e-mail, poniewa¿ podany adres jest "
@@ -9370,7 +9370,7 @@ msgstr "Dane konta"
 
 #: ../src/protocols/oscar/oscar.c:6392
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "Adres e-mail dla %s to %s"
 
 #: ../src/protocols/oscar/oscar.c:6464
@@ -9630,7 +9630,7 @@ msgstr ""
 "przyciskiem i wybieraj±c \"Ponownie popro¶ o autoryzacjê\"."
 
 #: ../src/protocols/oscar/oscar.c:8315
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Wyszukiwanie u¿ytkownika wg adresu e-mail"
 
 #: ../src/protocols/oscar/oscar.c:8316
@@ -9680,7 +9680,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Pokazuj u¿ytkowników oczekuj±cych na autoryzacjê"
 
 #: ../src/protocols/oscar/oscar.c:8467
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Szukaj znajomych wed³ug adresu e-mail..."
 
 #: ../src/protocols/oscar/oscar.c:8472
@@ -11183,15 +11183,15 @@ msgid "Key Pair Generation failed"
 msgstr ""
 
 #: ../src/protocols/silc/silc.c:920
-msgid "Key Length"
+msgid "Key length"
 msgstr "D³ugo¶æ klucza"
 
 #: ../src/protocols/silc/silc.c:922
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Plik z kluczem publicznym"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Plik z kluczem prywatnym"
 
 #: ../src/protocols/silc/silc.c:933
@@ -11504,7 +11504,7 @@ msgstr "Algorytm: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "D³ugo¶æ klucza: \t%d bitów\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11711,7 +11711,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Us³uga katalogu tymczasowo niedostêpna."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "Zastrze¿one wyszukiwanie e-mail."
 
 #: ../src/protocols/toc/toc.c:527

@@ -1,5 +1,5 @@
 # gaim ja.po.
-# Copyright (C) 2002, Ryosuke Kutsuna <ryosuke@cool.email.ne.jp>
+# Copyright (C) 2002, Ryosuke Kutsuna <ryosuke@cool.e-mail.ne.jp>
 # Copyright (C) 2002, Taku YASUI <tach@debian.or.jp>
 # Copyright (C) 2003, Junichi Uekawa <dancer@debian.org>
 # Copyright (C) 2003-2006, Takeshi AIHANA <aihana@gnome.gr.jp>
@@ -2855,7 +2855,7 @@ msgstr "ドロップダウンをメニュー型式ではなくリスト型式で
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "エラーが発生したので %s さんとの接続を切りました: %s\n"
 "その問題を解決しアカウントをもう一度有効にして接続し直して下さい。"
@@ -7376,7 +7376,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "文法エラー (おそらく Gaim のバグ)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "不正な E-メール・アドレス"
 
 #: ../src/protocols/msn/error.c:45
@@ -9055,12 +9055,12 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4782
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"ICQ emailを %s [%s] さんから受信しました\n"
+"ICQ e-mailを %s [%s] さんから受信しました\n"
 "\n"
 "メッセージは:\n"
 "%s"
@@ -9292,12 +9292,12 @@ msgstr[1] "次のスクリーン名は %s に関連づけられています"
 
 #: ../src/protocols/oscar/oscar.c:6301
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "%s というメール・アドレスに対して結果がありませんでした"
 
 #: ../src/protocols/oscar/oscar.c:6322
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "%s さんを確認するための問い合わせメールを受信して下さい"
 
 #: ../src/protocols/oscar/oscar.c:6324
@@ -9332,7 +9332,7 @@ msgstr "エラー 0x%04x: 要求されたスクリーン名が長すぎるので
 #: ../src/protocols/oscar/oscar.c:6367
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "エラー 0x%04x: このスクリーン名に対して既に要求がきているのでメールアドレスを"
@@ -9341,7 +9341,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6370
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "エラー 0x%04x: たくさんのスクリーン名に割り当てられているので、このメールアド"
@@ -9350,7 +9350,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6373
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "エラー 0x%04x: このアドレスは不正なので、このメールアドレスには変更できません"
@@ -9375,7 +9375,7 @@ msgstr "アカウント情報"
 
 #: ../src/protocols/oscar/oscar.c:6392
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "%s さんのメールアドレスは %s です"
 
 #: ../src/protocols/oscar/oscar.c:6464
@@ -9623,7 +9623,7 @@ msgstr ""
 "求することができます。"
 
 #: ../src/protocols/oscar/oscar.c:8315
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "E-メールから仲間を捜す"
 
 #: ../src/protocols/oscar/oscar.c:8316
@@ -9673,7 +9673,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "承認を待っている仲間を表示"
 
 #: ../src/protocols/oscar/oscar.c:8467
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "メールで仲間の検索..."
 
 #: ../src/protocols/oscar/oscar.c:8472
@@ -11202,15 +11202,15 @@ msgid "Key Pair Generation failed"
 msgstr "鍵ペアの生成が失敗しました"
 
 #: ../src/protocols/silc/silc.c:920
-msgid "Key Length"
+msgid "Key length"
 msgstr "鍵の長さ"
 
 #: ../src/protocols/silc/silc.c:922
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "公開鍵のファイル"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "秘密鍵のファイル"
 
 #: ../src/protocols/silc/silc.c:933
@@ -11525,7 +11525,7 @@ msgstr "アルゴリズム: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "鍵の長さ: \t%d ビット\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11736,7 +11736,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "一時的にディレクトリ・サービスが利用できません"
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "E-メール検索が拒否されました"
 
 #: ../src/protocols/toc/toc.c:527

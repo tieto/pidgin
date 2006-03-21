@@ -2282,7 +2282,7 @@ msgstr "끊어짐."
 #, c-format
 msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
-"Correct the error and reenable the account to connect."
+"Correct the error and re-enable the account to connect."
 msgstr ""
 
 #: src/gtkconv.c:325
@@ -6437,7 +6437,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "구문 오류 (게임의 버그일 수 있음)"
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "잘못된 메일 주소"
 
 #: src/protocols/msn/error.c:45
@@ -8097,7 +8097,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8310,12 +8310,12 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6140
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "%s 주소로 찾은 결과가 없음"
 
 #: src/protocols/oscar/oscar.c:6161
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6163
@@ -8348,21 +8348,21 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 
@@ -8384,7 +8384,7 @@ msgstr "계정 정보"
 
 #: src/protocols/oscar/oscar.c:6231
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:6298
@@ -8637,7 +8637,7 @@ msgstr ""
 "수 있습니다."
 
 #: src/protocols/oscar/oscar.c:8123
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "메일로 친구 찾기"
 
 #: src/protocols/oscar/oscar.c:8124
@@ -8696,7 +8696,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "인증을 기다리고 있는 친구 보여주기"
 
 #: src/protocols/oscar/oscar.c:8275
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "메일로 친구 찾기..."
 
 #: src/protocols/oscar/oscar.c:8280
@@ -10122,7 +10122,7 @@ msgstr "알고리즘: \t%s\n"
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "키 길이: \t%d 비트\n"
 
 #: src/protocols/silc/util.c:327
@@ -10244,7 +10244,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "디렉토리 서비스를 일시적으로 사용할 수 없습니다."
 
 #: src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "메일 찾아보기가 금지되어 있습니다."
 
 #: src/protocols/toc/toc.c:527
@@ -11126,7 +11126,7 @@ msgstr "g003: 연결중 에러 발생.\n"
 #~ msgid "Check Mail"
 #~ msgstr "편지 확인"
 
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "매 X 초마다 메일을 확인합니다.\n"
 
 #~ msgid "Auto-login"

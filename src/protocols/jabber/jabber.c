@@ -757,7 +757,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			gaim_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "email")) {
-			field = gaim_request_field_string_new("email", _("E-Mail"),
+			field = gaim_request_field_string_new("email", _("E-mail"),
 					NULL, FALSE);
 			gaim_request_field_group_add_field(group, field);
 		}
@@ -767,12 +767,12 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			gaim_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "first")) {
-			field = gaim_request_field_string_new("first", _("First Name"),
+			field = gaim_request_field_string_new("first", _("First name"),
 					NULL, FALSE);
 			gaim_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "last")) {
-			field = gaim_request_field_string_new("last", _("Last Name"),
+			field = gaim_request_field_string_new("last", _("Last name"),
 					NULL, FALSE);
 			gaim_request_field_group_add_field(group, field);
 		}
@@ -792,7 +792,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			gaim_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "zip")) {
-			field = gaim_request_field_string_new("zip", _("Postal Code"),
+			field = gaim_request_field_string_new("zip", _("Postal code"),
 					NULL, FALSE);
 			gaim_request_field_group_add_field(group, field);
 		}

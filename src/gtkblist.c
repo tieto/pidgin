@@ -4571,7 +4571,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
-	label = gtk_label_new(_("Screen Name:"));
+	label = gtk_label_new(_("Screen name:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 

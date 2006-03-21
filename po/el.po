@@ -2891,7 +2891,7 @@ msgstr ""
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "Ο %s αποσυνδέθηκε λόγω σφάλματος: %s\n"
 "Το Gaim δε θα επιχειρήσει να επανασυνδεθεί σε αυτό το λογαριασμό μέχρι να διορθώσετε "
@@ -7407,8 +7407,8 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Σφάλμα σύνταξης (πιθανώς bug του Gaim)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
-msgstr "Μη έγκυρη διεύθυνση email"
+msgid "Invalid e-mail address"
+msgstr "Μη έγκυρη διεύθυνση e-mail"
 
 #: ../src/protocols/msn/error.c:45
 msgid "User does not exist"
@@ -9110,12 +9110,12 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4782
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Λάβατε ένα ICQ email από τον %s [%s]\n"
+"Λάβατε ένα ICQ e-mail από τον %s [%s]\n"
 "\n"
 "Το μήνυμα είναι:\n"
 "%s"
@@ -9326,13 +9326,13 @@ msgstr[1] "Τα ακόλουθα εμφανιζόμενα ονόματα έχο�
 
 #: ../src/protocols/oscar/oscar.c:6301
 #, c-format
-msgid "No results found for email address %s"
-msgstr "Δε βρέθηκαν αποτελέσματα για τη διεύθυνση email %s"
+msgid "No results found for e-mail address %s"
+msgstr "Δε βρέθηκαν αποτελέσματα για τη διεύθυνση e-mail %s"
 
 #: ../src/protocols/oscar/oscar.c:6322
 #, c-format
-msgid "You should receive an email asking to confirm %s."
-msgstr "Πρέπει να λάβετε ένα email επιβεβαίωσης του %s."
+msgid "You should receive an e-mail asking to confirm %s."
+msgstr "Πρέπει να λάβετε ένα e-mail επιβεβαίωσης του %s."
 
 #: ../src/protocols/oscar/oscar.c:6324
 msgid "Account Confirmation Requested"
@@ -9370,7 +9370,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6367
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Σφάλμα 0x%04x: Αδυναμία αλλαγής της ηλ. διεύθυνσης επειδή υπάρχει μία αίτηση "
@@ -9379,7 +9379,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6370
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Σφάλμα 0x%04x: Αδυναμία αλλαγής της ηλ. διεύθυνσης επειδή η διεύθυνση που "
@@ -9388,7 +9388,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6373
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "Error 0x%04x: Αδυναμία αλλαγής της ηλ. διεύθυνσης επειδή η διεύθυνση που "
@@ -9414,7 +9414,7 @@ msgstr "Πληροφορίες λογαριασμού"
 
 #: ../src/protocols/oscar/oscar.c:6392
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "Η ηλ. διεύθυνση του %s είναι %s"
 
 #: ../src/protocols/oscar/oscar.c:6464
@@ -9676,7 +9676,7 @@ msgstr ""
 "απάνω τους και επιλέγοντας \"Αίτηση έγκρισης (ξανά).\""
 
 #: ../src/protocols/oscar/oscar.c:8315
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Εύρεση φίλου μέσω ηλ.διεύθυνσης"
 
 #: ../src/protocols/oscar/oscar.c:8316
@@ -9726,7 +9726,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Εμφάνιση φίλων που αναμένουν έγκριση"
 
 #: ../src/protocols/oscar/oscar.c:8467
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Αναζήτηση φίλου με ηλ.διεύθυνση..."
 
 #: ../src/protocols/oscar/oscar.c:8472
@@ -11241,15 +11241,15 @@ msgid "Key Pair Generation failed"
 msgstr "Αποτυχία δημιουργίας ζεύγους κλειδιών"
 
 #: ../src/protocols/silc/silc.c:920
-msgid "Key Length"
+msgid "Key length"
 msgstr "Μήκος Κλειδιού"
 
 #: ../src/protocols/silc/silc.c:922
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Αρχείο δημόσιου κλειδιού"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Αρχείο ιδιωτικού κλειδιού"
 
 #: ../src/protocols/silc/silc.c:933
@@ -11564,7 +11564,7 @@ msgstr "Αλγόριθμος: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Μήκος κλειδιού: \t%d bits\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11769,7 +11769,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Η υπηρεσία καταλόγου είναι προσωρινά μη διαθέσιμη."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "Εύρεση με ηλ.ταχυδρομείο περιορίστηκε."
 
 #: ../src/protocols/toc/toc.c:527

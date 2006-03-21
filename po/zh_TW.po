@@ -688,7 +688,7 @@ msgstr "傳送電子郵件"
 msgid "Evolution Integration Configuration"
 msgstr "Evolution 整合設定"
 
-# NOTE (00:38:50) LSchiere: wing: the statement quotes only makes sense in terms of the realization that there is no inherent correlation between im of any type and email
+# NOTE (00:38:50) LSchiere: wing: the statement quotes only makes sense in terms of the realization that there is no inherent correlation between im of any type and e-mail
 # NOTE (00:39:19) LSchiere: wing: apparently when adding a contact to your address book, if you fill in the screenname/im field, it is auto adding it to your list.
 # NOTE (00:39:46) LSchiere: wing: so its asking you to select what account(s) it'll be added to. now if there were an inherent correlation it would just know, but there isn't so it doesn't
 #. Label
@@ -2844,7 +2844,7 @@ msgstr "%s 結束連線"
 
 #: src/gtkconn.c:227
 #, c-format
-msgid "%s was disconnected due to an error. %s The account has been disabled. Correct the error and reenable the account to connect."
+msgid "%s was disconnected due to an error. %s The account has been disabled. Correct the error and re-enable the account to connect."
 msgstr ""
 
 #: src/gtkconv.c:349
@@ -7514,7 +7514,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "語法錯誤（可能是 Gaim 的 Bug）"
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "無效的電子郵件位址"
 
 #: src/protocols/msn/error.c:45
@@ -9217,7 +9217,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4632
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9431,12 +9431,12 @@ msgstr[1] "下列是 %s 的帳號"
 
 #: src/protocols/oscar/oscar.c:6195
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "找不到和電子郵件地址 %s 相關的結果"
 
 #: src/protocols/oscar/oscar.c:6216
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "您應該會收到一封要求對 %s 進行認證的電子郵件。"
 
 #: src/protocols/oscar/oscar.c:6218
@@ -9464,17 +9464,17 @@ msgstr "錯誤 0x%04x：無法格式化帳號，因為要求的帳號太長。"
 
 #: src/protocols/oscar/oscar.c:6261
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
 msgstr "錯誤 0x%04x：無法改變電子郵件地址，因為您已經送出的其他要求還未處理好。"
 
 #: src/protocols/oscar/oscar.c:6264
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
 msgstr "錯誤 0x%04x：無法改變電子郵件地址，因為這個電子郵件地址和太多的帳號產生關連。"
 
 #: src/protocols/oscar/oscar.c:6267
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
 msgstr "錯誤 0x%04x：無法改變電子郵件地址，因為這個電子郵件地址是無效的。"
 
 #: src/protocols/oscar/oscar.c:6270
@@ -9498,7 +9498,7 @@ msgstr "帳號資訊"
 
 #: src/protocols/oscar/oscar.c:6286
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "%s 的電子郵件地址為 %s"
 
 #: src/protocols/oscar/oscar.c:6353
@@ -9728,7 +9728,7 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "您可以重新要求這些好友的認證，只要在好友清單中以滑鼠右鍵點擊他們，然後選擇「要求重新認證」。"
 
 #: src/protocols/oscar/oscar.c:8193
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "以電子郵件地址來找尋好友"
 
 #: src/protocols/oscar/oscar.c:8194
@@ -9779,7 +9779,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "顯示等待認證的好友"
 
 #: src/protocols/oscar/oscar.c:8345
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "使用電子郵件地址搜尋好友..."
 
 #: src/protocols/oscar/oscar.c:8350
@@ -11309,15 +11309,15 @@ msgid "Key Pair Generation failed"
 msgstr "密鑰對產生失敗"
 
 #: src/protocols/silc/silc.c:910
-msgid "Key Length"
+msgid "Key length"
 msgstr "密鑰長度"
 
 #: src/protocols/silc/silc.c:912
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "公鑰檔案"
 
 #: src/protocols/silc/silc.c:914
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "私鑰檔案"
 
 #: src/protocols/silc/silc.c:923
@@ -11613,7 +11613,7 @@ msgstr "演算法：　　\t%s\n"
 
 #: src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "密鑰長度：　\t%d 個位元\n"
 
 #: src/protocols/silc/util.c:328
@@ -11805,7 +11805,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "暫時無法使用目錄服務。"
 
 #: src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "禁止 eMail 檢查。"
 
 #: src/protocols/toc/toc.c:527

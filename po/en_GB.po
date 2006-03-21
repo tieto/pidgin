@@ -2796,7 +2796,7 @@ msgstr "/Buddies/Sort Buddies"
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "%s was disconnected due to an error. %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
@@ -7321,8 +7321,8 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Syntax Error (probably a Gaim bug)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
-msgstr "Invalid email address"
+msgid "Invalid e-mail address"
+msgstr "Invalid e-mail address"
 
 #: ../src/protocols/msn/error.c:45
 msgid "User does not exist"
@@ -9011,12 +9011,12 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9230,13 +9230,13 @@ msgstr[1] "The following screen names are associated with %s"
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
-msgstr "No results found for email address %s"
+msgid "No results found for e-mail address %s"
+msgstr "No results found for e-mail address %s"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
-msgstr "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
+msgstr "You should receive an e-mail asking to confirm %s."
 
 #: ../src/protocols/oscar/oscar.c:6389
 msgid "Account Confirmation Requested"
@@ -9272,28 +9272,28 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 
 #: ../src/protocols/oscar/oscar.c:6441
@@ -9316,8 +9316,8 @@ msgstr "Account Info"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
-msgstr "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
+msgstr "The e-mail address for %s is %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
 msgid ""
@@ -9571,8 +9571,8 @@ msgstr ""
 "them and selecting \"Re-request Authorisation.\""
 
 #: ../src/protocols/oscar/oscar.c:8386
-msgid "Find Buddy by E-mail"
-msgstr "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
+msgstr "Find Buddy by E-Mail"
 
 #: ../src/protocols/oscar/oscar.c:8387
 msgid "Search for a buddy by e-mail address"
@@ -9621,8 +9621,8 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Show Buddies Awaiting Authorisation"
 
 #: ../src/protocols/oscar/oscar.c:8538
-msgid "Search for Buddy by Email..."
-msgstr "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
+msgstr "Search for Buddy by E-Mail..."
 
 #: ../src/protocols/oscar/oscar.c:8543
 msgid "Search for Buddy by Information"
@@ -11138,16 +11138,16 @@ msgid "Key Pair Generation failed"
 msgstr "Key Pair Generation failed"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Key Length"
-msgstr "Key Length"
+msgid "Key length"
+msgstr "Key length"
 
 #: ../src/protocols/silc/silc.c:926
-msgid "Public Key File"
-msgstr "Public Key File"
+msgid "Public key file"
+msgstr "Public key file"
 
 #: ../src/protocols/silc/silc.c:928
-msgid "Private Key File"
-msgstr "Private Key File"
+msgid "Private key file"
+msgstr "Private key file"
 
 #: ../src/protocols/silc/silc.c:937
 msgid "Real Name"
@@ -11450,8 +11450,8 @@ msgstr "Algorithm: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
-msgstr "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
+msgstr "Key length: \t%d bits\n"
 
 #: ../src/protocols/silc/util.c:328
 #, c-format
@@ -11659,8 +11659,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Dir service temporarily unavailable."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
-msgstr "Email lookup restricted."
+msgid "E-mail lookup restricted."
+msgstr "E-mail lookup restricted."
 
 #: ../src/protocols/toc/toc.c:527
 msgid "Keyword ignored."

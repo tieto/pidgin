@@ -465,7 +465,7 @@ static void ggp_register_user_dialog(GaimConnection *gc)
 	gaim_request_fields_add_group(fields, group);
 
 	field = gaim_request_field_string_new("email",
-			_("E-Mail"), "", FALSE);
+			_("E-mail"), "", FALSE);
 	gaim_request_field_string_set_masked(field, FALSE);
 	gaim_request_field_group_add_field(group, field);
 

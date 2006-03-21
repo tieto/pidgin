@@ -2796,7 +2796,7 @@ msgstr ""
 #, c-format
 msgid ""
 "%s was disconnected due to an error: %s\n"
-"The account has been disabled. Correct the error and reenable the account to "
+"The account has been disabled. Correct the error and re-enable the account to "
 "connect."
 msgstr ""
 
@@ -7168,8 +7168,8 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr ""
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
-msgstr "არასწორი email მისამართი"
+msgid "Invalid e-mail address"
+msgstr "არასწორი e-mail მისამართი"
 
 #: ../src/protocols/msn/error.c:45
 msgid "User does not exist"
@@ -8779,7 +8779,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4759
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8972,12 +8972,12 @@ msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:6286
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "ელ.ფოსტის ძიების შედეგები %s-თვის არაა ნაპოვნი"
 
 #: ../src/protocols/oscar/oscar.c:6307
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:6309
@@ -9012,21 +9012,21 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6352
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:6355
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:6358
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 
@@ -9048,7 +9048,7 @@ msgstr "ინფორმაცია ანგარიშის შესა�
 
 #: ../src/protocols/oscar/oscar.c:6377
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "ელ.ფოსტის მისამართი %s-თვის არის  %s"
 
 #: ../src/protocols/oscar/oscar.c:6449
@@ -9271,7 +9271,7 @@ msgid ""
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:8301
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:8302
@@ -9321,7 +9321,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:8453
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr ""
 
 #: ../src/protocols/oscar/oscar.c:8458
@@ -10778,15 +10778,15 @@ msgid "Key Pair Generation failed"
 msgstr ""
 
 #: ../src/protocols/silc/silc.c:920
-msgid "Key Length"
+msgid "Key length"
 msgstr "გასაღების სიგრძე"
 
 #: ../src/protocols/silc/silc.c:922
-msgid "Public Key File"
+msgid "Public key file"
 msgstr ""
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Private Key File"
+msgid "Private key file"
 msgstr ""
 
 #: ../src/protocols/silc/silc.c:933
@@ -11081,7 +11081,7 @@ msgstr ""
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "გასაღების სიგრძე: \t%d ბიტი\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11270,7 +11270,7 @@ msgid "Dir service temporarily unavailable."
 msgstr ""
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr ""
 
 #: ../src/protocols/toc/toc.c:527

@@ -3008,7 +3008,7 @@ msgstr "/Bičiuliai/Surikiuoti bičiulius"
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "%s buvo atjungtas dėl klaidos: %s\n"
 "Gaim nebebandys prisijungti su šia paskyra, kol nepataisysite klaidos ir iš naujo neaktyvuosite paskyros."
@@ -7613,7 +7613,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Sintaksės klaida (greičiausiai Gaim riktas)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "Neteisingas el. pašto adresas"
 
 #: ../src/protocols/msn/error.c:45
@@ -9317,7 +9317,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9561,12 +9561,12 @@ msgstr[2] "Tolimesni vardai yra susieti su %s"
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "Pagal el. pašto adresą %s jokių rezultatų nerasta"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Jūs turėtumėte gauti el. laišką, prašantį patvirtinti %s."
 
 #: ../src/protocols/oscar/oscar.c:6389
@@ -9605,7 +9605,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Klaida 0x%04x: neįmanoma pakeisti el. pašto adreso, kadangi šiuo metu laukia "
@@ -9614,7 +9614,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Klaida 0x%04x: neįmanoma pakeisti el. pašto adreso, kadangi duotas adresas "
@@ -9623,7 +9623,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "Klaida 0x%04x: neįmanoma pakeisti el. pašto adreso, kadangi duotas adresas "
@@ -9649,7 +9649,7 @@ msgstr "Abonento informacija"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "Vartotojo %s el. pašto adresas yra %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
@@ -9916,7 +9916,7 @@ msgstr ""
 "paprašyti prieigos teisės“."
 
 #: ../src/protocols/oscar/oscar.c:8394
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Surasti bičiulį pagal el. pašto adresą"
 
 #: ../src/protocols/oscar/oscar.c:8395
@@ -9966,7 +9966,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Parodyti bičiulius, laukiančius prieigos suteikimo"
 
 #: ../src/protocols/oscar/oscar.c:8546
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Ieškoti bičiulio pagal el. pašto adresą..."
 
 #: ../src/protocols/oscar/oscar.c:8551
@@ -11501,15 +11501,15 @@ msgid "Key Pair Generation failed"
 msgstr "Raktų poros sukūrimas nepavyko"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Key Length"
+msgid "Key length"
 msgstr "Rakto ilgis"
 
 #: ../src/protocols/silc/silc.c:926
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Viešojo rakto failas"
 
 #: ../src/protocols/silc/silc.c:928
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Privataus rakto failas"
 
 #: ../src/protocols/silc/silc.c:937
@@ -11835,7 +11835,7 @@ msgstr "Algoritmas:  \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Rakto ilgis, bitais: \t%d\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -12063,7 +12063,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Katalogo tarnyba laikinai neprieinama."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "El. pašto adresų paieška apribota."
 
 #: ../src/protocols/toc/toc.c:527

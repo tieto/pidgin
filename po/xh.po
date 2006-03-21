@@ -2330,7 +2330,7 @@ msgstr "Unxibelelwano luqhawukile."
 #, c-format
 msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
-"Correct the error and reenable the account to connect."
+"Correct the error and re-enable the account to connect."
 msgstr ""
 
 #: src/gtkconv.c:325
@@ -6569,7 +6569,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Impazamo yokwakheka kwezivakalisi (mhlawumbi sisiphene sikaGaim)"
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "IDilesi ye-imeyile engasebenziyo"
 
 #: src/protocols/msn/error.c:45
@@ -8268,7 +8268,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8490,12 +8490,12 @@ msgstr "Amagama alandelayo ezikrini anxulumaniswe no %s"
 
 #: src/protocols/oscar/oscar.c:6140
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "Akukho ziphumo zifunyenweyo zedilesi ye-imeyile %s"
 
 #: src/protocols/oscar/oscar.c:6161
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Uza kufumana i-imeyile ecela ukuba ungqine %s."
 
 #: src/protocols/oscar/oscar.c:6163
@@ -8534,7 +8534,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Impazamo 0x%04x: Akukwazeki ukutshintsha idilesi ye-imeyile ngenxa yokuba "
@@ -8543,7 +8543,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Impazamo 0x%04x: Akukwazeki ukutshintsha idilesi ye-imeyile ngenxa yokuba "
@@ -8552,7 +8552,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "Impazamo 0x%04x: Akukwazeki ukutshintsha idilesi ye-imeyile ngenxa yokuba "
@@ -8578,7 +8578,7 @@ msgstr "Ulwazi nge-akhawunti"
 
 #: src/protocols/oscar/oscar.c:6231
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "Idilesi ye-imeyili ye %s yile %s"
 
 #: src/protocols/oscar/oscar.c:6298
@@ -8862,7 +8862,7 @@ msgstr ""
 "nokukhetha \"Isicelo soGunyaziso Kwakhona.\""
 
 #: src/protocols/oscar/oscar.c:8123
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Fumana umHlobo ngeI-meyile"
 
 #: src/protocols/oscar/oscar.c:8124
@@ -8921,7 +8921,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Bonisa Abahlobo abaLindele uGunyaziso"
 
 #: src/protocols/oscar/oscar.c:8275
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Zingela umHlobo nge-Imeyile..."
 
 #: src/protocols/oscar/oscar.c:8280
@@ -10360,7 +10360,7 @@ msgstr "I-Algorithmu: \t%s\n"
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Ubude obuPhambili: \t%d bits\n"
 
 #: src/protocols/silc/util.c:327
@@ -10484,7 +10484,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Inkonzo yovimba weefayili ayifumaneki okwethutyana."
 
 #: src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "Ukukhangela i-imeyile kunezithintelo."
 
 #: src/protocols/toc/toc.c:527
@@ -11414,7 +11414,7 @@ msgstr "g003: Impazamo yokuvula inxibelelwano.\n"
 #~ msgid "Check Mail"
 #~ msgstr "Khangela iMeyile"
 
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "Khangela i-imeyile njalo ngemizuzwana X.\n"
 
 #~ msgid "Auto-login"

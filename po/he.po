@@ -2769,7 +2769,7 @@ msgstr "/אנשי קשר/מיין אנשי-קשר"
 msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
-"and reenable the account."
+"and re-enable the account."
 msgstr ""
 "%s נותק עקב שגיאה: %s\n"
 "גיים לא ינסה לחבר את החשבון מחדש עד אשר הבעיה תתוקן, והחשבון יופעל מחדש."
@@ -7235,7 +7235,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "שגיאת תחביר (כנראה באג בגיים)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "כתובת דוא\"ל לא תקפה"
 
 #: ../src/protocols/msn/error.c:45
@@ -8901,7 +8901,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9116,12 +9116,12 @@ msgstr[1] "שמות המשתמשים שלהלן מקושרים עם %s"
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "לא נמצאו תוצאות עבור כתובת הדוא\"ל %s"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "ישלח דוא\"ל לאשר את %s."
 
 #: ../src/protocols/oscar/oscar.c:6389
@@ -9155,7 +9155,7 @@ msgstr "שגיאה 0x%04x: לא ניתן לפרמט את שם המשתמש, כי
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "שגיאה 0x%04x: לא ניתן לשנות את כתובת הדוא\"ל כיוון שיש כבר בקשה מחכה עבור "
@@ -9164,7 +9164,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "שגיאה 0x%04x: לא ניתן לשנות את כתובת הדוא\"ל כיוון שהכתובת הנתונה מיוחסת "
@@ -9173,7 +9173,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "שגיאה 0x%04x: לא ניתן לשנות את כתובת הדוא\"ל כיוון שהכתובת שניתנה לא חוקית."
@@ -9198,7 +9198,7 @@ msgstr "מידע על החשבון"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "כתובת הדוא\"ל של %s היא %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
@@ -9442,7 +9442,7 @@ msgstr ""
 "ולבחור \"בקש הרשאה שוב\"."
 
 #: ../src/protocols/oscar/oscar.c:8388
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "מצא איש קשר לפי דוא\"ל"
 
 #: ../src/protocols/oscar/oscar.c:8389
@@ -9492,7 +9492,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "הצג את אנשי הקשר שמחכים לאישור"
 
 #: ../src/protocols/oscar/oscar.c:8540
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "חפש איש-קשר עפ\"י כתובת דוא\"ל..."
 
 #: ../src/protocols/oscar/oscar.c:8545
@@ -10995,15 +10995,15 @@ msgid "Key Pair Generation failed"
 msgstr "כשל בעת יצירה של זוג מפתחות"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Key Length"
+msgid "Key length"
 msgstr "אורך מפתח"
 
 #: ../src/protocols/silc/silc.c:926
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "קובץ מפתח ציבורי"
 
 #: ../src/protocols/silc/silc.c:928
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "קובץ מפתח פרטי"
 
 #: ../src/protocols/silc/silc.c:937
@@ -11304,7 +11304,7 @@ msgstr "אלגוריתם: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "אורך מפתח: \t%d ביטים\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11511,7 +11511,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "שירות המדריך אינו זמין זמנית."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "חיפוש הדוא\"ל מוגבל."
 
 #: ../src/protocols/toc/toc.c:527
@@ -13007,7 +13007,7 @@ msgstr "g003: שגיאה בעת פתיחת חיבור תקשורת.\n"
 #~ msgid "Check Mail"
 #~ msgstr "בדוק דואר"
 
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "בדוק דואר כל מספר שניות. \n"
 
 #~ msgid "Auto-login"

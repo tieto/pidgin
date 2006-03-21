@@ -2887,7 +2887,7 @@ msgstr "/Partnerek/Partnerek rendezése"
 #, c-format
 msgid ""
 "%s was disconnected due to an error: %s\n"
-"Gaim will not attempt to reconnect the account until you correct the error and reenable the account."
+"Gaim will not attempt to reconnect the account until you correct the error and re-enable the account."
 msgstr ""
 "%s kapcsolata bontva a következő hiba miatt: %s\n"
 "A Gaim nem próbálja meg újra csatlakoztatni a fiókot, amíg nem javítja a hibát és nem engedélyezi újra a fiókot."
@@ -7466,7 +7466,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Szintaktikai hiba (valószínűleg Gaim hiba)"
 
 #: ../src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "Érvénytelen e-mail cím"
 
 #: ../src/protocols/msn/error.c:45
@@ -9135,7 +9135,7 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:4847
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9351,12 +9351,12 @@ msgstr[1] "A következő felhasználónevek a következőhöz vannak rendelve: %
 
 #: ../src/protocols/oscar/oscar.c:6366
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "Nem található eredmény a(z) %s e-mail címre"
 
 #: ../src/protocols/oscar/oscar.c:6387
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Kapnia kell egy %s jóváhagyását kérő levelet."
 
 #: ../src/protocols/oscar/oscar.c:6389
@@ -9384,17 +9384,17 @@ msgstr "Hiba 0x%04x: Nem sikerült a felhasználóazonosítót megformázni, mer
 
 #: ../src/protocols/oscar/oscar.c:6432
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
 msgstr "Hiba 0x%04x: Nem sikerült a fiók azonosítót megformázni, mert egy kérés már függőben van erre a felhasználóazonosítóra."
 
 #: ../src/protocols/oscar/oscar.c:6435
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
 msgstr "Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet, mert a megadott cím túl sok felhasználóazonosítóval van társítva."
 
 #: ../src/protocols/oscar/oscar.c:6438
 #, c-format
-msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
 msgstr "Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet, mert a megadott cím érvénytelen."
 
 #: ../src/protocols/oscar/oscar.c:6441
@@ -9418,7 +9418,7 @@ msgstr "Fiókinformációk"
 
 #: ../src/protocols/oscar/oscar.c:6457
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "%s e-mail címe a következő: %s"
 
 #: ../src/protocols/oscar/oscar.c:6535
@@ -9623,7 +9623,7 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "Újra kérheti engedélyezést ezektől a partnerektől a jobb egérgombbal kattintva a nevükön, és az \"Engedélyezés újra kérése\" választásával"
 
 #: ../src/protocols/oscar/oscar.c:8386
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "Partnerek keresése e-mail cím szerint"
 
 #: ../src/protocols/oscar/oscar.c:8387
@@ -9673,7 +9673,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Engedélyezésre váró partnerek megjelenítése"
 
 #: ../src/protocols/oscar/oscar.c:8538
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "Partner keresése e-mail cím szerint..."
 
 #: ../src/protocols/oscar/oscar.c:8543
@@ -11175,15 +11175,15 @@ msgid "Key Pair Generation failed"
 msgstr "A kulcselőállítás meghiúsult"
 
 #: ../src/protocols/silc/silc.c:920
-msgid "Key Length"
+msgid "Key length"
 msgstr "Kulcs hossza"
 
 #: ../src/protocols/silc/silc.c:922
-msgid "Public Key File"
+msgid "Public key file"
 msgstr "Nyilvános kulcs fájlja"
 
 #: ../src/protocols/silc/silc.c:924
-msgid "Private Key File"
+msgid "Private key file"
 msgstr "Személyes kulcs fájlja"
 
 #: ../src/protocols/silc/silc.c:933
@@ -11472,7 +11472,7 @@ msgstr "Algoritmus: \t%s\n"
 
 #: ../src/protocols/silc/util.c:326
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Kulcs hossza: \t%d bit\n"
 
 #: ../src/protocols/silc/util.c:328
@@ -11681,7 +11681,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Könyvtárszolgáltatás átmenetileg nem érhető el."
 
 #: ../src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "E-mail keresés korlátozva."
 
 #: ../src/protocols/toc/toc.c:527

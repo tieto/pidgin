@@ -2237,7 +2237,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 				 * Yes, it's a bit odd to ask the user to enable proxied file transfers
 				 * when it's a proxied transfer that timed out. It is possible that a
 				 * stage 1 or 2 proxied transfer might work when a stage 3 will not. */
-				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Accounts->%s->Edit Account->Advanced."),
+				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Accounts -> %s -> Edit Account -> Advanced."),
 					gaim_xfer_get_filename(xfer), gaim_account_get_username(account));
 				gaim_xfer_conversation_write(xfer, msg, TRUE);
 				g_free(msg);
@@ -2939,9 +2939,9 @@ static int gaim_parse_auth_resp(OscarSession *sess, FlapFrame *fr, ...) {
 	gaim_debug_misc("oscar", "Reg status: %hu\n", info->regstatus);
 
 	if (info->email) {
-		gaim_debug_misc("oscar", "Email: %s\n", info->email);
+		gaim_debug_misc("oscar", "E-mail: %s\n", info->email);
 	} else {
-		gaim_debug_misc("oscar", "Email is NULL\n");
+		gaim_debug_misc("oscar", "E-mail is NULL\n");
 	}
 
 	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
@@ -4844,8 +4844,8 @@ static int incomingim_chan4(OscarSession *sess, OscarConnection *conn, aim_useri
 
 		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
-				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
-				gaim_notify_info(gc, NULL, "ICQ Email", dialog_msg);
+				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ e-mail from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
+				gaim_notify_info(gc, NULL, "ICQ E-Mail", dialog_msg);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -6175,14 +6175,14 @@ static int gaim_icqinfo(OscarSession *sess, FlapFrame *fr, ...)
 	oscar_string_append(gc->account, str, "\n<br>", _("First Name"), info->first);
 	oscar_string_append(gc->account, str, "\n<br>", _("Last Name"), info->last);
 	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email))) {
-		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
+		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("E-Mail Address"), utf8, utf8);
 		g_free(utf8);
 	}
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
 			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email2[i]))) {
-				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("Email Address"), utf8, utf8);
+				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("E-Mail Address"), utf8, utf8);
 				g_free(utf8);
 			}
 		}
@@ -6363,7 +6363,7 @@ static int gaim_parse_searcherror(OscarSession *sess, FlapFrame *fr, ...) {
 	email = va_arg(ap, char *);
 	va_end(ap);
 
-	buf = g_strdup_printf(_("No results found for email address %s"), email);
+	buf = g_strdup_printf(_("No results found for e-mail address %s"), email);
 	gaim_notify_error(sess->aux_data, NULL, buf, NULL);
 	g_free(buf);
 
@@ -6384,7 +6384,7 @@ static int gaim_account_confirm(OscarSession *sess, FlapFrame *fr, ...) {
 			   "account confirmation returned status 0x%04x (%s)\n", status,
 			status ? "unknown" : "email sent");
 	if (!status) {
-		g_snprintf(msg, sizeof(msg), _("You should receive an email asking to confirm %s."),
+		g_snprintf(msg, sizeof(msg), _("You should receive an e-mail asking to confirm %s."),
 				gaim_account_get_username(gaim_connection_get_account(gc)));
 		gaim_notify_info(gc, NULL, _("Account Confirmation Requested"), msg);
 	}
@@ -6429,13 +6429,13 @@ static int gaim_info_change(OscarSession *sess, FlapFrame *fr, ...) {
 				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name is too long."), err);
 			} break;
 			case 0x001d: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."), err);
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."), err);
 			} break;
 			case 0x0021: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."), err);
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."), err);
 			} break;
 			case 0x0023: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address is invalid."), err);
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address is invalid."), err);
 			} break;
 			default: {
 				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
@@ -6454,7 +6454,7 @@ static int gaim_info_change(OscarSession *sess, FlapFrame *fr, ...) {
 	}
 
 	if (email != NULL) {
-		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"),
+		char *dialog_msg = g_strdup_printf(_("The e-mail address for %s is %s"),
 						   gaim_account_get_username(gaim_connection_get_account(gc)), email);
 		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
 		g_free(dialog_msg);
@@ -8391,7 +8391,7 @@ static void search_by_email_cb(GaimConnection *gc, const char *email)
 static void oscar_show_find_email(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_request_input(gc, _("Find Buddy by E-mail"),
+	gaim_request_input(gc, _("Find Buddy by E-Mail"),
 					   _("Search for a buddy by e-mail address"),
 					   _("Type the e-mail address of the buddy you are "
 						 "searching for."),
@@ -8543,7 +8543,7 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 
 	m = g_list_append(m, NULL);
 
-	act = gaim_plugin_action_new(_("Search for Buddy by Email..."),
+	act = gaim_plugin_action_new(_("Search for Buddy by E-Mail..."),
 			oscar_show_find_email);
 	m = g_list_append(m, act);
 

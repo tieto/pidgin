@@ -1072,7 +1072,7 @@ silcgaim_whois_more(SilcClientEntry client_entry, gint id)
 			for (i = 0; i < vcard.num_emails; i++) {
 				if (vcard.emails[i].address)
 					g_string_append_printf(s, "%s:\t\t%s\n",
-							       _("EMail"),
+							       _("E-Mail"),
 							       vcard.emails[i].address);
 			}
 			if (vcard.note)
@@ -1180,7 +1180,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			g_free(tmp2);
 			if (client_entry->realname) {
 				tmp2 = g_markup_escape_text(client_entry->realname, -1);
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Realname"), tmp2);
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Real Name"), tmp2);
 				g_free(tmp2);
 			}
 			if (client_entry->username) {
@@ -1329,7 +1329,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			g_free(tmp);
 			if (realname) {
 				tmp = g_markup_escape_text(realname, -1);
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Realname"), tmp);
+				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Real Name"), tmp);
 				g_free(tmp);
 			}
 			if (username) {

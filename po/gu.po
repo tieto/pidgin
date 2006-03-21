@@ -2299,7 +2299,7 @@ msgstr "જોડાણ તૂટી ગયું."
 #, c-format
 msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
-"Correct the error and reenable the account to connect."
+"Correct the error and re-enable the account to connect."
 msgstr ""
 
 #: src/gtkconv.c:325
@@ -6499,7 +6499,7 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "વાક્યરચના ભૂલ (સંભવિત રીતે Gaim ત્રુટિ)"
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "અયોગ્ય ઈમેઈલ સરનામું"
 
 #: src/protocols/msn/error.c:45
@@ -8158,7 +8158,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8374,12 +8374,12 @@ msgstr "નીચેના સ્ક્રીન નામો %s સાથે �
 
 #: src/protocols/oscar/oscar.c:6140
 #, c-format
-msgid "No results found for email address %s"
+msgid "No results found for e-mail address %s"
 msgstr "ઈમેઈલ સરનામા %s માટે કોઈ પરિણામો મળ્યા નથી"
 
 #: src/protocols/oscar/oscar.c:6161
 #, c-format
-msgid "You should receive an email asking to confirm %s."
+msgid "You should receive an e-mail asking to confirm %s."
 msgstr "તમે %s ની ખાતરી કરવા માટે પૂછતો ઈમેઈલ મેળવવો જોઈએ."
 
 #: src/protocols/oscar/oscar.c:6163
@@ -8416,7 +8416,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "ભૂલ 0x%04x: સ્ક્રીન નામનું બંધારણ ઘડવામાં અસમર્થ કારણ કે આ સ્ક્રીન નામ માટેની અરજી "
@@ -8425,7 +8425,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "ભૂલ 0x%04x: સ્ક્રીન નામનું બંધારણ ઘડવામાં અસમર્થ કારણ કે આપેલ સરનામાના ઘણા સ્ક્રીન નામો "
@@ -8434,7 +8434,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr "ભૂલ 0x%04x: ઈમેઈલ સરનામું બદલવામાં અસમર્થ કારણ કે આપેલ સરનામું અગોગ્ય છે."
 
@@ -8458,7 +8458,7 @@ msgstr "ખાતા જાણકારી"
 
 #: src/protocols/oscar/oscar.c:6231
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "%s માટેનું ઈમેઈલ સરનામું %s છે"
 
 #: src/protocols/oscar/oscar.c:6298
@@ -8731,7 +8731,7 @@ msgstr ""
 "પુનઃ-અરજી કરો\" પસંદ કરીને."
 
 #: src/protocols/oscar/oscar.c:8123
-msgid "Find Buddy by E-mail"
+msgid "Find Buddy by E-Mail"
 msgstr "ઈ-મેઈલ દ્વારા વ્યક્તિ શોધો"
 
 #: src/protocols/oscar/oscar.c:8124
@@ -8790,7 +8790,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "સત્તાધિકરણ માટે રાહ જોઈ રહલે વ્યક્તિઓ બતાવો"
 
 #: src/protocols/oscar/oscar.c:8275
-msgid "Search for Buddy by Email..."
+msgid "Search for Buddy by E-Mail..."
 msgstr "ઈમેઈલ દ્વારા વ્યક્તિ માટે શોધ કરો..."
 
 #: src/protocols/oscar/oscar.c:8280
@@ -10194,7 +10194,7 @@ msgstr "અલગોરિધમ: \t%s\n"
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "કી લંબાઈ: \t%d bits\n"
 
 #: src/protocols/silc/util.c:327
@@ -10318,7 +10318,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "ડિરેક્ટરી સેવા કામચલાઉ રીતે ઉપલબ્ધ નથી."
 
 #: src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
+msgid "E-mail lookup restricted."
 msgstr "ઈમેઈલ જોવાનું પ્રતિબંધિત છે."
 
 #: src/protocols/toc/toc.c:527
@@ -11225,7 +11225,7 @@ msgstr "g003: જોડાણ ખોલવામાં ભૂલ.\n"
 #~ msgid "Check Mail"
 #~ msgstr "મેઈલ ચકાસો"
 
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "દર X સેકન્ડે મેઈલ ચકાસો.\n"
 
 #~ msgid "Auto-login"
