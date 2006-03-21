@@ -3551,7 +3551,7 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 							account, 3,
 							_("OK"), NULL,
 							_("Modify Account"), GAIM_CALLBACK(ce_modify_account_cb),
-							enabled ? _("Connect") : _("Enable Account"),
+							enabled ? _("Connect") : _("Re-enable Account"),
 							enabled ? GAIM_CALLBACK(gaim_account_connect) :
 										GAIM_CALLBACK(ce_enable_account_cb));
 	}
