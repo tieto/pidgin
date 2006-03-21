@@ -878,8 +878,7 @@ uri_command(const char *command, gboolean sync)
 
 	if (!gaim_program_is_valid(command))
 	{
-		/* TODO: Change the bold tags to quotes when not in string freeze */
-		tmp = g_strdup_printf(_("The browser command <b>%s</b> is invalid."),
+		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
 							  command ? command : "(none)");
 		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 		g_free(tmp);
@@ -891,8 +890,7 @@ uri_command(const char *command, gboolean sync)
 
 		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error))
 		{
-			/* TODO: Change the bold tags to quotes when not in string freeze */
-			tmp = g_strdup_printf(_("Error launching <b>%s</b>: %s"),
+			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 			g_free(tmp);
@@ -905,8 +903,7 @@ uri_command(const char *command, gboolean sync)
 	{
 		if (!g_spawn_command_line_async(command, &error))
 		{
-			/* TODO: Change the bold tags to quotes when not in string freeze */
-			tmp = g_strdup_printf(_("Error launching <b>%s</b>: %s"),
+			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 			g_free(tmp);
