@@ -315,15 +315,22 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	tmp2 = gaim_markup_linkify(tmp);
 	g_free(tmp);
 	if (!strcmp(name, "topic")) {
-		char *nick_esc;
-		nick = irc_mask_nick(from);
-		nick_esc = g_markup_escape_text(nick, -1);
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), nick, topic);
-		msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick_esc, tmp2);
-		g_free(nick_esc);
-		g_free(nick);
-		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
-		g_free(msg);
+		const char *current_topic = gaim_conv_chat_get_topic(GAIM_CONV_CHAT(convo));
+		if (!(current_topic != NULL && strcmp(tmp2, current_topic) == 0))
+		{
+			char *nick_esc;
+			nick = irc_mask_nick(from);
+			nick_esc = g_markup_escape_text(nick, -1);
+			gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), nick, topic);
+			if (*tmp2)
+				msg = g_strdup_printf(_("%s has changed the topic to: %s"), nick_esc, tmp2);
+			else
+				msg = g_strdup_printf(_("%s has cleared the topic."), nick_esc);
+			g_free(nick_esc);
+			g_free(nick);
+			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
+			g_free(msg);
+		}
 	} else {
 		char *chan_esc = g_markup_escape_text(chan, -1);
 		msg = g_strdup_printf(_("The topic for %s is: %s"), chan_esc, tmp2);
