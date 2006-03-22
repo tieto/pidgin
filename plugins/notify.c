@@ -654,7 +654,7 @@ get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(type_toggle_cb), "type_chat");
 
 	ref = toggle;
-	toggle = gtk_check_button_new_with_mnemonic(_("\t_Only when someone says your nick"));
+	toggle = gtk_check_button_new_with_mnemonic(_("\t_Only when someone says your screen name"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
 	                            gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick"));
