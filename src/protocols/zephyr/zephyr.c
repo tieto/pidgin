@@ -2893,10 +2893,10 @@ static void init_plugin(GaimPlugin * plugin)
 	GaimAccountOption *option;
 	char *tmp = get_exposure_level();
 
-	option = gaim_account_option_bool_new("Use tzc", "use_tzc", FALSE);
+	option = gaim_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new("tzc command", "tzc_command", "/usr/bin/tzc -e %s");
+	option = gaim_account_option_string_new(_("tzc command"), "tzc_command", "/usr/bin/tzc -e %s");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_bool_new(_("Export to .anyone"), "write_anyone", FALSE);
