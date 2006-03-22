@@ -69,7 +69,7 @@ static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your name in chat"), "nick_said", "alert.wav"}
+	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav"}
 };
 
 #ifdef USE_AO
