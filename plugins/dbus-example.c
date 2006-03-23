@@ -1,21 +1,38 @@
-/* 
-   This is an example of a gaim dbus plugin.  After enabling this
-   plugin, the following commands should work from the command line:
-
-   prompt$ gaim-send DbusExampleGetHelloObject
-
-     returns, say: int32 74
-
-   prompt$ gaim-send DbusExampleGetText int32:74
-
-     returns: string "Hello."
-
-   prompt$ gaim-send DbusExampleSetText int32:74 string:Bye!
-
-   prompt$ gaim-send DbusExampleGetText int32:74
-
-     returns: string "Bye!"
-
+/*
+ *   This is an example of a gaim dbus plugin.  After enabling this
+ *   plugin, the following commands should work from the command line:
+ *
+ *   prompt$ gaim-send DbusExampleGetHelloObject
+ *
+ *     returns, say: int32 74
+ *
+ *   prompt$ gaim-send DbusExampleGetText int32:74
+ *
+ *     returns: string "Hello."
+ *
+ *   prompt$ gaim-send DbusExampleSetText int32:74 string:Bye!
+ *
+ *   prompt$ gaim-send DbusExampleGetText int32:74
+ *
+ *     returns: string "Bye!"
+ *
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "internal.h"
