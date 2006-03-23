@@ -5,7 +5,7 @@
 ;;  German language strings for the Windows Gaim NSIS installer.
 ;;  Windows Code page: 1252
 ;;
-;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2005.
+;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2006.
 ;;  Version 3
 ;;
  
@@ -29,14 +29,14 @@
 !define GAIM_SHORTCUTS_SECTION_TITLE	"Verknüpfungen"
 !define GAIM_DESKTOP_SHORTCUT_SECTION_TITLE	"Desktop"
 !define GAIM_STARTMENU_SHORTCUT_SECTION_TITLE	"Startmenü"
-!define GAIM_SECTION_DESCRIPTION		"Gaim Basis-Dateien und -DLLs"
-!define GTK_SECTION_DESCRIPTION		"Ein Multi-Plattform GUI Toolkit, verwendet von Gaim"
+!define GAIM_SECTION_DESCRIPTION		"Gaim-Basisdateien und -DLLs"
+!define GTK_SECTION_DESCRIPTION		"Ein Multi-Plattform-GUI-Toolkit, verwendet von Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themen können Aussehen und Bedienung von GTK+ Anwendungen verändern."
 !define GTK_NO_THEME_DESC			"Installiere kein GTK+ Thema"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows Imitator) ist ein GTK Theme, das sich besonders gut in den Windows Desktop integriert."
 !define GTK_BLUECURVE_THEME_DESC		"Das Bluecurve Thema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Das Lighthouseblue Thema."
-!define GAIM_SHORTCUTS_SECTION_DESCRIPTION	"Verknüpfungen zum Start von Gaim"
+!define GAIM_SHORTCUTS_SECTION_DESCRIPTION	"Verknüpfungen zum Starten von Gaim"
 !define GAIM_DESKTOP_SHORTCUT_DESC   "Erstellt eine Verknüpfung zu Gaim auf dem Desktop"
 !define GAIM_STARTMENU_SHORTCUT_DESC   "Erstellt einen Eintrag für Gaim im Startmenü"
  
@@ -84,7 +84,7 @@
 !define GAIM_SPELLCHECK_DUTCH			"Holländisch"
 !define GAIM_SPELLCHECK_NORWEGIAN		"Norwegisch"
 !define GAIM_SPELLCHECK_POLISH			"Polnisch"
-!define GAIM_SPELLCHECK_PORTUGUESE		"Portuguese"
+!define GAIM_SPELLCHECK_PORTUGUESE		"Portugiesisch"
 !define GAIM_SPELLCHECK_ROMANIAN		"Rumänisch"
 !define GAIM_SPELLCHECK_RUSSIAN			"Russisch"
 !define GAIM_SPELLCHECK_SLOVAK			"Slowakisch"

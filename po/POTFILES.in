@@ -1,3 +1,4 @@
+
 gaim.desktop.in
 plugins/ciphertest.c
 plugins/contact_priority.c
@@ -80,6 +81,7 @@ src/gtkwhiteboard.c
 src/log.c
 src/plugin.c
 src/protocols/bonjour/bonjour.c
+src/protocols/bonjour/bonjour.h
 src/protocols/bonjour/jabber.c
 src/protocols/gg/gg.c
 src/protocols/irc/cmds.c
@@ -131,6 +133,7 @@ src/protocols/yahoo/yahoochat.c
 src/protocols/yahoo/ycht.c
 src/protocols/zephyr/zephyr.c
 src/proxy.c
+src/request.h
 src/savedstatuses.c
 src/server.c
 src/status.c
