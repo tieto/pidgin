@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "buddyicon.h"
 #include "conversation.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "util.h"
 
@@ -39,6 +40,7 @@ gaim_buddy_icon_create(GaimAccount *account, const char *username)
 	GHashTable *icon_cache;
 
 	icon = g_new0(GaimBuddyIcon, 1);
+	GAIM_DBUS_REGISTER_POINTER(icon, GaimBuddyIcon);
 
 	gaim_buddy_icon_set_account(icon,  account);
 	gaim_buddy_icon_set_username(icon, username);
@@ -136,6 +138,7 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 	if (icon->data != NULL)
 		g_free(icon->data);
 
+	GAIM_DBUS_UNREGISTER_POINTER(icon);
 	g_free(icon);
 }
 
