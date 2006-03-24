@@ -3235,25 +3235,31 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
+	GaimStatus *status = NULL;
 
-	if (idle && yd->current_status == YAHOO_STATUS_AVAILABLE)
+	if (idle && yd->current_status != YAHOO_STATUS_IDLE)
 		yd->current_status = YAHOO_STATUS_IDLE;
-	else if (!idle && yd->current_status == YAHOO_STATUS_IDLE)
-		yd->current_status = YAHOO_STATUS_AVAILABLE;
+	else if (!idle && yd->current_status == YAHOO_STATUS_IDLE) {
+		status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
+		yd->current_status = get_yahoo_status_from_gaim_status(status);
+	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *tmp;
-		GaimStatus *status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
+		if (status == NULL)
+			status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
 		tmp = gaim_status_get_attr_string(status, "message");
 		if (tmp != NULL) {
 			msg = yahoo_string_encode(gc, tmp, NULL);
 			msg2 = gaim_markup_strip_html(msg);
 			yahoo_packet_hash_str(pkt, 19, msg2);
 		} else {
-			yahoo_packet_hash_str(pkt, 19, "");
+			/* get_yahoo_status_from_gaim_status() returns YAHOO_STATUS_CUSTOM for
+			 * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message */
+			yahoo_packet_hash_str(pkt, 19, _("Away"));
 		}
 	} else {
 		yahoo_packet_hash_str(pkt, 19, "");
