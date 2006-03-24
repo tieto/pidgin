@@ -613,18 +613,10 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 static void
 joinchat_select_account_cb(GObject *w, GaimAccount *account,
-						   GaimGtkJoinChatData *data)
+                           GaimGtkJoinChatData *data)
 {
-	if (strcmp(gaim_account_get_protocol_id(data->account),
-		gaim_account_get_protocol_id(account)) == 0)
-	{
-		data->account = account;
-	}
-	else
-	{
-		data->account = account;
-		rebuild_joinchat_entries(data);
-	}
+    data->account = account;
+    rebuild_joinchat_entries(data);
 }
 
 static gboolean
