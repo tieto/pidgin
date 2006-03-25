@@ -179,6 +179,7 @@ SetDateSave on
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "JAPANESE"		"${GAIM_NSIS_INCLUDE_PATH}\translations\japanese.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "KOREAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\korean.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "KURDISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\kurdish.nsh"
+  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "LITHUANIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\lithuanian.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "NORWEGIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\norwegian.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "POLISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\polish.nsh"
   !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "PORTUGUESE"		"${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese.nsh"
