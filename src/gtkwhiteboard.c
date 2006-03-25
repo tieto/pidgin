@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 
+#include "internal.h"
 #include "blist.h"
 #include "debug.h"
 
@@ -752,7 +753,7 @@ static void gaim_gtk_whiteboard_button_save_press(GtkWidget *widget, gpointer da
 	int result;
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	dialog = gtk_file_chooser_dialog_new ("Save File",
+	dialog = gtk_file_chooser_dialog_new (_("Save File"),
 										  GTK_WINDOW(gtkwb->window),
 										  GTK_FILE_CHOOSER_ACTION_SAVE,
 										  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -771,7 +772,7 @@ static void gaim_gtk_whiteboard_button_save_press(GtkWidget *widget, gpointer da
 		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filename_for_existing_document);
 	*/
 #else
-	dialog = gtk_file_selection_new("Save File");
+	dialog = gtk_file_selection_new(_("Save File"));
 	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog), "whiteboard.jpg");
 #endif
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -859,7 +860,7 @@ static void color_select_dialog(GtkWidget *widget, GaimGtkWhiteboard *gtkwb)
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
 	
-	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new("Select color");
+	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
 
 	g_signal_connect(G_OBJECT(dialog->colorsel), "color-changed",
 					G_CALLBACK(change_color_cb), gtkwb);
