@@ -1222,7 +1222,8 @@ gaim_plugins_load_saved(const char *key)
 			basename++;
 
 		/* Strip the extension */
-		basename = gaim_plugin_get_basename(basename);
+		if (basename)
+			basename = gaim_plugin_get_basename(basename);
 
 		if ((plugin = gaim_plugins_find_with_filename(filename)) != NULL)
 		{
