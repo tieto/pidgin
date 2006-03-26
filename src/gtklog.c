@@ -83,6 +83,29 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 	return ret;
 }
 
+static void select_first_log(GaimGtkLogViewer *lv)
+{
+	GtkTreeModel *model;
+	GtkTreeIter iter, it;
+	GtkTreePath *path;
+
+	model = GTK_TREE_MODEL(lv->treestore);
+
+	if (!gtk_tree_model_get_iter_first(model, &iter))
+		return;
+
+	path = gtk_tree_model_get_path(model, &iter);
+	if (gtk_tree_model_iter_children(model, &it, &iter))
+	{
+		gtk_tree_view_expand_row(GTK_TREE_VIEW(lv->treeview), path, TRUE);
+		path = gtk_tree_model_get_path(model, &it);
+	}
+
+	gtk_tree_selection_select_path(gtk_tree_view_get_selection(GTK_TREE_VIEW(lv->treeview)), path);
+
+	gtk_tree_path_free(path);
+}
+
 static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 {
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
@@ -97,10 +120,12 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 		populate_log_tree(lv);
 		lv->search = NULL;
 		gtk_imhtml_search_clear(GTK_IMHTML(lv->imhtml));
+		select_first_log(lv);
 		return;
 	}
 
 	lv->search = g_strdup(search_term);
+	gtk_imhtml_clear(GTK_IMHTML(lv->imhtml));
 
 	gaim_gtk_set_cursor(lv->window, GDK_WATCH);
 
@@ -118,6 +143,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 		g_free(read);
 	}
 
+	select_first_log(lv);
 	gaim_gtk_clear_cursor(lv->window);
 }
 
@@ -135,15 +161,8 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 	} else
 		syslog_viewer = NULL;
 
-	while (lv->logs != NULL) {
-		GList *logs2;
-
-		gaim_log_free((GaimLog *)lv->logs->data);
-
-		logs2 = lv->logs->next;
-		g_list_free_1(lv->logs);
-		lv->logs = logs2;
-	}
+	g_list_foreach(lv->logs, (GFunc)gaim_log_free, NULL);
+	g_list_free(lv->logs);
 
 	if (lv->search != NULL)
 		g_free(lv->search);
@@ -273,17 +292,11 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
-#if GTK_CHECK_VERSION(2,2,0)
-	GtkTreePath *path_to_first_log;
-#endif
 	GtkWidget *vbox;
 	GtkWidget *frame;
 	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkWidget *size_label;
-
-	lv = g_new0(GaimGtkLogViewer, 1);
-	lv->logs = logs;
 
 	if (logs == NULL)
 	{
@@ -306,6 +319,9 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		gaim_notify_info(NULL, title, _("No logs were found"), log_preferences);
 		return NULL;
 	}
+
+	lv = g_new0(GaimGtkLogViewer, 1);
+	lv->logs = logs;
 
 	if (ht != NULL)
 		g_hash_table_insert(log_viewers, ht, lv);
@@ -408,19 +424,9 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
-	g_signal_connect(GTK_BUTTON(button), "activate", G_CALLBACK(search_cb), lv);
 	g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(search_cb), lv);
 
-#if GTK_CHECK_VERSION(2,2,0)
-	/* Show most recent log **********/
-	path_to_first_log = gtk_tree_path_new_from_string("0:0");
-	if (path_to_first_log)
-	{
-		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(lv->treeview), path_to_first_log);
-		gtk_tree_selection_select_path(sel, path_to_first_log);
-		gtk_tree_path_free(path_to_first_log);
-	}
-#endif
+	select_first_log(lv);
 
 	gtk_widget_show_all(lv->window);
 
