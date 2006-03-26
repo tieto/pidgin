@@ -219,12 +219,10 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 				int this_size = 0;
 
 				while (logs) {
-					GList *logs2 = logs->next;
 					GaimLog *log = (GaimLog*)(logs->data);
 					this_size += gaim_log_get_size(log);
 					gaim_log_free(log);
-					g_list_free_1(logs);
-					logs = logs2;
+					logs = g_list_delete_link(logs, logs);
 				}
 
 				size += this_size;
