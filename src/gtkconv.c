@@ -2453,7 +2453,7 @@ static gboolean
 icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 {
 	static GtkWidget *menu = NULL;
-	GtkWidget *button;
+	GtkWidget *item;
 
 	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
@@ -2475,11 +2475,11 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 							gtkconv->u.im->icon_timer);
 	}
 
-	button = gtk_menu_item_new_with_label(_("Hide Icon"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate",
+	item = gtk_menu_item_new_with_label(_("Hide Icon"));
+	g_signal_connect_swapped(G_OBJECT(item), "activate",
 							 G_CALLBACK(remove_icon), gtkconv);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-	gtk_widget_show(button);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
 
 	gaim_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
 							 G_CALLBACK(icon_menu_save_cb), gtkconv,
