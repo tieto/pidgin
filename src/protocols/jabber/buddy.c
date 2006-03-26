@@ -1383,7 +1383,11 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		gaim_request_fields_add_group(fields, group);
 
 		if((instnode = xmlnode_get_child(query, "instructions")))
-			instructions = xmlnode_get_data(instnode);
+		{
+			char *tmp = xmlnode_get_data(instnode);
+			instructions = g_strdup_printf(_("Server Instructions: %s"), tmp);
+			g_free(tmp);
+		}
 		else
 			instructions = g_strdup(_("Fill in one or more fields to search "
 						"for any matching Jabber users."));
