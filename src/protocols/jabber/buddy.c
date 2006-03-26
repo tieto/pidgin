@@ -1250,15 +1250,15 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 		/* old skool */
 		gaim_debug_info("jabber", "old-skool\n");
 
-		column = gaim_notify_searchresults_column_new("JID");
+		column = gaim_notify_searchresults_column_new(_("JID"));
 		gaim_notify_searchresults_column_add(results, column);
-		column = gaim_notify_searchresults_column_new("First");
+		column = gaim_notify_searchresults_column_new(_("First Name"));
 		gaim_notify_searchresults_column_add(results, column);
-		column = gaim_notify_searchresults_column_new("Last");
+		column = gaim_notify_searchresults_column_new(_("Last Name"));
 		gaim_notify_searchresults_column_add(results, column);
-		column = gaim_notify_searchresults_column_new("Nickname");
+		column = gaim_notify_searchresults_column_new(_("Nickname"));
 		gaim_notify_searchresults_column_add(results, column);
-		column = gaim_notify_searchresults_column_new("E-Mail");
+		column = gaim_notify_searchresults_column_new(_("E-Mail"));
 		gaim_notify_searchresults_column_add(results, column);
 
 		for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item)) {

@@ -6337,7 +6337,7 @@ static int gaim_parse_searchreply(OscarSession *sess, FlapFrame *fr, ...)
 						 num),
 					email);
 
-	column = gaim_notify_searchresults_column_new("Screen name");
+	column = gaim_notify_searchresults_column_new(_("Screen Name"));
 	gaim_notify_searchresults_column_add(results, column);
 
 	for (i = 0; i < num; i++) {
