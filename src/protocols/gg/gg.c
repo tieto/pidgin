@@ -1012,7 +1012,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 	column = gaim_notify_searchresults_column_new(_("UIN"));
 	gaim_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("First name"));
+	column = gaim_notify_searchresults_column_new(_("First Name"));
 	gaim_notify_searchresults_column_add(results, column);
 
 	column = gaim_notify_searchresults_column_new(_("Nickname"));
@@ -1021,7 +1021,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 	column = gaim_notify_searchresults_column_new(_("City"));
 	gaim_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("Birth year"));
+	column = gaim_notify_searchresults_column_new(_("Birth Year"));
 	gaim_notify_searchresults_column_add(results, column);
 
 	gaim_debug_info("gg", "Going with %d entries\n", res_count);
