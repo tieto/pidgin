@@ -1415,6 +1415,7 @@ if test "$enable_tcl" = yes; then
 	AC_MSG_CHECKING([for tclConfig.sh])
         TCLCONFIG=no
 	TCLCONFIGDIRS="/usr/lib \
+		       /usr/lib64 \
 		       /usr/lib/tcl8.4 \
 		       /usr/lib/tcl8.3 \
 		       /usr/lib/tcl8.2 \
@@ -1472,7 +1473,8 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	AC_MSG_CHECKING([for tkConfig.sh])
 	TKCONFIG=no
 	TKCONFIGDIRS="/usr/lib \
-	              /usr/lib/tk8.4 \
+		      /usr/lib64 \
+		      /usr/lib/tk8.4 \
 		      /usr/lib/tk8.3 \
 		      /usr/lib/tk8.2 \
 		      /usr/local/lib"
