@@ -49,6 +49,7 @@ common_sources = \
         common/Cmds.xs \
         common/Connection.xs \
         common/Conversation.xs \
+        common/Debug.xs \
         common/FT.xs \
         common/Gaim.pm \
         common/Gaim.xs \
@@ -69,6 +70,7 @@ common_sources = \
         common/SSLConn.xs \
         common/SavedStatuses.xs \
         common/Server.xs \
+        common/Signal.xs \
         common/Sound.xs \
         common/Status.xs \
         common/Stringref.xs \
