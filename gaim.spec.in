@@ -23,14 +23,15 @@ License:    GPL
 Group:      Applications/Internet
 URL:        http://gaim.sourceforge.net/
 Packager:   %{packager}
-Source:     %{name}-@VERSION@.tar.gz
+Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
-BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
+BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel, intltool, gettext
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
+%{?_with_gadugadu:BuildRequires: libgadu-devel}
 %{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{?_with_mono:BuildRequires: mono-devel}
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
@@ -52,6 +53,10 @@ BuildRequires: gtk2-devel
 %if "%{_vendor}" == "suse"
 BuildRequires: gnutls-devel
 %else
+# let's assume RH & FC1 are the only brain-dead distros missing the
+# perl-XML-Parser dependency on intltool and that other RH/FC releases
+# don't care if we specify it here
+BuildRequires: perl-XML-Parser
 BuildRequires: mozilla-nss-devel
 %endif
 %endif
@@ -73,6 +78,13 @@ Requires:   gaim = %{epoch}:%{version}
 %if 0%{?_with_meanwhile:1}
 %package meanwhile
 Summary:    Lotus Sametime plugin for Gaim using the Meanwhile library
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
+%endif
+
+%if 0%{?_with_gadugadu:1}
+%package gadugadu
+Summary:    Gadu-Gadu plugin for Gaim using the libgadu library
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
@@ -124,6 +136,11 @@ SILC (Secure Internet Live Conferencing) plugin for Gaim
 Lotus Sametime plugin for Gaim using the Meanwhile library
 %endif
 
+%if 0%{?_with_gadugadu:1}
+%description gadugadu
+Gadu-Gadu plugin for Gaim using the libgadu library
+%endif
+
 %if 0%{?_with_tcl:1}
 %description tcl
 Tcl plugin loader for Gaim.  This package will allow you to write or
@@ -153,7 +170,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --with-ao=%{_libdir} \
-                                    --with-perl-lib=%{_prefix} \
+                                    %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
+                                    %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
                                     %{?_with_mono:--enable-mono} \
@@ -166,7 +184,15 @@ make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
+if 0%{?_with_perlmakehack}
+make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
+     datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
+     libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
+     sysconfdir=%{buildroot}%{_sysconfdir} \
+     install
+%else
 make DESTDIR=$RPM_BUILD_ROOT install
+%endif
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
@@ -186,6 +212,10 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsametime.so
 %endif
 
+%if 0%{!?_with_gadugadu:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libgg.so
+%endif
+
 %if 0%{!?_with_tcl:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
 %endif
@@ -201,6 +231,7 @@ find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         grep -v libbonjour.so | \
         grep -v libsilcgaim.so | \
         grep -v libsametime.so | \
+        grep -v libgg.so | \
         grep -v tcl.so | \
         grep -v mono.so | \
         grep -v ".dll$" | \
@@ -254,6 +285,13 @@ rm -rf %{buildroot}
 %{_libdir}/gaim/libsametime.*
 %endif
 
+%if 0%{?_with_gadugadu:1}
+%files gadugadu
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libgg.*
+%endif
+
 %if 0%{?_with_tcl:1}
 %files tcl
 %defattr(-, root, root)
@@ -284,6 +322,12 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Wed Mar 29 2006 <stu@nosnilmot.com>
+- Source RPM uses tar.bz2 now to save space
+- Update BuildRequires for new intltool dependencies
+- Add a --with perlmakehack option to allow builds to succeed on RH9
+- Add a --with gadugadu to build (separate) gaim-gadugadu package
+
 * Sat Dec 17 2005 <stu@nosnilmot.com>
 - Add support for beta versions so the subsequent releases are seen as newer
   by RPM
