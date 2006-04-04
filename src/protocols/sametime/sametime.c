@@ -2700,14 +2700,16 @@ static void im_recv_mime(struct mwConversation *conv,
 				       (const char **) &end, &attribs)) {
 
       char *alt, *align, *border, *src;
-      int img;
+      int img = 0;
 
       alt = g_datalist_get_data(&attribs, "alt");
       align = g_datalist_get_data(&attribs, "align");
       border = g_datalist_get_data(&attribs, "border");
       src = g_datalist_get_data(&attribs, "src");
 
-      img = GPOINTER_TO_INT(g_hash_table_lookup(img_by_cid, src));
+      if(src)
+	img = GPOINTER_TO_INT(g_hash_table_lookup(img_by_cid, src));
+
       if(img) {
 	GString *atstr;
 	gsize len = (end - start);
