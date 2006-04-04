@@ -15,8 +15,8 @@
 #include <pwd.h>
 #endif
 
-extern char *getenv();
-extern int errno;
+#include <stdlib.h>
+#include <errno.h>
 
 Code_t ZSetLocation(exposure)
     char *exposure;
