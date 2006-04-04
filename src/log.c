@@ -722,7 +722,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 				g_free(tmp);
 			}
 #else
-			time_t stamp = gaim_str_to_time(filename, FALSE, NULL, &tm, NULL);
+			time_t stamp = gaim_str_to_time(filename, FALSE, &tm, NULL, NULL);
 
 			log = gaim_log_new(type, name, account, NULL, stamp, &tm);
 #endif
