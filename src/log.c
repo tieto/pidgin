@@ -698,8 +698,8 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 		{
 			GaimLog *log;
 			GaimLogCommonLoggerData *data;
-#if defined (HAVE_TM_GMTOFF) && defined (HAVE_STRUCT_TM_TM_ZONE)
 			struct tm tm;
+#if defined (HAVE_TM_GMTOFF) && defined (HAVE_STRUCT_TM_TM_ZONE)
 			long tz_off;
 			const char *rest;
 			time_t stamp = gaim_str_to_time(gaim_unescape_filename(filename), FALSE, &tm, &tz_off, &rest);
@@ -722,9 +722,9 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 				g_free(tmp);
 			}
 #else
-			time_t stamp = gaim_str_to_time(filename, FALSE, NULL, NULL, NULL);
+			time_t stamp = gaim_str_to_time(filename, FALSE, NULL, &tm, NULL);
 
-			log = gaim_log_new(type, name, account, NULL, stamp, NULL);
+			log = gaim_log_new(type, name, account, NULL, stamp, &tm);
 #endif
 
 			log->logger = logger;
