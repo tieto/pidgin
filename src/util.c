@@ -801,14 +801,20 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 
 			if (tzoff != GAIM_NO_TZ_OFF || utc)
 			{
+#if defined(_WIN32)
+				long sys_tzoff;
+#endif
+
 #if defined(_WIN32) || defined(HAVE_TM_GMTOFF) || defined (HAVE_TIMEZONE)
 				if (tzoff == GAIM_NO_TZ_OFF)
 					tzoff = 0;
 #endif
 
 #ifdef _WIN32
-				if ((tzoff = win32_get_tz_offset()) == -1)
+				if ((sys_tzoff = win32_get_tz_offset()) == -1)
 					tzoff = GAIM_NO_TZ_OFF;
+				else
+					tzoff += sys_tzoff;
 #else
 #ifdef HAVE_TM_GMTOFF
 				tzoff += t->tm_gmtoff;
