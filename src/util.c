@@ -2380,16 +2380,6 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	}
 #endif
 
-	/* Remove the old file, if it exists */
-	if (g_file_test(filename_full, G_FILE_TEST_EXISTS))
-	{
-		if (g_unlink(filename_full) == -1)
-		{
-			gaim_debug_error("util", "Error removing old file %s: %s\n",
-							 filename_full, strerror(errno));
-		}
-	}
-
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)
 	{
