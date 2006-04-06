@@ -687,44 +687,45 @@ dnl # directory searching to keep this situation at a minimum.
 dnl ###########################################################################
 AC_ARG_WITH(dbus-services, [  --with-dbus-services=<dir>   Where the D-Bus services directory is located.])
 
-AC_MSG_CHECKING([location of the D-Bus services directory])
-if ! test -z "$with_dbus_services" ; then
-	if ! test -d "$with_dbus_services" ; then
-		AC_MSG_ERROR([$with_dbus_services does not exist, if this is the correct location please make sure that it exists.])
-	fi
+DBUS_SERVICES_DIR=""
 
-	DBUS_SERVICES_DIR="$with_dbus_services"
-else
-	if test x"$prefix" = x"NONE" ; then
-		dnl # no prefix given, so we look for the correct dbus system paths.
-		dnl # if a prefix is given, we use it.
-
-		serviceprefixes="$datadir $libdir /usr/share /usr/local/share"
-		DBUS_SERVICES_DIR=""
-
-		for d in $serviceprefixes ; do
-			dir="$d/dbus-1/services"
-			if test -d $dir ; then
-				DBUS_SERVICES_DIR="$dir"
-				break
-			fi
-		done
-
-		if test -z $DBUS_SERVICES_DIR ; then
-			AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify it's location.])
+if test x"$enable_dbus" = "xyes" ; then
+	AC_MSG_CHECKING([location of the D-Bus services directory])
+	if ! test -z "$with_dbus_services" ; then
+		if ! test -d "$with_dbus_services" ; then
+			AC_MSG_ERROR([$with_dbus_services does not exist, if this is the correct location please make sure that it exists.])
 		fi
+
+		DBUS_SERVICES_DIR="$with_dbus_services"
 	else
-		DBUS_SERVICES_DIR="$datadir/dbus-1/services"
+		if test x"$prefix" = x"NONE" ; then
+			dnl # no prefix given, so we look for the correct dbus system paths.
+			dnl # if a prefix is given, we use it.
+
+			serviceprefixes="$datadir $libdir /usr/share /usr/local/share"
+			DBUS_SERVICES_DIR=""
+
+			for d in $serviceprefixes ; do
+				dir="$d/dbus-1/services"
+				if test -d $dir ; then
+					DBUS_SERVICES_DIR="$dir"
+					break
+				fi
+			done
+
+			if test -z $DBUS_SERVICES_DIR ; then
+				AC_MSG_ERROR([D-Bus services directory was not found!  Please use --with-dbus-services and specify it's location.])
+			fi
+		else
+			DBUS_SERVICES_DIR="$datadir/dbus-1/services"
+		fi
 	fi
+	AC_MSG_RESULT([$DBUS_SERVICES_DIR])
+    AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using DBUS.])
 fi
-AC_MSG_RESULT([$DBUS_SERVICES_DIR])
 AC_SUBST(DBUS_SERVICES_DIR)
 
-
 if test "x$enable_dbus" = "xyes" ; then
-    AC_MSG_RESULT([$DBUS_SESSION_DIR])
-    AC_SUBST(DBUS_SESSION_DIR)
-    AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using DBUS.])
     echo "Building with DBUS support"
 else
     echo "Building without DBUS support"
