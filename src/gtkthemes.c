@@ -72,6 +72,7 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 	struct smiley_list *list = NULL;
 	GSList *lst = smiley_themes;
 	char *dirname;
+	gboolean new_theme = FALSE;
 
 	if (!f)
 		return;
@@ -86,40 +87,16 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (!theme) {
+		new_theme = TRUE;
 		theme = g_new0(struct smiley_theme, 1);
 		theme->path = g_strdup(file);
-		smiley_themes = g_slist_append(smiley_themes, theme);
+	} else if (theme == current_smiley_theme) {
+		/* Don't reload the theme if it is already loaded */
+		fclose(f);
+		return;
 	}
 
 	dirname = g_path_get_dirname(file);
-	if (load) {
-		if (current_smiley_theme) {
-			GSList *already_freed = NULL;
-			struct smiley_list *wer = current_smiley_theme->list, *wer2;
-			while (wer) {
-				while (wer->smileys) {
-					GtkIMHtmlSmiley *uio = wer->smileys->data;
-					if (uio->icon)
-						g_object_unref(uio->icon);
-					if (!g_slist_find(already_freed, uio->file)) {
-						g_free(uio->file);
-						already_freed = g_slist_append(already_freed, uio->file);
-					}
-					g_free(uio->smile);
-					g_free(uio);
-					wer->smileys=g_slist_remove(wer->smileys, uio);
-				}
-				wer2 = wer->next;
-				g_free(wer->sml);
-				g_free(wer);
-				wer = wer2;
-			}
-			current_smiley_theme->list = NULL;
-			g_slist_free(already_freed);
-		}
-		current_smiley_theme = theme;
-	}
-
 
 	while (!feof(f)) {
 		if (!fgets(buf, sizeof(buf), f)) {
@@ -195,8 +172,74 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 		}
 	}
 
+	g_free(dirname);
+	fclose(f);
+
+	if (!theme->name || !theme->desc || !theme->author) {
+		GSList *already_freed = NULL;
+		struct smiley_list *wer = theme->list, *wer2;
+
+		gaim_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
+
+		while (wer) {
+			while (wer->smileys) {
+				GtkIMHtmlSmiley *uio = wer->smileys->data;
+				if (uio->icon)
+					g_object_unref(uio->icon);
+				if (!g_slist_find(already_freed, uio->file)) {
+					g_free(uio->file);
+					already_freed = g_slist_append(already_freed, uio->file);
+				}
+				g_free(uio->smile);
+				g_free(uio);
+				wer->smileys = g_slist_remove(wer->smileys, uio);
+			}
+			wer2 = wer->next;
+			g_free(wer->sml);
+			g_free(wer);
+			wer = wer2;
+		}
+		theme->list = NULL;
+		g_slist_free(already_freed);
+
+		g_free(theme->path);
+		g_free(theme);
+
+		return;
+	}
+
+	if (new_theme) {
+		smiley_themes = g_slist_append(smiley_themes, theme);
+	}
+
 	if (load) {
 		GList *cnv;
+
+		if (current_smiley_theme) {
+			GSList *already_freed = NULL;
+			struct smiley_list *wer = current_smiley_theme->list, *wer2;
+			while (wer) {
+				while (wer->smileys) {
+					GtkIMHtmlSmiley *uio = wer->smileys->data;
+					if (uio->icon)
+						g_object_unref(uio->icon);
+					if (!g_slist_find(already_freed, uio->file)) {
+						g_free(uio->file);
+						already_freed = g_slist_append(already_freed, uio->file);
+					}
+					g_free(uio->smile);
+					g_free(uio);
+					wer->smileys = g_slist_remove(wer->smileys, uio);
+				}
+				wer2 = wer->next;
+				g_free(wer->sml);
+				g_free(wer);
+				wer = wer2;
+			}
+			current_smiley_theme->list = NULL;
+			g_slist_free(already_freed);
+		}
+		current_smiley_theme = theme;
 
 		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			GaimConversation *conv = cnv->data;
@@ -207,9 +250,6 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 			}
 		}
 	}
-
-	g_free(dirname);
-	fclose(f);
 }
 
 void gaim_gtkthemes_smiley_theme_probe()

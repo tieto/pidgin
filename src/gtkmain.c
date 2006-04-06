@@ -248,7 +248,6 @@ gaim_gtk_ui_init(void)
 #endif
 
 	gaim_gtk_stock_init();
-	gaim_gtk_prefs_init();
 	gaim_gtk_account_init();
 	gaim_gtk_connection_init();
 	gaim_gtk_blist_init();
@@ -506,11 +505,11 @@ int main(int argc, char *argv[])
 			"%scontactinfo.php\n"),
 			GAIM_WEBSITE, GAIM_WEBSITE, GAIM_WEBSITE
 		);
-		
+
 		/* we have to convert the message (UTF-8 to console
 		   charset) early because after a segmentation fault
 		   it's not a good practice to allocate memory */
-		segfault_message = g_locale_from_utf8(segfault_message_tmp, 
+		segfault_message = g_locale_from_utf8(segfault_message_tmp,
 						      -1, NULL, NULL, &error);
 		if (segfault_message != NULL) {
 			g_free(segfault_message_tmp);
