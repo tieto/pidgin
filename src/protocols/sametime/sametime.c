@@ -500,16 +500,13 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
   stat = aware->status.status;
   id = aware->id.user;
 
-  /* not sure which client sends this yet */
-  if(idle == 0xdeadbeef || idle < 0 || idle > time(NULL)) {
-    /* knock knock!
-       who's there?
-       rude interrupting cow.
-       rude interr...
-       MOO! */
+  if(idle) {
+    DEBUG_INFO("%s has idle value 0x%x\n", NSTR(id), idle);
 
-    DEBUG_INFO("%s has messy idle value 0x%x\n", NSTR(id), idle);
-    idle = -1;
+    if(idle < 0 || idle > time(NULL)) {
+      DEBUG_INFO("hiding a messy idle value 0x%x\n", NSTR(id), idle);
+      idle = -1;
+    }
   }
 
   switch(stat) {
