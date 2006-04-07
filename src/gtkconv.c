@@ -8218,9 +8218,6 @@ generate_nick_colors(guint *color_count, GdkColor background)
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
 
-		gaim_debug_warning("gtkconv",
-				   "Looking for random colors to fill the list, I have found %i so far.\n",i);
-
 		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
