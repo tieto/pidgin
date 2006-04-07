@@ -33,7 +33,8 @@
  * The message is probably HTML.
  *
  */
-static int parsepopup(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+parsepopup(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tl;
@@ -49,8 +50,8 @@ static int parsepopup(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 	height = aim_tlv_get16(tl, 0x0004, 1);
 	delay = aim_tlv_get16(tl, 0x0005, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, msg, url, width, height, delay);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, msg, url, width, height, delay);
 
 	aim_tlvlist_free(&tl);
 	free(msg);
@@ -59,18 +60,18 @@ static int parsepopup(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0002)
-		return parsepopup(sess, mod, rx, snac, bs);
+		return parsepopup(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int popups_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+popups_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0008;
 	mod->version = 0x0001;
 	mod->toolid = 0x0104;

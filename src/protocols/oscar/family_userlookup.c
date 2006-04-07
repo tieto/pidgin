@@ -32,20 +32,20 @@
  *
  * XXX can this be integrated with the rest of the error handling?
  */
-static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 
 	/* XXX the modules interface should have already retrieved this for us */
-	if (!(snac2 = aim_remsnac(sess, snac->id))) {
+	if (!(snac2 = aim_remsnac(od, snac->id))) {
 		gaim_debug_misc("oscar", "search error: couldn't get a snac for 0x%08lx\n", snac->id);
 		return 0;
 	}
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, snac2->data /* address */);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, snac2->data /* address */);
 
 	/* XXX freesnac()? */
 	if (snac2)
@@ -59,23 +59,25 @@ static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
  * Subtype 0x0002
  *
  */
-faim_export int aim_search_address(OscarSession *sess, OscarConnection *conn, const char *address)
+int aim_search_address(OscarData *od, const char *address)
 {
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn || !address)
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_USERLOOKUP);
+
+	if (!od || !conn || !address)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+strlen(address))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+strlen(address));
 
-	snacid = aim_cachesnac(sess, 0x000a, 0x0002, 0x0000, strdup(address), strlen(address)+1);
-	aim_putsnac(&fr->data, 0x000a, 0x0002, 0x0000, snacid);
-	
-	aimbs_putstr(&fr->data, address); 
+	snacid = aim_cachesnac(od, 0x000a, 0x0002, 0x0000, strdup(address), strlen(address)+1);
+	aim_putsnac(&frame->data, 0x000a, 0x0002, 0x0000, snacid);
 
-	aim_tx_enqueue(sess, fr);
+	byte_stream_putstr(&frame->data, address);
+
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -84,7 +86,7 @@ faim_export int aim_search_address(OscarSession *sess, OscarConnection *conn, co
  * Subtype 0x0003
  *
  */
-static int reply(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int j = 0, m, ret = 0;
 	aim_tlvlist_t *tlvlist;
@@ -93,29 +95,30 @@ static int reply(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 	aim_snac_t *snac2;
 	char *searchaddr = NULL;
 
-	if ((snac2 = aim_remsnac(sess, snac->id)))
+	if ((snac2 = aim_remsnac(od, snac->id)))
 		searchaddr = (char *)snac2->data;
 
 	tlvlist = aim_tlvlist_read(bs);
 	m = aim_tlvlist_count(&tlvlist);
 
 	/* XXX uhm.
-	 * This is the only place that uses something other than 1 for the 3rd 
+	 * This is the only place that uses something other than 1 for the 3rd
 	 * parameter to aim_tlv_gettlv_whatever().
 	 */
-	while ((cur = aim_tlv_getstr(tlvlist, 0x0001, j+1)) && j < m) {
+	while ((cur = aim_tlv_getstr(tlvlist, 0x0001, j+1)) && j < m)
+	{
 		buf = realloc(buf, (j+1) * (MAXSNLEN+1));
 
 		strncpy(&buf[j * (MAXSNLEN+1)], cur, MAXSNLEN);
 		free(cur);
 
-		j++; 
+		j++;
 	}
 
 	aim_tlvlist_free(&tlvlist);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, searchaddr, j, buf);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, searchaddr, j, buf);
 
 	/* XXX freesnac()? */
 	if (snac2)
@@ -127,20 +130,20 @@ static int reply(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0001)
-		return error(sess, mod, rx, snac, bs);
+		return error(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0003)
-		return reply(sess, mod, rx, snac, bs);
+		return reply(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int search_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+search_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x000a;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;

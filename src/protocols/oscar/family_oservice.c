@@ -28,21 +28,21 @@
 #include "cipher.h"
 
 /* Subtype 0x0002 - Client Online */
-faim_export int aim_clientready(OscarSession *sess, OscarConnection *conn)
+int
+aim_clientready(OscarData *od, FlapConnection *conn)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 	if (!ins)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x0002, 0x0000, snacid);
 
 	/*
 	 * Send only the tool versions that the server cares about (that it
@@ -51,16 +51,16 @@ faim_export int aim_clientready(OscarSession *sess, OscarConnection *conn)
 	for (sg = ins->groups; sg; sg = sg->next) {
 		aim_module_t *mod;
 
-		if ((mod = aim__findmodulebygroup(sess, sg->group))) {
-			aimbs_put16(&fr->data, mod->family);
-			aimbs_put16(&fr->data, mod->version);
-			aimbs_put16(&fr->data, mod->toolid);
-			aimbs_put16(&fr->data, mod->toolversion);
+		if ((mod = aim__findmodulebygroup(od, sg->group))) {
+			byte_stream_put16(&frame->data, mod->family);
+			byte_stream_put16(&frame->data, mod->version);
+			byte_stream_put16(&frame->data, mod->toolid);
+			byte_stream_put16(&frame->data, mod->toolversion);
 		} else
 			gaim_debug_misc("oscar", "aim_clientready: server supports group 0x%04x but we don't!\n", sg->group);
 	}
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -79,18 +79,18 @@ faim_export int aim_clientready(OscarSession *sess, OscarConnection *conn)
  * shortly after the rate information is acknowledged.
  *
  */
-static int hostonline(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	guint16 *families;
 	int famcount;
 
 
-	if (!(families = malloc(aim_bstream_empty(bs))))
-		return 0;
+	families = malloc(byte_stream_empty(bs));
 
-	for (famcount = 0; aim_bstream_empty(bs); famcount++) {
-		families[famcount] = aimbs_get16(bs);
-		aim_conn_addgroup(rx->conn, families[famcount]);
+	for (famcount = 0; byte_stream_empty(bs); famcount++) {
+		families[famcount] = byte_stream_get16(bs);
+		flap_connection_addgroup(conn, families[famcount]);
 	}
 
 	free(families);
@@ -104,60 +104,67 @@ static int hostonline(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 	 * give it.
 	 *
 	 */
-	aim_setversions(sess, rx->conn);
+	aim_setversions(od, conn);
 
 	return 1;
 }
 
 /* Subtype 0x0004 - Service request */
-faim_export int aim_reqservice(OscarSession *sess, OscarConnection *conn, guint16 serviceid)
+int aim_reqservice(OscarData *od, guint16 serviceid)
 {
-	return aim_genericreq_s(sess, conn, 0x0001, 0x0004, &serviceid);
+	FlapConnection *conn;
+
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
+
+	return aim_genericreq_s(od, conn, 0x0001, 0x0004, &serviceid);
 }
 
 /*
- * Join a room of name roomname.  This is the first step to joining an 
- * already created room.  It's basically a Service Request for 
- * family 0x000e, with a little added on to specify the exchange and room 
+ * Join a room of name roomname.  This is the first step to joining an
+ * already created room.  It's basically a Service Request for
+ * family 0x000e, with a little added on to specify the exchange and room
  * name.
  */
-faim_export int aim_chat_join(OscarSession *sess, OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance)
+int
+aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 instance)
 {
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	struct chatsnacinfo csi;
 
-	if (!sess || !conn || !roomname || !strlen(roomname))
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
+	if (!od || !conn || !roomname || !strlen(roomname))
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 512);
 
 	memset(&csi, 0, sizeof(csi));
 	csi.exchange = exchange;
 	strncpy(csi.name, roomname, sizeof(csi.name));
 	csi.instance = instance;
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0004, 0x0000, &csi, sizeof(csi));
-	aim_putsnac(&fr->data, 0x0001, 0x0004, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x0004, 0x0000, &csi, sizeof(csi));
+	aim_putsnac(&frame->data, 0x0001, 0x0004, 0x0000, snacid);
 
 	/*
 	 * Requesting service chat (0x000e)
 	 */
-	aimbs_put16(&fr->data, 0x000e);
+	byte_stream_put16(&frame->data, 0x000e);
 
 	aim_tlvlist_add_chatroom(&tl, 0x0001, exchange, roomname, instance);
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 /* Subtype 0x0005 - Redirect */
-static int redirect(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	struct aim_redirect_data redir;
 	aim_rxcallback_t userfunc;
@@ -182,9 +189,9 @@ static int redirect(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	redir.cookie = (guchar *)aim_tlv_getstr(tlvlist, 0x0006, 1);
 
 	/* Fetch original SNAC so we can get csi if needed */
-	origsnac = aim_remsnac(sess, snac->id);
+	origsnac = aim_remsnac(od, snac->id);
 
-	if ((redir.group == AIM_CONN_TYPE_CHAT) && origsnac) {
+	if ((redir.group == SNAC_FAMILY_CHAT) && origsnac) {
 		struct chatsnacinfo *csi = (struct chatsnacinfo *)origsnac->data;
 
 		redir.chat.exchange = csi->exchange;
@@ -192,8 +199,8 @@ static int redirect(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 		redir.chat.instance = csi->instance;
 	}
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &redir);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, &redir);
 
 	free((void *)redir.ip);
 	free((void *)redir.cookie);
@@ -208,9 +215,10 @@ static int redirect(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 }
 
 /* Subtype 0x0006 - Request Rate Information. */
-faim_internal int aim_reqrates(OscarSession *sess, OscarConnection *conn)
+int
+aim_reqrates(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(sess, conn, 0x0001, 0x0006);
+	return aim_genericreq_n_snacid(od, conn, 0x0001, 0x0006);
 }
 
 /*
@@ -219,7 +227,7 @@ faim_internal int aim_reqrates(OscarSession *sess, OscarConnection *conn)
  * level, etc), and a set of SNAC family/type pairs associated with
  * it.  The rate classes, their limiting properties, and the definitions
  * of which SNACs are belong to which class, are defined in the
- * Rate Response packet at login to each host.  
+ * Rate Response packet at login to each host.
  *
  * Logically, all rate offenses within one class count against further
  * offenses for other SNACs in the same class (ie, sending messages
@@ -233,10 +241,10 @@ faim_internal int aim_reqrates(OscarSession *sess, OscarConnection *conn)
  * members as follows...
  *
  *  Rate class 0x0001:
- *  	- Everything thats not in any of the other classes
+ *	- Everything thats not in any of the other classes
  *
  *  Rate class 0x0002:
- * 	- Buddy list add/remove
+ *	- Buddy list add/remove
  *	- Permit list add/remove
  *	- Deny list add/remove
  *
@@ -252,23 +260,21 @@ faim_internal int aim_reqrates(OscarSession *sess, OscarConnection *conn)
  *	- Outgoing chat ICBMs
  *
  * The only other thing of note is that class 5 (chat) has slightly looser
- * limiting properties than class 3 (normal messages).  But thats just a 
+ * limiting properties than class 3 (normal messages).  But thats just a
  * small bit of trivia for you.
  *
  * The last thing that needs to be learned about the rate limiting
  * system is how the actual numbers relate to the passing of time.  This
  * seems to be a big mystery.
- * 
+ *
  */
 
-static void rc_addclass(struct rateclass **head, struct rateclass *inrc)
+static void
+rc_addclass(struct rateclass **head, struct rateclass *inrc)
 {
 	struct rateclass *rc, *rc2;
 
-	if (!(rc = malloc(sizeof(struct rateclass))))
-		return;
-
-	memcpy(rc, inrc, sizeof(struct rateclass));
+	rc = g_memdup(inrc, sizeof(struct rateclass));
 	rc->next = NULL;
 
 	for (rc2 = *head; rc2 && rc2->next; rc2 = rc2->next)
@@ -282,7 +288,8 @@ static void rc_addclass(struct rateclass **head, struct rateclass *inrc)
 	return;
 }
 
-static struct rateclass *rc_findclass(struct rateclass **head, guint16 id)
+static struct rateclass *
+rc_findclass(struct rateclass **head, guint16 id)
 {
 	struct rateclass *rc;
 
@@ -294,14 +301,12 @@ static struct rateclass *rc_findclass(struct rateclass **head, guint16 id)
 	return NULL;
 }
 
-static void rc_addpair(struct rateclass *rc, guint16 group, guint16 type)
+static void
+rc_addpair(struct rateclass *rc, guint16 group, guint16 type)
 {
 	struct snacpair *sp, *sp2;
 
-	if (!(sp = malloc(sizeof(struct snacpair))))
-		return;
-	memset(sp, 0, sizeof(struct snacpair));
-
+	sp = g_new0(struct snacpair, 1);
 	sp->group = group;
 	sp->subtype = type;
 	sp->next = NULL;
@@ -318,9 +323,10 @@ static void rc_addpair(struct rateclass *rc, guint16 group, guint16 type)
 }
 
 /* Subtype 0x0007 - Rate Parameters */
-static int rateresp(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)rx->conn->inside;
+	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	guint16 numclasses, i;
 	aim_rxcallback_t userfunc;
 
@@ -328,32 +334,30 @@ static int rateresp(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	/*
 	 * First are the parameters for each rate class.
 	 */
-	numclasses = aimbs_get16(bs);
+	numclasses = byte_stream_get16(bs);
 	for (i = 0; i < numclasses; i++) {
 		struct rateclass rc;
 
 		memset(&rc, 0, sizeof(struct rateclass));
 
-		rc.classid = aimbs_get16(bs);
-		rc.windowsize = aimbs_get32(bs);
-		rc.clear = aimbs_get32(bs);
-		rc.alert = aimbs_get32(bs);
-		rc.limit = aimbs_get32(bs);
-		rc.disconnect = aimbs_get32(bs);
-		rc.current = aimbs_get32(bs);
-		rc.max = aimbs_get32(bs);
+		rc.classid = byte_stream_get16(bs);
+		rc.windowsize = byte_stream_get32(bs);
+		rc.clear = byte_stream_get32(bs);
+		rc.alert = byte_stream_get32(bs);
+		rc.limit = byte_stream_get32(bs);
+		rc.disconnect = byte_stream_get32(bs);
+		rc.current = byte_stream_get32(bs);
+		rc.max = byte_stream_get32(bs);
 
 		/*
 		 * The server will send an extra five bytes of parameters
 		 * depending on the version we advertised in 1/17.  If we
 		 * didn't send 1/17 (evil!), then this will crash and you
-		 * die, as it will default to the old version but we have 
-		 * the new version hardcoded here. 
+		 * die, as it will default to the old version but we have
+		 * the new version hardcoded here.
 		 */
 		if (mod->version >= 3)
-			aimbs_getrawbuf(bs, rc.unknown, sizeof(rc.unknown));
-
-		gaim_debug_misc("oscar", "--- Adding rate class %d to connection type %d: window size = %ld, clear = %ld, alert = %ld, limit = %ld, disconnect = %ld, current = %ld, max = %ld\n", rx->conn->type, rc.classid, rc.windowsize, rc.clear, rc.alert, rc.limit, rc.disconnect, rc.current, rc.max);
+			byte_stream_getrawbuf(bs, rc.unknown, sizeof(rc.unknown));
 
 		rc_addclass(&ins->rates, &rc);
 	}
@@ -366,16 +370,16 @@ static int rateresp(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 		struct rateclass *rc;
 		int j;
 
-		classid = aimbs_get16(bs);
-		count = aimbs_get16(bs);
+		classid = byte_stream_get16(bs);
+		count = byte_stream_get16(bs);
 
 		rc = rc_findclass(&ins->rates, classid);
 
 		for (j = 0; j < count; j++) {
 			guint16 group, subtype;
 
-			group = aimbs_get16(bs);
-			subtype = aimbs_get16(bs);
+			group = byte_stream_get16(bs);
+			subtype = byte_stream_get16(bs);
 
 			if (rc)
 				rc_addpair(rc, group, subtype);
@@ -392,83 +396,84 @@ static int rateresp(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	 * Last step in the conn init procedure is to acknowledge that we
 	 * agree to these draconian limitations.
 	 */
-	aim_rates_addparam(sess, rx->conn);
+	aim_rates_addparam(od, conn);
 
 	/*
 	 * Finally, tell the client it's ready to go...
 	 */
-	if ((userfunc = aim_callhandler(sess, rx->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE)))
-		userfunc(sess, rx);
+	if ((userfunc = aim_callhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE)))
+		userfunc(od, conn, frame);
 
 
 	return 1;
 }
 
 /* Subtype 0x0008 - Add Rate Parameter */
-faim_internal int aim_rates_addparam(OscarSession *sess, OscarConnection *conn)
+int
+aim_rates_addparam(OscarData *od, FlapConnection *conn)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	struct rateclass *rc;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 512);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0008, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x0008, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x0008, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x0008, 0x0000, snacid);
 
 	for (rc = ins->rates; rc; rc = rc->next)
-		aimbs_put16(&fr->data, rc->classid);
+		byte_stream_put16(&frame->data, rc->classid);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 /* Subtype 0x0009 - Delete Rate Parameter */
-faim_internal int aim_rates_delparam(OscarSession *sess, OscarConnection *conn)
+int
+aim_rates_delparam(OscarData *od, FlapConnection *conn)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	struct rateclass *rc;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 512)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 512);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0009, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x0009, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x0009, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x0009, 0x0000, snacid);
 
 	for (rc = ins->rates; rc; rc = rc->next)
-		aimbs_put16(&fr->data, rc->classid);
+		byte_stream_put16(&frame->data, rc->classid);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 /* Subtype 0x000a - Rate Change */
-static int ratechange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 code, rateclass;
 	guint32 currentavg, maxavg, windowsize, clear, alert, limit, disconnect;
 
-	code = aimbs_get16(bs);
-	rateclass = aimbs_get16(bs);
+	code = byte_stream_get16(bs);
+	rateclass = byte_stream_get16(bs);
 
-	windowsize = aimbs_get32(bs);
-	clear = aimbs_get32(bs);
-	alert = aimbs_get32(bs);
-	limit = aimbs_get32(bs);
-	disconnect = aimbs_get32(bs);
-	currentavg = aimbs_get32(bs);
-	maxavg = aimbs_get32(bs);
+	windowsize = byte_stream_get32(bs);
+	clear = byte_stream_get32(bs);
+	alert = byte_stream_get32(bs);
+	limit = byte_stream_get32(bs);
+	disconnect = byte_stream_get32(bs);
+	currentavg = byte_stream_get32(bs);
+	maxavg = byte_stream_get32(bs);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
 
 	return ret;
 }
@@ -476,10 +481,10 @@ static int ratechange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 /*
  * How Migrations work.
  *
- * The server sends a Server Pause message, which the client should respond to 
- * with a Server Pause Ack, which contains the families it needs on this 
- * connection. The server will send a Migration Notice with an IP address, and 
- * then disconnect. Next the client should open the connection and send the 
+ * The server sends a Server Pause message, which the client should respond to
+ * with a Server Pause Ack, which contains the families it needs on this
+ * connection. The server will send a Migration Notice with an IP address, and
+ * then disconnect. Next the client should open the connection and send the
  * cookie.  Repeat the normal login process and pretend this never happened.
  *
  * The Server Pause contains no data.
@@ -487,13 +492,14 @@ static int ratechange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
  */
 
 /* Subtype 0x000b - Service Pause */
-static int serverpause(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame);
 
 	return ret;
 }
@@ -509,61 +515,64 @@ static int serverpause(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
  * libfaim can cause.
  *
  */
-faim_export int aim_sendpauseack(OscarSession *sess, OscarConnection *conn)
+int
+aim_sendpauseack(OscarData *od, FlapConnection *conn)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1024)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 1024);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x000c, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x000c, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x000c, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x000c, 0x0000, snacid);
 
 	/*
-	 * This list should have all the groups that the original 
-	 * Host Online / Server Ready said this host supports.  And 
+	 * This list should have all the groups that the original
+	 * Host Online / Server Ready said this host supports.  And
 	 * we want them all back after the migration.
 	 */
 	for (sg = ins->groups; sg; sg = sg->next)
-		aimbs_put16(&fr->data, sg->group);
+		byte_stream_put16(&frame->data, sg->group);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 /* Subtype 0x000d - Service Resume */
-static int serverresume(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+serverresume(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame);
 
 	return ret;
 }
 
 /* Subtype 0x000e - Request self-info */
-faim_export int aim_reqpersonalinfo(OscarSession *sess, OscarConnection *conn)
+int
+aim_reqpersonalinfo(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(sess, conn, 0x0001, 0x000e);
+	return aim_genericreq_n_snacid(od, conn, 0x0001, 0x000e);
 }
 
 /* Subtype 0x000f - Self User Info */
-static int selfinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+selfinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	aim_userinfo_t userinfo;
 
-	aim_info_extract(sess, bs, &userinfo);
+	aim_info_extract(od, bs, &userinfo);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, &userinfo);
 
 	aim_info_free(&userinfo);
 
@@ -571,7 +580,8 @@ static int selfinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 }
 
 /* Subtype 0x0010 - Evil Notification */
-static int evilnotify(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+evilnotify(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -580,13 +590,13 @@ static int evilnotify(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 
 	memset(&userinfo, 0, sizeof(aim_userinfo_t));
 
-	newevil = aimbs_get16(bs);
+	newevil = byte_stream_get16(bs);
 
-	if (aim_bstream_empty(bs))
-		aim_info_extract(sess, bs, &userinfo);
+	if (byte_stream_empty(bs))
+		aim_info_extract(od, bs, &userinfo);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, newevil, &userinfo);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, newevil, &userinfo);
 
 	aim_info_free(&userinfo);
 
@@ -602,25 +612,27 @@ static int evilnotify(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
  * call it again with zero when you're back.
  *
  */
-faim_export int aim_srv_setidle(OscarSession *sess, guint32 idletime)
+int
+aim_srv_setidle(OscarData *od, guint32 idletime)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_BOS)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS)))
 		return -EINVAL;
 
-	return aim_genericreq_l(sess, conn, 0x0001, 0x0011, &idletime);
+	return aim_genericreq_l(od, conn, 0x0001, 0x0011, &idletime);
 }
 
 /*
  * Subtype 0x0012 - Service Migrate
  *
  * This is the final SNAC sent on the original connection during a migration.
- * It contains the IP and cookie used to connect to the new server, and 
+ * It contains the IP and cookie used to connect to the new server, and
  * optionally a list of the SNAC groups being migrated.
  *
  */
-static int migrate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+migrate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
@@ -634,17 +646,17 @@ static int migrate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mod
 	 * migration can actually be quite selective about what groups it
 	 * moves to the new server.  When not all the groups for a connection
 	 * are migrated, or they are all migrated but some groups are moved
-	 * to a different server than others, it is called a bifurcated 
+	 * to a different server than others, it is called a bifurcated
 	 * migration.
 	 *
 	 * Let's play dumb and not support that.
 	 *
 	 */
-	groupcount = aimbs_get16(bs);
+	groupcount = byte_stream_get16(bs);
 	for (i = 0; i < groupcount; i++) {
 		guint16 group;
 
-		group = aimbs_get16(bs);
+		group = byte_stream_get16(bs);
 
 		gaim_debug_misc("oscar", "bifurcated migration unsupported -- group 0x%04x\n", group);
 	}
@@ -656,8 +668,8 @@ static int migrate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mod
 
 	cktlv = aim_tlv_gettlv(tl, 0x0006, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, ip, cktlv ? cktlv->value : NULL);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, ip, cktlv ? cktlv->value : NULL);
 
 	aim_tlvlist_free(&tl);
 	free(ip);
@@ -666,7 +678,8 @@ static int migrate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mod
 }
 
 /* Subtype 0x0013 - Message of the Day */
-static int motd(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	char *msg = NULL;
@@ -682,20 +695,20 @@ static int motd(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsna
 	 *   2 Advisory upgrade
 	 *   3 System bulletin
 	 *   4 Nothing's wrong ("top o the world" -- normal)
-	 *   5 Lets-break-something. 
+	 *   5 Lets-break-something.
 	 *
 	 */
-	id = aimbs_get16(bs);
+	id = byte_stream_get16(bs);
 
-	/* 
-	 * TLVs follow 
+	/*
+	 * TLVs follow
 	 */
 	tlvlist = aim_tlvlist_read(bs);
 
 	msg = aim_tlv_getstr(tlvlist, 0x000b, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, id, msg);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, id, msg);
 
 	free(msg);
 
@@ -704,7 +717,7 @@ static int motd(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsna
 	return ret;
 }
 
-/* 
+/*
  * Subtype 0x0014 - Set privacy flags
  *
  * Normally 0x03.
@@ -713,93 +726,96 @@ static int motd(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsna
  *  Bit 2:  Allows other AIM users to see how long you've been a member.
  *
  */
-faim_export int aim_bos_setprivacyflags(OscarSession *sess, OscarConnection *conn, guint32 flags)
+int
+aim_bos_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
 {
-	return aim_genericreq_l(sess, conn, 0x0001, 0x0014, &flags);
+	return aim_genericreq_l(od, conn, 0x0001, 0x0014, &flags);
 }
 
 /*
  * Subtype 0x0016 - No-op
  *
- * WinAIM sends these every 4min or so to keep the connection alive.  Its not 
+ * WinAIM sends these every 4min or so to keep the connection alive.  Its not
  * really necessary.
  *
- * Wha?  No?  Since when?  I think WinAIM sends an empty channel 3 
- * SNAC as a no-op...
+ * Wha?  No?  Since when?  I think WinAIM sends an empty channel 5
+ * FLAP as a no-op...
  */
-faim_export int aim_nop(OscarSession *sess, OscarConnection *conn)
+int
+aim_nop(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n(sess, conn, 0x0001, 0x0016);
+	return aim_genericreq_n(od, conn, 0x0001, 0x0016);
 }
 
-/* 
+/*
  * Subtype 0x0017 - Set client versions
  *
- * If you've seen the clientonline/clientready SNAC you're probably 
+ * If you've seen the clientonline/clientready SNAC you're probably
  * wondering what the point of this one is.  And that point seems to be
  * that the versions in the client online SNAC are sent too late for the
  * server to be able to use them to change the protocol for the earlier
- * login packets (client versions are sent right after Host Online is 
+ * login packets (client versions are sent right after Host Online is
  * received, but client online versions aren't sent until quite a bit later).
  * We can see them already making use of this by changing the format of
  * the rate information based on what version of group 1 we advertise here.
  *
  */
-faim_internal int aim_setversions(OscarSession *sess, OscarConnection *conn)
+int
+aim_setversions(OscarData *od, FlapConnection *conn)
 {
 	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 	if (!ins)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x0017, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x0017, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x0017, 0x0000, snacid);
 
 	/*
 	 * Send only the versions that the server cares about (that it
-	 * marked as supporting in the server ready SNAC).  
+	 * marked as supporting in the server ready SNAC).
 	 */
 	for (sg = ins->groups; sg; sg = sg->next) {
 		aim_module_t *mod;
 
-		if ((mod = aim__findmodulebygroup(sess, sg->group))) {
-			aimbs_put16(&fr->data, mod->family);
-			aimbs_put16(&fr->data, mod->version);
+		if ((mod = aim__findmodulebygroup(od, sg->group))) {
+			byte_stream_put16(&frame->data, mod->family);
+			byte_stream_put16(&frame->data, mod->version);
 		} else
 			gaim_debug_misc("oscar", "aim_setversions: server supports group 0x%04x but we don't!\n", sg->group);
 	}
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 /* Subtype 0x0018 - Host versions */
-static int hostversions(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int vercount;
 	guint8 *versions;
 
 	/* This is frivolous. (Thank you SmarterChild.) */
-	vercount = aim_bstream_empty(bs)/4;
-	versions = aimbs_getraw(bs, aim_bstream_empty(bs));
+	vercount = byte_stream_empty(bs)/4;
+	versions = byte_stream_getraw(bs, byte_stream_empty(bs));
 	free(versions);
 
 	/*
 	 * Now request rates.
 	 */
-	aim_reqrates(sess, rx->conn);
+	aim_reqrates(od, conn);
 
 	return 1;
 }
 
-/* 
+/*
  * Subtype 0x001e - Set various account settings (mostly ICQ related).
  *
  * These settings are transient, not server-stored (i.e. they only
@@ -814,24 +830,24 @@ static int hostversions(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, ai
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
  */
-faim_export int aim_setextstatus(OscarSession *sess, guint32 status)
+int
+aim_setextstatus(OscarData *od, guint32 status)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	guint32 data;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ICBM)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
 	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH | status;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 8);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
 
 	aim_tlvlist_add_32(&tl, 0x0006, data);
 #if 0
@@ -839,10 +855,10 @@ faim_export int aim_setextstatus(OscarSession *sess, guint32 status)
 	aim_tlvlist_add_raw(&tl, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
 	aim_tlvlist_add_16(&tl, 0x0012, unknown 0x00 00);
 #endif
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -856,46 +872,45 @@ faim_export int aim_setextstatus(OscarSession *sess, guint32 status)
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
  */
-faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg)
+int
+aim_srv_setstatusmsg(OscarData *od, const char *msg)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
 		return -EINVAL;
 
 	if ((msg != NULL) && *msg != '\0') {
-		if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 8)))
-			return -ENOMEM;
+		frame = flap_frame_new(od, 0x02, 10 + 4 + strlen(msg) + 8);
 
-		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
-		aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
+		snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
+		aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
 
-		aimbs_put16(&fr->data, 0x001d); /* userinfo TLV type */
-		aimbs_put16(&fr->data, strlen(msg)+8); /* total length of userinfo TLV data */
-		aimbs_put16(&fr->data, 0x0002);
-		aimbs_put8(&fr->data, 0x04);
-		aimbs_put8(&fr->data, strlen(msg)+4);
-		aimbs_put16(&fr->data, strlen(msg));
-		aimbs_putstr(&fr->data, msg);
-		aimbs_put16(&fr->data, 0x0000);
+		byte_stream_put16(&frame->data, 0x001d); /* userinfo TLV type */
+		byte_stream_put16(&frame->data, strlen(msg)+8); /* total length of userinfo TLV data */
+		byte_stream_put16(&frame->data, 0x0002);
+		byte_stream_put8(&frame->data, 0x04);
+		byte_stream_put8(&frame->data, strlen(msg)+4);
+		byte_stream_put16(&frame->data, strlen(msg));
+		byte_stream_putstr(&frame->data, msg);
+		byte_stream_put16(&frame->data, 0x0000);
 	} else {
-		if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + 8)))
-			return -ENOMEM;
+		frame = flap_frame_new(od, 0x02, 10 + 4 + 8);
 
-		snacid = aim_cachesnac(sess, 0x0001, 0x001e, 0x0000, NULL, 0);
-		aim_putsnac(&fr->data, 0x0001, 0x001e, 0x0000, snacid);
+		snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
+		aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
 
-		aimbs_put16(&fr->data, 0x001d);
-		aimbs_put16(&fr->data, 0x0008);
-		aimbs_put16(&fr->data, 0x0002);
-		aimbs_put16(&fr->data, 0x0404);
-		aimbs_put16(&fr->data, 0x0000);
-		aimbs_put16(&fr->data, 0x0000);
+		byte_stream_put16(&frame->data, 0x001d);
+		byte_stream_put16(&frame->data, 0x0008);
+		byte_stream_put16(&frame->data, 0x0002);
+		byte_stream_put16(&frame->data, 0x0404);
+		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&frame->data, 0x0000);
 	}
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -921,14 +936,14 @@ faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg)
  * If the client does not send any data back, or the data does not match
  * the data that the specific client should have, the client will get the
  * following message from "AOL Instant Messenger":
- *    "You have been disconnected from the AOL Instant Message Service (SM) 
+ *    "You have been disconnected from the AOL Instant Message Service (SM)
  *     for accessing the AOL network using unauthorized software.  You can
- *     download a FREE, fully featured, and authorized client, here 
+ *     download a FREE, fully featured, and authorized client, here
  *     http://www.aol.com/aim/download2.html"
  * The connection is then closed, receiving disconnect code 1, URL
- * http://www.aim.aol.com/errors/USER_LOGGED_OFF_NEW_LOGIN.html.  
+ * http://www.aim.aol.com/errors/USER_LOGGED_OFF_NEW_LOGIN.html.
  *
- * Note, however, that numerous inconsistencies can cause the above error, 
+ * Note, however, that numerous inconsistencies can cause the above error,
  * not just sending back a bad hash.  Do not immediatly suspect this code
  * if you get disconnected.  AOL and the open/free software community have
  * played this game for a couple years now, generating the above message
@@ -938,7 +953,8 @@ faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg)
  *
  */
 /* Subtype 0x001f - Client verification */
-static int memrequest(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+memrequest(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -946,16 +962,16 @@ static int memrequest(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 	aim_tlvlist_t *list;
 	char *modname;
 
-	offset = aimbs_get32(bs);
-	len = aimbs_get32(bs);
+	offset = byte_stream_get32(bs);
+	len = byte_stream_get32(bs);
 	list = aim_tlvlist_read(bs);
 
 	modname = aim_tlv_getstr(list, 0x0001, 1);
 
 	gaim_debug_info("oscar", "Got memory request for data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, offset, len, modname);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, offset, len, modname);
 
 	free(modname);
 	aim_tlvlist_free(&list);
@@ -964,25 +980,25 @@ static int memrequest(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 }
 
 /* Subtype 0x0020 - Client verification reply */
-faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag)
+int
+aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	if (!sess || !conn)
+	if (!od || !conn)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+2+16);
 
-	snacid = aim_cachesnac(sess, 0x0001, 0x0020, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, 0x0001, 0x0020, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, 0x0001, 0x0020, 0x0000, snacid);
-	aimbs_put16(&fr->data, 0x0010); /* md5 is always 16 bytes */
+	aim_putsnac(&frame->data, 0x0001, 0x0020, 0x0000, snacid);
+	byte_stream_put16(&frame->data, 0x0010); /* md5 is always 16 bytes */
 
 	if ((flag == AIM_SENDMEMBLOCK_FLAG_ISHASH) && buf && (len == 0x10)) { /* we're getting a hash */
 
-		aimbs_putraw(&fr->data, buf, 0x10);
+		byte_stream_putraw(&frame->data, buf, 0x10);
 
 	} else if (buf && (len > 0)) { /* use input buffer */
 		GaimCipher *cipher;
@@ -996,7 +1012,7 @@ faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guin
 		gaim_cipher_context_digest(context, 16, digest, NULL);
 		gaim_cipher_context_destroy(context);
 
-		aimbs_putraw(&fr->data, digest, 0x10);
+		byte_stream_putraw(&frame->data, digest, 0x10);
 
 	} else if (len == 0) { /* no length, just hash NULL (buf is optional) */
 		GaimCipher *cipher;
@@ -1015,7 +1031,7 @@ faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guin
 		gaim_cipher_context_digest(context, 16, digest, NULL);
 		gaim_cipher_context_destroy(context);
 
-		aimbs_putraw(&fr->data, digest, 0x10);
+		byte_stream_putraw(&frame->data, digest, 0x10);
 
 	} else {
 
@@ -1029,30 +1045,30 @@ faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guin
 		if ((offset == 0x03ffffff) && (len == 0x03ffffff)) {
 
 #if 1 /* with "AnrbnrAqhfzcd" */
-			aimbs_put32(&fr->data, 0x44a95d26);
-			aimbs_put32(&fr->data, 0xd2490423);
-			aimbs_put32(&fr->data, 0x93b8821f);
-			aimbs_put32(&fr->data, 0x51c54b01);
+			byte_stream_put32(&frame->data, 0x44a95d26);
+			byte_stream_put32(&frame->data, 0xd2490423);
+			byte_stream_put32(&frame->data, 0x93b8821f);
+			byte_stream_put32(&frame->data, 0x51c54b01);
 #else /* no filename */
-			aimbs_put32(&fr->data, 0x1df8cbae);
-			aimbs_put32(&fr->data, 0x5523b839);
-			aimbs_put32(&fr->data, 0xa0e10db3);
-			aimbs_put32(&fr->data, 0xa46d3b39);
+			byte_stream_put32(&frame->data, 0x1df8cbae);
+			byte_stream_put32(&frame->data, 0x5523b839);
+			byte_stream_put32(&frame->data, 0xa0e10db3);
+			byte_stream_put32(&frame->data, 0xa46d3b39);
 #endif
 
 		} else if ((offset == 0x00001000) && (len == 0x00000000)) {
 
-			aimbs_put32(&fr->data, 0xd41d8cd9);
-			aimbs_put32(&fr->data, 0x8f00b204);
-			aimbs_put32(&fr->data, 0xe9800998);
-			aimbs_put32(&fr->data, 0xecf8427e);
+			byte_stream_put32(&frame->data, 0xd41d8cd9);
+			byte_stream_put32(&frame->data, 0x8f00b204);
+			byte_stream_put32(&frame->data, 0xe9800998);
+			byte_stream_put32(&frame->data, 0xecf8427e);
 
 		} else
 			gaim_debug_warning("oscar", "sendmemblock: unknown hash request\n");
 
 	}
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -1064,30 +1080,31 @@ faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guin
  * status messages?  It's also used to tell the client whether or not it
  * needs to upload an SSI buddy icon... who engineers this stuff, anyway?
  */
-static int aim_parse_extstatus(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 type;
 	guint8 flags, length;
 
-	type = aimbs_get16(bs);
-	flags = aimbs_get8(bs);
-	length = aimbs_get8(bs);
+	type = byte_stream_get16(bs);
+	flags = byte_stream_get8(bs);
+	length = byte_stream_get8(bs);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
 		switch (type) {
 		case 0x0000:
 		case 0x0001: { /* buddy icon checksum */
 			/* not sure what the difference between 1 and 0 is */
-			guint8 *md5 = aimbs_getraw(bs, length);
-			ret = userfunc(sess, rx, type, flags, length, md5);
+			guint8 *md5 = byte_stream_getraw(bs, length);
+			ret = userfunc(od, conn, frame, type, flags, length, md5);
 			free(md5);
 			} break;
 		case 0x0002: { /* available message */
 			/* there is a second length that is just for the message */
-			char *msg = aimbs_getstr(bs, aimbs_get16(bs));
-			ret = userfunc(sess, rx, msg);
+			char *msg = byte_stream_getstr(bs, byte_stream_get16(bs));
+			ret = userfunc(od, conn, frame, msg);
 			free(msg);
 			} break;
 		}
@@ -1096,42 +1113,41 @@ static int aim_parse_extstatus(OscarSession *sess, aim_module_t *mod, FlapFrame 
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0003)
-		return hostonline(sess, mod, rx, snac, bs);
+		return hostonline(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0005)
-		return redirect(sess, mod, rx, snac, bs);
+		return redirect(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0007)
-		return rateresp(sess, mod, rx, snac, bs);
+		return rateresp(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x000a)
-		return ratechange(sess, mod, rx, snac, bs);
+		return ratechange(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x000b)
-		return serverpause(sess, mod, rx, snac, bs);
+		return serverpause(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x000d)
-		return serverresume(sess, mod, rx, snac, bs);
+		return serverresume(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x000f)
-		return selfinfo(sess, mod, rx, snac, bs);
+		return selfinfo(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0010)
-		return evilnotify(sess, mod, rx, snac, bs);
+		return evilnotify(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0012)
-		return migrate(sess, mod, rx, snac, bs);
+		return migrate(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0013)
-		return motd(sess, mod, rx, snac, bs);
+		return motd(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0018)
-		return hostversions(sess, mod, rx, snac, bs);
+		return hostversions(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x001f)
-		return memrequest(sess, mod, rx, snac, bs);
+		return memrequest(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0021)
-		return aim_parse_extstatus(sess, mod, rx, snac, bs);
+		return aim_parse_extstatus(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int service_modfirst(OscarSession *sess, aim_module_t *mod)
+int service_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0001;
 	mod->version = 0x0003;
 	mod->toolid = 0x0110;

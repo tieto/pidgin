@@ -25,108 +25,105 @@
 
 #include "oscar.h"
 
-faim_export int aim_icq_reqofflinemsgs(OscarSession *sess)
+int aim_icq_reqofflinemsgs(OscarData *od)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x003c); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x003c); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-faim_export int aim_icq_ackofflinemsgs(OscarSession *sess)
+int aim_icq_ackofflinemsgs(OscarData *od)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x003e); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x003e); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-faim_export int
-aim_icq_setsecurity(OscarSession *sess, gboolean auth_required, gboolean webaware)
+int
+aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2+4+2+2+2+2+2+1+1+1+1+1+1;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x0c3a); /* shrug. */
-	aimbs_putle16(&fr->data, 0x030c);
-	aimbs_putle16(&fr->data, 0x0001);
-	aimbs_putle8(&fr->data, webaware);
-	aimbs_putle8(&fr->data, 0xf8);
-	aimbs_putle8(&fr->data, 0x02);
-	aimbs_putle8(&fr->data, 0x01);
-	aimbs_putle8(&fr->data, 0x00);
-	aimbs_putle8(&fr->data, !auth_required);
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x0c3a); /* shrug. */
+	byte_stream_putle16(&frame->data, 0x030c);
+	byte_stream_putle16(&frame->data, 0x0001);
+	byte_stream_putle8(&frame->data, webaware);
+	byte_stream_putle8(&frame->data, 0xf8);
+	byte_stream_putle8(&frame->data, 0x02);
+	byte_stream_putle8(&frame->data, 0x01);
+	byte_stream_putle8(&frame->data, 0x00);
+	byte_stream_putle8(&frame->data, !auth_required);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -134,22 +131,22 @@ aim_icq_setsecurity(OscarSession *sess, gboolean auth_required, gboolean webawar
 /**
  * Change your ICQ password.
  *
- * @param sess The oscar session
+ * @param od The oscar session
  * @param passwd The new password.  If this is longer than 8 characters it
  *        will be truncated.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icq_changepasswd(OscarSession *sess, const char *passwd)
+int aim_icq_changepasswd(OscarData *od, const char *passwd)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen, passwdlen;
 
 	if (!passwd)
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	passwdlen = strlen(passwd);
@@ -157,34 +154,33 @@ faim_export int aim_icq_changepasswd(OscarSession *sess, const char *passwd)
 		passwdlen = MAXICQPASSLEN;
 	bslen = 2+4+2+2+2+2+passwdlen+1;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x042e); /* shrug. */
-	aimbs_putle16(&fr->data, passwdlen+1);
-	aimbs_putstr(&fr->data, passwd);
-	aimbs_putle8(&fr->data, '\0');
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x042e); /* shrug. */
+	byte_stream_putle16(&frame->data, passwdlen+1);
+	byte_stream_putstr(&frame->data, passwd);
+	byte_stream_putle8(&frame->data, '\0');
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-faim_export int aim_icq_getallinfo(OscarSession *sess, const char *uin)
+int aim_icq_getallinfo(OscarData *od, const char *uin)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 	struct aim_icq_info *info;
@@ -192,44 +188,43 @@ faim_export int aim_icq_getallinfo(OscarSession *sess, const char *uin)
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x04b2); /* shrug. */
-	aimbs_putle32(&fr->data, atoi(uin));
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x04b2); /* shrug. */
+	byte_stream_putle32(&frame->data, atoi(uin));
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	/* Keep track of this request and the ICQ number and request ID */
 	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
 	info->reqid = snacid;
 	info->uin = atoi(uin);
-	info->next = sess->icq_info;
-	sess->icq_info = info;
+	info->next = od->icq_info;
+	od->icq_info = info;
 
 	return 0;
 }
 
-faim_export int aim_icq_getalias(OscarSession *sess, const char *uin)
+int aim_icq_getalias(OscarData *od, const char *uin)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 	struct aim_icq_info *info;
@@ -237,112 +232,109 @@ faim_export int aim_icq_getalias(OscarSession *sess, const char *uin)
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x04ba); /* shrug. */
-	aimbs_putle32(&fr->data, atoi(uin));
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x04ba); /* shrug. */
+	byte_stream_putle32(&frame->data, atoi(uin));
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	/* Keep track of this request and the ICQ number and request ID */
 	info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
 	info->reqid = snacid;
 	info->uin = atoi(uin);
-	info->next = sess->icq_info;
-	sess->icq_info = info;
+	info->next = od->icq_info;
+	od->icq_info = info;
 
 	return 0;
 }
 
-faim_export int aim_icq_getsimpleinfo(OscarSession *sess, const char *uin)
+int aim_icq_getsimpleinfo(OscarData *od, const char *uin)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 
 	if (!uin || uin[0] < '0' || uin[0] > '9')
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2 + 4 + 2 + 2 + 2 + 4;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x051f); /* shrug. */
-	aimbs_putle32(&fr->data, atoi(uin));
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x051f); /* shrug. */
+	byte_stream_putle32(&frame->data, atoi(uin));
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 #if 0
-faim_export int aim_icq_sendxmlreq(OscarSession *sess, const char *xml)
+int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen;
 
 	if (!xml || !strlen(xml))
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	bslen = 2 + 10 + 2 + strlen(xml) + 1;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
-	aimbs_putle16(&fr->data, 0x0998); /* shrug. */
-	aimbs_putle16(&fr->data, strlen(xml) + 1);
-	aimbs_putraw(&fr->data, (guint8 *)xml, strlen(xml) + 1);
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x0998); /* shrug. */
+	byte_stream_putle16(&frame->data, strlen(xml) + 1);
+	byte_stream_putraw(&frame->data, (guint8 *)xml, strlen(xml) + 1);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -367,10 +359,10 @@ faim_export int aim_icq_sendxmlreq(OscarSession *sess, const char *xml)
  * Yeah hi Peter, whaaaat's happening.  If there's any way to use
  * a codepage other than 1252 that would be great.  Thaaaanks.
  */
-faim_export int aim_icq_sendsms(OscarSession *sess, const char *name, const char *msg, const char *alias)
+int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int bslen, xmllen;
 	char *xml;
@@ -378,7 +370,7 @@ faim_export int aim_icq_sendsms(OscarSession *sess, const char *name, const char
 	time_t t;
 	struct tm *tm;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0015)))
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
 
 	if (!name || !msg || !alias)
@@ -389,10 +381,9 @@ faim_export int aim_icq_sendsms(OscarSession *sess, const char *name, const char
 	timestr = gaim_utf8_strftime("%a, %d %b %Y %T %Z", tm);
 
 	/* The length of xml included the null terminating character */
-	xmllen = 225 + strlen(name) + strlen(msg) + strlen(sess->sn) + strlen(alias) + strlen(timestr) + 1;
+	xmllen = 225 + strlen(name) + strlen(msg) + strlen(od->sn) + strlen(alias) + strlen(timestr) + 1;
 
-	if (!(xml = (char *)malloc(xmllen*sizeof(char))))
-		return -ENOMEM;
+	xml = g_new(char, xmllen);
 	snprintf(xml, xmllen, "<icq_sms_message>\n"
 		"\t<destination>%s</destination>\n"
 		"\t<text>%s</text>\n"
@@ -402,41 +393,38 @@ faim_export int aim_icq_sendsms(OscarSession *sess, const char *name, const char
 		"\t<delivery_receipt>Yes</delivery_receipt>\n"
 		"\t<time>%s</time>\n"
 		"</icq_sms_message>\n",
-		name, msg, sess->sn, alias, timestr);
+		name, msg, od->sn, alias, timestr);
 
 	bslen = 37 + xmllen;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + bslen))) {
-		free(xml);
-		return -ENOMEM;
-	}
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
-	snacid = aim_cachesnac(sess, 0x0015, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0015, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
 
 	/* For simplicity, don't bother using a tlvlist */
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, bslen);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
 
-	aimbs_putle16(&fr->data, bslen - 2);
-	aimbs_putle32(&fr->data, atoi(sess->sn));
-	aimbs_putle16(&fr->data, 0x07d0); /* I command thee. */
-	aimbs_putle16(&fr->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
 
 	/* From libicq200-0.3.2/src/SNAC-SRV.cpp */
-	aimbs_putle16(&fr->data, 0x8214);
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, 0x0016);
-	aimbs_put32(&fr->data, 0x00000000);
-	aimbs_put32(&fr->data, 0x00000000);
-	aimbs_put32(&fr->data, 0x00000000);
-	aimbs_put32(&fr->data, 0x00000000);
+	byte_stream_putle16(&frame->data, 0x8214);
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, 0x0016);
+	byte_stream_put32(&frame->data, 0x00000000);
+	byte_stream_put32(&frame->data, 0x00000000);
+	byte_stream_put32(&frame->data, 0x00000000);
+	byte_stream_put32(&frame->data, 0x00000000);
 
-	aimbs_put16(&fr->data, 0x0000);
-	aimbs_put16(&fr->data, xmllen);
-	aimbs_putstr(&fr->data, xml);
+	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&frame->data, xmllen);
+	byte_stream_putstr(&frame->data, xml);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	free(xml);
 
@@ -482,7 +470,8 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 /**
  * Subtype 0x0003 - Response to 0x0015/0x002, contains an ICQesque packet.
  */
-static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_tlvlist_t *tl;
@@ -497,12 +486,12 @@ static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
 		return 0;
 	}
 
-	aim_bstream_init(&qbs, datatlv->value, datatlv->length);
+	byte_stream_init(&qbs, datatlv->value, datatlv->length);
 
-	cmdlen = aimbs_getle16(&qbs);
-	ouruin = aimbs_getle32(&qbs);
-	cmd = aimbs_getle16(&qbs);
-	reqid = aimbs_getle16(&qbs);
+	cmdlen = byte_stream_getle16(&qbs);
+	ouruin = byte_stream_getle32(&qbs);
+	cmd = byte_stream_getle16(&qbs);
+	reqid = byte_stream_getle16(&qbs);
 
 	gaim_debug_misc("oscar", "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
@@ -512,43 +501,43 @@ static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
 
 		memset(&msg, 0, sizeof(msg));
 
-		msg.sender = aimbs_getle32(&qbs);
-		msg.year = aimbs_getle16(&qbs);
-		msg.month = aimbs_getle8(&qbs);
-		msg.day = aimbs_getle8(&qbs);
-		msg.hour = aimbs_getle8(&qbs);
-		msg.minute = aimbs_getle8(&qbs);
-		msg.type = aimbs_getle8(&qbs);
-		msg.flags = aimbs_getle8(&qbs);
-		msg.msglen = aimbs_getle16(&qbs);
-		msg.msg = aimbs_getstr(&qbs, msg.msglen);
+		msg.sender = byte_stream_getle32(&qbs);
+		msg.year = byte_stream_getle16(&qbs);
+		msg.month = byte_stream_getle8(&qbs);
+		msg.day = byte_stream_getle8(&qbs);
+		msg.hour = byte_stream_getle8(&qbs);
+		msg.minute = byte_stream_getle8(&qbs);
+		msg.type = byte_stream_getle8(&qbs);
+		msg.flags = byte_stream_getle8(&qbs);
+		msg.msglen = byte_stream_getle16(&qbs);
+		msg.msg = byte_stream_getstr(&qbs, msg.msglen);
 
-		if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_OFFLINEMSG)))
-			ret = userfunc(sess, rx, &msg);
+		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG)))
+			ret = userfunc(od, conn, frame, &msg);
 
 		free(msg.msg);
 
 	} else if (cmd == 0x0042) {
 		aim_rxcallback_t userfunc;
 
-		if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE)))
-			ret = userfunc(sess, rx);
+		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE)))
+			ret = userfunc(od, conn, frame);
 
 	} else if (cmd == 0x07da) { /* information */
 		guint16 subtype;
 		struct aim_icq_info *info;
 		aim_rxcallback_t userfunc;
 
-		subtype = aimbs_getle16(&qbs);
-		aim_bstream_advance(&qbs, 1); /* 0x0a */
+		subtype = byte_stream_getle16(&qbs);
+		byte_stream_advance(&qbs, 1); /* 0x0a */
 
 		/* find other data from the same request */
-		for (info = sess->icq_info; info && (info->reqid != reqid); info = info->next);
+		for (info = od->icq_info; info && (info->reqid != reqid); info = info->next);
 		if (!info) {
 			info = (struct aim_icq_info *)calloc(1, sizeof(struct aim_icq_info));
 			info->reqid = reqid;
-			info->next = sess->icq_info;
-			sess->icq_info = info;
+			info->next = od->icq_info;
+			od->icq_info = info;
 		}
 
 		switch (subtype) {
@@ -561,64 +550,64 @@ static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
 		} break;
 
 		case 0x00c8: { /* general and "home" information */
-			info->nick = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->first = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->last = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->email = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homecity = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homestate = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homephone = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homefax = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homeaddr = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->mobile = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homezip = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->homecountry = aimbs_getle16(&qbs);
+			info->nick = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->first = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->last = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->email = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homecity = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homestate = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homephone = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homefax = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homeaddr = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->mobile = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homezip = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->homecountry = byte_stream_getle16(&qbs);
 			/* 0x0a 00 02 00 */
 			/* 1 byte timezone? */
 			/* 1 byte hide email flag? */
 		} break;
 
 		case 0x00dc: { /* personal information */
-			info->age = aimbs_getle8(&qbs);
-			info->unknown = aimbs_getle8(&qbs);
-			info->gender = aimbs_getle8(&qbs); /* Not specified=0x00, Female=0x01, Male=0x02 */
-			info->personalwebpage = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->birthyear = aimbs_getle16(&qbs);
-			info->birthmonth = aimbs_getle8(&qbs);
-			info->birthday = aimbs_getle8(&qbs);
-			info->language1 = aimbs_getle8(&qbs);
-			info->language2 = aimbs_getle8(&qbs);
-			info->language3 = aimbs_getle8(&qbs);
+			info->age = byte_stream_getle8(&qbs);
+			info->unknown = byte_stream_getle8(&qbs);
+			info->gender = byte_stream_getle8(&qbs); /* Not specified=0x00, Female=0x01, Male=0x02 */
+			info->personalwebpage = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->birthyear = byte_stream_getle16(&qbs);
+			info->birthmonth = byte_stream_getle8(&qbs);
+			info->birthday = byte_stream_getle8(&qbs);
+			info->language1 = byte_stream_getle8(&qbs);
+			info->language2 = byte_stream_getle8(&qbs);
+			info->language3 = byte_stream_getle8(&qbs);
 			/* 0x00 00 01 00 00 01 00 00 00 00 00 */
 		} break;
 
 		case 0x00d2: { /* work information */
-			info->workcity = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workstate = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workphone = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workfax = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workaddr = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workzip = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workcountry = aimbs_getle16(&qbs);
-			info->workcompany = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workdivision = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->workposition = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, 2); /* 0x01 00 */
-			info->workwebpage = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			info->workcity = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workstate = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workphone = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workfax = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workaddr = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workzip = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workcountry = byte_stream_getle16(&qbs);
+			info->workcompany = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workdivision = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->workposition = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			byte_stream_advance(&qbs, 2); /* 0x01 00 */
+			info->workwebpage = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
 		} break;
 
 		case 0x00e6: { /* additional personal information */
-			info->info = aimbs_getstr(&qbs, aimbs_getle16(&qbs)-1);
+			info->info = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs)-1);
 		} break;
 
 		case 0x00eb: { /* email address(es) */
 			int i;
-			info->numaddresses = aimbs_getle16(&qbs);
+			info->numaddresses = byte_stream_getle16(&qbs);
 			info->email2 = (char **)calloc(info->numaddresses, sizeof(char *));
 			for (i = 0; i < info->numaddresses; i++) {
-				info->email2[i] = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+				info->email2[i] = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
 				if (i+1 != info->numaddresses)
-					aim_bstream_advance(&qbs, 1); /* 0x00 */
+					byte_stream_advance(&qbs, 1); /* 0x00 */
 			}
 		} break;
 
@@ -629,10 +618,10 @@ static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
 		} break;
 
 		case 0x0104: { /* alias info */
-			info->nick = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->first = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->last = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			aim_bstream_advance(&qbs, aimbs_getle16(&qbs)); /* email address? */
+			info->nick = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->first = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->last = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			byte_stream_advance(&qbs, byte_stream_getle16(&qbs)); /* email address? */
 			/* Then 0x00 02 00 */
 		} break;
 
@@ -641,30 +630,30 @@ static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
 		} break;
 
 		case 0x019a: { /* simple info */
-			aim_bstream_advance(&qbs, 2);
-			info->uin = aimbs_getle32(&qbs);
-			info->nick = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->first = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->last = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
-			info->email = aimbs_getstr(&qbs, aimbs_getle16(&qbs));
+			byte_stream_advance(&qbs, 2);
+			info->uin = byte_stream_getle32(&qbs);
+			info->nick = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->first = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->last = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
+			info->email = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
 			/* Then 0x00 02 00 00 00 00 00 */
 		} break;
 		} /* End switch statement */
 
 		if (!(snac->flags & 0x0001)) {
 			if (subtype != 0x0104)
-				if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_INFO)))
-					ret = userfunc(sess, rx, info);
+				if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_INFO)))
+					ret = userfunc(od, conn, frame, info);
 
 			if (info->uin && info->nick)
-				if ((userfunc = aim_callhandler(sess, rx->conn, OSCAR_FAMILY_ICQ, OSCAR_SUBTYPE_ICQ_ALIAS)))
-					ret = userfunc(sess, rx, info);
+				if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_ALIAS)))
+					ret = userfunc(od, conn, frame, info);
 
-			if (sess->icq_info == info) {
-				sess->icq_info = info->next;
+			if (od->icq_info == info) {
+				od->icq_info = info->next;
 			} else {
 				struct aim_icq_info *cur;
-				for (cur=sess->icq_info; (cur->next && (cur->next!=info)); cur=cur->next);
+				for (cur=od->icq_info; (cur->next && (cur->next!=info)); cur=cur->next);
 				if (cur->next)
 					cur->next = cur->next->next;
 			}
@@ -677,31 +666,32 @@ static int icqresponse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0003)
-		return icqresponse(sess, mod, rx, snac, bs);
+		return icqresponse(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-static void icq_shutdown(OscarSession *sess, aim_module_t *mod)
+static void
+icq_shutdown(OscarData *od, aim_module_t *mod)
 {
 	struct aim_icq_info *del;
 
-	while (sess->icq_info) {
-		del = sess->icq_info;
-		sess->icq_info = sess->icq_info->next;
+	while (od->icq_info) {
+		del = od->icq_info;
+		od->icq_info = od->icq_info->next;
 		aim_icq_freeinfo(del);
 	}
 
 	return;
 }
 
-faim_internal int icq_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+icq_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0015;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;

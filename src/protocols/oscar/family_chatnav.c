@@ -35,36 +35,35 @@
  * conn must be a chatnav connection!
  *
  */
-faim_export int aim_chatnav_reqrights(OscarSession *sess, OscarConnection *conn)
+int aim_chatnav_reqrights(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(sess, conn, 0x000d, 0x0002);
+	return aim_genericreq_n_snacid(od, conn, 0x000d, 0x0002);
 }
 
 /*
  * Subtype 0x0008
  */
-faim_export int aim_chatnav_createroom(OscarSession *sess, OscarConnection *conn, const char *name, guint16 exchange)
+int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name, guint16 exchange)
 {
 	static const char ck[] = {"create"};
 	static const char lang[] = {"en"};
 	static const char charset[] = {"us-ascii"};
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(sess, 0x000d, 0x0008, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x000d, 0x0008, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x000d, 0x0008, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x000d, 0x0008, 0x0000, snacid);
 
 	/* exchange */
-	aimbs_put16(&fr->data, exchange);
+	byte_stream_put16(&frame->data, exchange);
 
 	/*
 	 * This looks to be a big hack.  You'll note that this entire
 	 * SNAC is just a room info structure, but the hard room name,
-	 * here, is set to "create".  
+	 * here, is set to "create".
 	 *
 	 * Either this goes on the "list of questions concerning
 	 * why-the-hell-did-you-do-that", or this value is completely
@@ -72,36 +71,37 @@ faim_export int aim_chatnav_createroom(OscarSession *sess, OscarConnection *conn
 	 * AOL style, I'm going to guess that it is the latter, and that
 	 * the value of the room name in create requests is ignored.
 	 */
-	aimbs_put8(&fr->data, strlen(ck));
-	aimbs_putstr(&fr->data, ck);
+	byte_stream_put8(&frame->data, strlen(ck));
+	byte_stream_putstr(&frame->data, ck);
 
-	/* 
+	/*
 	 * instance
-	 * 
+	 *
 	 * Setting this to 0xffff apparently assigns the last instance.
 	 *
 	 */
-	aimbs_put16(&fr->data, 0xffff);
+	byte_stream_put16(&frame->data, 0xffff);
 
 	/* detail level */
-	aimbs_put8(&fr->data, 0x01);
+	byte_stream_put8(&frame->data, 0x01);
 
 	aim_tlvlist_add_str(&tl, 0x00d3, name);
 	aim_tlvlist_add_str(&tl, 0x00d6, charset);
 	aim_tlvlist_add_str(&tl, 0x00d7, lang);
 
 	/* tlvcount */
-	aimbs_put16(&fr->data, aim_tlvlist_count(&tl));
-	aim_tlvlist_write(&fr->data, &tl);
+	byte_stream_put16(&frame->data, aim_tlvlist_count(&tl));
+	aim_tlvlist_write(&frame->data, &tl);
 
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
+static int
+parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
 {
 	aim_rxcallback_t userfunc;
 	int ret = 0;
@@ -113,30 +113,30 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 
 	tlvlist = aim_tlvlist_read(bs);
 
-	/* 
+	/*
 	 * Type 0x0002: Maximum concurrent rooms.
-	 */ 
+	 */
 	if (aim_tlv_gettlv(tlvlist, 0x0002, 1))
 		maxrooms = aim_tlv_get8(tlvlist, 0x0002, 1);
 
-	/* 
+	/*
 	 * Type 0x0003: Exchange information
 	 *
 	 * There can be any number of these, each one
-	 * representing another exchange.  
-	 * 
+	 * representing another exchange.
+	 *
 	 */
 	for (curexchange = 0; ((exchangetlv = aim_tlv_gettlv(tlvlist, 0x0003, curexchange+1))); ) {
 		ByteStream tbs;
 
-		aim_bstream_init(&tbs, exchangetlv->value, exchangetlv->length);
+		byte_stream_init(&tbs, exchangetlv->value, exchangetlv->length);
 
 		curexchange++;
 
 		exchanges = realloc(exchanges, curexchange * sizeof(struct aim_chat_exchangeinfo));
 
 		/* exchange number */
-		exchanges[curexchange-1].number = aimbs_get16(&tbs);
+		exchanges[curexchange-1].number = byte_stream_get16(&tbs);
 		innerlist = aim_tlvlist_read(&tbs);
 
 #if 0
@@ -213,7 +213,7 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 		/*
 		 * Type 0x00d2: Maximum Occupancy?
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d2, 1)) {	
+		if (aim_tlv_gettlv(innerlist, 0x00d2, 1)) {
 			/* Unhandled */
 		}
 #endif
@@ -221,7 +221,7 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 		/*
 		 * Type 0x00d3: Exchange Description
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d3, 1))	
+		if (aim_tlv_gettlv(innerlist, 0x00d3, 1))
 			exchanges[curexchange-1].name = aim_tlv_getstr(innerlist, 0x00d3, 1);
 		else
 			exchanges[curexchange-1].name = NULL;
@@ -241,7 +241,7 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 		 * 0  Creation not allowed
 		 * 1  Room creation allowed
 		 * 2  Exchange creation allowed
-		 * 
+		 *
 		 */
 		if (aim_tlv_gettlv(innerlist, 0x00d5, 1)) {
 			guint8 createperms;
@@ -251,32 +251,32 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 
 		/*
 		 * Type 0x00d6: Character Set (First Time)
-		 */	      
-		if (aim_tlv_gettlv(innerlist, 0x00d6, 1))	
+		 */
+		if (aim_tlv_gettlv(innerlist, 0x00d6, 1))
 			exchanges[curexchange-1].charset1 = aim_tlv_getstr(innerlist, 0x00d6, 1);
 		else
 			exchanges[curexchange-1].charset1 = NULL;
-		      
+
 		/*
 		 * Type 0x00d7: Language (First Time)
-		 */	      
-		if (aim_tlv_gettlv(innerlist, 0x00d7, 1))	
+		 */
+		if (aim_tlv_gettlv(innerlist, 0x00d7, 1))
 			exchanges[curexchange-1].lang1 = aim_tlv_getstr(innerlist, 0x00d7, 1);
 		else
 			exchanges[curexchange-1].lang1 = NULL;
 
 		/*
 		 * Type 0x00d8: Character Set (Second Time)
-		 */	      
-		if (aim_tlv_gettlv(innerlist, 0x00d8, 1))	
+		 */
+		if (aim_tlv_gettlv(innerlist, 0x00d8, 1))
 			exchanges[curexchange-1].charset2 = aim_tlv_getstr(innerlist, 0x00d8, 1);
 		else
 			exchanges[curexchange-1].charset2 = NULL;
 
 		/*
 		 * Type 0x00d9: Language (Second Time)
-		 */	      
-		if (aim_tlv_gettlv(innerlist, 0x00d9, 1))	
+		 */
+		if (aim_tlv_gettlv(innerlist, 0x00d9, 1))
 			exchanges[curexchange-1].lang2 = aim_tlv_getstr(innerlist, 0x00d9, 1);
 		else
 			exchanges[curexchange-1].lang2 = NULL;
@@ -296,8 +296,8 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 	/*
 	 * Call client.
 	 */
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, snac2->type, maxrooms, curexchange, exchanges);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, snac2->type, maxrooms, curexchange, exchanges);
 
 	for (curexchange--; curexchange >= 0; curexchange--) {
 		free(exchanges[curexchange].name);
@@ -312,7 +312,8 @@ static int parseinfo_perms(OscarSession *sess, aim_module_t *mod, FlapFrame *rx,
 	return ret;
 }
 
-static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
+static int
+parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist, *innerlist;
@@ -333,13 +334,13 @@ static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx
 		return 0;
 	}
 
-	aim_bstream_init(&bbbs, bigblock->value, bigblock->length);
+	byte_stream_init(&bbbs, bigblock->value, bigblock->length);
 
-	exchange = aimbs_get16(&bbbs);
-	cklen = aimbs_get8(&bbbs);
-	ck = aimbs_getstr(&bbbs, cklen);
-	instance = aimbs_get16(&bbbs);
-	detaillevel = aimbs_get8(&bbbs);
+	exchange = byte_stream_get16(&bbbs);
+	cklen = byte_stream_get8(&bbbs);
+	ck = byte_stream_getstr(&bbbs, cklen);
+	instance = byte_stream_get16(&bbbs);
+	detaillevel = byte_stream_get8(&bbbs);
 
 	if (detaillevel != 0x02) {
 		gaim_debug_misc("oscar", "unknown detaillevel in create room response (0x%02x)\n", detaillevel);
@@ -348,7 +349,7 @@ static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx
 		return 0;
 	}
 
-	unknown = aimbs_get16(&bbbs);
+	unknown = byte_stream_get16(&bbbs);
 
 	innerlist = aim_tlvlist_read(&bbbs);
 
@@ -373,8 +374,8 @@ static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx
 	if (aim_tlv_gettlv(innerlist, 0x00d5, 1))
 		createperms = aim_tlv_get8(innerlist, 0x00d5, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
-		ret = userfunc(sess, rx, snac2->type, fqcn, instance, exchange, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
+		ret = userfunc(od, conn, frame, snac2->type, fqcn, instance, exchange, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
 	}
 
 	free(ck);
@@ -389,7 +390,7 @@ static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx
 /*
  * Subtype 0x0009
  *
- * Since multiple things can trigger this callback, we must lookup the 
+ * Since multiple things can trigger this callback, we must lookup the
  * snacid to determine the original snac subtype that was called.
  *
  * XXX This isn't really how this works.  But this is:  Every d/9 response
@@ -399,17 +400,18 @@ static int parseinfo_create(OscarSession *sess, aim_module_t *mod, FlapFrame *rx
  *    Instance Info = 4
  *    Nav Short Desc = 8
  *    Nav Instance Info = 16
- * And then everything is really asynchronous.  There is no specific 
+ * And then everything is really asynchronous.  There is no specific
  * attachment of a response to a create room request, for example.  Creating
  * the room yields no different a response than requesting the room's info.
  *
  */
-static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_snac_t *snac2;
 	int ret = 0;
 
-	if (!(snac2 = aim_remsnac(sess, snac->id))) {
+	if (!(snac2 = aim_remsnac(od, snac->id))) {
 		gaim_debug_misc("oscar", "faim: chatnav_parse_info: received response to unknown request! (%08lx)\n", snac->id);
 		return 0;
 	}
@@ -423,7 +425,7 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 	 * We now know what the original SNAC subtype was.
 	 */
 	if (snac2->type == 0x0002) /* request chat rights */
-		ret = parseinfo_perms(sess, mod, rx, snac, bs, snac2);
+		ret = parseinfo_perms(od, conn, mod, frame, snac, bs, snac2);
 	else if (snac2->type == 0x0003) /* request exchange info */
 		gaim_debug_misc("oscar", "chatnav_parse_info: resposne to exchange info\n");
 	else if (snac2->type == 0x0004) /* request room info */
@@ -435,7 +437,7 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 	else if (snac2->type == 0x0007) /* search for a room */
 		gaim_debug_misc("oscar", "chatnav_parse_info: search results\n");
 	else if (snac2->type == 0x0008) /* create room */
-		ret = parseinfo_create(sess, mod, rx, snac, bs, snac2);
+		ret = parseinfo_create(od, conn, mod, frame, snac, bs, snac2);
 	else
 		gaim_debug_misc("oscar", "chatnav_parse_info: unknown request subtype (%04x)\n", snac2->type);
 
@@ -446,18 +448,18 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0009)
-		return parseinfo(sess, mod, rx, snac, bs);
+		return parseinfo(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int chatnav_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+chatnav_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x000d;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;

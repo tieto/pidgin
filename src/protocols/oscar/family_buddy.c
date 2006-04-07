@@ -33,16 +33,18 @@
  * Request Buddy List rights.
  *
  */
-faim_export int aim_buddylist_reqrights(OscarSession *sess, OscarConnection *conn)
+int
+aim_buddylist_reqrights(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(sess, conn, 0x0003, 0x0002);
+	return aim_genericreq_n_snacid(od, conn, 0x0003, 0x0002);
 }
 
 /*
  * Subtype 0x0003 - Rights.
  *
  */
-static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
@@ -77,8 +79,8 @@ static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mods
 	 * ICQ only?
 	 */
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, maxbuddies, maxwatchers);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, maxbuddies, maxwatchers);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -92,24 +94,24 @@ static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mods
  * XXX This should just be an extension of setbuddylist()
  *
  */
-faim_export int aim_buddylist_addbuddy(OscarSession *sess, OscarConnection *conn, const char *sn)
+int
+aim_buddylist_addbuddy(OscarData *od, FlapConnection *conn, const char *sn)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 	if (!sn || !strlen(sn))
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+1+strlen(sn));
 
-	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
-	aim_putsnac(&fr->data, 0x0003, 0x0004, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
+	aim_putsnac(&frame->data, 0x0003, 0x0004, 0x0000, snacid);
 
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
+	byte_stream_put8(&frame->data, strlen(sn));
+	byte_stream_putstr(&frame->data, sn);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -124,9 +126,10 @@ faim_export int aim_buddylist_addbuddy(OscarSession *sess, OscarConnection *conn
  * XXX Clean this up.
  *
  */
-faim_export int aim_buddylist_set(OscarSession *sess, OscarConnection *conn, const char *buddy_list)
+int
+aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int len = 0;
 	char *localcpy = NULL;
@@ -141,11 +144,10 @@ faim_export int aim_buddylist_set(OscarSession *sess, OscarConnection *conn, con
 		tmpptr = strtok(NULL, "&");
 	}
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+len)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+len);
 
-	snacid = aim_cachesnac(sess, 0x0003, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0003, 0x0004, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0003, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0003, 0x0004, 0x0000, snacid);
 
 	strncpy(localcpy, buddy_list, strlen(buddy_list) + 1);
 
@@ -153,12 +155,12 @@ faim_export int aim_buddylist_set(OscarSession *sess, OscarConnection *conn, con
 
 		gaim_debug_misc("oscar", "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
 
-		aimbs_put8(&fr->data, strlen(tmpptr));
-		aimbs_putstr(&fr->data, tmpptr);
+		byte_stream_put8(&frame->data, strlen(tmpptr));
+		byte_stream_putstr(&frame->data, tmpptr);
 		tmpptr = strtok(NULL, "&");
 	}
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	free(localcpy);
 
@@ -172,79 +174,24 @@ faim_export int aim_buddylist_set(OscarSession *sess, OscarConnection *conn, con
  * the same as setbuddylist() but with a different snac subtype).
  *
  */
-faim_export int aim_buddylist_removebuddy(OscarSession *sess, OscarConnection *conn, const char *sn)
+int
+aim_buddylist_removebuddy(OscarData *od, FlapConnection *conn, const char *sn)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 	if (!sn || !strlen(sn))
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+1+strlen(sn));
 
-	snacid = aim_cachesnac(sess, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
-	aim_putsnac(&fr->data, 0x0003, 0x0005, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
+	aim_putsnac(&frame->data, 0x0003, 0x0005, 0x0000, snacid);
 
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
+	byte_stream_put8(&frame->data, strlen(sn));
+	byte_stream_putstr(&frame->data, sn);
 
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/*
- * Subtype 0x000b
- *
- * XXX Why would we send this?
- *
- */
-faim_export int aim_buddylist_oncoming(OscarSession *sess, OscarConnection *conn, aim_userinfo_t *info)
-{
-	FlapFrame *fr;
-	aim_snacid_t snacid;
-
-	if (!sess || !conn || !info)
-		return -EINVAL;
-
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0003, 0x000b, 0x0000, NULL, 0);
-
-	aim_putsnac(&fr->data, 0x0003, 0x000b, 0x0000, snacid);
-	aim_putuserinfo(&fr->data, info);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/* 
- * Subtype 0x000c
- *
- * XXX Why would we send this?
- *
- */
-faim_export int aim_buddylist_offgoing(OscarSession *sess, OscarConnection *conn, const char *sn)
-{
-	FlapFrame *fr;
-	aim_snacid_t snacid;
-
-	if (!sess || !conn || !sn)
-		return -EINVAL;
-
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0003, 0x000c, 0x0000, NULL, 0);
-
-	aim_putsnac(&fr->data, 0x0003, 0x000c, 0x0000, snacid);
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
-
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -260,38 +207,39 @@ faim_export int aim_buddylist_offgoing(OscarSession *sess, OscarConnection *conn
  * it is still in a format parsable by aim_info_extract().
  *
  */
-static int buddychange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_userinfo_t userinfo;
 	aim_rxcallback_t userfunc;
 
-	aim_info_extract(sess, bs, &userinfo);
+	aim_info_extract(od, bs, &userinfo);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, &userinfo);
 
 	if (snac->subtype == 0x000b)
-		aim_locate_requestuserinfo(sess, userinfo.sn);
+		aim_locate_requestuserinfo(od, userinfo.sn);
 	aim_info_free(&userinfo);
 
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0003)
-		return rights(sess, mod, rx, snac, bs);
+		return rights(od, conn, mod, frame, snac, bs);
 	else if ((snac->subtype == 0x000b) || (snac->subtype == 0x000c))
-		return buddychange(sess, mod, rx, snac, bs);
+		return buddychange(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int buddylist_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+buddylist_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0003;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;

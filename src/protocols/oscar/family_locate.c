@@ -51,37 +51,37 @@ static const struct {
 	 */
 
 	/*
-	 * Perhaps better called AIM_CAPS_SHORTCAPS
+	 * Perhaps better called OSCAR_CAPABILITY_SHORTCAPS
 	 */
-	{AIM_CAPS_ICHAT,
+	{OSCAR_CAPABILITY_ICHAT,
 	 {0x09, 0x46, 0x00, 0x00, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_SECUREIM,
+	{OSCAR_CAPABILITY_SECUREIM,
 	 {0x09, 0x46, 0x00, 0x01, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_VIDEO,
+	{OSCAR_CAPABILITY_VIDEO,
 	 {0x09, 0x46, 0x01, 0x00, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/* "Live Video" support in Windows AIM 5.5.3501 and newer */
-	{AIM_CAPS_LIVEVIDEO,
+	{OSCAR_CAPABILITY_LIVEVIDEO,
 	 {0x09, 0x46, 0x01, 0x01, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/* "Camera" support in Windows AIM 5.5.3501 and newer */
-	{AIM_CAPS_CAMERA,
+	{OSCAR_CAPABILITY_CAMERA,
 	 {0x09, 0x46, 0x01, 0x02, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/* In Windows AIM 5.5.3501 and newer */
-	{AIM_CAPS_GENERICUNKNOWN,
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0x01, 0x03, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/* In iChatAV (version numbers...?) */
-	{AIM_CAPS_ICHATAV,
+	{OSCAR_CAPABILITY_ICHATAV,
 	 {0x09, 0x46, 0x01, 0x05, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x45, 0x53, 0x54, 0x00}},
 
@@ -90,55 +90,55 @@ static const struct {
 	 * 26 Sep 2003, Matthew Sachs suggested that, "this
 	 * is probably the capability for the SMS features."
 	 */
-	{AIM_CAPS_SMS,
+	{OSCAR_CAPABILITY_SMS,
 	 {0x09, 0x46, 0x01, 0xff, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_GENERICUNKNOWN,
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0xf0, 0x03, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_GENERICUNKNOWN,
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0xf0, 0x04, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_GENERICUNKNOWN,
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x09, 0x46, 0xf0, 0x05, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_HIPTOP,
+	{OSCAR_CAPABILITY_HIPTOP,
 	 {0x09, 0x46, 0x13, 0x23, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_TALK,
+	{OSCAR_CAPABILITY_TALK,
 	 {0x09, 0x46, 0x13, 0x41, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_SENDFILE,
+	{OSCAR_CAPABILITY_SENDFILE,
 	 {0x09, 0x46, 0x13, 0x43, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_ICQ_DIRECT,
+	{OSCAR_CAPABILITY_ICQ_DIRECT,
 	 {0x09, 0x46, 0x13, 0x44, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_DIRECTIM,
+	{OSCAR_CAPABILITY_DIRECTIM,
 	 {0x09, 0x46, 0x13, 0x45, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_BUDDYICON,
+	{OSCAR_CAPABILITY_BUDDYICON,
 	 {0x09, 0x46, 0x13, 0x46, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_ADDINS,
+	{OSCAR_CAPABILITY_ADDINS,
 	 {0x09, 0x46, 0x13, 0x47, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_GETFILE,
+	{OSCAR_CAPABILITY_GETFILE,
 	 {0x09, 0x46, 0x13, 0x48, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_ICQSERVERRELAY,
+	{OSCAR_CAPABILITY_ICQSERVERRELAY,
 	 {0x09, 0x46, 0x13, 0x49, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
@@ -148,14 +148,14 @@ static const struct {
 	 * forgot to fix endianness, or they made a typo. It really doesn't
 	 * matter which.
 	 */
-	{AIM_CAPS_GAMES,
+	{OSCAR_CAPABILITY_GAMES,
 	 {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-	{AIM_CAPS_GAMES2,
+	{OSCAR_CAPABILITY_GAMES2,
 	 {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_SENDBUDDYLIST,
+	{OSCAR_CAPABILITY_SENDBUDDYLIST,
 	 {0x09, 0x46, 0x13, 0x4b, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
@@ -168,53 +168,53 @@ static const struct {
 	 * see them as online (previous you could still see them, but they
 	 * couldn't see you.
 	 */
-	{AIM_CAPS_INTEROPERATE,
+	{OSCAR_CAPABILITY_INTEROPERATE,
 	 {0x09, 0x46, 0x13, 0x4d, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_ICQUTF8,
+	{OSCAR_CAPABILITY_ICQUTF8,
 	 {0x09, 0x46, 0x13, 0x4e, 0x4c, 0x7f, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
-	{AIM_CAPS_ICQUTF8OLD,
+	{OSCAR_CAPABILITY_ICQUTF8OLD,
 	 {0x2e, 0x7a, 0x64, 0x75, 0xfa, 0xdf, 0x4d, 0xc8,
 	  0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
 
 	/*
 	 * Chat is oddball.
 	 */
-	{AIM_CAPS_CHAT,
+	{OSCAR_CAPABILITY_CHAT,
 	 {0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/*
-	{AIM_CAPS_ICQ2GO,
+	{OSCAR_CAPABILITY_ICQ2GO,
 	 {0x56, 0x3f, 0xc8, 0x09, 0x0b, 0x6f, 0x41, 0xbd,
 	  0x9f, 0x79, 0x42, 0x26, 0x09, 0xdf, 0xa2, 0xf3}},
 	*/
 
-	{AIM_CAPS_ICQRTF,
+	{OSCAR_CAPABILITY_ICQRTF,
 	 {0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
 	  0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x92}},
 
 	/* This is added by the servers and it only shows up for ourselves... */
-	{AIM_CAPS_GENERICUNKNOWN,
+	{OSCAR_CAPABILITY_GENERICUNKNOWN,
 	 {0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
 	  0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x09}},
 
-	{AIM_CAPS_APINFO,
+	{OSCAR_CAPABILITY_APINFO,
 	 {0xaa, 0x4a, 0x32, 0xb5, 0xf8, 0x84, 0x48, 0xc6,
 	  0xa3, 0xd7, 0x8c, 0x50, 0x97, 0x19, 0xfd, 0x5b}},
 
-	{AIM_CAPS_TRILLIANCRYPT,
+	{OSCAR_CAPABILITY_TRILLIANCRYPT,
 	 {0xf2, 0xe7, 0xc7, 0xf4, 0xfe, 0xad, 0x4d, 0xfb,
 	  0xb2, 0x35, 0x36, 0x79, 0x8b, 0xdf, 0x00, 0x00}},
 
-	{AIM_CAPS_EMPTY,
+	{OSCAR_CAPABILITY_EMPTY,
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 
-	{AIM_CAPS_LAST,
+	{OSCAR_CAPABILITY_LAST,
 	 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 };
@@ -225,18 +225,18 @@ static const struct {
  *
  * @param userinfo Contains the new information for the buddy.
  */
-static void aim_locate_adduserinfo(OscarSession *sess, aim_userinfo_t *userinfo) {
+static void aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo) {
 	aim_userinfo_t *cur;
-	OscarConnection *conn;
+	FlapConnection *conn;
 	aim_rxcallback_t userfunc;
 
-	cur = aim_locate_finduserinfo(sess, userinfo->sn);
+	cur = aim_locate_finduserinfo(od, userinfo->sn);
 
 	if (cur == NULL) {
 		cur = (aim_userinfo_t *)calloc(1, sizeof(aim_userinfo_t));
 		cur->sn = strdup(userinfo->sn);
-		cur->next = sess->locate.userinfo;
-		sess->locate.userinfo = cur;
+		cur->next = od->locate.userinfo;
+		od->locate.userinfo = cur;
 	}
 
 	cur->warnlevel = userinfo->warnlevel;
@@ -307,51 +307,65 @@ static void aim_locate_adduserinfo(OscarSession *sess, aim_userinfo_t *userinfo)
 	 * messages in its buddy list, then it would need to know if a user's
 	 * away message changes.
 	 */
-	conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE);
-	if ((userfunc = aim_callhandler(sess, conn, OSCAR_FAMILY_LOCATE, OSCAR_SUBTYPE_LOCATE_GOTINFOBLOCK)))
-		userfunc(sess, NULL, cur);
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE);
+	if ((userfunc = aim_callhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_GOTINFOBLOCK)))
+		userfunc(od, conn, NULL, cur);
 }
 
-faim_export void aim_locate_dorequest(OscarSession *sess) {
-	struct userinfo_node *cur = sess->locate.torequest;
+void aim_locate_dorequest(OscarData *od) {
+	struct userinfo_node *cur = od->locate.torequest;
 
 	if (cur == NULL)
 		return;
 
-	if (sess->locate.waiting_for_response == TRUE)
+	if (od->locate.waiting_for_response == TRUE)
 		return;
 
-	sess->locate.waiting_for_response = TRUE;
-	aim_locate_getinfoshort(sess, cur->sn, 0x00000003);
+	od->locate.waiting_for_response = TRUE;
+	aim_locate_getinfoshort(od, cur->sn, 0x00000003);
 
 	/* Move this node to the "requested" queue */
-	sess->locate.torequest = cur->next;
-	cur->next = sess->locate.requested;
-	sess->locate.requested = cur;
+	od->locate.torequest = cur->next;
+	cur->next = od->locate.requested;
+	od->locate.requested = cur;
+}
+
+static gboolean
+gaim_reqinfo_timeout_cb(void *data)
+{
+	OscarData *od;
+
+	od = data;
+	aim_locate_dorequest(od);
+	od->getinfotimer = 0;
+
+	return FALSE;
 }
 
 /**
  * Remove this screen name from our queue.  If this info was requested
  * by our info request queue, then pop the next element off of the queue.
  *
- * @param sess The aim session.
+ * @param od The aim session.
  * @param sn Screen name of the info we just received.
  * @return True if the request was explicit (client requested the info),
  *         false if the request was implicit (libfaim request the info).
  */
-static int aim_locate_gotuserinfo(OscarSession *sess, const char *sn) {
+static int
+aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
+{
 	struct userinfo_node *cur, *del;
 	int was_explicit = TRUE;
 
-	while ((sess->locate.requested != NULL) && (aim_sncmp(sn, sess->locate.requested->sn) == 0)) {
-		del = sess->locate.requested;
-		sess->locate.requested = del->next;
+	while ((od->locate.requested != NULL) && (aim_sncmp(sn, od->locate.requested->sn) == 0)) {
+		del = od->locate.requested;
+		od->locate.requested = del->next;
 		was_explicit = FALSE;
 		free(del->sn);
 		free(del);
 	}
 
-	cur = sess->locate.requested;
+	cur = od->locate.requested;
 	while ((cur != NULL) && (cur->next != NULL)) {
 		if (aim_sncmp(sn, cur->next->sn) == 0) {
 			del = cur->next;
@@ -364,25 +378,26 @@ static int aim_locate_gotuserinfo(OscarSession *sess, const char *sn) {
 	}
 
 	if (!was_explicit) {
-		OscarConnection *conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE);
-		aim_rxcallback_t userfunc;
+		od->locate.waiting_for_response = FALSE;
 
-		sess->locate.waiting_for_response = FALSE;
-
-		if ((userfunc = aim_callhandler(sess, conn, OSCAR_FAMILY_LOCATE, OSCAR_SUBTYPE_LOCATE_REQUESTINFOTIMEOUT)))
-			userfunc(sess, NULL);
-		else
-			aim_locate_dorequest(sess);
+		/*
+		 * Wait a little while then call aim_locate_dorequest(od).
+		 * This keeps us from hitting the rate limit due to
+		 * requesting away messages and info too quickly.
+		 */
+		if (od->getinfotimer == 0)
+			od->getinfotimer = gaim_timeout_add(10000,
+					gaim_reqinfo_timeout_cb, od);
 	}
 
 	return was_explicit;
 }
 
-faim_internal void aim_locate_requestuserinfo(OscarSession *sess, const char *sn) {
+void aim_locate_requestuserinfo(OscarData *od, const char *sn) {
 	struct userinfo_node *cur;
 
 	/* Make sure we aren't already requesting info for this buddy */
-	cur = sess->locate.torequest;
+	cur = od->locate.torequest;
 	while (cur != NULL) {
 		if (aim_sncmp(sn, cur->sn) == 0)
 			return;
@@ -392,20 +407,20 @@ faim_internal void aim_locate_requestuserinfo(OscarSession *sess, const char *sn
 	/* Add a new node to our request queue */
 	cur = (struct userinfo_node *)malloc(sizeof(struct userinfo_node));
 	cur->sn = strdup(sn);
-	cur->next = sess->locate.torequest;
-	sess->locate.torequest = cur;
+	cur->next = od->locate.torequest;
+	od->locate.torequest = cur;
 
 	/* Actually request some info up in this piece */
-	aim_locate_dorequest(sess);
+	aim_locate_dorequest(od);
 }
 
-faim_export aim_userinfo_t *aim_locate_finduserinfo(OscarSession *sess, const char *sn) {
+aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *sn) {
 	aim_userinfo_t *cur = NULL;
 
 	if (sn == NULL)
 		return NULL;
 
-	cur = sess->locate.userinfo;
+	cur = od->locate.userinfo;
 
 	while (cur != NULL) {
 		if (aim_sncmp(cur->sn, sn) == 0)
@@ -416,18 +431,18 @@ faim_export aim_userinfo_t *aim_locate_finduserinfo(OscarSession *sess, const ch
 	return NULL;
 }
 
-faim_internal guint32 aim_locate_getcaps(OscarSession *sess, ByteStream *bs, int len)
+guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 {
 	guint32 flags = 0;
 	int offset;
 
-	for (offset = 0; aim_bstream_empty(bs) && (offset < len); offset += 0x10) {
+	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x10) {
 		guint8 *cap;
 		int i, identified;
 
-		cap = aimbs_getraw(bs, 0x10);
+		cap = byte_stream_getraw(bs, 0x10);
 
-		for (i = 0, identified = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++) {
+		for (i = 0, identified = 0; !(aim_caps[i].flag & OSCAR_CAPABILITY_LAST); i++) {
 			if (memcmp(&aim_caps[i].data, cap, 0x10) == 0) {
 				flags |= aim_caps[i].flag;
 				identified++;
@@ -450,18 +465,18 @@ faim_internal guint32 aim_locate_getcaps(OscarSession *sess, ByteStream *bs, int
 	return flags;
 }
 
-faim_internal guint32 aim_locate_getcaps_short(OscarSession *sess, ByteStream *bs, int len)
+guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 {
 	guint32 flags = 0;
 	int offset;
 
-	for (offset = 0; aim_bstream_empty(bs) && (offset < len); offset += 0x02) {
+	for (offset = 0; byte_stream_empty(bs) && (offset < len); offset += 0x02) {
 		guint8 *cap;
 		int i, identified;
 
-		cap = aimbs_getraw(bs, 0x02);
+		cap = byte_stream_getraw(bs, 0x02);
 
-		for (i = 0, identified = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++) {
+		for (i = 0, identified = 0; !(aim_caps[i].flag & OSCAR_CAPABILITY_LAST); i++) {
 			if (memcmp(&aim_caps[i].data[2], cap, 0x02) == 0) {
 				flags |= aim_caps[i].flag;
 				identified++;
@@ -478,31 +493,33 @@ faim_internal guint32 aim_locate_getcaps_short(OscarSession *sess, ByteStream *b
 	return flags;
 }
 
-faim_internal int aimbs_putcaps(ByteStream *bs, guint32 caps)
+int byte_stream_putcaps(ByteStream *bs, guint32 caps)
 {
 	int i;
 
 	if (!bs)
 		return -EINVAL;
 
-	for (i = 0; aim_bstream_empty(bs); i++) {
+	for (i = 0; byte_stream_empty(bs); i++) {
 
-		if (aim_caps[i].flag == AIM_CAPS_LAST)
+		if (aim_caps[i].flag == OSCAR_CAPABILITY_LAST)
 			break;
 
 		if (caps & aim_caps[i].flag)
-			aimbs_putraw(bs, aim_caps[i].data, 0x10);
+			byte_stream_putraw(bs, aim_caps[i].data, 0x10);
 
 	}
 
 	return 0;
 }
 
-static void dumptlv(OscarSession *sess, guint16 type, ByteStream *bs, guint8 len)
+#if 0
+static void
+dumptlv(OscarData *od, guint16 type, ByteStream *bs, guint8 len)
 {
 	int i;
 
-	if (!sess || !bs || !len)
+	if (!od || !bs || !len)
 		return;
 
 	gaim_debug_misc("oscar", "userinfo:   type  =0x%04x\n", type);
@@ -512,15 +529,16 @@ static void dumptlv(OscarSession *sess, guint16 type, ByteStream *bs, guint8 len
 	for (i = 0; i < len; i++) {
 		if ((i % 8) == 0)
 			gaim_debug_misc("oscar", "\nuserinfo:        ");
-		gaim_debug_misc("oscar", "0x%2x ", aimbs_get8(bs));
+		gaim_debug_misc("oscar", "0x%2x ", byte_stream_get8(bs));
 	}
 
 	gaim_debug_misc("oscar", "\n");
 
 	return;
 }
+#endif
 
-faim_internal void aim_info_free(aim_userinfo_t *info)
+void aim_info_free(aim_userinfo_t *info)
 {
 	free(info->sn);
 	free(info->iconcsum);
@@ -536,7 +554,7 @@ faim_internal void aim_info_free(aim_userinfo_t *info)
  * AIM is fairly regular about providing user info.  This is a generic
  * routine to extract it in its standard form.
  */
-faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_userinfo_t *outinfo)
+int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
 	guint8 snlen;
@@ -551,19 +569,19 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 	 * Screen name.  Stored as an unterminated string prepended with a
 	 * byte containing its length.
 	 */
-	snlen = aimbs_get8(bs);
-	outinfo->sn = aimbs_getstr(bs, snlen);
+	snlen = byte_stream_get8(bs);
+	outinfo->sn = byte_stream_getstr(bs, snlen);
 
 	/*
 	 * Warning Level.  Stored as an unsigned short.
 	 */
-	outinfo->warnlevel = aimbs_get16(bs);
+	outinfo->warnlevel = byte_stream_get16(bs);
 
 	/*
 	 * TLV Count. Unsigned short representing the number of
 	 * Type-Length-Value triples that follow.
 	 */
-	tlvcnt = aimbs_get16(bs);
+	tlvcnt = byte_stream_get16(bs);
 
 	/*
 	 * Parse out the Type-Length-Value triples as they're found.
@@ -572,31 +590,31 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 		int endpos;
 		guint16 type, length;
 
-		type = aimbs_get16(bs);
-		length = aimbs_get16(bs);
+		type = byte_stream_get16(bs);
+		length = byte_stream_get16(bs);
 
-		endpos = aim_bstream_curpos(bs) + length;
+		endpos = byte_stream_curpos(bs) + length;
 
 		if (type == 0x0001) {
 			/*
 			 * Type = 0x0001: User flags
-			 * 
+			 *
 			 * Specified as any of the following ORed together:
 			 *      0x0001  Trial (user less than 60days)
 			 *      0x0002  Unknown bit 2
 			 *      0x0004  AOL Main Service user
 			 *      0x0008  Unknown bit 4
-			 *      0x0010  Free (AIM) user 
+			 *      0x0010  Free (AIM) user
 			 *      0x0020  Away
 			 *      0x0400  ActiveBuddy
 			 *
 			 */
-			outinfo->flags = aimbs_get16(bs);
+			outinfo->flags = byte_stream_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_FLAGS;
 
 		} else if (type == 0x0002) {
 			/*
-			 * Type = 0x0002: Account creation time. 
+			 * Type = 0x0002: Account creation time.
 			 *
 			 * The time/date that the user originally registered for
 			 * the service, stored in time_t format.
@@ -608,36 +626,36 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 * since".  All these years and I finally found out
 			 * that I got the name wrong.
 			 */
-			outinfo->createtime = aimbs_get32(bs);
+			outinfo->createtime = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_CREATETIME;
 
 		} else if (type == 0x0003) {
 			/*
 			 * Type = 0x0003: On-Since date.
 			 *
-			 * The time/date that the user started their current 
+			 * The time/date that the user started their current
 			 * session, stored in time_t format.
 			 */
-			outinfo->onlinesince = aimbs_get32(bs);
+			outinfo->onlinesince = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_ONLINESINCE;
 
 		} else if (type == 0x0004) {
 			/*
 			 * Type = 0x0004: Idle time.
 			 *
-			 * Number of minutes since the user actively used the 
+			 * Number of minutes since the user actively used the
 			 * service.
 			 *
 			 * Note that the client tells the server when to start
-			 * counting idle times, so this may or may not be 
+			 * counting idle times, so this may or may not be
 			 * related to reality.
 			 */
-			outinfo->idletime = aimbs_get16(bs);
+			outinfo->idletime = byte_stream_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_IDLE;
 
 		} else if (type == 0x0005) {
 			/*
-			 * Type = 0x0005: Member since date. 
+			 * Type = 0x0005: Member since date.
 			 *
 			 * The time/date that the user originally registered for
 			 * the service, stored in time_t format.
@@ -646,18 +664,18 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 * creation time"), particularly in the self-info.
 			 * And particularly for ICQ?
 			 */
-			outinfo->membersince = aimbs_get32(bs);
+			outinfo->membersince = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_MEMBERSINCE;
 
 		} else if (type == 0x0006) {
 			/*
 			 * Type = 0x0006: ICQ Online Status
 			 *
-			 * ICQ's Away/DND/etc "enriched" status. Some decoding 
+			 * ICQ's Away/DND/etc "enriched" status. Some decoding
 			 * of values done by Scott <darkagl@pcnet.com>
 			 */
-			aimbs_get16(bs);
-			outinfo->icqinfo.status = aimbs_get16(bs);
+			byte_stream_get16(bs);
+			outinfo->icqinfo.status = byte_stream_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQEXTSTATUS;
 
 		} else if (type == 0x0008) {
@@ -674,11 +692,11 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 * ICQ User IP Address.
 			 * Ahh, the joy of ICQ security.
 			 */
-			outinfo->icqinfo.ipaddr = aimbs_get32(bs);
+			outinfo->icqinfo.ipaddr = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQIPADDR;
 
 		} else if (type == 0x000c) {
-			/* 
+			/*
 			 * Type = 0x000c
 			 *
 			 * random crap containing the IP address,
@@ -686,10 +704,10 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 *
 			 * Format is:
 			 * 4 bytes - Our IP address, 0xc0 a8 01 2b for 192.168.1.43
-			 * 
+			 *
 			 *
 			 */
-			aimbs_getrawbuf(bs, outinfo->icqinfo.crap, 0x25);
+			byte_stream_getrawbuf(bs, outinfo->icqinfo.crap, 0x25);
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQDATA;
 
 		} else if (type == 0x000d) {
@@ -699,7 +717,7 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 * OSCAR Capability information.
 			 *
 			 */
-			outinfo->capabilities |= aim_locate_getcaps(sess, bs, length);
+			outinfo->capabilities |= aim_locate_getcaps(od, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
 		} else if (type == 0x000e) {
@@ -715,31 +733,31 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 * Type = 0x000f: Session Length. (AIM)
 			 * Type = 0x0010: Session Length. (AOL)
 			 *
-			 * The duration, in seconds, of the user's current 
+			 * The duration, in seconds, of the user's current
 			 * session.
 			 *
 			 * Which TLV type this comes in depends on the
 			 * service the user is using (AIM or AOL).
 			 *
 			 */
-			outinfo->sessionlen = aimbs_get32(bs);
+			outinfo->sessionlen = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
 		} else if (type == 0x0019) {
 			/*
 			 * Type = 0x0019
 			 *
-			 * OSCAR short capability information.  A shortened 
+			 * OSCAR short capability information.  A shortened
 			 * form of the normal capabilities.
 			 */
-			outinfo->capabilities |= aim_locate_getcaps_short(sess, bs, length);
+			outinfo->capabilities |= aim_locate_getcaps_short(od, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
 		} else if (type == 0x001b) {
 			/*
 			 * Type = 0x001a
 			 *
-			 * AOL short capability information.  A shortened 
+			 * AOL short capability information.  A shortened
 			 * form of the normal capabilities.
 			 */
 
@@ -770,42 +788,42 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 			 */
 			int type2, number, length2;
 
-			while (aim_bstream_curpos(bs) < endpos) {
-				type2 = aimbs_get16(bs);
-				number = aimbs_get8(bs);
-				length2 = aimbs_get8(bs);
+			while (byte_stream_curpos(bs) < endpos) {
+				type2 = byte_stream_get16(bs);
+				number = byte_stream_get8(bs);
+				length2 = byte_stream_get8(bs);
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */
 						/* This is always 5 bytes of "0x02 01 d2 04 72"? */
-						aim_bstream_advance(bs, length2);
+						byte_stream_advance(bs, length2);
 					} break;
 
 					case 0x0001: { /* A buddy icon checksum */
 						if ((length2 > 0) && ((number == 0x00) || (number == 0x01))) {
 							free(outinfo->iconcsum);
 							outinfo->iconcsumtype = number;
-							outinfo->iconcsum = aimbs_getraw(bs, length2);
+							outinfo->iconcsum = byte_stream_getraw(bs, length2);
 							outinfo->iconcsumlen = length2;
 						} else
-							aim_bstream_advance(bs, length2);
+							byte_stream_advance(bs, length2);
 					} break;
 
 					case 0x0002: { /* A status/available message */
 						free(outinfo->status);
 						free(outinfo->status_encoding);
 						if (length2 >= 4) {
-							outinfo->status_len = aimbs_get16(bs);
-							outinfo->status = aimbs_getstr(bs, outinfo->status_len);
-							if (aimbs_get16(bs) == 0x0001) { /* We have an encoding */
-								aimbs_get16(bs);
-								outinfo->status_encoding = aimbs_getstr(bs, aimbs_get16(bs));
+							outinfo->status_len = byte_stream_get16(bs);
+							outinfo->status = byte_stream_getstr(bs, outinfo->status_len);
+							if (byte_stream_get16(bs) == 0x0001) { /* We have an encoding */
+								byte_stream_get16(bs);
+								outinfo->status_encoding = byte_stream_getstr(bs, byte_stream_get16(bs));
 							} else {
 								/* No explicit encoding, client should use UTF-8 */
 								outinfo->status_encoding = NULL;
 							}
 						} else {
-							aim_bstream_advance(bs, length2);
+							byte_stream_advance(bs, length2);
 							outinfo->status_len = 0;
 							outinfo->status = g_strdup("");
 							outinfo->status_encoding = NULL;
@@ -813,7 +831,7 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 					} break;
 
 					default: {
-						aim_bstream_advance(bs, length2);
+						byte_stream_advance(bs, length2);
 					} break;
 				}
 			}
@@ -837,23 +855,25 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 
 			/*
 			 * Reaching here indicates that either AOL has
-			 * added yet another TLV for us to deal with, 
+			 * added yet another TLV for us to deal with,
 			 * or the parsing has gone Terribly Wrong.
 			 *
 			 * Either way, inform the owner and attempt
 			 * recovery.
 			 *
 			 */
+#if 0
 			gaim_debug_misc("oscar", "userinfo: **warning: unexpected TLV:\n");
 			gaim_debug_misc("oscar", "userinfo:   sn    =%s\n", outinfo->sn);
-			dumptlv(sess, type, bs, length);
+			dumptlv(od, type, bs, length);
+#endif
 		}
 
 		/* Save ourselves. */
-		aim_bstream_setpos(bs, endpos);
+		byte_stream_setpos(bs, endpos);
 	}
 
-	aim_locate_adduserinfo(sess, outinfo);
+	aim_locate_adduserinfo(od, outinfo);
 
 	return 0;
 }
@@ -861,17 +881,18 @@ faim_internal int aim_info_extract(OscarSession *sess, ByteStream *bs, aim_useri
 /*
  * Inverse of aim_info_extract()
  */
-faim_internal int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
+int
+aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 {
 	aim_tlvlist_t *tlvlist = NULL;
 
 	if (!bs || !info)
 		return -EINVAL;
 
-	aimbs_put8(bs, strlen(info->sn));
-	aimbs_putstr(bs, info->sn);
+	byte_stream_put8(bs, strlen(info->sn));
+	byte_stream_putstr(bs, info->sn);
 
-	aimbs_put16(bs, info->warnlevel);
+	byte_stream_put16(bs, info->warnlevel);
 
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS)
 		aim_tlvlist_add_16(&tlvlist, 0x0001, info->flags);
@@ -898,7 +919,7 @@ faim_internal int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		aim_tlvlist_add_32(&tlvlist, (guint16)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
 
-	aimbs_put16(bs, aim_tlvlist_count(&tlvlist));
+	byte_stream_put16(bs, aim_tlvlist_count(&tlvlist));
 	aim_tlvlist_write(bs, &tlvlist);
 	aim_tlvlist_free(&tlvlist);
 
@@ -908,7 +929,8 @@ faim_internal int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info)
 /*
  * Subtype 0x0001
  */
-static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -917,7 +939,7 @@ static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 	char *sn;
 	int was_explicit;
 
-	if (!(snac2 = aim_remsnac(sess, snac->id))) {
+	if (!(snac2 = aim_remsnac(od, snac->id))) {
 		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from unknown request!\n");
 		return 0;
 	}
@@ -932,17 +954,17 @@ static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 		return 0;
 	}
 
-	reason = aimbs_get16(bs);
+	reason = byte_stream_get16(bs);
 
 	/*
-	 * Remove this screen name from our queue.  If the client requested 
-	 * this buddy's info explicitly, then notify them that we do not have 
+	 * Remove this screen name from our queue.  If the client requested
+	 * this buddy's info explicitly, then notify them that we do not have
 	 * info for this buddy.
 	 */
-	was_explicit = aim_locate_gotuserinfo(sess, sn);
+	was_explicit = aim_locate_gotuserinfo(od, conn, sn);
 	if (was_explicit == TRUE)
-		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-			ret = userfunc(sess, rx, reason, sn);
+		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+			ret = userfunc(od, conn, frame, reason, sn);
 
 	if (snac2)
 		free(snac2->data);
@@ -957,14 +979,15 @@ static int error(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
  * Request Location services rights.
  *
  */
-faim_export int aim_locate_reqrights(OscarSession *sess)
+int
+aim_locate_reqrights(OscarData *od)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
-	return aim_genericreq_n_snacid(sess, conn, OSCAR_FAMILY_LOCATE, OSCAR_SUBTYPE_LOCATE_REQRIGHTS);
+	return aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_REQRIGHTS);
 }
 
 /*
@@ -976,7 +999,8 @@ faim_export int aim_locate_reqrights(OscarSession *sess)
  *   t(0003)  - short - unknown (value = 10)
  *   t(0004)  - short - unknown (value = 2048) [ICQ only?]
  */
-static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_tlvlist_t *tlvlist;
 	aim_rxcallback_t userfunc;
@@ -988,8 +1012,8 @@ static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mods
 	if (aim_tlv_gettlv(tlvlist, 0x0001, 1))
 		maxsiglen = aim_tlv_get16(tlvlist, 0x0001, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, maxsiglen);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, maxsiglen);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -1016,18 +1040,19 @@ static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mods
  * obvious equivalent).
  *
  */
-faim_export int aim_locate_setprofile(OscarSession *sess,
+int
+aim_locate_setprofile(OscarData *od,
 				  const char *profile_encoding, const gchar *profile, const int profile_len,
 				  const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 	char *encoding;
 	static const char defencoding[] = {"text/aolrtf; charset=\"%s\""};
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	if (!profile && !awaymsg)
@@ -1041,9 +1066,6 @@ faim_export int aim_locate_setprofile(OscarSession *sess,
 	if (profile) {
 		/* no + 1 here because of %s */
 		encoding = malloc(strlen(defencoding) + strlen(profile_encoding));
-		if (encoding == NULL) {
-			return -ENOMEM;
-		}
 		snprintf(encoding, strlen(defencoding) + strlen(profile_encoding), defencoding, profile_encoding);
 		aim_tlvlist_add_str(&tl, 0x0001, encoding);
 		aim_tlvlist_add_raw(&tl, 0x0002, profile_len, (const guchar *)profile);
@@ -1061,9 +1083,6 @@ faim_export int aim_locate_setprofile(OscarSession *sess,
 	if (awaymsg) {
 		if (awaymsg_len) {
 			encoding = malloc(strlen(defencoding) + strlen(awaymsg_encoding));
-			if (encoding == NULL) {
-				return -ENOMEM;
-			}
 			snprintf(encoding, strlen(defencoding) + strlen(awaymsg_encoding), defencoding, awaymsg_encoding);
 			aim_tlvlist_add_str(&tl, 0x0003, encoding);
 			aim_tlvlist_add_raw(&tl, 0x0004, awaymsg_len, (const guchar *)awaymsg);
@@ -1072,16 +1091,15 @@ faim_export int aim_locate_setprofile(OscarSession *sess,
 			aim_tlvlist_add_noval(&tl, 0x0004);
 	}
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(&tl));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0002, 0x004, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0002, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0002, 0x004, 0x0000, snacid);
 
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -1089,28 +1107,28 @@ faim_export int aim_locate_setprofile(OscarSession *sess,
 /*
  * Subtype 0x0004 - Set your client's capabilities.
  */
-faim_export int aim_locate_setcaps(OscarSession *sess, guint32 caps)
+int
+aim_locate_setcaps(OscarData *od, guint32 caps)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	aim_tlvlist_add_caps(&tl, 0x0005, caps);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(&tl));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0002, 0x004, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0002, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0002, 0x004, 0x0000, snacid);
 
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -1124,32 +1142,33 @@ faim_export int aim_locate_setcaps(OscarSession *sess, guint32 caps)
  *        0x0003 - Away message
  *        0x0004 - Capabilities
  */
-faim_export int aim_locate_getinfo(OscarSession *sess, const char *sn, guint16 infotype)
+int
+aim_locate_getinfo(OscarData *od, const char *sn, guint16 infotype)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 12+1+strlen(sn))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 12+1+strlen(sn));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x0005, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, 0x0002, 0x0005, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, 0x0002, 0x0005, 0x0000, snacid);
-	aimbs_put16(&fr->data, infotype);
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
+	aim_putsnac(&frame->data, 0x0002, 0x0005, 0x0000, snacid);
+	byte_stream_put16(&frame->data, infotype);
+	byte_stream_put8(&frame->data, strlen(sn));
+	byte_stream_putstr(&frame->data, sn);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
 /* Subtype 0x0006 */
-static int userinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -1159,7 +1178,7 @@ static int userinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	int was_explicit;
 
 	userinfo = (aim_userinfo_t *)malloc(sizeof(aim_userinfo_t));
-	aim_info_extract(sess, bs, userinfo);
+	aim_info_extract(od, bs, userinfo);
 	tlvlist = aim_tlvlist_read(bs);
 
 	/* Profile will be 1 and 2 */
@@ -1181,14 +1200,14 @@ static int userinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	/* Caps will be 5 */
 	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1))) {
 		ByteStream cbs;
-		aim_bstream_init(&cbs, tlv->value, tlv->length);
-		userinfo->capabilities = aim_locate_getcaps(sess, &cbs, tlv->length);
+		byte_stream_init(&cbs, tlv->value, tlv->length);
+		userinfo->capabilities = aim_locate_getcaps(od, &cbs, tlv->length);
 		userinfo->present = AIM_USERINFO_PRESENT_CAPABILITIES;
 	}
 	aim_tlvlist_free(&tlvlist);
 
-	aim_locate_adduserinfo(sess, userinfo);
-	userinfo2 = aim_locate_finduserinfo(sess, userinfo->sn);
+	aim_locate_adduserinfo(od, userinfo);
+	userinfo2 = aim_locate_finduserinfo(od, userinfo->sn);
 	aim_info_free(userinfo);
 	free(userinfo);
 
@@ -1197,10 +1216,10 @@ static int userinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	 * this buddy's info explicitly, then notify them that we have info
 	 * for this buddy.
 	 */
-	was_explicit = aim_locate_gotuserinfo(sess, userinfo2->sn);
+	was_explicit = aim_locate_gotuserinfo(od, conn, userinfo2->sn);
 	if (was_explicit == TRUE)
-		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-			ret = userfunc(sess, rx, userinfo2);
+		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+			ret = userfunc(od, conn, frame, userinfo2);
 
 	return ret;
 }
@@ -1212,14 +1231,14 @@ static int userinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
  * privacy: 1 to allow searching, 0 to disallow.
  *
  */
-faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
+int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	aim_tlvlist_add_16(&tl, 0x000a, privacy);
@@ -1246,16 +1265,15 @@ faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, con
 	if (street)
 		aim_tlvlist_add_str(&tl, 0x0021, street);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(&tl));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x0009, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, 0x0002, 0x0009, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, 0x0002, 0x0009, 0x0000, snacid);
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_putsnac(&frame->data, 0x0002, 0x0009, 0x0000, snacid);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -1263,27 +1281,26 @@ faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, con
 /*
  * Subtype 0x000b - Huh? What is this?
  */
-faim_export int aim_locate_000b(OscarSession *sess, const char *sn)
+int aim_locate_000b(OscarData *od, const char *sn)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 		return -EINVAL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+1+strlen(sn));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x000b, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, 0x0002, 0x000b, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, 0x0002, 0x000b, 0x0000, snacid);
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
+	aim_putsnac(&frame->data, 0x0002, 0x000b, 0x0000, snacid);
+	byte_stream_put8(&frame->data, strlen(sn));
+	byte_stream_putstr(&frame->data, sn);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -1294,14 +1311,14 @@ faim_export int aim_locate_000b(OscarSession *sess, const char *sn)
  * XXX pass these in better
  *
  */
-faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
+int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
 	/* ?? privacy ?? */
@@ -1318,16 +1335,15 @@ faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest
 	if (interest5)
 		aim_tlvlist_add_str(&tl, 0x0000b, interest5);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(&tl));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x000f, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, 0x0002, 0x000f, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, 0x0002, 0x000f, 0x0000, 0);
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_putsnac(&frame->data, 0x0002, 0x000f, 0x0000, 0);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -1344,59 +1360,59 @@ faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest
  *        0x00000008 - Certification.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_locate_getinfoshort(OscarSession *sess, const char *sn, guint32 flags)
+int aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_LOCATE)) || !sn)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4+1+strlen(sn))))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+4+1+strlen(sn));
 
-	snacid = aim_cachesnac(sess, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);
+	snacid = aim_cachesnac(od, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);
 
-	aim_putsnac(&fr->data, 0x0002, 0x0015, 0x0000, snacid);
-	aimbs_put32(&fr->data, flags);
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
+	aim_putsnac(&frame->data, 0x0002, 0x0015, 0x0000, snacid);
+	byte_stream_put32(&frame->data, flags);
+	byte_stream_put8(&frame->data, strlen(sn));
+	byte_stream_putstr(&frame->data, sn);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0001)
-		return error(sess, mod, rx, snac, bs);
+		return error(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0003)
-		return rights(sess, mod, rx, snac, bs);
+		return rights(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0006)
-		return userinfo(sess, mod, rx, snac, bs);
+		return userinfo(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-static void locate_shutdown(OscarSession *sess, aim_module_t *mod)
+static void
+locate_shutdown(OscarData *od, aim_module_t *mod)
 {
 	aim_userinfo_t *del;
 
-	while (sess->locate.userinfo) {
-		del = sess->locate.userinfo;
-		sess->locate.userinfo = sess->locate.userinfo->next;
+	while (od->locate.userinfo) {
+		del = od->locate.userinfo;
+		od->locate.userinfo = od->locate.userinfo->next;
 		aim_info_free(del);
 		free(del);
 	}
 }
 
-faim_internal int locate_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+locate_modfirst(OscarData *od, aim_module_t *mod)
 {
-
-	mod->family = OSCAR_FAMILY_LOCATE;
+	mod->family = SNAC_FAMILY_LOCATE;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;

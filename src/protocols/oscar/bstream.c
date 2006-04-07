@@ -24,7 +24,7 @@
 
 #include "oscar.h"
 
-faim_internal int aim_bstream_init(ByteStream *bs, guint8 *data, int len)
+int byte_stream_init(ByteStream *bs, guint8 *data, int len)
 {
 
 	if (!bs)
@@ -37,17 +37,17 @@ faim_internal int aim_bstream_init(ByteStream *bs, guint8 *data, int len)
 	return 0;
 }
 
-faim_internal int aim_bstream_empty(ByteStream *bs)
+int byte_stream_empty(ByteStream *bs)
 {
 	return bs->len - bs->offset;
 }
 
-faim_internal int aim_bstream_curpos(ByteStream *bs)
+int byte_stream_curpos(ByteStream *bs)
 {
 	return bs->offset;
 }
 
-faim_internal int aim_bstream_setpos(ByteStream *bs, unsigned int off)
+int byte_stream_setpos(ByteStream *bs, unsigned int off)
 {
 
 	if (off > bs->len)
@@ -58,10 +58,10 @@ faim_internal int aim_bstream_setpos(ByteStream *bs, unsigned int off)
 	return off;
 }
 
-faim_internal void aim_bstream_rewind(ByteStream *bs)
+void byte_stream_rewind(ByteStream *bs)
 {
 
-	aim_bstream_setpos(bs, 0);
+	byte_stream_setpos(bs, 0);
 
 	return;
 }
@@ -71,10 +71,10 @@ faim_internal void aim_bstream_rewind(ByteStream *bs)
  * in a bstream.  I'm not sure if libfaim actually does
  * this anywhere...
  */
-faim_internal int aim_bstream_advance(ByteStream *bs, int n)
+int byte_stream_advance(ByteStream *bs, int n)
 {
 
-	if ((aim_bstream_curpos(bs) + n < 0) || (aim_bstream_empty(bs) < n))
+	if ((byte_stream_curpos(bs) + n < 0) || (byte_stream_empty(bs) < n))
 		return 0; /* XXX throw an exception */
 
 	bs->offset += n;
@@ -82,10 +82,10 @@ faim_internal int aim_bstream_advance(ByteStream *bs, int n)
 	return n;
 }
 
-faim_internal guint8 aimbs_get8(ByteStream *bs)
+guint8 byte_stream_get8(ByteStream *bs)
 {
 
-	if (aim_bstream_empty(bs) < 1)
+	if (byte_stream_empty(bs) < 1)
 		return 0; /* XXX throw an exception */
 
 	bs->offset++;
@@ -93,10 +93,10 @@ faim_internal guint8 aimbs_get8(ByteStream *bs)
 	return aimutil_get8(bs->data + bs->offset - 1);
 }
 
-faim_internal guint16 aimbs_get16(ByteStream *bs)
+guint16 byte_stream_get16(ByteStream *bs)
 {
 
-	if (aim_bstream_empty(bs) < 2)
+	if (byte_stream_empty(bs) < 2)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += 2;
@@ -104,10 +104,10 @@ faim_internal guint16 aimbs_get16(ByteStream *bs)
 	return aimutil_get16(bs->data + bs->offset - 2);
 }
 
-faim_internal guint32 aimbs_get32(ByteStream *bs)
+guint32 byte_stream_get32(ByteStream *bs)
 {
 
-	if (aim_bstream_empty(bs) < 4)
+	if (byte_stream_empty(bs) < 4)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += 4;
@@ -115,10 +115,10 @@ faim_internal guint32 aimbs_get32(ByteStream *bs)
 	return aimutil_get32(bs->data + bs->offset - 4);
 }
 
-faim_internal guint8 aimbs_getle8(ByteStream *bs)
+guint8 byte_stream_getle8(ByteStream *bs)
 {
 
-	if (aim_bstream_empty(bs) < 1)
+	if (byte_stream_empty(bs) < 1)
 		return 0; /* XXX throw an exception */
 
 	bs->offset++;
@@ -126,10 +126,10 @@ faim_internal guint8 aimbs_getle8(ByteStream *bs)
 	return aimutil_getle8(bs->data + bs->offset - 1);
 }
 
-faim_internal guint16 aimbs_getle16(ByteStream *bs)
+guint16 byte_stream_getle16(ByteStream *bs)
 {
 
-	if (aim_bstream_empty(bs) < 2)
+	if (byte_stream_empty(bs) < 2)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += 2;
@@ -137,10 +137,10 @@ faim_internal guint16 aimbs_getle16(ByteStream *bs)
 	return aimutil_getle16(bs->data + bs->offset - 2);
 }
 
-faim_internal guint32 aimbs_getle32(ByteStream *bs)
+guint32 byte_stream_getle32(ByteStream *bs)
 {
 
-	if (aim_bstream_empty(bs) < 4)
+	if (byte_stream_empty(bs) < 4)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += 4;
@@ -148,10 +148,10 @@ faim_internal guint32 aimbs_getle32(ByteStream *bs)
 	return aimutil_getle32(bs->data + bs->offset - 4);
 }
 
-faim_internal int aimbs_getrawbuf(ByteStream *bs, guint8 *buf, int len)
+int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len)
 {
 
-	if (aim_bstream_empty(bs) < len)
+	if (byte_stream_empty(bs) < len)
 		return 0;
 
 	memcpy(buf, bs->data + bs->offset, len);
@@ -160,14 +160,13 @@ faim_internal int aimbs_getrawbuf(ByteStream *bs, guint8 *buf, int len)
 	return len;
 }
 
-faim_internal guint8 *aimbs_getraw(ByteStream *bs, int len)
+guint8 *byte_stream_getraw(ByteStream *bs, int len)
 {
 	guint8 *ob;
 
-	if (!(ob = malloc(len)))
-		return NULL;
+	ob = malloc(len);
 
-	if (aimbs_getrawbuf(bs, ob, len) < len) {
+	if (byte_stream_getrawbuf(bs, ob, len) < len) {
 		free(ob);
 		return NULL;
 	}
@@ -175,14 +174,13 @@ faim_internal guint8 *aimbs_getraw(ByteStream *bs, int len)
 	return ob;
 }
 
-faim_internal char *aimbs_getstr(ByteStream *bs, int len)
+char *byte_stream_getstr(ByteStream *bs, int len)
 {
 	char *ob;
 
-	if (!(ob = malloc(len + 1)))
-		return NULL;
+	ob = malloc(len + 1);
 
-	if (aimbs_getrawbuf(bs, (guint8 *)ob, len) < len) {
+	if (byte_stream_getrawbuf(bs, (guint8 *)ob, len) < len) {
 		free(ob);
 		return NULL;
 	}
@@ -192,10 +190,10 @@ faim_internal char *aimbs_getstr(ByteStream *bs, int len)
 	return ob;
 }
 
-faim_internal int aimbs_put8(ByteStream *bs, guint8 v)
+int byte_stream_put8(ByteStream *bs, guint8 v)
 {
 
-	if (aim_bstream_empty(bs) < 1)
+	if (byte_stream_empty(bs) < 1)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_put8(bs->data + bs->offset, v);
@@ -203,10 +201,10 @@ faim_internal int aimbs_put8(ByteStream *bs, guint8 v)
 	return 1;
 }
 
-faim_internal int aimbs_put16(ByteStream *bs, guint16 v)
+int byte_stream_put16(ByteStream *bs, guint16 v)
 {
 
-	if (aim_bstream_empty(bs) < 2)
+	if (byte_stream_empty(bs) < 2)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_put16(bs->data + bs->offset, v);
@@ -214,10 +212,10 @@ faim_internal int aimbs_put16(ByteStream *bs, guint16 v)
 	return 2;
 }
 
-faim_internal int aimbs_put32(ByteStream *bs, guint32 v)
+int byte_stream_put32(ByteStream *bs, guint32 v)
 {
 
-	if (aim_bstream_empty(bs) < 4)
+	if (byte_stream_empty(bs) < 4)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_put32(bs->data + bs->offset, v);
@@ -225,10 +223,10 @@ faim_internal int aimbs_put32(ByteStream *bs, guint32 v)
 	return 1;
 }
 
-faim_internal int aimbs_putle8(ByteStream *bs, guint8 v)
+int byte_stream_putle8(ByteStream *bs, guint8 v)
 {
 
-	if (aim_bstream_empty(bs) < 1)
+	if (byte_stream_empty(bs) < 1)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_putle8(bs->data + bs->offset, v);
@@ -236,10 +234,10 @@ faim_internal int aimbs_putle8(ByteStream *bs, guint8 v)
 	return 1;
 }
 
-faim_internal int aimbs_putle16(ByteStream *bs, guint16 v)
+int byte_stream_putle16(ByteStream *bs, guint16 v)
 {
 
-	if (aim_bstream_empty(bs) < 2)
+	if (byte_stream_empty(bs) < 2)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_putle16(bs->data + bs->offset, v);
@@ -247,10 +245,10 @@ faim_internal int aimbs_putle16(ByteStream *bs, guint16 v)
 	return 2;
 }
 
-faim_internal int aimbs_putle32(ByteStream *bs, guint32 v)
+int byte_stream_putle32(ByteStream *bs, guint32 v)
 {
 
-	if (aim_bstream_empty(bs) < 4)
+	if (byte_stream_empty(bs) < 4)
 		return 0; /* XXX throw an exception */
 
 	bs->offset += aimutil_putle32(bs->data + bs->offset, v);
@@ -259,10 +257,10 @@ faim_internal int aimbs_putle32(ByteStream *bs, guint32 v)
 }
 
 
-faim_internal int aimbs_putraw(ByteStream *bs, const guint8 *v, int len)
+int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len)
 {
 
-	if (aim_bstream_empty(bs) < len)
+	if (byte_stream_empty(bs) < len)
 		return 0; /* XXX throw an exception */
 
 	memcpy(bs->data + bs->offset, v, len);
@@ -271,18 +269,18 @@ faim_internal int aimbs_putraw(ByteStream *bs, const guint8 *v, int len)
 	return len;
 }
 
-faim_internal int aimbs_putstr(ByteStream *bs, const char *str)
+int byte_stream_putstr(ByteStream *bs, const char *str)
 {
-	return aimbs_putraw(bs, (guint8 *)str, strlen(str));
+	return byte_stream_putraw(bs, (guint8 *)str, strlen(str));
 }
 
-faim_internal int aimbs_putbs(ByteStream *bs, ByteStream *srcbs, int len)
+int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len)
 {
 
-	if (aim_bstream_empty(srcbs) < len)
+	if (byte_stream_empty(srcbs) < len)
 		return 0; /* XXX throw exception (underrun) */
 
-	if (aim_bstream_empty(bs) < len)
+	if (byte_stream_empty(bs) < len)
 		return 0; /* XXX throw exception (overflow) */
 
 	memcpy(bs->data + bs->offset, srcbs->data + srcbs->offset, len);

@@ -25,17 +25,17 @@
 
 #include "oscar.h"
 
-faim_export int aim_ads_requestads(OscarSession *sess, OscarConnection *conn)
+int aim_ads_requestads(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n(sess, conn, 0x0005, 0x0002);
+	return aim_genericreq_n(od, conn, 0x0005, 0x0002);
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
 {
 	return 0;
 }
 
-faim_internal int adverts_modfirst(OscarSession *sess, aim_module_t *mod)
+int adverts_modfirst(OscarData *od, aim_module_t *mod)
 {
 
 	mod->family = 0x0005;

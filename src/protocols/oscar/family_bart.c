@@ -31,34 +31,33 @@
 /**
  * Subtype 0x0002 - Upload your icon.
  *
- * @param sess The oscar session.
- * @param conn The icon connection for this session.
+ * @param od The oscar session.
  * @param icon The raw data of the icon image file.
  * @param iconlen Length of the raw data of the icon image file.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_upload(OscarSession *sess, const guint8 *icon, guint16 iconlen)
+int
+aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 	FlapFrame *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !icon || !iconlen)
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0010)) || !icon || !iconlen)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 2 + 2+iconlen)))
-		return -ENOMEM;
-	snacid = aim_cachesnac(sess, 0x0010, 0x0002, 0x0000, NULL, 0);
+	fr = flap_frame_new(od, 0x02, 10 + 2 + 2+iconlen);
+	snacid = aim_cachesnac(od, 0x0010, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0010, 0x0002, 0x0000, snacid);
 
 	/* The reference number for the icon */
-	aimbs_put16(&fr->data, 1);
+	byte_stream_put16(&fr->data, 1);
 
 	/* The icon */
-	aimbs_put16(&fr->data, iconlen);
-	aimbs_putraw(&fr->data, icon, iconlen);
+	byte_stream_put16(&fr->data, iconlen);
+	byte_stream_putraw(&fr->data, icon, iconlen);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, fr);
 
 	return 0;
 }
@@ -68,19 +67,20 @@ faim_export int aim_bart_upload(OscarSession *sess, const guint8 *icon, guint16 
  *
  * You get this honky after you upload a buddy icon.
  */
-static int uploadack(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+uploadack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 something, somethingelse;
 	guint8 onemorething;
 
-	something = aimbs_get16(bs);
-	somethingelse = aimbs_get16(bs);
-	onemorething = aimbs_get8(bs);
+	something = byte_stream_get16(bs);
+	somethingelse = byte_stream_get16(bs);
+	onemorething = byte_stream_get8(bs);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame);
 
 	return ret;
 }
@@ -88,41 +88,40 @@ static int uploadack(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 /**
  * Subtype 0x0004 - Request someone's icon.
  *
- * @param sess The oscar session.
- * @param conn The icon connection for this session.
+ * @param od The oscar session.
  * @param sn The screen name of the person who's icon you are requesting.
  * @param iconcsum The MD5 checksum of the icon you are requesting.
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_request(OscarSession *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
+int
+aim_bart_request(OscarData *od, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 	FlapFrame *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0010)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0010)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 1+strlen(sn) + 4 + 1+iconcsumlen)))
-		return -ENOMEM;
-	snacid = aim_cachesnac(sess, 0x0010, 0x0004, 0x0000, NULL, 0);
+	fr = flap_frame_new(od, 0x02, 10 + 1+strlen(sn) + 4 + 1+iconcsumlen);
+	snacid = aim_cachesnac(od, 0x0010, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0010, 0x0004, 0x0000, snacid);
 
 	/* Screen name */
-	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putstr(&fr->data, sn);
+	byte_stream_put8(&fr->data, strlen(sn));
+	byte_stream_putstr(&fr->data, sn);
 
 	/* Some numbers.  You like numbers, right? */
-	aimbs_put8(&fr->data, 0x01);
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put8(&fr->data, iconcsumtype);
+	byte_stream_put8(&fr->data, 0x01);
+	byte_stream_put16(&fr->data, 0x0001);
+	byte_stream_put8(&fr->data, iconcsumtype);
 
 	/* Icon string */
-	aimbs_put8(&fr->data, iconcsumlen);
-	aimbs_putraw(&fr->data, iconcsum, iconcsumlen);
+	byte_stream_put8(&fr->data, iconcsumlen);
+	byte_stream_putraw(&fr->data, iconcsum, iconcsumlen);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, fr);
 
 	return 0;
 }
@@ -132,7 +131,8 @@ faim_export int aim_bart_request(OscarSession *sess, const char *sn, guint8 icon
  *
  * This is sent in response to a buddy icon request.
  */
-static int parseicon(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+parseicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -140,16 +140,16 @@ static int parseicon(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 	guint16 flags, iconlen;
 	guint8 iconcsumtype, iconcsumlen, *iconcsum, *icon;
 
-	sn = aimbs_getstr(bs, aimbs_get8(bs));
-	flags = aimbs_get16(bs);
-	iconcsumtype = aimbs_get8(bs);
-	iconcsumlen = aimbs_get8(bs);
-	iconcsum = aimbs_getraw(bs, iconcsumlen);
-	iconlen = aimbs_get16(bs);
-	icon = aimbs_getraw(bs, iconlen);
+	sn = byte_stream_getstr(bs, byte_stream_get8(bs));
+	flags = byte_stream_get16(bs);
+	iconcsumtype = byte_stream_get8(bs);
+	iconcsumlen = byte_stream_get8(bs);
+	iconcsum = byte_stream_getraw(bs, iconcsumlen);
+	iconlen = byte_stream_get16(bs);
+	icon = byte_stream_getraw(bs, iconlen);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, sn, iconcsumtype, iconcsum, iconcsumlen, icon, iconlen);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, sn, iconcsumtype, iconcsum, iconcsumlen, icon, iconlen);
 
 	free(sn);
 	free(iconcsum);
@@ -158,20 +158,20 @@ static int parseicon(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0003)
-		return uploadack(sess, mod, rx, snac, bs);
+		return uploadack(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0005)
-		return parseicon(sess, mod, rx, snac, bs);
+		return parseicon(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int bart_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+bart_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0010;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;

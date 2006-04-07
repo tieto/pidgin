@@ -28,13 +28,15 @@
 #include <string.h>
 
 /* Stored in the ->internal of chat connections */
-struct chatconnpriv {
+struct chatconnpriv
+{
 	guint16 exchange;
 	char *name;
 	guint16 instance;
 };
 
-faim_internal void oscar_connection_destroy_chat(OscarSession *sess, OscarConnection *conn)
+void
+flap_connection_destroy_chat(OscarData *od, FlapConnection *conn)
 {
 	struct chatconnpriv *ccp = (struct chatconnpriv *)conn->internal;
 
@@ -45,14 +47,15 @@ faim_internal void oscar_connection_destroy_chat(OscarSession *sess, OscarConnec
 	return;
 }
 
-faim_export char *aim_chat_getname(OscarConnection *conn)
+char *
+aim_chat_getname(FlapConnection *conn)
 {
 	struct chatconnpriv *ccp;
 
 	if (!conn)
 		return NULL;
 
-	if (conn->type != AIM_CONN_TYPE_CHAT)
+	if (conn->type != SNAC_FAMILY_CHAT)
 		return NULL;
 
 	ccp = (struct chatconnpriv *)conn->internal;
@@ -61,19 +64,20 @@ faim_export char *aim_chat_getname(OscarConnection *conn)
 }
 
 /* XXX get this into conn.c -- evil!! */
-faim_export OscarConnection *aim_chat_getconn(OscarSession *sess, const char *name)
+FlapConnection *
+aim_chat_getconn(OscarData *od, const char *name)
 {
 	GList *cur;
 
-	for (cur = sess->oscar_connections; cur; cur = cur->next)
+	for (cur = od->oscar_connections; cur; cur = cur->next)
 	{
-		OscarConnection *conn;
+		FlapConnection *conn;
 		struct chatconnpriv *ccp;
 
 		conn = cur->data;
 		ccp = (struct chatconnpriv *)conn->internal;
 
-		if (conn->type != AIM_CONN_TYPE_CHAT)
+		if (conn->type != SNAC_FAMILY_CHAT)
 			continue;
 		if (!conn->internal) {
 			gaim_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", conn->fd);
@@ -87,7 +91,8 @@ faim_export OscarConnection *aim_chat_getconn(OscarSession *sess, const char *na
 	return NULL;
 }
 
-faim_export int aim_chat_attachname(OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance)
+int
+aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname, guint16 instance)
 {
 	struct chatconnpriv *ccp;
 
@@ -97,8 +102,7 @@ faim_export int aim_chat_attachname(OscarConnection *conn, guint16 exchange, con
 	if (conn->internal)
 		free(conn->internal);
 
-	if (!(ccp = malloc(sizeof(struct chatconnpriv))))
-		return -ENOMEM;
+	ccp = g_new(struct chatconnpriv, 1);
 
 	ccp->exchange = exchange;
 	ccp->name = strdup(roomname);
@@ -109,29 +113,31 @@ faim_export int aim_chat_attachname(OscarConnection *conn, guint16 exchange, con
 	return 0;
 }
 
-faim_internal int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
+int
+aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 {
 	int namelen;
 
 	if (!bs || !outinfo)
 		return 0;
 
-	outinfo->exchange = aimbs_get16(bs);
-	namelen = aimbs_get8(bs);
-	outinfo->name = aimbs_getstr(bs, namelen);
-	outinfo->instance = aimbs_get16(bs);
+	outinfo->exchange = byte_stream_get16(bs);
+	namelen = byte_stream_get8(bs);
+	outinfo->name = byte_stream_getstr(bs, namelen);
+	outinfo->instance = byte_stream_get16(bs);
 
 	return 0;
 }
 
-faim_export int aim_chat_leaveroom(OscarSession *sess, const char *name)
+int
+aim_chat_leaveroom(OscarData *od, const char *name)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 
-	if (!(conn = aim_chat_getconn(sess, name)))
+	if (!(conn = aim_chat_getconn(od, name)))
 		return -ENOENT;
 
-	aim_conn_close(sess, conn);
+	flap_connection_close(od, conn);
 
 	return 0;
 }
@@ -144,7 +150,8 @@ faim_export int aim_chat_leaveroom(OscarSession *sess, const char *name)
  *	- Language (English)
  *
  */
-static int infoupdate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_userinfo_t *userinfo = NULL;
 	aim_rxcallback_t userfunc;
@@ -163,14 +170,14 @@ static int infoupdate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 
 	aim_chat_readroominfo(bs, &roominfo);
 
-	detaillevel = aimbs_get8(bs);
+	detaillevel = byte_stream_get8(bs);
 
 	if (detaillevel != 0x02) {
 		gaim_debug_misc("oscar", "faim: chat_roomupdateinfo: detail level %d not supported\n", detaillevel);
 		return 1;
 	}
 
-	tlvcount = aimbs_get16(bs);
+	tlvcount = byte_stream_get16(bs);
 
 	/*
 	 * Everything else are TLVs.
@@ -202,10 +209,10 @@ static int infoupdate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 		/* Allocate enough userinfo structs for all occupants */
 		userinfo = calloc(usercount, sizeof(aim_userinfo_t));
 
-		aim_bstream_init(&occbs, tmptlv->value, tmptlv->length);
+		byte_stream_init(&occbs, tmptlv->value, tmptlv->length);
 
 		while (curoccupant < usercount)
-			aim_info_extract(sess, &occbs, &userinfo[curoccupant++]);
+			aim_info_extract(od, &occbs, &userinfo[curoccupant++]);
 	}
 
 	/*
@@ -289,9 +296,9 @@ static int infoupdate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 	if (aim_tlv_gettlv(tlvlist, 0x000da, 1))
 		maxvisiblemsglen = aim_tlv_get16(tlvlist, 0x00da, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype))) {
-		ret = userfunc(sess,
-				rx,
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
+		ret = userfunc(od, conn,
+				frame,
 				&roominfo,
 				roomname,
 				usercount,
@@ -319,20 +326,21 @@ static int infoupdate(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_
 }
 
 /* Subtypes 0x0003 and 0x0004 */
-static int userlistchange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+userlistchange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_userinfo_t *userinfo = NULL;
 	aim_rxcallback_t userfunc;
 	int curcount = 0, ret = 0;
 
-	while (aim_bstream_empty(bs)) {
+	while (byte_stream_empty(bs)) {
 		curcount++;
 		userinfo = realloc(userinfo, curcount * sizeof(aim_userinfo_t));
-		aim_info_extract(sess, bs, &userinfo[curcount-1]);
+		aim_info_extract(od, bs, &userinfo[curcount-1]);
 	}
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, curcount, userinfo);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, curcount, userinfo);
 
 	aim_info_free(userinfo);
 	free(userinfo);
@@ -352,23 +360,23 @@ static int userlistchange(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
  *
  * XXX convert this to use tlvchains
  */
-faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language)
+int
+aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language)
 {
 	int i;
-	FlapFrame *fr;
+	FlapFrame *frame;
 	IcbmCookie *cookie;
 	aim_snacid_t snacid;
 	guint8 ckstr[8];
 	aim_tlvlist_t *otl = NULL, *itl = NULL;
 
-	if (!sess || !conn || !msg || (msglen <= 0))
+	if (!od || !conn || !msg || (msglen <= 0))
 		return 0;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(sess, 0x000e, 0x0005, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x000e, 0x0005, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x000e, 0x0005, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x000e, 0x0005, 0x0000, snacid);
 
 	/*
 	 * Cookie
@@ -382,11 +390,11 @@ faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guin
 	cookie = aim_mkcookie(ckstr, AIM_COOKIETYPE_CHAT, NULL);
 	cookie->data = NULL; /* XXX store something useful here */
 
-	aim_cachecookie(sess, cookie);
+	aim_cachecookie(od, cookie);
 
 	/* ICBM Header */
-	aimbs_putraw(&fr->data, ckstr, 8); /* Cookie */
-	aimbs_put16(&fr->data, 0x0003); /* Channel */
+	byte_stream_putraw(&frame->data, ckstr, 8); /* Cookie */
+	byte_stream_put16(&frame->data, 0x0003); /* Channel */
 
 	/*
 	 * Type 1: Flag meaning this message is destined to the room.
@@ -431,12 +439,12 @@ faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guin
 	 */
 	aim_tlvlist_add_frozentlvlist(&otl, 0x0005, &itl);
 
-	aim_tlvlist_write(&fr->data, &otl);
+	aim_tlvlist_write(&frame->data, &otl);
 
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&otl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -466,7 +474,8 @@ faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guin
  *       possibly others
  *
  */
-static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0, i;
 	aim_rxcallback_t userfunc;
@@ -485,9 +494,9 @@ static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
 	 * Read ICBM Cookie.
 	 */
 	for (i = 0; i < 8; i++)
-		cookie[i] = aimbs_get8(bs);
+		cookie[i] = byte_stream_get8(bs);
 
-	if ((ck = aim_uncachecookie(sess, cookie, AIM_COOKIETYPE_CHAT))) {
+	if ((ck = aim_uncachecookie(od, cookie, AIM_COOKIETYPE_CHAT))) {
 		free(ck->data);
 		free(ck);
 	}
@@ -498,7 +507,7 @@ static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
 	 * Channel 0x0003 is used for chat messages.
 	 *
 	 */
-	channel = aimbs_get16(bs);
+	channel = byte_stream_get16(bs);
 
 	if (channel != 0x0003) {
 		gaim_debug_misc("oscar", "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
@@ -519,8 +528,8 @@ static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
 
 		userinfotlv = aim_tlv_gettlv(otl, 0x0003, 1);
 
-		aim_bstream_init(&tbs, userinfotlv->value, userinfotlv->length);
-		aim_info_extract(sess, &tbs, &userinfo);
+		byte_stream_init(&tbs, userinfotlv->value, userinfotlv->length);
+		aim_info_extract(od, &tbs, &userinfo);
 	}
 
 #if 0
@@ -542,7 +551,7 @@ static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
 		ByteStream tbs;
 
 		msgblock = aim_tlv_gettlv(otl, 0x0005, 1);
-		aim_bstream_init(&tbs, msgblock->value, msgblock->length);
+		byte_stream_init(&tbs, msgblock->value, msgblock->length);
 		itl = aim_tlvlist_read(&tbs);
 
 		/*
@@ -568,8 +577,8 @@ static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
 		aim_tlvlist_free(&itl);
 	}
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, &userinfo, len, msg, encoding, language);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, &userinfo, len, msg, encoding, language);
 
 	aim_info_free(&userinfo);
 	free(msg);
@@ -578,22 +587,22 @@ static int incomingim_ch3(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, 
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0002)
-		return infoupdate(sess, mod, rx, snac, bs);
+		return infoupdate(od, conn, mod, frame, snac, bs);
 	else if ((snac->subtype == 0x0003) || (snac->subtype == 0x0004))
-		return userlistchange(sess, mod, rx, snac, bs);
+		return userlistchange(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0006)
-		return incomingim_ch3(sess, mod, rx, snac, bs);
+		return incomingim_ch3(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int chat_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+chat_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x000e;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;

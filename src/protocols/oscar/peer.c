@@ -19,59 +19,33 @@
 */
 
 /*
- * Oscar File transfer (OFT) and Oscar Direct Connect (ODC).
- * (ODC is also referred to as DirectIM and IM Image.)
- *
- * There are a few static helper functions at the top, then
- * ODC stuff, then ft stuff.
- *
- * I feel like this is a good place to explain OFT, so I'm going to
- * do just that.  Each OFT packet has a header type.  I guess this
- * is pretty similar to the subtype of a SNAC packet.  The type
- * basically tells the other client the meaning of the OFT packet.
- * There are two distinct types of file transfer, which I usually
- * call "sendfile" and "getfile."  Sendfile is when you send a file
- * to another AIM user.  Getfile is when you share a group of files,
- * and other users request that you send them the files.
- *
- * A typical sendfile file transfer goes like this:
- *   1) Sender sends a channel 2 ICBM telling the other user that
- *      we want to send them a file.  At the same time, we open a
- *      listener socket (this should be done before sending the
- *      ICBM) on some port, and wait for them to connect to us.
- *      The ICBM we sent should contain our IP address and the port
- *      number that we're listening on.
- *   2) The receiver connects to the sender on the given IP address
- *      and port.  After the connection is established, the receiver
- *      sends an ICBM signifying that we are ready and waiting.
- *   3) The sender sends an OFT PROMPT message over the OFT
- *      connection.
- *   4) The receiver of the file sends back an exact copy of this
- *      OFT packet, except the cookie is filled in with the cookie
- *      from the ICBM.  I think this might be an attempt to verify
- *      that the user that is connected is actually the guy that
- *      we sent the ICBM to.  Oh, I've been calling this the ACK.
- *   5) The sender starts sending raw data across the connection
- *      until the entire file has been sent.
- *   6) The receiver knows the file is finished because the sender
- *      sent the file size in an earlier OFT packet.  So then the
- *      receiver sends the DONE thingy (after filling in the
- *      "received" checksum and size) and closes the connection.
+ * Functions dealing with peer connections.  This includes the code
+ * used to establish a peer connection for both Oscar File transfer
+ * (OFT) and Oscar Direct Connect (ODC).  (ODC is also referred to
+ * as DirectIM and IM Image.)
  */
 
 #ifdef HAVE_CONFIG_H
 #include  <config.h>
 #endif
 
+/* From the oscar PRPL */
 #include "oscar.h"
 #include "peer.h"
+
+/* From Gaim */
+#include "conversation.h"
+#include "ft.h"
+#include "network.h"
+#include "notify.h"
+#include "request.h"
+#include "util.h"
 
 #ifndef _WIN32
 #include <stdio.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/utsname.h> /* for aim_odc_initiate */
 #include <arpa/inet.h> /* for inet_ntoa */
 #include <limits.h> /* for UINT_MAX */
 #endif
@@ -94,1152 +68,929 @@
 #define PF_INET6 PF_INET
 #endif
 
-struct aim_odc_intdata {
-	guint8 cookie[8];
-	char sn[MAXSNLEN+1];
-	char ip[22];
-};
-
-/**
- * Convert the directory separator from / (0x2f) to ^A (0x01)
- *
- * @param name The filename to convert.
- */
-static void
-aim_oft_dirconvert_tostupid(char *name)
-{
-	while (name[0]) {
-		if (name[0] == 0x01)
-			name[0] = G_DIR_SEPARATOR;
-		name++;
-	}
-}
-
-/**
- * Convert the directory separator from ^A (0x01) to / (0x2f)
- *
- * @param name The filename to convert.
- */
-static void
-aim_oft_dirconvert_fromstupid(char *name)
-{
-	while (name[0]) {
-		if (name[0] == G_DIR_SEPARATOR)
-			name[0] = 0x01;
-		name++;
-	}
-}
-
-/**
- * Calculate oft checksum of buffer
- *
- * Prevcheck should be 0xFFFF0000 when starting a checksum of a file.  The
- * checksum is kind of a rolling checksum thing, so each time you get bytes
- * of a file you just call this puppy and it updates the checksum.  You can
- * calculate the checksum of an entire file by calling this in a while or a
- * for loop, or something.
- *
- * Thanks to Graham Booker for providing this improved checksum routine,
- * which is simpler and should be more accurate than Josh Myer's original
- * code. -- wtm
- *
- * This algorithm works every time I have tried it.  The other fails
- * sometimes.  So, AOL who thought this up?  It has got to be the weirdest
- * checksum I have ever seen.
- *
- * @param buffer Buffer of data to checksum.  Man I'd like to buff her...
- * @param bufsize Size of buffer.
- * @param prevcheck Previous checksum.
- */
-guint32
-aim_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevcheck)
-{
-	guint32 check = (prevcheck >> 16) & 0xffff, oldcheck;
-	int i;
-	unsigned short val;
-
-	for (i=0; i<bufferlen; i++) {
-		oldcheck = check;
-		if (i&1)
-			val = buffer[i];
-		else
-			val = buffer[i] << 8;
-		check -= val;
-		/*
-		 * The following appears to be necessary.... It happens
-		 * every once in a while and the checksum doesn't fail.
-		 */
-		if (check > oldcheck)
-			check--;
-	}
-	check = ((check & 0x0000ffff) + (check >> 16));
-	check = ((check & 0x0000ffff) + (check >> 16));
-	return check << 16;
-}
-
-guint32
-aim_oft_checksum_file(char *filename)
-{
-	FILE *fd;
-	guint32 checksum = 0xffff0000;
-
-	if ((fd = fopen(filename, "rb"))) {
-		int bytes;
-		guint8 buffer[1024];
-
-		while ((bytes = fread(buffer, 1, 1024, fd)))
-			checksum = aim_oft_checksum_chunk(buffer, bytes, checksum);
-		fclose(fd);
-	}
-
-	return checksum;
-}
-
-/**
- * After establishing a listening socket, this is called to accept a connection.  It
- * clones the conn used by the listener, and passes both of these to a signal handler.
- * The signal handler should close the listener conn and keep track of the new conn,
- * since this is what is used for file transfers and what not.
- *
- * @param sess The session.
- * @param cur The conn the incoming connection is on.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_handlerendconnect(OscarSession *sess, OscarConnection *cur)
-{
-	int acceptfd = 0;
-	struct sockaddr addr;
-	socklen_t addrlen = sizeof(addr);
-	int ret = 0;
-	OscarConnection *newconn;
-	char ip[20];
-	unsigned short port;
-
-	if ((acceptfd = accept(cur->fd, &addr, &addrlen)) == -1)
-		return 0; /* not an error */
-
-	if ((addr.sa_family != PF_INET) && (addr.sa_family != PF_INET6)) {
-		close(acceptfd);
-		aim_conn_close(sess, cur);
-		return -1;
-	}
-
-	strncpy(ip, inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr), sizeof(ip));
-	port = ntohs(((struct sockaddr_in *)&addr)->sin_port);
-
-	if (!(newconn = aim_cloneconn(sess, cur))) {
-		close(acceptfd);
-		aim_conn_close(sess, cur);
-		return -ENOMEM;
-	}
-
-	newconn->type = AIM_CONN_TYPE_RENDEZVOUS;
-	newconn->fd = acceptfd;
-
-	if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
-		aim_rxcallback_t userfunc;
-		struct aim_odc_intdata *priv;
-
-		priv = (struct aim_odc_intdata *)(newconn->internal = cur->internal);
-		cur->internal = NULL;
-		snprintf(priv->ip, sizeof(priv->ip), "%s:%hu", ip, port);
-
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIM_ESTABLISHED)))
-			ret = userfunc(sess, NULL, newconn, cur);
-
-	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_GETFILE) {
-	} else if (newconn->subtype == AIM_CONN_SUBTYPE_OFT_SENDFILE) {
-		aim_rxcallback_t userfunc;
-
-		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, PEER_TYPE_ESTABLISHED)))
-			ret = userfunc(sess, NULL, newconn, cur);
-
-	} else {
-		gaim_debug_warning("oscar", "Got a connection on a listener that's not rendezvous.  Closing connection.\n");
-		aim_conn_close(sess, newconn);
-		ret = -1;
-	}
-
-	return ret;
-}
-
-/**
- * Send client-to-client typing notification over an established direct connection.
- *
- * @param sess The session.
- * @param conn The already-connected ODC connection.
- * @param typing If 0x0002, sends a "typing" message, 0x0001 sends "typed," and
- *        0x0000 sends "stopped."
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_odc_send_typing(OscarSession *sess, OscarConnection *conn, int typing)
-{
-	struct aim_odc_intdata *intdata = (struct aim_odc_intdata *)conn->internal;
-	FlapFrame *fr;
-	ByteStream *hdrbs;
-	guint8 *hdr;
-	int hdrlen = 0x44;
-
-	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS))
-		return -EINVAL;
-
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_OFT, 0x0001, 0)))
-		return -ENOMEM;
-	memcpy(fr->hdr.rend.magic, "ODC2", 4);
-	fr->hdr.rend.hdrlen = hdrlen + 8;
-
-	if (!(hdr = calloc(1, hdrlen))) {
-		aim_frame_destroy(fr);
-		return -ENOMEM;
-	}
-
-	hdrbs = &(fr->data);
-	aim_bstream_init(hdrbs, hdr, hdrlen);
-
-	aimbs_put16(hdrbs, 0x0006);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_putraw(hdrbs, intdata->cookie, 8);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put32(hdrbs, 0x00000000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-
-	if (typing == 0x0002)
-		aimbs_put16(hdrbs, 0x0002 | 0x0008);
-	else if (typing == 0x0001)
-		aimbs_put16(hdrbs, 0x0002 | 0x0004);
-	else
-		aimbs_put16(hdrbs, 0x0002);
-
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_putstr(hdrbs, sess->sn);
-
-	aim_bstream_setpos(hdrbs, 52); /* bleeehh */
-
-	aimbs_put8(hdrbs, 0x00);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put8(hdrbs, 0x00);
-
-	/* end of hdr */
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/**
- * Send client-to-client IM over an established direct connection.
- * Call this just like you would aim_send_im, to send a directim.
- *
- * @param sess The session.
- * @param conn The already-connected ODC connection.
- * @param msg Null-terminated string to send.
- * @param len The length of the message to send, including binary data.
- * @param encoding See the AIM_CHARSET_* defines in oscar.h
- * @param isawaymsg 0 if this is not an auto-response, 1 if it is.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_odc_send_im(OscarSession *sess, OscarConnection *conn, const char *msg, int len, int encoding, int isawaymsg)
-{
-	FlapFrame *fr;
-	ByteStream *hdrbs;
-	struct aim_odc_intdata *intdata = (struct aim_odc_intdata *)conn->internal;
-	int hdrlen = 0x44;
-	guint8 *hdr;
-
-	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS) || !msg)
-		return -EINVAL;
-
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, 0)))
-		return -ENOMEM;
-
-	memcpy(fr->hdr.rend.magic, "ODC2", 4);
-	fr->hdr.rend.hdrlen = hdrlen + 8;
-
-	if (!(hdr = calloc(1, hdrlen + len))) {
-		aim_frame_destroy(fr);
-		return -ENOMEM;
-	}
-
-	hdrbs = &(fr->data);
-	aim_bstream_init(hdrbs, hdr, hdrlen + len);
-
-	aimbs_put16(hdrbs, 0x0006);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_putraw(hdrbs, intdata->cookie, 8);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put32(hdrbs, len);
-	aimbs_put16(hdrbs, encoding);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-
-	/* flags - used for typing notification and to mark if this is an away message */
-	aimbs_put16(hdrbs, 0x0000 | isawaymsg);
-
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_putstr(hdrbs, sess->sn);
-
-	aim_bstream_setpos(hdrbs, 52); /* bleeehh */
-
-	aimbs_put8(hdrbs, 0x00);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put8(hdrbs, 0x00);
-
-	/* end of hdr2 */
-
-#if 0 /* XXX - this is how you send buddy icon info... */
-	aimbs_put16(hdrbs, 0x0008);
-	aimbs_put16(hdrbs, 0x000c);
-	aimbs_put16(hdrbs, 0x0000);
-	aimbs_put16(hdrbs, 0x1466);
-	aimbs_put16(hdrbs, 0x0001);
-	aimbs_put16(hdrbs, 0x2e0f);
-	aimbs_put16(hdrbs, 0x393e);
-	aimbs_put16(hdrbs, 0xcac8);
-#endif
-	aimbs_putraw(hdrbs, (guchar *)msg, len);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/**
- * Get the screen name of the peer of a direct connection.
- *
- * @param conn The ODC connection.
- * @return The screen name of the dude, or NULL if there was an anomaly.
- */
-const char *
-aim_odc_getsn(OscarConnection *conn)
-{
-	struct aim_odc_intdata *intdata;
-
-	if (!conn || !conn->internal)
-		return NULL;
-
-	if ((conn->type != AIM_CONN_TYPE_RENDEZVOUS) ||
-			(conn->subtype != AIM_CONN_SUBTYPE_OFT_DIRECTIM))
-		return NULL;
-
-	intdata = (struct aim_odc_intdata *)conn->internal;
-
-	return intdata->sn;
-}
-
-/**
- * Get the cookie of a direct connection.
- *
- * @param conn The ODC connection.
- * @return The cookie, an 8 byte unterminated string, or NULL if there was an anomaly.
- */
-const guchar *
-aim_odc_getcookie(OscarConnection *conn)
-{
-	struct aim_odc_intdata *intdata;
-
-	if (!conn || !conn->internal)
-		return NULL;
-
-	intdata = (struct aim_odc_intdata *)conn->internal;
-
-	return intdata->cookie;
-}
-
-/**
- * Find the conn of a direct connection with the given buddy.
- *
- * @param sess The session.
- * @param sn The screen name of the buddy whose direct connection you want to find.
- * @return The conn for the direct connection with the given buddy, or NULL if no
- *         connection was found.
- */
-OscarConnection *
-aim_odc_getconn(OscarSession *sess, const char *sn)
+PeerConnection *
+peer_connection_find_by_type(OscarData *od, const char *sn, OscarCapability type)
 {
 	GList *cur;
-	struct aim_odc_intdata *intdata;
+	PeerConnection *conn;
 
-	if (!sess || !sn || !strlen(sn))
-		return NULL;
-
-	for (cur = sess->oscar_connections; cur; cur = cur->next)
+	for (cur = od->peer_connections; cur != NULL; cur = cur->next)
 	{
-		OscarConnection *conn;
 		conn = cur->data;
-		if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) && (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)) {
-			intdata = conn->internal;
-			if (!aim_sncmp(intdata->sn, sn))
-				return conn;
-		}
+		if ((conn->type == type) && !aim_sncmp(conn->sn, sn))
+			return conn;
 	}
 
 	return NULL;
 }
 
 /**
- * For those times when we want to open up the direct connection channel ourselves.
- *
- * You'll want to set up some kind of watcher on this socket.
- * When the state changes, call aim_handlerendconnection with
- * the connection returned by this.  aim_handlerendconnection
- * will accept the pending connection and stop listening.
- *
- * @param sess The session
- * @param sn The screen name to connect to.
- * @return The new connection.
+ * @param cookie This must be exactly 8 characters.
  */
-OscarConnection *
-aim_odc_initiate(OscarSession *sess, const char *sn, int listenfd,
-                 const guint8 *localip, guint16 port, const guint8 *mycookie)
+PeerConnection *
+peer_connection_find_by_cookie(OscarData *od, const char *sn, const guchar *cookie)
 {
-	OscarConnection *newconn;
-	IcbmCookie *cookie;
-	struct aim_odc_intdata *priv;
-	guint8 ck[8];
+	GList *cur;
+	PeerConnection *conn;
 
-	if (!localip)
-		return NULL;
-
-	if (mycookie) {
-		memcpy(ck, mycookie, 8);
-		aim_im_sendch2_odcrequest(sess, ck, TRUE, sn, localip, port);
-	} else
-		aim_im_sendch2_odcrequest(sess, ck, FALSE, sn, localip, port);
-
-	cookie = (IcbmCookie *)calloc(1, sizeof(IcbmCookie));
-	memcpy(cookie->cookie, ck, 8);
-	cookie->type = AIM_COOKIETYPE_OFTIM;
-
-	/* this one is for the cookie */
-	priv = (struct aim_odc_intdata *)calloc(1, sizeof(struct aim_odc_intdata));
-
-	memcpy(priv->cookie, ck, 8);
-	strncpy(priv->sn, sn, sizeof(priv->sn));
-	cookie->data = priv;
-	aim_cachecookie(sess, cookie);
-
-	/* XXX - switch to aim_cloneconn()? */
-	if (!(newconn = oscar_connection_new(sess, AIM_CONN_TYPE_LISTENER))) {
-		close(listenfd);
-		return NULL;
+	for (cur = od->peer_connections; cur != NULL; cur = cur->next)
+	{
+		conn = cur->data;
+		if (!memcmp(conn->cookie, cookie, 8) && !aim_sncmp(conn->sn, sn))
+			return conn;
 	}
 
-	/* this one is for the conn */
-	priv = (struct aim_odc_intdata *)calloc(1, sizeof(struct aim_odc_intdata));
-
-	memcpy(priv->cookie, ck, 8);
-	strncpy(priv->sn, sn, sizeof(priv->sn));
-
-	newconn->fd = listenfd;
-	newconn->subtype = AIM_CONN_SUBTYPE_OFT_DIRECTIM;
-	newconn->internal = priv;
-	newconn->lastactivity = time(NULL);
-
-	return newconn;
-}
-
-/**
- * Connect directly to the given buddy for directim.
- *
- * This is a wrapper for oscar_connection_new.
- *
- * If addr is NULL, the socket is not created, but the connection is
- * allocated and setup to connect.
- *
- * @param sess The Godly session.
- * @param sn The screen name we're connecting to.  I hope it's a girl...
- * @param addr Address to connect to.
- * @return The new connection.
- */
-OscarConnection *
-aim_odc_connect(OscarSession *sess, const char *sn, const char *addr, const guint8 *cookie)
-{
-	OscarConnection *newconn;
-	struct aim_odc_intdata *intdata;
-
-	if (!sess || !sn)
-		return NULL;
-
-	if (!(intdata = calloc(1, sizeof(struct aim_odc_intdata))))
-		return NULL;
-	memcpy(intdata->cookie, cookie, 8);
-	strncpy(intdata->sn, sn, sizeof(intdata->sn));
-	if (addr)
-		strncpy(intdata->ip, addr, sizeof(intdata->ip));
-
-	/* XXX - verify that non-blocking connects actually work */
-	if (!(newconn = oscar_connection_new(sess, AIM_CONN_TYPE_RENDEZVOUS))) {
-		free(intdata);
-		return NULL;
-	}
-
-	newconn->internal = intdata;
-	newconn->subtype = AIM_CONN_SUBTYPE_OFT_DIRECTIM;
-
-	return newconn;
-}
-
-/**
- * Sometimes you just don't know with these kinds of people.
- *
- * @param sess The session.
- * @param conn The ODC connection of the incoming data.
- * @param frr The frame allocated for the incoming data.
- * @param bs It stands for "bologna sandwich."
- * @return Return 0 if no errors, otherwise return the error number.
- */
-static int
-handlehdr_odc(OscarSession *sess, OscarConnection *conn, FlapFrame *frr, ByteStream *bs)
-{
-	FlapFrame fr;
-	int ret = 0;
-	aim_rxcallback_t userfunc;
-	guint32 payloadlength;
-	guint16 flags, encoding;
-	char *snptr = NULL;
-
-	fr.conn = conn;
-
-	/* AAA - ugly */
-	aim_bstream_setpos(bs, 20);
-	payloadlength = aimbs_get32(bs);
-
-	aim_bstream_setpos(bs, 24);
-	encoding = aimbs_get16(bs);
-
-	aim_bstream_setpos(bs, 30);
-	flags = aimbs_get16(bs);
-
-	aim_bstream_setpos(bs, 36);
-	/* XXX - create an aimbs_getnullstr function? */
-	snptr = aimbs_getstr(bs, 32); /* Next 32 bytes contain the sn, padded with null chars */
-
-	gaim_debug_misc("oscar", "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
-
-	if (flags & 0x0008) {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMTYPING)))
-			ret = userfunc(sess, &fr, snptr, 2);
-	} else if (flags & 0x0004) {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMTYPING)))
-			ret = userfunc(sess, &fr, snptr, 1);
-	} else {
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMTYPING)))
-			ret = userfunc(sess, &fr, snptr, 0);
-	}
-
-	if ((payloadlength != 0) && (payloadlength != UINT_MAX)) {
-		char *msg;
-		int recvd = 0;
-		int i, isawaymsg;
-
-		isawaymsg = flags & 0x0001;
-
-		if (!(msg = calloc(1, payloadlength+1))) {
-			free(snptr);
-			return -ENOMEM;
-		}
-
-		while (payloadlength - recvd) {
-			if (payloadlength - recvd >= 1024)
-				i = aim_recv(conn->fd, &msg[recvd], 1024);
-			else
-				i = aim_recv(conn->fd, &msg[recvd], payloadlength - recvd);
-			if (i <= 0) {
-				free(msg);
-				free(snptr);
-				return -1;
-			}
-			recvd = recvd + i;
-			if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_IMAGETRANSFER)))
-				ret = userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
-		}
-
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, PEER_TYPE_DIRECTIMINCOMING)))
-			ret = userfunc(sess, &fr, snptr, msg, payloadlength, encoding, isawaymsg);
-
-		free(msg);
-	}
-
-	free(snptr);
-
-	return ret;
+	return NULL;
 }
 
 PeerConnection *
-aim_oft_createinfo(OscarSession *sess, const guint8 *cookie, const char *sn, const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv, int method, int stage)
+peer_connection_new(OscarData *od, OscarCapability type, const char *sn)
 {
-	PeerConnection *new;
+	PeerConnection *conn;
+	GaimAccount *account;
 
-	if (!sess)
-		return NULL;
+	account = gaim_connection_get_account(od->gc);
 
-	if (!(new = (PeerConnection *)calloc(1, sizeof(PeerConnection))))
-		return NULL;
+	conn = g_new0(PeerConnection, 1);
+	conn->od = od;
+	conn->type = type;
+	conn->sn = g_strdup(sn);
+	conn->buffer_outgoing = gaim_circ_buffer_new(0);
+	conn->listenerfd = -1;
+	conn->fd = -1;
+	conn->lastactivity = time(NULL);
+	conn->use_proxy |= gaim_account_get_bool(account, "use_rv_proxy", FALSE);
 
-	new->sess = sess;
-	if (cookie)
-		memcpy(new->cookie, cookie, 8);
-	else
-		aim_icbm_makecookie(new->cookie);
-	if (ip)
-		new->clientip = strdup(ip);
-	else
-		new->clientip = NULL;
-	if (sn)
-		new->sn = strdup(sn);
-	else
-		new->sn = NULL;
-	new->method = method;
-	new->send_or_recv = send_or_recv;
-	new->stage = stage;
-	new->port = port;
-	new->xfer_reffed = FALSE;
-	new->success = FALSE;
-	new->fh.totfiles = 1;
-	new->fh.filesleft = 1;
-	new->fh.totparts = 1;
-	new->fh.partsleft = 1;
-	new->fh.totsize = size;
-	new->fh.size = size;
-	new->fh.modtime = modtime;
-	new->fh.checksum = 0xffff0000;
-	new->fh.rfrcsum = 0xffff0000;
-	new->fh.rfcsum = 0xffff0000;
-	new->fh.recvcsum = 0xffff0000;
-	strncpy(new->fh.idstring, "OFT_Windows ICBMFT V1.1 32", 31);
-	if (filename) {
-		strncpy(new->fh.name, filename, 63);
-		new->fh.name[63] = '\0';
+	if (type == OSCAR_CAPABILITY_DIRECTIM)
+		memcpy(conn->magic, "ODC2", 4);
+	else if (type == OSCAR_CAPABILITY_SENDFILE)
+		memcpy(conn->magic, "OFT2", 4);
+
+	od->peer_connections = g_list_prepend(od->peer_connections, conn);
+
+	return conn;
+}
+
+static void
+peer_connection_close(PeerConnection *conn)
+{
+	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+		peer_odc_close(conn);
+	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
+		peer_oft_close(conn);
+
+	if (conn->watcher_incoming != 0)
+	{
+		gaim_input_remove(conn->watcher_incoming);
+		conn->watcher_incoming = 0;
+	}
+	if (conn->watcher_outgoing != 0)
+	{
+		gaim_input_remove(conn->watcher_outgoing);
+		conn->watcher_outgoing = 0;
+	}
+	if (conn->listenerfd != -1)
+	{
+		close(conn->listenerfd);
+		conn->listenerfd = -1;
+	}
+	if (conn->fd != -1)
+	{
+		close(conn->fd);
+		conn->fd = -1;
 	}
 
-	sess->peer_connections = g_list_prepend(sess->peer_connections, new);
+	g_free(conn->buffer_incoming.data);
+	conn->buffer_incoming.data = NULL;
+	conn->buffer_incoming.len = 0;
+	conn->buffer_incoming.offset = 0;
 
-	return new;
+	gaim_circ_buffer_destroy(conn->buffer_outgoing);
+	conn->buffer_outgoing = gaim_circ_buffer_new(0);
+
+	conn->flags &= ~PEER_CONNECTION_FLAG_IS_INCOMING;
 }
 
-PeerProxyInfo *aim_rv_proxy_createinfo(OscarSession *sess, const guint8 *cookie,
-	guint16 port)
+static gboolean
+peer_connection_destroy_cb(gpointer data)
 {
-	PeerProxyInfo *proxy_info;
-
-	if (!(proxy_info = (PeerProxyInfo*)calloc(1, sizeof(PeerProxyInfo))))
-		return NULL;
-
-	proxy_info->sess = sess;
-	proxy_info->port = port;
-	proxy_info->packet_ver = AIM_RV_PROXY_PACKETVER_DFLT;
-	proxy_info->unknownA = AIM_RV_PROXY_UNKNOWNA_DFLT;
-
-	if (cookie)
-		memcpy(proxy_info->cookie, cookie, 8);
-
-	return proxy_info;
-}
-
-/**
- * Remove the given PeerConnection from the PeerConnection linked list, and
- * then free its memory.
- *
- * @param sess The session.
- * @param peer_connection The PeerConnection that we're destroying.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_oft_destroyinfo(PeerConnection *peer_connection)
-{
-	OscarSession *sess;
-
-	if (!peer_connection || !(sess = peer_connection->sess))
-		return -EINVAL;
-
-	sess->peer_connections = g_list_remove(sess->peer_connections, peer_connection);
-
-	free(peer_connection->sn);
-	free(peer_connection->proxyip);
-	free(peer_connection->clientip);
-	free(peer_connection->verifiedip);
-	free(peer_connection);
-
-	return 0;
-}
-
-/**
- * Creates a listener socket so the other dude can connect to us.
- *
- * You'll want to set up some kind of watcher on this socket.
- * When the state changes, call aim_handlerendconnection with
- * the connection returned by this.  aim_handlerendconnection
- * will accept the pending connection and stop listening.
- *
- * @param sess The session.
- * @param peer_connection File transfer information associated with this
- *        connection.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_sendfile_listen(OscarSession *sess, PeerConnection *peer_connection, int listenfd)
-{
-	if (!peer_connection)
-		return -EINVAL;
-
-	if (!(peer_connection->conn = oscar_connection_new(sess, AIM_CONN_TYPE_LISTENER))) {
-		close(listenfd);
-		return -ENOMEM;
-	}
-
-	peer_connection->conn->fd = listenfd;
-	peer_connection->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-	peer_connection->conn->lastactivity = time(NULL);
-
-	return 0;
-}
-
-/**
- * Extract an &aim_fileheader_t from the given buffer.
- *
- * @param bs The should be from an incoming rendezvous packet.
- * @return A pointer to new struct on success, or NULL on error.
- */
-static PeerFrame *
-aim_oft_getheader(ByteStream *bs)
-{
-	PeerFrame *fh;
-
-	if (!(fh = calloc(1, sizeof(PeerFrame))))
-		return NULL;
-
-	/* The bstream should be positioned after the hdrtype. */
-	aimbs_getrawbuf(bs, fh->bcookie, 8);
-	fh->encrypt = aimbs_get16(bs);
-	fh->compress = aimbs_get16(bs);
-	fh->totfiles = aimbs_get16(bs);
-	fh->filesleft = aimbs_get16(bs);
-	fh->totparts = aimbs_get16(bs);
-	fh->partsleft = aimbs_get16(bs);
-	fh->totsize = aimbs_get32(bs);
-	fh->size = aimbs_get32(bs);
-	fh->modtime = aimbs_get32(bs);
-	fh->checksum = aimbs_get32(bs);
-	fh->rfrcsum = aimbs_get32(bs);
-	fh->rfsize = aimbs_get32(bs);
-	fh->cretime = aimbs_get32(bs);
-	fh->rfcsum = aimbs_get32(bs);
-	fh->nrecvd = aimbs_get32(bs);
-	fh->recvcsum = aimbs_get32(bs);
-	aimbs_getrawbuf(bs, (guchar *)fh->idstring, 32);
-	fh->flags = aimbs_get8(bs);
-	fh->lnameoffset = aimbs_get8(bs);
-	fh->lsizeoffset = aimbs_get8(bs);
-	aimbs_getrawbuf(bs, (guchar *)fh->dummy, 69);
-	aimbs_getrawbuf(bs, (guchar *)fh->macfileinfo, 16);
-	fh->nencode = aimbs_get16(bs);
-	fh->nlanguage = aimbs_get16(bs);
-	aimbs_getrawbuf(bs, (guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
-	fh->name[63] = '\0';
-
-	return fh;
-}
-
-/**
- * Fills a buffer with network-order fh data
- *
- * @param bs A bstream to fill -- automatically initialized
- * @param fh A PeerFrame to get data from.
- * @return Return non-zero on error.
- */
-static int
-aim_oft_buildheader(ByteStream *bs, PeerFrame *fh)
-{
-	guint8 *hdr;
-
-	if (!bs || !fh)
-		return -EINVAL;
-
-	if (!(hdr = (unsigned char *)calloc(1, 0x100 - 8)))
-		return -ENOMEM;
-
-	aim_bstream_init(bs, hdr, 0x100 - 8);
-	aimbs_putraw(bs, fh->bcookie, 8);
-	aimbs_put16(bs, fh->encrypt);
-	aimbs_put16(bs, fh->compress);
-	aimbs_put16(bs, fh->totfiles);
-	aimbs_put16(bs, fh->filesleft);
-	aimbs_put16(bs, fh->totparts);
-	aimbs_put16(bs, fh->partsleft);
-	aimbs_put32(bs, fh->totsize);
-	aimbs_put32(bs, fh->size);
-	aimbs_put32(bs, fh->modtime);
-	aimbs_put32(bs, fh->checksum);
-	aimbs_put32(bs, fh->rfrcsum);
-	aimbs_put32(bs, fh->rfsize);
-	aimbs_put32(bs, fh->cretime);
-	aimbs_put32(bs, fh->rfcsum);
-	aimbs_put32(bs, fh->nrecvd);
-	aimbs_put32(bs, fh->recvcsum);
-	aimbs_putraw(bs, (guchar *)fh->idstring, 32);
-	aimbs_put8(bs, fh->flags);
-	aimbs_put8(bs, fh->lnameoffset);
-	aimbs_put8(bs, fh->lsizeoffset);
-	aimbs_putraw(bs, (guchar *)fh->dummy, 69);
-	aimbs_putraw(bs, (guchar *)fh->macfileinfo, 16);
-	aimbs_put16(bs, fh->nencode);
-	aimbs_put16(bs, fh->nlanguage);
-	aimbs_putraw(bs, (guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
-
-	return 0;
-}
-
-/**
- * Create an OFT packet based on the given information, and send it on its merry way.
- *
- * @param sess The session.
- * @param type The subtype of the OFT packet we're sending.
- * @param peer_connection The PeerConnection with the connection and OFT
- *        info we're sending.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_oft_sendheader(OscarSession *sess, guint16 type, PeerConnection *peer_connection)
-{
-	FlapFrame *fr;
-
-	if (!sess || !peer_connection || !peer_connection->conn || (peer_connection->conn->type != AIM_CONN_TYPE_RENDEZVOUS))
-		return -EINVAL;
-
-#if 0
-	/*
-	 * If you are receiving a file, the cookie should be null, if you are sending a
-	 * file, the cookie should be the same as the one used in the ICBM negotiation
-	 * SNACs.
-	 */
-	fh->lnameoffset = 0x1a;
-	fh->lsizeoffset = 0x10;
-
-	/* These should be the same as charset and charsubset in ICBMs */
-	fh->nencode = 0x0000;
-	fh->nlanguage = 0x0000;
-#endif
-
-	aim_oft_dirconvert_tostupid(peer_connection->fh.name);
-
-	if (!(fr = flap_frame_new(sess, peer_connection->conn, AIM_FRAMETYPE_OFT, type, 0)))
-		return -ENOMEM;
-
-	if (aim_oft_buildheader(&fr->data, &peer_connection->fh) == -1) {
-		aim_frame_destroy(fr);
-		return -ENOMEM;
-	}
-
-	memcpy(fr->hdr.rend.magic, "OFT2", 4);
-	fr->hdr.rend.hdrlen = aim_bstream_curpos(&fr->data) + 8;
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/**
- * Create a rendezvous "init recv" packet and send it on its merry way.
- * This is the first packet sent to the proxy server by the second client
- * involved in this rendezvous proxy session.
- *
- * @param sess The session.
- * @param proxy_info Changable pieces of data for this packet
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_rv_proxy_init_recv(PeerProxyInfo *proxy_info)
-{
-#if 0
-	aim_tlvlist_t *tlvlist_sendfile;
-#endif
-	ByteStream bs;
-	guint8 *bs_raw;
-	guint16 packet_len;
-	guint8 sn_len;
-	int err;
-
-	err = 0;
-
-	if (!proxy_info)
-		return -EINVAL;
-
-	sn_len = strlen(proxy_info->sess->sn);
-	packet_len = 2 + 2	/* packet_len, packet_ver */
-		+ 2 + 4		/* cmd_type,  unknownA */
-		+ 2		/* flags */
-		+ 1 + sn_len	/* Length/value pair for screenname */
-		+ 8		/* ICBM Cookie */
-		+ 2		/* port */
-		+ 2 + 2 + 16;	/* TLV for Filesend capability block */
-
-	if (!(bs_raw = malloc(packet_len)))
-		return -ENOMEM;
-
-	aim_bstream_init(&bs, bs_raw, packet_len);
-	aimbs_put16(&bs, packet_len - 2); /* Length includes only packets after length marker */
-	aimbs_put16(&bs, proxy_info->packet_ver);
-	aimbs_put16(&bs, AIM_RV_PROXY_INIT_RECV);
-	aimbs_put32(&bs, proxy_info->unknownA);
-	aimbs_put16(&bs, proxy_info->flags);
-	aimbs_put8(&bs, sn_len);
-	aimbs_putraw(&bs, (const guchar *)proxy_info->sess->sn, sn_len);
-	aimbs_put16(&bs, proxy_info->port);
-	aimbs_putraw(&bs, proxy_info->cookie, 8);
-
-	aimbs_put16(&bs, 0x0001);		/* Type */
-	aimbs_put16(&bs, 16);			/* Length */
-	aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);	/* Value */
-
-
-#if 0
-	/* TODO: Use built-in TLV */
-	aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
-	aim_tlvlist_write(&bs, &tlvlist_sendfile);
-#endif
-
-	aim_bstream_rewind(&bs);
-	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
-		err = errno;
-	proxy_info->conn->lastactivity = time(NULL);
-
-#if 0
-	aim_tlvlist_free(tlvlist_sendfile);
-#endif
-	free(bs_raw);
-
-	return err;
-}
-
-
-/**
- * Create a rendezvous "init send" packet and send it on its merry way.
- * This is the first packet sent to the proxy server by the client
- * first indicating that this will be a proxied connection
- *
- * @param sess The session.
- * @param proxy_info Changable pieces of data for this packet
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int
-aim_rv_proxy_init_send(PeerProxyInfo *proxy_info)
-{
-#if 0
-	aim_tlvlist_t *tlvlist_sendfile;
-#endif
-	ByteStream bs;
-	guint8 *bs_raw;
-	guint16 packet_len;
-	guint8 sn_len;
-	int err;
-
-	err = 0;
-
-	if (!proxy_info)
-		return -EINVAL;
-
-	sn_len = strlen(proxy_info->sess->sn);
-	packet_len = 2 + 2	/* packet_len, packet_ver */
-		+ 2 + 4		/* cmd_type,  unknownA */
-		+ 2		/* flags */
-		+ 1 + sn_len	/* Length/value pair for screenname */
-		+ 8		/* ICBM Cookie */
-		+ 2 + 2 + 16;	/* TLV for Filesend capability block */
-
-	if (!(bs_raw = malloc(packet_len)))
-		return -ENOMEM;
-
-	aim_bstream_init(&bs, bs_raw, packet_len);
-	aimbs_put16(&bs, packet_len - 2); /* Length includes only packets after length marker */
-	aimbs_put16(&bs, proxy_info->packet_ver);
-	aimbs_put16(&bs, AIM_RV_PROXY_INIT_SEND);
-	aimbs_put32(&bs, proxy_info->unknownA);
-	aimbs_put16(&bs, proxy_info->flags);
-	aimbs_put8(&bs, sn_len);
-	aimbs_putraw(&bs, (const guchar *)proxy_info->sess->sn, sn_len);
-	aimbs_putraw(&bs, proxy_info->cookie, 8);
-
-	aimbs_put16(&bs, 0x0001);		/* Type */
-	aimbs_put16(&bs, 16);			/* Length */
-	aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);	/* Value */
-
-	/* TODO: Use built-in TLV */
-#if 0
-	aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
-	aim_tlvlist_write(&bs, &tlvlist_sendfile);
-#endif
-
-	aim_bstream_rewind(&bs);
-	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
-		err = errno;
-	proxy_info->conn->lastactivity = time(NULL);
-
-#if 0
-	aim_tlvlist_free(tlvlist_sendfile);
-#endif
-	free(bs_raw);
-
-	return err;
-}
-
-/**
- * Handle incoming data on a rendezvous connection.  This is analogous to the
- * consumesnac function in rxhandlers.c, and I really think this should probably
- * be in rxhandlers.c as well, but I haven't finished cleaning everything up yet.
- *
- * @param sess The session.
- * @param fr The frame allocated for the incoming data.
- * @return Return 0 if the packet was handled correctly, otherwise return the
- *         error number.
- */
-int
-aim_rxdispatch_rendezvous(OscarSession *sess, FlapFrame *fr)
-{
-	OscarConnection *conn = fr->conn;
-	int ret = 1;
-
-	if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM) {
-		if (fr->hdr.rend.type == 0x0001)
-			ret = handlehdr_odc(sess, conn, fr, &fr->data);
-		else
-			gaim_debug_info("oscar", "ODC directim frame unknown, type is %04x\n", fr->hdr.rend.type);
-
-	} else {
-		aim_rxcallback_t userfunc;
-		PeerFrame *header = aim_oft_getheader(&fr->data);
-		aim_oft_dirconvert_fromstupid(header->name); /* XXX - This should be client-side */
-
-		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, fr->hdr.rend.type)))
-			ret = userfunc(sess, fr, conn, header->bcookie, header);
-
-		free(header);
-	}
-
-	if (ret == -1)
-		aim_conn_close(sess, conn);
-
-	return ret;
-}
-
-/**
- * Handle incoming data on a rendezvous proxy connection.  This is similar to
- * aim_rxdispatch_rendezvous above and should probably be kept with that function.
- *
- * @param sess The session.
- * @param fr The frame allocated for the incoming data.
- * @return Return 0 if the packet was handled correctly, otherwise return the
- *         error number.
- */
-PeerProxyInfo *
-aim_rv_proxy_read(OscarSession *sess, OscarConnection *conn)
-{
-	ByteStream bs_hdr;
-	guint8 hdr_buf[AIM_RV_PROXY_HDR_LEN];
-	ByteStream bs_body; /* The body (everything but the header) of the packet */
-	guint8 *body_buf = NULL;
-	guint8 body_len;
-
-	char str_ip[30] = {""};
-	guint8 ip_temp[4];
-
-	guint16 len;
-	PeerProxyInfo *proxy_info;
-
-	if(!(proxy_info = malloc(sizeof(PeerProxyInfo))))
-		return NULL;
-
-	aim_bstream_init(&bs_hdr, hdr_buf, AIM_RV_PROXY_HDR_LEN);
-	if (aim_bstream_recv(&bs_hdr, conn->fd, AIM_RV_PROXY_HDR_LEN) == AIM_RV_PROXY_HDR_LEN) {
-		aim_bstream_rewind(&bs_hdr);
-		len = aimbs_get16(&bs_hdr);
-		proxy_info->packet_ver = aimbs_get16(&bs_hdr);
-		proxy_info->cmd_type = aimbs_get16(&bs_hdr);
-		proxy_info->unknownA = aimbs_get32(&bs_hdr);
-		proxy_info->flags = aimbs_get16(&bs_hdr);
-		if(proxy_info->cmd_type == AIM_RV_PROXY_READY) {
-			/* Do a little victory dance
-			 * A ready packet contains no additional information */
-		} else if(proxy_info->cmd_type == AIM_RV_PROXY_ERROR) {
-			if(len == AIM_RV_PROXY_ERROR_LEN - 2) {
-				body_len = AIM_RV_PROXY_ERROR_LEN - AIM_RV_PROXY_HDR_LEN;
-				body_buf = malloc(body_len);
-				aim_bstream_init(&bs_body, body_buf, body_len);
-				if (aim_bstream_recv(&bs_body, conn->fd, body_len) == body_len) {
-					aim_bstream_rewind(&bs_body);
-					proxy_info->err_code = aimbs_get16(&bs_body);
-				} else {
-					gaim_debug_warning("oscar","error reading rv proxy error packet\n");
-					aim_conn_close(sess, conn);
-					free(proxy_info);
-					proxy_info = NULL;
-				}
-			} else {
-				gaim_debug_warning("oscar","invalid length for proxy error packet\n");
-				free(proxy_info);
-				proxy_info = NULL;
-			}
-		} else if(proxy_info->cmd_type == AIM_RV_PROXY_ACK) {
-			if(len == AIM_RV_PROXY_ACK_LEN - 2) {
-				body_len = AIM_RV_PROXY_ACK_LEN - AIM_RV_PROXY_HDR_LEN;
-				body_buf = malloc(body_len);
-				aim_bstream_init(&bs_body, body_buf, body_len);
-				if (aim_bstream_recv(&bs_body, conn->fd, body_len) == body_len) {
-					int i;
-					aim_bstream_rewind(&bs_body);
-					proxy_info->port = aimbs_get16(&bs_body);
-					for(i=0; i<4; i++)
-						ip_temp[i] = aimbs_get8(&bs_body);
-					snprintf(str_ip, sizeof(str_ip), "%hhu.%hhu.%hhu.%hhu",
-						ip_temp[0], ip_temp[1],
-						ip_temp[2], ip_temp[3]);
-					proxy_info->ip = strdup(str_ip);
-				} else {
-					gaim_debug_warning("oscar","error reading rv proxy error packet\n");
-					aim_conn_close(sess, conn);
-					free(proxy_info);
-					proxy_info = NULL;
-				}
-			} else {
-				gaim_debug_warning("oscar","invalid length for proxy error packet\n");
-				free(proxy_info);
-				proxy_info = NULL;
-			}
-		} else {
-			gaim_debug_warning("oscar","unknown type for aim rendezvous proxy packet\n");
+	PeerConnection *conn;
+
+	conn = data;
+
+	gaim_request_close_with_handle(conn);
+
+	peer_connection_close(conn);
+
+	if (conn->xfer != NULL)
+	{
+		GaimXferStatusType status;
+		conn->xfer->data = NULL;
+		status = gaim_xfer_get_status(conn->xfer);
+		if ((status != GAIM_XFER_STATUS_DONE) &&
+			(status != GAIM_XFER_STATUS_CANCEL_LOCAL) &&
+			(status != GAIM_XFER_STATUS_CANCEL_REMOTE))
+		{
+			if ((conn->disconnect_reason == PEER_DISCONNECT_REMOTE_CLOSED) ||
+				(conn->disconnect_reason == PEER_DISCONNECT_REMOTE_REFUSED))
+				gaim_xfer_cancel_remote(conn->xfer);
+			else
+				gaim_xfer_cancel_local(conn->xfer);
 		}
-	} else {
-		gaim_debug_warning("oscar","error reading header of rv proxy packet\n");
-		aim_conn_close(sess, conn);
-		free(proxy_info);
-		proxy_info = NULL;
+		gaim_xfer_unref(conn->xfer);
+		conn->xfer = NULL;
 	}
-	if(body_buf) {
-		free(body_buf);
-		body_buf = NULL;
-	}
-	return proxy_info;
+
+	g_free(conn->proxyip);
+	g_free(conn->clientip);
+	g_free(conn->verifiedip);
+	gaim_circ_buffer_destroy(conn->buffer_outgoing);
+
+	conn->od->peer_connections = g_list_remove(conn->od->peer_connections, conn);
+
+	g_free(conn);
+
+	return FALSE;
 }
+
+void
+peer_connection_destroy(PeerConnection *conn, PeerDisconnectReason reason)
+{
+	conn->disconnect_reason = reason;
+	if (conn->destroy_timeout != 0)
+		gaim_timeout_remove(conn->destroy_timeout);
+	peer_connection_destroy_cb(conn);
+}
+
+void
+peer_connection_schedule_destroy(PeerConnection *conn, PeerDisconnectReason reason)
+{
+	if (conn->destroy_timeout != 0)
+		/* Already taken care of */
+		return;
+
+	gaim_debug_info("oscar", "Scheduling destruction of peer connection\n");
+	conn->disconnect_reason = reason;
+	conn->destroy_timeout = gaim_timeout_add(0, peer_connection_destroy_cb, conn);
+}
+
+/*******************************************************************/
+/* Begin code for receiving data on a peer connection                */
+/*******************************************************************/
+
+/**
+ * This should be used to read ODC and OFT framing info.  It should
+ * NOT be used to read the payload sent across the connection (IMs,
+ * file data, etc), and it should NOT be used to read proxy negotiation
+ * headers.
+ *
+ * Unlike flap_connection_recv_cb(), this only reads one frame at a
+ * time.  This is done so that the watcher can be changed during the
+ * handling of the frame.  If the watcher is changed then this
+ * function will not read in any more data.  This happens when
+ * reading the payload of a direct IM frame, or when we're
+ * receiving a file from the remote user.  Once the data has been
+ * read, the watcher will be switched back to this function to
+ * continue reading the next frame.
+ */
+void
+peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	PeerConnection *conn;
+	ssize_t read;
+	guint8 header[6];
+
+	conn = data;
+
+	/* Start reading a new ODC/OFT frame */
+	if (conn->buffer_incoming.data == NULL)
+	{
+		/* Peek at the first 6 bytes to get the length */
+		read = recv(conn->fd, &header, 6, MSG_PEEK);
+
+		/* Check if the remote user closed the connection */
+		if (read == 0)
+		{
+			peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+			return;
+		}
+
+		/* If there was an error then close the connection */
+		if (read == -1)
+		{
+			if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+				/* No worries */
+				return;
+
+			peer_connection_destroy(conn, PEER_DISCONNECT_LOST_CONNECTION);
+			return;
+		}
+
+		conn->lastactivity = time(NULL);
+
+		/* If we don't even have the first 6 bytes then do nothing */
+		if (read < 6)
+			return;
+
+		/* Read the first 6 bytes (magic string and frame length) */
+		read = recv(conn->fd, &header, 6, 0);
+
+		/* All ODC/OFT frames must start with a magic string */
+		if (memcmp(conn->magic, header, 4))
+		{
+			gaim_debug_warning("oscar", "Expecting magic string to "
+				"be %c%c%c%c but received magic string %c%c%c%c.  "
+				"Closing connection.\n",
+				conn->magic[0], conn->magic[1], conn->magic[2],
+				conn->magic[3], header[0], header[1], header[2], header[3]);
+			peer_connection_destroy(conn, PEER_DISCONNECT_INVALID_DATA);
+			return;
+		}
+
+		/* Initialize a new temporary ByteStream for incoming data */
+		conn->buffer_incoming.len = aimutil_get16(&header[4]) - 6;
+		conn->buffer_incoming.data = g_new(guint8, conn->buffer_incoming.len);
+		conn->buffer_incoming.offset = 0;
+	}
+
+	/* Read data into the temporary buffer until it is complete */
+	read = recv(conn->fd,
+				&conn->buffer_incoming.data[conn->buffer_incoming.offset],
+				conn->buffer_incoming.len - conn->buffer_incoming.offset,
+				0);
+
+	/* Check if the remote user closed the connection */
+	if (read == 0)
+	{
+		peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+		return;
+	}
+
+	if (read == -1)
+	{
+		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+			/* No worries */
+			return;
+
+		peer_connection_destroy(conn, PEER_DISCONNECT_LOST_CONNECTION);
+		return;
+	}
+
+	conn->lastactivity = time(NULL);
+	conn->buffer_incoming.offset += read;
+	if (conn->buffer_incoming.offset < conn->buffer_incoming.len)
+		/* Waiting for more data to arrive */
+		return;
+
+	/* We have a complete ODC/OFT frame!  Handle it and continue reading */
+	byte_stream_rewind(&conn->buffer_incoming);
+	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+	{
+		peer_odc_recv_frame(conn, &conn->buffer_incoming);
+	}
+	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
+	{
+		peer_oft_recv_frame(conn, &conn->buffer_incoming);
+	}
+	g_free(conn->buffer_incoming.data);
+	conn->buffer_incoming.data = NULL;
+}
+
+/*******************************************************************/
+/* End code for receiving data on a peer connection                */
+/*******************************************************************/
+
+/*******************************************************************/
+/* Begin code for sending data on a peer connection                */
+/*******************************************************************/
+
+static void
+send_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	PeerConnection *conn;
+	gsize writelen;
+	ssize_t wrotelen;
+
+	conn = data;
+	writelen = gaim_circ_buffer_get_max_read(conn->buffer_outgoing);
+
+	if (writelen == 0)
+	{
+		gaim_input_remove(conn->watcher_outgoing);
+		conn->watcher_outgoing = 0;
+		return;
+	}
+
+	wrotelen = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
+	if (wrotelen <= 0)
+	{
+		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+			/* No worries */
+			return;
+
+		if (conn->ready)
+			peer_connection_schedule_destroy(conn, PEER_DISCONNECT_LOST_CONNECTION);
+		else
+		{
+			/*
+			 * This could happen when unable to send a negotiation
+			 * frame to a peer proxy server.
+			 */
+			peer_connection_trynext(conn);
+		}
+		return;
+	}
+
+	gaim_circ_buffer_mark_read(conn->buffer_outgoing, wrotelen);
+	conn->lastactivity = time(NULL);
+}
+
+/**
+ * This should be called by OFT/ODC code to send a standard OFT or ODC
+ * frame across the peer connection along with some payload data.  Or
+ * maybe a file.  Anything, really.
+ */
+void
+peer_connection_send(PeerConnection *conn, ByteStream *bs)
+{
+	/* Add everything to our outgoing buffer */
+	gaim_circ_buffer_append(conn->buffer_outgoing, bs->data, bs->len);
+
+	/* If we haven't already started writing stuff, then start the cycle */
+	if (conn->watcher_outgoing == 0)
+	{
+		conn->watcher_outgoing = gaim_input_add(conn->fd,
+				GAIM_INPUT_WRITE, send_cb, conn);
+		send_cb(conn, conn->fd, 0);
+	}
+}
+
+/*******************************************************************/
+/* End code for sending data on a peer connection                  */
+/*******************************************************************/
+
+/*******************************************************************/
+/* Begin code for establishing a peer connection                   */
+/*******************************************************************/
+
+void
+peer_connection_finalize_connection(PeerConnection *conn)
+{
+	conn->watcher_incoming = gaim_input_add(conn->fd,
+			GAIM_INPUT_READ, peer_connection_recv_cb, conn);
+
+	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+	{
+		/*
+		 * If we are connecting to them then send our cookie so they
+		 * can verify who we are.  Note: This doesn't seem to be
+		 * necessary, but it also doesn't seem to hurt.
+		 */
+		if (!(conn->flags & PEER_CONNECTION_FLAG_IS_INCOMING))
+			peer_odc_send_cookie(conn);
+	}
+	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
+	{
+		if (gaim_xfer_get_type(conn->xfer) == GAIM_XFER_SEND)
+		{
+			peer_oft_send_prompt(conn);
+		}
+	}
+
+	/*
+	 * Tell the remote user that we're connected (which may also imply
+	 * that we've accepted their request).
+	 */
+	if (!(conn->flags & PEER_CONNECTION_FLAG_IS_INCOMING))
+		aim_im_sendch2_connected(conn);
+}
+
+/**
+ * We tried to make an outgoing connection to a remote user.  It
+ * either connected or failed to connect.
+ */
+static void
+peer_connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	NewPeerConnectionData *new_conn_data;
+	GaimConnection *gc;
+	PeerConnection *conn;
+
+	new_conn_data = data;
+	gc = new_conn_data->gc;
+	conn = new_conn_data->conn;
+	g_free(new_conn_data);
+
+	if (!g_list_find(gaim_connections_get_all(), gc))
+	{
+		if (source >= 0)
+			close(source);
+		return;
+	}
+
+	if (source < 0)
+	{
+		peer_connection_trynext(conn);
+		return;
+	}
+
+	conn->fd = source;
+
+	peer_connection_finalize_connection(conn);
+}
+
+/**
+ * This is the watcher callback for any listening socket that is
+ * waiting for a peer to connect.  When a peer connects we set the
+ * input watcher to start reading data from the peer.
+ *
+ * To make sure that the connection is with the intended person and
+ * not with a malicious middle man, we don't send anything until we've
+ * received a peer frame from the remote user and have verified that
+ * the cookie in the peer frame matches the cookie that was exchanged
+ * in the channel 2 ICBM.
+ */
+void
+peer_connection_listen_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	PeerConnection *conn;
+	OscarData *od;
+	GaimConnection *gc;
+	GaimAccount *account;
+	struct sockaddr addr;
+	socklen_t addrlen = sizeof(addr);
+
+	conn = data;
+	od = conn->od;
+	gc = od->gc;
+	account = gaim_connection_get_account(gc);
+
+	gaim_debug_info("oscar", "Accepting connection on listener socket.\n");
+
+	conn->fd = accept(conn->listenerfd, &addr, &addrlen);
+	if (conn->fd == -1)
+	{
+		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+			/* No connection yet--no worries */
+			/* TODO: Hmm, but they SHOULD be connected if we're here, right? */
+			return;
+
+		peer_connection_trynext(conn);
+		return;
+	}
+
+	if ((addr.sa_family != PF_INET) && (addr.sa_family != PF_INET6))
+	{
+		/* Invalid connection type?!  Continue waiting. */
+		close(conn->fd);
+		return;
+	}
+
+	fcntl(conn->fd, F_SETFL, O_NONBLOCK);
+	gaim_input_remove(conn->watcher_incoming);
+
+	peer_connection_finalize_connection(conn);
+}
+
+/**
+ * We've just opened a listener socket, so we send the remote
+ * user an ICBM and ask them to connect to us.
+ */
+static void
+peer_connection_establish_listener_cb(int listenerfd, gpointer data)
+{
+	NewPeerConnectionData *new_conn_data;
+	PeerConnection *conn;
+	OscarData *od;
+	GaimConnection *gc;
+	GaimAccount *account;
+	GaimConversation *conv;
+	char *tmp;
+	FlapConnection *bos_conn;
+	const char *listener_ip;
+	unsigned short listener_port;
+
+	new_conn_data = data;
+	gc = new_conn_data->gc;
+	conn = new_conn_data->conn;
+	g_free(new_conn_data);
+
+	if (!g_list_find(gaim_connections_get_all(), gc))
+	{
+		if (listenerfd != -1)
+			close(listenerfd);
+		return;
+	}
+
+	if (listenerfd == -1)
+	{
+		/* Could not open listener socket */
+		peer_connection_trynext(conn);
+		return;
+	}
+
+	od = conn->od;
+	account = gaim_connection_get_account(gc);
+	conn->listenerfd = listenerfd;
+
+	/* Send the "please connect to me!" ICBM */
+	bos_conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
+	listener_ip = gaim_network_get_my_ip(bos_conn->fd);
+	listener_port = gaim_network_get_port_from_fd(conn->listenerfd);
+	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+	{
+		aim_im_sendch2_odc_requestdirect(od,
+				conn->cookie, conn->sn, gaim_network_ip_atoi(listener_ip),
+				listener_port, ++conn->lastrequestnumber);
+
+		/* Print a message to a local conversation window */
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
+		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for "
+				"Direct IM."), conn->sn, listener_ip, listener_port);
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		g_free(tmp);
+	}
+	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
+	{
+		aim_im_sendch2_sendfile_requestdirect(od,
+				conn->cookie, conn->sn,
+				gaim_network_ip_atoi(listener_ip),
+				listener_port, ++conn->lastrequestnumber,
+				(const gchar *)conn->xferdata.name,
+				conn->xferdata.size, conn->xferdata.totfiles);
+	}
+}
+
+/**
+ * Try to establish the given PeerConnection using a defined
+ * sequence of steps.
+ */
+void
+peer_connection_trynext(PeerConnection *conn)
+{
+	NewPeerConnectionData *new_conn_data;
+	GaimAccount *account;
+
+	new_conn_data = g_new(NewPeerConnectionData, 1);
+	new_conn_data->gc = conn->od->gc;
+	new_conn_data->conn = conn;
+
+	account = gaim_connection_get_account(new_conn_data->gc);
+
+	/*
+	 * Close any remnants of a previous failed connection attempt.
+	 */
+	peer_connection_close(conn);
+
+	/*
+	 * 1. Attempt to connect to the remote user using their verifiedip.
+	 */
+	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_VERIFIEDIP) &&
+		(conn->verifiedip != NULL) && (conn->port != 0) && (!conn->use_proxy))
+	{
+		conn->flags |= PEER_CONNECTION_FLAG_TRIED_VERIFIEDIP;
+
+		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+		{
+			gchar *tmp;
+			GaimConversation *conv;
+			tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
+					conn->verifiedip, conn->port);
+			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
+			gaim_conversation_write(conv, NULL, tmp,
+					GAIM_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
+
+		if (gaim_proxy_connect(account, conn->verifiedip, conn->port,
+				peer_connection_established_cb, new_conn_data) == 0)
+		{
+			/* Connecting... */
+			return;
+		}
+	}
+
+	/*
+	 * 2. Attempt to connect to the remote user using their clientip.
+	 */
+	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_CLIENTIP) &&
+		(conn->clientip != NULL) && (conn->port != 0) && (!conn->use_proxy))
+	{
+		conn->flags |= PEER_CONNECTION_FLAG_TRIED_CLIENTIP;
+
+		if (strcmp(conn->verifiedip, conn->clientip))
+		{
+			if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+			{
+				gchar *tmp;
+				GaimConversation *conv;
+				tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
+						conn->clientip, conn->port);
+				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
+				gaim_conversation_write(conv, NULL, tmp,
+						GAIM_MESSAGE_SYSTEM, time(NULL));
+				g_free(tmp);
+			}
+
+			if (gaim_proxy_connect(account, conn->clientip, conn->port,
+					peer_connection_established_cb, new_conn_data) == 0)
+			{
+				/* Connecting... */
+				return;
+			}
+		}
+	}
+
+	/*
+	 * 3. Attempt to have the remote user connect to us (using both
+	 *    our verifiedip and our clientip).
+	 */
+	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_INCOMING) &&
+		(!conn->use_proxy))
+	{
+		conn->flags |= PEER_CONNECTION_FLAG_TRIED_INCOMING;
+
+		/*
+		 * Remote user is connecting to us, so we'll need to verify
+		 * that the user who connected is our friend.
+		 */
+		conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
+
+		if (gaim_network_listen_range(5190, 5290, SOCK_STREAM,
+				peer_connection_establish_listener_cb, new_conn_data))
+		{
+			/* Opening listener socket... */
+			return;
+		}
+	}
+
+	/*
+	 * 4. Attempt to have both users connect to an intermediate proxy
+	 *    server.
+	 */
+	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_PROXY))
+	{
+		conn->flags |= PEER_CONNECTION_FLAG_TRIED_PROXY;
+
+		/*
+		 * If we initiate the proxy connection, then the remote user
+		 * could be anyone, so we need to verify that the user who
+		 * connected is our friend.
+		 */
+		if (!conn->use_proxy)
+			conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
+
+		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
+		{
+			gchar *tmp;
+			GaimConversation *conv;
+			tmp = g_strdup_printf(_("Attempting to connect via proxy server."));
+			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
+			gaim_conversation_write(conv, NULL, tmp,
+					GAIM_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
+
+		if (gaim_proxy_connect(account,
+				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
+				PEER_PROXY_PORT,
+				peer_proxy_connection_established_cb, new_conn_data) == 0)
+		{
+			/* Connecting... */
+			return;
+		}
+	}
+
+	g_free(new_conn_data);
+
+	/* Give up! */
+	peer_connection_destroy(conn, PEER_DISCONNECT_COULD_NOT_CONNECT);
+}
+
+/**
+ * Initiate a peer connection with someone.
+ */
+void
+peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
+{
+	PeerConnection *conn;
+	GaimAccount *account;
+
+	account = gaim_connection_get_account(od->gc);
+
+	if (type == OSCAR_CAPABILITY_DIRECTIM)
+	{
+		conn = peer_connection_find_by_type(od, sn, type);
+		if (conn != NULL)
+		{
+			if (conn->ready)
+			{
+				GaimConversation *conv;
+
+				gaim_debug_info("oscar", "Already have a direct IM "
+						"session with %s.\n", sn);
+				account = gaim_connection_get_account(od->gc);
+				conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+						sn, account);
+				if (conv != NULL)
+					gaim_conversation_present(conv);
+				return;
+			}
+
+			/* Cancel the old connection and try again */
+			peer_connection_destroy(conn, PEER_DISCONNECT_RETRYING);
+		}
+	}
+
+	conn = peer_connection_new(od, type, sn);
+	conn->flags |= PEER_CONNECTION_FLAG_INITIATED_BY_ME;
+	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
+	aim_icbm_makecookie(conn->cookie);
+
+	peer_connection_trynext(conn);
+}
+
+/**
+ * Someone else wants to establish a peer connection with us,
+ * and we said yes.
+ */
+static void
+peer_connection_got_proposition_yes_cb(gpointer data, gint id)
+{
+	PeerConnection *conn;
+
+	conn = data;
+
+	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
+	peer_connection_trynext(conn);
+}
+
+/**
+ * Someone else wants to establish a peer connection with us,
+ * and we said no.
+ *
+ * "Well, one time my friend asked me if I wanted to play the
+ *  piccolo.  But I said no."
+ */
+static void
+peer_connection_got_proposition_no_cb(gpointer data, gint id)
+{
+	PeerConnection *conn;
+
+	conn = data;
+
+	aim_im_denytransfer(conn->od, conn->sn, conn->cookie,
+			AIM_TRANSFER_DENY_DECLINE);
+	peer_connection_destroy(conn, PEER_DISCONNECT_LOCAL_CLOSED);
+}
+
+/**
+ * Someone else wants to establish a peer connection with us.
+ */
+void
+peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *message, IcbmArgsCh2 *args)
+{
+	GaimConnection *gc;
+	GaimAccount *account;
+	PeerConnection *conn;
+	gchar *buf;
+
+	gc = od->gc;
+	account = gaim_connection_get_account(gc);
+
+	/*
+	 * If we have a connection with this same cookie then they are
+	 * probably just telling us they weren't able to connect to us
+	 * and we should try connecting to them, instead.  Or they want
+	 * to go through a proxy.
+	 */
+	conn = peer_connection_find_by_cookie(od, sn, args->cookie);
+	if ((conn != NULL) && (conn->type == args->type))
+	{
+		gaim_debug_info("oscar", "Remote user wants to try a "
+				"different connection method\n");
+		g_free(conn->proxyip);
+		g_free(conn->clientip);
+		g_free(conn->verifiedip);
+		if (args->use_proxy)
+			conn->proxyip = g_strdup(args->proxyip);
+		else
+			conn->proxyip = NULL;
+		conn->verifiedip = g_strdup(args->verifiedip);
+		conn->clientip = g_strdup(args->clientip);
+		conn->port = args->port;
+		conn->use_proxy |= args->use_proxy;
+		conn->lastrequestnumber++;
+		peer_connection_trynext(conn);
+		return;
+	}
+
+	/* If this is a direct IM, then close any existing session */
+	if (args->type == OSCAR_CAPABILITY_DIRECTIM)
+	{
+		conn = peer_connection_find_by_type(od, sn, args->type);
+		if (conn != NULL)
+		{
+			/* Close the old direct IM and start a new one */
+			gaim_debug_info("oscar", "Received new direct IM request "
+				"from %s.  Destroying old connection.\n", sn);
+			peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+		}
+	}
+
+	/* Check for proper arguments */
+	if (args->type == OSCAR_CAPABILITY_SENDFILE)
+	{
+		if ((args->info.sendfile.filename == NULL) ||
+			(args->info.sendfile.totsize == 0) ||
+			(args->info.sendfile.totfiles == 0))
+		{
+			gaim_debug_warning("oscar",
+					"%s tried to send you a file with incomplete "
+					"information.\n", sn);
+			return;
+		}
+	}
+
+	conn = peer_connection_new(od, args->type, sn);
+	memcpy(conn->cookie, args->cookie, 8);
+	if (args->use_proxy)
+		conn->proxyip = g_strdup(args->proxyip);
+	conn->clientip = g_strdup(args->clientip);
+	conn->verifiedip = g_strdup(args->verifiedip);
+	conn->port = args->port;
+	conn->use_proxy |= args->use_proxy;
+	conn->lastrequestnumber++;
+
+	if (args->type == OSCAR_CAPABILITY_DIRECTIM)
+	{
+		buf = g_strdup_printf(_("%s has just asked to directly connect to %s"),
+				sn, gaim_account_get_username(account));
+
+		gaim_request_action(conn, NULL, buf,
+						_("This requires a direct connection between "
+						  "the two computers and is necessary for IM "
+						  "Images.  Because your IP address will be "
+						  "revealed, this may be considered a privacy "
+						  "risk."),
+						GAIM_DEFAULT_ACTION_NONE, conn, 2,
+						_("_Connect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
+						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
+	}
+	else if (args->type == OSCAR_CAPABILITY_SENDFILE)
+	{
+		gchar *filename;
+
+		conn->xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE, sn);
+		conn->xfer->data = conn;
+		gaim_xfer_ref(conn->xfer);
+		gaim_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
+
+		/* Set the file name */
+		if (g_utf8_validate(args->info.sendfile.filename, -1, NULL))
+			filename = g_strdup(args->info.sendfile.filename);
+		else
+			filename = gaim_utf8_salvage(args->info.sendfile.filename);
+
+		if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR)
+		{
+			/*
+			 * If they are sending us a directory then the last character
+			 * of the file name will be an asterisk.  We don't want to
+			 * save stuff to a directory named "*" so we remove the
+			 * asterisk from the file name.
+			 */
+			char *tmp = strrchr(filename, '\\');
+			if ((tmp != NULL) && (tmp[1] == '*'))
+				tmp[0] = '\0';
+		}
+		gaim_xfer_set_filename(conn->xfer, filename);
+		g_free(filename);
+
+		/*
+		 * Set the message (unless this is the dummy message from an
+		 * ICQ client or an empty message from an AIM client.
+		 * TODO: Maybe we should strip HTML and then see if strlen>0?
+		 */
+		if ((message != NULL) &&
+			(g_ascii_strncasecmp(message, "<ICQ_COOL_FT>", 13) != 0) &&
+			(g_ascii_strcasecmp(message, "<HTML>") != 0))
+		{
+			gaim_xfer_set_message(conn->xfer, message);
+		}
+
+		/* Setup our I/O op functions */
+		gaim_xfer_set_init_fnc(conn->xfer, peer_oft_recvcb_init);
+		gaim_xfer_set_end_fnc(conn->xfer, peer_oft_recvcb_end);
+		gaim_xfer_set_request_denied_fnc(conn->xfer, peer_oft_cb_generic_cancel);
+		gaim_xfer_set_cancel_recv_fnc(conn->xfer, peer_oft_cb_generic_cancel);
+		gaim_xfer_set_ack_fnc(conn->xfer, peer_oft_recvcb_ack_recv);
+
+		/* Now perform the request */
+		gaim_xfer_request(conn->xfer);
+	}
+}
+
+/*******************************************************************/
+/* End code for establishing a peer connection                     */
+/*******************************************************************/

@@ -25,32 +25,33 @@
 
 #include <oscar.h>
 
-static int reportinterval(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+reportinterval(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 interval;
 
-	interval = aimbs_get16(bs);
+	interval = byte_stream_get16(bs);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, interval);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, interval);
 
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0002)
-		return reportinterval(sess, mod, rx, snac, bs);
+		return reportinterval(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int stats_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+stats_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x000b;
 	mod->version = 0x0001;
 	mod->toolid = 0x0104;

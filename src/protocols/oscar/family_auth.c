@@ -52,7 +52,8 @@
  * @param password Incoming password.
  * @param encoded Buffer to put encoded password.
  */
-static int aim_encode_password(const char *password, guint8 *encoded)
+static int
+aim_encode_password(const char *password, guint8 *encoded)
 {
 	guint8 encoding_table[] = {
 #if 0 /* old v1 table */
@@ -77,7 +78,8 @@ static int aim_encode_password(const char *password, guint8 *encoded)
 #endif
 
 #ifdef USE_OLD_MD5
-static int aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
+static int
+aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -94,7 +96,8 @@ static int aim_encode_password_md5(const char *password, const char *key, guint8
 	return 0;
 }
 #else
-static int aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
+static int
+aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -118,76 +121,28 @@ static int aim_encode_password_md5(const char *password, const char *key, guint8
 }
 #endif
 
-/*
- * The FLAP version is sent by itself at the beginning of authorization
- * connections.  The FLAP version is also sent before the cookie when connecting
- * for other services (BOS, chatnav, chat, etc.).
- */
-faim_export int aim_sendflapver(OscarSession *sess, OscarConnection *conn)
-{
-	FlapFrame *fr;
-
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4)))
-		return -ENOMEM;
-
-	aimbs_put32(&fr->data, 0x00000001);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-/*
- * This just pushes the passed cookie onto the passed connection, without
- * the SNAC header or any of that.
- *
- * Very commonly used, as every connection except auth will require this to
- * be the first thing you send.
- *
- */
-faim_export int aim_sendcookie(OscarSession *sess, OscarConnection *conn, const guint16 length, const guint8 *chipsahoy)
-{
-	FlapFrame *fr;
-	aim_tlvlist_t *tl = NULL;
-
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 4+2+2+length)))
-		return -ENOMEM;
-
-	aimbs_put32(&fr->data, 0x00000001);
-	aim_tlvlist_add_raw(&tl, 0x0006, length, chipsahoy);
-	aim_tlvlist_write(&fr->data, &tl);
-	aim_tlvlist_free(&tl);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
 #ifdef USE_XOR_FOR_ICQ
 /*
  * Part two of the ICQ hack.  Note the ignoring of the key.
  */
-static int goddamnicq2(OscarSession *sess, OscarConnection *conn, const char *sn, const char *password, ClientInfo *ci)
+static int
+goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *password, ClientInfo *ci)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_tlvlist_t *tl = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
 
 	passwdlen = strlen(password);
-	if (!(password_encoded = (guint8 *)malloc(passwdlen+1)))
-		return -ENOMEM;
+	password_encoded = (guint8 *)malloc(passwdlen+1);
 	if (passwdlen > MAXICQPASSLEN)
 		passwdlen = MAXICQPASSLEN;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x01, 1152))) {
-		free(password_encoded);
-		return -ENOMEM;
-	}
+	frame = flap_frame_new(od, 0x01, 1152);
 
 	aim_encode_password(password, password_encoded);
 
-	aimbs_put32(&fr->data, 0x00000001); /* FLAP Version */
+	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
 	aim_tlvlist_add_str(&tl, 0x0001, sn);
 	aim_tlvlist_add_raw(&tl, 0x0002, passwdlen, password_encoded);
 
@@ -202,12 +157,12 @@ static int goddamnicq2(OscarSession *sess, OscarConnection *conn, const char *sn
 	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
 	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
 
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 
 	free(password_encoded);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -242,9 +197,10 @@ static int goddamnicq2(OscarSession *sess, OscarConnection *conn, const char *sn
  *   serverstore = 0x01
  *
  */
-faim_export int aim_send_login(OscarSession *sess, OscarConnection *conn, const char *sn, const char *password, ClientInfo *ci, const char *key)
+int
+aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, ClientInfo *ci, const char *key)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_tlvlist_t *tl = NULL;
 	guint8 digest[16];
 	aim_snacid_t snacid;
@@ -255,14 +211,13 @@ faim_export int aim_send_login(OscarSession *sess, OscarConnection *conn, const 
 #ifdef USE_XOR_FOR_ICQ
 	/* If we're signing on an ICQ account then use the older, XOR login method */
 	if (isdigit(sn[0]))
-		return goddamnicq2(sess, conn, sn, password, ci);
+		return goddamnicq2(od, conn, sn, password, ci);
 #endif
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 1152);
 
-	snacid = aim_cachesnac(sess, 0x0017, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0017, 0x0002, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0017, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0017, 0x0002, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tl, 0x0001, sn);
 
@@ -302,11 +257,11 @@ faim_export int aim_send_login(OscarSession *sess, OscarConnection *conn, const 
 	 */
 	aim_tlvlist_add_8(&tl, 0x004a, 0x01);
 
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -314,20 +269,20 @@ faim_export int aim_send_login(OscarSession *sess, OscarConnection *conn, const 
 /*
  * This is sent back as a general response to the login command.
  * It can be either an error or a success, depending on the
- * presence of certain TLVs.  
+ * presence of certain TLVs.
  *
  * The client should check the value passed as errorcode. If
  * its nonzero, there was an error.
  */
-static int parse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_tlvlist_t *tlvlist;
 	aim_rxcallback_t userfunc;
 	struct aim_authresp_info *info;
 	int ret = 0;
 
-	info = (struct aim_authresp_info *)malloc(sizeof(struct aim_authresp_info));
-	memset(info, 0, sizeof(struct aim_authresp_info));
+	info = g_new0(struct aim_authresp_info, 1);
 
 	/*
 	 * Read block of TLVs.  All further data is derived
@@ -338,10 +293,10 @@ static int parse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 	/*
 	 * No matter what, we should have a screen name.
 	 */
-	memset(sess->sn, 0, sizeof(sess->sn));
+	memset(od->sn, 0, sizeof(od->sn));
 	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
 		info->sn = aim_tlv_getstr(tlvlist, 0x0001, 1);
-		strncpy(sess->sn, info->sn, sizeof(sess->sn));
+		strncpy(od->sn, info->sn, sizeof(od->sn));
 	}
 
 	/*
@@ -374,7 +329,7 @@ static int parse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 	/*
 	 * The email address attached to this account
 	 *   Not available for ICQ or @mac.com logins.
-	 *   If you receive this TLV, then you are allowed to use 
+	 *   If you receive this TLV, then you are allowed to use
 	 *   family 0x0018 to check the status of your email.
 	 * XXX - Not really true!
 	 */
@@ -443,10 +398,10 @@ static int parse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
 	}
 #endif
 
-	sess->authinfo = info;
+	od->authinfo = info;
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
-		ret = userfunc(sess, rx, info);
+	if ((userfunc = aim_callhandler(od, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
+		ret = userfunc(od, conn, frame, info);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -489,15 +444,14 @@ static int parse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsn
  * being called from the context of aim_rxdispatch()...
  *
  */
-static int goddamnicq(OscarSession *sess, OscarConnection *conn, const char *sn)
+static int
+goddamnicq(OscarData *od, FlapConnection *conn, const char *sn)
 {
-	FlapFrame fr;
+	FlapFrame frame;
 	aim_rxcallback_t userfunc;
 
-	fr.conn = conn;
-
-	if ((userfunc = aim_callhandler(sess, conn, 0x0017, 0x0007)))
-		userfunc(sess, &fr, "");
+	if ((userfunc = aim_callhandler(od, 0x0017, 0x0007)))
+		userfunc(od, conn, &frame, "");
 
 	return 0;
 }
@@ -506,34 +460,32 @@ static int goddamnicq(OscarSession *sess, OscarConnection *conn, const char *sn)
 /*
  * Subtype 0x0006
  *
- * In AIM 3.5 protocol, the first stage of login is to request login from the 
- * Authorizer, passing it the screen name for verification.  If the name is 
- * invalid, a 0017/0003 is spit back, with the standard error contents.  If 
- * valid, a 0017/0007 comes back, which is the signal to send it the main 
- * login command (0017/0002). 
+ * In AIM 3.5 protocol, the first stage of login is to request login from the
+ * Authorizer, passing it the screen name for verification.  If the name is
+ * invalid, a 0017/0003 is spit back, with the standard error contents.  If
+ * valid, a 0017/0007 comes back, which is the signal to send it the main
+ * login command (0017/0002).
  *
  */
-faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, const char *sn)
+int
+aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	if (!sess || !conn || !sn)
+	if (!od || !conn || !sn)
 		return -EINVAL;
 
 #ifdef USE_XOR_FOR_ICQ
 	if (isdigit(sn[0]))
-		return goddamnicq(sess, conn, sn);
+		return goddamnicq(od, conn, sn);
 #endif
 
-	aim_sendflapver(sess, conn);
+	frame = flap_frame_new(od, 0x02, 10+2+2+strlen(sn)+8);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn)+8 )))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
+	snacid = aim_cachesnac(od, 0x0017, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0017, 0x0006, 0x0000, snacid);
 
 	aim_tlvlist_add_str(&tl, 0x0001, sn);
 
@@ -543,10 +495,10 @@ faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, con
 	/* Unknown.  Sent in recent WinAIM clients.*/
 	aim_tlvlist_add_noval(&tl, 0x005a);
 
-	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -560,21 +512,22 @@ faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, con
  * Calls the client, which should then use the value to call aim_send_login.
  *
  */
-static int keyparse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int keylen, ret = 1;
 	aim_rxcallback_t userfunc;
 	char *keystr;
 
-	keylen = aimbs_get16(bs);
-	keystr = aimbs_getstr(bs, keylen);
+	keylen = byte_stream_get16(bs);
+	keystr = byte_stream_getstr(bs, keylen);
 
-	/* XXX - When GiantGrayPanda signed on AIM I got a thing asking me to register 
-	 * for the netscape network.  This SNAC had a type 0x0058 TLV with length 10.  
+	/* XXX - When GiantGrayPanda signed on AIM I got a thing asking me to register
+	 * for the netscape network.  This SNAC had a type 0x0058 TLV with length 10.
 	 * Data is 0x0007 0004 3e19 ae1e 0006 0004 0000 0005 */
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, keystr);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, keystr);
 
 	free(keystr);
 
@@ -586,13 +539,14 @@ static int keyparse(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
  *
  * Receive SecurID request.
  */
-static int got_securid_request(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+got_securid_request(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame);
 
 	return ret;
 }
@@ -602,66 +556,68 @@ static int got_securid_request(OscarSession *sess, aim_module_t *mod, FlapFrame 
  *
  * Send SecurID response.
  */
-faim_export int aim_auth_securid_send(OscarSession *sess, const char *securid)
+int
+aim_auth_securid_send(OscarData *od, const char *securid)
 {
-	OscarConnection *conn;
-	FlapFrame *fr;
+	FlapConnection *conn;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 	int len;
 
-	if (!sess || !(conn = aim_getconn_type_all(sess, AIM_CONN_TYPE_AUTH)) || !securid)
+	if (!od || !(conn = flap_connection_getbytype_all(od, SNAC_FAMILY_AUTH)) || !securid)
 		return -EINVAL;
 
 	len = strlen(securid);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+len)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+2+len);
 
-	snacid = aim_cachesnac(sess, OSCAR_FAMILY_AUTH, OSCAR_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, OSCAR_FAMILY_AUTH, OSCAR_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, 0);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_RESPONSE, 0x0000, 0);
 
-	aimbs_put16(&fr->data, len);
-	aimbs_putstr(&fr->data, securid);
+	byte_stream_put16(&frame->data, len);
+	byte_stream_putstr(&frame->data, securid);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-static void auth_shutdown(OscarSession *sess, aim_module_t *mod)
+static void
+auth_shutdown(OscarData *od, aim_module_t *mod)
 {
-	if (sess->authinfo) {
-		free(sess->authinfo->sn);
-		free(sess->authinfo->bosip);
-		free(sess->authinfo->errorurl);
-		free(sess->authinfo->email);
-		free(sess->authinfo->chpassurl);
-		free(sess->authinfo->latestrelease.name);
-		free(sess->authinfo->latestrelease.url);
-		free(sess->authinfo->latestrelease.info);
-		free(sess->authinfo->latestbeta.name);
-		free(sess->authinfo->latestbeta.url);
-		free(sess->authinfo->latestbeta.info);
-		free(sess->authinfo);
+	if (od->authinfo != NULL)
+	{
+		free(od->authinfo->sn);
+		free(od->authinfo->bosip);
+		free(od->authinfo->errorurl);
+		free(od->authinfo->email);
+		free(od->authinfo->chpassurl);
+		free(od->authinfo->latestrelease.name);
+		free(od->authinfo->latestrelease.url);
+		free(od->authinfo->latestrelease.info);
+		free(od->authinfo->latestbeta.name);
+		free(od->authinfo->latestbeta.url);
+		free(od->authinfo->latestbeta.info);
+		free(od->authinfo);
 	}
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0003)
-		return parse(sess, mod, rx, snac, bs);
+		return parse(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x0007)
-		return keyparse(sess, mod, rx, snac, bs);
+		return keyparse(od, conn, mod, frame, snac, bs);
 	else if (snac->subtype == 0x000a)
-		return got_securid_request(sess, mod, rx, snac, bs);
+		return got_securid_request(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int auth_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+auth_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0017;
 	mod->version = 0x0000;
 	mod->flags = 0;

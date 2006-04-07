@@ -33,48 +33,48 @@
 /**
  * Subtype 0x0006 - Request information about your email account
  *
- * @param sess The oscar session.
+ * @param od The oscar session.
  * @param conn The email connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_email_sendcookies(OscarSession *sess)
+int
+aim_email_sendcookies(OscarData *od)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 	FlapFrame *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ALERT)))
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+16+16)))
-		return -ENOMEM;
-	snacid = aim_cachesnac(sess, 0x0018, 0x0006, 0x0000, NULL, 0);
+	fr = flap_frame_new(od, 0x02, 10+2+16+16);
+	snacid = aim_cachesnac(od, 0x0018, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0018, 0x0006, 0x0000, snacid);
 
 	/* Number of cookies to follow */
-	aimbs_put16(&fr->data, 0x0002);
+	byte_stream_put16(&fr->data, 0x0002);
 
 	/* Cookie */
-	aimbs_put16(&fr->data, 0x5d5e);
-	aimbs_put16(&fr->data, 0x1708);
-	aimbs_put16(&fr->data, 0x55aa);
-	aimbs_put16(&fr->data, 0x11d3);
-	aimbs_put16(&fr->data, 0xb143);
-	aimbs_put16(&fr->data, 0x0060);
-	aimbs_put16(&fr->data, 0xb0fb);
-	aimbs_put16(&fr->data, 0x1ecb);
+	byte_stream_put16(&fr->data, 0x5d5e);
+	byte_stream_put16(&fr->data, 0x1708);
+	byte_stream_put16(&fr->data, 0x55aa);
+	byte_stream_put16(&fr->data, 0x11d3);
+	byte_stream_put16(&fr->data, 0xb143);
+	byte_stream_put16(&fr->data, 0x0060);
+	byte_stream_put16(&fr->data, 0xb0fb);
+	byte_stream_put16(&fr->data, 0x1ecb);
 
 	/* Cookie */
-	aimbs_put16(&fr->data, 0xb380);
-	aimbs_put16(&fr->data, 0x9ad8);
-	aimbs_put16(&fr->data, 0x0dba);
-	aimbs_put16(&fr->data, 0x11d5);
-	aimbs_put16(&fr->data, 0x9f8a);
-	aimbs_put16(&fr->data, 0x0060);
-	aimbs_put16(&fr->data, 0xb0ee);
-	aimbs_put16(&fr->data, 0x0631);
+	byte_stream_put16(&fr->data, 0xb380);
+	byte_stream_put16(&fr->data, 0x9ad8);
+	byte_stream_put16(&fr->data, 0x0dba);
+	byte_stream_put16(&fr->data, 0x11d5);
+	byte_stream_put16(&fr->data, 0x9f8a);
+	byte_stream_put16(&fr->data, 0x0060);
+	byte_stream_put16(&fr->data, 0xb0ee);
+	byte_stream_put16(&fr->data, 0x0631);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, fr);
 
 	return 0;
 }
@@ -92,7 +92,8 @@ faim_export int aim_email_sendcookies(OscarSession *sess)
  * this is just a periodic status update, this will also contain
  * the number of unread emails that you have.
  */
-static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
@@ -103,11 +104,11 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 
 	char *alertitle = NULL, *alerturl = NULL;
 
-	cookie8 = aimbs_getraw(bs, 8); /* Possibly the code used to log you in to mail? */
-	cookie16 = aimbs_getraw(bs, 16); /* Mail cookie sent above */
+	cookie8 = byte_stream_getraw(bs, 8); /* Possibly the code used to log you in to mail? */
+	cookie16 = byte_stream_getraw(bs, 16); /* Mail cookie sent above */
 
 	/* See if we already have some info associated with this cookie */
-	for (new = sess->emailinfo; (new && memcmp(cookie16, new->cookie16, 16)); new = new->next);
+	for (new = od->emailinfo; (new && memcmp(cookie16, new->cookie16, 16)); new = new->next);
 	if (new) {
 		/* Free some of the old info, if it exists */
 		free(new->cookie8);
@@ -116,17 +117,15 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 		free(new->domain);
 	} else {
 		/* We don't already have info, so create a new struct for it */
-		if (!(new = malloc(sizeof(struct aim_emailinfo))))
-			return -ENOMEM;
-		memset(new, 0, sizeof(struct aim_emailinfo));
-		new->next = sess->emailinfo;
-		sess->emailinfo = new;
+		new = g_new0(struct aim_emailinfo, 1);
+		new->next = od->emailinfo;
+		od->emailinfo = new;
 	}
 
 	new->cookie8 = cookie8;
 	new->cookie16 = cookie16;
 
-	tlvlist = aim_tlvlist_readnum(bs, aimbs_get16(bs));
+	tlvlist = aim_tlvlist_readnum(bs, byte_stream_get16(bs));
 
 	tmp = aim_tlv_get16(tlvlist, 0x0080, 1);
 	if (tmp) {
@@ -150,8 +149,8 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 	alertitle = aim_tlv_getstr(tlvlist, 0x0005, 1);
 	alerturl  = aim_tlv_getstr(tlvlist, 0x000d, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, new, havenewmail, alertitle, (alerturl ? alerturl + 2 : NULL));
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, new, havenewmail, alertitle, (alerturl ? alerturl + 2 : NULL));
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -164,51 +163,53 @@ static int parseinfo(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_m
 /**
  * Subtype 0x0016 - Send something or other
  *
- * @param sess The oscar session.
+ * @param od The oscar session.
  * @param conn The email connection for this session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_email_activate(OscarSession *sess)
+int
+aim_email_activate(OscarData *od)
 {
-	OscarConnection *conn;
+	FlapConnection *conn;
 	FlapFrame *fr;
 	aim_snacid_t snacid;
 
-	if (!sess || !(conn = aim_conn_findbygroup(sess, OSCAR_FAMILY_ALERT)))
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ALERT)))
 		return -EINVAL;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+16)))
-		return -ENOMEM;
-	snacid = aim_cachesnac(sess, 0x0018, 0x0016, 0x0000, NULL, 0);
+	fr = flap_frame_new(od, 0x02, 10+1+16);
+	snacid = aim_cachesnac(od, 0x0018, 0x0016, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0018, 0x0016, 0x0000, snacid);
 
 	/* I would guess this tells AIM that you want updates for your mail accounts */
 	/* ...but I really have no idea */
-	aimbs_put8(&fr->data, 0x02);
-	aimbs_put32(&fr->data, 0x04000000);
-	aimbs_put32(&fr->data, 0x04000000);
-	aimbs_put32(&fr->data, 0x04000000);
-	aimbs_put32(&fr->data, 0x00000000);
+	byte_stream_put8(&fr->data, 0x02);
+	byte_stream_put32(&fr->data, 0x04000000);
+	byte_stream_put32(&fr->data, 0x04000000);
+	byte_stream_put32(&fr->data, 0x04000000);
+	byte_stream_put32(&fr->data, 0x00000000);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, fr);
 
 	return 0;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0007)
-		return parseinfo(sess, mod, rx, snac, bs);
+		return parseinfo(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-static void email_shutdown(OscarSession *sess, aim_module_t *mod)
+static void
+email_shutdown(OscarData *od, aim_module_t *mod)
 {
-	while (sess->emailinfo) {
-		struct aim_emailinfo *tmp = sess->emailinfo;
-		sess->emailinfo = sess->emailinfo->next;
+	while (od->emailinfo)
+	{
+		struct aim_emailinfo *tmp = od->emailinfo;
+		od->emailinfo = od->emailinfo->next;
 		free(tmp->cookie16);
 		free(tmp->cookie8);
 		free(tmp->url);
@@ -219,9 +220,9 @@ static void email_shutdown(OscarSession *sess, aim_module_t *mod)
 	return;
 }
 
-faim_internal int email_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+email_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0018;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;

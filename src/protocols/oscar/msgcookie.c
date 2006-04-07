@@ -40,30 +40,30 @@
  * ->addtime of the found structure; otherwise adds the given cookie
  * to the cache
  *
- * @param sess session to add to
+ * @param od session to add to
  * @param cookie pointer to struct to append
  * @return returns -1 on error, 0 on append, 1 on update.  the cookie you pass
  *         in may be free'd, so don't count on its value after calling this!
  */
-faim_internal int aim_cachecookie(OscarSession *sess, IcbmCookie *cookie)
+int aim_cachecookie(OscarData *od, IcbmCookie *cookie)
 {
 	IcbmCookie *newcook;
 
-	if (!sess || !cookie)
+	if (!od || !cookie)
 		return -EINVAL;
 
-	newcook = aim_checkcookie(sess, cookie->cookie, cookie->type);
+	newcook = aim_checkcookie(od, cookie->cookie, cookie->type);
 
 	if (newcook == cookie) {
 		newcook->addtime = time(NULL);
 		return 1;
 	} else if (newcook)
-		aim_cookie_free(sess, newcook);
+		aim_cookie_free(od, newcook);
 
 	cookie->addtime = time(NULL);
 
-	cookie->next = sess->msgcookies;
-	sess->msgcookies = cookie;
+	cookie->next = od->msgcookies;
+	od->msgcookies = cookie;
 
 	return 0;
 }
@@ -73,19 +73,19 @@ faim_internal int aim_cachecookie(OscarSession *sess, IcbmCookie *cookie)
  *
  * takes a cookie string and a cookie type and finds the cookie struct associated with that duple, removing it from the cookie list ikn the process.
  *
- * @param sess session to grab cookie from
+ * @param od session to grab cookie from
  * @param cookie cookie string to look for
  * @param type cookie type to look for
  * @return if found, returns the struct; if none found (or on error), returns NULL:
  */
-faim_internal IcbmCookie *aim_uncachecookie(OscarSession *sess, guint8 *cookie, int type)
+IcbmCookie *aim_uncachecookie(OscarData *od, guint8 *cookie, int type)
 {
 	IcbmCookie *cur, **prev;
 
-	if (!cookie || !sess->msgcookies)
+	if (!cookie || !od->msgcookies)
 		return NULL;
 
-	for (prev = &sess->msgcookies; (cur = *prev); ) {
+	for (prev = &od->msgcookies; (cur = *prev); ) {
 		if ((cur->type == type) &&
 				(memcmp(cur->cookie, cookie, 8) == 0)) {
 			*prev = cur->next;
@@ -106,15 +106,14 @@ faim_internal IcbmCookie *aim_uncachecookie(OscarSession *sess, guint8 *cookie, 
  * @return returns NULL on error, a pointer to the newly-allocated
  *         cookie on success.
  */
-faim_internal IcbmCookie *aim_mkcookie(guint8 *c, int type, void *data)
+IcbmCookie *aim_mkcookie(guint8 *c, int type, void *data)
 {
 	IcbmCookie *cookie;
 
 	if (!c)
 		return NULL;
 
-	if (!(cookie = calloc(1, sizeof(IcbmCookie))))
-		return NULL;
+	cookie = calloc(1, sizeof(IcbmCookie));
 
 	cookie->data = data;
 	cookie->type = type;
@@ -126,21 +125,21 @@ faim_internal IcbmCookie *aim_mkcookie(guint8 *c, int type, void *data)
 /**
  * aim_checkcookie - check to see if a cookietuple has been cached
  *
- * @param sess session to check for the cookie in
+ * @param od session to check for the cookie in
  * @param cookie pointer to the cookie string array
  * @param type type of the cookie to look for
  * @return returns a pointer to the cookie struct (still in the list)
  *         on success; returns NULL on error/not found
  */
 
-faim_internal IcbmCookie *aim_checkcookie(OscarSession *sess, const guint8 *cookie, int type)
+IcbmCookie *aim_checkcookie(OscarData *od, const guint8 *cookie, int type)
 {
 	IcbmCookie *cur;
 
-	for (cur = sess->msgcookies; cur; cur = cur->next) {
+	for (cur = od->msgcookies; cur; cur = cur->next) {
 		if ((cur->type == type) &&
 				(memcmp(cur->cookie, cookie, 8) == 0))
-			return cur; 
+			return cur;
 	}
 
 	return NULL;
@@ -150,23 +149,23 @@ faim_internal IcbmCookie *aim_checkcookie(OscarSession *sess, const guint8 *cook
  * aim_cookie_free - free an IcbmCookie struct
  *
  * this function removes the cookie *cookie from the list of cookies
- * in sess, and then frees all memory associated with it. including
+ * in od, and then frees all memory associated with it. including
  * its data! if you want to use the private data after calling this,
  * make sure you copy it first.
  *
- * @param sess session to remove the cookie from
+ * @param od session to remove the cookie from
  * @param cookie the address of a pointer to the cookie struct to remove
  * @return returns -1 on error, 0 on success.
  *
  */
-faim_internal int aim_cookie_free(OscarSession *sess, IcbmCookie *cookie)
+int aim_cookie_free(OscarData *od, IcbmCookie *cookie)
 {
 	IcbmCookie *cur, **prev;
 
-	if (!sess || !cookie)
+	if (!od || !cookie)
 		return -EINVAL;
 
-	for (prev = &sess->msgcookies; (cur = *prev); ) {
+	for (prev = &od->msgcookies; (cur = *prev); ) {
 		if (cur == cookie)
 			*prev = cur->next;
 		else
@@ -180,16 +179,16 @@ faim_internal int aim_cookie_free(OscarSession *sess, IcbmCookie *cookie)
 }
 
 /* XXX I hate switch */
-faim_internal int aim_msgcookie_gettype(int reqclass)
+int aim_msgcookie_gettype(int type)
 {
 	/* XXX: hokey-assed. needs fixed. */
-	switch(reqclass) {
-	case AIM_CAPS_BUDDYICON: return AIM_COOKIETYPE_OFTICON;
-	case AIM_CAPS_TALK: return AIM_COOKIETYPE_OFTVOICE;
-	case AIM_CAPS_DIRECTIM: return AIM_COOKIETYPE_OFTIMAGE;
-	case AIM_CAPS_CHAT: return AIM_COOKIETYPE_CHAT;
-	case AIM_CAPS_GETFILE: return AIM_COOKIETYPE_OFTGET;
-	case AIM_CAPS_SENDFILE: return AIM_COOKIETYPE_OFTSEND;
+	switch(type) {
+	case OSCAR_CAPABILITY_BUDDYICON: return AIM_COOKIETYPE_OFTICON;
+	case OSCAR_CAPABILITY_TALK: return AIM_COOKIETYPE_OFTVOICE;
+	case OSCAR_CAPABILITY_DIRECTIM: return AIM_COOKIETYPE_OFTIMAGE;
+	case OSCAR_CAPABILITY_CHAT: return AIM_COOKIETYPE_CHAT;
+	case OSCAR_CAPABILITY_GETFILE: return AIM_COOKIETYPE_OFTGET;
+	case OSCAR_CAPABILITY_SENDFILE: return AIM_COOKIETYPE_OFTSEND;
 	default: return AIM_COOKIETYPE_UNKNOWN;
 	}
 }

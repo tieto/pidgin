@@ -21,12 +21,12 @@
 
 #include "oscar.h"
 
-static aim_tlv_t *createtlv(guint16 type, guint16 length, guint8 *value)
+static aim_tlv_t *
+createtlv(guint16 type, guint16 length, guint8 *value)
 {
 	aim_tlv_t *ret;
 
-	if (!(ret = (aim_tlv_t *)malloc(sizeof(aim_tlv_t))))
-		return NULL;
+	ret = g_new(aim_tlv_t, 1);
 	ret->type = type;
 	ret->length = length;
 	ret->value = value;
@@ -34,7 +34,8 @@ static aim_tlv_t *createtlv(guint16 type, guint16 length, guint8 *value)
 	return ret;
 }
 
-static void freetlv(aim_tlv_t **oldtlv)
+static void
+freetlv(aim_tlv_t **oldtlv)
 {
 
 	if (!oldtlv || !*oldtlv)
@@ -56,7 +57,7 @@ static void freetlv(aim_tlv_t **oldtlv)
  * be called to free the dynamic substructures.
  *
  * XXX There should be a flag setable here to have the tlvlist contain
- * bstream references, so that at least the ->value portion of each 
+ * bstream references, so that at least the ->value portion of each
  * element doesn't need to be malloc/memcpy'd.  This could prove to be
  * just as efficient as the in-place TLV parsing used in a couple places
  * in libfaim.
@@ -64,21 +65,21 @@ static void freetlv(aim_tlv_t **oldtlv)
  * @param bs Input bstream
  * @return Return the TLV chain read
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs)
+aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 
-	while (aim_bstream_empty(bs) > 0) {
+	while (byte_stream_empty(bs) > 0) {
 		guint16 type, length;
 
-		type = aimbs_get16(bs);
-		length = aimbs_get16(bs);
+		type = byte_stream_get16(bs);
+		length = byte_stream_get16(bs);
 
 #if 0 /* temporarily disabled until I know if they're still doing it or not */
 		/*
 		 * Okay, so now AOL has decided that any TLV of
 		 * type 0x0013 can only be two bytes, despite
-		 * what the actual given length is.  So here 
+		 * what the actual given length is.  So here
 		 * we dump any invalid TLVs of that sort.  Hopefully
 		 * there's no special cases to this special case.
 		 *   - mid (30jun2000)
@@ -91,27 +92,15 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs)
 #endif
 		else {
 
-			if (length > aim_bstream_empty(bs)) {
+			if (length > byte_stream_empty(bs)) {
 				aim_tlvlist_free(&list);
 				return NULL;
 			}
 
-			cur = (aim_tlvlist_t *)malloc(sizeof(aim_tlvlist_t));
-			if (!cur) {
-				aim_tlvlist_free(&list);
-				return NULL;
-			}
-
-			memset(cur, 0, sizeof(aim_tlvlist_t));
-
+			cur = g_new0(aim_tlvlist_t, 1);
 			cur->tlv = createtlv(type, length, NULL);
-			if (!cur->tlv) {
-				free(cur);
-				aim_tlvlist_free(&list);
-				return NULL;
-			}
 			if (cur->tlv->length > 0) {
-				cur->tlv->value = aimbs_getraw(bs, length);
+				cur->tlv->value = byte_stream_getraw(bs, length);
 				if (!cur->tlv->value) {
 					freetlv(&cur->tlv);
 					free(cur);
@@ -137,49 +126,37 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs)
  * be called to free the dynamic substructures.
  *
  * XXX There should be a flag setable here to have the tlvlist contain
- * bstream references, so that at least the ->value portion of each 
+ * bstream references, so that at least the ->value portion of each
  * element doesn't need to be malloc/memcpy'd.  This could prove to be
  * just as efficient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
  * @param bs Input bstream
- * @param num The max number of TLVs that will be read, or -1 if unlimited.  
- *        There are a number of places where you want to read in a tlvchain, 
- *        but the chain is not at the end of the SNAC, and the chain is 
+ * @param num The max number of TLVs that will be read, or -1 if unlimited.
+ *        There are a number of places where you want to read in a tlvchain,
+ *        but the chain is not at the end of the SNAC, and the chain is
  *        preceded by the number of TLVs.  So you can limit that with this.
  * @return Return the TLV chain read
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
+aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 
-	while ((aim_bstream_empty(bs) > 0) && (num != 0)) {
+	while ((byte_stream_empty(bs) > 0) && (num != 0)) {
 		guint16 type, length;
 
-		type = aimbs_get16(bs);
-		length = aimbs_get16(bs);
+		type = byte_stream_get16(bs);
+		length = byte_stream_get16(bs);
 
-		if (length > aim_bstream_empty(bs)) {
+		if (length > byte_stream_empty(bs)) {
 			aim_tlvlist_free(&list);
 			return NULL;
 		}
 
-		cur = (aim_tlvlist_t *)malloc(sizeof(aim_tlvlist_t));
-		if (!cur) {
-			aim_tlvlist_free(&list);
-			return NULL;
-		}
-
-		memset(cur, 0, sizeof(aim_tlvlist_t));
-
+		cur = g_new0(aim_tlvlist_t, 1);
 		cur->tlv = createtlv(type, length, NULL);
-		if (!cur->tlv) {
-			free(cur);
-			aim_tlvlist_free(&list);
-			return NULL;
-		}
 		if (cur->tlv->length > 0) {
-			cur->tlv->value = aimbs_getraw(bs, length);
+			cur->tlv->value = byte_stream_getraw(bs, length);
 			if (!cur->tlv->value) {
 				freetlv(&cur->tlv);
 				free(cur);
@@ -206,49 +183,37 @@ faim_internal aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
  * be called to free the dynamic substructures.
  *
  * XXX There should be a flag setable here to have the tlvlist contain
- * bstream references, so that at least the ->value portion of each 
+ * bstream references, so that at least the ->value portion of each
  * element doesn't need to be malloc/memcpy'd.  This could prove to be
  * just as efficient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
  * @param bs Input bstream
  * @param len The max length in bytes that will be read.
- *        There are a number of places where you want to read in a tlvchain, 
- *        but the chain is not at the end of the SNAC, and the chain is 
+ *        There are a number of places where you want to read in a tlvchain,
+ *        but the chain is not at the end of the SNAC, and the chain is
  *        preceded by the length of the TLVs.  So you can limit that with this.
  * @return Return the TLV chain read
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
+aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
 {
 	aim_tlvlist_t *list = NULL, *cur;
 
-	while ((aim_bstream_empty(bs) > 0) && (len > 0)) {
+	while ((byte_stream_empty(bs) > 0) && (len > 0)) {
 		guint16 type, length;
 
-		type = aimbs_get16(bs);
-		length = aimbs_get16(bs);
+		type = byte_stream_get16(bs);
+		length = byte_stream_get16(bs);
 
-		if (length > aim_bstream_empty(bs)) {
+		if (length > byte_stream_empty(bs)) {
 			aim_tlvlist_free(&list);
 			return NULL;
 		}
 
-		cur = (aim_tlvlist_t *)malloc(sizeof(aim_tlvlist_t));
-		if (!cur) {
-			aim_tlvlist_free(&list);
-			return NULL;
-		}
-
-		memset(cur, 0, sizeof(aim_tlvlist_t));
-
+		cur = g_new0(aim_tlvlist_t, 1);
 		cur->tlv = createtlv(type, length, NULL);
-		if (!cur->tlv) {
-			free(cur);
-			aim_tlvlist_free(&list);
-			return NULL;
-		}
 		if (cur->tlv->length > 0) {
-			cur->tlv->value = aimbs_getraw(bs, length);
+			cur->tlv->value = byte_stream_getraw(bs, length);
 			if (!cur->tlv->value) {
 				freetlv(&cur->tlv);
 				free(cur);
@@ -272,7 +237,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
  * @param orig The TLV chain you want to make a copy of.
  * @return A newly allocated TLV chain.
  */
-faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
+aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
 {
 	aim_tlvlist_t *new = NULL;
 
@@ -285,22 +250,22 @@ faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
 }
 
 /*
- * Compare two TLV lists for equality.  This probably is not the most 
+ * Compare two TLV lists for equality.  This probably is not the most
  * efficient way to do this.
  *
  * @param one One of the TLV chains to compare.
  * @param two The other TLV chain to compare.
  * @return Return 0 if the lists are the same, return 1 if they are different.
  */
-faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
+int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 {
 	ByteStream bs1, bs2;
 
 	if (aim_tlvlist_size(&one) != aim_tlvlist_size(&two))
 		return 1;
 
-	aim_bstream_init(&bs1, ((guint8 *)malloc(aim_tlvlist_size(&one)*sizeof(guint8))), aim_tlvlist_size(&one));
-	aim_bstream_init(&bs2, ((guint8 *)malloc(aim_tlvlist_size(&two)*sizeof(guint8))), aim_tlvlist_size(&two));
+	byte_stream_init(&bs1, ((guint8 *)malloc(aim_tlvlist_size(&one)*sizeof(guint8))), aim_tlvlist_size(&one));
+	byte_stream_init(&bs2, ((guint8 *)malloc(aim_tlvlist_size(&two)*sizeof(guint8))), aim_tlvlist_size(&two));
 
 	aim_tlvlist_write(&bs1, &one);
 	aim_tlvlist_write(&bs2, &two);
@@ -326,7 +291,7 @@ faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
  *
  * @param list Chain to be freed
  */
-faim_internal void aim_tlvlist_free(aim_tlvlist_t **list)
+void aim_tlvlist_free(aim_tlvlist_t **list)
 {
 	aim_tlvlist_t *cur;
 
@@ -354,7 +319,7 @@ faim_internal void aim_tlvlist_free(aim_tlvlist_t **list)
  * @param list Chain to be counted.
  * @return The number of TLVs stored in the passed chain.
  */
-faim_internal int aim_tlvlist_count(aim_tlvlist_t **list)
+int aim_tlvlist_count(aim_tlvlist_t **list)
 {
 	aim_tlvlist_t *cur;
 	int count;
@@ -372,10 +337,10 @@ faim_internal int aim_tlvlist_count(aim_tlvlist_t **list)
  * Count the number of bytes in a TLV chain.
  *
  * @param list Chain to be sized
- * @return The number of bytes that would be needed to 
+ * @return The number of bytes that would be needed to
  *         write the passed TLV chain to a data buffer.
  */
-faim_internal int aim_tlvlist_size(aim_tlvlist_t **list)
+int aim_tlvlist_size(aim_tlvlist_t **list)
 {
 	aim_tlvlist_t *cur;
 	int size;
@@ -399,25 +364,17 @@ faim_internal int aim_tlvlist_size(aim_tlvlist_t **list)
  * @param value String to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value)
+int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value)
 {
 	aim_tlvlist_t *newtlv, *cur;
 
 	if (list == NULL)
 		return 0;
 
-	if (!(newtlv = (aim_tlvlist_t *)malloc(sizeof(aim_tlvlist_t))))
-		return 0;
-	memset(newtlv, 0x00, sizeof(aim_tlvlist_t));
-
-	if (!(newtlv->tlv = createtlv(type, length, NULL))) {
-		free(newtlv);
-		return 0;
-	}
-	if (newtlv->tlv->length > 0) {
-		newtlv->tlv->value = (guint8 *)malloc(newtlv->tlv->length);
-		memcpy(newtlv->tlv->value, value, newtlv->tlv->length);
-	}
+	newtlv = g_new0(aim_tlvlist_t, 1);
+	newtlv->tlv = createtlv(type, length, NULL);
+	if (newtlv->tlv->length > 0)
+		newtlv->tlv->value = g_memdup(value, length);
 
 	if (!*list)
 		*list = newtlv;
@@ -438,7 +395,7 @@ faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, 
  * @param value Value to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const guint16 type, const guint8 value)
+int aim_tlvlist_add_8(aim_tlvlist_t **list, const guint16 type, const guint8 value)
 {
 	guint8 v8[1];
 
@@ -455,7 +412,7 @@ faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const guint16 type, co
  * @param value Value to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const guint16 type, const guint16 value)
+int aim_tlvlist_add_16(aim_tlvlist_t **list, const guint16 type, const guint16 value)
 {
 	guint8 v16[2];
 
@@ -472,7 +429,7 @@ faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const guint16 type, c
  * @param value Value to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const guint16 type, const guint32 value)
+int aim_tlvlist_add_32(aim_tlvlist_t **list, const guint16 type, const guint32 value)
 {
 	guint8 v32[4];
 
@@ -489,7 +446,7 @@ faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const guint16 type, c
  * @param value Value to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, const char *value)
+int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, const char *value)
 {
 	return aim_tlvlist_add_raw(list, type, strlen(value), (guint8 *)value);
 }
@@ -498,19 +455,19 @@ faim_internal int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, 
  * Adds a block of capability blocks to a TLV chain. The bitfield
  * passed in should be a bitwise %OR of any of the %AIM_CAPS constants:
  *
- *     %AIM_CAPS_BUDDYICON   Supports Buddy Icons
- *     %AIM_CAPS_TALK        Supports Voice Chat
- *     %AIM_CAPS_IMIMAGE     Supports DirectIM/IMImage
- *     %AIM_CAPS_CHAT        Supports Chat
- *     %AIM_CAPS_GETFILE     Supports Get File functions
- *     %AIM_CAPS_SENDFILE    Supports Send File functions
+ *     %OSCAR_CAPABILITY_BUDDYICON   Supports Buddy Icons
+ *     %OSCAR_CAPABILITY_TALK        Supports Voice Chat
+ *     %OSCAR_CAPABILITY_IMIMAGE     Supports DirectIM/IMImage
+ *     %OSCAR_CAPABILITY_CHAT        Supports Chat
+ *     %OSCAR_CAPABILITY_GETFILE     Supports Get File functions
+ *     %OSCAR_CAPABILITY_SENDFILE    Supports Send File functions
  *
  * @param list Destination chain
  * @param type TLV type to add
  * @param caps Bitfield of capability flags to send
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type, const guint32 caps)
+int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type, const guint32 caps)
 {
 	guint8 buf[16*16]; /* XXX icky fixed length buffer */
 	ByteStream bs;
@@ -518,11 +475,11 @@ faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type,
 	if (!caps)
 		return 0; /* nothing there anyway */
 
-	aim_bstream_init(&bs, buf, sizeof(buf));
+	byte_stream_init(&bs, buf, sizeof(buf));
 
-	aimbs_putcaps(&bs, caps);
+	byte_stream_putcaps(&bs, caps);
 
-	return aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);
+	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
 }
 
 /**
@@ -532,16 +489,16 @@ faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type,
  * @param type TLV type to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t *userinfo)
+int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t *userinfo)
 {
 	guint8 buf[1024]; /* bleh */
 	ByteStream bs;
 
-	aim_bstream_init(&bs, buf, sizeof(buf));
+	byte_stream_init(&bs, buf, sizeof(buf));
 
 	aim_putuserinfo(&bs, userinfo);
 
-	return aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);
+	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
 }
 
 /**
@@ -553,7 +510,7 @@ faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, a
  * @param instance The instance.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance)
+int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance)
 {
 	guint8 *buf;
 	int len;
@@ -561,17 +518,15 @@ faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, g
 
 	len = 2 + 1 + strlen(roomname) + 2;
 
-	if (!(buf = malloc(len)))
-		return 0;
+	buf = malloc(len);
+	byte_stream_init(&bs, buf, len);
 
-	aim_bstream_init(&bs, buf, len);
+	byte_stream_put16(&bs, exchange);
+	byte_stream_put8(&bs, strlen(roomname));
+	byte_stream_putstr(&bs, roomname);
+	byte_stream_put16(&bs, instance);
 
-	aimbs_put16(&bs, exchange);
-	aimbs_put8(&bs, strlen(roomname));
-	aimbs_putstr(&bs, roomname);
-	aimbs_put16(&bs, instance);
-
-	len = aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);
+	len = aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
 
 	free(buf);
 
@@ -585,7 +540,7 @@ faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, g
  * @param type TLV type to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type)
+int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type)
 {
 	return aim_tlvlist_add_raw(list, type, 0, NULL);
 }
@@ -596,7 +551,7 @@ faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type
  * made to this.
  *
  * XXX should probably support sublists for real.
- * 
+ *
  * This is so neat.
  *
  * @param list Destination chain.
@@ -606,7 +561,7 @@ faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type
  *         0 is returned if there was an error or if the destination
  *         TLV chain has length 0.
  */
-faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlist_t **tl)
+int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlist_t **tl)
 {
 	guint8 *buf;
 	int buflen;
@@ -617,14 +572,13 @@ faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 ty
 	if (buflen <= 0)
 		return 0;
 
-	if (!(buf = malloc(buflen)))
-		return 0;
+	buf = malloc(buflen);
 
-	aim_bstream_init(&bs, buf, buflen);
+	byte_stream_init(&bs, buf, buflen);
 
 	aim_tlvlist_write(&bs, tl);
 
-	aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);
+	aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
 
 	free(buf);
 
@@ -632,8 +586,8 @@ faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 ty
 }
 
 /**
- * Substitute a TLV of a given type with a new TLV of the same type.  If 
- * you attempt to replace a TLV that does not exist, this function will 
+ * Substitute a TLV of a given type with a new TLV of the same type.  If
+ * you attempt to replace a TLV that does not exist, this function will
  * just add a new TLV as if you called aim_tlvlist_add_raw().
  *
  * @param list Desination chain (%NULL pointer if empty).
@@ -642,7 +596,7 @@ faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 ty
  * @param value String to add.
  * @return The length of the TLV.
  */
-faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value)
+int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value)
 {
 	aim_tlvlist_t *cur;
 
@@ -656,8 +610,7 @@ faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 ty
 	free(cur->tlv->value);
 	cur->tlv->length = length;
 	if (cur->tlv->length > 0) {
-		cur->tlv->value = (guint8 *)malloc(cur->tlv->length);
-		memcpy(cur->tlv->value, value, cur->tlv->length);
+		cur->tlv->value = g_memdup(value, length);
 	} else
 		cur->tlv->value = NULL;
 
@@ -674,7 +627,7 @@ faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 ty
  * @param str String to add.
  * @return The length of the TLV.
  */
-faim_internal int aim_tlvlist_replace_str(aim_tlvlist_t **list, const guint16 type, const char *str)
+int aim_tlvlist_replace_str(aim_tlvlist_t **list, const guint16 type, const char *str)
 {
 	return aim_tlvlist_replace_raw(list, type, strlen(str), (const guchar *)str);
 }
@@ -688,7 +641,7 @@ faim_internal int aim_tlvlist_replace_str(aim_tlvlist_t **list, const guint16 ty
  * @param type TLV type.
  * @return The length of the TLV.
  */
-faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const guint16 type)
+int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const guint16 type)
 {
 	return aim_tlvlist_replace_raw(list, type, 0, NULL);
 }
@@ -703,7 +656,7 @@ faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const guint16 
  * @param value 8 bit value to add.
  * @return The length of the TLV.
  */
-faim_internal int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type, const guint8 value)
+int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type, const guint8 value)
 {
 	guint8 v8[1];
 
@@ -713,8 +666,8 @@ faim_internal int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type
 }
 
 /**
- * Substitute a TLV of a given type with a new TLV of the same type.  If 
- * you attempt to replace a TLV that does not exist, this function will 
+ * Substitute a TLV of a given type with a new TLV of the same type.  If
+ * you attempt to replace a TLV that does not exist, this function will
  * just add a new TLV as if you called aim_tlvlist_add_raw().
  *
  * @param list Desination chain (%NULL pointer if empty).
@@ -722,7 +675,7 @@ faim_internal int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type
  * @param value 32 bit value to add.
  * @return The length of the TLV.
  */
-faim_internal int aim_tlvlist_replace_32(aim_tlvlist_t **list, const guint16 type, const guint32 value)
+int aim_tlvlist_replace_32(aim_tlvlist_t **list, const guint16 type, const guint32 value)
 {
 	guint8 v32[4];
 
@@ -732,13 +685,13 @@ faim_internal int aim_tlvlist_replace_32(aim_tlvlist_t **list, const guint16 typ
 }
 
 /**
- * Remove a TLV of a given type.  If you attempt to remove a TLV that 
+ * Remove a TLV of a given type.  If you attempt to remove a TLV that
  * does not exist, nothing happens.
  *
  * @param list Desination chain (%NULL pointer if empty).
  * @param type TLV type.
  */
-faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type)
+void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type)
 {
 	aim_tlvlist_t *del;
 
@@ -768,17 +721,17 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type)
  * Write a TLV chain into a data buffer.
  *
  * Copies a TLV chain into a raw data buffer, writing only the number
- * of bytes specified. This operation does not free the chain; 
+ * of bytes specified. This operation does not free the chain;
  * aim_tlvlist_free() must still be called to free up the memory used
  * by the chain structures.
  *
- * XXX clean this up, make better use of bstreams 
+ * XXX clean this up, make better use of bstreams
  *
  * @param bs Input bstream
  * @param list Source TLV chain
  * @return Return 0 if the destination bstream is too small.
  */
-faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list)
+int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list)
 {
 	int goodbuflen;
 	aim_tlvlist_t *cur;
@@ -786,15 +739,15 @@ faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list)
 	/* do an initial run to test total length */
 	goodbuflen = aim_tlvlist_size(list);
 
-	if (goodbuflen > aim_bstream_empty(bs))
+	if (goodbuflen > byte_stream_empty(bs))
 		return 0; /* not enough buffer */
 
 	/* do the real write-out */
 	for (cur = *list; cur; cur = cur->next) {
-		aimbs_put16(bs, cur->tlv->type);
-		aimbs_put16(bs, cur->tlv->length);
+		byte_stream_put16(bs, cur->tlv->type);
+		byte_stream_put16(bs, cur->tlv->length);
 		if (cur->tlv->length)
-			aimbs_putraw(bs, cur->tlv->value, cur->tlv->length);
+			byte_stream_putraw(bs, cur->tlv->value, cur->tlv->length);
 	}
 
 	return 1; /* XXX this is a nonsensical return */
@@ -804,7 +757,7 @@ faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list)
 /**
  * Grab the Nth TLV of type type in the TLV list list.
  *
- * Returns a pointer to an aim_tlv_t of the specified type; 
+ * Returns a pointer to an aim_tlv_t of the specified type;
  * %NULL on error.  The @nth parameter is specified starting at %1.
  * In most cases, there will be no more than one TLV of any type
  * in a chain.
@@ -814,7 +767,7 @@ faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list)
  * @param nth Index of TLV of type to get.
  * @return The TLV you were looking for, or NULL if one could not be found.
  */
-faim_internal aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, const guint16 type, const int nth)
+aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlvlist_t *cur;
 	int i;
@@ -840,7 +793,7 @@ faim_internal aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, const guint16 type,
  * @return The length of the data in this TLV, or -1 if the TLV could not be
  *         found.  Unless -1 is returned, this value will be 2 bytes.
  */
-faim_internal int aim_tlv_getlength(aim_tlvlist_t *list, const guint16 type, const int nth)
+int aim_tlv_getlength(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlvlist_t *cur;
 	int i;
@@ -867,32 +820,32 @@ faim_internal int aim_tlv_getlength(aim_tlvlist_t *list, const guint16 type, con
  *         not be found.  This is a dynamic buffer and must be freed by the
  *         caller.
  */
-faim_internal char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth)
+char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlv_t *tlv;
-	char *newstr;
+	char *ret;
 
 	if (!(tlv = aim_tlv_gettlv(list, type, nth)))
 		return NULL;
 
-	newstr = (char *) malloc(tlv->length + 1);
-	memcpy(newstr, tlv->value, tlv->length);
-	newstr[tlv->length] = '\0';
+	ret = malloc(tlv->length + 1);
+	memcpy(ret, tlv->value, tlv->length);
+	ret[tlv->length] = '\0';
 
-	return newstr;
+	return ret;
 }
 
 /**
- * Retrieve the data from the nth TLV in the given TLV chain as an 8bit 
+ * Retrieve the data from the nth TLV in the given TLV chain as an 8bit
  * integer.
  *
  * @param list Source TLV chain.
  * @param type TLV type to search for.
  * @param nth Index of TLV to return.
- * @return The value the TLV you were looking for, or 0 if one could 
+ * @return The value the TLV you were looking for, or 0 if one could
  *         not be found.
  */
-faim_internal guint8 aim_tlv_get8(aim_tlvlist_t *list, const guint16 type, const int nth)
+guint8 aim_tlv_get8(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlv_t *tlv;
 
@@ -902,16 +855,16 @@ faim_internal guint8 aim_tlv_get8(aim_tlvlist_t *list, const guint16 type, const
 }
 
 /**
- * Retrieve the data from the nth TLV in the given TLV chain as a 16bit 
+ * Retrieve the data from the nth TLV in the given TLV chain as a 16bit
  * integer.
  *
  * @param list Source TLV chain.
  * @param type TLV type to search for.
  * @param nth Index of TLV to return.
- * @return The value the TLV you were looking for, or 0 if one could 
+ * @return The value the TLV you were looking for, or 0 if one could
  *         not be found.
  */
-faim_internal guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, const int nth)
+guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlv_t *tlv;
 
@@ -921,16 +874,16 @@ faim_internal guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, con
 }
 
 /**
- * Retrieve the data from the nth TLV in the given TLV chain as a 32bit 
+ * Retrieve the data from the nth TLV in the given TLV chain as a 32bit
  * integer.
  *
  * @param list Source TLV chain.
  * @param type TLV type to search for.
  * @param nth Index of TLV to return.
- * @return The value the TLV you were looking for, or 0 if one could 
+ * @return The value the TLV you were looking for, or 0 if one could
  *         not be found.
  */
-faim_internal guint32 aim_tlv_get32(aim_tlvlist_t *list, const guint16 type, const int nth)
+guint32 aim_tlv_get32(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlv_t *tlv;
 

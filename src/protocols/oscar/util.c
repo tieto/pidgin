@@ -37,7 +37,7 @@
  *   -- DMP.
  *
  */
-faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl)
+int aimutil_tokslen(char *toSearch, int theindex, char dl)
 {
 	int curCount = 1;
 	char *next;
@@ -61,7 +61,7 @@ faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl)
 	return toReturn;
 }
 
-faim_export int aimutil_itemcnt(char *toSearch, char dl)
+int aimutil_itemcnt(char *toSearch, char dl)
 {
 	int curCount;
 	char *next;
@@ -78,7 +78,7 @@ faim_export int aimutil_itemcnt(char *toSearch, char dl)
 	return curCount;
 }
 
-faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl)
+char *aimutil_itemindex(char *toSearch, int theindex, char dl)
 {
 	int curCount;
 	char *next;
@@ -122,7 +122,7 @@ faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl)
  * Calculate the checksum of a given icon.
  *
  */
-faim_export guint16 aimutil_iconsum(const guint8 *buf, int buflen)
+guint16 aimutil_iconsum(const guint8 *buf, int buflen)
 {
 	guint32 sum;
 	int i;
@@ -201,7 +201,7 @@ static int aim_snvalid_sms(const char *sn)
  *
  * @return 1 if the screen name is valid, 0 if not.
  */
-faim_export int aim_snvalid(const char *sn)
+int aim_snvalid(const char *sn)
 {
 	if ((sn == NULL) || (*sn == '\0'))
 		return 0;
@@ -224,7 +224,7 @@ faim_export int aim_snvalid(const char *sn)
  * @return 1 if the screen name is an ICQ screen name.  Otherwise 0
  *         is returned.
  */
-faim_export int aim_sn_is_icq(const char *sn)
+int aim_sn_is_icq(const char *sn)
 {
 	if (isalpha(sn[0]))
 		return 0;
@@ -239,7 +239,7 @@ faim_export int aim_sn_is_icq(const char *sn)
  * @return 1 if the screen name is an SMS number.  Otherwise 0
  *         is returned.
  */
-faim_export int aim_sn_is_sms(const char *sn)
+int aim_sn_is_sms(const char *sn)
 {
 	if (sn[0] != '+')
 		return 0;
@@ -254,7 +254,7 @@ faim_export int aim_sn_is_sms(const char *sn)
 * return is equal to that of strlen().
 *
 */
-faim_export int aim_snlen(const char *sn)
+int aim_snlen(const char *sn)
 {
 	int i = 0;
 
@@ -283,7 +283,7 @@ faim_export int aim_snlen(const char *sn)
 *     non-0 if different
 *
 */
-faim_export int aim_sncmp(const char *sn1, const char *sn2)
+int aim_sncmp(const char *sn1, const char *sn2)
 {
 
 	if ((sn1 == NULL) || (sn2 == NULL))

@@ -30,6 +30,7 @@
 #define _OSCAR_H_
 
 #include "debug.h"
+#include "eventloop.h"
 #include "gaim_buffer.h"
 #include "internal.h"
 
@@ -56,39 +57,17 @@ typedef struct _ByteStream         ByteStream;
 typedef struct _ClientInfo         ClientInfo;
 typedef struct _FlapFrame          FlapFrame;
 typedef struct _IcbmCookie         IcbmCookie;
-typedef struct _OscarConnection    OscarConnection;
-typedef struct _OscarSession       OscarSession;
+typedef struct _FlapConnection     FlapConnection;
+typedef struct _OscarData          OscarData;
+typedef struct _IcbmArgsCh2        IcbmArgsCh2;
 
 typedef guint32 aim_snacid_t;
 typedef guint16 flap_seqnum_t;
 
-#include "peer.h"
 #include "snactypes.h"
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#define WIN32_STATIC
-#if defined(_WIN32) && !defined(WIN32_STATIC)
-/*
- * For a win32 DLL, we define WIN32_INDLL if this file
- * is included while compiling the DLL. If it's not
- * defined (it's included in a client app), the symbols
- * will be imported instead of exported.
- */
-#ifdef WIN32_INDLL
-#define faim_export __declspec(dllexport)
-#else
-#define faim_export __declspec(dllimport)
-#endif /* WIN32_INDLL */
-#define faim_internal
-#else
-/*
- * Nothing normally needed for unix...
- */
-#define faim_export
-#define faim_internal
 #endif
 
 #define FAIM_SNAC_HASH_SIZE 16
@@ -113,7 +92,7 @@ extern "C" {
  * send any more than 1kb.  Amaze all your windows friends
  * with utterly oversized instant messages!
  *
- * XXX: the real limit is the total SNAC size at 8192. Fix this.
+ * TODO: the real limit is the total SNAC size at 8192. Fix this.
  *
  */
 #define MAXMSGLEN 7987
@@ -306,103 +285,38 @@ struct _ClientInfo
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
 #define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_5_45_3777
 
-/*
- * These could be arbitrary, but its easier to use the actual AIM values
- */
-#define AIM_CONN_TYPE_BOS		0x0002
-#define AIM_CONN_TYPE_ADS		0x0005
-#define AIM_CONN_TYPE_AUTH		0x0007
-#define AIM_CONN_TYPE_CHATNAV	0x000d
-#define AIM_CONN_TYPE_CHAT		0x000e
-#define AIM_CONN_TYPE_SEARCH	0x000f
-#define AIM_CONN_TYPE_ICON		0x0010
-#define AIM_CONN_TYPE_EMAIL		0x0018
-
-/* they start getting arbitrary for rendezvous stuff =) */
-#define AIM_CONN_TYPE_RENDEZVOUS_PROXY	0xfffd /* these speak a strange language */
-#define AIM_CONN_TYPE_RENDEZVOUS	0xfffe /* these do not speak FLAP! */
-#define AIM_CONN_TYPE_LISTENER		0xffff /* socket waiting for accept() */
-
-/* Command types for doing a rendezvous proxy login
- * Thanks to Keith Lea and the Joust project for documenting these commands well */
-#define AIM_RV_PROXY_PACKETVER_DFLT	0x044a
-#define AIM_RV_PROXY_ERROR		0x0001
-#define AIM_RV_PROXY_INIT_SEND		0x0002 /* First command sent when creating a connection */
-#define AIM_RV_PROXY_INIT_RECV		0x0004 /* First command sent when receiving existing connection */
-#define AIM_RV_PROXY_ACK		0x0003
-#define AIM_RV_PROXY_READY		0x0005
-
-/* Number of bytes expected in each of the above packets, including the 2 bytes specifying length */
-#define AIM_RV_PROXY_ERROR_LEN		14
-#define AIM_RV_PROXY_INIT_SEND_LEN	55
-#define AIM_RV_PROXY_INIT_RECV_LEN	57
-#define AIM_RV_PROXY_ACK_LEN		18
-#define AIM_RV_PROXY_READY_LEN		12
-#define AIM_RV_PROXY_HDR_LEN		12	/* Bytes in just the header alone */
-
-/* Default values for unknown/unused values in rendezvous proxy negotiation packets */
-#define AIM_RV_PROXY_SERVER_FLAGS	0x0220		/* Default flags sent by proxy server */
-#define AIM_RV_PROXY_CLIENT_FLAGS	0x0000		/* Default flags sent by client */
-#define AIM_RV_PROXY_UNKNOWNA_DFLT	0x00000000	/* Default value for an unknown block */
-#define AIM_RV_PROXY_SERVER_URL		"ars.oscar.aol.com"
-#define AIM_RV_PROXY_CONNECT_PORT	5190		/* The port we should always connect to */
-
-/* What is the purpose of this transfer? (Who will end up with a new file?)
- * These values are used in peer_connection->send_or_recv */
-#define AIM_XFER_SEND			0x0001
-#define AIM_XFER_RECV			0x0002
-
-/* Via what method is the data getting routed?
- * These values are used in peer_connection->method */
-#define AIM_XFER_DIRECT			0x0001	/* Direct connection; receiver connects to sender */
-#define AIM_XFER_REDIR			0x0002	/* Redirected connection; sender connects to receiver */
-#define AIM_XFER_PROXY			0x0003	/* Proxied connection */
-
-/* Who requested the proxy?
- * The difference between a stage 2 and stage 3 proxied transfer is that the receiver does the
- * initial login for a stage 2, but the sender must do it for a stage 3.
- * These values are used in peer_connection->stage */
-#define AIM_XFER_PROXY_NONE		0x0001
-#define AIM_XFER_PROXY_STG1		0x0002	/* Sender requested a proxy be used (stage1) */
-#define AIM_XFER_PROXY_STG2		0x0003	/* Receiver requested a proxy be used (stage2) */
-#define AIM_XFER_PROXY_STG3		0x0004	/* Receiver requested a proxy be used (stage3) */
-
-/*
- * Subtypes, we need these for OFT stuff.
- */
-#define AIM_CONN_SUBTYPE_OFT_DIRECTIM	0x0001
-#define AIM_CONN_SUBTYPE_OFT_GETFILE	0x0002
-#define AIM_CONN_SUBTYPE_OFT_SENDFILE	0x0003
-#define AIM_CONN_SUBTYPE_OFT_BUDDYICON	0x0004
-#define AIM_CONN_SUBTYPE_OFT_VOICE	0x0005
-
-/*
- * Status values returned from aim_conn_new().  ORed together.
- */
-#define AIM_CONN_STATUS_READY		0x0001
-#define AIM_CONN_STATUS_INTERNALERR	0x0002
-#define AIM_CONN_STATUS_RESOLVERR	0x0040
-#define AIM_CONN_STATUS_CONNERR		0x0080
-#define AIM_CONN_STATUS_INPROGRESS	0x0100
-
-#define AIM_FRAMETYPE_FLAP		0x0000
-#define AIM_FRAMETYPE_OFT		0x0001
-
-struct _OscarConnection
+typedef enum
 {
-	int fd;
-	GaimCircBuffer *buffer_outgoing;
-	guint16 type;
-	guint16 subtype;
-	flap_seqnum_t seqnum;
-	guint32 status;
-	void *internal; /* internal conn-specific libfaim data */
-	time_t lastactivity; /* time of last transmit */
-	void *handlerlist;
-	OscarSession *sessv; /* pointer to parent session */
-	void *inside; /* only accessible from inside libfaim */
-	struct _OscarConnection *next;
-};
+	OSCAR_CAPABILITY_BUDDYICON            = 0x00000001,
+	OSCAR_CAPABILITY_TALK                 = 0x00000002,
+	OSCAR_CAPABILITY_DIRECTIM             = 0x00000004,
+	OSCAR_CAPABILITY_CHAT                 = 0x00000008,
+	OSCAR_CAPABILITY_GETFILE              = 0x00000010,
+	OSCAR_CAPABILITY_SENDFILE             = 0x00000020,
+	OSCAR_CAPABILITY_GAMES                = 0x00000040,
+	OSCAR_CAPABILITY_ADDINS               = 0x00000080,
+	OSCAR_CAPABILITY_SENDBUDDYLIST        = 0x00000100,
+	OSCAR_CAPABILITY_GAMES2               = 0x00000200,
+	OSCAR_CAPABILITY_ICQ_DIRECT           = 0x00000400,
+	OSCAR_CAPABILITY_APINFO               = 0x00000800,
+	OSCAR_CAPABILITY_ICQRTF               = 0x00001000,
+	OSCAR_CAPABILITY_EMPTY                = 0x00002000,
+	OSCAR_CAPABILITY_ICQSERVERRELAY       = 0x00004000,
+	OSCAR_CAPABILITY_ICQUTF8OLD           = 0x00008000,
+	OSCAR_CAPABILITY_TRILLIANCRYPT        = 0x00010000,
+	OSCAR_CAPABILITY_ICQUTF8              = 0x00020000,
+	OSCAR_CAPABILITY_INTEROPERATE         = 0x00040000,
+	OSCAR_CAPABILITY_ICHAT                = 0x00080000,
+	OSCAR_CAPABILITY_HIPTOP               = 0x00100000,
+	OSCAR_CAPABILITY_SECUREIM             = 0x00200000,
+	OSCAR_CAPABILITY_SMS                  = 0x00400000,
+	OSCAR_CAPABILITY_GENERICUNKNOWN       = 0x00800000,
+	OSCAR_CAPABILITY_VIDEO                = 0x01000000,
+	OSCAR_CAPABILITY_ICHATAV              = 0x02000000,
+	OSCAR_CAPABILITY_LIVEVIDEO            = 0x04000000,
+	OSCAR_CAPABILITY_CAMERA               = 0x08000000,
+	OSCAR_CAPABILITY_LAST                 = 0x10000000
+} OscarCapability;
 
 /*
  * Byte Stream type. Sort of.
@@ -427,22 +341,30 @@ struct _ByteStream
 
 struct _FlapFrame
 {
-	guint8 hdrtype; /* defines which piece of the union to use */
-	union {
-		struct {
-			guint8 channel;
-			flap_seqnum_t seqnum;
-		} flap;
-		struct {
-			guint8 magic[4];	/* ODC2 or OFT2 */
-			guint16 hdrlen;
-			guint16 type;
-		} rend;
-	} hdr;
-	ByteStream data;		/* payload stream */
-	OscarConnection *conn;		/* the connection it came in on/is going out on */
-	guint8 handled;			/* 0 = new, !0 = been handled */
-	struct _FlapFrame *next;
+	guint8 channel;
+	flap_seqnum_t seqnum;
+	ByteStream data;        /* payload stream */
+};
+
+struct _FlapConnection
+{
+	OscarData *od;              /**< Pointer to parent session. */
+	int fd;
+	time_t lastactivity;             /**< Time of last transmit. */
+	gboolean connected;
+	guint destroy_timeout;
+
+	FlapFrame buffer_incoming;
+	GaimCircBuffer *buffer_outgoing;
+	guint watcher_incoming;
+	guint watcher_outgoing;
+
+	guint16 type;
+	guint16 subtype;
+	flap_seqnum_t seqnum;
+	guint32 status;
+	void *internal; /* internal conn-specific libfaim data */
+	void *inside; /* only accessible from inside libfaim */
 };
 
 struct _IcbmCookie
@@ -454,66 +376,75 @@ struct _IcbmCookie
 	struct _IcbmCookie *next;
 };
 
+#include "peer.h"
+
 /*
  * AIM Session: The main client-data interface.
  *
  */
-struct _OscarSession
+struct _OscarData
 {
+	gboolean iconconnecting;
+	gboolean set_icon;
+
+	GSList *create_rooms;
+
+	gboolean conf;
+	gboolean reqemail;
+	gboolean setemail;
+	char *email;
+	gboolean setnick;
+	char *newsn;
+	gboolean chpass;
+	char *oldp;
+	char *newp;
+
+	GSList *oscar_chats;
+	GHashTable *buddyinfo;
+	GSList *requesticon;
+
+	gboolean killme;
+	gboolean icq;
+	guint icontimer;
+	guint getblisttimer;
+	guint getinfotimer;
+	gint timeoffset;
+
+	struct {
+		guint maxwatchers; /* max users who can watch you */
+		guint maxbuddies; /* max users you can watch */
+		guint maxgroups; /* max groups in server list */
+		guint maxpermits; /* max users on permit list */
+		guint maxdenies; /* max users on deny list */
+		guint maxsiglen; /* max size (bytes) of profile */
+		guint maxawaymsglen; /* max size (bytes) of posted away message */
+	} rights;
 
 	/* ---- Client Accessible ------------------------ */
 
 	/* Our screen name. */
+	/* TODO: Get rid of this and use gaim_account_get_username() everywhere? */
 	char sn[MAXSNLEN+1];
 
-	/*
-	 * Pointer to anything the client wants to
-	 * explicitly associate with this session.
-	 *
-	 * This is for use in the callbacks mainly. In any
-	 * callback, you can access this with sess->aux_data.
-	 *
-	 */
-	void *aux_data;
+	GaimConnection *gc;
 
 	/* ---- Internal Use Only ------------------------ */
 
-	/*
-	 * Transmit/receive queues.
-	 *
-	 * These are only used when you don't use your own lowlevel
-	 * I/O.  I don't suggest that you use libfaim's internal I/O.
-	 * Its really bad and the API/event model is quirky at best.
-	 *
-	 */
-	FlapFrame *queue_outgoing;
-	FlapFrame *queue_incoming;
-
-	/*
-	 * Tx Enqueuing function.
-	 *
-	 * This is how you override the transmit direction of libfaim's
-	 * internal I/O.  This function will be called whenever it needs
-	 * to send something.
-	 *
-	 */
-	int (*tx_enqueue)(OscarSession *, FlapFrame *);
-
 	void *modlistv;
-
-	struct {
-		char server[128];
-		char username[128];
-		char password[128];
-	} socksproxy;
 
 	/*
 	 * Outstanding snac handling
 	 *
-	 * XXX: Should these be per-connection? -mid
+	 * TODO: Should these be per-connection? -mid
 	 */
 	void *snac_hash[FAIM_SNAC_HASH_SIZE];
 	aim_snacid_t snacid_next;
+
+	/*
+	 * TODO: Data specific to a certain family should go into a
+	 *       hashtable and the core parts of libfaim shouldn't
+	 *       need to know about them.
+	 */
 
 	IcbmCookie *msgcookies;
 	struct aim_icq_info *icq_info;
@@ -538,7 +469,10 @@ struct _OscarSession
 		int waiting_for_ack;
 	} ssi;
 
-	/** A linked list containing OscarConnections. */
+	/* TODO: Implement this as a HashTable for HUGE speed improvement! */
+	GList *handlerlist;
+
+	/** A linked list containing FlapConnections. */
 	GList *oscar_connections;
 
 	/** A linked list containing PeerConnections. */
@@ -546,40 +480,22 @@ struct _OscarSession
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
-#define AIM_ICQ_STATE_NORMAL		0x00000000
-#define AIM_ICQ_STATE_AWAY		0x00000001
-#define AIM_ICQ_STATE_DND		0x00000002
-#define AIM_ICQ_STATE_OUT		0x00000004
-#define AIM_ICQ_STATE_BUSY		0x00000010
-#define AIM_ICQ_STATE_CHAT		0x00000020
-#define AIM_ICQ_STATE_INVISIBLE		0x00000100
-#define AIM_ICQ_STATE_WEBAWARE		0x00010000
-#define AIM_ICQ_STATE_HIDEIP		0x00020000
-#define AIM_ICQ_STATE_BIRTHDAY		0x00080000
-#define AIM_ICQ_STATE_DIRECTDISABLED	0x00100000
-#define AIM_ICQ_STATE_ICQHOMEPAGE	0x00200000
-#define AIM_ICQ_STATE_DIRECTREQUIREAUTH	0x10000000
-#define AIM_ICQ_STATE_DIRECTCONTACTLIST	0x20000000
+#define AIM_ICQ_STATE_NORMAL            0x00000000
+#define AIM_ICQ_STATE_AWAY              0x00000001
+#define AIM_ICQ_STATE_DND               0x00000002
+#define AIM_ICQ_STATE_OUT               0x00000004
+#define AIM_ICQ_STATE_BUSY              0x00000010
+#define AIM_ICQ_STATE_CHAT              0x00000020
+#define AIM_ICQ_STATE_INVISIBLE         0x00000100
+#define AIM_ICQ_STATE_WEBAWARE          0x00010000
+#define AIM_ICQ_STATE_HIDEIP            0x00020000
+#define AIM_ICQ_STATE_BIRTHDAY          0x00080000
+#define AIM_ICQ_STATE_DIRECTDISABLED    0x00100000
+#define AIM_ICQ_STATE_ICQHOMEPAGE       0x00200000
+#define AIM_ICQ_STATE_DIRECTREQUIREAUTH 0x10000000
+#define AIM_ICQ_STATE_DIRECTCONTACTLIST 0x20000000
 
-/*
- * Get command from connections
- *
- * aim_get_commmand() is the libfaim lowlevel I/O in the receive direction.
- * XXX Make this easily overridable.
- *
- */
-faim_export int aim_get_command(OscarSession *, OscarConnection *);
-
-/*
- * Dispatch commands that are in the rx queue.
- */
-faim_export void aim_rxdispatch(OscarSession *);
-
-faim_export int aim_debugconn_sendconnect(OscarSession *sess, OscarConnection *conn);
-
-void oscar_connection_destroy(OscarSession *sess, OscarConnection *deadconn);
-
-typedef int (*aim_rxcallback_t)(OscarSession *, FlapFrame *, ...);
+typedef int (*aim_rxcallback_t)(OscarData *od, FlapConnection *conn, FlapFrame *frame, ...);
 
 
 /* family_auth.c */
@@ -613,50 +529,47 @@ struct aim_redirect_data
 	const char *ip;
 	guint16 cookielen;
 	const guint8 *cookie;
-	struct { /* group == AIM_CONN_TYPE_CHAT */
+	struct { /* group == SNAC_FAMILY_CHAT */
 		guint16 exchange;
 		const char *room;
 		guint16 instance;
 	} chat;
 };
 
-faim_export int aim_clientready(OscarSession *sess, OscarConnection *conn);
-faim_export int aim_sendflapver(OscarSession *sess, OscarConnection *conn);
-faim_export int aim_request_login(OscarSession *sess, OscarConnection *conn, const char *sn);
-faim_export int aim_send_login(OscarSession *, OscarConnection *, const char *, const char *, ClientInfo *, const char *key);
-/* 0x000b */ faim_export int aim_auth_securid_send(OscarSession *sess, const char *securid);
+int aim_clientready(OscarData *od, FlapConnection *conn);
+int aim_request_login(OscarData *od, FlapConnection *conn, const char *sn);
+int aim_send_login(OscarData *, FlapConnection *, const char *, const char *, ClientInfo *, const char *key);
+/* 0x000b */ int aim_auth_securid_send(OscarData *od, const char *securid);
 
-faim_export void aim_purge_rxqueue(OscarSession *);
-faim_export void aim_cleansnacs(OscarSession *, int maxage);
+void aim_cleansnacs(OscarData *, int maxage);
 
-#define AIM_TX_QUEUED    0 /* default */
-#define AIM_TX_IMMEDIATE 1
-faim_export int aim_tx_setenqueue(OscarSession *sess, int what, int (*func)(OscarSession *, FlapFrame *));
+int oscar_data_addhandler(OscarData *od, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
+void aim_clearhandlers(OscarData *od);
 
-faim_export int aim_tx_flushqueue(OscarSession *);
+/* flap_connection.c */
+FlapConnection *flap_connection_new(OscarData *, int type);
+void flap_connection_addgroup(FlapConnection *conn, guint16 group);
+void flap_connection_close(OscarData *od, FlapConnection *conn);
+void flap_connection_destroy(FlapConnection *conn);
+void flap_connection_schedule_destroy(FlapConnection *conn);
+FlapConnection *flap_connection_findbygroup(OscarData *od, guint16 group);
+FlapConnection *flap_connection_getbytype(OscarData *, int type);
+FlapConnection *flap_connection_getbytype_all(OscarData *, int type);
+void flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond);
+FlapConnection *flap_connection_clone(OscarData *od, FlapConnection *src);
+void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
+void flap_connection_send_version(OscarData *od, FlapConnection *conn);
+void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
+void flap_connection_send_keepalive(OscarData *od, FlapConnection *conn);
+FlapFrame *flap_frame_new(OscarData *od, guint16 channel, int datalen);
 
-faim_export int aim_conn_addhandler(OscarSession *, OscarConnection *conn, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
-faim_export int aim_clearhandlers(OscarConnection *conn);
 
-faim_export OscarConnection *aim_conn_findbygroup(OscarSession *sess, guint16 group);
-faim_export OscarSession *aim_conn_getsess(OscarConnection *conn);
-void oscar_connection_destroy(OscarSession *sess, OscarConnection *conn);
-faim_export void aim_conn_close(OscarSession *sess, OscarConnection *conn);
-faim_export OscarConnection *oscar_connection_new(OscarSession *, int type);
-faim_export int aim_conn_isready(OscarConnection *);
-faim_export int aim_conn_setstatus(OscarConnection *, int);
-faim_export int aim_conn_completeconnect(OscarSession *sess, OscarConnection *conn);
-faim_export int aim_conn_isconnecting(OscarConnection *conn);
-
-OscarSession *oscar_session_new(void);
-void oscar_session_destroy(OscarSession *);
-
-faim_export OscarConnection *aim_getconn_type(OscarSession *, int type);
-faim_export OscarConnection *aim_getconn_type_all(OscarSession *, int type);
+OscarData *oscar_data_new(void);
+void oscar_data_destroy(OscarData *);
 
 /* 0x0001 - family_oservice.c */
-faim_export int aim_srv_setstatusmsg(OscarSession *sess, const char *msg);
-faim_export int aim_srv_setidle(OscarSession *sess, guint32 idletime);
+int aim_srv_setstatusmsg(OscarData *od, const char *msg);
+int aim_srv_setidle(OscarData *od, guint32 idletime);
 
 /* misc.c */
 
@@ -670,29 +583,28 @@ faim_export int aim_srv_setidle(OscarSession *sess, guint32 idletime);
 
 #define AIM_WARN_ANON                     0x01
 
-faim_export int aim_sendpauseack(OscarSession *sess, OscarConnection *conn);
-faim_export int aim_nop(OscarSession *, OscarConnection *);
-faim_export int aim_flap_nop(OscarSession *sess, OscarConnection *conn);
-faim_export int aim_bos_changevisibility(OscarSession *, OscarConnection *, int, const char *);
-faim_export int aim_bos_setgroupperm(OscarSession *, OscarConnection *, guint32 mask);
-faim_export int aim_bos_setprivacyflags(OscarSession *, OscarConnection *, guint32);
-faim_export int aim_reqpersonalinfo(OscarSession *, OscarConnection *);
-faim_export int aim_reqservice(OscarSession *, OscarConnection *, guint16);
-faim_export int aim_bos_reqrights(OscarSession *, OscarConnection *);
-faim_export int aim_setextstatus(OscarSession *sess, guint32 status);
+int aim_sendpauseack(OscarData *od, FlapConnection *conn);
+int aim_nop(OscarData *, FlapConnection *);
+int aim_bos_changevisibility(OscarData *, FlapConnection *, int, const char *);
+int aim_bos_setgroupperm(OscarData *, FlapConnection *, guint32 mask);
+int aim_bos_setprivacyflags(OscarData *, FlapConnection *, guint32);
+int aim_reqpersonalinfo(OscarData *, FlapConnection *);
+int aim_reqservice(OscarData *, guint16);
+int aim_bos_reqrights(OscarData *, FlapConnection *);
+int aim_setextstatus(OscarData *od, guint32 status);
 
 #define AIM_CLIENTTYPE_UNKNOWN  0x0000
 #define AIM_CLIENTTYPE_MC       0x0001
 #define AIM_CLIENTTYPE_WINAIM   0x0002
 #define AIM_CLIENTTYPE_WINAIM41 0x0003
 #define AIM_CLIENTTYPE_AOL_TOC  0x0004
-faim_export guint16 aim_im_fingerprint(const guint8 *msghdr, int len);
+guint16 aim_im_fingerprint(const guint8 *msghdr, int len);
 
 #define AIM_RATE_CODE_CHANGE     0x0001
 #define AIM_RATE_CODE_WARNING    0x0002
 #define AIM_RATE_CODE_LIMIT      0x0003
 #define AIM_RATE_CODE_CLEARLIMIT 0x0004
-faim_export int aim_ads_requestads(OscarSession *sess, OscarConnection *conn);
+int aim_ads_requestads(OscarData *od, FlapConnection *conn);
 
 
 
@@ -778,11 +690,11 @@ typedef struct aim_mpmsg_s
 	aim_mpmsg_section_t *parts;
 } aim_mpmsg_t;
 
-faim_export int aim_mpmsg_init(OscarSession *sess, aim_mpmsg_t *mpm);
-faim_export int aim_mpmsg_addraw(OscarSession *sess, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen);
-faim_export int aim_mpmsg_addascii(OscarSession *sess, aim_mpmsg_t *mpm, const char *ascii);
-faim_export int aim_mpmsg_addunicode(OscarSession *sess, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen);
-faim_export void aim_mpmsg_free(OscarSession *sess, aim_mpmsg_t *mpm);
+int aim_mpmsg_init(OscarData *od, aim_mpmsg_t *mpm);
+int aim_mpmsg_addraw(OscarData *od, aim_mpmsg_t *mpm, guint16 charset, guint16 charsubset, const gchar *data, guint16 datalen);
+int aim_mpmsg_addascii(OscarData *od, aim_mpmsg_t *mpm, const char *ascii);
+int aim_mpmsg_addunicode(OscarData *od, aim_mpmsg_t *mpm, const guint16 *unicode, guint16 unicodelen);
+void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm);
 
 /*
  * Arguments to aim_send_im_ext().
@@ -872,24 +784,26 @@ struct aim_incomingim_ch1_args
 };
 
 /* Valid values for channel 2 args->status */
-#define AIM_RENDEZVOUS_PROPOSE	0x0000
-#define AIM_RENDEZVOUS_CANCEL	0x0001
-#define AIM_RENDEZVOUS_ACCEPT	0x0002
+#define AIM_RENDEZVOUS_PROPOSE   0x0000
+#define AIM_RENDEZVOUS_CANCEL    0x0001
+#define AIM_RENDEZVOUS_CONNECTED 0x0002
 
-struct aim_incomingim_ch2_args
+struct _IcbmArgsCh2
 {
 	guint16 status;
 	guchar cookie[8];
-	int reqclass;
+	int type; /* One of the OSCAR_CAPABILITY_ constants */
 	const char *proxyip;
 	const char *clientip;
 	const char *verifiedip;
 	guint16 port;
+	gboolean use_proxy;
 	guint16 errorcode;
 	const char *msg; /* invite message or file description */
 	guint16 msglen;
 	const char *encoding;
 	const char *language;
+	guint16 requestnumber;
 	union {
 		struct {
 			guint32 checksum;
@@ -911,9 +825,6 @@ struct aim_incomingim_ch2_args
 			guint16 totfiles;
 			guint32 totsize;
 			char *filename;
-			/* reqnum: 0x0001 usually; 0x0002 = reply request for stage 2 proxy transfer */
-			guint16 reqnum;
-			guint8 use_proxy; /* Did the user request that we use a rv proxy? */
 		} sendfile;
 	} info;
 	void *destructor; /* used internally only */
@@ -934,43 +845,49 @@ struct aim_incomingim_ch4_args
 };
 
 /* SNAC sending functions */
-/* 0x0002 */ faim_export int aim_im_setparams(OscarSession *sess, struct aim_icbmparameters *params);
-/* 0x0004 */ faim_export int aim_im_reqparams(OscarSession *sess);
-/* 0x0006 */ faim_export int aim_im_sendch1_ext(OscarSession *sess, struct aim_sendimext_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch1(OscarSession *, const char *destsn, guint16 flags, const char *msg);
-/* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(OscarSession *sess, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance);
-/* 0x0006 */ faim_export int aim_im_sendch2_icon(OscarSession *sess, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
-/* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(OscarSession *sess, struct aim_sendrtfmsg_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(OscarSession *sess, guchar *cookie, gboolean usecookie, const char *sn, const guint8 *ip, guint16 port);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(OscarSession *sess, PeerConnection *peer_connection);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(OscarSession *sess, PeerConnection *info);
-/* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(OscarSession *sess, PeerConnection *peer_connection);
-/* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(OscarSession *sess, const char *sn, int type);
-/* 0x0006 */ faim_export int aim_im_sendch4(OscarSession *sess, const char *sn, guint16 type, const char *message);
-/* 0x0008 */ faim_export int aim_im_warn(OscarSession *sess, OscarConnection *conn, const char *destsn, guint32 flags);
-/* 0x000b */ faim_export int aim_im_denytransfer(OscarSession *sess, const char *sender, const guchar *cookie, guint16 code);
-/* 0x0014 */ faim_export int aim_im_sendmtn(OscarSession *sess, guint16 type1, const char *sn, guint16 type2);
-faim_export void aim_icbm_makecookie(guchar* cookie);
+/* 0x0002 */ int aim_im_setparams(OscarData *od, struct aim_icbmparameters *params);
+/* 0x0004 */ int aim_im_reqparams(OscarData *od);
+/* 0x0006 */ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args);
+/* 0x0006 */ int aim_im_sendch1(OscarData *, const char *destsn, guint16 flags, const char *msg);
+/* 0x0006 */ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance);
+/* 0x0006 */ int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum);
+/* 0x0006 */ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args);
+
+/* 0x0006 */ void aim_im_sendch2_cancel(PeerConnection *peer_conn);
+/* 0x0006 */ void aim_im_sendch2_connected(PeerConnection *peer_conn);
+/* 0x0006 */ void aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 port, guint16 requestnumber);
+/* 0x0006 */ void aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 pin, guint16 requestnumber);
+/* 0x0006 */ void aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 port, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles);
+/* 0x0006 */ void aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 pin, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles);
+
+/* 0x0006 */ int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type);
+/* 0x0006 */ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *message);
+/* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destsn, guint32 flags);
+/* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, guint16 code);
+/* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2);
+void aim_icbm_makecookie(guchar* cookie);
+gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen);
+gchar *gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen);
 
 
 /* 0x0002 - family_locate.c */
 /*
  * AIM User Info, Standard Form.
  */
-#define AIM_FLAG_UNCONFIRMED	0x0001 /* "damned transients" */
-#define AIM_FLAG_ADMINISTRATOR	0x0002
-#define AIM_FLAG_AOL			0x0004
-#define AIM_FLAG_OSCAR_PAY		0x0008
-#define AIM_FLAG_FREE			0x0010
-#define AIM_FLAG_AWAY			0x0020
-#define AIM_FLAG_ICQ			0x0040
-#define AIM_FLAG_WIRELESS		0x0080
-#define AIM_FLAG_UNKNOWN100		0x0100
-#define AIM_FLAG_UNKNOWN200		0x0200
-#define AIM_FLAG_ACTIVEBUDDY	0x0400
-#define AIM_FLAG_UNKNOWN800		0x0800
-#define AIM_FLAG_ABINTERNAL		0x1000
-#define AIM_FLAG_ALLUSERS		0x001f
+#define AIM_FLAG_UNCONFIRMED     0x0001 /* "damned transients" */
+#define AIM_FLAG_ADMINISTRATOR   0x0002
+#define AIM_FLAG_AOL             0x0004
+#define AIM_FLAG_OSCAR_PAY       0x0008
+#define AIM_FLAG_FREE            0x0010
+#define AIM_FLAG_AWAY            0x0020
+#define AIM_FLAG_ICQ             0x0040
+#define AIM_FLAG_WIRELESS        0x0080
+#define AIM_FLAG_UNKNOWN100      0x0100
+#define AIM_FLAG_UNKNOWN200      0x0200
+#define AIM_FLAG_ACTIVEBUDDY     0x0400
+#define AIM_FLAG_UNKNOWN800      0x0800
+#define AIM_FLAG_ABINTERNAL      0x1000
+#define AIM_FLAG_ALLUSERS        0x001f
 
 #define AIM_USERINFO_PRESENT_FLAGS        0x00000001
 #define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
@@ -1026,40 +943,10 @@ typedef struct aim_userinfo_s
 	struct aim_userinfo_s *next;
 } aim_userinfo_t;
 
-#define AIM_CAPS_BUDDYICON		0x00000001
-#define AIM_CAPS_TALK			0x00000002
-#define AIM_CAPS_DIRECTIM		0x00000004
-#define AIM_CAPS_CHAT			0x00000008
-#define AIM_CAPS_GETFILE		0x00000010
-#define AIM_CAPS_SENDFILE		0x00000020
-#define AIM_CAPS_GAMES			0x00000040
-#define AIM_CAPS_ADDINS			0x00000080
-#define AIM_CAPS_SENDBUDDYLIST	0x00000100
-#define AIM_CAPS_GAMES2			0x00000200
-#define AIM_CAPS_ICQ_DIRECT		0x00000400
-#define AIM_CAPS_APINFO			0x00000800
-#define AIM_CAPS_ICQRTF			0x00001000
-#define AIM_CAPS_EMPTY			0x00002000
-#define AIM_CAPS_ICQSERVERRELAY	0x00004000
-#define AIM_CAPS_ICQUTF8OLD		0x00008000
-#define AIM_CAPS_TRILLIANCRYPT	0x00010000
-#define AIM_CAPS_ICQUTF8		0x00020000
-#define AIM_CAPS_INTEROPERATE	0x00040000
-#define AIM_CAPS_ICHAT			0x00080000
-#define AIM_CAPS_HIPTOP			0x00100000
-#define AIM_CAPS_SECUREIM		0x00200000
-#define AIM_CAPS_SMS			0x00400000
-#define AIM_CAPS_GENERICUNKNOWN	0x00800000
-#define AIM_CAPS_VIDEO			0x01000000
-#define AIM_CAPS_ICHATAV		0x02000000
-#define AIM_CAPS_LIVEVIDEO		0x04000000
-#define AIM_CAPS_CAMERA			0x08000000
-#define AIM_CAPS_LAST			0x10000000
-
 #define AIM_SENDMEMBLOCK_FLAG_ISREQUEST  0
 #define AIM_SENDMEMBLOCK_FLAG_ISHASH     1
 
-faim_export int aim_sendmemblock(OscarSession *sess, OscarConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag);
+int aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 len, const guint8 *buf, guint8 flag);
 
 struct aim_invite_priv
 {
@@ -1086,32 +973,37 @@ struct aim_invite_priv
 #define AIM_COOKIETYPE_OFTIMAGE 0x14
 #define AIM_COOKIETYPE_OFTICON  0x15
 
-faim_export aim_userinfo_t *aim_locate_finduserinfo(OscarSession *sess, const char *sn);
-faim_export void aim_locate_dorequest(OscarSession *sess);
+aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *sn);
+void aim_locate_dorequest(OscarData *od);
 
-/* 0x0002 */ faim_export int aim_locate_reqrights(OscarSession *sess);
-/* 0x0004 */ faim_export int aim_locate_setcaps(OscarSession *sess, guint32 caps);
-/* 0x0004 */ faim_export int aim_locate_setprofile(OscarSession *sess, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
-/* 0x0005 */ faim_export int aim_locate_getinfo(OscarSession *sess, const char *, guint16);
-/* 0x0009 */ faim_export int aim_locate_setdirinfo(OscarSession *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy);
-/* 0x000b */ faim_export int aim_locate_000b(OscarSession *sess, const char *sn);
-/* 0x000f */ faim_export int aim_locate_setinterests(OscarSession *sess, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
-/* 0x0015 */ faim_export int aim_locate_getinfoshort(OscarSession *sess, const char *sn, guint32 flags);
+/* 0x0002 */ int aim_locate_reqrights(OscarData *od);
+/* 0x0004 */ int aim_locate_setcaps(OscarData *od, guint32 caps);
+/* 0x0004 */ int aim_locate_setprofile(OscarData *od, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
+/* 0x0005 */ int aim_locate_getinfo(OscarData *od, const char *, guint16);
+/* 0x0009 */ int aim_locate_setdirinfo(OscarData *od, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, guint16 privacy);
+/* 0x000b */ int aim_locate_000b(OscarData *od, const char *sn);
+/* 0x000f */ int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
+/* 0x0015 */ int aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags);
+
+void aim_locate_requestuserinfo(OscarData *od, const char *sn);
+guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
+guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
+void aim_info_free(aim_userinfo_t *);
+int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *);
+int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
 
 
 
 /* 0x0003 - family_buddy.c */
-/* 0x0002 */ faim_export int aim_buddylist_reqrights(OscarSession *, OscarConnection *);
-/* 0x0004 */ faim_export int aim_buddylist_set(OscarSession *, OscarConnection *, const char *);
-/* 0x0004 */ faim_export int aim_buddylist_addbuddy(OscarSession *, OscarConnection *, const char *);
-/* 0x0005 */ faim_export int aim_buddylist_removebuddy(OscarSession *, OscarConnection *, const char *);
-/* 0x000b */ faim_export int aim_buddylist_oncoming(OscarSession *sess, OscarConnection *conn, aim_userinfo_t *info);
-/* 0x000c */ faim_export int aim_buddylist_offgoing(OscarSession *sess, OscarConnection *conn, const char *sn);
+/* 0x0002 */ int aim_buddylist_reqrights(OscarData *, FlapConnection *);
+/* 0x0004 */ int aim_buddylist_set(OscarData *, FlapConnection *, const char *);
+/* 0x0004 */ int aim_buddylist_addbuddy(OscarData *, FlapConnection *, const char *);
+/* 0x0005 */ int aim_buddylist_removebuddy(OscarData *, FlapConnection *, const char *);
 
 
 
 /* 0x000a - family_userlookup.c */
-faim_export int aim_search_address(OscarSession *, OscarConnection *, const char *);
+int aim_search_address(OscarData *, const char *);
 
 
 
@@ -1136,16 +1028,16 @@ struct aim_chat_exchangeinfo
 
 #define AIM_CHATFLAGS_NOREFLECT 0x0001
 #define AIM_CHATFLAGS_AWAY      0x0002
-faim_export int aim_chat_send_im(OscarSession *sess, OscarConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
-faim_export int aim_chat_join(OscarSession *sess, OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
-faim_export int aim_chat_attachname(OscarConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
-faim_export char *aim_chat_getname(OscarConnection *conn);
-faim_export OscarConnection *aim_chat_getconn(OscarSession *, const char *name);
+int aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language);
+int aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 instance);
+int aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname, guint16 instance);
+char *aim_chat_getname(FlapConnection *conn);
+FlapConnection *aim_chat_getconn(OscarData *, const char *name);
 
-faim_export int aim_chatnav_reqrights(OscarSession *sess, OscarConnection *conn);
+int aim_chatnav_reqrights(OscarData *od, FlapConnection *conn);
 
-faim_export int aim_chatnav_createroom(OscarSession *sess, OscarConnection *conn, const char *name, guint16 exchange);
-faim_export int aim_chat_leaveroom(OscarSession *sess, const char *name);
+int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name, guint16 exchange);
+int aim_chat_leaveroom(OscarData *od, const char *name);
 
 
 
@@ -1169,15 +1061,15 @@ struct aim_odir
 	struct aim_odir *next;
 };
 
-faim_export int aim_odir_email(OscarSession *, const char *, const char *);
-faim_export int aim_odir_name(OscarSession *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
-faim_export int aim_odir_interest(OscarSession *, const char *, const char *);
+int aim_odir_email(OscarData *, const char *, const char *);
+int aim_odir_name(OscarData *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *, const char *);
+int aim_odir_interest(OscarData *, const char *, const char *);
 
 
 
 /* 0x0010 - family_bart.c */
-faim_export int aim_bart_upload(OscarSession *sess, const guint8 *icon, guint16 iconlen);
-faim_export int aim_bart_request(OscarSession *sess, const char *sn, guint8 iconcsumtype, const guint8 *iconstr, guint16 iconstrlen);
+int aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen);
+int aim_bart_request(OscarData *od, const char *sn, guint8 iconcsumtype, const guint8 *iconstr, guint16 iconstrlen);
 
 
 
@@ -1221,45 +1113,45 @@ struct aim_ssi_tmp
 };
 
 /* These build the actual SNACs and queue them to be sent */
-/* 0x0002 */ faim_export int aim_ssi_reqrights(OscarSession *sess);
-/* 0x0004 */ faim_export int aim_ssi_reqdata(OscarSession *sess);
-/* 0x0005 */ faim_export int aim_ssi_reqifchanged(OscarSession *sess, time_t localstamp, guint16 localrev);
-/* 0x0007 */ faim_export int aim_ssi_enable(OscarSession *sess);
-/* 0x0008 */ faim_export int aim_ssi_addmoddel(OscarSession *sess);
-/* 0x0011 */ faim_export int aim_ssi_modbegin(OscarSession *sess);
-/* 0x0012 */ faim_export int aim_ssi_modend(OscarSession *sess);
-/* 0x0014 */ faim_export int aim_ssi_sendauth(OscarSession *sess, char *sn, char *msg);
-/* 0x0018 */ faim_export int aim_ssi_sendauthrequest(OscarSession *sess, char *sn, const char *msg);
-/* 0x001a */ faim_export int aim_ssi_sendauthreply(OscarSession *sess, char *sn, guint8 reply, const char *msg);
+/* 0x0002 */ int aim_ssi_reqrights(OscarData *od);
+/* 0x0004 */ int aim_ssi_reqdata(OscarData *od);
+/* 0x0005 */ int aim_ssi_reqifchanged(OscarData *od, time_t localstamp, guint16 localrev);
+/* 0x0007 */ int aim_ssi_enable(OscarData *od);
+/* 0x0008 */ int aim_ssi_addmoddel(OscarData *od);
+/* 0x0011 */ int aim_ssi_modbegin(OscarData *od);
+/* 0x0012 */ int aim_ssi_modend(OscarData *od);
+/* 0x0014 */ int aim_ssi_sendauth(OscarData *od, char *sn, char *msg);
+/* 0x0018 */ int aim_ssi_sendauthrequest(OscarData *od, char *sn, const char *msg);
+/* 0x001a */ int aim_ssi_sendauthreply(OscarData *od, char *sn, guint8 reply, const char *msg);
 
 /* Client functions for retrieving SSI data */
-faim_export struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gid, guint16 bid);
-faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, guint16 type);
-faim_export struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const char *sn);
-faim_export char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, const char *sn);
-faim_export int aim_ssi_getpermdeny(struct aim_ssi_item *list);
-faim_export guint32 aim_ssi_getpresence(struct aim_ssi_item *list);
-faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn);
-faim_export char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *sn);
-faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
+struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gid, guint16 bid);
+struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const char *gn, const char *sn, guint16 type);
+struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const char *sn);
+char *aim_ssi_itemlist_findparentname(struct aim_ssi_item *list, const char *sn);
+int aim_ssi_getpermdeny(struct aim_ssi_item *list);
+guint32 aim_ssi_getpresence(struct aim_ssi_item *list);
+char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn);
+char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *sn);
+int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
-faim_export int aim_ssi_addbuddy(OscarSession *sess, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
-faim_export int aim_ssi_addpermit(OscarSession *sess, const char *name);
-faim_export int aim_ssi_adddeny(OscarSession *sess, const char *name);
-faim_export int aim_ssi_delbuddy(OscarSession *sess, const char *name, const char *group);
-faim_export int aim_ssi_delpermit(OscarSession *sess, const char *name);
-faim_export int aim_ssi_deldeny(OscarSession *sess, const char *name);
-faim_export int aim_ssi_movebuddy(OscarSession *sess, const char *oldgn, const char *newgn, const char *sn);
-faim_export int aim_ssi_aliasbuddy(OscarSession *sess, const char *gn, const char *sn, const char *alias);
-faim_export int aim_ssi_editcomment(OscarSession *sess, const char *gn, const char *sn, const char *alias);
-faim_export int aim_ssi_rename_group(OscarSession *sess, const char *oldgn, const char *newgn);
-faim_export int aim_ssi_cleanlist(OscarSession *sess);
-faim_export int aim_ssi_deletelist(OscarSession *sess);
-faim_export int aim_ssi_setpermdeny(OscarSession *sess, guint8 permdeny, guint32 vismask);
-faim_export int aim_ssi_setpresence(OscarSession *sess, guint32 presence);
-faim_export int aim_ssi_seticon(OscarSession *sess, guint8 *iconsum, guint16 iconsumlen);
-faim_export int aim_ssi_delicon(OscarSession *sess);
+int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
+int aim_ssi_addpermit(OscarData *od, const char *name);
+int aim_ssi_adddeny(OscarData *od, const char *name);
+int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group);
+int aim_ssi_delpermit(OscarData *od, const char *name);
+int aim_ssi_deldeny(OscarData *od, const char *name);
+int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *sn);
+int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *sn, const char *alias);
+int aim_ssi_editcomment(OscarData *od, const char *gn, const char *sn, const char *alias);
+int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn);
+int aim_ssi_cleanlist(OscarData *od);
+int aim_ssi_deletelist(OscarData *od);
+int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask);
+int aim_ssi_setpresence(OscarData *od, guint32 presence);
+int aim_ssi_seticon(OscarData *od, guint8 *iconsum, guint16 iconsumlen);
+int aim_ssi_delicon(OscarData *od);
 
 
 
@@ -1345,23 +1237,23 @@ struct aim_icq_info
 	struct aim_icq_info *next;
 };
 
-faim_export int aim_icq_reqofflinemsgs(OscarSession *sess);
-faim_export int aim_icq_ackofflinemsgs(OscarSession *sess);
-faim_export int aim_icq_setsecurity(OscarSession *sess, gboolean auth_required, gboolean webaware);
-faim_export int aim_icq_changepasswd(OscarSession *sess, const char *passwd);
-faim_export int aim_icq_getsimpleinfo(OscarSession *sess, const char *uin);
-faim_export int aim_icq_getalias(OscarSession *sess, const char *uin);
-faim_export int aim_icq_getallinfo(OscarSession *sess, const char *uin);
+int aim_icq_reqofflinemsgs(OscarData *od);
+int aim_icq_ackofflinemsgs(OscarData *od);
+int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
+int aim_icq_changepasswd(OscarData *od, const char *passwd);
+int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
+int aim_icq_getalias(OscarData *od, const char *uin);
+int aim_icq_getallinfo(OscarData *od, const char *uin);
 
 
 
 /* 0x0017 - family_auth.c */
-faim_export int aim_sendcookie(OscarSession *, OscarConnection *, const guint16 length, const guint8 *);
-faim_export int aim_admin_changepasswd(OscarSession *, OscarConnection *, const char *newpw, const char *curpw);
-faim_export int aim_admin_reqconfirm(OscarSession *sess, OscarConnection *conn);
-faim_export int aim_admin_getinfo(OscarSession *sess, OscarConnection *conn, guint16 info);
-faim_export int aim_admin_setemail(OscarSession *sess, OscarConnection *conn, const char *newemail);
-faim_export int aim_admin_setnick(OscarSession *sess, OscarConnection *conn, const char *newnick);
+void aim_sendcookie(OscarData *, FlapConnection *, const guint16 length, const guint8 *);
+int aim_admin_changepasswd(OscarData *, FlapConnection *, const char *newpw, const char *curpw);
+int aim_admin_reqconfirm(OscarData *od, FlapConnection *conn);
+int aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info);
+int aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail);
+int aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick);
 
 
 
@@ -1378,8 +1270,8 @@ struct aim_emailinfo
 	struct aim_emailinfo *next;
 };
 
-faim_export int aim_email_sendcookies(OscarSession *sess);
-faim_export int aim_email_activate(OscarSession *sess);
+int aim_email_sendcookies(OscarData *od);
+int aim_email_activate(OscarData *od);
 
 
 
@@ -1401,55 +1293,49 @@ typedef struct aim_tlvlist_s
 } aim_tlvlist_t;
 
 /* TLV handling functions */
-faim_internal aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, guint16 type, const int nth);
-faim_internal int aim_tlv_getlength(aim_tlvlist_t *list, guint16 type, const int nth);
-faim_internal char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth);
-faim_internal guint8 aim_tlv_get8(aim_tlvlist_t *list, const guint16 type, const int nth);
-faim_internal guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, const int nth);
-faim_internal guint32 aim_tlv_get32(aim_tlvlist_t *list, const guint16 type, const int nth);
+aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, guint16 type, const int nth);
+int aim_tlv_getlength(aim_tlvlist_t *list, guint16 type, const int nth);
+char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth);
+guint8 aim_tlv_get8(aim_tlvlist_t *list, const guint16 type, const int nth);
+guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, const int nth);
+guint32 aim_tlv_get32(aim_tlvlist_t *list, const guint16 type, const int nth);
 
 /* TLV list handling functions */
-faim_internal aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs);
-faim_internal aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num);
-faim_internal aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len);
-faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig);
+aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs);
+aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num);
+aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len);
+aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig);
 
-faim_internal int aim_tlvlist_count(aim_tlvlist_t **list);
-faim_internal int aim_tlvlist_size(aim_tlvlist_t **list);
-faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two);
-faim_internal int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list);
-faim_internal void aim_tlvlist_free(aim_tlvlist_t **list);
+int aim_tlvlist_count(aim_tlvlist_t **list);
+int aim_tlvlist_size(aim_tlvlist_t **list);
+int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two);
+int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list);
+void aim_tlvlist_free(aim_tlvlist_t **list);
 
-faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value);
-faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type);
-faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const guint16 type, const guint8 value);
-faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const guint16 type, const guint16 value);
-faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const guint16 type, const guint32 value);
-faim_internal int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, const char *value);
-faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type, const guint32 caps);
-faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t *userinfo);
-faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
-faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlist_t **tl);
+int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value);
+int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type);
+int aim_tlvlist_add_8(aim_tlvlist_t **list, const guint16 type, const guint8 value);
+int aim_tlvlist_add_16(aim_tlvlist_t **list, const guint16 type, const guint16 value);
+int aim_tlvlist_add_32(aim_tlvlist_t **list, const guint16 type, const guint32 value);
+int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, const char *value);
+int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type, const guint32 caps);
+int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t *userinfo);
+int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
+int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlist_t **tl);
 
-faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 type, const guint16 lenth, const guint8 *value);
-faim_internal int aim_tlvlist_replace_str(aim_tlvlist_t **list, const guint16 type, const char *str);
-faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const guint16 type);
-faim_internal int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type, const guint8 value);
-faim_internal int aim_tlvlist_replace_16(aim_tlvlist_t **list, const guint16 type, const guint16 value);
-faim_internal int aim_tlvlist_replace_32(aim_tlvlist_t **list, const guint16 type, const guint32 value);
+int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 type, const guint16 lenth, const guint8 *value);
+int aim_tlvlist_replace_str(aim_tlvlist_t **list, const guint16 type, const char *str);
+int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const guint16 type);
+int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type, const guint8 value);
+int aim_tlvlist_replace_16(aim_tlvlist_t **list, const guint16 type, const guint16 value);
+int aim_tlvlist_replace_32(aim_tlvlist_t **list, const guint16 type, const guint32 value);
 
-faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type);
+void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type);
 
 
 
 /* util.c */
-/*
- * These are really ugly.  You'd think this was LISP.  I wish it was.
- *
- * XXX With the advent of bstream's, these should be removed to enforce
- * their use.
- *
- */
+/* These are really ugly.  You'd think this was LISP.  I wish it was. */
 #define aimutil_put8(buf, data) ((*(buf) = (guint8)(data)&0xff),1)
 #define aimutil_get8(buf) ((*(buf))&0xff)
 #define aimutil_put16(buf, data) ( \
@@ -1495,18 +1381,193 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type);
 		(((*((buf)+2)) << 16) & 0x00ff0000) + \
 		(((*((buf)+3)) << 24) & 0xff000000))
 
-faim_export guint16 aimutil_iconsum(const guint8 *buf, int buflen);
-faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl);
-faim_export int aimutil_itemcnt(char *toSearch, char dl);
-faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl);
+guint16 aimutil_iconsum(const guint8 *buf, int buflen);
+int aimutil_tokslen(char *toSearch, int theindex, char dl);
+int aimutil_itemcnt(char *toSearch, char dl);
+char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
-faim_export int aim_snvalid(const char *sn);
-faim_export int aim_sn_is_icq(const char *sn);
-faim_export int aim_sn_is_sms(const char *sn);
-faim_export int aim_snlen(const char *sn);
-faim_export int aim_sncmp(const char *sn1, const char *sn2);
+int aim_snvalid(const char *sn);
+int aim_sn_is_icq(const char *sn);
+int aim_sn_is_sms(const char *sn);
+int aim_snlen(const char *sn);
+int aim_sncmp(const char *sn1, const char *sn2);
 
-#include "oscar_internal.h"
+
+
+
+typedef struct {
+	guint16 family;
+	guint16 subtype;
+	guint16 flags;
+	guint32 id;
+} aim_modsnac_t;
+
+#define AIM_MODULENAME_MAXLEN 16
+#define AIM_MODFLAG_MULTIFAMILY 0x0001
+typedef struct aim_module_s
+{
+	guint16 family;
+	guint16 version;
+	guint16 toolid;
+	guint16 toolversion;
+	guint16 flags;
+	char name[AIM_MODULENAME_MAXLEN+1];
+	int (*snachandler)(OscarData *od, FlapConnection *conn, struct aim_module_s *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs);
+	void (*shutdown)(OscarData *od, struct aim_module_s *mod);
+	void *priv;
+	struct aim_module_s *next;
+} aim_module_t;
+
+int aim__registermodule(OscarData *od, int (*modfirst)(OscarData *, aim_module_t *));
+void aim__shutdownmodules(OscarData *od);
+aim_module_t *aim__findmodulebygroup(OscarData *od, guint16 group);
+aim_module_t *aim__findmodule(OscarData *od, const char *name);
+
+int admin_modfirst(OscarData *od, aim_module_t *mod);
+int buddylist_modfirst(OscarData *od, aim_module_t *mod);
+int bos_modfirst(OscarData *od, aim_module_t *mod);
+int search_modfirst(OscarData *od, aim_module_t *mod);
+int stats_modfirst(OscarData *od, aim_module_t *mod);
+int auth_modfirst(OscarData *od, aim_module_t *mod);
+int msg_modfirst(OscarData *od, aim_module_t *mod);
+int misc_modfirst(OscarData *od, aim_module_t *mod);
+int chatnav_modfirst(OscarData *od, aim_module_t *mod);
+int chat_modfirst(OscarData *od, aim_module_t *mod);
+int locate_modfirst(OscarData *od, aim_module_t *mod);
+int service_modfirst(OscarData *od, aim_module_t *mod);
+int invite_modfirst(OscarData *od, aim_module_t *mod);
+int translate_modfirst(OscarData *od, aim_module_t *mod);
+int popups_modfirst(OscarData *od, aim_module_t *mod);
+int adverts_modfirst(OscarData *od, aim_module_t *mod);
+int odir_modfirst(OscarData *od, aim_module_t *mod);
+int bart_modfirst(OscarData *od, aim_module_t *mod);
+int ssi_modfirst(OscarData *od, aim_module_t *mod);
+int icq_modfirst(OscarData *od, aim_module_t *mod);
+int email_modfirst(OscarData *od, aim_module_t *mod);
+
+int aim_genericreq_n(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype);
+int aim_genericreq_n_snacid(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype);
+int aim_genericreq_l(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *);
+int aim_genericreq_s(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *);
+
+/* bstream.c */
+int byte_stream_init(ByteStream *bs, guint8 *data, int len);
+int byte_stream_empty(ByteStream *bs);
+int byte_stream_curpos(ByteStream *bs);
+int byte_stream_setpos(ByteStream *bs, unsigned int off);
+void byte_stream_rewind(ByteStream *bs);
+int byte_stream_advance(ByteStream *bs, int n);
+guint8 byte_stream_get8(ByteStream *bs);
+guint16 byte_stream_get16(ByteStream *bs);
+guint32 byte_stream_get32(ByteStream *bs);
+guint8 byte_stream_getle8(ByteStream *bs);
+guint16 byte_stream_getle16(ByteStream *bs);
+guint32 byte_stream_getle32(ByteStream *bs);
+int byte_stream_getrawbuf(ByteStream *bs, guint8 *buf, int len);
+guint8 *byte_stream_getraw(ByteStream *bs, int len);
+char *byte_stream_getstr(ByteStream *bs, int len);
+int byte_stream_put8(ByteStream *bs, guint8 v);
+int byte_stream_put16(ByteStream *bs, guint16 v);
+int byte_stream_put32(ByteStream *bs, guint32 v);
+int byte_stream_putle8(ByteStream *bs, guint8 v);
+int byte_stream_putle16(ByteStream *bs, guint16 v);
+int byte_stream_putle32(ByteStream *bs, guint32 v);
+int byte_stream_putraw(ByteStream *bs, const guint8 *v, int len);
+int byte_stream_putstr(ByteStream *bs, const char *str);
+int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
+int byte_stream_putcaps(ByteStream *bs, guint32 caps);
+
+/* rxhandlers.c */
+aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 type);
+
+/*
+ * Generic SNAC structure.  Rarely if ever used.
+ */
+typedef struct aim_snac_s {
+	aim_snacid_t id;
+	guint16 family;
+	guint16 type;
+	guint16 flags;
+	void *data;
+	time_t issuetime;
+	struct aim_snac_s *next;
+} aim_snac_t;
+
+/* snac.c */
+void aim_initsnachash(OscarData *od);
+aim_snacid_t aim_newsnac(OscarData *, aim_snac_t *newsnac);
+aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen);
+aim_snac_t *aim_remsnac(OscarData *, aim_snacid_t id);
+int aim_putsnac(ByteStream *, guint16 family, guint16 type, guint16 flags, aim_snacid_t id);
+
+struct chatsnacinfo {
+	guint16 exchange;
+	char name[128];
+	guint16 instance;
+};
+
+/*
+ * In SNACland, the terms 'family' and 'group' are synonymous -- the former
+ * is my term, the latter is AOL's.
+ */
+struct snacgroup {
+	guint16 group;
+	struct snacgroup *next;
+};
+
+struct snacpair {
+	guint16 group;
+	guint16 subtype;
+	struct snacpair *next;
+};
+
+struct rateclass {
+	guint16 classid;
+	guint32 windowsize;
+	guint32 clear;
+	guint32 alert;
+	guint32 limit;
+	guint32 disconnect;
+	guint32 current;
+	guint32 max;
+	guint8 unknown[5]; /* only present in versions >= 3 */
+	struct snacpair *members;
+	struct rateclass *next;
+};
+
+/*
+ * This is inside every connection.  But it is a void * to anything
+ * outside of libfaim.  It should remain that way.  It's called data
+ * abstraction.  Maybe you've heard of it.  (Probably not if you're a
+ * libfaim user.)
+ *
+ */
+typedef struct aim_conn_inside_s {
+	struct snacgroup *groups;
+	struct rateclass *rates;
+} aim_conn_inside_t;
+
+int aim_cachecookie(OscarData *od, IcbmCookie *cookie);
+IcbmCookie *aim_uncachecookie(OscarData *od, guint8 *cookie, int type);
+IcbmCookie *aim_mkcookie(guint8 *, int, void *);
+IcbmCookie *aim_checkcookie(OscarData *, const unsigned char *, const int);
+int aim_freecookie(OscarData *od, IcbmCookie *cookie);
+int aim_msgcookie_gettype(int type);
+int aim_cookie_free(OscarData *od, IcbmCookie *cookie);
+
+int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);
+
+void flap_connection_destroy_chat(OscarData *od, FlapConnection *conn);
+
+/* These are all handled internally now. */
+int aim_setversions(OscarData *od, FlapConnection *conn);
+int aim_reqrates(OscarData *, FlapConnection *);
+int aim_rates_addparam(OscarData *, FlapConnection *);
+int aim_rates_delparam(OscarData *, FlapConnection *);
+
+
+
+
 
 #ifdef __cplusplus
 }

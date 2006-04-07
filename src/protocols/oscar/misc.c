@@ -39,75 +39,75 @@
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-faim_internal int aim_genericreq_n(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype)
+int
+aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid = 0x00000000;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10);
 
-	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
+	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-faim_internal int aim_genericreq_n_snacid(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype)
+int
+aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10);
 
-	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
+	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-faim_internal int aim_genericreq_l(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype, guint32 *longdata)
+int
+aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *longdata)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 	if (!longdata)
-		return aim_genericreq_n(sess, conn, family, subtype);
+		return aim_genericreq_n(od, conn, family, subtype);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+4)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+4);
 
-	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
-	aimbs_put32(&fr->data, *longdata);
+	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
+	byte_stream_put32(&frame->data, *longdata);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-faim_internal int aim_genericreq_s(OscarSession *sess, OscarConnection *conn, guint16 family, guint16 subtype, guint16 *shortdata)
+int
+aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *shortdata)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	aim_snacid_t snacid;
 
 	if (!shortdata)
-		return aim_genericreq_n(sess, conn, family, subtype);
+		return aim_genericreq_n(od, conn, family, subtype);
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2)))
-		return -ENOMEM;
+	frame = flap_frame_new(od, 0x02, 10+2);
 
-	snacid = aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
 
-	aim_putsnac(&fr->data, family, subtype, 0x0000, snacid);
-	aimbs_put16(&fr->data, *shortdata);
+	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
+	byte_stream_put16(&frame->data, *shortdata);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
@@ -116,20 +116,21 @@ faim_internal int aim_genericreq_s(OscarSession *sess, OscarConnection *conn, gu
  * Should be generic enough to handle the errors for all groups.
  *
  */
-static int generror(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+generror(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
 	int error = 0;
 	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
 
-	snac2 = aim_remsnac(sess, snac->id);
+	snac2 = aim_remsnac(od, snac->id);
 
-	if (aim_bstream_empty(bs))
-		error = aimbs_get16(bs);
+	if (byte_stream_empty(bs))
+		error = byte_stream_get16(bs);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, error, snac2 ? snac2->data : NULL);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, error, snac2 ? snac2->data : NULL);
 
 	if (snac2)
 		free(snac2->data);
@@ -138,24 +139,24 @@ static int generror(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mo
 	return ret;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0001)
-		return generror(sess, mod, rx, snac, bs);
+		return generror(od, conn, mod, frame, snac, bs);
 	else if ((snac->family == 0xffff) && (snac->subtype == 0xffff)) {
 		aim_rxcallback_t userfunc;
 
-		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-			return userfunc(sess, rx);
+		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+			return userfunc(od, conn, frame);
 	}
 
 	return 0;
 }
 
-faim_internal int misc_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+misc_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0xffff;
 	mod->version = 0x0000;
 	mod->flags = AIM_MODFLAG_MULTIFAMILY;

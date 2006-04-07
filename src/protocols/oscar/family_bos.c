@@ -29,13 +29,13 @@
 #include <string.h>
 
 /* Subtype 0x0002 - Request BOS rights. */
-faim_export int aim_bos_reqrights(OscarSession *sess, OscarConnection *conn)
+int aim_bos_reqrights(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(sess, conn, 0x0009, 0x0002);
+	return aim_genericreq_n_snacid(od, conn, 0x0009, 0x0002);
 }
 
 /* Subtype 0x0003 - BOS Rights. */
-static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
 	aim_tlvlist_t *tlvlist;
@@ -59,8 +59,8 @@ static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mods
 	if (aim_tlv_gettlv(tlvlist, 0x0002, 1))
 		maxdenies = aim_tlv_get16(tlvlist, 0x0002, 1);
 
-	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, maxpermits, maxdenies);
+	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+		ret = userfunc(od, conn, frame, maxpermits, maxdenies);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -77,9 +77,9 @@ static int rights(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_mods
  * a bitwise OR of all the user classes you want to see you.
  *
  */
-faim_export int aim_bos_setgroupperm(OscarSession *sess, OscarConnection *conn, guint32 mask)
+int aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask)
 {
-	return aim_genericreq_l(sess, conn, 0x0009, 0x0004, &mask);
+	return aim_genericreq_l(od, conn, 0x0009, 0x0004, &mask);
 }
 
 /*
@@ -110,9 +110,9 @@ faim_export int aim_bos_setgroupperm(OscarSession *sess, OscarConnection *conn, 
  *
  * XXX ye gods.
  */
-faim_export int aim_bos_changevisibility(OscarSession *sess, OscarConnection *conn, int changetype, const char *denylist)
+int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int changetype, const char *denylist)
 {
-	FlapFrame *fr;
+	FlapFrame *frame;
 	int packlen = 0;
 	guint16 subtype;
 	char *localcpy = NULL, *tmpptr = NULL;
@@ -139,41 +139,38 @@ faim_export int aim_bos_changevisibility(OscarSession *sess, OscarConnection *co
 	listcount = aimutil_itemcnt(localcpy, '&');
 	packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
 
-	if (!(fr = flap_frame_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, packlen))) {
-		free(localcpy);
-		return -ENOMEM;
-	}
+	frame = flap_frame_new(od, 0x02, packlen);
 
-	snacid = aim_cachesnac(sess, 0x0009, subtype, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0009, subtype, 0x00, snacid);
+	snacid = aim_cachesnac(od, 0x0009, subtype, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0009, subtype, 0x00, snacid);
 
 	for (i = 0; (i < (listcount - 1)) && (i < 99); i++) {
 		tmpptr = aimutil_itemindex(localcpy, i, '&');
 
-		aimbs_put8(&fr->data, strlen(tmpptr));
-		aimbs_putstr(&fr->data, tmpptr);
+		byte_stream_put8(&frame->data, strlen(tmpptr));
+		byte_stream_putstr(&frame->data, tmpptr);
 
 		free(tmpptr);
 	}
 	free(localcpy);
 
-	aim_tx_enqueue(sess, fr);
+	flap_connection_send(conn, frame);
 
 	return 0;
 }
 
-static int snachandler(OscarSession *sess, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
+static int
+snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-
 	if (snac->subtype == 0x0003)
-		return rights(sess, mod, rx, snac, bs);
+		return rights(od, conn, mod, frame, snac, bs);
 
 	return 0;
 }
 
-faim_internal int bos_modfirst(OscarSession *sess, aim_module_t *mod)
+int
+bos_modfirst(OscarData *od, aim_module_t *mod)
 {
-
 	mod->family = 0x0009;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;

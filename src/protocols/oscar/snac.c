@@ -37,21 +37,21 @@
 /*
  * Called from oscar_session_new() to initialize the hash.
  */
-faim_internal void aim_initsnachash(OscarSession *sess)
+void aim_initsnachash(OscarData *od)
 {
 	int i;
 
 	for (i = 0; i < FAIM_SNAC_HASH_SIZE; i++)
-		sess->snac_hash[i] = NULL;
+		od->snac_hash[i] = NULL;
 
 	return;
 }
 
-faim_internal aim_snacid_t aim_cachesnac(OscarSession *sess, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen)
+aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 type, const guint16 flags, const void *data, const int datalen)
 {
 	aim_snac_t snac;
 
-	snac.id = sess->snacid_next++;
+	snac.id = od->snacid_next++;
 	snac.family = family;
 	snac.type = type;
 	snac.flags = flags;
@@ -63,14 +63,14 @@ faim_internal aim_snacid_t aim_cachesnac(OscarSession *sess, const guint16 famil
 	} else
 		snac.data = NULL;
 
-	return aim_newsnac(sess, &snac);
+	return aim_newsnac(od, &snac);
 }
 
 /*
  * Clones the passed snac structure and caches it in the
  * list/hash.
  */
-faim_internal aim_snacid_t aim_newsnac(OscarSession *sess, aim_snac_t *newsnac)
+aim_snacid_t aim_newsnac(OscarData *od, aim_snac_t *newsnac)
 {
 	aim_snac_t *snac;
 	int index;
@@ -85,27 +85,27 @@ faim_internal aim_snacid_t aim_newsnac(OscarSession *sess, aim_snac_t *newsnac)
 
 	index = snac->id % FAIM_SNAC_HASH_SIZE;
 
-	snac->next = (aim_snac_t *)sess->snac_hash[index];
-	sess->snac_hash[index] = (void *)snac;
+	snac->next = (aim_snac_t *)od->snac_hash[index];
+	od->snac_hash[index] = (void *)snac;
 
 	return snac->id;
 }
 
 /*
- * Finds a snac structure with the passed SNAC ID, 
+ * Finds a snac structure with the passed SNAC ID,
  * removes it from the list/hash, and returns a pointer to it.
  *
  * The returned structure must be freed by the caller.
  *
  */
-faim_internal aim_snac_t *aim_remsnac(OscarSession *sess, aim_snacid_t id) 
+aim_snac_t *aim_remsnac(OscarData *od, aim_snacid_t id)
 {
 	aim_snac_t *cur, **prev;
 	int index;
 
 	index = id % FAIM_SNAC_HASH_SIZE;
 
-	for (prev = (aim_snac_t **)&sess->snac_hash[index]; (cur = *prev); ) {
+	for (prev = (aim_snac_t **)&od->snac_hash[index]; (cur = *prev); ) {
 		if (cur->id == id) {
 			*prev = cur->next;
 			if (cur->flags & AIM_SNACFLAGS_DESTRUCTOR) {
@@ -127,7 +127,7 @@ faim_internal aim_snac_t *aim_remsnac(OscarSession *sess, aim_snacid_t id)
  * maxage is the _minimum_ age in seconds to keep SNACs.
  *
  */
-faim_export void aim_cleansnacs(OscarSession *sess, int maxage)
+void aim_cleansnacs(OscarData *od, int maxage)
 {
 	int i;
 
@@ -135,12 +135,12 @@ faim_export void aim_cleansnacs(OscarSession *sess, int maxage)
 		aim_snac_t *cur, **prev;
 		time_t curtime;
 
-		if (!sess->snac_hash[i])
+		if (!od->snac_hash[i])
 			continue;
 
 		curtime = time(NULL); /* done here in case we waited for the lock */
 
-		for (prev = (aim_snac_t **)&sess->snac_hash[i]; (cur = *prev); ) {
+		for (prev = (aim_snac_t **)&od->snac_hash[i]; (cur = *prev); ) {
 			if ((curtime - cur->issuetime) > maxage) {
 
 				*prev = cur->next;
@@ -155,13 +155,13 @@ faim_export void aim_cleansnacs(OscarSession *sess, int maxage)
 	return;
 }
 
-faim_internal int aim_putsnac(ByteStream *bs, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid)
+int aim_putsnac(ByteStream *bs, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid)
 {
 
-	aimbs_put16(bs, family);
-	aimbs_put16(bs, subtype);
-	aimbs_put16(bs, flags);
-	aimbs_put32(bs, snacid);
+	byte_stream_put16(bs, family);
+	byte_stream_put16(bs, subtype);
+	byte_stream_put16(bs, flags);
+	byte_stream_put32(bs, snacid);
 
 	return 10;
 }

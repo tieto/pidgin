@@ -7,7 +7,6 @@ pkgdir = $(libdir)/gaim
 
 OSCARSOURCES = \
 	bstream.c           \
-	conn.c              \
 	family_admin.c      \
 	family_advert.c     \
 	family_alert.c      \
@@ -28,20 +27,21 @@ OSCARSOURCES = \
 	family_stats.c      \
 	family_translate.c  \
 	family_userlookup.c \
+	flap_connection.c   \
 	misc.c         \
 	msgcookie.c         \
+	odc.c               \
+	oft.c               \
 	oscar.c             \
 	oscar.h             \
-	oscar_internal.h    \
+	oscar_data.c        \
 	peer.c              \
 	peer.h              \
+	peer_proxy.c        \
 	rxhandlers.c        \
-	rxqueue.c           \
-	session.c           \
 	snac.c              \
 	snactypes.h         \
 	tlv.c               \
-	txqueue.c           \
 	util.c
 
 AM_CFLAGS = $(st)
