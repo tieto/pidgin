@@ -197,7 +197,7 @@ static void dll_prep() {
 			DWORD regval = 1;
 			DWORD reglen = sizeof(DWORD);
 
-			printf("Using Win2k (SP3+) / WinXP (No SP).. Checking SafeDllSearch\n");
+			printf("Using Win2k (SP3+) / WinXP (No SP)... Checking SafeDllSearch\n");
 			read_reg_string(HKEY_LOCAL_MACHINE,
 				"System\\CurrentControlSet\\Control\\Session Manager",
 				"SafeDllSearchMode",
@@ -359,6 +359,7 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 		switch (lcid) {
 			case 2125: posix = "my_MM"; break; /* Myanmar (Burmese) */
 			case 1076: posix = "xh"; break; /* Xhosa */
+			case 9999: posix = "ku"; break; /* Kurdish (from NSIS) */
 		}
 	}
 
