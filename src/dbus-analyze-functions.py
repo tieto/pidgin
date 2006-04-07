@@ -182,11 +182,11 @@ class ClientBinding (Binding):
         print 'dbus_g_proxy_call(gaim_proxy, "%s", NULL,' % ctopascal(self.function.name)
         
         for type_name in self.inputparams:
-            print "%s, %s, " % type_name,
+            print "\t%s, %s, " % type_name,
         print "G_TYPE_INVALID,"
 
         for type_name in self.outputparams:
-            print "%s, &%s, " % type_name,
+            print "\t%s, &%s, " % type_name,
         print "G_TYPE_INVALID);"
         
         for code in self.returncode:
@@ -276,24 +276,24 @@ class ServerBinding (Binding):
         print "%s_DBUS(DBusMessage *message_DBUS, DBusError *error_DBUS) {" % \
               self.function.name
         
-        print "DBusMessage *reply_DBUS;"
+        print "\tDBusMessage *reply_DBUS;"
 
         for decl in self.cdecls:
             print decl
 
-        print "%s(message_DBUS, error_DBUS, " % self.argfunc,
+        print "\t%s(message_DBUS, error_DBUS, " % self.argfunc,
         for param in self.cparams:
             print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
 
-        print "CHECK_ERROR(error_DBUS);"
+        print "\tCHECK_ERROR(error_DBUS);"
 
         for code in self.ccode:
             print code
 
-        print "reply_DBUS =  dbus_message_new_method_return (message_DBUS);"
+        print "\treply_DBUS =  dbus_message_new_method_return (message_DBUS);"
 
-        print "dbus_message_append_args(reply_DBUS, ",
+        print "\tdbus_message_append_args(reply_DBUS, ",
         for param in self.cparamsout:
             if type(param) is str:
                 print "%s, " % param
@@ -304,7 +304,7 @@ class ServerBinding (Binding):
         for code in self.ccodeout:
             print code
 
-        print "return reply_DBUS;\n}\n"
+        print "\treturn reply_DBUS;\n}\n"
 
 
     def addstring(self, *items):
@@ -321,68 +321,68 @@ class ServerBinding (Binding):
     # input parameters
 
     def inputsimple(self, type, name):
-        self.cdecls.append("dbus_int32_t %s;" % name)
+        self.cdecls.append("\tdbus_int32_t %s;" % name)
         self.cparams.append(("INT32", name))
         self.addintype("i", name)
 
     def inputvalist(self, type, name):
-        self.cdecls.append("void * %s;" % name);
-        self.ccode.append("%s = NULL;" % name);
+        self.cdecls.append("\tvoid * %s;" % name);
+        self.ccode.append("\t%s = NULL;" % name);
 
     def inputstring(self, type, name):
-        self.cdecls.append("const char *%s;" % name)
+        self.cdecls.append("\tconst char *%s;" % name)
         self.cparams.append(("STRING", name))
-        self.ccode  .append("NULLIFY(%s);" % name)
+        self.ccode  .append("\tNULLIFY(%s);" % name)
         self.addintype("s", name)
 
     def inputhash(self, type, name):
         self.argfunc = "gaim_dbus_message_get_args"
-        self.cdecls.append("DBusMessageIter %s_ITER;" % name)
-        self.cdecls.append("GHashTable *%s;" % name)
+        self.cdecls.append("\tDBusMessageIter %s_ITER;" % name)
+        self.cdecls.append("\tGHashTable *%s;" % name)
         self.cparams.append(("ARRAY", "%s_ITER" % name))
-        self.ccode.append("%s = gaim_dbus_iter_hash_table(&%s_ITER, error_DBUS);" \
+        self.ccode.append("\t%s = gaim_dbus_iter_hash_table(&%s_ITER, error_DBUS);" \
                      % (name, name))
-        self.ccode.append("CHECK_ERROR(error_DBUS);")
-        self.ccodeout.append("g_hash_table_destroy(%s);" % name)
+        self.ccode.append("\tCHECK_ERROR(error_DBUS);")
+        self.ccodeout.append("\tg_hash_table_destroy(%s);" % name)
         self.addintype("a{ss}", name)
 
     def inputgaimstructure(self, type, name):
-        self.cdecls.append("dbus_int32_t %s_ID;" %  name)
-        self.cdecls.append("%s *%s;" % (type[0], name))
+        self.cdecls.append("\tdbus_int32_t %s_ID;" %  name)
+        self.cdecls.append("\t%s *%s;" % (type[0], name))
         self.cparams.append(("INT32", name + "_ID"))
-        self.ccode.append("GAIM_DBUS_ID_TO_POINTER(%s, %s_ID, %s, error_DBUS);"  % \
+        self.ccode.append("\tGAIM_DBUS_ID_TO_POINTER(%s, %s_ID, %s, error_DBUS);"  % \
                        (name, name, type[0]))
         self.addintype("i", name)
 
     def inputpointer(self, type, name):
-        self.cdecls.append("dbus_int32_t %s_NULL;" %  name)
-        self.cdecls .append("%s *%s;" % (type[0], name))
+        self.cdecls.append("\tdbus_int32_t %s_NULL;" %  name)
+        self.cdecls .append("\t%s *%s;" % (type[0], name))
         self.cparams.append(("INT32", name + "_NULL"))
-        self.ccode  .append("%s = NULL;" % name)
+        self.ccode  .append("\t%s = NULL;" % name)
         self.addintype("i", name)
 
     # output parameters
 
     def outputvoid(self, type, name):
-        self.ccode.append("%s;" % self.call) # just call the function
+        self.ccode.append("\t%s;" % self.call) # just call the function
 
     def outputstring(self, type, name, const):
-        self.cdecls.append("const char *%s;" % name)
-        self.ccode.append("%s = null_to_empty(%s);" % (name, self.call))
+        self.cdecls.append("\tconst char *%s;" % name)
+        self.ccode.append("\t%s = null_to_empty(%s);" % (name, self.call))
         self.cparamsout.append(("STRING", name))
         self.addouttype("s", name)
         if not const:
-            self.ccodeout.append("g_free(%s);" % name)
+            self.ccodeout.append("\tg_free(%s);" % name)
 
     def outputsimple(self, type, name):
-        self.cdecls.append("dbus_int32_t %s;" % name)
-        self.ccode.append("%s = %s;" % (name, self.call))
+        self.cdecls.append("\tdbus_int32_t %s;" % name)
+        self.ccode.append("\t%s = %s;" % (name, self.call))
         self.cparamsout.append(("INT32", name))
         self.addouttype("i", name)
 
     def outputgaimstructure(self, type, name):
-        self.cdecls.append("dbus_int32_t %s;" % name)
-        self.ccode .append("GAIM_DBUS_POINTER_TO_ID(%s, %s, error_DBUS);" % (name, self.call))
+        self.cdecls.append("\tdbus_int32_t %s;" % name)
+        self.ccode .append("\tGAIM_DBUS_POINTER_TO_ID(%s, %s, error_DBUS);" % (name, self.call))
         self.cparamsout.append(("INT32", name))
         self.addouttype("i", name)
 
@@ -395,21 +395,21 @@ class ServerBinding (Binding):
     # of strings
 
     def outputlist(self, type, name):
-        self.cdecls.append("dbus_int32_t %s_LEN;" % name)
-        self.ccodeout.append("g_free(%s);" % name)
+        self.cdecls.append("\tdbus_int32_t %s_LEN;" % name)
+        self.ccodeout.append("\tg_free(%s);" % name)
 
         if self.function.name in stringlists:
-            self.cdecls.append("char **%s;" % name)
-            self.ccode.append("%s = gaim_%s_to_array(%s, FALSE, &%s_LEN);" % \
+            self.cdecls.append("\tchar **%s;" % name)
+            self.ccode.append("\t%s = gaim_%s_to_array(%s, FALSE, &%s_LEN);" % \
                          (name, type[0], self.call, name))
-            self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
+            self.cparamsout.append("\tDBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
                           % (name, name))
             self.addouttype("as", name)
         else:
-            self.cdecls.append("dbus_int32_t *%s;" % name)
-            self.ccode.append("%s = gaim_dbusify_%s(%s, FALSE, &%s_LEN);" % \
+            self.cdecls.append("\tdbus_int32_t *%s;" % name)
+            self.ccode.append("\t%s = gaim_dbusify_%s(%s, FALSE, &%s_LEN);" % \
                          (name, type[0], self.call, name))
-            self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
+            self.cparamsout.append("\tDBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
                               % (name, name))
             self.addouttype("ai", name)
 
