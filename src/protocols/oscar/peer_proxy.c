@@ -304,10 +304,11 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
 			peer_connection_trynext(conn);
 			return;
 		}
+
+		frame->payload.offset += read;
 	}
 
 	conn->lastactivity = time(NULL);
-	frame->payload.offset += read;
 	if (frame->payload.offset < frame->payload.len)
 		/* Waiting for more data to arrive */
 		return;

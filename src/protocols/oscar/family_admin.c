@@ -182,7 +182,7 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
 
-	flap_frame_new(od, 0x02, 10+2+2+strlen(newemail));
+	fr = flap_frame_new(od, 0x02, 10+2+2+strlen(newemail));
 
 	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);

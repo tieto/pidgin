@@ -1623,7 +1623,7 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	separator = strchr(redir->ip, ':');
 	if (separator != NULL)
 	{
-		host = g_strndup(redir->ip, (int)separator - (int)host);
+		host = g_strndup(redir->ip, (int)separator - (int)redir->ip);
 		port = atoi(separator + 1);
 	}
 	else
