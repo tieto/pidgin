@@ -431,6 +431,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 	buddy = gaim_find_buddy(account, xfer->who);
 
 	if (type == GAIM_XFER_SEND) {
+		/* Sending a file */
 		/* Check the filename. */
 #ifdef _WIN32
 		if (g_strrstr(filename, "../") || g_strrstr(filename, "..\\")) {
@@ -468,6 +469,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		g_free(msg);
 	}
 	else {
+		/* Receiving a file */
 		xfer->status = GAIM_XFER_STATUS_ACCEPTED;
 		gaim_xfer_set_local_filename(xfer, filename);
 
@@ -970,7 +972,7 @@ gaim_xfer_end(GaimXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 
 	/* See if we are actually trying to cancel this. */
-	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_DONE) {
+	if (!gaim_xfer_is_completed(xfer)) {
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
