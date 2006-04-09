@@ -225,7 +225,9 @@ static const struct {
  *
  * @param userinfo Contains the new information for the buddy.
  */
-static void aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo) {
+static void
+aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
+{
 	aim_userinfo_t *cur;
 	FlapConnection *conn;
 	aim_rxcallback_t userfunc;
@@ -312,7 +314,9 @@ static void aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo) {
 		userfunc(od, conn, NULL, cur);
 }
 
-void aim_locate_dorequest(OscarData *od) {
+void
+aim_locate_dorequest(OscarData *od)
+{
 	struct userinfo_node *cur = od->locate.torequest;
 
 	if (cur == NULL)
@@ -393,7 +397,9 @@ aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
 	return was_explicit;
 }
 
-void aim_locate_requestuserinfo(OscarData *od, const char *sn) {
+void
+aim_locate_requestuserinfo(OscarData *od, const char *sn)
+{
 	struct userinfo_node *cur;
 
 	/* Make sure we aren't already requesting info for this buddy */
@@ -431,7 +437,8 @@ aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *sn) {
 	return NULL;
 }
 
-guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
+guint32
+aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 {
 	guint32 flags = 0;
 	int offset;
@@ -465,7 +472,8 @@ guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 	return flags;
 }
 
-guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
+guint32
+aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 {
 	guint32 flags = 0;
 	int offset;
@@ -493,7 +501,8 @@ guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 	return flags;
 }
 
-int byte_stream_putcaps(ByteStream *bs, guint32 caps)
+int
+byte_stream_putcaps(ByteStream *bs, guint32 caps)
 {
 	int i;
 
@@ -538,7 +547,8 @@ dumptlv(OscarData *od, guint16 type, ByteStream *bs, guint8 len)
 }
 #endif
 
-void aim_info_free(aim_userinfo_t *info)
+void
+aim_info_free(aim_userinfo_t *info)
 {
 	free(info->sn);
 	free(info->iconcsum);
@@ -554,7 +564,8 @@ void aim_info_free(aim_userinfo_t *info)
  * AIM is fairly regular about providing user info.  This is a generic
  * routine to extract it in its standard form.
  */
-int aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
+int
+aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 {
 	int curtlv, tlvcnt;
 	guint8 snlen;
@@ -1311,7 +1322,8 @@ int aim_locate_000b(OscarData *od, const char *sn)
  * XXX pass these in better
  *
  */
-int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
+int
+aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;
@@ -1360,7 +1372,8 @@ int aim_locate_setinterests(OscarData *od, const char *interest1, const char *in
  *        0x00000008 - Certification.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
+int
+aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;

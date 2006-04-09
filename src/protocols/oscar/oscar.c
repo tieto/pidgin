@@ -1244,11 +1244,12 @@ oscar_login(GaimAccount *account)
 	ck[0] = 0x5a;
 }
 
-/* TODO: Move most of this to oscar_data_destroy() */
 static void
 oscar_close(GaimConnection *gc)
 {
-	OscarData *od = (OscarData *)gc->proto_data;
+	OscarData *od;
+
+	od = (OscarData *)gc->proto_data;
 
 	while (od->oscar_chats)
 	{
@@ -1256,33 +1257,18 @@ oscar_close(GaimConnection *gc)
 		od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
 		oscar_chat_destroy(cc);
 	}
-	while (od->requesticon) {
-		gchar *sn = od->requesticon->data;
-		od->requesticon = g_slist_remove(od->requesticon, sn);
-		g_free(sn);
-	}
-	while (od->create_rooms) {
+	while (od->create_rooms)
+	{
 		struct create_room *cr = od->create_rooms->data;
 		g_free(cr->name);
 		od->create_rooms = g_slist_remove(od->create_rooms, cr);
 		g_free(cr);
 	}
-	if (od->email)
-		g_free(od->email);
-	if (od->newp)
-		g_free(od->newp);
-	if (od->oldp)
-		g_free(od->oldp);
-	if (od->icontimer > 0)
-		gaim_timeout_remove(od->icontimer);
-	if (od->getblisttimer > 0)
-		gaim_timeout_remove(od->getblisttimer);
-	if (od->getinfotimer > 0)
-		gaim_timeout_remove(od->getinfotimer);
-	gaim_prefs_disconnect_by_handle(gc);
-
 	oscar_data_destroy(od);
 	gc->proto_data = NULL;
+
+	gaim_prefs_disconnect_by_handle(gc);
+
 	gaim_debug_info("oscar", "Signed off.\n");
 }
 

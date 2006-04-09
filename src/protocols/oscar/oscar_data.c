@@ -92,6 +92,21 @@ oscar_data_destroy(OscarData *od)
 {
 	aim_cleansnacs(od, -1);
 
+	while (od->requesticon)
+	{
+		gchar *sn = od->requesticon->data;
+		od->requesticon = g_slist_remove(od->requesticon, sn);
+		g_free(sn);
+	}
+	g_free(od->email);
+	g_free(od->newp);
+	g_free(od->oldp);
+	if (od->icontimer > 0)
+		gaim_timeout_remove(od->icontimer);
+	if (od->getblisttimer > 0)
+		gaim_timeout_remove(od->getblisttimer);
+	if (od->getinfotimer > 0)
+		gaim_timeout_remove(od->getinfotimer);
 	while (od->oscar_connections != NULL)
 		flap_connection_destroy(od->oscar_connections->data);
 
@@ -109,7 +124,8 @@ oscar_data_destroy(OscarData *od)
 	g_free(od);
 }
 
-int oscar_data_addhandler(OscarData *od, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags)
+int
+oscar_data_addhandler(OscarData *od, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags)
 {
 	SnacHandler *snac_handler;
 
