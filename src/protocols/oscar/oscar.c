@@ -1841,7 +1841,6 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	gchar *tmp;
 	aim_mpmsg_section_t *curpart;
 	const char *start;
-	const char *end;
 	GData *attribs;
 
 	gaim_debug_misc("oscar", "Received IM from %s with %d parts\n",
@@ -1937,7 +1936,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	/*
 	 * Convert iChat color tags to normal font tags.
 	 */
-	if (gaim_markup_find_tag("body", tmp, &start, &end, &attribs))
+	if (gaim_markup_find_tag("body", tmp, &start, NULL, &attribs))
 	{
 		const char *ichattextcolor, *ichatballooncolor;
 

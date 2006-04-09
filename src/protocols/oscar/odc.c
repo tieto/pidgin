@@ -204,6 +204,12 @@ peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encoding, g
 	g_free(frame.payload.data);
 }
 
+struct embedded_data
+{
+	size_t size;
+	const guint8 *data;
+};
+
 /**
  * This is called after a direct IM has been received in its entirety.  This
  * function is passed a long chunk of data which contains the IM with any
@@ -217,7 +223,7 @@ peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encoding, g
  * create the img store using the given data.
  *
  * For somewhat easy reference, here's a sample message
- * (without the whitespace and asterisks):
+ * (with added whitespace):
  *
  * <HTML><BODY BGCOLOR="#ffffff">
  *     <FONT LANG="0">
@@ -232,144 +238,189 @@ peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encoding, g
  *     <DATA ID="1" SIZE="9894">datadatadatadata</DATA>
  *     <DATA ID="2" SIZE="65978">datadatadatadata</DATA>
  * </BINARY>
- *
- * TODO: This should be rewritten to parse all the binary data first
- *       and add each image, then go through the message afterwrod and
- *       substitute in the image tags.
  */
 static void
 peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int encoding, gboolean autoreply)
 {
-	OscarData *od;
 	GaimConnection *gc;
 	GaimAccount *account;
-	GaimMessageFlags imflags;
+	const char *msgend, *binary_start, *dataend;
+	const char *tmp, *start, *end, *idstr, *src, *sizestr;
+	GData *attributes;
+	GHashTable *embedded_datas;
+	struct embedded_data *embedded_data;
+	GSList *images;
 	gchar *utf8;
 	GString *newmsg;
-	GSList *images;
-	const char *msgend, *binary_start, *binary;
+	GaimMessageFlags imflags;
 
-	od = conn->od;
-	gc = od->gc;
+	gc = conn->od->gc;
 	account = gaim_connection_get_account(gc);
 
-	imflags = 0;
-	newmsg = g_string_new("");
-	images = NULL;
+	dataend = msg + len;
 
-	msgend = msg + len;
+	/*
+	 * Create a hash table containing references to each embedded
+	 * data chunk.  The key is the "ID" and the value is an
+	 * embedded_data struct.
+	 */
+	embedded_datas = g_hash_table_new_full(g_direct_hash,
+			g_direct_equal, NULL, g_free);
 
-	if (autoreply)
-		imflags |= GAIM_MESSAGE_AUTO_RESP;
-
-	/* message has a binary trailer */
-	if ((binary_start = gaim_strcasestr(msg, "<binary>")))
+	/*
+	 * Create an index of any binary chunks.  If we run into any
+	 * problems while parsing the binary data section then we stop
+	 * parsing it, and the local user will see broken image icons.
+	 */
+	/* TODO: Use a length argument when looking for the <binary> tag! */
+	binary_start = gaim_strcasestr(msg, "<binary>");
+	if (binary_start == NULL)
+		msgend = dataend;
+	else
 	{
-		GData *attribs;
-		const char *tmp, *start, *end, *last = NULL;
+		msgend = binary_start;
 
-		binary = binary_start;
-		tmp = msg;
+		/* Move our pointer to immediately after the <binary> tag */
+		tmp = binary_start + 8;
 
-		/* for each valid image tag... */
-		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs))
+		/* The embedded binary markup has a mimimum length of 29 bytes */
+		/* TODO: Use a length argument when looking for the <data> tag! */
+		while ((tmp + 29 <= dataend) &&
+				gaim_markup_find_tag("data", tmp, &start, &tmp, &attributes))
 		{
-			const char *id, *src, *datasize;
-			const char *data = NULL;
-			char *tag = NULL;
+			unsigned int id;
 			size_t size;
-			int imgid = 0;
 
-			/* update the location of the last img tag */
-			last = end;
+			/* Move the binary pointer from ">" to the start of the data */
+			tmp++;
 
-			/* grab attributes */
-			id       = g_datalist_get_data(&attribs, "id");
-			src      = g_datalist_get_data(&attribs, "src");
-			datasize = g_datalist_get_data(&attribs, "datasize");
-
-			/* if we have id & datasize, build the data tag */
-			if (id && datasize)
-				tag = g_strdup_printf("<data id=\"%s\" size=\"%s\">", id, datasize);
-
-			/* if we have a tag, find the start of the data */
-			if (tag && (data = gaim_strcasestr(binary, tag)))
+			/* Get the ID */
+			idstr = g_datalist_get_data(&attributes, "id");
+			if (idstr == NULL)
 			{
-				data += strlen(tag);
-				binary = data + atoi(datasize) + 7; /* for </data> */
+				g_datalist_clear(&attributes);
+				break;
 			}
+			id = atoi(idstr);
 
-			g_free(tag);
+			/* Get the size */
+			sizestr = g_datalist_get_data(&attributes, "size");
+			if (sizestr == NULL)
+			{
+				g_datalist_clear(&attributes);
+				break;
+			}
+			size = atol(sizestr);
 
-			/* check the data is here and store it */
-			if (data && (data + (size = atoi(datasize)) <= msgend))
-				imgid = gaim_imgstore_add(data, size, src);
+			g_datalist_clear(&attributes);
 
-			/* if we have a stored image... */
-			if (imgid) {
-				/* append the message up to the tag */
-				utf8 = gaim_plugin_oscar_decode_im_part(account, conn->sn,
-								encoding, 0x0000, tmp, start - tmp);
-				if (utf8 != NULL) {
-					newmsg = g_string_append(newmsg, utf8);
-					g_free(utf8);
-				}
+			if ((size > 0) && (tmp + size > dataend))
+				break;
 
-				/* write the new image tag */
-				g_string_append_printf(newmsg, "<IMG ID=\"%d\">", imgid);
+			embedded_data = g_new(struct embedded_data, 1);
+			embedded_data->size = size;
+			embedded_data->data = (const guint8 *)tmp;
+			tmp += size;
 
-				/* and record the image number */
+			/* Skip past the closing </data> tag */
+			if (strncasecmp(tmp, "</data>", 7))
+			{
+				g_free(embedded_data);
+				break;
+			}
+			tmp += 7;
+
+			g_hash_table_insert(embedded_datas,
+					GINT_TO_POINTER(id), embedded_data);
+		}
+	}
+
+	/*
+	 * Loop through the message, replacing OSCAR img tags with the
+	 * equivalent Gaim img tag.
+	 */
+	images = NULL;
+	newmsg = g_string_new("");
+	tmp = msg;
+	while (gaim_markup_find_tag("img", tmp, &start, &end, &attributes))
+	{
+		int imgid = 0;
+
+		idstr   = g_datalist_get_data(&attributes, "id");
+		src     = g_datalist_get_data(&attributes, "src");
+		sizestr = g_datalist_get_data(&attributes, "datasize");
+
+		if ((idstr != NULL) && (src != NULL) && (sizestr!= NULL))
+		{
+			unsigned int id;
+			size_t size;
+
+			id = atoi(idstr);
+			size = atol(sizestr);
+			embedded_data = g_hash_table_lookup(embedded_datas,
+					GINT_TO_POINTER(id));
+
+			if ((embedded_data != NULL) && (embedded_data->size == size))
+			{
+				imgid = gaim_imgstore_add(embedded_data->data, size, src);
+
+				/* Record the image number */
 				images = g_slist_append(images, GINT_TO_POINTER(imgid));
-			} else {
-				/* otherwise, copy up to the end of the tag */
-				utf8 = gaim_plugin_oscar_decode_im_part(account, conn->sn,
-								encoding, 0x0000, tmp, (end + 1) - tmp);
-				if (utf8 != NULL) {
-					newmsg = g_string_append(newmsg, utf8);
-					g_free(utf8);
-				}
 			}
-
-			/* clear the attribute list */
-			g_datalist_clear(&attribs);
-
-			/* continue from the end of the tag */
-			tmp = end + 1;
 		}
 
-		/* append any remaining message data (without the > :-)) */
-		if (last++ && (last < binary_start))
-			newmsg = g_string_append_len(newmsg, last, binary_start - last);
+		/* Delete the attribute list */
+		g_datalist_clear(&attributes);
 
-		/* set the flag if we caught any images */
-		if (images)
-			imflags |= GAIM_MESSAGE_IMAGES;
-	} else {
+		/* Append the message up to the tag */
 		utf8 = gaim_plugin_oscar_decode_im_part(account, conn->sn,
-						encoding, 0x0000, msg, len);
+				encoding, 0x0000, tmp, start - tmp);
+		if (utf8 != NULL) {
+			g_string_append(newmsg, utf8);
+			g_free(utf8);
+		}
+
+		if (imgid != 0)
+		{
+			/* Write the new image tag */
+			g_string_append_printf(newmsg, "<IMG ID=\"%d\">", imgid);
+		}
+
+		/* Continue from the end of the tag */
+		tmp = end + 1;
+	}
+
+	/* Append any remaining message data */
+	if (tmp <= msgend)
+	{
+		utf8 = gaim_plugin_oscar_decode_im_part(account, conn->sn,
+				encoding, 0x0000, tmp, msgend - tmp);
 		if (utf8 != NULL) {
 			g_string_append(newmsg, utf8);
 			g_free(utf8);
 		}
 	}
 
+	/* Send the message */
+	imflags = 0;
+	if (images != NULL)
+		imflags |= GAIM_MESSAGE_IMAGES;
+	if (autoreply)
+		imflags |= GAIM_MESSAGE_AUTO_RESP;
 	serv_got_im(gc, conn->sn, newmsg->str, imflags, time(NULL));
-
-	/* free the message */
 	g_string_free(newmsg, TRUE);
 
 	/* unref any images we allocated */
-	if (images) {
-		GSList *tmp;
-		int id;
-
-		for (tmp = images; tmp != NULL; tmp = tmp->next) {
-			id = GPOINTER_TO_INT(tmp->data);
-			gaim_imgstore_unref(id);
-		}
-
+	if (images)
+	{
+		GSList *l;
+		for (l = images; l != NULL; l = l->next)
+			gaim_imgstore_unref(GPOINTER_TO_INT(l->data));
 		g_slist_free(images);
 	}
+
+	/* Delete our list of pointers to embedded images */
+	g_hash_table_destroy(embedded_datas);
 }
 
 /**
