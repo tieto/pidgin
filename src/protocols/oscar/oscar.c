@@ -941,6 +941,7 @@ connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
 	NewFlapConnectionData *new_conn_data;
 	GaimConnection *gc;
 	OscarData *od;
+	GaimAccount *account;
 	FlapConnection *conn;
 
 	new_conn_data = data;
@@ -955,6 +956,7 @@ connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	od = gc->proto_data;
+	account = gaim_connection_get_account(gc);
 	conn = new_conn_data->conn;
 	conn->fd = source;
 
@@ -978,7 +980,7 @@ connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
 			GAIM_INPUT_READ, flap_connection_recv_cb, conn);
 	if (new_conn_data->cookie == NULL)
 	{
-		if (!((conn->type == SNAC_FAMILY_AUTH) && !aim_sn_is_icq(od->sn)))
+		if (!aim_sn_is_icq(gaim_account_get_username(account)))
 			/*
 			 * We don't send this when authenticating an ICQ account
 			 * because for some reason ICQ is still using the
@@ -992,8 +994,6 @@ connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
-		GaimAccount *account;
-		account = gaim_connection_get_account(gc);
 		aim_request_login(od, conn, gaim_account_get_username(account));
 		gaim_debug_info("oscar", "Screen name sent, waiting for response\n");
 		gaim_connection_update_progress(gc, _("Screen name sent"), 1, OSCAR_CONNECT_STEPS);
