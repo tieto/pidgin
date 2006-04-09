@@ -556,8 +556,7 @@ parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 		return;
 	}
 
-	/* Used only by the older login protocol */
-	/* XXX remove this special case? */
+	/* An ICQ account is logging in */
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
 		parse_fakesnac(od, conn, frame, 0x0017, 0x0003);
