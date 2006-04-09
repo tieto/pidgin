@@ -3946,12 +3946,17 @@ oscar_send_typing(GaimConnection *gc, const char *name, int typing)
 static void
 gaim_odc_send_im(PeerConnection *conn, const char *message, GaimMessageFlags imflags)
 {
-	GString *msg = g_string_new("<HTML><BODY>");
-	GString *data = g_string_new("</BODY></HTML><BINARY>");
+	GString *msg;
+	GString *data;
+	gchar *tmp;
+	int tmplen;
+	guint16 charset, charsubset;
 	GData *attribs;
 	const char *start, *end, *last;
 	int oscar_id = 0;
 
+	msg = g_string_new("<HTML><BODY>");
+	data = g_string_new("<BINARY>");
 	last = message;
 
 	/* for each valid IMG tag... */
@@ -3988,8 +3993,8 @@ gaim_odc_send_im(PeerConnection *conn, const char *message, GaimMessageFlags imf
 			/* ... and append the data to the binary section ... */
 			g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%lu\">",
 				oscar_id, size);
-			data = g_string_append_len(data, imgdata, size);
-			data = g_string_append(data, "</DATA>");
+			g_string_append_len(data, imgdata, size);
+			g_string_append(data, "</DATA>");
 		}
 			/* If the tag is invalid, skip it, thus no else here */
 
@@ -3999,20 +4004,27 @@ gaim_odc_send_im(PeerConnection *conn, const char *message, GaimMessageFlags imf
 		last = end + 1;
 	}
 
-	/* append any remaining message data (without the > :-) ) */
+	/* append any remaining message data */
 	if (last && *last)
-		msg = g_string_append(msg, last);
+		g_string_append(msg, last);
 
-	/* if we inserted any images in the binary section, append it */
+	g_string_append(msg, "</BODY></HTML>");
+
+	/* Convert the message to a good encoding */
+	gaim_plugin_oscar_convert_to_best_encoding(conn->od->gc,
+			conn->sn, msg->str, &tmp, &tmplen, &charset, &charsubset);
+	g_string_free(msg, TRUE);
+	msg = g_string_new_len(tmp, tmplen);
+
+	/* Append any binary data that we may have */
 	if (oscar_id) {
 		msg = g_string_append_len(msg, data->str, data->len);
 		msg = g_string_append(msg, "</BINARY>");
 	}
-
 	g_string_free(data, TRUE);
 
-	/* TODO: Deal with the encoding. */
-	peer_odc_send_im(conn, msg->str, msg->len, 0, imflags & GAIM_MESSAGE_AUTO_RESP);
+	peer_odc_send_im(conn, msg->str, msg->len, charset,
+			imflags & GAIM_MESSAGE_AUTO_RESP);
 	g_string_free(msg, TRUE);
 }
 
