@@ -233,8 +233,9 @@ peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encoding, g
  *     <DATA ID="2" SIZE="65978">datadatadatadata</DATA>
  * </BINARY>
  *
- * TODO: I think this does bad things when receiving
- *       multiple images in one IM.
+ * TODO: This should be rewritten to parse all the binary data first
+ *       and add each image, then go through the message afterwrod and
+ *       substitute in the image tags.
  */
 static void
 peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int encoding, gboolean autoreply)
@@ -246,7 +247,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	gchar *utf8;
 	GString *newmsg;
 	GSList *images;
-	const char *msgend, *binary;
+	const char *msgend, *binary_start, *binary;
 
 	od = conn->od;
 	gc = od->gc;
@@ -262,11 +263,12 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		imflags |= GAIM_MESSAGE_AUTO_RESP;
 
 	/* message has a binary trailer */
-	if ((binary = gaim_strcasestr(msg, "<binary>")))
+	if ((binary_start = gaim_strcasestr(msg, "<binary>")))
 	{
 		GData *attribs;
 		const char *tmp, *start, *end, *last = NULL;
 
+		binary = binary_start;
 		tmp = msg;
 
 		/* for each valid image tag... */
@@ -292,12 +294,15 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 
 			/* if we have a tag, find the start of the data */
 			if (tag && (data = gaim_strcasestr(binary, tag)))
+			{
 				data += strlen(tag);
+				binary = data + atoi(datasize) + 7; /* for </data> */
+			}
 
 			g_free(tag);
 
 			/* check the data is here and store it */
-			if (data + (size = atoi(datasize)) <= msgend)
+			if (data && (data + (size = atoi(datasize)) <= msgend))
 				imgid = gaim_imgstore_add(data, size, src);
 
 			/* if we have a stored image... */
@@ -333,8 +338,8 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 		}
 
 		/* append any remaining message data (without the > :-)) */
-		if (last++ && (last < binary))
-			newmsg = g_string_append_len(newmsg, last, binary - last);
+		if (last++ && (last < binary_start))
+			newmsg = g_string_append_len(newmsg, last, binary_start - last);
 
 		/* set the flag if we caught any images */
 		if (images)
