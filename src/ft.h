@@ -106,6 +106,8 @@ struct _GaimXfer
 
 	size_t bytes_sent;            /**< The number of bytes sent.           */
 	size_t bytes_remaining;       /**< The number of bytes remaining.      */
+	time_t start_time;            /**< When the transfer of data began.    */
+	time_t end_time;              /**< When the transfer of data ended.    */
 
 	GaimXferStatusType status;    /**< File Transfer's status.             */
 

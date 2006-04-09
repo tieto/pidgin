@@ -84,9 +84,7 @@ struct _GaimGtkXferDialog
 typedef struct
 {
 	GtkTreeIter iter;
-	time_t start_time;
 	time_t last_updated_time;
-	time_t end_time;
 	gboolean in_list;
 
 	char *name;
@@ -121,35 +119,39 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 
 	data = GAIM_GTKXFER(xfer);
 
-	if (data->end_time == -1 &&
-		(gaim_xfer_is_canceled(xfer) || gaim_xfer_is_completed(xfer)))
-		data->end_time = time(NULL);
-
-	if (data->end_time != -1)
-		now = data->end_time;
+	if (xfer->end_time != 0)
+		now = xfer->end_time;
 	else
 		now = time(NULL);
 
 	kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
 	kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
-	elapsed = (now - data->start_time);
+	elapsed = (xfer->start_time > 0 ? now - xfer->start_time : 0);
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
 	if (kbsec != NULL) {
 		*kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
 	}
 
-	if (time_elapsed != NULL) {
+	if (time_elapsed != NULL)
+	{
 		int h, m, s;
 		int secs_elapsed;
 
-		secs_elapsed = now - data->start_time;
+		if (xfer->start_time > 0)
+		{
+			secs_elapsed = now - xfer->start_time;
 
-		h = secs_elapsed / 3600;
-		m = (secs_elapsed % 3600) / 60;
-		s = secs_elapsed % 60;
+			h = secs_elapsed / 3600;
+			m = (secs_elapsed % 3600) / 60;
+			s = secs_elapsed % 60;
 
-		*time_elapsed = g_strdup_printf("%d:%02d:%02d", h, m, s);
+			*time_elapsed = g_strdup_printf("%d:%02d:%02d", h, m, s);
+		}
+		else
+		{
+			*time_elapsed = g_strdup(_("Not started"));
+		}
 	}
 
 	if (time_remaining != NULL) {
@@ -227,10 +229,10 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 							 _("<b>Sending As:</b>"));
 	}
 
-	gtk_label_set_text(GTK_LABEL(dialog->local_user_label), 
+	gtk_label_set_text(GTK_LABEL(dialog->local_user_label),
 								 gaim_account_get_username(xfer->account));
 	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), xfer->who);
-	gtk_label_set_text(GTK_LABEL(dialog->protocol_label), 
+	gtk_label_set_text(GTK_LABEL(dialog->protocol_label),
 								 gaim_account_get_protocol_name(xfer->account));
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
@@ -892,9 +894,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 
 	gaim_gtkxfer_dialog_show(dialog);
 
-	data->start_time = time(NULL);
 	data->last_updated_time = 0;
-	data->end_time = -1;
 
 	type = gaim_xfer_get_type(xfer);
 

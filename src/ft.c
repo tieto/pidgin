@@ -909,6 +909,8 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 
 	xfer->watcher = gaim_input_add(xfer->fd, cond, transfer_cb, xfer);
 
+	xfer->start_time = time(NULL);
+
 	if (xfer->ops.start != NULL)
 		xfer->ops.start(xfer);
 }
@@ -977,6 +979,7 @@ gaim_xfer_end(GaimXfer *xfer)
 		return;
 	}
 
+	xfer->end_time = time(NULL);
 	if (xfer->ops.end != NULL)
 		xfer->ops.end(xfer);
 
@@ -1018,6 +1021,7 @@ gaim_xfer_cancel_local(GaimXfer *xfer)
 	g_return_if_fail(xfer != NULL);
 
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_LOCAL);
+	xfer->end_time = time(NULL);
 
 	if (gaim_xfer_get_filename(xfer) != NULL)
 	{
@@ -1077,6 +1081,7 @@ gaim_xfer_cancel_remote(GaimXfer *xfer)
 
 	gaim_request_close_with_handle(xfer);
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_CANCEL_REMOTE);
+	xfer->end_time = time(NULL);
 
 	account = gaim_xfer_get_account(xfer);
 	buddy = gaim_find_buddy(account, xfer->who);
