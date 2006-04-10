@@ -3393,6 +3393,7 @@ static gboolean
 _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
 {
 	gchar *enteredstring;
+	gchar *tmp;
 	gchar *withmarkup;
 	gchar *nomarkup;
 	gchar *normalized;
@@ -3404,15 +3405,20 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 
 	gtk_tree_model_get(model, iter, column, &withmarkup, -1);
 
-	enteredstring = g_utf8_casefold(gaim_normalize(NULL, key), -1);
+	tmp = g_utf8_normalize(key, -1, G_NORMALIZE_DEFAULT);
+	enteredstring = g_utf8_casefold(tmp, -1);
+	g_free(tmp);
+
 	nomarkup = gaim_markup_strip_html(withmarkup);
-	normalized = g_utf8_casefold(gaim_normalize(NULL, nomarkup), -1);
+	tmp = g_utf8_normalize(nomarkup, -1, G_NORMALIZE_DEFAULT);
+	g_free(nomarkup);
+	normalized = g_utf8_casefold(tmp, -1);
+	g_free(tmp);
 
 	if (gaim_str_has_prefix(normalized, enteredstring))
 	{
 		g_free(withmarkup);
 		g_free(enteredstring);
-		g_free(nomarkup);
 		g_free(normalized);
 		return FALSE;
 	}
@@ -3461,7 +3467,6 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 
 	g_free(withmarkup);
 	g_free(enteredstring);
-	g_free(nomarkup);
 	g_free(normalized);
 
 	return result;
