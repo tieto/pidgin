@@ -139,7 +139,7 @@ FARPROC wgaim_find_and_loadproc(char* dllname, char* procedure) {
 	FARPROC proc = 0;
 
 	if(!(hmod = GetModuleHandle(dllname))) {
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "%s not found. Loading it..\n", dllname);
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "%s not already loaded; loading it...\n", dllname);
 		if(!(hmod = LoadLibrary(dllname))) {
 			gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Could not load: %s\n", dllname);
 			return NULL;
