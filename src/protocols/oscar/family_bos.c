@@ -29,9 +29,10 @@
 #include <string.h>
 
 /* Subtype 0x0002 - Request BOS rights. */
-int aim_bos_reqrights(OscarData *od, FlapConnection *conn)
+void
+aim_bos_reqrights(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(od, conn, 0x0009, 0x0002);
+	aim_genericreq_n_snacid(od, conn, 0x0009, 0x0002);
 }
 
 /* Subtype 0x0003 - BOS Rights. */

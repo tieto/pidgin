@@ -1168,7 +1168,9 @@ int aim_ssi_reqrights(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQRIGHTS);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQRIGHTS);
+
+	return 0;
 }
 
 /*
@@ -1223,7 +1225,9 @@ int aim_ssi_reqdata(OscarData *od)
 	/* Free any current data, just in case */
 	aim_ssi_freelist(od);
 
-	return aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQDATA);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQDATA);
+
+	return 0;
 }
 
 /*

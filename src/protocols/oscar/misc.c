@@ -19,11 +19,8 @@
 */
 
 /*
- * misc.c
- *
  * Random stuff.  Basically just a few functions for sending
  * simple SNACs, and then the generic error handler.
- *
  */
 
 #include "oscar.h"
@@ -54,7 +51,7 @@ aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	return 0;
 }
 
-int
+void
 aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype)
 {
 	FlapFrame *frame;
@@ -66,8 +63,6 @@ aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, gui
 	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 int

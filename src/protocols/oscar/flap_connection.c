@@ -119,7 +119,6 @@ flap_connection_new(OscarData *od, int type)
 	conn = g_new0(FlapConnection, 1);
 	conn->od = od;
 	conn->buffer_outgoing = gaim_circ_buffer_new(0);
-	conn->inside = g_new0(aim_conn_inside_t, 1);
 	conn->fd = -1;
 	conn->subtype = -1;
 	conn->type = type;
@@ -152,16 +151,7 @@ flap_connection_clone(OscarData *od, FlapConnection *src)
 	conn->internal = src->internal;
 	conn->lastactivity = src->lastactivity;
 
-	if (src->inside != NULL)
-	{
-		/*
-		 * XXX should clone this section as well, but since currently
-		 * this function only gets called for some of that rendezvous
-		 * crap, and not on SNAC connections, its probably okay for
-		 * now.
-		 *
-		 */
-	}
+	/* TODO: Clone groups and rates */
 
 	return conn;
 }
@@ -253,15 +243,8 @@ flap_connection_destroy_cb(gpointer data)
 	if (conn->type == SNAC_FAMILY_CHAT)
 		flap_connection_destroy_chat(od, conn);
 
-	if (conn->inside != NULL)
-	{
-		aim_conn_inside_t *inside = (aim_conn_inside_t *)conn->inside;
-
-		flap_connection_destroy_snacgroups(inside->groups);
-		flap_connection_destroy_rates(inside->rates);
-
-		free(inside);
-	}
+	flap_connection_destroy_snacgroups(conn->groups);
+	flap_connection_destroy_rates(conn->rates);
 
 	od->oscar_connections = g_list_remove(od->oscar_connections, conn);
 	g_free(conn);
@@ -375,7 +358,6 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 void
 flap_connection_addgroup(FlapConnection *conn, guint16 group)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 
 	sg = g_new0(struct snacgroup, 1);
@@ -384,8 +366,8 @@ flap_connection_addgroup(FlapConnection *conn, guint16 group)
 			"of type 0x%04hx\n", group, conn->type);
 	sg->group = group;
 
-	sg->next = ins->groups;
-	ins->groups = sg;
+	sg->next = conn->groups;
+	conn->groups = sg;
 }
 
 /**
@@ -402,13 +384,11 @@ flap_connection_findbygroup(OscarData *od, guint16 group)
 	for (cur = od->oscar_connections; cur != NULL; cur = cur->next)
 	{
 		FlapConnection *conn;
-		aim_conn_inside_t *ins;
 		struct snacgroup *sg;
 
 		conn = cur->data;
-		ins = (aim_conn_inside_t *)conn->inside;
 
-		for (sg = ins->groups; sg != NULL; sg = sg->next)
+		for (sg = conn->groups; sg != NULL; sg = sg->next)
 		{
 			if (sg->group == group)
 				return conn;

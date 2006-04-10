@@ -28,16 +28,12 @@
 #include "cipher.h"
 
 /* Subtype 0x0002 - Client Online */
-int
+void
 aim_clientready(OscarData *od, FlapConnection *conn)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-
-	if (!ins)
-		return -EINVAL;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
@@ -48,7 +44,8 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 	 * Send only the tool versions that the server cares about (that it
 	 * marked as supporting in the server ready SNAC).
 	 */
-	for (sg = ins->groups; sg; sg = sg->next) {
+	for (sg = conn->groups; sg; sg = sg->next)
+	{
 		aim_module_t *mod;
 
 		if ((mod = aim__findmodulebygroup(od, sg->group))) {
@@ -61,8 +58,6 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 	}
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 /*
@@ -215,10 +210,10 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 }
 
 /* Subtype 0x0006 - Request Rate Information. */
-int
+void
 aim_reqrates(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(od, conn, 0x0001, 0x0006);
+	aim_genericreq_n_snacid(od, conn, 0x0001, 0x0006);
 }
 
 /*
@@ -326,10 +321,8 @@ rc_addpair(struct rateclass *rc, guint16 group, guint16 type)
 static int
 rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	guint16 numclasses, i;
 	aim_rxcallback_t userfunc;
-
 
 	/*
 	 * First are the parameters for each rate class.
@@ -359,7 +352,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		if (mod->version >= 3)
 			byte_stream_getrawbuf(bs, rc.unknown, sizeof(rc.unknown));
 
-		rc_addclass(&ins->rates, &rc);
+		rc_addclass(&conn->rates, &rc);
 	}
 
 	/*
@@ -373,7 +366,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		classid = byte_stream_get16(bs);
 		count = byte_stream_get16(bs);
 
-		rc = rc_findclass(&ins->rates, classid);
+		rc = rc_findclass(&conn->rates, classid);
 
 		for (j = 0; j < count; j++) {
 			guint16 group, subtype;
@@ -404,15 +397,13 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	if ((userfunc = aim_callhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE)))
 		userfunc(od, conn, frame);
 
-
 	return 1;
 }
 
 /* Subtype 0x0008 - Add Rate Parameter */
-int
+void
 aim_rates_addparam(OscarData *od, FlapConnection *conn)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	struct rateclass *rc;
@@ -422,19 +413,16 @@ aim_rates_addparam(OscarData *od, FlapConnection *conn)
 	snacid = aim_cachesnac(od, 0x0001, 0x0008, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0001, 0x0008, 0x0000, snacid);
 
-	for (rc = ins->rates; rc; rc = rc->next)
+	for (rc = conn->rates; rc; rc = rc->next)
 		byte_stream_put16(&frame->data, rc->classid);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 /* Subtype 0x0009 - Delete Rate Parameter */
-int
+void
 aim_rates_delparam(OscarData *od, FlapConnection *conn)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	struct rateclass *rc;
@@ -444,12 +432,10 @@ aim_rates_delparam(OscarData *od, FlapConnection *conn)
 	snacid = aim_cachesnac(od, 0x0001, 0x0009, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0001, 0x0009, 0x0000, snacid);
 
-	for (rc = ins->rates; rc; rc = rc->next)
+	for (rc = conn->rates; rc; rc = rc->next)
 		byte_stream_put16(&frame->data, rc->classid);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 /* Subtype 0x000a - Rate Change */
@@ -515,12 +501,11 @@ serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
  * libfaim can cause.
  *
  */
-int
+void
 aim_sendpauseack(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 
 	frame = flap_frame_new(od, 0x02, 1024);
@@ -533,12 +518,10 @@ aim_sendpauseack(OscarData *od, FlapConnection *conn)
 	 * Host Online / Server Ready said this host supports.  And
 	 * we want them all back after the migration.
 	 */
-	for (sg = ins->groups; sg; sg = sg->next)
+	for (sg = conn->groups; sg; sg = sg->next)
 		byte_stream_put16(&frame->data, sg->group);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 /* Subtype 0x000d - Service Resume */
@@ -555,10 +538,10 @@ serverresume(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 }
 
 /* Subtype 0x000e - Request self-info */
-int
+void
 aim_reqpersonalinfo(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(od, conn, 0x0001, 0x000e);
+	aim_genericreq_n_snacid(od, conn, 0x0001, 0x000e);
 }
 
 /* Subtype 0x000f - Self User Info */
@@ -760,16 +743,12 @@ aim_nop(OscarData *od, FlapConnection *conn)
  * the rate information based on what version of group 1 we advertise here.
  *
  */
-int
+void
 aim_setversions(OscarData *od, FlapConnection *conn)
 {
-	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
 	struct snacgroup *sg;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-
-	if (!ins)
-		return -EINVAL;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
@@ -780,7 +759,7 @@ aim_setversions(OscarData *od, FlapConnection *conn)
 	 * Send only the versions that the server cares about (that it
 	 * marked as supporting in the server ready SNAC).
 	 */
-	for (sg = ins->groups; sg; sg = sg->next) {
+	for (sg = conn->groups; sg; sg = sg->next) {
 		aim_module_t *mod;
 
 		if ((mod = aim__findmodulebygroup(od, sg->group))) {
@@ -791,8 +770,6 @@ aim_setversions(OscarData *od, FlapConnection *conn)
 	}
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 /* Subtype 0x0018 - Host versions */

@@ -198,7 +198,9 @@ int aim_im_reqparams(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
 		return -EINVAL;
 
-	return aim_genericreq_n_snacid(od, conn, 0x0004, 0x0004);
+	aim_genericreq_n_snacid(od, conn, 0x0004, 0x0004);
+
+	return 0;
 }
 
 /**

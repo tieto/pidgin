@@ -35,9 +35,9 @@
  * conn must be a chatnav connection!
  *
  */
-int aim_chatnav_reqrights(OscarData *od, FlapConnection *conn)
+void aim_chatnav_reqrights(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(od, conn, 0x000d, 0x0002);
+	aim_genericreq_n_snacid(od, conn, 0x000d, 0x0002);
 }
 
 /*

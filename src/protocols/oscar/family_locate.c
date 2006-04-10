@@ -998,7 +998,9 @@ aim_locate_reqrights(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)))
 		return -EINVAL;
 
-	return aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_REQRIGHTS);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_REQRIGHTS);
+
+	return 0;
 }
 
 /*

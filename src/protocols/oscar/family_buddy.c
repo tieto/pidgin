@@ -33,10 +33,10 @@
  * Request Buddy List rights.
  *
  */
-int
+void
 aim_buddylist_reqrights(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n_snacid(od, conn, 0x0003, 0x0002);
+	aim_genericreq_n_snacid(od, conn, 0x0003, 0x0002);
 }
 
 /*

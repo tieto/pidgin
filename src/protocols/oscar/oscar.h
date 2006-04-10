@@ -376,8 +376,10 @@ struct _FlapConnection
 	guint16 subtype;
 	flap_seqnum_t seqnum;
 	guint32 status;
+	struct snacgroup *groups;
+	struct rateclass *rates;
+
 	void *internal; /* internal conn-specific libfaim data */
-	void *inside; /* only accessible from inside libfaim */
 };
 
 struct _IcbmCookie
@@ -549,7 +551,7 @@ struct aim_redirect_data
 	} chat;
 };
 
-int aim_clientready(OscarData *od, FlapConnection *conn);
+void aim_clientready(OscarData *od, FlapConnection *conn);
 int aim_request_login(OscarData *od, FlapConnection *conn, const char *sn);
 int aim_send_login(OscarData *, FlapConnection *, const char *, const char *, ClientInfo *, const char *key);
 /* 0x000b */ int aim_auth_securid_send(OscarData *od, const char *securid);
@@ -596,14 +598,13 @@ int aim_srv_setidle(OscarData *od, guint32 idletime);
 
 #define AIM_WARN_ANON                     0x01
 
-int aim_sendpauseack(OscarData *od, FlapConnection *conn);
 int aim_nop(OscarData *, FlapConnection *);
 int aim_bos_changevisibility(OscarData *, FlapConnection *, int, const char *);
 int aim_bos_setgroupperm(OscarData *, FlapConnection *, guint32 mask);
 int aim_bos_setprivacyflags(OscarData *, FlapConnection *, guint32);
-int aim_reqpersonalinfo(OscarData *, FlapConnection *);
+void aim_reqpersonalinfo(OscarData *, FlapConnection *);
 int aim_reqservice(OscarData *, guint16);
-int aim_bos_reqrights(OscarData *, FlapConnection *);
+void aim_bos_reqrights(OscarData *, FlapConnection *);
 int aim_setextstatus(OscarData *od, guint32 status);
 
 #define AIM_CLIENTTYPE_UNKNOWN  0x0000
@@ -1008,7 +1009,7 @@ int aim_putuserinfo(ByteStream *bs, aim_userinfo_t *info);
 
 
 /* 0x0003 - family_buddy.c */
-/* 0x0002 */ int aim_buddylist_reqrights(OscarData *, FlapConnection *);
+/* 0x0002 */ void aim_buddylist_reqrights(OscarData *, FlapConnection *);
 /* 0x0004 */ int aim_buddylist_set(OscarData *, FlapConnection *, const char *);
 /* 0x0004 */ int aim_buddylist_addbuddy(OscarData *, FlapConnection *, const char *);
 /* 0x0005 */ int aim_buddylist_removebuddy(OscarData *, FlapConnection *, const char *);
@@ -1047,7 +1048,7 @@ int aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *room
 char *aim_chat_getname(FlapConnection *conn);
 FlapConnection *aim_chat_getconn(OscarData *, const char *name);
 
-int aim_chatnav_reqrights(OscarData *od, FlapConnection *conn);
+void aim_chatnav_reqrights(OscarData *od, FlapConnection *conn);
 
 int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name, guint16 exchange);
 int aim_chat_leaveroom(OscarData *od, const char *name);
@@ -1459,7 +1460,7 @@ int icq_modfirst(OscarData *od, aim_module_t *mod);
 int email_modfirst(OscarData *od, aim_module_t *mod);
 
 int aim_genericreq_n(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype);
-int aim_genericreq_n_snacid(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype);
+void aim_genericreq_n_snacid(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype);
 int aim_genericreq_l(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *);
 int aim_genericreq_s(OscarData *, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *);
 
@@ -1548,18 +1549,6 @@ struct rateclass {
 	struct rateclass *next;
 };
 
-/*
- * This is inside every connection.  But it is a void * to anything
- * outside of libfaim.  It should remain that way.  It's called data
- * abstraction.  Maybe you've heard of it.  (Probably not if you're a
- * libfaim user.)
- *
- */
-typedef struct aim_conn_inside_s {
-	struct snacgroup *groups;
-	struct rateclass *rates;
-} aim_conn_inside_t;
-
 int aim_cachecookie(OscarData *od, IcbmCookie *cookie);
 IcbmCookie *aim_uncachecookie(OscarData *od, guint8 *cookie, int type);
 IcbmCookie *aim_mkcookie(guint8 *, int, void *);
@@ -1573,10 +1562,11 @@ int aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo);
 void flap_connection_destroy_chat(OscarData *od, FlapConnection *conn);
 
 /* These are all handled internally now. */
-int aim_setversions(OscarData *od, FlapConnection *conn);
-int aim_reqrates(OscarData *, FlapConnection *);
-int aim_rates_addparam(OscarData *, FlapConnection *);
-int aim_rates_delparam(OscarData *, FlapConnection *);
+void aim_setversions(OscarData *od, FlapConnection *conn);
+void aim_reqrates(OscarData *, FlapConnection *);
+void aim_rates_addparam(OscarData *, FlapConnection *);
+void aim_rates_delparam(OscarData *, FlapConnection *);
+void aim_sendpauseack(OscarData *od, FlapConnection *conn);
 
 
 
