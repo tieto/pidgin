@@ -1349,6 +1349,24 @@ static void user_search_cb(struct user_search_info *usi, GaimRequestFields *fiel
 	g_free(usi);
 }
 
+#if 0
+/* This is for gettext only -- it will see this even though there's an #if 0. */
+
+/*
+ * An incomplete list of server generated original language search
+ * comments for Jabber User Directories
+ *
+ * See discussion thread "Search comment for Jabber is not translatable"
+ * in gaim-i18n@lists.sourceforge.net (March 2006)
+ */
+static const char * jabber_user_dir_comments [] = {
+       /* current comment from Jabber User Directory users.jabber.org */
+       N_("Find a contact by entering the search criteria in the given fields. "
+          "Note: Each field supports wild card searches (%)"),
+       NULL
+};
+#endif
+
 static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *x;
@@ -1372,7 +1390,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 	} else {
 		struct user_search_info *usi;
 		xmlnode *instnode;
-		char *instructions;
+		char *instructions = NULL;
 		GaimRequestFields *fields;
 		GaimRequestFieldGroup *group;
 		GaimRequestField *field;
@@ -1385,12 +1403,21 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		if((instnode = xmlnode_get_child(query, "instructions")))
 		{
 			char *tmp = xmlnode_get_data(instnode);
-			instructions = g_strdup_printf(_("Server Instructions: %s"), tmp);
-			g_free(tmp);
+			
+			if(tmp)
+			{
+				/* Try to translate the message (see static message 
+				   list in jabber_user_dir_comments[]) */
+				instructions = g_strdup_printf(_("Server Instructions: %s"), _(tmp));
+				g_free(tmp);
+			}
 		}
-		else
+		
+		if(!instructions)
+		{
 			instructions = g_strdup(_("Fill in one or more fields to search "
-						"for any matching Jabber users."));
+						  "for any matching Jabber users."));
+		}
 
 		if(xmlnode_get_child(query, "first")) {
 			field = gaim_request_field_string_new("first", _("First Name"),
