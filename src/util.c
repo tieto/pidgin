@@ -2561,6 +2561,7 @@ gaim_program_is_valid(const char *program)
 gboolean
 gaim_running_gnome(void)
 {
+#ifndef _WIN32
 	gchar *tmp = g_find_program_in_path("gnome-open");
 
 	if (tmp == NULL)
@@ -2568,11 +2569,15 @@ gaim_running_gnome(void)
 	g_free(tmp);
 
 	return (g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL);
+#else
+	return FALSE;
+#endif
 }
 
 gboolean
 gaim_running_kde(void)
 {
+#ifndef _WIN32
 	gchar *tmp = g_find_program_in_path("kfmclient");
 	const char *session;
 
@@ -2589,6 +2594,9 @@ gaim_running_kde(void)
 	 * only a problem if you're running something !(KDE || GNOME) and
 	 * you run Gaim from Konsole. This really shouldn't be a problem. */
 	return ((g_getenv("KDEDIR") != NULL) || g_getenv("KDEDIRS") != NULL);
+#else
+	return FALSE;
+#endif
 }
 
 char *
