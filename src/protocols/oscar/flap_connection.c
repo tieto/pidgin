@@ -149,20 +149,6 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 }
 
 static void
-flap_connection_destroy_snacgroups(struct snacgroup *head)
-{
-	struct snacgroup *sg;
-	for (sg = head; sg; )
-	{
-		struct snacgroup *tmp;
-
-		tmp = sg->next;
-		free(sg);
-		sg = tmp;
-	}
-}
-
-static void
 flap_connection_destroy_rates(struct rateclass *head)
 {
 	struct rateclass *rc;
@@ -215,7 +201,7 @@ flap_connection_destroy_cb(gpointer data)
 	if (conn->type == SNAC_FAMILY_CHAT)
 		flap_connection_destroy_chat(od, conn);
 
-	flap_connection_destroy_snacgroups(conn->groups);
+	g_list_free(conn->groups);
 	flap_connection_destroy_rates(conn->rates);
 
 	od->oscar_connections = g_list_remove(od->oscar_connections, conn);
@@ -327,26 +313,10 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
  * about such inane things.
  *
  */
-void
-flap_connection_addgroup(FlapConnection *conn, guint16 group)
-{
-	struct snacgroup *sg;
-
-	sg = g_new0(struct snacgroup, 1);
-
-	gaim_debug_misc("oscar", "Adding group 0x%04x to connection "
-			"of type 0x%04hx\n", group, conn->type);
-	sg->group = group;
-
-	sg->next = conn->groups;
-	conn->groups = sg;
-}
 
 /**
  * Find a FlapConnection that supports the given oscar
  * family.
- *
- * TODO: This should be implemented to use a hash table.
  */
 FlapConnection *
 flap_connection_findbygroup(OscarData *od, guint16 group)
@@ -356,13 +326,13 @@ flap_connection_findbygroup(OscarData *od, guint16 group)
 	for (cur = od->oscar_connections; cur != NULL; cur = cur->next)
 	{
 		FlapConnection *conn;
-		struct snacgroup *sg;
+		GList *l;
 
 		conn = cur->data;
 
-		for (sg = conn->groups; sg != NULL; sg = sg->next)
+		for (l = conn->groups; l != NULL; l = l->next)
 		{
-			if (sg->group == group)
+			if (GPOINTER_TO_UINT(l->data) == group)
 				return conn;
 		}
 	}

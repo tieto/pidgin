@@ -31,9 +31,9 @@
 void
 aim_clientready(OscarData *od, FlapConnection *conn)
 {
-	struct snacgroup *sg;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
+	GList *cur;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
@@ -44,17 +44,17 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 	 * Send only the tool versions that the server cares about (that it
 	 * marked as supporting in the server ready SNAC).
 	 */
-	for (sg = conn->groups; sg; sg = sg->next)
+	for (cur = conn->groups; cur != NULL; cur = cur->next)
 	{
 		aim_module_t *mod;
 
-		if ((mod = aim__findmodulebygroup(od, sg->group))) {
+		if ((mod = aim__findmodulebygroup(od, GPOINTER_TO_UINT(cur->data))))
+		{
 			byte_stream_put16(&frame->data, mod->family);
 			byte_stream_put16(&frame->data, mod->version);
 			byte_stream_put16(&frame->data, mod->toolid);
 			byte_stream_put16(&frame->data, mod->toolversion);
-		} else
-			gaim_debug_misc("oscar", "aim_clientready: server supports group 0x%04x but we don't!\n", sg->group);
+		}
 	}
 
 	flap_connection_send(conn, frame);
@@ -77,19 +77,13 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 static int
 hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	guint16 *families;
-	int famcount;
+	int group;
 
-
-	families = malloc(byte_stream_empty(bs));
-
-	for (famcount = 0; byte_stream_empty(bs); famcount++) {
-		families[famcount] = byte_stream_get16(bs);
-		flap_connection_addgroup(conn, families[famcount]);
+	while (byte_stream_empty(bs))
+	{
+		group = byte_stream_get16(bs);
+		conn->groups = g_list_prepend(conn->groups, GUINT_TO_POINTER(group));
 	}
-
-	free(families);
-
 
 	/*
 	 * Next step is in the Host Versions handler.
@@ -506,7 +500,7 @@ aim_sendpauseack(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	struct snacgroup *sg;
+	GList *cur;
 
 	frame = flap_frame_new(od, 0x02, 1024);
 
@@ -518,8 +512,8 @@ aim_sendpauseack(OscarData *od, FlapConnection *conn)
 	 * Host Online / Server Ready said this host supports.  And
 	 * we want them all back after the migration.
 	 */
-	for (sg = conn->groups; sg; sg = sg->next)
-		byte_stream_put16(&frame->data, sg->group);
+	for (cur = conn->groups; cur != NULL; cur = cur->next)
+		byte_stream_put16(&frame->data, GPOINTER_TO_UINT(cur->data));
 
 	flap_connection_send(conn, frame);
 }
@@ -746,9 +740,9 @@ aim_nop(OscarData *od, FlapConnection *conn)
 void
 aim_setversions(OscarData *od, FlapConnection *conn)
 {
-	struct snacgroup *sg;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
+	GList *cur;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
@@ -759,14 +753,15 @@ aim_setversions(OscarData *od, FlapConnection *conn)
 	 * Send only the versions that the server cares about (that it
 	 * marked as supporting in the server ready SNAC).
 	 */
-	for (sg = conn->groups; sg; sg = sg->next) {
+	for (cur = conn->groups; cur != NULL; cur = cur->next)
+	{
 		aim_module_t *mod;
 
-		if ((mod = aim__findmodulebygroup(od, sg->group))) {
+		if ((mod = aim__findmodulebygroup(od, GPOINTER_TO_UINT(cur->data))))
+		{
 			byte_stream_put16(&frame->data, mod->family);
 			byte_stream_put16(&frame->data, mod->version);
-		} else
-			gaim_debug_misc("oscar", "aim_setversions: server supports group 0x%04x but we don't!\n", sg->group);
+		}
 	}
 
 	flap_connection_send(conn, frame);

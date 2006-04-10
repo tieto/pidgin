@@ -376,7 +376,7 @@ struct _FlapConnection
 	guint16 subtype;
 	flap_seqnum_t seqnum;
 	guint32 status;
-	struct snacgroup *groups;
+	GList *groups;
 	struct rateclass *rates;
 
 	void *internal; /* internal conn-specific libfaim data */
@@ -563,7 +563,6 @@ void aim_clearhandlers(OscarData *od);
 
 /* flap_connection.c */
 FlapConnection *flap_connection_new(OscarData *, int type);
-void flap_connection_addgroup(FlapConnection *conn, guint16 group);
 void flap_connection_close(OscarData *od, FlapConnection *conn);
 void flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason);
 void flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason);
@@ -1517,15 +1516,6 @@ struct chatsnacinfo {
 	guint16 exchange;
 	char name[128];
 	guint16 instance;
-};
-
-/*
- * In SNACland, the terms 'family' and 'group' are synonymous -- the former
- * is my term, the latter is AOL's.
- */
-struct snacgroup {
-	guint16 group;
-	struct snacgroup *next;
 };
 
 struct snacpair {
