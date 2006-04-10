@@ -2612,20 +2612,22 @@ gaim_fd_get_ip(int fd)
 const char *
 gaim_normalize(const GaimAccount *account, const char *str)
 {
-	GaimPlugin *prpl = NULL;
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	const char *ret = NULL;
 
-	if(account)
-		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	if (account == NULL)
+	{
+		GaimPlugin *prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
-	if(prpl)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+		if (prpl != NULL)
+		{
+			GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(prpl_info && prpl_info->normalize)
-		ret = prpl_info->normalize(account, str);
+			if(prpl_info && prpl_info->normalize)
+				ret = prpl_info->normalize(account, str);
+		}
+	}
 
-	if(!ret)
+	if (ret != NULL)
 	{
 		static char buf[BUF_LEN];
 		char *tmp;
