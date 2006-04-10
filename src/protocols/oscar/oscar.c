@@ -251,8 +251,6 @@ oscar_charset_check(const char *utf8)
 
 	/*
 	 * Can we get away with using our custom encoding?
-	 * TODO: This should actually try using the encoding specified in
-	 *       the account editor.
 	 */
 	while (utf8[i])
 	{
@@ -5724,54 +5722,60 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 
 static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 
-	GaimConnection *gc = gaim_account_get_connection(buddy->account);
-	OscarData *od = gc->proto_data;
-
-	GList *m = NULL;
+	GaimConnection *gc;
+	OscarData *od;
+	GList *m;
 	GaimMenuAction *act;
+	aim_userinfo_t *userinfo;
+
+	gc = gaim_account_get_connection(buddy->account);
+	od = gc->proto_data;
+	userinfo = aim_locate_finduserinfo(od, buddy->name);
+	m = NULL;
 
 	act = gaim_menu_action_new(_("Edit Buddy Comment"),
 	                           GAIM_CALLBACK(oscar_buddycb_edit_comment),
 	                           NULL, NULL);
 	m = g_list_append(m, act);
 
-	if (od->icq) {
 #if 0
+	if (od->icq)
+	{
 		act = gaim_menu_action_new(_("Get Status Msg"),
 		                           GAIM_CALLBACK(oscar_get_icqstatusmsg),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
+	}
 #endif
-	} else {
-		aim_userinfo_t *userinfo;
-		userinfo = aim_locate_finduserinfo(od, buddy->name);
 
-		if (userinfo &&
-			aim_sncmp(gaim_account_get_username(buddy->account), buddy->name) &&
-			GAIM_BUDDY_IS_ONLINE(buddy))
+	if (userinfo &&
+		aim_sncmp(gaim_account_get_username(buddy->account), buddy->name) &&
+		GAIM_BUDDY_IS_ONLINE(buddy))
+	{
+		if (userinfo->capabilities & OSCAR_CAPABILITY_DIRECTIM)
 		{
-			if (userinfo->capabilities & OSCAR_CAPABILITY_DIRECTIM)
-			{
-				act = gaim_menu_action_new(_("Direct IM"),
-				                           GAIM_CALLBACK(oscar_ask_directim),
-				                           NULL, NULL);
-				m = g_list_append(m, act);
-			}
-#if 0
-			/* TODO: This menu item should be added by the core */
-			if (userinfo->capabilities & OSCAR_CAPABILITY_GETFILE) {
-				act = gaim_menu_action_new(_("Get File"),
-				                           GAIM_CALLBACK(oscar_ask_getfile),
-				                           NULL, NULL);
-				m = g_list_append(m, act);
-			}
-#endif
+			act = gaim_menu_action_new(_("Direct IM"),
+			                           GAIM_CALLBACK(oscar_ask_directim),
+			                           NULL, NULL);
+			m = g_list_append(m, act);
 		}
+#if 0
+		/* TODO: This menu item should be added by the core */
+		if (userinfo->capabilities & OSCAR_CAPABILITY_GETFILE) {
+			act = gaim_menu_action_new(_("Get File"),
+			                           GAIM_CALLBACK(oscar_ask_getfile),
+			                           NULL, NULL);
+			m = g_list_append(m, act);
+		}
+#endif
 	}
 
-	if (od->ssi.received_data) {
-		char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, buddy->name);
-		if (gname && aim_ssi_waitingforauth(od->ssi.local, gname, buddy->name)) {
+	if (od->ssi.received_data)
+	{
+		char *gname;
+		gname = aim_ssi_itemlist_findparentname(od->ssi.local, buddy->name);
+		if (gname && aim_ssi_waitingforauth(od->ssi.local, gname, buddy->name))
+		{
 			act = gaim_menu_action_new(_("Re-request Authorization"),
 			                           GAIM_CALLBACK(gaim_auth_sendrequest_menu),
 			                           NULL, NULL);
