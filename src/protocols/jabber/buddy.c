@@ -1375,7 +1375,6 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 	if(!(from = xmlnode_get_attrib(packet, "from")))
 		return;
 
-	/* XXX: make a pretty error box after the string freeze */
 	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
 		gaim_notify_error(js->gc, _("Directory Query Failed"),
 				  _("Could not query the directory server. Either "
