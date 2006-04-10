@@ -287,6 +287,18 @@ struct _ClientInfo
 
 typedef enum
 {
+	OSCAR_DISCONNECT_DONE,
+	OSCAR_DISCONNECT_LOCAL_CLOSED,
+	OSCAR_DISCONNECT_REMOTE_CLOSED,
+	OSCAR_DISCONNECT_REMOTE_REFUSED,
+	OSCAR_DISCONNECT_LOST_CONNECTION,
+	OSCAR_DISCONNECT_INVALID_DATA,
+	OSCAR_DISCONNECT_COULD_NOT_CONNECT,
+	OSCAR_DISCONNECT_RETRYING
+} OscarDisconnectReason;
+
+typedef enum
+{
 	OSCAR_CAPABILITY_BUDDYICON            = 0x00000001,
 	OSCAR_CAPABILITY_TALK                 = 0x00000002,
 	OSCAR_CAPABILITY_DIRECTIM             = 0x00000004,
@@ -349,11 +361,12 @@ struct _FlapFrame
 struct _FlapConnection
 {
 	OscarData *od;              /**< Pointer to parent session. */
-	int fd;
-	time_t lastactivity;             /**< Time of last transmit. */
 	gboolean connected;
+	time_t lastactivity;             /**< Time of last transmit. */
 	guint destroy_timeout;
+	OscarDisconnectReason disconnect_reason;
 
+	int fd;
 	FlapFrame buffer_incoming;
 	GaimCircBuffer *buffer_outgoing;
 	guint watcher_incoming;
@@ -550,8 +563,8 @@ void aim_clearhandlers(OscarData *od);
 FlapConnection *flap_connection_new(OscarData *, int type);
 void flap_connection_addgroup(FlapConnection *conn, guint16 group);
 void flap_connection_close(OscarData *od, FlapConnection *conn);
-void flap_connection_destroy(FlapConnection *conn);
-void flap_connection_schedule_destroy(FlapConnection *conn);
+void flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason);
+void flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason);
 FlapConnection *flap_connection_findbygroup(OscarData *od, guint16 group);
 FlapConnection *flap_connection_getbytype(OscarData *, int type);
 FlapConnection *flap_connection_getbytype_all(OscarData *, int type);
@@ -612,7 +625,7 @@ int aim_ads_requestads(OscarData *od, FlapConnection *conn);
 #define AIM_OFT_SUBTYPE_SEND_FILE	0x0001
 #define AIM_OFT_SUBTYPE_SEND_DIR	0x0002
 #define AIM_OFT_SUBTYPE_GET_FILE	0x0011
-#define AIM_OPT_SUBTYPE_GET_LIST	0x0012
+#define AIM_OFT_SUBTYPE_GET_LIST	0x0012
 
 #define AIM_TRANSFER_DENY_NOTSUPPORTED	0x0000
 #define AIM_TRANSFER_DENY_DECLINE	0x0001

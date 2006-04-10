@@ -108,11 +108,12 @@ oscar_data_destroy(OscarData *od)
 	if (od->getinfotimer > 0)
 		gaim_timeout_remove(od->getinfotimer);
 	while (od->oscar_connections != NULL)
-		flap_connection_destroy(od->oscar_connections->data);
+		flap_connection_destroy(od->oscar_connections->data,
+				OSCAR_DISCONNECT_DONE);
 
 	while (od->peer_connections != NULL)
 		peer_connection_destroy(od->peer_connections->data,
-				PEER_DISCONNECT_LOCAL_CLOSED);
+				OSCAR_DISCONNECT_LOCAL_CLOSED);
 
 	if (od->handlerlist != NULL)
 		aim_clearhandlers(od);

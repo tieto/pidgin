@@ -191,8 +191,8 @@ peer_connection_destroy_cb(gpointer data)
 			(status != GAIM_XFER_STATUS_CANCEL_LOCAL) &&
 			(status != GAIM_XFER_STATUS_CANCEL_REMOTE))
 		{
-			if ((conn->disconnect_reason == PEER_DISCONNECT_REMOTE_CLOSED) ||
-				(conn->disconnect_reason == PEER_DISCONNECT_REMOTE_REFUSED))
+			if ((conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED) ||
+				(conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_REFUSED))
 				gaim_xfer_cancel_remote(conn->xfer);
 			else
 				gaim_xfer_cancel_local(conn->xfer);
@@ -214,7 +214,7 @@ peer_connection_destroy_cb(gpointer data)
 }
 
 void
-peer_connection_destroy(PeerConnection *conn, PeerDisconnectReason reason)
+peer_connection_destroy(PeerConnection *conn, OscarDisconnectReason reason)
 {
 	conn->disconnect_reason = reason;
 	if (conn->destroy_timeout != 0)
@@ -223,7 +223,7 @@ peer_connection_destroy(PeerConnection *conn, PeerDisconnectReason reason)
 }
 
 void
-peer_connection_schedule_destroy(PeerConnection *conn, PeerDisconnectReason reason)
+peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason reason)
 {
 	if (conn->destroy_timeout != 0)
 		/* Already taken care of */
@@ -271,7 +271,7 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* Check if the remote user closed the connection */
 		if (read == 0)
 		{
-			peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED);
 			return;
 		}
 
@@ -282,7 +282,7 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 				/* No worries */
 				return;
 
-			peer_connection_destroy(conn, PEER_DISCONNECT_LOST_CONNECTION);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_LOST_CONNECTION);
 			return;
 		}
 
@@ -303,7 +303,7 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 				"Closing connection.\n",
 				conn->magic[0], conn->magic[1], conn->magic[2],
 				conn->magic[3], header[0], header[1], header[2], header[3]);
-			peer_connection_destroy(conn, PEER_DISCONNECT_INVALID_DATA);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_INVALID_DATA);
 			return;
 		}
 
@@ -322,7 +322,7 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 	/* Check if the remote user closed the connection */
 	if (read == 0)
 	{
-		peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED);
 		return;
 	}
 
@@ -332,7 +332,7 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			/* No worries */
 			return;
 
-		peer_connection_destroy(conn, PEER_DISCONNECT_LOST_CONNECTION);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOST_CONNECTION);
 		return;
 	}
 
@@ -389,7 +389,7 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		if (conn->ready)
-			peer_connection_schedule_destroy(conn, PEER_DISCONNECT_LOST_CONNECTION);
+			peer_connection_schedule_destroy(conn, OSCAR_DISCONNECT_LOST_CONNECTION);
 		else
 		{
 			/*
@@ -764,7 +764,7 @@ peer_connection_trynext(PeerConnection *conn)
 	g_free(new_conn_data);
 
 	/* Give up! */
-	peer_connection_destroy(conn, PEER_DISCONNECT_COULD_NOT_CONNECT);
+	peer_connection_destroy(conn, OSCAR_DISCONNECT_COULD_NOT_CONNECT);
 }
 
 /**
@@ -798,7 +798,7 @@ peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
 			}
 
 			/* Cancel the old connection and try again */
-			peer_connection_destroy(conn, PEER_DISCONNECT_RETRYING);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_RETRYING);
 		}
 	}
 
@@ -841,7 +841,7 @@ peer_connection_got_proposition_no_cb(gpointer data, gint id)
 
 	aim_im_denytransfer(conn->od, conn->sn, conn->cookie,
 			AIM_TRANSFER_DENY_DECLINE);
-	peer_connection_destroy(conn, PEER_DISCONNECT_LOCAL_CLOSED);
+	peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED);
 }
 
 /**
@@ -894,7 +894,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 			/* Close the old direct IM and start a new one */
 			gaim_debug_info("oscar", "Received new direct IM request "
 				"from %s.  Destroying old connection.\n", sn);
-			peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED);
 		}
 	}
 

@@ -912,7 +912,7 @@ oscar_chat_kill(GaimConnection *gc, struct chat_connection *cc)
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
-	flap_connection_schedule_destroy(cc->conn);
+	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE);
 	oscar_chat_destroy(cc);
 }
 
@@ -967,7 +967,8 @@ connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
 		if (conn->type == SNAC_FAMILY_LOCATE)
 			gaim_connection_error(gc, _("Could not connect to BOS server"));
 		else /* Maybe we should call this for BOS connections, too? */
-			flap_connection_schedule_destroy(conn);
+			flap_connection_schedule_destroy(conn,
+					OSCAR_DISCONNECT_COULD_NOT_CONNECT);
 		destroy_new_conn_data(new_conn_data);
 		return;
 	}
@@ -1336,13 +1337,12 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		return 1;
 	}
 
-
 	gaim_debug_misc("oscar", "Reg status: %hu\n", info->regstatus);
 	gaim_debug_misc("oscar", "E-mail: %s\n",
 					(info->email != NULL) ? info->email : "null");
 	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
 	gaim_debug_info("oscar", "Closing auth connection...\n");
-	flap_connection_schedule_destroy(conn);
+	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE);
 
 	for (i = 0; i < strlen(info->bosip); i++) {
 		if (info->bosip[i] == ':') {
@@ -1644,7 +1644,8 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	if (gaim_proxy_connect(account, host, port, connection_established_cb, new_conn_data) != 0)
 	{
-		flap_connection_schedule_destroy(new_conn_data->conn);
+		flap_connection_schedule_destroy(new_conn_data->conn,
+				OSCAR_DISCONNECT_COULD_NOT_CONNECT);
 		gaim_debug_error("oscar", "Unable to connect to FLAP server "
 				"of type 0x%04hx\n", redir->group);
 		destroy_new_conn_data(new_conn_data);
@@ -2054,7 +2055,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			 */
 			if (conn != NULL)
 			{
-				peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_CLOSED);
+				peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED);
 			}
 		}
 		else if (args->status == AIM_RENDEZVOUS_CONNECTED)
@@ -2595,7 +2596,7 @@ gaim_parse_clientauto_ch2(OscarData *od, const char *who, guint16 reason, const 
 		}
 		else
 		{
-			peer_connection_destroy(conn, PEER_DISCONNECT_REMOTE_REFUSED);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_REFUSED);
 		}
 	}
 	else
@@ -6263,7 +6264,7 @@ oscar_convo_closed(GaimConnection *gc, const char *who)
 		if (!conn->ready)
 			aim_im_sendch2_cancel(conn);
 
-		peer_connection_destroy(conn, PEER_DISCONNECT_LOCAL_CLOSED);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED);
 	}
 }
 

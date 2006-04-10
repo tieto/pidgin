@@ -33,18 +33,6 @@ typedef struct _ProxyFrame            ProxyFrame;
 typedef struct _NewPeerConnectionData NewPeerConnectionData;
 typedef struct _PeerConnection        PeerConnection;
 
-typedef enum
-{
-	PEER_DISCONNECT_DONE,
-	PEER_DISCONNECT_LOCAL_CLOSED,
-	PEER_DISCONNECT_REMOTE_CLOSED,
-	PEER_DISCONNECT_REMOTE_REFUSED,
-	PEER_DISCONNECT_LOST_CONNECTION,
-	PEER_DISCONNECT_INVALID_DATA,
-	PEER_DISCONNECT_COULD_NOT_CONNECT,
-	PEER_DISCONNECT_RETRYING
-} PeerDisconnectReason;
-
 #define PEER_CONNECTION_FLAG_INITIATED_BY_ME  0x0001
 #define PEER_CONNECTION_FLAG_APPROVED         0x0002
 #define PEER_CONNECTION_FLAG_TRIED_VERIFIEDIP 0x0004
@@ -163,7 +151,7 @@ struct _PeerConnection
 	int flags;                       /**< Bitmask of PEER_CONNECTION_FLAG_ */
 	time_t lastactivity;             /**< Time of last transmit. */
 	guint destroy_timeout;
-	PeerDisconnectReason disconnect_reason;
+	OscarDisconnectReason disconnect_reason;
 
 	/**
 	 * A pointer to either an OdcFrame or an OftFrame.
@@ -221,8 +209,8 @@ struct _PeerConnection
  */
 PeerConnection *peer_connection_new(OscarData *od, OscarCapability type, const char *sn);
 
-void peer_connection_destroy(PeerConnection *conn, PeerDisconnectReason reason);
-void peer_connection_schedule_destroy(PeerConnection *conn, PeerDisconnectReason reason);
+void peer_connection_destroy(PeerConnection *conn, OscarDisconnectReason reason);
+void peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason reason);
 PeerConnection *peer_connection_find_by_type(OscarData *od, const char *sn, OscarCapability type);
 PeerConnection *peer_connection_find_by_cookie(OscarData *od, const char *sn, const guchar *cookie);
 

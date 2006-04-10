@@ -307,7 +307,7 @@ peer_oft_recv_frame_ack(PeerConnection *conn, OftFrame *frame)
 	{
 		gaim_debug_info("oscar", "Received an incorrect cookie.  "
 				"Closing connection.\n");
-		peer_connection_destroy(conn, PEER_DISCONNECT_INVALID_DATA);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_INVALID_DATA);
 		return;
 	}
 
@@ -415,7 +415,7 @@ peer_oft_recvcb_end(GaimXfer *xfer)
 	conn->xfer->fd = -1;
 	peer_oft_send_done(conn);
 
-	conn->disconnect_reason = PEER_DISCONNECT_DONE;
+	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
 	conn->sending_data_timer = gaim_timeout_add(100,
 			destroy_connection_when_done_sending_data, conn);
 }
@@ -524,7 +524,7 @@ peer_oft_cb_generic_cancel(GaimXfer *xfer)
 	if (conn == NULL)
 		return;
 
-	peer_connection_destroy(conn, PEER_DISCONNECT_LOCAL_CLOSED);
+	peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED);
 }
 
 /*******************************************************************/
