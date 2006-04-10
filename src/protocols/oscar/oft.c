@@ -244,8 +244,6 @@ start_transfer_when_done_sending_data(gpointer data)
 	if (gaim_circ_buffer_get_max_read(conn->buffer_outgoing) == 0)
 	{
 		conn->sending_data_timer = 0;
-		gaim_input_remove(conn->watcher_incoming);
-		conn->watcher_incoming = 0;
 		conn->xfer->fd = conn->fd;
 		conn->fd = -1;
 		gaim_xfer_start(conn->xfer, conn->xfer->fd, NULL, 0);
