@@ -571,7 +571,6 @@ FlapConnection *flap_connection_findbygroup(OscarData *od, guint16 group);
 FlapConnection *flap_connection_getbytype(OscarData *, int type);
 FlapConnection *flap_connection_getbytype_all(OscarData *, int type);
 void flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond);
-FlapConnection *flap_connection_clone(OscarData *od, FlapConnection *src);
 void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);

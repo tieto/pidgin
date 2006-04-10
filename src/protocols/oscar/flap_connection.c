@@ -129,34 +129,6 @@ flap_connection_new(OscarData *od, int type)
 }
 
 /**
- * Clone a FlapConnection.
- *
- * A new connection is allocated, and the values are filled in
- * appropriately.
- *
- * @param od The session containing this connection.
- * @param src The connection to clone.
- * @return Returns a pointer to the new FlapConnection, or %NULL on error.
- */
-FlapConnection *
-flap_connection_clone(OscarData *od, FlapConnection *src)
-{
-	FlapConnection *conn;
-
-	conn = flap_connection_new(od, src->type);
-	conn->fd = src->fd;
-	conn->type = src->type;
-	conn->subtype = src->subtype;
-	conn->seqnum = src->seqnum;
-	conn->internal = src->internal;
-	conn->lastactivity = src->lastactivity;
-
-	/* TODO: Clone groups and rates */
-
-	return conn;
-}
-
-/**
  * Close (but not free) a connection.
  *
  * This leaves everything untouched except for setting the fd
