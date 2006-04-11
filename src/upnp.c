@@ -169,11 +169,18 @@ static gboolean
 gaim_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
 {
 	xmlnode* deviceTypeNode = xmlnode_get_child(device, "deviceType");
+	char *tmp;
+	gboolean ret;
+
 	if(deviceTypeNode == NULL) {
 		return FALSE;
 	}
-	return !g_ascii_strcasecmp(xmlnode_get_data(deviceTypeNode),
-			deviceType);
+
+	tmp = xmlnode_get_data(deviceTypeNode);
+	ret = !g_ascii_strcasecmp(tmp, deviceType);
+	g_free(tmp);
+
+	return ret;
 }
 
 
@@ -181,11 +188,18 @@ static gboolean
 gaim_upnp_compare_service(const xmlnode* service, const gchar* serviceType)
 {
 	xmlnode* serviceTypeNode = xmlnode_get_child(service, "serviceType");
+	char *tmp;
+	gboolean ret;
+
 	if(serviceTypeNode == NULL) {
 		return FALSE;
 	}
-	return !g_ascii_strcasecmp(xmlnode_get_data(serviceTypeNode),
-			serviceType);
+
+	tmp = xmlnode_get_data(serviceTypeNode);
+	ret = !g_ascii_strcasecmp(tmp, serviceType);
+	g_free(tmp);
+
+	return ret;
 }
 
 
@@ -193,14 +207,9 @@ static gchar*
 gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	const gchar* httpURL, const gchar* serviceType)
 {
-	gchar* xmlRoot;
-	gchar* baseURL;
-	gchar* controlURL;
-	gchar* service;
-	xmlnode* xmlRootNode;
-	xmlnode* serviceTypeNode;
-	xmlnode* controlURLNode;
-	xmlnode* baseURLNode;
+	gchar *xmlRoot, *baseURL, *controlURL, *service;
+	xmlnode *xmlRootNode, *serviceTypeNode, *controlURLNode, *baseURLNode;
+	char *tmp;
 
 	/* make sure we have a valid http response */
 	if(g_strstr_len(httpResponse, len, HTTP_OK) == NULL) {
@@ -226,7 +235,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 
 	/* get the baseURL of the device */
 	if((baseURLNode = xmlnode_get_child(xmlRootNode, "URLBase")) != NULL) {
-		baseURL = g_strdup(xmlnode_get_data(baseURLNode));
+		baseURL = xmlnode_get_data(baseURLNode);
 	} else {
 		baseURL = g_strdup(httpURL);
 	}
@@ -328,12 +337,13 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 		return NULL;
 	}
 
-	if(!gaim_str_has_prefix(xmlnode_get_data(controlURLNode), "http://") &&
-	   !gaim_str_has_prefix(xmlnode_get_data(controlURLNode), "HTTP://")) {
-		controlURL = g_strdup_printf("%s%s", baseURL,
-			xmlnode_get_data(controlURLNode));
+	tmp = xmlnode_get_data(controlURLNode);
+	if(!gaim_str_has_prefix(tmp, "http://") &&
+	   !gaim_str_has_prefix(tmp, "HTTP://")) {
+		controlURL = g_strdup_printf("%s%s", baseURL, tmp);
+		g_free(tmp);
 	}else{
-		controlURL = g_strdup(xmlnode_get_data(controlURLNode));
+		controlURL = tmp;
 	}
 	g_free(baseURL);
 	xmlnode_free(xmlRootNode);
