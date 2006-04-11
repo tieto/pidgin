@@ -96,7 +96,7 @@ C_SRC =			cmdproc.c \
 			transaction.c \
 			user.c \
 			userlist.c \
-			utils.c
+			msn-utils.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)

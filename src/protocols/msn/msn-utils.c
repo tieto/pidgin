@@ -1,5 +1,5 @@
 /**
- * @file utils.c Utility functions
+ * @file msn-utils.c Utility functions
  *
  * gaim
  *
@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
-#include "utils.h"
+#include "msn-utils.h"
 
 void
 msn_parse_format(const char *mime, char **pre_ret, char **post_ret)

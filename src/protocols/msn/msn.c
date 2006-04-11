@@ -36,7 +36,7 @@
 #include "utils.h"
 #include "cmds.h"
 #include "prpl.h"
-#include "util.h"
+#include "msn-util.h"
 #include "version.h"
 
 #include "switchboard.h"

@@ -1,5 +1,5 @@
 /**
- * @file utils.h Utility functions
+ * @file msn-utils.h Utility functions
  *
  * gaim
  *
