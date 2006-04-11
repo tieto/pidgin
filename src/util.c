@@ -2635,7 +2635,7 @@ gaim_normalize(const GaimAccount *account, const char *str)
 		}
 	}
 
-	if (ret != NULL)
+	if (ret == NULL)
 	{
 		static char buf[BUF_LEN];
 		char *tmp;
