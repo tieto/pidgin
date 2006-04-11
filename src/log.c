@@ -76,16 +76,26 @@ static int txt_logger_total_size(GaimLogType type, const char *name, GaimAccount
 GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
                       GaimConversation *conv, time_t time, const struct tm *tm)
 {
-	GaimLog *log = g_new0(GaimLog, 1);
+	GaimLog *log;
+
+	/* IMPORTANT: Make sure to initialize all the members of GaimLog */
+	log = g_slice_new(GaimLog);
+
+	log->type = type;
 	log->name = g_strdup(gaim_normalize(account, name));
 	log->account = account;
 	log->conv = conv;
 	log->time = time;
-	log->type = type;
+	log->logger = gaim_log_logger_get();
 	log->logger_data = NULL;
-	if (tm != NULL)
+
+	if (tm == NULL)
+		log->tm = NULL;
+	else
 	{
-		log->tm = g_new0(struct tm, 1);
+		/* There's no need to zero this as we immediately do a direct copy. */
+		log->tm = g_slice_new(struct tm);
+
 		*(log->tm) = *tm;
 
 #ifdef HAVE_STRUCT_TM_TM_ZONE
@@ -101,7 +111,7 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 		}
 #endif
 	}
-	log->logger = gaim_log_logger_get();
+
 	if (log->logger && log->logger->create)
 		log->logger->create(log);
 	return log;
@@ -120,10 +130,10 @@ void gaim_log_free(GaimLog *log)
 		/* XXX: This is so wrong... */
 		g_free((char *)log->tm->tm_zone);
 #endif
-		g_free(log->tm);
+		g_slice_free(struct tm, log->tm);
 	}
 
-	g_free(log);
+	g_slice_free(GaimLog, log);
 }
 
 void gaim_log_write(GaimLog *log, GaimMessageFlags type,
@@ -504,7 +514,8 @@ void gaim_log_set_free(GaimLogSet *set)
 	g_free(set->name);
 	if (set->normalized_name != set->name)
 		g_free(set->normalized_name);
-	g_free(set);
+
+	g_slice_free(GaimLogSet, set);
 }
 
 GList *gaim_log_get_system_logs(GaimAccount *account)
@@ -652,7 +663,7 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 		g_free(dir);
 		g_free(filename);
 
-		log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
+		log->logger_data = data = g_slice_new0(GaimLogCommonLoggerData);
 
 		data->file = g_fopen(path, "a");
 		if (data->file == NULL)
@@ -728,7 +739,8 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 #endif
 
 			log->logger = logger;
-			log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
+			log->logger_data = data = g_slice_new0(GaimLogCommonLoggerData);
+
 			data->path = g_build_filename(path, filename, NULL);
 			list = g_list_prepend(list, log);
 		}
@@ -860,7 +872,10 @@ static void log_get_log_sets_common(GHashTable *sets)
 			/* Don't worry about the cast, name will point to dynamically allocated memory shortly. */
 			while ((name = (gchar *)g_dir_read_name(username_dir)) != NULL) {
 				size_t len;
-				GaimLogSet *set = g_new0(GaimLogSet, 1);
+				GaimLogSet *set;
+
+				/* IMPORTANT: Always initialize all members of GaimLogSet */
+				set = g_slice_new(GaimLogSet);
 
 				/* Unescape the filename. */
 				name = g_strdup(gaim_unescape_filename(name));
@@ -868,12 +883,13 @@ static void log_get_log_sets_common(GHashTable *sets)
 				/* Get the (possibly new) length of name. */
 				len = strlen(name);
 
-				set->account = account;
+				set->type = GAIM_LOG_IM;
 				set->name = name;
+				set->account = account;
+				/* set->buddy is always set below */
 				set->normalized_name = g_strdup(gaim_normalize(account, name));
 
 				/* Chat for .chat or .system at the end of the name to determine the type. */
-				set->type = GAIM_LOG_IM;
 				if (len > 7) {
 					gchar *tmp = &name[len - 7];
 					if (!strcmp(tmp, ".system")) {
@@ -892,6 +908,8 @@ static void log_get_log_sets_common(GHashTable *sets)
 				/* Determine if this (account, name) combination exists as a buddy. */
 				if (account != NULL)
 					set->buddy = (gaim_find_buddy(account, name) != NULL);
+				else
+					set->buddy = FALSE;
 
 				log_add_log_set_to_hash(sets, set);
 			}
@@ -1117,7 +1135,8 @@ static void html_logger_finalize(GaimLog *log)
 			fclose(data->file);
 		}
 		g_free(data->path);
-		g_free(data);
+
+		g_slice_free(GaimLogCommonLoggerData, data);
 	}
 }
 
@@ -1248,7 +1267,8 @@ static void txt_logger_finalize(GaimLog *log)
 			fclose(data->file);
 		if(data->path)
 			g_free(data->path);
-		g_free(data);
+
+		g_slice_free(GaimLogCommonLoggerData, data);
 	}
 }
 
@@ -1371,10 +1391,14 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 						log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
 						log->logger = old_logger;
 						log->time = (time_t)idx_time;
-						data = g_new0(struct old_logger_data, 1);
+
+						/* IMPORTANT: Always set all members of struct old_logger_data */
+						data = g_slice_new(struct old_logger_data);
+
+						data->pathref = gaim_stringref_ref(pathref);
 						data->offset = lastoff;
 						data->length = newlen;
-						data->pathref = gaim_stringref_ref(pathref);
+
 						log->logger_data = data;
 						list = g_list_prepend(list, log);
 					}
@@ -1450,10 +1474,14 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
 					log->logger = old_logger;
 					log->time = lasttime;
-					data = g_new0(struct old_logger_data, 1);
+
+					/* IMPORTANT: Always set all members of struct old_logger_data */
+					data = g_slice_new(struct old_logger_data);
+
+					data->pathref = gaim_stringref_ref(pathref);
 					data->offset = lastoff;
 					data->length = newlen;
-					data->pathref = gaim_stringref_ref(pathref);
+
 					log->logger_data = data;
 					list = g_list_prepend(list, log);
 
@@ -1505,10 +1533,14 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
 			log->logger = old_logger;
 			log->time = lasttime;
-			data = g_new0(struct old_logger_data, 1);
+
+			/* IMPORTANT: Always set all members of struct old_logger_data */
+			data = g_slice_new(struct old_logger_data);
+
+			data->pathref = gaim_stringref_ref(pathref);
 			data->offset = lastoff;
 			data->length = newlen;
-			data->pathref = gaim_stringref_ref(pathref);
+
 			log->logger_data = data;
 			list = g_list_prepend(list, log);
 
@@ -1626,7 +1658,8 @@ static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 			continue;
 		}
 
-		set = g_new0(GaimLogSet, 1);
+		/* IMPORTANT: Always set all members of GaimLogSet */
+		set = g_slice_new(GaimLogSet);
 
 		/* Chat for .chat at the end of the name to determine the type. */
 		*ext = '\0';
@@ -1665,6 +1698,12 @@ static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 			}
 		}
 
+		if (!found)
+		{
+			set->account = NULL;
+			set->buddy = FALSE;
+		}
+
 		cb(sets, set);
 	}
 	g_dir_close(log_dir);
@@ -1674,5 +1713,5 @@ static void old_logger_finalize(GaimLog *log)
 {
 	struct old_logger_data *data = log->logger_data;
 	gaim_stringref_unref(data->pathref);
-	g_free(data);
+	g_slice_free(struct old_logger_data, data);
 }

@@ -126,6 +126,9 @@ struct _GaimLog {
 	                                           if struct tm has the BSD
 	                                           timezone fields, else @c NULL.
 	                                           Do NOT modify anything in this struct.*/
+
+	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
+	 * IMPORTANT: Update that code if you add members here. */
 };
 
 /**
@@ -160,6 +163,9 @@ struct _GaimLogSet {
 	                                           @a name. It must be set, and
 	                                           may be set to the same pointer
 	                                           value as @a name. */
+
+	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
+	 * IMPORTANT: Update that code if you add members here. */
 };
 
 #ifdef __cplusplus
