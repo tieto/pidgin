@@ -2622,7 +2622,7 @@ gaim_normalize(const GaimAccount *account, const char *str)
 {
 	const char *ret = NULL;
 
-	if (account == NULL)
+	if (account != NULL)
 	{
 		GaimPlugin *prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
