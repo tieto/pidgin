@@ -202,6 +202,10 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 		theme->list = NULL;
 		g_slist_free(already_freed);
 
+		g_free(theme->name);
+		g_free(theme->desc);
+		g_free(theme->author);
+		g_free(theme->icon);
 		g_free(theme->path);
 		g_free(theme);
 
