@@ -1,5 +1,5 @@
 /**
- * @file utils.h
+ * @file gg-utils.h
  *
  * gaim
  *

@@ -1,5 +1,5 @@
 /**
- * @file utils.c
+ * @file gg-utils.c
  *
  * gaim
  *
@@ -21,7 +21,7 @@
  */
 
 
-#include "utils.h"
+#include "gg-utils.h"
 
 
 /* uin_t ggp_str_to_uin(const char *str) {{{ */

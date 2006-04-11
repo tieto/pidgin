@@ -43,7 +43,7 @@
 #include "confer.h"
 #include "search.h"
 #include "buddylist.h"
-#include "utils.h"
+#include "gg-utils.h"
 
 static GaimPlugin *my_protocol = NULL;
 

@@ -23,7 +23,7 @@
 
 #include <libgadu.h>
 
-#include "utils.h"
+#include "gg-utils.h"
 #include "search.h"
 
 /* GGPSearchForm *ggp_search_form_new() {{{ */

@@ -23,7 +23,7 @@
 
 #include <libgadu.h>
 #include "gg.h"
-#include "utils.h"
+#include "gg-utils.h"
 #include "confer.h"
 
 /* GaimConversation *ggp_confer_find_by_name(GaimConnection *gc, const gchar *name) {{{ */

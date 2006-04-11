@@ -24,7 +24,7 @@
 #include <libgadu.h>
 
 #include "gg.h"
-#include "utils.h"
+#include "gg-utils.h"
 #include "buddylist.h"
 
 

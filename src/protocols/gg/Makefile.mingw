@@ -81,7 +81,7 @@ C_SRC =	\
 	confer.c \
 	gg.c \
 	search.c \
-	utils.c
+	gg-utils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

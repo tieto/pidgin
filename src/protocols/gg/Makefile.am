@@ -3,8 +3,8 @@ EXTRA_DIST = Makefile.mingw
 pkgdir = $(libdir)/gaim
 
 GGSOURCES = \
-	utils.h \
-	utils.c \
+	gg-utils.h \
+	gg-utils.c \
 	confer.h \
 	confer.c \
 	search.h \
