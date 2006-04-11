@@ -1,9 +1,0 @@
-Makefile
-Makefile.in
-.*.swp
-.deps
-.libs
-*.dll
-*.la
-*.lo
-dbus-example-bindings.c
