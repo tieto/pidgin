@@ -142,6 +142,11 @@
 #	define g_open open
 #endif
 
+#if !GLIB_CHECK_VERSION(2,10,0)
+#	define g_slice_new(type) g_new(type, 1)
+#	define g_slice_new0(type) g_new0(type, 1)
+#	define g_slice_free(type, mem) g_free(mem)
+#endif
 
 /* ugly ugly ugly */
 /* This is a workaround for the fact that G_GINT64_MODIFIER and G_GSIZE_FORMAT
