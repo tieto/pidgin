@@ -329,6 +329,7 @@ msn_httpconn_disconnect(MsnHttpConn *httpconn)
 
 	close(httpconn->fd);
 
+	g_free(httpconn->rx_buf);
 	httpconn->rx_buf = NULL;
 	httpconn->rx_len = 0;
 
@@ -394,8 +395,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	if (httpconn->rx_buf != NULL)
-		g_free(httpconn->rx_buf);
+	g_free(httpconn->rx_buf);
 	httpconn->rx_buf = NULL;
 	httpconn->rx_len = 0;
 
@@ -733,18 +733,15 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 
 		if (!wasted)
 		{
-			if (httpconn->full_session_id != NULL)
-				g_free(httpconn->full_session_id);
+			g_free(httpconn->full_session_id);
 
 			httpconn->full_session_id = full_session_id;
 
-			if (httpconn->session_id != NULL)
-				g_free(httpconn->session_id);
+			g_free(httpconn->session_id);
 
 			httpconn->session_id = session_id;
 
-			if (httpconn->host != NULL)
-				g_free(httpconn->host);
+			g_free(httpconn->host);
 
 			httpconn->host = gw_ip;
 		}
