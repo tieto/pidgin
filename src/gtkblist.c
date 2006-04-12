@@ -3549,6 +3549,7 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 							enabled ? GAIM_CALLBACK(gaim_account_connect) :
 										GAIM_CALLBACK(ce_enable_account_cb));
 	}
+	g_free(primary);
 	gtk_widget_destroy(GTK_WIDGET(widget));
 	g_hash_table_remove(gtkblist->connection_errors, account);
 }
