@@ -1237,6 +1237,7 @@ oscar_login(GaimAccount *account)
 	new_conn_data->conn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 	new_conn_data->cookielen = 0;
 	new_conn_data->cookie = NULL;
+	new_conn_data->data = NULL;
 
 	if (gaim_proxy_connect(account,
 			gaim_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
@@ -1356,6 +1357,7 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	new_conn_data->conn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
 	new_conn_data->cookielen = info->cookielen;
 	new_conn_data->cookie = g_memdup(info->cookie, info->cookielen);
+	new_conn_data->data = NULL;
 	rc = gaim_proxy_connect(gc->account, host, port, connection_established_cb, new_conn_data);
 	g_free(host);
 	if (rc < 0) {
@@ -1640,6 +1642,10 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		cc->show = extract_name(redir->chat.room);
 		new_conn_data->data = cc;
 		gaim_debug_info("oscar", "Connecting to chat room %s exchange %hu\n", cc->name, cc->exchange);
+	}
+	else
+	{
+		new_conn_data->data = NULL;
 	}
 
 	if (gaim_proxy_connect(account, host, port, connection_established_cb, new_conn_data) != 0)
