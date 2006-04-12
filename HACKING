@@ -28,26 +28,24 @@ works) and uses GLib functions for timeouts and socket notification. If
 you don't know GTK+ you should go learn that first.
 
 If you're going to hack gaim, PLEASE, PLEASE PLEASE PLEASE send patches
-against the absolute latest CVS. I get really annoyed when I get patches
+against the absolute latest SVN. I get really annoyed when I get patches
 against the last released version, especially since I don't usually have
 a copy of it on my computer, and gaim tends to change a lot between
-versions. (I sometimes get annoyed when they're against CVS from 3 days
+versions. (I sometimes get annoyed when they're against SVN from 3 days
 ago, but can't complain because it's usually my fault that I haven't
-looked at the patch yet.) To get gaim from CVS (if you haven't already),
+looked at the patch yet.) To get gaim from SVN (if you haven't already),
 run the following commands:
 
-$ export CVSROOT=:pserver:anonymous@cvs.sourceforge.net:/cvsroot/gaim
-$ cvs login (hit enter as the password)
-$ cvs co gaim (you'll see it getting all of the files)
+$ svn co https://svn.sourceforge.net/svnroot/gaim/trunk gaim
 $ cd gaim
 $ ./autogen.sh
 
 You'll now have your normal gaim tree with ./configure and all (which
 ./autogen.sh takes the liberty of running for you). (If you want to make
-your life really simple, learn how CVS works. CVS is your friend.) To make
+your life really simple, learn how SVN works. SVN is your friend.) To make
 a patch, just edit the files right there in that tree (don't bother with
 two trees, or even two copies of the same file). Then when you're ready to
-make your patch, simply run 'cvs diff -u >my.patch' and post it on 
+make your patch, simply run 'svn diff > my.patch' and post it on
 sf.net/projects/gaim in the patches section.
 
 Some Documentation is available on the Gaim api if you run the command 

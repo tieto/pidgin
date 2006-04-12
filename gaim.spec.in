@@ -9,7 +9,7 @@
 %define beta 3
 
 %if 0%{?beta}
-%define gaimver %(echo "@VERSION@"|sed -e 's/cvs//; s/beta.*//')
+%define gaimver %(echo "@VERSION@"|sed -e 's/svn//; s/beta.*//')
 %else
 %define gaimver @VERSION@
 %endif
