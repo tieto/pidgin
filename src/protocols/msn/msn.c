@@ -33,10 +33,10 @@
 #include "prefs.h"
 #include "session.h"
 #include "state.h"
-#include "utils.h"
+#include "util.h"
 #include "cmds.h"
 #include "prpl.h"
-#include "msn-util.h"
+#include "msn-utils.h"
 #include "version.h"
 
 #include "switchboard.h"
