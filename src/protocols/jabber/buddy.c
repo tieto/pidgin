@@ -1376,10 +1376,15 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		return;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
+		char *msg = jabber_parse_error(js, packet);
+		
+		if(!msg)
+			msg = g_strdup(_("Unknown error"));
+
 		gaim_notify_error(js->gc, _("Directory Query Failed"),
-				  _("Could not query the directory server. Either "
-				    "the Jabber user directory specified is invalid or "
-				    "directory server could not be reached."), NULL);
+				  _("Could not query the directory server."), msg);
+		g_free(msg);
+
 		return;
 	}
 
