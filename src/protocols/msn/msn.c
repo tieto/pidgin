@@ -105,7 +105,7 @@ msn_cmd_nudge(GaimConversation *conv, const gchar *cmd, gchar **args, gchar **er
 	session = gc->proto_data;
 	swboard = msn_session_get_swboard(session, gaim_conversation_get_name(conv), MSN_SB_FLAG_IM);
 
-	if (session == NULL || swboard == NULL)
+	if (swboard == NULL)
 		return GAIM_CMD_RET_FAILED;
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);

@@ -209,6 +209,8 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 {
 	MsnSwitchBoard *swboard;
 
+	g_return_val_if_fail(session != NULL, NULL);
+
 	swboard = msn_session_find_swboard(session, username);
 
 	if (swboard == NULL)
