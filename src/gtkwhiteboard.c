@@ -98,6 +98,7 @@ GaimWhiteboardUiOps *gaim_gtk_whiteboard_get_ui_ops(void)
 
 static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 {
+	GaimBuddy *buddy;
 	GtkWidget *window;
 	GtkWidget *drawing_area;
 	GtkWidget *vbox_controls;
@@ -119,8 +120,6 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	GtkWidget *color_button;
 
 	GaimGtkWhiteboard *gtkwb = g_new0(GaimGtkWhiteboard, 1);
-
-	const char *window_title;
 
 	gtkwb->wb = wb;
 	wb->ui_data = gtkwb;
@@ -147,9 +146,10 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	/* Try and set window title as the name of the buddy, else just use their
 	 * username
 	 */
-	window_title = gaim_contact_get_alias(gaim_buddy_get_contact(gaim_find_buddy(wb->account, wb->who)));
-	if(window_title)
-		gtk_window_set_title((GtkWindow*)(window), window_title);
+	buddy = gaim_find_buddy(wb->account, wb->who);
+
+	if (buddy != NULL)
+		gtk_window_set_title((GtkWindow*)(window), gaim_buddy_get_contact_alias(buddy));
 	else
 		gtk_window_set_title((GtkWindow*)(window), wb->who);
 
