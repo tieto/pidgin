@@ -297,17 +297,18 @@ void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, cha
 	char *chan, *topic, *msg, *nick, *tmp, *tmp2;
 	GaimConversation *convo;
 
+	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, chan, irc->account);
+	if (!convo) {
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a topic for %s, which doesn't exist\n", chan);
+		return;
+	}
+
 	if (!strcmp(name, "topic")) {
 		chan = args[0];
 		topic = irc_mirc2txt (args[1]);
 	} else {
 		chan = args[1];
 		topic = irc_mirc2txt (args[2]);
-	}
-
-	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, chan, irc->account);
-	if (!convo) {
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a topic for %s, which doesn't exist\n", chan);
 	}
 
 	/* If this is an interactive update, print it out */
