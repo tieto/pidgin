@@ -1247,7 +1247,7 @@ static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	GaimConnection *gc;
-	GaimConversation *convo;
+	GaimConversation *convo = conv;
 	int id = 0;
 
 	gc = gaim_conversation_get_gc(conv);
@@ -1255,13 +1255,12 @@ static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
 	if (gc == NULL)
 		return GAIM_CMD_RET_FAILED;
 
-	if(args && args[0]) {
+	if(args && args[0])
 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, args[0],
 									gc->account);
-	} else
-		convo = conv;
 
-	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo));
+	if (convo != NULL)
+		id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo));
 
 	if (id == 0)
 		return GAIM_CMD_RET_FAILED;
