@@ -1559,6 +1559,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			GtkWidget *widget = l2->data;
 			GtkTreeIter iter;
 			const char *setting;
+			char *value2;
 			int int_value;
 			gboolean bool_value;
 
@@ -1585,8 +1586,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 				case GAIM_PREF_STRING_LIST:
 					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
-					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value, -1);
-					gaim_account_set_string(dialog->account, setting, value);
+					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
+					gaim_account_set_string(account, setting, value2);
+					g_free(value2);
 					break;
 
 				default:
