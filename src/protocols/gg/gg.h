@@ -29,6 +29,9 @@
 #include "connection.h"
 
 
+#define PUBDIR_RESULTS_MAX 20
+
+
 typedef struct
 {
 	char *name;

@@ -964,9 +964,10 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin,
 
 /*
  */
-/* static void ggp_sr_close_cb(GGPSearchForm *form) {{{ */
-static void ggp_sr_close_cb(GGPSearchForm *form)
+/* static void ggp_sr_close_cb(gpointer user_data) {{{ */
+static void ggp_sr_close_cb(gpointer user_data)
 {
+	GGPSearchForm *form = user_data;
 	GGPInfo *info = form->user_data;
 
 	ggp_search_remove(info->searches, form->seq);
@@ -976,40 +977,78 @@ static void ggp_sr_close_cb(GGPSearchForm *form)
 
 /*
  */
-/* static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req) {{{ */
-static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
+/* static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
+static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
+				   GGPSearchForm *form)
 {
-	GGPInfo *info = gc->proto_data;
+	GString *text;
+	char *val, *who;
+
+	text = g_string_new("");
+
+	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
+	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
+	                       _("Status"), val);
+	g_free(val);
+
+	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
+	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
+	                       _("UIN"), who);
+
+	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
+	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
+	                       _("First Name"), val);
+	g_free(val);
+
+	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
+	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
+	                       _("Nickname"), val);
+	g_free(val);
+
+	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
+	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
+	                       _("City"), val);
+	g_free(val);
+
+	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
+	if (strncmp(val, "0", 1) == 0) {
+		g_free(val);
+		val = g_strdup("");
+	}
+	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
+			       _("Birth Year"), val);
+	g_free(val);
+
+	val = ggp_buddy_get_name(gc, ggp_str_to_uin(who));
+	g_free(who);
+	who = val;
+
+	val = gaim_strdup_withhtml(text->str);
+
+	gaim_notify_userinfo(gc, who, val, ggp_sr_close_cb, form);
+
+	g_string_free(text, TRUE);
+	g_free(val);
+	g_free(who);
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
+static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
+				   GGPSearchForm *form)
+{
 	GaimNotifySearchResults *results;
 	GaimNotifySearchColumn *column;
-	GGPSearchForm *form;
-	int res_count = 0;
+	int res_count;
 	int start;
 	int i;
-	guint32 seq;
 
-	seq = gg_pubdir50_seq(req);
-	form = ggp_search_get(info->searches, seq);
-
-	if (form == NULL) {
-		/*
-		 * this can happen when user will request more results
-		 * and close the results window before they arrive.
-		 */
-		gaim_debug_error("gg", "No search form available for this search!\n");
-		return;
-	}
+	g_return_if_fail(form != NULL);
 
 	res_count = gg_pubdir50_count(req);
-	if (res_count < 1) {
-		gaim_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
-		gaim_notify_error(gc, NULL,
-			_("No matching users found"),
-			_("There are no users matching your search criteria."));
-		ggp_sr_close_cb(form);
-		return;
-	}
-	res_count = (res_count > 20) ? 20 : res_count;
+	res_count = (res_count > PUBDIR_RESULTS_MAX) ? PUBDIR_RESULTS_MAX : res_count;
 
 	results = gaim_notify_searchresults_new();
 
@@ -1074,6 +1113,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 					     ggp_callback_add_buddy);
 	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_IM,
 					     ggp_callback_im);
+
 	if (form->window == NULL) {
 		void *h = gaim_notify_searchresults(gc,
 				_("Gadu-Gadu Public Directory"),
@@ -1094,6 +1134,49 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		form->window = h;
 	} else {
 		gaim_notify_searchresults_new_rows(gc, results, form->window);
+	}
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req) {{{ */
+static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
+{
+	GGPInfo *info = gc->proto_data;
+	GGPSearchForm *form;
+	int res_count;
+	guint32 seq;
+
+	seq = gg_pubdir50_seq(req);
+	form = ggp_search_get(info->searches, seq);
+
+	/*
+	 * this can happen when user will request more results
+	 * and close the results window before they arrive.
+	 */
+	g_return_if_fail(form != NULL);
+
+	res_count = gg_pubdir50_count(req);
+	if (res_count < 1) {
+		gaim_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
+		gaim_notify_error(gc, NULL,
+			_("No matching users found"),
+			_("There are no users matching your search criteria."));
+		ggp_sr_close_cb(form);
+		return;
+	}
+
+	switch (form->search_type) {
+		case GGP_SEARCH_TYPE_INFO:
+			ggp_pubdir_handle_info(gc, req, form);
+			break;
+		case GGP_SEARCH_TYPE_FULL:
+			ggp_pubdir_handle_full(gc, req, form);
+			break;
+		default:
+			gaim_debug_warning("gg", "Unknown search_type!\n");
+			break;
 	}
 }
 /* }}} */
