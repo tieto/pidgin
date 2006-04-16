@@ -26,12 +26,19 @@
 #include "gg-utils.h"
 #include "search.h"
 
+
 /* GGPSearchForm *ggp_search_form_new() {{{ */
-GGPSearchForm *ggp_search_form_new()
+GGPSearchForm *ggp_search_form_new(GGPSearchType st)
 {
 	GGPSearchForm *form;
 
 	form = g_new0(GGPSearchForm, 1);
+
+	form->search_type = st;
+	form->window = NULL;
+	form->user_data = NULL;
+	form->seq = 0;
+
 	form->uin = NULL;
 	form->lastname = NULL;
 	form->firstname = NULL;
@@ -41,25 +48,103 @@ GGPSearchForm *ggp_search_form_new()
 	form->gender = NULL;
 	form->active = NULL;
 	form->offset = NULL;
-
 	form->last_uin = NULL;
 
 	return form;
 }
 /* }}} */
 
-/* void ggp_search_start(GaimConnection *gc, GGPSearchForm *form) {{{ */
-void ggp_search_start(GaimConnection *gc, GGPSearchForm *form)
+/* void ggp_search_form_destroy(GGPSearchForm *form) {{{ */
+void ggp_search_form_destroy(GGPSearchForm *form)
+{
+	g_return_if_fail(form != NULL);
+
+	form->window = NULL;
+	form->user_data = NULL;
+	form->seq = 0;
+
+	g_free(form->uin);
+	g_free(form->lastname);
+	g_free(form->firstname);
+	g_free(form->nickname);
+	g_free(form->city);
+	g_free(form->birthyear);
+	g_free(form->gender);
+	g_free(form->active);
+	g_free(form->offset);
+	g_free(form->last_uin);
+	g_free(form);
+}
+/* }}} */
+
+/* void ggp_search_add(GGPSearches *searches, guint32 seq, GGPSearchForm *form) {{{ */
+void ggp_search_add(GGPSearches *searches, guint32 seq, GGPSearchForm *form)
+{
+	guint32 *tmp;
+
+	g_return_if_fail(searches != NULL);
+	g_return_if_fail(form != NULL);
+
+	tmp = g_new0(guint32, 1);
+	*tmp = seq;
+	form->seq = seq;
+
+	g_hash_table_insert(searches, tmp, form);
+}
+/* }}} */
+
+/* void ggp_search_remove(GGPSearches *searches, guint32 seq) {{{ */
+void ggp_search_remove(GGPSearches *searches, guint32 seq)
+{
+	g_return_if_fail(searches != NULL);
+
+	g_hash_table_remove(searches, &seq);
+}
+/* }}} */
+
+/* GGPSearchForm *ggp_search_get(GGPSearches *searches, seq) {{{ */
+GGPSearchForm *ggp_search_get(GGPSearches *searches, guint32 seq)
+{
+	g_return_val_if_fail(searches != NULL, NULL);
+
+	return g_hash_table_lookup(searches, &seq);
+}
+/* }}} */
+
+/* GGPSearches *ggp_search_new() {{{ */
+GGPSearches *ggp_search_new(void)
+{
+	GGPSearches *searches;
+
+	searches = g_hash_table_new_full(g_int_hash, g_int_equal,
+					 g_free, NULL);
+
+	return searches;
+}
+/* }}} */
+
+/* void ggp_search_destroy(GGPSearches *searches) {{{ */
+void ggp_search_destroy(GGPSearches *searches)
+{
+	g_return_if_fail(searches != NULL);
+
+	g_hash_table_destroy(searches);
+}
+/* }}} */
+
+/* guint32 ggp_search_start(GaimConnection *gc, GGPSearchForm *form) {{{ */
+guint32 ggp_search_start(GaimConnection *gc, GGPSearchForm *form)
 {
 	GGPInfo *info = gc->proto_data;
 	gg_pubdir50_t req;
+	guint seq;
 
 	gaim_debug_info("gg", "It's time to perform a search...\n");
 
 	if ((req = gg_pubdir50_new(GG_PUBDIR50_SEARCH)) == NULL) {
 		gaim_debug_error("gg",
 			"ggp_bmenu_show_details: Unable to create req variable.\n");
-		return;
+		return 0;
 	}
 
 	if (form->uin != NULL) {
@@ -105,12 +190,15 @@ void ggp_search_start(GaimConnection *gc, GGPSearchForm *form)
 	gaim_debug_info("gg", "offset: %s\n", form->offset);
 	gg_pubdir50_add(req, GG_PUBDIR50_START, g_strdup(form->offset));
 
-	if (gg_pubdir50(info->session, req) == 0) {
+	if ((seq = gg_pubdir50(info->session, req)) == 0) {
 		gaim_debug_warning("gg", "ggp_bmenu_show_details: Search failed.\n");
-		return;
+		return 0;
 	}
 
+	gaim_debug_info("gg", "search sequence number: %d\n", seq);
 	gg_pubdir50_free(req);
+
+	return seq;
 }
 /* }}} */
 

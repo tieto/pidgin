@@ -171,6 +171,8 @@ version 2.0.0:
 	* gaim_date_full(): See gaim_date_format_full()
 	* gaim_strftime(): See gaim_utf8_strftime()
 	* GAIM_MESSAGE_COLORIZE
+	* user_data from gaim_notify_searchresults_new_rows and from 
+	  notify_searchresults in GaimNotifyUiOps.
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -283,6 +285,8 @@ version 2.0.0:
 	* gaim_gtk_clear_cursor()
 	* GAIM_MESSAGE_ACTIVE_ONLY
 	* gaim_proxy_get_setup()
+	* GaimNotifySearchResultsCallback: Added user_data.
+	* gaim_notify_searchresults: Added user_data.
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

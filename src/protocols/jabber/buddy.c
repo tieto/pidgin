@@ -1196,7 +1196,7 @@ const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
 	return NULL;
 }
 
-static void user_search_result_add_buddy_cb(GaimConnection *gc, GList *row)
+static void user_search_result_add_buddy_cb(GaimConnection *gc, GList *row, void *user_data)
 {
 	/* XXX find out the jid */
 	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),

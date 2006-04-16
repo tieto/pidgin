@@ -4223,7 +4223,7 @@ static void mw_prpl_set_idle(GaimConnection *gc, int t) {
 }
 
 
-static void notify_im(GaimConnection *gc, GList *row) {
+static void notify_im(GaimConnection *gc, GList *row, void *user_data) {
   GaimAccount *acct;
   GaimConversation *conv;
   char *id;
@@ -4236,7 +4236,7 @@ static void notify_im(GaimConnection *gc, GList *row) {
 }
 
 
-static void notify_add(GaimConnection *gc, GList *row) {
+static void notify_add(GaimConnection *gc, GList *row, void *user_data) {
   gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
 			       g_list_nth_data(row, 1), NULL,
 			       g_list_nth_data(row, 0));

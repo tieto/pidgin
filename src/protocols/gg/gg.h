@@ -28,6 +28,7 @@
 #include "search.h"
 #include "connection.h"
 
+
 typedef struct
 {
 	char *name;
@@ -53,10 +54,9 @@ typedef struct
 typedef struct {
 
 	struct gg_session *session;
-	GGPSearchForm *search_form;
 	GGPToken *token;
 	GList *chats;
-	void *searchresults_window;
+	GGPSearches *searches;
 
 	uin_t tmp_buddy;
 	int chats_count;

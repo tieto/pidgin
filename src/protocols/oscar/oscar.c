@@ -3746,7 +3746,7 @@ static int gaim_popup(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	return 1;
 }
 
-static void oscar_searchresults_add_buddy_cb(GaimConnection *gc, GList *row)
+static void oscar_searchresults_add_buddy_cb(GaimConnection *gc, GList *row, void *user_data)
 {
 	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
 								 g_list_nth_data(row, 0), NULL, NULL);

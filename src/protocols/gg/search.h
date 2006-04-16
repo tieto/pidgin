@@ -30,6 +30,12 @@
 #include "gg.h"
 
 
+typedef enum {
+	GGP_SEARCH_TYPE_INFO,
+	GGP_SEARCH_TYPE_FULL
+
+} GGPSearchType;
+
 typedef struct {
 
 	char *uin;
@@ -44,7 +50,15 @@ typedef struct {
 
 	char *last_uin;
 
+	GGPSearchType search_type;
+	guint32 seq;
+
+	void *user_data;
+	void *window;
 } GGPSearchForm;
+
+typedef GHashTable GGPSearches;
+
 
 /**
  * Create a new GGPSearchForm structure, and set the fields
@@ -53,15 +67,72 @@ typedef struct {
  * @return Newly allocated GGPSearchForm.
  */
 GGPSearchForm *
-ggp_search_form_new(void);
+ggp_search_form_new(GGPSearchType st);
+
+/**
+ * Destroy a Search Form.
+ *
+ * @param form Search Form to destroy.
+ */
+void
+ggp_search_form_destroy(GGPSearchForm *form);
+
+/**
+ * Add a search to the list of searches.
+ *
+ * @param searches The list of searches.
+ * @param seq      Search (form) ID number.
+ * @param form 	   The search form to add.
+ */
+void
+ggp_search_add(GGPSearches *searches, guint32 seq, GGPSearchForm *form);
+
+/**
+ * Remove a search from the list.
+ *
+ * If you want to destory the search completely also call:
+ * ggp_search_form_destroy().
+ *
+ * @param searches The list of searches.
+ * @param seq      ID number of the search.
+ */
+void
+ggp_search_remove(GGPSearches *searches, guint32 seq);
+
+/**
+ * Return the search with the specified ID.
+ *
+ * @param searches The list of searches.
+ * @param seq      ID number of the search.
+ */
+GGPSearchForm *
+ggp_search_get(GGPSearches *searches, guint32 seq);
+
+/**
+ * Create a new GGPSearches structure.
+ *
+ * @return GGPSearches instance.
+ */
+GGPSearches *
+ggp_search_new(void);
+
+/**
+ * Destroy GGPSearches instance.
+ *
+ * @param searches GGPSearches instance.
+ */
+void
+ggp_search_destroy(GGPSearches *searches);
 
 /**
  * Initiate a search in the public directory.
  *
  * @param gc   GaimConnection.
  * @param form Filled in GGPSearchForm.
+ *
+ * @return Sequence number of a search or 0 if an error occured.
  */
-void
+guint32
 ggp_search_start(GaimConnection *gc, GGPSearchForm *form);
 
 /*

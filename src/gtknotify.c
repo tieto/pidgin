@@ -52,6 +52,8 @@ typedef struct
 	GtkListStore *model;
 	GtkWidget *treeview;
 	GtkWidget *window;
+	gpointer user_data;
+
 } GaimNotifySearchResultsData;
 
 typedef struct
@@ -157,7 +159,7 @@ formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 }
 
 static void
-searchresults_close_cb(GaimNotifySearchResultsData *data, GdkEvent *event, void *user_data)
+searchresults_close_cb(GaimNotifySearchResultsData *data, GdkEvent *event, gpointer user_data)
 {
 	gaim_notify_close(GAIM_NOTIFY_SEARCHRESULTS, data);
 }
@@ -188,7 +190,7 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, GaimNotifySearchResultsButt
 	}
 
 	button = bd->button;
-	button->callback(gaim_account_get_connection(data->account), row);
+	button->callback(gaim_account_get_connection(data->account), row, data->user_data);
 }
 
 static void *
@@ -614,7 +616,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 static void
 gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults *results,
-									   void *data_, gpointer user_data)
+									   void *data_)
 {
 	GaimNotifySearchResultsData *data = data_;
 	GtkListStore *model = data->model;
@@ -656,7 +658,7 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 static void *
 gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 							  const char *primary, const char *secondary,
-							  GaimNotifySearchResults *results)
+							  GaimNotifySearchResults *results, gpointer user_data)
 {
 	GtkWidget *window;
 	GtkWidget *treeview;
@@ -679,6 +681,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	g_return_val_if_fail(results != NULL, NULL);
 
 	data = g_malloc(sizeof(GaimNotifySearchResultsData));
+	data->user_data = user_data;
 
 	/* Create the window */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -824,7 +827,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	data->window = window;
 
 	/* Insert rows. */
-	gaim_gtk_notify_searchresults_new_rows(gc, results, data, NULL);
+	gaim_gtk_notify_searchresults_new_rows(gc, results, data);
 
 	/* Show the window */
 	gtk_widget_show(window);

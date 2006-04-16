@@ -106,10 +106,12 @@ typedef struct
 /**
  * Callback for a button in a search result.
  *
- * @param c   the GaimConnection passed to gaim_notify_searchresults
- * @param row the contents of the selected row
+ * @param c         the GaimConnection passed to gaim_notify_searchresults
+ * @param row       the contents of the selected row
+ * @param user_data User defined data.
  */
-typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *c, GList *row);
+typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *c, GList *row,
+												gpointer user_data);
 
 
 /**
@@ -145,11 +147,11 @@ typedef struct
 
 	void *(*notify_searchresults)(GaimConnection *gc, const char *title,
 	                              const char *primary, const char *secondary,
-	                              GaimNotifySearchResults *results);
+	                              GaimNotifySearchResults *results, gpointer user_data);
 
 	void (*notify_searchresults_new_rows)(GaimConnection *gc,
 	                                      GaimNotifySearchResults *results,
-	                                      void *data, gpointer user_data);
+	                                      void *data);
 
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
 	                         const char *text);
@@ -184,7 +186,8 @@ extern "C" {
  * @param results   The GaimNotifySearchResults instance.
  * @param cb        The callback to call when the user closes
  *                  the notification.
- * @param user_data The data to pass to the callback.
+ * @param user_data The data to pass to the close callback and any other
+ *                  callback associated with a button.
  *
  * @return A UI-specific handle.
  */
@@ -201,11 +204,10 @@ void gaim_notify_searchresults_free(GaimNotifySearchResults *results);
  * @param gc        The GaimConnection structure.
  * @param results   The GaimNotifySearchResults structure.
  * @param data      Data returned by the gaim_notify_searchresults().
- * @param user_data User defined data.
  */
 void gaim_notify_searchresults_new_rows(GaimConnection *gc,
 										GaimNotifySearchResults *results,
-										void *data, gpointer user_data);
+										void *data);
 
 
 /**

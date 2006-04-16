@@ -504,21 +504,27 @@ static void ggp_register_user_dialog(GaimConnection *gc)
 
 /*
  */
-/* static void ggp_callback_show_next(GaimConnection *gc, GList *row) {{{ */
-static void ggp_callback_show_next(GaimConnection *gc, GList *row)
+/* static void ggp_callback_show_next(GaimConnection *gc, GList *row, void *user_data) {{{ */
+static void ggp_callback_show_next(GaimConnection *gc, GList *row, void *user_data)
 {
 	GGPInfo *info = gc->proto_data;
+	GGPSearchForm *form = user_data;
+	guint32 seq;
 
-	g_free(info->search_form->offset);
-	info->search_form->offset = g_strdup(info->search_form->last_uin);
-	ggp_search_start(gc, info->search_form);
+	g_free(form->offset);
+	form->offset = g_strdup(form->last_uin);
+
+	ggp_search_remove(info->searches, form->seq);
+
+	seq = ggp_search_start(gc, form);
+	ggp_search_add(info->searches, seq, form);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row) {{{ */
-static void ggp_callback_add_buddy(GaimConnection *gc, GList *row)
+/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, void *user_data) {{{ */
+static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, void *user_data)
 {
 	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
 				     g_list_nth_data(row, 0), NULL, NULL);
@@ -532,10 +538,11 @@ static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fie
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form;
+	guint32 seq;
 
-	form = ggp_search_form_new();
-	info->search_form = form;
+	form = ggp_search_form_new(GGP_SEARCH_TYPE_FULL);
 
+	form->user_data = info;
 	form->lastname  = charset_convert(
 				gaim_request_fields_get_string(fields, "lastname"),
 				"UTF-8", "CP1250");
@@ -569,7 +576,8 @@ static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fie
 
 	form->offset = g_strdup("0");
 
-	ggp_search_start(gc, form);
+	seq = ggp_search_start(gc, form);
+	ggp_search_add(info->searches, seq, form);
 }
 /* }}} */
 
@@ -579,18 +587,10 @@ static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fie
 static void ggp_find_buddies(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
 
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
-
-	if (info->search_form != NULL) {
-		gaim_notify_error(gc, NULL,
-			_("Unable to initiate a new search"),
-			_("You have a pending search. Please wait for it to finish."));
-		return;
-	}
 
 	fields = gaim_request_fields_new();
 	group = gaim_request_field_group_new(NULL);
@@ -947,29 +947,13 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin,
 
 /*
  */
-/* static void ggp_sr_close_cb(GaimAccount *account) {{{ */
-static void ggp_sr_close_cb(GaimAccount *account)
+/* static void ggp_sr_close_cb(GGPSearchForm *form) {{{ */
+static void ggp_sr_close_cb(GGPSearchForm *form)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	GGPInfo *info = gc->proto_data;
-	GGPSearchForm *f;
+	GGPInfo *info = form->user_data;
 
-	info->searchresults_window = NULL;
-
-	f = info->search_form;
-	g_free(f->uin);
-	g_free(f->lastname);
-	g_free(f->firstname);
-	g_free(f->nickname);
-	g_free(f->city);
-	g_free(f->birthyear);
-	g_free(f->gender);
-	g_free(f->active);
-	g_free(f->offset);
-	g_free(f->last_uin);
-	g_free(f);
-
-	info->search_form = NULL;
+	ggp_search_remove(info->searches, form->seq);
+	ggp_search_form_destroy(form);
 }
 /* }}} */
 
@@ -978,13 +962,26 @@ static void ggp_sr_close_cb(GaimAccount *account)
 /* static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req) {{{ */
 static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
 	GGPInfo *info = gc->proto_data;
 	GaimNotifySearchResults *results;
 	GaimNotifySearchColumn *column;
+	GGPSearchForm *form;
 	int res_count = 0;
 	int start;
 	int i;
+	guint32 seq;
+
+	seq = gg_pubdir50_seq(req);
+	form = ggp_search_get(info->searches, seq);
+
+	if (form == NULL) {
+		/*
+		 * this can happen when user will request more results
+		 * and close the results window before they arrive.
+		 */
+		gaim_debug_error("gg", "No search form available for this search!\n");
+		return;
+	}
 
 	res_count = gg_pubdir50_count(req);
 	if (res_count < 1) {
@@ -992,7 +989,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		gaim_notify_error(gc, NULL,
 			_("No matching users found"),
 			_("There are no users matching your search criteria."));
-		ggp_sr_close_cb(account);
+		ggp_sr_close_cb(form);
 		return;
 	}
 	res_count = (res_count > 20) ? 20 : res_count;
@@ -1005,7 +1002,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		gaim_notify_error(gc, NULL,
 				  _("Unable to display the search results."),
 				  NULL);
-		ggp_sr_close_cb(account);
+		ggp_sr_close_cb(form);
 		return;
 	}
 
@@ -1049,9 +1046,8 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		gaim_notify_searchresults_row_add(results, row);
 
 		if (i == res_count - 1) {
-			g_free(info->search_form->last_uin);
-			info->search_form->last_uin = ggp_search_get_result(req, i,
-								GG_PUBDIR50_UIN);
+			g_free(form->last_uin);
+			form->last_uin = ggp_search_get_result(req, i, GG_PUBDIR50_UIN);
 		}
 	}
 
@@ -1059,12 +1055,12 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 					     ggp_callback_show_next);
 	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD,
 					     ggp_callback_add_buddy);
-	if (info->searchresults_window == NULL) {
+	if (form->window == NULL) {
 		void *h = gaim_notify_searchresults(gc,
 				_("Gadu-Gadu Public Directory"),
 				_("Search results"), NULL, results,
 				(GaimNotifyCloseCallback)ggp_sr_close_cb,
-				account);
+				form);
 
 		if (h == NULL) {
 			gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
@@ -1072,14 +1068,13 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 			gaim_notify_error(gc, NULL,
 					  _("Unable to display the search results."),
 					  NULL);
-			ggp_sr_close_cb(account);
+			ggp_sr_close_cb(form);
 			return;
 		}
 
-		info->searchresults_window = h;
+		form->window = h;
 	} else {
-		gaim_notify_searchresults_new_rows(gc, results,
-				info->searchresults_window, NULL);
+		gaim_notify_searchresults_new_rows(gc, results, form->window);
 	}
 }
 /* }}} */
@@ -1560,10 +1555,10 @@ static void ggp_login(GaimAccount *account)
 
 	/* Probably this should be moved to *_new() function. */
 	info->session = NULL;
-	info->searchresults_window = NULL;
 	info->chats = NULL;
 	info->chats_count = 0;
 	info->token = NULL;
+	info->searches = ggp_search_new();
 
 	gc->proto_data = info;
 
@@ -1606,6 +1601,8 @@ static void ggp_close(GaimConnection *gc)
 			gg_logoff(info->session);
 			gg_free_session(info->session);
 		}
+
+		ggp_search_destroy(info->searches);
 		g_free(info);
 		gc->proto_data = NULL;
 	}
@@ -1651,22 +1648,17 @@ static void ggp_get_info(GaimConnection *gc, const char *name)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form;
+	guint32 seq;
 
-	if (info->search_form != NULL) {
-		gaim_notify_error(gc, NULL,
-			_("Unable to initiate a new search"),
-			_("You have a pending search. Please wait for it to finish."));
-		return;
-	}
+	form = ggp_search_form_new(GGP_SEARCH_TYPE_INFO);
 
-	form = ggp_search_form_new();
-	info->search_form = form;
-
+	form->user_data = info;
 	form->uin = g_strdup(name);
 	form->offset = g_strdup("0");
 	form->last_uin = g_strdup("0");
 
-	ggp_search_start(gc, form);
+	seq = ggp_search_start(gc, form);
+	ggp_search_add(info->searches, seq, form);
 }
 /* }}} */
 

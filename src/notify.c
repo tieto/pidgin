@@ -165,7 +165,8 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 void *
 gaim_notify_searchresults(GaimConnection *gc, const char *title,
 						  const char *primary, const char *secondary,
-						  GaimNotifySearchResults *results, GaimNotifyCloseCallback cb, gpointer user_data)
+						  GaimNotifySearchResults *results, GaimNotifyCloseCallback cb,
+						  gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -178,7 +179,7 @@ gaim_notify_searchresults(GaimConnection *gc, const char *title,
 		info->type      = GAIM_NOTIFY_SEARCHRESULTS;
 		info->handle    = gc;
 		info->ui_handle = ops->notify_searchresults(gc, title, primary,
-													secondary, results);
+													secondary, results, user_data);
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
@@ -225,14 +226,14 @@ gaim_notify_searchresults_free(GaimNotifySearchResults *results)
 void
 gaim_notify_searchresults_new_rows(GaimConnection *gc,
 		GaimNotifySearchResults *results,
-		void *data, gpointer user_data)
+		void *data)
 {
 	GaimNotifyUiOps *ops;
 
 	ops = gaim_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_searchresults != NULL) {
-		ops->notify_searchresults_new_rows(gc, results, data, user_data);
+		ops->notify_searchresults_new_rows(gc, results, data);
 	}
 }
 
