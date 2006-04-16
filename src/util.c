@@ -2121,16 +2121,7 @@ gaim_markup_slice(const char *str, guint x, guint y)
 				/* z += 0; */
 			}
 
-			if (z == x && !appended) {
-				GList *l = q->tail;
-
-				while (l) {
-					tag = l->data;
-					g_string_append(ret, tag);
-					l = l->prev;
-				}
-				appended = TRUE;
-			} else if (z >= x) {
+			if (z >= x) {
 				g_string_append_len(ret, str, end - str + 1);
 			}
 
@@ -2152,6 +2143,17 @@ gaim_markup_slice(const char *str, guint x, guint y)
 			z++;
 			str = end;
 		} else {
+			if (z == x && z > 0 && !appended) {
+				GList *l = q->tail;
+
+				while (l) {
+					tag = l->data;
+					g_string_append(ret, tag);
+					l = l->prev;
+				}
+				appended = TRUE;
+			}
+
 			if (z >= x)
 				g_string_append_unichar(ret, c);
 			z++;
@@ -2184,7 +2186,7 @@ gaim_markup_get_tag_name(const char *tag)
 		if (tag[i] == '>' || tag[i] == ' ' || tag[i] == '/')
 			break;
 
-	return g_strndup(tag, i);
+	return g_strndup(tag+1, i-1);
 }
 
 /**************************************************************************
