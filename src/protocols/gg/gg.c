@@ -975,6 +975,38 @@ static void ggp_sr_close_cb(gpointer user_data)
 }
 /* }}} */
 
+/**
+ * Translate a status' ID to a more user-friendly name.
+ *
+ * @param id The ID of the status.
+ *
+ * @return The user-friendly name of the status.
+ */
+/* static const char *ggp_status_by_id(unsigned int id) {{{ */
+static const char *ggp_status_by_id(unsigned int id)
+{
+	const char *st;
+
+	gaim_debug_info("gg", "ggp_status_by_id: %d\n", id);
+	switch (id) {
+		case GG_STATUS_NOT_AVAIL:
+			st = _("Offline");
+			break;
+		case GG_STATUS_AVAIL:
+			st = _("Available");
+			break;
+		case GG_STATUS_BUSY:
+			st = _("Away");
+			break;
+		default:
+			st = _("Unknown");
+			break;
+	}
+
+	return st;
+}
+/* }}} */
+
 /*
  */
 /* static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
@@ -987,8 +1019,9 @@ static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
 	text = g_string_new("");
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
+	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
 	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-	                       _("Status"), val);
+	                       _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
