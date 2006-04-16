@@ -504,8 +504,8 @@ static void ggp_register_user_dialog(GaimConnection *gc)
 
 /*
  */
-/* static void ggp_callback_show_next(GaimConnection *gc, GList *row, void *user_data) {{{ */
-static void ggp_callback_show_next(GaimConnection *gc, GList *row, void *user_data)
+/* static void ggp_callback_show_next(GaimConnection *gc, GList *row, gpointer user_data) {{{ */
+static void ggp_callback_show_next(GaimConnection *gc, GList *row, gpointer user_data)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form = user_data;
@@ -523,11 +523,28 @@ static void ggp_callback_show_next(GaimConnection *gc, GList *row, void *user_da
 
 /*
  */
-/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, void *user_data) {{{ */
-static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, void *user_data)
+/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, gpointer user_data) {{{ */
+static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, gpointer user_data)
 {
 	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
 				     g_list_nth_data(row, 0), NULL, NULL);
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_callback_im(GaimConnection *gc, GList *row, gpointer user_data) {{{ */
+static void ggp_callback_im(GaimConnection *gc, GList *row, gpointer user_data)
+{
+	GaimAccount *account;
+	GaimConversation *conv;
+	char *name;
+
+	account = gaim_connection_get_account(gc);
+
+	name = g_list_nth_data(row, 0);
+	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
+	gaim_conversation_present(conv);
 }
 /* }}} */
 
@@ -1055,6 +1072,8 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 					     ggp_callback_show_next);
 	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD,
 					     ggp_callback_add_buddy);
+	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_IM,
+					     ggp_callback_im);
 	if (form->window == NULL) {
 		void *h = gaim_notify_searchresults(gc,
 				_("Gadu-Gadu Public Directory"),
