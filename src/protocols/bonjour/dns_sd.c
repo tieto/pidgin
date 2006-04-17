@@ -143,11 +143,12 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 
 	/* Put the parameters of the text_record in a buddy and add the buddy to */
 	/* the buddy list */
-	buddy = bonjour_buddy_new((gchar *)name, first, port_p2pj, phsh,
+	buddy = bonjour_buddy_new(name, first, port_p2pj, phsh,
 							  status, email, last, jid, AIM, vc, ip, msg);
 
 	if (bonjour_buddy_check(buddy) == FALSE)
 	{
+		bonjour_buddy_delete(buddy);
 		return SW_DISCOVERY_E_UNKNOWN;
 	}
 

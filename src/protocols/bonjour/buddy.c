@@ -27,9 +27,10 @@
  * Creates a new buddy.
  */
 BonjourBuddy *
-bonjour_buddy_new(gchar *name, gchar *first, gint port_p2pj,
-	gchar *phsh, gchar *status, gchar *email, gchar *last, gchar *jid, gchar *AIM,
-	gchar *vc, gchar *ip, gchar *msg)
+bonjour_buddy_new(const gchar *name, const gchar *first, gint port_p2pj,
+	const gchar *phsh, const gchar *status, const gchar *email,
+	const gchar *last, const gchar *jid, const gchar *AIM,
+	const gchar *vc, const gchar *ip, const gchar *msg)
 {
 	BonjourBuddy *buddy = malloc(sizeof(BonjourBuddy));
 
