@@ -2667,7 +2667,7 @@ gaim_normalize_nocase(const GaimAccount *account, const char *str)
 
 	tmp1 = g_utf8_strdown(str, -1);
 	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
-	g_snprintf(buf, sizeof(buf), "%s", tmp2);
+	g_snprintf(buf, sizeof(buf), "%s", tmp2 ? tmp2 : "");
 	g_free(tmp2);
 	g_free(tmp1);
 
