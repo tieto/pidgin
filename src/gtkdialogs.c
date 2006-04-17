@@ -400,6 +400,14 @@ void gaim_gtkdialogs_about()
 	g_string_append(str, "  <b>SSL:</b> Gaim was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
 #endif
 
+/* This might be useful elsewhere too, but it is particularly useful for
+ * debugging stuff known to be GTK+/Glib bugs on Windows */
+#ifdef _WIN32
+	g_string_append_printf(str, "  <b>GTK+ Runtime:</b> %u.%u.%u<br/>"
+		"  <b>Glib Runtime:</b> %u.%u.%u<br/>",
+		gtk_major_version, gtk_minor_version, gtk_micro_version,
+		glib_major_version, glib_minor_version, glib_micro_version);
+#endif
 
 g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 
