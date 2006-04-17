@@ -261,7 +261,7 @@ gaim_gnome_proxy_get_info(void)
  * Proxy API
  **************************************************************************/
 
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__)
 
 /*
  * This structure represents both a pending DNS request and
@@ -768,7 +768,7 @@ gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback
 	return 0;
 }
 
-#elif defined _WIN32 /* end __unix__ */
+#elif defined _WIN32 /* end __unix__ || __APPLE__ */
 
 typedef struct _dns_tdata {
 	char *hostname;
@@ -882,7 +882,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 	return 0;
 }
 
-#else /* not __unix__ or _WIN32 */
+#else /* not __unix__ or __APPLE__ or _WIN32 */
 
 typedef struct {
 	gpointer data;
@@ -933,7 +933,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 	return 0;
 }
 
-#endif /* not __unix__ or _WIN32 */
+#endif /* not __unix__ or __APPLE__ or _WIN32 */
 
 static void
 no_one_calls(gpointer data, gint source, GaimInputCondition cond)
