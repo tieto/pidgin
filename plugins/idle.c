@@ -72,7 +72,10 @@ set_idle_time(GaimAccount *acct, int mins_idle)
 			"setting idle time for %s to %d\n",
 			gaim_account_get_username(acct), mins_idle);
 
-	t = time(NULL) - (60 * mins_idle); /* subtract seconds idle from current time */
+	if (mins_idle)
+		t = time(NULL) - (60 * mins_idle); /* subtract seconds idle from current time */
+	else
+		t = 0; /* time idle is irrelevant */
 
 	gaim_presence_set_idle(presence, mins_idle ? TRUE : FALSE, t);
 }
