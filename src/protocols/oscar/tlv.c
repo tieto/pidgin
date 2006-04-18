@@ -810,6 +810,18 @@ int aim_tlv_getlength(aim_tlvlist_t *list, const guint16 type, const int nth)
 	return -1;
 }
 
+char *
+aim_tlv_getvalue_as_string(aim_tlv_t *tlv)
+{
+	char *ret;
+
+	ret = malloc(tlv->length + 1);
+	memcpy(ret, tlv->value, tlv->length);
+	ret[tlv->length] = '\0';
+
+	return ret;
+}
+
 /**
  * Retrieve the data from the nth TLV in the given TLV chain as a string.
  *
@@ -823,16 +835,11 @@ int aim_tlv_getlength(aim_tlvlist_t *list, const guint16 type, const int nth)
 char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth)
 {
 	aim_tlv_t *tlv;
-	char *ret;
 
 	if (!(tlv = aim_tlv_gettlv(list, type, nth)))
 		return NULL;
 
-	ret = malloc(tlv->length + 1);
-	memcpy(ret, tlv->value, tlv->length);
-	ret[tlv->length] = '\0';
-
-	return ret;
+	return aim_tlv_getvalue_as_string(tlv);
 }
 
 /**

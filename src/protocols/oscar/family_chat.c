@@ -156,17 +156,18 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	aim_userinfo_t *userinfo = NULL;
 	aim_rxcallback_t userfunc;
 	int ret = 0;
-	int usercount = 0;
+	int usercount;
 	guint8 detaillevel = 0;
-	char *roomname = NULL;
+	char *roomname;
 	struct aim_chat_roominfo roominfo;
 	guint16 tlvcount = 0;
 	aim_tlvlist_t *tlvlist;
-	char *roomdesc = NULL;
-	guint16 flags = 0;
-	guint32 creationtime = 0;
-	guint16 maxmsglen = 0, maxvisiblemsglen = 0;
-	guint16 unknown_d2 = 0, unknown_d5 = 0;
+	aim_tlv_t *tlv;
+	char *roomdesc;
+	guint16 flags;
+	guint32 creationtime;
+	guint16 maxmsglen, maxvisiblemsglen;
+	guint16 unknown_d2, unknown_d5;
 
 	aim_chat_readroominfo(bs, &roominfo);
 
@@ -187,29 +188,26 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	/*
 	 * TLV type 0x006a is the room name in Human Readable Form.
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x006a, 1))
-		roomname = aim_tlv_getstr(tlvlist, 0x006a, 1);
+	roomname = aim_tlv_getstr(tlvlist, 0x006a, 1);
 
 	/*
 	 * Type 0x006f: Number of occupants.
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x006f, 1))
-		usercount = aim_tlv_get16(tlvlist, 0x006f, 1);
+	usercount = aim_tlv_get16(tlvlist, 0x006f, 1);
 
 	/*
 	 * Type 0x0073:  Occupant list.
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0073, 1)) {
+	tlv = aim_tlv_gettlv(tlvlist, 0x0073, 1);
+	if (tlv != NULL)
+	{
 		int curoccupant = 0;
-		aim_tlv_t *tmptlv;
 		ByteStream occbs;
-
-		tmptlv = aim_tlv_gettlv(tlvlist, 0x0073, 1);
 
 		/* Allocate enough userinfo structs for all occupants */
 		userinfo = calloc(usercount, sizeof(aim_userinfo_t));
 
-		byte_stream_init(&occbs, tmptlv->value, tmptlv->length);
+		byte_stream_init(&occbs, tlv->value, tlv->length);
 
 		while (curoccupant < usercount)
 			aim_info_extract(od, &occbs, &userinfo[curoccupant++]);
@@ -218,32 +216,27 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	/*
 	 * Type 0x00c9: Flags. (AIM_CHATROOM_FLAG)
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x00c9, 1))
-		flags = aim_tlv_get16(tlvlist, 0x00c9, 1);
+	flags = aim_tlv_get16(tlvlist, 0x00c9, 1);
 
 	/*
 	 * Type 0x00ca: Creation time (4 bytes)
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x00ca, 1))
-		creationtime = aim_tlv_get32(tlvlist, 0x00ca, 1);
+	creationtime = aim_tlv_get32(tlvlist, 0x00ca, 1);
 
 	/*
 	 * Type 0x00d1: Maximum Message Length
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x00d1, 1))
-		maxmsglen = aim_tlv_get16(tlvlist, 0x00d1, 1);
+	maxmsglen = aim_tlv_get16(tlvlist, 0x00d1, 1);
 
 	/*
 	 * Type 0x00d2: Unknown. (2 bytes)
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x00d2, 1))
-		unknown_d2 = aim_tlv_get16(tlvlist, 0x00d2, 1);
+	unknown_d2 = aim_tlv_get16(tlvlist, 0x00d2, 1);
 
 	/*
 	 * Type 0x00d3: Room Description
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x00d3, 1))
-		roomdesc = aim_tlv_getstr(tlvlist, 0x00d3, 1);
+	roomdesc = aim_tlv_getstr(tlvlist, 0x00d3, 1);
 
 #if 0
 	/*
@@ -257,8 +250,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	/*
 	 * Type 0x00d5: Unknown. (1 byte)
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x00d5, 1))
-		unknown_d5 = aim_tlv_get8(tlvlist, 0x00d5, 1);
+	unknown_d5 = aim_tlv_get8(tlvlist, 0x00d5, 1);
 
 #if 0
 	/*
@@ -293,8 +285,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	/*
 	 * Type 0x00da: Maximum visible message length
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000da, 1))
-		maxvisiblemsglen = aim_tlv_get16(tlvlist, 0x00da, 1);
+	maxvisiblemsglen = aim_tlv_get16(tlvlist, 0x00da, 1);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
 		ret = userfunc(od, conn,
@@ -368,7 +359,7 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	IcbmCookie *cookie;
 	aim_snacid_t snacid;
 	guint8 ckstr[8];
-	aim_tlvlist_t *otl = NULL, *itl = NULL;
+	aim_tlvlist_t *tlvlist = NULL, *inner_tlvlist = NULL;
 
 	if (!od || !conn || !msg || (msglen <= 0))
 		return 0;
@@ -399,36 +390,36 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	/*
 	 * Type 1: Flag meaning this message is destined to the room.
 	 */
-	aim_tlvlist_add_noval(&otl, 0x0001);
+	aim_tlvlist_add_noval(&tlvlist, 0x0001);
 
 	/*
 	 * Type 6: Reflect
 	 */
 	if (!(flags & AIM_CHATFLAGS_NOREFLECT))
-		aim_tlvlist_add_noval(&otl, 0x0006);
+		aim_tlvlist_add_noval(&tlvlist, 0x0006);
 
 	/*
 	 * Type 7: Autoresponse
 	 */
 	if (flags & AIM_CHATFLAGS_AWAY)
-		aim_tlvlist_add_noval(&otl, 0x0007);
+		aim_tlvlist_add_noval(&tlvlist, 0x0007);
 
 	/*
 	 * SubTLV: Type 1: Message
 	 */
-	aim_tlvlist_add_raw(&itl, 0x0001, msglen, (guchar *)msg);
+	aim_tlvlist_add_raw(&inner_tlvlist, 0x0001, msglen, (guchar *)msg);
 
 	/*
 	 * SubTLV: Type 2: Encoding
 	 */
 	if (encoding != NULL)
-		aim_tlvlist_add_str(&itl, 0x0002, encoding);
+		aim_tlvlist_add_str(&inner_tlvlist, 0x0002, encoding);
 
 	/*
 	 * SubTLV: Type 3: Language
 	 */
 	if (language != NULL)
-		aim_tlvlist_add_str(&itl, 0x0003, language);
+		aim_tlvlist_add_str(&inner_tlvlist, 0x0003, language);
 
 	/*
 	 * Type 5: Message block.  Contains more TLVs.
@@ -437,12 +428,12 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	 * put in a message TLV however.
 	 *
 	 */
-	aim_tlvlist_add_frozentlvlist(&otl, 0x0005, &itl);
+	aim_tlvlist_add_frozentlvlist(&tlvlist, 0x0005, &inner_tlvlist);
 
-	aim_tlvlist_write(&frame->data, &otl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
 
-	aim_tlvlist_free(&itl);
-	aim_tlvlist_free(&otl);
+	aim_tlvlist_free(&inner_tlvlist);
+	aim_tlvlist_free(&tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -482,11 +473,13 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	aim_userinfo_t userinfo;
 	guint8 cookie[8];
 	guint16 channel;
-	aim_tlvlist_t *otl;
+	aim_tlvlist_t *tlvlist;
 	char *msg = NULL;
 	int len = 0;
 	char *encoding = NULL, *language = NULL;
 	IcbmCookie *ck;
+	aim_tlv_t *tlv;
+	ByteStream tbs;
 
 	memset(&userinfo, 0, sizeof(aim_userinfo_t));
 
@@ -517,18 +510,15 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	/*
 	 * Start parsing TLVs right away.
 	 */
-	otl = aim_tlvlist_read(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
 	/*
 	 * Type 0x0003: Source User Information
 	 */
-	if (aim_tlv_gettlv(otl, 0x0003, 1)) {
-		aim_tlv_t *userinfotlv;
-		ByteStream tbs;
-
-		userinfotlv = aim_tlv_gettlv(otl, 0x0003, 1);
-
-		byte_stream_init(&tbs, userinfotlv->value, userinfotlv->length);
+	tlv = aim_tlv_gettlv(tlvlist, 0x0003, 1);
+	if (tlv != NULL)
+	{
+		byte_stream_init(&tbs, tlv->value, tlv->length);
 		aim_info_extract(od, &tbs, &userinfo);
 	}
 
@@ -537,7 +527,7 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	 * Type 0x0001: If present, it means it was a message to the
 	 * room (as opposed to a whisper).
 	 */
-	if (aim_tlv_gettlv(otl, 0x0001, 1)) {
+	if (aim_tlv_gettlv(tlvlist, 0x0001, 1)) {
 		/* Unhandled */
 	}
 #endif
@@ -545,36 +535,36 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	/*
 	 * Type 0x0005: Message Block.  Conains more TLVs.
 	 */
-	if (aim_tlv_gettlv(otl, 0x0005, 1)) {
-		aim_tlvlist_t *itl;
-		aim_tlv_t *msgblock;
-		ByteStream tbs;
+	tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1);
+	if (tlv != NULL)
+	{
+		aim_tlvlist_t *inner_tlvlist;
+		aim_tlv_t *inner_tlv;
 
-		msgblock = aim_tlv_gettlv(otl, 0x0005, 1);
-		byte_stream_init(&tbs, msgblock->value, msgblock->length);
-		itl = aim_tlvlist_read(&tbs);
+		byte_stream_init(&tbs, tlv->value, tlv->length);
+		inner_tlvlist = aim_tlvlist_read(&tbs);
 
 		/*
 		 * Type 0x0001: Message.
 		 */
-		if (aim_tlv_gettlv(itl, 0x0001, 1)) {
-			msg = aim_tlv_getstr(itl, 0x0001, 1);
-			len = aim_tlv_gettlv(itl, 0x0001, 1)->length;
+		inner_tlv = aim_tlv_gettlv(inner_tlvlist, 0x0001, 1);
+		if (inner_tlv != NULL)
+		{
+			len = inner_tlv->length;
+			msg = aim_tlv_getvalue_as_string(inner_tlv);
 		}
 
 		/*
 		 * Type 0x0002: Encoding.
 		 */
-		if (aim_tlv_gettlv(itl, 0x0002, 1))
-			encoding = aim_tlv_getstr(itl, 0x0002, 1);
+		encoding = aim_tlv_getstr(inner_tlvlist, 0x0002, 1);
 
 		/*
 		 * Type 0x0003: Language.
 		 */
-		if (aim_tlv_gettlv(itl, 0x0003, 1))
-			language = aim_tlv_getstr(itl, 0x0003, 1);
+		language = aim_tlv_getstr(inner_tlvlist, 0x0003, 1);
 
-		aim_tlvlist_free(&itl);
+		aim_tlvlist_free(&inner_tlvlist);
 	}
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
@@ -582,7 +572,9 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 
 	aim_info_free(&userinfo);
 	free(msg);
-	aim_tlvlist_free(&otl);
+	free(encoding);
+	free(language);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }

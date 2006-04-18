@@ -321,9 +321,11 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 		aim_tlv_t *tmptlv;
 
 		tmptlv = aim_tlv_gettlv(tlvlist, 0x0006, 1);
-
-		info->cookielen = tmptlv->length;
-		info->cookie = tmptlv->value;
+		if (tmptlv != NULL)
+		{
+			info->cookielen = tmptlv->length;
+			info->cookie = tmptlv->value;
+		}
 	}
 
 	/*

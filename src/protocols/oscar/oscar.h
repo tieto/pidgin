@@ -1305,6 +1305,8 @@ typedef struct aim_tlvlist_s
 } aim_tlvlist_t;
 
 /* TLV handling functions */
+char *aim_tlv_getvalue_as_string(aim_tlv_t *tlv);
+
 aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, guint16 type, const int nth);
 int aim_tlv_getlength(aim_tlvlist_t *list, guint16 type, const int nth);
 char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth);
