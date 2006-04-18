@@ -81,10 +81,12 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 		switch (type) {
 			case 0x0001: {
+				free(sn);
 				sn = byte_stream_getstr(bs, length);
 			} break;
 
 			case 0x0004: {
+				free(url);
 				url = byte_stream_getstr(bs, length);
 			} break;
 
@@ -93,6 +95,7 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 			} break;
 
 			case 0x0011: {
+				free(email);
 				if (length == 0)
 					email = g_strdup("*suppressed");
 				else
