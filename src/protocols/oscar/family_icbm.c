@@ -1679,13 +1679,13 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 		} else if (type == 0x0017) {
 
-			free(args.extdata);
-			args.extdatalen = length;
-			if (args.extdatalen > byte_stream_empty(bs))
+			if (length > byte_stream_empty(bs))
 			{
 				gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 				break;
 			}
+			free(args.extdata);
+			args.extdatalen = length;
 			if (args.extdatalen == 0)
 				args.extdata = NULL;
 			else
