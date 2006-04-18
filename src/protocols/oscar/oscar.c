@@ -1777,7 +1777,7 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 	bi->ipaddr = info->icqinfo.ipaddr;
 
 	if (info->iconcsumlen) {
-		const char *filename = NULL, *saved_b16 = NULL;
+		const char *filename, *saved_b16 = NULL;
 		char *b16 = NULL, *filepath = NULL;
 		GaimBuddy *b = NULL;
 
@@ -1787,7 +1787,10 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 		 * If for some reason the checksum is valid, but cached file is not..
 		 * we want to know.
 		 */
-		filename = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon");
+		if (b != NULL)
+			filename = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon");
+		else
+			filename = NULL;
 		if (filename != NULL) {
 			if (g_file_test(filename, G_FILE_TEST_EXISTS))
 				saved_b16 = gaim_blist_node_get_string((GaimBlistNode*)b,
@@ -2132,20 +2135,26 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 static void
 gaim_auth_request(struct name_data *data, char *msg)
 {
-	GaimConnection *gc = data->gc;
+	GaimConnection *gc;
+	OscarData *od;
+	GaimBuddy *buddy;
+	GaimGroup *group;
 
-	if (g_list_find(gaim_connections_get_all(), gc)) {
-		OscarData *od = gc->proto_data;
-		GaimBuddy *buddy = gaim_find_buddy(gc->account, data->name);
-		GaimGroup *group = gaim_buddy_get_group(buddy);
-		if (buddy && group) {
-			gaim_debug_info("oscar",
-					   "ssi: adding buddy %s to group %s\n",
-					   buddy->name, group->name);
-			aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
-			if (!aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-				aim_ssi_addbuddy(od, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 1);
-		}
+	gc = data->gc;
+	od = gc->proto_data;
+	buddy = gaim_find_buddy(gaim_connection_get_account(gc), data->name);
+	if (buddy != NULL)
+		group = gaim_buddy_get_group(buddy);
+	else
+		group = NULL;
+
+	if (group != NULL)
+	{
+		gaim_debug_info("oscar", "ssi: adding buddy %s to group %s\n",
+				   buddy->name, group->name);
+		aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
+		if (!aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
+			aim_ssi_addbuddy(od, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 1);
 	}
 }
 
@@ -2902,7 +2911,7 @@ static int gaim_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr
 
 	if (!gaim_status_is_available(status) && gaim_status_is_online(status))
 	{
-		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) &&
+		if ((userinfo->flags & AIM_FLAG_AWAY) &&
 			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
 			message = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
@@ -3188,11 +3197,12 @@ static int gaim_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame *f
 	 */
 	if ((iconlen > 0) && (iconlen != 90)) {
 		char *b16;
-		GaimBuddy *b = gaim_find_buddy(gc->account, sn);
+		GaimBuddy *b;
 		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
 									  sn, icon, iconlen);
 		b16 = gaim_base16_encode(iconcsum, iconcsumlen);
-		if (b16) {
+		b = gaim_find_buddy(gc->account, sn);
+		if ((b16 != NULL) && (b != NULL)) {
 			gaim_blist_node_set_string((GaimBlistNode*)b, "icon_checksum", b16);
 			g_free(b16);
 		}
@@ -4470,11 +4480,9 @@ oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	}
 
 	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
-		if (buddy && group) {
-			gaim_debug_info("oscar",
-					   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-			aim_ssi_addbuddy(od, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 0);
-		}
+		gaim_debug_info("oscar",
+				   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
+		aim_ssi_addbuddy(od, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 0);
 	}
 
 	/* XXX - Should this be done from AIM accounts, as well? */
@@ -5228,14 +5236,15 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message, Gaim
 
 static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b)
 {
-	if (!b || (b && b->name && b->name[0] == '+')) {
+	if ((b == NULL) || (b->name == NULL) || aim_sn_is_sms(b->name))
+	{
 		if (a != NULL && aim_sn_is_icq(gaim_account_get_username(a)))
 			return "icq";
 		else
 			return "aim";
 	}
 
-	if (b != NULL && aim_sn_is_icq(b->name))
+	if (aim_sn_is_icq(b->name))
 		return "icq";
 	return "aim";
 }
@@ -5252,8 +5261,7 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	int i = 0;
 	aim_userinfo_t *userinfo = NULL;
 
-	if (b != NULL)
-		account = b->account;
+	account = b->account;
 	if (account != NULL)
 		gc = account->gc;
 	if (gc != NULL)
