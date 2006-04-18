@@ -1120,8 +1120,8 @@ static gchar* gen_pidf(struct simple_account_data *sip) {
 			"<tuple id=\"bs35r9f\">\n"
 			"<status>\n"
 			"<basic>open</basic>\n"
-			"<im:im>%s</im:im>\n"
 			"</status>\n"
+			"<note>%s</note>\n"
 			"</tuple>\n"
 			"</presence>",
 			sip->username,
