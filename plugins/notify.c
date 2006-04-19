@@ -591,7 +591,7 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 
 static void
 apply_method() {
-	GList *convs = gaim_get_conversations();
+	GList *convs;
 	GaimGtkWindow *gaimwin = NULL;
 
 	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next) {

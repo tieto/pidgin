@@ -963,7 +963,7 @@ network_page()
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
-	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button, *stun_server_entry;
+	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
 	GaimProxyInfo *proxy_info = NULL;
 
@@ -972,7 +972,7 @@ network_page()
 
 	vbox = gaim_gtk_make_frame (ret, _("IP Address"));
 
-	stun_server_entry = gaim_gtk_prefs_labeled_entry(vbox,_("ST_UN server:"), "/core/network/stun_server", NULL);
+	gaim_gtk_prefs_labeled_entry(vbox,_("ST_UN server:"), "/core/network/stun_server", NULL);
 
 	auto_ip_checkbox = gaim_gtk_prefs_checkbox(_("_Autodetect IP address"),
 			"/core/network/auto_ip", vbox);

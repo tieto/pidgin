@@ -693,7 +693,7 @@ debug_window_new(void)
 
 		/* Pause */
 		image = gtk_image_new_from_stock(GAIM_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
-		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 		                                    NULL, _("Pause"), _("Pause"),
 		                                    NULL, image,

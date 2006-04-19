@@ -864,13 +864,10 @@ void
 gaim_status_set_attr_boolean(GaimStatus *status, const char *id,
 		gboolean value)
 {
-	GaimStatusType *status_type;
 	GaimValue *attr_value;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
-
-	status_type = gaim_status_get_type(status);
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = gaim_status_get_attr_value(status, id);
@@ -883,13 +880,10 @@ gaim_status_set_attr_boolean(GaimStatus *status, const char *id,
 void
 gaim_status_set_attr_int(GaimStatus *status, const char *id, int value)
 {
-	GaimStatusType *status_type;
 	GaimValue *attr_value;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
-
-	status_type = gaim_status_get_type(status);
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = gaim_status_get_attr_value(status, id);
@@ -903,13 +897,10 @@ void
 gaim_status_set_attr_string(GaimStatus *status, const char *id,
 		const char *value)
 {
-	GaimStatusType *status_type;
 	GaimValue *attr_value;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
-
-	status_type = gaim_status_get_type(status);
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = gaim_status_get_attr_value(status, id);

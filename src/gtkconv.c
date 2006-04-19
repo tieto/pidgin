@@ -447,11 +447,9 @@ check_for_and_do_command(GaimConversation *conv)
 	GaimGtkConversation *gtkconv;
 	char *cmd;
 	const char *prefix;
-	GaimAccount *account;
 	GtkTextIter start;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	account = gaim_conversation_get_account(conv);
 	prefix = gaim_gtk_get_cmd_prefix();
 
 	cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
@@ -2235,8 +2233,6 @@ update_tab_icon(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *win;
-	GaimAccount *account;
-	const char *name;
 	GdkPixbuf *status = NULL;
 
 	g_return_if_fail(conv != NULL);
@@ -2245,9 +2241,6 @@ update_tab_icon(GaimConversation *conv)
 	win = gtkconv->win;
 	if (conv != gtkconv->active_conv)
 		return;
-
-	name = gaim_conversation_get_name(conv);
-	account = gaim_conversation_get_account(conv);
 
 	status = gaim_gtkconv_get_tab_icon(conv, TRUE);
 
@@ -6265,9 +6258,6 @@ static void
 account_signed_off_cb(GaimConnection *gc, gpointer event)
 {
 	GList *iter;
-	GaimAccount *account;
-
-	account = gaim_connection_get_account(gc);
 
 	for (iter = gaim_get_conversations(); iter; iter = iter->next)
 	{
@@ -7504,13 +7494,11 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	GtkWidget *tab_cont = gtkconv->tab_cont;
 	GtkWidget *close_image;
 	GaimConversationType conv_type;
-	const char *name;
 	const gchar *tmp_lab;
 	gint close_button_width, close_button_height, focus_width, focus_pad;
 	gboolean tabs_side = FALSE;
 	gint angle = 0;
 
-	name      = gaim_conversation_get_name(conv);
 	conv_type = gaim_conversation_get_type(conv);
 
 

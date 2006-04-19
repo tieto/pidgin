@@ -880,7 +880,6 @@ status_editor_add_columns(StatusEditor *dialog)
 						    renderer,
 						    "active", STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS,
 						    NULL);
-	column = gtk_tree_view_get_column(GTK_TREE_VIEW(dialog->treeview), 1);
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 			 G_CALLBACK(status_editor_substatus_cb), dialog);
 

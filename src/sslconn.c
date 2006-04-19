@@ -120,12 +120,8 @@ void
 gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func,
 				   void *data)
 {
-	GaimSslOps *ops;
-
 	g_return_if_fail(func != NULL);
 	g_return_if_fail(gaim_ssl_is_supported());
-
-	ops = gaim_ssl_get_ops();
 
 	gsc->recv_cb_data = data;
 	gsc->recv_cb      = func;

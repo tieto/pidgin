@@ -93,12 +93,10 @@ unset_account_autoaway(GaimConnection *gc)
 {
 	GaimAccount *account;
 	GaimPresence *presence;
-	GaimStatus *status;
 	GaimSavedStatus *saved_status;
 
 	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
-	status = gaim_presence_get_active_status(presence);
 
 	if (!gc->is_auto_away)
 		/* This account is already not auto-away! */

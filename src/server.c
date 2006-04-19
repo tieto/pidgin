@@ -725,9 +725,6 @@ void serv_got_chat_left(GaimConnection *g, int id)
 	GSList *bcs;
 	GaimConversation *conv = NULL;
 	GaimConvChat *chat = NULL;
-	GaimAccount *account;
-
-	account = gaim_connection_get_account(g);
 
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (GaimConversation *)bcs->data;

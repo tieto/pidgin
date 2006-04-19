@@ -90,7 +90,6 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 	GaimConversationType type;
 	GaimAccount *account;
 	GaimConnection *gc;
-	GaimConversationUiOps *ops;
 	char *displayed = NULL, *sent = NULL;
 	int err = 0;
 
@@ -104,7 +103,6 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 	g_return_if_fail(gc != NULL);
 
 	type = gaim_conversation_get_type(conv);
-	ops  = gaim_conversation_get_ui_ops(conv);
 
 	/* Always linkfy the text for display */
 	displayed = gaim_markup_linkify(message);
