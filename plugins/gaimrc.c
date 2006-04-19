@@ -357,20 +357,25 @@ static void
 gaimrc_set_font_special(GtkWidget *widget, gpointer data)
 {
 	GtkWidget *font_dialog = NULL;
+#if 0
 	const char *font = NULL;
+#endif
 
 	font_dialog = gtk_font_selection_dialog_new(_("Select Interface Font"));
 	g_signal_connect(G_OBJECT(font_dialog), "response",
 	                 G_CALLBACK(gaimrc_font_response_special), NULL);
 
-	font = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
-	/* TODO Figure out a way to test for the presence of a value in the
+#if 0
+	/*
+	 * TODO Figure out a way to test for the presence of a value in the
 	 * actual pref
+	 */
+	font = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
 	printf("font - %s.\n", font);
 	if (font != NULL && font != "") {
 		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name"));
 	}
-	*/
+#endif
 
 	gtk_window_present(GTK_WINDOW(font_dialog));
 }
