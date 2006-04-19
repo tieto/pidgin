@@ -75,6 +75,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	char pkd[256], prd[256];
 	struct stat st;
 	struct passwd *pw;
+	int fd;
 
 	pw = getpwuid(getuid());
 	if (!pw) {
@@ -225,6 +226,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	}
 #endif
 
+	fd = open(file_private_key, O_RDONLY);
 	if ((g_stat(file_private_key, &st)) == -1) {
 		/* If file doesn't exist */
 		if (errno == ENOENT) {
@@ -234,10 +236,15 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 					     file_public_key, file_private_key, NULL,
 					     (gc->password == NULL) ? "" : gc->password,
 						 NULL, NULL, NULL, FALSE);
+			if (fd != -1)
+				close(fd);
+			fd = open(file_private_key, O_RDONLY);
 			g_stat(file_private_key, &st);
 		} else {
 			gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							 file_private_key, strerror(errno));
+			if (fd != -1)
+				close(fd);
 			return FALSE;
 		}
 	}
@@ -246,22 +253,29 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	/* Check the owner of the private key */
 	if (st.st_uid != 0 && st.st_uid != pw->pw_uid) {
 		gaim_debug_error("silc", "You don't seem to own your private key!?\n");
+		if (fd != -1)
+			close(fd);
 		return FALSE;
 	}
 
 	/* Check the permissions for the private key */
 	if ((st.st_mode & 0777) != 0600) {
 		gaim_debug_warning("silc", "Wrong permissions in your private key file `%s'!\n"
-			"Trying to change them ... ", file_private_key);
-		if ((chmod(file_private_key, 0600)) == -1) {
+			"Trying to change them ...\n", file_private_key);
+		if ((fd != -1) && (fchmod(fd, S_IRUSR | S_IWUSR)) == -1) {
 			gaim_debug_error("silc",
 				"Failed to change permissions for private key file!\n"
 				"Permissions for your private key file must be 0600.\n");
+			if (fd != -1)
+				close(fd);
 			return FALSE;
 		}
 		gaim_debug_warning("silc", "Done.\n\n");
 	}
 #endif
+
+	if (fd != -1)
+		close(fd);
 
 	return TRUE;
 }
