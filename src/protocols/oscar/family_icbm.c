@@ -1306,6 +1306,7 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 		ret = userfunc(od, conn, frame, channel, sn, msg, icbmflags, flag1, flag2);
 
 	free(sn);
+	free(msg);
 	aim_tlvlist_free(&tlvlist);
 
 	return ret;
@@ -1808,16 +1809,11 @@ static void incomingim_ch2_chat(OscarData *od, FlapConnection *conn, aim_module_
 		aim_chat_readroominfo(servdata, &args->info.chat.roominfo);
 
 	args->destructor = (void *)incomingim_ch2_chat_free;
-
-	return;
 }
 
 static void incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
 {
-
 	free((char *)args->info.rtfmsg.rtfmsg);
-
-	return;
 }
 
 /*
@@ -1831,6 +1827,10 @@ static void incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
 static void incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
 	guint16 hdrlen, anslen, msglen;
+
+	if (servdata == NULL)
+		/* Odd...  Oh well. */
+		return;
 
 	hdrlen = byte_stream_getle16(servdata);
 	byte_stream_advance(servdata, hdrlen);
@@ -1853,8 +1853,6 @@ static void incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, a
 	byte_stream_advance(servdata, hdrlen);
 
 	args->destructor = (void *)incomingim_ch2_icqserverrelay_free;
-
-	return;
 }
 
 static void incomingim_ch2_sendfile_free(OscarData *od, IcbmArgsCh2 *args)
@@ -1923,6 +1921,11 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	 * There's another block of TLVs embedded in the type 5 here.
 	 */
 	block1 = aim_tlv_gettlv(tlvlist, 0x0005, 1);
+	if (block1 == NULL)
+	{
+		/* The server sent us ch2 ICBM without ch2 info?  Weird. */
+		return 1;
+	}
 	byte_stream_init(&bbs, block1->value, block1->length);
 
 	/*

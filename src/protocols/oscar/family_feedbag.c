@@ -745,8 +745,8 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 	/* Find the parent */
 	if (!(parent = aim_ssi_itemlist_finditem(od->ssi.local, group, NULL, AIM_SSI_TYPE_GROUP))) {
 		/* Find the parent's parent (the master group) */
-		if (!(parent = aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000)))
-			if (!(parent = aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL)))
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			if (aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL) == NULL)
 				return -ENOMEM;
 		/* Add the parent */
 		if (!(parent = aim_ssi_itemlist_add(&od->ssi.local, group, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL)))
@@ -1307,7 +1307,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		od->ssi.received_data = 1;
 
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame, fmtver, od->ssi.numitems, od->ssi.official, od->ssi.timestamp);
+			ret = userfunc(od, conn, frame, fmtver, od->ssi.numitems, od->ssi.timestamp);
 	}
 
 	return ret;

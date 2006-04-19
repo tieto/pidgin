@@ -98,11 +98,6 @@ aimutil_itemindex(char *toSearch, int theindex, char dl)
 		last = next + 1;
 		next = strchr(last, dl);
 	}
-
-	if (curCount < theindex) {
-		toReturn = malloc(sizeof(char));
-		*toReturn = '\0';
-	}
 	next = strchr(last, dl);
 
 	if (curCount < theindex) {

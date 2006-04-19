@@ -1179,7 +1179,6 @@ oscar_login(GaimAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_ERROR, gaim_ssi_parseerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RIGHTSINFO, gaim_ssi_parserights, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_LIST, gaim_ssi_parselist, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_NOLIST, gaim_ssi_parselist, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SRVACK, gaim_ssi_parseack, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_ADD, gaim_ssi_parseadd, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTH, gaim_ssi_authgiven, 0);
@@ -1454,7 +1453,11 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 		g_free(pos);
 		return;
 	}
-	read(pos->fd, m, 16);
+	if (read(pos->fd, m, 16) != 16)
+	{
+		gaim_debug_warning("oscar", "Could not read full AIM login hash "
+				"from " AIMHASHDATA "--that's bad.\n");
+	}
 	m[16] = '\0';
 	gaim_debug_misc("oscar", "Sending hash: ");
 	for (x = 0; x < 16; x++)
@@ -3351,6 +3354,7 @@ static int gaim_parse_ratechange(OscarData *od, FlapConnection *conn, FlapFrame 
 }
 
 static int gaim_parse_evilnotify(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
+#ifdef CRAZY_WARNING
 	va_list ap;
 	guint16 newevil;
 	aim_userinfo_t *userinfo;
@@ -3360,7 +3364,6 @@ static int gaim_parse_evilnotify(OscarData *od, FlapConnection *conn, FlapFrame 
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-#ifdef CRAZY_WARNING
 	gaim_prpl_got_account_warning_level(account, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
 #endif
 
@@ -4633,7 +4636,6 @@ static int gaim_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	guint32 tmp;
 	va_list ap;
 	guint16 fmtver, numitems;
-	struct aim_ssi_item *items;
 	guint32 timestamp;
 
 	gc = od->gc;
@@ -4643,7 +4645,6 @@ static int gaim_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	va_start(ap, fr);
 	fmtver = (guint16)va_arg(ap, int);
 	numitems = (guint16)va_arg(ap, int);
-	items = va_arg(ap, struct aim_ssi_item *);
 	timestamp = va_arg(ap, guint32);
 	va_end(ap);
 

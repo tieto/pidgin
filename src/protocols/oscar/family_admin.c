@@ -224,17 +224,17 @@ accountconfirm(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 status;
-	aim_tlvlist_t *tl;
+	/* aim_tlvlist_t *tl; */
 
 	status = byte_stream_get16(bs);
-	/* This is 0x0013 if unable to confirm at this time */
+	/* Status is 0x0013 if unable to confirm at this time */
 
-	tl = aim_tlvlist_read(bs);
+	/* tl = aim_tlvlist_read(bs); */
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, status);
 
-	aim_tlvlist_free(&tl);
+	/* aim_tlvlist_free(&tl); */
 
 	return ret;
 }

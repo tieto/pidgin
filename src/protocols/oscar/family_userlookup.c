@@ -72,7 +72,7 @@ int aim_search_address(OscarData *od, const char *address)
 
 	frame = flap_frame_new(od, 0x02, 10+strlen(address));
 
-	snacid = aim_cachesnac(od, 0x000a, 0x0002, 0x0000, strdup(address), strlen(address)+1);
+	snacid = aim_cachesnac(od, 0x000a, 0x0002, 0x0000, address, strlen(address)+1);
 	aim_putsnac(&frame->data, 0x000a, 0x0002, 0x0000, snacid);
 
 	byte_stream_putstr(&frame->data, address);
@@ -93,10 +93,10 @@ static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 	char *cur = NULL, *buf = NULL;
 	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
-	char *searchaddr = NULL;
+	const char *searchaddr = NULL;
 
 	if ((snac2 = aim_remsnac(od, snac->id)))
-		searchaddr = (char *)snac2->data;
+		searchaddr = (const char *)snac2->data;
 
 	tlvlist = aim_tlvlist_read(bs);
 	m = aim_tlvlist_count(&tlvlist);
@@ -114,6 +114,7 @@ static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 
 		j++;
 	}
+	free(cur);
 
 	aim_tlvlist_free(&tlvlist);
 
