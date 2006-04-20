@@ -5377,9 +5377,7 @@ static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTre
 		}
 
 		name_cmp = gaim_utf8_strcasecmp(
-			(my_buddy
-			 ? gaim_contact_get_alias(gaim_buddy_get_contact(my_buddy))
-			 : NULL),
+			gaim_contact_get_alias(gaim_buddy_get_contact(my_buddy)),
 			(this_buddy
 			 ? gaim_contact_get_alias(gaim_buddy_get_contact(this_buddy))
 			 : NULL));
