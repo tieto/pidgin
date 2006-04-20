@@ -276,6 +276,7 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 		gaim_roomlist_set_in_progress(irc->roomlist, FALSE);
 		gaim_roomlist_unref(irc->roomlist);
 		irc->roomlist = NULL;
+		return;
 	}
 
 	if (!strcmp(name, "322")) {
