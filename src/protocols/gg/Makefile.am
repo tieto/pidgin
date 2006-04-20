@@ -1,4 +1,17 @@
-EXTRA_DIST = Makefile.mingw
+EXTRA_DIST = \
+	Makefile.mingw \
+	lib/common.c \
+	lib/compat.h \
+	lib/COPYING \
+	lib/dcc.c \
+	lib/events.c \
+	lib/http.c \
+	lib/libgadu.c \
+	lib/libgadu-config.h \
+	lib/libgadu.h \
+	lib/obsolete.c \
+	lib/pubdir50.c \
+	lib/pubdir.c
 
 pkgdir = $(libdir)/gaim
 
