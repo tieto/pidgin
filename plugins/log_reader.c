@@ -1131,17 +1131,17 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 
 			*c = '\0';
 			if (gaim_str_has_prefix(line, "Session Close ")) {
-				if (data && !data->length)
-					data->length = last_line_offset - data->offset;
-				if (!data->length) {
-					/* This log had no data, so we remove it. */
-					GList *last = g_list_last(list);
+				if (data && !data->length) {
+					if (!(data->length = last_line_offset - data->offset)) {
+						/* This log had no data, so we remove it. */
+						GList *last = g_list_last(list);
 
-					gaim_debug(GAIM_DEBUG_INFO, "Trillian log list",
-						"Empty log. Offset %i\n", data->offset);
+						gaim_debug(GAIM_DEBUG_INFO, "Trillian log list",
+							"Empty log. Offset %i\n", data->offset);
 
-					trillian_logger_finalize((GaimLog *)last->data);
-					list = g_list_delete_link(list, last);
+						trillian_logger_finalize((GaimLog *)last->data);
+						list = g_list_delete_link(list, last);
+					}
 				}
 			} else if (line[0] && line[1] && line [3] &&
 					   gaim_str_has_prefix(&line[3], "sion Start ")) {
