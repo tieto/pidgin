@@ -67,7 +67,7 @@ int aim_search_address(OscarData *od, const char *address)
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_USERLOOKUP);
 
-	if (!od || !conn || !address)
+	if (!conn || !address)
 		return -EINVAL;
 
 	frame = flap_frame_new(od, 0x02, 10+strlen(address));

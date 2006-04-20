@@ -1991,7 +1991,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 {
 	GaimConnection *gc;
 	GaimAccount *account;
-	const char *username = NULL;
 	char *message = NULL;
 
 	g_return_val_if_fail(od != NULL, 0);
@@ -2000,7 +1999,6 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	gc = od->gc;
 	account = gaim_connection_get_account(gc);
 	od = gc->proto_data;
-	username = gaim_account_get_username(account);
 
 	if (args == NULL)
 		return 0;

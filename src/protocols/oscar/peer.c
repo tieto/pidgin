@@ -516,14 +516,12 @@ peer_connection_listen_cb(gpointer data, gint source, GaimInputCondition cond)
 	PeerConnection *conn;
 	OscarData *od;
 	GaimConnection *gc;
-	GaimAccount *account;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
 
 	conn = data;
 	od = conn->od;
 	gc = od->gc;
-	account = gaim_connection_get_account(gc);
 
 	gaim_debug_info("oscar", "Accepting connection on listener socket.\n");
 
@@ -595,6 +593,13 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 
 	/* Send the "please connect to me!" ICBM */
 	bos_conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
+	if (bos_conn == NULL)
+	{
+		/* Not good */
+		peer_connection_trynext(conn);
+		return;
+	}
+
 	listener_ip = gaim_network_get_my_ip(bos_conn->fd);
 	listener_port = gaim_network_get_port_from_fd(conn->listenerfd);
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
@@ -774,9 +779,6 @@ void
 peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
 {
 	PeerConnection *conn;
-	GaimAccount *account;
-
-	account = gaim_connection_get_account(od->gc);
 
 	if (type == OSCAR_CAPABILITY_DIRECTIM)
 	{
@@ -785,6 +787,7 @@ peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
 		{
 			if (conn->ready)
 			{
+				GaimAccount *account;
 				GaimConversation *conv;
 
 				gaim_debug_info("oscar", "Already have a direct IM "

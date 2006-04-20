@@ -128,7 +128,6 @@ aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 	aim_tlvlist_t *tl = NULL;
 
 	fr = flap_frame_new(od, 0x02, 10+2+2+strlen(newnick));
-		return -ENOMEM;
 
 	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);

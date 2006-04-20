@@ -124,7 +124,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	struct chatsnacinfo csi;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
-	if (!od || !conn || !roomname || !strlen(roomname))
+	if (!conn || !roomname || !strlen(roomname))
 		return -EINVAL;
 
 	frame = flap_frame_new(od, 0x02, 512);

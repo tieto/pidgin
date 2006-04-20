@@ -1906,6 +1906,7 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	aim_rxcallback_t userfunc;
 	aim_tlv_t *block1, *servdatatlv;
 	aim_tlvlist_t *list2;
+	aim_tlv_t *tlv;
 	IcbmArgsCh2 args;
 	ByteStream bbs, sdbs, *sdbsptr = NULL;
 	guint8 *cookie2;
@@ -1964,43 +1965,31 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	 *
 	 * TODO: I don't like this.  Maybe just read in an int?  Or inet_ntoa...
 	 */
-	if (aim_tlv_gettlv(list2, 0x0002, 1)) {
-		aim_tlv_t *iptlv;
-
-		iptlv = aim_tlv_gettlv(list2, 0x0002, 1);
-		if (iptlv->length == 4)
-			snprintf(proxyip, sizeof(proxyip), "%hhu.%hhu.%hhu.%hhu",
-				iptlv->value[0], iptlv->value[1],
-				iptlv->value[2], iptlv->value[3]);
-	}
+	tlv = aim_tlv_gettlv(list2, 0x0002, 1);
+	if ((tlv != NULL) && (tlv->length == 4))
+		snprintf(proxyip, sizeof(proxyip), "%hhu.%hhu.%hhu.%hhu",
+				tlv->value[0], tlv->value[1],
+				tlv->value[2], tlv->value[3]);
 
 	/*
 	 * IP address from the perspective of the client.
 	 */
-	if (aim_tlv_gettlv(list2, 0x0003, 1)) {
-		aim_tlv_t *iptlv;
-
-		iptlv = aim_tlv_gettlv(list2, 0x0003, 1);
-		if (iptlv->length == 4)
-			snprintf(clientip, sizeof(clientip), "%hhu.%hhu.%hhu.%hhu",
-				iptlv->value[0], iptlv->value[1],
-				iptlv->value[2], iptlv->value[3]);
-	}
+	tlv = aim_tlv_gettlv(list2, 0x0003, 1);
+	if ((tlv != NULL) && (tlv->length == 4))
+		snprintf(clientip, sizeof(clientip), "%hhu.%hhu.%hhu.%hhu",
+				tlv->value[0], tlv->value[1],
+				tlv->value[2], tlv->value[3]);
 
 	/*
 	 * Verified IP address (from the perspective of Oscar).
 	 *
 	 * This is added by the server.
 	 */
-	if (aim_tlv_gettlv(list2, 0x0004, 1)) {
-		aim_tlv_t *iptlv;
-
-		iptlv = aim_tlv_gettlv(list2, 0x0004, 1);
-		if (iptlv->length == 4)
-			snprintf(verifiedip, sizeof(verifiedip), "%hhu.%hhu.%hhu.%hhu",
-				iptlv->value[0], iptlv->value[1],
-				iptlv->value[2], iptlv->value[3]);
-	}
+	tlv = aim_tlv_gettlv(list2, 0x0004, 1);
+	if ((tlv != NULL) && (tlv->length == 4))
+		snprintf(verifiedip, sizeof(verifiedip), "%hhu.%hhu.%hhu.%hhu",
+				tlv->value[0], tlv->value[1],
+				tlv->value[2], tlv->value[3]);
 
 	/*
 	 * Port number for something.
