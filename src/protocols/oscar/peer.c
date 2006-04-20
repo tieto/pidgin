@@ -683,7 +683,8 @@ peer_connection_trynext(PeerConnection *conn)
 	{
 		conn->flags |= PEER_CONNECTION_FLAG_TRIED_CLIENTIP;
 
-		if (strcmp(conn->verifiedip, conn->clientip))
+		if ((conn->verifiedip == NULL) ||
+			strcmp(conn->verifiedip, conn->clientip))
 		{
 			if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 			{
