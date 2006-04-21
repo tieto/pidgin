@@ -5040,7 +5040,7 @@ gaim_gtk_blist_visibility_manager_remove()
 	if (visibility_manager_count)
 		visibility_manager_count--;
 	if (!visibility_manager_count)
-		gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+		gaim_blist_set_visible(TRUE);
 	gaim_debug_info("gtkblist", "removed visibility manager: %d\n", visibility_manager_count);
 }
 
