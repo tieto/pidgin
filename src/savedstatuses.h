@@ -156,7 +156,9 @@ const GList *gaim_savedstatuses_get_all(void);
  * determined by when the last time a saved_status was used and
  * how many times it has been used.  If the current status would
  * normally show up in this list, then it is omited and instead
- * the "how_many+1" saved status will appear in the list.
+ * the "how_many+1" saved status will appear in the list.  Also
+ * transient statuses without messages are not included in the
+ * list.
  *
  * @param how_many The maximum number of saved statuses
  *                 to return, or '0' to get all saved
