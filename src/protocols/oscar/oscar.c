@@ -66,7 +66,7 @@
 #define OSCAR_DEFAULT_AUTHORIZATION TRUE
 #define OSCAR_DEFAULT_HIDE_IP TRUE
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
-#define OSCAR_DEFAULT_USE_RV_PROXY FALSE
+#define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 
 static int caps_aim = OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
 static int caps_icq = OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_ICQUTF8 | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
@@ -6459,17 +6459,16 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	/* TODO: Need to somehow invert this */
 	option = gaim_account_option_bool_new(
-		_("Always use AIM/ICQ proxy server\n(slower, but does not reveal your IP address)"), "use_rv_proxy",
-		OSCAR_DEFAULT_USE_RV_PROXY);
+		_("Always use AIM/ICQ proxy server\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
+		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	/* Preferences */
 	gaim_prefs_add_none("/plugins/prpl/oscar");
 	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
-	gaim_prefs_remove("/plugins/prpl/oscar/use_rv_proxy");
+	gaim_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 }
 
 GAIM_INIT_PLUGIN(oscar, init_plugin, info);

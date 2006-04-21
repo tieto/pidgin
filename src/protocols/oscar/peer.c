@@ -119,7 +119,7 @@ peer_connection_new(OscarData *od, OscarCapability type, const char *sn)
 	conn->listenerfd = -1;
 	conn->fd = -1;
 	conn->lastactivity = time(NULL);
-	conn->use_proxy |= gaim_account_get_bool(account, "use_rv_proxy", FALSE);
+	conn->use_proxy |= gaim_account_get_bool(account, "always_use_rv_proxy", FALSE);
 
 	if (type == OSCAR_CAPABILITY_DIRECTIM)
 		memcpy(conn->magic, "ODC2", 4);
