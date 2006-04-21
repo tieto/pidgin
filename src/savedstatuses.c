@@ -684,18 +684,30 @@ gaim_savedstatuses_get_all(void)
 GList *
 gaim_savedstatuses_get_popular(unsigned int how_many)
 {
-	GList *truncated = NULL;
+	GList *popular = NULL;
 	GList *cur;
 	int i;
+	GaimSavedStatus *current;
+
+	/* We don't want the current status to be in the GList */
+	current = gaim_savedstatus_get_current();
 
 	/* Copy 'how_many' elements to a new list */
-	for (i = 0, cur = saved_statuses; (i < how_many) && (cur != NULL); i++)
+	i = 0;
+	cur = saved_statuses;
+	while ((i < how_many) && (cur != NULL))
 	{
-		truncated = g_list_append(truncated, cur->data);
+		if (cur->data != current)
+		{
+			popular = g_list_prepend(popular, cur->data);
+			i++;
+		}
 		cur = cur->next;
 	}
 
-	return truncated;
+	popular = g_list_reverse(popular);
+
+	return popular;
 }
 
 GaimSavedStatus *

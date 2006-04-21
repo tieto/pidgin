@@ -154,7 +154,9 @@ const GList *gaim_savedstatuses_get_all(void);
 /**
  * Returns the n most popular saved statuses.  "Popularity" is
  * determined by when the last time a saved_status was used and
- * how many times it has been used.
+ * how many times it has been used.  If the current status would
+ * normally show up in this list, then it is omited and instead
+ * the "how_many+1" saved status will appear in the list.
  *
  * @param how_many The maximum number of saved statuses
  *                 to return, or '0' to get all saved
