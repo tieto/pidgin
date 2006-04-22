@@ -115,7 +115,9 @@ struct type3_message {
 #endif
 };
 
-gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain) {
+gchar *
+gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
+{
 	char *msg = g_malloc0(sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
 	struct type1_message *tmsg = (struct type1_message*)msg;
 	tmsg->protocol[0] = 'N';
@@ -138,7 +140,9 @@ gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain) {
 	return gaim_base64_encode((guchar*)msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
 }
 
-gchar *gaim_ntlm_parse_type2(gchar *type2, guint32 *flags) {
+gchar *
+gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags)
+{
 	gsize retlen;
 	static gchar nonce[8];
 	struct type2_message *tmsg = (struct type2_message*)gaim_base64_decode((char*)type2, &retlen);
@@ -148,7 +152,8 @@ gchar *gaim_ntlm_parse_type2(gchar *type2, guint32 *flags) {
 	return nonce;
 }
 
-static void setup_des_key(unsigned char key_56[], char *key)
+static void
+setup_des_key(const unsigned char key_56[], char *key)
 {
 	key[0] = key_56[0];
 	key[1] = ((key_56[0] << 7) & 0xFF) | (key_56[1] >> 1);
@@ -163,11 +168,13 @@ static void setup_des_key(unsigned char key_56[], char *key)
 /*
  * helper function for gaim cipher.c
  */
-static void des_ecb_encrypt(char *plaintext, char *result, char *key) {
+static void
+des_ecb_encrypt(char *plaintext, char *result, char *key)
+{
 	GaimCipher *cipher;
 	GaimCipherContext *context;
 	gsize outlen;
-	
+
 	cipher = gaim_ciphers_find_cipher("des");
 	context = gaim_cipher_context_new(cipher, NULL);
 	gaim_cipher_context_set_key(context, (guchar*)key);
@@ -180,7 +187,8 @@ static void des_ecb_encrypt(char *plaintext, char *result, char *key) {
  * 8 byte plaintext is encrypted with each key and the resulting 24
  * bytes are stored in the results array.
  */
-static void calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned char *results)
+static void
+calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned char *results)
 {
 	guchar key[8];
 	setup_des_key(keys, (char*)key);
@@ -193,7 +201,9 @@ static void calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned ch
 	des_ecb_encrypt((char*)plaintext, (char*)(results+16), (char*)key);
 }
 
-static void gensesskey(char *buffer, char *oldkey) {
+static void
+gensesskey(char *buffer, const char *oldkey)
+{
 	int i = 0;
 	if(oldkey == NULL) {
 		for(i=0; i<16; i++) {
