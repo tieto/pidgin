@@ -172,7 +172,7 @@ gaim_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 	ListenUPnPData *ldata = data;
 
 	if (!success) {
-		gaim_debug_warning("network", "Couldn't create UPnP mapping for...\n");
+		gaim_debug_info("network", "Couldn't create UPnP mapping\n");
 		if (ldata->retry) {
 			ldata->retry = FALSE;
 			ldata->adding = FALSE;
