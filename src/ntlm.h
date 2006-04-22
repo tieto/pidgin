@@ -33,7 +33,7 @@
  * @param domain The domain to authenticate to
  * @return base64 encoded string to send to the server. has to be freed with g_free
  */
-gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain);
+gchar *gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
 
 /**
  * Parses the ntlm type 2 message
@@ -41,7 +41,7 @@ gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain);
  * @param type2 String containing the base64 encoded type2 message
  * @return The nonce for use in message type3
  */
-gchar *gaim_ntlm_parse_type2(gchar *type2, guint32 *flags);
+gchar *gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags);
 
 /**
  * Generates a type3 message
