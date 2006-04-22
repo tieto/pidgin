@@ -624,7 +624,7 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 			"To: <%s>%s%s\r\n"
 			"Max-Forwards: 10\r\n"
 			"CSeq: %d %s\r\n"
-			"User-Agent: Gaim SIP/SIMPLE Plugin\r\n"
+			"User-Agent: Gaim/" VERSION "\r\n"
 			"Call-ID: %s\r\n"
 			"%s%s"
 			"Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n%s",
@@ -992,6 +992,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			if(sip->registerstatus != 2) {
 				gaim_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
 				if(sip->registrar.retries > 3) {
+					sip->gc->wants_to_die = TRUE;
 					gaim_connection_error(sip->gc, _("Wrong Password"));
 					return TRUE;
 				}
@@ -1581,6 +1582,7 @@ static void simple_login(GaimAccount *account)
 	gc = gaim_account_get_connection(account);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
 		return;
 	}
