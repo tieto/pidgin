@@ -174,23 +174,26 @@ GList *gaim_savedstatuses_get_popular(unsigned int how_many);
  * Returns the currently selected saved status.
  *
  * @return A pointer to the in-use GaimSavedStatus.
+ *         This function never returns NULL.
  */
 GaimSavedStatus *gaim_savedstatus_get_current(void);
-
-/**
- * Returns the status to be used when gaim is starting up
- *
- * @return A pointer to the startup GaimSavedStatus.
- */
-GaimSavedStatus *gaim_savedstatus_get_startup(void);
 
 /**
  * Returns the saved status that gets used when your
  * accounts become idle-away.
  *
  * @return A pointer to the idle-away GaimSavedStatus.
+ *         This function never returns NULL.
  */
 GaimSavedStatus *gaim_savedstatus_get_idleaway(void);
+
+/**
+ * Returns the status to be used when gaim is starting up
+ *
+ * @return A pointer to the startup GaimSavedStatus.
+ *         This function never returns NULL.
+ */
+GaimSavedStatus *gaim_savedstatus_get_startup(void);
 
 /**
  * Finds a saved status with the specified title.

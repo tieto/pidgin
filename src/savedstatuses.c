@@ -39,6 +39,11 @@
 #define MAX_TRANSIENTS 5
 
 /**
+ * The default message to use when the user becomes auto-away.
+ */
+#define DEFAULT_AUTOAWAY_MESSAGE _("I'm not here right now")
+
+/**
  * The information stores a snap-shot of the statuses of all
  * your accounts.  Basically these are your saved away messages.
  * There is an overall status and message that applies to
@@ -713,29 +718,6 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 }
 
 GaimSavedStatus *
-gaim_savedstatus_get_startup()
-{
-	int creation_time;
-	GaimSavedStatus *saved_status = NULL;
-
-	creation_time = gaim_prefs_get_int("/core/savedstatus/startup");
-
-	if (creation_time != 0)
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
-
-	if (saved_status == NULL)
-	{
-		/* We don't have a status to apply.
-		 * This may be the first login, or the user wants to
-		 * restore the "current" status */
-		saved_status = gaim_savedstatus_get_current();
-	}
-
-	return saved_status;
-}
-
-
-GaimSavedStatus *
 gaim_savedstatus_get_current()
 {
 	int creation_time;
@@ -749,7 +731,7 @@ gaim_savedstatus_get_current()
 	if (saved_status == NULL)
 	{
 		/*
-		 * We don't have a current saved statuses!  This is either a new
+		 * We don't have a current saved status!  This is either a new
 		 * Gaim user or someone upgrading from Gaim 1.5.0 or older, or
 		 * possibly someone who deleted the status they were currently
 		 * using?  In any case, add a default status.
@@ -766,29 +748,55 @@ GaimSavedStatus *
 gaim_savedstatus_get_idleaway()
 {
 	int creation_time;
-	GaimSavedStatus *saved_status;
+	GaimSavedStatus *saved_status = NULL;
 
 	creation_time = gaim_prefs_get_int("/core/savedstatus/idleaway");
 
-	if (creation_time == 0)
-	{
-		/*
-		 * We don't have a current saved statuses!  This is either a new
-		 * Gaim user or someone upgrading from Gaim 1.5.0 or older.  Add
-		 * a default status.
-		 */
-		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AWAY);
-		gaim_savedstatus_set_message(saved_status, _("I'm not here right now"));
-		gaim_prefs_set_int("/core/savedstatus/idleaway",
-						   gaim_savedstatus_get_creation_time(saved_status));
-	}
-	else
-	{
+	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+
+	if (saved_status == NULL)
+	{
+		/* We don't have a specified "idle" status!  Weird. */
+		saved_status = gaim_savedstatus_find_transient_by_type_and_message(
+				GAIM_STATUS_AWAY, DEFAULT_AUTOAWAY_MESSAGE);
+
+		if (saved_status == NULL)
+		{
+			saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AWAY);
+			gaim_savedstatus_set_message(saved_status, DEFAULT_AUTOAWAY_MESSAGE);
+			gaim_prefs_set_int("/core/savedstatus/idleaway",
+							   gaim_savedstatus_get_creation_time(saved_status));
+		}
 	}
 
 	return saved_status;
 }
+
+GaimSavedStatus *
+gaim_savedstatus_get_startup()
+{
+	int creation_time;
+	GaimSavedStatus *saved_status = NULL;
+
+	creation_time = gaim_prefs_get_int("/core/savedstatus/startup");
+
+	if (creation_time != 0)
+		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+
+	if (saved_status == NULL)
+	{
+		/*
+		 * We don't have a status to apply.
+		 * This may be the first login, or the user wants to
+		 * restore the "current" status.
+		 */
+		saved_status = gaim_savedstatus_get_current();
+	}
+
+	return saved_status;
+}
+
 
 GaimSavedStatus *
 gaim_savedstatus_find(const char *title)
