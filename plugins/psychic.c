@@ -15,9 +15,6 @@
 #include "prefs.h"
 
 
-#define DEBUG_INFO(a...) gaim_debug_info("psychic", a)
-
-
 #define PLUGIN_ID       "core-psychic"
 #define PLUGIN_NAME     N_("Psychic Mode")
 #define PLUGIN_SUMMARY  N_("Psychic mode for incoming conversation")
@@ -39,19 +36,19 @@ buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
 
   if(gaim_prefs_get_bool(PREF_STATUS) &&
      ! gaim_status_is_available(gaim_account_get_active_status(acct))) {
-    DEBUG_INFO("not available, doing nothing\n");
+    gaim_debug_info("psychic", "not available, doing nothing\n");
     return;
   }
 
   if(gaim_prefs_get_bool(PREF_BUDDIES) &&
      ! gaim_find_buddy(acct, name)) {
-    DEBUG_INFO("not in blist, doing nothing\n");
+    gaim_debug_info("psychic", "not in blist, doing nothing\n");
     return;
   }
 
   gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, acct);
   if(! gconv) {
-    DEBUG_INFO("no previous conversation exists\n");
+    gaim_debug_info("psychic", "no previous conversation exists\n");
     gconv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, name);
     gaim_conversation_present(gconv);
 
