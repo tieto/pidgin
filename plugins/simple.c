@@ -3,6 +3,9 @@
 #include "plugin.h"
 #include "version.h"
 
+/** Plugin id : type-author-name (to guarantee uniqueness) */
+#define SIMPLE_PLUGIN_ID "core-ewarmenhoven-simple"
+
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
@@ -30,7 +33,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
-	NULL,                                             /**< id             */
+	SIMPLE_PLUGIN_ID,                                 /**< id             */
 	N_("Simple Plugin"),                              /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
@@ -38,7 +41,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Tests to see that most things are working."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
