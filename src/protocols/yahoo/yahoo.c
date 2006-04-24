@@ -153,13 +153,11 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 		status = YAHOO_STATUS_TYPE_INVISIBLE;
 		break;
 	case YAHOO_STATUS_CUSTOM:
+	case YAHOO_STATUS_IDLE:
 		if (!f->away)
 			status = YAHOO_STATUS_TYPE_AVAILABLE;
 		else
 			status = YAHOO_STATUS_TYPE_AWAY;
-		break;
-	case YAHOO_STATUS_IDLE:
-		status = YAHOO_STATUS_TYPE_AVAILABLE;
 		break;
 	default:
 		gaim_debug_warning("yahoo", "Warning, unknown status %d\n", f->status);
@@ -3237,7 +3235,7 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	char *msg = NULL, *msg2 = NULL;
 	GaimStatus *status = NULL;
 
-	if (idle && yd->current_status != YAHOO_STATUS_IDLE)
+	if (idle && yd->current_status != YAHOO_STATUS_CUSTOM)
 		yd->current_status = YAHOO_STATUS_IDLE;
 	else if (!idle && yd->current_status == YAHOO_STATUS_IDLE) {
 		status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
