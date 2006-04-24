@@ -3428,7 +3428,7 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	len = g_utf8_strlen(normalized, -1);
 	log_attrs = g_new(PangoLogAttr, len + 1);
 
-	pango_get_log_attrs(normalized, len, -1, NULL, log_attrs, len + 1);
+	pango_get_log_attrs(normalized, strlen(normalized), -1, NULL, log_attrs, len + 1);
 
 	word = normalized;
 	result = TRUE;
