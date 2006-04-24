@@ -5384,7 +5384,7 @@ static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTre
 
 		presence_cmp = gaim_presence_compare(
 			gaim_buddy_get_presence(my_buddy),
-			gaim_buddy_get_presence(this_buddy));
+			this_buddy ? gaim_buddy_get_presence(this_buddy) : NULL);
 
 		if (this_buddy == NULL ||
 			(presence_cmp < 0 ||
