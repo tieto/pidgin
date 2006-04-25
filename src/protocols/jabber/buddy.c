@@ -362,6 +362,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	JabberStream *js = gc->proto_data;
 	xmlnode *vc_node;
 	char *avatar_file = NULL;
+	struct tag_attr *tag_attr;
 
 	if(js->avatar_hash)
 		g_free(js->avatar_hash);
@@ -375,6 +376,8 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 
 	if(!vc_node && avatar_file) {
 		vc_node = xmlnode_new("vCard");
+		for(tag_attr = vcard_tag_attr_list; tag_attr->attr != NULL; ++tag_attr)
+			xmlnode_set_attrib(vc_node, tag_attr->attr, tag_attr->value);
 	}
 
 	if(vc_node) {
