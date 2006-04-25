@@ -104,14 +104,9 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	while ((l = swboard->ack_list) != NULL)
 		msg_error_helper(swboard->cmdproc, l->data, MSN_MSG_ERROR_SB);
 
-	if (swboard->im_user != NULL)
-		g_free(swboard->im_user);
-
-	if (swboard->auth_key != NULL)
-		g_free(swboard->auth_key);
-
-	if (swboard->session_id != NULL)
-		g_free(swboard->session_id);
+	g_free(swboard->im_user);
+	g_free(swboard->auth_key);
+	g_free(swboard->session_id);
 
 	for (l = swboard->users; l != NULL; l = l->next)
 		g_free(l->data);

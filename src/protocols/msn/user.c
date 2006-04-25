@@ -64,23 +64,12 @@ msn_user_destroy(MsnUser *user)
 	if (user->msnobj != NULL)
 		msn_object_destroy(user->msnobj);
 
-	if (user->passport != NULL)
-		g_free(user->passport);
-
-	if (user->friendly_name != NULL)
-		g_free(user->friendly_name);
-
-	if (user->store_name != NULL)
-		g_free(user->store_name);
-
-	if (user->phone.home != NULL)
-		g_free(user->phone.home);
-
-	if (user->phone.work != NULL)
-		g_free(user->phone.work);
-
-	if (user->phone.mobile != NULL)
-		g_free(user->phone.mobile);
+	g_free(user->passport);
+	g_free(user->friendly_name);
+	g_free(user->store_name);
+	g_free(user->phone.home);
+	g_free(user->phone.work);
+	g_free(user->phone.mobile);
 
 	g_free(user);
 }
@@ -134,9 +123,7 @@ msn_user_set_passport(MsnUser *user, const char *passport)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->passport != NULL)
-		g_free(user->passport);
-
+	g_free(user->passport);
 	user->passport = g_strdup(passport);
 }
 
@@ -145,9 +132,7 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->friendly_name != NULL)
-		g_free(user->friendly_name);
-
+	g_free(user->friendly_name);
 	user->friendly_name = g_strdup(name);
 }
 
@@ -156,9 +141,7 @@ msn_user_set_store_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->store_name != NULL)
-		g_free(user->store_name);
-
+	g_free(user->store_name);
 	user->store_name = g_strdup(name);
 }
 

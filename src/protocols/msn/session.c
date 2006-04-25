@@ -70,17 +70,10 @@ msn_session_destroy(MsnSession *session)
 
 	msn_userlist_destroy(session->userlist);
 
-	if (session->passport_info.kv != NULL)
-		g_free(session->passport_info.kv);
-
-	if (session->passport_info.sid != NULL)
-		g_free(session->passport_info.sid);
-
-	if (session->passport_info.mspauth != NULL)
-		g_free(session->passport_info.mspauth);
-
-	if (session->passport_info.client_ip != NULL)
-		g_free(session->passport_info.client_ip);
+	g_free(session->passport_info.kv);
+	g_free(session->passport_info.sid);
+	g_free(session->passport_info.mspauth);
+	g_free(session->passport_info.client_ip);
 
 	if (session->passport_info.file != NULL)
 	{
