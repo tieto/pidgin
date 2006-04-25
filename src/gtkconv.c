@@ -2275,8 +2275,6 @@ redraw_icon(gpointer data)
 
 	GdkPixbuf *buf;
 	GdkPixbuf *scale;
-	GdkPixmap *pm;
-	GdkBitmap *bm;
 	gint delay;
 	int scale_width, scale_height;
 
@@ -2299,14 +2297,9 @@ redraw_icon(gpointer data)
 		    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
 		GDK_INTERP_BILINEAR);
 
-	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->u.im->icon), scale);
 	g_object_unref(G_OBJECT(scale));
-	gtk_image_set_from_pixmap(GTK_IMAGE(gtkconv->u.im->icon), pm, bm);
-	g_object_unref(G_OBJECT(pm));
 	gtk_widget_queue_draw(gtkconv->u.im->icon);
-
-	if (bm)
-		g_object_unref(G_OBJECT(bm));
 
 	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter);
 
@@ -5758,8 +5751,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GtkWidget *event;
 	GtkWidget *frame;
 	GdkPixbuf *scale;
-	GdkPixmap *pm;
-	GdkBitmap *bm;
 	int scale_width, scale_height;
 
 	GaimAccount *account;
@@ -5857,14 +5848,10 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 				    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
 				GDK_INTERP_BILINEAR);
 
-	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
-	g_object_unref(G_OBJECT(scale));
-
 	gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
 
 	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame),
-							  (bm ? GTK_SHADOW_NONE : GTK_SHADOW_IN));
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_NONE);
 	gtk_box_pack_start(GTK_BOX(gtkconv->u.im->icon_container), frame,
 					   FALSE, FALSE, 0);
 
@@ -5874,15 +5861,12 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 					 G_CALLBACK(icon_menu), gtkconv);
 	gtk_widget_show(event);
 
-	gtkconv->u.im->icon = gtk_image_new_from_pixmap(pm, bm);
+	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
 	gtk_widget_set_size_request(gtkconv->u.im->icon, scale_width, scale_height);
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
 
-	g_object_unref(G_OBJECT(pm));
-
-	if (bm)
-		g_object_unref(G_OBJECT(bm));
+	g_object_unref(G_OBJECT(scale));
 
 	gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox),
 			   gtkconv->u.im->icon_container, FALSE, FALSE, 0);
