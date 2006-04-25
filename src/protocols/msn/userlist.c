@@ -399,26 +399,14 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	if (list_op & MSN_LIST_AL_OP)
 	{
 		/* These are users who are allowed to see our status. */
-
-		if (g_slist_find_custom(account->deny, passport,
-								(GCompareFunc)strcmp))
-		{
-			gaim_privacy_deny_remove(gc->account, passport, TRUE);
-		}
-
+		gaim_privacy_deny_remove(account, passport, TRUE);
 		gaim_privacy_permit_add(account, passport, TRUE);
 	}
 
 	if (list_op & MSN_LIST_BL_OP)
 	{
 		/* These are users who are not allowed to see our status. */
-
-		if (g_slist_find_custom(account->permit, passport,
-								(GCompareFunc)strcmp))
-		{
-			gaim_privacy_permit_remove(gc->account, passport, TRUE);
-		}
-
+		gaim_privacy_permit_remove(account, passport, TRUE);
 		gaim_privacy_deny_add(account, passport, TRUE);
 	}
 
