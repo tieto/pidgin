@@ -5216,6 +5216,10 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message, Gaim
 			GAIM_MESSAGE_ERROR, time(NULL));
 
 	gaim_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+	/*
+	 * Evan S. suggested that maxvis really does mean "number of
+	 * visible characters" and not "number of bytes"
+	 */
 	if ((len > c->maxlen) || (len > c->maxvis)) {
 		g_free(buf2);
 		return -E2BIG;
