@@ -306,6 +306,9 @@ static GaimPluginInfo info =
 	NULL,
 	GAIM_PRIORITY_DEFAULT,
 	IDLE_PLUGIN_ID,
+
+	/* This is a cultural reference.  Dy'er Mak'er is a song by Led Zeppelin.
+	   If that doesn't translate well into your language, drop the 's before translating. */
 	N_("I'dle Mak'er"),
 	VERSION,
 	N_("Allows you to hand-configure how long you've been idle"),

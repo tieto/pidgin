@@ -138,6 +138,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 		g_string_append_printf(s, _("<br><b>Channel Cipher:</b> %s"),
 				       silc_cipher_get_name(channel->channel_key));
 	if (channel->hmac)
+		/* Definition of HMAC: http://en.wikipedia.org/wiki/HMAC */
 		g_string_append_printf(s, _("<br><b>Channel HMAC:</b> %s"),
 				       silc_hmac_get_name(channel->hmac));
 

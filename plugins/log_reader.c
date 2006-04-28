@@ -1832,6 +1832,9 @@ plugin_load(GaimPlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
+	/* The names of IM clients are marked for translation at the request of
+	   translators who wanted to transliterate them.  Many translators
+	   choose to leave them alone.  Choose what's best for your language. */
 	adium_logger = gaim_log_logger_new("adium", _("Adium"), 6,
 									   NULL,
 									   NULL,
@@ -1841,6 +1844,9 @@ plugin_load(GaimPlugin *plugin)
 									   adium_logger_size);
 	gaim_log_logger_add(adium_logger);
 
+	/* The names of IM clients are marked for translation at the request of
+	   translators who wanted to transliterate them.  Many translators
+	   choose to leave them alone.  Choose what's best for your language. */
 	fire_logger = gaim_log_logger_new("fire", _("Fire"), 6,
 									  NULL,
 									  NULL,
@@ -1850,6 +1856,9 @@ plugin_load(GaimPlugin *plugin)
 									  fire_logger_size);
 	gaim_log_logger_add(fire_logger);
 
+	/* The names of IM clients are marked for translation at the request of
+	   translators who wanted to transliterate them.  Many translators
+	   choose to leave them alone.  Choose what's best for your language. */
 	messenger_plus_logger = gaim_log_logger_new("messenger_plus", _("Messenger Plus!"), 6,
 												NULL,
 												NULL,
@@ -1859,6 +1868,9 @@ plugin_load(GaimPlugin *plugin)
 												messenger_plus_logger_size);
 	gaim_log_logger_add(messenger_plus_logger);
 
+	/* The names of IM clients are marked for translation at the request of
+	   translators who wanted to transliterate them.  Many translators
+	   choose to leave them alone.  Choose what's best for your language. */
 	msn_logger = gaim_log_logger_new("msn", _("MSN Messenger"), 6,
 									 NULL,
 									 NULL,
@@ -1868,6 +1880,9 @@ plugin_load(GaimPlugin *plugin)
 									 msn_logger_size);
 	gaim_log_logger_add(msn_logger);
 
+	/* The names of IM clients are marked for translation at the request of
+	   translators who wanted to transliterate them.  Many translators
+	   choose to leave them alone.  Choose what's best for your language. */
 	trillian_logger = gaim_log_logger_new("trillian", _("Trillian"), 6,
 										  NULL,
 										  NULL,

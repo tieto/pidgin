@@ -97,6 +97,7 @@ static struct developer retired_developers[] = {
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
+	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{"Jim Seymour",			N_("Jabber developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},

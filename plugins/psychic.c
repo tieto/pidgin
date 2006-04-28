@@ -54,6 +54,12 @@ buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
 
     if(gaim_prefs_get_bool(PREF_NOTICE)) {
       gaim_conversation_write(gconv, NULL,
+			      /* This is a quote from Star Wars.  You should
+			         probably not translate it literally.  If
+				 you can't find a fitting cultural reference
+				 in your language, consider translating
+				 something like this instead:
+				 "You feel a new message coming." */
 			      _("You feel a disturbance in the force..."),
 			      GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG | GAIM_MESSAGE_ACTIVE_ONLY,
 			      time(NULL));

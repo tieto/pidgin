@@ -1291,16 +1291,25 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 static void
 port_popup_cb(GtkWidget *w, GtkMenu *menu, gpointer data)
 {
-	GtkWidget *item;
+	GtkWidget *item1;
+	GtkWidget *item2;
 
-	item = gtk_menu_item_new_with_label(
-			_("you can see the butterflies mating"));
-	gtk_widget_show(item);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+	/* This is an easter egg.
+	   It means one of two things, both intended as humourus:
+	   A) your network is really slow and you have nothing better to do than
+	      look at butterflies.
+	   B)You are looking really closely at something that shouldn't matter. */
+	item1 = gtk_menu_item_new_with_label(_("If you look real closely"));
 
-	item = gtk_menu_item_new_with_label(_("If you look real closely"));
-	gtk_widget_show(item);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item);
+	/* This is an easter egg. See the comment on the previous line in the source. */
+	item2 = gtk_menu_item_new_with_label(_("you can see the butterflies mating"));
+
+	gtk_widget_show(item1);
+	gtk_widget_show(item2);
+
+	/* Prepend these in reverse order so they appear correctly. */
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item2);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), item1);
 }
 
 static void
