@@ -140,11 +140,11 @@ gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	return gaim_base64_encode((guchar*)msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
 }
 
-gchar *
+guint8 *
 gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 {
 	gsize retlen;
-	static gchar nonce[8];
+	static guint8 nonce[8];
 	struct type2_message *tmsg = (struct type2_message*)gaim_base64_decode((char*)type2, &retlen);
 	memcpy(nonce, tmsg->nonce, 8);
 	if(flags) *flags = tmsg->flags;
@@ -169,7 +169,7 @@ setup_des_key(const unsigned char key_56[], char *key)
  * helper function for gaim cipher.c
  */
 static void
-des_ecb_encrypt(char *plaintext, char *result, char *key)
+des_ecb_encrypt(const guint8 *plaintext, char *result, char *key)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -188,17 +188,17 @@ des_ecb_encrypt(char *plaintext, char *result, char *key)
  * bytes are stored in the results array.
  */
 static void
-calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned char *results)
+calc_resp(unsigned char *keys, const guint8 *plaintext, unsigned char *results)
 {
 	guchar key[8];
 	setup_des_key(keys, (char*)key);
-	des_ecb_encrypt((char*)plaintext, (char*)results, (char*)key);
+	des_ecb_encrypt(plaintext, (char*)results, (char*)key);
 
 	setup_des_key(keys+7, (char*)key);
-	des_ecb_encrypt((char*)plaintext, (char*)(results+8), (char*)key);
+	des_ecb_encrypt(plaintext, (char*)(results+8), (char*)key);
 
 	setup_des_key(keys+14, (char*)key);
-	des_ecb_encrypt((char*)plaintext, (char*)(results+16), (char*)key);
+	des_ecb_encrypt(plaintext, (char*)(results+16), (char*)key);
 }
 
 static void
@@ -215,12 +215,11 @@ gensesskey(char *buffer, const char *oldkey)
 }
 
 gchar *
-gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, gchar *nonce, guint32 *flags)
+gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags)
 {
 	char  lm_pw[14];
 	unsigned char lm_hpw[21];
 	char sesskey[16];
-	gchar *sessionnonce = nonce;
 	gchar key[8];
 	int msglen = sizeof(struct type3_message)+
 		strlen(domain) + strlen(username)+
@@ -284,13 +283,13 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 		lm_pw[idx] = 0;
 
 	setup_des_key((unsigned char*)lm_pw, (char*)key);
-	des_ecb_encrypt((char*)magic, (char*)lm_hpw, (char*)key);
+	des_ecb_encrypt(magic, (char*)lm_hpw, (char*)key);
 
 	setup_des_key((unsigned char*)(lm_pw+7), (char*)key);
-	des_ecb_encrypt((char*)magic, (char*)lm_hpw+8, (char*)key);
+	des_ecb_encrypt(magic, (char*)lm_hpw+8, (char*)key);
 
 	memset(lm_hpw+16, 0, 5);
-	calc_resp(lm_hpw, (guchar*)sessionnonce, lm_resp);
+	calc_resp(lm_hpw, nonce, lm_resp);
 
 	/* NTLM */
 	lennt = strlen(passw);
@@ -309,7 +308,7 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 	memset(nt_hpw+16, 0, 5);
 
 
-	calc_resp(nt_hpw, (guchar*)sessionnonce, nt_resp);
+	calc_resp(nt_hpw, nonce, nt_resp);
 	memcpy(tmp, lm_resp, 0x18);
 	tmp += 0x18;
 	memcpy(tmp, nt_resp, 0x18);

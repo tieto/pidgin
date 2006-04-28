@@ -1207,7 +1207,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		if(status == 407 /* Proxy Auth */) {
 			gchar *ntlm;
 			if((ntlm = g_strrstr((const gchar *)phb->read_buffer, "Proxy-Authenticate: NTLM "))) { /* Check for Type-2 */
-				gchar *nonce = ntlm;
+				gchar *tmp = ntlm;
+				guint8 *nonce;
 				gchar *domain = (gchar*)gaim_proxy_info_get_username(phb->gpi);
 				gchar *username;
 				gchar *request;
@@ -1230,8 +1231,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				*username = '\0';
 				username++;
 				ntlm += strlen("Proxy-Authenticate: NTLM ");
-				while(*nonce != '\r' && *nonce != '\0') nonce ++;
-				*nonce = '\0';
+				while(*tmp != '\r' && *tmp != '\0') tmp++;
+				*tmp = '\0';
 				nonce = gaim_ntlm_parse_type2(ntlm, NULL);
 				response = gaim_ntlm_gen_type3(username,
 					(gchar*) gaim_proxy_info_get_password(phb->gpi),

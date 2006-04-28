@@ -1,13 +1,13 @@
 /**
  * @file ntlm.h
- * 
+ *
  * gaim
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
  *
- * ntlm structs are taken from NTLM description on 
- * http://www.innovation.ch/java/ntlm.html 
- * 
+ * ntlm structs are taken from NTLM description on
+ * http://www.innovation.ch/java/ntlm.html
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -31,7 +31,8 @@
  *
  * @param hostname Your hostname
  * @param domain The domain to authenticate to
- * @return base64 encoded string to send to the server. has to be freed with g_free
+ * @return base64 encoded string to send to the server.  This should
+ *         be g_free'd by the caller.
  */
 gchar *gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
 
@@ -39,9 +40,10 @@ gchar *gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
  * Parses the ntlm type 2 message
  *
  * @param type2 String containing the base64 encoded type2 message
- * @return The nonce for use in message type3
+ * @return The nonce for use in message type3.  This is a statically
+ *         allocated 8 byte binary string.
  */
-gchar *gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags);
+guint8 *gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags);
 
 /**
  * Generates a type3 message
@@ -52,8 +54,9 @@ gchar *gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags);
  * @param domain The domain to authenticate against
  * @param nonce The nonce returned by gaim_ntlm_parse_type2
  * @param flags Pointer to the flags returned by gaim_ntlm_parse_type2
- * @return A base64 encoded type3 message
+ * @return A base64 encoded type3 message.  This should be g_free'd by
+ *         the caller.
  */
-gchar *gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, gchar *nonce, guint32 *flags);
+gchar *gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags);
 
 #endif /* _GAIM_NTLM_H */

@@ -278,7 +278,8 @@ static gchar *auth_header(struct simple_account_data *sip,
 		return ret;
 	} else if(auth->type == 2) { /* NTLM */
 		if(auth->nc == 3 && auth->nonce) {
-			ret = gaim_ntlm_gen_type3(authuser, sip->password, "gaim", authdomain, auth->nonce, &auth->flags);
+			/* TODO: Don't hardcode "gaim" as the hostname */
+			ret = gaim_ntlm_gen_type3(authuser, sip->password, "gaim", authdomain, (const guint8 *)auth->nonce, &auth->flags);
 			tmp = g_strdup_printf("NTLM qop=\"auth\", opaque=\"%s\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"%s\"\r\n", auth->opaque, auth->realm, auth->target, ret);
 			g_free(ret);
 			return tmp;
@@ -339,7 +340,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		while(parts[i]) {
 			gaim_debug_info("simple", "parts[i] %s\n", parts[i]);
 			if((tmp = parse_attribute("gssapi-data=\"", parts[i]))) {
-				auth->nonce = g_strdup(gaim_ntlm_parse_type2(tmp, &auth->flags));
+				auth->nonce = g_memdup(gaim_ntlm_parse_type2(tmp, &auth->flags), 8);
 				g_free(tmp);
 			}
 			if((tmp = parse_attribute("targetname=\"",
