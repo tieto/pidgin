@@ -897,7 +897,7 @@ des_key_schedule (const guint8 * rawkey, guint32 * subkey)
  *  Does not check for weak keys.
  **/
 static void
-des_set_key (GaimCipherContext *context, guchar * key)
+des_set_key (GaimCipherContext *context, const guchar * key)
 {
 	struct _des_ctx *ctx = gaim_cipher_context_get_data(context);
 	int i;
@@ -1734,7 +1734,7 @@ gaim_cipher_context_get_salt_size(GaimCipherContext *context) {
 }
 
 void
-gaim_cipher_context_set_key(GaimCipherContext *context, guchar *key) {
+gaim_cipher_context_set_key(GaimCipherContext *context, const guchar *key) {
 	GaimCipher *cipher = NULL;
 
 	g_return_if_fail(context);

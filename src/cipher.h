@@ -98,7 +98,7 @@ struct _GaimCipherOps {
 	size_t (*get_salt_size)(GaimCipherContext *context);
 
 	/** The set key function */
-	void (*set_key)(GaimCipherContext *context, guchar *key);
+	void (*set_key)(GaimCipherContext *context, const guchar *key);
 
 	/** The get key size function */
 	size_t (*get_key_size)(GaimCipherContext *context);
@@ -358,7 +358,7 @@ size_t gaim_cipher_context_get_salt_size(GaimCipherContext *context);
  * @param context The context who's key to set
  * @param key     The key
  */
-void gaim_cipher_context_set_key(GaimCipherContext *context, guchar *key);
+void gaim_cipher_context_set_key(GaimCipherContext *context, const guchar *key);
 
 /**
  * Gets the key size for a context
