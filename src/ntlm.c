@@ -115,6 +115,7 @@ struct type3_message {
 #endif
 };
 
+/* TODO: Will this work on both little-endian and big-endian machines? */
 gchar *
 gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 {
@@ -152,8 +153,12 @@ gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 	return nonce;
 }
 
+/**
+ * Create a 64bit DES key by taking a 56bit key and adding
+ * a parity bit after every 7th bit.
+ */
 static void
-setup_des_key(const unsigned char key_56[], char *key)
+setup_des_key(const guint8 key_56[], guint8 *key)
 {
 	key[0] = key_56[0];
 	key[1] = ((key_56[0] << 7) & 0xFF) | (key_56[1] >> 1);
@@ -169,7 +174,7 @@ setup_des_key(const unsigned char key_56[], char *key)
  * helper function for gaim cipher.c
  */
 static void
-des_ecb_encrypt(const guint8 *plaintext, char *result, char *key)
+des_ecb_encrypt(const guint8 *plaintext, char *result, const guint8 *key)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -177,7 +182,7 @@ des_ecb_encrypt(const guint8 *plaintext, char *result, char *key)
 
 	cipher = gaim_ciphers_find_cipher("des");
 	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_set_key(context, (guchar*)key);
+	gaim_cipher_context_set_key(context, key);
 	gaim_cipher_context_encrypt(context, (guchar*)plaintext, 8, (guchar*)result, &outlen);
 	gaim_cipher_context_destroy(context);
 }
@@ -188,17 +193,17 @@ des_ecb_encrypt(const guint8 *plaintext, char *result, char *key)
  * bytes are stored in the results array.
  */
 static void
-calc_resp(unsigned char *keys, const guint8 *plaintext, unsigned char *results)
+calc_resp(guint8 *keys, const guint8 *plaintext, unsigned char *results)
 {
-	guchar key[8];
-	setup_des_key(keys, (char*)key);
-	des_ecb_encrypt(plaintext, (char*)results, (char*)key);
+	guint8 key[8];
+	setup_des_key(keys, key);
+	des_ecb_encrypt(plaintext, (char*)results, key);
 
-	setup_des_key(keys+7, (char*)key);
-	des_ecb_encrypt(plaintext, (char*)(results+8), (char*)key);
+	setup_des_key(keys+7, key);
+	des_ecb_encrypt(plaintext, (char*)(results+8), key);
 
-	setup_des_key(keys+14, (char*)key);
-	des_ecb_encrypt(plaintext, (char*)(results+16), (char*)key);
+	setup_des_key(keys+14, key);
+	des_ecb_encrypt(plaintext, (char*)(results+16), key);
 }
 
 static void
@@ -220,7 +225,7 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 	char  lm_pw[14];
 	unsigned char lm_hpw[21];
 	char sesskey[16];
-	gchar key[8];
+	guint8 key[8];
 	int msglen = sizeof(struct type3_message)+
 		strlen(domain) + strlen(username)+
 		strlen(hostname) + 24 +24 + ((flags) ? 16 : 0);
@@ -282,11 +287,11 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 	for (; idx<14; idx++)
 		lm_pw[idx] = 0;
 
-	setup_des_key((unsigned char*)lm_pw, (char*)key);
-	des_ecb_encrypt(magic, (char*)lm_hpw, (char*)key);
+	setup_des_key((unsigned char*)lm_pw, key);
+	des_ecb_encrypt(magic, (char*)lm_hpw, key);
 
-	setup_des_key((unsigned char*)(lm_pw+7), (char*)key);
-	des_ecb_encrypt(magic, (char*)lm_hpw+8, (char*)key);
+	setup_des_key((unsigned char*)(lm_pw+7), key);
+	des_ecb_encrypt(magic, (char*)lm_hpw+8, key);
 
 	memset(lm_hpw+16, 0, 5);
 	calc_resp(lm_hpw, nonce, lm_resp);
