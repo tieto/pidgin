@@ -75,6 +75,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
 														 * handheld, pc, phone,
 														 * web */
+			xmlnode_set_atttrib(identity, "name", PACKAGE);
 
 			SUPPORT_FEATURE("jabber:iq:last")
 			SUPPORT_FEATURE("jabber:iq:oob")
