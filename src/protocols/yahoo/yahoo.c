@@ -3751,19 +3751,19 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Yahoo Japan"), "yahoojp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Pager host"), "server", YAHOO_PAGER_HOST);
+	option = gaim_account_option_string_new(_("Pager server"), "server", YAHOO_PAGER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Japan Pager host"), "serverjp", YAHOOJP_PAGER_HOST);
+	option = gaim_account_option_string_new(_("Japan Pager server"), "serverjp", YAHOOJP_PAGER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("File transfer host"), "xfer_host", YAHOO_XFER_HOST);
+	option = gaim_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Japan file transfer host"), "xferjp_host", YAHOOJP_XFER_HOST);
+	option = gaim_account_option_string_new(_("Japan file transfer server"), "xferjp_host", YAHOOJP_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
@@ -3779,10 +3779,10 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("YCHT host"), "ycht-server", YAHOO_YCHT_HOST);
+	option = gaim_account_option_string_new(_("Yahoo Chat server"), "ycht-server", YAHOO_YCHT_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("YCHT port"), "ycht-port", YAHOO_YCHT_PORT);
+	option = gaim_account_option_int_new(_("Yahoo Chat port"), "ycht-port", YAHOO_YCHT_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 

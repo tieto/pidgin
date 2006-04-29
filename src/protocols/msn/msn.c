@@ -2046,7 +2046,7 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Login server"), "server",
+	option = gaim_account_option_string_new(_("Server"), "server",
 											MSN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

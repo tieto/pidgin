@@ -6454,10 +6454,10 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Auth host"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
+	option = gaim_account_option_string_new(_("Server"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("Auth port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
+	option = gaim_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
