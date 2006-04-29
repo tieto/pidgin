@@ -119,6 +119,7 @@ struct type3_message {
 gchar *
 gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 {
+	gchar *tmp;
 	char *msg = g_malloc0(sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
 	struct type1_message *tmsg = (struct type1_message*)msg;
 	tmsg->protocol[0] = 'N';
@@ -138,7 +139,9 @@ gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	memcpy(msg+sizeof(struct type1_message),hostname,strlen(hostname));
 	memcpy(msg+sizeof(struct type1_message)+strlen(hostname),domain,strlen(domain));
 
-	return gaim_base64_encode((guchar*)msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
+	tmp = gaim_base64_encode((guchar*)msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
+	g_free(msg);
+	return tmp;
 }
 
 guint8 *
