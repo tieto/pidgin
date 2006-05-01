@@ -70,10 +70,12 @@ send_typed(gpointer data)
 	GaimConnection *gc;
 	const char *name;
 
+	g_return_val_if_fail(conv != NULL, FALSE);
+	
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if (conv != NULL && gc != NULL && name != NULL) {
+	if (gc != NULL && name != NULL) {
 		gaim_conv_im_set_type_again(GAIM_CONV_IM(conv), TRUE);
 
 		serv_send_typing(gc, name, GAIM_TYPED);
