@@ -129,14 +129,6 @@ delete_win_cb(GtkWidget *w, GdkEventAny *e, GaimGtkPounceDialog *dialog)
 }
 
 static void
-delete_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
-{
-	gaim_pounce_destroy(dialog->pounce);
-
-	delete_win_cb(NULL, NULL, dialog);
-}
-
-static void
 cancel_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	delete_win_cb(NULL, NULL, dialog);
@@ -788,16 +780,6 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
-
-	/* Delete button */
-	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	if (cur_pounce == NULL)
-		gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(delete_cb), dialog);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
