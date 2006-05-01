@@ -253,7 +253,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
 		char *msnobj_data;
-		const char *sha1c;
 		const char *file_name;
 		char *content;
 		gsize len;
@@ -273,7 +272,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		msnobj_data = (char *)gaim_base64_decode(context, &len);
 		obj = msn_object_new_from_string(msnobj_data);
 		type = msn_object_get_type(obj);
-		sha1c = msn_object_get_sha1c(obj);
 		g_free(msnobj_data);
 
 		if (!(type == MSN_OBJECT_USERTILE))
@@ -1095,10 +1093,8 @@ msn_request_user_display(MsnUser *user)
 	else
 	{
 		MsnObject *my_obj = NULL;
-		const char *filename = NULL;
 		gchar *data = NULL;
 		gsize len = 0;
-		const char *my_info = NULL;
 		GSList *sl, *list;
 
 #ifdef MSN_DEBUG_UD
@@ -1109,12 +1105,11 @@ msn_request_user_display(MsnUser *user)
 
 		if (my_obj != NULL)
 		{
-			filename = msn_object_get_real_location(my_obj);
-			my_info = msn_object_get_sha1c(my_obj);
-		}
+			const char *filename = msn_object_get_real_location(my_obj);
 
-		if (filename != NULL)
-			g_file_get_contents(filename, &data, &len, NULL);
+			if (filename != NULL)
+				g_file_get_contents(filename, &data, &len, NULL);
+		}
 
 		/* TODO: I think we need better buddy icon core functions. */
 		gaim_buddy_icons_set_for_user(account, user->passport, (void *)data, len);

@@ -401,12 +401,10 @@ t_msn_xfer_init(GaimXfer *xfer)
 	if ((fp = g_fopen(filename, "rb")) == NULL)
 	{
 		GaimAccount *account;
-		GaimConnection *gc;
 		const char *who;
 		char *msg;
 
 		account = slplink->session->account;
-		gc = gaim_account_get_connection(account);
 		who = slplink->remote_user;
 
 		msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
@@ -1354,11 +1352,8 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 
 	if (b)
 	{
-		GaimPresence *presence;
 		GString *str = g_string_new("");
 		char *tmp;
-
-		presence = gaim_buddy_get_presence(b);
 
 		if (b->alias && b->alias[0])
 		{

@@ -408,7 +408,6 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 
 void jabber_chat_request_room_configure(JabberChat *chat) {
 	JabberIq *iq;
-	xmlnode *query;
 	char *room_jid;
 
 	if(!chat)
@@ -424,7 +423,6 @@ void jabber_chat_request_room_configure(JabberChat *chat) {
 
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
 			"http://jabber.org/protocol/muc#owner");
-	query = xmlnode_get_child(iq->node, "query");
 	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
 	xmlnode_set_attrib(iq->node, "to", room_jid);
@@ -946,7 +944,7 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *wh
 static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberChat *chat;
-	xmlnode *query, *x, *error;
+	xmlnode *query, *x;
 	int id = GPOINTER_TO_INT(data);
 
 	if(!(chat = jabber_chat_find_by_id(js, id)))
@@ -956,7 +954,7 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	 * support this request */
 	chat->xhtml = TRUE;
 
-	if((error = xmlnode_get_child(packet, "error"))) {
+	if(xmlnode_get_child(packet, "error")) {
 		return;
 	}
 

@@ -89,24 +89,22 @@ static void
 lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	MsnGroup *group;
-	GaimGroup *g;
 	const char *name;
 	int group_id;
 
 	group_id = atoi(cmd->params[0]);
 	name = gaim_url_decode(cmd->params[1]);
 
-	group = msn_group_new(session->userlist, group_id, name);
+	msn_group_new(session->userlist, group_id, name);
 
 	/* HACK */
 	if (group_id == 0)
 		/* Group of ungroupped buddies */
 		return;
 
-	if ((g = gaim_find_group(name)) == NULL)
+	if ((gaim_find_group(name)) == NULL)
 	{
-		g = gaim_group_new(name);
+		GaimGroup *g = gaim_group_new(name);
 		gaim_blist_add_group(g, NULL);
 	}
 }

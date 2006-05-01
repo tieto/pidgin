@@ -78,10 +78,8 @@ void
 msn_user_update(MsnUser *user)
 {
 	GaimAccount *account;
-	GaimConnection *gc;
 
 	account = user->userlist->session->account;
-	gc = gaim_account_get_connection(account);
 
 	if (user->status != NULL)
 		gaim_prpl_got_user_status(account, user->passport, user->status, NULL);

@@ -557,7 +557,6 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 static void
 adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	MsnGroup *group;
 	MsnSession *session;
 	gint group_id;
 	const char *group_name;
@@ -568,7 +567,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	group_name = gaim_url_decode(cmd->params[2]);
 
-	group = msn_group_new(session->userlist, group_id, group_name);
+	msn_group_new(session->userlist, group_id, group_name);
 
 	/* There is a user that must me moved to this group */
 	if (cmd->trans->data)

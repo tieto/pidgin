@@ -956,7 +956,6 @@ _get_details_resp_send_invite(NMUser *user, NMERR_T ret_code,
 	GaimConnection *gc;
 	NMUserRecord *user_record = resp_data;
 	char *err;
-	const char *display_id;
 	GSList *cnode;
 	NMConference *conference;
 	gpointer chat;
@@ -966,7 +965,6 @@ _get_details_resp_send_invite(NMUser *user, NMERR_T ret_code,
 		return;
 
 	gc = gaim_account_get_connection(user->client_data);
-	display_id = nm_user_record_get_display_id(user_record);
 
 	if (ret_code == NM_OK) {
 

@@ -2383,15 +2383,15 @@ static void yahoo_login_page_hash_iter(const char *key, const char *val, GString
 {
 	if (!strcmp(key, "passwd"))
 		return;
-	url = g_string_append_c(url, '&');
-	url = g_string_append(url, key);
-	url = g_string_append_c(url, '=');
+	g_string_append_c(url, '&');
+	g_string_append(url, key);
+	g_string_append_c(url, '=');
 	if (!strcmp(key, ".save") || !strcmp(key, ".js"))
-		url = g_string_append_c(url, '1');
+		g_string_append_c(url, '1');
 	else if (!strcmp(key, ".challenge"))
-		url = g_string_append(url, val);
+		g_string_append(url, val);
 	else
-		url = g_string_append(url, gaim_url_encode(val));
+		g_string_append(url, gaim_url_encode(val));
 }
 
 static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
@@ -2669,7 +2669,6 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	YahooFriend *f;
 	GaimPresence *presence;
 	GaimStatus *status;
-	const char *status_id;
 
 	if (!b || !(account = b->account) || !(gc = gaim_account_get_connection(account)) ||
 					     !(yd = gc->proto_data))
@@ -2683,7 +2682,6 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 
 	presence = gaim_buddy_get_presence(b);
 	status = gaim_presence_get_active_status(presence);
-	status_id = gaim_status_get_id(status);
 
 	if (gaim_presence_is_online(presence) == FALSE) {
 		*se = "offline";
@@ -3383,14 +3381,13 @@ static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo
 static void yahoo_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	YahooFriend *f;
         struct yahoo_packet *pkt;
 	GSList *buddies, *l;
 	GaimGroup *g;
 	gboolean remove = TRUE;
 	char *cg;
 
-	if (!(f = yahoo_friend_find(gc, buddy->name)))
+	if (!(yahoo_friend_find(gc, buddy->name)))
 		return;
 
 	buddies = gaim_find_buddies(gaim_connection_get_account(gc), buddy->name);

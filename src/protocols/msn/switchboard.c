@@ -899,7 +899,6 @@ control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	GaimConnection *gc;
 	MsnSwitchBoard *swboard;
-	const char *value;
 	char *passport;
 
 	gc = cmdproc->session->account->gc;
@@ -907,7 +906,7 @@ control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	passport = msg->remote_user;
 
 	if (swboard->current_users == 1 &&
-		(value = msn_message_get_attr(msg, "TypingUser")) != NULL)
+		msn_message_get_attr(msg, "TypingUser") != NULL)
 	{
 		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
 						GAIM_TYPING);

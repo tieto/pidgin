@@ -281,10 +281,8 @@ static void yahoo_xfer_start(GaimXfer *xfer)
 
 static void yahoo_xfer_end(GaimXfer *xfer)
 {
-	GaimAccount *account;
 	struct yahoo_xfer_data *xfer_data;
 
-	account   = gaim_xfer_get_account(xfer);
 	xfer_data = xfer->data;
 
 	if (xfer_data)
@@ -400,11 +398,9 @@ static gssize yahoo_xfer_write(const guchar *buffer, size_t size, GaimXfer *xfer
 
 static void yahoo_xfer_cancel_send(GaimXfer *xfer)
 {
-	GaimAccount *account;
 	struct yahoo_xfer_data *xfer_data;
 
 	xfer_data = xfer->data;
-	account   = gaim_xfer_get_account(xfer);
 
 	if (xfer_data)
 		yahoo_xfer_data_free(xfer_data);
@@ -413,10 +409,8 @@ static void yahoo_xfer_cancel_send(GaimXfer *xfer)
 
 static void yahoo_xfer_cancel_recv(GaimXfer *xfer)
 {
-	GaimAccount *account;
 	struct yahoo_xfer_data *xfer_data;
 
-	account   = gaim_xfer_get_account(xfer);
 	xfer_data = xfer->data;
 
 	if (xfer_data)

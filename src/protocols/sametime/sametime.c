@@ -1176,7 +1176,6 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
 
   struct mwGaimPluginData *pd = data;
   struct mwSametimeList *stlist;
-  struct mwSession *s;
 
   struct mwGetBuffer *b;
 
@@ -1192,8 +1191,6 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
 
   stlist = mwSametimeList_new();
   mwSametimeList_get(b, stlist);
-
-  s = mwService_getSession(MW_SERVICE(srvc));
 
   /* merge or synch depending on preferences */
   if(BLIST_PREF_IS_MERGE() || BLIST_PREF_IS_STORE()) {
@@ -2615,8 +2612,6 @@ static void im_recv_mime(struct mwConversation *conv,
 			 struct mwGaimPluginData *pd,
 			 const char *data) {
 
-  struct mwIdBlock *idb;
-
   GHashTable *img_by_cid;
   GList *images;
 
@@ -2624,8 +2619,6 @@ static void im_recv_mime(struct mwConversation *conv,
 
   GaimMimeDocument *doc;
   const GList *parts;
-
-  idb = mwConversation_getTarget(conv);
 
   img_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
   images = NULL;

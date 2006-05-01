@@ -564,7 +564,6 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 						size_t size, char **ret_buf, size_t *ret_size,
 						gboolean *error)
 {
-	GaimConnection *gc;
 	const char *s, *c;
 	char *header, *body;
 	const char *body_start;
@@ -584,8 +583,6 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 #endif
 
 	httpconn->waiting_response = FALSE;
-
-	gc = gaim_account_get_connection(httpconn->session->account);
 
 	/* Healthy defaults. */
 	body = NULL;

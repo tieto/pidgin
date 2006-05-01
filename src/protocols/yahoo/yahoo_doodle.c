@@ -116,7 +116,7 @@ void yahoo_doodle_initiate(GaimConnection *gc, const char *name)
 		/* Insert this 'session' in the list.  At this point, it's only a
 		 * requested session.
 		 */
-		wb = gaim_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+		gaim_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
 	}
 
 	/* NOTE Perhaps some careful handling of remote assumed established
@@ -193,7 +193,7 @@ void yahoo_doodle_command_got_request(GaimConnection *gc, const char *from)
 		dialog_message, NULL, NULL, NULL);
 		*/
 
-		wb = gaim_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
+		gaim_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
 
 		yahoo_doodle_command_send_request(gc, from);
 	}
