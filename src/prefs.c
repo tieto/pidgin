@@ -953,23 +953,42 @@ gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname)
 		struct gaim_pref *oldpref, *newpref;
 
 		oldpref = find_pref(oldname);
-		newpref = find_pref(newname);
 
 		/* it's already been renamed, call off the cats */
 		if(!oldpref)
 			return;
 
+		if (oldpref->type != GAIM_PREF_BOOLEAN)
+		{
+			gaim_debug_error("prefs", "Unable to rename %s to %s: old pref not a boolean\n", oldname, newname);
+			return;
+		}
+
+		if (oldpref->first_child != NULL) /* can't rename parents */
+		{
+			gaim_debug_error("prefs", "Unable to rename %s to %s: can't rename parents\n", oldname, newname);
+			return;
+		}
+
+
+		newpref = find_pref(newname);
+
+		if (newpref == NULL)
+		{
+			gaim_debug_error("prefs", "Unable to rename %s to %s: new pref not created\n", oldname, newname);
+			return;
+		}
+
+		if (oldpref->type != newpref->type)
+		{
+			gaim_debug_error("prefs", "Unable to rename %s to %s: differing types\n", oldname, newname);
+			return;
+		}
+
 		gaim_debug_info("prefs", "Renaming and toggling %s to %s\n", oldname, newname);
-
-		g_return_if_fail(newpref != NULL); /* the new one needs to be created */
-		g_return_if_fail(oldpref->type == newpref->type);
-		g_return_if_fail(oldpref->type == GAIM_PREF_BOOLEAN);
-		g_return_if_fail(oldpref->first_child == NULL); /* can't rename parents */
-
 		gaim_prefs_set_bool(newname, !(oldpref->value.boolean));
 
 		remove_pref(oldpref);
-
 }
 
 guint
