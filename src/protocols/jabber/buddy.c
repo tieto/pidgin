@@ -450,7 +450,6 @@ void jabber_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 static void
 jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
 {
-	GaimAccount *account;
 	xmlnode *vc_node;
 	GaimRequestField *field;
 	const char *text;
@@ -488,13 +487,13 @@ jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
 	p = xmlnode_to_str(vc_node, NULL);
 	xmlnode_free(vc_node);
 
-	account = gaim_connection_get_account(gc);
+	if (gc != NULL) {
+		GaimAccount *account = gaim_connection_get_account(gc);
 
-	if (account != NULL) {
-		gaim_account_set_user_info(account, p);
-
-		if (gc != NULL)
+		if (account != NULL) {
+			gaim_account_set_user_info(account, p);
 			serv_set_info(gc, p);
+		}
 	}
 
 	g_free(p);
