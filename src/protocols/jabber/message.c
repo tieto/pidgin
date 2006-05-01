@@ -30,8 +30,6 @@
 #include "message.h"
 #include "xmlnode.h"
 
-#define JABBER_TYPING_NOTIFY_INT 15
-
 void jabber_message_free(JabberMessage *jm)
 {
         g_free(jm->from);
@@ -79,14 +77,24 @@ static void handle_chat(JabberMessage *jm)
 	}
 
 	if(!jm->xhtml && !jm->body) {
-		if(jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
+		if(JM_STATE_COMPOSING == jm->chat_state)
 			serv_got_typing(jm->js->gc, from, 0, GAIM_TYPING);
+		else if(JM_STATE_PAUSED == jm->chat_state)
+			serv_got_typing(jm->js->gc, from, 0, GAIM_TYPED);
 		else
 			serv_got_typing_stopped(jm->js->gc, from);
 	} else {
 		if(jbr) {
-			if(jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
+			if(JM_TS_JEP_0085 == (jm->typing_style & JM_TS_JEP_0085)) {
+				jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+			} else {
+				jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+			}
+
+			if(JM_TS_JEP_0022 == (jm->typing_style & JM_TS_JEP_0022)) {
 				jbr->capabilities |= JABBER_CAP_COMPOSING;
+			}
+
 			if(jbr->thread_id)
 				g_free(jbr->thread_id);
 			jbr->thread_id = g_strdup(jbr->thread_id);
@@ -94,6 +102,7 @@ static void handle_chat(JabberMessage *jm)
 		serv_got_im(jm->js->gc, from, jm->xhtml ? jm->xhtml : jm->body, 0,
 				jm->sent);
 	}
+
 
 	g_free(from);
 	jabber_id_free(jid);
@@ -286,6 +295,21 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "html")) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body"))
 				jm->xhtml = xmlnode_to_str(child, NULL);
+		} else if(!strcmp(child->name, "active")) {
+			jm->chat_state = JM_STATE_ACTIVE;
+			jm->typing_style |= JM_TS_JEP_0085;
+		} else if(!strcmp(child->name, "composing")) {
+			jm->chat_state = JM_STATE_COMPOSING;
+			jm->typing_style |= JM_TS_JEP_0085;
+		} else if(!strcmp(child->name, "paused")) {
+			jm->chat_state = JM_STATE_PAUSED;
+			jm->typing_style |= JM_TS_JEP_0085;
+		} else if(!strcmp(child->name, "inactive")) {
+			jm->chat_state = JM_STATE_INACTIVE;
+			jm->typing_style |= JM_TS_JEP_0085;
+		} else if(!strcmp(child->name, "gone")) {
+			jm->chat_state = JM_STATE_GONE;
+			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
@@ -303,8 +327,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "x")) {
 			const char *xmlns = xmlnode_get_attrib(child, "xmlns");
 			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
-				if(xmlnode_get_child(child, "composing"))
-					jm->events |= JABBER_MESSAGE_EVENT_COMPOSING;
+				if(xmlnode_get_child(child, "composing")) {
+					if(jm->chat_state == JM_STATE_ACTIVE)
+						jm->chat_state = JM_STATE_COMPOSING;
+					jm->typing_style |= JM_TS_JEP_0022;
+				}
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
@@ -411,11 +438,35 @@ void jabber_message_send(JabberMessage *jm)
 		xmlnode_insert_data(child, jm->thread_id, -1);
 	}
 
-	if(jm->events || (!jm->body && !jm->xhtml && !jm->subject)) {
+	if(JM_TS_JEP_0022 == (jm->typing_style & JM_TS_JEP_0022)) {
 		child = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(child, "xmlns", "jabber:x:event");
-		if(jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
+		if(jm->chat_state == JM_STATE_COMPOSING || jm->body)
 			xmlnode_new_child(child, "composing");
+	}
+
+	if(JM_TS_JEP_0085 == (jm->typing_style & JM_TS_JEP_0085)) {
+		child = NULL;
+		switch(jm->chat_state)
+		{
+			case JM_STATE_ACTIVE:
+				child = xmlnode_new_child(message, "active");
+				break;
+			case JM_STATE_COMPOSING:
+				child = xmlnode_new_child(message, "composing");
+				break;
+			case JM_STATE_PAUSED:
+				child = xmlnode_new_child(message, "paused");
+				break;
+			case JM_STATE_INACTIVE:
+				child = xmlnode_new_child(message, "inactive");
+				break;
+			case JM_STATE_GONE:
+				child = xmlnode_new_child(message, "gone");
+				break;
+		}
+		if(child)
+			xmlnode_set_attrib(child, "xmlns", "http://jabber.org/protocol/chatstates");
 	}
 
 	if(jm->subject) {
@@ -467,11 +518,24 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	jm = g_new0(JabberMessage, 1);
 	jm->js = gc->proto_data;
 	jm->type = JABBER_MESSAGE_CHAT;
-	jm->events = JABBER_MESSAGE_EVENT_COMPOSING;
+	jm->chat_state = JM_STATE_ACTIVE;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
-	if(jbr && jbr->thread_id)
-		jm->thread_id = jbr->thread_id;
+	jm->chat_state = JM_STATE_ACTIVE;
+
+	if(jbr) {
+		if(jbr->thread_id)
+			jm->thread_id = jbr->thread_id;
+
+		if(jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED) {
+			jm->typing_style |= JM_TS_JEP_0085;
+			/* if(JABBER_CHAT_STATES_UNKNOWN == jbr->chat_states)
+			   jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED; */
+		}
+
+		if(jbr->chat_states != JABBER_CHAT_STATES_SUPPORTED)
+			jm->typing_style |= JM_TS_JEP_0022;
+	}
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
 
@@ -537,21 +601,35 @@ int jabber_send_typing(GaimConnection *gc, const char *who, int typing)
 
 	g_free(resource);
 
-	if(!jbr || !(jbr->capabilities & JABBER_CAP_COMPOSING))
+	if(!jbr || !((jbr->capabilities & JABBER_CAP_COMPOSING) || (jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED)))
 		return 0;
 
+	/* TODO: figure out threading */
 	jm = g_new0(JabberMessage, 1);
 	jm->js = gc->proto_data;
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
 
-	if(typing == GAIM_TYPING)
-		jm->events = JABBER_MESSAGE_EVENT_COMPOSING;
+	if(GAIM_TYPING == typing)
+		jm->chat_state = JM_STATE_COMPOSING;
+	else if(GAIM_TYPED == typing)
+		jm->chat_state = JM_STATE_PAUSED;
+	else
+		jm->chat_state = JM_STATE_ACTIVE;
+
+	if(jbr->chat_states != JABBER_CHAT_STATES_UNSUPPORTED) {
+		jm->typing_style |= JM_TS_JEP_0085;
+		/* if(JABBER_CHAT_STATES_UNKNOWN == jbr->chat_states)
+			jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED; */
+	}
+
+	if(jbr->chat_states != JABBER_CHAT_STATES_SUPPORTED)
+		jm->typing_style |= JM_TS_JEP_0022;
 
 	jabber_message_send(jm);
 	jabber_message_free(jm);
 
-	return JABBER_TYPING_NOTIFY_INT;
+	return 0;
 }
 

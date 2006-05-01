@@ -61,6 +61,16 @@ typedef struct _JabberBuddyResource {
 	char *status;
 	JabberCapabilities capabilities;
 	char *thread_id;
+	enum {
+		JABBER_CHAT_STATES_UNKNOWN,
+		JABBER_CHAT_STATES_UNSUPPORTED,
+		JABBER_CHAT_STATES_SUPPORTED
+	} chat_states;
+	struct {
+		char *version;
+		char *name;
+		char *os;
+	} client;
 } JabberBuddyResource;
 
 void jabber_buddy_free(JabberBuddy *jb);

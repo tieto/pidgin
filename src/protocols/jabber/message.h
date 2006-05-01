@@ -48,8 +48,17 @@ typedef struct _JabberMessage {
 	char *error;
 	char *thread_id;
 	enum {
-		JABBER_MESSAGE_EVENT_COMPOSING = 1 << 1
-	} events;
+		JM_TS_NONE = 0,
+		JM_TS_JEP_0022 = 0x1,
+		JM_TS_JEP_0085 = 0x2
+	} typing_style;
+	enum {
+		JM_STATE_ACTIVE,
+		JM_STATE_COMPOSING,
+		JM_STATE_PAUSED,
+		JM_STATE_INACTIVE,
+		JM_STATE_GONE
+	} chat_state;
 	GList *etc;
 } JabberMessage;
 
