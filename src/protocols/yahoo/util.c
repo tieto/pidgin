@@ -222,7 +222,7 @@ static void _font_tags_fix_size(GString *tag, GString *dest)
 	char *x, *end;
 	int size;
 
-	if (((x = strstr(tag->str, "size"))) && ((x = strchr(tag->str, '=')))) {
+	if (((x = strstr(tag->str, "size"))) && ((x = strchr(x, '=')))) {
 		while (*x && !g_ascii_isdigit(*x))
 			x++;
 		if (*x) {
