@@ -915,17 +915,33 @@ gaim_prefs_rename(const char *oldname, const char *newname)
 	struct gaim_pref *oldpref, *newpref;
 
 	oldpref = find_pref(oldname);
-	newpref = find_pref(newname);
 
 	/* it's already been renamed, call off the dogs */
 	if(!oldpref)
 		return;
 
-	gaim_debug_info("prefs", "Renaming %s to %s\n", oldname, newname);
+	if (oldpref->first_child != NULL) /* can't rename parents */
+	{
+		gaim_debug_error("prefs", "Unable to rename %s to %s: can't rename parents\n", oldname, newname);
+		return;
+	}
 
-	g_return_if_fail(newpref != NULL); /* the new one needs to be created first */
-	g_return_if_fail(oldpref->type == newpref->type);
-	g_return_if_fail(oldpref->first_child == NULL); /* can't rename parents */
+
+	newpref = find_pref(newname);
+
+	if (newpref == NULL)
+	{
+		gaim_debug_error("prefs", "Unable to rename %s to %s: new pref not created\n", oldname, newname);
+		return;
+	}
+
+	if (oldpref->type != newpref->type)
+	{
+		gaim_debug_error("prefs", "Unable to rename %s to %s: differing types\n", oldname, newname);
+		return;
+	}
+
+	gaim_debug_info("prefs", "Renaming %s to %s\n", oldname, newname);
 
 	switch(oldpref->type) {
 		case GAIM_PREF_NONE:
