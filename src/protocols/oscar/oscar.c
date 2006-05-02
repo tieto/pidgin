@@ -3650,12 +3650,22 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (info->gender != 0)
 		oscar_string_append(gc->account, str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
-		struct tm tm;
-		tm.tm_mday = (int)info->birthday;
-		tm.tm_mon = (int)info->birthmonth-1;
-		tm.tm_year = (int)info->birthyear-1900;
+		/* Initialize the struct properly or strftime() will crash
+		 * on some systems (Debian Sarge AMD64). */
+		time_t t = time(NULL);
+		struct tm *tm = localtime(&t);
+
+		tm->tm_mday = (int)info->birthday;
+		tm->tm_mon  = (int)info->birthmonth - 1;
+		tm->tm_year = (int)info->birthyear - 1900;
+
+		/* To be 100% sure that the fields are re-normalized.
+		 * If you're sure strftime() ALWAYS does this EVERYWHERE,
+		 * feel free to remove it.  --rlaager */
+		mktime(tm);
+
 		oscar_string_append(gc->account, str, "\n<br>", _("Birthday"),
-				    gaim_date_format_short(&tm));
+				    gaim_date_format_short(tm));
 	}
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
