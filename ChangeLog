@@ -56,7 +56,7 @@ version 2.0.0:
 
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
-	* Use libao for playing sounds via NAS instead of accessing NAS directly
+	* Use GStreamer for playing sounds, instead of libao
 	* A volume control in the preferences (Casey Harkins)
 
 	Log Viewer:
