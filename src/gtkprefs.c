@@ -1354,7 +1354,7 @@ sound_changed2_cb(const char *name, GaimPrefType type,
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
 
-#ifdef USE_AO
+#ifdef USE_GSTREAMER
 static void
 sound_changed3_cb(const char *name, GaimPrefType type,
 				  gconstpointer value, gpointer data)
@@ -1368,7 +1368,7 @@ sound_changed3_cb(const char *name, GaimPrefType type,
 				 !strcmp(method, "esd") ||
 				 !strcmp(method, "nas"));
 }
-#endif /* USE_AO */
+#endif /* USE_GSTREAMER */
 #endif /* !_WIN32 */
 
 
@@ -1470,7 +1470,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 					  G_CALLBACK(sound_chosen_cb), NULL, GINT_TO_POINTER(sound_row_sel));
 }
 
-#ifdef USE_AO
+#ifdef USE_GSTREAMER
 static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
 {
 	if(val < 15) {
@@ -1553,7 +1553,7 @@ sound_page()
 	dd = gaim_gtk_prefs_dropdown(vbox, _("_Method:"), GAIM_PREF_STRING,
 			"/gaim/gtk/sound/method",
 			_("Console beep"), "beep",
-#ifdef USE_AO
+#ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
 			"Arts", "arts",
 			"ESD", "esd",
@@ -1600,7 +1600,7 @@ sound_page()
 	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
 				   "/core/sound/while_away", vbox);
 
-#ifdef USE_AO
+#ifdef USE_GSTREAMER
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 

@@ -159,6 +159,17 @@ int main()
 ]
 )
 
+dnl #######################################################################
+dnl # GStreamer
+dnl #######################################################################
+enable_gst=yes
+PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10, ,enable_gst=no)
+AC_SUBST(GSTREAMER_CFLAGS)
+AC_SUBST(GSTREAMER_LIBS)
+AC_ARG_ENABLE(gstreamer,[  --disable-gstreamer     compile with GStreamer audio support],enable_gst=no)
+if test "x$enable_gst" = "xyes"; then
+  AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for making sounds])
+fi
 
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
@@ -468,7 +479,6 @@ AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
-AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
 AC_ARG_ENABLE(mono,    [  --enable-mono           compile with Mono runtime support],,enable_mono=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
@@ -1530,23 +1540,6 @@ if test "$enable_gtkspell" = yes ; then
 	fi
 fi
 
-if test "$enable_audio" = yes ; then
-	GAIM_PATH_AO(found_ao_lib=true)
-
-	AM_PATH_AUDIOFILE([0.2.0], found_af_lib=true)
-
-	if test "$found_ao_lib" = "true" -a "$found_af_lib" = "true"; then
-		SOUND_LIBS="$SOUND_LIBS $AO_LIBS $AUDIOFILE_LIBS"
-		AC_SUBST(SOUND_LIBS)
-		AC_DEFINE(USE_AO, 1, [Define if we're using libao and libaudiofile for sound playing])
-		enable_audio=yes
-	else
-		enable_audio=no
-	fi
-else
-	enable_audio=no
-fi
-
 if test "$ac_cv_cygwin" = yes ; then
 	LDADD="$LDADD -static"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
@@ -1767,12 +1760,12 @@ echo
 echo UI Library.................... : GTK+ 2.x
 echo SSL Library/Libraries......... : $msg_ssl
 echo
+echo Build with GStreamer support.. : $enable_gst
 echo Build with Plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono
 echo Build with Perl support....... : $enable_perl
 echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
-echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
 if test x$enable_dbus = xyes ; then

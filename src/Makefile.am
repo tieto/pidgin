@@ -336,7 +336,7 @@ gaim_LDADD = \
 	@LIBOBJS@ \
 	$(GTK_LIBS) \
 	$(DBUS_LIBS) \
-	$(SOUND_LIBS) \
+	$(GSTREAMER_LIBS) \
 	$(STATIC_LINK_LIBS) \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
@@ -351,8 +351,7 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/plugins \
-	$(AUDIOFILE_CFLAGS) \
-	$(AO_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(DBUS_CFLAGS) \

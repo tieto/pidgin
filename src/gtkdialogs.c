@@ -456,10 +456,10 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 
 #ifndef _WIN32
-#ifdef USE_AO
-	g_string_append(str, "    <b>libao:</b> Enabled<br/>");
+#ifdef USE_GSTREAMER
+	g_string_append(str, "    <b>gstreamer:</b> Enabled<br/>");
 #else
-	g_string_append(str, "    <b>libao:</b> Disabled<br/>");
+	g_string_append(str, "    <b>gstreamer:</b> Disabled<br/>");
 #endif
 #endif
 

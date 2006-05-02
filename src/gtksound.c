@@ -31,10 +31,9 @@
 #include <mmsystem.h>
 #endif
 
-#ifdef USE_AO
-# include <ao/ao.h>
-# include <audiofile.h>
-#endif /* USE_AO */
+#ifdef USE_GSTREAMER
+# include <gst/gst.h>
+#endif /* USE_GSTREAMER */
 
 #include "debug.h"
 #include "notify.h"
@@ -55,7 +54,6 @@ struct gaim_sound_event {
 
 static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
-static gboolean sound_initialized = FALSE;
 
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "login.wav"},
@@ -71,10 +69,6 @@ static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{NULL, "pounce_default", "alert.wav"},
 	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav"}
 };
-
-#ifdef USE_AO
-static int ao_driver = -1;
-#endif /* USE_AO */
 
 static gboolean
 unmute_login_sounds_cb(gpointer data)
@@ -235,35 +229,6 @@ account_signon_cb(GaimConnection *gc, gpointer data)
 	mute_login_sounds_timeout = gaim_timeout_add(10000, unmute_login_sounds_cb, NULL);
 }
 
-static void
-_pref_sound_method_changed(const char *name, GaimPrefType type,
-						   gconstpointer val, gpointer data)
-{
-	if(type != GAIM_PREF_STRING || strcmp(name, "/gaim/gtk/sound/method"))
-		return;
-
-	sound_initialized = TRUE;
-
-#ifdef USE_AO
-	ao_driver = -1;
-
-	if(!strcmp(val, "esd"))
-		ao_driver = ao_driver_id("esd");
-	else if(!strcmp(val, "arts"))
-		ao_driver = ao_driver_id("arts");
-	else if(!strcmp(val, "nas"))
-		ao_driver = ao_driver_id("nas");
-	else if(!strcmp(val, "automatic"))
-		ao_driver = ao_default_driver_id();
-
-	if(ao_driver != -1) {
-		ao_info *info = ao_driver_info(ao_driver);
-		gaim_debug_info("sound",
-						"Sound output driver loaded: %s\n", info->name);
-	}
-#endif /* USE_AO */
-}
-
 const char *
 gaim_gtk_sound_get_event_option(GaimSoundEventID event)
 {
@@ -332,13 +297,10 @@ gaim_gtk_sound_init(void)
 	gaim_prefs_add_string("/gaim/gtk/sound/method", "automatic");
 	gaim_prefs_add_int("/gaim/gtk/sound/volume", 50);
 
-#ifdef USE_AO
+#ifdef USE_GSTREAMER
 	gaim_debug_info("sound", "Initializing sound output drivers.\n");
-	ao_initialize();
-#endif /* USE_AO */
-
-	gaim_prefs_connect_callback(gaim_gtk_sound_get_handle(), "/gaim/gtk/sound/method",
-			_pref_sound_method_changed, NULL);
+	gst_init(NULL, NULL);
+#endif /* USE_GSTREAMER */
 
 	gaim_signal_connect(blist_handle, "buddy-signed-on",
 						gtk_sound_handle, GAIM_CALLBACK(buddy_state_cb),
@@ -369,15 +331,14 @@ gaim_gtk_sound_init(void)
 static void
 gaim_gtk_sound_uninit(void)
 {
-#ifdef USE_AO
-	ao_shutdown();
+#ifdef USE_GSTREAMER
+	gst_deinit();
 #endif
-	sound_initialized = FALSE;
 
 	gaim_signals_disconnect_by_handle(gaim_gtk_sound_get_handle());
 }
 
-#ifdef USE_AO
+#ifdef USE_GSTREAMER
 static gboolean
 expire_old_child(gpointer data)
 {
@@ -395,79 +356,46 @@ expire_old_child(gpointer data)
     return FALSE; /* do not run again */
 }
 
-/* Uncomment the following line to enable debugging of clipping in the scaling. */
-/* #define DEBUG_CLIPPING */
-
-static void
-scale_pcm_data(char *data, int nframes, int bits, int channels,
-			   double intercept, double minclip, double maxclip,
-			   float scale)
+static gboolean
+bus_call (GstBus     *bus,
+	  GstMessage *msg,
+  	  gpointer    data)
 {
-	int i;
-	float v;
-	gint16 *data16 = (gint16*)data;
-	gint32 *data32 = (gint32*)data;
-	gint64 *data64 = (gint64*)data;
+	GstElement *play = data;
+	GError *err;
 
-	switch(bits) {
-		case 16:
-			for(i = 0; i < nframes * channels; i++) {
-				v = ((data16[i] - intercept) * scale) + intercept;
-#ifdef DEBUG_CLIPPING
-				if (v > maxclip)
-					printf("Clipping detected!\n");
-				else if (v < minclip)
-					printf("Clipping detected!\n");
-#endif
-				v = CLAMP(v, minclip, maxclip);
-				data16[i]=(gint16)v;
-			}
-			break;
-		case 32:
-			for(i = 0; i < nframes * channels; i++) {
-				v = ((data32[i] - intercept) * scale) + intercept;
-#ifdef DEBUG_CLIPPING
-				if (v > maxclip)
-					printf("Clipping detected!\n");
-				else if (v < minclip)
-					printf("Clipping detected!\n");
-#endif
-				v = CLAMP(v, minclip, maxclip);
-				data32[i]=(gint32)v;
-			}
-			break;
-		case 64:
-			for(i = 0; i < nframes * channels; i++) {
-				v = ((data64[i] - intercept) * scale) + intercept;
-#ifdef DEBUG_CLIPPING
-				if (v > maxclip)
-					printf("Clipping detected!\n");
-				else if (v < minclip)
-					printf("Clipping detected!\n");
-#endif
-				v = CLAMP(v, minclip, maxclip);
-				data64[i]=(gint64)v;
-			}
-			break;
-		default:
-			gaim_debug_warning("gtksound", "Scaling of %d bit pcm data not supported.\n", bits);
-			break;
+	switch (GST_MESSAGE_TYPE (msg)) {
+	case GST_MESSAGE_EOS:
+		gst_element_set_state(play, GST_STATE_NULL);
+		gst_object_unref(GST_OBJECT(play));
+		break;
+	case GST_MESSAGE_ERROR:
+		gst_message_parse_error(msg, &err, NULL);
+		gaim_debug_error("gstreamer", err->message);
+		g_error_free(err);
+		break;
+	case GST_MESSAGE_WARNING:
+		gst_message_parse_warning(msg, &err, NULL);
+		gaim_debug_warning("gstreamer", err->message);
+		g_error_free(err);
+		break;
+	default:
+		break;
 	}
+	return TRUE;
 }
-#endif /* USE_AO */
+#endif
 
 static void
 gaim_gtk_sound_play_file(const char *filename)
 {
 	const char *method;
-#ifdef USE_AO
-	pid_t pid;
-	AFfilehandle file;
-	int volume = 50;
+#ifdef USE_GSTREAMER
+	float volume;
+	char *uri;
+	GstElement *sink = NULL;
+	GstElement *play = NULL;
 #endif
-
-	if (!sound_initialized)
-		gaim_prefs_trigger_callback("/gaim/gtk/sound/method");
 
 	if (gaim_prefs_get_bool("/gaim/gtk/sound/mute"))
 		return;
@@ -519,91 +447,37 @@ gaim_gtk_sound_play_file(const char *filename)
 		g_free(command);
 		return;
 	}
-#ifdef USE_AO
-	volume = gaim_prefs_get_int("/gaim/gtk/sound/volume");
-	volume = CLAMP(volume, 0, 100);
-
-	pid = fork();
-	if (pid < 0)
-		return;
-	else if (pid == 0) {
-		/* Child process */
-
-		/* calculating the scaling factor:
-		 *   scale(x)   = (x+30)^2 / 6400
-		 *   scale(0)   = 0.1406   (quiet)
-		 *   scale(50)  = 1.0      (no scaling, normal volume)
-		 *   scale(100) = 2.6406   (roughly maximized without clipping)
-		 */
-		float scale = ( ((float)volume + 30) * ((float)volume + 30) ) / 6400;
-		file = afOpenFile(filename, "rb", NULL);
-		if(file) {
-			ao_device *device;
-			ao_sample_format format;
-			int in_fmt;
-			int bytes_per_frame;
-			double slope, intercept, minclip, maxclip;
-
-			format.rate = afGetRate(file, AF_DEFAULT_TRACK);
-			format.channels = afGetChannels(file, AF_DEFAULT_TRACK);
-			afGetSampleFormat(file, AF_DEFAULT_TRACK, &in_fmt,
-					&format.bits);
-
-			afGetPCMMapping(file, AF_DEFAULT_TRACK, &slope,
-					&intercept, &minclip, &maxclip);
-
-			/* XXX: libao doesn't seem to like 8-bit sounds, so we'll
-			 * let libaudiofile make them a bit better for us */
-			if(format.bits == 8)
-				format.bits = 16;
-
-			afSetVirtualSampleFormat(file, AF_DEFAULT_TRACK,
-					AF_SAMPFMT_TWOSCOMP, format.bits);
-
-#if G_BYTE_ORDER == G_BIG_ENDIAN
-			format.byte_format = AO_FMT_BIG;
-			afSetVirtualByteOrder(file, AF_DEFAULT_TRACK,
-					AF_BYTEORDER_BIGENDIAN);
-#elif G_BYTE_ORDER == G_LITTLE_ENDIAN
-			format.byte_format = AO_FMT_LITTLE;
-			afSetVirtualByteOrder(file, AF_DEFAULT_TRACK,
-					AF_BYTEORDER_LITTLEENDIAN);
-#else
-#warning Unknown endianness
-#endif
-
-			bytes_per_frame = format.bits * format.channels / 8;
-
-			device = ao_open_live(ao_driver, &format, NULL);
-
-			if(device) {
-				int frames_read;
-				char buf[4096];
-				int buf_frames = sizeof(buf) / bytes_per_frame;
-
-				while((frames_read = afReadFrames(file, AF_DEFAULT_TRACK,
-								buf, buf_frames))) {
-					/* no need to scale at volume == 50 */
-					if(volume != 50)
-						scale_pcm_data(buf, frames_read, format.bits, format.channels,
-									   intercept, minclip, maxclip, scale);
-					if(!ao_play(device, buf, frames_read * bytes_per_frame))
-						break;
-				}
-				ao_close(device);
-			}
-			afCloseFile(file);
+#ifdef USE_GSTREAMER
+	volume = (float)(CLAMP(gaim_prefs_get_int("/gaim/gtk/sound/volume"),0,100)) / 50;
+	if (!strcmp(method, "automatic")) {
+		if (gaim_running_gnome()) {
+			sink = gst_element_factory_make("gconfaudiosink", "sink");
 		}
-		ao_shutdown();
-		_exit(0);
-	} else {
-		/* Parent process */
-		gaim_timeout_add(PLAY_SOUND_TIMEOUT, expire_old_child, GINT_TO_POINTER(pid));
+	} else if (!strcmp(method, "esd")) {
+		sink = gst_element_factory_make("esdsink", "sink");
+	} else if (!strcmp(method, "arts")) {
+		sink = gst_element_factory_make("artssink", "sink");
+	} else if (!strcmp(method, "nas")) {
+		sink = gst_element_factory_make("nassink", "sink");
 	}
-#else /* USE_AO */
+
+	uri = g_strdup_printf("file://%s", filename);
+	play = gst_element_factory_make("playbin", "play");
+	
+	g_object_set(G_OBJECT(play), "uri", uri,
+		                     "volume", volume, 
+		                     "audio-sink", sink, NULL);
+
+	gst_bus_add_watch(gst_pipeline_get_bus(GST_PIPELINE(play)),
+			  bus_call, play);
+	gst_element_set_state(play, GST_STATE_PLAYING);
+	
+	g_free(uri);
+	
+#else /* USE_GSTREAMER */
 	gdk_beep();
 	return;
-#endif /* USE_AO */
+#endif /* USE_GSTREAMER */
 #else /* _WIN32 */
 	gaim_debug_info("sound", "Playing %s\n", filename);
 
