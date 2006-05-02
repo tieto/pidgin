@@ -500,7 +500,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 }
 
 static void
-show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer null)
+show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, GtkWidget *dialog)
 {
 	GtkTreeSelection *sel;
 	GtkTreeIter iter;
@@ -518,7 +518,7 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 		return;
 
 	/* Now show the pref-dialog for the plugin */
-	plugin_dialog_response_cb(NULL, GAIM_RESPONSE_CONFIGURE, sel);
+	plugin_dialog_response_cb(dialog, GAIM_RESPONSE_CONFIGURE, sel);
 }
 
 void gaim_gtk_plugin_dialog_show()
@@ -561,7 +561,7 @@ void gaim_gtk_plugin_dialog_show()
 	event_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
 
 	g_signal_connect(G_OBJECT(event_view), "row-activated",
-				G_CALLBACK(show_plugin_prefs_cb), event_view);
+				G_CALLBACK(show_plugin_prefs_cb), plugin_dialog);
 
 	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-load", plugin_dialog,
 	                    GAIM_CALLBACK(plugin_load_cb), event_view);
