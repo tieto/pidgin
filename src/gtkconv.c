@@ -1732,46 +1732,27 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 {
 	GaimGtkConversation *next_gtkconv = NULL;
 	GaimGtkWindow *win;
-	int index, i, total, found = 0;
+	int initial, i, total, diff;
 
 	win   = gtkconv->win;
-	index = gtk_notebook_page_num(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont);
+	initial = gtk_notebook_page_num(GTK_NOTEBOOK(win->notebook),
+	                                gtkconv->tab_cont);
 	total = gaim_gtk_conv_window_get_gtkconv_count(win);
+	/* By adding total here, the moduli calculated later will always have two
+	 * positive arguments. x % y where x < 0 is not guaranteed to return a
+	 * positive number.
+	 */
+	diff = (forward ? 1 : -1) + total;
 
-	/* First check the tabs after (forward) or before (!forward) this position. */
-	for (i = forward ? index + 1 : index - 1;
-		 !found && (next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i));
-		 forward ? i++ : i--) {
-		if (i == -1) {
-			break;
-		}
-
+	for (i = (initial + diff) % total; i != initial; i = (i + diff) % total) {
+		next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i);
 		if (next_gtkconv->unseen_state > 0)
-			found = 1;
+			break;
 	}
 
-	if (!found) {
-		/* Now check from the beginning up to (forward) or end back to (!forward) this position. */
-		for (i = forward ? 0 : total - 1;
-			 !found && (forward ? i < index : i >= 0) &&
-			 (next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i));
-			 forward ? i++ : i--) {
-
-			if (next_gtkconv->unseen_state > 0)
-				found = 1;
-		}
-
-		if (!found) {
-			/* Okay, just grab the next (forward) or previous (!forward) conversation tab. */
-			if (forward) {
-				index++;
-			}
-			else {
-				index = (index == 0) ? total - 1 : index - 1;
-			}
-			if (!(next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, index)))
-				next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, 0);
-		}
+	if (i == initial) { /* no new messages */
+		i = (i + diff) % total;
+		next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i);
 	}
 
 	if (next_gtkconv != NULL && next_gtkconv != gtkconv)
