@@ -384,7 +384,7 @@ gaim_plugin_oscar_convert_to_utf8(const gchar *data, gsize datalen, const char *
 		else
 			ret = g_convert(data, datalen, "UTF-8", charsetstr, NULL, NULL, &err);
 		if (err != NULL) {
-			gaim_debug_warning("oscar", "Conversation from %s failed: %s.\n",
+			gaim_debug_warning("oscar", "Conversion from %s failed: %s.\n",
 							   charsetstr, err->message);
 			g_error_free(err);
 		}
