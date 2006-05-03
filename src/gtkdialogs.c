@@ -457,9 +457,9 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 
 #ifndef _WIN32
 #ifdef USE_GSTREAMER
-	g_string_append(str, "    <b>gstreamer:</b> Enabled<br/>");
+	g_string_append(str, "    <b>GStreamer:</b> Enabled<br/>");
 #else
-	g_string_append(str, "    <b>gstreamer:</b> Disabled<br/>");
+	g_string_append(str, "    <b>GStreamer:</b> Disabled<br/>");
 #endif
 #endif
 
