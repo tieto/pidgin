@@ -4424,6 +4424,10 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	gaim_request_close_with_handle(gtkconv);
 	gaim_notify_close_with_handle(gtkconv);
 
+	/* Close the "Find" dialog if it's open */
+	if (gtkconv->dialogs.search)
+		gtk_widget_destroy(gtkconv->dialogs.search);
+
 	gtk_widget_destroy(gtkconv->tab_cont);
 	g_object_unref(gtkconv->tab_cont);
 
