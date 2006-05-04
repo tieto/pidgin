@@ -208,7 +208,13 @@ flap_connection_destroy_cb(gpointer data)
 	g_free(conn);
 
 	account = gaim_connection_get_account(od->gc);
-	if ((od->oscar_connections == NULL) && (!account->disconnecting))
+
+	/*
+	 * TODO: If we don't have a SNAC_FAMILY_LOCATE connection then
+	 * we should try to request one instead of disconnecting.
+	 */
+	if (!account->disconnecting && ((od->oscar_connections == NULL)
+			|| (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
 	{
 		/* No more FLAP connections!  Sign off this GaimConnection! */
 		const gchar *tmp;
