@@ -146,7 +146,7 @@ set_account_unidle(GaimAccount *account)
 
 	gaim_debug_info("idle", "Setting %s unidle\n",
 			   gaim_account_get_username(account));
-	gaim_presence_set_idle(presence, FALSE, time(NULL));
+	gaim_presence_set_idle(presence, FALSE, 0);
 }
 
 /*
