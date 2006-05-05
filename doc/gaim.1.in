@@ -48,9 +48,14 @@ Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
 .B \-h, \-\-help
 Print this help and exit.
 .TP
-.B \-n, \-\-loginwin
-Don't automatically login when \fBgaim\fR starts.  Show the \fBLogin\fR
-window instead.
+.B \-n, \-\-nologin
+Don't automatically login when \fBgaim\fR starts.  Sets all accounts to
+Offline.
+.TP
+.B \-l, \-\-login[=\fINAME\fR,\fINAME\fR,...]
+Sign in the comma-separated list of accounts provided, in addition to the
+accounts that would be logged in anyway.  If you do not specify such a
+comma-separated list, your first account will be signed in.
 .TP
 .B \-v, \-\-version
 Display the version information window.
