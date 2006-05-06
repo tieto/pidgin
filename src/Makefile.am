@@ -199,6 +199,8 @@ lib_LTLIBRARIES = libgaim-client.la
 
 libgaim_client_la_SOURCES = gaim-client.c gaim-client.h
 
+libgaim_client_la_LIBADD = $(DBUS_LIBS)
+
 gaim-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
