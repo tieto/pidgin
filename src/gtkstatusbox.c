@@ -914,7 +914,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
 	gtk_list_store_append(status_box->store, &(status_box->iter));
-	gtk_gaim_status_box_refresh(status_box);
 
 	gtk_container_add(GTK_CONTAINER(status_box->toggle_button), status_box->hbox);
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->cell_view, TRUE, TRUE, 0);
@@ -985,6 +984,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	cache_pixbufs(status_box);
 	gtk_gaim_status_box_regenerate(status_box);
+	gtk_gaim_status_box_refresh(status_box);
 
 	gaim_prefs_connect_callback(status_box, "/core/savedstatus/current",
 								current_status_pref_changed_cb, status_box);
