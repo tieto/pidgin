@@ -113,7 +113,7 @@ static struct translator current_translators[] = {
 	{N_("Bengali"),             "bn", "Samia Nimatullah", "mailsamia2001@yahoo.com"},
 	{N_("Bosnian"),             "bs", "Lejla Hadzialic", "lejlah@gmail.com"},
 	{N_("Catalan"),             "ca", "Josep Puigdemont", "tradgnome@softcatala.org"},
-	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "her@softcatala.org"},
+	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),               "cs", "Miloslav Trmac", "mitr@volny.cz"},
 	{N_("Danish"),              "da", "Morten Brix Pedersen", "morten@wtf.dk"},
