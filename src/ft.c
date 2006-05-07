@@ -800,7 +800,7 @@ gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 }
 
 gssize
-gaim_xfer_write(GaimXfer *xfer, const guchar *buffer, size_t size)
+gaim_xfer_write(GaimXfer *xfer, const guchar *buffer, gsize size)
 {
 	gssize r, s;
 
