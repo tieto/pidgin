@@ -865,11 +865,6 @@ gaim_account_destroy(GaimAccount *account)
 
 	gaim_debug_info("account", "Destroying account %p\n", account);
 
-	if (gaim_account_is_connected(account))
-		gaim_account_disconnect(account);
-
-	gaim_debug_info("account", "Continuing to destroy account %p\n", account);
-
 	for (l = gaim_get_conversations(); l != NULL; l = l->next)
 	{
 		GaimConversation *conv = (GaimConversation *)l->data;
@@ -2131,6 +2126,9 @@ gaim_accounts_delete(GaimAccount *account)
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	g_return_if_fail(account != NULL);
+
+	if (gaim_account_is_connected(account))
+		gaim_account_disconnect(account);
 
 	gaim_notify_close_with_handle(account);
 	gaim_request_close_with_handle(account);
