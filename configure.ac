@@ -189,12 +189,13 @@ AC_SUBST(MEANWHILE_LIBS)
 dnl #######################################################################
 dnl # Check for Howl headers (for Bonjour)
 dnl #######################################################################
-AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [Compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
-AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [Compile the Bonjour plugin against the Howl libs in DIR])], [ac_howl_libs="$withval"], [ac_howl_libs="no"])
+AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
+AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [compile the Bonjour plugin against the Howl libs in DIR])], [ac_howl_libs="$withval"], [ac_howl_libs="no"])
 HOWL_CFLAGS=""
 HOWL_LIBS=""
 
 dnl Attempt to autodetect Howl
+dnl TODO Check avahi-compat-howl!!!
 PKG_CHECK_MODULES(HOWL, howl, [
 		howlincludes="yes"
 		howllibs="yes"
@@ -227,8 +228,8 @@ AC_SUBST(HOWL_LIBS)
 dnl #######################################################################
 dnl # Check for SILC client includes and libraries
 dnl #######################################################################
-AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [Compile the SILC plugin against includes in DIR])], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
-AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [Compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
+AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [compile the SILC plugin against includes in DIR])], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
+AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
 SILC_CFLAGS=""
 SILC_LIBS=""
 if test -n "$with_silc_includes" || test -n "$with_silc_libs"; then
@@ -294,8 +295,8 @@ fi
 dnl #######################################################################
 dnl # Check for gadugadu client includes and libraries
 dnl #######################################################################
-AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [Compile the gadugadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
-AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [Compile the gadugadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
+AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the gadugadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
+AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the gadugadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
@@ -363,7 +364,7 @@ AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
 DYNAMIC_PRPLS=all
-AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="")
+AC_ARG_WITH(static-prpls, [AC_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 	DYNAMIC_PRPLS=""
 fi
@@ -398,7 +399,7 @@ for i in $STATIC_PRPLS ; do
 	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
 		bonjour)	static_bonjour=yes ;;
-		gg)		static_gg=yes ;;
+		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
@@ -633,7 +634,7 @@ if test "x$enable_dbus" = "xyes" ; then
 fi
 
 if test "x$enable_dbus" = "xyes" ; then
-   	PKG_CHECK_MODULES(DBUS, [dbus-1 >= 0.35 dbus-glib-1 >= 0.35],
+	PKG_CHECK_MODULES(DBUS, [dbus-1 >= 0.35 dbus-glib-1 >= 0.35],
 	[
 		AC_SUBST(DBUS_CFLAGS)
 		AC_SUBST(DBUS_LIBS)
@@ -645,7 +646,7 @@ if test "x$enable_dbus" = "xyes" ; then
 	])
 fi
 
-dnl  Why do we need python?  
+dnl  Why do we need python?
 
 dnl  Python scripts are used to auto-generate about 3000 lines of C
 dnl  and XML code that wraps (part of) the existing Gaim API so that
@@ -661,7 +662,7 @@ dnl  in C (brrrr ...).
 
 AC_ARG_WITH([python],
 			AC_HELP_STRING([--with-python],
-						   [Which python interpreter to use for dbus code generation]),
+						   [which python interpreter to use for dbus code generation]),
 			PYTHON=$withval)
 
 if test "x$enable_dbus" = "xyes" ; then
@@ -696,7 +697,7 @@ dnl # This is still prone to error if one of the legacy directories exist
 dnl # although a newer dbus is installed.  But I have tried to order the
 dnl # directory searching to keep this situation at a minimum.
 dnl ###########################################################################
-AC_ARG_WITH(dbus-services, [  --with-dbus-services=<dir>   Where the D-Bus services directory is located.])
+AC_ARG_WITH(dbus-services, [  --with-dbus-services=<dir>      where the D-Bus services directory is located.])
 
 DBUS_SERVICES_DIR=""
 
@@ -747,7 +748,7 @@ AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 dnl #######################################################################
 dnl # Check for startup notification
 dnl #######################################################################
-AC_ARG_ENABLE(startup-notification, [  --disable-startup-notification    compile without startup notification support],,enable_startup_notification=yes)
+AC_ARG_ENABLE(startup-notification, [AC_HELP_STRING([--disable-startup-notification], [compile without startup notification support])], , enable_startup_notification=yes)
 
 if test "x$enable_startup_notification" = "xyes"; then
 	PKG_CHECK_MODULES(STARTUP_NOTIFICATION, libstartup-notification-1.0 >= 0.5,
@@ -879,19 +880,19 @@ if test x"$enable_mono" = x"yes" ; then
 	else
 		MONO_LIBS=`pkg-config --libs mono 2> /dev/null`
 		AC_MSG_RESULT(ok)
-		
+
 		oldLIBS="$LIBS"
 		LIBS="$LIBS $MONO_LIBS"
 		AC_MSG_CHECKING(for libmono)
 		AC_CHECK_FUNCS(mono_jit_init, [], enable_mono=no)
 		LIBS="$oldLIBS"
-		
+
 		oldCPPFLAGS="$CPPFLAGS"
 		CPPFLAGS="$CPPFLAGS $MONO_CFLAGS"
 		AC_CHECK_HEADERS(mono/jit/jit.h, [], enable_mono=no)
 		AC_CHECK_HEADERS(mono/metadata/object.h, [], enable_mono=no)
 		CPPFLAGS="$oldCPPFLAGS"
-		
+
 		AC_DEFINE(ENABLE_MONO, 1, [Define if mono enabled.])
 	fi
 else
@@ -981,7 +982,7 @@ if test "$enable_perl" = yes ; then
 		fi
 
 		AC_ARG_WITH(perl-lib,
-		[  --with-perl-lib=[site|vendor|DIR] Specify where to install the
+		[  --with-perl-lib=[site|vendor|DIR] specify where to install the
                                   Perl libraries for gaim. Default is site.],
 		[
 			if test "x$withval" = xsite; then
@@ -1047,12 +1048,12 @@ dnl #######################################################################
 dnl These two are inverses of each other <-- stolen from evolution!
 
 AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no]  Attempt to use GNUTLS for SSL support (preferred) [default=yes]],
+	[  --enable-gnutls=[yes,no]  attempt to use GNUTLS for SSL support (preferred) [default=yes]],
 	[enable_gnutls="$enableval"],
 	[enable_gnutls="yes"])
 
 AC_ARG_ENABLE(nss,
-	[  --enable-nss=[yes,no,static]    Attempt to use Mozilla libnss for SSL support [default=yes]],
+	[  --enable-nss=[yes,no,static]    attempt to use Mozilla libnss for SSL support [default=yes]],
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
@@ -1066,7 +1067,7 @@ if test "x$enable_gnutls" != "xno"; then
 	prefix=`eval echo $prefix`
 
 	AC_ARG_WITH(gnutls-includes,
-		[  --with-gnutls-includes=PREFIX   Location of GNUTLS includes.],
+		[  --with-gnutls-includes=PREFIX   location of GNUTLS includes.],
 		[ with_gnutls_includes="$withval" ],
 		[ with_gnutls_includes="$prefix/include" ])
 
@@ -1096,7 +1097,7 @@ if test "x$enable_gnutls" != "xno"; then
 	fi
 
 	AC_ARG_WITH(gnutls-libs,
-		[  --with-gnutls-libs=PREFIX       Location of GNUTLS libraries.],
+		[  --with-gnutls-libs=PREFIX       location of GNUTLS libraries.],
 		[ with_gnutls_libs="$withval" ])
 
 	if test "x$with_gnutls_libs"     != "xno" -a \
@@ -1148,19 +1149,19 @@ dnl #
 if test "x$enable_nss" != "xno"; then
 
 	AC_ARG_WITH(nspr-includes,
-		[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
+		[  --with-nspr-includes=PREFIX     specify location of Mozilla nspr4 includes.],
 		[with_nspr_includes="$withval"])
 
 	AC_ARG_WITH(nspr-libs,
-		[  --with-nspr-libs=PREFIX         Specify location of Mozilla nspr4 libs.],
+		[  --with-nspr-libs=PREFIX         specify location of Mozilla nspr4 libs.],
 		[with_nspr_libs="$withval"])
 
 	AC_ARG_WITH(nss-includes,
-		[  --with-nss-includes=PREFIX      Specify location of Mozilla nss3 includes.],
+		[  --with-nss-includes=PREFIX      specify location of Mozilla nss3 includes.],
 		[with_nss_includes="$withval"])
 
 	AC_ARG_WITH(nss-libs,
-		[  --with-nss-libs=PREFIX          Specify location of Mozilla nss3 libs.],
+		[  --with-nss-libs=PREFIX          specify location of Mozilla nss3 libs.],
 		[with_nss_libs="$withval"])
 
 
@@ -1625,7 +1626,7 @@ if test "$zephyr" != "no" ; then
 	elif test -d /usr/local/include/zephyr ; then
 		ZEPHYR_CFLAGS="-I/usr/local/include"
 	fi
-	AC_DEFINE(LIBZEPHYR_EXT, 1 , [Define if external libzephyr should be used.]) 
+	AC_DEFINE(LIBZEPHYR_EXT, 1 , [Define if external libzephyr should be used.])
 	AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 	orig_LDFLAGS="$LDFLAGS"
 	LDFLAGS="$LDFLAGS $ZEPHYR_LDFLAGS"
@@ -1653,8 +1654,8 @@ AC_VAR_TIMEZONE_EXTERNALS
 dnl #######################################################################
 dnl # Doxygen Stuff
 dnl #######################################################################
-AC_ARG_ENABLE(doxygen, [  --enable-doxygen    enable documentation with doxygen],,enable_doxygen=yes)
-AC_ARG_ENABLE(dot,     [  --enable-dot        enable graphs in doxygen via 'dot'],,enable_dot=yes)
+AC_ARG_ENABLE(doxygen, [AC_HELP_STRING([--enable-doxygen], [enable documentation with doxygen])],,enable_doxygen=yes)
+AC_ARG_ENABLE(dot, [AC_HELP_STRING([--enable-dot], [enable graphs in doxygen via 'dot'])],,enable_dot=yes)
 
 if test "x$enable_doxygen" = xyes; then
 	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
