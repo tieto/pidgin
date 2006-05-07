@@ -3527,28 +3527,21 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	GaimAccount *account;
 	char *primary;
 	const char *text;
+	gboolean enabled;
 
 	account = user_data;
 	primary = g_strdup_printf(_("%s disconnected"),
 							  gaim_account_get_username(account));
 	text = g_hash_table_lookup(gtkblist->connection_errors, account);
 
-	if (gaim_account_is_connected(account))
-	{
-		gaim_notify_formatted(NULL, _("Connection Error"),
-							  primary, NULL, text, NULL, NULL);
-	}
-	else
-	{
-		gboolean enabled = gaim_account_get_enabled(account, gaim_core_get_ui());
-		gaim_request_action(account, _("Connection Error"), primary, text, 2,
-							account, 3,
-							_("OK"), NULL,
-							_("Modify Account"), GAIM_CALLBACK(ce_modify_account_cb),
-							enabled ? _("Connect") : _("Re-enable Account"),
-							enabled ? GAIM_CALLBACK(gaim_account_connect) :
-										GAIM_CALLBACK(ce_enable_account_cb));
-	}
+	enabled = gaim_account_get_enabled(account, gaim_core_get_ui());
+	gaim_request_action(account, _("Connection Error"), primary, text, 2,
+						account, 3,
+						_("OK"), NULL,
+						_("Modify Account"), GAIM_CALLBACK(ce_modify_account_cb),
+						enabled ? _("Connect") : _("Re-enable Account"),
+						enabled ? GAIM_CALLBACK(gaim_account_connect) :
+									GAIM_CALLBACK(ce_enable_account_cb));
 	g_free(primary);
 	gtk_widget_destroy(GTK_WIDGET(widget));
 	g_hash_table_remove(gtkblist->connection_errors, account);

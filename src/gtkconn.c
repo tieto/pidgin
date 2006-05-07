@@ -51,7 +51,6 @@ typedef struct {
  * value is a pointer to a GaimAutoRecon.
  */
 static GHashTable *hash = NULL;
-static GHashTable *errored_accounts = NULL;
 
 static void
 gaim_gtk_connection_connect_progress(GaimConnection *gc,
@@ -64,7 +63,7 @@ gaim_gtk_connection_connect_progress(GaimConnection *gc,
 					   (gaim_connections_get_connecting() != NULL));
 	gtk_gaim_status_box_pulse_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
 }
-
+\
 static void
 gaim_gtk_connection_connected(GaimConnection *gc)
 {
@@ -81,11 +80,7 @@ gaim_gtk_connection_connected(GaimConnection *gc)
 	if (hash != NULL)
 		g_hash_table_remove(hash, account);
 
-	if (g_hash_table_size(errored_accounts) > 0)
-	{
-		g_hash_table_remove(errored_accounts, account);
-		gaim_gtk_blist_update_account_error_state(account, NULL);
-	}
+	gaim_gtk_blist_update_account_error_state(account, NULL);
 }
 
 static void
@@ -151,11 +146,9 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
 	GaimAccount *account = NULL;
 	GaimAutoRecon *info;
-	GSList* errored_account;
 
 	account = gaim_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
-	errored_account = g_hash_table_lookup(errored_accounts, account);
 
 	gaim_gtk_blist_update_account_error_state(account, text);
 	if (!gc->wants_to_die) {
@@ -169,15 +162,10 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 				g_source_remove(info->timeout);
 		}
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
-
-		g_hash_table_insert(errored_accounts, account, NULL);
 	} else {
 		char *p, *s, *n=NULL ;
 		if (info != NULL)
 			g_hash_table_remove(hash, account);
-
-		if (errored_account != NULL)
-			g_hash_table_remove(errored_accounts, errored_account);
 
 		if (gaim_account_get_alias(account))
 		{
@@ -231,11 +219,7 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 {
 	g_hash_table_remove(hash, account);
 
-	if (g_hash_table_size(errored_accounts) > 0)
-	{
-		g_hash_table_remove(errored_accounts, account);
-		gaim_gtk_blist_update_account_error_state(account, NULL);
-	}
+	gaim_gtk_blist_update_account_error_state(account, NULL);
 }
 
 
@@ -257,9 +241,6 @@ gaim_gtk_connection_init(void)
 	hash = g_hash_table_new_full(
 							g_direct_hash, g_direct_equal,
 							NULL, free_auto_recon);
-	errored_accounts = g_hash_table_new_full(
-							g_direct_hash, g_direct_equal,
-							NULL, NULL);
 
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
 						gaim_gtk_connection_get_handle(),
@@ -272,5 +253,4 @@ gaim_gtk_connection_uninit(void)
 	gaim_signals_disconnect_by_handle(gaim_gtk_connection_get_handle());
 
 	g_hash_table_destroy(hash);
-	g_hash_table_destroy(errored_accounts);
 }
