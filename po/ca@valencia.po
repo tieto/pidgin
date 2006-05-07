@@ -5,6 +5,7 @@
 #               January (2004-01-07,12), Xan <dxpublica@telefonica.net>
 # Copyright (c) 2004, 2005, 2006
 #               Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>
+# Copyright (C) 2006 Toni Hermoso <toniher@softcatala.org>.
 #
 # This file is distributed under the same license as the Gaim package.
 #
