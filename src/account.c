@@ -1205,6 +1205,13 @@ gaim_account_set_alias(GaimAccount *account, const char *alias)
 {
 	g_return_if_fail(account != NULL);
 
+	/*
+	 * Do nothing if alias and account->alias are both NULL.  Or if
+	 * they're the exact same string.
+	 */
+	if (alias == account->alias)
+		return;
+
 	if ((!alias && account->alias) || (alias && !account->alias) ||
 			g_utf8_collate(account->alias, alias))
 	{
