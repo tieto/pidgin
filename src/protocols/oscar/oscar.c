@@ -3651,7 +3651,7 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		oscar_string_append(gc->account, str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
 		/* Initialize the struct properly or strftime() will crash
-		 * on some systems (Debian Sarge AMD64). */
+		 * under some conditions (e.g. Debian sarge w/ LANG=en_HK). */
 		time_t t = time(NULL);
 		struct tm *tm = localtime(&t);
 
