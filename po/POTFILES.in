@@ -1,4 +1,3 @@
-
 gaim.desktop.in
 plugins/ciphertest.c
 plugins/contact_priority.c
@@ -112,7 +111,10 @@ src/protocols/msn/userlist.c
 src/protocols/napster/napster.c
 src/protocols/novell/nmuser.c
 src/protocols/novell/novell.c
+src/protocols/oscar/flap_connection.c
+src/protocols/oscar/odc.c
 src/protocols/oscar/oscar.c
+src/protocols/oscar/peer.c
 src/protocols/sametime/sametime.c
 src/protocols/silc/buddy.c
 src/protocols/silc/chat.c

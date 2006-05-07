@@ -13,6 +13,8 @@ version 2.0.0:
 	* English (British) translation updated (Stu Tomlinson and Luke Ross)
 	* English (Canadian) translation updated (Adam Weinberger)
 	* Estonian translation updated (Ivar Smolin)
+	* Euskera (Basque) translation added (Hizkuntza Politikarako
+	  Sailburuordetza and Iñaki Larrañaga Murgoitio)
 	* Finnish translation updated (Timo Jyrinki)
 	* French translation updated (Éric Boumaour)
 	* Galician translation updated (Ignacio Casal Quinteiro)
@@ -36,14 +38,16 @@ version 2.0.0:
 	* Romanian translation updated (Mişu Moldovan)
 	* Russian translation updated (Dmitry Beloglazov)
 	* Serbian translation updated (Nikola Kotur)
+	* Slovak translation updated (Richard Golier)
 	* Slovenian translation updated (Martin Srebotnjak)
 	* Spanish gaim.desktop translation updated (Javier Fernandez-Sanguino Peña)	
 	* Swedish translation updated (Peter Hjalmarsson)
 	* Tamil translation updated (Viveka Nathan K)
 	* Telugu translation added (Mr. Subbaramaih)
+	* Thai translation added (Isriya Paireepairit)
 	* Turkish translation updated (Ahmet Alp BALKAN)
 	* Ukrainian translation updated (Maxim V. Dziumanenko)
-	* Valencian translation added (Software Valencià)
+	* Valencian-Catalan translation added (Toni Hermoso, Josep Puigdemont)
 
 version 1.5.1:
 	* Catalan win32 installer translation updated (Bernat López)
