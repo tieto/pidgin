@@ -1377,10 +1377,10 @@ static void remove_typing_cb(GtkGaimStatusBox *status_box)
 		return;
 	}
 
-	activate_currently_selected_status(status_box);
-
 	g_source_remove(status_box->typing);
 	status_box->typing = 0;
+
+	activate_currently_selected_status(status_box);
 	gtk_gaim_status_box_refresh(status_box);
 }
 
