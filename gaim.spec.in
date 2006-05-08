@@ -28,6 +28,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel, intltool, gettext
+%{?_with_avahi:BuildRequires: avahi-devel}
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
@@ -61,7 +62,7 @@ BuildRequires: mozilla-nss-devel
 %endif
 %endif
 
-%if 0%{?_with_howl:1}
+%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package bonjour
 Summary:    Bonjour plugin for Gaim
 Group:      Applications/Internet
@@ -121,7 +122,7 @@ unique features, such as perl scripting, TCL scripting and C plugins.
 Gaim is NOT affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
-%if 0%{?_with_howl:1}
+%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %description bonjour
 Bonjour plugin for Gaim
 %endif
@@ -200,7 +201,7 @@ rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
-%if 0%{!?_with_howl:1}
+%if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
 %endif
 
@@ -264,7 +265,7 @@ rm -rf %{buildroot}
 %{_datadir}/dbus-1/services/gaim.service
 %endif
 
-%if 0%{?_with_howl:1}
+%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %files bonjour
 %defattr(-, root, root)
 
@@ -322,6 +323,10 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon May 8 2006 <thekingant@users.sourceforge.net>
+- Add --with avahi option to compile the gaim-bonjour package against
+  Avahi's Howl compatibility layer.
+
 * Wed Mar 29 2006 <stu@nosnilmot.com>
 - Source RPM uses tar.bz2 now to save space
 - Update BuildRequires for new intltool dependencies
