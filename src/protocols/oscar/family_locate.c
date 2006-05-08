@@ -319,9 +319,6 @@ aim_locate_dorequest(OscarData *od)
 {
 	struct userinfo_node *cur = od->locate.torequest;
 
-	if (cur == NULL)
-		return;
-
 	if (od->locate.waiting_for_response == TRUE)
 		return;
 
@@ -340,10 +337,16 @@ gaim_reqinfo_timeout_cb(void *data)
 	OscarData *od;
 
 	od = data;
-	aim_locate_dorequest(od);
-	od->getinfotimer = 0;
 
-	return FALSE;
+	if (od->locate.torequest == NULL)
+	{
+		od->getinfotimer = 0;
+		return FALSE;
+	}
+
+	aim_locate_dorequest(od);
+
+	return TRUE;
 }
 
 /**
