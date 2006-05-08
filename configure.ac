@@ -75,11 +75,11 @@ AC_CHECK_FUNCS(getopt_long,,
 ])
 
 dnl Check for inet_aton
-AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
+AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
 				         [AC_ERROR(inet_aton not found)])])
 AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
-AC_CHECK_FUNC(socket, , 
+AC_CHECK_FUNC(socket, ,
               [AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])
 dnl If all goes well, by this point the previous two checks will have
 dnl pulled in -lsocket and -lnsl if we need them.
@@ -130,12 +130,12 @@ int main()
 {
 	char buf[6];
 	time_t t = time(NULL);
-	
+
 	if (strftime(buf, sizeof(buf), "%z", localtime(&t)) != 5)
 		return 1;
-	
+
 	fprintf(stderr, "strftime(\"%%z\") yields: \"%s\"\n", buf);
-	
+
 	return !((buf[0] == '-' || buf[0] == '+') &&
 	         (buf[1] >= '0' && buf[1] <= '9') &&
 	         (buf[2] >= '0' && buf[2] <= '9') &&
@@ -508,6 +508,7 @@ AC_CHECK_FUNC(uname)
 
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+	enable_fatal_asserts="yes"
 fi
 
 if test "x$enable_fatal_asserts" = "xyes" ; then
