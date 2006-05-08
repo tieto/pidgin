@@ -107,7 +107,7 @@ guint gaim_timeout_remove(guint handle);
  * @param func      The callback function for data.
  * @param user_data User-specified data.
  *
- * @return The resulting handle.
+ * @return The resulting handle (will be greater than 0).
  * @see g_io_add_watch_full
  */
 guint gaim_input_add(int fd, GaimInputCondition cond,
