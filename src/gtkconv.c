@@ -2497,7 +2497,6 @@ gaim_gtkconv_present_conversation(GaimConversation *conv)
 
 	gaim_gtkconv_switch_active_conversation(conv);
 	gaim_gtk_conv_window_switch_gtkconv(gtkconv->win, gtkconv);
-	gaim_gtk_conv_window_raise(gtkconv->win);
 	gtk_window_present(GTK_WINDOW(gtkconv->win->window));
 }
 
@@ -7443,7 +7442,7 @@ gaim_gtk_conv_window_hide(GaimGtkWindow *win)
 void
 gaim_gtk_conv_window_raise(GaimGtkWindow *win)
 {
-	gtk_window_present(GTK_WINDOW(win->window));
+	gdk_window_raise(GDK_WINDOW(win->window));
 }
 
 void
