@@ -194,9 +194,8 @@ AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [compile the Bonj
 HOWL_CFLAGS=""
 HOWL_LIBS=""
 
-dnl Attempt to autodetect Howl
-dnl TODO Check avahi-compat-howl!!!
-PKG_CHECK_MODULES(HOWL, howl, [
+dnl Attempt to autodetect avahi-compat-howl
+PKG_CHECK_MODULES(HOWL, avahi-compat-howl, [
 		howlincludes="yes"
 		howllibs="yes"
 	], [
@@ -204,6 +203,18 @@ PKG_CHECK_MODULES(HOWL, howl, [
 		howlincludes="no"
 		howllibs="no"
 	])
+
+dnl Attempt to autodetect Howl
+if test "x$howlincludes" = "xno"; then
+	PKG_CHECK_MODULES(HOWL, howl, [
+			howlincludes="yes"
+			howllibs="yes"
+		], [
+			AC_MSG_RESULT(no)
+			howlincludes="no"
+			howllibs="no"
+		])
+fi
 
 dnl Override HOWL_CFLAGS if the user specified an include dir
 if test "$ac_howl_includes" != "no"; then
@@ -216,7 +227,7 @@ CPPFLAGS="$CPPFLAGS_save"
 
 dnl Override HOWL_LIBS if the user specified a libs dir
 if test "$ac_howl_libs" != "no"; then
-	HOWL_LIBS="-L$ac_howl_libs"
+	HOWL_LIBS="-L$ac_howl_libs -lhowl"
 fi
 AC_CHECK_LIB(howl, sw_discovery_init, [howllibs=yes], [howllibs=no], $HOWL_LIBS)
 
