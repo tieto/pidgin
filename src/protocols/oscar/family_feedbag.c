@@ -45,6 +45,8 @@
 
 #include "oscar.h"
 
+static int aim_ssi_addmoddel(OscarData *od);
+
 /**
  * Locally rebuild the 0x00c8 TLV in the additional data of the given group.
  *
@@ -276,7 +278,7 @@ struct aim_ssi_item *aim_ssi_itemlist_find(struct aim_ssi_item *list, guint16 gi
 }
 
 /**
- * Locally find an item given a group name, screen name, and type.  If group name 
+ * Locally find an item given a group name, screen name, and type.  If group name
  * and screen name are null, then just return the first item of the given type.
  *
  * @param list A pointer to the current list of items.
@@ -378,8 +380,8 @@ int aim_ssi_getpermdeny(struct aim_ssi_item *list)
 }
 
 /**
- * Locally find the presence flag item, and return the setting.  The returned setting is a 
- * bitmask of the user flags that you are visible to.  See the AIM_FLAG_* #defines 
+ * Locally find the presence flag item, and return the setting.  The returned setting is a
+ * bitmask of the user flags that you are visible to.  See the AIM_FLAG_* #defines
  * in oscar.h
  *
  * @param list A pointer to the current list of items.
@@ -465,7 +467,7 @@ int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char
 }
 
 /**
- * If there are changes, then create temporary items and 
+ * If there are changes, then create temporary items and
  * call addmoddel.
  *
  * @param od The oscar session.
@@ -475,6 +477,13 @@ static int aim_ssi_sync(OscarData *od)
 {
 	struct aim_ssi_item *cur1, *cur2;
 	struct aim_ssi_tmp *cur, *new;
+	int n = 0;
+
+	/*
+	 * The variable "n" is used to limit the number of addmoddel's that
+	 * are performed in a single SNAC.  It will hopefully keep the size
+	 * of the SNAC below the maximum SNAC size.
+	 */
 
 	if (!od)
 		return -EINVAL;
@@ -494,8 +503,9 @@ static int aim_ssi_sync(OscarData *od)
 
 	/* Additions */
 	if (!od->ssi.pending) {
-		for (cur1=od->ssi.local; cur1; cur1=cur1->next) {
+		for (cur1=od->ssi.local; cur1 && (n < 15); cur1=cur1->next) {
 			if (!aim_ssi_itemlist_find(od->ssi.official, cur1->gid, cur1->bid)) {
+				n++;
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
 				new->action = SNAC_SUBTYPE_FEEDBAG_ADD;
 				new->ack = 0xffff;
@@ -513,8 +523,9 @@ static int aim_ssi_sync(OscarData *od)
 
 	/* Deletions */
 	if (!od->ssi.pending) {
-		for (cur1=od->ssi.official; cur1; cur1=cur1->next) {
+		for (cur1=od->ssi.official; cur1 && (n < 15); cur1=cur1->next) {
 			if (!aim_ssi_itemlist_find(od->ssi.local, cur1->gid, cur1->bid)) {
+				n++;
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
 				new->action = SNAC_SUBTYPE_FEEDBAG_DEL;
 				new->ack = 0xffff;
@@ -532,9 +543,10 @@ static int aim_ssi_sync(OscarData *od)
 
 	/* Modifications */
 	if (!od->ssi.pending) {
-		for (cur1=od->ssi.local; cur1; cur1=cur1->next) {
+		for (cur1=od->ssi.local; cur1 && (n < 15); cur1=cur1->next) {
 			cur2 = aim_ssi_itemlist_find(od->ssi.official, cur1->gid, cur1->bid);
 			if (cur2 && (aim_ssi_itemlist_cmp(cur1, cur2))) {
+				n++;
 				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
 				new->action = SNAC_SUBTYPE_FEEDBAG_MOD;
 				new->ack = 0xffff;
@@ -556,7 +568,7 @@ static int aim_ssi_sync(OscarData *od)
 		return 0;
 	}
 
-	/* Make sure we don't send anything else between now 
+	/* Make sure we don't send anything else between now
 	 * and when we receive the ack for the following operation */
 	od->ssi.waiting_for_ack = 1;
 
@@ -692,7 +704,7 @@ int aim_ssi_cleanlist(OscarData *od)
 			cur2 = cur->next;
 			while (cur2) {
 				next2 = cur2->next;
-				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!strcmp(cur->name, cur2->name))) {
+				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!aim_sncmp(cur->name, cur2->name))) {
 					aim_ssi_itemlist_del(&od->ssi.local, cur2);
 				}
 				cur2 = next2;
@@ -1320,7 +1332,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
  * are ready to begin using the list.  It will promptly give you the
  * presence information for everyone in your list and put your permit/deny
  * settings into effect.
- * 
+ *
  */
 int aim_ssi_enable(OscarData *od)
 {
@@ -1335,12 +1347,12 @@ int aim_ssi_enable(OscarData *od)
 /*
  * Subtype 0x0008/0x0009/0x000a - SSI Add/Mod/Del Item(s).
  *
- * Sends the SNAC to add, modify, or delete an item from the server-stored
+ * Sends the SNAC to add, modify, or delete items from the server-stored
  * information.  These 3 SNACs all have an identical structure.  The only
  * difference is the subtype that is set for the SNAC.
- * 
+ *
  */
-int aim_ssi_addmoddel(OscarData *od)
+static int aim_ssi_addmoddel(OscarData *od)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;
@@ -1386,7 +1398,7 @@ int aim_ssi_addmoddel(OscarData *od)
 /*
  * Subtype 0x0008 - Incoming SSI add.
  *
- * Sent by the server, for example, when someone is added to 
+ * Sent by the server, for example, when someone is added to
  * your "Recent Buddies" group.
  */
 static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)

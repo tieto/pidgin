@@ -1129,7 +1129,6 @@ struct aim_ssi_tmp
 /* 0x0004 */ int aim_ssi_reqdata(OscarData *od);
 /* 0x0005 */ int aim_ssi_reqifchanged(OscarData *od, time_t localstamp, guint16 localrev);
 /* 0x0007 */ int aim_ssi_enable(OscarData *od);
-/* 0x0008 */ int aim_ssi_addmoddel(OscarData *od);
 /* 0x0011 */ int aim_ssi_modbegin(OscarData *od);
 /* 0x0012 */ int aim_ssi_modend(OscarData *od);
 /* 0x0014 */ int aim_ssi_sendauth(OscarData *od, char *sn, char *msg);
