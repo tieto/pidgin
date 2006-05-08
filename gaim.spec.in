@@ -185,7 +185,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-if 0%{?_with_perlmakehack}
+%if 0%{?_with_perlmakehack}
 make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
      libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
