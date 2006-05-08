@@ -214,7 +214,7 @@ static void jabber_send_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (writelen == 0) {
 		gaim_input_remove(js->writeh);
-		js->writeh = -1;
+		js->writeh = 0;
 		return;
 	}
 
@@ -264,7 +264,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
 			pos += towrite;
 
-			if (js->writeh != -1)
+			if (js->writeh > 0)
 				ret = jabber_do_send(js, out, olen);
 			else {
 				ret = -1;
@@ -276,7 +276,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			else if (ret < olen) {
 				if (ret < 0)
 					ret = 0;
-				if (js->writeh == -1)
+				if (js->writeh == 0)
 					js->writeh = gaim_input_add(
 						js->gsc ? js->gsc->fd : js->fd,
 						GAIM_INPUT_WRITE,
@@ -292,7 +292,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	if (len == -1)
 		len = strlen(data);
 
-	if (js->writeh == -1)
+	if (js->writeh == 0)
 		ret = jabber_do_send(js, data, len);
 	else {
 		ret = -1;
@@ -304,7 +304,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	else if (ret < len) {
 		if (ret < 0)
 			ret = 0;
-		if (js->writeh == -1)
+		if (js->writeh == 0)
 			js->writeh = gaim_input_add(
 				js->gsc ? js->gsc->fd : js->fd,
 				GAIM_INPUT_WRITE, jabber_send_cb, js);
@@ -514,7 +514,6 @@ jabber_login(GaimAccount *account)
 	js->user = jabber_id_new(gaim_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = gaim_circ_buffer_new(512);
-	js->writeh = -1;
 
 	if(!js->user) {
 		gaim_connection_error(gc, _("Invalid Jabber ID"));
@@ -859,7 +858,6 @@ static void jabber_register_account(GaimAccount *account)
 	}
 
 	js->write_buffer = gaim_circ_buffer_new(512);
-	js->writeh = -1;
 
 	if(!js->user->resource) {
 		char *me;
