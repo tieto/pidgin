@@ -7442,7 +7442,7 @@ gaim_gtk_conv_window_hide(GaimGtkWindow *win)
 void
 gaim_gtk_conv_window_raise(GaimGtkWindow *win)
 {
-	gdk_window_raise(GDK_WINDOW(win->window));
+	gdk_window_raise(GDK_WINDOW(win->window->window));
 }
 
 void
