@@ -5648,7 +5648,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 							gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 							g_signal_connect(G_OBJECT(menuitem), "activate",
 									G_CALLBACK(plugin_act), action);
-							g_object_set_data_full(G_OBJECT(menuitem), "plugin_action", action, gaim_plugin_action_free);
+							g_object_set_data_full(G_OBJECT(menuitem), "plugin_action", action, (GDestroyNotify)gaim_plugin_action_free);
 							gtk_widget_show(menuitem);
 						} else
 							gaim_separator(submenu);
