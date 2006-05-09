@@ -1737,7 +1737,7 @@ s5_sendconnect(gpointer data, gint source)
 {
 	struct PHB *phb = data;
 	int hlen = strlen(phb->host);
-	phb->write_buf_len = 5 + hlen + 1;
+	phb->write_buf_len = 5 + hlen + 2;
 	phb->write_buffer = g_malloc(phb->write_buf_len);
 	phb->written_len = 0;
 
