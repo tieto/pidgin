@@ -1190,8 +1190,9 @@ const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
 		case JABBER_BUDDY_STATE_ONLINE:
 			return "available";
 		case JABBER_BUDDY_STATE_UNKNOWN:
+			return "available";
 		case JABBER_BUDDY_STATE_ERROR:
-			return NULL;
+			return "error";
 		case JABBER_BUDDY_STATE_UNAVAILABLE:
 			return "offline";
 	}
