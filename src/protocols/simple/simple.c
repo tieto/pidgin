@@ -379,7 +379,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	}
 	g_strfreev(parts);
 
-	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce ? auth->nonce : "(null)", auth->realm ? auth->realm : "(null)");
+	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s\n", auth->nonce ? auth->nonce : "(null)", auth->realm ? auth->realm : "(null)");
 	if(auth->realm) {
 		auth->digest_session_key = gaim_cipher_http_digest_calculate_session_key(
 				"md5", authuser, auth->realm, sip->password, auth->nonce, NULL);

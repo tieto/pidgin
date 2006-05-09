@@ -5095,7 +5095,7 @@ static int gaim_ssi_gotadded(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 
 	buddy = gaim_find_buddy(gc->account, sn);
 	gaim_debug_info("oscar", "ssi: %s added you to their buddy list\n", sn);
-	gaim_account_notify_added(gc->account, NULL, sn, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
+	gaim_account_notify_added(gc->account, sn, NULL, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
 
 	return 1;
 }
