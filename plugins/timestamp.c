@@ -208,14 +208,16 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	void *conv_handle = gaim_conversations_get_handle();
+	void *gtkconv_handle = gaim_gtk_conversations_get_handle();
 
 	init_timer_list();
 
 	gaim_signal_connect(conv_handle, "conversation-created",
 					plugin, GAIM_CALLBACK(timestamp_new_convo), NULL);
 
-	/* record IM display events for each conversation */
-	gaim_signal_connect(conv_handle, "displaying-im-msg",
+	gaim_signal_connect(gtkconv_handle, "displaying-chat-msg",
+					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
+	gaim_signal_connect(gtkconv_handle, "displaying-im-msg",
 					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
 
 	interval = gaim_prefs_get_int("/plugins/gtk/timestamp/interval");
