@@ -63,7 +63,7 @@ gaim_gtk_connection_connect_progress(GaimConnection *gc,
 					   (gaim_connections_get_connecting() != NULL));
 	gtk_gaim_status_box_pulse_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
 }
-\
+
 static void
 gaim_gtk_connection_connected(GaimConnection *gc)
 {
