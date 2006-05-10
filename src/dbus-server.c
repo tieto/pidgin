@@ -101,7 +101,7 @@ gint gaim_dbus_pointer_to_id(gpointer node) {
 	{
 		gaim_debug_warning("dbus",
 				"Need to register an object with the dbus subsystem.\n");
-		g_return_if_reached();
+		g_return_val_if_reached(0);
 	}
     return id;
 }
