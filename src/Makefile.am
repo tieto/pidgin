@@ -176,7 +176,7 @@ CLEANFILES = \
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-gaim.h dbus-server.h dbus-useful.h dbus-define-api.h
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h connection.h conversation.h core.h roomlist.h savedstatuses.h status.h server.h
+dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h connection.h conversation.h core.h log.h roomlist.h savedstatuses.h status.h server.h
 
 gaim_build_coreheaders = $(addprefix $(srcdir)/, $(gaim_coreheaders))
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
