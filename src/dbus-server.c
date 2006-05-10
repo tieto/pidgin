@@ -96,7 +96,12 @@ void gaim_dbus_unregister_pointer(gpointer node) {
 
 gint gaim_dbus_pointer_to_id(gpointer node) {
     gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
-    g_return_val_if_fail(id || node == NULL, 0);
+	if ((id == 0) && (node != NULL))
+	{
+		gaim_debug_warning("dbus",
+				"Need to register an object with the dbus subsystem.\n");
+		g_return_if_reached();
+	}
     return id;
 }
 	
