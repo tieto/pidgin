@@ -340,23 +340,6 @@ gaim_gtk_sound_uninit(void)
 
 #ifdef USE_GSTREAMER
 static gboolean
-expire_old_child(gpointer data)
-{
-	int ret;
-	pid_t pid = GPOINTER_TO_INT(data);
-
-	ret = waitpid(pid, NULL, WNOHANG | WUNTRACED);
-
-	if(ret == 0) {
-		if(kill(pid, SIGKILL) < 0)
-			gaim_debug_error("gtksound", "Killing process %d failed (%s)\n",
-							 pid, strerror(errno));
-	}
-
-    return FALSE; /* do not run again */
-}
-
-static gboolean
 bus_call (GstBus     *bus,
 	  GstMessage *msg,
   	  gpointer    data)
