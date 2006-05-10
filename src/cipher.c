@@ -56,6 +56,7 @@
 
 #include "internal.h"
 #include "cipher.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "signals.h"
 #include "value.h"
@@ -1380,6 +1381,7 @@ gaim_ciphers_register_cipher(const gchar *name, GaimCipherOps *ops) {
 	g_return_val_if_fail(!gaim_ciphers_find_cipher(name), NULL);
 
 	cipher = g_new0(GaimCipher, 1);
+	GAIM_DBUS_REGISTER_POINTER(cipher, GaimCipher);
 
 	cipher->name = g_strdup(name);
 	cipher->ops = ops;
@@ -1401,6 +1403,8 @@ gaim_ciphers_unregister_cipher(GaimCipher *cipher) {
 	ciphers = g_list_remove(ciphers, cipher);
 
 	g_free(cipher->name);
+
+	GAIM_DBUS_UNREGISTER_POINTER(cipher);
 	g_free(cipher);
 
 	return TRUE;
