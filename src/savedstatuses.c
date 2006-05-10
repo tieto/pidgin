@@ -1,5 +1,5 @@
 /**
- * @file savedstatus.c Saved Status API
+ * @file savedstatuses.c Saved Status API
  * @ingroup core
  *
  * gaim
@@ -27,6 +27,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "savedstatuses.h"
+#include "dbus-maybe.h"
 #include "status.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -108,6 +109,7 @@ free_saved_status_sub(GaimSavedStatusSub *substatus)
 	g_return_if_fail(substatus != NULL);
 
 	g_free(substatus->message);
+	GAIM_DBUS_UNREGISTER_POINTER(substatus);
 	g_free(substatus);
 }
 
@@ -126,6 +128,7 @@ free_saved_status(GaimSavedStatus *status)
 		free_saved_status_sub(substatus);
 	}
 
+	GAIM_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
 }
 
@@ -369,6 +372,7 @@ parse_substatus(xmlnode *substatus)
 	char *data;
 
 	ret = g_new0(GaimSavedStatusSub, 1);
+	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatusSub);
 
 	/* Read the account */
 	node = xmlnode_get_child(substatus, "account");
@@ -442,6 +446,7 @@ parse_status(xmlnode *status)
 	int i;
 
 	ret = g_new0(GaimSavedStatus, 1);
+	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatus);
 
 	attrib = xmlnode_get_attrib(status, "transient");
 	if ((attrib == NULL) || (strcmp(attrib, "true")))
@@ -547,6 +552,7 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 		g_return_val_if_fail(gaim_savedstatus_find(title) == NULL, NULL);
 
 	status = g_new0(GaimSavedStatus, 1);
+	GAIM_DBUS_REGISTER_POINTER(status, GaimSavedStatus);
 	status->title = g_strdup(title);
 	status->type = type;
 	set_creation_time(status, time(NULL));
@@ -613,6 +619,7 @@ gaim_savedstatus_set_substatus(GaimSavedStatus *saved_status,
 	if (substatus == NULL)
 	{
 		substatus = g_new0(GaimSavedStatusSub, 1);
+		GAIM_DBUS_REGISTER_POINTER(substatus, GaimSavedStatusSub);
 		substatus->account = (GaimAccount *)account;
 		saved_status->substatuses = g_list_prepend(saved_status->substatuses, substatus);
 	}

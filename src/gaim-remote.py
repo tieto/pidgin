@@ -97,17 +97,34 @@ def execute(uri):
                                               params.get("group", ""), "")
 
     elif command == "setstatus":
+        current = gaim.GaimSavedstatusGetCurrent()
+
+        if "status" in params:
+            status_id = params["status"]
+            status_type = gaim.GaimPrimitiveGetTypeFromId(status_id)
+        else:
+            status_type = gaim.GaimSavedStatusGetType(current)
+            status_id = gaim.GaimPrimitiveGetIdFromType(status_type)
+
+        if "message" in params:
+            message = params["message"];
+        else:
+            message = gaim.GaimSavedstatusGetMessage(current)
+
         if "account" in params:
             accounts = [cgaim.GaimAccountsFindAny(accountname, protocol)]
+
+            for account in accounts:
+                status = gaim.GaimAccountGetStatus(account, status_id)
+                type = gaim.GaimStatusGetType(status)
+                gaim.GaimSavedstatusSetSubstatus(current, account, type, message)
+                gaim.GaimSavedstatusActivateForAccount(current, account)
         else:
             accounts = gaim.GaimAccountsGetAllActive()
+            saved = gaim.GaimSavedstatusNew("", status_type)
+            gaim.GaimSavedstatusSetMessage(saved, message)
+            gaim.GaimSavedstatusActivate(saved)
 
-        for account in accounts:
-            status = cgaim.GaimAccountGetStatus(account, params["status"])
-            for key, value in params.items():
-                if key not in ["status", "account"]:
-                    gaim.GaimStatusSetAttrString(status, key, value)
-            gaim.GaimAccountSetStatusVargs(account, params["status"], 1)
         return None
 
     elif command == "getinfo":

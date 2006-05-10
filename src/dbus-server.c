@@ -36,6 +36,7 @@
 #include "dbus-bindings.h"
 #include "debug.h"
 #include "core.h"
+#include "savedstatuses.h"
 #include "value.h"
 
 
