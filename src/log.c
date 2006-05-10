@@ -24,6 +24,7 @@
  */
 
 #include "account.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "internal.h"
 #include "log.h"
@@ -80,6 +81,7 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 
 	/* IMPORTANT: Make sure to initialize all the members of GaimLog */
 	log = g_slice_new(GaimLog);
+	GAIM_DBUS_REGISTER_POINTER(log, GaimLog);
 
 	log->type = type;
 	log->name = g_strdup(gaim_normalize(account, name));
@@ -133,6 +135,7 @@ void gaim_log_free(GaimLog *log)
 		g_slice_free(struct tm, log->tm);
 	}
 
+	GAIM_DBUS_UNREGISTER_POINTER(log);
 	g_slice_free(GaimLog, log);
 }
 
