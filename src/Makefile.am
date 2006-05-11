@@ -1,8 +1,8 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
-		gaim-notifications-example.py \
-		gaim-remote.py \
+		gaim-notifications-example \
+		gaim-remote \
 		gaim-send \
 		gaim-send-async \
 		getopt.c \
@@ -228,7 +228,10 @@ gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 
 # scripts
 
-bin_SCRIPTS = gaim-remote.py gaim-notifications-example.py gaim-send gaim-send-async
+bin_SCRIPTS = gaim-remote gaim-send gaim-send-async
+
+exampledir = $(datadir)/doc/@PACKAGE@/examples
+example_DATA = gaim-notifications-example
 
 endif
 
