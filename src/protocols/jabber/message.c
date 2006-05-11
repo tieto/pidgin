@@ -231,7 +231,7 @@ static void handle_error(JabberMessage *jm)
 		return;
 
 	buf = g_strdup_printf(_("Message delivery to %s failed: %s"),
-			jm->from, jm->error);
+			jm->from, jm->error ? jm->error : "");
 
 	gaim_notify_formatted(jm->js->gc, _("Jabber Message Error"), _("Jabber Message Error"), buf,
 			jm->xhtml ? jm->xhtml : jm->body, NULL, NULL);
