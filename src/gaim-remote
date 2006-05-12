@@ -54,7 +54,6 @@ def findaccount(accountname, protocolname):
     except:
         # try to get any account and connect it
         account = cgaim.GaimAccountsFindAny(accountname, protocolname)
-        print gaim.GaimAccountGetUsername(account)
         gaim.GaimAccountSetStatusVargs(account, "online", 1)
         gaim.GaimAccountConnect(account)
         return account
@@ -68,7 +67,7 @@ def execute(uri):
     if protocol is not None:
         protocol = "prpl-" + protocol
     command = match.group(5)
-    paramstring = match.group(7) 
+    paramstring = match.group(7)
     params = {}
     if paramstring is not None:
         for param in paramstring.split("&"):
@@ -78,7 +77,6 @@ def execute(uri):
     accountname = params.get("account", "")
 
     if command == "goim":
-        print params
         account = findaccount(accountname, protocol)
         conversation = cgaim.GaimConversationNew(1, account, params["screenname"])
         if "message" in params:
@@ -207,6 +205,8 @@ Examples of commands:
 """ % sys.argv[0]
 
 for arg in sys.argv[1:]:
-    print execute(arg)
-    
-    
+    output = execute(arg)
+
+    if (output != None):
+        print output
+
