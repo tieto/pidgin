@@ -7535,7 +7535,7 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
 	if (tabs_side) {
-		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), MIN(g_utf8_strlen(tmp_lab, -1), 18));
+		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), MIN(g_utf8_strlen(tmp_lab, -1), 12));
 	}
 	if (angle)
 		gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
