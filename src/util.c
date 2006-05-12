@@ -1837,7 +1837,7 @@ gaim_markup_linkify(const char *text)
 				t++;
 
 			}
-		} else if (!g_ascii_strncasecmp(c, "www.", 4)) {
+		} else if (!g_ascii_strncasecmp(c, "www.", 4) && (c == text || badchar(c[-1]) || badentity(c-1))) {
 			if (c[4] != '.') {
 				t = c;
 				while (1) {
@@ -1892,7 +1892,7 @@ gaim_markup_linkify(const char *text)
 				t++;
 
 			}
-		} else if (!g_ascii_strncasecmp(c, "ftp.", 4)) {
+		} else if (!g_ascii_strncasecmp(c, "ftp.", 4) && (c == text || badchar(c[-1]) || badentity(c-1))) {
 			if (c[4] != '.') {
 				t = c;
 				while (1) {
