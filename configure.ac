@@ -673,7 +673,7 @@ dnl  Alternatively, these python scripts could be rewritten
 dnl  in C (brrrr ...).
 
 AC_ARG_WITH([python],
-			AC_HELP_STRING([--with-python],
+			AC_HELP_STRING([--with-python=PATH],
 						   [which python interpreter to use for dbus code generation]),
 			PYTHON=$withval)
 
