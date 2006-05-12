@@ -59,6 +59,7 @@ static const char *PREF_DBLIST_ON_TOP = "/plugins/gtk/win32/winprefs/dblist_on_t
 static GaimPlugin *handle = NULL;
 static GtkAppBar *blist_ab = NULL;
 static GtkWidget *blist = NULL;
+static guint blist_visible_cb_id = 0;
 
 /* flash info */
 
@@ -109,11 +110,11 @@ static void blist_set_ontop(gboolean val) {
 
 static void blist_dock_cb(gboolean val) {
 	if(val) {
-		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Docking..\n");
+		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Docking...\n");
 		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) != BLIST_TOP_NEVER)
 			blist_set_ontop(TRUE);
 	} else {
-		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking..\n");
+		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking...\n");
 		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 			blist_set_ontop(TRUE);
 		else
@@ -150,6 +151,34 @@ static void gaim_quit_cb() {
 	blist_set_dockable(FALSE);
 }
 
+/* Listen for the first time the window stops being withdrawn */
+static void blist_visible_cb(const char *pref, GaimPrefType type,
+		gconstpointer value, gpointer user_data) {
+	if(gaim_prefs_get_bool(pref)) {
+		gtk_appbar_dock(blist_ab,
+			gaim_prefs_get_int(PREF_DBLIST_SIDE));
+
+		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP)
+				== BLIST_TOP_DOCKED)
+			blist_set_ontop(TRUE);
+
+		/* We only need to be notified about this once */
+		gaim_prefs_disconnect_callback(blist_visible_cb_id);
+	}
+}
+
+/* This needs to be delayed otherwise, when the blist is originally created and
+ * hidden, it'll trigger the blist_visible_cb */
+static gboolean listen_for_blist_visible_cb(gpointer data) {
+	if (handle != NULL)
+		blist_visible_cb_id =
+			gaim_prefs_connect_callback(handle,
+				"/gaim/gtk/blist/list_visible",
+				blist_visible_cb, NULL);
+
+	return FALSE;
+}
+
 static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
 	gaim_debug_info(WINPREFS_PLUGIN_ID, "buddy list created\n");
 
@@ -159,10 +188,16 @@ static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
 		blist_set_dockable(TRUE);
 		if(gaim_prefs_get_bool(PREF_DBLIST_DOCKED)) {
 			blist_ab->undocked_height = gaim_prefs_get_int(PREF_DBLIST_HEIGHT);
-			gtk_appbar_dock(blist_ab,
-				gaim_prefs_get_int(PREF_DBLIST_SIDE));
-			if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_DOCKED)
-				blist_set_ontop(TRUE);
+			if(!(gdk_window_get_state(blist->window)
+					& GDK_WINDOW_STATE_WITHDRAWN)) {
+				gtk_appbar_dock(blist_ab,
+					gaim_prefs_get_int(PREF_DBLIST_SIDE));
+				if(gaim_prefs_get_int(PREF_BLIST_ON_TOP)
+						== BLIST_TOP_DOCKED)
+					blist_set_ontop(TRUE);
+			} else {
+				g_idle_add(listen_for_blist_visible_cb, NULL);
+			}
 		}
 	}
 
@@ -373,6 +408,8 @@ static gboolean plugin_load(GaimPlugin *plugin) {
 static gboolean plugin_unload(GaimPlugin *plugin) {
 	blist_set_dockable(FALSE);
 	blist_set_ontop(FALSE);
+
+	handle = NULL;
 
 	return TRUE;
 }
