@@ -212,6 +212,15 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 	else
 		return FALSE; /* carry on normally */
 
+#ifdef _WIN32
+	/* Workaround for GTK+ bug # 169811 - "configure_event" is fired
+	 * when the window is being maximized */
+	if (gdk_window_get_state(w->window)
+			& GDK_WINDOW_STATE_MAXIMIZED) {
+		return FALSE;
+	}
+#endif
+
 	/* don't save if nothing changed */
 	if (x == gaim_prefs_get_int("/gaim/gtk/blist/x") &&
 		y == gaim_prefs_get_int("/gaim/gtk/blist/y") &&
