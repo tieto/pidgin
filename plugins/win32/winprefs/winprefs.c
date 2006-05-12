@@ -382,7 +382,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	GtkWidget *vbox;
 	GtkWidget *button;
 	char* gtk_version = NULL;
-	HKEY hKey = HKEY_CURRENT_USER;
+	HKEY hKey;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
@@ -409,6 +409,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Gaim", 0, NULL, NULL, NULL)) {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		}
+		RegCloseKey(hKey);
 	}
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(winprefs_set_autostart), NULL);
 	gtk_widget_show(button);
