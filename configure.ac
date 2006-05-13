@@ -166,7 +166,7 @@ enable_gst=yes
 PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10, ,enable_gst=no)
 AC_SUBST(GSTREAMER_CFLAGS)
 AC_SUBST(GSTREAMER_LIBS)
-AC_ARG_ENABLE(gstreamer,[  --disable-gstreamer     compile with GStreamer audio support],enable_gst=no)
+AC_ARG_ENABLE(gstreamer,[  --disable-gstreamer     compile without GStreamer audio support],enable_gst=no)
 if test "x$enable_gst" = "xyes"; then
   AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for making sounds])
 fi
@@ -304,10 +304,10 @@ fi
 
 
 dnl #######################################################################
-dnl # Check for gadugadu client includes and libraries
+dnl # Check for Gadu-Gadu client includes and libraries
 dnl #######################################################################
-AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the gadugadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
-AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the gadugadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
+AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the GaduGadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
+AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the GaduGadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
