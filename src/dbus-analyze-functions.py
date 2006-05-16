@@ -26,6 +26,11 @@ excluded = [\
     "gaim_conv_placement_get_fnc",
     "gaim_conv_placement_get_current_func",
     "gaim_conv_placement_set_current_func",
+
+    # This is excluded because this script treats GaimLogReadFlags*
+    # as pointer to a struct, instead of a pointer to an enum.  This
+    # causes a compilation error. Someone should fix this script.
+    "gaim_log_read",
     ]
 
 # This is a list of functions that return a GList* whose elements are
