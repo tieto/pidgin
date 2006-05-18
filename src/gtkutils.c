@@ -1687,16 +1687,10 @@ gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
 	if (act == NULL) {
 		gaim_separator(menu);
 	} else {
-		GtkWidget *menuitem, *label;
+		GtkWidget *menuitem;
 
 		if (act->children == NULL) {
-			menuitem = gtk_menu_item_new();
-			label = gtk_label_new("");
-			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-			gtk_label_set_pattern(GTK_LABEL(label), "_");
-			gtk_label_set_markup_with_mnemonic(GTK_LABEL(label),
-			                                   act->label);
-			gtk_container_add(GTK_CONTAINER(menuitem), label);
+			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 
 			if (act->callback != NULL) {
 				g_object_set_data(G_OBJECT(menuitem),
@@ -1716,12 +1710,21 @@ gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
 		} else {
 			GList *l = NULL;
 			GtkWidget *submenu = NULL;
+			GtkAccelGroup *group;
 
 			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 			submenu = gtk_menu_new();
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+			group = gtk_menu_get_accel_group(GTK_MENU(menu));
+			if (group) {
+				char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path, act->label);
+				gtk_menu_set_accel_path(GTK_MENU(submenu), path);
+				g_free(path);
+				gtk_menu_set_accel_group(GTK_MENU(submenu), group);
+			}
 
 			for (l = act->children; l; l = l->next) {
 				GaimMenuAction *act = (GaimMenuAction *)l->data;

@@ -1540,6 +1540,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	GaimConvChat *chat = GAIM_CONV_CHAT(conv);
 	gboolean is_me = FALSE;
 	GtkWidget *button;
+	GaimBuddy *buddy = NULL;
 
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -1616,7 +1617,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	}
 
 	if (!is_me && prpl_info && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-		if (gaim_find_buddy(conv->account, who))
+		if ((buddy = gaim_find_buddy(conv->account, who)) != NULL)
 			button = gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 						G_CALLBACK(menu_chat_add_remove_cb), GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
 		else
@@ -1634,6 +1635,15 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	if (!get_mark_for_user(GAIM_GTK_CONVERSATION(conv), who))
 		gtk_widget_set_sensitive(button, FALSE);
+
+	if (buddy != NULL)
+	{
+		if (gaim_account_is_connected(conv->account))
+			gaim_gtk_append_blist_node_proto_menu(menu, conv->account->gc,
+												  (GaimBlistNode *)buddy);
+		gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *)buddy);
+		gtk_widget_show_all(menu);
+	}
 
 	return menu;
 }
@@ -2611,6 +2621,7 @@ static GtkItemFactoryEntry menu_items[] =
 			"<StockItem>", GAIM_STOCK_INFO },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
 			"<StockItem>", GAIM_STOCK_INVITE },
+	{ N_("/Conversation/M_ore"), NULL, NULL, 0, "<Branch>", NULL },
 
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>", NULL },
 
@@ -2704,12 +2715,67 @@ show_buddy_icons_pref_changed_cb(const char *name, GaimPrefType type,
 	}
 }
 
+static void
+regenerate_options_items(GaimGtkWindow *win)
+{
+	GtkWidget *menu;
+	GList *list;
+	GaimGtkConversation *gtkconv;
+	GaimConversation *conv;
+	GaimBuddy *buddy;
+
+	gtkconv = gaim_gtk_conv_window_get_active_gtkconv(win);
+	conv = gtkconv->active_conv;
+	buddy = gaim_find_buddy(conv->account, conv->name);
+
+	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+
+	/* Remove the previous entries */
+	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
+	{
+		GtkWidget *w = list->data;
+		list = list->next;
+		gtk_widget_destroy(w);
+	}
+
+	/* Now add the stuff */
+	if (buddy)
+	{
+		if (gaim_account_is_connected(conv->account))
+			gaim_gtk_append_blist_node_proto_menu(menu, conv->account->gc,
+												  (GaimBlistNode *)buddy);
+		gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *)buddy);
+	}
+
+	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL)
+	{
+		GtkWidget *item = gtk_menu_item_new_with_label(_("No actions available"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_set_sensitive(item, FALSE);
+	}
+
+	gtk_widget_show_all(menu);
+}
+
+static void menubar_activated(GtkWidget *item, gpointer data)
+{
+	regenerate_options_items(data);
+	g_signal_handlers_block_by_func(G_OBJECT(item), G_CALLBACK(menubar_activated), data);
+}
+
+static void
+focus_out_from_menubar(GtkWidget *wid, GaimGtkWindow *win)
+{
+	GtkWidget *menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
+	g_signal_handlers_unblock_by_func(G_OBJECT(menuitem), G_CALLBACK(menubar_activated), win);
+}
 
 static GtkWidget *
 setup_menubar(GaimGtkWindow *win)
 {
 	GtkAccelGroup *accel_group;
 	const char *method;
+	GtkWidget *menuitem;
 
 	accel_group = gtk_accel_group_new ();
 	gtk_window_add_accel_group(GTK_WINDOW(win->window), accel_group);
@@ -2727,10 +2793,13 @@ setup_menubar(GaimGtkWindow *win)
 	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
 	                 G_CALLBACK(gaim_gtk_save_accels_cb), NULL);
 
+	menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
+	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(menubar_activated), win);
 
 	win->menu.menubar =
 		gtk_item_factory_get_widget(win->menu.item_factory, "<main>");
 
+	g_signal_connect(G_OBJECT(win->menu.menubar), "deactivate", G_CALLBACK(focus_out_from_menubar), win);
 
 	win->menu.view_log =
 		gtk_item_factory_get_widget(win->menu.item_factory,
