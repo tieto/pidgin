@@ -112,6 +112,10 @@ int wgaim_recv(int fd, void *buf, size_t len, int flags);
 #define recv(fd, buf, len, flags) \
 wgaim_recv(fd, buf, len, flags)
 
+int wgaim_send(int fd, const void *buf, unsigned int size, int flags);
+#define send(socket, buf, buflen, flags) \
+wgaim_send(socket, buf, buflen, flags)
+
 int wgaim_close(int fd);
 #define close( fd ) \
 wgaim_close( fd )

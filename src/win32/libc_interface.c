@@ -285,20 +285,25 @@ int wgaim_read(int fd, void *buf, unsigned int size) {
 	}
 }
 
-int wgaim_write(int fd, const void *buf, unsigned int size) {
+int wgaim_send(int fd, const void *buf, unsigned int size, int flags) {
 	int ret;
 
-	if(wgaim_is_socket(fd)) {
-		if((ret = send(fd, buf, size, 0)) == SOCKET_ERROR) {
-			errno = WSAGetLastError();
-			if(errno == WSAEWOULDBLOCK)
-				errno = EAGAIN;
-			return -1;
-		} else {
-			/* success */
-			return ret;
-		}
-	} else
+	ret = send(fd, buf, size, flags);
+
+	if (ret == SOCKET_ERROR) {
+		errno = WSAGetLastError();
+		if(errno == WSAEWOULDBLOCK)
+			errno = EAGAIN;
+		return -1;
+	}
+	return ret;
+}
+
+int wgaim_write(int fd, const void *buf, unsigned int size) {
+
+	if(wgaim_is_socket(fd))
+		return wgaim_send(fd, buf, size, 0);
+	else
 		return write(fd, buf, size);
 }
 
