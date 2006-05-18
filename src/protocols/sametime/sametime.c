@@ -92,7 +92,7 @@
 
 
 /* stages of connecting-ness */
-#define MW_CONNECT_STEPS  10
+#define MW_CONNECT_STEPS  11
 
 
 /* stages of conciousness */
