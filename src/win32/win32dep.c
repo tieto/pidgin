@@ -169,9 +169,8 @@ FARPROC wgaim_find_and_loadproc(char* dllname, char* procedure) {
 /* Get paths to special Windows folders. */
 char *wgaim_get_special_folder(int folder_type) {
 	static LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
-	char *retval = NULL;
-#if GLIB_CHECK_VERSION(2,6,0)
 	static LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
+	char *retval = NULL;
 
 	if (!MySHGetFolderPathW) {
 		MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW)
@@ -186,7 +185,6 @@ char *wgaim_get_special_folder(int folder_type) {
 			retval = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
 		}
 	}
-#endif
 
 	if (!retval) {
 		if (!MySHGetFolderPathA) {
@@ -198,11 +196,7 @@ char *wgaim_get_special_folder(int folder_type) {
 
 			if (SUCCEEDED(MySHGetFolderPathA(NULL, folder_type, NULL,
 							SHGFP_TYPE_CURRENT, locale_dir))) {
-#if GLIB_CHECK_VERSION(2,6,0)
 				retval = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
-#else
-				retval = g_strdup(locale_dir);
-#endif
 			}
 		}
 	}
@@ -359,22 +353,51 @@ int wgaim_gz_untar(const char* filename, const char* destdir) {
 }
 
 void wgaim_notify_uri(const char *uri) {
-	SHELLEXECUTEINFO sinfo;
-
-	memset(&sinfo, 0, sizeof(sinfo));
-	sinfo.cbSize = sizeof(sinfo);
-	sinfo.fMask = SEE_MASK_CLASSNAME;
-	sinfo.lpVerb = "open";
-	sinfo.lpFile = uri;
-	sinfo.nShow = SW_SHOWNORMAL;
-	sinfo.lpClass = "http";
 
 	/* We'll allow whatever URI schemes are supported by the
-	   default http browser.
-	*/
-	if(!ShellExecuteEx(&sinfo))
-		gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
-			uri, (int) sinfo.hInstApp);
+	 * default http browser.
+	 */
+
+	if (G_WIN32_HAVE_WIDECHAR_API()) {
+		SHELLEXECUTEINFOW wsinfo;
+		wchar_t *w_uri;
+
+		w_uri = g_utf8_to_utf16(uri, -1, NULL, NULL, NULL);
+
+		memset(&wsinfo, 0, sizeof(wsinfo));
+		wsinfo.cbSize = sizeof(wsinfo);
+		wsinfo.fMask = SEE_MASK_CLASSNAME;
+		wsinfo.lpVerb = L"open";
+		wsinfo.lpFile = w_uri;
+		wsinfo.nShow = SW_SHOWNORMAL;
+		wsinfo.lpClass = L"http";
+
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim_notify_uri", "The wide uri is %s\n", uri);
+		if(!ShellExecuteExW(&wsinfo))
+			gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
+				uri, (int) wsinfo.hInstApp);
+
+		g_free(w_uri);
+        } else {
+		SHELLEXECUTEINFOA sinfo;
+		gchar *locale_uri;
+
+		locale_uri = g_locale_from_utf8(uri, -1, NULL, NULL, NULL);
+
+		memset(&sinfo, 0, sizeof(sinfo));
+		sinfo.cbSize = sizeof(sinfo);
+		sinfo.fMask = SEE_MASK_CLASSNAME;
+		sinfo.lpVerb = "open";
+		sinfo.lpFile = locale_uri;
+		sinfo.nShow = SW_SHOWNORMAL;
+		sinfo.lpClass = "http";
+
+		if(!ShellExecuteExA(&sinfo))
+			gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
+				uri, (int) sinfo.hInstApp);
+
+		g_free(locale_uri);
+	}
 }
 
 void wgaim_init(HINSTANCE hint) {
@@ -407,11 +430,10 @@ void wgaim_init(HINSTANCE hint) {
 	/* Set Environmental Variables */
 	/* Tell perl where to find Gaim's perl modules */
 	perlenv = g_getenv("PERL5LIB");
-	newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
+	newenv = g_strdup_printf("PERL5LIB=%s%s%s" G_DIR_SEPARATOR_S "perlmod;",
 		perlenv ? perlenv : "",
 		perlenv ? ";" : "",
-		wgaim_install_dir(),
-		"\\perlmod;");
+		wgaim_install_dir());
 	if (putenv(newenv) < 0)
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 	g_free(newenv);
