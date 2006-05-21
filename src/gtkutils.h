@@ -409,7 +409,7 @@ GdkPixbuf *gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatu
  * Create a Gaim running-man icon with the status emblem overlayed
  * in the lower right corner.
  *
- * @param status_type  The status type to set the emblem for.
+ * @param primitive    The status type to set the emblem for.
  * @param scale_factor The amount to scale to the original image.
  *                     The default size is 32x32 pixels.  A scale
  *                     factor of 1 means no scaling will be done.
@@ -423,15 +423,15 @@ GdkPixbuf *gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatu
  *         allocate the image buffer, or the image file contained
  *         invalid data.
  */
-GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitve, double scale_factor);
+GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitive, double scale_factor);
 
 
 /**
  * Append a GaimMenuAction to a menu.
  *
- * @param menu   The menu to append to.
- * @param act    The GaimMenuAction to append.
- * @param object The object to be passed to the action callback.
+ * @param menu    The menu to append to.
+ * @param act     The GaimMenuAction to append.
+ * @param gobject The object to be passed to the action callback.
  *
  * @return The menu.
  */

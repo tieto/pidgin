@@ -50,7 +50,7 @@ struct _GaimDBusType {
     GaimDBusType *parent;
 };
 
-/* By convesion, the GaimDBusType variable representing each structure
+/* By convention, the GaimDBusType variable representing each structure
    GaimSomeStructure has the name GAIM_DBUS_TYPE_GaimSomeStructure.
    The following macros facilitate defining such variables
 

@@ -244,7 +244,7 @@ const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time to format, or @c NULL to use the current local time
+ * @param tm The time to format, or @c NULL to use the current local time
  *
  * @return The date, formatted as per the user's settings.
  */
@@ -256,7 +256,7 @@ const char *gaim_date_format_short(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time to format, or @c NULL to use the current local time
+ * @param tm The time to format, or @c NULL to use the current local time
  *
  * @return The timestamp, formatted as per the user's settings.
  */
@@ -268,7 +268,7 @@ const char *gaim_date_format_long(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time to format, or @c NULL to use the current local time
+ * @param tm The time to format, or @c NULL to use the current local time
  *
  * @return The date and time, formatted as per the user's settings.
  */
@@ -280,8 +280,7 @@ const char *gaim_date_format_full(const struct tm *tm);
  * The returned string is stored in a static buffer, so the result
  * should be g_strdup()'d if it's going to be kept.
  *
- * @param time The time value to format.
- * @param time The time to format, or @c NULL to use the current local time
+ * @param tm The time to format, or @c NULL to use the current local time
  *
  * @return The time, formatted as per the user's settings.
  */

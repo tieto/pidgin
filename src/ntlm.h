@@ -40,6 +40,8 @@ gchar *gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain);
  * Parses the ntlm type 2 message
  *
  * @param type2 String containing the base64 encoded type2 message
+ * @param flags If not @c NULL, this will store the flags for the message
+ * 
  * @return The nonce for use in message type3.  This is a statically
  *         allocated 8 byte binary string.
  */

@@ -98,6 +98,7 @@ extern "C" {
  * @param pouncer The account that will pounce.
  * @param pouncee The buddy to pounce on.
  * @param event   The event(s) to pounce on.
+ * @param option  Pounce options.
  *
  * @return The new buddy pounce structure.
  */
