@@ -544,6 +544,7 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	gtk_widget_grab_focus(gtkconv->entry);
 
 	if (strlen(clean) == 0) {
+		g_free(buf);
 		g_free(clean);
 		return;
 	}
