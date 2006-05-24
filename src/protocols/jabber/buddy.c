@@ -110,7 +110,10 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 	jbr->state = state;
 	if(jbr->status)
 		g_free(jbr->status);
-	jbr->status = g_markup_escape_text(status, -1);
+        if (status)
+		jbr->status = g_markup_escape_text(status, -1);
+	else
+		jbr->status = NULL;
 
 	return jbr;
 }
