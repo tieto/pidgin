@@ -1,10 +1,10 @@
 /**
  * @file msgs.c
- * 
+ *
  * gaim
  *
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -367,7 +367,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!strcmp(name, "366")) {
 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, irc->nameconv ? irc->nameconv : args[1], irc->account);
 		if (!convo) {
-			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a NAMES list for %s, which doesn't exist\n", args[2]);
+			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a NAMES list for %s, which doesn't exist\n", args[1]);
 			g_string_free(irc->names, TRUE);
 			irc->names = NULL;
 			g_free(irc->nameconv);
