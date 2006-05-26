@@ -178,7 +178,7 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 
 	if (len < 0 && errno == EAGAIN)
 		return;
-	else if (len < 0) {
+	else if (len <= 0) {
 		/* XXX: Shouldn't this be canceling the transfer? */
 		gaim_input_remove(xd->inpa);
 		xd->inpa = 0;

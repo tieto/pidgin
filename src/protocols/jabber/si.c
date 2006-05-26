@@ -273,7 +273,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		len = read(source, buffer, 5 - jsx->rxlen);
 		if(len < 0 && errno == EAGAIN)
 			return;
-		else if(len < 0) {
+		else if(len <= 0) {
 			gaim_input_remove(xfer->watcher);
 			xfer->watcher = 0;
 			close(source);
@@ -297,7 +297,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		len = read(source, buffer, jsx->rxqueue[4] + 5 + 2 - jsx->rxlen);
 		if(len < 0 && errno == EAGAIN)
 			return;
-		else if(len < 0) {
+		else if(len <= 0) {
 			gaim_input_remove(xfer->watcher);
 			xfer->watcher = 0;
 			close(source);
@@ -415,7 +415,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		len = read(source, buffer, 2 - jsx->rxlen);
 		if(len < 0 && errno == EAGAIN)
 			return;
-		else if(len < 0) {
+		else if(len <= 0) {
 			gaim_input_remove(xfer->watcher);
 			xfer->watcher = 0;
 			close(source);
@@ -431,7 +431,7 @@ jabber_si_xfer_bytestreams_send_read_cb(gpointer data, gint source,
 		len = read(source, buffer, jsx->rxqueue[1] + 2 - jsx->rxlen);
 		if(len < 0 && errno == EAGAIN)
 			return;
-		else if(len < 0) {
+		else if(len <= 0) {
 			gaim_input_remove(xfer->watcher);
 			xfer->watcher = 0;
 			close(source);

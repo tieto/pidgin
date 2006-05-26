@@ -794,6 +794,8 @@ gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 		else if ((gaim_xfer_get_size(xfer) > 0) &&
 			((gaim_xfer_get_bytes_sent(xfer)+r) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
+		else if (r == 0)
+			r = -1;
 	}
 
 	return r;
@@ -835,7 +837,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		r = gaim_xfer_read(xfer, &buffer);
 		if (r > 0) {
 			fwrite(buffer, 1, r, xfer->dest_fp);
-		} else if(r < 0) {
+		} else if(r <= 0) {
 			gaim_xfer_cancel_remote(xfer);
 			return;
 		}

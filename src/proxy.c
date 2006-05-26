@@ -1119,7 +1119,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	len = read(source, p, max_read);
 	if(len < 0 && errno == EAGAIN)
 		return;
-	else if(len < 0) {
+	else if(len <= 0) {
 		close(source);
 		source = -1;
 		g_free(phb->read_buffer);
@@ -1508,7 +1508,7 @@ s4_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	len = read(source, buf, max_read);
 
-	if ((len < 0 && errno == EAGAIN) || len + phb->read_len < 4)
+	if ((len < 0 && errno == EAGAIN) || (len > 0 && len + phb->read_len < 4))
 		return;
 	else if (len + phb->read_len >= 4) {
 		if (phb->read_buffer[1] == 90) {
@@ -1663,7 +1663,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 	len = read(source, dest, (phb->read_buf_len - phb->read_len));
 	if(len < 0 && errno == EAGAIN)
 		return;
-	else if(len < 0) {
+	else if(len <= 0) {
 		gaim_debug_warning("socks5 proxy", "or not...\n");
 		close(source);
 		gaim_input_remove(phb->inpa);
@@ -1775,7 +1775,7 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 		phb->read_buf_len - phb->read_len);
 	if(len < 0 && errno == EAGAIN)
 		return;
-	else if(len < 0) {
+	else if(len <= 0) {
 		close(source);
 		gaim_input_remove(phb->inpa);
 		g_free(phb->read_buffer);
@@ -1867,7 +1867,7 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 
 	if(len < 0 && errno == EAGAIN)
 		return;
-	else if(len < 0) {
+	else if(len <= 0) {
 		close(source);
 		gaim_input_remove(phb->inpa);
 		g_free(phb->read_buffer);
@@ -1994,7 +1994,7 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		phb->read_buf_len - phb->read_len);
 	if(len < 0 && errno == EAGAIN)
 		return;
-	else if(len < 0) {
+	else if(len <= 0) {
 		close(source);
 		gaim_input_remove(phb->inpa);
 		g_free(phb->read_buffer);
