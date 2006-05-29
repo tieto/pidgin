@@ -108,7 +108,7 @@ get_last_auto_response(GaimConnection *gc, const char *name)
 	g_snprintf(lar->name, sizeof(lar->name), "%s", name);
 	lar->gc = gc;
 	lar->sent = 0;
-	last_auto_responses = g_slist_append(last_auto_responses, lar);
+	last_auto_responses = g_slist_prepend(last_auto_responses, lar);
 
 	return lar;
 }
