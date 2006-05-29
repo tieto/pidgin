@@ -7533,7 +7533,7 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	GtkWidget *close_image;
 	GaimConversationType conv_type;
 	const gchar *tmp_lab;
-	GtkRcStyle *rcstyle;
+	gint close_button_width, close_button_height, focus_width, focus_pad;
 	gboolean tabs_side = FALSE;
 	gint angle = 0;
 
@@ -7559,15 +7559,20 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
+	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &close_button_width, &close_button_height);
+	if (gtk_check_version(2, 4, 2) == NULL) {
+		/* Need to account for extra padding around the gtkbutton */
+		gtk_widget_style_get(GTK_WIDGET(gtkconv->close),
+		                     "focus-line-width", &focus_width,
+		                     "focus-padding", &focus_pad,
+		                     NULL);
+		close_button_width += (focus_width + focus_pad) * 2;
+		close_button_height += (focus_width + focus_pad) * 2;
+	}
+	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close),
+	                            close_button_width, close_button_height);
 
-	gtk_button_set_focus_on_click(GTK_BUTTON(gtkconv->close), FALSE);
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
-
-	rcstyle = gtk_rc_style_new ();
-	rcstyle->xthickness = rcstyle->ythickness = 0;
-	gtk_widget_modify_style(gtkconv->close, rcstyle);
-	gtk_rc_style_unref(rcstyle);
-
 	close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 	gtk_widget_show(close_image);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
