@@ -187,9 +187,15 @@ gaim_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
 static gboolean
 gaim_upnp_compare_service(const xmlnode* service, const gchar* serviceType)
 {
-	xmlnode* serviceTypeNode = xmlnode_get_child(service, "serviceType");
+	xmlnode* serviceTypeNode;
 	char *tmp;
 	gboolean ret;
+
+	if(service == NULL) {
+		return FALSE;
+	}
+
+	serviceTypeNode = xmlnode_get_child(service, "serviceType");
 
 	if(serviceTypeNode == NULL) {
 		return FALSE;
