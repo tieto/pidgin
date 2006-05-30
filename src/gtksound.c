@@ -393,9 +393,7 @@ gaim_gtk_sound_play_file(const char *filename)
 	}
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		char *tmp = g_strdup_printf("sound file (%s) does not exist.\n", filename);
-		gaim_debug_error("gtksound", tmp);
-		g_free(tmp);
+		gaim_debug_error("gtksound", "sound file (%s) does not exist.\n", filename);
 		return;
 	}
 
