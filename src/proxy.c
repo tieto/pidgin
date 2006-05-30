@@ -386,7 +386,7 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 		rc = select(child_in + 1, &fds, NULL, NULL, &tv);
 		if (!rc) {
 			if (show_debug)
-				fprintf(stderr,"dns[%d]: nobody needs me... =(\n", getpid());
+				printf("dns[%d]: nobody needs me... =(\n", getpid());
 			break;
 		}
 		rc = read(child_in, &dns_params, sizeof(dns_params_t));
@@ -396,11 +396,11 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 		}
 		if (rc == 0) {
 			if (show_debug)
-				fprintf(stderr,"dns[%d]: Oops, father has gone, wait for me, wait...!\n", getpid());
+				printf("dns[%d]: Oops, father has gone, wait for me, wait...!\n", getpid());
 			_exit(0);
 		}
 		if (dns_params.hostname[0] == '\0') {
-			fprintf(stderr, "dns[%d]: hostname = \"\" (port = %d)!!!\n", getpid(), dns_params.port);
+			printf("dns[%d]: hostname = \"\" (port = %d)!!!\n", getpid(), dns_params.port);
 			_exit(1);
 		}
 		/* Tell our parent that we read the data successfully */
@@ -424,7 +424,7 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 		if (rc != 0) {
 			close(child_out);
 			if (show_debug)
-				fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
+				printf("dns[%d] Error: getaddrinfo returned %d\n",
 					getpid(), rc);
 			dns_params.hostname[0] = '\0';
 			continue;
@@ -445,7 +445,7 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 				write(child_out, &h_errno, sizeof(int));
 				close(child_out);
 				if (show_debug)
-					fprintf(stderr,"DNS Error: %d\n", h_errno);
+					printf("DNS Error: %d\n", h_errno);
 				_exit(0);
 			}
 			memset(&sin, 0, sizeof(struct sockaddr_in));
