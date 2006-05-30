@@ -239,6 +239,11 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
+void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id)
+{
+	g_hash_table_remove(js->iq_callbacks, id);
+}
+
 void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberCallbackData *jcd;
@@ -256,7 +261,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	if(type && (!strcmp(type, "result") || !strcmp(type, "error"))) {
 		if(id && *id && (jcd = g_hash_table_lookup(js->iq_callbacks, id))) {
 			jcd->callback(js, packet, jcd->data);
-			g_hash_table_remove(js->iq_callbacks, id);
+			jabber_iq_remove_callback_by_id(js, id);
 			return;
 		}
 	}

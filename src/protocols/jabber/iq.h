@@ -53,6 +53,7 @@ JabberIq *jabber_iq_new_query(JabberStream *js, JabberIqType type,
 
 void jabber_iq_parse(JabberStream *js, xmlnode *packet);
 
+void jabber_iq_remove_callback_by_id(JabberStream *js, const char *id);
 void jabber_iq_set_callback(JabberIq *iq, JabberIqCallback *cb, gpointer data);
 void jabber_iq_set_id(JabberIq *iq, const char *id);
 

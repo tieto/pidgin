@@ -35,6 +35,21 @@
 #include "presence.h"
 #include "xdata.h"
 
+typedef struct {
+	long idle_seconds;
+} JabberBuddyInfoResource;
+
+typedef struct {
+	JabberStream *js;
+	JabberBuddy *jb;
+	char *jid;
+	GSList *ids;
+	GHashTable *resources;
+	int timeout_handle;
+	char *vcard_text;
+	GSList *vcard_imgids;
+} JabberBuddyInfo;
+
 void jabber_buddy_free(JabberBuddy *jb)
 {
 	g_return_if_fail(jb != NULL);
@@ -125,10 +140,11 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
 
 	g_free(jbr->name);
-	if(jbr->status)
-		g_free(jbr->status);
-	if(jbr->thread_id)
-		g_free(jbr->thread_id);
+	g_free(jbr->status);
+	g_free(jbr->thread_id);
+	g_free(jbr->client.name);
+	g_free(jbr->client.version);
+	g_free(jbr->client.os);
 	g_free(jbr);
 }
 
@@ -587,39 +603,24 @@ void jabber_setup_set_info(GaimPluginAction *action)
  * end of that ancient crap that needs to die
  ******/
 
-
-static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
+static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 {
-	GList *resources;
-	const char *from = xmlnode_get_attrib(packet, "from");
-	JabberBuddy *jb;
-	JabberBuddyResource *jbr;
 	GString *info_text;
 	char *resource_name;
-	char *bare_jid;
-	char *text;
-	xmlnode *vcard;
-	GaimBuddy *b;
-	GSList *imgids = NULL;
+	JabberBuddyResource *jbr;
+	JabberBuddyInfoResource *jbir;
+	GList *resources;
 
-	if(!from)
+	/* not yet */
+	if(jbi->ids)
 		return;
-
-	if(!(jb = jabber_buddy_find(js, from, TRUE)))
-		return;
-
-	/* XXX: handle the error case */
-
-	resource_name = jabber_get_resource(from);
-	bare_jid = jabber_get_bare_jid(from);
-
-	b = gaim_find_buddy(js->gc->account, bare_jid);
-
 
 	info_text = g_string_new("");
+	resource_name = jabber_get_resource(jbi->jid);
 
 	if(resource_name) {
-		jbr = jabber_buddy_find_resource(jb, resource_name);
+		jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
+		jbir = g_hash_table_lookup(jbi->resources, resource_name);
 		if(jbr) {
 			char *purdy = NULL;
 			if(jbr->status)
@@ -634,24 +635,126 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 					_("Status"), _("Unknown"));
 		}
+		if(jbir) {
+			if(jbir->idle_seconds > 0) {
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
+						_("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
+			}
+		}
+		if(jbr && jbr->client.name) {
+			g_string_append_printf(info_text, "<b>%s:</b> %s %s<br/>",
+					_("Client:"), jbr->client.name,
+					jbr->client.version ? jbr->client.version : "");
+			if(jbr->client.os) {
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
+						_("Operating System"), jbr->client.os);
+			}
+		}
 	} else {
-		for(resources = jb->resources; resources; resources = resources->next) {
+		for(resources = jbi->jb->resources; resources; resources = resources->next) {
 			char *purdy = NULL;
 			jbr = resources->data;
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
 			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 					_("Resource"), jbr->name);
-			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/><br/>",
+			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
 					_("Status"), jabber_buddy_state_get_name(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
 			if(purdy)
 				g_free(purdy);
+
+			jbir = g_hash_table_lookup(jbi->resources, jbr->name);
+			if(jbir) {
+				if(jbir->idle_seconds > 0) {
+					g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
+							_("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
+				}
+			}
+			if(jbr->client.name) {
+				g_string_append_printf(info_text, "<b>%s:</b> %s %s<br/>",
+						_("Client:"), jbr->client.name,
+						jbr->client.version ? jbr->client.version : "");
+				if(jbr->client.os) {
+					g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
+							_("Operating System"), jbr->client.os);
+				}
+			}
+
+			g_string_append_printf(info_text, "<br/>");
 		}
 	}
 
 	g_free(resource_name);
+
+	info_text = g_string_append(info_text, jbi->vcard_text);
+
+	gaim_notify_userinfo(jbi->js->gc, jbi->jid, info_text->str, NULL, NULL);
+
+	while(jbi->vcard_imgids) {
+		gaim_imgstore_unref(GPOINTER_TO_INT(jbi->vcard_imgids->data));
+		jbi->vcard_imgids = g_slist_delete_link(jbi->vcard_imgids, jbi->vcard_imgids);
+	}
+
+	g_string_free(info_text, TRUE);
+
+	gaim_timeout_remove(jbi->timeout_handle);
+	g_free(jbi->jid);
+	g_hash_table_destroy(jbi->resources);
+	g_free(jbi->vcard_text);
+	g_free(jbi);
+}
+
+static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
+{
+	GSList *l = jbi->ids;
+
+	if(!id)
+		return;
+
+	while(l) {
+		if(!strcmp(id, l->data)) {
+			jbi->ids = g_slist_remove(jbi->ids, l->data);
+			return;
+		}
+		l = l->next;
+	}
+}
+
+static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	const char *type, *id, *from;
+	JabberBuddy *jb;
+	GString *info_text;
+	char *bare_jid;
+	char *text;
+	xmlnode *vcard;
+	GaimBuddy *b;
+	JabberBuddyInfo *jbi = data;
+
+	from = xmlnode_get_attrib(packet, "from");
+	type = xmlnode_get_attrib(packet, "type");
+	id = xmlnode_get_attrib(packet, "id");
+
+	jabber_buddy_info_remove_id(jbi, id);
+
+	if(!jbi)
+		return;
+
+	if(!from)
+		return;
+
+	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+		return;
+
+	/* XXX: handle the error case */
+
+	bare_jid = jabber_get_bare_jid(from);
+
+	b = gaim_find_buddy(js->gc->account, bare_jid);
+
+	info_text = g_string_new("");
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
@@ -838,11 +941,11 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 					data = gaim_base64_decode(bintext, &size);
 
-					imgids = g_slist_prepend(imgids, GINT_TO_POINTER(gaim_imgstore_add(data, size, "logo.png")));
+					jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(gaim_imgstore_add(data, size, "logo.png")));
 					g_string_append_printf(info_text,
 							"<b>%s:</b> <img id='%d'><br/>",
 							photo ? _("Photo") : _("Logo"),
-							GPOINTER_TO_INT(imgids->data));
+							GPOINTER_TO_INT(jbi->vcard_imgids->data));
 
 					gaim_buddy_icons_set_for_user(js->gc->account, bare_jid,
 							data, size);
@@ -862,33 +965,187 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		}
 	}
 
-	text = gaim_strdup_withhtml(info_text->str);
-
-	gaim_notify_userinfo(js->gc, from, text, NULL, NULL);
-
-	while(imgids) {
-		gaim_imgstore_unref(GPOINTER_TO_INT(imgids->data));
-		imgids = g_slist_delete_link(imgids, imgids);
-	}
+	jbi->vcard_text = gaim_strdup_withhtml(info_text->str);
 	g_string_free(info_text, TRUE);
-	g_free(text);
 	g_free(bare_jid);
+
+	jabber_buddy_info_show_if_ready(jbi);
 }
 
-static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *full_jid)
+
+static void jabber_buddy_info_resource_free(gpointer data)
+{
+	JabberBuddyInfoResource *jbri = data;
+	g_free(jbri);
+}
+
+static void jabber_version_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JabberBuddyInfo *jbi = data;
+	const char *type, *id, *from;
+	xmlnode *query;
+	char *resource_name;
+
+	g_return_if_fail(jbi != NULL);
+
+	type = xmlnode_get_attrib(packet, "type");
+	id = xmlnode_get_attrib(packet, "id");
+	from = xmlnode_get_attrib(packet, "from");
+
+	jabber_buddy_info_remove_id(jbi, id);
+
+	if(!from)
+		return;
+
+	resource_name = jabber_get_resource(from);
+
+	if(resource_name) {
+		if(type && !strcmp(type, "result")) {
+			if((query = xmlnode_get_child(packet, "query"))) {
+				JabberBuddyResource *jbr = jabber_buddy_find_resource(jbi->jb, resource_name);
+				if(jbr) {
+					xmlnode *node;
+					if((node = xmlnode_get_child(query, "name"))) {
+						jbr->client.name = xmlnode_get_data(node);
+					}
+					if((node = xmlnode_get_child(query, "version"))) {
+						jbr->client.version = xmlnode_get_data(node);
+					}
+					if((node = xmlnode_get_child(query, "os"))) {
+						jbr->client.os = xmlnode_get_data(node);
+					}
+				}
+			}
+		}
+		g_free(resource_name);
+	}
+
+	jabber_buddy_info_show_if_ready(jbi);
+}
+
+static void jabber_last_parse(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JabberBuddyInfo *jbi = data;
+	xmlnode *query;
+	char *resource_name;
+	const char *type, *id, *from, *seconds;
+
+	g_return_if_fail(jbi != NULL);
+
+	type = xmlnode_get_attrib(packet, "type");
+	id = xmlnode_get_attrib(packet, "id");
+	from = xmlnode_get_attrib(packet, "from");
+
+	jabber_buddy_info_remove_id(jbi, id);
+
+	if(!from)
+		return;
+
+	resource_name = jabber_get_resource(from);
+
+	if(resource_name) {
+		if(type && !strcmp(type, "result")) {
+			if((query = xmlnode_get_child(packet, "query"))) {
+				seconds = xmlnode_get_attrib(query, "seconds");
+				if(seconds) {
+					char *end = NULL;
+					long sec = strtol(seconds, &end, 10);
+					if(end != seconds) {
+						JabberBuddyInfoResource *jbir = g_hash_table_lookup(jbi->resources, resource_name);
+						if(jbir) {
+							jbir->idle_seconds = sec;
+						}
+					}
+				}
+			}
+		}
+		g_free(resource_name);
+	}
+
+	jabber_buddy_info_show_if_ready(jbi);
+}
+
+static gboolean jabber_buddy_get_info_timeout(gpointer data)
+{
+	JabberBuddyInfo *jbi = data;
+
+	/* remove the pending callbacks */
+	while(jbi->ids) {
+		char *id = jbi->ids->data;
+		jabber_iq_remove_callback_by_id(jbi->js, id);
+		g_free(id);
+		jbi->ids = g_slist_remove(jbi->ids, id);
+	}
+
+	jbi->timeout_handle = 0;
+
+	jabber_buddy_info_show_if_ready(jbi);
+
+	return FALSE;
+}
+
+static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 {
 	JabberIq *iq;
 	xmlnode *vcard;
+	GList *resources;
+	JabberBuddy *jb;
+	JabberBuddyInfo *jbi;
+
+	jb = jabber_buddy_find(js, jid, TRUE);
+
+	/* invalid JID */
+	if(!jb)
+		return;
+
+	jbi = g_new0(JabberBuddyInfo, 1);
+	jbi->jid = g_strdup(jid);
+	jbi->js = js;
+	jbi->jb = jb;
+	jbi->resources = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_buddy_info_resource_free);
 
 	iq = jabber_iq_new(js, JABBER_IQ_GET);
 
-	xmlnode_set_attrib(iq->node, "to", full_jid);
+	xmlnode_set_attrib(iq->node, "to", jid);
 	vcard = xmlnode_new_child(iq->node, "vCard");
 	xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
 
-	jabber_iq_set_callback(iq, jabber_vcard_parse, NULL);
+	jabber_iq_set_callback(iq, jabber_vcard_parse, jbi);
+	jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
 
 	jabber_iq_send(iq);
+
+	for(resources = jb->resources; resources; resources = resources->next)
+	{
+		JabberBuddyResource *jbr = resources->data;
+		JabberBuddyInfoResource *jbir = g_new0(JabberBuddyInfoResource, 1);
+		char *full_jid;
+		if(strrchr(jid, '/')) {
+			full_jid = g_strdup(jid);
+		} else {
+			full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
+		}
+
+		g_hash_table_insert(jbi->resources, g_strdup(jbr->name), jbir);
+
+		if(!jbr->client.name) {
+			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:version");
+			xmlnode_set_attrib(iq->node, "to", full_jid);
+			jabber_iq_set_callback(iq, jabber_version_parse, jbi);
+			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+			jabber_iq_send(iq);
+		}
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+		xmlnode_set_attrib(iq->node, "to", full_jid);
+		jabber_iq_set_callback(iq, jabber_last_parse, jbi);
+		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+		jabber_iq_send(iq);
+
+		g_free(full_jid);
+	}
+
+	jbi->timeout_handle = gaim_timeout_add(30000, jabber_buddy_get_info_timeout, jbi);
 }
 
 void jabber_buddy_get_info(GaimConnection *gc, const char *who)
@@ -1383,7 +1640,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
-		
+
 		if(!msg)
 			msg = g_strdup(_("Unknown error"));
 
@@ -1417,16 +1674,16 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		if((instnode = xmlnode_get_child(query, "instructions")))
 		{
 			char *tmp = xmlnode_get_data(instnode);
-			
+
 			if(tmp)
 			{
-				/* Try to translate the message (see static message 
+				/* Try to translate the message (see static message
 				   list in jabber_user_dir_comments[]) */
 				instructions = g_strdup_printf(_("Server Instructions: %s"), _(tmp));
 				g_free(tmp);
 			}
 		}
-		
+
 		if(!instructions)
 		{
 			instructions = g_strdup(_("Fill in one or more fields to search "
@@ -1497,3 +1754,6 @@ void jabber_user_search_begin(GaimPluginAction *action)
 			_("Search Directory"), GAIM_CALLBACK(jabber_user_search_ok),
 			_("Cancel"), NULL, js);
 }
+
+
+
