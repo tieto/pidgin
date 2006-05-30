@@ -76,15 +76,15 @@ msgstr "Fa una prova dels xifratges que es distribueixen amb el gaim."
 
 #: ../plugins/contact_priority.c:61
 msgid "Buddy is idle"
-msgstr "L'amic és inactiu"
+msgstr "L'amic està inactiu"
 
 #: ../plugins/contact_priority.c:62
 msgid "Buddy is away"
-msgstr "L'amic és absent"
+msgstr "L'amic està absent"
 
 #: ../plugins/contact_priority.c:63
 msgid "Buddy is \"extended\" away"
-msgstr "L'amic és absent «de fa temps»"
+msgstr "L'amic està absent «de fa temps»"
 
 #. Not used yet.
 #: ../plugins/contact_priority.c:66
@@ -895,7 +895,7 @@ msgstr "Quan s'obre una nova conversa este connector inserirà la darrera conver
 #. *< id
 #: ../plugins/iconaway.c:82
 msgid "Iconify on Away"
-msgstr "Iconifica si s'és absent"
+msgstr "Iconifica si s'està absent"
 
 #. *< name
 #. *< version
@@ -938,7 +938,7 @@ msgstr "_Cancel·la"
 
 #: ../plugins/idle.c:180
 msgid "None of your accounts are idle."
-msgstr "Cap dels vostres comptes és inactiu."
+msgstr "Cap dels vostres comptes està inactiu."
 
 # FIXME
 #: ../plugins/idle.c:196
@@ -1011,7 +1011,7 @@ msgstr "Connector de proves per a servidor d'IPC, que registra les ordres IPC."
 
 #: ../plugins/log_reader.c:1405
 msgid "User is offline."
-msgstr "L'usuari és fora de línia."
+msgstr "L'usuari està fora de línia."
 
 #: ../plugins/log_reader.c:1411
 msgid "Auto-response sent:"
@@ -1312,7 +1312,7 @@ msgstr "Carregador de connectors en Perl"
 #: ../plugins/perl/perl.c:585
 #: ../plugins/perl/perl.c:586
 msgid "Provides support for loading perl plugins."
-msgstr "Proporciona suport per a carregar connectors en Perl."
+msgstr "Permet carregar connectors en Perl."
 
 #: ../plugins/psychic.c:19
 msgid "Psychic Mode"
@@ -1342,7 +1342,7 @@ msgstr "Habilita-ho només per als usuaris de la llista d'amics"
 
 #: ../plugins/psychic.c:87
 msgid "Disable when away"
-msgstr "Inhabilita-ho quan siga absent"
+msgstr "Inhabilita-ho quan estiga absent"
 
 #: ../plugins/psychic.c:91
 msgid "Display notification message in conversations"
@@ -1527,7 +1527,7 @@ msgstr "GNUTLS"
 #: ../plugins/ssl/ssl-gnutls.c:254
 #: ../plugins/ssl/ssl-gnutls.c:256
 msgid "Provides SSL support through GNUTLS."
-msgstr "Proporciona suport per a SSL a través de la biblioteca GNUTLS."
+msgstr "Permet l'ús d'SSL a través de la biblioteca GNUTLS."
 
 #. *< type
 #. *< ui_requirement
@@ -1546,7 +1546,7 @@ msgstr "NSS"
 #: ../plugins/ssl/ssl-nss.c:415
 #: ../plugins/ssl/ssl-nss.c:417
 msgid "Provides SSL support through Mozilla NSS."
-msgstr "Proporciona suport per a SSL a través de la biblioteca NSS de Mozilla."
+msgstr "Permet l'ús d'SSL a través de la biblioteca NSS de Mozilla."
 
 #. *< type
 #. *< ui_requirement
@@ -1565,12 +1565,12 @@ msgstr "SSL"
 #: ../plugins/ssl/ssl.c:97
 #: ../plugins/ssl/ssl.c:99
 msgid "Provides a wrapper around SSL support libraries."
-msgstr "Proporciona una interfície per a les biblioteques de suport d'SSL."
+msgstr "Proporciona una interfície per a les biblioteques per a SSL."
 
 #: ../plugins/statenotify.c:50
 #, c-format
 msgid "%s is no longer away."
-msgstr "%s ja no és absent."
+msgstr "%s ja no està absent."
 
 #: ../plugins/statenotify.c:52
 #, c-format
@@ -1585,7 +1585,7 @@ msgstr "%s ha passat a inactiu."
 #: ../plugins/statenotify.c:64
 #, c-format
 msgid "%s is no longer idle."
-msgstr "%s ja no és inactiu."
+msgstr "%s ja no està inactiu."
 
 #: ../plugins/statenotify.c:73
 #, c-format
@@ -1634,7 +1634,7 @@ msgstr "Carregador de connectors en Tcl"
 #: ../plugins/tcl/tcl.c:371
 #: ../plugins/tcl/tcl.c:372
 msgid "Provides support for loading Tcl plugins"
-msgstr "Proporciona suport per a carregar els connectors en Tcl"
+msgstr "Permet carregar els connectors en Tcl"
 
 # FIXME (josep)
 #. *< type
@@ -2992,7 +2992,7 @@ msgid ""
 "The following commands are available in this context:\n"
 msgstr ""
 "Feu servir «/help &lt;ordre&gt;» per a obtindre ajuda sobre una ordre.\n"
-"Les següents ordres són disponibles en este context:\n"
+"Hi ha les següents ordres disponibles en este context:\n"
 
 #: ../src/gtkconv.c:482
 msgid "No such command."
@@ -3355,7 +3355,7 @@ msgstr "Nou esdeveniment"
 
 #: ../src/gtkconv.c:6521
 msgid "say &lt;message&gt;:  Send a message normally as if you weren't using a command."
-msgstr "say &lt;missatge&gt;: Envia un missatge normalment com si no féssiu servir cap ordre."
+msgstr "say &lt;missatge&gt;: Envia un missatge normalment com si no féreu servir cap ordre."
 
 #: ../src/gtkconv.c:6524
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
@@ -4180,7 +4180,7 @@ msgstr "Este tema no disposa d'emoticones."
 #. show everything
 #: ../src/gtkimhtmltoolbar.c:735
 msgid "Smile!"
-msgstr "Somrigueu!"
+msgstr "Somrieu!"
 
 #: ../src/gtkimhtmltoolbar.c:923
 msgid "Bold"
@@ -4520,7 +4520,7 @@ msgstr "Passe a _inactiu"
 
 #: ../src/gtkpounce.c:591
 msgid "Is no longer i_dle"
-msgstr "Ja no siga i_nactiu"
+msgstr "Ja no estiga i_nactiu"
 
 #: ../src/gtkpounce.c:593
 msgid "Starts _typing"
@@ -4578,7 +4578,7 @@ msgstr "Opcions"
 
 #: ../src/gtkpounce.c:773
 msgid "P_ounce only when my status is not available"
-msgstr "Avisa n_omés quan el meu estat no siga disponible"
+msgstr "Avisa n_omés quan el meu estat no estiga disponible"
 
 #: ../src/gtkpounce.c:778
 msgid "_Recurring"
@@ -5032,7 +5032,7 @@ msgstr "Auto-absència"
 
 #: ../src/gtkprefs.c:1788
 msgid "Change status when _idle"
-msgstr "Canvia l'estat quan siga _inactiu"
+msgstr "Canvia l'estat quan estiga _inactiu"
 
 #: ../src/gtkprefs.c:1792
 msgid "_Minutes before changing status:"
@@ -6158,7 +6158,7 @@ msgstr "S'ha produït un error en mostrar la frase del dia"
 
 #: ../src/protocols/irc/irc.c:78
 msgid "No MOTD available"
-msgstr "La frase del dia no és disponible"
+msgstr "La frase del dia no està disponible"
 
 #: ../src/protocols/irc/irc.c:79
 msgid "There is no MOTD associated with this connection."
@@ -6198,7 +6198,7 @@ msgstr "Els sobrenoms d'IRC no poden contenir espais en blanc"
 #: ../src/protocols/jabber/jabber.c:550
 #: ../src/protocols/jabber/jabber.c:890
 msgid "SSL support unavailable"
-msgstr "El suport per a SSL no és disponible"
+msgstr "La implementació d'SSL no està disponible"
 
 #: ../src/protocols/irc/irc.c:333
 #: ../src/protocols/simple/simple.c:452
@@ -6319,7 +6319,7 @@ msgstr "Bandejat"
 #: ../src/protocols/irc/msgs.c:136
 #, c-format
 msgid "Cannot ban %s: banlist is full"
-msgstr "No es pot bandejar %s: la llista de bandejats és plena"
+msgstr "No es pot bandejar %s: la llista de bandejats està plena"
 
 #: ../src/protocols/irc/msgs.c:215
 #: ../src/protocols/irc/msgs.c:235
@@ -6664,11 +6664,11 @@ msgstr "Desconnectat."
 
 #: ../src/protocols/jabber/auth.c:51
 msgid "Server requires TLS/SSL for login.  Select \"Use TLS if available\" in account properties"
-msgstr "El servidor requereix TLS/SSL per a entrar. Seleccioneu «Utilitza TLS si és disponible» en les propietats del compte"
+msgstr "El servidor requereix TLS/SSL per a entrar. Seleccioneu «Utilitza TLS si està disponible» en les propietats del compte"
 
 #: ../src/protocols/jabber/auth.c:53
 msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
-msgstr "El servidor requereix TLS/SSL per a entrar. No s'ha trobat suport per a TLS/SSL."
+msgstr "El servidor requereix TLS/SSL per a entrar. No es pot fer funcionar TLS/SSL."
 
 #: ../src/protocols/jabber/auth.c:114
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -7276,7 +7276,7 @@ msgstr "De pagament"
 
 #: ../src/protocols/jabber/jabber.c:1438
 msgid "Recipient Unavailable"
-msgstr "El destinatari no és disponible"
+msgstr "El destinatari no està disponible"
 
 #: ../src/protocols/jabber/jabber.c:1442
 msgid "Registration Required"
@@ -7296,7 +7296,7 @@ msgstr "El servidor està sobrecarregat"
 
 #: ../src/protocols/jabber/jabber.c:1450
 msgid "Service Unavailable"
-msgstr "El servei no és disponible"
+msgstr "El servei no està disponible"
 
 #: ../src/protocols/jabber/jabber.c:1452
 msgid "Subscription Required"
@@ -7523,7 +7523,7 @@ msgstr "Connector per al protocol Jabber"
 
 #: ../src/protocols/jabber/jabber.c:1911
 msgid "Use TLS if available"
-msgstr "Utilitza TLS si és disponible"
+msgstr "Utilitza TLS si està disponible"
 
 #: ../src/protocols/jabber/jabber.c:1916
 msgid "Require TLS"
@@ -7702,7 +7702,7 @@ msgstr "No és a la llista"
 #: ../src/protocols/msn/error.c:70
 #: ../src/protocols/zephyr/zephyr.c:705
 msgid "User is offline"
-msgstr "L'usuari és fora de línia"
+msgstr "L'usuari està fora de línia"
 
 #: ../src/protocols/msn/error.c:73
 msgid "Already in the mode"
@@ -7759,7 +7759,7 @@ msgstr "No està connectat"
 
 #: ../src/protocols/msn/error.c:116
 msgid "Service Temporarily Unavailable"
-msgstr "El servei és temporalment fora de servei."
+msgstr "El servei està temporalment fora de servei."
 
 #: ../src/protocols/msn/error.c:119
 msgid "Database server error"
@@ -7789,7 +7789,7 @@ msgstr "El servidor està ocupat"
 #: ../src/protocols/msn/error.c:151
 #: ../src/protocols/msn/error.c:206
 msgid "Server unavailable"
-msgstr "El servidor no és disponible"
+msgstr "El servidor no està disponible"
 
 #: ../src/protocols/msn/error.c:141
 msgid "Peer Notification server down"
@@ -8684,7 +8684,7 @@ msgstr "El vostre administrador del sistema ha inhabilitat esta operació"
 
 #: ../src/protocols/novell/nmuser.c:1913
 msgid "The server is unavailable; try again later"
-msgstr "El servidor no és disponible, proveu-ho més tard"
+msgstr "El servidor no està disponible, proveu-ho més tard"
 
 #: ../src/protocols/novell/nmuser.c:1916
 msgid "Cannot add a contact to the same folder twice"
@@ -8915,7 +8915,7 @@ msgstr "Se vos ha desconnectat perquè heu entrat a través d'una altra estació
 #: ../src/protocols/novell/novell.c:2070
 #, c-format
 msgid "%s appears to be offline and did not receive the message that you just sent."
-msgstr "És possible que %s no siga en línia, i no haja rebut el missatge que li acabeu d'enviar."
+msgstr "És possible que %s no estiga en línia, i no haja rebut el missatge que li acabeu d'enviar."
 
 #. TODO: Would be nice to prompt if not set!
 #. *  gaim_request_fields(gc, _("Server Address"),...);
@@ -8927,7 +8927,7 @@ msgstr "No s'ha pogut connectar al servidor. Introduïu l'adreça del servidor a
 
 #: ../src/protocols/novell/novell.c:2190
 msgid "Error. SSL support is not installed."
-msgstr "Error. El suport per a SLL no està instal·lat."
+msgstr "S'ha produït un error. La funcionalitat per a SSL no està instal·lada."
 
 #: ../src/protocols/novell/novell.c:2499
 msgid "This conference has been closed. No more messages can be sent."
@@ -9030,7 +9030,7 @@ msgstr "Massa malvat (receptor)"
 
 #: ../src/protocols/oscar/oscar.c:163
 msgid "User temporarily unavailable"
-msgstr "Usuari no disponible temporalment"
+msgstr "L'usuari no està disponible temporalment"
 
 #: ../src/protocols/oscar/oscar.c:164
 msgid "No match"
@@ -9217,7 +9217,7 @@ msgstr "El vostre compte està actualment suspés."
 #. service temporarily unavailable
 #: ../src/protocols/oscar/oscar.c:1317
 msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr "El servei de missatges instantanis d'AOL no és disponible temporalment."
+msgstr "El servei de missatges instantanis d'AOL no està disponible temporalment."
 
 #: ../src/protocols/oscar/oscar.c:1322
 msgid "You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."
@@ -9469,12 +9469,12 @@ msgstr "No s'ha pogut enviar el missatge a %s:"
 #: ../src/protocols/oscar/oscar.c:2799
 #, c-format
 msgid "User information not available: %s"
-msgstr "La informació de l'usuari no és disponible: %s"
+msgstr "La informació de l'usuari no està disponible: %s"
 
 #: ../src/protocols/oscar/oscar.c:2802
 #, c-format
 msgid "User information for %s unavailable:"
-msgstr "La informació de %s no és disponible:"
+msgstr "La informació de %s no està disponible:"
 
 #: ../src/protocols/oscar/oscar.c:2828
 msgid "Online Since"
@@ -11211,7 +11211,7 @@ msgstr "Fallida: Les versions no coincideixen, actualitzeu el client"
 
 #: ../src/protocols/silc/ops.c:1941
 msgid "Failure: Remote does not trust/support your public key"
-msgstr "Fallida: El remot no se'n refia o no suporta la vostra clau pública"
+msgstr "Fallida: El remot no se'n refia o no funciona amb la vostra clau pública"
 
 #: ../src/protocols/silc/ops.c:1944
 msgid "Failure: Remote does not support proposed KE group"
@@ -11882,7 +11882,7 @@ msgstr "S'ha ignorat un missatge. Esteu excedint el límit de velocitat del serv
 #: ../src/protocols/toc/toc.c:500
 #, c-format
 msgid "Chat in %s is not available."
-msgstr "El xat a %s no és disponible."
+msgstr "El xat a %s no està disponible."
 
 #: ../src/protocols/toc/toc.c:503
 #, c-format
@@ -11933,7 +11933,7 @@ msgstr "L'usuari no té informació al directori."
 
 #: ../src/protocols/toc/toc.c:537
 msgid "Country not supported."
-msgstr "País no suportat."
+msgstr "País no implementat."
 
 #: ../src/protocols/toc/toc.c:540
 #, c-format
@@ -11942,7 +11942,7 @@ msgstr "Fallada desconeguda: %s."
 
 #: ../src/protocols/toc/toc.c:546
 msgid "The service is temporarily unavailable."
-msgstr "El servei és temporalment no disponible."
+msgstr "El servei està temporalment no disponible."
 
 #: ../src/protocols/toc/toc.c:549
 msgid "Your warning level is currently too high to log in."
@@ -11988,7 +11988,7 @@ msgstr "TOC ha enviat l'ordre PAUSE."
 
 #: ../src/protocols/toc/toc.c:994
 msgid "When this happens, TOC ignores any messages sent to it, and may kick you off if you send a message. Gaim will prevent anything from going through. This is only temporary, please be patient."
-msgstr "Quan açò succeeix, TOC ignora els missatges que se li envien, i vos pot fer fora si envieu un missatge. Gaim evitarà que res d'això passe. Només éstemporalment. Si vos plau, tingueu paciència."
+msgstr "Quan açò succeeix, TOC ignora els missatges que se li envien, i vos pot fer fora si envieu un missatge. Gaim evitarà que res d'això passe. Només és temporalment. Si vos plau, tingueu paciència."
 
 #: ../src/protocols/toc/toc.c:1549
 msgid "Get Dir Info"
@@ -12411,7 +12411,7 @@ msgstr "Darrera actualització"
 #: ../src/protocols/yahoo/yahoo_profile.c:1170
 #, c-format
 msgid "User information for %s unavailable"
-msgstr "Dades de l'usuari %s no disponibles"
+msgstr "Les dades de l'usuari %s no estan disponibles"
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1176
 msgid "Sorry, this profile seems to be in a language or format that is not supported at this time."
@@ -12450,7 +12450,7 @@ msgstr "Sala desconeguda"
 #. -15
 #: ../src/protocols/yahoo/yahoochat.c:367
 msgid "Maybe the room is full"
-msgstr "Pot ser que la sala siga plena"
+msgstr "Pot ser que la sala estiga plena"
 
 #. -35
 #: ../src/protocols/yahoo/yahoochat.c:370
@@ -12722,12 +12722,12 @@ msgstr "%s ha canviat l'estat de %s a %s"
 #: ../src/status.c:632
 #, c-format
 msgid "%s is now %s"
-msgstr "%s es ara %s"
+msgstr "%s està ara %s"
 
 #: ../src/status.c:637
 #, c-format
 msgid "%s is no longer %s"
-msgstr "%s ja no és %s"
+msgstr "%s ja no està %s"
 
 #: ../src/status.c:1311
 #, c-format
@@ -12737,7 +12737,7 @@ msgstr "%s ha passat a inactiu"
 #: ../src/status.c:1328
 #, c-format
 msgid "%s became unidle"
-msgstr "%s ja no és inactiu"
+msgstr "%s ja no està inactiu"
 
 #: ../src/status.c:1394
 #, c-format
@@ -12747,7 +12747,7 @@ msgstr "+++ %s ha passat a inactiu"
 #: ../src/status.c:1396
 #, c-format
 msgid "+++ %s became unidle"
-msgstr "+++ %s ja no és inactiu"
+msgstr "+++ %s ja no està inactiu"
 
 #: ../src/util.c:679
 #, c-format
@@ -12855,7 +12855,7 @@ msgstr "g003: Error en obrir la connexió.\n"
 #~ msgid "Active item"
 #~ msgstr "Element actiu"
 #~ msgid "The item which is currently active"
-#~ msgstr "L'element que és actualment actiu"
+#~ msgstr "L'element que està actualment actiu"
 #~ msgid "Appears as list"
 #~ msgstr "Apareix com una llista"
 #~ msgid "Whether combobox dropdowns should look like lists rather than menus"
@@ -12890,7 +12890,7 @@ msgstr "g003: Error en obrir la connexió.\n"
 #~ msgid "You have lost your connection to chat room %s."
 #~ msgstr "Heu perdut la connexió a la sala de xat %s."
 #~ msgid "Chat is currently unavailable"
-#~ msgstr "El xat no és actualment disponible"
+#~ msgstr "El xat no està actualment disponible"
 #~ msgid "Unable to login to AIM"
 #~ msgstr "No s'ha pogut connectar a l'AIM"
 #~ msgid "Attempting connection redirect..."
@@ -13126,7 +13126,7 @@ msgstr "g003: Error en obrir la connexió.\n"
 #~ msgid "Remove Buddy Pounce"
 #~ msgstr "Suprimeix l'avís d'un amic"
 #~ msgid "_Queue new messages when away"
-#~ msgstr "Posa els missatges en una cua _quan siga absent"
+#~ msgstr "Posa els missatges en una cua _quan estiga absent"
 #~ msgid "Could't open file"
 #~ msgstr "No s'ha pogut obrir el fitxer"
 #~ msgid "Change password"

@@ -1,6 +1,246 @@
 # translation of eu.po to 
+# translation of eu.po to
+# translation of eu.po to
+# translation of eu.po to
+# translation of eu.po to
+# translation of eu.po to
+# translation of eu.po to
+# translation of gaim-2.0_eu.po to
+# translation of gaim-2.0_eu.po to
+# translation of gaim-2.0_eu.po to
+# translation of gaim-2.0_eu.po to
 # translation of gaim-2.0_eu.po to Basque
 # translation of gaim.po to Basque
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
+# tamax, 2006.
 # Hizkuntza Politikarako Sailburuordetza <hizkpol@ej-gv.es>, 2005.
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2006.
 # tamax, 2006.
@@ -10,7 +250,7 @@ msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-11 16:20+0000\n"
-"PO-Revision-Date: 2006-05-05 04:20+0200\n"
+"PO-Revision-Date: 2006-05-25 23:48+0200\n"
 "Last-Translator: tamax\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -106,9 +346,8 @@ msgstr ""
 #. *< priority
 #. *< id
 #: ../plugins/dbus-example.c:152
-#, fuzzy
 msgid "DBus"
-msgstr "Lanpetuta"
+msgstr "DBus"
 
 #. *< name
 #. *< version
@@ -120,7 +359,7 @@ msgstr "DBus Plugin adibidea"
 
 #: ../plugins/docklet/docklet.c:154
 msgid "Right-click for more unread messages...\n"
-msgstr ""
+msgstr "Eskubiko botoiaz klik egin irakurri gabeko mezu gehiagorentzat...\n"
 
 #: ../plugins/docklet/docklet.c:157 ../src/gtkblist.c:3230
 #, c-format
@@ -173,9 +412,8 @@ msgid "New..."
 msgstr "Berria..."
 
 #: ../plugins/docklet/docklet.c:468 ../src/gtkstatusbox.c:682
-#, fuzzy
 msgid "Saved..."
-msgstr "Gorde fitxategia..."
+msgstr "Gordeta..."
 
 #: ../plugins/docklet/docklet.c:484
 msgid "Show Buddy List"
@@ -233,9 +471,8 @@ msgstr "Eskutatutako solasaldietan"
 #: ../plugins/docklet/docklet.c:686 ../plugins/docklet/docklet.c:694
 #: ../plugins/timestamp_format.c:39 ../plugins/timestamp_format.c:48
 #: ../plugins/win32/winprefs/winprefs.c:425 ../src/gtkprefs.c:825
-#, fuzzy
 msgid "Always"
-msgstr "Kanpoan"
+msgstr "Beti"
 
 #: ../plugins/docklet/docklet.c:690
 msgid "C_hat Messages:"
@@ -307,7 +544,7 @@ msgstr "Bereiztu IM eta berriketa leihoak zenbakien araberan kokatzean"
 #. *< id
 #: ../plugins/extplacement.c:135
 msgid "ExtPlacement"
-msgstr ""
+msgstr "ExtPlacement "
 
 #. *< name
 #. *< version
@@ -380,9 +617,8 @@ msgid "Secondary Cursor Color"
 msgstr "Bigarrengo Kurtsore kolorea"
 
 #: ../plugins/gaimrc.c:43
-#, fuzzy
 msgid "Hyperlink Color"
-msgstr "Hiperestekaren kolorea"
+msgstr "Hiperestekaren kolorea "
 
 #: ../plugins/gaimrc.c:56
 msgid "GtkTreeView Expander Size"
@@ -413,8 +649,9 @@ msgid "Notify Dialog"
 msgstr "Jakinarazpenak elkarrizketa"
 
 #: ../plugins/gaimrc.c:91
+# , fuzzy
 msgid "GtkTreeView Indent Expanders"
-msgstr ""
+msgstr "GtkTreeView zabaltzailea"
 
 #: ../plugins/gaimrc.c:287
 #, c-format
@@ -422,9 +659,8 @@ msgid "Select Color for %s"
 msgstr "Hautatu testu-kolorea honentzako  %s"
 
 #: ../plugins/gaimrc.c:289
-#, fuzzy
 msgid "Select Color"
-msgstr "Hautatu testu-kolorea"
+msgstr "Hautatu kolorea"
 
 #: ../plugins/gaimrc.c:324
 #, c-format
@@ -432,9 +668,8 @@ msgid "Select Font for %s"
 msgstr "Hautatu letra-tipoa honentzako %s"
 
 #: ../plugins/gaimrc.c:362
-#, fuzzy
 msgid "Select Interface Font"
-msgstr "Hautatu letra-tipoa"
+msgstr "Hautatu letra-tipoa "
 
 #: ../plugins/gaimrc.c:415
 msgid "General"
@@ -806,9 +1041,8 @@ msgid "Unset Account Idle Time"
 msgstr "Kendu kontuaren ez-aktibo-denbora"
 
 #: ../plugins/idle.c:196
-#, fuzzy
 msgid "_Unset"
-msgstr "_Erabili"
+msgstr "_Ezarpena kendu"
 
 #: ../plugins/idle.c:218 ../plugins/idle.c:257
 msgid "Set Idle Time for All Accounts"
@@ -944,15 +1178,17 @@ msgstr "_Aplikatu"
 #. *< name
 #. *< version
 #: ../plugins/musicmessaging/musicmessaging.c:663
+# , fuzzy
 msgid "Music Messaging Plugin for collaborative composition."
-msgstr ""
+msgstr "Musika mezuen Plugin-a kolaborazio bitarteko osaketarako."
 
 #. *  summary
 #: ../plugins/musicmessaging/musicmessaging.c:665
+# , fuzzy
 msgid ""
 "The Music Messaging Plugin allows a number of users to simultaneously work "
 "on a piece of music by editting a common score in real-time."
-msgstr ""
+msgstr "Musika mezuen plugin-a hainbat erabiltzaile momentu berean musika zati batean amankumeko \"score\"-a editatzen lan egiteko aukera eskeintzen du benetazko denboran."
 
 #. ---------- "Notify For" ----------
 #: ../plugins/notify.c:638
@@ -1067,11 +1303,11 @@ msgstr "Perl plugin-ak kargatzeko erabiltzen da."
 
 #: ../plugins/psychic.c:22
 msgid "Psychic Mode"
-msgstr ""
+msgstr "Modu psikikoa "
 
 #: ../plugins/psychic.c:23
 msgid "Psychic mode for incoming conversation"
-msgstr ""
+msgstr "Modu psikikoa datorren elkarrizketerako "
 
 #: ../plugins/psychic.c:24
 msgid ""
@@ -1082,8 +1318,9 @@ msgstr ""
 "Honek funtzionatzen du AIM,ICQ,Jabber,Sametime eta Yahoo!"
 
 #: ../plugins/psychic.c:60
+# , fuzzy
 msgid "You feel a disturbance in the force..."
-msgstr ""
+msgstr "Ikanbila sentitu duzu indarrean"
 
 #: ../plugins/psychic.c:79
 msgid "Only enable for users on the buddy list"
@@ -1205,7 +1442,7 @@ msgstr "Gauza gehienak ondo dabiltzan begiratzen du."
 
 #: ../plugins/spellchk.c:1918
 msgid "Duplicate Correction"
-msgstr ""
+msgstr "Bikoiztutako zuzenketa"
 
 #: ../plugins/spellchk.c:1919
 msgid "The specified word already exists in the correction list."
@@ -1229,7 +1466,7 @@ msgstr "Hitz osoak bakarrik"
 
 #: ../plugins/spellchk.c:2191
 msgid "Case sensitive"
-msgstr ""
+msgstr "Maiuskulak bereizi"
 
 #: ../plugins/spellchk.c:2217
 msgid "Add a new text replacement"
@@ -1245,8 +1482,9 @@ msgstr "_Bidaltzen duzu:"
 
 #. Created here so it can be passed to whole_words_button_toggled.
 #: ../plugins/spellchk.c:2262
+# , fuzzy
 msgid "_Exact case match (uncheck for automatic case handling)"
-msgstr ""
+msgstr "Kasuarko topaketa zehatza (ez-gaitu kasu automatikorako)"
 
 #: ../plugins/spellchk.c:2264
 msgid "Only replace _whole words"
@@ -1450,7 +1688,7 @@ msgstr "iChat estiloko ordu-zigiluak gehitzen ditu solasaldietan, N minutuz behi
 
 #: ../plugins/timestamp_format.c:22
 msgid "Timestamp Format Options"
-msgstr ""
+msgstr "Timestamp-en formatu ezarpenak"
 
 #: ../plugins/timestamp_format.c:27
 msgid "_Force (traditional Gaim) 24-hour time format"
@@ -1465,13 +1703,12 @@ msgid "Co_nversations:"
 msgstr "So_lasaldiak"
 
 #: ../plugins/timestamp_format.c:37 ../plugins/timestamp_format.c:46
-#, fuzzy
 msgid "For delayed messages"
-msgstr "Bidali mezua"
+msgstr "Berandu datozen mezuentzat"
 
 #: ../plugins/timestamp_format.c:38 ../plugins/timestamp_format.c:47
 msgid "For delayed messages and in chats"
-msgstr ""
+msgstr "Atzeratutako mezuentzat eta berriketentzat"
 
 #: ../plugins/timestamp_format.c:44
 msgid "_Message Logs:"
@@ -1485,14 +1722,14 @@ msgstr "_Mezuen egunkariak:"
 #. *< id
 #: ../plugins/timestamp_format.c:150
 msgid "Message Timestamp Formats"
-msgstr ""
+msgstr "Mezuen Timestamp formatuak"
 
 #. *< name
 #. *< version
 #. *  summary
 #: ../plugins/timestamp_format.c:153
 msgid "Customizes the message timestamp formats."
-msgstr ""
+msgstr "Pertsonalizatu mezuen timestamp formatuak."
 
 #. *  description
 #: ../plugins/timestamp_format.c:155
@@ -1500,6 +1737,8 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
+"Plugin honek erabiltzaileak elkarrizketak eta egunkari "
+"mezuen timestamp formatuak pertsonalizatzea ahalbidetzen du."
 
 #: ../plugins/win32/transparency/win2ktrans.c:183
 #: ../plugins/win32/transparency/win2ktrans.c:569
@@ -1602,7 +1841,7 @@ msgstr "_Utzi lagunen zerrendaren leihoa goian:"
 #. XXX: Did this ever work?
 #: ../plugins/win32/winprefs/winprefs.c:427
 msgid "Only when docked"
-msgstr ""
+msgstr "Bakarrik geldiunean"
 
 #. Conversations
 #: ../plugins/win32/winprefs/winprefs.c:431 ../src/gtkprefs.c:819
@@ -1611,7 +1850,6 @@ msgid "Conversations"
 msgstr "Solasaldiak"
 
 #: ../plugins/win32/winprefs/winprefs.c:432
-#, fuzzy
 msgid "_Flash window when messages are received"
 msgstr "_Erakutsi leihoa keinuka mezuak jasotzean"
 
@@ -1627,7 +1865,7 @@ msgstr "Windows Gaim-i bakarrik dagozkion aukerak."
 msgid ""
 "Provides options specific to Windows Gaim, such as buddy list docking and "
 "conversation flashing."
-msgstr ""
+msgstr "Gaim Windows-en ezarpenak zehazteko aukera eskeintzen du, hala nola lagunen-zerrenda gelditzea eta elkarrizketa kinuak."
 
 #: ../src/account.c:773
 msgid "accounts"
@@ -2444,13 +2682,12 @@ msgstr ""
 "<b>Egoera:</b> Txundigarria "
 
 #: ../src/gtkblist.c:2662
-#, fuzzy
 msgid ""
 "\n"
 "<b>Status:</b> Rockin'"
 msgstr ""
 "\n"
-"<b>Egoera</b>: Rockin'"
+"<b>Egoera:</b> Rockin'"
 
 #: ../src/gtkblist.c:2951
 #, c-format
@@ -2647,7 +2884,7 @@ msgid ""
 "%s was disconnected due to an error: %s\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
 "and re-enable the account."
-msgstr ""
+msgstr "%s deskonektatua izan da errorea baten ondorioz: %s\n Gaim ez da saiatuko kontua berriz konektatzen errorea konpondu  eta kontua ahalbidetu arte."
 
 #: ../src/gtkconv.c:373
 msgid "Supported debug options are:  version"
@@ -2690,9 +2927,8 @@ msgid "That command doesn't work on this protocol."
 msgstr "Komando horrek ez du protokolo honekin lanik egiten"
 
 #: ../src/gtkconv.c:744 ../src/gtkconv.c:770
-#, fuzzy
 msgid "That buddy is not on the same protocol as this chat."
-msgstr "Lagun hori ez dago berriketa honek darabilen protokoloarekin"
+msgstr "Lagun hori ez dago berriketa honek darabilen protokoloarekin."
 
 #: ../src/gtkconv.c:764
 msgid "You are not currently signed on with an account that can invite that buddy."
@@ -3061,7 +3297,7 @@ msgstr "Tapaki guztiak itxi"
 
 #: ../src/gtkconv.c:7286
 msgid "Detach this tab"
-msgstr ""
+msgstr "Banatu betilea"
 
 #: ../src/gtkconv.c:7292
 msgid "Close this tab"
@@ -3177,11 +3413,11 @@ msgstr "Bulgariera"
 
 #: ../src/gtkdialogs.c:111 ../src/gtkdialogs.c:112
 msgid "Bengali"
-msgstr ""
+msgstr "bengalera"
 
 #: ../src/gtkdialogs.c:113
 msgid "Bosnian"
-msgstr "Bosniera"
+msgstr "Bosniarra"
 
 #: ../src/gtkdialogs.c:114 ../src/gtkdialogs.c:168 ../src/gtkdialogs.c:169
 msgid "Catalan"
@@ -3189,7 +3425,7 @@ msgstr "Katalana"
 
 #: ../src/gtkdialogs.c:115
 msgid "Valencian"
-msgstr "Balentzianoa"
+msgstr "Balentziera"
 
 #: ../src/gtkdialogs.c:116 ../src/gtkdialogs.c:170
 msgid "Czech"
@@ -3205,7 +3441,7 @@ msgstr "Alemana"
 
 #: ../src/gtkdialogs.c:120 ../src/gtkdialogs.c:121
 msgid "Greek"
-msgstr "Greziar"
+msgstr "Gerkera"
 
 #: ../src/gtkdialogs.c:122
 msgid "Australian English"
@@ -3226,7 +3462,7 @@ msgstr "Gaztelania"
 
 #: ../src/gtkdialogs.c:126 ../src/gtkdialogs.c:127
 msgid "Persian"
-msgstr ""
+msgstr "pertsiera"
 
 #: ../src/gtkdialogs.c:128 ../src/gtkdialogs.c:176 ../src/gtkdialogs.c:177
 msgid "Finnish"
@@ -3271,9 +3507,8 @@ msgid "Korean"
 msgstr "Koreera"
 
 #: ../src/gtkdialogs.c:138 ../src/gtkdialogs.c:139
-#, fuzzy
 msgid "Kurdish"
-msgstr "Turkiera"
+msgstr "Turkiera "
 
 #: ../src/gtkdialogs.c:140 ../src/gtkdialogs.c:188 ../src/gtkdialogs.c:189
 msgid "Lithuanian"
@@ -3325,13 +3560,12 @@ msgid "Swedish"
 msgstr "Suediera"
 
 #: ../src/gtkdialogs.c:154
-#, fuzzy
 msgid "Tamil"
-msgstr "Terminala"
+msgstr "Tamil"
 
 #: ../src/gtkdialogs.c:155
 msgid "Telugu"
-msgstr ""
+msgstr "Telugu"
 
 #: ../src/gtkdialogs.c:156
 msgid "Turkish"
@@ -3376,6 +3610,8 @@ msgid ""
 "file for the complete list of contributors.  We provide no warranty for this "
 "program.<BR><BR>"
 msgstr ""
+"Gaim berehalako mezuen bezero modularra da  AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"eta Gadu-Gadu momentu berean erabiltzeko gaitasuna duena. GTK+ erabiliz idatzi izan da .<BR><BR> Programa hau aldatu eta ber-banatu dezakezu  GPL terminopean (2 bertsioa edo beranduagokoa). GPL -ren kopia COPYING izeneko fitxategi baten dago gaim distribuzioarekin batera. Gaim \"copyright\"-a du bere laguntzaileen eskutik. Ikusi ezazy COPYRIGHT fitxategia laguntzaileen zerrenda osoa ikusteko. Ez dugu programa honen bermea zihurtatzen.<BR><BR>"
 
 #: ../src/gtkdialogs.c:275
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -3675,9 +3911,8 @@ msgid "Paste as Plain _Text"
 msgstr "Itsatsi _testu gisa"
 
 #: ../src/gtkimhtml.c:833
-#, fuzzy
 msgid "_Reset formatting"
-msgstr "_Garbitu estiloa"
+msgstr "_Garbitu estiloa "
 
 #: ../src/gtkimhtml.c:1327
 msgid "Hyperlink color"
@@ -3849,9 +4084,8 @@ msgid "Background color"
 msgstr "Atzeko planoko kolorea"
 
 #: ../src/gtkimhtmltoolbar.c:1030
-#, fuzzy
 msgid "Reset formatting"
-msgstr "Estilo lehenetsia"
+msgstr "Formateoa beregin"
 
 #: ../src/gtkimhtmltoolbar.c:1045
 msgid "Insert link"
@@ -3938,6 +4172,16 @@ msgid ""
 "                      account(s) to use, separated by commas)\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+"Gaim %s\n"
+"Erabiltzeko era: %s [Aukerak]...\n"
+"\n"
+"  -c, --config=DIR    erabili DIR konfigurazio fitxategientzat\n"
+"  -d, --debug         idatzi \"debugging\"mezuak stdout -en\n"
+"  -h, --help          Erakutsi laguntza eta irten\n"
+"  -n, --nologin       Automatikoki ez konexio hasi\n"
+"  -l, --login[=IZENA]  Automatikoki konexioa hasi (IZENA aukerazko argumentu espesifikazioa\n"
+"                      kontua(k) erabiltzeko, koma batez bereiztu)\n"
+"  -v, --version       Erakutsi egungo bertsioa eta irten\n"
 
 #: ../src/gtkmain.c:493
 #, c-format
@@ -3974,9 +4218,8 @@ msgid "From"
 msgstr "Nork"
 
 #: ../src/gtknotify.c:418
-#, fuzzy
 msgid "Subject"
-msgstr "Ezarri"
+msgstr "Gaia"
 
 #: ../src/gtknotify.c:427
 msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
@@ -4187,8 +4430,9 @@ msgid "Options"
 msgstr "Aukerak"
 
 #: ../src/gtkpounce.c:773
+# , fuzzy
 msgid "P_ounce only when my status is not available"
-msgstr ""
+msgstr "P_ounce bakarrik nire egoera eskuragarri ez nagoenean"
 
 #: ../src/gtkpounce.c:778
 msgid "_Recurring"
@@ -4196,8 +4440,9 @@ msgstr "_Errepikatzean"
 
 #: ../src/gtkpounce.c:1092
 #, c-format
+# , fuzzy
 msgid "Are you sure you want to delete the pounce on %s for %s?"
-msgstr ""
+msgstr "Zihur al zaude \"pounce\" -an %s %s-entzako ezabatu nahi duzu ?"
 
 #: ../src/gtkpounce.c:1240
 #, fuzzy
@@ -4318,7 +4563,7 @@ msgstr "_Nabarmendu gaizki idatzitako hitzak "
 
 #: ../src/gtkprefs.c:849
 msgid "Use smooth-scrolling"
-msgstr ""
+msgstr "Erabili mugimendu leuna norantza bertikalean"
 
 #: ../src/gtkprefs.c:865
 msgid ""
@@ -4534,9 +4779,8 @@ msgid "Normal"
 msgstr "Normala"
 
 #: ../src/gtkprefs.c:1470
-# ,fuzzy
 msgid "Loud"
-msgstr "Altu esan"
+msgstr "Altu esan "
 
 #: ../src/gtkprefs.c:1472
 #, fuzzy
@@ -4626,13 +4870,12 @@ msgid "_Report idle time:"
 msgstr "Ezagutarazi _inaktibotasun-denborak"
 
 #: ../src/gtkprefs.c:1750
-#,fuzzy
 msgid "From last sent message"
-msgstr "Hem"
+msgstr "Bidalitako azkeneko mezutik"
 
 #: ../src/gtkprefs.c:1752
 msgid "Based on keyboard or mouse use"
-msgstr ""
+msgstr "Teklatu edo saguaren erabilpenean oinarrituta"
 
 #: ../src/gtkprefs.c:1761
 msgid "_Auto-reply:"
@@ -4665,14 +4908,12 @@ msgid "Status at startup"
 msgstr "Hasierako egoera"
 
 #: ../src/gtkprefs.c:1808
-#, fuzzy
 msgid "Use status from last _exit at startup"
-msgstr "Erabili azkeneko egoera hasieratzeko"
+msgstr "Erabili azkeneko irteteerako egoera hasieratzeko"
 
 #: ../src/gtkprefs.c:1814
-# , fuzzy
 msgid "Status to a_pply at startup:"
-msgstr "Ezartzeko egoera"
+msgstr "Haserako egoera ezartzeko:"
 
 #: ../src/gtkprefs.c:1865
 msgid "Smiley Themes"
@@ -4859,9 +5100,8 @@ msgid "Title"
 msgstr "Lanpostua"
 
 #: ../src/gtksavedstatuses.c:448
-#, fuzzy
 msgid "Type"
-msgstr "Mota"
+msgstr "Mota "
 
 #. Available status messages are plain text
 #: ../src/gtksavedstatuses.c:459 ../src/gtksavedstatuses.c:920
@@ -4897,9 +5137,8 @@ msgid "_Use"
 msgstr "_Erabili"
 
 #: ../src/gtksavedstatuses.c:695
-# , fuzzy
 msgid "Title already in use.  You must choose a unique title."
-msgstr "Titulua erabiltzen ari da. Titulu bakarra"
+msgstr "Titulua erabilia dago. Berria aukeratu."
 
 #: ../src/gtksavedstatuses.c:879
 msgid "Different"
@@ -4921,9 +5160,8 @@ msgid "_Title:"
 msgstr "_Titulua:"
 
 #: ../src/gtksavedstatuses.c:1092 ../src/gtksavedstatuses.c:1413
-#, fuzzy
 msgid "_Status:"
-msgstr "Egoera:"
+msgstr "_Egoera:"
 
 #. Different status message expander
 #: ../src/gtksavedstatuses.c:1124
@@ -4937,9 +5175,8 @@ msgstr "G_orde eta erabili"
 
 #: ../src/gtksavedstatuses.c:1394
 #, c-format
-# , fuzzy
 msgid "Status for %s"
-msgstr "Egoera : %s"
+msgstr "Egoera : %s rako."
 
 #: ../src/gtksound.c:61
 msgid "Buddy logs in"
@@ -5059,9 +5296,8 @@ msgid ""
 msgstr "Gaim -ek ezin du karpeta bidali. Fitxategiak banan-bana bidali beharko dituzu."
 
 #: ../src/gtkutils.c:1438 ../src/gtkutils.c:1447 ../src/gtkutils.c:1452
-#, fuzzy
 msgid "You have dragged an image"
-msgstr "Herrestan eraman duzu irudia"
+msgstr "Herrestan eraman duzu irudia "
 
 #: ../src/gtkutils.c:1439
 msgid ""
@@ -5109,15 +5345,15 @@ msgstr ""
 #. * Probably not.  I'll just give an error and return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 #: ../src/gtkutils.c:1509
-# , fuzzy
+
 msgid "Cannot send launcher"
-msgstr "Ezinezkoa "
+msgstr "Ezinezkoa  jaurtitzailea  bidaltzea"
 
 #: ../src/gtkutils.c:1509
 msgid ""
 "You dragged a desktop launcher. Most likely you wanted to send whatever this "
 "launcher points to instead of this launcher itself."
-msgstr ""
+msgstr "Mahaingain-eko jaurtigailua herrestan eraman duzu. Seguraski beste zeozer bidali nahiko zenuen. "
 
 #: ../src/gtkwhiteboard.c:756 ../src/gtkwhiteboard.c:775
 msgid "Save File"
@@ -5191,12 +5427,12 @@ msgstr "Errore ezezaguna"
 #: ../src/plugin.c:424
 #, c-format
 msgid "Plugin magic mismatch %d (need %d)"
-msgstr ""
+msgstr "Plugin magikoa gaizki elkartua %d (%d beharrezkoa) "
 
 #: ../src/plugin.c:441
 #, c-format
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
-msgstr ""
+msgstr "ABI bertsio gaizki elkartua %d.%d.x (%d.%d.x beharrezkoa)"
 
 #: ../src/plugin.c:458
 msgid "Plugin does not implement all required functions"
@@ -5239,9 +5475,8 @@ msgid "Unable to listen for incoming IM connections\n"
 msgstr "Datozen BM konexio berriak entzutea ezinezkoa gertatu da\n"
 
 #: ../src/protocols/bonjour/bonjour.c:146
-# , fuzzy
 msgid "Unable to establish connection with the local mDNS server.  Is it running?"
-msgstr "Ezinezkoa izan da konexioa ematea mDNS zerbitzari lokalarekin , martxan al dago ?"
+msgstr "Ezinezkoa izan da konexioa ezatzea mDNS zerbitzari lokalarekin , martxan al dago ?"
 
 #: ../src/protocols/bonjour/bonjour.c:337
 #: ../src/protocols/sametime/sametime.c:3251
@@ -5286,7 +5521,7 @@ msgstr "Gaim erabiltzailea"
 #. Creating the user splits
 #: ../src/protocols/bonjour/bonjour.c:575 ../src/protocols/silc/silc.c:935
 msgid "Hostname"
-msgstr ""
+msgstr "Ostalari-Izena"
 
 #. Creating the options for the protocol
 #. port to connect to
@@ -5355,9 +5590,8 @@ msgstr ""
 
 #: ../src/protocols/gg/gg.c:115 ../src/protocols/gg/gg.c:137
 #: ../src/protocols/gg/gg.c:180
-#, fuzzy
 msgid "Token Error"
-msgstr "Lekukoarekin errorea"
+msgstr "Testigu errorea"
 
 #: ../src/protocols/gg/gg.c:116 ../src/protocols/gg/gg.c:138
 #: ../src/protocols/gg/gg.c:181
@@ -5398,7 +5632,6 @@ msgid "Save buddylist..."
 msgstr "Gorde lagunen-zerrenda..."
 
 #: ../src/protocols/gg/gg.c:380
-
 msgid "Fill in the registration fields."
 msgstr "Bete harpidetzarako eremuak"
 
@@ -5428,19 +5661,18 @@ msgid "Password (retype)"
 msgstr "Pasahitza (beridatzi)"
 
 #: ../src/protocols/gg/gg.c:483 ../src/protocols/gg/gg.c:757
-#, fuzzy
+# , fuzzy
 msgid "Enter current token"
-msgstr "%s ez dago une honetan konektatuta."
+msgstr "Sartu momentuko lekukoa"
 
 #: ../src/protocols/gg/gg.c:489 ../src/protocols/gg/gg.c:763
-#, fuzzy
+# , fuzzy
 msgid "Current token"
-msgstr "Orain konektatuta"
+msgstr "Momentuko lekukoa"
 
 #: ../src/protocols/gg/gg.c:493 ../src/protocols/gg/gg.c:494
-#, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Erregistratu Jabber kontu berria"
+msgstr "Erregistratu Gadu-Gadu kontu berria"
 
 #: ../src/protocols/gg/gg.c:495
 msgid "Please, fill in the following fields"
@@ -5511,9 +5743,8 @@ msgid "Fill in the fields."
 msgstr "Bete eremuak"
 
 #: ../src/protocols/gg/gg.c:685
-# , fuzzy
 msgid "Your current password is different from the one that you specified."
-msgstr "Zure egungo pasahitza ezberdina da zuk adierazi dezunaren aldean."
+msgstr "Zure egungo pasahitza ezberdina da zuk adierazi dezunaren aldean. "
 
 #: ../src/protocols/gg/gg.c:699
 msgid "Unable to change password. Error occured.\n"
@@ -5541,9 +5772,8 @@ msgstr "Aldatu Gadu-Gadu -ren pasahitza"
 
 #: ../src/protocols/gg/gg.c:846
 #, c-format
-# , fuzzy
 msgid "Select a chat for buddy: %s"
-msgstr "Aukeratu berriketak lagun batentzat:%s"
+msgstr "Aukeratu berriketak lagun batentzat:%s "
 
 #: ../src/protocols/gg/gg.c:849 ../src/protocols/gg/gg.c:850
 msgid "Add to chat..."
@@ -5686,7 +5916,7 @@ msgstr "Gadu-Gadu protokoloaren plugin-a"
 #. summary
 #: ../src/protocols/gg/gg.c:2001
 msgid "Polish popular IM"
-msgstr ""
+msgstr "Poloniar IM ospetsua"
 
 #: ../src/protocols/gg/gg.c:2049
 msgid "Gadu-Gadu User"
@@ -5914,9 +6144,8 @@ msgstr "%s(e)k gaia aldatu du: %s"
 
 #: ../src/protocols/irc/msgs.c:328
 #, c-format
-#,fuzzy
 msgid "%s has cleared the topic."
-msgstr "%s(e)k gaia garbitu du: %s"
+msgstr "%s(e)k gaia garbitu du."
 
 #: ../src/protocols/irc/msgs.c:336
 #, c-format
@@ -6487,7 +6716,7 @@ msgstr "Ez molestatu"
 
 #: ../src/protocols/jabber/buddy.c:1253
 msgid "JID"
-msgstr ""
+msgstr "JID"
 
 #: ../src/protocols/jabber/buddy.c:1257 ../src/protocols/jabber/buddy.c:1401
 #: ../src/protocols/oscar/oscar.c:6176
@@ -6504,9 +6733,8 @@ msgid "Server Instructions: %s"
 msgstr "Zerbitzariaren aginduak:%s"
 
 #: ../src/protocols/jabber/buddy.c:1392
-#,fuzzy
 msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr "Bete ezazu bat edo eremu gehiago edozein Jabber erabiltzaileren topaketarako."
+msgstr "Bete ezazu bat edo eremu gehiago edozein Jabber erabiltzaileren topaketarako. "
 
 #: ../src/protocols/jabber/buddy.c:1411 ../src/protocols/novell/novell.c:1490
 #: ../src/protocols/oscar/oscar.c:6178 ../src/protocols/oscar/oscar.c:6185
@@ -6982,14 +7210,14 @@ msgid "Unable to affiliate user %s as \"%s\""
 msgstr "Ezin da erabiltzailea %s kide bihurtu \"%s\""
 
 #: ../src/protocols/jabber/jabber.c:1644
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown role: \"%s\""
-msgstr "Komando ezezaguna: %s"
+msgstr "Rol ezezaguna:\" %s\""
 
 #: ../src/protocols/jabber/jabber.c:1651
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr "Ezin da mezua bidali: %s"
+msgstr "%s erabiltzaileari ezin zaio %s rola ezarri"
 
 #: ../src/protocols/jabber/jabber.c:1704
 #, c-format
@@ -7024,13 +7252,13 @@ msgstr "ban &lt;erabiltzailea&gt; [gela]:  bota erabiltzailea gela batetik."
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
 "affiliation with the room."
-msgstr ""
+msgstr "Afiliatu &It; erabiltzaile&gt;&It;jabea| administratzailea|kidea| paria | ezer ez&gt;: Erabiltzailearen afiliazioa ezarri gelarekiko."
 
 #: ../src/protocols/jabber/jabber.c:1777
 msgid ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
 "role in the room."
-msgstr ""
+msgstr "Zeregin &It;erabiltzaile;&It;moderatzailea| partehartzailea | bisitari | ezer ez&gt;: Ezarri erabiltzailearen zeregina gelarekiko."
 
 #: ../src/protocols/jabber/jabber.c:1783
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -7433,9 +7661,8 @@ msgid "MSN Error: %s\n"
 msgstr "MSN Errorea: %s\n"
 
 #: ../src/protocols/msn/msn.c:113
-# ,fuzzy
 msgid "You have just sent a Nudge!"
-msgstr "Bidali berri duzu Nudge-a !"
+msgstr "Harreta eskaera bidali berri duzu  !"
 
 #: ../src/protocols/msn/msn.c:138
 msgid "Your new MSN friendly name is too long."
@@ -7555,7 +7782,6 @@ msgid "Allow/Disallow Mobile Pages..."
 msgstr "Baimendu/Ukatu mugikorraren orriak..."
 
 #: ../src/protocols/msn/msn.c:657
-#, fuzzy
 msgid "Open Hotmail Inbox"
 msgstr "Ireki Hotmail posta"
 
@@ -7637,9 +7863,8 @@ msgid "Marital Status"
 msgstr "Egoera zibila"
 
 #: ../src/protocols/msn/msn.c:1566
-# , fuzzy
 msgid "Interests"
-msgstr "Interesak"
+msgstr "Intereresak"
 
 #: ../src/protocols/msn/msn.c:1567
 msgid "Pets"
@@ -7654,9 +7879,9 @@ msgid "Places Lived"
 msgstr "Bizilekua"
 
 #: ../src/protocols/msn/msn.c:1570
-# ,fuzzy
+# , fuzzy
 msgid "Fashion"
-msgstr "Era"
+msgstr "Fashion"
 
 #: ../src/protocols/msn/msn.c:1571
 msgid "Humor"
@@ -7754,9 +7979,9 @@ msgid "Work Mobile"
 msgstr "Laneko segapotoa"
 
 #: ../src/protocols/msn/msn.c:1615
-#, fuzzy
+# , fuzzy
 msgid "Work Pager"
-msgstr "Web orria"
+msgstr "Lan orrigilea"
 
 #: ../src/protocols/msn/msn.c:1616
 msgid "Work Fax"
@@ -7771,9 +7996,8 @@ msgid "Work IM"
 msgstr "Laneko IM"
 
 #: ../src/protocols/msn/msn.c:1619
-#,fuzzy
 msgid "Start Date"
-msgstr "Hasteko data"
+msgstr "Hasteko data "
 
 #: ../src/protocols/msn/msn.c:1624
 #, c-format
@@ -7857,9 +8081,8 @@ msgid "Show custom smileys"
 msgstr "Erakutsi _aurpegiera grafikoak "
 
 #: ../src/protocols/msn/msn.c:2071
-#, fuzzy
 msgid "nudge: nudge a user to get their attention"
-msgstr "buzz: eman abisu kontaktu bati bere harreta lortzeko"
+msgstr "Harreta ematen: harreta eman kontaktu bati atentzioa lortzeko"
 
 #: ../src/protocols/msn/nexus.c:141 ../src/protocols/msn/servconn.c:133
 #: ../src/protocols/yahoo/yahoochat.c:1345
@@ -8068,7 +8291,7 @@ msgstr "Mezua ezin izan da bidali errore ezezaguna gertatu delako:"
 #: ../src/protocols/msn/switchboard.c:959
 #, c-format
 msgid "%s just sent you a Nudge!"
-msgstr "%s berriki Nugde bidali dizute !"
+msgstr "%s berriki harreta eskaera bidali dizute !"
 
 #: ../src/protocols/msn/userlist.c:96
 #, c-format
@@ -8865,14 +9088,12 @@ msgstr "Ezin da konexio berria sortu."
 
 #: ../src/protocols/oscar/oscar.c:2581 ../src/protocols/oscar/oscar.c:2590
 #: ../src/protocols/oscar/oscar.c:2604 ../src/protocols/oscar/oscar.c:2614
-#, fuzzy
 msgid "Unable to log into file transfer proxy."
-msgstr "Ezin da %s fitxategian idatzi"
+msgstr "Ezin da egunkarian gorde proxy-aren transferentzia fitxategia. "
 
 #: ../src/protocols/oscar/oscar.c:2668
-#, fuzzy
 msgid "Unable to establish listener socket or no AOL proxy connection present."
-msgstr "Ezin da entzuteko socket-a ezarri."
+msgstr "Ezin da entzuteko socket-a ezarri edo AOL proxy konexioa dago."
 
 #: ../src/protocols/oscar/oscar.c:2906 ../src/protocols/toc/toc.c:543
 msgid "Incorrect nickname or password."
@@ -8984,9 +9205,8 @@ msgid "Request Authorization"
 msgstr "Eskatu baimena"
 
 #: ../src/protocols/oscar/oscar.c:4643
-#, fuzzy
 msgid "_Request Authorization"
-msgstr "Eskatu baimena"
+msgstr "_Baimena eskatu"
 
 #: ../src/protocols/oscar/oscar.c:4681 ../src/protocols/oscar/oscar.c:4687
 #: ../src/protocols/oscar/oscar.c:4791 ../src/protocols/oscar/oscar.c:4815
@@ -8999,7 +9219,7 @@ msgid "Authorization Denied Message:"
 msgstr "Baimena ezesteko mezua:"
 
 #: ../src/protocols/oscar/oscar.c:4793
-#, fuzzy, c-format
+#c-format
 msgid ""
 "The user %u wants to add %s to their buddy list for the following reason:\n"
 "%s"
@@ -9059,7 +9279,7 @@ msgstr ""
 "%s"
 
 #: ../src/protocols/oscar/oscar.c:4847
-#, fuzzy, c-format
+# c-format
 msgid ""
 "You have received an ICQ e-mail from %s [%s]\n"
 "\n"
@@ -9081,9 +9301,8 @@ msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Lagun hori zure lagunen zerrendan gehitu nahi duzu?"
 
 #: ../src/protocols/oscar/oscar.c:4878
-#, fuzzy
 msgid "_Decline"
-msgstr "Ukatu"
+msgstr "_Ukatu"
 
 #: ../src/protocols/oscar/oscar.c:4962
 #, c-format
@@ -9186,9 +9405,8 @@ msgid "Capabilities"
 msgstr "Gaitasunak"
 
 #: ../src/protocols/oscar/oscar.c:5285
-#, fuzzy
 msgid "Available Message"
-msgstr "Mezu erabilgarria:"
+msgstr "Mezua eskuragarri:"
 
 #: ../src/protocols/oscar/oscar.c:5402
 msgid "Your AIM connection may be lost."
@@ -9266,21 +9484,21 @@ msgid "Pop-Up Message"
 msgstr "Pop-up mezua"
 
 #: ../src/protocols/oscar/oscar.c:6335
-#, fuzzy, c-format
+#, c-format
 msgid "The following screen name is associated with %s"
 msgid_plural "The following screen names are associated with %s"
-msgstr[0] "Ondoko pantaila-izenak %s erabiltzailearekin asoziatuta daude"
-msgstr[1] "Ondoko pantaila-izenak %s erabiltzailearekin asoziatuta daude"
+msgstr[0] "Ondoko pantaila-izenak %s erabiltzailearekin erlazionatuak daude"
+msgstr[1] "Ondoko pantaila-izenak %s erabiltzailearekin erlazionatuak daude"
 
 #: ../src/protocols/oscar/oscar.c:6366
-#, fuzzy, c-format
+#, c-format
 msgid "No results found for e-mail address %s"
-msgstr "Emaitzarik ez %s helbide elektronikoarentzat"
+msgstr "Emaitzarik ez %s helbide elektronikoarentzat "
 
 #: ../src/protocols/oscar/oscar.c:6387
-#, fuzzy, c-format
+#, c-format
 msgid "You should receive an e-mail asking to confirm %s."
-msgstr "%s berrestea eskatzeko mezu bat jaso beharko zenuke."
+msgstr "%s berrestea eskatzeko posta-mezu bat jaso beharko zenuke. "
 
 #: ../src/protocols/oscar/oscar.c:6389
 msgid "Account Confirmation Requested"
@@ -9300,11 +9518,11 @@ msgstr ""
 "eta jatorrizkoa bat ez datozelako."
 
 #: ../src/protocols/oscar/oscar.c:6426
-#, fuzzy, c-format
+#, c-format
 msgid "Error 0x%04x: Unable to format screen name because it is invalid."
 msgstr ""
 "0x%04x errorea: ezin da formateatu pantaila-izena, eskatutako pantaila-izena "
-"luzeegia delako."
+"Balio okerra du."
 
 #: ../src/protocols/oscar/oscar.c:6429
 #, c-format
@@ -9316,31 +9534,31 @@ msgstr ""
 "luzeegia delako."
 
 #: ../src/protocols/oscar/oscar.c:6432
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"0x%04x errorea: ezin da helbide elektronikoa aldatu, badagoelako lehendik "
+"0x%04x errorea: ezin da helbide elektronikoa aldatu,  lehendik badagoelak"
 "eskaera bat zain pantaila-izen honekin."
 
 #: ../src/protocols/oscar/oscar.c:6435
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "0x%04x errorea: ezin da helbide elektronikoa aldatu, emandako helbideak "
-"pantaila-izen gehiegi dituelako asoziatuta."
+"pantaila-izen gehiegi dituelako erlazionatuak."
 
 #: ../src/protocols/oscar/oscar.c:6438
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
 "0x%04x errorea: ezin da helbide elektronikoa aldatu, emandako helbidea ez "
-"delako baliozkoa."
+"delako baliozkoa. "
 
 #: ../src/protocols/oscar/oscar.c:6441
 #, c-format
@@ -9361,14 +9579,14 @@ msgid "Account Info"
 msgstr "Kontuari buruzko informazioa"
 
 #: ../src/protocols/oscar/oscar.c:6457
-#, fuzzy, c-format
+#, c-format
 msgid "The e-mail address for %s is %s"
-msgstr "%s erabiltzailearen helbide elektronikoa %s da"
+msgstr "%s erabiltzailearen helbide elektronikoa %s da "
 
 #: ../src/protocols/oscar/oscar.c:6535
 msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
-"Zure IM irudia ez da bidali. 'Zuzenean Konektatuta' egon behar zara IM "
+"Zure BM irudia ez da bidali. 'Zuzeneko Konexioa'  behar duzu BM "
 "irudiak bidaltzeko."
 
 #: ../src/protocols/oscar/oscar.c:6775
@@ -9492,13 +9710,11 @@ msgid "Authorization Given"
 msgstr "Baimena eman da"
 
 #: ../src/protocols/oscar/oscar.c:7471
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The user %s wants to add %s to their buddy list for the following reason:\n"
 "%s"
-msgstr ""
-"%s erabiltzaileak bere lagunen zerrendan gehitu nahi zaitu. Arrazoia:\n"
-"%s"
+msgstr "%s erabiltzaileak bere lagunen zerrendan %s gehitu nahi du bere lagunen zerrendan honako arrazoiagatik:\n %s"
 
 #. Granted
 #: ../src/protocols/oscar/oscar.c:7516
@@ -9569,18 +9785,16 @@ msgid "Re-request Authorization"
 msgstr "Eskatu baimena berriro"
 
 #: ../src/protocols/oscar/oscar.c:8243
-#, fuzzy
 msgid "Require authorization"
-msgstr "Eskatu baimena"
+msgstr "Baimena beharrezkoa"
 
 #: ../src/protocols/oscar/oscar.c:8246
 msgid "Web aware (enabling this will cause you to receive SPAM!)"
-msgstr ""
+msgstr "Web kontuan izan ( hau ahalbidetzen baduzu Zaborra jasotzea gerta daiteke) "
 
 #: ../src/protocols/oscar/oscar.c:8251
-#, fuzzy
 msgid "ICQ Privacy Options"
-msgstr "Proxy aukerak"
+msgstr "ICQ pribatisasun ezarpenak"
 
 #: ../src/protocols/oscar/oscar.c:8268
 msgid "The new formatting is invalid."
@@ -9617,9 +9831,8 @@ msgstr ""
 "gainean, eta hautatu \"Eskatu baimena berriro.\""
 
 #: ../src/protocols/oscar/oscar.c:8394
-#, fuzzy
 msgid "Find Buddy by E-Mail"
-msgstr "Bilatu laguna helbide elektronikoaren arabera"
+msgstr "Bilatu laguna helbide elektronikoaren arabera "
 
 #: ../src/protocols/oscar/oscar.c:8395
 msgid "Search for a buddy by e-mail address"
@@ -9643,9 +9856,8 @@ msgstr "Konfiguratu BMen birbidalketa (URLa)"
 
 #. ICQ actions
 #: ../src/protocols/oscar/oscar.c:8514
-#, fuzzy
 msgid "Set Privacy Options..."
-msgstr "Ezarri pribatutasuna:"
+msgstr "Ezarri pribatitasun aukerak:"
 
 #. AIM actions
 #: ../src/protocols/oscar/oscar.c:8521
@@ -9669,9 +9881,8 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Bistaratu baimenaren zain dauden lagunak"
 
 #: ../src/protocols/oscar/oscar.c:8546
-#, fuzzy
 msgid "Search for Buddy by E-Mail..."
-msgstr "Bilatu laguna helbide elektronikoaren arabera..."
+msgstr "Bilatu laguna helbide elektronikoaren arabera... "
 
 #: ../src/protocols/oscar/oscar.c:8551
 msgid "Search for Buddy by Information"
@@ -9708,202 +9919,183 @@ msgid ""
 "Use AIM/ICQ proxy server\n"
 "(slower, but usually works)"
 msgstr ""
+"Erabili AIM/ICQ proxy zerbitzaria\n"
+"(motelagoa, baina normalean funtzionatzen du)"
 
 #: ../src/protocols/sametime/sametime.c:415
-#, fuzzy
 msgid "Connection closed (writing)"
-msgstr "Konexioa itxi da"
+msgstr "Konexioa itxi da (idazten)"
 
 #: ../src/protocols/sametime/sametime.c:1267
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Group Title:</b> %s<br>"
-msgstr "<b>Erabiltzailea:</b> %s<br>"
+msgstr "<b>Taldearen titulua:</b> %s<br>"
 
 #: ../src/protocols/sametime/sametime.c:1268
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Notes Group ID:</b> %s<br>"
-msgstr "<b>Erabiltzailea:</b> %s<br>"
+msgstr "<b>Talde ID oharra:</b> %s<br> "
 
 #: ../src/protocols/sametime/sametime.c:1270
-#, fuzzy, c-format
+#, c-format
 msgid "Info for Group %s"
-msgstr "%s(r)en inf."
+msgstr "%s Taldearentzako informazioa"
 
 #: ../src/protocols/sametime/sametime.c:1272
-#, fuzzy
 msgid "Notes Address Book Information"
-msgstr "Laneko datuak"
+msgstr "Helbide agenda-ren informazioa"
 
 #: ../src/protocols/sametime/sametime.c:1304
-#, fuzzy
 msgid "Invite Group to Conference..."
-msgstr "Hasi konferentzia"
+msgstr "Konferentziara  taldea gonbidatu"
 
 #: ../src/protocols/sametime/sametime.c:1314
-#, fuzzy
 msgid "Get Notes Address Book Info"
-msgstr "Gehitu helbide-liburuan"
+msgstr "Gehitu helbide-liburuan oharraren informazioa"
 
 #: ../src/protocols/sametime/sametime.c:1467
-#, fuzzy
 msgid "Sending Handshake"
-msgstr "Cookie bidaltzen"
+msgstr "Bostekoa bidaltzen"
 
 #: ../src/protocols/sametime/sametime.c:1472
-#, fuzzy
+# , fuzzy
 msgid "Waiting for Handshake Acknowledgement"
-msgstr "Transferentziaren zain hasteko"
+msgstr "Bosteko ezagupenaren zain"
 
 #: ../src/protocols/sametime/sametime.c:1477
 msgid "Handshake Acknowledged, Sending Login"
-msgstr ""
+msgstr "Bostekoa ezagutua, Konexio informazioa bidaltzen"
 
 #: ../src/protocols/sametime/sametime.c:1482
+# , fuzzy
 msgid "Waiting for Login Acknowledgement"
-msgstr ""
+msgstr "Konexio ikuskapenaren zain"
 
 #: ../src/protocols/sametime/sametime.c:1487
-#, fuzzy
 msgid "Login Redirected"
-msgstr "Saioa hasteko zerbitzaria"
+msgstr "Konexio berbideratua"
 
 #: ../src/protocols/sametime/sametime.c:1493
-#, fuzzy
 msgid "Forcing Login"
-msgstr "Konektatzea"
+msgstr "Konektatzea behartzen"
 
 #: ../src/protocols/sametime/sametime.c:1497
+# ,fuzzy
 msgid "Login Acknowledged"
-msgstr ""
+msgstr "Konexio ikuskapena"
 
 #: ../src/protocols/sametime/sametime.c:1502
-#, fuzzy
 msgid "Starting Services"
-msgstr "Zerbitzuak linean"
+msgstr "Zerbitzuak hasten"
 
 #: ../src/protocols/sametime/sametime.c:1507
-#, fuzzy
 msgid "Connected"
-msgstr "Konektatu"
+msgstr "Konektatua"
 
 #: ../src/protocols/sametime/sametime.c:1605
 #, c-format
 msgid "A Sametime administrator has issued the following announcement on server %s"
-msgstr ""
+msgstr "Sametime-eko administratzaileak hurrengo oharra argitaratu du zerbitzarian: %s"
 
 #: ../src/protocols/sametime/sametime.c:1610
 msgid "Sametime Administrator Announcement"
-msgstr ""
+msgstr "Sametime-eko administratzailearen oharra"
 
 #: ../src/protocols/sametime/sametime.c:1662
-#, fuzzy
 msgid "Connection reset"
-msgstr "Konexioa itxi da"
+msgstr "Konexioa berabierazten "
 
 #: ../src/protocols/sametime/sametime.c:1669
-#, fuzzy, c-format
+#, c-format
 msgid "Error reading from socket: %s"
-msgstr "Errorea socket-etik irakurtzean."
+msgstr "Errorea socket-etik irakurtzean:%s."
 
 #. this is a regular connect, error out
 #: ../src/protocols/sametime/sametime.c:1698
 #: ../src/protocols/sametime/sametime.c:3696
-#, fuzzy
 msgid "Unable to connect to host"
-msgstr "Ezin da zerbitzariarekin konektatu"
+msgstr "Ezin da ostalariarekin konektatu"
 
 #: ../src/protocols/sametime/sametime.c:1736
 #, c-format
 msgid "Announcement from %s"
-msgstr ""
+msgstr "Oharra  %s -tik"
 
 #: ../src/protocols/sametime/sametime.c:1910
-#, fuzzy
 msgid "Conference Closed"
-msgstr "Konexioa itxi da"
+msgstr "Konferentzia itxi da"
 
 #: ../src/protocols/sametime/sametime.c:2367
-#, fuzzy
 msgid "Unable to send message: "
-msgstr "Ezin da mezua bidali: %s"
+msgstr "Ezin da mezua bidali: %s."
 
 #: ../src/protocols/sametime/sametime.c:2926
-#, fuzzy
 msgid "Place Closed"
-msgstr "Bertan behera utzi da"
+msgstr "Place itxita"
 
 #: ../src/protocols/sametime/sametime.c:3217
 msgid "Microphone"
-msgstr ""
+msgstr "Mikrofonoa"
 
 #: ../src/protocols/sametime/sametime.c:3218
 msgid "Speakers"
-msgstr ""
+msgstr "Bozgorailuak"
 
 #: ../src/protocols/sametime/sametime.c:3219
-#, fuzzy
 msgid "Video Camera"
-msgstr "Bideo-berriketa"
+msgstr "Bideo-kamera"
 
 #: ../src/protocols/sametime/sametime.c:3223
-#, fuzzy
 msgid "File Transfer"
-msgstr "Fitxategi-transferentziak"
+msgstr "Fitxategi-transferentzia"
 
 #: ../src/protocols/sametime/sametime.c:3257
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "<b>Supports:</b> %s"
 msgstr ""
 "\n"
-"<b>%s:</b> %s"
+"<b>Bermatua:</b> %s"
 
 #: ../src/protocols/sametime/sametime.c:3262
-#, fuzzy
 msgid ""
 "\n"
 "<b>External User</b>"
 msgstr ""
 "\n"
-"<b>Abisatuta:</b>"
+"<b>Kanpoko erabiltzailea:</b>"
 
 #: ../src/protocols/sametime/sametime.c:3368
-#, fuzzy
 msgid "Create conference with user"
-msgstr "Hautatu konferentzia-zerbitzari bat kontsulta egiteko"
+msgstr "Erabiltzailerarekin konferentzia sortu"
 
 #: ../src/protocols/sametime/sametime.c:3369
 #, c-format
 msgid ""
 "Please enter a topic for the new conference, and an invitation message to be "
 "sent to %s"
-msgstr ""
+msgstr "Gehitu ezazu topiko berria konferentziarako, eta mezua idatzi inbitazion moduan bidaltzeko %s"
 
 #: ../src/protocols/sametime/sametime.c:3373
-#, fuzzy
 msgid "New Conference"
-msgstr "Hasi konferentzia"
+msgstr "Konferentzia berria"
 
 #: ../src/protocols/sametime/sametime.c:3375
-#, fuzzy
 msgid "Create"
-msgstr "Berriketa"
+msgstr "Sortu"
 
 #: ../src/protocols/sametime/sametime.c:3439
-#, fuzzy
 msgid "Available Conferences"
-msgstr "Hasi konferentzia"
+msgstr "Konferentzia erabilgarri"
 
 #: ../src/protocols/sametime/sametime.c:3445
-#, fuzzy
 msgid "Create New Conference..."
-msgstr "Hasi konferentzia"
+msgstr "Sortu konferentzia berria..."
 
 #: ../src/protocols/sametime/sametime.c:3452
-#, fuzzy
 msgid "Invite user to a conference"
-msgstr "Hasi konferentzia"
+msgstr "Erabiltzailea konferentziara gonbidatu"
 
 #: ../src/protocols/sametime/sametime.c:3453
 #, c-format
@@ -9911,74 +10103,70 @@ msgid ""
 "Select a conference from the list below to send an invite to user %s. Select "
 "\"Create New Conference\" if you'd like to create a new conference to invite "
 "this user to."
-msgstr ""
+msgstr "Beheko zerrendatik aukeratu konferentzia %s erabiltzaileari gonbitea bidaltzeko. Aukeratu \"Konferentzia berria sortu\" konferentzia berria sortu nahi baduzu aurreko erabiltzailea gonbidatzeko."
 
 #: ../src/protocols/sametime/sametime.c:3458
-#, fuzzy
 msgid "Invite to Conference"
-msgstr "Hasi konferentzia"
+msgstr "Konferentziara gonbidatu"
 
 #: ../src/protocols/sametime/sametime.c:3460
 msgid "Invite"
 msgstr "Gonbidatu"
 
 #: ../src/protocols/sametime/sametime.c:3548
-#, fuzzy
 msgid "Invite to Conference..."
-msgstr "Hasi konferentzia"
+msgstr "Konferentziara gonbidatu..."
 
 #: ../src/protocols/sametime/sametime.c:3553
 msgid "Send TEST Announcement"
-msgstr ""
+msgstr "Bidali FROGA oharra"
 
 #: ../src/protocols/sametime/sametime.c:3600
 msgid "No Sametime Community Server specified"
-msgstr ""
+msgstr "Ez dago Sametime komunitatearen espezifikaziorik zerbitzarian  "
 
 #: ../src/protocols/sametime/sametime.c:3622
 #, c-format
 msgid ""
 "No host or IP address has been configured for the Meanwhile account %s. "
 "Please enter one below to continue logging in."
-msgstr ""
+msgstr "Ez da inongo stalari edo IP helbide konfiguratu izan %s konturako. Sartu ezazu behean konexioa ezartzen jarraitzeko."
 
 #: ../src/protocols/sametime/sametime.c:3627
-#, fuzzy
 msgid "Meanwhile Connection Setup"
-msgstr "Urruneko konexioak huts egin du"
+msgstr "Konexio ezarpena bitartean"
 
 #: ../src/protocols/sametime/sametime.c:3628
 msgid "No Sametime Community Server Specified"
-msgstr ""
+msgstr "Ez dago Sametime komunitatearen espezifikaziorik zerbitzarian "
 
 #: ../src/protocols/sametime/sametime.c:4085
-#, fuzzy
 msgid "<b>External User</b><br>"
-msgstr "<b>Erabiltzailea:</b> %s<br>"
+msgstr "<b>Kanpoko Erabiltzailea:</b><br>"
 
 #: ../src/protocols/sametime/sametime.c:4088
-#, fuzzy, c-format
+#, c-format
 msgid "<b>User ID:</b> %s<br>"
-msgstr "<b>Erabiltzailea:</b> %s<br>"
+msgstr "<b>ID Erabiltzailea :</b> %s<br>"
 
 #: ../src/protocols/sametime/sametime.c:4094
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Full Name:</b> %s<br>"
-msgstr "<b>Aliasa:</b> %s<br>"
+msgstr "<b>Izen osoa:</b> %s<br>"
 
 #: ../src/protocols/sametime/sametime.c:4100
 msgid "<b>Last Known Client:</b> "
-msgstr ""
+msgstr "<b>Azkenengo bezero ezaguna:</b> "
 
 #: ../src/protocols/sametime/sametime.c:4108
 #, c-format
 msgid "Unknown (0x%04x)<br>"
-msgstr ""
+msgstr "Ezezaguna (0x%04x)<br>"
 
 #: ../src/protocols/sametime/sametime.c:4115
-#, fuzzy, c-format
+#, c-format
 msgid "<b>Supports:</b> %s<br>"
-msgstr "<b>%s:</b> </b>%s<br>"
+msgstr "<b>Bermatua: </b>%s<br>"
 
 #: ../src/protocols/sametime/sametime.c:4121
 #, c-format
@@ -9987,37 +10175,34 @@ msgstr "<b>Egoera:</b> %s"
 
 #: ../src/protocols/sametime/sametime.c:4264
 #: ../src/protocols/sametime/sametime.c:5427
-#, fuzzy
 msgid "User Name"
-msgstr "Erabiltzaile-izena"
+msgstr "Erabiltzaile-izena "
 
 #: ../src/protocols/sametime/sametime.c:4267
 #: ../src/protocols/sametime/sametime.c:5430
 msgid "Sametime ID"
-msgstr ""
+msgstr "Sametime ID"
 
 #: ../src/protocols/sametime/sametime.c:4291
 msgid "An ambiguous user ID was entered"
-msgstr ""
+msgstr "ID erabiltzaile anbiguoa sartua izan da."
 
 #: ../src/protocols/sametime/sametime.c:4292
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The identifier '%s' may possibly refer to any of the following users. Please "
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
-"Erabiltzaile bat baino gehiagok izen berdina dute. Hautatu erabiltzaile "
-"zuzena zerrendatik lagunen zerrendan gehitzeko."
+"%s identifikatzailea segurazki beste edozein erabiltzaileri erreferentzia egiten dio."
+" Mesedez  ondorengo zerrendatik zuzeneko erabiltzailea hautatu zure lagun-zerrendara gehitzeko."
 
 #: ../src/protocols/sametime/sametime.c:4297
-#, fuzzy
 msgid "Select User"
-msgstr "Hautatu erabiltzaile zuzena"
+msgstr "Hautatu erabiltzaile "
 
 #: ../src/protocols/sametime/sametime.c:4367
-#, fuzzy
 msgid "Unable to add user: user not found"
-msgstr "Ezin da erabiltzailea gehitu: %s (%s)"
+msgstr "Ezin da erabiltzailea gehitu: erabiltzailea ez aurkitu"
 
 #: ../src/protocols/sametime/sametime.c:4369
 #, c-format
@@ -10025,35 +10210,33 @@ msgid ""
 "The identifier '%s' did not match any users in your Sametime community. This "
 "entry has been removed from your buddy list."
 msgstr ""
+"%s identifikatzailea ez dator bat Sametime-ko komunitateko inongo erabiltzailearekin. Sarrea hau "
+"zure lagunen-zerrendatik ezabatua izan da."
 
 #: ../src/protocols/sametime/sametime.c:4374
-#, fuzzy
 msgid "Unable to add user"
-msgstr "Ezin da %s erabiltzailea kanporatu"
+msgstr "Ezin da erabiltzailea gehitu"
 
 #: ../src/protocols/sametime/sametime.c:4946
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Error reading file %s: \n"
 "%s\n"
 msgstr ""
-"Errorea %s irakurtzean: \n"
+"Errorea %s fitxategia irakurtzean: \n"
 "%s\n"
 
 #: ../src/protocols/sametime/sametime.c:5077
-#, fuzzy
 msgid "Remotely Stored Buddy List"
-msgstr "Bidali lagunen zerrenda"
+msgstr "Hurrunezko lagunen zerrenda bilketa"
 
 #: ../src/protocols/sametime/sametime.c:5082
-#, fuzzy
 msgid "Buddy List Storage Mode"
-msgstr "Lagunen zerrenda ordenatzea"
+msgstr "Lagunen zerrenda bilketa modua"
 
 #: ../src/protocols/sametime/sametime.c:5085
-#, fuzzy
 msgid "Local Buddy List Only"
-msgstr "_Lagunen zerrenda atrakagarria"
+msgstr "Bertako lagunen zerrenda bakarrik"
 
 #: ../src/protocols/sametime/sametime.c:5087
 #, fuzzy
@@ -10066,43 +10249,40 @@ msgid "Merge and Save List to Server"
 msgstr "Esportatu lagunen zerrenda zerbitzarira"
 
 #: ../src/protocols/sametime/sametime.c:5091
-#, fuzzy
 msgid "Synchronize List with Server"
-msgstr "Zerbitzariarekin sinkronizatzen"
+msgstr "Zerbitzariarekin  zerrenda sinkronizatu"
 
 #: ../src/protocols/sametime/sametime.c:5140
 #, c-format
 msgid "Import Sametime List for Account %s"
-msgstr ""
+msgstr "Sametime-eko zerrenda inportatu kontu honetara %s"
 
 #: ../src/protocols/sametime/sametime.c:5179
 #, c-format
 msgid "Export Sametime List for Account %s"
-msgstr ""
+msgstr "Sametime-eko zerrenda esportatu kontu honetara %s"
 
 #: ../src/protocols/sametime/sametime.c:5232
-#, fuzzy
 msgid "Unable to add group: group exists"
-msgstr "Ezin da %s gehitu zure ukatuen zerrendan (%s)."
+msgstr "Ezin da taldea gehitu:dagoneneko badago."
 
 #: ../src/protocols/sametime/sametime.c:5233
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
-msgstr ""
+msgstr "%s izena duen taldea badago zure lagunen-zerrendan."
 
 #: ../src/protocols/sametime/sametime.c:5236
 #: ../src/protocols/sametime/sametime.c:5365
-#, fuzzy
 msgid "Unable to add group"
-msgstr "Ezin da taldea ezabatu"
+msgstr "Ezin da taldea gehitu"
 
 #: ../src/protocols/sametime/sametime.c:5295
 msgid "Possible Matches"
-msgstr ""
+msgstr "Topaketa posibleak"
 
 #: ../src/protocols/sametime/sametime.c:5311
 msgid "Notes Address Book group results"
-msgstr ""
+msgstr "Helbideen agenda taldeen emaitzak "
 
 #: ../src/protocols/sametime/sametime.c:5312
 #, c-format
@@ -10110,40 +10290,37 @@ msgid ""
 "The identifier '%s' may possibly refer to any of the following Notes Address "
 "Book groups. Please select the correct group from the list below to add it "
 "to your buddy list."
-msgstr ""
+msgstr "%s Identifitikatzailea behar bada helbide-liburuaren oharreko taldeetara erreferentzia egiten ari da. Aukeratu ezazu talde egokia beheko zerrenda honetatik eta gehitu ezazu zure lagunen zerrenda."
 
 #: ../src/protocols/sametime/sametime.c:5317
-#, fuzzy
 msgid "Select Notes Address Book"
-msgstr "Gehitu helbide-liburuan"
+msgstr "Gehitu helbide-liburuan oharretan"
 
 #: ../src/protocols/sametime/sametime.c:5359
-#, fuzzy
 msgid "Unable to add group: group not found"
-msgstr "Ezin da saretik irakurri"
+msgstr "Ezin da taldea gehitu:ez da taldea topatu"
 
 #: ../src/protocols/sametime/sametime.c:5361
 #, c-format
 msgid ""
 "The identifier '%s' did not match any Notes Address Book groups in your "
 "Sametime community."
-msgstr ""
+msgstr "%s identifikatzailea ez du  inongo emaitzik aurkitu helbide agenda taldean, zure Sametime-eko komunitatean."
 
 #: ../src/protocols/sametime/sametime.c:5402
-#, fuzzy
 msgid "Notes Address Book Group"
-msgstr "Gehitu helbide-liburuan"
+msgstr "Helbide agenda taldea"
 
 #: ../src/protocols/sametime/sametime.c:5403
 msgid ""
 "Enter the name of a Notes Address Book group in the field below to add the "
 "group and its members to your buddy list."
-msgstr ""
+msgstr "Sartu ezazu helbide-liburuaren talde oharreko izena beheko gunean taldearen izena gehitzeko eta bere kideak zure lagunen zerrendara."
 
 #: ../src/protocols/sametime/sametime.c:5451
-#, fuzzy, c-format
+#, c-format
 msgid "Search results for '%s'"
-msgstr "Bilaketaren emaitza"
+msgstr "Bilaketaren emaitza '%s'"
 
 #: ../src/protocols/sametime/sametime.c:5452
 #, c-format
@@ -10152,64 +10329,60 @@ msgid ""
 "may add these users to your buddy list or send them messages with the action "
 "buttons below."
 msgstr ""
+"%s Identifitikatzailea behar bada ondorengo erabiltzaileren bati erreferentzia egiten ari da. "
+"Erabiltzaileek zure lagunen-zerrendara gehitu ditzazkezu edo mezu bat bidali beheko ekintza botoiekin."
 
 #: ../src/protocols/sametime/sametime.c:5484
-#, fuzzy
 msgid "No matches"
-msgstr "Ez dago bat datorrenik"
+msgstr "Ez dago bat datorrenik "
 
 #: ../src/protocols/sametime/sametime.c:5485
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
-msgstr ""
+msgstr "%s identifikatzailea ez dator bat inongo  zure Sametime komunitateko erabiltzaileekin."
 
 #: ../src/protocols/sametime/sametime.c:5489
-#, fuzzy
 msgid "No Matches"
-msgstr "Ez dago bat datorrenik"
+msgstr "Ez da ezer ez aurkitu"
 
 #: ../src/protocols/sametime/sametime.c:5526
-#, fuzzy
 msgid "Search for a user"
-msgstr "Bila_tu:"
+msgstr "Erabiltzailea bilatu"
 
 #: ../src/protocols/sametime/sametime.c:5527
 msgid ""
 "Enter a name or partial ID in the field below to search for matching users "
 "in your Sametime community."
-msgstr ""
+msgstr "Sartu ezazu izena edo ID partziala beheko gunean Sametime komunitateko erabiltzaileak topatzeko."
 
 #: ../src/protocols/sametime/sametime.c:5530
-#, fuzzy
 msgid "User Search"
-msgstr "Bilatu"
+msgstr "Erabiltzaile bilaketa"
 
 #: ../src/protocols/sametime/sametime.c:5542
 msgid "Import Sametime List..."
-msgstr ""
+msgstr "Inportatu Sametime zerrenda..."
 
 #: ../src/protocols/sametime/sametime.c:5546
 msgid "Export Sametime List..."
-msgstr ""
+msgstr "Esportatu Sametime zerrenda..."
 
 #: ../src/protocols/sametime/sametime.c:5550
-#, fuzzy
 msgid "Add Notes Address Book Group..."
-msgstr "Gehitu helbide-liburuan"
+msgstr "Helbide agenda taldea  gehitu..."
 
 #: ../src/protocols/sametime/sametime.c:5554
-#, fuzzy
 msgid "User Search..."
-msgstr "Direktorio-bilaketa"
+msgstr "Erabiltzaile Bilaketa..."
 
 #: ../src/protocols/sametime/sametime.c:5651
 msgid "Force login (ignore server redirects)"
-msgstr ""
+msgstr "Konexioa ezartzen behartu (entzungor egin zerbitzariaren norantza ber-adierazlei) "
 
 #. pretend to be Sametime Connect
 #: ../src/protocols/sametime/sametime.c:5661
 msgid "Hide client identity"
-msgstr ""
+msgstr "Eskutatu bezeroaren identidadea"
 
 #: ../src/protocols/silc/buddy.c:52 ../src/protocols/silc/buddy.c:420
 #: ../src/protocols/silc/buddy.c:545 ../src/protocols/silc/buddy.c:711
@@ -10355,9 +10528,8 @@ msgstr ""
 "inportatzeko"
 
 #: ../src/protocols/silc/buddy.c:1079
-#, fuzzy
 msgid "_Import..."
-msgstr "Inportatu..."
+msgstr "_Inportatu..."
 
 #: ../src/protocols/silc/buddy.c:1175
 msgid "Select correct user"
@@ -10504,7 +10676,7 @@ msgstr "Kanporatu erabiltzailea"
 
 #: ../src/protocols/silc/buddy.c:1670 ../src/protocols/silc/chat.c:971
 msgid "Draw On Whiteboard"
-msgstr ""
+msgstr "Marraztu Whiteboard -ean"
 
 #: ../src/protocols/silc/chat.c:39
 msgid "_Passphrase:"
@@ -10712,9 +10884,8 @@ msgid "Cannot join private group"
 msgstr "Ezin da talde pribatura konektatu"
 
 #: ../src/protocols/silc/chat.c:1293 ../src/protocols/silc/silc.c:1156
-#, fuzzy
 msgid "Call Command"
-msgstr "Komandoa"
+msgstr "Deitu Komandoa"
 
 #: ../src/protocols/silc/chat.c:1293 ../src/protocols/silc/silc.c:1156
 msgid "Cannot call command"
@@ -10747,9 +10918,8 @@ msgid "Key agreement failed"
 msgstr "Gako-hitzarmenak huts egin du"
 
 #: ../src/protocols/silc/ft.c:102
-#, fuzzy
 msgid "File transfer session does not exist"
-msgstr "Ez dago fitxategi-transferentzia saiorik"
+msgstr "Ez dago fitxategi-transferentzia saiorik "
 
 #: ../src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
@@ -10848,9 +11018,8 @@ msgstr "Sartu berriketa batean"
 
 #: ../src/protocols/silc/ops.c:1183 ../src/protocols/silc/ops.c:1332
 #: ../src/protocols/yahoo/yahoo_profile.c:1046
-#, fuzzy
 msgid "Real Name"
-msgstr "Benetako izena"
+msgstr "Benetako izena "
 
 #: ../src/protocols/silc/ops.c:1211
 msgid "Status Text"
@@ -10865,9 +11034,8 @@ msgid "Public Key Babbleprint"
 msgstr "Gako publikoaren 'babble'-marka"
 
 #: ../src/protocols/silc/ops.c:1298
-#, fuzzy
 msgid "_More..."
-msgstr "Gehiago..."
+msgstr "_Gehiago..."
 
 #: ../src/protocols/silc/ops.c:1369 ../src/protocols/silc/silc.c:1007
 msgid "Detach From Server"
@@ -11079,9 +11247,8 @@ msgid "Verify Public Key"
 msgstr "Egiaztatu gako publikoa"
 
 #: ../src/protocols/silc/pk.c:119
-#, fuzzy
 msgid "_View..."
-msgstr "Ikusi..."
+msgstr "_Ikusi..."
 
 #: ../src/protocols/silc/pk.c:141
 msgid "Unsupported public key type"
@@ -11104,14 +11271,12 @@ msgid "Out of memory"
 msgstr "Memoriarik ez"
 
 #: ../src/protocols/silc/silc.c:328
-#, fuzzy
 msgid "Cannot initialize SILC protocol"
-msgstr "Ezin izan da SILC bezeroaren konexioa hasieratu"
+msgstr "Ezin izan da SILC protokoloa hasieratu"
 
 #: ../src/protocols/silc/silc.c:335
-#, fuzzy
 msgid "Cannot find/access ~/.silc directory"
-msgstr "Ezin da direktoririk bidali."
+msgstr "Ezin da ~/silc direktorioa lortu"
 
 #. Progress
 #: ../src/protocols/silc/silc.c:340
@@ -11119,23 +11284,21 @@ msgid "Connecting to SILC Server"
 msgstr "SILC zerbitzariarekin konektatzen"
 
 #: ../src/protocols/silc/silc.c:349
-#, fuzzy, c-format
+#, c-format
 msgid "Could not load SILC key pair: %s"
-msgstr "Ezin izan da gako publikoa kargatu"
+msgstr "Ezin da SILC gako-parea : %s kargatu."
 
 #: ../src/protocols/silc/silc.c:369
-#, fuzzy
 msgid "Unable to create connection"
-msgstr "Ezin da konexio berria sortu."
+msgstr "Ezin da konexio sortu."
 
 #: ../src/protocols/silc/silc.c:668
 msgid "Your Current Mood"
 msgstr "Uneko umorea"
 
 #: ../src/protocols/silc/silc.c:684
-#, fuzzy
 msgid "In love"
-msgstr "Maitemindua"
+msgstr "Maitemindua "
 
 #: ../src/protocols/silc/silc.c:695
 msgid ""
@@ -11154,9 +11317,8 @@ msgid "MMS"
 msgstr "MMS"
 
 #: ../src/protocols/silc/silc.c:707
-#, fuzzy
 msgid "Video conferencing"
-msgstr "Bideo-konferentzia"
+msgstr "Bideo-konferentzia "
 
 #: ../src/protocols/silc/silc.c:712
 msgid "Your Current Status"
@@ -11207,9 +11369,8 @@ msgstr "Ez dago konexio honekin asoziatutako eguneko mezurik."
 
 #: ../src/protocols/silc/silc.c:841 ../src/protocols/silc/silc.c:885
 #: ../src/protocols/silc/silc.c:956 ../src/protocols/silc/silc.c:957
-#, fuzzy
 msgid "Create New SILC Key Pair"
-msgstr "SILC gako bikotea sortzen..."
+msgstr "SILC gako bikotea berria sortzen..."
 
 #: ../src/protocols/silc/silc.c:841
 #, fuzzy
@@ -11222,19 +11383,16 @@ msgid "Key Pair Generation failed"
 msgstr "Gako-hitzarmenak huts egin du"
 
 #: ../src/protocols/silc/silc.c:924
-#, fuzzy
 msgid "Key length"
-msgstr "Gako-hitzarmena"
+msgstr "Gakoa luzera"
 
 #: ../src/protocols/silc/silc.c:926
-#, fuzzy
 msgid "Public key file"
-msgstr "Gako publikoaren fitxategia"
+msgstr "Gako publikoaren fitxategia "
 
 #: ../src/protocols/silc/silc.c:928
-#, fuzzy
 msgid "Private key file"
-msgstr "Gako pribatuaren fitxategia"
+msgstr "Gako pribatuaren fitxategia "
 
 #: ../src/protocols/silc/silc.c:951
 #, fuzzy
@@ -11242,9 +11400,8 @@ msgid "Passphrase (retype)"
 msgstr "Pasaesaldia behar da"
 
 #: ../src/protocols/silc/silc.c:958
-#, fuzzy
 msgid "Generate Key Pair"
-msgstr "Gako pribatuaren fitxategia"
+msgstr "Gako bikote berria egin"
 
 #: ../src/protocols/silc/silc.c:1002
 msgid "Online Status"
@@ -11457,11 +11614,11 @@ msgstr "Gako pribatuaren fitxategia"
 
 #: ../src/protocols/silc/silc.c:1876
 msgid "Cipher"
-msgstr ""
+msgstr "Zifra"
 
 #: ../src/protocols/silc/silc.c:1886
 msgid "HMAC"
-msgstr ""
+msgstr "HMAC "
 
 #: ../src/protocols/silc/silc.c:1889
 msgid "Public key authentication"
@@ -11485,17 +11642,15 @@ msgstr "Ezetsi lineako egoeraren atributuen eskaerak"
 
 #: ../src/protocols/silc/silc.c:1904
 msgid "Block messages to whiteboard"
-msgstr ""
+msgstr "Mezuak blokeatu \"whiteboard\" -ean "
 
 #: ../src/protocols/silc/silc.c:1907
-#, fuzzy
 msgid "Automatically open whiteboard"
-msgstr "_Zabaldu automatikoki kontaktuak"
+msgstr "Automatikoki zabaldu whiteboard-a"
 
 #: ../src/protocols/silc/silc.c:1910
-#, fuzzy
 msgid "Digitally sign and verify all messages"
-msgstr "Sinatu digitalki IMko mezu guztiak"
+msgstr "Sinatu digitalki eta mezu guztiak ondo daudela zihurtatu"
 
 #: ../src/protocols/silc/util.c:206 ../src/protocols/silc/util.c:231
 msgid "Creating SILC key pair..."
@@ -11515,9 +11670,9 @@ msgid "User Name: \t%s\n"
 msgstr "Erabiltzaile-izena: \t%s\n"
 
 #: ../src/protocols/silc/util.c:318
-#, fuzzy, c-format
+#, c-format
 msgid "E-Mail: \t\t%s\n"
-msgstr "Helb. elek.: \t\t%s\n"
+msgstr "Helbide elektronikoa.: \t\t%s\n"
 
 #: ../src/protocols/silc/util.c:320
 #, c-format
@@ -11589,51 +11744,47 @@ msgid "Terminal"
 msgstr "Terminala"
 
 #: ../src/protocols/silc/wb.c:284
-#, c-format
+# c-format
 msgid "%s sent message to whiteboard. Would you like to open the whiteboard?"
-msgstr ""
+msgstr "\"Whiteboard\" -era   %s mezua bidalia izan da. \"Whiteboard\" -a irekitzea nahi al duzu ?"
 
 #: ../src/protocols/silc/wb.c:288
 #, c-format
 msgid ""
 "%s sent message to whiteboard on %s channel. Would you like to open the "
 "whiteboard?"
-msgstr ""
+msgstr " bidalitako mezua %s \"Whiteboard\"-ko  %s kanalera.\"Whiteboard\"-a irekitzea nahi al duzu ?"
 
 #: ../src/protocols/silc/wb.c:302
 msgid "Whiteboard"
-msgstr ""
+msgstr "\"Whiteboard\" "
 
 #. TODO: do we really want to disconnect on a failure to write?
 #: ../src/protocols/simple/simple.c:409
-#, fuzzy
 msgid "Could not write"
-msgstr "Ezin izan da bidali"
+msgstr "Ezin izan da idatzi"
 
 #: ../src/protocols/simple/simple.c:424 ../src/protocols/simple/simple.c:1422
 msgid "Could not connect"
 msgstr "Ezin izan da konektatu"
 
 #: ../src/protocols/simple/simple.c:994
-#, fuzzy
 msgid "Wrong Password"
-msgstr "Aldatu pasahitza"
+msgstr "Pasahitza okerra"
 
 #: ../src/protocols/simple/simple.c:1453 ../src/protocols/simple/simple.c:1492
 #: ../src/protocols/simple/simple.c:1504 ../src/protocols/simple/simple.c:1551
-#, fuzzy
 msgid "Could not create listen socket"
-msgstr "Ezin izan da socket-a sortu"
+msgstr "Ezin izan da entzuteko socket-a sortu"
 
 #: ../src/protocols/simple/simple.c:1474
-#, fuzzy
+# ,fuzzy
 msgid "Couldn't resolve host"
-msgstr "Ezin izan da ostalariarekin konektatu"
+msgstr "Ezin izan da ostalaria"
 
 #: ../src/protocols/simple/simple.c:1572
-#, fuzzy
 msgid "SIP usernames may not contain whitespaces or @ symbols"
-msgstr "IRC goitizenek ezin dute zuriunerik eduki"
+msgstr "SIP goitizenek ezin dute zurigunerik izan edo @ ikurra"
 
 #. *< type
 #. *< ui_requirement
@@ -11644,29 +11795,25 @@ msgstr "IRC goitizenek ezin dute zuriunerik eduki"
 #. *< name
 #. *< version
 #: ../src/protocols/simple/simple.c:1734
-#, fuzzy
 msgid "SIP/SIMPLE Protocol Plugin"
-msgstr "SILC protokoloaren plugin-a"
+msgstr "SIP/SIMPLE protokoloaren plugin-a"
 
 #. *  summary
 #: ../src/protocols/simple/simple.c:1735
-#, fuzzy
 msgid "The SIP/SIMPLE Protocol Plugin"
-msgstr "SILC protokoloaren plugin-a"
+msgstr "SIP/SIMPLE protokoloaren plugin-a"
 
 #: ../src/protocols/simple/simple.c:1757
 msgid "Publish status (note: everyone may watch you)"
-msgstr ""
+msgstr "Egoera argitaratu (oharra:Jende guztiak ikusi zaitzake)"
 
 #: ../src/protocols/simple/simple.c:1763
-#, fuzzy
 msgid "Use UDP"
-msgstr "Erabiltzailearen IDa"
+msgstr "Erabilli UDP"
 
 #: ../src/protocols/simple/simple.c:1765
-#, fuzzy
 msgid "Use proxy"
-msgstr "Proxy-rik ez"
+msgstr "Erabili proxy-a"
 
 #: ../src/protocols/simple/simple.c:1767
 msgid "Proxy"
@@ -11763,9 +11910,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Dir zerbitzua ez dago erabilgarri une honetan."
 
 #: ../src/protocols/toc/toc.c:524
-#, fuzzy
 msgid "E-mail lookup restricted."
-msgstr "Helbide elektronikoaren bilaketa murriztu da."
+msgstr "Helbide elektronikoaren bilaketa murriztu da. "
 
 #: ../src/protocols/toc/toc.c:527
 msgid "Keyword ignored."
@@ -11944,14 +12090,13 @@ msgstr "Yahoo! sistema-mezua - %s:"
 #. * this should probably be moved to the core.
 #.
 #: ../src/protocols/yahoo/yahoo.c:907
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s wants to add %s to his or her buddy list%s%s."
-msgstr "%s erabiltzaileak %s gehitu nahi du bere lagunen zerrendan."
+msgstr "%s erabiltzaileak %s gehitu nahi du bere lagunen zerrendan %s%s."
 
 #: ../src/protocols/yahoo/yahoo.c:913
-#, fuzzy
 msgid "Message (optional) :"
-msgstr "Mezu-jakinarazpena"
+msgstr "Mezu (Aukerazkoa):"
 
 #: ../src/protocols/yahoo/yahoo.c:955
 #, c-format
@@ -12048,7 +12193,7 @@ msgstr "Ezin izan da laguna zerbitzari-zerrendan gehitu"
 #: ../src/protocols/yahoo/yahoo.c:2012
 #, c-format
 msgid "[ Audible %s/%s/%s.swf ] %s"
-msgstr ""
+msgstr "[ Entzungai %s/%s/%s.swf ] %s"
 
 #: ../src/protocols/yahoo/yahoo.c:2151 ../src/protocols/yahoo/yahoo.c:2298
 #: ../src/protocols/yahoo/yahoo.c:2313 ../src/protocols/yahoo/ycht.c:472
@@ -12063,19 +12208,16 @@ msgid "Connection problem"
 msgstr "Konexio-arazoa"
 
 #: ../src/protocols/yahoo/yahoo.c:2715 ../src/protocols/yahoo/yahoo.c:3302
-#, fuzzy
 msgid "Not at Home"
-msgstr "Ez dago etxean"
+msgstr "Ez dago etxean "
 
 #: ../src/protocols/yahoo/yahoo.c:2717 ../src/protocols/yahoo/yahoo.c:3305
-#, fuzzy
 msgid "Not at Desk"
-msgstr "Ez dago bere mahaian"
+msgstr "Ez dago bere mahaian "
 
 #: ../src/protocols/yahoo/yahoo.c:2719 ../src/protocols/yahoo/yahoo.c:3308
-#, fuzzy
 msgid "Not in Office"
-msgstr "Ez dago bulegoan"
+msgstr "Ez dago bulegoan "
 
 #: ../src/protocols/yahoo/yahoo.c:2723 ../src/protocols/yahoo/yahoo.c:3314
 msgid "On Vacation"
@@ -12090,9 +12232,8 @@ msgid "Not on server list"
 msgstr "Ez dago zerbitzarien zerrendan"
 
 #: ../src/protocols/yahoo/yahoo.c:2867 ../src/protocols/yahoo/yahoo.c:2926
-#, fuzzy
 msgid "Appear Online"
-msgstr "Agertu Lineaz kanpo"
+msgstr "Agertu Linean"
 
 #: ../src/protocols/yahoo/yahoo.c:2870 ../src/protocols/yahoo/yahoo.c:2947
 #, fuzzy
@@ -12128,7 +12269,7 @@ msgstr "Erabili ingurune-ezarpenak"
 
 #: ../src/protocols/yahoo/yahoo.c:3029
 msgid "Start Doodling"
-msgstr ""
+msgstr "Hasi \"Doodling\" "
 
 #: ../src/protocols/yahoo/yahoo.c:3061
 msgid "Active which ID?"
@@ -12143,18 +12284,16 @@ msgid "Activate ID..."
 msgstr "Aktibatu IDa..."
 
 #: ../src/protocols/yahoo/yahoo.c:3084
-#, fuzzy
 msgid "Join User in Chat..."
-msgstr "Elkartu erabiltzailearekin berriketan..."
+msgstr "Join User in Chat..."
 
 #: ../src/protocols/yahoo/yahoo.c:3628
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr "join &lt;gela&gt;:  konektatu Yahoo sareko berriketa-gelara"
 
 #: ../src/protocols/yahoo/yahoo.c:3633
-#, fuzzy
 msgid "list: List rooms on the Yahoo network"
-msgstr "list: zerrendatu sare honetako kanalak"
+msgstr "zerrendatu: ZerrendatuYahoo sareko kanalak"
 
 #: ../src/protocols/yahoo/yahoo.c:3637
 #, fuzzy
@@ -12163,7 +12302,7 @@ msgstr "buzz: eman abisu kontaktu bati bere harreta lortzeko"
 
 #: ../src/protocols/yahoo/yahoo.c:3641
 msgid "doodle: Request user to start a Doodle session"
-msgstr ""
+msgstr "doodle: Request user to start a Doodle session"
 
 #. *< type
 #. *< ui_requirement
@@ -12200,9 +12339,8 @@ msgid "File transfer host"
 msgstr "Fitxategi-transferentzien ostalaria"
 
 #: ../src/protocols/yahoo/yahoo.c:3768
-#, fuzzy
 msgid "Japan file transfer host"
-msgstr "Japoniako fitxategi-transferentzien ostalaria"
+msgstr "Japoniako fitxategi-transferentzien ostalaria "
 
 #: ../src/protocols/yahoo/yahoo.c:3771
 msgid "File transfer port"
@@ -12210,39 +12348,35 @@ msgstr "Fitxategi-transferentzien ataka"
 
 #: ../src/protocols/yahoo/yahoo.c:3774
 msgid "Chat room locale"
-msgstr ""
+msgstr "Berriketarako gela gunea"
 
 #: ../src/protocols/yahoo/yahoo.c:3777
 msgid "Ignore conference and chatroom invitations"
-msgstr ""
+msgstr "Entzungor egin konferentzia eta berriketa-gela gonbidapenei"
 
 #: ../src/protocols/yahoo/yahoo.c:3781
-#, fuzzy
 msgid "Chat room list URL"
-msgstr "Berriketa-gelen zerrendaren URLa"
+msgstr "Berriketa-gelen zerrendaren URLa "
 
 #: ../src/protocols/yahoo/yahoo.c:3784
-#, fuzzy
 msgid "YCHT host"
-msgstr "YCHT ostalaria"
+msgstr "YCHT ostalaria "
 
 #: ../src/protocols/yahoo/yahoo.c:3787
-#, fuzzy
 msgid "YCHT port"
-msgstr "YCHT Ataka"
+msgstr "YCHT Ataka "
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
 #.
 #: ../src/protocols/yahoo/yahoo_doodle.c:96
 msgid "Sent Doodle request."
-msgstr ""
+msgstr "Bidalia izan da \"Doodle\" eskaera "
 
 #. TODO: what to do here - do we really have to disconnect?
 #: ../src/protocols/yahoo/yahoo_packet.c:265
-#, fuzzy
 msgid "Write Error"
-msgstr "Idazketa-errorea"
+msgstr "Idazketa-errorea "
 
 #: ../src/protocols/yahoo/yahoo_profile.c:707
 #, c-format
@@ -12301,9 +12435,8 @@ msgid "Cool Link 3"
 msgstr "Esteka bikaina 3"
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1164
-#, fuzzy
 msgid "Last Update"
-msgstr "Azken eguneratzea"
+msgstr "Azken eguneratzea "
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1170
 #, c-format
@@ -12311,11 +12444,10 @@ msgid "User information for %s unavailable"
 msgstr "%s erabiltzailearen datuak ez daude erabilgarri"
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1176
-#, fuzzy
 msgid ""
 "Sorry, this profile seems to be in a language or format that is not "
 "supported at this time."
-msgstr "Badirudi profila hau oraingoz onartzen ez den hizkuntza batean dagoela"
+msgstr "Badirudi profila hau oraingoz onartzen ez den hizkuntza edo formatuan batean dagoela dirudi."
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1192
 msgid ""
@@ -12356,15 +12488,13 @@ msgstr "Huts egin du berriketan sartzean"
 
 #. -6
 #: ../src/protocols/yahoo/yahoochat.c:364
-#, fuzzy
 msgid "Unknown room"
-msgstr "Errore ezezaguna"
+msgstr "Gela ezezaguna"
 
 #. -15
 #: ../src/protocols/yahoo/yahoochat.c:367
-#, fuzzy
 msgid "Maybe the room is full"
-msgstr "Gela beteta egongo da?"
+msgstr "Gela beteta egon daiteke"
 
 #. -35
 #: ../src/protocols/yahoo/yahoochat.c:370
@@ -12376,6 +12506,8 @@ msgid ""
 "Unknown error. You may need to logout and wait five minutes before being "
 "able to rejoin a chatroom"
 msgstr ""
+"Errore ezezaguna. Deskonektatzeko beharrean egongo zara eta 5 minutu itxoin berriketa-gela berriz "
+"konektatu baino lehen"
 
 #: ../src/protocols/yahoo/yahoochat.c:452
 #, c-format
@@ -12425,9 +12557,9 @@ msgstr ""
 "Kontu-editorean)"
 
 #: ../src/protocols/zephyr/zephyr.c:701
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to send to chat %s,%s,%s"
-msgstr "Ezin da bidali berriketara %s,%s,%s"
+msgstr "Ezin da bidali berriketara %s,%s,%s "
 
 #: ../src/protocols/zephyr/zephyr.c:734 ../src/protocols/zephyr/zephyr.c:1151
 #, c-format
@@ -12481,9 +12613,8 @@ msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
 msgstr "inst &lt;instantzia&gt;: ezarri klase honetan erabiliko den instantzia"
 
 #: ../src/protocols/zephyr/zephyr.c:2647
-#, fuzzy
 msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-msgstr "inst &lt;instantzia&gt;: ezarri klase honetan erabiliko den instantzia"
+msgstr "topikoa &lt;instantzia&gt;: ezarri klase honetan erabiliko den instantzia"
 
 #: ../src/protocols/zephyr/zephyr.c:2653
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
@@ -12550,9 +12681,8 @@ msgid "Use tzc"
 msgstr "Erabili tzc"
 
 #: ../src/protocols/zephyr/zephyr.c:2899
-#, fuzzy
 msgid "tzc command"
-msgstr "Ezin da komandoari deitu"
+msgstr "tzc komandoa"
 
 #: ../src/protocols/zephyr/zephyr.c:2902
 msgid "Export to .anyone"
@@ -12563,19 +12693,16 @@ msgid "Export to .zephyr.subs"
 msgstr "Esportatu hona: .zephyr.subs"
 
 #: ../src/protocols/zephyr/zephyr.c:2908
-#, fuzzy
 msgid "Import from .anyone"
-msgstr "Esportatu hona: .anyone"
+msgstr "Inportatu hemendik:edozein"
 
 #: ../src/protocols/zephyr/zephyr.c:2911
-#, fuzzy
 msgid "Import from .zephyr.subs"
-msgstr "Esportatu hona: .zephyr.subs"
+msgstr "Inportatu hemendik: .zephyr.subs"
 
 #: ../src/protocols/zephyr/zephyr.c:2914
-#, fuzzy
 msgid "Realm"
-msgstr "Benetako izena"
+msgstr "Realm"
 
 #: ../src/protocols/zephyr/zephyr.c:2917
 msgid "Exposure"
@@ -12597,14 +12724,12 @@ msgstr "Sarbidea ukatuta: proxy zerbitzariak ez du tunelik onartzen %d atakan."
 #. * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
 #.
 #: ../src/request.h:1354
-#, fuzzy
 msgid "_Accept"
-msgstr "Onartu"
+msgstr "_Onartu"
 
 #: ../src/savedstatuses.c:514
-#, fuzzy
 msgid "saved statuses"
-msgstr "Egoeraren arabera"
+msgstr "Gorde egoerak"
 
 #: ../src/savedstatuses.c:767
 msgid "I'm not here right now"
@@ -12616,11 +12741,11 @@ msgid "%s is now known as %s.\n"
 msgstr "%s orain %s da.\n"
 
 #: ../src/server.c:681
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
-msgstr "'%s' erabiltzaileak %s gonbidatu du %s berriketa-gelara\n"
+msgstr "'%s' erabiltzaileak %s gonbidatu du %s:\n%s berriketa-gelara"
 
 #: ../src/server.c:686
 #, c-format
@@ -12654,9 +12779,9 @@ msgid "%s is now %s"
 msgstr "%s orain %s da"
 
 #: ../src/status.c:637
-#, fuzzy, c-format
+#, c-format
 msgid "%s is no longer %s"
-msgstr "%s aktibo jarri da berriro."
+msgstr "%s ez dago luzaroago %s"
 
 #: ../src/status.c:1320
 #, c-format

@@ -1651,7 +1651,7 @@ msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
 msgstr ""
-"This plugin allows the user to customize conversation and logging message "
+"This plug-in allows the user to customize conversation and logging message "
 "timestamp formats."
 
 #: ../plugins/win32/transparency/win2ktrans.c:183
@@ -2472,7 +2472,7 @@ msgstr "/Tools/Buddy _Pounces"
 
 #: ../src/gtkblist.c:2453
 msgid "/Tools/Plu_gins"
-msgstr "/Tools/Plu_gins"
+msgstr "/Tools/Plu_g-ins"
 
 #: ../src/gtkblist.c:2454
 msgid "/Tools/Pr_eferences"

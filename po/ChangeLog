@@ -47,7 +47,8 @@ version 2.0.0:
 	* Thai translation added (Isriya Paireepairit)
 	* Turkish translation updated (Ahmet Alp BALKAN)
 	* Ukrainian translation updated (Maxim V. Dziumanenko)
-	* Valencian-Catalan translation added (Toni Hermoso, Josep Puigdemont)
+	* Valencian-Catalan translation added (Toni Hermoso Pulido,
+	  Josep Puigdemont)
 
 version 1.5.1:
 	* Catalan win32 installer translation updated (Bernat LÃ³pez)
@@ -588,7 +589,7 @@ version 0.69 (09/24/2003):
 	* Russian translation updated (Alexandre Prokoudine)
 	* Serbian translation updated (Danilo Segan)
 	* Serbian Latin translation updated (Danilo Segan)
-	* Spanish translation updated (Javier Fernández-Sanguino Peña)
+	* Spanish translation updated (Javier Fern?ndez-Sanguino Pe?a)
 	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.68 (09/01/2003):
