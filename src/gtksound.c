@@ -392,8 +392,12 @@ gaim_gtk_sound_play_file(const char *filename)
 		return;
 	}
 
-	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
+		char *tmp = g_strdup_printf("sound file (%s) does not exist.\n", filename);
+		gaim_debug_error("gtksound", tmp);
+		g_free(tmp);
 		return;
+	}
 
 #ifndef _WIN32
 	if (!strcmp(method, "custom")) {
@@ -404,10 +408,9 @@ gaim_gtk_sound_play_file(const char *filename)
 		sound_cmd = gaim_prefs_get_string("/gaim/gtk/sound/command");
 
 		if (!sound_cmd || *sound_cmd == '\0') {
-			gaim_notify_error(NULL, NULL,
-							  _("Unable to play sound because the "
-								"'Command' sound method has been chosen, "
-								"but no command has been set."), NULL);
+			gaim_debug_error("gtksound",
+					 "'Command' sound method has been chosen, "
+					 "but no command has been set.");
 			return;
 		}
 
@@ -417,8 +420,8 @@ gaim_gtk_sound_play_file(const char *filename)
 			command = g_strdup_printf("%s %s", sound_cmd, filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
-			char *tmp = g_strdup_printf(_("Unable to play sound because the configured sound command could not be launched: %s"), error->message);
-			gaim_notify_error(NULL, NULL, tmp, NULL);
+			char *tmp = g_strdup_printf("sound command could not be launched: %s\n", error->message);
+			gaim_debug_error("gtksound", tmp);
 			g_free(tmp);
 			g_error_free(error);
 		}
