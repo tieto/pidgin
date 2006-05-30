@@ -392,12 +392,8 @@ gaim_gtk_sound_play_file(const char *filename)
 		return;
 	}
 
-	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		char *tmp = g_strdup_printf(_("Unable to play sound because the chosen file (%s) does not exist."), filename);
-		gaim_notify_error(NULL, NULL, tmp, NULL);
-		g_free(tmp);
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
 		return;
-	}
 
 #ifndef _WIN32
 	if (!strcmp(method, "custom")) {
