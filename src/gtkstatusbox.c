@@ -1465,18 +1465,12 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	{
 		if (status_box->imhtml_visible)
 		{
-			GtkTextBuffer *buf;
-			GtkTextIter start, end;
 			gtk_widget_show_all(status_box->vbox);
 			if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
 				status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			}
 			gtk_widget_grab_focus(status_box->imhtml);
-			buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
-			gtk_text_buffer_get_start_iter(buf, &start);
-			gtk_text_buffer_get_end_iter(buf, &end);
-			gtk_text_buffer_move_mark_by_name(buf, "insert", &end);
-			gtk_text_buffer_move_mark_by_name(buf, "selection_bound", &start);
+			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		}
 		else
 		{
