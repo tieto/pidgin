@@ -1267,7 +1267,8 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 		/* Has the status really been changed? */
 		saved_status = gaim_savedstatus_get_current();
-		if (gaim_savedstatus_get_type(saved_status) == GPOINTER_TO_INT(data))
+		if (gaim_savedstatus_get_type(saved_status) == GPOINTER_TO_INT(data) &&
+		    !gaim_savedstatus_has_substatuses(saved_status))
 		{
 			if (!message_changed(gaim_savedstatus_get_message(saved_status), message))
 				changed = FALSE;
