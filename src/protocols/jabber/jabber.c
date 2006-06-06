@@ -1457,21 +1457,21 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 		if(xmlnode_get_child(packet, "aborted")) {
 			js->gc->wants_to_die = TRUE;
 			text = _("Authorization Aborted");
-		} else if(xmlnode_get_child(error, "incorrect-encoding")) {
+		} else if(xmlnode_get_child(packet, "incorrect-encoding")) {
 			text = _("Incorrect encoding in authorization");
-		} else if(xmlnode_get_child(error, "invalid-authzid")) {
+		} else if(xmlnode_get_child(packet, "invalid-authzid")) {
 			js->gc->wants_to_die = TRUE;
 			text = _("Invalid authzid");
-		} else if(xmlnode_get_child(error, "invalid-mechanism")) {
+		} else if(xmlnode_get_child(packet, "invalid-mechanism")) {
 			js->gc->wants_to_die = TRUE;
 			text = _("Invalid Authorization Mechanism");
-		} else if(xmlnode_get_child(error, "mechanism-too-weak")) {
+		} else if(xmlnode_get_child(packet, "mechanism-too-weak")) {
 			js->gc->wants_to_die = TRUE;
 			text = _("Authorization mechanism too weak");
-		} else if(xmlnode_get_child(error, "not-authorized")) {
+		} else if(xmlnode_get_child(packet, "not-authorized")) {
 			js->gc->wants_to_die = TRUE;
 			text = _("Not Authorized");
-		} else if(xmlnode_get_child(error, "temporary-auth-failure")) {
+		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
 			text = _("Temporary Authentication Failure");
 		} else {
 			js->gc->wants_to_die = TRUE;
