@@ -432,8 +432,6 @@ GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitive, 
  * @param menu    The menu to append to.
  * @param act     The GaimMenuAction to append.
  * @param gobject The object to be passed to the action callback.
- *
- * @return The menu.
  */
 void gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
                                  gpointer gobject);
