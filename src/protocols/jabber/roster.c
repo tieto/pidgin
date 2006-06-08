@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "server.h"
+#include "util.h"
 
 #include "buddy.h"
 #include "presence.h"
@@ -202,7 +203,9 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 
 				if(!(group_name = xmlnode_get_data(group)))
 					group_name = g_strdup("");
-				groups = g_slist_append(groups, group_name);
+
+				if (g_slist_find_custom(groups, group_name, (GCompareFunc)gaim_utf8_strcasecmp) == NULL)
+					groups = g_slist_append(groups, group_name);
 			}
 			add_gaim_buddies_in_groups(js, jid, name, groups);
 		}
