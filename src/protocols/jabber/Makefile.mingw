@@ -10,6 +10,7 @@
 
 INCLUDE_DIR :=		.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
+LIBXML2_DIR:=		../../../../win32-dev/libxml2
 GAIM_TOP :=		../../..
 JABBER_ROOT :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
@@ -50,18 +51,16 @@ include $(GAIM_TOP)/src/win32/global.mak
 INCLUDE_PATHS +=	-I$(JABBER_ROOT) \
 			-I$(JABBER_ROOT)/win32 \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(LIBXML2_DIR)/include \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
 			-I$(GAIM_TOP)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(LIBXML2_DIR)/lib \
 			-L$(GAIM_TOP)/src
 
 
@@ -93,11 +92,9 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS = \
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
+			-lxml2 \
 			-lws2_32 \
 			-lintl \
 			-lgaim

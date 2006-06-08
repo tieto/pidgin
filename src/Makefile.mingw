@@ -18,6 +18,7 @@ IDLETRACK_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 NSS_DIR :=		../../win32-dev/nss-3.9
 NSPR_DIR :=		../../win32-dev/nspr-4.4.1
+LIBXML2_DIR :=		../../win32-dev/libxml2
 
 ##
 ## VARIABLE DEFINITIONS
@@ -66,7 +67,8 @@ INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 			-I$(ASPELL_TOP)/include \
 			-I$(GTKSPELL_TOP) \
 			-I$(NSS_DIR)/include \
-			-I$(NSPR_DIR)/include
+			-I$(NSPR_DIR)/include \
+			-I$(LIBXML2_DIR)/include
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
@@ -74,7 +76,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(IDLETRACK_TOP) \
 			-L$(ASPELL_TOP)/lib \
 			-L$(NSS_DIR)/lib \
-			-L$(NSPR_DIR)/lib
+			-L$(NSPR_DIR)/lib \
+			-L$(LIBXML2_DIR)/lib
 
 ##
 ##  SOURCES, OBJECTS
@@ -191,8 +194,8 @@ DLL_LIBS =		-lgtk-win32-2.0 \
 			-lidletrack \
 			-lnss3 \
 			-lnspr4 \
-			-lssl3
-			
+			-lssl3 \
+			-lxml2
 
 EXE_LIBS =
 

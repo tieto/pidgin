@@ -635,6 +635,8 @@
    <inttypes.h> don't define. */
 /* #undef uintmax_t */
 
+#define HAVE_LIBXML 1
+
 /*
  * Following are added for Win32 version of Gaim
  */

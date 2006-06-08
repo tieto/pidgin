@@ -12,6 +12,7 @@ GAIM_PIXMAPS = ./pixmaps
 GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
 GTKSPELL_TOP = ../win32-dev/gtkspell-2.0.6/gtkspell
+LIBXML2_DIR = ../win32-dev/libxml2
 IDLETRACK_TOP = $(GAIM_SRC)/win32/IdleTracker
 GTKRC_TOP = ../win32-dev/gtkrc
 OSCAR = $(GAIM_PROTOS)/oscar
@@ -33,7 +34,8 @@ MAKENSIS := makensis.exe
 VERSION := $(shell cat ./VERSION)
 
 NEEDED_DLLS =		$(GTKSPELL_TOP)/libgtkspell.dll \
-			$(IDLETRACK_TOP)/idletrack.dll
+			$(IDLETRACK_TOP)/idletrack.dll \
+			$(LIBXML2_DIR)/bin/libxml2.dll
 
 SOUNDS =		$(GAIM_SOUNDS)/alert.wav \
 			$(GAIM_SOUNDS)/login.wav \
