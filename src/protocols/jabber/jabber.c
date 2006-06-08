@@ -63,9 +63,9 @@ static void jabber_stream_init(JabberStream *js)
 						  "xmlns:stream='http://etherx.jabber.org/streams' "
 						  "version='1.0'>",
 						  js->user->domain);
-
+	/* setup the parser fresh for each stream */
+	jabber_parser_setup(js);
 	jabber_send_raw(js, open_stream, -1);
-
 	g_free(open_stream);
 }
 
@@ -88,7 +88,7 @@ static void jabber_session_init(JabberStream *js)
 	jabber_iq_set_callback(iq, jabber_session_initialized_cb, NULL);
 
 	session = xmlnode_new_child(iq->node, "session");
-	xmlnode_set_attrib(session, "xmlns", "urn:ietf:params:xml:ns:xmpp-session");
+	xmlnode_set_namespace(session, "urn:ietf:params:xml:ns:xmpp-session");
 
 	jabber_iq_send(iq);
 }
@@ -137,7 +137,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		xmlnode *bind, *resource;
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
 		bind = xmlnode_new_child(iq->node, "bind");
-		xmlnode_set_attrib(bind, "xmlns", "urn:ietf:params:xml:ns:xmpp-bind");
+		xmlnode_set_namespace(bind, "urn:ietf:params:xml:ns:xmpp-bind");
 		resource = xmlnode_new_child(bind, "resource");
 		xmlnode_insert_data(resource, js->user->resource, -1);
 
@@ -174,7 +174,13 @@ void jabber_process_packet(JabberStream *js, xmlnode *packet)
 		jabber_message_parse(js, packet);
 	} else if(!strcmp(packet->name, "stream:features")) {
 		jabber_stream_features_parse(js, packet);
+	} else if (!strcmp(packet->name, "features") && 
+		   !strcmp(xmlnode_get_namespace(packet), "http://etherx.jabber.org/streams")) {
+		jabber_stream_features_parse(js, packet);
 	} else if(!strcmp(packet->name, "stream:error")) {
+		jabber_stream_handle_error(js, packet);
+	} else if (!strcmp(packet->name, "error") &&
+		   !strcmp(xmlnode_get_namespace(packet), "http://etherx.jabber.org/streams")) {
 		jabber_stream_handle_error(js, packet);
 	} else if(!strcmp(packet->name, "challenge")) {
 		if(js->state == JABBER_STREAM_AUTHENTICATING)
@@ -405,7 +411,6 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
-
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
 	gaim_ssl_input_add(gsc, jabber_recv_cb_ssl, gc);
 }
@@ -923,9 +928,10 @@ static void jabber_close(GaimConnection *gc)
 			gaim_input_remove(js->gc->inpa);
 		close(js->fd);
 	}
-
+#ifndef HAVE_LIBXML
 	if(js->context)
 		g_markup_parse_context_free(js->context);
+#endif
 	if(js->iq_callbacks)
 		g_hash_table_destroy(js->iq_callbacks);
 	if(js->disco_callbacks)
@@ -981,7 +987,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			gaim_connection_update_progress(js->gc, _("Initializing Stream"),
 					js->gsc ? 5 : 2, JABBER_CONNECT_STEPS);
 			jabber_stream_init(js);
-			jabber_parser_setup(js);
 			break;
 		case JABBER_STREAM_AUTHENTICATING:
 			gaim_connection_update_progress(js->gc, _("Authenticating"),
@@ -1400,7 +1405,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *error;
 	const char *code = NULL, *text = NULL;
-	const char *xmlns = xmlnode_get_attrib(packet, "xmlns");
+	const char *xmlns = xmlnode_get_namespace(packet);
 	char *cdata = NULL;
 
 	if((error = xmlnode_get_child(packet, "error"))) {

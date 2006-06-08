@@ -121,7 +121,7 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 
 	if(js->avatar_hash) {
 		x = xmlnode_new_child(presence, "x");
-		xmlnode_set_attrib(x, "xmlns", "vcard-temp:x:update");
+		xmlnode_set_namespace(x, "vcard-temp:x:update");
 		photo = xmlnode_new_child(x, "photo");
 		xmlnode_insert_data(photo, js->avatar_hash, -1);
 	}
@@ -167,7 +167,7 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 
 	/* JEP-0115 */
 	c = xmlnode_new_child(presence, "c");
-	xmlnode_set_attrib(c, "xmlns",  "http://jabber.org/protocol/caps");
+	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
 	xmlnode_set_attrib(c, "ver", VERSION);
 
@@ -290,7 +290,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	gboolean muc = FALSE;
 	char *avatar_hash = NULL;
 
-
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
 		return;
 
@@ -363,7 +362,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				g_free(p);
 			}
 		} else if(!strcmp(y->name, "x")) {
-			const char *xmlns = xmlnode_get_attrib(y, "xmlns");
+			const char *xmlns = xmlnode_get_namespace(y);
 			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
 				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
@@ -464,7 +463,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				for(x = xmlnode_get_child(packet, "x"); x; x = xmlnode_get_next_twin(x)) {
 					const char *xmlns, *nick, *code;
 					xmlnode *stat, *item;
-					if(!(xmlns = xmlnode_get_attrib(x, "xmlns")) ||
+					if(!(xmlns = xmlnode_get_namespace(x)) ||
 							strcmp(xmlns, "http://jabber.org/protocol/muc#user"))
 						continue;
 					if(!(stat = xmlnode_get_child(x, "status")))
@@ -560,7 +559,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					iq = jabber_iq_new(js, JABBER_IQ_GET);
 					xmlnode_set_attrib(iq->node, "to", buddy_name);
 					vcard = xmlnode_new_child(iq->node, "vCard");
-					xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
+					xmlnode_set_namespace(vcard, "vcard-temp");
 
 					jabber_iq_set_callback(iq, jabber_vcard_parse_avatar, NULL);
 					jabber_iq_send(iq);

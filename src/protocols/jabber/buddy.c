@@ -1108,7 +1108,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 
 	xmlnode_set_attrib(iq->node, "to", jid);
 	vcard = xmlnode_new_child(iq->node, "vCard");
-	xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
+	xmlnode_set_namespace(vcard, "vcard-temp");
 
 	jabber_iq_set_callback(iq, jabber_vcard_parse, jbi);
 	jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));

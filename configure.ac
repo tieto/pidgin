@@ -171,6 +171,17 @@ if test "x$enable_gst" = "xyes"; then
   AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for making sounds])
 fi
 
+dnl #################
+dnl # LibXML2
+dnl #################
+enable_libxml=yes
+PKG_CHECK_MODULES(LIBXML, libxml-2.0, ,enable_libxml=no)
+AC_SUBST(LIBXML_CFLAGS)
+AC_SUBST(LIBXML_LIBS)
+if test "x$enable_libxml" = "xyes"; then
+	AC_DEFINE(HAVE_LIBXML, 1, [Use libxml2 for xml parsing])
+fi
+
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################

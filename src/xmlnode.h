@@ -41,6 +41,9 @@ typedef enum _XMLNodeType
 typedef struct _xmlnode
 {
 	char *name;					/**< The name of the node. */
+#ifdef HAVE_LIBXML
+	char *namespace;                    /**< The namespace of the node */
+#endif
 	XMLNodeType type;			/**< The type of the node. */
 	char *data;					/**< The data for the node. */
 	size_t data_sz;				/**< The size of the data. */
@@ -152,6 +155,22 @@ const char *xmlnode_get_attrib(xmlnode *node, const char *attr);
  * @param attr The attribute to remove.
  */
 void xmlnode_remove_attrib(xmlnode *node, const char *attr);
+
+/**
+ * Sets the namespace of a node
+ *
+ * @param node The node to qualify
+ * @param xmlns The namespace of the node
+ */
+void xmlnode_set_namespace(xmlnode *node, const char *xmlns);
+
+/**
+ * Returns the namespace of a node
+ *
+ * @param node The node to get the namepsace from
+ * @return The namespace of this node
+ */
+const char *xmlnode_get_namespace(xmlnode *node);
 
 /**
  * Returns the node in a string of xml.

@@ -123,7 +123,7 @@ static void handle_headline(JabberMessage *jm)
 
 	for(etc = jm->etc; etc; etc = etc->next) {
 		xmlnode *x = etc->data;
-		const char *xmlns = xmlnode_get_attrib(x, "xmlns");
+		const char *xmlns = xmlnode_get_namespace(x);
 		if(xmlns && !strcmp(xmlns, "jabber:x:oob")) {
 			xmlnode *url, *desc;
 			char *urltxt, *desctxt;
@@ -325,7 +325,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			g_free(code_txt);
 			g_free(text);
 		} else if(!strcmp(child->name, "x")) {
-			const char *xmlns = xmlnode_get_attrib(child, "xmlns");
+			const char *xmlns = xmlnode_get_namespace(child);
 			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
 				if(xmlnode_get_child(child, "composing")) {
 					if(jm->chat_state == JM_STATE_ACTIVE)
@@ -440,7 +440,7 @@ void jabber_message_send(JabberMessage *jm)
 
 	if(JM_TS_JEP_0022 == (jm->typing_style & JM_TS_JEP_0022)) {
 		child = xmlnode_new_child(message, "x");
-		xmlnode_set_attrib(child, "xmlns", "jabber:x:event");
+		xmlnode_set_namespace(child, "jabber:x:event");
 		if(jm->chat_state == JM_STATE_COMPOSING || jm->body)
 			xmlnode_new_child(child, "composing");
 	}
@@ -466,7 +466,7 @@ void jabber_message_send(JabberMessage *jm)
 				break;
 		}
 		if(child)
-			xmlnode_set_attrib(child, "xmlns", "http://jabber.org/protocol/chatstates");
+			xmlnode_set_namespace(child, "http://jabber.org/protocol/chatstates");
 	}
 
 	if(jm->subject) {

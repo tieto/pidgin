@@ -168,11 +168,11 @@ static void jabber_oob_xfer_recv_error(GaimXfer *xfer, const char *code) {
 	if(!strcmp(code, "406")) {
 		z = xmlnode_new_child(y, "not-acceptable");
 		xmlnode_set_attrib(y, "type", "modify");
-		xmlnode_set_attrib(z, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(z, "urn:ietf:params:xml:ns:xmpp-stanzas");
 	} else if(!strcmp(code, "404")) {
 		z = xmlnode_new_child(y, "not-found");
 		xmlnode_set_attrib(y, "type", "cancel");
-		xmlnode_set_attrib(z, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(z, "urn:ietf:params:xml:ns:xmpp-stanzas");
 	}
 	jabber_iq_send(iq);
 

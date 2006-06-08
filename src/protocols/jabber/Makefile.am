@@ -60,4 +60,5 @@ endif
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	$(DEBUG_CFLAGS) \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	$(LIBXML_CFLAGS)

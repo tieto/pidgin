@@ -78,7 +78,7 @@ JabberIq *jabber_iq_new_query(JabberStream *js, JabberIqType type,
 	xmlnode *query;
 
 	query = xmlnode_new_child(iq->node, "query");
-	xmlnode_set_attrib(query, "xmlns", xmlns);
+	xmlnode_set_namespace(query, xmlns);
 
 	return iq;
 }
@@ -268,7 +268,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	/* Apparently not, so lets see if we have a pre-defined handler */
 
-	if(type && query && (xmlns = xmlnode_get_attrib(query, "xmlns"))) {
+	if(type && query && (xmlns = xmlnode_get_namespace(query))) {
 		if(!strcmp(type, "set")) {
 			if(!strcmp(xmlns, "jabber:iq:roster")) {
 				jabber_roster_parse(js, packet);
@@ -329,7 +329,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		xmlnode_set_attrib(error, "type", "cancel");
 		xmlnode_set_attrib(error, "code", "501");
 		x = xmlnode_new_child(error, "feature-not-implemented");
-		xmlnode_set_attrib(x, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(x, "urn:ietf:params:xml:ns:xmpp-stanzas");
 
 		jabber_iq_send(iq);
 	}

@@ -104,7 +104,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			xmlnode_set_attrib(error, "code", "404");
 			xmlnode_set_attrib(error, "type", "cancel");
 			inf = xmlnode_new_child(error, "item-not-found");
-			xmlnode_set_attrib(inf, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+			xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
 		}
 
 		jabber_iq_send(iq);

@@ -438,6 +438,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 #endif
 
+#ifdef HAVE_LIBXML
+	g_string_append_printf(str, "    <b>XML Parser:</b> libxml2<br/>");
+#else
+	g_string_append_printf(str, "    <b>XML Parser:</b> GMarkup<br/>");
+#endif
+
 #ifdef HAVE_LIBGADU
 #ifdef _WIN32
 	g_string_append(str, "    <b>Gadu-Gadu library (libgadu):</b> Internal<br/>");

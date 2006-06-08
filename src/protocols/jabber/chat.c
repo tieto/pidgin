@@ -162,7 +162,7 @@ void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
 	if(chat->muc) {
 		xmlnode_set_attrib(message, "to", room_jid);
 		x = xmlnode_new_child(message, "x");
-		xmlnode_set_attrib(x, "xmlns", "http://jabber.org/protocol/muc#user");
+		xmlnode_set_namespace(x, "http://jabber.org/protocol/muc#user");
 		invite = xmlnode_new_child(x, "invite");
 		xmlnode_set_attrib(invite, "to", name);
 		body = xmlnode_new_child(invite, "reason");
@@ -173,7 +173,7 @@ void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
 		xmlnode_insert_data(body, msg, -1);
 		x = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(x, "jid", room_jid);
-		xmlnode_set_attrib(x, "xmlns", "jabber:x:conference");
+		xmlnode_set_namespace(x, "jabber:x:conference");
 	}
 
 	jabber_send(js, message);
@@ -267,7 +267,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	g_free(full_jid);
 
 	x = xmlnode_new_child(presence, "x");
-	xmlnode_set_attrib(x, "xmlns", "http://jabber.org/protocol/muc");
+	xmlnode_set_namespace(x, "http://jabber.org/protocol/muc");
 
 	if(passwd && *passwd) {
 		xmlnode *password = xmlnode_new_child(x, "password");
@@ -380,7 +380,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 
 		for(x = xmlnode_get_child(query, "x"); x; x = xmlnode_get_next_twin(x)) {
 			const char *xmlns;
-			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
+			if(!(xmlns = xmlnode_get_namespace(x)))
 				continue;
 
 			if(!strcmp(xmlns, "jabber:x:data")) {
@@ -451,7 +451,7 @@ void jabber_chat_create_instant_room(JabberChat *chat) {
 	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
 	xmlnode_set_attrib(iq->node, "to", room_jid);
-	xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
+	xmlnode_set_namespace(x, "jabber:x:data");
 	xmlnode_set_attrib(x, "type", "submit");
 
 	jabber_iq_send(iq);
@@ -524,7 +524,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 		for(x = xmlnode_get_child(query, "x"); x; x = xmlnode_get_next_twin(x)) {
 			const char *xmlns;
 
-			if(!(xmlns = xmlnode_get_attrib(x, "xmlns")))
+			if(!(xmlns = xmlnode_get_namespace(x)))
 				continue;
 
 			if(!strcmp(xmlns, "jabber:x:data")) {

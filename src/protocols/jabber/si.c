@@ -139,7 +139,7 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 		xmlnode_set_attrib(error, "code", "404");
 		xmlnode_set_attrib(error, "type", "cancel");
 		condition = xmlnode_new_child(error, "condition");
-		xmlnode_set_attrib(condition, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_set_namespace(condition, "urn:ietf:params:xml:ns:xmpp-stanzas");
 		xmlnode_new_child(condition, "item-not-found");
 
 		jabber_iq_send(iq);
@@ -637,14 +637,14 @@ static void jabber_si_xfer_send_request(GaimXfer *xfer)
 	iq = jabber_iq_new(jsx->js, JABBER_IQ_SET);
 	xmlnode_set_attrib(iq->node, "to", xfer->who);
 	si = xmlnode_new_child(iq->node, "si");
-	xmlnode_set_attrib(si, "xmlns", "http://jabber.org/protocol/si");
+	xmlnode_set_namespace(si, "http://jabber.org/protocol/si");
 	jsx->stream_id = jabber_get_next_id(jsx->js);
 	xmlnode_set_attrib(si, "id", jsx->stream_id);
 	xmlnode_set_attrib(si, "profile",
 			"http://jabber.org/protocol/si/profile/file-transfer");
 
 	file = xmlnode_new_child(si, "file");
-	xmlnode_set_attrib(file, "xmlns",
+	xmlnode_set_namespace(file,
 			"http://jabber.org/protocol/si/profile/file-transfer");
 	xmlnode_set_attrib(file, "name", xfer->filename);
 	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
@@ -652,10 +652,10 @@ static void jabber_si_xfer_send_request(GaimXfer *xfer)
 	/* maybe later we'll do hash and date attribs */
 
 	feature = xmlnode_new_child(si, "feature");
-	xmlnode_set_attrib(feature, "xmlns",
+	xmlnode_set_namespace(feature,
 			"http://jabber.org/protocol/feature-neg");
 	x = xmlnode_new_child(feature, "x");
-	xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
+	xmlnode_set_namespace(x, "jabber:x:data");
 	xmlnode_set_attrib(x, "type", "form");
 	field = xmlnode_new_child(x, "field");
 	xmlnode_set_attrib(field, "var", "stream-method");
@@ -771,13 +771,13 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 		jsx->accepted = TRUE;
 
 		si = xmlnode_new_child(iq->node, "si");
-		xmlnode_set_attrib(si, "xmlns", "http://jabber.org/protocol/si");
+		xmlnode_set_namespace(si, "http://jabber.org/protocol/si");
 
 		feature = xmlnode_new_child(si, "feature");
-		xmlnode_set_attrib(feature, "xmlns", "http://jabber.org/protocol/feature-neg");
+		xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
 
 		x = xmlnode_new_child(feature, "x");
-		xmlnode_set_attrib(x, "xmlns", "jabber:x:data");
+		xmlnode_set_namespace(x, "jabber:x:data");
 		xmlnode_set_attrib(x, "type", "submit");
 
 		field = xmlnode_new_child(x, "field");

@@ -49,7 +49,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 	JabberStream *js = data->js;
 	GList *groups, *flds;
 
-	xmlnode_set_attrib(result, "xmlns", "jabber:x:data");
+	xmlnode_set_namespace(result, "jabber:x:data");
 	xmlnode_set_attrib(result, "type", "submit");
 
 	for(groups = gaim_request_fields_get_groups(fields); groups; groups = groups->next) {
@@ -140,7 +140,7 @@ static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, GaimRequest
 	}
 	g_free(data);
 
-	xmlnode_set_attrib(result, "xmlns", "jabber:x:data");
+	xmlnode_set_namespace(result, "jabber:x:data");
 	xmlnode_set_attrib(result, "type", "cancel");
 
 	cb(js, result, user_data);

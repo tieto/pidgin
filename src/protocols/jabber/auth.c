@@ -67,7 +67,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 		gchar *enc_out;
 
 		auth = xmlnode_new("auth");
-		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 
 		response = g_string_new("");
 		response = g_string_append_len(response, "\0", 1);
@@ -269,7 +269,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
 		auth = xmlnode_new("auth");
-		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth,"mechanism", mech);
 		if (clientout) {
 			if (coutlen == 0) {
@@ -386,7 +386,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 		js->auth_type = JABBER_AUTH_DIGEST_MD5;
 		auth = xmlnode_new("auth");
-		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth, "mechanism", "DIGEST-MD5");
 
 		jabber_send(js, auth);
@@ -720,7 +720,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			return;
 		} else {
 			response = xmlnode_new("response");
-			xmlnode_set_attrib(response, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+			xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
 			if (c_out) {
 				enc_out = gaim_base64_encode((unsigned char*)c_out, clen);
 				xmlnode_insert_data(response, enc_out, -1);
@@ -735,7 +735,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 {
-	const char *ns = xmlnode_get_attrib(packet, "xmlns");
+	const char *ns = xmlnode_get_namespace(packet);
 #ifdef HAVE_CYRUS_SASL
 	int *x;
 #endif
