@@ -1,7 +1,7 @@
 /*
  * Tcl/Glib glue
  *
- * Copyright (C) 2003, 2004 Ethan Blanton <eblanton@cs.purdue.edu>
+ * Copyright (C) 2003, 2004, 2006 Ethan Blanton <eblanton@cs.purdue.edu>
  *
  * This file is dual-licensed under the two sets of terms below.  You may
  * use, redistribute, or modify it pursuant to either the set of conditions
@@ -157,8 +157,8 @@ static void tcl_create_file_handler(int fd, int mask, Tcl_FileProc *proc, Client
 	GIOChannel *channel;
 	GIOCondition cond = 0;
 
-	if (g_hash_table_lookup(tcl_file_handlers, (gpointer)fd))
-		tcl_delete_file_handler(fd);
+	if (g_hash_table_lookup(tcl_file_handlers, GINT_TO_POINTER(fd)))
+            tcl_delete_file_handler(fd);
 	
 	if (mask & TCL_READABLE)
 		cond |= G_IO_IN;
@@ -176,7 +176,7 @@ static void tcl_create_file_handler(int fd, int mask, Tcl_FileProc *proc, Client
 	tfh->source = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond, tcl_file_callback, tfh, g_free);
 	g_io_channel_unref(channel);
 
-	g_hash_table_insert(tcl_file_handlers, (gpointer)fd, tfh);
+	g_hash_table_insert(tcl_file_handlers, GINT_TO_POINTER(fd), tfh);
 
 	Tcl_ServiceAll();
 }
@@ -189,7 +189,7 @@ static void tcl_delete_file_handler(int fd)
 		return;
 
 	g_source_remove(tfh->source);
-	g_hash_table_remove(tcl_file_handlers, (gpointer)fd);
+	g_hash_table_remove(tcl_file_handlers, GINT_TO_POINTER(fd));
 
 	Tcl_ServiceAll();
 }
@@ -241,7 +241,7 @@ int tcl_file_event_callback(Tcl_Event *event, int flags)
 		return 0;
 	}
 
-	tfh = g_hash_table_lookup(tcl_file_handlers, (gpointer)fev->fd);
+	tfh = g_hash_table_lookup(tcl_file_handlers, GINT_TO_POINTER(fev->fd));
 	if (tfh == NULL)
 		return 1;
 
