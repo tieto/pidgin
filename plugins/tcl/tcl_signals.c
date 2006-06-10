@@ -48,7 +48,8 @@ void tcl_signal_handler_free(struct tcl_signal_handler *handler)
 		return;
 
 	Tcl_DecrRefCount(handler->signal);
-	Tcl_DecrRefCount(handler->namespace);
+	if (handler->namespace)
+		Tcl_DecrRefCount(handler->namespace);
 	g_free(handler);
 }
 
@@ -86,7 +87,6 @@ gboolean tcl_signal_connect(struct tcl_signal_handler *handler)
 				       (void *)handler))
 		return FALSE;
 
-	Tcl_IncrRefCount(handler->signal);
 	handler->namespace = new_cb_namespace ();
 	Tcl_IncrRefCount(handler->namespace);
 	proc = g_string_new("");
@@ -256,8 +256,12 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			case GAIM_SUBTYPE_UNKNOWN:
 				gaim_debug(GAIM_DEBUG_ERROR, "tcl", "subtype unknown\n");
 			case GAIM_SUBTYPE_ACCOUNT:
-			case GAIM_SUBTYPE_CONNECTION:
 			case GAIM_SUBTYPE_CONVERSATION:
+				if (gaim_value_is_outgoing(handler->argtypes[i]))
+					gaim_debug_error("tcl", "pointer subtypes do not currently support outgoing arguments\n");
+				arg = gaim_tcl_ref_new(GaimTclRefAccount, va_arg(args, void *));
+				break;
+			case GAIM_SUBTYPE_CONNECTION:
 			case GAIM_SUBTYPE_PLUGIN:
 			case GAIM_SUBTYPE_XFER:
 				/* pointers again */
@@ -281,24 +285,40 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 					node = va_arg(args, GaimBlistNode *);
 				switch (node->type) {
 				case GAIM_BLIST_GROUP_NODE:
-					g_string_printf(val, "group {%s}", ((GaimGroup *)node)->name);
+					arg = Tcl_NewListObj(0, NULL);
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 Tcl_NewStringObj("group", -1));
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 Tcl_NewStringObj(((GaimGroup *)node)->name, -1));
 					break;
 				case GAIM_BLIST_CONTACT_NODE:
 					/* g_string_printf(val, "contact {%s}", Contact Name? ); */
+					arg = Tcl_NewStringObj("contact", -1);
 					break;
 				case GAIM_BLIST_BUDDY_NODE:
-					g_string_printf(val, "buddy {%s} %lu", ((GaimBuddy *)node)->name,
-							(unsigned long)((GaimBuddy *)node)->account);
+					arg = Tcl_NewListObj(0, NULL);
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 Tcl_NewStringObj("buddy", -1));
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 Tcl_NewStringObj(((GaimBuddy *)node)->name, -1));
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 gaim_tcl_ref_new(GaimTclRefAccount,
+										  ((GaimBuddy *)node)->account));
 					break;
 				case GAIM_BLIST_CHAT_NODE:
-					g_string_printf(val, "chat {%s} %lu", ((GaimChat *)node)->alias,
-							(unsigned long)((GaimChat *)node)->account);
+					arg = Tcl_NewListObj(0, NULL);
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 Tcl_NewStringObj("chat", -1));
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 Tcl_NewStringObj(((GaimChat *)node)->alias, -1));
+					Tcl_ListObjAppendElement(handler->interp, arg,
+								 gaim_tcl_ref_new(GaimTclRefAccount,
+										  ((GaimChat *)node)->account));
 					break;
 				case GAIM_BLIST_OTHER_NODE:
-					g_string_printf(val, "other");
+					arg = Tcl_NewStringObj("other", -1);
 					break;
 				}
-				arg = Tcl_NewStringObj(val->str, -1);
 				break;
 			}
 		}
@@ -329,8 +349,10 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	for (i = 0; i < handler->nargs; i++) {
 		g_string_printf(name, "%s::arg%d",
 				Tcl_GetString(handler->namespace), i);
-		if (gaim_value_is_outgoing(handler->argtypes[i]))
+		if (gaim_value_is_outgoing(handler->argtypes[i])
+		    && gaim_value_get_type(handler->argtypes[i]) != GAIM_TYPE_SUBTYPE)
 			Tcl_UnlinkVar(handler->interp, name->str);
+
 		/* We basically only have to deal with strings on the
 		 * way out */
 		switch (gaim_value_get_type(handler->argtypes[i])) {

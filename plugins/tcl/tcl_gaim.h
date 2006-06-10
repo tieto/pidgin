@@ -28,6 +28,7 @@
 #include "internal.h"
 #include "plugin.h"
 #include "value.h"
+#include "stringref.h"
 
 struct tcl_signal_handler {
 	Tcl_Obj *signal;
@@ -46,6 +47,13 @@ struct tcl_signal_handler {
 
 extern GaimPlugin *_tcl_plugin;
 
+/* Capitalized this way because these are "types" */
+extern GaimStringref *GaimTclRefAccount;
+extern GaimStringref *GaimTclRefConversation;
+extern GaimStringref *GaimTclRefStatus;
+extern GaimStringref *GaimTclRefStatusAttr;
+extern GaimStringref *GaimTclRefStatusType;
+
 GaimPlugin *tcl_interp_get_plugin(Tcl_Interp *interp);
 
 void tcl_signal_init(void);
@@ -53,6 +61,10 @@ void tcl_signal_handler_free(struct tcl_signal_handler *handler);
 void tcl_signal_cleanup(Tcl_Interp *interp);
 gboolean tcl_signal_connect(struct tcl_signal_handler *handler);
 void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *interp);
+
+void gaim_tcl_ref_init();
+void *gaim_tcl_ref_get(Tcl_Interp *interp, Tcl_Obj *obj, GaimStringref *type);
+Tcl_Obj *gaim_tcl_ref_new(GaimStringref *type, void *value);
 
 Tcl_ObjCmdProc tcl_cmd_account;
 Tcl_ObjCmdProc tcl_cmd_signal_connect;
@@ -65,6 +77,9 @@ Tcl_ObjCmdProc tcl_cmd_notify;
 Tcl_ObjCmdProc tcl_cmd_prefs;
 Tcl_ObjCmdProc tcl_cmd_send_im;
 Tcl_ObjCmdProc tcl_cmd_signal;
+Tcl_ObjCmdProc tcl_cmd_status;
+Tcl_ObjCmdProc tcl_cmd_status_attr;
+Tcl_ObjCmdProc tcl_cmd_status_type;
 Tcl_ObjCmdProc tcl_cmd_unload;
 
 #endif /* _GAIM_TCL_GAIM_H_ */

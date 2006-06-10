@@ -50,6 +50,12 @@ struct tcl_plugin_data {
 	Tcl_Interp *interp;
 };
 
+GaimStringref *GaimTclRefAccount;
+GaimStringref *GaimTclRefConversation;
+GaimStringref *GaimTclRefStatus;
+GaimStringref *GaimTclRefStatusAttr;
+GaimStringref *GaimTclRefStatusType;
+
 static GHashTable *tcl_plugins = NULL;
 
 GaimPlugin *_tcl_plugin;
@@ -125,6 +131,9 @@ static int tcl_init_interp(Tcl_Interp *interp)
 	Tcl_CreateObjCommand(interp, "::gaim::prefs", tcl_cmd_prefs, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::send_im", tcl_cmd_send_im, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::signal", tcl_cmd_signal, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::gaim::status", tcl_cmd_status_type, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::gaim::status_attr", tcl_cmd_status_type, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::gaim::status_type", tcl_cmd_status_type, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::unload", tcl_cmd_unload, (ClientData)NULL, NULL);
 
 	return 0;
@@ -329,6 +338,14 @@ static gboolean tcl_load(GaimPlugin *plugin)
 		return FALSE;
 	tcl_glib_init();
 	tcl_signal_init();
+	gaim_tcl_ref_init();
+
+	GaimTclRefAccount = gaim_stringref_new("Account");
+	GaimTclRefConversation = gaim_stringref_new("Conversation");
+	GaimTclRefStatus = gaim_stringref_new("Status");
+	GaimTclRefStatusAttr = gaim_stringref_new("StatusAttr");
+	GaimTclRefStatusType = gaim_stringref_new("StatusType");
+
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 #ifdef HAVE_TK
@@ -342,6 +359,12 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 {
 	g_hash_table_destroy(tcl_plugins);
 	tcl_plugins = NULL;
+
+	gaim_stringref_unref(GaimTclRefAccount);
+	gaim_stringref_unref(GaimTclRefConversation);
+	gaim_stringref_unref(GaimTclRefStatus);
+	gaim_stringref_unref(GaimTclRefStatusAttr);
+	gaim_stringref_unref(GaimTclRefStatusType);
 
 	return TRUE;
 }

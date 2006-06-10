@@ -35,33 +35,46 @@
 
 #include "tcl_gaim.h"
 
-static gboolean tcl_validate_account(GaimAccount *account, Tcl_Interp *interp);
-static gboolean tcl_validate_conversation(GaimConversation *convo, Tcl_Interp *interp);
+static GaimAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp);
+static GaimConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *interp);
 static gboolean tcl_validate_gc(GaimConnection *gc);
 
-static gboolean tcl_validate_account(GaimAccount *account, Tcl_Interp *interp)
+static GaimAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 {
+	GaimAccount *account;
 	GList *cur;
+
+	account = gaim_tcl_ref_get(interp, obj, GaimTclRefAccount);
+
+	if (account == NULL)
+		return NULL;
+
 	for (cur = gaim_accounts_get_all(); cur != NULL; cur = g_list_next(cur)) {
 		if (account == cur->data)
-			return TRUE;
+			return account;
 	}
 	if (interp != NULL)
 		Tcl_SetStringObj(Tcl_GetObjResult(interp), "invalid account", -1);
-	return FALSE;
+	return NULL;
 }
 
-static gboolean tcl_validate_conversation(GaimConversation *convo, Tcl_Interp *interp)
+static GaimConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *interp)
 {
+	GaimConversation *convo;
 	GList *cur;
+
+	convo = gaim_tcl_ref_get(interp, obj, GaimTclRefConversation);
+
+	if (convo == NULL)
+		return NULL;
 
 	for (cur = gaim_get_conversations(); cur != NULL; cur = g_list_next(cur)) {
 		if (convo == cur->data)
-			return TRUE;
+			return convo;
 	}
 	if (interp != NULL)
 		Tcl_SetStringObj(Tcl_GetObjResult(interp), "invalid account", -1);
-	return FALSE;
+	return NULL;
 }
 
 static gboolean tcl_validate_gc(GaimConnection *gc)
@@ -77,19 +90,24 @@ static gboolean tcl_validate_gc(GaimConnection *gc)
 int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
-	const char *cmds[] = { "alias", "connect", "connection", "disconnect", "find",
-			 "handle", "isconnected", "list",
-			 "protocol", "username", NULL };
-	enum { CMD_ACCOUNT_ALIAS, CMD_ACCOUNT_CONNECT, CMD_ACCOUNT_CONNECTION,
-	       CMD_ACCOUNT_DISCONNECT, CMD_ACCOUNT_FIND, CMD_ACCOUNT_HANDLE,
-	       CMD_ACCOUNT_ISCONNECTED, CMD_ACCOUNT_LIST,
-	       CMD_ACCOUNT_PROTOCOL, CMD_ACCOUNT_USERNAME } cmd;
+	const char *cmds[] = { "active_status", "alias", "connect",
+	                       "connection", "disconnect", "enabled", "find",
+	                       "handle", "isconnected", "list", "protocol",
+	                       "status_type", "status_types", "username", NULL };
+	enum { CMD_ACCOUNT_ACTIVE_STATUS, CMD_ACCOUNT_ALIAS,
+	       CMD_ACCOUNT_CONNECT, CMD_ACCOUNT_CONNECTION,
+	       CMD_ACCOUNT_DISCONNECT, CMD_ACCOUNT_ENABLED, CMD_ACCOUNT_FIND,
+	       CMD_ACCOUNT_HANDLE, CMD_ACCOUNT_ISCONNECTED, CMD_ACCOUNT_LIST,
+	       CMD_ACCOUNT_PROTOCOL, CMD_ACCOUNT_STATUS_TYPE,
+	       CMD_ACCOUNT_STATUS_TYPES, CMD_ACCOUNT_USERNAME } cmd;
 	const char *listopts[] = { "-all", "-online", NULL };
 	enum { CMD_ACCOUNTLIST_ALL, CMD_ACCOUNTLIST_ONLINE } listopt;
 	const char *alias;
-	GList *cur;
+	const GList *cur;
 	GaimAccount *account;
+	GaimStatusType *status_type;
 	int error;
+	int b;
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
@@ -100,13 +118,23 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		return error;
 
 	switch (cmd) {
+	case CMD_ACCOUNT_ACTIVE_STATUS:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "account");
+			return TCL_ERROR;
+		}
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetObjResult(interp,
+		                 gaim_tcl_ref_new(GaimTclRefStatus,
+		                                  gaim_account_get_active_status(account)));
+		break;
 	case CMD_ACCOUNT_ALIAS:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		alias = gaim_account_get_alias(account);
 		Tcl_SetStringObj(result, alias ? (char *)alias : "", -1);
@@ -116,8 +144,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		if (!gaim_account_is_connected(account))
 			gaim_account_connect(account);
@@ -128,8 +155,8 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetIntObj(result, (int)gaim_account_get_connection(account));
 		break;
@@ -138,10 +165,26 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		gaim_account_disconnect(account);
+		break;
+	case CMD_ACCOUNT_ENABLED:
+		if (objc != 3 && objc != 4) {
+			Tcl_WrongNumArgs(interp, 2, objv, "account ?enabled?");
+			return TCL_ERROR;
+		}
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		if (objc == 3) {
+			Tcl_SetBooleanObj(result,
+					  gaim_account_get_enabled(account,
+								   gaim_core_get_ui()));
+		} else {
+			if ((error = Tcl_GetBooleanFromObj(interp, objv[3], &b)) != TCL_OK)
+				return TCL_ERROR;
+			gaim_account_set_enabled(account, gaim_core_get_ui(), b);
+		}
 		break;
 	case CMD_ACCOUNT_FIND:
 		if (objc != 4) {
@@ -163,8 +206,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetBooleanObj(result, gaim_account_is_connected(account));
 		break;
@@ -183,7 +225,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			account = cur->data;
 			if (listopt == CMD_ACCOUNTLIST_ONLINE && !gaim_account_is_connected(account))
 				continue;
-			elem = Tcl_NewIntObj((int)account);
+			elem = gaim_tcl_ref_new(GaimTclRefAccount, account);
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
@@ -193,18 +235,63 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetStringObj(result, (char *)gaim_account_get_protocol_id(account), -1);
+		break;
+	case CMD_ACCOUNT_STATUS_TYPE:
+		if (objc != 4 && objc != 5) {
+			Tcl_WrongNumArgs(interp, 2, objv, "account ?statustype? ?-primitive primitive?");
+			return TCL_ERROR;
+		}
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		if (objc == 4) {
+			status_type = gaim_account_get_status_type(account,
+								   Tcl_GetString(objv[3]));
+		} else {
+			GaimStatusPrimitive primitive;
+			if (strcmp(Tcl_GetString(objv[3]), "-primitive")) {
+				Tcl_SetStringObj(result, "bad option \"", -1);
+				Tcl_AppendObjToObj(result, objv[3]);
+				Tcl_AppendToObj(result,
+						"\": should be -primitive", -1);
+				return TCL_ERROR;
+			}
+			primitive = gaim_primitive_get_type_from_id(Tcl_GetString(objv[4]));
+			status_type = gaim_account_get_status_type_with_primitive(account,
+										  primitive);
+		}
+		if (status_type == NULL) {
+			Tcl_SetStringObj(result, "status type not found", -1);
+			return TCL_ERROR;
+		}
+		Tcl_SetObjResult(interp,
+				 gaim_tcl_ref_new(GaimTclRefStatusType,
+						  status_type));
+		break;
+	case CMD_ACCOUNT_STATUS_TYPES:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "account");
+			return TCL_ERROR;
+		}
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		list = Tcl_NewListObj(0, NULL);
+		for (cur = gaim_account_get_status_types(account); cur != NULL;
+		     cur = g_list_next(cur)) {
+			Tcl_ListObjAppendElement(interp, list,
+						 gaim_tcl_ref_new(GaimTclRefStatusType,
+								  cur->data));
+		}
+		Tcl_SetObjResult(interp, list);
 		break;
 	case CMD_ACCOUNT_USERNAME:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account);
-		if (error || !tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetStringObj(result, (char *)gaim_account_get_username(account), -1);
 		break;
@@ -227,9 +314,7 @@ static GaimBlistNode *tcl_list_to_buddy(Tcl_Interp *interp, int count, Tcl_Obj *
 
 	type = Tcl_GetString(elems[0]);
 	name = Tcl_GetString(elems[1]);
-	if (Tcl_GetIntFromObj(interp, elems[2], (int *)&account) != TCL_OK)
-		return NULL;
-	if (!tcl_validate_account(account, interp))
+	if ((account = tcl_validate_account(elems[2], interp)) == NULL)
 		return NULL;
 
 	if (!strcmp(type, "buddy")) {
@@ -301,15 +386,11 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 				Tcl_SetStringObj(result, "invalid buddy", -1);
 				return TCL_ERROR;
 			}
-			if ((error = Tcl_GetIntFromObj(interp, elems[2], (int *)&account)) != TCL_OK)
-				return TCL_ERROR;
-			if (!tcl_validate_account(account, interp))
+			if ((account = tcl_validate_account(elems[2], interp)) == NULL)
 				return TCL_ERROR;
 			serv_get_info(gaim_account_get_connection(account), Tcl_GetString(elems[1]));
 		} else {
-			if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&account)) != TCL_OK)
-				return error;
-			if (!tcl_validate_account(account, interp))
+			if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 				return TCL_ERROR;
 			serv_get_info(gaim_account_get_connection(account), Tcl_GetString(objv[3]));
 		}
@@ -351,7 +432,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 						tclbud = Tcl_NewListObj(0, NULL);
 						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("buddy", -1));
 						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(bud->name, -1));
-						Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewIntObj((int)bud->account));
+						Tcl_ListObjAppendElement(interp, tclbud, gaim_tcl_ref_new(GaimTclRefAccount, bud->account));
 						Tcl_ListObjAppendElement(interp, tclcontactlist, tclbud);
 					}
 					if (count) {
@@ -368,7 +449,7 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					tclbud = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj("chat", -1));
 					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewStringObj(cnode->alias, -1));
-					Tcl_ListObjAppendElement(interp, tclbud, Tcl_NewIntObj((int)cnode->account));
+					Tcl_ListObjAppendElement(interp, tclbud, gaim_tcl_ref_new(GaimTclRefAccount, cnode->account));
 					Tcl_ListObjAppendElement(interp, tclgrouplist, tclbud);
 					break;
 				default:
@@ -483,10 +564,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			return TCL_ERROR;
 		}
 		account = NULL;
-		if ((error = Tcl_GetIntFromObj(interp, objv[2],
-					       (int *)&account)) != TCL_OK)
-			return error;
-		if (!tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY,
 							    Tcl_GetString(objv[3]),
@@ -538,9 +616,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			Tcl_WrongNumArgs(interp, 2, objv, "?options? account name");
 			return TCL_ERROR;
 		}
-		if ((error = Tcl_GetIntFromObj(interp, objv[argsused++], (int *)&account)) != TCL_OK)
-			return error;
-		if (!tcl_validate_account(account, interp))
+		if ((account = tcl_validate_account(objv[argsused++], interp)) == NULL)
 			return TCL_ERROR;
 		convo = gaim_conversation_new(type, account, Tcl_GetString(objv[argsused]));
 		Tcl_SetIntObj(result, (int)convo);
@@ -550,12 +626,10 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			Tcl_WrongNumArgs(interp, 2, objv, "conversation style from what");
 			return TCL_ERROR;
 		}
-		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&convo)) != TCL_OK)
-			return error;
+		if ((convo = tcl_validate_conversation(objv[2], interp)) == NULL)
+			return TCL_ERROR;
 		if ((error = Tcl_GetIndexFromObj(interp, objv[3], styles, "style", 0, (int *)&style)) != TCL_OK)
 			return error;
-		if (!tcl_validate_conversation(convo, interp))
-			return TCL_ERROR;
 		from = Tcl_GetString(objv[4]);
 		what = Tcl_GetString(objv[5]);
 		
@@ -856,6 +930,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			return error;
 		}
 		handler->signal = objv[3];
+		Tcl_IncrRefCount(handler->signal);
 		handler->args = objv[4];
 		handler->proc = objv[5];
 		handler->interp = interp;
@@ -868,12 +943,254 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 		break;
 	case CMD_SIGNAL_DISCONNECT:
 		if (objc != 4) {
-			Tcl_WrongNumArgs(interp, 2, objv, "signal");
+			Tcl_WrongNumArgs(interp, 2, objv, "instance signal");
 			return TCL_ERROR;
 		}
 		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&instance)) != TCL_OK)
 			return error;
 		tcl_signal_disconnect(instance, Tcl_GetString(objv[3]), interp);
+		break;
+	}
+
+	return TCL_OK;
+}
+
+int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	const char *cmds[] = { "attr", "type" };
+	enum { CMD_STATUS_ATTR, CMD_STATUS_TYPE } cmd;
+	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	GaimStatus *status;
+	GaimStatusType *status_type;
+	GaimValue *value;
+	int error;
+
+	if (objc < 2) {
+		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
+		return TCL_ERROR;
+	}
+
+	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
+		return error;
+
+	switch (cmd) {
+	case CMD_STATUS_ATTR:
+		if (objc != 4) {
+			Tcl_WrongNumArgs(interp, 2, objv, "status attr_id");
+			return TCL_ERROR;
+		}
+		if ((status = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatus)) == NULL)
+			return TCL_ERROR;
+		value = gaim_status_get_attr_value(status, Tcl_GetString(objv[3]));
+		if (value == NULL) {
+			Tcl_SetStringObj(result, "no such attribute", -1);
+			return TCL_ERROR;
+		}
+		switch (gaim_value_get_type(value)) {
+		case GAIM_TYPE_BOOLEAN:
+			Tcl_SetBooleanObj(result, gaim_value_get_boolean(value));
+			break;
+		case GAIM_TYPE_INT:
+			Tcl_SetIntObj(result, gaim_value_get_int(value));
+			break;
+		case GAIM_TYPE_STRING:
+			Tcl_SetStringObj(result, gaim_value_get_string(value), -1);
+			break;
+		default:
+			Tcl_SetStringObj(result, "attribute has unknown type", -1);
+			return TCL_ERROR;
+		}
+		break;
+	case CMD_STATUS_TYPE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "status");
+			return TCL_ERROR;
+		}
+		if ((status = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatus)) == NULL)
+			return TCL_ERROR;
+		status_type = gaim_status_get_type(status);
+		Tcl_SetObjResult(interp, gaim_tcl_ref_new(GaimTclRefStatusType,
+		                                          status_type));
+		break;
+	}
+
+	return TCL_OK;
+}
+
+int tcl_cmd_status_attr(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	const char *cmds[] = { "id", "name", NULL };
+	enum { CMD_STATUS_ATTR_ID, CMD_STATUS_ATTR_NAME } cmd;
+	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	GaimStatusAttr *attr;
+	int error;
+
+	if (objc < 2) {
+		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
+		return TCL_ERROR;
+	}
+
+	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
+		return error;
+
+	switch (cmd) {
+	case CMD_STATUS_ATTR_ID:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "attr");
+			return TCL_ERROR;
+		}
+		if ((attr = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusAttr)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, gaim_status_attr_get_id(attr), -1);
+		break;
+	case CMD_STATUS_ATTR_NAME:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "attr");
+			return TCL_ERROR;
+		}
+		if ((attr = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusAttr)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, gaim_status_attr_get_name(attr), -1);
+		break;
+	}
+
+	return TCL_OK;
+}
+
+int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	const char *cmds[] = { "attr", "attrs", "available", "exclusive", "id",
+	                       "independent", "name", "primary_attr",
+	                       "primitive", "saveable", "user_settable",
+	                       NULL };
+	enum { CMD_STATUS_TYPE_ATTR, CMD_STATUS_TYPE_ATTRS,
+	       CMD_STATUS_TYPE_AVAILABLE, CMD_STATUS_TYPE_EXCLUSIVE,
+	       CMD_STATUS_TYPE_ID, CMD_STATUS_TYPE_INDEPENDENT,
+	       CMD_STATUS_TYPE_NAME, CMD_STATUS_TYPE_PRIMARY_ATTR,
+	       CMD_STATUS_TYPE_PRIMITIVE, CMD_STATUS_TYPE_SAVEABLE,
+	       CMD_STATUS_TYPE_USER_SETTABLE } cmd;
+	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	GaimStatusType *status_type;
+	Tcl_Obj *list, *elem;
+	const GList *cur;
+	int error;
+
+	if (objc < 2) {
+		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
+		return TCL_ERROR;
+	}
+
+	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
+		return error;
+
+	switch (cmd) {
+	case CMD_STATUS_TYPE_AVAILABLE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetBooleanObj(result, gaim_status_type_is_available(status_type));
+		break;
+	case CMD_STATUS_TYPE_ATTR:
+		if (objc != 4) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype attr");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetObjResult(interp,
+				 gaim_tcl_ref_new(GaimTclRefStatusAttr,
+						  gaim_status_type_get_attr(status_type,
+									    Tcl_GetStringFromObj(objv[3], NULL))));
+		break;
+	case CMD_STATUS_TYPE_ATTRS:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		list = Tcl_NewListObj(0, NULL);
+		for (cur = gaim_status_type_get_attrs(status_type);
+		     cur != NULL; cur = g_list_next(cur)) {
+			elem = gaim_tcl_ref_new(GaimTclRefStatusAttr, cur->data);
+			Tcl_ListObjAppendElement(interp, list, elem);
+		}
+		Tcl_SetObjResult(interp, list);
+		break;
+	case CMD_STATUS_TYPE_EXCLUSIVE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetBooleanObj(result, gaim_status_type_is_exclusive(status_type));
+		break;
+	case CMD_STATUS_TYPE_ID:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, gaim_status_type_get_id(status_type), -1);
+		break;
+	case CMD_STATUS_TYPE_INDEPENDENT:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetBooleanObj(result, gaim_status_type_is_independent(status_type));
+		break;
+	case CMD_STATUS_TYPE_NAME:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, gaim_status_type_get_name(status_type), -1);
+		break;
+	case CMD_STATUS_TYPE_PRIMITIVE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, gaim_primitive_get_id_from_type(gaim_status_type_get_primitive(status_type)), -1);
+		break;
+	case CMD_STATUS_TYPE_PRIMARY_ATTR:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, gaim_status_type_get_primary_attr(status_type), -1);
+		break;
+	case CMD_STATUS_TYPE_SAVEABLE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetBooleanObj(result, gaim_status_type_is_saveable(status_type));
+		break;
+	case CMD_STATUS_TYPE_USER_SETTABLE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "statustype");
+			return TCL_ERROR;
+		}
+		if ((status_type = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatusType)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetBooleanObj(result, gaim_status_type_is_user_settable(status_type));
 		break;
 	}
 
