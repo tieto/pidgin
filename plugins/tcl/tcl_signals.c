@@ -186,14 +186,9 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 		case GAIM_TYPE_OBJECT:
 		case GAIM_TYPE_BOXED:
 			/* These are all "pointer" types to us */
-			if (gaim_value_is_outgoing(handler->argtypes[i])) {
-				vals[i] = va_arg(args, void **);
-				Tcl_LinkVar(handler->interp, name->str,
-					    vals[i], TCL_LINK_INT);
-				arg = Tcl_NewStringObj(name->str, -1);
-			} else {
-				arg = Tcl_NewIntObj((int)va_arg(args, void *));
-			}
+			if (gaim_value_is_outgoing(handler->argtypes[i]))
+				gaim_debug_error("tcl", "pointer types do not currently support outgoing arguments\n");
+			arg = gaim_tcl_ref_new(GaimTclRefPointer, va_arg(args, void *));
 			break;
 		case GAIM_TYPE_BOOLEAN:
 			if (gaim_value_is_outgoing(handler->argtypes[i])) {

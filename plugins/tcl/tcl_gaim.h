@@ -51,6 +51,7 @@ extern GaimPlugin *_tcl_plugin;
 extern GaimStringref *GaimTclRefAccount;
 extern GaimStringref *GaimTclRefConnection;
 extern GaimStringref *GaimTclRefConversation;
+extern GaimStringref *GaimTclRefPointer;
 extern GaimStringref *GaimTclRefStatus;
 extern GaimStringref *GaimTclRefStatusAttr;
 extern GaimStringref *GaimTclRefStatusType;
