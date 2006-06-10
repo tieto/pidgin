@@ -178,6 +178,7 @@ enable_libxml=yes
 PKG_CHECK_MODULES(LIBXML, libxml-2.0, ,enable_libxml=no)
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
+AC_ARG_ENABLE(libxml,[  --disable-libxml     compile without libxml2 support],enable_libxml=no)
 if test "x$enable_libxml" = "xyes"; then
 	AC_DEFINE(HAVE_LIBXML, 1, [Use libxml2 for xml parsing])
 fi
