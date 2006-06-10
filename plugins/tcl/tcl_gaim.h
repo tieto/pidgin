@@ -49,6 +49,7 @@ extern GaimPlugin *_tcl_plugin;
 
 /* Capitalized this way because these are "types" */
 extern GaimStringref *GaimTclRefAccount;
+extern GaimStringref *GaimTclRefConnection;
 extern GaimStringref *GaimTclRefConversation;
 extern GaimStringref *GaimTclRefStatus;
 extern GaimStringref *GaimTclRefStatusAttr;

@@ -134,6 +134,22 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 		tcl_callbacks = g_list_remove_all(tcl_callbacks, NULL);
 }
 
+static GaimStringref *ref_type(GaimSubType type)
+{
+	switch (type) {
+	case GAIM_SUBTYPE_ACCOUNT:
+		return GaimTclRefAccount;
+	case GAIM_SUBTYPE_CONNECTION:
+		return GaimTclRefConnection;
+	case GAIM_SUBTYPE_CONVERSATION:
+		return GaimTclRefConversation;
+	case GAIM_SUBTYPE_STATUS:
+		return GaimTclRefStatus;
+	default:
+		return NULL;
+	}
+}
+
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler)
 {
 	GString *name, *val;
@@ -256,12 +272,13 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			case GAIM_SUBTYPE_UNKNOWN:
 				gaim_debug(GAIM_DEBUG_ERROR, "tcl", "subtype unknown\n");
 			case GAIM_SUBTYPE_ACCOUNT:
+			case GAIM_SUBTYPE_CONNECTION:
 			case GAIM_SUBTYPE_CONVERSATION:
+			case GAIM_SUBTYPE_STATUS:
 				if (gaim_value_is_outgoing(handler->argtypes[i]))
 					gaim_debug_error("tcl", "pointer subtypes do not currently support outgoing arguments\n");
-				arg = gaim_tcl_ref_new(GaimTclRefAccount, va_arg(args, void *));
+				arg = gaim_tcl_ref_new(ref_type(gaim_value_get_subtype(handler->argtypes[i])), va_arg(args, void *));
 				break;
-			case GAIM_SUBTYPE_CONNECTION:
 			case GAIM_SUBTYPE_PLUGIN:
 			case GAIM_SUBTYPE_XFER:
 				/* pointers again */

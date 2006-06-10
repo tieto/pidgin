@@ -51,6 +51,7 @@ struct tcl_plugin_data {
 };
 
 GaimStringref *GaimTclRefAccount;
+GaimStringref *GaimTclRefConnection;
 GaimStringref *GaimTclRefConversation;
 GaimStringref *GaimTclRefStatus;
 GaimStringref *GaimTclRefStatusAttr;
@@ -341,6 +342,7 @@ static gboolean tcl_load(GaimPlugin *plugin)
 	gaim_tcl_ref_init();
 
 	GaimTclRefAccount = gaim_stringref_new("Account");
+	GaimTclRefConnection = gaim_stringref_new("Connection");
 	GaimTclRefConversation = gaim_stringref_new("Conversation");
 	GaimTclRefStatus = gaim_stringref_new("Status");
 	GaimTclRefStatusAttr = gaim_stringref_new("StatusAttr");
@@ -361,6 +363,7 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 	tcl_plugins = NULL;
 
 	gaim_stringref_unref(GaimTclRefAccount);
+	gaim_stringref_unref(GaimTclRefConnection);
 	gaim_stringref_unref(GaimTclRefConversation);
 	gaim_stringref_unref(GaimTclRefStatus);
 	gaim_stringref_unref(GaimTclRefStatusAttr);

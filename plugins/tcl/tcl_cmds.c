@@ -37,7 +37,7 @@
 
 static GaimAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp);
 static GaimConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *interp);
-static gboolean tcl_validate_gc(GaimConnection *gc);
+static GaimConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp);
 
 static GaimAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 {
@@ -77,14 +77,21 @@ static GaimConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *int
 	return NULL;
 }
 
-static gboolean tcl_validate_gc(GaimConnection *gc)
+static GaimConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp)
 {
+	GaimConnection *gc;
 	GList *cur;
+
+	gc = gaim_tcl_ref_get(interp, obj, GaimTclRefConnection);
+
+	if (gc == NULL)
+		return NULL;
+
 	for (cur = gaim_connections_get_all(); cur != NULL; cur = g_list_next(cur)) {
 		if (gc == cur->data)
-			return TRUE;
+			return gc;
 	}
-	return FALSE;
+	return NULL;
 }
 
 int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
@@ -148,7 +155,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			return TCL_ERROR;
 		if (!gaim_account_is_connected(account))
 			gaim_account_connect(account);
-		Tcl_SetIntObj(result, (int)gaim_account_get_connection(account));
+		Tcl_SetObjResult(interp,
+		                 gaim_tcl_ref_new(GaimTclRefConnection,
+		                                  gaim_account_get_connection(account)));
 		break;
 	case CMD_ACCOUNT_CONNECTION:
 		if (objc != 3) {
@@ -158,7 +167,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetIntObj(result, (int)gaim_account_get_connection(account));
+		Tcl_SetObjResult(interp,
+		                 gaim_tcl_ref_new(GaimTclRefConnection,
+		                                  gaim_account_get_connection(account)));
 		break;
 	case CMD_ACCOUNT_DISCONNECT:
 		if (objc != 3) {
@@ -191,8 +202,10 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "username protocol");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)gaim_accounts_find(Tcl_GetString(objv[2]),
-									   Tcl_GetString(objv[3])));
+		account = gaim_accounts_find(Tcl_GetString(objv[2]),
+		                             Tcl_GetString(objv[3]));
+		Tcl_SetObjResult(interp,
+		                 gaim_tcl_ref_new(GaimTclRefAccount, account));
 		break;
 	case CMD_ACCOUNT_HANDLE:
 		if (objc != 2) {
@@ -490,23 +503,19 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			Tcl_WrongNumArgs(interp, 2, objv, "gc");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&gc);
-		if (error || !tcl_validate_gc(gc)) {
-			Tcl_SetStringObj(result, "invalid gc", -1);
+		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		}
-		Tcl_SetIntObj(result, (int)gaim_connection_get_account(gc));
+		Tcl_SetObjResult(interp,
+		                 gaim_tcl_ref_new(GaimTclRefAccount,
+		                                  gaim_connection_get_account(gc)));
 		break;
 	case CMD_CONN_DISPLAYNAME:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "gc");
 			return TCL_ERROR;
 		}
-		error = Tcl_GetIntFromObj(interp, objv[2], (int *)&gc);
-		if (error || !tcl_validate_gc(gc)) {
-			Tcl_SetStringObj(result, "invalid gc", -1);
+		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		}
 		Tcl_SetStringObj(result, (char *)gaim_connection_get_display_name(gc), -1);
 		break;
 	case CMD_CONN_HANDLE:
@@ -523,7 +532,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 		}
 		list = Tcl_NewListObj(0, NULL);
 		for (cur = gaim_connections_get_all(); cur != NULL; cur = g_list_next(cur)) {
-			elem = Tcl_NewIntObj((int)cur->data);
+			elem = gaim_tcl_ref_new(GaimTclRefConnection, cur->data);
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
@@ -569,7 +578,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY,
 							    Tcl_GetString(objv[3]),
 							    account);
-		Tcl_SetIntObj(result, (int)convo);
+		Tcl_SetObjResult(interp, gaim_tcl_ref_new(GaimTclRefConversation, convo));
 		break;
 	case CMD_CONV_HANDLE:
 		if (objc != 2) {
@@ -581,7 +590,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	case CMD_CONV_LIST:
 		list = Tcl_NewListObj(0, NULL);
 		for (cur = gaim_get_conversations(); cur != NULL; cur = g_list_next(cur)) {
-			elem = Tcl_NewIntObj((int)cur->data);
+			elem = gaim_tcl_ref_new(GaimTclRefConversation, cur->data);
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
@@ -619,7 +628,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		if ((account = tcl_validate_account(objv[argsused++], interp)) == NULL)
 			return TCL_ERROR;
 		convo = gaim_conversation_new(type, account, Tcl_GetString(objv[argsused]));
-		Tcl_SetIntObj(result, (int)convo);
+		Tcl_SetObjResult(interp, gaim_tcl_ref_new(GaimTclRefConversation, convo));
 		break;
 	case CMD_CONV_WRITE:
 		if (objc != 6) {
@@ -877,21 +886,14 @@ int tcl_cmd_send_im(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 {
 	GaimConnection *gc;
 	char *who, *text;
-	int error;
-	Tcl_Obj *result;
 
 	if (objc != 4) {
 		Tcl_WrongNumArgs(interp, 1, objv, "gc who text");
 		return TCL_ERROR;
 	}
 
-	if ((error = Tcl_GetIntFromObj(interp, objv[1], (int *)&gc)) != TCL_OK)
-		return error;
-	if (!tcl_validate_gc(gc)) {
-		result = Tcl_GetObjResult(interp);
-		Tcl_SetStringObj(result, "invalid gc", -1);
+	if ((gc = tcl_validate_gc(objv[1], interp)) == NULL)
 		return TCL_ERROR;
-	}
 
 	who = Tcl_GetString(objv[2]);
 	text = Tcl_GetString(objv[3]);
