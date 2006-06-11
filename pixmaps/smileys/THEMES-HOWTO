@@ -4,9 +4,7 @@ Sean M. Egan
 
 Version 0.60 of Gaim brings up all themable smileys.  In the preferences dialog, a user can choose from a selection of looks his smileys will take.  This guide is to serve as a reference to those interested in creating third-party smiley themes.  
 
-(SME: I'm doing this at 6:30AM; I'm tired, but I can't sleep.  Someone make sure I fix this up to make sure it all makes sense when I'm not tired anymore.  Right now it's mostly just unassembled thoughts)
-
-Your theme should be contained in a single directory.  This directory will be installed in the Gaim smiley theme directory (SME: There should probably be a $HOME/.gaim/smileys/ that the theme could go in too.).  This directory will contain a file called `theme' that specifies the theme and image (SME: And possibly sound) files that are used by the theme.  The format of the `theme' file is as follows.
+Your theme should be contained in a single directory.  This directory will be installed in the Gaim smiley theme directory ($HOME/.gaim/smileys/).  This directory will contain a file called `theme' that specifies the theme metadata and image files that are used by the theme.  The format of the `theme' file is as follows.
 
 The beginning of the file contains some metainformation about the theme in the format
 
@@ -19,10 +17,16 @@ Icon - An image used to represent the theme in the theme selector UI
 Author - The author's name
 
 Following this meta-information are "sml" groups.  A "sml" group is a group of smileys that will be shown together.  For example, each protocol has its own "sml" group (MSN, Yahoo, Gadu-Gadu, etc.).  The name of the group is surrounded in square brackets, and each line beneath it (until the next sml group or the end of the file) defines a smiley.
-Each line of the group starts with a filename of the icon (SME: Or sound?) followed by a space-delimited list of the characters that represent it. 
+Each line of the group starts with a filename of the icon followed by a space-delimited list of the characters that represent it. 
 
 Example:
 [AIM/ICQ]
 smiley.png  :) :-)
 
 In the smiley selector UI, each icon will only be shown once, and the first string representing it will be used.  To keep a smiley out of the selector altogether, make the first two characters of the line "! " followed by the filename and emoticons.
+
+As of 2.0.0beta2, spaces and backslashes in the "list of characters" (see above) must be escaped by prepending them with a backslash.  For example, to define a smiley that is represented by ":-/" and ":-\", use:
+
+[AIM/ICQ]
+think.png	:-/	:-\\
+
