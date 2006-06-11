@@ -318,8 +318,8 @@ fi
 dnl #######################################################################
 dnl # Check for Gadu-Gadu client includes and libraries
 dnl #######################################################################
-AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the GaduGadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
-AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the GaduGadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
+AC_ARG_WITH(gadu-includes, [AC_HELP_STRING([--with-gadu-includes=DIR], [compile the Gadu-Gadu plugin against includes in DIR])], [ac_gadu_includes="$withval"], [ac_gadu_includes="no"])
+AC_ARG_WITH(gadu-libs, [AC_HELP_STRING([--with-gadu-libs=DIR], [compile the Gadu-Gadu plugin against the libs in DIR])], [ac_gadu_libs="$withval"], [ac_gadu_libs="no"])
 GADU_CFLAGS=""
 GADU_LIBS=""
 if test -n "$with_gadu_includes" || test -n "$with_gadu_libs"; then
@@ -1072,7 +1072,7 @@ dnl #######################################################################
 dnl These two are inverses of each other <-- stolen from evolution!
 
 AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no]  attempt to use GNUTLS for SSL support (preferred) [default=yes]],
+	[  --enable-gnutls=[yes,no]  attempt to use GnuTLS for SSL support (preferred) [default=yes]],
 	[enable_gnutls="$enableval"],
 	[enable_gnutls="yes"])
 
@@ -1084,14 +1084,14 @@ AC_ARG_ENABLE(nss,
 msg_ssl="None (MSN will not work without SSL!)"
 
 dnl #
-dnl # Check for GNUTLS if it's specified.
+dnl # Check for GnuTLS if it's specified.
 dnl #
 if test "x$enable_gnutls" != "xno"; then
 	enable_gnutls="no"
 	prefix=`eval echo $prefix`
 
 	AC_ARG_WITH(gnutls-includes,
-		[  --with-gnutls-includes=PREFIX   location of GNUTLS includes.],
+		[  --with-gnutls-includes=PREFIX   location of GnuTLS includes.],
 		[ with_gnutls_includes="$withval" ],
 		[ with_gnutls_includes="$prefix/include" ])
 
@@ -1100,7 +1100,7 @@ if test "x$enable_gnutls" != "xno"; then
 	if test "x$with_gnutls_includes" != "xno"; then
 		CPPFLAGS_save="$CPPFLAGS"
 
-		AC_MSG_CHECKING(for GNUTLS includes)
+		AC_MSG_CHECKING(for GnuTLS includes)
 		AC_MSG_RESULT("")
 
 		CPPFLAGS="$CPPFLAGS -I$with_gnutls_includes"
@@ -1116,12 +1116,12 @@ if test "x$enable_gnutls" != "xno"; then
 			GNUTLS_CFLAGS=""
 		fi
 	else
-		AC_MSG_CHECKING(for GNUTLS includes)
+		AC_MSG_CHECKING(for GnuTLS includes)
 		AC_MSG_RESULT(no)
 	fi
 
 	AC_ARG_WITH(gnutls-libs,
-		[  --with-gnutls-libs=PREFIX       location of GNUTLS libraries.],
+		[  --with-gnutls-libs=PREFIX       location of GnuTLS libraries.],
 		[ with_gnutls_libs="$withval" ])
 
 	if test "x$with_gnutls_libs"     != "xno" -a \
@@ -1134,7 +1134,7 @@ if test "x$enable_gnutls" != "xno"; then
 			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
 		esac
 
-		AC_CACHE_CHECK([for GNUTLS libraries], gnutls_libs,
+		AC_CACHE_CHECK([for GnuTLS libraries], gnutls_libs,
 		[
 			LDFLAGS="$LDFLAGS $with_gnutls_libs -lgnutls -lgcrypt"
 			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
@@ -1142,9 +1142,9 @@ if test "x$enable_gnutls" != "xno"; then
 		])
 
 		if test "x$gnutls_libs" != "xno"; then
-			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GNUTLS])
+			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
 			AC_DEFINE(HAVE_SSL)
-			msg_gnutls="GNUTLS"
+			msg_gnutls="GnuTLS"
 			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
 
 			enable_gnutls="yes"
@@ -1153,7 +1153,7 @@ if test "x$enable_gnutls" != "xno"; then
 			GNUTLS_LIBS=""
 		fi
 	else
-		AC_MSG_CHECKING(for GNUTLS libraries)
+		AC_MSG_CHECKING(for GnuTLS libraries)
 		AC_MSG_RESULT(no)
 	fi
 else
@@ -1168,7 +1168,7 @@ AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 
 
 dnl #
-dnl # Check for NSS if it's specified, or if GNUTLS checks failed.
+dnl # Check for NSS if it's specified, or if GnuTLS checks failed.
 dnl #
 if test "x$enable_nss" != "xno"; then
 
