@@ -798,6 +798,16 @@ gaim_gtkdialogs_log(void)
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+
+	/* gaim_request_field_account_new() only sets a default value if you're
+	 * connected, and it sets it from the list of connected accounts.  Since
+	 * we're going to set show_all here, it makes sense to use the first
+	 * account, not the first connected account. */
+	if (gaim_accounts_get_all() != NULL) {
+		gaim_request_field_account_set_default_value(field, gaim_accounts_get_all()->data);
+		gaim_request_field_account_set_value(field, gaim_accounts_get_all()->data);
+	}
+
 	gaim_request_field_set_type_hint(field, "account");
 	gaim_request_field_account_set_show_all(field, TRUE);
 	gaim_request_field_set_visible(field,
