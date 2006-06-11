@@ -54,6 +54,7 @@ GaimStringref *GaimTclRefAccount;
 GaimStringref *GaimTclRefConnection;
 GaimStringref *GaimTclRefConversation;
 GaimStringref *GaimTclRefPointer;
+GaimStringref *GaimTclRefPresence;
 GaimStringref *GaimTclRefStatus;
 GaimStringref *GaimTclRefStatusAttr;
 GaimStringref *GaimTclRefStatusType;
@@ -131,6 +132,7 @@ static int tcl_init_interp(Tcl_Interp *interp)
 	Tcl_CreateObjCommand(interp, "::gaim::debug", tcl_cmd_debug, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::notify", tcl_cmd_notify, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::prefs", tcl_cmd_prefs, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::gaim::presence", tcl_cmd_presence, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::send_im", tcl_cmd_send_im, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::signal", tcl_cmd_signal, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::status", tcl_cmd_status_type, (ClientData)NULL, NULL);
@@ -346,6 +348,7 @@ static gboolean tcl_load(GaimPlugin *plugin)
 	GaimTclRefConnection = gaim_stringref_new("Connection");
 	GaimTclRefConversation = gaim_stringref_new("Conversation");
 	GaimTclRefPointer = gaim_stringref_new("Pointer");
+	GaimTclRefPresence = gaim_stringref_new("Presence");
 	GaimTclRefStatus = gaim_stringref_new("Status");
 	GaimTclRefStatusAttr = gaim_stringref_new("StatusAttr");
 	GaimTclRefStatusType = gaim_stringref_new("StatusType");
@@ -368,6 +371,7 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 	gaim_stringref_unref(GaimTclRefConnection);
 	gaim_stringref_unref(GaimTclRefConversation);
 	gaim_stringref_unref(GaimTclRefPointer);
+	gaim_stringref_unref(GaimTclRefPresence);
 	gaim_stringref_unref(GaimTclRefStatus);
 	gaim_stringref_unref(GaimTclRefStatusAttr);
 	gaim_stringref_unref(GaimTclRefStatusType);
