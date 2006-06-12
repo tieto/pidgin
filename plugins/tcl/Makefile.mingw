@@ -63,6 +63,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			tcl.c \
 			tcl_cmds.c \
 			tcl_glib.c \
+			tcl_ref.c \
 			tcl_signals.c
 
 
