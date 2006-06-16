@@ -252,7 +252,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		}
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
-		Tcl_SetObjResult(result, gaim_tcl_ref_new(GaimTclRefPresence,
+		Tcl_SetObjResult(interp, gaim_tcl_ref_new(GaimTclRefPresence,
 							  gaim_account_get_presence(account)));
 		break;
 	case CMD_ACCOUNT_PROTOCOL:
@@ -1183,7 +1183,8 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	GaimStatus *status;
 	GaimStatusType *status_type;
 	GaimValue *value;
-	int error;
+	const char *attr;
+	int error, v;
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
@@ -1195,26 +1196,42 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 	switch (cmd) {
 	case CMD_STATUS_ATTR:
-		if (objc != 4) {
-			Tcl_WrongNumArgs(interp, 2, objv, "status attr_id");
+		if (objc != 4 && objc != 5) {
+			Tcl_WrongNumArgs(interp, 2, objv, "status attr_id ?value?");
 			return TCL_ERROR;
 		}
 		if ((status = gaim_tcl_ref_get(interp, objv[2], GaimTclRefStatus)) == NULL)
 			return TCL_ERROR;
-		value = gaim_status_get_attr_value(status, Tcl_GetString(objv[3]));
+		attr = Tcl_GetString(objv[3]);
+		value = gaim_status_get_attr_value(status, attr);
 		if (value == NULL) {
 			Tcl_SetStringObj(result, "no such attribute", -1);
 			return TCL_ERROR;
 		}
 		switch (gaim_value_get_type(value)) {
 		case GAIM_TYPE_BOOLEAN:
-			Tcl_SetBooleanObj(result, gaim_value_get_boolean(value));
+			if (objc == 4) {
+				Tcl_SetBooleanObj(result, gaim_value_get_boolean(value));
+			} else {
+				if ((error = Tcl_GetBooleanFromObj(interp, objv[4], &v)) != TCL_OK)
+					return error;
+				gaim_status_set_attr_boolean(status, attr, v);
+			}
 			break;
 		case GAIM_TYPE_INT:
-			Tcl_SetIntObj(result, gaim_value_get_int(value));
+			if (objc == 4) {
+				Tcl_SetIntObj(result, gaim_value_get_int(value));
+			} else {
+				if ((error = Tcl_GetIntFromObj(interp, objv[4], &v)) != TCL_OK)
+					return error;
+				gaim_status_set_attr_int(status, attr, v );
+			}
 			break;
 		case GAIM_TYPE_STRING:
-			Tcl_SetStringObj(result, gaim_value_get_string(value), -1);
+			if (objc == 4)
+				Tcl_SetStringObj(result, gaim_value_get_string(value), -1);
+			else
+				gaim_status_set_attr_string(status, attr, Tcl_GetString(objv[4]));
 			break;
 		default:
 			Tcl_SetStringObj(result, "attribute has unknown type", -1);

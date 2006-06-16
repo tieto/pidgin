@@ -65,7 +65,7 @@ void tcl_signal_cleanup(Tcl_Interp *interp);
 gboolean tcl_signal_connect(struct tcl_signal_handler *handler);
 void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *interp);
 
-void gaim_tcl_ref_init();
+void gaim_tcl_ref_init(void);
 void *gaim_tcl_ref_get(Tcl_Interp *interp, Tcl_Obj *obj, GaimStringref *type);
 Tcl_Obj *gaim_tcl_ref_new(GaimStringref *type, void *value);
 
