@@ -60,7 +60,7 @@ void *gaim_tcl_ref_get(Tcl_Interp *interp, Tcl_Obj *obj, GaimStringref *type)
 		if (interp) {
 			Tcl_Obj *error = Tcl_NewStringObj("Bad Gaim reference type: expected ", -1);
 			Tcl_AppendToObj(error, gaim_stringref_value(type), -1);
-			Tcl_AppendToObj(error, "but got ", -1);
+			Tcl_AppendToObj(error, " but got ", -1);
 			Tcl_AppendToObj(error, gaim_stringref_value(OBJ_REF_TYPE(obj)), -1);
 			Tcl_SetObjResult(interp, error);
 		}
