@@ -97,26 +97,29 @@ static GaimConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp)
 int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
-	const char *cmds[] = { "active_status", "alias", "connect",
-	                       "connection", "disconnect", "enabled", "find",
-	                       "handle", "isconnected", "list", "presence",
-	                       "protocol", "status_type", "status_types",
-	                       "username", NULL };
-	enum { CMD_ACCOUNT_ACTIVE_STATUS, CMD_ACCOUNT_ALIAS,
+	const char *cmds[] = { "alias", "connect", "connection", "disconnect",
+	                       "enabled", "find", "handle", "isconnected",
+	                       "list", "presence", "protocol", "status",
+	                       "status_type", "status_types", "username",
+	                       NULL };
+	enum { CMD_ACCOUNT_ALIAS,
 	       CMD_ACCOUNT_CONNECT, CMD_ACCOUNT_CONNECTION,
 	       CMD_ACCOUNT_DISCONNECT, CMD_ACCOUNT_ENABLED, CMD_ACCOUNT_FIND,
 	       CMD_ACCOUNT_HANDLE, CMD_ACCOUNT_ISCONNECTED, CMD_ACCOUNT_LIST,
-	       CMD_ACCOUNT_PRESENCE,
-	       CMD_ACCOUNT_PROTOCOL, CMD_ACCOUNT_STATUS_TYPE,
-	       CMD_ACCOUNT_STATUS_TYPES, CMD_ACCOUNT_USERNAME } cmd;
+	       CMD_ACCOUNT_PRESENCE, CMD_ACCOUNT_PROTOCOL, CMD_ACCOUNT_STATUS,
+	       CMD_ACCOUNT_STATUS_TYPE, CMD_ACCOUNT_STATUS_TYPES,
+	       CMD_ACCOUNT_USERNAME } cmd;
 	const char *listopts[] = { "-all", "-online", NULL };
 	enum { CMD_ACCOUNTLIST_ALL, CMD_ACCOUNTLIST_ONLINE } listopt;
 	const char *alias;
 	const GList *cur;
 	GaimAccount *account;
+	GaimStatus *status;
 	GaimStatusType *status_type;
+	GaimValue *value;
+	char *attr_id;
 	int error;
-	int b;
+	int b, i;
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
@@ -127,17 +130,6 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		return error;
 
 	switch (cmd) {
-	case CMD_ACCOUNT_ACTIVE_STATUS:
-		if (objc != 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, "account");
-			return TCL_ERROR;
-		}
-		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
-			return TCL_ERROR;
-		Tcl_SetObjResult(interp,
-		                 gaim_tcl_ref_new(GaimTclRefStatus,
-		                                  gaim_account_get_active_status(account)));
-		break;
 	case CMD_ACCOUNT_ALIAS:
 		if (objc != 3) {
 			Tcl_WrongNumArgs(interp, 2, objv, "account");
@@ -263,6 +255,63 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		Tcl_SetStringObj(result, (char *)gaim_account_get_protocol_id(account), -1);
+		break;
+	case CMD_ACCOUNT_STATUS:
+		if (objc < 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "account ?status_id name value ...?");
+			return TCL_ERROR;
+		}
+		if ((account = tcl_validate_account(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		if (objc == 3) {
+			Tcl_SetObjResult(interp,
+					 gaim_tcl_ref_new(GaimTclRefStatus,
+							  gaim_account_get_active_status(account)));
+		} else {
+			GList *l = NULL;
+			if (objc % 2) {
+				Tcl_SetStringObj(result, "name without value setting status", -1);
+				return TCL_ERROR;
+			}
+			status = gaim_account_get_status(account, Tcl_GetString(objv[3]));
+			if (status == NULL) {
+				Tcl_SetStringObj(result, "invalid status for account", -1);
+				return TCL_ERROR;
+			}
+			for (i = 4; i < objc; i += 2) {
+				attr_id = Tcl_GetString(objv[i]);
+				value = gaim_status_get_attr_value(status, attr_id);
+				if (value == NULL) {
+					Tcl_SetStringObj(result, "invalid attribute for account", -1);
+					return TCL_ERROR;
+				}
+				switch (gaim_value_get_type(value)) {
+				case GAIM_TYPE_BOOLEAN:
+					error = Tcl_GetBooleanFromObj(interp, objv[i + 1], &b);
+					if (error != TCL_OK)
+						return error;
+					l = g_list_append(l, attr_id);
+					l = g_list_append(l, GINT_TO_POINTER(b));
+					break;
+				case GAIM_TYPE_INT:
+					error = Tcl_GetIntFromObj(interp, objv[i + 1], &b);
+					if (error != TCL_OK)
+						return error;
+					l = g_list_append(l, attr_id);
+					l = g_list_append(l, GINT_TO_POINTER(b));
+					break;
+				case GAIM_TYPE_STRING:
+					l = g_list_append(l, attr_id);
+					l = g_list_append(l, Tcl_GetString(objv[i + 1]));
+					break;
+				default:
+					Tcl_SetStringObj(result, "unknown GaimValue type", -1);
+					return TCL_ERROR;
+				}
+			}
+			gaim_account_set_status_list(account, Tcl_GetString(objv[3]), TRUE, l);
+			g_list_free(l);
+		}
 		break;
 	case CMD_ACCOUNT_STATUS_TYPE:
 		if (objc != 4 && objc != 5) {
@@ -1177,7 +1226,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	const char *cmds[] = { "attr", "type" };
+	const char *cmds[] = { "attr", "type", NULL };
 	enum { CMD_STATUS_ATTR, CMD_STATUS_TYPE } cmd;
 	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	GaimStatus *status;
