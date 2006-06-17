@@ -1903,6 +1903,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 			file = g_fopen(iconfile, "rb");
 			if (file) {
 				/* XXX - Use g_file_get_contents() */
+				/* g_file_get_contents(iconfile, &data, &len, NULL); */
 				int len = fread(buf, 1, st.st_size, file);
 				gaim_debug_info("oscar",
 						   "Sending buddy icon to %s (%d bytes, "

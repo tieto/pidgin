@@ -292,6 +292,11 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
  
 		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{
+			/*
+			 * TODO: The friendly name was NULL for me when I
+			 *       looked at this.  Maybe we should use the store
+			 *       name instead? --KingAnt
+			 */
 			got_new_entry(gc, passport, friendly);
 		}
 	}
@@ -413,7 +418,12 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	if (list_op & MSN_LIST_RL_OP)
 	{
 		/* These are users who have us on their buddy list. */
-		/* TODO: what does store name is when this happens? */
+		/*
+		 * TODO: What is store name set to when this happens?
+		 *       For one of my accounts "something@hotmail.com"
+		 *       the store name was "something."  Maybe we
+		 *       should use the friendly name, instead? --KingAnt
+		 */
 
 		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{

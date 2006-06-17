@@ -116,7 +116,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 
 		struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
 
-		/* this is weird, and in one of the chat packets, and causes us
+		/* this is weird, and in one of the chat packets, and causes us to
 		 * think all the values are keys and all the keys are values after
 		 * this point if we don't handle it */
 		if (data[pos] == '\0') {
