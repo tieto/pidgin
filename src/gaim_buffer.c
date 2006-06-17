@@ -34,6 +34,7 @@ gaim_circ_buffer_new(gsize growsize) {
 }
 
 void gaim_circ_buffer_destroy(GaimCircBuffer *buf) {
+	g_return_if_fail(buf);
 	g_free(buf->buffer);
 	g_free(buf);
 }
