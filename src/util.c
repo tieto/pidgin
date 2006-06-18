@@ -3355,6 +3355,7 @@ url_fetch_connect_cb(gpointer url_data, gint sock, GaimInputCondition cond) {
 				"GET %s%s HTTP/%s\r\n"
 				"Connection: close\r\n"
 				"User-Agent: %s\r\n"
+				"Accept: */*\r\n"
 				"Host: %s\r\n\r\n",
 				(gfud->full ? "" : "/"),
 				(gfud->full ? gfud->url : gfud->website.page),
@@ -3364,6 +3365,7 @@ url_fetch_connect_cb(gpointer url_data, gint sock, GaimInputCondition cond) {
 			gfud->request = g_strdup_printf(
 				"GET %s%s HTTP/%s\r\n"
 				"Connection: close\r\n"
+				"Accept: */*\r\n"
 				"Host: %s\r\n\r\n",
 				(gfud->full ? "" : "/"),
 				(gfud->full ? gfud->url : gfud->website.page),
