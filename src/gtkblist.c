@@ -1659,6 +1659,11 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			  GtkSelectionData *sd, guint info, guint t)
 {
+	if (gtkblist->drag_timeout) {
+		g_source_remove(gtkblist->drag_timeout);
+		gtkblist->drag_timeout = 0;
+	}
+
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE) && sd->data) {
 		GaimBlistNode *n = NULL;
 		GtkTreePath *path = NULL;
