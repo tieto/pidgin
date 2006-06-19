@@ -388,8 +388,9 @@ gaim_xfer_request(GaimXfer *xfer)
 		           gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED)
 		{
 			gchar* message = NULL;
+			GaimBuddy *buddy = gaim_find_buddy(xfer->account, xfer->who);
 			message = g_strdup_printf(_("%s is offering to send file %s"),
-				xfer->who, gaim_xfer_get_filename(xfer));
+				buddy ? gaim_buddy_get_alias(buddy) : xfer->who, gaim_xfer_get_filename(xfer));
 			gaim_xfer_conversation_write(xfer, message, FALSE);
 			g_free(message);
 			/* Ask for a filename to save to if it's not already given by a plugin */
