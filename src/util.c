@@ -1342,7 +1342,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 								face = g_string_append_c(face, *q);
 								q++;
 							}
-							g_string_append_printf(style, "font-family: %s; ", face->str);
+							g_string_append_printf(style, "font-family: %s; ", g_strstrip(face->str));
 							g_string_free(face, TRUE);
 							p = q;
 						} else if(!g_ascii_strncasecmp(p, "size=", strlen("size="))) {
@@ -1392,7 +1392,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					if(style->len)
-						g_string_append_printf(xhtml, "<span style='%s'>", style->str);
+						g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
 					else
 						pt->ignore = TRUE;
 					g_string_free(style, TRUE);
@@ -1412,7 +1412,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 								color = g_string_append_c(color, *q);
 								q++;
 							}
-							g_string_append_printf(xhtml, "<span style='background: %s;'>", color->str);
+							g_string_append_printf(xhtml, "<span style='background: %s;'>", g_strstrip(color->str));
 							g_string_free(color, TRUE);
 							if ((c = strchr(c, '>')) != NULL)
 								c++;
