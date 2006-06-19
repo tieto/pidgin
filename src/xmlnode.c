@@ -557,7 +557,9 @@ xmlnode_from_str(const char *str, gssize size)
 {
 	struct _xmlnode_parser_data *xpd;
 	xmlnode *ret;
+#ifndef HAVE_LIBXML
 	GMarkupParseContext *context;
+#endif
 	gsize real_size;
 
 	g_return_val_if_fail(str != NULL, NULL);
