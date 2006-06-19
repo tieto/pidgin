@@ -56,14 +56,14 @@ typedef GaimCmdRet (*GaimCmdFunc)(GaimConversation *, const gchar *cmd,
 typedef guint GaimCmdId;
 
 enum _GaimCmdPriority {
-	GAIM_CMD_P_VERY_LOW = -1000,
-	GAIM_CMD_P_LOW      =     0,
-	GAIM_CMD_P_DEFAULT  =  1000,
-	GAIM_CMD_P_PRPL     =  2000,
-	GAIM_CMD_P_PLUGIN   =  3000,
-	GAIM_CMD_P_ALIAS    =  4000,
-	GAIM_CMD_P_HIGH     =  5000,
-	GAIM_CMD_P_VERYHIGH =  6000,
+	GAIM_CMD_P_VERY_LOW  = -1000,
+	GAIM_CMD_P_LOW       =     0,
+	GAIM_CMD_P_DEFAULT   =  1000,
+	GAIM_CMD_P_PRPL      =  2000,
+	GAIM_CMD_P_PLUGIN    =  3000,
+	GAIM_CMD_P_ALIAS     =  4000,
+	GAIM_CMD_P_HIGH      =  5000,
+	GAIM_CMD_P_VERY_HIGH =  6000,
 };
 
 enum _GaimCmdFlag {
@@ -111,11 +111,11 @@ extern "C" {
  * @param f These are the flags. You need to at least pass one of GAIM_CMD_FLAG_IM or
  *          GAIM_CMD_FLAG_CHAT (can may pass both) in order for the command to ever actually
  *          be called.
- * @param prpl_id This is the prpl's id string. This is only meaningful is the proper flag is set.
+ * @param prpl_id This is the prpl's id string. This is only meaningful if the proper flag is set.
  * @param func This is the function to call when someone enters this command.
  * @param helpstr This is a whitespace sensitive, UTF-8, HTML string describing how to use the command.
  *                The preferred format of this string shall be the commands name, followed by a space
- *                and any arguments it accpets (if it takes any arguments, otherwise no space), follow
+ *                and any arguments it accepts (if it takes any arguments, otherwise no space), followed
  *                by a colon, two spaces, and a description of the command in sentence form. No slash
  *                before the command name.
  * @param data User defined data to pass to the GaimCmdFunc
