@@ -102,12 +102,13 @@ static void
 idle_all_action_ok(void *ignored, GaimRequestFields *fields)
 {
 	GaimAccount *acct = NULL;
-	GList *l = gaim_accounts_get_all_active();
+	GList *list, *iter;
 	int tm = gaim_request_fields_get_integer(fields, "mins");
 	const char *prpl_id = NULL;
 
-	for(; l; l = l->next) {
-		acct = (GaimAccount *)(l->data);
+	list = gaim_accounts_get_all_active();
+	for(iter = list; iter; iter = iter->next) {
+		acct = (GaimAccount *)(iter->data);
 
 		if(acct)
 			prpl_id = gaim_account_get_protocol_id(acct);
@@ -122,6 +123,8 @@ idle_all_action_ok(void *ignored, GaimRequestFields *fields)
 				idled_accts = g_list_append(idled_accts, acct);
 		}
 	}
+
+	g_list_free(list);
 }
 
 static void

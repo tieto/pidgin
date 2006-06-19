@@ -286,11 +286,13 @@ PPCODE:
 void
 gaim_accounts_get_all_active()
 PREINIT:
-	GList *l;
+	GList *list, *iter;
 PPCODE:
-	for (l = gaim_accounts_get_all_active(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Account")));
+	list = gaim_accounts_get_all_active();
+	for (iter = gaim_accounts_get_all_active(); iter != NULL; iter = iter->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(iter->data, "Gaim::Account")));
 	}
+	g_list_free(list);
 
 Gaim::Account
 gaim_accounts_find(name, protocol)

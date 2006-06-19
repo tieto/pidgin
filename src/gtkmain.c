@@ -432,6 +432,7 @@ int main(int argc, char *argv[])
 	char *opt_session_arg = NULL;
 	int dologin_ret = -1;
 	char *search_path;
+	GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -752,9 +753,13 @@ int main(int argc, char *argv[])
 		gaim_accounts_restore_current_statuses();
 	}
 
-	if (gaim_accounts_get_all_active() == NULL)
+	if ((accounts = gaim_accounts_get_all_active()) == NULL)
 	{
 		gaim_gtk_accounts_window_show();
+	}
+	else
+	{
+		g_list_free(accounts);
 	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION
