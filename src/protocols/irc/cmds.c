@@ -372,6 +372,8 @@ int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, cons
 		g_free(buf);
 
 		irc->quitting = TRUE;
+
+		gaim_account_set_status(irc->account, "offline", TRUE, NULL);
 	}
 
 	return 0;
