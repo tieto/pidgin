@@ -760,6 +760,10 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 				type = gaim_account_get_status_type(account, id);
 				gaim_savedstatus_set_substatus(saved_status, account, type, message);
 			}
+			else
+			{
+				gaim_savedstatus_unset_substatus(saved_status, account);
+			}
 			g_free(id);
 			g_free(message);
 		} while (gtk_tree_model_iter_next(model, &iter));
