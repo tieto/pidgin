@@ -173,6 +173,8 @@ version 2.0.0:
 	* GAIM_MESSAGE_COLORIZE
 	* user_data from gaim_notify_searchresults_new_rows and from 
 	  notify_searchresults in GaimNotifyUiOps.
+	* gaim_conversation_get_send_history(), and send_history from
+	  GaimConversation
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

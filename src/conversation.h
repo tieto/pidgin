@@ -236,8 +236,6 @@ struct _GaimConversation
 
 	GList *logs;                /**< This conversation's logs           */
 
-	GList *send_history;        /**< The send history.                  */
-
 	union
 	{
 		GaimConvIm   *im;       /**< IM-specific data.                  */
@@ -439,15 +437,6 @@ gboolean gaim_conversation_is_logging(const GaimConversation *conv);
  * @param conv The conversation.
  */
 void gaim_conversation_close_logs(GaimConversation *conv);
-
-/**
- * Returns the specified conversation's send history.
- *
- * @param conv The conversation.
- *
- * @return The conversation's send history.
- */
-GList *gaim_conversation_get_send_history(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's IM-specific data.

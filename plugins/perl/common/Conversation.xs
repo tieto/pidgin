@@ -46,16 +46,6 @@ MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation  PREFIX = gaim_convers
 PROTOTYPES: ENABLE
 
 void
-gaim_conversation_get_send_history(conv)
-	Gaim::Conversation conv
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = gaim_conversation_get_send_history(conv); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
-	}
-
-void
 gaim_conversation_destroy(conv)
 	Gaim::Conversation conv
 

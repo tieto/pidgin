@@ -114,6 +114,7 @@ struct _GaimGtkConversation
 {
 	GaimConversation *active_conv;
 	GList *convs;
+	GList *send_history;
 
 	GaimGtkWindow *win;
 

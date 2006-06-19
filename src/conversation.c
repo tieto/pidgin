@@ -263,7 +263,6 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->account      = account;
 	conv->name         = g_strdup(name);
 	conv->title        = g_strdup(name);
-	conv->send_history = g_list_append(NULL, NULL);
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 	/* copy features from the connection. */
@@ -418,17 +417,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 	conv->name = NULL;
 	conv->title = NULL;
-
-	for (node = g_list_first(conv->send_history);
-		 node != NULL;
-		 node = g_list_next(node)) {
-
-		if (node->data != NULL)
-			g_free(node->data);
-		node->data = NULL;
-	}
-
-	g_list_free(g_list_first(conv->send_history));
 
 	if (conv->type == GAIM_CONV_TYPE_IM) {
 		gaim_conv_im_stop_typing_timeout(conv->u.im);
@@ -706,14 +694,6 @@ gaim_conversation_close_logs(GaimConversation *conv)
 	g_list_foreach(conv->logs, (GFunc)gaim_log_free, NULL);
 	g_list_free(conv->logs);
 	conv->logs = NULL;
-}
-
-GList *
-gaim_conversation_get_send_history(const GaimConversation *conv)
-{
-	g_return_val_if_fail(conv != NULL, NULL);
-
-	return conv->send_history;
 }
 
 GaimConvIm *

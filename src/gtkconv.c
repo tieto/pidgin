@@ -427,18 +427,14 @@ help_command_cb(GaimConversation *conv,
 }
 
 static void
-send_history_add(GaimConversation *conv, const char *message)
+send_history_add(GaimGtkConversation *gtkconv, const char *message)
 {
 	GList *first;
 
-	first = g_list_first(conv->send_history);
-
-	if (first->data)
-		g_free(first->data);
-
+	first = g_list_first(gtkconv->send_history);
+	g_free(first->data);
 	first->data = g_strdup(message);
-
-	conv->send_history = g_list_prepend(first, NULL);
+	gtkconv->send_history = g_list_prepend(first, NULL);
 }
 
 static gboolean
@@ -462,7 +458,7 @@ check_for_and_do_command(GaimConversation *conv)
 		GtkTextIter end;
 
 		send_history = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
-		send_history_add(conv, send_history);
+		send_history_add(gtkconv, send_history);
 		g_free(send_history);
 
 		cmdline = cmd + strlen(prefix);
@@ -562,7 +558,7 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 
 		bufs = gtk_imhtml_get_markup_lines(GTK_IMHTML(gtkconv->entry));
 		for (i = 0; bufs[i]; i++) {
-			send_history_add(conv, bufs[i]);
+			send_history_add(gtkconv, bufs[i]);
 			if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 				gaim_conv_im_send_with_flags(GAIM_CONV_IM(conv), bufs[i], flags);
 			else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
@@ -572,7 +568,7 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 		g_strfreev(bufs);
 
 	} else {
-		send_history_add(conv, buf);
+		send_history_add(gtkconv, buf);
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 			gaim_conv_im_send_with_flags(GAIM_CONV_IM(conv), buf, flags);
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
@@ -1787,29 +1783,28 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
 			case GDK_Up:
-				if (!conv->send_history)
+				if (!gtkconv->send_history)
 					break;
 
-				if (!conv->send_history->prev) {
+				if (!gtkconv->send_history->prev) {
 					GtkTextIter start, end;
 
-					if (conv->send_history->data)
-						g_free(conv->send_history->data);
+					g_free(gtkconv->send_history->data);
 
 					gtk_text_buffer_get_start_iter(gtkconv->entry_buffer,
 												   &start);
 					gtk_text_buffer_get_end_iter(gtkconv->entry_buffer, &end);
 
-					conv->send_history->data =
+					gtkconv->send_history->data =
 						gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 				}
 
-				if (conv->send_history->next && conv->send_history->next->data) {
+				if (gtkconv->send_history->next && gtkconv->send_history->next->data) {
 					GObject *object;
 					GtkTextIter iter;
 					GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
-					conv->send_history = conv->send_history->next;
+					gtkconv->send_history = gtkconv->send_history->next;
 
 					/* Block the signal to prevent application of default formatting. */
 					object = g_object_ref(G_OBJECT(gtkconv->entry));
@@ -1824,7 +1819,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
-						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
+						GTK_IMHTML(gtkconv->entry), gtkconv->send_history->data,
 						0, NULL);
 					/* this is mainly just a hack so the formatting at the
 					 * cursor gets picked up. */
@@ -1836,15 +1831,15 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 			case GDK_Down:
-				if (!conv->send_history)
+				if (!gtkconv->send_history)
 					break;
 
-				if (conv->send_history->prev &&	conv->send_history->prev->data) {
+				if (gtkconv->send_history->prev && gtkconv->send_history->prev->data) {
 					GObject *object;
 					GtkTextIter iter;
 					GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
-					conv->send_history = conv->send_history->prev;
+					gtkconv->send_history = gtkconv->send_history->prev;
 
 					/* Block the signal to prevent application of default formatting. */
 					object = g_object_ref(G_OBJECT(gtkconv->entry));
@@ -1859,11 +1854,11 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
-						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
+						GTK_IMHTML(gtkconv->entry), gtkconv->send_history->data,
 						0, NULL);
 					/* this is mainly just a hack so the formatting at the
 					 * cursor gets picked up. */
-					if (*(char *)conv->send_history->data) {
+					if (*(char *)gtkconv->send_history->data) {
 						gtk_text_buffer_get_end_iter(buffer, &iter);
 						gtk_text_buffer_move_mark_by_name(buffer, "insert", &iter);
 					} else {
@@ -4347,6 +4342,7 @@ private_gtkconv_new(GaimConversation *conv, gboolean hidden)
 	conv->ui_data = gtkconv;
 	gtkconv->active_conv = conv;
 	gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
+	gtkconv->send_history = g_list_append(NULL, NULL);
 
 	/* Setup some initial variables. */
 	gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
@@ -4514,6 +4510,10 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	}
 
 	gtk_object_sink(GTK_OBJECT(gtkconv->tooltips));
+
+	gtkconv->send_history = g_list_first(gtkconv->send_history);
+	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
+	g_list_free(gtkconv->send_history);
 
 	g_free(gtkconv);
 }
