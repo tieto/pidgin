@@ -744,7 +744,11 @@ static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, GtkGaimStatusBo
 	{
 		g_source_remove(status_box->typing);
 		status_box->typing = 0;
-		status_menu_refresh_iter(status_box);
+		if (status_box->account != NULL)
+			update_to_reflect_account_status(status_box, status_box->account,
+							gaim_account_get_active_status(status_box->account));
+		else
+			status_menu_refresh_iter(status_box);
 		return TRUE;
 	}
 	
