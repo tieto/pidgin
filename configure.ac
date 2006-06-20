@@ -163,7 +163,11 @@ dnl #######################################################################
 dnl # GStreamer
 dnl #######################################################################
 enable_gst=yes
-PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10, ,enable_gst=no)
+PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], ,
+		  [
+		   AC_MSG_RESULT(no)
+		   enable_gst=no
+		  ])
 AC_SUBST(GSTREAMER_CFLAGS)
 AC_SUBST(GSTREAMER_LIBS)
 AC_ARG_ENABLE(gstreamer,[  --disable-gstreamer     compile without GStreamer audio support],enable_gst=no)
@@ -175,7 +179,11 @@ dnl #################
 dnl # LibXML2
 dnl #################
 enable_libxml2=yes
-PKG_CHECK_MODULES(LIBXML, libxml-2.0, ,enable_libxml2=no)
+PKG_CHECK_MODULES(LIBXML, [libxml-2.0], ,
+		  [
+		   AC_MSG_RESULT(no)
+		   enable_libxml2=no
+		  ])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 AC_ARG_ENABLE(libxml,[  --disable-libxml     compile without libxml2 support],enable_libxml2=no)
