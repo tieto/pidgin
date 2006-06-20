@@ -38,18 +38,16 @@
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
-/* This should return the elapsed time in seconds in which Gaim will not send
- * typing notifications.
- * if it returns zero, it will not send any more typing notifications
- * typing is a flag - TRUE for typing, FALSE for stopped typing */
-int serv_send_typing(GaimConnection *g, const char *name, int typing) {
+unsigned int
+serv_send_typing(GaimConnection *gc, const char *name, GaimTypingState state)
+{
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (g && prpl_info && prpl_info->send_typing)
-		return prpl_info->send_typing(g, name, typing);
+	if (prpl_info && prpl_info->send_typing)
+		return prpl_info->send_typing(gc, name, state);
 
 	return 0;
 }
@@ -150,8 +148,8 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 		lar->sent = time(NULL);
 	}
 
-	if (conv && gaim_conv_im_get_type_again_timeout(GAIM_CONV_IM(conv)))
-		gaim_conv_im_stop_type_again_timeout(GAIM_CONV_IM(conv));
+	if (conv && gaim_conv_im_get_send_typed_timeout(GAIM_CONV_IM(conv)))
+		gaim_conv_im_stop_send_typed_timeout(GAIM_CONV_IM(conv));
 
 	return val;
 }
@@ -593,7 +591,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 		else
 		{
 			gaim_signal_emit(gaim_conversations_get_handle(),
-							 "buddy-typing-stopped", gc->account, name);
+							 "buddy-typed", gc->account, name);
 		}
 	}
 
@@ -617,6 +615,11 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 		gaim_conv_im_stop_typing_timeout(im);
 		gaim_conv_im_set_typing_state(im, GAIM_NOT_TYPING);
 		gaim_conv_im_update_typing(im);
+	}
+	else
+	{
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "buddy-typing-stopped", gc->account, name);
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(),

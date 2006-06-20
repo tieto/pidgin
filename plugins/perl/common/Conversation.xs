@@ -179,15 +179,15 @@ gaim_conv_im_get_type_again(im)
 	Gaim::Conversation::IM im
 
 void
-gaim_conv_im_start_type_again_timeout(im)
+gaim_conv_im_start_send_typed_timeout(im)
 	Gaim::Conversation::IM im
 
 void
-gaim_conv_im_stop_type_again_timeout(im)
+gaim_conv_im_stop_send_typed_timeout(im)
 	Gaim::Conversation::IM im
 
 guint
-gaim_conv_im_get_type_again_timeout(im)
+gaim_conv_im_get_send_typed_timeout(im)
 	Gaim::Conversation::IM im
 
 void

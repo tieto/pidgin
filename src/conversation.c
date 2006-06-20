@@ -46,13 +46,10 @@ gaim_conversations_set_ui_ops(GaimConversationUiOps *ops)
 }
 
 static gboolean
-reset_typing(gpointer data)
+reset_typing_cb(gpointer data)
 {
 	GaimConversation *c = (GaimConversation *)data;
 	GaimConvIm *im;
-
-	if (!g_list_find(conversations, c))
-		return FALSE;
 
 	im = GAIM_CONV_IM(c);
 
@@ -60,25 +57,33 @@ reset_typing(gpointer data)
 	gaim_conv_im_update_typing(im);
 	gaim_conv_im_stop_typing_timeout(im);
 
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "buddy-typing-stopped", c);
+
 	return FALSE;
 }
 
 static gboolean
-send_typed(gpointer data)
+send_typed_cb(gpointer data)
 {
 	GaimConversation *conv = (GaimConversation *)data;
 	GaimConnection *gc;
 	const char *name;
 
 	g_return_val_if_fail(conv != NULL, FALSE);
-	
+
 	gc   = gaim_conversation_get_gc(conv);
 	name = gaim_conversation_get_name(conv);
 
 	if (gc != NULL && name != NULL) {
-		gaim_conv_im_set_type_again(GAIM_CONV_IM(conv), TRUE);
+		/* We set this to 1 so that GAIM_TYPING will be sent
+		 * if the Gaim user types anything else.
+		 */
+		gaim_conv_im_set_type_again(GAIM_CONV_IM(conv), 1);
 
 		serv_send_typing(gc, name, GAIM_TYPED);
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "buddy-typed", conv);
 
 		gaim_debug(GAIM_DEBUG_MISC, "conversation", "typed...\n");
 	}
@@ -420,7 +425,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 	if (conv->type == GAIM_CONV_TYPE_IM) {
 		gaim_conv_im_stop_typing_timeout(conv->u.im);
-		gaim_conv_im_stop_type_again_timeout(conv->u.im);
+		gaim_conv_im_stop_send_typed_timeout(conv->u.im);
 
 		if (conv->u.im->icon != NULL)
 			gaim_buddy_icon_unref(conv->u.im->icon);
@@ -986,7 +991,12 @@ gaim_conv_im_set_typing_state(GaimConvIm *im, GaimTypingState state)
 			gaim_signal_emit(gaim_conversations_get_handle(),
 							 "buddy-typing", im->conv->account, im->conv->name);
 		}
-		else
+		else if (state == GAIM_TYPED)
+		{
+			gaim_signal_emit(gaim_conversations_get_handle(),
+							 "buddy-typed", im->conv->account, im->conv->name);
+		}
+		else if (state == GAIM_NOT_TYPING)
 		{
 			gaim_signal_emit(gaim_conversations_get_handle(),
 							 "buddy-typing-stopped", im->conv->account, im->conv->name);
@@ -1016,7 +1026,7 @@ gaim_conv_im_start_typing_timeout(GaimConvIm *im, int timeout)
 	conv = gaim_conv_im_get_conversation(im);
 	name = gaim_conversation_get_name(conv);
 
-	im->typing_timeout = gaim_timeout_add(timeout * 1000, reset_typing, conv);
+	im->typing_timeout = gaim_timeout_add(timeout * 1000, reset_typing_cb, conv);
 }
 
 void
@@ -1040,11 +1050,14 @@ gaim_conv_im_get_typing_timeout(const GaimConvIm *im)
 }
 
 void
-gaim_conv_im_set_type_again(GaimConvIm *im, time_t val)
+gaim_conv_im_set_type_again(GaimConvIm *im, unsigned int val)
 {
 	g_return_if_fail(im != NULL);
 
-	im->type_again = val;
+	if (val == 0)
+		im->type_again = 0;
+	else
+		im->type_again = time(NULL) + val;
 }
 
 time_t
@@ -1056,32 +1069,32 @@ gaim_conv_im_get_type_again(const GaimConvIm *im)
 }
 
 void
-gaim_conv_im_start_type_again_timeout(GaimConvIm *im)
+gaim_conv_im_start_send_typed_timeout(GaimConvIm *im)
 {
 	g_return_if_fail(im != NULL);
 
-	im->type_again_timeout = gaim_timeout_add(SEND_TYPED_TIMEOUT, send_typed,
+	im->send_typed_timeout = gaim_timeout_add(SEND_TYPED_TIMEOUT, send_typed_cb,
 											  gaim_conv_im_get_conversation(im));
 }
 
 void
-gaim_conv_im_stop_type_again_timeout(GaimConvIm *im)
+gaim_conv_im_stop_send_typed_timeout(GaimConvIm *im)
 {
 	g_return_if_fail(im != NULL);
 
-	if (im->type_again_timeout == 0)
+	if (im->send_typed_timeout == 0)
 		return;
 
-	gaim_timeout_remove(im->type_again_timeout);
-	im->type_again_timeout = 0;
+	gaim_timeout_remove(im->send_typed_timeout);
+	im->send_typed_timeout = 0;
 }
 
 guint
-gaim_conv_im_get_type_again_timeout(const GaimConvIm *im)
+gaim_conv_im_get_send_typed_timeout(const GaimConvIm *im)
 {
 	g_return_val_if_fail(im != NULL, 0);
 
-	return im->type_again_timeout;
+	return im->send_typed_timeout;
 }
 
 void
@@ -2085,6 +2098,12 @@ gaim_conversations_init(void)
 										GAIM_SUBTYPE_CONVERSATION));
 
 	gaim_signal_register(handle, "buddy-typing",
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING));
+
+	gaim_signal_register(handle, "buddy-typed",
 						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),

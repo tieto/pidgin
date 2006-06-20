@@ -3131,12 +3131,12 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	return ret;
 }
 
-static int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
+static unsigned int yahoo_send_typing(GaimConnection *gc, const char *who, GaimTypingState state)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
 	yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, gaim_connection_get_display_name(gc),
-	                  14, " ", 13, typ == GAIM_TYPING ? "1" : "0",
+	                  14, " ", 13, state == GAIM_TYPING ? "1" : "0",
 	                  5, who, 1002, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);

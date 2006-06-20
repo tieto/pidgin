@@ -836,8 +836,8 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	return 1;
 }
 
-static int
-msn_send_typing(GaimConnection *gc, const char *who, int typing)
+static unsigned int
+msn_send_typing(GaimConnection *gc, const char *who, GaimTypingState state)
 {
 	GaimAccount *account;
 	MsnSession *session;
@@ -847,7 +847,12 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	account = gaim_connection_get_account(gc);
 	session = gc->proto_data;
 
-	if (!typing)
+	/*
+	 * TODO: I feel like this should be "if (state != GAIM_TYPING)"
+	 *       but this is how it was before, and I don't want to break
+	 *       anything. --KingAnt
+	 */
+	if (state == GAIM_NOT_TYPING)
 		return 0;
 
 	if (!g_ascii_strcasecmp(who, gaim_account_get_username(account)))

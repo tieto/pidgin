@@ -3965,14 +3965,14 @@ static int mw_prpl_send_im(GaimConnection *gc,
 }
 
 
-static int mw_prpl_send_typing(GaimConnection *gc, const char *name,
-			       int typing) {
+static unsigned int mw_prpl_send_typing(GaimConnection *gc, const char *name,
+			       GaimTypingState state) {
   
   struct mwGaimPluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
   struct mwConversation *conv;
 
-  gpointer t = GINT_TO_POINTER(!! typing);
+  gpointer t = GINT_TO_POINTER(!! state);
 
   g_return_val_if_fail(gc != NULL, 0);
   pd = gc->proto_data;
@@ -3984,7 +3984,7 @@ static int mw_prpl_send_typing(GaimConnection *gc, const char *name,
   if(mwConversation_isOpen(conv))
     return ! mwConversation_send(conv, mwImSend_TYPING, t);
 
-  if(typing) {
+  if ((state == GAIM_TYPING) || (state == GAIM_TYPED)) {
     /* let's only open a channel for typing, not for not-typing.
        Otherwise two users in psychic mode will continually open
        conversations to each other, never able to get rid of them, as
@@ -3996,6 +3996,11 @@ static int mw_prpl_send_typing(GaimConnection *gc, const char *name,
       mwConversation_open(conv);
   }
 
+  /*
+   * TODO: This should probably be "0."  When it's set to 1, the Gaim
+   *       core will call serv_send_typing(gc, who, GAIM_TYPING) once
+   *       every second until the Gaim user stops typing. --KingAnt
+   */
   return 1;
 }
 

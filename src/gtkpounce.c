@@ -81,6 +81,7 @@ typedef struct
 	GtkWidget *idle;
 	GtkWidget *idle_return;
 	GtkWidget *typing;
+	GtkWidget *typed;
 	GtkWidget *stop_typing;
 	GtkWidget *message_recv;
 
@@ -277,6 +278,9 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->typing)))
 		events |= GAIM_POUNCE_TYPING;
+
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->typed)))
+		events |= GAIM_POUNCE_TYPED;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->stop_typing)))
 		events |= GAIM_POUNCE_TYPING_STOPPED;
@@ -564,7 +568,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	/* Create the "Pounce When Buddy..." frame. */
 	frame = gaim_gtk_make_frame(vbox2, _("Pounce When Buddy..."));
 
-	table = gtk_table_new(2, 4, FALSE);
+	table = gtk_table_new(5, 2, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
 	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
 	gtk_widget_show(table);
@@ -583,28 +587,32 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 		gtk_check_button_new_with_mnemonic(_("Is no longer i_dle"));
 	dialog->typing =
 		gtk_check_button_new_with_mnemonic(_("Starts _typing"));
+	dialog->typed =
+		gtk_check_button_new_with_mnemonic(_("P_auses while typing"));
 	dialog->stop_typing =
 		gtk_check_button_new_with_mnemonic(_("Stops t_yping"));
 	dialog->message_recv =
 		gtk_check_button_new_with_mnemonic(_("Sends a _message"));
 
-	gtk_table_attach(GTK_TABLE(table), dialog->signon,       0, 1, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->message_recv, 0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      1, 2, 0, 1,
+	gtk_table_attach(GTK_TABLE(table), dialog->signon,       0, 1, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away,         0, 1, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->signoff,      0, 1, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  1, 2, 1, 2,
+	gtk_table_attach(GTK_TABLE(table), dialog->away,         0, 1, 3, 4,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle,         0, 1, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->away_return,  0, 1, 4, 5,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  1, 2, 2, 3,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle,         1, 2, 0, 1,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->typing,       0, 1, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->idle_return,  1, 2, 1, 2,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  1, 2, 3, 4,
+	gtk_table_attach(GTK_TABLE(table), dialog->typing,       1, 2, 2, 3,
 					 GTK_FILL, 0, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), dialog->message_recv, 0, 1, 4, 5,
+	gtk_table_attach(GTK_TABLE(table), dialog->typed,        1, 2, 3, 4,
+					 GTK_FILL, 0, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), dialog->stop_typing,  1, 2, 4, 5,
 					 GTK_FILL, 0, 0, 0);
 
 	gtk_widget_show(dialog->signon);
@@ -614,6 +622,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_widget_show(dialog->idle);
 	gtk_widget_show(dialog->idle_return);
 	gtk_widget_show(dialog->typing);
+	gtk_widget_show(dialog->typed);
 	gtk_widget_show(dialog->stop_typing);
 	gtk_widget_show(dialog->message_recv);
 
@@ -845,6 +854,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 									(events & GAIM_POUNCE_IDLE_RETURN));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->typing),
 									(events & GAIM_POUNCE_TYPING));
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->typed),
+									(events & GAIM_POUNCE_TYPED));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->stop_typing),
 									(events & GAIM_POUNCE_TYPING_STOPPED));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->message_recv),
@@ -1429,6 +1440,8 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		tmp = g_strdup_printf(
 				   (events & GAIM_POUNCE_TYPING) ?
 				   _("%s has started typing to you (%s)") :
+				   (events & GAIM_POUNCE_TYPED) ?
+				   _("%s has paused while typing to you (%s)") :
 				   (events & GAIM_POUNCE_SIGNON) ?
 				   _("%s has signed on (%s)") :
 				   (events & GAIM_POUNCE_IDLE_RETURN) ?

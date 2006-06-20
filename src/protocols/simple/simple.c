@@ -1053,7 +1053,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	send_sip_response(sip->gc, msg, 200, "OK", NULL);
 }
 
-static int simple_typing(GaimConnection *gc, const char *name, int typing) {
+static unsigned int simple_typing(GaimConnection *gc, const char *name, GaimTypingState state) {
 	struct simple_account_data *sip = gc->proto_data;
 
 	gchar *xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -1065,16 +1065,22 @@ static int simple_typing(GaimConnection *gc, const char *name, int typing) {
 			"<refresh>60</refresh>\n"
 			"</isComposing>";
 	gchar *recv = g_strdup(name);
-	if(typing == GAIM_TYPING) {
+	if(state == GAIM_TYPING) {
 		gchar *msg = g_strdup_printf(xml, "active");
 		simple_send_message(sip, recv, msg, "application/im-iscomposing+xml");
 		g_free(msg);
-	} else {
+	} else /* TODO: Only if (state == GAIM_TYPED) ? */ {
 		gchar *msg = g_strdup_printf(xml, "idle");
 		simple_send_message(sip, recv, msg, "application/im-iscomposing+xml");
 		g_free(msg);
 	}
 	g_free(recv);
+	/*
+	 * TODO: Is this right?  It will cause the core to call
+	 *       serv_send_typing(gc, who, GAIM_TYPING) once every second
+	 *       until the user stops typing.  If that's not desired,
+	 *       then return 0 instead.
+	 */
 	return 1;
 }
 

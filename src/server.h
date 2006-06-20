@@ -33,11 +33,27 @@
 extern "C" {
 #endif
 
+/**
+ * Send a typing message to a given user over a given connection.
+ *
+ * TODO: Could probably move this into the conversation API.
+ *
+ * @param typing One of GAIM_TYPING, GAIM_TYPED, or GAIM_NOT_TYPING.
+ * @return A quiet-period, specified in seconds, where Gaim will not
+ *         send any additional typing notification messages.  Most
+ *         protocols should return 0, which means that no additional
+ *         GAIM_TYPING messages need to be sent.  If this is 5, for
+ *         example, then Gaim will wait five seconds, and if the Gaim
+ *         user is still typing then Gaim will send another GAIM_TYPING
+ *         message.
+ */
+unsigned int serv_send_typing(GaimConnection *gc, const char *name, GaimTypingState state);
+
+void serv_move_buddy(GaimBuddy *, GaimGroup *, GaimGroup *);
 int  serv_send_im(GaimConnection *, const char *, const char *, GaimMessageFlags flags);
 void serv_get_info(GaimConnection *, const char *);
 void serv_set_info(GaimConnection *, const char *);
-int  serv_send_typing(GaimConnection *, const char *, int);
-void serv_move_buddy(GaimBuddy *, GaimGroup *, GaimGroup *);
+
 void serv_add_permit(GaimConnection *, const char *);
 void serv_add_deny(GaimConnection *, const char *);
 void serv_rem_permit(GaimConnection *, const char *);
@@ -51,12 +67,31 @@ void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
 int  serv_chat_send(GaimConnection *, int, const char *, GaimMessageFlags flags);
 void serv_alias_buddy(GaimBuddy *);
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias);
+
+/**
+ * Receive a typing message from a remote user.  Either GAIM_TYPING
+ * or GAIM_TYPED.  If the user has stopped typing then use
+ * serv_got_typing_stopped instead.
+ *
+ * TODO: Could probably move this into the conversation API.
+ *
+ * @param timeout If this is a number greater than 0, then
+ *        Gaim will wait this number of seconds and then
+ *        set this buddy to the GAIM_NOT_TYPING state.  This
+ *        is used by protocols that send repeated typing messages
+ *        while the user is composing the message.
+ */
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state);
-void serv_set_buddyicon(GaimConnection *gc, const char *filename);
+
+/**
+ * TODO: Could probably move this into the conversation API.
+ */
 void serv_got_typing_stopped(GaimConnection *gc, const char *name);
+
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 GaimMessageFlags flags, time_t mtime);
+void serv_set_buddyicon(GaimConnection *gc, const char *filename);
 void serv_got_chat_invite(GaimConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);

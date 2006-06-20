@@ -224,7 +224,7 @@ struct _GaimPluginProtocolInfo
 					GaimMessageFlags flags);
 
 	void (*set_info)(GaimConnection *, const char *info);
-	int  (*send_typing)(GaimConnection *, const char *name, int typing);
+	unsigned int (*send_typing)(GaimConnection *, const char *name, GaimTypingState state);
 	void (*get_info)(GaimConnection *, const char *who);
 	void (*set_status)(GaimAccount *account, GaimStatus *status);
 

@@ -2168,8 +2168,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 	if (gtk_text_iter_is_start(start_pos) && gtk_text_iter_is_end(end_pos)) {
 
 		/* We deleted all the text, so turn off typing. */
-		if (gaim_conv_im_get_type_again_timeout(im))
-			gaim_conv_im_stop_type_again_timeout(im);
+		gaim_conv_im_stop_send_typed_timeout(im);
 
 		serv_send_typing(gaim_conversation_get_gc(conv),
 						 gaim_conversation_get_name(conv),
@@ -2913,22 +2912,18 @@ got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first)
 
 	im = GAIM_CONV_IM(conv);
 
-	if (gaim_conv_im_get_type_again_timeout(im))
-		gaim_conv_im_stop_type_again_timeout(im);
+	gaim_conv_im_stop_send_typed_timeout(im);
+	gaim_conv_im_start_send_typed_timeout(im);
 
-	gaim_conv_im_start_type_again_timeout(im);
-
+	/* Check if we need to send another GAIM_TYPING message */
 	if (first || (gaim_conv_im_get_type_again(im) != 0 &&
-				  time(NULL) > gaim_conv_im_get_type_again(im))) {
-
-		int timeout = serv_send_typing(gaim_conversation_get_gc(conv),
-									   (char *)gaim_conversation_get_name(conv),
-									   GAIM_TYPING);
-
-		if (timeout)
-			gaim_conv_im_set_type_again(im, time(NULL) + timeout);
-		else
-			gaim_conv_im_set_type_again(im, 0);
+				  time(NULL) > gaim_conv_im_get_type_again(im)))
+	{
+		unsigned int timeout;
+		timeout = serv_send_typing(gaim_conversation_get_gc(conv),
+								   gaim_conversation_get_name(conv),
+								   GAIM_TYPING);
+		gaim_conv_im_set_type_again(im, timeout);
 	}
 }
 

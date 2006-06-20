@@ -71,7 +71,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 		GaimMessageFlags flags);
 int jabber_message_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags);
 
-int jabber_send_typing(GaimConnection *gc, const char *who, int typing);
+unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingState state);
 
 
 #endif /* _GAIM_JABBER_MESSAGE_H_ */

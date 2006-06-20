@@ -200,10 +200,10 @@ serv_send_im(con, a, b, flags )
 	Gaim::MessageFlags flags
 
 int  
-serv_send_typing(con, a, b)
+serv_send_typing(con, a, state)
 	Gaim::Connection con
 	const char * a
-	int b
+	Gaim::TypingState state
 
 void 
 serv_set_buddyicon(gc, filename)

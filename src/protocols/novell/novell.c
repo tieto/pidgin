@@ -2303,8 +2303,8 @@ novell_send_im(GaimConnection * gc, const char *name,
 	return 1;
 }
 
-static int
-novell_send_typing(GaimConnection * gc, const char *name, int typing)
+static unsigned int
+novell_send_typing(GaimConnection * gc, const char *name, GaimTypingState state)
 {
 	NMConference *conf = NULL;
 	NMUser *user;
@@ -2312,11 +2312,11 @@ novell_send_typing(GaimConnection * gc, const char *name, int typing)
 	NMERR_T rc = NM_OK;
 
 	if (gc == NULL || name == NULL)
-		return -1;
+		return 0;
 
 	user = gc->proto_data;
 	if (user == NULL)
-		return -1;
+		return 0;
 
 	/* Need to get the DN for the buddy so we can look up the convo */
 	dn = nm_lookup_dn(user, name);
@@ -2327,7 +2327,7 @@ novell_send_typing(GaimConnection * gc, const char *name, int typing)
 		if (conf) {
 
 			rc = nm_send_typing(user, conf,
-								((typing == GAIM_TYPING) ? TRUE : FALSE), NULL);
+								((state == GAIM_TYPING) ? TRUE : FALSE), NULL);
 			_check_for_disconnect(user, rc);
 
 		}

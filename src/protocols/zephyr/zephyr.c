@@ -2450,14 +2450,15 @@ static const char *zephyr_list_icon(GaimAccount * a, GaimBuddy * b)
 	return "zephyr";
 }
 
-static int zephyr_send_typing(GaimConnection *gc, const char *who, int typing) {
+static unsigned int zephyr_send_typing(GaimConnection *gc, const char *who, GaimTypingState state) {
 	gchar *recipient;
 	zephyr_account *zephyr = gc->proto_data;
 	if (use_tzc(zephyr)) 
 		return 0;
 
-	if (!typing)
+	if (state == GAIM_NOT_TYPING)
 		return 0;
+
 	/* XXX We probably should care if this fails. Or maybe we don't want to */
 	if (!who) {
 		gaim_debug_info("zephyr", "who is null\n");
@@ -2476,6 +2477,12 @@ static int zephyr_send_typing(GaimConnection *gc, const char *who, int typing) {
 	gaim_debug_info("zephyr","about to send typing notification to %s\n",recipient);
 	zephyr_send_message(zephyr,"MESSAGE","PERSONAL",recipient,"","","PING");
 	gaim_debug_info("zephyr","sent typing notification\n");
+
+	/*
+	 * TODO: Is this correct?  It means we will call
+	 *       serv_send_typing(gc, who, GAIM_TYPING) once every 15 seconds
+	 *       until the Gaim user stops typing.
+	 */
 	return ZEPHYR_TYPING_SEND_TIMEOUT;
 }
 

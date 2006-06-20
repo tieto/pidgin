@@ -3945,8 +3945,8 @@ oscar_keepalive(GaimConnection *gc)
 		flap_connection_send_keepalive(od, conn);
 }
 
-static int
-oscar_send_typing(GaimConnection *gc, const char *name, int typing)
+static unsigned int
+oscar_send_typing(GaimConnection *gc, const char *name, GaimTypingState state)
 {
 	OscarData *od;
 	PeerConnection *conn;
@@ -3956,7 +3956,7 @@ oscar_send_typing(GaimConnection *gc, const char *name, int typing)
 
 	if ((conn != NULL) && (conn->ready))
 	{
-		peer_odc_send_typing(conn, typing);
+		peer_odc_send_typing(conn, state);
 	}
 	else {
 		/* Don't send if this turkey is in our deny list */
@@ -3965,9 +3965,9 @@ oscar_send_typing(GaimConnection *gc, const char *name, int typing)
 		if (!list) {
 			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(gc->account, name));
 			if (bi && bi->typingnot) {
-				if (typing == GAIM_TYPING)
+				if (state == GAIM_TYPING)
 					aim_im_sendmtn(od, 0x0001, name, 0x0002);
-				else if (typing == GAIM_TYPED)
+				else if (state == GAIM_TYPED)
 					aim_im_sendmtn(od, 0x0001, name, 0x0001);
 				else
 					aim_im_sendmtn(od, 0x0001, name, 0x0000);

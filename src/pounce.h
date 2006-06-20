@@ -35,16 +35,17 @@ typedef struct _GaimPounce GaimPounce;
  */
 typedef enum
 {
-	GAIM_POUNCE_NONE           = 0x00, /**< No events.                    */
-	GAIM_POUNCE_SIGNON         = 0x01, /**< The buddy signed on.          */
-	GAIM_POUNCE_SIGNOFF        = 0x02, /**< The buddy signed off.         */
-	GAIM_POUNCE_AWAY           = 0x04, /**< The buddy went away.          */
-	GAIM_POUNCE_AWAY_RETURN    = 0x08, /**< The buddy returned from away. */
-	GAIM_POUNCE_IDLE           = 0x10, /**< The buddy became idle.        */
-	GAIM_POUNCE_IDLE_RETURN    = 0x20, /**< The buddy is no longer idle.  */
-	GAIM_POUNCE_TYPING         = 0x40, /**< The buddy started typing.     */
-	GAIM_POUNCE_TYPING_STOPPED = 0x80, /**< The buddy stopped typing.     */
-	GAIM_POUNCE_MESSAGE_RECEIVED = 0x100 /**< The buddy sent a message    */
+	GAIM_POUNCE_NONE             = 0x000, /**< No events.                    */
+	GAIM_POUNCE_SIGNON           = 0x001, /**< The buddy signed on.          */
+	GAIM_POUNCE_SIGNOFF          = 0x002, /**< The buddy signed off.         */
+	GAIM_POUNCE_AWAY             = 0x004, /**< The buddy went away.          */
+	GAIM_POUNCE_AWAY_RETURN      = 0x008, /**< The buddy returned from away. */
+	GAIM_POUNCE_IDLE             = 0x010, /**< The buddy became idle.        */
+	GAIM_POUNCE_IDLE_RETURN      = 0x020, /**< The buddy is no longer idle.  */
+	GAIM_POUNCE_TYPING           = 0x040, /**< The buddy started typing.     */
+	GAIM_POUNCE_TYPED            = 0x080, /**< The buddy has entered text.   */
+	GAIM_POUNCE_TYPING_STOPPED   = 0x100, /**< The buddy stopped typing.     */
+	GAIM_POUNCE_MESSAGE_RECEIVED = 0x200  /**< The buddy sent a message      */
 
 } GaimPounceEvent;
 

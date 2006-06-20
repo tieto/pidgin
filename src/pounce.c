@@ -206,6 +206,8 @@ pounce_to_xmlnode(GaimPounce *pounce)
 		add_event_to_xmlnode(child, "return-from-idle");
 	if (events & GAIM_POUNCE_TYPING)
 		add_event_to_xmlnode(child, "start-typing");
+	if (events & GAIM_POUNCE_TYPED)
+		add_event_to_xmlnode(child, "typed");
 	if (events & GAIM_POUNCE_TYPING_STOPPED)
 		add_event_to_xmlnode(child, "stop-typing");
 	if (events & GAIM_POUNCE_MESSAGE_RECEIVED)
@@ -411,7 +413,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	else if (!strcmp(element_name, "option")) {
 		if (!strcmp(data->option_type, "on-away"))
 			data->options |= GAIM_POUNCE_OPTION_AWAY;
-		
+
 		g_free(data->option_type);
 		data->option_type = NULL;
 	}
@@ -430,6 +432,8 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			data->events |= GAIM_POUNCE_IDLE_RETURN;
 		else if (!strcmp(data->event_type, "start-typing"))
 			data->events |= GAIM_POUNCE_TYPING;
+		else if (!strcmp(data->event_type, "typed"))
+			data->events |= GAIM_POUNCE_TYPED;
 		else if (!strcmp(data->event_type, "stop-typing"))
 			data->events |= GAIM_POUNCE_TYPING_STOPPED;
 		else if (!strcmp(data->event_type, "message-received"))
@@ -1059,10 +1063,16 @@ buddy_typing_cb(GaimAccount *account, const char *name, void *data)
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
 	if (conv != NULL)
 	{
+		GaimTypingState state;
 		GaimPounceEvent event;
 
-		event = (gaim_conv_im_get_typing_state(GAIM_CONV_IM(conv)) == GAIM_TYPING
-				 ? GAIM_POUNCE_TYPING : GAIM_POUNCE_TYPING_STOPPED);
+		state = gaim_conv_im_get_typing_state(GAIM_CONV_IM(conv));
+		if (state == GAIM_TYPED)
+			event = GAIM_POUNCE_TYPED;
+		else if (state == GAIM_NOT_TYPING)
+			event = GAIM_POUNCE_TYPING_STOPPED;
+		else
+			event = GAIM_POUNCE_TYPING;
 
 		gaim_pounce_execute(account, name, event);
 	}
@@ -1104,6 +1114,8 @@ gaim_pounces_init(void)
 						GINT_TO_POINTER(GAIM_POUNCE_SIGNOFF));
 
 	gaim_signal_connect(conv_handle, "buddy-typing",
+						handle, GAIM_CALLBACK(buddy_typing_cb), NULL);
+	gaim_signal_connect(conv_handle, "buddy-typed",
 						handle, GAIM_CALLBACK(buddy_typing_cb), NULL);
 	gaim_signal_connect(conv_handle, "buddy-typing-stopped",
 						handle, GAIM_CALLBACK(buddy_typing_cb), NULL);

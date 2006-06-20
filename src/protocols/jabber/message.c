@@ -589,7 +589,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg, GaimMe
 	return 1;
 }
 
-int jabber_send_typing(GaimConnection *gc, const char *who, int typing)
+unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingState state)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
@@ -611,9 +611,9 @@ int jabber_send_typing(GaimConnection *gc, const char *who, int typing)
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
 
-	if(GAIM_TYPING == typing)
+	if(GAIM_TYPING == state)
 		jm->chat_state = JM_STATE_COMPOSING;
-	else if(GAIM_TYPED == typing)
+	else if(GAIM_TYPED == state)
 		jm->chat_state = JM_STATE_PAUSED;
 	else
 		jm->chat_state = JM_STATE_ACTIVE;

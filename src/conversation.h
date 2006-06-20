@@ -186,7 +186,7 @@ struct _GaimConvIm
 	GaimTypingState typing_state;      /**< The current typing state.    */
 	guint  typing_timeout;             /**< The typing timer handle.     */
 	time_t type_again;                 /**< The type again time.         */
-	guint  type_again_timeout;         /**< The type again timer handle. */
+	guint  send_typed_timeout;         /**< The type again timer handle. */
 
 	GaimBuddyIcon *icon;               /**< The buddy icon.              */
 };
@@ -666,19 +666,25 @@ void gaim_conv_im_stop_typing_timeout(GaimConvIm *im);
 guint gaim_conv_im_get_typing_timeout(const GaimConvIm *im);
 
 /**
- * Sets the IM's time until it should send another typing notification.
+ * Sets the quiet-time when no GAIM_TYPING messages will be sent.
+ * Few protocols need this (maybe only MSN).  If the user is still
+ * typing after this quiet-period, then another GAIM_TYPING message
+ * will be sent.
  *
  * @param im  The IM.
- * @param val The time.
+ * @param val The number of seconds to wait before allowing another
+ *            GAIM_TYPING message to be sent to the user.  Or 0 to
+ *            not send another GAIM_TYPING message.
  */
-void gaim_conv_im_set_type_again(GaimConvIm *im, time_t val);
+void gaim_conv_im_set_type_again(GaimConvIm *im, unsigned int val);
 
 /**
- * Returns the IM's time until it should send another typing notification.
+ * Returns the time after which another GAIM_TYPING message should be sent.
  *
  * @param im The IM.
  *
- * @return The time.
+ * @return The time in seconds since the epoch.  Or 0 if no additional
+ *         GAIM_TYPING message should be sent.
  */
 time_t gaim_conv_im_get_type_again(const GaimConvIm *im);
 
@@ -687,14 +693,14 @@ time_t gaim_conv_im_get_type_again(const GaimConvIm *im);
  *
  * @param im      The IM.
  */
-void gaim_conv_im_start_type_again_timeout(GaimConvIm *im);
+void gaim_conv_im_start_send_typed_timeout(GaimConvIm *im);
 
 /**
  * Stops the IM's type again timeout.
  *
  * @param im The IM.
  */
-void gaim_conv_im_stop_type_again_timeout(GaimConvIm *im);
+void gaim_conv_im_stop_send_typed_timeout(GaimConvIm *im);
 
 /**
  * Returns the IM's type again timeout interval.
@@ -703,7 +709,7 @@ void gaim_conv_im_stop_type_again_timeout(GaimConvIm *im);
  *
  * @return The type again timeout interval.
  */
-guint gaim_conv_im_get_type_again_timeout(const GaimConvIm *im);
+guint gaim_conv_im_get_send_typed_timeout(const GaimConvIm *im);
 
 /**
  * Updates the visual typing notification for an IM conversation.
