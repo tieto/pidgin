@@ -690,7 +690,7 @@ AC_ARG_WITH([python],
 			PYTHON=$withval)
 
 if test "x$enable_dbus" = "xyes" ; then
-	if test -z "$PYTHON" ; then
+	if test -z "$PYTHON" -o "x$PYTHON" = "xyes"; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
 
