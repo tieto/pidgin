@@ -126,6 +126,7 @@ static int tcl_init_interp(Tcl_Interp *interp)
 
 	Tcl_CreateObjCommand(interp, "::gaim::account", tcl_cmd_account, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::buddy", tcl_cmd_buddy, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::gaim::cmd", tcl_cmd_cmd, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::connection", tcl_cmd_connection, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::conversation", tcl_cmd_conversation, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::core", tcl_cmd_core, (ClientData)NULL, NULL);
@@ -284,7 +285,9 @@ static gboolean tcl_load_plugin(GaimPlugin *plugin)
 
 	if (Tcl_EvalFile(interp, plugin->path) != TCL_OK) {
 		result = Tcl_GetObjResult(interp);
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Error evaluating %s: %s\n", plugin->path, Tcl_GetString(result));
+		gaim_debug(GAIM_DEBUG_ERROR, "tcl",
+		           "Error evaluating %s: %s\n", plugin->path,
+		           Tcl_GetString(result));
 		Tcl_DeleteInterp(interp);
 		return FALSE;
 	}
@@ -313,6 +316,7 @@ static gboolean tcl_unload_plugin(GaimPlugin *plugin)
 	if (data != NULL) {
 		g_hash_table_remove(tcl_plugins, (gpointer)(data->interp));
 		gaim_signals_disconnect_by_handle(data->interp);
+		tcl_cmd_cleanup(data->interp);
 		tcl_signal_cleanup(data->interp);
 		Tcl_Release((ClientData)data->interp);
 		Tcl_DeleteInterp(data->interp);
@@ -341,6 +345,7 @@ static gboolean tcl_load(GaimPlugin *plugin)
 	if(!tcl_loaded)
 		return FALSE;
 	tcl_glib_init();
+	tcl_cmd_init();
 	tcl_signal_init();
 	gaim_tcl_ref_init();
 

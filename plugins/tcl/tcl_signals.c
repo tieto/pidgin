@@ -387,7 +387,6 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	g_string_free(val, TRUE);
 	g_free(vals);
 	g_free(strs);
-	
 
 	return retval;
 }

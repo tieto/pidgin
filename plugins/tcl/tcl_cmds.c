@@ -541,6 +541,70 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	return TCL_OK;
 }
 
+int tcl_cmd_cmd(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	const char *cmds[] = { "register", "unregister", NULL };
+	enum { CMD_CMD_REGISTER, CMD_CMD_UNREGISTER } cmd;
+	struct tcl_cmd_handler *handler;
+	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	GaimCmdId id;
+	int error;
+
+	if (objc < 2) {
+		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
+		return TCL_ERROR;
+	}
+
+	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
+		return error;
+
+	switch (cmd) {
+	case CMD_CMD_REGISTER:
+		if (objc != 9) {
+			Tcl_WrongNumArgs(interp, 2, objv, "cmd arglist priority flags prpl_id proc helpstr");
+			return TCL_ERROR;
+		}
+		handler = g_new0(struct tcl_cmd_handler, 1);
+		handler->cmd = objv[2];
+		handler->args = Tcl_GetString(objv[3]);
+		handler->nargs = strlen(handler->args);
+		if ((error = Tcl_GetIntFromObj(interp, objv[4],
+		                               &handler->priority)) != TCL_OK) {
+			g_free(handler);
+			return error;
+		}
+		if ((error = Tcl_GetIntFromObj(interp, objv[5],
+		                               &handler->flags)) != TCL_OK) {
+			g_free(handler);
+			return error;
+		}
+		handler->prpl_id = Tcl_GetString(objv[6]);
+		handler->proc = objv[7];
+		handler->helpstr = Tcl_GetString(objv[8]);
+		handler->interp = interp;
+		if ((id = tcl_cmd_register(handler)) == 0) {
+			tcl_cmd_handler_free(handler);
+			Tcl_SetIntObj(result, 0);
+		} else {
+			handler->id = id;
+			Tcl_SetIntObj(result, id);
+		}
+		break;
+	case CMD_CMD_UNREGISTER:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "id");
+			return TCL_ERROR;
+		}
+		if ((error = Tcl_GetIntFromObj(interp, objv[2],
+		                               (int *)&id)) != TCL_OK)
+			return error;
+		tcl_cmd_unregister(id, interp);
+		break;
+	}
+
+	return TCL_OK;
+}
+
 int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *result = Tcl_GetObjResult(interp), *list, *elem;
