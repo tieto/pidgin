@@ -137,7 +137,7 @@ static GaimCmdRet tcl_cmd_callback(GaimConversation *conv, const gchar *cmd,
 	Tcl_ListObjAppendElement(handler->interp, command, arg);
 
 	/* The conversation */
-	arg = Tcl_NewIntObj((int)conv);
+	arg = gaim_tcl_ref_new(GaimTclRefConversation, conv);
 	Tcl_ListObjAppendElement(handler->interp, command, arg);
 
 	/* The command */
