@@ -73,7 +73,7 @@ static GaimConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *int
 			return convo;
 	}
 	if (interp != NULL)
-		Tcl_SetStringObj(Tcl_GetObjResult(interp), "invalid account", -1);
+		Tcl_SetStringObj(Tcl_GetObjResult(interp), "invalid conversation", -1);
 	return NULL;
 }
 
