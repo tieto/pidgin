@@ -47,14 +47,17 @@ redraw_tree(GntTree *tree)
 
 	wbkgd(tree->scroll, COLOR_PAIR(GNT_COLOR_NORMAL));
 
-	/* XXX: Add the rows */
 	for (start = tree->top, iter = g_list_nth(tree->list, tree->top);
 				iter && start < tree->bottom; start++, iter = iter->next)
 	{
 		char str[2096];	/* XXX: This should be safe for any terminal */
 		GntTreeRow *row = g_hash_table_lookup(tree->hash, iter->data);
 
-		snprintf(str, widget->priv.width - 2, "%s\n", row->text);
+		if (snprintf(str, widget->priv.width, "%s\n", row->text) >= widget->priv.width)
+		{
+			/* XXX: ellipsize */
+			str[widget->priv.width - 1] = 0;
+		}
 		
 		if (start == tree->current)
 		{
@@ -83,7 +86,7 @@ gnt_tree_draw(GntWidget *widget)
 
 	/* For the Tree (or anything that scrolls), we will create a 'hidden' window
 	 * of 'large enough' size. We never wrefresh that hidden-window, instead we
-	 * just 'scroll' it, and wrefresh the subwindow */
+	 * just copy stuff from it into the visible window */
 
 	if (tree->scroll == NULL)
 	{

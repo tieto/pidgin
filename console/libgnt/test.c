@@ -2,11 +2,21 @@
 #include "gnt.h"
 #include "gntkeys.h"
 #include "gnttree.h"
+#include "gntbox.h"
 
 static gboolean
 key_pressed(GntWidget *widget, const char *text, gpointer null)
 {
 	GntWidget *w = null;
+	GntWidget *box = gnt_box_new(FALSE, FALSE);
+	GntWidget *label = gnt_label_new("so wassup!!");
+
+	gnt_box_add_widget(GNT_BOX(box), label);
+	GNT_WIDGET_UNSET_FLAGS(box, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+	gnt_box_set_title(GNT_BOX(box), "This is a test");
+
+	gnt_widget_show(box);
+#if 0
 
 	gnt_widget_set_focus(w, TRUE);
 
@@ -24,6 +34,7 @@ key_pressed(GntWidget *widget, const char *text, gpointer null)
 	}
 
 	gnt_widget_draw(w);
+#endif
 
 	return FALSE;
 }
@@ -75,14 +86,14 @@ int main()
 	gnt_widget_set_name(widget, "widget");
 	gnt_widget_set_name(widget2, "widget2");
 
-	gnt_box_add_widget(vbox, widget);
-	gnt_box_add_widget(vbox, widget2);
+	gnt_box_add_widget(GNT_BOX(vbox), widget);
+	gnt_box_add_widget(GNT_BOX(vbox), widget2);
 
-	gnt_box_add_widget(hbox, label);
-	gnt_box_add_widget(hbox, vbox);
+	gnt_box_add_widget(GNT_BOX(hbox), label);
+	gnt_box_add_widget(GNT_BOX(hbox), vbox);
 
 	tree = gnt_tree_new();
-	gnt_box_add_widget(hbox, tree);
+	gnt_box_add_widget(GNT_BOX(hbox), tree);
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "a", "a", NULL, NULL);
 	gnt_tree_add_row_after(GNT_TREE(tree), "c", "c", NULL, NULL);
@@ -91,7 +102,7 @@ int main()
 	gnt_tree_add_row_after(GNT_TREE(tree), "b", "b", "d", NULL);
 
 	GNT_WIDGET_UNSET_FLAGS(hbox, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
-	gnt_box_set_title(hbox, "111111111111111111111111111111111111111111111111111111111111111This is the title …");
+	gnt_box_set_title(GNT_BOX(hbox), "111111111111111111111111111111111111111111111111111111111111111This is the title …");
 
 	/*gnt_widget_set_take_focus(vbox, TRUE);*/
 	/*gnt_widget_set_take_focus(hbox, TRUE);*/
