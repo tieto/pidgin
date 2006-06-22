@@ -1,5 +1,5 @@
 CFLAGS=`pkg-config --cflags gaim gobject-2.0` -g -I./libgnt/
-LDFLAGS=`pkg-config --libs gaim gobject-2.0 gthread-2.0 libxml-2.0` -lncursesw -L./libgnt/ -lgnt
+LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0` -lncursesw -L./libgnt/ -lgnt
 
 GG_SOURCES = \
 	gntblist.c \

@@ -168,8 +168,6 @@ init_libgaim()
 
 int main(int argc, char **argv)
 {
-	GMainLoop *loop;
-
 	/* Initialize the libgaim stuff */
 	init_libgaim();
 
@@ -178,11 +176,6 @@ int main(int argc, char **argv)
 	/* Enable the accounts and restore the status */
 	gaim_accounts_restore_current_statuses();
 
-	/* Main loop */
-	g_thread_init(NULL);
-	loop = g_main_loop_new(NULL, TRUE);
-	g_thread_create((GThreadFunc)g_main_loop_run, loop, FALSE, NULL);
-	
 	/* Initialize the UI */
 	init_gnt_ui();
 
