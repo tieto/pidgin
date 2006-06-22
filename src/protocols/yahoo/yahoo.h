@@ -105,6 +105,16 @@ struct yahoo_data {
 	GaimCircBuffer *txbuf;
 	guint txhandler;
 	GHashTable *friends;
+
+	/**
+	 * This is used to keep track of the IMVironment chosen
+	 * by people you talk to.  We don't do very much with
+	 * this right now... but at least now if the remote user
+	 * selects an IMVironment we won't reset it back to the
+	 * default of nothing.
+	 */
+	GHashTable *imvironments;
+
 	int current_status;
 	gboolean logged_in;
 	GString *tmp_serv_blist, *tmp_serv_ilist, *tmp_serv_plist;

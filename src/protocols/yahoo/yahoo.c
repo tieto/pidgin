@@ -670,6 +670,7 @@ struct _yahoo_im {
 
 static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
@@ -712,24 +713,29 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	/** TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
-	if(im != NULL && imv != NULL && !strcmp(imv, "doodle;11"))
+	if (im != NULL && imv!= NULL && im->from != NULL)
 	{
-		GaimWhiteboard *wb;
+		g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(imv));
 
-		if (!yahoo_privacy_check(gc, im->from)) {
-			gaim_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
-			return;
-		}
-
-		wb = gaim_whiteboard_get_session(gc->account, im->from);
-
-		/* If a Doodle session doesn't exist between this user */
-		if(wb == NULL)
+		if (strcmp(imv, "doodle;11") == 0)
 		{
-			wb = gaim_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
+			GaimWhiteboard *wb;
 
-			yahoo_doodle_command_send_request(gc, im->from);
-			yahoo_doodle_command_send_ready(gc, im->from);
+			if (!yahoo_privacy_check(gc, im->from)) {
+				gaim_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
+				return;
+			}
+
+			wb = gaim_whiteboard_get_session(gc->account, im->from);
+
+			/* If a Doodle session doesn't exist between this user */
+			if(wb == NULL)
+			{
+				wb = gaim_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
+
+				yahoo_doodle_command_send_request(gc, im->from);
+				yahoo_doodle_command_send_ready(gc, im->from);
+			}
 		}
 	}
 
@@ -2576,6 +2582,7 @@ static void yahoo_login(GaimAccount *account) {
 	/* TODO: Is there a good grow size for the buffer? */
 	yd->txbuf = gaim_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
+	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
@@ -2628,6 +2635,7 @@ static void yahoo_close(GaimConnection *gc) {
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
 	g_hash_table_destroy(yd->friends);
+	g_hash_table_destroy(yd->imvironments);
 	g_free(yd->chat_name);
 
 	g_free(yd->cookie_y);
@@ -3101,14 +3109,30 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 		yahoo_packet_hash_str(pkt, 97, "1");
 	yahoo_packet_hash_str(pkt, 14, msg2);
 
-	/* If this message is to a user who is also Doodling with the local user,
+	/*
+	 * IMVironment.
+	 *
+	 * If this message is to a user who is also Doodling with the local user,
 	 * format the chat packet with the correct IMV information (thanks Yahoo!)
-	*/
-	wb = gaim_whiteboard_get_session(gc->account, (char*)who);
+	 *
+	 * Otherwise attempt to use the same IMVironment as the remote user,
+	 * just so that we don't inadvertantly reset their IMVironment back
+	 * to nothing.
+	 *
+	 * If they have no set an IMVironment, then use the default.
+	 */
+	wb = gaim_whiteboard_get_session(gc->account, who);
 	if (wb)
-		yahoo_packet_hash_str(pkt,   63, "doodle;11");
+		yahoo_packet_hash_str(pkt, 63, "doodle;11");
 	else
-		yahoo_packet_hash_str(pkt,   63, ";0"); /* IMvironment */
+	{
+		const char *imv;
+		imv = g_hash_table_lookup(yd->imvironments, who);
+		if (imv != NULL)
+			yahoo_packet_hash_str(pkt, 63, imv);
+		else
+			yahoo_packet_hash_str(pkt, 63, ";0");
+	}
 
 	yahoo_packet_hash_str(pkt,   64, "0"); /* no idea */
 	yahoo_packet_hash_str(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */

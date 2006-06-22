@@ -481,13 +481,17 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *to = NULL;
 	char *msg = NULL;
 	char *url = NULL;
+	char *imv = NULL;
 	long expires = 0;
 	GaimXfer *xfer;
+	struct yahoo_data *yd;
 	struct yahoo_xfer_data *xfer_data;
 	char *service = NULL;
 	char *filename = NULL;
 	unsigned long filesize = 0L;
 	GSList *l;
+
+	yd = gc->proto_data;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -508,6 +512,17 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 			filesize = atol(pair->value);
 		if (pair->key == 49)
 			service = pair->value;
+		if (pair->key == 63)
+			imv = pair->value;
+	}
+
+	/*
+	 * The remote user has changed their IMVironment.  We
+	 * record it for later use.
+	 */
+	if (from && imv && service && (strcmp("IMVIRONMENT", service) == 0)) {
+		g_hash_table_replace(yd->imvironments, g_strdup(from), g_strdup(imv));
+		return;
 	}
 
 	if (pkt->service == YAHOO_SERVICE_P2PFILEXFER) {
