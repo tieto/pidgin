@@ -207,6 +207,7 @@ GntWidget *gnt_tree_new()
 
 	tree->hash = g_hash_table_new(g_direct_hash, g_direct_equal);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
+	gnt_widget_set_take_focus(widget, TRUE);
 
 	return widget;
 }
