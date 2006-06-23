@@ -21,11 +21,12 @@ struct _GnTreeRow
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
-/* XXX: This is ugly, but what can you do ... */
 static void
-gnt_tree_refresh(GntTree *tree)
+redraw_tree(GntTree *tree)
 {
+	int start;
 	GntWidget *widget = GNT_WIDGET(tree);
+	GList *iter;
 	int pos;
 
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
@@ -33,50 +34,45 @@ gnt_tree_refresh(GntTree *tree)
 	else
 		pos = 1;
 
-	copywin(tree->scroll, widget->window, tree->top, 0,
-			pos, pos, widget->priv.height - pos - 1, widget->priv.width - pos - 1, FALSE);
-	wrefresh(widget->window);
-}
-
-static void
-redraw_tree(GntTree *tree)
-{
-	int start;
-	GntWidget *widget = GNT_WIDGET(tree);
-	GList *iter;
-
 	wbkgd(tree->scroll, COLOR_PAIR(GNT_COLOR_NORMAL));
 
 	for (start = tree->top, iter = g_list_nth(tree->list, tree->top);
 				iter && start < tree->bottom; start++, iter = iter->next)
 	{
 		char str[2096];	/* XXX: This should be safe for any terminal */
+		int wr;
 		GntTreeRow *row = g_hash_table_lookup(tree->hash, iter->data);
 
-		if (snprintf(str, widget->priv.width, "%s\n", row->text) >= widget->priv.width)
+		if ((wr = snprintf(str, widget->priv.width, "%s", row->text)) >= widget->priv.width)
 		{
 			/* XXX: ellipsize */
 			str[widget->priv.width - 1] = 0;
+		}
+		else
+		{
+			while (wr < widget->priv.width - 1)
+				str[wr++] = ' ';
+			str[wr] = 0;
 		}
 		
 		if (start == tree->current)
 		{
 			wbkgdset(tree->scroll, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
-			mvwprintw(tree->scroll, start, 0, str);
+			mvwprintw(tree->scroll, start - tree->top + pos, pos, str);
 			wbkgdset(tree->scroll, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}
 		else
-			mvwprintw(tree->scroll, start, 0, str);
+			mvwprintw(tree->scroll, start - tree->top + pos, pos, str);
 	}
 
 	while (start < tree->bottom)
 	{
-		wmove(tree->scroll, start, 0);
+		wmove(tree->scroll, start - tree->top + pos, pos);
 		wclrtoeol(tree->scroll);
 		start++;
 	}
 
-	gnt_tree_refresh(tree);
+	wrefresh(widget->window);
 }
 
 static void
@@ -90,9 +86,10 @@ gnt_tree_draw(GntWidget *widget)
 
 	if (tree->scroll == NULL)
 	{
-		tree->scroll = newwin(SCROLL_HEIGHT, widget->priv.width, widget->priv.y, widget->priv.x);
+		tree->scroll = widget->window; /* newwin(SCROLL_HEIGHT, widget->priv.width, 0, 0); */
 		scrollok(tree->scroll, TRUE);
-		wsetscrreg(tree->scroll, 0, SCROLL_HEIGHT - 1);
+		/*wsetscrreg(tree->scroll, 0, SCROLL_HEIGHT - 1);*/
+		wsetscrreg(tree->scroll, 0, widget->priv.height - 1);
 
 		tree->top = 0;
 		tree->bottom = widget->priv.height -
@@ -132,14 +129,16 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			tree->current++;
 			if (tree->current >= tree->bottom)
 				gnt_tree_scroll(tree, 1 + tree->current - tree->bottom);
-			redraw_tree(tree);
+			else
+				redraw_tree(tree);
 		}
 		else if (strcmp(text+1, GNT_KEY_UP) == 0 && tree->current > 0)
 		{
 			tree->current--;
 			if (tree->current < tree->top)
 				gnt_tree_scroll(tree, tree->current - tree->top);
-			redraw_tree(tree);
+			else
+				redraw_tree(tree);
 		}
 	}
 	else if (text[0] == '\r')
@@ -216,6 +215,7 @@ GntWidget *gnt_tree_new()
 	GntTree *tree = GNT_TREE(widget);
 
 	tree->hash = g_hash_table_new(g_direct_hash, g_direct_equal);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
 
 	return widget;
 }
@@ -249,8 +249,7 @@ void gnt_tree_scroll(GntTree *tree, int count)
 	tree->top += count;
 	tree->bottom += count;
 
-	/*wscrl(tree->scroll, count);*/
-	gnt_tree_refresh(tree);
+	redraw_tree(tree);
 }
 
 void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)

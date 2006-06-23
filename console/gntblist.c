@@ -8,30 +8,9 @@
 #include "gntbox.h"
 #include "gnttree.h"
 
+#include "gntblist.h"
+
 #define	TAB_SIZE 3
-
-/**
- * NOTES:
- *
- * 1. signal-callbacks should check for module_in_focus() before redrawing anything.
- * 2. call module_lost_focus() before opening a new window, and module_gained_focus() when
- * 		the new window is closed. This is to make sure the signal callbacks don't screw up
- * 		the display.
- */
-
-static GaimBlistUiOps blist_ui_ops = 
-{
-	NULL,
-	NULL,
-	NULL,
-	NULL,		/* This doesn't do crap */
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
-};
 
 typedef struct
 {
@@ -40,6 +19,43 @@ typedef struct
 } GGBlist;
 
 GGBlist *ggblist;
+
+static void
+new_node(GaimBlistNode *node)
+{
+}
+
+static void
+node_update(GaimBuddyList *list, GaimBlistNode *node)
+{
+}
+
+static void
+node_remove(GaimBuddyList *list, GaimBlistNode *node)
+{
+}
+
+static void
+new_list(GaimBuddyList *list)
+{
+	if (ggblist == NULL)
+		gg_blist_init();
+	list->ui_data = ggblist;
+}
+
+static GaimBlistUiOps blist_ui_ops = 
+{
+	new_list,
+	new_node,
+	NULL,
+	node_update,		/* This doesn't do crap */
+	node_remove,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
 
 static gpointer
 gg_blist_get_handle()
@@ -61,16 +77,26 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 }
 
 static void
-buddy_signed_on(GaimBuddy *buddy, GGBlist *ggblist)
+add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 {
-	GaimGroup *group = gaim_buddy_get_group(buddy);
 	char *text;
+	GaimGroup *group;
+	GaimBlistNode *node = (GaimBlistNode *)buddy;
+	if (node->ui_data)
+		return;
 
+	group = gaim_buddy_get_group(buddy);
 	add_group(group, ggblist);
 
 	text = g_strdup_printf("%*s%s", TAB_SIZE, "", gaim_buddy_get_alias(buddy));
 	gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy, text, group, NULL);
 	g_free(text);
+}
+
+static void
+buddy_signed_on(GaimBuddy *buddy, GGBlist *ggblist)
+{
+	add_buddy(buddy, ggblist);
 }
 
 static void
@@ -92,13 +118,17 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 
 void gg_blist_init()
 {
-	ggblist = g_new0(GGBlist, 1);
+	if (ggblist == NULL)
+		ggblist = g_new0(GGBlist, 1);
 
 	ggblist->window = gnt_box_new(FALSE, FALSE);
+	GNT_WIDGET_UNSET_FLAGS(ggblist->window, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	gnt_box_set_title(GNT_BOX(ggblist->window), _("Buddy List"));
+	gnt_box_set_pad(GNT_BOX(ggblist->window), 0);
 
 	ggblist->tree = gnt_tree_new();
-	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr));
+	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
+	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr) - 2);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 	gnt_widget_show(ggblist->window);

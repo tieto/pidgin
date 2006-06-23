@@ -23,6 +23,7 @@ struct _GnBox
 	GList *list;		/* List of widgets */
 
 	GList *active;
+	int pad;			/* Number of spaces to use between widgets */
 
 	char *title;
 
@@ -51,6 +52,8 @@ GntWidget *gnt_box_new(gboolean homo, gboolean vert);
 void gnt_box_add_widget(GntBox *box, GntWidget *widget);
 
 void gnt_box_set_title(GntBox *box, const char *title);
+
+void gnt_box_set_pad(GntBox *box, int pad);
 
 G_END_DECLS
 

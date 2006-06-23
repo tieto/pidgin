@@ -31,8 +31,8 @@ gnt_box_draw(GntWidget *widget)
 		}
 		else
 		{
+			/* XXX: Position of the title might be configurable */
 			pos = (widget->priv.width - pos - 2) / 2;
-			/*pos = 2;*/
 		}
 		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
 		mvwprintw(widget->window, 0, pos, title);
@@ -52,17 +52,15 @@ reposition_children(GntWidget *widget)
 	gboolean has_border = FALSE;
 	int x, y;
 
-	x = widget->priv.x;
-	y = widget->priv.y;
 	w = h = 0;
 	max = -1;
-	curx = widget->priv.x;
-	cury = widget->priv.y;
+	curx = widget->priv.x + 1;
+	cury = widget->priv.y + 1;
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
 	{
 		has_border = TRUE;
-		curx += 1;
-		cury += 1;
+		curx += box->pad;
+		cury += box->pad;
 		if (!box->vertical)
 			curx++;
 	}
@@ -73,13 +71,13 @@ reposition_children(GntWidget *widget)
 		gnt_widget_get_size(GNT_WIDGET(iter->data), &w, &h);
 		if (box->vertical)
 		{
-			cury += h + 1;
+			cury += h + box->pad;
 			if (max < w)
 				max = w;
 		}
 		else
 		{
-			curx += w + 2;
+			curx += w + box->pad;
 			if (max < h)
 				max = h;
 		}
@@ -303,6 +301,7 @@ GntWidget *gnt_box_new(gboolean homo, gboolean vert)
 
 	box->homogeneous = homo;
 	box->vertical = vert;
+	box->pad = 1;
 	gnt_widget_set_take_focus(widget, TRUE);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 
@@ -319,5 +318,11 @@ void gnt_box_set_title(GntBox *b, const char *title)
 {
 	g_free(b->title);
 	b->title = g_strdup(title);
+}
+
+void gnt_box_set_pad(GntBox *box, int pad)
+{
+	box->pad = pad;
+	/* XXX: Perhaps redraw if already showing? */
 }
 
