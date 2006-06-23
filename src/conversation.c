@@ -58,7 +58,7 @@ reset_typing_cb(gpointer data)
 	gaim_conv_im_stop_typing_timeout(im);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "buddy-typing-stopped", c);
+					 "buddy-typing-stopped", c->account, c->name);
 
 	return FALSE;
 }
@@ -83,7 +83,7 @@ send_typed_cb(gpointer data)
 
 		serv_send_typing(gc, name, GAIM_TYPED);
 		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "buddy-typed", conv);
+						 "buddy-typed", conv->account, conv->name);
 
 		gaim_debug(GAIM_DEBUG_MISC, "conversation", "typed...\n");
 	}
