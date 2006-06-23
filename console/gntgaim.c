@@ -171,8 +171,6 @@ int main(int argc, char **argv)
 	/* Initialize the libgaim stuff */
 	init_libgaim();
 
-	/* Connect to the signals */
-
 	/* Enable the accounts and restore the status */
 	gaim_accounts_restore_current_statuses();
 

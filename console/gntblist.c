@@ -16,9 +16,14 @@ typedef struct
 {
 	GntWidget *window;
 	GntWidget *tree;
+
+	GaimBuddyList *list;
 } GGBlist;
 
 GGBlist *ggblist;
+
+static void add_buddy(GaimBuddy *buddy, GGBlist *ggblist);
+static void add_group(GaimGroup *group, GGBlist *ggblist);
 
 static void
 new_node(GaimBlistNode *node)
@@ -26,21 +31,37 @@ new_node(GaimBlistNode *node)
 }
 
 static void
-node_update(GaimBuddyList *list, GaimBlistNode *node)
+node_remove(GaimBuddyList *list, GaimBlistNode *node)
 {
+	GGBlist *ggblist = list->ui_data;
+
+	if (node->ui_data == NULL)
+		return;
+
+	gnt_tree_remove(GNT_TREE(ggblist->tree), node);
+	node->ui_data = NULL;
+
+	/* XXX: Depending on the node, we may want to remove the group/contact node if necessary */
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+	{
+		GaimGroup *group = gaim_buddy_get_group((GaimBuddy*)node);
+		if (gaim_blist_get_group_online_count(group) == 0)
+			node_remove(list, (GaimBlistNode*)group);
+	}
 }
 
 static void
-node_remove(GaimBuddyList *list, GaimBlistNode *node)
+node_update(GaimBuddyList *list, GaimBlistNode *node)
 {
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+	{
+		GaimBuddy *buddy = (GaimBuddy*)node;
+	}
 }
 
 static void
 new_list(GaimBuddyList *list)
 {
-	if (ggblist == NULL)
-		gg_blist_init();
-	list->ui_data = ggblist;
 }
 
 static GaimBlistUiOps blist_ui_ops = 
@@ -85,6 +106,7 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	if (node->ui_data)
 		return;
 
+	node->ui_data = GINT_TO_POINTER(TRUE);
 	group = gaim_buddy_get_group(buddy);
 	add_group(group, ggblist);
 
@@ -102,10 +124,10 @@ buddy_signed_on(GaimBuddy *buddy, GGBlist *ggblist)
 static void
 buddy_signed_off(GaimBuddy *buddy, GGBlist *ggblist)
 {
-	gnt_tree_remove(GNT_TREE(ggblist->tree), buddy);
+	node_remove(ggblist->list, (GaimBlistNode*)buddy);
 }
 
-GaimBlistUiOps *gg_get_blist_ui_ops()
+GaimBlistUiOps *gg_blist_get_ui_ops()
 {
 	return &blist_ui_ops;
 }
@@ -118,8 +140,9 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 
 void gg_blist_init()
 {
-	if (ggblist == NULL)
-		ggblist = g_new0(GGBlist, 1);
+	ggblist = g_new0(GGBlist, 1);
+
+	gaim_get_blist()->ui_data = ggblist;
 
 	ggblist->window = gnt_box_new(FALSE, FALSE);
 	GNT_WIDGET_UNSET_FLAGS(ggblist->window, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
@@ -139,7 +162,7 @@ void gg_blist_init()
 				GAIM_CALLBACK(buddy_signed_off), ggblist);
 
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
-	
+
 	/*gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg", gg_blist_get_handle(),*/
 				/*GAIM_CALLBACK(received_im_msg), list);*/
 	/*gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg", gg_blist_get_handle(),*/

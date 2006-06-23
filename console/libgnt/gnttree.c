@@ -13,9 +13,11 @@ struct _GnTreeRow
 	char *text;
 	void *data;		/* XXX: unused */
 
+	/* XXX: These are also unused */
 	GntTreeRow *parent;
 	GntTreeRow *child;
 	GntTreeRow *next;
+	GntTreeRow *prev;
 };
 
 static GntWidgetClass *parent_class = NULL;
@@ -268,7 +270,9 @@ void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *pa
 			pr = g_hash_table_lookup(tree->hash, bigbro);
 			if (pr)
 			{
+				if (pr->next)	pr->next->prev = row;
 				row->next = pr->next;
+				row->prev = pr;
 				pr->next = row;
 				row->parent = pr->parent;
 
@@ -281,6 +285,7 @@ void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *pa
 			pr = g_hash_table_lookup(tree->hash, parent);
 			if (pr)
 			{
+				if (pr->child)	pr->child->prev = row;
 				row->next = pr->child;
 				pr->child = row;
 				row->parent = pr;
@@ -291,6 +296,7 @@ void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *pa
 
 		if (pr == NULL)
 		{
+			if (tree->root)	tree->root->prev = row;
 			row->next = tree->root;
 			tree->root = row;
 
@@ -316,6 +322,7 @@ int gnt_tree_get_selection_index(GntTree *tree)
 	return tree->current;
 }
 
+/* XXX: Should this also remove all the children of the row being removed? */
 void gnt_tree_remove(GntTree *tree, gpointer key)
 {
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
