@@ -6,6 +6,7 @@ HEADERS = \
 	gntbox.h \
 	gntbutton.h \
 	gntcolors.h \
+	gntentry.h \
 	gntlabel.h \
 	gnttree.h \
 	gntutils.h \
@@ -16,6 +17,7 @@ SOURCES = \
 	gntbox.c \
 	gntbutton.c \
 	gntcolors.c \
+	gntentry.c \
 	gntlabel.c \
 	gnttree.c \
 	gntutils.c \
@@ -26,6 +28,7 @@ OBJECTS = \
 	gntbox.o \
 	gntbutton.o \
 	gntcolors.o \
+	gntentry.o \
 	gntlabel.o \
 	gnttree.o \
 	gntutils.o \
@@ -34,11 +37,13 @@ OBJECTS = \
 all: libgnt
 
 test: $(OBJECTS)
+key: $(OBJECTS)
 
 gntwidget.o: gntwidget.c $(HEADERS)
 gntbox.o: gntbox.c $(HEADERS)
 gntbutton.o: gntbutton.c $(HEADERS)
 gntcolors.o: gntcolors.c $(HEADERS)
+gntentry.o: gntentry.c $(HEADERS)
 gntlabel.o: gntlabel.c $(HEADERS)
 gnttree.o: gnttree.c $(HEADERS)
 gntutils.o: gntutils.c $(HEADERS)

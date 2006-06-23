@@ -286,6 +286,8 @@ gboolean
 gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 {
 	gboolean ret;
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
+		return FALSE;
 	g_signal_emit(widget, signals[SIG_KEY_PRESSED], 0, keys, &ret);
 	return ret;
 }

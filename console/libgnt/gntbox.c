@@ -53,15 +53,13 @@ reposition_children(GntWidget *widget)
 
 	w = h = 0;
 	max = -1;
-	curx = widget->priv.x + 1;
-	cury = widget->priv.y + 1;
+	curx = widget->priv.x;
+	cury = widget->priv.y;
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
 	{
 		has_border = TRUE;
-		curx += box->pad;
-		cury += box->pad;
-		if (!box->vertical)
-			curx++;
+		curx += 1;
+		cury += 1;
 	}
 
 	for (iter = box->list; iter; iter = iter->next)
@@ -84,7 +82,7 @@ reposition_children(GntWidget *widget)
 
 	if (has_border)
 	{
-		curx += 2;
+		curx += 1;
 		cury += 1;
 		max += 2;
 	}
@@ -146,16 +144,44 @@ gnt_box_map(GntWidget *widget)
 	DEBUG;
 }
 
+/* Ensures that the current widget can take focus */
+static void
+ensure_active(GntBox *box)
+{
+	int investigated = 0;
+	int total;
+
+	if (box->active == NULL)
+		box->active = box->list;
+
+	total = g_list_length(box->list);
+
+	while (box->active && !GNT_WIDGET_IS_FLAG_SET(box->active->data, GNT_WIDGET_CAN_TAKE_FOCUS))
+	{
+		box->active = box->active->next;
+		investigated++;
+	}
+
+	/* Rotate if necessary */
+	if (!box->active && investigated < total)
+	{
+		box->active = box->list;
+		while (investigated < total &&  !GNT_WIDGET_IS_FLAG_SET(box->active->data, GNT_WIDGET_CAN_TAKE_FOCUS))
+		{
+			box->active = box->active->next;
+			investigated++;
+		}
+	}
+}
+
 static gboolean
 gnt_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntBox *box = GNT_BOX(widget);
 
-	/*if (box->list == NULL)*/
-		/*return FALSE;*/
-
+	ensure_active(box);
 	if (box->active == NULL)
-		box->active = box->list;
+		return FALSE;
 
 	if (gnt_widget_key_pressed(box->active->data, text))
 		return TRUE;

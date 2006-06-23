@@ -1,4 +1,4 @@
-#include "gn-skel.h"
+#include "gnt-skel.h"
 
 enum
 {
@@ -34,11 +34,17 @@ gnt_skel_key_pressed(GntWidget *widget, const char *text)
 }
 
 static void
+gnt_skel_destroy(GntWidget *widget)
+{
+}
+
+static void
 gnt_skel_class_init(GntWidgetClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = GNT_WIDGET_CLASS(klass);
+	parent_class->destroy = gnt_skel_destroy;
 	parent_class->draw = gnt_skel_draw;
 	parent_class->map = gnt_skel_map;
 	parent_class->size_request = gnt_skel_size_request;

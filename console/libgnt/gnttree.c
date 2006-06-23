@@ -46,11 +46,11 @@ redraw_tree(GntTree *tree)
 		if ((wr = snprintf(str, widget->priv.width, "%s", row->text)) >= widget->priv.width)
 		{
 			/* XXX: ellipsize */
-			str[widget->priv.width - 1] = 0;
+			str[widget->priv.width - 1 - pos] = 0;
 		}
 		else
 		{
-			while (wr < widget->priv.width - 1)
+			while (wr < widget->priv.width - 1 - pos)
 				str[wr++] = ' ';
 			str[wr] = 0;
 		}
@@ -67,8 +67,8 @@ redraw_tree(GntTree *tree)
 
 	while (start < tree->bottom)
 	{
-		wmove(widget->window, start - tree->top + pos, pos);
-		wclrtoeol(widget->window);
+		mvwhline(widget->window, start - tree->top + pos, pos, ' ',
+				widget->priv.width - pos * 2);
 		start++;
 	}
 

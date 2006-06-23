@@ -90,7 +90,9 @@ int main()
 	gnt_box_add_widget(GNT_BOX(vbox), widget2);
 
 	gnt_box_add_widget(GNT_BOX(hbox), label);
-	gnt_box_add_widget(GNT_BOX(hbox), vbox);
+	/*gnt_box_add_widget(GNT_BOX(hbox), vbox);*/
+
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_entry_new("a"));
 
 	tree = gnt_tree_new();
 	gnt_box_add_widget(GNT_BOX(hbox), tree);
@@ -106,11 +108,11 @@ int main()
 
 	/*gnt_widget_set_take_focus(vbox, TRUE);*/
 	/*gnt_widget_set_take_focus(hbox, TRUE);*/
-	gnt_widget_set_position(hbox, 10, 10);
+	/*gnt_widget_set_position(hbox, 10, 10);*/
 
 	gnt_widget_show(hbox);
 
-	g_signal_connect(hbox, "key_pressed", G_CALLBACK(key_pressed), widget);
+	/*g_signal_connect(hbox, "key_pressed", G_CALLBACK(key_pressed), widget);*/
 	g_signal_connect(widget, "activate", G_CALLBACK(button1), hbox);
 	g_signal_connect(widget2, "activate", G_CALLBACK(button2), hbox);
 
