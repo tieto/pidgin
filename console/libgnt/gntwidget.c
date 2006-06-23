@@ -224,6 +224,7 @@ gnt_widget_destroy(GntWidget *obj)
 	delwin(obj->window);
 	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING))
 		g_object_run_dispose(G_OBJECT(obj));
+	/* XXX: This may be the wrong place */
 	gnt_screen_remove_widget(obj);
 	DEBUG;
 }

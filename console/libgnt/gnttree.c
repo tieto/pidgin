@@ -5,6 +5,8 @@ enum
 	SIGS = 1,
 };
 
+#define	TAB_SIZE 3
+
 /* XXX: Make this one into a GObject?
  * 		 ... Probably not */
 struct _GnTreeRow
@@ -202,12 +204,21 @@ gnt_tree_get_gtype(void)
 	return type;
 }
 
+static void
+free_tree_row(gpointer data)
+{
+	GntTreeRow *row = data;
+
+	g_free(row->text);
+	g_free(row);
+}
+
 GntWidget *gnt_tree_new()
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_TREE, NULL);
 	GntTree *tree = GNT_TREE(widget);
 
-	tree->hash = g_hash_table_new(g_direct_hash, g_direct_equal);
+	tree->hash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_tree_row);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
 	gnt_widget_set_take_focus(widget, TRUE);
 
@@ -246,13 +257,23 @@ void gnt_tree_scroll(GntTree *tree, int count)
 	redraw_tree(tree);
 }
 
+static int
+find_depth(GntTreeRow *row)
+{
+	int dep = -1;
+
+	while (row)
+	{
+		dep++;
+		row = row->parent;
+	}
+
+	return dep;
+}
+
 void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)
 {
 	GntTreeRow *row = g_new0(GntTreeRow, 1), *pr = NULL;
-
-	row->key = key;
-	row->text = g_strdup(text);
-	row->data = NULL;
 
 	g_hash_table_insert(tree->hash, key, row);
 
@@ -307,6 +328,10 @@ void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *pa
 			tree->list = g_list_insert(tree->list, key, position + 1);
 		}
 	}
+
+	row->key = key;
+	row->text = g_strdup_printf("%*s%s", TAB_SIZE * find_depth(row), "", text);
+	row->data = NULL;
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
 		redraw_tree(tree);

@@ -10,8 +10,6 @@
 
 #include "gntblist.h"
 
-#define	TAB_SIZE 3
-
 typedef struct
 {
 	GntWidget *window;
@@ -100,7 +98,6 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 static void
 add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 {
-	char *text;
 	GaimGroup *group;
 	GaimBlistNode *node = (GaimBlistNode *)buddy;
 	if (node->ui_data)
@@ -110,9 +107,7 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	group = gaim_buddy_get_group(buddy);
 	add_group(group, ggblist);
 
-	text = g_strdup_printf("%*s%s", TAB_SIZE, "", gaim_buddy_get_alias(buddy));
-	gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy, text, group, NULL);
-	g_free(text);
+	gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy, gaim_buddy_get_alias(buddy), group, NULL);
 }
 
 static void
