@@ -50,7 +50,6 @@ reposition_children(GntWidget *widget)
 	GntBox *box = GNT_BOX(widget);
 	int w, h, curx, cury, max;
 	gboolean has_border = FALSE;
-	int x, y;
 
 	w = h = 0;
 	max = -1;

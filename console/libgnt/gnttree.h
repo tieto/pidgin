@@ -27,8 +27,6 @@ struct _GnTree
 {
 	GntWidget parent;
 
-	WINDOW *scroll;
-
 	int current;	/* current selection */
 
 	int top;		/* The index in 'list' of the topmost visible item */

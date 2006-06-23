@@ -34,7 +34,7 @@ redraw_tree(GntTree *tree)
 	else
 		pos = 1;
 
-	wbkgd(tree->scroll, COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
 	for (start = tree->top, iter = g_list_nth(tree->list, tree->top);
 				iter && start < tree->bottom; start++, iter = iter->next)
@@ -57,18 +57,18 @@ redraw_tree(GntTree *tree)
 		
 		if (start == tree->current)
 		{
-			wbkgdset(tree->scroll, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
-			mvwprintw(tree->scroll, start - tree->top + pos, pos, str);
-			wbkgdset(tree->scroll, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+			mvwprintw(widget->window, start - tree->top + pos, pos, str);
+			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}
 		else
-			mvwprintw(tree->scroll, start - tree->top + pos, pos, str);
+			mvwprintw(widget->window, start - tree->top + pos, pos, str);
 	}
 
 	while (start < tree->bottom)
 	{
-		wmove(tree->scroll, start - tree->top + pos, pos);
-		wclrtoeol(tree->scroll);
+		wmove(widget->window, start - tree->top + pos, pos);
+		wclrtoeol(widget->window);
 		start++;
 	}
 
@@ -80,21 +80,12 @@ gnt_tree_draw(GntWidget *widget)
 {
 	GntTree *tree = GNT_TREE(widget);
 
-	/* For the Tree (or anything that scrolls), we will create a 'hidden' window
-	 * of 'large enough' size. We never wrefresh that hidden-window, instead we
-	 * just copy stuff from it into the visible window */
+	scrollok(widget->window, TRUE);
+	wsetscrreg(widget->window, 0, widget->priv.height - 1);
 
-	if (tree->scroll == NULL)
-	{
-		tree->scroll = widget->window; /* newwin(SCROLL_HEIGHT, widget->priv.width, 0, 0); */
-		scrollok(tree->scroll, TRUE);
-		/*wsetscrreg(tree->scroll, 0, SCROLL_HEIGHT - 1);*/
-		wsetscrreg(tree->scroll, 0, widget->priv.height - 1);
-
-		tree->top = 0;
-		tree->bottom = widget->priv.height -
-				(GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER) ? 0 : 2);
-	}
+	tree->top = 0;
+	tree->bottom = widget->priv.height -
+			(GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER) ? 0 : 2);
 
 	redraw_tree(tree);
 	
