@@ -55,6 +55,8 @@ void gnt_box_set_title(GntBox *box, const char *title);
 
 void gnt_box_set_pad(GntBox *box, int pad);
 
+void gnt_box_set_toplevel(GntBox *box, gboolean set);
+
 G_END_DECLS
 
 #endif /* GNT_BOX_H */

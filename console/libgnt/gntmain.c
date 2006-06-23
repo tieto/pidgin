@@ -90,7 +90,6 @@ void gnt_init()
 	setlocale(LC_ALL, "");
 	initscr();
 	start_color();
-	/*use_default_colors();*/
 	gnt_init_colors();
 
 	max_x = getmaxx(stdscr);

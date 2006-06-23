@@ -112,7 +112,7 @@ int main()
 
 	gnt_widget_show(hbox);
 
-	/*g_signal_connect(hbox, "key_pressed", G_CALLBACK(key_pressed), widget);*/
+	g_signal_connect(hbox, "key_pressed", G_CALLBACK(key_pressed), tree);
 	g_signal_connect(widget, "activate", G_CALLBACK(button1), hbox);
 	g_signal_connect(widget2, "activate", G_CALLBACK(button2), hbox);
 

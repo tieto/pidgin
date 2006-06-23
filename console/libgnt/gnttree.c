@@ -1,8 +1,10 @@
 #include "gnttree.h"
+#include "gntutils.h"
 
 enum
 {
-	SIGS = 1,
+	SIG_SELECTION_CHANGED,
+	SIGS,
 };
 
 #define	TAB_SIZE 3
@@ -113,10 +115,18 @@ gnt_tree_map(GntWidget *widget)
 	DEBUG;
 }
 
+static void
+tree_selection_changed(GntTree *tree, int old, int current)
+{
+	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old, current);
+}
+
 static gboolean
 gnt_tree_key_pressed(GntWidget *widget, const char *text)
 {
 	GntTree *tree = GNT_TREE(widget);
+	int old = tree->current;
+
 	if (text[0] == 27)
 	{
 		if (strcmp(text+1, GNT_KEY_DOWN) == 0 && tree->current < g_list_length(tree->list) - 1)
@@ -141,6 +151,9 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		gnt_widget_activate(widget);
 	}
 
+	if (old != tree->current)
+		tree_selection_changed(tree, old, tree->current);
+
 	return FALSE;
 }
 
@@ -154,7 +167,7 @@ gnt_tree_destroy(GntWidget *widget)
 }
 
 static void
-gnt_tree_class_init(GntWidgetClass *klass)
+gnt_tree_class_init(GntTreeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
@@ -164,6 +177,15 @@ gnt_tree_class_init(GntWidgetClass *klass)
 	parent_class->map = gnt_tree_map;
 	parent_class->size_request = gnt_tree_size_request;
 	parent_class->key_pressed = gnt_tree_key_pressed;
+
+	signals[SIG_SELECTION_CHANGED] = 
+		g_signal_new("selection-changed",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntTreeClass, selection_changed),
+					 NULL, NULL,
+					 gnt_closure_marshal_VOID__INT_INT,
+					 G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_INT);
 
 	DEBUG;
 }
@@ -271,7 +293,7 @@ find_depth(GntTreeRow *row)
 	return dep;
 }
 
-void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)
+GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)
 {
 	GntTreeRow *row = g_new0(GntTreeRow, 1), *pr = NULL;
 
@@ -335,11 +357,13 @@ void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *pa
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
 		redraw_tree(tree);
+
+	return row;
 }
 
 gpointer gnt_tree_get_selection_data(GntTree *tree)
 {
-	return g_list_nth(tree->list, tree->current);
+	return g_list_nth_data(tree->list, tree->current);
 }
 
 int gnt_tree_get_selection_index(GntTree *tree)
@@ -355,9 +379,6 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 	{
 		int len, pos;
 
-		g_free(row->text);
-		g_free(row);
-
 		pos = g_list_index(tree->list, key);
 
 		g_hash_table_remove(tree->hash, key);
@@ -367,6 +388,13 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 		{
 			redraw_tree(tree);
 		}
+		g_hash_table_replace(tree->hash, key, NULL);
 	}
+}
+
+int gnt_tree_get_selection_visible_line(GntTree *tree)
+{
+	return (tree->current - tree->top) +
+			!!(GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_NO_BORDER));
 }
 

@@ -267,7 +267,7 @@ gnt_box_destroy(GntWidget *w)
 }
 
 static void
-gnt_box_class_init(GntWidgetClass *klass)
+gnt_box_class_init(GntBoxClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
@@ -349,5 +349,14 @@ void gnt_box_set_pad(GntBox *box, int pad)
 {
 	box->pad = pad;
 	/* XXX: Perhaps redraw if already showing? */
+}
+
+void gnt_box_set_toplevel(GntBox *box, gboolean set)
+{
+	GntWidget *widget = GNT_WIDGET(box);
+	if (set)
+		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+	else
+		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 }
 

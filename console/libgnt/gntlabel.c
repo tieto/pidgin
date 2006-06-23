@@ -57,7 +57,7 @@ gnt_label_size_request(GntWidget *widget)
 }
 
 static void
-gnt_label_class_init(GntWidgetClass *klass)
+gnt_label_class_init(GntLabelClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 

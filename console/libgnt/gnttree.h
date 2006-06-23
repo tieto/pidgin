@@ -42,6 +42,8 @@ struct _GnTreeClass
 {
 	GntWidgetClass parent;
 
+	void (*selection_changed)(int old, int current);
+
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
@@ -60,13 +62,16 @@ int gnt_tree_get_visible_rows(GntTree *tree);
 
 void gnt_tree_scroll(GntTree *tree, int count);
 
-void gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro);
+GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro);
 
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
 int gnt_tree_get_selection_index(GntTree *tree);
 
 void gnt_tree_remove(GntTree *tree, gpointer key);
+
+/* Returns the visible line number of the selected row */
+int gnt_tree_get_selection_visible_line(GntTree *tree);
 
 G_END_DECLS
 

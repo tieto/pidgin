@@ -138,7 +138,7 @@ gnt_entry_destroy(GntWidget *widget)
 }
 
 static void
-gnt_entry_class_init(GntWidgetClass *klass)
+gnt_entry_class_init(GntEntryClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 

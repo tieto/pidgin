@@ -221,11 +221,12 @@ gnt_widget_destroy(GntWidget *obj)
 {
 	g_return_if_fail(GNT_IS_WIDGET(obj));
 
+	gnt_widget_hide(obj);
 	delwin(obj->window);
 	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING))
 		g_object_run_dispose(G_OBJECT(obj));
 	/* XXX: This may be the wrong place */
-	gnt_screen_remove_widget(obj);
+	/*gnt_screen_remove_widget(obj);*/
 	DEBUG;
 }
 
@@ -309,6 +310,7 @@ gnt_widget_hide(GntWidget *widget)
 	 * those windows to redraw themselves by emitting the approrpiate
 	 * expose signal. */
 
+	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(widget->window);
 	wrefresh(widget->window);
 }

@@ -39,7 +39,7 @@ gnt_skel_destroy(GntWidget *widget)
 }
 
 static void
-gnt_skel_class_init(GntWidgetClass *klass)
+gnt_skel_class_init(GntSkelClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
