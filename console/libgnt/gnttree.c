@@ -231,6 +231,9 @@ free_tree_row(gpointer data)
 {
 	GntTreeRow *row = data;
 
+	if (!row)
+		return;
+
 	g_free(row->text);
 	g_free(row);
 }

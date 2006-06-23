@@ -17,8 +17,6 @@ typedef struct
 
 	GntWidget *tooltip;
 	GaimBlistNode *tnode;		/* Who is the tooltip being displayed for? */
-
-	GaimBuddyList *list;
 } GGBlist;
 
 GGBlist *ggblist;
@@ -134,7 +132,7 @@ buddy_signed_on(GaimBuddy *buddy, GGBlist *ggblist)
 static void
 buddy_signed_off(GaimBuddy *buddy, GGBlist *ggblist)
 {
-	node_remove(ggblist->list, (GaimBlistNode*)buddy);
+	node_remove(gaim_get_blist(), (GaimBlistNode*)buddy);
 }
 
 GaimBlistUiOps *gg_blist_get_ui_ops()
@@ -246,7 +244,6 @@ void gg_blist_init()
 	ggblist = g_new0(GGBlist, 1);
 
 	gaim_get_blist()->ui_data = ggblist;
-	ggblist->list = gaim_get_blist();
 
 	ggblist->window = gnt_box_new(FALSE, FALSE);
 	gnt_box_set_toplevel(GNT_BOX(ggblist->window), TRUE);
