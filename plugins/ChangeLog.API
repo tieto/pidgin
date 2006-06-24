@@ -176,6 +176,7 @@ version 2.0.0:
 	  notify_searchresults in GaimNotifyUiOps.
 	* gaim_conversation_get_send_history(), and send_history from
 	  GaimConversation
+	* Removed ui_ops from GaimBuddyList. Use gaim_blist_get_ui_ops() instead
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

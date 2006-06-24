@@ -1298,7 +1298,7 @@ static void
 update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
-	GaimBlistUiOps *ops = gaim_get_blist()->ui_ops;
+	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 
 	if (!old_idle && idle)
 	{

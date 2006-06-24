@@ -152,8 +152,6 @@ struct _GaimChat {
 struct _GaimBuddyList {
 	GaimBlistNode *root;          /**< The first node in the buddy list */
 	GHashTable *buddies;          /**< Every buddy in this list */
-	GaimBlistUiOps *ui_ops;       /**< The UI operations for the buddy list */
-
 	void *ui_data;                /**< UI-specific data. */
 };
 
