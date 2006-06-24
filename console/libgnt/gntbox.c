@@ -202,7 +202,7 @@ gnt_box_key_pressed(GntWidget *widget, const char *text)
 				now = box->list;
 		}
 
-		if (now)
+		if (now && now != box->active)
 		{
 			gnt_widget_set_focus(box->active->data, FALSE);
 			box->active = now;
