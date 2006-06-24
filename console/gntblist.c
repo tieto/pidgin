@@ -24,11 +24,21 @@ GGBlist *ggblist;
 
 static void add_buddy(GaimBuddy *buddy, GGBlist *ggblist);
 static void add_group(GaimGroup *group, GGBlist *ggblist);
+static void add_node(GaimBlistNode *node, GGBlist *ggblist);
 static void draw_tooltip(GGBlist *ggblist);
 
 static void
 new_node(GaimBlistNode *node)
 {
+}
+
+static void add_node(GaimBlistNode *node, GGBlist *ggblist)
+{
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		add_buddy((GaimBuddy*)node, ggblist);
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+		add_group((GaimGroup*)node, ggblist);
+	draw_tooltip(ggblist);
 }
 
 static void
@@ -56,14 +66,8 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 		GaimGroup *group = gaim_buddy_get_group((GaimBuddy*)node);
 		if (gaim_blist_get_group_online_count(group) == 0)
 			node_remove(list, (GaimBlistNode*)group);
-		else if (ggblist->tnode == (GaimBlistNode *)group)	/* Need to update the counts */
-			draw_tooltip(ggblist);
 	}
-
-	if (ggblist->tnode == node)
-	{
-		remove_tooltip(ggblist);
-	}
+	draw_tooltip(ggblist);
 }
 
 static void
@@ -73,7 +77,7 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 	{
 		GaimBuddy *buddy = (GaimBuddy*)node;
 		if (gaim_presence_is_online(gaim_buddy_get_presence(buddy)))
-			add_buddy(buddy, list->ui_data);
+			add_node((GaimBlistNode*)buddy, list->ui_data);
 		else
 			node_remove(gaim_get_blist(), node);
 	}
@@ -171,19 +175,16 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 		return;
 
 	group = gaim_buddy_get_group(buddy);
-	add_group(group, ggblist);
+	add_node((GaimBlistNode*)group, ggblist);
 
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
 				get_buddy_display_name(buddy), group, NULL);
-
-	if (ggblist->tnode == (GaimBlistNode*)group)
-		draw_tooltip(ggblist);
 }
 
 static void
 buddy_signed_on(GaimBuddy *buddy, GGBlist *ggblist)
 {
-	add_buddy(buddy, ggblist);
+	add_node((GaimBlistNode*)buddy, ggblist);
 }
 
 static void

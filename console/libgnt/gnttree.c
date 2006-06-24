@@ -6,6 +6,7 @@
 enum
 {
 	SIG_SELECTION_CHANGED,
+	SIG_SCROLLED,
 	SIGS,
 };
 
@@ -345,6 +346,14 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
+	signals[SIG_SCROLLED] = 
+		g_signal_new("scrolled",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__INT,
+					 G_TYPE_NONE, 1, G_TYPE_INT);
 
 	DEBUG;
 }
@@ -445,6 +454,7 @@ void gnt_tree_scroll(GntTree *tree, int count)
 	}
 
 	redraw_tree(tree);
+	g_signal_emit(tree, signals[SIG_SCROLLED], 0, count);
 }
 
 static int
