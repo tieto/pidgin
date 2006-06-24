@@ -36,12 +36,67 @@ is_num(char *str)
 	return TRUE;
 }
 
+/*
+ * check the command is the command with payload content
+ *  if it is	return TRUE
+ *  else 		return FALSE
+ */
+static gboolean
+isPayloadCmd(char *str)
+{
+	if( (!strcmp(str,"ADL")) ||
+		(!strcmp(str,"GCF")) ||
+		(!strcmp(str,"MSG")) ||
+		(!strcmp(str,"QRY")) ||
+		(!strcmp(str,"RML")) ||
+		(!strcmp(str,"UBX")) ||
+		(!strcmp(str,"UBN")) ||
+		(!strcmp(str,"UUN")) ||
+		(!strcmp(str,"UUX"))){
+			return TRUE;
+		}
+
+	return FALSE;
+}
+
+/*get the payload positon*/
+int getPayloadPosition(char *str)
+{
+	/*because MSG has "MSG hotmail hotmail [payload length]"*/
+	if(!(strcmp(str,"MSG"))){
+		return 2;
+	}
+	return 1;
+}
+/*
+ * set command Payload length
+ */
+int
+setPayloadLen(MsnCommand *cmd)
+{
+	char * param;
+
+	if(isPayloadCmd(cmd->command)){
+		if(!(strcmp(cmd->command,"MSG"))){
+			param = cmd->params[2];
+		}else{
+			param = cmd->params[1];
+		}
+		cmd->payload_len = is_num(param) ? atoi(param) : 0;
+	}else{
+		cmd->payload_len = 0;
+	}
+	return 0;
+}
+
 MsnCommand *
 msn_command_from_string(const char *string)
 {
 	MsnCommand *cmd;
 	char *tmp;
 	char *param_start;
+	char *param;
+	int c;
 
 	g_return_val_if_fail(string != NULL, NULL);
 
@@ -51,11 +106,7 @@ msn_command_from_string(const char *string)
 	cmd = g_new0(MsnCommand, 1);
 	cmd->command = tmp;
 
-	if (param_start)
-	{
-		char *param;
-		int c;
-
+	if (param_start){
 		*param_start++ = '\0';
 		cmd->params = g_strsplit(param_start, " ", 0);
 
@@ -65,9 +116,13 @@ msn_command_from_string(const char *string)
 		param = cmd->params[0];
 
 		cmd->trId = is_num(param) ? atoi(param) : 0;
-	}
-	else
+	}else{
 		cmd->trId = 0;
+	}
+
+	/*add payload Length checking*/
+	setPayloadLen(cmd);
+	gaim_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);
 
 	msn_command_ref(cmd);
 

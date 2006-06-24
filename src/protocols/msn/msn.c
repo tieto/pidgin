@@ -2025,10 +2025,10 @@ static GaimPluginInfo info =
 	"MSN",                                            /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("MSN Protocol Plugin"),
+	N_("Windows Live Messenger Protocol Plugin"),
 	                                                  /**  description    */
-	N_("MSN Protocol Plugin"),
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	N_("Windows Live Messenger Protocol Plugin"),
+	"MaYuan <mayuan2006@gmail.com>",				/**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	msn_load,                                         /**< load           */
@@ -2047,11 +2047,11 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 
 	option = gaim_account_option_string_new(_("Server"), "server",
-											MSN_SERVER);
+											WLM_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = gaim_account_option_int_new(_("Port"), "port", 1863);
+	option = gaim_account_option_int_new(_("Port"), "port", WLM_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

@@ -62,6 +62,12 @@
 #define USEROPT_MSNPORT 4
 #define MSN_PORT 1863
 
+/* Windows Live Messenger Server*/
+#define WLM_SERVER			"muser.messenger.hotmail.com"
+#define WLM_PORT			1863
+#define WLM_PROT_VER		13
+#define WLM_MIN_PROTOCOL	13
+
 #define MSN_TYPING_RECV_TIMEOUT 6
 #define MSN_TYPING_SEND_TIMEOUT	4
 

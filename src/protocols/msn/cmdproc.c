@@ -228,8 +228,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnMsgTypeCb cb;
 
-	if (msn_message_get_content_type(msg) == NULL)
-	{
+	if (msn_message_get_content_type(msg) == NULL){
 		gaim_debug_misc("msn", "failed to find message content\n");
 		return;
 	}
@@ -237,8 +236,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	cb = g_hash_table_lookup(cmdproc->cbs_table->msgs,
 							 msn_message_get_content_type(msg));
 
-	if (cb == NULL)
-	{
+	if (cb == NULL){
 		gaim_debug_warning("msn", "Unhandled content-type '%s'\n",
 						   msn_message_get_content_type(msg));
 

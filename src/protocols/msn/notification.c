@@ -102,9 +102,9 @@ connect_cb(MsnServConn *servconn)
 	account = session->account;
 
 	/* Allocate an array for CVR0, NULL, and all the versions */
-	a = c = g_new0(char *, session->protocol_ver - 8 + 3);
+	a = c = g_new0(char *, session->protocol_ver - WLM_MIN_PROTOCOL + 3);
 
-	for (i = session->protocol_ver; i >= 8; i--)
+	for (i = session->protocol_ver; i >= WLM_MIN_PROTOCOL; i--)
 		*c++ = g_strdup_printf("MSNP%d", i);
 
 	*c++ = g_strdup("CVR0");
@@ -230,9 +230,8 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	account = session->account;
 	gc = gaim_account_get_connection(account);
 
-	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
-	{
-		/* OK */
+	if (!g_ascii_strcasecmp(cmd->params[1], "OK")){
+		/* authenticate OK */
 		const char *friendly = gaim_url_decode(cmd->params[3]);
 
 		gaim_connection_set_display_name(gc, friendly);
@@ -240,9 +239,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
 
 		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
-	}
-	else if (!g_ascii_strcasecmp(cmd->params[1], "TWN"))
-	{
+	}else if (!g_ascii_strcasecmp(cmd->params[1], "TWN")){
 		/* Passport authentication */
 		char **elems, **cur, **tokens;
 
@@ -252,8 +249,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		elems = g_strsplit(cmd->params[3], ",", 0);
 
-		for (cur = elems; *cur != NULL; cur++)
-		{
+		for (cur = elems; *cur != NULL; cur++){
 				tokens = g_strsplit(*cur, "=", 2);
 				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
 				/* Don't free each of the tokens, only the array. */
@@ -322,8 +318,12 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		return;
 	}
 
+	/*
+	 * Windows Live Messenger 8.0 
+	 * Notice :CVR String discriminate!
+	 */
 	msn_cmdproc_send(cmdproc, "CVR",
-					 "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0602 MSMSGS %s",
+					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
 					 gaim_account_get_username(account));
 }
 
@@ -379,16 +379,16 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
+	gaim_debug_info("MaYuan","Processing MSG... \n");
+	if(cmd->payload_len == 0){
+		return;
+	}
 	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
 	 * command and we are processing it */
-
-	if (cmd->payload == NULL)
-	{
+	if (cmd->payload == NULL){
 		cmdproc->last_cmd->payload_cb  = msg_cmd_post;
 		cmdproc->servconn->payload_len = atoi(cmd->params[2]);
-	}
-	else
-	{
+	}else{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
@@ -1118,6 +1118,27 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_free(host);
 }
 
+static void
+gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","Processing GCF... \n");
+	if(cmd->payload_len == 0){
+//		cmd->payload_len = is_num(cmd->params[1]) ? atoi(cmd->params[1]) : 0;
+		return;
+	}
+	/*get the payload content*/
+}
+
+static void
+sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","Processing SBS... \n");
+	if(cmd->payload_len == 0){
+		return;
+	}
+	/*get the payload content*/
+}
+
 /**************************************************************************
  * Message Types
  **************************************************************************/
@@ -1387,6 +1408,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "REM", "REM", rem_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "XFR", xfr_cmd);
+	msn_table_add_cmd(cbs_table, "USR", "GCF", gcf_cmd);
 	msn_table_add_cmd(cbs_table, "SYN", "SYN", syn_cmd);
 	msn_table_add_cmd(cbs_table, "CVR", "CVR", cvr_cmd);
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
@@ -1402,6 +1424,8 @@ msn_notification_init(void)
 	/* Asynchronous */
 	msn_table_add_cmd(cbs_table, NULL, "IPG", ipg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "GCF", gcf_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "SBS", sbs_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NOT", not_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "CHL", chl_cmd);

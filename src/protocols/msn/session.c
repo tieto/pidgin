@@ -43,7 +43,7 @@ msn_session_new(GaimAccount *account)
 	session->user = msn_user_new(session->userlist,
 								 gaim_account_get_username(account), NULL);
 
-	session->protocol_ver = 9;
+	session->protocol_ver = WLM_PROT_VER;
 	session->conv_seq = 1;
 
 	return session;
