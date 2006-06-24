@@ -32,7 +32,7 @@ gnt_box_draw(GntWidget *widget)
 		else
 		{
 			/* XXX: Position of the title might be configurable */
-			pos = (widget->priv.width - pos - 2) / 2;
+			pos = (widget->priv.width - pos) / 2;
 		}
 		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
 		mvwprintw(widget->window, 0, pos, title);

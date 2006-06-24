@@ -27,10 +27,10 @@ struct _GnTree
 {
 	GntWidget parent;
 
-	int current;	/* current selection */
+	GntTreeRow *current;	/* current selection */
 
-	int top;		/* The index in 'list' of the topmost visible item */
-	int bottom;		/* The index in 'list' of the bottommost visible item */
+	GntTreeRow *top;		/* The topmost visible item */
+	GntTreeRow *bottom;		/* The bottommost visible item */
 	
 	GntTreeRow *root; /* The root of all evil */
 	
@@ -66,12 +66,12 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
-int gnt_tree_get_selection_index(GntTree *tree);
-
 void gnt_tree_remove(GntTree *tree, gpointer key);
 
 /* Returns the visible line number of the selected row */
 int gnt_tree_get_selection_visible_line(GntTree *tree);
+
+void gnt_tree_change_text(GntTree *tree, gpointer key, const char *text);
 
 G_END_DECLS
 

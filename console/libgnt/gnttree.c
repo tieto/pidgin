@@ -1,6 +1,8 @@
 #include "gnttree.h"
 #include "gntutils.h"
 
+#include <string.h>
+
 enum
 {
 	SIG_SELECTION_CHANGED,
@@ -17,7 +19,8 @@ struct _GnTreeRow
 	char *text;
 	void *data;		/* XXX: unused */
 
-	/* XXX: These are also unused */
+	gboolean collapsed;
+
 	GntTreeRow *parent;
 	GntTreeRow *child;
 	GntTreeRow *next;
@@ -27,29 +30,165 @@ struct _GnTreeRow
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
+static GntTreeRow *
+_get_next(GntTreeRow *row, gboolean godeep)
+{
+	if (row == NULL)
+		return NULL;
+	if (godeep && row->child)
+		return row->child;
+	if (row->next)
+		return row->next;
+	return _get_next(row->parent, FALSE);
+}
+
+static GntTreeRow *
+get_next(GntTreeRow *row)
+{
+	if (row == NULL)
+		return;
+	return _get_next(row, !row->collapsed);
+}
+
+/* Returns the n-th next row. If it doesn't exist, returns NULL */
+static GntTreeRow *
+get_next_n(GntTreeRow *row, int n)
+{
+	while (row && n--)
+		row = get_next(row);
+	return row;
+}
+
+/* Returns the n-th next row. If it doesn't exist, then the last non-NULL node */
+static GntTreeRow *
+get_next_n_opt(GntTreeRow *row, int n, int *pos)
+{
+	GntTreeRow *next = row;
+	int r = 0;
+
+	if (row == NULL)
+		return NULL;
+
+	while (row && n--)
+	{
+		row = get_next(row);
+		if (row)
+		{
+			next = row;
+			r++;
+		}
+	}
+
+	if (pos)
+		*pos = r;
+
+	return next;
+}
+
+static GntTreeRow *
+get_last_child(GntTreeRow *row)
+{
+	if (row == NULL)
+		return NULL;
+	if (!row->collapsed && row->child)
+		row = row->child;
+	else
+		return row;
+
+	while(row->next)
+		row = row->next;
+	if (row->child)
+		row = get_last_child(row->child);
+	return row;
+}
+
+static GntTreeRow *
+get_prev(GntTreeRow *row)
+{
+	if (row == NULL)
+		return NULL;
+	if (row->prev)
+		return get_last_child(row->prev);
+	return row->parent;
+}
+
+static GntTreeRow *
+get_prev_n(GntTreeRow *row, int n)
+{
+	while (row && n--)
+		row = get_prev(row);
+	return row;
+}
+
+/* Distance of row from the root */
+/* XXX: This is uber-inefficient */
+static int
+get_root_distance(GntTreeRow *row)
+{
+	if (row == NULL)
+		return -1;
+	return get_root_distance(get_prev(row)) + 1;
+}
+
+/* Returns the distance between a and b. 
+ * If a is 'above' b, then the distance is positive */
+static int
+get_distance(GntTreeRow *a, GntTreeRow *b)
+{
+	/* First get the distance from a to the root.
+	 * Then the distance from b to the root.
+	 * Subtract.
+	 * It's not that good, but it works. */
+	int ha = get_root_distance(a);
+	int hb = get_root_distance(b);
+
+	return (hb - ha);
+}
+
 static void
 redraw_tree(GntTree *tree)
 {
 	int start;
 	GntWidget *widget = GNT_WIDGET(tree);
-	GList *iter;
+	GntTreeRow *row;
 	int pos;
+	gboolean deep;
 
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		pos = 0;
 	else
 		pos = 1;
 
+	if (tree->top == NULL)
+		tree->top = tree->root;
+	if (tree->current == NULL)
+		tree->current = tree->root;
+
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
-	for (start = tree->top, iter = g_list_nth(tree->list, tree->top);
-				iter && start < tree->bottom; start++, iter = iter->next)
+	deep = TRUE;
+	row = tree->top;
+	for (start = pos; row && start < widget->priv.height - pos;
+				start++, row = get_next(row))
 	{
-		char str[2096];	/* XXX: This should be safe for any terminal */
+		char str[2048];
 		int wr;
-		GntTreeRow *row = g_hash_table_lookup(tree->hash, iter->data);
+		char format[16] = "";
 
-		if ((wr = snprintf(str, widget->priv.width, "%s", row->text)) >= widget->priv.width)
+		deep = TRUE;
+
+		if (row->parent == NULL && row->child)
+		{
+			if (row->collapsed)
+			{
+				strcpy(format, "+ ");
+				deep = FALSE;
+			}
+			else
+				strcpy(format, "- ");
+		}
+
+		if ((wr = g_snprintf(str, widget->priv.width, "%s%s", format, row->text)) >= widget->priv.width)
 		{
 			/* XXX: ellipsize */
 			str[widget->priv.width - 1 - pos] = 0;
@@ -61,19 +200,20 @@ redraw_tree(GntTree *tree)
 			str[wr] = 0;
 		}
 		
-		if (start == tree->current)
+		if (row == tree->current)
 		{
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
-			mvwprintw(widget->window, start - tree->top + pos, pos, str);
+			mvwprintw(widget->window, start, pos, str);
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}
 		else
-			mvwprintw(widget->window, start - tree->top + pos, pos, str);
+			mvwprintw(widget->window, start, pos, str);
+		tree->bottom = row;
 	}
 
-	while (start < tree->bottom)
+	while (start < widget->priv.height - pos)
 	{
-		mvwhline(widget->window, start - tree->top + pos, pos, ' ',
+		mvwhline(widget->window, start, pos, ' ',
 				widget->priv.width - pos * 2);
 		start++;
 	}
@@ -85,13 +225,12 @@ static void
 gnt_tree_draw(GntWidget *widget)
 {
 	GntTree *tree = GNT_TREE(widget);
+	int bottom;
 
 	scrollok(widget->window, TRUE);
 	wsetscrreg(widget->window, 0, widget->priv.height - 1);
 
-	tree->top = 0;
-	tree->bottom = widget->priv.height -
-			(GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER) ? 0 : 2);
+	tree->top = tree->root;
 
 	redraw_tree(tree);
 	
@@ -116,32 +255,42 @@ gnt_tree_map(GntWidget *widget)
 }
 
 static void
-tree_selection_changed(GntTree *tree, int old, int current)
+tree_selection_changed(GntTree *tree, GntTreeRow *old, GntTreeRow *current)
 {
 	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old, current);
+}
+
+static GntTreeRow *
+get_nth_row(GntTree *tree, int n)
+{
+	gpointer key = g_list_nth_data(tree->list, n);
+	return g_hash_table_lookup(tree->hash, key);
 }
 
 static gboolean
 gnt_tree_key_pressed(GntWidget *widget, const char *text)
 {
 	GntTree *tree = GNT_TREE(widget);
-	int old = tree->current;
+	GntTreeRow *old = tree->current;
+	GntTreeRow *row;
 
 	if (text[0] == 27)
 	{
-		if (strcmp(text+1, GNT_KEY_DOWN) == 0 && tree->current < g_list_length(tree->list) - 1)
+		int dist;
+		if (strcmp(text+1, GNT_KEY_DOWN) == 0 && (row = get_next(tree->current)) != NULL)
 		{
-			tree->current++;
-			if (tree->current >= tree->bottom)
-				gnt_tree_scroll(tree, 1 + tree->current - tree->bottom);
+			tree->current = row;
+			if ((dist = get_distance(tree->current, tree->bottom)) < 0)
+				gnt_tree_scroll(tree, -dist);
 			else
 				redraw_tree(tree);
 		}
-		else if (strcmp(text+1, GNT_KEY_UP) == 0 && tree->current > 0)
+		else if (strcmp(text+1, GNT_KEY_UP) == 0 && (row = get_prev(tree->current)) != NULL)
 		{
-			tree->current--;
-			if (tree->current < tree->top)
-				gnt_tree_scroll(tree, tree->current - tree->top);
+			tree->current = row;
+
+			if ((dist = get_distance(tree->current, tree->top)) > 0)
+				gnt_tree_scroll(tree, -dist);
 			else
 				redraw_tree(tree);
 		}
@@ -149,6 +298,16 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 	else if (text[0] == '\r')
 	{
 		gnt_widget_activate(widget);
+	}
+	else if (text[0] == ' ' && text[1] == 0)
+	{
+		/* Space pressed */
+		GntTreeRow *row = tree->current;
+		if (row && row->child)
+		{
+			row->collapsed = !row->collapsed;
+			redraw_tree(tree);
+		}
 	}
 
 	if (old != tree->current)
@@ -184,8 +343,8 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntTreeClass, selection_changed),
 					 NULL, NULL,
-					 gnt_closure_marshal_VOID__INT_INT,
-					 G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_INT);
+					 gnt_closure_marshal_VOID__POINTER_POINTER,
+					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 
 	DEBUG;
 }
@@ -268,16 +427,22 @@ int gnt_tree_get_visible_rows(GntTree *tree)
 
 void gnt_tree_scroll(GntTree *tree, int count)
 {
-	if (tree->top == 0 && count < 0)
-		return;
+	GntTreeRow *row;
 
-	if (count > 0 && tree->bottom + count >= g_list_length(tree->list))
-		count = g_list_length(tree->list) - tree->bottom;
-	else if (count < 0 && tree->top + count < 0)
-		count = -tree->top;
-
-	tree->top += count;
-	tree->bottom += count;
+	if (count < 0)
+	{
+		if (get_root_distance(tree->top) == 0)
+			return;
+		row = get_prev_n(tree->top, -count);
+		if (row == NULL)
+			row = tree->root;
+		tree->top = row;
+	}
+	else
+	{
+		get_next_n_opt(tree->bottom, count, &count);
+		tree->top = get_next_n(tree->top, count);
+	}
 
 	redraw_tree(tree);
 }
@@ -300,7 +465,7 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 {
 	GntTreeRow *row = g_new0(GntTreeRow, 1), *pr = NULL;
 
-	g_hash_table_insert(tree->hash, key, row);
+	g_hash_table_replace(tree->hash, key, row);
 
 	if (tree->root == NULL)
 	{
@@ -342,11 +507,13 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 
 		if (pr == NULL)
 		{
-			if (tree->root)	tree->root->prev = row;
-			row->next = tree->root;
-			tree->root = row;
+			GntTreeRow *r = tree->root;
+			while (r->next)
+				r = r->next;
+			r->next = row;
+			row->prev = r;
 
-			tree->list = g_list_prepend(tree->list, key);
+			tree->list = g_list_append(tree->list, key);
 		}
 		else
 		{
@@ -366,12 +533,9 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 
 gpointer gnt_tree_get_selection_data(GntTree *tree)
 {
-	return g_list_nth_data(tree->list, tree->current);
-}
-
-int gnt_tree_get_selection_index(GntTree *tree)
-{
-	return tree->current;
+	if (tree->current)
+		return tree->current->key;	/* XXX: perhaps we should just get rid of 'data' */
+	return NULL;
 }
 
 /* XXX: Should this also remove all the children of the row being removed? */
@@ -380,24 +544,70 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
 	if (row)
 	{
-		int len, pos;
+		gboolean redraw = FALSE;
 
-		pos = g_list_index(tree->list, key);
+		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
+			redraw = TRUE;
 
+		/* Update root/top/current/bottom if necessary */
+		if (tree->root == row)
+			tree->root = get_next(row);
+		if (tree->top == row)
+		{
+			if (tree->top != tree->root)
+				tree->top = get_prev(row);
+			else
+				tree->top = get_next(row);
+			if (tree->current == row)
+				tree->current = tree->top;
+		}
+		else if (tree->current == row)
+		{
+			if (tree->current != tree->root)
+				tree->current = get_prev(row);
+			else
+				tree->current = get_next(row);
+		}
+		else if (tree->bottom == row)
+		{
+			tree->bottom = get_prev(row);
+		}
+
+		/* Fix the links */
+		if (row->next)
+			row->next->prev = row->prev;
+		if (row->parent && row->parent->child == row)
+			row->parent->child = row->next;
+		if (row->prev)
+			row->prev->next = row->next;
+		
 		g_hash_table_remove(tree->hash, key);
 		tree->list = g_list_remove(tree->list, key);
 
-		if (pos >= tree->top && pos < tree->bottom)
+		if (redraw)
 		{
 			redraw_tree(tree);
 		}
-		g_hash_table_replace(tree->hash, key, NULL);
 	}
 }
 
 int gnt_tree_get_selection_visible_line(GntTree *tree)
 {
-	return (tree->current - tree->top) +
+	return get_distance(tree->top, tree->current) +
 			!!(GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_NO_BORDER));
 }
+
+void gnt_tree_change_text(GntTree *tree, gpointer key, const char *text)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	if (row)
+	{
+		g_free(row->text);
+		row->text = g_strdup_printf("%*s%s", TAB_SIZE * find_depth(row), "", text);
+
+		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) > 0)
+			redraw_tree(tree);
+	}
+}
+
 

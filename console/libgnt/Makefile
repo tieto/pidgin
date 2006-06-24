@@ -36,7 +36,7 @@ OBJECTS = \
 
 all: libgnt
 
-test: $(OBJECTS)
+test2: $(OBJECTS)
 key: $(OBJECTS)
 
 gntwidget.o: gntwidget.c $(HEADERS)

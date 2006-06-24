@@ -9,6 +9,7 @@
 #include "gnttree.h"
 
 #include "gntblist.h"
+#include <string.h>
 
 typedef struct
 {
@@ -23,6 +24,7 @@ GGBlist *ggblist;
 
 static void add_buddy(GaimBuddy *buddy, GGBlist *ggblist);
 static void add_group(GaimGroup *group, GGBlist *ggblist);
+static void draw_tooltip(GGBlist *ggblist);
 
 static void
 new_node(GaimBlistNode *node)
@@ -54,6 +56,8 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 		GaimGroup *group = gaim_buddy_get_group((GaimBuddy*)node);
 		if (gaim_blist_get_group_online_count(group) == 0)
 			node_remove(list, (GaimBlistNode*)group);
+		else if (ggblist->tnode == (GaimBlistNode *)group)	/* Need to update the counts */
+			draw_tooltip(ggblist);
 	}
 
 	if (ggblist->tnode == node)
@@ -68,6 +72,10 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
 		GaimBuddy *buddy = (GaimBuddy*)node;
+		if (gaim_presence_is_online(gaim_buddy_get_presence(buddy)))
+			add_buddy(buddy, list->ui_data);
+		else
+			node_remove(gaim_get_blist(), node);
 	}
 }
 
@@ -108,6 +116,52 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 			group->name, NULL, NULL);
 }
 
+static const char *
+get_buddy_display_name(GaimBuddy *buddy)
+{
+	static char text[2096];
+	char status[8];
+	GaimStatusPrimitive prim;
+	GaimPresence *presence;
+	GaimStatus *now;
+
+	presence = gaim_buddy_get_presence(buddy);
+	now = gaim_presence_get_active_status(presence);
+
+	prim = gaim_status_type_get_primitive(gaim_status_get_type(now));
+
+	switch(prim)
+	{
+#if 1
+		case GAIM_STATUS_OFFLINE:
+			strncpy(status, "x", sizeof(status) - 1);
+			break;
+		case GAIM_STATUS_AVAILABLE:
+			strncpy(status, "o", sizeof(status) - 1);
+			break;
+		default:
+			strncpy(status, ".", sizeof(status) - 1);
+			break;
+#else
+		/* XXX: Let's use these some time */
+		case GAIM_STATUS_OFFLINE:
+			strncpy(status, "⊗", sizeof(status) - 1);
+			break;
+		case GAIM_STATUS_AVAILABLE:
+			/* XXX: Detect idleness */
+			strncpy(status, "◯", sizeof(status) - 1);
+			break;
+		default:
+			strncpy(status, "⊖", sizeof(status) - 1);
+			break;
+#endif
+	}
+
+	snprintf(text, sizeof(text) - 1, "%s %s", status, gaim_buddy_get_alias(buddy));
+
+	return text;
+}
+
 static void
 add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 {
@@ -120,7 +174,10 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	add_group(group, ggblist);
 
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
-				gaim_buddy_get_alias(buddy), group, NULL);
+				get_buddy_display_name(buddy), group, NULL);
+
+	if (ggblist->tnode == (GaimBlistNode*)group)
+		draw_tooltip(ggblist);
 }
 
 static void
@@ -147,17 +204,20 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 }
 
 static void
-selection_changed(GntWidget *widget, int old, int current, GGBlist *ggblist)
+draw_tooltip(GGBlist *ggblist)
 {
 	GaimBlistNode *node;
-	GntTree *tree = GNT_TREE(widget);
 	int x, y, top, width;
 	GString *str;
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
 	GaimAccount *account;
-	GntWidget *box, *label;
-	char *title;
+	GntTree *tree;
+	GntWidget *widget, *box, *label;
+	char *title = NULL;
+
+	widget = ggblist->tree;
+	tree = GNT_TREE(widget);
 
 	if (ggblist->tooltip)
 	{
@@ -195,6 +255,16 @@ selection_changed(GntWidget *widget, int old, int current, GGBlist *ggblist)
 
 		title = g_strdup(gaim_buddy_get_name(buddy));
 	}
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+	{
+		GaimGroup *group = (GaimGroup *)node;
+
+		g_string_append_printf(str, _("Online: %d\nTotal: %d"),
+						gaim_blist_get_group_online_count(group),
+						gaim_blist_get_group_size(group, FALSE));
+
+		title = g_strdup(group->name);
+	}
 	else
 	{
 		g_string_free(str, TRUE);
@@ -217,11 +287,19 @@ selection_changed(GntWidget *widget, int old, int current, GGBlist *ggblist)
 
 	gnt_widget_set_position(box, x, y);
 	gnt_widget_draw(box);
-	
+
+	g_free(title);
 	g_string_free(str, TRUE);
 	ggblist->tooltip = box;
 	ggblist->tnode = node;
 }
+
+static void
+selection_changed(GntWidget *widget, gpointer old, gpointer current, GGBlist *ggblist)
+{
+	draw_tooltip(ggblist);
+}
+
 
 static gboolean
 key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
@@ -237,6 +315,14 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 		}
 	}
 	return FALSE;
+}
+
+static void
+buddy_status_changed(GaimBuddy *buddy, GaimStatus *old, GaimStatus *now, GGBlist *ggblist)
+{
+	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, get_buddy_display_name(buddy));
+	if (ggblist->tnode == (GaimBlistNode*)buddy)
+		draw_tooltip(ggblist);
 }
 
 void gg_blist_init()
@@ -256,13 +342,16 @@ void gg_blist_init()
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 	gnt_widget_show(ggblist->window);
+
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", gg_blist_get_handle(),
+				GAIM_CALLBACK(buddy_status_changed), ggblist);
 	
+#if 0
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_signed_on), ggblist);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-off", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_signed_off), ggblist);
 
-#if 0
 	/* These I plan to use to indicate unread-messages etc. */
 	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg", gg_blist_get_handle(),
 				GAIM_CALLBACK(received_im_msg), list);
