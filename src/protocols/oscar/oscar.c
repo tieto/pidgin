@@ -1113,9 +1113,8 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 
 	od->iconconnecting = FALSE;
 
-	if (od->icontimer)
-		gaim_timeout_remove(od->icontimer);
-	od->icontimer = gaim_timeout_add(100, gaim_icon_timerfunc, gc);
+	if (od->icontimer == 0)
+		od->icontimer = gaim_timeout_add(100, gaim_icon_timerfunc, gc);
 }
 
 static int
@@ -1815,9 +1814,8 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 				cur = cur->next;
 			if (!cur) {
 				od->requesticon = g_slist_append(od->requesticon, g_strdup(gaim_normalize(account, info->sn)));
-				if (od->icontimer)
-					gaim_timeout_remove(od->icontimer);
-				od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
+				if (od->icontimer == 0)
+					od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
 			}
 		}
 		g_free(b16);
@@ -3169,9 +3167,8 @@ static int gaim_icon_error(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	od->requesticon = g_slist_remove(od->requesticon, sn);
 	g_free(sn);
 
-	if (od->icontimer)
-		gaim_timeout_remove(od->icontimer);
-	od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
+	if (od->icontimer == 0)
+		od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -3221,9 +3218,8 @@ static int gaim_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame *f
 			cur = cur->next;
 	}
 
-	if (od->icontimer)
-		gaim_timeout_remove(od->icontimer);
-	od->icontimer = gaim_timeout_add(250, gaim_icon_timerfunc, gc);
+	if (od->icontimer == 0)
+		od->icontimer = gaim_timeout_add(250, gaim_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -3233,6 +3229,8 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo;
 	FlapConnection *conn;
+
+	od->icontimer = 0;
 
 	conn = flap_connection_getbytype(od, SNAC_FAMILY_BART);
 	if (!conn) {
@@ -3286,7 +3284,9 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 		g_free(sn);
 	}
 
-	return TRUE;
+	od->icontimer = gaim_timeout_add(100, gaim_icon_timerfunc, gc);
+
+	return FALSE;
 }
 
 /*
