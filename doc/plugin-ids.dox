@@ -28,10 +28,7 @@
     - qpe       - Gaim for Qtopia plugin.
 
   The @em username must be a unique identifier for that person. It
-  @em should be your Gaim website user ID
-  (registered <a href="http://gaim.sourceforge.net/register.php">here</a>).
-  If for some reason you cannot register there (it shouldn't be a
-  problem!), you can use your SourceForge ID. Do @em not leave this field
+  @em should be your SourceForge ID. Do @em not leave this field
   blank.
 
   The @em pluginname is the name of your plugin. It can be whatever you like,
