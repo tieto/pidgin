@@ -222,6 +222,8 @@ draw_tooltip(GGBlist *ggblist)
 
 	if (ggblist->tooltip)
 	{
+		/* XXX: Once we can properly redraw on expose events, this can be removed at the end
+		 * to avoid the blinking*/
 		remove_tooltip(ggblist);
 	}
 
@@ -293,6 +295,8 @@ draw_tooltip(GGBlist *ggblist)
 	g_string_free(str, TRUE);
 	ggblist->tooltip = box;
 	ggblist->tnode = node;
+
+	gnt_widget_set_name(ggblist->tooltip, "tooltip");
 }
 
 static void
@@ -333,6 +337,7 @@ void gg_blist_init()
 	gaim_get_blist()->ui_data = ggblist;
 
 	ggblist->window = gnt_box_new(FALSE, FALSE);
+	gnt_widget_set_name(ggblist->window, "buddylist");
 	gnt_box_set_toplevel(GNT_BOX(ggblist->window), TRUE);
 	gnt_box_set_title(GNT_BOX(ggblist->window), _("Buddy List"));
 	gnt_box_set_pad(GNT_BOX(ggblist->window), 0);

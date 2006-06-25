@@ -225,8 +225,6 @@ gnt_widget_destroy(GntWidget *obj)
 	delwin(obj->window);
 	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING))
 		g_object_run_dispose(G_OBJECT(obj));
-	/* XXX: This may be the wrong place */
-	/*gnt_screen_remove_widget(obj);*/
 	DEBUG;
 }
 
@@ -264,11 +262,10 @@ gnt_widget_draw(GntWidget *widget)
 	else
 		werase(widget->window);
 
+#if 0
+	/* XXX: No shadow for now :( */
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_SHADOW))
 	{
-		/* XXX: Find out the actual windows beneath this window, and 
-		 * draw the shadow on them */
-		/* XXX: Or perhaps do all these from a psedo-WM! */
 		widget->back = newwin(widget->priv.height, widget->priv.width,
 						widget->priv.y + 1, widget->priv.x + 1);
 		wbkgd(widget->back, COLOR_PAIR(GNT_COLOR_SHADOW));
@@ -279,6 +276,7 @@ gnt_widget_draw(GntWidget *widget)
 		touchline(widget->back, 0, widget->priv.height);
 		wrefresh(widget->back);
 	}
+#endif
 
 	wrefresh(widget->window);
 	g_signal_emit(widget, signals[SIG_DRAW], 0);

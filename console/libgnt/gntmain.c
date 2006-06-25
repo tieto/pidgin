@@ -9,6 +9,10 @@ static GList *focus_list;
 static int max_x;
 static int max_y;
 
+static GHashTable *nodes;
+
+static void free_node(gpointer data);
+
 void gnt_screen_take_focus(GntWidget *widget)
 {
 	focus_list = g_list_prepend(focus_list, widget);
@@ -95,6 +99,8 @@ void gnt_init()
 	max_x = getmaxx(stdscr);
 	max_y = getmaxy(stdscr);
 
+	nodes = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_node);
+
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	noecho();
 	refresh();
@@ -106,5 +112,85 @@ void gnt_main()
 {
 	GMainLoop *loop = g_main_new(FALSE);
 	g_main_run(loop);
+}
+
+/*********************************
+ * Stuff for 'window management' *
+ *********************************/
+
+typedef struct
+{
+	GntWidget *me;
+	GList *below;		/* List of widgets below me */
+	GList *above;		/* List of widgets above me */
+} GntNode;
+
+static void
+free_node(gpointer data)
+{
+	GntNode *node = data;
+	g_list_free(node->below);
+	g_list_free(node->above);
+	g_free(node);
+}
+
+static void
+check_intersection(gpointer key, gpointer value, gpointer data)
+{
+	GntNode *n = value;
+	GntNode *nu = data;
+
+	if (value == NULL)
+		return;
+
+	if (n->me->priv.x + n->me->priv.width < nu->me->priv.x)
+		return;
+	if (nu->me->priv.x + nu->me->priv.width < n->me->priv.x)
+		return;
+
+	if (n->me->priv.y + n->me->priv.height < nu->me->priv.y)
+		return;
+	if (nu->me->priv.y + nu->me->priv.height < n->me->priv.y)
+		return;
+
+	n->above = g_list_prepend(n->above, nu->me);
+	nu->below = g_list_prepend(nu->below, n->me);
+}
+
+void gnt_screen_occupy(GntWidget *widget)
+{
+	/* XXX: what happens if this is called more than once for the same widget?
+	 *      perhaps _release first? */
+	GntNode *node = g_new0(GntNode, 1);
+	node->me = widget;
+
+	g_hash_table_foreach(nodes, check_intersection, node);
+	g_hash_table_replace(nodes, widget, node);
+}
+
+void gnt_screen_release(GntWidget *widget)
+{
+	GList *iter;
+	GntNode *node = g_hash_table_lookup(nodes, widget);
+	if (node == NULL || node->below == NULL)	/* Yay! Nothing to do. */
+		return;
+
+	/* XXX: This is not going to work.
+	 *      It will be necessary to build a topology and go from there. */
+	for (iter = node->below; iter; iter = iter->next)
+	{
+		GntWidget *w = iter->data;
+		int left, right, top, bottom;
+
+		left = MAX(widget->priv.x, w->priv.x) - w->priv.x;
+		right = MIN(widget->priv.x + widget->priv.width, w->priv.x + w->priv.width) - w->priv.x;
+		
+		top = MAX(widget->priv.y, w->priv.y) - w->priv.y;
+		bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
+		
+		gnt_widget_expose(w, left, top, right - left, bottom - top);
+	}
+
+	g_hash_table_remove(nodes, widget);
 }
 

@@ -1,5 +1,5 @@
 CFLAGS=`pkg-config --cflags gobject-2.0` -g
-LDFLAGS=`pkg-config --libs gobject-2.0` -lncursesw
+LDFLAGS=`pkg-config --libs gobject-2.0` -lncursesw -pg
 
 HEADERS = \
 	gntwidget.h \

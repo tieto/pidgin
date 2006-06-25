@@ -16,7 +16,9 @@ gnt_box_draw(GntWidget *widget)
 
 	for (iter = box->list; iter; iter = iter->next)
 	{
-		gnt_widget_draw(GNT_WIDGET(iter->data));
+		GntWidget *w = GNT_WIDGET(iter->data);
+		gnt_widget_draw(w);
+		overwrite(w->window, widget->window);
 	}
 
 	if (box->title)
@@ -39,6 +41,8 @@ gnt_box_draw(GntWidget *widget)
 		g_free(title);
 	}
 	wrefresh(widget->window);
+
+	gnt_screen_occupy(widget);
 	
 	DEBUG;
 }
@@ -263,7 +267,18 @@ gnt_box_destroy(GntWidget *w)
 		gnt_widget_destroy(iter->data);
 	}
 
+	gnt_screen_release(w);
+	
 	g_list_free(box->list);
+}
+
+static void
+gnt_box_expose(GntWidget *widget, int x, int y, int width, int height)
+{
+	WINDOW *win = newwin(height, width, widget->priv.y + y, widget->priv.x + x);
+	copywin(widget->window, win, y, x, 0, 0, height - 1, width - 1, FALSE);
+	wrefresh(win);
+	delwin(win);
 }
 
 static void
@@ -274,6 +289,7 @@ gnt_box_class_init(GntBoxClass *klass)
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_box_destroy;
 	parent_class->draw = gnt_box_draw;
+	parent_class->expose = gnt_box_expose;
 	parent_class->map = gnt_box_map;
 	parent_class->size_request = gnt_box_size_request;
 	parent_class->set_position = gnt_box_set_position;

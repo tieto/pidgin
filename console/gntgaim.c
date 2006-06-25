@@ -169,7 +169,7 @@ init_libgaim()
 int main(int argc, char **argv)
 {
 	/* XXX: Don't puke */
-	freopen("/dev/null", "w", stderr);
+	freopen(".error", "w", stderr);
 
 	/* Initialize the libgaim stuff */
 	init_libgaim();
