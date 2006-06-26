@@ -62,7 +62,7 @@ static void _qq_buddy_status_dump_unclear(qq_buddy_status * s)
 
 /*****************************************************************************/
 // parse the data into qq_buddy_status
-static gint _qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_status * s) {
+gint _qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_status * s) {
 	gint bytes;
 
 	g_return_val_if_fail(data != NULL && *cursor != NULL && s != NULL, -1);

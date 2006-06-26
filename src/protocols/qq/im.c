@@ -48,7 +48,7 @@
 #define DEFAULT_FONT_NAME_LEN 	  4
 
 // a debug function
-static void _qq_show_packet(gchar * desc, gchar * buf, gint len);
+void _qq_show_packet(gchar * desc, gchar * buf, gint len);
 
 enum
 {
@@ -230,7 +230,7 @@ static const gchar *qq_get_recv_im_type_str(gint type)
 
 /*****************************************************************************/
 // generate a md5 key using uid and session_key
-static gchar *_gen_session_md5(gint uid, gchar * session_key)
+gchar *_gen_session_md5(gint uid, gchar * session_key)
 {
 	gchar *src, md5_str[QQ_KEY_LENGTH];
 	guint8 *cursor;

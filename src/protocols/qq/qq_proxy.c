@@ -60,7 +60,7 @@ static void _qq_show_socket(gchar *desc, gint fd) {
 }
 */
 
-static void _qq_show_packet(gchar * desc, gchar * buf, gint len)
+void _qq_show_packet(gchar * desc, gchar * buf, gint len)
 {
 	char buf1[4096], buf2[10];
 	int i;
@@ -108,7 +108,7 @@ static guint8 *_gen_pwkey(const gchar * pwd)
 
 
 /*****************************************************************************/
-static gint _qq_fill_host(struct sockaddr_in * addr, const gchar * host, guint16 port)
+gint _qq_fill_host(struct sockaddr_in * addr, const gchar * host, guint16 port)
 {
 	if (!inet_aton(host, &(addr->sin_addr))) {
 		struct hostent *hp;

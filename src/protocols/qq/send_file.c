@@ -140,7 +140,7 @@ static ssize_t _qq_xfer_read(char **buf, GaimXfer *xfer)
 }
 */
 
-static gssize _qq_xfer_write(const guchar *buf, size_t len, GaimXfer *xfer) //gfhuang
+gssize _qq_xfer_write(const guchar *buf, size_t len, GaimXfer *xfer) //gfhuang
 {
 	return _qq_xfer_udp_send(buf, len, xfer);
 }
