@@ -1,0 +1,176 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of OpenQ src
+#
+
+#
+# PATHS
+#
+
+INCLUDE_DIR :=		.
+OPENQ_TOP :=		../
+GTK_TOP :=		../../../../win32-dev/gtk_2_0
+GAIM_TOP :=		../../..
+OPENQ_ROOT :=		.
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+
+##
+## VARIABLE DEFINITIONS
+##
+
+TARGET = openq
+
+TYPE = PLUGIN
+
+OPENQ_VERSION := $(shell cat $(OPENQ_TOP)/VERSION)
+
+# Compiler Options
+
+CFLAGS =
+
+DEFINES = -DOPENQ_VERSION=\"$(OPENQ_VERSION)\"
+
+# Static or Plugin... 
+ifeq ($(TYPE),STATIC)
+	DEFINES += -DSTATIC
+	DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
+else
+ifeq ($(TYPE),PLUGIN)
+	DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)/plugins
+endif
+endif
+
+
+##
+## INCLUDE  MAKEFILES
+##
+
+include $(GAIM_TOP)/src/win32/global.mak
+
+##
+## INCLUDE PATHS
+##
+
+INCLUDE_PATHS += \
+	-I$(OPENQ_ROOT) \
+	-I$(GTK_TOP)/include \
+	-I$(GTK_TOP)/include/gtk-2.0 \
+	-I$(GTK_TOP)/include/glib-2.0 \
+	-I$(GTK_TOP)/include/pango-1.0 \
+	-I$(GTK_TOP)/include/atk-1.0 \
+	-I$(GTK_TOP)/lib/glib-2.0/include \
+	-I$(GTK_TOP)/lib/gtk-2.0/include \
+	-I$(GAIM_TOP)/src \
+	-I$(GAIM_TOP)/src/win32 \
+	-I$(GAIM_TOP)
+
+LIB_PATHS = \
+	-L$(GTK_TOP)/lib \
+	-L$(GAIM_TOP)/src
+
+##
+##  SOURCES, OBJECTS
+##
+
+C_SRC = \
+	buddy_info.c \
+	buddy_list.c \
+	buddy_opt.c \
+	buddy_status.c \
+	char_conv.c \
+	crypt.c \
+	file_trans.c \
+	group.c \
+	group_admindlg.c \
+	group_conv.c \
+	group_find.c \
+	group_free.c \
+	group_hash.c \
+	group_im.c \
+	group_info.c \
+	group_join.c \
+	group_misc.c \
+	group_network.c \
+	group_opt.c \
+	group_search.c \
+	header_info.c \
+	im.c \
+	infodlg.c \
+	ip_location.c \
+	keep_alive.c \
+	login_logout.c \
+	packet_parse.c \
+	qq.c \
+	qq_proxy.c \
+	recv_core.c \
+	send_core.c \
+	send_file.c \
+	sendqueue.c \
+	show.c \
+	sys_msg.c \
+	udp_proxy_s5.c \
+	utils.c
+
+OBJECTS = $(C_SRC:%.c=%.o)
+
+##
+## LIBRARIES
+##
+
+LIBS = \
+	-lgtk-win32-2.0 \
+	-lglib-2.0 \
+	-lgdk-win32-2.0 \
+	-lgdk_pixbuf-2.0 \
+	-lgmodule-2.0 \
+	-lgobject-2.0 \
+	-lws2_32 \
+	-lintl \
+	-lgaim
+
+##
+## RULES
+##
+
+# How to make a C file
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean
+
+all: $(TARGET).dll
+
+install:
+	mkdir -p $(DLL_INSTALL_DIR)
+	cp $(OPENQ_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+
+
+##
+## BUILD Dependencies
+##
+
+$(GAIM_TOP)/src/gaim.lib:
+	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+
+##
+## BUILD DLL
+##
+
+$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -rf *.o
+	rm -rf $(TARGET).dll
+	rm -rf $(TARGET).lib
+

@@ -1,0 +1,18 @@
+* Decide how to handle QQ status icons, which are customizable and legion.
+* Give "Online Offline" and "My Offline" statuses appropriate titles.
+* Handle emoticon at beginning of message via passthrough_unknown_commands.
+* Fix file transfer.
+* QQ protocol currently breaks Chinese localization of Gaim. Fix this.
+* Fix ability to insert images into a conversation via the menubar.
+* Fix _qq_menu_block_buddy in qq.c
+* Eliminate all references to QQWry.dat and the geolocation lookup feature previously present OpenQ.
+* Give smileys verbal instead of numerical titles.
+* Clean up signedness warnings.
+* Clean up mixed declaration and code warnings.
+* Better decomposition: 
+** some of these functions are _really_ long
+** buddy_status.c has a helper function which seems to belong in buddy_status.c
+** consider cleaning up qq_encrypt (nested function declarations)
+** eliminate group_misc.c
+** investigate whether all of these externs are appropriate
+* Check for memory leaks.

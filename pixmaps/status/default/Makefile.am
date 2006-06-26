@@ -34,6 +34,7 @@ EXTRA_DIST = \
 	offline.png \
 	op.png \
 	pending.png \
+	qq.png \
 	secure.png \
 	silc.png \
 	simple.png \
