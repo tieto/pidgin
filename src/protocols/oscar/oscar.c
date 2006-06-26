@@ -726,7 +726,16 @@ static char *oscar_icqstatus(int state) {
 }
 
 static void
-oscar_string_append(GaimAccount *account, GString *str, const char *newline,
+oscar_string_append(GString *str, const char *newline,
+					const char *name, const char *value)
+{
+	if (value && value[0]) {
+		g_string_append_printf(str, "%s<b>%s:</b> %s", newline, name, value);
+	}
+}
+
+static void
+oscar_string_convert_and_append(GaimAccount *account, GString *str, const char *newline,
 					const char *name, const char *value)
 {
 	gchar *utf8;
@@ -772,16 +781,16 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		if (gaim_presence_is_online(presence)) {
 			if (aim_sn_is_icq(b->name)) {
 				GaimStatus *status = gaim_presence_get_active_status(presence);
-				oscar_string_append(gc->account, str, newline, _("Status"),
+				oscar_string_append(str, newline, _("Status"),
 									gaim_status_get_name(status));
 			}
 		} else {
 			tmp = aim_ssi_itemlist_findparentname(od->ssi.local, b->name);
 			if (aim_ssi_waitingforauth(od->ssi.local, tmp, b->name))
-				oscar_string_append(gc->account, str, newline, _("Status"),
+				oscar_string_append(str, newline, _("Status"),
 									_("Not Authorized"));
 			else
-				oscar_string_append(gc->account, str, newline, _("Status"),
+				oscar_string_append(str, newline, _("Status"),
 									_("Offline"));
 		}
 	}
@@ -792,14 +801,14 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(gc->account, str, newline, _("IP Address"), tmp);
+		oscar_string_append(str, newline, _("IP Address"), tmp);
 		g_free(tmp);
 	}
 
 
 	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
 		tmp = g_strdup_printf("%d", (int)(userinfo->warnlevel/10.0 + .5));
-		oscar_string_append(gc->account, str, newline, _("Warning Level"), tmp);
+		oscar_string_append(str, newline, _("Warning Level"), tmp);
 		g_free(tmp);
 	}
 
@@ -808,7 +817,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		if (tmp != NULL) {
 			char *tmp2 = g_markup_escape_text(tmp, strlen(tmp));
 			g_free(tmp);
-			oscar_string_append(gc->account, str, newline, _("Buddy Comment"), tmp2);
+			oscar_string_convert_and_append(account, str, newline, _("Buddy Comment"), tmp2);
 			g_free(tmp2);
 		}
 	}
@@ -2824,23 +2833,23 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		time_t t = userinfo->onlinesince - od->timeoffset;
-		oscar_string_append(gc->account, str, "\n<br>", _("Online Since"), gaim_date_format_full(localtime(&t)));
+		oscar_string_append(str, "\n<br>", _("Online Since"), gaim_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince - od->timeoffset;
-		oscar_string_append(gc->account, str, "\n<br>", _("Member Since"), gaim_date_format_full(localtime(&t)));
+		oscar_string_append(str, "\n<br>", _("Member Since"), gaim_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->capabilities != 0) {
 		tmp = oscar_caps_to_string(userinfo->capabilities);
-		oscar_string_append(gc->account, str, "\n<br>", _("Capabilities"), tmp);
+		oscar_string_append(str, "\n<br>", _("Capabilities"), tmp);
 		g_free(tmp);
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = gaim_str_seconds_to_string(userinfo->idletime*60);
-		oscar_string_append(gc->account, str, "\n<br>", _("Idle"), tmp);
+		oscar_string_append(str, "\n<br>", _("Idle"), tmp);
 		g_free(tmp);
 	}
 
@@ -2852,7 +2861,7 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 		if (userinfo->status[0] != '\0')
 			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
-		oscar_string_append(gc->account, str, "\n<br>", _("Available Message"), tmp);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Available Message"), tmp);
 		g_free(tmp);
 	}
 
@@ -3598,15 +3607,19 @@ static int gaim_offlinemsgdone(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	GaimConnection *gc = od->gc;
+	GaimConnection *gc;
+	GaimAccount *account;
 	GaimBuddy *buddy;
-	struct buddyinfo *bi = NULL;
+	struct buddyinfo *bi;
 	gchar who[16];
 	GString *str;
 	gchar *utf8;
 	const gchar *alias;
 	va_list ap;
 	struct aim_icq_info *info;
+
+	gc = od->gc;
+	account = gaim_connection_get_account(gc);
 
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_icq_info *);
@@ -3620,20 +3633,22 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
 	if (buddy != NULL)
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(buddy->account, buddy->name));
+	else
+		bi = NULL;
 
 	g_string_append_printf(str, "<b>%s:</b> %s", _("UIN"), who);
-	oscar_string_append(gc->account, str, "\n<br>", _("Nick"), info->nick);
+	oscar_string_convert_and_append(account, str, "\n<br>", _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 						(bi->ipaddr & 0xff000000) >> 24,
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(gc->account, str, "\n<br>", _("IP Address"), tstr);
+		oscar_string_append(str, "\n<br>", _("IP Address"), tstr);
 		g_free(tstr);
 	}
-	oscar_string_append(gc->account, str, "\n<br>", _("First Name"), info->first);
-	oscar_string_append(gc->account, str, "\n<br>", _("Last Name"), info->last);
+	oscar_string_convert_and_append(account, str, "\n<br>", _("First Name"), info->first);
+	oscar_string_convert_and_append(account, str, "\n<br>", _("Last Name"), info->last);
 	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email))) {
 		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("E-Mail Address"), utf8, utf8);
 		g_free(utf8);
@@ -3647,9 +3662,9 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			}
 		}
 	}
-	oscar_string_append(gc->account, str, "\n<br>", _("Mobile Phone"), info->mobile);
+	oscar_string_convert_and_append(account, str, "\n<br>", _("Mobile Phone"), info->mobile);
 	if (info->gender != 0)
-		oscar_string_append(gc->account, str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
+		oscar_string_append(str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
 		/* Initialize the struct properly or strftime() will crash
 		 * under some conditions (e.g. Debian sarge w/ LANG=en_HK). */
@@ -3665,13 +3680,13 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 * feel free to remove it.  --rlaager */
 		mktime(tm);
 
-		oscar_string_append(gc->account, str, "\n<br>", _("Birthday"),
+		oscar_string_append(str, "\n<br>", _("Birthday"),
 				    gaim_date_format_short(tm));
 	}
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		oscar_string_append(gc->account, str, "\n<br>", _("Age"), age);
+		oscar_string_append(str, "\n<br>", _("Age"), age);
 	}
 	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->personalwebpage))) {
 		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Personal Web Page"), utf8, utf8);
@@ -3684,25 +3699,25 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	g_string_append_printf(str, "<hr>");
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Home Address"));
-		oscar_string_append(gc->account, str, "\n<br>", _("Address"), info->homeaddr);
-		oscar_string_append(gc->account, str, "\n<br>", _("City"), info->homecity);
-		oscar_string_append(gc->account, str, "\n<br>", _("State"), info->homestate);
-		oscar_string_append(gc->account, str, "\n<br>", _("Zip Code"), info->homezip);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Address"), info->homeaddr);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("City"), info->homecity);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("State"), info->homestate);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Zip Code"), info->homezip);
 		g_string_append_printf(str, "\n<hr>");
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Address"));
-		oscar_string_append(gc->account, str, "\n<br>", _("Address"), info->workaddr);
-		oscar_string_append(gc->account, str, "\n<br>", _("City"), info->workcity);
-		oscar_string_append(gc->account, str, "\n<br>", _("State"), info->workstate);
-		oscar_string_append(gc->account, str, "\n<br>", _("Zip Code"), info->workzip);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Address"), info->workaddr);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("City"), info->workcity);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("State"), info->workstate);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Zip Code"), info->workzip);
 		g_string_append_printf(str, "\n<hr>");
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
 		g_string_append_printf(str, "<b>%s:</b>", _("Work Information"));
-		oscar_string_append(gc->account, str, "\n<br>", _("Company"), info->workcompany);
-		oscar_string_append(gc->account, str, "\n<br>", _("Division"), info->workdivision);
-		oscar_string_append(gc->account, str, "\n<br>", _("Position"), info->workposition);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Company"), info->workcompany);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Division"), info->workdivision);
+		oscar_string_convert_and_append(account, str, "\n<br>", _("Position"), info->workposition);
 		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->workwebpage))) {
 			g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
 			g_free(utf8);
