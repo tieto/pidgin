@@ -675,6 +675,14 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		/* We are joining a channel for the first time */
 		serv_got_joined_chat(gc, id++, args[0]);
 		g_free(nick);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
+							    args[0],
+							    irc->account);
+		if (convo == NULL) {
+			gaim_debug_error("irc", "tried to join %s but couldn't\n", args[0]);
+			return;
+		}
+		gaim_conversation_present(convo);
 		return;
 	}
 

@@ -402,6 +402,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 		return 0;
 
 	convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, irc->account, args[0]);
+	gaim_conversation_present(convo);
 
 	if (args[1]) {
 		gc = gaim_account_get_connection(irc->account);
