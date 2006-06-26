@@ -1225,6 +1225,7 @@ oscar_login(GaimAccount *account)
 	if (!aim_snvalid(gaim_account_get_username(account))) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), gaim_account_get_username(account));
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc, buf);
 		g_free(buf);
 	}
@@ -2915,6 +2916,11 @@ static int gaim_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	if (b == NULL)
 		return 1;
 
+	if (strcmp(gaim_buddy_get_name(b), userinfo->sn))
+		serv_got_alias(gc, gaim_buddy_get_name(b), userinfo->sn);
+	else
+		serv_got_alias(gc, gaim_buddy_get_name(b), NULL);
+
 	presence = gaim_buddy_get_presence(b);
 	status = gaim_presence_get_active_status(presence);
 
@@ -4227,6 +4233,11 @@ oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimMes
 	return ret;
 }
 
+/*
+ * As of 26 June 2006, ICQ users can request AIM info from
+ * everyone, and can request ICQ info from ICQ users, and
+ * AIM users can only request AIM info.
+ */
 static void oscar_get_info(GaimConnection *gc, const char *name) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
@@ -5760,6 +5771,20 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 	g_free(buf);
 }
 
+static void
+oscar_get_aim_info_cb(GaimBlistNode *node, gpointer ignore)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (GaimBuddy *)node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	aim_locate_getinfoshort(gc->proto_data, gaim_buddy_get_name(buddy), 0x00000003);
+}
+
 static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 
 	GaimConnection *gc;
@@ -5772,6 +5797,14 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 	od = gc->proto_data;
 	userinfo = aim_locate_finduserinfo(od, buddy->name);
 	m = NULL;
+
+	if (od->icq && aim_sn_is_icq(gaim_buddy_get_name(buddy)))
+	{
+		act = gaim_menu_action_new(_("Get AIM Info"),
+								   GAIM_CALLBACK(oscar_get_aim_info_cb),
+								   NULL, NULL);
+		m = g_list_append(m, act);
+	}
 
 	act = gaim_menu_action_new(_("Edit Buddy Comment"),
 	                           GAIM_CALLBACK(oscar_buddycb_edit_comment),
