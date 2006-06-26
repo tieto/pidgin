@@ -132,12 +132,8 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 	if (icon_cache != NULL)
 		g_hash_table_remove(icon_cache, gaim_buddy_icon_get_username(icon));
 
-	if (icon->username != NULL)
-		g_free(icon->username);
-
-	if (icon->data != NULL)
-		g_free(icon->data);
-
+	g_free(icon->username);
+	g_free(icon->data);
 	GAIM_DBUS_UNREGISTER_POINTER(icon);
 	g_free(icon);
 }
@@ -315,8 +311,7 @@ gaim_buddy_icon_set_username(GaimBuddyIcon *icon, const char *username)
 	g_return_if_fail(icon     != NULL);
 	g_return_if_fail(username != NULL);
 
-	if (icon->username != NULL)
-		g_free(icon->username);
+	g_free(icon->username);
 
 	icon->username = g_strdup(username);
 }
@@ -326,8 +321,7 @@ gaim_buddy_icon_set_data(GaimBuddyIcon *icon, void *data, size_t len)
 {
 	g_return_if_fail(icon != NULL);
 
-	if (icon->data != NULL)
-		g_free(icon->data);
+	g_free(icon->data);
 
 	if (data != NULL && len > 0)
 	{
@@ -485,8 +479,7 @@ gaim_buddy_icons_set_cache_dir(const char *dir)
 {
 	g_return_if_fail(dir != NULL);
 
-	if (cache_dir != NULL)
-		g_free(cache_dir);
+	g_free(cache_dir);
 
 	cache_dir = g_strdup(dir);
 }
