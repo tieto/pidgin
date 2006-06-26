@@ -1,8 +1,8 @@
-#include <gaim/account.h>
-#include <gaim/blist.h>
+#include <account.h>
+#include <blist.h>
+#include <server.h>
 #include <signal.h>
-#include <gaim/util.h>
-#include <gaim/server.h>
+#include <util.h>
 
 #include "gntgaim.h"
 #include "gntbox.h"
