@@ -142,6 +142,8 @@ check_intersection(gpointer key, gpointer value, gpointer data)
 
 	if (value == NULL)
 		return;
+	if (n->me == nu->me)
+		return;
 
 	if (n->me->priv.x + n->me->priv.width < nu->me->priv.x)
 		return;
@@ -153,15 +155,24 @@ check_intersection(gpointer key, gpointer value, gpointer data)
 	if (nu->me->priv.y + nu->me->priv.height < n->me->priv.y)
 		return;
 
-	n->above = g_list_prepend(n->above, nu->me);
-	nu->below = g_list_prepend(nu->below, n->me);
+	n->above = g_list_prepend(n->above, nu);
+	nu->below = g_list_prepend(nu->below, n);
 }
 
 void gnt_screen_occupy(GntWidget *widget)
 {
-	/* XXX: what happens if this is called more than once for the same widget?
-	 *      perhaps _release first? */
-	GntNode *node = g_new0(GntNode, 1);
+	GntNode *node;
+
+	if (widget->parent)
+	{
+		while (widget->parent)
+			widget = widget->parent;
+	}
+	
+	if (g_hash_table_lookup(nodes, widget))
+		return;		/* XXX: perhaps _update instead? */
+
+	node = g_new0(GntNode, 1);
 	node->me = widget;
 
 	g_hash_table_foreach(nodes, check_intersection, node);
@@ -170,16 +181,21 @@ void gnt_screen_occupy(GntWidget *widget)
 
 void gnt_screen_release(GntWidget *widget)
 {
+	WINDOW *win;
 	GList *iter;
 	GntNode *node = g_hash_table_lookup(nodes, widget);
 	if (node == NULL || node->below == NULL)	/* Yay! Nothing to do. */
 		return;
 
+	win = dupwin(widget->window);
+	werase(win);
+
 	/* XXX: This is not going to work.
 	 *      It will be necessary to build a topology and go from there. */
 	for (iter = node->below; iter; iter = iter->next)
 	{
-		GntWidget *w = iter->data;
+		GntNode *n = iter->data;
+		GntWidget *w = n->me;
 		int left, right, top, bottom;
 
 		left = MAX(widget->priv.x, w->priv.x) - w->priv.x;
@@ -188,9 +204,61 @@ void gnt_screen_release(GntWidget *widget)
 		top = MAX(widget->priv.y, w->priv.y) - w->priv.y;
 		bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
 		
-		gnt_widget_expose(w, left, top, right - left, bottom - top);
+		copywin(w->window, win, top, left,
+						w->priv.y + top,
+						w->priv.x + left,
+						w->priv.y + bottom - top - 1,
+						w->priv.x + right - left - 1, FALSE);
+		n->above = g_list_remove(n->above, node);
 	}
 
+	wrefresh(win);
+	delwin(win);
+
 	g_hash_table_remove(nodes, widget);
+}
+
+void gnt_screen_update(GntWidget *widget)
+{
+	GList *iter;
+	WINDOW *win;
+	GntNode *node;
+	
+	if (widget->parent)
+	{
+		while (widget->parent)
+			widget = widget->parent;
+	}
+	
+	gnt_box_sync_children(widget);
+	node = g_hash_table_lookup(nodes, widget);
+
+	win = dupwin(widget->window);
+	
+	if (node && node->above)
+	{
+		/* XXX: Same here: need to build a topology first. */
+		for (iter = node->above; iter; iter = iter->next)
+		{
+			GntNode *n = iter->data;
+			GntWidget *w = n->me;
+			int left, right, top, bottom;
+
+			left = MAX(widget->priv.x, w->priv.x) - w->priv.x;
+			right = MIN(widget->priv.x + widget->priv.width, w->priv.x + w->priv.width) - w->priv.x;
+			
+			top = MAX(widget->priv.y, w->priv.y) - w->priv.y;
+			bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
+
+			copywin(w->window, win, top, left,
+					w->priv.y + top,
+					w->priv.x + left,
+					w->priv.y + bottom - top - 1,
+					w->priv.x + right - left - 1, FALSE);
+		}
+	}
+
+	wrefresh(win);
+	delwin(win);
 }
 

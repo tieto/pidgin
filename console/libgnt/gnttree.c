@@ -219,7 +219,7 @@ redraw_tree(GntTree *tree)
 		start++;
 	}
 
-	wrefresh(widget->window);
+	gnt_widget_queue_update(widget);
 }
 
 static void
@@ -230,8 +230,6 @@ gnt_tree_draw(GntWidget *widget)
 
 	scrollok(widget->window, TRUE);
 	wsetscrreg(widget->window, 0, widget->priv.height - 1);
-
-	tree->top = tree->root;
 
 	redraw_tree(tree);
 	

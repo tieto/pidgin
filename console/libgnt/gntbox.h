@@ -57,6 +57,8 @@ void gnt_box_set_pad(GntBox *box, int pad);
 
 void gnt_box_set_toplevel(GntBox *box, gboolean set);
 
+void gnt_box_sync_children(GntBox *box);
+
 G_END_DECLS
 
 #endif /* GNT_BOX_H */

@@ -22,8 +22,6 @@ gnt_entry_draw(GntWidget *widget)
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
 
-	wrefresh(widget->window);
-
 	DEBUG;
 }
 

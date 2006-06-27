@@ -21,8 +21,6 @@ gnt_button_draw(GntWidget *widget)
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
 	mvwprintw(widget->window, 1, 1, button->priv->text);
 
-	wrefresh(widget->window);
-
 	DEBUG;
 }
 

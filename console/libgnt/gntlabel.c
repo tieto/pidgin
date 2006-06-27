@@ -24,7 +24,6 @@ gnt_label_draw(GntWidget *widget)
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	mvwprintw(widget->window, 0, 0, label->text);
-	wrefresh(widget->window);
 
 	DEBUG;
 }

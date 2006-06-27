@@ -12,14 +12,10 @@ static void
 gnt_box_draw(GntWidget *widget)
 {
 	GntBox *box = GNT_BOX(widget);
-	GList *iter;
 
-	for (iter = box->list; iter; iter = iter->next)
-	{
-		GntWidget *w = GNT_WIDGET(iter->data);
-		gnt_widget_draw(w);
-		overwrite(w->window, widget->window);
-	}
+	g_list_foreach(box->list, (GFunc)gnt_widget_draw, NULL);
+
+	gnt_box_sync_children(box);
 
 	if (box->title)
 	{
@@ -40,9 +36,6 @@ gnt_box_draw(GntWidget *widget)
 		mvwprintw(widget->window, 0, pos, title);
 		g_free(title);
 	}
-	wrefresh(widget->window);
-
-	gnt_screen_occupy(widget);
 	
 	DEBUG;
 }
@@ -374,5 +367,18 @@ void gnt_box_set_toplevel(GntBox *box, gboolean set)
 		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	else
 		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+}
+
+void gnt_box_sync_children(GntBox *box)
+{
+	GList *iter;
+	GntWidget *widget = GNT_WIDGET(box);
+
+	for (iter = box->list; iter; iter = iter->next)
+	{
+		GntWidget *w = GNT_WIDGET(iter->data);
+		copywin(w->window, widget->window, 0, 0, w->priv.y - widget->priv.y, w->priv.x - widget->priv.x,
+					w->priv.height, w->priv.width, FALSE);
+	}
 }
 

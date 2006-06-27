@@ -17,8 +17,7 @@
 #define GNT_WIDGET_SET_FLAGS(obj, flags)		(GNT_WIDGET_FLAGS(obj) |= flags)
 #define GNT_WIDGET_UNSET_FLAGS(obj, flags)	(GNT_WIDGET_FLAGS(obj) &= ~(flags))
 #define GNT_WIDGET_IS_FLAG_SET(obj, flags)	(GNT_WIDGET_FLAGS(obj) & (flags))
-#define	DEBUG
-//#define	DEBUG	printf("%s\n", __FUNCTION__)
+#define	DEBUG	fprintf(stderr, "%s\n", __FUNCTION__)
 
 typedef struct _GnWidget			GntWidget;
 typedef struct _GnWidgetPriv		GntWidgetPriv;
@@ -28,16 +27,18 @@ typedef struct _GnWidgetClass		GntWidgetClass;
 
 typedef enum _GnWidgetFlags
 {
-	GNT_WIDGET_DESTROYING	= 1 << 0,
-	GNT_WIDGET_CAN_TAKE_FOCUS= 1 << 1,
-	GNT_WIDGET_MAPPED 		= 1 << 2,
+	GNT_WIDGET_DESTROYING     = 1 << 0,
+	GNT_WIDGET_CAN_TAKE_FOCUS = 1 << 1,
+	GNT_WIDGET_MAPPED         = 1 << 2,
 	/* XXX: Need to set the following two as properties, and setup a callback whenever these
 	 * get chnaged. */
-	GNT_WIDGET_NO_BORDER		= 1 << 3,
-	GNT_WIDGET_NO_SHADOW		= 1 << 4,
-	GNT_WIDGET_HAS_FOCUS		= 1 << 5
+	GNT_WIDGET_NO_BORDER      = 1 << 3,
+	GNT_WIDGET_NO_SHADOW      = 1 << 4,
+	GNT_WIDGET_HAS_FOCUS      = 1 << 5,
+	GNT_WIDGET_DRAWING        = 1 << 6
 } GntWidgetFlags;
 
+/* XXX: I'll have to ask grim what he's using this for in guifications. */
 typedef enum _GnParamFlags
 {
 	GNT_PARAM_SERIALIZABLE	= 1 << G_PARAM_USER_SHIFT
@@ -111,6 +112,10 @@ gboolean gnt_widget_set_focus(GntWidget *widget, gboolean set);
 void gnt_widget_activate(GntWidget *widget);
 
 void gnt_widget_set_name(GntWidget *widget, const char *name);
+
+/* Widget-subclasses should call this from the draw-callback.
+ * Applications should just call gnt_widget_draw instead of this. */
+void gnt_widget_queue_update(GntWidget *widget);
 
 G_END_DECLS
 

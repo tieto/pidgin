@@ -219,7 +219,14 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean can)
 void
 gnt_widget_destroy(GntWidget *obj)
 {
+	int id;
 	g_return_if_fail(GNT_IS_WIDGET(obj));
+
+	if ((id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(obj), "gnt:queue_update"))))
+	{
+		g_source_remove(id);
+		g_object_set_data(G_OBJECT(obj), "gnt:queue_update", NULL);
+	}
 
 	gnt_widget_hide(obj);
 	delwin(obj->window);
@@ -244,24 +251,29 @@ gnt_widget_draw(GntWidget *widget)
 {
 	/* Draw the widget */
 	DEBUG;
-	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_MAPPED))
-		gnt_widget_map(widget);
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DRAWING))
+		return;
 
-	if (widget->window)
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_DRAWING);
+	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_MAPPED))
 	{
-		delwin(widget->window);
+		gnt_widget_map(widget);
+		gnt_screen_occupy(widget);
 	}
-	
-	widget->window = newwin(widget->priv.height, widget->priv.width,
-					widget->priv.y, widget->priv.x);
-	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
+
+	if (widget->window == NULL)
+	{
+		/* XXX: It may be necessary to make sure the size hasn't changed */
+		widget->window = newwin(widget->priv.height, widget->priv.width,
+						widget->priv.y, widget->priv.x);
+		wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
+	}
+
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
-	{
 		box(widget->window, 0, 0);
-	}
 	else
 		werase(widget->window);
-
+	
 #if 0
 	/* XXX: No shadow for now :( */
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_SHADOW))
@@ -276,10 +288,12 @@ gnt_widget_draw(GntWidget *widget)
 		touchline(widget->back, 0, widget->priv.height);
 		wrefresh(widget->back);
 	}
-#endif
 
 	wrefresh(widget->window);
+#endif
 	g_signal_emit(widget, signals[SIG_DRAW], 0);
+	gnt_widget_queue_update(widget);
+	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DRAWING);
 }
 
 gboolean
@@ -301,16 +315,9 @@ gnt_widget_expose(GntWidget *widget, int x, int y, int width, int height)
 void
 gnt_widget_hide(GntWidget *widget)
 {
-	int i;
-
-	/* XXX: Currently it simply empties the window. Ideally, it will
-	 * detect what windows are immediately beneath this one, and cause
-	 * those windows to redraw themselves by emitting the approrpiate
-	 * expose signal. */
-
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(widget->window);
-	wrefresh(widget->window);
+	gnt_screen_release(widget);
 }
 
 void
@@ -385,5 +392,29 @@ void gnt_widget_set_name(GntWidget *widget, const char *name)
 void gnt_widget_activate(GntWidget *widget)
 {
 	g_signal_emit(widget, signals[SIG_ACTIVATE], 0);
+}
+
+static gboolean
+update_queue_callback(gpointer data)
+{
+	GntWidget *widget = GNT_WIDGET(data);
+
+	if (!g_object_get_data(G_OBJECT(widget), "gnt:queue_update"))
+		return FALSE;
+	gnt_screen_update(widget);
+	g_object_set_data(G_OBJECT(widget), "gnt:queue_update", GINT_TO_POINTER(FALSE));
+	return FALSE;
+}
+
+void gnt_widget_queue_update(GntWidget *widget)
+{
+	while (widget->parent)
+		widget = widget->parent;
+	
+	if (!g_object_get_data(G_OBJECT(widget), "gnt:queue_update"))
+	{
+		int id = g_timeout_add(0, update_queue_callback, widget);
+		g_object_set_data(G_OBJECT(widget), "gnt:queue_update", GINT_TO_POINTER(id));
+	}
 }
 

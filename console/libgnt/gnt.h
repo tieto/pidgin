@@ -11,3 +11,4 @@ void gnt_screen_occupy(GntWidget *widget);
 
 void gnt_screen_release(GntWidget *widget);
 
+void gnt_scree_update(GntWidget *widget);
