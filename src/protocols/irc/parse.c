@@ -140,6 +140,7 @@ static struct _irc_user_cmd {
 	{ "time", "", irc_cmd_time, N_("time: Displays the current local time at the IRC server.") },
 	{ "topic", ":", irc_cmd_topic, N_("topic [new topic]:  View or change the channel topic.") },
 	{ "umode", ":", irc_cmd_mode, N_("umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode.") },
+	{ "version", ":", irc_cmd_ctcp_version, N_("version [nick]: send CTCP VERSION request to a user") },
 	{ "voice", ":", irc_cmd_op, N_("voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this.") },
 	{ "wallops", ":", irc_cmd_wallops, N_("wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
 	{ "whois", "tt", irc_cmd_whois, N_("whois [server] &lt;nick&gt;:  Get information on a user.") },

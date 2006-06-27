@@ -130,6 +130,7 @@ version 2.0.0:
 	  channel or change your nick
 	* Added /nickserv, /memoserv, /chanserv and /operserv
 	  commands (Joao Luís Marques Pinto)
+	* Added CTCP VERSION via /version (Andrej Krivulčík)
 
 	Jabber Features:
 	* Support for SRV lookups

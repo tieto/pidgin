@@ -127,6 +127,21 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	return 1;
 }
 
+int irc_cmd_ctcp_version(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+
+	if (!args || !args[0])
+		return 0;
+
+	buf = irc_format(irc, "vn:", "PRIVMSG", args[0], "\001VERSION\001");
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
 int irc_cmd_invite(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	char *buf;

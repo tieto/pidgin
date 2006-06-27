@@ -152,6 +152,7 @@ void irc_cmd_table_build(struct irc_conn *irc);
 int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
+int irc_cmd_ctcp_version(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_invite(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_join(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
