@@ -4461,9 +4461,10 @@ static void
 add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 {
 	const char *grp, *who, *whoalias;
-	GaimConversation *c;
-	GaimBuddy *b;
 	GaimGroup *g;
+	GaimBuddy *b;
+	GaimConversation *c;
+	GaimBuddyIcon *icon;
 
 	if (resp == GTK_RESPONSE_OK)
 	{
@@ -4500,7 +4501,9 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 
 		c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, data->account);
 		if (c != NULL) {
-			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
+			icon = gaim_conv_im_get_icon(GAIM_CONV_IM(c));
+			if (icon != NULL)
+				gaim_buddy_icon_update(icon);
 		}
 	}
 
