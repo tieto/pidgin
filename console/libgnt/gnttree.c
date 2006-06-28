@@ -47,7 +47,7 @@ static GntTreeRow *
 get_next(GntTreeRow *row)
 {
 	if (row == NULL)
-		return;
+		return NULL;
 	return _get_next(row, !row->collapsed);
 }
 
@@ -229,7 +229,6 @@ static void
 gnt_tree_draw(GntWidget *widget)
 {
 	GntTree *tree = GNT_TREE(widget);
-	int bottom;
 
 	scrollok(widget->window, TRUE);
 	wsetscrreg(widget->window, 0, widget->priv.height - 1);
@@ -330,8 +329,6 @@ gnt_tree_destroy(GntWidget *widget)
 static void
 gnt_tree_class_init(GntTreeClass *klass)
 {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_tree_destroy;
 	parent_class->draw = gnt_tree_draw;
@@ -432,7 +429,8 @@ int gnt_tree_get_visible_rows(GntTree *tree)
 	GntWidget *widget = GNT_WIDGET(tree);
 	int ret = widget->priv.height;
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
-		widget->priv.height -= 2;
+		ret -= 2;
+	return ret;
 }
 
 void gnt_tree_scroll(GntTree *tree, int count)

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "gntbutton.h"
 
 enum
@@ -54,8 +56,6 @@ gnt_button_key_pressed(GntWidget *widget, const char *key)
 static void
 gnt_button_class_init(GntWidgetClass *klass)
 {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->draw = gnt_button_draw;
 	parent_class->map = gnt_button_map;

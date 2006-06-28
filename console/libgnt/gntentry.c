@@ -1,4 +1,6 @@
+#include <ctype.h>
 #include <string.h>
+
 #include "gntentry.h"
 
 enum
@@ -28,8 +30,6 @@ gnt_entry_draw(GntWidget *widget)
 static void
 gnt_entry_size_request(GntWidget *widget)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
-
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
 	{
 		widget->priv.height = 1;
@@ -150,8 +150,6 @@ gnt_entry_destroy(GntWidget *widget)
 static void
 gnt_entry_class_init(GntEntryClass *klass)
 {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_entry_destroy;
 	parent_class->draw = gnt_entry_draw;

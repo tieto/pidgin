@@ -1,5 +1,7 @@
 #include "gntbox.h"
 
+#include <string.h>
+
 enum
 {
 	SIGS = 1,
@@ -238,7 +240,6 @@ static GntWidget *find_focused_widget(GntBox *box)
 static void
 gnt_box_lost_focus(GntWidget *widget)
 {
-	GntBox *box = GNT_BOX(widget);
 	GntWidget *p = widget;
 
 	while (p->parent)
@@ -277,8 +278,6 @@ gnt_box_expose(GntWidget *widget, int x, int y, int width, int height)
 static void
 gnt_box_class_init(GntBoxClass *klass)
 {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_box_destroy;
 	parent_class->draw = gnt_box_draw;

@@ -117,6 +117,7 @@ void gnt_widget_set_name(GntWidget *widget, const char *name);
  * Applications should just call gnt_widget_draw instead of this. */
 void gnt_widget_queue_update(GntWidget *widget);
 
+void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 G_END_DECLS
 
 #endif /* GNT_WIDGET_H */

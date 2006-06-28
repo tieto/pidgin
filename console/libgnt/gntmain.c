@@ -1,9 +1,13 @@
 #include "gnt.h"
+#include "gntbox.h"
 #include "gntkeys.h"
 #include "gntcolors.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
+#include <unistd.h>
+#include <string.h>
 
 static GList *focus_list;
 static int max_x;
@@ -248,7 +252,7 @@ void gnt_screen_update(GntWidget *widget)
 			widget = widget->parent;
 	}
 	
-	gnt_box_sync_children(widget);
+	gnt_box_sync_children(GNT_BOX(widget));
 	node = g_hash_table_lookup(nodes, widget);
 
 	win = dupwin(widget->window);

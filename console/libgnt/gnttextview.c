@@ -50,8 +50,6 @@ gnt_text_view_destroy(GntWidget *widget)
 static void
 gnt_text_view_class_init(GntTextViewClass *klass)
 {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_text_view_destroy;
 	parent_class->draw = gnt_text_view_draw;

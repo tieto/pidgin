@@ -55,7 +55,7 @@ gntutils.o: gntutils.c $(HEADERS)
 gntmain.o: gntmain.c $(HEADERS)
 
 libgnt: $(OBJECTS)
-	$(CC) --shared -o libgnt.so $(OBJECTS)
+	$(CC) --shared -o libgnt.so $(OBJECTS) $(LDFLAGS)
 
 clean:
 	rm -f *.o

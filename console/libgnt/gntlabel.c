@@ -58,8 +58,6 @@ gnt_label_size_request(GntWidget *widget)
 static void
 gnt_label_class_init(GntLabelClass *klass)
 {
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_label_destroy;
 	parent_class->draw = gnt_label_draw;
