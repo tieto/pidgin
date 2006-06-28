@@ -118,9 +118,11 @@ static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIt
 #endif
 static GaimGtkBuddyList *gtkblist = NULL;
 
+static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list);
 static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node);
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node);
+static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
@@ -159,8 +161,10 @@ static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event,
 {
 	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
 		gtk_blist_obscured = TRUE;
-	else
-		gtk_blist_obscured = FALSE;
+	else if (gtk_blist_obscured) {
+			gtk_blist_obscured = FALSE;
+			gaim_gtk_blist_refresh_timer(gaim_get_blist());
+	}	
 
 	/* continue to handle event normally */
 	return FALSE;
@@ -171,8 +175,10 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 	if(event->changed_mask & GDK_WINDOW_STATE_WITHDRAWN) {
 		if(event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN)
 			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", FALSE);
-		else
+		else {
 			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", TRUE);
+			gaim_gtk_blist_refresh_timer(gaim_get_blist());
+		}
 	}
 
 	if(event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
@@ -181,7 +187,13 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 		else
 			gaim_prefs_set_bool("/gaim/gtk/blist/list_maximized", FALSE);
 	}
-
+	
+	/* Refresh gtkblist if un-iconifying */
+	if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED){
+		if (!(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+			gaim_gtk_blist_refresh_timer(gaim_get_blist());
+	}
+	
 	return FALSE;
 }
 
@@ -877,8 +889,7 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 		gtk_main_iteration();
 	gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(gtkblist->treeview), path, NULL, FALSE, 0, 0);
 
-
-	gaim_gtk_blist_update(NULL, node);
+	gaim_gtk_blist_update_contact(NULL, node->child);
 	gtk_tree_path_free(path);
 }
 
@@ -2869,7 +2880,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	struct _gaim_gtk_blist_node *gtkcontactnode = NULL;
 	char *idletime = NULL, *statustext = NULL;
 	time_t t;
-	/* XXX Clean up this crap */
+	/* XXX Good luck cleaning up this crap */
 
 	contact = (GaimContact*)((GaimBlistNode*)b)->parent;
 	if(contact)
@@ -2880,11 +2891,6 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	else
 		name = gaim_buddy_get_alias(b);
 	esc = g_markup_escape_text(name, strlen(name));
-
-	prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
-
-	if (prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	presence = gaim_buddy_get_presence(b);
 
@@ -2900,6 +2906,11 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		else
 			return esc;
 	}
+
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(b->account));
+
+	if (prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info && prpl_info->status_text && b->account->gc) {
 		char *tmp = prpl_info->status_text(b);
@@ -2951,66 +2962,68 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 #endif
 	}
 
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
-		gaim_presence_is_idle(presence))
-	{
-		time_t idle_secs = gaim_presence_get_idle_time(presence);
-
-		if (idle_secs > 0) {
-			int ihrs, imin;
-
-			time(&t);
-			ihrs = (t - idle_secs) / 3600;
-			imin = ((t - idle_secs) / 60) % 60;
-
-			if (ihrs)
-				idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
-			else
-				idletime = g_strdup_printf(_("Idle %dm"), imin);
-		}
-		else
-			idletime = g_strdup(_("Idle"));
-	}
-
 	if(!gaim_presence_is_online(presence) && !statustext)
 		statustext = g_strdup(_("Offline"));
+	else if (!statustext)
+		text = g_strdup(esc);
+		
+	if (gaim_presence_is_idle(presence)) {
+		if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time")) {
+			time_t idle_secs = gaim_presence_get_idle_time(presence);
 
-	if (statustext == NULL && idletime == NULL)
-	{
-		if (!selected && gaim_presence_is_idle(presence))
+			if (idle_secs > 0) {
+				int ihrs, imin;
+
+				time(&t);
+				ihrs = (t - idle_secs) / 3600;
+				imin = ((t - idle_secs) / 60) % 60;
+
+				if (ihrs)
+					idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
+				else
+					idletime = g_strdup_printf(_("Idle %dm"), imin);
+			}
+			else
+				idletime = g_strdup(_("Idle"));
+
+			if (!selected)
+				text = g_strdup_printf("<span color='%s'>%s</span>\n"
+				"<span color='%s' size='smaller'>%s%s%s</span>",
+				dim_grey(), esc, dim_grey(),
+				idletime != NULL ? idletime : "",
+				(idletime != NULL && statustext != NULL) ? " - " : "",
+				statustext != NULL ? statustext : "");
+		}
+		else if (!selected && !statustext) /* We handle selected text later */
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
-		else
-			text = g_strdup(esc);
-	}
-	else if (!selected)
-	{
-		if (gaim_presence_is_idle(presence))
-		{
+		else if (!selected && !text)
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
-						"<span color='%s' size='smaller'>%s%s%s</span>",
-						dim_grey(), esc, dim_grey(),
-						idletime != NULL ? idletime : "",
-						(idletime != NULL && statustext != NULL) ? " - " : "",
-						statustext != NULL ? statustext : "");
-		}
-		else
-		{
-			text = g_strdup_printf("%s\n"
-					       "<span color='%s' size='smaller'>%s%s%s</span>",
-					       esc, dim_grey(),
-					       idletime != NULL ? idletime : "",
-					       (idletime != NULL && statustext != NULL) ? " - " : "",
-					       statustext != NULL ? statustext :  "");
-		}
+				"<span color='%s' size='smaller'>%s%s%s</span>",
+				dim_grey(), esc, dim_grey(),
+				idletime != NULL ? idletime : "",
+				(idletime != NULL && statustext != NULL) ? " - " : "",
+				statustext != NULL ? statustext : "");
 	}
-	else
-		text = g_strdup_printf("%s\n"
-				       "<span size='smaller'>%s%s%s</span>",
-				       esc,
-				       idletime != NULL ? idletime : "",
-				       (idletime != NULL && statustext != NULL) ? " - " : "",
-				       statustext != NULL ? statustext :  "");
 
+	/* Not idle and not selected */
+	else if (!selected && !text)
+	{
+		text = g_strdup_printf("%s\n"
+			"<span color='%s' size='smaller'>%s%s%s</span>",
+			esc, dim_grey(),
+			idletime != NULL ? idletime : "",
+			(idletime != NULL && statustext != NULL) ? " - " : "",
+			statustext != NULL ? statustext :  "");
+	}
+
+	/* It is selected. */
+	if ((selected && !text) || (selected && idletime)) 
+		text = g_strdup_printf("%s\n"
+			"<span size='smaller'>%s%s%s</span>",
+			esc,
+			idletime != NULL ? idletime : "",
+			(idletime != NULL && statustext != NULL) ? " - " : "",
+			statustext != NULL ? statustext :  "");
 
 	g_free(idletime);
 	g_free(statustext);
@@ -3057,6 +3070,9 @@ static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list)
 {
 	GaimBlistNode *gnode, *cnode;
 
+	if (gtk_blist_obscured || !GTK_WIDGET_VISIBLE(gtkblist->window))
+		return TRUE;
+	
 	for(gnode = list->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
@@ -3068,7 +3084,7 @@ static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list)
 
 				if (buddy &&
 						gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
-					gaim_gtk_blist_update(list, cnode);
+					gaim_gtk_blist_update_contact(list, (GaimBlistNode*)buddy);		
 			}
 		}
 	}
@@ -3908,7 +3924,7 @@ static void redo_buddy_list(GaimBuddyList *list, gboolean remove)
 
 	while (node)
 	{
-		if (!GAIM_BLIST_NODE_IS_GROUP(node) && remove)
+		if (remove && !GAIM_BLIST_NODE_IS_GROUP(node))
 			gaim_gtk_blist_hide_node(list, node);
 
 		gaim_gtk_blist_update(list, node);
@@ -4081,15 +4097,25 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 	return TRUE;
 }
 
+/*This version of gaim_gtk_blist_update_group can take the original buddy 
+or a group, but has much better algorithmic performance with a pre-known buddy*/
 static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node)
 {
 	GaimGroup *group;
 	int count;
 	gboolean show = FALSE;
+	GaimBlistNode* gnode;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP(node));
 
-	group = (GaimGroup*)node;
+	if (GAIM_BLIST_NODE_IS_GROUP(node))
+		gnode = node;
+	else if (GAIM_BLIST_NODE_IS_BUDDY(node)) /* maybe OR'ed with IS_CHAT? */
+		gnode = node->parent->parent;
+	else if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		gnode = node->parent;
+	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP(gnode));
+
+	group = (GaimGroup*)gnode;
 
 	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies"))
 		count = gaim_blist_get_group_size(group, FALSE);
@@ -4098,25 +4124,15 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 
 	if (count > 0 || gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups"))
 		show = TRUE;
-	else {
-		GaimBlistNode *n;
-		n = node->child;
-		while (n && !GAIM_BLIST_NODE_IS_GROUP(n)) {
-			if (GAIM_BLIST_NODE_IS_BUDDY(n)) {
-				if (buddy_is_displayable((GaimBuddy*)n)) {
-					show = TRUE;
-					break;
-				}
-			}
-			n = gaim_blist_node_next(n, FALSE);
-		}
-	}
+	else if (GAIM_BLIST_NODE_IS_BUDDY(node)){ /* Or chat? */
+		if (buddy_is_displayable((GaimBuddy*)node))
+			show = TRUE;}
 
 	if (show) {
 		char *mark, *esc;
 		GtkTreeIter iter;
 
-		if(!insert_node(list, node, &iter))
+		if(!insert_node(list, gnode, &iter))
 			return;
 
 		esc = g_markup_escape_text(group->name, -1);
@@ -4129,11 +4145,11 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 				STATUS_ICON_COLUMN, NULL,
 				STATUS_ICON_VISIBLE_COLUMN, FALSE,
 				NAME_COLUMN, mark,
-				NODE_COLUMN, node,
+				NODE_COLUMN, gnode,
 				-1);
 		g_free(mark);
 	} else {
-		gaim_gtk_blist_hide_node(list, node);
+		gaim_gtk_blist_hide_node(list, gnode);
 	}
 }
 
@@ -4155,7 +4171,8 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	mark = gaim_gtk_blist_get_name_markup(buddy, selected);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
-		gaim_presence_is_idle(presence))
+		gaim_presence_is_idle(presence) &&
+		!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
 	{
 		time_t idle_secs = gaim_presence_get_idle_time(presence);
 
@@ -4166,7 +4183,6 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			time(&t);
 			ihrs = (t - idle_secs) / 3600;
 			imin = ((t - idle_secs) / 60) % 60;
-
 			idle = g_strdup_printf("%d:%02d", ihrs, imin);
 		}
 	}
@@ -4197,35 +4213,45 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 		g_object_unref(avatar);
 }
 
-
+/* This is a variation on the original gtk_blist_update_contact. Here we
+	can know in advance which buddy has changed so we can just update that */
 static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *node)
 {
+	GaimBlistNode *cnode;
 	GaimContact *contact;
 	GaimBuddy *buddy;
 	struct _gaim_gtk_blist_node *gtknode;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT(node));
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		cnode = node->parent;
+	else
+		cnode = node;
+	
+	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT(cnode));
 
 	/* First things first, update the group */
-	gaim_gtk_blist_update_group(list, node->parent);
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		gaim_gtk_blist_update_group(list, node);
+	else
+		gaim_gtk_blist_update_group(list, cnode->parent);
 
-	contact = (GaimContact*)node;
+	contact = (GaimContact*)cnode;
 	buddy = gaim_contact_get_priority_buddy(contact);
-
+	
 	if (buddy_is_displayable(buddy))
 	{
 		GtkTreeIter iter;
 
-		if(!insert_node(list, node, &iter))
+		if(!insert_node(list, cnode, &iter))
 			return;
 
-		gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+		gtknode = (struct _gaim_gtk_blist_node *)cnode->ui_data;
 
 		if(gtknode->contact_expanded) {
 			GdkPixbuf *status;
 			char *mark;
 
-			status = gaim_gtk_blist_get_status_icon(node,
+			status = gaim_gtk_blist_get_status_icon(cnode,
 					(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons") ?
 					 GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL));
 
@@ -4242,29 +4268,29 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 			if(status)
 				g_object_unref(status);
 		} else {
-			buddy_node(buddy, &iter, node);
+			buddy_node(buddy, &iter, cnode);
 		}
 	} else {
-		gaim_gtk_blist_hide_node(list, node);
+		gaim_gtk_blist_hide_node(list, cnode);
 	}
 }
 
+
+
 static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node)
 {
-	GaimContact *contact;
 	GaimBuddy *buddy;
 	struct _gaim_gtk_blist_node *gtkparentnode;
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
+	if (node->parent == NULL)
+		return;	
+
 	buddy = (GaimBuddy*)node;
-	contact = (GaimContact*)node->parent;
-
-	if (contact == NULL)
-		return;
-
+	
 	/* First things first, update the contact */
-	gaim_gtk_blist_update_contact(list, node->parent);
+	gaim_gtk_blist_update_contact(list, node);
 
 	gtkparentnode = (struct _gaim_gtk_blist_node *)node->parent->ui_data;
 

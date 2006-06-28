@@ -732,13 +732,15 @@ static GaimBlistNode *get_next_node(GaimBlistNode *node, gboolean godeep)
 GaimBlistNode *gaim_blist_node_next(GaimBlistNode *node, gboolean offline)
 {
 	GaimBlistNode *ret = node;
-	
+
+	if (offline)
+		return get_next_node(ret, TRUE);
 	do
 	{
 		ret = get_next_node(ret, TRUE);
-	} while (ret && !offline && GAIM_BLIST_NODE_IS_BUDDY(ret) &&
+	} while (ret && GAIM_BLIST_NODE_IS_BUDDY(ret) &&
 			!gaim_account_is_connected(gaim_buddy_get_account((GaimBuddy *)ret)));
-	
+
 	return ret;
 }
 
