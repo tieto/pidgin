@@ -24,6 +24,7 @@ GGBlist *ggblist;
 
 static void add_buddy(GaimBuddy *buddy, GGBlist *ggblist);
 static void add_group(GaimGroup *group, GGBlist *ggblist);
+static void add_chat(GaimChat *chat, GGBlist *ggblist);
 static void add_node(GaimBlistNode *node, GGBlist *ggblist);
 static void draw_tooltip(GGBlist *ggblist);
 
@@ -38,6 +39,8 @@ static void add_node(GaimBlistNode *node, GGBlist *ggblist)
 		add_buddy((GaimBuddy*)node, ggblist);
 	else if (GAIM_BLIST_NODE_IS_GROUP(node))
 		add_group((GaimGroup*)node, ggblist);
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		add_chat((GaimChat *)node, ggblist);
 	draw_tooltip(ggblist);
 }
 
@@ -81,6 +84,10 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 		else
 			node_remove(gaim_get_blist(), node);
 	}
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+	{
+		add_chat((GaimChat *)node, list->ui_data);
+	}
 }
 
 static void
@@ -121,49 +128,77 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 }
 
 static const char *
-get_buddy_display_name(GaimBuddy *buddy)
+get_display_name(GaimBlistNode *node)
 {
 	static char text[2096];
-	char status[8];
-	GaimStatusPrimitive prim;
-	GaimPresence *presence;
-	GaimStatus *now;
+	char status[8] = " ";
+	const char *name = NULL;
 
-	presence = gaim_buddy_get_presence(buddy);
-	now = gaim_presence_get_active_status(presence);
-
-	prim = gaim_status_type_get_primitive(gaim_status_get_type(now));
-
-	switch(prim)
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
+		GaimBuddy *buddy = (GaimBuddy *)node;
+		GaimStatusPrimitive prim;
+		GaimPresence *presence;
+		GaimStatus *now;
+
+		
+		presence = gaim_buddy_get_presence(buddy);
+		now = gaim_presence_get_active_status(presence);
+
+		prim = gaim_status_type_get_primitive(gaim_status_get_type(now));
+
+		switch(prim)
+		{
 #if 1
-		case GAIM_STATUS_OFFLINE:
-			strncpy(status, "x", sizeof(status) - 1);
-			break;
-		case GAIM_STATUS_AVAILABLE:
-			strncpy(status, "o", sizeof(status) - 1);
-			break;
-		default:
-			strncpy(status, ".", sizeof(status) - 1);
-			break;
+			case GAIM_STATUS_OFFLINE:
+				strncpy(status, "x", sizeof(status) - 1);
+				break;
+			case GAIM_STATUS_AVAILABLE:
+				strncpy(status, "o", sizeof(status) - 1);
+				break;
+			default:
+				strncpy(status, ".", sizeof(status) - 1);
+				break;
 #else
-		/* XXX: Let's use these some time */
-		case GAIM_STATUS_OFFLINE:
-			strncpy(status, "⊗", sizeof(status) - 1);
-			break;
-		case GAIM_STATUS_AVAILABLE:
-			/* XXX: Detect idleness */
-			strncpy(status, "◯", sizeof(status) - 1);
-			break;
-		default:
-			strncpy(status, "⊖", sizeof(status) - 1);
-			break;
+			/* XXX: Let's use these some time */
+			case GAIM_STATUS_OFFLINE:
+				strncpy(status, "⊗", sizeof(status) - 1);
+				break;
+			case GAIM_STATUS_AVAILABLE:
+				/* XXX: Detect idleness */
+				strncpy(status, "◯", sizeof(status) - 1);
+				break;
+			default:
+				strncpy(status, "⊖", sizeof(status) - 1);
+				break;
 #endif
+		}
+		name = gaim_buddy_get_alias(buddy);
+	}
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+	{
+		GaimChat *chat = (GaimChat*)node;
+		name = gaim_chat_get_name(chat);
 	}
 
-	snprintf(text, sizeof(text) - 1, "%s %s", status, gaim_buddy_get_alias(buddy));
+	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
 
 	return text;
+}
+
+static void
+add_chat(GaimChat *chat, GGBlist *ggblist)
+{
+	GaimGroup *group;
+	GaimBlistNode *node = (GaimBlistNode *)chat;
+	if (node->ui_data)
+		return;
+
+	group = gaim_chat_get_group(chat);
+	add_node((GaimBlistNode*)group, ggblist);
+
+	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), chat,
+				get_display_name(node), group, NULL);
 }
 
 static void
@@ -178,7 +213,7 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	add_node((GaimBlistNode*)group, ggblist);
 
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
-				get_buddy_display_name(buddy), group, NULL);
+				get_display_name(node), group, NULL);
 }
 
 static void
@@ -268,6 +303,15 @@ draw_tooltip(GGBlist *ggblist)
 
 		title = g_strdup(group->name);
 	}
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+	{
+		GaimChat *chat = (GaimChat *)node;
+		GaimAccount *account = chat->account;
+
+		g_string_append_printf(str, _("Account: %s"), gaim_account_get_username(account));
+
+		title = g_strdup(gaim_chat_get_name(chat));
+	}
 	else
 	{
 		g_string_free(str, TRUE);
@@ -325,7 +369,7 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 static void
 buddy_status_changed(GaimBuddy *buddy, GaimStatus *old, GaimStatus *now, GGBlist *ggblist)
 {
-	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, get_buddy_display_name(buddy));
+	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, get_display_name((GaimBlistNode*)buddy));
 	if (ggblist->tnode == (GaimBlistNode*)buddy)
 		draw_tooltip(ggblist);
 }

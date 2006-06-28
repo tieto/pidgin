@@ -12,6 +12,8 @@ void init_gnt_ui()
 	gg_blist_init();
 	gaim_blist_set_ui_ops(gg_blist_get_ui_ops());
 
+	/* Now the conversations */
+
 	gnt_main();
 }
 

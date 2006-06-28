@@ -57,6 +57,6 @@ libgnt: $(OBJECTS)
 	$(CC) --shared -o libgnt.so $(OBJECTS)
 
 clean:
-	rm *.o
-	rm libgnt.so
+	rm -f *.o
+	rm -f libgnt.so
 

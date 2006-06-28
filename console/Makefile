@@ -25,6 +25,6 @@ gntui.o: gntui.c $(GG_HEADERS)
 
 clean:
 	cd libgnt && make clean
-	rm *.o
-	rm gntgaim
+	rm -f *.o
+	rm -f gntgaim
 
