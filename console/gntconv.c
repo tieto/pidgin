@@ -180,27 +180,31 @@ gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
 {
 	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
 	char *strip;
-	char *name;
 
 	g_return_if_fail(ggconv != NULL);
 
 	strip = gaim_markup_strip_html(message);
-	if (alias && *alias)
-		name = g_strdup_printf("%s: ", alias);
-	else if (who && *who)
-		name = g_strdup_printf("%s: ", who);
-	else
-		name = g_strdup("");
 
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			name, GNT_TEXT_FLAG_BOLD);
+	if (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV))
+	{
+		char *name;
+		if (alias && *alias)
+			name = g_strdup_printf("%s: ", alias);
+		else if (who && *who)
+			name = g_strdup_printf("%s: ", who);
+		else
+			name = g_strdup("");
+
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+				name, GNT_TEXT_FLAG_BOLD);
+		g_free(name);
+	}
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 			strip, 0);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
 	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
 	g_free(strip);
-	g_free(name);
 }
 
 static void

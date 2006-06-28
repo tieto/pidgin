@@ -1,4 +1,5 @@
-CFLAGS=`pkg-config --cflags gobject-2.0` -g
+CC=gcc
+CFLAGS=`pkg-config --cflags gobject-2.0` -g -Wall
 LDFLAGS=`pkg-config --libs gobject-2.0` -lncursesw -pg
 
 HEADERS = \

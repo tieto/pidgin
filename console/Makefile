@@ -1,4 +1,5 @@
-CFLAGS=`pkg-config --cflags gaim gobject-2.0` -g -I./libgnt/
+CC=gcc
+CFLAGS=`pkg-config --cflags gaim gobject-2.0` -g -I./libgnt/ -Wall
 LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0` -lncursesw -L./libgnt/ -lgnt -pg
 
 GG_SOURCES = \

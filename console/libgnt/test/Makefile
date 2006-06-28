@@ -1,3 +1,4 @@
+CC=gcc
 CFLAGS=`pkg-config --cflags gobject-2.0` -g -I../
 LDFLAGS=`pkg-config --libs gobject-2.0` -lncursesw -pg -lgnt -L../
 

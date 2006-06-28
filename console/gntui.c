@@ -1,4 +1,6 @@
 #include "gntui.h"
+#include "gntblist.h"
+#include "gntconv.h"
 
 void init_gnt_ui()
 {
