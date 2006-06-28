@@ -49,7 +49,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (focus_list)
 	{
 		gboolean ret = FALSE;
-		/*g_signal_emit_by_name(focus_list->data, "key_pressed", buffer, &ret);*/
 		ret = gnt_widget_key_pressed(focus_list->data, buffer);
 	}
 
@@ -57,22 +56,35 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	{
 		/* Some special key has been pressed */
 		if (strcmp(buffer+1, GNT_KEY_POPUP) == 0)
+		{}
+		else if (strcmp(buffer + 1, "c") == 0)
 		{
-			/*printf("popup\n");*/
+			/* Alt + c was pressed. I am going to use it to close a window. */
+			if (focus_list)
+			{
+				gnt_widget_destroy(focus_list->data);
+				gnt_screen_remove_widget(focus_list->data);
+			}
 		}
-		else
+		else if (strcmp(buffer + 1, "q") == 0)
 		{
-			/*printf("Unknown: %s\n", buffer+1);*/
-		}
-	}
-	else
-	{
-		if (buffer[0] == 'q')
-		{
+			/* I am going to use Alt + q to quit. */
 			endwin();
 			exit(1);
 		}
-		/*printf("%s\n", buffer);*/
+		else if (strcmp(buffer + 1, "n") == 0)
+		{
+			/* Alt + n to go to the next window */
+			if (focus_list && focus_list->next)
+				focus_list = focus_list->next;
+			else
+				focus_list = g_list_first(focus_list);
+			if (focus_list)
+			{
+				/* XXX: Need a way to bring it on top */
+				gnt_widget_draw(focus_list->data);
+			}
+		}
 	}
 	refresh();
 
@@ -184,7 +196,7 @@ void gnt_screen_release(GntWidget *widget)
 	WINDOW *win;
 	GList *iter;
 	GntNode *node = g_hash_table_lookup(nodes, widget);
-	if (node == NULL || node->below == NULL)	/* Yay! Nothing to do. */
+	if (node == NULL)	/* Yay! Nothing to do. */
 		return;
 
 	win = dupwin(widget->window);
@@ -210,6 +222,12 @@ void gnt_screen_release(GntWidget *widget)
 						w->priv.y + bottom - top - 1,
 						w->priv.x + right - left - 1, FALSE);
 		n->above = g_list_remove(n->above, node);
+	}
+
+	for (iter = node->above; iter; iter = iter->next)
+	{
+		GntNode *n = iter->data;
+		n->below = g_list_remove(n->below, node);
 	}
 
 	wrefresh(win);

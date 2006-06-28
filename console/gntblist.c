@@ -179,6 +179,8 @@ get_display_name(GaimBlistNode *node)
 	{
 		GaimChat *chat = (GaimChat*)node;
 		name = gaim_chat_get_name(chat);
+
+		strncpy(status, "~", sizeof(status) - 1);
 	}
 
 	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
@@ -363,6 +365,25 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 			return TRUE;
 		}
 	}
+	else if (text[0] == '\r' && text[1] == '\0')
+	{
+		GntTree *tree = GNT_TREE(ggblist->tree);
+		GaimBlistNode *node = gnt_tree_get_selection_data(tree);
+
+		if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		{
+			GaimBuddy *buddy = (GaimBuddy *)node;
+			gaim_conversation_new(GAIM_CONV_TYPE_IM,
+					gaim_buddy_get_account(buddy),
+					gaim_buddy_get_name(buddy));
+		}
+		else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		{
+			GaimChat *chat = (GaimChat*)node;
+			serv_join_chat(chat->account->gc, chat->components);
+		}
+	}
+
 	return FALSE;
 }
 

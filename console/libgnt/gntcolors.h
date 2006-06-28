@@ -18,7 +18,7 @@ typedef enum
 
 enum
 {
-	GNT_COLOR_BLACK = 1,
+	GNT_COLOR_BLACK = 0,
 	GNT_COLOR_RED,
 	GNT_COLOR_GREEN,
 	GNT_COLOR_BLUE,
