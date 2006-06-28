@@ -134,6 +134,7 @@ gg_write_chat(GaimConversation *conv, const char *who, const char *message,
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 			strip, (flags & GAIM_MESSAGE_NICK) ? GNT_TEXT_FLAG_UNDERLINE : 0);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
+	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
 	g_free(name);
 	g_free(strip);
@@ -167,13 +168,15 @@ gg_write_im(GaimConversation *conv, const char *who, const char *message,
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 			(strip = gaim_markup_strip_html(message)), 0);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
+	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
+
 	g_free(strip);
 	g_free(name);
 }
 
 static void
-gg_write_conv(GaimConversation *conv, const char *who, const char *message,
-		GaimMessageFlags flags, time_t mtime)
+gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
+		const char *message, GaimMessageFlags flags, time_t mtime)
 {
 	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
 	char *strip;
@@ -182,15 +185,22 @@ gg_write_conv(GaimConversation *conv, const char *who, const char *message,
 	g_return_if_fail(ggconv != NULL);
 
 	strip = gaim_markup_strip_html(message);
-	name = g_strdup_printf("%s: ", who);
+	if (alias && *alias)
+		name = g_strdup_printf("%s: ", alias);
+	else if (who && *who)
+		name = g_strdup_printf("%s: ", who);
+	else
+		name = g_strdup("");
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 			name, GNT_TEXT_FLAG_BOLD);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 			strip, 0);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
+	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
 	g_free(strip);
+	g_free(name);
 }
 
 static void
@@ -215,7 +225,7 @@ static GaimConversationUiOps conv_ui_ops =
 	.destroy_conversation = gg_destroy_conversation,
 	.write_chat = gg_write_chat,
 	.write_im = gg_write_im,
-	.write_chat = gg_write_conv,
+	.write_conv = gg_write_conv,
 	.chat_add_users = gg_chat_add_users,
 	.chat_rename_user = gg_chat_rename_user,
 	.chat_remove_users = gg_chat_remove_user,
