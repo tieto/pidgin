@@ -203,7 +203,10 @@ redraw_tree(GntTree *tree)
 		
 		if (row == tree->current)
 		{
-			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+			if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_HAS_FOCUS))
+				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+			else
+				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D)); /* XXX: This, somehow, doesn't work */
 			mvwprintw(widget->window, start, pos, str);
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}

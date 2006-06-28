@@ -8,6 +8,7 @@ HEADERS = \
 	gntcolors.h \
 	gntentry.h \
 	gntlabel.h \
+	gnttextview.h \
 	gnttree.h \
 	gntutils.h \
 	gnt.h
@@ -19,6 +20,7 @@ SOURCES = \
 	gntcolors.c \
 	gntentry.c \
 	gntlabel.c \
+	gnttextview.c \
 	gnttree.c \
 	gntutils.c \
 	gntmain.c
@@ -30,6 +32,7 @@ OBJECTS = \
 	gntcolors.o \
 	gntentry.o \
 	gntlabel.o \
+	gnttextview.o \
 	gnttree.o \
 	gntutils.o \
 	gntmain.o
@@ -45,6 +48,7 @@ gntbutton.o: gntbutton.c $(HEADERS)
 gntcolors.o: gntcolors.c $(HEADERS)
 gntentry.o: gntentry.c $(HEADERS)
 gntlabel.o: gntlabel.c $(HEADERS)
+gnttextview.o: gnttextview.c $(HEADERS)
 gnttree.o: gnttree.c $(HEADERS)
 gntutils.o: gntutils.c $(HEADERS)
 gntmain.o: gntmain.c $(HEADERS)

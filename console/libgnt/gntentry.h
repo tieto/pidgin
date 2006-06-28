@@ -69,9 +69,14 @@ GntWidget *gnt_entry_new(const char *text);
 
 void gnt_entry_set_max(GntEntry *entry, int max);
 
+/* XXX: For now, call gnt_entry_clear before calling this */
 void gnt_entry_set_text(GntEntry *entry, const char *text);
 
 void gnt_entry_set_flag(GntEntry *entry, GntEntryFlag flag);
+
+const char *gnt_entry_get_text(GntEntry *entry);
+
+void gnt_entry_clear(GntEntry *entry);
 
 G_END_DECLS
 

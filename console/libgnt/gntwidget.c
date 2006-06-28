@@ -267,13 +267,13 @@ gnt_widget_draw(GntWidget *widget)
 		widget->window = newwin(widget->priv.height, widget->priv.width,
 						widget->priv.y, widget->priv.x);
 		wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
+	
+		if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
+			box(widget->window, 0, 0);
+		else
+			werase(widget->window);
 	}
 
-	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
-		box(widget->window, 0, 0);
-	else
-		werase(widget->window);
-	
 #if 0
 	/* XXX: No shadow for now :( */
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_SHADOW))
@@ -358,6 +358,7 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 {
 	widget->priv.width = width;
 	widget->priv.height = height;
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_MAPPED);
 }
 
 gboolean

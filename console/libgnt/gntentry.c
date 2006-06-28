@@ -29,8 +29,12 @@ static void
 gnt_entry_size_request(GntWidget *widget)
 {
 	GntEntry *entry = GNT_ENTRY(widget);
-	widget->priv.height = 1;
-	widget->priv.width = 20;
+
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
+	{
+		widget->priv.height = 1;
+		widget->priv.width = 20;
+	}
 }
 
 static void
@@ -39,6 +43,13 @@ gnt_entry_map(GntWidget *widget)
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
 	DEBUG;
+}
+
+static void
+entry_redraw(GntWidget *widget)
+{
+	gnt_entry_draw(widget);
+	gnt_widget_queue_update(widget);
 }
 
 static gboolean
@@ -52,21 +63,21 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		{
 			memmove(entry->cursor, entry->cursor + 1, entry->end - entry->cursor + 1);
 			entry->end--;
-			gnt_entry_draw(widget);
+			entry_redraw(widget);
 		}
 		else if (strcmp(text + 1, GNT_KEY_LEFT) == 0 && entry->cursor > entry->start)
 		{
 			entry->cursor--;
 			if (entry->cursor < entry->scroll)
 				entry->scroll--;
-			gnt_entry_draw(widget);
+			entry_redraw(widget);
 		}
 		else if (strcmp(text + 1, GNT_KEY_RIGHT) == 0 && entry->cursor < entry->end)
 		{
 			entry->cursor++;
 			if (entry->cursor - entry->scroll > widget->priv.width)
 				entry->scroll++;
-			gnt_entry_draw(widget);
+			entry_redraw(widget);
 		}
 		/* XXX: handle other keys, like home/end, and ctrl+ goodness */
 	}
@@ -106,7 +117,8 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->cursor - entry->scroll > widget->priv.width)
 					entry->scroll++;
 			}
-			gnt_entry_draw(widget);
+			entry_redraw(widget);
+			return TRUE;
 		}
 		else
 		{
@@ -120,7 +132,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->scroll > entry->start)
 					entry->scroll--;
 
-				gnt_entry_draw(widget);
+				entry_redraw(widget);
 			}
 		}
 	}
@@ -233,7 +245,8 @@ void gnt_entry_set_text(GntEntry *entry, const char *text)
 	entry->scroll = entry->start + scroll;
 	entry->cursor = entry->end - cursor;
 
-	/* XXX: redraw if necessary? */
+	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(entry), GNT_WIDGET_MAPPED))
+		entry_redraw(GNT_WIDGET(entry));
 }
 
 void gnt_entry_set_max(GntEntry *entry, int max)
@@ -246,4 +259,17 @@ void gnt_entry_set_flag(GntEntry *entry, GntEntryFlag flag)
 	entry->flag = flag;
 	/* XXX: Check the existing string to make sure the flags are respected? */
 }
+
+const char *gnt_entry_get_text(GntEntry *entry)
+{
+	return entry->start;
+}
+
+void gnt_entry_clear(GntEntry *entry)
+{
+	gnt_entry_set_text(entry, NULL);
+	entry->scroll = entry->cursor = entry->end = entry->start;
+	entry_redraw(GNT_WIDGET(entry));
+}
+
 
