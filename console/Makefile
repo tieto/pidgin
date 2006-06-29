@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=`pkg-config --cflags gaim gobject-2.0` -g -I./libgnt/ -Wall
-LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0` -lncursesw -L./libgnt/ -lgnt -pg
+CFLAGS=`pkg-config --cflags gaim gobject-2.0 gnt` -g -Wall
+LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0 gnt` -pg
 
 GG_SOURCES = \
 	gntblist.c \
@@ -17,9 +17,7 @@ GG_OBJECTS = \
 	gntconv.o \
 	gntui.o
 
-all:
-	cd libgnt && make
-	make gntgaim
+all: gntgaim
 
 gntgaim: gntgaim.o $(GG_OBJECTS)
 	$(CC) -o gntgaim gntgaim.o $(GG_OBJECTS) $(LDFLAGS)
@@ -29,7 +27,6 @@ gntgaim.o: gntgaim.c gntgaim.h $(GG_HEADERS)
 gntui.o: gntui.c $(GG_HEADERS)
 
 clean:
-	cd libgnt && make clean
 	rm -f *.o
 	rm -f gntgaim
 
