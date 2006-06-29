@@ -1161,7 +1161,7 @@ int aim_ssi_cleanlist(OscarData *od);
 int aim_ssi_deletelist(OscarData *od);
 int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);
-int aim_ssi_seticon(OscarData *od, guint8 *iconsum, guint16 iconsumlen);
+int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen);
 int aim_ssi_delicon(OscarData *od);
 
 

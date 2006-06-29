@@ -1089,7 +1089,7 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 0x10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_seticon(OscarData *od, guint8 *iconsum, guint16 iconsumlen)
+int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen)
 {
 	struct aim_ssi_item *tmp;
 	guint8 *csumdata;
@@ -1099,13 +1099,12 @@ int aim_ssi_seticon(OscarData *od, guint8 *iconsum, guint16 iconsumlen)
 
 	/* Find the ICONINFO item, or add it if it does not exist */
 	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
-		tmp = aim_ssi_itemlist_add(&od->ssi.local, "1", 0x0000, 0x51F4, AIM_SSI_TYPE_ICONINFO, NULL);
+		tmp = aim_ssi_itemlist_add(&od->ssi.local, "1", 0x0000, 0xFFFF, AIM_SSI_TYPE_ICONINFO, NULL);
 	}
 
 	/* Need to add the 0x00d5 TLV to the TLV chain */
 	csumdata = (guint8 *)malloc((iconsumlen+2)*sizeof(guint8));
-	csumdata[0] = 0x00;
-	csumdata[1] = 0x10;
+	aimutil_put16(&csumdata[0], iconsumlen);
 	memcpy(&csumdata[2], iconsum, iconsumlen);
 	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(guint8), csumdata);
 	free(csumdata);
@@ -1122,23 +1121,17 @@ int aim_ssi_seticon(OscarData *od, guint8 *iconsum, guint16 iconsumlen)
  * Remove a reference to a server stored buddy icon.  This will make your
  * icon stop showing up to other people.
  *
- * @param od The oscar odion.
+ * Really this function just sets the icon to a dummy value.  It's weird...
+ * but I think the dummy value basically means "I don't have an icon!"
+ *
+ * @param od The oscar session.
  * @return Return 0 if no errors, otherwise return the error number.
  */
 int aim_ssi_delicon(OscarData *od)
 {
-	struct aim_ssi_item *tmp;
+	const guint8 csumdata[] = {0x02, 0x01, 0xd2, 0x04, 0x72};
 
-	if (!od)
-		return -EINVAL;
-
-	/* Find the ICONINFO item and delete it if it exists*/
-	if ((tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO)))
-		aim_ssi_itemlist_del(&od->ssi.local, tmp);
-
-	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-	return 0;
+	return aim_ssi_seticon(od, csumdata, 5);
 }
 
 /**

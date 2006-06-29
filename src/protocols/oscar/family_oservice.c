@@ -1064,6 +1064,11 @@ aim_parse_extstatus(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	flags = byte_stream_get8(bs);
 	length = byte_stream_get8(bs);
 
+	/*
+	 * A flag of 0x01 could mean "this is the checksum we have for you"
+	 * A flag of 0x40 could mean "I don't have your icon, upload it"
+	 */
+
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype))) {
 		switch (type) {
 		case 0x0000:

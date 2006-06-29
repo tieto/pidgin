@@ -286,6 +286,7 @@ void gaim_blist_alias_buddy(GaimBuddy *buddy, const char *alias);
 
 /**
  * Sets the server-sent alias of a buddy in the buddy list.
+ * PRPLs should call serv_got_alias() instead of this.
  *
  * @param buddy  The buddy whose alias will be changed.
  * @param alias  The buddy's "official" alias.

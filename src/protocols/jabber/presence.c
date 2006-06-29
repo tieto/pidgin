@@ -256,13 +256,14 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				char hash[41], *p;
 				int i;
 
-				gaim_cipher_digest_region("sha1", (guchar *)data, size,
+				gaim_cipher_digest_region("sha1", data, size,
 						sizeof(hashval), hashval, NULL);
 				p = hash;
 				for(i=0; i<20; i++, p+=2)
 					snprintf(p, 3, "%02x", hashval[i]);
 				gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
 			}
+			g_free(data);
 			g_free(text);
 		}
 	}
