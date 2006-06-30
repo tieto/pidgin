@@ -219,12 +219,12 @@ void gnt_screen_release(GntWidget *widget)
 		
 		top = MAX(widget->priv.y, w->priv.y) - w->priv.y;
 		bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
-		
+
 		copywin(w->window, win, top, left,
-						w->priv.y + top,
-						w->priv.x + left,
-						w->priv.y + bottom - top - 1,
-						w->priv.x + right - left - 1, FALSE);
+					w->priv.y - widget->priv.y + top,
+					w->priv.x - widget->priv.x + left,
+					w->priv.y - widget->priv.y + bottom - 1,
+					w->priv.x - widget->priv.x + right - 1, FALSE);
 		n->above = g_list_remove(n->above, node);
 	}
 
@@ -273,10 +273,10 @@ void gnt_screen_update(GntWidget *widget)
 			bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
 
 			copywin(w->window, win, top, left,
-					w->priv.y + top,
-					w->priv.x + left,
-					w->priv.y + bottom - top - 1,
-					w->priv.x + right - left - 1, FALSE);
+					w->priv.y - widget->priv.y + top,
+					w->priv.x - widget->priv.x + left,
+					w->priv.y - widget->priv.y + bottom - 1,
+					w->priv.x - widget->priv.x + right - 1, FALSE);
 		}
 	}
 
