@@ -67,7 +67,7 @@ static GaimPluginInfo info = {
 	"Hello World Plugin",
 	"Hello World Plugin",
 	NULL,
-	GAIM_WEBSITE,
+	"http://www.helloworld.tld",
 
 	plugin_load,
 	NULL,
@@ -197,7 +197,7 @@ static GaimPluginInfo info = {
 	NULL,                         /* This is where you can put your name and
                                      email address.  (You are the author right?)
                                    */
-	GAIM_WEBSITE,                 /* This is the website for the plugin.  This
+	"http://www.helloworld.tld",  /* This is the website for the plugin.  This
                                      is helpful if users find bugs in your
                                      plugin so they can help to bring them to
                                      your attention.
