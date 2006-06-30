@@ -275,6 +275,12 @@ static gpointer res_thread(gpointer data) {
 
 #endif
 
+/*
+ * TODO: It would be really good if this returned some sort of handle
+ *       that we could use to cancel the DNS query.  As it is now,
+ *       each callback has to check to make sure gc is still valid.
+ *       And that is ugly.
+ */
 void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSRVCallback cb, gpointer extradata) {
 	char *query = g_strdup_printf("_%s._%s.%s",protocol, transport, domain);
 	struct resdata *rdata;
