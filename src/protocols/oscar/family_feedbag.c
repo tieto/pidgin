@@ -456,14 +456,14 @@ char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *
  * @param sn The name of the buddy.
  * @return 1 if you are waiting for authorization; 0 if you are not
  */
-int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn)
+gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn)
 {
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		if (aim_tlv_gettlv(cur->data, 0x0066, 1))
-			return 1;
+			return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
 
 /**
@@ -945,10 +945,17 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
  */
 int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *sn)
 {
-	char *alias = aim_ssi_getalias(od->ssi.local, oldgn, sn);
-	aim_ssi_addbuddy(od, sn, newgn, alias, NULL, NULL, aim_ssi_waitingforauth(od->ssi.local, oldgn, sn));
+	char *alias;
+	gboolean waitingforauth;
+
+	alias = aim_ssi_getalias(od->ssi.local, oldgn, sn);
+	waitingforauth = aim_ssi_waitingforauth(od->ssi.local, oldgn, sn);
+
 	aim_ssi_delbuddy(od, sn, oldgn);
+	aim_ssi_addbuddy(od, sn, newgn, alias, NULL, NULL, waitingforauth);
+
 	free(alias);
+
 	return 0;
 }
 
