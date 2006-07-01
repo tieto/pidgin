@@ -13,20 +13,57 @@ static GList *focus_list;
 static int max_x;
 static int max_y;
 
+typedef struct
+{
+	GntWidget *me;
+	GList *below;		/* List of widgets below me */
+	GList *above;		/* List of widgets above me */
+} GntNode;
+
 static GHashTable *nodes;
 
 static void free_node(gpointer data);
 
 void gnt_screen_take_focus(GntWidget *widget)
 {
+	GntWidget *w = NULL;
+	if (focus_list)
+		w = focus_list->data;
 	focus_list = g_list_prepend(focus_list, widget);
+	gnt_widget_set_focus(widget, TRUE);
+	if (w)
+		gnt_widget_set_focus(w, FALSE);
 }
 
 void gnt_screen_remove_widget(GntWidget *widget)
 {
 	focus_list = g_list_remove(focus_list, widget);
 	if (focus_list)
+	{
+		gnt_widget_set_focus(focus_list->data, TRUE);
 		gnt_widget_draw(focus_list->data);
+	}
+}
+
+static void
+bring_on_top(GntWidget *widget)
+{
+	GntNode *node = g_hash_table_lookup(nodes, widget);
+	GList *iter;
+
+	if (!node)
+		return;
+
+	for (iter = node->above; iter;)
+	{
+		GntNode *n = iter->data;
+		iter = iter->next;
+		n->below = g_list_remove(n->below, node);
+		n->above = g_list_prepend(n->above, node);
+
+		node->above = g_list_remove(node->above, n);
+		node->below = g_list_prepend(node->below, n);
+	}
 }
 
 static gboolean
@@ -79,15 +116,23 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		else if (strcmp(buffer + 1, "n") == 0)
 		{
 			/* Alt + n to go to the next window */
+			GntWidget *w = NULL;
+			if (focus_list)
+				w = focus_list->data;
+
 			if (focus_list && focus_list->next)
 				focus_list = focus_list->next;
 			else
 				focus_list = g_list_first(focus_list);
 			if (focus_list)
 			{
-				/* XXX: Need a way to bring it on top */
+				gnt_widget_set_focus(focus_list->data, TRUE);
+				bring_on_top(focus_list->data);
 				gnt_widget_draw(focus_list->data);
 			}
+
+			if (w && w != focus_list->data)
+				gnt_widget_set_focus(w, FALSE);
 		}
 	}
 	refresh();
@@ -133,13 +178,6 @@ void gnt_main()
 /*********************************
  * Stuff for 'window management' *
  *********************************/
-
-typedef struct
-{
-	GntWidget *me;
-	GList *below;		/* List of widgets below me */
-	GList *above;		/* List of widgets above me */
-} GntNode;
 
 static void
 free_node(gpointer data)
@@ -282,5 +320,28 @@ void gnt_screen_update(GntWidget *widget)
 
 	wrefresh(win);
 	delwin(win);
+}
+
+gboolean gnt_widget_has_focus(GntWidget *widget)
+{
+	GntWidget *w;
+	if (!widget)
+		return FALSE;
+
+	w = widget;
+
+	while (widget->parent)
+	{
+		fprintf(stderr, "%p %p\n", widget, widget->parent);
+		widget = widget->parent;
+	}
+	fprintf(stderr, "%p %p\n", widget, widget->parent);
+
+	if (focus_list && focus_list->data == widget &&
+			(!GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_CAN_TAKE_FOCUS) ||
+			GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_HAS_FOCUS)))
+		return TRUE;
+
+	return FALSE;
 }
 

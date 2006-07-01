@@ -16,6 +16,7 @@
 #include "whiteboard.h"
 
 #include "gntgaim.h"
+#include "gntui.h"
 
 /* Anything IO-related is directly copied from gtkgaim's source tree */
 

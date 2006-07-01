@@ -10,6 +10,8 @@ enum
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
+static GntWidget * find_focusable_widget(GntBox *box);
+
 static void
 gnt_box_draw(GntWidget *widget)
 {
@@ -34,7 +36,11 @@ gnt_box_draw(GntWidget *widget)
 			/* XXX: Position of the title might be configurable */
 			pos = (widget->priv.width - pos) / 2;
 		}
-		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
+
+		if (gnt_widget_has_focus(widget))
+			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
+		else
+			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE_D));
 		mvwprintw(widget->window, 0, pos, title);
 		g_free(title);
 	}
@@ -139,23 +145,88 @@ static void
 gnt_box_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
+	{
 		gnt_widget_size_request(widget);
+		find_focusable_widget(GNT_BOX(widget));
+	}
 	DEBUG;
 }
 
+static GntWidget *
+find_next_focus(GntBox *box)
+{
+	GntWidget *w = box->active;
+	GList *iter;
+
+	while (w && !(iter = g_list_find(box->list, w)))
+		w = w->parent;
+
+	if (!w)
+		box->active = NULL;
+	else if (iter)
+	{
+		GntWidget *next = NULL;
+		
+		do
+		{
+			next = find_next_focus(iter->data);
+			box->active = next;
+			iter = iter->next;
+		} while (!next && iter);
+	}
+
+	if (box->active == NULL && GNT_WIDGET(box)->parent == NULL)
+	{
+		box->active = find_focusable_widget(box);
+	}
+	
+	if (box->active)
+		GNT_WIDGET_SET_FLAGS(box->active, GNT_WIDGET_HAS_FOCUS);
+
+	return box->active;
+}
+
 /* Ensures that the current widget can take focus */
-static void
-ensure_active(GntBox *box)
+static GntWidget *
+find_focusable_widget(GntBox *box)
 {
 	int investigated = 0;
 	int total;
+	GntWidget *w = NULL;
+	GList *iter;
 
-	if (box->active == NULL)
-		box->active = box->list;
+	for (iter = box->list; iter; iter = iter->next)
+	{
+		w = iter->data;
+		if (GNT_IS_BOX(w))
+		{
+			w = find_focusable_widget(GNT_BOX(w));
+			if (w)
+				break;
+		}
+		else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_CAN_TAKE_FOCUS))
+			break;
+	}
+
+	if (iter)
+		box->active = w;
+	else
+		box->active = NULL;
+
+	if (box->active)
+		GNT_WIDGET_SET_FLAGS(box->active, GNT_WIDGET_HAS_FOCUS);
+
+	return box->active;
+
+#if 0
+	if (box->active == NULL && box->list)
+		box->active = box->list->data;
+	else
+		w = box->active;
 
 	total = g_list_length(box->list);
 
-	while (box->active && !GNT_WIDGET_IS_FLAG_SET(box->active->data, GNT_WIDGET_CAN_TAKE_FOCUS))
+	while (box->active && !GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_CAN_TAKE_FOCUS))
 	{
 		box->active = box->active->next;
 		investigated++;
@@ -171,6 +242,12 @@ ensure_active(GntBox *box)
 			investigated++;
 		}
 	}
+
+	if (box->active)
+		gnt_widget_set_focus(box->active->data, TRUE);
+	if (w && w != box->active->data)
+		gnt_widget_set_focus(w, FALSE);
+#endif
 }
 
 static gboolean
@@ -178,15 +255,15 @@ gnt_box_key_pressed(GntWidget *widget, const char *text)
 {
 	GntBox *box = GNT_BOX(widget);
 
-	ensure_active(box);
-	if (box->active == NULL)
+	if (box->active == NULL && !find_focusable_widget(box))
 		return FALSE;
 
-	if (gnt_widget_key_pressed(box->active->data, text))
+	if (gnt_widget_key_pressed(box->active, text))
 		return TRUE;
 	
 	if (text[0] == 27)
 	{
+#if 0
 		GList *now = NULL;
 		if (strcmp(text+1, GNT_KEY_LEFT) == 0)
 		{
@@ -209,6 +286,7 @@ gnt_box_key_pressed(GntWidget *widget, const char *text)
 
 			return TRUE;
 		}
+#endif
 	}
 
 	return FALSE;
@@ -237,8 +315,9 @@ static GntWidget *find_focused_widget(GntBox *box)
 	return NULL;
 }
 
+#if 0
 static void
-gnt_box_lost_focus(GntWidget *widget)
+gnt_box_set_focus(GntWidget *widget, gboolean set)
 {
 	GntWidget *p = widget;
 
@@ -247,8 +326,30 @@ gnt_box_lost_focus(GntWidget *widget)
 
 	p = find_focused_widget(GNT_BOX(p));
 	if (p)
-		gnt_widget_set_focus(p, FALSE);
+		gnt_widget_set_focus(p, set);
+	gnt_widget_draw(widget);
 }
+
+static void
+gnt_box_lost_focus(GntWidget *widget)
+{
+	gnt_box_set_focus(widget, FALSE);
+}
+
+static void
+gnt_box_gained_focus(GntWidget *widget)
+{
+	GntWidget *p;
+
+	while (widget->parent)
+		widget = widget->parent;
+	
+	p = find_focused_widget(GNT_BOX(widget));
+	GNT_BOX(widget)->active = g_list_find(GNT_BOX(widget)->list, p);
+	if (p)
+		gnt_widget_draw(p);
+}
+#endif
 
 static void
 gnt_box_destroy(GntWidget *w)
@@ -286,7 +387,11 @@ gnt_box_class_init(GntBoxClass *klass)
 	parent_class->size_request = gnt_box_size_request;
 	parent_class->set_position = gnt_box_set_position;
 	parent_class->key_pressed = gnt_box_key_pressed;
+#if 0
+	/* We are going to need this when there are multiple focusble widgets in a box */
 	parent_class->lost_focus = gnt_box_lost_focus;
+	parent_class->gained_focus = gnt_box_gained_focus;
+#endif
 
 	DEBUG;
 }

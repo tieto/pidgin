@@ -203,7 +203,7 @@ redraw_tree(GntTree *tree)
 		
 		if (row == tree->current)
 		{
-			if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_HAS_FOCUS))
+			if (gnt_widget_has_focus(widget))
 				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
 			else
 				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D)); /* XXX: This, somehow, doesn't work */
@@ -229,9 +229,6 @@ static void
 gnt_tree_draw(GntWidget *widget)
 {
 	GntTree *tree = GNT_TREE(widget);
-
-	scrollok(widget->window, TRUE);
-	wsetscrreg(widget->window, 0, widget->priv.height - 1);
 
 	redraw_tree(tree);
 	

@@ -6,6 +6,7 @@
 
 #include "gntgaim.h"
 #include "gntbox.h"
+#include "gntlabel.h"
 #include "gnttree.h"
 
 #include "gntblist.h"
@@ -238,12 +239,27 @@ GaimBlistUiOps *gg_blist_get_ui_ops()
 static void
 selection_activate(GntWidget *widget, GGBlist *ggblist)
 {
-	gnt_widget_set_focus(widget, FALSE);
+	GntTree *tree = GNT_TREE(ggblist->tree);
+	GaimBlistNode *node = gnt_tree_get_selection_data(tree);
+
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+	{
+		GaimBuddy *buddy = (GaimBuddy *)node;
+		gaim_conversation_new(GAIM_CONV_TYPE_IM,
+				gaim_buddy_get_account(buddy),
+				gaim_buddy_get_name(buddy));
+	}
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+	{
+		GaimChat *chat = (GaimChat*)node;
+		serv_join_chat(chat->account->gc, chat->components);
+	}
 }
 
 static void
 draw_tooltip(GGBlist *ggblist)
 {
+	return;
 	GaimBlistNode *node;
 	int x, y, top, width;
 	GString *str;
@@ -251,11 +267,14 @@ draw_tooltip(GGBlist *ggblist)
 	GaimPluginProtocolInfo *prpl_info;
 	GaimAccount *account;
 	GntTree *tree;
-	GntWidget *widget, *box, *label;
+	GntWidget *widget, *box;
 	char *title = NULL;
 
 	widget = ggblist->tree;
 	tree = GNT_TREE(widget);
+
+	if (!gnt_widget_has_focus(ggblist->tree))
+		return;
 
 	if (ggblist->tooltip)
 	{
@@ -332,7 +351,7 @@ draw_tooltip(GGBlist *ggblist)
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW);
 	gnt_box_set_title(GNT_BOX(box), title);
 
-	gnt_box_add_widget(GNT_BOX(box), GNT_WIDGET(gnt_label_new(str->str)));
+	gnt_box_add_widget(GNT_BOX(box), gnt_label_new(str->str));
 
 	gnt_widget_set_position(box, x, y);
 	gnt_widget_draw(box);
@@ -363,24 +382,6 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 			gnt_widget_destroy(ggblist->tooltip);
 			ggblist->tooltip = NULL;
 			return TRUE;
-		}
-	}
-	else if (text[0] == '\r' && text[1] == '\0')
-	{
-		GntTree *tree = GNT_TREE(ggblist->tree);
-		GaimBlistNode *node = gnt_tree_get_selection_data(tree);
-
-		if (GAIM_BLIST_NODE_IS_BUDDY(node))
-		{
-			GaimBuddy *buddy = (GaimBuddy *)node;
-			gaim_conversation_new(GAIM_CONV_TYPE_IM,
-					gaim_buddy_get_account(buddy),
-					gaim_buddy_get_name(buddy));
-		}
-		else if (GAIM_BLIST_NODE_IS_CHAT(node))
-		{
-			GaimChat *chat = (GaimChat*)node;
-			serv_join_chat(chat->account->gc, chat->components);
 		}
 	}
 

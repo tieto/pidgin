@@ -9,6 +9,9 @@
 #define GNT_KEY_UP     "[A"
 #define GNT_KEY_DOWN   "[B"
 
+#define GNT_KEY_PGUP   "[5~"
+#define GNT_KEY_PGDOWN "[6~"
+
 #define GNT_KEY_ENTER  "\r"
 
 #define GNT_KEY_BACKSPACE "\177"

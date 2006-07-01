@@ -37,6 +37,7 @@ int main()
 	gnt_box_set_title(GNT_BOX(box2), "On top");
 
 	gnt_box_add_widget(GNT_BOX(box2), GNT_WIDGET(gnt_label_new("asdasd")));
+	gnt_box_add_widget(GNT_BOX(box2), gnt_entry_new(NULL));
 
 	gnt_widget_show(hbox);
 	gnt_widget_set_position(box2, 5, 5);

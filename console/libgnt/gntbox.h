@@ -22,7 +22,7 @@ struct _GnBox
 	gboolean homogeneous;
 	GList *list;		/* List of widgets */
 
-	GList *active;
+	GntWidget *active;
 	int pad;			/* Number of spaces to use between widgets */
 
 	char *title;

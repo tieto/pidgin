@@ -17,7 +17,10 @@ gnt_entry_draw(GntWidget *widget)
 	GntEntry *entry = GNT_ENTRY(widget);
 	int stop;
 
-	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TEXT_NORMAL));
+	if (gnt_widget_has_focus(widget))
+		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TEXT_NORMAL));
+	else
+		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 	mvwprintw(widget->window, 0, 0, entry->scroll);
 
 	stop = entry->end - entry->scroll;

@@ -1,3 +1,4 @@
+#include <string.h>
 #include <util.h>
 
 #include "gntgaim.h"
@@ -59,6 +60,20 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
 		return TRUE;
 	}
+	else if (key[0] == 27)
+	{
+		if (strcmp(key+1, GNT_KEY_DOWN) == 0)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 1);
+		else if (strcmp(key+1, GNT_KEY_UP) == 0)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), -1);
+		else if (strcmp(key+1, GNT_KEY_PGDOWN) == 0)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), ggconv->tv->priv.height - 2);
+		else if (strcmp(key+1, GNT_KEY_PGUP) == 0)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), -(ggconv->tv->priv.height - 2));
+		else
+			return FALSE;
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -90,7 +105,7 @@ gg_create_conversation(GaimConversation *conv)
 	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
-	gnt_widget_set_name(ggc->window, "conversation-window");
+	gnt_widget_set_name(ggc->window, title);
 
 	ggc->tv = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
@@ -180,6 +195,7 @@ gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
 {
 	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
 	char *strip;
+	GntTextViewFlags fl = 0;
 
 	g_return_if_fail(ggconv != NULL);
 
@@ -199,8 +215,14 @@ gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
 				name, GNT_TEXT_FLAG_BOLD);
 		g_free(name);
 	}
+	else
+		fl = GNT_TEXT_FLAG_DIM;
+
+	if (flags & GAIM_MESSAGE_ERROR)
+		fl |= GNT_TEXT_FLAG_BOLD;
+
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			strip, 0);
+			strip, fl);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
 	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 

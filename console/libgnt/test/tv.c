@@ -11,10 +11,10 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 {
 	if (key[0] == '\r' && key[1] == 0)
 	{
-		gnt_text_view_next_line(GNT_TEXT_VIEW(view));
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view),
 				gnt_entry_get_text(GNT_ENTRY(w)),
-				GNT_TEXT_FLAG_BOLD);
+				GNT_TEXT_FLAG_HIGHLIGHT);
+		gnt_text_view_next_line(GNT_TEXT_VIEW(view));
 		gnt_entry_clear(GNT_ENTRY(w));
 		gnt_text_view_scroll(GNT_TEXT_VIEW(view), 0);
 
@@ -54,8 +54,8 @@ int main()
 	view = gnt_text_view_new();
 	gnt_widget_set_name(view, "view");
 
-	gnt_widget_set_size(view, getmaxx(stdscr) - 3, 15);
-	gnt_widget_set_size(entry, getmaxx(stdscr) - 3, 1);
+	gnt_widget_set_size(view, 20, 15);
+	gnt_widget_set_size(entry, 20, 1);
 
 	gnt_box_add_widget(GNT_BOX(hbox), view);
 	gnt_box_add_widget(GNT_BOX(hbox), entry);

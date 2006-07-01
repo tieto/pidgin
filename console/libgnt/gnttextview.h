@@ -25,9 +25,7 @@ struct _GnTextView
 {
 	GntWidget parent;
 
-	WINDOW *scroll;     /* XXX: For now, let's do with this. */
-	int pos;            /* Scroll position. */
-	int lines;          /* No. of lines of text. */
+	GList *list;        /* List of GntTextLine */
 };
 
 typedef enum
@@ -35,6 +33,8 @@ typedef enum
 	GNT_TEXT_FLAG_BOLD        = 1 << 0,
 	GNT_TEXT_FLAG_UNDERLINE   = 1 << 1,
 	GNT_TEXT_FLAG_BLINK       = 1 << 2,
+	GNT_TEXT_FLAG_DIM         = 1 << 3,
+	GNT_TEXT_FLAG_HIGHLIGHT   = 1 << 4,
 } GntTextViewFlags;
 
 struct _GnTextViewClass
