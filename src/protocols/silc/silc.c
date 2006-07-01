@@ -268,6 +268,7 @@ silcgaim_login(GaimAccount *account)
 	GaimConnection *gc;
 	char pkd[256], prd[256];
 	const char *cipher, *hmac;
+	char *realname;
 	int i;
 
 	gc = account->gc;
@@ -298,11 +299,16 @@ silcgaim_login(GaimAccount *account)
 		client->username = silc_get_username();
 		gaim_account_set_username(account, client->username);
 	}
+	realname = silc_get_real_name();
 	if (gaim_account_get_user_info(account)) {
 		client->realname = strdup(gaim_account_get_user_info(account));
-	} else {
-		client->realname = silc_get_real_name();
+		free(realname);
+	} else if ((silc_get_real_name() != NULL) && (*realname != '\0')) {
+		client->realname = realname;
 		gaim_account_set_user_info(account, client->realname);
+	} else {
+		free(realname);
+		client->realname = strdup(_("Gaim User"));
 	}
 	client->hostname = silc_net_localhost();
 
