@@ -23,6 +23,7 @@ typedef struct
 static GHashTable *nodes;
 
 static void free_node(gpointer data);
+static void draw_taskbar();
 
 void gnt_screen_take_focus(GntWidget *widget)
 {
@@ -33,6 +34,7 @@ void gnt_screen_take_focus(GntWidget *widget)
 	gnt_widget_set_focus(widget, TRUE);
 	if (w)
 		gnt_widget_set_focus(w, FALSE);
+	draw_taskbar();
 }
 
 void gnt_screen_remove_widget(GntWidget *widget)
@@ -43,6 +45,7 @@ void gnt_screen_remove_widget(GntWidget *widget)
 		gnt_widget_set_focus(focus_list->data, TRUE);
 		gnt_widget_draw(focus_list->data);
 	}
+	draw_taskbar();
 }
 
 static void
@@ -64,6 +67,53 @@ bring_on_top(GntWidget *widget)
 		node->above = g_list_remove(node->above, n);
 		node->below = g_list_prepend(node->below, n);
 	}
+}
+
+static void
+draw_taskbar()
+{
+	static WINDOW *taskbar = NULL;
+	GList *iter;
+	int n, width;
+	int i;
+
+	if (taskbar == NULL)
+	{
+		taskbar = newwin(1, getmaxx(stdscr), getmaxy(stdscr) - 1, 0);
+	}
+
+	werase(taskbar);
+
+	n = g_list_length(g_list_first(focus_list));
+	if (n)
+		width = getmaxx(stdscr) / n;
+
+	for (i = 0, iter = g_list_first(focus_list); iter; iter = iter->next, i++)
+	{
+		GntWidget *w = iter->data;
+		int color;
+
+		if (w == focus_list->data)
+		{
+			/* This is the current window in focus */
+			color = GNT_COLOR_TITLE;
+			GNT_WIDGET_UNSET_FLAGS(w, GNT_WIDGET_URGENT);
+		}
+		else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT))
+		{
+			/* This is a window with the URGENT hint set */
+			color = GNT_COLOR_TITLE_D;
+		}
+		else
+		{
+			color = GNT_COLOR_NORMAL;
+		}
+		wbkgdset(taskbar, '\0' | COLOR_PAIR(color));
+		mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
+		mvwprintw(taskbar, 0, width * i, "%s", GNT_BOX(w)->title);
+	}
+
+	wrefresh(taskbar);
 }
 
 static gboolean
@@ -135,6 +185,8 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				gnt_widget_set_focus(w, FALSE);
 		}
 	}
+
+	draw_taskbar();
 	refresh();
 
 	return TRUE;
@@ -343,5 +395,17 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 		return TRUE;
 
 	return FALSE;
+}
+
+void gnt_widget_set_urgent(GntWidget *widget)
+{
+	while (widget->parent)
+		widget = widget->parent;
+
+	if (focus_list && focus_list->data == widget)
+		return;
+
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
+	draw_taskbar();
 }
 

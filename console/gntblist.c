@@ -219,6 +219,7 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 				get_display_name(node), group, NULL);
 }
 
+#if 0
 static void
 buddy_signed_on(GaimBuddy *buddy, GGBlist *ggblist)
 {
@@ -230,6 +231,7 @@ buddy_signed_off(GaimBuddy *buddy, GGBlist *ggblist)
 {
 	node_remove(gaim_get_blist(), (GaimBlistNode*)buddy);
 }
+#endif
 
 GaimBlistUiOps *gg_blist_get_ui_ops()
 {
@@ -259,7 +261,6 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 static void
 draw_tooltip(GGBlist *ggblist)
 {
-	return;
 	GaimBlistNode *node;
 	int x, y, top, width;
 	GString *str;
@@ -410,7 +411,7 @@ void gg_blist_init()
 
 	ggblist->tree = gnt_tree_new();
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
-	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr) - 2);
+	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr) - 3);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 	gnt_widget_show(ggblist->window);

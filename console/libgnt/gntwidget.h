@@ -35,7 +35,8 @@ typedef enum _GnWidgetFlags
 	GNT_WIDGET_NO_BORDER      = 1 << 3,
 	GNT_WIDGET_NO_SHADOW      = 1 << 4,
 	GNT_WIDGET_HAS_FOCUS      = 1 << 5,
-	GNT_WIDGET_DRAWING        = 1 << 6
+	GNT_WIDGET_DRAWING        = 1 << 6,
+	GNT_WIDGET_URGENT         = 1 << 7
 } GntWidgetFlags;
 
 /* XXX: I'll have to ask grim what he's using this for in guifications. */

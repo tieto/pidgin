@@ -101,7 +101,7 @@ gg_create_conversation(GaimConversation *conv)
 	ggc->conv = conv;
 
 	type = gaim_conversation_get_type(conv);
-	title = g_strdup_printf(_("Conversation: %s"), gaim_conversation_get_name(conv));
+	title = g_strdup_printf(_("%s"), gaim_conversation_get_name(conv));
 	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
@@ -133,38 +133,52 @@ gg_destroy_conversation(GaimConversation *conv)
 }
 
 static void
-gg_write_chat(GaimConversation *conv, const char *who, const char *message,
+gg_write_common(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
 	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
-	char *name, *strip;
+	char *strip;
+	GntTextViewFlags fl = 0;
 
 	g_return_if_fail(ggconv != NULL);
 
-	name = g_strdup_printf("%s: ", who);
-	strip = gaim_markup_strip_html(message);
+	if (who && *who && (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV)))
+	{
+		char * name = g_strdup_printf("%s: ", who);
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+				name, GNT_TEXT_FLAG_BOLD);
+		g_free(name);
+	}
+	else
+		fl = GNT_TEXT_FLAG_DIM;
 
+	if (flags & GAIM_MESSAGE_ERROR)
+		fl |= GNT_TEXT_FLAG_BOLD;
+	if (flags & GAIM_MESSAGE_NICK)
+		fl |= GNT_TEXT_FLAG_UNDERLINE;
+
+	strip = gaim_markup_strip_html(message);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			name, GNT_TEXT_FLAG_BOLD);
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			strip, (flags & GAIM_MESSAGE_NICK) ? GNT_TEXT_FLAG_UNDERLINE : 0);
+				strip, fl);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
 	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
-	g_free(name);
 	g_free(strip);
+
+	gnt_widget_set_urgent(ggconv->tv);
+}
+
+static void
+gg_write_chat(GaimConversation *conv, const char *who, const char *message,
+		GaimMessageFlags flags, time_t mtime)
+{
+	gg_write_common(conv, who, message, flags, mtime);
 }
 
 static void
 gg_write_im(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
-	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
-	char *strip;
-	char *name;
-
-	g_return_if_fail(ggconv != NULL);
-
 	if (flags & GAIM_MESSAGE_SEND)
 	{
 		who = gaim_connection_get_display_name(conv->account->gc);
@@ -176,57 +190,22 @@ gg_write_im(GaimConversation *conv, const char *who, const char *message,
 	else if (flags & GAIM_MESSAGE_RECV)
 		who = gaim_conversation_get_name(conv);
 
-	name = g_strdup_printf("%s: ", who);
-
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			name, GNT_TEXT_FLAG_BOLD);
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			(strip = gaim_markup_strip_html(message)), 0);
-	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
-	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
-
-	g_free(strip);
-	g_free(name);
+	gg_write_common(conv, who, message, flags, mtime);
 }
 
 static void
 gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
 		const char *message, GaimMessageFlags flags, time_t mtime)
 {
-	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
-	char *strip;
-	GntTextViewFlags fl = 0;
-
-	g_return_if_fail(ggconv != NULL);
-
-	strip = gaim_markup_strip_html(message);
-
-	if (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV))
-	{
-		char *name;
-		if (alias && *alias)
-			name = g_strdup_printf("%s: ", alias);
-		else if (who && *who)
-			name = g_strdup_printf("%s: ", who);
-		else
-			name = g_strdup("");
-
-		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-				name, GNT_TEXT_FLAG_BOLD);
-		g_free(name);
-	}
+	const char *name;
+	if (alias && *alias)
+		name = alias;
+	else if (who && *who)
+		name = who;
 	else
-		fl = GNT_TEXT_FLAG_DIM;
+		name = NULL;
 
-	if (flags & GAIM_MESSAGE_ERROR)
-		fl |= GNT_TEXT_FLAG_BOLD;
-
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-			strip, fl);
-	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
-	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
-
-	g_free(strip);
+	gg_write_common(conv, name, message, flags, mtime);
 }
 
 static void
