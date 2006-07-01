@@ -221,18 +221,29 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 struct _check_buddy_by_address_t {
 	char *address;
 	GaimBuddy **gb;
+	BonjourJabber *bj;
 };
 
 static void
 _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 {
 	GaimBuddy *gb = (GaimBuddy*)value;
-	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
-	struct _check_buddy_by_address_t *d = (struct _check_buddy_by_address_t *)data;
+	BonjourBuddy *bb;
+	struct _check_buddy_by_address_t *cbba;
 
-	if (bb != NULL) {
-		if (g_strcasecmp(bb->ip, (char*)d->address) == 0)
-			*(d->gb) = gb;
+	gb = value;
+	cbba = data;
+
+	/*
+	 * If the current GaimBuddy's data is not null and the GaimBuddy's account
+	 * is the same as the account requesting the check then continue to determine
+	 * whether the buddies IP matches the target IP.
+	 */
+	if (cbba->bj->account == gb->account)
+	{
+		bb = gb->proto_data;
+		if ((bb != NULL) && (g_strcasecmp(bb->ip, cbba->address) == 0))
+			*(cbba->gb) = gb;
 	}
 }
 
@@ -371,6 +382,7 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	socklen_t sin_size = sizeof(struct sockaddr);
 	int client_socket;
 	BonjourBuddy *bb = NULL;
+	BonjourJabber *bj = data;
 	char *address_text = NULL;
 	GaimBuddyList *bl = gaim_get_blist();
 	struct _check_buddy_by_address_t *cbba;
@@ -386,11 +398,12 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	}
 	fcntl(client_socket, F_SETFL, O_NONBLOCK);
 
-	/* Look for the buddy that has open the conversation and fill information */
+	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
 	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
 	cbba->gb = &gb;
+	cbba->bj = bj;
 	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, cbba);
 	g_free(cbba);
 	if (gb == NULL)
