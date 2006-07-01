@@ -229,17 +229,6 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0],
 	])
 
 
-PKG_CHECK_MODULES(GAIM, [gaim],
-	[
-		AC_SUBST(GAIM_CFLAGS)
-		AC_SUBST(GAIM_LIBS)
-	],
-	[
-		AC_MSG_ERROR([
-*** Need to have libgaim dude.])
-	])
-
-
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
 AC_CHECK_FUNCS(gethostid lrand48)
