@@ -309,6 +309,7 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 	char *closed_conv_message;
 	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
 	gboolean closed_conversation = FALSE;
+	xmlnode *message_node = NULL;
 
 	/* Read the data from the socket */
 	if ((message_length = _read_data(socket, &message)) == -1) {
@@ -325,34 +326,39 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 		}
 	}
 
-	/* Check if the start of the doctype has been received, if not check that the current */
-	/* data is the doctype */
-	if (!(bb->conversation->start_step_one))
-	{
-		if (g_str_has_prefix(message, DOCTYPE_DECLARATION))
-		{
-			bb->conversation->start_step_one = TRUE;
-		}
-	}
+	/* Parse the message into an XMLnode for analysis */
+	message_node = xmlnode_from_str(message, strlen(message));
 
 	/* Check if the start of the stream has been received, if not check that the current */
 	/* data is the start of the stream */
-	if (!(bb->conversation->start_step_two))
+	if (!(bb->conversation->stream_started))
 	{
-		if (g_str_has_suffix(message, STREAM_START)) {
-			bb->conversation->start_step_two = TRUE;
-
-			/* If we haven't done it yet, we have to sent the start of the stream to the other buddy */
-			if (!(bb->conversation->stream_started)) {
-				if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1) {
-					gaim_debug_error("bonjour", "Unable to start a conversation with %s\n", bb->name);
-				}
+		/* Check if this is the start of the stream */
+		if ((message_node != NULL) &&
+		   g_ascii_strcasecmp(xmlnode_get_attrib(message_node, "xmlns"), "jabber:client") &&
+		   (xmlnode_get_attrib(message_node,"xmlns:stream") != NULL))
+		{
+			bb->conversation->stream_started = TRUE;
+		}
+		else
+		{
+			/* TODO: This needs to be nonblocking! */
+			if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
+			{
+				gaim_debug_error("bonjour", "Unable to start a conversation with %s\n", bb->name);
+			}
+			else
+			{
+				bb->conversation->stream_started = TRUE;
 			}
 		}
-		return;
 	}
 
-	/* Check that this is not the end of the conversation */
+	/*
+	 * Check that this is not the end of the conversation.  This is
+	 * using a magic string, but xmlnode won't play nice when just
+	 * parsing an end tag
+	 */
 	if (g_str_has_prefix(message, STREAM_END) || (closed_conversation == TRUE)) {
 		/* Close the socket, clear the watcher and free memory */
 		if (bb->conversation != NULL) {
@@ -372,6 +378,8 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 		/* Parse the message to get the data and send to the ui */
 		_jabber_parse_and_write_message_to_ui(message, account->gc, gb);
 	}
+
+	xmlnode_free(message_node);
 }
 
 static void
@@ -419,8 +427,6 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	{
 		bb->conversation = g_new(BonjourJabberConversation, 1);
 		bb->conversation->socket = client_socket;
-		bb->conversation->start_step_one = FALSE;
-		bb->conversation->start_step_two = FALSE;
 		bb->conversation->stream_started = FALSE;
 		bb->conversation->buddy_name = g_strdup(gb->name);
 		bb->conversation->message_id = 1;
@@ -553,12 +559,10 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	{
 		bb->conversation = g_new(BonjourJabberConversation, 1);
 		bb->conversation->socket = _connect_to_buddy(gb);
-		bb->conversation->start_step_one = FALSE;
-		bb->conversation->start_step_two = FALSE;
 		bb->conversation->stream_started = FALSE;
 		bb->conversation->buddy_name = g_strdup(gb->name);
 		bb->conversation->watcher_id = gaim_input_add(bb->conversation->socket,
-														GAIM_INPUT_READ, _client_socket_handler, gb);
+				GAIM_INPUT_READ, _client_socket_handler, gb);
 	}
 
 	/* Check if the stream for the conversation has been started */

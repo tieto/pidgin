@@ -28,11 +28,8 @@
 
 #include "account.h"
 
-#define DOCTYPE_DECLARATION "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
-#define STREAM_START "<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
-#define CONVERSATION_START "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
 #define STREAM_END "</stream:stream>"
-#define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\" >"
+#define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
 
 typedef struct _BonjourJabber
 {
@@ -47,8 +44,6 @@ typedef struct _BonjourJabberConversation
 	gint socket;
 	gint watcher_id;
 	gchar* buddy_name;
-	gboolean start_step_one;
-	gboolean start_step_two;
 	gboolean stream_started;
 	gint message_id;
 } BonjourJabberConversation;
