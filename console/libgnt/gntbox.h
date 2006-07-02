@@ -26,6 +26,7 @@ struct _GnBox
 	int pad;			/* Number of spaces to use between widgets */
 
 	char *title;
+	GList *focus;		/* List of widgets to cycle focus (only valid for parent boxes) */
 
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);

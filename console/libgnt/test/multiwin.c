@@ -49,7 +49,7 @@ int main()
 	gnt_tree_add_row_after(GNT_TREE(tree), "e", "e", "a", NULL);
 	gnt_tree_add_row_after(GNT_TREE(tree), "b", "b", "d", NULL);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), "1", "1", NULL, NULL);
+	gnt_tree_add_choice(GNT_TREE(tree), "1", "1", NULL, NULL);
 	gnt_tree_add_row_after(GNT_TREE(tree), "2", "2", NULL, NULL);
 	gnt_tree_add_row_after(GNT_TREE(tree), "3", "3", NULL, NULL);
 	gnt_tree_add_row_after(GNT_TREE(tree), "4", "4", "a", NULL);
@@ -59,6 +59,8 @@ int main()
 	g_timeout_add(1000, (GSourceFunc)show, hbox);
 
 	gnt_main();
+
+	gnt_quit();
 
 	return 0;
 }

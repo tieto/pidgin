@@ -7,6 +7,7 @@ enum
 {
 	SIG_SELECTION_CHANGED,
 	SIG_SCROLLED,
+	SIG_TOGGLED,
 	SIGS,
 };
 
@@ -21,6 +22,9 @@ struct _GnTreeRow
 	void *data;		/* XXX: unused */
 
 	gboolean collapsed;
+	gboolean choice;            /* Is this a choice-box?
+	                               If choice is true, then child will be NULL */
+	gboolean isselected;
 
 	GntTreeRow *parent;
 	GntTreeRow *child;
@@ -188,6 +192,10 @@ redraw_tree(GntTree *tree)
 			else
 				strcpy(format, "- ");
 		}
+		else if (row->choice)
+		{
+			g_snprintf(format, sizeof(format) - 1, "[%c] ", row->isselected ? 'X' : ' ');
+		}
 
 		if ((wr = g_snprintf(str, widget->priv.width, "%s%s", format, row->text)) >= widget->priv.width)
 		{
@@ -206,7 +214,7 @@ redraw_tree(GntTree *tree)
 			if (gnt_widget_has_focus(widget))
 				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
 			else
-				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D)); /* XXX: This, somehow, doesn't work */
+				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 			mvwprintw(widget->window, start, pos, str);
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}
@@ -306,10 +314,19 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			row->collapsed = !row->collapsed;
 			redraw_tree(tree);
 		}
+		else if (row && row->choice)
+		{
+			row->isselected = !row->isselected;
+			g_signal_emit(tree, signals[SIG_TOGGLED], 0, row->key);
+			redraw_tree(tree);
+		}
 	}
 
 	if (old != tree->current)
+	{
 		tree_selection_changed(tree, old, tree->current);
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -349,6 +366,14 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__INT,
 					 G_TYPE_NONE, 1, G_TYPE_INT);
+	signals[SIG_TOGGLED] = 
+		g_signal_new("toggled",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__POINTER,
+					 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
 	DEBUG;
 }
@@ -616,4 +641,39 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, const char *text)
 	}
 }
 
+GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)
+{
+	GntTreeRow *row;
+
+	row = g_hash_table_lookup(tree->hash, key);
+	g_return_val_if_fail(!row || !row->choice, NULL);
+		
+	row = gnt_tree_add_row_after(tree, key, text, parent, bigbro);
+	row->choice = TRUE;
+
+	return row;
+}
+
+void gnt_tree_set_choice(GntTree *tree, void *key, gboolean set)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+
+	if (!row)
+		return;
+	g_return_if_fail(row->choice);
+
+	row->isselected = set;
+	redraw_tree(tree);
+}
+
+gboolean gnt_tree_get_choice(GntTree *tree, void *key)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+
+	if (!row)
+		return;
+	g_return_val_if_fail(row->choice, FALSE);
+
+	return row->isselected;
+}
 

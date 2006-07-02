@@ -1,4 +1,6 @@
 #include "gntui.h"
+
+#include "gntaccount.h"
 #include "gntblist.h"
 #include "gntconv.h"
 
@@ -6,9 +8,9 @@ void init_gnt_ui()
 {
 	gnt_init();
 
-	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
-	werase(stdscr);
-	wrefresh(stdscr);
+	/* Accounts */
+	gg_accounts_init();
+	gaim_accounts_set_ui_ops(gg_accounts_get_ui_ops());
 
 	/* Initialize the buddy list */
 	gg_blist_init();
@@ -19,5 +21,16 @@ void init_gnt_ui()
 	gaim_conversations_set_ui_ops(gg_conv_get_ui_ops());
 
 	gnt_main();
+
+	gaim_accounts_set_ui_ops(NULL);
+	gg_accounts_uninit();
+
+	gaim_blist_set_ui_ops(NULL);
+	gg_blist_uninit();
+
+	gaim_conversations_set_ui_ops(NULL);
+	gg_conversation_uninit();
+
+	gnt_quit();
 }
 

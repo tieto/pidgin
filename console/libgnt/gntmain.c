@@ -10,8 +10,12 @@
 #include <string.h>
 
 static GList *focus_list;
-static int max_x;
-static int max_y;
+static int X_MIN;
+static int X_MAX;
+static int Y_MIN;
+static int Y_MAX;
+
+static GMainLoop *loop;
 
 typedef struct
 {
@@ -19,6 +23,14 @@ typedef struct
 	GList *below;		/* List of widgets below me */
 	GList *above;		/* List of widgets above me */
 } GntNode;
+
+typedef enum
+{
+	GNT_KP_MODE_NORMAL,
+	GNT_KP_MODE_RESIZE,
+	GNT_KP_MODE_MOVE,
+	GNT_KP_MODE_MENU,
+} GntKeyPressMode;
 
 static GHashTable *nodes;
 
@@ -28,9 +40,15 @@ static void draw_taskbar();
 void gnt_screen_take_focus(GntWidget *widget)
 {
 	GntWidget *w = NULL;
+
 	if (focus_list)
 		w = focus_list->data;
-	focus_list = g_list_prepend(focus_list, widget);
+
+	/* XXX: ew */
+	focus_list = g_list_first(focus_list);
+	focus_list = g_list_append(focus_list, widget);
+	focus_list = g_list_find(focus_list, widget);
+
 	gnt_widget_set_focus(widget, TRUE);
 	if (w)
 		gnt_widget_set_focus(w, FALSE);
@@ -39,7 +57,18 @@ void gnt_screen_take_focus(GntWidget *widget)
 
 void gnt_screen_remove_widget(GntWidget *widget)
 {
+	int pos = g_list_index(g_list_first(focus_list), widget);
+	GList *next;
+
+	if (pos == -1)
+		return;
+
+	focus_list = g_list_first(focus_list);
 	focus_list = g_list_remove(focus_list, widget);
+	next = g_list_nth(focus_list, pos - 1);
+	if (next)
+		focus_list = next;
+
 	if (focus_list)
 	{
 		gnt_widget_set_focus(focus_list->data, TRUE);
@@ -82,6 +111,7 @@ draw_taskbar()
 		taskbar = newwin(1, getmaxx(stdscr), getmaxy(stdscr) - 1, 0);
 	}
 
+	wbkgdset(taskbar, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(taskbar);
 
 	n = g_list_length(g_list_first(focus_list));
@@ -116,10 +146,45 @@ draw_taskbar()
 	wrefresh(taskbar);
 }
 
+static void
+switch_window(int direction)
+{
+	GntWidget *w = NULL;
+	if (focus_list)
+		w = focus_list->data;
+
+	if (direction == 1)
+	{
+		if (focus_list && focus_list->next)
+			focus_list = focus_list->next;
+		else
+			focus_list = g_list_first(focus_list);
+	}
+	else if (direction == -1)
+	{
+		if (focus_list && focus_list->prev)
+			focus_list = focus_list->prev;
+		else
+			focus_list = g_list_last(focus_list);
+	}
+	
+	if (focus_list)
+	{
+		gnt_widget_set_focus(focus_list->data, TRUE);
+		bring_on_top(focus_list->data);
+		gnt_widget_draw(focus_list->data);
+	}
+
+	if (w && (!focus_list || w != focus_list->data))
+		gnt_widget_set_focus(w, FALSE);
+}		
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char buffer[256];
+	static GntKeyPressMode mode = GNT_KP_MODE_NORMAL;
+	gboolean ret = FALSE;
 
 	int rd = read(0, buffer, sizeof(buffer) - 1);
 	if (rd < 0)
@@ -137,52 +202,109 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	buffer[rd] = 0;
 
-	if (focus_list)
+	if (mode == GNT_KP_MODE_NORMAL)
 	{
-		gboolean ret = FALSE;
-		ret = gnt_widget_key_pressed(focus_list->data, buffer);
+		if (focus_list)
+		{
+			ret = gnt_widget_key_pressed(focus_list->data, buffer);
+		}
+
+		if (!ret)
+		{
+			if (buffer[0] == 27)
+			{
+				/* Some special key has been pressed */
+				if (strcmp(buffer+1, GNT_KEY_POPUP) == 0)
+				{}
+				else if (strcmp(buffer + 1, "c") == 0)
+				{
+					/* Alt + c was pressed. I am going to use it to close a window. */
+					if (focus_list)
+					{
+						gnt_widget_destroy(focus_list->data);
+					}
+				}
+				else if (strcmp(buffer + 1, "q") == 0)
+				{
+					/* I am going to use Alt + q to quit. */
+					g_main_loop_quit(loop);
+				}
+				else if (strcmp(buffer + 1, "n") == 0)
+				{
+					/* Alt + n to go to the next window */
+					switch_window(1);
+				}
+				else if (strcmp(buffer + 1, "p") == 0)
+				{
+					/* Alt + p to go to the previous window */
+					switch_window(-1);
+				}
+				else if (strcmp(buffer + 1, "m") == 0 && focus_list)
+				{
+					mode = GNT_KP_MODE_MOVE;
+				}
+			}
+		}
 	}
-
-	if (buffer[0] == 27)
+	else if (mode == GNT_KP_MODE_MOVE && focus_list)
 	{
-		/* Some special key has been pressed */
-		if (strcmp(buffer+1, GNT_KEY_POPUP) == 0)
-		{}
-		else if (strcmp(buffer + 1, "c") == 0)
+		if (buffer[0] == 27)
 		{
-			/* Alt + c was pressed. I am going to use it to close a window. */
-			if (focus_list)
+			gboolean changed = FALSE;
+			int x, y, w, h;
+			GntWidget *widget = GNT_WIDGET(focus_list->data);
+
+			gnt_widget_get_position(widget, &x, &y);
+			gnt_widget_get_size(widget, &w, &h);
+
+			if (strcmp(buffer + 1, GNT_KEY_LEFT) == 0)
 			{
-				gnt_widget_destroy(focus_list->data);
-				gnt_screen_remove_widget(focus_list->data);
+				if (x > X_MIN)
+				{
+					x--;
+					changed = TRUE;
+				}
+			}
+			else if (strcmp(buffer + 1, GNT_KEY_RIGHT) == 0)
+			{
+				if (x + w < X_MAX)
+				{
+					x++;
+					changed = TRUE;
+				}
+			}
+			else if (strcmp(buffer + 1, GNT_KEY_UP) == 0)
+			{
+				if (y > Y_MIN)
+				{
+					y--;
+					changed = TRUE;
+				}						
+			}
+			else if (strcmp(buffer + 1, GNT_KEY_DOWN) == 0)
+			{
+				if (y + h < Y_MAX)
+				{
+					y++;
+					changed = TRUE;
+				}
+			}
+			else if (buffer[1] == 0)
+			{
+				mode = GNT_KP_MODE_NORMAL;
+				changed = TRUE;
+			}
+
+			if (changed)
+			{
+				gnt_widget_hide(widget);
+				gnt_widget_set_position(widget, x, y);
+				gnt_widget_show(widget);
 			}
 		}
-		else if (strcmp(buffer + 1, "q") == 0)
+		else if (*buffer == '\r')
 		{
-			/* I am going to use Alt + q to quit. */
-			endwin();
-			exit(1);
-		}
-		else if (strcmp(buffer + 1, "n") == 0)
-		{
-			/* Alt + n to go to the next window */
-			GntWidget *w = NULL;
-			if (focus_list)
-				w = focus_list->data;
-
-			if (focus_list && focus_list->next)
-				focus_list = focus_list->next;
-			else
-				focus_list = g_list_first(focus_list);
-			if (focus_list)
-			{
-				gnt_widget_set_focus(focus_list->data, TRUE);
-				bring_on_top(focus_list->data);
-				gnt_widget_draw(focus_list->data);
-			}
-
-			if (w && w != focus_list->data)
-				gnt_widget_set_focus(w, FALSE);
+			mode = GNT_KP_MODE_NORMAL;
 		}
 	}
 
@@ -209,8 +331,10 @@ void gnt_init()
 	start_color();
 	gnt_init_colors();
 
-	max_x = getmaxx(stdscr);
-	max_y = getmaxy(stdscr);
+	X_MIN = 0;
+	Y_MIN = 0;
+	X_MAX = getmaxx(stdscr);
+	Y_MAX = getmaxy(stdscr) - 1;
 
 	nodes = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_node);
 
@@ -218,13 +342,17 @@ void gnt_init()
 	noecho();
 	refresh();
 	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+	werase(stdscr);
+	wrefresh(stdscr);
+
 	g_type_init();
 }
 
 void gnt_main()
 {
-	GMainLoop *loop = g_main_new(FALSE);
-	g_main_run(loop);
+	loop = g_main_loop_new(NULL, FALSE);
+	g_main_loop_run(loop);
 }
 
 /*********************************
@@ -290,6 +418,9 @@ void gnt_screen_release(GntWidget *widget)
 	WINDOW *win;
 	GList *iter;
 	GntNode *node = g_hash_table_lookup(nodes, widget);
+
+	gnt_screen_remove_widget(widget);
+
 	if (node == NULL)	/* Yay! Nothing to do. */
 		return;
 
@@ -384,15 +515,15 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 
 	while (widget->parent)
 	{
-		fprintf(stderr, "%p %p\n", widget, widget->parent);
 		widget = widget->parent;
 	}
-	fprintf(stderr, "%p %p\n", widget, widget->parent);
 
-	if (focus_list && focus_list->data == widget &&
-			(!GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_CAN_TAKE_FOCUS) ||
-			GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_HAS_FOCUS)))
-		return TRUE;
+	if (focus_list && focus_list->data == widget)
+	{
+		if (GNT_IS_BOX(widget) &&
+				(GNT_BOX(widget)->active == w || widget == w))
+			return TRUE;
+	}
 
 	return FALSE;
 }
@@ -407,5 +538,10 @@ void gnt_widget_set_urgent(GntWidget *widget)
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
 	draw_taskbar();
+}
+
+void gnt_quit()
+{
+	endwin();
 }
 

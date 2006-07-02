@@ -440,3 +440,11 @@ void gg_blist_init()
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
 }
 
+void gg_blist_uninit()
+{
+	gnt_widget_destroy(ggblist->window);
+	g_free(ggblist);
+	ggblist = NULL;
+}
+
+

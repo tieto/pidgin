@@ -66,6 +66,8 @@ int main()
 
 	gnt_main();
 
+	gnt_quit();
+
 	return 0;
 }
 

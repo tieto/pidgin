@@ -165,7 +165,8 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 
 	g_free(strip);
 
-	gnt_widget_set_urgent(ggconv->tv);
+	if (flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_NICK | GAIM_MESSAGE_ERROR))
+		gnt_widget_set_urgent(ggconv->tv);
 }
 
 static void
@@ -259,5 +260,11 @@ GaimConversationUiOps *gg_conv_get_ui_ops()
 void gg_conversation_init()
 {
 	ggconvs = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, destroy_ggconv);
+}
+
+void gg_conversation_uninit()
+{
+	g_hash_table_destroy(ggconvs);
+	ggconvs = NULL;
 }
 

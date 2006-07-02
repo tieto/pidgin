@@ -18,3 +18,6 @@ void gnt_screen_take_focus(GntWidget *widget);
 gboolean gnt_widget_has_focus(GntWidget *widget);
 
 void gnt_widget_set_urgent(GntWidget *widget);
+
+void gnt_quit();
+

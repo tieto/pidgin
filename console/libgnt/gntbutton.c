@@ -16,10 +16,11 @@ gnt_button_draw(GntWidget *widget)
 	GntButton *button = GNT_BUTTON(widget);
 	GntColorType type;
 
-	if (GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_HAS_FOCUS)
+	if (gnt_widget_has_focus(widget))
 		type = GNT_COLOR_HIGHLIGHT;
 	else
 		type = GNT_COLOR_NORMAL;
+	
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
 	mvwprintw(widget->window, 1, 1, button->priv->text);
 

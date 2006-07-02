@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 	/* Enable the accounts and restore the status */
 	gaim_accounts_restore_current_statuses();
 
-	/* Initialize the UI */
+	/* Initialize and run the UI */
 	init_gnt_ui();
 
 	gaim_core_quit();

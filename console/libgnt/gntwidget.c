@@ -239,11 +239,11 @@ void
 gnt_widget_show(GntWidget *widget)
 {
 	/* Draw the widget and take focus */
-	gnt_widget_draw(widget);
 	if (GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_CAN_TAKE_FOCUS)
 	{
 		gnt_widget_take_focus(widget);
 	}
+	gnt_widget_draw(widget);
 }
 
 void
@@ -267,7 +267,7 @@ gnt_widget_draw(GntWidget *widget)
 		widget->window = newwin(widget->priv.height, widget->priv.width,
 						widget->priv.y, widget->priv.x);
 		wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
-	
+
 		if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
 			box(widget->window, 0, 0);
 		else
@@ -316,8 +316,8 @@ void
 gnt_widget_hide(GntWidget *widget)
 {
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
-	werase(widget->window);
 	gnt_screen_release(widget);
+	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_MAPPED);
 }
 
 void
@@ -326,6 +326,8 @@ gnt_widget_set_position(GntWidget *wid, int x, int y)
 	/* XXX: Need to install properties for these and g_object_notify */
 	wid->priv.x = x;
 	wid->priv.y = y;
+	if (wid->window)
+		mvwin(wid->window, y, x);
 	g_signal_emit(wid, signals[SIG_POSITION], 0, x, y);
 }
 

@@ -73,6 +73,12 @@ int gnt_tree_get_selection_visible_line(GntTree *tree);
 
 void gnt_tree_change_text(GntTree *tree, gpointer key, const char *text);
 
+GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, const char *text, void *parent, void *bigbro);
+
+void gnt_tree_set_choice(GntTree *tree, void *key, gboolean set);
+
+gboolean gnt_tree_get_choice(GntTree *tree, void *key);
+
 G_END_DECLS
 
 #endif /* GNT_TREE_H */
