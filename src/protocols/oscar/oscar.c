@@ -6162,8 +6162,8 @@ oscar_can_receive_file(GaimConnection *gc, const char *who)
 		 * Don't allowing sending a file to a user that does not support
 		 * file transfer, and don't allow sending to ourselves.
 		 */
-		if ((userinfo != NULL) &&
-			(userinfo->capabilities & OSCAR_CAPABILITY_SENDFILE) &&
+		if (((userinfo == NULL) ||
+			(userinfo->capabilities & OSCAR_CAPABILITY_SENDFILE)) &&
 			aim_sncmp(who, gaim_account_get_username(account)))
 		{
 			return TRUE;
