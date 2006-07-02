@@ -34,9 +34,31 @@ typedef struct
 
 } MsnAddRemData;
 
+/* Remove the buddy referenced by the MsnAddRemData before the serverside list is changed.
+ * If the buddy will be added, he'll be added back; if he will be removed, he won't be. */
+static void
+msn_complete_sync_issue(MsnAddRemData *data)
+{
+	GaimBuddy *buddy;
+	GaimGroup *group = NULL;
+
+	if (data->group != NULL)
+		group = gaim_find_group(data->group);
+	
+	if (group != NULL)
+		buddy = gaim_find_buddy_in_group(gaim_connection_get_account(data->gc), data->who, group);
+	else
+		buddy = gaim_find_buddy(gaim_connection_get_account(data->gc), data->who);
+	
+	if (buddy != NULL)
+		gaim_blist_remove_buddy(buddy);
+}
+
 static void
 msn_add_cb(MsnAddRemData *data)
 {
+	msn_complete_sync_issue(data);
+
 	if (g_list_find(gaim_connections_get_all(), data->gc) != NULL)
 	{
 		MsnSession *session = data->gc->proto_data;
@@ -55,6 +77,8 @@ msn_add_cb(MsnAddRemData *data)
 static void
 msn_rem_cb(MsnAddRemData *data)
 {
+	msn_complete_sync_issue(data);
+
 	if (g_list_find(gaim_connections_get_all(), data->gc) != NULL)
 	{
 		MsnSession *session = data->gc->proto_data;
@@ -78,8 +102,6 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	GaimAccount *account;
 	MsnAddRemData *data;
 	char *msg, *reason;
-	GaimBuddy *buddy;
-	GaimGroup *group = NULL;
 
 	account = session->account;
 	gc = gaim_account_get_connection(account);
@@ -113,17 +135,6 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));
-
-	if (group_name != NULL)
-		group = gaim_find_group(group_name);
-
-	if (group != NULL)
-		buddy = gaim_find_buddy_in_group(account, passport, group);
-	else
-		buddy = gaim_find_buddy(account, passport);
-
-	if (buddy != NULL)
-		gaim_blist_remove_buddy(buddy);
 
 	g_free(reason);
 	g_free(msg);

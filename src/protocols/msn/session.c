@@ -231,7 +231,7 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues. */
 
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+	for (gnode = gaim_blist_get_root(); gnode; gnode = gnode->next) {
 		GaimGroup *group = (GaimGroup *)gnode;
 		const char *group_name = group->name;
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
@@ -244,11 +244,11 @@ msn_session_sync_users(MsnSession *session)
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (GaimBuddy *)bnode;
-				if(b->account == gc->account) {
+				if(gaim_buddy_get_account(b) == gaim_connection_get_account(gc)) {
 					MsnUser *remote_user;
 					gboolean found = FALSE;
 
-					remote_user = msn_userlist_find_user(session->userlist, b->name);
+					remote_user = msn_userlist_find_user(session->userlist, gaim_buddy_get_name(b));
 
 					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
 					{
@@ -273,7 +273,7 @@ msn_session_sync_users(MsnSession *session)
 					{
 						/* The user was not on the server list or not in that group
 						 * on the server list */
-						msn_show_sync_issue(session, b->name, group_name);
+						msn_show_sync_issue(session, gaim_buddy_get_name(b), group_name);
 					}
 				}
 			}
