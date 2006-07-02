@@ -251,11 +251,19 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", BONJOUR_DEFAULT_PORT);
 	sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
 	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
-	sw_text_record_add_key_and_string_value(dns_data, "msg", data->msg);
-	sw_text_record_add_key_and_string_value(dns_data, "email", data->email);
 	sw_text_record_add_key_and_string_value(dns_data, "vc", data->vc);
-	sw_text_record_add_key_and_string_value(dns_data, "jid", data->jid);
-	sw_text_record_add_key_and_string_value(dns_data, "AIM", data->AIM);
+
+	if ((data->email != NULL) && (*data->email != '\0'))
+		sw_text_record_add_key_and_string_value(dns_data, "email", data->email);
+
+	if ((data->jid != NULL) && (*data->jid != '\0'))
+		sw_text_record_add_key_and_string_value(dns_data, "jid", data->jid);
+
+	if ((data->AIM != NULL) && (*data->AIM != '\0'))
+		sw_text_record_add_key_and_string_value(dns_data, "AIM", data->AIM);
+
+	if ((data->msg != NULL) && (*data->msg != '\0'))
+		sw_text_record_add_key_and_string_value(dns_data, "msg", data->msg);
 
 	/* Publish the service */
 	switch (type)

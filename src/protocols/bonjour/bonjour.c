@@ -127,8 +127,8 @@ bonjour_login(GaimAccount *account)
 	bd->dns_sd_data->phsh = g_strdup("");
 	bd->dns_sd_data->email = g_strdup(gaim_account_get_string(account, "email", ""));
 	bd->dns_sd_data->vc = g_strdup("");
-	bd->dns_sd_data->jid = g_strdup("");
-	bd->dns_sd_data->AIM = g_strdup("");
+	bd->dns_sd_data->jid = g_strdup(gaim_account_get_string(account, "jid", ""));
+	bd->dns_sd_data->AIM = g_strdup(gaim_account_get_string(account, "AIM", ""));
 
 	status = gaim_account_get_active_status(account);
 	presence = gaim_account_get_presence(account);
@@ -586,6 +586,12 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("E-mail"), "email", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_string_new(_("AIM Account"), "AIM", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_string_new(_("Jabber Account"), "jid", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
