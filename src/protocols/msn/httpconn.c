@@ -274,7 +274,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	int len, cur_len;
 	char *result_msg = NULL;
 	size_t result_len = 0;
-	gboolean error;
+	gboolean error = FALSE;
 
 	httpconn = data;
 	servconn = NULL;
@@ -506,7 +506,7 @@ msn_httpconn_poll(gpointer data)
 	char *header;
 	char *auth;
 
-	data = httpconn;
+	httpconn = data;
 
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 
