@@ -9,7 +9,9 @@
 #include <unistd.h>
 #include <string.h>
 
+static int lock_focus_list;
 static GList *focus_list;
+
 static int X_MIN;
 static int X_MAX;
 static int Y_MIN;
@@ -41,6 +43,9 @@ void gnt_screen_take_focus(GntWidget *widget)
 {
 	GntWidget *w = NULL;
 
+	if (lock_focus_list)
+		return;
+
 	if (focus_list)
 		w = focus_list->data;
 
@@ -59,6 +64,9 @@ void gnt_screen_remove_widget(GntWidget *widget)
 {
 	int pos = g_list_index(g_list_first(focus_list), widget);
 	GList *next;
+
+	if (lock_focus_list)
+		return;
 
 	if (pos == -1)
 		return;
@@ -297,9 +305,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 			if (changed)
 			{
+				lock_focus_list = 1;
 				gnt_widget_hide(widget);
 				gnt_widget_set_position(widget, x, y);
 				gnt_widget_show(widget);
+				lock_focus_list = 0;
 			}
 		}
 		else if (*buffer == '\r')

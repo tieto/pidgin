@@ -18,6 +18,9 @@
 #include "gntgaim.h"
 #include "gntui.h"
 
+#define _GNU_SOURCE
+#include <getopt.h>
+
 /* Anything IO-related is directly copied from gtkgaim's source tree */
 
 static GaimCoreUiOps core_ops =
@@ -103,12 +106,6 @@ static guint gnt_input_add(gint fd, GaimInputCondition condition, GaimInputFunct
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      gaim_gtk_io_invoke, closure, gaim_gtk_io_destroy);
 
-#if 0
-	gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
-			   "CLOSURE: adding input watcher %d for fd %d\n",
-			   closure->result, fd);
-#endif
-
 	g_io_channel_unref(channel);
 	return closure->result;
 }
@@ -129,25 +126,124 @@ gnt_eventloop_get_ui_ops(void)
 
 /* This is mostly copied from gtkgaim's source tree */
 static void
-init_libgaim()
+show_usage(const char *name, gboolean terse)
+{
+	char *text;
+
+	if (terse) {
+		text = g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+	} else {
+		text = g_strdup_printf(_("Gaim %s\n"
+		       "Usage: %s [OPTION]...\n\n"
+		       "  -c, --config=DIR    use DIR for config files\n"
+		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -h, --help          display this help and exit\n"
+		       "  -n, --nologin       don't automatically login\n"
+		       "  -v, --version       display the current version and exit\n"), VERSION, name);
+	}
+
+	gaim_print_utf8_to_console(stdout, text);
+	g_free(text);
+}
+
+static int
+init_libgaim(int argc, char **argv)
 {
 	char *path;
+	int opt;
+	gboolean opt_help = FALSE;
+	gboolean opt_nologin = FALSE;
+	gboolean opt_version = FALSE;
+	char *opt_config_dir_arg = NULL;
+	char *opt_session_arg = NULL;
+	gboolean debug_enabled;
 
+	struct option long_options[] = {
+		{"config",   required_argument, NULL, 'c'},
+		{"debug",    no_argument,       NULL, 'd'},
+		{"help",     no_argument,       NULL, 'h'},
+		{"nologin",  no_argument,       NULL, 'n'},
+		{"session",  required_argument, NULL, 's'},
+		{"version",  no_argument,       NULL, 'v'},
+		{0, 0, 0, 0}
+	};
+
+	/* scan command-line options */
+	opterr = 1;
+	while ((opt = getopt_long(argc, argv,
+#ifndef _WIN32
+				  "c:dhn::s:v",
+#else
+				  "c:dhn::v",
+#endif
+				  long_options, NULL)) != -1) {
+		switch (opt) {
+		case 'c':	/* config dir */
+			g_free(opt_config_dir_arg);
+			opt_config_dir_arg = g_strdup(optarg);
+			break;
+		case 'd':	/* debug */
+			debug_enabled = TRUE;
+			break;
+		case 'h':	/* help */
+			opt_help = TRUE;
+			break;
+		case 'n':	/* no autologin */
+			opt_nologin = TRUE;
+			break;
+		case 's':	/* use existing session ID */
+			g_free(opt_session_arg);
+			opt_session_arg = g_strdup(optarg);
+			break;
+		case 'v':	/* version */
+			opt_version = TRUE;
+			break;
+		case '?':	/* show terse help */
+		default:
+			show_usage(argv[0], TRUE);
+			return 0;
+			break;
+		}
+	}
+
+	/* show help message */
+	if (opt_help) {
+		show_usage(argv[0], FALSE);
+		return 0;
+	}
+	/* show version message */
+	if (opt_version) {
+		printf("Gaim %s\n", VERSION);
+		return 0;
+	}
+
+	/* set a user-specified config directory */
+	if (opt_config_dir_arg != NULL) {
+		gaim_util_set_user_dir(opt_config_dir_arg);
+	}
+
+	/*
+	 * We're done piddling around with command line arguments.
+	 * Fire up this baby.
+	 */
+
+	/* Because we don't want debug-messages to show up and corrup the display */
 	gaim_debug_set_enabled(FALSE);
 
 	gaim_core_set_ui_ops(gnt_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
 
-	gaim_util_set_user_dir("/tmp/tmp/");		/* XXX: */
-
 	path = g_build_filename(gaim_user_dir(), "plugins", NULL);
 	gaim_plugins_add_search_path(path);
 	g_free(path);
+
 	gaim_plugins_add_search_path("/usr/local/lib/gaim");	/* XXX: */
 
 	if (!gaim_core_init(GAIM_GNT_UI))
 	{
-		fprintf(stderr, "OOPSSS!!\n");
+		fprintf(stderr,
+				"Initialization of the Gaim core failed. Dumping core.\n"
+				"Please report this!\n");
 		abort();
 	}
 
@@ -160,11 +256,36 @@ init_libgaim()
 	gaim_prefs_update_old();
 
 	/* load plugins we had when we quit */
-	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
+	gaim_plugins_load_saved("/gaim/gnt/plugins/loaded");
 
 	/* TODO: Move pounces loading into gaim_pounces_init() */
 	gaim_pounces_load();
 
+	if (opt_nologin)
+	{
+		/* Set all accounts to "offline" */
+		GaimSavedStatus *saved_status;
+
+		/* If we've used this type+message before, lookup the transient status */
+		saved_status = gaim_savedstatus_find_transient_by_type_and_message(
+							GAIM_STATUS_OFFLINE, NULL);
+
+		/* If this type+message is unique then create a new transient saved status */
+		if (saved_status == NULL)
+			saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_OFFLINE);
+
+		/* Set the status for each account */
+		gaim_savedstatus_activate(saved_status);
+	}
+	else
+	{
+		/* Everything is good to go--sign on already */
+		if (!gaim_prefs_get_bool("/core/savedstatus/startup_current_status"))
+			gaim_savedstatus_activate(gaim_savedstatus_get_startup());
+		gaim_accounts_restore_current_statuses();
+	}
+
+	return 1;
 }
 
 int main(int argc, char **argv)
@@ -173,10 +294,8 @@ int main(int argc, char **argv)
 	freopen(".error", "w", stderr);
 
 	/* Initialize the libgaim stuff */
-	init_libgaim();
-
-	/* Enable the accounts and restore the status */
-	gaim_accounts_restore_current_statuses();
+	if (!init_libgaim(argc, argv))
+		return 0;
 
 	/* Initialize and run the UI */
 	init_gnt_ui();
