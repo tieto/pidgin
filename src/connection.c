@@ -217,11 +217,8 @@ gaim_connection_destroy(GaimConnection *gc)
 
 	gaim_account_set_connection(account, NULL);
 
-	if (gc->password != NULL)
-		g_free(gc->password);
-
-	if (gc->display_name != NULL)
-		g_free(gc->display_name);
+	g_free(gc->password);
+	g_free(gc->display_name);
 
 	if (gc->disconnect_timeout)
 		gaim_timeout_remove(gc->disconnect_timeout);

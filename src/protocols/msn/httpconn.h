@@ -44,13 +44,13 @@ struct _MsnHttpConn
 
 	gboolean waiting_response; /**< The flag that states if we are waiting
 								 a response from the server. */
-	gboolean dirty;            /**< The flag that states if we should poll. */
 	gboolean connected;        /**< The flag that states if the connection is on. */
 	gboolean virgin;           /**< The flag that states if this connection
 								 should specify the host (not gateway) to
 								 connect to. */
 
 	char *host; /**< The HTTP gateway host. */
+	GList *queue; /**< The queue of data chunks to write. */
 
 	int fd; /**< The connection's file descriptor. */
 	guint inpa; /**< The connection's input handler. */
@@ -83,11 +83,11 @@ void msn_httpconn_destroy(MsnHttpConn *httpconn);
  *
  * @param servconn    The server connection.
  * @param data        The data to write.
- * @param size        The size of the data to write.
+ * @param data_len    The size of the data to write.
  *
  * @return The number of bytes written.
  */
-ssize_t msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t size);
+ssize_t msn_httpconn_write(MsnHttpConn *httpconn, const char *data, size_t data_len);
 
 /**
  * Connects the HTTP connection object to a host.

@@ -130,11 +130,11 @@ void gaim_connection_new(GaimAccount *account, gboolean regist,
 									const char *password);
 
 /**
- * This function should only be called by gaim_account_disconnect()
- * in account.c.  If you're trying to sign on an account, use that
- * function instead.
- *
  * Disconnects and destroys a GaimConnection.
+ *
+ * This function should only be called by gaim_account_disconnect()
+ * in account.c.  If you're trying to sign off an account, use that
+ * function instead.
  *
  * @param gc The gaim connection to destroy.
  */

@@ -731,8 +731,7 @@ msn_login(GaimAccount *account)
 		return;
 	}
 
-	if (gaim_account_get_bool(account, "http_method", FALSE))
-		http_method = TRUE;
+	http_method = gaim_account_get_bool(account, "http_method", FALSE);
 
 	host = gaim_account_get_string(account, "server", MSN_SERVER);
 	port = gaim_account_get_int(account, "port", MSN_PORT);
