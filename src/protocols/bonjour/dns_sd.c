@@ -21,27 +21,6 @@
 #include "buddy.h"
 #include "debug.h"
 
-/* Private data */
-
-typedef struct _dns_sd_packet
-{
-	gchar *name;
-	gchar *txtvers;
-	gchar *version;
-	gchar *first;
-	gchar *last;
-	gint port_p2pj;
-	gchar *phsh;
-	gchar *status;
-	gchar *message;
-	gchar *email;
-	gchar *vc;
-	gchar *jid;
-	gchar *AIM;
-} dns_sd_packet;
-
-/* End private data */
-
 /* Private functions */
 
 static sw_result HOWL_API
@@ -83,7 +62,6 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	gchar *txtvers = NULL;
 	gchar *version = NULL;
 	gchar *first = NULL;
-	gint port_p2pj = -1;
 	gchar *phsh = NULL;
 	gchar *status = NULL;
 	gchar *email = NULL;
@@ -119,8 +97,6 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 				version = g_strdup(value);
 			} else if (strcmp(key, "1st") == 0) {
 				first = g_strdup(value);
-			} else if (strcmp(key, "port.p2pj") == 0) {
-				port_p2pj = atoi(value);
 			} else if (strcmp(key, "status") == 0) {
 				status = g_strdup(value);
 			} else if (strcmp(key, "email") == 0) {
@@ -143,7 +119,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 
 	/* Put the parameters of the text_record in a buddy and add the buddy to */
 	/* the buddy list */
-	buddy = bonjour_buddy_new(name, first, port_p2pj, phsh,
+	buddy = bonjour_buddy_new(name, first, port, phsh,
 							  status, email, last, jid, AIM, vc, ip, msg);
 
 	if (bonjour_buddy_check(buddy) == FALSE)
@@ -200,7 +176,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			gaim_debug_warning("bonjour", "_browser_reply --> Remove domain\n");
 			break;
 		case SW_DISCOVERY_BROWSE_ADD_SERVICE:
-			/* A new peer has join the network and uses iChat bonjour */
+			/* A new peer has joined the network and uses iChat bonjour */
 			gaim_debug_info("bonjour", "_browser_reply --> Add service\n");
 			if (g_ascii_strcasecmp(name, account->username) != 0)
 			{
@@ -235,6 +211,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 {
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
+	char portstring[6];
 
 	/* Fill the data for the service */
 	if (sw_text_record_init(&dns_data) != SW_OKAY)
@@ -243,16 +220,20 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 		return -1;
 	}
 
+	/* Convert the port to a string */
+	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
+
+	/* Publish standard records */
 	sw_text_record_add_key_and_string_value(dns_data, "txtvers", data->txtvers);
 	sw_text_record_add_key_and_string_value(dns_data, "version", data->version);
 	sw_text_record_add_key_and_string_value(dns_data, "1st", data->first);
 	sw_text_record_add_key_and_string_value(dns_data, "last", data->last);
-	/* sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", itoa(data->port_p2pj)); */
-	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", BONJOUR_DEFAULT_PORT);
+	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", portstring);
 	sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
 	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
 	sw_text_record_add_key_and_string_value(dns_data, "vc", data->vc);
 
+	/* Publish extra records */
 	if ((data->email != NULL) && (*data->email != '\0'))
 		sw_text_record_add_key_and_string_value(dns_data, "email", data->email);
 
@@ -280,7 +261,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	}
 	if (publish_result != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.");
+		gaim_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.\n");
 		return -1;
 	}
 

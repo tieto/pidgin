@@ -103,7 +103,7 @@ bonjour_login(GaimAccount *account)
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new(BonjourJabber, 1);
-	bd->jabber_data->port = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
+	bd->jabber_data->port = BONJOUR_DEFAULT_PORT_INT;
 	bd->jabber_data->account = account;
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
@@ -123,7 +123,7 @@ bonjour_login(GaimAccount *account)
 	bd->dns_sd_data->version = g_strdup("1");
 	bd->dns_sd_data->first = g_strdup(gaim_account_get_string(account, "first", default_firstname));
 	bd->dns_sd_data->last = g_strdup(gaim_account_get_string(account, "last", default_lastname));
-	bd->dns_sd_data->port_p2pj = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
+	bd->dns_sd_data->port_p2pj = bd->jabber_data->port;
 	bd->dns_sd_data->phsh = g_strdup("");
 	bd->dns_sd_data->email = g_strdup(gaim_account_get_string(account, "email", ""));
 	bd->dns_sd_data->vc = g_strdup("");
@@ -356,7 +356,8 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
-	{"png", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY},          /* icon_spec */
+	/* {"png", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, */    /* icon_spec */
+	NO_BUDDY_ICONS, /* not yet */                            /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
 	bonjour_list_emblems,                                    /* list_emblems */
 	bonjour_status_text,                                     /* status_text */
@@ -576,9 +577,6 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */
-	option = gaim_account_option_int_new(_("Port"), "port", 5298);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 	option = gaim_account_option_string_new(_("First name"), "first", default_firstname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 

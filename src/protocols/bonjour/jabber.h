@@ -49,8 +49,10 @@ typedef struct _BonjourJabberConversation
 } BonjourJabberConversation;
 
 /**
- * Start listening for jabber connections. Returns 0 if the connection could be
- * stablished, -1 if a problem appears.
+ * Start listening for jabber connections.
+ *
+ * @return -1 if there was a problem, else returns the listening
+ *         port number.
  */
 gint bonjour_jabber_start(BonjourJabber *data);
 

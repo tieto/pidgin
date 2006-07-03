@@ -21,8 +21,6 @@
 #include <glib.h>
 #include "account.h"
 
-#define BONJOUR_DEFAULT_PORT "5298"
-#define BONJOUR_DEFAULT_PORT_INT 5298
 #define ICHAT_SERVICE "_presence._tcp."
 
 /**

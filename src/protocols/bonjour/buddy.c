@@ -69,10 +69,6 @@ bonjour_buddy_check(BonjourBuddy *buddy)
 		return FALSE;
 	}
 
-	if (buddy->port_p2pj == -1) {
-		return FALSE;
-	}
-
 	if (buddy->status == NULL) {
 		return FALSE;
 	}

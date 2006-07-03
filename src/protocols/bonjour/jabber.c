@@ -450,6 +450,8 @@ bonjour_jabber_start(BonjourJabber *data)
 {
 	struct sockaddr_in my_addr;
 	int yes = 1;
+	int i;
+	gboolean bind_successful;
 
 	/* Open a listening socket for incoming conversations */
 	if ((data->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
@@ -469,19 +471,33 @@ bonjour_jabber_start(BonjourJabber *data)
 
 	memset(&my_addr, 0, sizeof(struct sockaddr_in));
 	my_addr.sin_family = PF_INET;
-	my_addr.sin_port = htons(data->port);
 
-	if (bind(data->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) != 0)
+	/* Attempt to find a free port */
+	bind_successful = FALSE;
+	for (i = 0; i < 10; i++)
+	{
+		my_addr.sin_port = htons(data->port);
+		if (bind(data->socket, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) == 0)
+		{
+			bind_successful = TRUE;
+			break;
+		}
+		data->port++;
+	}
+
+	/* On no!  We tried 10 ports and could not bind to ANY of them */
+	if (!bind_successful)
 	{
 		gaim_debug_error("bonjour", "Cannot bind socket: %s\n", strerror(errno));
-		gaim_connection_error(data->account->gc, _("Cannot bind socket to port"));
+		gaim_connection_error(data->account->gc, _("Could not bind socket to port"));
 		return -1;
 	}
 
+	/* Attempt to listen on the bound socket */
 	if (listen(data->socket, 10) != 0)
 	{
 		gaim_debug_error("bonjour", "Cannot listen on socket: %s\n", strerror(errno));
-		gaim_connection_error(data->account->gc, _("Cannot listen on socket"));
+		gaim_connection_error(data->account->gc, _("Could not listen on socket"));
 		return -1;
 	}
 
@@ -498,7 +514,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	/* Open a watcher in the socket we have just opened */
 	data->watcher_id = gaim_input_add(data->socket, GAIM_INPUT_READ, _server_socket_handler, data);
 
-	return 0;
+	return data->port;
 }
 
 int
@@ -547,6 +563,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 
 	message_node = xmlnode_new("message");
 	xmlnode_set_attrib(message_node, "to", ((BonjourBuddy*)(gb->proto_data))->name);
+	xmlnode_set_attrib(message_node, "from", data->account->username);
 	xmlnode_set_attrib(message_node, "type", "chat");
 	xmlnode_insert_child(message_node, message_body_node);
 	xmlnode_insert_child(message_node, message_html_node);
