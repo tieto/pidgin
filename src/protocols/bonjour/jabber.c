@@ -379,7 +379,8 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 		_jabber_parse_and_write_message_to_ui(message, account->gc, gb);
 	}
 
-	xmlnode_free(message_node);
+	if (message_node != NULL)
+		xmlnode_free(message_node);
 }
 
 static void

@@ -556,7 +556,7 @@ initialize_default_account_values()
 #endif
 
 	/* Try to figure out a good host name to use */
-	/* TODO: Avoiding 'localhost,' if possible */
+	/* TODO: Avoid 'localhost,' if possible */
 	if (gethostname(hostname, 255) != 0) {
 		gaim_debug_warning("bonjour", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
 		strcpy(hostname, "localhost");
