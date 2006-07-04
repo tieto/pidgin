@@ -437,7 +437,9 @@ void gnt_init()
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	noecho();
 	refresh();
+#if MAYBE_SOMEDAY
 	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+#endif
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(stdscr);
 	wrefresh(stdscr);
