@@ -239,6 +239,8 @@ AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 #AC_VAR_TIMEZONE_EXTERNALS
 
+AC_CHECK_LIB(ncursesw, initscr, , [AC_MSG_ERROR([
+*** You need ncursesw. ])])
 
 AC_OUTPUT([Makefile
            gnt.pc
