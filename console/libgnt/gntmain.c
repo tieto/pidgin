@@ -1,7 +1,10 @@
+#include <panel.h>
+
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntkeys.h"
 #include "gntcolors.h"
+#include "gnttree.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,12 +21,17 @@ static int Y_MIN;
 static int Y_MAX;
 
 static GMainLoop *loop;
+static struct
+{
+	GntWidget *window;
+	GntWidget *tree;
+} window_list;
 
 typedef struct
 {
 	GntWidget *me;
-	GList *below;		/* List of widgets below me */
-	GList *above;		/* List of widgets above me */
+
+	PANEL *panel;
 } GntNode;
 
 typedef enum
@@ -32,6 +40,7 @@ typedef enum
 	GNT_KP_MODE_RESIZE,
 	GNT_KP_MODE_MOVE,
 	GNT_KP_MODE_MENU,
+	GNT_KP_MODE_WINDOW_LIST
 } GntKeyPressMode;
 
 static GHashTable *nodes;
@@ -91,19 +100,23 @@ bring_on_top(GntWidget *widget)
 	GntNode *node = g_hash_table_lookup(nodes, widget);
 	GList *iter;
 
+	g_return_if_fail(focus_list->data == widget);
+
 	if (!node)
 		return;
 
-	for (iter = node->above; iter;)
-	{
-		GntNode *n = iter->data;
-		iter = iter->next;
-		n->below = g_list_remove(n->below, node);
-		n->above = g_list_prepend(n->above, node);
+	gnt_widget_set_focus(focus_list->data, TRUE);
+	gnt_widget_draw(focus_list->data);
 
-		node->above = g_list_remove(node->above, n);
-		node->below = g_list_prepend(node->below, n);
+	top_panel(node->panel);
+
+	if (window_list.window)
+	{
+		GntNode *nd = g_hash_table_lookup(nodes, window_list.window);
+		top_panel(nd->panel);
 	}
+	update_panels();
+	doupdate();
 }
 
 static void
@@ -178,21 +191,75 @@ switch_window(int direction)
 	
 	if (focus_list)
 	{
-		gnt_widget_set_focus(focus_list->data, TRUE);
 		bring_on_top(focus_list->data);
-		gnt_widget_draw(focus_list->data);
 	}
 
 	if (w && (!focus_list || w != focus_list->data))
+	{
 		gnt_widget_set_focus(w, FALSE);
-}		
+	}
+}
+
+static void
+window_list_activate(GntTree *tree, gpointer null)
+{
+	GntWidget *widget = gnt_tree_get_selection_data(GNT_TREE(tree));
+	GntWidget *old;
+
+	if (focus_list)
+		old = focus_list->data;
+
+	focus_list = g_list_find(g_list_first(focus_list), widget);
+	bring_on_top(widget);
+
+	if (old && (!focus_list || old != focus_list->data))
+	{
+		gnt_widget_set_focus(old, FALSE);
+	}
+}
+
+static GntWidget *
+show_window_list()
+{
+	GntWidget *tree, *win;
+	GList *iter;
+	int id;
+
+	if (window_list.window)
+		return window_list.window;
+
+	win = window_list.window = gnt_box_new(FALSE, FALSE);
+	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
+	gnt_box_set_title(GNT_BOX(win), "Window List");
+	gnt_box_set_pad(GNT_BOX(win), 0);
+
+	tree = window_list.tree = gnt_tree_new();
+
+	for (iter = g_list_first(focus_list); iter; iter = iter->next)
+	{
+		GntBox *box = GNT_BOX(iter->data);
+
+		gnt_tree_add_row_after(GNT_TREE(tree), box, box->title, NULL, NULL);
+	}
+
+	gnt_box_add_widget(GNT_BOX(win), tree);
+
+	gnt_widget_set_size(tree, getmaxx(stdscr) / 3, getmaxy(stdscr) / 2);
+	gnt_widget_set_position(win, getmaxx(stdscr) / 3, getmaxy(stdscr) / 4);
+
+	lock_focus_list = 1;
+	gnt_widget_show(win);
+	lock_focus_list = 0;
+
+	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(window_list_activate), NULL);
+}
 
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char buffer[256];
-	static GntKeyPressMode mode = GNT_KP_MODE_NORMAL;
 	gboolean ret = FALSE;
+	static GntKeyPressMode mode = GNT_KP_MODE_NORMAL;
 
 	int rd = read(0, buffer, sizeof(buffer) - 1);
 	if (rd < 0)
@@ -250,6 +317,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				else if (strcmp(buffer + 1, "m") == 0 && focus_list)
 				{
 					mode = GNT_KP_MODE_MOVE;
+				}
+				else if (strcmp(buffer + 1, "w") == 0 && focus_list)
+				{
+					mode = GNT_KP_MODE_WINDOW_LIST;
+					show_window_list();
 				}
 			}
 		}
@@ -317,6 +389,20 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			mode = GNT_KP_MODE_NORMAL;
 		}
 	}
+	else if (mode == GNT_KP_MODE_WINDOW_LIST && window_list.window)
+	{
+		gnt_widget_key_pressed(window_list.window, buffer);
+
+		if (buffer[0] == '\r' || (buffer[0] == 27 && buffer[1] == 0))
+		{
+			mode = GNT_KP_MODE_NORMAL;
+			lock_focus_list = 1;
+			gnt_widget_destroy(window_list.window);
+			window_list.window = NULL;
+			window_list.tree = NULL;
+			lock_focus_list = 0;
+		}
+	}
 
 	draw_taskbar();
 	refresh();
@@ -373,34 +459,8 @@ static void
 free_node(gpointer data)
 {
 	GntNode *node = data;
-	g_list_free(node->below);
-	g_list_free(node->above);
+	del_panel(node->panel);
 	g_free(node);
-}
-
-static void
-check_intersection(gpointer key, gpointer value, gpointer data)
-{
-	GntNode *n = value;
-	GntNode *nu = data;
-
-	if (value == NULL)
-		return;
-	if (n->me == nu->me)
-		return;
-
-	if (n->me->priv.x + n->me->priv.width < nu->me->priv.x)
-		return;
-	if (nu->me->priv.x + nu->me->priv.width < n->me->priv.x)
-		return;
-
-	if (n->me->priv.y + n->me->priv.height < nu->me->priv.y)
-		return;
-	if (nu->me->priv.y + nu->me->priv.height < n->me->priv.y)
-		return;
-
-	n->above = g_list_prepend(n->above, nu);
-	nu->below = g_list_prepend(nu->below, n);
 }
 
 void gnt_screen_occupy(GntWidget *widget)
@@ -419,56 +479,41 @@ void gnt_screen_occupy(GntWidget *widget)
 	node = g_new0(GntNode, 1);
 	node->me = widget;
 
-	g_hash_table_foreach(nodes, check_intersection, node);
 	g_hash_table_replace(nodes, widget, node);
+
+	if (window_list.window)
+	{
+		if ((GNT_IS_BOX(widget) && GNT_BOX(widget)->title) && window_list.window != widget
+				&& GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
+			gnt_tree_add_row_after(GNT_TREE(window_list.tree), widget,
+					GNT_BOX(widget)->title, NULL, NULL);
+	}
+
+	update_panels();
+	doupdate();
 }
 
 void gnt_screen_release(GntWidget *widget)
 {
 	WINDOW *win;
 	GList *iter;
-	GntNode *node = g_hash_table_lookup(nodes, widget);
+	GntNode *node;
 
 	gnt_screen_remove_widget(widget);
+	node = g_hash_table_lookup(nodes, widget);
 
 	if (node == NULL)	/* Yay! Nothing to do. */
 		return;
 
-	win = dupwin(widget->window);
-	werase(win);
-
-	/* XXX: This is not going to work.
-	 *      It will be necessary to build a topology and go from there. */
-	for (iter = node->below; iter; iter = iter->next)
-	{
-		GntNode *n = iter->data;
-		GntWidget *w = n->me;
-		int left, right, top, bottom;
-
-		left = MAX(widget->priv.x, w->priv.x) - w->priv.x;
-		right = MIN(widget->priv.x + widget->priv.width, w->priv.x + w->priv.width) - w->priv.x;
-		
-		top = MAX(widget->priv.y, w->priv.y) - w->priv.y;
-		bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
-
-		copywin(w->window, win, top, left,
-					w->priv.y - widget->priv.y + top,
-					w->priv.x - widget->priv.x + left,
-					w->priv.y - widget->priv.y + bottom - 1,
-					w->priv.x - widget->priv.x + right - 1, FALSE);
-		n->above = g_list_remove(n->above, node);
-	}
-
-	for (iter = node->above; iter; iter = iter->next)
-	{
-		GntNode *n = iter->data;
-		n->below = g_list_remove(n->below, node);
-	}
-
-	wrefresh(win);
-	delwin(win);
-
 	g_hash_table_remove(nodes, widget);
+
+	if (window_list.window)
+	{
+		gnt_tree_remove(GNT_TREE(window_list.tree), widget);
+	}
+
+	update_panels();
+	doupdate();
 }
 
 void gnt_screen_update(GntWidget *widget)
@@ -485,34 +530,17 @@ void gnt_screen_update(GntWidget *widget)
 	
 	gnt_box_sync_children(GNT_BOX(widget));
 	node = g_hash_table_lookup(nodes, widget);
+	if (node && !node->panel)
+		node->panel = new_panel(node->me->window);
 
-	win = dupwin(widget->window);
-	
-	if (node && node->above)
+	if (window_list.window)
 	{
-		/* XXX: Same here: need to build a topology first. */
-		for (iter = node->above; iter; iter = iter->next)
-		{
-			GntNode *n = iter->data;
-			GntWidget *w = n->me;
-			int left, right, top, bottom;
-
-			left = MAX(widget->priv.x, w->priv.x) - w->priv.x;
-			right = MIN(widget->priv.x + widget->priv.width, w->priv.x + w->priv.width) - w->priv.x;
-			
-			top = MAX(widget->priv.y, w->priv.y) - w->priv.y;
-			bottom = MIN(widget->priv.y + widget->priv.height, w->priv.y + w->priv.height) - w->priv.y;
-
-			copywin(w->window, win, top, left,
-					w->priv.y - widget->priv.y + top,
-					w->priv.x - widget->priv.x + left,
-					w->priv.y - widget->priv.y + bottom - 1,
-					w->priv.x - widget->priv.x + right - 1, FALSE);
-		}
+		GntNode *nd = g_hash_table_lookup(nodes, window_list.window);
+		top_panel(nd->panel);
 	}
 
-	wrefresh(win);
-	delwin(win);
+	update_panels();
+	doupdate();
 }
 
 gboolean gnt_widget_has_focus(GntWidget *widget)
@@ -520,6 +548,9 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	GntWidget *w;
 	if (!widget)
 		return FALSE;
+
+	if (widget == window_list.window)
+		return TRUE;
 
 	w = widget;
 

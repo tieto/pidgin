@@ -355,6 +355,7 @@ draw_tooltip(GGBlist *ggblist)
 	gnt_box_add_widget(GNT_BOX(box), gnt_label_new(str->str));
 
 	gnt_widget_set_position(box, x, y);
+	GNT_WIDGET_UNSET_FLAGS(box, GNT_WIDGET_CAN_TAKE_FOCUS);
 	gnt_widget_draw(box);
 
 	g_free(title);
@@ -438,6 +439,10 @@ void gg_blist_init()
 	g_signal_connect(G_OBJECT(ggblist->tree), "selection_changed", G_CALLBACK(selection_changed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "key_pressed", G_CALLBACK(key_pressed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
+	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),
+				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+	g_signal_connect_data(G_OBJECT(ggblist->tree), "lost-focus", G_CALLBACK(remove_tooltip),
+				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 }
 
 void gg_blist_uninit()
@@ -447,4 +452,23 @@ void gg_blist_uninit()
 	ggblist = NULL;
 }
 
+void gg_blist_get_position(int *x, int *y)
+{
+	gnt_widget_get_position(ggblist->window, x, y);
+}
+
+void gg_blist_set_position(int x, int y)
+{
+	gnt_widget_set_position(ggblist->window, x, y);
+}
+
+void gg_blist_get_size(int *width, int *height)
+{
+	gnt_widget_get_size(ggblist->window, width, height);
+}
+
+void gg_blist_set_size(int width, int height)
+{
+	gnt_widget_set_size(ggblist->window, width, height);
+}
 

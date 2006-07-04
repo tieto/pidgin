@@ -2,6 +2,7 @@
 #include <util.h>
 
 #include "gntgaim.h"
+#include "gntblist.h"
 #include "gntconv.h"
 
 #include "gnt.h"
@@ -91,9 +92,13 @@ gg_create_conversation(GaimConversation *conv)
 	GGConv *ggc = g_hash_table_lookup(ggconvs, conv);
 	char *title;
 	GaimConversationType type;
+	int x, width;
 
 	if (ggc)
 		return;
+
+	gg_blist_get_position(&x, NULL);
+	gg_blist_get_size(&width, NULL);
 
 	ggc = g_new0(GGConv, 1);
 	g_hash_table_insert(ggconvs, conv, ggc);
@@ -102,25 +107,28 @@ gg_create_conversation(GaimConversation *conv)
 
 	type = gaim_conversation_get_type(conv);
 	title = g_strdup_printf(_("%s"), gaim_conversation_get_name(conv));
-	ggc->window = gnt_box_new(FALSE, TRUE);
+	ggc->window = gnt_box_new(TRUE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
+	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
 	gnt_widget_set_name(ggc->window, title);
 
 	ggc->tv = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
 	gnt_widget_set_name(ggc->tv, "conversation-window-textview");
-	gnt_widget_set_size(ggc->tv, getmaxx(stdscr) - 40, getmaxy(stdscr) - 15);
+	gnt_widget_set_size(ggc->tv, getmaxx(stdscr) - 2 - x - width, getmaxy(stdscr) - 4);
 
 	ggc->entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->entry);
 	gnt_widget_set_name(ggc->entry, "conversation-window-entry");
-	gnt_widget_set_size(ggc->entry, getmaxx(stdscr) - 40, 1);
 
 	g_signal_connect(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
-	gnt_widget_set_position(ggc->window, 32, 0);
+	/* XXX: I am assuming the buddylist is on the leftmost corner.
+	 *      That may not always be correct, since the windows can be moved.
+	 *      It might be an option to remember the position of conv. windows. */
+	gnt_widget_set_position(ggc->window, x + width, 0);
 	gnt_widget_show(ggc->window);
 
 	g_free(title);

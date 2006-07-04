@@ -326,8 +326,11 @@ gnt_widget_set_position(GntWidget *wid, int x, int y)
 	/* XXX: Need to install properties for these and g_object_notify */
 	wid->priv.x = x;
 	wid->priv.y = y;
+	
+	/* XXX: I am supposed to move_panel ... but that seems to crash */
 	if (wid->window)
 		mvwin(wid->window, y, x);
+
 	g_signal_emit(wid, signals[SIG_POSITION], 0, x, y);
 }
 

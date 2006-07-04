@@ -38,7 +38,7 @@ void gg_accounts_init()
 	gnt_widget_set_name(accounts.window, "accounts");
 
 	gnt_box_add_widget(GNT_BOX(accounts.window),
-			gnt_label_new(_("You can enable/disable accounts from the follwing list.")));
+			gnt_label_new(_("You can enable/disable accounts from the following list.")));
 
 	accounts.tree = gnt_tree_new();
 	GNT_WIDGET_SET_FLAGS(accounts.tree, GNT_WIDGET_NO_BORDER);

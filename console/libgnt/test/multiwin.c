@@ -1,18 +1,20 @@
-#include "gntbutton.h"
 #include "gnt.h"
+#include "gntbutton.h"
+#include "gntentry.h"
 #include "gntkeys.h"
+#include "gntlabel.h"
 #include "gnttree.h"
 #include "gntbox.h"
 
 gboolean show(GntWidget *w)
 {
-	gnt_widget_draw(w);
-
-	return TRUE;
+	gnt_widget_destroy(w);
+	return FALSE;
 }
 
 int main()
 {
+	freopen(".error", "w", stderr);
 	gnt_init();
 
 	GntWidget *hbox, *tree, *box2;
@@ -36,11 +38,11 @@ int main()
 	gnt_box_set_toplevel(GNT_BOX(box2), TRUE);
 	gnt_box_set_title(GNT_BOX(box2), "On top");
 
-	gnt_box_add_widget(GNT_BOX(box2), GNT_WIDGET(gnt_label_new("asdasd")));
+	gnt_box_add_widget(GNT_BOX(box2), gnt_label_new("asdasd"));
 	gnt_box_add_widget(GNT_BOX(box2), gnt_entry_new(NULL));
 
 	gnt_widget_show(hbox);
-	gnt_widget_set_position(box2, 5, 5);
+	gnt_widget_set_position(box2, 35, 15);
 	gnt_widget_show(box2);
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "a", "a", NULL, NULL);
@@ -56,7 +58,8 @@ int main()
 	gnt_tree_add_row_after(GNT_TREE(tree), "5", "5", "d", NULL);
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "6", "6", "4", NULL);
-	g_timeout_add(1000, (GSourceFunc)show, hbox);
+
+	g_timeout_add(5000, show, box2);
 
 	gnt_main();
 
