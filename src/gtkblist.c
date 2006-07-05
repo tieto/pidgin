@@ -4106,14 +4106,16 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	gboolean show = FALSE;
 	GaimBlistNode* gnode;
 
+	g_return_if_fail(node != NULL);
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node))
 		gnode = node;
-	else if (GAIM_BLIST_NODE_IS_BUDDY(node)) /* maybe OR'ed with IS_CHAT? */
+	else if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CHAT(node))
 		gnode = node->parent->parent;
 	else if (GAIM_BLIST_NODE_IS_CONTACT(node))
 		gnode = node->parent;
-	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP(gnode));
+	else
+		return;
 
 	group = (GaimGroup*)gnode;
 
