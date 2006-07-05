@@ -47,6 +47,7 @@ static GHashTable *nodes;
 
 static void free_node(gpointer data);
 static void draw_taskbar();
+static void bring_on_top(GntWidget *widget);
 
 void gnt_screen_take_focus(GntWidget *widget)
 {
@@ -88,8 +89,7 @@ void gnt_screen_remove_widget(GntWidget *widget)
 
 	if (focus_list)
 	{
-		gnt_widget_set_focus(focus_list->data, TRUE);
-		gnt_widget_draw(focus_list->data);
+		bring_on_top(focus_list->data);
 	}
 	draw_taskbar();
 }
@@ -98,7 +98,6 @@ static void
 bring_on_top(GntWidget *widget)
 {
 	GntNode *node = g_hash_table_lookup(nodes, widget);
-	GList *iter;
 
 	g_return_if_fail(focus_list->data == widget);
 
@@ -124,7 +123,7 @@ draw_taskbar()
 {
 	static WINDOW *taskbar = NULL;
 	GList *iter;
-	int n, width;
+	int n, width = 0;
 	int i;
 
 	if (taskbar == NULL)
@@ -204,7 +203,7 @@ static void
 window_list_activate(GntTree *tree, gpointer null)
 {
 	GntWidget *widget = gnt_tree_get_selection_data(GNT_TREE(tree));
-	GntWidget *old;
+	GntWidget *old = NULL;
 
 	if (focus_list)
 		old = focus_list->data;
@@ -218,15 +217,14 @@ window_list_activate(GntTree *tree, gpointer null)
 	}
 }
 
-static GntWidget *
+static void
 show_window_list()
 {
 	GntWidget *tree, *win;
 	GList *iter;
-	int id;
 
 	if (window_list.window)
-		return window_list.window;
+		return;
 
 	win = window_list.window = gnt_box_new(FALSE, FALSE);
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
@@ -497,8 +495,6 @@ void gnt_screen_occupy(GntWidget *widget)
 
 void gnt_screen_release(GntWidget *widget)
 {
-	WINDOW *win;
-	GList *iter;
 	GntNode *node;
 
 	gnt_screen_remove_widget(widget);
@@ -520,8 +516,6 @@ void gnt_screen_release(GntWidget *widget)
 
 void gnt_screen_update(GntWidget *widget)
 {
-	GList *iter;
-	WINDOW *win;
 	GntNode *node;
 	
 	if (widget->parent)
