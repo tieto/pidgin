@@ -931,13 +931,13 @@ gaim_gtk_debug_window_hide(void)
 
 static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
-					 const char *format, va_list args)
+					 const char *arg_s)
 {
 #ifdef HAVE_REGEX_H
 	GtkTreeIter iter;
 #endif /* HAVE_REGEX_H */
 	gboolean timestamps;
-	gchar *arg_s, *ts_s;
+	gchar *ts_s;
 	gchar *esc_s, *cat_s, *tmp, *s;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/debug/enabled") ||
@@ -947,8 +947,6 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 	}
 
 	timestamps = gaim_prefs_get_bool("/core/debug/timestamps");
-
-	arg_s = g_strdup_vprintf(format, args);
 
 	/*
 	 * For some reason we only print the timestamp if category is
@@ -970,8 +968,6 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 		cat_s = g_strdup_printf("<b>%s:</b> ", category);
 
 	esc_s = g_markup_escape_text(arg_s, -1);
-
-	g_free(arg_s);
 
 	s = g_strdup_printf("<font color=\"%s\">%s%s%s</font>",
 						debug_fg_colors[level], ts_s, cat_s, esc_s);

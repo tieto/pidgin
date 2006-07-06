@@ -48,7 +48,7 @@ typedef enum
 typedef struct
 {
 	void (*print)(GaimDebugLevel level, const char *category,
-				  const char *format, va_list args);
+				  const char *arg_s);
 } GaimDebugUiOps;
 
 #ifdef __cplusplus
