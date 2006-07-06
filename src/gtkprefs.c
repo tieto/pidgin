@@ -1818,7 +1818,7 @@ away_page()
 	}
 
 	/* Signon status stuff */
-	vbox = gaim_gtk_make_frame(ret, _("Status at startup"));
+	vbox = gaim_gtk_make_frame(ret, _("Status at Startup"));
 
 	button = gaim_gtk_prefs_checkbox(_("Use status from last _exit at startup"),
 		"/core/savedstatus/startup_current_status", vbox);
