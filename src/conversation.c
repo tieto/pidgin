@@ -57,9 +57,6 @@ reset_typing_cb(gpointer data)
 	gaim_conv_im_update_typing(im);
 	gaim_conv_im_stop_typing_timeout(im);
 
-	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "buddy-typing-stopped", c->account, c->name);
-
 	return FALSE;
 }
 

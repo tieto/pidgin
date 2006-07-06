@@ -106,6 +106,11 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	GaimSslGnutlsData *gnutls_data;
 	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
 
+	/*
+	 * TODO: Uh, this needs to somehow check to make sure that gsc is
+	 *       still valid before actually doing anything.
+	 */
+
 	if(source < 0) {
 		if(gsc->error_cb != NULL)
 			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);

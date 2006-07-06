@@ -621,9 +621,6 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 		gaim_signal_emit(gaim_conversations_get_handle(),
 						 "buddy-typing-stopped", gc->account, name);
 	}
-
-	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "buddy-typing-stopped", gc->account, name);
 }
 
 struct chat_invite_data {

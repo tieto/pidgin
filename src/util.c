@@ -2521,7 +2521,7 @@ gaim_mkstemp(char **fpath, gboolean binary)
 		}
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
-				   "g_get_tmp_dir() failed!");
+				   "g_get_tmp_dir() failed!\n");
 	}
 
 	return fp;
