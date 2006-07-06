@@ -56,6 +56,7 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
 	GSList *buddies, *g2, *l;
+	gchar *my_bare_jid;
 
 	buddies = gaim_find_buddies(js->gc->account, jid);
 
@@ -67,6 +68,8 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		else
 			return;
 	}
+
+	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 
 	while(buddies) {
 		GaimBuddy *b = buddies->data;
@@ -100,10 +103,27 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 		gaim_blist_alias_buddy(b, alias);
+
+
+		/* If we just learned about ourself, then fake our status,
+		 * because we won't be receiving a normal presence message
+		 * about ourself. */
+		if(!strcmp(b->name, my_bare_jid)) {
+			GaimPresence *gpresence;
+			GaimStatus *status;
+
+			gpresence = gaim_account_get_presence(js->gc->account);
+			status = gaim_presence_get_active_status(gpresence);
+			jabber_presence_fake_to_self(js, status);
+		}
+
+
+
 		g_free(g2->data);
 		g2 = g_slist_delete_link(g2, g2);
 	}
 
+	g_free(my_bare_jid);
 	g_slist_free(buddies);
 }
 
