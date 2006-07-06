@@ -156,7 +156,7 @@ init_libgaim(int argc, char **argv)
 	gboolean opt_version = FALSE;
 	char *opt_config_dir_arg = NULL;
 	char *opt_session_arg = NULL;
-	gboolean debug_enabled;
+	gboolean debug_enabled = FALSE;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
