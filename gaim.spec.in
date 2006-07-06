@@ -6,10 +6,10 @@
 # When not doing betas comment this out
 # NOTE: %defines in spec files are evaluated in comments so the correct
 #       way to comment it out is to replace the % with #
-%define beta 3
+%define beta 4
 
 %if 0%{?beta}
-%define gaimver %(echo "@VERSION@"|sed -e 's/svn//; s/beta.*//')
+%define gaimver %(echo "@VERSION@"|sed -e 's/dev//; s/beta.*//')
 %else
 %define gaimver @VERSION@
 %endif
@@ -28,7 +28,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel, intltool, gettext
-%{?_with_avahi:BuildRequires: avahi-devel}
+%{?_with_avahi:BuildRequires: avahi-compat-howl avahi-compat-howl-devel}
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
