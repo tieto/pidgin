@@ -8,7 +8,6 @@
 
 gboolean show(GntWidget *w)
 {
-	gnt_widget_destroy(w);
 	return FALSE;
 }
 

@@ -228,7 +228,7 @@ init_libgaim(int argc, char **argv)
 	 */
 
 	/* Because we don't want debug-messages to show up and corrup the display */
-	gaim_debug_set_enabled(FALSE);
+	gaim_debug_set_enabled(debug_enabled);
 
 	gaim_core_set_ui_ops(gnt_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());

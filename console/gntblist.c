@@ -141,7 +141,7 @@ get_display_name(GaimBlistNode *node)
 		GaimStatusPrimitive prim;
 		GaimPresence *presence;
 		GaimStatus *now;
-
+		gboolean ascii = gnt_ascii_only();
 		
 		presence = gaim_buddy_get_presence(buddy);
 		now = gaim_presence_get_active_status(presence);
@@ -150,29 +150,15 @@ get_display_name(GaimBlistNode *node)
 
 		switch(prim)
 		{
-#if 1
 			case GAIM_STATUS_OFFLINE:
-				strncpy(status, "x", sizeof(status) - 1);
+				strncpy(status, ascii ? "x" : "⊗", sizeof(status) - 1);
 				break;
 			case GAIM_STATUS_AVAILABLE:
-				strncpy(status, "o", sizeof(status) - 1);
+				strncpy(status, ascii ? "o" : "◯", sizeof(status) - 1);
 				break;
 			default:
-				strncpy(status, ".", sizeof(status) - 1);
+				strncpy(status, ascii ? "." : "⊖", sizeof(status) - 1);
 				break;
-#else
-			/* XXX: Let's use these some time */
-			case GAIM_STATUS_OFFLINE:
-				strncpy(status, "⊗", sizeof(status) - 1);
-				break;
-			case GAIM_STATUS_AVAILABLE:
-				/* XXX: Detect idleness */
-				strncpy(status, "◯", sizeof(status) - 1);
-				break;
-			default:
-				strncpy(status, "⊖", sizeof(status) - 1);
-				break;
-#endif
 		}
 		name = gaim_buddy_get_alias(buddy);
 	}
@@ -412,7 +398,7 @@ void gg_blist_init()
 
 	ggblist->tree = gnt_tree_new();
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
-	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr) - 3);
+	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr) - 4);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 	gnt_widget_show(ggblist->window);

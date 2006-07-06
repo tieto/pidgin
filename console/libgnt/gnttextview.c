@@ -152,7 +152,7 @@ GntWidget *gnt_text_view_new()
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	GntTextLine *line = g_new0(GntTextLine, 1);
 
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 
 	view->list = g_list_append(view->list, line);
 
@@ -198,7 +198,7 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 		{
 			GntTextSegment *seg = g_new0(GntTextSegment, 1);
 			seg->flags = fl;
-			seg->text = g_new0(char, len);		/* XXX: MUST be improved */
+			seg->text = g_new0(char, len + 1);		/* XXX: MUST be improved */
 			g_utf8_strncpy(seg->text, iter, widget->priv.width - line->length - 1);
 			line->segments = g_list_append(line->segments, seg);
 

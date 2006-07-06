@@ -216,10 +216,14 @@ redraw_tree(GntTree *tree)
 			else
 				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 			mvwprintw(widget->window, start, pos, str);
+			whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}
 		else
+		{
 			mvwprintw(widget->window, start, pos, str);
+			whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
+		}
 		tree->bottom = row;
 	}
 
@@ -505,7 +509,7 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 	}
 	else
 	{
-		int position;
+		int position = 0;
 
 		if (bigbro)
 		{
@@ -671,7 +675,7 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key)
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
 
 	if (!row)
-		return;
+		return FALSE;
 	g_return_val_if_fail(row->choice, FALSE);
 
 	return row->isselected;

@@ -7,6 +7,8 @@ void gnt_init();
 
 void gnt_main();
 
+gboolean gnt_ascii_only();
+
 void gnt_screen_occupy(GntWidget *widget);
 
 void gnt_screen_release(GntWidget *widget);

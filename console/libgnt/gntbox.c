@@ -383,15 +383,18 @@ void gnt_box_sync_children(GntBox *box)
 	for (iter = box->list; iter; iter = iter->next)
 	{
 		GntWidget *w = GNT_WIDGET(iter->data);
+		int height, width;
 
 		if (GNT_IS_BOX(w))
 			gnt_box_sync_children(GNT_BOX(w));
 
+		gnt_widget_get_size(w, &width, &height);
+
 		copywin(w->window, widget->window, 0, 0,
 				w->priv.y - widget->priv.y,
 				w->priv.x - widget->priv.x,
-				w->priv.y - widget->priv.y + w->priv.height - 1,
-				w->priv.x - widget->priv.x + w->priv.width - 1,
+				w->priv.y - widget->priv.y + height - 1,
+				w->priv.x - widget->priv.x + width - 1,
 				FALSE);
 	}
 }

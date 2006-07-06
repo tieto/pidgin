@@ -116,7 +116,7 @@ gg_create_conversation(GaimConversation *conv)
 	ggc->tv = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
 	gnt_widget_set_name(ggc->tv, "conversation-window-textview");
-	gnt_widget_set_size(ggc->tv, getmaxx(stdscr) - 2 - x - width, getmaxy(stdscr) - 4);
+	gnt_widget_set_size(ggc->tv, getmaxx(stdscr) - 3 - x - width, getmaxy(stdscr) - 5);
 
 	ggc->entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->entry);

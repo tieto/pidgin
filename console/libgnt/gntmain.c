@@ -20,6 +20,8 @@ static int X_MAX;
 static int Y_MIN;
 static int Y_MAX;
 
+static gboolean ascii_only;
+
 static GMainLoop *loop;
 static struct
 {
@@ -314,10 +316,12 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				}
 				else if (strcmp(buffer + 1, "m") == 0 && focus_list)
 				{
+					/* Move a window */
 					mode = GNT_KP_MODE_MOVE;
 				}
 				else if (strcmp(buffer + 1, "w") == 0 && focus_list)
 				{
+					/* Window list */
 					mode = GNT_KP_MODE_WINDOW_LIST;
 					show_window_list();
 				}
@@ -375,11 +379,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 			if (changed)
 			{
-				lock_focus_list = 1;
-				gnt_widget_hide(widget);
+				GntNode *node = g_hash_table_lookup(nodes, widget);
 				gnt_widget_set_position(widget, x, y);
-				gnt_widget_show(widget);
-				lock_focus_list = 0;
+				move_panel(node->panel, y, x);
+				update_panels();
+				doupdate();
 			}
 		}
 		else if (*buffer == '\r')
@@ -419,8 +423,13 @@ void gnt_init()
 	int result = g_io_add_watch(channel, 
 					(G_IO_IN | G_IO_HUP | G_IO_ERR),
 					io_invoke, NULL);
+	const char *locale = setlocale(LC_ALL, "");
 
-	setlocale(LC_ALL, "");
+	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
+		ascii_only = FALSE;
+	else
+		ascii_only = TRUE;
+
 	initscr();
 	start_color();
 	gnt_init_colors();
@@ -459,6 +468,7 @@ static void
 free_node(gpointer data)
 {
 	GntNode *node = data;
+	hide_panel(node->panel);
 	del_panel(node->panel);
 	g_free(node);
 }
@@ -580,5 +590,10 @@ void gnt_widget_set_urgent(GntWidget *widget)
 void gnt_quit()
 {
 	endwin();
+}
+
+gboolean gnt_ascii_only()
+{
+	return ascii_only;
 }
 

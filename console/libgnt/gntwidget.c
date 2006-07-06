@@ -263,34 +263,32 @@ gnt_widget_draw(GntWidget *widget)
 
 	if (widget->window == NULL)
 	{
-		/* XXX: It may be necessary to make sure the size hasn't changed */
-		widget->window = newwin(widget->priv.height, widget->priv.width,
+		gboolean shadow = TRUE;
+
+		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+			shadow = FALSE;
+		
+		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
 						widget->priv.y, widget->priv.x);
 		wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
 		if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
-			box(widget->window, 0, 0);
+		{
+			WINDOW *tmp = derwin(widget->window, widget->priv.height, widget->priv.width, 0, 0);
+			box(tmp, 0, 0);
+			delwin(tmp);
+		}
 		else
 			werase(widget->window);
+
+		if (shadow)
+		{
+			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_SHADOW));
+			mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
+			mvwhline(widget->window, widget->priv.height, 1, ' ', widget->priv.width);
+		}
 	}
 
-#if 0
-	/* XXX: No shadow for now :( */
-	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_SHADOW))
-	{
-		widget->back = newwin(widget->priv.height, widget->priv.width,
-						widget->priv.y + 1, widget->priv.x + 1);
-		wbkgd(widget->back, COLOR_PAIR(GNT_COLOR_SHADOW));
-		werase(widget->back);
-
-		mvwchgat(widget->back, 0, 0, widget->priv.height,
-					A_REVERSE | A_BLINK, 0, 0);
-		touchline(widget->back, 0, widget->priv.height);
-		wrefresh(widget->back);
-	}
-
-	wrefresh(widget->window);
-#endif
 	g_signal_emit(widget, signals[SIG_DRAW], 0);
 	gnt_widget_queue_update(widget);
 	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DRAWING);
@@ -316,6 +314,11 @@ void
 gnt_widget_hide(GntWidget *widget)
 {
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+#if 1
+	/* XXX: I have no clue why, but this seems to be necessary. */
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+		mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
+#endif
 	gnt_screen_release(widget);
 	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_MAPPED);
 }
@@ -327,10 +330,6 @@ gnt_widget_set_position(GntWidget *wid, int x, int y)
 	wid->priv.x = x;
 	wid->priv.y = y;
 	
-	/* XXX: I am supposed to move_panel ... but that seems to crash */
-	if (wid->window)
-		mvwin(wid->window, y, x);
-
 	g_signal_emit(wid, signals[SIG_POSITION], 0, x, y);
 }
 
@@ -352,10 +351,15 @@ gnt_widget_size_request(GntWidget *widget)
 void
 gnt_widget_get_size(GntWidget *wid, int *width, int *height)
 {
+	gboolean shadow = TRUE;
+	if (GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_NO_SHADOW))
+		shadow = FALSE;
+
 	if (width)
-		*width = wid->priv.width;
+		*width = wid->priv.width + shadow;
 	if (height)
-		*height = wid->priv.height;
+		*height = wid->priv.height + shadow;
+	
 }
 
 void

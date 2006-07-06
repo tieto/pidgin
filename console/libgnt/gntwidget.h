@@ -61,7 +61,6 @@ struct _GnWidget
 
 	GntWidgetPriv priv;
 	WINDOW *window;
-	WINDOW *back;
 
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);

@@ -40,4 +40,5 @@ libgnt_la_LIBADD = \
 	-lncursesw -lpanelw
 
 AM_CPPFLAGS = \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	-Wall
