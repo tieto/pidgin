@@ -1021,8 +1021,9 @@ proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 
 	if (connect(fd, (struct sockaddr *)addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			gaim_debug_warning("proxy",
-					   "Connect would have blocked.\n");
+			/* This just confuses people. */
+			/* gaim_debug_warning("proxy",
+			                   "Connect would have blocked.\n"); */
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, no_one_calls, phb);
 		}
 		else {
