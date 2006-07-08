@@ -36,7 +36,9 @@ typedef enum _GnWidgetFlags
 	GNT_WIDGET_NO_SHADOW      = 1 << 4,
 	GNT_WIDGET_HAS_FOCUS      = 1 << 5,
 	GNT_WIDGET_DRAWING        = 1 << 6,
-	GNT_WIDGET_URGENT         = 1 << 7
+	GNT_WIDGET_URGENT         = 1 << 7,
+	GNT_WIDGET_GROW_X         = 1 << 8,
+	GNT_WIDGET_GROW_Y         = 1 << 9,
 } GntWidgetFlags;
 
 /* XXX: I'll have to ask grim what he's using this for in guifications. */
@@ -81,6 +83,7 @@ struct _GnWidgetClass
 	void (*lost_focus)(GntWidget *widget);
 
 	void (*size_request)(GntWidget *widget);
+	gboolean (*confirm_size)(GntWidget *widget, int x, int y);
 	void (*set_position)(GntWidget *widget, int x, int y);
 	gboolean (*key_pressed)(GntWidget *widget, const char *key);
 	void (*activate)(GntWidget *widget);
@@ -104,7 +107,7 @@ void gnt_widget_get_position(GntWidget *widget, int *x, int *y);
 void gnt_widget_set_position(GntWidget *widget, int x, int y);
 void gnt_widget_size_request(GntWidget *widget);
 void gnt_widget_get_size(GntWidget *widget, int *width, int *height);
-void gnt_widget_set_size(GntWidget *widget, int width, int height);
+gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
 
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
 

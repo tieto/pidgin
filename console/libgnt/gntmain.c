@@ -325,6 +325,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					mode = GNT_KP_MODE_WINDOW_LIST;
 					show_window_list();
 				}
+				else if (strcmp(buffer + 1, "r") == 0 && focus_list)
+				{
+					/* Resize window */
+					mode = GNT_KP_MODE_RESIZE;
+				}
 			}
 		}
 	}
@@ -405,6 +410,63 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			lock_focus_list = 0;
 		}
 	}
+	else if (mode == GNT_KP_MODE_RESIZE)
+	{
+		if (buffer[0] == '\r' || (buffer[0] == 27 && buffer[1] == 0))
+			mode = GNT_KP_MODE_NORMAL;
+		else if (buffer[0] == 27)
+		{
+			GntWidget *widget = focus_list->data;
+			gboolean changed = FALSE;
+			int width, height;
+
+			gnt_widget_get_size(widget, &width, &height);
+
+			if (strcmp(buffer + 1, GNT_KEY_DOWN) == 0)
+			{
+				if (widget->priv.y + height < Y_MAX)
+				{
+					height++;
+					changed = TRUE;
+				}
+			}
+			else if (strcmp(buffer + 1, GNT_KEY_UP) == 0)
+			{
+				height--;
+				changed = TRUE;
+			}
+			else if (strcmp(buffer + 1, GNT_KEY_LEFT) == 0)
+			{
+				width--;
+				changed = TRUE;
+			}
+			else if (strcmp(buffer + 1, GNT_KEY_RIGHT) == 0)
+			{
+				if (widget->priv.x + width < X_MAX)
+				{
+					width++;
+					changed = TRUE;
+				}
+			}
+
+			if (changed)
+			{
+				GntNode *node = g_hash_table_lookup(nodes, widget);
+				int x, y;
+
+				gnt_widget_get_position(widget, &x, &y);
+
+				hide_panel(node->panel);
+				gnt_widget_set_size(widget, width, height);
+				gnt_widget_set_position(widget, x, y);
+				gnt_widget_draw(widget);
+				replace_panel(node->panel, widget->window);
+				show_panel(node->panel);
+				update_panels();
+				doupdate();
+			}
+		}
+	}
 
 	draw_taskbar();
 	refresh();
@@ -477,11 +539,8 @@ void gnt_screen_occupy(GntWidget *widget)
 {
 	GntNode *node;
 
-	if (widget->parent)
-	{
-		while (widget->parent)
-			widget = widget->parent;
-	}
+	while (widget->parent)
+		widget = widget->parent;
 	
 	if (g_hash_table_lookup(nodes, widget))
 		return;		/* XXX: perhaps _update instead? */
@@ -528,11 +587,8 @@ void gnt_screen_update(GntWidget *widget)
 {
 	GntNode *node;
 	
-	if (widget->parent)
-	{
-		while (widget->parent)
-			widget = widget->parent;
-	}
+	while (widget->parent)
+		widget = widget->parent;
 	
 	gnt_box_sync_children(GNT_BOX(widget));
 	node = g_hash_table_lookup(nodes, widget);
@@ -555,15 +611,13 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	if (!widget)
 		return FALSE;
 
-	if (widget == window_list.window)
-		return TRUE;
-
 	w = widget;
 
 	while (widget->parent)
-	{
 		widget = widget->parent;
-	}
+
+	if (widget == window_list.window)
+		return TRUE;
 
 	if (focus_list && focus_list->data == widget)
 	{

@@ -39,24 +39,29 @@ gnt_box_draw(GntWidget *widget)
 	if (box->title)
 	{
 		gchar *title = g_strdup(box->title);
-		int pos = g_utf8_strlen(title, -1);
+		int pos = g_utf8_strlen(title, -1), right;
 
-		if (pos >= widget->priv.width - 2)
+		if (pos >= widget->priv.width - 4)
 		{
-			g_utf8_strncpy(title, box->title, widget->priv.width - 2);
-			pos = 1;
+			g_utf8_strncpy(title, box->title, widget->priv.width - 4);
+			pos = 2;
+			right = pos + g_utf8_strlen(title, -1);
 		}
 		else
 		{
 			/* XXX: Position of the title might be configurable */
+			right = pos;
 			pos = (widget->priv.width - pos) / 2;
+			right += pos;
 		}
 
 		if (gnt_widget_has_focus(widget))
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
 		else
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE_D));
+		mvwaddch(widget->window, 0, pos-1, ACS_RTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
 		mvwprintw(widget->window, 0, pos, title);
+		mvwaddch(widget->window, 0, right, ACS_LTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
 		g_free(title);
 	}
 	
@@ -273,6 +278,34 @@ gnt_box_expose(GntWidget *widget, int x, int y, int width, int height)
 	delwin(win);
 }
 
+static gboolean
+gnt_box_confirm_size(GntWidget *widget, int width, int height)
+{
+	GList *iter;
+	GntBox *box = GNT_BOX(widget);
+	int wchange, hchange;
+	int wc = 0, hc = 0;
+
+	wchange = widget->priv.width - width;
+	hchange = widget->priv.height - height;
+
+	/* XXX: Right now, I am trying to just apply all the changes to 
+	 * just one widget. It should be possible to distribute the
+	 * changes to all the widgets in the box. */
+	for (iter = box->list; iter; iter = iter->next)
+	{
+		GntWidget *wid = iter->data;
+		int w, h;
+
+		gnt_widget_get_size(wid, &w, &h);
+
+		if (gnt_widget_set_size(wid, w - wchange, h - hchange))
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 gnt_box_class_init(GntBoxClass *klass)
 {
@@ -286,6 +319,7 @@ gnt_box_class_init(GntBoxClass *klass)
 	parent_class->key_pressed = gnt_box_key_pressed;
 	parent_class->lost_focus = gnt_box_lost_focus;
 	parent_class->gained_focus = gnt_box_gained_focus;
+	parent_class->confirm_size = gnt_box_confirm_size;
 
 	DEBUG;
 }
@@ -293,6 +327,9 @@ gnt_box_class_init(GntBoxClass *klass)
 static void
 gnt_box_init(GTypeInstance *instance, gpointer class)
 {
+	/* Initially make both the height and width resizable.
+	 * Update the flags as necessary when widgets are added to it. */
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	DEBUG;
 }
 
@@ -344,6 +381,17 @@ void gnt_box_add_widget(GntBox *b, GntWidget *widget)
 {
 	b->list = g_list_append(b->list, widget);
 	widget->parent = GNT_WIDGET(b);
+
+	if (b->vertical)
+	{
+		if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
+			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(b), GNT_WIDGET_GROW_X);
+	}
+	else
+	{
+		if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
+			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(b), GNT_WIDGET_GROW_Y);
+	}
 }
 
 void gnt_box_set_title(GntBox *b, const char *title)

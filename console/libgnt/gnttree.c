@@ -385,6 +385,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 static void
 gnt_tree_init(GTypeInstance *instance, gpointer class)
 {
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	DEBUG;
 }
 

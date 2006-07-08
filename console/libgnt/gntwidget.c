@@ -4,6 +4,8 @@
 #include "gntutils.h"
 #include "gnt.h"
 
+#define MIN_SIZE 5
+
 enum
 {
 	SIG_DESTROY,
@@ -15,12 +17,15 @@ enum
 	SIG_ACTIVATE,
 	SIG_EXPOSE,
 	SIG_SIZE_REQUEST,
+	SIG_CONFIRM_SIZE,
 	SIG_POSITION,
 	SIGS
 };
 
 static GObjectClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
+
+static void init_widget(GntWidget *widget);
 
 static void
 gnt_widget_init(GTypeInstance *instance, gpointer class)
@@ -63,6 +68,18 @@ gnt_widget_focus_change(GntWidget *widget)
 		gnt_widget_draw(widget);
 }
 
+static gboolean
+gnt_widget_dummy_confirm_size(GntWidget *widget, int width, int height)
+{
+	if (width < MIN_SIZE || height < MIN_SIZE)
+		return FALSE;
+	if (widget->priv.width != width && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
+		return FALSE;
+	if (widget->priv.height != height && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
+		return FALSE;
+	return TRUE;
+}
+
 static void
 gnt_widget_class_init(GntWidgetClass *klass)
 {
@@ -79,6 +96,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 	klass->map = gnt_widget_map;
 	klass->lost_focus = gnt_widget_focus_change;
 	klass->gained_focus = gnt_widget_focus_change;
+	klass->confirm_size = gnt_widget_dummy_confirm_size;
 	
 	klass->key_pressed = NULL;
 	klass->activate = NULL;
@@ -155,6 +173,14 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
+	signals[SIG_CONFIRM_SIZE] = 
+		g_signal_new("confirm_size",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntWidgetClass, confirm_size),
+					 NULL, NULL,
+					 gnt_closure_marshal_BOOLEAN__INT_INT,
+					 G_TYPE_BOOLEAN, 2, G_TYPE_INT, G_TYPE_INT);
 	signals[SIG_KEY_PRESSED] = 
 		g_signal_new("key_pressed",
 					 G_TYPE_FROM_CLASS(klass),
@@ -270,23 +296,8 @@ gnt_widget_draw(GntWidget *widget)
 		
 		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
 						widget->priv.y, widget->priv.x);
-		wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
-		if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
-		{
-			WINDOW *tmp = derwin(widget->window, widget->priv.height, widget->priv.width, 0, 0);
-			box(tmp, 0, 0);
-			delwin(tmp);
-		}
-		else
-			werase(widget->window);
-
-		if (shadow)
-		{
-			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_SHADOW));
-			mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
-			mvwhline(widget->window, widget->priv.height, 1, ' ', widget->priv.width);
-		}
+		init_widget(widget);
 	}
 
 	g_signal_emit(widget, signals[SIG_DRAW], 0);
@@ -362,12 +373,65 @@ gnt_widget_get_size(GntWidget *wid, int *width, int *height)
 	
 }
 
-void
+static void
+init_widget(GntWidget *widget)
+{
+	gboolean shadow = TRUE;
+
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+		shadow = FALSE;
+
+	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
+	werase(widget->window);
+
+	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
+	{
+		WINDOW *tmp = derwin(widget->window, widget->priv.height, widget->priv.width, 0, 0);
+		box(tmp, 0, 0);
+		delwin(tmp);
+	}
+
+	if (shadow)
+	{
+		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_SHADOW));
+		mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
+		mvwhline(widget->window, widget->priv.height, 1, ' ', widget->priv.width);
+	}
+}
+
+gboolean
 gnt_widget_set_size(GntWidget *widget, int width, int height)
 {
-	widget->priv.width = width;
-	widget->priv.height = height;
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_MAPPED);
+	gboolean ret = TRUE;
+
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
+	{
+		if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+		{
+			width--;
+			height--;
+		}
+		g_signal_emit(widget, signals[SIG_CONFIRM_SIZE], 0, width, height, &ret);
+	}
+
+	if (ret)
+	{
+		gboolean shadow = TRUE;
+
+		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+			shadow = FALSE;
+
+		widget->priv.width = width;
+		widget->priv.height = height;
+		if (widget->window)
+			wresize(widget->window, height + shadow, width + shadow);
+		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
+			init_widget(widget);
+		else
+			GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_MAPPED);
+	}
+
+	return ret;
 }
 
 gboolean

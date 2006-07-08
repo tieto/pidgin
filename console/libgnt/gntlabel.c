@@ -70,6 +70,7 @@ gnt_label_class_init(GntLabelClass *klass)
 static void
 gnt_label_init(GTypeInstance *instance, gpointer class)
 {
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	DEBUG;
 }
 
