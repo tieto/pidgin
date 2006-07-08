@@ -557,13 +557,21 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			lar = get_last_auto_response(gc, name);
 			if ((now - lar->sent) >= SECS_BEFORE_RESENDING_AUTORESPONSE)
 			{
+				/*
+				 * We don't want to send an autoresponse in response to the other user's
+				 * autoresponse.  We do, however, not want to then send one in response to the
+				 * _next_ message, so we still set lar->sent to now.
+				 */
 				lar->sent = now;
+				
+				if (!(flags & GAIM_MESSAGE_AUTO_RESP))
+				{
+					serv_send_im(gc, name, away_msg, GAIM_MESSAGE_AUTO_RESP);
 
-				serv_send_im(gc, name, away_msg, GAIM_MESSAGE_AUTO_RESP);
-
-				gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, away_msg,
-				                   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
-				                   mtime);
+					gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, away_msg,
+									   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
+									   mtime);
+				}
 			}
 		}
 	}
