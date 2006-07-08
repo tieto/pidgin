@@ -5,6 +5,7 @@
 #include "gnt.h"
 #include "gntcolors.h"
 #include "gntkeys.h"
+#include "gnttextview.h"
 
 #define GNT_TYPE_TREE				(gnt_tree_get_gtype())
 #define GNT_TREE(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_TREE, GntTree))
@@ -78,6 +79,8 @@ GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, const char *text, void
 void gnt_tree_set_choice(GntTree *tree, void *key, gboolean set);
 
 gboolean gnt_tree_get_choice(GntTree *tree, void *key);
+
+void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
 
 G_END_DECLS
 

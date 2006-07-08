@@ -25,6 +25,7 @@ struct _GnTreeRow
 	gboolean choice;            /* Is this a choice-box?
 	                               If choice is true, then child will be NULL */
 	gboolean isselected;
+	GntTextFormatFlags flags;
 
 	GntTreeRow *parent;
 	GntTreeRow *child;
@@ -180,6 +181,9 @@ redraw_tree(GntTree *tree)
 		int wr;
 		char format[16] = "";
 
+		GntTextFormatFlags flags = row->flags;
+		int attr = 0;
+
 		deep = TRUE;
 
 		if (row->parent == NULL && row->child)
@@ -208,25 +212,38 @@ redraw_tree(GntTree *tree)
 				str[wr++] = ' ';
 			str[wr] = 0;
 		}
-		
+
+		if (flags & GNT_TEXT_FLAG_BOLD)
+			attr |= A_BOLD;
+		if (flags & GNT_TEXT_FLAG_UNDERLINE)
+			attr |= A_UNDERLINE;
+		if (flags & GNT_TEXT_FLAG_BLINK)
+			attr |= A_BLINK;
+
 		if (row == tree->current)
 		{
 			if (gnt_widget_has_focus(widget))
-				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+				attr |= COLOR_PAIR(GNT_COLOR_HIGHLIGHT);
 			else
-				wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
-			mvwprintw(widget->window, start, pos, str);
-			whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
-			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+				attr |= COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D);
 		}
 		else
 		{
-			mvwprintw(widget->window, start, pos, str);
-			whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
+			if (flags & GNT_TEXT_FLAG_DIM)
+				attr |= (A_DIM | COLOR_PAIR(GNT_COLOR_DISABLED));
+			else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
+				attr |= (A_DIM | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+			else
+				attr |= COLOR_PAIR(GNT_COLOR_NORMAL);
 		}
+
+		wbkgdset(widget->window, '\0' | attr);
+		mvwprintw(widget->window, start, pos, str);
+		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
 		tree->bottom = row;
 	}
 
+	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	while (start < widget->priv.height - pos)
 	{
 		mvwhline(widget->window, start, pos, ' ',
@@ -680,5 +697,15 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key)
 	g_return_val_if_fail(row->choice, FALSE);
 
 	return row->isselected;
+}
+
+void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	if (!row)
+		return;
+
+	row->flags = flags;
+	redraw_tree(tree);
 }
 

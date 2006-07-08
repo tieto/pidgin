@@ -58,6 +58,8 @@ int main()
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "6", "6", "4", NULL);
 
+	gnt_tree_set_row_flags(GNT_TREE(tree), "e", GNT_TEXT_FLAG_DIM);
+
 	g_timeout_add(5000, show, box2);
 
 	gnt_main();

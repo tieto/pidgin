@@ -7,7 +7,7 @@ enum
 
 typedef struct
 {
-	GntTextViewFlags flags;
+	GntTextFormatFlags flags;
 	char *text;
 } GntTextSegment;
 
@@ -162,7 +162,7 @@ GntWidget *gnt_text_view_new()
 	return widget;
 }
 
-void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextViewFlags flags)
+void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags)
 {
 	GntWidget *widget = GNT_WIDGET(view);
 	int fl = 0;

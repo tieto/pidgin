@@ -203,6 +203,10 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
 				get_display_name(node), group, NULL);
+	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
+	else
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, 0);
 }
 
 #if 0
@@ -358,7 +362,6 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, GGBlist *gg
 	draw_tooltip(ggblist);
 }
 
-
 static gboolean
 key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 {
@@ -377,11 +380,28 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 }
 
 static void
-buddy_status_changed(GaimBuddy *buddy, GaimStatus *old, GaimStatus *now, GGBlist *ggblist)
+update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist)
 {
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, get_display_name((GaimBlistNode*)buddy));
 	if (ggblist->tnode == (GaimBlistNode*)buddy)
 		draw_tooltip(ggblist);
+
+	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
+	else
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, 0);
+}
+
+static void
+buddy_status_changed(GaimBuddy *buddy, GaimStatus *old, GaimStatus *now, GGBlist *ggblist)
+{
+	update_buddy_display(buddy, ggblist);
+}
+
+static void
+buddy_idle_changed(GaimBuddy *buddy, int old, int new, GGBlist *ggblist)
+{
+	update_buddy_display(buddy, ggblist);
 }
 
 void gg_blist_init()
@@ -405,6 +425,8 @@ void gg_blist_init()
 
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_status_changed), ggblist);
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-idle-changed", gg_blist_get_handle(),
+				GAIM_CALLBACK(buddy_idle_changed), ggblist);
 	
 #if 0
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gg_blist_get_handle(),

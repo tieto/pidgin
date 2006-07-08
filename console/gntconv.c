@@ -146,7 +146,7 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 {
 	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
 	char *strip;
-	GntTextViewFlags fl = 0;
+	GntTextFormatFlags fl = 0;
 
 	g_return_if_fail(ggconv != NULL);
 

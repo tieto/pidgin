@@ -35,7 +35,7 @@ typedef enum
 	GNT_TEXT_FLAG_BLINK       = 1 << 2,
 	GNT_TEXT_FLAG_DIM         = 1 << 3,
 	GNT_TEXT_FLAG_HIGHLIGHT   = 1 << 4,
-} GntTextViewFlags;
+} GntTextFormatFlags;
 
 struct _GnTextViewClass
 {
@@ -58,7 +58,7 @@ GntWidget *gnt_text_view_new();
 /* scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end */
 void gnt_text_view_scroll(GntTextView *view, int scroll);
 
-void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextViewFlags flags);
+void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags);
 
 /* Move the cursor to the beginning of the next line and resets text-attributes.
  * It first completes the current line with the current text-attributes. */

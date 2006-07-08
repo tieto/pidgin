@@ -284,7 +284,6 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 	GList *iter;
 	GntBox *box = GNT_BOX(widget);
 	int wchange, hchange;
-	int wc = 0, hc = 0;
 
 	wchange = widget->priv.width - width;
 	hchange = widget->priv.height - height;
