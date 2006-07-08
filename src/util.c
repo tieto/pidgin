@@ -1744,6 +1744,7 @@ badchar(char c)
 	case ',':
 	case '\0':
 	case '\n':
+	case '\r':
 	case '<':
 	case '>':
 	case '"':
@@ -2682,12 +2683,16 @@ gaim_strdup_withhtml(const gchar *src)
 
 	g_return_val_if_fail(src != NULL, NULL);
 
-	/* New length is (length of src) + (number of \n's * 3) + 1 */
+	/* New length is (length of src) + (number of \n's * 3) - (number of \r's) + 1 */
+	destsize = 0;
 	for (i = 0, j = 0; src[i] != '\0'; i++)
+	{
 		if (src[i] == '\n')
-			j++;
+			destsize += 4;
+		else if (src[i] != '\r')
+			destsize++;
+	}
 
-	destsize = i + (j * 3) + 1;
 	dest = g_malloc(destsize);
 
 	/* Copy stuff, ignoring \r's, because they are dumb */
