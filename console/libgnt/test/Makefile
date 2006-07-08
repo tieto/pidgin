@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=`pkg-config --cflags gobject-2.0` -g -I../
 LDFLAGS=`pkg-config --libs gobject-2.0` -pg -lgnt -L../
 
-EXAMPLES=focus tv multiwin
+EXAMPLES=combo focus tv multiwin
 
 all:
 	make examples

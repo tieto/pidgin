@@ -1,5 +1,5 @@
 #include "gnttree.h"
-#include "gntutils.h"
+#include "gntmarshal.h"
 
 #include <string.h>
 
@@ -592,6 +592,13 @@ gpointer gnt_tree_get_selection_data(GntTree *tree)
 	return NULL;
 }
 
+const char *gnt_tree_get_selection_text(GntTree *tree)
+{
+	if (tree->current)
+		return tree->current->text;
+	return NULL;
+}
+
 /* XXX: Should this also remove all the children of the row being removed? */
 void gnt_tree_remove(GntTree *tree, gpointer key)
 {
@@ -707,6 +714,6 @@ void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags)
 		return;
 
 	row->flags = flags;
-	redraw_tree(tree);	/* XXX: Is shouldn't be necessary to redraw the whole darned tree */
+	redraw_tree(tree);	/* XXX: It shouldn't be necessary to redraw the whole darned tree */
 }
 

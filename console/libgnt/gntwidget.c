@@ -1,7 +1,7 @@
 /* Stuff brutally ripped from Gflib */
 
 #include "gntwidget.h"
-#include "gntutils.h"
+#include "gntmarshal.h"
 #include "gnt.h"
 
 #define MIN_SIZE 5

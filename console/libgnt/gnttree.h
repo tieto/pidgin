@@ -67,6 +67,8 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
+const char *gnt_tree_get_selection_text(GntTree *tree);
+
 void gnt_tree_remove(GntTree *tree, gpointer key);
 
 /* Returns the visible line number of the selected row */

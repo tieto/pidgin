@@ -8,11 +8,12 @@ libgnt_la_SOURCES = \
 	gntbox.c \
 	gntbutton.c \
 	gntcolors.c \
+	gntcombobox.c \
 	gntentry.c \
 	gntlabel.c \
+	gntmarshal.c \
 	gnttextview.c \
 	gnttree.c \
-	gntutils.c \
 	gntmain.c
 
 libgnt_la_headers = \
@@ -20,12 +21,13 @@ libgnt_la_headers = \
 	gntbox.h \
 	gntbutton.h \
 	gntcolors.h \
+	gntcombobox.h \
 	gntentry.h \
 	gntkeys.h \
 	gntlabel.h \
+	gntmarshal.h \
 	gnttextview.h \
 	gnttree.h \
-	gntutils.h \
 	gnt.h
 
 libgnt_laincludedir=$(includedir)/gnt

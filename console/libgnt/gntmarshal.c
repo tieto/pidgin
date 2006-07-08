@@ -1,4 +1,4 @@
-#include "gntutils.h"
+#include "gntmarshal.h"
 
 void gnt_closure_marshal_BOOLEAN__STRING(GClosure *closure,
 										GValue *ret_value,
