@@ -118,6 +118,23 @@ bring_on_top(GntWidget *widget)
 	}
 	update_panels();
 	doupdate();
+	draw_taskbar();
+}
+
+static void
+update_window_in_list(GntWidget *wid)
+{
+	GntTextFormatFlags flag = 0;
+
+	if (window_list.window == NULL)
+		return;
+
+	if (wid == focus_list->data)
+		flag |= GNT_TEXT_FLAG_DIM;
+	else if (GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_URGENT))
+		flag |= GNT_TEXT_FLAG_BOLD;
+
+	gnt_tree_set_row_flags(GNT_TREE(window_list.tree), wid, flag);
 }
 
 static void
@@ -163,6 +180,8 @@ draw_taskbar()
 		wbkgdset(taskbar, '\0' | COLOR_PAIR(color));
 		mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
 		mvwprintw(taskbar, 0, width * i, "%s", GNT_BOX(w)->title);
+
+		update_window_in_list(w);
 	}
 
 	wrefresh(taskbar);
@@ -240,6 +259,7 @@ show_window_list()
 		GntBox *box = GNT_BOX(iter->data);
 
 		gnt_tree_add_row_after(GNT_TREE(tree), box, box->title, NULL, NULL);
+		update_window_in_list(GNT_WIDGET(box));
 	}
 
 	gnt_box_add_widget(GNT_BOX(win), tree);
@@ -468,7 +488,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		}
 	}
 
-	draw_taskbar();
 	refresh();
 
 	return TRUE;
@@ -554,8 +573,11 @@ void gnt_screen_occupy(GntWidget *widget)
 	{
 		if ((GNT_IS_BOX(widget) && GNT_BOX(widget)->title) && window_list.window != widget
 				&& GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
+		{
 			gnt_tree_add_row_after(GNT_TREE(window_list.tree), widget,
 					GNT_BOX(widget)->title, NULL, NULL);
+			update_window_in_list(widget);
+		}
 	}
 
 	update_panels();

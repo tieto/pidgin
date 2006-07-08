@@ -35,6 +35,7 @@ void gg_accounts_init()
 	accounts.window = gnt_box_new(TRUE, TRUE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);
 	gnt_box_set_title(GNT_BOX(accounts.window), _("Accounts"));
+	gnt_box_set_pad(GNT_BOX(accounts.window), 0);
 	gnt_widget_set_name(accounts.window, "accounts");
 
 	gnt_box_add_widget(GNT_BOX(accounts.window),
@@ -58,7 +59,7 @@ void gg_accounts_init()
 
 	g_signal_connect(G_OBJECT(accounts.tree), "toggled", G_CALLBACK(account_toggled), NULL);
 	
-	gnt_widget_set_size(accounts.tree, 40, 15);
+	gnt_widget_set_size(accounts.tree, 40, 10);
 	gnt_box_add_widget(GNT_BOX(accounts.window), accounts.tree);
 
 	box = gnt_box_new(FALSE, FALSE);

@@ -201,6 +201,7 @@ redraw_tree(GntTree *tree)
 			g_snprintf(format, sizeof(format) - 1, "[%c] ", row->isselected ? 'X' : ' ');
 		}
 
+		/* XXX: Need a utf8 version of snprintf */
 		if ((wr = g_snprintf(str, widget->priv.width, "%s%s", format, row->text)) >= widget->priv.width)
 		{
 			/* XXX: ellipsize */
@@ -702,10 +703,10 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key)
 void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags)
 {
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
-	if (!row)
+	if (!row || row->flags == flags)
 		return;
 
 	row->flags = flags;
-	redraw_tree(tree);
+	redraw_tree(tree);	/* XXX: Is shouldn't be necessary to redraw the whole darned tree */
 }
 
