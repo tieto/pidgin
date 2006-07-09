@@ -47,16 +47,28 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 	if (key[0] == '\r' && key[1] == 0)
 	{
 		const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-		switch (gaim_conversation_get_type(ggconv->conv))
+		if (*text == '/')
 		{
-			case GAIM_CONV_TYPE_IM:
-				gaim_conv_im_send_with_flags(GAIM_CONV_IM(ggconv->conv), text, GAIM_MESSAGE_SEND);
-				break;
-			case GAIM_CONV_TYPE_CHAT:
-				gaim_conv_chat_send(GAIM_CONV_CHAT(ggconv->conv), text);
-				break;
-			default:
-				g_return_val_if_reached(FALSE);
+			/* XXX: Need to check for /-commands here */
+			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+					_("Commands are not supported yet. Message was NOT sent."),
+					GNT_TEXT_FLAG_DIM | GNT_TEXT_FLAG_UNDERLINE);
+			gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
+			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
+		}
+		else
+		{
+			switch (gaim_conversation_get_type(ggconv->conv))
+			{
+				case GAIM_CONV_TYPE_IM:
+					gaim_conv_im_send_with_flags(GAIM_CONV_IM(ggconv->conv), text, GAIM_MESSAGE_SEND);
+					break;
+				case GAIM_CONV_TYPE_CHAT:
+					gaim_conv_chat_send(GAIM_CONV_CHAT(ggconv->conv), text);
+					break;
+				default:
+					g_return_val_if_reached(FALSE);
+			}
 		}
 		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
 		return TRUE;
