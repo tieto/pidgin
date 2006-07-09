@@ -14,6 +14,19 @@
 typedef struct _GnBox			GntBox;
 typedef struct _GnBoxClass		GntBoxClass;
 
+typedef enum
+{
+	/* These for vertical boxes */
+	GNT_ALIGN_LEFT,
+	GNT_ALIGN_RIGHT,
+
+	GNT_ALIGN_MID,
+
+	/* These for horizontal boxes */
+	GNT_ALIGN_TOP,
+	GNT_ALIGN_BOTTOM
+} GntAlignment;
+
 struct _GnBox
 {
 	GntWidget parent;
@@ -24,6 +37,7 @@ struct _GnBox
 
 	GntWidget *active;
 	int pad;			/* Number of spaces to use between widgets */
+	GntAlignment alignment;  /* How are the widgets going to be aligned? */
 
 	char *title;
 	GList *focus;		/* List of widgets to cycle focus (only valid for parent boxes) */
@@ -59,6 +73,8 @@ void gnt_box_set_pad(GntBox *box, int pad);
 void gnt_box_set_toplevel(GntBox *box, gboolean set);
 
 void gnt_box_sync_children(GntBox *box);
+
+void gnt_box_set_alignment(GntBox *box, GntAlignment alignment);
 
 G_END_DECLS
 

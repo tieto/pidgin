@@ -372,6 +372,10 @@ GntWidget *gnt_box_new(gboolean homo, gboolean vert)
 	box->pad = 1;
 	gnt_widget_set_take_focus(widget, TRUE);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+	if (vert)
+		box->alignment = GNT_ALIGN_LEFT;
+	else
+		box->alignment = GNT_ALIGN_MID;
 
 	return widget;
 }
@@ -431,18 +435,42 @@ void gnt_box_sync_children(GntBox *box)
 	{
 		GntWidget *w = GNT_WIDGET(iter->data);
 		int height, width;
+		int x, y;
 
 		if (GNT_IS_BOX(w))
 			gnt_box_sync_children(GNT_BOX(w));
 
 		gnt_widget_get_size(w, &width, &height);
 
+		x = w->priv.x - widget->priv.x;
+		y = w->priv.y - widget->priv.y;
+
+		if (box->vertical)
+		{
+			if (box->alignment == GNT_ALIGN_RIGHT)
+				x += widget->priv.width - width;
+			else if (box->alignment == GNT_ALIGN_MID)
+				x += (widget->priv.width - width)/2;
+			if (x + width > widget->priv.width - 1)
+				x -= x + width - (widget->priv.width - 1);
+		}
+		else
+		{
+			if (box->alignment == GNT_ALIGN_BOTTOM)
+				y += widget->priv.height - height;
+			else if (box->alignment == GNT_ALIGN_MID)
+				y += (widget->priv.height - height)/2;
+			if (y + height > widget->priv.height - 1)
+				y -= y + height - (widget->priv.height - 1);
+		}
+
 		copywin(w->window, widget->window, 0, 0,
-				w->priv.y - widget->priv.y,
-				w->priv.x - widget->priv.x,
-				w->priv.y - widget->priv.y + height - 1,
-				w->priv.x - widget->priv.x + width - 1,
-				FALSE);
+				y, x, y + height - 1, x + width - 1, FALSE);
 	}
+}
+
+void gnt_box_set_alignment(GntBox *box, GntAlignment alignment)
+{
+	box->alignment = alignment;
 }
 
