@@ -33,6 +33,7 @@ gnt_combo_box_draw(GntWidget *widget)
 	GntComboBox *box = GNT_COMBO_BOX(widget);
 	const char *text = NULL;
 	GntColorType type;
+	int len;
 	
 	if (box->dropdown)
 	{
@@ -43,14 +44,28 @@ gnt_combo_box_draw(GntWidget *widget)
 	if (text == NULL)
 		text = "";
 
+	text = g_strdup(text);
+
 	if (gnt_widget_has_focus(widget))
 		type = GNT_COLOR_HIGHLIGHT;
 	else
 		type = GNT_COLOR_NORMAL;
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
-	mvwprintw(widget->window, 1, 1, text);
 
+	if ((len = g_utf8_strlen(text, -1)) > widget->priv.width - 4)
+	{
+		char *s = g_utf8_offset_to_pointer(text, widget->priv.width - 4);
+		*s = '\0';
+		len = widget->priv.width - 4;
+	}
+
+	mvwprintw(widget->window, 1, 1, text);
+	whline(widget->window, '\0' | COLOR_PAIR(type), widget->priv.width - 4 - len);
+	mvwaddch(widget->window, 1, widget->priv.width - 3, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
+	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | COLOR_PAIR(GNT_COLOR_NORMAL));
+
+	g_free(text);
 	DEBUG;
 }
 
@@ -164,6 +179,7 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 
 	box = gnt_box_new(FALSE, FALSE);
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER);
+	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_add_widget(GNT_BOX(box), combo->dropdown);
 	
 	DEBUG;

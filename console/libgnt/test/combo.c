@@ -17,7 +17,7 @@ int main()
 	combo = gnt_combo_box_new();
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "1", "1");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "2", "2");
-	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "3", "3");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "3", "3abcdefghijklmnopqrstuvwxyz");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "4", "4");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "5", "5");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "6", "6");

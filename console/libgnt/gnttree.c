@@ -201,11 +201,13 @@ redraw_tree(GntTree *tree)
 			g_snprintf(format, sizeof(format) - 1, "[%c] ", row->isselected ? 'X' : ' ');
 		}
 
-		/* XXX: Need a utf8 version of snprintf */
-		if ((wr = g_snprintf(str, widget->priv.width, "%s%s", format, row->text)) >= widget->priv.width)
+		g_snprintf(str, sizeof(str) - 1, "%s%s", format, row->text);
+
+		if ((wr = g_utf8_strlen(str, -1)) >= widget->priv.width - 1 - pos)
 		{
 			/* XXX: ellipsize */
-			str[widget->priv.width - 1 - pos] = 0;
+			char *s = g_utf8_offset_to_pointer(str, widget->priv.width - 1 - pos);
+			*s = '\0';
 		}
 		else
 		{
