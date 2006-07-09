@@ -24,7 +24,9 @@
 #ifndef _MSN_NEXUS_H_
 #define _MSN_NEXUS_H_
 
-#define TWN_SERVER	"loginnet.passport.com"
+#include "soap.h"
+
+#define MSN_TWN_SERVER	"loginnet.passport.com"
 
 #define TWN_START_TOKEN		"<wsse:BinarySecurityToken Id=\"PPToken1\">"
 #define TWN_END_TOKEN		"</wsse:BinarySecurityToken>"
@@ -75,20 +77,8 @@ typedef struct _MsnNexus MsnNexus;
 struct _MsnNexus
 {
 	MsnSession *session;
-
-	char *login_host;
-	char *login_path;
+	MsnSoapConn *soapconn;	
 	GHashTable *challenge_data;
-	GaimSslConnection *gsc;
-
-	guint input_handler;
-
-	char *write_buf;
-	gsize written_len;
-	GaimInputFunction written_cb;
-
-	char *read_buf;
-	gsize read_len;
 };
 
 void msn_nexus_connect(MsnNexus *nexus);

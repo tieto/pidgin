@@ -892,8 +892,7 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 
 	gc = gaim_account_get_connection(account);
 
-	if (gc != NULL)
-	{
+	if (gc != NULL){
 		session = gc->proto_data;
 		msn_change_status(session);
 	}

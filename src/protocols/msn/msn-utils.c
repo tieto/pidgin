@@ -351,14 +351,14 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 
 	host = g_strdup(str);
 
-	if ((c = strchr(host, ':')) != NULL)
-	{
+	if ((c = strchr(host, ':')) != NULL){
 		*c = '\0';
 		port = atoi(c + 1);
-	}
-	else
+	}else{
 		port = 1863;
+	}
 
 	*ret_host = host;
 	*ret_port = port;
 }
+

@@ -42,7 +42,7 @@ is_num(char *str)
  *  else 		return FALSE
  */
 static gboolean
-isPayloadCmd(char *str)
+msn_check_payload_cmd(char *str)
 {
 	if( (!strcmp(str,"ADL")) ||
 		(!strcmp(str,"GCF")) ||
@@ -60,7 +60,7 @@ isPayloadCmd(char *str)
 }
 
 /*get the payload positon*/
-int getPayloadPosition(char *str)
+int msn_get_payload_position(char *str)
 {
 	/*because MSG has "MSG hotmail hotmail [payload length]"*/
 	if(!(strcmp(str,"MSG"))){
@@ -72,11 +72,11 @@ int getPayloadPosition(char *str)
  * set command Payload length
  */
 int
-setPayloadLen(MsnCommand *cmd)
+msn_set_payload_len(MsnCommand *cmd)
 {
 	char * param;
 
-	if(isPayloadCmd(cmd->command)){
+	if(msn_check_payload_cmd(cmd->command)){
 		if(!(strcmp(cmd->command,"MSG"))){
 			param = cmd->params[2];
 		}else{
@@ -121,7 +121,7 @@ msn_command_from_string(const char *string)
 	}
 
 	/*add payload Length checking*/
-	setPayloadLen(cmd);
+	msn_set_payload_len(cmd);
 	gaim_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);
 
 	msn_command_ref(cmd);

@@ -38,6 +38,7 @@ typedef struct _MsnSession MsnSession;
 #include "cmdproc.h"
 #include "nexus.h"
 #include "httpconn.h"
+#include "contact.h"
 
 #include "userlist.h"
 #include "sync.h"
@@ -94,6 +95,7 @@ struct _MsnSession
 
 	MsnNotification *notification;
 	MsnNexus *nexus;
+	MsnContact *contact;
 	MsnSync *sync;
 
 	MsnUserList *userlist;
@@ -107,6 +109,10 @@ struct _MsnSession
 
 	struct
 	{
+		/*t and p, get via USR TWN*/
+		char *t;
+		char *p;
+
 		char *kv;
 		char *sid;
 		char *mspauth;
@@ -114,7 +120,6 @@ struct _MsnSession
 		char *file;
 		char *client_ip;
 		int client_port;
-
 	} passport_info;
 };
 

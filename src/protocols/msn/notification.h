@@ -24,6 +24,14 @@
 #ifndef _MSN_NOTIFICATION_H_
 #define _MSN_NOTIFICATION_H_
 
+/*MSN protocol challenge info*/
+/*MSNP13 challenge*/
+#define MSNP13_WLM_PRODUCT_KEY	"O4BG@C7BWLYQX?5G"
+#define MSNP13_WLM_PRODUCT_ID	"PROD01065C%ZFN6F"
+
+#define MSNP10_PRODUCT_KEY		"VT6PX?UQTM4WM%YR"
+#define MSNP10_PRODUCT_ID		"PROD0038W!61ZTF9" 
+
 typedef struct _MsnNotification MsnNotification;
 
 #include "session.h"

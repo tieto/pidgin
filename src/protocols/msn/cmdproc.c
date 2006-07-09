@@ -127,8 +127,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		trans->callbacks = g_hash_table_lookup(cmdproc->cbs_table->cmds,
 											   trans->command);
 
-	if (trans->payload != NULL)
-	{
+	if (trans->payload != NULL){
 		data = g_realloc(data, len + trans->payload_len);
 		memcpy(data + len, trans->payload, trans->payload_len);
 		len += trans->payload_len;

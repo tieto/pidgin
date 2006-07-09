@@ -238,7 +238,8 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
 
-		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
+//		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
+		//TODO we should use SOAP contact to fetch contact list
 	}else if (!g_ascii_strcasecmp(cmd->params[1], "TWN")){
 		/* Passport authentication */
 		char **elems, **cur, **tokens;
@@ -397,8 +398,8 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 /**************************************************************************
  * Challenges
+ *  we use MD5 to caculate the Chanllenges 
  **************************************************************************/
-
 static void
 chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -416,7 +417,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	gaim_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
 
-	challenge_resp = "VT6PX?UQTM4WM%YR";
+	challenge_resp = MSNP13_WLM_PRODUCT_KEY;
 
 	gaim_cipher_context_append(context, (const guchar *)challenge_resp,
 							   strlen(challenge_resp));
@@ -426,7 +427,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	for (i = 0; i < 16; i++)
 		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
 
-	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", "PROD0038W!61ZTF9");
+	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
 
@@ -436,7 +437,6 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Buddy Lists
  **************************************************************************/
-
 static void
 add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -552,6 +552,10 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	g_free(reason);
 
 	g_strfreev(params);
+}
+
+static void adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
 }
 
 static void
@@ -1100,12 +1104,9 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_parse_socket(cmd->params[2], &host, &port);
 
-	if (!strcmp(cmd->params[1], "SB"))
-	{
+	if (!strcmp(cmd->params[1], "SB")){
 		gaim_debug_error("msn", "This shouldn't be handled here.\n");
-	}
-	else if (!strcmp(cmd->params[1], "NS"))
-	{
+	}else if (!strcmp(cmd->params[1], "NS")){
 		MsnSession *session;
 
 		session = cmdproc->session;
@@ -1123,7 +1124,6 @@ gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	gaim_debug_info("MaYuan","Processing GCF... \n");
 	if(cmd->payload_len == 0){
-//		cmd->payload_len = is_num(cmd->params[1]) ? atoi(cmd->params[1]) : 0;
 		return;
 	}
 	/*get the payload content*/
@@ -1149,49 +1149,53 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	MsnSession *session;
 	const char *value;
 
+	gaim_debug_info("MaYuan","profile_msg... \n");
 	session = cmdproc->session;
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
 		return;
 
-	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
-	{
+	if ((value = msn_message_get_attr(msg, "kv")) != NULL){
 		if (session->passport_info.kv != NULL)
 			g_free(session->passport_info.kv);
 
 		session->passport_info.kv = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "sid")) != NULL)
-	{
+	if ((value = msn_message_get_attr(msg, "sid")) != NULL){
 		if (session->passport_info.sid != NULL)
 			g_free(session->passport_info.sid);
 
 		session->passport_info.sid = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
-	{
+	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL){
 		if (session->passport_info.mspauth != NULL)
 			g_free(session->passport_info.mspauth);
 
+		gaim_debug_info("MaYuan","MSPAuth:%s\n",value);
 		session->passport_info.mspauth = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
-	{
+	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL){
 		if (session->passport_info.client_ip != NULL)
 			g_free(session->passport_info.client_ip);
 
 		session->passport_info.client_ip = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
+	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL){
 		session->passport_info.client_port = ntohs(atoi(value));
+	}
 
 	if ((value = msn_message_get_attr(msg, "LoginTime")) != NULL)
 		session->passport_info.sl = atol(value);
+
+	/*starting retrieve the contact list*/
+	session->contact = msn_contact_new(session);
+	msn_contact_connect(session->contact);
+
 }
 
 static void
