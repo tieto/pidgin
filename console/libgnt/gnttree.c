@@ -209,12 +209,6 @@ redraw_tree(GntTree *tree)
 			char *s = g_utf8_offset_to_pointer(str, widget->priv.width - 1 - pos);
 			*s = '\0';
 		}
-		else
-		{
-			while (wr < widget->priv.width - 1 - pos)
-				str[wr++] = ' ';
-			str[wr] = 0;
-		}
 
 		if (flags & GNT_TEXT_FLAG_BOLD)
 			attr |= A_BOLD;
