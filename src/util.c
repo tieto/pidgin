@@ -2684,8 +2684,8 @@ gaim_strdup_withhtml(const gchar *src)
 	g_return_val_if_fail(src != NULL, NULL);
 
 	/* New length is (length of src) + (number of \n's * 3) - (number of \r's) + 1 */
-	destsize = 0;
-	for (i = 0, j = 0; src[i] != '\0'; i++)
+	destsize = 1;
+	for (i = 0; src[i] != '\0'; i++)
 	{
 		if (src[i] == '\n')
 			destsize += 4;
