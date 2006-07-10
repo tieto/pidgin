@@ -919,8 +919,9 @@ static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	/* If using OpenSSL, don't perform any actions on the ssl connection
-	 * if we were forcibly disconnected because it will crash. -- evands
+	/* Don't perform any actions on the ssl connection
+	 * if we were forcibly disconnected because it will crash
+	 * on some SSL backends.
 	 */
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
