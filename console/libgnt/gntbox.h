@@ -62,6 +62,9 @@ G_BEGIN_DECLS
 
 GType gnt_box_get_gtype(void);
 
+#define gnt_vbox_new(homo) gnt_box_new(homo, TRUE)
+#define gnt_hbox_new(homo) gnt_box_new(homo, FALSE)
+
 GntWidget *gnt_box_new(gboolean homo, gboolean vert);
 
 void gnt_box_add_widget(GntBox *box, GntWidget *widget);
@@ -75,6 +78,12 @@ void gnt_box_set_toplevel(GntBox *box, gboolean set);
 void gnt_box_sync_children(GntBox *box);
 
 void gnt_box_set_alignment(GntBox *box, GntAlignment alignment);
+
+void gnt_box_remove(GntBox *box, GntWidget *widget); /* XXX: does NOT destroy widget */
+
+void gnt_box_remove_all(GntBox *box);      /* Removes AND destroys all the widgets in it */
+
+void gnt_box_readjust(GntBox *box);
 
 G_END_DECLS
 

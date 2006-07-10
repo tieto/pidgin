@@ -4,11 +4,23 @@
 #include <gntcombobox.h>
 #include <gntlabel.h>
 
+static void
+button_activated(GntWidget *b, GntComboBox *combo)
+{
+	GntWidget *w = b->parent;
+
+	gnt_box_add_widget(GNT_BOX(w),
+			gnt_label_new(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo))));
+	fprintf(stderr, "%s\n", gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
+	gnt_box_readjust(GNT_BOX(w->parent));
+}
+
 int main()
 {
 	GntWidget *box, *combo, *button;
 	GntWidget *hbox;
 
+	freopen(".error", "w", stderr);
 	gnt_init();
 	
 	box = gnt_box_new(FALSE, TRUE);
@@ -43,6 +55,7 @@ int main()
 
 	button = gnt_button_new("OK");
 	gnt_box_add_widget(GNT_BOX(hbox), button);
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(button_activated), combo);
 
 	gnt_box_add_widget(GNT_BOX(box), hbox);
 

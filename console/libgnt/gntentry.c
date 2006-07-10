@@ -83,6 +83,10 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			entry_redraw(widget);
 		}
 		/* XXX: handle other keys, like home/end, and ctrl+ goodness */
+		else
+			return FALSE;
+
+		return TRUE;
 	}
 	else
 	{
@@ -136,6 +140,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 					entry->scroll--;
 
 				entry_redraw(widget);
+				return TRUE;
 			}
 		}
 	}
@@ -166,6 +171,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 static void
 gnt_entry_init(GTypeInstance *instance, gpointer class)
 {
+	GntWidget *widget = GNT_WIDGET(instance);
 	GntEntry *entry = GNT_ENTRY(instance);
 
 	entry->flag = GNT_ENTRY_FLAG_ALL;
@@ -174,6 +180,9 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry), GNT_WIDGET_GROW_X);
+
+	widget->priv.minw = 3;
+	widget->priv.minh = 1;
 	
 	DEBUG;
 }

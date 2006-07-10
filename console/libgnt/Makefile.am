@@ -11,6 +11,7 @@ libgnt_la_SOURCES = \
 	gntcombobox.c \
 	gntentry.c \
 	gntlabel.c \
+	gntline.c \
 	gntmarshal.c \
 	gnttextview.c \
 	gnttree.c \
@@ -25,6 +26,7 @@ libgnt_la_headers = \
 	gntentry.h \
 	gntkeys.h \
 	gntlabel.h \
+	gntline.h \
 	gntmarshal.h \
 	gnttextview.h \
 	gnttree.h \

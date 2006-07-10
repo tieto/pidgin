@@ -1,11 +1,17 @@
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
+#include <gntcombobox.h>
+#include <gntentry.h>
 #include <gntlabel.h>
+#include <gntline.h>
 #include <gnttree.h>
 
+#include <account.h>
+#include <accountopt.h>
 #include <connection.h>
 #include <notify.h>
+#include <plugin.h>
 #include <request.h>
 
 #include "gntaccount.h"
@@ -18,6 +24,166 @@ typedef struct
 } GGAccountList;
 
 static GGAccountList accounts;
+
+typedef struct
+{
+	GaimAccount *account;          /* NULL for a new account */
+
+	GntWidget *window;
+
+	GntWidget *protocol;
+	GntWidget *screenname;
+	GntWidget *password;
+	GntWidget *alias;
+	
+	GntWidget *splits;
+	GList *split_entries;
+} AccountEditDialog;
+
+static void
+edit_dialog_destroy(AccountEditDialog *dialog)
+{
+	g_free(dialog);
+}
+
+static void
+save_account_cb(AccountEditDialog *dialog)
+{
+}
+
+static void
+update_user_splits(AccountEditDialog *dialog)
+{
+	GntWidget *hbox;
+	GaimPlugin *plugin;
+	GaimPluginProtocolInfo *prplinfo;
+	GList *iter;
+	char *username = NULL;
+
+	if (dialog->splits)
+	{
+		gnt_box_remove_all(GNT_BOX(dialog->splits));
+		g_list_free(dialog->split_entries);
+	}
+	else
+	{
+		dialog->splits = gnt_box_new(FALSE, TRUE);
+		gnt_box_set_pad(GNT_BOX(dialog->splits), 0);
+	}
+
+	dialog->split_entries = NULL;
+
+	plugin = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->protocol));
+	if (!plugin)
+		return;
+	prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	
+	username = g_strdup(gaim_account_get_username(dialog->account));
+
+	for (iter = prplinfo->user_splits; iter; iter = iter->next)
+	{
+		GaimAccountUserSplit *split = iter->data;
+		GntWidget *entry;
+		char *buf;
+
+		hbox = gnt_box_new(TRUE, FALSE);
+		gnt_box_add_widget(GNT_BOX(dialog->splits), hbox);
+
+		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(split));
+		gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(buf));
+
+		entry = gnt_entry_new(NULL);
+		gnt_box_add_widget(GNT_BOX(hbox), entry);
+
+		dialog->split_entries = g_list_append(dialog->split_entries, entry);
+		g_free(buf);
+	}
+
+	/* XXX: Add default/custom values to the splits */
+	g_free(username);
+}
+
+static void
+prpl_changed_cb(GntWidget *combo, GaimPlugin *old, GaimPlugin *new, AccountEditDialog *dialog)
+{
+	update_user_splits(dialog);
+	gnt_box_readjust(GNT_BOX(dialog->window));
+	gnt_widget_draw(dialog->window);
+}
+
+static void
+add_account(GntWidget *b, gpointer null)
+{
+	GntWidget *window, *hbox;
+	GntWidget *combo, *button, *entry;
+	GList *list, *iter;
+	AccountEditDialog *dialog;
+
+	dialog = g_new0(AccountEditDialog, 1);
+
+	dialog->window = window = gnt_box_new(FALSE, TRUE);
+	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
+	gnt_box_set_title(GNT_BOX(window), _("New Account"));
+	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
+	gnt_box_set_pad(GNT_BOX(window), 0);
+
+	hbox = gnt_box_new(TRUE, FALSE);
+	gnt_box_add_widget(GNT_BOX(window), hbox);
+	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
+
+	dialog->protocol = combo = gnt_combo_box_new();
+	list = gaim_plugins_get_protocols();
+	for (iter = list; iter; iter = iter->next)
+	{
+		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), iter->data,
+				((GaimPlugin*)iter->data)->info->name);
+	}
+	g_signal_connect(G_OBJECT(combo), "selection-changed", G_CALLBACK(prpl_changed_cb), dialog);
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Protocol:")));
+	gnt_box_add_widget(GNT_BOX(hbox), combo);
+
+	hbox = gnt_box_new(TRUE, FALSE);
+	gnt_box_add_widget(GNT_BOX(window), hbox);
+
+	dialog->screenname = entry = gnt_entry_new(NULL);
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Screen name:")));
+	gnt_box_add_widget(GNT_BOX(hbox), entry);
+
+	/* User splits */
+	update_user_splits(dialog);
+	gnt_box_add_widget(GNT_BOX(window), dialog->splits);
+
+	hbox = gnt_box_new(TRUE, FALSE);
+	gnt_box_add_widget(GNT_BOX(window), hbox);
+
+	dialog->password = entry = gnt_entry_new(NULL);
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Password:")));
+	gnt_box_add_widget(GNT_BOX(hbox), entry);
+
+	hbox = gnt_box_new(TRUE, FALSE);
+	gnt_box_add_widget(GNT_BOX(window), hbox);
+
+	dialog->alias = entry = gnt_entry_new(NULL);
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Alias:")));
+	gnt_box_add_widget(GNT_BOX(hbox), entry);
+
+	gnt_box_add_widget(GNT_BOX(window), gnt_line_new(FALSE));
+	
+	hbox = gnt_box_new(FALSE, FALSE);
+	gnt_box_add_widget(GNT_BOX(window), hbox);
+
+	button = gnt_button_new(_("Cancel"));
+	gnt_box_add_widget(GNT_BOX(hbox), button);
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), window);
+	
+	button = gnt_button_new(_("Save"));
+	gnt_box_add_widget(GNT_BOX(hbox), button);
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(save_account_cb), dialog);
+
+	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(edit_dialog_destroy), dialog);
+
+	gnt_widget_show(window);
+}
 
 static void
 account_toggled(GntWidget *widget, void *key, gpointer null)
@@ -32,14 +198,17 @@ void gg_accounts_init()
 	GList *iter;
 	GntWidget *box, *button;
 
-	accounts.window = gnt_box_new(TRUE, TRUE);
+	accounts.window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);
 	gnt_box_set_title(GNT_BOX(accounts.window), _("Accounts"));
 	gnt_box_set_pad(GNT_BOX(accounts.window), 0);
+	gnt_box_set_alignment(GNT_BOX(accounts.window), GNT_ALIGN_MID);
 	gnt_widget_set_name(accounts.window, "accounts");
 
 	gnt_box_add_widget(GNT_BOX(accounts.window),
 			gnt_label_new(_("You can enable/disable accounts from the following list.")));
+
+	gnt_box_add_widget(GNT_BOX(accounts.window), gnt_line_new(FALSE));
 
 	accounts.tree = gnt_tree_new();
 	GNT_WIDGET_SET_FLAGS(accounts.tree, GNT_WIDGET_NO_BORDER);
@@ -62,10 +231,13 @@ void gg_accounts_init()
 	gnt_widget_set_size(accounts.tree, 40, 10);
 	gnt_box_add_widget(GNT_BOX(accounts.window), accounts.tree);
 
+	gnt_box_add_widget(GNT_BOX(accounts.window), gnt_line_new(FALSE));
+
 	box = gnt_box_new(FALSE, FALSE);
 
 	button = gnt_button_new(_("Add"));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(add_account), NULL);
 
 	button = gnt_button_new(_("Modify"));
 	gnt_box_add_widget(GNT_BOX(box), button);

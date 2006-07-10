@@ -234,6 +234,9 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 	GntTree *tree = GNT_TREE(ggblist->tree);
 	GaimBlistNode *node = gnt_tree_get_selection_data(tree);
 
+	if (!node)
+		return;
+
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
 		GaimBuddy *buddy = (GaimBuddy *)node;

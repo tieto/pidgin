@@ -400,6 +400,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			{
 				mode = GNT_KP_MODE_NORMAL;
 				changed = TRUE;
+				gnt_widget_draw(widget);
 			}
 
 			if (changed)
@@ -471,19 +472,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 			if (changed)
 			{
-				GntNode *node = g_hash_table_lookup(nodes, widget);
-				int x, y;
-
-				gnt_widget_get_position(widget, &x, &y);
-
-				hide_panel(node->panel);
-				gnt_widget_set_size(widget, width, height);
-				gnt_widget_set_position(widget, x, y);
-				gnt_widget_draw(widget);
-				replace_panel(node->panel, widget->window);
-				show_panel(node->panel);
-				update_panels();
-				doupdate();
+				gnt_screen_resize_widget(widget, width, height);
 			}
 		}
 	}
@@ -671,5 +660,23 @@ void gnt_quit()
 gboolean gnt_ascii_only()
 {
 	return ascii_only;
+}
+
+void gnt_screen_resize_widget(GntWidget *widget, int width, int height)
+{
+	if (widget->parent == NULL)
+	{
+		GntNode *node = g_hash_table_lookup(nodes, widget);
+		if (!node)
+			return;
+
+		hide_panel(node->panel);
+		gnt_widget_set_size(widget, width, height);
+		gnt_widget_draw(widget);
+		replace_panel(node->panel, widget->window);
+		show_panel(node->panel);
+		update_panels();
+		doupdate();
+	}
 }
 

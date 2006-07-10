@@ -20,6 +20,7 @@ toggled(GntWidget *tree, gpointer key, gpointer null)
 
 int main()
 {
+	freopen(".error", "w", stderr);
 	gnt_init();
 
 	GntWidget *label = gnt_label_new("So wassup dudes and dudettes!!\nSo this is, like,\nthe third line!! \\o/");
@@ -30,7 +31,7 @@ int main()
 	wrefresh(stdscr);
 
 	vbox = gnt_box_new(FALSE, FALSE);
-	hbox = gnt_box_new(TRUE, TRUE);
+	hbox = gnt_box_new(FALSE, TRUE);
 
 	gnt_widget_set_name(vbox, "vbox");
 	gnt_widget_set_name(hbox, "hbox");

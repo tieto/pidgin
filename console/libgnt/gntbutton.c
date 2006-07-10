@@ -69,10 +69,14 @@ gnt_button_class_init(GntWidgetClass *klass)
 static void
 gnt_button_init(GTypeInstance *instance, gpointer class)
 {
+	GntWidget *widget = GNT_WIDGET(instance);
 	GntButton *button = GNT_BUTTON(instance);
 	button->priv = g_new0(GntButtonPriv, 1);
 
-	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(button), GNT_WIDGET_GROW_X); /* Can be resized sideways */
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X);
+
+	widget->priv.minw = 4;
+	widget->priv.minh = 3;
 	DEBUG;
 }
 

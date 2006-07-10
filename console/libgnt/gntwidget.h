@@ -53,6 +53,8 @@ struct _GnWidgetPriv
 	int width, height;
 	GntWidgetFlags flags;
 	char *name;
+
+	int minw, minh;    /* Minimum size for the widget */
 };
 
 struct _GnWidget
@@ -84,6 +86,7 @@ struct _GnWidgetClass
 
 	void (*size_request)(GntWidget *widget);
 	gboolean (*confirm_size)(GntWidget *widget, int x, int y);
+	void (*size_changed)(GntWidget *widget, int w, int h);
 	void (*set_position)(GntWidget *widget, int x, int y);
 	gboolean (*key_pressed)(GntWidget *widget, const char *key);
 	void (*activate)(GntWidget *widget);
@@ -108,6 +111,7 @@ void gnt_widget_set_position(GntWidget *widget, int x, int y);
 void gnt_widget_size_request(GntWidget *widget);
 void gnt_widget_get_size(GntWidget *widget, int *width, int *height);
 gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
+gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
 
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
 

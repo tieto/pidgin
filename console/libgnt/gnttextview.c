@@ -113,9 +113,14 @@ gnt_text_view_class_init(GntTextViewClass *klass)
 static void
 gnt_text_view_init(GTypeInstance *instance, gpointer class)
 {
+	GntWidget *widget = GNT_WIDGET(instance);
+	
 	/* XXX: For now, resizing the width is not permitted. This is because
 	 * of the way I am handling wrapped lines. */
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_Y);
+
+	widget->priv.minw = 5;
+	widget->priv.minh = 1;
 	DEBUG;
 }
 

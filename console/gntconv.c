@@ -119,7 +119,7 @@ gg_create_conversation(GaimConversation *conv)
 
 	type = gaim_conversation_get_type(conv);
 	title = g_strdup_printf(_("%s"), gaim_conversation_get_name(conv));
-	ggc->window = gnt_box_new(TRUE, TRUE);
+	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);

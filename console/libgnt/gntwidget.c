@@ -4,8 +4,6 @@
 #include "gntmarshal.h"
 #include "gnt.h"
 
-#define MIN_SIZE 5
-
 enum
 {
 	SIG_DESTROY,
@@ -18,6 +16,7 @@ enum
 	SIG_EXPOSE,
 	SIG_SIZE_REQUEST,
 	SIG_CONFIRM_SIZE,
+	SIG_SIZE_CHANGED,
 	SIG_POSITION,
 	SIGS
 };
@@ -71,7 +70,7 @@ gnt_widget_focus_change(GntWidget *widget)
 static gboolean
 gnt_widget_dummy_confirm_size(GntWidget *widget, int width, int height)
 {
-	if (width < MIN_SIZE || height < MIN_SIZE)
+	if (width < widget->priv.minw || height < widget->priv.minh)
 		return FALSE;
 	if (widget->priv.width != width && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
 		return FALSE;
@@ -173,6 +172,14 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
+	signals[SIG_SIZE_CHANGED] = 
+		g_signal_new("size_changed",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntWidgetClass, size_changed),
+					 NULL, NULL,
+					 gnt_closure_marshal_VOID__INT_INT,
+					 G_TYPE_NONE, 2, G_TYPE_INT, G_TYPE_INT);
 	signals[SIG_CONFIRM_SIZE] = 
 		g_signal_new("confirm_size",
 					 G_TYPE_FROM_CLASS(klass),
@@ -245,14 +252,7 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean can)
 void
 gnt_widget_destroy(GntWidget *obj)
 {
-	int id;
 	g_return_if_fail(GNT_IS_WIDGET(obj));
-
-	if ((id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(obj), "gnt:queue_update"))))
-	{
-		g_source_remove(id);
-		g_object_set_data(G_OBJECT(obj), "gnt:queue_update", NULL);
-	}
 
 	gnt_widget_hide(obj);
 	delwin(obj->window);
@@ -276,7 +276,6 @@ void
 gnt_widget_draw(GntWidget *widget)
 {
 	/* Draw the widget */
-	DEBUG;
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DRAWING))
 		return;
 
@@ -293,10 +292,9 @@ gnt_widget_draw(GntWidget *widget)
 
 		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
 			shadow = FALSE;
-		
+
 		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
 						widget->priv.y, widget->priv.x);
-
 		init_widget(widget);
 	}
 
@@ -337,11 +335,10 @@ gnt_widget_hide(GntWidget *widget)
 void
 gnt_widget_set_position(GntWidget *wid, int x, int y)
 {
+	g_signal_emit(wid, signals[SIG_POSITION], 0, x, y);
 	/* XXX: Need to install properties for these and g_object_notify */
 	wid->priv.x = x;
 	wid->priv.y = y;
-	
-	g_signal_emit(wid, signals[SIG_POSITION], 0, x, y);
 }
 
 void
@@ -404,27 +401,38 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 {
 	gboolean ret = TRUE;
 
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+	{
+		width--;
+		height--;
+	}
+
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
 	{
-		if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
-		{
-			width--;
-			height--;
-		}
-		g_signal_emit(widget, signals[SIG_CONFIRM_SIZE], 0, width, height, &ret);
+		ret = gnt_widget_confirm_size(widget, width, height);
 	}
 
 	if (ret)
 	{
 		gboolean shadow = TRUE;
+		int oldw, oldh;
 
 		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
 			shadow = FALSE;
 
+		oldw = widget->priv.width;
+		oldh = widget->priv.height;
+
 		widget->priv.width = width;
 		widget->priv.height = height;
+
+		g_signal_emit(widget, signals[SIG_SIZE_CHANGED], 0, oldw, oldh);
+
 		if (widget->window)
+		{
 			wresize(widget->window, height + shadow, width + shadow);
+			init_widget(widget);
+		}
 		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
 			init_widget(widget);
 		else
@@ -475,7 +483,7 @@ update_queue_callback(gpointer data)
 	if (!g_object_get_data(G_OBJECT(widget), "gnt:queue_update"))
 		return FALSE;
 	gnt_screen_update(widget);
-	g_object_set_data(G_OBJECT(widget), "gnt:queue_update", GINT_TO_POINTER(FALSE));
+	g_object_set_data(G_OBJECT(widget), "gnt:queue_update", NULL);
 	return FALSE;
 }
 
@@ -487,7 +495,15 @@ void gnt_widget_queue_update(GntWidget *widget)
 	if (!g_object_get_data(G_OBJECT(widget), "gnt:queue_update"))
 	{
 		int id = g_timeout_add(0, update_queue_callback, widget);
-		g_object_set_data(G_OBJECT(widget), "gnt:queue_update", GINT_TO_POINTER(id));
+		g_object_set_data_full(G_OBJECT(widget), "gnt:queue_update", GINT_TO_POINTER(id),
+				(GDestroyNotify)g_source_remove);
 	}
+}
+
+gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height)
+{
+	gboolean ret = FALSE;
+	g_signal_emit(widget, signals[SIG_CONFIRM_SIZE], 0, width, height, &ret);
+	return ret;
 }
 

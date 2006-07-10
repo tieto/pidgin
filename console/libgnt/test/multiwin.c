@@ -60,7 +60,7 @@ int main()
 
 	gnt_tree_set_row_flags(GNT_TREE(tree), "e", GNT_TEXT_FLAG_DIM);
 
-	g_timeout_add(5000, show, box2);
+	g_timeout_add(5000, (GSourceFunc)show, box2);
 
 	gnt_main();
 

@@ -31,13 +31,13 @@ static void
 gnt_combo_box_draw(GntWidget *widget)
 {
 	GntComboBox *box = GNT_COMBO_BOX(widget);
-	const char *text = NULL;
+	char *text = NULL;
 	GntColorType type;
 	int len;
 	
 	if (box->dropdown)
 	{
-		text = gnt_tree_get_selection_text(GNT_TREE(box->dropdown));
+		text = (char *)gnt_tree_get_selection_text(GNT_TREE(box->dropdown));
 		box->selected = gnt_tree_get_selection_data(GNT_TREE(box->dropdown));
 	}
 
@@ -96,7 +96,6 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 			{
 				case '\r':
 				case '\t':
-					/* XXX: Get the selction */
 					set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
 				case 27:
 					gnt_widget_hide(box->dropdown->parent);
@@ -114,10 +113,19 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 			if (strcmp(text + 1, GNT_KEY_UP) == 0 ||
 					strcmp(text + 1, GNT_KEY_DOWN) == 0)
 			{
+				GntWidget *parent = box->dropdown->parent;
 				gnt_widget_set_size(box->dropdown, widget->priv.width, 9);
-				gnt_widget_set_position(box->dropdown->parent,
+				gnt_widget_set_position(parent,
 						widget->priv.x, widget->priv.y + widget->priv.height - 1);
-				gnt_widget_draw(box->dropdown->parent);
+				if (parent->window)
+				{
+					if (mvwin(parent->window, widget->priv.y + widget->priv.height - 1,
+								widget->priv.x) == ERR)
+						mvwin(parent->window,
+							widget->priv.y - 9 + 1, widget->priv.x);
+				}
+
+				gnt_widget_draw(parent);
 				return TRUE;
 			}
 		}
@@ -171,6 +179,7 @@ static void
 gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *box;
+	GntWidget *widget = GNT_WIDGET(instance);
 	GntComboBox *combo = GNT_COMBO_BOX(instance);
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance),
@@ -182,6 +191,8 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_add_widget(GNT_BOX(box), combo->dropdown);
 	
+	widget->priv.minw = 4;
+	widget->priv.minh = 3;
 	DEBUG;
 }
 
