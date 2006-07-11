@@ -183,7 +183,7 @@ static void tcl_create_file_handler(int fd, int mask, Tcl_FileProc *proc, Client
 
 static void tcl_delete_file_handler(int fd)
 {
-	struct tcl_file_handler *tfh = g_hash_table_lookup(tcl_file_handlers, (gpointer)fd);
+	struct tcl_file_handler *tfh = g_hash_table_lookup(tcl_file_handlers, GINT_TO_POINTER(fd));
 
 	if (tfh == NULL)
 		return;
