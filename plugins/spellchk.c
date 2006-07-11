@@ -1898,21 +1898,48 @@ static void case_sensitive_toggled(GtkCellRendererToggle *cellrenderertoggle,
 static void list_add_new()
 {
 	GtkTreeIter iter;
+	const char *word = gtk_entry_get_text(GTK_ENTRY(bad_entry));
+	gboolean case_sensitive = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(case_toggle));
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
-		char *tmpword = g_utf8_casefold(gtk_entry_get_text(GTK_ENTRY(bad_entry)), -1);
+		char *tmpword = g_utf8_casefold(word, -1);
 
 		do {
-			GValue val0;
-			char *bad;
+			GValue bad_val;
+			gboolean match;
 
-			val0.g_type = 0;
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
-			bad = g_utf8_casefold(g_value_get_string(&val0), -1);
+			bad_val.g_type = 0;
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &bad_val);
 
-			if (!strcmp(bad, tmpword)) {
-				g_value_unset(&val0);
+			if (case_sensitive)
+			{
+				GValue case_sensitive_val;
+				case_sensitive_val.g_type = 0;
+				gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, CASE_SENSITIVE_COLUMN, &case_sensitive_val);
+
+				/* If they're both case-sensitive, then compare directly.
+				 * Otherwise, they overlap. */
+				if (g_value_get_boolean(&case_sensitive_val))
+				{
+					match = !strcmp(g_value_get_string(&bad_val), word);
+				}
+				else
+				{
+					char *bad = g_utf8_casefold(g_value_get_string(&bad_val), -1);
+					match = !strcmp(bad, tmpword);
+					g_free(bad);
+				}
+				g_value_unset(&case_sensitive_val);
+			}
+			else
+			{
+				char *bad = g_utf8_casefold(g_value_get_string(&bad_val), -1);
+				match = !strcmp(bad, tmpword);
 				g_free(bad);
+			}
+
+			if (match) {
+				g_value_unset(&bad_val);
 				g_free(tmpword);
 
 				gaim_notify_error(NULL, _("Duplicate Correction"),
@@ -1921,8 +1948,7 @@ static void list_add_new()
 				return;
 			}
 
-			g_value_unset(&val0);
-			g_free(bad);
+			g_value_unset(&bad_val);
 
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 
@@ -1932,10 +1958,10 @@ static void list_add_new()
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
-		BAD_COLUMN, gtk_entry_get_text(GTK_ENTRY(bad_entry)),
+		BAD_COLUMN, word,
 		GOOD_COLUMN, gtk_entry_get_text(GTK_ENTRY(good_entry)),
 		WORD_ONLY_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(complete_toggle)),
-		CASE_SENSITIVE_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(case_toggle)),
+		CASE_SENSITIVE_COLUMN, case_sensitive,
 		-1);
 
 	gtk_editable_delete_text(GTK_EDITABLE(bad_entry), 0, -1);
