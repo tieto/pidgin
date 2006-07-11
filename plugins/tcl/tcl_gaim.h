@@ -70,10 +70,12 @@ extern GaimStringref *GaimTclRefAccount;
 extern GaimStringref *GaimTclRefConnection;
 extern GaimStringref *GaimTclRefConversation;
 extern GaimStringref *GaimTclRefPointer;
+extern GaimStringref *GaimTclRefPlugin;
 extern GaimStringref *GaimTclRefPresence;
 extern GaimStringref *GaimTclRefStatus;
 extern GaimStringref *GaimTclRefStatusAttr;
 extern GaimStringref *GaimTclRefStatusType;
+extern GaimStringref *GaimTclRefXfer;
 
 GaimPlugin *tcl_interp_get_plugin(Tcl_Interp *interp);
 

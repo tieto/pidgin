@@ -54,10 +54,12 @@ GaimStringref *GaimTclRefAccount;
 GaimStringref *GaimTclRefConnection;
 GaimStringref *GaimTclRefConversation;
 GaimStringref *GaimTclRefPointer;
+GaimStringref *GaimTclRefPlugin;
 GaimStringref *GaimTclRefPresence;
 GaimStringref *GaimTclRefStatus;
 GaimStringref *GaimTclRefStatusAttr;
 GaimStringref *GaimTclRefStatusType;
+GaimStringref *GaimTclRefXfer;
 
 static GHashTable *tcl_plugins = NULL;
 
@@ -186,7 +188,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	buf = g_malloc(len + 1);
 
 	cur = buf;
-	while (fgets(cur, (int) buf - (buf - cur), fp)) {
+	while (fgets(cur, GPOINTER_TO_INT(buf) - (buf - cur), fp)) {
 		cur += strlen(cur);
 		if (feof(fp))
 			break;
@@ -353,10 +355,12 @@ static gboolean tcl_load(GaimPlugin *plugin)
 	GaimTclRefConnection = gaim_stringref_new("Connection");
 	GaimTclRefConversation = gaim_stringref_new("Conversation");
 	GaimTclRefPointer = gaim_stringref_new("Pointer");
+	GaimTclRefPlugin = gaim_stringref_new("Plugin");
 	GaimTclRefPresence = gaim_stringref_new("Presence");
 	GaimTclRefStatus = gaim_stringref_new("Status");
 	GaimTclRefStatusAttr = gaim_stringref_new("StatusAttr");
 	GaimTclRefStatusType = gaim_stringref_new("StatusType");
+	GaimTclRefXfer = gaim_stringref_new("Xfer");
 
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
 

@@ -143,8 +143,12 @@ static GaimStringref *ref_type(GaimSubType type)
 		return GaimTclRefConnection;
 	case GAIM_SUBTYPE_CONVERSATION:
 		return GaimTclRefConversation;
+	case GAIM_SUBTYPE_PLUGIN:
+		return GaimTclRefPlugin;
 	case GAIM_SUBTYPE_STATUS:
 		return GaimTclRefStatus;
+	case GAIM_SUBTYPE_XFER:
+		return GaimTclRefXfer;
 	default:
 		return NULL;
 	}
@@ -270,21 +274,11 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			case GAIM_SUBTYPE_CONNECTION:
 			case GAIM_SUBTYPE_CONVERSATION:
 			case GAIM_SUBTYPE_STATUS:
+			case GAIM_SUBTYPE_PLUGIN:
+			case GAIM_SUBTYPE_XFER:
 				if (gaim_value_is_outgoing(handler->argtypes[i]))
 					gaim_debug_error("tcl", "pointer subtypes do not currently support outgoing arguments\n");
 				arg = gaim_tcl_ref_new(ref_type(gaim_value_get_subtype(handler->argtypes[i])), va_arg(args, void *));
-				break;
-			case GAIM_SUBTYPE_PLUGIN:
-			case GAIM_SUBTYPE_XFER:
-				/* pointers again */
-				if (gaim_value_is_outgoing(handler->argtypes[i])) {
-					vals[i] = va_arg(args, void **);
-					Tcl_LinkVar(handler->interp, name->str,
-						    vals[i], TCL_LINK_INT);
-					arg = Tcl_NewStringObj(name->str, -1);
-				} else {
-					arg = Tcl_NewIntObj((int)va_arg(args, void *));
-				}
 				break;
 			case GAIM_SUBTYPE_BLIST:
 			case GAIM_SUBTYPE_BLIST_BUDDY:
