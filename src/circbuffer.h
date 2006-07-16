@@ -1,5 +1,5 @@
 /*
- * @file gaim_buffer.h Buffer Utility Functions
+ * @file circbuffer.h Buffer Utility Functions
  * @ingroup core
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -20,8 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_BUFFER_H
-#define _GAIM_BUFFER_H
+#ifndef _CIRCBUFFER_H
+#define _CIRCBUFFER_H
+
+#include <glib.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -112,4 +114,4 @@ gboolean gaim_circ_buffer_mark_read(GaimCircBuffer *buf, gsize len);
 }
 #endif
 
-#endif /* _GAIM_BUFFER_H */
+#endif /* _CIRCBUFFER_H */

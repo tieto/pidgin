@@ -70,6 +70,7 @@ gaim_coresources = \
 	blist.c \
 	buddyicon.c \
 	cipher.c \
+	circbuffer.c \
 	cmds.c \
 	connection.c \
 	conversation.c \
@@ -78,7 +79,6 @@ gaim_coresources = \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
-	gaim_buffer.c \
 	idle.c \
 	imgstore.c \
 	log.c \
@@ -117,6 +117,7 @@ gaim_coreheaders = \
 	blist.h \
 	buddyicon.h \
 	cipher.h \
+	circbuffer.h \
 	cmds.h \
 	connection.h \
 	conversation.h \
@@ -126,7 +127,6 @@ gaim_coreheaders = \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
-	gaim_buffer.h \
 	idle.h \
 	imgstore.h \
 	log.h \

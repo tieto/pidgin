@@ -26,9 +26,9 @@
 #include <glib.h>
 #include <time.h>
 
-#include <cipher.h>
-#include <gaim_buffer.h>
-#include <prpl.h>
+#include "cipher.h"
+#include "circbuffer.h"
+#include "prpl.h"
 
 #include "sipmsg.h"
 

@@ -25,8 +25,8 @@
 #ifndef _YAHOO_H_
 #define _YAHOO_H_
 
+#include "circbuffer.h"
 #include "prpl.h"
-#include "gaim_buffer.h"
 
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050

@@ -32,25 +32,25 @@
 #include <glib/glist.h>
 
 /* gaim includes */
-#include <internal.h>
-#include <gaim.h>
-#include <config.h>
+#include "internal.h"
+#include "gaim.h"
+#include "config.h"
 
-#include <account.h>
-#include <accountopt.h>
-#include <conversation.h>
-#include <debug.h>
-#include <ft.h>
-#include <gaim_buffer.h>
-#include <imgstore.h>
-#include <mime.h>
-#include <notify.h>
-#include <plugin.h>
-#include <privacy.h>
-#include <prpl.h>
-#include <request.h>
-#include <util.h>
-#include <version.h>
+#include "account.h"
+#include "accountopt.h"
+#include "circbuffer.h"
+#include "conversation.h"
+#include "debug.h"
+#include "ft.h"
+#include "imgstore.h"
+#include "mime.h"
+#include "notify.h"
+#include "plugin.h"
+#include "privacy.h"
+#include "prpl.h"
+#include "request.h"
+#include "util.h"
+#include "version.h"
 
 /* meanwhile includes */
 #include <mw_cipher.h>

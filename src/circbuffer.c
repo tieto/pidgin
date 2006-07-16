@@ -1,5 +1,5 @@
 /*
- * @file gaim_buffer.h Buffer Utility Functions
+ * @file circbuffer.h Buffer Utility Functions
  * @ingroup core
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -22,7 +22,7 @@
  */
 #include "internal.h"
 
-#include "gaim_buffer.h"
+#include "circbuffer.h"
 
 #define DEFAULT_BUF_SIZE 256
 

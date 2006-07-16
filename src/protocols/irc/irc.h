@@ -25,8 +25,8 @@
 
 #include <glib.h>
 
+#include "circbuffer.h"
 #include "ft.h"
-#include "gaim_buffer.h"
 #include "roomlist.h"
 #include "sslconn.h"
 

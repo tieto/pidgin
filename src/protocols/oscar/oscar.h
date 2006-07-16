@@ -29,9 +29,9 @@
 #ifndef _OSCAR_H_
 #define _OSCAR_H_
 
+#include "circbuffer.h"
 #include "debug.h"
 #include "eventloop.h"
-#include "gaim_buffer.h"
 #include "internal.h"
 
 #include <stdio.h>

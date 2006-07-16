@@ -89,6 +89,7 @@ DLL_C_SRC =	\
 			blist.c \
 			buddyicon.c \
 			cipher.c \
+			circbuffer.c \
 			cmds.c \
 			connection.c \
 			conversation.c \
@@ -97,7 +98,6 @@ DLL_C_SRC =	\
 			dnssrv.c \
 			eventloop.c \
 			ft.c \
-			gaim_buffer.c \
 			gtkaccount.c \
 			gtkblist.c \
 			gtkconn.c \
