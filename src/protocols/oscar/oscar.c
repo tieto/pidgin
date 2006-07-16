@@ -2916,10 +2916,13 @@ static int gaim_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	if (b == NULL)
 		return 1;
 
-	if (strcmp(gaim_buddy_get_name(b), userinfo->sn))
-		serv_got_alias(gc, gaim_buddy_get_name(b), userinfo->sn);
-	else
-		serv_got_alias(gc, gaim_buddy_get_name(b), NULL);
+	if (!aim_sn_is_icq(userinfo->sn))
+	{
+		if (strcmp(gaim_buddy_get_name(b), userinfo->sn))
+			serv_got_alias(gc, gaim_buddy_get_name(b), userinfo->sn);
+		else
+			serv_got_alias(gc, gaim_buddy_get_name(b), NULL);
+	}
 
 	presence = gaim_buddy_get_presence(b);
 	status = gaim_presence_get_active_status(presence);
