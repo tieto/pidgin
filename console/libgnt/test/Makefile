@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=`pkg-config --cflags gobject-2.0` -g -I../
-LDFLAGS=`pkg-config --libs gobject-2.0` -pg -lgnt -L../
+CFLAGS=`pkg-config --cflags gobject-2.0 gmodule-2.0` -g -I../ -DSTANDALONE
+LDFLAGS=`pkg-config --libs gobject-2.0 gmodule-2.0` -pg -lgnt -L../
 
 EXAMPLES=combo focus tv multiwin
 
@@ -8,6 +8,9 @@ all:
 	make examples
 
 clean:
-	rm -f $(EXAMPLES)
+	rm -f $(EXAMPLES) *.so wm
+
+WM: wm
+	for i in $(EXAMPLES); do gcc -shared $(CFLAGS) -USTANDALONE $(LDFLAGS) $${i}.c -o $${i}.so ; done
 
 examples: $(EXAMPLES)

@@ -20,8 +20,10 @@ int main()
 	GntWidget *box, *combo, *button;
 	GntWidget *hbox;
 
+#ifdef STANDALONE
 	freopen(".error", "w", stderr);
 	gnt_init();
+#endif
 	
 	box = gnt_box_new(FALSE, TRUE);
 	gnt_widget_set_name(box, "box");
@@ -61,9 +63,11 @@ int main()
 
 	gnt_widget_show(box);
 
+#ifdef STANDALONE
 	gnt_main();
 
 	gnt_quit();
+#endif
 
 	return 0;
 }

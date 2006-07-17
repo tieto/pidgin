@@ -35,12 +35,11 @@ int main()
 {
 	GntWidget *hbox, *entry, *view;
 
+#ifdef STANDALONE
 	freopen(".error", "w", stderr);
 
 	gnt_init();
-
-	box(stdscr, 0, 0);
-	wrefresh(stdscr);
+#endif
 
 	hbox = gnt_box_new(FALSE, TRUE);
 	gnt_widget_set_name(hbox, "hbox");
@@ -67,9 +66,11 @@ int main()
 
 	g_signal_connect(G_OBJECT(entry), "key_pressed", G_CALLBACK(key_pressed), view);
 
+#ifdef STANDALONE
 	gnt_main();
 
 	gnt_quit();
+#endif
 
 	return 0;
 }

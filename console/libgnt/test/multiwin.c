@@ -13,13 +13,12 @@ gboolean show(GntWidget *w)
 
 int main()
 {
+#ifdef STANDALONE
 	freopen(".error", "w", stderr);
 	gnt_init();
+#endif
 
 	GntWidget *hbox, *tree, *box2;
-
-	box(stdscr, 0, 0);
-	wrefresh(stdscr);
 
 	hbox = gnt_box_new(FALSE, TRUE);
 	box2 = gnt_box_new(FALSE, TRUE);
@@ -64,9 +63,11 @@ int main()
 
 	g_timeout_add(5000, (GSourceFunc)show, box2);
 
+#ifdef STANDALONE
 	gnt_main();
 
 	gnt_quit();
+#endif
 
 	return 0;
 }

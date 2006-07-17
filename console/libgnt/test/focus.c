@@ -20,15 +20,14 @@ toggled(GntWidget *tree, gpointer key, gpointer null)
 
 int main()
 {
+#ifdef STANDALONE
 	freopen(".error", "w", stderr);
 	gnt_init();
-
+#endif
+	
 	GntWidget *label = gnt_label_new("So wassup dudes and dudettes!!\nSo this is, like,\nthe third line!! \\o/");
 	GntWidget *vbox, *hbox, *tree, *box, *button;
 	WINDOW *test;
-
-	box(stdscr, 0, 0);
-	wrefresh(stdscr);
 
 	vbox = gnt_box_new(FALSE, FALSE);
 	hbox = gnt_box_new(FALSE, TRUE);
@@ -58,7 +57,6 @@ int main()
 	GNT_WIDGET_UNSET_FLAGS(hbox, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	gnt_box_set_title(GNT_BOX(hbox), "This is the title …");
 
-
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(toggled), NULL);
 
 	button = gnt_button_new("one");
@@ -77,9 +75,11 @@ int main()
 	
 	gnt_widget_show(hbox);
 
+#ifdef STANDALONE
 	gnt_main();
 
 	gnt_quit();
+#endif
 
 	return 0;
 }
