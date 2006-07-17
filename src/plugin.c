@@ -843,8 +843,8 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 		}
 	}
 
-	if (plugin->path  != NULL) g_free(plugin->path);
-	if (plugin->error != NULL) g_free(plugin->error);
+	g_free(plugin->path);
+	g_free(plugin->error);
 
 	GAIM_DBUS_UNREGISTER_POINTER(plugin);
 

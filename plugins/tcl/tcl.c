@@ -380,10 +380,12 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 	gaim_stringref_unref(GaimTclRefConnection);
 	gaim_stringref_unref(GaimTclRefConversation);
 	gaim_stringref_unref(GaimTclRefPointer);
+	gaim_stringref_unref(GaimTclRefPlugin);
 	gaim_stringref_unref(GaimTclRefPresence);
 	gaim_stringref_unref(GaimTclRefStatus);
 	gaim_stringref_unref(GaimTclRefStatusAttr);
 	gaim_stringref_unref(GaimTclRefStatusType);
+	gaim_stringref_unref(GaimTclRefXfer);
 
 	return TRUE;
 }
