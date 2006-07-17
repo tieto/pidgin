@@ -267,7 +267,13 @@ signal_connect_common(void *instance, const char *signal, void *handle,
 	instance_data =
 		(GaimInstanceData *)g_hash_table_lookup(instance_table, instance);
 
-	g_return_val_if_fail(instance_data != NULL, 0);
+	if (instance_data == NULL)
+	{
+		gaim_debug_warning("signals", "Something tried to register a callback "
+				"for the '%s' signal, but we do not have any signals "
+				"registered with the given handle\n", signal);
+		g_return_val_if_reached(0);
+	}
 
 	/* Get the signal data */
 	signal_data =

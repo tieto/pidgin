@@ -259,6 +259,8 @@ static gboolean
 plugin_load(GaimPlugin *plugin) {
 	void *conv_list_handle;
 
+	GAIM_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
+
     /* First, we have to register our four exported functions with the
        main gaim dbus loop.  Without this statement, the gaim dbus
        code wouldn't know about our functions. */

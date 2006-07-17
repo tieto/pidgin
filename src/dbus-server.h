@@ -74,6 +74,17 @@ struct _GaimDBusType {
 #define GAIM_DBUS_DEFINE_INHERITING_TYPE(type, parent) \
     GaimDBusType GAIM_DBUS_TYPE_##type = { GAIM_DBUS_TYPE(parent) };
 
+#define GAIM_DBUS_RETURN_FALSE_IF_DISABLED(plugin) \
+	if (gaim_dbus_get_init_error() != NULL) \
+	{ \
+		gchar *title; \
+		title = g_strdup_printf("Unable to Load %s Plugin", plugin->info->name); \
+		gaim_notify_error(NULL, title, \
+				_("Gaim's D-BUS server is not running for the reason listed below"), \
+				_(gaim_dbus_get_init_error())); \
+		g_free(title); \
+		return FALSE; \
+	}
 
 /**
    Initializes gaim dbus pointer registration engine.
@@ -139,8 +150,9 @@ void gaim_dbus_signal_emit_gaim(const char *name, int num_values,
  * NOT running then gaim_dbus_dispatch_init() failed for some reason,
  * and a message should have been gaim_debug_error()'ed.
  *
- * This function should be called by any DBUS plugin before trying
- * to use the DBUS API.  See plugins/dbus-example.c for usage.
+ * Gaim plugins that use D-BUS should use the
+ * GAIM_DBUS_RETURN_FALSE_IF_DISABLED macro to short-circuit
+ * initialization if Gaim's D-BUS subsystem is not running.
  *
  * @return If the D-BUS subsystem started with no problems then this
  *         will return NULL and everything will be hunky dory.  If
