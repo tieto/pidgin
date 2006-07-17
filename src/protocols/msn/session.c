@@ -252,18 +252,15 @@ msn_session_sync_users(MsnSession *session)
 
 					remote_user = msn_userlist_find_user(session->userlist, b->name);
 
-					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
-					{
+					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP)){
 						int group_id;
 						GList *l;
 
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
 
-						for (l = remote_user->group_ids; l != NULL; l = l->next)
-						{
-							if (group_id == GPOINTER_TO_INT(l->data))
-							{
+						for (l = remote_user->group_ids; l != NULL; l = l->next){
+							if (group_id == GPOINTER_TO_INT(l->data)){
 								found = TRUE;
 								break;
 							}
@@ -271,8 +268,7 @@ msn_session_sync_users(MsnSession *session)
 
 					}
 
-					if (!found)
-					{
+					if (!found){
 						/* The user was not on the server list or not in that group
 						 * on the server list */
 						msn_show_sync_issue(session, b->name, group_name);
@@ -407,3 +403,4 @@ msn_session_finish_login(MsnSession *session)
 	/* Sync users */
 	msn_session_sync_users(session);
 }
+

@@ -93,16 +93,13 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 						  gaim_account_get_username(account),
 						  gaim_account_get_protocol_name(account));
 
-	if (group_name != NULL)
-	{
+	if (group_name != NULL){
 		reason = g_strdup_printf(_("%s on the local list is "
 								   "inside the group \"%s\" but not on "
 								   "the server list. "
 								   "Do you want this buddy to be added?"),
 								 passport, group_name);
-	}
-	else
-	{
+	}else{
 		reason = g_strdup_printf(_("%s is on the local list but "
 								   "not on the server list. "
 								   "Do you want this buddy to be added?"),

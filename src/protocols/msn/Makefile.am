@@ -32,6 +32,8 @@ MSNSOURCES = \
 	notification.h \
 	object.c \
 	object.h \
+	oim.c\
+	oim.h\
 	page.c \
 	page.h \
 	servconn.c \

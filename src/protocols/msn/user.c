@@ -25,6 +25,7 @@
 #include "user.h"
 #include "slp.h"
 
+/*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
 			 const char *store_name)
@@ -50,6 +51,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	return user;
 }
 
+/*destroy a user object*/
 void
 msn_user_destroy(MsnUser *user)
 {
@@ -67,6 +69,7 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->passport);
 	g_free(user->friendly_name);
 	g_free(user->store_name);
+	g_free(user->uid);
 	g_free(user->phone.home);
 	g_free(user->phone.work);
 	g_free(user->phone.mobile);
@@ -144,6 +147,23 @@ msn_user_set_store_name(MsnUser *user, const char *name)
 }
 
 void
+msn_user_set_uid(MsnUser *user, const char *uid)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->uid);
+	user->uid = g_strdup(uid);
+}
+
+void
+msn_user_set_type(MsnUser *user,int type)
+{
+	g_return_if_fail(user != NULL);
+
+	user->type = type;
+}
+
+void
 msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 {
 	struct stat st;
@@ -152,20 +172,16 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 	g_return_if_fail(user != NULL);
 
-	if (filename == NULL || g_stat(filename, &st) == -1)
-	{
+	if (filename == NULL || g_stat(filename, &st) == -1){
 		msn_user_set_object(user, NULL);
-	}
-	else if ((fp = g_fopen(filename, "rb")) != NULL)
-	{
+	}else if ((fp = g_fopen(filename, "rb")) != NULL){
 		GaimCipherContext *ctx;
 		char *buf;
 		gsize len;
 		char *base64;
 		unsigned char digest[20];
 
-		if (msnobj == NULL)
-		{
+		if (msnobj == NULL)	{
 			msnobj = msn_object_new();
 			msn_object_set_local(msnobj);
 			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
@@ -217,16 +233,15 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		base64 = gaim_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1c(msnobj, base64);
 		g_free(base64);
-	}
-	else
-	{
+	}else{
 		gaim_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
 		msn_user_set_object(user, NULL);
 	}
 }
 
+/*add group id to User object*/
 void
-msn_user_add_group_id(MsnUser *user, int id)
+msn_user_add_group_id(MsnUser *user, const char* id)
 {
 	MsnUserList *userlist;
 	GaimAccount *account;
@@ -236,9 +251,9 @@ msn_user_add_group_id(MsnUser *user, int id)
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id >= 0);
+	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
+	user->group_ids = g_list_append(user->group_ids,id);
 
 	userlist = user->userlist;
 	account = userlist->session->account;
@@ -248,16 +263,14 @@ msn_user_add_group_id(MsnUser *user, int id)
 
 	g = gaim_find_group(group_name);
 
-	if ((id == 0) && (g == NULL))
-	{
+	if ((id == 0) && (g == NULL)){
 		g = gaim_group_new(group_name);
 		gaim_blist_add_group(g, NULL);
 	}
 
 	b = gaim_find_buddy_in_group(account, passport, g);
 
-	if (b == NULL)
-	{
+	if (b == NULL){
 		b = gaim_buddy_new(account, passport, NULL);
 
 		gaim_blist_add_buddy(b, NULL, g, NULL);
@@ -267,12 +280,12 @@ msn_user_add_group_id(MsnUser *user, int id)
 }
 
 void
-msn_user_remove_group_id(MsnUser *user, int id)
+msn_user_remove_group_id(MsnUser *user, const char * id)
 {
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id >= 0);
+	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_remove(user->group_ids, GINT_TO_POINTER(id));
+	user->group_ids = g_list_remove(user->group_ids, id);
 }
 
 void

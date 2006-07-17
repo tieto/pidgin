@@ -47,7 +47,6 @@ msn_check_payload_cmd(char *str)
 	if( (!strcmp(str,"ADL")) ||
 		(!strcmp(str,"GCF")) ||
 		(!strcmp(str,"MSG")) ||
-		(!strcmp(str,"QRY")) ||
 		(!strcmp(str,"RML")) ||
 		(!strcmp(str,"UBX")) ||
 		(!strcmp(str,"UBN")) ||

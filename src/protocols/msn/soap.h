@@ -35,6 +35,7 @@ struct _MsnSoapConn{
 
 	char *login_host;
 	char *login_path;
+	char *soap_action;
 
 	/*ssl connection?*/
 	guint	ssl_conn;
@@ -69,7 +70,8 @@ struct _MsnSoapConn{
 
 /*Function Prototype*/
 /*new a soap conneciton */
-MsnSoapConn *msn_soap_new(MsnSession *session);
+MsnSoapConn *msn_soap_new(MsnSession *session,gpointer data,int sslconn);
+
 /*destroy */
 void msn_soap_destroy(MsnSoapConn *soapconn);
 
@@ -78,10 +80,15 @@ void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,GaimSslInputFunctio
 
 /*write to soap*/
 void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction written_cb);
+void msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_cb);
+
 void  msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
 void msn_soap_connect_cb(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
 void msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond);
+
+/*check if the soap connection is connected*/
+int msn_soap_connected(MsnSoapConn *soapconn);
 
 #endif/*_MSN_SOAP_H_*/
 

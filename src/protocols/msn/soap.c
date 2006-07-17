@@ -26,14 +26,19 @@
 #include "msn.h"
 #include "soap.h"
 
+//msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 /*new a soap connection*/
 MsnSoapConn *
-msn_soap_new(MsnSession *session)
+msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 {
 	MsnSoapConn *soapconn;
 
 	soapconn = g_new0(MsnSoapConn, 1);
 	soapconn->session = session;
+	soapconn->parent = data;
+	soapconn->ssl_conn = sslconn;
+
+	soapconn->gsc = NULL;
 	soapconn->input_handler = -1;
 	soapconn->output_handler = -1;
 	return soapconn;
@@ -118,6 +123,18 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	g_free(soapconn);
 }
 
+/*check the soap is connected?
+ * if connected return 0
+ */
+int
+msn_soap_connected(MsnSoapConn *soapconn)
+{
+	if(soapconn->ssl_conn){
+		return (soapconn->gsc == NULL? -1 : 0);
+	}
+	return(soapconn->fd>0? 0 : -1);
+}
+
 /*read and append the content to the buffer*/
 static gssize
 msn_soap_read(MsnSoapConn *soapconn)
@@ -154,7 +171,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	char * body_start,*body_len;
 	char *length_start,*length_end;
 
-	gaim_debug_misc("MaYuan", "soap read cb\n");
+//	gaim_debug_misc("MaYuan", "soap read cb\n");
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
@@ -207,6 +224,12 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	g_free(body_len);
 
+#if 1
+	/*remove the read handler*/
+	gaim_input_remove(soapconn->input_handler);
+	soapconn->input_handler = -1;
+#endif
+
 	/*call the read callback*/
 	if(soapconn->read_cb != NULL){
 		soapconn->read_cb(soapconn,source,0);
@@ -218,8 +241,8 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	/*remove the read handler*/
 	gaim_input_remove(soapconn->input_handler);
 	soapconn->input_handler = -1;
-	gaim_ssl_close(soapconn->gsc);
-	soapconn->gsc = NULL;
+//	gaim_ssl_close(soapconn->gsc);
+//	soapconn->gsc = NULL;
 #endif
 }
 
@@ -294,9 +317,50 @@ msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction writte
 	soapconn->write_buf = write_buf;
 	soapconn->written_len = 0;
 	soapconn->written_cb = written_cb;
+
+	/*clear the read buffer first*/
 	/*start the write*/
 	soapconn->output_handler = gaim_input_add(soapconn->gsc->fd, GAIM_INPUT_WRITE,
 													msn_soap_write_cb, soapconn);
 	msn_soap_write_cb(soapconn, soapconn->gsc->fd, GAIM_INPUT_WRITE);
+}
+
+/*Post the soap action*/
+void
+msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_cb)
+{
+	char * soap_head = NULL;
+	char * soap_body = NULL;
+	char * request_str = NULL;
+
+	gaim_debug_info("MaYuan","msn_get_address_book()...\n");
+	soap_body = g_strdup_printf(body);
+	soap_head = g_strdup_printf(
+					"POST %s HTTP/1.1\r\n"
+					"SOAPAction: %s\r\n"
+					"Content-Type:text/xml; charset=utf-8\r\n"
+					"Cookie: MSPAuth=%s\r\n"
+					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
+					"Accept: text/*\r\n"
+					"Host: %s\r\n"
+					"Content-Length: %d\r\n"
+					"Connection: Keep-Alive\r\n"
+					"Cache-Control: no-cache\r\n\r\n",
+					soapconn->login_path,
+					soapconn->soap_action,
+					soapconn->session->passport_info.mspauth,
+					soapconn->login_host,
+					strlen(soap_body)
+					);
+	request_str = g_strdup_printf("%s%s", soap_head,soap_body);
+	g_free(soapconn->login_path);
+	g_free(soapconn->soap_action);
+	g_free(soap_head);
+	g_free(soap_body);
+
+	/*free read buffer*/
+	msn_soap_free_read_buf(soapconn);
+//	gaim_debug_info("MaYuan","send to contact server{%s}\n",request_str);
+	msn_soap_write(soapconn,request_str,written_cb);
 }
 

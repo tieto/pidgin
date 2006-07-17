@@ -25,18 +25,18 @@
 #include "group.h"
 
 MsnGroup *
-msn_group_new(MsnUserList *userlist, int id, const char *name)
+msn_group_new(MsnUserList *userlist, const char *id, const char *name)
 {
 	MsnGroup *group;
 
-	g_return_val_if_fail(id >= 0,      NULL);
+	g_return_val_if_fail(id != NULL,      NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
 	group = g_new0(MsnGroup, 1);
 
 	msn_userlist_add_group(userlist, group);
 
-	group->id      = id;
+	group->id      = g_strdup(id);
 	group->name    = g_strdup(name);
 
 	return group;
@@ -47,17 +47,18 @@ msn_group_destroy(MsnGroup *group)
 {
 	g_return_if_fail(group != NULL);
 
+	g_free(group->id);
 	g_free(group->name);
 	g_free(group);
 }
 
 void
-msn_group_set_id(MsnGroup *group, int id)
+msn_group_set_id(MsnGroup *group, const char *id)
 {
 	g_return_if_fail(group != NULL);
-	g_return_if_fail(id >= 0);
+	g_return_if_fail(id != NULL);
 
-	group->id = id;
+	group->id = g_strdup(id);
 }
 
 void
@@ -72,7 +73,7 @@ msn_group_set_name(MsnGroup *group, const char *name)
 	group->name = g_strdup(name);
 }
 
-int
+char*
 msn_group_get_id(const MsnGroup *group)
 {
 	g_return_val_if_fail(group != NULL, -1);
@@ -87,3 +88,4 @@ msn_group_get_name(const MsnGroup *group)
 
 	return group->name;
 }
+

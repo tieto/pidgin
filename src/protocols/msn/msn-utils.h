@@ -47,5 +47,9 @@ void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
 void msn_import_html(const char *html, char **attributes, char **message);
 
 void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
+void msn_handle_chl(char *input, char *output);
+int isBigEndian(void);
+unsigned int swapInt(unsigned int dw);
+
 
 #endif /* _MSN_UTILS_H_ */

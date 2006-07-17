@@ -66,6 +66,7 @@
 #define WLM_SERVER			"muser.messenger.hotmail.com"
 #define WLM_PORT			1863
 #define WLM_PROT_VER		13
+#define WLM_MAX_PROTOCOL	14
 #define WLM_MIN_PROTOCOL	13
 
 #define MSN_TYPING_RECV_TIMEOUT 6

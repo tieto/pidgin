@@ -37,10 +37,9 @@ msn_nexus_new(MsnSession *session)
 
 	nexus = g_new0(MsnNexus, 1);
 	nexus->session = session;
-	nexus->soapconn = msn_soap_new(session);
-	nexus->soapconn->parent = nexus;
 	/*we must use SSL connection to do Windows Live ID authentication*/
-	nexus->soapconn->ssl_conn = 1;
+	nexus->soapconn = msn_soap_new(session,nexus,1);
+
 	nexus->challenge_data = g_hash_table_new_full(g_str_hash,
 		g_str_equal, g_free, g_free);
 

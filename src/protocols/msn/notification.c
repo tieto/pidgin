@@ -102,9 +102,11 @@ connect_cb(MsnServConn *servconn)
 	account = session->account;
 
 	/* Allocate an array for CVR0, NULL, and all the versions */
-	a = c = g_new0(char *, session->protocol_ver - WLM_MIN_PROTOCOL + 3);
+//	a = c = g_new0(char *, session->protocol_ver - WLM_MIN_PROTOCOL + 3);
+	a = c = g_new0(char *, WLM_MAX_PROTOCOL - WLM_MIN_PROTOCOL + 3);
 
-	for (i = session->protocol_ver; i >= WLM_MIN_PROTOCOL; i--)
+//	for (i = session->protocol_ver; i >= WLM_MIN_PROTOCOL; i--)
+	for (i = WLM_MAX_PROTOCOL; i >= WLM_MIN_PROTOCOL; i--)
 		*c++ = g_strdup_printf("MSNP%d", i);
 
 	*c++ = g_strdup("CVR0");
@@ -163,24 +165,16 @@ group_error_helper(MsnSession *session, const char *msg, int group_id, int error
 	account = session->account;
 	gc = gaim_account_get_connection(account);
 
-	if (error == 224)
-	{
-		if (group_id == 0)
-		{
+	if (error == 224){
+		if (group_id == 0){
 			return;
-		}
-		else
-		{
+		}else{
 			const char *group_name;
-			group_name =
-				msn_userlist_find_group_name(session->userlist,
-											 group_id);
+			group_name = msn_userlist_find_group_name(session->userlist,group_id);
 			reason = g_strdup_printf(_("%s is not a valid group."),
 									 group_name);
 		}
-	}
-	else
-	{
+	}else{
 		reason = g_strdup(_("Unknown error."));
 	}
 
@@ -214,7 +208,6 @@ cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	GaimAccount *account;
 
 	account = cmdproc->session->account;
-
 	msn_cmdproc_send(cmdproc, "USR", "TWN I %s",
 					 gaim_account_get_username(account));
 }
@@ -303,17 +296,15 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
-	for (i = 1; i < cmd->param_count; i++)
-	{
-		if (!strcmp(cmd->params[i], proto_str))
-		{
+	for (i = 1; i < cmd->param_count; i++){
+//		gaim_debug_info("MaYuan","%s\,proto_str:%s\n",cmd->params[i],proto_str);
+		if (!strcmp(cmd->params[i], proto_str))	{
 			protocol_supported = TRUE;
 			break;
 		}
 	}
 
-	if (!protocol_supported)
-	{
+	if (!protocol_supported){
 		msn_session_set_error(session, MSN_ERROR_UNSUPPORTED_PROTOCOL,
 							  NULL);
 		return;
@@ -324,7 +315,8 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * Notice :CVR String discriminate!
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
-					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
+//					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
+					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
 					 gaim_account_get_username(account));
 }
 
@@ -405,18 +397,12 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnTransaction *trans;
 	char buf[33];
-	const char *challenge_resp;
-	GaimCipher *cipher;
-	GaimCipherContext *context;
-	guchar digest[16];
-	int i;
 
+#if 0
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
-
 	gaim_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
-
 	challenge_resp = MSNP13_WLM_PRODUCT_KEY;
 
 	gaim_cipher_context_append(context, (const guchar *)challenge_resp,
@@ -424,9 +410,13 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
 
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < 16; i++){
 		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
-
+	}
+#else
+	msn_handle_chl(cmd->params[1], buf);
+#endif
+	gaim_debug_info("MaYuan","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
 	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
@@ -437,6 +427,102 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Buddy Lists
  **************************************************************************/
+void
+dump_adl_cmd(MsnSession *session)
+{
+	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
+	MsnUserList *userlist;
+	MsnUser *user;
+	GList *l;
+	xmlnode *adl_node,*d_node,*c_node;
+	char **tokens;
+	char *email,*domain;
+	char * payload,*attr;
+	char *list_op,*type;
+	int payload_len;
+
+	cmdproc = session->notification->cmdproc;
+	userlist = session->userlist;
+	adl_node = xmlnode_new("ml");
+	adl_node->child = NULL;
+	xmlnode_set_attrib(adl_node, "l", "1");
+
+	/*get the userlist*/
+	for (l = userlist->users; l != NULL; l = l->next){
+		user = l->data;
+
+		gaim_debug_info("MaYuan","passport:%s\n",user->passport);
+		tokens = g_strsplit(user->passport, "@", 2);
+		email = tokens[0];
+		domain = tokens[1];
+
+		/*find a domain node*/
+		for(d_node = xmlnode_get_child(adl_node,"d"); d_node; d_node = xmlnode_get_next_twin(d_node)){
+			gaim_debug_info("MaYuan","d_node:%s\n",d_node->name);
+			attr = xmlnode_get_attrib(d_node,"n");
+			if(attr == NULL){
+				continue;
+			}
+			if(!strcmp(attr,domain)){
+				break;
+			}
+		}
+		if(d_node == NULL){
+			gaim_debug_info("MaYuan","get No d_node\n");
+			d_node = xmlnode_new("d");
+			xmlnode_set_attrib(d_node,"n",domain);
+			xmlnode_insert_child(adl_node,d_node);
+		}
+
+		/*create contact node*/
+		c_node = xmlnode_new("c");
+		xmlnode_set_attrib(c_node,"n",email);
+
+		list_op = g_strdup_printf("%d",user->list_op);
+		gaim_debug_info("MaYuan","list_op:%d\n",user->list_op);
+		xmlnode_set_attrib(c_node,"l",list_op);
+#if 1
+		type = g_strdup_printf("%d",user->type);
+		xmlnode_set_attrib(c_node,"t",type);
+#else
+		xmlnode_set_attrib(c_node,"t","1");
+#endif
+		xmlnode_insert_child(d_node, c_node);
+
+		g_free(list_op);
+		g_free(type);
+	}
+
+	payload = xmlnode_to_str(adl_node,payload_len);
+
+	gaim_debug_info("MaYuan","ADL{%s}\n",payload);
+	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
+
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+static void
+adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	
+}
+
+static void
+rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	MsnTransaction *trans;
+	char * payload;
+
+	trans = msn_transaction_new(cmdproc, "RML","");
+
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
 static void
 add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -456,13 +542,12 @@ add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
-	if (user == NULL)
-	{
+	if (user == NULL){
 		user = msn_user_new(session->userlist, passport, friendly);
 		msn_userlist_add_user(session->userlist, user);
-	}
-	else
+	}else{
 		msn_user_set_friendly_name(user, friendly);
+	}
 
 	list_id = msn_get_list_id(list);
 
@@ -554,10 +639,6 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	g_strfreev(params);
 }
 
-static void adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-}
-
 static void
 adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -634,8 +715,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_friendly_name(user, friendly);
 
-	if (session->protocol_ver >= 9 && cmd->param_count == 6)
-	{
+	if (session->protocol_ver >= 9 && cmd->param_count == 6){
 		msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[5]));
 		msn_user_set_object(user, msnobj);
 	}
@@ -684,16 +764,12 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_friendly_name(user, friendly);
 
-	if (session->protocol_ver >= 9)
-	{
-		if (cmd->param_count == 5)
-		{
+	if (session->protocol_ver >= 9){
+		if (cmd->param_count == 5){
 			msnobj =
 				msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
 			msn_user_set_object(user, msnobj);
-		}
-		else
-		{
+		}else{
 			msn_user_set_object(user, NULL);
 		}
 	}
@@ -1195,7 +1271,6 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	/*starting retrieve the contact list*/
 	session->contact = msn_contact_new(session);
 	msn_contact_connect(session->contact);
-
 }
 
 static void
@@ -1249,6 +1324,12 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	}
 
 	g_hash_table_destroy(table);
+}
+
+static void
+initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	gaim_debug_info("MaYuan","mdata...{%s} \n",msg->body);
 }
 
 static void
@@ -1457,6 +1538,9 @@ msn_notification_init(void)
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsprofile",
 						   profile_msg);
+	msn_table_add_msg_type(cbs_table,
+							"text/x-msmsgsinitialmdatanotification",
+							initial_mdata_msg);	
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsinitialemailnotification",
 						   initial_email_msg);

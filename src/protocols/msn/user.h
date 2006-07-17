@@ -45,6 +45,8 @@ struct _MsnUser
 	char *store_name;       /**< The name stored in the server. */
 	char *friendly_name;    /**< The friendly name.             */
 
+	char * uid;				/*< User Id							*/
+
 	const char *status;     /**< The state of the user.         */
 	gboolean idle;          /**< The idle state of the user.    */
 
@@ -65,6 +67,7 @@ struct _MsnUser
 
 	GHashTable *clientcaps; /**< The client's capabilities.     */
 
+	int type;
 	int list_op;
 };
 
@@ -156,7 +159,7 @@ void msn_user_set_group_ids(MsnUser *user, GList *ids);
  * @param user The user.
  * @param id   The group ID.
  */
-void msn_user_add_group_id(MsnUser *user, int id);
+void msn_user_add_group_id(MsnUser *user, const char * id);
 
 /**
  * Removes the group ID from a user.
@@ -164,7 +167,7 @@ void msn_user_add_group_id(MsnUser *user, int id);
  * @param user The user.
  * @param id   The group ID.
  */
-void msn_user_remove_group_id(MsnUser *user, int id);
+void msn_user_remove_group_id(MsnUser *user, const char * id);
 
 /**
  * Sets the home phone number for a user.
@@ -181,6 +184,9 @@ void msn_user_set_home_phone(MsnUser *user, const char *number);
  * @param number The work phone number.
  */
 void msn_user_set_work_phone(MsnUser *user, const char *number);
+
+void msn_user_set_uid(MsnUser *user, const char *uid);
+void msn_user_set_type(MsnUser *user,int type);
 
 /**
  * Sets the mobile phone number for a user.
