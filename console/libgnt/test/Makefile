@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=`pkg-config --cflags gobject-2.0 gmodule-2.0` -g -I../ -DSTANDALONE
-LDFLAGS=`pkg-config --libs gobject-2.0 gmodule-2.0` -pg -lgnt -L../
+LDFLAGS=`pkg-config --libs gobject-2.0 gmodule-2.0 gnt` -pg
 
 EXAMPLES=combo focus tv multiwin
 
