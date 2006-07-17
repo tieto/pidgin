@@ -275,6 +275,34 @@ show_window_list()
 	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(window_list_activate), NULL);
 }
 
+static void
+shift_window(GntWidget *widget, int dir)
+{
+	GList *all = g_list_first(focus_list);
+	GList *list = g_list_find(all, widget);
+	int length, pos;
+	if (!list)
+		return;
+
+	length = g_list_length(all);
+	pos = g_list_position(all, list);
+
+	pos += dir;
+	if (dir > 0)
+		pos++;
+
+	if (pos < 0)
+		pos = length;
+	else if (pos > length)
+		pos = 0;
+
+	all = g_list_insert(all, widget, pos);
+	all = g_list_delete_link(all, list);
+	if (focus_list == list)
+		focus_list = g_list_find(all, widget);
+	draw_taskbar();
+}
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
@@ -350,6 +378,15 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				{
 					/* Resize window */
 					mode = GNT_KP_MODE_RESIZE;
+				}
+				else if (strcmp(buffer + 1, ",") == 0 && focus_list)
+				{
+					/* Re-order the list of windows */
+					shift_window(focus_list->data, -1);
+				}
+				else if (strcmp(buffer + 1, ".") == 0 && focus_list)
+				{
+					shift_window(focus_list->data, 1);
 				}
 			}
 		}
