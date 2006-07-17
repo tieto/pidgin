@@ -29,6 +29,8 @@ gg_notify_message(GaimNotifyMsgType type, const char *title,
 	window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), title);
+	gnt_box_set_fill(GNT_BOX(window), FALSE);
+	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
 	if (primary)
 		gnt_box_add_widget(GNT_BOX(window),

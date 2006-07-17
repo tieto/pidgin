@@ -33,6 +33,7 @@ struct _GnBox
 
 	gboolean vertical;
 	gboolean homogeneous;
+	gboolean fill;
 	GList *list;		/* List of widgets */
 
 	GntWidget *active;
@@ -84,6 +85,8 @@ void gnt_box_remove(GntBox *box, GntWidget *widget); /* XXX: does NOT destroy wi
 void gnt_box_remove_all(GntBox *box);      /* Removes AND destroys all the widgets in it */
 
 void gnt_box_readjust(GntBox *box);
+
+void gnt_box_set_fill(GntBox *box, gboolean fill);
 
 G_END_DECLS
 

@@ -32,6 +32,7 @@ int main()
 
 	vbox = gnt_box_new(FALSE, FALSE);
 	hbox = gnt_box_new(FALSE, TRUE);
+	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 
 	gnt_widget_set_name(vbox, "vbox");
 	gnt_widget_set_name(hbox, "hbox");

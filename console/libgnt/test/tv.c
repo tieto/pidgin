@@ -45,7 +45,9 @@ int main()
 	hbox = gnt_box_new(FALSE, TRUE);
 	gnt_widget_set_name(hbox, "hbox");
 	gnt_box_set_toplevel(GNT_BOX(hbox), TRUE);
+	gnt_box_set_fill(GNT_BOX(hbox), FALSE);
 	gnt_box_set_title(GNT_BOX(hbox), "Textview test");
+	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 
 	entry = gnt_entry_new(NULL);
 	gnt_widget_set_name(entry, "entry");

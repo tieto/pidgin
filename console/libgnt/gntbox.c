@@ -173,31 +173,30 @@ gnt_box_size_request(GntWidget *widget)
 		if (maxw < w)
 			maxw = w;
 	}
-	
-	if (box->homogeneous)
+
+	for (iter = box->list; iter; iter = iter->next)
 	{
-		for (iter = box->list; iter; iter = iter->next)
-		{
-			gnt_widget_set_size(GNT_WIDGET(iter->data), maxw, maxh);
-		}
-	}
-	else
-	{
-		for (iter = box->list; iter; iter = iter->next)
+		int w, h;
+		GntWidget *wid = GNT_WIDGET(iter->data);
+
+		gnt_widget_get_size(wid, &w, &h);
+
+		if (box->homogeneous)
 		{
 			if (box->vertical)
-			{
-				int h;
-				gnt_widget_get_size(GNT_WIDGET(iter->data), NULL, &h);
-				gnt_widget_set_size(GNT_WIDGET(iter->data), maxw, h);
-			}
+				h = maxh;
 			else
-			{
-				int w;
-				gnt_widget_get_size(GNT_WIDGET(iter->data), &w, NULL);
-				gnt_widget_set_size(GNT_WIDGET(iter->data), w, maxh);
-			}
+				w = maxw;
 		}
+		if (box->fill)
+		{
+			if (box->vertical)
+				w = maxw;
+			else
+				h = maxh;
+		}
+
+		gnt_widget_set_size(wid, w, h);
 	}
 
 	reposition_children(widget);
@@ -495,6 +494,7 @@ GntWidget *gnt_box_new(gboolean homo, gboolean vert)
 	box->homogeneous = homo;
 	box->vertical = vert;
 	box->pad = 1;
+	box->fill = TRUE;
 	gnt_widget_set_take_focus(widget, TRUE);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	if (vert)
@@ -667,5 +667,10 @@ void gnt_box_readjust(GntBox *box)
 		gnt_screen_resize_widget(wid, width, height);
 		find_focusable_widget(box);
 	}
+}
+
+void gnt_box_set_fill(GntBox *box, gboolean fill)
+{
+	box->fill = fill;
 }
 
