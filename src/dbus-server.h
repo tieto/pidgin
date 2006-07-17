@@ -135,13 +135,19 @@ void gaim_dbus_signal_emit_gaim(const char *name, int num_values,
 				GaimValue **values, va_list vargs);
 
 /**
- * Starts the gaim DBUS server.  It is responsible for handling DBUS
- * requests from other applications.
+ * Returns whether Gaim's D-BUS subsystem is up and running.  If it's
+ * NOT running then gaim_dbus_dispatch_init() failed for some reason,
+ * and a message should have been gaim_debug_error()'ed.
  *
- * @return TRUE if successful, FALSE otherwise.
+ * This function should be called by any DBUS plugin before trying
+ * to use the DBUS API.  See plugins/dbus-example.c for usage.
+ *
+ * @return If the D-BUS subsystem started with no problems then this
+ *         will return NULL and everything will be hunky dory.  If
+ *         there was an error initializing the D-BUS subsystem then
+ *         this will return an error message explaining why.
  */
-gboolean gaim_dbus_init(void);
-
+const char *gaim_dbus_get_init_error(void);
 
 /**
  * Returns the dbus subsystem handle.
@@ -149,6 +155,17 @@ gboolean gaim_dbus_init(void);
  * @return The dbus subsystem handle.
  */
 void *gaim_dbus_get_handle(void);
+
+/**
+ * Starts Gaim's D-BUS server.  It is responsible for handling DBUS
+ * requests from other applications.
+ */
+void gaim_dbus_init(void);
+
+/**
+ * Uninitializes Gaim's D-BUS server.
+ */
+void gaim_dbus_uninit(void);
 
 /**
 

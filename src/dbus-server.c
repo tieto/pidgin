@@ -36,6 +36,7 @@
 #include "dbus-bindings.h"
 #include "debug.h"
 #include "core.h"
+#include "internal.h"
 #include "savedstatuses.h"
 #include "value.h"
 
@@ -58,6 +59,8 @@
 static GHashTable *map_node_id; 
 static GHashTable *map_id_node; 
 static GHashTable *map_id_type; 
+
+static gchar *init_error;
 
 
 /* This function initializes the pointer-id traslation system.  It
@@ -229,7 +232,7 @@ gaim_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
 	    DBusMessageIter *sub;
 	    sub = va_arg (var_args, DBusMessageIter*);
 	    dbus_message_iter_recurse(iter, sub);
-	    g_print("subiter %i:%i\n", (int) sub, * (int*) sub);
+	    gaim_debug_info("dbus", "subiter %p:%p\n", sub, * (gpointer*) sub);
 	    break;		/* for testing only! */
 	}
 	
@@ -383,12 +386,6 @@ DBusConnection *gaim_dbus_get_connection(void) {
 
 #include "dbus-bindings.c"
 
-void *gaim_dbus_get_handle(void) {
-    static int handle;
-
-    return &handle;
-}
-
 static gboolean
 gaim_dbus_dispatch_cb(DBusConnection *connection,
 		   DBusMessage *message,
@@ -437,7 +434,7 @@ gaim_dbus_dispatch_cb(DBusConnection *connection,
 }
 
 
-static const char *gettext(const char **ptr) {
+static const char *dbus_gettext(const char **ptr) {
     const char *text = *ptr;
     *ptr += strlen(text) + 1;
     return text;
@@ -478,9 +475,9 @@ static DBusMessage *gaim_dbus_introspect(DBusMessage *message)
 	    while (*text) {		
 		const char *name, *direction, *type;
 		
-		direction = gettext(&text);
-		type = gettext(&text);
-		name = gettext(&text);
+		direction = dbus_gettext(&text);
+		type = dbus_gettext(&text);
+		name = dbus_gettext(&text);
 		
 		g_string_append_printf(str, 
 				       "<arg name='%s' type='%s' direction='%s'/>\n",
@@ -539,7 +536,7 @@ void gaim_dbus_register_bindings(void *handle, GaimDBusBinding *bindings) {
 
 
 
-static gboolean gaim_dbus_dispatch_init(void) 
+static void gaim_dbus_dispatch_init(void) 
 {
     static DBusObjectPathVTable vtable = {NULL, &gaim_dbus_dispatch, NULL, NULL, NULL, NULL};
 
@@ -550,17 +547,17 @@ static gboolean gaim_dbus_dispatch_init(void)
     gaim_dbus_connection = dbus_bus_get (DBUS_BUS_STARTER, &error);    
 
     if (gaim_dbus_connection == NULL) {
-	gaim_debug_error("dbus", "Failed to get connection\n");
+	init_error = g_strdup_printf(N_("Failed to get connection: %s"), error.message);
 	dbus_error_free(&error);
-	return FALSE;
+	return;
     }
 
     if (!dbus_connection_register_object_path (gaim_dbus_connection,
 					       DBUS_PATH_GAIM, &vtable, NULL))
     {
-	gaim_debug_error("dbus", "Failed to get name: %s\n", error.name);
+	init_error = g_strdup_printf(N_("Failed to get name: %s"), error.name);
         dbus_error_free(&error);
-	return FALSE;
+	return;
     }
 	    
 
@@ -571,8 +568,8 @@ static gboolean gaim_dbus_dispatch_init(void)
 	dbus_connection_unref(gaim_dbus_connection);
 	dbus_error_free(&error);
 	gaim_dbus_connection = NULL;
-	gaim_debug_error("dbus", "Failed to get serv name: %s\n", error.name);
-	return FALSE;
+	init_error = g_strdup_printf(N_("Failed to get serv name: %s"), error.name);
+	return;
     }
 	
     dbus_connection_setup_with_g_main(gaim_dbus_connection, NULL);
@@ -590,8 +587,6 @@ static gboolean gaim_dbus_dispatch_init(void)
 			 gaim_value_new_outgoing(GAIM_TYPE_POINTER));
 
     GAIM_DBUS_REGISTER_BINDINGS(gaim_dbus_get_handle());
-
-    return TRUE;
 }
 
 
@@ -709,15 +704,37 @@ void gaim_dbus_signal_emit_gaim(const char *name, int num_values,
     dbus_message_unref(signal);
 }
 
-
-
-
-
-
-gboolean gaim_dbus_init(void) 
+const char *
+gaim_dbus_get_init_error(void)
 {
-    gaim_dbus_init_ids();
-    return gaim_dbus_dispatch_init() ;
+	return init_error;
 }
 
+void *
+gaim_dbus_get_handle(void)
+{
+    static int handle;
 
+    return &handle;
+}
+
+void
+gaim_dbus_init(void)
+{
+    gaim_dbus_init_ids();
+
+	g_free(init_error);
+	init_error = NULL;
+	gaim_dbus_dispatch_init();
+	if (init_error != NULL)
+		gaim_debug_error("dbus", "%s\n", init_error);
+}
+
+void
+gaim_dbus_uninit(void)
+{
+	/* Surely we must do SOME kind of uninitialization? */
+
+	g_free(init_error);
+	init_error = NULL;
+}

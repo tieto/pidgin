@@ -99,7 +99,6 @@ gaim_core_init(const char *ui)
 	gaim_dbus_init();
 #endif
 
-
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -192,6 +191,10 @@ gaim_core_quit(void)
 
 	gaim_plugins_uninit();
 	gaim_signals_uninit();
+
+#ifdef HAVE_DBUS
+	gaim_dbus_uninit();
+#endif
 
 	if (core->ui != NULL) {
 		g_free(core->ui);

@@ -37,8 +37,9 @@
 
 #include "internal.h"
 
-#include "plugin.h"
 #include "blist.h"
+#include "notify.h"
+#include "plugin.h"
 #include "version.h"
 
 #include <stdio.h>
@@ -108,6 +109,17 @@ const char *dbus_example_get_buddy_name(GaimBuddy *buddy)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+	const char *dbus_init_error;
+
+	dbus_init_error = gaim_dbus_get_init_error();
+	if (dbus_init_error != NULL)
+	{
+		gaim_notify_error(NULL, _("Unable to Load Plugin"),
+				_("Gaim's D-BUS server is not running for the reason listed below"),
+				_(dbus_init_error));
+		return FALSE;
+	}
+
     /* First, we have to register our four exported functions with the
        main gaim dbus loop.  Without this statement, the gaim dbus
        code wouldn't know about our functions. */
