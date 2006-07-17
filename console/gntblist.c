@@ -479,6 +479,7 @@ draw_context_menu(GGBlist *ggblist)
 
 	gnt_widget_set_position(window, x, y);
 	gnt_widget_draw(window);
+	g_free(title);
 }
 
 static void
