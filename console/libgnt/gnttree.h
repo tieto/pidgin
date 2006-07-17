@@ -84,6 +84,8 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key);
 
 void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
 
+void gnt_tree_set_selected(GntTree *tree , void *key);
+
 G_END_DECLS
 
 #endif /* GNT_TREE_H */

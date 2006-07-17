@@ -262,6 +262,7 @@ show_window_list()
 		update_window_in_list(GNT_WIDGET(box));
 	}
 
+	gnt_tree_set_selected(GNT_TREE(tree), focus_list->data);
 	gnt_box_add_widget(GNT_BOX(win), tree);
 
 	gnt_widget_set_size(tree, getmaxx(stdscr) / 3, getmaxy(stdscr) / 2);

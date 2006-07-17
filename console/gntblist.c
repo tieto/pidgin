@@ -288,7 +288,9 @@ draw_tooltip(GGBlist *ggblist)
 		GaimBuddy *buddy = (GaimBuddy *)node;
 		account = gaim_buddy_get_account(buddy);
 		
-		g_string_append_printf(str, _("Account: %s"), gaim_account_get_username(account));
+		g_string_append_printf(str, _("Account: %s (%s)"),
+				gaim_account_get_username(account),
+				gaim_account_get_protocol_name(account));
 		
 		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
@@ -323,7 +325,9 @@ draw_tooltip(GGBlist *ggblist)
 		GaimChat *chat = (GaimChat *)node;
 		GaimAccount *account = chat->account;
 
-		g_string_append_printf(str, _("Account: %s"), gaim_account_get_username(account));
+		g_string_append_printf(str, _("Account: %s (%s)"),
+				gaim_account_get_username(account),
+				gaim_account_get_protocol_name(account));
 
 		title = g_strdup(gaim_chat_get_name(chat));
 	}

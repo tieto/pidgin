@@ -716,3 +716,24 @@ void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags)
 	redraw_tree(tree);	/* XXX: It shouldn't be necessary to redraw the whole darned tree */
 }
 
+void gnt_tree_set_selected(GntTree *tree , void *key)
+{
+	int dist;
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	if (!row)
+		return;
+
+	if (tree->top == NULL)
+		tree->top = row;
+	if (tree->bottom == NULL)
+		tree->bottom = row;
+
+	tree->current = row;
+	if ((dist = get_distance(tree->current, tree->bottom)) < 0)
+		gnt_tree_scroll(tree, -dist);
+	else if ((dist = get_distance(tree->current, tree->top)) > 0)
+		gnt_tree_scroll(tree, -dist);
+	else
+		redraw_tree(tree);
+}
+

@@ -178,19 +178,7 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 	if (text == NULL || *text == '\0')
 		return;
 
-	if (flags & GNT_TEXT_FLAG_BOLD)
-		fl |= A_BOLD;
-	if (flags & GNT_TEXT_FLAG_UNDERLINE)
-		fl |= A_UNDERLINE;
-	if (flags & GNT_TEXT_FLAG_BLINK)
-		fl |= A_BLINK;
-
-	if (flags & GNT_TEXT_FLAG_DIM)
-		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_DISABLED));
-	else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
-		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
-	else
-		fl |= COLOR_PAIR(GNT_COLOR_NORMAL);
+	fl = gnt_text_format_flag_to_chtype(flags);
 
 	view->list = g_list_first(view->list);
 
@@ -260,5 +248,26 @@ void gnt_text_view_next_line(GntTextView *view)
 	view->list = g_list_prepend(g_list_first(view->list), line);
 	view->list = list;
 	gnt_widget_draw(GNT_WIDGET(view));
+}
+
+chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags)
+{
+	chtype fl = 0;
+
+	if (flags & GNT_TEXT_FLAG_BOLD)
+		fl |= A_BOLD;
+	if (flags & GNT_TEXT_FLAG_UNDERLINE)
+		fl |= A_UNDERLINE;
+	if (flags & GNT_TEXT_FLAG_BLINK)
+		fl |= A_BLINK;
+
+	if (flags & GNT_TEXT_FLAG_DIM)
+		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_DISABLED));
+	else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
+		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+	else
+		fl |= COLOR_PAIR(GNT_COLOR_NORMAL);
+
+	return fl;
 }
 

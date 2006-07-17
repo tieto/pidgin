@@ -21,8 +21,9 @@ static void
 gnt_label_draw(GntWidget *widget)
 {
 	GntLabel *label = GNT_LABEL(widget);
+	chtype flag = gnt_text_format_flag_to_chtype(label->flags);
 
-	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgdset(widget->window, '\0' | flag);
 	mvwprintw(widget->window, 0, 0, label->text);
 
 	DEBUG;
@@ -109,10 +110,16 @@ gnt_label_get_gtype(void)
 
 GntWidget *gnt_label_new(const char *text)
 {
+	return gnt_label_new_with_format(text, 0);
+}
+
+GntWidget *gnt_label_new_with_format(const char *text, GntTextFormatFlags flags)
+{
 	GntWidget *widget = g_object_new(GNT_TYPE_LABEL, NULL);
 	GntLabel *label = GNT_LABEL(widget);
 
 	label->text = g_strdup(text);
+	label->flags = flags;
 	gnt_widget_set_take_focus(widget, FALSE);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 

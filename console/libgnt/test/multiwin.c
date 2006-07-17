@@ -60,6 +60,8 @@ int main()
 
 	gnt_tree_set_row_flags(GNT_TREE(tree), "e", GNT_TEXT_FLAG_DIM);
 
+	gnt_tree_set_selected(GNT_TREE(tree), "2");
+
 	g_timeout_add(5000, (GSourceFunc)show, box2);
 
 	gnt_main();

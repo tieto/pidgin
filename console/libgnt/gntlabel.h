@@ -3,6 +3,7 @@
 
 #include "gnt.h"
 #include "gntwidget.h"
+#include "gnttextview.h"
 
 #define GNT_TYPE_LABEL				(gnt_label_get_gtype())
 #define GNT_LABEL(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_LABEL, GntLabel))
@@ -19,6 +20,7 @@ struct _GnLabel
 	GntWidget parent;
 
 	char *text;
+	GntTextFormatFlags flags;
 
     void (*gnt_reserved1)(void);
     void (*gnt_reserved2)(void);
@@ -41,6 +43,8 @@ G_BEGIN_DECLS
 GType gnt_label_get_gtype(void);
 
 GntWidget *gnt_label_new(const char *text);
+
+GntWidget *gnt_label_new_with_format(const char *text, GntTextFormatFlags flags);
 
 G_END_DECLS
 

@@ -59,6 +59,7 @@ int main()
 
 	gnt_box_add_widget(GNT_BOX(hbox), view);
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
+	gnt_box_add_widget(GNT_BOX(hbox), gnt_button_new("OK"));
 
 	gnt_widget_show(hbox);
 

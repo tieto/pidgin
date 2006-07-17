@@ -64,6 +64,8 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
  * It first completes the current line with the current text-attributes. */
 void gnt_text_view_next_line(GntTextView *view);
 
+chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags);
+
 G_END_DECLS
 
 #endif /* GNT_TEXT_VIEW_H */
