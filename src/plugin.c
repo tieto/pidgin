@@ -772,12 +772,16 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 	 * mismatch, but it's a lot better than trying to free something
 	 * we shouldn't, and crashing while trying to load an old plugin */
 	if(plugin->info == NULL || plugin->info->magic != GAIM_PLUGIN_MAGIC ||
-			plugin->info->major_version != GAIM_MAJOR_VERSION) {
+			plugin->info->major_version != GAIM_MAJOR_VERSION)
+	{
 		if(plugin->handle)
 			g_module_close(plugin->handle);
 
+		g_free(plugin->path);
+		g_free(plugin->error);
+
 		GAIM_DBUS_UNREGISTER_POINTER(plugin);
-	
+
 		g_free(plugin);
 		return;
 	}

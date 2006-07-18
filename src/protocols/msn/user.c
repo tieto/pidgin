@@ -55,6 +55,12 @@ msn_user_destroy(MsnUser *user)
 {
 	g_return_if_fail(user != NULL);
 
+	/*
+	 * TODO: If any GaimBuddy->proto_data pointers point to this
+	 *       MsnUser then set them to NULL.  Or possibly even better,
+	 *       don't set GaimBuddy->proto_data in the first place.
+	 */
+
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
 

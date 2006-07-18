@@ -152,7 +152,7 @@ static GaimPluginInfo info =
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"dbus-example",                                   /**< id             */
-	N_("DBus"),                        /**< name           */
+	N_("DBus Example"),                               /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
 	N_("DBus Plugin Example"),
