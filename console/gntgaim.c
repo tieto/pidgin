@@ -299,8 +299,9 @@ int main(int argc, char **argv)
 
 	/* Initialize and run the UI */
 	init_gnt_ui();
-
+#ifdef STANDALONE
 	gaim_core_quit();
+#endif
 
 	return 0;
 }

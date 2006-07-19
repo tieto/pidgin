@@ -1,4 +1,6 @@
 #include <string.h>
+
+#include <cmds.h>
 #include <util.h>
 
 #include "gntgaim.h"
@@ -49,12 +51,53 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 		const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
 		if (*text == '/')
 		{
-			/* XXX: Need to check for /-commands here */
+			GaimConversation *conv = ggconv->conv;
+			GaimCmdStatus status;
+			const char *cmdline = text + 1;
+			char *error = NULL, *escape;
+
+			escape = g_markup_escape_text(cmdline, -1);
+			status = gaim_cmd_do_command(conv, cmdline, escape, &error);
+			g_free(escape);
+
+			switch (status)
+			{
+				case GAIM_CMD_STATUS_OK:
+					break;
+				case GAIM_CMD_STATUS_NOT_FOUND:
+					gaim_conversation_write(conv, "", _("No such command."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+					break;
+				case GAIM_CMD_STATUS_WRONG_ARGS:
+					gaim_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
+										"to that command."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+					break;
+				case GAIM_CMD_STATUS_FAILED:
+					gaim_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+					break;
+				case GAIM_CMD_STATUS_WRONG_TYPE:
+					if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+						gaim_conversation_write(conv, "", _("That command only works in chats, not IMs."),
+								GAIM_MESSAGE_NO_LOG, time(NULL));
+					else
+						gaim_conversation_write(conv, "", _("That command only works in IMs, not chats."),
+								GAIM_MESSAGE_NO_LOG, time(NULL));
+					break;
+				case GAIM_CMD_STATUS_WRONG_PRPL:
+					gaim_conversation_write(conv, "", _("That command doesn't work on this protocol."),
+							GAIM_MESSAGE_NO_LOG, time(NULL));
+					break;
+			}
+			g_free(error);
+#if 0
 			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					_("Commands are not supported yet. Message was NOT sent."),
 					GNT_TEXT_FLAG_DIM | GNT_TEXT_FLAG_UNDERLINE);
 			gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
+#endif
 		}
 		else
 		{

@@ -8,8 +8,9 @@
 
 void init_gnt_ui()
 {
+#ifdef STANDALONE
 	gnt_init();
-
+#endif
 	/* Accounts */
 	gg_accounts_init();
 	gaim_accounts_set_ui_ops(gg_accounts_get_ui_ops());
@@ -30,6 +31,7 @@ void init_gnt_ui()
 	gg_notify_init();
 	gaim_notify_set_ui_ops(gg_notify_get_ui_ops());
 
+#ifdef STANDALONE
 	gnt_main();
 
 	gaim_accounts_set_ui_ops(NULL);
@@ -48,5 +50,6 @@ void init_gnt_ui()
 	gg_notify_uninit();
 
 	gnt_quit();
+#endif
 }
 

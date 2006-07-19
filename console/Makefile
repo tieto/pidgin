@@ -1,6 +1,6 @@
 VERSION=gntgaim-0.0.0dev
 CC=gcc
-CFLAGS=`pkg-config --cflags gaim gobject-2.0 gnt` -g -Wall -DVERSION=\"$(VERSION)\"
+CFLAGS=`pkg-config --cflags gaim gobject-2.0 gnt` -g -Wall -DVERSION=\"$(VERSION)\" -DSTANDALONE
 LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0 gnt` -pg
 
 GG_SOURCES = \
