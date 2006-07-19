@@ -38,7 +38,6 @@ static GList *ims = NULL;
 static GList *chats = NULL;
 static GaimConversationUiOps *default_ops = NULL;
 
-
 void
 gaim_conversations_set_ui_ops(GaimConversationUiOps *ops)
 {
@@ -1441,6 +1440,45 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
 	g_list_free(flags2);
 }
 
+int
+gaim_conv_chat_cb_compare(GaimConvChatBuddy *a, GaimConvChatBuddy *b)
+{
+	GaimConvChatBuddyFlags f1 = 0, f2 = 0;
+	char *user1 = NULL, *user2 = NULL;
+	gint ret = 0;
+
+	
+	if (a) {
+		f1 = a->flags;
+		if (a->alias_key)
+			user1 = a->alias_key;
+		else if (a->name)
+			user1 = a->name;
+	}
+	
+	if (b) {
+		f2 = b->flags;
+		if (b->alias_key)
+			user2 = b->alias_key;
+		else if (b->name)
+			user2 = b->name;
+	}
+
+	if (user1 == NULL || user2 == NULL) {
+		if (!(user1 == NULL && user2 == NULL))
+			ret = (user1 == NULL) ? -1: 1;
+	} else if (f1 != f2) {
+		/* sort more important users first */
+		ret = (f1 > f2) ? -1 : 1;
+	} else if (a->buddy != b->buddy) { 
+		ret = a->buddy ? -1 : 1;
+	} else {
+		ret = strcasecmp(user1, user2);
+	}
+
+	return ret;
+}
+
 void
 gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 						 GList *flags, gboolean new_arrivals)
@@ -1451,7 +1489,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info;
 	GList *ul, *fl;
-	GList *aliases = NULL;
+	GList *cbuddies = NULL;
 
 	g_return_if_fail(chat  != NULL);
 	g_return_if_fail(users != NULL);
@@ -1470,8 +1508,11 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		const char *user = (const char *)ul->data;
 		const char *alias = user;
 		gboolean quiet;
+		GaimConvChatBuddy *cbuddy;
 		GaimConvChatBuddyFlags flags = GPOINTER_TO_INT(fl->data);
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
+
+		cbuddy = gaim_conv_chat_cb_new(user, NULL, GPOINTER_TO_INT(fl->data));
 
 		if (!strcmp(chat->nick, gaim_normalize(conv->account, user))) {
 			const char *alias2 = gaim_account_get_alias(conv->account);
@@ -1493,11 +1534,15 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 						 "chat-buddy-joining", conv, user, flags)) |
 				gaim_conv_chat_is_user_ignored(chat, user);
 
-		cb = gaim_conv_chat_cb_new(user, flags);
+		cb = gaim_conv_chat_cb_new(user, NULL, flags);
+		/* This seems dumb. Why should we set users thousands of times? */
 		gaim_conv_chat_set_users(chat,
 				g_list_prepend(gaim_conv_chat_get_users(chat), cb));
-		/* We reverse this later to keep it in the same order as users. */
-		aliases = g_list_prepend(aliases, (char *)alias);
+
+		cbuddy->alias = strdup(alias); /* Should I be doing a strdup? */
+		cbuddy->alias_key = g_utf8_collate_key(alias, strlen(alias));
+		cbuddy->buddy = (gaim_find_buddy(conv->account, cbuddy->name) != NULL);
+		cbuddies = g_list_prepend(cbuddies, cbuddy);
 
 		if (!quiet && new_arrivals) {
 			char *escaped = g_markup_escape_text(alias, -1);
@@ -1525,14 +1570,11 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 			extra_msgs = extra_msgs->next;
 	}
 
-	/* This needs to be in the same order as users, but it's faster
-	 * to prepend, so we do that above. */
-	aliases = g_list_reverse(aliases);
-
+	cbuddies = g_list_sort(cbuddies, (GCompareFunc)gaim_conv_chat_cb_compare);
+	
 	if (ops != NULL && ops->chat_add_users != NULL)
-		ops->chat_add_users(conv, users, flags, aliases, new_arrivals);
+		ops->chat_add_users(conv, cbuddies, new_arrivals);
 
-	g_list_free(aliases);
 }
 
 void
@@ -1562,7 +1604,7 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	g_return_if_fail(prpl_info != NULL);
 
 	flags = gaim_conv_chat_user_get_flags(chat, old_user);
-	cb = gaim_conv_chat_cb_new(new_user, flags);
+	cb = gaim_conv_chat_cb_new(new_user, NULL, flags);
 	gaim_conv_chat_set_users(chat,
 		g_list_prepend(gaim_conv_chat_get_users(chat), cb));
 
@@ -1873,9 +1915,8 @@ gaim_conv_chat_has_left(GaimConvChat *chat)
 
 	return chat->left;
 }
-
 GaimConvChatBuddy *
-gaim_conv_chat_cb_new(const char *name, GaimConvChatBuddyFlags flags)
+gaim_conv_chat_cb_new(const char *name, const char *alias, GaimConvChatBuddyFlags flags)
 {
 	GaimConvChatBuddy *cb;
 
@@ -1884,6 +1925,10 @@ gaim_conv_chat_cb_new(const char *name, GaimConvChatBuddyFlags flags)
 	cb = g_new0(GaimConvChatBuddy, 1);
 	cb->name = g_strdup(name);
 	cb->flags = flags;
+	if (alias)
+		cb->alias = g_strdup(alias);
+	else
+		cb->alias = NULL;
 
 	GAIM_DBUS_REGISTER_POINTER(cb, GaimConvChatBuddy);
 	return cb;

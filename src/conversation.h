@@ -158,8 +158,8 @@ struct _GaimConversationUiOps
 	                   const char *message, GaimMessageFlags flags,
 	                   time_t mtime);
 
-	void (*chat_add_users)(GaimConversation *conv, GList *users,
-						   GList *flags, GList *aliases, gboolean new_arrivals);
+	void (*chat_add_users)(GaimConversation *conv, GList *cbuddies, gboolean new_arrivals);	
+	
 	void (*chat_rename_user)(GaimConversation *conv, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	void (*chat_remove_users)(GaimConversation *conv, GList *users);
@@ -214,6 +214,9 @@ struct _GaimConvChat
 struct _GaimConvChatBuddy
 {
 	char *name;                      /**< The name                      */
+	char *alias;					 /**< The alias 					*/
+	char *alias_key;				 /**< The alias key					*/
+	gboolean buddy;					 /**< ChatBuddy is on the blist		*/
 	GaimConvChatBuddyFlags flags;    /**< Flags (ops, voice etc.)       */
 };
 
@@ -1133,11 +1136,12 @@ gboolean gaim_conv_chat_has_left(GaimConvChat *chat);
  * Creates a new chat buddy
  *
  * @param name The name.
+ * @param alias The alias.
  * @param flags The flags.
  *
  * @return The new chat buddy
  */
-GaimConvChatBuddy *gaim_conv_chat_cb_new(const char *name,
+GaimConvChatBuddy *gaim_conv_chat_cb_new(const char *name, const char *alias,
 										GaimConvChatBuddyFlags flags);
 
 /**
