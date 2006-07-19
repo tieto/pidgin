@@ -129,8 +129,9 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 	GaimBlistNode *node = (GaimBlistNode *)group;
 	if (node->ui_data)
 		return;
+	gnt_tree_remove(GNT_TREE(ggblist->tree), group);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), group,
-			group->name, NULL, NULL);
+			gnt_tree_create_row(GNT_TREE(ggblist->tree), group->name), NULL, NULL);
 }
 
 static const char *
@@ -191,8 +192,10 @@ add_chat(GaimChat *chat, GGBlist *ggblist)
 	group = gaim_chat_get_group(chat);
 	add_node((GaimBlistNode*)group, ggblist);
 
+	gnt_tree_remove(GNT_TREE(ggblist->tree), chat);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), chat,
-				get_display_name(node), group, NULL);
+				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
+				group, NULL);
 }
 
 static void
@@ -206,8 +209,10 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	group = gaim_buddy_get_group(buddy);
 	add_node((GaimBlistNode*)group, ggblist);
 
+	gnt_tree_remove(GNT_TREE(ggblist->tree), buddy);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
-				get_display_name(node), group, NULL);
+				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
+				group, NULL);
 	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
 		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
 	else
@@ -270,7 +275,8 @@ gnt_append_menu_action(GntTree *tree, GaimMenuAction *action, gpointer parent)
 {
 	GList *list;
 	
-	gnt_tree_add_row_after(tree, action, action->label, parent, NULL);
+	gnt_tree_add_row_after(tree, action,
+			gnt_tree_create_row(tree, action->label), parent, NULL);
 	for (list = action->children; list; list = list->next)
 		gnt_append_menu_action(tree, list->data, action);
 }
@@ -640,7 +646,7 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 static void
 update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist)
 {
-	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, get_display_name((GaimBlistNode*)buddy));
+	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, 0, get_display_name((GaimBlistNode*)buddy));
 	if (ggblist->tnode == (GaimBlistNode*)buddy)
 		draw_tooltip(ggblist);
 
@@ -685,7 +691,8 @@ void gg_blist_init()
 
 	ggblist->tree = gnt_tree_new();
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
-	gnt_widget_set_size(ggblist->tree, 25, getmaxy(stdscr) - 4);
+	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, 25);
+	gnt_widget_set_size(ggblist->tree, 0, getmaxy(stdscr) - 4);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 	gnt_widget_show(ggblist->window);

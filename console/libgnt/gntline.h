@@ -42,6 +42,9 @@ G_BEGIN_DECLS
 
 GType gnt_line_get_gtype(void);
 
+#define gnt_hline_new() gnt_line_new(FALSE)
+#define gnt_vline_new() gnt_line_new(TRUE)
+
 GntWidget *gnt_line_new(gboolean vertical);
 
 G_END_DECLS

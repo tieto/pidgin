@@ -210,25 +210,26 @@ void gg_accounts_init()
 
 	gnt_box_add_widget(GNT_BOX(accounts.window), gnt_line_new(FALSE));
 
-	accounts.tree = gnt_tree_new();
+	accounts.tree = gnt_tree_new_with_columns(2);
 	GNT_WIDGET_SET_FLAGS(accounts.tree, GNT_WIDGET_NO_BORDER);
 
 	for (iter = gaim_accounts_get_all(); iter; iter = iter->next)
 	{
 		GaimAccount *account = iter->data;
-		char *str = g_strdup_printf("%s (%s)",
-				gaim_account_get_username(account), gaim_account_get_protocol_id(account));
 
 		gnt_tree_add_choice(GNT_TREE(accounts.tree), account,
-				str, NULL, NULL);
+				gnt_tree_create_row(GNT_TREE(accounts.tree),
+					gaim_account_get_username(account),
+					gaim_account_get_protocol_name(account)),
+				NULL, NULL);
 		gnt_tree_set_choice(GNT_TREE(accounts.tree), account,
 				gaim_account_get_enabled(account, GAIM_GNT_UI));
-		g_free(str);
 	}
 
 	g_signal_connect(G_OBJECT(accounts.tree), "toggled", G_CALLBACK(account_toggled), NULL);
 	
-	gnt_widget_set_size(accounts.tree, 40, 10);
+	gnt_tree_set_col_width(GNT_TREE(accounts.tree), 0, 40);
+	gnt_tree_set_col_width(GNT_TREE(accounts.tree), 1, 10);
 	gnt_box_add_widget(GNT_BOX(accounts.window), accounts.tree);
 
 	gnt_box_add_widget(GNT_BOX(accounts.window), gnt_line_new(FALSE));

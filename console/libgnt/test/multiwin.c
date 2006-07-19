@@ -43,19 +43,19 @@ int main()
 	gnt_widget_set_position(box2, 35, 15);
 	gnt_widget_show(box2);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), "a", "a", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "c", "c", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "d", "d", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "e", "e", "a", NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "b", "b", "d", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "a", gnt_tree_create_row(GNT_TREE(tree), "a"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "c", gnt_tree_create_row(GNT_TREE(tree), "c"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "d", gnt_tree_create_row(GNT_TREE(tree), "d"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "e", gnt_tree_create_row(GNT_TREE(tree), "e"), "a", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "b", gnt_tree_create_row(GNT_TREE(tree), "b"), "d", NULL);
 
-	gnt_tree_add_choice(GNT_TREE(tree), "1", "1", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "2", "2", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "3", "3", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "4", "4", "a", NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "5", "5", "d", NULL);
+	gnt_tree_add_choice(GNT_TREE(tree), "1", gnt_tree_create_row(GNT_TREE(tree), "1"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "2", gnt_tree_create_row(GNT_TREE(tree), "2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "3", gnt_tree_create_row(GNT_TREE(tree), "3"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "4", gnt_tree_create_row(GNT_TREE(tree), "4"), "a", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "5", gnt_tree_create_row(GNT_TREE(tree), "5"), "d", NULL);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), "6", "6", "4", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6"), "4", NULL);
 
 	gnt_tree_set_row_flags(GNT_TREE(tree), "e", GNT_TEXT_FLAG_DIM);
 

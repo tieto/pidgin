@@ -46,6 +46,8 @@ GntWidget *gnt_label_new(const char *text);
 
 GntWidget *gnt_label_new_with_format(const char *text, GntTextFormatFlags flags);
 
+void gnt_label_set_text(GntLabel *label, const char *text);
+
 G_END_DECLS
 
 #endif /* GNT_LABEL_H */

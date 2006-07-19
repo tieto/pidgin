@@ -18,7 +18,6 @@ enum
 struct _GnTreeRow
 {
 	void *key;
-	char *text;
 	void *data;		/* XXX: unused */
 
 	gboolean collapsed;
@@ -31,6 +30,14 @@ struct _GnTreeRow
 	GntTreeRow *child;
 	GntTreeRow *next;
 	GntTreeRow *prev;
+
+	GList *columns;
+};
+
+struct _GnTreeCol
+{
+	char *text;
+	int span;       /* How many columns does it span? */
 };
 
 static GntWidgetClass *parent_class = NULL;
@@ -151,6 +158,83 @@ get_distance(GntTreeRow *a, GntTreeRow *b)
 	return (hb - ha);
 }
 
+static int
+find_depth(GntTreeRow *row)
+{
+	int dep = -1;
+
+	while (row)
+	{
+		dep++;
+		row = row->parent;
+	}
+
+	return dep;
+}
+
+static char *
+update_row_text(GntTree *tree, GntTreeRow *row)
+{
+	GString *string = g_string_new(NULL);
+	GList *iter;
+	int i;
+
+	for (i = 0, iter = row->columns; i < tree->ncol && iter; i++, iter = iter->next)
+	{
+		GntTreeCol *col = iter->data;
+		char *text;
+		int len = g_utf8_strlen(col->text, -1);
+		int fl = 0;
+		gboolean ell = FALSE;
+
+		if (i == 0)
+		{
+			if (row->choice)
+			{
+				g_string_append_printf(string, "[%c] ",
+						row->isselected ? 'X' : ' ');
+				fl = 4;
+			}
+			else if (row->parent == NULL && row->child)
+			{
+				if (row->collapsed)
+				{
+					string = g_string_append(string, "+ ");
+				}
+				else
+				{
+					string = g_string_append(string, "- ");
+				}
+				fl = 2;
+			}
+			else
+			{
+				fl = TAB_SIZE * find_depth(row);
+				g_string_append_printf(string, "%*s", fl, "");
+			}
+			len += fl;
+		}
+		else
+			g_string_append_c(string, '|');
+
+		if (len > tree->columns[i].width)
+		{
+			len = tree->columns[i].width;
+			ell = TRUE;
+		}
+
+		text = g_utf8_offset_to_pointer(col->text, len - fl - ell);
+		string = g_string_append_len(string, col->text, text - col->text);
+		if (len < tree->columns[i].width)
+			g_string_append_printf(string, "%*s", tree->columns[i].width - len, "");
+		else if (ell)
+		{
+			g_string_append_unichar(string, (gunichar)2026);
+		}
+	}
+	return g_string_free(string, FALSE);
+}
+
 static void
 redraw_tree(GntTree *tree)
 {
@@ -158,7 +242,6 @@ redraw_tree(GntTree *tree)
 	GntWidget *widget = GNT_WIDGET(tree);
 	GntTreeRow *row;
 	int pos;
-	gboolean deep;
 
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		pos = 0;
@@ -172,36 +255,17 @@ redraw_tree(GntTree *tree)
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
-	deep = TRUE;
 	row = tree->top;
 	for (start = pos; row && start < widget->priv.height - pos;
 				start++, row = get_next(row))
 	{
-		char str[2048];
+		char *str;
 		int wr;
-		char format[16] = "";
 
 		GntTextFormatFlags flags = row->flags;
 		int attr = 0;
 
-		deep = TRUE;
-
-		if (row->parent == NULL && row->child)
-		{
-			if (row->collapsed)
-			{
-				strcpy(format, "+ ");
-				deep = FALSE;
-			}
-			else
-				strcpy(format, "- ");
-		}
-		else if (row->choice)
-		{
-			g_snprintf(format, sizeof(format) - 1, "[%c] ", row->isselected ? 'X' : ' ');
-		}
-
-		g_snprintf(str, sizeof(str) - 1, "%s%s", format, row->text);
+		str = update_row_text(tree, row);
 
 		if ((wr = g_utf8_strlen(str, -1)) >= widget->priv.width - 1 - pos)
 		{
@@ -238,6 +302,7 @@ redraw_tree(GntTree *tree)
 		mvwprintw(widget->window, start, pos, str);
 		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
 		tree->bottom = row;
+		g_free(str);
 	}
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
@@ -267,7 +332,13 @@ gnt_tree_size_request(GntWidget *widget)
 	if (widget->priv.height == 0)
 		widget->priv.height = 10;	/* XXX: Why?! */
 	if (widget->priv.width == 0)
-		widget->priv.width = 20;	/* YYY: 'cuz ... */
+	{
+		GntTree *tree = GNT_TREE(widget);
+		int i, width = 0;
+		for (i = 0; i < tree->ncol; i++)
+			width += tree->columns[i].width;
+		widget->priv.width = width + i;
+	}
 }
 
 static void
@@ -437,6 +508,15 @@ gnt_tree_get_gtype(void)
 }
 
 static void
+free_tree_col(gpointer data)
+{
+	GntTreeCol *col = data;
+
+	g_free(col->text);
+	g_free(col);
+}
+
+static void
 free_tree_row(gpointer data)
 {
 	GntTreeRow *row = data;
@@ -444,20 +524,14 @@ free_tree_row(gpointer data)
 	if (!row)
 		return;
 
-	g_free(row->text);
+	g_list_foreach(row->columns, (GFunc)free_tree_col, NULL);
+	g_list_free(row->columns);
 	g_free(row);
 }
 
 GntWidget *gnt_tree_new()
 {
-	GntWidget *widget = g_object_new(GNT_TYPE_TREE, NULL);
-	GntTree *tree = GNT_TREE(widget);
-
-	tree->hash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_tree_row);
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
-	gnt_widget_set_take_focus(widget, TRUE);
-
-	return widget;
+	return gnt_tree_new_with_columns(1);
 }
 
 void gnt_tree_set_visible_rows(GntTree *tree, int rows)
@@ -500,23 +574,9 @@ void gnt_tree_scroll(GntTree *tree, int count)
 	g_signal_emit(tree, signals[SIG_SCROLLED], 0, count);
 }
 
-static int
-find_depth(GntTreeRow *row)
+GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro)
 {
-	int dep = -1;
-
-	while (row)
-	{
-		dep++;
-		row = row->parent;
-	}
-
-	return dep;
-}
-
-GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)
-{
-	GntTreeRow *row = g_new0(GntTreeRow, 1), *pr = NULL;
+	GntTreeRow *pr = NULL;
 
 	g_hash_table_replace(tree->hash, key, row);
 
@@ -575,7 +635,6 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, v
 	}
 
 	row->key = key;
-	row->text = g_strdup_printf("%*s%s", TAB_SIZE * find_depth(row), "", text);
 	row->data = NULL;
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
@@ -591,10 +650,10 @@ gpointer gnt_tree_get_selection_data(GntTree *tree)
 	return NULL;
 }
 
-const char *gnt_tree_get_selection_text(GntTree *tree)
+char *gnt_tree_get_selection_text(GntTree *tree)
 {
 	if (tree->current)
-		return tree->current->text;
+		update_row_text(tree, tree->current);
 	return NULL;
 }
 
@@ -657,27 +716,32 @@ int gnt_tree_get_selection_visible_line(GntTree *tree)
 			!!(GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_NO_BORDER));
 }
 
-void gnt_tree_change_text(GntTree *tree, gpointer key, const char *text)
+void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *text)
 {
-	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	GntTreeRow *row;
+	GntTreeCol *col;
+
+	g_return_if_fail(colno < tree->ncol);
+	
+	row = g_hash_table_lookup(tree->hash, key);
 	if (row)
 	{
-		g_free(row->text);
-		row->text = g_strdup_printf("%*s%s", TAB_SIZE * find_depth(row), "", text);
+		col = g_list_nth_data(row->columns, colno);
+		g_free(col->text);
+		col->text = g_strdup(text);
 
 		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) > 0)
 			redraw_tree(tree);
 	}
 }
 
-GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, const char *text, void *parent, void *bigbro)
+GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro)
 {
-	GntTreeRow *row;
-
-	row = g_hash_table_lookup(tree->hash, key);
-	g_return_val_if_fail(!row || !row->choice, NULL);
+	GntTreeRow *r;
+	r = g_hash_table_lookup(tree->hash, key);
+	g_return_val_if_fail(!r || !r->choice, NULL);
 		
-	row = gnt_tree_add_row_after(tree, key, text, parent, bigbro);
+	row = gnt_tree_add_row_after(tree, key, row, parent, bigbro);
 	row->choice = TRUE;
 
 	return row;
@@ -735,5 +799,51 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 		gnt_tree_scroll(tree, -dist);
 	else
 		redraw_tree(tree);
+}
+
+GntWidget *gnt_tree_new_with_columns(int col)
+{
+	GntWidget *widget = g_object_new(GNT_TYPE_TREE, NULL);
+	GntTree *tree = GNT_TREE(widget);
+
+	tree->hash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_tree_row);
+	tree->ncol = col;
+	tree->columns = g_new0(struct _GntTreeColInfo, col);
+	while (col--)
+	{
+		tree->columns[col].width = 15;
+	}
+	
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
+	gnt_widget_set_take_focus(widget, TRUE);
+
+	return widget;
+}
+
+GntTreeRow *gnt_tree_create_row(GntTree *tree, ...)
+{
+	GntTreeRow *row = g_new0(GntTreeRow, 1);
+	int i;
+	va_list args;
+
+	va_start(args, tree);
+
+	for (i = 0; i < tree->ncol; i++)
+	{
+		GntTreeCol *col = g_new0(GntTreeCol, 1);
+		col->span = 1;
+		col->text = g_strdup(va_arg(args, const char *));
+
+		row->columns = g_list_append(row->columns, col);
+	}
+
+	return row;
+}
+
+void gnt_tree_set_col_width(GntTree *tree, int col, int width)
+{
+	g_return_if_fail(col < tree->ncol);
+
+	tree->columns[col].width = width;
 }
 

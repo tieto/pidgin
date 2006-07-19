@@ -23,20 +23,28 @@ typedef struct _GnTreePriv		GntTreePriv;
 typedef struct _GnTreeClass		GntTreeClass;
 
 typedef struct _GnTreeRow		GntTreeRow;
+typedef struct _GnTreeCol		GntTreeCol;
 
 struct _GnTree
 {
 	GntWidget parent;
 
-	GntTreeRow *current;	/* current selection */
+	GntTreeRow *current;    /* current selection */
 
-	GntTreeRow *top;		/* The topmost visible item */
-	GntTreeRow *bottom;		/* The bottommost visible item */
+	GntTreeRow *top;        /* The topmost visible item */
+	GntTreeRow *bottom;     /* The bottommost visible item */
 	
-	GntTreeRow *root; /* The root of all evil */
+	GntTreeRow *root;       /* The root of all evil */
 	
-	GList *list;	/* List of GntTreeRow s */
-	GHashTable *hash;	/* XXX: We may need this for quickly referencing the rows */
+	GList *list;            /* List of GntTreeRow s */
+	GHashTable *hash;       /* XXX: We may need this for quickly referencing the rows */
+
+	int ncol;               /* No. of columns */
+	struct _GntTreeColInfo
+	{
+		int width;
+		int *name;
+	} *columns;             /* Would a GList be better? */
 };
 
 struct _GnTreeClass
@@ -55,7 +63,9 @@ G_BEGIN_DECLS
 
 GType gnt_tree_get_gtype(void);
 
-GntWidget *gnt_tree_new();
+GntWidget *gnt_tree_new();      /* A tree with just one column */
+
+GntWidget *gnt_tree_new_with_columns(int columns);
 
 void gnt_tree_set_visible_rows(GntTree *tree, int rows);
 
@@ -63,20 +73,20 @@ int gnt_tree_get_visible_rows(GntTree *tree);
 
 void gnt_tree_scroll(GntTree *tree, int count);
 
-GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, const char *text, void *parent, void *bigbro);
+GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro);
 
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
-const char *gnt_tree_get_selection_text(GntTree *tree);
+char *gnt_tree_get_selection_text(GntTree *tree);
 
 void gnt_tree_remove(GntTree *tree, gpointer key);
 
 /* Returns the visible line number of the selected row */
 int gnt_tree_get_selection_visible_line(GntTree *tree);
 
-void gnt_tree_change_text(GntTree *tree, gpointer key, const char *text);
+void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *text);
 
-GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, const char *text, void *parent, void *bigbro);
+GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro);
 
 void gnt_tree_set_choice(GntTree *tree, void *key, gboolean set);
 
@@ -85,6 +95,10 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key);
 void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
 
 void gnt_tree_set_selected(GntTree *tree , void *key);
+
+GntTreeRow *gnt_tree_create_row(GntTree *tree, ...);
+
+void gnt_tree_set_col_width(GntTree *tree, int col, int width);
 
 G_END_DECLS
 

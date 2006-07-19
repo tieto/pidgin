@@ -30,6 +30,7 @@ struct _GnTextView
 
 typedef enum
 {
+	GNT_TEXT_FLAG_NORMAL      = 0,
 	GNT_TEXT_FLAG_BOLD        = 1 << 0,
 	GNT_TEXT_FLAG_UNDERLINE   = 1 << 1,
 	GNT_TEXT_FLAG_BLINK       = 1 << 2,

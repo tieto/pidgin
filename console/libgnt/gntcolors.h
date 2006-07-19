@@ -32,4 +32,6 @@ enum
 /* populate some default colors */
 void gnt_init_colors();
 
+void gnt_uninit_colors();
+
 #endif

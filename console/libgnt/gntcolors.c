@@ -1,10 +1,40 @@
 #include <ncursesw/ncurses.h>
 #include "gntcolors.h"
 
+static struct
+{
+	short r, g, b;
+} colors[GNT_TOTAL_COLORS];
+
+static void
+backup_colors()
+{
+	short i;
+	for (i = 0; i < GNT_TOTAL_COLORS; i++)
+	{
+		color_content(i, &colors[i].r,
+				&colors[i].g, &colors[i].b);
+	}
+}
+
+static void
+restore_colors()
+{
+	short i;
+	for (i = 0; i < GNT_TOTAL_COLORS; i++)
+	{
+		init_color(i, colors[i].r,
+				colors[i].g, colors[i].b);
+	}
+}
+
 void gnt_init_colors()
 {
+	start_color();
 	if (can_change_color())
 	{
+		backup_colors();
+
 		/* XXX: Do some init_color()s */
 		init_color(GNT_COLOR_BLACK, 0, 0, 0);
 		init_color(GNT_COLOR_RED, 1000, 0, 0);
@@ -37,5 +67,11 @@ void gnt_init_colors()
 		init_pair(GNT_COLOR_HIGHLIGHT_D, COLOR_CYAN, COLOR_BLACK);
 		init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, COLOR_WHITE);
 	}
+}
+
+void
+gnt_uninit_colors()
+{
+	restore_colors();
 }
 

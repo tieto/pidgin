@@ -20,8 +20,9 @@ key_pressed(GntEntry *entry, const char *text, gpointer null)
 		handle = g_module_open(cmd, G_MODULE_BIND_LOCAL);
 		if (handle && g_module_symbol(handle, "main", (gpointer)&func))
 		{
+			char *argv[] = {cmd, NULL};
 			gnt_entry_clear(entry);
-			func();
+			func(1, argv);
 		}
 		else
 		{
@@ -29,6 +30,7 @@ key_pressed(GntEntry *entry, const char *text, gpointer null)
 			gnt_box_set_toplevel(GNT_BOX(widget), TRUE);
 			gnt_box_set_title(GNT_BOX(widget), "Error");
 			gnt_box_add_widget(GNT_BOX(widget), gnt_label_new("Could not execute."));
+			gnt_box_add_widget(GNT_BOX(widget), gnt_label_new(g_module_error()));
 
 			gnt_widget_show(widget);
 		}

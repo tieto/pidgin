@@ -2,11 +2,18 @@
 #include <gntbox.h>
 #include <gntbutton.h>
 #include <gntlabel.h>
+#include <gnttree.h>
 
 #include <util.h>
 
 #include "gntnotify.h"
 #include "gntgaim.h"
+
+static struct
+{
+	GntWidget *window;
+	GntWidget *tree;
+} emaildialog;
 
 static void *
 gg_notify_message(GaimNotifyMsgType type, const char *title,
@@ -72,6 +79,44 @@ static void *gg_notify_formatted(const char *title, const char *primary,
 	return ret;
 }
 
+static void
+reset_email_dialog()
+{
+	emaildialog.window = NULL;
+	emaildialog.tree = NULL;
+}
+
+static void
+setup_email_dialog()
+{
+	GntWidget *box, *tree, *button;
+	if (emaildialog.window)
+		return;
+
+	emaildialog.window = box = gnt_vbox_new(FALSE);
+	gnt_box_set_toplevel(GNT_BOX(box), TRUE);
+	gnt_box_set_title(GNT_BOX(box), _("Emails"));
+	gnt_box_set_fill(GNT_BOX(box), FALSE);
+	gnt_box_set_alignment(GNT_BOX(box), GNT_ALIGN_MID);
+	gnt_box_set_pad(GNT_BOX(box), 0);
+
+	gnt_box_add_widget(GNT_BOX(box),
+			gnt_label_new_with_format(_("You have mail!"), GNT_TEXT_FLAG_BOLD));
+
+	emaildialog.tree = tree = gnt_tree_new_with_columns(3);
+	gnt_tree_set_col_width(GNT_TREE(tree), 0, 15);
+	gnt_tree_set_col_width(GNT_TREE(tree), 1, 25);
+	gnt_tree_set_col_width(GNT_TREE(tree), 2, 25);
+
+	gnt_box_add_widget(GNT_BOX(box), tree);
+
+	button = gnt_button_new(_("Close"));
+	gnt_box_add_widget(GNT_BOX(box), button);
+
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), box);
+	g_signal_connect(G_OBJECT(box), "destroy", G_CALLBACK(reset_email_dialog), NULL);
+}
+
 static void *
 gg_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		const char **subjects, const char **froms, const char **tos,
@@ -92,14 +137,16 @@ gg_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	}
 	else
 	{
-		/* XXX: Yes, yes. I know, the combined dialog thing. Maybe later. */
-		g_string_append_printf(message,
-				_("You have received a mail \"%s\""), *subjects);
-		if (froms && *froms && **froms)
-			g_string_append_printf(message, _("\nfrom %s"), *froms);
-		g_string_append_printf(message, _(" to %s (%s)"),
-				tos ? *tos : gaim_account_get_username(account),
-				gaim_account_get_protocol_name(account));
+		setup_email_dialog();
+
+		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(time(NULL)),
+				gnt_tree_create_row(GNT_TREE(emaildialog.tree),
+					tos ? *tos : gaim_account_get_username(account),
+					froms ? *froms : "[Unknown sender]",
+					*subjects),
+				NULL, NULL);
+		gnt_widget_show(emaildialog.window);
+		return NULL;
 	}
 
 	ret = gg_notify_message(GAIM_NOTIFY_MSG_INFO, _("New Mail"), _("You have mail!"), message->str);

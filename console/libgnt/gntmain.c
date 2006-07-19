@@ -258,14 +258,16 @@ show_window_list()
 	{
 		GntBox *box = GNT_BOX(iter->data);
 
-		gnt_tree_add_row_after(GNT_TREE(tree), box, box->title, NULL, NULL);
+		gnt_tree_add_row_after(GNT_TREE(tree), box,
+				gnt_tree_create_row(GNT_TREE(tree), box->title), NULL, NULL);
 		update_window_in_list(GNT_WIDGET(box));
 	}
 
 	gnt_tree_set_selected(GNT_TREE(tree), focus_list->data);
 	gnt_box_add_widget(GNT_BOX(win), tree);
 
-	gnt_widget_set_size(tree, getmaxx(stdscr) / 3, getmaxy(stdscr) / 2);
+	gnt_tree_set_col_width(GNT_TREE(tree), 0, getmaxx(stdscr) / 3);
+	gnt_widget_set_size(tree, 0, getmaxy(stdscr) / 2);
 	gnt_widget_set_position(win, getmaxx(stdscr) / 3, getmaxy(stdscr) / 4);
 
 	lock_focus_list = 1;
@@ -539,7 +541,6 @@ void gnt_init()
 		ascii_only = TRUE;
 
 	initscr();
-	start_color();
 	gnt_init_colors();
 
 	X_MIN = 0;
@@ -602,7 +603,8 @@ void gnt_screen_occupy(GntWidget *widget)
 				&& GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		{
 			gnt_tree_add_row_after(GNT_TREE(window_list.tree), widget,
-					GNT_BOX(widget)->title, NULL, NULL);
+					gnt_tree_create_row(GNT_TREE(window_list.tree), GNT_BOX(widget)->title),
+					NULL, NULL);
 			update_window_in_list(widget);
 		}
 	}
@@ -692,6 +694,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 
 void gnt_quit()
 {
+	gnt_uninit_colors();
 	endwin();
 }
 

@@ -48,11 +48,11 @@ int main()
 	gnt_box_add_widget(GNT_BOX(box), tree);
 	gnt_box_add_widget(GNT_BOX(hbox), box);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), "a", "a", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "c", "c", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "d", "d", NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "e", "e", "a", NULL);
-	gnt_tree_add_choice(GNT_TREE(tree), "b", "b", "d", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "a", gnt_tree_create_row(GNT_TREE(tree), "a"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "c", gnt_tree_create_row(GNT_TREE(tree), "c"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "d", gnt_tree_create_row(GNT_TREE(tree), "d"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "e", gnt_tree_create_row(GNT_TREE(tree), "e"), "a", NULL);
+	gnt_tree_add_choice(GNT_TREE(tree), "b", gnt_tree_create_row(GNT_TREE(tree), "b"), "d", NULL);
 
 	GNT_WIDGET_UNSET_FLAGS(hbox, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	gnt_box_set_title(GNT_BOX(hbox), "This is the title …");
