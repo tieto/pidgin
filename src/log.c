@@ -107,10 +107,10 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 		{
 			char *tmp = g_locale_from_utf8(log->tm->tm_zone, -1, NULL, NULL, NULL);
 			if (tmp != NULL)
-				log->tm->tm_zone = (const char *)tmp;
+				log->tm->tm_zone = tmp;
 			else
 				/* Just shove the UTF-8 bytes in and hope... */
-				log->tm->tm_zone = (const char *)g_strdup(log->tm->tm_zone);
+				log->tm->tm_zone = (char *)g_strdup(log->tm->tm_zone);
 		}
 #endif
 	}
