@@ -185,7 +185,6 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		char *text;
 		int len = g_utf8_strlen(col->text, -1);
 		int fl = 0;
-		gboolean ell = FALSE;
 
 		if (i == 0)
 		{
@@ -220,19 +219,28 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		if (len > tree->columns[i].width)
 		{
 			len = tree->columns[i].width;
-			ell = TRUE;
 		}
 
-		text = g_utf8_offset_to_pointer(col->text, len - fl - ell);
+		text = g_utf8_offset_to_pointer(col->text, len - fl);
 		string = g_string_append_len(string, col->text, text - col->text);
 		if (len < tree->columns[i].width)
 			g_string_append_printf(string, "%*s", tree->columns[i].width - len, "");
-		else if (ell)
-		{
-			g_string_append_unichar(string, (gunichar)2026);
-		}
 	}
 	return g_string_free(string, FALSE);
+}
+
+static void
+tree_mark_columns(GntTree *tree, int pos, int y, chtype type)
+{
+	GntWidget *widget = GNT_WIDGET(tree);
+	int i;
+	int x = pos;
+
+	for (i = 0; i < tree->ncol - 1; i++)
+	{
+		x += tree->columns[i].width;
+		mvwaddch(widget->window, y, x + i, type);
+	}
 }
 
 static void
@@ -255,8 +263,29 @@ redraw_tree(GntTree *tree)
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
+	start = 0;
+	if (tree->show_title)
+	{
+		int i;
+		int x = pos;
+
+		mvwhline(widget->window, pos + 1, pos, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
+				widget->priv.width - pos - 1);
+		
+		for (i = 0; i < tree->ncol; i++)
+		{
+			mvwprintw(widget->window, pos, x + i, tree->columns[i].title);
+			x += tree->columns[i].width;
+		}
+		if (pos)
+			tree_mark_columns(tree, pos, 0, ACS_TTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
+		tree_mark_columns(tree, pos, pos + 1, ACS_PLUS | COLOR_PAIR(GNT_COLOR_NORMAL));
+		tree_mark_columns(tree, pos, pos, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
+		start = 2;
+	}
+
 	row = tree->top;
-	for (start = pos; row && start < widget->priv.height - pos;
+	for (start = start + pos; row && start < widget->priv.height - pos;
 				start++, row = get_next(row))
 	{
 		char *str;
@@ -303,6 +332,7 @@ redraw_tree(GntTree *tree)
 		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
 		tree->bottom = row;
 		g_free(str);
+		tree_mark_columns(tree, pos, start, ACS_VLINE | attr);
 	}
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
@@ -310,6 +340,7 @@ redraw_tree(GntTree *tree)
 	{
 		mvwhline(widget->window, start, pos, ' ',
 				widget->priv.width - pos * 2);
+		tree_mark_columns(tree, pos, start, ACS_VLINE);
 		start++;
 	}
 
@@ -424,9 +455,16 @@ static void
 gnt_tree_destroy(GntWidget *widget)
 {
 	GntTree *tree = GNT_TREE(widget);
+	int i;
 
 	g_hash_table_destroy(tree->hash);
 	g_list_free(tree->list);
+
+	for (i = 0; i < tree->ncol; i++)
+	{
+		g_free(tree->columns[i].title);
+	}
+	g_free(tree->columns);
 }
 
 static void
@@ -813,6 +851,7 @@ GntWidget *gnt_tree_new_with_columns(int col)
 	{
 		tree->columns[col].width = 15;
 	}
+	tree->show_title = FALSE;
 	
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
 	gnt_widget_set_take_focus(widget, TRUE);
@@ -836,6 +875,7 @@ GntTreeRow *gnt_tree_create_row(GntTree *tree, ...)
 
 		row->columns = g_list_append(row->columns, col);
 	}
+	va_end(args);
 
 	return row;
 }
@@ -845,5 +885,24 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width)
 	g_return_if_fail(col < tree->ncol);
 
 	tree->columns[col].width = width;
+}
+
+void gnt_tree_set_column_titles(GntTree *tree, ...)
+{
+	int i;
+	va_list args;
+
+	va_start(args, tree);
+	for (i = 0; i < tree->ncol; i++)
+	{
+		const char *title = va_arg(args, const char *);
+		tree->columns[i].title = g_strdup(title);
+	}
+	va_end(args);
+}
+
+void gnt_tree_set_show_title(GntTree *tree, gboolean set)
+{
+	tree->show_title = set;
 }
 

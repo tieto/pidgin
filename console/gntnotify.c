@@ -104,6 +104,8 @@ setup_email_dialog()
 			gnt_label_new_with_format(_("You have mail!"), GNT_TEXT_FLAG_BOLD));
 
 	emaildialog.tree = tree = gnt_tree_new_with_columns(3);
+	gnt_tree_set_column_titles(GNT_TREE(tree), _("Account"), _("From"), _("Subject"));
+	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 15);
 	gnt_tree_set_col_width(GNT_TREE(tree), 1, 25);
 	gnt_tree_set_col_width(GNT_TREE(tree), 2, 25);
@@ -141,7 +143,7 @@ gg_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 
 		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(time(NULL)),
 				gnt_tree_create_row(GNT_TREE(emaildialog.tree),
-					tos ? *tos : gaim_account_get_username(account),
+					tos ? *tos : gaim_account_get_username(account), /* XXX: Perhaps add the prpl-name */
 					froms ? *froms : "[Unknown sender]",
 					*subjects),
 				NULL, NULL);

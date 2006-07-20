@@ -37,14 +37,15 @@ struct _GnTree
 	GntTreeRow *root;       /* The root of all evil */
 	
 	GList *list;            /* List of GntTreeRow s */
-	GHashTable *hash;       /* XXX: We may need this for quickly referencing the rows */
+	GHashTable *hash;       /* We need this for quickly referencing the rows */
 
 	int ncol;               /* No. of columns */
 	struct _GntTreeColInfo
 	{
 		int width;
-		int *name;
+		char *title;
 	} *columns;             /* Would a GList be better? */
+	gboolean show_title;
 };
 
 struct _GnTreeClass
@@ -99,6 +100,10 @@ void gnt_tree_set_selected(GntTree *tree , void *key);
 GntTreeRow *gnt_tree_create_row(GntTree *tree, ...);
 
 void gnt_tree_set_col_width(GntTree *tree, int col, int width);
+
+void gnt_tree_set_column_titles(GntTree *tree, ...);
+
+void gnt_tree_set_show_title(GntTree *tree, gboolean set);
 
 G_END_DECLS
 

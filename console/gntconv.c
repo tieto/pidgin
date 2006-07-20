@@ -245,11 +245,12 @@ gg_write_im(GaimConversation *conv, const char *who, const char *message,
 {
 	if (flags & GAIM_MESSAGE_SEND)
 	{
-		who = gaim_connection_get_display_name(conv->account->gc);
+		GaimAccount *account = gaim_conversation_get_account(conv);
+		who = gaim_connection_get_display_name(gaim_account_get_connection(account));
 		if (!who)
-			who = gaim_account_get_alias(conv->account);
+			who = gaim_account_get_alias(account);
 		if (!who)
-			who = gaim_account_get_username(conv->account);
+			who = gaim_account_get_username(account);
 	}
 	else if (flags & GAIM_MESSAGE_RECV)
 		who = gaim_conversation_get_name(conv);
@@ -273,20 +274,48 @@ gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
 }
 
 static void
-gg_chat_add_users(GaimConversation *conv, GList *users, GList *flags, GList *aliases, gboolean new_arrivals)
-{}
+gg_chat_add_users(GaimConversation *conv, GList *users, gboolean new_arrivals)
+{
+	if (!new_arrivals)
+	{
+		/* Print the list of users in the room */
+		GString *string = g_string_new(_("List of users:\n"));
+		GList *iter;
+
+		for (iter = users; iter; iter = iter->next)
+		{
+			GaimConvChatBuddy *cbuddy = iter->data;
+			char *str;
+
+			if ((str = cbuddy->alias) == NULL)
+				str = cbuddy->name;
+			g_string_append_printf(string, "[ %s ]", str);
+		}
+
+		gaim_conversation_write(conv, NULL, string->str,
+				GAIM_MESSAGE_SYSTEM, time(NULL));
+		g_string_free(string, TRUE);
+	}
+	/* XXX: Add the names for string completion */
+}
 
 static void
 gg_chat_rename_user(GaimConversation *conv, const char *old, const char *new_n, const char *new_a)
-{}
+{
+	/* XXX: Update the name for string completion */
+}
 
 static void
 gg_chat_remove_user(GaimConversation *conv, GList *list)
-{}
+{
+	/* XXX: Remove the name from string completion */
+}
 
 static void
 gg_chat_update_user(GaimConversation *conv, const char *user)
-{}
+{
+	/* XXX: This probably will not require updating the string completion  */
+}
 
 static GaimConversationUiOps conv_ui_ops = 
 {
@@ -309,9 +338,9 @@ static GaimConversationUiOps conv_ui_ops =
 static void
 destroy_ggconv(gpointer data)
 {
-	GGConv *conv = data;
-	gnt_widget_destroy(conv->window);
-	g_free(conv);
+	GGConv *ggconv = data;
+	gnt_widget_destroy(ggconv->window);
+	g_free(ggconv);
 }
 
 GaimConversationUiOps *gg_conv_get_ui_ops()
@@ -319,10 +348,132 @@ GaimConversationUiOps *gg_conv_get_ui_ops()
 	return &conv_ui_ops;
 }
 
+/* Xerox */
+static GaimCmdRet
+say_command_cb(GaimConversation *conv,
+              const char *cmd, char **args, char **error, void *data)
+{
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+		gaim_conv_im_send(GAIM_CONV_IM(conv), args[0]);
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		gaim_conv_chat_send(GAIM_CONV_CHAT(conv), args[0]);
+
+	return GAIM_CMD_RET_OK;
+}
+
+/* Xerox */
+static GaimCmdRet
+me_command_cb(GaimConversation *conv,
+              const char *cmd, char **args, char **error, void *data)
+{
+	char *tmp;
+
+	tmp = g_strdup_printf("/me %s", args[0]);
+
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+		gaim_conv_im_send(GAIM_CONV_IM(conv), tmp);
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		gaim_conv_chat_send(GAIM_CONV_CHAT(conv), tmp);
+
+	g_free(tmp);
+	return GAIM_CMD_RET_OK;
+}
+
+/* Xerox */
+static GaimCmdRet
+debug_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	char *tmp, *markup;
+	GaimCmdStatus status;
+
+	if (!g_ascii_strcasecmp(args[0], "version")) {
+		tmp = g_strdup_printf("me is using %s.", VERSION);
+		markup = g_markup_escape_text(tmp, -1);
+
+		status = gaim_cmd_do_command(conv, tmp, markup, error);
+
+		g_free(tmp);
+		g_free(markup);
+		return status;
+	} else {
+		gaim_conversation_write(conv, NULL, _("Supported debug options are:  version"),
+		                        GAIM_MESSAGE_NO_LOG|GAIM_MESSAGE_ERROR, time(NULL));
+		return GAIM_CMD_STATUS_OK;
+	}
+}
+
+/* Xerox */
+static GaimCmdRet
+clear_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	GGConv *ggconv = conv->ui_data;
+	gnt_text_view_clear(GNT_TEXT_VIEW(ggconv->tv));
+	return GAIM_CMD_STATUS_OK;
+}
+
+/* Xerox */
+static GaimCmdRet
+help_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	GList *l, *text;
+	GString *s;
+
+	if (args[0] != NULL) {
+		s = g_string_new("");
+		text = gaim_cmd_help(conv, args[0]);
+
+		if (text) {
+			for (l = text; l; l = l->next)
+				if (l->next)
+					g_string_append_printf(s, "%s\n", (char *)l->data);
+				else
+					g_string_append_printf(s, "%s", (char *)l->data);
+		} else {
+			g_string_append(s, _("No such command (in this context)."));
+		}
+	} else {
+		s = g_string_new(_("Use \"/help &lt;command&gt;\" for help on a specific command.\n"
+											 "The following commands are available in this context:\n"));
+
+		text = gaim_cmd_list(conv);
+		for (l = text; l; l = l->next)
+			if (l->next)
+				g_string_append_printf(s, "%s, ", (char *)l->data);
+			else
+				g_string_append_printf(s, "%s.", (char *)l->data);
+		g_list_free(text);
+	}
+
+	gaim_conversation_write(conv, NULL, s->str, GAIM_MESSAGE_NO_LOG, time(NULL));
+	g_string_free(s, TRUE);
+
+	return GAIM_CMD_STATUS_OK;
+}
+
 
 void gg_conversation_init()
 {
 	ggconvs = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, destroy_ggconv);
+
+	/* Xerox */
+	gaim_cmd_register("say", "S", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  say_command_cb, _("say &lt;message&gt;:  Send a message normally as if you weren't using a command."), NULL);
+	gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  me_command_cb, _("me &lt;action&gt;:  Send an IRC style action to a buddy or chat."), NULL);
+	gaim_cmd_register("debug", "w", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  debug_command_cb, _("debug &lt;option&gt;:  Send various debug information to the current conversation."), NULL);
+	gaim_cmd_register("clear", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  clear_command_cb, _("clear: Clears the conversation scrollback."), NULL);
+	gaim_cmd_register("help", "w", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
+	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
 }
 
 void gg_conversation_uninit()

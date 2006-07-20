@@ -26,7 +26,9 @@ int main()
 	gnt_widget_set_name(hbox, "hbox");
 	gnt_widget_set_name(box2, "box2");
 
-	tree = gnt_tree_new();
+	tree = gnt_tree_new_with_columns(3);
+	gnt_tree_set_column_titles(GNT_TREE(tree), "12345678901234567890", "column 2", "column3");
+	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_widget_set_name(tree, "tree");
 	gnt_box_add_widget(GNT_BOX(hbox), tree);
 
@@ -43,19 +45,21 @@ int main()
 	gnt_widget_set_position(box2, 35, 15);
 	gnt_widget_show(box2);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), "a", gnt_tree_create_row(GNT_TREE(tree), "a"), NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "c", gnt_tree_create_row(GNT_TREE(tree), "c"), NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "d", gnt_tree_create_row(GNT_TREE(tree), "d"), NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "e", gnt_tree_create_row(GNT_TREE(tree), "e"), "a", NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "b", gnt_tree_create_row(GNT_TREE(tree), "b"), "d", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "a",
+			gnt_tree_create_row(GNT_TREE(tree), "alaskdjfkashfashfah kfalkdhflsiafhlasf", " long text", "a2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "c",
+			gnt_tree_create_row(GNT_TREE(tree), "casdgertqhyeqgasfeytwfga fg arf  agfwa ", " long text", "a2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "d", gnt_tree_create_row(GNT_TREE(tree), "d", " long text", "a2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "e", gnt_tree_create_row(GNT_TREE(tree), "e", " long text", "a2"), "a", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "b", gnt_tree_create_row(GNT_TREE(tree), "b", "this is", "a2"), "d", NULL);
 
-	gnt_tree_add_choice(GNT_TREE(tree), "1", gnt_tree_create_row(GNT_TREE(tree), "1"), NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "2", gnt_tree_create_row(GNT_TREE(tree), "2"), NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "3", gnt_tree_create_row(GNT_TREE(tree), "3"), NULL, NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "4", gnt_tree_create_row(GNT_TREE(tree), "4"), "a", NULL);
-	gnt_tree_add_row_after(GNT_TREE(tree), "5", gnt_tree_create_row(GNT_TREE(tree), "5"), "d", NULL);
+	gnt_tree_add_choice(GNT_TREE(tree), "1", gnt_tree_create_row(GNT_TREE(tree), "1", " long text", "a2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "2", gnt_tree_create_row(GNT_TREE(tree), "2", " long text", "a2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "3", gnt_tree_create_row(GNT_TREE(tree), "3", " long text", "a2"), NULL, NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "4", gnt_tree_create_row(GNT_TREE(tree), "4", " long text", "a2"), "a", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "5", gnt_tree_create_row(GNT_TREE(tree), "5", " long text", "a2"), "d", NULL);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6"), "4", NULL);
+	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6", " long text", "a2"), "4", NULL);
 
 	gnt_tree_set_row_flags(GNT_TREE(tree), "e", GNT_TEXT_FLAG_DIM);
 

@@ -271,3 +271,18 @@ chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags)
 	return fl;
 }
 
+void gnt_text_view_clear(GntTextView *view)
+{
+	GntTextLine *line;
+
+	g_list_foreach(view->list, free_text_line, NULL);
+	g_list_free(view->list);
+	view->list = NULL;
+
+	line = g_new0(GntTextLine, 1);
+	view->list = g_list_append(view->list, line);
+
+	if (GNT_WIDGET(view)->window)
+		gnt_widget_draw(GNT_WIDGET(view));
+}
+

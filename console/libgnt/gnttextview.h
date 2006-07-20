@@ -67,6 +67,8 @@ void gnt_text_view_next_line(GntTextView *view);
 
 chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags);
 
+void gnt_text_view_clear(GntTextView *view);
+
 G_END_DECLS
 
 #endif /* GNT_TEXT_VIEW_H */
