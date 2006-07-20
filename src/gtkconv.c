@@ -417,6 +417,7 @@ help_command_cb(GaimConversation *conv,
 				g_string_append_printf(s, "%s, ", (char *)l->data);
 			else
 				g_string_append_printf(s, "%s.", (char *)l->data);
+		g_list_free(text);
 	}
 
 	gaim_conversation_write(conv, NULL, s->str, GAIM_MESSAGE_NO_LOG, time(NULL));
