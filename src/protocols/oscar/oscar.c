@@ -954,7 +954,7 @@ connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
 	new_conn_data = data;
 	gc = new_conn_data->gc;
 
-	if (!g_list_find(gaim_connections_get_all(), gc))
+	if (!GAIM_CONNECTION_IS_VALID(gc))
 	{
 		if (source >= 0)
 			close(source);
@@ -2182,12 +2182,10 @@ static void
 gaim_auth_dontrequest(struct name_data *data)
 {
 	GaimConnection *gc = data->gc;
+	GaimBuddy *b = gaim_find_buddy(gaim_connection_get_account(gc), data->name);
 
-	if (g_list_find(gaim_connections_get_all(), gc)) {
-		/* Remove from local list */
-		GaimBuddy *b = gaim_find_buddy(gaim_connection_get_account(gc), data->name);
-		gaim_blist_remove_buddy(b);
-	}
+	/* Remove from local list */
+	gaim_blist_remove_buddy(b);
 
 	oscar_free_name_data(data);
 }
@@ -2240,11 +2238,9 @@ static void
 gaim_auth_grant(struct name_data *data)
 {
 	GaimConnection *gc = data->gc;
+	OscarData *od = gc->proto_data;
 
-	if (g_list_find(gaim_connections_get_all(), gc)) {
-		OscarData *od = gc->proto_data;
-		aim_ssi_sendauthreply(od, data->name, 0x01, NULL);
-	}
+	aim_ssi_sendauthreply(od, data->name, 0x01, NULL);
 
 	oscar_free_name_data(data);
 }
@@ -2254,11 +2250,9 @@ static void
 gaim_auth_dontgrant(struct name_data *data, char *msg)
 {
 	GaimConnection *gc = data->gc;
+	OscarData *od = gc->proto_data;
 
-	if (g_list_find(gaim_connections_get_all(), gc)) {
-		OscarData *od = gc->proto_data;
-		aim_ssi_sendauthreply(od, data->name, 0x00, msg ? msg : _("No reason given."));
-	}
+	aim_ssi_sendauthreply(od, data->name, 0x00, msg ? msg : _("No reason given."));
 }
 
 static void
@@ -2277,9 +2271,7 @@ gaim_icq_buddyadd(struct name_data *data)
 {
 	GaimConnection *gc = data->gc;
 
-	if (g_list_find(gaim_connections_get_all(), gc)) {
-		gaim_blist_request_add_buddy(gaim_connection_get_account(gc), data->name, NULL, data->nick);
-	}
+	gaim_blist_request_add_buddy(gaim_connection_get_account(gc), data->name, NULL, data->nick);
 
 	oscar_free_name_data(data);
 }
@@ -2780,7 +2772,11 @@ static int gaim_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		} break;
 
 		default: {
-			gaim_debug_error("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
+			/*
+			 * It looks like iChat sometimes sends typing notification
+			 * with type1=0x0001 and type2=0x000f.  Not sure why.
+			 */
+			gaim_debug_info("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
 		} break;
 	}
 

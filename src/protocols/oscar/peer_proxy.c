@@ -337,7 +337,7 @@ peer_proxy_connection_established_cb(gpointer data, gint source, GaimInputCondit
 	conn = new_conn_data->conn;
 	g_free(new_conn_data);
 
-	if (!g_list_find(gaim_connections_get_all(), gc))
+	if (!GAIM_CONNECTION_IS_VALID(gc))
 	{
 		if (source >= 0)
 			close(source);

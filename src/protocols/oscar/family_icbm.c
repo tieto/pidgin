@@ -1718,9 +1718,9 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	return ret;
 }
 
-static void incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
+static void
+incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
-
 	/*
 	 * This goes like this...
 	 *
@@ -1740,7 +1740,8 @@ static void incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_mo
 	 *     ...
 	 *   ...
 	 */
-	while (servdata && byte_stream_empty(servdata)) {
+	while (byte_stream_empty(servdata))
+	{
 		guint16 gnlen, numb;
 		int i;
 		char *gn;
@@ -1767,51 +1768,49 @@ static void incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_mo
 	return;
 }
 
-static void incomingim_ch2_buddyicon_free(OscarData *od, IcbmArgsCh2 *args)
+static void
+incomingim_ch2_buddyicon_free(OscarData *od, IcbmArgsCh2 *args)
 {
-
 	free(args->info.icon.icon);
 
 	return;
 }
 
-static void incomingim_ch2_buddyicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
+static void
+incomingim_ch2_buddyicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
-
-	if (servdata) {
-		args->info.icon.checksum = byte_stream_get32(servdata);
-		args->info.icon.length = byte_stream_get32(servdata);
-		args->info.icon.timestamp = byte_stream_get32(servdata);
-		args->info.icon.icon = byte_stream_getraw(servdata, args->info.icon.length);
-	}
+	args->info.icon.checksum = byte_stream_get32(servdata);
+	args->info.icon.length = byte_stream_get32(servdata);
+	args->info.icon.timestamp = byte_stream_get32(servdata);
+	args->info.icon.icon = byte_stream_getraw(servdata, args->info.icon.length);
 
 	args->destructor = (void *)incomingim_ch2_buddyicon_free;
 
 	return;
 }
 
-static void incomingim_ch2_chat_free(OscarData *od, IcbmArgsCh2 *args)
+static void
+incomingim_ch2_chat_free(OscarData *od, IcbmArgsCh2 *args)
 {
-
 	/* XXX - aim_chat_roominfo_free() */
 	free(args->info.chat.roominfo.name);
 
 	return;
 }
 
-static void incomingim_ch2_chat(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
+static void
+incomingim_ch2_chat(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
-
 	/*
 	 * Chat room info.
 	 */
-	if (servdata)
-		aim_chat_readroominfo(servdata, &args->info.chat.roominfo);
+	aim_chat_readroominfo(servdata, &args->info.chat.roominfo);
 
 	args->destructor = (void *)incomingim_ch2_chat_free;
 }
 
-static void incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
+static void
+incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
 {
 	free((char *)args->info.rtfmsg.rtfmsg);
 }
@@ -1824,12 +1823,13 @@ static void incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
  * Note that this is all little-endian.  Cringe.
  *
  */
-static void incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
+static void
+incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
 	guint16 hdrlen, anslen, msglen;
 
-	if (servdata == NULL)
-		/* Odd...  Oh well. */
+	if (byte_stream_empty(servdata) < 24)
+		/* Someone sent us a short server relay ICBM.  Weird.  (Maybe?) */
 		return;
 
 	hdrlen = byte_stream_getle16(servdata);
@@ -1855,48 +1855,47 @@ static void incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, a
 	args->destructor = (void *)incomingim_ch2_icqserverrelay_free;
 }
 
-static void incomingim_ch2_sendfile_free(OscarData *od, IcbmArgsCh2 *args)
+static void
+incomingim_ch2_sendfile_free(OscarData *od, IcbmArgsCh2 *args)
 {
 	free(args->info.sendfile.filename);
 }
 
-static void incomingim_ch2_sendfile(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
+/* Someone is sending us a file */
+static void
+incomingim_ch2_sendfile(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, aim_userinfo_t *userinfo, IcbmArgsCh2 *args, ByteStream *servdata)
 {
+	int flen;
 
 	args->destructor = (void *)incomingim_ch2_sendfile_free;
 
 	/* Maybe there is a better way to tell what kind of sendfile
 	 * this is?  Maybe TLV t(000a)? */
-	if (servdata) { /* Someone is sending us a file */
-		int flen;
 
-		/* subtype is one of AIM_OFT_SUBTYPE_* */
-		args->info.sendfile.subtype = byte_stream_get16(servdata);
-		args->info.sendfile.totfiles = byte_stream_get16(servdata);
-		args->info.sendfile.totsize = byte_stream_get32(servdata);
+	/* subtype is one of AIM_OFT_SUBTYPE_* */
+	args->info.sendfile.subtype = byte_stream_get16(servdata);
+	args->info.sendfile.totfiles = byte_stream_get16(servdata);
+	args->info.sendfile.totsize = byte_stream_get32(servdata);
 
-		/*
-		 * I hope to God I'm right when I guess that there is a
-		 * 32 char max filename length for single files.  I think
-		 * OFT tends to do that.  Gotta love inconsistency.  I saw
-		 * a 26 byte filename?
-		 */
-		/* AAA - create an byte_stream_getnullstr function (don't anymore)(maybe) */
-		/* Use an inelegant way of getting the null-terminated filename,
-		 * since there's no easy bstream routine. */
-		for (flen = 0; byte_stream_get8(servdata); flen++);
-		byte_stream_advance(servdata, -flen -1);
-		args->info.sendfile.filename = byte_stream_getstr(servdata, flen);
+	/*
+	 * I hope to God I'm right when I guess that there is a
+	 * 32 char max filename length for single files.  I think
+	 * OFT tends to do that.  Gotta love inconsistency.  I saw
+	 * a 26 byte filename?
+	 */
+	/* AAA - create an byte_stream_getnullstr function (don't anymore)(maybe) */
+	/* Use an inelegant way of getting the null-terminated filename,
+	 * since there's no easy bstream routine. */
+	for (flen = 0; byte_stream_get8(servdata); flen++);
+	byte_stream_advance(servdata, -flen -1);
+	args->info.sendfile.filename = byte_stream_getstr(servdata, flen);
 
-		/* There is sometimes more after the null-terminated filename,
-		 * but I'm unsure of its format. */
-		/* I don't believe him. */
-		/* There is sometimes a null byte inside a unicode filename,
-		 * but as far as I can tell the filename is the last
-		 * piece of data that will be in this message. --Jonathan */
-	}
-
-	return;
+	/* There is sometimes more after the null-terminated filename,
+	 * but I'm unsure of its format. */
+	/* I don't believe him. */
+	/* There is sometimes a null byte inside a unicode filename,
+	 * but as far as I can tell the filename is the last
+	 * piece of data that will be in this message. --Jonathan */
 }
 
 typedef void (*ch2_args_destructor_t)(OscarData *od, IcbmArgsCh2 *args);
@@ -2071,23 +2070,23 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 		byte_stream_init(&sdbs, servdatatlv->value, servdatatlv->length);
 		sdbsptr = &sdbs;
-	}
 
-	/*
-	 * The rest of the handling depends on what type it is.
-	 *
-	 * Not all of them have special handling (yet).
-	 */
-	if (args.type & OSCAR_CAPABILITY_BUDDYICON)
-		incomingim_ch2_buddyicon(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
-	else if (args.type & OSCAR_CAPABILITY_SENDBUDDYLIST)
-		incomingim_ch2_buddylist(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
-	else if (args.type & OSCAR_CAPABILITY_CHAT)
-		incomingim_ch2_chat(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
-	else if (args.type & OSCAR_CAPABILITY_ICQSERVERRELAY)
-		incomingim_ch2_icqserverrelay(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
-	else if (args.type & OSCAR_CAPABILITY_SENDFILE)
-		incomingim_ch2_sendfile(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
+		/*
+		 * The rest of the handling depends on what type it is.
+		 *
+		 * Not all of them have special handling (yet).
+		 */
+		if (args.type & OSCAR_CAPABILITY_BUDDYICON)
+			incomingim_ch2_buddyicon(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
+		else if (args.type & OSCAR_CAPABILITY_SENDBUDDYLIST)
+			incomingim_ch2_buddylist(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
+		else if (args.type & OSCAR_CAPABILITY_CHAT)
+			incomingim_ch2_chat(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
+		else if (args.type & OSCAR_CAPABILITY_ICQSERVERRELAY)
+			incomingim_ch2_icqserverrelay(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
+		else if (args.type & OSCAR_CAPABILITY_SENDFILE)
+			incomingim_ch2_sendfile(od, conn, mod, frame, snac, userinfo, &args, sdbsptr);
+	}
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, channel, userinfo, &args);

@@ -152,27 +152,23 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 	const char *dfile;
 
 	g_return_if_fail(gc != NULL);
-	sg = gc->proto_data;
+
+	if (!GAIM_CONNECTION_IS_VALID(gc)) {
+		close(source);
+		return;
+	}
 
 	if (source < 0) {
 		gaim_connection_error(gc, _("Connection failed"));
 		return;
 	}
 
+	sg = gc->proto_data;
 	if (sg == NULL)
 		return;
 
 	client = sg->client;
 	account = sg->account;
-
-	if (!g_list_find(gaim_connections_get_all(), gc)) {
-		close(source);
-		g_source_remove(sg->scheduler);
-		silc_client_stop(sg->client);
-		silc_client_free(sg->client);
-		silc_free(sg);
-		return;
-	}
 
 	/* Get session detachment data, if available */
 	memset(&params, 0, sizeof(params));

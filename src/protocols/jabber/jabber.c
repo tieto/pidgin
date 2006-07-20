@@ -344,7 +344,8 @@ jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
 	int len;
 	static char buf[4096];
 
-	if(!g_list_find(gaim_connections_get_all(), gc)) {
+	/* TODO: It should be possible to make this check unnecessary */
+	if(!GAIM_CONNECTION_IS_VALID(gc)) {
 		gaim_ssl_close(gsc);
 		return;
 	}

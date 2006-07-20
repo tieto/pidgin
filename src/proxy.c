@@ -86,9 +86,9 @@ gaim_proxy_info_destroy(GaimProxyInfo *info)
 {
 	g_return_if_fail(info != NULL);
 
-	if (info->host     != NULL) g_free(info->host);
-	if (info->username != NULL) g_free(info->username);
-	if (info->password != NULL) g_free(info->password);
+	g_free(info->host);
+	g_free(info->username);
+	g_free(info->password);
 
 	g_free(info);
 }
@@ -106,8 +106,7 @@ gaim_proxy_info_set_host(GaimProxyInfo *info, const char *host)
 {
 	g_return_if_fail(info != NULL);
 
-	if (info->host != NULL)
-		g_free(info->host);
+	g_free(info->host);
 
 	info->host = (host == NULL ? NULL : g_strdup(host));
 }
@@ -125,8 +124,7 @@ gaim_proxy_info_set_username(GaimProxyInfo *info, const char *username)
 {
 	g_return_if_fail(info != NULL);
 
-	if (info->username != NULL)
-		g_free(info->username);
+	g_free(info->username);
 
 	info->username = (username == NULL ? NULL : g_strdup(username));
 }
@@ -136,8 +134,7 @@ gaim_proxy_info_set_password(GaimProxyInfo *info, const char *password)
 {
 	g_return_if_fail(info != NULL);
 
-	if (info->password != NULL)
-		g_free(info->password);
+	g_free(info->password);
 
 	info->password = (password == NULL ? NULL : g_strdup(password));
 }
@@ -303,7 +300,7 @@ static void
 trap_gdb_bug()
 {
 	const char *message =
-		"Gaim's DNS child got a SIGTRAP signal. \n"
+		"Gaim's DNS child got a SIGTRAP signal.\n"
 		"This can be caused by trying to run gaim inside gdb.\n"
 		"There is a known gdb bug which prevents this.  Supposedly gaim\n"
 		"should have detected you were using gdb and used an ugly hack,\n"
@@ -2319,6 +2316,12 @@ gaim_proxy_get_setup(GaimAccount *account)
 	return gpi;
 }
 
+/*
+ * TODO: It would be really good if this returned some sort of handle
+ *       that we could use to cancel the connection.  As it is now,
+ *       each callback has to check to make sure gc is still valid.
+ *       And that is ugly.
+ */
 int
 gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 				   GaimInputFunction func, gpointer data)

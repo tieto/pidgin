@@ -271,7 +271,7 @@ GList *gaim_connections_get_connecting(void);
  *
  * @return @c TRUE if gc is valid.
  */
-#define GAIM_CONNECTION_IS_VALID(gc) (g_list_find(gaim_connections_get_all(), (gc)) || g_list_find(gaim_connections_get_connecting(), (gc)))
+#define GAIM_CONNECTION_IS_VALID(gc) (g_list_find(gaim_connections_get_all(), (gc)))
 
 /*@}*/
 

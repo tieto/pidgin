@@ -810,6 +810,7 @@ static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pk
 	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
 
+	/* TODO: Does this really need to be escaped?  It seems like it doesn't. */
 	escmsg = g_markup_escape_text(msg, -1);
 
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
@@ -2132,6 +2133,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_PICTURE_UPLOAD:
 		yahoo_process_picture_upload(gc, pkt);
 		break;
+	case YAHOO_SERVICE_AVATAR_UPDATE:
+		yahoo_process_avatar_update(gc, pkt);
+		break;
 	case YAHOO_SERVICE_AUDIBLE:
 		yahoo_process_audible(gc, pkt);
 		break;
@@ -2234,7 +2238,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	if (!g_list_find(gaim_connections_get_all(), gc)) {
+	if (!GAIM_CONNECTION_IS_VALID(gc)) {
 		close(source);
 		return;
 	}
@@ -2261,7 +2265,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, GaimInputConditi
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	if (!g_list_find(gaim_connections_get_all(), gc)) {
+	if (!GAIM_CONNECTION_IS_VALID(gc)) {
 		close(source);
 		return;
 	}

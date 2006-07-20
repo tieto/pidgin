@@ -481,7 +481,7 @@ peer_connection_established_cb(gpointer data, gint source, GaimInputCondition co
 	conn = new_conn_data->conn;
 	g_free(new_conn_data);
 
-	if (!g_list_find(gaim_connections_get_all(), gc))
+	if (!GAIM_CONNECTION_IS_VALID(gc))
 	{
 		if (source >= 0)
 			close(source);
@@ -573,7 +573,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	conn = new_conn_data->conn;
 	g_free(new_conn_data);
 
-	if (!g_list_find(gaim_connections_get_all(), gc))
+	if (!GAIM_CONNECTION_IS_VALID(gc))
 	{
 		if (listenerfd != -1)
 			close(listenerfd);

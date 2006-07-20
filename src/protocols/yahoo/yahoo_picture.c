@@ -225,6 +225,50 @@ void yahoo_process_picture_upload(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+void yahoo_process_avatar_update(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	char *who = NULL;
+	int avatar = 0;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 4:
+			who = pair->value;
+			break;
+		case 5:
+			/* us */
+			break;
+		case 206:
+			/*
+			 * 0 - No icon or avatar
+			 * 1 - Using an avatar
+			 * 2 - Using an icon
+			 */
+			avatar = strtol(pair->value, NULL, 10);
+			break;
+		}
+		l = l->next;
+	}
+
+	if (who) {
+		if (avatar == 2)
+			yahoo_send_picture_request(gc, who);
+		else if ((avatar == 0) || (avatar == 1)) {
+			GaimBuddy *b = gaim_find_buddy(gc->account, who);
+			YahooFriend *f;
+			gaim_buddy_icons_set_for_user(gc->account, who, NULL, 0);
+			if (b)
+				gaim_blist_node_remove_setting((GaimBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+			if ((f = yahoo_friend_find(gc, who)))
+				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
+			gaim_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
+		}
+	}
+}
+
 void yahoo_send_picture_info(GaimConnection *gc, const char *who)
 {
 	struct yahoo_data *yd = gc->proto_data;

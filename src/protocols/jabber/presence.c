@@ -182,32 +182,30 @@ struct _jabber_add_permit {
 
 static void authorize_add_cb(struct _jabber_add_permit *jap)
 {
-	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
-		GaimBuddy *buddy = NULL;
+	GaimBuddy *buddy = NULL;
 
-		jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
-				"subscribed");
+	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
+			"subscribed");
 
-		buddy = gaim_find_buddy(jap->gc->account, jap->who);
+	buddy = gaim_find_buddy(jap->gc->account, jap->who);
 
-		if (buddy) {
-			JabberBuddy *jb = NULL;
+	if (buddy) {
+		JabberBuddy *jb = NULL;
 
-			jb = jabber_buddy_find(jap->js, jap->who, TRUE);
+		jb = jabber_buddy_find(jap->js, jap->who, TRUE);
 
-			if ((jb->subscription & JABBER_SUB_TO) == 0) {
-				gaim_account_request_add(jap->gc->account,
+		if ((jb->subscription & JABBER_SUB_TO) == 0) {
+			gaim_account_request_add(jap->gc->account,
 				                         jap->who, NULL,
-				                         NULL, NULL);
-			} else {
-				gaim_account_notify_added(jap->gc->account,
-				                          jap->who, NULL,
-				                          NULL, NULL);
-			}
+			                         NULL, NULL);
 		} else {
-			gaim_account_request_add(jap->gc->account, jap->who,
-			                         NULL, NULL, NULL);
+			gaim_account_notify_added(jap->gc->account,
+			                          jap->who, NULL,
+			                          NULL, NULL);
 		}
+	} else {
+		gaim_account_request_add(jap->gc->account, jap->who,
+		                         NULL, NULL, NULL);
 	}
 
 	g_free(jap->who);
@@ -216,10 +214,8 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 
 static void deny_add_cb(struct _jabber_add_permit *jap)
 {
-	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
-		jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
-				"unsubscribed");
-	}
+	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
+			"unsubscribed");
 
 	g_free(jap->who);
 	g_free(jap);

@@ -35,6 +35,8 @@ void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_picture_checksum(GaimConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_picture_upload(GaimConnection *gc, struct yahoo_packet *pkt);
 
+void yahoo_process_avatar_update(GaimConnection *gc, struct yahoo_packet *pkt);
+
 void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile);
 void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_data *d);
 void yahoo_buddy_icon_upload_data_free(struct yahoo_buddy_icon_upload_data *d);

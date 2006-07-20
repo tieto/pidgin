@@ -343,11 +343,12 @@ time_t gaim_str_to_time(const char *timestamp, gboolean utc,
  * in a GData hash table. The names of the attributes are lower-cased
  * in the hash table, and the name of the tag is case insensitive.
  *
- * @param needle	the name of the tag
- * @param haystack	the null-delimited string to search in
- * @param start		a pointer to the start of the tag if found
- * @param end		a pointer to the end of the tag if found
- * @param attributes	the attributes, if the tag was found
+ * @param needle	  The name of the tag
+ * @param haystack	  The null-delimited string to search in
+ * @param start		  A pointer to the start of the tag if found
+ * @param end		  A pointer to the end of the tag if found
+ * @param attributes  The attributes, if the tag was found.  This should
+ *                    be freed with g_datalist_clear().
  * @return TRUE if the tag was found
  */
 gboolean gaim_markup_find_tag(const char *needle, const char *haystack,

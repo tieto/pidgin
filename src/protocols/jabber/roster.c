@@ -104,7 +104,6 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 		gaim_blist_alias_buddy(b, alias);
 
-
 		/* If we just learned about ourself, then fake our status,
 		 * because we won't be receiving a normal presence message
 		 * about ourself. */
@@ -116,8 +115,6 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 			status = gaim_presence_get_active_status(gpresence);
 			jabber_presence_fake_to_self(js, status);
 		}
-
-
 
 		g_free(g2->data);
 		g2 = g_slist_delete_link(g2, g2);

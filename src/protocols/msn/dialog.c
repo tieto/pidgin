@@ -57,19 +57,17 @@ msn_complete_sync_issue(MsnAddRemData *data)
 static void
 msn_add_cb(MsnAddRemData *data)
 {
+	MsnSession *session;
+	MsnUserList *userlist;
+
 	msn_complete_sync_issue(data);
 
-	if (g_list_find(gaim_connections_get_all(), data->gc) != NULL)
-	{
-		MsnSession *session = data->gc->proto_data;
-		MsnUserList *userlist = session->userlist;
+	session = data->gc->proto_data;
+	userlist = session->userlist;
 
-		msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
-	}
+	msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
 
-	if (data->group != NULL)
-		g_free(data->group);
-
+	g_free(data->group);
 	g_free(data->who);
 	g_free(data);
 }
@@ -77,19 +75,17 @@ msn_add_cb(MsnAddRemData *data)
 static void
 msn_rem_cb(MsnAddRemData *data)
 {
+	MsnSession *session;
+	MsnUserList *userlist;
+
 	msn_complete_sync_issue(data);
 
-	if (g_list_find(gaim_connections_get_all(), data->gc) != NULL)
-	{
-		MsnSession *session = data->gc->proto_data;
-		MsnUserList *userlist = session->userlist;
+	session = data->gc->proto_data;
+	userlist = session->userlist;
 
-		msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
-	}
+	msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
 
-	if (data->group != NULL)
-		g_free(data->group);
-
+	g_free(data->group);
 	g_free(data->who);
 	g_free(data);
 }

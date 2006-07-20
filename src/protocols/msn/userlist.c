@@ -40,23 +40,20 @@ typedef struct
 static void
 msn_accept_add_cb(MsnPermitAdd *pa)
 {
-	if (g_list_find(gaim_connections_get_all(), pa->gc) != NULL)
-	{
-		MsnSession *session = pa->gc->proto_data;
-		MsnUserList *userlist = session->userlist;
-		GaimBuddy *buddy;
+	MsnSession *session = pa->gc->proto_data;
+	MsnUserList *userlist = session->userlist;
+	GaimBuddy *buddy;
 
-		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
+	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
 
-		buddy = gaim_find_buddy(pa->gc->account, pa->who);
+	buddy = gaim_find_buddy(pa->gc->account, pa->who);
 
-		if (buddy != NULL)
-			gaim_account_notify_added(pa->gc->account, pa->who,
-				NULL, pa->friendly, NULL);
-		else
-			gaim_account_request_add(pa->gc->account, pa->who,
-				NULL, pa->friendly, NULL);
-	}
+	if (buddy != NULL)
+		gaim_account_notify_added(pa->gc->account, pa->who,
+			NULL, pa->friendly, NULL);
+	else
+		gaim_account_request_add(pa->gc->account, pa->who,
+			NULL, pa->friendly, NULL);
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -66,13 +63,10 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 static void
 msn_cancel_add_cb(MsnPermitAdd *pa)
 {
-	if (g_list_find(gaim_connections_get_all(), pa->gc) != NULL)
-	{
-		MsnSession *session = pa->gc->proto_data;
-		MsnUserList *userlist = session->userlist;
+	MsnSession *session = pa->gc->proto_data;
+	MsnUserList *userlist = session->userlist;
 
-		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
-	}
+	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
 
 	g_free(pa->who);
 	g_free(pa->friendly);

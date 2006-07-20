@@ -42,6 +42,10 @@ struct _GaimBuddyIcon
 	int ref_count;         /**< The buddy icon reference count.    */
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name Buddy Icon API                                                  */
 /**************************************************************************/
@@ -280,5 +284,9 @@ void gaim_buddy_icons_uninit(void);
 void gaim_buddy_icon_get_scale_size(GaimBuddyIconSpec *spec, int *width, int *height);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_BUDDYICON_H_ */

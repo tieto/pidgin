@@ -3435,6 +3435,13 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	PangoLogAttr *log_attrs;
 	gchar *word;
 
+	if (strcasecmp(key, "Global Thermonuclear War") == 0)
+	{
+		gaim_notify_info(NULL, "WOPR",
+				"Wouldn't you prefer a nice game of chess?", NULL);
+		return FALSE;
+	}
+
 	gtk_tree_model_get(model, iter, column, &withmarkup, -1);
 
 	tmp = g_utf8_normalize(key, -1, G_NORMALIZE_DEFAULT);
