@@ -191,6 +191,8 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, GaimNotifySearchResultsButt
 
 	button = bd->button;
 	button->callback(gaim_account_get_connection(data->account), row, data->user_data);
+	g_list_foreach(row, (GFunc)g_free, NULL);
+	g_list_free(row);
 }
 
 static void *
