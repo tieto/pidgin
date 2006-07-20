@@ -1485,7 +1485,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 {
 	GaimConversation *conv;
 	GaimConversationUiOps *ops;
-	GaimConvChatBuddy *cb;
+	GaimConvChatBuddy *cbuddy;
 	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info;
 	GList *ul, *fl;
@@ -1508,11 +1508,8 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		const char *user = (const char *)ul->data;
 		const char *alias = user;
 		gboolean quiet;
-		GaimConvChatBuddy *cbuddy;
-		GaimConvChatBuddyFlags flags = GPOINTER_TO_INT(fl->data);
+		GaimConvChatBuddyFlags flag = GPOINTER_TO_INT(fl->data);
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
-
-		cbuddy = gaim_conv_chat_cb_new(user, NULL, GPOINTER_TO_INT(fl->data));
 
 		if (!strcmp(chat->nick, gaim_normalize(conv->account, user))) {
 			const char *alias2 = gaim_account_get_alias(conv->account);
@@ -1531,17 +1528,14 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		}
 
 		quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-						 "chat-buddy-joining", conv, user, flags)) |
+						 "chat-buddy-joining", conv, user, flag)) |
 				gaim_conv_chat_is_user_ignored(chat, user);
 
-		cb = gaim_conv_chat_cb_new(user, NULL, flags);
+		cbuddy = gaim_conv_chat_cb_new(user, alias, flag);
 		/* This seems dumb. Why should we set users thousands of times? */
 		gaim_conv_chat_set_users(chat,
-				g_list_prepend(gaim_conv_chat_get_users(chat), cb));
+				g_list_prepend(gaim_conv_chat_get_users(chat), cbuddy));
 
-		cbuddy->alias = strdup(alias); /* Should I be doing a strdup? */
-		cbuddy->alias_key = g_utf8_collate_key(alias, strlen(alias));
-		cbuddy->buddy = (gaim_find_buddy(conv->account, cbuddy->name) != NULL);
 		cbuddies = g_list_prepend(cbuddies, cbuddy);
 
 		if (!quiet && new_arrivals) {
@@ -1563,7 +1557,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		}
 
 		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "chat-buddy-joined", conv, user, flags, new_arrivals);
+						 "chat-buddy-joined", conv, user, flag, new_arrivals);
 		ul = ul->next;
 		fl = fl->next;
 		if (extra_msgs != NULL)
@@ -1575,6 +1569,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 	if (ops != NULL && ops->chat_add_users != NULL)
 		ops->chat_add_users(conv, cbuddies, new_arrivals);
 
+	g_list_free(cbuddies);
 }
 
 void

@@ -460,6 +460,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 			yd->chat_name = g_strdup(room);
 			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, NULL, flags, FALSE);
 		}
+		g_list_free(flags);
 	} else if (c) {
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
