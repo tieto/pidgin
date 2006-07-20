@@ -82,8 +82,8 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	swboard->destroying = TRUE;
 
 	/* If it linked us is because its looking for trouble */
-	if (swboard->slplink != NULL)
-		msn_slplink_destroy(swboard->slplink);
+	while (swboard->slplinks != NULL)
+		msn_slplink_destroy(swboard->slplinks->data);
 
 	/* Destroy the message queue */
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)

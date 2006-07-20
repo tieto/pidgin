@@ -102,7 +102,7 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	g_return_if_fail(slplink != NULL);
 
 	if (slplink->swboard != NULL)
-		slplink->swboard->slplink = NULL;
+		slplink->swboard->slplinks = g_list_remove(slplink->swboard->slplinks, slplink);
 
 	session = slplink->session;
 
@@ -256,7 +256,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 				return;
 
 			/* If swboard is destroyed we will be too */
-			slplink->swboard->slplink = slplink;
+			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
 		}
 
 		msn_switchboard_send_msg(slplink->swboard, msg, TRUE);

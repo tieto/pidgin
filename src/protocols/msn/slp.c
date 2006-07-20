@@ -748,7 +748,7 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		 * reporting bugs. Hopefully this doesn't cause more crashes. Stu.
 		 */
 		if (slplink->swboard != NULL)
-			slplink->swboard->slplink = slplink;
+			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
 		else
 			gaim_debug_error("msn", "msn_p2p_msg, swboard is NULL, ouch!\n");
 	}
