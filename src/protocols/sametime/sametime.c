@@ -75,7 +75,7 @@
    I don't know why I even bother providing these. Oh valiant reader,
    I do it all for you. */
 /* scratch that, I just added it to the prpl options panel */
-#define PLUGIN_ID        "prpl-meanwhile"
+#define PLUGIN_ID        "prpl-sametime"
 #define PLUGIN_NAME      "Sametime"
 #define PLUGIN_SUMMARY   "Sametime Protocol Plugin"
 #define PLUGIN_DESC      "Open implementation of a Lotus Sametime client"
