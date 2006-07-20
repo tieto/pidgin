@@ -53,6 +53,7 @@ typedef struct
 	GtkWidget *treeview;
 	GtkWidget *window;
 	gpointer user_data;
+	GaimNotifySearchResults *results;
 
 } GaimNotifySearchResultsData;
 
@@ -684,6 +685,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 	data = g_malloc(sizeof(GaimNotifySearchResultsData));
 	data->user_data = user_data;
+	data->results = results;
 
 	/* Create the window */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -812,6 +814,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 			g_signal_connect(G_OBJECT(button), "clicked",
 			                 G_CALLBACK(searchresults_callback_wrapper_cb), bd);
+			g_signal_connect_swapped(G_OBJECT(button), "destroy", G_CALLBACK(g_free), bd);
 		}
 	}
 
@@ -864,6 +867,7 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 		GaimNotifySearchResultsData *data = (GaimNotifySearchResultsData *)ui_handle;
 
 		gtk_widget_destroy(data->window);
+		gaim_notify_searchresults_free(data->results);
 
 		g_free(data);
 	}

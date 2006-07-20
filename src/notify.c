@@ -200,6 +200,7 @@ gaim_notify_searchresults_free(GaimNotifySearchResults *results)
 
 	for (l = results->buttons; l; l = g_list_delete_link(l, l)) {
 		GaimNotifySearchButton *button = l->data;
+		g_free(button->label);
 		g_free(button);
 	}
 	results->buttons = NULL;
