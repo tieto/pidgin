@@ -20,10 +20,14 @@ set_selection(GntComboBox *box, gpointer key)
 {
 	if (box->selected != key)
 	{
+		/* XXX: make sure the key actually does exist */
 		gpointer old = box->selected;
 		box->selected = key;
 		g_signal_emit(box, signals[SIG_SELECTION_CHANGED], 0, old, key);
-		gnt_widget_draw(GNT_WIDGET(box));
+		if (GNT_WIDGET(box)->window)
+			gnt_widget_draw(GNT_WIDGET(box));
+		if (box->dropdown)
+			gnt_tree_set_selected(GNT_TREE(box->dropdown), key);
 	}
 }
 
@@ -244,5 +248,10 @@ void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text)
 gpointer gnt_combo_box_get_selected_data(GntComboBox *box)
 {
 	return box->selected;
+}
+
+void gnt_combo_box_set_selected(GntComboBox *box, gpointer key)
+{
+	set_selection(box, key);
 }
 

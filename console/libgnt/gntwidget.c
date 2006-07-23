@@ -489,6 +489,8 @@ update_queue_callback(gpointer data)
 
 void gnt_widget_queue_update(GntWidget *widget)
 {
+	if (widget->window == NULL)
+		return;
 	while (widget->parent)
 		widget = widget->parent;
 	

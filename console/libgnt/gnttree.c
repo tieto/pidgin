@@ -278,7 +278,11 @@ redraw_tree(GntTree *tree)
 			x += tree->columns[i].width;
 		}
 		if (pos)
+		{
 			tree_mark_columns(tree, pos, 0, ACS_TTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
+			tree_mark_columns(tree, pos, widget->priv.height - pos,
+					ACS_BTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
+		}
 		tree_mark_columns(tree, pos, pos + 1, ACS_PLUS | COLOR_PAIR(GNT_COLOR_NORMAL));
 		tree_mark_columns(tree, pos, pos, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
 		start = 2;
@@ -691,8 +695,26 @@ gpointer gnt_tree_get_selection_data(GntTree *tree)
 char *gnt_tree_get_selection_text(GntTree *tree)
 {
 	if (tree->current)
-		update_row_text(tree, tree->current);
+		return update_row_text(tree, tree->current);
 	return NULL;
+}
+
+GList *gnt_tree_get_selection_text_list(GntTree *tree)
+{
+	GList *list = NULL, *iter;
+	int i;
+
+	if (!tree->current)
+		return NULL;
+
+	for (i = 0, iter = tree->current->columns; i < tree->ncol && iter;
+			i++, iter = iter->next)
+	{
+		GntTreeCol *col = iter->data;
+		list = g_list_append(list, g_strdup(col->text));
+	}
+
+	return list;
 }
 
 /* XXX: Should this also remove all the children of the row being removed? */
@@ -859,23 +881,40 @@ GntWidget *gnt_tree_new_with_columns(int col)
 	return widget;
 }
 
-GntTreeRow *gnt_tree_create_row(GntTree *tree, ...)
+GntTreeRow *gnt_tree_create_row_from_list(GntTree *tree, GList *list)
 {
-	GntTreeRow *row = g_new0(GntTreeRow, 1);
+	GList *iter;
 	int i;
-	va_list args;
+	GntTreeRow *row = g_new0(GntTreeRow, 1);
 
-	va_start(args, tree);
-
-	for (i = 0; i < tree->ncol; i++)
+	for (i = 0, iter = list; i < tree->ncol && iter; iter = iter->next, i++)
 	{
 		GntTreeCol *col = g_new0(GntTreeCol, 1);
 		col->span = 1;
-		col->text = g_strdup(va_arg(args, const char *));
+		col->text = g_strdup(iter->data);
 
 		row->columns = g_list_append(row->columns, col);
 	}
+
+	return row;
+}
+
+GntTreeRow *gnt_tree_create_row(GntTree *tree, ...)
+{
+	int i;
+	va_list args;
+	GList *list = NULL;
+	GntTreeRow *row;
+
+	va_start(args, tree);
+	for (i = 0; i < tree->ncol; i++)
+	{
+		list = g_list_append(list, va_arg(args, const char *));
+	}
 	va_end(args);
+
+	row = gnt_tree_create_row_from_list(tree, list);
+	g_list_free(list);
 
 	return row;
 }

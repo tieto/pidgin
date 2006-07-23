@@ -1,6 +1,7 @@
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
+#include <gntcheckbox.h>
 #include <gntcombobox.h>
 #include <gntlabel.h>
 
@@ -60,6 +61,8 @@ int main()
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(button_activated), combo);
 
 	gnt_box_add_widget(GNT_BOX(box), hbox);
+
+	gnt_box_add_widget(GNT_BOX(box), gnt_check_box_new("check box"));
 
 	gnt_widget_show(box);
 

@@ -7,6 +7,7 @@ libgnt_la_SOURCES = \
 	gntwidget.c \
 	gntbox.c \
 	gntbutton.c \
+	gntcheckbox.c \
 	gntcolors.c \
 	gntcombobox.c \
 	gntentry.c \
@@ -21,6 +22,7 @@ libgnt_la_headers = \
 	gntwidget.h \
 	gntbox.h \
 	gntbutton.h \
+	gntcheckbox.h \
 	gntcolors.h \
 	gntcombobox.h \
 	gntentry.h \

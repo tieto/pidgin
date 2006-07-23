@@ -80,6 +80,8 @@ gpointer gnt_tree_get_selection_data(GntTree *tree);
 
 char *gnt_tree_get_selection_text(GntTree *tree);
 
+GList *gnt_tree_get_selection_text_list(GntTree *tree);
+
 void gnt_tree_remove(GntTree *tree, gpointer key);
 
 /* Returns the visible line number of the selected row */
@@ -98,6 +100,8 @@ void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
 void gnt_tree_set_selected(GntTree *tree , void *key);
 
 GntTreeRow *gnt_tree_create_row(GntTree *tree, ...);
+
+GntTreeRow *gnt_tree_create_row_from_list(GntTree *tree, GList *list);
 
 void gnt_tree_set_col_width(GntTree *tree, int col, int width);
 

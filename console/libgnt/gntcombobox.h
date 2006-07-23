@@ -50,6 +50,8 @@ void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text);
 
 gpointer gnt_combo_box_get_selected_data(GntComboBox *box);
 
+void gnt_combo_box_set_selected(GntComboBox *box, gpointer key);
+
 G_END_DECLS
 
 #endif /* GNT_COMBO_BOX_H */

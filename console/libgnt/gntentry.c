@@ -21,7 +21,14 @@ gnt_entry_draw(GntWidget *widget)
 		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TEXT_NORMAL));
 	else
 		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
-	mvwprintw(widget->window, 0, 0, entry->scroll);
+
+	if (entry->masked)
+	{
+		mvwhline(widget->window, 0, 0, gnt_ascii_only() ? '*' : ACS_BULLET,
+				entry->end - entry->scroll);
+	}
+	else
+		mvwprintw(widget->window, 0, 0, entry->scroll);
 
 	stop = entry->end - entry->scroll;
 	if (stop < widget->priv.width)
@@ -283,4 +290,8 @@ void gnt_entry_clear(GntEntry *entry)
 	entry_redraw(GNT_WIDGET(entry));
 }
 
+void gnt_entry_set_masked(GntEntry *entry, gboolean set)
+{
+	entry->masked = set;
+}
 

@@ -57,7 +57,13 @@ gg_notify_message(GaimNotifyMsgType type, const char *title,
 /* handle is, in all/most occasions, a GntWidget * */
 static void gg_close_notify(GaimNotifyType type, void *handle)
 {
-	gnt_widget_destroy(GNT_WIDGET(handle));
+	GntWidget *widget = handle;
+	while (widget->parent)
+		widget = widget->parent;
+	
+	if (type == GAIM_NOTIFY_SEARCHRESULTS)
+		gaim_notify_searchresults_free(g_object_get_data(handle, "notify-results"));
+	gnt_widget_destroy(widget);
 }
 
 static void *gg_notify_formatted(const char *title, const char *primary,
@@ -180,6 +186,112 @@ gg_notify_userinfo(GaimConnection *gc, const char *who, const char *text)
 	return ui_handle;
 }
 
+static void
+notify_button_activated(GntWidget *widget, GaimNotifySearchButton *b)
+{
+	GList *list = NULL;
+	GaimAccount *account = g_object_get_data(G_OBJECT(widget), "notify-account");
+	gpointer data = g_object_get_data(G_OBJECT(widget), "notify-data");
+
+	list = gnt_tree_get_selection_text_list(GNT_TREE(widget));
+
+	b->callback(gaim_account_get_connection(account), list, data);
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+}
+
+static void
+gg_notify_sr_new_rows(GaimConnection *gc,
+		GaimNotifySearchResults *results, void *data)
+{
+	GntTree *tree = GNT_TREE(data);
+	GList *o;
+
+	/* XXX: Do I need to empty the tree here? */
+
+	for (o = results->rows; o; o = o->next)
+	{
+		gnt_tree_add_row_after(GNT_TREE(tree), o->data,
+				gnt_tree_create_row_from_list(GNT_TREE(tree), o->data),
+				NULL, NULL);
+	}
+}
+
+static void *
+gg_notify_searchresults(GaimConnection *gc, const char *title,
+		const char *primary, const char *secondary,
+		GaimNotifySearchResults *results, gpointer data)
+{
+	GntWidget *window, *tree, *box, *button;
+	GList *iter;
+
+	window = gnt_vbox_new(FALSE);
+	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
+	gnt_box_set_title(GNT_BOX(window), title);
+	gnt_box_set_fill(GNT_BOX(window), FALSE);
+	gnt_box_set_pad(GNT_BOX(window), 0);
+	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
+
+	gnt_box_add_widget(GNT_BOX(window),
+			gnt_label_new_with_format(primary, GNT_TEXT_FLAG_BOLD));
+	gnt_box_add_widget(GNT_BOX(window),
+			gnt_label_new_with_format(secondary, GNT_TEXT_FLAG_NORMAL));
+
+	tree = gnt_tree_new_with_columns(g_list_length(results->columns));
+	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
+	gnt_box_add_widget(GNT_BOX(window), tree);
+
+	box = gnt_hbox_new(TRUE);
+
+	for (iter = results->buttons; iter; iter = iter->next)
+	{
+		GaimNotifySearchButton *b = iter->data;
+		const char *text;
+
+		switch (b->type)
+		{
+			case GAIM_NOTIFY_BUTTON_LABELED:
+				text = b->label;
+				break;
+			case GAIM_NOTIFY_BUTTON_CONTINUE:
+				text = _("Continue");
+				break;
+			case GAIM_NOTIFY_BUTTON_ADD:
+				text = _("Add");
+				break;
+			case GAIM_NOTIFY_BUTTON_INFO:
+				text = _("Info");
+				break;
+			case GAIM_NOTIFY_BUTTON_IM:
+				text = _("IM");
+				break;
+			case GAIM_NOTIFY_BUTTON_JOIN:
+				text = _("Join");
+				break;
+			case GAIM_NOTIFY_BUTTON_INVITE:
+				text = _("Invite");
+				break;
+		}
+
+		button = gnt_button_new(text);
+		g_object_set_data(G_OBJECT(button), "notify-account", gaim_connection_get_account(gc));
+		g_object_set_data(G_OBJECT(button), "notify-data", data);
+		g_signal_connect_swapped(G_OBJECT(button), "activate",
+				G_CALLBACK(notify_button_activated), b);
+
+		gnt_box_add_widget(GNT_BOX(box), button);
+	}
+
+	gnt_box_add_widget(GNT_BOX(window), box);
+
+	gg_notify_sr_new_rows(gc, results, tree);
+
+	gnt_widget_show(window);
+	g_object_set_data(G_OBJECT(window), "notify-results", results);
+
+	return tree;
+}
+
 static GaimNotifyUiOps ops = 
 {
 	.notify_message = gg_notify_message,
@@ -190,8 +302,8 @@ static GaimNotifyUiOps ops =
 	.notify_emails = gg_notify_emails,
 	.notify_userinfo = gg_notify_userinfo,
 
-	.notify_searchresults = NULL,          /* We are going to need multi-column GntTree's for this */
-	.notify_searchresults_new_rows = NULL,
+	.notify_searchresults = gg_notify_searchresults,
+	.notify_searchresults_new_rows = gg_notify_sr_new_rows,
 	.notify_uri = NULL                     /* This is of low-priority to me */
 };
 

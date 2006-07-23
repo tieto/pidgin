@@ -49,6 +49,7 @@ struct _GnEntry
 	size_t buffer;  /* Size of the buffer */
 	
 	int max;        /* 0 means infinite */
+	gboolean masked;
 };
 
 struct _GnEntryClass
@@ -77,6 +78,8 @@ void gnt_entry_set_flag(GntEntry *entry, GntEntryFlag flag);
 const char *gnt_entry_get_text(GntEntry *entry);
 
 void gnt_entry_clear(GntEntry *entry);
+
+void gnt_entry_set_masked(GntEntry *entry, gboolean set);
 
 G_END_DECLS
 

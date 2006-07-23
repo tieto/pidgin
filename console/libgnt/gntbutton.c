@@ -22,7 +22,7 @@ gnt_button_draw(GntWidget *widget)
 		type = GNT_COLOR_NORMAL;
 	
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
-	mvwprintw(widget->window, 1, 1, button->priv->text);
+	mvwprintw(widget->window, 1, 2, button->priv->text);
 
 	DEBUG;
 }
@@ -31,8 +31,10 @@ static void
 gnt_button_size_request(GntWidget *widget)
 {
 	GntButton *button = GNT_BUTTON(widget);
-	widget->priv.width = g_utf8_strlen(button->priv->text, -1) + 2;
-	widget->priv.height = 3;
+	widget->priv.width = g_utf8_strlen(button->priv->text, -1) + 4;
+	widget->priv.height = 1;
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+		widget->priv.height += 2;
 }
 
 static void
