@@ -1440,7 +1440,7 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
 	g_list_free(flags2);
 }
 
-int
+static int
 gaim_conv_chat_cb_compare(GaimConvChatBuddy *a, GaimConvChatBuddy *b)
 {
 	GaimConvChatBuddyFlags f1 = 0, f2 = 0;

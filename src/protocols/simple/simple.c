@@ -1535,7 +1535,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	int port;
 
 	gc = data;
-	if (!g_list_find(gaim_connections_get_all(), gc))
+	if (!GAIM_CONNECTION_IS_VALID(gc))
 	{
 		/* This connection has been closed */
 		g_free(resp);

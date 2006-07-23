@@ -245,9 +245,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	const char *type;
 	xmlnode *child;
 
-	if(strcmp(packet->name, "message"))
-		return;
-
 	jm = g_new0(JabberMessage, 1);
 	jm->js = js;
 	jm->sent = time(NULL);

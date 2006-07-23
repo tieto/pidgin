@@ -370,7 +370,7 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 	int len;
 	static char buf[4096];
 
-	if(!g_list_find(gaim_connections_get_all(), gc))
+	if(!GAIM_CONNECTION_IS_VALID(gc))
 		return;
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
@@ -486,7 +486,7 @@ static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
 	JabberStream *js;
 
 	gc = data;
-	if (!g_list_find(gaim_connections_get_all(), gc))
+	if (!GAIM_CONNECTION_IS_VALID(gc))
 	{
 		/* This connection has been closed */
 		g_free(resp);
@@ -500,7 +500,7 @@ static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
 		g_free(resp);
 	} else {
 		jabber_login_connect(js, js->user->domain,
-			gaim_account_get_int(js->gc->account, "port", 0));
+			gaim_account_get_int(js->gc->account, "port", 5222));
 	}
 }
 
