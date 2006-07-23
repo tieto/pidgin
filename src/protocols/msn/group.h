@@ -40,8 +40,11 @@ typedef struct _MsnGroup  MsnGroup;
 #define MSN_GROUP_IDS	"<guid>9e57e654-59f0-44d1-aedc-0a7500b7e51f</guid>"
 #define MSN_DELETE_GROUP_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>Timer</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><ABGroupDelete xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groupFilter><groupIds>%s</groupIds></groupFilter></ABGroupDelete></soap:Body></soap:Envelope>"
 
-#define MSN_INDIVIDUALS_GROUP_ID	"0"
+#define MSN_INDIVIDUALS_GROUP_ID	"123"
 #define MSN_INDIVIDUALS_GROUP_NAME	"Other Contacts"
+
+#define MSN_NON_IM_GROUP_ID		"email"
+#define MSN_NON_IM_GROUP_NAME	"Non-IM Contacts"
 
 /**
  * A group.

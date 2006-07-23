@@ -468,11 +468,13 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 
 	for (l = userlist->users; l != NULL; l = l->next){
 		MsnUser *user = (MsnUser *)l->data;
-
+//		gaim_debug_info("MsnUserList","user passport:%s,passport:%s\n",user->passport,passport);
 		g_return_val_if_fail(user->passport != NULL, NULL);
 
-		if (!g_strcasecmp(passport, user->passport))
+		if (!g_strcasecmp(passport, user->passport)){
+//			gaim_debug_info("MsnUserList","return:%p\n",user);
 			return user;
+		}
 	}
 
 	return NULL;
@@ -516,11 +518,10 @@ msn_userlist_find_group_with_name(MsnUserList *userlist, const char *name)
 	g_return_val_if_fail(userlist != NULL, NULL);
 	g_return_val_if_fail(name     != NULL, NULL);
 
-	for (l = userlist->groups; l != NULL; l = l->next)
-	{
+	for (l = userlist->groups; l != NULL; l = l->next){
 		MsnGroup *group = l->data;
 
-		if ((group->name != NULL) && !g_ascii_strcasecmp(name, group->name))
+		if ((group->name != NULL) && !g_strcasecmp(name, group->name))
 			return group;
 	}
 

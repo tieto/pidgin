@@ -234,12 +234,15 @@ msn_session_sync_users(MsnSession *session)
 	/* The core used to use msn_add_buddy to add all buddies before
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues. */
-
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next){
 		GaimGroup *group = (GaimGroup *)gnode;
 		const char *group_name = group->name;
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
+		if(!g_strcasecmp(group_name, MSN_INDIVIDUALS_GROUP_NAME)
+						||	!g_strcasecmp(group_name,MSN_NON_IM_GROUP_NAME)){
+			continue;
+		}
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
@@ -248,7 +251,7 @@ msn_session_sync_users(MsnSession *session)
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (GaimBuddy *)bnode;
-				if(b->account == gc->account) {
+				if(b->account == gc->account){
 					MsnUser *remote_user;
 					gboolean found = FALSE;
 
@@ -256,11 +259,14 @@ msn_session_sync_users(MsnSession *session)
 					remote_user = msn_userlist_find_user(session->userlist, b->name);
 
 					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP)){
-						char *group_id;
+						const char *group_id;
 						GList *l;
 
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
+						if(group_id == NULL){
+							continue;
+						}
 
 						for (l = remote_user->group_ids; l != NULL; l = l->next){
 							if (!g_strcasecmp(group_id ,l->data)){

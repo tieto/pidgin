@@ -713,6 +713,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	GaimConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
+	int wlmclient;
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
@@ -721,7 +722,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
-	friendly = gaim_url_decode(cmd->params[3]);
+	wlmclient = atoi(cmd->params[3]);
+	friendly = gaim_url_decode(cmd->params[4]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
@@ -729,8 +731,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_friendly_name(user, friendly);
 
-	if (session->protocol_ver >= 9 && cmd->param_count == 6){
-		msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[5]));
+	if (session->protocol_ver >= 9 && cmd->param_count == 7){
+		msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[6]));
 		msn_user_set_object(user, msnobj);
 	}
 
@@ -762,6 +764,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	int clientid;
+	int wlmclient;
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
@@ -770,7 +773,8 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
-	friendly = gaim_url_decode(cmd->params[2]);
+	wlmclient = atoi(cmd->params[2]);
+	friendly = gaim_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
@@ -779,15 +783,15 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_user_set_friendly_name(user, friendly);
 
 	if (session->protocol_ver >= 9){
-		if (cmd->param_count == 5){
-			msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
+		if (cmd->param_count == 6){
+			msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[5]));
 			msn_user_set_object(user, msnobj);
 		}else{
 			msn_user_set_object(user, NULL);
 		}
 	}
 
-	clientid = atoi(cmd->params[3]);
+	clientid = atoi(cmd->params[4]);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
 
 	msn_user_set_state(user, state);

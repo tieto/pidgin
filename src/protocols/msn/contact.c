@@ -28,6 +28,7 @@
 #include "soap.h"
 #include "contact.h"
 #include "xmlnode.h"
+#include "group.h"
 
 /*new a contact*/
 MsnContact *
@@ -220,6 +221,7 @@ msn_parse_addressbook(MsnContact * contact)
 	xmlnode *groups,*group,*groupname,*groupId,*groupInfo;
 	xmlnode	*contacts,*contactNode,*contactId,*contactInfo,*contactType,*passportName,*displayName,*groupIds,*guid;
 	xmlnode *ab;
+	char *group_name,*group_id;
 
 	session = contact->session;
 	gaim_debug_misc("xml","parse addressbook:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
@@ -236,43 +238,64 @@ msn_parse_addressbook(MsnContact * contact)
 	gaim_debug_misc("xml","response{%p},name:%s\n",response,response->name);
 	result =xmlnode_get_child(response,"ABFindAllResult");
 	gaim_debug_misc("xml","result{%p},name:%s\n",result,result->name);
+
+	/*Process Group List*/
 	groups =xmlnode_get_child(result,"groups");
 	for(group = xmlnode_get_child(groups, "Group"); group;
 					group = xmlnode_get_next_twin(group)){
-			char * name,*group_id;
-			groupId = xmlnode_get_child(group,"groupId");
-			group_id = xmlnode_get_data(groupId);
-			groupInfo = xmlnode_get_child(group,"groupInfo");
-			groupname = xmlnode_get_child(groupInfo,"name");
-			name = xmlnode_get_data(groupname);
+		groupId = xmlnode_get_child(group,"groupId");
+		group_id = xmlnode_get_data(groupId);
+		groupInfo = xmlnode_get_child(group,"groupInfo");
+		groupname = xmlnode_get_child(groupInfo,"name");
+		group_name = xmlnode_get_data(groupname);
 
-			msn_group_new(session->userlist, group_id, name);
+		msn_group_new(session->userlist, group_id, group_name);
 
-			if (group_id == NULL)
-					/* Group of ungroupped buddies */
-					continue;
+		if (group_id == NULL){
+			/* Group of ungroupped buddies */
+			continue;
+		}
 
-			if ((gaim_find_group(name)) == NULL){
-					GaimGroup *g = gaim_group_new(name);
-					gaim_blist_add_group(g, NULL);
-			}
-
-			gaim_debug_misc("group","name:%s,Id:{%s}\n",name,group_id);
+		gaim_debug_misc("MsnContact","group_id:%s name:%s\n",group_id,group_name);
+		if ((gaim_find_group(group_name)) == NULL){
+			GaimGroup *g = gaim_group_new(group_name);
+			gaim_blist_add_group(g, NULL);
+		}
 	}
+	/*add a default No group to set up the no group Membership*/
+	group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
+	group_name = g_strdup(MSN_INDIVIDUALS_GROUP_NAME);
+	msn_group_new(session->userlist,group_id , group_name);
+	if (group_id != NULL){
+		gaim_debug_misc("MsnContact","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
+		if ((gaim_find_group(group_name)) == NULL){
+			GaimGroup *g = gaim_group_new(group_name);
+			gaim_blist_add_group(g, NULL);
+		}
+	}
+	g_free(group_name);
+	g_free(group_id);
 
+	/*add a default No group to set up the no group Membership*/
+	group_id = g_strdup(MSN_NON_IM_GROUP_ID);
+	group_name = g_strdup(MSN_NON_IM_GROUP_NAME);
+	msn_group_new(session->userlist,group_id , group_name);
+	if (group_id != NULL){
+		gaim_debug_misc("MsnContact","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
+		if ((gaim_find_group(group_name)) == NULL){
+			GaimGroup *g = gaim_group_new(group_name);
+			gaim_blist_add_group(g, NULL);
+		}
+	}
+	g_free(group_name);
+	g_free(group_id);
+
+	/*Process contact List*/
 	contacts =xmlnode_get_child(result,"contacts");
 	for(contactNode = xmlnode_get_child(contacts, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)){
 		MsnUser *user;
-		xmlnode *messengerEnableNode;
 		char *passport,*Name,*uid,*type;
-		char *messengerEnable;
-
-		messengerEnableNode = xmlnode_get_child(contactNode,"isMessengerEnabled");
-		messengerEnable = xmlnode_get_data(messengerEnableNode);
-		if(!g_strcasecmp(messengerEnable,"false")){
-			continue;
-		}
 
 		contactId= xmlnode_get_child(contactNode,"contactId");
 		uid = xmlnode_get_data(contactId);
@@ -305,38 +328,42 @@ msn_parse_addressbook(MsnContact * contact)
 		msn_user_set_type(user,msn_get_user_type(type));
 		user->list_op |= 1;
 
+		gaim_debug_misc("MsnContact","\n");
 		groupIds = xmlnode_get_child(contactInfo,"groupIds");
 		if(groupIds){
 			for(guid = xmlnode_get_child(groupIds, "guid");guid;
 							guid = xmlnode_get_next_twin(guid)){
-				char *group_id;
-
 				group_id = xmlnode_get_data(guid);
 				msn_user_add_group_id(user,group_id);
 				gaim_debug_misc("contact","guid:%s\n",group_id);
 			}
 		}else{
+			group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
+			msn_user_add_group_id(user,group_id);
+			g_free(group_id);
+#if 0
+			/*not in any group,Then set default group*/
 			char *name,*group_id;
 
 			name = g_strdup(MSN_INDIVIDUALS_GROUP_NAME);
 			group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
+			gaim_debug_misc("MsnContact","group_id:%s name:%s\n",group_id,name);
 
 			msn_user_add_group_id(user,group_id);
 			msn_group_new(session->userlist, group_id, name);
 
-			if (group_id == NULL)
-					/* Group of ungroupped buddies */
-					continue;
-
-			if ((gaim_find_group(name)) == NULL){
+			if (group_id != NULL){
+				gaim_debug_misc("MsnContact","group_id:%s name:%s,value:%d\n",group_id,name,*name=='\0');
+				if ((gaim_find_group(name)) == NULL){
 					GaimGroup *g = gaim_group_new(name);
 					gaim_blist_add_group(g, NULL);
+				}
 			}
 
 			gaim_debug_misc("contact","guid is NULL\n");
 			g_free(name);
 			g_free(group_id);
-
+#endif
 		}
 	}
 

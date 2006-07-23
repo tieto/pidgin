@@ -261,9 +261,11 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 
 	group_name = msn_userlist_find_group_name(userlist, id);
 
+	gaim_debug_info("User","group id:%s,name:%s,user:%s\n",id,group_name,passport);
+
 	g = gaim_find_group(group_name);
 
-	if ((id == 0) && (g == NULL)){
+	if ((id == NULL) && (g == NULL)){
 		g = gaim_group_new(group_name);
 		gaim_blist_add_group(g, NULL);
 	}
