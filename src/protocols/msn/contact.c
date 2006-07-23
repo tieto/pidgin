@@ -90,10 +90,8 @@ msn_get_memberrole(char * role)
 		return MSN_LIST_AL_OP;
 	}else if(!strcmp(role,"Block")){
 		return MSN_LIST_BL_OP;
-	}else if(!strcmp(role,"Reverse")){
-		return MSN_LIST_RL_OP;
-	}else if(!strcmp(role,"Forward")){
-		return MSN_LIST_FL_OP;
+//	}else if(!strcmp(role,"Reverse")){
+//		return MSN_LIST_RL_OP;
 	}
 	return 0;
 }
@@ -120,7 +118,7 @@ msn_parse_contact_list(MsnContact * contact)
 	xmlnode *membershipnode,*members,*member,*passportNode,*role;
 
 	session = contact->session;
-	gaim_debug_misc("xml","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
+//	gaim_debug_misc("xml","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
 	node = 	xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
 //	node = 	xmlnode_from_str(contact->soapconn->body, -1);
 
@@ -144,22 +142,33 @@ msn_parse_contact_list(MsnContact * contact)
 	for(membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
 					membershipnode = xmlnode_get_next_twin(membershipnode)){
 		role = xmlnode_get_child(membershipnode,"MemberRole");
-	//	gaim_debug_misc("memberrole","role:%s\n",xmlnode_get_data(role));
 		list_op = msn_get_memberrole(xmlnode_get_data(role));
 		gaim_debug_misc("memberrole","role:%s,list_op:%d\n",xmlnode_get_data(role),list_op);
 		members = xmlnode_get_child(membershipnode,"Members");
 		for(member = xmlnode_get_child(members, "Member"); member;
 				member = xmlnode_get_next_twin(member)){
-			passportNode = xmlnode_get_child(member,"PassportName");
-			passport = xmlnode_get_data(passportNode);
-			gaim_debug_misc("Passport","name:%s\n",passport);
-			user = msn_userlist_find_user(session->userlist, passport);
-			if (user == NULL){
-				user = msn_user_new(session->userlist, passport, "");
-				msn_userlist_add_user(session->userlist, user);
+			xmlnode * typeNode;
+			char * type;
+
+			gaim_debug_misc("MaYuan","type:%s\n",xmlnode_get_attrib(member,"type"));
+			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PassportMember")){
+				passportNode = xmlnode_get_child(member,"PassportName");
+				passport = xmlnode_get_data(passportNode);
+				typeNode = xmlnode_get_child(member,"Type");
+				type = xmlnode_get_data(typeNode);
+				gaim_debug_misc("Passport","name:%s,type:%s\n",passport,type);
+				user = msn_userlist_find_user(session->userlist, passport);
+				if (user == NULL){
+					user = msn_user_new(session->userlist, passport, "");
+					msn_userlist_add_user(session->userlist, user);
+				}
+//				user->list_op |= list_op;
+				msn_got_lst_user(session, user, list_op, NULL);
 			}
-//			user->list_op |= list_op;
-			msn_got_lst_user(session, user, list_op, NULL);
+			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PhoneMember")){
+			}
+			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"EmailMember")){
+			}
 		}
 	}
 
@@ -255,7 +264,15 @@ msn_parse_addressbook(MsnContact * contact)
 	for(contactNode = xmlnode_get_child(contacts, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)){
 		MsnUser *user;
+		xmlnode *messengerEnableNode;
 		char *passport,*Name,*uid,*type;
+		char *messengerEnable;
+
+		messengerEnableNode = xmlnode_get_child(contactNode,"isMessengerEnabled");
+		messengerEnable = xmlnode_get_data(messengerEnableNode);
+		if(!g_strcasecmp(messengerEnable,"false")){
+			continue;
+		}
 
 		contactId= xmlnode_get_child(contactNode,"contactId");
 		uid = xmlnode_get_data(contactId);
@@ -265,6 +282,10 @@ msn_parse_addressbook(MsnContact * contact)
 		type = xmlnode_get_data(contactType);
 
 		passportName = xmlnode_get_child(contactInfo,"passportName");
+		if(passportName == NULL){
+			/*TODO: add it to the none-instant Messenger group and recognize as email Membership*/
+			continue;
+		}
 		passport = xmlnode_get_data(passportName);
 
 		displayName = xmlnode_get_child(contactInfo,"displayName");
@@ -282,19 +303,40 @@ msn_parse_addressbook(MsnContact * contact)
 		}
 		msn_user_set_uid(user,uid);
 		msn_user_set_type(user,msn_get_user_type(type));
+		user->list_op |= 1;
 
 		groupIds = xmlnode_get_child(contactInfo,"groupIds");
 		if(groupIds){
 			for(guid = xmlnode_get_child(groupIds, "guid");guid;
 							guid = xmlnode_get_next_twin(guid)){
-				char * group_id;
+				char *group_id;
 
 				group_id = xmlnode_get_data(guid);
 				msn_user_add_group_id(user,group_id);
 				gaim_debug_misc("contact","guid:%s\n",group_id);
 			}
 		}else{
+			char *name,*group_id;
+
+			name = g_strdup(MSN_INDIVIDUALS_GROUP_NAME);
+			group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
+
+			msn_user_add_group_id(user,group_id);
+			msn_group_new(session->userlist, group_id, name);
+
+			if (group_id == NULL)
+					/* Group of ungroupped buddies */
+					continue;
+
+			if ((gaim_find_group(name)) == NULL){
+					GaimGroup *g = gaim_group_new(name);
+					gaim_blist_add_group(g, NULL);
+			}
+
 			gaim_debug_misc("contact","guid is NULL\n");
+			g_free(name);
+			g_free(group_id);
+
 		}
 	}
 
@@ -304,6 +346,7 @@ msn_parse_addressbook(MsnContact * contact)
 	msn_soap_free_read_buf(contact->soapconn);
 
 	dump_adl_cmd(session);
+	msn_set_psm(session);
 	msn_session_finish_login(session);
 }
 

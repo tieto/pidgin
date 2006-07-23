@@ -38,6 +38,62 @@ static const char *away_text[] =
 	N_("Available")
 };
 
+char *
+msn_build_psm(char * psmstr,char *mediastr,char * guidstr)
+{
+	xmlnode *dataNode,*psmNode,*mediaNode,*guidNode;
+	char *result;
+	int length;
+
+	dataNode = xmlnode_new("Data");
+
+	psmNode = xmlnode_new("PSM");
+	if(psmstr != NULL){
+		xmlnode_insert_data(psmNode,psmstr,strlen(psmstr));
+	}
+	xmlnode_insert_child(dataNode,psmNode);
+
+//"<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>\
+<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>\
+<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>"
+
+	mediaNode = xmlnode_new("CurrentMedia");
+	if(mediastr != NULL){
+		xmlnode_insert_data(psmNode,mediastr,strlen(mediastr));
+	}
+	xmlnode_insert_child(dataNode,mediaNode);
+
+	guidNode = xmlnode_new("MachineGuid");
+	if(guidstr != NULL){
+		xmlnode_insert_data(guidNode,guidstr,strlen(guidstr));
+	}
+	xmlnode_insert_child(dataNode,guidNode);
+
+	result = xmlnode_to_str(dataNode,&length);
+	return result;
+}
+
+void
+msn_set_psm(MsnSession *session)
+{
+	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
+	char *payload;
+
+	cmdproc = session->notification->cmdproc;
+	/*prepare PSM info*/
+	if(session->psm){
+		g_free(session->psm);
+	}
+	session ->psm = g_strdup(msn_build_psm("Hello",NULL,NULL));
+	payload = session->psm;
+
+	gaim_debug_info("MaYuan","UUX{%s}\n",payload);
+	trans = msn_transaction_new(cmdproc, "UUX","%d",strlen(payload));
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
 void
 msn_change_status(MsnSession *session)
 {
@@ -62,13 +118,10 @@ msn_change_status(MsnSession *session)
 
 	msnobj = msn_user_get_object(user);
 
-	if (msnobj == NULL)
-	{
+	if (msnobj == NULL){
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
 						 MSN_CLIENT_ID);
-	}
-	else
-	{
+	}else{
 		char *msnobj_str;
 
 		msnobj_str = msn_object_to_string(msnobj);

@@ -59,6 +59,8 @@ const char *msn_away_get_text(MsnAwayType type);
 
 const char *msn_state_get_text(MsnAwayType state);
 
+void msn_set_psm(MsnSession *session);
+
 MsnAwayType msn_state_from_account(GaimAccount *account);
 
 #endif /* _MSN_STATE_H_ */

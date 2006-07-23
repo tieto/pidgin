@@ -113,10 +113,11 @@ connect_cb(MsnServConn *servconn)
 
 	vers = g_strjoinv(" ", a);
 
-	if (session->login_step == MSN_LOGIN_STEP_START)
+	if (session->login_step == MSN_LOGIN_STEP_START){
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
-	else
+	}else{
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE2);
+	}
 
 	msn_cmdproc_send(cmdproc, "VER", "%s", vers);
 
@@ -244,10 +245,13 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		elems = g_strsplit(cmd->params[3], ",", 0);
 
 		for (cur = elems; *cur != NULL; cur++){
-				tokens = g_strsplit(*cur, "=", 2);
+			tokens = g_strsplit(*cur, "=", 2);
+//			gaim_debug_info("MaYuan","challenge %p,key:%s,value:%s\n",
+//								session->nexus->challenge_data,tokens[0],tokens[1]);
+			if(tokens[0]&&tokens[1])
 				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
-				/* Don't free each of the tokens, only the array. */
-				g_free(tokens);
+			/* Don't free each of the tokens, only the array. */
+			g_free(tokens);
 		}
 
 		g_strfreev(elems);
@@ -296,9 +300,9 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
-	for (i = 1; i < cmd->param_count; i++){
-//		gaim_debug_info("MaYuan","%s\,proto_str:%s\n",cmd->params[i],proto_str);
-		if (!strcmp(cmd->params[i], proto_str))	{
+	for (i = 1; i < cmd->param_count -1; i++){
+		gaim_debug_info("MaYuan","%s\,proto_str:%s\n",cmd->params[i],proto_str);
+		if (strcmp(cmd->params[i], proto_str) >= 0)	{
 			protocol_supported = TRUE;
 			break;
 		}
@@ -313,6 +317,8 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/*
 	 * Windows Live Messenger 8.0 
 	 * Notice :CVR String discriminate!
+	 * reference of http://www.microsoft.com/globaldev/reference/oslocversion.mspx
+	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
 //					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
@@ -416,7 +422,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 #else
 	msn_handle_chl(cmd->params[1], buf);
 #endif
-	gaim_debug_info("MaYuan","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
+//	gaim_debug_info("MaYuan","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
 	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
@@ -438,7 +444,7 @@ dump_adl_cmd(MsnSession *session)
 	xmlnode *adl_node,*d_node,*c_node;
 	char **tokens;
 	char *email,*domain;
-	char * payload,*attr;
+	char *payload;
 	char *list_op,*type;
 	int payload_len;
 
@@ -459,6 +465,7 @@ dump_adl_cmd(MsnSession *session)
 
 		/*find a domain node*/
 		for(d_node = xmlnode_get_child(adl_node,"d"); d_node; d_node = xmlnode_get_next_twin(d_node)){
+			const char * attr = NULL;
 			gaim_debug_info("MaYuan","d_node:%s\n",d_node->name);
 			attr = xmlnode_get_attrib(d_node,"n");
 			if(attr == NULL){
@@ -482,11 +489,12 @@ dump_adl_cmd(MsnSession *session)
 		list_op = g_strdup_printf("%d",user->list_op);
 		gaim_debug_info("MaYuan","list_op:%d\n",user->list_op);
 		xmlnode_set_attrib(c_node,"l",list_op);
-#if 1
+#if 0
 		type = g_strdup_printf("%d",user->type);
 		xmlnode_set_attrib(c_node,"t",type);
 #else
-		xmlnode_set_attrib(c_node,"t","1");
+		type = g_strdup_printf("1");
+		xmlnode_set_attrib(c_node,"t",type);
 #endif
 		xmlnode_insert_child(d_node, c_node);
 
@@ -494,7 +502,7 @@ dump_adl_cmd(MsnSession *session)
 		g_free(type);
 	}
 
-	payload = xmlnode_to_str(adl_node,payload_len);
+	payload = xmlnode_to_str(adl_node,&payload_len);
 
 	gaim_debug_info("MaYuan","ADL{%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
@@ -505,9 +513,15 @@ dump_adl_cmd(MsnSession *session)
 }
 
 static void
+blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","Process BLP\n");
+}
+
+static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	
+	gaim_debug_info("MaYuan","Process ADL\n");
 }
 
 static void
@@ -766,8 +780,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (session->protocol_ver >= 9){
 		if (cmd->param_count == 5){
-			msnobj =
-				msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
+			msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
 			msn_user_set_object(user, msnobj);
 		}else{
 			msn_user_set_object(user, NULL);
@@ -1203,6 +1216,7 @@ gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		return;
 	}
 	/*get the payload content*/
+	gaim_debug_info("MaYuan","GCF{%s}\n",cmd->payload);
 }
 
 static void
@@ -1213,6 +1227,18 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		return;
 	}
 	/*get the payload content*/
+}
+
+static void
+ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","UBX... \n");
+}
+
+static void
+uux_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","UUX... \n");
 }
 
 /**************************************************************************
@@ -1438,38 +1464,31 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 void
 msn_notification_add_buddy(MsnNotification *notification, const char *list,
 						   const char *who, const char *store_name,
-						   int group_id)
+						   const char *group_id)
 {
 	MsnCmdProc *cmdproc;
 	cmdproc = notification->servconn->cmdproc;
 
-	if (group_id < 0 && !strcmp(list, "FL"))
-		group_id = 0;
+	if (group_id != NULL && !strcmp(list, "FL"))
 
-	if (group_id >= 0)
-	{
+	if (group_id >= 0){
 		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s %d",
 						 list, who, store_name, group_id);
-	}
-	else
-	{
+	}else{
 		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who, store_name);
 	}
 }
 
 void
 msn_notification_rem_buddy(MsnNotification *notification, const char *list,
-						   const char *who, int group_id)
+						   const char *who, const char *group_id)
 {
 	MsnCmdProc *cmdproc;
 	cmdproc = notification->servconn->cmdproc;
 
-	if (group_id >= 0)
-	{
+	if (group_id != NULL){
 		msn_cmdproc_send(cmdproc, "REM", "%s %s %d", list, who, group_id);
-	}
-	else
-	{
+	}else{
 		msn_cmdproc_send(cmdproc, "REM", "%s %s", list, who);
 	}
 }
@@ -1489,7 +1508,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "CHG", "CHG", NULL);
 	msn_table_add_cmd(cbs_table, "CHG", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "ADD", "ADD", add_cmd);
-	msn_table_add_cmd(cbs_table, "ADD", "ILN", iln_cmd);
+	msn_table_add_cmd(cbs_table, "ADL", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "REM", "REM", rem_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "XFR", xfr_cmd);
@@ -1499,8 +1518,8 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
 	msn_table_add_cmd(cbs_table, "REA", "REA", rea_cmd);
 	msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd);
-	/* msn_table_add_cmd(cbs_table, "BLP", "BLP", blp_cmd); */
-	msn_table_add_cmd(cbs_table, "BLP", "BLP", NULL);
+	msn_table_add_cmd(cbs_table, "BLP", "BLP", blp_cmd);
+//	msn_table_add_cmd(cbs_table, "BLP", "BLP", NULL);
 	msn_table_add_cmd(cbs_table, "REG", "REG", reg_cmd);
 	msn_table_add_cmd(cbs_table, "ADG", "ADG", adg_cmd);
 	msn_table_add_cmd(cbs_table, "RMG", "RMG", rmg_cmd);
@@ -1515,7 +1534,7 @@ msn_notification_init(void)
 
 	msn_table_add_cmd(cbs_table, NULL, "CHL", chl_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "REM", rem_cmd);
-	msn_table_add_cmd(cbs_table, NULL, "ADD", add_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "ADL", adl_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "QRY", NULL);
 	msn_table_add_cmd(cbs_table, NULL, "QNG", NULL);
@@ -1524,6 +1543,9 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "OUT", out_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "RNG", rng_cmd);
+
+	msn_table_add_cmd(cbs_table, NULL, "UBX", ubx_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "UUX", uux_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "URL", url_cmd);
 

@@ -66,6 +66,9 @@
 #define WLM_SERVER			"muser.messenger.hotmail.com"
 #define WLM_PORT			1863
 #define WLM_PROT_VER		13
+/*This MSNP14 Support chat with Yahoo Messenger*/
+#define WLM_YAHOO_PROT_VER	14
+
 #define WLM_MAX_PROTOCOL	14
 #define WLM_MIN_PROTOCOL	13
 

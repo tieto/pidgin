@@ -89,8 +89,7 @@ show_debug_cmd(MsnCmdProc *cmdproc, gboolean incoming, const char *command)
 
 	tmp = (incoming) ? 'S' : 'C';
 
-	if ((show[len - 1] == '\n') && (show[len - 2] == '\r'))
-	{
+	if ((show[len - 1] == '\n') && (show[len - 2] == '\r')){
 		show[len - 2] = '\0';
 	}
 
@@ -134,7 +133,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	}
 
 	msn_servconn_write(servconn, data, len);
-	gaim_debug_info("<<","%s",data);
+	gaim_debug_info("<<","%s\n",data);
 
 	g_free(data);
 }

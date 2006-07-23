@@ -1116,12 +1116,9 @@ msn_set_permit_deny(GaimConnection *gc)
 	cmdproc = session->notification->cmdproc;
 
 	if (account->perm_deny == GAIM_PRIVACY_ALLOW_ALL ||
-		account->perm_deny == GAIM_PRIVACY_DENY_USERS)
-	{
+		account->perm_deny == GAIM_PRIVACY_DENY_USERS){
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
-	}
-	else
-	{
+	}else{
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
 	}
 }
@@ -1261,7 +1258,7 @@ msn_rename_group(GaimConnection *gc, const char *old_name,
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	int old_gid;
+	const char *old_gid;
 	const char *enc_new_group_name;
 
 	session = gc->proto_data;
@@ -1270,13 +1267,12 @@ msn_rename_group(GaimConnection *gc, const char *old_name,
 
 	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
 
-	if (old_gid >= 0)
-	{
+	if (old_gid != NULL){
+		/*find a Group*/
 		msn_cmdproc_send(cmdproc, "REG", "%d %s 0", old_gid,
 						 enc_new_group_name);
-	}
-	else
-	{
+	}else{
+		/*not found*/
 		msn_cmdproc_send(cmdproc, "ADG", "%s 0", enc_new_group_name);
 	}
 }
@@ -1332,13 +1328,13 @@ msn_remove_group(GaimConnection *gc, GaimGroup *group)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	int group_id;
+	const char *group_id;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
-	if ((group_id = msn_userlist_find_group_id(session->userlist, group->name)) >= 0)
-	{
+	group_id = msn_userlist_find_group_id(session->userlist, group->name);
+	if (group_id != NULL){
 		msn_cmdproc_send(cmdproc, "RMG", "%d", group_id);
 	}
 }
@@ -1354,20 +1350,17 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
 						info_data->name);
 
-	if (b)
-	{
+	if (b){
 		GString *str = g_string_new("");
 		char *tmp;
 
-		if (b->alias && b->alias[0])
-		{
+		if (b->alias && b->alias[0]){
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
 			g_free(aliastext);
 		}
 
-		if (b->server_alias)
-		{
+		if (b->server_alias){
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
 			g_string_append_printf(s, _("<b>%s:</b> "), _("Nickname"));
 			g_string_append_printf(s, "<font sml=\"msn\">%s</font><br>",
@@ -1976,7 +1969,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_add_deny,			/* add_deny */
 	msn_rem_permit,			/* rem_permit */
 	msn_rem_deny,			/* rem_deny */
-	msn_set_permit_deny,		/* set_permit_deny */
+	msn_set_permit_deny,	/* set_permit_deny */
 	NULL,					/* join_chat */
 	NULL,					/* reject chat invite */
 	NULL,					/* get_chat_name */

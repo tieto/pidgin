@@ -107,6 +107,9 @@ struct _MsnSession
 
 	int conv_seq; /**< The current conversation sequence number. */
 
+	/*psm info*/
+	char *psm;
+
 	struct
 	{
 		/*t and p, get via USR TWN*/

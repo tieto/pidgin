@@ -43,6 +43,8 @@ msn_session_new(GaimAccount *account)
 	session->user = msn_user_new(session->userlist,
 								 gaim_account_get_username(account), NULL);
 
+	/*if you want to chat with Yahoo Messenger*/
+	//session->protocol_ver = WLM_YAHOO_PROT_VER;
 	session->protocol_ver = WLM_PROT_VER;
 	session->conv_seq = 1;
 
@@ -250,22 +252,22 @@ msn_session_sync_users(MsnSession *session)
 					MsnUser *remote_user;
 					gboolean found = FALSE;
 
+					gaim_debug_info("MaYuan","buddy name:%s,group name:%s\n",b->name,group_name);
 					remote_user = msn_userlist_find_user(session->userlist, b->name);
 
 					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP)){
-						int group_id;
+						char *group_id;
 						GList *l;
 
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
 
 						for (l = remote_user->group_ids; l != NULL; l = l->next){
-							if (group_id == GPOINTER_TO_INT(l->data)){
+							if (!g_strcasecmp(group_id ,l->data)){
 								found = TRUE;
 								break;
 							}
 						}
-
 					}
 
 					if (!found){

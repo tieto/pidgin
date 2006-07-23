@@ -90,7 +90,7 @@ nexus_login_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	gaim_debug_misc("msn", "TWN Server Reply: {%s}\n", soapconn->read_buf);
+//	gaim_debug_misc("msn", "TWN Server Reply: {%s}\n", soapconn->read_buf);
 
 	if (strstr(soapconn->read_buf, "HTTP/1.1 302") != NULL){
 		/* Redirect. */
@@ -263,7 +263,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 					soapconn->login_path,soapconn->login_host,strlen(tail));
 
 	request_str = g_strdup_printf("%s%s", head,tail);
-	gaim_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
+//	gaim_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
 
 	g_free(head);
 	g_free(tail);

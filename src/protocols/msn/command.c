@@ -46,6 +46,7 @@ msn_check_payload_cmd(char *str)
 {
 	if( (!strcmp(str,"ADL")) ||
 		(!strcmp(str,"GCF")) ||
+		(!strcmp(str,"SG")) ||
 		(!strcmp(str,"MSG")) ||
 		(!strcmp(str,"RML")) ||
 		(!strcmp(str,"UBX")) ||
@@ -62,11 +63,13 @@ msn_check_payload_cmd(char *str)
 int msn_get_payload_position(char *str)
 {
 	/*because MSG has "MSG hotmail hotmail [payload length]"*/
-	if(!(strcmp(str,"MSG"))){
+	if(!(strcmp(str,"MSG"))|| (!strcmp(str,"UBX")) ){
 		return 2;
 	}
+
 	return 1;
 }
+
 /*
  * set command Payload length
  */
@@ -76,11 +79,14 @@ msn_set_payload_len(MsnCommand *cmd)
 	char * param;
 
 	if(msn_check_payload_cmd(cmd->command)){
+		param = cmd->params[msn_get_payload_position(cmd->command)];
+#if 0
 		if(!(strcmp(cmd->command,"MSG"))){
 			param = cmd->params[2];
 		}else{
 			param = cmd->params[1];
 		}
+#endif
 		cmd->payload_len = is_num(param) ? atoi(param) : 0;
 	}else{
 		cmd->payload_len = 0;

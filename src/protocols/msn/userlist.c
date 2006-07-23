@@ -187,7 +187,7 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 					  const char *old_group_name, const char *new_group_name)
 {
 	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
+//	MsnTransaction *trans;
 	MsnMoveBuddy *data;
 
 	cmdproc = userlist->session->notification->cmdproc;
@@ -300,29 +300,19 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 
 	passport = msn_user_get_passport(user);
 
-	if (list_id == MSN_LIST_FL)
-	{
+	if (list_id == MSN_LIST_FL){
 		/* TODO: When is the user totally removed? */
-		if (group_id >= 0)
-		{
+		if (group_id != NULL){
 			msn_user_remove_group_id(user, group_id);
 			return;
-		}
-		else
-		{
+		}else{
 			/* session->sync->fl_users_count--; */
 		}
-	}
-	else if (list_id == MSN_LIST_AL)
-	{
+	}else if (list_id == MSN_LIST_AL){
 		gaim_privacy_permit_remove(account, passport, TRUE);
-	}
-	else if (list_id == MSN_LIST_BL)
-	{
+	}else if (list_id == MSN_LIST_BL){
 		gaim_privacy_deny_remove(account, passport, TRUE);
-	}
-	else if (list_id == MSN_LIST_RL)
-	{
+	}else if (list_id == MSN_LIST_RL){
 		GaimConversation *convo;
 
 		gaim_debug_info("msn",
@@ -347,11 +337,9 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 	user->list_op &= ~(1 << list_id);
 	/* gaim_user_remove_list_id (user, list_id); */
 
-	if (user->list_op == 0)
-	{
+	if (user->list_op == 0){
 		gaim_debug_info("msn", "Buddy '%s' shall be deleted?.\n",
 						passport);
-
 	}
 }
 
@@ -370,13 +358,11 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	passport = msn_user_get_passport(user);
 	store = msn_user_get_store_name(user);
 
-	if (list_op & MSN_LIST_FL_OP)
-	{
+	if (list_op & MSN_LIST_FL_OP){
 		GSList *c;
-		for (c = group_ids; c != NULL; c = g_slist_next(c))
-		{
-			int group_id;
-			group_id = GPOINTER_TO_INT(c->data);
+		for (c = group_ids; c != NULL; c = g_slist_next(c))	{
+			char *group_id;
+			group_id = c->data;
 			msn_user_add_group_id(user, group_id);
 		}
 
@@ -485,7 +471,7 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 
 		g_return_val_if_fail(user->passport != NULL, NULL);
 
-		if (!strcmp(passport, user->passport))
+		if (!g_strcasecmp(passport, user->passport))
 			return user;
 	}
 
@@ -515,7 +501,7 @@ msn_userlist_find_group_with_id(MsnUserList *userlist, const char * id)
 	for (l = userlist->groups; l != NULL; l = l->next){
 		MsnGroup *group = l->data;
 
-		if (!strcmp(group->id,id))
+		if (!g_strcasecmp(group->id,id))
 			return group;
 	}
 
@@ -548,10 +534,11 @@ msn_userlist_find_group_id(MsnUserList *userlist, const char *group_name)
 
 	group = msn_userlist_find_group_with_name(userlist, group_name);
 
-	if (group != NULL)
+	if (group != NULL){
 		return msn_group_get_id(group);
-	else
+	}else{
 		return NULL;
+	}
 }
 
 const char *
@@ -599,7 +586,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 					   const char *who, int list_id, const char *group_name)
 {
 	MsnUser *user;
-	char *group_id;
+	const char *group_id;
 	const char *list;
 
 	user = msn_userlist_find_user(userlist, who);
@@ -635,11 +622,11 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 					   const char *group_name)
 {
 	MsnUser *user;
-	int group_id;
+	const char *group_id;
 	const char *list;
 	const char *store_name;
 
-	group_id = -1;
+	group_id = NULL;
 
 	if (!gaim_email_is_valid(who)){
 		/* only notify the user about problems adding to the friends list
@@ -658,7 +645,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	if (group_name != NULL){
 		group_id = msn_userlist_find_group_id(userlist, group_name);
 
-		if (group_id < 0){
+		if (group_id == NULL){
 			/* Whoa, we must add that group first. */
 			msn_request_add_group(userlist, who, NULL, group_name);
 			return;
@@ -687,11 +674,11 @@ void
 msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 						const char *old_group_name, const char *new_group_name)
 {
-	int new_group_id;
+	const char *new_group_id;
 
 	new_group_id = msn_userlist_find_group_id(userlist, new_group_name);
 
-	if (new_group_id < 0){
+	if (new_group_id == NULL){
 		msn_request_add_group(userlist, who, old_group_name, new_group_name);
 		return;
 	}
