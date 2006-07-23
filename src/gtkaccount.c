@@ -2221,9 +2221,15 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   COLUMN_ENABLED, &enabled,
 					   -1);
 
-	/* Set the statuses for this account to the current status */
-	saved_status = gaim_savedstatus_get_current();
-	gaim_savedstatus_activate_for_account(saved_status, account);
+	/*
+	 * If we just enabled the account, then set the statuses
+	 * to the current status.
+	 */
+	if (!enabled)
+	{
+		saved_status = gaim_savedstatus_get_current();
+		gaim_savedstatus_activate_for_account(saved_status, account);
+	}
 
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
 }
