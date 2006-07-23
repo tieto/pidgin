@@ -329,6 +329,7 @@ gnt_widget_hide(GntWidget *widget)
 		mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
 #endif
 	gnt_screen_release(widget);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_INVISIBLE);
 	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_MAPPED);
 }
 
@@ -507,5 +508,13 @@ gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height)
 	gboolean ret = FALSE;
 	g_signal_emit(widget, signals[SIG_CONFIRM_SIZE], 0, width, height, &ret);
 	return ret;
+}
+
+void gnt_widget_set_visible(GntWidget *widget, gboolean set)
+{
+	if (set)
+		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_INVISIBLE);
+	else
+		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_INVISIBLE);
 }
 

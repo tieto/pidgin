@@ -396,6 +396,10 @@ update_user_options(AccountEditDialog *dialog)
 	if (dialog->account)
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->newmail),
 				gaim_account_get_check_mail(dialog->account));
+	if (!prplinfo || !(prplinfo->options & OPT_PROTO_MAIL_CHECK))
+		gnt_widget_set_visible(dialog->newmail, FALSE);
+	else
+		gnt_widget_set_visible(dialog->newmail, TRUE);
 
 	if (dialog->remember == NULL)
 		dialog->remember = gnt_check_box_new(_("Remember password"));

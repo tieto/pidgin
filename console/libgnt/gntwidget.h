@@ -39,6 +39,7 @@ typedef enum _GnWidgetFlags
 	GNT_WIDGET_URGENT         = 1 << 7,
 	GNT_WIDGET_GROW_X         = 1 << 8,
 	GNT_WIDGET_GROW_Y         = 1 << 9,
+	GNT_WIDGET_INVISIBLE      = 1 << 10,
 } GntWidgetFlags;
 
 /* XXX: I'll have to ask grim what he's using this for in guifications. */
@@ -125,6 +126,9 @@ void gnt_widget_set_name(GntWidget *widget, const char *name);
 void gnt_widget_queue_update(GntWidget *widget);
 
 void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
+
+void gnt_widget_set_visible(GntWidget *widget, gboolean set);
+
 G_END_DECLS
 
 #endif /* GNT_WIDGET_H */

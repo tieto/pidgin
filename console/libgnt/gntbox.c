@@ -89,6 +89,8 @@ reposition_children(GntWidget *widget)
 
 	for (iter = box->list; iter; iter = iter->next)
 	{
+		if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(iter->data), GNT_WIDGET_INVISIBLE))
+			continue;
 		gnt_widget_set_position(GNT_WIDGET(iter->data), curx, cury);
 		gnt_widget_get_size(GNT_WIDGET(iter->data), &w, &h);
 		if (box->vertical)
@@ -217,6 +219,7 @@ gnt_box_map(GntWidget *widget)
 static GntWidget *
 find_focusable_widget(GntBox *box)
 {
+	/* XXX: Make sure the widget is visible? */
 	if (box->focus == NULL && GNT_WIDGET(box)->parent == NULL)
 		g_list_foreach(box->list, add_to_focus, box);
 
@@ -229,11 +232,17 @@ find_focusable_widget(GntBox *box)
 static void
 find_next_focus(GntBox *box)
 {
-	GList *iter = g_list_find(box->focus, box->active);
-	if (iter && iter->next)
-		box->active = iter->next->data;
-	else if (box->focus)
-		box->active = box->focus->data;
+	gpointer last = box->active;
+	do
+	{
+		GList *iter = g_list_find(box->focus, box->active);
+		if (iter && iter->next)
+			box->active = iter->next->data;
+		else if (box->focus)
+			box->active = box->focus->data;
+		if (!GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_INVISIBLE))
+			break;
+	} while (box->active != last);
 }
 
 static gboolean
@@ -563,6 +572,9 @@ void gnt_box_sync_children(GntBox *box)
 		GntWidget *w = GNT_WIDGET(iter->data);
 		int height, width;
 		int x, y;
+
+		if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_INVISIBLE))
+			continue;
 
 		if (GNT_IS_BOX(w))
 			gnt_box_sync_children(GNT_BOX(w));
