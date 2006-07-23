@@ -8,7 +8,10 @@ GG_SOURCES = \
 	gntblist.c \
 	gntconn.c \
 	gntconv.c \
+	gntdebug.c \
 	gntnotify.c \
+	gntprefs.c \
+	gntrequest.c \
 	gntui.c
 
 GG_HEADERS = \
@@ -16,7 +19,10 @@ GG_HEADERS = \
 	gntblist.h \
 	gntconn.h \
 	gntconv.h \
+	gntdebug.h \
 	gntnotify.h \
+	gntprefs.h \
+	gntrequest.h \
 	gntui.h
 
 GG_OBJECTS = \
@@ -24,7 +30,10 @@ GG_OBJECTS = \
 	gntblist.o \
 	gntconn.o \
 	gntconv.o \
+	gntdebug.o \
 	gntnotify.o \
+	gntprefs.o \
+	gntrequest.o \
 	gntui.o
 
 all: gntgaim

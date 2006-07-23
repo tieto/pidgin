@@ -5,6 +5,7 @@
 #include "gntconn.h"
 #include "gntconv.h"
 #include "gntnotify.h"
+#include "gntrequest.h"
 
 void init_gnt_ui()
 {
@@ -31,6 +32,9 @@ void init_gnt_ui()
 	gg_notify_init();
 	gaim_notify_set_ui_ops(gg_notify_get_ui_ops());
 
+	gg_request_init();
+	gaim_request_set_ui_ops(gg_request_get_ui_ops());
+
 #ifdef STANDALONE
 	gnt_main();
 
@@ -48,6 +52,9 @@ void init_gnt_ui()
 
 	gaim_notify_set_ui_ops(NULL);
 	gg_notify_uninit();
+
+	gaim_request_set_ui_ops(NULL);
+	gg_request_uninit();
 
 	gnt_quit();
 #endif

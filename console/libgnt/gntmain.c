@@ -524,7 +524,12 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 void gnt_init()
 {
-	GIOChannel *channel = g_io_channel_unix_new(0);
+	static GIOChannel *channel = NULL;
+	
+	if (channel)
+		return;
+	
+	channel = g_io_channel_unix_new(0);
 
 	g_io_channel_set_encoding(channel, NULL, NULL);
 	g_io_channel_set_buffered(channel, FALSE);

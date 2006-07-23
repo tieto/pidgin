@@ -15,18 +15,25 @@
 #include "util.h"
 #include "whiteboard.h"
 
+#include "gntdebug.h"
 #include "gntgaim.h"
+#include "gntprefs.h"
 #include "gntui.h"
 
 #define _GNU_SOURCE
 #include <getopt.h>
 
-/* Anything IO-related is directly copied from gtkgaim's source tree */
+static void
+debug_init()
+{
+	gg_debug_init();
+	gaim_debug_set_ui_ops(gg_debug_get_ui_ops());
+}
 
 static GaimCoreUiOps core_ops =
 {
-	NULL, /*gaim_gtk_prefs_init,*/
-	NULL, /*debug_init,*/
+	gg_prefs_init,
+	debug_init,
 	NULL, /*gaim_gtk_ui_init,*/
 	NULL, /*gaim_gtk_quit*/
 };
@@ -36,6 +43,8 @@ gnt_core_get_ui_ops()
 {
 	return &core_ops;
 }
+
+/* Anything IO-related is directly copied from gtkgaim's source tree */
 
 #define GAIM_GTK_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define GAIM_GTK_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
@@ -292,6 +301,8 @@ int main(int argc, char **argv)
 {
 	/* XXX: Don't puke */
 	freopen(".error", "w", stderr);
+
+	gnt_init();
 
 	/* Initialize the libgaim stuff */
 	if (!init_libgaim(argc, argv))
