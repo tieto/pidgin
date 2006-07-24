@@ -4691,7 +4691,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimConversationType type;
 	char *displaying;
 	gboolean plugin_return;
-	struct tm tm;
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4776,16 +4775,16 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
 
-	tm = *(localtime(&mtime));
 	mdate = gaim_signal_emit_return_1(gaim_gtk_conversations_get_handle(),
 	                                  "conversation-timestamp",
-	                                  conv, &tm);
+	                                  conv, mtime);
 	if (mdate == NULL)
 	{
+		struct tm *tm = localtime(&mtime);
 		if (time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
-			mdate = g_strdup(gaim_date_format_long(&tm));
+			mdate = g_strdup(gaim_date_format_long(tm));
 		else
-			mdate = g_strdup(gaim_time_format(&tm));
+			mdate = g_strdup(gaim_time_format(tm));
 	}
 
 	sml_attrib = g_strdup_printf("sml=\"%s\"", gaim_account_get_protocol_name(account));
@@ -6576,11 +6575,17 @@ gaim_gtk_conversations_init(void)
 	                                    "GaimGtkWindow *"));
 
 	gaim_signal_register(handle, "conversation-timestamp",
-	                     gaim_marshal_POINTER__POINTER_POINTER,
+#if SIZEOF_TIME_T == 4
+	                     gaim_marshal_POINTER__POINTER_INT,
+#elif SIZEOF_TIME_T == 8
+			     gaim_marshal_POINTER__POINTER_INT64,
+#else
+# error Unknown size of time_t
+#endif
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                                    GAIM_SUBTYPE_CONVERSATION),
-	                     gaim_value_new(GAIM_TYPE_POINTER));
+	                                    GAIM_SUBTYPE_LOG),
+	                     gaim_value_new(GAIM_TYPE_TIME_T));
 
 	gaim_signal_register(handle, "displaying-im-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,

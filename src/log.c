@@ -594,12 +594,17 @@ void gaim_log_init(void)
 	gaim_log_logger_add(old_logger);
 
 	gaim_signal_register(handle, "log-timestamp",
-	                     gaim_marshal_POINTER__POINTER_POINTER,
+#if SIZEOF_TIME_T == 4
+	                     gaim_marshal_POINTER__POINTER_INT,
+#elif SIZEOF_TIME_T == 8
+			     gaim_marshal_POINTER__POINTER_INT64,
+#else
+# error Unknown size of time_t
+#endif
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_LOG),
-	                     gaim_value_new(GAIM_TYPE_BOXED,
-	                                    "struct tm *"));
+	                     gaim_value_new(GAIM_TYPE_TIME_T));
 
 	gaim_prefs_connect_callback(NULL, "/core/logging/format",
 							    logger_pref_cb, NULL);
@@ -623,14 +628,15 @@ gaim_log_uninit(void)
 static char *log_get_timestamp(GaimLog *log, time_t when)
 {
 	char *date;
-	struct tm tm = *(localtime(&when));
+	struct tm tm;
 
 	date = gaim_signal_emit_return_1(gaim_log_get_handle(),
 	                          "log-timestamp",
-	                          log, &tm);
+	                          log, when);
 	if (date != NULL)
 		return date;
 
+	tm = *(localtime(&when));
 	if (log->type == GAIM_LOG_SYSTEM || time(NULL) > when + 20*60)
 		return g_strdup(gaim_date_format_long(&tm));
 	else

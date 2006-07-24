@@ -8,13 +8,13 @@
 
  @signaldef log-timestamp
   @signalproto
-char *(*log_timestamp)(GaimConversation *conv, struct tm *tm);
+char *(*log_timestamp)(GaimConversation *conv, time_t when);
   @endsignalproto
   @signaldesc
    Emitted to allow plugins to customize the timestamp on a message
    being logged.
   @param log The log the message belongs to.
-  @param tm The time to be converted to a string.
+  @param when The time to be converted to a string.
   @return A textual representation of the time, or @c NULL to use a
           default format.
   @note Plugins must be careful of logs with a type of GAIM_LOG_SYSTEM.

@@ -52,18 +52,18 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 }
 
 static char *timestamp_cb_common(GaimConversation *conv,
-                                 const struct tm *tm,
+                                 time_t t,
                                  gboolean force,
                                  const char *dates)
 {
+	struct tm *tm = localtime(&t);
 	g_return_val_if_fail(conv != NULL, NULL);
-	g_return_val_if_fail(tm != NULL, NULL);
 	g_return_val_if_fail(dates != NULL, NULL);
 
 	if (!strcmp(dates, "always") ||
 	    (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
 	     !strcmp(dates, "chats")) ||
-	    (time(NULL) > (mktime((struct tm *)tm) + 20*60)))
+	    (time(NULL) > (mktime(tm) + 20*60)))
 	{
 		if (force)
 			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
@@ -78,7 +78,7 @@ static char *timestamp_cb_common(GaimConversation *conv,
 }
 
 static char *conversation_timestamp_cb(GaimConversation *conv,
-                                       const struct tm *tm, gpointer data)
+                                       time_t t, gpointer data)
 {
 	gboolean force = gaim_prefs_get_bool(
 				"/plugins/gtk/timestamp_format/force_24hr");
@@ -86,13 +86,11 @@ static char *conversation_timestamp_cb(GaimConversation *conv,
 				"/plugins/gtk/timestamp_format/use_dates/conversation");
 
 	g_return_val_if_fail(conv != NULL, NULL);
-	g_return_val_if_fail(tm != NULL, NULL);
 
-	return timestamp_cb_common(conv, tm, force, dates);
+	return timestamp_cb_common(conv, t, force, dates);
 }
 
-static char *log_timestamp_cb(GaimLog *log,
-                                  const struct tm *tm, gpointer data)
+static char *log_timestamp_cb(GaimLog *log, time_t t, gpointer data)
 {
 	gboolean force = gaim_prefs_get_bool(
 				"/plugins/gtk/timestamp_format/force_24hr");
@@ -100,17 +98,18 @@ static char *log_timestamp_cb(GaimLog *log,
 				"/plugins/gtk/timestamp_format/use_dates/log");
 
 	g_return_val_if_fail(log != NULL, NULL);
-	g_return_val_if_fail(tm != NULL, NULL);
 
 	if (log->type == GAIM_LOG_SYSTEM)
 	{
-		if (force)
+		if (force) {
+			struct tm *tm = localtime(&t);
 			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
-		else
+		} else {
 			return NULL;
+		}
 	}
 
-	return timestamp_cb_common(log->conv, tm, force, dates);
+	return timestamp_cb_common(log->conv, t, force, dates);
 }
 
 static gboolean

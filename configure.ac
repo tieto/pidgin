@@ -60,6 +60,9 @@ AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h sign
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_STRUCT_TM
+AC_CHECK_SIZEOF(time_t, ,[
+#include <stdio.h>
+#include <time.h>])
 
 AC_C_BIGENDIAN
 
