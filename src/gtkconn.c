@@ -37,7 +37,9 @@
 #include "gtkutils.h"
 #include "util.h"
 
-#define INITIAL_RECON_DELAY 8000
+#define INITIAL_RECON_DELAY_MIN  8000
+#define INITIAL_RECON_DELAY_MAX 60000
+
 #define MAX_RECON_DELAY 600000
 
 typedef struct {
@@ -155,7 +157,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
-			info->delay = INITIAL_RECON_DELAY;
+			info->delay = g_random_int_range(INITIAL_RECON_DELAY_MIN, INITIAL_RECON_DELAY_MAX);
 		} else {
 			info->delay = MIN(2 * info->delay, MAX_RECON_DELAY);
 			if (info->timeout != 0)
