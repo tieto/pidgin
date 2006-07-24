@@ -15,6 +15,12 @@ static struct
 	GntWidget *tree;
 } emaildialog;
 
+static void
+notify_msg_window_destroy_cb(GntWidget *window, GaimNotifyMsgType type)
+{
+	gaim_notify_close(type, window);
+}
+
 static void *
 gg_notify_message(GaimNotifyMsgType type, const char *title,
 		const char *primary, const char *secondary)
@@ -48,7 +54,10 @@ gg_notify_message(GaimNotifyMsgType type, const char *title,
 
 	button = gnt_button_new(_("OK"));
 	gnt_box_add_widget(GNT_BOX(window), button);
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), window);
+	g_signal_connect_swapped(G_OBJECT(button), "activate",
+			G_CALLBACK(gnt_widget_destroy), window);
+	g_signal_connect(G_OBJECT(window), "destroy",
+			G_CALLBACK(notify_msg_window_destroy_cb), GINT_TO_POINTER(type));
 
 	gnt_widget_show(window);
 	return window;
@@ -58,11 +67,20 @@ gg_notify_message(GaimNotifyMsgType type, const char *title,
 static void gg_close_notify(GaimNotifyType type, void *handle)
 {
 	GntWidget *widget = handle;
+
+	if (!widget)
+		return;
+
 	while (widget->parent)
 		widget = widget->parent;
 	
 	if (type == GAIM_NOTIFY_SEARCHRESULTS)
 		gaim_notify_searchresults_free(g_object_get_data(handle, "notify-results"));
+#if 0
+	/* This does not seem to be necessary */
+	g_signal_handlers_disconnect_by_func(G_OBJECT(widget),
+			G_CALLBACK(notify_msg_window_destroy_cb), GINT_TO_POINTER(type));
+#endif
 	gnt_widget_destroy(widget);
 }
 
@@ -77,7 +95,7 @@ static void *gg_notify_formatted(const char *title, const char *primary,
 			secondary ? "\n" : "",
 			unformat ? unformat : "");
 
-	void *ret = gg_notify_message(GAIM_NOTIFY_MSG_INFO, title, primary, t);
+	void *ret = gg_notify_message(GAIM_NOTIFY_FORMATTED, title, primary, t);
 
 	g_free(t);
 	g_free(unformat);
@@ -157,7 +175,7 @@ gg_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		return NULL;
 	}
 
-	ret = gg_notify_message(GAIM_NOTIFY_MSG_INFO, _("New Mail"), _("You have mail!"), message->str);
+	ret = gg_notify_message(GAIM_NOTIFY_EMAIL, _("New Mail"), _("You have mail!"), message->str);
 	g_string_free(message, TRUE);
 	return ret;
 }

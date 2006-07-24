@@ -200,7 +200,7 @@ static void
 gg_write_common(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
-	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv);
+	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv); /* XXX: ggconv = conv->ui_data; should do */
 	char *strip;
 	GntTextFormatFlags fl = 0;
 
