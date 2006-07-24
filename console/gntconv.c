@@ -159,6 +159,7 @@ gg_create_conversation(GaimConversation *conv)
 	g_hash_table_insert(ggconvs, conv, ggc);
 
 	ggc->conv = conv;
+	conv->ui_data = ggc;
 
 	type = gaim_conversation_get_type(conv);
 	title = g_strdup_printf(_("%s"), gaim_conversation_get_name(conv));

@@ -644,9 +644,7 @@ void gg_accounts_uninit()
 	gnt_widget_destroy(accounts.window);
 }
 
-#if 0
 /* The following uiops stuff are copied from gtkaccount.c */
-/* Need to do some work on notify- and request-ui before this works */
 typedef struct
 {
 	GaimAccount *account;
@@ -693,6 +691,31 @@ notify_added(GaimAccount *account, const char *remote_user,
 }
 
 static void
+free_add_user_data(AddUserData *data)
+{
+	g_free(data->username);
+
+	if (data->alias != NULL)
+		g_free(data->alias);
+
+	g_free(data);
+}
+
+static void
+add_user_cb(AddUserData *data)
+{
+	GaimConnection *gc = gaim_account_get_connection(data->account);
+
+	if (g_list_find(gaim_connections_get_all(), gc))
+	{
+		gaim_blist_request_add_buddy(data->account, data->username,
+									 NULL, data->alias);
+	}
+
+	free_add_user_data(data);
+}
+
+static void
 request_add(GaimAccount *account, const char *remote_user,
 		  const char *id, const char *alias,
 		  const char *msg)
@@ -709,12 +732,10 @@ request_add(GaimAccount *account, const char *remote_user,
 	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-#if 0
 	gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
 	                    buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
 	                    _("Add"),    G_CALLBACK(add_user_cb),
 	                    _("Cancel"), G_CALLBACK(free_add_user_data));
-#endif
 	g_free(buffer);
 }
 
@@ -724,16 +745,6 @@ static GaimAccountUiOps ui_ops =
 	.status_changed = NULL,
 	.request_add  = request_add
 };
-#else
-
-static GaimAccountUiOps ui_ops = 
-{
-	.notify_added = NULL,
-	.status_changed = NULL,
-	.request_add  = NULL
-};
-
-#endif
 
 GaimAccountUiOps *gg_accounts_get_ui_ops()
 {

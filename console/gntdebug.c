@@ -80,6 +80,12 @@ GaimDebugUiOps *gg_debug_get_ui_ops()
 	return &uiops;
 }
 
+static void
+reset_debug_win(GntWidget *w, gpointer null)
+{
+	debug.window = debug.tview = NULL;
+}
+
 void gg_debug_window_show()
 {
 	if (debug.window == NULL)
@@ -90,6 +96,8 @@ void gg_debug_window_show()
 
 		debug.tview = gnt_text_view_new();
 		gnt_box_add_widget(GNT_BOX(debug.window), debug.tview);
+
+		g_signal_connect(G_OBJECT(debug.window), "destroy", G_CALLBACK(reset_debug_win), NULL);
 	}
 
 	gnt_widget_show(debug.window);
