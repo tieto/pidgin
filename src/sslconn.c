@@ -137,7 +137,7 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 	GaimSslConnection *gsc;
 	GaimSslOps *ops;
 
-	g_return_val_if_fail(fd > 0,                  NULL);
+	g_return_val_if_fail(fd != -1,                NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
 	g_return_val_if_fail(gaim_ssl_is_supported(), NULL);
 
@@ -178,12 +178,10 @@ gaim_ssl_close(GaimSslConnection *gsc)
 	if (ops != NULL && ops->close != NULL)
 		(ops->close)(gsc);
 
-	if (gsc->fd)
+	if (gsc->fd != -1)
 		close(gsc->fd);
 
-	if (gsc->host != NULL)
-		g_free(gsc->host);
-
+	g_free(gsc->host);
 	g_free(gsc);
 }
 

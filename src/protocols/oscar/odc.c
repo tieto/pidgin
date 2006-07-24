@@ -37,25 +37,15 @@ peer_odc_close(PeerConnection *conn)
 	const gchar *tmp;
 
 	if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
-	{
 		tmp = _("The remote user has closed the connection.");
-	}
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_REFUSED)
-	{
 		tmp = _("The remote user has declined your request.");
-	}
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
-	{
 		tmp = _("Lost connection with the remote user for an unknown reason.");
-	}
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
-	{
 		tmp = _("Received invalid data on connection with remote user.");
-	}
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-	{
 		tmp = _("Could not establish a connection with the remote user.");
-	}
 	else
 		/*
 		 * We shouldn't print a message for some disconnect_reasons.

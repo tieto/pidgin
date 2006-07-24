@@ -205,7 +205,6 @@ flap_connection_destroy_cb(gpointer data)
 	flap_connection_destroy_rates(conn->rates);
 
 	od->oscar_connections = g_list_remove(od->oscar_connections, conn);
-	g_free(conn);
 
 	account = gaim_connection_get_account(od->gc);
 
@@ -227,11 +226,17 @@ flap_connection_destroy_cb(gpointer data)
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
 			tmp = _("Could not establish a connection with the server.");
 		else
+			/*
+			 * We shouldn't print a message for some disconnect_reasons.
+			 * Like OSCAR_DISCONNECT_LOCAL_CLOSED.
+			 */
 			tmp = NULL;
 
 		if (tmp != NULL)
 			gaim_connection_error(od->gc, tmp);
 	}
+
+	g_free(conn);
 
 	return FALSE;
 }
