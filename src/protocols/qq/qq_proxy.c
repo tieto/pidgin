@@ -37,9 +37,8 @@
 #include "packet_parse.h"	// MAX_PACKET_SIZE
 #include "buddy_info.h"		// qq_info_query_free
 #include "buddy_opt.h"		// qq_add_buddy_request_free
-#include "group_admindlg.h"	// qq_qun_info_window_free
+#include "char_conv.h"		// qq_sending_im_msg_cb
 #include "group_free.h"		// qq_group_packets_free
-#include "infodlg.h"		// qq_contact_info_window_free
 #include "login_logout.h"	// qq_send_packet_login
 #include "qq_proxy.h"		//
 #include "recv_core.h"		// qq_pending, qq_b4_packets_free
@@ -126,6 +125,17 @@ gint _qq_fill_host(struct sockaddr_in * addr, const gchar * host, guint16 port)
 }				// _qq_fill_host
 
 /*****************************************************************************/
+// set up any finalizing start-up stuff
+static void _qq_start_services(GaimConnection *gc)
+{
+	/* start watching for IMs about to be sent */
+	/*
+	gaim_signal_connect(gaim_conversations_get_handle(),
+			"sending-im-msg", gc,
+			GAIM_CALLBACK(qq_sending_im_msg_cb), NULL);
+			*/
+}
+
 // the callback function after socket is built
 // we setup the qq protocol related configuration here
 static void _qq_got_login(gpointer data, gint source, GaimInputCondition cond)
@@ -171,6 +181,8 @@ static void _qq_got_login(gpointer data, gint source, GaimInputCondition cond)
 	gaim_connection_update_progress(gc, buf, 1, QQ_CONNECT_STEPS);
 	g_free(buf);
 
+	_qq_start_services(gc);
+
 //	qq_send_packet_login(gc);	// finally ready to fire
 	qq_send_packet_request_login_token(gc);
 }				// _qq_got_login
@@ -206,8 +218,6 @@ static void _qq_common_clean(GaimConnection * gc)
 	qq_group_free_all(qd);
 	qq_add_buddy_request_free(qd);
 	qq_info_query_free(qd);
-	qq_contact_info_window_free(qd);
-	qq_qun_info_window_free(qd);
 	qq_buddies_list_free(gc->account /* by gfhuang */, qd);
 
 }				// _qq_common_clean

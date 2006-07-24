@@ -125,8 +125,11 @@ gchar **split_data(guint8 * data, gint len, const gchar * delimit, gint expected
 // the return needs to be freed
 gchar *gen_ip_str(guint8 * ip)
 {
-	return g_strdup_printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
-}				// gen_ip_str
+	if (ip == NULL || ip[0] == 0)
+	       	return g_strdup_printf("");
+	else 
+		return g_strdup_printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+}
 
 // by gfhuang
 guint8 *str_ip_gen(gchar *str) {
@@ -168,36 +171,7 @@ guint32 gaim_name_to_uid(const gchar * name)
 	// atoi is not thread-safe and also not async-cancel safe
 	// atoi is deprecated by strtol() and should not be used in new code
 	return (p == NULL) ? 0 : strtol(p + strlen(QQ_NAME_PREFIX), NULL, 10);
-}				// gaim_name_to_uid
-
-/*****************************************************************************/
-// convert QQ icon index into its pixbuf
-GdkPixbuf *get_face_gdkpixbuf(guint8 index)
-{
-	gint set, suffix;
-	gchar *image_name, *file_name;
-	GdkPixbuf *pixbuf;
-	const gchar *datadir;
-
-	set = (index / 3) + 1;
-	suffix = (index % 3) + 1;
-
-	image_name = g_strdup_printf("%s.png", get_icon_name(set, suffix));
-	// we need to configure DATADIR in Makefile.am
-	// st = -DDATADIR=\"$(datadir)\"
-	datadir = gaim_prefs_get_string("/plugins/prpl/qq/datadir");
-	if (datadir == NULL || strlen(datadir) == 0)
-		file_name = g_build_filename(datadir, "pixmaps", "gaim", "status", "default", image_name, NULL);
-	else
-		file_name = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", image_name, NULL);
-
-	pixbuf = gdk_pixbuf_new_from_file(file_name, NULL);
-
-	g_free(image_name);
-	g_free(file_name);
-
-	return pixbuf;
-}				// get_face_gdkpixbuf
+}
 
 /*****************************************************************************/
 // try to dump the data as GBK
@@ -227,6 +201,7 @@ void try_dump_as_gbk(guint8 * data, gint len)
 }				// try_dump_gbk
 
 /*****************************************************************************/
+
 // dump a chunk of raw data into hex string
 // the return should be freed later
 gchar *hex_dump_to_str(const guint8 * buffer, gint bytes)
@@ -255,16 +230,16 @@ gchar *hex_dump_to_str(const guint8 * buffer, gint bytes)
 				g_string_append_c(str, '.');
 			else
 				g_string_append_c(str, ch);
-		}		// for j
+		}
 		g_string_append_c(str, '\n');
-	}			// for i
+	}
 
 	ret = str->str;
 	// GString can be freed without freeing it character data
 	g_string_free(str, FALSE);
 
 	return ret;
-}				// hex_dump_to_str
+}
 
 /*****************************************************************************/
 // ENF OF FILE

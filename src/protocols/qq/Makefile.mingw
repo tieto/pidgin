@@ -82,7 +82,6 @@ C_SRC = \
 	crypt.c \
 	file_trans.c \
 	group.c \
-	group_admindlg.c \
 	group_conv.c \
 	group_find.c \
 	group_free.c \
@@ -96,7 +95,6 @@ C_SRC = \
 	group_search.c \
 	header_info.c \
 	im.c \
-	infodlg.c \
 	ip_location.c \
 	keep_alive.c \
 	login_logout.c \

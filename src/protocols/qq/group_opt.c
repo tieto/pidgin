@@ -30,7 +30,7 @@
 #include "packet_parse.h"	// create_packet_b
 #include "buddy_info.h"		// qq_send_packet_get_info
 #include "char_conv.h"		// utf8_to_qq
-#include "group_admindlg.h"	// qq_group_manage_window_show
+//#include "group_admindlg.h"	// qq_group_detail_window_show
 #include "group_find.h"		// qq_group_find_by_internal_group_id
 #include "group_hash.h"		// qq_group_refresh
 #include "group_info.h"		// qq_send_cmd_group_get_group_info
@@ -366,7 +366,8 @@ static void qq_group_setup_with_gc_and_uid(gc_and_uid * g)
 	group = qq_group_find_by_internal_group_id(g->gc, g->uid);
 	g_return_if_fail(group != NULL);
 
-	qq_group_detail_window_show(g->gc, group);
+	//XXX insert UI code here
+	//qq_group_detail_window_show(g->gc, group);
 	g_free(g);
 }				// qq_group_setup_with_gc_and_uid
 
@@ -470,7 +471,8 @@ void qq_group_manage_group(GaimConnection * gc, GHashTable * data)
 	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
 	g_return_if_fail(group != NULL);
 
-	qq_group_detail_window_show(gc, group);
+	//XXX insert UI code here
+	//qq_group_detail_window_show(gc, group);
 
 }				// qq_group_manage_members
 

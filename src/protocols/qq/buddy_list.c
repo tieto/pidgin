@@ -42,6 +42,8 @@
 #include "group_hash.h"         //qq_group_create_by_id
 #include "group_info.h"         //qq_send_cmd_group_get_group_info
 
+#include "qq_proxy.h"
+
 #define QQ_GET_ONLINE_BUDDY_02          0x02
 #define QQ_GET_ONLINE_BUDDY_03          0x03	// unknown function
 
@@ -55,13 +57,6 @@ typedef struct _qq_friends_online_entry {
 	guint16 unknown2;
 	guint8 ending;		//0x00
 } qq_friends_online_entry;
-
-//TODO: defined in qq_buddy_status.c, but only used here. Check decomposition.
-extern void			// defined in qq_buddy_status.c
- _qq_buddy_status_dump_unclear(qq_buddy_status * s);
-
-extern gint			// defined in qq_buddy_status.c
- _qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_status * s);
 
 /*****************************************************************************/
 // get a list of online_buddies
@@ -148,7 +143,7 @@ static void _qq_buddies_online_reply_dump_unclear(qq_friends_online_entry * fe)
 
 	g_return_if_fail(fe != NULL);
 
-	_qq_buddy_status_dump_unclear(fe->s);
+	qq_buddy_status_dump_unclear(fe->s);
 
 	dump = g_string_new("");
 	g_string_append_printf(dump, "unclear fields for [%d]:\n", fe->s->uid);
@@ -180,9 +175,14 @@ void qq_process_get_buddies_online_reply(guint8 * buf, gint buf_len, GaimConnect
 	data = g_newa(guint8, len);
 	cursor = data;
 
+	gaim_debug(GAIM_DEBUG_INFO, "QQ", "processing get_buddies_online_reply\n");
+	
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 
+		_qq_show_packet("Get buddies online reply packet", data, len);
+
 		read_packet_b(data, &cursor, len, &position);
+
 		fe = g_newa(qq_friends_online_entry, 1);
 		fe->s = g_newa(qq_buddy_status, 1);
 
@@ -190,7 +190,7 @@ void qq_process_get_buddies_online_reply(guint8 * buf, gint buf_len, GaimConnect
 			// based on one online buddy entry
 			bytes = 0;
 			// 000-030 qq_buddy_status
-			bytes += _qq_buddy_status_read(data, &cursor, len, fe->s);
+			bytes += qq_buddy_status_read(data, &cursor, len, fe->s);
 			// 031-032: unknown4
 			bytes += read_packet_w(data, &cursor, len, &fe->unknown1);
 			// 033-033: flag1
@@ -209,8 +209,8 @@ void qq_process_get_buddies_online_reply(guint8 * buf, gint buf_len, GaimConnect
 				continue;
 			}	// check if it is a valid entry
 
-//			if (QQ_DEBUG)
-//				_qq_buddies_online_reply_dump_unclear(fe);
+			if (QQ_DEBUG)
+				_qq_buddies_online_reply_dump_unclear(fe);
 
 			// update buddy information
 			b = gaim_find_buddy(gaim_connection_get_account(gc), uid_to_gaim_name(fe->s->uid));
@@ -219,10 +219,10 @@ void qq_process_get_buddies_online_reply(guint8 * buf, gint buf_len, GaimConnect
 			if (q_bud != NULL) {	// we find one and update qq_buddy
 				if(0 != fe->s->client_version)
 					q_bud->client_version = fe->s->client_version; //by gfhuang
-				if(0 != *((guint32 *)fe->s->ip)) { // by gfhuang
+			//	if(0 != *((guint32 *)fe->s->ip)) { // by gfhuang
 					g_memmove(q_bud->ip, fe->s->ip, 4);
 					q_bud->port = fe->s->port;
-				}
+		//		}
 				q_bud->status = fe->s->status;
 				q_bud->flag1 = fe->flag1;
 				q_bud->comm_flag = fe->comm_flag;

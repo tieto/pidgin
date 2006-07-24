@@ -32,10 +32,8 @@
 #include "request.h"
 #include "accountopt.h"
 #include "prpl.h"
-#include "gtkroomlist.h"
-#include "gtklog.h"
 #include "server.h"
-#include "util.h" 		/* GaimMenuAction, gaim_menu_action_new, gaim2beta2, gfhuang*/
+#include "util.h" 		/* GaimMenuAction, gaim_menu_action_new */
 
 #include "utils.h"
 #include "buddy_info.h"
@@ -50,7 +48,6 @@
 #include "group.h"		/* chat_info, etc */
 #include "header_info.h"	/* qq_get_cmd_desc */
 #include "im.h"
-#include "infodlg.h"
 #include "keep_alive.h"
 #include "ip_location.h"	/* qq_ip_get_location */
 #include "login_logout.h"
@@ -88,48 +85,12 @@ const gchar *tcp_server_list[] = {
 };
 const gint tcp_server_amount = (sizeof(tcp_server_list) / sizeof(tcp_server_list[0]));
 
-/*********** Prototypes ***********/
-
-static void _qq_login(GaimAccount * account);
-static void _qq_close(GaimConnection * gc);
-static const gchar *_qq_list_icon(GaimAccount * a, GaimBuddy * b);
-static gchar *_qq_status_text(GaimBuddy *b);
-static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full);
-static void _qq_list_emblems(GaimBuddy * b, const char **se, const char **sw, const char **nw, const char **ne);
-static GList *_qq_away_states(GaimAccount *ga);
-static void _qq_set_away(GaimAccount *account, GaimStatus *status);
-static gint _qq_send_im(GaimConnection * gc, const gchar * who, const gchar * message, GaimMessageFlags flags); 
-static int _qq_chat_send(GaimConnection *gc, int channel, const char *message, GaimMessageFlags flags);
-static void _qq_get_info(GaimConnection * gc, const gchar * who);
-static void _qq_menu_get_my_info(GaimPluginAction * action);
-//static void _qq_menu_block_buddy(GaimBlistNode * node);
-static void _qq_menu_show_login_info(GaimPluginAction * action);
-static void _qq_menu_show_about(GaimPluginAction * action);
-static void _qq_menu_any_cmd_send_cb(GaimConnection * gc, GaimRequestFields * fields);
-static void _qq_menu_any_cmd(GaimPluginAction * action);
-static void _qq_menu_locate_ip_cb(GaimConnection * gc, GaimRequestFields * fields);
-static void _qq_menu_locate_ip(GaimPluginAction *action);
-static void _qq_menu_search_or_add_permanent_group(GaimPluginAction * action);
-static void _qq_menu_create_permanent_group(GaimPluginAction * action);
-static void _qq_menu_unsubscribe_group(GaimBlistNode * node);
-static void _qq_menu_manage_group(GaimBlistNode * node);
-static void _qq_menu_show_system_message(GaimPluginAction *action);
-//static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored);
-static GList *_qq_actions(GaimPlugin * plugin, gpointer context);
-static GList *_qq_chat_menu(GaimBlistNode *node);
-static GList *_qq_buddy_menu(GaimBlistNode * node);
-static void _qq_keep_alive(GaimConnection * gc);
-static void _qq_get_chat_buddy_info(GaimConnection * gc, gint channel, const gchar * who);
-static gchar *_qq_get_chat_buddy_real_name(GaimConnection * gc, gint channel, const gchar * who);
-//static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin * plugin);
-static void init_plugin(GaimPlugin * plugin);
-
 static void _qq_login(GaimAccount * account)
 {
 	const gchar *qq_server, *qq_port;
 	qq_data *qd;
 	GaimConnection *gc;
-	GaimPresence *presence;				//gfhuang
+	GaimPresence *presence;	
 	gboolean login_hidden, use_tcp;
 
 	g_return_if_fail(account != NULL);
@@ -145,7 +106,6 @@ static void _qq_login(GaimAccount * account)
 	qq_server = gaim_account_get_string(account, "server", NULL);
 	qq_port = gaim_account_get_string(account, "port", NULL);
 	use_tcp = gaim_account_get_bool(account, "use_tcp", FALSE);
-//	login_hidden = gaim_account_get_bool(account, "hidden", FALSE);		gfhuang
         presence = gaim_account_get_presence(account);
         login_hidden = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE);
 
@@ -183,19 +143,27 @@ static void _qq_close(GaimConnection * gc)
 /* returns the icon name for a buddy or protocol */
 static const gchar *_qq_list_icon(GaimAccount * a, GaimBuddy * b)
 {
+	/* XXX temp commented out until we figure out what to do with
+	 * status icons */
+	/*
 	gchar *filename;
 	qq_buddy *q_bud;
 	gchar icon_suffix;
+	*/
 
 	/* do not use g_return_val_if_fail, as it is not assertion */
 	if (b == NULL || b->proto_data == NULL)
 		return "qq";
 
+	/*
 	q_bud = (qq_buddy *) b->proto_data;
+
 	icon_suffix = get_suffix_from_status(q_bud->status);
 	filename = get_icon_name(q_bud->icon / 3 + 1, icon_suffix);
 
 	return filename;
+	*/
+	return "qq";
 }
 
 
@@ -203,13 +171,8 @@ static const gchar *_qq_list_icon(GaimAccount * a, GaimBuddy * b)
 static gchar *_qq_status_text(GaimBuddy *b)
 {
 	qq_buddy *q_bud;
-//	gboolean show_info;
 	GString *status;
 	gchar *ret;
-
-//	show_info = gaim_prefs_get_bool("/plugins/prpl/qq/show_status_by_icon");
-//	if (!show_info)
-//		return NULL;
 
 	q_bud = (qq_buddy *) b->proto_data;
 	if (q_bud == NULL)
@@ -217,7 +180,6 @@ static gchar *_qq_status_text(GaimBuddy *b)
 
 	status = g_string_new("");
 
-	//by gfhuang
 	switch(q_bud->status) {
 	case QQ_BUDDY_OFFLINE:
 		g_string_append(status, "My Offline");
@@ -270,19 +232,19 @@ static gchar *_qq_status_text(GaimBuddy *b)
 static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 {
 	qq_buddy *q_bud;
-	gchar *country, *country_utf8, *city, *city_utf8;
-	guint32 ip_value;
+	//gchar *country, *country_utf8, *city, *city_utf8;
+	//guint32 ip_value;
 	gchar *ip_str;
 
 	g_return_if_fail(b != NULL);
 
 	q_bud = (qq_buddy *) b->proto_data;
-	g_return_if_fail(q_bud != NULL);
+	//g_return_if_fail(q_bud != NULL);
 
-//	if (is_online(q_bud->status)) //disable by gfhuang
+	if (GAIM_BUDDY_IS_ONLINE(b) && q_bud != NULL)
 	{
+		/*
 		ip_value = ntohl(*(guint32 *) (q_bud->ip));
-//		tooltip = g_string_new("");                     beta2, gfhuang
 		if (qq_ip_get_location(ip_value, &country, &city)) {
 			country_utf8 = qq_to_utf8(country, QQ_CHARSET_DEFAULT);
 			city_utf8 = qq_to_utf8(city, QQ_CHARSET_DEFAULT);
@@ -292,12 +254,13 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 			g_free(country_utf8);
 			g_free(city_utf8);
 		}
-		//memory leak fixed by gfhuang
+		*/
 		ip_str = gen_ip_str(q_bud->ip);
-		g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d", (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
+		if (strlen(ip_str) != 0) {
+			g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d", (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
 				       ? "TCP" : "UDP", ip_str, q_bud->port);
+		}
 		g_free(ip_str);
-		//added by gfhuang
 		g_string_append_printf(tooltip, "\n<b>Age:</b> %d", q_bud->age);
         	switch (q_bud->gender) {
 	        case QQ_BUDDY_GENDER_GG:
@@ -319,24 +282,12 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 }
 
 /* we can show tiny icons on the four corners of buddy icon, */
-static void _qq_list_emblems(GaimBuddy * b, const char **se, const char **sw, const char **nw, const char **ne) {   //add const by gfhuang
+static void _qq_list_emblems(GaimBuddy * b, const char **se, const char **sw, const char **nw, const char **ne) { 
 	// each char ** are refering to filename in pixmaps/gaim/status/default/*png
 
 	qq_buddy *q_bud = b->proto_data;
-//        GaimPresence *presence;
         const char *emblems[4] = { NULL, NULL, NULL, NULL };
         int i = 0;
-
-/*        presence = gaim_buddy_get_presence(b);
-
-        if (!gaim_presence_is_online(presence))
-                emblems[i++] = "offline";
-        else if (gaim_presence_is_status_active(presence, "busy") ||
-                         gaim_presence_is_status_active(presence, "phone"))
-                emblems[i++] = "occupied";
-        else if (!gaim_presence_is_available(presence))
-                emblems[i++] = "away";
-*/
 
         if (q_bud == NULL)
         {
@@ -351,9 +302,6 @@ static void _qq_list_emblems(GaimBuddy * b, const char **se, const char **sw, co
 		if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
 			emblems[i++] = "video";
 
-
-//                if (!(user->list_op & (1 << MSN_LIST_RL)))
-//                        emblems[i++] = "nr";
         }
 
         *se = emblems[0];
@@ -365,7 +313,6 @@ static void _qq_list_emblems(GaimBuddy * b, const char **se, const char **sw, co
 }
 
 /* QQ away status (used to initiate QQ away packet) */
-//Rewritten by gfhuang
 static GList *_qq_away_states(GaimAccount *ga) 
 {
 	GaimStatusType *status;
@@ -379,7 +326,7 @@ static GList *_qq_away_states(GaimAccount *ga)
 			"away", _("QQ: Away"), FALSE, TRUE, FALSE);
         types = g_list_append(types, status);
 
-        status = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE, /* HIDDEN, change to gaim2beta2, gfhuang */ 
+        status = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE, 
 			"invisible", _("QQ: Invisible"), FALSE, TRUE, FALSE);
         types = g_list_append(types, status);
 
@@ -389,29 +336,10 @@ static GList *_qq_away_states(GaimAccount *ga)
 
 	return types;
 }
-/*
-GList *_qq_away_states(GaimConnection * gc)
-{
-	GList *m;
-
-	g_return_val_if_fail(gc != NULL, NULL);
-
-	m = NULL;
-	m = g_list_append(m, _("QQ: Available"));
-	m = g_list_append(m, _("QQ: Away"));
-	m = g_list_append(m, _("QQ: Invisible"));
-	m = g_list_append(m, GAIM_AWAY_CUSTOM);       
-	return m;
-}
-*/
-
-
 
 /* initiate QQ away with proper change_status packet */
-//void _qq_set_away(GaimConnection * gc, const char *state, const char *msg)
 static void _qq_set_away(GaimAccount *account, GaimStatus *status)
 {
-	// by gfhuang
 	GaimConnection *gc = gaim_account_get_connection(account);
 	const char *state = gaim_status_get_id(status);
 
@@ -422,7 +350,6 @@ static void _qq_set_away(GaimAccount *account, GaimStatus *status)
 
 	qd = (qq_data *) gc->proto_data;
 
-	// by gfhuang
 	if(0 == strcmp(state, "available"))
 		qd->status = QQ_SELF_STATUS_AVAILABLE;
 	else if (0 == strcmp(state, "away"))
@@ -432,38 +359,11 @@ static void _qq_set_away(GaimAccount *account, GaimStatus *status)
 	else
 		qd->status = QQ_SELF_STATUS_AVAILABLE;
 
-/*	if (gc->away) {                //disable by gfhuang, 1.2006
-		g_free(gc->away);
-		gc->away = NULL;
-	}
-
-	if (msg) {
-		qd->status = QQ_SELF_STATUS_CUSTOM;
-		gc->away = g_strdup(msg);
-	} else if (state) {
-		gc->away = g_strdup("");
-		if (g_ascii_strcasecmp(state, _("QQ: Available")) == 0)
-			qd->status = QQ_SELF_STATUS_AVAILABLE;
-		else if (g_ascii_strcasecmp(state, _("QQ: Away")) == 0)
-			qd->status = QQ_SELF_STATUS_AWAY;
-		else if (g_ascii_strcasecmp(state, _("QQ: Invisible")) == 0)
-			qd->status = QQ_SELF_STATUS_INVISIBLE;
-		else if (g_ascii_strcasecmp(state, GAIM_AWAY_CUSTOM) == 0) {
-			if (gc->is_idle)
-				qd->status = QQ_SELF_STATUS_IDLE;
-			else
-				qd->status = QQ_SELF_STATUS_AVAILABLE;
-		}
-	} else if (gc->is_idle)
-		qd->status = QQ_SELF_STATUS_IDLE; 
-	else
-		qd->status = QQ_SELF_STATUS_AVAILABLE;
-*/
 	qq_send_packet_change_status(gc);
 }
 
 
-// IMPORTANT: GaimConvImFlags -> GaimMessageFlags    //gfhuang
+// IMPORTANT: GaimConvImFlags -> GaimMessageFlags
 /* send an instance msg to a buddy */
 static gint _qq_send_im(GaimConnection * gc, const gchar * who, const gchar * message, GaimMessageFlags flags)
 {
@@ -495,7 +395,7 @@ static gint _qq_send_im(GaimConnection * gc, const gchar * who, const gchar * me
 }
 
 /* send a chat msg to a QQ Qun */
-static int _qq_chat_send(GaimConnection *gc, int channel, const char *message, GaimMessageFlags flags/*gfhuang*/)
+static int _qq_chat_send(GaimConnection *gc, int channel, const char *message, GaimMessageFlags flags)
 {
 	gchar *msg, *msg_with_qq_smiley;
 	qq_group *group;
@@ -531,11 +431,11 @@ static void _qq_get_info(GaimConnection * gc, const gchar * who)
 		return;
 	}
 
-	qq_send_packet_get_info(gc, uid, TRUE);	/* need to show up info window */
+	qq_send_packet_get_info(gc, uid, TRUE);
 }
 
 /* get my own information */
-static void _qq_menu_get_my_info(GaimPluginAction * action)
+static void _qq_menu_modify_my_info(GaimPluginAction * action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
 	qq_data *qd;
@@ -543,7 +443,8 @@ static void _qq_menu_get_my_info(GaimPluginAction * action)
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
-	_qq_get_info(gc, uid_to_gaim_name(qd->uid));
+	//_qq_get_info(gc, uid_to_gaim_name(qd->uid));
+	qq_prepare_modify_info(gc);
 }
 
 /* remove a buddy from my list and remove myself from his list */
@@ -615,136 +516,7 @@ static void _qq_menu_show_login_info(GaimPluginAction * action)
 	g_string_free(info, TRUE);
 }
 
-/* show about page about QQ plugin */
-static void _qq_menu_show_about(GaimPluginAction * action)
-{
-	GaimConnection *gc = (GaimConnection *) action->context;
-	qq_data *qd;
-	GString *info;
-	gchar *head;
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
-	info = g_string_new("<html><body>\n");
-
-	g_string_append_printf(info, _("<b>Author</b> : %s<br>\n"), OPENQ_AUTHOR);
-	g_string_append(info, "Copyright (c) 2004.  All rights reserved.<br><br>\n");
-
-	g_string_append(info, _("<p><b>Code Contributors</b><br>\n"));
-	g_string_append(info, "gfhuang   : patches for gaim 2.0.0beta2<br>\n");
-	g_string_append(info, "henryouly : file transfer, udp sock5 proxy and qq_show<br>\n");
-	g_string_append(info, "arfankai  : fixed bugs in char_conv.c<br>\n");
-	g_string_append(info, "rakescar  : provided filter for HTML tag<br>\n");
-	g_string_append(info, "yyw       : improved performance on PPC linux<br>\n");
-	g_string_append(info, "lvxiang   : provided ip to location original code<br><br>\n");
-
-	g_string_append(info, _("<p><b>Acknowledgement</b><br>\n"));
-	g_string_append(info, "Shufeng Tan : http://sf.net/projects/perl-oicq<br>\n");
-	g_string_append(info, "Jeff Ye : http://www.sinomac.com<br>\n");
-	g_string_append(info, "Hu Zheng : http://forlinux.yeah.net<br><br>\n");
-
-	g_string_append(info, "<p>And, my parents...\n");
-
-	g_string_append(info, "</body></html>");
-
-	head = g_strdup_printf("About QQ Plugin Ver %s", VERSION);
-	gaim_notify_formatted(gc, NULL, head, NULL, info->str, NULL, NULL);
-
-	g_free(head);
-	g_string_free(info, TRUE);
-}
-
-/* callback of sending any command to QQ server */
-static void _qq_menu_any_cmd_send_cb(GaimConnection * gc, GaimRequestFields * fields)
-{
-	GList *groups, *flds;
-	GaimRequestField *field;
-	const gchar *id, *value;
-	gchar *cmd_str, *data_str, **segments;
-	guint16 cmd;
-	guint8 *data;
-	gint i, data_len;
-
-	cmd_str = NULL;
-	data_str = NULL;
-	cmd = 0x00;
-	data = NULL;
-	data_len = 0;
-
-	for (groups = gaim_request_fields_get_groups(fields); groups; groups = groups->next) {
-		for (flds = gaim_request_field_group_get_fields(groups->data); flds; flds = flds->next) {
-			field = flds->data;
-			id = gaim_request_field_get_id(field);
-			value = gaim_request_field_string_get_value(field);
-
-			if (!g_ascii_strcasecmp(id, "cmd"))
-				cmd_str = g_strdup(value);
-			else if (!g_ascii_strcasecmp(id, "data"))
-				data_str = g_strdup(value);
-		}
-	}
-
-	if (cmd_str != NULL)
-		cmd = (guint16) strtol(cmd_str, NULL, 16);
-
-	if (data_str != NULL) {
-		if (NULL == (segments = split_data(data_str, strlen(data_str), ",", 0))) {
-			g_free(cmd_str);
-			g_free(data_str);
-			return;
-		}
-		for (data_len = 0; segments[data_len] != NULL; data_len++) {;
-		}
-		data = g_newa(guint8, data_len);
-		for (i = 0; i < data_len; i++)
-			data[i] = (guint8) strtol(segments[i], NULL, 16);
-		g_strfreev(segments);
-	}
-
-	if (cmd && data_len > 0) {
-		gaim_debug(GAIM_DEBUG_INFO, "QQ",
-			   "Send Any cmd: %s, data dump\n%s", qq_get_cmd_desc(cmd), hex_dump_to_str(data, data_len));
-		qq_send_cmd(gc, cmd, TRUE, 0, TRUE, data, data_len);
-	}
-
-	g_free(cmd_str);
-	g_free(data_str);
-}				
-
-/* send any command with data to QQ server, for testing and debuggin only */
-static void _qq_menu_any_cmd(GaimPluginAction * action)
-{
-	GaimConnection *gc = (GaimConnection *) action->context;
-	qq_data *qd;
-	const char *tips;
-	GaimRequestField *field;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
-
-	tips = _("Separate the value with \",\"\nAllow \"0x\" before each value");
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
-
-	/* sample: 0x22 */
-	field = gaim_request_field_string_new("cmd", _("CMD Code"), NULL, FALSE);
-	gaim_request_field_group_add_field(group, field);
-	/* sample: 0x00,0x15,0xAB */
-	/*     or: 00,15,AB */
-	/* the delimit is ",", allow 0x before the value */
-	field = gaim_request_field_string_new("data", _("Raw Data"), NULL, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	gaim_request_fields(gc, _("QQ Any Command"),
-			    _("Send Arbitrary Command"), tips, fields,
-			    _("Send"), G_CALLBACK(_qq_menu_any_cmd_send_cb), _("Cancel"), NULL, gc);
-}
-
-/* added by gfhuang */
+/*
 static void _qq_menu_locate_ip_cb(GaimConnection * gc, GaimRequestFields * fields)
 {
         GList *groups, *flds;
@@ -790,7 +562,6 @@ static void _qq_menu_locate_ip_cb(GaimConnection * gc, GaimRequestFields * field
 	}
 }
 
-/* added by gfhuang */
 static void _qq_menu_locate_ip(GaimPluginAction *action)
 {
         GaimConnection *gc = (GaimConnection *) action->context;
@@ -811,12 +582,16 @@ static void _qq_menu_locate_ip(GaimPluginAction *action)
 			_("Locate an IP address"), NULL, fields,
 			 _("Check"), G_CALLBACK(_qq_menu_locate_ip_cb), _("Cancel"), NULL, gc);
 }
+*/
 
+/*
 static void _qq_menu_search_or_add_permanent_group(GaimPluginAction * action)
 {
 	gaim_gtk_roomlist_dialog_show();
 }
+*/
 
+/*
 static void _qq_menu_create_permanent_group(GaimPluginAction * action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
@@ -827,49 +602,43 @@ static void _qq_menu_create_permanent_group(GaimPluginAction * action)
 			   "OpenQ", FALSE, FALSE, NULL,
 			   _("Create"), G_CALLBACK(qq_group_create_with_name), _("Cancel"), NULL, gc);
 }
+*/
 
-static void _qq_menu_unsubscribe_group(GaimBlistNode * node) // by gfhuang, gpointer param_components)
+/* XXX re-enable this
+static void _qq_menu_unsubscribe_group(GaimBlistNode * node)
 {
-//	GaimBuddy *buddy;		by gfhuang
 	GaimChat *chat = (GaimChat *)node;
 	GaimConnection *gc = gaim_account_get_connection(chat->account);
 	GHashTable *components = chat -> components;
-//	GHashTable *components = (GHashTable *) param_components;
 
-//	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));	bug! found by gfhuang
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
-
-//	buddy = (GaimBuddy *) node;
-//	gc = gaim_account_get_connection(buddy->account);
 
 	g_return_if_fail(gc != NULL && components != NULL);
 	qq_group_exit(gc, components);
 }
 
-static void _qq_menu_manage_group(GaimBlistNode * node) // by gfhuang, gpointer param_components)
+// XXX re-enable this
+static void _qq_menu_manage_group(GaimBlistNode * node)
 {
-//	GaimBuddy *buddy;		by gfhuang
 	GaimChat *chat = (GaimChat *)node;
 	GaimConnection *gc = gaim_account_get_connection(chat->account);
 	GHashTable *components = chat -> components;
-//	GHashTable *components = (GHashTable *) param_components;
 
-//	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));	bug! found by gfhuang
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
-
-//	buddy = (GaimBuddy *) node;
-//	gc = gaim_account_get_connection(buddy->account);
 
 	g_return_if_fail(gc != NULL && components != NULL);
 	qq_group_manage_group(gc, components);
 }
+*/
 
+/*
 static void _qq_menu_show_system_message(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
 	g_return_if_fail ( gc != NULL );
 	gaim_gtk_log_show(GAIM_LOG_IM, "systemim", gaim_connection_get_account(gc));
 }
+*/
 
 /* TODO: re-enable this
 static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored)
@@ -896,61 +665,61 @@ static GList *_qq_actions(GaimPlugin * plugin, gpointer context)
 	GaimPluginAction *act;
 
 	m = NULL;
-	act = gaim_plugin_action_new(_("Modify My Information"), _qq_menu_get_my_info);
+	act = gaim_plugin_action_new(_("Modify My Information"), _qq_menu_modify_my_info);
 	m = g_list_append(m, act);
 
 	act = gaim_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);
 	m = g_list_append(m, act);
 
+	/* XXX consider re-enabling this
 	act = gaim_plugin_action_new(_("Show System Message"), _qq_menu_show_system_message);
 	m = g_list_append(m, act);
+	*/
 
-	act = gaim_plugin_action_new(_("Any QQ Command"), _qq_menu_any_cmd);
-	m = g_list_append(m, act);
-
+	/* XXX the old group gtk code needs to moved to the gaim UI before this can be used
 	act = gaim_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
 	m = g_list_append(m, act);
 
 	act = gaim_plugin_action_new(_("Qun: Create a permanent Qun"), _qq_menu_create_permanent_group);
 	m = g_list_append(m, act);
+	*/
 
+	/* XXX consider re-enabling this
 	act = gaim_plugin_action_new(_("Locate an IP"), _qq_menu_locate_ip);
         m = g_list_append(m, act);
+	*/
 	
-	act = gaim_plugin_action_new(_("About QQ Plugin"), _qq_menu_show_about);
-	m = g_list_append(m, act);
-
 	return m;
 }
 
 /* chat-related (QQ Qun) menu shown up with right-click */
-static GList *_qq_chat_menu(GaimBlistNode *node)	//gfhuang
+/* XXX re-enable this
+static GList *_qq_chat_menu(GaimBlistNode *node)
 {
 	GList *m;
 	GaimMenuAction *act;
 
 	m = NULL;
-	act = gaim_menu_action_new(_("Exit this QQ Qun"), GAIM_CALLBACK(_qq_menu_unsubscribe_group), NULL, NULL);   //add NULL by gfhuang
+	act = gaim_menu_action_new(_("Exit this QQ Qun"), GAIM_CALLBACK(_qq_menu_unsubscribe_group), NULL, NULL);
 	m = g_list_append(m, act);
 
-	act = gaim_menu_action_new(_("Show Details"), GAIM_CALLBACK(_qq_menu_manage_group), NULL, NULL);  //add NULL by gfhuang
+	act = gaim_menu_action_new(_("Show Details"), GAIM_CALLBACK(_qq_menu_manage_group), NULL, NULL);
 	m = g_list_append(m, act);
 
 	return m;
 }
+*/
 /* buddy-related menu shown up with right-click */
+/* XXX re-enable this
 static GList *_qq_buddy_menu(GaimBlistNode * node)
 {
 	GList *m;
-	/*GaimBlistNodeAction->GaimMenuAction, gaim2beta2, gfhuang*/
-//	GaimMenuAction  *act;
 
-	if(GAIM_BLIST_NODE_IS_CHAT(node))		//by gfhuang
+	if(GAIM_BLIST_NODE_IS_CHAT(node))
 		return _qq_chat_menu(node);
 	
 	m = NULL;
-	/*gaim_blist_node_action_new -> gaim_menu_action_new, gaim2beta2, gfhuang */
-
+*/
 /* TODO : not working, temp commented out by gfhuang 
 
 	act = gaim_menu_action_new(_("Block this buddy"), GAIM_CALLBACK(_qq_menu_block_buddy), NULL, NULL); //add NULL by gfhuang
@@ -960,9 +729,10 @@ static GList *_qq_buddy_menu(GaimBlistNode * node)
 		m = g_list_append(m, act);
 //	}
 */
-
+/*
 	return m;
 }
+*/
 
 
 static void _qq_keep_alive(GaimConnection * gc)
@@ -980,8 +750,7 @@ static void _qq_keep_alive(GaimConnection * gc)
 		group = (qq_group *) list->data;
 		if (group->my_status == QQ_GROUP_MEMBER_STATUS_IS_MEMBER ||
 		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
-// no need to get info time and time again, online members enough, gfhuang
-//			qq_send_cmd_group_get_group_info(gc, group);
+			// no need to get info time and time again, online members enough
 			qq_send_cmd_group_get_online_member(gc, group);
 	
 		list = list->next;
@@ -1018,49 +787,6 @@ void qq_function_not_implemented(GaimConnection * gc)
 	gaim_notify_warning(gc, NULL, _("This function has not be implemented yet"), _("Please wait for new version"));
 }
 
-/*
-static GaimPluginPrefFrame *get_plugin_pref_frame(GaimPlugin * plugin)
-{
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
-
-	frame = gaim_plugin_pref_frame_new();
-
-	ppref = gaim_plugin_pref_new_with_label(_("Convert IP to location"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/qq/ipfile", _("IP file"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_label(_("Display Options"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label
-	    ("/plugins/prpl/qq/show_status_by_icon", _("Show gender/age information beside buddy icons"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label
-	    ("/plugins/prpl/qq/show_fake_video", _("Fake an video for GAIM QQ (re-login to activate)"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_label(_("System Options"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label
-	    ("/plugins/prpl/qq/prompt_for_missing_packet", _("Prompt user for actions if there are missing packets"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label
-	    ("/plugins/prpl/qq/prompt_group_msg_on_recv", _("Pop up Qun chat window when receive Qun message"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/qq/datadir", _("OpenQ installed directory"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-*/
-
 GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info	= {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
@@ -1072,7 +798,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	_qq_status_text,		/* status_text	*/
 	_qq_tooltip_text,		/* tooltip_text */
 	_qq_away_states,		/* away_states	*/
-	_qq_buddy_menu,			/* blist_node_menu */
+	NULL,				/* blist_node_menu */
 	qq_chat_info,			/* chat_info */
 	NULL,				/* chat_info_defaults */
 	_qq_login,			/* login */
@@ -1118,18 +844,12 @@ static GaimPluginProtocolInfo prpl_info	= {
 	qq_roomlist_get_list,		/* roomlist_get_list */
 	qq_roomlist_cancel,		/* roomlist_cancel */
 	NULL,				/* roomlist_expand_category */
-	qq_can_receive_file,				/* can_receive_file */
-	qq_send_file,				/* send_file */
-	NULL,                           /* new xfer, by gfhuang */
-	NULL,				/* offline_message, gaim2beta2, gfhuang */
-	NULL,				/* GaimWhiteboardPrplOps, gaim2beta2, gfhuang */
+	NULL,				/* can_receive_file */
+	qq_send_file,			/* send_file */
+	NULL,                           /* new xfer */
+	NULL,				/* offline_message */
+	NULL,				/* GaimWhiteboardPrplOps */
 };
-
-/*
-static GaimPluginUiInfo prefs_info = {
-	get_plugin_pref_frame
-};
-*/
 
 static GaimPluginInfo info = {
 	GAIM_PLUGIN_MAGIC,

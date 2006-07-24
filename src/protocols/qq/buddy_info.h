@@ -40,9 +40,7 @@
 #define QQ_BUDDY_GENDER_MM          0x01
 #define QQ_BUDDY_GENDER_UNKNOWN     0xff
 
-typedef struct _contact_info contact_info;
-
-struct _contact_info {
+typedef struct _contact_info {
 	gchar *uid;		//0
 	gchar *nick;		//1
 	gchar *country;		//2 
@@ -80,15 +78,46 @@ struct _contact_info {
 	gchar *blood;		//34
 	gchar *qq_show;		//35
 	gchar *unknown6;	//36, always 0x2D
-};
+} contact_info;
 
-void qq_refresh_buddy_and_myself(contact_info * info, GaimConnection * gc);
-void qq_send_packet_get_info(GaimConnection * gc, guint32 uid, gboolean show_window);
-void qq_send_packet_modify_info(GaimConnection * gc, contact_info * info, gchar * new_passwd);
-void qq_process_modify_info_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_process_get_info_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_info_query_free(qq_data * qd);
+// There is no user id stored in the reply packet for information query
+// we have to manually store the query, so that we know the query source
+typedef struct _qq_info_query {
+	guint32 uid;
+	gboolean show_window;
+	gboolean modify_info;
+} qq_info_query;
+
+// We get an info packet on ourselves before we modify our information.
+// Even though not all of the information is currently modifiable, it still
+// all needs to be there when we send out the modify info packet
+typedef struct _modify_info_data {
+	GaimConnection *gc;
+	GList *misc, *node;
+} modify_info_data;
+
+#define QQ_CONTACT_FIELDS 				37
+
+#define QQ_MAIN_INFO		"Primary Information"
+#define QQ_EXTRA_INFO		"Detailed Information"
+#define QQ_PERSONAL_INTRO	"Personal Introduction"
+#define QQ_MISC			"Miscellaneous"
+
+#define QQ_NO_CHOICE		0
+#define QQ_HOROSCOPE		 1
+#define QQ_ZODIAC		 2
+#define QQ_BLOOD		 3
+#define QQ_GENDER		 4
+#define QQ_COUNTRY		 5
+#define QQ_PROVINCE		 6
+#define QQ_OCCUPATION		 7
+
+void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc);
+void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window);
+void qq_send_packet_modify_info(GaimConnection *gc, contact_info *info, gchar *new_passwd);
+void qq_prepare_modify_info(GaimConnection *gc);
+void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_info_query_free(qq_data *qd);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

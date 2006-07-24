@@ -20,13 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_MY_UTILS_H_
 #define _QQ_MY_UTILS_H_
 
+#include <stdio.h>
 #include <glib.h>
-#include <gtk/gtk.h>
 
 #define QQ_NAME_PREFIX    "qq-"
 
@@ -36,19 +34,15 @@ gint qq_string_to_dec_value(const gchar * str);
 
 gchar **split_data(guint8 * data, gint len, const gchar * delimit, gint expected_fields);
 gchar *gen_ip_str(guint8 * ip);
-guint8 *str_ip_gen(gchar *str); //by gfhuang
+guint8 *str_ip_gen(gchar *str);
 gchar *uid_to_gaim_name(guint32 uid);
 
 guint32 gaim_name_to_uid(const gchar * name);
 
 gchar *get_icon_name(gint set, gint suffix);
 
-GdkPixbuf *get_face_gdkpixbuf(guint8 index);
-
 void try_dump_as_gbk(guint8 * data, gint len);
 
 gchar *hex_dump_to_str(const guint8 * buf, gint buf_len);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

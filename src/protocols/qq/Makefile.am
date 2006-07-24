@@ -21,8 +21,6 @@ QQSOURCES = \
 	char_conv.h \
 	crypt.c \
 	crypt.h \
-	group_admindlg.c \
-	group_admindlg.h \
 	group.c \
 	group_conv.c \
 	group_conv.h \
@@ -52,8 +50,6 @@ QQSOURCES = \
 	header_info.h \
 	im.c \
 	im.h \
-	infodlg.c \
-	infodlg.h \
 	ip_location.c \
 	ip_location.h \
 	keep_alive.c \
@@ -68,8 +64,6 @@ QQSOURCES = \
 	send_core.h \
 	sendqueue.c \
 	sendqueue.h \
-	show.c \
-	show.h \
 	sys_msg.c \
 	sys_msg.h \
 	udp_proxy_s5.c \
@@ -104,6 +98,5 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"${datadir}/locale\" \
         -DVERSION=\"$(VERSION)\" \
         $(DEBUG_CFLAGS) \
-        $(GTK_CFLAGS) \
         $(GLIB_CFLAGS) \
 	$(GAIM_CFLAGS)

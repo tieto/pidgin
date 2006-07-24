@@ -56,9 +56,11 @@ enum {
 	QQ_SELF_STATUS_CUSTOM = 0x14,
 	QQ_SELF_STATUS_IDLE = 0x15,
 };
-
+ 
+void qq_buddy_status_dump_unclear(qq_buddy_status * s);
 gboolean is_online(guint8 status);
 
+gint qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_status * s);
 gchar get_suffix_from_status(guint8 status);
 
 void qq_send_packet_change_status(GaimConnection * gc);

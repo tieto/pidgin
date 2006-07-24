@@ -51,6 +51,7 @@ gint qq_proxy_write(qq_data * qd, guint8 * data, gint len);
 gint qq_connect(GaimAccount * account, const gchar * host, guint16 port, gboolean use_tcp, gboolean is_redirect);
 
 void qq_disconnect(GaimConnection * gc);
+void _qq_show_packet(gchar * des, gchar * buf, gint len);
 
 #endif				//_QQ_PROXY_H
 /*****************************************************************************/
