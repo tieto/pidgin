@@ -107,7 +107,7 @@ static const gchar *zodiac_names[] = {
 };
 
 static const gchar *blood_types[] = {
-	"其它", "A型", "B型", "O型", "AB型", NULL
+	"-", N_("A"), N_("B"), N_("O"), N_("AB"), N_("Other"), NULL
 };
 
 static const gchar *genders[] = {
@@ -138,7 +138,7 @@ static const gchar *occupation_names[] = {
         "销售/广告/市场", NULL
 };
 
-static const gint choice_sizes[] = { 0, 13, 13, 5, 2, 7, 34, 15 };
+static const gint choice_sizes[] = { 0, 13, 13, 6, 2, 7, 34, 15 };
 
 
 static const gchar *info_group_headers[] = {
@@ -221,7 +221,7 @@ static gboolean is_valid_index(gchar *value, gint choice)
 
 	if (choice == 0) return FALSE;
 	len = strlen(value);
-	// the server sends us an ascii index and none of arrays has more than 99
+	// the server sends us an ascii index and none of the arrays has more than 99
 	// elements
 	if (len > 3 || len == 0) return FALSE;
 	for (i = 0; i < len; i++)
@@ -357,6 +357,11 @@ void qq_send_packet_modify_info(GaimConnection *gc, contact_info *info, gchar *n
 
 static void modify_info_cancel_cb(modify_info_data *mid)
 {
+	qq_data *qd;
+
+	qd = (qq_data *) mid->gc->proto_data;
+	qd->modifying_info = FALSE;
+
 	g_list_free(mid->misc);
 	g_free(mid);
 }
@@ -378,7 +383,7 @@ static void parse_field(gpointer field, gpointer outgoing_info)
 		value = g_strdup_printf("%d", gaim_request_field_choice_get_value(f));
 	else {
 		value = (gchar *) gaim_request_field_string_get_value(f);
-		if (value == NULL) value = g_strdup("");
+		if (value == NULL) value = g_strdup("-");
 		else value = utf8_to_qq(value, QQ_CHARSET_DEFAULT);
 	}
 	segments[ft->pos] = value;
@@ -401,12 +406,15 @@ static void parse_misc_field(gpointer field, gpointer outgoing_info)
 static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
 {
 	GaimConnection *gc;
+	qq_data *qd;
 	GList *list,  *groups, *group_node;
 	gchar *info_field[QQ_CONTACT_FIELDS];
 	contact_info *info;
 	gint i;
 
 	gc = mid->gc;
+	qd = (qq_data *) gc->proto_data;
+	qd->modifying_info = FALSE;
 	list = mid->misc;
 	g_list_foreach(list, parse_misc_field, info_field);
 	g_list_free(list);
@@ -469,6 +477,7 @@ static void setup_group(gpointer field, gpointer group)
 // a form using those values and the info_template.
 static void create_modify_info_dialogue(GaimConnection *gc, const gchar **info)
 {
+	qq_data *qd;
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
@@ -476,32 +485,38 @@ static void create_modify_info_dialogue(GaimConnection *gc, const gchar **info)
 	modify_info_data *mid;
 	gint i;
 
-	fields = gaim_request_fields_new();
-	
-	// we only care about the first 3 groups, not the miscellaneous stuff
-	for (i = 0; i < 3; i++) {
-		group = gaim_request_field_group_new(info_group_headers[i]);
-		gaim_request_fields_add_group(fields, group);
-		group_list = info_get_group(info, info_group_headers[i]);
-		g_list_foreach(group_list, setup_group, group);
-		g_list_free(group_list);
-	}
+	// so we only have one dialog open at a time
+	qd = (qq_data *) gc->proto_data;
+	if (!qd->modifying_info) {
+		qd->modifying_info = TRUE;
 
-	//set this manually here instead of generating a new template column
-	field = gaim_request_fields_get_field(fields, "uid");
-	gaim_request_field_string_set_editable(field, FALSE);
-
-	//we need to pass the info that doesn't get modified as aux data
-	//because we'll still need it when we send the modify_info packet
-	mid = g_new0(modify_info_data, 1);
-	mid->gc = gc;
-	mid->misc = info_get_group(info, info_group_headers[3]);
+		fields = gaim_request_fields_new();
 	
-	gaim_request_fields(gc, _("Modify my information"),
+		// we only care about the first 3 groups, not the miscellaneous stuff
+		for (i = 0; i < 3; i++) {
+			group = gaim_request_field_group_new(info_group_headers[i]);
+			gaim_request_fields_add_group(fields, group);
+			group_list = info_get_group(info, info_group_headers[i]);
+			g_list_foreach(group_list, setup_group, group);
+			g_list_free(group_list);
+		}
+
+		//set this manually here instead of generating a new template column
+		field = gaim_request_fields_get_field(fields, "uid");
+		gaim_request_field_string_set_editable(field, FALSE);
+
+		//we need to pass the info that doesn't get modified as aux data
+		//because we'll still need it when we send the modify_info packet
+		mid = g_new0(modify_info_data, 1);
+		mid->gc = gc;
+		mid->misc = info_get_group(info, info_group_headers[3]);
+	
+		gaim_request_fields(gc, _("Modify my information"),
 			_("Modify my information"), NULL, fields,
 			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
 			_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
 			mid);
+	}
 }
 
 // process the reply of modify_info packet
@@ -519,6 +534,7 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	data = g_newa(guint8, len);
 
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+		data[len] = '\0';
 		if (qd->uid == atoi((gchar *) data)) {	// return should be my uid
 			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Update info ACK OK\n");
 			gaim_notify_info(gc, NULL, _("Your information has been updated"), NULL);
@@ -558,10 +574,6 @@ void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc)
 	}
 	g_free(alias_utf8);
 }
-
-// XXX When we don't have any immediate response, we send duplicate get info packets 
-// to the server. If the server ends up responding to multiple packets, we get multiple
-// modify info dialogues, which is annoying. Fix this.
 
 // process reply to get_info packet
 void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)

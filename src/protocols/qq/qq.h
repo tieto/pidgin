@@ -102,6 +102,8 @@ struct _qq_data {
 	GList *info_query;
 	GList *add_buddy_request;
 	GQueue *before_login_packets;
+
+	gboolean modifying_info;
 };
 
 void qq_function_not_implemented(GaimConnection * gc);
