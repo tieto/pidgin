@@ -594,7 +594,13 @@ void gaim_log_init(void)
 	gaim_log_logger_add(old_logger);
 
 	gaim_signal_register(handle, "log-timestamp",
+#if SIZEOF_TIME_T == 4
 	                     gaim_marshal_POINTER__POINTER_INT,
+#elif SIZEOF_TIME_T == 8
+			     gaim_marshal_POINTER__POINTER_INT64,
+#else
+#error Unknown size of time_t
+#endif
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_LOG),
