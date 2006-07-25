@@ -6585,7 +6585,13 @@ gaim_gtk_conversations_init(void)
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_LOG),
-	                     gaim_value_new(GAIM_TYPE_TIME_T));
+#if SIZEOF_TIME_T == 4
+	                     gaim_value_new(GAIM_TYPE_INT));
+#elif SIZE_OF_TIME_T == 8
+	                     gaim_value_new(GAIM_TYPE_INT64));
+#else
+# error Unknown size of time_t
+#endif
 
 	gaim_signal_register(handle, "displaying-im-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,

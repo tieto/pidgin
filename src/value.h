@@ -26,7 +26,6 @@
 #define _GAIM_VALUE_H_
 
 #include <glib.h>
-#include "config.h"
 
 /**
  * Specific value types.
@@ -53,15 +52,6 @@ typedef enum
 	GAIM_TYPE_BOXED         /**< Boxed pointer with specific type. */
 
 } GaimType;
-
-/* time_t is normally either an int or a uint; this is a little ugly
- * and probably deserves revisiting. */
-#if SIZEOF_TIME_T == 8
-# define GAIM_TYPE_TIME_T GAIM_TYPE_INT64
-#else
-# define GAIM_TYPE_TIME_T GAIM_TYPE_INT
-#endif /* sizeof(time_t) == 8 */
-
 
 
 /**
