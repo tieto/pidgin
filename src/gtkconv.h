@@ -103,9 +103,6 @@ struct _GaimGtkChatPane
 	GtkWidget *count;
 	GtkWidget *list;
 	GtkWidget *topic_text;
-	GtkWidget *userlist_im;
-	GtkWidget *userlist_ignore;
-	GtkWidget *userlist_info;
 };
 
 /**

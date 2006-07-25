@@ -3869,10 +3869,9 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	GtkWidget *vbox, *hbox, *frame;
 	GtkWidget *imhtml_sw;
 	GtkPolicyType imhtml_sw_hscroll;
-	GtkWidget *lbox, *bbox;
+	GtkWidget *lbox;
 	GtkWidget *label;
 	GtkWidget *list;
-	GtkWidget *button;
 	GtkWidget *sw;
 	GtkListStore *ls;
 	GtkCellRenderer *rend;
@@ -4019,48 +4018,6 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtkchat->list = list;
 
 	gtk_container_add(GTK_CONTAINER(sw), list);
-
-	/* Setup the user list toolbar. */
-	bbox = gtk_hbox_new(TRUE, GAIM_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(lbox), bbox, FALSE, FALSE, 0);
-	gtk_widget_show(bbox);
-
-	/* IM */
-	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_IM,
-										   GAIM_BUTTON_VERTICAL);
-	gtkchat->userlist_im = button;
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("IM the user"), NULL);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(chat_im_button_cb), gtkconv);
-
-	gtk_widget_show(button);
-
-	/* Ignore */
-	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_IGNORE,
-										   GAIM_BUTTON_VERTICAL);
-	gtkchat->userlist_ignore = button;
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Ignore the user"), NULL);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(ignore_cb), gtkconv);
-	gtk_widget_show(button);
-
-	/* Info */
-	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_INFO,
-										   GAIM_BUTTON_VERTICAL);
-	gtkchat->userlist_info = button;
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, button,
-						 _("Get the user's information"), NULL);
-	g_signal_connect(G_OBJECT(button), "clicked",
-	                 G_CALLBACK(info_cb), gtkconv);
-
-	gtk_widget_show(button);
 
 	/* Setup the bottom half of the conversation window */
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
@@ -5586,13 +5543,7 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 									 (gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
 		}
 
-		/* Deal with chat userlist buttons */
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
-		{
-			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, TRUE);
-			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, TRUE);
-			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, (prpl_info->get_info != NULL));
-		}
+  
 	} else {
 		/* Account is offline */
 		/* Or it's a chat that we've left. */
@@ -5608,14 +5559,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.remove, FALSE);
 		gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
 		gtk_widget_set_sensitive(win->menu.insert_image, FALSE);
-
-		/* Deal with chat userlist buttons */
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
-		{
-			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, FALSE);
-		}
 	}
 
 	/*
@@ -6575,13 +6518,7 @@ gaim_gtk_conversations_init(void)
 	                                    "GaimGtkWindow *"));
 
 	gaim_signal_register(handle, "conversation-timestamp",
-#if SIZEOF_TIME_T == 4
 	                     gaim_marshal_POINTER__POINTER_INT,
-#elif SIZEOF_TIME_T == 8
-			     gaim_marshal_POINTER__POINTER_INT64,
-#else
-# error Unknown size of time_t
-#endif
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_LOG),
