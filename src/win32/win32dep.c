@@ -74,7 +74,6 @@ HINSTANCE gaimdll_hInstance = 0;
  */
 
 FARPROC wgaim_find_and_loadproc(char*, char*);
-extern void wgaim_gtkspell_init();
 char* wgaim_data_dir(void);
 
 /*
