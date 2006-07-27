@@ -58,9 +58,19 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
-		handles = g_list_append(handles, info);
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
+			
+			return info->ui_handle;
+			
+		} else {
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
 
-		return info->ui_handle;
+			g_free(info);
+
+			return NULL;
+		}		
 	}
 
 	return NULL;
@@ -85,7 +95,19 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
-		handles = g_list_append(handles, info);
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
+
+			return info->ui_handle;
+
+		} else {
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
+
+			g_free(info);
+
+			return NULL;
+		}		
 
 		return info->ui_handle;
 	}
@@ -125,9 +147,19 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
-		handles = g_list_append(handles, info);
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
 
-		return info->ui_handle;
+			return info->ui_handle;
+
+		} else {
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
+
+			g_free(info);
+
+			return NULL;
+		}
 	}
 
 	return NULL;
@@ -154,9 +186,19 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
-		handles = g_list_append(handles, info);
-
-		return info->ui_handle;
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
+			
+			return info->ui_handle;
+			
+		} else {
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
+			
+			g_free(info);
+			
+			return NULL;
+		}
 	}
 
 	return NULL;
@@ -183,7 +225,19 @@ gaim_notify_searchresults(GaimConnection *gc, const char *title,
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
-		handles = g_list_append(handles, info);
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
+
+			return info->ui_handle;
+
+		} else {
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
+
+			g_free(info);
+
+			return NULL;
+		}
 
 		return info->ui_handle;
 	}
@@ -375,10 +429,21 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 		info->cb = cb;
 		info->cb_user_data = user_data;
 
-		handles = g_list_append(handles, info);
-
 		g_free(infotext);
-		return info->ui_handle;
+
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
+
+			return info->ui_handle;
+
+		} else {
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
+
+			g_free(info);
+
+			return NULL;
+		}
 	}
 
 	return NULL;
@@ -401,9 +466,16 @@ gaim_notify_uri(void *handle, const char *uri)
 		info->handle    = handle;
 		info->ui_handle = ops->notify_uri(uri);
 
-		handles = g_list_append(handles, info);
+		if (info->ui_handle != NULL) {
+			handles = g_list_append(handles, info);
+			
+			return info->ui_handle;
 
-		return info->ui_handle;
+		} else {
+			g_free(info);
+
+			return NULL;
+		}
 	}
 
 	return NULL;
