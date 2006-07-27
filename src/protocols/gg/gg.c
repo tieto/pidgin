@@ -1737,6 +1737,11 @@ static void ggp_close(GaimConnection *gc)
 			gg_free_session(info->session);
 		}
 
+		/* Immediately close any notifications on this handle since that process depends
+		 * upon the contents of info->searches, which we are about to destroy.
+		 */
+		gaim_notify_close_with_handle(gc);
+
 		ggp_search_destroy(info->searches);
 		g_free(info);
 		gc->proto_data = NULL;
