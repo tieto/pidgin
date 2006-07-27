@@ -205,7 +205,7 @@ static GList *info_get_group(const gchar **info, const gchar *group_name)
 		if (g_ascii_strcasecmp(group_name, cur->group) == 0) {
 			entry = g_memdup(cur, sizeof(info_field));
 			entry->value = g_strdup(info[entry->pos]);
-			group = g_list_insert_sorted_with_data(group, entry, info_field_compare, NULL);
+			group = g_list_insert_sorted(group, entry, info_field_compare);
 		}
 		cur++;
 	}
