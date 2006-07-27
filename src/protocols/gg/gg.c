@@ -1160,7 +1160,6 @@ static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
 			gaim_notify_error(gc, NULL,
 					  _("Unable to display the search results."),
 					  NULL);
-			ggp_sr_close_cb(form);
 			return;
 		}
 
