@@ -1952,8 +1952,12 @@ gaim_conv_chat_cb_destroy(GaimConvChatBuddy *cb)
 {
 	g_return_if_fail(cb != NULL);
 
+	g_free(cb->alias);
+	g_free(cb->alias_key);
 	g_free(cb->name);
 	cb->name = NULL;
+	cb->alias = NULL;
+	cb->alias_key = NULL;
 	cb->flags = 0;
 
 	GAIM_DBUS_UNREGISTER_POINTER(cb);
