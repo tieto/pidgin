@@ -66,6 +66,7 @@ static void jabber_stream_init(JabberStream *js)
 	/* setup the parser fresh for each stream */
 	jabber_parser_setup(js);
 	jabber_send_raw(js, open_stream, -1);
+	js->reinit = FALSE;
 	g_free(open_stream);
 }
 
@@ -354,6 +355,8 @@ jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
+		if(js->reinit)
+			jabber_stream_init(js);
 	}
 
 	if(errno == EAGAIN)
@@ -1009,7 +1012,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_REINITIALIZING:
 			gaim_connection_update_progress(js->gc, _("Re-initializing Stream"),
 					6, JABBER_CONNECT_STEPS);
-			jabber_stream_init(js);
+			js->reinit = TRUE;
 			break;
 		case JABBER_STREAM_CONNECTED:
 			jabber_roster_request(js);
