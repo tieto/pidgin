@@ -70,7 +70,11 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 			g_free(info);
 
 			return NULL;
-		}		
+		}
+
+	} else {
+		if (cb != NULL)
+			cb(user_data);
 	}
 
 	return NULL;
@@ -108,8 +112,9 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 
 			return NULL;
 		}		
-
-		return info->ui_handle;
+	} else {
+		if (cb != NULL)
+			cb(user_data);
 	}
 
 	return NULL;
@@ -160,6 +165,10 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 
 			return NULL;
 		}
+
+	} else {
+		if (cb != NULL)
+			cb(user_data);
 	}
 
 	return NULL;
@@ -199,6 +208,10 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 			
 			return NULL;
 		}
+
+	} else {
+		if (cb != NULL)
+			cb(user_data);
 	}
 
 	return NULL;
@@ -239,7 +252,9 @@ gaim_notify_searchresults(GaimConnection *gc, const char *title,
 			return NULL;
 		}
 
-		return info->ui_handle;
+	} else {
+		if (cb != NULL)
+			cb(user_data);
 	}
 
 	return NULL;
@@ -444,6 +459,10 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 
 			return NULL;
 		}
+
+	} else {
+		if (cb != NULL)
+			cb(user_data);
 	}
 
 	return NULL;
