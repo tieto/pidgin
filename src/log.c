@@ -606,7 +606,7 @@ void gaim_log_init(void)
 	                                    GAIM_SUBTYPE_LOG),
 #if SIZEOF_TIME_T == 4
 	                     gaim_value_new(GAIM_TYPE_INT));
-#elif SIZE_OF_TIME_T == 8
+#elif SIZEOF_TIME_T == 8
 	                     gaim_value_new(GAIM_TYPE_INT64));
 #else
 # error Unknown size of time_t
