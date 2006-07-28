@@ -1,6 +1,11 @@
 #include <ncursesw/ncurses.h>
 #include "gntcolors.h"
 
+#include <glib.h>
+
+#include <stdlib.h>
+#include <string.h>
+
 static struct
 {
 	short r, g, b;
@@ -73,5 +78,127 @@ void
 gnt_uninit_colors()
 {
 	restore_colors();
+}
+
+static int
+get_color(char *key)
+{
+	int color;
+
+	key = g_strstrip(key);
+
+	if (strcmp(key, "black") == 0)
+		color = GNT_COLOR_BLACK;
+	else if (strcmp(key, "red") == 0)
+		color = GNT_COLOR_RED;
+	else if (strcmp(key, "green") == 0)
+		color = GNT_COLOR_GREEN;
+	else if (strcmp(key, "blue") == 0)
+		color = GNT_COLOR_BLUE;
+	else if (strcmp(key, "white") == 0)
+		color = GNT_COLOR_WHITE;
+	else if (strcmp(key, "gray") == 0)
+		color = GNT_COLOR_GRAY;
+	else if (strcmp(key, "darkgray") == 0)
+		color = GNT_COLOR_DARK_GRAY;
+	else
+		color = -1;
+	return color;
+}
+
+void gnt_colors_parse(GKeyFile *kfile)
+{
+	GError *error = NULL;
+	gsize nkeys;
+	char **keys = g_key_file_get_keys(kfile, "colors", &nkeys, &error);
+
+	if (error)
+	{
+		/* XXX: some error happened. */
+		g_error_free(error);
+	}
+	else
+	{
+		while (nkeys--)
+		{
+			gsize len;
+			char *key = keys[nkeys];
+			char **list = g_key_file_get_string_list(kfile, "colors", key, &len, NULL);
+			if (len == 3)
+			{
+				int r = atoi(list[0]);
+				int g = atoi(list[1]);
+				int b = atoi(list[2]);
+				int color = -1;
+
+				g_ascii_strdown(key, -1);
+				color = get_color(key);
+				if (color == -1)
+					continue;
+
+				init_color(color, r, g, b);
+			}
+			g_strfreev(list);
+		}
+
+		g_strfreev(keys);
+	}
+
+	gnt_color_pairs_parse(kfile);
+}
+
+void gnt_color_pairs_parse(GKeyFile *kfile)
+{
+	GError *error = NULL;
+	gsize nkeys;
+	char **keys = g_key_file_get_keys(kfile, "colorpairs", &nkeys, &error);
+
+	if (error)
+	{
+		/* XXX: some error happened. */
+		g_error_free(error);
+		return;
+	}
+
+	while (nkeys--)
+	{
+		gsize len;
+		char *key = keys[nkeys];
+		char **list = g_key_file_get_string_list(kfile, "colorpairs", key, &len, NULL);
+		if (len == 2)
+		{
+			GntColorType type = 0;
+			int fg = get_color(g_ascii_strdown(list[0], -1));
+			int bg = get_color(g_ascii_strdown(list[1], -1));
+			if (fg == -1 || bg == -1)
+				continue;
+
+			g_ascii_strdown(key, -1);
+
+			if (strcmp(key, "normal") == 0)
+				type = GNT_COLOR_NORMAL;
+			else if (strcmp(key, "highlight") == 0)
+				type = GNT_COLOR_HIGHLIGHT;
+			else if (strcmp(key, "highlightd") == 0)
+				type = GNT_COLOR_HIGHLIGHT_D;
+			else if (strcmp(key, "shadow") == 0)
+				type = GNT_COLOR_SHADOW;
+			else if (strcmp(key, "title") == 0)
+				type = GNT_COLOR_TITLE;
+			else if (strcmp(key, "titled") == 0)
+				type = GNT_COLOR_TITLE_D;
+			else if (strcmp(key, "text") == 0)
+				type = GNT_COLOR_TEXT_NORMAL;
+			else if (strcmp(key, "disabled") == 0)
+				type = GNT_COLOR_DISABLED;
+			else
+				continue;
+
+			init_pair(type, fg, bg);
+		}
+		g_strfreev(list);
+	}
+
+	g_strfreev(keys);
 }
 

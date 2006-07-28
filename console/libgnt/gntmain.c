@@ -2,8 +2,9 @@
 
 #include "gnt.h"
 #include "gntbox.h"
-#include "gntkeys.h"
 #include "gntcolors.h"
+#include "gntkeys.h"
+#include "gntstyle.h"
 #include "gnttree.h"
 
 #include <stdio.h>
@@ -56,6 +57,8 @@ void gnt_screen_take_focus(GntWidget *widget)
 	GntWidget *w = NULL;
 
 	if (lock_focus_list)
+		return;
+	if (g_list_find(g_list_first(focus_list), widget))
 		return;
 
 	if (focus_list)
@@ -525,6 +528,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 void gnt_init()
 {
 	static GIOChannel *channel = NULL;
+	char *filename;
 	
 	if (channel)
 		return;
@@ -547,6 +551,10 @@ void gnt_init()
 
 	initscr();
 	gnt_init_colors();
+
+	filename = g_build_filename(g_get_home_dir(), ".gntrc", NULL);
+	gnt_style_read_configure_file(filename);
+	g_free(filename);
 
 	X_MIN = 0;
 	Y_MIN = 0;

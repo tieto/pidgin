@@ -1,0 +1,21 @@
+[general]
+shadow = 0
+
+[colors]
+black = 0; 0; 0
+red = 1000; 0; 0
+green = 0; 1000; 0
+blue = 250; 250; 700
+white = 1000; 1000; 1000
+gray = 700; 700; 700
+darkgray = 256; 256; 256
+
+[colorpairs]
+normal = black; white
+highlight = white; blue
+highlightd = black; gray
+shadow = black; darkgray
+title = white; blue
+titled = white; gray
+text = white; blue
+disabled = gray; white

@@ -1,6 +1,8 @@
 #ifndef GNT_COLORS_H
 #define GNT_COLORS_H
 
+#include <glib.h>
+
 typedef enum
 {
 	GNT_COLOR_NORMAL = 1,
@@ -33,5 +35,9 @@ enum
 void gnt_init_colors();
 
 void gnt_uninit_colors();
+
+void gnt_colors_parse(GKeyFile *kfile);
+
+void gnt_color_pairs_parse(GKeyFile *kfile);
 
 #endif
