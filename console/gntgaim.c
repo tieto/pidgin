@@ -246,7 +246,11 @@ init_libgaim(int argc, char **argv)
 	gaim_plugins_add_search_path(path);
 	g_free(path);
 
-	gaim_plugins_add_search_path("/usr/local/lib/gaim");	/* XXX: */
+#ifdef LIBDIR
+	gaim_plugins_add_search_path(LIBDIR);
+#else
+	gaim_plugins_add_search_path("/usr/local/lib/gaim");	/* XXX: Remove this after the restructure */
+#endif
 
 	if (!gaim_core_init(GAIM_GNT_UI))
 	{
