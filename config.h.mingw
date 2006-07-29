@@ -641,3 +641,5 @@
  * Following are added for Win32 version of Gaim
  */
 #define HAVE_VSNPRINTF 1
+
+#define SIZEOF_TIME_T 4
