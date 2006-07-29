@@ -162,7 +162,7 @@ gg_create_conversation(GaimConversation *conv)
 	conv->ui_data = ggc;
 
 	type = gaim_conversation_get_type(conv);
-	title = g_strdup_printf(_("%s"), gaim_conversation_get_name(conv));
+	title = g_strdup_printf(_("%s"), gaim_conversation_get_title(conv));
 	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
@@ -244,9 +244,9 @@ static void
 gg_write_im(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
+	GaimAccount *account = gaim_conversation_get_account(conv);
 	if (flags & GAIM_MESSAGE_SEND)
 	{
-		GaimAccount *account = gaim_conversation_get_account(conv);
 		who = gaim_connection_get_display_name(gaim_account_get_connection(account));
 		if (!who)
 			who = gaim_account_get_alias(account);
@@ -254,7 +254,13 @@ gg_write_im(GaimConversation *conv, const char *who, const char *message,
 			who = gaim_account_get_username(account);
 	}
 	else if (flags & GAIM_MESSAGE_RECV)
+	{
+		GaimBuddy *buddy;
 		who = gaim_conversation_get_name(conv);
+		buddy = gaim_find_buddy(account, who);
+		if (buddy)
+			who = gaim_buddy_get_contact_alias(buddy);
+	}
 
 	gg_write_common(conv, who, message, flags, mtime);
 }
