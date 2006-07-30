@@ -415,30 +415,35 @@ msn_get_address_book(MsnContact *contact)
 	msn_soap_post(contact->soapconn,MSN_GET_ADDRESS_TEMPLATE,msn_address_written_cb);
 }
 
+/*add a Contact */
 void
 msn_add_contact(MsnContact *contact)
 {
 
 }
 
+/*delete a Contact*/
 void
 msn_delete_contact(MsnContact *contact)
 {	
 
 }
 
+/*block a Contact*/
 void
 msn_block_contact(MsnContact *contact)
 {	
 
 }
 
+/*unblock a contact*/
 void
 msn_unblock_contact(MsnContact *contact)
 {	
 
 }
 
+/*get the gleams info*/
 void
 msn_get_gleams(MsnContact *contact)
 {

@@ -26,6 +26,9 @@
 #include "nexus.h"
 #include "notification.h"
 
+/*Local Function Prototype*/
+static void nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,GaimInputCondition cond);
+
 /**************************************************************************
  * Main
  **************************************************************************/
@@ -59,13 +62,8 @@ msn_nexus_destroy(MsnNexus *nexus)
 /**************************************************************************
  * Login
  **************************************************************************/
-
 static void
-login_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond);
-
-static void
-login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+nexus_login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 {
 	MsnSoapConn * soapconn = data;
 	MsnSession *session;
@@ -78,12 +76,19 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	 * to destroy it here, or we'd crash */
 }
 
+/*process the SOAP reply, get the Authentication Info*/
 static void
 nexus_login_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 	MsnNexus *nexus;
 	MsnSession *session;
+
+	char *base, *c;
+	char *msn_twn_t,*msn_twn_p;
+	char *login_params;
+	char **elems, **cur, **tokens;
+	char * cert_str;
 
 	nexus = soapconn->parent;
 	g_return_if_fail(nexus != NULL);
@@ -92,107 +97,52 @@ nexus_login_read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 //	gaim_debug_misc("msn", "TWN Server Reply: {%s}\n", soapconn->read_buf);
 
-	if (strstr(soapconn->read_buf, "HTTP/1.1 302") != NULL){
-		/* Redirect. */
-		char *location, *c;
+	/*reply OK, we should process the SOAP body*/
+	gaim_debug_info("MaYuan","Windows Live ID Reply OK!\n");
 
-		location = strstr(soapconn->read_buf, "Location: ");
-		if (location == NULL){
-			msn_soap_free_read_buf(soapconn);
-			return;
-		}
-		location = strchr(location, ' ') + 1;
+	//TODO: we should parse it using XML
+	base  = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_START_TOKEN);
+	base += strlen(TWN_START_TOKEN);
+	c     = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_END_TOKEN);
+	login_params = g_strndup(base, c - base);
 
-		if ((c = strchr(location, '\r')) != NULL)
-			*c = '\0';
+	//		gaim_debug_info("msn", "TWN Cert: {%s}\n", login_params);
 
-		/* Skip the http:// */
-		if ((c = strchr(location, '/')) != NULL)
-			location = c + 2;
+	/* Parse the challenge data. */
+	elems = g_strsplit(login_params, "&amp;", 0);
 
-		if ((c = strchr(location, '/')) != NULL){
-			g_free(soapconn->login_path);
-			soapconn->login_path = g_strdup(c);
-
-			*c = '\0';
-		}
-		g_free(soapconn->login_host);
-
-		msn_soap_init(soapconn,location,1,login_connect_cb,login_error_cb);
-	}else if (strstr(soapconn->read_buf, "HTTP/1.1 401 Unauthorized") != NULL){
-		const char *error;
-
-		if ((error = strstr(soapconn->read_buf, "WWW-Authenticate")) != NULL)	{
-			if ((error = strstr(error, "cbtxt=")) != NULL){
-				const char *c;
-				char *temp;
-
-				error += strlen("cbtxt=");
-
-				if ((c = strchr(error, '\n')) == NULL)
-					c = error + strlen(error);
-
-				temp = g_strndup(error, c - error);
-				error = gaim_url_decode(temp);
-				g_free(temp);
-			}
-		}
-		msn_session_set_error(session, MSN_ERROR_AUTH, error);
-	}else if (strstr(soapconn->read_buf, "HTTP/1.1 200 OK")){
-		/*reply OK, we should process the SOAP body*/
-		char *base, *c;
-		char *msn_twn_t,*msn_twn_p;
-		char *login_params;
-
-		char **elems, **cur, **tokens;
-		char * cert_str;
-
-		gaim_debug_info("MaYuan","Windows Live ID Reply OK!\n");
-
-		//TODO: we should parse it using XML
-		base  = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_START_TOKEN);
-		base += strlen(TWN_START_TOKEN);
-		c     = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_END_TOKEN);
-		login_params = g_strndup(base, c - base);
-
-//		gaim_debug_info("msn", "TWN Cert: {%s}\n", login_params);
-
-		/* Parse the challenge data. */
-		elems = g_strsplit(login_params, "&amp;", 0);
-
-		for (cur = elems; *cur != NULL; cur++){
-				tokens = g_strsplit(*cur, "=", 2);
-				g_hash_table_insert(nexus->challenge_data, tokens[0], tokens[1]);
-				/* Don't free each of the tokens, only the array. */
-				g_free(tokens);
-		}
-
-		g_strfreev(elems);
-
-		msn_twn_t = (char *)g_hash_table_lookup(nexus->challenge_data, "t");
-		msn_twn_p = (char *)g_hash_table_lookup(nexus->challenge_data, "p");
-
-		/*setup the t and p parameter for session*/
-		if (session->passport_info.t != NULL){
-			g_free(session->passport_info.t);
-		}
-		session->passport_info.t = g_strdup(msn_twn_t);
-
-		if (session->passport_info.p != NULL)
-			g_free(session->passport_info.p);
-		session->passport_info.p = g_strdup(msn_twn_p);
-
-		cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);
-		msn_got_login_params(session, cert_str);
-
-		gaim_debug_info("MaYuan","close nexus connection! \n");
-		g_free(cert_str);
-		g_free(login_params);
-		msn_nexus_destroy(nexus);
-		session->nexus = NULL;
-		return;
+	for (cur = elems; *cur != NULL; cur++){
+			tokens = g_strsplit(*cur, "=", 2);
+			g_hash_table_insert(nexus->challenge_data, tokens[0], tokens[1]);
+			/* Don't free each of the tokens, only the array. */
+			g_free(tokens);
 	}
-	msn_soap_free_read_buf(soapconn);
+
+	g_strfreev(elems);
+
+	msn_twn_t = (char *)g_hash_table_lookup(nexus->challenge_data, "t");
+	msn_twn_p = (char *)g_hash_table_lookup(nexus->challenge_data, "p");
+
+	/*setup the t and p parameter for session*/
+	if (session->passport_info.t != NULL){
+			g_free(session->passport_info.t);
+	}
+	session->passport_info.t = g_strdup(msn_twn_t);
+
+	if (session->passport_info.p != NULL)
+			g_free(session->passport_info.p);
+	session->passport_info.p = g_strdup(msn_twn_p);
+
+	cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);
+	msn_got_login_params(session, cert_str);
+
+	gaim_debug_info("MaYuan","close nexus connection! \n");
+	g_free(cert_str);
+	g_free(login_params);
+	msn_nexus_destroy(nexus);
+	session->nexus = NULL;
+
+	return;
 }
 
 static void
@@ -205,8 +155,9 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 
+/*when connect, do the SOAP Style windows Live ID authentication */
 void
-login_connect_cb(gpointer data, GaimSslConnection *gsc,
+nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
 	MsnSoapConn *soapconn;
@@ -285,6 +236,6 @@ msn_nexus_connect(MsnNexus *nexus)
 	/*  Authenticate via Windows Live ID. */
 	gaim_debug_info("MaYuan","msn_nexus_connect...\n");
 
-	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,login_connect_cb,login_error_cb);
+	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,nexus_login_connect_cb,nexus_login_error_cb);
 }
 

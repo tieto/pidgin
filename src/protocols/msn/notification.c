@@ -1370,6 +1370,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	/*new a oim session*/
 	session = cmdproc->session;
 	session->oim = msn_oim_new(session);
+//	msn_oim_connect(session->oim);
 
 	/*parse offline message data*/
 	elems = g_strsplit(msg->body, "\r\n", 0);

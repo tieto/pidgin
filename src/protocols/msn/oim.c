@@ -50,9 +50,12 @@ msn_oim_destroy(MsnOim *oim)
 	g_free(oim);
 }
 
+/****************************************
+ * OIM send SOAP request
+ * **************************************/
 /*oim SOAP server login error*/
 static void
-msn_oim_login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+msn_oim_send_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession *session;
@@ -65,7 +68,7 @@ msn_oim_login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *dat
 
 /*msn oim SOAP server connect process*/
 static void
-msn_oim_login_connect_cb(gpointer data, GaimSslConnection *gsc,
+msn_oim_send_connect_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
@@ -83,10 +86,42 @@ void msn_oim_send_msg(MsnOim *oim,char *msg)
 {
 	if(msn_soap_connected(oim->sendconn) == -1){
 		msn_soap_init(oim->sendconn,MSN_OIM_SEND_HOST,1,
-					msn_oim_login_connect_cb,
-					msn_oim_login_error_cb);
+					msn_oim_send_connect_cb,
+					msn_oim_send_error_cb);
 	}
 	
+}
+
+/****************************************
+ * OIM get SOAP request
+ * **************************************/
+/*oim SOAP server login error*/
+static void
+msn_oim_get_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+{
+	MsnSoapConn *soapconn = data;
+	MsnSession *session;
+
+	session = soapconn->session;
+	g_return_if_fail(session != NULL);
+
+	msn_session_set_error(session, MSN_ERROR_SERV_DOWN, _("Unable to connect to OIM server"));
+}
+
+/*msn oim SOAP server connect process*/
+static void
+msn_oim_get_connect_cb(gpointer data, GaimSslConnection *gsc,
+				 GaimInputCondition cond)
+{
+	MsnSoapConn *soapconn = data;
+	MsnSession * session;
+	MsnOim *oim;
+
+	oim = soapconn->parent;
+	g_return_if_fail(oim != NULL);
+
+	session = oim->session;
+	g_return_if_fail(session != NULL);
 }
 
 static void
@@ -107,14 +142,8 @@ msn_oim_get_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	soapconn->read_cb = msn_oim_get_read_cb;
 	msn_soap_read_cb(data,source,cond);
 }
-/*
-static void
-msn_oim_login_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
-{
-	
-}*/
 
+/*get the conversation*/
 static GaimConversation *
 msn_oim_get_conv(MsnOim *oim,char *passport)
 {
@@ -132,6 +161,7 @@ msn_oim_get_conv(MsnOim *oim,char *passport)
 	return conv;
 }
 
+/*put the OIM Message to User Conversation*/
 void
 msn_oim_report_user(MsnOim *oim,const char *passport,char *msg)
 {
@@ -143,6 +173,7 @@ msn_oim_report_user(MsnOim *oim,const char *passport,char *msg)
 
 }
 
+/*parse the oim XML data*/
 void
 msn_parse_oim_msg(MsnOim *oim,char *xmlmsg)
 {
@@ -161,25 +192,24 @@ msn_parse_oim_msg(MsnOim *oim,char *xmlmsg)
 		nNode = xmlnode_get_child(mNode,"N");
 		nickname = xmlnode_get_data(nNode);
 		gaim_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);
-		msn_oim_report_user(oim,passport,"hello");
-//		msn_oim_get_msg(oim,msgid);
+//		msn_oim_report_user(oim,passport,"hello");
+		msn_oim_get_msg(oim,msgid);
 	}
 }
 
+/*MSN OIM get SOAP request*/
 void msn_oim_get_msg(MsnOim *oim,char *msgid)
 {
 	const char *oimid ,*oimsoapbody,*t,*p;
 
 	if(msn_soap_connected(oim->retrieveconn) == -1){
 		gaim_debug_info("MaYuan","retreive OIM server not connected!\n");
-		msn_soap_init(oim->retrieveconn,MSN_OIM_RETRIEVE_HOST,1,
-					msn_oim_login_connect_cb,
-					msn_oim_login_error_cb);
 		return;
 	}
 
+	gaim_debug_info("MaYuan","Get OIM with SOAP \n");
 	oim->retrieveconn->login_path = g_strdup(MSN_OIM_RETRIEVE__URL);
-	oim->retrieveconn->soap_action = g_strdup(MSN_OIM_DEL_SOAP_ACTION);
+	oim->retrieveconn->soap_action = g_strdup(MSN_OIM_GET_SOAP_ACTION);
 	t = oim->session->passport_info.t;
 	p = oim->session->passport_info.p;
 
@@ -198,8 +228,11 @@ msn_oim_connect(MsnOim *oim)
 	gaim_debug_info("MaYuan","msn_oim_connect...\n");
 
 	msn_soap_init(oim->retrieveconn,MSN_OIM_RETRIEVE_HOST,1,
-					msn_oim_login_connect_cb,
-					msn_oim_login_error_cb);
+					msn_oim_get_connect_cb,
+					msn_oim_get_error_cb);
+	msn_soap_init(oim->sendconn,MSN_OIM_SEND_HOST,1,
+					msn_oim_send_connect_cb,
+					msn_oim_send_error_cb);
 }
 
 /*endof oim.c*/
