@@ -117,7 +117,9 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	msn_soap_free_write_buf(soapconn);
 
 	/*close ssl connection*/
-	gaim_ssl_close(soapconn->gsc);
+	if(soapconn->gsc != NULL){
+		gaim_ssl_close(soapconn->gsc);
+	}
 	soapconn->gsc = NULL;
 
 	g_free(soapconn);
@@ -199,41 +201,104 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	body_start = (char *)g_strstr_len(soapconn->read_buf, soapconn->read_len,"\r\n\r\n");
-	if(!body_start){
-		return;
-	}
-	body_start += 4;
+	if (strstr(soapconn->read_buf, "HTTP/1.1 302") != NULL)
+	{
+		/* Redirect. */
+		char *location, *c;
 
-//	gaim_debug_misc("msn", "Soap Read: {%s}\n", soapconn->read_buf);
+		location = strstr(soapconn->read_buf, "Location: ");
+		if (location == NULL)
+		{
+			msn_soap_free_read_buf(soapconn);
 
-	/* we read the content-length*/
-	length_start = strstr(soapconn->read_buf, "Content-Length: ");
-	length_start += strlen("Content-Length: ");
-	length_end = strstr(length_start, "\r\n");
-	body_len = g_strndup(length_start,length_end - length_start);
-
-	/*setup the conn body */
-	soapconn->body		= body_start;
-	soapconn->body_len	= atoi(body_len);
-//	gaim_debug_misc("MaYuan","content length :%d",soapconn->body_len);
-
-	if(soapconn->read_len < body_start - soapconn->read_buf + atoi(body_len)){
 			return;
-	}
+		}
+		location = strchr(location, ' ') + 1;
 
-	g_free(body_len);
+		if ((c = strchr(location, '\r')) != NULL)
+			*c = '\0';
+
+		/* Skip the http:// */
+		if ((c = strchr(location, '/')) != NULL)
+			location = c + 2;
+
+		if ((c = strchr(location, '/')) != NULL)
+		{
+			g_free(soapconn->login_path);
+			soapconn->login_path = g_strdup(c);
+
+			*c = '\0';
+		}
+
+		g_free(soapconn->login_host);
+		soapconn->login_host = g_strdup(location);
+
+		gaim_ssl_connect(session->account, soapconn->login_host,
+			GAIM_SSL_DEFAULT_PORT, msn_soap_connect_cb,
+			msn_soap_error_cb, soapconn);
+	}
+	else if (strstr(soapconn->read_buf, "HTTP/1.1 401 Unauthorized") != NULL)
+	{
+		const char *error;
+
+		if ((error = strstr(soapconn->read_buf, "WWW-Authenticate")) != NULL)
+		{
+			if ((error = strstr(error, "cbtxt=")) != NULL)
+			{
+				const char *c;
+				char *temp;
+
+				error += strlen("cbtxt=");
+
+				if ((c = strchr(error, '\n')) == NULL)
+					c = error + strlen(error);
+
+				temp = g_strndup(error, c - error);
+				error = gaim_url_decode(temp);
+				g_free(temp);
+			}
+		}
+
+		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, error);
+	}
+	else if (strstr(soapconn->read_buf, "HTTP/1.1 200 OK"))
+	{
+			/*OK! process the SOAP body*/
+			body_start = (char *)g_strstr_len(soapconn->read_buf, soapconn->read_len,"\r\n\r\n");
+			if(!body_start){
+					return;
+			}
+			body_start += 4;
+
+			//	gaim_debug_misc("msn", "Soap Read: {%s}\n", soapconn->read_buf);
+
+			/* we read the content-length*/
+			length_start = strstr(soapconn->read_buf, "Content-Length: ");
+			length_start += strlen("Content-Length: ");
+			length_end = strstr(length_start, "\r\n");
+			body_len = g_strndup(length_start,length_end - length_start);
+
+			/*setup the conn body */
+			soapconn->body		= body_start;
+			soapconn->body_len	= atoi(body_len);
+			//	gaim_debug_misc("MaYuan","content length :%d",soapconn->body_len);
+
+			if(soapconn->read_len < body_start - soapconn->read_buf + atoi(body_len)){
+					return;
+			}
+
+			g_free(body_len);
 
 #if 1
-	/*remove the read handler*/
-	gaim_input_remove(soapconn->input_handler);
-	soapconn->input_handler = -1;
+			/*remove the read handler*/
+			gaim_input_remove(soapconn->input_handler);
+			soapconn->input_handler = -1;
 #endif
 
-	/*call the read callback*/
-	if(soapconn->read_cb != NULL){
-		soapconn->read_cb(soapconn,source,0);
-	}
+			/*call the read callback*/
+			if(soapconn->read_cb != NULL){
+					soapconn->read_cb(soapconn,source,0);
+			}
 #if 0
 	/*clear the read buffer*/
 	msn_soap_free_read_buf(soapconn);
@@ -241,9 +306,10 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	/*remove the read handler*/
 	gaim_input_remove(soapconn->input_handler);
 	soapconn->input_handler = -1;
-//	gaim_ssl_close(soapconn->gsc);
-//	soapconn->gsc = NULL;
+	//	gaim_ssl_close(soapconn->gsc);
+	//	soapconn->gsc = NULL;
 #endif
+	}
 }
 
 void 
@@ -360,7 +426,7 @@ msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_
 
 	/*free read buffer*/
 	msn_soap_free_read_buf(soapconn);
-//	gaim_debug_info("MaYuan","send to contact server{%s}\n",request_str);
+	gaim_debug_info("MaYuan","send to  server{%s}\n",request_str);
 	msn_soap_write(soapconn,request_str,written_cb);
 }
 

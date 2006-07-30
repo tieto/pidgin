@@ -98,6 +98,8 @@ struct _MsnOim
 /*function prototype*/
 MsnOim * msn_oim_new(MsnSession *session);
 void msn_oim_destroy(MsnOim *oim);
+void msn_parse_oim_msg(MsnOim *oim,char *xmlmsg);
 
+void msn_oim_get_msg(MsnOim *oim,char *msgid);
 #endif/* _MSN_OIM_H_*/
 /*endof oim.h*/

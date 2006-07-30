@@ -386,7 +386,7 @@ swapInt(unsigned int dw)
 }
 
 /*
- * handle MSN Chanllege computation
+ * Handle MSN Chanllege computation
  *This algorithm reference with http://msnpiki.msnfanatic.com/index.php/MSNP11:Challenges
  */
 #define BUFSIZE	256

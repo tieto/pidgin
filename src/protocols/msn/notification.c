@@ -390,6 +390,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}else{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
+		gaim_debug_info("MaYuan","MSG payload:{%s}\n",cmd->payload);
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -1359,7 +1360,40 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 static void
 initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	gaim_debug_info("MaYuan","mdata...{%s} \n",msg->body);
+	MsnSession *session;
+	xmlnode *mdNode;
+	char *end;
+	char **elems, **cur, **tokens;
+
+//	gaim_debug_info("MaYuan","mdata...{%s} \n",msg->body);
+
+	/*new a oim session*/
+	session = cmdproc->session;
+	session->oim = msn_oim_new(session);
+
+	/*parse offline message data*/
+	elems = g_strsplit(msg->body, "\r\n", 0);
+	for (cur = elems; *cur != NULL; cur++){
+		const char *key, *value;
+
+//		gaim_debug_info("MaYuan","cur:{%s}\n",*cur);
+		tokens = g_strsplit(*cur, ": ", 2);
+
+		key = tokens[0];
+		value = tokens[1];
+
+		/*if not MIME content ,then return*/
+		if ((key != NULL) && (!strcmp(key, "Mail-Data")) ){
+//			gaim_debug_info("MaYuan","data:{%s}\n",value);
+			msn_parse_oim_msg(session->oim,value);
+			g_strfreev(tokens);
+			break;
+		}
+
+		g_strfreev(tokens);
+	}
+
+	g_strfreev(elems);
 }
 
 static void
