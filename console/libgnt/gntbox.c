@@ -430,8 +430,11 @@ gnt_box_size_changed(GntWidget *widget, int oldw, int oldh)
 
 	for (i = box->list; i; i = i->next)
 	{
-		gnt_widget_get_size(GNT_WIDGET(i->data), &tw, &th);
-		gnt_widget_set_size(i->data, tw + wchange, th + hchange);
+		if (wid != i->data)
+		{
+			gnt_widget_get_size(GNT_WIDGET(i->data), &tw, &th);
+			gnt_widget_set_size(i->data, tw + wchange, th + hchange);
+		}
 	}
 
 	reposition_children(widget);

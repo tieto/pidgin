@@ -1,7 +1,7 @@
 VERSION=gntgaim-0.0.0dev
 CC=gcc
 CFLAGS=`pkg-config --cflags gaim gobject-2.0 gnt` -g -Wall -DVERSION=\"$(VERSION)\" -DSTANDALONE
-LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0 gnt` -pg
+LDFLAGS=`pkg-config --libs gaim gobject-2.0 libxml-2.0 gnt` -pg -lgaim
 
 GG_SOURCES = \
 	gntaccount.c \
@@ -10,6 +10,7 @@ GG_SOURCES = \
 	gntconv.c \
 	gntdebug.c \
 	gntnotify.c \
+	gntplugin.c \
 	gntprefs.c \
 	gntrequest.c \
 	gntui.c
@@ -22,6 +23,7 @@ GG_HEADERS = \
 	gntdebug.h \
 	gntnotify.h \
 	gntprefs.h \
+	gntplugin.h \
 	gntrequest.h \
 	gntui.h
 
@@ -32,6 +34,7 @@ GG_OBJECTS = \
 	gntconv.o \
 	gntdebug.o \
 	gntnotify.o \
+	gntplugin.o \
 	gntprefs.o \
 	gntrequest.o \
 	gntui.o

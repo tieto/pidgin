@@ -387,7 +387,7 @@ gnt_tree_map(GntWidget *widget)
 static void
 tree_selection_changed(GntTree *tree, GntTreeRow *old, GntTreeRow *current)
 {
-	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old, current);
+	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old->key, current->key);
 }
 
 static GntTreeRow *

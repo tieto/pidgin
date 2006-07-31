@@ -33,7 +33,7 @@ gnt_button_size_request(GntWidget *widget)
 	GntButton *button = GNT_BUTTON(widget);
 	widget->priv.width = g_utf8_strlen(button->priv->text, -1) + 4;
 	widget->priv.height = 1;
-	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		widget->priv.height += 2;
 }
 

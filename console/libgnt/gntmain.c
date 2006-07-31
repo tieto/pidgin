@@ -551,6 +551,7 @@ void gnt_init()
 
 	initscr();
 	gnt_init_colors();
+	gnt_init_styles();
 
 	filename = g_build_filename(g_get_home_dir(), ".gntrc", NULL);
 	gnt_style_read_configure_file(filename);
@@ -708,6 +709,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 void gnt_quit()
 {
 	gnt_uninit_colors();
+	gnt_uninit_styles();
 	endwin();
 }
 

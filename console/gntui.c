@@ -5,13 +5,19 @@
 #include "gntconn.h"
 #include "gntconv.h"
 #include "gntnotify.h"
+#include "gntplugin.h"
 #include "gntrequest.h"
+
+#include <prefs.h>
 
 void init_gnt_ui()
 {
 #ifdef STANDALONE
 	gnt_init();
 #endif
+
+	gaim_prefs_add_none("/gaim/gnt");
+	
 	/* Accounts */
 	gg_accounts_init();
 	gaim_accounts_set_ui_ops(gg_accounts_get_ui_ops());
@@ -35,7 +41,12 @@ void init_gnt_ui()
 	gg_request_init();
 	gaim_request_set_ui_ops(gg_request_get_ui_ops());
 
+	gg_plugins_show_all();
+
 #ifdef STANDALONE
+
+	gg_plugins_save_loaded();
+
 	gnt_main();
 
 	gaim_accounts_set_ui_ops(NULL);

@@ -1,6 +1,7 @@
 /* Stuff brutally ripped from Gflib */
 
 #include "gntwidget.h"
+#include "gntstyle.h"
 #include "gntmarshal.h"
 #include "gnt.h"
 
@@ -290,7 +291,7 @@ gnt_widget_draw(GntWidget *widget)
 	{
 		gboolean shadow = TRUE;
 
-		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+		if (!gnt_widget_has_shadow(widget))
 			shadow = FALSE;
 
 		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
@@ -325,7 +326,7 @@ gnt_widget_hide(GntWidget *widget)
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 #if 1
 	/* XXX: I have no clue why, but this seems to be necessary. */
-	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+	if (gnt_widget_has_shadow(widget))
 		mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
 #endif
 	gnt_screen_release(widget);
@@ -361,7 +362,7 @@ void
 gnt_widget_get_size(GntWidget *wid, int *width, int *height)
 {
 	gboolean shadow = TRUE;
-	if (GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_NO_SHADOW))
+	if (!gnt_widget_has_shadow(wid))
 		shadow = FALSE;
 
 	if (width)
@@ -376,7 +377,7 @@ init_widget(GntWidget *widget)
 {
 	gboolean shadow = TRUE;
 
-	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+	if (!gnt_widget_has_shadow(widget))
 		shadow = FALSE;
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
@@ -384,9 +385,16 @@ init_widget(GntWidget *widget)
 
 	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_NO_BORDER))
 	{
-		WINDOW *tmp = derwin(widget->window, widget->priv.height, widget->priv.width, 0, 0);
-		box(tmp, 0, 0);
-		delwin(tmp);
+		/* - This is ugly. */
+		/* - What's your point? */
+		mvwvline(widget->window, 0, 0, ACS_VLINE, widget->priv.height);
+		mvwvline(widget->window, 0, widget->priv.width - 1, ACS_VLINE, widget->priv.height);
+		mvwhline(widget->window, widget->priv.height - 1, 0, ACS_HLINE, widget->priv.width);
+		mvwhline(widget->window, 0, 0, ACS_HLINE, widget->priv.width);
+		mvwaddch(widget->window, 0, 0, ACS_ULCORNER);
+		mvwaddch(widget->window, 0, widget->priv.width - 1, ACS_URCORNER);
+		mvwaddch(widget->window, widget->priv.height - 1, 0, ACS_LLCORNER);
+		mvwaddch(widget->window, widget->priv.height - 1, widget->priv.width - 1, ACS_LRCORNER);
 	}
 
 	if (shadow)
@@ -402,7 +410,7 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 {
 	gboolean ret = TRUE;
 
-	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+	if (gnt_widget_has_shadow(widget))
 	{
 		width--;
 		height--;
@@ -418,7 +426,7 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 		gboolean shadow = TRUE;
 		int oldw, oldh;
 
-		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW))
+		if (!gnt_widget_has_shadow(widget))
 			shadow = FALSE;
 
 		oldw = widget->priv.width;
@@ -516,5 +524,11 @@ void gnt_widget_set_visible(GntWidget *widget, gboolean set)
 		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_INVISIBLE);
 	else
 		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_INVISIBLE);
+}
+
+gboolean gnt_widget_has_shadow(GntWidget *widget)
+{
+	return (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW) &&
+			gnt_style_get_bool(GNT_STYLE_SHADOW, FALSE));
 }
 

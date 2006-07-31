@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <cmds.h>
+#include <prefs.h>
 #include <util.h>
 
 #include "gntgaim.h"
@@ -11,6 +12,8 @@
 #include "gntbox.h"
 #include "gntentry.h"
 #include "gnttextview.h"
+
+#define PREF_ROOT	"/gaim/gnt/conversations"
 
 GHashTable *ggconvs;
 
@@ -142,18 +145,28 @@ closing_window(GntWidget *window, GGConv *ggconv)
 }
 
 static void
+size_changed_cb(GntWidget *w, int width, int height)
+{
+	gaim_prefs_set_int(PREF_ROOT "/size/width", width);
+	gaim_prefs_set_int(PREF_ROOT "/size/height", height);
+}
+
+static void
+save_position_cb(GntWidget *w, int x, int y)
+{
+	gaim_prefs_set_int(PREF_ROOT "/position/x", x);
+	gaim_prefs_set_int(PREF_ROOT "/position/y", y);
+}
+
+static void
 gg_create_conversation(GaimConversation *conv)
 {
 	GGConv *ggc = g_hash_table_lookup(ggconvs, conv);
 	char *title;
 	GaimConversationType type;
-	int x, width;
 
 	if (ggc)
 		return;
-
-	gg_blist_get_position(&x, NULL);
-	gg_blist_get_size(&width, NULL);
 
 	ggc = g_new0(GGConv, 1);
 	g_hash_table_insert(ggconvs, conv, ggc);
@@ -172,7 +185,8 @@ gg_create_conversation(GaimConversation *conv)
 	ggc->tv = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
 	gnt_widget_set_name(ggc->tv, "conversation-window-textview");
-	gnt_widget_set_size(ggc->tv, getmaxx(stdscr) - 3 - x - width, getmaxy(stdscr) - 5);
+	gnt_widget_set_size(ggc->tv, gaim_prefs_get_int(PREF_ROOT "/size/width"),
+			gaim_prefs_get_int(PREF_ROOT "/size/height"));
 
 	ggc->entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->entry);
@@ -181,11 +195,12 @@ gg_create_conversation(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
-	/* XXX: I am assuming the buddylist is on the leftmost corner.
-	 *      That may not always be correct, since the windows can be moved.
-	 *      It might be an option to remember the position of conv. windows. */
-	gnt_widget_set_position(ggc->window, x + width, 0);
+	gnt_widget_set_position(ggc->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
+			gaim_prefs_get_int(PREF_ROOT "/position/y"));
 	gnt_widget_show(ggc->window);
+
+	g_signal_connect(G_OBJECT(ggc->tv), "size_changed", G_CALLBACK(size_changed_cb), NULL);
+	g_signal_connect(G_OBJECT(ggc->window), "position_set", G_CALLBACK(save_position_cb), NULL);
 
 	g_free(title);
 }
@@ -465,7 +480,15 @@ void gg_conversation_init()
 {
 	ggconvs = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, destroy_ggconv);
 
-	/* Xerox */
+	gaim_prefs_add_none(PREF_ROOT);
+	gaim_prefs_add_none(PREF_ROOT "/size");
+	gaim_prefs_add_int(PREF_ROOT "/size/width", 70);
+	gaim_prefs_add_int(PREF_ROOT "/size/height", 20);
+	gaim_prefs_add_none(PREF_ROOT "/position");
+	gaim_prefs_add_int(PREF_ROOT "/position/x", 0);
+	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
+
+	/* Xerox the commands */
 	gaim_cmd_register("say", "S", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
 	                  say_command_cb, _("say &lt;message&gt;:  Send a message normally as if you weren't using a command."), NULL);

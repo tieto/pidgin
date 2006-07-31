@@ -39,9 +39,7 @@ static void
 gg_debug_print(GaimDebugLevel level, const char *category,
 		const char *args)
 {
-	if (debug.window == NULL)
-		fprintf(stderr, "%s: %s\n", category, args);
-	else
+	if (debug.window)
 	{
 		GntTextFormatFlags flag = GNT_TEXT_FLAG_NORMAL;
 
@@ -105,7 +103,8 @@ void gg_debug_window_show()
 
 void gg_debug_init()
 {
-	gg_debug_window_show();
+	if (gaim_debug_is_enabled())
+		gg_debug_window_show();
 }
 
 void gg_debug_uninit()

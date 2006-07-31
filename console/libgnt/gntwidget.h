@@ -129,6 +129,8 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 
 void gnt_widget_set_visible(GntWidget *widget, gboolean set);
 
+gboolean gnt_widget_has_shadow(GntWidget *widget);
+
 G_END_DECLS
 
 #endif /* GNT_WIDGET_H */

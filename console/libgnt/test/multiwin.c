@@ -27,6 +27,7 @@ int main()
 	gnt_widget_set_name(box2, "box2");
 
 	tree = gnt_tree_new_with_columns(3);
+	GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
 	gnt_tree_set_column_titles(GNT_TREE(tree), "12345678901234567890", "column 2", "column3");
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_widget_set_name(tree, "tree");

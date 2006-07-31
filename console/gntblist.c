@@ -13,6 +13,8 @@
 #include "gntblist.h"
 #include <string.h>
 
+#define PREF_ROOT "/gaim/gnt/blist"
+
 typedef struct
 {
 	GntWidget *window;
@@ -274,6 +276,8 @@ static void
 gnt_append_menu_action(GntTree *tree, GaimMenuAction *action, gpointer parent)
 {
 	GList *list;
+	if (action == NULL)
+		return;
 	
 	gnt_tree_add_row_after(tree, action,
 			gnt_tree_create_row(tree, action->label), parent, NULL);
@@ -677,8 +681,30 @@ remove_peripherals(GGBlist *ggblist)
 		remove_context_menu(ggblist);
 }
 
+static void
+size_changed_cb(GntWidget *w, int width, int height)
+{
+	gaim_prefs_set_int(PREF_ROOT "/size/width", width);
+	gaim_prefs_set_int(PREF_ROOT "/size/height", height);
+}
+
+static void
+save_position_cb(GntWidget *w, int x, int y)
+{
+	gaim_prefs_set_int(PREF_ROOT "/position/x", x);
+	gaim_prefs_set_int(PREF_ROOT "/position/y", y);
+}
+
 void gg_blist_init()
 {
+	gaim_prefs_add_none(PREF_ROOT);
+	gaim_prefs_add_none(PREF_ROOT "/size");
+	gaim_prefs_add_int(PREF_ROOT "/size/width", 20);
+	gaim_prefs_add_int(PREF_ROOT "/size/height", 20);
+	gaim_prefs_add_none(PREF_ROOT "/position");
+	gaim_prefs_add_int(PREF_ROOT "/position/x", 0);
+	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
+
 	ggblist = g_new0(GGBlist, 1);
 
 	gaim_get_blist()->ui_data = ggblist;
@@ -692,7 +718,10 @@ void gg_blist_init()
 	ggblist->tree = gnt_tree_new();
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
 	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, 25);
-	gnt_widget_set_size(ggblist->tree, 0, getmaxy(stdscr) - 4);
+	gnt_widget_set_size(ggblist->tree, gaim_prefs_get_int(PREF_ROOT "/size/width"),
+			gaim_prefs_get_int(PREF_ROOT "/size/height"));
+	gnt_widget_set_position(ggblist->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
+			gaim_prefs_get_int(PREF_ROOT "/position/y"));
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 	gnt_widget_show(ggblist->window);
@@ -725,6 +754,9 @@ void gg_blist_init()
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "lost-focus", G_CALLBACK(remove_peripherals),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+	g_signal_connect(G_OBJECT(ggblist->tree), "size_changed", G_CALLBACK(size_changed_cb), NULL);
+	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);
+
 }
 
 void gg_blist_uninit()

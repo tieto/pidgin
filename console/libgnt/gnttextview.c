@@ -182,13 +182,21 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 
 	view->list = g_list_first(view->list);
 
-	split = g_strsplit(text, "\n", 0);
+	split = g_strsplit(text, "\n", -1);
 	for (i = 0; split[i]; i++)
 	{
-		GntTextLine *line = view->list->data;
+		GntTextLine *line;
 		int len = g_utf8_strlen(split[i], -1);
 		char *iter = split[i];
 		int prev = 0;
+
+		if (i)
+		{
+			line = g_new0(GntTextLine, 1);
+			view->list = g_list_prepend(g_list_first(view->list), line);
+		}
+
+		line = view->list->data;
 
 		while (iter && *iter)
 		{
