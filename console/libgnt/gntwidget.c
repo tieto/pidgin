@@ -387,14 +387,19 @@ init_widget(GntWidget *widget)
 	{
 		/* - This is ugly. */
 		/* - What's your point? */
-		mvwvline(widget->window, 0, 0, ACS_VLINE, widget->priv.height);
-		mvwvline(widget->window, 0, widget->priv.width - 1, ACS_VLINE, widget->priv.height);
-		mvwhline(widget->window, widget->priv.height - 1, 0, ACS_HLINE, widget->priv.width);
-		mvwhline(widget->window, 0, 0, ACS_HLINE, widget->priv.width);
-		mvwaddch(widget->window, 0, 0, ACS_ULCORNER);
-		mvwaddch(widget->window, 0, widget->priv.width - 1, ACS_URCORNER);
-		mvwaddch(widget->window, widget->priv.height - 1, 0, ACS_LLCORNER);
-		mvwaddch(widget->window, widget->priv.height - 1, widget->priv.width - 1, ACS_LRCORNER);
+		mvwvline(widget->window, 0, 0, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL), widget->priv.height);
+		mvwvline(widget->window, 0, widget->priv.width - 1,
+				ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL), widget->priv.height);
+		mvwhline(widget->window, widget->priv.height - 1, 0,
+				ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL), widget->priv.width);
+		mvwhline(widget->window, 0, 0, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL), widget->priv.width);
+		mvwaddch(widget->window, 0, 0, ACS_ULCORNER | COLOR_PAIR(GNT_COLOR_NORMAL));
+		mvwaddch(widget->window, 0, widget->priv.width - 1,
+				ACS_URCORNER | COLOR_PAIR(GNT_COLOR_NORMAL));
+		mvwaddch(widget->window, widget->priv.height - 1, 0,
+				ACS_LLCORNER | COLOR_PAIR(GNT_COLOR_NORMAL));
+		mvwaddch(widget->window, widget->priv.height - 1, widget->priv.width - 1,
+				ACS_LRCORNER | COLOR_PAIR(GNT_COLOR_NORMAL));
 	}
 
 	if (shadow)

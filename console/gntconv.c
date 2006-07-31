@@ -216,7 +216,7 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
 	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv); /* XXX: ggconv = conv->ui_data; should do */
-	char *strip;
+	char *strip, *newline;
 	GntTextFormatFlags fl = 0;
 
 	g_return_if_fail(ggconv != NULL);
@@ -236,12 +236,15 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 	if (flags & GAIM_MESSAGE_NICK)
 		fl |= GNT_TEXT_FLAG_UNDERLINE;
 
-	strip = gaim_markup_strip_html(message);
+	/* XXX: Remove this workaround when textview can parse messages. */
+	newline = gaim_strdup_withhtml(message);
+	strip = gaim_markup_strip_html(newline);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 				strip, fl);
 	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
 	gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
+	g_free(newline);
 	g_free(strip);
 
 	if (flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_NICK | GAIM_MESSAGE_ERROR))
