@@ -92,7 +92,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	g_memmove(input, data, len);
 	input[len] = 0x00;
 
-	segments = g_strsplit(input, delimit, 0);
+	segments = g_strsplit((gchar *) input, delimit, 0);
 	if (expected_fields <= 0)
 		return segments;
 
@@ -123,9 +123,12 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 // the return needs to be freed
 gchar *gen_ip_str(guint8 *ip)
 {
-	if (ip == NULL || ip[0] == 0)
-	       	return g_strdup_printf("");
-	else 
+	gchar *ret;
+	if (ip == NULL || ip[0] == 0) {
+		ret = g_new(gchar, 1);
+		*ret = '\0';
+	       	return ret;
+	} else 
 		return g_strdup_printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 }
 
@@ -189,7 +192,7 @@ void try_dump_as_gbk(guint8 *data, gint len)
 		if (incoming[i] >= 0x81)
 			break;
 
-	msg_utf8 = i < len ? qq_to_utf8(&incoming[i], QQ_CHARSET_DEFAULT) : NULL;
+	msg_utf8 = i < len ? qq_to_utf8((gchar *) &incoming[i], QQ_CHARSET_DEFAULT) : NULL;
 
 	if (msg_utf8 != NULL) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);

@@ -444,7 +444,6 @@ static void _qq_menu_modify_my_info(GaimPluginAction * action)
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
-	//_qq_get_info(gc, uid_to_gaim_name(qd->uid));
 	qq_prepare_modify_info(gc);
 }
 
