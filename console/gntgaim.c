@@ -140,9 +140,9 @@ show_usage(const char *name, gboolean terse)
 	char *text;
 
 	if (terse) {
-		text = g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+		text = g_strdup_printf(_("%s. Try `%s -h' for more information.\n"), VERSION, name);
 	} else {
-		text = g_strdup_printf(_("Gaim %s\n"
+		text = g_strdup_printf(_("%s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
@@ -151,6 +151,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
+	gnt_quit();
 	gaim_print_utf8_to_console(stdout, text);
 	g_free(text);
 }
