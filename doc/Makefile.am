@@ -1,4 +1,4 @@
-man_MANS = gaim.1
+man_MANS = gaim.1 gntgaim.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
@@ -15,6 +15,7 @@ EXTRA_DIST = \
 	dbus-server-signals.dox \
 	gaim.1.in \
 	gaims_funniest_home_convos.txt \
+	gntgaim.1.in \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \

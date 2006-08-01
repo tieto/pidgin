@@ -1,0 +1,177 @@
+.\" Copyright (c) 2006, Sadrul Habib Chowdhury <sadrul@users.sf.net>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.TH gntgaim 1
+.SH NAME
+GntGaim \- Console frontend for Instant Messaging client Gaim.
+.SH SYNOPSIS
+.TP 5
+\fBgntgaim \fI[options]\fR
+
+.SH DESCRIPTION
+.PP
+\fBgntgaim\fR is a console-based frontend for Instant Messaging (IM)
+application Gaim.  It supports multiple protocols via modules, including AIM,
+ICQ, Yahoo!, MSN, Jabber, IRC, Napster, Gadu-Gadu and Zephyr.  It has many
+common features found in other clients, as well as many unique features.  Gaim
+is not endorsed by or affiliated with America Online, ICQ, Microsoft, or Yahoo.
+
+.SH OPTIONS
+The following options are provided by \fBgntgaim\fR using the standard GNU
+command line syntax:
+.TP
+.B \-d, \-\-debug
+Print debugging messages to stdout.  These are the same debugging messages
+that are displayed in the \fBDebug\fR window.
+.TP
+.B \-c, \-\-config=\fIDIR\fB
+Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
+.TP
+.B \-h, \-\-help
+Print this help and exit.
+.TP
+.B \-n, \-\-nologin
+Don't automatically login when \fBgntgaim\fR starts.  Sets all accounts to
+Offline.
+.TP
+.B \-v, \-\-version
+Display the version information window.
+
+.SH GNT Shortcuts
+You can use the following shortcuts:
+.TP
+.B Alt \+ n
+Go to the next window.
+.TP
+.B Alt \+ p
+Go to the previous window.
+.TP
+.B Alt \+ w
+Show the list of windows. You can select and jump to any window from the list.
+.TP
+.B Alt \+ c
+Close the current window.
+.TP
+.B Alt \+ q
+Quit.
+.TP
+.B Alt \+ m
+Start moving a window. Press the cursor keys to move the window. When you are
+done, press \fBEnter\fR or \fBEscape\fR.
+.TP
+.B Alt \+ r
+Start resizing a window. Press the cursor keys to resize the window. When you
+are done, press \fBEnter\fR or \fBEscape\fR.
+
+.SH FILES
+\fI~/.gntrc\fR: configuration file for gnt applications.
+.br
+.TP
+A sample file looks like:
+.br
+[general]
+.br
+shadow = 0
+.br
+
+.br
+[colors]
+.br
+# The RGB values range in [0, 1000]
+.br
+black = 0; 0; 0
+.br
+red = 1000; 0; 0
+.br
+green = 0; 1000; 0
+.br
+blue = 250; 250; 700
+.br
+white = 1000; 1000; 1000
+.br
+gray = 700; 700; 700
+.br
+darkgray = 256; 256; 256
+.br
+
+.br
+[colorpairs]
+.br
+normal = white; black
+.br
+highlight = white; blue
+.br
+highlightd = black; gray
+.br
+shadow = black; darkgray
+.br
+title = white; blue
+.br
+titled = white; gray
+.br
+text = white; blue
+.br
+disabled = gray; black
+.br
+
+.SH BUGS
+Known bugs are listed at
+.br
+\fIhttp://sourceforge.net/tracker/?group_id=235&atid=100235\fR
+
+.SH PATCHES
+If you fix a bug in \fBgntgaim\fR (or otherwise enhance it), please submit a
+patch (using \fIcvs diff -up > my.diff\fR against the latest CVS version)
+at
+.br
+\fIhttp://sourceforge.net/tracker/?func=add&group_id=235&atid=300235\fR
+
+Before sending a bug report, please verify that you have the latest
+version of \fBgntgaim\fR.  Many bugs (major and minor) are fixed
+at each release, and if yours is out of date, the problem may already
+have been solved.
+
+.SH SEE ALSO
+\fIhttp://gaim.sourceforge.net/\fR
+.br
+\fIhttp://www.sourceforge.net/projects/gaim/\fR
+
+.SH LICENSE
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+\fBWITHOUT ANY WARRANTY\fR; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+.SH AUTHORS
+Sadrul Habib Chowdhury <\fIsadrul@users.sourceforge.net\fR>
+.br
+
+This manpage was written by Sadrul Habib Chowdhury <\fIsadrul@users.sourceforge.net\fR>.
+

@@ -1747,6 +1747,7 @@ AC_OUTPUT([Makefile
 		   gaim.service
 		   doc/Makefile
 		   doc/gaim.1
+		   doc/gntgaim.1
 		   m4macros/Makefile
 		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile
