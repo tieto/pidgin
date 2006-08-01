@@ -180,7 +180,7 @@ static const info_field *info_field_get_template(const gchar *id)
 }
 
 // info_fields are compared by their group positions
-static gint info_field_compare(gconstpointer a, gconstpointer b, gpointer unused)
+static gint info_field_compare(gconstpointer a, gconstpointer b)
 {
 	return ((info_field *) a)->group_pos - ((info_field *) b)->group_pos;
 }
@@ -318,31 +318,22 @@ void qq_prepare_modify_info(GaimConnection *gc)
 	}
 }
 
-// send packet to modify personal information, and/or change password
-void qq_send_packet_modify_info(GaimConnection *gc, contact_info *info, gchar *new_passwd)
+// send packet to modify personal information
+void qq_send_packet_modify_info(GaimConnection *gc, contact_info *info)
 {
-	GaimAccount *a;
-	gchar *old_passwd, *info_field[QQ_CONTACT_FIELDS];
+	gchar *info_field[QQ_CONTACT_FIELDS];
 	gint i;
 	guint8 *raw_data, *cursor, bar;
 
 	g_return_if_fail(gc != NULL && info != NULL);
 
-	a = gc->account;
-	old_passwd = a->password;
 	bar = 0x1f;
 	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 128);
 	cursor = raw_data;
 
 	g_memmove(info_field, info, sizeof(gchar *) * QQ_CONTACT_FIELDS);
 
-	if (new_passwd == NULL || strlen(new_passwd) == 0)
-		create_packet_b(raw_data, &cursor, bar);
-	else {			// we're gonna change passwd
-		create_packet_data(raw_data, &cursor, (guint8 *) old_passwd, strlen(old_passwd));
-		create_packet_b(raw_data, &cursor, bar);
-		create_packet_data(raw_data, &cursor, (guint8 *) new_passwd, strlen(new_passwd));
-	}
+	create_packet_b(raw_data, &cursor, bar);
 
 	// important!, skip the first uid entry
 	for (i = 1; i < QQ_CONTACT_FIELDS; i++) {
@@ -427,7 +418,7 @@ static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
 	}
 	info = (contact_info *) info_field;
 
-	qq_send_packet_modify_info(gc, info, NULL);
+	qq_send_packet_modify_info(gc, info);
 	g_free(mid);
 	for (i = 0; i < QQ_CONTACT_FIELDS; i++)
 		g_free(info_field[i]);

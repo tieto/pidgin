@@ -447,6 +447,12 @@ static void _qq_menu_modify_my_info(GaimPluginAction * action)
 	qq_prepare_modify_info(gc);
 }
 
+
+static void _qq_menu_change_password(GaimPluginAction * action)
+{
+	        gaim_notify_uri(NULL, "https://password.qq.com");
+}
+
 /* remove a buddy from my list and remove myself from his list */
 /* TODO: re-enable this
 static void _qq_menu_block_buddy(GaimBlistNode * node)
@@ -666,6 +672,9 @@ static GList *_qq_actions(GaimPlugin * plugin, gpointer context)
 
 	m = NULL;
 	act = gaim_plugin_action_new(_("Modify My Information"), _qq_menu_modify_my_info);
+	m = g_list_append(m, act);
+
+	act = gaim_plugin_action_new(_("Change Password"), _qq_menu_change_password);
 	m = g_list_append(m, act);
 
 	act = gaim_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);

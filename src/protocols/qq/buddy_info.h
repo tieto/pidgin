@@ -114,7 +114,7 @@ typedef struct _modify_info_data {
 
 void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc);
 void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window);
-void qq_send_packet_modify_info(GaimConnection *gc, contact_info *info, gchar *new_passwd);
+void qq_send_packet_modify_info(GaimConnection *gc, contact_info *info);
 void qq_prepare_modify_info(GaimConnection *gc);
 void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
 void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
