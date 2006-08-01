@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #include "debug.h"		// gaim_debug
 #include "internal.h"		// memcpy, _("get_text")
 #include "server.h"		// serv_finish_login
@@ -40,16 +38,14 @@
 #include "send_core.h"		// qq_send_cmd
 #include "qq.h"			// qq_data
 
-//#define QQ_LOGIN_DATA_LENGTH                69	//length of plain login packet
-#define QQ_LOGIN_DATA_LENGTH			416	//new length from eva, by gfhuang
+#define QQ_LOGIN_DATA_LENGTH		    416
 #define QQ_LOGIN_REPLY_OK_PACKET_LEN        139
 #define QQ_LOGIN_REPLY_REDIRECT_PACKET_LEN  11
 
-#define QQ_REQUEST_LOGIN_TOKEN_REPLY_OK 	0x00		//added by gfhuang
+#define QQ_REQUEST_LOGIN_TOKEN_REPLY_OK 	0x00
 
 #define QQ_LOGIN_REPLY_OK                   0x00
 #define QQ_LOGIN_REPLY_REDIRECT             0x01
-//#define QQ_LOGIN_REPLY_PWD_ERROR            0x02
 #define QQ_LOGIN_REPLY_PWD_ERROR            0x05
 #define QQ_LOGIN_REPLY_MISC_ERROR           0xff	// defined by myself
 
@@ -71,7 +67,7 @@ static const guint8 login_23_51[29] = {
 };
 */
 
-//for QQ 2005? copy from lumqq
+//for QQ 2005? copy from lumaqq
 static const gint8 login_23_51[29] = {
 	0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 0, -122, 
@@ -149,12 +145,11 @@ extern gint			// defined in send_core.c
 /*****************************************************************************/
 // It is fixed to 16 bytes 0x01 for QQ2003, 
 // Any value works (or a random 16 bytes string)
-static gchar *_gen_login_key(void)
+static guint8 *_gen_login_key(void)
 {
-	return g_strnfill(QQ_KEY_LENGTH, 0x01);
-}				// _gen_login_key
+	return (guint8 *) g_strnfill(QQ_KEY_LENGTH, 0x01);
+}
 
-/*****************************************************************************/
 // process login reply which says OK
 static gint _qq_process_login_ok(GaimConnection * gc, guint8 * data, gint len)
 {
@@ -217,7 +212,7 @@ static gint _qq_process_login_ok(GaimConnection * gc, guint8 * data, gint len)
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 			   "Fail parsing login info, expect %d bytes, read %d bytes\n",
 			   QQ_LOGIN_REPLY_OK_PACKET_LEN, bytes);
-	}			// but we still goes on as login OK
+	}			// but we still go on as login OK
 
 	qd->session_key = g_memdup(lrop.session_key, QQ_KEY_LENGTH);
 	qd->my_ip = gen_ip_str(lrop.client_ip);
@@ -229,7 +224,6 @@ static gint _qq_process_login_ok(GaimConnection * gc, guint8 * data, gint len)
 	g_free(lrop.session_key);
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
-//	serv_finish_login(gc);         //by gfhuang
 	qd->logged_in = TRUE;	// must be defined after sev_finish_login
 
 	// now initiate QQ Qun, do it first as it may take longer to finish
@@ -247,9 +241,8 @@ static gint _qq_process_login_ok(GaimConnection * gc, guint8 * data, gint len)
 	//qq_send_packet_get_all_list_with_group(gc, QQ_FRIENDS_LIST_POSITION_START);
 
 	return QQ_LOGIN_REPLY_OK;
-}				// _qq_process_login_ok
+}
 
-/*****************************************************************************/
 // process login reply packet which includes redirected new server address
 static gint _qq_process_login_redirect(GaimConnection * gc, guint8 * data, gint len)
 {
@@ -285,12 +278,11 @@ static gint _qq_process_login_redirect(GaimConnection * gc, guint8 * data, gint 
 		qq_connect(gc->account, new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
 		g_free(new_server_str);
 		ret = QQ_LOGIN_REPLY_REDIRECT;
-	}			// if bytes != QQ_LOGIN_REPLY_MISC_ERROR 
+	}
 
 	return ret;
-}				// _qq_process_login_redirect
+}
 
-/*****************************************************************************/
 // process login reply which says wrong password
 static gint _qq_process_login_wrong_pwd(GaimConnection * gc, guint8 * data, gint len)
 {
@@ -303,10 +295,9 @@ static gint _qq_process_login_wrong_pwd(GaimConnection * gc, guint8 * data, gint
 	g_free(server_reply_utf8);
 
 	return QQ_LOGIN_REPLY_PWD_ERROR;
-}				// _qq_process_login_wrong_pwd
+}
 
-
-// request before login, new protocal, by gfhuang
+// request before login
 void qq_send_packet_request_login_token(GaimConnection *gc)
 {
 	qq_data *qd;
@@ -332,9 +323,12 @@ void qq_send_packet_request_login_token(GaimConnection *gc)
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail create request login token packet\n");
 }
 
-/*****************************************************************************/
+// TODO: The login packet and its response have changed by QQ2006 Beta2. In that version,
+// the login OK response packet does not appear to be decryptable with qd->pwkey or qd->inikey.
+// Fortunately, this older system still works.
+
 // send login packet to QQ server
-void qq_send_packet_login(GaimConnection * gc, guint8 token_length, guint8 *token)
+static void qq_send_packet_login(GaimConnection * gc, guint8 token_length, guint8 *token)
 {
 	qq_data *qd;
 	guint8 *buf, *cursor, *raw_data, *encrypted_data;
@@ -352,7 +346,7 @@ void qq_send_packet_login(GaimConnection * gc, guint8 token_length, guint8 *toke
 
 	// now generate the encrypted data
 	// 000-015 use pwkey as key to encrypt empty string
-	qq_crypt(ENCRYPT, "", 0, qd->pwkey, raw_data, &encrypted_len);
+	qq_crypt(ENCRYPT, (guint8 *) "", 0, qd->pwkey, raw_data, &encrypted_len);
 	// 016-016 
 	raw_data[16] = 0x00;
 	// 017-020, used to be IP, now zero
@@ -366,7 +360,7 @@ void qq_send_packet_login(GaimConnection * gc, guint8 token_length, guint8 *toke
 	// 053-068, fixed value, maybe related to per machine
 	g_memmove(raw_data + 53, login_53_68, 16);
 
-	// 069    , login token length, by gfhuang
+	// 069, login token length
 	raw_data[69] = token_length;
 	pos = 70;
 	// 070-093, login token		//normally 24 bytes
@@ -392,10 +386,8 @@ void qq_send_packet_login(GaimConnection * gc, guint8 token_length, guint8 *toke
 		_qq_send_packet(gc, buf, bytes, QQ_CMD_LOGIN);
 	else
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail create login packet\n");
-}				// qq_send_packet_login
+}
 
-
-//added by gfhuang
 void qq_process_request_login_token_reply(guint8 * buf, gint buf_len, GaimConnection * gc)
 {
         qq_data *qd;
@@ -406,9 +398,15 @@ void qq_process_request_login_token_reply(guint8 * buf, gint buf_len, GaimConnec
         qd = (qq_data *) gc->proto_data;
 
 	if (buf[0] == QQ_REQUEST_LOGIN_TOKEN_REPLY_OK) {
+		if (buf[1] != buf_len-2) {
+			gaim_debug(GAIM_DEBUG_INFO, "QQ", 
+					"Malformed login token reply packet. Packet specifies length of %d, actual length is %d\n", buf[1], buf_len-2);
+			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+					"Attempting to proceed with the actual packet length.\n");
+		}
 		gaim_debug(GAIM_DEBUG_INFO, "QQ",
-                                   "<<< got a token with %d bytes -> [default] decrypt and dump\n%s",buf[1], hex_dump_to_str(buf+2, buf[1]));
-		qq_send_packet_login(gc, buf[1], buf + 2);
+                                   "<<< got a token with %d bytes -> [default] decrypt and dump\n%s",buf_len-2, hex_dump_to_str(buf+2, buf_len-2));
+		qq_send_packet_login(gc, buf_len-2, buf+2);
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown request login token reply code : %d\n", buf[0]);
                 gaim_debug(GAIM_DEBUG_WARNING, "QQ",
@@ -419,7 +417,6 @@ void qq_process_request_login_token_reply(guint8 * buf, gint buf_len, GaimConnec
 	}		
 }
 
-/*****************************************************************************/
 // send logout packets to QQ server
 void qq_send_packet_logout(GaimConnection * gc)
 {
@@ -435,7 +432,6 @@ void qq_send_packet_logout(GaimConnection * gc)
 	qd->logged_in = FALSE;	// update login status AFTER sending logout packets
 }				// qq_send_packet_logout
 
-/*****************************************************************************/
 // process the login reply packet
 void qq_process_login_reply(guint8 * buf, gint buf_len, GaimConnection * gc)
 {
@@ -474,7 +470,6 @@ void qq_process_login_reply(guint8 * buf, gint buf_len, GaimConnection * gc)
 				break;
 			default:
 				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
-				// dump by gfhuang
 		                gaim_debug(GAIM_DEBUG_WARNING, "QQ",
                 		           ">>> %d bytes -> [default] decrypt and dump\n%s",
 		                           buf_len, hex_dump_to_str(data, len));
@@ -504,8 +499,5 @@ void qq_process_login_reply(guint8 * buf, gint buf_len, GaimConnection * gc)
 		break;
 	default:{;
 		}
-	}			// switch ret
-}				// qq_process_login_reply
-
-/*****************************************************************************/
-// END OF FILE
+	}
+}

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_LOGIN_LOGOUT_H_
 #define _QQ_LOGIN_LOGOUT_H_
 
@@ -31,14 +29,9 @@
 #define QQ_LOGIN_MODE_NORMAL        0x0a
 #define QQ_LOGIN_MODE_HIDDEN        0x28
 
-//void qq_send_packet_login(GaimConnection * gc);	//for internal usage, by gfhuang
-void qq_send_packet_request_login_token(GaimConnection *gc);	//by gfhuang
-
+void qq_send_packet_request_login_token(GaimConnection *gc);
+void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_process_login_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
 void qq_send_packet_logout(GaimConnection * gc);
 
-void qq_process_login_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnection *gc); // by gfhuang
-
 #endif
-/*****************************************************************************/
-// END OF FILE
