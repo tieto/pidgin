@@ -51,6 +51,7 @@
 #include "keep_alive.h"
 #include "ip_location.h"	/* qq_ip_get_location */
 #include "login_logout.h"
+#include "packet_parse.h"	/* MAX_PACKET_SIZE */
 #include "qq_proxy.h"		/* qq_connect, qq_disconnect */
 #include "send_core.h"
 #include "qq.h"
@@ -447,10 +448,9 @@ static void _qq_menu_modify_my_info(GaimPluginAction * action)
 	qq_prepare_modify_info(gc);
 }
 
-
 static void _qq_menu_change_password(GaimPluginAction * action)
 {
-	        gaim_notify_uri(NULL, "https://password.qq.com");
+	gaim_notify_uri(NULL, "https://password.qq.com");
 }
 
 /* remove a buddy from my list and remove myself from his list */
@@ -663,6 +663,57 @@ static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored)
 //	}
 }
 */
+/*
+static void _qq_send_custom_packet(GaimConnection *gc, const gchar *packet)
+{
+	guint16 cmd;
+	guint8 *buffer;
+	gint len;
+
+	if (!packet) {
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Null packet inputted!\n");
+		return;
+	}
+	if (strlen(packet) > MAX_PACKET_SIZE * 2) {
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Packet inputted is too large!\n");
+		return;
+	}
+	if (strlen(packet) < 4) {
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Packet is impossibly short!\n");
+		return;
+	}
+
+	buffer = hex_str_to_bytes(packet);
+	if (!buffer) {
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid packet inputted!\n");
+		return;
+	}
+	// big endian
+	cmd = 256 * buffer[0] + buffer[1];
+	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Inputted CMD: %d\n", cmd);
+
+	len = strlen(buffer) - 2;
+	packet = buffer + 2;
+
+	qq_send_cmd(gc, cmd, TRUE, 0, TRUE, packet, len);
+
+	g_free(buffer);
+}
+*/
+
+/* send a custom packet to the server - for protocol testing */
+/*
+static void _qq_menu_send_custom_packet(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	g_return_if_fail(gc != NULL);
+	gaim_request_input(gc, _("Send Custom Packet"),
+			   _("Enter the packet in hex here"),
+			   _("Include the command and everything following"),
+			   NULL, FALSE, FALSE, NULL,
+			   _("Send"), G_CALLBACK(_qq_send_custom_packet), _("Cancel"), NULL, gc);
+}
+*/
 
 /* protocol related menus */
 static GList *_qq_actions(GaimPlugin * plugin, gpointer context)
@@ -679,6 +730,11 @@ static GList *_qq_actions(GaimPlugin * plugin, gpointer context)
 
 	act = gaim_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);
 	m = g_list_append(m, act);
+
+	/* 
+	act = gaim_plugin_action_new(_("Send Custom Packet"), _qq_menu_send_custom_packet);
+	m = g_list_append(m, act);
+	*/
 
 	/* XXX consider re-enabling this
 	act = gaim_plugin_action_new(_("Show System Message"), _qq_menu_show_system_message);

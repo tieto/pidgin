@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #include "stdlib.h"		// strtol
 #include "limits.h"
 #include "string.h"		// strlen
@@ -46,7 +44,7 @@ gint g_str_has_prefix(const gchar *str, const gchar *prefix)
 #endif
 
 /*****************************************************************************/
-gchar *get_name_by_index_str(gchar ** array, const gchar * index_str, gint amount) {
+gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount) {
 	gint index;
 
 	index = atoi(index_str);
@@ -57,7 +55,7 @@ gchar *get_name_by_index_str(gchar ** array, const gchar * index_str, gint amoun
 }				// get_name_by_index_str
 
 /*****************************************************************************/
-gchar *get_index_str_by_name(gchar ** array, const gchar * name, gint amount) {
+gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount) {
 	gint index;
 
 	for (index = 0; index <= amount; index++)
@@ -70,7 +68,7 @@ gchar *get_index_str_by_name(gchar ** array, const gchar * name, gint amount) {
 }				// get_index_str_by_name
 
 /*****************************************************************************/
-gint qq_string_to_dec_value(const gchar * str)
+gint qq_string_to_dec_value(const gchar *str)
 {
 	g_return_val_if_fail(str != NULL, 0);
 	return strtol(str, NULL, 10);
@@ -80,7 +78,7 @@ gint qq_string_to_dec_value(const gchar * str)
 // split the given data(len) with delimit,
 // check the number of field matches the expected_fields (<=0 means all)
 // return gchar* array (needs to be freed by g_strfreev later), or NULL
-gchar **split_data(guint8 * data, gint len, const gchar * delimit, gint expected_fields) {
+gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields) {
 
 	guint8 *input;
 	gchar **segments;
@@ -111,19 +109,19 @@ gchar **split_data(guint8 * data, gint len, const gchar * delimit, gint expected
 		// free up those not used
 		for (j = expected_fields; j < i; j++) {
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "field[%d] is %s\n", j, segments[j]);
-			g_free(segments[j]); // bug found by gfhuang ! i -> j
+			g_free(segments[j]);
 		}
 		
 		segments[expected_fields] = NULL;
-	}			// if i
+	}
 
 	return segments;
-}				// split_data
+}
 
 /*****************************************************************************/
 // given a four-byte ip data, convert it into a human readable ip string
 // the return needs to be freed
-gchar *gen_ip_str(guint8 * ip)
+gchar *gen_ip_str(guint8 *ip)
 {
 	if (ip == NULL || ip[0] == 0)
 	       	return g_strdup_printf("");
@@ -131,7 +129,6 @@ gchar *gen_ip_str(guint8 * ip)
 		return g_strdup_printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 }
 
-// by gfhuang
 guint8 *str_ip_gen(gchar *str) {
 	guint8 *ip = g_new(guint8, 4);
 	int a, b, c, d;
@@ -161,7 +158,7 @@ gchar *uid_to_gaim_name(guint32 uid)
 
 /*****************************************************************************/
 // convert GAIM name to original QQ UID
-guint32 gaim_name_to_uid(const gchar * name)
+guint32 gaim_name_to_uid(const gchar *name)
 {
 	gchar *p;
 
@@ -175,7 +172,7 @@ guint32 gaim_name_to_uid(const gchar * name)
 
 /*****************************************************************************/
 // try to dump the data as GBK
-void try_dump_as_gbk(guint8 * data, gint len)
+void try_dump_as_gbk(guint8 *data, gint len)
 {
 	gint i;
 	guint8 *incoming;
@@ -201,10 +198,75 @@ void try_dump_as_gbk(guint8 * data, gint len)
 }				// try_dump_gbk
 
 /*****************************************************************************/
+// strips whitespace
+static gchar *strstrip(const gchar *buffer)
+{
+	GString *stripped;
+	gchar *ret;
+	int i;
 
-// dump a chunk of raw data into hex string
-// the return should be freed later
-gchar *hex_dump_to_str(const guint8 * buffer, gint bytes)
+        stripped = g_string_new("");
+        for (i=0; i<strlen(buffer); i++) {
+                if ((int) buffer[i] != 32) {
+                        g_string_append_c(stripped, buffer[i]);
+                }
+        }
+	ret = stripped->str;
+	g_string_free(stripped, FALSE);
+
+        return ret;
+}
+
+/*****************************************************************************/
+// Dumps an ASCII hex string to a string of bytes. The return should be freed later.
+// Returns NULL if a string with an odd number of nibbles is passed in or if buffer 
+// isn't a valid hex string
+guint8 *hex_str_to_bytes(const gchar *buffer)
+{
+	gchar *hex_str, *hex_buffer, *cursor, tmp;
+	guint8 *bytes, nibble1, nibble2;
+	gint index, len;
+
+	hex_buffer = strstrip(buffer);
+
+	if (strlen(hex_buffer) % 2 != 0) {
+		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+			"Unable to convert an odd number of nibbles to a string of bytes!\n");
+		g_free(hex_buffer);
+		return NULL;
+	}
+	bytes = g_newa(guint8, strlen(hex_buffer) / 2);
+	hex_str = g_ascii_strdown(hex_buffer, -1);
+	g_free(hex_buffer);
+	index = 0;
+	for (cursor = hex_str; cursor < hex_str + sizeof(gchar) * (strlen(hex_str)) - 1; cursor++) {
+		if (g_ascii_isdigit(*cursor)) {tmp = *cursor; nibble1 = atoi(&tmp); }
+		else if (g_ascii_isalpha(*cursor) && (gint) *cursor - 87 < 16)
+			nibble1 = (gint) *cursor - 87;
+		else {
+			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+				"Invalid char found in hex string!\n");
+			g_free(hex_str);
+			return NULL;
+		}
+		nibble1 = nibble1 << 4;
+		cursor++;
+		if (g_ascii_isdigit(*cursor)) {tmp = *cursor; nibble2 = atoi(&tmp); }
+		else if (g_ascii_isalpha(*cursor) && (gint) (*cursor - 87) < 16)
+			nibble2 = (gint) *cursor - 87;
+		else {
+			g_free(hex_str);
+			return NULL;
+		}
+		bytes[index++] = nibble1 + nibble2;
+	}
+	len = strlen(hex_str) / 2;
+	g_free(hex_str);
+	return g_memdup(bytes, len);
+}
+
+// Dumps a chunk of raw data into an ASCII hex string. The return should be freed later.
+gchar *hex_dump_to_str(const guint8 *buffer, gint bytes)
 {
 	GString *str;
 	gchar *ret;
@@ -240,6 +302,3 @@ gchar *hex_dump_to_str(const guint8 * buffer, gint bytes)
 
 	return ret;
 }
-
-/*****************************************************************************/
-// ENF OF FILE
