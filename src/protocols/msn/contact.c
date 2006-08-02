@@ -419,35 +419,39 @@ msn_get_address_book(MsnContact *contact)
 void
 msn_add_contact(MsnContact *contact)
 {
-
+	gaim_debug_info("MaYuan","msn add a contact...\n");
 }
 
 /*delete a Contact*/
 void
 msn_delete_contact(MsnContact *contact)
 {	
-
+	gaim_debug_info("MaYuan","msn delete a contact...\n");
 }
 
 /*block a Contact*/
 void
 msn_block_contact(MsnContact *contact)
 {	
-
+	gaim_debug_info("MaYuan","msn block a contact...\n");
 }
 
 /*unblock a contact*/
 void
 msn_unblock_contact(MsnContact *contact)
 {	
-
+	gaim_debug_info("MaYuan","msn unblock a contact...\n");
 }
 
 /*get the gleams info*/
 void
 msn_get_gleams(MsnContact *contact)
 {
-
+	gaim_debug_info("MaYuan","msn get gleams info...\n");
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_GET_ADDRESS_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GET_ADDRESS_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
 }
 
 void

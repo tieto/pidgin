@@ -81,7 +81,7 @@
 "</soap:Envelope>"
 
 /*Gleams SOAP request template*/
-#define MSN_GLEAMS_TEMPLATE = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+#define MSN_GLEAMS_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\

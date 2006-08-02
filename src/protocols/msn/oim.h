@@ -90,18 +90,26 @@ struct _MsnOim
 	MsnSession *session;
 
 	MsnSoapConn *retrieveconn;
+	GList * oim_list;
 
 	MsnSoapConn *sendconn;
 	gint	LockKeyChallenge;
 };
 
-/*function prototype*/
+/****************************************************
+ * function prototype
+ * **************************************************/
 MsnOim * msn_oim_new(MsnSession *session);
 void msn_oim_destroy(MsnOim *oim);
 void msn_oim_connect(MsnOim *oim);
 
 void msn_parse_oim_msg(MsnOim *oim,char *xmlmsg);
 
-void msn_oim_get_msg(MsnOim *oim,char *msgid);
+/*get the OIM message*/
+void msn_oim_get_msg(MsnOim *oim);
+
+/*report the oim message to the conversation*/
+void msn_oim_report_user(MsnOim *oim,const char *passport,char *msg);
+
 #endif/* _MSN_OIM_H_*/
 /*endof oim.h*/

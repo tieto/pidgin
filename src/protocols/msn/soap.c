@@ -399,7 +399,7 @@ msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_
 	char * soap_body = NULL;
 	char * request_str = NULL;
 
-	gaim_debug_info("MaYuan","msn_get_address_book()...\n");
+	gaim_debug_info("MaYuan","msn_soap_post()...\n");
 	soap_body = g_strdup_printf(body);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
