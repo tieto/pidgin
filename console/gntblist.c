@@ -35,6 +35,7 @@ static void add_chat(GaimChat *chat, GGBlist *ggblist);
 static void add_node(GaimBlistNode *node, GGBlist *ggblist);
 static void draw_tooltip(GGBlist *ggblist);
 static void remove_peripherals(GGBlist *ggblist);
+static const char * get_display_name(GaimBlistNode *node);
 
 static void
 new_node(GaimBlistNode *node)
@@ -84,6 +85,12 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 static void
 node_update(GaimBuddyList *list, GaimBlistNode *node)
 {
+	if (node->ui_data != NULL)
+	{
+		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
+				0, get_display_name(node));
+	}
+
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
 		GaimBuddy *buddy = (GaimBuddy*)node;
@@ -133,7 +140,7 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 		return;
 	gnt_tree_remove(GNT_TREE(ggblist->tree), group);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), group,
-			gnt_tree_create_row(GNT_TREE(ggblist->tree), group->name), NULL, NULL);
+			gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)), NULL, NULL);
 }
 
 static const char *
@@ -177,6 +184,8 @@ get_display_name(GaimBlistNode *node)
 
 		strncpy(status, "~", sizeof(status) - 1);
 	}
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+		return ((GaimGroup*)node)->name;
 
 	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
 
@@ -391,8 +400,44 @@ context_menu_callback(GntTree *tree, GGBlist *ggblist)
 }
 
 static void
+rename_blist_node(GaimBlistNode *node, const char *newname)
+{
+	const char *name = newname;
+	if (name && !*name)
+		name = NULL;
+
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		gaim_blist_alias_buddy((GaimBuddy*)node, name);
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		gaim_blist_alias_chat((GaimChat*)node, name);
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+		gaim_blist_rename_group((GaimGroup*)node, name);
+	else
+		g_return_if_reached();
+}
+
+static void
 gg_blist_rename_node_cb(GaimBlistNode *node, GaimBlistNode *null)
 {
+	const char *name = NULL;
+	char *prompt;
+
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		name = gaim_buddy_get_contact_alias((GaimBuddy*)node);
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		name = gaim_chat_get_name((GaimChat*)node);
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+		name = ((GaimGroup*)node)->name;
+	else
+		g_return_if_reached();
+	
+	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
+	
+	gaim_request_input(node, _("Rename"), prompt, _("Enter empty string to reset the name."),
+			name, FALSE, FALSE, NULL, _("Rename"), G_CALLBACK(rename_blist_node),
+			_("Cancel"), NULL, node);
+
+	g_free(prompt);
 }
 
 /* XXX: This still doesn't do anything, because request doesn't have a ui yet */
