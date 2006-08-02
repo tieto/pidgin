@@ -158,7 +158,8 @@ request_action_cb(GntWidget *button, GntWidget *window)
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
 	int id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(button), "activate-id"));
 
-	callback(data, id);
+	if (callback)
+		callback(data, id);
 
 	gaim_request_close(GAIM_REQUEST_ACTION, window);
 }
