@@ -125,8 +125,6 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 	const char *names[] = { "Notification", "Switchboard" };
 	const char *name;
 
-	msn_servconn_disconnect(servconn);
-
 	name = names[servconn->type];
 
 	switch (error)
@@ -157,6 +155,8 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 		if (swboard != NULL)
 			swboard->error = MSN_SB_ERROR_CONNECTION;
 	}
+
+	msn_servconn_disconnect(servconn);
 
 	g_free(tmp);
 }
