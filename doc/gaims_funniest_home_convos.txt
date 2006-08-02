@@ -360,3 +360,16 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
                  gaim becomes a text terminal
       [time passes ...]
 21:38 <An_Idiot>  I'm terribly conservative when it comes to security
+
+19:47 <someusr> hey
+19:48 <someusr> how do i set aim to block all users except those on my
+                buddy list?
+19:48 <someusr> don't tell me i have to log in with the regular AIM :(
+19:48 <Paco-Paco> I wouldn't tell you that, because it's wrong
+19:48 <Paco-Paco> how about you look in privacy
+19:49 <someusr> where?
+19:49 <someusr> i can't find it
+19:49 <SimGuy> in Privacy
+19:49 <someusr> OH!
+19:49 <someusr> haha
+19:49 <someusr> thanks!
