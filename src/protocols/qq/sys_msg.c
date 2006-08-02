@@ -20,31 +20,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
-#include "debug.h"		// gaim_debug
-#include "internal.h"		// _("get_text")
-#include "notify.h"		// gaim_noitfy_xx
-#include "request.h"		// gaim_request_action
+#include "debug.h"
+#include "internal.h"
+#include "notify.h"
+#include "request.h"
 
-#include "utils.h"		// hex_dump_to_str
-#include "packet_parse.h"	// create_packet_
-#include "buddy_info.h"		// qq_send_packet_get_info
-#include "buddy_list.h"		// qq_send_packet_get_buddies_online
-#include "buddy_opt.h"		// gc_and_uid
-#include "char_conv.h"		// qq_to_utf8
-#include "crypt.h"		// qq_crypt
-#include "header_info.h"	// cmd alias
-#include "send_core.h"		// qq_send_cmd
+#include "buddy_info.h"
+#include "buddy_list.h"
+#include "buddy_opt.h"
+#include "char_conv.h"
+#include "crypt.h"
+#include "header_info.h"
+#include "packet_parse.h"
+#include "qq.h"
+#include "send_core.h"
 #include "sys_msg.h"
-#include "qq.h"			// qq_data
+#include "utils.h"
 
 enum {
 	QQ_MSG_SYS_BEING_ADDED = 0x01,
 	QQ_MSG_SYS_ADD_CONTACT_REQUEST = 0x02,
 	QQ_MSG_SYS_ADD_CONTACT_APPROVED = 0x03,
 	QQ_MSG_SYS_ADD_CONTACT_REJECTED = 0x04,
-	QQ_MSG_SYS_NEW_VERSION = 0x09,
+	QQ_MSG_SYS_NEW_VERSION = 0x09
 };
 
 /* Henry: private function for reading/writing of system log */
@@ -59,7 +57,7 @@ static void _qq_sys_msg_log_write(GaimConnection *gc, gchar *msg, gchar *from)
 	log = gaim_log_new(GAIM_LOG_IM,
 			"systemim",
 			account,
-			NULL,        //gfhuang
+			NULL,
 			time(NULL),
 			NULL
 			);
@@ -68,9 +66,8 @@ static void _qq_sys_msg_log_write(GaimConnection *gc, gchar *msg, gchar *from)
 	gaim_log_free(log);
 }
 
-/*****************************************************************************/
-// suggested by rakescar@linuxsir, can still approve after search
-static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid * g)
+/* suggested by rakescar@linuxsir, can still approve after search */
+static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 {
 	GaimConnection *gc;
 	guint32 uid;
@@ -81,17 +78,15 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid * g)
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
-	qq_send_packet_get_info(gc, uid, TRUE);	// we wanna see window
+	qq_send_packet_get_info(gc, uid, TRUE);	/* we wanna see window */
 	gaim_request_action
 	    (gc, NULL, _("Do you wanna approve the request?"), "", 2, g, 2,
 	     _("Reject"),
 	     G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"), G_CALLBACK(qq_approve_add_request_with_gc_and_uid));
+}
 
-}				// _qq_search_before_auth_with_gc_and_uid
-
-/*****************************************************************************/
-static void _qq_search_before_add_with_gc_and_uid(gc_and_uid * g)
+static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 {
 	GaimConnection *gc;
 	guint32 uid;
@@ -102,16 +97,15 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid * g)
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
-	qq_send_packet_get_info(gc, uid, TRUE);	// we wanna see window
+	qq_send_packet_get_info(gc, uid, TRUE);	/* we wanna see window */
 	gaim_request_action
 	    (gc, NULL, _("Do you wanna add this buddy?"), "", 2, g, 2,
 	     _("Cancel"), NULL, _("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid));
+}
 
-}				// _qq_search_before_add_with_gc_and_uid
-
-/*****************************************************************************/
-// Send ACK if the sys message needs an ACK
-static void _qq_send_packet_ack_msg_sys(GaimConnection * gc, guint8 code, guint32 from, guint16 seq) {
+/* Send ACK if the sys message needs an ACK */
+static void _qq_send_packet_ack_msg_sys(GaimConnection *gc, guint8 code, guint32 from, guint16 seq)
+{
 	guint8 bar, *ack, *cursor;
 	gchar *str;
 	gint ack_len, bytes;
@@ -131,33 +125,32 @@ static void _qq_send_packet_ack_msg_sys(GaimConnection * gc, guint8 code, guint3
 
 	g_free(str);
 
-	if (bytes == ack_len)	// creation OK
+	if (bytes == ack_len)	/* creation OK */
 		qq_send_cmd(gc, QQ_CMD_ACK_SYS_MSG, TRUE, 0, FALSE, ack, ack_len);
 	else
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
 			   "Fail creating sys msg ACK, expect %d bytes, build %d bytes\n", ack_len, bytes);
+}
 
-}				// _qq_send_packet_ack_msg_sys
-
-/*****************************************************************************/
-// when you are added by a person, QQ server will send sys message
-static void _qq_process_msg_sys_being_added(GaimConnection * gc, gchar * from, gchar * to, gchar * msg_utf8) {
+/* when you are added by a person, QQ server will send sys message */
+static void _qq_process_msg_sys_being_added(GaimConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+{
 	gchar *message;
 	GaimBuddy *b;
 	guint32 uid;
 	gc_and_uid *g;
-	gchar *name; //for memory leak bug, by gfhuang
+	gchar *name;
 
 	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
 
 	uid = strtol(from, NULL, 10);
-	name = uid_to_gaim_name(uid);   //by gfhuang
+	name = uid_to_gaim_name(uid);
 	b = gaim_find_buddy(gc->account, name);
 	g_free(name);
-	if (b == NULL) {	// the person is not in my list 
+	if (b == NULL) {	/* the person is not in my list */
 		g = g_new0(gc_and_uid, 1);
 		g->gc = gc;
-		g->uid = uid;	// only need to get value
+		g->uid = uid;	/* only need to get value */
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
 		gaim_request_action(gc, NULL, message,
@@ -173,11 +166,11 @@ static void _qq_process_msg_sys_being_added(GaimConnection * gc, gchar * from, g
 	}
 
 	g_free(message);
-}				// qq_process_msg_sys_being_added
+}
 
-/*****************************************************************************/
-// you are rejected by the person
-static void _qq_process_msg_sys_add_contact_rejected(GaimConnection * gc, gchar * from, gchar * to, gchar * msg_utf8) {
+/* you are rejected by the person */
+static void _qq_process_msg_sys_add_contact_rejected(GaimConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+{
 	gchar *message, *reason;
 
 	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
@@ -189,11 +182,11 @@ static void _qq_process_msg_sys_add_contact_rejected(GaimConnection * gc, gchar 
 	gaim_notify_info(gc, NULL, message, reason);
 	g_free(message);
 	g_free(reason);
-}				// qq_process_msg_sys_add_contact_rejected
+}
 
-/*****************************************************************************/
-// the buddy approves your request of adding him/her as your friend
-static void _qq_process_msg_sys_add_contact_approved(GaimConnection * gc, gchar * from, gchar * to, gchar * msg_utf8) {
+/* the buddy approves your request of adding him/her as your friend */
+static void _qq_process_msg_sys_add_contact_approved(GaimConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+{
 	gchar *message;
 	qq_data *qd;
 
@@ -207,16 +200,16 @@ static void _qq_process_msg_sys_add_contact_approved(GaimConnection * gc, gchar 
 	gaim_notify_info(gc, NULL, message, NULL);
 
 	g_free(message);
-}				// qq_process_msg_sys_add_contact_approved
+}
 
-/*****************************************************************************/
-// someone wants to add you to his buddy list
-static void _qq_process_msg_sys_add_contact_request(GaimConnection * gc, gchar * from, gchar * to, gchar * msg_utf8) {
+/* someone wants to add you to his buddy list */
+static void _qq_process_msg_sys_add_contact_request(GaimConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
+{
 	gchar *message, *reason;
 	guint32 uid;
 	gc_and_uid *g, *g2;
 	GaimBuddy *b;
-	gchar *name;  // by gfhuang
+	gchar *name;
 
 	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
 
@@ -240,10 +233,10 @@ static void _qq_process_msg_sys_add_contact_request(GaimConnection * gc, gchar *
 	g_free(message);
 	g_free(reason);
 
-	name = uid_to_gaim_name(uid);	//by gfhuang
+	name = uid_to_gaim_name(uid);
 	b = gaim_find_buddy(gc->account, name);
 	g_free(name);
-	if (b == NULL) {	// the person is not in my list 
+	if (b == NULL) {	/* the person is not in my list  */
 		g2 = g_new0(gc_and_uid, 1);
 		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
@@ -255,12 +248,11 @@ static void _qq_process_msg_sys_add_contact_request(GaimConnection * gc, gchar *
 				    (qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
 		g_free(message);
-	}			// if b== NULL
+	}
+}
 
-}				// qq_process_msg_sys_add_contact_request
-
-/*****************************************************************************/
-void qq_process_msg_sys(guint8 * buf, gint buf_len, guint16 seq, GaimConnection * gc) {
+void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc)
+{
 	qq_data *qd;
 	gint len;
 	guint8 *data;
@@ -283,7 +275,7 @@ void qq_process_msg_sys(guint8 * buf, gint buf_len, guint16 seq, GaimConnection 
 
 		_qq_send_packet_ack_msg_sys(gc, code[0], strtol(from, NULL, 10), seq);
 
-		if (strtol(to, NULL, 10) != qd->uid) {	// not to me
+		if (strtol(to, NULL, 10) != qd->uid) {	/* not to me */
 			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Recv sys msg to [%s], not me!, discard\n", to);
 			g_strfreev(segments);
 			return;
@@ -310,14 +302,11 @@ void qq_process_msg_sys(guint8 * buf, gint buf_len, guint16 seq, GaimConnection 
 		default:
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Recv unknown sys msg code: %s\n", code);
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "the msg is : %s\n", msg_utf8);
-		}		// switch code
+		}
 		g_free(msg_utf8);
 		g_strfreev(segments);
 
-	} else
+	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt recv msg sys\n");
-
-}				// qq_process_msg_sys
-
-/*****************************************************************************/
-// END OF FILE
+	}
+}

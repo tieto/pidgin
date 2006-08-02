@@ -26,8 +26,6 @@
  * Puzzlebird, Nov-Dec 2002
  */
 
-// START OF FILE
-/*****************************************************************************/
 /*Notes: (OICQ uses 0x10 iterations, and modified something...)
 
 IN : 64  bits of data in v[0] - v[1].
@@ -45,12 +43,13 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 #include <string.h>
 
 #include "crypt.h"
-#include "debug.h"              // gaim_debug
+#include "debug.h"
 
 /********************************************************************
  * encryption 
  *******************************************************************/
 
+/* TODO: convert these data types to proper glib ones */
 static void qq_encipher(unsigned long *const v, const unsigned long *const k, unsigned long *const w)
 {
 	register unsigned long y = ntohl(v[0]), 
@@ -73,15 +72,15 @@ static void qq_encipher(unsigned long *const v, const unsigned long *const k, un
 	w[1] = htonl(z);
 }
 
-static int rand(void) {	// it can be the real random seed function
+static int rand(void) {	/* it can be the real random seed function */
 	return 0xdead;
-}			// override with number, convenient for debug
+}			/* override with number, convenient for debug */
 
-// we encrypt every eight byte chunk
+/* we encrypt every eight byte block */
 static void encrypt_every_8_byte(unsigned char *plain, unsigned char *plain_pre_8, unsigned char **crypted, 
 		unsigned char **crypted_pre_8, unsigned char *key, int *count, int *pos_in_byte, int *is_header) 
 {
-	// prepare plain text
+	/* prepare plain text */
 	for (*pos_in_byte = 0; *pos_in_byte < 8; (*pos_in_byte)++) {
 		if (*is_header) {
 			plain[*pos_in_byte] ^= plain_pre_8[*pos_in_byte];
@@ -89,34 +88,36 @@ static void encrypt_every_8_byte(unsigned char *plain, unsigned char *plain_pre_
 			plain[*pos_in_byte] ^= (*crypted_pre_8)[*pos_in_byte];
 		}
 	}
-	qq_encipher((unsigned long *) plain, (unsigned long *) key, (unsigned long *) *crypted);	// encrypt it
+	/* encrypt it */
+	qq_encipher((unsigned long *) plain, (unsigned long *) key, (unsigned long *) *crypted);
 
 	for (*pos_in_byte = 0; *pos_in_byte < 8; (*pos_in_byte)++) {
 		(*crypted)[*pos_in_byte] ^= plain_pre_8[*pos_in_byte];
 	}
-	memcpy(plain_pre_8, plain, 8);	// prepare next
+	memcpy(plain_pre_8, plain, 8);	/* prepare next */
 
-	*crypted_pre_8 = *crypted;	// store position of previous 8 byte
-	*crypted += 8;			// prepare next output
-	*count += 8;			// outstrlen increase by 8
-	*pos_in_byte = 0;		// back to start
-	*is_header = 0;			// and exit header
-}					// encrypt_every_8_byte
+	*crypted_pre_8 = *crypted;	/* store position of previous 8 byte */
+	*crypted += 8;			/* prepare next output */
+	*count += 8;			/* outstrlen increase by 8 */
+	*pos_in_byte = 0;		/* back to start */
+	*is_header = 0;			/* and exit header */
+}					/* encrypt_every_8_byte */
 
 
-static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key, unsigned char *outstr, int *outstrlen_prt)
+static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key, 
+		unsigned char *outstr, int *outstrlen_prt)
 {
-	unsigned char plain[8],		// plain text buffer
-		plain_pre_8[8],		// plain text buffer, previous 8 bytes
-		*crypted,		// crypted text
-		*crypted_pre_8,		// crypted test, previous 8 bytes
-		*inp;			// current position in instr
-	int pos_in_byte = 1,		// loop in the byte 
-		is_header = 1,		// header is one byte
-		count = 0,		// number of bytes being crypted
-		padding = 0;		// number of padding stuff
+	unsigned char plain[8],		/* plain text buffer */
+		plain_pre_8[8],		/* plain text buffer, previous 8 bytes */
+		*crypted,		/* crypted text */
+		*crypted_pre_8,		/* crypted test, previous 8 bytes */
+		*inp;			/* current position in instr */
+	int pos_in_byte = 1,		/* loop in the byte */
+		is_header = 1,		/* header is one byte */
+		count = 0,		/* number of bytes being crypted */
+		padding = 0;		/* number of padding stuff */
 
-	pos_in_byte = (instrlen + 0x0a) % 8;	// header padding decided by instrlen
+	pos_in_byte = (instrlen + 0x0a) % 8;	/* header padding decided by instrlen */
 	if (pos_in_byte) {
 		pos_in_byte = 8 - pos_in_byte;
 	}
@@ -127,8 +128,8 @@ static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key, u
 
 	crypted = crypted_pre_8 = outstr;
 
-	padding = 1;		// pad some stuff in header
-	while (padding <= 2) {	// at most two bytes
+	padding = 1;		/* pad some stuff in header */
+	while (padding <= 2) {	/* at most two bytes */
 		if (pos_in_byte < 8) {
 			plain[pos_in_byte++] = rand() & 0xff;
 			padding++;
@@ -149,8 +150,8 @@ static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key, u
 		}
 	}
 
-	padding = 1;		// pad some stuff in tail
-	while (padding <= 7) {	// at most seven bytes
+	padding = 1;		/* pad some stuff in tail */
+	while (padding <= 7) {	/* at most seven bytes */
 		if (pos_in_byte < 8) {
 			plain[pos_in_byte++] = 0x00;
 			padding++;
@@ -177,7 +178,7 @@ static void qq_decipher(unsigned long *const v, const unsigned long *const k, un
 		c = ntohl(k[2]), 
 		d = ntohl(k[3]), 
 		n = 0x10, 
-		sum = 0xE3779B90,	// why this ? must be related with n value
+		sum = 0xE3779B90,	/* why this ? must be related with n value */
 		delta = 0x9E3779B9;
 
 	/* sum = delta<<5, in general sum = delta * n */
@@ -208,23 +209,24 @@ static int decrypt_every_8_byte(unsigned char **crypt_buff, const int instrlen, 
 	return 1;
 }
 
-// return 0 if failed, 1 otherwise
-static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key, unsigned char *outstr, int *outstrlen_ptr)
+/* return 0 if failed, 1 otherwise */
+static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key, 
+		unsigned char *outstr, int *outstrlen_ptr)
 {
 	unsigned char decrypted[8], m[8], *crypt_buff, *crypt_buff_pre_8, *outp;
 	int count, context_start, pos_in_byte, padding;
 
-	// at least 16 bytes and %8 == 0
+	/* at least 16 bytes and %8 == 0 */
 	if ((instrlen % 8) || (instrlen < 16)) { 
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
 			"Packet len is either too short or not a multiple of 8 bytes, read %d bytes\n", instrlen);
 		return 0;
 	}
-	// get information from header
+	/* get information from header */
 	qq_decipher((unsigned long *) instr, (unsigned long *) key, (unsigned long *) decrypted);
 	pos_in_byte = decrypted[0] & 0x7;
-	count = instrlen - pos_in_byte - 10;	// this is the plaintext length
-	// return if outstr buffer is not large enough or error plaintext length
+	count = instrlen - pos_in_byte - 10;	/* this is the plaintext length */
+	/* return if outstr buffer is not large enough or error plaintext length */
 	if (*outstrlen_ptr < count || count < 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Buffer len %d is less than real len %d", *outstrlen_ptr, count);
 		return 0;
@@ -232,15 +234,15 @@ static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key, un
 
 	memset(m, 0, 8);
 	crypt_buff_pre_8 = m;
-	*outstrlen_ptr = count;	// everything is ok! set return string length
+	*outstrlen_ptr = count;	/* everything is ok! set return string length */
 
-	crypt_buff = instr + 8;	// address of real data start 
-	context_start = 8;	// context is at the second chunk of 8 bytes
-	pos_in_byte++;		// start of paddng stuff
+	crypt_buff = instr + 8;	/* address of real data start */
+	context_start = 8;	/* context is at the second block of 8 bytes */
+	pos_in_byte++;		/* start of paddng stuff */
 
-	padding = 1;		// at least one in header
-	while (padding <= 2) {	// there are 2 byte padding stuff in header
-		if (pos_in_byte < 8) {	// bypass the padding stuff, it's nonsense data
+	padding = 1;		/* at least one in header */
+	while (padding <= 2) {	/* there are 2 byte padding stuff in header */
+		if (pos_in_byte < 8) {	/* bypass the padding stuff, it's nonsense data */
 			pos_in_byte++;
 			padding++;
 		}
@@ -287,9 +289,8 @@ static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key, un
 	return 1;
 }
 
-/*****************************************************************************/
 /* This is the Public Function */
-// return 1 is succeed, otherwise return 0
+/* return 1 is succeed, otherwise return 0 */
 int qq_crypt(unsigned char flag,
 	     unsigned char *instr, int instrlen, unsigned char *key, unsigned char *outstr, int *outstrlen_ptr)
 {
@@ -297,9 +298,8 @@ int qq_crypt(unsigned char flag,
 		return qq_decrypt(instr, instrlen, key, outstr, outstrlen_ptr);
 	else if (flag == ENCRYPT)
 		qq_encrypt(instr, instrlen, key, outstr, outstrlen_ptr);
+	else 
+		return 0;
 
-	return 1;		// flag must be DECRYPT or ENCRYPT
+	return 1;
 }
-
-/*****************************************************************************/
-// END OF FILE

@@ -20,22 +20,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #include "header_info.h"
 
-#define QQ_CLIENT_062E 0x062e	// GB QQ2000c build 0630
-#define QQ_CLIENT_072E 0x072e	// En QQ2000c build 0305
-#define QQ_CLIENT_0801 0x0801	// En QQ2000c build 0630
-#define QQ_CLIENT_0A1D 0x0a1d	// Gb QQ2003c build 0808
-#define QQ_CLIENT_0B07 0x0b07	// Gb QQ2003c build 0925
-#define QQ_CLIENT_0B2F 0x0b2f	// GB QQ2003iii build 0117
-#define QQ_CLIENT_0B35 0x0b35	// GB QQ2003iii build 0304 (offical release)
-#define QQ_CLIENT_0B37 0x0b37	// GB QQ2003iii build 0304 (April 05 updates)
-#define QQ_SERVER_0100 0x0100	// server
+#define QQ_CLIENT_062E 0x062e	/* GB QQ2000c build 0630 */
+#define QQ_CLIENT_072E 0x072e	/* EN QQ2000c build 0305 */
+#define QQ_CLIENT_0801 0x0801	/* EN QQ2000c build 0630 */
+#define QQ_CLIENT_0A1D 0x0a1d	/* GB QQ2003c build 0808 */
+#define QQ_CLIENT_0B07 0x0b07	/* GB QQ2003c build 0925 */
+#define QQ_CLIENT_0B2F 0x0b2f	/* GB QQ2003iii build 0117 */
+#define QQ_CLIENT_0B35 0x0b35	/* GB QQ2003iii build 0304 (offical release) */
+#define QQ_CLIENT_0B37 0x0b37	/* GB QQ2003iii build 0304 (April 05 updates) */
+#define QQ_SERVER_0100 0x0100	/* server */
 
-/*****************************************************************************/
-// given command alias, return the command name accordingly
+/* given command alias, return the command name accordingly */
 const gchar *qq_get_cmd_desc(gint type)
 {
 	switch (type) {
@@ -73,21 +70,20 @@ const gchar *qq_get_cmd_desc(gint type)
 		return "QQ_CMD_GET_FRIENDS_ONLINE";
 	case QQ_CMD_GROUP_CMD:
 		return "QQ_CMD_GROUP_CMD";
-	case QQ_CMD_GET_ALL_LIST_WITH_GROUP:		// by gfhuang
+	case QQ_CMD_GET_ALL_LIST_WITH_GROUP:
 		return "QQ_CMD_GET_ALL_LIST_WITH_GROUP";
 	case QQ_CMD_REQUEST_LOGIN_TOKEN:
-		return "QQ_CMD_REQUEST_LOGIN_TOKEN";	// by gfhuang
+		return "QQ_CMD_REQUEST_LOGIN_TOKEN";
 	case QQ_CMD_RECV_MSG_SYS:
 		return "QQ_CMD_RECV_MSG_SYS";
 	case QQ_CMD_RECV_MSG_FRIEND_CHANGE_STATUS:
 		return "QQ_CMD_RECV_MSG_FRIEND_CHANGE_STATUS";
 	default:
 		return "UNKNOWN_TYPE";
-	}			// switch (type)
-}				// qq_get_cmd_desc
+	}
+}
 
-/*****************************************************************************/
-// given source tag, return its description accordingly
+/* given source tag, return its description accordingly */
 const gchar *qq_get_source_str(gint source)
 {
 	switch (source) {
@@ -112,7 +108,4 @@ const gchar *qq_get_source_str(gint source)
 	default:
 		return "QQ unknown version";
 	}
-}				// qq_get_source_str
-
-/*****************************************************************************/
-// END OF FILE
+}

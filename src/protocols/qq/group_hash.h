@@ -20,13 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_HASH_H_
 #define _QQ_GROUP_HASH_H_
 
-#include <glib.h>		// GHashTable
-#include "group.h"		// qq_group
+#include <glib.h>
+#include "group.h"
 
 #define QQ_GROUP_KEY_MEMBER_STATUS      "my_status_code"
 #define QQ_GROUP_KEY_MEMBER_STATUS_DESC "my_status_desc"
@@ -39,12 +37,10 @@
 #define QQ_GROUP_KEY_GROUP_NAME_UTF8    "group_name_utf8"
 #define QQ_GROUP_KEY_GROUP_DESC_UTF8    "group_desc_utf8"
 
-qq_group *qq_group_create_by_id(GaimConnection * gc, guint32 internal_id, guint32 external_id);
-GHashTable *qq_group_to_hashtable(qq_group * group);
+qq_group *qq_group_create_by_id(GaimConnection *gc, guint32 internal_id, guint32 external_id);
+GHashTable *qq_group_to_hashtable(qq_group *group);
 
-qq_group *qq_group_from_hashtable(GaimConnection * gc, GHashTable * data);
-void qq_group_refresh(GaimConnection * gc, qq_group * group);
+qq_group *qq_group_from_hashtable(GaimConnection *gc, GHashTable *data);
+void qq_group_refresh(GaimConnection *gc, qq_group *group);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

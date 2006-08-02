@@ -24,12 +24,10 @@
  *  * IpChecker.m, by Jeff_Ye
  */
 
-// START OF FILE
-/*****************************************************************************/
 #include "internal.h"
-#include <string.h>		// memset
+#include <string.h>
 #include "debug.h"
-#include "prefs.h"		// gaim_prefs_get_string
+#include "prefs.h"
 
 #include "utils.h"
 #include "ip_location.h"
@@ -38,20 +36,19 @@
 
 typedef struct _ip_finder ip_finder;
 
-// all offset is based the begining of the file
+/* all offset is based the begining of the file */
 struct _ip_finder {
-	guint32 offset_first_start_ip;	// first abs offset of start ip
-	guint32 offset_last_start_ip;	// last abs offset of start ip
-	guint32 cur_start_ip;	// start ip of current search range
-	guint32 cur_end_ip;	// end ip of current search range
-	guint32 offset_cur_end_ip;	// where is the current end ip saved
-	GIOChannel *io;		// IO Channel to read file
-};				// struct _ip_finder
+	guint32 offset_first_start_ip;	/* first abs offset of start ip */
+	guint32 offset_last_start_ip;	/* last abs offset of start ip */
+	guint32 cur_start_ip;		/* start ip of current search range */
+	guint32 cur_end_ip;		/* end ip of current search range */
+	guint32 offset_cur_end_ip;	/* where is the current end ip saved */
+	GIOChannel *io;			/* IO Channel to read file */
+};					/* struct _ip_finder */
 
-/*****************************************************************************/
-// convert 1-4 bytes array to integer.
-// Small endian (higher bytes in lower place)
-static guint32 _byte_array_to_int(guint8 * ip, gint count)
+/* convert 1-4 bytes array to integer.
+ * Small endian (higher bytes in lower place) */
+static guint32 _byte_array_to_int(guint8 *ip, gint count)
 {
 	guint32 ret, i;
 	g_return_val_if_fail(count >= 1 && count <= 4, 0);
@@ -59,11 +56,10 @@ static guint32 _byte_array_to_int(guint8 * ip, gint count)
 	for (i = 0; i < count; i++)
 		ret |= ((guint32) ip[i]) << (8 * i);
 	return ret;
-}				// _byte_array_to_int
+}
 
-/*****************************************************************************/
-// read len of bytes to buf, from io at offset
-static void _read_from(GIOChannel * io, guint32 offset, guint8 * buf, gint len)
+/* read len of bytes to buf, from io at offset */
+static void _read_from(GIOChannel *io, guint32 offset, guint8 *buf, gint len)
 {
 	GError *err;
 	GIOStatus status;
@@ -75,7 +71,7 @@ static void _read_from(GIOChannel * io, guint32 offset, guint8 * buf, gint len)
 		g_error_free(err);
 		memset(buf, 0, len);
 		return;
-	}			// if err
+	}
 
 	status = g_io_channel_read_chars(io, buf, len, NULL, &err);
 	if (err != NULL) {
@@ -83,12 +79,11 @@ static void _read_from(GIOChannel * io, guint32 offset, guint8 * buf, gint len)
 		g_error_free(err);
 		memset(buf, 0, len);
 		return;
-	}			// if err
-}				// _read_from
+	}
+}
 
-/*****************************************************************************/
-// read len of bytes to buf, from io at offset
-static gsize _read_line_from(GIOChannel * io, guint32 offset, gchar ** ret_str)
+/* read len of bytes to buf, from io at offset */
+static gsize _read_line_from(GIOChannel *io, guint32 offset, gchar **ret_str)
 {
 	gsize bytes_read;
 	GError *err;
@@ -101,7 +96,7 @@ static gsize _read_line_from(GIOChannel * io, guint32 offset, gchar ** ret_str)
 		g_error_free(err);
 		ret_str = NULL;
 		return -1;
-	}			// if err
+	}
 
 	status = g_io_channel_read_line(io, ret_str, &bytes_read, NULL, &err);
 	if (err != NULL) {
@@ -109,15 +104,14 @@ static gsize _read_line_from(GIOChannel * io, guint32 offset, gchar ** ret_str)
 		g_error_free(err);
 		ret_str = NULL;
 		return -1;
-	}			// if err
+	}
 
 	return bytes_read;
-}				// _read_from
+}
 
-/*****************************************************************************/
-// read the string from io, at offset, it may jump several times
-// returns the offset of next readable string for area
-static guint32 _get_string(GIOChannel * io, guint32 offset, gchar ** ret)
+/* read the string from io, at offset, it may jump several times
+ * returns the offset of next readable string for area */
+static guint32 _get_string(GIOChannel *io, guint32 offset, gchar **ret)
 {
 	guint8 *buf;
 	g_return_val_if_fail(io != NULL, 0);
@@ -136,12 +130,11 @@ static guint32 _get_string(GIOChannel * io, guint32 offset, gchar ** ret)
 	default:
 	  _read_line_from(io, offset, ret);
 	  return offset + strlen(*ret) + 1;
-	} /* switch */
-}				// _get_string
+	}
+}
 
-/*****************************************************************************/
-// extract country and area starting from offset
-static void _get_country_city(GIOChannel * io, guint32 offset, gchar ** country, gchar ** area)
+/* extract country and area starting from offset */
+static void _get_country_city(GIOChannel *io, guint32 offset, gchar **country, gchar **area)
 {
 	guint32 next_offset;
 	g_return_if_fail(io != NULL);
@@ -151,11 +144,10 @@ static void _get_country_city(GIOChannel * io, guint32 offset, gchar ** country,
 		*area = g_strdup("");
 	else
 		_get_string(io, next_offset, area);
-}				// _get_country_city
+}
 
-/*****************************************************************************/
-// set start_ip and end_ip of current range
-static void _set_ip_range(gint rec_no, ip_finder * f)
+/* set start_ip and end_ip of current range */
+static void _set_ip_range(gint rec_no, ip_finder *f)
 {
 	guint8 *buf;
 	guint32 offset;
@@ -171,13 +163,11 @@ static void _set_ip_range(gint rec_no, ip_finder * f)
 
 	_read_from(f->io, f->offset_cur_end_ip, buf, 4);
 	f->cur_end_ip = _byte_array_to_int(buf, 4);
+}
 
-}				// _set_ip_range
-
-/*****************************************************************************/
-// set the country and area for given IP.
-// country and area needs to be freed later
-gboolean qq_ip_get_location(guint32 ip, gchar ** country, gchar ** area)
+/* set the country and area for given IP.
+ * country and area needs to be freed later */
+gboolean qq_ip_get_location(guint32 ip, gchar **country, gchar **area)
 {
 	gint rec, record_count, B, E;
 	guint8 *buf;
@@ -204,8 +194,9 @@ gboolean qq_ip_get_location(guint32 ip, gchar ** country, gchar ** area)
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unable to open (%s): %s\n", addr_file, err->message);
 		g_error_free(err);
 		return FALSE;
-	} else
-		g_io_channel_set_encoding(f->io, NULL, NULL);	// set binary
+	} else {
+		g_io_channel_set_encoding(f->io, NULL, NULL);	/* set binary */
+	}
 
 	buf = g_newa(guint8, 4);
 
@@ -220,7 +211,7 @@ gboolean qq_ip_get_location(guint32 ip, gchar ** country, gchar ** area)
 		g_io_channel_shutdown(f->io, FALSE, NULL);
 		return FALSE;;
 	}
-	// search for right range
+	/* search for right range */
 	B = 0;
 	E = record_count;
 	while (B < E - 1) {
@@ -234,20 +225,16 @@ gboolean qq_ip_get_location(guint32 ip, gchar ** country, gchar ** area)
 			B = rec;
 		else
 			E = rec;
-	}			// while
+	}
 	_set_ip_range(B, f);
 
 	if (f->cur_start_ip <= ip && ip <= f->cur_end_ip) {
 		_get_country_city(f->io, f->offset_cur_end_ip + 4, country, area);
-	} else {		// not in this range... miss
+	} else {		/* not in this range... miss */
 		*country = g_strdup("unkown");
 		*area = g_strdup(" ");
-	}			// if ip_start<=ip<=ip_end
+	}			/* if ip_start<=ip<=ip_end */
 
 	g_io_channel_shutdown(f->io, FALSE, NULL);
 	return TRUE;
-
-}				// qq_ip_get_location
-
-/*****************************************************************************/
-// END OF FILE
+}

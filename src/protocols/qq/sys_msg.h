@@ -20,16 +20,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_SYS_MSG_H_
 #define _QQ_SYS_MSG_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
+#include "connection.h"
 
-void qq_process_msg_sys(guint8 * buf, gint buf_len, guint16 seq, GaimConnection * gc);
+void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

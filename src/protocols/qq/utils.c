@@ -20,18 +20,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "stdlib.h"		// strtol
+#include "stdlib.h"
 #include "limits.h"
-#include "string.h"		// strlen
+#include "string.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
 
-#include "debug.h"		// gaim_debug
+#include "char_conv.h"
+#include "debug.h"
+#include "prefs.h"
 #include "utils.h"
-#include "char_conv.h"		// qq_to_utf8
-#include "prefs.h"		// gaim_prefs_get_string
 
 #define QQ_NAME_FORMAT    "qq-%d"
 
@@ -43,8 +43,8 @@ gint g_str_has_prefix(const gchar *str, const gchar *prefix)
 }
 #endif
 
-/*****************************************************************************/
-gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount) {
+gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
+{
 	gint index;
 
 	index = atoi(index_str);
@@ -52,10 +52,10 @@ gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 		index = 0;
 
 	return array[index];
-}				// get_name_by_index_str
+}
 
-/*****************************************************************************/
-gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount) {
+gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount) 
+{
 	gint index;
 
 	for (index = 0; index <= amount; index++)
@@ -63,31 +63,29 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount) {
 			break;
 
 	if (index >= amount)
-		index = 0;	// meaning no match
+		index = 0;	/* meaning no match */
 	return g_strdup_printf("%d", index);
-}				// get_index_str_by_name
+}
 
-/*****************************************************************************/
 gint qq_string_to_dec_value(const gchar *str)
 {
 	g_return_val_if_fail(str != NULL, 0);
 	return strtol(str, NULL, 10);
-}				// _qq_string_to_dec_value
+}
 
-/*****************************************************************************/
-// split the given data(len) with delimit,
-// check the number of field matches the expected_fields (<=0 means all)
-// return gchar* array (needs to be freed by g_strfreev later), or NULL
-gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields) {
-
+/* split the given data(len) with delimit,
+ * check the number of field matches the expected_fields (<=0 means all)
+ * return gchar* array (needs to be freed by g_strfreev later), or NULL */
+gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields)
+{
 	guint8 *input;
 	gchar **segments;
 	gint i, j;
 
 	g_return_val_if_fail(data != NULL && len != 0 && delimit != 0, NULL);
 
-	// as the last field would be string, but data is not ended with 0x00
-	// we have to duplicate the data and append a 0x00 at the end
+	/* as the last field would be string, but data is not ended with 0x00
+	 * we have to duplicate the data and append a 0x00 at the end */
 	input = g_newa(guint8, len + 1);
 	g_memmove(input, data, len);
 	input[len] = 0x00;
@@ -98,15 +96,15 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 
 	for (i = 0; segments[i] != NULL; i++) {;
 	}
-	if (i < expected_fields) {	// not enough fields
+	if (i < expected_fields) {	/* not enough fields */
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
 			   "Invalid data, expect %d fields, found only %d, discard\n", expected_fields, i);
 		g_strfreev(segments);
 		return NULL;
-	} else if (i > expected_fields) {	// more fields, OK
+	} else if (i > expected_fields) {	/* more fields, OK */
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 			   "Dangerous data, expect %d fields, found %d, return all\n", expected_fields, i);
-		// free up those not used
+		/* free up those not used */
 		for (j = expected_fields; j < i; j++) {
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "field[%d] is %s\n", j, segments[j]);
 			g_free(segments[j]);
@@ -118,9 +116,8 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	return segments;
 }
 
-/*****************************************************************************/
-// given a four-byte ip data, convert it into a human readable ip string
-// the return needs to be freed
+/* given a four-byte ip data, convert it into a human readable ip string
+ * the return needs to be freed */
 gchar *gen_ip_str(guint8 *ip)
 {
 	gchar *ret;
@@ -128,8 +125,9 @@ gchar *gen_ip_str(guint8 *ip)
 		ret = g_new(gchar, 1);
 		*ret = '\0';
 	       	return ret;
-	} else 
+	} else {
 		return g_strdup_printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+	}
 }
 
 guint8 *str_ip_gen(gchar *str) {
@@ -143,24 +141,21 @@ guint8 *str_ip_gen(gchar *str) {
 	return ip;
 }
 
-/*****************************************************************************/
-// return the QQ icon file name
-// the return needs to be freed
+/* return the QQ icon file name
+ * the return needs to be freed */
 gchar *get_icon_name(gint set, gint suffix)
 {
 	return g_strdup_printf("qq_%d-%d", set, suffix);
-}				// get_icon_name
+}
 
-/*****************************************************************************/
-// convert a QQ UID to a unique name of GAIM
-// the return needs to be freed
+/* convert a QQ UID to a unique name of GAIM
+ * the return needs to be freed */
 gchar *uid_to_gaim_name(guint32 uid)
 {
 	return g_strdup_printf(QQ_NAME_FORMAT, uid);
-}				// uid_to_gaim_name
+}
 
-/*****************************************************************************/
-// convert GAIM name to original QQ UID
+/* convert GAIM name to original QQ UID */
 guint32 gaim_name_to_uid(const gchar *name)
 {
 	gchar *p;
@@ -168,13 +163,10 @@ guint32 gaim_name_to_uid(const gchar *name)
 	g_return_val_if_fail(g_str_has_prefix(name, QQ_NAME_PREFIX), 0);
 
 	p = g_strrstr(name, QQ_NAME_PREFIX);
-	// atoi is not thread-safe and also not async-cancel safe
-	// atoi is deprecated by strtol() and should not be used in new code
 	return (p == NULL) ? 0 : strtol(p + strlen(QQ_NAME_PREFIX), NULL, 10);
 }
 
-/*****************************************************************************/
-// try to dump the data as GBK
+/* try to dump the data as GBK */
 void try_dump_as_gbk(guint8 *data, gint len)
 {
 	gint i;
@@ -184,10 +176,10 @@ void try_dump_as_gbk(guint8 *data, gint len)
 	incoming = g_newa(guint8, len + 1);
 	g_memmove(incoming, data, len);
 	incoming[len] = 0x00;
-	// GBK code: 
-	// Single-byte ASCII:      0x21-0x7E
-	// GBK first byte range:   0x81-0xFE
-	// GBK second byte range:  0x40-0x7E and 0x80-0xFE
+	/* GBK code: 
+	 * Single-byte ASCII:      0x21-0x7E
+	 * GBK first byte range:   0x81-0xFE
+	 * GBK second byte range:  0x40-0x7E and 0x80-0xFE */
 	for (i = 0; i < len; i++)
 		if (incoming[i] >= 0x81)
 			break;
@@ -197,11 +189,10 @@ void try_dump_as_gbk(guint8 *data, gint len)
 	if (msg_utf8 != NULL) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);
 		g_free(msg_utf8);
-	}			// msg_utf8 != NULL
-}				// try_dump_gbk
+	}
+}
 
-/*****************************************************************************/
-// strips whitespace
+/* strips whitespace */
 static gchar *strstrip(const gchar *buffer)
 {
 	GString *stripped;
@@ -220,10 +211,9 @@ static gchar *strstrip(const gchar *buffer)
         return ret;
 }
 
-/*****************************************************************************/
-// Dumps an ASCII hex string to a string of bytes. The return should be freed later.
-// Returns NULL if a string with an odd number of nibbles is passed in or if buffer 
-// isn't a valid hex string
+/* Dumps an ASCII hex string to a string of bytes. The return should be freed later.
+ * Returns NULL if a string with an odd number of nibbles is passed in or if buffer 
+ * isn't a valid hex string */
 guint8 *hex_str_to_bytes(const gchar *buffer)
 {
 	gchar *hex_str, *hex_buffer, *cursor, tmp;
@@ -268,7 +258,7 @@ guint8 *hex_str_to_bytes(const gchar *buffer)
 	return g_memdup(bytes, len);
 }
 
-// Dumps a chunk of raw data into an ASCII hex string. The return should be freed later.
+/* Dumps a chunk of raw data into an ASCII hex string. The return should be freed later. */
 gchar *hex_dump_to_str(const guint8 *buffer, gint bytes)
 {
 	GString *str;
@@ -277,10 +267,10 @@ gchar *hex_dump_to_str(const guint8 *buffer, gint bytes)
 
 	str = g_string_new("");
 	for (i = 0; i < bytes; i += 16) {
-		// length label
+		/* length label */
 		g_string_append_printf(str, "%04d: ", i);
 
-		// dump hex value
+		/* dump hex value */
 		for (j = 0; j < 16; j++)
 			if ((i + j) < bytes)
 				g_string_append_printf(str, " %02X", buffer[i + j]);
@@ -288,7 +278,7 @@ gchar *hex_dump_to_str(const guint8 *buffer, gint bytes)
 				g_string_append(str, "   ");
 		g_string_append(str, "  ");
 
-		// dump ascii value
+		/* dump ascii value */
 		for (j = 0; j < 16 && (i + j) < bytes; j++) {
 			ch = buffer[i + j] & 127;
 			if (ch < ' ' || ch == 127)
@@ -300,7 +290,7 @@ gchar *hex_dump_to_str(const guint8 *buffer, gint bytes)
 	}
 
 	ret = str->str;
-	// GString can be freed without freeing it character data
+	/* GString can be freed without freeing it character data */
 	g_string_free(str, FALSE);
 
 	return ret;

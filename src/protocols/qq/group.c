@@ -20,35 +20,31 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #include "internal.h"
 
-#include "debug.h"		// gaim_debug
-#include "prpl.h"		// struct proto_chat_entry
-#include "request.h"		// gaim_request_input
+#include "debug.h"
+#include "prpl.h"
+#include "request.h"
 
-#include "utils.h"		// qq_string_to_dec_value
-#include "group_hash.h"		// QQ_GROUP_KEY_EXTERNAL_ID
-#include "group_info.h"		// qq_send_cmd_group_get_group_info
-#include "group_search.h"	// qq_send_cmd_group_search_group
+#include "group_hash.h"
+#include "group_info.h"
+#include "group_search.h"
+#include "utils.h"
 
 #include "group.h"
 
-/*****************************************************************************/
-static void _qq_group_search_callback(GaimConnection * gc, const gchar * input)
+static void _qq_group_search_callback(GaimConnection *gc, const gchar *input)
 {
 	guint32 external_group_id;
 
 	g_return_if_fail(gc != NULL && input != NULL);
 	external_group_id = qq_string_to_dec_value(input);
-	// 0x00000000 means search for demo group
+	/* 0x00000000 means search for demo group */
 	qq_send_cmd_group_search_group(gc, external_group_id);
-}				// _qq_group_search_callback
+}
 
-/*****************************************************************************/
-// This is needed for GaimChat node to be valid
-GList *qq_chat_info(GaimConnection * gc)
+/* This is needed for GaimChat node to be valid */
+GList *qq_chat_info(GaimConnection *gc)
 {
 	GList *m;
 	struct proto_chat_entry *pce;
@@ -71,11 +67,10 @@ GList *qq_chat_info(GaimConnection * gc)
 	m = g_list_append(m, pce);
 
 	return m;
-}				// qq_chat_info
+}
 
-/*****************************************************************************/
-//  get a list of qq groups
-GaimRoomlist *qq_roomlist_get_list(GaimConnection * gc)
+/*  get a list of qq groups */
+GaimRoomlist *qq_roomlist_get_list(GaimConnection *gc)
 {
 	GList *fields;
 	qq_data *qd;
@@ -112,17 +107,15 @@ GaimRoomlist *qq_roomlist_get_list(GaimConnection * gc)
 
 	gaim_request_input(gc, _("QQ Qun"),
 			   _("Please input external group ID"),
-			   _
-			   ("You can only search for permanent QQ group\nInput 0 or leave it blank to search for demo groups"),
+			   _("You can only search for permanent QQ group\nInput 0 or leave it blank to search for demo groups"),
 			   NULL, FALSE, FALSE, NULL, _("Search"),
 			   G_CALLBACK(_qq_group_search_callback), _("Cancel"), NULL, gc);
 
 	return qd->roomlist;
-}				// qq_roomlist_get_list
+}
 
-/*****************************************************************************/
-// free roomlist space, I have no idea when this one is called ...
-void qq_roomlist_cancel(GaimRoomlist * list)
+/* free roomlist space, I have no idea when this one is called ... */
+void qq_roomlist_cancel(GaimRoomlist *list)
 {
 	qq_data *qd;
 	GaimConnection *gc;
@@ -135,11 +128,10 @@ void qq_roomlist_cancel(GaimRoomlist * list)
 
 	gaim_roomlist_set_in_progress(list, FALSE);
 	gaim_roomlist_unref(list);
-}				// qq_roomlist_cancel
+}
 
-/*****************************************************************************/
-// this should be called upon signin, even we did not open group chat window
-void qq_group_init(GaimConnection * gc)
+/* this should be called upon signin, even when we did not open group chat window */
+void qq_group_init(GaimConnection *gc)
 {
 	gint i;
 	GaimAccount *account;
@@ -156,24 +148,20 @@ void qq_group_init(GaimConnection * gc)
 	if (gaim_group == NULL) {
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "We have no QQ Qun\n");
 		return;
-	}			// if group
+	}
 
 	i = 0;
 	for (node = ((GaimBlistNode *) gaim_group)->child; node != NULL; node = node->next)
-		if (GAIM_BLIST_NODE_IS_CHAT(node)) {	// got one
+		if (GAIM_BLIST_NODE_IS_CHAT(node)) {	/* got one */
 			chat = (GaimChat *) node;
 			if (account != chat->account)
-				continue;	// very important here !
+				continue;	/* very important here ! */
 			group = qq_group_from_hashtable(gc, chat->components);
 			if (group != NULL) {
 				i++;
-				qq_send_cmd_group_get_group_info(gc, group);	// get group info and members
-			}	// if group
-		}		// if is chat
+				qq_send_cmd_group_get_group_info(gc, group);	/* get group info and members */
+			}
+		}
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Load %d QQ Qun configurations\n", i);
-
-}				// qq_group_init
-
-/*****************************************************************************/
-// END OF FILE
+}

@@ -20,18 +20,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
-#include "blist.h"		// gaim_blist_find_chat
-#include "debug.h"		// gaim_debug
+#include "blist.h"
+#include "debug.h"
 
-#include "utils.h"		// qq_string_to_dec_value
-#include "buddy_opt.h"		// qq_get_gaim_group
+#include "buddy_opt.h"
 #include "group_hash.h"
-#include "group_misc.h"		// qq_group_get_auth_index_str
+#include "group_misc.h"
+#include "utils.h"
 
-/*****************************************************************************/
-static gchar *_qq_group_set_my_status_desc(qq_group * group)
+static gchar *_qq_group_set_my_status_desc(qq_group *group)
 {
 	const char *status_desc;
 	g_return_val_if_fail(group != NULL, g_strdup(""));
@@ -51,13 +48,12 @@ static gchar *_qq_group_set_my_status_desc(qq_group * group)
 		break;
 	default:
 		status_desc = _("Unknown status");
-	}			// switch
+	}
 
 	return g_strdup(status_desc);
-}				// _qq_group_set_my_status_desc
+}
 
-/*****************************************************************************/
-static void _qq_group_add_to_blist(GaimConnection * gc, qq_group * group)
+static void _qq_group_add_to_blist(GaimConnection *gc, qq_group *group)
 {
 	GHashTable *components;
 	GaimGroup *g;
@@ -67,13 +63,13 @@ static void _qq_group_add_to_blist(GaimConnection * gc, qq_group * group)
 	g = qq_get_gaim_group(GAIM_GROUP_QQ_QUN);
 	gaim_blist_add_chat(chat, g, NULL);
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "You have add group \"%s\" to blist locally\n", group->group_name_utf8);
-}				// _qq_group_add_to_blist
+}
 
-/*****************************************************************************/
-// create a dummy qq_group, which includes only internal_id and external_id
-// all other attributes should be set to empty.
-// and we need to send a get_group_info to QQ server to update it right away
-qq_group *qq_group_create_by_id(GaimConnection * gc, guint32 internal_id, guint32 external_id) {
+/* create a dummy qq_group, which includes only internal_id and external_id
+ * all other attributes should be set to empty.
+ * and we need to send a get_group_info to QQ server to update it right away */
+qq_group *qq_group_create_by_id(GaimConnection *gc, guint32 internal_id, guint32 external_id)
+{
 	qq_group *group;
 	qq_data *qd;
 
@@ -86,10 +82,10 @@ qq_group *qq_group_create_by_id(GaimConnection * gc, guint32 internal_id, guint3
 	group->my_status_desc = _qq_group_set_my_status_desc(group);
 	group->internal_group_id = internal_id;
 	group->external_group_id = external_id;
-	group->group_type = 0x01;	// assume permanent Qun
-	group->creator_uid = 10000;	// assume by QQ admin
+	group->group_type = 0x01;	/* assume permanent Qun */
+	group->creator_uid = 10000;	/* assume by QQ admin */
 	group->group_category = 0x01;
-	group->auth_type = 0x02;	// assume need auth
+	group->auth_type = 0x02;	/* assume need auth */
 	group->group_name_utf8 = g_strdup("");
 	group->group_desc_utf8 = g_strdup("");
 	group->notice_utf8 = g_strdup("");
@@ -99,11 +95,10 @@ qq_group *qq_group_create_by_id(GaimConnection * gc, guint32 internal_id, guint3
 	_qq_group_add_to_blist(gc, group);
 
 	return group;
-}				// qq_group_create_by_id
+}
 
-/*****************************************************************************/
-// convert a qq_group to hash-table, which could be component of GaimChat
-GHashTable *qq_group_to_hashtable(qq_group * group)
+/* convert a qq_group to hash-table, which could be component of GaimChat */
+GHashTable *qq_group_to_hashtable(qq_group *group)
 {
 	GHashTable *components;
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
@@ -123,11 +118,10 @@ GHashTable *qq_group_to_hashtable(qq_group * group)
 	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_GROUP_NAME_UTF8), g_strdup(group->group_name_utf8));
 	g_hash_table_insert(components, g_strdup(QQ_GROUP_KEY_GROUP_DESC_UTF8), g_strdup(group->group_desc_utf8));
 	return components;
-}				// qq_group_to_hashtable
+}
 
-/*****************************************************************************/
-// create a qq_group from hashtable
-qq_group *qq_group_from_hashtable(GaimConnection * gc, GHashTable * data)
+/* create a qq_group from hashtable */
+qq_group *qq_group_from_hashtable(GaimConnection *gc, GHashTable *data)
 {
 	qq_data *qd;
 	qq_group *group;
@@ -158,20 +152,19 @@ qq_group *qq_group_from_hashtable(GaimConnection * gc, GHashTable * data)
 	qd->groups = g_list_append(qd->groups, group);
 
 	return group;
-}				// qq_group_from_hashtable
+}
 
-/*****************************************************************************/
-// refresh group local subscription
-void qq_group_refresh(GaimConnection * gc, qq_group * group)
+/* refresh group local subscription */
+void qq_group_refresh(GaimConnection *gc, qq_group *group)
 {
 	GaimChat *chat;
 	g_return_if_fail(gc != NULL && group != NULL);
 
 	chat = gaim_blist_find_chat(gaim_connection_get_account(gc), g_strdup_printf("%d", group->external_group_id));
-	if (chat == NULL && group->my_status != QQ_GROUP_MEMBER_STATUS_NOT_MEMBER)
+	if (chat == NULL && group->my_status != QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) {
 		_qq_group_add_to_blist(gc, group);
-	else if (chat != NULL) {	// we have a local record, update its info
-		// if there is group_name_utf8, we update the group name
+	} else if (chat != NULL) {	/* we have a local record, update its info */
+		/* if there is group_name_utf8, we update the group name */
 		if (group->group_name_utf8 != NULL && strlen(group->group_name_utf8) > 0)
 			gaim_blist_alias_chat(chat, group->group_name_utf8);
 		g_hash_table_replace(chat->components,
@@ -198,8 +191,5 @@ void qq_group_refresh(GaimConnection * gc, qq_group * group)
 				     g_strdup(QQ_GROUP_KEY_GROUP_NAME_UTF8), g_strdup(group->group_name_utf8));
 		g_hash_table_replace(chat->components,
 				     g_strdup(QQ_GROUP_KEY_GROUP_DESC_UTF8), g_strdup(group->group_desc_utf8));
-	}			// if chat
-}				// qq_group_refresh
-
-/*****************************************************************************/
-// END OF FILE
+	}
+}

@@ -21,17 +21,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
-
 #ifndef _QQ_PROXY_H
 #define _QQ_PROXY_H
 
 #include <glib.h>
-#include "proxy.h"		// GaimAccount, GaimConnection
-#include "qq.h"			// qq_data
+#include "proxy.h"
+#include "qq.h"
 
-#define QQ_CONNECT_STEPS    2	// steps in cnnection
+#define QQ_CONNECT_STEPS    2	/* steps in connection */
 
 struct PHB {
 	GaimInputFunction func;
@@ -45,14 +42,12 @@ struct PHB {
 	gpointer sockbuf;
 };
 
-gint qq_proxy_read(qq_data * qd, guint8 * data, gint len);
-gint qq_proxy_write(qq_data * qd, guint8 * data, gint len);
+gint qq_proxy_read(qq_data *qd, guint8 *data, gint len);
+gint qq_proxy_write(qq_data *qd, guint8 *data, gint len);
 
-gint qq_connect(GaimAccount * account, const gchar * host, guint16 port, gboolean use_tcp, gboolean is_redirect);
+gint qq_connect(GaimAccount *account, const gchar *host, guint16 port, gboolean use_tcp, gboolean is_redirect);
 
-void qq_disconnect(GaimConnection * gc);
-void _qq_show_packet(gchar * des, gchar * buf, gint len);
+void qq_disconnect(GaimConnection *gc);
+void _qq_show_packet(gchar *des, gchar *buf, gint len);
 
-#endif				//_QQ_PROXY_H
-/*****************************************************************************/
-// END OF FILE
+#endif

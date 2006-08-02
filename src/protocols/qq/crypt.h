@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_CRYPT_H_
 #define _QQ_CRYPT_H_
 
@@ -32,5 +30,3 @@ int qq_crypt(unsigned char flag,
 	     unsigned char *instr, int instrlen, unsigned char *key, unsigned char *outstr, int *outstrlen_ptr);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

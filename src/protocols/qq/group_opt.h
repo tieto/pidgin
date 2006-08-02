@@ -20,16 +20,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_OPT_H_
 #define _QQ_GROUP_OPT_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "group.h"		// qq_group
+#include "connection.h"
+#include "group.h"
 
-#define QQ_QUN_MEMBER_MAX       80	// max number of the group
+#define QQ_QUN_MEMBER_MAX       80	/* max number of the group */
 
 typedef struct _group_member_opt {
 	GaimConnection *gc;
@@ -39,29 +37,27 @@ typedef struct _group_member_opt {
 
 enum {
 	QQ_GROUP_TYPE_PERMANENT = 0x01,
-	QQ_GROUP_TYPE_TEMPORARY,
+	QQ_GROUP_TYPE_TEMPORARY
 };
 
 enum {
 	QQ_GROUP_MEMBER_ADD = 0x01,
-	QQ_GROUP_MEMBER_DEL,
+	QQ_GROUP_MEMBER_DEL
 };
 
-void qq_group_modify_members(GaimConnection * gc, qq_group * group, guint32 * new_members);
-void qq_group_modify_info(GaimConnection * gc, qq_group * group);
+void qq_group_modify_members(GaimConnection *gc, qq_group *group, guint32 *new_members);
+void qq_group_modify_info(GaimConnection *gc, qq_group *group);
 
-void qq_group_approve_application_with_struct(group_member_opt * g);
-void qq_group_reject_application_with_struct(group_member_opt * g);
-void qq_group_search_application_with_struct(group_member_opt * g);
+void qq_group_approve_application_with_struct(group_member_opt *g);
+void qq_group_reject_application_with_struct(group_member_opt *g);
+void qq_group_search_application_with_struct(group_member_opt *g);
 
-void qq_group_process_modify_info_reply(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
-void qq_group_process_modify_members_reply(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
-void qq_group_manage_group(GaimConnection * gc, GHashTable * data);
-void qq_group_create_with_name(GaimConnection * gc, const gchar * name);
-void qq_group_activate_group(GaimConnection * gc, guint32 internal_group_id);
-void qq_group_process_activate_group_reply(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
-void qq_group_process_create_group_reply(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
+void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_group_manage_group(GaimConnection *gc, GHashTable *data);
+void qq_group_create_with_name(GaimConnection *gc, const gchar *name);
+void qq_group_activate_group(GaimConnection *gc, guint32 internal_group_id);
+void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

@@ -20,51 +20,47 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_H_
 #define _QQ_GROUP_H_
 
 #include <glib.h>
 #include "account.h"
-#include "connection.h"		// GaimConnection
-#include "roomlist.h"		// GaimRoomlist
-#include "qq.h"			// qq_data
+#include "connection.h"
+#include "roomlist.h"
+#include "qq.h"
 
 #define GAIM_GROUP_QQ_QUN         "QQ 群"
 
 typedef enum {
-	QQ_GROUP_MEMBER_STATUS_NOT_MEMBER = 0x00,	// default 0x00 means not member
+	QQ_GROUP_MEMBER_STATUS_NOT_MEMBER = 0x00,	/* default 0x00 means not member */
 	QQ_GROUP_MEMBER_STATUS_IS_MEMBER,
 	QQ_GROUP_MEMBER_STATUS_APPLYING,
 	QQ_GROUP_MEMBER_STATUS_IS_ADMIN,
 } qq_group_member_status;
 
 typedef struct _qq_group {
-	// all these will be saved when exit GAIM
-	qq_group_member_status my_status;	// my status for this group
-	gchar *my_status_desc;	// my status description
+	/* all these will be saved when exit GAIM */
+	qq_group_member_status my_status;	/* my status for this group */
+	gchar *my_status_desc;			/* my status description */
 	guint32 internal_group_id;
 	guint32 external_group_id;
-	guint8 group_type;	// permanent or temporory
+	guint8 group_type;			/* permanent or temporory */
 	guint32 creator_uid;
 	guint32 group_category;
 	guint8 auth_type;
 	gchar *group_name_utf8;
 	gchar *group_desc_utf8;
-	// all these will loaded from netowrk only
-	gchar *notice_utf8;	// group notice by admin
-	GList *members;		// those evert appear in the group
+	/* all these will loaded from network only */
+	gchar *notice_utf8;	/* group notice by admin */
+	GList *members;		/* those evert appear in the group */
 } qq_group;
 
-GList *qq_chat_info(GaimConnection * gc);
+GList *qq_chat_info(GaimConnection *gc);
 
-void qq_group_init(GaimConnection * gc);
+void qq_group_init(GaimConnection *gc);
 
-GaimRoomlist *qq_roomlist_get_list(GaimConnection * gc);
+GaimRoomlist *qq_roomlist_get_list(GaimConnection *gc);
 
-void qq_roomlist_cancel(GaimRoomlist * list);
+void qq_roomlist_cancel(GaimRoomlist *list);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

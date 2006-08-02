@@ -20,26 +20,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
-#include <string.h>		// g_memmove
-#include "debug.h"		// gaim_debug
-#include "prefs.h"		// gaim_prefs_get_bool
+#include <string.h>
+#include "debug.h"
+#include "prefs.h"
 
-#include "utils.h"		// get_ip_str
-#include "packet_parse.h"	// create_packet,
 #include "buddy_status.h"
-#include "crypt.h"		// qq_crypt.h
-#include "header_info.h"	// cmd alias
-#include "keep_alive.h"		// qq_update_buddy_contact
-#include "send_core.h"		// qq_send_cmd
+#include "crypt.h"
+#include "header_info.h"
+#include "keep_alive.h"
+#include "packet_parse.h"
+#include "send_core.h"
+#include "utils.h"
 
 #include "qq_proxy.h"
 
 #define QQ_MISC_STATUS_HAVING_VIIDEO      0x00000001
 
 #define QQ_ICON_SUFFIX_DEFAULT            QQ_ICON_SUFFIX_OFFLINE
-#define QQ_CHANGE_ONLINE_STATUS_REPLY_OK 	0x30	// ASCii value of "0"
+#define QQ_CHANGE_ONLINE_STATUS_REPLY_OK 	0x30	/* ASCII value of "0" */
 
 enum {
 	QQ_ICON_SUFFIX_NORMAL = 1,
@@ -47,8 +45,7 @@ enum {
 	QQ_ICON_SUFFIX_AWAY = 3,
 };
 
-/*****************************************************************************/
-void qq_buddy_status_dump_unclear(qq_buddy_status * s)
+void qq_buddy_status_dump_unclear(qq_buddy_status *s)
 {
 	GString *dump;
 
@@ -57,48 +54,49 @@ void qq_buddy_status_dump_unclear(qq_buddy_status * s)
 	dump = g_string_new("");
 	g_string_append_printf(dump, "unclear fields for [%d]:\n", s->uid);
 	g_string_append_printf(dump, "004:     %02x   (unknown)\n", s->unknown1);
-	//g_string_append_printf(dump, "005-008:     %09x   (ip)\n", *(s->ip));
+	/* g_string_append_printf(dump, "005-008:     %09x   (ip)\n", *(s->ip)); */
 	g_string_append_printf(dump, "009-010:     %04x   (port)\n", s->port);
 	g_string_append_printf(dump, "011:     %02x   (unknown)\n", s->unknown2);
 	g_string_append_printf(dump, "012:     %02x   (status)\n", s->status);
 	g_string_append_printf(dump, "013-014:     %04x   (client_version)\n", s->client_version);
-	//g_string_append_printf(dump, "015-030:     %s   (unknown key)\n", s->unknown_key);
+	/* g_string_append_printf(dump, "015-030:     %s   (unknown key)\n", s->unknown_key); */
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Buddy status entry, %s", dump->str);
 	_qq_show_packet("Unknown key", s->unknown_key, QQ_KEY_LENGTH);
 	g_string_free(dump, TRUE);
 }
 
-/*****************************************************************************/
-// TODO: figure out what's going on with the IP region. Sometimes I get things which
-// may be valid IP addresses, but the port number's weird, other times I get 0s. 
-// Note: I get these simultaneously on the same buddy, using different accounts to get info.
-// parse the data into qq_buddy_status
-gint qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_status * s) {
+/* TODO: figure out what's going on with the IP region. Sometimes I get valid IP addresses, 
+ * but the port number's weird, other times I get 0s. I get these simultaneously on the same buddy, 
+ * using different accounts to get info. */
+
+/* parse the data into qq_buddy_status */
+gint qq_buddy_status_read(guint8 *data, guint8 **cursor, gint len, qq_buddy_status *s)
+{
 	gint bytes;
 
 	g_return_val_if_fail(data != NULL && *cursor != NULL && s != NULL, -1);
 
 	bytes = 0;
 
-	// 000-003: uid
+	/* 000-003: uid */
 	bytes += read_packet_dw(data, cursor, len, &s->uid);
-	// 004-004: 0x01
+	/* 004-004: 0x01 */
 	bytes += read_packet_b(data, cursor, len, &s->unknown1);
-	// this is no longer the IP, it seems QQ (as of 2006) no longer sends
-	// the buddy's IP in this packet. all 0s
-	// 005-008: ip
+	/* this is no longer the IP, it seems QQ (as of 2006) no longer sends
+	 * the buddy's IP in this packet. all 0s */
+	/* 005-008: ip */
 	s->ip = g_new0(guint8, 4);
 	bytes += read_packet_data(data, cursor, len, s->ip, 4);
-	// port info is no longer here either
-	// 009-010: port
+	/* port info is no longer here either */
+	/* 009-010: port */
 	bytes += read_packet_w(data, cursor, len, &s->port);
-	// 011-011: 0x00
+	/* 011-011: 0x00 */
 	bytes += read_packet_b(data, cursor, len, &s->unknown2);
-	// 012-012: status
+	/* 012-012: status */
 	bytes += read_packet_b(data, cursor, len, &s->status);
-	// 013-014: client_version 
+	/* 013-014: client_version */
 	bytes += read_packet_w(data, cursor, len, &s->client_version);
-	// 015-030: unknown key
+	/* 015-030: unknown key */
 	s->unknown_key = g_new0(guint8, QQ_KEY_LENGTH);
 	bytes += read_packet_data(data, cursor, len, s->unknown_key, QQ_KEY_LENGTH);
 
@@ -106,15 +104,11 @@ gint qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_st
 		return -1;
 
 	return bytes;
-
 }
 
-/*****************************************************************************/
-// check if status means online or offline
+/* check if status means online or offline */
 gboolean is_online(guint8 status)
 {
-//	return (status == QQ_BUDDY_ONLINE_NORMAL ? TRUE : (status == QQ_BUDDY_ONLINE_AWAY ? TRUE : FALSE));
-	//rewritten by gfhuang
 	switch(status) {
 	case QQ_BUDDY_ONLINE_NORMAL:
 	case QQ_BUDDY_ONLINE_AWAY:
@@ -124,11 +118,10 @@ gboolean is_online(guint8 status)
 		return FALSE;
 	}
 	return FALSE;
-}				// is_online
+}
 
-/*****************************************************************************/
-// the icon suffix is detemined by status
-// although QQ server may return the right icon, I set it here myself
+/* the icon suffix is detemined by status
+ * although QQ server may return the right icon, I set it here myself */
 gchar get_suffix_from_status(guint8 status)
 {
 	switch (status) {
@@ -141,12 +134,11 @@ gchar get_suffix_from_status(guint8 status)
 		return QQ_ICON_SUFFIX_OFFLINE;
 	default:
 		return QQ_ICON_SUFFIX_DEFAULT;
-	}			// switch
-}				// get_suffix_from_status
+	}
+}
 
-/*****************************************************************************/
-// send a packet to change my online status
-void qq_send_packet_change_status(GaimConnection * gc)
+/* send a packet to change my online status */
+void qq_send_packet_change_status(GaimConnection *gc)
 {
 	qq_data *qd;
 	guint8 *raw_data, *cursor, away_cmd;
@@ -191,9 +183,9 @@ void qq_send_packet_change_status(GaimConnection * gc)
 	g_free(raw_data);
 }
 
-/*****************************************************************************/
-// parse the reply packet for change_status
-void qq_process_change_status_reply(guint8 * buf, gint buf_len, GaimConnection * gc) {
+/* parse the reply packet for change_status */
+void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+{
 	qq_data *qd;
 	gint len;
 	guint8 *data, *cursor, reply;
@@ -217,10 +209,9 @@ void qq_process_change_status_reply(guint8 * buf, gint buf_len, GaimConnection *
 
 }
 
-/*****************************************************************************/
-// it is a server message 
-// indicating that one of my buddies changes its status
-void qq_process_friend_change_status(guint8 * buf, gint buf_len, GaimConnection * gc) {
+/* it is a server message indicating that one of my buddies has changed its status */
+void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *gc) 
+{
 	qq_data *qd;
 	gint len, bytes;
 	guint32 my_uid;
@@ -241,9 +232,9 @@ void qq_process_friend_change_status(guint8 * buf, gint buf_len, GaimConnection 
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		s = g_new0(qq_buddy_status, 1);
 		bytes = 0;
-		// 000-030: qq_buddy_status;
+		/* 000-030: qq_buddy_status */
 		bytes += qq_buddy_status_read(data, &cursor, len, s);
-		// 031-034: my uid
+		/* 031-034: my uid */
 		bytes += read_packet_dw(data, &cursor, len, &my_uid);
 
 		if (my_uid == 0 || bytes != 35) {
@@ -253,8 +244,6 @@ void qq_process_friend_change_status(guint8 * buf, gint buf_len, GaimConnection 
 			g_free(s);
 			return;
 		}
-//		if (QQ_DEBUG)						gfhuang
-//			_qq_buddy_status_dump_unclear(s);
 
 		name = uid_to_gaim_name(s->uid);
 		b = gaim_find_buddy(gc->account, name);
@@ -270,16 +259,15 @@ void qq_process_friend_change_status(guint8 * buf, gint buf_len, GaimConnection 
 			if(0 != s->client_version) 
 				q_bud->client_version = s->client_version; 
 			qq_update_buddy_contact(gc, q_bud);
+		} else {
+			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+					"got information of unknown buddy by gfhuang %d\n", s->uid);
 		}
-		else 
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "got information of unknown buddy by gfhuang %d\n", s->uid);
 
 		g_free(s->ip);
 		g_free(s->unknown_key);
 		g_free(s);
-	} else
+	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt buddy status change packet\n");
+	}
 }
-
-/*****************************************************************************/
-// END OF FILE

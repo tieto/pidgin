@@ -20,17 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_SEARCH_H_
 #define _QQ_GROUP_SEARCH_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
+#include "connection.h"
 
-void qq_send_cmd_group_search_group(GaimConnection * gc, guint32 external_group_id);
-void qq_process_group_cmd_search_group(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
+void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_id);
+void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

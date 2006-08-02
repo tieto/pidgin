@@ -20,25 +20,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
+#include "conversation.h"
 #include "debug.h"
-#include "conversation.h"	// GaimConversation
-#include "notify.h"		// gaim_notify_warning
-#include "prefs.h"		// gaim_prefs_get_bool
-#include "request.h"		// gaim_request_action
+#include "notify.h"
+#include "prefs.h"
+#include "request.h"
 #include "util.h"
 
-#include "utils.h"		// uid_to_gaim_name
-#include "packet_parse.h"	// create_packet_xx
-#include "char_conv.h"		// qq_smiley_to_gaim
-#include "group_find.h"		// qq_group_find_by_external_group_id
-#include "group_hash.h"		// qq_group_refresh
-#include "group_info.h"		// qq_send_cmd_group_get_group_info
+#include "char_conv.h"
+#include "group_find.h"
+#include "group_hash.h"
+#include "group_info.h"
 #include "group_im.h"
-#include "group_network.h"	// qq_send_group_cmd
-#include "group_opt.h"		// add_group_member
-#include "im.h"			// QQ_SEND_IM_AFTER_MSG_LEN
+#include "group_network.h"
+#include "group_opt.h"
+#include "im.h"
+#include "packet_parse.h"
+#include "utils.h"
 
 typedef struct _qq_recv_group_im {
 	guint32 external_group_id;
@@ -52,9 +50,9 @@ typedef struct _qq_recv_group_im {
 	gint font_attr_len;
 } qq_recv_group_im;
 
-/*****************************************************************************/
-// send IM to a group
-void qq_send_packet_group_im(GaimConnection * gc, qq_group * group, const gchar * msg) {
+/* send IM to a group */
+void qq_send_packet_group_im(GaimConnection *gc, qq_group *group, const gchar *msg)
+{
 	gint data_len, bytes;
 	guint8 *raw_data, *cursor;
 	guint16 msg_len;
@@ -80,26 +78,25 @@ void qq_send_packet_group_im(GaimConnection * gc, qq_group * group, const gchar 
 	g_free(send_im_tail);
 	g_free(msg_filtered);
 
-	if (bytes == data_len)	// create OK
+	if (bytes == data_len)	/* create OK */
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 	else
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
 			   "Fail creating group_im packet, expect %d bytes, build %d bytes\n", data_len, bytes);
+}
 
-}				// qq_send_packet_group_im
-
-/*****************************************************************************/
-// this is the ACK
-void qq_process_group_cmd_im(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc) {
-	// return should be the internal group id
-	// but we have nothing to do with it
+/* this is the ACK */
+void qq_process_group_cmd_im(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc) 
+{
+	/* return should be the internal group id
+	 * but we have nothing to do with it */
 	return;
-}				// qq_process_group_cmd_im
+}
 
-/*****************************************************************************/
-// receive an application to join the group
+/* receive an application to join the group */
 void qq_process_recv_group_im_apply_join
-    (guint8 * data, guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc) {
+    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc)
+{
 	guint32 external_group_id, user_uid;
 	guint8 group_type;
 	gchar *reason_utf8, *msg, *reason;
@@ -110,7 +107,7 @@ void qq_process_recv_group_im_apply_join
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg apply_join is empty\n");
 		return;
-	}			// if
+	}
 
 	read_packet_dw(data, cursor, len, &external_group_id);
 	read_packet_b(data, cursor, len, &group_type);
@@ -142,13 +139,12 @@ void qq_process_recv_group_im_apply_join
 	g_free(reason);
 	g_free(msg);
 	g_free(reason_utf8);
+}
 
-}				// qq_process_recv_group_im_apply_join
-
-/*****************************************************************************/
-// the request to join a group is rejected
+/* the request to join a group is rejected */
 void qq_process_recv_group_im_been_rejected
-    (guint8 * data, guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc) {
+    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc)
+{
 	guint32 external_group_id, admin_uid;
 	guint8 group_type;
 	gchar *reason_utf8, *msg, *reason;
@@ -159,7 +155,7 @@ void qq_process_recv_group_im_been_rejected
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_rejected is empty\n");
 		return;
-	}			// if
+	}
 
 	read_packet_dw(data, cursor, len, &external_group_id);
 	read_packet_b(data, cursor, len, &group_type);
@@ -179,18 +175,17 @@ void qq_process_recv_group_im_been_rejected
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
 		qq_group_refresh(gc, group);
-	}			// if group
+	}
 
 	g_free(reason);
 	g_free(msg);
 	g_free(reason_utf8);
+}
 
-}				// qq_process_group_im_being_rejected
-
-/*****************************************************************************/
-// the request to join a group is approved
+/* the request to join a group is approved */
 void qq_process_recv_group_im_been_approved
-    (guint8 * data, guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc) {
+    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc)
+{
 	guint32 external_group_id, admin_uid;
 	guint8 group_type;
 	gchar *reason_utf8, *msg;
@@ -201,14 +196,14 @@ void qq_process_recv_group_im_been_approved
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_approved is empty\n");
 		return;
-	}			// if
+	}
 
 	read_packet_dw(data, cursor, len, &external_group_id);
 	read_packet_b(data, cursor, len, &group_type);
 	read_packet_dw(data, cursor, len, &admin_uid);
 
 	g_return_if_fail(external_group_id > 0 && admin_uid > 0);
-	// it is also a "无" here, so do not display
+	/* it is also a "无" here, so do not display */
 	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
@@ -220,16 +215,16 @@ void qq_process_recv_group_im_been_approved
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
-	}			// if group
+	}
 
 	g_free(msg);
 	g_free(reason_utf8);
-}				// qq_process_group_im_being_approved
+}
 
-/*****************************************************************************/
-// process the packet when reomved from a group
+/* process the packet when removed from a group */
 void qq_process_recv_group_im_been_removed
-    (guint8 * data, guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc) {
+    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc)
+{
 	guint32 external_group_id, uid;
 	guint8 group_type;
 	gchar *msg;
@@ -240,7 +235,7 @@ void qq_process_recv_group_im_been_removed
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_removed is empty\n");
 		return;
-	}			// if
+	}
 
 	read_packet_dw(data, cursor, len, &external_group_id);
 	read_packet_b(data, cursor, len, &group_type);
@@ -255,15 +250,15 @@ void qq_process_recv_group_im_been_removed
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
 		qq_group_refresh(gc, group);
-	}			// if group
+	}
 
 	g_free(msg);
-}				// qq_process_recv_group_im_been_removed
+}
 
-/*****************************************************************************/
-// process the packet when added to a group
+/* process the packet when added to a group */
 void qq_process_recv_group_im_been_added
-    (guint8 * data, guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc) {
+    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc)
+{
 	guint32 external_group_id, uid;
 	guint8 group_type;
 	qq_group *group;
@@ -274,7 +269,7 @@ void qq_process_recv_group_im_been_added
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_added is empty\n");
 		return;
-	}			// if
+	}
 
 	read_packet_dw(data, cursor, len, &external_group_id);
 	read_packet_b(data, cursor, len, &group_type);
@@ -289,22 +284,20 @@ void qq_process_recv_group_im_been_added
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
-	} else {		// no such group, try to create a dummy first, and then update
+	} else {		/* no such group, try to create a dummy first, and then update */
 		group = qq_group_create_by_id(gc, internal_group_id, external_group_id);
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
 		qq_send_cmd_group_get_group_info(gc, group);
-		// the return of this cmd will automatically update the group in blist
-	}			// if group;
+		/* the return of this cmd will automatically update the group in blist */
+	}
 
 	g_free(msg);
+}
 
-}				// qq_process_recv_group_im_been_added
-
-/*****************************************************************************/
-// recv an IM from a group chat
+/* recv an IM from a group chat */
 void qq_process_recv_group_im
-    (guint8 * data, guint8 ** cursor, gint data_len, guint32 internal_group_id, GaimConnection * gc, guint16 im_type /* gfhuang */)
+    (guint8 *data, guint8 **cursor, gint data_len, guint32 internal_group_id, GaimConnection *gc, guint16 im_type)
 {
 	gchar *msg_with_gaim_smiley, *msg_utf8_encoded, *im_src_name;
 	guint16 unknown;
@@ -319,7 +312,7 @@ void qq_process_recv_group_im
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL && data != NULL && data_len > 0);
 	qd = (qq_data *) gc->proto_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ",	//by gfhuang
+	gaim_debug(GAIM_DEBUG_INFO, "QQ",
 			   "group im hex dump\n%s\n", hex_dump_to_str(*cursor, data_len - (*cursor - data)));
 
 	if (*cursor >= (data + data_len - 1)) {
@@ -332,34 +325,38 @@ void qq_process_recv_group_im
 	read_packet_dw(data, cursor, data_len, &(im_group->external_group_id));
 	read_packet_b(data, cursor, data_len, &(im_group->group_type));
 
-	if(QQ_RECV_IM_TEMP_QUN_IM == im_type) {	//by gfhuang, protocal changed
+	if(QQ_RECV_IM_TEMP_QUN_IM == im_type) {
 		read_packet_dw(data, cursor, data_len, &(internal_group_id));
 	}
 
 	read_packet_dw(data, cursor, data_len, &(im_group->member_uid));
-	read_packet_w(data, cursor, data_len, &unknown);	// 0x0001?
+	read_packet_w(data, cursor, data_len, &unknown);	/* 0x0001? */
 	read_packet_w(data, cursor, data_len, &(im_group->msg_seq));
 	read_packet_dw(data, cursor, data_len, (guint32 *) & (im_group->send_time));
-	read_packet_dw(data, cursor, data_len, &unknown4);	// versionID, gfhuang
-	// length includes font_attr
-	// this msg_len includes msg and font_attr
-	////////////////// the format is
-	// length of all
-	// 1. unknown 10 bytes
-	// 2. 0-ended string
-	// 3. font_attr
+	read_packet_dw(data, cursor, data_len, &unknown4);	/* versionID */
+	/*
+	 * length includes font_attr
+	 * this msg_len includes msg and font_attr
+	 **** the format is ****
+	 * length of all
+	 * 1. unknown 10 bytes
+	 * 2. 0-ended string
+	 * 3. font_attr
+	 */
 
 	read_packet_w(data, cursor, data_len, &(im_group->msg_len));
 	g_return_if_fail(im_group->msg_len > 0);
 
-	// 10 bytes from lumaqq
-	//    contentType = buf.getChar();
-	//    totalFragments = buf.get() & 255;
-	//    fragmentSequence = buf.get() & 255;
-	//    messageId = buf.getChar();
-	//    buf.getInt();
+	/*
+	 * 10 bytes from lumaqq
+	 *    contentType = buf.getChar();
+	 *    totalFragments = buf.get() & 255;
+	 *    fragmentSequence = buf.get() & 255;
+	 *    messageId = buf.getChar();
+	 *    buf.getInt();
+	 */
 
-	if(im_type != QQ_RECV_IM_UNKNOWN_QUN_IM)  // gfhuang, protocal changed
+	if(im_type != QQ_RECV_IM_UNKNOWN_QUN_IM)
 		skip_len = 10;
 	else
 		skip_len = 0;
@@ -367,14 +364,14 @@ void qq_process_recv_group_im
 
 	im_group->msg = g_strdup(*cursor);
 	*cursor += strlen(im_group->msg) + 1;
-	// there might not be any font_attr, check it
-	im_group->font_attr_len = im_group->msg_len - strlen(im_group->msg) - 1 - skip_len /* gfhuang */;
+	/* there might not be any font_attr, check it */
+	im_group->font_attr_len = im_group->msg_len - strlen(im_group->msg) - 1 - skip_len;
 	if (im_group->font_attr_len > 0)
 		im_group->font_attr = g_memdup(*cursor, im_group->font_attr_len);
 	else
 		im_group->font_attr = NULL;
 
-	// group im_group has no flag to indicate whether it has font_attr or not
+	/* group im_group has no flag to indicate whether it has font_attr or not */
 	msg_with_gaim_smiley = qq_smiley_to_gaim(im_group->msg);
 	if (im_group->font_attr_len > 0)
 		msg_utf8_encoded = qq_encode_to_gaim(im_group->font_attr,
@@ -385,11 +382,11 @@ void qq_process_recv_group_im
 	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
 	g_return_if_fail(group != NULL);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, /*gfhuang*/group->group_name_utf8, gaim_connection_get_account(gc));
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, group->group_name_utf8, gaim_connection_get_account(gc));
 	if (conv == NULL && gaim_prefs_get_bool("/plugins/prpl/qq/prompt_group_msg_on_recv")) {
 		serv_got_joined_chat(gc, qd->channel++, group->group_name_utf8);
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, /*gfhuang*/group->group_name_utf8, gaim_connection_get_account(gc));
-	}			// if conv
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, group->group_name_utf8, gaim_connection_get_account(gc));
+	}
 
 	if (conv != NULL) {
 		member = qq_group_find_member_by_uid(group, im_group->member_uid);
@@ -401,13 +398,9 @@ void qq_process_recv_group_im
 				 gaim_conv_chat_get_id(GAIM_CONV_CHAT
 						       (conv)), im_src_name, 0, msg_utf8_encoded, im_group->send_time);
 		g_free(im_src_name);
-	}			// if conv
+	}
 	g_free(msg_with_gaim_smiley);
 	g_free(msg_utf8_encoded);
 	g_free(im_group->msg);
 	g_free(im_group->font_attr);
-}				// _qq_process_recv_group_im
-
-
-/*****************************************************************************/
-// END OF FILE
+}

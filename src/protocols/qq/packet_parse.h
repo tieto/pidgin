@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_PACKET_PARSE_H_
 #define _QQ_PACKED_PARSE_H_
 
@@ -36,15 +34,13 @@
  */
 #define MAX_PACKET_SIZE 65535
 
-gint read_packet_b(guint8 * buf, guint8 ** cursor, gint buflen, guint8 * b);
-gint read_packet_w(guint8 * buf, guint8 ** cursor, gint buflen, guint16 * w);
-gint read_packet_dw(guint8 * buf, guint8 ** cursor, gint buflen, guint32 * dw);
-gint read_packet_data(guint8 * buf, guint8 ** cursor, gint buflen, guint8 * data, gint datalen);
-gint create_packet_b(guint8 * buf, guint8 ** cursor, guint8 b);
-gint create_packet_w(guint8 * buf, guint8 ** cursor, guint16 w);
-gint create_packet_dw(guint8 * buf, guint8 ** cursor, guint32 dw);
-gint create_packet_data(guint8 * buf, guint8 ** cursor, guint8 * data, gint datalen);
+gint read_packet_b(guint8 *buf, guint8 **cursor, gint buflen, guint8 *b);
+gint read_packet_w(guint8 *buf, guint8 **cursor, gint buflen, guint16 *w);
+gint read_packet_dw(guint8 *buf, guint8 **cursor, gint buflen, guint32 *dw);
+gint read_packet_data(guint8 *buf, guint8 **cursor, gint buflen, guint8 *data, gint datalen);
+gint create_packet_b(guint8 *buf, guint8 **cursor, guint8 b);
+gint create_packet_w(guint8 *buf, guint8 **cursor, guint16 w);
+gint create_packet_dw(guint8 *buf, guint8 **cursor, guint32 dw);
+gint create_packet_data(guint8 *buf, guint8 **cursor, guint8 *data, gint datalen);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

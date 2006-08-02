@@ -21,17 +21,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_UDP_PROXY_S5_H_
 #define _QQ_UDP_PROXY_S5_H_
 
-#include "internal.h"		// for socket stuff
+#include "internal.h"		/* for socket stuff */
 
 #include "qq_proxy.h"
 
 gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

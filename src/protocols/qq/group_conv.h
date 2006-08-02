@@ -20,17 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_CONV_H_
 #define _QQ_GROUP_CONV_H_
 
-#include "connection.h"		// GaimConnection
-#include "group.h"		// qq_group
+#include "connection.h"
+#include "group.h"
 
-void qq_group_conv_show_window(GaimConnection * gc, qq_group * group);
-void qq_group_conv_refresh_online_member(GaimConnection * gc, qq_group * group);
+void qq_group_conv_show_window(GaimConnection *gc, qq_group *group);
+void qq_group_conv_refresh_online_member(GaimConnection *gc, qq_group *group);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

@@ -20,8 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _WIN32
 #include <arpa/inet.h>
 #else
@@ -32,107 +30,105 @@
 
 #include "packet_parse.h"
 
-/*****************************************************************************/
-// read one byte from buf, 
-// return the number of bytes read if succeeds, otherwise return -1
-gint read_packet_b(guint8 * buf, guint8 ** cursor, gint buflen, guint8 * b)
+/* read one byte from buf, 
+ * return the number of bytes read if succeeds, otherwise return -1 */
+gint read_packet_b(guint8 *buf, guint8 **cursor, gint buflen, guint8 *b)
 {
 	if (*cursor <= buf + buflen - sizeof(*b)) {
 		*b = **(guint8 **) cursor;
 		*cursor += sizeof(*b);
 		return sizeof(*b);
-	} else
+	} else {
 		return -1;
-}				// read_packet_b
+	}
+}
 
-/*****************************************************************************/
-// read two bytes as "guint16" from buf, 
-// return the number of bytes read if succeeds, otherwise return -1
-gint read_packet_w(guint8 * buf, guint8 ** cursor, gint buflen, guint16 * w)
+/* read two bytes as "guint16" from buf, 
+ * return the number of bytes read if succeeds, otherwise return -1 */
+gint read_packet_w(guint8 *buf, guint8 **cursor, gint buflen, guint16 *w)
 {
 	if (*cursor <= buf + buflen - sizeof(*w)) {
 		*w = ntohs(**(guint16 **) cursor);
 		*cursor += sizeof(*w);
 		return sizeof(*w);
-	} else
+	} else {
 		return -1;
-}				// read_packet_w
+	}
+}
 
-/*****************************************************************************/
-// read four bytes as "guint32" from buf, 
-// return the number of bytes read if succeeds, otherwise return -1
-gint read_packet_dw(guint8 * buf, guint8 ** cursor, gint buflen, guint32 * dw)
+/* read four bytes as "guint32" from buf, 
+ * return the number of bytes read if succeeds, otherwise return -1 */
+gint read_packet_dw(guint8 *buf, guint8 **cursor, gint buflen, guint32 *dw)
 {
 	if (*cursor <= buf + buflen - sizeof(*dw)) {
 		*dw = ntohl(**(guint32 **) cursor);
 		*cursor += sizeof(*dw);
 		return sizeof(*dw);
-	} else
+	} else {
 		return -1;
-}				// read_packet_dw
+	}
+}
 
-/*****************************************************************************/
-// read datalen bytes from buf, 
-// return the number of bytes read if succeeds, otherwise return -1
-gint read_packet_data(guint8 * buf, guint8 ** cursor, gint buflen, guint8 * data, gint datalen) {
+/* read datalen bytes from buf, 
+ * return the number of bytes read if succeeds, otherwise return -1 */
+gint read_packet_data(guint8 *buf, guint8 **cursor, gint buflen, guint8 *data, gint datalen) {
 	if (*cursor <= buf + buflen - datalen) {
 		g_memmove(data, *cursor, datalen);
 		*cursor += datalen;
 		return datalen;
-	} else
+	} else {
 		return -1;
-}				// read_packet_data
+	}
+}
 
-/*****************************************************************************/
-// pack one byte into buf
-// return the number of bytes packed, otherwise return -1
-gint create_packet_b(guint8 * buf, guint8 ** cursor, guint8 b)
+/* pack one byte into buf
+ * return the number of bytes packed, otherwise return -1 */
+gint create_packet_b(guint8 *buf, guint8 **cursor, guint8 b)
 {
 	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint8)) {
 		**(guint8 **) cursor = b;
 		*cursor += sizeof(guint8);
 		return sizeof(guint8);
-	} else
+	} else {
 		return -1;
-}				// create_packet_b
+	}
+}
 
-/*****************************************************************************/
-// pack two bytes as "guint16" into buf
-// return the number of bytes packed, otherwise return -1
-gint create_packet_w(guint8 * buf, guint8 ** cursor, guint16 w)
+/* pack two bytes as "guint16" into buf
+ * return the number of bytes packed, otherwise return -1 */
+gint create_packet_w(guint8 *buf, guint8 **cursor, guint16 w)
 {
 	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint16)) {
 		**(guint16 **) cursor = htons(w);
 		*cursor += sizeof(guint16);
 		return sizeof(guint16);
-	} else
+	} else {
 		return -1;
-}				// create_packet_w
+	}
+}
 
-/*****************************************************************************/
-// pack four bytes as "guint32" into buf
-// return the number of bytes packed, otherwise return -1
-gint create_packet_dw(guint8 * buf, guint8 ** cursor, guint32 dw)
+/* pack four bytes as "guint32" into buf
+ * return the number of bytes packed, otherwise return -1 */
+gint create_packet_dw(guint8 *buf, guint8 **cursor, guint32 dw)
 {
 	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint32)) {
 		**(guint32 **) cursor = htonl(dw);
 		*cursor += sizeof(guint32);
 		return sizeof(guint32);
-	} else
+	} else {
 		return -1;
-}				// create_packet_dw
+	}
+}
 
-/*****************************************************************************/
-// pack datalen bytes into buf
-// return the number of bytes packed, otherwise return -1
-gint create_packet_data(guint8 * buf, guint8 ** cursor, guint8 * data, gint datalen) {
+/* pack datalen bytes into buf
+ * return the number of bytes packed, otherwise return -1 */
+gint create_packet_data(guint8 *buf, guint8 **cursor, guint8 *data, gint datalen)
+{
 	if (*cursor <= buf + MAX_PACKET_SIZE - datalen) {
 		g_memmove(*cursor, data, datalen);
 		*cursor += datalen;
 		return datalen;
-	} else
+	} else {
 		return -1;
-}				// create_packet_data
-
-/*****************************************************************************/
-// END OF FILE
+	}
+}

@@ -20,21 +20,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_SEND_CORE_H_
 #define _QQ_SEND_CORE_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
+#include "connection.h"
 
 
 #define	QQ_CLIENT	0x0E1B
 
 gint
-qq_send_cmd(GaimConnection * gc,
-	    guint16 cmd, gboolean is_auto_seq, guint16 seq, gboolean need_ack, guint8 * data, gint len);
+qq_send_cmd(GaimConnection *gc,
+	    guint16 cmd, gboolean is_auto_seq, guint16 seq, gboolean need_ack, guint8 *data, gint len);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

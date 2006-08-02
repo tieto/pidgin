@@ -21,22 +21,18 @@
  *
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_KEEP_ALIVE_H_
 #define _QQ_KEEP_ALIVE_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "qq.h"			// qq_buddy
+#include "connection.h"
+#include "qq.h"
 
-void qq_send_packet_keep_alive(GaimConnection * gc);
+void qq_send_packet_keep_alive(GaimConnection *gc);
 
-void qq_process_keep_alive_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_refresh_all_buddy_status(GaimConnection * gc);
+void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_refresh_all_buddy_status(GaimConnection *gc);
 
-void qq_update_buddy_contact(GaimConnection * gc, qq_buddy * q_bud);
+void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

@@ -20,15 +20,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_MISC_H_
 #define _QQ_GROUP_MISC_H_
 
 #include <glib.h>
-#include "group.h"		// qq_group
-
+#include "group.h"
 
 #endif
-/*****************************************************************************/
-// END OF FILE

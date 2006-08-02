@@ -20,35 +20,25 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_IM_H_
 #define _QQ_GROUP_IM_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "group.h"		// qq_group
+#include "connection.h"
+#include "group.h"
 
-void qq_send_packet_group_im(GaimConnection * gc, qq_group * group, const gchar * msg);
-void qq_process_group_cmd_im(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
-void
-qq_process_recv_group_im(guint8 * data,
-			 guint8 ** cursor, gint data_len, guint32 internal_group_id, GaimConnection * gc, guint16 im_type /* gfhuang */);
-void
-qq_process_recv_group_im_apply_join(guint8 * data,
-				    guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc);
-void
-qq_process_recv_group_im_been_rejected(guint8 * data,
-				       guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc);
-void
-qq_process_recv_group_im_been_approved(guint8 * data,
-				       guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc);
-void
-qq_process_recv_group_im_been_removed(guint8 * data,
-				      guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc);
-void
-qq_process_recv_group_im_been_added(guint8 * data,
-				    guint8 ** cursor, gint len, guint32 internal_group_id, GaimConnection * gc);
+void qq_send_packet_group_im(GaimConnection *gc, qq_group *group, const gchar *msg);
+void qq_process_group_cmd_im(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_process_recv_group_im(guint8 *data, 
+		guint8 **cursor, gint data_len, guint32 internal_group_id, GaimConnection *gc, guint16 im_type);
+void qq_process_recv_group_im_apply_join(guint8 *data,
+				    guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc);
+void qq_process_recv_group_im_been_rejected(guint8 *data,
+				       guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc);
+void qq_process_recv_group_im_been_approved(guint8 *data,
+				       guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc);
+void qq_process_recv_group_im_been_removed(guint8 *data,
+				      guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc);
+void qq_process_recv_group_im_been_added(guint8 *data,
+				    guint8 **cursor, gint len, guint32 internal_group_id, GaimConnection *gc);
 #endif
-/*****************************************************************************/
-// END OF FILE

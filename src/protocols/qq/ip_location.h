@@ -20,15 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_IP_LOCATION_H_
 #define _QQ_IP_LOCATION_H_
 
 #include "glib.h"
 
-gboolean qq_ip_get_location(guint32 ip, gchar ** country, gchar ** city);
+gboolean qq_ip_get_location(guint32 ip, gchar **country, gchar **city);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

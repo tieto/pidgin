@@ -20,19 +20,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_RECV_CORE_H_
 #define _QQ_RECV_CORE_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "qq.h"			// qq_data
+#include "connection.h"
+#include "qq.h"
 
-void qq_b4_packets_free(qq_data * qd);
+void qq_b4_packets_free(qq_data *qd);
 
 void qq_input_pending(gpointer data, gint source, GaimInputCondition cond);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

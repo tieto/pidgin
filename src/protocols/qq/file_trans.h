@@ -54,15 +54,13 @@ enum {
 #define QQ_FILE_FRAGMENT_MAXLEN 1000
 
 #define QQ_FILE_CONTROL_PACKET_TAG 0x00
-//#define QQ_PACKET_TAG           0x02    // all QQ text packets starts with it
+/* #define QQ_PACKET_TAG           0x02 */ /* all QQ text packets starts with it */
 #define QQ_FILE_DATA_PACKET_TAG 0x03
 #define QQ_FILE_AGENT_PACKET_TAG 0x04
-//#define QQ_PACKET_TAIL          0x03    // all QQ text packets end with it
-
+/* #define QQ_PACKET_TAIL          0x03 */   /* all QQ text packets end with it */
 
 void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte);
 void qq_process_recv_file(GaimConnection *gc, guint8 *data, gint len);
-//void qq_send_file_data_packet(GaimConnection *gc, guint16 packet_type, guint8 sub_type, guint32 fragment_index, guint16 seq, 
-//		guint8 *data, gint len);
+/* void qq_send_file_data_packet(GaimConnection *gc, guint16 packet_type, guint8 sub_type, guint32 fragment_index, guint16 seq, guint8 *data, gint len); */
 void qq_xfer_close_file(GaimXfer *xfer);
 #endif

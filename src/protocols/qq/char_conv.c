@@ -20,16 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
-#include "debug.h"		// gaim_debug
-#include "internal.h"		// strlen
-//	#include <regex.h>
+#include "debug.h"
+#include "internal.h"
 
-#include "utils.h"		// hex_dump_to_str
-#include "packet_parse.h"	// read_packet
 #include "char_conv.h"
-#include "qq.h"			// QQ_CHARSET_DEFAULT
+#include "packet_parse.h"
+#include "qq.h"
+#include "utils.h"
 
 #define QQ_SMILEY_AMOUNT      96
 
@@ -37,10 +34,10 @@
 #define QQ_CHARSET_ZH_CN      "GBK"
 #define QQ_CHARSET_ENG        "ISO-8859-1"
 
-#define QQ_NULL_MSG           "(NULL)"	// return this if conversion fail
-#define QQ_NULL_SMILEY        "(SM)"	// return this if smiley conversion fails
+#define QQ_NULL_MSG           "(NULL)"	/* return this if conversion fails */
+#define QQ_NULL_SMILEY        "(SM)"	/* return this if smiley conversion fails */
 
-// a debug function
+/* a debug function */
 void _qq_show_packet(gchar * desc, gchar * buf, gint len);
 
 const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
@@ -55,12 +52,10 @@ const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 	0x63, 0x64, 0x65, 0x66, 0x83, 0x68, 0x84, 0x85,
 	0x86, 0x87, 0x6b, 0x6e, 0x6f, 0x70, 0x88, 0xa0,
 	0x50, 0x51, 0x52, 0x53, 0x54, 0x56, 0x5b, 0x5d,
-	0x5f, 0x61, 0x69, 0x6a, 0x6c, 0x6d, 0x71, 0x72,
+	0x5f, 0x61, 0x69, 0x6a, 0x6c, 0x6d, 0x71, 0x72
 };
 
 
-// change from \\ to / by gfhuang, for gaim2beta2
-// change the pixmaps/smiley/theme file as well
 const gchar *gaim_smiley_map[QQ_SMILEY_AMOUNT] = {
 	"/jy", "/pz", "/se", "/fd", "/dy", "/ll", "/hx", "/bz",
 	"/shui", "/dk	", "/gg", "/fn", "/tp", "/cy", "/wx", "/ng",
@@ -82,8 +77,7 @@ const gchar *gaim_smiley_map[QQ_SMILEY_AMOUNT] = {
 	"/nan"
 };
 
-/*****************************************************************************/
-// these functions parses font-attr
+/* these functions parse font-attr */
 static gchar _get_size(gchar font_attr)
 {
 	return font_attr & 0x1f;
@@ -104,10 +98,9 @@ static gboolean _check_underline(gchar font_attr)
 	return (font_attr & 0x80) ? TRUE : FALSE;
 }
 
-/*****************************************************************************/
-// convert a string from from_charset to to_charset, using g_convert
-static gchar *_my_convert(const gchar * str, gssize len, const gchar * to_charset, const gchar * from_charset) {
-
+/* convert a string from from_charset to to_charset, using g_convert */
+static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset, const gchar *from_charset) 
+{
 	GError *error = NULL;
 	gchar *ret;
 	gsize byte_read, byte_write;
@@ -117,21 +110,21 @@ static gchar *_my_convert(const gchar * str, gssize len, const gchar * to_charse
 	ret = g_convert(str, len, to_charset, from_charset, &byte_read, &byte_write, &error);
 
 	if (error == NULL)
-		return ret;	// conversion is OK
-	else {			// conversion error
+		return ret;	/* conversion is OK */
+	else {			/* conversion error */
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", error->message);
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 			   "Dump failed text\n%s", hex_dump_to_str(str, (len == -1) ? strlen(str) : len));
 		g_error_free(error);
 		return g_strdup(QQ_NULL_MSG);
-	}			// if error
-}				// _my_convert
+	}
+}
 
-/*****************************************************************************/
-// take the input as a pascal string and return a converted c-string in UTF-8
-// returns the number of bytes read, return -1 if fatal error
-// the converted UTF-8 will be save in ret, 
-gint convert_as_pascal_string(guint8 * data, gchar ** ret, const gchar * from_charset) {
+/* take the input as a pascal string and return a converted c-string in UTF-8
+ * returns the number of bytes read, return -1 if fatal error
+ * the converted UTF-8 will be saved in ret */
+gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset) 
+{
 	guint8 len;
 
 	g_return_val_if_fail(data != NULL && from_charset != NULL, -1);
@@ -140,11 +133,10 @@ gint convert_as_pascal_string(guint8 * data, gchar ** ret, const gchar * from_ch
 	*ret = _my_convert(data + 1, (gssize) len, UTF8, from_charset);
 
 	return len + 1;
-}				// convert_as_pascal_string
+}
 
-/*****************************************************************************/
-// convert QQ formatted msg to GAIM formatted msg (and UTF-8)
-gchar *qq_encode_to_gaim(guint8 * data, gint len, const gchar * msg)
+/* convert QQ formatted msg to GAIM formatted msg (and UTF-8) */
+gchar *qq_encode_to_gaim(guint8 *data, gint len, const gchar *msg)
 {
 	GString *encoded;
 	guint8 font_attr, font_size, color[3], bar, *cursor;
@@ -156,10 +148,10 @@ gchar *qq_encode_to_gaim(guint8 * data, gint len, const gchar * msg)
 	_qq_show_packet("QQ_MESG recv for font style", data, len);
 
 	read_packet_b(data, &cursor, len, &font_attr);
-	read_packet_data(data, &cursor, len, color, 3);	// red,green,blue
+	read_packet_data(data, &cursor, len, color, 3);	/* red,green,blue */
 	color_code = g_strdup_printf("#%02x%02x%02x", color[0], color[1], color[2]);
 
-	read_packet_b(data, &cursor, len, &bar);	// skip, not sure of its use
+	read_packet_b(data, &cursor, len, &bar);	/* skip, not sure of its use */
 	read_packet_w(data, &cursor, len, &charset_code);
 
 	font_name = g_strndup(cursor, data + len - cursor);
@@ -169,16 +161,16 @@ gchar *qq_encode_to_gaim(guint8 * data, gint len, const gchar * msg)
 	is_italic = _check_italic(font_attr);
 	is_underline = _check_underline(font_attr);
 
-	// although there is charset returned from QQ msg, it is can not be used
-	// for example, if a user send a Chinese message from English windows
-	// the charset_code in QQ msg is 0x0000, not 0x8602
-	// therefore, it is better to use uniform conversion.
-	// by default, we use GBK, which includes all character of SC, TC, and EN
+	/* Although there is charset returned from QQ msg, it can't be used.
+	 * For example, if a user send a Chinese message from English Windows
+	 * the charset_code in QQ msg is 0x0000, not 0x8602.
+	 * Therefore, it is better to use uniform conversion.
+	 * By default, we use GBK, which includes all character of SC, TC, and EN. */
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
 	encoded = g_string_new("");
 
-	// Henry: The range QQ sends rounds from 8 to 22, where a font size
-	// of 10 is equal to 3 in html font tag
+	/* Henry: The range QQ sends rounds from 8 to 22, where a font size
+	 * of 10 is equal to 3 in html font tag */
 	g_string_append_printf(encoded,
 			       "<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
 			       color_code, font_name, font_size / 3);
@@ -209,24 +201,22 @@ gchar *qq_encode_to_gaim(guint8 * data, gint len, const gchar * msg)
 	g_string_free(encoded, FALSE);
 
 	return ret;
-}				// qq_encode_to_gaim
+}
 
-/*****************************************************************************/
-// two convenient methods, using _my_convert
-gchar *utf8_to_qq(const gchar * str, const gchar * to_charset)
+/* two convenience methods, using _my_convert */
+gchar *utf8_to_qq(const gchar *str, const gchar *to_charset)
 {
 	return _my_convert(str, -1, to_charset, UTF8);
-}				// utf8_to_qq
+}
 
-gchar *qq_to_utf8(const gchar * str, const gchar * from_charset)
+gchar *qq_to_utf8(const gchar *str, const gchar *from_charset)
 {
 	return _my_convert(str, -1, UTF8, from_charset);
-}				// qq_to_utf8
+}
 
-/*****************************************************************************/
-// QQ uses binary code for smiley, while gaim uses strings. 
-// there is a mapping relations between these two.
-gchar *qq_smiley_to_gaim(gchar * text)
+/* QQ uses binary code for smiley, while gaim uses strings. 
+ * There is a mapping relation between these two. */
+gchar *qq_smiley_to_gaim(gchar *text)
 {
 	gint index;
 	gchar qq_smiley, *cur_seg, **segments, *ret;
@@ -239,25 +229,25 @@ gchar *qq_smiley_to_gaim(gchar * text)
 	while ((*(++segments)) != NULL) {
 		cur_seg = *segments;
 		qq_smiley = cur_seg[0];
-		for (index = 0; index < QQ_SMILEY_AMOUNT; index++)
+		for (index = 0; index < QQ_SMILEY_AMOUNT; index++) {
 			if (qq_smiley_map[index] == qq_smiley)
 				break;
-		if (index >= QQ_SMILEY_AMOUNT)
+		}
+		if (index >= QQ_SMILEY_AMOUNT) {
 			g_string_append(converted, QQ_NULL_SMILEY);
-		else {
+		} else {
 			g_string_append(converted, gaim_smiley_map[index]);
 			g_string_append(converted, (cur_seg + 1));
-		}		// if index
-	}			// while
+		}
+	}
 
 	ret = converted->str;
 	g_string_free(converted, FALSE);
 	return ret;
-}				// qq_smiley_to_gaim
+}
 
-/*****************************************************************************/
-// convert smiley from gaim style to qq binary code
-gchar *gaim_smiley_to_qq(gchar * text)
+/* convert smiley from gaim style to qq binary code */
+gchar *gaim_smiley_to_qq(gchar *text)
 {
 	gchar *begin, *cursor, *ret;
 	gint index;
@@ -272,14 +262,11 @@ gchar *gaim_smiley_to_qq(gchar * text)
 			g_string_insert_c(converted, (cursor - begin), 0x14);
 			g_string_insert_c(converted, (cursor - begin + 1), qq_smiley_map[index]);
 			cursor++;
-		}		// while
-	}			// for
-	g_string_append_c(converted, 0x20);	// important for last smiiley
+		}
+	}
+	g_string_append_c(converted, 0x20);	/* important for last smiiley */
 
 	ret = converted->str;
 	g_string_free(converted, FALSE);
 	return ret;
-}				// gaim_smiley_to_qq
-
-/*****************************************************************************/
-// END OF FILE
+}

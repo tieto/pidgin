@@ -20,15 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_BUDDY_INFO_H_
 #define _QQ_BUDDY_INFO_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "buddy_opt.h"		// gc_and_uid
-#include "qq.h"			// qq_data
+#include "connection.h"
+#include "buddy_opt.h"
+#include "qq.h"
 
 #define QQ_COMM_FLAG_QQ_MEMBER      0x02
 #define QQ_COMM_FLAG_TCP_MODE       0x10
@@ -41,56 +39,56 @@
 #define QQ_BUDDY_GENDER_UNKNOWN     0xff
 
 typedef struct _contact_info {
-	gchar *uid;		//0
-	gchar *nick;		//1
-	gchar *country;		//2 
-	gchar *province;	//3
-	gchar *zipcode;		//4
-	gchar *address;		//5
-	gchar *tel;		//6
-	gchar *age;		//7
-	gchar *gender;		//8
-	gchar *name;		//9
-	gchar *email;		//10
-	gchar *pager_sn;	//11
-	gchar *pager_num;	//12
-	gchar *pager_sp;	//13
-	gchar *pager_base_num;	//14
-	gchar *pager_type;	//15
-	gchar *occupation;	//16
-	gchar *homepage;	//17
-	gchar *auth_type;	//18
-	gchar *unknown1;	//19
-	gchar *unknown2;	//20
-	gchar *face;		//21
-	gchar *hp_num;		//22
-	gchar *hp_type;		//23
-	gchar *intro;		//24
-	gchar *city;		//25
-	gchar *unknown3;	//26
-	gchar *unknown4;	//27
-	gchar *unknown5;	//28
-	gchar *is_open_hp;	//29
-	gchar *is_open_contact;	//30
-	gchar *college;		//31
-	gchar *horoscope;	//32
-	gchar *zodiac;		//33 sheng xiao
-	gchar *blood;		//34
-	gchar *qq_show;		//35
-	gchar *unknown6;	//36, always 0x2D
+	gchar *uid;
+	gchar *nick;
+	gchar *country;
+	gchar *province;
+	gchar *zipcode;
+	gchar *address;
+	gchar *tel;
+	gchar *age;
+	gchar *gender;
+	gchar *name;
+	gchar *email;
+	gchar *pager_sn;
+	gchar *pager_num;
+	gchar *pager_sp;
+	gchar *pager_base_num;
+	gchar *pager_type;
+	gchar *occupation;
+	gchar *homepage;
+	gchar *auth_type;
+	gchar *unknown1;
+	gchar *unknown2;
+	gchar *face;
+	gchar *hp_num;
+	gchar *hp_type;
+	gchar *intro;
+	gchar *city;
+	gchar *unknown3;
+	gchar *unknown4;
+	gchar *unknown5;
+	gchar *is_open_hp;
+	gchar *is_open_contact;	
+	gchar *college;
+	gchar *horoscope;
+	gchar *zodiac;
+	gchar *blood;
+	gchar *qq_show;
+	gchar *unknown6;	/* always 0x2D */
 } contact_info;
 
-// There is no user id stored in the reply packet for information query
-// we have to manually store the query, so that we know the query source
+/* There is no user id stored in the reply packet for information query
+ * we have to manually store the query, so that we know the query source */
 typedef struct _qq_info_query {
 	guint32 uid;
 	gboolean show_window;
 	gboolean modify_info;
 } qq_info_query;
 
-// We get an info packet on ourselves before we modify our information.
-// Even though not all of the information is currently modifiable, it still
-// all needs to be there when we send out the modify info packet
+/* We get an info packet on ourselves before we modify our information.
+ * Even though not all of the information is currently modifiable, it still
+ * all needs to be there when we send out the modify info packet */
 typedef struct _modify_info_data {
 	GaimConnection *gc;
 	GList *misc, *node;

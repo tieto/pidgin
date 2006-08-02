@@ -20,22 +20,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_INFO_H_
 #define _QQ_GROUP_INFO_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "group.h"		// qq_group
+#include "connection.h"
+#include "group.h"
 
-void qq_send_cmd_group_get_group_info(GaimConnection * gc, qq_group * group);
-void qq_send_cmd_group_get_online_member(GaimConnection * gc, qq_group * group);
-void qq_send_cmd_group_get_member_info(GaimConnection * gc, qq_group * group);
-void qq_process_group_cmd_get_group_info(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
-void qq_process_group_cmd_get_online_member(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
-void qq_process_group_cmd_get_member_info(guint8 * data, guint8 ** cursor, gint len, GaimConnection * gc);
+void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group);
+void qq_send_cmd_group_get_online_member(GaimConnection *gc, qq_group *group);
+void qq_send_cmd_group_get_member_info(GaimConnection *gc, qq_group *group);
+void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_process_group_cmd_get_online_member(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

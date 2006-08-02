@@ -26,36 +26,36 @@
 #define random rand
 #endif
 
+#include "accountopt.h"
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
-#include "request.h"
-#include "accountopt.h"
 #include "prpl.h"
+#include "request.h"
 #include "server.h"
-#include "util.h" 		/* GaimMenuAction, gaim_menu_action_new */
+#include "util.h"
 
-#include "utils.h"
 #include "buddy_info.h"
 #include "buddy_opt.h"
 #include "buddy_status.h"
 #include "char_conv.h"
-#include "group_find.h"		/* qq_group_find_member_by_channel_and_nickname */
-#include "group_im.h"		/* qq_send_packet_group_im */
-#include "group_info.h"		/* qq_send_cmd_group_get_group_info */
-#include "group_join.h"		/* qq_group_join */
-#include "group_opt.h"		/* qq_group_manage_members */
-#include "group.h"		/* chat_info, etc */
-#include "header_info.h"	/* qq_get_cmd_desc */
+#include "group.h"
+#include "group_find.h"
+#include "group_im.h"
+#include "group_info.h"
+#include "group_join.h"
+#include "group_opt.h"
+#include "header_info.h"
 #include "im.h"
+#include "ip_location.h"
 #include "keep_alive.h"
-#include "ip_location.h"	/* qq_ip_get_location */
 #include "login_logout.h"
-#include "packet_parse.h"	/* MAX_PACKET_SIZE */
-#include "qq_proxy.h"		/* qq_connect, qq_disconnect */
-#include "send_core.h"
+#include "packet_parse.h"
 #include "qq.h"
+#include "qq_proxy.h"
+#include "send_core.h"
 #include "send_file.h"
+#include "utils.h"
 #include "version.h"
 
 #define OPENQ_AUTHOR            "Puzzlebird"
@@ -64,13 +64,13 @@
 #define QQ_UDP_PORT             "8000"
 
 const gchar *udp_server_list[] = {
-	"sz.tencent.com",	// 61.144.238.145
-	"sz2.tencent.com",	// 61.144.238.146
-	"sz3.tencent.com",	// 202.104.129.251
-	"sz4.tencent.com",	// 202.104.129.254
-	"sz5.tencent.com",	// 61.141.194.203
-	"sz6.tencent.com",	// 202.104.129.252
-	"sz7.tencent.com",	// 202.104.129.253
+	"sz.tencent.com",	/* 61.144.238.145 */
+	"sz2.tencent.com",	/* 61.144.238.146 */
+	"sz3.tencent.com",	/* 202.104.129.251 */
+	"sz4.tencent.com",	/* 202.104.129.254 */
+	"sz5.tencent.com",	/* 61.141.194.203 */
+	"sz6.tencent.com",	/* 202.104.129.252 */
+	"sz7.tencent.com",	/* 202.104.129.253 */
 	"202.96.170.64",
 	"64.144.238.155",
 	"202.104.129.254"
@@ -79,14 +79,14 @@ const gint udp_server_amount = (sizeof(udp_server_list) / sizeof(udp_server_list
 
 
 const gchar *tcp_server_list[] = {
-	"tcpconn.tencent.com",	// 218.17.209.23
-	"tcpconn2.tencent.com",	// 218.18.95.153
-	"tcpconn3.tencent.com",	// 218.17.209.23
-	"tcpconn4.tencent.com",	// 218.18.95.153
+	"tcpconn.tencent.com",	/* 218.17.209.23 */
+	"tcpconn2.tencent.com",	/* 218.18.95.153 */
+	"tcpconn3.tencent.com",	/* 218.17.209.23 */
+	"tcpconn4.tencent.com"	/* 218.18.95.153 */
 };
 const gint tcp_server_amount = (sizeof(tcp_server_list) / sizeof(tcp_server_list[0]));
 
-static void _qq_login(GaimAccount * account)
+static void _qq_login(GaimAccount *account)
 {
 	const gchar *qq_server, *qq_port;
 	qq_data *qd;
@@ -115,8 +115,7 @@ static void _qq_login(GaimAccount * account)
 	if (login_hidden) {
 		qd->login_mode = QQ_LOGIN_MODE_HIDDEN;
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Login in hidden mode\n");
-	}
-	else {
+	} else {
 		qd->login_mode = QQ_LOGIN_MODE_NORMAL;
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Login in normal mode\n");
 	}
@@ -135,14 +134,14 @@ static void _qq_login(GaimAccount * account)
 }
 
 /* directly goes for qq_disconnect */
-static void _qq_close(GaimConnection * gc)
+static void _qq_close(GaimConnection *gc)
 {
 	g_return_if_fail(gc != NULL);
 	qq_disconnect(gc);
 }
 
 /* returns the icon name for a buddy or protocol */
-static const gchar *_qq_list_icon(GaimAccount * a, GaimBuddy * b)
+static const gchar *_qq_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	/* XXX temp commented out until we figure out what to do with
 	 * status icons */
@@ -217,10 +216,10 @@ static gchar *_qq_status_text(GaimBuddy *b)
 
 	g_string_append_printf(status, " Age: %d", q_bud->age);
 	g_string_append_printf(status, " Client: %04x", q_bud->client_version);
+	having_video = q_bud->comm_flag & QQ_COMM_FLAG_VIDEO;
+	if (having_video)
+		g_string_append(status, " (video)");
 	*/
-//	having_video = q_bud->comm_flag & QQ_COMM_FLAG_VIDEO;
-//	if (having_video)
-//		g_string_append(status, " (video)");
 
 	ret = status->str;
 	g_string_free(status, FALSE);
@@ -233,14 +232,15 @@ static gchar *_qq_status_text(GaimBuddy *b)
 static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 {
 	qq_buddy *q_bud;
-	//gchar *country, *country_utf8, *city, *city_utf8;
-	//guint32 ip_value;
+	/* gchar *country, *country_utf8, *city, *city_utf8; 
+	  guint32 ip_value;
+	 */
 	gchar *ip_str;
 
 	g_return_if_fail(b != NULL);
 
 	q_bud = (qq_buddy *) b->proto_data;
-	//g_return_if_fail(q_bud != NULL);
+	/* g_return_if_fail(q_bud != NULL); */
 
 	if (GAIM_BUDDY_IS_ONLINE(b) && q_bud != NULL)
 	{
@@ -283,19 +283,17 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 }
 
 /* we can show tiny icons on the four corners of buddy icon, */
-static void _qq_list_emblems(GaimBuddy * b, const char **se, const char **sw, const char **nw, const char **ne) { 
-	// each char ** are refering to filename in pixmaps/gaim/status/default/*png
+static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
+{
+	/* each char ** are refering to filename in pixmaps/gaim/status/default/ *png */
 
 	qq_buddy *q_bud = b->proto_data;
         const char *emblems[4] = { NULL, NULL, NULL, NULL };
         int i = 0;
 
-        if (q_bud == NULL)
-        {
+        if (q_bud == NULL) {
                 emblems[0] = "offline";
-        }
-        else
-        {
+	} else {
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 			emblems[i++] = "qq_member";
                 if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
@@ -363,10 +361,9 @@ static void _qq_set_away(GaimAccount *account, GaimStatus *status)
 	qq_send_packet_change_status(gc);
 }
 
-
-// IMPORTANT: GaimConvImFlags -> GaimMessageFlags
-/* send an instance msg to a buddy */
-static gint _qq_send_im(GaimConnection * gc, const gchar * who, const gchar * message, GaimMessageFlags flags)
+/* IMPORTANT: GaimConvImFlags -> GaimMessageFlags */
+/* send an instant msg to a buddy */
+static gint _qq_send_im(GaimConnection *gc, const gchar *who, const gchar *message, GaimMessageFlags flags)
 {
 	gint type, to_uid;
 	gchar *msg, *msg_with_qq_smiley;
@@ -382,9 +379,9 @@ static gint _qq_send_im(GaimConnection * gc, const gchar * who, const gchar * me
 	to_uid = gaim_name_to_uid(who);
 
 	/* if msg is to myself, bypass the network */
-	if (to_uid == qd->uid)
+	if (to_uid == qd->uid) {
 		serv_got_im(gc, who, message, flags, time(NULL));
-	else {
+	} else {
 		msg = utf8_to_qq(message, QQ_CHARSET_DEFAULT);
 		msg_with_qq_smiley = gaim_smiley_to_qq(msg);
 		qq_send_packet_im(gc, to_uid, msg_with_qq_smiley, type);
@@ -417,7 +414,7 @@ static int _qq_chat_send(GaimConnection *gc, int channel, const char *message, G
 }
 
 /* send packet to get who's detailed information */
-static void _qq_get_info(GaimConnection * gc, const gchar * who)
+static void _qq_get_info(GaimConnection *gc, const gchar *who)
 {
 	guint32 uid;
 	qq_data *qd;
@@ -436,7 +433,7 @@ static void _qq_get_info(GaimConnection * gc, const gchar * who)
 }
 
 /* get my own information */
-static void _qq_menu_modify_my_info(GaimPluginAction * action)
+static void _qq_menu_modify_my_info(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
 	qq_data *qd;
@@ -447,7 +444,7 @@ static void _qq_menu_modify_my_info(GaimPluginAction * action)
 	qq_prepare_modify_info(gc);
 }
 
-static void _qq_menu_change_password(GaimPluginAction * action)
+static void _qq_menu_change_password(GaimPluginAction *action)
 {
 	gaim_notify_uri(NULL, "https://password.qq.com");
 }
@@ -487,7 +484,7 @@ static void _qq_menu_block_buddy(GaimBlistNode * node)
 */
 
 /* show a brief summary of what we get from login packet */
-static void _qq_menu_show_login_info(GaimPluginAction * action)
+static void _qq_menu_show_login_info(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
 	qq_data *qd;
@@ -715,7 +712,7 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 */
 
 /* protocol related menus */
-static GList *_qq_actions(GaimPlugin * plugin, gpointer context)
+static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 {
 	GList *m;
 	GaimPluginAction *act;
@@ -799,7 +796,7 @@ static GList *_qq_buddy_menu(GaimBlistNode * node)
 */
 
 
-static void _qq_keep_alive(GaimConnection * gc)
+static void _qq_keep_alive(GaimConnection *gc)
 {
 	qq_group *group;
 	qq_data *qd;
@@ -814,7 +811,7 @@ static void _qq_keep_alive(GaimConnection * gc)
 		group = (qq_group *) list->data;
 		if (group->my_status == QQ_GROUP_MEMBER_STATUS_IS_MEMBER ||
 		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
-			// no need to get info time and time again, online members enough
+			/* no need to get info time and time again, online members enough */
 			qq_send_cmd_group_get_online_member(gc, group);
 	
 		list = list->next;
@@ -826,7 +823,7 @@ static void _qq_keep_alive(GaimConnection * gc)
 
 /* convert chat nickname to qq-uid to get this buddy info */
 /* who is the nickname of buddy in QQ chat-room (Qun) */
-static void _qq_get_chat_buddy_info(GaimConnection * gc, gint channel, const gchar * who)
+static void _qq_get_chat_buddy_info(GaimConnection *gc, gint channel, const gchar *who)
 {
 	gchar *gaim_name;
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL);
@@ -834,21 +831,20 @@ static void _qq_get_chat_buddy_info(GaimConnection * gc, gint channel, const gch
 	gaim_name = qq_group_find_member_by_channel_and_nickname(gc, channel, who);
 	if (gaim_name != NULL)
 		_qq_get_info(gc, gaim_name);
-
 }
 
 /* convert chat nickname to qq-uid to invite individual IM to buddy */
 /* who is the nickname of buddy in QQ chat-room (Qun) */
-static gchar *_qq_get_chat_buddy_real_name(GaimConnection * gc, gint channel, const gchar * who)
+static gchar *_qq_get_chat_buddy_real_name(GaimConnection *gc, gint channel, const gchar *who)
 {
 	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL, NULL);
 	return qq_group_find_member_by_channel_and_nickname(gc, channel, who);
-
 }
 
-void qq_function_not_implemented(GaimConnection * gc)
+void qq_function_not_implemented(GaimConnection *gc)
 {
-	gaim_notify_warning(gc, NULL, _("This function has not be implemented yet"), _("Please wait for new version"));
+	gaim_notify_warning(gc, NULL, 
+			_("This function has not be implemented yet"), _("Please wait for new version"));
 }
 
 GaimPlugin *my_protocol = NULL;
@@ -946,7 +942,7 @@ static GaimPluginInfo info = {
 };
 
 
-static void init_plugin(GaimPlugin * plugin)
+static void init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 

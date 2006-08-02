@@ -20,28 +20,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_BUDDY_LIST_H_
 #define _QQ_BUDDY_LIST_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
+#include "connection.h"
 
 #define QQ_FRIENDS_LIST_POSITION_START 		0x0000
 #define QQ_FRIENDS_LIST_POSITION_END 		0xffff
 #define QQ_FRIENDS_ONLINE_POSITION_START 	0x00
 #define QQ_FRIENDS_ONLINE_POSITION_END 		0xff
 
-void qq_send_packet_get_buddies_online(GaimConnection * gc, guint8 position);
-void qq_process_get_buddies_online_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_send_packet_get_buddies_list(GaimConnection * gc, guint16 position);
-void qq_process_get_buddies_list_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-
-//added by gfhuang
-void qq_send_packet_get_all_list_with_group(GaimConnection * gc, guint32 position);
-void qq_process_get_all_list_with_group_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
+void qq_send_packet_get_buddies_online(GaimConnection *gc, guint8 position);
+void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_send_packet_get_buddies_list(GaimConnection *gc, guint16 position);
+void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_send_packet_get_all_list_with_group(GaimConnection *gc, guint32 position);
+void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

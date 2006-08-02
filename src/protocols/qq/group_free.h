@@ -20,20 +20,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_FREE_H_
 #define _QQ_GROUP_FREE_H_
 
 #include <glib.h>
-#include "qq.h"			// qq_data
+#include "qq.h"
 
-void qq_group_packets_free(qq_data * qd);
+void qq_group_packets_free(qq_data *qd);
 
-void qq_group_free_all(qq_data * qd);
+void qq_group_free_all(qq_data *qd);
 
-void qq_group_remove_by_internal_group_id(qq_data * qd, guint32 internal_group_id);
+void qq_group_remove_by_internal_group_id(qq_data *qd, guint32 internal_group_id);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

@@ -24,14 +24,14 @@
 #define _QQ_LOGIN_LOGOUT_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
+#include "connection.h"
 
 #define QQ_LOGIN_MODE_NORMAL        0x0a
 #define QQ_LOGIN_MODE_HIDDEN        0x28
 
 void qq_send_packet_request_login_token(GaimConnection *gc);
 void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_process_login_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_send_packet_logout(GaimConnection * gc);
+void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_send_packet_logout(GaimConnection *gc);
 
 #endif

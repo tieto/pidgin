@@ -21,16 +21,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
-#include "debug.h"		// gaim_debug
+#include "debug.h"
 
 #include "udp_proxy_s5.h"
 
-extern gint			// defined in qq_proxy.c
+extern gint			/* defined in qq_proxy.c */
  _qq_fill_host(struct sockaddr_in *addr, const gchar * host, guint16 port);
 
-/*****************************************************************************/
 static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
@@ -103,7 +100,6 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	g_free(phb);
 }
 
-/*****************************************************************************/
 static void _qq_s5_sendconnect(gpointer data, gint source)
 {
 	unsigned char buf[512];
@@ -173,7 +169,6 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 	phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, _qq_s5_canread_again, phb);
 }
 
-/*****************************************************************************/
 static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
@@ -211,7 +206,6 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	_qq_s5_sendconnect(phb, source);
 }
 
-/*****************************************************************************/
 static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
@@ -281,7 +275,6 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-/*****************************************************************************/
 void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
@@ -342,10 +335,8 @@ void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, _qq_s5_canread, phb);
 }
 
-/*****************************************************************************/
-gint qq_proxy_socks5(struct PHB * phb, struct sockaddr * addr, socklen_t addrlen)
+gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 {
-
 	gint fd;
 	gaim_debug(GAIM_DEBUG_INFO, "QQ",
 		   "Connecting to %s:%d via %s:%d using SOCKS5\n",
@@ -364,12 +355,12 @@ gint qq_proxy_socks5(struct PHB * phb, struct sockaddr * addr, socklen_t addrlen
 		} else {
 			close(fd);
 			return -1;
-		}		// if error
+		}
 	} else {
 		gaim_debug(GAIM_DEBUG_MISC, "QQ", "Connect in blocking mode.\n");
 		fcntl(fd, F_SETFL, 0);
 		_qq_s5_canwrite(phb, fd, GAIM_INPUT_WRITE);
-	}			// if connect
+	}
 
 	return fd;
-}				// qq_proxy_connect
+}

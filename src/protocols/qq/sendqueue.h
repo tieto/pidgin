@@ -20,15 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_SEND_QUEUE_H_
 #define _QQ_SEND_QUEUE_H_
 
 #include <glib.h>
-#include "qq.h"			// qq_data
+#include "qq.h"
 
-#define QQ_SENDQUEUE_TIMEOUT 			5000	// in 1/1000 sec
+#define QQ_SENDQUEUE_TIMEOUT 			5000	/* in 1/1000 sec */
 
 typedef struct _qq_sendpacket qq_sendpacket;
 
@@ -42,11 +40,9 @@ struct _qq_sendpacket {
 	time_t sendtime;
 };
 
-void qq_sendqueue_free(qq_data * qd);
+void qq_sendqueue_free(qq_data *qd);
 
-void qq_sendqueue_remove(qq_data * qd, guint16 send_seq);
+void qq_sendqueue_remove(qq_data *qd, guint16 send_seq);
 gboolean qq_sendqueue_timeout_callback(gpointer data);
 
 #endif
-/*****************************************************************************/
-// END OF FILE

@@ -44,21 +44,16 @@ typedef struct _ft_info {
 	gboolean use_major;
 } ft_info;
 
-void qq_process_recv_file_accept
-	(guint8 * data, guint8 ** cursor, gint data_len, guint32 sender_uid,
-	 GaimConnection * gc);
-void qq_process_recv_file_reject
-	(guint8 * data, guint8 ** cursor, gint data_len, guint32 sender_uid,
-	 GaimConnection * gc);
-void qq_process_recv_file_cancel
-	(guint8 * data, guint8 ** cursor, gint data_len, guint32 sender_uid,
-	 GaimConnection * gc);
-void qq_process_recv_file_request
-	(guint8 * data, guint8 ** cursor, gint data_len, guint32 sender_uid,
-	 GaimConnection * gc);
-void qq_process_recv_file_notify
-	(guint8 * data, guint8 ** cursor, gint data_len, guint32 sender_uid,
-	 GaimConnection * gc);
+void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len, 
+		guint32 sender_uid, GaimConnection *gc);
+void qq_process_recv_file_reject(guint8 *data, guint8 **cursor, gint data_len, 
+		guint32 sender_uid, GaimConnection *gc);
+void qq_process_recv_file_cancel(guint8 *data, guint8 **cursor, gint data_len, 
+		guint32 sender_uid, GaimConnection *gc);
+void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len, 
+		guint32 sender_uid, GaimConnection *gc);
+void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len, 
+		guint32 sender_uid, GaimConnection *gc);
 gboolean qq_can_receive_file(GaimConnection *gc, const char *who);
 void qq_send_file(GaimConnection *gc, const char *who, const char *file);
 void qq_get_conn_info(guint8 *data, guint8 **cursor, gint data_len, ft_info *info);

@@ -20,15 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #include "debug.h"
 
-#include "utils.h"
 #include "buddy_status.h"
 #include "group_misc.h"
-
-
-
-/*****************************************************************************/
-// END OF FILE
+#include "utils.h"

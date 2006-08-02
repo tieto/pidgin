@@ -21,14 +21,12 @@
  *
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_BUDDY_STATUS_H_
 #define _QQ_BUDDY_STATUS_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "qq.h"			// QQ_KEY_LENGTH
+#include "connection.h"
+#include "qq.h"
 
 typedef struct _qq_buddy_status {
 	guint32 uid;
@@ -42,31 +40,29 @@ typedef struct _qq_buddy_status {
 } qq_buddy_status;
 
 enum {
-	QQ_BUDDY_OFFLINE = 0x00,               // by gfhuang
-	QQ_BUDDY_ONLINE_NORMAL = 0x0a,		//10
-	QQ_BUDDY_ONLINE_OFFLINE = 0x14,		//20
-	QQ_BUDDY_ONLINE_AWAY = 0x1e,		//30
-	QQ_BUDDY_ONLINE_INVISIBLE = 0x28,	// 40 not 0x40!, bug by gfhuang
+	QQ_BUDDY_OFFLINE = 0x00,
+	QQ_BUDDY_ONLINE_NORMAL = 0x0a,
+	QQ_BUDDY_ONLINE_OFFLINE = 0x14,
+	QQ_BUDDY_ONLINE_AWAY = 0x1e,
+	QQ_BUDDY_ONLINE_INVISIBLE = 0x28
 };
 
 enum {
-	QQ_SELF_STATUS_AVAILABLE = 0x11,	// I determined value
+	QQ_SELF_STATUS_AVAILABLE = 0x11,
 	QQ_SELF_STATUS_AWAY = 0x12,
 	QQ_SELF_STATUS_INVISIBLE = 0x13,
 	QQ_SELF_STATUS_CUSTOM = 0x14,
-	QQ_SELF_STATUS_IDLE = 0x15,
+	QQ_SELF_STATUS_IDLE = 0x15
 };
  
-void qq_buddy_status_dump_unclear(qq_buddy_status * s);
+void qq_buddy_status_dump_unclear(qq_buddy_status *s);
 gboolean is_online(guint8 status);
 
-gint qq_buddy_status_read(guint8 * data, guint8 ** cursor, gint len, qq_buddy_status * s);
+gint qq_buddy_status_read(guint8 *data, guint8 **cursor, gint len, qq_buddy_status *s);
 gchar get_suffix_from_status(guint8 status);
 
-void qq_send_packet_change_status(GaimConnection * gc);
+void qq_send_packet_change_status(GaimConnection *gc);
 
-void qq_process_change_status_reply(guint8 * buf, gint buf_len, GaimConnection * gc);
-void qq_process_friend_change_status(guint8 * buf, gint buf_len, GaimConnection * gc);
+void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *gc);
 #endif
-/*****************************************************************************/
-// END OF FILE

@@ -20,15 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// START OF FILE
-/*****************************************************************************/
 #ifndef _QQ_GROUP_NETWORK_H_
 #define _QQ_GROUP_NETWORK_H_
 
 #include <glib.h>
-#include "connection.h"		// GaimConnection
-#include "packet_parse.h"	// create_packet
-#include "group.h"		// qq_group
+#include "connection.h"
+#include "group.h"
+#include "packet_parse.h"
 
 typedef enum {
 	QQ_GROUP_CMD_CREATE_GROUP = 0x01,
@@ -42,7 +40,7 @@ typedef enum {
 	QQ_GROUP_CMD_EXIT_GROUP = 0x09,
 	QQ_GROUP_CMD_SEND_MSG = 0x0a,
 	QQ_GROUP_CMD_GET_ONLINE_MEMBER = 0x0b,
-	QQ_GROUP_CMD_GET_MEMBER_INFO = 0x0c,
+	QQ_GROUP_CMD_GET_MEMBER_INFO = 0x0c
 } qq_group_cmd;
 
 typedef struct _group_packet {
@@ -52,9 +50,7 @@ typedef struct _group_packet {
 
 const gchar *qq_group_cmd_get_desc(qq_group_cmd cmd);
 
-void qq_send_group_cmd(GaimConnection * gc, qq_group * group, guint8 * raw_data, gint data_len);
-void qq_process_group_cmd_reply(guint8 * buf, gint buf_len, guint16 seq, GaimConnection * gc);
+void qq_send_group_cmd(GaimConnection *gc, qq_group *group, guint8 *raw_data, gint data_len);
+void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);
 
 #endif
-/*****************************************************************************/
-// END OF FILE
