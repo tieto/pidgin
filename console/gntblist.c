@@ -393,7 +393,10 @@ context_menu_callback(GntTree *tree, GGBlist *ggblist)
 	{
 		void (*callback)(GaimBlistNode *, gpointer);
 		callback = (void (*)(GaimBlistNode *, gpointer))action->callback;
-		callback(node, action->data);
+		if (callback)
+			callback(node, action->data);
+		else
+			return;
 	}
 
 	remove_context_menu(ggblist);
@@ -521,7 +524,8 @@ draw_context_menu(GGBlist *ggblist)
 	window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), title);
-			
+
+	gnt_widget_set_size(context, 0, g_list_length(GNT_TREE(context)->list));
 	gnt_box_add_widget(GNT_BOX(window), context);
 
 	/* Set the position for the popup */
