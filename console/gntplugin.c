@@ -70,6 +70,14 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
 }
 
+static void
+reset_plugin_window(GntWidget *window, gpointer null)
+{
+	plugins.window = NULL;
+	plugins.tree = NULL;
+	plugins.aboot = NULL;
+}
+
 void gg_plugins_show_all()
 {
 	GntWidget *window, *tree, *box, *aboot;
@@ -118,6 +126,7 @@ void gg_plugins_show_all()
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);
 	g_signal_connect(G_OBJECT(tree), "selection_changed", G_CALLBACK(selection_changed), NULL);
+	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(reset_plugin_window), NULL);
 
 	gnt_widget_show(window);
 }

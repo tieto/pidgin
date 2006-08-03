@@ -5,8 +5,11 @@
 #include <util.h>
 
 #include "gntgaim.h"
+#include "gntaccount.h"
 #include "gntblist.h"
 #include "gntconv.h"
+#include "gntdebug.h"
+#include "gntplugin.h"
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -478,6 +481,13 @@ help_command_cb(GaimConversation *conv,
 	return GAIM_CMD_STATUS_OK;
 }
 
+static GaimCmdRet
+cmd_show_window(GaimConversation *conv, const char *cmd, char **args, char **error, gpointer data)
+{
+	void (*callback)() = data;
+	callback();
+	return GAIM_CMD_STATUS_OK;
+}
 
 void gg_conversation_init()
 {
@@ -507,6 +517,20 @@ void gg_conversation_init()
 	gaim_cmd_register("help", "w", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
+
+	/* Now some commands to bring up some other windows */
+	gaim_cmd_register("plugins", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  cmd_show_window, _("plugins: Show the plugins window."), gg_plugins_show_all);
+	gaim_cmd_register("buddylist", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  cmd_show_window, _("buddylist: Show the buddylist."), gg_blist_show);
+	gaim_cmd_register("accounts", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  cmd_show_window, _("accounts: Show the accounts window."), gg_accounts_show_all);
+	gaim_cmd_register("debugwin", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  cmd_show_window, _("debugwin: Show the debug window."), gg_debug_window_show);
 }
 
 void gg_conversation_uninit()

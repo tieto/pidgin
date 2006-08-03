@@ -66,7 +66,7 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 {
 	GGBlist *ggblist = list->ui_data;
 
-	if (node->ui_data == NULL)
+	if (ggblist == NULL || node->ui_data == NULL)
 		return;
 
 	gnt_tree_remove(GNT_TREE(ggblist->tree), node);
@@ -85,6 +85,9 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 static void
 node_update(GaimBuddyList *list, GaimBlistNode *node)
 {
+	if (list->ui_data == NULL)
+		return;
+
 	if (node->ui_data != NULL)
 	{
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
@@ -744,6 +747,40 @@ save_position_cb(GntWidget *w, int x, int y)
 	gaim_prefs_set_int(PREF_ROOT "/position/y", y);
 }
 
+static void
+reset_blist_window(GntWidget *window, gpointer null)
+{
+	GaimBlistNode *node;
+	gaim_signals_disconnect_by_handle(gg_blist_get_handle());
+	gaim_get_blist()->ui_data = NULL;
+
+	node = gaim_blist_get_root();
+	while (node)
+	{
+		node->ui_data = NULL;
+		node = gaim_blist_node_next(node, TRUE);
+	}
+		
+	remove_peripherals(ggblist);
+	g_free(ggblist);
+	ggblist = NULL;
+}
+
+static void
+populate_buddylist()
+{
+	GaimBlistNode *node;
+	GaimBuddyList *list;
+
+	list = gaim_get_blist();
+	node = gaim_blist_get_root();
+	while (node)
+	{
+		node_update(list, node);
+		node = gaim_blist_node_next(node, TRUE);
+	}
+}
+
 void gg_blist_init()
 {
 	gaim_prefs_add_none(PREF_ROOT);
@@ -753,6 +790,16 @@ void gg_blist_init()
 	gaim_prefs_add_none(PREF_ROOT "/position");
 	gaim_prefs_add_int(PREF_ROOT "/position/x", 0);
 	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
+
+	gg_blist_show();
+
+	return;
+}
+
+void gg_blist_show()
+{
+	if (ggblist)
+		return;
 
 	ggblist = g_new0(GGBlist, 1);
 
@@ -805,11 +852,16 @@ void gg_blist_init()
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect(G_OBJECT(ggblist->tree), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);
+	g_signal_connect(G_OBJECT(ggblist->window), "destroy", G_CALLBACK(reset_blist_window), NULL);
 
+	populate_buddylist();
 }
 
 void gg_blist_uninit()
 {
+	if (ggblist == NULL)
+		return;
+
 	gnt_widget_destroy(ggblist->window);
 	g_free(ggblist);
 	ggblist = NULL;

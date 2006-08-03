@@ -548,6 +548,13 @@ account_toggled(GntWidget *widget, void *key, gpointer null)
 	gaim_account_set_enabled(account, GAIM_GNT_UI, gnt_tree_get_choice(GNT_TREE(widget), key));
 }
 
+static void
+reset_accounts_win(GntWidget *widget, gpointer null)
+{
+	accounts.window = NULL;
+	accounts.tree = NULL;
+}
+
 void gg_accounts_show_all()
 {
 	GList *iter;
@@ -597,6 +604,8 @@ void gg_accounts_show_all()
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(delete_account_cb), accounts.tree);
 	
 	gnt_box_add_widget(GNT_BOX(accounts.window), box);
+
+	g_signal_connect(G_OBJECT(accounts.window), "destroy", G_CALLBACK(reset_accounts_win), NULL);
 	
 	gnt_widget_show(accounts.window);
 }
@@ -641,7 +650,8 @@ void gg_accounts_init()
 
 void gg_accounts_uninit()
 {
-	gnt_widget_destroy(accounts.window);
+	if (accounts.window)
+		gnt_widget_destroy(accounts.window);
 }
 
 /* The following uiops stuff are copied from gtkaccount.c */
