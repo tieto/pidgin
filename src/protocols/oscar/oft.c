@@ -325,9 +325,6 @@ peer_oft_recv_frame_ack(PeerConnection *conn, OftFrame *frame)
 static void
 peer_oft_recv_frame_done(PeerConnection *conn, OftFrame *frame)
 {
-	if (frame->nrecvd == frame->size)
-		gaim_xfer_set_completed(conn->xfer, TRUE);
-
 	gaim_input_remove(conn->watcher_incoming);
 	conn->watcher_incoming = 0;
 	conn->xfer->fd = conn->fd;
