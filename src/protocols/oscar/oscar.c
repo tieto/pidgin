@@ -4786,7 +4786,18 @@ static int gaim_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *fr
 					char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, curitem->name);
 					char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
 					char *alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
-					char *alias_utf8 = alias ? oscar_utf8_try_convert(gc->account, alias) : NULL;
+					char *alias_utf8;
+
+					if (alias != NULL)
+					{
+						if (g_utf8_validate(alias, -1, NULL))
+							alias_utf8 = g_strdup(alias);
+						else
+							alias_utf8 = oscar_utf8_try_convert(account, alias);
+					}
+					else
+						alias_utf8 = NULL;
+
 					b = gaim_find_buddy(gc->account, curitem->name);
 					/* Should gname be freed here? -- elb */
 					/* Not with the current code, but that might be cleaner -- med */
@@ -4946,8 +4957,18 @@ static int gaim_ssi_parseadd(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 
 	gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
 	gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
+
 	alias = aim_ssi_getalias(od->ssi.local, gname, name);
-	alias_utf8 = alias ? oscar_utf8_try_convert(gc->account, alias) : NULL;
+	if (alias != NULL)
+	{
+		if (g_utf8_validate(alias, -1, NULL))
+			alias_utf8 = g_strdup(alias);
+		else
+			alias_utf8 = oscar_utf8_try_convert(gaim_connection_get_account(gc), alias);
+	}
+	else
+		alias_utf8 = NULL;
+
 	b = gaim_find_buddy(gc->account, name);
 	g_free(alias);
 
