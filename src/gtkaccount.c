@@ -860,7 +860,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Alias */
 	dialog->alias_entry = gtk_entry_new();
-	add_pref_box(dialog, vbox, _("Alias:"), dialog->alias_entry);
+	add_pref_box(dialog, vbox, _("Local alias:"), dialog->alias_entry);
 
 	/* Remember Password */
 	dialog->remember_pass_check =
