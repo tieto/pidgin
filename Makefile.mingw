@@ -21,7 +21,6 @@ MSN = $(GAIM_PROTOS)/msn
 TOC = $(GAIM_PROTOS)/toc
 IRC = $(GAIM_PROTOS)/irc
 JABBER = $(GAIM_PROTOS)/jabber
-NAPSTER = $(GAIM_PROTOS)/napster
 GG = $(GAIM_PROTOS)/gg
 NOVELL = $(GAIM_PROTOS)/novell
 SILC = $(GAIM_PROTOS)/silc

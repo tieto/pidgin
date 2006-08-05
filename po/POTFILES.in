@@ -108,7 +108,6 @@ src/protocols/msn/session.c
 src/protocols/msn/state.c
 src/protocols/msn/switchboard.c
 src/protocols/msn/userlist.c
-src/protocols/napster/napster.c
 src/protocols/novell/nmuser.c
 src/protocols/novell/novell.c
 src/protocols/oscar/flap_connection.c

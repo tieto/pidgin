@@ -1777,7 +1777,6 @@ AC_OUTPUT([Makefile
 		   src/protocols/irc/Makefile
 		   src/protocols/jabber/Makefile
 		   src/protocols/msn/Makefile
-		   src/protocols/napster/Makefile
 		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/qq/Makefile

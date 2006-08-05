@@ -152,6 +152,7 @@ version 2.0.0:
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
 	  Requires the meanwhile library: http://meanwhile.sourceforge.net
+	* Removed support for the napster and toc protocols
 
 	Other Noteworthy Changes:
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
