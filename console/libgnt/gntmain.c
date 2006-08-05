@@ -308,6 +308,99 @@ shift_window(GntWidget *widget, int dir)
 	draw_taskbar();
 }
 
+static void
+dump_screen()
+{
+	int x, y;
+	chtype old = 0, now = 0;
+	FILE *file = fopen("dump.html", "w");
+
+	fprintf(file, "<pre>");
+	for (y = 0; y < getmaxy(stdscr); y++)
+	{
+		for (x = 0; x < getmaxx(stdscr); x++)
+		{
+			char ch;
+			now = mvwinch(newscr, y, x);
+			ch = now & A_CHARTEXT;
+			now ^= ch;
+
+#define CHECK(attr, start, end) \
+			do \
+			{  \
+				if (now & attr)  \
+				{  \
+					if (!(old & attr))  \
+						fprintf(file, start);  \
+				}  \
+				else if (old & attr)  \
+				{  \
+					fprintf(file, end);  \
+				}  \
+			} while (0) 
+
+			CHECK(A_BOLD, "<b>", "</b>");
+			CHECK(A_UNDERLINE, "<u>", "</u>");
+			CHECK(A_BLINK, "<blink>", "</blink>");
+
+			if ((now & A_COLOR) != (old & A_COLOR))
+			{
+				int ret;
+				short fgp, bgp, r, g, b;
+				struct
+				{
+					int r, g, b;
+				} fg, bg;
+
+				ret = pair_content(PAIR_NUMBER(now & A_COLOR), &fgp, &bgp);
+				ret = color_content(fgp, &r, &g, &b);
+				fg.r = r; fg.b = b; fg.g = g;
+				ret = color_content(bgp, &r, &g, &b);
+				bg.r = r; bg.b = b; bg.g = g;
+#define ADJUST(x) (x = x * 255 / 1000)
+				ADJUST(fg.r);
+				ADJUST(fg.g);
+				ADJUST(fg.b);
+				ADJUST(bg.r);
+				ADJUST(bg.b);
+				ADJUST(bg.g);
+				
+				if (x) fprintf(file, "</span>");
+				fprintf(file, "<span style=\"background:#%02x%02x%02x;color:#%02x%02x%02x\">",
+						bg.r, bg.g, bg.b, fg.r, fg.g, fg.b);
+			}
+			if (now & A_ALTCHARSET)
+			{
+				switch (ch)
+				{
+					case 'q':
+						ch = '-'; break;
+					case 't':
+					case 'u':
+					case 'x':
+						ch = '|'; break;
+					case 'v':
+					case 'w':
+					case 'l':
+					case 'm':
+					case 'k':
+					case 'j':
+					case 'n':
+						ch = '+'; break;
+					default:
+						ch = ' '; break;
+				}
+			}
+			fprintf(file, "%c", ch);
+			old = now;
+		}
+		fprintf(file, "</span>\n");
+		old = 0;
+	}
+	fprintf(file, "</pre>");
+	fclose(file);
+}
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
@@ -330,6 +423,12 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	}
 
 	buffer[rd] = 0;
+
+	if (buffer[0] == 27 && buffer[1] == 'd' && buffer[2] == 0)
+	{
+		/* This dumps the screen contents in an html file */
+		dump_screen();
+	}
 
 	if (mode == GNT_KP_MODE_NORMAL)
 	{
@@ -567,8 +666,8 @@ void gnt_init()
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	noecho();
 	refresh();
-#if MAYBE_SOMEDAY
-	mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+#if 0
+	mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED | REPORT_MOUSE_POSITION, NULL);
 #endif
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(stdscr);
