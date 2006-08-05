@@ -25,14 +25,17 @@ gnt_entry_draw(GntWidget *widget)
 	if (entry->masked)
 	{
 		mvwhline(widget->window, 0, 0, gnt_ascii_only() ? '*' : ACS_BULLET,
-				entry->end - entry->scroll);
+				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
 	else
 		mvwprintw(widget->window, 0, 0, entry->scroll);
 
-	stop = entry->end - entry->scroll;
+	stop = g_utf8_pointer_to_offset(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
+
+	mvwchgat(widget->window, 0, g_utf8_pointer_to_offset(entry->scroll, entry->cursor), 1,
+			A_REVERSE, COLOR_PAIR(GNT_COLOR_TEXT_NORMAL), NULL);
 
 	DEBUG;
 }
@@ -71,22 +74,23 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 	{
 		if (strcmp(text + 1, GNT_KEY_DEL) == 0 && entry->cursor < entry->end)
 		{
-			memmove(entry->cursor, entry->cursor + 1, entry->end - entry->cursor + 1);
-			entry->end--;
+			int len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
+			memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
+			entry->end -= len;
 			entry_redraw(widget);
 		}
 		else if (strcmp(text + 1, GNT_KEY_LEFT) == 0 && entry->cursor > entry->start)
 		{
-			entry->cursor--;
+			entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
 			if (entry->cursor < entry->scroll)
-				entry->scroll--;
+				entry->scroll = entry->cursor;
 			entry_redraw(widget);
 		}
 		else if (strcmp(text + 1, GNT_KEY_RIGHT) == 0 && entry->cursor < entry->end)
 		{
-			entry->cursor++;
-			if (entry->cursor - entry->scroll > widget->priv.width)
-				entry->scroll++;
+			entry->cursor = g_utf8_find_next_char(entry->cursor, NULL);
+			if (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
+				entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
 			entry_redraw(widget);
 		}
 		/* XXX: handle other keys, like home/end, and ctrl+ goodness */
@@ -99,37 +103,44 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 	{
 		if (!iscntrl(text[0]))
 		{
-			int i;
+			const char *str, *next;
 
-			for (i = 0; text[i]; i++)
+			for (str = text; *str;)
 			{
+				int len;
+				next = g_utf8_find_next_char(str, NULL);
+				len = next - str;
+
 				/* Valid input? */
-				if (ispunct(text[i]) && (entry->flag & GNT_ENTRY_FLAG_NO_PUNCT))
+				/* XXX: Is it necessary to use _unichar_ variants here? */
+				if (ispunct(*str) && (entry->flag & GNT_ENTRY_FLAG_NO_PUNCT))
 					continue;
-				if (isspace(text[i]) && (entry->flag & GNT_ENTRY_FLAG_NO_SPACE))
+				if (isspace(*str) && (entry->flag & GNT_ENTRY_FLAG_NO_SPACE))
 					continue;
-				if (isalpha(text[i]) && !(entry->flag & GNT_ENTRY_FLAG_ALPHA))
+				if (isalpha(*str) && !(entry->flag & GNT_ENTRY_FLAG_ALPHA))
 					continue;
-				if (isdigit(text[i]) && !(entry->flag & GNT_ENTRY_FLAG_INT))
+				if (isdigit(*str) && !(entry->flag & GNT_ENTRY_FLAG_INT))
 					continue;
 
 				/* Reached the max? */
-				if (entry->max && entry->end - entry->start >= entry->max)
+				if (entry->max && g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->max)
 					continue;
 
-				if (entry->end - entry->start >= entry->buffer)
+				if (g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->buffer)
 				{
 					char *tmp = g_strdup_printf(entry->start);
 					gnt_entry_set_text(entry, tmp);
 					g_free(tmp);
 				}
 
-				*(entry->cursor) = text[i];
-				entry->cursor++;
+				memmove(entry->cursor + len, entry->cursor, entry->end - entry->cursor + 1);
+				entry->end += len;
 
-				entry->end++;
-				if (entry->cursor - entry->scroll > widget->priv.width)
-					entry->scroll++;
+				while (str < next)
+					*(entry->cursor++) = *str++;
+
+				while (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
+					entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
 			}
 			entry_redraw(widget);
 			return TRUE;
@@ -139,12 +150,13 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			/* Backspace is here */
 			if (strcmp(text, GNT_KEY_BACKSPACE) == 0 && entry->cursor > entry->start)
 			{
-				entry->cursor--;
-				memmove(entry->cursor, entry->cursor + 1, entry->end - entry->cursor);
-				entry->end--;
+				int len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
+				entry->cursor -= len;
+				memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
+				entry->end -= len;
 
 				if (entry->scroll > entry->start)
-					entry->scroll--;
+					entry->scroll = g_utf8_find_prev_char(entry->start, entry->scroll);
 
 				entry_redraw(widget);
 				return TRUE;
