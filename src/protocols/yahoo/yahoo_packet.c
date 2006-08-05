@@ -43,7 +43,7 @@ void yahoo_packet_hash_str(struct yahoo_packet *pkt, int key, const char *value)
 	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
 	pair->key = key;
 	pair->value = g_strdup(value);
-	pkt->hash = g_slist_append(pkt->hash, pair);
+	pkt->hash = g_slist_prepend(pkt->hash, pair);
 }
 
 void yahoo_packet_hash_int(struct yahoo_packet *pkt, int key, int value)
@@ -52,7 +52,7 @@ void yahoo_packet_hash_int(struct yahoo_packet *pkt, int key, int value)
 
 	pair->key = key;
 	pair->value = g_strdup_printf("%d", value);
-	pkt->hash = g_slist_append(pkt->hash, pair);
+	pkt->hash = g_slist_prepend(pkt->hash, pair);
 }
 
 void yahoo_packet_hash(struct yahoo_packet *pkt, const char *fmt, ...)
@@ -105,17 +105,16 @@ size_t yahoo_packet_length(struct yahoo_packet *pkt)
 	return len;
 }
 
-void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
+void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 {
 	int pos = 0;
+	char key[64], *delimiter, *esc;
+	gboolean accept;
+	int x;
+	struct yahoo_pair *pair;
 
-	while (pos + 1 < len) {
-		char key[64], *value = NULL, *esc;
-		int accept;
-		int x;
-
-		struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
-
+	while (pos + 1 < len)
+	{
 		/* this is weird, and in one of the chat packets, and causes us to
 		 * think all the values are keys and all the keys are values after
 		 * this point if we don't handle it */
@@ -126,9 +125,10 @@ void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 				pos++;
 			}
 			pos += 2;
-			g_free(pair);
 			continue;
 		}
+
+		pair = g_new0(struct yahoo_pair, 1);
 
 		x = 0;
 		while (pos + 1 < len) {
@@ -151,25 +151,29 @@ void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 
 		if (len - pos + 1 <= 0) {
 			/* Truncated. Garbage or something. */
-			accept = 0;
+			accept = FALSE;
 		}
 
 		if (accept) {
-			value = g_malloc(len - pos + 1);
-			x = 0;
-			while (pos + 1 < len) {
-				if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
-					break;
-				value[x++] = data[pos++];
+			delimiter = strstr((char *)&data[pos], "\xc0\x80");
+			if (delimiter == NULL)
+			{
+				/* Malformed packet! (it doesn't end in 0xc0 0x80) */
+				g_free(pair);
+				pos = len;
+				continue;
 			}
-			value[x] = 0;
-			pair->value = g_strdup(value);
-			g_free(value);
-			pkt->hash = g_slist_append(pkt->hash, pair);
+			x = (guint64)delimiter - (guint64)data;
+			pair->value = g_strndup((const gchar *)&data[pos], x - pos);
+			pos = x;
+			pkt->hash = g_slist_prepend(pkt->hash, pair);
+
+#ifdef DEBUG
 			esc = g_strescape(pair->value, NULL);
 			gaim_debug(GAIM_DEBUG_MISC, "yahoo",
 					   "Key: %d  \tValue: %s\n", pair->key, esc);
 			g_free(esc);
+#endif
 		} else {
 			g_free(pair);
 		}
@@ -179,6 +183,16 @@ void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len)
 		if (data[0] == '9' && data[pos] == 0x01)
 			pos++;
 	}
+
+	/*
+	 * Originally this function used g_slist_append().  I changed
+	 * it to use g_slist_prepend() for improved performance.
+	 * Ideally the Yahoo! PRPL code would be indifferent to the
+	 * order of the key/value pairs, but I don't know if this is
+	 * the case for all incoming messages.  To be on the safe side
+	 * we reverse the list.
+	 */
+	pkt->hash = g_slist_reverse(pkt->hash);
 }
 
 void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
