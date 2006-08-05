@@ -126,7 +126,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->max && g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->max)
 					continue;
 
-				if (g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->buffer)
+				if (entry->end - entry->start >= entry->buffer)
 				{
 					char *tmp = g_strdup_printf(entry->start);
 					gnt_entry_set_text(entry, tmp);
@@ -255,14 +255,14 @@ void gnt_entry_set_text(GntEntry *entry, const char *text)
 
 	if (text && text[0])
 	{
-		len = g_utf8_strlen(text, -1);
-		entry->buffer = len * 2;
+		len = strlen(text);
 	}
 	else
 	{
-		entry->buffer = 128;
 		len = 0;
 	}
+
+	entry->buffer = len + 128;
 
 	scroll = entry->scroll - entry->start;
 	cursor = entry->end - entry->cursor;
