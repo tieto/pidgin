@@ -88,6 +88,10 @@ void gnt_box_readjust(GntBox *box);
 
 void gnt_box_set_fill(GntBox *box, gboolean fill);
 
+void gnt_box_move_focus(GntBox *box, int dir);  /* +1 to move forward, -1 for backward */
+
+void gnt_box_give_focus_to_child(GntBox *box, GntWidget *widget);
+
 G_END_DECLS
 
 #endif /* GNT_BOX_H */

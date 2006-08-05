@@ -49,6 +49,9 @@ typedef struct
 	GntWidget *remember;
 } AccountEditDialog;
 
+/* This is necessary to close an edit-dialog when an account is deleted */
+static GList *accountdialogs;
+
 static void
 account_add(GaimAccount *account)
 {
@@ -64,6 +67,7 @@ account_add(GaimAccount *account)
 static void
 edit_dialog_destroy(AccountEditDialog *dialog)
 {
+	accountdialogs = g_list_remove(accountdialogs, dialog);
 	g_list_free(dialog->prpl_entries);
 	g_list_free(dialog->split_entries);
 	g_free(dialog);
@@ -143,7 +147,6 @@ save_account_cb(AccountEditDialog *dialog)
 		gaim_account_set_password(account, NULL);
 
 	/* Mail notification */
-	/* XXX: Only if the protocol has anything to do with emails */
 	gaim_account_set_check_mail(account,
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->newmail)));
 
@@ -426,7 +429,19 @@ edit_account(GaimAccount *account)
 	GList *list, *iter;
 	AccountEditDialog *dialog;
 
+	if (account)
+	{
+		GList *iter;
+		for (iter = accountdialogs; iter; iter = iter->next)
+		{
+			AccountEditDialog *dlg = iter->data;
+			if (dlg->account == account)
+				return;
+		}
+	}
+
 	dialog = g_new0(AccountEditDialog, 1);
+	accountdialogs = g_list_prepend(accountdialogs, dialog);
 
 	dialog->window = window = gnt_box_new(FALSE, TRUE);
 	dialog->account = account;
@@ -534,10 +549,38 @@ modify_account_cb(GntWidget *widget, GntTree *tree)
 }
 
 static void
+really_delete_account(GaimAccount *account)
+{
+	GList *iter;
+	for (iter = accountdialogs; iter; iter = iter->next)
+	{
+		AccountEditDialog *dlg = iter->data;
+		if (dlg->account == account)
+		{
+			gnt_widget_destroy(dlg->window);
+			break;
+		}
+	}
+	gaim_accounts_delete(account);
+}
+
+static void
 delete_account_cb(GntWidget *widget, GntTree *tree)
 {
-	/* XXX: After the request-api is complete */
-	/* Note: remove the modify-dialog for the account */
+	GaimAccount *account;
+	char *prompt;
+
+	account  = gnt_tree_get_selection_data(tree);
+	if (!account)
+		return;
+
+	prompt = g_strdup_printf(_("Are you sure you want to delete %s?"),
+			gaim_account_get_username(account));
+
+	gaim_request_close_with_handle(account); /* Close any other opened delete window */
+	gaim_request_action(account, _("Delete Account"), prompt, NULL, 0, account, 2,
+			_("Delete"), really_delete_account, _("Cancel"), NULL);
+	g_free(prompt);
 }
 
 static void

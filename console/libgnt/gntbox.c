@@ -245,6 +245,28 @@ find_next_focus(GntBox *box)
 	} while (box->active != last);
 }
 
+static void
+find_prev_focus(GntBox *box)
+{
+	gpointer last = box->active;
+
+	if (!box->focus)
+		return;
+
+	do
+	{
+		GList *iter = g_list_find(box->focus, box->active);
+		if (!iter)
+			box->active = box->focus->data;
+		else if (!iter->prev)
+			box->active = g_list_last(box->focus)->data;
+		else
+			box->active = iter->prev->data;
+		if (!GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_INVISIBLE))
+			break;
+	} while (box->active != last);
+}
+
 static gboolean
 gnt_box_key_pressed(GntWidget *widget, const char *text)
 {
@@ -263,15 +285,7 @@ gnt_box_key_pressed(GntWidget *widget, const char *text)
 	{
 		if (strcmp(text+1, GNT_KEY_LEFT) == 0)
 		{
-			GList *iter = g_list_find(box->focus, box->active);
-			if ((!iter || !iter->prev) && box->focus)
-			{
-				box->active = box->focus->data;
-			}
-			else
-			{
-				box->active = iter->prev->data;
-			}
+			find_prev_focus(box);
 		}
 		else if (strcmp(text+1, GNT_KEY_RIGHT) == 0)
 		{
@@ -687,5 +701,48 @@ void gnt_box_readjust(GntBox *box)
 void gnt_box_set_fill(GntBox *box, gboolean fill)
 {
 	box->fill = fill;
+}
+
+void gnt_box_move_focus(GntBox *box, int dir)
+{
+	GntWidget *now;
+
+	if (box->active == NULL)
+	{
+		find_focusable_widget(box);
+		return;
+	}
+
+	now = box->active;
+
+	if (dir == 1)
+		find_next_focus(box);
+	else if (dir == -1)
+		find_prev_focus(box);
+
+	if (now && now != box->active)
+	{
+		gnt_widget_set_focus(now, FALSE);
+		gnt_widget_set_focus(box->active, TRUE);
+	}
+
+	if (GNT_WIDGET(box)->window)
+		gnt_widget_draw(GNT_WIDGET(box));
+}
+
+void gnt_box_give_focus_to_child(GntBox *box, GntWidget *widget)
+{
+	GList *find = g_list_find(box->focus, widget);
+	gpointer now = box->active;
+	if (find)
+		box->active = widget;
+	if (now && now != box->active)
+	{
+		gnt_widget_set_focus(now, FALSE);
+		gnt_widget_set_focus(box->active, TRUE);
+	}
+
+	if (GNT_WIDGET(box)->window)
+		gnt_widget_draw(GNT_WIDGET(box));
 }
 

@@ -16,7 +16,8 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 				GNT_TEXT_FLAG_HIGHLIGHT);
 		gnt_text_view_next_line(GNT_TEXT_VIEW(view));
 		gnt_entry_clear(GNT_ENTRY(w));
-		gnt_text_view_scroll(GNT_TEXT_VIEW(view), 0);
+		if (gnt_text_view_get_lines_below(GNT_TEXT_VIEW(view)) <= 1)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(view), 0);
 
 		return TRUE;
 	}

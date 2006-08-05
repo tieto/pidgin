@@ -16,8 +16,9 @@ gnt_entry_draw(GntWidget *widget)
 {
 	GntEntry *entry = GNT_ENTRY(widget);
 	int stop;
+	gboolean focus;
 
-	if (gnt_widget_has_focus(widget))
+	if ((focus = gnt_widget_has_focus(widget)))
 		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TEXT_NORMAL));
 	else
 		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
@@ -34,8 +35,9 @@ gnt_entry_draw(GntWidget *widget)
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
 
-	mvwchgat(widget->window, 0, g_utf8_pointer_to_offset(entry->scroll, entry->cursor), 1,
-			A_REVERSE, COLOR_PAIR(GNT_COLOR_TEXT_NORMAL), NULL);
+	if (focus)
+		mvwchgat(widget->window, 0, g_utf8_pointer_to_offset(entry->scroll, entry->cursor),
+				1, A_REVERSE, COLOR_PAIR(GNT_COLOR_TEXT_NORMAL), NULL);
 
 	DEBUG;
 }

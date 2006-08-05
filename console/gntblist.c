@@ -1,19 +1,25 @@
 #include <account.h>
 #include <blist.h>
 #include <request.h>
+#include <savedstatuses.h>
 #include <server.h>
 #include <signal.h>
+#include <status.h>
 #include <util.h>
 
 #include "gntgaim.h"
 #include "gntbox.h"
+#include "gntcombobox.h"
+#include "gntentry.h"
 #include "gntlabel.h"
+#include "gntline.h"
 #include "gnttree.h"
 
 #include "gntblist.h"
 #include <string.h>
 
 #define PREF_ROOT "/gaim/gnt/blist"
+#define TYPING_TIMEOUT 4000
 
 typedef struct
 {
@@ -25,7 +31,28 @@ typedef struct
 
 	GntWidget *context;
 	GaimBlistNode *cnode;
+
+	/* XXX: I am KISSing */
+	GntWidget *status;          /* Dropdown with the statuses  */
+	GntWidget *statustext;      /* Status message */
+	int typing;
 } GGBlist;
+
+typedef enum
+{
+	STATUS_PRIMITIVE = 0,
+	STATUS_SAVED
+} StatusType;
+
+typedef struct
+{
+	StatusType type;
+	union
+	{
+		GaimStatusPrimitive prim;
+		GaimSavedStatus *saved;
+	} u;
+} StatusBoxItem;
 
 GGBlist *ggblist;
 
@@ -34,6 +61,7 @@ static void add_group(GaimGroup *group, GGBlist *ggblist);
 static void add_chat(GaimChat *chat, GGBlist *ggblist);
 static void add_node(GaimBlistNode *node, GGBlist *ggblist);
 static void draw_tooltip(GGBlist *ggblist);
+static void remove_typing_cb(gpointer null);
 static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
 
@@ -113,7 +141,7 @@ new_list(GaimBuddyList *list)
 {
 }
 
-static GaimBlistUiOps blist_ui_ops = 
+static GaimBlistUiOps blist_ui_ops =
 {
 	new_list,
 	new_node,
@@ -201,6 +229,8 @@ add_chat(GaimChat *chat, GGBlist *ggblist)
 	GaimGroup *group;
 	GaimBlistNode *node = (GaimBlistNode *)chat;
 	if (node->ui_data)
+		return;
+	if (!gaim_account_is_connected(chat->account))
 		return;
 
 	group = gaim_chat_get_group(chat);
@@ -290,7 +320,7 @@ gnt_append_menu_action(GntTree *tree, GaimMenuAction *action, gpointer parent)
 	GList *list;
 	if (action == NULL)
 		return;
-	
+
 	gnt_tree_add_row_after(tree, action,
 			gnt_tree_create_row(tree, action->label), parent, NULL);
 	for (list = action->children; list; list = list->next)
@@ -367,7 +397,7 @@ create_buddy_menu(GntTree *tree, GaimBuddy *buddy)
 	add_custom_action(tree, _("View Log"),
 			GAIM_CALLBACK(gg_blist_view_log_cb)), buddy);
 #endif
-	
+
 	/* Protocol actions */
 	append_proto_menu(tree,
 			gaim_account_get_connection(gaim_buddy_get_account(buddy)),
@@ -436,9 +466,9 @@ gg_blist_rename_node_cb(GaimBlistNode *node, GaimBlistNode *null)
 		name = ((GaimGroup*)node)->name;
 	else
 		g_return_if_reached();
-	
+
 	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
-	
+
 	gaim_request_input(node, _("Rename"), prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, _("Rename"), G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL, node);
@@ -682,7 +712,7 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 		ret = gnt_widget_key_pressed(ggblist->context, text);
 		stop = TRUE;
 	}
-	
+
 	if (text[0] == 27)
 	{
 		if (strcmp(text + 1, GNT_KEY_POPUP) == 0)
@@ -760,7 +790,8 @@ reset_blist_window(GntWidget *window, gpointer null)
 		node->ui_data = NULL;
 		node = gaim_blist_node_next(node, TRUE);
 	}
-		
+
+	remove_typing_cb(NULL);
 	remove_peripherals(ggblist);
 	g_free(ggblist);
 	ggblist = NULL;
@@ -777,8 +808,53 @@ populate_buddylist()
 	while (node)
 	{
 		node_update(list, node);
-		node = gaim_blist_node_next(node, TRUE);
+		node = gaim_blist_node_next(node, FALSE);
 	}
+}
+
+static void
+destroy_status_list(GList *list)
+{
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+}
+
+static void
+populate_status_dropdown()
+{
+	int i;
+	GList *iter;
+	GList *items = NULL;
+
+	/* First the primitives */
+	GaimStatusPrimitive prims[] = {GAIM_STATUS_AVAILABLE, GAIM_STATUS_AWAY,
+			GAIM_STATUS_INVISIBLE, GAIM_STATUS_OFFLINE, GAIM_STATUS_UNSET};
+
+	for (i = 0; prims[i] != GAIM_STATUS_UNSET; i++)
+	{
+		StatusBoxItem *item = g_new0(StatusBoxItem, 1);
+		item->type = STATUS_PRIMITIVE;
+		item->u.prim = prims[i];
+		items = g_list_prepend(items, item);
+		gnt_combo_box_add_data(GNT_COMBO_BOX(ggblist->status), item,
+				gaim_primitive_get_name_from_type(prims[i]));
+	}
+
+	/* Now the popular statuses */
+	for (iter = gaim_savedstatuses_get_popular(6); iter; iter = iter->next)
+	{
+		StatusBoxItem *item = g_new0(StatusBoxItem, 1);
+		item->type = STATUS_SAVED;
+		item->u.saved = iter->data;
+		items = g_list_prepend(items, item);
+		gnt_combo_box_add_data(GNT_COMBO_BOX(ggblist->status), item,
+				gaim_savedstatus_get_title(iter->data));
+	}
+
+	/* The keys for the combobox are created here, and never used
+	 * anywhere else. So make sure the keys are freed when the widget
+	 * is destroyed. */
+	g_object_set_data_full(G_OBJECT(ggblist->status), "list of statuses", items, (GDestroyNotify)destroy_status_list);
 }
 
 void gg_blist_init()
@@ -796,6 +872,120 @@ void gg_blist_init()
 	return;
 }
 
+static void
+remove_typing_cb(gpointer null)
+{
+	GaimSavedStatus *current;
+	const char *message, *newmessage;
+	GaimStatusPrimitive prim, newprim;
+	StatusBoxItem *item;
+
+	current = gaim_savedstatus_get_current();
+	message = gaim_savedstatus_get_message(current);
+	prim = gaim_savedstatus_get_type(current);
+
+	newmessage = gnt_entry_get_text(GNT_ENTRY(ggblist->statustext));
+	item = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(ggblist->status));
+	g_return_if_fail(item->type == STATUS_PRIMITIVE);
+	newprim = item->u.prim;
+
+	if (newprim != prim || ((message && !newmessage) ||
+				(!message && newmessage) ||
+				(message && newmessage && g_utf8_collate(message, newmessage) != 0)))
+	{
+		GaimSavedStatus *status = gaim_savedstatus_find_transient_by_type_and_message(newprim, newmessage);
+									/* Holy Crap! That's a LAWNG function name */
+		if (status == NULL)
+		{
+			status = gaim_savedstatus_new(NULL, newprim);
+			gaim_savedstatus_set_message(status, newmessage);
+		}
+
+		gaim_savedstatus_activate(status);
+	}
+
+	gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
+	g_source_remove(ggblist->typing);
+	ggblist->typing = 0;
+}
+
+static void
+status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *now, gpointer null)
+{
+	gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), NULL);
+	if (now->type == STATUS_SAVED)
+	{
+		/* Set the status immediately */
+		gaim_savedstatus_activate(now->u.saved);
+	}
+	else if (now->type == STATUS_PRIMITIVE)
+	{
+		/* Move the focus to the entry box */
+		gnt_box_move_focus(GNT_BOX(ggblist->window), 1);
+		ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+	}
+	else
+		g_return_if_reached();
+}
+
+static gboolean
+status_text_changed(GntEntry *entry, const char *text, gpointer null)
+{
+	if (text[0] == 27 && ggblist->typing == 0)
+		return FALSE;
+
+	g_source_remove(ggblist->typing);
+	ggblist->typing = 0;
+
+	if (text[0] == '\r' && text[1] == 0)
+	{
+		/* Set the status only after you press 'Enter' */
+		remove_typing_cb(NULL);
+		return TRUE;
+	}
+
+	ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+	return FALSE;
+}
+
+static void
+savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
+{
+	/* Block the signals we don't want to emit */
+	GList *list;
+	GaimStatusPrimitive prim;
+	const char *message;
+
+	if (!ggblist)
+		return;
+
+	g_signal_handlers_block_matched(ggblist->status, G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL, status_selection_changed, NULL);
+	g_signal_handlers_block_matched(ggblist->statustext, G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL, status_text_changed, NULL);
+
+	prim = gaim_savedstatus_get_type(now);
+	message = gaim_savedstatus_get_message(now);
+
+	list = g_object_get_data(G_OBJECT(ggblist->status), "list of statuses");
+	for (; list; list = list->next)
+	{
+		StatusBoxItem *item = list->data;
+		if (item->type == STATUS_PRIMITIVE && item->u.prim == prim)
+		{
+			gnt_combo_box_set_selected(GNT_COMBO_BOX(ggblist->status), item);
+			gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), message);
+			gnt_widget_draw(ggblist->status);
+			break;
+		}
+	}
+
+	g_signal_handlers_unblock_matched(ggblist->status, G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL, status_selection_changed, NULL);
+	g_signal_handlers_unblock_matched(ggblist->statustext, G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL, status_text_changed, NULL);
+}
+
 void gg_blist_show()
 {
 	if (ggblist)
@@ -805,7 +995,7 @@ void gg_blist_show()
 
 	gaim_get_blist()->ui_data = ggblist;
 
-	ggblist->window = gnt_box_new(FALSE, FALSE);
+	ggblist->window = gnt_vbox_new(FALSE);
 	gnt_widget_set_name(ggblist->window, "buddylist");
 	gnt_box_set_toplevel(GNT_BOX(ggblist->window), TRUE);
 	gnt_box_set_title(GNT_BOX(ggblist->window), _("Buddy List"));
@@ -820,13 +1010,23 @@ void gg_blist_show()
 			gaim_prefs_get_int(PREF_ROOT "/position/y"));
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
+
+	gnt_box_add_widget(GNT_BOX(ggblist->window), gnt_hline_new());
+
+	ggblist->status = gnt_combo_box_new();
+	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->status);
+	ggblist->statustext = gnt_entry_new(NULL);
+	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->statustext);
+
+	populate_status_dropdown();
+
 	gnt_widget_show(ggblist->window);
 
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_status_changed), ggblist);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-idle-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_idle_changed), ggblist);
-	
+
 #if 0
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_signed_on), ggblist);
@@ -854,7 +1054,17 @@ void gg_blist_show()
 	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "destroy", G_CALLBACK(reset_blist_window), NULL);
 
+	/* Status signals */
+	gaim_signal_connect(gaim_savedstatuses_get_handle(), "savedstatus-changed", gg_blist_get_handle(),
+				GAIM_CALLBACK(savedstatus_changed), NULL);
+	g_signal_connect(G_OBJECT(ggblist->status), "selection_changed",
+				G_CALLBACK(status_selection_changed), NULL);
+	g_signal_connect(G_OBJECT(ggblist->statustext), "key_pressed",
+				G_CALLBACK(status_text_changed), NULL);
+
 	populate_buddylist();
+
+	savedstatus_changed(gaim_savedstatus_get_current(), NULL);
 }
 
 void gg_blist_uninit()

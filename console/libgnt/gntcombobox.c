@@ -23,11 +23,11 @@ set_selection(GntComboBox *box, gpointer key)
 		/* XXX: make sure the key actually does exist */
 		gpointer old = box->selected;
 		box->selected = key;
-		g_signal_emit(box, signals[SIG_SELECTION_CHANGED], 0, old, key);
 		if (GNT_WIDGET(box)->window)
 			gnt_widget_draw(GNT_WIDGET(box));
 		if (box->dropdown)
 			gnt_tree_set_selected(GNT_TREE(box->dropdown), key);
+		g_signal_emit(box, signals[SIG_SELECTION_CHANGED], 0, old, key);
 	}
 }
 
@@ -65,7 +65,7 @@ gnt_combo_box_draw(GntWidget *widget)
 	}
 
 	mvwprintw(widget->window, 1, 1, text);
-	whline(widget->window, '\0' | COLOR_PAIR(type), widget->priv.width - 4 - len);
+	whline(widget->window, ' ' | COLOR_PAIR(type), widget->priv.width - 4 - len);
 	mvwaddch(widget->window, 1, widget->priv.width - 3, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
 	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | COLOR_PAIR(GNT_COLOR_NORMAL));
 
