@@ -792,8 +792,7 @@ delete_setting(void *data)
 {
 	GaimAccountSetting *setting = (GaimAccountSetting *)data;
 
-	if (setting->ui != NULL)
-		g_free(setting->ui);
+	g_free(setting->ui);
 
 	if (setting->type == GAIM_PREF_STRING)
 		g_free(setting->value.string);
@@ -1178,7 +1177,7 @@ gaim_account_set_username(GaimAccount *account, const char *username)
 	g_return_if_fail(account != NULL);
 
 	g_free(account->username);
-	account->username = (username == NULL ? NULL : g_strdup(username));
+	account->username = g_strdup(username);
 
 	schedule_accounts_save();
 }
@@ -1189,8 +1188,7 @@ gaim_account_set_password(GaimAccount *account, const char *password)
 	g_return_if_fail(account != NULL);
 
 	g_free(account->password);
-	account->password = NULL;
-	account->password = (password == NULL ? NULL : g_strdup(password));
+	account->password = g_strdup(password);
 
 	schedule_accounts_save();
 }
@@ -1212,7 +1210,7 @@ gaim_account_set_alias(GaimAccount *account, const char *alias)
 	{
 		char *old = account->alias;
 
-		account->alias = (alias == NULL ? NULL : g_strdup(alias));
+		account->alias = g_strdup(alias);
 		gaim_signal_emit(gaim_accounts_get_handle(), "account-alias-changed",
 						 account, old);
 		g_free(old);
@@ -1227,7 +1225,7 @@ gaim_account_set_user_info(GaimAccount *account, const char *user_info)
 	g_return_if_fail(account != NULL);
 
 	g_free(account->user_info);
-	account->user_info = (user_info == NULL ? NULL : g_strdup(user_info));
+	account->user_info = g_strdup(user_info);
 
 	schedule_accounts_save();
 }
@@ -1263,7 +1261,7 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 	}
 
 	g_free(account->buddy_icon);
-	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
+	account->buddy_icon = g_strdup(icon);
 	if (gaim_account_is_connected(account))
 	{
 		char *filename = gaim_buddy_icons_get_full_path(icon);
@@ -1362,11 +1360,7 @@ gaim_account_set_status_types(GaimAccount *account, GList *status_types)
 	/* Old with the old... */
 	if (account->status_types != NULL)
 	{
-		GList *l;
-
-		for (l = account->status_types; l != NULL; l = l->next)
-			gaim_status_type_destroy((GaimStatusType *)l->data);
-
+		g_list_foreach(account->status_types, (GFunc)gaim_status_type_destroy, NULL);
 		g_list_free(account->status_types);
 	}
 

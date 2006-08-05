@@ -54,26 +54,12 @@ gaim_request_fields_new(void)
 void
 gaim_request_fields_destroy(GaimRequestFields *fields)
 {
-	GList *l;
-	GaimRequestFieldGroup *group;
-
 	g_return_if_fail(fields != NULL);
 
-	for (l = fields->groups; l != NULL; l = l->next)
-	{
-		group = l->data;
-
-		gaim_request_field_group_destroy(group);
-	}
-
-	if (fields->groups != NULL)
-		g_list_free(fields->groups);
-
-	if (fields->required_fields != NULL)
-		g_list_free(fields->required_fields);
-
+	g_list_foreach(fields->groups, (GFunc)gaim_request_field_group_destroy, NULL);
+	g_list_free(fields->groups);
+	g_list_free(fields->required_fields);
 	g_hash_table_destroy(fields->fields);
-
 	g_free(fields);
 }
 
@@ -263,8 +249,7 @@ gaim_request_field_group_new(const char *title)
 
 	group = g_new0(GaimRequestFieldGroup, 1);
 
-	if (title != NULL)
-		group->title = g_strdup(title);
+	group->title = g_strdup(title);
 
 	return group;
 }
@@ -272,20 +257,11 @@ gaim_request_field_group_new(const char *title)
 void
 gaim_request_field_group_destroy(GaimRequestFieldGroup *group)
 {
-	GaimRequestField *field;
-	GList *l;
-
 	g_return_if_fail(group != NULL);
 
-	if (group->title != NULL)
-		g_free(group->title);
+	g_free(group->title);
 
-	for (l = group->fields; l != NULL; l = l->next) {
-		field = l->data;
-
-		gaim_request_field_destroy(field);
-	}
-
+	g_list_foreach(group->fields, (GFunc)gaim_request_field_destroy, NULL);
 	g_list_free(group->fields);
 
 	g_free(group);
@@ -356,22 +332,14 @@ gaim_request_field_destroy(GaimRequestField *field)
 {
 	g_return_if_fail(field != NULL);
 
-	if (field->id != NULL)
-		g_free(field->id);
-
-	if (field->label != NULL)
-		g_free(field->label);
-
-	if (field->type_hint != NULL)
-		g_free(field->type_hint);
+	g_free(field->id);
+	g_free(field->label);
+	g_free(field->type_hint);
 
 	if (field->type == GAIM_REQUEST_FIELD_STRING)
 	{
-		if (field->u.string.default_value != NULL)
-			g_free(field->u.string.default_value);
-
-		if (field->u.string.value != NULL)
-			g_free(field->u.string.value);
+		g_free(field->u.string.default_value);
+		g_free(field->u.string.value);
 	}
 	else if (field->type == GAIM_REQUEST_FIELD_CHOICE)
 	{
@@ -407,10 +375,8 @@ gaim_request_field_set_label(GaimRequestField *field, const char *label)
 {
 	g_return_if_fail(field != NULL);
 
-	if (field->label != NULL)
-		g_free(field->label);
-
-	field->label = (label == NULL ? NULL : g_strdup(label));
+	g_free(field->label);
+	field->label = g_strdup(label);
 }
 
 void
@@ -427,10 +393,8 @@ gaim_request_field_set_type_hint(GaimRequestField *field,
 {
 	g_return_if_fail(field != NULL);
 
-	if (field->type_hint != NULL)
-		g_free(field->type_hint);
-
-	field->type_hint = (type_hint == NULL ? NULL : g_strdup(type_hint));
+	g_free(field->type_hint);
+	field->type_hint = g_strdup(type_hint);
 }
 
 void
@@ -535,11 +499,8 @@ gaim_request_field_string_set_default_value(GaimRequestField *field,
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
 
-	if (field->u.string.default_value != NULL)
-		g_free(field->u.string.default_value);
-
-	field->u.string.default_value = (default_value == NULL
-									  ? NULL : g_strdup(default_value));
+	g_free(field->u.string.default_value);
+	field->u.string.default_value = g_strdup(default_value);
 }
 
 void
@@ -548,10 +509,8 @@ gaim_request_field_string_set_value(GaimRequestField *field, const char *value)
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
 
-	if (field->u.string.value != NULL)
-		g_free(field->u.string.value);
-
-	field->u.string.value = (value == NULL ? NULL : g_strdup(value));
+	g_free(field->u.string.value);
+	field->u.string.value = g_strdup(value);
 }
 
 void

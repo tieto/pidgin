@@ -30,11 +30,13 @@
 #include "pluginpref.h"
 #include "prefs.h"
 
-struct _GaimPluginPrefFrame {
+struct _GaimPluginPrefFrame
+{
 	GList *prefs;
 };
 
-struct _GaimPluginPref {
+struct _GaimPluginPref
+{
 	char *name;
 	char *label;
 
@@ -49,7 +51,8 @@ struct _GaimPluginPref {
 };
 
 GaimPluginPrefFrame *
-gaim_plugin_pref_frame_new() {
+gaim_plugin_pref_frame_new()
+{
 	GaimPluginPrefFrame *frame;
 
 	frame = g_new0(GaimPluginPrefFrame, 1);
@@ -58,42 +61,36 @@ gaim_plugin_pref_frame_new() {
 }
 
 void
-gaim_plugin_pref_frame_destroy(GaimPluginPrefFrame *frame) {
-	GaimPluginPref *pref;
-	GList *l;
+gaim_plugin_pref_frame_destroy(GaimPluginPrefFrame *frame)
+{
+	g_return_if_fail(frame != NULL);
 
-	g_return_if_fail(frame);
-
-	for(l = frame->prefs; l != NULL; l = l->next) {
-		pref = (GaimPluginPref *)l->data;
-		gaim_plugin_pref_destroy(pref);
-	}
-
+	g_list_foreach(frame->prefs, (GFunc)gaim_plugin_pref_destroy, NULL);
 	g_list_free(frame->prefs);
-	frame->prefs = NULL;
-
 	g_free(frame);
-	frame = NULL;
 }
 
 void
-gaim_plugin_pref_frame_add(GaimPluginPrefFrame *frame, GaimPluginPref *pref) {
-	g_return_if_fail(frame);
-	g_return_if_fail(pref);
+gaim_plugin_pref_frame_add(GaimPluginPrefFrame *frame, GaimPluginPref *pref)
+{
+	g_return_if_fail(frame != NULL);
+	g_return_if_fail(pref  != NULL);
 
 	frame->prefs = g_list_append(frame->prefs, pref);
 }
 
 GList *
-gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame) {
-	g_return_val_if_fail(frame, NULL);
-	g_return_val_if_fail(frame->prefs, NULL);
+gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame)
+{
+	g_return_val_if_fail(frame        != NULL, NULL);
+	g_return_val_if_fail(frame->prefs != NULL, NULL);
 
 	return frame->prefs;
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new() {
+gaim_plugin_pref_new()
+{
 	GaimPluginPref *pref;
 
 	pref = g_new0(GaimPluginPref, 1);
@@ -102,10 +99,11 @@ gaim_plugin_pref_new() {
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new_with_name(const char *name) {
+gaim_plugin_pref_new_with_name(const char *name)
+{
 	GaimPluginPref *pref;
 
-	g_return_val_if_fail(name, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
 	pref = g_new0(GaimPluginPref, 1);
 	pref->name = g_strdup(name);
@@ -114,10 +112,11 @@ gaim_plugin_pref_new_with_name(const char *name) {
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new_with_label(const char *label) {
+gaim_plugin_pref_new_with_label(const char *label)
+{
 	GaimPluginPref *pref;
 
-	g_return_val_if_fail(label, NULL);
+	g_return_val_if_fail(label != NULL, NULL);
 
 	pref = g_new0(GaimPluginPref, 1);
 	pref->label = g_strdup(label);
@@ -126,11 +125,12 @@ gaim_plugin_pref_new_with_label(const char *label) {
 }
 
 GaimPluginPref *
-gaim_plugin_pref_new_with_name_and_label(const char *name, const char *label) {
+gaim_plugin_pref_new_with_name_and_label(const char *name, const char *label)
+{
 	GaimPluginPref *pref;
 
-	g_return_val_if_fail(name, NULL);
-	g_return_val_if_fail(label, NULL);
+	g_return_val_if_fail(name  != NULL, NULL);
+	g_return_val_if_fail(label != NULL, NULL);
 
 	pref = g_new0(GaimPluginPref, 1);
 	pref->name = g_strdup(name);
@@ -140,78 +140,70 @@ gaim_plugin_pref_new_with_name_and_label(const char *name, const char *label) {
 }
 
 void
-gaim_plugin_pref_destroy(GaimPluginPref *pref) {
-	g_return_if_fail(pref);
+gaim_plugin_pref_destroy(GaimPluginPref *pref)
+{
+	g_return_if_fail(pref != NULL);
 
-	if(pref->name) {
-		g_free(pref->name);
-		pref->name = NULL;
-	}
-
-	if(pref->label) {
-		g_free(pref->label);
-		pref->label = NULL;
-	}
-
-	if(pref->choices) {
-		g_list_free(pref->choices);
-		pref->choices = NULL;
-	}
-
+	g_free(pref->name);
+	g_free(pref->label);
+	g_list_free(pref->choices);
 	g_free(pref);
 }
 
 void
-gaim_plugin_pref_set_name(GaimPluginPref *pref, const char *name) {
-	g_return_if_fail(pref);
-	g_return_if_fail(name);
+gaim_plugin_pref_set_name(GaimPluginPref *pref, const char *name)
+{
+	g_return_if_fail(pref != NULL);
+	g_return_if_fail(name != NULL);
 
-	if(pref->name)
-		g_free(pref->name);
-
+	g_free(pref->name);
 	pref->name = g_strdup(name);
 }
 
 const char *
-gaim_plugin_pref_get_name(GaimPluginPref *pref) {
-	g_return_val_if_fail(pref, NULL);
+gaim_plugin_pref_get_name(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref != NULL, NULL);
 
 	return pref->name;
 }
 
 void
-gaim_plugin_pref_set_label(GaimPluginPref *pref, const char *label) {
-	g_return_if_fail(pref);
-	g_return_if_fail(label);
+gaim_plugin_pref_set_label(GaimPluginPref *pref, const char *label)
+{
+	g_return_if_fail(pref  != NULL);
+	g_return_if_fail(label != NULL);
 
-	if(pref->label)
-		g_free(pref->label);
-
+	g_free(pref->label);
 	pref->label = g_strdup(label);
 }
 
 const char *
-gaim_plugin_pref_get_label(GaimPluginPref *pref) {
-	g_return_val_if_fail(pref, NULL);
+gaim_plugin_pref_get_label(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref != NULL, NULL);
 
 	return pref->label;
 }
 
 void
-gaim_plugin_pref_set_bounds(GaimPluginPref *pref, int min, int max) {
+gaim_plugin_pref_set_bounds(GaimPluginPref *pref, int min, int max)
+{
 	int tmp;
 
-	g_return_if_fail(pref);
-	g_return_if_fail(pref->name);
+	g_return_if_fail(pref       != NULL);
+	g_return_if_fail(pref->name != NULL);
 
-	if(gaim_prefs_get_type(pref->name) != GAIM_PREF_INT) {
-		gaim_debug(GAIM_DEBUG_INFO, "pluginpref",
+	if (gaim_prefs_get_type(pref->name) != GAIM_PREF_INT)
+	{
+		gaim_debug_info("pluginpref",
 				"gaim_plugin_pref_set_bounds: %s is not an integer pref\n",
 				pref->name);
 		return;
 	}
 
-	if(min > max) {
+	if (min > max)
+	{
 		tmp = min;
 		min = max;
 		max = tmp;
@@ -221,11 +213,13 @@ gaim_plugin_pref_set_bounds(GaimPluginPref *pref, int min, int max) {
 	pref->max = max;
 }
 
-void gaim_plugin_pref_get_bounds(GaimPluginPref *pref, int *min, int *max) {
-	g_return_if_fail(pref);
-	g_return_if_fail(pref->name);
+void gaim_plugin_pref_get_bounds(GaimPluginPref *pref, int *min, int *max)
+{
+	g_return_if_fail(pref       != NULL);
+	g_return_if_fail(pref->name != NULL);
 
-	if(gaim_prefs_get_type(pref->name) != GAIM_PREF_INT) {
+	if (gaim_prefs_get_type(pref->name) != GAIM_PREF_INT)
+	{
 		gaim_debug(GAIM_DEBUG_INFO, "pluginpref",
 				"gaim_plugin_pref_get_bounds: %s is not an integer pref\n",
 				pref->name);
@@ -237,23 +231,26 @@ void gaim_plugin_pref_get_bounds(GaimPluginPref *pref, int *min, int *max) {
 }
 
 void
-gaim_plugin_pref_set_type(GaimPluginPref *pref, GaimPluginPrefType type) {
-	g_return_if_fail(pref);
+gaim_plugin_pref_set_type(GaimPluginPref *pref, GaimPluginPrefType type)
+{
+	g_return_if_fail(pref != NULL);
 
 	pref->type = type;
 }
 
 GaimPluginPrefType
-gaim_plugin_pref_get_type(GaimPluginPref *pref) {
-	g_return_val_if_fail(pref, GAIM_PLUGIN_PREF_NONE);
+gaim_plugin_pref_get_type(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref != NULL, GAIM_PLUGIN_PREF_NONE);
 
 	return pref->type;
 }
 
 void
-gaim_plugin_pref_add_choice(GaimPluginPref *pref, const char *label, gpointer choice) {
-	g_return_if_fail(pref);
-	g_return_if_fail(label);
+gaim_plugin_pref_add_choice(GaimPluginPref *pref, const char *label, gpointer choice)
+{
+	g_return_if_fail(pref  != NULL);
+	g_return_if_fail(label != NULL);
 	g_return_if_fail(choice || gaim_prefs_get_type(pref->name) == GAIM_PREF_INT);
 
 	pref->choices = g_list_append(pref->choices, (gpointer)label);
@@ -261,36 +258,41 @@ gaim_plugin_pref_add_choice(GaimPluginPref *pref, const char *label, gpointer ch
 }
 
 GList *
-gaim_plugin_pref_get_choices(GaimPluginPref *pref) {
-	g_return_val_if_fail(pref, NULL);
+gaim_plugin_pref_get_choices(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref != NULL, NULL);
 
 	return pref->choices;
 }
 
 void
-gaim_plugin_pref_set_max_length(GaimPluginPref *pref, unsigned int max_length) {
-	g_return_if_fail(pref);
+gaim_plugin_pref_set_max_length(GaimPluginPref *pref, unsigned int max_length)
+{
+	g_return_if_fail(pref != NULL);
 
 	pref->max_length = max_length;
 }
 
 unsigned int
-gaim_plugin_pref_get_max_length(GaimPluginPref *pref) {
-	g_return_val_if_fail(pref, 0);
+gaim_plugin_pref_get_max_length(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref != NULL, 0);
 
 	return pref->max_length;
 }
 
 void
-gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean masked) {
-	g_return_if_fail(pref);
+gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean masked)
+{
+	g_return_if_fail(pref != NULL);
 
 	pref->masked = masked;
 }
 
 gboolean
-gaim_plugin_pref_get_masked(GaimPluginPref *pref) {
-	g_return_val_if_fail(pref, FALSE);
+gaim_plugin_pref_get_masked(GaimPluginPref *pref)
+{
+	g_return_val_if_fail(pref != NULL, FALSE);
 
 	return pref->masked;
 }
@@ -298,7 +300,7 @@ gaim_plugin_pref_get_masked(GaimPluginPref *pref) {
 void
 gaim_plugin_pref_set_format_type(GaimPluginPref *pref, GaimStringFormatType format)
 {
-	g_return_if_fail(pref);
+	g_return_if_fail(pref != NULL);
 	g_return_if_fail(pref->type == GAIM_PLUGIN_PREF_STRING_FORMAT);
 
 	pref->format = format;
@@ -307,11 +309,11 @@ gaim_plugin_pref_set_format_type(GaimPluginPref *pref, GaimStringFormatType form
 GaimStringFormatType
 gaim_plugin_pref_get_format_type(GaimPluginPref *pref)
 {
-	g_return_val_if_fail(pref, 0);
+	g_return_val_if_fail(pref != NULL, 0);
 
 	if (pref->type != GAIM_PLUGIN_PREF_STRING_FORMAT)
 		return GAIM_STRING_FORMAT_TYPE_NONE;
-	
+
 	return pref->format;
 }
 

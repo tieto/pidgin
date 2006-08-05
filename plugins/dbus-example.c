@@ -51,7 +51,7 @@
 #include "dbus-bindings.h"
 
 typedef struct {
-    char *text;
+	char *text;
 } GaimText;
 
 /* This makes the structure GaimText visible to the gaim-dbus type
@@ -59,7 +59,7 @@ typedef struct {
    on, we will be able to register pointers to structures of this
    type.  You to dbus-define types you want to be directly accessible
    by external applications. */
-GAIM_DBUS_DEFINE_TYPE(GaimText)	
+GAIM_DBUS_DEFINE_TYPE(GaimText)
 
 /* Here we make four functions accessible to other applications by
    DBus.  These functions can access types defined in gaim proper
@@ -78,30 +78,30 @@ DBUS_EXPORT const char *dbus_example_get_buddy_name(GaimBuddy *buddy);
 static GaimText hello;
 
 /* Here come the definitions of the four exported functions. */
-GaimText* dbus_example_get_hello_object(void) 
+GaimText* dbus_example_get_hello_object(void)
 {
-    return &hello;
+	return &hello;
 }
 
-void dbus_example_set_text(GaimText *obj, const char *text) 
+void dbus_example_set_text(GaimText *obj, const char *text)
 {
-    if (obj != NULL) {
-	g_free(obj->text);
-	obj->text = g_strdup(text);
-    }
+	if (obj != NULL) {
+		g_free(obj->text);
+		obj->text = g_strdup(text);
+	}
 }
 
-const char *dbus_example_get_text(GaimText *obj) 
+const char *dbus_example_get_text(GaimText *obj)
 {
-    if (obj != NULL) 
-	return obj->text;
-    else
-	return NULL;
+	if (obj != NULL)
+		return obj->text;
+	else
+		return NULL;
 }
 
-const char *dbus_example_get_buddy_name(GaimBuddy *buddy) 
+const char *dbus_example_get_buddy_name(GaimBuddy *buddy)
 {
-    return gaim_buddy_get_name(buddy);
+	return gaim_buddy_get_name(buddy);
 }
 
 /* And now standard plugin stuff */
@@ -111,33 +111,33 @@ plugin_load(GaimPlugin *plugin)
 {
 	GAIM_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
 
-    /* First, we have to register our four exported functions with the
-       main gaim dbus loop.  Without this statement, the gaim dbus
-       code wouldn't know about our functions. */
-    GAIM_DBUS_REGISTER_BINDINGS(plugin);
+	/* First, we have to register our four exported functions with the
+	   main gaim dbus loop.  Without this statement, the gaim dbus
+	   code wouldn't know about our functions. */
+	GAIM_DBUS_REGISTER_BINDINGS(plugin);
 
-    /* Then, we register the hello object of type GaimText.  Note that
-       pointer registrations / unregistrations are completely dynamic;
-       they don't have to be made when the plugin is loaded /
-       unloaded.  Without this statement the dbus gaim code wouldn't
-       know about the hello object.  */
-    GAIM_DBUS_REGISTER_POINTER(&hello, GaimText);
+	/* Then, we register the hello object of type GaimText.  Note that
+	   pointer registrations / unregistrations are completely dynamic;
+	   they don't have to be made when the plugin is loaded /
+	   unloaded.  Without this statement the dbus gaim code wouldn't
+	   know about the hello object.  */
+	GAIM_DBUS_REGISTER_POINTER(&hello, GaimText);
 
-    hello.text = g_strdup("Hello.");
-    
-    return TRUE;
+	hello.text = g_strdup("Hello.");
+
+	return TRUE;
 }
 
 
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-    g_free(hello.text);
+	g_free(hello.text);
 
-    /* It is necessary to unregister all pointers registered by the module. */
-    GAIM_DBUS_UNREGISTER_POINTER(&hello);
+	/* It is necessary to unregister all pointers registered by the module. */
+	GAIM_DBUS_UNREGISTER_POINTER(&hello);
 
-    return TRUE;
+	return TRUE;
 }
 
 static GaimPluginInfo info =

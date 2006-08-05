@@ -337,10 +337,8 @@ gaim_connection_set_display_name(GaimConnection *gc, const char *name)
 {
 	g_return_if_fail(gc != NULL);
 
-	if (gc->display_name != NULL)
-		g_free(gc->display_name);
-
-	gc->display_name = (name == NULL ? NULL : g_strdup(name));
+	g_free(gc->display_name);
+	gc->display_name = g_strdup(name);
 }
 
 GaimConnectionState

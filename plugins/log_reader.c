@@ -300,7 +300,7 @@ static int adium_logger_size (GaimLog *log)
 
 		if (!data->path || stat(data->path, &st))
 			st.st_size = 0;
-	
+
 		return st.st_size;
 	}
 
@@ -399,7 +399,7 @@ static char * messenger_plus_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
-	
+
 	/* TODO: Do something here. */
 	return g_strdup("");
 }

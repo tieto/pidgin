@@ -57,9 +57,6 @@ imhtml_cb(GtkTextBuffer *buffer, gpointer data)
 	g_return_if_fail(pref);
 
 	text = gtk_imhtml_get_markup(imhtml);
-
-	if (!text)
-		text = "";
 	gaim_prefs_set_string(pref, text);
 	g_free(text);
 }

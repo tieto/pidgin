@@ -1097,8 +1097,7 @@ gaim_gtkxfer_destroy(GaimXfer *xfer)
 
 	data = GAIM_GTKXFER(xfer);
 	if (data) {
-		if (data->name)
-			g_free(data->name);
+		g_free(data->name);
 		g_free(data);
 		xfer->ui_data = NULL;
 	}

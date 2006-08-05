@@ -85,13 +85,11 @@ gaim_value_destroy(GaimValue *value)
 
 	if (gaim_value_get_type(value) == GAIM_TYPE_BOXED)
 	{
-		if (value->u.specific_type != NULL)
-			g_free(value->u.specific_type);
+		g_free(value->u.specific_type);
 	}
 	else if (gaim_value_get_type(value) == GAIM_TYPE_STRING)
 	{
-		if (value->data.string_data != NULL)
-			g_free(value->data.string_data);
+		g_free(value->data.string_data);
 	}
 
 	g_free(value);
@@ -322,10 +320,8 @@ gaim_value_set_string(GaimValue *value, const char *data)
 {
 	g_return_if_fail(value != NULL);
 
-	if (value->data.string_data != NULL)
-		g_free(value->data.string_data);
-
-	value->data.string_data = (data == NULL ? NULL : g_strdup(data));
+	g_free(value->data.string_data);
+	value->data.string_data = g_strdup(data);
 }
 
 void

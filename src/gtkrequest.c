@@ -364,7 +364,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 	/* Entry field. */
 	data->u.input.multiline = multiline;
-	data->u.input.hint = (hint == NULL ? NULL : g_strdup(hint));
+	data->u.input.hint = g_strdup(hint);
 
 	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
 		GtkWidget *frame;
@@ -1586,7 +1586,7 @@ gaim_gtk_request_folder(const char *title, const char *dirname,
 {
 	GaimGtkRequestData *data;
 	GtkWidget *dirsel;
-	
+
 	data = g_new0(GaimGtkRequestData, 1);
 	data->type = GAIM_REQUEST_FOLDER;
 	data->user_data = user_data;
@@ -1633,8 +1633,7 @@ gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 {
 	GaimGtkRequestData *data = (GaimGtkRequestData *)ui_handle;
 
-	if (data->cbs != NULL)
-		g_free(data->cbs);
+	g_free(data->cbs);
 
 	gtk_widget_destroy(data->dialog);
 

@@ -99,12 +99,12 @@ get_config_frame(GaimPlugin *plugin)
 
 		hbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	
+
 		label = gtk_label_new_with_mnemonic(_(statuses[i].description));
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 		gtk_size_group_add_widget(sg, label);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	
+
 		adj = gtk_adjustment_new(gaim_prefs_get_int(pref), -500, 500, 1, 1, 1);
 		spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
 		g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), pref);

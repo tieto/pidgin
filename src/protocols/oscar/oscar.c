@@ -1567,7 +1567,7 @@ int gaim_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 
 	pos->offset = offset;
 	pos->len = len;
-	pos->modname = modname ? g_strdup(modname) : NULL;
+	pos->modname = g_strdup(modname);
 
 	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80, straight_to_hell, pos) != 0)
 	{

@@ -5,7 +5,7 @@
 
 #include "gaim-client.h"
 
-/* 
+/*
    This example demonstrates how to use libgaim-client to communicate
    with gaim.  The names and signatures of functions provided by
    libgaim-client are the same as those in gaim.  However, all
@@ -21,19 +21,19 @@
 
 int main (int argc, char **argv)
 {
-    GList *alist, *node;
+	GList *alist, *node;
 
-    gaim_init();
-    
-    alist = gaim_accounts_get_all();
-    for (node = alist; node; node = node->next) {
-	GaimAccount *account = (GaimAccount*) node->data;
-	char *name = gaim_account_get_username(account);
-	g_print("Name: %s\n", name);
-	g_free(name);
-    }
+	gaim_init();
 
-    g_list_free(alist);
+	alist = gaim_accounts_get_all();
+	for (node = alist; node != NULL; node = node->next)
+	{
+		GaimAccount *account = (GaimAccount*) node->data;
+		char *name = gaim_account_get_username(account);
+		g_print("Name: %s\n", name);
+		g_free(name);
+	}
+	g_list_free(alist);
 
-    return 0;
+	return 0;
 }

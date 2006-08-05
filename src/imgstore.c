@@ -82,10 +82,8 @@ static void gaim_imgstore_free_priv(GaimStoredImagePriv *priv) {
 
 	img = priv->img;
 	if (img) {
-		if (img->data)
-			g_free(img->data);
-		if (img->filename)
-			g_free(img->filename);
+		g_free(img->data);
+		g_free(img->filename);
 		g_free(img);
 	}
 

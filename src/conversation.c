@@ -335,7 +335,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 	GaimConversationUiOps *ops;
 	GaimConnection *gc;
 	const char *name;
-	GList *node;
 
 	g_return_if_fail(conv != NULL);
 
@@ -433,34 +432,22 @@ gaim_conversation_destroy(GaimConversation *conv)
 	}
 	else if (conv->type == GAIM_CONV_TYPE_CHAT) {
 
-		for (node = conv->u.chat->in_room; node != NULL; node = node->next) {
-			if (node->data != NULL)
-				gaim_conv_chat_cb_destroy((GaimConvChatBuddy *)node->data);
-			node->data = NULL;
-		}
-
-		for (node = conv->u.chat->ignored; node != NULL; node = node->next) {
-			if (node->data != NULL)
-				g_free(node->data);
-			node->data = NULL;
-		}
-
+		g_list_foreach(conv->u.chat->in_room, (GFunc)gaim_conv_chat_cb_destroy, NULL);
 		g_list_free(conv->u.chat->in_room);
+
+		g_list_foreach(conv->u.chat->ignored, (GFunc)g_free, NULL);
 		g_list_free(conv->u.chat->ignored);
 
 		conv->u.chat->in_room = NULL;
 		conv->u.chat->ignored = NULL;
 
-		if (conv->u.chat->who != NULL)
-			g_free(conv->u.chat->who);
+		g_free(conv->u.chat->who);
 		conv->u.chat->who = NULL;
 
-		if (conv->u.chat->topic != NULL)
-			g_free(conv->u.chat->topic);
+		g_free(conv->u.chat->topic);
 		conv->u.chat->topic = NULL;
 
-		if(conv->u.chat->nick)
-			g_free(conv->u.chat->nick);
+		g_free(conv->u.chat->nick);
 
 		GAIM_DBUS_UNREGISTER_POINTER(conv->u.chat);
 		g_free(conv->u.chat);
@@ -587,9 +574,7 @@ gaim_conversation_set_title(GaimConversation *conv, const char *title)
 	g_return_if_fail(conv  != NULL);
 	g_return_if_fail(title != NULL);
 
-	if (conv->title != NULL)
-		g_free(conv->title);
-
+	g_free(conv->title);
 	conv->title = g_strdup(title);
 
 	gaim_conversation_update(conv, GAIM_CONV_UPDATE_TITLE);
@@ -651,10 +636,8 @@ gaim_conversation_set_name(GaimConversation *conv, const char *name)
 {
 	g_return_if_fail(conv != NULL);
 
-	if (conv->name != NULL)
-		g_free(conv->name);
-
-	conv->name = (name == NULL ? NULL : g_strdup(name));
+	g_free(conv->name);
+	conv->name = g_strdup(name);
 
 	gaim_conversation_autoset_title(conv);
 }
@@ -1326,11 +1309,11 @@ gaim_conv_chat_set_topic(GaimConvChat *chat, const char *who, const char *topic)
 {
 	g_return_if_fail(chat != NULL);
 
-	if (chat->who   != NULL) g_free(chat->who);
-	if (chat->topic != NULL) g_free(chat->topic);
+	g_free(chat->who);
+	g_free(chat->topic);
 
-	chat->who   = (who   == NULL ? NULL : g_strdup(who));
-	chat->topic = (topic == NULL ? NULL : g_strdup(topic));
+	chat->who   = g_strdup(who);
+	chat->topic = g_strdup(topic);
 
 	gaim_conversation_update(gaim_conv_chat_get_conversation(chat),
 							 GAIM_CONV_UPDATE_TOPIC);
@@ -1447,7 +1430,6 @@ gaim_conv_chat_cb_compare(GaimConvChatBuddy *a, GaimConvChatBuddy *b)
 	char *user1 = NULL, *user2 = NULL;
 	gint ret = 0;
 
-	
 	if (a) {
 		f1 = a->flags;
 		if (a->alias_key)
@@ -1455,7 +1437,7 @@ gaim_conv_chat_cb_compare(GaimConvChatBuddy *a, GaimConvChatBuddy *b)
 		else if (a->name)
 			user1 = a->name;
 	}
-	
+
 	if (b) {
 		f2 = b->flags;
 		if (b->alias_key)
@@ -1470,7 +1452,7 @@ gaim_conv_chat_cb_compare(GaimConvChatBuddy *a, GaimConvChatBuddy *b)
 	} else if (f1 != f2) {
 		/* sort more important users first */
 		ret = (f1 > f2) ? -1 : 1;
-	} else if (a->buddy != b->buddy) { 
+	} else if (a->buddy != b->buddy) {
 		ret = a->buddy ? -1 : 1;
 	} else {
 		ret = strcasecmp(user1, user2);
@@ -1565,7 +1547,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 	}
 
 	cbuddies = g_list_sort(cbuddies, (GCompareFunc)gaim_conv_chat_cb_compare);
-	
+
 	if (ops != NULL && ops->chat_add_users != NULL)
 		ops->chat_add_users(conv, cbuddies, new_arrivals);
 
@@ -1728,7 +1710,7 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 		}
 
 		/* NOTE: Don't remove them from ignored in case they re-enter. */
-	
+
 		if (!quiet) {
 			const char *alias = user;
 			char *escaped;
@@ -1866,8 +1848,7 @@ gaim_conv_chat_user_get_flags(GaimConvChat *chat, const char *user)
 void gaim_conv_chat_set_nick(GaimConvChat *chat, const char *nick) {
 	g_return_if_fail(chat != NULL);
 
-	if(chat->nick)
-		g_free(chat->nick);
+	g_free(chat->nick);
 	chat->nick = g_strdup(gaim_normalize(chat->conv->account, nick));
 }
 
@@ -1920,10 +1901,7 @@ gaim_conv_chat_cb_new(const char *name, const char *alias, GaimConvChatBuddyFlag
 	cb = g_new0(GaimConvChatBuddy, 1);
 	cb->name = g_strdup(name);
 	cb->flags = flags;
-	if (alias)
-		cb->alias = g_strdup(alias);
-	else
-		cb->alias = NULL;
+	cb->alias = g_strdup(alias);
 
 	GAIM_DBUS_REGISTER_POINTER(cb, GaimConvChatBuddy);
 	return cb;
@@ -1950,15 +1928,12 @@ gaim_conv_chat_cb_find(GaimConvChat *chat, const char *name)
 void
 gaim_conv_chat_cb_destroy(GaimConvChatBuddy *cb)
 {
-	g_return_if_fail(cb != NULL);
+	if (cb == NULL)
+		return;
 
 	g_free(cb->alias);
 	g_free(cb->alias_key);
 	g_free(cb->name);
-	cb->name = NULL;
-	cb->alias = NULL;
-	cb->alias_key = NULL;
-	cb->flags = 0;
 
 	GAIM_DBUS_UNREGISTER_POINTER(cb);
 	g_free(cb);

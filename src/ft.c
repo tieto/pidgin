@@ -648,11 +648,7 @@ gaim_xfer_set_message(GaimXfer *xfer, const char *message)
 	g_return_if_fail(xfer != NULL);
 
 	g_free(xfer->message);
-
-	if (message != NULL)
-		xfer->message = g_strdup(message);
-	else
-		xfer->message = NULL;
+	xfer->message = g_strdup(message);
 }
 
 void
@@ -660,10 +656,8 @@ gaim_xfer_set_filename(GaimXfer *xfer, const char *filename)
 {
 	g_return_if_fail(xfer != NULL);
 
-	if (xfer->filename != NULL)
-		g_free(xfer->filename);
-
-	xfer->filename = (filename == NULL ? NULL : g_strdup(filename));
+	g_free(xfer->filename);
+	xfer->filename = g_strdup(filename);
 }
 
 void
@@ -671,10 +665,8 @@ gaim_xfer_set_local_filename(GaimXfer *xfer, const char *filename)
 {
 	g_return_if_fail(xfer != NULL);
 
-	if (xfer->local_filename != NULL)
-		g_free(xfer->local_filename);
-
-	xfer->local_filename = (filename == NULL ? NULL : g_strdup(filename));
+	g_free(xfer->local_filename);
+	xfer->local_filename = g_strdup(filename);
 }
 
 void

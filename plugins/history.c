@@ -90,7 +90,7 @@ static void historize(GaimConversation *c)
 		if (logs == NULL)
 			logs = gaim_log_get_logs(GAIM_LOG_IM, name, account);
 		else
-        		logs = g_list_sort(logs, gaim_log_compare);
+			logs = g_list_sort(logs, gaim_log_compare);
 	}
 	else if (convtype == GAIM_CONV_TYPE_CHAT)
 	{

@@ -120,7 +120,7 @@ static void timestamp_new_convo(GaimConversation *conv)
 		gaim_conversation_set_data(conv, "timestamp-initialized", GINT_TO_POINTER(TRUE));
 		gaim_conversation_set_data(conv, "timestamp-enabled", GINT_TO_POINTER(TRUE));
 		gaim_conversation_set_data(conv, "timestamp-conv-active", GINT_TO_POINTER(TRUE));
-		gtk_text_buffer_create_tag (buffer, "TIMESTAMP", "foreground", "#888888", "justification", GTK_JUSTIFY_CENTER, 
+		gtk_text_buffer_create_tag (buffer, "TIMESTAMP", "foreground", "#888888", "justification", GTK_JUSTIFY_CENTER,
 					    "weight", PANGO_WEIGHT_BOLD, NULL);
 		do_timestamp(conv);
 	}

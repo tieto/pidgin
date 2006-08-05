@@ -48,8 +48,7 @@ new_node(const char *name, XMLNodeType type)
 {
 	xmlnode *node = g_new0(xmlnode, 1);
 
-	if(name)
-		node->name = g_strdup(name);
+	node->name = g_strdup(name);
 	node->type = type;
 
 	return node;
@@ -181,12 +180,10 @@ void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 #ifdef HAVE_LIBXML
 	g_return_if_fail(node != NULL);
 
-	if (node->namespace)
-		g_free(node->namespace);
-	
+	g_free(node->namespace);
 	node->namespace = g_strdup(xmlns);
 #else
-	return xmlnode_set_attrib(node, "xmlns", xmlns);
+	xmlnode_set_attrib(node, "xmlns", xmlns);
 #endif
 }
 
@@ -215,13 +212,10 @@ xmlnode_free(xmlnode *node)
 		x = y;
 	}
 
-	if(node->name)
-		g_free(node->name);
-	if(node->data)
-		g_free(node->data);
+	g_free(node->name);
+	g_free(node->data);
 #ifdef HAVE_LIBXML
-	if(node->namespace)
-		g_free(node->namespace);
+	g_free(node->namespace);
 #endif
 	g_free(node);
 }
@@ -311,7 +305,7 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 		g_string_append_printf(text, " xmlns='%s'", namespace);
 		g_free(namespace);
 	}
-#endif	
+#endif
 	for(c = node->child; c; c = c->next)
 	{
 		if(c->type == XMLNODE_TYPE_ATTRIB) {
@@ -353,8 +347,7 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 
 	g_free(node_name);
 
-	if(tab)
-		g_free(tab);
+	g_free(tab);
 
 	if(len)
 		*len = text->len;
@@ -422,7 +415,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 }
 
 static void
-xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name, 
+xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 				 const xmlChar *prefix, const xmlChar *namespace)
 {
 	struct _xmlnode_parser_data *xpd = user_data;

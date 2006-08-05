@@ -312,7 +312,6 @@ gaim_buddy_icon_set_username(GaimBuddyIcon *icon, const char *username)
 	g_return_if_fail(username != NULL);
 
 	g_free(icon->username);
-
 	icon->username = g_strdup(username);
 }
 
@@ -480,7 +479,6 @@ gaim_buddy_icons_set_cache_dir(const char *dir)
 	g_return_if_fail(dir != NULL);
 
 	g_free(cache_dir);
-
 	cache_dir = g_strdup(dir);
 }
 

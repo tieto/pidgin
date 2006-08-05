@@ -119,23 +119,19 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 				theme->list = child;
 			list = child;
 		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
-			if(theme->name)
-				g_free(theme->name);
+			g_free(theme->name);
 			theme->name = g_strdup(i+ strlen("Name="));
 			theme->name[strlen(theme->name)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Description=", strlen("Description="))) {
-			if(theme->desc)
-				g_free(theme->desc);
+			g_free(theme->desc);
 			theme->desc = g_strdup(i + strlen("Description="));
 			theme->desc[strlen(theme->desc)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Icon=", strlen("Icon="))) {
-			if(theme->icon)
-				g_free(theme->icon);
+			g_free(theme->icon);
 			theme->icon = g_build_filename(dirname, i + strlen("Icon="), NULL);
 			theme->icon[strlen(theme->icon)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Author=", strlen("Author="))) {
-			if(theme->author)
-				g_free(theme->author);
+			g_free(theme->author);
 			theme->author = g_strdup(i + strlen("Author="));
 			theme->author[strlen(theme->author)-1] = 0;
 		} else if (load && list) {

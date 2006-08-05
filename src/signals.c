@@ -83,16 +83,7 @@ destroy_instance_data(GaimInstanceData *instance_data)
 static void
 destroy_signal_data(GaimSignalData *signal_data)
 {
-	GaimSignalHandlerData *handler_data;
-	GList *l;
-
-	for (l = signal_data->handlers; l != NULL; l = l->next)
-	{
-		handler_data = (GaimSignalHandlerData *)l->data;
-
-		g_free(l->data);
-	}
-
+	g_list_foreach(signal_data->handlers, (GFunc)g_free, NULL);
 	g_list_free(signal_data->handlers);
 
 	if (signal_data->values != NULL)

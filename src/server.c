@@ -366,8 +366,7 @@ void serv_chat_invite(GaimConnection *g, int id, const char *message, const char
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-invited-user",
 					 conv, name, buffy);
 
-	if (buffy)
-		g_free(buffy);
+	g_free(buffy);
 }
 
 /* Ya know, nothing uses this except gaim_conversation_destroy(),
@@ -471,10 +470,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 								  &angel, &buffy, cnv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
-		if (buffy)
-			g_free(buffy);
-		if (angel)
-			g_free(angel);
+		g_free(buffy);
+		g_free(angel);
 		return;
 	}
 
@@ -563,7 +560,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 * _next_ message, so we still set lar->sent to now.
 				 */
 				lar->sent = now;
-				
+
 				if (!(flags & GAIM_MESSAGE_AUTO_RESP))
 				{
 					serv_send_im(gc, name, away_msg, GAIM_MESSAGE_AUTO_RESP);

@@ -107,8 +107,7 @@ gaim_proxy_info_set_host(GaimProxyInfo *info, const char *host)
 	g_return_if_fail(info != NULL);
 
 	g_free(info->host);
-
-	info->host = (host == NULL ? NULL : g_strdup(host));
+	info->host = g_strdup(host);
 }
 
 void
@@ -125,8 +124,7 @@ gaim_proxy_info_set_username(GaimProxyInfo *info, const char *username)
 	g_return_if_fail(info != NULL);
 
 	g_free(info->username);
-
-	info->username = (username == NULL ? NULL : g_strdup(username));
+	info->username = g_strdup(username);
 }
 
 void
@@ -135,8 +133,7 @@ gaim_proxy_info_set_password(GaimProxyInfo *info, const char *password)
 	g_return_if_fail(info != NULL);
 
 	g_free(info->password);
-
-	info->password = (password == NULL ? NULL : g_strdup(password));
+	info->password = g_strdup(password);
 }
 
 GaimProxyType

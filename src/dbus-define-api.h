@@ -7,10 +7,10 @@
 
 /* blist.h */
 gboolean GAIM_BLIST_NODE_IS_CHAT(GaimBlistNode *node);
-gboolean GAIM_BLIST_NODE_IS_BUDDY(GaimBlistNode *node);   
+gboolean GAIM_BLIST_NODE_IS_BUDDY(GaimBlistNode *node);
 gboolean GAIM_BLIST_NODE_IS_CONTACT(GaimBlistNode *node);
 gboolean GAIM_BLIST_NODE_IS_GROUP(GaimBlistNode *node);
-gboolean GAIM_BUDDY_IS_ONLINE(GaimBuddy *buddy); 
+gboolean GAIM_BUDDY_IS_ONLINE(GaimBuddy *buddy);
 gboolean GAIM_BLIST_NODE_HAS_FLAG(GaimBlistNode *node, int flags);
 gboolean GAIM_BLIST_NODE_SHOULD_SAVE(GaimBlistNode *node);
 

@@ -593,7 +593,7 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
 	g_signal_connect(G_OBJECT(selection), "changed",
 					 G_CALLBACK(selection_changed_cb), grl);
-	
+
 	g_object_unref(model);
 
 	grl->model = model;

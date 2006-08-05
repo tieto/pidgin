@@ -193,15 +193,9 @@ static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) 
 static gint
 close_conv_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
-	GList *list = g_list_copy(gtkconv->convs), *l;
+	GList *list = g_list_copy(gtkconv->convs);
 
-	l = list;
-	while (l) {
-		GaimConversation *conv = l->data;
-		gaim_conversation_destroy(conv);
-		l = l->next;
-	}
-
+	g_list_foreach(list, (GFunc)gaim_conversation_destroy, NULL);
 	g_list_free(list);
 
 	return TRUE;
@@ -489,8 +483,7 @@ check_for_and_do_command(GaimConversation *conv)
 			case GAIM_CMD_STATUS_FAILED:
 				gaim_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
 						GAIM_MESSAGE_NO_LOG, time(NULL));
-				if(error)
-					g_free(error);
+				g_free(error);
 				return TRUE;
 			case GAIM_CMD_STATUS_WRONG_TYPE:
 				if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
@@ -771,8 +764,8 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 		}
 
-		if (username != NULL) g_free(username);
-		if (protocol != NULL) g_free(protocol);
+		g_free(username);
+		g_free(protocol);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -1426,7 +1419,7 @@ ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 		gaim_conv_chat_ignore(chat, name);
 
 	cbuddy = gaim_conv_chat_cb_new(name, alias, flags);
-	
+
 	add_chat_buddy_common(conv, cbuddy, NULL);
 	g_free(name);
 	g_free(alias);
@@ -1525,7 +1518,7 @@ menu_last_said_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 	mark = get_mark_for_user(gtkconv, who);
-	
+
 	if (mark != NULL)
 		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gtkconv->imhtml), mark, 0.1, FALSE, 0, 0);
 	else
@@ -3214,8 +3207,7 @@ generate_invite_user_names(GaimConnection *gc)
 	GaimBlistNode *gnode,*cnode,*bnode;
 	static GList *tmp = NULL;
 
-	if (tmp)
-		g_list_free(tmp);
+	g_list_free(tmp);
 
 	tmp = g_list_append(NULL, "");
 
@@ -4261,8 +4253,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			}
 		}
 
-		if (username != NULL) g_free(username);
-		if (protocol != NULL) g_free(protocol);
+		g_free(username);
+		g_free(protocol);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -4868,8 +4860,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 			}
 		}
 
-		if(alias_escaped)
-			g_free(alias_escaped);
+		g_free(alias_escaped);
 
 		/* Are we in a chat where we can tell which users are buddies? */
 		if  (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
@@ -5070,7 +5061,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 	g_return_if_fail(new_alias != NULL);
 
 	cbuddy = gaim_conv_chat_cb_new(new_name, new_alias, flags);
-	
+
 	add_chat_buddy_common(conv, cbuddy, old_name);
 }
 
@@ -5177,7 +5168,7 @@ gaim_gtkconv_chat_update_user(GaimConversation *conv, const char *user)
 	flags = gaim_conv_chat_user_get_flags(chat, user);
 
 	cbuddy = gaim_conv_chat_cb_new(user, alias, flags);
-	
+
 	add_chat_buddy_common(conv, cbuddy, NULL);
 	g_free(alias);
 }

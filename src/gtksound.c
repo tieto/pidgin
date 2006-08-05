@@ -342,7 +342,7 @@ gaim_gtk_sound_uninit(void)
 static gboolean
 bus_call (GstBus     *bus,
 	  GstMessage *msg,
-  	  gpointer    data)
+	  gpointer    data)
 {
 	GstElement *play = data;
 	GError *err;
@@ -443,17 +443,17 @@ gaim_gtk_sound_play_file(const char *filename)
 
 	uri = g_strdup_printf("file://%s", filename);
 	play = gst_element_factory_make("playbin", "play");
-	
+
 	g_object_set(G_OBJECT(play), "uri", uri,
-		                     "volume", volume, 
+		                     "volume", volume,
 		                     "audio-sink", sink, NULL);
 
 	gst_bus_add_watch(gst_pipeline_get_bus(GST_PIPELINE(play)),
 			  bus_call, play);
 	gst_element_set_state(play, GST_STATE_PLAYING);
-	
+
 	g_free(uri);
-	
+
 #else /* USE_GSTREAMER */
 	gdk_beep();
 	return;
@@ -499,7 +499,7 @@ gaim_gtk_sound_play_event(GaimSoundEventID event)
 	if (gaim_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(gaim_prefs_get_string(file_pref));
 		if(!filename || !strlen(filename)) {
-			if(filename) g_free(filename);
+			g_free(filename);
 			filename = g_build_filename(DATADIR, "sounds", "gaim", sounds[event].def, NULL);
 		}
 

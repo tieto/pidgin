@@ -926,8 +926,7 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 
 						/* don't store a blank attribute name */
 						if (len) {
-							if (name)
-								g_free(name);
+							g_free(name);
 							name = g_ascii_strdown(cur, len);
 						}
 
@@ -994,8 +993,7 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 	}
 
 	/* clean up any attribute name from a premature termination */
-	if (name)
-		g_free(name);
+	g_free(name);
 
 	if (found) {
 		*attributes = attribs;
@@ -1770,7 +1768,7 @@ char *
 gaim_markup_linkify(const char *text)
 {
 	const char *c, *t, *q = NULL;
-	char *tmp, *tmpurlbuf, *url_buf;
+	char *tmpurlbuf, *url_buf;
 	gunichar g;
 	gboolean inside_html = FALSE;
 	int inside_paren = 0;
@@ -2023,9 +2021,7 @@ gaim_markup_linkify(const char *text)
 		c++;
 
 	}
-	tmp = ret->str;
-	g_string_free(ret, FALSE);
-	return tmp;
+	return g_string_free(ret, FALSE);
 }
 
 char *
@@ -2110,8 +2106,7 @@ gaim_markup_slice(const char *str, guint x, guint y)
 				char *tmp;
 
 				tmp = g_queue_pop_head(q);
-				if (tmp)
-					g_free(tmp);
+				g_free(tmp);
 				/* z += 0; */
 			} else {
 				/* push it unto the stack */
@@ -3430,10 +3425,10 @@ gaim_url_fetch_request(const char *url, gboolean full,
 	gfud->callback = cb;
 	gfud->user_data  = user_data;
 	gfud->url = g_strdup(url);
-	gfud->user_agent = user_agent ? g_strdup(user_agent) : NULL;
+	gfud->user_agent = g_strdup(user_agent);
 	gfud->http11 = http11;
 	gfud->full = full;
-	gfud->request = request ? g_strdup(request) : NULL;
+	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
 
 	gaim_url_parse(url, &gfud->website.address, &gfud->website.port,
@@ -3677,8 +3672,7 @@ gaim_utf8_try_convert(const char *str)
 	if ((utf8 != NULL) && (converted == strlen(str)))
 		return utf8;
 
-	if (utf8 != NULL)
-		g_free(utf8);
+	g_free(utf8);
 
 	return NULL;
 }

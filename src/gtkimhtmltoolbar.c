@@ -878,8 +878,7 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 				toolbar);
 	}
 
-	if (toolbar->sml)
-		free(toolbar->sml);
+	free(toolbar->sml);
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
 
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -1132,8 +1131,6 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 
 void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *proto_id)
 {
-	if (toolbar->sml)
-		g_free(toolbar->sml);
-
+	g_free(toolbar->sml);
 	toolbar->sml = g_strdup(proto_id);
 }

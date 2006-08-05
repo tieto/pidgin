@@ -124,8 +124,7 @@ GaimWhiteboard *gaim_whiteboard_get_session(GaimAccount *account, const char *wh
 
 void gaim_whiteboard_draw_list_destroy(GList *draw_list)
 {
-	if (draw_list)
-		g_list_free(draw_list);
+	g_list_free(draw_list);
 }
 
 gboolean gaim_whiteboard_get_dimensions(GaimWhiteboard *wb, int *width, int *height)

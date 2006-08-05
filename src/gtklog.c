@@ -111,8 +111,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
 	GList *logs;
 
-	if (lv->search != NULL)
-		g_free(lv->search);
+	g_free(lv->search);
 
 	gtk_tree_store_clear(lv->treestore);
 	if (!(*search_term)) {
@@ -154,9 +153,7 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 		lv = g_hash_table_lookup(log_viewers, ht);
 		g_hash_table_remove(log_viewers, ht);
 
-		if (ht->screenname != NULL)
-			g_free(ht->screenname);
-
+		g_free(ht->screenname);
 		g_free(ht);
 	} else
 		syslog_viewer = NULL;
@@ -164,10 +161,9 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 	g_list_foreach(lv->logs, (GFunc)gaim_log_free, NULL);
 	g_list_free(lv->logs);
 
-	if (lv->search != NULL)
-		g_free(lv->search);
-
+	g_free(lv->search);
 	g_free(lv);
+
 	gtk_widget_destroy(w);
 
 	return TRUE;

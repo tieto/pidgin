@@ -1248,10 +1248,8 @@ gtk_imhtml_finalize (GObject *object)
 
 	g_list_free(imhtml->scalables);
 	g_slist_free(imhtml->im_images);
-	if (imhtml->protocol_name)
-		g_free(imhtml->protocol_name);
-	if (imhtml->search_string)
-		g_free(imhtml->search_string);
+	g_free(imhtml->protocol_name);
+	g_free(imhtml->search_string);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -2737,8 +2735,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 							ws[0] = '\0'; wpos = 0;
 							/* NEW_BIT(NEW_TEXT_BIT); */
-							if (bg)
-								g_free(bg);
+							g_free(bg);
 							bg = bgcolor;
 							gtk_imhtml_toggle_background(imhtml, bg);
 						}
@@ -2752,8 +2749,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							ws[0] = '\0'; wpos = 0;
 							gtk_imhtml_toggle_link(imhtml, href);
 						}
-						if (href)
-							g_free(href);
+						g_free(href);
 					}
 					break;
 				case 46:	/* IMG (opt) */
@@ -3037,14 +3033,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	while (fonts) {
 		GtkIMHtmlFontDetail *font = fonts->data;
 		fonts = g_slist_remove (fonts, font);
-		if (font->face)
-			g_free (font->face);
-		if (font->fore)
-			g_free (font->fore);
-		if (font->back)
-			g_free (font->back);
-		if (font->sml)
-			g_free (font->sml);
+		g_free (font->face);
+		g_free (font->fore);
+		g_free (font->back);
+		g_free (font->sml);
 		g_free (font);
 	}
 
@@ -3082,9 +3074,8 @@ gtk_imhtml_get_protocol_name(GtkIMHtml *imhtml) {
 
 void
 gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name) {
-	if (imhtml->protocol_name)
-		g_free(imhtml->protocol_name);
-	imhtml->protocol_name = protocol_name ? g_strdup(protocol_name) : NULL;
+	g_free(imhtml->protocol_name);
+	imhtml->protocol_name = g_strdup(protocol_name);
 }
 
 void
@@ -3174,7 +3165,7 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, i
 	im_image->width = gdk_pixbuf_get_width(img);
 	im_image->height = gdk_pixbuf_get_height(img);
 	im_image->mark = NULL;
-	im_image->filename = filename ? g_strdup(filename) : NULL;
+	im_image->filename = g_strdup(filename);
 	im_image->id = id;
 	im_image->filesel = NULL;
 
@@ -3441,8 +3432,7 @@ void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 
 	g_object_unref(image->pixbuf);
-	if (image->filename)
-		g_free(image->filename);
+	g_free(image->filename);
 	if (image->filesel)
 		gtk_widget_destroy(image->filesel);
 	g_free(scale);
@@ -3559,8 +3549,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml)
 	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
 
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "search", &start, &end);
-	if (imhtml->search_string)
-		g_free(imhtml->search_string);
+	g_free(imhtml->search_string);
 	imhtml->search_string = NULL;
 }
 
@@ -3825,7 +3814,7 @@ static void delete_cb(GtkTextBuffer *buffer, GtkTextIter *start, GtkTextIter *en
 					strncmp(tag->name, "LINK ", 5) == 0 && imhtml->edit.link) {
 				gtk_imhtml_toggle_link(imhtml, NULL);
 			}
-		}			
+		}
 	}
 	g_slist_free(tags);
 }
@@ -3944,37 +3933,25 @@ void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold,
 char *
 gtk_imhtml_get_current_fontface(GtkIMHtml *imhtml)
 {
-	if (imhtml->edit.fontface)
-		return g_strdup(imhtml->edit.fontface);
-	else
-		return NULL;
+	return g_strdup(imhtml->edit.fontface);
 }
 
 char *
 gtk_imhtml_get_current_forecolor(GtkIMHtml *imhtml)
 {
-	if (imhtml->edit.forecolor)
-		return g_strdup(imhtml->edit.forecolor);
-	else
-		return NULL;
+	return g_strdup(imhtml->edit.forecolor);
 }
 
 char *
 gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml)
 {
-	if (imhtml->edit.backcolor)
-		return g_strdup(imhtml->edit.backcolor);
-	else
-		return NULL;
+	return g_strdup(imhtml->edit.backcolor);
 }
 
 char *
 gtk_imhtml_get_current_background(GtkIMHtml *imhtml)
 {
-	if (imhtml->edit.background)
-		return g_strdup(imhtml->edit.background);
-	else
-		return NULL;
+	return g_strdup(imhtml->edit.background);
 }
 
 gint
@@ -4029,15 +4006,15 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 		return;
 
 	imhtml->edit.bold = imhtml->edit.italic = imhtml->edit.underline = imhtml->edit.strike = FALSE;
-	if (imhtml->edit.forecolor)
-		g_free(imhtml->edit.forecolor);
+	g_free(imhtml->edit.forecolor);
 	imhtml->edit.forecolor = NULL;
-	if (imhtml->edit.backcolor)
-		g_free(imhtml->edit.backcolor);
+
+	g_free(imhtml->edit.backcolor);
 	imhtml->edit.backcolor = NULL;
-	if (imhtml->edit.fontface)
-		g_free(imhtml->edit.fontface);
+
+	g_free(imhtml->edit.fontface);
 	imhtml->edit.fontface = NULL;
+
 	imhtml->edit.fontsize = 0;
 	imhtml->edit.link = NULL;
 

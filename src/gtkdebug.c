@@ -58,9 +58,9 @@ typedef struct
 
 	gboolean invert;
 	gboolean highlight;
-	
+
 	guint timer;
-	
+
 	regex_t regex;
 #else
 	GtkWidget *find;
@@ -351,8 +351,8 @@ regex_match(DebugWindow *win, const gchar *text) {
 
 			for(m = 0; m < n_matches; m++) {
 				GtkTextIter ms, me;
-				
-				if(matches[m].rm_eo == -1) 
+
+				if(matches[m].rm_eo == -1)
 					break;
 
 				i += offset;
@@ -524,7 +524,7 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 	 */
 	if(win->paused)
 		return;
-	
+
 	gtk_tree_model_get(model, iter, 0, &text, -1);
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
@@ -840,8 +840,7 @@ gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 		g_free(new_msg);
 	}
 
-	if (new_domain != NULL)
-		g_free(new_domain);
+	g_free(new_domain);
 }
 
 #ifdef _WIN32

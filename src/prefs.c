@@ -463,7 +463,6 @@ pref_full_name(struct gaim_pref *pref)
 {
 	GString *name;
 	struct gaim_pref *parent;
-	char *ret;
 
 	if(!pref)
 		return NULL;
@@ -479,9 +478,7 @@ pref_full_name(struct gaim_pref *pref)
 		name = g_string_prepend(name, parent->name);
 	}
 	name = g_string_prepend_c(name, '/');
-	ret = name->str;
-	g_string_free(name, FALSE);
-	return ret;
+	return g_string_free(name, FALSE);
 }
 
 static struct gaim_pref *
@@ -514,10 +511,7 @@ free_pref_value(struct gaim_pref *pref)
 			break;
 		case GAIM_PREF_STRING_LIST:
 			{
-				GList *tmp;
-				for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
-					g_free(tmp->data);
-
+				g_list_foreach(pref->value.stringlist, (GFunc)g_free, NULL);
 				g_list_free(pref->value.stringlist);
 			} break;
 		case GAIM_PREF_NONE:
@@ -794,15 +788,14 @@ gaim_prefs_set_string_list(const char *name, GList *value)
 			return;
 		}
 
-		for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
-			g_free(tmp->data);
-
+		g_list_foreach(pref->value.stringlist, (GFunc)g_free, NULL);
 		g_list_free(pref->value.stringlist);
 		pref->value.stringlist = NULL;
 
 		for(tmp = value; tmp; tmp = tmp->next)
-			pref->value.stringlist = g_list_append(pref->value.stringlist,
+			pref->value.stringlist = g_list_prepend(pref->value.stringlist,
 					g_strdup(tmp->data));
+		pref->value.stringlist = g_list_reverse(pref->value.stringlist);
 
 		do_callbacks(name, pref);
 
@@ -904,7 +897,8 @@ gaim_prefs_get_string_list(const char *name)
 	}
 
 	for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
-		ret = g_list_append(ret, g_strdup(tmp->data));
+		ret = g_list_prepend(ret, g_strdup(tmp->data));
+	ret = g_list_reverse(ret);
 
 	return ret;
 }

@@ -521,8 +521,7 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->account_name = NULL;
 	}
 
-	if (buffer != NULL)
-		g_free(buffer);
+	g_free(buffer);
 }
 
 static void
@@ -728,8 +727,7 @@ gaim_pounce_set_pouncee(GaimPounce *pounce, const char *pouncee)
 	g_return_if_fail(pouncee != NULL);
 
 	g_free(pounce->pouncee);
-
-	pounce->pouncee = (pouncee == NULL ? NULL : g_strdup(pouncee));
+	pounce->pouncee = g_strdup(pouncee);
 
 	schedule_pounces_save();
 }
@@ -926,7 +924,7 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 			!gaim_utf8_strcasecmp(gaim_normalize(pouncer, gaim_pounce_get_pouncee(pounce)),
 								  norm_pouncee) &&
 			(pounce->options == GAIM_POUNCE_OPTION_NONE ||
-			 (pounce->options & GAIM_POUNCE_OPTION_AWAY && 
+			 (pounce->options & GAIM_POUNCE_OPTION_AWAY &&
 			  !gaim_presence_is_available(presence))))
 		{
 			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);

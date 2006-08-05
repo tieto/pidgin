@@ -190,7 +190,7 @@ gaim_plugin_new(gboolean native, const char *path)
 	plugin = g_new0(GaimPlugin, 1);
 
 	plugin->native_plugin = native;
-	plugin->path = (path == NULL ? NULL : g_strdup(path));
+	plugin->path = g_strdup(path);
 
 	GAIM_DBUS_REGISTER_POINTER(plugin, GaimPlugin);
 
@@ -528,8 +528,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 			                  _("Gaim encountered errors loading the plugin."), tmp);
 			g_free(tmp);
 
-			if (dep_list != NULL)
-				g_list_free(dep_list);
+			g_list_free(dep_list);
 
 			return FALSE;
 		}
@@ -555,8 +554,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 				                 _("Gaim was unable to load your plugin."), tmp);
 				g_free(tmp);
 
-				if (dep_list != NULL)
-					g_list_free(dep_list);
+				g_list_free(dep_list);
 
 				return FALSE;
 			}
@@ -571,8 +569,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 		dep_plugin->dependent_plugins = g_list_prepend(dep_plugin->dependent_plugins, plugin->info->id);
 	}
 
-	if (dep_list != NULL)
-		g_list_free(dep_list);
+	g_list_free(dep_list);
 
 	if (plugin->native_plugin)
 	{
@@ -786,7 +783,7 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 		return;
 	}
 
-	if (plugin->info != NULL && plugin->info->dependencies != NULL)
+	if (plugin->info != NULL)
 		g_list_free(plugin->info->dependencies);
 
 	if (plugin->native_plugin)

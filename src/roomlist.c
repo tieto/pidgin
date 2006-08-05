@@ -102,21 +102,14 @@ static void gaim_roomlist_destroy(GaimRoomlist *list)
 	if (ops && ops->destroy)
 		ops->destroy(list);
 
-	if (list->rooms) {
-		for (l = list->rooms; l; l = l->next) {
-			GaimRoomlistRoom *r = l->data;
-			gaim_roomlist_room_destroy(list, r);
-		}
-		g_list_free(list->rooms);
+	for (l = list->rooms; l; l = l->next) {
+		GaimRoomlistRoom *r = l->data;
+		gaim_roomlist_room_destroy(list, r);
 	}
+	g_list_free(list->rooms);
 
-	if (list->fields) {
-		for (l = list->fields; l; l = l->next) {
-			GaimRoomlistField *f = l->data;
-			gaim_roomlist_field_destroy(f);
-		}
-		g_list_free(list->fields);
-	}
+	g_list_foreach(list->fields, (GFunc)gaim_roomlist_field_destroy, NULL);
+	g_list_free(list->fields);
 
 	g_free(list);
 }

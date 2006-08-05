@@ -627,21 +627,21 @@ gaim_contact_compute_priority_buddy(GaimContact *contact)
 
 		if (!gaim_account_is_connected(buddy->account))
 			continue;
- 		if (new_priority == NULL)
- 			new_priority = buddy;
- 		else
- 		{
- 			int cmp;
+		if (new_priority == NULL)
+			new_priority = buddy;
+		else
+		{
+			int cmp;
 
 			cmp = gaim_presence_compare(gaim_buddy_get_presence(new_priority),
 			                            gaim_buddy_get_presence(buddy));
 
- 			if (cmp > 0 || (cmp == 0 &&
+			if (cmp > 0 || (cmp == 0 &&
 			                gaim_prefs_get_bool("/core/contact/last_match")))
- 			{
- 				new_priority = buddy;
- 			}
- 		}
+			{
+				new_priority = buddy;
+			}
+		}
 	}
 
 	contact->priority = new_priority;
@@ -1055,7 +1055,7 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 				/* Make a list of what the groups each buddy is in */
 				for(cur = buddies; cur; cur = cur->next) {
 					GaimBlistNode *node = (GaimBlistNode *)cur->data;
-					groups = g_list_append(groups, node->parent->parent);
+					groups = g_list_prepend(groups, node->parent->parent);
 				}
 
 				gaim_account_remove_buddies(account, buddies, groups);
@@ -2037,7 +2037,7 @@ const char *gaim_buddy_get_local_alias(GaimBuddy *buddy)
 const char *gaim_chat_get_name(GaimChat *chat)
 {
 	struct proto_chat_entry *pce;
-	GList *parts, *tmp;
+	GList *parts;
 	char *ret;
 
 	g_return_val_if_fail(chat != NULL, NULL);
@@ -2048,8 +2048,7 @@ const char *gaim_chat_get_name(GaimChat *chat)
 	parts = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
 	pce = parts->data;
 	ret = g_hash_table_lookup(chat->components, pce->identifier);
-	for (tmp = parts; tmp; tmp = tmp->next)
-		g_free(tmp->data);
+	g_list_foreach(parts, (GFunc)g_free, NULL);
 	g_list_free(parts);
 
 	return ret;

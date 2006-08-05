@@ -196,11 +196,7 @@ gaim_core_quit(void)
 	gaim_dbus_uninit();
 #endif
 
-	if (core->ui != NULL) {
-		g_free(core->ui);
-		core->ui = NULL;
-	}
-
+	g_free(core->ui);
 	g_free(core);
 
 	_core = NULL;

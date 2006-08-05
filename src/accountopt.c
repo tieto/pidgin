@@ -87,8 +87,7 @@ gaim_account_option_string_new(const char *text, const char *pref_name,
 	if (option == NULL)
 		return NULL;
 
-	if (default_value != NULL)
-		option->default_value.string = g_strdup(default_value);
+	option->default_value.string = g_strdup(default_value);
 
 	return option;
 }
@@ -159,10 +158,8 @@ gaim_account_option_set_default_string(GaimAccountOption *option,
 	g_return_if_fail(option != NULL);
 	g_return_if_fail(option->type == GAIM_PREF_STRING);
 
-	if (option->default_value.string != NULL)
-		g_free(option->default_value.string);
-
-	option->default_value.string = (value == NULL ? NULL : g_strdup(value));
+	g_free(option->default_value.string);
+	option->default_value.string = g_strdup(value);
 }
 
 void
@@ -310,8 +307,7 @@ gaim_account_user_split_new(const char *text, const char *default_value,
 
 	split->text = g_strdup(text);
 	split->field_sep = sep;
-	split->default_value = (default_value == NULL
-							? NULL : g_strdup(default_value));
+	split->default_value = g_strdup(default_value);
 
 	return split;
 }
@@ -321,12 +317,8 @@ gaim_account_user_split_destroy(GaimAccountUserSplit *split)
 {
 	g_return_if_fail(split != NULL);
 
-	if (split->text != NULL)
-		g_free(split->text);
-
-	if (split->default_value != NULL)
-		g_free(split->default_value);
-
+	g_free(split->text);
+	g_free(split->default_value);
 	g_free(split);
 }
 

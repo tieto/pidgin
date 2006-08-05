@@ -553,9 +553,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 			((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
 	}
 
-	if (data->entries != NULL)
-		g_list_free(data->entries);
-
+	g_list_free(data->entries);
 	data->entries = NULL;
 
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
@@ -1519,8 +1517,7 @@ parse_vcard(const char *vcard, GaimGroup *group)
 	if (aims == NULL && icqs == NULL && yahoos == NULL &&
 		msns == NULL && jabbers == NULL)
 	{
-		if (alias != NULL)
-			g_free(alias);
+		g_free(alias);
 
 		return FALSE;
 	}
@@ -1531,8 +1528,7 @@ parse_vcard(const char *vcard, GaimGroup *group)
 	add_buddies_from_vcard("prpl-msn",    group, msns,    alias);
 	add_buddies_from_vcard("prpl-jabber", group, jabbers, alias);
 
-	if (alias != NULL)
-		g_free(alias);
+	g_free(alias);
 
 	return TRUE;
 }
@@ -1594,7 +1590,6 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 		GValue val;
 		GString *str;
 		const char *protocol;
-		char *mime_str;
 
 		ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
 		sourcerow = gtk_tree_row_reference_get_path(ref);
@@ -1654,15 +1649,13 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 
 		str = g_string_append(str, "\r\n");
 
-		mime_str = g_string_free(str, FALSE);
-
 		gtk_selection_data_set(data,
 					gdk_atom_intern("application/x-im-contact", FALSE),
 					8, /* bits */
-					(const guchar *)mime_str,
-					strlen(mime_str) + 1);
+					(const guchar *)str->str,
+					strlen(str->str) + 1);
 
-		g_free(mime_str);
+		g_string_free(str, TRUE);
 		gtk_tree_path_free(sourcerow);
 	}
 }
@@ -1878,9 +1871,9 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			}
 		}
 
-		if (username != NULL) g_free(username);
-		if (protocol != NULL) g_free(protocol);
-		if (alias    != NULL) g_free(alias);
+		g_free(username);
+		g_free(protocol);
+		g_free(alias);
 
 		if (path != NULL)
 			gtk_tree_path_free(path);
@@ -2966,7 +2959,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		statustext = g_strdup(_("Offline"));
 	else if (!statustext)
 		text = g_strdup(esc);
-		
+
 	if (gaim_presence_is_idle(presence)) {
 		if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time")) {
 			time_t idle_secs = gaim_presence_get_idle_time(presence);
@@ -3017,7 +3010,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	}
 
 	/* It is selected. */
-	if ((selected && !text) || (selected && idletime)) 
+	if ((selected && !text) || (selected && idletime))
 		text = g_strdup_printf("%s\n"
 			"<span size='smaller'>%s%s%s</span>",
 			esc,
@@ -3072,7 +3065,7 @@ static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list)
 
 	if (gtk_blist_obscured || !GTK_WIDGET_VISIBLE(gtkblist->window))
 		return TRUE;
-	
+
 	for(gnode = list->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
@@ -3084,7 +3077,7 @@ static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list)
 
 				if (buddy &&
 						gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
-					gaim_gtk_blist_update_contact(list, (GaimBlistNode*)buddy);		
+					gaim_gtk_blist_update_contact(list, (GaimBlistNode*)buddy);
 			}
 		}
 	}
@@ -4246,7 +4239,7 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 
 	contact = (GaimContact*)cnode;
 	buddy = gaim_contact_get_priority_buddy(contact);
-	
+
 	if (buddy_is_displayable(buddy))
 	{
 		GtkTreeIter iter;
@@ -4294,10 +4287,10 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
 	if (node->parent == NULL)
-		return;	
+		return;
 
 	buddy = (GaimBuddy*)node;
-	
+
 	/* First things first, update the contact */
 	gaim_gtk_blist_update_contact(list, node);
 
@@ -4800,8 +4793,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
 	}
 
-	if (data->entries != NULL)
-		g_list_free(data->entries);
+	g_list_free(data->entries);
 
 	data->entries = NULL;
 
@@ -5833,7 +5825,7 @@ gaim_gtk_blist_update_plugin_actions(void)
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 		gtk_widget_show(submenu);
-		
+
 		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
 		path = g_strdup_printf("%s/Tools/%s", gtkblist->ift->path, plugin->info->name);
 		gtk_menu_set_accel_path(GTK_MENU(submenu), path);

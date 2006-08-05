@@ -204,7 +204,7 @@ set_dialog_icon(AccountPrefsDialog *dialog)
 		gaim_gtk_buddy_icon_get_scale_size(pixbuf,
 							&dialog->prpl_info->icon_spec, &width, &height);
 		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
-		
+
 		g_object_unref(G_OBJECT(pixbuf));
 		pixbuf = scale;
 	}
@@ -231,9 +231,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	{
 		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
-		if (dialog->protocol_id != NULL)
-			g_free(dialog->protocol_id);
-
+		g_free(dialog->protocol_id);
 		dialog->protocol_id = g_strdup(dialog->plugin->info->id);
 	}
 
@@ -317,8 +315,7 @@ icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 #endif /* FILECHOOSER */
 
-	if (dialog->icon_path)
-		g_free(dialog->icon_path);
+	g_free(dialog->icon_path);
 	dialog->icon_path = convert_buddy_icon(dialog->plugin, filename);
 	set_dialog_icon(dialog);
 	gtk_widget_show(dialog->icon_entry);
@@ -482,8 +479,7 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 static void
 icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-	if (dialog->icon_path)
-		g_free(dialog->icon_path);
+	g_free(dialog->icon_path);
 	dialog->icon_path = NULL;
 
 	gtk_widget_hide(dialog->icon_entry);
@@ -512,8 +508,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
-			if (dialog->icon_path)
-				g_free(dialog->icon_path);
+			g_free(dialog->icon_path);
 			dialog->icon_path = convert_buddy_icon(dialog->plugin, tmp);
 			set_dialog_icon(dialog);
 			gtk_widget_show(dialog->icon_entry);
@@ -1423,14 +1418,9 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	gtk_widget_destroy(dialog->window);
 
-	if (dialog->user_split_entries != NULL)
-		g_list_free(dialog->user_split_entries);
-
-	if (dialog->protocol_opt_entries != NULL)
-		g_list_free(dialog->protocol_opt_entries);
-
-	if (dialog->protocol_id != NULL)
-		g_free(dialog->protocol_id);
+	g_list_free(dialog->user_split_entries);
+	g_list_free(dialog->protocol_opt_entries);
+	g_free(dialog->protocol_id);
 
 	if (dialog->icon_path != NULL)
 	{
@@ -2572,10 +2562,7 @@ static void
 free_add_user_data(GaimGtkAccountAddUserData *data)
 {
 	g_free(data->username);
-
-	if (data->alias != NULL)
-		g_free(data->alias);
-
+	g_free(data->alias);
 	g_free(data);
 }
 
@@ -2645,7 +2632,7 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	data = g_new0(GaimGtkAccountAddUserData, 1);
 	data->account  = account;
 	data->username = g_strdup(remote_user);
-	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
+	data->alias    = g_strdup(alias);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 

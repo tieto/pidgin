@@ -1053,9 +1053,9 @@ gaim_gtk_parse_x_im_contact(const char *msg, gboolean all_accounts,
 	{
 		valid = FALSE;
 
-		if (username != NULL) g_free(username);
-		if (protocol != NULL) g_free(protocol);
-		if (alias    != NULL) g_free(alias);
+		g_free(username);
+		g_free(protocol);
+		g_free(alias);
 	}
 
 	g_free(str);

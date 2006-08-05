@@ -60,9 +60,9 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 
 		if (info->ui_handle != NULL) {
 			handles = g_list_append(handles, info);
-			
+
 			return info->ui_handle;
-			
+
 		} else {
 			if (info->cb != NULL)
 				info->cb(info->cb_user_data);
@@ -111,7 +111,7 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 			g_free(info);
 
 			return NULL;
-		}		
+		}
 	} else {
 		if (cb != NULL)
 			cb(user_data);
@@ -197,15 +197,15 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 
 		if (info->ui_handle != NULL) {
 			handles = g_list_append(handles, info);
-			
+
 			return info->ui_handle;
-			
+
 		} else {
 			if (info->cb != NULL)
 				info->cb(info->cb_user_data);
-			
+
 			g_free(info);
-			
+
 			return NULL;
 		}
 
@@ -272,23 +272,18 @@ gaim_notify_searchresults_free(GaimNotifySearchResults *results)
 		g_free(button->label);
 		g_free(button);
 	}
-	results->buttons = NULL;
 
 	for (l = results->rows; l; l = g_list_delete_link(l, l)) {
 		GList *row = l->data;
-		for (; row; row = g_list_delete_link(row, row)) {
-			gchar *str = row->data;
-			g_free(str);
-		}
+		g_list_foreach(row, (GFunc)g_free, NULL);
+		g_list_free(row);
 	}
-	results->rows = NULL;
 
 	for (l = results->columns; l; l = g_list_delete_link(l, l)) {
 		GaimNotifySearchColumn *column = l->data;
 		g_free(column->title);
 		g_free(column);
 	}
-	results->columns = NULL;
 
 	g_free(results);
 }
@@ -487,7 +482,7 @@ gaim_notify_uri(void *handle, const char *uri)
 
 		if (info->ui_handle != NULL) {
 			handles = g_list_append(handles, info);
-			
+
 			return info->ui_handle;
 
 		} else {

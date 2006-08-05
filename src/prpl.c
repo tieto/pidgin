@@ -123,7 +123,7 @@ void
 gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		const char *status_id, ...)
 {
-	GSList *list, *iter;
+	GSList *list;
 	GaimBuddy *buddy;
 	GaimPresence *presence;
 	GaimStatus *status;
@@ -150,11 +150,7 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 	va_end(args);
 
 	list = gaim_find_buddies(account, name);
-	for (iter = list; iter != NULL; iter = iter->next)
-	{
-		buddy = (GaimBuddy *)iter->data;
-		gaim_blist_update_buddy_status(buddy, old_status);
-	}
+	g_slist_foreach(list, (GFunc)gaim_blist_update_buddy_status, old_status);
 	g_slist_free(list);
 
 	if (!gaim_status_is_online(status))

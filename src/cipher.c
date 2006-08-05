@@ -10,7 +10,7 @@
  *
  * Original md4 taken from linux kernel
  * MD4 Message Digest Algorithm (RFC1320).
- * 
+ *
  * Implementation derived from Andrew Tridgell and Steve French's
  * CIFS MD4 implementation, and the cryptoapi implementation
  * originally based on the public domain implementation written
@@ -26,16 +26,16 @@
  *
  * des.c - DES and Triple-DES encryption/decryption Algorithm
  *	Copyright (C) 1998 Free Software Foundation, Inc.
- *	
+ *
  *	Please see below for more legal information!
- *	
+ *
  *	 According to the definition of DES in FIPS PUB 46-2 from December 1993.
  *	 For a description of triple encryption, see:
  *	   Bruce Schneier: Applied Cryptography. Second Edition.
  *	   John Wiley & Sons, 1996. ISBN 0-471-12845-7. Pages 358 ff.
- *	
+ *
  *	 This file is part of GnuPG.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or

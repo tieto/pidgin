@@ -110,7 +110,7 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 				log->tm->tm_zone = tmp;
 			else
 				/* Just shove the UTF-8 bytes in and hope... */
-				log->tm->tm_zone = (char *)g_strdup(log->tm->tm_zone);
+				log->tm->tm_zone = g_strdup(log->tm->tm_zone);
 		}
 #endif
 	}
@@ -853,7 +853,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 		for (account_iter = gaim_accounts_get_all() ; account_iter != NULL ; account_iter = account_iter->next) {
 			GaimPlugin *prpl;
 			GaimPluginProtocolInfo *prpl_info;
-		
+
 			prpl = gaim_find_prpl(gaim_account_get_protocol_id((GaimAccount *)account_iter->data));
 			if (!prpl)
 				continue;
@@ -1281,8 +1281,7 @@ static void txt_logger_finalize(GaimLog *log)
 	if (data) {
 		if(data->file)
 			fclose(data->file);
-		if(data->path)
-			g_free(data->path);
+		g_free(data->path);
 
 		g_slice_free(GaimLogCommonLoggerData, data);
 	}

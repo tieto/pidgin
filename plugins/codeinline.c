@@ -48,12 +48,12 @@ static gboolean outgoing_msg_cb(GaimAccount *account, const char *who, char **me
 
 static gboolean
 plugin_load(GaimPlugin *plugin)
-{       
+{
      void *handle = gaim_conversations_get_handle();
      plugin_handle = plugin;
-     gaim_signal_connect(handle, "writing-im-msg", plugin, 
+     gaim_signal_connect(handle, "writing-im-msg", plugin,
                 GAIM_CALLBACK(outgoing_msg_cb), NULL);
-     
+
      return TRUE;
 }
 

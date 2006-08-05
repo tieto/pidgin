@@ -280,23 +280,14 @@ gaim_status_type_new_with_attrs(GaimStatusPrimitive primitive,
 void
 gaim_status_type_destroy(GaimStatusType *status_type)
 {
-	GList *l;
-
 	g_return_if_fail(status_type != NULL);
 
 	g_free(status_type->id);
 	g_free(status_type->name);
+	g_free(status_type->primary_attr_id);
 
-	if (status_type->primary_attr_id != NULL)
-		g_free(status_type->primary_attr_id);
-
-	if (status_type->attrs != NULL)
-	{
-		for (l = status_type->attrs; l != NULL; l = l->next)
-			gaim_status_attr_destroy((GaimStatusAttr *)l->data);
-
-		g_list_free(status_type->attrs);
-	}
+	g_list_foreach(status_type->attrs, (GFunc)gaim_status_attr_destroy, NULL);
+	g_list_free(status_type->attrs);
 
 	GAIM_DBUS_UNREGISTER_POINTER(status_type);
 	g_free(status_type);
@@ -307,10 +298,8 @@ gaim_status_type_set_primary_attr(GaimStatusType *status_type, const char *id)
 {
 	g_return_if_fail(status_type != NULL);
 
-	if (status_type->primary_attr_id != NULL)
-		g_free(status_type->primary_attr_id);
-
-	status_type->primary_attr_id = (id == NULL ? NULL : g_strdup(id));
+	g_free(status_type->primary_attr_id);
+	status_type->primary_attr_id = g_strdup(id);
 }
 
 void
@@ -1192,19 +1181,15 @@ gaim_presence_destroy(GaimPresence *presence)
 
 		g_hash_table_remove(buddy_presences, &key);
 
-		if (presence->u.buddy.name != NULL)
-			g_free(presence->u.buddy.name);
+		g_free(presence->u.buddy.name);
 	}
 	else if (gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_CONV)
 	{
-		if (presence->u.chat.user != NULL)
-			g_free(presence->u.chat.user);
+		g_free(presence->u.chat.user);
 	}
 
-	if (presence->statuses != NULL) {
-		g_list_foreach(presence->statuses, (GFunc)gaim_status_destroy, NULL);
-		g_list_free(presence->statuses);
-	}
+	g_list_foreach(presence->statuses, (GFunc)gaim_status_destroy, NULL);
+	g_list_free(presence->statuses);
 
 	g_hash_table_destroy(presence->status_table);
 

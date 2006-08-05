@@ -751,7 +751,7 @@ static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, GtkGaimStatusBo
 			status_menu_refresh_iter(status_box);
 		return TRUE;
 	}
-	
+
 	gtk_gaim_status_box_pulse_typing(status_box);
 	g_source_remove(status_box->typing);
 	status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);

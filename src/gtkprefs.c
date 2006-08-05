@@ -1474,7 +1474,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
 {
 	if(val < 15) {
- 		return g_strdup_printf(_("Quietest"));
+		return g_strdup_printf(_("Quietest"));
 	} else if(val < 30) {
 		return g_strdup_printf(_("Quieter"));
 	} else if(val < 45) {
