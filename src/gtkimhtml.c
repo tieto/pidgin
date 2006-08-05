@@ -220,7 +220,6 @@ clipboard_html_to_win32(char *html) {
 	int length;
 	GString *clipboard;
 	gchar *tmp;
-	gchar *ret;
 
 	if (html == NULL)
 		return NULL;
@@ -238,14 +237,8 @@ clipboard_html_to_win32(char *html) {
 	g_string_append(clipboard, "<!--StartFragment-->\r\n");
 	g_string_append(clipboard, html);
 	g_string_append(clipboard, "\r\n<!--EndFragment-->");
-	ret = clipboard->str;
-	g_string_free(clipboard, FALSE);
 
-#if 0 /* Debugging for Windows clipboard */
-	gaim_debug_info("imhtml clipboard", "from gaim: %s\n", ret);
-#endif
-
-	return ret;
+	return g_string_free(clipboard, FALSE);
 }
 
 static void clipboard_copy_html_win32(GtkIMHtml *imhtml) {
@@ -2229,11 +2222,9 @@ gtk_imhtml_get_css_opt (gchar       *style,
 			e++;
 		}
 	}
-
 	g_free(val);
-	val = ret->str;
-	g_string_free(ret, FALSE);
-	return val;
+
+	return g_string_free(ret, FALSE);
 }
 
 static const char *accepted_protocols[] = {
