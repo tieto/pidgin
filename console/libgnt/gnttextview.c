@@ -93,6 +93,7 @@ static void
 gnt_text_view_destroy(GntWidget *widget)
 {
 	GntTextView *view = GNT_TEXT_VIEW(widget);
+	view->list = g_list_first(view->list);
 	g_list_foreach(view->list, free_text_line, NULL);
 	g_list_free(view->list);
 }
@@ -292,5 +293,26 @@ void gnt_text_view_clear(GntTextView *view)
 
 	if (GNT_WIDGET(view)->window)
 		gnt_widget_draw(GNT_WIDGET(view));
+}
+
+int gnt_text_view_get_lines_below(GntTextView *view)
+{
+	int below = 0;
+	GList *list = view->list;
+	while ((list = list->prev))
+		++below;
+	return below;
+}
+
+int gnt_text_view_get_lines_above(GntTextView *view)
+{
+	int above = 0;
+	GList *list = view->list;
+	list = g_list_nth(view->list, GNT_WIDGET(view)->priv.height);
+	if (!list)
+		return 0;
+	while ((list = list->next))
+		++above;
+	return above;
 }
 

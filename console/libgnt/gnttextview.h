@@ -69,6 +69,10 @@ chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags);
 
 void gnt_text_view_clear(GntTextView *view);
 
+int gnt_text_view_get_lines_below(GntTextView *view);
+
+int gnt_text_view_get_lines_above(GntTextView *view);
+
 G_END_DECLS
 
 #endif /* GNT_TEXT_VIEW_H */
