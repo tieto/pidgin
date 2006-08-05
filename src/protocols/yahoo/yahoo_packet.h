@@ -127,7 +127,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd);
 int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd);
 size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 guchar **buf);
-void yahoo_packet_read(struct yahoo_packet *pkt, guchar *data, int len);
+void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len);
 void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data);
 void yahoo_packet_dump(guchar *data, int len);
 size_t yahoo_packet_length(struct yahoo_packet *pkt);
