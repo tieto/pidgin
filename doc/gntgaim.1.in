@@ -30,7 +30,7 @@ GntGaim \- Console frontend for Instant Messaging client Gaim.
 .PP
 \fBgntgaim\fR is a console-based frontend for Instant Messaging (IM)
 application Gaim.  It supports multiple protocols via modules, including AIM,
-ICQ, Yahoo!, MSN, Jabber, IRC, Napster, Gadu-Gadu and Zephyr.  It has many
+ICQ, Yahoo!, MSN, Jabber, IRC, Gadu-Gadu and Zephyr.  It has many
 common features found in other clients, as well as many unique features.  Gaim
 is not endorsed by or affiliated with America Online, ICQ, Microsoft, or Yahoo.
 

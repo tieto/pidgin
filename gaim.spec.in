@@ -112,7 +112,7 @@ Requires:   pkgconfig, gaim = %{epoch}:%{version}
 %description
 Gaim allows you to talk to anyone using a variety of messaging
 protocols, including AIM, ICQ, IRC, Yahoo!, Novell Groupwise, MSN
-Messenger, Jabber, Gadu-Gadu, Napster, Lotus Sametime and Zephyr.
+Messenger, Jabber, Gadu-Gadu, Lotus Sametime and Zephyr.
 These protocols are implemented using a modular, easy to use design.
 To use a protocol, just add an account using the account editor.
 

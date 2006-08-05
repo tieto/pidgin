@@ -30,7 +30,7 @@ Gaim v@VERSION@ \- Instant Messaging client
 .PP
 \fBgaim\fR is a GTK2-based Instant Messaging (IM) application.  It supports
 multiple protocols via modules, including AIM, ICQ, Yahoo!, MSN, Jabber,
-IRC, Napster, Gadu-Gadu and Zephyr.  It has many common features found in
+IRC, Gadu-Gadu and Zephyr.  It has many common features found in
 other clients, as well as many unique features.  Gaim is not endorsed by or
 affiliated with America Online, ICQ, Microsoft, or Yahoo.
 
