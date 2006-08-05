@@ -187,7 +187,6 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 	for (i = 0; split[i]; i++)
 	{
 		GntTextLine *line;
-		int len = g_utf8_strlen(split[i], -1);
 		char *iter = split[i];
 		int prev = 0;
 
@@ -202,8 +201,9 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 		while (iter && *iter)
 		{
 			GntTextSegment *seg = g_new0(GntTextSegment, 1);
+			int len = g_utf8_offset_to_pointer(iter, widget->priv.width - line->length - 1) - iter;
 			seg->flags = fl;
-			seg->text = g_new0(char, len + 1);		/* XXX: MUST be improved */
+			seg->text = g_new0(char, len + 1);
 			g_utf8_strncpy(seg->text, iter, widget->priv.width - line->length - 1);
 			line->segments = g_list_append(line->segments, seg);
 
@@ -215,7 +215,6 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 				line = g_new0(GntTextLine, 1);
 				view->list = g_list_prepend(g_list_first(view->list), line);
 			}
-			/*len -= prev;*/
 		}
 	}
 
