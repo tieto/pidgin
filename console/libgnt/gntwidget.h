@@ -40,6 +40,7 @@ typedef enum _GnWidgetFlags
 	GNT_WIDGET_GROW_X         = 1 << 8,
 	GNT_WIDGET_GROW_Y         = 1 << 9,
 	GNT_WIDGET_INVISIBLE      = 1 << 10,
+	GNT_WIDGET_TRANSIENT      = 1 << 11,
 } GntWidgetFlags;
 
 /* XXX: I'll have to ask grim what he's using this for in guifications. */

@@ -129,6 +129,7 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 							widget->priv.y - 9 + 1, widget->priv.x);
 				}
 
+				GNT_WIDGET_SET_FLAGS(parent, GNT_WIDGET_TRANSIENT);
 				gnt_widget_draw(parent);
 				return TRUE;
 			}

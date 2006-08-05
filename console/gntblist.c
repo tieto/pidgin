@@ -679,6 +679,7 @@ draw_tooltip(GGBlist *ggblist)
 
 	gnt_widget_set_position(box, x, y);
 	GNT_WIDGET_UNSET_FLAGS(box, GNT_WIDGET_CAN_TAKE_FOCUS);
+	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_TRANSIENT);
 	gnt_widget_draw(box);
 
 	g_free(title);

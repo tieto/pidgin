@@ -67,7 +67,7 @@ void gnt_screen_take_focus(GntWidget *widget)
 	/* XXX: ew */
 	focus_list = g_list_first(focus_list);
 	focus_list = g_list_append(focus_list, widget);
-	focus_list = g_list_find(focus_list, widget);
+	focus_list = g_list_find(focus_list, w ? w : widget);
 
 	gnt_widget_set_focus(widget, TRUE);
 	if (w)
@@ -757,7 +757,14 @@ void gnt_screen_update(GntWidget *widget)
 	gnt_box_sync_children(GNT_BOX(widget));
 	node = g_hash_table_lookup(nodes, widget);
 	if (node && !node->panel)
+	{
 		node->panel = new_panel(node->me->window);
+		if (!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT))
+		{
+			bottom_panel(node->panel);     /* New windows should not grab focus */
+			gnt_widget_set_urgent(node->me);
+		}
+	}
 
 	if (window_list.window)
 	{
