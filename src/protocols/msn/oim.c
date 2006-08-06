@@ -181,7 +181,7 @@ msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 	MsnSoapConn * soapconn = data;	
 	MsnOim * msnoim;
 
-	gaim_debug_info("MaYuan","read buffer:{%s}\n",soapconn->body);
+	gaim_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
 }
 
 static void
@@ -296,12 +296,13 @@ msn_oim_connect(MsnOim *oim)
 					msn_oim_get_connect_cb,
 					msn_oim_get_error_cb);
 	}
-
+#if 0
 	if(msn_soap_connected(oim->sendconn) == -1){
 		msn_soap_init(oim->sendconn,MSN_OIM_SEND_HOST,1,
 					msn_oim_send_connect_cb,
 					msn_oim_send_error_cb);
 	}
+#endif
 }
 
 /*endof oim.c*/

@@ -102,8 +102,11 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 void
 msn_soap_destroy(MsnSoapConn *soapconn)
 {
-	g_free(soapconn->login_host);
-	g_free(soapconn->login_path);
+	if(soapconn->login_host)
+		g_free(soapconn->login_host);
+
+	if(soapconn->login_path)
+		g_free(soapconn->login_path);
 
 	/*remove the write handler*/
 	if (soapconn->output_handler > 0){

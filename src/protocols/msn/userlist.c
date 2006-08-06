@@ -617,6 +617,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 	msn_notification_rem_buddy(userlist->session->notification, list, who, group_id);
 }
 
+/*add buddy*/
 void
 msn_userlist_add_buddy(MsnUserList *userlist,
 					   const char *who, int list_id,

@@ -565,6 +565,8 @@ msn_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
 							   (user->list_op & (1 << MSN_LIST_BL)) ?
 							   _("Yes") : _("No"));
 	}
+
+	gaim_debug_info("MaYuan","tooltip string:{%s}\n",str);
 }
 
 static GList *
@@ -778,6 +780,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	char *msgformat;
 	char *msgtext;
 
+	gaim_debug_info("MaYuan","send IM {%s}\n",message);
 	account = gaim_connection_get_account(gc);
 
 	msn_import_html(message, &msgformat, &msgtext);
@@ -1373,6 +1376,7 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 							  "\n", "<br>");
 		g_string_free(str, TRUE);
 		g_string_append_printf(s, "%s<br>", tmp);
+//		gaim_debug_info("MaYuan","tooltip info string:{%s}\n",s);
 		g_free(tmp);
 	}
 
@@ -1414,7 +1418,7 @@ static char *msn_info_date_reformat(const char *field, size_t len)
 
 #define MSN_GOT_INFO_GET_FIELD(a, b) \
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s, \
-			"\n" a "\t", 0, "\n", 0, "Undisclosed", b, 0, NULL, NULL); \
+			"\n" a ":\t", 0, "\n", 0, "Undisclosed", b, 0, NULL, NULL); \
 	if (found) \
 		sect_info = TRUE;
 
@@ -1440,7 +1444,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	MsnGetInfoStepTwoData *info2_data = NULL;
 #endif
 
-	gaim_debug_info("msn", "In msn_got_info\n");
+	gaim_debug_info("msn", "In msn_got_info,url_text:{%s}\n",url_text);
 
 	/* Make sure the connection is still valid */
 	if (g_list_find(gaim_connections_get_all(), info_data->gc) == NULL)

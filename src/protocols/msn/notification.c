@@ -1357,6 +1357,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_hash_table_destroy(table);
 }
 
+/*offline Message notification process*/
 static void
 initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -1599,8 +1600,13 @@ msn_notification_init(void)
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsprofile",
 						   profile_msg);
+	/*initial OIM notification*/
 	msn_table_add_msg_type(cbs_table,
 							"text/x-msmsgsinitialmdatanotification",
+							initial_mdata_msg);	
+	/*OIM notification when user online*/
+	msn_table_add_msg_type(cbs_table,
+							"text/x-msmsgsoimnotification",
 							initial_mdata_msg);	
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsinitialemailnotification",
@@ -1618,3 +1624,4 @@ msn_notification_end(void)
 {
 	msn_table_destroy(cbs_table);
 }
+

@@ -29,6 +29,8 @@
 
 #include "error.h"
 
+#define MSN_DEBUG_SB
+
 static MsnTable *cbs_table;
 
 static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
@@ -615,6 +617,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
+	gaim_debug_info("Ma Yuan","switchboard send msg..\n");
 	if (msn_switchboard_can_send(swboard))
 		release_msg(swboard, msg);
 	else if (queue)
@@ -1051,6 +1054,8 @@ static void
 cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
 	int reason = MSN_SB_ERROR_UNKNOWN;
+	MsnMessage *msg;
+	MsnSwitchBoard *swboard = trans->data;
 
 	if (error == 215)
 	{
@@ -1063,7 +1068,19 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	}
 
 	gaim_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
+	gaim_debug_warning("msn", "Will Use Offline Message to sendit\n");
 
+//	cal_error_helper(trans, reason);
+	/*offline Message send Process*/
+
+	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
+		gaim_debug_warning("Ma Yuan","offline msg to send:{%s}\n",msg->body);
+		/* The messages could not be sent due to a switchboard error */
+		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
+		msg_error_helper(swboard->cmdproc, msg,
+							 MSN_MSG_ERROR_SB);
+		msn_message_unref(msg);
+	}
 	cal_error_helper(trans, reason);
 }
 

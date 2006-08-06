@@ -33,6 +33,8 @@
 
 /* ms to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20000
+/*debug SLP*/
+#define MSN_DEBUG_UD
 
 static void send_ok(MsnSlpCall *slpcall, const char *branch,
 					const char *type, const char *content);
