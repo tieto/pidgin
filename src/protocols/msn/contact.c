@@ -410,7 +410,7 @@ msn_get_address_book(MsnContact *contact)
 {
 	gaim_debug_info("MaYuan","msn_get_address_book()...\n");
 	/*build SOAP and POST it*/
-	contact->soapconn->login_path = g_strdup(MSN_GET_ADDRESS_POST_URL);
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_GET_ADDRESS_SOAP_ACTION);
 	msn_soap_post(contact->soapconn,MSN_GET_ADDRESS_TEMPLATE,msn_address_written_cb);
 }
@@ -420,6 +420,12 @@ void
 msn_add_contact(MsnContact *contact)
 {
 	gaim_debug_info("MaYuan","msn add a contact...\n");
+
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_CONTACT_ADD_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GET_ADDRESS_TEMPLATE,msn_address_written_cb);
+
 }
 
 /*delete a Contact*/
@@ -427,6 +433,10 @@ void
 msn_delete_contact(MsnContact *contact)
 {	
 	gaim_debug_info("MaYuan","msn delete a contact...\n");
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GET_GLEAMS_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
 }
 
 /*block a Contact*/
@@ -434,6 +444,10 @@ void
 msn_block_contact(MsnContact *contact)
 {	
 	gaim_debug_info("MaYuan","msn block a contact...\n");
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GET_GLEAMS_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
 }
 
 /*unblock a contact*/
@@ -441,6 +455,10 @@ void
 msn_unblock_contact(MsnContact *contact)
 {	
 	gaim_debug_info("MaYuan","msn unblock a contact...\n");
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GET_GLEAMS_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
 }
 
 /*get the gleams info*/
@@ -449,9 +467,31 @@ msn_get_gleams(MsnContact *contact)
 {
 	gaim_debug_info("MaYuan","msn get gleams info...\n");
 	/*build SOAP and POST it*/
-	contact->soapconn->login_path = g_strdup(MSN_GET_ADDRESS_POST_URL);
-	contact->soapconn->soap_action = g_strdup(MSN_GET_ADDRESS_SOAP_ACTION);
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GET_GLEAMS_SOAP_ACTION);
 	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
+}
+
+void msn_add_group(MsnContact *contact)
+{
+	gaim_debug_info("MaYuan","msn add group...\n");
+
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GROUP_ADD_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GROUP_ADD_TEMPLATE,msn_address_written_cb);
+
+}
+
+void msn_del_group(MsnContact *contact)
+{
+	gaim_debug_info("MaYuan","msn del group...\n");
+
+	/*build SOAP and POST it*/
+	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+	contact->soapconn->soap_action = g_strdup(MSN_GROUP_DEL_SOAP_ACTION);
+	msn_soap_post(contact->soapconn,MSN_GROUP_DEL_TEMPLATE,msn_address_written_cb);
+
 }
 
 void

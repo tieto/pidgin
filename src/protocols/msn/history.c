@@ -84,3 +84,4 @@ msn_history_add(MsnHistory *history, MsnTransaction *trans)
 		msn_transaction_destroy(trans);
 	}
 }
+
