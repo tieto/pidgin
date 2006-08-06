@@ -56,7 +56,7 @@ static void _qq_show_socket(gchar *desc, gint fd) {
 
 void _qq_show_packet(gchar *desc, gchar *buf, gint len)
 {
-	char buf1[4096], buf2[10];
+	char buf1[8*len+2], buf2[10];
 	int i;
 	buf1[0] = 0;
 	for (i = 0; i < len; i++) {
