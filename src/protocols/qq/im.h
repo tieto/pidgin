@@ -54,7 +54,7 @@ enum {
 guint8 *qq_get_send_im_tail(const gchar *font_color,
 			    const gchar *font_size,
 			    const gchar *font_name,
-			    gboolean is_bold, gboolean is_italic, gboolean is_underline, guint len);
+			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint len);
 
 void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type);
 void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);

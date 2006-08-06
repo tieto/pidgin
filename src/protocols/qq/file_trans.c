@@ -282,7 +282,7 @@ static gint _qq_send_file(GaimConnection *gc, guint8 *data, gint len, guint16 pa
 	return bytes;
 }
 
-extern gchar *_gen_session_md5(gint uid, gchar *session_key);
+extern gchar *_gen_session_md5(gint uid, guint8 *session_key);
 
 /* send a file to udp channel with QQ_FILE_CONTROL_PACKET_TAG */
 void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte)

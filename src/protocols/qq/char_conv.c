@@ -38,7 +38,7 @@
 #define QQ_NULL_SMILEY        "(SM)"	/* return this if smiley conversion fails */
 
 /* a debug function */
-void _qq_show_packet(gchar * desc, gchar * buf, gint len);
+void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
 
 const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 	0x41, 0x43, 0x42, 0x44, 0x45, 0x46, 0x47, 0x48,

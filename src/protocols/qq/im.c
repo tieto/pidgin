@@ -45,7 +45,7 @@
 #define DEFAULT_FONT_NAME_LEN 	  4
 
 /* a debug function */
-void _qq_show_packet(gchar *desc, gchar *buf, gint len);
+void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
 
 enum
 {
@@ -94,7 +94,7 @@ struct _qq_recv_normal_im_text {
 	guint8 is_there_font_attr;
 	guint8 unknown3[4];
 	guint8 msg_type;
-	guint8 *msg;		/* no fixed length, ends with 0x00 */
+	gchar *msg;		/* no fixed length, ends with 0x00 */
 	guint8 *font_attr;
 	gint font_attr_len;
 };
@@ -121,11 +121,11 @@ struct _qq_recv_im_header {
 guint8 *qq_get_send_im_tail(const gchar *font_color,
 			    const gchar *font_size,
 			    const gchar *font_name,
-			    gboolean is_bold, gboolean is_italic, gboolean is_underline, guint tail_len)
+			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint tail_len)
 {
 	gchar *s1, *s2;
 	unsigned char *rgb;
-	guint font_name_len;
+	gint font_name_len;
 	guint8 *send_im_tail;
 	const guint8 simsun[] = { 0xcb, 0xce, 0xcc, 0xe5 };
 
@@ -133,14 +133,14 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 		font_name_len = strlen(font_name);
 	} else {
 		font_name_len = DEFAULT_FONT_NAME_LEN;
-		font_name = simsun;
+		font_name = (const gchar *) simsun;
 	}
 
 	send_im_tail = g_new0(guint8, tail_len);
 
-	g_strlcpy(send_im_tail + QQ_SEND_IM_AFTER_MSG_HEADER_LEN,
+	g_strlcpy((gchar *) (send_im_tail + QQ_SEND_IM_AFTER_MSG_HEADER_LEN),
 		  font_name, tail_len - QQ_SEND_IM_AFTER_MSG_HEADER_LEN);
-	send_im_tail[tail_len - 1] = tail_len;
+	send_im_tail[tail_len - 1] = (guint8) tail_len;
 
 	send_im_tail[0] = 0x00;
 	if (font_size) {
@@ -210,14 +210,13 @@ static const gchar *qq_get_recv_im_type_str(gint type)
 }
 
 /* generate a md5 key using uid and session_key */
-gchar *_gen_session_md5(gint uid, gchar *session_key)
+gchar *_gen_session_md5(gint uid, guint8 *session_key)
 {
-	gchar *src, md5_str[QQ_KEY_LENGTH];
-	guint8 *cursor;
+	guint8 *src, md5_str[QQ_KEY_LENGTH], *cursor;
 	GaimCipher *cipher;
         GaimCipherContext *context;
 
-	src = g_newa(gchar, 20);
+	src = g_newa(guint8, 20);
 	cursor = src;
 	create_packet_dw(src, &cursor, uid);
 	create_packet_data(src, &cursor, session_key, QQ_KEY_LENGTH);
@@ -309,15 +308,15 @@ static void _qq_process_recv_normal_im_text
 	 * even the is_there_font_attr shows 0x01, and msg does not ends with 0x00 */
 	if (im_text->msg_type == QQ_IM_AUTO_REPLY) {
 		im_text->is_there_font_attr = 0x00;	/* indeed there is no this flag */
-		im_text->msg = g_strndup(*cursor, data + len - *cursor);
+		im_text->msg = g_strndup(*(gchar **) cursor, data + len - *cursor);
 	} else {		/* it is normal mesasge */
 		if (im_text->is_there_font_attr) {
-			im_text->msg = g_strdup(*cursor);
+			im_text->msg = g_strdup(*(gchar **) cursor);
 			*cursor += strlen(im_text->msg) + 1;
 			im_text->font_attr_len = data + len - *cursor;
 			im_text->font_attr = g_memdup(*cursor, im_text->font_attr_len);
 		} else		/* not im_text->is_there_font_attr */
-			im_text->msg = g_strndup(*cursor, data + len - *cursor);
+			im_text->msg = g_strndup(*(gchar **) cursor, data + len - *cursor);
 	}			/* if im_text->msg_type */
 	_qq_show_packet("QQ_MESG recv", data, *cursor - data);
 
@@ -450,9 +449,9 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data;
+	guint8 *cursor, *raw_data, *send_im_tail;
 	guint16 client_tag, normal_im_type;
-	gint msg_len, raw_len, bytes;
+	gint msg_len, raw_len, font_name_len, tail_len, bytes;
 	time_t now;
 	gchar *md5, *msg_filtered;
 	GData *attribs;
@@ -512,7 +511,6 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	now = time(NULL);
 	md5 = _gen_session_md5(qd->uid, qd->session_key);
 
-	guint font_name_len, tail_len;
 	font_name_len = (font_name) ? strlen(font_name) : DEFAULT_FONT_NAME_LEN;
 	tail_len = font_name_len + QQ_SEND_IM_AFTER_MSG_HEADER_LEN + 1;
 
@@ -553,11 +551,11 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	/* 052-052: text message type (normal/auto-reply) */
 	bytes += create_packet_b(raw_data, &cursor, type);
 	/* 053-   : msg ends with 0x00 */
-	bytes += create_packet_data(raw_data, &cursor, msg_filtered, msg_len);
-	guint8 *send_im_tail = qq_get_send_im_tail(font_color, font_size, font_name, is_bold,
+	bytes += create_packet_data(raw_data, &cursor, (guint8 *) msg_filtered, msg_len);
+	send_im_tail = qq_get_send_im_tail(font_color, font_size, font_name, is_bold,
 						   is_italic, is_underline, tail_len);
 	_qq_show_packet("QQ_MESG debug", send_im_tail, tail_len);
-	bytes += create_packet_data(raw_data, &cursor, (gchar *) send_im_tail, tail_len);
+	bytes += create_packet_data(raw_data, &cursor, send_im_tail, tail_len);
 
 	_qq_show_packet("QQ_MESG raw", raw_data, cursor - raw_data);
 

@@ -269,7 +269,7 @@ gint qq_fill_conn_info(guint8 *raw_data, guint8 **cursor, ft_info *info)
 }
 
 
-extern gchar *_gen_session_md5(gint uid, gchar *session_key);
+extern gchar *_gen_session_md5(gint uid, guint8 *session_key);
 
 /* fill in the common information of file transfer */
 static gint _qq_create_packet_file_header

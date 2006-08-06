@@ -54,7 +54,7 @@ static void _qq_show_socket(gchar *desc, gint fd) {
 }
 */
 
-void _qq_show_packet(gchar *desc, gchar *buf, gint len)
+void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 {
 	char buf1[8*len+2], buf2[10];
 	int i;
@@ -73,11 +73,11 @@ static guint8 *_gen_pwkey(const gchar *pwd)
         GaimCipher *cipher;
         GaimCipherContext *context;
 
-	gchar pwkey_tmp[QQ_KEY_LENGTH];
+	guchar pwkey_tmp[QQ_KEY_LENGTH];
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, pwd, strlen(pwd));
+	gaim_cipher_context_append(context, (guchar *) pwd, strlen(pwd));
 	gaim_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
 	gaim_cipher_context_destroy(context);
 	context = gaim_cipher_context_new(cipher, NULL);

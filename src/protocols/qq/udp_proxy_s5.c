@@ -33,7 +33,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	unsigned char buf[512];
 	struct PHB *phb = data;
 	struct sockaddr_in sin;
-	int len;
+	int len, error;
 
 	gaim_input_remove(phb->inpa);
 	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
@@ -82,7 +82,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 		return;
 	}
 
-	int error = ETIMEDOUT;
+	error = ETIMEDOUT;
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Connect didn't block\n");
 	len = sizeof(error);
 	if (getsockopt(phb->udpsock, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
@@ -209,12 +209,15 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
-	struct PHB *phb = data;
+	struct PHB *phb;
+	int ret;
+
+	phb = data;
 
 	gaim_input_remove(phb->inpa);
 	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read.\n");
 
-	int ret = read(source, buf, 2);
+	ret = read(source, buf, 2);
 	if (ret < 2) {
 		gaim_debug(GAIM_DEBUG_INFO, "s5_canread", "packet smaller than 2 octet\n");
 		close(source);
@@ -275,7 +278,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
 	int i;
