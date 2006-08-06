@@ -1241,6 +1241,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const char *name = gaim_normalize(account, gaim_account_get_username(account));
 	const char *pass = gaim_connection_get_password(gc);
+	char *enc_pass;
 	struct yahoo_data *yd = gc->proto_data;
 
 	GaimCipher			*md5_cipher;
@@ -1472,14 +1473,20 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		magic_key_char[3] = (updated_key >> 24) & 0xff;
 	}
 
+	enc_pass = yahoo_string_encode(gc, pass, NULL);
+
 	/* Get password and crypt hashes as per usual. */
 	gaim_cipher_context_reset(md5_ctx, NULL);
-	gaim_cipher_context_append(md5_ctx, (const guchar *)pass, strlen(pass));
+	gaim_cipher_context_append(md5_ctx, (const guchar *)enc_pass, strlen(enc_pass));
 	gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(password_hash, md5_digest, 16);
 
-	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
+	crypt_result = yahoo_crypt(enc_pass, "$1$_2S43d5f$");
+
+	g_free(enc_pass);
+	enc_pass = NULL;
+
 	gaim_cipher_context_reset(md5_ctx, NULL);
 	gaim_cipher_context_append(md5_ctx, (const guchar *)crypt_result, strlen(crypt_result));
 	gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
