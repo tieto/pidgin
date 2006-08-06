@@ -79,6 +79,7 @@
 #define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
 /*#define PROFILE_URL "http://spaces.msn.com/profile.aspx?mem="*/
 #define PROFILE_URL "http://spaces.live.com/profile.aspx?mem="
+#define PHOTO_URL	" contactparams:photopreauthurl=\""
 
 #define USEROPT_HOTMAIL 0
 

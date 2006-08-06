@@ -1390,12 +1390,10 @@ msn_get_photo_url(const char *url_text)
 {
 	char *p, *q;
 
-	if ((p = strstr(url_text, " contactparams:photopreauthurl=\"")) != NULL)
-	{
-		p += strlen(" contactparams:photopreauthurl=\"");
+	if ((p = strstr(url_text, PHOTO_URL)) != NULL){
+		p += strlen(PHOTO_URL);
 	}
-
-	if (p && (strncmp(p, "http://", 8) == 0) && ((q = strchr(p, '"')) != NULL))
+	if (p && (strncmp(p, "http://",strlen("http://")) == 0) && ((q = strchr(p, '"')) != NULL))
 			return g_strndup(p, q - p);
 
 	return NULL;
@@ -1809,6 +1807,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
+	gaim_debug_info("Ma Yuan","photo url:{%s}\n",photo_url_text);
 
 	/* Marshall the existing state */
 	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
