@@ -28,11 +28,11 @@
 
 #include "accountopt.h"
 #include "debug.h"
-#include "gtkroomlist.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
+#include "roomlist.h"
 #include "server.h"
 #include "util.h"
 
@@ -507,9 +507,9 @@ static void _qq_menu_show_login_info(GaimPluginAction *action)
 	g_string_free(info, TRUE);
 }
 
-static void _qq_menu_search_or_add_permanent_group(GaimPluginAction * action)
+static void _qq_menu_search_or_add_permanent_group(GaimPluginAction *action)
 {
-	gaim_gtk_roomlist_dialog_show();
+	gaim_roomlist_show_with_account(NULL);
 }
 
 /*
