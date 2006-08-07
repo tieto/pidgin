@@ -35,7 +35,7 @@
 
 #define QQ_NAME_FORMAT    "qq-%d"
 
-#ifndef g_str_has_prefix
+#if !GLIB_CHECK_VERSION(2, 1, 0)
 gint g_str_has_prefix(const gchar *str, const gchar *prefix)
 {
 	gint len = strlen(prefix);
