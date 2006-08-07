@@ -252,8 +252,27 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 			else if (type == GAIM_REQUEST_FIELD_LIST)
 			{
 				GntWidget *tree = field->ui_data;
-				gpointer data = gnt_tree_get_selection_data(GNT_TREE(tree));
-				GList *list = g_list_append(NULL, data);   /* XXX: Update when multi-select is allowed */
+				GList *list = NULL;
+
+				if (gaim_request_field_list_get_multi_select(field))
+				{
+					const GList *iter;
+					
+					iter = gaim_request_field_list_get_items(field);
+					for (; iter; iter = iter->next)
+					{
+						const char *text = list->data;
+						gpointer key = gaim_request_field_list_get_data(field, text);
+						if (gnt_tree_get_choice(GNT_TREE(tree), key))
+							list = g_list_prepend(list, key);
+					}
+				}
+				else
+				{
+					gpointer data = gnt_tree_get_selection_data(GNT_TREE(tree));
+					list = g_list_append(list, data);
+				}
+
 				gaim_request_field_list_set_selected(field, list);
 				g_list_free(list);
 			}
@@ -355,8 +374,8 @@ gg_request_fields(const char *title, const char *primary,
 			}
 			else if (type == GAIM_REQUEST_FIELD_LIST)
 			{
-				/* XXX: Yet to allow multi-select, because the feature is absent in GntTree */
 				const GList *list;
+				gboolean multi = gaim_request_field_list_get_multi_select(field);
 				GntWidget *tree = gnt_tree_new();
 				gnt_box_add_widget(GNT_BOX(hbox), tree);
 				field->ui_data = tree;
@@ -366,10 +385,20 @@ gg_request_fields(const char *title, const char *primary,
 				{
 					const char *text = list->data;
 					gpointer key = gaim_request_field_list_get_data(field, text);
-					gnt_tree_add_row_after(GNT_TREE(tree), key,
-							gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
-					if (gaim_request_field_list_is_selected(field, text))
-						gnt_tree_set_selected(GNT_TREE(tree), key);
+					if (multi)
+					{
+						gnt_tree_add_choice(GNT_TREE(tree), key,
+								gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
+						if (gaim_request_field_list_is_selected(field, text))
+							gnt_tree_set_choice(GNT_TREE(tree), key, TRUE);
+					}
+					else
+					{
+						gnt_tree_add_row_after(GNT_TREE(tree), key,
+								gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
+						if (gaim_request_field_list_is_selected(field, text))
+							gnt_tree_set_selected(GNT_TREE(tree), key);
+					}
 				}
 			}
 #if 0
