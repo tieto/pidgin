@@ -413,7 +413,7 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 			} else { /* a group */
 				group = qq_group_find_by_internal_group_id(gc, uid);
 				if(group == NULL) {
-					/* not working
+					/*XXX not working
 					group = qq_group_create_by_id(gc, uid, 0);
 					qq_send_cmd_group_get_group_info(gc, group);
 					*/

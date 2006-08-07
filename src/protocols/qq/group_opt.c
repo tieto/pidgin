@@ -37,6 +37,7 @@
 #include "qq.h"
 #include "utils.h"
 
+/* TODO: can't we use qsort here? */
 /* This implement quick sort algorithm (low->high) */
 static void _quick_sort(gint *numbers, gint left, gint right)
 {
@@ -228,7 +229,6 @@ void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint l
 	gaim_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun member"), NULL);
 }
 
-/*****************************************************************************/
 void qq_group_modify_info(GaimConnection *gc, qq_group *group)
 {
 	gint data_len, data_written;
@@ -262,15 +262,15 @@ void qq_group_modify_info(GaimConnection *gc, qq_group *group)
 	data_written += create_packet_w(data, &cursor, group->group_category);
 
 	data_written += create_packet_b(data, &cursor, strlen(group_name));
-	data_written += create_packet_data(data, &cursor, group_name, strlen(group_name));
+	data_written += create_packet_data(data, &cursor, (guint8 *) group_name, strlen(group_name));
 
 	data_written += create_packet_w(data, &cursor, 0x0000);
 
 	data_written += create_packet_b(data, &cursor, strlen(notice));
-	data_written += create_packet_data(data, &cursor, notice, strlen(notice));
+	data_written += create_packet_data(data, &cursor, (guint8 *) notice, strlen(notice));
 
 	data_written += create_packet_b(data, &cursor, strlen(group_desc));
-	data_written += create_packet_data(data, &cursor, group_desc, strlen(group_desc));
+	data_written += create_packet_data(data, &cursor, (guint8 *) group_desc, strlen(group_desc));
 
 	if (data_written != data_len)
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
@@ -326,7 +326,7 @@ void qq_group_create_with_name(GaimConnection *gc, const gchar *name)
 	data_written += create_packet_w(data, &cursor, 0x0003);
 	/* 007 */
 	data_written += create_packet_b(data, &cursor, strlen(name));
-	data_written += create_packet_data(data, &cursor, (gchar *) name, strlen(name));
+	data_written += create_packet_data(data, &cursor, (guint8 *) name, strlen(name));
 	data_written += create_packet_w(data, &cursor, 0x0000);
 	data_written += create_packet_b(data, &cursor, 0x00);	/* no group notice */
 	data_written += create_packet_b(data, &cursor, 0x00);	/* no group desc */

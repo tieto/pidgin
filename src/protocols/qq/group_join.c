@@ -154,7 +154,7 @@ void qq_send_cmd_group_auth(GaimConnection *gc, qq_group *group, guint8 opt, gui
 	bytes += create_packet_b(raw_data, &cursor, opt);
 	bytes += create_packet_dw(raw_data, &cursor, uid);
 	bytes += create_packet_b(raw_data, &cursor, strlen(reason_qq));
-	bytes += create_packet_data(raw_data, &cursor, reason_qq, strlen(reason_qq));
+	bytes += create_packet_data(raw_data, &cursor, (guint8 *) reason_qq, strlen(reason_qq));
 
 	if (bytes != data_len)
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
@@ -335,7 +335,6 @@ void qq_group_join(GaimConnection *gc, GHashTable *data)
 	}
 }
 
-/*****************************************************************************/
 void qq_group_exit(GaimConnection *gc, GHashTable *data)
 {
 	gchar *internal_group_id_ptr;

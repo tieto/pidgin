@@ -45,7 +45,7 @@ typedef struct _qq_recv_group_im {
 	guint16 msg_seq;
 	time_t send_time;
 	guint16 msg_len;
-	guint8 *msg;
+	gchar *msg;
 	guint8 *font_attr;
 	gint font_attr_len;
 } qq_recv_group_im;
@@ -54,7 +54,7 @@ typedef struct _qq_recv_group_im {
 void qq_send_packet_group_im(GaimConnection *gc, qq_group *group, const gchar *msg)
 {
 	gint data_len, bytes;
-	guint8 *raw_data, *cursor;
+	guint8 *raw_data, *cursor, *send_im_tail;
 	guint16 msg_len;
 	gchar *msg_filtered;
 
@@ -70,11 +70,11 @@ void qq_send_packet_group_im(GaimConnection *gc, qq_group *group, const gchar *m
 	bytes += create_packet_b(raw_data, &cursor, QQ_GROUP_CMD_SEND_MSG);
 	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
 	bytes += create_packet_w(raw_data, &cursor, msg_len + QQ_SEND_IM_AFTER_MSG_LEN);
-	bytes += create_packet_data(raw_data, &cursor, (gchar *) msg_filtered, msg_len);
-	guint8 *send_im_tail = qq_get_send_im_tail(NULL, NULL, NULL,
+	bytes += create_packet_data(raw_data, &cursor, (guint8 *) msg_filtered, msg_len);
+	send_im_tail = qq_get_send_im_tail(NULL, NULL, NULL,
 						   FALSE, FALSE, FALSE,
 						   QQ_SEND_IM_AFTER_MSG_LEN);
-	bytes += create_packet_data(raw_data, &cursor, (gchar *) send_im_tail, QQ_SEND_IM_AFTER_MSG_LEN);
+	bytes += create_packet_data(raw_data, &cursor, send_im_tail, QQ_SEND_IM_AFTER_MSG_LEN);
 	g_free(send_im_tail);
 	g_free(msg_filtered);
 
@@ -296,8 +296,8 @@ void qq_process_recv_group_im_been_added
 }
 
 /* recv an IM from a group chat */
-void qq_process_recv_group_im
-    (guint8 *data, guint8 **cursor, gint data_len, guint32 internal_group_id, GaimConnection *gc, guint16 im_type)
+void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len, 
+		guint32 internal_group_id, GaimConnection *gc, guint16 im_type)
 {
 	gchar *msg_with_gaim_smiley, *msg_utf8_encoded, *im_src_name;
 	guint16 unknown;
@@ -362,7 +362,7 @@ void qq_process_recv_group_im
 		skip_len = 0;
 	*cursor += skip_len;
 
-	im_group->msg = g_strdup(*cursor);
+	im_group->msg = g_strdup((gchar *) *cursor);
 	*cursor += strlen(im_group->msg) + 1;
 	/* there might not be any font_attr, check it */
 	im_group->font_attr_len = im_group->msg_len - strlen(im_group->msg) - 1 - skip_len;
