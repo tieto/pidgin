@@ -1011,8 +1011,13 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			break;
 		case JABBER_STREAM_REINITIALIZING:
 			gaim_connection_update_progress(js->gc, _("Re-initializing Stream"),
-					6, JABBER_CONNECT_STEPS);
-			js->reinit = TRUE;
+					(js->gsc ? 7 : 4), JABBER_CONNECT_STEPS);
+			if (js->gsc) {
+				/* The stream will be reinitialized later, in jabber_recv_cb_ssl() */
+				js->reinit = TRUE;
+			} else {
+				jabber_stream_init(js);
+			}
 			break;
 		case JABBER_STREAM_CONNECTED:
 			jabber_roster_request(js);
