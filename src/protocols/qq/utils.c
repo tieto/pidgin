@@ -199,6 +199,8 @@ static gchar *strstrip(const gchar *buffer)
 	gchar *ret;
 	int i;
 
+	g_return_val_if_fail(buffer != NULL, NULL);
+
         stripped = g_string_new("");
         for (i=0; i<strlen(buffer); i++) {
                 if ((int) buffer[i] != 32) {
@@ -214,12 +216,14 @@ static gchar *strstrip(const gchar *buffer)
 /* Dumps an ASCII hex string to a string of bytes. The return should be freed later.
  * Returns NULL if a string with an odd number of nibbles is passed in or if buffer 
  * isn't a valid hex string */
-guint8 *hex_str_to_bytes(const gchar *buffer)
+guint8 *hex_str_to_bytes(const gchar *buffer, gint *out_len)
 {
 	gchar *hex_str, *hex_buffer, *cursor, tmp;
 	guint8 *bytes, nibble1, nibble2;
-	gint index, len;
+	gint index;
 
+	g_return_val_if_fail(buffer != NULL, NULL);
+	
 	hex_buffer = strstrip(buffer);
 
 	if (strlen(hex_buffer) % 2 != 0) {
@@ -233,10 +237,11 @@ guint8 *hex_str_to_bytes(const gchar *buffer)
 	g_free(hex_buffer);
 	index = 0;
 	for (cursor = hex_str; cursor < hex_str + sizeof(gchar) * (strlen(hex_str)) - 1; cursor++) {
-		if (g_ascii_isdigit(*cursor)) {tmp = *cursor; nibble1 = atoi(&tmp); }
-		else if (g_ascii_isalpha(*cursor) && (gint) *cursor - 87 < 16)
+		if (g_ascii_isdigit(*cursor)) {
+			tmp = *cursor; nibble1 = atoi(&tmp);
+		} else if (g_ascii_isalpha(*cursor) && (gint) *cursor - 87 < 16) {
 			nibble1 = (gint) *cursor - 87;
-		else {
+		} else {
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 				"Invalid char found in hex string!\n");
 			g_free(hex_str);
@@ -244,18 +249,21 @@ guint8 *hex_str_to_bytes(const gchar *buffer)
 		}
 		nibble1 = nibble1 << 4;
 		cursor++;
-		if (g_ascii_isdigit(*cursor)) {tmp = *cursor; nibble2 = atoi(&tmp); }
-		else if (g_ascii_isalpha(*cursor) && (gint) (*cursor - 87) < 16)
+		if (g_ascii_isdigit(*cursor)) {
+			tmp = *cursor; nibble2 = atoi(&tmp);
+		} else if (g_ascii_isalpha(*cursor) && (gint) (*cursor - 87) < 16) {
 			nibble2 = (gint) *cursor - 87;
-		else {
+		} else {
+			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+				"Invalid char found in hex string!\n");
 			g_free(hex_str);
 			return NULL;
 		}
 		bytes[index++] = nibble1 + nibble2;
 	}
-	len = strlen(hex_str) / 2;
+	*out_len = strlen(hex_str) / 2;
 	g_free(hex_str);
-	return g_memdup(bytes, len);
+	return g_memdup(bytes, *out_len);
 }
 
 /* Dumps a chunk of raw data into an ASCII hex string. The return should be freed later. */

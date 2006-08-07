@@ -90,6 +90,7 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 	data = g_newa(guint8, len);
 	msg_utf8 = NULL;
 
+	_qq_show_packet("Processing unknown packet", buf, len);
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 			   ">>> [%d] %s, %d bytes -> [default] decrypt and dump\n%s",

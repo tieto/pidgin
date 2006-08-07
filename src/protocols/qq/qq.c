@@ -28,6 +28,7 @@
 
 #include "accountopt.h"
 #include "debug.h"
+#include "gtkroomlist.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -586,12 +587,10 @@ static void _qq_menu_locate_ip(GaimPluginAction *action)
 }
 */
 
-/*
 static void _qq_menu_search_or_add_permanent_group(GaimPluginAction * action)
 {
 	gaim_gtk_roomlist_dialog_show();
 }
-*/
 
 /*
 static void _qq_menu_create_permanent_group(GaimPluginAction * action)
@@ -659,57 +658,160 @@ static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored)
 //	}
 }
 */
-/*
-static void _qq_send_custom_packet(GaimConnection *gc, const gchar *packet)
+
+static gboolean _qq_parse_custom_packet_field(GaimRequestFields *fields,
+		const gchar *id, guint8 **value)
 {
-	guint16 cmd;
-	guint8 *buffer;
-	gint len;
+	GaimRequestField *field;
+	const gchar *str;
+	gint len, i;
+	gboolean success;
 
-	if (!packet) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Null packet inputted!\n");
-		return;
+	success = FALSE;
+	field = gaim_request_fields_get_field(fields, id);
+	str = gaim_request_field_string_get_value(field);
+	if (str) {
+		success = TRUE;
+		if (strcmp(id, "uid") != 0) {
+			*value = hex_str_to_bytes(str, &len);
+			if (!*value || len != 2)
+				success = FALSE;
+		} else {
+			for (i = 0; i < strlen(str); i++) {
+				if (!g_ascii_isdigit(str[i])) {
+					success = FALSE;
+					break;
+				}
+			}
+			if (success) {
+				*(guint32 *) value = strtoul(str, NULL, 10);
+				if (errno == ERANGE)
+					success = FALSE;
+			}
+		}
 	}
-	if (strlen(packet) > MAX_PACKET_SIZE * 2) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Packet inputted is too large!\n");
-		return;
-	}
-	if (strlen(packet) < 4) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Packet is impossibly short!\n");
-		return;
-	}
-
-	buffer = hex_str_to_bytes(packet);
-	if (!buffer) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid packet inputted!\n");
-		return;
-	}
-	// big endian
-	cmd = 256 * buffer[0] + buffer[1];
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Inputted CMD: %d\n", cmd);
-
-	len = strlen(buffer) - 2;
-	packet = buffer + 2;
-
-	qq_send_cmd(gc, cmd, TRUE, 0, TRUE, packet, len);
-
-	g_free(buffer);
+	if (!success)
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid entry: %s\n", id);
+	return success;
 }
-*/
+
+static gboolean _qq_parse_custom_packet_fields(GaimRequestFields *fields,
+		guint8 **client, guint8 **cmd, guint8 **seq, guint32 *uid, 
+		guint8 **body, gint *body_len)
+{
+	GaimRequestField *field;
+	gboolean success;
+
+	success = TRUE;
+	*client = *cmd = *seq = *body = NULL;
+	*uid = 0;
+	success = _qq_parse_custom_packet_field(fields, "client", client);
+	if (success)
+		success = _qq_parse_custom_packet_field(fields, "cmd", cmd);
+	if (success)
+		success = _qq_parse_custom_packet_field(fields, "uid", (guint8 **) uid);
+	if (success)
+		success = _qq_parse_custom_packet_field(fields, "seq", seq);
+	if (success) {
+		field = gaim_request_fields_get_field(fields, "body");
+		*body = hex_str_to_bytes(gaim_request_field_string_get_value(field), 
+				body_len);
+	} else {
+		if (*client)
+			g_free(*client);
+		if (*cmd)
+			g_free(*cmd);
+		if (*seq)
+			g_free(*seq);
+	}
+	return success;
+}
+
+static void _qq_send_custom_packet_cb(GaimConnection *gc, GaimRequestFields *fields)
+{
+	guint32 uid;
+	guint8 *buf, *client, *cmd, *seq, *body, *cursor;
+	gint bytes, len;
+	qq_data *qd;
+	gboolean success;
+
+	qd = (qq_data *) gc->proto_data;
+
+	success = _qq_parse_custom_packet_fields(fields, &client, &cmd, 
+			&seq, &uid, &body, &len);
+	if (!success) {
+		gaim_notify_error(gc, _("Error"), _("Invalid packet entry"), NULL);
+		return;
+	}
+
+	if (body)
+		g_return_if_fail(len+12 <= MAX_PACKET_SIZE);
+
+	bytes = 0;
+	buf = g_newa(guint8, MAX_PACKET_SIZE);
+	cursor = buf;
+        /* QQ TCP packet has two bytes in the beginning to define packet length
+	 * so I leave room here for size */
+	if (qd->use_tcp)
+		bytes += create_packet_w(buf, &cursor, 0x0000);
+	bytes += create_packet_b(buf, &cursor, QQ_PACKET_TAG);
+	bytes += create_packet_w(buf, &cursor, *(guint16 *) client);
+	bytes += create_packet_w(buf, &cursor, *(guint16 *) cmd);
+	bytes += create_packet_w(buf, &cursor, *(guint16 *) seq);
+	bytes += create_packet_dw(buf, &cursor, uid);
+	if (body) {
+		bytes += create_packet_data(buf, &cursor, body, len);
+		g_free(body);
+	}
+	bytes += create_packet_b(buf, &cursor, QQ_PACKET_TAIL);
+
+	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Custom packet of length %i\n", bytes);
+	_qq_show_packet("Outgoing custom packet", buf, bytes);
+	
+	_qq_send_packet(gc, buf, bytes, *(guint16 *) cmd);
+	g_free(client);
+	g_free(cmd);
+	g_free(seq);
+}
 
 /* send a custom packet to the server - for protocol testing */
-/*
 static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	g_return_if_fail(gc != NULL);
-	gaim_request_input(gc, _("Send Custom Packet"),
-			   _("Enter the packet in hex here"),
-			   _("Include the command and everything following"),
-			   NULL, FALSE, FALSE, NULL,
-			   _("Send"), G_CALLBACK(_qq_send_custom_packet), _("Cancel"), NULL, gc);
+	GaimConnection *gc;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+	gchar *tmp;
+	qq_data *qd;
+       
+	gc = (GaimConnection *) action->context;
+	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL && qd != NULL);
+
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(_("Packet Elements"));
+	gaim_request_fields_add_group(fields, group);
+	tmp = g_strdup_printf("%04X", QQ_CLIENT);
+	field = gaim_request_field_string_new("client", _("Client (hex)"), tmp, FALSE);
+	g_free(tmp);
+	gaim_request_field_group_add_field(group, field);
+	field = gaim_request_field_string_new("cmd", _("Command (hex)"), "0000", FALSE);
+	gaim_request_field_group_add_field(group, field);
+	field = gaim_request_field_string_new("seq", _("Sequence (hex)"), "0000", FALSE);
+	gaim_request_field_group_add_field(group, field);
+	tmp = g_strdup_printf("%u", qd->uid);
+	field = gaim_request_field_string_new("uid", _("QQ Number (decimal)"), tmp, FALSE);
+	g_free(tmp);
+	gaim_request_field_group_add_field(group, field);
+	field = gaim_request_field_string_new("body", _("Body (hex)"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(gc, _("Send a custom packet"),
+			_("Send a custom packet"), NULL, fields,
+			_("Send"), G_CALLBACK(_qq_send_custom_packet_cb),
+			_("Cancel"), NULL,
+			gc);
 }
-*/
 
 /* protocol related menus */
 static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
@@ -727,7 +829,7 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 	act = gaim_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);
 	m = g_list_append(m, act);
 
-	/* 
+	/*
 	act = gaim_plugin_action_new(_("Send Custom Packet"), _qq_menu_send_custom_packet);
 	m = g_list_append(m, act);
 	*/
@@ -737,7 +839,7 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	*/
 
-	/* XXX the old group gtk code needs to moved to the gaim UI before this can be used
+	/*
 	act = gaim_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
 	m = g_list_append(m, act);
 
