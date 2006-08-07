@@ -50,8 +50,6 @@ QQSOURCES = \
 	header_info.h \
 	im.c \
 	im.h \
-	ip_location.c \
-	ip_location.h \
 	keep_alive.c \
 	keep_alive.h \
 	login_logout.c \

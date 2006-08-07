@@ -95,7 +95,6 @@ C_SRC = \
 	group_search.c \
 	header_info.c \
 	im.c \
-	ip_location.c \
 	keep_alive.c \
 	login_logout.c \
 	packet_parse.c \

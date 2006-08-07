@@ -48,7 +48,6 @@
 #include "group_opt.h"
 #include "header_info.h"
 #include "im.h"
-#include "ip_location.h"
 #include "keep_alive.h"
 #include "login_logout.h"
 #include "packet_parse.h"
@@ -245,21 +244,10 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 
 	if (GAIM_BUDDY_IS_ONLINE(b) && q_bud != NULL)
 	{
-		/*
-		ip_value = ntohl(*(guint32 *) (q_bud->ip));
-		if (qq_ip_get_location(ip_value, &country, &city)) {
-			country_utf8 = qq_to_utf8(country, QQ_CHARSET_DEFAULT);
-			city_utf8 = qq_to_utf8(city, QQ_CHARSET_DEFAULT);
-			g_string_append_printf(tooltip, "\n%s, %s", country_utf8, city_utf8);
-			g_free(country);
-			g_free(city);
-			g_free(country_utf8);
-			g_free(city_utf8);
-		}
-		*/
 		ip_str = gen_ip_str(q_bud->ip);
 		if (strlen(ip_str) != 0) {
-			g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d", (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
+			g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d", 
+					(q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
 				       ? "TCP" : "UDP", ip_str, q_bud->port);
 		}
 		g_free(ip_str);
@@ -518,74 +506,6 @@ static void _qq_menu_show_login_info(GaimPluginAction *action)
 
 	g_string_free(info, TRUE);
 }
-
-/*
-static void _qq_menu_locate_ip_cb(GaimConnection * gc, GaimRequestFields * fields)
-{
-        GList *groups, *flds;
-        GaimRequestField *field;
-        const gchar *id, *value;
-        gchar *ip_str = NULL, *ip_dupstr = NULL;
-	guint8 *ip;
-        gchar *country, *country_utf8, *city, *city_utf8;
-        guint32 ip_value;
-
-        for (groups = gaim_request_fields_get_groups(fields); groups && !ip_str; groups = groups->next) {
-                for (flds = gaim_request_field_group_get_fields(groups->data); flds && !ip_str; flds = flds->next) {
-                        field = flds->data;
-                        id = gaim_request_field_get_id(field);
-                        value = gaim_request_field_string_get_value(field);
-
-                        if (!g_ascii_strcasecmp(id, "ip")) {
-                                ip_str = g_strdup(value);
-				break;
-			}
-                }
-        }
-	
-	if(ip_str) {
-		ip = str_ip_gen(ip_str);
-		ip_dupstr = gen_ip_str(ip);
-        
-		ip_value = ntohl(*(guint32 *)ip);
-        	if (qq_ip_get_location(ip_value, &country, &city)) {
-                        country_utf8 = qq_to_utf8(country, QQ_CHARSET_DEFAULT);
-                        city_utf8 = qq_to_utf8(city, QQ_CHARSET_DEFAULT);
-			gaim_notify_info(gc, ip_dupstr, country_utf8, city_utf8);
-                        g_free(country);
-                        g_free(city);
-                        g_free(country_utf8);
-                        g_free(city_utf8);
-        	}
-		else 
-			gaim_notify_info(gc, ip_dupstr, "IP not found", NULL);
-		g_free(ip);
-		g_free(ip_dupstr);
-		g_free(ip_str);
-	}
-}
-
-static void _qq_menu_locate_ip(GaimPluginAction *action)
-{
-        GaimConnection *gc = (GaimConnection *) action->context;
-        GaimRequestField *field;
-        GaimRequestFields *fields;
-        GaimRequestFieldGroup *group;
-
-        g_return_if_fail(gc != NULL);
-
-        fields = gaim_request_fields_new();
-        group = gaim_request_field_group_new(NULL);
-        gaim_request_fields_add_group(fields, group);
-        
-	field = gaim_request_field_string_new("ip", _("IP Address"), NULL, FALSE);
-        gaim_request_field_group_add_field(group, field);
-        
-	gaim_request_fields(gc, _("Locate an IP"),
-			_("Locate an IP address"), NULL, fields,
-			 _("Check"), G_CALLBACK(_qq_menu_locate_ip_cb), _("Cancel"), NULL, gc);
-}
-*/
 
 static void _qq_menu_search_or_add_permanent_group(GaimPluginAction * action)
 {
@@ -847,11 +767,6 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 	m = g_list_append(m, act);
 	*/
 
-	/* XXX consider re-enabling this
-	act = gaim_plugin_action_new(_("Locate an IP"), _qq_menu_locate_ip);
-        m = g_list_append(m, act);
-	*/
-	
 	return m;
 }
 
@@ -1066,7 +981,6 @@ static void init_plugin(GaimPlugin *plugin)
 	my_protocol = plugin;
 
 	gaim_prefs_add_none("/plugins/prpl/qq");
-	gaim_prefs_add_string("/plugins/prpl/qq/ipfile", "");
 	gaim_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	gaim_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
 	gaim_prefs_add_string("/plugins/prpl/qq/datadir", DATADIR);
