@@ -107,17 +107,20 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 		}
 		else
 		{
+			char *escape = g_markup_escape_text(text, -1);
 			switch (gaim_conversation_get_type(ggconv->conv))
 			{
 				case GAIM_CONV_TYPE_IM:
-					gaim_conv_im_send_with_flags(GAIM_CONV_IM(ggconv->conv), text, GAIM_MESSAGE_SEND);
+					gaim_conv_im_send_with_flags(GAIM_CONV_IM(ggconv->conv), escape, GAIM_MESSAGE_SEND);
 					break;
 				case GAIM_CONV_TYPE_CHAT:
-					gaim_conv_chat_send(GAIM_CONV_CHAT(ggconv->conv), text);
+					gaim_conv_chat_send(GAIM_CONV_CHAT(ggconv->conv), escape);
 					break;
 				default:
+					g_free(escape);
 					g_return_val_if_reached(FALSE);
 			}
+			g_free(escape);
 		}
 		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
 		return TRUE;

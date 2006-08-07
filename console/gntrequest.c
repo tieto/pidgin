@@ -1,15 +1,19 @@
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
+#include <gntcheckbox.h>
 #include <gntcombobox.h>
 #include <gntentry.h>
 #include <gntlabel.h>
+#include <gntline.h>
+#include <gnttree.h>
 
+#include "gntgaim.h"
 #include "gntrequest.h"
 
 static GntWidget *
 setup_request_window(const char *title, const char *primary,
-		const char *secondary)
+		const char *secondary, GaimRequestType type)
 {
 	GntWidget *window;
 
@@ -24,6 +28,9 @@ setup_request_window(const char *title, const char *primary,
 	if (secondary)
 		gnt_box_add_widget(GNT_BOX(window), gnt_label_new(secondary));
 
+	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(gaim_request_close),
+			GINT_TO_POINTER(type));
+
 	return window;
 }
 
@@ -35,7 +42,7 @@ setup_button_box(gpointer userdata, gpointer cb, gpointer data, ...)
 	const char *text;
 	gpointer callback;
 
-	box = gnt_hbox_new(TRUE);
+	box = gnt_hbox_new(FALSE);
 
 	va_start(list, data);
 
@@ -79,7 +86,7 @@ gg_request_input(const char *title, const char *primary,
 {
 	GntWidget *window, *box, *entry;
 
-	window = setup_request_window(title, primary, secondary);
+	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_INPUT);
 
 	entry = gnt_entry_new(default_value);
 	if (masked)
@@ -131,7 +138,7 @@ gg_request_choice(const char *title, const char *primary,
 	const char *text;
 	int val;
 
-	window = setup_request_window(title, primary, secondary);
+	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_CHOICE);
 
 	combo = gnt_combo_box_new();
 	gnt_box_add_widget(GNT_BOX(window), combo);
@@ -173,7 +180,7 @@ gg_request_action(const char *title, const char *primary,
 	GntWidget *window, *box, *button;
 	int i;
 
-	window = setup_request_window(title, primary, secondary);
+	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_ACTION);
 
 	box = gnt_hbox_new(TRUE);
 	gnt_box_add_widget(GNT_BOX(window), box);
@@ -196,12 +203,212 @@ gg_request_action(const char *title, const char *primary,
 	return window;
 }
 
+static void
+request_fields_cb(GntWidget *button, GaimRequestFields *fields)
+{
+	GaimRequestFieldsCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
+	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
+	GList *list;
+
+	/* Update the data of the fields. GtkGaim does this differently. Instead of
+	 * updating the fields at the end like here, it updates the appropriate field
+	 * instantly whenever a change is made. That allows it to make sure the
+	 * 'required' fields are entered before the user can hit OK. It's not the case
+	 * here, althought it can be done. I am not honouring the 'required' fields
+	 * for the moment. */
+	for (list = gaim_request_fields_get_groups(fields); list; list = list->next)
+	{
+		GaimRequestFieldGroup *group = list->data;
+		GList *fields = gaim_request_field_group_get_fields(group);
+		
+		for (; fields ; fields = fields->next)
+		{
+			GaimRequestField *field = fields->data;
+			GaimRequestFieldType type = gaim_request_field_get_type(field);
+			if (type == GAIM_REQUEST_FIELD_BOOLEAN)
+			{
+				GntWidget *check = field->ui_data;
+				gboolean value = gnt_check_box_get_checked(GNT_CHECK_BOX(check));
+				gaim_request_field_bool_set_value(field, value);
+			}
+			else if (type == GAIM_REQUEST_FIELD_STRING)
+			{
+				GntWidget *entry = field->ui_data;
+				gaim_request_field_string_set_value(field, gnt_entry_get_text(GNT_ENTRY(entry)));
+			}
+			else if (type == GAIM_REQUEST_FIELD_INTEGER)
+			{
+				GntWidget *entry = field->ui_data;
+				const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
+				int value = (text && *text) ? atoi(text) : 0;
+				gaim_request_field_int_set_value(field, value);
+			}
+			else if (type == GAIM_REQUEST_FIELD_CHOICE)
+			{
+				GntWidget *combo = field->ui_data;;
+				int id = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
+				gaim_request_field_choice_set_value(field, id);
+			}
+			else if (type == GAIM_REQUEST_FIELD_LIST)
+			{
+				GntWidget *tree = field->ui_data;
+				gpointer data = gnt_tree_get_selection_data(GNT_TREE(tree));
+				GList *list = g_list_append(NULL, data);   /* XXX: Update when multi-select is allowed */
+				gaim_request_field_list_set_selected(field, list);
+				g_list_free(list);
+			}
+			else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
+			{
+			}
+		}
+	}
+
+	if (callback)
+		callback(data, fields);
+
+	while (button->parent)
+		button = button->parent;
+
+	gaim_request_close(GAIM_REQUEST_FIELDS, button);
+}
+
+static void *
+gg_request_fields(const char *title, const char *primary,
+		const char *secondary, GaimRequestFields *fields,
+		const char *ok, GCallback ok_cb,
+		const char *cancel, GCallback cancel_cb,
+		void *userdata)
+{
+	GntWidget *window, *box;
+	GList *list;
+
+	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_FIELDS);
+
+	/* This is how it's going to work: the request-groups are going to be
+	 * stacked vertically one after the other. A GntLine will be separating
+	 * the groups. */
+	box = gnt_vbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(box), 0);
+	gnt_box_set_fill(GNT_BOX(box), TRUE);
+	for (list = gaim_request_fields_get_groups(fields); list; list = list->next)
+	{
+		GaimRequestFieldGroup *group = list->data;
+		GList *fields = gaim_request_field_group_get_fields(group);
+		GntWidget *hbox;
+		
+		/* XXX: Do something with the title, perhaps add a bold label  */
+
+		for (; fields ; fields = fields->next)
+		{
+			GaimRequestField *field = fields->data;
+			GaimRequestFieldType type = gaim_request_field_get_type(field);
+			const char *label = gaim_request_field_get_label(field);
+				
+			hbox = gnt_hbox_new(FALSE);
+			gnt_box_set_pad(GNT_BOX(hbox), 0);
+			gnt_box_add_widget(GNT_BOX(box), hbox);
+			
+			if (type != GAIM_REQUEST_FIELD_BOOLEAN)
+				gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(label));
+
+			if (type == GAIM_REQUEST_FIELD_BOOLEAN)
+			{
+				GntWidget *check = gnt_check_box_new(label);
+				gnt_check_box_set_checked(GNT_CHECK_BOX(check),
+						gaim_request_field_bool_get_default_value(field));
+				gnt_box_add_widget(GNT_BOX(hbox), check);
+				field->ui_data = check;
+			}
+			else if (type == GAIM_REQUEST_FIELD_STRING)
+			{
+				GntWidget *entry = gnt_entry_new(
+							gaim_request_field_string_get_default_value(field));
+				gnt_entry_set_masked(GNT_ENTRY(entry),
+						gaim_request_field_string_is_masked(field));
+				gnt_box_add_widget(GNT_BOX(hbox), entry);
+				field->ui_data = entry;
+			}
+			else if (type == GAIM_REQUEST_FIELD_INTEGER)
+			{
+				GntWidget *entry = gnt_entry_new(
+							gaim_request_field_string_get_default_value(field));
+				gnt_entry_set_flag(GNT_ENTRY(entry), GNT_ENTRY_FLAG_INT);
+				gnt_box_add_widget(GNT_BOX(hbox), entry);
+				field->ui_data = entry;
+			}
+			else if (type == GAIM_REQUEST_FIELD_CHOICE)
+			{
+				int id;
+				const GList *list;
+				GntWidget *combo = gnt_combo_box_new();
+				gnt_box_add_widget(GNT_BOX(hbox), combo);
+				field->ui_data = combo;
+
+				list = gaim_request_field_choice_get_labels(field);
+				for (id = 1; list; list = list->next, id++)
+				{
+					gnt_combo_box_add_data(GNT_COMBO_BOX(combo),
+							GINT_TO_POINTER(id), list->data);
+				}
+				gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
+						GINT_TO_POINTER(gaim_request_field_choice_get_default_value(field)));
+			}
+			else if (type == GAIM_REQUEST_FIELD_LIST)
+			{
+				/* XXX: Yet to allow multi-select, because the feature is absent in GntTree */
+				const GList *list;
+				GntWidget *tree = gnt_tree_new();
+				gnt_box_add_widget(GNT_BOX(hbox), tree);
+				field->ui_data = tree;
+
+				list = gaim_request_field_list_get_items(field);
+				for (; list; list = list->next)
+				{
+					const char *text = list->data;
+					gpointer key = gaim_request_field_list_get_data(field, text);
+					gnt_tree_add_row_after(GNT_TREE(tree), key,
+							gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
+					if (gaim_request_field_list_is_selected(field, text))
+						gnt_tree_set_selected(GNT_TREE(tree), key);
+				}
+			}
+#if 0
+			else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
+			{
+				/* XXX: remember to set the field->ui_data */
+			}
+#endif
+			else
+			{
+				gnt_box_add_widget(GNT_BOX(hbox),
+						gnt_label_new_with_format(_("Not implemented yet."),
+							GNT_TEXT_FLAG_BOLD));
+			}
+			if (fields->next)
+				gnt_box_add_widget(GNT_BOX(box), gnt_hline_new());
+		}
+	}
+	gnt_box_add_widget(GNT_BOX(window), box);
+
+	box = setup_button_box(userdata, request_fields_cb, fields,
+			ok, ok_cb, cancel, cancel_cb, NULL);
+	gnt_box_add_widget(GNT_BOX(window), box);
+
+	gnt_widget_show(window);
+	
+	
+	return window;
+}
+
 static GaimRequestUiOps uiops =
 {
 	.request_input = gg_request_input,
 	.close_request = gg_close_request,
 	.request_choice = gg_request_choice,
 	.request_action = gg_request_action,
+	.request_fields = gg_request_fields,
+	.request_file = NULL,                  /* No plans for these */
+	.request_folder = NULL
 };
 
 GaimRequestUiOps *gg_request_get_ui_ops()

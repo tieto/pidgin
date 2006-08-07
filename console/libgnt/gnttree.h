@@ -78,6 +78,7 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
+/* Returned string needs to be freed */
 char *gnt_tree_get_selection_text(GntTree *tree);
 
 GList *gnt_tree_get_selection_text_list(GntTree *tree);

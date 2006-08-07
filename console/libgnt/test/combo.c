@@ -46,6 +46,9 @@ int main()
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "4", "4");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "5", "5");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "6", "6");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "7", "7");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "8", "8");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(combo), "9", "9");
 
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new("Select"));
 	gnt_box_add_widget(GNT_BOX(hbox), combo);

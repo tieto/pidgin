@@ -41,14 +41,12 @@ gnt_combo_box_draw(GntWidget *widget)
 	
 	if (box->dropdown)
 	{
-		text = (char *)gnt_tree_get_selection_text(GNT_TREE(box->dropdown));
+		text = gnt_tree_get_selection_text(GNT_TREE(box->dropdown));
 		box->selected = gnt_tree_get_selection_data(GNT_TREE(box->dropdown));
 	}
 
 	if (text == NULL)
-		text = "";
-
-	text = g_strdup(text);
+		text = g_strdup(text);
 
 	if (gnt_widget_has_focus(widget))
 		type = GNT_COLOR_HIGHLIGHT;
@@ -102,6 +100,7 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 				case '\t':
 					set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
 				case 27:
+					gnt_tree_set_selected(GNT_TREE(box->dropdown), box->selected);
 					gnt_widget_hide(box->dropdown->parent);
 					return TRUE;
 					break;
@@ -118,18 +117,18 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 					strcmp(text + 1, GNT_KEY_DOWN) == 0)
 			{
 				GntWidget *parent = box->dropdown->parent;
-				gnt_widget_set_size(box->dropdown, widget->priv.width, 9);
-				gnt_widget_set_position(parent,
-						widget->priv.x, widget->priv.y + widget->priv.height - 1);
+				int height = g_list_length(GNT_TREE(box->dropdown)->list);
+				int y = widget->priv.y + widget->priv.height - 1;
+				gnt_widget_set_size(box->dropdown, widget->priv.width, height + 2);
+
+				if (y + height + 2 >= getmaxy(stdscr))
+					y = widget->priv.y - height - 1;
+				gnt_widget_set_position(parent, widget->priv.x, y);
 				if (parent->window)
 				{
-					if (mvwin(parent->window, widget->priv.y + widget->priv.height - 1,
-								widget->priv.x) == ERR)
-						mvwin(parent->window,
-							widget->priv.y - 9 + 1, widget->priv.x);
+					mvwin(parent->window, y, widget->priv.x);
 				}
 
-				GNT_WIDGET_SET_FLAGS(parent, GNT_WIDGET_TRANSIENT);
 				gnt_widget_draw(parent);
 				return TRUE;
 			}
@@ -192,7 +191,7 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 	combo->dropdown = gnt_tree_new();
 
 	box = gnt_box_new(FALSE, FALSE);
-	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER);
+	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER | GNT_WIDGET_TRANSIENT);
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_add_widget(GNT_BOX(box), combo->dropdown);
 	

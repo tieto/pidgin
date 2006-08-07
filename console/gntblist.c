@@ -61,7 +61,7 @@ static void add_group(GaimGroup *group, GGBlist *ggblist);
 static void add_chat(GaimChat *chat, GGBlist *ggblist);
 static void add_node(GaimBlistNode *node, GGBlist *ggblist);
 static void draw_tooltip(GGBlist *ggblist);
-static void remove_typing_cb(gpointer null);
+static gboolean remove_typing_cb(gpointer null);
 static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
 
@@ -873,7 +873,7 @@ void gg_blist_init()
 	return;
 }
 
-static void
+static gboolean
 remove_typing_cb(gpointer null)
 {
 	GaimSavedStatus *current;
@@ -887,7 +887,7 @@ remove_typing_cb(gpointer null)
 
 	newmessage = gnt_entry_get_text(GNT_ENTRY(ggblist->statustext));
 	item = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(ggblist->status));
-	g_return_if_fail(item->type == STATUS_PRIMITIVE);
+	g_return_val_if_fail(item->type == STATUS_PRIMITIVE, FALSE);
 	newprim = item->u.prim;
 
 	if (newprim != prim || ((message && !newmessage) ||
@@ -908,6 +908,7 @@ remove_typing_cb(gpointer null)
 	gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
 	g_source_remove(ggblist->typing);
 	ggblist->typing = 0;
+	return FALSE;
 }
 
 static void
@@ -932,7 +933,7 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 static gboolean
 status_text_changed(GntEntry *entry, const char *text, gpointer null)
 {
-	if (text[0] == 27 && ggblist->typing == 0)
+	if ((text[0] == 27 || (text[0] == '\t' && text[1] == '\0')) && ggblist->typing == 0)
 		return FALSE;
 
 	g_source_remove(ggblist->typing);
