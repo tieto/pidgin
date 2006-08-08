@@ -31,17 +31,10 @@
 #include "char_conv.h"
 #include "debug.h"
 #include "prefs.h"
+#include "util.h"
 #include "utils.h"
 
 #define QQ_NAME_FORMAT    "qq-%d"
-
-#if !GLIB_CHECK_VERSION(2, 1, 0)
-gint g_str_has_prefix(const gchar *str, const gchar *prefix)
-{
-	gint len = strlen(prefix);
-	return !strncmp(str, prefix, len);
-}
-#endif
 
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 {
@@ -160,7 +153,7 @@ guint32 gaim_name_to_uid(const gchar *name)
 {
 	gchar *p;
 
-	g_return_val_if_fail(g_str_has_prefix(name, QQ_NAME_PREFIX), 0);
+	g_return_val_if_fail(gaim_str_has_prefix(name, QQ_NAME_PREFIX), 0);
 
 	p = g_strrstr(name, QQ_NAME_PREFIX);
 	return (p == NULL) ? 0 : strtol(p + strlen(QQ_NAME_PREFIX), NULL, 10);

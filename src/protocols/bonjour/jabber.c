@@ -359,7 +359,7 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 	 * using a magic string, but xmlnode won't play nice when just
 	 * parsing an end tag
 	 */
-	if (g_str_has_prefix(message, STREAM_END) || (closed_conversation == TRUE)) {
+	if (gaim_str_has_prefix(message, STREAM_END) || (closed_conversation == TRUE)) {
 		/* Close the socket, clear the watcher and free memory */
 		if (bb->conversation != NULL) {
 			close(bb->conversation->socket);
