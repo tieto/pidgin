@@ -963,9 +963,6 @@ static void init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset(PACKAGE, "UTF-8");
-
 	option = gaim_account_option_bool_new(_("Login in TCP"), "use_tcp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
