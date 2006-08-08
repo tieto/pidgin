@@ -85,7 +85,7 @@ static void _fill_filename_md5(const gchar *filename, gchar *md5)
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, filename, strlen(filename));
+	gaim_cipher_context_append(context, (guint8 *) filename, strlen(filename));
 	gaim_cipher_context_digest(context, 16, md5, NULL);
 	gaim_cipher_context_destroy(context);
 }
@@ -93,7 +93,7 @@ static void _fill_filename_md5(const gchar *filename, gchar *md5)
 static void _fill_file_md5(const gchar *filename, gint filelen, gchar *md5)
 {
 	FILE *fp;
-	gchar *buffer;
+	guint8 *buffer;
 	GaimCipher *cipher;
 	GaimCipherContext *context;
 
@@ -106,7 +106,7 @@ static void _fill_file_md5(const gchar *filename, gint filelen, gchar *md5)
 	fp = fopen(filename, "rb");
 	g_return_if_fail(fp != NULL);
 
-	buffer = g_newa(gchar, filelen);
+	buffer = g_newa(guint8, filelen);
 	g_return_if_fail(buffer != NULL);
 	fread(buffer, filelen, 1, fp);
 
@@ -398,10 +398,11 @@ static void _qq_send_file_data_packet(GaimConnection *gc, guint16 packet_type, g
 	gchar file_md5[16], filename_md5[16], *filename;
 	gint filename_len, filesize;
 	qq_data *qd;
+	ft_info *info;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
-	ft_info *info = (ft_info *) qd->xfer->data;
+	info = (ft_info *) qd->xfer->data;
 
 	filename = (gchar *) gaim_xfer_get_filename(qd->xfer);
 	filesize = gaim_xfer_get_size(qd->xfer);
@@ -664,10 +665,12 @@ static void _qq_send_file_progess(GaimConnection *gc)
 
 static void _qq_update_send_progess(GaimConnection *gc, guint32 fragment_index)
 {
+	guint32 mask;
+	guint8 *buffer;
+	gint readbytes;
 	qq_data *qd = (qq_data *) gc->proto_data;
 	GaimXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
-	guint32 mask;
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", 
 			"receiving %dth fragment ack, slide window status %o, max_fragment_index %d\n", 
@@ -698,8 +701,6 @@ static void _qq_update_send_progess(GaimConnection *gc, guint32 fragment_index)
 		{
 			/* move the slide window */
 			info->window &= ~mask;
-			guint8 *buffer;
-			gint readbytes;
 
 			buffer = g_newa(guint8, info->fragment_len);
 			readbytes = _qq_xfer_read_file(buffer, info->max_fragment_index + sizeof(info->window), 

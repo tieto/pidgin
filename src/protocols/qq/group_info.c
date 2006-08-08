@@ -157,7 +157,9 @@ void qq_send_cmd_group_get_member_info(GaimConnection *gc, qq_group *group)
 void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
 {
 	qq_group *group;
+	qq_buddy *member;
 	qq_data *qd;
+	GaimConversation *gaim_conv;
 	guint8 orgnization, role;
 	guint16 unknown;
 	guint32 member_uid, internal_group_id;
@@ -206,7 +208,7 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 		if(orgnization != 0 || role != 0) {
 			gaim_debug(GAIM_DEBUG_INFO, "QQ", "group member %d: orgnizatio=%d, role=%d\n", member_uid, orgnization, role);
 		}
-		qq_buddy *member = qq_group_find_or_add_member(gc, group, member_uid);
+		member = qq_group_find_or_add_member(gc, group, member_uid);
 		member->role = role;
 	}
         if(*cursor > (data + len)) {
@@ -220,7 +222,8 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 
 	qq_group_refresh(gc, group);
 
-	GaimConversation *gaim_conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,group->group_name_utf8, gaim_connection_get_account(gc));
+	gaim_conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, 
+			group->group_name_utf8, gaim_connection_get_account(gc));
 	if(NULL == gaim_conv) {
                 gaim_debug(GAIM_DEBUG_WARNING, "QQ",
                            "Conv windows for \"%s\" is not on, do not set topic\n", group->group_name_utf8);

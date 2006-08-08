@@ -114,7 +114,8 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	else {			/* conversion error */
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", error->message);
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
-			   "Dump failed text\n%s", hex_dump_to_str(str, (len == -1) ? strlen(str) : len));
+			   "Dump failed text\n%s", 
+			   hex_dump_to_str((guint8 *) str, (len == -1) ? strlen(str) : len));
 		g_error_free(error);
 		return g_strdup(QQ_NULL_MSG);
 	}
@@ -130,7 +131,7 @@ gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_chars
 	g_return_val_if_fail(data != NULL && from_charset != NULL, -1);
 
 	len = data[0];
-	*ret = _my_convert(data + 1, (gssize) len, UTF8, from_charset);
+	*ret = _my_convert((gchar *) (data + 1), (gssize) len, UTF8, from_charset);
 
 	return len + 1;
 }
@@ -154,7 +155,7 @@ gchar *qq_encode_to_gaim(guint8 *data, gint len, const gchar *msg)
 	read_packet_b(data, &cursor, len, &bar);	/* skip, not sure of its use */
 	read_packet_w(data, &cursor, len, &charset_code);
 
-	font_name = g_strndup(cursor, data + len - cursor);
+	font_name = g_strndup((gchar *) cursor, data + len - cursor);
 
 	font_size = _get_size(font_attr);
 	is_bold = _check_bold(font_attr);
@@ -223,7 +224,7 @@ gchar *qq_smiley_to_gaim(gchar *text)
 	GString *converted;
 
 	converted = g_string_new("");
-	segments = split_data(text, strlen(text), "\x14", 0);
+	segments = split_data((guint8 *) text, strlen(text), "\x14", 0);
 	g_string_append(converted, segments[0]);
 
 	while ((*(++segments)) != NULL) {

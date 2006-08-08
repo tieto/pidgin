@@ -119,7 +119,7 @@ static void _qq_send_packet_ack_msg_sys(GaimConnection *gc, guint8 code, guint32
 
 	bytes += create_packet_b(ack, &cursor, code);
 	bytes += create_packet_b(ack, &cursor, bar);
-	bytes += create_packet_data(ack, &cursor, str, strlen(str));
+	bytes += create_packet_data(ack, &cursor, (guint8 *) str, strlen(str));
 	bytes += create_packet_b(ack, &cursor, bar);
 	bytes += create_packet_w(ack, &cursor, seq);
 
@@ -263,7 +263,7 @@ void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *
 
 	qd = (qq_data *) gc->proto_data;
 	len = buf_len;
-	data = g_newa(gchar, len);
+	data = g_newa(guint8, len);
 
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		if (NULL == (segments = split_data(data, len, "\x1f", 4)))

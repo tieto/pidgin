@@ -61,7 +61,7 @@ struct _qq_recv_msg_header {
 static gboolean _qq_check_packet_set_window(guint16 seq, GaimConnection *gc)
 {
 	qq_data *qd;
-	gchar *byte, mask;
+	guint8 *byte, mask;
 
 	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
 	qd = (qq_data *) gc->proto_data;
@@ -291,7 +291,7 @@ void qq_b4_packets_free(qq_data *qd)
 void qq_input_pending(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc;
-	qq_data *qd;;
+	qq_data *qd;
 	guint8 *buf;
 	gint len;
 

@@ -33,7 +33,7 @@ typedef struct _qq_sendpacket qq_sendpacket;
 struct _qq_sendpacket {
 	gint fd;
 	gint len;
-	gchar *buf;
+	guint8 *buf;
 	guint16 cmd;
 	guint16 send_seq;
 	gint resend_times;

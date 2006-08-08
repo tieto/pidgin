@@ -81,7 +81,7 @@ static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *curs
 	gchar *msg, *msg_utf8;
 	g_return_if_fail(cursor != NULL && len > 0 && gc != NULL);
 
-	msg = g_strndup(cursor, len);	/* it will append 0x00 */
+	msg = g_strndup((gchar *) cursor, len);	/* it will append 0x00 */
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
 	g_free(msg);
 	msg = g_strdup_printf(_("Code [0x%02X]: %s"), reply, msg_utf8);

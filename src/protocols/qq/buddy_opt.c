@@ -64,7 +64,8 @@ static void _qq_send_packet_remove_buddy(GaimConnection *gc, guint32 uid)
 	g_return_if_fail(gc != NULL && uid > 0);
 
 	uid_str = g_strdup_printf("%d", uid);
-	qq_send_cmd(gc, QQ_CMD_DEL_FRIEND, TRUE, 0, TRUE, uid_str, strlen(uid_str));
+	qq_send_cmd(gc, QQ_CMD_DEL_FRIEND, TRUE, 0, 
+			TRUE, (guint8 *) uid_str, strlen(uid_str));
 
 	g_free(uid_str);
 }
@@ -94,7 +95,8 @@ static void _qq_send_packet_add_buddy(GaimConnection *gc, guint32 uid)
 
 	/* we need to send the ascii code of this uid to qq server */
 	uid_str = g_strdup_printf("%d", uid);
-	qq_send_cmd(gc, QQ_CMD_ADD_FRIEND_WO_AUTH, TRUE, 0, TRUE, uid_str, strlen(uid_str));
+	qq_send_cmd(gc, QQ_CMD_ADD_FRIEND_WO_AUTH, TRUE, 0, 
+			TRUE, (guint8 *) uid_str, strlen(uid_str));
 	g_free(uid_str);
 
 	/* must be set after sending packet to get the correct send_seq */
@@ -118,14 +120,14 @@ static void _qq_send_packet_buddy_auth(GaimConnection *gc, guint32 uid, const gc
 	raw_data = g_newa(guint8, QQ_MSG_IM_MAX);
 	cursor = raw_data;
 
-	create_packet_data(raw_data, &cursor, uid_str, strlen(uid_str));
+	create_packet_data(raw_data, &cursor, (guint8 *) uid_str, strlen(uid_str));
 	create_packet_b(raw_data, &cursor, bar);
 	create_packet_b(raw_data, &cursor, response);
 
 	if (text != NULL) {
 		text_qq = utf8_to_qq(text, QQ_CHARSET_DEFAULT);
 		create_packet_b(raw_data, &cursor, bar);
-		create_packet_data(raw_data, &cursor, text_qq, strlen(text_qq));
+		create_packet_data(raw_data, &cursor, (guint8 *) text_qq, strlen(text_qq));
 		g_free(text_qq);
 	}
 
@@ -342,7 +344,8 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 {
 	qq_data *qd;
 	gint len, for_uid;
-	gchar *msg, *data, **segments, *uid, *reply;
+	gchar *msg, **segments, *uid, *reply;
+	guint8 *data;
 	GList *list;
 	GaimBuddy *b;
 	gc_and_uid *g;

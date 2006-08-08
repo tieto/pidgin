@@ -61,10 +61,11 @@ void qq_send_packet_keep_alive(GaimConnection *gc)
 }
 
 /* parse the return of keep-alive packet, it includes some system information */
-void qq_process_keep_alive_reply(guint8 * buf, gint buf_len, GaimConnection *gc) {
+void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc) {
 	qq_data *qd;
 	gint len;
-	gchar *data, **segments;	/* the returns are gchar, no need guint8 */
+	gchar **segments;
+	guint8 *data;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
@@ -125,6 +126,8 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 {
 	gchar *name;
 	GaimBuddy *bud;
+	gchar *status_id;
+	
 	g_return_if_fail(gc != NULL && q_bud != NULL);
 
 	name = uid_to_gaim_name(q_bud->uid);
@@ -138,7 +141,7 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 		/* gaim supports signon and idle time
 		 * but it is not much use for QQ, I do not use them */
 		/* serv_got_update(gc, name, online, 0, q_bud->signon, q_bud->idle, bud->uc); */
-		char *status_id = "available";
+		status_id = "available";
 		switch(q_bud->status) {
 		case QQ_BUDDY_OFFLINE:
 			status_id = "offline";

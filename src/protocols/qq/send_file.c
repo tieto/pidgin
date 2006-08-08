@@ -77,12 +77,12 @@ static int _qq_xfer_init_udp_channel(ft_info *info)
 }
 
 /* these 2 functions send and recv buffer from/to UDP channel */
-static ssize_t _qq_xfer_udp_recv(char *buf, size_t len, GaimXfer *xfer)
+static ssize_t _qq_xfer_udp_recv(guint8 *buf, size_t len, GaimXfer *xfer)
 {
 	struct sockaddr_in sin;
-	int sinlen;
+	socklen_t sinlen;
 	ft_info *info;
-	int r;
+	gint r;
 
 	info = (ft_info *) xfer->data;
 	sinlen = sizeof(sin);
@@ -102,7 +102,7 @@ static ssize_t _qq_xfer_udp_send(const char *buf, size_t len, GaimXfer *xfer)
 	return send(info->sender_fd, buf, len, 0);
 }
 */
-static ssize_t _qq_xfer_udp_send(const char *buf, size_t len, GaimXfer *xfer)
+static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, GaimXfer *xfer)
 {
 	struct sockaddr_in sin;
 	ft_info *info;
@@ -140,7 +140,7 @@ static ssize_t _qq_xfer_read(char **buf, GaimXfer *xfer)
 }
 */
 
-gssize _qq_xfer_write(const guchar *buf, size_t len, GaimXfer *xfer)
+gssize _qq_xfer_write(const guint8 *buf, size_t len, GaimXfer *xfer)
 {
 	return _qq_xfer_udp_send(buf, len, xfer);
 }
@@ -219,7 +219,7 @@ static void _qq_xfer_end(GaimXfer *xfer)
 	g_free(info);
 }
 
-void qq_show_conn_info(ft_info *info)
+static void qq_show_conn_info(ft_info *info)
 {
 	gchar *internet_ip_str, *real_ip_str;
 	guint32 ip;
@@ -375,7 +375,8 @@ in_addr_t get_real_ip()
 
 static void _qq_xfer_init_socket(GaimXfer *xfer)
 {
-	int sockfd, listen_port = 0, i, sin_len;
+	gint sockfd, listen_port = 0, i; 
+	socklen_t sin_len;
 	struct sockaddr_in sin;
 	ft_info *info;
 
@@ -446,27 +447,28 @@ static void _qq_send_packet_file_request (GaimConnection *gc, guint32 to_uid, gc
 	info->conn_method = 0x00;
 	qd->xfer->data = info;
 
-	filename_len = strlen (filename);
-	filelen_str = g_strdup_printf ("%d ×Ö½Ú", filesize);
-	filelen_strlen = strlen (filelen_str);
+	filename_len = strlen(filename);
+	filelen_str = g_strdup_printf("%d ×Ö½Ú", filesize);
+	filelen_strlen = strlen(filelen_str);
 
 	packet_len = 82 + filename_len + filelen_strlen;
-	raw_data = g_newa (guint8, packet_len);
+	raw_data = g_newa(guint8, packet_len);
 	cursor = raw_data;
 
-	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_REQ, qd, FALSE);
+	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, 
+			QQ_FILE_TRANS_REQ, qd, FALSE);
 	bytes += qq_fill_conn_info(raw_data, &cursor, info);
 	/* 079: 0x20 */
 	bytes += create_packet_b (raw_data, &cursor, 0x20);
 	/* 080: 0x1f */
 	bytes += create_packet_b (raw_data, &cursor, 0x1f);
 	/* undetermined len: filename */
-	bytes += create_packet_data (raw_data, &cursor, filename,
+	bytes += create_packet_data (raw_data, &cursor, (guint8 *) filename,
 				     filename_len);
 	/* 0x1f */
 	bytes += create_packet_b (raw_data, &cursor, 0x1f);
 	/* file length */
-	bytes += create_packet_data (raw_data, &cursor, filelen_str,
+	bytes += create_packet_data (raw_data, &cursor, (guint8 *) filelen_str,
 				     filelen_strlen);
 
 	if (packet_len == bytes)
@@ -485,6 +487,8 @@ static void _qq_send_packet_file_accept(GaimConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
 	guint8 *cursor, *raw_data;
+	guint16 minor_port;
+	guint32 real_ip;
 	gint packet_len, bytes;
 	ft_info *info;
 
@@ -494,8 +498,6 @@ static void _qq_send_packet_file_accept(GaimConnection *gc, guint32 to_uid)
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "I've accepted the file transfer request from %d\n", to_uid);
 	_qq_xfer_init_socket(qd->xfer);
-	guint16 minor_port;
-	guint32 real_ip;
 
 	packet_len = 79;
 	raw_data = g_newa (guint8, packet_len);
@@ -779,7 +781,7 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 {
 	qq_data *qd;
 	GaimXfer *xfer;
-	gchar *sender_name;
+	gchar *sender_name, **fileinfo;
 	ft_info *info;
 	GaimBuddy *b;
 	qq_buddy *q_bud;
@@ -803,8 +805,7 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 	*cursor = data + 18 + 12;
 	qq_get_conn_info(data, cursor, data_len, info);
 
-	gchar **fileinfo;
-	fileinfo = g_strsplit(data + 81 + 12, "\x1f", 2);
+	fileinfo = g_strsplit((gchar *) (data + 81 + 12), "\x1f", 2);
 	g_return_if_fail (fileinfo != NULL && fileinfo[0] != NULL && fileinfo[1] != NULL);
 
 	sender_name = uid_to_gaim_name(sender_uid);
