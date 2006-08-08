@@ -92,7 +92,6 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
-	-DDATADIR=\"${datadir}\" \
         -DVERSION=\"$(VERSION)\" \
         $(DEBUG_CFLAGS) \
         $(GLIB_CFLAGS) \
