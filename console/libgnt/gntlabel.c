@@ -1,4 +1,5 @@
 #include "gntlabel.h"
+#include "gntutils.h"
 
 #include <string.h>
 
@@ -33,27 +34,9 @@ static void
 gnt_label_size_request(GntWidget *widget)
 {
 	GntLabel *label = GNT_LABEL(widget);
-	char *s = label->text, *last = s;
-	int count = 1;
-	int max = 0;
 
-	/* XXX: ew ... everyone look away */
-	while (*s)
-	{
-		if (*s == '\n' || *s == '\r')
-		{
-			count++;
-			if (max < s - last + 1)
-				max = s - last + 1;
-			last = s + 1;
-		}
-		s++;
-	}
-	if (max < s - last + 1)
-		max = s - last + 1;
-	widget->priv.height = count;
-
-	widget->priv.width = max;
+	gnt_util_get_text_bound(label->text,
+			&widget->priv.width, &widget->priv.height);
 }
 
 static void

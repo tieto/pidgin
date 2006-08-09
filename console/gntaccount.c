@@ -213,8 +213,9 @@ update_user_splits(AccountEditDialog *dialog)
 	}
 	else
 	{
-		dialog->splits = gnt_box_new(FALSE, TRUE);
+		dialog->splits = gnt_vbox_new(FALSE);
 		gnt_box_set_pad(GNT_BOX(dialog->splits), 0);
+		gnt_box_set_fill(GNT_BOX(dialog->splits), TRUE);
 	}
 
 	dialog->split_entries = NULL;
@@ -232,7 +233,7 @@ update_user_splits(AccountEditDialog *dialog)
 		GntWidget *entry;
 		char *buf;
 
-		hbox = gnt_box_new(TRUE, FALSE);
+		hbox = gnt_hbox_new(TRUE);
 		gnt_box_add_widget(GNT_BOX(dialog->splits), hbox);
 
 		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(split));
@@ -443,16 +444,18 @@ edit_account(GaimAccount *account)
 	dialog = g_new0(AccountEditDialog, 1);
 	accountdialogs = g_list_prepend(accountdialogs, dialog);
 
-	dialog->window = window = gnt_box_new(FALSE, TRUE);
+	dialog->window = window = gnt_vbox_new(FALSE);
 	dialog->account = account;
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), account ? _("Modify Account") : _("New Account"));
 	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 	gnt_box_set_pad(GNT_BOX(window), 0);
+	gnt_widget_set_name(window, "edit-account");
+	gnt_box_set_fill(GNT_BOX(window), TRUE);
 
-	hbox = gnt_box_new(TRUE, FALSE);
+	hbox = gnt_hbox_new(TRUE);
+	gnt_box_set_pad(GNT_BOX(hbox), 0);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
-	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 
 	dialog->protocol = combo = gnt_combo_box_new();
 	list = gaim_plugins_get_protocols();
@@ -461,6 +464,7 @@ edit_account(GaimAccount *account)
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), iter->data,
 				((GaimPlugin*)iter->data)->info->name);
 	}
+
 	if (account)
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
 				gaim_plugins_find_with_id(gaim_account_get_protocol_id(account)));
@@ -468,10 +472,12 @@ edit_account(GaimAccount *account)
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), list->data);
 
 	g_signal_connect(G_OBJECT(combo), "selection-changed", G_CALLBACK(prpl_changed_cb), dialog);
+
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Protocol:")));
 	gnt_box_add_widget(GNT_BOX(hbox), combo);
 
-	hbox = gnt_box_new(TRUE, FALSE);
+	hbox = gnt_hbox_new(TRUE);
+	gnt_box_set_pad(GNT_BOX(hbox), 0);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->screenname = entry = gnt_entry_new(NULL);
@@ -482,7 +488,8 @@ edit_account(GaimAccount *account)
 	update_user_splits(dialog);
 	gnt_box_add_widget(GNT_BOX(window), dialog->splits);
 
-	hbox = gnt_box_new(TRUE, FALSE);
+	hbox = gnt_hbox_new(TRUE);
+	gnt_box_set_pad(GNT_BOX(hbox), 0);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->password = entry = gnt_entry_new(NULL);
@@ -492,7 +499,8 @@ edit_account(GaimAccount *account)
 	if (account)
 		gnt_entry_set_text(GNT_ENTRY(entry), gaim_account_get_password(account));
 
-	hbox = gnt_box_new(TRUE, FALSE);
+	hbox = gnt_hbox_new(TRUE);
+	gnt_box_set_pad(GNT_BOX(hbox), 0);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->alias = entry = gnt_entry_new(NULL);
@@ -515,8 +523,9 @@ edit_account(GaimAccount *account)
 	/* TODO: Add proxy options */
 
 	/* The button box */
-	hbox = gnt_box_new(FALSE, FALSE);
+	hbox = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
+	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 
 	button = gnt_button_new(_("Cancel"));
 	gnt_box_add_widget(GNT_BOX(hbox), button);
@@ -603,7 +612,7 @@ void gg_accounts_show_all()
 	GList *iter;
 	GntWidget *box, *button;
 
-	accounts.window = gnt_box_new(FALSE, TRUE);
+	accounts.window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);
 	gnt_box_set_title(GNT_BOX(accounts.window), _("Accounts"));
 	gnt_box_set_pad(GNT_BOX(accounts.window), 0);
@@ -632,7 +641,7 @@ void gg_accounts_show_all()
 
 	gnt_box_add_widget(GNT_BOX(accounts.window), gnt_line_new(FALSE));
 
-	box = gnt_box_new(FALSE, FALSE);
+	box = gnt_hbox_new(FALSE);
 
 	button = gnt_button_new(_("Add"));
 	gnt_box_add_widget(GNT_BOX(box), button);

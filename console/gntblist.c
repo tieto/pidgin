@@ -906,7 +906,8 @@ remove_typing_cb(gpointer null)
 	}
 
 	gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
-	g_source_remove(ggblist->typing);
+	if (ggblist->typing)
+		g_source_remove(ggblist->typing);
 	ggblist->typing = 0;
 	return FALSE;
 }
@@ -923,6 +924,7 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 	else if (now->type == STATUS_PRIMITIVE)
 	{
 		/* Move the focus to the entry box */
+		/* XXX: Make sure the selected status can have a message */
 		gnt_box_move_focus(GNT_BOX(ggblist->window), 1);
 		ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
 	}
@@ -936,7 +938,8 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 	if ((text[0] == 27 || (text[0] == '\t' && text[1] == '\0')) && ggblist->typing == 0)
 		return FALSE;
 
-	g_source_remove(ggblist->typing);
+	if (ggblist->typing)
+		g_source_remove(ggblist->typing);
 	ggblist->typing = 0;
 
 	if (text[0] == '\r' && text[1] == 0)

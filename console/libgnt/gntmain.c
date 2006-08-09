@@ -391,7 +391,14 @@ dump_screen()
 						ch = ' '; break;
 				}
 			}
-			fprintf(file, "%c", ch);
+			if (ch == '&')
+				fprintf(file, "&amp;");
+			else if (ch == '<')
+				fprintf(file, "&lt;");
+			else if (ch == '>')
+				fprintf(file, "&gt;");
+			else
+				fprintf(file, "%c", ch);
 			old = now;
 		}
 		fprintf(file, "</span>\n");

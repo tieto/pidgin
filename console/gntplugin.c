@@ -128,6 +128,8 @@ void gg_plugins_show_all()
 	g_signal_connect(G_OBJECT(tree), "selection_changed", G_CALLBACK(selection_changed), NULL);
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(reset_plugin_window), NULL);
 
+	gnt_tree_set_selected(GNT_TREE(tree), gaim_plugins_get_all()->data);
+
 	gnt_widget_show(window);
 }
 

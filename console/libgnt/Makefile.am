@@ -17,6 +17,7 @@ libgnt_la_SOURCES = \
 	gntstyle.c \
 	gnttextview.c \
 	gnttree.c \
+	gntutils.c \
 	gntmain.c
 
 libgnt_la_headers = \
@@ -34,6 +35,7 @@ libgnt_la_headers = \
 	gntstyle.h \
 	gnttextview.h \
 	gnttree.h \
+	gntutils.h \
 	gnt.h
 
 libgnt_laincludedir=$(includedir)/gnt

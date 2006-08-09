@@ -251,13 +251,12 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 			}
 			else if (type == GAIM_REQUEST_FIELD_LIST)
 			{
-				GntWidget *tree = field->ui_data;
 				GList *list = NULL;
-
 				if (gaim_request_field_list_get_multi_select(field))
 				{
 					const GList *iter;
-					
+					GntWidget *tree = field->ui_data;
+
 					iter = gaim_request_field_list_get_items(field);
 					for (; iter; iter = iter->next)
 					{
@@ -269,7 +268,8 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 				}
 				else
 				{
-					gpointer data = gnt_tree_get_selection_data(GNT_TREE(tree));
+					GntWidget *combo = field->ui_data;
+					gpointer data = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
 					list = g_list_append(list, data);
 				}
 
@@ -315,7 +315,9 @@ gg_request_fields(const char *title, const char *primary,
 		GList *fields = gaim_request_field_group_get_fields(group);
 		GntWidget *hbox;
 		
-		/* XXX: Do something with the title, perhaps add a bold label  */
+		gnt_box_add_widget(GNT_BOX(box),
+				gnt_label_new_with_format(gaim_request_field_group_get_title(group),
+					GNT_TEXT_FLAG_BOLD));
 
 		for (; fields ; fields = fields->next)
 		{
@@ -328,7 +330,11 @@ gg_request_fields(const char *title, const char *primary,
 			gnt_box_add_widget(GNT_BOX(box), hbox);
 			
 			if (type != GAIM_REQUEST_FIELD_BOOLEAN)
-				gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(label));
+			{
+				GntWidget *l = gnt_label_new(label);
+				gnt_widget_set_size(l, 0, 1);
+				gnt_box_add_widget(GNT_BOX(hbox), l);
+			}
 
 			if (type == GAIM_REQUEST_FIELD_BOOLEAN)
 			{
@@ -376,28 +382,38 @@ gg_request_fields(const char *title, const char *primary,
 			{
 				const GList *list;
 				gboolean multi = gaim_request_field_list_get_multi_select(field);
-				GntWidget *tree = gnt_tree_new();
-				gnt_box_add_widget(GNT_BOX(hbox), tree);
-				field->ui_data = tree;
-
-				list = gaim_request_field_list_get_items(field);
-				for (; list; list = list->next)
+				if (multi)
 				{
-					const char *text = list->data;
-					gpointer key = gaim_request_field_list_get_data(field, text);
-					if (multi)
+					GntWidget *tree = gnt_tree_new();
+					gnt_box_add_widget(GNT_BOX(hbox), tree);
+					field->ui_data = tree;
+
+					list = gaim_request_field_list_get_items(field);
+					for (; list; list = list->next)
 					{
+						const char *text = list->data;
+						gpointer key = gaim_request_field_list_get_data(field, text);
 						gnt_tree_add_choice(GNT_TREE(tree), key,
 								gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
 						if (gaim_request_field_list_is_selected(field, text))
 							gnt_tree_set_choice(GNT_TREE(tree), key, TRUE);
 					}
-					else
+				}
+				else
+				{
+					GntWidget *combo = gnt_combo_box_new();
+					gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
+					gnt_box_add_widget(GNT_BOX(hbox), combo);
+					field->ui_data = combo;
+
+					list = gaim_request_field_list_get_items(field);
+					for (; list; list = list->next)
 					{
-						gnt_tree_add_row_after(GNT_TREE(tree), key,
-								gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
+						const char *text = list->data;
+						gpointer key = gaim_request_field_list_get_data(field, text);
+						gnt_combo_box_add_data(GNT_COMBO_BOX(combo), key, text);
 						if (gaim_request_field_list_is_selected(field, text))
-							gnt_tree_set_selected(GNT_TREE(tree), key);
+							gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), key);
 					}
 				}
 			}
@@ -413,9 +429,9 @@ gg_request_fields(const char *title, const char *primary,
 						gnt_label_new_with_format(_("Not implemented yet."),
 							GNT_TEXT_FLAG_BOLD));
 			}
-			if (fields->next)
-				gnt_box_add_widget(GNT_BOX(box), gnt_hline_new());
 		}
+		if (list->next)
+			gnt_box_add_widget(GNT_BOX(box), gnt_hline_new());
 	}
 	gnt_box_add_widget(GNT_BOX(window), box);
 
@@ -424,7 +440,6 @@ gg_request_fields(const char *title, const char *primary,
 	gnt_box_add_widget(GNT_BOX(window), box);
 
 	gnt_widget_show(window);
-	
 	
 	return window;
 }

@@ -19,7 +19,6 @@ debug_window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
 {
 	if (key[0] == 27)
 	{
-		/* XXX: This doesn't seem to always work */
 		if (strcmp(key+1, GNT_KEY_DOWN) == 0)
 			gnt_text_view_scroll(view, 1);
 		else if (strcmp(key+1, GNT_KEY_UP) == 0)
@@ -61,10 +60,7 @@ gg_debug_print(GaimDebugLevel level, const char *category,
 		}
 		
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview), args, flag);
-		gnt_text_view_next_line(GNT_TEXT_VIEW(debug.tview));
 		gnt_text_view_scroll(GNT_TEXT_VIEW(debug.tview), 0);
-
-		g_signal_connect(G_OBJECT(debug.window), "key_pressed", G_CALLBACK(debug_window_kpress_cb), debug.tview);
 	}
 }
 
@@ -95,7 +91,10 @@ void gg_debug_window_show()
 		debug.tview = gnt_text_view_new();
 		gnt_box_add_widget(GNT_BOX(debug.window), debug.tview);
 
+		/* XXX: Add checkboxes/buttons for Clear, Pause, Timestamps */
+
 		g_signal_connect(G_OBJECT(debug.window), "destroy", G_CALLBACK(reset_debug_win), NULL);
+		g_signal_connect(G_OBJECT(debug.window), "key_pressed", G_CALLBACK(debug_window_kpress_cb), debug.tview);
 	}
 
 	gnt_widget_show(debug.window);
