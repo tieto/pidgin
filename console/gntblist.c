@@ -101,7 +101,6 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 	gnt_tree_remove(GNT_TREE(ggblist->tree), node);
 	node->ui_data = NULL;
 
-	/* XXX: Depending on the node, we may want to remove the group/contact node if necessary */
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
 		GaimGroup *group = gaim_buddy_get_group((GaimBuddy*)node);
@@ -648,17 +647,33 @@ gg_blist_remove_node(GaimBlistNode *node)
 	}
 }
 
-/* XXX: This still doesn't do anything, because request doesn't have a ui yet */
 static void
 gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *null)
 {
+	char *primary, *sec = NULL;
+	const char *name;
+
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		name = gaim_buddy_get_name((GaimBuddy*)node);
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		name = gaim_chat_get_name((GaimChat*)node);
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+	{
+		name = ((GaimGroup*)node)->name;
+		sec = _("Removing this group will also remove all the buddies in the group");
+	}
+	else
+		return;
+
+	primary = g_strdup_printf(_("Are you sure you want to remove %s?"), name);
+
 	/* XXX: anything to do with the returned ui-handle? */
 	gaim_request_action(node, _("Confirm Remove"),
-			_("Are you sure you want to remove ..."), NULL,    /* XXX: tidy up */
+			primary, sec,
 			1, node, 2,
 			_("Remove"), gg_blist_remove_node,
-			_("No"), NULL);
-
+			_("Cancel"), NULL);
+	g_free(primary);
 }
 
 static void

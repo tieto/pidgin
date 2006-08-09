@@ -182,7 +182,7 @@ gg_request_action(const char *title, const char *primary,
 
 	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_ACTION);
 
-	box = gnt_hbox_new(TRUE);
+	box = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), box);
 	for (i = 0; i < actioncount; i++)
 	{
