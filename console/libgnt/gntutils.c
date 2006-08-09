@@ -8,22 +8,25 @@ void gnt_util_get_text_bound(const char *text, int *width, int *height)
 
 	/* XXX: ew ... everyone look away */
 	last = s;
-	while (*s)
+	if (s)
 	{
-		if (*s == '\n' || *s == '\r')
+		while (*s)
 		{
-			count++;
-			len = g_utf8_pointer_to_offset(last, s);
-			if (max < len)
-				max = len;
-			last = s + 1;
+			if (*s == '\n' || *s == '\r')
+			{
+				count++;
+				len = g_utf8_pointer_to_offset(last, s);
+				if (max < len)
+					max = len;
+				last = s + 1;
+			}
+			s++;
 		}
-		s++;
-	}
 
-	len = g_utf8_pointer_to_offset(last, s);
-	if (max < len)
-		max = len;
+		len = g_utf8_pointer_to_offset(last, s);
+		if (max < len)
+			max = len;
+	}
 
 	if (height)
 		*height = count;

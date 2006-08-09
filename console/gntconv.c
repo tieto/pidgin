@@ -229,6 +229,9 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 
 	g_return_if_fail(ggconv != NULL);
 
+	if (gaim_prefs_get_bool("/gaim/gnt/conversations/timestamps"))
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+					gaim_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
 	if (who && *who && (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV)))
 	{
 		char * name = g_strdup_printf("%s: ", who);
