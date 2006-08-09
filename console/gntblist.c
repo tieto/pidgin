@@ -590,24 +590,73 @@ gg_blist_rename_node_cb(GaimBlistNode *node, GaimBlistNode *null)
 	g_free(prompt);
 }
 
+/* Xeroxed from gtkdialogs.c:gaim_gtkdialogs_remove_group_cb*/
+static void
+remove_group(GaimGroup *group)
+{
+	GaimBlistNode *cnode, *bnode;
+
+	cnode = ((GaimBlistNode*)group)->child;
+
+	while (cnode) {
+		if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+			bnode = cnode->child;
+			cnode = cnode->next;
+			while (bnode) {
+				GaimBuddy *buddy;
+				if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
+					buddy = (GaimBuddy*)bnode;
+					bnode = bnode->next;
+					if (gaim_account_is_connected(buddy->account)) {
+						gaim_account_remove_buddy(buddy->account, buddy, group);
+						gaim_blist_remove_buddy(buddy);
+					}
+				} else {
+					bnode = bnode->next;
+				}
+			}
+		} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
+			GaimChat *chat = (GaimChat *)cnode;
+			cnode = cnode->next;
+			if (gaim_account_is_connected(chat->account))
+				gaim_blist_remove_chat(chat);
+		} else {
+			cnode = cnode->next;
+		}
+	}
+
+	gaim_blist_remove_group(group);
+}
+
+static void
+gg_blist_remove_node(GaimBlistNode *node)
+{
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+	{
+		GaimBuddy *buddy = (GaimBuddy*)node;
+		GaimGroup *group = gaim_buddy_get_group(buddy);
+		gaim_account_remove_buddy(gaim_buddy_get_account(buddy), buddy, group);
+		gaim_blist_remove_buddy(buddy);
+	}
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+	{
+		gaim_blist_remove_chat((GaimChat*)node);
+	}
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+	{
+		remove_group((GaimGroup*)node);
+	}
+}
+
 /* XXX: This still doesn't do anything, because request doesn't have a ui yet */
 static void
 gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *null)
 {
-	void (*callback)(gpointer);
-
-	if (GAIM_BLIST_NODE_IS_BUDDY(node))
-		callback = (void(*)(gpointer))gaim_blist_remove_buddy;
-	else if (GAIM_BLIST_NODE_IS_CHAT(node))
-		callback = (void(*)(gpointer))gaim_blist_remove_chat;
-	else if (GAIM_BLIST_NODE_IS_GROUP(node))
-		callback = (void(*)(gpointer))gaim_blist_remove_group;
-
 	/* XXX: anything to do with the returned ui-handle? */
 	gaim_request_action(node, _("Confirm Remove"),
 			_("Are you sure you want to remove ..."), NULL,    /* XXX: tidy up */
 			1, node, 2,
-			_("Remove"), callback,
+			_("Remove"), gg_blist_remove_node,
 			_("No"), NULL);
 
 }

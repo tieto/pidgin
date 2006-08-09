@@ -234,7 +234,8 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 			else if (type == GAIM_REQUEST_FIELD_STRING)
 			{
 				GntWidget *entry = field->ui_data;
-				gaim_request_field_string_set_value(field, gnt_entry_get_text(GNT_ENTRY(entry)));
+				const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
+				gaim_request_field_string_set_value(field, (text && *text) ? text : NULL);
 			}
 			else if (type == GAIM_REQUEST_FIELD_INTEGER)
 			{
