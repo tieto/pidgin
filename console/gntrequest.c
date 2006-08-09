@@ -278,6 +278,9 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 			}
 			else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
 			{
+				GntWidget *combo = field->ui_data;
+				GaimAccount *acc = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
+				gaim_request_field_account_set_value(field, acc);
 			}
 		}
 	}
@@ -293,13 +296,13 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 
 static void *
 gg_request_fields(const char *title, const char *primary,
-		const char *secondary, GaimRequestFields *fields,
+		const char *secondary, GaimRequestFields *allfields,
 		const char *ok, GCallback ok_cb,
 		const char *cancel, GCallback cancel_cb,
 		void *userdata)
 {
 	GntWidget *window, *box;
-	GList *list;
+	GList *grlist;
 
 	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_FIELDS);
 
@@ -309,27 +312,28 @@ gg_request_fields(const char *title, const char *primary,
 	box = gnt_vbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_set_fill(GNT_BOX(box), TRUE);
-	for (list = gaim_request_fields_get_groups(fields); list; list = list->next)
+	for (grlist = gaim_request_fields_get_groups(allfields); grlist; grlist = grlist->next)
 	{
-		GaimRequestFieldGroup *group = list->data;
+		GaimRequestFieldGroup *group = grlist->data;
 		GList *fields = gaim_request_field_group_get_fields(group);
 		GntWidget *hbox;
-		
-		gnt_box_add_widget(GNT_BOX(box),
-				gnt_label_new_with_format(gaim_request_field_group_get_title(group),
-					GNT_TEXT_FLAG_BOLD));
+		const char *title = gaim_request_field_group_get_title(group);
+
+		if (title)
+			gnt_box_add_widget(GNT_BOX(box),
+					gnt_label_new_with_format(title, GNT_TEXT_FLAG_BOLD));
 
 		for (; fields ; fields = fields->next)
 		{
+			/* XXX: Break each of the fields into a separate function? */
 			GaimRequestField *field = fields->data;
 			GaimRequestFieldType type = gaim_request_field_get_type(field);
 			const char *label = gaim_request_field_get_label(field);
 				
-			hbox = gnt_hbox_new(FALSE);
-			gnt_box_set_pad(GNT_BOX(hbox), 0);
+			hbox = gnt_hbox_new(TRUE);   /* hrm */
 			gnt_box_add_widget(GNT_BOX(box), hbox);
 			
-			if (type != GAIM_REQUEST_FIELD_BOOLEAN)
+			if (type != GAIM_REQUEST_FIELD_BOOLEAN && label)
 			{
 				GntWidget *l = gnt_label_new(label);
 				gnt_widget_set_size(l, 0, 1);
@@ -417,12 +421,44 @@ gg_request_fields(const char *title, const char *primary,
 					}
 				}
 			}
-#if 0
 			else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
 			{
-				/* XXX: remember to set the field->ui_data */
+				gboolean all;
+				GaimAccount *def;
+				GList *list;
+				GntWidget *combo = gnt_combo_box_new();
+				gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
+				gnt_box_add_widget(GNT_BOX(hbox), combo);
+				field->ui_data = combo;
+
+				all = gaim_request_field_account_get_show_all(field);
+				def = gaim_request_field_account_get_default_value(field);
+
+				if (all)
+					list = gaim_accounts_get_all();
+				else
+					list = gaim_connections_get_all();
+
+				for (; list; list = list->next)
+				{
+					GaimAccount *account;
+					char *text;
+
+					if (all)
+						account = list->data;
+					else
+						account = gaim_connection_get_account(list->data);
+
+					text = g_strdup_printf("%s (%s)",
+							gaim_account_get_username(account),
+							gaim_account_get_protocol_name(account));
+					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), account, text);
+					g_free(text);
+					if (account == def)
+						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), account);
+				}
+				gnt_widget_set_size(combo, 20, 3); /* ew */
 			}
-#endif
 			else
 			{
 				gnt_box_add_widget(GNT_BOX(hbox),
@@ -430,12 +466,12 @@ gg_request_fields(const char *title, const char *primary,
 							GNT_TEXT_FLAG_BOLD));
 			}
 		}
-		if (list->next)
+		if (grlist->next)
 			gnt_box_add_widget(GNT_BOX(box), gnt_hline_new());
 	}
 	gnt_box_add_widget(GNT_BOX(window), box);
 
-	box = setup_button_box(userdata, request_fields_cb, fields,
+	box = setup_button_box(userdata, request_fields_cb, allfields,
 			ok, ok_cb, cancel, cancel_cb, NULL);
 	gnt_box_add_widget(GNT_BOX(window), box);
 

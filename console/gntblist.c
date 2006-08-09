@@ -1,5 +1,6 @@
 #include <account.h>
 #include <blist.h>
+#include <notify.h>
 #include <request.h>
 #include <savedstatuses.h>
 #include <server.h>
@@ -141,6 +142,103 @@ new_list(GaimBuddyList *list)
 {
 }
 
+static void
+add_buddy_cb(void *data, GaimRequestFields *allfields)
+{
+	const char *username = gaim_request_fields_get_string(allfields, "screenname");
+	const char *alias = gaim_request_fields_get_string(allfields, "alias");
+	const char *group = gaim_request_fields_get_string(allfields, "group");
+	GaimAccount *account = gaim_request_fields_get_account(allfields, "account");
+	const char *error = NULL;
+	GaimGroup *grp;
+	GaimBuddy *buddy;
+
+	if (!username)
+		error = _("You must provide a screename for the buddy.");
+	else if (!group)
+		error = _("You must provide a group.");
+	else if (!account)
+		error = _("You must select an account.");
+
+	if (error)
+	{
+		gaim_notify_error(NULL, _("Error"), _("Error adding buddy"), error);
+		return;
+	}
+
+	grp = gaim_find_group(group);
+	if (!grp)
+	{
+		grp = gaim_group_new(group);
+		gaim_blist_add_group(grp, NULL);
+	}
+
+	buddy = gaim_buddy_new(account, username, alias);
+	gaim_blist_add_buddy(buddy, NULL, grp, NULL);
+	gaim_account_add_buddy(account, buddy);
+}
+
+static void
+gg_request_add_buddy(GaimAccount *account, const char *username, const char *grp, const char *alias)
+{
+	GaimRequestFields *fields = gaim_request_fields_new();
+	GaimRequestFieldGroup *group = gaim_request_field_group_new(NULL);
+	GaimRequestField *field;
+
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("screenname", _("Screen Name"), username, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("alias", _("Alias"), alias, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("group", _("Group"), grp, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_account_new("account", _("Account"), NULL);
+	gaim_request_field_account_set_show_all(field, FALSE);
+	if (account)
+		gaim_request_field_account_set_value(field, account);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(NULL, _("Add Buddy"), NULL, _("Please enter buddy information."),
+			fields, _("Add"), G_CALLBACK(add_buddy_cb), _("Cancel"), NULL, NULL);
+}
+
+static void
+add_group_cb(gpointer null, const char *group)
+{
+	GaimGroup *grp;
+
+	if (!group || !*group)
+	{
+		gaim_notify_error(NULL, _("Error"), _("Error adding group"),
+				_("You must give a name for the group to add."));
+		return;
+	}
+
+	grp = gaim_find_group(group);
+	if (!grp)
+	{
+		grp = gaim_group_new(group);
+		gaim_blist_add_group(grp, NULL);
+	}
+	else
+	{
+		gaim_notify_error(NULL, _("Error"), _("Error adding group"),
+				_("A group with the name already exists."));
+	}
+}
+
+static void
+gg_request_add_group()
+{
+	gaim_request_input(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
+			NULL, FALSE, FALSE, NULL,
+			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL, NULL);
+}
+
 static GaimBlistUiOps blist_ui_ops =
 {
 	new_list,
@@ -150,9 +248,9 @@ static GaimBlistUiOps blist_ui_ops =
 	node_remove,
 	NULL,
 	NULL,
+	.request_add_buddy = gg_request_add_buddy,
 	NULL,
-	NULL,
-	NULL
+	.request_add_group = gg_request_add_group
 };
 
 static gpointer
@@ -360,8 +458,24 @@ create_chat_menu(GntTree *tree, GaimChat *chat)
 }
 
 static void
+gg_add_buddy(GaimGroup *grp, GaimBlistNode *node)
+{
+	gaim_blist_request_add_buddy(NULL, NULL, grp->name, NULL);
+}
+
+static void
+gg_add_group(GaimGroup *grp, GaimBlistNode *node)
+{
+	gaim_blist_request_add_group();
+}
+
+static void
 create_group_menu(GntTree *tree, GaimGroup *group)
 {
+	add_custom_action(tree, _("Add Buddy"),
+			GAIM_CALLBACK(gg_add_buddy), group);
+	add_custom_action(tree, _("Add Group"),
+			GAIM_CALLBACK(gg_add_group), group);
 }
 
 static void
@@ -555,6 +669,7 @@ draw_context_menu(GGBlist *ggblist)
 			GAIM_CALLBACK(gg_blist_remove_node_cb), node);
 
 	window = gnt_vbox_new(FALSE);
+	GNT_WIDGET_SET_FLAGS(window, GNT_WIDGET_TRANSIENT);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), title);
 
