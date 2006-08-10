@@ -495,27 +495,59 @@ msn_get_gleams(MsnContact *contact)
 	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
 }
 
-/*add group*/
-void msn_add_group(MsnContact *contact,const char* group_name)
+/***************************************************************
+ * Group Operation
+ ***************************************************************/
+static void
+msn_group_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
+	gaim_debug_info("MaYuan","Group read \n");
+}
+
+static void
+msn_group_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","finish Group written\n");
+	soapconn->read_cb = msn_group_read_cb;
+	msn_soap_read_cb(data,source,cond);
+}
+
+/*add group*/
+void msn_add_group(MsnSession *session,const char* group_name)
+{
+	char *body = NULL;
+	MsnContact *contact ;
+
+	g_return_if_fail(session != NULL);
+	contact = session->contact;
 	gaim_debug_info("MaYuan","msn add group...\n");
 
+	body = g_strdup_printf(MSN_GROUP_ADD_TEMPLATE,group_name);
 	/*build SOAP and POST it*/
 	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_GROUP_ADD_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,MSN_GROUP_ADD_TEMPLATE,msn_address_written_cb);
+	msn_soap_post(contact->soapconn,body,msn_group_written_cb);
+	g_free(body);
 }
 
 /*delete a group*/
-void msn_del_group(MsnContact *contact,const char *guid)
+void msn_del_group(MsnSession *session,const char *guid)
 {
+	MsnContact *contact;
+	char *body = NULL;
+
+	g_return_if_fail(session != NULL);
+	contact = session->contact;
 	gaim_debug_info("MaYuan","msn del group...\n");
 
+	body = g_strdup_printf(MSN_GROUP_DEL_TEMPLATE,guid);
 	/*build SOAP and POST it*/
 	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_GROUP_DEL_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,MSN_GROUP_DEL_TEMPLATE,msn_address_written_cb);
-
+	msn_soap_post(contact->soapconn,body,msn_group_written_cb);
+	g_free(body);
 }
 
 void

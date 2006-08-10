@@ -1268,6 +1268,7 @@ msn_rename_group(GaimConnection *gc, const char *old_name,
 	cmdproc = session->notification->cmdproc;
 	enc_new_group_name = gaim_url_encode(group->name);
 
+	gaim_debug_info("MaYuan","rename group:old{%s},new{%s}",old_name,enc_new_group_name);
 	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
 
 	if (old_gid != NULL){

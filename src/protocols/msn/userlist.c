@@ -187,7 +187,6 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 					  const char *old_group_name, const char *new_group_name)
 {
 	MsnCmdProc *cmdproc;
-//	MsnTransaction *trans;
 	MsnMoveBuddy *data;
 
 	cmdproc = userlist->session->notification->cmdproc;
@@ -199,6 +198,7 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 		data->old_group_name = g_strdup(old_group_name);
 
 	/*TODO:add new group via SOAP action*/
+
 }
 
 /**************************************************************************

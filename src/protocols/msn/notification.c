@@ -301,7 +301,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
 	for (i = 1; i < cmd->param_count -1; i++){
-		gaim_debug_info("MaYuan","%s\,proto_str:%s\n",cmd->params[i],proto_str);
+		gaim_debug_info("MaYuan","%s,proto_str:%s\n",cmd->params[i],proto_str);
 		if (strcmp(cmd->params[i], proto_str) >= 0)	{
 			protocol_supported = TRUE;
 			break;
@@ -531,11 +531,14 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans;
 	char * payload;
 
+	gaim_debug_info("MaYuan","Process ADL\n");
+#if 0
 	trans = msn_transaction_new(cmdproc, "RML","");
 
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 
 	msn_cmdproc_send_trans(cmdproc, trans);
+#endif
 }
 
 static void
@@ -1414,6 +1417,8 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	}
 
 	g_strfreev(elems);
+/* test code for add group*/
+//	msn_add_group(session,"hello");
 }
 
 static void
@@ -1591,7 +1596,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "NOT", not_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "CHL", chl_cmd);
-	msn_table_add_cmd(cbs_table, NULL, "REM", rem_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "RML", rml_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "ADL", adl_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "QRY", NULL);

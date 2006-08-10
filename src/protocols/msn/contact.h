@@ -158,7 +158,9 @@ struct _MsnContact
 	MsnSoapConn *soapconn;
 };
 
-/*function prototype*/
+/************************************************
+ * function prototype
+ ************************************************/
 MsnContact * msn_contact_new(MsnSession *session);
 void msn_contact_destroy(MsnContact *contact);
 
@@ -166,5 +168,8 @@ void msn_contact_connect(MsnContact *contact);
 void msn_get_contact_list(MsnContact * contact);
 void msn_get_address_book(MsnContact *contact);
 
+/*group operation*/
+void msn_add_group(MsnSession *session,const char* group_name);
+void msn_del_group(MsnSession *session,const char *guid);
 #endif/* _MSN_CMDPROC_H_*/
 
