@@ -1368,6 +1368,24 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 //	gaim_debug_info("MaYuan","mdata...{%s} \n",msg->body);
 
+//	/*time debug*/
+	{
+	const char *timestr;
+	time_t t;
+	struct tm *tm;
+	char datestr[]="2006-07-15T07:21:26+0700";
+	GDate *date;
+	time(&t);
+	tm = gmtime(&t);
+	timestr = gaim_utf8_strftime("%a, %d %b %Y %T %Z", tm);
+//	strftime(datestr,strlen(datestr),"%a",tm);
+	date = g_date_new();
+	g_date_set_parse(date,datestr);
+	gaim_debug_info("MaYuan","date is NULL?date valid%d\n",g_date_valid(date));
+	g_date_free(date);
+	gaim_debug_info("MaYuan","utf8 time:{%s}\n",timestr);
+	}
+
 	/*new a oim session*/
 	session = cmdproc->session;
 	session->oim = msn_oim_new(session);

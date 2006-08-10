@@ -50,6 +50,7 @@ void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
 void msn_handle_chl(char *input, char *output);
 int isBigEndian(void);
 unsigned int swapInt(unsigned int dw);
+char * msn_strptime (const char *buf,const char *format,struct tm *tm);
 
 
 #endif /* _MSN_UTILS_H_ */
