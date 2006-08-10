@@ -909,7 +909,7 @@ void gaim_request_field_list_clear_selected(GaimRequestField *field);
  * @param items The list of selected items.
  */
 void gaim_request_field_list_set_selected(GaimRequestField *field,
-										  GList *items);
+										  const GList *items);
 
 /**
  * Returns whether or not a particular item is selected in a list field.

@@ -865,9 +865,9 @@ gaim_request_field_list_clear_selected(GaimRequestField *field)
 }
 
 void
-gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
+gaim_request_field_list_set_selected(GaimRequestField *field, const GList *items)
 {
-	GList *l;
+	const GList *l;
 
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(items != NULL);
@@ -876,7 +876,7 @@ gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
 	gaim_request_field_list_clear_selected(field);
 
 	if (!gaim_request_field_list_get_multi_select(field) &&
-		g_list_length(items) > 1)
+		g_list_length((GList*)items) > 1)
 	{
 		gaim_debug_warning("request",
 						   "More than one item added to non-multi-select "
@@ -885,10 +885,10 @@ gaim_request_field_list_set_selected(GaimRequestField *field, GList *items)
 		return;
 	}
 
-	field->u.list.selected = items;
-
-	for (l = field->u.list.selected; l != NULL; l = l->next)
+	for (l = items; l != NULL; l = l->next)
 	{
+		field->u.list.selected = g_list_append(field->u.list.selected,
+					g_strdup(l->data));
 		g_hash_table_insert(field->u.list.selected_table,
 							g_strdup((char *)l->data), NULL);
 	}
