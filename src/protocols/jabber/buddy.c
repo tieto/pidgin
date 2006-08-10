@@ -533,7 +533,7 @@ void jabber_setup_set_info(GaimPluginAction *action)
 	GaimRequestField *field;
 	const struct vcard_template *vc_tp;
 	const char *user_info;
-	char *cdata;
+	char *cdata = NULL;
 	xmlnode *x_vc_data = NULL;
 
 	fields = gaim_request_fields_new();
@@ -564,10 +564,7 @@ void jabber_setup_set_info(GaimPluginAction *action)
 			}
 			if(data_node)
 				cdata = xmlnode_get_data(data_node);
-			else
-				cdata = NULL;
-		} else
-			cdata = NULL;
+		}
 
 		if(strcmp(vc_tp->tag, "DESC") == 0) {
 			field = gaim_request_field_string_new(vc_tp->tag,
@@ -578,6 +575,9 @@ void jabber_setup_set_info(GaimPluginAction *action)
 												  _(vc_tp->label), cdata,
 												  FALSE);
 		}
+
+		g_free(cdata);
+		cdata = NULL;
 
 		gaim_request_field_group_add_field(group, field);
 	}
