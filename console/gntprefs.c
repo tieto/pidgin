@@ -14,9 +14,12 @@ void gg_prefs_init()
 	gaim_prefs_add_none("/gaim/gnt/plugins");
 	gaim_prefs_add_string_list("/gaim/gnt/plugins/loaded", NULL);
 
+	gaim_prefs_add_none("/gaim/gnt/blist");
+	gaim_prefs_add_bool("/gaim/gnt/blist/idletime", TRUE);
+	
 	gaim_prefs_add_none("/gaim/gnt/conversations");
 	gaim_prefs_add_bool("/gaim/gnt/conversations/timestamps", TRUE);
-	gaim_prefs_add_bool("/gaim/gnt/conversations/notify_typing", FALSE);
+	gaim_prefs_add_bool("/gaim/gnt/conversations/notify_typing", FALSE); /* XXX: Not functional yet */
 }
 
 typedef struct
@@ -93,6 +96,12 @@ get_pref_field(Prefs *prefs)
 	return field;
 }
 
+static Prefs blist[] = 
+{
+	{GAIM_PREF_BOOLEAN, "/gaim/gnt/blist/idletime", _("Show Idle Time"), NULL},
+	{GAIM_PREF_NONE, NULL, NULL, NULL}
+};
+
 static Prefs convs[] = 
 {
 	{GAIM_PREF_BOOLEAN, "/gaim/gnt/conversations/timestamps", _("Show Timestamps"), NULL},
@@ -163,30 +172,31 @@ save_cb(void *data, GaimRequestFields *allfields)
 	}
 }
 
-void gg_prefs_show_all()
+static void
+add_pref_group(GaimRequestFields *fields, const char *title, Prefs *prefs)
 {
-	GaimRequestFields *fields;
 	GaimRequestField *field;
 	GaimRequestFieldGroup *group;
 	int i;
 
+	group = gaim_request_field_group_new(title);
+	gaim_request_fields_add_group(fields, group);
+	for (i = 0; prefs[i].pref; i++)
+	{
+		field = get_pref_field(prefs + i);
+		gaim_request_field_group_add_field(group, field);
+	}
+}
+
+void gg_prefs_show_all()
+{
+	GaimRequestFields *fields;
+
 	fields = gaim_request_fields_new();
 
-	group = gaim_request_field_group_new(_("Conversations"));
-	gaim_request_fields_add_group(fields, group);
-	for (i = 0; convs[i].pref; i++)
-	{
-		field = get_pref_field(convs + i);
-		gaim_request_field_group_add_field(group, field);
-	}
-
-	group = gaim_request_field_group_new(_("Logging"));
-	gaim_request_fields_add_group(fields, group);
-	for (i = 0; logging[i].pref; i++)
-	{
-		field = get_pref_field(logging + i);
-		gaim_request_field_group_add_field(group, field);
-	}
+	add_pref_group(fields, _("Buddy List"), blist);
+	add_pref_group(fields, _("Conversations"), convs);
+	add_pref_group(fields, _("Logging"), logging);
 
 	gaim_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), NULL, NULL);

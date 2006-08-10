@@ -813,6 +813,18 @@ draw_tooltip(GGBlist *ggblist)
 			g_free(br);
 		}
 
+		if (gaim_prefs_get_bool("/gaim/gnt/blist/idletime"))
+		{
+			GaimPresence *pre = gaim_buddy_get_presence(buddy);
+			if (gaim_presence_is_idle(pre))
+			{
+				time_t idle = gaim_presence_get_idle_time(pre);
+				char *st = gaim_str_seconds_to_string(time(NULL) - idle);
+				g_string_append_printf(str, _("\nIdle: %s"), st);
+				g_free(st);
+			}
+		}
+
 		title = g_strdup(gaim_buddy_get_name(buddy));
 	}
 	else if (GAIM_BLIST_NODE_IS_GROUP(node))
