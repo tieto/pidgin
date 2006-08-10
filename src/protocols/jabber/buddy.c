@@ -532,7 +532,7 @@ void jabber_setup_set_info(GaimPluginAction *action)
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
 	const struct vcard_template *vc_tp;
-	char *user_info;
+	const char *user_info;
 	char *cdata;
 	xmlnode *x_vc_data = NULL;
 
@@ -543,10 +543,8 @@ void jabber_setup_set_info(GaimPluginAction *action)
 	/*
 	 * Get existing, XML-formatted, user info
 	 */
-	if((user_info = g_strdup(gaim_account_get_user_info(gc->account))) != NULL)
+	if((user_info = gaim_account_get_user_info(gc->account)) != NULL)
 		x_vc_data = xmlnode_from_str(user_info, -1);
-	else
-		user_info = g_strdup("");
 
 	/*
 	 * Set up GSLists for edit with labels from "template," data from user info
@@ -555,16 +553,20 @@ void jabber_setup_set_info(GaimPluginAction *action)
 		xmlnode *data_node;
 		if((vc_tp->label)[0] == '\0')
 			continue;
-		if(vc_tp->ptag == NULL) {
-			data_node = xmlnode_get_child(x_vc_data, vc_tp->tag);
-		} else {
-			gchar *tag = g_strdup_printf("%s/%s", vc_tp->ptag, vc_tp->tag);
-			data_node = xmlnode_get_child(x_vc_data, tag);
-			g_free(tag);
-		}
-		if(data_node)
-			cdata = xmlnode_get_data(data_node);
-		else
+
+		if (x_vc_data != NULL) {
+			if(vc_tp->ptag == NULL) {
+				data_node = xmlnode_get_child(x_vc_data, vc_tp->tag);
+			} else {
+				gchar *tag = g_strdup_printf("%s/%s", vc_tp->ptag, vc_tp->tag);
+				data_node = xmlnode_get_child(x_vc_data, tag);
+				g_free(tag);
+			}
+			if(data_node)
+				cdata = xmlnode_get_data(data_node);
+			else
+				cdata = NULL;
+		} else
 			cdata = NULL;
 
 		if(strcmp(vc_tp->tag, "DESC") == 0) {
@@ -582,8 +584,6 @@ void jabber_setup_set_info(GaimPluginAction *action)
 
 	if(x_vc_data != NULL)
 		xmlnode_free(x_vc_data);
-
-    g_free(user_info);
 
 	gaim_request_fields(gc, _("Edit Jabber vCard"),
 						_("Edit Jabber vCard"),
@@ -724,8 +724,7 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 
 static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 {
-	const char *type, *id, *from;
-	JabberBuddy *jb;
+	const char *id, *from;
 	GString *info_text;
 	char *bare_jid;
 	char *text;
@@ -734,18 +733,17 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	JabberBuddyInfo *jbi = data;
 
 	from = xmlnode_get_attrib(packet, "from");
-	type = xmlnode_get_attrib(packet, "type");
 	id = xmlnode_get_attrib(packet, "id");
-
-	jabber_buddy_info_remove_id(jbi, id);
 
 	if(!jbi)
 		return;
 
+	jabber_buddy_info_remove_id(jbi, id);
+
 	if(!from)
 		return;
 
-	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+	if(!jabber_buddy_find(js, from, FALSE))
 		return;
 
 	/* XXX: handle the error case */
