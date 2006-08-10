@@ -130,7 +130,8 @@ static struct sip_connection *connection_find(struct simple_account_data *sip, i
 	return NULL;
 }
 
-static struct simple_watcher *watcher_find(struct simple_account_data *sip, gchar *name) {
+static struct simple_watcher *watcher_find(struct simple_account_data *sip,
+		const gchar *name) {
 	struct simple_watcher *watcher;
 	GSList *entry = sip->watcher;
 	while(entry) {
@@ -141,7 +142,9 @@ static struct simple_watcher *watcher_find(struct simple_account_data *sip, gcha
 	return NULL;
 }
 
-static struct simple_watcher *watcher_create(struct simple_account_data *sip, gchar *name, gchar *callid, gchar *ourtag, gchar *theirtag, int needsxpidf) {
+static struct simple_watcher *watcher_create(struct simple_account_data *sip,
+		const gchar *name, const gchar *callid, const gchar *ourtag,
+		const gchar *theirtag, gboolean needsxpidf) {
 	struct simple_watcher *watcher = g_new0(struct simple_watcher, 1);
 	watcher->name = g_strdup(name);
 	watcher->dialog.callid = g_strdup(callid);
@@ -152,7 +155,7 @@ static struct simple_watcher *watcher_create(struct simple_account_data *sip, gc
 	return watcher;
 }
 
-static void watcher_remove(struct simple_account_data *sip, gchar *name) {
+static void watcher_remove(struct simple_account_data *sip, const gchar *name) {
 	struct simple_watcher *watcher = watcher_find(sip, name);
 	sip->watcher = g_slist_remove(sip->watcher, watcher);
 	g_free(watcher->name);
@@ -299,8 +302,9 @@ static gchar *auth_header(struct simple_account_data *sip,
 	return ret;
 }
 
-static char *parse_attribute(const char *attrname, char *source) {
-	char *tmp, *tmp2, *retval = NULL;
+static char *parse_attribute(const char *attrname, const char *source) {
+	const char *tmp, *tmp2;
+	char *retval = NULL;
 	int len = strlen(attrname);
 
 	if(!strncmp(source, attrname, len)) {
@@ -524,7 +528,8 @@ static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) 
 	g_string_free(outstr, TRUE);
 }
 
-static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, char *text, char *body) {
+static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code,
+		const char *text, const char *body) {
 	GSList *tmp = msg->headers;
 	gchar *name;
 	gchar *value;
@@ -560,7 +565,7 @@ static void transactions_remove(struct simple_account_data *sip, struct transact
 	g_free(trans);
 }
 
-static void transactions_add_buf(struct simple_account_data *sip, gchar *buf, void *callback) {
+static void transactions_add_buf(struct simple_account_data *sip, const gchar *buf, void *callback) {
 	struct transaction *trans = g_new0(struct transaction, 1);
 	trans->time = time(NULL);
 	trans->msg = sipmsg_parse_msg(buf);
@@ -593,6 +598,7 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 	char *auth = "";
 	const char *addh = "";
 	gchar *branch = genbranch();
+	gchar *tag = NULL;
 	char *buf;
 
 	if(!strcmp(method, "REGISTER")) {
@@ -618,6 +624,9 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
+	if (!dialog)
+		tag = gentag();
+
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
 			/* Don't know what epid is, but LCS wants it */
@@ -637,7 +646,7 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 			branch,
 			sip->username,
 			sip->servername,
-			dialog ? dialog->ourtag : gentag(),
+			dialog ? dialog->ourtag : tag,
 			to,
 			dialog ? ";tag=" : "",
 			dialog ? dialog->theirtag : "",
@@ -648,6 +657,9 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 			addh,
 			strlen(body),
 			body);
+
+	g_free(tag);
+	g_free(auth);
 	g_free(branch);
 	g_free(callid);
 
@@ -691,30 +703,30 @@ static void do_register(struct simple_account_data *sip) {
 	do_register_exp(sip, sip->registerexpire);
 }
 
-static gchar *parse_from(gchar *hdr) {
-	gchar *from = hdr;
-	gchar *tmp;
+static gchar *parse_from(const gchar *hdr) {
+	gchar *from;
+	const gchar *tmp, *tmp2 = hdr;
 
-	if(!from) return NULL;
-	gaim_debug_info("simple", "parsing address out of %s\n", from);
-	tmp = strchr(from, '<');
+	if(!hdr) return NULL;
+	gaim_debug_info("simple", "parsing address out of %s\n", hdr);
+	tmp = strchr(hdr, '<');
 
 	/* i hate the different SIP UA behaviours... */
 	if(tmp) { /* sip address in <...> */
-		from = tmp+1;
-		tmp = strchr(from, '>');
+		tmp2 = tmp + 1;
+		tmp = strchr(tmp2, '>');
 		if(tmp) {
-			from = g_strndup(from, tmp-from);
+			from = g_strndup(tmp2, tmp - tmp2);
 		} else {
 			gaim_debug_info("simple", "found < without > in From\n");
 			return NULL;
 		}
 	} else {
-		tmp = strchr(from, ';');
+		tmp = strchr(tmp2, ';');
 		if(tmp) {
-			from = g_strndup(from, tmp-from);
+			from = g_strndup(tmp2, tmp - tmp2);
 		} else {
-			from = g_strdup(from);
+			from = g_strdup(tmp2);
 		}
 	}
 	gaim_debug_info("simple", "got %s\n", from);
@@ -722,11 +734,13 @@ static gchar *parse_from(gchar *hdr) {
 }
 
 static gboolean process_subscribe_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
-	gchar *to = parse_from(sipmsg_find_header(tc->msg, "To")); /* cant be NULL since it is our own msg */
+	gchar *to;
 
 	if(msg->response == 200 || msg->response == 202) {
 		return TRUE;
 	}
+
+	to = parse_from(sipmsg_find_header(tc->msg, "To")); /* cant be NULL since it is our own msg */
 
 	/* we can not subscribe -> user is offline (TODO unknown status?) */
 
@@ -740,7 +754,7 @@ static void simple_subscribe(struct simple_account_data *sip, struct simple_budd
 	gchar *to;
 	gchar *tmp;
 
-	if(strstr(buddy->name,"sip:"))
+	if(strstr(buddy->name, "sip:"))
 		to = g_strdup(buddy->name);
 	else
 		to = g_strdup_printf("sip:%s", buddy->name);
@@ -768,43 +782,50 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 	xmlnode *item, *group, *isc;
 	const char *name_group;
 	GaimBuddy *b;
-	GaimGroup *g;
+	GaimGroup *g = NULL;
 	struct simple_buddy *bs;
 	int len = msg->bodylen;
 
 
 	tmp = sipmsg_find_header(msg, "Event");
-	if(tmp && !strncmp(tmp,"vnd-microsoft-roaming-contacts",30)){
+	if(tmp && !strncmp(tmp, "vnd-microsoft-roaming-contacts", 30)){
 
-		gaim_debug_info("simple","simple_add_lcs_contacts->%s-%d\n",msg->body, len);
+		gaim_debug_info("simple", "simple_add_lcs_contacts->%s-%d\n", msg->body, len);
 		/*Convert the contact from XML to Gaim Buddies*/
-		isc = xmlnode_from_str(msg->body, len);  
+		isc = xmlnode_from_str(msg->body, len);
 
 		/* ToDo. Find for all groups */
-		group = xmlnode_get_child(isc, "group"); 
-		name_group = xmlnode_get_attrib(group, "name");
-		gaim_debug_info("simple","name_group->%s\n",name_group);  
-		g = gaim_find_group(name_group);
-		if(!g) {
+		if ((group = xmlnode_get_child(isc, "group"))) {
+			name_group = xmlnode_get_attrib(group, "name");
+			gaim_debug_info("simple", "name_group->%s\n", name_group);
+			g = gaim_find_group(name_group);
+			if(!g)
+				g = gaim_group_new(name_group);
+		}
+
+		if (!g) {
 			g = gaim_find_group("Buddies");
-			if(!g){
+			if(!g)
 				g = gaim_group_new("Buddies");
-			}
-		}else{
-			g = gaim_group_new(name_group);
 		}
 
 		for(item = xmlnode_get_child(isc, "contact"); item; item = xmlnode_get_next_twin(item))
 		{
 			const char *uri, *name, *groups;
+			char *buddy_name;
 			uri = xmlnode_get_attrib(item, "uri");
 			name = xmlnode_get_attrib(item, "name");
 			groups = xmlnode_get_attrib(item, "groups");
-			gaim_debug_info("simple","URI->%s\n",uri);
-			b = gaim_find_buddy(sip->account, g_strdup_printf("sip:%s",uri));
+			gaim_debug_info("simple", "URI->%s\n", uri);
+
+			buddy_name = g_strdup_printf("sip:%s", uri);
+
+			b = gaim_find_buddy(sip->account, buddy_name);
 			if(!b){
-				b = gaim_buddy_new(sip->account, g_strdup_printf("sip:%s",uri), uri);
+				b = gaim_buddy_new(sip->account, buddy_name, uri);
 			}
+			g_free(buddy_name);
+
 			gaim_blist_add_buddy(b, NULL, g, NULL);
 			gaim_blist_alias_buddy(b, uri);
 			bs = g_new0(struct simple_buddy, 1);
@@ -821,13 +842,13 @@ static void simple_subscribe_buddylist(struct simple_account_data *sip) {
 	gchar *to;
 	gchar *tmp;
 	to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
-        
+
 	tmp = get_contact(sip);
-       
+
 	contact = g_strdup_printf("%sContact: %s\r\n", contact, tmp);
 	g_free(tmp);
-	
-	send_sip_request(sip->gc, "SUBSCRIBE",to, to, contact, "", NULL, simple_add_lcs_contacts);
+
+	send_sip_request(sip->gc, "SUBSCRIBE", to, to, contact, "", NULL, simple_add_lcs_contacts);
 
 	g_free(to);
 	g_free(contact);
@@ -953,6 +974,8 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		if(statedata) {
 			if(strstr(statedata, "active")) serv_got_typing(sip->gc, from, 0, GAIM_TYPING);
 			else serv_got_typing_stopped(sip->gc, from);
+
+			g_free(statedata);
 		}
 		xmlnode_free(isc);
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
@@ -984,7 +1007,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 
 			subscribe_timeout(sip);
 			tmp = sipmsg_find_header(msg, "Allow-Events");
-		        if(tmp && strstr(tmp,"vnd-microsoft-provisioning")){
+		        if(tmp && strstr(tmp, "vnd-microsoft-provisioning")){
 				simple_subscribe_buddylist(sip);
 			}
 
@@ -1044,6 +1067,8 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		isonline = TRUE;
 	}
 
+	g_free(tmp2);
+
 	if(isonline) gaim_prpl_got_user_status(sip->account, from, "available", NULL);
 	else gaim_prpl_got_user_status(sip->account, from, "offline", NULL);
 
@@ -1084,16 +1109,13 @@ static unsigned int simple_typing(GaimConnection *gc, const char *name, GaimTypi
 	return 1;
 }
 
-static gchar *find_tag(gchar *hdr) {
-	gchar *tmp = strstr(hdr, ";tag=");
-	gchar *tmp2;
+static gchar *find_tag(const gchar *hdr) {
+	const gchar *tmp = strstr(hdr, ";tag="), *tmp2;
+
 	if(!tmp) return NULL;
 	tmp += 5;
 	if((tmp2 = strchr(tmp, ';'))) {
-		tmp2[0] = '\0';
-		tmp = g_strdup(tmp);
-		tmp2[0] = ';';
-		return tmp;
+		return g_strndup(tmp, tmp2 - tmp);
 	}
 	return g_strdup(tmp);
 }
@@ -1162,12 +1184,14 @@ static void send_publish(struct simple_account_data *sip) {
 		"Content-Type: application/pidf+xml\r\n",
 		doc, NULL, process_publish_response);
 	sip->republish = time(NULL) + 500;
+	g_free(uri);
 	g_free(doc);
 }
 
 static void process_incoming_subscribe(struct simple_account_data *sip, struct sipmsg *msg) {
-	gchar *from = parse_from(sipmsg_find_header(msg, "From"));
-	gchar *theirtag = find_tag(sipmsg_find_header(msg, "From"));
+	const char *from_hdr = sipmsg_find_header(msg, "From");
+	gchar *from = parse_from(from_hdr);
+	gchar *theirtag = find_tag(from_hdr);
 	gchar *ourtag = find_tag(sipmsg_find_header(msg, "To"));
 	gboolean tagadded = FALSE;
 	gchar *callid = sipmsg_find_header(msg, "Call-ID");
@@ -1180,7 +1204,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	}
 	if(!watcher) { /* new subscription */
 		gchar *acceptheader = sipmsg_find_header(msg, "Accept");
-		int needsxpidf = 0;
+		gboolean needsxpidf = FALSE;
 		if(!gaim_privacy_check(sip->account, from)) {
 			send_sip_response(sip->gc, msg, 202, "Ok", NULL);
 			goto privend;
@@ -1192,9 +1216,9 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 			while(tmp && tmp < acceptheader + strlen(acceptheader)) {
 				gchar *tmp2 = strchr(tmp, ',');
 				if(tmp2) *tmp2 = '\0';
-				if(!strcmp("application/pidf+xml",tmp))
+				if(!strcmp("application/pidf+xml", tmp))
 					foundpidf = 1;
-				if(!strcmp("application/xpidf+xml",tmp))
+				if(!strcmp("application/xpidf+xml", tmp))
 					foundxpidf = 1;
 				if(tmp2) {
 					*tmp2 = ',';
@@ -1203,7 +1227,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 				} else
 					tmp = 0;
 			}
-			if(!foundpidf && foundxpidf) needsxpidf = 1;
+			if(!foundpidf && foundxpidf) needsxpidf = TRUE;
 			g_free(acceptheader);
 		}
 		watcher = watcher_create(sip, from, callid, ourtag, theirtag, needsxpidf);
@@ -1212,6 +1236,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 		gchar *to = g_strdup_printf("%s;tag=%s", sipmsg_find_header(msg, "To"), ourtag);
 		sipmsg_remove_header(msg, "To");
 		sipmsg_add_header(msg, "To", to);
+		g_free(to);
 	}
 	if(expire)
 		watcher->expire = time(NULL) + strtol(expire, NULL, 10);
@@ -1221,7 +1246,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	tmp = get_contact(sip);
 	sipmsg_add_header(msg, "Contact", tmp);
 	g_free(tmp);
-	gaim_debug_info("simple","got subscribe: name %s ourtag %s theirtag %s callid %s\n", watcher->name, watcher->dialog.ourtag, watcher->dialog.theirtag, watcher->dialog.callid);
+	gaim_debug_info("simple", "got subscribe: name %s ourtag %s theirtag %s callid %s\n", watcher->name, watcher->dialog.ourtag, watcher->dialog.theirtag, watcher->dialog.callid);
 	send_sip_response(sip->gc, msg, 200, "Ok", NULL);
 	send_notify(sip, watcher);
 privend:
@@ -1274,7 +1299,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 					gaim_debug_info("simple", "got trying response\n");
 				} else {
 					sip->proxy.retries = 0;
-					if(!strcmp(trans->msg->method,"REGISTER")) {
+					if(!strcmp(trans->msg->method, "REGISTER")) {
 						if(msg->response == 401) sip->registrar.retries++;
 						else sip->registrar.retries = 0;
 					} else {
@@ -1327,7 +1352,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		cur++;
 	}
 	if(cur != conn->inbuf) {
-		memmove(conn->inbuf, cur, conn->inbufused-(cur-conn->inbuf));
+		memmove(conn->inbuf, cur, conn->inbufused - (cur - conn->inbuf));
 		conn->inbufused = strlen(conn->inbuf);
 	}
 
@@ -1340,7 +1365,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 		msg = sipmsg_parse_header(conn->inbuf);
 		cur[0] = '\r';
 		cur += 2;
-		restlen = conn->inbufused - (cur-conn->inbuf);
+		restlen = conn->inbufused - (cur - conn->inbuf);
 		if(restlen >= msg->bodylen) {
 			dummy = g_malloc(msg->bodylen + 1);
 			memcpy(dummy, cur, msg->bodylen);

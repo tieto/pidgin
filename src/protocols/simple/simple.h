@@ -44,7 +44,7 @@ struct simple_watcher {
 	gchar *name;
 	time_t expire;
 	struct sip_dialog dialog;
-	int needsxpidf;
+	gboolean needsxpidf;
 };
 
 struct simple_buddy {

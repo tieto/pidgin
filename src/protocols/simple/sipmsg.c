@@ -35,18 +35,23 @@
 #include "simple.h"
 #include "sipmsg.h"
 
-struct sipmsg *sipmsg_parse_msg(gchar *msg) {
-	char *tmp = strstr(msg, "\r\n\r\n");
+struct sipmsg *sipmsg_parse_msg(const gchar *msg) {
+	const char *tmp = strstr(msg, "\r\n\r\n");
+	char *line;
 	struct sipmsg *smsg;
+
 	if(!tmp) return NULL;
-	tmp[0]=0;
-	smsg = sipmsg_parse_header(msg);
-	tmp[0]='\r';
-	smsg->body = g_strdup(tmp+4);
+
+	line = g_strndup(msg, tmp - msg);
+
+	smsg = sipmsg_parse_header(line);
+	smsg->body = g_strdup(tmp + 4);
+
+	g_free(line);
 	return smsg;
 }
 
-struct sipmsg *sipmsg_parse_header(gchar *header) {
+struct sipmsg *sipmsg_parse_header(const gchar *header) {
 	struct sipmsg *msg = g_new0(struct sipmsg,1);
 	gchar **lines = g_strsplit(header,"\r\n",0);
 	gchar **parts;
@@ -110,7 +115,7 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 	return msg;
 }
 
-void sipmsg_print(struct sipmsg *msg) {
+void sipmsg_print(const struct sipmsg *msg) {
 	GSList *cur;
 	struct siphdrelement *elem;
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "SIP MSG\n");
@@ -124,7 +129,7 @@ void sipmsg_print(struct sipmsg *msg) {
 	}
 }
 
-char *sipmsg_to_string(struct sipmsg *msg) {
+char *sipmsg_to_string(const struct sipmsg *msg) {
 	GSList *cur;
 	GString *outstr = g_string_new("");
 	struct siphdrelement *elem;
@@ -148,7 +153,7 @@ char *sipmsg_to_string(struct sipmsg *msg) {
 
 	return g_string_free(outstr, FALSE);
 }
-void sipmsg_add_header(struct sipmsg *msg, gchar *name, gchar *value) {
+void sipmsg_add_header(struct sipmsg *msg, const gchar *name, const gchar *value) {
 	struct siphdrelement *element = g_new0(struct siphdrelement,1);
 	element->name = g_strdup(name);
 	element->value = g_strdup(value);
@@ -170,13 +175,16 @@ void sipmsg_free(struct sipmsg *msg) {
 	g_free(msg);
 }
 
-void sipmsg_remove_header(struct sipmsg *msg, gchar *name) {
+void sipmsg_remove_header(struct sipmsg *msg, const gchar *name) {
 	struct siphdrelement *elem;
 	GSList *tmp = msg->headers;
 	while(tmp) {
 		elem = tmp->data;
 		if(strcmp(elem->name, name)==0) {
 			msg->headers = g_slist_remove(msg->headers, elem);
+			g_free(elem->name);
+			g_free(elem->value);
+			g_free(elem);
 			return;
 		}
 		tmp = g_slist_next(tmp);
@@ -184,7 +192,7 @@ void sipmsg_remove_header(struct sipmsg *msg, gchar *name) {
 	return;
 }
 
-gchar *sipmsg_find_header(struct sipmsg *msg, gchar *name) {
+gchar *sipmsg_find_header(struct sipmsg *msg, const gchar *name) {
 	GSList *tmp;
 	struct siphdrelement *elem;
 	tmp = msg->headers;
