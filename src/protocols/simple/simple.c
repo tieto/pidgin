@@ -967,6 +967,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 		if(!state) {
 			gaim_debug_info("simple", "process_incoming_message: no state found\n");
+			xmlnode_free(isc);
 			return;
 		}
 
@@ -1035,7 +1036,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	gchar *fromhdr;
 	gchar *tmp2;
 	xmlnode *pidf;
-	xmlnode *basicstatus;
+	xmlnode *basicstatus = NULL, *tuple, *status;
 	gboolean isonline = FALSE;
 
 	fromhdr = sipmsg_find_header(msg, "From");
@@ -1049,10 +1050,13 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		return;
 	}
 
-	basicstatus = xmlnode_get_child(xmlnode_get_child(xmlnode_get_child(pidf, "tuple"), "status"), "basic");
+	if ((tuple = xmlnode_get_child(pidf, "tuple")))
+		if ((status = xmlnode_get_child(tuple, "status")))
+			basicstatus = xmlnode_get_child(status, "basic");
 
 	if(!basicstatus) {
 		gaim_debug_info("simple", "process_incoming_notify: no basic found\n");
+		xmlnode_free(pidf);
 		return;
 	}
 
@@ -1060,6 +1064,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 
 	if(!tmp2) {
 		gaim_debug_info("simple", "process_incoming_notify: no basic data found\n");
+		xmlnode_free(pidf);
 		return;
 	}
 
@@ -1211,15 +1216,15 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 		}
 		if(acceptheader) {
 			gchar *tmp = acceptheader;
-			int foundpidf = 0;
-			int foundxpidf = 0;
+			gboolean foundpidf = FALSE;
+			gboolean foundxpidf = FALSE;
 			while(tmp && tmp < acceptheader + strlen(acceptheader)) {
 				gchar *tmp2 = strchr(tmp, ',');
 				if(tmp2) *tmp2 = '\0';
 				if(!strcmp("application/pidf+xml", tmp))
-					foundpidf = 1;
+					foundpidf = TRUE;
 				if(!strcmp("application/xpidf+xml", tmp))
-					foundxpidf = 1;
+					foundxpidf = TRUE;
 				if(tmp2) {
 					*tmp2 = ',';
 					tmp = tmp2;
