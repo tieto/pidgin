@@ -1028,13 +1028,6 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 			byte_stream_put32(&frame->data, 0xa46d3b39);
 #endif
 
-		} else if ((offset == 0x00001000) && (len == 0x00000000)) {
-
-			byte_stream_put32(&frame->data, 0xd41d8cd9);
-			byte_stream_put32(&frame->data, 0x8f00b204);
-			byte_stream_put32(&frame->data, 0xe9800998);
-			byte_stream_put32(&frame->data, 0xecf8427e);
-
 		} else
 			gaim_debug_warning("oscar", "sendmemblock: unknown hash request\n");
 
