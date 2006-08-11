@@ -2354,19 +2354,17 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	}
 }
 
-static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_got_cookies_send_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	GaimConnection *gc = data;
-	struct yahoo_data *yd = gc->proto_data;
-	int written, total_len;
+	GaimConnection *gc;
+	struct yahoo_data *yd;
+	int written, remaining;
 
-	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
-		return;
-	}
+	gc = data;
+	yd = gc->proto_data;
 
-	total_len = strlen(yd->auth) - yd->auth_written;
-	written = write(source, yd->auth + yd->auth_written, total_len);
+	remaining = strlen(yd->auth) - yd->auth_written;
+	written = write(source, yd->auth + yd->auth_written, remaining);
 
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
@@ -2380,20 +2378,33 @@ static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition con
 		return;
 	}
 
-	if (written < total_len) {
+	if (written < remaining) {
 		yd->auth_written += written;
-		if (!gc->inpa)
-			gc->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
-				yahoo_got_cookies, gc);
 		return;
 	}
 
 	g_free(yd->auth);
 	yd->auth = NULL;
 	yd->auth_written = 0;
-	if (gc->inpa)
-		gaim_input_remove(gc->inpa);
+	gaim_input_remove(gc->inpa);
 	gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, yahoo_web_pending, gc);
+}
+
+static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimConnection *gc = data;
+
+	if (source < 0) {
+		gaim_connection_error(gc, _("Unable to connect."));
+		return;
+	}
+
+	if (gc->inpa == 0)
+	{
+		gc->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
+			yahoo_got_cookies_send_cb, gc);
+		yahoo_got_cookies_send_cb(gc, source, GAIM_INPUT_WRITE);
+	}
 }
 
 static void yahoo_login_page_hash_iter(const char *key, const char *val, GString *url)

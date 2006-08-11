@@ -1335,38 +1335,22 @@ static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputConditio
 	yrl->rxlen = 0;
 }
 
-static void yahoo_roomlist_got_connected(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct yahoo_roomlist *yrl = data;
-	GaimRoomlist *list = yrl->list;
-	struct yahoo_data *yd = gaim_account_get_connection(list->account)->proto_data;
-	int written, total_len;
+	struct yahoo_roomlist *yrl;
+	GaimRoomlist *list;
+	int written, remaining;
 
-	if (source < 0) {
-		gaim_notify_error(gaim_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
-		yahoo_roomlist_cleanup(list, yrl);
-		return;
-	}
+	yrl = data;
+	list = yrl->list;
 
-	if (yrl->txbuf == NULL) {
-		yrl->fd = source;
-
-		yrl->txbuf = g_strdup_printf(
-			"GET http://%s/%s HTTP/1.0\r\n"
-			"Host: %s\r\n"
-			"Cookie: Y=%s; T=%s\r\n\r\n",
-			yrl->host, yrl->path, yrl->host, yd->cookie_y,
-			yd->cookie_t);
-	}
-
-	total_len = strlen(yrl->txbuf) - yrl->tx_written;
-	written = write(yrl->fd, yrl->txbuf + yrl->tx_written, total_len);
+	remaining = strlen(yrl->txbuf) - yrl->tx_written;
+	written = write(yrl->fd, yrl->txbuf + yrl->tx_written, remaining);
 
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
 	else if (written <= 0) {
-		if (yrl->inpa)
-			gaim_input_remove(yrl->inpa);
+		gaim_input_remove(yrl->inpa);
 		yrl->inpa = 0;
 		g_free(yrl->txbuf);
 		yrl->txbuf = NULL;
@@ -1375,22 +1359,45 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, GaimInputCo
 		return;
 	}
 
-	if (written < total_len) {
-		if (!yrl->inpa)
-			yrl->inpa = gaim_input_add(yrl->fd,
-				GAIM_INPUT_WRITE, yahoo_roomlist_got_connected,
-				yrl);
+	if (written < remaining) {
 		yrl->tx_written += written;
 		return;
 	}
 
 	g_free(yrl->txbuf);
 	yrl->txbuf = NULL;
-	if (yrl->inpa)
-		gaim_input_remove(yrl->inpa);
-	yrl->inpa = gaim_input_add(yrl->fd, GAIM_INPUT_READ,
-		yahoo_roomlist_pending, yrl);
 
+	gaim_input_remove(yrl->inpa);
+	yrl->inpa = gaim_input_add(yrl->fd, GAIM_INPUT_READ,
+							   yahoo_roomlist_pending, yrl);
+
+}
+
+static void yahoo_roomlist_got_connected(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct yahoo_roomlist *yrl = data;
+	GaimRoomlist *list = yrl->list;
+	struct yahoo_data *yd = gaim_account_get_connection(list->account)->proto_data;
+
+	if (source < 0) {
+		gaim_notify_error(gaim_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
+		yahoo_roomlist_cleanup(list, yrl);
+		return;
+	}
+
+	yrl->fd = source;
+
+	yrl->txbuf = g_strdup_printf(
+		"GET http://%s/%s HTTP/1.0\r\n"
+		"Host: %s\r\n"
+		"Cookie: Y=%s; T=%s\r\n\r\n",
+		yrl->host, yrl->path, yrl->host, yd->cookie_y,
+		yd->cookie_t);
+
+
+	yrl->inpa = gaim_input_add(yrl->fd, GAIM_INPUT_WRITE,
+							   yahoo_roomlist_send_cb, yrl);
+	yahoo_roomlist_send_cb(yrl, yrl->fd, GAIM_INPUT_WRITE);
 }
 
 GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc)

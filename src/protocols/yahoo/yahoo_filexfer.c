@@ -57,11 +57,45 @@ static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 	g_free(xd);
 }
 
+static void yahoo_receivefile_send_cb(gpointer data, gint source, GaimInputCondition condition)
+{
+	GaimXfer *xfer;
+	struct yahoo_xfer_data *xd;
+	int remaining, written;
+
+	xfer = data;
+	xd = xfer->data;
+
+	remaining = xd->txbuflen - xd->txbuf_written;
+	written = write(xfer->fd, xd->txbuf + xd->txbuf_written, remaining);
+
+	if (written < 0 && errno == EAGAIN)
+		written = 0;
+	else if (written <= 0) {
+		gaim_debug_error("yahoo", "Unable to write in order to start ft errno = %d\n", errno);
+		gaim_xfer_cancel_remote(xfer);
+		return;
+	}
+
+	if (written < remaining) {
+		xd->txbuf_written += written;
+		return;
+	}
+
+	gaim_input_remove(xd->tx_handler);
+	xd->tx_handler = 0;
+	g_free(xd->txbuf);
+	xd->txbuf = NULL;
+	xd->txbuflen = 0;
+
+	gaim_xfer_start(xfer, source, NULL, 0);
+
+}
+
 static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimXfer *xfer;
 	struct yahoo_xfer_data *xd;
-	int total_len, written;
 
 	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
 			   "AAA - in yahoo_receivefile_connected\n");
@@ -76,6 +110,8 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 		return;
 	}
 
+	xfer->fd = source;
+
 	/* The first time we get here, assemble the tx buffer */
 	if (xd->txbuflen == 0) {
 		xd->txbuf = g_strdup_printf("GET /%s HTTP/1.0\r\nHost: %s\r\n\r\n",
@@ -84,11 +120,25 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 		xd->txbuf_written = 0;
 	}
 
-	total_len = xd->txbuflen - xd->txbuf_written;
+	if (!xd->tx_handler)
+	{
+		xd->tx_handler = gaim_input_add(source, GAIM_INPUT_WRITE,
+			yahoo_receivefile_send_cb, xfer);
+		yahoo_receivefile_send_cb(xfer, source, GAIM_INPUT_WRITE);
+	}
+}
 
-	xfer->fd = source;
+static void yahoo_sendfile_send_cb(gpointer data, gint source, GaimInputCondition condition)
+{
+	GaimXfer *xfer;
+	struct yahoo_xfer_data *xd;
+	int written, remaining;
 
-	written = write(xfer->fd, xd->txbuf + xd->txbuf_written, total_len);
+	xfer = data;
+	xd = xfer->data;
+
+	remaining = xd->txbuflen - xd->txbuf_written;
+	written = write(xfer->fd, xd->txbuf + xd->txbuf_written, remaining);
 
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
@@ -98,31 +148,33 @@ static void yahoo_receivefile_connected(gpointer data, gint source, GaimInputCon
 		return;
 	}
 
-	if (written < total_len) {
-		if (!xd->tx_handler)
-			xd->tx_handler = gaim_input_add(source, GAIM_INPUT_WRITE,
-				yahoo_receivefile_connected, xfer);
+	if (written < remaining) {
 		xd->txbuf_written += written;
 		return;
 	}
 
-	if (xd->tx_handler)
-		gaim_input_remove(xd->tx_handler);
+	gaim_input_remove(xd->tx_handler);
 	xd->tx_handler = 0;
 	g_free(xd->txbuf);
 	xd->txbuf = NULL;
 	xd->txbuflen = 0;
 
 	gaim_xfer_start(xfer, source, NULL, 0);
-
 }
-
 
 static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondition condition)
 {
 	GaimXfer *xfer;
 	struct yahoo_xfer_data *xd;
-	int written, total_len;
+	struct yahoo_packet *pkt;
+	gchar *size, *filename, *encoded_filename, *header;
+	guchar *pkt_buf;
+	const char *host;
+	int port;
+	size_t content_length, header_len, pkt_buf_len;
+	GaimConnection *gc;
+	GaimAccount *account;
+	struct yahoo_data *yd;
 
 	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
 			   "AAA - in yahoo_sendfile_connected\n");
@@ -131,7 +183,6 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	if (!(xd = xfer->data))
 		return;
 
-
 	if (source < 0) {
 		gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer),
 				xfer->who, _("Unable to connect."));
@@ -139,96 +190,61 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 		return;
 	}
 
-	/* The first time we get here, assemble the tx buffer */
-	if (xd->txbuflen == 0) {
-		struct yahoo_packet *pkt;
-		gchar *size, *filename, *encoded_filename, *header;
-		guchar *pkt_buf;
-		const char *host;
-		int port;
-		size_t content_length, header_len, pkt_buf_len;
-		GaimConnection *gc;
-		GaimAccount *account;
-		struct yahoo_data *yd;
-
-		gc = xd->gc;
-		account = gaim_connection_get_account(gc);
-		yd = gc->proto_data;
-
-		pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER,
-			YAHOO_STATUS_AVAILABLE, yd->session_id);
-
-		size = g_strdup_printf("%" G_GSIZE_FORMAT, gaim_xfer_get_size(xfer));
-		filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
-		encoded_filename = yahoo_string_encode(gc, filename, NULL);
-
-		yahoo_packet_hash(pkt, "sssss", 0, gaim_connection_get_display_name(gc),
-			  5, xfer->who, 14, "", 27, encoded_filename, 28, size);
-		g_free(size);
-		g_free(encoded_filename);
-		g_free(filename);
-
-		content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
-
-		pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, &pkt_buf);
-		yahoo_packet_free(pkt);
-
-		host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST);
-		port = gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
-		header = g_strdup_printf(
-			"POST http://%s:%d/notifyft HTTP/1.0\r\n"
-			"Content-length: %" G_GSIZE_FORMAT "\r\n"
-			"Host: %s:%d\r\n"
-			"Cookie: Y=%s; T=%s\r\n"
-			"\r\n",
-			host, port, content_length + 4 + gaim_xfer_get_size(xfer),
-			host, port, yd->cookie_y, yd->cookie_t);
-
-
-		header_len = strlen(header);
-
-		xd->txbuflen = header_len + pkt_buf_len + 4;
-		xd->txbuf = g_malloc(xd->txbuflen);
-
-		memcpy(xd->txbuf, header, header_len);
-		g_free(header);
-		memcpy(xd->txbuf + header_len, pkt_buf, pkt_buf_len);
-		g_free(pkt_buf);
-		memcpy(xd->txbuf + header_len + pkt_buf_len, "29\xc0\x80", 4);
-
-		xd->txbuf_written = 0;
-	}
-
-	total_len = xd->txbuflen - xd->txbuf_written;
-
 	xfer->fd = source;
 
-	written = write(xfer->fd, xd->txbuf + xd->txbuf_written, total_len);
+	/* Assemble the tx buffer */
+	gc = xd->gc;
+	account = gaim_connection_get_account(gc);
+	yd = gc->proto_data;
 
-	if (written < 0 && errno == EAGAIN)
-		written = 0;
-	else if (written <= 0) {
-		gaim_debug_error("yahoo", "Unable to write in order to start ft errno = %d\n", errno);
-		gaim_xfer_cancel_remote(xfer);
-		return;
+	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER,
+		YAHOO_STATUS_AVAILABLE, yd->session_id);
+
+	size = g_strdup_printf("%" G_GSIZE_FORMAT, gaim_xfer_get_size(xfer));
+	filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+	encoded_filename = yahoo_string_encode(gc, filename, NULL);
+
+	yahoo_packet_hash(pkt, "sssss", 0, gaim_connection_get_display_name(gc),
+	  5, xfer->who, 14, "", 27, encoded_filename, 28, size);
+	g_free(size);
+	g_free(encoded_filename);
+	g_free(filename);
+
+	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
+
+	pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, &pkt_buf);
+	yahoo_packet_free(pkt);
+
+	host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST);
+	port = gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
+	header = g_strdup_printf(
+		"POST http://%s:%d/notifyft HTTP/1.0\r\n"
+		"Content-length: %" G_GSIZE_FORMAT "\r\n"
+		"Host: %s:%d\r\n"
+		"Cookie: Y=%s; T=%s\r\n"
+		"\r\n",
+		host, port, content_length + 4 + gaim_xfer_get_size(xfer),
+		host, port, yd->cookie_y, yd->cookie_t);
+
+	header_len = strlen(header);
+
+	xd->txbuflen = header_len + pkt_buf_len + 4;
+	xd->txbuf = g_malloc(xd->txbuflen);
+
+	memcpy(xd->txbuf, header, header_len);
+	g_free(header);
+	memcpy(xd->txbuf + header_len, pkt_buf, pkt_buf_len);
+	g_free(pkt_buf);
+	memcpy(xd->txbuf + header_len + pkt_buf_len, "29\xc0\x80", 4);
+
+	xd->txbuf_written = 0;
+
+	if (xd->tx_handler == 0)
+	{
+		xd->tx_handler = gaim_input_add(source, GAIM_INPUT_WRITE,
+										yahoo_sendfile_send_cb, xfer);
+		yahoo_sendfile_send_cb(xfer, source, GAIM_INPUT_WRITE);
 	}
-
-	if (written < total_len) {
-		if (!xd->tx_handler)
-			xd->tx_handler = gaim_input_add(source, GAIM_INPUT_WRITE,
-				yahoo_sendfile_connected, xfer);
-		xd->txbuf_written += written;
-		return;
-	}
-
-	if (xd->tx_handler)
-		gaim_input_remove(xd->tx_handler);
-	xd->tx_handler = 0;
-	g_free(xd->txbuf);
-	xd->txbuf = NULL;
-	xd->txbuflen = 0;
-
-	gaim_xfer_start(xfer, source, NULL, 0);
 }
 
 static void yahoo_xfer_init(GaimXfer *xfer)
