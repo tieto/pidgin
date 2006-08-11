@@ -84,7 +84,13 @@ gaim_request_fields_add_group(GaimRequestFields *fields,
 		field = l->data;
 
 		g_hash_table_insert(fields->fields,
-							g_strdup(gaim_request_field_get_id(field)), field);
+			g_strdup(gaim_request_field_get_id(field)), field);
+
+		if (gaim_request_field_is_required(field)) {
+			fields->required_fields =
+				g_list_append(fields->required_fields, field);
+		}
+
 	}
 }
 
@@ -280,15 +286,16 @@ gaim_request_field_group_add_field(GaimRequestFieldGroup *group,
 	{
 		g_hash_table_insert(group->fields_list->fields,
 							g_strdup(gaim_request_field_get_id(field)), field);
+
+		if (gaim_request_field_is_required(field))
+		{
+			group->fields_list->required_fields =
+				g_list_append(group->fields_list->required_fields, field);
+		}
 	}
 
 	field->group = group;
 
-	if (gaim_request_field_is_required(field))
-	{
-		group->fields_list->required_fields =
-			g_list_append(group->fields_list->required_fields, field);
-	}
 }
 
 const char *
