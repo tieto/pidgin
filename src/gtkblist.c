@@ -3598,15 +3598,16 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	hbox = gtk_hbox_new(FALSE, 0);
 
 	/* Create the icon */
-	status_type = gaim_account_get_status_type_with_primitive(account,
-							GAIM_STATUS_OFFLINE);
-	pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
-	if (pixbuf != NULL) {
-		image = gtk_image_new_from_pixbuf(pixbuf);
-		g_object_unref(pixbuf);
+	if ((status_type = gaim_account_get_status_type_with_primitive(account,
+							GAIM_STATUS_OFFLINE))) {
+		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
+		if (pixbuf != NULL) {
+			image = gtk_image_new_from_pixbuf(pixbuf);
+			g_object_unref(pixbuf);
 
-		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
-		                   GAIM_HIG_BOX_SPACE);
+			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
+			                   GAIM_HIG_BOX_SPACE);
+		}
 	}
 
 	/* Create the text */
