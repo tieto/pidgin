@@ -205,12 +205,20 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 		/* If file doesn't exist */
 		if (errno == ENOENT) {
 			gaim_connection_update_progress(gc, _("Creating SILC key pair..."), 1, 5);
-			silc_create_key_pair(SILCGAIM_DEF_PKCS,
+			if (!silc_create_key_pair(SILCGAIM_DEF_PKCS,
 					     SILCGAIM_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
 					     (gc->password == NULL) ? "" : gc->password,
-						 NULL, NULL, NULL, FALSE);
-			g_stat(file_public_key, &st);
+						 NULL, NULL, NULL, FALSE)) {
+				gaim_debug_error("silc", "Couldn't create key pair\n");
+				return FALSE;
+			}
+
+			if ((g_stat(file_public_key, &st)) == -1) {
+				gaim_debug_error("silc", "Couldn't stat '%s' public key, error: %s\n",
+					file_public_key, strerror(errno));
+				return FALSE;
+			}
 		} else {
 			gaim_debug_error("silc", "Couldn't stat '%s' public key, error: %s\n",
 							 file_public_key, strerror(errno));
