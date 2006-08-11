@@ -790,6 +790,7 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 		time_t time_unix;
 		struct tm *tm_new;
 		char *timestamp;
+		char *tmp;
 		const char *style;
 
 		new_session_id = xmlnode_get_attrib(message, "SessionID");
@@ -982,16 +983,18 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 		style     = xmlnode_get_attrib(text_node, "Style");
 
+		tmp = xmlnode_get_data(text_node);
 		if (style && *style) {
 			text = g_string_append(text, "<span style=\"");
 			text = g_string_append(text, style);
 			text = g_string_append(text, "\">");
-			text = g_string_append(text, xmlnode_get_data(text_node));
+			text = g_string_append(text, tmp);
 			text = g_string_append(text, "</span>\n");
 		} else {
-			text = g_string_append(text, xmlnode_get_data(text_node));
+			text = g_string_append(text, tmp);
 			text = g_string_append(text, "\n");
 		}
+		g_free(tmp);
 	}
 
 	data->text = text;
@@ -1462,7 +1465,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 						g_string_append(formatted,
 							"<span style=\"color: #ff0000;\">");
-						
+
 						if (gaim_str_has_prefix(line,
 							"Your previous message has not been sent.  "
 							"Reason: Maximum length exceeded.")) {
@@ -1686,7 +1689,7 @@ init_plugin(GaimPlugin *plugin)
 
 	path = NULL;
 	/* TODO: Test this after removing the trailing "\\". */
-	if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\", 
+	if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\",
 				0, KEY_QUERY_VALUE, &hKey)) {
 
 		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "", NULL, &type, (LPBYTE)buffer, &size)) {
