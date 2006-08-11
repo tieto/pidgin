@@ -696,14 +696,14 @@ parse_account(xmlnode *node)
 
 	if ((protocol_id == NULL) || (name == NULL))
 	{
-		free(protocol_id);
-		free(name);
+		g_free(protocol_id);
+		g_free(name);
 		return NULL;
 	}
 
 	ret = gaim_account_new(name, protocol_id);
-	free(name);
-	free(protocol_id);
+	g_free(name);
+	g_free(protocol_id);
 
 	/* Read the password */
 	child = xmlnode_get_child(node, "password");
