@@ -841,6 +841,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				_("Register New Jabber Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb), js);
+
+		g_free(instructions);
 	}
 }
 
