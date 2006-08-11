@@ -3202,7 +3202,7 @@ parse_content_len(const char *data, size_t data_len)
 
 
 static void
-url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
+url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 {
 	GaimFetchUrlData *gfud = url_data;
 	int len;
@@ -3210,7 +3210,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 	char *data_cursor;
 	gboolean got_eof = FALSE;
 
-	while((len = read(sock, buf, sizeof(buf))) > 0) {
+	while((len = read(source, buf, sizeof(buf))) > 0) {
 		/* If we've filled up our butfer, make it bigger */
 		if((gfud->len + len) >= gfud->data_len) {
 			while((gfud->len + len) >= gfud->data_len)
@@ -3240,7 +3240,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 					header_len, gfud->webdata);
 
 				/* See if we can find a redirect. */
-				if(parse_redirect(gfud->webdata, header_len, sock, gfud))
+				if(parse_redirect(gfud->webdata, header_len, source, gfud))
 					return;
 
 				gfud->got_headers = TRUE;
@@ -3273,7 +3273,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 						gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n",
 							content_len, strerror(errno));
 						gaim_input_remove(gfud->inpa);
-						close(sock);
+						close(source);
 						gfud->callback(gfud->user_data, NULL, 0);
 						destroy_fetch_url_data(gfud);
 
@@ -3310,7 +3310,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 			got_eof = TRUE;
 		} else {
 			gaim_input_remove(gfud->inpa);
-			close(sock);
+			close(source);
 
 			gfud->callback(gfud->user_data, NULL, 0);
 
@@ -3326,7 +3326,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		/* gaim_debug_misc("gaim_url_fetch", "Received: '%s'\n", gfud->webdata); */
 
 		gaim_input_remove(gfud->inpa);
-		close(sock);
+		close(source);
 		gfud->callback(gfud->user_data, gfud->webdata, gfud->len);
 
 		destroy_fetch_url_data(gfud);
@@ -3334,17 +3334,54 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 }
 
 static void
-url_fetch_connect_cb(gpointer url_data, gint sock, GaimInputCondition cond) {
-	GaimFetchUrlData *gfud = url_data;
+url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	GaimFetchUrlData *gfud;
 	int len, total_len;
 
-	if(sock == -1) {
+	gfud = data;
+
+	total_len = strlen(gfud->request);
+
+	len = write(source, gfud->request + gfud->request_written,
+			total_len - gfud->request_written);
+
+	if(len < 0 && errno == EAGAIN)
+		return;
+	else if(len < 0) {
+		gaim_input_remove(gfud->inpa);
+		close(source);
+		gfud->callback(gfud->user_data, NULL, 0);
+		destroy_fetch_url_data(gfud);
+		return;
+	}
+	gfud->request_written += len;
+
+	if(gfud->request_written != total_len)
+		return;
+
+	/* We're done writing, now start reading */
+	gaim_input_remove(gfud->inpa);
+	gfud->inpa = gaim_input_add(source, GAIM_INPUT_READ, url_fetch_recv_cb,
+		gfud);
+}
+
+static void
+url_fetch_connect_cb(gpointer url_data, gint source, GaimInputCondition cond)
+{
+	GaimFetchUrlData *gfud;
+
+	gfud = url_data;
+
+	if (source == -1)
+	{
 		gfud->callback(gfud->user_data, NULL, 0);
 		destroy_fetch_url_data(gfud);
 		return;
 	}
 
-	if (!gfud->request) {
+	if (!gfud->request)
+	{
 		if (gfud->user_agent) {
 			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
 			 * clients must know how to handle the "chunked" transfer encoding.
@@ -3376,33 +3413,9 @@ url_fetch_connect_cb(gpointer url_data, gint sock, GaimInputCondition cond) {
 
 	gaim_debug_misc("gaim_url_fetch", "Request: '%s'\n", gfud->request);
 
-	if(!gfud->inpa)
-		gfud->inpa = gaim_input_add(sock, GAIM_INPUT_WRITE,
-			url_fetch_connect_cb, gfud);
-
-	total_len = strlen(gfud->request);
-
-	len = write(sock, gfud->request + gfud->request_written,
-			total_len - gfud->request_written);
-
-	if(len < 0 && errno == EAGAIN)
-		return;
-	else if(len < 0) {
-		gaim_input_remove(gfud->inpa);
-		close(sock);
-		gfud->callback(gfud->user_data, NULL, 0);
-		destroy_fetch_url_data(gfud);
-		return;
-	}
-	gfud->request_written += len;
-
-	if(gfud->request_written != total_len)
-		return;
-
-	gaim_input_remove(gfud->inpa);
-
-	gfud->inpa = gaim_input_add(sock, GAIM_INPUT_READ, url_fetched_cb,
-		gfud);
+	gfud->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
+								url_fetch_send_cb, gfud);
+	url_fetch_send_cb(gfud, source, GAIM_INPUT_WRITE);
 }
 
 void
