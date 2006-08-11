@@ -50,7 +50,9 @@ struct _MsnDirectConn
 MsnDirectConn *msn_directconn_new(MsnSlpLink *slplink);
 gboolean msn_directconn_connect(MsnDirectConn *directconn,
 								const char *host, int port);
+#if 0
 void msn_directconn_listen(MsnDirectConn *directconn);
+#endif
 void msn_directconn_send_msg(MsnDirectConn *directconn, MsnMessage *msg);
 void msn_directconn_parse_nonce(MsnDirectConn *directconn, const char *nonce);
 void msn_directconn_destroy(MsnDirectConn *directconn);

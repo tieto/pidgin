@@ -76,6 +76,7 @@ msn_directconn_send_handshake(MsnDirectConn *directconn)
  * Connection Functions
  **************************************************************************/
 
+#if 0
 static int
 create_listener(int port)
 {
@@ -159,6 +160,7 @@ create_listener(int port)
 
 	return fd;
 }
+#endif
 
 static size_t
 msn_directconn_write(MsnDirectConn *directconn,
@@ -447,6 +449,7 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 		return FALSE;
 }
 
+#if 0
 void
 msn_directconn_listen(MsnDirectConn *directconn)
 {
@@ -466,6 +469,7 @@ msn_directconn_listen(MsnDirectConn *directconn)
 	directconn->port = port;
 	directconn->c = 0;
 }
+#endif
 
 MsnDirectConn*
 msn_directconn_new(MsnSlpLink *slplink)
