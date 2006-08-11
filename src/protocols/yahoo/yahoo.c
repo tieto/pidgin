@@ -350,7 +350,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (cksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
+			if (b && cksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
 				yahoo_send_picture_request(gc, name);
 
 			break;
@@ -3396,7 +3396,7 @@ static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo
 	if (foo)
 		group = foo->name;
 	if (!group) {
-		g = gaim_buddy_get_group(gaim_find_buddy(gc->account, buddy->name));
+		g = gaim_buddy_get_group(buddy);
 		if (g)
 			group = g->name;
 		else
