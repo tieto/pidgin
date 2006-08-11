@@ -1232,7 +1232,7 @@ gaim_plugins_load_saved(const char *key)
 							plugin->path);
 			gaim_plugin_load(plugin);
 		}
-		else if ((plugin = gaim_plugins_find_with_basename(basename)) != NULL)
+		else if (basename && (plugin = gaim_plugins_find_with_basename(basename)) != NULL)
 		{
 			gaim_debug_info("plugins", "Loading saved plugin %s\n",
 							plugin->path);
