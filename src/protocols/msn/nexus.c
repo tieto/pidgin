@@ -422,8 +422,8 @@ nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if ((da_login = strstr(base, "DALogin=")) != NULL)
 	{
-		if ((da_login = strchr(da_login, '=')) != NULL)
-			da_login++;
+		/* skip over "DALogin=" */
+		da_login += 8;
 
 		if ((c = strchr(da_login, ',')) != NULL)
 			*c = '\0';
