@@ -900,7 +900,7 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 								!isalnum(*(from_name +
 								alias_length)));
 
-						to_name_matches = (gaim_str_has_prefix(
+						to_name_matches = to_name && (gaim_str_has_prefix(
 								to_name, alias) &&
 								!isalnum(*(to_name +
 								alias_length)));
@@ -1682,6 +1682,7 @@ init_plugin(GaimPlugin *plugin)
 	char buffer[1024] = "";
 	DWORD size = (sizeof(buffer) - 1);
 	DWORD type;
+	gboolean found = FALSE;
 
 	path = NULL;
 	/* TODO: Test this after removing the trailing "\\". */
@@ -1720,20 +1721,18 @@ init_plugin(GaimPlugin *plugin)
 
 	if (!path) {
 		char *folder = wgaim_get_special_folder(CSIDL_PROGRAM_FILES);
-		if (folder)
+		if (folder) {
 			path = g_build_filename(folder, "Trillian",
 					"users", "default", "talk.ini", NULL);
 			g_free(folder);
 		}
 	}
 
-	gboolean found = FALSE;
-
 	if (path) {
 		/* Read talk.ini file to find the log directory. */
 		GError *error = NULL;
 
-#if 0 && GTK_CHECK_VERSION(2,6,0) /* FIXME: Not tested yet. */
+#if 0 && GLIB_CHECK_VERSION(2,6,0) /* FIXME: Not tested yet. */
 		GKeyFile *key_file;
 
 		gaim_debug(GAIM_DEBUG_INFO, "Trillian talk.ini read",
@@ -1760,9 +1759,9 @@ init_plugin(GaimPlugin *plugin)
 
 			g_key_file_free(key_file);
 		}
-#else /* !GTK_CHECK_VERSION(2,6,0) */
-		GError *error = NULL;
+#else /* !GLIB_CHECK_VERSION(2,6,0) */
 		gsize length;
+		gchar *contents = NULL;
 
 		gaim_debug(GAIM_DEBUG_INFO, "Trillian talk.ini read",
 					"Reading %s\n", path);
