@@ -780,15 +780,15 @@ gaim_upnp_get_internal_ip()
 }
 
 static void
-looked_up_internal_ip_cb(gpointer data, gint sock, GaimInputCondition cond)
+looked_up_internal_ip_cb(gpointer data, gint source)
 {
-	if (sock) {
+	if (source) {
 		strncpy(control_info.internalip,
-			gaim_network_get_local_system_ip(sock),
+			gaim_network_get_local_system_ip(source),
 			sizeof(control_info.internalip));
 		gaim_debug_info("upnp", "Local IP: %s\n",
 				control_info.internalip);
-		close(sock);
+		close(source);
 	} else
 		gaim_debug_info("upnp", "Unable to look up local IP\n");
 
@@ -811,8 +811,8 @@ lookup_internal_ip()
 	}
 
 	if(gaim_proxy_connect(NULL, addressOfControl, port,
-			looked_up_internal_ip_cb, NULL) != 0) {
-
+			looked_up_internal_ip_cb, NULL, NULL) == NULL)
+	{
 		gaim_debug_error("upnp", "Get Local IP Connect Failed: Address: %s @@@ Port %d\n",
 			addressOfControl, port);
 	}

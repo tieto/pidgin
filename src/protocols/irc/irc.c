@@ -46,7 +46,7 @@ static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
 static void irc_login(GaimAccount *account);
 static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
-static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
+static void irc_login_cb(gpointer data, gint source);
 static void irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error, gpointer data);
 static void irc_close(GaimConnection *gc);
 static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags);
@@ -283,7 +283,7 @@ static void irc_login(GaimAccount *account)
 	struct irc_conn *irc;
 	char **userparts;
 	const char *username = gaim_account_get_username(account);
-	int err;
+	GaimProxyConnectInfo *connect_info;
 
 	gc = gaim_account_get_connection(account);
 	gc->flags |= GAIM_CONNECTION_NO_NEWLINES;
@@ -325,11 +325,11 @@ static void irc_login(GaimAccount *account)
 
 	if (!irc->gsc) {
 
-		err = gaim_proxy_connect(account, irc->server,
+		connect_info = gaim_proxy_connect(account, irc->server,
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
-				 irc_login_cb, gc);
+				 irc_login_cb, NULL, gc);
 
-		if (err || !gaim_account_get_connection(account)) {
+		if (!connect_info || !gaim_account_get_connection(account)) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 			return;
 		}
@@ -394,7 +394,7 @@ static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc,
 	}
 }
 
-static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
+static void irc_login_cb(gpointer data, gint source)
 {
 	GaimConnection *gc = data;
 	struct irc_conn *irc = gc->proto_data;

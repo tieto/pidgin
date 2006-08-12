@@ -69,7 +69,7 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 {
 	GaimSslConnection *gsc;
 	GaimSslOps *ops;
-	int i;
+	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(host != NULL,            NULL);
 	g_return_val_if_fail(port != 0 && port != -1, NULL);
@@ -95,9 +95,9 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 
-	i = gaim_proxy_connect(account, host, port, ops->connect_cb, gsc);
+	connect_info = gaim_proxy_connect(account, host, port, ops->connect_cb, NULL, gsc);
 
-	if (i < 0)
+	if (connect_info == NULL)
 	{
 		g_free(gsc->host);
 		g_free(gsc);

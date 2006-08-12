@@ -421,7 +421,7 @@ static void simple_canwrite_cb(gpointer data, gint source, GaimInputCondition co
 
 static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond);
 
-static void send_later_cb(gpointer data, gint source, GaimInputCondition cond) {
+static void send_later_cb(gpointer data, gint source) {
 	GaimConnection *gc = data;
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
@@ -448,11 +448,12 @@ static void send_later_cb(gpointer data, gint source, GaimInputCondition cond) {
 
 static void sendlater(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
-	int error = 0;
+	GaimProxyConnectInfo *connect_info;
+
 	if(!sip->connecting) {
 		gaim_debug_info("simple", "connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
-		error = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
-		if(error) {
+		connect_info = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, NULL, gc);
+		if(connect_info == NULL) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 		}
 		sip->connecting = TRUE;
@@ -1452,7 +1453,7 @@ static void simple_newconn_cb(gpointer data, gint source, GaimInputCondition con
 	conn->inputhandler = gaim_input_add(newfd, GAIM_INPUT_READ, simple_input_cb, gc);
 }
 
-static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
+static void login_cb(gpointer data, gint source) {
 	GaimConnection *gc = data;
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
@@ -1536,7 +1537,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 static void
 simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
-	int error = 0;
+	GaimProxyConnectInfo *connect_info;
 
 	sip->listenfd = listenfd;
 	if(sip->listenfd == -1) {
@@ -1551,9 +1552,9 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	gaim_debug_info("simple", "connecting to %s port %d\n",
 			sip->realhostname, sip->realport);
 	/* open tcp connection to the server */
-	error = gaim_proxy_connect(sip->account, sip->realhostname,
-			sip->realport, login_cb, sip->gc);
-	if(error) {
+	connect_info = gaim_proxy_connect(sip->account, sip->realhostname,
+			sip->realport, login_cb, NULL, sip->gc);
+	if(connect_info == NULL) {
 		gaim_connection_error(sip->gc, _("Couldn't create socket"));
 	}
 }

@@ -421,7 +421,7 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 
 
 static void
-jabber_login_callback(gpointer data, gint source, GaimInputCondition cond)
+jabber_login_callback(gpointer data, gint source)
 {
 	GaimConnection *gc = data;
 	JabberStream *js = gc->proto_data;
@@ -474,12 +474,12 @@ static void tls_init(JabberStream *js)
 
 static void jabber_login_connect(JabberStream *js, const char *server, int port)
 {
-	int rc;
+	GaimProxyConnectInfo *connect_info;
 
-	rc = gaim_proxy_connect(js->gc->account, server,
-			port, jabber_login_callback, js->gc);
+	connect_info = gaim_proxy_connect(js->gc->account, server,
+			port, jabber_login_callback, NULL, js->gc);
 
-	if (rc != 0)
+	if (connect_info == NULL)
 		gaim_connection_error(js->gc, _("Unable to create socket"));
 }
 
@@ -862,7 +862,7 @@ static void jabber_register_account(GaimAccount *account)
 	const char *connect_server = gaim_account_get_string(account,
 			"connect_server", "");
 	const char *server;
-	int rc;
+	GaimProxyConnectInfo *connect_info;
 
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
@@ -912,11 +912,11 @@ static void jabber_register_account(GaimAccount *account)
 	}
 
 	if(!js->gsc) {
-		rc = gaim_proxy_connect(account, server,
+		connect_info = gaim_proxy_connect(account, server,
 				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback, gc);
+				jabber_login_callback, NULL, gc);
 
-		if (rc != 0)
+		if (connect_info == NULL)
 			gaim_connection_error(gc, _("Unable to create socket"));
 	}
 }

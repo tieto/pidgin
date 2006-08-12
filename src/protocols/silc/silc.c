@@ -141,7 +141,7 @@ silcgaim_nickname_parse(const char *nickname,
 }
 
 static void
-silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
+silcgaim_login_connected(gpointer data, gint source)
 {
 	GaimConnection *gc = data;
 	SilcGaim sg;
@@ -367,7 +367,8 @@ silcgaim_login(GaimAccount *account)
 			       gaim_account_get_string(account, "server",
 						       "silc.silcnet.org"),
 			       gaim_account_get_int(account, "port", 706),
-			       silcgaim_login_connected, gc)) {
+			       silcgaim_login_connected, NULL, gc) == NULL)
+	{
 		gaim_connection_error(gc, _("Unable to create connection"));
 		return;
 	}

@@ -88,7 +88,7 @@ jabber_si_xfer_find(JabberStream *js, const char *sid, const char *from)
 
 static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer);
 
-static void jabber_si_bytestreams_connect_cb(gpointer data, gint source, GaimInputCondition cond)
+static void jabber_si_bytestreams_connect_cb(gpointer data, gint source)
 {
 	GaimXfer *xfer = data;
 	JabberSIXfer *jsx = xfer->data;
@@ -167,7 +167,7 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 	for(i=0; i<20; i++, p+=2)
 		snprintf(p, 3, "%02x", hashval[i]);
 
-	gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0, jabber_si_bytestreams_connect_cb, xfer);
+	gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0, jabber_si_bytestreams_connect_cb, NULL, xfer);
 	g_free(dstaddr);
 }
 

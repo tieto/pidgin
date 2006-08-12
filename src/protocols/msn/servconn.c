@@ -166,7 +166,7 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
  **************************************************************************/
 
 static void
-connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source)
 {
 	MsnServConn *servconn = data;
 
@@ -199,7 +199,7 @@ gboolean
 msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 {
 	MsnSession *session;
-	int r;
+	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(servconn != NULL, FALSE);
 	g_return_val_if_fail(host     != NULL, FALSE);
@@ -232,10 +232,10 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 		return TRUE;
 	}
 
-	r = gaim_proxy_connect(session->account, host, port, connect_cb,
-		servconn);
+	connect_info = gaim_proxy_connect(session->account, host, port,
+		connect_cb, NULL, servconn);
 
-	if (r == 0)
+	if (connect_info != NULL)
 	{
 		servconn->processing = TRUE;
 		return TRUE;

@@ -693,7 +693,7 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 }
 
 static void
-connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source)
 {
 	MsnHttpConn *httpconn = data;
 
@@ -729,7 +729,7 @@ connect_cb(gpointer data, gint source, GaimInputCondition cond)
 gboolean
 msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 {
-	int r;
+	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 	g_return_val_if_fail(host     != NULL, FALSE);
@@ -738,10 +738,10 @@ msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
 
-	r = gaim_proxy_connect(httpconn->session->account,
-		"gateway.messenger.hotmail.com", 80, connect_cb, httpconn);
+	connect_info = gaim_proxy_connect(httpconn->session->account,
+		"gateway.messenger.hotmail.com", 80, connect_cb, NULL, httpconn);
 
-	if (r == 0)
+	if (connect_info != NULL)
 	{
 		httpconn->waiting_response = TRUE;
 		httpconn->connected = TRUE;

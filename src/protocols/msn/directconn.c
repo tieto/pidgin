@@ -368,12 +368,12 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-connect_cb(gpointer data, gint source, GaimInputCondition cond)
+connect_cb(gpointer data, gint source)
 {
 	MsnDirectConn* directconn;
 	int fd;
 
-	gaim_debug_misc("msn", "directconn: connect_cb: %d, %d.\n", source, cond);
+	gaim_debug_misc("msn", "directconn: connect_cb: %d\n", source);
 
 	directconn = data;
 
@@ -423,7 +423,7 @@ gboolean
 msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 {
 	MsnSession *session;
-	int r;
+	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(directconn != NULL, FALSE);
 	g_return_val_if_fail(host       != NULL, TRUE);
@@ -438,10 +438,10 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 	}
 #endif
 
-	r = gaim_proxy_connect(session->account, host, port, connect_cb,
-						   directconn);
+	connect_info = gaim_proxy_connect(session->account, host, port,
+						   connect_cb, NULL, directconn);
 
-	if (r == 0)
+	if (connect_info != NULL)
 	{
 		return TRUE;
 	}

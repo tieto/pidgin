@@ -470,7 +470,7 @@ peer_connection_finalize_connection(PeerConnection *conn)
  * either connected or failed to connect.
  */
 static void
-peer_connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
+peer_connection_established_cb(gpointer data, gint source)
 {
 	NewPeerConnectionData *new_conn_data;
 	GaimConnection *gc;
@@ -668,7 +668,7 @@ peer_connection_trynext(PeerConnection *conn)
 		}
 
 		if (gaim_proxy_connect(account, conn->verifiedip, conn->port,
-				peer_connection_established_cb, new_conn_data) == 0)
+				peer_connection_established_cb, NULL, new_conn_data) != NULL)
 		{
 			/* Connecting... */
 			return;
@@ -699,7 +699,7 @@ peer_connection_trynext(PeerConnection *conn)
 			}
 
 			if (gaim_proxy_connect(account, conn->clientip, conn->port,
-					peer_connection_established_cb, new_conn_data) == 0)
+					peer_connection_established_cb, NULL, new_conn_data) != NULL)
 			{
 				/* Connecting... */
 				return;
@@ -760,7 +760,7 @@ peer_connection_trynext(PeerConnection *conn)
 		if (gaim_proxy_connect(account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
-				peer_proxy_connection_established_cb, new_conn_data) == 0)
+				peer_proxy_connection_established_cb, NULL, new_conn_data) != NULL)
 		{
 			/* Connecting... */
 			return;

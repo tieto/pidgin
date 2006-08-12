@@ -310,7 +310,7 @@ struct named_id {
 
 /* connection functions */
 
-static void connect_cb(gpointer data, gint source, GaimInputCondition cond);
+static void connect_cb(gpointer data, gint source);
 
 
 /* ----- session ------ */
@@ -1409,7 +1409,7 @@ static void session_loginRedirect(struct mwSession *session,
   port = gaim_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
 
   if(gaim_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     gaim_proxy_connect(account, host, port, connect_cb, pd)) {
+     (gaim_proxy_connect(account, host, port, connect_cb, NULL, pd) == NULL)) {
 
     mwSession_forceLogin(session);
   }
@@ -1669,8 +1669,7 @@ static void read_cb(gpointer data, gint source, GaimInputCondition cond) {
 
 /** Callback passed to gaim_proxy_connect when an account is logged
     in, and if the session logging in receives a redirect message */
-static void connect_cb(gpointer data, gint source,
-		       GaimInputCondition cond) {
+static void connect_cb(gpointer data, gint source) {
 
   struct mwGaimPluginData *pd = data;
   GaimConnection *gc = pd->gc;
@@ -3684,7 +3683,7 @@ static void mw_prpl_login(GaimAccount *account) {
 
   gaim_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
-  if(gaim_proxy_connect(account, host, port, connect_cb, pd)) {
+  if(gaim_proxy_connect(account, host, port, connect_cb, NULL, pd) == NULL) {
     gaim_connection_error(gc, _("Unable to connect to host"));
   }
 }

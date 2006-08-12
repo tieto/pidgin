@@ -911,13 +911,13 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 }
 
 static void
-connect_cb(gpointer data, gint source, GaimInputCondition condition)
+connect_cb(gpointer data, gint source)
 {
 	GaimXfer *xfer = (GaimXfer *)data;
 
 	xfer->fd = source;
 
-	begin_transfer(xfer, condition);
+	begin_transfer(xfer, GAIM_INPUT_READ);
 }
 
 void
@@ -946,7 +946,7 @@ gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 
 			/* Establish a file descriptor. */
 			gaim_proxy_connect(xfer->account, xfer->remote_ip,
-							   xfer->remote_port, connect_cb, xfer);
+							   xfer->remote_port, connect_cb, NULL, xfer);
 
 			return;
 		}

@@ -119,7 +119,7 @@ static void _qq_start_services(GaimConnection *gc)
 
 /* the callback function after socket is built
  * we setup the qq protocol related configuration here */
-static void _qq_got_login(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_got_login(gpointer data, gint source)
 {
 	qq_data *qd;
 	GaimConnection *gc;
@@ -309,7 +309,7 @@ static gint _qq_udp_proxy_connect(GaimAccount *account,
  * and qq_udp_proxy.c to add UDP proxy support (thanks henry)
  *  return the socket handle, -1 means fail */
 static gint _proxy_connect_full (GaimAccount *account, const gchar *host, guint16 port, 
-		GaimInputFunction func, gpointer data, gboolean use_tcp)
+		GaimProxyConnectFunction func, gpointer data, gboolean use_tcp)
 {
 	GaimConnection *gc;
 	qq_data *qd;
@@ -319,8 +319,12 @@ static gint _proxy_connect_full (GaimAccount *account, const gchar *host, guint1
 	qd->server_ip = g_strdup(host);
 	qd->server_port = port;
 
-	return use_tcp ? gaim_proxy_connect(account, host, port, func, data) :	/* TCP mode */
-	    _qq_udp_proxy_connect(account, host, port, func, data);	/* UDP mode */
+	if (use_tcp)
+		/* TCP mode */
+		return (gaim_proxy_connect(account, host, port, func, NULL, data) == NULL);
+	else
+		/* UDP mode */
+		return _qq_udp_proxy_connect(account, host, port, func, data);
 }
 
 /* establish a generic QQ connection 

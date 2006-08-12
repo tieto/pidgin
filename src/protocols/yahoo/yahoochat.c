@@ -1373,7 +1373,7 @@ static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputConditio
 
 }
 
-static void yahoo_roomlist_got_connected(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_roomlist_got_connected(gpointer data, gint source)
 {
 	struct yahoo_roomlist *yrl = data;
 	GaimRoomlist *list = yrl->list;
@@ -1449,8 +1449,8 @@ GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc)
 
 	gaim_roomlist_set_fields(rl, fields);
 
-	if (gaim_proxy_connect(gaim_connection_get_account(gc),
-	                       yrl->host, 80, yahoo_roomlist_got_connected, yrl) != 0)
+	if (gaim_proxy_connect(gaim_connection_get_account(gc), yrl->host, 80,
+	                       yahoo_roomlist_got_connected, NULL, yrl) == NULL)
 	{
 		gaim_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));
 		yahoo_roomlist_cleanup(rl, yrl);
@@ -1518,8 +1518,8 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 	yrl->ucat = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
 	gaim_roomlist_room_add(list, yrl->ucat);
 
-	if (gaim_proxy_connect(list->account,
-	                       yrl->host, 80, yahoo_roomlist_got_connected, yrl) != 0)
+	if (gaim_proxy_connect(list->account, yrl->host, 80,
+	                       yahoo_roomlist_got_connected, NULL, yrl) == NULL)
 	{
 		gaim_notify_error(gaim_account_get_connection(list->account),
 		                  NULL, _("Connection problem"), _("Unable to fetch room list."));

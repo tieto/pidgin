@@ -2239,7 +2239,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_got_connected(gpointer data, gint source)
 {
 	GaimConnection *gc = data;
 	struct yahoo_data *yd;
@@ -2266,7 +2266,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
-static void yahoo_got_web_connected(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_got_web_connected(gpointer data, gint source)
 {
 	GaimConnection *gc = data;
 	struct yahoo_data *yd;
@@ -2348,7 +2348,7 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	/* Now we have our cookies to login with.  I'll go get the milk. */
 	if (gaim_proxy_connect(account, "wcs2.msg.dcn.yahoo.com",
 			       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
-			       yahoo_got_web_connected, gc) != 0) {
+			       yahoo_got_web_connected, NULL, gc) == NULL) {
 		gaim_connection_error(gc, _("Connection problem"));
 		return;
 	}
@@ -2390,7 +2390,7 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, GaimInputCondi
 	gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, yahoo_web_pending, gc);
 }
 
-static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_got_cookies(gpointer data, gint source)
 {
 	GaimConnection *gc = data;
 
@@ -2516,7 +2516,7 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 			      "Host: login.yahoo.com\r\n\r\n");
 	g_hash_table_destroy(hash);
 	yd->auth = g_string_free(url, FALSE);
-	if (gaim_proxy_connect(account, "login.yahoo.com", 80, yahoo_got_cookies, gc) != 0) {
+	if (gaim_proxy_connect(account, "login.yahoo.com", 80, yahoo_got_cookies, NULL, gc) == NULL) {
 		gaim_connection_error(gc, _("Connection problem"));
 		return;
 	}
@@ -2618,7 +2618,7 @@ static void yahoo_login(GaimAccount *account) {
 		if (gaim_proxy_connect(account,
 		                       gaim_account_get_string(account, "serverjp",  YAHOOJP_PAGER_HOST),
 		                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
-		                       yahoo_got_connected, gc) != 0)
+		                       yahoo_got_connected, NULL, gc) == NULL)
 		{
 			gaim_connection_error(gc, _("Connection problem"));
 			return;
@@ -2628,7 +2628,7 @@ static void yahoo_login(GaimAccount *account) {
 		if (gaim_proxy_connect(account,
 		                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
 		                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
-		                       yahoo_got_connected, gc) != 0)
+		                       yahoo_got_connected, NULL, gc) == NULL)
 		{
 			gaim_connection_error(gc, _("Connection problem"));
 			return;

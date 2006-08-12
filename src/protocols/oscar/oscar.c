@@ -943,7 +943,7 @@ destroy_new_conn_data(NewFlapConnectionData *new_conn_data)
  * on the type of host, we do a few different things here.
  */
 static void
-connection_established_cb(gpointer data, gint source, GaimInputCondition cond)
+connection_established_cb(gpointer data, gint source)
 {
 	NewFlapConnectionData *new_conn_data;
 	GaimConnection *gc;
@@ -1250,7 +1250,7 @@ oscar_login(GaimAccount *account)
 	if (gaim_proxy_connect(account,
 			gaim_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
 			gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
-			connection_established_cb, new_conn_data) < 0)
+			connection_established_cb, NULL, new_conn_data) == NULL)
 	{
 		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
@@ -1294,7 +1294,8 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	GaimConnection *gc = od->gc;
 	GaimAccount *account = gc->account;
 	char *host; int port;
-	int i, rc;
+	int i;
+	GaimProxyConnectInfo *connect_info;
 	NewFlapConnectionData *new_conn_data;
 	va_list ap;
 	struct aim_authresp_info *info;
@@ -1366,9 +1367,10 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	new_conn_data->cookielen = info->cookielen;
 	new_conn_data->cookie = g_memdup(info->cookie, info->cookielen);
 	new_conn_data->data = NULL;
-	rc = gaim_proxy_connect(gc->account, host, port, connection_established_cb, new_conn_data);
+	connect_info = gaim_proxy_connect(gc->account, host, port,
+			connection_established_cb, NULL, new_conn_data);
 	g_free(host);
-	if (rc < 0) {
+	if (connect_info == NULL) {
 		gaim_connection_error(gc, _("Could Not Connect"));
 		od->killme = TRUE;
 		return 0;
@@ -1479,7 +1481,9 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	g_free(pos);
 }
 
-static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond) {
+static void
+straight_to_hell(gpointer data, gint source)
+{
 	struct pieceofcrap *pos = data;
 	gchar *buf;
 
@@ -1569,7 +1573,8 @@ int gaim_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
-	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80, straight_to_hell, pos) != 0)
+	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80,
+			straight_to_hell, NULL, pos) == NULL)
 	{
 		char buf[256];
 		if (pos->modname)
@@ -1660,7 +1665,7 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		new_conn_data->data = NULL;
 	}
 
-	if (gaim_proxy_connect(account, host, port, connection_established_cb, new_conn_data) != 0)
+	if (gaim_proxy_connect(account, host, port, connection_established_cb, NULL, new_conn_data) == NULL)
 	{
 		flap_connection_schedule_destroy(new_conn_data->conn,
 				OSCAR_DISCONNECT_COULD_NOT_CONNECT);

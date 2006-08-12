@@ -3367,7 +3367,7 @@ url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-url_fetch_connect_cb(gpointer url_data, gint source, GaimInputCondition cond)
+url_fetch_connect_cb(gpointer url_data, gint source)
 {
 	GaimFetchUrlData *gfud;
 
@@ -3448,7 +3448,8 @@ gaim_url_fetch_request(const char *url, gboolean full,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
 	if (gaim_proxy_connect(NULL, gfud->website.address,
-		gfud->website.port, url_fetch_connect_cb, gfud) != 0) {
+		gfud->website.port, url_fetch_connect_cb, NULL, gfud) == NULL)
+	{
 		destroy_fetch_url_data(gfud);
 
 		cb(user_data, g_strdup(_("g003: Error opening connection.\n")), 0);
