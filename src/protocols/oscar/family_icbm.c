@@ -1588,7 +1588,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	 * I've changed it to process the TLVs in-place.  This avoids lots
 	 * of per-IM memory allocations.
 	 */
-	while (byte_stream_empty(bs))
+	while (byte_stream_empty(bs) >= 4)
 	{
 		type = byte_stream_get16(bs);
 		length = byte_stream_get16(bs);
