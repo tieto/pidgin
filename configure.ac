@@ -546,7 +546,6 @@ AC_CHECK_FUNC(uname)
 
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-	enable_fatal_asserts="yes"
 fi
 
 if test "x$enable_fatal_asserts" = "xyes" ; then
@@ -1822,9 +1821,10 @@ echo Use external libzephyr........ : $zephyr
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
 echo Use X Session Management...... : $enable_sm
-echo Use startup notification.......: $enable_startup_notification
+echo Use startup notification...... : $enable_startup_notification
 echo
 echo Print debugging messages...... : $enable_debug
+echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
 eval eval echo Gaim will be installed in $bindir.
 if test "x$gaimpath" != "x" ; then
