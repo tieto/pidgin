@@ -674,7 +674,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			}
 			if(jbr->client.name) {
 				g_string_append_printf(info_text, "<b>%s:</b> %s %s<br/>",
-						_("Client:"), jbr->client.name,
+						_("Client"), jbr->client.name,
 						jbr->client.version ? jbr->client.version : "");
 				if(jbr->client.os) {
 					g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
@@ -688,7 +688,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	g_free(resource_name);
 
-	info_text = g_string_append(info_text, jbi->vcard_text);
+	if (jbi->vcard_text != NULL)
+		info_text = g_string_append(info_text, jbi->vcard_text);
 
 	gaim_notify_userinfo(jbi->js->gc, jbi->jid, info_text->str, NULL, NULL);
 
@@ -699,7 +700,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 	g_string_free(info_text, TRUE);
 
-	gaim_timeout_remove(jbi->timeout_handle);
+	if (jbi->timeout_handle > 0)
+		gaim_timeout_remove(jbi->timeout_handle);
+
 	g_free(jbi->jid);
 	g_hash_table_destroy(jbi->resources);
 	g_free(jbi->vcard_text);
