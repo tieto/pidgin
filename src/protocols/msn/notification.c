@@ -1230,14 +1230,19 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	/*get the payload content*/
+	gaim_debug_info("MaYuan","GCF{%s}\n",cmd->payload);
+}
+
+static void
 gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	gaim_debug_info("MaYuan","Processing GCF... \n");
-	if(cmd->payload_len == 0){
-		return;
-	}
-	/*get the payload content*/
-	gaim_debug_info("MaYuan","GCF{%s}\n",cmd->payload);
+	cmdproc->last_cmd->payload_cb  = gcf_cmd_post;
+	return;
 }
 
 static void
