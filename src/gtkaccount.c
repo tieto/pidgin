@@ -210,7 +210,8 @@ set_dialog_icon(AccountPrefsDialog *dialog)
 	}
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_entry), pixbuf);
-	g_object_unref(G_OBJECT(pixbuf));
+	if (pixbuf != NULL)
+		g_object_unref(G_OBJECT(pixbuf));
 	g_free(filename);
 }
 
