@@ -38,7 +38,6 @@
 #include "proxy.h"
 #include "util.h"
 
-/* Does anyone know what PHB stands for? */
 struct _GaimProxyConnectInfo {
 	GaimProxyConnectFunction connect_cb;
 	GaimProxyErrorFunction error_cb;
