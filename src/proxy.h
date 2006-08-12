@@ -56,7 +56,7 @@ typedef struct
 
 } GaimProxyInfo;
 
-typedef struct PBH GaimProxyConnectInfo;
+typedef struct _GaimProxyConnectInfo GaimProxyConnectInfo;
 
 typedef void (*GaimProxyConnectFunction)(gpointer data, gint source);
 typedef void (*GaimProxyErrorFunction)(gpointer dat, const gchar *error_message);
