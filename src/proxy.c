@@ -297,6 +297,10 @@ gaim_proxy_connect_info_connected(GaimProxyConnectInfo *connect_info, int fd)
  *        failed.  This will be passed to the callback function
  *        specified in the call to gaim_proxy_connect().
  */
+/*
+ * TODO: Make sure all callers of this function pass a really really
+ *       good error_message.
+ */
 static void
 gaim_proxy_connect_info_error(GaimProxyConnectInfo *connect_info, const gchar *error_message)
 {
@@ -1066,7 +1070,8 @@ proxy_connect_none(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, so
 	fcntl(fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(fd, (struct sockaddr *)addr, addrlen) < 0) {
+	if (connect(fd, (struct sockaddr *)addr, addrlen) != 0)
+	{
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			/* This just confuses people. */
 			/* gaim_debug_warning("proxy",
@@ -1085,7 +1090,8 @@ proxy_connect_none(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, so
 		int error = ETIMEDOUT;
 		gaim_debug_misc("proxy", "Connect didn't block.\n");
 		len = sizeof(error);
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
+		{
 			gaim_debug_error("proxy", "getsockopt failed.\n");
 			close(fd);
 			return -1;
@@ -1455,7 +1461,8 @@ proxy_connect_http(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, so
 	fcntl(fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(fd, addr, addrlen) < 0) {
+	if (connect(fd, addr, addrlen) != 0)
+	{
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			gaim_debug_warning("http proxy",
 					   "Connect would have blocked.\n");
@@ -1481,7 +1488,8 @@ proxy_connect_http(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, so
 				   "Connect didn't block.\n");
 
 		len = sizeof(error);
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
+		{
 			close(fd);
 			return -1;
 		}
@@ -1612,7 +1620,8 @@ proxy_connect_socks4(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, 
 	fcntl(fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(fd, addr, addrlen) < 0) {
+	if (connect(fd, addr, addrlen) != 0)
+	{
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			gaim_debug_warning("socks4 proxy",
 					   "Connect would have blocked.\n");
@@ -1631,7 +1640,8 @@ proxy_connect_socks4(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, 
 
 		len = sizeof(error);
 
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
+		{
 			close(fd);
 			return -1;
 		}
@@ -2159,7 +2169,8 @@ proxy_connect_socks5(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, 
 	fcntl(fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(fd, addr, addrlen) < 0) {
+	if (connect(fd, addr, addrlen) != 0)
+	{
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			gaim_debug_warning("socks5 proxy",
 					   "Connect would have blocked.\n");
@@ -2179,7 +2190,8 @@ proxy_connect_socks5(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, 
 
 		len = sizeof(error);
 
-		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
+		{
 			close(fd);
 			return -1;
 		}
@@ -2196,7 +2208,14 @@ static void try_connect(GaimProxyConnectInfo *connect_info)
 	struct sockaddr *addr;
 	int ret = -1;
 
-	while (connect_info->hosts) {
+	if (connect_info->hosts == NULL)
+	{
+		gaim_proxy_connect_info_error(connect_info, _("Could not resolve host name"));
+		return;
+	}
+
+	while (connect_info->hosts)
+	{
 		addrlen = GPOINTER_TO_INT(connect_info->hosts->data);
 		connect_info->hosts = g_slist_remove(connect_info->hosts, connect_info->hosts->data);
 		addr = connect_info->hosts->data;
@@ -2229,12 +2248,12 @@ static void try_connect(GaimProxyConnectInfo *connect_info)
 
 		g_free(addr);
 
-		if (ret > 0)
+		if (ret >= 0)
 			break;
 	}
 
 	if (ret < 0) {
-		gaim_proxy_connect_info_error(connect_info, _("TODO"));
+		gaim_proxy_connect_info_error(connect_info, _("Unable to establish a connection"));
 	}
 }
 
@@ -2243,6 +2262,12 @@ connection_host_resolved(GSList *hosts, gpointer data,
 						 const char *error_message)
 {
 	GaimProxyConnectInfo *connect_info;
+
+	if (error_message != NULL)
+	{
+		gaim_debug_info("proxy", "Error while resolving hostname: %s\n", error_message);
+		/* TODO: Destroy connect_info and return? */
+	}
 
 	connect_info = data;
 	connect_info->hosts = hosts;
