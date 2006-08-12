@@ -13,6 +13,11 @@
 #include <unistd.h>
 #include <string.h>
 
+/**
+ * Notes: Interesting functions to look at:
+ * 	scr_dump, scr_init, scr_restore: for workspaces
+ */
+
 static int lock_focus_list;
 static GList *focus_list;
 
@@ -51,6 +56,14 @@ static GHashTable *nodes;
 static void free_node(gpointer data);
 static void draw_taskbar();
 static void bring_on_top(GntWidget *widget);
+
+static gboolean
+update_screen(gpointer null)
+{
+	update_panels();
+	doupdate();
+	return TRUE;
+}
 
 void gnt_screen_take_focus(GntWidget *widget)
 {
@@ -119,8 +132,7 @@ bring_on_top(GntWidget *widget)
 		GntNode *nd = g_hash_table_lookup(nodes, window_list.window);
 		top_panel(nd->panel);
 	}
-	update_panels();
-	doupdate();
+	update_screen(NULL);
 	draw_taskbar();
 }
 
@@ -437,6 +449,8 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		dump_screen();
 	}
 
+	gnt_keys_refine(buffer);
+
 	if (mode == GNT_KP_MODE_NORMAL)
 	{
 		if (focus_list)
@@ -499,6 +513,14 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				{
 					shift_window(focus_list->data, 1);
 				}
+				else if (strcmp(buffer + 1, "l") == 0)
+				{
+					touchwin(stdscr);
+					touchwin(newscr);
+					wrefresh(newscr);
+					update_screen(NULL);
+					draw_taskbar();
+				}
 			}
 		}
 	}
@@ -557,8 +579,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				GntNode *node = g_hash_table_lookup(nodes, widget);
 				gnt_widget_set_position(widget, x, y);
 				move_panel(node->panel, y, x);
-				update_panels();
-				doupdate();
+				update_screen(NULL);
 			}
 		}
 		else if (*buffer == '\r')
@@ -656,6 +677,10 @@ void gnt_init()
 		ascii_only = TRUE;
 
 	initscr();
+	typeahead(-1);
+	noecho();
+	curs_set(0);
+
 	gnt_init_colors();
 	gnt_init_styles();
 
@@ -671,7 +696,6 @@ void gnt_init()
 	nodes = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_node);
 
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
-	noecho();
 	refresh();
 #if 0
 	mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED | REPORT_MOUSE_POSITION, NULL);
@@ -729,8 +753,7 @@ void gnt_screen_occupy(GntWidget *widget)
 		}
 	}
 
-	update_panels();
-	doupdate();
+	update_screen(NULL);
 }
 
 void gnt_screen_release(GntWidget *widget)
@@ -750,8 +773,7 @@ void gnt_screen_release(GntWidget *widget)
 		gnt_tree_remove(GNT_TREE(window_list.tree), widget);
 	}
 
-	update_panels();
-	doupdate();
+	update_screen(NULL);
 }
 
 void gnt_screen_update(GntWidget *widget)
@@ -779,8 +801,7 @@ void gnt_screen_update(GntWidget *widget)
 		top_panel(nd->panel);
 	}
 
-	update_panels();
-	doupdate();
+	update_screen(NULL);
 }
 
 gboolean gnt_widget_has_focus(GntWidget *widget)
@@ -844,8 +865,7 @@ void gnt_screen_resize_widget(GntWidget *widget, int width, int height)
 		gnt_widget_draw(widget);
 		replace_panel(node->panel, widget->window);
 		show_panel(node->panel);
-		update_panels();
-		doupdate();
+		update_screen(NULL);
 	}
 }
 

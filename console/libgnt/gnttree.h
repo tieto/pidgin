@@ -85,6 +85,8 @@ GList *gnt_tree_get_selection_text_list(GntTree *tree);
 
 void gnt_tree_remove(GntTree *tree, gpointer key);
 
+void gnt_tree_remove_all(GntTree *tree);
+
 /* Returns the visible line number of the selected row */
 int gnt_tree_get_selection_visible_line(GntTree *tree);
 

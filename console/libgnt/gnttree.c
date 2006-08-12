@@ -770,6 +770,15 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 	}
 }
 
+void gnt_tree_remove_all(GntTree *tree)
+{
+	tree->root = NULL;
+	g_hash_table_remove_all(tree->hash);
+	g_list_free(tree->list);
+	tree->list = NULL;
+	tree->current = tree->top = tree->bottom = NULL;
+}
+
 int gnt_tree_get_selection_visible_line(GntTree *tree)
 {
 	return get_distance(tree->top, tree->current) +

@@ -14,19 +14,24 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view),
 				gnt_entry_get_text(GNT_ENTRY(w)),
 				GNT_TEXT_FLAG_HIGHLIGHT);
+		gnt_entry_add_to_history(GNT_ENTRY(w), gnt_entry_get_text(GNT_ENTRY(w)));
 		gnt_text_view_next_line(GNT_TEXT_VIEW(view));
 		gnt_entry_clear(GNT_ENTRY(w));
 		if (gnt_text_view_get_lines_below(GNT_TEXT_VIEW(view)) <= 1)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(view), 0);
+		gnt_entry_remove_suggest(GNT_ENTRY(w), "acb");
 
 		return TRUE;
 	}
 	else if (key[0] == 27)
 	{
-		if (strcmp(key+1, GNT_KEY_UP))
-			gnt_text_view_scroll(GNT_TEXT_VIEW(view), 1);
-		else if (strcmp(key+1, GNT_KEY_DOWN))
+		if (strcmp(key+1, GNT_KEY_UP) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(view), -1);
+		else if (strcmp(key+1, GNT_KEY_DOWN) == 0)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(view), 1);
+		else
+			return FALSE;
+		return TRUE;
 	}
 		
 	return FALSE;
@@ -53,6 +58,15 @@ int main()
 	gnt_widget_set_name(entry, "entry");
 	GNT_WIDGET_SET_FLAGS(entry, GNT_WIDGET_CAN_TAKE_FOCUS);
 
+	gnt_entry_set_word_suggest(GNT_ENTRY(entry), TRUE);
+	gnt_entry_set_always_suggest(GNT_ENTRY(entry), FALSE);
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "a");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "ab");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "abc");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "abcd");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "abcde");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "acb");
+
 	view = gnt_text_view_new();
 	gnt_widget_set_name(view, "view");
 
@@ -65,7 +79,8 @@ int main()
 
 	gnt_widget_show(hbox);
 
-	g_signal_connect(G_OBJECT(entry), "key_pressed", G_CALLBACK(key_pressed), view);
+	gnt_entry_set_history_length(GNT_ENTRY(entry), -1);
+	g_signal_connect_after(G_OBJECT(entry), "key_pressed", G_CALLBACK(key_pressed), view);
 
 #ifdef STANDALONE
 	gnt_main();

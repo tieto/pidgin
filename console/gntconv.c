@@ -123,6 +123,7 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 			}
 			g_free(escape);
 		}
+		gnt_entry_add_to_history(GNT_ENTRY(ggconv->entry), text);
 		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
 		return TRUE;
 	}
@@ -198,8 +199,11 @@ gg_create_conversation(GaimConversation *conv)
 	ggc->entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->entry);
 	gnt_widget_set_name(ggc->entry, "conversation-window-entry");
+	gnt_entry_set_history_length(GNT_ENTRY(ggc->entry), -1);
+	gnt_entry_set_word_suggest(GNT_ENTRY(ggc->entry), TRUE);
+	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
 
-	g_signal_connect(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
+	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
 	gnt_widget_set_position(ggc->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
@@ -315,6 +319,9 @@ gg_write_conv(GaimConversation *conv, const char *who, const char *alias,
 static void
 gg_chat_add_users(GaimConversation *conv, GList *users, gboolean new_arrivals)
 {
+	GGConv *ggc = conv->ui_data;
+	GntEntry *entry = GNT_ENTRY(ggc->entry);
+
 	if (!new_arrivals)
 	{
 		/* Print the list of users in the room */
@@ -335,25 +342,39 @@ gg_chat_add_users(GaimConversation *conv, GList *users, gboolean new_arrivals)
 				GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_string_free(string, TRUE);
 	}
-	/* XXX: Add the names for string completion */
+
+	for (; users; users = users->next)
+	{
+		GaimConvChatBuddy *cbuddy = users->data;
+		gnt_entry_add_suggest(entry, cbuddy->name);
+		gnt_entry_add_suggest(entry, cbuddy->alias);
+	}
 }
 
 static void
 gg_chat_rename_user(GaimConversation *conv, const char *old, const char *new_n, const char *new_a)
 {
 	/* XXX: Update the name for string completion */
+	GGConv *ggc = conv->ui_data;
+	GntEntry *entry = GNT_ENTRY(ggc->entry);
+	gnt_entry_remove_suggest(entry, old);
+	gnt_entry_add_suggest(entry, new_n);
+	gnt_entry_add_suggest(entry, new_a);
 }
 
 static void
 gg_chat_remove_user(GaimConversation *conv, GList *list)
 {
 	/* XXX: Remove the name from string completion */
+	GGConv *ggc = conv->ui_data;
+	GntEntry *entry = GNT_ENTRY(ggc->entry);
+	for (; list; list = list->next)
+		gnt_entry_remove_suggest(entry, list->data);
 }
 
 static void
 gg_chat_update_user(GaimConversation *conv, const char *user)
 {
-	/* XXX: This probably will not require updating the string completion  */
 }
 
 static GaimConversationUiOps conv_ui_ops = 

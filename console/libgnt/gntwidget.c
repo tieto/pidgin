@@ -80,6 +80,23 @@ gnt_widget_dummy_confirm_size(GntWidget *widget, int width, int height)
 	return TRUE;
 }
 
+static gboolean
+gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
+				  GValue                *return_accu,
+				  const GValue          *handler_return,
+				  gpointer               dummy)
+{
+	gboolean continue_emission;
+	gboolean signal_handled;
+
+	signal_handled = g_value_get_boolean (handler_return);
+	g_value_set_boolean (return_accu, signal_handled);
+	continue_emission = !signal_handled;
+
+	return continue_emission;
+}
+
+
 static void
 gnt_widget_class_init(GntWidgetClass *klass)
 {
@@ -194,7 +211,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, key_pressed),
-					 NULL, NULL,
+					 gnt_boolean_handled_accumulator, NULL,
 					 gnt_closure_marshal_BOOLEAN__STRING,
 					 G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
 	DEBUG;

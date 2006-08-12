@@ -1,7 +1,9 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "gntbox.h"
 #include "gntentry.h"
+#include "gnttree.h"
 
 enum
 {
@@ -10,6 +12,92 @@ enum
 
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
+
+static void
+destroy_suggest(GntEntry *entry)
+{
+	if (entry->ddown)
+	{
+		gnt_widget_destroy(entry->ddown->parent);
+		entry->ddown = NULL;
+	}
+}
+
+static char *
+get_beginning_of_word(GntEntry *entry)
+{
+	char *s = entry->cursor;
+	while (s > entry->start)
+	{
+		char *t = g_utf8_find_prev_char(entry->start, s);
+		if ((*t < 'A' || *t > 'Z') && (*t < 'a' || *t > 'z'))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static gboolean
+show_suggest_dropdown(GntEntry *entry)
+{
+	char *suggest = NULL;
+	int len;
+	int offset = 0, x, y;
+	int count = 0;
+	GList *iter;
+
+	if (entry->word)
+	{
+		char *s = get_beginning_of_word(entry);
+		suggest = g_strndup(s, entry->cursor - s);
+		if (entry->scroll < s)
+			offset = g_utf8_pointer_to_offset(entry->scroll, s);
+	}
+	else
+		suggest = g_strdup(entry->start);
+	len = strlen(suggest);  /* Don't need to use the utf8-function here */
+	
+	if (entry->ddown == NULL)
+	{
+		GntWidget *box = gnt_vbox_new(FALSE);
+		entry->ddown = gnt_tree_new();
+		gnt_box_add_widget(GNT_BOX(box), entry->ddown);
+
+		GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_TRANSIENT);
+
+		gnt_widget_get_position(GNT_WIDGET(entry), &x, &y);
+		x += offset;
+		y++;
+		if (y + 10 >= getmaxy(stdscr))
+			y -= 11;
+		gnt_widget_set_position(box, x, y);
+		
+		gnt_widget_draw(box);
+	}
+	else
+		gnt_tree_remove_all(GNT_TREE(entry->ddown));
+
+	for (count = 0, iter = entry->suggests; iter; iter = iter->next)
+	{
+		const char *text = iter->data;
+		if (strncmp(suggest, text, len) == 0 && strlen(text) >= len)
+		{
+			gnt_tree_add_row_after(GNT_TREE(entry->ddown), (gpointer)text,
+					gnt_tree_create_row(GNT_TREE(entry->ddown), text),
+					NULL, NULL);
+			count++;
+		}
+	}
+	g_free(suggest);
+
+	if (count == 0)
+	{
+		destroy_suggest(entry);
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 static void
 gnt_entry_draw(GntWidget *widget)
@@ -80,6 +168,11 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
 			entry->end -= len;
 			entry_redraw(widget);
+
+			if (entry->ddown)
+				show_suggest_dropdown(entry);
+
+			return TRUE;
 		}
 		else if (strcmp(text + 1, GNT_KEY_LEFT) == 0 && entry->cursor > entry->start)
 		{
@@ -87,6 +180,8 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			if (entry->cursor < entry->scroll)
 				entry->scroll = entry->cursor;
 			entry_redraw(widget);
+
+			return TRUE;
 		}
 		else if (strcmp(text + 1, GNT_KEY_RIGHT) == 0 && entry->cursor < entry->end)
 		{
@@ -94,15 +189,90 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			if (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
 				entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
 			entry_redraw(widget);
+
+			return TRUE;
+		}
+		else if (strcmp(text + 1, GNT_KEY_CTRL_DOWN) == 0 && entry->histlength)
+		{
+			if (entry->history->prev)
+			{
+				entry->history = entry->history->prev;
+				gnt_entry_set_text(entry, entry->history->data);
+				destroy_suggest(entry);
+
+				return TRUE;
+			}
+		}
+		else if (strcmp(text + 1, GNT_KEY_UP) == 0 ||
+				strcmp(text + 1, GNT_KEY_DOWN) == 0)
+		{
+			if (entry->ddown)
+			{
+				gnt_widget_key_pressed(entry->ddown, text);
+				return TRUE;
+			}
+		}
+		else if (strcmp(text + 1, GNT_KEY_CTRL_UP) == 0 && entry->histlength)
+		{
+			if (entry->history->next)
+			{
+				if (entry->history->prev == NULL)
+				{
+					/* Save the current contents */
+					char *text = g_strdup(gnt_entry_get_text(entry));
+					g_free(entry->history->data);
+					entry->history->data = text;
+				}
+
+				entry->history = entry->history->next;
+				gnt_entry_set_text(entry, entry->history->data);
+				destroy_suggest(entry);
+
+				return TRUE;
+			}
 		}
 		/* XXX: handle other keys, like home/end, and ctrl+ goodness */
-		else
-			return FALSE;
+		else if (text[1] == 0)
+		{
+			destroy_suggest(entry);
+		}
 
-		return TRUE;
+		return FALSE;
 	}
 	else
 	{
+		if (text[0] == '\t')
+		{
+			if (entry->ddown)
+				destroy_suggest(entry);
+			else if (entry->suggests)
+				return show_suggest_dropdown(entry);
+
+			return FALSE;
+		}
+		else if (text[0] == '\r' && entry->ddown)
+		{
+			char *text = g_strdup(gnt_tree_get_selection_data(GNT_TREE(entry->ddown)));
+			destroy_suggest(entry);
+			if (entry->word)
+			{
+				char *s = get_beginning_of_word(entry);
+				char *iter = text;
+				while (*s == *iter)
+				{
+					s++;
+					iter++;
+				}
+				gnt_entry_key_pressed(widget, iter);
+			}
+			else
+			{
+				gnt_entry_set_text(entry, text);
+			}
+			g_free(text);
+			return TRUE;
+		}
+
 		if (!iscntrl(text[0]))
 		{
 			const char *str, *next;
@@ -143,6 +313,9 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 
 				while (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
 					entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+
+				if (entry->ddown)
+					show_suggest_dropdown(entry);
 			}
 			entry_redraw(widget);
 			return TRUE;
@@ -161,6 +334,8 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 					entry->scroll = g_utf8_find_prev_char(entry->start, entry->scroll);
 
 				entry_redraw(widget);
+				if (entry->ddown)
+					show_suggest_dropdown(entry);
 				return TRUE;
 			}
 		}
@@ -174,6 +349,32 @@ gnt_entry_destroy(GntWidget *widget)
 {
 	GntEntry *entry = GNT_ENTRY(widget);
 	g_free(entry->start);
+
+	if (entry->history)
+	{
+		entry->history = g_list_first(entry->history);
+		g_list_foreach(entry->history, (GFunc)g_free, NULL);
+		g_list_free(entry->history);
+	}
+
+	if (entry->suggests)
+	{
+		g_list_foreach(entry->suggests, (GFunc)g_free, NULL);
+		g_list_free(entry->suggests);
+	}
+
+	if (entry->ddown)
+	{
+		gnt_widget_destroy(entry->ddown->parent);
+	}
+}
+
+static void
+gnt_entry_lost_focus(GntWidget *widget)
+{
+	GntEntry *entry = GNT_ENTRY(widget);
+	destroy_suggest(entry);
+	entry_redraw(widget);
 }
 
 static void
@@ -185,6 +386,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	parent_class->map = gnt_entry_map;
 	parent_class->size_request = gnt_entry_size_request;
 	parent_class->key_pressed = gnt_entry_key_pressed;
+	parent_class->lost_focus = gnt_entry_lost_focus;
 
 	DEBUG;
 }
@@ -197,6 +399,13 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 
 	entry->flag = GNT_ENTRY_FLAG_ALL;
 	entry->max = 0;
+	
+	entry->histlength = 0;
+	entry->history = NULL;
+
+	entry->word = TRUE;
+	entry->always = FALSE;
+	entry->suggests = NULL;
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);
@@ -302,10 +511,98 @@ void gnt_entry_clear(GntEntry *entry)
 	gnt_entry_set_text(entry, NULL);
 	entry->scroll = entry->cursor = entry->end = entry->start;
 	entry_redraw(GNT_WIDGET(entry));
+	destroy_suggest(entry);
 }
 
 void gnt_entry_set_masked(GntEntry *entry, gboolean set)
 {
 	entry->masked = set;
+}
+
+void gnt_entry_add_to_history(GntEntry *entry, const char *text)
+{
+	g_return_if_fail(entry->history != NULL);   /* Need to set_history_length first */
+
+	if (g_list_length(entry->history) >= entry->histlength)
+		return;
+
+	entry->history = g_list_first(entry->history);
+	g_free(entry->history->data);
+	entry->history->data = g_strdup(text);
+	entry->history = g_list_prepend(entry->history, NULL);
+}
+
+void gnt_entry_set_history_length(GntEntry *entry, int num)
+{
+	if (num == 0)
+	{
+		entry->histlength = num;
+		if (entry->history)
+		{
+			entry->history = g_list_first(entry->history);
+			g_list_foreach(entry->history, (GFunc)g_free, NULL);
+			g_list_free(entry->history);
+			entry->history = NULL;
+		}
+		return;
+	}
+
+	if (entry->histlength == 0)
+	{
+		entry->histlength = num;
+		entry->history = g_list_append(NULL, NULL);
+		return;
+	}
+
+	if (num > 0 && num < entry->histlength)
+	{
+		GList *first, *iter;
+		int index = 0;
+		for (first = entry->history, index = 0; first->prev; first = first->prev, index++);
+		while ((iter = g_list_nth(first, num)) != NULL)
+		{
+			g_free(iter->data);
+			first = g_list_delete_link(first, iter);
+		}
+		entry->histlength = num;
+		if (index >= num)
+			entry->history = g_list_last(first);
+		return;
+	}
+
+	entry->histlength = num;
+}
+
+void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word)
+{
+	entry->word = word;
+}
+
+void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always)
+{
+	entry->always = always;
+}
+
+void gnt_entry_add_suggest(GntEntry *entry, const char *text)
+{
+	GList *find;
+
+	if (!text || !*text)
+		return;
+	
+	find = g_list_find_custom(entry->suggests, text, (GCompareFunc)g_utf8_collate);
+	if (find)
+		return;
+	entry->suggests = g_list_append(entry->suggests, g_strdup(text));
+}
+
+void gnt_entry_remove_suggest(GntEntry *entry, const char *text)
+{
+	GList *find = g_list_find_custom(entry->suggests, text, (GCompareFunc)g_utf8_collate);
+	if (find)
+	{
+		g_free(find->data);
+		entry->suggests = g_list_delete_link(entry->suggests, find);
+	}
 }
 

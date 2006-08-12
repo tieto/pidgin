@@ -11,6 +11,7 @@ libgnt_la_SOURCES = \
 	gntcolors.c \
 	gntcombobox.c \
 	gntentry.c \
+	gntkeys.c \
 	gntlabel.c \
 	gntline.c \
 	gntmarshal.c \

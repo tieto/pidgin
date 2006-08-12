@@ -50,6 +50,14 @@ struct _GnEntry
 	
 	int max;        /* 0 means infinite */
 	gboolean masked;
+
+	GList *history; /* History of the strings. User can use this by pressing ctrl+up/down */
+	int histlength; /* How long can the history be? */
+
+	GList *suggests;    /* List of suggestions */
+	gboolean word;      /* Are the suggestions for only a word, or for the whole thing? */
+	gboolean always;    /* Should the list of suggestions show at all times, or only on tab-press? */
+	GntWidget *ddown;   /* The dropdown with the suggested list */
 };
 
 struct _GnEntryClass
@@ -70,7 +78,6 @@ GntWidget *gnt_entry_new(const char *text);
 
 void gnt_entry_set_max(GntEntry *entry, int max);
 
-/* XXX: For now, call gnt_entry_clear before calling this */
 void gnt_entry_set_text(GntEntry *entry, const char *text);
 
 void gnt_entry_set_flag(GntEntry *entry, GntEntryFlag flag);
@@ -80,6 +87,18 @@ const char *gnt_entry_get_text(GntEntry *entry);
 void gnt_entry_clear(GntEntry *entry);
 
 void gnt_entry_set_masked(GntEntry *entry, gboolean set);
+
+void gnt_entry_add_to_history(GntEntry *entry, const char *text);
+
+void gnt_entry_set_history_length(GntEntry *entry, int num);
+
+void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word);
+
+void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always);
+
+void gnt_entry_add_suggest(GntEntry *entry, const char *text);
+
+void gnt_entry_remove_suggest(GntEntry *entry, const char *text);
 
 G_END_DECLS
 
