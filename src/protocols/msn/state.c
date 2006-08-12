@@ -38,6 +38,17 @@ static const char *away_text[] =
 	N_("Available")
 };
 
+/* Local Function Prototype*/
+char * msn_build_psm(char * psmstr,char *mediastr,char * guidstr);
+
+/*
+ * WLM media PSM info build prcedure
+ *
+ * Result can like:
+ *	<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>\
+ *	<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>\
+ *	<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>"
+ */
 char *
 msn_build_psm(char * psmstr,char *mediastr,char * guidstr)
 {
@@ -52,10 +63,6 @@ msn_build_psm(char * psmstr,char *mediastr,char * guidstr)
 		xmlnode_insert_data(psmNode,psmstr,strlen(psmstr));
 	}
 	xmlnode_insert_child(dataNode,psmNode);
-
-//"<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>\
-<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>\
-<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>"
 
 	mediaNode = xmlnode_new("CurrentMedia");
 	if(mediastr != NULL){

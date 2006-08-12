@@ -195,7 +195,7 @@ msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-msn_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_get_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
@@ -210,7 +210,7 @@ msn_get_contact_list(MsnContact * contact)
 	gaim_debug_info("MaYuan","msn_get_contact_list()...\n");
 	contact->soapconn->login_path = g_strdup(MSN_GET_CONTACT_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_GET_CONTACT_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,MSN_GET_CONTACT_TEMPLATE,msn_contact_written_cb);
+	msn_soap_post(contact->soapconn,MSN_GET_CONTACT_TEMPLATE,msn_get_contact_written_cb);
 }
 
 static void
@@ -372,7 +372,7 @@ msn_parse_addressbook(MsnContact * contact)
 	xmlnode_free(node);
 	msn_soap_free_read_buf(contact->soapconn);
 
-	dump_adl_cmd(session);
+	msn_notification_dump_contact(session);
 	msn_set_psm(session);
 	msn_session_finish_login(session);
 }
@@ -415,42 +415,97 @@ msn_get_address_book(MsnContact *contact)
 	msn_soap_post(contact->soapconn,MSN_GET_ADDRESS_TEMPLATE,msn_address_written_cb);
 }
 
+static void
+msn_add_contact_read_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	gaim_debug_info("MaYuan","block read done\n");
+}
+
+static void
+msn_add_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","finish unblock written\n");
+	soapconn->read_cb = msn_add_contact_read_cb;
+	msn_soap_read_cb(data,source,cond);
+}
+
 /*add a Contact */
 void
-msn_add_contact(MsnContact *contact,const char *passport)
+msn_add_contact(MsnContact *contact,const char *passport,char *groupId)
 {
 	char *body = NULL;
 	char *contact_xml = NULL;
 
 	gaim_debug_info("MaYuan","msn add a contact...\n");
 	contact_xml = g_strdup_printf(MSN_CONTACT_XML,passport);
-	body = g_strdup_printf(MSN_ADD_CONTACT_TEMPLATE,contact_xml);
-	g_free(contact_xml);
-
-	/*build SOAP and POST it*/
-	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
-	contact->soapconn->soap_action = g_strdup(MSN_CONTACT_ADD_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,body,msn_address_written_cb);
+	if(groupId == NULL){
+		body = g_strdup_printf(MSN_ADD_CONTACT_TEMPLATE,contact_xml);
+		g_free(contact_xml);
+		/*build SOAP and POST it*/
+		contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+		contact->soapconn->soap_action = g_strdup(MSN_CONTACT_ADD_SOAP_ACTION);
+	}else{
+		body = g_strdup_printf(MSN_ADD_CONTACT_GROUP_TEMPLATE,groupId,contact_xml);
+		g_free(contact_xml);
+		/*build SOAP and POST it*/
+		contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
+		contact->soapconn->soap_action = g_strdup(MSN_ADD_CONTACT_GROUP_SOAP_ACTION);
+	}
+	msn_soap_post(contact->soapconn,body,msn_add_contact_written_cb);
 
 	g_free(body);
 }
 
+static void
+msn_delete_contact_read_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	gaim_debug_info("MaYuan","delete contact read done\n");
+}
+
+static void
+msn_delete_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","delete contact written\n");
+	soapconn->read_cb = msn_delete_contact_read_cb;
+	msn_soap_read_cb(data,source,cond);
+}
+
 /*delete a Contact*/
 void
-msn_delete_contact(MsnContact *contact,const char *passport_id)
+msn_delete_contact(MsnContact *contact,const char *contactId)
 {	
 	char *body = NULL;
 	char *contact_xml = NULL ;
 
-	gaim_debug_info("MaYuan","msn delete a contact...\n");
-	contact_xml = g_strdup_printf(MSN_CONTACTS_DEL_XML,passport_id);
+	gaim_debug_info("MaYuan","msn delete a contact,contactId:{%s}...\n",contactId);
+	contact_xml = g_strdup_printf(MSN_CONTACTS_DEL_XML,contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE,contact_xml);
 	g_free(contact_xml);
 	/*build SOAP and POST it*/
 	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_CONTACT_DEL_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,body,msn_address_written_cb);
+	msn_soap_post(contact->soapconn,body,msn_delete_contact_written_cb);
 	g_free(body);
+}
+
+static void
+msn_block_read_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	gaim_debug_info("MaYuan","block read done\n");
+}
+
+static void
+msn_block_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","finish unblock written\n");
+	soapconn->read_cb = msn_block_read_cb;
+	msn_soap_read_cb(data,source,cond);
 }
 
 /*block a Contact*/
@@ -464,8 +519,24 @@ msn_block_contact(MsnContact *contact,const char* membership_id)
 	/*build SOAP and POST it*/
 	contact->soapconn->login_path = g_strdup(MSN_SHARE_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_CONTACT_BLOCK_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,body,msn_address_written_cb);
+	msn_soap_post(contact->soapconn,body,msn_block_written_cb);
 	g_free(body);
+}
+
+static void
+msn_unblock_read_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	gaim_debug_info("MaYuan","unblock read done\n");
+}
+
+static void
+msn_unblock_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","finish unblock written\n");
+	soapconn->read_cb = msn_unblock_read_cb;
+	msn_soap_read_cb(data,source,cond);
 }
 
 /*unblock a contact*/
@@ -480,8 +551,24 @@ msn_unblock_contact(MsnContact *contact,const char* passport)
 	/*build SOAP and POST it*/
 	contact->soapconn->login_path = g_strdup(MSN_SHARE_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_CONTACT_UNBLOCK_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,body,msn_address_written_cb);
+	msn_soap_post(contact->soapconn,body,msn_unblock_written_cb);
 	g_free(body);
+}
+
+static void
+msn_gleams_read_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	gaim_debug_info("MaYuan","Gleams read done\n");
+}
+
+static void
+msn_gleams_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","finish Group written\n");
+	soapconn->read_cb = msn_gleams_read_cb;
+	msn_soap_read_cb(data,source,cond);
 }
 
 /*get the gleams info*/
@@ -492,7 +579,7 @@ msn_get_gleams(MsnContact *contact)
 	/*build SOAP and POST it*/
 	contact->soapconn->login_path = g_strdup(MSN_ADDRESS_BOOK_POST_URL);
 	contact->soapconn->soap_action = g_strdup(MSN_GET_GLEAMS_SOAP_ACTION);
-	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_address_written_cb);
+	msn_soap_post(contact->soapconn,MSN_GLEAMS_TEMPLATE,msn_gleams_written_cb);
 }
 
 /***************************************************************

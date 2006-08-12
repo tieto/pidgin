@@ -26,6 +26,8 @@
 #ifndef _MSN_SOAP_H_
 #define _MSN_SOAP_H_
 
+#define MSN_SOAP_READ_BUFF_SIZE		8192
+
 /*MSN Https connection structure*/
 typedef struct _MsnSoapConn MsnSoapConn;
 

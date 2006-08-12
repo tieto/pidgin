@@ -146,12 +146,12 @@ msn_soap_read(MsnSoapConn *soapconn)
 {
 	gssize len;
 	gssize total_len = 0;
-	char temp_buf[10240];
+	char temp_buf[MSN_SOAP_READ_BUFF_SIZE];
 
 	if(soapconn->ssl_conn){
-		len = gaim_ssl_read(soapconn->gsc, temp_buf,sizeof(temp_buf));
+		len = gaim_ssl_read(soapconn->gsc, temp_buf,MSN_SOAP_READ_BUFF_SIZE);
 	}else{
-		len = read(soapconn->fd, temp_buf,sizeof(temp_buf));
+		len = read(soapconn->fd, temp_buf,MSN_SOAP_READ_BUFF_SIZE);
 	}
 	if(len >0){
 		total_len += len;
@@ -162,6 +162,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 		soapconn->read_len += len;
 		soapconn->read_buf[soapconn->read_len] = '\0';
 	}
+	gaim_debug_info("MaYuan","++soap ssl read:{%d}\n",total_len);
 //	gaim_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
 	return total_len;
 }
@@ -209,6 +210,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* Redirect. */
 		char *location, *c;
 
+		gaim_debug_error("MaYuan", "soap redirect\n");
 		location = strstr(soapconn->read_buf, "Location: ");
 		if (location == NULL)
 		{
@@ -244,6 +246,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		const char *error;
 
+		gaim_debug_error("MaYuan", "soap 401\n");
 		if ((error = strstr(soapconn->read_buf, "WWW-Authenticate")) != NULL)
 		{
 			if ((error = strstr(error, "cbtxt=")) != NULL)
@@ -284,12 +287,11 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			/*setup the conn body */
 			soapconn->body		= body_start;
 			soapconn->body_len	= atoi(body_len);
-			//	gaim_debug_misc("MaYuan","content length :%d",soapconn->body_len);
+			gaim_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
 
-			if(soapconn->read_len < body_start - soapconn->read_buf + atoi(body_len)){
+			if(soapconn->read_len < body_start - soapconn->read_buf + soapconn->body_len){
 					return;
 			}
-
 			g_free(body_len);
 
 #if 1
@@ -313,6 +315,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	//	soapconn->gsc = NULL;
 #endif
 	}
+	return;
 }
 
 void 
@@ -342,6 +345,13 @@ msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	MsnSoapConn *soapconn = data;
 	int len, total_len;
 
+	g_return_if_fail(soapconn != NULL);
+	if(soapconn->write_buf == NULL){
+		gaim_debug_error("MaYuan","soap buffer is NULL\n");
+		gaim_input_remove(soapconn->output_handler);
+		soapconn->output_handler = -1;
+		return;
+	}
 	total_len = strlen(soapconn->write_buf);
 
 	/* 

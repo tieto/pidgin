@@ -63,7 +63,7 @@ void msn_notification_destroy(MsnNotification *notification);
 gboolean msn_notification_connect(MsnNotification *notification,
 							  const char *host, int port);
 void msn_notification_disconnect(MsnNotification *notification);
-void dump_adl_cmd(MsnSession *session);
+void msn_notification_dump_contact(MsnSession *session);
 
 /**
  * Closes a notification.

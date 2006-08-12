@@ -972,6 +972,7 @@ msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
+	gaim_debug_info("MaYuan","add user:{%s} to group:{%s}\n",who,group->name);
 	if (!session->logged_in)
 	{
 #if 0

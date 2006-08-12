@@ -34,6 +34,11 @@
 
 static MsnTable *cbs_table;
 
+/****************************************************************************
+ * 	Local Function Prototype
+ ****************************************************************************/
+void msn_add_contact_xml(xmlnode *mlNode,char *passport,int list_op,int type);
+
 /**************************************************************************
  * Main
  **************************************************************************/
@@ -434,19 +439,70 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 /**************************************************************************
  * Buddy Lists
  **************************************************************************/
+/* add contact to xmlnode */
+void 
+msn_add_contact_xml(xmlnode *mlNode,char *passport,int list_op,int type)
+{
+	xmlnode *d_node,*c_node;
+	char **tokens;
+	char *email,*domain;
+	char *list_op_str,*type_str;
+
+	gaim_debug_info("MaYuan","passport:%s\n",passport);
+	tokens = g_strsplit(passport, "@", 2);
+	email = tokens[0];
+	domain = tokens[1];
+
+	/*find a domain Node*/
+	for(d_node = xmlnode_get_child(mlNode,"d"); d_node; d_node = xmlnode_get_next_twin(d_node)){
+		const char * attr = NULL;
+		gaim_debug_info("MaYuan","d_node:%s\n",d_node->name);
+		attr = xmlnode_get_attrib(d_node,"n");
+		if(attr == NULL){
+			continue;
+		}
+		if(!strcmp(attr,domain)){
+			break;
+		}
+	}
+	if(d_node == NULL){
+		/*domain not found, create a new domain Node*/
+		gaim_debug_info("MaYuan","get No d_node\n");
+		d_node = xmlnode_new("d");
+		xmlnode_set_attrib(d_node,"n",domain);
+		xmlnode_insert_child(mlNode,d_node);
+	}
+
+	/*create contact node*/
+	c_node = xmlnode_new("c");
+	xmlnode_set_attrib(c_node,"n",email);
+
+	list_op_str = g_strdup_printf("%d",list_op);
+	gaim_debug_info("MaYuan","list_op:%d\n",list_op_str);
+	xmlnode_set_attrib(c_node,"l",list_op_str);
+	g_free(list_op_str);
+#if 0
+	type_str = g_strdup_printf("%d",type);
+	xmlnode_set_attrib(c_node,"t",type_str);
+#else
+	type_str = g_strdup_printf("1");
+	xmlnode_set_attrib(c_node,"t",type_str);
+	g_free(type_str);
+#endif
+	xmlnode_insert_child(d_node, c_node);
+}
+
+/*dump contact info to NS*/
 void
-dump_adl_cmd(MsnSession *session)
+msn_notification_dump_contact(MsnSession *session)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
 	MsnUserList *userlist;
 	MsnUser *user;
 	GList *l;
-	xmlnode *adl_node,*d_node,*c_node;
-	char **tokens;
-	char *email,*domain;
+	xmlnode *adl_node;
 	char *payload;
-	char *list_op,*type;
 	int payload_len;
 
 	cmdproc = session->notification->cmdproc;
@@ -458,58 +514,15 @@ dump_adl_cmd(MsnSession *session)
 	/*get the userlist*/
 	for (l = userlist->users; l != NULL; l = l->next){
 		user = l->data;
-
-		gaim_debug_info("MaYuan","passport:%s\n",user->passport);
-		tokens = g_strsplit(user->passport, "@", 2);
-		email = tokens[0];
-		domain = tokens[1];
-
-		/*find a domain node*/
-		for(d_node = xmlnode_get_child(adl_node,"d"); d_node; d_node = xmlnode_get_next_twin(d_node)){
-			const char * attr = NULL;
-			gaim_debug_info("MaYuan","d_node:%s\n",d_node->name);
-			attr = xmlnode_get_attrib(d_node,"n");
-			if(attr == NULL){
-				continue;
-			}
-			if(!strcmp(attr,domain)){
-				break;
-			}
-		}
-		if(d_node == NULL){
-			gaim_debug_info("MaYuan","get No d_node\n");
-			d_node = xmlnode_new("d");
-			xmlnode_set_attrib(d_node,"n",domain);
-			xmlnode_insert_child(adl_node,d_node);
-		}
-
-		/*create contact node*/
-		c_node = xmlnode_new("c");
-		xmlnode_set_attrib(c_node,"n",email);
-
-		list_op = g_strdup_printf("%d",user->list_op);
-		gaim_debug_info("MaYuan","list_op:%d\n",user->list_op);
-		xmlnode_set_attrib(c_node,"l",list_op);
-#if 0
-		type = g_strdup_printf("%d",user->type);
-		xmlnode_set_attrib(c_node,"t",type);
-#else
-		type = g_strdup_printf("1");
-		xmlnode_set_attrib(c_node,"t",type);
-#endif
-		xmlnode_insert_child(d_node, c_node);
-
-		g_free(list_op);
-		g_free(type);
+		msn_add_contact_xml(adl_node,user->passport,user->list_op,user->type);
 	}
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
+	xmlnode_free(adl_node);
 
 	gaim_debug_info("MaYuan","ADL{%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
-
 	msn_transaction_set_payload(trans, payload, strlen(payload));
-
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
@@ -1530,16 +1543,29 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 						   const char *group_id)
 {
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
+	xmlnode *adl_node;
+	char *payload;
+	int payload_len;
+
 	cmdproc = notification->servconn->cmdproc;
 
-	if (group_id != NULL && !strcmp(list, "FL"))
-
-	if (group_id >= 0){
-		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s %d",
-						 list, who, store_name, group_id);
-	}else{
-		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who, store_name);
+	if (strcmp(list, "FL") != 0){
 	}
+
+	adl_node = xmlnode_new("ml");
+	adl_node->child = NULL;
+	xmlnode_set_attrib(adl_node, "l", "1");
+
+	msn_add_contact_xml(adl_node,who,3,1);
+
+	payload = xmlnode_to_str(adl_node,&payload_len);
+	xmlnode_free(adl_node);
+
+	gaim_debug_info("MaYuan","ADL{%s}\n",payload);
+	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 void
@@ -1547,19 +1573,31 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 						   const char *who, const char *group_id)
 {
 	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
+	xmlnode *rml_node;
+	char *payload;
+	int payload_len;
+
 	cmdproc = notification->servconn->cmdproc;
 
-	if (group_id != NULL){
-		msn_cmdproc_send(cmdproc, "REM", "%s %s %d", list, who, group_id);
-	}else{
-		msn_cmdproc_send(cmdproc, "REM", "%s %s", list, who);
-	}
+	rml_node = xmlnode_new("ml");
+	rml_node->child = NULL;
+	xmlnode_set_attrib(rml_node, "l", "1");
+
+	msn_add_contact_xml(rml_node,who,3,1);
+
+	payload = xmlnode_to_str(rml_node,&payload_len);
+	xmlnode_free(rml_node);
+
+	gaim_debug_info("MaYuan","RML{%s}\n",payload);
+	trans = msn_transaction_new(cmdproc, "RML","%d",strlen(payload));
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 /**************************************************************************
  * Init
  **************************************************************************/
-
 void
 msn_notification_init(void)
 {

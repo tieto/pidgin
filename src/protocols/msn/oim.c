@@ -106,7 +106,8 @@ msn_oim_send_written_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 /*pose single message to oim server*/
-void msn_oim_send_single_msg(MsnOim *oim,char * msg)
+void 
+msn_oim_send_single_msg(MsnOim *oim,char * msg)
 {
 	const char *oimsoapbody,*t,*p;
 
@@ -137,6 +138,10 @@ void msn_oim_send_msg(MsnOim *oim,char *msg)
 	}
 	
 }
+
+/****************************************
+ * OIM delete SOAP request
+ * **************************************/
 
 /****************************************
  * OIM get SOAP request
@@ -179,9 +184,13 @@ msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
-	MsnOim * msnoim;
+	MsnOim * oim = soapconn->session->oim;
 
 	gaim_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
+
+	/*get next single Offline Message*/
+	oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
+//	msn_oim_get_msg(oim);
 }
 
 static void
@@ -220,7 +229,6 @@ msn_oim_report_user(MsnOim *oim,const char *passport,char *msg)
 	if ((conv = msn_oim_get_conv(oim,passport)) != NULL){
 		gaim_conversation_write(conv, NULL, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
-
 }
 
 /*parse the oim XML data*/
@@ -269,19 +277,15 @@ static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 					msgid
 					);
 	msn_soap_post(oim->retrieveconn, oimsoapbody, msn_oim_get_written_cb);
-
 }
 
 /*MSN OIM get SOAP request*/
 void msn_oim_get_msg(MsnOim *oim)
 {
-	GList *list;	
-
 	gaim_debug_info("MaYuan","Get OIM with SOAP \n");
 //	gaim_debug_info("MaYuan","oim->oim_list:%p,data:%s \n",oim->oim_list,oim->oim_list->data);
-	for(list = oim->oim_list; list!= NULL;list = g_list_next(list)){
-		msn_oim_post_single_get_msg(oim,list->data);
-		oim->oim_list = g_list_remove(oim->oim_list, list->data);
+	if(oim->oim_list !=NULL){
+		msn_oim_post_single_get_msg(oim,oim->oim_list->data);
 	}
 }
 

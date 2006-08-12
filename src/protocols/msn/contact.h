@@ -25,7 +25,7 @@
 #ifndef _MSN_CONTACT_H_
 #define _MSN_CONTACT_H_
 
-#define MSN_CONTACT_SERVER	"contacts.msn.com"
+#define MSN_CONTACT_SERVER	"omega.contacts.msn.com"
 
 /*get contact list soap request template*/
 #define MSN_GET_CONTACT_POST_URL	"/abservice/SharingService.asmx"
@@ -116,6 +116,10 @@
 
 #define MSN_ADD_CONTACT_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>ContactSave</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><ABContactAdd xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><contacts>%s</contacts><options><EnableAllowListManagement>true</EnableAllowListManagement></options></ABContactAdd></soap:Body></soap:Envelope>"
 
+/*Contact Group Add*/
+#define MSN_ADD_CONTACT_GROUP_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABGroupContactAdd"
+#define MSN_ADD_CONTACT_GROUP_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>ContactSave</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><ABGroupContactAdd xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groupFilter><groupIds><guid>%s</guid></groupIds></groupFilter><contacts>%s</contacts><groupContactAddOptions><fGenerateMissingQuickName>true</fGenerateMissingQuickName><EnableAllowListManagement>true</EnableAllowListManagement></groupContactAddOptions></ABGroupContactAdd></soap:Body></soap:Envelope>"
+
 /*delete contact from contact list soap request template*/
 #define MSN_CONTACT_DEL_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABContactDelete"
 #define MSN_CONTACTS_DEL_XML		"<Contact><contactId>%s</contactId></Contact>"
@@ -167,6 +171,11 @@ void msn_contact_destroy(MsnContact *contact);
 void msn_contact_connect(MsnContact *contact);
 void msn_get_contact_list(MsnContact * contact);
 void msn_get_address_book(MsnContact *contact);
+
+/*contact SOAP Operation*/
+void msn_add_contact(MsnContact *contact,const char *passport,char *groupId);
+void msn_delete_contact(MsnContact *contact,const char *contactId);
+
 
 /*group operation*/
 void msn_add_group(MsnSession *session,const char* group_name);
