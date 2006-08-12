@@ -80,7 +80,7 @@ show_suggest_dropdown(GntEntry *entry)
 	for (count = 0, iter = entry->suggests; iter; iter = iter->next)
 	{
 		const char *text = iter->data;
-		if (strncmp(suggest, text, len) == 0 && strlen(text) >= len)
+		if (g_ascii_strncasecmp(suggest, text, len) == 0 && strlen(text) >= len)
 		{
 			gnt_tree_add_row_after(GNT_TREE(entry->ddown), (gpointer)text,
 					gnt_tree_create_row(GNT_TREE(entry->ddown), text),
@@ -258,10 +258,9 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			{
 				char *s = get_beginning_of_word(entry);
 				char *iter = text;
-				while (*s == *iter)
+				while (toupper(*s) == toupper(*iter))
 				{
-					s++;
-					iter++;
+					*s++ = *iter++;
 				}
 				gnt_entry_key_pressed(widget, iter);
 			}
