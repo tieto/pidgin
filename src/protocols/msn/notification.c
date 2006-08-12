@@ -37,7 +37,7 @@ static MsnTable *cbs_table;
 /****************************************************************************
  * 	Local Function Prototype
  ****************************************************************************/
-void msn_add_contact_xml(xmlnode *mlNode,char *passport,int list_op,int type);
+void msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type);
 
 /**************************************************************************
  * Main
@@ -441,7 +441,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  **************************************************************************/
 /* add contact to xmlnode */
 void 
-msn_add_contact_xml(xmlnode *mlNode,char *passport,int list_op,int type)
+msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
@@ -1383,8 +1383,6 @@ static void
 initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
-	xmlnode *mdNode;
-	char *end;
 	char **elems, **cur, **tokens;
 
 //	gaim_debug_info("MaYuan","mdata...{%s} \n",msg->body);

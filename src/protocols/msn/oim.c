@@ -233,7 +233,7 @@ msn_oim_report_user(MsnOim *oim,const char *passport,char *msg)
 
 /*parse the oim XML data*/
 void
-msn_parse_oim_msg(MsnOim *oim,char *xmlmsg)
+msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
 	xmlnode *mdNode,*mNode,*INode,*nNode,*ENode,*rtNode;
 	char *passport,*rTime,*msgid,*nickname;
