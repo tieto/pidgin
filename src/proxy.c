@@ -46,7 +46,13 @@ struct _GaimProxyConnectInfo {
 	int port;
 	guint inpa;
 	GaimProxyInfo *gpi;
+
+	/**
+	 * This contains alternating length/char* values.  The char*
+	 * values need to be freed when removed from the linked list.
+	 */
 	GSList *hosts;
+
 	guchar *write_buffer;
 	gsize write_buf_len;
 	gsize written_len;
@@ -71,7 +77,7 @@ static const char *socks5errors[] = {
 static GaimProxyInfo *global_proxy_info = NULL;
 static GSList *connect_infos = NULL;
 
-static void try_connect(struct _GaimProxyConnectInfo *);
+static void try_connect(GaimProxyConnectInfo *);
 
 /**************************************************************************
  * Proxy structure API
@@ -257,7 +263,7 @@ gaim_gnome_proxy_get_info(void)
  **************************************************************************/
 
 static void
-gaim_proxy_connect_info_destroy(struct _GaimProxyConnectInfo *connect_info)
+gaim_proxy_connect_info_destroy(GaimProxyConnectInfo *connect_info)
 {
 	connect_infos = g_slist_remove(connect_infos, connect_info);
 
@@ -280,7 +286,7 @@ gaim_proxy_connect_info_destroy(struct _GaimProxyConnectInfo *connect_info)
 }
 
 static void
-gaim_proxy_connect_info_connected(struct _GaimProxyConnectInfo *connect_info, int fd)
+gaim_proxy_connect_info_connected(GaimProxyConnectInfo *connect_info, int fd)
 {
 	connect_info->connect_cb(connect_info->data, fd);
 	gaim_proxy_connect_info_destroy(connect_info);
@@ -292,7 +298,7 @@ gaim_proxy_connect_info_connected(struct _GaimProxyConnectInfo *connect_info, in
  *        specified in the call to gaim_proxy_connect().
  */
 static void
-gaim_proxy_connect_info_error(struct _GaimProxyConnectInfo *connect_info, const gchar *error_message)
+gaim_proxy_connect_info_error(GaimProxyConnectInfo *connect_info, const gchar *error_message)
 {
 	if (connect_info->error_cb == NULL)
 	{
@@ -990,7 +996,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 static void
 no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	socklen_t len;
 	int error=0, ret;
 
@@ -1034,7 +1040,7 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 
 static gboolean clean_connect(gpointer data)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 
 	gaim_proxy_connect_info_connected(connect_info, connect_info->port);
 
@@ -1043,7 +1049,7 @@ static gboolean clean_connect(gpointer data)
 
 
 static int
-proxy_connect_none(struct _GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_none(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
 {
 	int fd = -1;
 
@@ -1097,7 +1103,7 @@ proxy_connect_none(struct _GaimProxyConnectInfo *connect_info, struct sockaddr *
 static void
 proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	const guchar *request = connect_info->write_buffer + connect_info->written_len;
 	gsize request_len = connect_info->write_buf_len - connect_info->written_len;
 
@@ -1135,7 +1141,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 {
 	int len, headers_len, status = 0;
 	gboolean error;
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	guchar *p;
 	gsize max_read;
 	gchar *msg;
@@ -1367,7 +1373,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
 	char request[8192];
 	int request_len = 0;
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	socklen_t len;
 	int error = ETIMEDOUT;
 
@@ -1430,7 +1436,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static int
-proxy_connect_http(struct _GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_http(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
 {
 	int fd = -1;
 
@@ -1489,7 +1495,7 @@ proxy_connect_http(struct _GaimProxyConnectInfo *connect_info, struct sockaddr *
 static void
 s4_canread(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	guchar *buf;
 	int len, max_read;
 
@@ -1531,7 +1537,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char packet[9];
 	struct hostent *hp;
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	socklen_t len;
 	int error = ETIMEDOUT;
 
@@ -1588,7 +1594,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static int
-proxy_connect_socks4(struct _GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_socks4(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
 {
 	int fd = -1;
 
@@ -1640,7 +1646,7 @@ static void
 s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 {
 	guchar *dest, *buf;
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	int len;
 
 	if (connect_info->read_buffer == NULL) {
@@ -1722,7 +1728,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 static void
 s5_sendconnect(gpointer data, int source)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	int hlen = strlen(connect_info->host);
 	connect_info->write_buf_len = 5 + hlen + 2;
 	connect_info->write_buffer = g_malloc(connect_info->write_buf_len);
@@ -1746,7 +1752,7 @@ s5_sendconnect(gpointer data, int source)
 static void
 s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	int len;
 
 	if (connect_info->read_buffer == NULL) {
@@ -1792,7 +1798,8 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	s5_sendconnect(connect_info, source);
 }
 
-static void hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, unsigned char * response)
+static void
+hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, unsigned char * response)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *ctx;
@@ -1839,7 +1846,7 @@ static void
 s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 {
 	guchar *cmdbuf, *buf;
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	int len, navas, currentav;
 
 	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Got CHAP response.\n");
@@ -1972,7 +1979,7 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 static void
 s5_canread(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	int len;
 
 	if (connect_info->read_buffer == NULL) {
@@ -2087,7 +2094,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[5];
 	int i;
-	struct _GaimProxyConnectInfo *connect_info = data;
+	GaimProxyConnectInfo *connect_info = data;
 	socklen_t len;
 	int error = ETIMEDOUT;
 
@@ -2134,7 +2141,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static int
-proxy_connect_socks5(struct _GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_socks5(GaimProxyConnectInfo *connect_info, struct sockaddr *addr, socklen_t addrlen)
 {
 	int fd = -1;
 
@@ -2168,8 +2175,7 @@ proxy_connect_socks5(struct _GaimProxyConnectInfo *connect_info, struct sockaddr
 		socklen_t len;
 		int error = ETIMEDOUT;
 
-		gaim_debug_misc("socks5 proxy",
-				   "Connect didn't block.\n");
+		gaim_debug_misc("socks5 proxy", "Connect didn't block.\n");
 
 		len = sizeof(error);
 
@@ -2184,7 +2190,7 @@ proxy_connect_socks5(struct _GaimProxyConnectInfo *connect_info, struct sockaddr
 	return fd;
 }
 
-static void try_connect(struct _GaimProxyConnectInfo *connect_info)
+static void try_connect(GaimProxyConnectInfo *connect_info)
 {
 	size_t addrlen;
 	struct sockaddr *addr;
@@ -2236,8 +2242,9 @@ static void
 connection_host_resolved(GSList *hosts, gpointer data,
 						 const char *error_message)
 {
-	struct _GaimProxyConnectInfo *connect_info = (struct _GaimProxyConnectInfo*)data;
+	GaimProxyConnectInfo *connect_info;
 
+	connect_info = data;
 	connect_info->hosts = hosts;
 
 	try_connect(connect_info);
@@ -2316,14 +2323,14 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 {
 	const char *connecthost = host;
 	int connectport = port;
-	struct _GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
 	/* g_return_val_if_fail(error_cb   != NULL, NULL); *//* TODO: Soon! */
 
-	connect_info = g_new0(struct _GaimProxyConnectInfo, 1);
+	connect_info = g_new0(GaimProxyConnectInfo, 1);
 	connect_info->connect_cb = connect_cb;
 	connect_info->error_cb = error_cb;
 	connect_info->data = data;
@@ -2378,14 +2385,14 @@ gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 				   GaimProxyConnectFunction connect_cb,
 				   GaimProxyErrorFunction error_cb, gpointer data)
 {
-	struct _GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
 	/* g_return_val_if_fail(error_cb   != NULL, NULL); *//* TODO: Soon! */
 
-	connect_info = g_new0(struct _GaimProxyConnectInfo, 1);
+	connect_info = g_new0(GaimProxyConnectInfo, 1);
 	connect_info->connect_cb = connect_cb;
 	connect_info->error_cb = error_cb;
 	connect_info->data = data;
