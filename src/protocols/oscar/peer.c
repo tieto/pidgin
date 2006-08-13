@@ -139,6 +139,18 @@ peer_connection_close(PeerConnection *conn)
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 		peer_oft_close(conn);
 
+	if (conn->connect_info != NULL)
+	{
+		gaim_proxy_connect_cancel(conn->connect_info);
+		conn->connect_info = NULL;
+	}
+
+	if (conn->connect_timeout_timer != 0)
+	{
+		gaim_timeout_remove(conn->connect_timeout_timer);
+		conn->connect_timeout_timer = 0;
+	}
+
 	if (conn->watcher_incoming != 0)
 	{
 		gaim_input_remove(conn->watcher_incoming);
@@ -472,21 +484,13 @@ peer_connection_finalize_connection(PeerConnection *conn)
 static void
 peer_connection_established_cb(gpointer data, gint source)
 {
-	NewPeerConnectionData *new_conn_data;
-	GaimConnection *gc;
 	PeerConnection *conn;
 
-	new_conn_data = data;
-	gc = new_conn_data->gc;
-	conn = new_conn_data->conn;
-	g_free(new_conn_data);
+	conn = data;
 
-	if (!GAIM_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		return;
-	}
+	conn->connect_info = NULL;
+	gaim_timeout_remove(conn->connect_timeout_timer);
+	conn->connect_timeout_timer = 0;
 
 	if (source < 0)
 	{
@@ -627,20 +631,53 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 }
 
 /**
+ * This is a callback function used when we're connecting to a peer
+ * using either the client IP or the verified IP and the connection
+ * took longer than 15 seconds to complete.  We do this because
+ * waiting for the OS to time out the connection attempt is not
+ * practical--the default timeout on many OSes can be 3 minutes or
+ * more, and users are impatient.
+ *
+ * Worst case scenario: the user is connected to the Internet using
+ * a modem with severe lag.  The peer connections fail and Gaim falls
+ * back to using a proxied connection.  The lower bandwidth
+ * limitations imposed by the proxied connection won't matter because
+ * the user is using a modem.
+ *
+ * I suppose this line of thinking is discriminatory against people
+ * with very high lag but decent throughput who are transferring
+ * large files.  But we don't care about those people.
+ */
+static gboolean
+peer_connection_tooktoolong(gpointer data)
+{
+	PeerConnection *conn;
+
+	conn = data;
+
+	gaim_debug_info("oscar", "Peer connection timed out after 15 seconds.  "
+			"Trying next method...\n");
+
+	gaim_proxy_connect_cancel(conn->connect_info);
+	conn->connect_info = NULL;
+	conn->connect_timeout_timer = 0;
+
+	peer_connection_trynext(conn);
+
+	/* Cancel this timer.  It'll be added again, if needed. */
+	return FALSE;
+}
+
+/**
  * Try to establish the given PeerConnection using a defined
  * sequence of steps.
  */
 void
 peer_connection_trynext(PeerConnection *conn)
 {
-	NewPeerConnectionData *new_conn_data;
 	GaimAccount *account;
 
-	new_conn_data = g_new(NewPeerConnectionData, 1);
-	new_conn_data->gc = conn->od->gc;
-	new_conn_data->conn = conn;
-
-	account = gaim_connection_get_account(new_conn_data->gc);
+	account = gaim_connection_get_account(conn->od->gc);
 
 	/*
 	 * Close any remnants of a previous failed connection attempt.
@@ -667,10 +704,14 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
-		if (gaim_proxy_connect(account, conn->verifiedip, conn->port,
-				peer_connection_established_cb, NULL, new_conn_data) != NULL)
+		conn->connect_info = gaim_proxy_connect(account,
+				conn->verifiedip, conn->port,
+				peer_connection_established_cb, NULL, conn);
+		if (conn->connect_info != NULL)
 		{
 			/* Connecting... */
+			conn->connect_timeout_timer = gaim_timeout_add(15000,
+					peer_connection_tooktoolong, conn);
 			return;
 		}
 	}
@@ -698,10 +739,14 @@ peer_connection_trynext(PeerConnection *conn)
 				g_free(tmp);
 			}
 
-			if (gaim_proxy_connect(account, conn->clientip, conn->port,
-					peer_connection_established_cb, NULL, new_conn_data) != NULL)
+			conn->connect_info = gaim_proxy_connect(account,
+					conn->clientip, conn->port,
+					peer_connection_established_cb, NULL, conn);
+			if (conn->connect_info != NULL)
 			{
 				/* Connecting... */
+				conn->connect_timeout_timer = gaim_timeout_add(15000,
+						peer_connection_tooktoolong, conn);
 				return;
 			}
 		}
@@ -714,6 +759,12 @@ peer_connection_trynext(PeerConnection *conn)
 	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_INCOMING) &&
 		(!conn->use_proxy))
 	{
+		NewPeerConnectionData *new_conn_data;
+
+		new_conn_data = g_new(NewPeerConnectionData, 1);
+		new_conn_data->gc = conn->od->gc;
+		new_conn_data->conn = conn;
+
 		conn->flags |= PEER_CONNECTION_FLAG_TRIED_INCOMING;
 
 		/*
@@ -728,6 +779,8 @@ peer_connection_trynext(PeerConnection *conn)
 			/* Opening listener socket... */
 			return;
 		}
+
+		g_free(new_conn_data);
 	}
 
 	/*
@@ -757,17 +810,16 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
-		if (gaim_proxy_connect(account,
+		conn->connect_info = gaim_proxy_connect(account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
-				peer_proxy_connection_established_cb, NULL, new_conn_data) != NULL)
+				peer_proxy_connection_established_cb, NULL, conn);
+		if (conn->connect_info != NULL)
 		{
 			/* Connecting... */
 			return;
 		}
 	}
-
-	g_free(new_conn_data);
 
 	/* Give up! */
 	peer_connection_destroy(conn, OSCAR_DISCONNECT_COULD_NOT_CONNECT);

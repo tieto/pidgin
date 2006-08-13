@@ -328,21 +328,11 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
 void
 peer_proxy_connection_established_cb(gpointer data, gint source)
 {
-	NewPeerConnectionData *new_conn_data;
-	GaimConnection *gc;
 	PeerConnection *conn;
 
-	new_conn_data = data;
-	gc = new_conn_data->gc;
-	conn = new_conn_data->conn;
-	g_free(new_conn_data);
+	conn = data;
 
-	if (!GAIM_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		return;
-	}
+	conn->connect_info = NULL;
 
 	if (source < 0)
 	{

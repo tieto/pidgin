@@ -159,10 +159,21 @@ struct _PeerConnection
 	gpointer frame;
 
 	/**
+	 * This is only used when the peer connection is being established.
+	 */
+	GaimProxyConnectInfo *connect_info;
+
+	/**
+	 * This is only used when the peer connection is being established.
+	 */
+	guint connect_timeout_timer;
+
+	/**
 	 * This is only used while the remote user is attempting to
 	 * connect to us.
 	 */
 	int listenerfd;
+
 	int fd;
 
 	guint watcher_incoming;
