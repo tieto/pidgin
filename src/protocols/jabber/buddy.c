@@ -1119,15 +1119,20 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 	for(resources = jb->resources; resources; resources = resources->next)
 	{
 		JabberBuddyResource *jbr = resources->data;
-		JabberBuddyInfoResource *jbir = g_new0(JabberBuddyInfoResource, 1);
+		JabberBuddyInfoResource *jbir;
 		char *full_jid;
-		if(strrchr(jid, '/')) {
-			full_jid = g_strdup(jid);
-		} else {
+
+		if ((strchr(jid, '/') == NULL) && (jbr->name != NULL)) {
 			full_jid = g_strdup_printf("%s/%s", jid, jbr->name);
+		} else {
+			full_jid = g_strdup(jid);
 		}
 
-		g_hash_table_insert(jbi->resources, g_strdup(jbr->name), jbir);
+		if (jbr->name != NULL)
+		{
+			jbir = g_new0(JabberBuddyInfoResource, 1);
+			g_hash_table_insert(jbi->resources, g_strdup(jbr->name), jbir);
+		}
 
 		if(!jbr->client.name) {
 			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:version");
