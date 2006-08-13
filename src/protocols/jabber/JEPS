@@ -22,6 +22,6 @@
 	Gateway Interaction (Transports)
 0115: WATCH
 	Client Capabilities
-0017: NEED
-	Advanced IM Protocol Suite
+0117: NEED
+	Intermediate IM Protocol Suite
 
