@@ -31,7 +31,7 @@
 typedef enum _XMLNodeType
 {
 	XMLNODE_TYPE_TAG,		/**< Just a tag */
-	XMLNODE_TYPE_ATTRIB,	/**< Has attributes */
+	XMLNODE_TYPE_ATTRIB,		/**< Has attributes */
 	XMLNODE_TYPE_DATA		/**< Has data */
 } XMLNodeType;
 
@@ -40,13 +40,13 @@ typedef enum _XMLNodeType
  */
 typedef struct _xmlnode
 {
-	char *name;					/**< The name of the node. */
+	char *name;			/**< The name of the node. */
 #ifdef HAVE_LIBXML
-	char *namespace;                    /**< The namespace of the node */
+	char *namespace;		/**< The namespace of the node */
 #endif
-	XMLNodeType type;			/**< The type of the node. */
-	char *data;					/**< The data for the node. */
-	size_t data_sz;				/**< The size of the data. */
+	XMLNodeType type;		/**< The type of the node. */
+	char *data;			/**< The data for the node. */
+	size_t data_sz;			/**< The size of the data. */
 	struct _xmlnode *parent;	/**< The parent node or @c NULL.*/
 	struct _xmlnode *child;		/**< The child node or @c NULL.*/
 	struct _xmlnode *lastchild;	/**< The last child node or @c NULL.*/
@@ -125,7 +125,8 @@ void xmlnode_insert_data(xmlnode *node, const char *data, gssize size);
  *
  * @param node The node to get data from.
  *
- * @return The data from the node.
+ * @return The data from the node.  You must g_free
+ *         this string when finished using it.
  */
 char *xmlnode_get_data(xmlnode *node);
 
