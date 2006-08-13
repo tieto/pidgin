@@ -448,6 +448,19 @@ msn_userlist_destroy(MsnUserList *userlist)
 	g_free(userlist);
 }
 
+MsnUser *
+msn_userlist_find_add_user(MsnUserList *userlist,const char *passport,const char *userName)
+{
+	MsnUser *user;
+
+	user = msn_userlist_find_user(userlist, passport);
+	if (user == NULL){
+		user = msn_user_new(userlist, passport, userName);
+		msn_userlist_add_user(userlist, user);
+	}
+	return user;
+}
+
 void
 msn_userlist_add_user(MsnUserList *userlist, MsnUser *user)
 {

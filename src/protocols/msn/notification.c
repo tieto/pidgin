@@ -161,7 +161,7 @@ msn_notification_disconnect(MsnNotification *notification)
  **************************************************************************/
 
 static void
-group_error_helper(MsnSession *session, const char *msg, int group_id, int error)
+group_error_helper(MsnSession *session, const char *msg, const char *group_id, int error)
 {
 	GaimAccount *account;
 	GaimConnection *gc;
@@ -400,6 +400,94 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 }
 
+/*send Message to Yahoo Messenger*/
+void
+uum_send_msg(MsnSession *session,MsnMessage *msg)
+{
+	MsnCmdProc *cmdproc;
+	MsnTransaction *trans;
+	char *payload;
+	gsize payload_len;
+	int type;
+	
+	cmdproc = session->notification->cmdproc;
+	g_return_if_fail(msg     != NULL);
+	payload = msn_message_gen_payload(msg, &payload_len);
+	gaim_debug_info("MaYuan","send UUM,payload{%s}\n",payload);
+	type = msg->type;
+	trans = msn_transaction_new(cmdproc, "UUM","%s 32 %d %d",msg->remote_user,type,strlen(payload));
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+static void
+ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	MsnMessage *msg;
+	GaimConnection *gc;
+
+	gaim_debug_info("MaYuan","Process UBM payload:%s\n",payload);
+	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
+
+	msn_message_parse_payload(msg, payload, len);
+#ifdef MSN_DEBUG_NS
+	msn_message_show_readable(msg, "Notification", TRUE);
+#endif
+
+	gaim_debug_info("MaYuan","type:%d\n",msg->type);
+	if(msg->type == MSN_MSG_TEXT){
+		const char *value;
+		const char *body;
+		char *body_str;
+		char *body_enc;
+		char *body_final;
+		size_t body_len;
+		const char *passport;
+
+		body = msn_message_get_bin_data(msg, &body_len);
+		body_str = g_strndup(body, body_len);
+		body_enc = g_markup_escape_text(body_str, -1);
+		g_free(body_str);
+
+		passport = msg->remote_user;
+		gc = cmdproc->session->account->gc;
+			if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
+					char *pre, *post;
+
+				msn_parse_format(value, &pre, &post);
+				body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
+								body_enc ? body_enc : "", post ? post : "");
+				g_free(pre);
+				g_free(post);
+				g_free(body_enc);
+		}
+		serv_got_im(gc, passport, body_final, 0, time(NULL));
+	}
+	msn_message_destroy(msg);
+}
+
+/*Yahoo msg process*/
+static void
+ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","Processing UBM... \n");
+	if(cmd->payload_len == 0){
+		return;
+	}
+	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
+	 * command and we are processing it */
+	if (cmd->payload == NULL){
+		cmdproc->last_cmd->payload_cb  = ubm_cmd_post;
+		cmdproc->servconn->payload_len = atoi(cmd->params[2]);
+	}else{
+		g_return_if_fail(cmd->payload_cb != NULL);
+
+		gaim_debug_info("MaYuan","UBM payload:{%s}\n",cmd->payload);
+		ubm_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
+	}
+}
+
 /**************************************************************************
  * Challenges
  *  we use MD5 to caculate the Chanllenges 
@@ -481,12 +569,12 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	gaim_debug_info("MaYuan","list_op:%d\n",list_op_str);
 	xmlnode_set_attrib(c_node,"l",list_op_str);
 	g_free(list_op_str);
-#if 1
+#if 0
 	type_str = g_strdup_printf("%d",type);
 	xmlnode_set_attrib(c_node,"t",type_str);
 #else
 	if(g_strrstr(domain,"yahoo") != NULL){
-		type_str = g_strdup_printf("31");
+		type_str = g_strdup_printf("32");
 	}else{
 		/*passport*/
 		type_str = g_strdup_printf("1");
@@ -932,12 +1020,12 @@ reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 reg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
-	int group_id;
+	const char * group_id;
 	char **params;
 
 	params = g_strsplit(trans->params, " ", 0);
 
-	group_id = atoi(params[0]);
+	group_id = params[0];
 
 	group_error_helper(cmdproc->session, _("Unable to rename group"), group_id, error);
 
@@ -1640,6 +1728,7 @@ msn_notification_init(void)
 	/* Asynchronous */
 	msn_table_add_cmd(cbs_table, NULL, "IPG", ipg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "UBM", ubm_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "GCF", gcf_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "SBS", sbs_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NOT", not_cmd);

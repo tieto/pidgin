@@ -742,6 +742,14 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_misc("MaYuan","get UBM...\n");
+	cmdproc->servconn->payload_len = atoi(cmd->params[4]);
+	cmdproc->last_cmd->payload_cb = msg_cmd_post;
+}
+
+static void
 nak_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnMessage *msg;
@@ -1236,6 +1244,7 @@ msn_switchboard_init(void)
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "UBM", ubm_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "JOI", joi_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "BYE", bye_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "OUT", out_cmd);

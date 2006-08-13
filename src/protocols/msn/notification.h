@@ -48,6 +48,7 @@ struct _MsnNotification
 };
 
 #include "state.h"
+void uum_send_msg(MsnSession *session,MsnMessage *msg);
 
 void msn_notification_end(void);
 void msn_notification_init(void);

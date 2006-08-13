@@ -51,6 +51,8 @@ msn_check_payload_cmd(char *str)
 		(!strcmp(str,"RML")) ||
 		(!strcmp(str,"UBX")) ||
 		(!strcmp(str,"UBN")) ||
+		(!strcmp(str,"UUM")) ||
+		(!strcmp(str,"UBM")) ||
 		(!strcmp(str,"UUN")) ||
 		(!strcmp(str,"UUX"))){
 			return TRUE;
@@ -65,6 +67,11 @@ int msn_get_payload_position(char *str)
 	/*because MSG has "MSG hotmail hotmail [payload length]"*/
 	if(!(strcmp(str,"MSG"))|| (!strcmp(str,"UBX")) ){
 		return 2;
+	}
+	/*Yahoo User Message UBM 
+	 * Format UBM email@yahoo.com 32 1 [payload length]*/
+	if(!(strcmp(str,"UBM"))|| (!strcmp(str,"UUM")) ){
+		return 3;
 	}
 
 	return 1;

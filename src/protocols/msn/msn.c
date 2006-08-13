@@ -780,7 +780,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	char *msgformat;
 	char *msgtext;
 
-	gaim_debug_info("MaYuan","send IM {%s}\n",message);
+	gaim_debug_info("MaYuan","send IM {%s} to %s\n",message,who);
 	account = gaim_connection_get_account(gc);
 
 	msn_import_html(message, &msgformat, &msgtext);
@@ -794,20 +794,27 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	}
 
 	msg = msn_message_new_plain(msgtext);
+	msg->remote_user = g_strdup(who);
 	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
 
 	g_free(msgformat);
 	g_free(msgtext);
 
+	gaim_debug_info("MaYuan","prepare to send...\n");
 	if (g_ascii_strcasecmp(who, gaim_account_get_username(account)))
 	{
 		MsnSession *session;
 		MsnSwitchBoard *swboard;
 
 		session = gc->proto_data;
-		swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
-
-		msn_switchboard_send_msg(swboard, msg, TRUE);
+		if(strstr(who,"yahoo") != NULL){
+			gaim_debug_info("MaYuan","send to Yahoo!\n");
+			uum_send_msg(session,msg);
+		}else{
+			gaim_debug_info("MaYuan","send via switchboard\n");
+			swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
+			msn_switchboard_send_msg(swboard, msg, TRUE);
+		}
 	}
 	else
 	{

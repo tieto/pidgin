@@ -142,8 +142,10 @@ msn_user_set_store_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->store_name);
-	user->store_name = g_strdup(name);
+	if (name != NULL){
+		g_free(user->store_name);
+		user->store_name = g_strdup(name);
+	}
 }
 
 void

@@ -75,10 +75,14 @@ void msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 MsnUserList *msn_userlist_new(MsnSession *session);
 void msn_userlist_destroy(MsnUserList *userlist);
+
 void msn_userlist_add_user(MsnUserList *userlist, MsnUser *user);
 void msn_userlist_remove_user(MsnUserList *userlist, MsnUser *user);
 MsnUser *msn_userlist_find_user(MsnUserList *userlist,
-								const char *passport);
+				const char *passport);
+MsnUser *msn_userlist_find_add_user(MsnUserList *userlist,
+				const char *passport,const char *userName);
+
 void msn_userlist_add_group(MsnUserList *userlist, MsnGroup *group);
 void msn_userlist_remove_group(MsnUserList *userlist, MsnGroup *group);
 MsnGroup *msn_userlist_find_group_with_id(MsnUserList *userlist, const char *id);

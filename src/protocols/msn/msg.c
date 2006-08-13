@@ -471,6 +471,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 		{
 			memcpy(n, body, body_len);
 			n += body_len;
+			n = "\0";
 		}
 	}
 
