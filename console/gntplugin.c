@@ -68,6 +68,7 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
+	g_free(text);
 }
 
 static void
@@ -76,6 +77,17 @@ reset_plugin_window(GntWidget *window, gpointer null)
 	plugins.window = NULL;
 	plugins.tree = NULL;
 	plugins.aboot = NULL;
+}
+
+static int
+plugin_compare(GaimPlugin *p1, GaimPlugin *p2)
+{
+	char *s1 = g_utf8_strup(p1->info->name, -1);
+	char *s2 = g_utf8_strup(p2->info->name, -1);
+	int ret = g_utf8_collate(s1, s2);
+	g_free(s1);
+	g_free(s2);
+	return ret;
 }
 
 void gg_plugins_show_all()
@@ -102,6 +114,7 @@ void gg_plugins_show_all()
 
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	plugins.tree = tree = gnt_tree_new();
+	gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)plugin_compare);
 	GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
 	gnt_box_add_widget(GNT_BOX(box), tree);
 	gnt_box_add_widget(GNT_BOX(box), gnt_vline_new());
@@ -127,8 +140,6 @@ void gg_plugins_show_all()
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);
 	g_signal_connect(G_OBJECT(tree), "selection_changed", G_CALLBACK(selection_changed), NULL);
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(reset_plugin_window), NULL);
-
-	gnt_tree_set_selected(GNT_TREE(tree), gaim_plugins_get_all()->data);
 
 	gnt_widget_show(window);
 }

@@ -163,14 +163,18 @@ gg_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	}
 	else
 	{
+		char *to;
+
 		setup_email_dialog();
 
+		to = g_strdup_printf("%s (%s)", tos ? *tos : gaim_account_get_username(account),
+					gaim_account_get_protocol_name(account));
 		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(time(NULL)),
-				gnt_tree_create_row(GNT_TREE(emaildialog.tree),
-					tos ? *tos : gaim_account_get_username(account), /* XXX: Perhaps add the prpl-name */
+				gnt_tree_create_row(GNT_TREE(emaildialog.tree), to,
 					froms ? *froms : "[Unknown sender]",
 					*subjects),
 				NULL, NULL);
+		g_free(to);
 		gnt_widget_show(emaildialog.window);
 		return NULL;
 	}

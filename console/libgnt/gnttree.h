@@ -46,6 +46,8 @@ struct _GnTree
 		char *title;
 	} *columns;             /* Would a GList be better? */
 	gboolean show_title;
+
+	GCompareFunc compare;
 };
 
 struct _GnTreeClass
@@ -75,6 +77,8 @@ int gnt_tree_get_visible_rows(GntTree *tree);
 void gnt_tree_scroll(GntTree *tree, int count);
 
 GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro);
+
+GntTreeRow *gnt_tree_add_row_last(GntTree *tree, void *key, GntTreeRow *row, void *parent);
 
 gpointer gnt_tree_get_selection_data(GntTree *tree);
 
@@ -111,6 +115,8 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width);
 void gnt_tree_set_column_titles(GntTree *tree, ...);
 
 void gnt_tree_set_show_title(GntTree *tree, gboolean set);
+
+void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func);
 
 G_END_DECLS
 

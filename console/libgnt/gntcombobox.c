@@ -244,8 +244,8 @@ GntWidget *gnt_combo_box_new()
 
 void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text)
 {
-	gnt_tree_add_row_after(GNT_TREE(box->dropdown), key,
-			gnt_tree_create_row(GNT_TREE(box->dropdown), text), NULL, NULL);
+	gnt_tree_add_row_last(GNT_TREE(box->dropdown), key,
+			gnt_tree_create_row(GNT_TREE(box->dropdown), text), NULL);
 	if (box->selected == NULL)
 		set_selection(box, key);
 }

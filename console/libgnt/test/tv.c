@@ -62,9 +62,10 @@ int main()
 	gnt_entry_set_always_suggest(GNT_ENTRY(entry), FALSE);
 	gnt_entry_add_suggest(GNT_ENTRY(entry), "a");
 	gnt_entry_add_suggest(GNT_ENTRY(entry), "ab");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "abe");
 	gnt_entry_add_suggest(GNT_ENTRY(entry), "abc");
-	gnt_entry_add_suggest(GNT_ENTRY(entry), "abcd");
 	gnt_entry_add_suggest(GNT_ENTRY(entry), "abcde");
+	gnt_entry_add_suggest(GNT_ENTRY(entry), "abcd");
 	gnt_entry_add_suggest(GNT_ENTRY(entry), "acb");
 
 	view = gnt_text_view_new();

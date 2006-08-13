@@ -249,7 +249,10 @@ redraw_tree(GntTree *tree)
 	int start;
 	GntWidget *widget = GNT_WIDGET(tree);
 	GntTreeRow *row;
-	int pos;
+	int pos, up, down, nr;
+
+	if (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
+		return;
 
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 		pos = 0;
@@ -287,6 +290,21 @@ redraw_tree(GntTree *tree)
 		tree_mark_columns(tree, pos, pos, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
 		start = 2;
 	}
+
+	nr = widget->priv.height - pos * 2 - start - 1;
+	tree->bottom = get_next_n_opt(tree->top, nr, &down);
+	if (down < nr)
+	{
+		tree->top = get_prev_n(tree->bottom, nr);
+		if (tree->top == NULL)
+			tree->top = tree->root;
+	}
+
+	up = get_distance(tree->top, tree->current);
+	if (up < 0)
+		tree->top = tree->current;
+	else if (up >= widget->priv.height - pos)
+		tree->top = get_prev_n(tree->current, nr);
 
 	row = tree->top;
 	for (start = start + pos; row && start < widget->priv.height - pos;
@@ -379,8 +397,13 @@ gnt_tree_size_request(GntWidget *widget)
 static void
 gnt_tree_map(GntWidget *widget)
 {
+	GntTree *tree = GNT_TREE(widget);
 	if (widget->priv.width == 0 || widget->priv.height == 0)
+	{
 		gnt_widget_size_request(widget);
+	}
+	tree->top = tree->root;
+	tree->current = tree->root;
 	DEBUG;
 }
 
@@ -616,11 +639,47 @@ void gnt_tree_scroll(GntTree *tree, int count)
 	g_signal_emit(tree, signals[SIG_SCROLLED], 0, count);
 }
 
+static gpointer
+find_position(GntTree *tree, gpointer key, gpointer parent)
+{
+	GntTreeRow *row;
+
+	if (tree->compare == NULL)
+		return NULL;
+
+	if (parent == NULL)
+		row = tree->root;
+	else
+		row = g_hash_table_lookup(tree->hash, parent);
+
+	if (!row)
+		return NULL;
+
+	if (parent)
+		row = row->child;
+
+	while (row)
+	{
+		if (tree->compare(key, row->key) < 0)
+			return (row->prev ? row->prev->key : NULL);
+		if (row->next)
+			row = row->next;
+		else
+			return row->key;
+	}
+	return NULL;
+}
+
 GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro)
 {
 	GntTreeRow *pr = NULL;
 
 	g_hash_table_replace(tree->hash, key, row);
+
+	if (bigbro == NULL && tree->compare)
+	{
+		bigbro = find_position(tree, key, parent);
+	}
 
 	if (tree->root == NULL)
 	{
@@ -663,12 +722,10 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 		if (pr == NULL)
 		{
 			GntTreeRow *r = tree->root;
-			while (r->next)
-				r = r->next;
-			r->next = row;
-			row->prev = r;
-
-			tree->list = g_list_append(tree->list, key);
+			row->next = r;
+			if (r) r->prev = row;
+			tree->root = row;
+			tree->list = g_list_prepend(tree->list, key);
 		}
 		else
 		{
@@ -679,10 +736,30 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 	row->key = key;
 	row->data = NULL;
 
-	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
-		redraw_tree(tree);
+	redraw_tree(tree);
 
 	return row;
+}
+
+GntTreeRow *gnt_tree_add_row_last(GntTree *tree, void *key, GntTreeRow *row, void *parent)
+{
+	GntTreeRow *pr = NULL, *br = NULL;
+
+	if (parent)
+		pr = g_hash_table_lookup(tree->hash, parent);
+
+	if (pr)
+		br = pr->child;
+	else
+		br = tree->root;
+
+	if (br)
+	{
+		while (br->next)
+			br = br->next;
+	}
+
+	return gnt_tree_add_row_after(tree, key, row, parent, br ? br->key : NULL);
 }
 
 gpointer gnt_tree_get_selection_data(GntTree *tree)
@@ -952,5 +1029,10 @@ void gnt_tree_set_column_titles(GntTree *tree, ...)
 void gnt_tree_set_show_title(GntTree *tree, gboolean set)
 {
 	tree->show_title = set;
+}
+
+void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func)
+{
+	tree->compare = func;
 }
 

@@ -337,6 +337,9 @@ add_chat(GaimChat *chat, GGBlist *ggblist)
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), chat,
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				group, NULL);
+
+	if (gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"))
+		serv_join_chat(gaim_account_get_connection(chat->account), chat->components);
 }
 
 static void
@@ -452,8 +455,23 @@ add_custom_action(GntTree *tree, const char *label, GaimCallback callback,
 }
 
 static void
+context_menu_toggle(GntTree *tree, GaimMenuAction *action, gpointer null)
+{
+	gboolean sel = gnt_tree_get_choice(tree, action);
+	gaim_blist_node_set_bool(action->data, "gnt-autojoin", sel);
+}
+
+static void
 create_chat_menu(GntTree *tree, GaimChat *chat)
 {
+	GaimMenuAction *action = gaim_menu_action_new(_("Auto-join"), NULL, chat, NULL);
+
+	gnt_tree_add_choice(tree, action, gnt_tree_create_row(tree, action->label), NULL, NULL);
+	gnt_tree_set_choice(tree, action, gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"));
+	
+	g_signal_connect_swapped(G_OBJECT(tree), "destroy",
+			G_CALLBACK(gaim_menu_action_free), action);
+	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(context_menu_toggle), NULL);
 }
 
 static void
@@ -1182,6 +1200,42 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 			0, 0, NULL, status_text_changed, NULL);
 }
 
+static int
+blist_node_compare(GaimBlistNode *n1, GaimBlistNode *n2)
+{
+	const char *s1, *s2;
+	char *us1, *us2;
+	int ret;
+	
+	g_return_val_if_fail(n1->type == n2->type, -1);
+	
+	switch (n1->type)
+	{
+		case GAIM_BLIST_GROUP_NODE:
+			s1 = ((GaimGroup*)n1)->name;
+			s2 = ((GaimGroup*)n2)->name;
+			break;
+		case GAIM_BLIST_CHAT_NODE:
+			s1 = gaim_chat_get_name((GaimChat*)n1);
+			s2 = gaim_chat_get_name((GaimChat*)n2);
+			break;
+		case GAIM_BLIST_BUDDY_NODE:
+			s1 = gaim_buddy_get_alias((GaimBuddy*)n1);
+			s2 = gaim_buddy_get_alias((GaimBuddy*)n2);
+			break;
+		default:
+			return -1;
+	}
+
+	us1 = g_utf8_strup(s1, -1);
+	us2 = g_utf8_strup(s2, -1);
+	ret = g_utf8_collate(us1, us2);
+	g_free(us1);
+	g_free(us2);
+
+	return ret;
+}
+
 void gg_blist_show()
 {
 	if (ggblist)
@@ -1198,6 +1252,7 @@ void gg_blist_show()
 	gnt_box_set_pad(GNT_BOX(ggblist->window), 0);
 
 	ggblist->tree = gnt_tree_new();
+	gnt_tree_set_compare_func(GNT_TREE(ggblist->tree), (GCompareFunc)blist_node_compare);
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
 	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, 25);
 	gnt_widget_set_size(ggblist->tree, gaim_prefs_get_int(PREF_ROOT "/size/width"),
