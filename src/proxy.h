@@ -271,6 +271,17 @@ GaimProxyConnectInfo *gaim_proxy_connect_socks5(GaimProxyInfo *gpi,
 			GaimProxyErrorFunction error_cb, gpointer data);
 
 /**
+ * Cancel an in-progress connection attempt.  This should be called
+ * by the PRPL if the user disables an account while it is still
+ * performing the initial sign on.  Or when establishing a file
+ * transfer, if we attempt to connect to a remote user but they
+ * are behind a firewall then the PRPL can cancel the connection
+ * attempt early rather than just letting the OS's TCP/IP stack
+ * time-out the connection.
+ */
+void gaim_proxy_connect_cancel(GaimProxyConnectInfo *connect_info);
+
+/**
  * Do an async dns query
  *
  * @param hostname The hostname to resolve
