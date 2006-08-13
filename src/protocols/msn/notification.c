@@ -481,11 +481,18 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	gaim_debug_info("MaYuan","list_op:%d\n",list_op_str);
 	xmlnode_set_attrib(c_node,"l",list_op_str);
 	g_free(list_op_str);
-#if 0
+#if 1
 	type_str = g_strdup_printf("%d",type);
 	xmlnode_set_attrib(c_node,"t",type_str);
 #else
-	type_str = g_strdup_printf("1");
+	if(g_strrstr(domain,"yahoo") != NULL){
+		type_str = g_strdup_printf("31");
+	}else{
+		/*passport*/
+		type_str = g_strdup_printf("1");
+	}
+	/*mobile*/
+	//type_str = g_strdup_printf("4");
 	xmlnode_set_attrib(c_node,"t",type_str);
 	g_free(type_str);
 #endif
@@ -514,7 +521,7 @@ msn_notification_dump_contact(MsnSession *session)
 	/*get the userlist*/
 	for (l = userlist->users; l != NULL; l = l->next){
 		user = l->data;
-		msn_add_contact_xml(adl_node,user->passport,user->list_op,user->type);
+		msn_add_contact_xml(adl_node,user->passport,user->list_op&MSN_LIST_OP_MASK,user->type);
 	}
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
@@ -739,6 +746,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
+	/*if a contact is actually on the WLM part or the yahoo part*/
 	wlmclient = atoi(cmd->params[3]);
 	friendly = gaim_url_decode(cmd->params[4]);
 

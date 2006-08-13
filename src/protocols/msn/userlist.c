@@ -228,6 +228,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	const char *passport;
 	const char *friendly;
 
+	gaim_debug_info("MaYuan","got add user...\n");
 	account = session->account;
 
 	passport = msn_user_get_passport(user);
@@ -675,9 +676,8 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	gaim_debug_info("MaYuan", "add user:{%s} to group id {%s}\n",store_name ,group_id);
 	msn_add_contact(userlist->session->contact,who,group_id);
-/*	msn_notification_add_buddy(userlist->session->notification, list, who,
+	msn_notification_add_buddy(userlist->session->notification, list, who,
 							   store_name, group_id);
-							   */
 }
 
 void

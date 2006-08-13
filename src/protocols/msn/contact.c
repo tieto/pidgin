@@ -91,8 +91,8 @@ msn_get_memberrole(char * role)
 		return MSN_LIST_AL_OP;
 	}else if(!strcmp(role,"Block")){
 		return MSN_LIST_BL_OP;
-//	}else if(!strcmp(role,"Reverse")){
-//		return MSN_LIST_RL_OP;
+	}else if(!strcmp(role,"Reverse")){
+		return MSN_LIST_RL_OP;
 	}
 	return 0;
 }
@@ -326,7 +326,7 @@ msn_parse_addressbook(MsnContact * contact)
 		}
 		msn_user_set_uid(user,uid);
 		msn_user_set_type(user,msn_get_user_type(type));
-		user->list_op |= 1;
+		user->list_op |= MSN_LIST_FL_OP;
 
 		gaim_debug_misc("MsnContact","\n");
 		groupIds = xmlnode_get_child(contactInfo,"groupIds");

@@ -100,6 +100,7 @@ typedef enum
 	MSN_LIST_RL_OP = 0x08
 
 } MsnListOp;
+#define MSN_LIST_OP_MASK	0x07
 
 typedef enum
 {
