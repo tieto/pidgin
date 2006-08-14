@@ -780,7 +780,7 @@ gaim_upnp_get_internal_ip()
 }
 
 static void
-looked_up_internal_ip_cb(gpointer data, gint source)
+looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 {
 	if (source) {
 		strncpy(control_info.internalip,

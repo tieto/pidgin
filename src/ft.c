@@ -911,7 +911,7 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 }
 
 static void
-connect_cb(gpointer data, gint source)
+connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	GaimXfer *xfer = (GaimXfer *)data;
 

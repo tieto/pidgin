@@ -271,6 +271,10 @@ GList *gaim_connections_get_connecting(void);
  *
  * @return @c TRUE if gc is valid.
  */
+/*
+ * TODO: Eventually this bad boy will be removed, because it is
+ *       a gross fix for a crashy problem.
+ */
 #define GAIM_CONNECTION_IS_VALID(gc) (g_list_find(gaim_connections_get_all(), (gc)))
 
 /*@}*/

@@ -3367,7 +3367,7 @@ url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-url_fetch_connect_cb(gpointer url_data, gint source)
+url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 {
 	GaimFetchUrlData *gfud;
 
