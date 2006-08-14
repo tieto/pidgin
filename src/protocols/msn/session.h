@@ -234,4 +234,12 @@ void msn_session_set_login_step(MsnSession *session, MsnLoginStep step);
  */
 void msn_session_finish_login(MsnSession *session);
 
+/*get conversation via session,
+ * If has one, return that,else create a new one;
+ */
+GaimConversation *msn_session_get_conv(MsnSession *session,const char *passport);
+
+/*post message to User*/
+void msn_session_report_user(MsnSession *session,const char *passport,
+							char *msg,GaimMessageFlags flags);
 #endif /* _MSN_SESSION_H_ */

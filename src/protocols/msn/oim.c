@@ -202,35 +202,6 @@ msn_oim_get_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	msn_soap_read_cb(data,source,cond);
 }
 
-/*get the conversation*/
-static GaimConversation *
-msn_oim_get_conv(MsnOim *oim,const char *passport)
-{
-	GaimAccount *account;
-	GaimConversation * conv;
-
-	g_return_val_if_fail(oim != NULL, NULL);
-	account = oim->session->account;
-
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-									passport, account);
-	if(conv == NULL){
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, passport);
-	}
-	return conv;
-}
-
-/*put the OIM Message to User Conversation*/
-void
-msn_oim_report_user(MsnOim *oim,const char *passport,char *msg)
-{
-	GaimConversation * conv;
-
-	if ((conv = msn_oim_get_conv(oim,passport)) != NULL){
-		gaim_conversation_write(conv, NULL, msg, GAIM_MESSAGE_SYSTEM, time(NULL));
-	}
-}
-
 /*parse the oim XML data*/
 void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
@@ -250,7 +221,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		nNode = xmlnode_get_child(mNode,"N");
 		nickname = xmlnode_get_data(nNode);
 		gaim_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);
-//		msn_oim_report_user(oim,passport,"hello");
+//		msn_session_report_user(oim->session,passport,"hello");
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
 	}
 	if(msn_soap_connected(oim->retrieveconn) == -1){

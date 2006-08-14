@@ -163,6 +163,38 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 	return NULL;
 }
 
+/*get the conversation*/
+GaimConversation *
+msn_session_get_conv(MsnSession *session,const char *passport)
+{
+	GaimAccount *account;
+	GaimConversation * conv;
+
+	g_return_val_if_fail(session != NULL, NULL);
+	account = session->account;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+									passport, account);
+	if(conv == NULL){
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, passport);
+	}
+	return conv;
+}
+
+/* put Message to User Conversation
+ *
+ * 	passport - the one want to talk to you
+ */
+void
+msn_session_report_user(MsnSession *session,const char *passport,char *msg,GaimMessageFlags flags)
+{
+	GaimConversation * conv;
+
+	if ((conv = msn_session_get_conv(session,passport)) != NULL){
+		gaim_conversation_write(conv, NULL, msg, flags, time(NULL));
+	}
+}
+
 MsnSwitchBoard *
 msn_session_find_swboard_with_conv(MsnSession *session, GaimConversation *conv)
 {

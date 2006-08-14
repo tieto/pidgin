@@ -426,6 +426,8 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	MsnMessage *msg;
 	GaimConnection *gc;
+	const char *passport;
+	const char *content_type;
 
 	gaim_debug_info("MaYuan","Process UBM payload:%s\n",payload);
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
@@ -435,34 +437,61 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msn_message_show_readable(msg, "Notification", TRUE);
 #endif
 
-	gaim_debug_info("MaYuan","type:%d\n",msg->type);
-	if(msg->type == MSN_MSG_TEXT){
+	gc = cmdproc->session->account->gc;
+	passport = msg->remote_user;
+
+	content_type = msn_message_get_content_type(msg);
+	gaim_debug_info("MaYuan","type:%d\n",content_type);
+	if(!strcmp(content_type,"text/plain")){
 		const char *value;
 		const char *body;
 		char *body_str;
 		char *body_enc;
 		char *body_final;
 		size_t body_len;
-		const char *passport;
 
 		body = msn_message_get_bin_data(msg, &body_len);
 		body_str = g_strndup(body, body_len);
 		body_enc = g_markup_escape_text(body_str, -1);
 		g_free(body_str);
 
-		passport = msg->remote_user;
-		gc = cmdproc->session->account->gc;
-			if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
-					char *pre, *post;
+		if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
+			char *pre, *post;
 
-				msn_parse_format(value, &pre, &post);
-				body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
-								body_enc ? body_enc : "", post ? post : "");
-				g_free(pre);
-				g_free(post);
-				g_free(body_enc);
+			msn_parse_format(value, &pre, &post);
+			body_final = g_strdup_printf("%s%s%s", pre ? pre : "",
+							body_enc ? body_enc : "", post ? post : "");
+			g_free(pre);
+			g_free(post);
+			g_free(body_enc);
 		}
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
+	}
+	if(!strcmp(content_type,"text/x-msmsgscontrol")){
+		if(msn_message_get_attr(msg, "TypingUser") != NULL){
+			serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
+						GAIM_TYPING);
+		}
+	}
+	if(!strcmp(content_type,"text/x-msnmsgr-datacast")){
+		char *username, *str;
+		GaimAccount *account;
+		GaimBuddy *buddy;
+		const char *user;
+
+		account = cmdproc->session->account;
+		user = msg->remote_user;
+
+		if ((buddy = gaim_find_buddy(account, user)) != NULL){
+			username = g_markup_escape_text(gaim_buddy_get_alias(buddy), -1);
+		}else{
+			username = g_markup_escape_text(user, -1);
+		}
+
+		str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
+		g_free(username);
+		msn_session_report_user(cmdproc->session,user,str,GAIM_MESSAGE_SYSTEM);
+		g_free(str);
 	}
 	msn_message_destroy(msg);
 }
@@ -647,43 +676,6 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_cmdproc_send_trans(cmdproc, trans);
 #endif
-}
-
-static void
-add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	MsnUser *user;
-	const char *list;
-	const char *passport;
-	const char *friendly;
-	MsnListId list_id;
-	int group_id;
-
-	list     = cmd->params[1];
-	passport = cmd->params[3];
-	friendly = gaim_url_decode(cmd->params[4]);
-
-	session = cmdproc->session;
-
-	user = msn_userlist_find_user(session->userlist, passport);
-
-	if (user == NULL){
-		user = msn_user_new(session->userlist, passport, friendly);
-		msn_userlist_add_user(session->userlist, user);
-	}else{
-		msn_user_set_friendly_name(user, friendly);
-	}
-
-	list_id = msn_get_list_id(list);
-
-	if (cmd->param_count >= 6)
-		group_id = atoi(cmd->params[5]);
-	else
-		group_id = -1;
-
-	msn_got_add_user(session, user, list_id, group_id);
-	msn_user_update(user);
 }
 
 static void
@@ -1707,7 +1699,6 @@ msn_notification_init(void)
 	/* Synchronous */
 	msn_table_add_cmd(cbs_table, "CHG", "CHG", NULL);
 	msn_table_add_cmd(cbs_table, "CHG", "ILN", iln_cmd);
-	msn_table_add_cmd(cbs_table, "ADD", "ADD", add_cmd);
 	msn_table_add_cmd(cbs_table, "ADL", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "REM", "REM", rem_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
