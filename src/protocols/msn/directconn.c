@@ -288,11 +288,6 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* ERROR */
 		gaim_debug_error("msn", "error reading\n");
 
-		if (directconn->inpa)
-			gaim_input_remove(directconn->inpa);
-
-		close(directconn->fd);
-
 		msn_directconn_destroy(directconn);
 
 		return;
@@ -306,11 +301,6 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		/* ERROR */
 		gaim_debug_error("msn", "error reading\n");
-
-		if (directconn->inpa)
-			gaim_input_remove(directconn->inpa);
-
-		close(directconn->fd);
 
 		msn_directconn_destroy(directconn);
 
@@ -358,17 +348,12 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* ERROR */
 		gaim_debug_error("msn", "error reading\n");
 
-		if (directconn->inpa)
-			gaim_input_remove(directconn->inpa);
-
-		close(directconn->fd);
-
 		msn_directconn_destroy(directconn);
 	}
 }
 
 static void
-connect_cb(gpointer data, gint source)
+connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	MsnDirectConn* directconn;
 	int fd;
@@ -376,6 +361,7 @@ connect_cb(gpointer data, gint source)
 	gaim_debug_misc("msn", "directconn: connect_cb: %d\n", source);
 
 	directconn = data;
+	directconn->connect_info = NULL;
 
 	if (TRUE)
 	{
@@ -423,7 +409,6 @@ gboolean
 msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 {
 	MsnSession *session;
-	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(directconn != NULL, FALSE);
 	g_return_val_if_fail(host       != NULL, TRUE);
@@ -438,10 +423,10 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 	}
 #endif
 
-	connect_info = gaim_proxy_connect(session->account, host, port,
+	directconn->connect_info = gaim_proxy_connect(session->account, host, port,
 						   connect_cb, directconn);
 
-	if (connect_info != NULL)
+	if (directconn->connect_info != NULL)
 	{
 		return TRUE;
 	}
@@ -491,6 +476,15 @@ msn_directconn_new(MsnSlpLink *slplink)
 void
 msn_directconn_destroy(MsnDirectConn *directconn)
 {
+	if (directconn->connect_info != NULL)
+		gaim_proxy_connect_cancel(directconn->connect_info);
+
+	if (directconn->inpa != 0)
+		gaim_input_remove(directconn->inpa);
+
+	if (directconn->fd >= 0)
+		close(directconn->fd);
+
 	if (directconn->nonce != NULL)
 		g_free(directconn->nonce);
 

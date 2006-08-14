@@ -37,6 +37,8 @@ struct _MsnHttpConn
 	MsnSession *session; /**< The MSN Session. */
 	MsnServConn *servconn; /**< The connection object. */
 
+	GaimProxyConnectInfo *connect_info;
+
 	char *full_session_id; /**< The full session id. */
 	char *session_id; /**< The trimmed session id. */
 

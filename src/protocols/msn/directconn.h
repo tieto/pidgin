@@ -35,6 +35,8 @@ struct _MsnDirectConn
 	MsnSlpLink *slplink;
 	MsnSlpCall *initial_call;
 
+	GaimProxyConnectInfo *connect_info;
+
 	gboolean acked;
 
 	char *nonce;

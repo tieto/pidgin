@@ -166,10 +166,12 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
  **************************************************************************/
 
 static void
-connect_cb(gpointer data, gint source)
+connect_cb(gpointer data, gint source, const gchar *error_message)
 {
-	MsnServConn *servconn = data;
+	MsnServConn *servconn;
 
+	servconn = data;
+	servconn->connect_info = NULL;
 	servconn->processing = FALSE;
 
 	if (servconn->wasted)
@@ -199,7 +201,6 @@ gboolean
 msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 {
 	MsnSession *session;
-	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(servconn != NULL, FALSE);
 	g_return_val_if_fail(host     != NULL, FALSE);
@@ -232,10 +233,10 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 		return TRUE;
 	}
 
-	connect_info = gaim_proxy_connect(session->account, host, port,
+	servconn->connect_info = gaim_proxy_connect(session->account, host, port,
 		connect_cb, servconn);
 
-	if (connect_info != NULL)
+	if (servconn->connect_info != NULL)
 	{
 		servconn->processing = TRUE;
 		return TRUE;
@@ -265,6 +266,12 @@ msn_servconn_disconnect(MsnServConn *servconn)
 			servconn->disconnect_cb(servconn);
 
 		return;
+	}
+
+	if (servconn->connect_info != NULL)
+	{
+		gaim_proxy_connect_cancel(servconn->connect_info);
+		servconn->connect_info = NULL;
 	}
 
 	if (servconn->inpa > 0)

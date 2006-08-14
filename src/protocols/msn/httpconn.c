@@ -693,21 +693,12 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 }
 
 static void
-connect_cb(gpointer data, gint source)
+connect_cb(gpointer data, gint source, const gchar *error_message)
 {
-	MsnHttpConn *httpconn = data;
+	MsnHttpConn *httpconn;
 
-	/*
-	TODO: Need to do this in case the account is disabled while connecting
-	if (!g_list_find(gaim_connections_get_all(), gc))
-	{
-		if (source >= 0)
-			close(source);
-		destroy_new_conn_data(new_conn_data);
-		return;
-	}
-	*/
-
+	httpconn = data;
+	httpconn->connect_info = NULL;
 	httpconn->fd = source;
 
 	if (source >= 0)
@@ -729,8 +720,6 @@ connect_cb(gpointer data, gint source)
 gboolean
 msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 {
-	GaimProxyConnectInfo *connect_info;
-
 	g_return_val_if_fail(httpconn != NULL, FALSE);
 	g_return_val_if_fail(host     != NULL, FALSE);
 	g_return_val_if_fail(port      > 0,    FALSE);
@@ -738,10 +727,10 @@ msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
 
-	connect_info = gaim_proxy_connect(httpconn->session->account,
+	httpconn->connect_info = gaim_proxy_connect(httpconn->session->account,
 		"gateway.messenger.hotmail.com", 80, connect_cb, httpconn);
 
-	if (connect_info != NULL)
+	if (httpconn->connect_info != NULL)
 	{
 		httpconn->waiting_response = TRUE;
 		httpconn->connected = TRUE;
@@ -758,10 +747,17 @@ msn_httpconn_disconnect(MsnHttpConn *httpconn)
 	if (!httpconn->connected)
 		return;
 
-	if (httpconn->timer)
-		gaim_timeout_remove(httpconn->timer);
+	if (httpconn->connect_info != NULL)
+	{
+		gaim_proxy_connect_cancel(httpconn->connect_info);
+		httpconn->connect_info = NULL;
+	}
 
-	httpconn->timer = 0;
+	if (httpconn->timer)
+	{
+		gaim_timeout_remove(httpconn->timer);
+		httpconn->timer = 0;
+	}
 
 	if (httpconn->inpa > 0)
 	{
@@ -770,6 +766,7 @@ msn_httpconn_disconnect(MsnHttpConn *httpconn)
 	}
 
 	close(httpconn->fd);
+	httpconn->fd = -1;
 
 	g_free(httpconn->rx_buf);
 	httpconn->rx_buf = NULL;
