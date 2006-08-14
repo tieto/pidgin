@@ -528,7 +528,7 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-static void ycht_got_connected(gpointer data, gint source)
+static void ycht_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	YchtConn *ycht = data;
 	GaimConnection *gc = ycht->gc;

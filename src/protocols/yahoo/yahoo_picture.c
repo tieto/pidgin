@@ -406,7 +406,7 @@ static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, GaimInpu
 	}
 }
 
-static void yahoo_buddy_icon_upload_connected(gpointer data, gint source)
+static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const gchar *error_message)
 {
 	struct yahoo_buddy_icon_upload_data *d = data;
 	struct yahoo_packet *pkt;

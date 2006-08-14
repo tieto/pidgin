@@ -2239,7 +2239,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-static void yahoo_got_connected(gpointer data, gint source)
+static void yahoo_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	GaimConnection *gc = data;
 	struct yahoo_data *yd;
@@ -2266,7 +2266,7 @@ static void yahoo_got_connected(gpointer data, gint source)
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
-static void yahoo_got_web_connected(gpointer data, gint source)
+static void yahoo_got_web_connected(gpointer data, gint source, const gchar *error_message)
 {
 	GaimConnection *gc = data;
 	struct yahoo_data *yd;
@@ -2390,7 +2390,7 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, GaimInputCondi
 	gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, yahoo_web_pending, gc);
 }
 
-static void yahoo_got_cookies(gpointer data, gint source)
+static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_message)
 {
 	GaimConnection *gc = data;
 

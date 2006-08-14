@@ -92,7 +92,7 @@ static void yahoo_receivefile_send_cb(gpointer data, gint source, GaimInputCondi
 
 }
 
-static void yahoo_receivefile_connected(gpointer data, gint source)
+static void yahoo_receivefile_connected(gpointer data, gint source, const gchar *error_message)
 {
 	GaimXfer *xfer;
 	struct yahoo_xfer_data *xd;
@@ -162,7 +162,7 @@ static void yahoo_sendfile_send_cb(gpointer data, gint source, GaimInputConditio
 	gaim_xfer_start(xfer, source, NULL, 0);
 }
 
-static void yahoo_sendfile_connected(gpointer data, gint source)
+static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *error_message)
 {
 	GaimXfer *xfer;
 	struct yahoo_xfer_data *xd;

@@ -1373,7 +1373,7 @@ static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputConditio
 
 }
 
-static void yahoo_roomlist_got_connected(gpointer data, gint source)
+static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	struct yahoo_roomlist *yrl = data;
 	GaimRoomlist *list = yrl->list;
