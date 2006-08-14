@@ -4,17 +4,17 @@
   Adds Lotus Sametime support to Gaim using the Meanwhile library
 
   Copyright (C) 2004 Christopher (siege) O'Brien <siege@preoccupied.net>
-  
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or (at
   your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
   General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
@@ -1409,7 +1409,7 @@ static void session_loginRedirect(struct mwSession *session,
   port = gaim_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
 
   if(gaim_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
-     (gaim_proxy_connect(account, host, port, connect_cb, NULL, pd) == NULL)) {
+     (gaim_proxy_connect(account, host, port, connect_cb, pd) == NULL)) {
 
     mwSession_forceLogin(session);
   }
@@ -3683,7 +3683,7 @@ static void mw_prpl_login(GaimAccount *account) {
 
   gaim_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
-  if(gaim_proxy_connect(account, host, port, connect_cb, NULL, pd) == NULL) {
+  if(gaim_proxy_connect(account, host, port, connect_cb, pd) == NULL) {
     gaim_connection_error(gc, _("Unable to connect to host"));
   }
 }

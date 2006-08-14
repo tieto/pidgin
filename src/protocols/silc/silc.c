@@ -367,7 +367,7 @@ silcgaim_login(GaimAccount *account)
 			       gaim_account_get_string(account, "server",
 						       "silc.silcnet.org"),
 			       gaim_account_get_int(account, "port", 706),
-			       silcgaim_login_connected, NULL, gc) == NULL)
+			       silcgaim_login_connected, gc) == NULL)
 	{
 		gaim_connection_error(gc, _("Unable to create connection"));
 		return;

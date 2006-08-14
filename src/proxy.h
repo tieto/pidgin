@@ -58,8 +58,7 @@ typedef struct
 
 typedef struct _GaimProxyConnectInfo GaimProxyConnectInfo;
 
-typedef void (*GaimProxyConnectFunction)(gpointer data, gint source);
-typedef void (*GaimProxyErrorFunction)(gpointer dat, const gchar *error_message);
+typedef void (*GaimProxyConnectFunction)(gpointer data, gint source, const gchar *error_message);
 
 /**
  * The "hosts" parameter is a linked list containing pairs of
@@ -235,9 +234,9 @@ GaimProxyInfo *gaim_proxy_get_setup(GaimAccount *account);
  * @param host       The destination host.
  * @param port       The destination port.
  * @param connect_cb The function to call when the connection is
- *                   established.
- * @param error_cb   The function to call if there is an error while
- *                   establishing the connection.
+ *                   established.  If the connection failed then
+ *                   fd will be -1 and error message will be set
+ *                   to something descriptive (hopefully).
  * @param data       User-defined data.
  *
  * @return NULL if there was an error, or a reference to a data
@@ -246,8 +245,7 @@ GaimProxyInfo *gaim_proxy_get_setup(GaimAccount *account);
  */
 GaimProxyConnectInfo *gaim_proxy_connect(GaimAccount *account,
 			const char *host, int port,
-			GaimProxyConnectFunction connect_cb,
-			GaimProxyErrorFunction error_cb, gpointer data);
+			GaimProxyConnectFunction connect_cb, gpointer data);
 
 /**
  * Makes a connection through a SOCKS5 proxy.
@@ -256,9 +254,9 @@ GaimProxyConnectInfo *gaim_proxy_connect(GaimAccount *account,
  * @param host       The destination host.
  * @param port       The destination port.
  * @param connect_cb The function to call when the connection is
- *                   established.
- * @param error_cb   The function to call if there is an error while
- *                   establishing the connection.
+ *                   established.  If the connection failed then
+ *                   fd will be -1 and error message will be set
+ *                   to something descriptive (hopefully).
  * @param data       User-defined data.
  *
  * @return NULL if there was an error, or a reference to a data
@@ -267,8 +265,7 @@ GaimProxyConnectInfo *gaim_proxy_connect(GaimAccount *account,
  */
 GaimProxyConnectInfo *gaim_proxy_connect_socks5(GaimProxyInfo *gpi,
 			const char *host, int port,
-			GaimProxyConnectFunction connect_cb,
-			GaimProxyErrorFunction error_cb, gpointer data);
+			GaimProxyConnectFunction connect_cb, gpointer data);
 
 /**
  * Cancel an in-progress connection attempt.  This should be called

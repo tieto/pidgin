@@ -321,7 +321,7 @@ static gint _proxy_connect_full (GaimAccount *account, const gchar *host, guint1
 
 	if (use_tcp)
 		/* TCP mode */
-		return (gaim_proxy_connect(account, host, port, func, NULL, data) == NULL);
+		return (gaim_proxy_connect(account, host, port, func, data) == NULL);
 	else
 		/* UDP mode */
 		return _qq_udp_proxy_connect(account, host, port, func, data);

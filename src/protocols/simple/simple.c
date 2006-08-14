@@ -452,7 +452,7 @@ static void sendlater(GaimConnection *gc, const char *buf) {
 
 	if(!sip->connecting) {
 		gaim_debug_info("simple", "connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
-		connect_info = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, NULL, gc);
+		connect_info = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
 		if(connect_info == NULL) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 		}
@@ -1553,7 +1553,7 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 			sip->realhostname, sip->realport);
 	/* open tcp connection to the server */
 	connect_info = gaim_proxy_connect(sip->account, sip->realhostname,
-			sip->realport, login_cb, NULL, sip->gc);
+			sip->realport, login_cb, sip->gc);
 	if(connect_info == NULL) {
 		gaim_connection_error(sip->gc, _("Couldn't create socket"));
 	}

@@ -263,7 +263,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 		if (yd->jp) {
 			if (gaim_proxy_connect(account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
 			                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-			                       yahoo_sendfile_connected, NULL, xfer) == NULL)
+			                       yahoo_sendfile_connected, xfer) == NULL)
 			{
 				gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 				                _("Unable to establish file descriptor."));
@@ -272,7 +272,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 		} else {
 			if (gaim_proxy_connect(account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
 			                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-			                       yahoo_sendfile_connected, NULL, xfer) == NULL)
+			                       yahoo_sendfile_connected, xfer) == NULL)
 			{
 				gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 				                _("Unable to establish file descriptor."));
@@ -282,7 +282,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 	} else {
 		/* TODO: Using xfer->fd like this is probably a bad thing... */
 		if (gaim_proxy_connect(account, xfer_data->host, xfer_data->port,
-		                              yahoo_receivefile_connected, NULL, xfer) == NULL)
+		                              yahoo_receivefile_connected, xfer) == NULL)
 			xfer->fd = -1;
 		else
 			xfer->fd = 0;

@@ -811,7 +811,7 @@ lookup_internal_ip()
 	}
 
 	if(gaim_proxy_connect(NULL, addressOfControl, port,
-			looked_up_internal_ip_cb, NULL, NULL) == NULL)
+			looked_up_internal_ip_cb, NULL) == NULL)
 	{
 		gaim_debug_error("upnp", "Get Local IP Connect Failed: Address: %s @@@ Port %d\n",
 			addressOfControl, port);

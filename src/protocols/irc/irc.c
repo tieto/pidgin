@@ -327,7 +327,7 @@ static void irc_login(GaimAccount *account)
 
 		connect_info = gaim_proxy_connect(account, irc->server,
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
-				 irc_login_cb, NULL, gc);
+				 irc_login_cb, gc);
 
 		if (!connect_info || !gaim_account_get_connection(account)) {
 			gaim_connection_error(gc, _("Couldn't create socket"));

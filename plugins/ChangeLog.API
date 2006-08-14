@@ -114,9 +114,9 @@ version 2.0.0:
 	* All network activity has been updated to use non-blocking sockets.
 	  This means that plugins must be updated to expect such a socket from
 	  gaim_proxy_connect() and gaim_network_listen*().
-	* gaim_proxy_connect(): changed to return NULL on error and a void *
-	  handle on success, and changed parameters.  It is now possible to
-	  cancel connection attempts.
+	* gaim_proxy_connect(): changed to return NULL on error and a pointer
+	  to a GaimProxyConnectInfo object which can be used to cancel
+	  connection attempts using gaim_proxy_connect_cancel().
 	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 	* gaim_account_get_log(): Added create parameter
 	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH

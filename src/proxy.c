@@ -40,7 +40,6 @@
 
 struct _GaimProxyConnectInfo {
 	GaimProxyConnectFunction connect_cb;
-	GaimProxyErrorFunction error_cb;
 	gpointer data;
 	char *host;
 	int port;
@@ -324,7 +323,7 @@ gaim_proxy_connect_info_destroy(GaimProxyConnectInfo *connect_info)
 static void
 gaim_proxy_connect_info_connected(GaimProxyConnectInfo *connect_info)
 {
-	connect_info->connect_cb(connect_info->data, connect_info->fd);
+	connect_info->connect_cb(connect_info->data, connect_info->fd, NULL);
 
 	/*
 	 * We've passed the file descriptor to the protocol, so it's no longer
@@ -348,22 +347,7 @@ gaim_proxy_connect_info_connected(GaimProxyConnectInfo *connect_info)
 static void
 gaim_proxy_connect_info_error(GaimProxyConnectInfo *connect_info, const gchar *error_message)
 {
-	if (connect_info->error_cb == NULL)
-	{
-		/*
-		 * TODO
-		 * While we're transitioning to the new gaim_proxy_connect()
-		 * code, not all callers supply an error_cb.  If this is the
-		 * case then they're expecting connect_cb to be called with
-		 * an fd of -1 in the case of an error.  Once all callers have
-		 * been changed this whole if statement should be removed.
-		 */
-		connect_info->connect_cb(connect_info->data, -1);
-		gaim_proxy_connect_info_destroy(connect_info);
-		return;
-	}
-
-	connect_info->error_cb(connect_info->data, error_message);
+	connect_info->connect_cb(connect_info->data, -1, error_message);
 	gaim_proxy_connect_info_destroy(connect_info);
 }
 
@@ -2339,8 +2323,7 @@ gaim_proxy_get_setup(GaimAccount *account)
 
 GaimProxyConnectInfo *
 gaim_proxy_connect(GaimAccount *account, const char *host, int port,
-				   GaimProxyConnectFunction connect_cb,
-				   GaimProxyErrorFunction error_cb, gpointer data)
+				   GaimProxyConnectFunction connect_cb, gpointer data)
 {
 	const char *connecthost = host;
 	int connectport = port;
@@ -2349,12 +2332,10 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
-	/* g_return_val_if_fail(error_cb   != NULL, NULL); *//* TODO: Soon! */
 
 	connect_info = g_new0(GaimProxyConnectInfo, 1);
 	connect_info->fd = -1;
 	connect_info->connect_cb = connect_cb;
-	connect_info->error_cb = error_cb;
 	connect_info->data = data;
 	connect_info->host = g_strdup(host);
 	connect_info->port = port;
@@ -2404,20 +2385,17 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
  */
 GaimProxyConnectInfo *
 gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
-				   GaimProxyConnectFunction connect_cb,
-				   GaimProxyErrorFunction error_cb, gpointer data)
+				   GaimProxyConnectFunction connect_cb, gpointer data)
 {
 	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
-	/* g_return_val_if_fail(error_cb   != NULL, NULL); *//* TODO: Soon! */
 
 	connect_info = g_new0(GaimProxyConnectInfo, 1);
 	connect_info->fd = -1;
 	connect_info->connect_cb = connect_cb;
-	connect_info->error_cb = error_cb;
 	connect_info->data = data;
 	connect_info->host = g_strdup(host);
 	connect_info->port = port;

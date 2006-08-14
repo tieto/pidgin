@@ -571,7 +571,7 @@ void ycht_connection_open(GaimConnection *gc)
 	if (gaim_proxy_connect(account,
 	                       gaim_account_get_string(account, "ycht-server",  YAHOO_YCHT_HOST),
 	                       gaim_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
-	                       ycht_got_connected, NULL, ycht) == NULL)
+	                       ycht_got_connected, ycht) == NULL)
 	{
 		ycht_connection_error(ycht, _("Connection problem"));
 		return;

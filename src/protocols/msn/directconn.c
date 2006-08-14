@@ -439,7 +439,7 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 #endif
 
 	connect_info = gaim_proxy_connect(session->account, host, port,
-						   connect_cb, NULL, directconn);
+						   connect_cb, directconn);
 
 	if (connect_info != NULL)
 	{

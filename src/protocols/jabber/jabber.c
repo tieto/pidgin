@@ -477,7 +477,7 @@ static void jabber_login_connect(JabberStream *js, const char *server, int port)
 	GaimProxyConnectInfo *connect_info;
 
 	connect_info = gaim_proxy_connect(js->gc->account, server,
-			port, jabber_login_callback, NULL, js->gc);
+			port, jabber_login_callback, js->gc);
 
 	if (connect_info == NULL)
 		gaim_connection_error(js->gc, _("Unable to create socket"));
@@ -914,7 +914,7 @@ static void jabber_register_account(GaimAccount *account)
 	if(!js->gsc) {
 		connect_info = gaim_proxy_connect(account, server,
 				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback, NULL, gc);
+				jabber_login_callback, gc);
 
 		if (connect_info == NULL)
 			gaim_connection_error(gc, _("Unable to create socket"));

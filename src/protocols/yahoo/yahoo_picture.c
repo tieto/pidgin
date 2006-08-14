@@ -484,7 +484,7 @@ void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_
 	if (yd->jp) {
 		if (gaim_proxy_connect(account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
 		                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-		                       yahoo_buddy_icon_upload_connected, NULL, d) == NULL)
+		                       yahoo_buddy_icon_upload_connected, d) == NULL)
 		{
 			gaim_debug_error("yahoo", "Uploading our buddy icon failed to connect.\n");
 			yahoo_buddy_icon_upload_data_free(d);
@@ -492,7 +492,7 @@ void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_
 	} else {
 		if (gaim_proxy_connect(account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
 		                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-		                       yahoo_buddy_icon_upload_connected, NULL, d) == NULL)
+		                       yahoo_buddy_icon_upload_connected, d) == NULL)
 		{
 			gaim_debug_error("yahoo", "Uploading our buddy icon failed to connect.\n");
 			yahoo_buddy_icon_upload_data_free(d);

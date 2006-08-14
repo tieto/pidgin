@@ -706,7 +706,7 @@ peer_connection_trynext(PeerConnection *conn)
 
 		conn->connect_info = gaim_proxy_connect(account,
 				conn->verifiedip, conn->port,
-				peer_connection_established_cb, NULL, conn);
+				peer_connection_established_cb, conn);
 		if (conn->connect_info != NULL)
 		{
 			/* Connecting... */
@@ -741,7 +741,7 @@ peer_connection_trynext(PeerConnection *conn)
 
 			conn->connect_info = gaim_proxy_connect(account,
 					conn->clientip, conn->port,
-					peer_connection_established_cb, NULL, conn);
+					peer_connection_established_cb, conn);
 			if (conn->connect_info != NULL)
 			{
 				/* Connecting... */
@@ -813,7 +813,7 @@ peer_connection_trynext(PeerConnection *conn)
 		conn->connect_info = gaim_proxy_connect(account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
-				peer_proxy_connection_established_cb, NULL, conn);
+				peer_proxy_connection_established_cb, conn);
 		if (conn->connect_info != NULL)
 		{
 			/* Connecting... */

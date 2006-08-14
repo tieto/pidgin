@@ -1250,7 +1250,7 @@ oscar_login(GaimAccount *account)
 	if (gaim_proxy_connect(account,
 			gaim_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
 			gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
-			connection_established_cb, NULL, new_conn_data) == NULL)
+			connection_established_cb, new_conn_data) == NULL)
 	{
 		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
@@ -1368,7 +1368,7 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	new_conn_data->cookie = g_memdup(info->cookie, info->cookielen);
 	new_conn_data->data = NULL;
 	connect_info = gaim_proxy_connect(gc->account, host, port,
-			connection_established_cb, NULL, new_conn_data);
+			connection_established_cb, new_conn_data);
 	g_free(host);
 	if (connect_info == NULL) {
 		gaim_connection_error(gc, _("Could Not Connect"));
@@ -1574,7 +1574,7 @@ int gaim_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->modname = g_strdup(modname);
 
 	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80,
-			straight_to_hell, NULL, pos) == NULL)
+			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
 		if (pos->modname)
@@ -1665,7 +1665,7 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		new_conn_data->data = NULL;
 	}
 
-	if (gaim_proxy_connect(account, host, port, connection_established_cb, NULL, new_conn_data) == NULL)
+	if (gaim_proxy_connect(account, host, port, connection_established_cb, new_conn_data) == NULL)
 	{
 		flap_connection_schedule_destroy(new_conn_data->conn,
 				OSCAR_DISCONNECT_COULD_NOT_CONNECT);

@@ -3448,7 +3448,7 @@ gaim_url_fetch_request(const char *url, gboolean full,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
 	if (gaim_proxy_connect(NULL, gfud->website.address,
-		gfud->website.port, url_fetch_connect_cb, NULL, gfud) == NULL)
+		gfud->website.port, url_fetch_connect_cb, gfud) == NULL)
 	{
 		destroy_fetch_url_data(gfud);
 

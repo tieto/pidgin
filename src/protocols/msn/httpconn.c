@@ -739,7 +739,7 @@ msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 		msn_httpconn_disconnect(httpconn);
 
 	connect_info = gaim_proxy_connect(httpconn->session->account,
-		"gateway.messenger.hotmail.com", 80, connect_cb, NULL, httpconn);
+		"gateway.messenger.hotmail.com", 80, connect_cb, httpconn);
 
 	if (connect_info != NULL)
 	{

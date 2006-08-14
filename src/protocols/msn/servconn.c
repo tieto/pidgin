@@ -233,7 +233,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	}
 
 	connect_info = gaim_proxy_connect(session->account, host, port,
-		connect_cb, NULL, servconn);
+		connect_cb, servconn);
 
 	if (connect_info != NULL)
 	{
