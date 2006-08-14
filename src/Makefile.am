@@ -339,6 +339,7 @@ gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS) $(MS_LIBS)
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = \
 	@LIBOBJS@ \
+	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
