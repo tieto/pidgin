@@ -421,16 +421,24 @@ static void simple_canwrite_cb(gpointer data, gint source, GaimInputCondition co
 
 static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond);
 
-static void send_later_cb(gpointer data, gint source) {
+static void send_later_cb(gpointer data, gint source, const gchar *error) {
 	GaimConnection *gc = data;
-	struct simple_account_data *sip = gc->proto_data;
+	struct simple_account_data *sip;
 	struct sip_connection *conn;
+
+	if (!GAIM_CONNECTION_IS_VALID(gc))
+	{
+		if (source >= 0)
+			close(source);
+		return;
+	}
 
 	if(source < 0) {
 		gaim_connection_error(gc, _("Could not connect"));
 		return;
 	}
 
+	sip = gc->proto_data;
 	sip->fd = source;
 	sip->connecting = FALSE;
 
@@ -1453,16 +1461,24 @@ static void simple_newconn_cb(gpointer data, gint source, GaimInputCondition con
 	conn->inputhandler = gaim_input_add(newfd, GAIM_INPUT_READ, simple_input_cb, gc);
 }
 
-static void login_cb(gpointer data, gint source) {
+static void login_cb(gpointer data, gint source, const gchar *error_message) {
 	GaimConnection *gc = data;
-	struct simple_account_data *sip = gc->proto_data;
+	struct simple_account_data *sip;
 	struct sip_connection *conn;
+
+	if (!GAIM_CONNECTION_IS_VALID(gc))
+	{
+		if (source >= 0)
+			close(source);
+		return;
+	}
 
 	if(source < 0) {
 		gaim_connection_error(gc, _("Could not connect"));
 		return;
 	}
 
+	sip = gc->proto_data;
 	sip->fd = source;
 
 	conn = connection_create(sip, source);
