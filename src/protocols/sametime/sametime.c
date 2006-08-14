@@ -226,6 +226,7 @@ struct mwGaimPluginData {
   /** socket fd */
   int socket;
   gint outpa;  /* like inpa, but the other way */
+  GaimProxyConnectInfo *connect_info;
 
   /** circular buffer for outgoing data */
   GaimCircBuffer *sock_buf;
@@ -310,7 +311,7 @@ struct named_id {
 
 /* connection functions */
 
-static void connect_cb(gpointer data, gint source);
+static void connect_cb(gpointer data, gint source, const gchar *error_message);
 
 
 /* ----- session ------ */
@@ -1669,15 +1670,12 @@ static void read_cb(gpointer data, gint source, GaimInputCondition cond) {
 
 /** Callback passed to gaim_proxy_connect when an account is logged
     in, and if the session logging in receives a redirect message */
-static void connect_cb(gpointer data, gint source) {
+static void connect_cb(gpointer data, gint source, const gchar *error_message) {
 
   struct mwGaimPluginData *pd = data;
   GaimConnection *gc = pd->gc;
 
-  if(! g_list_find(gaim_connections_get_all(), pd->gc)) {
-    close(source);
-    g_return_if_reached();
-  }
+  pd->connect_info = NULL;
 
   if(source < 0) {
     /* connection failed */
@@ -3683,7 +3681,8 @@ static void mw_prpl_login(GaimAccount *account) {
 
   gaim_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
-  if(gaim_proxy_connect(account, host, port, connect_cb, pd) == NULL) {
+  pd->connect_info = gaim_proxy_connect(account, host, port, connect_cb, pd);
+  if(pd->connect_info == NULL) {
     gaim_connection_error(gc, _("Unable to connect to host"));
   }
 }
@@ -3714,6 +3713,11 @@ static void mw_prpl_close(GaimConnection *gc) {
   if(gc->inpa) {
     gaim_input_remove(gc->inpa);
     gc->inpa = 0;
+  }
+
+  if(pd->connect_info != NULL) {
+    gaim_proxy_connect_cancel(pd->connect_info);
+    pd->connect_info = NULL;
   }
 
   /* clean up the rest */
