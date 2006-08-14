@@ -658,9 +658,7 @@ peer_connection_tooktoolong(gpointer data)
 	gaim_debug_info("oscar", "Peer connection timed out after 15 seconds.  "
 			"Trying next method...\n");
 
-	gaim_proxy_connect_cancel(conn->connect_info);
-	conn->connect_info = NULL;
-	conn->connect_timeout_timer = 0;
+	peer_connection_close(conn);
 
 	peer_connection_trynext(conn);
 
