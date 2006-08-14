@@ -54,6 +54,8 @@ struct irc_conn {
 	guint timer;
 	GHashTable *buddies;
 
+	GaimProxyConnectInfo *connect_info;
+
 	char *inbuf;
 	int inbuflen;
 	int inbufused;

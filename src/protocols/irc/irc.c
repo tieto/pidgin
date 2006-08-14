@@ -46,7 +46,7 @@ static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
 static void irc_login(GaimAccount *account);
 static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
-static void irc_login_cb(gpointer data, gint source);
+static void irc_login_cb(gpointer data, gint source, const gchar *error_message);
 static void irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error, gpointer data);
 static void irc_close(GaimConnection *gc);
 static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags);
@@ -283,7 +283,6 @@ static void irc_login(GaimAccount *account)
 	struct irc_conn *irc;
 	char **userparts;
 	const char *username = gaim_account_get_username(account);
-	GaimProxyConnectInfo *connect_info;
 
 	gc = gaim_account_get_connection(account);
 	gc->flags |= GAIM_CONNECTION_NO_NEWLINES;
@@ -325,11 +324,11 @@ static void irc_login(GaimAccount *account)
 
 	if (!irc->gsc) {
 
-		connect_info = gaim_proxy_connect(account, irc->server,
+		irc->connect_info = gaim_proxy_connect(account, irc->server,
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
 				 irc_login_cb, gc);
 
-		if (!connect_info || !gaim_account_get_connection(account)) {
+		if (!irc->connect_info || !gaim_account_get_connection(account)) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 			return;
 		}
@@ -394,19 +393,15 @@ static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc,
 	}
 }
 
-static void irc_login_cb(gpointer data, gint source)
+static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 {
 	GaimConnection *gc = data;
 	struct irc_conn *irc = gc->proto_data;
-	GList *connections = gaim_connections_get_all();
+
+	irc->connect_info = NULL;
 
 	if (source < 0) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
-		return;
-	}
-
-	if (!g_list_find(connections, gc)) {
-		close(source);
 		return;
 	}
 
@@ -443,7 +438,11 @@ static void irc_close(GaimConnection *gc)
 	if (irc == NULL)
 		return;
 
-	irc_cmd_quit(irc, "quit", NULL, NULL);
+	if (irc->gsc || (irc->fd >= 0))
+		irc_cmd_quit(irc, "quit", NULL, NULL);
+
+	if (irc->connect_info)
+		gaim_proxy_connect_cancel(irc->connect_info);
 
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
