@@ -857,11 +857,10 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 				 * friendly name or alias. For this test, "match" is defined as:
 				 * ^(friendly_name|alias)([^a-zA-Z0-9].*)?$
 				 */
-				from_name_matches = from_name != NULL && (
-				                     (gaim_str_has_prefix(from_name, friendly_name) &&
+				from_name_matches = (gaim_str_has_prefix(from_name, friendly_name) &&
 				                      !isalnum(*(from_name + friendly_name_length))) ||
 				                     (gaim_str_has_prefix(from_name, log->account->alias) &&
-				                      !isalnum(*(from_name + alias_length))));
+				                      !isalnum(*(from_name + alias_length)));
 
 				to_name_matches = to_name != NULL && (
 				                   (gaim_str_has_prefix(to_name, friendly_name) &&
@@ -930,10 +929,11 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 									!isalnum(*(from_name +
 									friendly_name_length)));
 
-							to_name_matches = (gaim_str_has_prefix(
+							to_name_matches = to_name && (
+									(gaim_str_has_prefix(
 									to_name, buddy->server_alias) &&
 									!isalnum(*(to_name +
-									friendly_name_length)));
+									friendly_name_length))));
 
 							if (from_name_matches) {
 								if (!to_name_matches) {
