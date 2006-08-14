@@ -160,8 +160,9 @@ static void toc_login_callback(gpointer data, gint source, GaimInputCondition co
 	struct sockaddr_in name;
 	socklen_t namelen;
 
-	if (!g_list_find(gaim_connections_get_all(), data)) {
-		close(source);
+	if (!GAIM_CONNECTION_IS_VALID(gc)) {
+		if (source >= 0)
+			close(source);
 		return;
 	}
 
