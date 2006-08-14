@@ -119,7 +119,7 @@ static void _qq_start_services(GaimConnection *gc)
 
 /* the callback function after socket is built
  * we setup the qq protocol related configuration here */
-static void _qq_got_login(gpointer data, gint source)
+static void _qq_got_login(gpointer data, gint source, const gchar *error_message)
 {
 	qq_data *qd;
 	GaimConnection *gc;
@@ -127,12 +127,13 @@ static void _qq_got_login(gpointer data, gint source)
 	const gchar *passwd;
 
 	gc = (GaimConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
-	if (g_list_find(gaim_connections_get_all(), gc) == NULL) {
+	if (!GAIM_CONNECTION_IS_VALID(gc)) {
 		close(source);
 		return;
 	}
+
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	if (source < 0) {	/* socket returns -1 */
 		gaim_connection_error(gc, _("Unable to connect."));
