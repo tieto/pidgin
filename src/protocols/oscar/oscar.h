@@ -33,6 +33,7 @@
 #include "debug.h"
 #include "eventloop.h"
 #include "internal.h"
+#include "proxy.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -366,6 +367,12 @@ struct _FlapConnection
 	guint destroy_timeout;
 	OscarDisconnectReason disconnect_reason;
 
+	/* A few variables that are only used when connecting */
+	GaimProxyConnectInfo *connect_info;
+	guint16 cookielen;
+	guint8 *cookie;
+	gpointer connect_data;
+
 	int fd;
 	FlapFrame buffer_incoming;
 	GaimCircBuffer *buffer_outgoing;
@@ -661,12 +668,34 @@ struct aim_icbmparameters
 	guint32 minmsginterval; /* in milliseconds? */
 };
 
+/*
+ * TODO: Should probably combine this with struct chat_connection.
+ */
 struct aim_chat_roominfo
 {
 	guint16 exchange;
 	char *name;
 	guint16 instance;
 };
+
+struct chat_connection
+{
+	char *name;
+	char *show; /* AOL did something funny to us */
+	guint16 exchange;
+	guint16 instance;
+	FlapConnection *conn;
+	int id;
+	GaimConnection *gc;
+	GaimConversation *conv;
+	int maxlen;
+	int maxvis;
+};
+
+/*
+ * All this chat struct stuff should be in family_chat.c
+ */
+void oscar_chat_destroy(struct chat_connection *cc);
 
 #define AIM_IMFLAGS_AWAY				0x0001 /* mark as an autoreply */
 #define AIM_IMFLAGS_ACK					0x0002 /* request a receipt notice */

@@ -76,33 +76,9 @@ static guint8 features_icq[] = {0x01, 0x06};
 static guint8 features_icq_offline[] = {0x01};
 static guint8 ck[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-typedef struct _NewFlapConnectionData NewFlapConnectionData;
-struct _NewFlapConnectionData
-{
-	GaimConnection *gc;
-	FlapConnection *conn;
-	guint16 cookielen;
-	guint8 *cookie;
-	gpointer data;
-};
-
 struct create_room {
 	char *name;
 	int exchange;
-};
-
-struct chat_connection
-{
-	char *name;
-	char *show; /* AOL did something funny to us */
-	guint16 exchange;
-	guint16 instance;
-	FlapConnection *conn;
-	int id;
-	GaimConnection *gc; /* i hate this. */
-	GaimConversation *conv; /* bah. */
-	int maxlen;
-	int maxvis;
 };
 
 struct oscar_ask_directim_data
@@ -903,7 +879,7 @@ find_oscar_chat_by_conv(GaimConnection *gc, GaimConversation *conv)
 	return NULL;
 }
 
-static void
+void
 oscar_chat_destroy(struct chat_connection *cc)
 {
 	g_free(cc->name);
@@ -925,46 +901,25 @@ oscar_chat_kill(GaimConnection *gc, struct chat_connection *cc)
 	oscar_chat_destroy(cc);
 }
 
-static void
-destroy_new_conn_data(NewFlapConnectionData *new_conn_data)
-{
-	if ((new_conn_data->data != NULL) &&
-		(new_conn_data->conn->type == SNAC_FAMILY_CHAT))
-	{
-		oscar_chat_destroy(new_conn_data->data);
-	}
-	g_free(new_conn_data->cookie);
-	g_free(new_conn_data);
-}
-
 /**
  * This is the callback function anytime gaim_proxy_connect()
  * establishes a new TCP connection with an oscar host.  Depending
  * on the type of host, we do a few different things here.
  */
 static void
-connection_established_cb(gpointer data, gint source)
+connection_established_cb(gpointer data, gint source, const gchar *error_message)
 {
-	NewFlapConnectionData *new_conn_data;
 	GaimConnection *gc;
 	OscarData *od;
 	GaimAccount *account;
 	FlapConnection *conn;
 
-	new_conn_data = data;
-	gc = new_conn_data->gc;
-
-	if (!GAIM_CONNECTION_IS_VALID(gc))
-	{
-		if (source >= 0)
-			close(source);
-		destroy_new_conn_data(new_conn_data);
-		return;
-	}
-
-	od = gc->proto_data;
+	conn = data;
+	od = conn->od;
+	gc = od->gc;
 	account = gaim_connection_get_account(gc);
-	conn = new_conn_data->conn;
+
+	conn->connect_info = NULL;
 	conn->fd = source;
 
 	if (source < 0)
@@ -978,7 +933,6 @@ connection_established_cb(gpointer data, gint source)
 		else /* Maybe we should call this for BOS connections, too? */
 			flap_connection_schedule_destroy(conn,
 					OSCAR_DISCONNECT_COULD_NOT_CONNECT);
-		destroy_new_conn_data(new_conn_data);
 		return;
 	}
 
@@ -986,7 +940,7 @@ connection_established_cb(gpointer data, gint source)
 			conn->type);
 	conn->watcher_incoming = gaim_input_add(conn->fd,
 			GAIM_INPUT_READ, flap_connection_recv_cb, conn);
-	if (new_conn_data->cookie == NULL)
+	if (conn->cookie == NULL)
 	{
 		if (!aim_sn_is_icq(gaim_account_get_username(account)))
 			/*
@@ -997,8 +951,12 @@ connection_established_cb(gpointer data, gint source)
 			flap_connection_send_version(od, conn);
 	}
 	else
+	{
 		flap_connection_send_version_with_cookie(od, conn,
-				new_conn_data->cookielen, new_conn_data->cookie);
+				conn->cookielen, conn->cookie);
+		g_free(conn->cookie);
+		conn->cookie = NULL;
+	}
 
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
@@ -1014,11 +972,9 @@ connection_established_cb(gpointer data, gint source)
 	}
 	else if (conn->type == SNAC_FAMILY_CHAT)
 	{
-		od->oscar_chats = g_slist_append(od->oscar_chats, new_conn_data->data);
-		new_conn_data->data = NULL;
+		od->oscar_chats = g_slist_append(od->oscar_chats, conn->connect_data);
+		conn->connect_data = NULL;
 	}
-
-	destroy_new_conn_data(new_conn_data);
 }
 
 static void
@@ -1152,7 +1108,7 @@ oscar_login(GaimAccount *account)
 {
 	GaimConnection *gc;
 	OscarData *od;
-	NewFlapConnectionData *new_conn_data;
+	FlapConnection *newconn;
 
 	gc = gaim_account_get_connection(account);
 	od = gc->proto_data = oscar_data_new();
@@ -1240,17 +1196,12 @@ oscar_login(GaimAccount *account)
 	/* Connect to core Gaim signals */
 	gaim_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
 
-	new_conn_data = g_new(NewFlapConnectionData, 1);
-	new_conn_data->gc = gc;
-	new_conn_data->conn = flap_connection_new(od, SNAC_FAMILY_AUTH);
-	new_conn_data->cookielen = 0;
-	new_conn_data->cookie = NULL;
-	new_conn_data->data = NULL;
-
-	if (gaim_proxy_connect(account,
+	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
+	newconn->connect_info = gaim_proxy_connect(account,
 			gaim_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
 			gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
-			connection_established_cb, new_conn_data) == NULL)
+			connection_established_cb, newconn);
+	if (newconn->connect_info == NULL)
 	{
 		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
@@ -1295,8 +1246,7 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	GaimAccount *account = gc->account;
 	char *host; int port;
 	int i;
-	GaimProxyConnectInfo *connect_info;
-	NewFlapConnectionData *new_conn_data;
+	FlapConnection *newconn;
 	va_list ap;
 	struct aim_authresp_info *info;
 
@@ -1361,16 +1311,14 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		}
 	}
 	host = g_strndup(info->bosip, i);
-	new_conn_data = g_new(NewFlapConnectionData, 1);
-	new_conn_data->gc = gc;
-	new_conn_data->conn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
-	new_conn_data->cookielen = info->cookielen;
-	new_conn_data->cookie = g_memdup(info->cookie, info->cookielen);
-	new_conn_data->data = NULL;
-	connect_info = gaim_proxy_connect(gc->account, host, port,
-			connection_established_cb, new_conn_data);
+	newconn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
+	newconn->cookielen = info->cookielen;
+	newconn->cookie = g_memdup(info->cookie, info->cookielen);
+	newconn->connect_info = gaim_proxy_connect(account, host, port,
+			connection_established_cb, newconn);
 	g_free(host);
-	if (connect_info == NULL) {
+	if (newconn->connect_info == NULL)
+	{
 		gaim_connection_error(gc, _("Could Not Connect"));
 		od->killme = TRUE;
 		return 0;
@@ -1482,10 +1430,17 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 }
 
 static void
-straight_to_hell(gpointer data, gint source)
+straight_to_hell(gpointer data, gint source, const gchar *error_message)
 {
 	struct pieceofcrap *pos = data;
 	gchar *buf;
+
+	if (!GAIM_CONNECTION_IS_VALID(pos->gc))
+	{
+		g_free(pos->modname);
+		g_free(pos);
+		return;
+	}
 
 	pos->fd = source;
 
@@ -1496,8 +1451,7 @@ straight_to_hell(gpointer data, gint source)
 							_("Gaim was unable to get a valid AIM login hash."),
 							buf);
 		g_free(buf);
-		if (pos->modname)
-			g_free(pos->modname);
+		g_free(pos->modname);
 		g_free(pos);
 		return;
 	}
@@ -1506,8 +1460,7 @@ straight_to_hell(gpointer data, gint source)
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
 	write(pos->fd, buf, strlen(buf));
 	g_free(buf);
-	if (pos->modname)
-		g_free(pos->modname);
+	g_free(pos->modname);
 	pos->inpa = gaim_input_add(pos->fd, GAIM_INPUT_READ, damn_you, pos);
 	return;
 }
@@ -1573,6 +1526,7 @@ int gaim_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
+	/* TODO: Keep track of this return value. */
 	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80,
 			straight_to_hell, pos) == NULL)
 	{
@@ -1622,7 +1576,7 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	GaimAccount *account = gaim_connection_get_account(gc);
 	char *host, *separator;
 	int port;
-	NewFlapConnectionData *new_conn_data;
+	FlapConnection *newconn;
 	va_list ap;
 	struct aim_redirect_data *redir;
 
@@ -1642,36 +1596,30 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	gaim_debug_info("oscar", "Connecting to FLAP server %s:%d of type 0x%04hx\n",
 					host, port, redir->group);
-	new_conn_data = g_new(NewFlapConnectionData, 1);
-	new_conn_data->gc = gc;
-	new_conn_data->conn = flap_connection_new(od, redir->group);
-	new_conn_data->cookielen = redir->cookielen;
-	new_conn_data->cookie = g_memdup(redir->cookie, redir->cookielen);
-	if (new_conn_data->conn->type == SNAC_FAMILY_CHAT)
+	newconn = flap_connection_new(od, redir->group);
+	newconn->cookielen = redir->cookielen;
+	newconn->cookie = g_memdup(redir->cookie, redir->cookielen);
+	if (newconn->type == SNAC_FAMILY_CHAT)
 	{
 		struct chat_connection *cc;
 		cc = g_new0(struct chat_connection, 1);
-		cc->conn = new_conn_data->conn;
+		cc->conn = newconn;
 		cc->gc = gc;
 		cc->name = g_strdup(redir->chat.room);
 		cc->exchange = redir->chat.exchange;
 		cc->instance = redir->chat.instance;
 		cc->show = extract_name(redir->chat.room);
-		new_conn_data->data = cc;
+		newconn->connect_data = cc;
 		gaim_debug_info("oscar", "Connecting to chat room %s exchange %hu\n", cc->name, cc->exchange);
 	}
-	else
-	{
-		new_conn_data->data = NULL;
-	}
 
-	if (gaim_proxy_connect(account, host, port, connection_established_cb, new_conn_data) == NULL)
+	newconn->connect_info = gaim_proxy_connect(account, host, port,
+			connection_established_cb, newconn);
+	if (newconn->connect_info == NULL)
 	{
-		flap_connection_schedule_destroy(new_conn_data->conn,
-				OSCAR_DISCONNECT_COULD_NOT_CONNECT);
+		flap_connection_schedule_destroy(newconn, OSCAR_DISCONNECT_COULD_NOT_CONNECT);
 		gaim_debug_error("oscar", "Unable to connect to FLAP server "
 				"of type 0x%04hx\n", redir->group);
-		destroy_new_conn_data(new_conn_data);
 	}
 	g_free(host);
 

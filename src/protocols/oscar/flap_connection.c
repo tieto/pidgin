@@ -21,6 +21,7 @@
 #include "oscar.h"
 
 #include "eventloop.h"
+#include "proxy.h"
 
 #ifndef _WIN32
 #include <netdb.h>
@@ -131,21 +132,37 @@ flap_connection_new(OscarData *od, int type)
 /**
  * Close (but not free) a connection.
  *
- * This leaves everything untouched except for setting the fd
- * to -1 (used to recognize dead connections).
+ * This cancels any currently pending connection attempt,
+ * closes any open fd and frees the auth cookie.
  *
  * @param conn The connection to close.
  */
 void
 flap_connection_close(OscarData *od, FlapConnection *conn)
 {
-	if (conn->fd == -1)
-		return;
+	if (conn->connect_info != NULL)
+	{
+		gaim_proxy_connect_cancel(conn->connect_info);
+		conn->connect_info = NULL;
+	}
 
-	if (conn->type == SNAC_FAMILY_LOCATE)
-		flap_connection_send_close(od, conn);
+	if (conn->connect_data != NULL)
+	{
+		if (conn->type == SNAC_FAMILY_CHAT)
+		{
+			oscar_chat_destroy(conn->connect_data);
+			conn->connect_data = NULL;
+		}
+	}
 
-	close(conn->fd);
+	if (conn->fd != -1)
+	{
+		if (conn->type == SNAC_FAMILY_LOCATE)
+			flap_connection_send_close(od, conn);
+
+		close(conn->fd);
+		conn->fd = -1;
+	}
 }
 
 static void
@@ -187,6 +204,8 @@ flap_connection_destroy_cb(gpointer data)
 			"type 0x%04hx\n", conn->type);
 
 	flap_connection_close(od, conn);
+
+	g_free(conn->cookie);
 
 	if (conn->watcher_incoming != 0)
 		gaim_input_remove(conn->watcher_incoming);

@@ -482,7 +482,7 @@ peer_connection_finalize_connection(PeerConnection *conn)
  * either connected or failed to connect.
  */
 static void
-peer_connection_established_cb(gpointer data, gint source)
+peer_connection_established_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PeerConnection *conn;
 

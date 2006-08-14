@@ -326,7 +326,7 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
  * either connected or failed to connect.
  */
 void
-peer_proxy_connection_established_cb(gpointer data, gint source)
+peer_proxy_connection_established_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PeerConnection *conn;
 

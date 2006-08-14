@@ -265,7 +265,7 @@ void peer_oft_cb_generic_cancel(GaimXfer *xfer);
 /*
  * For peer proxying
  */
-void peer_proxy_connection_established_cb(gpointer data, gint source);
+void peer_proxy_connection_established_cb(gpointer data, gint source, const gchar *error_message);
 
 #if 0
 int peer_oft_sendheader(OscarData *od, guint16 type, PeerConnection *peer_connection);
