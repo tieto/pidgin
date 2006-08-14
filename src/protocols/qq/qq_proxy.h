@@ -31,7 +31,7 @@
 #define QQ_CONNECT_STEPS    2	/* steps in connection */
 
 struct PHB {
-	GaimInputFunction func;
+	GaimProxyConnectFunction func;
 	gpointer data;
 	gchar *host;
 	gint port;

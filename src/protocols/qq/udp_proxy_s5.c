@@ -45,7 +45,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, source, GAIM_INPUT_READ);
+			phb->func(phb->data, source, NULL);
 		}
 
 		g_free(phb->host);
@@ -61,7 +61,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);
@@ -93,7 +93,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	fcntl(phb->udpsock, F_SETFL, 0);
 
 	if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
-		phb->func(phb->data, phb->udpsock, GAIM_INPUT_READ);
+		phb->func(phb->data, phb->udpsock, NULL);
 	}
 
 	g_free(phb->host);
@@ -158,7 +158,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 		gaim_debug(GAIM_DEBUG_INFO, "s5_sendconnect", "packet too small\n");
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);
@@ -182,7 +182,7 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);
@@ -195,7 +195,7 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);
@@ -224,7 +224,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, source, GAIM_INPUT_READ);
+			phb->func(phb->data, source, NULL);
 		}
 
 		g_free(phb->host);
@@ -238,7 +238,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);
@@ -263,7 +263,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 			if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-				phb->func(phb->data, -1, GAIM_INPUT_READ);
+				phb->func(phb->data, -1, NULL);
 			}
 
 			g_free(phb->host);
@@ -297,7 +297,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		close(source);
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);
@@ -327,7 +327,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
+			phb->func(phb->data, -1, NULL);
 		}
 
 		g_free(phb->host);

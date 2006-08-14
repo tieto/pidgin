@@ -246,7 +246,7 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 	} else {		/* connect returns 0 */
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Connected.\n");
 		fcntl(fd, F_SETFL, 0);
-		phb->func(phb->data, fd, GAIM_INPUT_READ);
+		phb->func(phb->data, fd, NULL);
 	}
 
 	return fd;
@@ -255,7 +255,7 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 /* returns the socket handler, or -1 if there is any error */
 static gint _qq_udp_proxy_connect(GaimAccount *account,
 			   const gchar *server,
-			   guint16 port, void callback(gpointer, gint, GaimInputCondition), GaimConnection *gc)
+			   guint16 port, void callback(gpointer, gint, const gchar *error_message), GaimConnection *gc)
 {
 	struct sockaddr_in sin;
 	struct PHB *phb;
