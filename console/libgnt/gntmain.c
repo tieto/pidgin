@@ -399,6 +399,10 @@ dump_screen()
 					case 'j':
 					case 'n':
 						ch = '+'; break;
+					case '-':
+						ch = '^'; break;
+					case '.':
+						ch = 'v'; break;
 					default:
 						ch = ' '; break;
 				}

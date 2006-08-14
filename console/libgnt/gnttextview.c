@@ -46,6 +46,18 @@ gnt_text_view_draw(GntWidget *widget)
 		}
 	}
 	
+	mvwaddch(widget->window, 0,
+			widget->priv.width - 1,
+			lines ? 
+			ACS_UARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
+			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
+
+	mvwaddch(widget->window, widget->priv.height - 1,
+			widget->priv.width - 1,
+			(view->list && view->list->prev) ? 
+			ACS_DARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
+			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
+
 	DEBUG;
 }
 

@@ -223,7 +223,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 
 		text = g_utf8_offset_to_pointer(col->text, len - fl);
 		string = g_string_append_len(string, col->text, text - col->text);
-		if (len < tree->columns[i].width)
+		if (len < tree->columns[i].width && iter->next)
 			g_string_append_printf(string, "%*s", tree->columns[i].width - len, "");
 	}
 	return g_string_free(string, FALSE);
@@ -306,6 +306,12 @@ redraw_tree(GntTree *tree)
 	else if (up >= widget->priv.height - pos)
 		tree->top = get_prev_n(tree->current, nr);
 
+	mvwaddch(widget->window, start + pos,
+			widget->priv.width - pos - 1,
+			(tree->top != tree->root) ? 
+			ACS_UARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
+			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
+
 	row = tree->top;
 	for (start = start + pos; row && start < widget->priv.height - pos;
 				start++, row = get_next(row))
@@ -351,17 +357,23 @@ redraw_tree(GntTree *tree)
 
 		wbkgdset(widget->window, '\0' | attr);
 		mvwprintw(widget->window, start, pos, str);
-		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1));
+		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1) - 1);
 		tree->bottom = row;
 		g_free(str);
 		tree_mark_columns(tree, pos, start, ACS_VLINE | attr);
 	}
 
+	mvwaddch(widget->window, widget->priv.height - pos - 1,
+			widget->priv.width - pos - 1,
+			get_next(tree->bottom) ? 
+			ACS_DARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
+			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
+
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	while (start < widget->priv.height - pos)
 	{
 		mvwhline(widget->window, start, pos, ' ',
-				widget->priv.width - pos * 2);
+				widget->priv.width - pos * 2 - 1);
 		tree_mark_columns(tree, pos, start, ACS_VLINE);
 		start++;
 	}
