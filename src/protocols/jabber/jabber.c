@@ -30,6 +30,7 @@
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
+#include "proxy.h"
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
@@ -421,18 +422,15 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 
 
 static void
-jabber_login_callback(gpointer data, gint source)
+jabber_login_callback(gpointer data, gint source, const gchar *error)
 {
 	GaimConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 
+	js->connect_info = NULL;
+
 	if (source < 0) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
-		return;
-	}
-
-	if(!g_list_find(gaim_connections_get_all(), gc)) {
-		close(source);
 		return;
 	}
 
@@ -474,12 +472,10 @@ static void tls_init(JabberStream *js)
 
 static void jabber_login_connect(JabberStream *js, const char *server, int port)
 {
-	GaimProxyConnectInfo *connect_info;
-
-	connect_info = gaim_proxy_connect(js->gc->account, server,
+	js->connect_info = gaim_proxy_connect(js->gc->account, server,
 			port, jabber_login_callback, js->gc);
 
-	if (connect_info == NULL)
+	if (js->connect_info == NULL)
 		gaim_connection_error(js->gc, _("Unable to create socket"));
 }
 
@@ -862,7 +858,6 @@ static void jabber_register_account(GaimAccount *account)
 	const char *connect_server = gaim_account_get_string(account,
 			"connect_server", "");
 	const char *server;
-	GaimProxyConnectInfo *connect_info;
 
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
@@ -912,11 +907,11 @@ static void jabber_register_account(GaimAccount *account)
 	}
 
 	if(!js->gsc) {
-		connect_info = gaim_proxy_connect(account, server,
+		js->connect_info = gaim_proxy_connect(account, server,
 				gaim_account_get_int(account, "port", 5222),
 				jabber_login_callback, gc);
 
-		if (connect_info == NULL)
+		if (js->connect_info == NULL)
 			gaim_connection_error(gc, _("Unable to create socket"));
 	}
 }
@@ -931,6 +926,9 @@ static void jabber_close(GaimConnection *gc)
 	 */
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
+
+	if (js->connect_info)
+		gaim_proxy_connect_cancel(js->connect_info);
 
 	if(js->gsc) {
 #ifdef HAVE_OPENSSL

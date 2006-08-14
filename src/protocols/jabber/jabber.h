@@ -67,6 +67,8 @@ typedef struct _JabberStream
 {
 	int fd;
 
+	GaimProxyConnectInfo *connect_info;
+
 #ifdef HAVE_LIBXML
 	xmlParserCtxt *context;
 #else
