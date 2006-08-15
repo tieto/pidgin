@@ -13,6 +13,7 @@ GG_SOURCES = \
 	gntplugin.c \
 	gntprefs.c \
 	gntrequest.c \
+	gntstatus.c \
 	gntui.c
 
 GG_HEADERS = \
@@ -25,6 +26,7 @@ GG_HEADERS = \
 	gntprefs.h \
 	gntplugin.h \
 	gntrequest.h \
+	gntstatus.h \
 	gntui.h
 
 GG_OBJECTS = \
@@ -37,6 +39,7 @@ GG_OBJECTS = \
 	gntplugin.o \
 	gntprefs.o \
 	gntrequest.o \
+	gntstatus.o \
 	gntui.o
 
 all: gntgaim

@@ -11,6 +11,7 @@
 #include "gntdebug.h"
 #include "gntplugin.h"
 #include "gntprefs.h"
+#include "gntstatus.h"
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -566,6 +567,9 @@ void gg_conversation_init()
 	gaim_cmd_register("prefs", "", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("prefs: Show the preference window."), gg_prefs_show_all);
+	gaim_cmd_register("status", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  cmd_show_window, _("statuses: Show the savedstatuses window."), gg_savedstatus_show_all);
 }
 
 void gg_conversation_uninit()

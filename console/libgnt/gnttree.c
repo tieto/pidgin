@@ -274,7 +274,7 @@ redraw_tree(GntTree *tree)
 		int x = pos;
 
 		mvwhline(widget->window, pos + 1, pos, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
-				widget->priv.width - pos);
+				widget->priv.width - pos - 1);
 		
 		for (i = 0; i < tree->ncol; i++)
 		{

@@ -17,6 +17,7 @@
 #include "gnttree.h"
 
 #include "gntblist.h"
+#include "gntstatus.h"
 #include <string.h>
 
 #define PREF_ROOT "/gaim/gnt/blist"
@@ -42,7 +43,8 @@ typedef struct
 typedef enum
 {
 	STATUS_PRIMITIVE = 0,
-	STATUS_SAVED
+	STATUS_SAVED_POPULAR,
+	STATUS_SAVED_ALL,
 } StatusType;
 
 typedef struct
@@ -1035,6 +1037,7 @@ populate_status_dropdown()
 	int i;
 	GList *iter;
 	GList *items = NULL;
+	StatusBoxItem *item = NULL;
 
 	/* First the primitives */
 	GaimStatusPrimitive prims[] = {GAIM_STATUS_AVAILABLE, GAIM_STATUS_AWAY,
@@ -1042,7 +1045,7 @@ populate_status_dropdown()
 
 	for (i = 0; prims[i] != GAIM_STATUS_UNSET; i++)
 	{
-		StatusBoxItem *item = g_new0(StatusBoxItem, 1);
+		item = g_new0(StatusBoxItem, 1);
 		item->type = STATUS_PRIMITIVE;
 		item->u.prim = prims[i];
 		items = g_list_prepend(items, item);
@@ -1053,18 +1056,26 @@ populate_status_dropdown()
 	/* Now the popular statuses */
 	for (iter = gaim_savedstatuses_get_popular(6); iter; iter = iter->next)
 	{
-		StatusBoxItem *item = g_new0(StatusBoxItem, 1);
-		item->type = STATUS_SAVED;
+		item = g_new0(StatusBoxItem, 1);
+		item->type = STATUS_SAVED_POPULAR;
 		item->u.saved = iter->data;
 		items = g_list_prepend(items, item);
 		gnt_combo_box_add_data(GNT_COMBO_BOX(ggblist->status), item,
 				gaim_savedstatus_get_title(iter->data));
 	}
 
+	/* More savedstatuses */
+	item = g_new0(StatusBoxItem, 1);
+	item->type = STATUS_SAVED_ALL;
+	items = g_list_prepend(items, item);
+	gnt_combo_box_add_data(GNT_COMBO_BOX(ggblist->status), item,
+			_("Saved..."));
+
 	/* The keys for the combobox are created here, and never used
 	 * anywhere else. So make sure the keys are freed when the widget
 	 * is destroyed. */
-	g_object_set_data_full(G_OBJECT(ggblist->status), "list of statuses", items, (GDestroyNotify)destroy_status_list);
+	g_object_set_data_full(G_OBJECT(ggblist->status), "list of statuses",
+			items, (GDestroyNotify)destroy_status_list);
 }
 
 void gg_blist_init()
@@ -1125,7 +1136,7 @@ static void
 status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *now, gpointer null)
 {
 	gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), NULL);
-	if (now->type == STATUS_SAVED)
+	if (now->type == STATUS_SAVED_POPULAR)
 	{
 		/* Set the status immediately */
 		gaim_savedstatus_activate(now->u.saved);
@@ -1136,6 +1147,10 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 		/* XXX: Make sure the selected status can have a message */
 		gnt_box_move_focus(GNT_BOX(ggblist->window), 1);
 		ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
+	}
+	else if (now->type == STATUS_SAVED_ALL)
+	{
+		gg_savedstatus_show_all();
 	}
 	else
 		g_return_if_reached();

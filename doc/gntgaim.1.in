@@ -169,6 +169,10 @@ for the plugins window.
 .B prefs
 for the preferences window.
 
+.TP
+.B status
+for the status window.
+
 .SH BUGS
 Known bugs are listed at
 .br
