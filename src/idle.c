@@ -58,63 +58,6 @@ static guint idle_timer = 0;
 static time_t last_active_time = 0;
 
 static void
-set_account_autoaway(GaimConnection *gc)
-{
-	GaimAccount *account;
-	GaimPresence *presence;
-	GaimStatus *status;
-
-	if (gc->is_auto_away)
-		/* This account is already auto-away! */
-		return;
-
-	account = gaim_connection_get_account(gc);
-	presence = gaim_account_get_presence(account);
-	status = gaim_presence_get_active_status(presence);
-
-	if (gaim_status_is_available(status))
-	{
-		GaimSavedStatus *saved_status;
-
-		gaim_debug_info("idle", "Making %s auto-away\n",
-						gaim_account_get_username(account));
-
-		saved_status = gaim_savedstatus_get_idleaway();
-		gaim_savedstatus_activate_for_account(saved_status, account);
-
-		gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
-	} else {
-		gc->is_auto_away = GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY;
-	}
-}
-
-static void
-unset_account_autoaway(GaimConnection *gc)
-{
-	GaimAccount *account;
-	GaimSavedStatus *saved_status;
-
-	account = gaim_connection_get_account(gc);
-
-	if (!gc->is_auto_away)
-		/* This account is already not auto-away! */
-		return;
-
-	if (gc->is_auto_away == GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY) {
-		gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
-	} else {
-		gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
-
-		gaim_debug_info("idle", "%s returning from auto-away\n",
-						gaim_account_get_username(account));
-
-		/* Return our account to its previous status */
-		saved_status = gaim_savedstatus_get_current();
-		gaim_savedstatus_activate_for_account(saved_status, account);
-	}
-}
-
-static void
 set_account_idle(GaimAccount *account, int time_idle)
 {
 	GaimPresence *presence;
@@ -203,13 +146,11 @@ check_idleness()
 	if (auto_away &&
 		(time_idle > (60 * gaim_prefs_get_int("/core/away/mins_before_away"))))
 	{
-		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-			set_account_autoaway(l->data);
+		gaim_savedstatus_set_idleaway(TRUE);
 	}
 	else if (time_idle < 60 * gaim_prefs_get_int("/core/away/mins_before_away"))
 	{
-		for (l = gaim_connections_get_all(); l != NULL; l = l->next)
-			unset_account_autoaway(l->data);
+		gaim_savedstatus_set_idleaway(FALSE);
 	}
 
 	/* Idle reporting stuff */
@@ -252,7 +193,6 @@ signing_off_cb(GaimConnection *gc, void *data)
 
 	account = gaim_connection_get_account(gc);
 	set_account_unidle(account);
-	unset_account_autoaway(gc);
 }
 
 void

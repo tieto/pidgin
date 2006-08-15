@@ -257,6 +257,7 @@ gtk_gaim_status_box_finalize(GObject *obj)
 								statusbox, GAIM_CALLBACK(account_status_changed_cb));
 		statusbox->status_changed_signal = 0;
 	}
+	gaim_signals_disconnect_by_handle(statusbox);
 	gaim_prefs_disconnect_by_handle(statusbox);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
@@ -829,8 +830,7 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 }
 
 static void
-current_status_pref_changed_cb(const char *name, GaimPrefType type,
-							   gconstpointer val, gpointer data)
+current_savedstatus_changed_cb(GaimSavedStatus *now, GaimSavedStatus *old, gpointer data)
 {
 	GtkGaimStatusBox *status_box = data;
 
@@ -1000,8 +1000,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_regenerate(status_box);
 	gtk_gaim_status_box_refresh(status_box);
 
-	gaim_prefs_connect_callback(status_box, "/core/savedstatus/current",
-								current_status_pref_changed_cb, status_box);
+	gaim_signal_connect(gaim_savedstatuses_get_handle(), "savedstatus-changed",
+						status_box,
+						GAIM_CALLBACK(current_savedstatus_changed_cb),
+						status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/blist/show_buddy_icons",
 								buddy_list_details_pref_changed_cb, status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/conversations/spellcheck",
@@ -1253,9 +1255,8 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	 * "Saved..." or a popular status then do nothing.
 	 * Popular statuses are
 	 * activated elsewhere, and we update the status_box
-	 * accordingly by monitoring the preference
-	 * "/core/savedstatus/current" and then calling
-	 * status_menu_refresh_iter()
+	 * accordingly by connecting to the savedstatus-changed
+	 * signal and then calling status_menu_refresh_iter()
 	 */
 	if (type != GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE)
 		return;

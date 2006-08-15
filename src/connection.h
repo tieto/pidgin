@@ -89,8 +89,6 @@ struct _GaimConnection
 	guint keepalive;             /**< Keep-alive.                        */
 
 
-	gboolean is_auto_away;       /**< Whether or not it's auto-away.     */
-
 	gboolean wants_to_die;	     /**< Wants to Die state.  This is set
 	                                  when the user chooses to log out,
 	                                  or when the protocol is

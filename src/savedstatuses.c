@@ -25,6 +25,7 @@
 #include "internal.h"
 
 #include "debug.h"
+#include "idle.h"
 #include "notify.h"
 #include "savedstatuses.h"
 #include "dbus-maybe.h"
@@ -676,9 +677,9 @@ gaim_savedstatus_delete(const char *title)
 	 * If we just deleted our current status or our idleaway status,
 	 * then set the appropriate pref back to 0.
 	 */
-	current = gaim_prefs_get_int("/core/savedstatus/current");
+	current = gaim_prefs_get_int("/core/savedstatus/default");
 	if (current == creation_time)
-		gaim_prefs_set_int("/core/savedstatus/current", 0);
+		gaim_prefs_set_int("/core/savedstatus/default", 0);
 
 	idleaway = gaim_prefs_get_int("/core/savedstatus/idleaway");
 	if (idleaway == creation_time)
@@ -725,12 +726,21 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 }
 
 GaimSavedStatus *
-gaim_savedstatus_get_current()
+gaim_savedstatus_get_current(void)
+{
+	if (gaim_savedstatus_is_idleaway())
+		return gaim_savedstatus_get_idleaway();
+	else
+		return gaim_savedstatus_get_default();
+}
+
+GaimSavedStatus *
+gaim_savedstatus_get_default()
 {
 	int creation_time;
 	GaimSavedStatus *saved_status = NULL;
 
-	creation_time = gaim_prefs_get_int("/core/savedstatus/current");
+	creation_time = gaim_prefs_get_int("/core/savedstatus/default");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -744,7 +754,7 @@ gaim_savedstatus_get_current()
 		 * using?  In any case, add a default status.
 		 */
 		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AVAILABLE);
-		gaim_prefs_set_int("/core/savedstatus/current",
+		gaim_prefs_set_int("/core/savedstatus/default",
 						   gaim_savedstatus_get_creation_time(saved_status));
 	}
 
@@ -778,6 +788,51 @@ gaim_savedstatus_get_idleaway()
 	}
 
 	return saved_status;
+}
+
+gboolean
+gaim_savedstatus_is_idleaway()
+{
+	return gaim_prefs_get_bool("/core/savedstatus/isidleaway");
+}
+
+void
+gaim_savedstatus_set_idleaway(gboolean idleaway)
+{
+	GList *accounts, *node;
+	GaimSavedStatus *old, *saved_status;
+
+	if (gaim_savedstatus_is_idleaway() == idleaway)
+		/* Don't need to do anything */
+		return;
+
+	/* Changing our status makes us un-idle */
+	if (!idleaway)
+		gaim_idle_touch();
+
+	old = gaim_savedstatus_get_current();
+	gaim_prefs_set_bool("/core/savedstatus/isidleaway", idleaway);
+	saved_status = gaim_savedstatus_get_current();
+
+	accounts = gaim_accounts_get_all_active();
+	for (node = accounts; node != NULL; node = node->next)
+	{
+		GaimAccount *account;
+		GaimPresence *presence;
+		GaimStatus *status;
+
+		account = node->data;
+		presence = gaim_account_get_presence(account);
+		status = gaim_presence_get_active_status(presence);
+
+		if (!idleaway || gaim_status_is_available(status))
+			gaim_savedstatus_activate_for_account(saved_status, account);
+	}
+
+	g_list_free(accounts);
+
+	gaim_signal_emit(gaim_savedstatuses_get_handle(), "savedstatus-changed",
+					 saved_status, old);
 }
 
 GaimSavedStatus *
@@ -1001,12 +1056,12 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	gaim_prefs_set_int("/core/savedstatus/current",
+	gaim_prefs_set_int("/core/savedstatus/default",
 					   gaim_savedstatus_get_creation_time(saved_status));
+	gaim_savedstatus_set_idleaway(FALSE);
 
 	gaim_signal_emit(gaim_savedstatuses_get_handle(), "savedstatus-changed",
 					 saved_status, old);
-
 }
 
 void
@@ -1070,10 +1125,11 @@ gaim_savedstatuses_init(void)
 	 * saved status and return that to the user.
 	 */
 	gaim_prefs_add_none("/core/savedstatus");
-	gaim_prefs_add_int("/core/savedstatus/current", 0);
+	gaim_prefs_add_int("/core/savedstatus/default", 0);
 	gaim_prefs_add_int("/core/savedstatus/startup", 0);
 	gaim_prefs_add_bool("/core/savedstatus/startup_current_status", TRUE);
 	gaim_prefs_add_int("/core/savedstatus/idleaway", 0);
+	gaim_prefs_add_bool("/core/savedstatus/isidleaway", FALSE);
 
 	load_statuses();
 

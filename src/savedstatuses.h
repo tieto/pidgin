@@ -171,7 +171,9 @@ const GList *gaim_savedstatuses_get_all(void);
 GList *gaim_savedstatuses_get_popular(unsigned int how_many);
 
 /**
- * Returns the currently selected saved status.
+ * Returns the currently selected saved status.  If we are idle
+ * then this returns gaim_savedstatus_get_idleaway().  Otherwise
+ * it returns gaim_savedstatus_get_default().
  *
  * @return A pointer to the in-use GaimSavedStatus.
  *         This function never returns NULL.
@@ -179,13 +181,39 @@ GList *gaim_savedstatuses_get_popular(unsigned int how_many);
 GaimSavedStatus *gaim_savedstatus_get_current(void);
 
 /**
- * Returns the saved status that gets used when your
+ * Returns the default saved status that is used when our
+ * accounts are not idle-away.
+ *
+ * @return A pointer to the in-use GaimSavedStatus.
+ *         This function never returns NULL.
+ */
+GaimSavedStatus *gaim_savedstatus_get_default(void);
+
+/**
+ * Returns the saved status that is used when your
  * accounts become idle-away.
  *
  * @return A pointer to the idle-away GaimSavedStatus.
  *         This function never returns NULL.
  */
 GaimSavedStatus *gaim_savedstatus_get_idleaway(void);
+
+/**
+ * Return TRUE if we are currently idle-away.  Otherwise
+ * returns FALSE.
+ *
+ * @return TRUE if our accounts have been set to idle-away.
+ */
+gboolean gaim_savedstatus_is_idleaway(void);
+
+/**
+ * Set whether accounts in Gaim are idle-away or not.
+ *
+ * @param TRUE if accounts should be switched to use the
+ *        idle-away saved status.  FALSE if they should
+ *        be switched to use the default status.
+ */
+void gaim_savedstatus_set_idleaway(gboolean idleaway);
 
 /**
  * Returns the status to be used when gaim is starting up
