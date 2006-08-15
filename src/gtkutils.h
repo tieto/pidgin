@@ -460,4 +460,23 @@ void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
  */
 void gaim_gtk_clear_cursor(GtkWidget *widget);
 
+/**
+ * Creates a File Selection widget for choosing a buddy icon
+ *
+ * @param parent      The parent window
+ * @param callback    The callback to call when the window is closed. If the user chose an icon, the char* argument will point to its path
+ * @param data        Data to pass to @callback
+ * @return            The file dialog 
+ */
+GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data);
+
+/**
+ * Converts a buddy icon to the required size and format
+ * 
+ * @param plugin     The prpl to conver the icon
+ * @param path       The path of a buddy icon to convert
+ * @return           The path of a new buddy icon
+ */
+char* gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path);
+
 #endif /* _GAIM_GTKUTILS_H_ */

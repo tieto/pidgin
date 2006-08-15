@@ -115,6 +115,7 @@ typedef struct
 	GtkWidget *user_frame;
 	GtkWidget *new_mail_check;
 	GtkWidget *icon_hbox;
+	GtkWidget *icon_check;
 	GtkWidget *icon_entry;
 	char *icon_path;
 	GtkWidget *icon_filesel;
@@ -153,8 +154,6 @@ static GHashTable *account_pref_wins;
 static void add_account_to_liststore(GaimAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  GaimAccount *account);
-static char*
-convert_buddy_icon(GaimPlugin *plugin, const char *path);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -271,210 +270,24 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 	}
 }
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-icon_filesel_choose_cb(GtkWidget *widget, gint response, AccountPrefsDialog *dialog)
+icon_filesel_choose_cb(const char *filename, AccountPrefsDialog *dialog)
 {
-	char *filename, *current_folder;
-
-	if (response != GTK_RESPONSE_ACCEPT) {
-		if (response == GTK_RESPONSE_CANCEL)
-			gtk_widget_destroy(dialog->icon_filesel);
-		dialog->icon_filesel = NULL;
-		return;
+	if (filename) {
+		g_free(dialog->icon_path);
+		dialog->icon_path = gaim_gtk_convert_buddy_icon(dialog->plugin, filename);
+		set_dialog_icon(dialog);
+		gtk_widget_show(dialog->icon_entry);
 	}
-
-	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog->icon_filesel));
-	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel));
-	if (current_folder != NULL) {
-		gaim_prefs_set_string("/gaim/gtk/filelocations/last_icon_folder", current_folder);
-		g_free(current_folder);
-	}
-
-#else /* FILECHOOSER */
-static void
-icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
-{
-	char *filename, *current_folder;
-
-	filename = g_strdup(gtk_file_selection_get_filename(
-				GTK_FILE_SELECTION(dialog->icon_filesel)));
-
-	/* If they typed in a directory, change there */
-	if (gaim_gtk_check_if_dir(filename,
-				GTK_FILE_SELECTION(dialog->icon_filesel)))
-	{
-		g_free(filename);
-		return;
-	}
-
-	current_folder = g_path_get_dirname(filename);
-	if (current_folder != NULL) {
-		gaim_prefs_set_string("/gaim/gtk/filelocations/last_icon_folder", current_folder);
-		g_free(current_folder);
-	}
-
-#endif /* FILECHOOSER */
-
-	g_free(dialog->icon_path);
-	dialog->icon_path = convert_buddy_icon(dialog->plugin, filename);
-	set_dialog_icon(dialog);
-	gtk_widget_show(dialog->icon_entry);
-
-	gtk_widget_destroy(dialog->icon_filesel);
-	dialog->icon_filesel = NULL;
-	g_free(filename);
- }
-
-static void
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-icon_preview_change_cb(GtkFileChooser *widget, AccountPrefsDialog *dialog)
-#else /* FILECHOOSER */
-icon_preview_change_cb(GtkTreeSelection *sel, AccountPrefsDialog *dialog)
-#endif /* FILECHOOSER */
-{
-	GdkPixbuf *pixbuf, *scale;
-	int height, width;
-	char *basename, *markup, *size;
-	struct stat st;
-	char *filename;
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	filename = gtk_file_chooser_get_preview_filename(
-					GTK_FILE_CHOOSER(dialog->icon_filesel));
-#else /* FILECHOOSER */
-	filename = g_strdup(gtk_file_selection_get_filename(
-		GTK_FILE_SELECTION(dialog->icon_filesel)));
-#endif /* FILECHOOSER */
-
-	if (!filename || g_stat(filename, &st))
-	{
-		g_free(filename);
-		return;
-	}
-
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	if (!pixbuf) {
-		gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), NULL);
-		gtk_label_set_markup(GTK_LABEL(dialog->icon_text), "");
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-		gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
-#endif /* FILECHOOSER */
-		g_free(filename);
-		return;
-	}
-
-	width = gdk_pixbuf_get_width(pixbuf);
-	height = gdk_pixbuf_get_height(pixbuf);
-	basename = g_path_get_basename(filename);
-	size = gaim_str_size_to_units(st.st_size);
-	markup = g_strdup_printf(_("<b>File:</b> %s\n"
-							   "<b>File size:</b> %s\n"
-							   "<b>Image size:</b> %dx%d"),
-							 basename, size, width, height);
-
-	scale = gdk_pixbuf_scale_simple(pixbuf, width * 50 / height,
-									50, GDK_INTERP_BILINEAR);
-	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), scale);
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
-#endif /* FILECHOOSER */
-	gtk_label_set_markup(GTK_LABEL(dialog->icon_text), markup);
-
-	g_object_unref(G_OBJECT(pixbuf));
-	g_object_unref(G_OBJECT(scale));
-	g_free(filename);
-	g_free(basename);
-	g_free(size);
-	g_free(markup);
-}
-
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
-icon_filesel_delete_cb(GtkWidget *w, AccountPrefsDialog *dialog)
-{
-	if (dialog->icon_filesel != NULL)
-		gtk_widget_destroy(dialog->icon_filesel);
-
+	
 	dialog->icon_filesel = NULL;
 }
-#endif /* FILECHOOSER */
 
 static void
 icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	GtkWidget *hbox;
-	GtkWidget *tv;
-	GtkTreeSelection *sel;
-#endif /* FILECHOOSER */
-	const char *current_folder;
-
-	if (dialog->icon_filesel != NULL) {
-		gtk_window_present(GTK_WINDOW(dialog->icon_filesel));
-		return;
-	}
-
-	current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_icon_folder");
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	dialog->icon_filesel = gtk_file_chooser_dialog_new(_("Buddy Icon"),
-									GTK_WINDOW(dialog->window),
-									GTK_FILE_CHOOSER_ACTION_OPEN,
-									GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-									GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-									NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog->icon_filesel), GTK_RESPONSE_ACCEPT);
-	if ((current_folder != NULL) && (*current_folder != '\0'))
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel),
-											current_folder);
-
-	dialog->icon_preview = gtk_image_new();
-	dialog->icon_text = gtk_label_new(NULL);
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel),
-					    GTK_WIDGET(dialog->icon_preview));
-	g_signal_connect(G_OBJECT(dialog->icon_filesel), "update-preview",
-					 G_CALLBACK(icon_preview_change_cb), dialog);
-	g_signal_connect(G_OBJECT(dialog->icon_filesel), "response",
-					 G_CALLBACK(icon_filesel_choose_cb), dialog);
-	icon_preview_change_cb(NULL, dialog);
-#else /* FILECHOOSER */
-	dialog->icon_filesel = gtk_file_selection_new(_("Buddy Icon"));
-	dialog->icon_preview = gtk_image_new();
-	dialog->icon_text = gtk_label_new(NULL);
-	if ((current_folder != NULL) && (*current_folder != '\0'))
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->icon_filesel),
-										current_folder);
-
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_box_pack_start(
-		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
-		hbox, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), dialog->icon_preview,
-					 FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), dialog->icon_text, FALSE, FALSE, 0);
-
-	tv = GTK_FILE_SELECTION(dialog->icon_filesel)->file_list;
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
-
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(icon_preview_change_cb), dialog);
-	g_signal_connect(
-		G_OBJECT(GTK_FILE_SELECTION(dialog->icon_filesel)->ok_button),
-		"clicked",
-		G_CALLBACK(icon_filesel_choose_cb), dialog);
-	g_signal_connect(
-		G_OBJECT(GTK_FILE_SELECTION(dialog->icon_filesel)->cancel_button),
-		"clicked",
-		G_CALLBACK(icon_filesel_delete_cb), dialog);
-	g_signal_connect(G_OBJECT(dialog->icon_filesel), "destroy",
-					 G_CALLBACK(icon_filesel_delete_cb), dialog);
-#endif /* FILECHOOSER */
-
-	gtk_widget_show_all(GTK_WIDGET(dialog->icon_filesel));
+	dialog->icon_filesel = gaim_gtk_buddy_icon_chooser_new(dialog->window, icon_filesel_choose_cb, dialog);
+	gtk_widget_show_all(dialog->icon_filesel);
 }
 
 static void
@@ -510,7 +323,8 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
 			g_free(dialog->icon_path);
-			dialog->icon_path = convert_buddy_icon(dialog->plugin, tmp);
+
+			dialog->icon_path = gaim_gtk_convert_buddy_icon(dialog->plugin, tmp);
 			set_dialog_icon(dialog);
 			gtk_widget_show(dialog->icon_entry);
 			g_free(tmp);
@@ -518,207 +332,6 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		gtk_drag_finish(dc, TRUE, FALSE, t);
 	}
 	gtk_drag_finish(dc, FALSE, FALSE, t);
-}
-
-
-#if GTK_CHECK_VERSION(2,2,0)
-static gboolean
-str_array_match(char **a, char **b)
-{
-	int i, j;
-
-	if (!a || !b)
-		return FALSE;
-	for (i = 0; a[i] != NULL; i++)
-		for (j = 0; b[j] != NULL; j++)
-			if (!g_ascii_strcasecmp(a[i], b[j]))
-				return TRUE;
-	return FALSE;
-}
-#endif
-
-static char*
-convert_buddy_icon(GaimPlugin *plugin, const char *path)
-{
-#if GTK_CHECK_VERSION(2,2,0)
-	int width, height;
-	char **pixbuf_formats = NULL;
-	GdkPixbufFormat *format;
-	GdkPixbuf *pixbuf;
-	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
-	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
-#if !GTK_CHECK_VERSION(2,4,0)
-	GdkPixbufLoader *loader;
-	FILE *file;
-	struct stat st;
-	void *data = NULL;
-#endif
-#endif
-	const char *dirname = gaim_buddy_icons_get_cache_dir();
-	char *random   = g_strdup_printf("%x", g_random_int());
-	char *filename = g_build_filename(dirname, random, NULL);
-
-	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
-
-		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-			gaim_debug_error("buddyicon",
-							 "Unable to create directory %s: %s\n",
-							 dirname, strerror(errno));
-#if GTK_CHECK_VERSION(2,2,0)
-			g_strfreev(prpl_formats);
-#endif
-			g_free(random);
-			g_free(filename);
-			return NULL;
-		}
-	}
-
-#if GTK_CHECK_VERSION(2,2,0)
-#if GTK_CHECK_VERSION(2,4,0)
-	format = gdk_pixbuf_get_file_info (path, &width, &height);
-#else
-	loader = gdk_pixbuf_loader_new();
-	if (!g_stat(path, &st) && (file = g_fopen(path, "rb")) != NULL) {
-		data = g_malloc(st.st_size);
-		fread(data, 1, st.st_size, file);
-		fclose(file);
-		gdk_pixbuf_loader_write(loader, data, st.st_size, NULL);
-		g_free(data);
-	}
-	gdk_pixbuf_loader_close(loader, NULL);
-	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-	width = gdk_pixbuf_get_width(pixbuf);
-	height = gdk_pixbuf_get_height(pixbuf);
-	format = gdk_pixbuf_loader_get_format(loader);
-	g_object_unref(G_OBJECT(loader));
-#endif
-	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
-
-	if (str_array_match(pixbuf_formats, prpl_formats) &&                  /* This is an acceptable format AND */
-		 (!(prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) ||   /* The prpl doesn't scale before it sends OR */
-		  (prpl_info->icon_spec.min_width <= width &&
-		   prpl_info->icon_spec.max_width >= width &&
-		   prpl_info->icon_spec.min_height <= height &&
-		   prpl_info->icon_spec.max_height >= height)))                   /* The icon is the correct size */
-#endif
-	{
-		gchar *contents;
-		gsize length;
-		FILE *image;
-
-#if GTK_CHECK_VERSION(2,2,0)
-		g_strfreev(prpl_formats);
-		g_strfreev(pixbuf_formats);
-#endif
-
-		/* Copy the image to the cache folder as "filename". */
-
-		if (!g_file_get_contents(path, &contents, &length, NULL) ||
-		    (image = g_fopen(filename, "wb")) == NULL)
-		{
-			g_free(random);
-			g_free(filename);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
-#endif
-			return NULL;
-		}
-
-		if (fwrite(contents, 1, length, image) != length)
-		{
-			fclose(image);
-			g_unlink(filename);
-
-			g_free(random);
-			g_free(filename);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
-#endif
-			return NULL;
-		}
-		fclose(image);
-
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-		g_object_unref(G_OBJECT(pixbuf));
-#endif
-
-		g_free(filename);
-		return random;
-	}
-#if GTK_CHECK_VERSION(2,2,0)
-	else
-	{
-		int i;
-		GError *error = NULL;
-		GdkPixbuf *scale;
-		pixbuf = gdk_pixbuf_new_from_file(path, &error);
-		g_strfreev(pixbuf_formats);
-		if (!error && (prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
-			(width < prpl_info->icon_spec.min_width ||
-			 width > prpl_info->icon_spec.max_width ||
-			 height < prpl_info->icon_spec.min_height ||
-			 height > prpl_info->icon_spec.max_height))
-		{
-			int new_width = width;
-			int new_height = height;
-
-			if(new_width > prpl_info->icon_spec.max_width)
-				new_width = prpl_info->icon_spec.max_width;
-			else if(new_width < prpl_info->icon_spec.min_width)
-				new_width = prpl_info->icon_spec.min_width;
-			if(new_height > prpl_info->icon_spec.max_height)
-				new_height = prpl_info->icon_spec.max_height;
-			else if(new_height < prpl_info->icon_spec.min_height)
-				new_height = prpl_info->icon_spec.min_height;
-
-			/* preserve aspect ratio */
-			if ((double)height * (double)new_width >
-				(double)width * (double)new_height) {
-					new_width = 0.5 + (double)width * (double)new_height / (double)height;
-			} else {
-					new_height = 0.5 + (double)height * (double)new_width / (double)width;
-			}
-
-			scale = gdk_pixbuf_scale_simple (pixbuf, new_width, new_height,
-					GDK_INTERP_HYPER);
-			g_object_unref(G_OBJECT(pixbuf));
-			pixbuf = scale;
-		}
-		if (error) {
-			g_free(random);
-			g_free(filename);
-			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
-			g_error_free(error);
-			g_strfreev(prpl_formats);
-			return NULL;
-		}
-
-		for (i = 0; prpl_formats[i]; i++) {
-			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
-			/* The gdk-pixbuf documentation is wrong. gdk_pixbuf_save returns TRUE if it was successful,
-			 * FALSE if an error was set. */
-			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
-					break;
-			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i], error->message);
-			g_error_free(error);
-			error = NULL;
-		}
-		g_strfreev(prpl_formats);
-		if (!error) {
-			g_object_unref(G_OBJECT(pixbuf));
-			g_free(filename);
-			return random;
-		} else {
-			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
-			g_error_free(error);
-		}
-		g_free(random);
-		g_free(filename);
-		g_object_unref(G_OBJECT(pixbuf));
-	}
-	return NULL;
-#endif
 }
 
 static void
@@ -898,6 +511,12 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
+icon_check_cb(GtkWidget *checkbox, AccountPrefsDialog *dialog)
+{
+	gtk_widget_set_sensitive(dialog->icon_hbox, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
+}
+
+static void
 add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
@@ -930,12 +549,17 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->new_mail_check);
 
 	/* Buddy icon */
+	dialog->icon_check = gtk_check_button_new_with_label(_("Use this buddy icon for this account:"));
+	g_signal_connect(G_OBJECT(dialog->icon_check), "toggled", G_CALLBACK(icon_check_cb), dialog);
+	gtk_widget_show(dialog->icon_check);
+	gtk_box_pack_start(GTK_BOX(vbox), dialog->icon_check, FALSE, FALSE, 0);
+
 	dialog->icon_hbox = hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_widget_set_sensitive(hbox, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	label = gtk_label_new(_("Buddy icon:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
+	label = gtk_label_new("    ");
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -976,12 +600,14 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->account != NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
-				gaim_account_get_check_mail(dialog->account));
+					     gaim_account_get_check_mail(dialog->account));
+		
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->icon_check),
+					     !gaim_account_get_ui_bool(dialog->account, GAIM_GTK_UI, "use-global-buddyicon",
+								       TRUE));
 
-		if (gaim_account_get_buddy_icon(dialog->account) != NULL) {
-			dialog->icon_path = g_strdup(gaim_account_get_buddy_icon(dialog->account));
-			set_dialog_icon(dialog);
-		}
+		dialog->icon_path = g_strdup(gaim_account_get_ui_string(dialog->account, GAIM_GTK_UI, "non-global-buddyicon", NULL));
+		set_dialog_icon(dialog);
 	}
 
 	if (!dialog->prpl_info ||
@@ -1425,12 +1051,13 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	if (dialog->icon_path != NULL)
 	{
-		const char *icon = gaim_account_get_buddy_icon(dialog->account);
+		const char *icon = gaim_account_get_ui_string(dialog->account, GAIM_GTK_UI, "non-global-buddyicon", NULL);
 		if (dialog->icon_path != NULL && (icon == NULL || strcmp(dialog->icon_path, icon)))
 		{
 			/* The user set an icon, which would've been cached by convert_buddy_icon,
 			 * but didn't save the changes. Delete the cache file. */
 			char *filename = g_build_filename(gaim_buddy_icons_get_cache_dir(), dialog->icon_path, NULL);
+			printf("Deleting\n");
 			g_unlink(filename);
 			g_free(filename);
 		}
@@ -1460,7 +1087,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	const char *value;
 	char *username;
 	char *tmp;
-	gboolean new = FALSE;
+	gboolean new = FALSE, icon_change = FALSE;
 	GaimAccount *account;
 
 	if (dialog->account == NULL)
@@ -1488,7 +1115,20 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	gaim_account_set_buddy_icon(account, dialog->icon_path);
+	if (gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) == 
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check))) {
+		icon_change = TRUE;
+	}
+	gaim_account_set_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
+	gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon", dialog->icon_path);
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check))) {
+		gaim_account_set_buddy_icon(account, dialog->icon_path);
+	} else if (gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon") && icon_change) {
+		char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
+		gaim_account_set_buddy_icon(account, icon);
+		g_free(icon);
+	}
+		
 
 	/* Remember Password */
 	gaim_account_set_remember_password(account,
@@ -2672,6 +2312,7 @@ gaim_gtk_account_init(void)
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  520);
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 321);
+	gaim_prefs_add_string("/gaim/gtk/accounts/buddyicon", NULL);
 
 	gaim_signal_register(gaim_gtk_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,

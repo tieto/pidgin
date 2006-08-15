@@ -77,6 +77,8 @@ static void gtk_gaim_status_box_size_allocate (GtkWidget *widget, GtkAllocation 
 static gboolean gtk_gaim_status_box_expose_event (GtkWidget *widget, GdkEventExpose *event);
 static void gtk_gaim_status_box_forall (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 
+static void do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift);
+
 static void (*combo_box_size_request)(GtkWidget *widget, GtkRequisition *requisition);
 static void (*combo_box_size_allocate)(GtkWidget *widget, GtkAllocation *allocation);
 static void (*combo_box_forall) (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
@@ -259,6 +261,17 @@ gtk_gaim_status_box_finalize(GObject *obj)
 	}
 	gaim_signals_disconnect_by_handle(statusbox);
 	gaim_prefs_disconnect_by_handle(statusbox);
+
+	gdk_cursor_unref(statusbox->hand_cursor);
+	gdk_cursor_unref(statusbox->arrow_cursor);
+
+	g_object_unref(G_OBJECT(statusbox->buddy_icon));
+	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
+	
+	if (statusbox->buddy_icon_sel)
+		gtk_widget_destroy(statusbox->buddy_icon_sel);
+	
+	g_free(statusbox->buddy_icon_path);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -907,6 +920,55 @@ toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 }
 
 static void
+icon_choose_cb(const char *filename, GtkGaimStatusBox *box)
+{
+	if (filename) {
+		GList *accounts;
+		for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+			GaimAccount *account = accounts->data;
+			if (gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddy-icon", TRUE)) {
+				char *icon = gaim_gtk_convert_buddy_icon(gaim_find_prpl(gaim_account_get_protocol_id(account)),
+									 filename);
+				gaim_account_set_buddy_icon(account, icon);
+				g_free(icon);
+			}
+		}
+		gtk_gaim_status_box_set_buddy_icon(box, filename);
+	}
+	
+	box->buddy_icon_sel = NULL;
+}
+
+static gboolean
+icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
+{
+	if (box->buddy_icon_sel) {
+		gtk_window_present(GTK_WINDOW(box->buddy_icon_sel));
+		return FALSE;
+	}
+
+	GtkWidget *filesel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+	gtk_widget_show_all(filesel);
+	return FALSE;
+}
+
+static gboolean
+icon_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *box)
+{
+	gdk_window_set_cursor(widget->window, box->hand_cursor);
+	gtk_image_set_from_pixbuf(box->icon, box->buddy_icon_hover);
+	return FALSE;
+}
+
+static gboolean
+icon_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *box)
+{
+	gdk_window_set_cursor(widget->window, box->arrow_cursor);
+	gtk_image_set_from_pixbuf(box->icon, box->buddy_icon) ;
+	return FALSE;
+}
+
+static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
@@ -922,6 +984,18 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
+	status_box->buddy_icon = gdk_pixbuf_new_from_file("/home/seanegan/p1120233.jpg", NULL);
+	status_box->icon = gtk_image_new_from_pixbuf(status_box->buddy_icon);
+	status_box->icon_box = gtk_event_box_new();
+	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
+	status_box->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+
+	g_signal_connect(G_OBJECT(status_box->icon_box), "enter-notify-event", G_CALLBACK(icon_box_enter_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->icon_box), "leave-notify-event", G_CALLBACK(icon_box_leave_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->icon_box), "button-press-event", G_CALLBACK(icon_box_press_cb), status_box);
+
+	gtk_container_add(GTK_CONTAINER(status_box->icon_box), status_box->icon);
+
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
@@ -934,6 +1008,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->vsep, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->arrow, FALSE, FALSE, 0);
 	gtk_widget_show_all(status_box->toggle_button);
+	gtk_widget_show_all(status_box->icon_box);
 #if GTK_CHECK_VERSION(2,4,0)
 	gtk_button_set_focus_on_click(GTK_BUTTON(status_box->toggle_button), FALSE);
 #endif
@@ -984,6 +1059,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 #endif
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
+	gtk_widget_set_parent(status_box->icon_box, GTK_WIDGET(status_box));
 	GTK_BIN(status_box)->child = status_box->toggle_button;
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
@@ -1024,14 +1100,58 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 		requisition->height += box_req.height + 3;
 
 	requisition->width = 1;
+
+
+}
+
+/* From gnome-panel */
+static void
+do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
+{
+	gint i, j;
+	gint width, height, has_alpha, srcrowstride, destrowstride;
+	guchar *target_pixels;
+	guchar *original_pixels;
+	guchar *pixsrc;
+	guchar *pixdest;
+	int val;
+	guchar r,g,b;
+
+	has_alpha = gdk_pixbuf_get_has_alpha (src);
+	width = gdk_pixbuf_get_width (src);
+	height = gdk_pixbuf_get_height (src);
+	srcrowstride = gdk_pixbuf_get_rowstride (src);
+	destrowstride = gdk_pixbuf_get_rowstride (dest);
+	target_pixels = gdk_pixbuf_get_pixels (dest);
+	original_pixels = gdk_pixbuf_get_pixels (src);
+
+	for (i = 0; i < height; i++) {
+		pixdest = target_pixels + i*destrowstride;
+		pixsrc = original_pixels + i*srcrowstride;
+		for (j = 0; j < width; j++) {
+			r = *(pixsrc++);
+			g = *(pixsrc++);
+			b = *(pixsrc++);
+			val = r + shift;
+			*(pixdest++) = CLAMP(val, 0, 255);
+			val = g + shift;
+			*(pixdest++) = CLAMP(val, 0, 255);
+			val = b + shift;
+			*(pixdest++) = CLAMP(val, 0, 255);
+			if (has_alpha)
+				*(pixdest++) = *(pixsrc++);
+		}
+	}
 }
 
 static void
 gtk_gaim_status_box_size_allocate(GtkWidget *widget,
-								  GtkAllocation *allocation)
+				  GtkAllocation *allocation)
 {
+	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
 	GtkRequisition req = {0,0};
-	GtkAllocation parent_alc, box_alc;
+	GtkAllocation parent_alc, box_alc, icon_alc;
+	GdkPixbuf *scaled;
 
 	combo_box_size_request(widget, &req);
 
@@ -1043,7 +1163,28 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	parent_alc = *allocation;
 	parent_alc.height = MAX(1,req.height);
 	parent_alc.y += 3;
+	parent_alc.width -= (parent_alc.height + 3);
 	combo_box_size_allocate(widget, &parent_alc);
+
+	icon_alc = *allocation;
+	icon_alc.height = MAX(1,req.height);
+	icon_alc.width = icon_alc.height;
+	icon_alc.x = allocation->width - icon_alc.width;
+	icon_alc.y += 3;
+	
+	if (status_box->icon_size != icon_alc.height) {
+		scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path, 
+							   icon_alc.height, icon_alc.width, FALSE, NULL);
+		status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
+		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
+		g_object_unref(status_box->buddy_icon);
+		status_box->buddy_icon = scaled;
+		gtk_image_set_from_pixbuf(status_box->icon, status_box->buddy_icon);
+		status_box->icon_size = icon_alc.height;
+	}
+	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->icon_box, &icon_alc);
+
+
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->toggle_button, &parent_alc);
 	widget->allocation = *allocation;
 }
@@ -1055,6 +1196,7 @@ gtk_gaim_status_box_expose_event(GtkWidget *widget,
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->toggle_button, event);
+	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->icon_box, event);
 	return FALSE;
 }
 
@@ -1071,6 +1213,7 @@ gtk_gaim_status_box_forall(GtkContainer *container,
 		(* callback) (status_box->vbox, callback_data);
 		(* callback) (status_box->toggle_button, callback_data);
 		(* callback) (status_box->arrow, callback_data);
+		(* callback) (status_box->icon_box, callback_data);
 	}
 
 	combo_box_forall(container, include_internals, callback, callback_data);
@@ -1176,6 +1319,30 @@ gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connec
 		return;
 	status_box->connecting = connecting;
 	gtk_gaim_status_box_refresh(status_box);
+}
+
+void
+gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *box, const char *filename)
+{
+	GdkPixbuf *scaled;
+	g_free(box->buddy_icon_path);
+	box->buddy_icon_path = g_strdup(filename);
+
+	scaled = gdk_pixbuf_new_from_file_at_scale(filename, 
+						   box->icon_size, box->icon_size, FALSE, NULL);
+	box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
+	do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
+	g_object_unref(box->buddy_icon);
+	box->buddy_icon = scaled;
+	gtk_image_set_from_pixbuf(box->icon, box->buddy_icon);
+	
+	gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
+}
+
+const char*
+gtk_gaim_status_box_get_buddy_icon(GtkGaimStatusBox *box)
+{
+	return box->buddy_icon_path;
 }
 
 void

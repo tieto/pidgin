@@ -83,6 +83,17 @@ struct _GtkGaimStatusBox
 
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
+
+	char      *buddy_icon_path;
+        GdkPixbuf *buddy_icon;
+        GdkPixbuf *buddy_icon_hover;
+	GtkWidget *buddy_icon_sel;
+        GtkWidget *icon;
+	GtkWidget *icon_box;
+	GdkCursor *hand_cursor;
+	GdkCursor *arrow_cursor;
+        int icon_size;
+
 	gboolean imhtml_visible;
 
 	GtkWidget *cell_view;
@@ -145,6 +156,12 @@ gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connec
 
 void
 gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box);
+
+void
+gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *status_box, const char *filename);
+
+const char *
+gtk_gaim_status_box_get_buddy_icon(GtkGaimStatusBox *status_box);
 
 char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
 
