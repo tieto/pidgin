@@ -21,7 +21,7 @@
 .\" USA.
 .TH gntgaim 1
 .SH NAME
-GntGaim \- Console frontend for Instant Messaging client Gaim.
+GntGaim \- A Pimpin' Penguin console frontend for Instant Messaging client Gaim.
 .SH SYNOPSIS
 .TP 5
 \fBgntgaim \fI[options]\fR
@@ -39,8 +39,9 @@ The following options are provided by \fBgntgaim\fR using the standard GNU
 command line syntax:
 .TP
 .B \-d, \-\-debug
-Print debugging messages to stdout.  These are the same debugging messages
-that are displayed in the \fBDebug\fR window.
+Print debugging messages to stderr and start with the \fBDebug\fR window. The
+messages shown in the \fBDebug\fR window are the same as the ones printed in
+stderr.
 .TP
 .B \-c, \-\-config=\fIDIR\fB
 Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
@@ -80,6 +81,18 @@ done, press \fBEnter\fR or \fBEscape\fR.
 .B Alt \+ r
 Start resizing a window. Press the cursor keys to resize the window. When you
 are done, press \fBEnter\fR or \fBEscape\fR.
+.TP
+.B Alt \+ d
+Dump the contents of the screen in HTML format in a file named "dump.html" in
+working directory.
+.TP
+.B Alt \+ .
+Move the position of the current window in the window list one place to the
+right.
+.TP
+.B Alt \+ ,
+Move the position of the current window in the window list one place to the
+left.
 
 .SH FILES
 \fI~/.gntrc\fR: configuration file for gnt applications.
@@ -132,6 +145,30 @@ text = white; blue
 disabled = gray; black
 .br
 
+.SH Conversation Commands
+There are a few helpful commands in addition to the regular commands. You can
+use these from any conversation to access other windows.
+
+.TP
+.B accounts
+for the accounts window.
+
+.TP
+.B buddylist
+for the buddylist.
+
+.TP
+.B debugwin
+for the debug window.
+
+.TP
+.B plugins
+for the plugins window.
+
+.TP
+.B prefs
+for the preferences window.
+
 .SH BUGS
 Known bugs are listed at
 .br
@@ -139,15 +176,15 @@ Known bugs are listed at
 
 .SH PATCHES
 If you fix a bug in \fBgntgaim\fR (or otherwise enhance it), please submit a
-patch (using \fIcvs diff -up > my.diff\fR against the latest CVS version)
+patch (using \fIsvn diff > my.diff\fR against the latest SVN version)
 at
 .br
 \fIhttp://sourceforge.net/tracker/?func=add&group_id=235&atid=300235\fR
 
 Before sending a bug report, please verify that you have the latest
-version of \fBgntgaim\fR.  Many bugs (major and minor) are fixed
-at each release, and if yours is out of date, the problem may already
-have been solved.
+version of \fBgntgaim\fR and \fBlibgaim\fR.  Many bugs (major and minor) are
+fixed at each release, and if yours is out of date, the problem may already have
+been solved.
 
 .SH SEE ALSO
 \fIhttp://gaim.sourceforge.net/\fR
@@ -173,5 +210,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Sadrul Habib Chowdhury <\fIsadrul@users.sourceforge.net\fR>
 .br
 
-This manpage was written by Sadrul Habib Chowdhury <\fIsadrul@users.sourceforge.net\fR>.
+This manpage was written by Sadrul Habib Chowdhury
+<\fIsadrul@users.sourceforge.net\fR> and Dennis Ristuccia
+<\fIdennis@dennisr.net\fR>.
 
