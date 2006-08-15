@@ -26,7 +26,7 @@ gnt_text_view_draw(GntWidget *widget)
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	int i = 0;
 	GList *lines;
-	int showing, position, rows, scrcol;
+	int rows, scrcol;
 
 	werase(widget->window);
 
@@ -51,11 +51,17 @@ gnt_text_view_draw(GntWidget *widget)
 	rows = widget->priv.height - 2;
 	if (rows > 0)
 	{
+		int total = g_list_length(g_list_first(view->list));
+		int showing, position, up, down;
 
-		showing = rows * rows / g_list_length(g_list_first(view->list)) + 1;
+		showing = rows * rows / total + 1;
 		showing = MIN(rows, showing);
 
-		position = showing * g_list_length(view->list) / rows;
+		total -= rows;
+		up = g_list_length(lines);
+		down = total - up;
+
+		position = (rows - showing) * up / MAX(1, up + down);
 		position = MAX((lines != NULL), position);
 
 		if (showing + position > rows)

@@ -67,6 +67,7 @@ static void draw_tooltip(GGBlist *ggblist);
 static gboolean remove_typing_cb(gpointer null);
 static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
+static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
 
 static void
 new_node(GaimBlistNode *node)
@@ -1150,6 +1151,9 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 	}
 	else if (now->type == STATUS_SAVED_ALL)
 	{
+		/* Restore the selection to reflect current status. */
+		savedstatus_changed(gaim_savedstatus_get_current(), NULL);
+		gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
 		gg_savedstatus_show_all();
 	}
 	else

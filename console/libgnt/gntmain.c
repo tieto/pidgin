@@ -16,6 +16,8 @@
 /**
  * Notes: Interesting functions to look at:
  * 	scr_dump, scr_init, scr_restore: for workspaces
+ *
+ * 	Need to wattrset for colors to use with PDCurses.
  */
 
 static int lock_focus_list;
@@ -176,6 +178,7 @@ draw_taskbar()
 	{
 		GntWidget *w = iter->data;
 		int color;
+		const char *title;
 
 		if (w == focus_list->data)
 		{
@@ -194,7 +197,8 @@ draw_taskbar()
 		}
 		wbkgdset(taskbar, '\0' | COLOR_PAIR(color));
 		mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
-		mvwprintw(taskbar, 0, width * i, "%s", GNT_BOX(w)->title);
+		title = GNT_BOX(w)->title;
+		mvwprintw(taskbar, 0, width * i, "%s", title ? title : "<gnt>");
 
 		update_window_in_list(w);
 	}

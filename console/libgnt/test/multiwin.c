@@ -63,7 +63,7 @@ int main()
 	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6", " long text", "a2"), "4", NULL);
 
 	int i;
-	for (i = 110; i < 130; i++)
+	for (i = 110; i < 430; i++)
 	{
 		char *s;
 		s = g_strdup_printf("%d", i); /* XXX: yes, leaking */

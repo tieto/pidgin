@@ -250,7 +250,7 @@ redraw_tree(GntTree *tree)
 	GntWidget *widget = GNT_WIDGET(tree);
 	GntTreeRow *row;
 	int pos, up, down;
-	int showing, position, rows, scrcol;
+	int rows, scrcol;
 
 	if (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
 		return;
@@ -371,11 +371,18 @@ redraw_tree(GntTree *tree)
 	rows--;
 	if (rows > 0)
 	{
-		get_next_n_opt(tree->root, g_list_length(tree->list), &i);
-		showing = rows * rows / MAX(i, 1) + 1;
+		int total;
+		int showing, position;
+
+		get_next_n_opt(tree->root, g_list_length(tree->list), &total);
+		showing = rows * rows / MAX(total, 1) + 1;
 		showing = MIN(rows, showing);
 
-		position = showing * get_distance(tree->root, tree->top) / rows;
+		total -= rows;
+		up = get_distance(tree->root, tree->top);
+		down = total - up;
+
+		position = (rows - showing) * up / MAX(1, up + down);
 		position = MAX((tree->top != tree->root), position);
 
 		if (showing + position > rows)
