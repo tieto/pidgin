@@ -62,6 +62,14 @@ int main()
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6", " long text", "a2"), "4", NULL);
 
+	int i;
+	for (i = 110; i < 130; i++)
+	{
+		char *s;
+		s = g_strdup_printf("%d", i); /* XXX: yes, leaking */
+		gnt_tree_add_row_after(GNT_TREE(tree), s, gnt_tree_create_row(GNT_TREE(tree), s, " long text", "a2"), "4", NULL);
+	}
+
 	gnt_tree_set_row_flags(GNT_TREE(tree), "e", GNT_TEXT_FLAG_DIM);
 
 	gnt_tree_set_selected(GNT_TREE(tree), "2");

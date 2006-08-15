@@ -403,6 +403,8 @@ dump_screen()
 						ch = '^'; break;
 					case '.':
 						ch = 'v'; break;
+					case 'a':
+						ch = '#'; break;
 					default:
 						ch = ' '; break;
 				}

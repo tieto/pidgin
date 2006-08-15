@@ -26,6 +26,7 @@ gnt_text_view_draw(GntWidget *widget)
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	int i = 0;
 	GList *lines;
+	int showing, position, rows, scrcol;
 
 	werase(widget->window);
 
@@ -45,18 +46,35 @@ gnt_text_view_draw(GntWidget *widget)
 				whline(widget->window, ' ' | seg->flags, widget->priv.width - line->length - 1);
 		}
 	}
-	
-	mvwaddch(widget->window, 0,
-			widget->priv.width - 1,
-			lines ? 
-			ACS_UARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
-			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
 
-	mvwaddch(widget->window, widget->priv.height - 1,
-			widget->priv.width - 1,
-			(view->list && view->list->prev) ? 
-			ACS_DARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
-			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
+	scrcol = widget->priv.width - 1;
+	rows = widget->priv.height - 2;
+	if (rows > 0)
+	{
+
+		showing = rows * rows / g_list_length(g_list_first(view->list)) + 1;
+		showing = MIN(rows, showing);
+
+		position = showing * g_list_length(view->list) / rows;
+		position = MAX((lines != NULL), position);
+
+		if (showing + position > rows)
+			position = rows - showing;
+		
+		if (showing + position == rows && view->list && view->list->prev)
+			position = MAX(1, rows - 1 - showing);
+		else if (showing + position < rows && view->list && !view->list->prev)
+			position = rows - showing;
+
+		mvwvline(widget->window, position + 1, scrcol,
+				ACS_CKBOARD | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D), showing);
+	}
+
+	mvwaddch(widget->window, 0, scrcol,
+			(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+	mvwaddch(widget->window, widget->priv.height - 1, scrcol,
+			((view->list && view->list->prev) ? ACS_DARROW : ' ') |
+				COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 
 	DEBUG;
 }
@@ -133,7 +151,7 @@ gnt_text_view_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_Y);
 
 	widget->priv.minw = 5;
-	widget->priv.minh = 1;
+	widget->priv.minh = 2;
 	DEBUG;
 }
 

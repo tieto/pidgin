@@ -246,10 +246,11 @@ tree_mark_columns(GntTree *tree, int pos, int y, chtype type)
 static void
 redraw_tree(GntTree *tree)
 {
-	int start;
+	int start, i;
 	GntWidget *widget = GNT_WIDGET(tree);
 	GntTreeRow *row;
-	int pos, up, down, nr;
+	int pos, up, down;
+	int showing, position, rows, scrcol;
 
 	if (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
 		return;
@@ -273,7 +274,7 @@ redraw_tree(GntTree *tree)
 		int x = pos;
 
 		mvwhline(widget->window, pos + 1, pos, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
-				widget->priv.width - pos - 1);
+				widget->priv.width - pos);
 		
 		for (i = 0; i < tree->ncol; i++)
 		{
@@ -291,11 +292,11 @@ redraw_tree(GntTree *tree)
 		start = 2;
 	}
 
-	nr = widget->priv.height - pos * 2 - start - 1;
-	tree->bottom = get_next_n_opt(tree->top, nr, &down);
-	if (down < nr)
+	rows = widget->priv.height - pos * 2 - start - 1;
+	tree->bottom = get_next_n_opt(tree->top, rows, &down);
+	if (down < rows)
 	{
-		tree->top = get_prev_n(tree->bottom, nr);
+		tree->top = get_prev_n(tree->bottom, rows);
 		if (tree->top == NULL)
 			tree->top = tree->root;
 	}
@@ -304,17 +305,11 @@ redraw_tree(GntTree *tree)
 	if (up < 0)
 		tree->top = tree->current;
 	else if (up >= widget->priv.height - pos)
-		tree->top = get_prev_n(tree->current, nr);
-
-	mvwaddch(widget->window, start + pos,
-			widget->priv.width - pos - 1,
-			(tree->top != tree->root) ? 
-			ACS_UARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
-			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
+		tree->top = get_prev_n(tree->current, rows);
 
 	row = tree->top;
-	for (start = start + pos; row && start < widget->priv.height - pos;
-				start++, row = get_next(row))
+	for (i = start + pos; row && i < widget->priv.height - pos;
+				i++, row = get_next(row))
 	{
 		char *str;
 		int wr;
@@ -356,27 +351,55 @@ redraw_tree(GntTree *tree)
 		}
 
 		wbkgdset(widget->window, '\0' | attr);
-		mvwprintw(widget->window, start, pos, str);
+		mvwprintw(widget->window, i, pos, str);
 		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1) - 1);
 		tree->bottom = row;
 		g_free(str);
-		tree_mark_columns(tree, pos, start, ACS_VLINE | attr);
+		tree_mark_columns(tree, pos, i, ACS_VLINE | attr);
 	}
-
-	mvwaddch(widget->window, widget->priv.height - pos - 1,
-			widget->priv.width - pos - 1,
-			get_next(tree->bottom) ? 
-			ACS_DARROW | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D) :
-			' '| COLOR_PAIR(GNT_COLOR_NORMAL));
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
-	while (start < widget->priv.height - pos)
+	while (i < widget->priv.height - pos)
 	{
-		mvwhline(widget->window, start, pos, ' ',
+		mvwhline(widget->window, i, pos, ' ',
 				widget->priv.width - pos * 2 - 1);
-		tree_mark_columns(tree, pos, start, ACS_VLINE);
-		start++;
+		tree_mark_columns(tree, pos, i, ACS_VLINE);
+		i++;
 	}
+
+	scrcol = widget->priv.width - pos - 1;
+	rows--;
+	if (rows > 0)
+	{
+		get_next_n_opt(tree->root, g_list_length(tree->list), &i);
+		showing = rows * rows / MAX(i, 1) + 1;
+		showing = MIN(rows, showing);
+
+		position = showing * get_distance(tree->root, tree->top) / rows;
+		position = MAX((tree->top != tree->root), position);
+
+		if (showing + position > rows)
+			position = rows - showing;
+
+		if (showing + position == rows  && row)
+			position = MAX(0, rows - 1 - showing);
+		else if (showing + position < rows && !row)
+			position = rows - showing;
+
+		position += pos + start + 1;
+
+		mvwvline(widget->window, pos + start + 1, scrcol,
+				' ' | COLOR_PAIR(GNT_COLOR_NORMAL), rows);
+		mvwvline(widget->window, position, scrcol,
+				ACS_CKBOARD | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D), showing);
+	}
+
+	mvwaddch(widget->window, start + pos, scrcol,
+			((tree->top != tree->root) ?  ACS_UARROW : ' ') |
+				COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+
+	mvwaddch(widget->window, widget->priv.height - pos - 1, scrcol,
+			(row ?  ACS_DARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 
 	gnt_widget_queue_update(widget);
 }
@@ -550,7 +573,7 @@ gnt_tree_init(GTypeInstance *instance, gpointer class)
 	GntWidget *widget = GNT_WIDGET(instance);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	widget->priv.minw = 4;
-	widget->priv.minh = 3;
+	widget->priv.minh = 4;
 	DEBUG;
 }
 
@@ -1007,7 +1030,7 @@ GntTreeRow *gnt_tree_create_row(GntTree *tree, ...)
 	va_start(args, tree);
 	for (i = 0; i < tree->ncol; i++)
 	{
-		list = g_list_append(list, va_arg(args, const char *));
+		list = g_list_append(list, va_arg(args, char *));
 	}
 	va_end(args);
 
@@ -1041,6 +1064,7 @@ void gnt_tree_set_column_titles(GntTree *tree, ...)
 void gnt_tree_set_show_title(GntTree *tree, gboolean set)
 {
 	tree->show_title = set;
+	GNT_WIDGET(tree)->priv.minh = (set ? 6 : 4);
 }
 
 void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func)
