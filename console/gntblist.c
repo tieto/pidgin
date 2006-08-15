@@ -45,6 +45,7 @@ typedef enum
 	STATUS_PRIMITIVE = 0,
 	STATUS_SAVED_POPULAR,
 	STATUS_SAVED_ALL,
+	STATUS_SAVED_NEW
 } StatusType;
 
 typedef struct
@@ -1065,6 +1066,13 @@ populate_status_dropdown()
 				gaim_savedstatus_get_title(iter->data));
 	}
 
+	/* New savedstatus */
+	item = g_new0(StatusBoxItem, 1);
+	item->type = STATUS_SAVED_NEW;
+	items = g_list_prepend(items, item);
+	gnt_combo_box_add_data(GNT_COMBO_BOX(ggblist->status), item,
+			_("New..."));
+
 	/* More savedstatuses */
 	item = g_new0(StatusBoxItem, 1);
 	item->type = STATUS_SAVED_ALL;
@@ -1155,6 +1163,12 @@ status_selection_changed(GntComboBox *box, StatusBoxItem *old, StatusBoxItem *no
 		savedstatus_changed(gaim_savedstatus_get_current(), NULL);
 		gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
 		gg_savedstatus_show_all();
+	}
+	else if (now->type == STATUS_SAVED_NEW)
+	{
+		savedstatus_changed(gaim_savedstatus_get_current(), NULL);
+		gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
+		gg_savedstatus_edit(NULL);
 	}
 	else
 		g_return_if_reached();

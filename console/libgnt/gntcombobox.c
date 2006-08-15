@@ -79,7 +79,7 @@ gnt_combo_box_size_request(GntWidget *widget)
 		GntWidget *dd = GNT_COMBO_BOX(widget)->dropdown;
 		gnt_widget_size_request(dd);
 		widget->priv.height = 3;   /* For now, a combobox will have border */
-		widget->priv.width = MIN(10, dd->priv.width + 4);
+		widget->priv.width = MAX(10, dd->priv.width + 4);
 	}
 }
 
