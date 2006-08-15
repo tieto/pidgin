@@ -27,7 +27,7 @@ Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
-BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel, intltool, gettext
+BuildRequires: libtool, pkgconfig, intltool, gstreamer-devel
 %{?_with_avahi:BuildRequires: avahi-compat-howl avahi-compat-howl-devel}
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
@@ -323,9 +323,14 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Tue Aug 15 2006 <thekingant@users.sourceforge.net>
+- Add a BuildRequire for gstreamer-devel
+- Remove the BuildRequires for audiofile-devel, libao-devel and
+  gettext
+
 * Mon May 8 2006 <thekingant@users.sourceforge.net>
 - Add --with avahi option to compile the gaim-bonjour package against
-  Avahi's Howl compatibility layer.
+  Avahi's Howl compatibility layer
 
 * Wed Mar 29 2006 <stu@nosnilmot.com>
 - Source RPM uses tar.bz2 now to save space
