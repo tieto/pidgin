@@ -239,12 +239,20 @@ im_msg_sent_cb(GaimAccount *account, const char *receiver,
 }
 
 static void
+signing_on_cb(GaimConnection *gc, void *data)
+{
+	/* When signing on a new account, check if the account should be idle */
+	check_idleness();
+}
+
+static void
 signing_off_cb(GaimConnection *gc, void *data)
 {
 	GaimAccount *account;
 
 	account = gaim_connection_get_account(gc);
-	idled_accts = g_list_remove(idled_accts, account);
+	set_account_unidle(account);
+	unset_account_autoaway(gc);
 }
 
 void
@@ -288,6 +296,9 @@ gaim_idle_init()
 	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg",
 						gaim_idle_get_handle(),
 						GAIM_CALLBACK(im_msg_sent_cb), NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signing-on",
+						gaim_idle_get_handle(),
+						GAIM_CALLBACK(signing_on_cb), NULL);
 	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
 						gaim_idle_get_handle(),
 						GAIM_CALLBACK(signing_off_cb), NULL);
