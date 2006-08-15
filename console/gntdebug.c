@@ -80,6 +80,12 @@ reset_debug_win(GntWidget *w, gpointer null)
 	debug.window = debug.tview = NULL;
 }
 
+static void
+print_stderr(const char *string)
+{
+	g_printerr("%s", string);
+}
+
 void gg_debug_window_show()
 {
 	if (debug.window == NULL)
@@ -102,6 +108,7 @@ void gg_debug_window_show()
 
 void gg_debug_init()
 {
+	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
 	if (gaim_debug_is_enabled())
 		gg_debug_window_show();
 }

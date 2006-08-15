@@ -273,8 +273,8 @@ show_window_list()
 	{
 		GntBox *box = GNT_BOX(iter->data);
 
-		gnt_tree_add_row_after(GNT_TREE(tree), box,
-				gnt_tree_create_row(GNT_TREE(tree), box->title), NULL, NULL);
+		gnt_tree_add_row_last(GNT_TREE(tree), box,
+				gnt_tree_create_row(GNT_TREE(tree), box->title), NULL);
 		update_window_in_list(GNT_WIDGET(box));
 	}
 
@@ -752,9 +752,9 @@ void gnt_screen_occupy(GntWidget *widget)
 		if ((GNT_IS_BOX(widget) && GNT_BOX(widget)->title) && window_list.window != widget
 				&& GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		{
-			gnt_tree_add_row_after(GNT_TREE(window_list.tree), widget,
+			gnt_tree_add_row_last(GNT_TREE(window_list.tree), widget,
 					gnt_tree_create_row(GNT_TREE(window_list.tree), GNT_BOX(widget)->title),
-					NULL, NULL);
+					NULL);
 			update_window_in_list(widget);
 		}
 	}
