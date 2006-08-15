@@ -53,6 +53,7 @@ msn_check_payload_cmd(char *str)
 		(!strcmp(str,"UBN")) ||
 		(!strcmp(str,"UUM")) ||
 		(!strcmp(str,"UBM")) ||
+		(!strcmp(str,"FQY")) ||
 		(!strcmp(str,"UUN")) ||
 		(!strcmp(str,"UUX"))){
 			return TRUE;

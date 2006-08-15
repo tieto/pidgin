@@ -37,6 +37,8 @@ static MsnTable *cbs_table;
 /****************************************************************************
  * 	Local Function Prototype
  ****************************************************************************/
+void msn_notification_post_adl(MsnCmdProc *cmdproc,char *payload ,int payload_len);
+
 void msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type);
 
 /**************************************************************************
@@ -447,7 +449,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		const char *body;
 		char *body_str;
 		char *body_enc;
-		char *body_final;
+		char *body_final = NULL;
 		size_t body_len;
 
 		body = msn_message_get_bin_data(msg, &body_len);
@@ -614,14 +616,25 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	g_free(type_str);
 #endif
 	xmlnode_insert_child(d_node, c_node);
+
+	g_free(tokens);
+}
+
+void
+msn_notification_post_adl(MsnCmdProc *cmdproc,char *payload, int payload_len)
+{
+	MsnTransaction *trans;
+
+	gaim_debug_info("MaYuan","Send ADL{%s}\n",payload);
+	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
+	msn_transaction_set_payload(trans, payload, strlen(payload));
+	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
 /*dump contact info to NS*/
 void
 msn_notification_dump_contact(MsnSession *session)
 {
-	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
 	MsnUserList *userlist;
 	MsnUser *user;
 	GList *l;
@@ -629,7 +642,6 @@ msn_notification_dump_contact(MsnSession *session)
 	char *payload;
 	int payload_len;
 
-	cmdproc = session->notification->cmdproc;
 	userlist = session->userlist;
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
@@ -644,10 +656,31 @@ msn_notification_dump_contact(MsnSession *session)
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
 
-	gaim_debug_info("MaYuan","ADL{%s}\n",payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
+	msn_notification_post_adl(session->notification->cmdproc,payload,payload_len);
+}
+
+/*Post FQY to NS,Inform add a Yahoo User*/
+void
+msn_notification_fqy_yahoo(MsnSession *session,char *passport)
+{
+	MsnTransaction *trans;
+	MsnCmdProc *cmdproc;
+	char* email,*domain,*payload;
+	char **tokens;
+
+	cmdproc = session->notification->cmdproc;
+
+	tokens = g_strsplit(passport, "@", 2);
+	email = tokens[0];
+	domain = tokens[1];
+
+	payload = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",domain,email);
+	trans = msn_transaction_new(cmdproc, "FQY","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
+
+	g_free(payload);
+	g_free(tokens);
 }
 
 static void
@@ -660,6 +693,21 @@ static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	gaim_debug_info("MaYuan","Process ADL\n");
+}
+
+static void
+fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	gaim_debug_info("MaYuan","FQY payload{%s}\n",payload);
+	msn_notification_post_adl(cmdproc,payload,len);
+}
+
+static void
+fqy_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	gaim_debug_info("MaYuan","Process FQY\n");
+	cmdproc->last_cmd->payload_cb  = fqy_cmd_post;
 }
 
 static void
@@ -1344,9 +1392,21 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	/*get the payload content*/
+	gaim_debug_info("MaYuan","ubx{%s}\n",cmd->payload);
+}
+
+static void
 ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	gaim_debug_info("MaYuan","UBX... \n");
+	if(cmd->payload_len == 0){
+		return;
+	}
+	cmdproc->last_cmd->payload_cb  = ubx_cmd_post;
 }
 
 static void
@@ -1653,10 +1713,8 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
 
-	gaim_debug_info("MaYuan","ADL{%s}\n",payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
-	msn_cmdproc_send_trans(cmdproc, trans);
+	msn_notification_post_adl(notification->servconn->cmdproc,
+							payload,payload_len);
 }
 
 void
@@ -1727,6 +1785,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "CHL", chl_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "RML", rml_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "ADL", adl_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "FQY", fqy_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "QRY", NULL);
 	msn_table_add_cmd(cbs_table, NULL, "QNG", NULL);
