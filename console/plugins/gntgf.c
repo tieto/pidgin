@@ -34,6 +34,7 @@
 #include <version.h>
 #include <blist.h>
 #include <conversation.h>
+#include <util.h>
 
 #include <gnt.h>
 #include <gntbox.h>
@@ -144,7 +145,18 @@ static void
 received_chat_msg(GaimAccount *account, const char *sender, const char *msg,
 		GaimConversation *conv, GaimMessageFlags flags, gpointer null)
 {
-	if (gaim_prefs_get_bool(PREFS_EVENT_CHAT_NICK) && (flags & GAIM_MESSAGE_NICK))
+	const char *nick;
+
+	if (flags & GAIM_MESSAGE_WHISPER)
+		return;
+	
+	nick = GAIM_CONV_CHAT(conv)->nick;
+
+	if (g_utf8_collate(sender, nick) == 0)
+		return;
+
+	if (gaim_prefs_get_bool(PREFS_EVENT_CHAT_NICK) &&
+			(gaim_utf8_has_word(msg, nick)))
 		notify(_("%s said your nick in %s"), sender, gaim_conversation_get_name(conv));
 	else if (gaim_prefs_get_bool(PREFS_EVENT_CHAT_MSG))
 		notify(_("%s sent a message in %s"), sender, gaim_conversation_get_name(conv));
