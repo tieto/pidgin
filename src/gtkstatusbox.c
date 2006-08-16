@@ -998,23 +998,28 @@ icon_choose_cb(const char *filename, gpointer data)
 
 		if (box->account) {
 			GaimPlugin *plug = gaim_find_prpl(gaim_account_get_protocol_id(box->account));
-			GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
-			if (prplinfo->icon_spec.format) {
-				char *icon = gaim_gtk_convert_buddy_icon(plug, filename);
-				gaim_account_set_buddy_icon(box->account, icon);
-				g_free(icon);
-				gaim_account_set_ui_bool(box->account, GAIM_GTK_UI, "use-global-buddyicon", FALSE);
+			if (plug) {
+				GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+				if (prplinfo && prplinfo->icon_spec.format) {
+					char *icon = gaim_gtk_convert_buddy_icon(plug, filename);
+					gaim_account_set_buddy_icon(box->account, icon);
+					g_free(icon);
+					gaim_account_set_ui_bool(box->account, GAIM_GTK_UI, "use-global-buddyicon", FALSE);
+				}
 			}
 		} else {
 			for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 				GaimAccount *account = accounts->data;
 				GaimPlugin *plug = gaim_find_prpl(gaim_account_get_protocol_id(account));
-				GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
-				if (gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) &&
-					prplinfo->icon_spec.format) {
-					char *icon = gaim_gtk_convert_buddy_icon(plug, filename);
-					gaim_account_set_buddy_icon(account, icon);
-					g_free(icon);
+				if (plug) {
+					GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+					if (prplinfo != NULL &&
+					    gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) &&
+					    prplinfo->icon_spec.format) {
+						char *icon = gaim_gtk_convert_buddy_icon(plug, filename);
+						gaim_account_set_buddy_icon(account, icon);
+						g_free(icon);
+					}
 				}
 			}
 		}
