@@ -2457,6 +2457,8 @@ str_array_match(char **a, char **b)
 char*
 gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
+	g_return_val_if_fail(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->icon_spec.format != NULL, NULL);
+
 #if GTK_CHECK_VERSION(2,2,0)
 	int width, height;
 	char **pixbuf_formats = NULL;

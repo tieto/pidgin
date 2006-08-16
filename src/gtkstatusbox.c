@@ -926,7 +926,8 @@ icon_choose_cb(const char *filename, GtkGaimStatusBox *box)
 		GList *accounts;
 		for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			GaimAccount *account = accounts->data;
-			if (gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddy-icon", TRUE)) {
+			if (gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddy-icon", TRUE) &&
+			    GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(account)))->icon_spec.format) {
 				char *icon = gaim_gtk_convert_buddy_icon(gaim_find_prpl(gaim_account_get_protocol_id(account)),
 									 filename);
 				gaim_account_set_buddy_icon(account, icon);
