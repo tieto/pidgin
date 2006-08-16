@@ -41,6 +41,8 @@ msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 	soapconn->gsc = NULL;
 	soapconn->input_handler = -1;
 	soapconn->output_handler = -1;
+
+	soapconn->soap_queue = g_queue_new();
 	return soapconn;
 }
 
@@ -65,6 +67,9 @@ msn_soap_connect_cb(gpointer data, GaimSslConnection *gsc,
 	if(soapconn->connect_cb != NULL){
 		soapconn->connect_cb(data,gsc,cond);
 	}
+
+	/*we do the SOAP request here*/
+	msn_soap_post_head_request(soapconn);
 }
 
 /*ssl soap error callback*/
@@ -90,6 +95,11 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
 	soapconn->error_cb = error_cb;
+}
+
+void
+msn_soap_connect(MsnSoapConn *soapconn)
+{
 	if(soapconn->ssl_conn){
 		gaim_ssl_connect(soapconn->session->account, soapconn->login_host,
 				GAIM_SSL_DEFAULT_PORT, msn_soap_connect_cb, msn_soap_error_cb,
@@ -98,10 +108,24 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 	}
 }
 
+void
+msn_soap_close(MsnSoapConn *soapconn)
+{
+	if(soapconn->ssl_conn){
+		if(soapconn->gsc != NULL){
+			gaim_ssl_close(soapconn->gsc);
+			soapconn->gsc = NULL;
+		}
+	}else{
+	}
+}
+
 /*destroy the soap connection*/
 void
 msn_soap_destroy(MsnSoapConn *soapconn)
 {
+	MsnSoapReq *request;
+
 	if(soapconn->login_host)
 		g_free(soapconn->login_host);
 
@@ -120,11 +144,12 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	msn_soap_free_write_buf(soapconn);
 
 	/*close ssl connection*/
-	if(soapconn->gsc != NULL){
-		gaim_ssl_close(soapconn->gsc);
-	}
-	soapconn->gsc = NULL;
+	msn_soap_close(soapconn);
 
+	while ((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
+		msn_soap_request_free(request);
+	}
+	g_queue_free(soapconn->soap_queue);
 	g_free(soapconn);
 }
 
@@ -290,7 +315,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			gaim_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
 
 			if(soapconn->read_len < body_start - soapconn->read_buf + soapconn->body_len){
-					return;
+				return;
 			}
 			g_free(body_len);
 
@@ -302,8 +327,12 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 			/*call the read callback*/
 			if(soapconn->read_cb != NULL){
-					soapconn->read_cb(soapconn,source,0);
+				soapconn->read_cb(soapconn,source,0);
 			}
+
+			/*Process the next queued SOAP request*/
+			msn_soap_post_head_request(soapconn);
+
 #if 0
 	/*clear the read buffer*/
 	msn_soap_free_read_buf(soapconn);
@@ -404,16 +433,78 @@ msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction writte
 	msn_soap_write_cb(soapconn, soapconn->gsc->fd, GAIM_INPUT_WRITE);
 }
 
-/*Post the soap action*/
+/* New a soap request*/
+MsnSoapReq *
+msn_soap_request_new(const char *host,const char *post_url,const char *soap_action,
+				const char *body,
+				GaimInputFunction read_cb,GaimInputFunction written_cb)
+{
+	MsnSoapReq *request;
+
+	request = g_new0(MsnSoapReq, 1);
+	request->id = 0;
+
+	request->login_host = g_strdup(host);
+	request->login_path = g_strdup(post_url);
+	request->soap_action		= g_strdup(soap_action);
+	request->body		= g_strdup(body);
+	request->read_cb	= read_cb;
+	request->written_cb	= written_cb;
+
+	return request;
+}
+
+/*free a soap request*/
 void
-msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_cb)
+msn_soap_request_free(MsnSoapReq *request)
+{
+	g_return_if_fail(request != NULL);
+
+	g_free(request->login_host);
+	g_free(request->login_path);
+	g_free(request->soap_action);
+	g_free(request->body);
+	request->read_cb	= NULL;
+	request->written_cb	= NULL;
+
+	g_free(request);
+}
+
+void
+msn_soap_post_head_request(MsnSoapConn *soapconn)
+{
+	if(!g_queue_is_empty(soapconn->soap_queue)){
+		MsnSoapReq *request;
+	
+		if((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
+			msn_soap_post_request(soapconn,request);
+		}
+	}
+}
+
+void
+msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
+{
+	g_queue_push_tail(soapconn->soap_queue, request);
+	if(!msn_soap_connected(soapconn)){
+		/*not connected?connect it first*/
+		msn_soap_connect(soapconn);
+		return;
+	}
+	/*if connected, what we only needed to do is to queue the request, 
+	 * when SOAP request in the queue processed done, will do this command.
+	 * we just waiting...
+	 */
+}
+
+/*Post the soap request action*/
+void
+msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 {
 	char * soap_head = NULL;
-	char * soap_body = NULL;
 	char * request_str = NULL;
 
 	gaim_debug_info("MaYuan","msn_soap_post()...\n");
-	soap_body = g_strdup_printf(body);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
 					"SOAPAction: %s\r\n"
@@ -425,21 +516,18 @@ msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_
 					"Content-Length: %d\r\n"
 					"Connection: Keep-Alive\r\n"
 					"Cache-Control: no-cache\r\n\r\n",
-					soapconn->login_path,
-					soapconn->soap_action,
+					request->login_path,
+					request->soap_action,
 					soapconn->session->passport_info.mspauth,
-					soapconn->login_host,
-					strlen(soap_body)
+					request->login_host,
+					strlen(request->body)
 					);
-	request_str = g_strdup_printf("%s%s", soap_head,soap_body);
-	g_free(soapconn->login_path);
-	g_free(soapconn->soap_action);
+	request_str = g_strdup_printf("%s%s", soap_head,request->body);
 	g_free(soap_head);
-	g_free(soap_body);
 
 	/*free read buffer*/
 	msn_soap_free_read_buf(soapconn);
 	gaim_debug_info("MaYuan","send to  server{%s}\n",request_str);
-	msn_soap_write(soapconn,request_str,written_cb);
+	msn_soap_write(soapconn,request_str,request->written_cb);
 }
 

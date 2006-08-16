@@ -28,8 +28,25 @@
 
 #define MSN_SOAP_READ_BUFF_SIZE		8192
 
+/*MSN SoapRequest structure*/
+typedef struct _MsnSoapReq MsnSoapReq;
+
 /*MSN Https connection structure*/
 typedef struct _MsnSoapConn MsnSoapConn;
+
+struct _MsnSoapReq{
+	/*request sequence*/
+	int	 id;
+
+	char *login_host;
+	char *login_path;
+	char *soap_action;
+
+	char *body;
+
+	GaimInputFunction read_cb;
+	GaimInputFunction written_cb;
+};
 
 struct _MsnSoapConn{
 	MsnSession *session;
@@ -55,6 +72,10 @@ struct _MsnSoapConn{
 	/*write handler*/
 	guint output_handler;
 
+	/*Queue of SOAP request to send*/
+	int soap_id;
+	GQueue *soap_queue;
+
 	/*write buffer*/
 	char *write_buf;
 	gsize written_len;
@@ -71,6 +92,15 @@ struct _MsnSoapConn{
 };
 
 /*Function Prototype*/
+/*Soap Request Function */
+MsnSoapReq *
+msn_soap_request_new(const char *host,const char *post_url,const char *soap_action,
+				const char *body,
+				GaimInputFunction read_cb,GaimInputFunction written_cb);
+void msn_soap_request_free(MsnSoapReq *request);
+void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
+void msn_soap_post_head_request(MsnSoapConn *soapconn);
+
 /*new a soap conneciton */
 MsnSoapConn *msn_soap_new(MsnSession *session,gpointer data,int sslconn);
 
@@ -82,7 +112,7 @@ void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,GaimSslInputFunctio
 
 /*write to soap*/
 void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction written_cb);
-void msn_soap_post(MsnSoapConn *soapconn,const char * body,GaimInputFunction written_cb);
+void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request);
 
 void  msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);

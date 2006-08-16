@@ -109,7 +109,8 @@ msn_oim_send_written_cb(gpointer data, gint source, GaimInputCondition cond)
 void 
 msn_oim_send_single_msg(MsnOim *oim,char * msg)
 {
-	const char *oimsoapbody,*t,*p;
+	MsnSoapReq *soap_request;
+	const char *soap_body,*t,*p;
 
 	gaim_debug_info("MaYuan","send single OIM Message\n");
 	oim->sendconn->login_path = g_strdup(MSN_OIM_SEND_URL);
@@ -128,8 +129,12 @@ msn_oim_send_single_msg(MsnOim *oim,char * msg)
 					msg
 					);
 #endif
-	msn_soap_post(oim->retrieveconn, oimsoapbody, msn_oim_send_written_cb);
-
+	soap_request = msn_soap_request_new(MSN_OIM_SEND_HOST,
+					MSN_OIM_SEND_URL,MSN_OIM_SEND_SOAP_ACTION,
+					soap_body,
+					msn_oim_send_read_cb,
+					msn_oim_send_written_cb);
+	msn_soap_post(oim->sendconn,soap_request);
 }
 
 void msn_oim_send_msg(MsnOim *oim,char *msg)
@@ -234,7 +239,8 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 {
-	const char *oimsoapbody,*t,*p;
+	MsnSoapReq *soap_request;
+	const char *soap_body,*t,*p;
 
 	gaim_debug_info("MaYuan","Get single OIM Message\n");
 	oim->retrieveconn->login_path = g_strdup(MSN_OIM_RETRIEVE__URL);
@@ -242,12 +248,17 @@ static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 	t = oim->session->passport_info.t;
 	p = oim->session->passport_info.p;
 
-	oimsoapbody = g_strdup_printf(MSN_OIM_GET_TEMPLATE,
+	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE,
 					t,
 					p,
 					msgid
 					);
-	msn_soap_post(oim->retrieveconn, oimsoapbody, msn_oim_get_written_cb);
+	soap_request = msn_soap_request_new(MSN_OIM_SEND_HOST,
+					MSN_OIM_SEND_URL,MSN_OIM_SEND_SOAP_ACTION,
+					soap_body,
+					msn_oim_get_read_cb,
+					msn_oim_get_written_cb);
+	msn_soap_post(oim->retrieveconn,soap_request);
 }
 
 /*MSN OIM get SOAP request*/
