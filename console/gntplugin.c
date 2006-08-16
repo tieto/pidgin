@@ -18,6 +18,8 @@ static struct
 	GntWidget *conf;
 } plugins;
 
+static GHashTable *confwins;
+
 static void
 decide_conf_button(GaimPlugin *plugin)
 {
@@ -44,8 +46,15 @@ plugin_toggled_cb(GntWidget *tree, GaimPlugin *plugin, gpointer null)
 	}
 	else
 	{
+		GntWidget *win;
+
 		if (!gaim_plugin_unload(plugin))
 			gaim_notify_error(NULL, "ERROR", "unloading plugin failed", NULL);
+
+		if ((win = g_hash_table_lookup(confwins, plugin)) != NULL)
+		{
+			gnt_widget_destroy(win);
+		}
 	}
 	decide_conf_button(plugin);
 	gg_plugins_save_loaded();
@@ -111,6 +120,18 @@ plugin_compare(GaimPlugin *p1, GaimPlugin *p2)
 }
 
 static void
+confwin_init()
+{
+	confwins = g_hash_table_new(g_direct_hash, g_direct_equal);
+}
+
+static void
+remove_confwin(GntWidget *window, gpointer plugin)
+{
+	g_hash_table_remove(confwins, plugin);
+}
+
+static void
 configure_plugin_cb(GntWidget *button, gpointer null)
 {
 	GaimPlugin *plugin;
@@ -125,6 +146,9 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 			_("Plugin need to be loaded before you can configure it."), NULL);
 		return;
 	}
+
+	if (confwins && g_hash_table_lookup(confwins, plugin))
+		return;
 
 	if (GAIM_IS_GNT_PLUGIN(plugin) &&
 			(callback = GAIM_GNT_PLUGIN_UI_INFO(plugin)) != NULL)
@@ -146,8 +170,13 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 		gnt_box_add_widget(GNT_BOX(box), button);
 		g_signal_connect_swapped(G_OBJECT(button), "activate",
 				G_CALLBACK(gnt_widget_destroy), window);
+		g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(remove_confwin), plugin);
 
-		gnt_widget_show(window);  /* XXX: This window needs to be closed when the plugin is unloaded */
+		gnt_widget_show(window);
+
+		if (confwins == NULL)
+			confwin_init();
+		g_hash_table_insert(confwins, plugin, window);
 	}
 	else if (plugin->info->prefs_info &&
 			plugin->info->prefs_info->get_plugin_pref_frame)
