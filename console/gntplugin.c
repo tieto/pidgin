@@ -1,5 +1,6 @@
 #include <gnt.h>
 #include <gntbox.h>
+#include <gntbutton.h>
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
@@ -14,7 +15,24 @@ static struct
 	GntWidget *tree;
 	GntWidget *window;
 	GntWidget *aboot;
+	GntWidget *conf;
 } plugins;
+
+static void
+decide_conf_button(GaimPlugin *plugin)
+{
+	if (gaim_plugin_is_loaded(plugin) && 
+		((GAIM_IS_GNT_PLUGIN(plugin) &&
+			GAIM_GNT_PLUGIN_UI_INFO(plugin) != NULL) ||
+		(plugin->info->prefs_info &&
+			plugin->info->prefs_info->get_plugin_pref_frame)))
+		gnt_widget_set_visible(plugins.conf, TRUE);
+	else
+		gnt_widget_set_visible(plugins.conf, FALSE);
+
+	gnt_box_readjust(GNT_BOX(plugins.window));
+	gnt_widget_draw(plugins.window);
+}
 
 static void
 plugin_toggled_cb(GntWidget *tree, GaimPlugin *plugin, gpointer null)
@@ -29,6 +47,7 @@ plugin_toggled_cb(GntWidget *tree, GaimPlugin *plugin, gpointer null)
 		if (!gaim_plugin_unload(plugin))
 			gaim_notify_error(NULL, "ERROR", "unloading plugin failed", NULL);
 	}
+	decide_conf_button(plugin);
 	gg_plugins_save_loaded();
 }
 
@@ -69,6 +88,7 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
 	g_free(text);
+	decide_conf_button(plugin);
 }
 
 static void
@@ -90,9 +110,63 @@ plugin_compare(GaimPlugin *p1, GaimPlugin *p2)
 	return ret;
 }
 
+static void
+configure_plugin_cb(GntWidget *button, gpointer null)
+{
+	GaimPlugin *plugin;
+	GGPluginFrame callback;
+
+	g_return_if_fail(plugins.tree != NULL);
+
+	plugin = gnt_tree_get_selection_data(GNT_TREE(plugins.tree));
+	if (!gaim_plugin_is_loaded(plugin))
+	{
+		gaim_notify_error(plugin, _("Error"),
+			_("Plugin need to be loaded before you can configure it."), NULL);
+		return;
+	}
+
+	if (GAIM_IS_GNT_PLUGIN(plugin) &&
+			(callback = GAIM_GNT_PLUGIN_UI_INFO(plugin)) != NULL)
+	{
+		GntWidget *window = gnt_vbox_new(FALSE);
+		GntWidget *box, *button;
+
+		gnt_box_set_toplevel(GNT_BOX(window), TRUE);
+		gnt_box_set_title(GNT_BOX(window), plugin->info->name);
+		gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
+
+		box = callback();
+		gnt_box_add_widget(GNT_BOX(window), box);
+
+		box = gnt_hbox_new(FALSE);
+		gnt_box_add_widget(GNT_BOX(window), box);
+
+		button = gnt_button_new(_("Close"));
+		gnt_box_add_widget(GNT_BOX(box), button);
+		g_signal_connect_swapped(G_OBJECT(button), "activate",
+				G_CALLBACK(gnt_widget_destroy), window);
+
+		gnt_widget_show(window);  /* XXX: This window needs to be closed when the plugin is unloaded */
+	}
+	else if (plugin->info->prefs_info &&
+			plugin->info->prefs_info->get_plugin_pref_frame)
+	{
+		gaim_notify_info(plugin, _("..."),
+			_("Still need to do something about this."), NULL);
+		return;
+	}
+	else
+	{
+		gaim_notify_info(plugin, _("Error"),
+			_("No configuration options for this plugin."), NULL);
+		return;
+	}
+}
+
 void gg_plugins_show_all()
 {
-	GntWidget *window, *tree, *box, *aboot;
+	GntWidget *window, *tree, *box, *aboot, *button;
 	GList *iter;
 	if (plugins.window)
 		return;
@@ -103,6 +177,7 @@ void gg_plugins_show_all()
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), _("Plugins"));
 	gnt_box_set_pad(GNT_BOX(window), 0);
+	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
 	gnt_box_add_widget(GNT_BOX(window),
 			gnt_label_new(_("You can (un)load plugins from the following list.")));
@@ -139,8 +214,23 @@ void gg_plugins_show_all()
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);
 	g_signal_connect(G_OBJECT(tree), "selection_changed", G_CALLBACK(selection_changed), NULL);
+
+	box = gnt_hbox_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(window), box);
+
+	button = gnt_button_new(_("Close"));
+	gnt_box_add_widget(GNT_BOX(box), button);
+	g_signal_connect_swapped(G_OBJECT(button), "activate",
+			G_CALLBACK(gnt_widget_destroy), window);
+
+	plugins.conf = button = gnt_button_new(_("Configure Plugin"));
+	gnt_box_add_widget(GNT_BOX(box), button);
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(configure_plugin_cb), NULL);
+
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(reset_plugin_window), NULL);
 
 	gnt_widget_show(window);
+
+	decide_conf_button(gnt_tree_get_selection_data(GNT_TREE(tree)));
 }
 

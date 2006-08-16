@@ -586,10 +586,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 			if (changed)
 			{
-				GntNode *node = g_hash_table_lookup(nodes, widget);
-				gnt_widget_set_position(widget, x, y);
-				move_panel(node->panel, y, x);
-				update_screen(NULL);
+				gnt_screen_move_widget(widget, x, y);
 			}
 		}
 		else if (*buffer == '\r')
@@ -877,5 +874,13 @@ void gnt_screen_resize_widget(GntWidget *widget, int width, int height)
 		show_panel(node->panel);
 		update_screen(NULL);
 	}
+}
+
+void gnt_screen_move_widget(GntWidget *widget, int x, int y)
+{
+	GntNode *node = g_hash_table_lookup(nodes, widget);
+	gnt_widget_set_position(widget, x, y);
+	move_panel(node->panel, y, x);
+	update_screen(NULL);
 }
 
