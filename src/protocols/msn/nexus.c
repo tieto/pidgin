@@ -294,13 +294,13 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 /* this guards against missing hash entries */
-char *
+static char *
 nexus_challenge_data_lookup(GHashTable *challenge_data, const char *key)
 {
-  char *entry;
+	char *entry;
 
-  return (entry = (char *)g_hash_table_lookup(challenge_data, key)) ?
-    entry : "(null)";
+	return (entry = (char *)g_hash_table_lookup(challenge_data, key)) ?
+		entry : "(null)";
 }
 
 void
