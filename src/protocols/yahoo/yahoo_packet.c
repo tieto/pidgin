@@ -40,7 +40,11 @@ struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_sta
 
 void yahoo_packet_hash_str(struct yahoo_packet *pkt, int key, const char *value)
 {
-	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
+	struct yahoo_pair *pair;
+
+	g_return_if_fail(value != NULL);
+
+	pair = g_new0(struct yahoo_pair, 1);
 	pair->key = key;
 	pair->value = g_strdup(value);
 	pkt->hash = g_slist_prepend(pkt->hash, pair);
@@ -48,8 +52,9 @@ void yahoo_packet_hash_str(struct yahoo_packet *pkt, int key, const char *value)
 
 void yahoo_packet_hash_int(struct yahoo_packet *pkt, int key, int value)
 {
-	struct yahoo_pair *pair = g_new0(struct yahoo_pair, 1);
+	struct yahoo_pair *pair;
 
+	pair = g_new0(struct yahoo_pair, 1);
 	pair->key = key;
 	pair->value = g_strdup_printf("%d", value);
 	pkt->hash = g_slist_prepend(pkt->hash, pair);
