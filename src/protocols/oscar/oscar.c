@@ -4369,7 +4369,8 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 		/* This is needed for us to un-set any previous away message. */
 		away = g_strdup("");
 	}
-	else if (primitive == GAIM_STATUS_AWAY)
+	else if ((primitive == GAIM_STATUS_AWAY) ||
+			 (primitive == GAIM_STATUS_EXTENDED_AWAY))
 	{
 		htmlaway = gaim_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
@@ -5609,19 +5610,25 @@ oscar_status_types(GaimAccount *account)
 	status_types = g_list_append(status_types, type);
 
 	/* ICQ-specific status types */
-	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
-									 OSCAR_STATUS_ID_OCCUPIED,
-									 _("Occupied"), TRUE, is_icq, FALSE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE,
+				OSCAR_STATUS_ID_OCCUPIED,
+				_("Occupied"), TRUE, is_icq, FALSE,
+				"message", _("Message"),
+				gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
-									 OSCAR_STATUS_ID_DND,
-									 _("Do Not Disturb"), TRUE, is_icq, FALSE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY,
+				OSCAR_STATUS_ID_DND,
+				_("Do Not Disturb"), TRUE, is_icq, FALSE,
+				"message", _("Message"),
+				gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_EXTENDED_AWAY,
-									 OSCAR_STATUS_ID_NA,
-									 _("Not Available"), TRUE, is_icq, FALSE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY,
+				OSCAR_STATUS_ID_NA,
+				_("Not Available"), TRUE, is_icq, FALSE,
+				"message", _("Message"),
+				gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
