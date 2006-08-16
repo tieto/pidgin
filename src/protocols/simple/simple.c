@@ -604,7 +604,7 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 		const gchar *body, struct sip_dialog *dialog, TransCallback tc) {
 	struct simple_account_data *sip = gc->proto_data;
 	char *callid = dialog ? g_strdup(dialog->callid) : gencallid();
-	char *auth = "";
+	char *auth = NULL;
 	const char *addh = "";
 	gchar *branch = genbranch();
 	gchar *tag = NULL;
@@ -662,7 +662,7 @@ static void send_sip_request(GaimConnection *gc, const gchar *method,
 			++sip->cseq,
 			method,
 			callid,
-			auth,
+			auth ? auth : "",
 			addh,
 			strlen(body),
 			body);
