@@ -2636,6 +2636,11 @@ gaim_blist_init(void)
 										GAIM_SUBTYPE_STATUS),
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_STATUS));
+	gaim_signal_register(handle, "buddy-privacy-changed",
+	                     gaim_marshal_VOID__POINTER, NULL,
+	                     1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "buddy-idle-changed",
 	                     gaim_marshal_VOID__POINTER_INT_INT, NULL,

@@ -34,6 +34,7 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who,
 {
 	GSList *l;
 	char *name;
+	GaimBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -41,16 +42,17 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who,
 	name = g_strdup(gaim_normalize(account, who));
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, gaim_normalize(account, (char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, (char *)l->data))
 			break;
 	}
 
-	g_free(name);
+ 	if (l != NULL)
+	{
+		g_free(name);
+ 		return FALSE;
+	}
 
-	if (l != NULL)
-		return FALSE;
-
-	account->permit = g_slist_append(account->permit, g_strdup(who));
+	account->permit = g_slist_append(account->permit, name);
 
 	if (!local_only && gaim_account_is_connected(account))
 		serv_add_permit(gaim_account_get_connection(account), who);
@@ -60,6 +62,12 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who,
 
 	gaim_blist_schedule_save();
 
+	/* This lets the UI know a buddy has had its privacy setting changed */
+	buddy = gaim_find_buddy(account, name);
+	if (buddy != NULL) {
+		gaim_signal_emit(gaim_blist_get_handle(),
+                "buddy-privacy-changed", buddy);
+	}
 	return TRUE;
 }
 
@@ -69,18 +77,17 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 {
 	GSList *l;
 	char *name;
+	GaimBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(gaim_normalize(account, who));
+	name = gaim_normalize(account, who);
 
 	for (l = account->permit; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, gaim_normalize(account, (char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, (char *)l->data))
 			break;
 	}
-
-	g_free(name);
 
 	if (l == NULL)
 		return FALSE;
@@ -96,6 +103,11 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 
 	gaim_blist_schedule_save();
 
+	buddy = gaim_find_buddy(account, name);
+	if (buddy != NULL) {
+		gaim_signal_emit(gaim_blist_get_handle(),
+                "buddy-privacy-changed", buddy);
+	}
 	return TRUE;
 }
 
@@ -105,6 +117,7 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who,
 {
 	GSList *l;
 	char *name;
+	GaimBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -116,12 +129,13 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who,
 			break;
 	}
 
-	g_free(name);
-
 	if (l != NULL)
+	{
+		g_free(name);
 		return FALSE;
+	}
 
-	account->deny = g_slist_append(account->deny, g_strdup(who));
+	account->deny = g_slist_append(account->deny, name);
 
 	if (!local_only && gaim_account_is_connected(account))
 		serv_add_deny(gaim_account_get_connection(account), who);
@@ -131,6 +145,11 @@ gaim_privacy_deny_add(GaimAccount *account, const char *who,
 
 	gaim_blist_schedule_save();
 
+	buddy = gaim_find_buddy(account, name);
+	if (buddy != NULL) {
+		gaim_signal_emit(gaim_blist_get_handle(),
+                "buddy-privacy-changed", buddy);
+	}
 	return TRUE;
 }
 
@@ -140,18 +159,19 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 {
 	GSList *l;
 	char *name;
+	GaimBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(gaim_normalize(account, who));
+	name = gaim_normalize(account, who);
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, gaim_normalize(account, (char *)l->data)))
+		if (!gaim_utf8_strcasecmp(name, (char *)l->data))
 			break;
 	}
 
-	g_free(name);
+	buddy = gaim_find_buddy(account, name);
 
 	if (l == NULL)
 		return FALSE;
@@ -163,7 +183,12 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 		serv_rem_deny(gaim_account_get_connection(account), name);
 
 	if (privacy_ops != NULL && privacy_ops->deny_removed != NULL)
-		privacy_ops->deny_removed(account, name);
+		privacy_ops->deny_removed(account, who);
+
+	if (buddy != NULL) {
+		gaim_signal_emit(gaim_blist_get_handle(),
+                "buddy-privacy-changed", buddy);
+	}
 
 	g_free(name);
 	gaim_blist_schedule_save();
@@ -184,15 +209,17 @@ gaim_privacy_check(GaimAccount *account, const char *who)
 			return FALSE;
 
 		case GAIM_PRIVACY_ALLOW_USERS:
+			who = gaim_normalize(account, who);
 			for (list=account->permit; list!=NULL; list=list->next) {
-				if (!gaim_utf8_strcasecmp(who, gaim_normalize(account, (char *)list->data)))
+				if (!gaim_utf8_strcasecmp(who, (char *)list->data))
 					return TRUE;
 			}
 			return FALSE;
 
 		case GAIM_PRIVACY_DENY_USERS:
+			who = gaim_normalize(account, who);
 			for (list=account->deny; list!=NULL; list=list->next) {
-				if (!gaim_utf8_strcasecmp(who, gaim_normalize( account, (char *)list->data )))
+				if (!gaim_utf8_strcasecmp(who, (char *)list->data ))
 					return FALSE;
 			}
 			return TRUE;

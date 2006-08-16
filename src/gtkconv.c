@@ -2185,6 +2185,7 @@ gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 	GaimAccount *account = NULL;
 	const char *name = NULL;
 	GdkPixbuf *status = NULL;
+	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 
 	g_return_val_if_fail(conv != NULL, NULL);
 
@@ -2198,6 +2199,12 @@ gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		GaimBuddy *b = gaim_find_buddy(account, name);
 		if (b != NULL) {
+			/* I hate this hack.  It fixes a bug where the pending message icon
+			 * displays in the conv tab even though it shouldn't.
+			 * A better solution would be great. */
+			if (ops && ops->update)
+				ops->update(NULL, (GaimBlistNode*)b);
+
 			status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)b,
 				(small_icon ? GAIM_STATUS_ICON_SMALL : GAIM_STATUS_ICON_LARGE));
 		}
@@ -6341,6 +6348,20 @@ update_buddy_status_changed(GaimBuddy *buddy, GaimStatus *old, GaimStatus *newst
 }
 
 static void
+update_buddy_privacy_changed(GaimBuddy *buddy)
+{
+	GaimGtkConversation *gtkconv;
+	GaimConversation *conv;
+
+	gtkconv = get_gtkconv_with_contact(gaim_buddy_get_contact(buddy));
+	if (gtkconv)
+	{
+		conv = gtkconv->active_conv;
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON);
+	}
+}
+
+static void
 update_buddy_idle_changed(GaimBuddy *buddy, gboolean old, gboolean newidle)
 {
 	GaimConversation *conv;
@@ -6628,6 +6649,8 @@ gaim_gtk_conversations_init(void)
 						handle, GAIM_CALLBACK(update_buddy_sign), "off");
 	gaim_signal_connect(blist_handle, "buddy-status-changed",
 						handle, GAIM_CALLBACK(update_buddy_status_changed), NULL);
+	gaim_signal_connect(blist_handle, "buddy-privacy-changed",
+						handle, GAIM_CALLBACK(update_buddy_privacy_changed), NULL);
 	gaim_signal_connect(blist_handle, "buddy-idle-changed",
 						handle, GAIM_CALLBACK(update_buddy_idle_changed), NULL);
 	gaim_signal_connect(blist_handle, "buddy-icon-changed",

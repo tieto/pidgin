@@ -143,7 +143,7 @@ GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist(void);
  * Populates a menu with the items shown on the buddy list for a buddy.
  *
  * @param menu  The menu to populate
- * @param buddy The buddy who's menu to get
+ * @param buddy The buddy whose menu to get
  * @param sub   TRUE if this is a sub-menu, FALSE otherwise
  */
 void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub);
