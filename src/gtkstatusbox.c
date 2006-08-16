@@ -989,7 +989,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
-	status_box->buddy_icon = gdk_pixbuf_new_from_file("/home/seanegan/p1120233.jpg", NULL);
 	status_box->icon = gtk_image_new_from_pixbuf(status_box->buddy_icon);
 	status_box->icon_box = gtk_event_box_new();
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -1184,6 +1183,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 		{
 			scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
 								   icon_alc.height, icon_alc.width, FALSE, NULL);
+			g_object_unref(status_box->buddy_icon_hover);
 			status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
 			do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
 			g_object_unref(status_box->buddy_icon);
