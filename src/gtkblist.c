@@ -2991,10 +2991,8 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
 		else if (!selected && !text)
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
-				"<span color='%s' size='smaller'>%s%s%s</span>",
+				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
-				idletime != NULL ? idletime : "",
-				(idletime != NULL && statustext != NULL) ? " - " : "",
 				statustext != NULL ? statustext : "");
 	}
 
