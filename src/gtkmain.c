@@ -650,7 +650,9 @@ int main(int argc, char *argv[])
 	 * threadify dbus when that gets initialized.  Ugh. */
 	if (!g_thread_supported())
 		g_thread_init(NULL);
+#ifndef _WIN32
 	gdk_threads_init();
+#endif
 #endif /* Glib has threads */
 
 	gui_check = gtk_init_check(&argc, &argv);
