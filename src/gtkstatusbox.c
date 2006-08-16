@@ -953,7 +953,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *bo
 	}
 
 	box->buddy_icon_sel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
-	gtk_widget_show_all(filesel);
+	gtk_widget_show_all(box->buddy_icon_sel);
 	return FALSE;
 }
 
