@@ -293,6 +293,15 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 }
 
+/* this guards against missing hash entries */
+char *
+nexus_challenge_data_lookup(GHashTable *challenge_data, const char *key)
+{
+  char *entry;
+
+  return (entry = (char *)g_hash_table_lookup(challenge_data, key)) ?
+    entry : "(null)";
+}
 
 void
 login_connect_cb(gpointer data, GaimSslConnection *gsc,
@@ -336,16 +345,16 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		"Host: %s\r\n"
 		"Connection: Keep-Alive\r\n"
 		"Cache-Control: no-cache\r\n",
-		(char *)g_hash_table_lookup(nexus->challenge_data, "lc"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "id"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "tw"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "fs"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "lc"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "id"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "tw"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "fs"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "ru"),
 		ctint,
-		(char *)g_hash_table_lookup(nexus->challenge_data, "kpp"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "kv"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ver"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "tpf"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "kpp"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "kv"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "ver"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "tpf"),
 		nexus->login_host);
 
 	buffer = g_strdup_printf("%s,pwd=XXXXXXXX,%s\r\n", head, tail);
