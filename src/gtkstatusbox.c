@@ -947,14 +947,12 @@ icon_choose_cb(const char *filename, gpointer data)
 static gboolean
 icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
-	GtkWidget *filesel;
-
 	if (box->buddy_icon_sel) {
 		gtk_window_present(GTK_WINDOW(box->buddy_icon_sel));
 		return FALSE;
 	}
 
-	filesel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+	box->buddy_icon_sel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
 	gtk_widget_show_all(filesel);
 	return FALSE;
 }
