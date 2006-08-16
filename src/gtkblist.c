@@ -4018,7 +4018,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->statusbox = gtk_gaim_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
 	gtk_widget_set_name(gtkblist->statusbox, "gaim_gtkblist_statusbox");
-	gtk_gaim_status_box_set_buddy_icon(gtkblist->statusbox, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
 	gtk_widget_show(gtkblist->statusbox);
 	
 	/* set the Show Offline Buddies option. must be done
