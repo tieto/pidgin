@@ -2453,7 +2453,7 @@ str_array_match(char **a, char **b)
 }
 #endif
 
-char*
+char *
 gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
 #if GTK_CHECK_VERSION(2,2,0)
@@ -2518,6 +2518,8 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	format = gdk_pixbuf_loader_get_format(loader);
 	g_object_unref(G_OBJECT(loader));
 #endif
+	if (format == NULL)
+		return NULL;
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
 	if (str_array_match(pixbuf_formats, prpl_formats) &&                  /* This is an acceptable format AND */
