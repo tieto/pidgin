@@ -124,14 +124,14 @@ pref_to_xmlnode(xmlnode *parent, struct gaim_pref *pref)
 	}
 	else if (pref->type == GAIM_PREF_STRING) {
 		xmlnode_set_attrib(node, "type", "string");
-		xmlnode_set_attrib(node, "value", pref->value.string);
+		xmlnode_set_attrib(node, "value", pref->value.string ? pref->value.string : "");
 	}
 	else if (pref->type == GAIM_PREF_STRING_LIST) {
 		xmlnode_set_attrib(node, "type", "stringlist");
 		for (cur = pref->value.stringlist; cur != NULL; cur = cur->next)
 		{
 			childnode = xmlnode_new_child(node, "item");
-			xmlnode_set_attrib(childnode, "value", cur->data);
+			xmlnode_set_attrib(childnode, "value", cur->data ? cur->data : "");
 		}
 	}
 	else if (pref->type == GAIM_PREF_BOOLEAN) {

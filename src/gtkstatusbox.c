@@ -1179,7 +1179,9 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	icon_alc.x = allocation->width - icon_alc.width;
 	icon_alc.y += 3;
 
-	if (status_box->icon_size != icon_alc.height) {
+	if ((status_box->buddy_icon_path != NULL) &&
+		(status_box->icon_size != icon_alc.height))
+	{
 		scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
 							   icon_alc.height, icon_alc.width, FALSE, NULL);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
@@ -1335,13 +1337,16 @@ gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *box, const char *filename)
 	g_free(box->buddy_icon_path);
 	box->buddy_icon_path = g_strdup(filename);
 
-	scaled = gdk_pixbuf_new_from_file_at_scale(filename,
-						   box->icon_size, box->icon_size, FALSE, NULL);
-	box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
-	do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
-	g_object_unref(box->buddy_icon);
-	box->buddy_icon = scaled;
-	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
+	if (filename != NULL)
+	{
+		scaled = gdk_pixbuf_new_from_file_at_scale(filename,
+							   box->icon_size, box->icon_size, FALSE, NULL);
+		box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
+		do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
+		g_object_unref(box->buddy_icon);
+		box->buddy_icon = scaled;
+		gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
+	}
 
 	gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
 }
