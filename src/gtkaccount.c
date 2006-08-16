@@ -271,22 +271,26 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 }
 
 static void
-icon_filesel_choose_cb(const char *filename, AccountPrefsDialog *dialog)
+icon_filesel_choose_cb(const char *filename, gpointer data)
 {
+	AccountPrefsDialog *dialog;
+
+	dialog = data;
+
 	if (filename) {
 		g_free(dialog->icon_path);
 		dialog->icon_path = gaim_gtk_convert_buddy_icon(dialog->plugin, filename);
 		set_dialog_icon(dialog);
 		gtk_widget_show(dialog->icon_entry);
 	}
-	
+
 	dialog->icon_filesel = NULL;
 }
 
 static void
 icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-	dialog->icon_filesel = gaim_gtk_buddy_icon_chooser_new(dialog->window, icon_filesel_choose_cb, dialog);
+	dialog->icon_filesel = gaim_gtk_buddy_icon_chooser_new(GTK_WINDOW(dialog->window), icon_filesel_choose_cb, dialog);
 	gtk_widget_show_all(dialog->icon_filesel);
 }
 

@@ -85,14 +85,14 @@ struct _GtkGaimStatusBox
 	GtkWidget *imhtml;
 
 	char      *buddy_icon_path;
-        GdkPixbuf *buddy_icon;
-        GdkPixbuf *buddy_icon_hover;
+	GdkPixbuf *buddy_icon;
+	GdkPixbuf *buddy_icon_hover;
 	GtkWidget *buddy_icon_sel;
-        GtkWidget *icon;
+	GtkWidget *icon;
 	GtkWidget *icon_box;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
-        int icon_size;
+	int icon_size;
 
 	gboolean imhtml_visible;
 
@@ -128,16 +128,16 @@ struct _GtkGaimStatusBox
 
 struct _GtkGaimStatusBoxClass
 {
-  GtkComboBoxClass parent_class;
+	GtkComboBoxClass parent_class;
 
-  /* signals */
-  void     (* changed)          (GtkComboBox *combo_box);
+	/* signals */
+	void     (* changed)          (GtkComboBox *combo_box);
 
-  /* Padding for future expansion */
-  void (*_gtk_reserved0) (void);
-  void (*_gtk_reserved1) (void);
-  void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
+	/* Padding for future expansion */
+	void (*_gtk_reserved0) (void);
+	void (*_gtk_reserved1) (void);
+	void (*_gtk_reserved2) (void);
+	void (*_gtk_reserved3) (void);
 };
 
 

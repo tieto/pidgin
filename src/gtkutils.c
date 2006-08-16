@@ -2358,14 +2358,13 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 }
 
 
-GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data) {
+GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char *, gpointer), gpointer data) {
 	struct _icon_chooser *dialog = g_new0(struct _icon_chooser, 1);
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	GtkWidget *hbox;
 	GtkWidget *tv;
 	GtkTreeSelection *sel;
-	
 #endif /* FILECHOOSER */
 	const char *current_folder;
 
@@ -2457,15 +2456,13 @@ str_array_match(char **a, char **b)
 char*
 gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
-	g_return_val_if_fail(GAIM_PLUGIN_PROTOCOL_INFO(plugin)->icon_spec.format != NULL, NULL);
-
 #if GTK_CHECK_VERSION(2,2,0)
 	int width, height;
 	char **pixbuf_formats = NULL;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
-	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
-	char **prpl_formats =  g_strsplit (prpl_info->icon_spec.format,",",0);
+	GaimPluginProtocolInfo *prpl_info;
+	char **prpl_formats;
 #if !GTK_CHECK_VERSION(2,4,0)
 	GdkPixbufLoader *loader;
 	FILE *file;
@@ -2473,9 +2470,18 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	void *data = NULL;
 #endif
 #endif
-	const char *dirname = gaim_buddy_icons_get_cache_dir();
-	char *random   = g_strdup_printf("%x", g_random_int());
-	char *filename = g_build_filename(dirname, random, NULL);
+	const char *dirname;
+	char *random;
+	char *filename;
+
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+	g_return_val_if_fail(prpl_info->icon_spec.format != NULL, NULL);
+
+	prpl_formats = g_strsplit(prpl_info->icon_spec.format,",",0);
+	dirname = gaim_buddy_icons_get_cache_dir();
+	random = g_strdup_printf("%x", g_random_int());
+	filename = g_build_filename(dirname, random, NULL);
 
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
 		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");

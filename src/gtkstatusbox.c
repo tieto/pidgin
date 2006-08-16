@@ -267,10 +267,10 @@ gtk_gaim_status_box_finalize(GObject *obj)
 
 	g_object_unref(G_OBJECT(statusbox->buddy_icon));
 	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
-	
+
 	if (statusbox->buddy_icon_sel)
 		gtk_widget_destroy(statusbox->buddy_icon_sel);
-	
+
 	g_free(statusbox->buddy_icon_path);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
@@ -920,8 +920,12 @@ toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 }
 
 static void
-icon_choose_cb(const char *filename, GtkGaimStatusBox *box)
+icon_choose_cb(const char *filename, gpointer data)
 {
+	GtkGaimStatusBox *box;
+
+	box = data;
+
 	if (filename) {
 		GList *accounts;
 		for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
@@ -936,19 +940,21 @@ icon_choose_cb(const char *filename, GtkGaimStatusBox *box)
 		}
 		gtk_gaim_status_box_set_buddy_icon(box, filename);
 	}
-	
+
 	box->buddy_icon_sel = NULL;
 }
 
 static gboolean
 icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
+	GtkWidget *filesel;
+
 	if (box->buddy_icon_sel) {
 		gtk_window_present(GTK_WINDOW(box->buddy_icon_sel));
 		return FALSE;
 	}
 
-	GtkWidget *filesel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+	filesel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
 	gtk_widget_show_all(filesel);
 	return FALSE;
 }
@@ -957,7 +963,7 @@ static gboolean
 icon_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *box)
 {
 	gdk_window_set_cursor(widget->window, box->hand_cursor);
-	gtk_image_set_from_pixbuf(box->icon, box->buddy_icon_hover);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon_hover);
 	return FALSE;
 }
 
@@ -965,7 +971,7 @@ static gboolean
 icon_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *box)
 {
 	gdk_window_set_cursor(widget->window, box->arrow_cursor);
-	gtk_image_set_from_pixbuf(box->icon, box->buddy_icon) ;
+	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon) ;
 	return FALSE;
 }
 
@@ -1172,15 +1178,15 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	icon_alc.width = icon_alc.height;
 	icon_alc.x = allocation->width - icon_alc.width;
 	icon_alc.y += 3;
-	
+
 	if (status_box->icon_size != icon_alc.height) {
-		scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path, 
+		scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
 							   icon_alc.height, icon_alc.width, FALSE, NULL);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
 		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
 		g_object_unref(status_box->buddy_icon);
 		status_box->buddy_icon = scaled;
-		gtk_image_set_from_pixbuf(status_box->icon, status_box->buddy_icon);
+		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 		status_box->icon_size = icon_alc.height;
 	}
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->icon_box, &icon_alc);
@@ -1329,14 +1335,14 @@ gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *box, const char *filename)
 	g_free(box->buddy_icon_path);
 	box->buddy_icon_path = g_strdup(filename);
 
-	scaled = gdk_pixbuf_new_from_file_at_scale(filename, 
+	scaled = gdk_pixbuf_new_from_file_at_scale(filename,
 						   box->icon_size, box->icon_size, FALSE, NULL);
 	box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
 	do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
 	g_object_unref(box->buddy_icon);
 	box->buddy_icon = scaled;
-	gtk_image_set_from_pixbuf(box->icon, box->buddy_icon);
-	
+	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
+
 	gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
 }
 
