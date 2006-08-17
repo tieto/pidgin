@@ -1360,29 +1360,6 @@ chat_do_im(GaimGtkConversation *gtkconv, const char *who)
 }
 
 static void
-chat_im_button_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
-{
-	GaimGtkChatPane *gtkchat;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	GtkTreeSelection *sel;
-	char *name;
-
-	gtkchat = gtkconv->u.chat;
-
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
-	sel   = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
-
-	if (gtk_tree_selection_get_selected(sel, NULL, &iter))
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
-	else
-		return;
-
-	chat_do_im(gtkconv, name);
-	g_free(name);
-}
-
-static void
 ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
