@@ -71,6 +71,7 @@ gaim_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	GaimSslConnection *gsc;
 	GaimSslOps *ops;
+	void (*connect_func)(GaimSslConnection *gsc);
 
 	gsc = data;
 	gsc->connect_info = NULL;
@@ -87,7 +88,8 @@ gaim_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 	gsc->fd = source;
 
 	ops = gaim_ssl_get_ops();
-	ops->connect(gsc);
+	connect_func = (ops->connect);
+	connect_func(gsc);
 }
 
 GaimSslConnection *
@@ -158,6 +160,7 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 {
 	GaimSslConnection *gsc;
 	GaimSslOps *ops;
+	void (*connect_func)(GaimSslConnection *gsc);
 
 	g_return_val_if_fail(fd != -1,                NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
@@ -177,7 +180,8 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 	gsc->fd              = fd;
 
 	ops = gaim_ssl_get_ops();
-	ops->connect(gsc);
+	connect_func = ops->connect;
+	connect_func(gsc);
 
 	return (GaimSslConnection *)gsc;
 }
