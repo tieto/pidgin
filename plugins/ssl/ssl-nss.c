@@ -237,15 +237,12 @@ ssl_nss_handshake_cb(gpointer data, int fd, GaimInputCondition cond)
 }
 
 static void
-ssl_nss_connect_cb(gpointer data, gint source, GaimInputCondition cond)
+ssl_nss_connect(GaimSslConnection *gsc)
 {
-	GaimSslConnection *gsc = (GaimSslConnection *)data;
 	GaimSslNssData *nss_data = g_new0(GaimSslNssData, 1);
 	PRSocketOptionData socket_opt;
 
 	gsc->private_data = nss_data;
-
-	gsc->fd = source;
 
 	nss_data->fd = PR_ImportTCPSocket(gsc->fd);
 
@@ -359,7 +356,7 @@ static GaimSslOps ssl_ops =
 {
 	ssl_nss_init,
 	ssl_nss_uninit,
-	ssl_nss_connect_cb,
+	ssl_nss_connect,
 	ssl_nss_close,
 	ssl_nss_read,
 	ssl_nss_write

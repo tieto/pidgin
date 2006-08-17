@@ -45,10 +45,14 @@ ssl_init(void)
 		gaim_plugin_load(plugin);
 
 	ops = gaim_ssl_get_ops();
-	if (ops != NULL && ops->init != NULL)
-		return ops->init();
-	else
+	if ((ops == NULL) || (ops->init == NULL) || (ops->uninit == NULL) ||
+		(ops->connect == NULL) || (ops->close == NULL) ||
+		(ops->read == NULL) || (ops->write == NULL))
+	{
 		return FALSE;
+	}
+
+	return ops->init();
 }
 
 gboolean
@@ -62,24 +66,41 @@ gaim_ssl_is_supported(void)
 #endif
 }
 
+static void
+gaim_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
+{
+	GaimSslConnection *gsc;
+	GaimSslOps *ops;
+
+	gsc = data;
+	gsc->connect_info = NULL;
+
+	if (source < 0)
+	{
+		if (gsc->error_cb != NULL)
+			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
+
+		gaim_ssl_close(gsc);
+		return;
+	}
+
+	gsc->fd = source;
+
+	ops = gaim_ssl_get_ops();
+	ops->connect(gsc);
+}
+
 GaimSslConnection *
 gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 				 GaimSslInputFunction func, GaimSslErrorFunction error_func,
 				 void *data)
 {
 	GaimSslConnection *gsc;
-	GaimSslOps *ops;
-	GaimProxyConnectInfo *connect_info;
 
 	g_return_val_if_fail(host != NULL,            NULL);
 	g_return_val_if_fail(port != 0 && port != -1, NULL);
 	g_return_val_if_fail(func != NULL,            NULL);
 	g_return_val_if_fail(gaim_ssl_is_supported(), NULL);
-
-	ops = gaim_ssl_get_ops();
-
-	g_return_val_if_fail(ops != NULL, NULL);
-	g_return_val_if_fail(ops->connect_cb != NULL, NULL);
 
 	if (!_ssl_initialized)
 	{
@@ -89,15 +110,16 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 
 	gsc = g_new0(GaimSslConnection, 1);
 
+	gsc->fd              = -1;
 	gsc->host            = g_strdup(host);
 	gsc->port            = port;
 	gsc->connect_cb_data = data;
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 
-	connect_info = gaim_proxy_connect(account, host, port, ops->connect_cb, gsc);
+	gsc->connect_info = gaim_proxy_connect(account, host, port, gaim_ssl_connect_cb, gsc);
 
-	if (connect_info == NULL)
+	if (gsc->connect_info == NULL)
 	{
 		g_free(gsc->host);
 		g_free(gsc);
@@ -141,11 +163,6 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 	g_return_val_if_fail(func != NULL,            NULL);
 	g_return_val_if_fail(gaim_ssl_is_supported(), NULL);
 
-	ops = gaim_ssl_get_ops();
-
-	g_return_val_if_fail(ops != NULL, NULL);
-	g_return_val_if_fail(ops->connect_cb != NULL, NULL);
-
 	if (!_ssl_initialized)
 	{
 		if (!ssl_init())
@@ -157,8 +174,10 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 	gsc->connect_cb_data = data;
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
+	gsc->fd              = fd;
 
-	ops->connect_cb(gsc, fd, GAIM_INPUT_READ);
+	ops = gaim_ssl_get_ops();
+	ops->connect(gsc);
 
 	return (GaimSslConnection *)gsc;
 }
@@ -171,14 +190,15 @@ gaim_ssl_close(GaimSslConnection *gsc)
 	g_return_if_fail(gsc != NULL);
 
 	ops = gaim_ssl_get_ops();
+	(ops->close)(gsc);
 
-	if (gsc->inpa)
+	if (gsc->connect_info != NULL)
+		gaim_proxy_connect_cancel(gsc->connect_info);
+
+	if (gsc->inpa > 0)
 		gaim_input_remove(gsc->inpa);
 
-	if (ops != NULL && ops->close != NULL)
-		(ops->close)(gsc);
-
-	if (gsc->fd != -1)
+	if (gsc->fd >= 0)
 		close(gsc->fd);
 
 	g_free(gsc->host);
@@ -195,11 +215,7 @@ gaim_ssl_read(GaimSslConnection *gsc, void *data, size_t len)
 	g_return_val_if_fail(len  >  0,    0);
 
 	ops = gaim_ssl_get_ops();
-
-	if (ops != NULL && (ops->read) != NULL)
-		return (ops->read)(gsc, data, len);
-
-	return 0;
+	return (ops->read)(gsc, data, len);
 }
 
 size_t
@@ -212,11 +228,7 @@ gaim_ssl_write(GaimSslConnection *gsc, const void *data, size_t len)
 	g_return_val_if_fail(len  >  0,    0);
 
 	ops = gaim_ssl_get_ops();
-
-	if (ops != NULL && (ops->write) != NULL)
-		return (ops->write)(gsc, data, len);
-
-	return 0;
+	return (ops->write)(gsc, data, len);
 }
 
 void
@@ -245,9 +257,7 @@ gaim_ssl_uninit(void)
 		return;
 
 	ops = gaim_ssl_get_ops();
-
-	if (ops != NULL && ops->uninit != NULL)
-		ops->uninit();
+	ops->uninit();
 
 	_ssl_initialized = FALSE;
 }

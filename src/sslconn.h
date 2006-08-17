@@ -54,6 +54,7 @@ struct _GaimSslConnection
 
 	int fd;
 	int inpa;
+	GaimProxyConnectInfo *connect_info;
 
 	void *private_data;
 };
@@ -61,13 +62,13 @@ struct _GaimSslConnection
 /**
  * SSL implementation operations structure.
  *
- * Every SSL implementation must provide one of these and register it.
+ * Every SSL implementation must provide all of these and register it.
  */
 typedef struct
 {
 	gboolean (*init)(void);
 	void (*uninit)(void);
-	GaimInputFunction connect_cb;
+	void (*connect)(GaimSslConnection *gsc);
 	void (*close)(GaimSslConnection *gsc);
 	size_t (*read)(GaimSslConnection *gsc, void *data, size_t len);
 	size_t (*write)(GaimSslConnection *gsc, const void *data, size_t len);

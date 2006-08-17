@@ -450,7 +450,7 @@ static void irc_close(GaimConnection *gc)
 	g_free(irc->inbuf);
 	if (irc->gsc) {
 		gaim_ssl_close(irc->gsc);
-	} else if (irc->fd > 0) {
+	} else if (irc->fd >= 0) {
 		close(irc->fd);
 	}
 	if (irc->timer)
