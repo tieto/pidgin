@@ -234,7 +234,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	}
 #endif
 
-	if ((fd = g_open(file_private_key, O_RDONLY)) != -1) {
+	if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
 		if ((fstat(fd, &st)) == -1) {
 			gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							 file_private_key, strerror(errno));
@@ -254,7 +254,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 				return FALSE;
 			}
 
-			if ((fd = g_open(file_private_key, O_RDONLY)) != -1) {
+			if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
 				if ((fstat(fd, &st)) == -1) {
 					gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							 file_private_key, strerror(errno));
