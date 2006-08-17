@@ -100,26 +100,10 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 
 static void
-ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
+ssl_gnutls_connect(GaimSslConnection *gsc)
 {
-	GaimSslConnection *gsc = (GaimSslConnection *)data;
 	GaimSslGnutlsData *gnutls_data;
 	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
-
-	/*
-	 * TODO: Uh, this needs to somehow check to make sure that gsc is
-	 *       still valid before actually doing anything.
-	 */
-
-	if(source < 0) {
-		if(gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
-
-		gaim_ssl_close(gsc);
-		return;
-	}
-
-	gsc->fd = source;
 
 	gnutls_data = g_new0(GaimSslGnutlsData, 1);
 	gsc->private_data = gnutls_data;
@@ -133,7 +117,7 @@ ssl_gnutls_connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	gnutls_credentials_set(gnutls_data->session, GNUTLS_CRD_CERTIFICATE,
 		xcred);
 
-	gnutls_transport_set_ptr(gnutls_data->session, GINT_TO_POINTER(source));
+	gnutls_transport_set_ptr(gnutls_data->session, GINT_TO_POINTER(gsc->fd));
 
 	gnutls_data->handshake_handler = gaim_input_add(gsc->fd,
 		GAIM_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
@@ -204,7 +188,7 @@ static GaimSslOps ssl_ops =
 {
 	ssl_gnutls_init,
 	ssl_gnutls_uninit,
-	ssl_gnutls_connect_cb,
+	ssl_gnutls_connect,
 	ssl_gnutls_close,
 	ssl_gnutls_read,
 	ssl_gnutls_write
