@@ -234,25 +234,44 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	}
 #endif
 
-	fd = open(file_private_key, O_RDONLY);
-	if ((g_stat(file_private_key, &st)) == -1) {
+	if ((fd = g_open(file_private_key, O_RDONLY)) != -1) {
+		if ((fstat(fd, &st)) == -1) {
+			gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
+							 file_private_key, strerror(errno));
+			close(fd);
+			return FALSE;
+		}
+	} else if ((g_stat(file_private_key, &st)) == -1) {
 		/* If file doesn't exist */
 		if (errno == ENOENT) {
 			gaim_connection_update_progress(gc, _("Creating SILC key pair..."), 1, 5);
-			silc_create_key_pair(SILCGAIM_DEF_PKCS,
+			if (!silc_create_key_pair(SILCGAIM_DEF_PKCS,
 					     SILCGAIM_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
 					     (gc->password == NULL) ? "" : gc->password,
-						 NULL, NULL, NULL, FALSE);
-			if (fd != -1)
-				close(fd);
-			fd = open(file_private_key, O_RDONLY);
-			g_stat(file_private_key, &st);
+						 NULL, NULL, NULL, FALSE)) {
+				gaim_debug_error("silc", "Couldn't create key pair\n");
+				return FALSE;
+			}
+
+			if ((fd = g_open(file_private_key, O_RDONLY)) != -1) {
+				if ((fstat(fd, &st)) == -1) {
+					gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
+							 file_private_key, strerror(errno));
+					close(fd);
+					return FALSE;
+				}
+			}
+			/* This shouldn't really happen because silc_create_key_pair()
+			 * will set the permissions */
+			else if ((g_stat(file_private_key, &st)) == -1) {
+				gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
+					file_private_key, strerror(errno));
+				return FALSE;
+			}
 		} else {
 			gaim_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
 							 file_private_key, strerror(errno));
-			if (fd != -1)
-				close(fd);
 			return FALSE;
 		}
 	}
@@ -270,7 +289,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	if ((st.st_mode & 0777) != 0600) {
 		gaim_debug_warning("silc", "Wrong permissions in your private key file `%s'!\n"
 			"Trying to change them ...\n", file_private_key);
-		if ((fd != -1) && (fchmod(fd, S_IRUSR | S_IWUSR)) == -1) {
+		if ((fd == -1) || (fchmod(fd, S_IRUSR | S_IWUSR)) == -1) {
 			gaim_debug_error("silc",
 				"Failed to change permissions for private key file!\n"
 				"Permissions for your private key file must be 0600.\n");
