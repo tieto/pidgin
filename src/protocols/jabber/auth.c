@@ -181,9 +181,9 @@ static void allow_cyrus_plaintext_auth(GaimAccount *account)
 
 static void jabber_auth_start_cyrus(JabberStream *js)
 {
-	const char *clientout, *mech;
+	const char *clientout = NULL, *mech = NULL;
 	char *enc_out;
-	unsigned coutlen;
+	unsigned coutlen = 0;
 	xmlnode *auth;
 	sasl_security_properties_t secprops;
 	gboolean again;
@@ -256,21 +256,29 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				/* For everything else, fail the mechanism and try again */
 			default:
 				gaim_debug_info("sasl", "sasl_state is %d, failing the mech and trying again\n", js->sasl_state);
-				if (strlen(mech)>0) {
+
+				/*
+				 * DAA: is this right?
+				 * The manpage says that "mech" will contain the chosen mechanism on success.
+				 * Presumably, if we get here that isn't the case and we shouldn't try again?
+				 * I suspect that this never happens.
+				 */
+				if (mech && strlen(mech) > 0) {
 					char *pos;
-					pos = strstr(js->sasl_mechs->str,mech);
-					g_assert(pos!=NULL);
-					g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str,strlen(mech));
+					if ((pos = strstr(js->sasl_mechs->str, mech)) {
+						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(mech));
+					}
+					again = TRUE;
 				}
+
 				sasl_dispose(&js->sasl);
-				again=TRUE;
 		}
 	} while (again);
 
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
-		xmlnode_set_attrib(auth,"mechanism", mech);
+		xmlnode_set_attrib(auth, "mechanism", mech);
 		if (clientout) {
 			if (coutlen == 0) {
 				xmlnode_insert_data(auth, "=", -1);
@@ -332,7 +340,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		char *mech_name = xmlnode_get_data(mechnode);
 #ifdef HAVE_CYRUS_SASL
 		g_string_append(js->sasl_mechs, mech_name);
-		g_string_append_c(js->sasl_mechs,' ');
+		g_string_append_c(js->sasl_mechs, ' ');
 #else
 		if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
 			digest_md5 = TRUE;
