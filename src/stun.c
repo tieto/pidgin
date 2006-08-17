@@ -40,7 +40,6 @@
 
 #include "debug.h"
 #include "account.h"
-#include "dnsquery.h"
 #include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
@@ -360,7 +359,7 @@ static void do_test1(GaimSrvResponse *resp, int results, gpointer sdata) {
 	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n",
 		results, servername, port);
 
-	gaim_dnsquery_a(servername, port, hbn_cb, NULL);
+	gaim_gethostbyname_async(servername, port, hbn_cb, NULL);
 	g_free(resp);
 }
 

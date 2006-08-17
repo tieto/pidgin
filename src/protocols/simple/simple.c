@@ -30,7 +30,6 @@
 #include "blist.h"
 #include "conversation.h"
 #include "debug.h"
-#include "dnsquery.h"
 #include "notify.h"
 #include "privacy.h"
 #include "prpl.h"
@@ -1622,7 +1621,7 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		gaim_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
+		gaim_gethostbyname_async(hostname, port, simple_udp_host_resolved, sip);
 	}
 }
 

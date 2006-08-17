@@ -95,7 +95,6 @@ DLL_C_SRC =	\
 			conversation.c \
 			core.c \
 			debug.c \
-			dnsquery.c \
 			dnssrv.c \
 			eventloop.c \
 			ft.c \

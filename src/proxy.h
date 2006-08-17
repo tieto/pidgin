@@ -26,7 +26,6 @@
 #define _GAIM_PROXY_H_
 
 #include <glib.h>
-#include "dnsquery.h"
 #include "eventloop.h"
 
 /**
@@ -57,7 +56,6 @@ typedef struct
 
 } GaimProxyInfo;
 
-typedef struct _GaimDnsQueryData GaimDnsQueryData;
 typedef struct _GaimProxyConnectInfo GaimProxyConnectInfo;
 
 typedef void (*GaimProxyConnectFunction)(gpointer data, gint source, const gchar *error_message);
@@ -279,6 +277,18 @@ GaimProxyConnectInfo *gaim_proxy_connect_socks5(GaimProxyInfo *gpi,
  * time-out the connection.
  */
 void gaim_proxy_connect_cancel(GaimProxyConnectInfo *connect_info);
+
+/**
+ * Do an async dns query
+ *
+ * @param hostname The hostname to resolve
+ * @param port A portnumber which is stored in the struct sockaddr
+ * @param callback Callback to call after resolving
+ * @param data Extra data for the callback function
+ *
+ * @return Zero indicates the connection is pending. Any other value indicates failure.
+ */
+int gaim_gethostbyname_async(const char *hostname, int port, GaimProxyDnsConnectFunction callback, gpointer data);
 
 /*@}*/
 
