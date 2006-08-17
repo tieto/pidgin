@@ -22,11 +22,13 @@
 
 #define PLUGIN_STATIC_NAME	"GntGf"
 
-#define PREFS_EVENT           "/plugins/gnt/gntgf/events"
+#define PREFS_PREFIX          "/plugins/gnt/gntgf"
+#define PREFS_EVENT           PREFS_PREFIX "/events"
 #define PREFS_EVENT_SIGNONF   PREFS_EVENT "/signonf"
 #define PREFS_EVENT_IM_MSG    PREFS_EVENT "/immsg"
 #define PREFS_EVENT_CHAT_MSG  PREFS_EVENT "/chatmsg"
 #define PREFS_EVENT_CHAT_NICK PREFS_EVENT "/chatnick"
+#define PREFS_BEEP            PREFS_PREFIX "/beep"
 
 #include <glib.h>
 
@@ -39,6 +41,7 @@
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
+#include <gntcheckbox.h>
 #include <gntlabel.h>
 #include <gnttree.h>
 
@@ -95,6 +98,9 @@ notify(const char *fmt, ...)
 	char *str;
 	int h, w;
 	va_list args;
+
+	if (gaim_prefs_get_bool(PREFS_BEEP))
+		beep();
 
 	toast->window = window = gnt_vbox_new(FALSE);
 	GNT_WIDGET_SET_FLAGS(window, GNT_WIDGET_TRANSIENT);
@@ -197,7 +203,7 @@ static struct
 } prefs[] =
 {
 	{PREFS_EVENT_SIGNONF, _("Buddy signs on/off")},
-	{PREFS_EVENT_IM_MSG, _("You receive an IMs")},
+	{PREFS_EVENT_IM_MSG, _("You receive an IM")},
 	{PREFS_EVENT_CHAT_MSG, _("Someone speaks in a chat")},
 	{PREFS_EVENT_CHAT_NICK, _("Someone says your name in a chat")},
 	{NULL, NULL}
@@ -209,10 +215,16 @@ pref_toggled(GntTree *tree, char *key, gpointer null)
 	gaim_prefs_set_bool(key, gnt_tree_get_choice(tree, key));
 }
 
+static void
+beep_toggled(GntCheckBox *check, gpointer null)
+{
+	gaim_prefs_set_bool(PREFS_BEEP, gnt_check_box_get_checked(check));
+}
+
 static GntWidget *
 config_frame()
 {
-	GntWidget *window, *tree;
+	GntWidget *window, *tree, *check;
 	int i;
 
 	window = gnt_vbox_new(FALSE);
@@ -235,6 +247,11 @@ config_frame()
 	}
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 40);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(pref_toggled), NULL);
+
+	check = gnt_check_box_new(_("Beep too!"));
+	gnt_check_box_set_checked(GNT_CHECK_BOX(check), gaim_prefs_get_bool(PREFS_BEEP));
+	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(beep_toggled), NULL);
+	gnt_box_add_widget(GNT_BOX(window), check);
 
 	return window;
 }
@@ -278,6 +295,8 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool(PREFS_EVENT_IM_MSG, TRUE);
 	gaim_prefs_add_bool(PREFS_EVENT_CHAT_MSG, TRUE);
 	gaim_prefs_add_bool(PREFS_EVENT_CHAT_NICK, TRUE);
+
+	gaim_prefs_add_bool(PREFS_BEEP, TRUE);
 }
 
 GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
