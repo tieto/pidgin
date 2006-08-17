@@ -171,6 +171,12 @@ do_prpl_change_account_status(GaimAccount *account,
 		return;
 	}
 
+	if (!gaim_status_is_online(new_status))
+	{
+		if (!gaim_account_is_disconnected(account))
+			gaim_account_disconnect(account);
+		return;
+	}
 
 	if (gaim_account_is_connecting(account))
 		/*
@@ -190,13 +196,6 @@ do_prpl_change_account_status(GaimAccount *account,
 	if (!gaim_account_is_disconnected(account) && prpl_info->set_status != NULL)
 	{
 		prpl_info->set_status(account, new_status);
-	}
-
-	if (!gaim_status_is_online(new_status))
-	{
-		if (!gaim_account_is_disconnected(account))
-			gaim_account_disconnect(account);
-		return;
 	}
 }
 
