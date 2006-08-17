@@ -99,6 +99,7 @@ version 2.0.0:
 	  removed.
 	* 'Highlight when nick said' option added to Message Notification
 	  plugin.
+	* The system tray icon is now transparent (Dan Winship)
 
 	MSN Features:
 	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)
