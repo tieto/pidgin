@@ -867,6 +867,24 @@ gaim_gtk_blist_remove_cb (GtkWidget *w, GaimBlistNode *node)
 	}
 }
 
+struct _expand {
+	GtkTreeView *treeview;
+	GtkTreePath *path;
+	GaimBlistNode *node;
+};
+
+static gboolean 
+scroll_to_expanded_cell(struct _expand *ex)
+{
+	gtk_tree_view_scroll_to_cell(ex->treeview, ex->path, NULL, FALSE, 0, 0);
+	gaim_gtk_blist_update_contact(NULL, ex->node);
+
+	gtk_tree_path_free(ex->path);
+	g_free(ex);
+	
+	return FALSE;
+}
+
 static void
 gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 {
@@ -875,6 +893,8 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	GaimBlistNode *bnode;
 	GtkTreePath *path;
 
+	struct _expand *ex = g_new0(struct _expand, 1);
+	
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
 		return;
 
@@ -891,13 +911,12 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent,
 			  gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
-	/* Let the treeview draw so it knows where to scroll */
-	while (gtk_events_pending())
-		gtk_main_iteration();
-	gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW(gtkblist->treeview), path, NULL, FALSE, 0, 0);
 
-	gaim_gtk_blist_update_contact(NULL, node->child);
-	gtk_tree_path_free(path);
+	/* Let the treeview draw so it knows where to scroll */
+	ex->treeview = GTK_TREE_VIEW(gtkblist->treeview);
+	ex->path = path;
+	ex->node = node->child;
+	g_idle_add(scroll_to_expanded_cell, ex);
 }
 
 static void
@@ -3933,6 +3952,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
                         G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
+	gtk_tree_view_set_rules_hint (GTK_TREE_VIEW(gtkblist->treeview), TRUE);
+
 	gtk_widget_show(gtkblist->treeview);
 	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
 
