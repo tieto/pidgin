@@ -1119,7 +1119,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	if (gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) == 
+	if (new || gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) ==
 	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check))) {
 		icon_change = TRUE;
 	}
