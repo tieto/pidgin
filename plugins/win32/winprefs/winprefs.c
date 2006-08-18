@@ -52,6 +52,7 @@ static const char *PREF_DBLIST_HEIGHT = "/plugins/gtk/win32/winprefs/dblist_heig
 static const char *PREF_DBLIST_SIDE = "/plugins/gtk/win32/winprefs/dblist_side";
 static const char *PREF_BLIST_ON_TOP = "/plugins/gtk/win32/winprefs/blist_on_top";
 static const char *PREF_IM_BLINK = "/plugins/gtk/win32/winprefs/im_blink";
+static const char *PREF_CHAT_BLINK = "/plugins/gtk/win32/winprefs/chat_blink";
 
 /* Deprecated */
 static const char *PREF_DBLIST_ON_TOP = "/plugins/gtk/win32/winprefs/dblist_on_top";
@@ -317,17 +318,13 @@ halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data)
 /* FlashWindowEx is only supported by Win98+ and WinNT5+. If it's
    not supported we do it our own way */
 static gboolean
-wgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
-		GaimConversation *conv, int flags, void *data)
+wgaim_conv_blink(GaimConversation *conv, int flags)
 {
 	GaimGtkWindow *win;
 	GtkWidget *window;
 
 	/* Don't flash for our own messages or system messages */
 	if(flags & GAIM_MESSAGE_SEND || flags & GAIM_MESSAGE_SYSTEM)
-		return FALSE;
-
-	if(!gaim_prefs_get_bool(PREF_IM_BLINK))
 		return FALSE;
 
 	if(conv == NULL) {
@@ -368,6 +365,27 @@ wgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
 	return FALSE;
 }
 
+static gboolean
+wgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
+		GaimConversation *conv, int flags, void *data)
+{
+	if(!gaim_prefs_get_bool(PREF_IM_BLINK))
+		return FALSE;
+
+	return wgaim_conv_blink(conv, flags);
+
+}
+
+static gboolean
+wgaim_conv_chat_blink(GaimAccount *account, const char *who, char **message,
+		GaimConversation *conv, int flags, void *data)
+{
+	if(!gaim_prefs_get_bool(PREF_CHAT_BLINK))
+		return FALSE;
+
+	return wgaim_conv_blink(conv, flags);
+}
+
 
 /*
  *  EXPORTED FUNCTIONS
@@ -392,6 +410,10 @@ static gboolean plugin_load(GaimPlugin *plugin) {
 
 	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
 		"displaying-im-msg", plugin, GAIM_CALLBACK(wgaim_conv_im_blink),
+		NULL);
+
+	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+		"displaying-chat-msg", plugin, GAIM_CALLBACK(wgaim_conv_chat_blink),
 		NULL);
 
 	gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin,
@@ -467,8 +489,10 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
 	/* Conversations */
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
-	gaim_gtk_prefs_checkbox(_("_Flash window when messages are received"),
+	gaim_gtk_prefs_checkbox(_("_Flash window when IMs are received"),
 							PREF_IM_BLINK, vbox);
+	gaim_gtk_prefs_checkbox(_("_Flash window when chat messages are received"),
+							PREF_CHAT_BLINK, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -517,6 +541,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
 	gaim_prefs_add_int(PREF_DBLIST_SIDE, 0);
 	gaim_prefs_add_bool(PREF_IM_BLINK, TRUE);
+	gaim_prefs_add_bool(PREF_CHAT_BLINK, FALSE);
 
 	/* Convert old preferences */
 	if(gaim_prefs_exists(PREF_DBLIST_ON_TOP)) {
