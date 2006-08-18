@@ -1275,19 +1275,22 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 
 		if (status_box->icon_size != icon_alc.height)
 		{
+			if (status_box->buddy_icon_hover)
+				g_object_unref(status_box->buddy_icon_hover);
 			if ((status_box->buddy_icon_path != NULL) &&
 				(*status_box->buddy_icon_path != '\0'))
 			{
 				scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
 									   icon_alc.height, icon_alc.width, FALSE, NULL);
-				if (status_box->buddy_icon_hover)
-					g_object_unref(status_box->buddy_icon_hover);
-				status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
-				do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
-				if (status_box->buddy_icon)
-					g_object_unref(status_box->buddy_icon);
-				status_box->buddy_icon = scaled;
-				gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
+				if (scaled != NULL)
+				{
+					status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
+					do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
+					if (status_box->buddy_icon)
+						g_object_unref(status_box->buddy_icon);
+					status_box->buddy_icon = scaled;
+					gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
+				}
 			}
 			status_box->icon_size = icon_alc.height;
 		}
