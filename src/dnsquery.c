@@ -37,6 +37,8 @@
 
 #if defined(__unix__) || defined(__APPLE__)
 
+#define MAX_DNS_CHILDREN 4
+
 /*
  * This structure represents both a pending DNS request and
  * a free child process.
@@ -55,8 +57,6 @@ static GSList *free_dns_children = NULL;
 static GQueue *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
-
-static const int MAX_DNS_CHILDREN = 2;
 
 typedef struct {
 	char hostname[512];
