@@ -877,11 +877,11 @@ detect_entity(const char *text, int *length)
 	else if(IS_ENTITY("&nbsp;"))
 		pln = " ";
 	else if(IS_ENTITY("&copy;"))
-		pln = "\251";
+		pln = "\302\251";      /* or use g_unichar_to_utf8(0xa9); */
 	else if(IS_ENTITY("&quot;"))
 		pln = "\"";
 	else if(IS_ENTITY("&reg;"))
-		pln = "\256";
+		pln = "\302\256";      /* or use g_unichar_to_utf8(0xae); */
 	else if(IS_ENTITY("&apos;"))
 		pln = "\'";
 	else if(*(text+1) == '#' && (sscanf(text, "&#%u;", &pound) == 1) &&
