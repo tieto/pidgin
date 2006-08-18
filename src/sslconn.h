@@ -68,7 +68,7 @@ typedef struct
 {
 	gboolean (*init)(void);
 	void (*uninit)(void);
-	void (*connect)(GaimSslConnection *gsc);
+	void (*connectfunc)(GaimSslConnection *gsc);
 	void (*close)(GaimSslConnection *gsc);
 	size_t (*read)(GaimSslConnection *gsc, void *data, size_t len);
 	size_t (*write)(GaimSslConnection *gsc, const void *data, size_t len);

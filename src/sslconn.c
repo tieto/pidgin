@@ -46,7 +46,7 @@ ssl_init(void)
 
 	ops = gaim_ssl_get_ops();
 	if ((ops == NULL) || (ops->init == NULL) || (ops->uninit == NULL) ||
-		(ops->connect == NULL) || (ops->close == NULL) ||
+		(ops->connectfunc == NULL) || (ops->close == NULL) ||
 		(ops->read == NULL) || (ops->write == NULL))
 	{
 		return FALSE;
@@ -87,7 +87,7 @@ gaim_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 	gsc->fd = source;
 
 	ops = gaim_ssl_get_ops();
-	(ops->connect)(gsc);
+	ops->connectfunc(gsc);
 }
 
 GaimSslConnection *
@@ -177,7 +177,7 @@ gaim_ssl_connect_fd(GaimAccount *account, int fd,
 	gsc->fd              = fd;
 
 	ops = gaim_ssl_get_ops();
-	(ops->connect)(gsc);
+	ops->connectfunc(gsc);
 
 	return (GaimSslConnection *)gsc;
 }
