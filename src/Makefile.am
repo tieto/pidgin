@@ -77,6 +77,7 @@ gaim_coresources = \
 	core.c \
 	debug.c \
 	desktopitem.c \
+	dnsquery.c \
 	eventloop.c \
 	ft.c \
 	idle.c \
@@ -125,6 +126,7 @@ gaim_coreheaders = \
 	dbus-maybe.h \
 	debug.h \
 	desktopitem.h \
+	dnsquery.h \
 	eventloop.h \
 	ft.h \
 	idle.h \

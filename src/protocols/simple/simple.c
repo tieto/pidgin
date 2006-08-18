@@ -29,6 +29,7 @@
 #include "accountopt.h"
 #include "blist.h"
 #include "conversation.h"
+#include "dnsquery.h"
 #include "debug.h"
 #include "notify.h"
 #include "privacy.h"

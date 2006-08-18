@@ -40,6 +40,7 @@
 
 #include "debug.h"
 #include "account.h"
+#include "dnsquery.h"
 #include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
