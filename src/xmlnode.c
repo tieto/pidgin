@@ -35,6 +35,7 @@
 #include <string.h>
 #include <glib.h>
 
+#include "util.h"
 #include "xmlnode.h"
 
 #ifdef _WIN32
@@ -406,6 +407,11 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			char *attrib = g_malloc(attrib_len + 1);
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
+#ifdef HAVE_LIBXML
+			char *txt = attrib;
+			attrib = gaim_unescape_html(txt);
+			g_free(txt);
+#endif
 			xmlnode_set_attrib(node, attributes[i], attrib);
 			g_free(attrib);
 		}

@@ -854,6 +854,55 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 /**************************************************************************
  * Markup Functions
  **************************************************************************/
+
+/* Returns a NULL-terminated string after unescaping an entity
+ * (eg. &amp;, &lt; &#38 etc.) starting at s. Returns NULL on failure.*/
+static const char *
+detect_entity(const char *text, int *length)
+{
+	const char *pln;
+	int len, pound;
+
+	if (!text || *text != '&')
+		return NULL;
+
+#define IS_ENTITY(s)  (!g_ascii_strncasecmp(text, s, (len = sizeof(s) - 1)))
+
+	if(IS_ENTITY("&amp;"))
+		pln = "&";
+	else if(IS_ENTITY("&lt;"))
+		pln = "<";
+	else if(IS_ENTITY("&gt;"))
+		pln = ">";
+	else if(IS_ENTITY("&nbsp;"))
+		pln = " ";
+	else if(IS_ENTITY("&copy;"))
+		pln = "\251";
+	else if(IS_ENTITY("&quot;"))
+		pln = "\"";
+	else if(IS_ENTITY("&reg;"))
+		pln = "\256";
+	else if(IS_ENTITY("&apos;"))
+		pln = "\'";
+	else if(*(text+1) == '#' && (sscanf(text, "&#%u;", &pound) == 1) &&
+			pound != 0 && *(text+3+(gint)log10(pound)) == ';') {
+		static char buf[7];
+		int buflen = g_unichar_to_utf8((gunichar)pound, buf);
+		buf[buflen] = '\0';
+		pln = buf;
+
+		len = 2;
+		while(isdigit((gint) text[len])) len++;
+		if(text[len] == ';') len++;
+	}
+	else
+		return NULL;
+
+	if (length)
+		*length = len;
+	return pln;
+}
+
 gboolean
 gaim_markup_find_tag(const char *needle, const char *haystack,
 					 const char **start, const char **end, GData **attributes)
@@ -1443,44 +1492,10 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			}
 		} else if(*c == '&') {
 			char buf[7];
-			char *pln;
-			int len = 1;
-			guint pound;
-			if(!g_ascii_strncasecmp(c, "&amp;", 5)) {
-				pln = "&";
-				len = 5;
-			} else if(!g_ascii_strncasecmp(c, "&lt;", 4)) {
-				pln = "<";
-				len = 4;
-			} else if(!g_ascii_strncasecmp(c, "&gt;", 4)) {
-				pln = ">";
-				len = 4;
-			} else if(!g_ascii_strncasecmp(c, "&nbsp;", 6)) {
-				pln = " ";
-				len = 6;
-			} else if(!g_ascii_strncasecmp(c, "&copy;", 6)) {
-				pln = "©";
-				len = 6;
-			} else if(!g_ascii_strncasecmp(c, "&quot;", 6)) {
-				pln = "\"";
-				len = 6;
-			} else if(!g_ascii_strncasecmp(c, "&reg;", 5)) {
-				pln = "®";
-				len = 5;
-			} else if(!g_ascii_strncasecmp(c, "&apos;", 6)) {
-				pln = "\'";
-				len = 6;
-			} else if(*(c+1) == '#' && (sscanf(c, "&#%u;", &pound) == 1) &&
-					pound != 0 && *(c+3+(gint)log10(pound)) == ';') {
-				int buflen = g_unichar_to_utf8((gunichar)pound, buf);
-				buf[buflen] = '\0';
-				pln = buf;
+			const char *pln;
+			int len;
 
-
-				len = 2;
-				while(isdigit((gint) c [len])) len++;
-				if(c [len] == ';') len++;
-			} else {
+			if ((pln = detect_entity(c, &len)) == NULL) {
 				len = 1;
 				g_snprintf(buf, sizeof(buf), "%c", *c);
 				pln = buf;
@@ -1522,11 +1537,11 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 char *
 gaim_markup_strip_html(const char *str)
 {
-	int i, j, k;
+	int i, j, k, entlen;
 	gboolean visible = TRUE;
 	gboolean closing_td_p = FALSE;
 	gchar *str2;
-	const gchar *cdata_close_tag = NULL;
+	const gchar *cdata_close_tag = NULL, *ent;
 	gchar *href = NULL;
 	int href_st = 0;
 
@@ -1685,41 +1700,11 @@ gaim_markup_strip_html(const char *str)
 			visible = TRUE;
 		}
 
-		/* XXX: This sucks.  We need to be un-escaping all entities, which
-		 * includes these, as well as the &#num; ones */
-
-		if (str2[i] == '&' && strncasecmp(str2 + i, "&quot;", 6) == 0)
+		if (str2[i] == '&' && (ent = detect_entity(str2 + i, &entlen)) != NULL)
 		{
-		    str2[j++] = '\"';
-		    i = i + 5;
-		    continue;
-		}
-
-		if (str2[i] == '&' && strncasecmp(str2 + i, "&amp;", 5) == 0)
-		{
-			str2[j++] = '&';
-			i = i + 4;
-			continue;
-		}
-
-		if (str2[i] == '&' && strncasecmp(str2 + i, "&lt;", 4) == 0)
-		{
-			str2[j++] = '<';
-			i = i + 3;
-			continue;
-		}
-
-		if (str2[i] == '&' && strncasecmp(str2 + i, "&gt;", 4) == 0)
-		{
-			str2[j++] = '>';
-			i = i + 3;
-			continue;
-		}
-
-		if (str2[i] == '&' && strncasecmp(str2 + i, "&apos;", 6) == 0)
-		{
-			str2[j++] = '\'';
-			i = i + 5;
+			while (*ent)
+				str2[j++] = *ent++;
+			i += entlen - 1;
 			continue;
 		}
 
@@ -2026,41 +2011,28 @@ gaim_markup_linkify(const char *text)
 
 char *
 gaim_unescape_html(const char *html) {
-	const char *c;
-	GString *ret;
+	if (html != NULL) {
+		const char *c = html;
+		GString *ret = g_string_new("");
+		while (*c) {
+			int len;
+			const char *ent;
 
-	if (html == NULL)
-		return NULL;
-
-	c = html;
-	ret = g_string_new("");
-	while (*c) {
-		if (!strncmp(c, "&amp;", 5)) {
-			ret = g_string_append_c(ret, '&');
-			c += 5;
-		} else if (!strncmp(c, "&lt;", 4)) {
-			ret = g_string_append_c(ret, '<');
-			c += 4;
-		} else if (!strncmp(c, "&gt;", 4)) {
-			ret = g_string_append_c(ret, '>');
-			c += 4;
-		} else if (!strncmp(c, "&quot;", 6)) {
-			ret = g_string_append_c(ret, '"');
-			c += 6;
-		} else if (!strncmp(c, "&apos;", 6)) {
-			ret = g_string_append_c(ret, '\'');
-			c += 6;
-		} else if (!strncmp(c, "<br>", 4)) {
-			ret = g_string_append_c(ret, '\n');
-			c += 4;
-		} else {
-			ret = g_string_append_c(ret, *c);
-			c++;
+			if ((ent = detect_entity(c, &len)) != NULL) {
+				ret = g_string_append(ret, ent);
+				c += len;
+			} else if (!strncmp(c, "<br>", 4)) {
+				ret = g_string_append_c(ret, '\n');
+				c += 4;
+			} else {
+				ret = g_string_append_c(ret, *c);
+				c++;
+			}
 		}
+		return g_string_free(ret, FALSE);
 	}
 
-	return g_string_free(ret, FALSE);
-
+	return NULL;
 }
 
 char *
@@ -3997,5 +3969,4 @@ gaim_escape_filename(const char *str)
 
 	return buf;
 }
-
 
