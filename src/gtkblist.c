@@ -120,7 +120,6 @@ static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIt
 static GaimGtkBuddyList *gtkblist = NULL;
 
 static gboolean gaim_gtk_blist_refresh_timer(GaimBuddyList *list);
-static void gaim_gtk_blist_update_buddy_status_icon_key(GaimBlistNode *node, GaimStatusIconSize size);
 static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node, gboolean statusChange);
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node);
@@ -140,6 +139,9 @@ struct _gaim_gtk_blist_node {
 	gint recent_signonoff_timer;
 	GString *status_icon_key;
 };
+
+static void gaim_gtk_blist_update_buddy_status_icon_key(struct _gaim_gtk_blist_node *gtkbuddynode,
+	GaimBuddy *buddy, GaimStatusIconSize size);
 
 
 static char dim_grey_string[8] = "";
@@ -167,7 +169,7 @@ static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event,
 	else if (gtk_blist_obscured) {
 			gtk_blist_obscured = FALSE;
 			gaim_gtk_blist_refresh_timer(gaim_get_blist());
-	}	
+	}
 
 	/* continue to handle event normally */
 	return FALSE;
@@ -190,13 +192,13 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 		else
 			gaim_prefs_set_bool("/gaim/gtk/blist/list_maximized", FALSE);
 	}
-	
+
 	/* Refresh gtkblist if un-iconifying */
 	if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED){
 		if (!(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
 			gaim_gtk_blist_refresh_timer(gaim_get_blist());
 	}
-	
+
 	return FALSE;
 }
 
@@ -873,15 +875,16 @@ struct _expand {
 	GaimBlistNode *node;
 };
 
-static gboolean 
-scroll_to_expanded_cell(struct _expand *ex)
+static gboolean
+scroll_to_expanded_cell(gpointer data)
 {
+	struct _expand *ex = data;
 	gtk_tree_view_scroll_to_cell(ex->treeview, ex->path, NULL, FALSE, 0, 0);
 	gaim_gtk_blist_update_contact(NULL, ex->node);
 
 	gtk_tree_path_free(ex->path);
 	g_free(ex);
-	
+
 	return FALSE;
 }
 
@@ -894,7 +897,7 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	GtkTreePath *path;
 
 	struct _expand *ex = g_new0(struct _expand, 1);
-	
+
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
 		return;
 
@@ -1675,7 +1678,7 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 				buddy->alias);
 		}
 
-		str = g_string_append(str, "\r\n");
+		g_string_append(str, "\r\n");
 
 		gtk_selection_data_set(data,
 					gdk_atom_intern("application/x-im-contact", FALSE),
@@ -2478,7 +2481,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, gaim_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT }, 
+	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Accounts menu */
 	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>", NULL },
@@ -2723,39 +2726,27 @@ struct _emblem_data {
 static void g_string_destroy(GString *destroyable)
 {
 	g_string_free(destroyable, TRUE);
-	return;
 }
 
 static void
-gaim_gtk_blist_update_buddy_status_icon_key(GaimBlistNode *node, GaimStatusIconSize size)
+gaim_gtk_blist_update_buddy_status_icon_key(struct _gaim_gtk_blist_node *gtkbuddynode, GaimBuddy *buddy, GaimStatusIconSize size)
 {
-	int i;
-	GaimAccount *account;
-	GaimPlugin *prpl;
-	GaimPluginProtocolInfo *prpl_info;
 	GString *key = g_string_sized_new(16);
-	GaimBuddy *buddy;
-	const char *protoname = NULL;
-	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
-	struct _gaim_gtk_blist_node *gtkbuddynode = NULL;
-	struct _emblem_data emblems[4] = {{NULL, 15, 15}, {NULL, 0, 15},
-		{NULL, 0, 0}, {NULL, 15, 0}};
 
-	buddy = (GaimBuddy*)node;
-	gtkbuddynode = node->ui_data;
-
-	if (gtkbuddynode && gtkbuddynode->recent_signonoff) {
-		if (GAIM_BUDDY_IS_ONLINE(buddy))
+	if(gtkbuddynode && gtkbuddynode->recent_signonoff) {
+		if(GAIM_BUDDY_IS_ONLINE(buddy))
 			g_string_printf(key, "login");
 		else
 			g_string_printf(key, "logout");
 	} else {
-		GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-															 gaim_buddy_get_name(buddy),
-															 gaim_buddy_get_account(buddy));
-
-		account = buddy->account;
-		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+		int i;
+		const char *protoname = NULL;
+		GaimAccount *account = buddy->account;
+		GaimPlugin *prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+		GaimPluginProtocolInfo *prpl_info;
+		GaimConversation *conv;
+		struct _emblem_data emblems[4] = {{NULL, 15, 15}, {NULL, 0, 15},
+			{NULL, 0, 0}, {NULL, 15, 0}};
 
 		if(!prpl)
 			return;
@@ -2766,24 +2757,26 @@ gaim_gtk_blist_update_buddy_status_icon_key(GaimBlistNode *node, GaimStatusIconS
 			protoname = prpl_info->list_icon(account, buddy);
 		}
 		if(prpl_info && prpl_info->list_emblems) {
-			if(gtknode)
-				prpl_info->list_emblems(buddy, &emblems[0].filename,
-						&emblems[1].filename, &emblems[2].filename,
-						&emblems[3].filename);
+			prpl_info->list_emblems(buddy, &emblems[0].filename,
+					&emblems[1].filename, &emblems[2].filename,
+					&emblems[3].filename);
 		}
 
 		g_string_assign(key, protoname);
 
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+			gaim_buddy_get_name(buddy), account);
+
 		if(conv != NULL) {
 			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-			if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv)) {
+			if(gaim_gtkconv_is_hidden(gtkconv)) {
 				/* add pending emblem */
 				if(size == GAIM_STATUS_ICON_SMALL) {
-					emblems[0].filename="pending";
+					emblems[0].filename = "pending";
 				}
 				else {
-					emblems[3].filename=emblems[2].filename;
-					emblems[2].filename="pending";
+					emblems[3].filename = emblems[2].filename;
+					emblems[2].filename = "pending";
 				}
 			}
 		}
@@ -2793,30 +2786,24 @@ gaim_gtk_blist_update_buddy_status_icon_key(GaimBlistNode *node, GaimStatusIconS
 			emblems[1].filename = emblems[2].filename = emblems[3].filename = NULL;
 		}
 
-		for(i=0; i<4; i++) {
-			if(emblems[i].filename) {
+		for(i = 0; i < 4; i++) {
+			if(emblems[i].filename)
 				g_string_append_printf(key, "/%s", emblems[i].filename);
-			}
 		}
 	}
 
-	if (!GAIM_BUDDY_IS_ONLINE(buddy)) {
-		key = g_string_append(key, "/off");
-	} else if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy))) {
-		key = g_string_append(key, "/idle");
-	}
-	if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy))) {
-		key = g_string_append(key, "/priv");
-	}
+	if (!GAIM_BUDDY_IS_ONLINE(buddy))
+		g_string_append(key, "/off");
+	else if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
+		g_string_append(key, "/idle");
 
-	if (gtkbuddynode) {
-		if (gtkbuddynode->status_icon_key)
-			g_string_free(gtkbuddynode->status_icon_key, TRUE);
-		gtkbuddynode->status_icon_key = g_string_new(key->str);		
-	}
+	if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy)))
+		g_string_append(key, "/priv");
 
-	g_string_free(key, TRUE);
-	return;
+	if (gtkbuddynode->status_icon_key)
+		g_string_free(gtkbuddynode->status_icon_key, TRUE);
+	gtkbuddynode->status_icon_key = key;
+
 }
 
 GdkPixbuf *
@@ -2854,13 +2841,13 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 								(GEqualFunc)g_string_equal,
 								(GDestroyNotify)g_string_destroy,
 								(GDestroyNotify)gdk_pixbuf_unref);
-	
+
 	} else if (buddy && gtkbuddynode->status_icon_key && gtkbuddynode->status_icon_key->str) {
 		key = g_string_new(gtkbuddynode->status_icon_key->str);
 
 		/* Respect the size request given */
 		if (size == GAIM_STATUS_ICON_SMALL) {
-			key = g_string_append(key, "/tiny");
+			g_string_append(key, "/tiny");
 		}
 
 		scale = g_hash_table_lookup(status_icon_hash_table, key);
@@ -2900,8 +2887,8 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 
 /* Begin Generating Lookup Key */
 	if (buddy) {
-		gaim_gtk_blist_update_buddy_status_icon_key(node, size);
-		g_string_printf(key, "%s", strdup(gtkbuddynode->status_icon_key->str));
+		gaim_gtk_blist_update_buddy_status_icon_key(gtkbuddynode, buddy, size);
+		g_string_assign(key, gtkbuddynode->status_icon_key->str);
 	}
 	/* There are only two options for chat or gaimdude - big or small */
 	else if (chat) {
@@ -2923,14 +2910,14 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		g_string_append_printf(key, "%s-chat", protoname);
 	}
 	else
-		key = g_string_append(key, "gaimdude");
+		g_string_append(key, "gaimdude");
 
 	/* If the icon is small, we do not store this into the status_icon_key
-	 * in the gtkbuddynode.  This way we can respect the size value on cache 
+	 * in the gtkbuddynode.  This way we can respect the size value on cache
 	 * lookup. Otherwise, different sized icons could not be stored easily.
 	 */
 	if (size == GAIM_STATUS_ICON_SMALL) {
-		key = g_string_append(key, "/tiny");
+		g_string_append(key, "/tiny");
 	}
 
 /* End Generating Lookup Key */
@@ -2945,54 +2932,52 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 
 /* Create a new composite icon */
 
-		if(buddy) {
-			GaimAccount *account;
-			GaimPlugin *prpl;
-			GaimPluginProtocolInfo *prpl_info;
-			GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-																	 gaim_buddy_get_name(buddy),
-																	 gaim_buddy_get_account(buddy));
+	if(buddy) {
+		GaimAccount *account;
+		GaimPlugin *prpl;
+		GaimPluginProtocolInfo *prpl_info;
+		GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+			gaim_buddy_get_name(buddy),
+			gaim_buddy_get_account(buddy));
 
-			account = buddy->account;
+		account = buddy->account;
 
-			prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-			if(!prpl)
-				return NULL;
+		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+		if(!prpl)
+			return NULL;
 
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-			if(prpl_info && prpl_info->list_icon) {
-				protoname = prpl_info->list_icon(account, buddy);
-			}
-			if(prpl_info && prpl_info->list_emblems) {
-				if(gtknode && !gtknode->recent_signonoff)
-					prpl_info->list_emblems(buddy, &emblems[0].filename,
-							&emblems[1].filename, &emblems[2].filename,
-							&emblems[3].filename);
-			}
-			
-			if(conv != NULL) {
-				GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-				if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv)) {
-					/* add pending emblem */
-					if(size == GAIM_STATUS_ICON_SMALL) {
-						emblems[0].filename="pending";
-					}
-					else {
-						emblems[3].filename=emblems[2].filename;
-						emblems[2].filename="pending";
-					}
+		if(prpl_info && prpl_info->list_icon) {
+			protoname = prpl_info->list_icon(account, buddy);
+		}
+		if(prpl_info && prpl_info->list_emblems) {
+			if(gtknode && !gtknode->recent_signonoff)
+				prpl_info->list_emblems(buddy, &emblems[0].filename,
+						&emblems[1].filename, &emblems[2].filename,
+						&emblems[3].filename);
+		}
+
+		if(conv != NULL) {
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+			if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv)) {
+				/* add pending emblem */
+				if(size == GAIM_STATUS_ICON_SMALL) {
+					emblems[0].filename="pending";
+				}
+				else {
+					emblems[3].filename=emblems[2].filename;
+					emblems[2].filename="pending";
 				}
 			}
 		}
+	}
 
 	if(size == GAIM_STATUS_ICON_SMALL) {
 		scalesize = 15;
 		/* So that only the se icon will composite */
 		emblems[1].filename = emblems[2].filename = emblems[3].filename = NULL;
 	}
-
-
 
 	if(buddy && GAIM_BUDDY_IS_ONLINE(buddy) &&  gtkbuddynode && gtkbuddynode->recent_signonoff) {
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "login.png", NULL);
@@ -3010,8 +2995,10 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	status = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
-	if(!status)
+	if(!status) {
+		g_string_free(key, TRUE);
 		return NULL;
+	}
 
 	scale = gdk_pixbuf_scale_simple(status, scalesize, scalesize,
 			GDK_INTERP_BILINEAR);
@@ -3079,7 +3066,7 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		}
 	}
 
-	/* Insert the new icon into the status icon hash table */	
+	/* Insert the new icon into the status icon hash table */
 	g_hash_table_insert (status_icon_hash_table, key, scale);
 	gdk_pixbuf_ref(scale);
 
@@ -3318,7 +3305,7 @@ static void gaim_gtk_blist_hide_node(GaimBuddyList *list, GaimBlistNode *node, g
 		gtkblist->selected_node = NULL;
 	if (get_iter_from_node(node, &iter)) {
 		gtk_tree_store_remove(gtkblist->treemodel, &iter);
-		if(update && (GAIM_BLIST_NODE_IS_CONTACT(node) || 
+		if(update && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
 			GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CHAT(node))) {
 			gaim_gtk_blist_update(list, node->parent);
 		}
@@ -3438,7 +3425,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 	return TRUE;
 }
 
-static void 
+static void
 conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
                         GaimGtkBuddyList *gtkblist)
 {
@@ -3479,7 +3466,7 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		}
 		if(tooltip_text->len > 0) {
 			/* get rid of the last newline */
-			tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len -1);
+			g_string_truncate(tooltip_text, tooltip_text->len -1);
 			img = gtk_image_new_from_stock(GAIM_STOCK_PENDING, GTK_ICON_SIZE_MENU);
 
 			gtkblist->menutrayicon = gtk_event_box_new();
@@ -4040,7 +4027,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
 	gtk_widget_set_name(gtkblist->statusbox, "gaim_gtkblist_statusbox");
 	gtk_widget_show(gtkblist->statusbox);
-	
+
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
 	 */
@@ -4330,7 +4317,7 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 	return TRUE;
 }
 
-/*This version of gaim_gtk_blist_update_group can take the original buddy 
+/*This version of gaim_gtk_blist_update_group can take the original buddy
 or a group, but has much better algorithmic performance with a pre-known buddy*/
 static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node)
 {
@@ -4461,7 +4448,7 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 		cnode = node->parent;
 	else
 		cnode = node;
-	
+
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CONTACT(cnode));
 
 	/* First things first, update the group */
@@ -4516,6 +4503,7 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 {
 	GaimBuddy *buddy;
 	struct _gaim_gtk_blist_node *gtkparentnode;
+	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
 
@@ -4525,7 +4513,8 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 	buddy = (GaimBuddy*)node;
 
 	if (statusChange)
-		gaim_gtk_blist_update_buddy_status_icon_key(node, (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")
+		gaim_gtk_blist_update_buddy_status_icon_key(gtknode, buddy,
+			(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")
 				 ? GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL));
 
 	/* First things first, update the contact */
