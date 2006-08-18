@@ -192,7 +192,9 @@ static void
 set_dialog_icon(AccountPrefsDialog *dialog)
 {
 	char *filename = gaim_buddy_icons_get_full_path(dialog->icon_path);
-	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	GdkPixbuf *pixbuf = NULL;
+	if (filename)
+		gdk_pixbuf_new_from_file(filename, NULL);
 
 	if (pixbuf && dialog->prpl_info &&
 	    (dialog->prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY))
