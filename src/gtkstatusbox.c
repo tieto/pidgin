@@ -115,7 +115,8 @@ enum {
 
 enum {
 	PROP_0,
-	PROP_ACCOUNT
+	PROP_ACCOUNT,
+	PROP_ICON_SEL,
 };
 
 GtkComboBoxClass *parent_class = NULL;
@@ -162,6 +163,9 @@ gtk_gaim_status_box_get_property(GObject *object, guint param_id,
 	switch (param_id) {
 	case PROP_ACCOUNT:
 		g_value_set_pointer(value, statusbox->account);
+		break;
+	case PROP_ICON_SEL:
+		g_value_set_boolean(value, statusbox->icon_box != NULL);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, psec);
@@ -253,6 +257,9 @@ icon_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *
 static void
 setup_icon_box(GtkGaimStatusBox *status_box)
 {
+	if (status_box->icon_box != NULL)
+		return;
+
 	if (status_box->account &&
 		!gaim_account_get_ui_bool(status_box->account, GAIM_GTK_UI, "use-global-buddyicon", TRUE))
 	{
@@ -280,12 +287,54 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 }
 
 static void
+destroy_icon_box(GtkGaimStatusBox *statusbox)
+{
+	if (statusbox->icon_box == NULL)
+		return;
+
+	gtk_widget_destroy(statusbox->icon_box);
+	gdk_cursor_unref(statusbox->hand_cursor);
+	gdk_cursor_unref(statusbox->arrow_cursor);
+
+	g_object_unref(G_OBJECT(statusbox->buddy_icon));
+	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
+
+	if (statusbox->buddy_icon_sel)
+		gtk_widget_destroy(statusbox->buddy_icon_sel);
+
+	g_free(statusbox->buddy_icon_path);
+
+	statusbox->icon_box = NULL;
+	statusbox->buddy_icon_path = NULL;
+	statusbox->buddy_icon = NULL;
+	statusbox->buddy_icon_hover = NULL;
+	statusbox->hand_cursor = NULL;
+	statusbox->arrow_cursor = NULL;
+}
+
+static void
 gtk_gaim_status_box_set_property(GObject *object, guint param_id,
                                  const GValue *value, GParamSpec *pspec)
 {
 	GtkGaimStatusBox *statusbox = GTK_GAIM_STATUS_BOX(object);
 
 	switch (param_id) {
+	case PROP_ICON_SEL:
+		if (g_value_get_boolean(value)) {
+			if (statusbox->account) {
+				GaimPlugin *plug = gaim_plugins_find_with_id(gaim_account_get_protocol_id(statusbox->account));
+				if (plug) {
+					GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+					if (prplinfo && prplinfo->icon_spec.format != NULL)
+						setup_icon_box(statusbox);
+				}
+			} else {
+				setup_icon_box(statusbox);
+			}
+		} else {
+			destroy_icon_box(statusbox);
+		}
+		break;
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
 
@@ -296,16 +345,9 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 		}
 
 		if (statusbox->account) {
-			GaimPlugin *plug = gaim_plugins_find_with_id(gaim_account_get_protocol_id(statusbox->account));
-			GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
-			if (prplinfo && prplinfo->icon_spec.format != NULL) {
-				setup_icon_box(statusbox);
-			}
 			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
 			                                                       statusbox, GAIM_CALLBACK(account_status_changed_cb),
 			                                                       statusbox);
-		} else {
-			setup_icon_box(statusbox);
 		}
 		gtk_gaim_status_box_regenerate(statusbox);
 
@@ -365,6 +407,7 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 
 	combo_box_forall = container_class->forall;
 	container_class->forall = gtk_gaim_status_box_forall;
+	container_class->remove = NULL;
 
 	object_class = (GObjectClass *)klass;
 
@@ -378,6 +421,15 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 	                                g_param_spec_pointer("account",
 	                                                     "Account",
 	                                                     "The account, or NULL for all accounts",
+	                                                      G_PARAM_READWRITE
+	                                                     )
+	                               );
+	g_object_class_install_property(object_class,
+	                                PROP_ICON_SEL,
+	                                g_param_spec_boolean("iconsel",
+	                                                     "Icon Selector",
+	                                                     "Whether the icon selector should be displayed or not.",
+														 FALSE,
 	                                                      G_PARAM_READWRITE
 	                                                     )
 	                               );
@@ -1005,6 +1057,7 @@ icon_choose_cb(const char *filename, gpointer data)
 					gaim_account_set_buddy_icon(box->account, icon);
 					g_free(icon);
 					gaim_account_set_ui_bool(box->account, GAIM_GTK_UI, "use-global-buddyicon", FALSE);
+					gaim_account_set_ui_string(box->account, GAIM_GTK_UI, "non-global-buddyicon", icon);
 				}
 			}
 		} else {
@@ -1251,7 +1304,8 @@ gtk_gaim_status_box_expose_event(GtkWidget *widget,
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->toggle_button, event);
-	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->icon_box, event);
+	if (status_box->icon_box)
+		gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->icon_box, event);
 	return FALSE;
 }
 
@@ -1278,13 +1332,15 @@ gtk_gaim_status_box_forall(GtkContainer *container,
 GtkWidget *
 gtk_gaim_status_box_new()
 {
-	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, "account", NULL, NULL);
+	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, "account", NULL,
+	                    "iconsel", TRUE, NULL);
 }
 
 GtkWidget *
 gtk_gaim_status_box_new_with_account(GaimAccount *account)
 {
-	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, "account", account, NULL);
+	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, "account", account,
+	                    "iconsel", TRUE, NULL);
 }
 
 /**
