@@ -47,6 +47,7 @@ struct _GaimProxyConnectInfo {
 	int fd;
 	guint inpa;
 	GaimProxyInfo *gpi;
+	GaimDnsQueryData *query_data;
 
 	/**
 	 * This contains alternating length/char* values.  The char*
@@ -1695,8 +1696,9 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 			return NULL;
 	}
 
-	if (gaim_gethostbyname_async(connecthost,
-			connectport, connection_host_resolved, connect_info) != 0)
+	connect_info->query_data = gaim_dnsquery_a(connecthost,
+			connectport, connection_host_resolved, connect_info);
+	if (connect_info->query_data == NULL)
 	{
 		gaim_proxy_connect_info_destroy(connect_info);
 		return NULL;
@@ -1728,8 +1730,11 @@ gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 	connect_info->port = port;
 	connect_info->gpi = gpi;
 
-	if (gaim_gethostbyname_async(gaim_proxy_info_get_host(gpi),
-			gaim_proxy_info_get_port(gpi), connection_host_resolved, connect_info) != 0)
+	connect_info->query_data =
+			gaim_dnsquery_a(gaim_proxy_info_get_host(gpi),
+					gaim_proxy_info_get_port(gpi),
+					connection_host_resolved, connect_info);
+	if (connect_info->query_data == NULL)
 	{
 		gaim_proxy_connect_info_destroy(connect_info);
 		return NULL;

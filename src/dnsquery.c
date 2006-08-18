@@ -35,6 +35,9 @@
  * DNS query API
  **************************************************************************/
 
+struct _GaimDnsQueryData {
+};
+
 #if defined(__unix__) || defined(__APPLE__)
 
 #define MAX_DNS_CHILDREN 4
@@ -46,7 +49,7 @@
 typedef struct {
 	char *host;
 	int port;
-	GaimProxyDnsConnectFunction callback;
+	GaimDnsQueryConnectFunction callback;
 	gpointer data;
 	guint inpa;
 	int fd_in, fd_out;
@@ -65,7 +68,7 @@ typedef struct {
 
 typedef struct {
 	dns_params_t params;
-	GaimProxyDnsConnectFunction callback;
+	GaimDnsQueryConnectFunction callback;
 	gpointer data;
 } queued_dns_request_t;
 
@@ -473,8 +476,8 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
  * End the functions for dealing with the DNS child processes.
  */
 
-int
-gaim_gethostbyname_async(const char *hostname, int port, GaimProxyDnsConnectFunction callback, gpointer data)
+GaimDnsQueryData *
+gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryConnectFunction callback, gpointer data)
 {
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
@@ -521,14 +524,14 @@ gaim_gethostbyname_async(const char *hostname, int port, GaimProxyDnsConnectFunc
 			gaim_debug_info("dns",
 					   "DNS query for '%s' queued\n", dns_params.hostname);
 
-			return 0;
+			return (GaimDnsQueryData *)1;
 		}
 
 		req = gaim_dns_new_resolverthread(show_debug);
 		if (req == NULL)
 		{
 			gaim_debug_error("proxy", "oh dear, this is going to explode, I give up\n");
-			return -1;
+			return NULL;
 		}
 		send_dns_request_to_child(req, &dns_params);
 	}
@@ -539,7 +542,7 @@ gaim_gethostbyname_async(const char *hostname, int port, GaimProxyDnsConnectFunc
 	req->data = data;
 	req->inpa = gaim_input_add(req->fd_out, GAIM_INPUT_READ, host_resolved, req);
 
-	return 0;
+	return (GaimDnsQueryData *)1;
 }
 
 #elif defined _WIN32 /* end __unix__ || __APPLE__ */
@@ -547,7 +550,7 @@ gaim_gethostbyname_async(const char *hostname, int port, GaimProxyDnsConnectFunc
 typedef struct _dns_tdata {
 	char *hostname;
 	int port;
-	GaimProxyDnsConnectFunction callback;
+	GaimDnsQueryConnectFunction callback;
 	gpointer data;
 	GSList *hosts;
 	char *errmsg;
@@ -621,9 +624,9 @@ static gpointer dns_thread(gpointer data) {
 	return 0;
 }
 
-int
-gaim_gethostbyname_async(const char *hostname, int port,
-							  GaimProxyDnsConnectFunction callback, gpointer data)
+GaimDnsQueryData *
+gaim_dnsquery_a(const char *hostname, int port,
+							  GaimDnsQueryConnectFunction callback, gpointer data)
 {
 	dns_tdata *td;
 	struct sockaddr_in sin;
@@ -636,7 +639,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
 		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
 		callback(hosts, data, NULL);
-		return 0;
+		return (GaimDnsQueryData *)1;
 	}
 
 	gaim_debug_info("dns", "DNS Lookup for: %s\n", hostname);
@@ -651,9 +654,9 @@ gaim_gethostbyname_async(const char *hostname, int port,
 		g_error_free(err);
 		g_free(td->hostname);
 		g_free(td);
-		return -1;
+		return NULL;
 	}
-	return 0;
+	return (GaimDnsQueryData *)1;
 }
 
 #else /* not __unix__ or __APPLE__ or _WIN32 */
@@ -662,7 +665,7 @@ typedef struct {
 	gpointer data;
 	size_t addrlen;
 	struct sockaddr *addr;
-	GaimProxyDnsConnectFunction callback;
+	GaimDnsQueryConnectFunction callback;
 } pending_dns_request_t;
 
 static gboolean host_resolved(gpointer data)
@@ -676,9 +679,9 @@ static gboolean host_resolved(gpointer data)
 	return FALSE;
 }
 
-int
-gaim_gethostbyname_async(const char *hostname, int port,
-						 GaimProxyDnsConnectFunction callback, gpointer data)
+GaimDnsQueryData *
+gaim_dnsquery_a(const char *hostname, int port,
+						 GaimDnsQueryConnectFunction callback, gpointer data)
 {
 	struct sockaddr_in sin;
 	pending_dns_request_t *req;
@@ -689,7 +692,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 			gaim_debug_error("dns",
 					   "gaim_gethostbyname(\"%s\", %d) failed: %d\n",
 					   hostname, port, h_errno);
-			return -1;
+			return NULL;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
 		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
@@ -704,7 +707,7 @@ gaim_gethostbyname_async(const char *hostname, int port,
 	req->data = data;
 	req->callback = callback;
 	gaim_timeout_add(10, host_resolved, req);
-	return 0;
+	return (GaimDnsQueryData *)1;
 }
 
 #endif /* not __unix__ or __APPLE__ or _WIN32 */

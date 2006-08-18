@@ -28,11 +28,13 @@
 #include <glib.h>
 #include "eventloop.h"
 
+typedef struct _GaimDnsQueryData GaimDnsQueryData;
+
 /**
  * The "hosts" parameter is a linked list containing pairs of
  * one size_t addrlen and one struct sockaddr *addr.
  */
-typedef void (*GaimProxyDnsConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
+typedef void (*GaimDnsQueryConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
 
 
 #include "account.h"
@@ -54,9 +56,11 @@ extern "C" {
  * @param callback Callback to call after resolving
  * @param data Extra data for the callback function
  *
- * @return Zero indicates the connection is pending. Any other value indicates failure.
+ * @return NULL if there was an error, otherwise return a reference to
+ *         a data structure that can be used to cancel the pending
+ *         DNS query, if needed.
  */
-int gaim_gethostbyname_async(const char *hostname, int port, GaimProxyDnsConnectFunction callback, gpointer data);
+GaimDnsQueryData *gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryConnectFunction callback, gpointer data);
 
 /*@}*/
 
