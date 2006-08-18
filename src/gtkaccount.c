@@ -646,6 +646,11 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		dialog->protocol_frame = NULL;
 	}
 
+	if (dialog->protocol_opt_entries != NULL) {
+		g_list_free(dialog->protocol_opt_entries);
+		dialog->protocol_opt_entries = NULL;
+	}
+
 	if (dialog->prpl_info == NULL ||
 		dialog->prpl_info->protocol_options == NULL) {
 
@@ -668,11 +673,6 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
-
-	if (dialog->protocol_opt_entries != NULL) {
-		g_list_free(dialog->protocol_opt_entries);
-		dialog->protocol_opt_entries = NULL;
-	}
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
 	{
