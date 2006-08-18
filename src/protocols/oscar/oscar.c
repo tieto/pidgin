@@ -2886,6 +2886,9 @@ static int gaim_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr
 			gaim_status_set_attr_string(status, "message", message);
 			g_free(message);
 		}
+		else
+			/* Set an empty message so that we know not to show "pending" */
+			gaim_status_set_attr_string(status, "message", message);
 
 		gaim_blist_update_buddy_status(b, status);
 	}
