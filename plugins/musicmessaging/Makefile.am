@@ -6,6 +6,7 @@ musicmessagingdir = $(libdir)/gaim
 musicmessaging_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(DBUS_LIBS)
 
 if PLUGINS
+if ENABLE_DBUS
 
 musicmessagingpixdir = $(datadir)/pixmaps/gaim/buttons
 musicmessagingpix_DATA = music.png
@@ -30,8 +31,7 @@ music-messaging-bindings.c: $(top_srcdir)/src/dbus-analyze-functions.py $(musicm
 
 $(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c $(top_builddir)/src/dbus-types.h
 
-
-
+endif
 endif
 
 AM_CPPFLAGS = \
