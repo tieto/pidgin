@@ -265,7 +265,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 */
 				if (mech && strlen(mech) > 0) {
 					char *pos;
-					if ((pos = strstr(js->sasl_mechs->str, mech)) {
+					if ((pos = strstr(js->sasl_mechs->str, mech))) {
 						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(mech));
 					}
 					again = TRUE;
