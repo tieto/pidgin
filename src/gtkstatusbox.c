@@ -1280,10 +1280,12 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 			{
 				scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
 									   icon_alc.height, icon_alc.width, FALSE, NULL);
-				g_object_unref(status_box->buddy_icon_hover);
+				if (status_box->buddy_icon_hover)
+					g_object_unref(status_box->buddy_icon_hover);
 				status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
 				do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
-				g_object_unref(status_box->buddy_icon);
+				if (status_box->buddy_icon)
+					g_object_unref(status_box->buddy_icon);
 				status_box->buddy_icon = scaled;
 				gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 			}
@@ -1444,14 +1446,18 @@ gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *box, const char *filename)
 	{
 		if (box->buddy_icon != NULL)
 			g_object_unref(box->buddy_icon);
-		scaled = gdk_pixbuf_new_from_file_at_scale(filename,
-							   box->icon_size, box->icon_size, FALSE, NULL);
-		if (scaled != NULL)
-		{
-			box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
-			do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
-			box->buddy_icon = scaled;
-			gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
+
+		/* This will get called before the box is shown and will not have a size */
+		if (box->icon_size > 0) {
+			scaled = gdk_pixbuf_new_from_file_at_scale(filename,
+				box->icon_size, box->icon_size, FALSE, NULL);
+			if (scaled != NULL)
+			{
+				box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
+				do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
+				box->buddy_icon = scaled;
+				gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
+			}
 		}
 	}
 
