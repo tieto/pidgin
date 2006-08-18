@@ -90,5 +90,4 @@ struct timezone {
 	int tz_dsttime;
 };
 
-
 #endif /* _LIBC_INTERNAL_ */
