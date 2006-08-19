@@ -1854,6 +1854,8 @@ AC_OUTPUT([Makefile
 		   libgaim/protocols/yahoo/Makefile
 		   libgaim/protocols/zephyr/Makefile
 		   console/Makefile
+		   console/libgnt/Makefile
+		   console/libgnt/gnt.pc
 		   console/plugins/Makefile
 		   po/Makefile.in
 		   gaim.pc
