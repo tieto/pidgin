@@ -101,10 +101,12 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 				GaimSslInputFunction	connect_cb,
 				GaimSslErrorFunction	error_cb)
 {
+	gaim_debug_info("MaYuan","msn_soap_init...\n");
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
 	soapconn->error_cb = error_cb;
+	gaim_debug_info("MaYuan","msn_soap_init...done\n");
 }
 
 /*connect the soap connection*/
@@ -343,14 +345,13 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			if(soapconn->read_cb != NULL){
 				soapconn->read_cb(soapconn,source,0);
 			}
+			/*clear the read buffer*/
+			msn_soap_free_read_buf(soapconn);
 
 			/*Process the next queued SOAP request*/
 			msn_soap_post_head_request(soapconn);
 
 #if 0
-	/*clear the read buffer*/
-	msn_soap_free_read_buf(soapconn);
-
 	/*remove the read handler*/
 	gaim_input_remove(soapconn->input_handler);
 	soapconn->input_handler = -1;

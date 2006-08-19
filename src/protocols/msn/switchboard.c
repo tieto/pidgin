@@ -530,6 +530,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
+	gaim_debug_info("MaYuan","SB length:{%d}",payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
@@ -706,8 +707,8 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	process_queue(swboard);
 
-	if (!session->http_method)
-		send_clientcaps(swboard);
+//	if (!session->http_method)
+//		send_clientcaps(swboard);
 
 	if (swboard->closed)
 		msn_switchboard_close(swboard);

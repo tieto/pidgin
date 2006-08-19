@@ -104,8 +104,7 @@ msn_message_unref(MsnMessage *msg)
 	gaim_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
 #endif
 
-	if (msg->ref_count == 0)
-	{
+	if (msg->ref_count == 0){
 		msn_message_destroy(msg);
 
 		return NULL;
@@ -121,15 +120,15 @@ msn_message_new_plain(const char *message)
 	char *message_cr;
 
 	msg = msn_message_new(MSN_MSG_TEXT);
-	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
+//	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
-	msn_message_set_flag(msg, 'A');
+	msn_message_set_flag(msg, 'N');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
-						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
+						 "FN=MS%20Sans%20Serif; EF=; CO=0; CS=86;PF=0");
 
 	message_cr = gaim_str_add_cr(message);
-	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));
+	msn_message_set_bin_data(msg, message_cr, strlen(message_cr)+1);
 	g_free(message_cr);
 
 	return msg;
@@ -471,7 +470,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 		{
 			memcpy(n, body, body_len);
 			n += body_len;
-			n = "\0";
+//			n = '\0';
 		}
 	}
 

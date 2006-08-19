@@ -326,6 +326,9 @@ msn_parse_addressbook(MsnContact * contact)
 			for(contactEmailNode = xmlnode_get_child(emailsNode,"ContactEmail");contactEmailNode;
 					contactEmailNode = xmlnode_get_next_twin(contactEmailNode) ){
 				messengerEnabledNode = xmlnode_get_child(contactEmailNode,"isMessengerEnabled");
+				if(messengerEnabledNode == NULL){
+					break;
+				}
 				msnEnabled = xmlnode_get_data(messengerEnabledNode);
 				if(!strcmp(msnEnabled,"true")){
 					emailNode = xmlnode_get_child(contactEmailNode,"email");
@@ -339,7 +342,10 @@ msn_parse_addressbook(MsnContact * contact)
 		}
 
 		displayName = xmlnode_get_child(contactInfo,"displayName");
-		Name =xmlnode_get_data(displayName);
+		if(displayName == NULL)
+			Name = "";
+		else
+			Name =xmlnode_get_data(displayName);	
 
 		gaim_debug_misc("contact","name:%s,Id:{%s},display:{%s}\n",
 						passport,

@@ -163,6 +163,7 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	MsnSoapConn *soapconn;
 	MsnNexus * nexus;
 	MsnSession *session;
+	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
 	char *username, *password;
 	char *request_str, *head, *tail,*challenge_str;
 
@@ -183,19 +184,31 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	username = g_strdup(gaim_account_get_username(session->account));
 	password = g_strdup(gaim_connection_get_password(session->account->gc));
 
+	lc =	(char *)g_hash_table_lookup(nexus->challenge_data, "lc");
+	id =	(char *)g_hash_table_lookup(nexus->challenge_data, "id");
+	tw =	(char *)g_hash_table_lookup(nexus->challenge_data, "tw");
+	ru =	(char *)g_hash_table_lookup(nexus->challenge_data, "ru");
+	ct =	(char *)g_hash_table_lookup(nexus->challenge_data, "ct");
+	kpp=	(char *)g_hash_table_lookup(nexus->challenge_data, "kpp");
+	kv =	(char *)g_hash_table_lookup(nexus->challenge_data, "kv");
+	ver= (char *)g_hash_table_lookup(nexus->challenge_data, "ver");
+	rn = (char *)g_hash_table_lookup(nexus->challenge_data, "rn");
+	tpf=	(char *)g_hash_table_lookup(nexus->challenge_data, "tpf");
+
+	if(!(lc && id && tw && ru && ct && kpp && kv && ver && tpf)){
+		gaim_debug_error("MaYuan","WLM Authenticate Key Error!\n");
+		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication Failed"));
+		g_free(username);
+		g_free(password);
+		gaim_ssl_close(gsc);
+		msn_nexus_destroy(nexus);
+		session->nexus = NULL;
+		return;
+	}
+
 	challenge_str = g_strdup_printf(
-		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
-		(char *)g_hash_table_lookup(nexus->challenge_data, "lc"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "id"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "tw"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "fs"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ct"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "kpp"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "kv"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ver"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "rn"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "tpf")
+		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=1&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
+		lc,id,tw,ru,ct,kpp,kv,ver,rn,tpf
 		);
 
 	/*build the SOAP windows Live ID XML body */
