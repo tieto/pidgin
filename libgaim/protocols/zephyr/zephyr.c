@@ -27,7 +27,7 @@
 
 */
 /* XXX eww */
-#include "core/internal.h"
+#include "libgaim/internal.h"
 
 #include "accountopt.h"
 #include "debug.h"
