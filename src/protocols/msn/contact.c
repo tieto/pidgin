@@ -30,6 +30,8 @@
 #include "xmlnode.h"
 #include "group.h"
 
+void msn_contact_connect_init(MsnSoapConn *soapconn);
+
 /*new a contact*/
 MsnContact *
 msn_contact_new(MsnSession *session)
@@ -80,7 +82,7 @@ msn_contact_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_return_if_fail(session != NULL);
 
 	/*login ok!We can retrieve the contact list*/
-	msn_get_contact_list(contact);
+//	msn_get_contact_list(contact);
 }
 
 /*get MSN member role utility*/
@@ -212,12 +214,13 @@ msn_get_contact_list(MsnContact * contact)
 {
 	MsnSoapReq *soap_request;
 
+	gaim_debug_info("MaYuan","Getting Contact List...\n");
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_GET_CONTACT_POST_URL,MSN_GET_CONTACT_SOAP_ACTION,
 					MSN_GET_CONTACT_TEMPLATE,
 					msn_get_contact_list_cb,
 					msn_get_contact_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 }
 
 static void
@@ -437,7 +440,7 @@ msn_get_address_book(MsnContact *contact)
 					MSN_GET_ADDRESS_TEMPLATE,
 					msn_get_address_cb,
 					msn_address_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 }
 
 static void
@@ -483,7 +486,7 @@ msn_add_contact(MsnContact *contact,const char *passport,char *groupId)
 					body,
 					msn_add_contact_read_cb,
 					msn_add_contact_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 
 	g_free(soap_action);
 	g_free(body);
@@ -523,7 +526,7 @@ msn_delete_contact(MsnContact *contact,const char *contactId)
 					body,
 					msn_delete_contact_read_cb,
 					msn_delete_contact_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 
 	g_free(body);
 }
@@ -559,7 +562,7 @@ msn_block_contact(MsnContact *contact,const char* membership_id)
 					body,
 					msn_block_read_cb,
 					msn_block_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 
 	g_free(body);
 }
@@ -596,7 +599,7 @@ msn_unblock_contact(MsnContact *contact,const char* passport)
 					body,
 					msn_unblock_read_cb,
 					msn_unblock_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 
 	g_free(body);
 }
@@ -630,7 +633,7 @@ msn_get_gleams(MsnContact *contact)
 					MSN_GLEAMS_TEMPLATE,
 					msn_gleams_read_cb,
 					msn_gleams_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 }
 
 /***************************************************************
@@ -670,7 +673,7 @@ void msn_add_group(MsnSession *session,const char* group_name)
 					body,
 					msn_group_read_cb,
 					msn_group_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 }
 
 /*delete a group*/
@@ -691,18 +694,18 @@ void msn_del_group(MsnSession *session,const char *guid)
 					body,
 					msn_group_read_cb,
 					msn_group_written_cb);
-	msn_soap_post(contact->soapconn,soap_request);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 
 	g_free(body);
 }
 
 void
-msn_contact_connect(MsnContact *contact)
+msn_contact_connect_init(MsnSoapConn *soapconn)
 {
 	/*  Authenticate via Windows Live ID. */
 	gaim_debug_info("MaYuan","msn_contact_connect...\n");
 
-	msn_soap_init(contact->soapconn,MSN_CONTACT_SERVER,1,
+	msn_soap_init(soapconn,MSN_CONTACT_SERVER,1,
 					msn_contact_login_connect_cb,
 					msn_contact_login_error_cb);
 }

@@ -1470,7 +1470,8 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	/*starting retrieve the contact list*/
 	session->contact = msn_contact_new(session);
-	msn_contact_connect(session->contact);
+	msn_get_contact_list(session->contact);
+//	msn_contact_connect(session->contact);
 }
 
 static void

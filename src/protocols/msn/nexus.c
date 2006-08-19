@@ -182,7 +182,6 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	/*prepare the Windows Live ID authentication token*/
 	username = g_strdup(gaim_account_get_username(session->account));
 	password = g_strdup(gaim_connection_get_password(session->account->gc));
-//		g_strdup(gaim_url_encode(gaim_connection_get_password(session->account->gc)));
 
 	challenge_str = g_strdup_printf(
 		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
@@ -235,7 +234,7 @@ msn_nexus_connect(MsnNexus *nexus)
 {
 	/*  Authenticate via Windows Live ID. */
 	gaim_debug_info("MaYuan","msn_nexus_connect...\n");
-
 	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,nexus_login_connect_cb,nexus_login_error_cb);
+	msn_soap_connect(nexus->soapconn);
 }
 

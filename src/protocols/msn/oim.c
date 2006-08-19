@@ -29,6 +29,8 @@
 
 /*Local Function Prototype*/
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid);
+void msn_oim_retrieve_connect_init(MsnSoapConn *soapconn);
+void msn_oim_send_connect_init(MsnSoapConn *soapconn);
 
 /*new a OIM object*/
 MsnOim *
@@ -134,7 +136,7 @@ msn_oim_send_single_msg(MsnOim *oim,char * msg)
 					soap_body,
 					msn_oim_send_read_cb,
 					msn_oim_send_written_cb);
-	msn_soap_post(oim->sendconn,soap_request);
+	msn_soap_post(oim->sendconn,soap_request,msn_oim_send_connect_init);
 }
 
 void msn_oim_send_msg(MsnOim *oim,char *msg)
@@ -180,8 +182,6 @@ msn_oim_get_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_return_if_fail(session != NULL);
 
 	gaim_debug_info("MaYuan","oim get SOAP Server connected!\n");
-	/*call to get the message*/
-	msn_oim_get_msg(oim);
 }
 
 static void
@@ -193,9 +193,9 @@ msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 
 	gaim_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
 
+	/*we need to process the read message!*/
 	/*get next single Offline Message*/
-	oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
-//	msn_oim_get_msg(oim);
+//	oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
 }
 
 static void
@@ -228,13 +228,8 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		gaim_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);
 //		msn_session_report_user(oim->session,passport,"hello");
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
+		msn_oim_post_single_get_msg(oim,msgid);
 	}
-	if(msn_soap_connected(oim->retrieveconn) == -1){
-		gaim_debug_info("MaYuan","retreive OIM server not connected! We need to connect it first\n");
-		msn_oim_connect(oim);
-		return;
-	}
-	msn_oim_get_msg(oim);
 }
 
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
@@ -258,37 +253,30 @@ static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 					soap_body,
 					msn_oim_get_read_cb,
 					msn_oim_get_written_cb);
-	msn_soap_post(oim->retrieveconn,soap_request);
+	msn_soap_post(oim->retrieveconn,soap_request,msn_oim_retrieve_connect_init);
 }
 
-/*MSN OIM get SOAP request*/
-void msn_oim_get_msg(MsnOim *oim)
-{
-	gaim_debug_info("MaYuan","Get OIM with SOAP \n");
-//	gaim_debug_info("MaYuan","oim->oim_list:%p,data:%s \n",oim->oim_list,oim->oim_list->data);
-	if(oim->oim_list !=NULL){
-		msn_oim_post_single_get_msg(oim,oim->oim_list->data);
-	}
-}
-
-/*msn oim server connect*/
+/*msn oim retrieve server connect init */
 void
-msn_oim_connect(MsnOim *oim)
+msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 {
 	gaim_debug_info("MaYuan","msn_oim_connect...\n");
 
-	if(msn_soap_connected(oim->retrieveconn) == -1){
-		msn_soap_init(oim->retrieveconn,MSN_OIM_RETRIEVE_HOST,1,
+	if(msn_soap_connected(soapconn) == -1){
+		msn_soap_init(soapconn,MSN_OIM_RETRIEVE_HOST,1,
 					msn_oim_get_connect_cb,
 					msn_oim_get_error_cb);
 	}
-#if 0
-	if(msn_soap_connected(oim->sendconn) == -1){
-		msn_soap_init(oim->sendconn,MSN_OIM_SEND_HOST,1,
+}
+
+void msn_oim_send_connect_init(MsnSoapConn *sendconn)
+{
+	gaim_debug_info("MaYuan","msn oim send connect init...\n");
+	if(msn_soap_connected(sendconn) == -1){
+		msn_soap_init(sendconn,MSN_OIM_SEND_HOST,1,
 					msn_oim_send_connect_cb,
 					msn_oim_send_error_cb);
 	}
-#endif
 }
 
 /*endof oim.c*/

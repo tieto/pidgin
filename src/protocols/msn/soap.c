@@ -26,6 +26,12 @@
 #include "msn.h"
 #include "soap.h"
 
+void
+msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step)
+{
+	soapconn->step = step;
+}
+
 //msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 /*new a soap connection*/
 MsnSoapConn *
@@ -42,6 +48,7 @@ msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 	soapconn->input_handler = -1;
 	soapconn->output_handler = -1;
 
+	msn_soap_set_process_step(soapconn,MSN_SOAP_UNCONNECTED);
 	soapconn->soap_queue = g_queue_new();
 	return soapconn;
 }
@@ -68,6 +75,7 @@ msn_soap_connect_cb(gpointer data, GaimSslConnection *gsc,
 		soapconn->connect_cb(data,gsc,cond);
 	}
 
+	msn_soap_set_process_step(soapconn,MSN_SOAP_CONNECTED);
 	/*we do the SOAP request here*/
 	msn_soap_post_head_request(soapconn);
 }
@@ -83,6 +91,7 @@ msn_soap_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	if(soapconn->error_cb != NULL){
 		soapconn->error_cb(gsc,error,data);
 	}
+	msn_soap_set_process_step(soapconn, MSN_SOAP_UNCONNECTED);
 }
 
 /*init the soap connection*/
@@ -97,6 +106,7 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 	soapconn->error_cb = error_cb;
 }
 
+/*connect the soap connection*/
 void
 msn_soap_connect(MsnSoapConn *soapconn)
 {
@@ -108,6 +118,7 @@ msn_soap_connect(MsnSoapConn *soapconn)
 	}
 }
 
+/*close the soap connection*/
 void
 msn_soap_close(MsnSoapConn *soapconn)
 {
@@ -118,6 +129,7 @@ msn_soap_close(MsnSoapConn *soapconn)
 		}
 	}else{
 	}
+	msn_soap_set_process_step(soapconn,MSN_SOAP_UNCONNECTED);
 }
 
 /*destroy the soap connection*/
@@ -146,6 +158,7 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	/*close ssl connection*/
 	msn_soap_close(soapconn);
 
+	/*process the unhandled soap request*/
 	while ((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
 		msn_soap_request_free(request);
 	}
@@ -154,15 +167,15 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 }
 
 /*check the soap is connected?
- * if connected return 0
+ * if connected return 1
  */
 int
 msn_soap_connected(MsnSoapConn *soapconn)
 {
 	if(soapconn->ssl_conn){
-		return (soapconn->gsc == NULL? -1 : 0);
+		return (soapconn->gsc == NULL? 0 : 1);
 	}
-	return(soapconn->fd>0? 0 : -1);
+	return(soapconn->fd>0? 1 : 0);
 }
 
 /*read and append the content to the buffer*/
@@ -475,26 +488,33 @@ msn_soap_post_head_request(MsnSoapConn *soapconn)
 {
 	if(!g_queue_is_empty(soapconn->soap_queue)){
 		MsnSoapReq *request;
-	
 		if((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
 			msn_soap_post_request(soapconn,request);
 		}
 	}
+	msn_soap_set_process_step(soapconn,MSN_SOAP_CONNECTED_IDLE);
 }
 
 void
-msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
+msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
+				MsnSoapConnectInitFunction msn_soap_init_func)
 {
 	g_queue_push_tail(soapconn->soap_queue, request);
 	if(!msn_soap_connected(soapconn)){
 		/*not connected?connect it first*/
+		gaim_debug_info("Ma Yuan","soap is not connected!\n");
+		msn_soap_init_func(soapconn);
 		msn_soap_connect(soapconn);
 		return;
 	}
+	gaim_debug_info("Ma Yuan","soap  connected!\n");
 	/*if connected, what we only needed to do is to queue the request, 
 	 * when SOAP request in the queue processed done, will do this command.
 	 * we just waiting...
 	 */
+	if(soapconn->step == MSN_SOAP_CONNECTED_IDLE){
+		msn_soap_post_head_request(soapconn);
+	}
 }
 
 /*Post the soap request action*/
@@ -505,6 +525,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	char * request_str = NULL;
 
 	gaim_debug_info("MaYuan","msn_soap_post()...\n");
+	msn_soap_set_process_step(soapconn,MSN_SOAP_PROCESSING);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
 					"SOAPAction: %s\r\n"

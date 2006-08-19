@@ -28,11 +28,21 @@
 
 #define MSN_SOAP_READ_BUFF_SIZE		8192
 
+typedef enum
+{
+	MSN_SOAP_UNCONNECTED,
+	MSN_SOAP_CONNECTED,
+	MSN_SOAP_PROCESSING,
+	MSN_SOAP_CONNECTED_IDLE
+}MsnSoapStep;
+
 /*MSN SoapRequest structure*/
 typedef struct _MsnSoapReq MsnSoapReq;
 
 /*MSN Https connection structure*/
 typedef struct _MsnSoapConn MsnSoapConn;
+
+typedef void (*MsnSoapConnectInitFunction)(MsnSoapConn *);
 
 struct _MsnSoapReq{
 	/*request sequence*/
@@ -56,6 +66,7 @@ struct _MsnSoapConn{
 	char *login_path;
 	char *soap_action;
 
+	MsnSoapStep step;
 	/*ssl connection?*/
 	guint	ssl_conn;
 	/*normal connection*/
@@ -109,10 +120,11 @@ void msn_soap_destroy(MsnSoapConn *soapconn);
 
 /*init a soap conneciton */
 void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,GaimSslInputFunction connect_cb,GaimSslErrorFunction error_cb);
+void msn_soap_connect(MsnSoapConn *soapconn);
 
 /*write to soap*/
 void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction written_cb);
-void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request);
+void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,MsnSoapConnectInitFunction msn_soap_init_func);
 
 void  msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
