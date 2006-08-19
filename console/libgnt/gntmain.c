@@ -437,7 +437,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	gboolean ret = FALSE;
 	static GntKeyPressMode mode = GNT_KP_MODE_NORMAL;
 
-	int rd = read(0, buffer, sizeof(buffer) - 1);
+	int rd = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
 	if (rd < 0)
 	{
 		endwin();
