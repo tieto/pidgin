@@ -156,6 +156,83 @@ entry_redraw(GntWidget *widget)
 	gnt_widget_queue_update(widget);
 }
 
+static void
+move_back(GntEntry *entry)
+{
+	if (entry->cursor <= entry->start)
+		return;
+	entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
+	if (entry->cursor < entry->scroll)
+		entry->scroll = entry->cursor;
+	entry_redraw(GNT_WIDGET(entry));
+}
+
+static void
+move_forward(GntEntry *entry)
+{
+	if (entry->cursor >= entry->end)
+		return;
+	entry->cursor = g_utf8_find_next_char(entry->cursor, NULL);
+	if (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
+		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+	entry_redraw(GNT_WIDGET(entry));
+}
+
+static void
+backspace(GntEntry *entry)
+{
+	int len;
+
+	if (entry->cursor <= entry->start)
+		return;
+	
+	len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
+	entry->cursor -= len;
+	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
+	entry->end -= len;
+
+	if (entry->scroll > entry->start)
+		entry->scroll = g_utf8_find_prev_char(entry->start, entry->scroll);
+
+	entry_redraw(GNT_WIDGET(entry));
+	if (entry->ddown)
+		show_suggest_dropdown(entry);
+}
+
+static void
+delkey(GntEntry *entry)
+{
+	int len;
+
+	if (entry->cursor >= entry->end)
+		return;
+	
+	len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
+	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
+	entry->end -= len;
+	entry_redraw(GNT_WIDGET(entry));
+
+	if (entry->ddown)
+		show_suggest_dropdown(entry);
+}
+
+static void
+move_start(GntEntry *entry)
+{
+	entry->scroll = entry->cursor = entry->start;
+	entry_redraw(GNT_WIDGET(entry));
+}
+
+static void
+move_end(GntEntry *entry)
+{
+	entry->cursor = entry->end;
+	/* This should be better than this */
+	while (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
+		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+	entry_redraw(GNT_WIDGET(entry));
+}
+
 static gboolean
 gnt_entry_key_pressed(GntWidget *widget, const char *text)
 {
@@ -165,32 +242,17 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 	{
 		if (strcmp(text + 1, GNT_KEY_DEL) == 0 && entry->cursor < entry->end)
 		{
-			int len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
-			memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
-			entry->end -= len;
-			entry_redraw(widget);
-
-			if (entry->ddown)
-				show_suggest_dropdown(entry);
-
+			delkey(entry);
 			return TRUE;
 		}
-		else if (strcmp(text + 1, GNT_KEY_LEFT) == 0 && entry->cursor > entry->start)
+		else if (strcmp(text + 1, GNT_KEY_LEFT) == 0)
 		{
-			entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
-			if (entry->cursor < entry->scroll)
-				entry->scroll = entry->cursor;
-			entry_redraw(widget);
-
+			move_back(entry);
 			return TRUE;
 		}
-		else if (strcmp(text + 1, GNT_KEY_RIGHT) == 0 && entry->cursor < entry->end)
+		else if (strcmp(text + 1, GNT_KEY_RIGHT) == 0)
 		{
-			entry->cursor = g_utf8_find_next_char(entry->cursor, NULL);
-			if (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
-				entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
-			entry_redraw(widget);
-
+			move_forward(entry);
 			return TRUE;
 		}
 		else if (strcmp(text + 1, GNT_KEY_CTRL_DOWN) == 0 && entry->histlength)
@@ -322,20 +384,55 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		}
 		else
 		{
-			/* Backspace is here */
 			if (strcmp(text, GNT_KEY_BACKSPACE) == 0 && entry->cursor > entry->start)
 			{
-				int len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
-				entry->cursor -= len;
-				memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
-				entry->end -= len;
-
-				if (entry->scroll > entry->start)
-					entry->scroll = g_utf8_find_prev_char(entry->start, entry->scroll);
-
+				backspace(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_A) == 0)
+			{
+				move_start(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_B) == 0)
+			{
+				move_back(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_D) == 0)
+			{
+				delkey(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_E) == 0)
+			{
+				move_end(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_F) == 0)
+			{
+				move_forward(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_H) == 0)
+			{
+				backspace(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_K) == 0)
+			{
+				entry->end = entry->cursor;
+				memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 				entry_redraw(widget);
-				if (entry->ddown)
-					show_suggest_dropdown(entry);
+				return TRUE;
+			}
+			else if (strcmp(text, GNT_KEY_CTRL_U) == 0)
+			{
+				memmove(entry->start, entry->cursor, entry->end - entry->cursor);
+				entry->end -= (entry->cursor - entry->start);
+				entry->cursor = entry->scroll = entry->start;
+				memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
+				entry_redraw(widget);
 				return TRUE;
 			}
 		}

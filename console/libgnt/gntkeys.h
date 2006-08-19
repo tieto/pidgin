@@ -22,6 +22,29 @@
 #define GNT_KEY_BACKSPACE "\177"
 #define GNT_KEY_DEL    "[3~"
 
+#define GNT_KEY_CTRL_A     "\001"
+#define GNT_KEY_CTRL_B     "\002"
+#define GNT_KEY_CTRL_D     "\004"
+#define GNT_KEY_CTRL_E     "\005"
+#define GNT_KEY_CTRL_F     "\006"
+#define GNT_KEY_CTRL_G     "\007"
+#define GNT_KEY_CTRL_H     "\010"
+#define GNT_KEY_CTRL_I     "\011"
+#define GNT_KEY_CTRL_J     "\012"
+#define GNT_KEY_CTRL_K     "\013"
+#define GNT_KEY_CTRL_L     "\014"
+#define GNT_KEY_CTRL_M     "\012"
+#define GNT_KEY_CTRL_N     "\016"
+#define GNT_KEY_CTRL_O     "\017"
+#define GNT_KEY_CTRL_P     "\020"
+#define GNT_KEY_CTRL_R     "\022"
+#define GNT_KEY_CTRL_T     "\024"
+#define GNT_KEY_CTRL_U     "\025"
+#define GNT_KEY_CTRL_V     "\026"
+#define GNT_KEY_CTRL_W     "\027"
+#define GNT_KEY_CTRL_X     "\030"
+#define GNT_KEY_CTRL_Y     "\031"
+
 /**
  * This will do stuff with the terminal settings and stuff.
  */
