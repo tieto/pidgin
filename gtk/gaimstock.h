@@ -69,7 +69,6 @@
 #define GAIM_STOCK_INVITE          "gaim-invite"
 #define GAIM_STOCK_LINK            "gaim-link"
 #define GAIM_STOCK_LOG             "gaim-log"
-#define GAIM_STOCK_LOGO            "gaim-logo"
 #define GAIM_STOCK_MODIFY          "gaim-modify"
 #define GAIM_STOCK_OPEN_MAIL       "gaim-stock-open-mail"
 #define GAIM_STOCK_PAUSE           "gaim-pause"
@@ -105,7 +104,6 @@
  * For using icons that aren't one of the default GTK_ICON_SIZEs
  */
 #define GAIM_ICON_SIZE_DIALOG_COOL           "gaim-icon-size-dialog-cool"
-#define GAIM_ICON_SIZE_LOGO                  "gaim-icon-size-logo"
 #define GAIM_ICON_SIZE_STATUS                "gaim-icon-size-status"
 #define GAIM_ICON_SIZE_STATUS_TWO_LINE       "gaim-icon-size-status-two-line"
 #define GAIM_ICON_SIZE_STATUS_SMALL          "gaim-icon-size-status-small"

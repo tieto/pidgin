@@ -93,7 +93,6 @@ static struct StockIcon
 	{ GAIM_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
 	{ GAIM_STOCK_LOG,             NULL,      GTK_STOCK_DND_MULTIPLE     },
-	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
 	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ GAIM_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
@@ -174,42 +173,6 @@ find_file(const char *dir, const char *base)
 	return filename;
 }
 
-static void
-gaim_gtk_stock_versionize(GdkPixbuf **original, GtkWidget *widget) {
-	GdkPixmap *pixmap;
-	GtkStyle *style;
-	PangoContext *context;
-	PangoLayout *layout;
-	gchar *markup;
-	gint width, height;
-	gint lwidth = 0, lheight = 0;
-
-	style = gtk_widget_get_style(widget);
-
-	gdk_pixbuf_render_pixmap_and_mask(*original, &pixmap, NULL, 255);
-	width = gdk_pixbuf_get_width(*original);
-	height = gdk_pixbuf_get_height(*original);
-	g_object_unref(G_OBJECT(*original));
-
-	context = gtk_widget_get_pango_context(widget);
-	layout = pango_layout_new(context);
-
-	markup = g_strdup_printf("<span foreground=\"#FFFFFF\" size=\"larger\">%s</span>", VERSION);
-	pango_layout_set_font_description(layout, style->font_desc);
-	pango_layout_set_markup(layout, markup, strlen(markup));
-	g_free(markup);
-
-	pango_layout_get_pixel_size(layout, &lwidth, &lheight);
-	gdk_draw_layout(GDK_DRAWABLE(pixmap), style->bg_gc[GTK_STATE_NORMAL],
-					width - (lwidth + 3), height - (lheight + 1), layout);
-	g_object_unref(G_OBJECT(layout));
-
-	*original = gdk_pixbuf_get_from_drawable(NULL, pixmap, NULL,
-											 0, 0, 0, 0,
-											 width, height);
-	g_object_unref(G_OBJECT(pixmap));
-}
-
 void
 gaim_gtk_stock_init(void)
 {
@@ -255,9 +218,6 @@ gaim_gtk_stock_init(void)
 
 			g_free(filename);
 
-			if (!strcmp(stock_icons[i].name, GAIM_STOCK_LOGO))
-				gaim_gtk_stock_versionize(&pixbuf, win);
-
 			iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
 
 			g_object_unref(G_OBJECT(pixbuf));
@@ -271,7 +231,6 @@ gaim_gtk_stock_init(void)
 	gtk_widget_destroy(win);
 
 	/* register custom icon sizes */
-	gtk_icon_size_register(GAIM_ICON_SIZE_LOGO, 330, 90);
 	gtk_icon_size_register(GAIM_ICON_SIZE_DIALOG_COOL, 40, 60);
 	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS, 30, 30);
 	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_TWO_LINE, 30, 30);
