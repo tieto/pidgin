@@ -663,20 +663,25 @@ void gnt_init()
 {
 	static GIOChannel *channel = NULL;
 	char *filename;
-	
+	int result;
+	const char *locale;
+
 	if (channel)
 		return;
 	
-	channel = g_io_channel_unix_new(0);
+	channel = g_io_channel_unix_new(STDIN_FILENO);
 
 	g_io_channel_set_encoding(channel, NULL, NULL);
 	g_io_channel_set_buffered(channel, FALSE);
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
 
-	int result = g_io_add_watch(channel, 
-					(G_IO_IN | G_IO_HUP | G_IO_ERR),
-					io_invoke, NULL);
-	const char *locale = setlocale(LC_ALL, "");
+	result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI | G_IO_NVAL),
+					io_invoke, NULL, NULL);
+	
+	locale = setlocale(LC_ALL, "");
+
+	g_io_channel_unref(channel);
 
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
