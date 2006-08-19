@@ -356,7 +356,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 //			msn_soap_close(soapconn);
 #endif
 			/*Process the next queued SOAP request*/
-			msn_soap_post_head_request(soapconn);
+//			msn_soap_post_head_request(soapconn);
 	}
 	return;
 }

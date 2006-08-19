@@ -416,10 +416,11 @@ uum_send_msg(MsnSession *session,MsnMessage *msg)
 	cmdproc = session->notification->cmdproc;
 	g_return_if_fail(msg     != NULL);
 	payload = msn_message_gen_payload(msg, &payload_len);
-	gaim_debug_info("MaYuan","send UUM,payload{%s}\n",payload);
+	gaim_debug_info("MaYuan","send UUM,payload{%s},strlen:%d,len:%d\n",
+		payload,strlen(payload),payload_len);
 	type = msg->type;
-	trans = msn_transaction_new(cmdproc, "UUM","%s 32 %d %d",msg->remote_user,type,strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
+	trans = msn_transaction_new(cmdproc, "UUM","%s 32 %d %d",msg->remote_user,type,payload_len);
+	msn_transaction_set_payload(trans, payload, payload_len);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
