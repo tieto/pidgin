@@ -223,6 +223,44 @@ static void destroy_about()
 	about = NULL;
 }
 
+/* This function puts the version number onto the pixmap we use in the 'about' 
+ * screen in Gaim. */
+static void
+gaim_gtk_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
+	GdkPixmap *pixmap;
+	GtkStyle *style;
+	PangoContext *context;
+	PangoLayout *layout;
+	gchar *markup;
+	gint width, height;
+	gint lwidth = 0, lheight = 0;
+
+	style = gtk_widget_get_style(widget);
+
+	gdk_pixbuf_render_pixmap_and_mask(*original, &pixmap, NULL, 255);
+	width = gdk_pixbuf_get_width(*original);
+	height = gdk_pixbuf_get_height(*original);
+	g_object_unref(G_OBJECT(*original));
+
+	context = gtk_widget_get_pango_context(widget);
+	layout = pango_layout_new(context);
+
+	markup = g_strdup_printf("<span foreground=\"#FFFFFF\" size=\"larger\">%s</span>", VERSION);
+	pango_layout_set_font_description(layout, style->font_desc);
+	pango_layout_set_markup(layout, markup, strlen(markup));
+	g_free(markup);
+
+	pango_layout_get_pixel_size(layout, &lwidth, &lheight);
+	gdk_draw_layout(GDK_DRAWABLE(pixmap), style->bg_gc[GTK_STATE_NORMAL],
+					width - (lwidth + 3), height - (lheight + 1), layout);
+	g_object_unref(G_OBJECT(layout));
+
+	*original = gdk_pixbuf_get_from_drawable(NULL, pixmap, NULL,
+											 0, 0, 0, 0,
+											 width, height);
+	g_object_unref(G_OBJECT(pixmap));
+}
+
 void gaim_gtkdialogs_about()
 {
 	GtkWidget *hbox;
@@ -236,6 +274,8 @@ void gaim_gtkdialogs_about()
 	GString *str;
 	int i;
 	AtkObject *obj;
+	char* filename;
+	GdkPixbuf *pixbuf;
 
 	if (about != NULL) {
 		gtk_window_present(GTK_WINDOW(about));
@@ -256,7 +296,17 @@ void gaim_gtkdialogs_about()
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-	logo = gtk_image_new_from_stock(GAIM_STOCK_LOGO, gtk_icon_size_from_name(GAIM_ICON_SIZE_LOGO));
+	/* Generate a logo with a version number */
+	logo = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_realize(logo);
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "logo.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+	gaim_gtk_logo_versionize(&pixbuf, logo);
+	gtk_widget_destroy(logo);
+	logo = gtk_image_new_from_pixbuf(pixbuf);
+	gdk_pixbuf_unref(pixbuf);
+	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
 	atk_object_set_description(obj, "Gaim " VERSION);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
