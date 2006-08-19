@@ -639,6 +639,7 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
     [
         AC_SUBST(GLIB_CFLAGS)
         AC_SUBST(GLIB_LIBS)
+	    echo "GLib 2.0 check OK!"
     ],
     [
         AC_MSG_ERROR([
@@ -654,6 +655,7 @@ if test "$enable_gtk" = yes ; then
        [
            AC_SUBST(GTK_CFLAGS)
            AC_SUBST(GTK_LIBS)
+		   echo "GTK+ 2.0 check OK!"
        ],
        [
            AC_MSG_ERROR([
