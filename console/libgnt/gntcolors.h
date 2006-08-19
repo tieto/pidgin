@@ -36,8 +36,10 @@ void gnt_init_colors();
 
 void gnt_uninit_colors();
 
+#if GLIB_CHECK_VERSION(2,6,0)
 void gnt_colors_parse(GKeyFile *kfile);
 
 void gnt_color_pairs_parse(GKeyFile *kfile);
+#endif
 
 #endif

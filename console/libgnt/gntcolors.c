@@ -106,6 +106,7 @@ get_color(char *key)
 	return color;
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 void gnt_colors_parse(GKeyFile *kfile)
 {
 	GError *error = NULL;
@@ -202,3 +203,4 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 	g_strfreev(keys);
 }
 
+#endif  /* GKeyFile */

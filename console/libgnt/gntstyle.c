@@ -41,6 +41,7 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 	return bool_styles[style];
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 static void
 read_general_style(GKeyFile *kfile)
 {
@@ -70,6 +71,7 @@ read_general_style(GKeyFile *kfile)
 		}
 	}
 }
+#endif
 
 void gnt_style_read_configure_file(const char *filename)
 {
