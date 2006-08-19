@@ -889,10 +889,16 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 	}
 }
 
+static gboolean
+return_true(gpointer key, gpointer data, gpointer null)
+{
+	return TRUE;
+}
+
 void gnt_tree_remove_all(GntTree *tree)
 {
 	tree->root = NULL;
-	g_hash_table_remove_all(tree->hash);
+	g_hash_table_foreach_remove(tree->hash, (GHRFunc)return_true, NULL);
 	g_list_free(tree->list);
 	tree->list = NULL;
 	tree->current = tree->top = tree->bottom = NULL;
