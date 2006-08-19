@@ -76,7 +76,7 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 						   gboolean local_only)
 {
 	GSList *l;
-	char *name;
+	const char *name;
 	GaimBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
@@ -158,20 +158,21 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 						 gboolean local_only)
 {
 	GSList *l;
+	const char *normalized;
 	char *name;
 	GaimBuddy *buddy;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = gaim_normalize(account, who);
+	normalized = gaim_normalize(account, who);
 
 	for (l = account->deny; l != NULL; l = l->next) {
-		if (!gaim_utf8_strcasecmp(name, (char *)l->data))
+		if (!gaim_utf8_strcasecmp(normalized, (char *)l->data))
 			break;
 	}
 
-	buddy = gaim_find_buddy(account, name);
+	buddy = gaim_find_buddy(account, normalized);
 
 	if (l == NULL)
 		return FALSE;
