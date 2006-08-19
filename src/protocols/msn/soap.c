@@ -119,6 +119,7 @@ msn_soap_connect(MsnSoapConn *soapconn)
 				soapconn);
 	}else{
 	}
+	msn_soap_set_process_step(soapconn,MSN_SOAP_CONNECTING);
 }
 
 /*close the soap connection*/
@@ -185,14 +186,16 @@ msn_soap_connected(MsnSoapConn *soapconn)
 static gssize
 msn_soap_read(MsnSoapConn *soapconn)
 {
-	gssize len;
+	gssize len,requested_len;
 	gssize total_len = 0;
 	char temp_buf[MSN_SOAP_READ_BUFF_SIZE];
 
+//	requested_len = (soapconn->need_to_read > 0) ? soapconn->need_to_read : MSN_SOAP_READ_BUFF_SIZE;
+	requested_len = MSN_SOAP_READ_BUFF_SIZE;
 	if(soapconn->ssl_conn){
-		len = gaim_ssl_read(soapconn->gsc, temp_buf,MSN_SOAP_READ_BUFF_SIZE);
+		len = gaim_ssl_read(soapconn->gsc, temp_buf,requested_len);
 	}else{
-		len = read(soapconn->fd, temp_buf,MSN_SOAP_READ_BUFF_SIZE);
+		len = read(soapconn->fd, temp_buf,requested_len);
 	}
 	if(len >0){
 		total_len += len;
@@ -330,7 +333,9 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			soapconn->body_len	= atoi(body_len);
 			gaim_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
 
+			soapconn->need_to_read = (body_start - soapconn->read_buf +soapconn->body_len) - soapconn->read_len;
 			if(soapconn->read_len < body_start - soapconn->read_buf + soapconn->body_len){
+//			if(soapconn->need_to_read >0){
 				return;
 			}
 			g_free(body_len);
@@ -370,6 +375,7 @@ msn_soap_free_read_buf(MsnSoapConn *soapconn)
 	}
 	soapconn->read_buf = NULL;
 	soapconn->read_len = 0;
+	soapconn->need_to_read = 0;
 }
 
 void
@@ -506,7 +512,7 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 				MsnSoapConnectInitFunction msn_soap_init_func)
 {
 	g_queue_push_tail(soapconn->soap_queue, request);
-	if(!msn_soap_connected(soapconn)){
+	if(!msn_soap_connected(soapconn)&&(soapconn->step == MSN_SOAP_UNCONNECTED)){
 		/*not connected?connect it first*/
 		gaim_debug_info("Ma Yuan","soap is not connected!\n");
 		msn_soap_init_func(soapconn);

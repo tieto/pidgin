@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "msg.h"
+#define MSN_DEBUG_MSG
 
 MsnMessage *
 msn_message_new(MsnMsgType type)
@@ -123,12 +124,12 @@ msn_message_new_plain(const char *message)
 //	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
-	msn_message_set_flag(msg, 'N');
+	msn_message_set_flag(msg, 'A');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
 						 "FN=MS%20Sans%20Serif; EF=; CO=0; CS=86;PF=0");
 
 	message_cr = gaim_str_add_cr(message);
-	msn_message_set_bin_data(msg, message_cr, strlen(message_cr)+1);
+	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));
 	g_free(message_cr);
 
 	return msg;
@@ -514,14 +515,11 @@ msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
 	if (msg->body != NULL)
 		g_free(msg->body);
 
-	if (data != NULL && len > 0)
-	{
+	if (data != NULL && len > 0){
 		msg->body = g_malloc0(len + 1);
 		memcpy(msg->body, data, len);
 		msg->body_len = len;
-	}
-	else
-	{
+	}else{
 		msg->body = NULL;
 		msg->body_len = 0;
 	}

@@ -26,7 +26,7 @@
 #define _MSN_OIM_H_
 
 #define MSN_OIM_RETRIEVE_HOST	"rsi.hotmail.com"
-#define MSN_OIM_RETRIEVE__URL	"/rsi/rsi.asmx"
+#define MSN_OIM_RETRIEVE_URL	"/rsi/rsi.asmx"
 #define MSN_OIM_GET_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/GetMessage"
 #define MSN_OIM_DEL_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/DeleteMessages"
 

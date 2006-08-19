@@ -31,6 +31,7 @@
 typedef enum
 {
 	MSN_SOAP_UNCONNECTED,
+	MSN_SOAP_CONNECTING,
 	MSN_SOAP_CONNECTED,
 	MSN_SOAP_PROCESSING,
 	MSN_SOAP_CONNECTED_IDLE
@@ -95,6 +96,7 @@ struct _MsnSoapConn{
 	/*read buffer*/
 	char *read_buf;
 	gsize read_len;
+	gsize need_to_read;
 	GaimInputFunction read_cb;
 
 	/*HTTP reply body part*/
