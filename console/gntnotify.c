@@ -293,6 +293,8 @@ gg_notify_searchresults(GaimConnection *gc, const char *title,
 			case GAIM_NOTIFY_BUTTON_INVITE:
 				text = _("Invite");
 				break;
+			default:
+				text = _("(none)");
 		}
 
 		button = gnt_button_new(text);

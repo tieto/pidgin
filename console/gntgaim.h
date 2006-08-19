@@ -1,6 +1,6 @@
 #include <glib.h>
-#include <libintl.h>
+
+#include "libgaim/internal.h"
 
 #define GAIM_GNT_UI "gnt-gaim"
 
-#define	_(x)	x

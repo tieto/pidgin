@@ -129,7 +129,7 @@ static GaimEventLoopUiOps eventloop_ops =
 	(guint (*)(guint))g_source_remove
 };
 
-GaimEventLoopUiOps *
+static GaimEventLoopUiOps *
 gnt_eventloop_get_ui_ops(void)
 {
 	return &eventloop_ops;

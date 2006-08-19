@@ -1,3 +1,6 @@
+#ifndef _GNT_PLUGIN_H
+#define _GNT_PLUGIN_H
+
 #include <gnt.h>
 
 #include <plugin.h>
@@ -16,7 +19,8 @@ typedef GntWidget* (*GGPluginFrame) ();
 #define GAIM_GNT_PLUGIN_UI_INFO(plugin) \
 	(GGPluginFrame)((plugin)->info->ui_info)
 
-void gg_plugins_show_all();
+void gg_plugins_show_all(void);
 
-void gg_plugins_save_loaded();
+void gg_plugins_save_loaded(void);
 
+#endif

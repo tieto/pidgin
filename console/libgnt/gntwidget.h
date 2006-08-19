@@ -23,8 +23,6 @@ typedef struct _GnWidget			GntWidget;
 typedef struct _GnWidgetPriv		GntWidgetPriv;
 typedef struct _GnWidgetClass		GntWidgetClass;
 
-#define	N_(X)	X
-
 typedef enum _GnWidgetFlags
 {
 	GNT_WIDGET_DESTROYING     = 1 << 0,

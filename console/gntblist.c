@@ -672,8 +672,8 @@ gg_blist_remove_node(GaimBlistNode *node)
 static void
 gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *null)
 {
-	char *primary, *sec = NULL;
-	const char *name;
+	char *primary;
+	const char *name, *sec = NULL;
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 		name = gaim_buddy_get_name((GaimBuddy*)node);

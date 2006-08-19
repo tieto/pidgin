@@ -247,7 +247,8 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 			else if (type == GAIM_REQUEST_FIELD_CHOICE)
 			{
 				GntWidget *combo = field->ui_data;;
-				int id = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
+				int id;
+				id = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
 				gaim_request_field_choice_set_value(field, id);
 			}
 			else if (type == GAIM_REQUEST_FIELD_LIST)

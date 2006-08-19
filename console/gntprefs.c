@@ -46,15 +46,15 @@ get_pref_field(Prefs *prefs)
 		switch (prefs->type)
 		{
 			case GAIM_PREF_BOOLEAN:
-				field = gaim_request_field_bool_new(prefs->pref, prefs->label,
+				field = gaim_request_field_bool_new(prefs->pref, _(prefs->label),
 						gaim_prefs_get_bool(prefs->pref));
 				break;
 			case GAIM_PREF_INT:
-				field = gaim_request_field_int_new(prefs->pref, prefs->label,
+				field = gaim_request_field_int_new(prefs->pref, _(prefs->label),
 						gaim_prefs_get_int(prefs->pref));
 				break;
 			case GAIM_PREF_STRING:
-				field = gaim_request_field_string_new(prefs->pref, prefs->label,
+				field = gaim_request_field_string_new(prefs->pref, _(prefs->label),
 						gaim_prefs_get_string(prefs->pref), FALSE);
 				break;
 			default:
@@ -64,7 +64,7 @@ get_pref_field(Prefs *prefs)
 	else
 	{
 		GList *list = prefs->lv(), *iter;
-		field = gaim_request_field_list_new(prefs->pref, prefs->label);
+		field = gaim_request_field_list_new(prefs->pref, _(prefs->label));
 		for (iter = list; iter; iter = iter->next)
 		{
 			gboolean select = FALSE;
@@ -98,23 +98,23 @@ get_pref_field(Prefs *prefs)
 
 static Prefs blist[] = 
 {
-	{GAIM_PREF_BOOLEAN, "/gaim/gnt/blist/idletime", _("Show Idle Time"), NULL},
+	{GAIM_PREF_BOOLEAN, "/gaim/gnt/blist/idletime", N_("Show Idle Time"), NULL},
 	{GAIM_PREF_NONE, NULL, NULL, NULL}
 };
 
 static Prefs convs[] = 
 {
-	{GAIM_PREF_BOOLEAN, "/gaim/gnt/conversations/timestamps", _("Show Timestamps"), NULL},
-	{GAIM_PREF_BOOLEAN, "/gaim/gnt/conversations/notify_typing", _("Notify buddies when you are typing"), NULL},
+	{GAIM_PREF_BOOLEAN, "/gaim/gnt/conversations/timestamps", N_("Show Timestamps"), NULL},
+	{GAIM_PREF_BOOLEAN, "/gaim/gnt/conversations/notify_typing", N_("Notify buddies when you are typing"), NULL},
 	{GAIM_PREF_NONE, NULL, NULL, NULL}
 };
 
 static Prefs logging[] = 
 {
-	{GAIM_PREF_STRING, "/core/logging/format", _("Log format"), get_log_options},
-	{GAIM_PREF_BOOLEAN, "/core/logging/log_ims", _("Log IMs"), NULL},
-	{GAIM_PREF_BOOLEAN, "/core/logging/log_chats", _("Log chats"), NULL},
-	{GAIM_PREF_BOOLEAN, "/core/logging/log_system", _("Log status change events"), NULL},
+	{GAIM_PREF_STRING, "/core/logging/format", N_("Log format"), get_log_options},
+	{GAIM_PREF_BOOLEAN, "/core/logging/log_ims", N_("Log IMs"), NULL},
+	{GAIM_PREF_BOOLEAN, "/core/logging/log_chats", N_("Log chats"), NULL},
+	{GAIM_PREF_BOOLEAN, "/core/logging/log_system", N_("Log status change events"), NULL},
 	{GAIM_PREF_NONE, NULL, NULL, NULL},
 };
 
