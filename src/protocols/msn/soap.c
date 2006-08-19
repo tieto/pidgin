@@ -26,6 +26,7 @@
 #include "msn.h"
 #include "soap.h"
 
+/*setup the soap process step*/
 void
 msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step)
 {
@@ -483,6 +484,7 @@ msn_soap_request_free(MsnSoapReq *request)
 	g_free(request);
 }
 
+/*post the soap request queue's head request*/
 void
 msn_soap_post_head_request(MsnSoapConn *soapconn)
 {
@@ -495,6 +497,9 @@ msn_soap_post_head_request(MsnSoapConn *soapconn)
 	msn_soap_set_process_step(soapconn,MSN_SOAP_CONNECTED_IDLE);
 }
 
+/*post the soap request ,
+ * if not connected, Connected first.
+ */
 void
 msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 				MsnSoapConnectInitFunction msn_soap_init_func)

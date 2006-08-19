@@ -984,16 +984,13 @@ connect_cb(MsnServConn *servconn)
 	swboard = cmdproc->data;
 	g_return_if_fail(swboard != NULL);
 
-	if (msn_switchboard_is_invited(swboard))
-	{
+	if (msn_switchboard_is_invited(swboard)){
 		swboard->empty = FALSE;
 
 		msn_cmdproc_send(cmdproc, "ANS", "%s %s %s",
 						 gaim_account_get_username(account),
 						 swboard->auth_key, swboard->session_id);
-	}
-	else
-	{
+	}else{
 		msn_cmdproc_send(cmdproc, "USR", "%s %s",
 						 gaim_account_get_username(account),
 						 swboard->auth_key);
@@ -1132,6 +1129,7 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* The conversation window was closed. */
 		return;
 
+	gaim_debug_info("MaYuan","Switchboard:auth:{%s} socket:{%s}\n",cmd->params[4],cmd->params[2]);
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
 	msn_parse_socket(cmd->params[2], &host, &port);
