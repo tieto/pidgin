@@ -296,7 +296,10 @@ void qq_input_pending(gpointer data, gint source, GaimInputCondition cond)
 	gint len;
 
 	gc = (GaimConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && cond == GAIM_INPUT_READ);
+	if(gc == NULL || gc->proto_data == NULL || cond != GAIM_INPUT_READ) {
+		gaim_connection_error(gc, _("Socket error"));
+		return;
+	}
 
 	qd = (qq_data *) gc->proto_data;
 	buf = g_newa(guint8, MAX_PACKET_SIZE);

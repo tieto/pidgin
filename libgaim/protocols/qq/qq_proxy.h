@@ -25,7 +25,9 @@
 #define _QQ_PROXY_H
 
 #include <glib.h>
+#include "dnsquery.h"
 #include "proxy.h"
+
 #include "qq.h"
 
 #define QQ_CONNECT_STEPS    2	/* steps in connection */
@@ -47,8 +49,6 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len);
 
 gint qq_connect(GaimAccount *account, const gchar *host, guint16 port, gboolean use_tcp, gboolean is_redirect);
 void qq_disconnect(GaimConnection *gc);
-
-gint _qq_fill_host(struct sockaddr_in *addr, const gchar *host, guint16 port);
 
 void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
 

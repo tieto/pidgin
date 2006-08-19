@@ -64,25 +64,26 @@
 #define QQ_UDP_PORT             "8000"
 
 const gchar *udp_server_list[] = {
-	"sz.tencent.com",	/* 61.144.238.145 */
-	"sz2.tencent.com",	/* 61.144.238.146 */
-	"sz3.tencent.com",	/* 202.104.129.251 */
-	"sz4.tencent.com",	/* 202.104.129.254 */
-	"sz5.tencent.com",	/* 61.141.194.203 */
-	"sz6.tencent.com",	/* 202.104.129.252 */
-	"sz7.tencent.com",	/* 202.104.129.253 */
-	"202.96.170.64",
-	"64.144.238.155",
-	"202.104.129.254"
+	"sz.tencent.com",
+	"sz2.tencent.com",
+	"sz3.tencent.com",
+	"sz4.tencent.com",
+	"sz5.tencent.com",
+	"sz6.tencent.com",
+	"sz7.tencent.com",
+	"sz8.tencent.com",
+	"sz9.tencent.com"
 };
 const gint udp_server_amount = (sizeof(udp_server_list) / sizeof(udp_server_list[0]));
 
 
 const gchar *tcp_server_list[] = {
-	"tcpconn.tencent.com",	/* 218.17.209.23 */
-	"tcpconn2.tencent.com",	/* 218.18.95.153 */
-	"tcpconn3.tencent.com",	/* 218.17.209.23 */
-	"tcpconn4.tencent.com"	/* 218.18.95.153 */
+	"tcpconn.tencent.com",
+	"tcpconn2.tencent.com",
+	"tcpconn3.tencent.com",
+	"tcpconn4.tencent.com",
+	"tcpconn5.tencent.com",
+	"tcpconn6.tencent.com"
 };
 const gint tcp_server_amount = (sizeof(tcp_server_list) / sizeof(tcp_server_list[0]));
 
@@ -102,6 +103,7 @@ static void _qq_login(GaimAccount *account)
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_AUTO_RESP;
 
 	qd = g_new0(qq_data, 1);
+	qd->gc = gc;
 	gc->proto_data = qd;
 
 	qq_server = gaim_account_get_string(account, "server", NULL);
@@ -122,13 +124,14 @@ static void _qq_login(GaimAccount *account)
 
 	if (qq_server == NULL || strlen(qq_server) == 0)
 		qq_server = use_tcp ?
-		    tcp_server_list[random() % tcp_server_amount] : udp_server_list[random() % udp_server_amount];
+		    tcp_server_list[random() % tcp_server_amount] : 
+		    udp_server_list[random() % udp_server_amount];
 
 	if (qq_port == NULL || strtol(qq_port, NULL, 10) == 0)
 		qq_port = use_tcp ? QQ_TCP_QUERY_PORT : QQ_UDP_PORT;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, QQ_CONNECT_STEPS);
-
+ 
 	if (qq_connect(account, qq_server, strtol(qq_port, NULL, 10), use_tcp, FALSE) < 0)
 		gaim_connection_error(gc, _("Unable to connect."));
 }

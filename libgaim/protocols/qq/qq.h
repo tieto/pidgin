@@ -67,7 +67,9 @@ struct _qq_data {
 	gboolean logged_in;		/* used by qq-add_buddy */
 	gboolean use_tcp;		/* network in tcp or udp */
 
-	GaimProxyType proxy_type;	/* proxy type */
+	GaimProxyType proxy_type;
+	GaimConnection *gc;
+
 	GaimXfer *xfer;			/* file transfer handler */
 	struct sockaddr_in dest_sin;
 

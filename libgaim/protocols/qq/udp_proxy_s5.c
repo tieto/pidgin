@@ -25,15 +25,13 @@
 
 #include "udp_proxy_s5.h"
 
-extern gint			/* defined in qq_proxy.c */
- _qq_fill_host(struct sockaddr_in *addr, const gchar * host, guint16 port);
-
 static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 {
 	unsigned char buf[512];
 	struct PHB *phb = data;
 	struct sockaddr_in sin;
 	int len, error;
+	socklen_t errlen;
 
 	gaim_input_remove(phb->inpa);
 	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
@@ -61,7 +59,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
@@ -84,8 +82,8 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 
 	error = ETIMEDOUT;
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Connect didn't block\n");
-	len = sizeof(error);
-	if (getsockopt(phb->udpsock, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+	errlen = sizeof(error);
+	if (getsockopt(phb->udpsock, SOL_SOCKET, SO_ERROR, &error, &errlen) < 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "getsockopt failed.\n");
 		close(phb->udpsock);
 		return;
@@ -105,7 +103,8 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 	unsigned char buf[512];
 	struct PHB *phb = data;
 	struct sockaddr_in sin, ctlsin;
-	int port, ctllen;
+	int port; 
+	socklen_t ctllen;
 
 	gaim_debug(GAIM_DEBUG_INFO, "s5_sendconnect", "remote host is %s:%d\n", phb->host, phb->port);
 
@@ -137,7 +136,9 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 
 	port = ntohs(ctlsin.sin_port) + 1;
 	while (1) {
-		_qq_fill_host(&sin, "0.0.0.0", port);
+		inet_aton("0.0.0.0", &(sin.sin_addr));
+		sin.sin_family = AF_INET;
+		sin.sin_port = htons(port);
 		if (bind(phb->udpsock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
 			port++;
 			if (port > 65500) {
@@ -158,7 +159,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 		gaim_debug(GAIM_DEBUG_INFO, "s5_sendconnect", "packet too small\n");
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
@@ -182,7 +183,7 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
@@ -195,7 +196,7 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
@@ -238,7 +239,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
@@ -263,7 +264,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 			if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-				phb->func(phb->data, -1, NULL);
+				phb->func(phb->data, -1, _("Unable to connect"));
 			}
 
 			g_free(phb->host);
@@ -297,7 +298,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		close(source);
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
@@ -327,7 +328,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);

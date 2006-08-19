@@ -73,7 +73,7 @@ gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
 /* for those need ack and resend no ack feed back from server
  * return number of bytes written to the socket,
  * return -1 if there is any error */
-gint _qq_send_packet(GaimConnection * gc, guint8 *buf, gint len, guint16 cmd)
+gint _qq_send_packet(GaimConnection *gc, guint8 *buf, gint len, guint16 cmd)
 {
 	qq_data *qd;
 	qq_sendpacket *p;
