@@ -707,8 +707,8 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	process_queue(swboard);
 
-//	if (!session->http_method)
-//		send_clientcaps(swboard);
+	if (!session->http_method)
+		send_clientcaps(swboard);
 
 	if (swboard->closed)
 		msn_switchboard_close(swboard);

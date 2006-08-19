@@ -121,7 +121,7 @@ msn_message_new_plain(const char *message)
 	char *message_cr;
 
 	msg = msn_message_new(MSN_MSG_TEXT);
-//	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
+	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'A');

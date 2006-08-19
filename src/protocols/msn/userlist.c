@@ -458,6 +458,7 @@ msn_userlist_find_add_user(MsnUserList *userlist,const char *passport,const char
 		user = msn_user_new(userlist, passport, userName);
 		msn_userlist_add_user(userlist, user);
 	}
+	msn_user_set_store_name(user, userName);
 	return user;
 }
 

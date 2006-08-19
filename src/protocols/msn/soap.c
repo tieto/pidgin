@@ -352,17 +352,11 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			}
 			/*clear the read buffer*/
 			msn_soap_free_read_buf(soapconn);
-
+#if 1
+//			msn_soap_close(soapconn);
+#endif
 			/*Process the next queued SOAP request*/
 			msn_soap_post_head_request(soapconn);
-
-#if 0
-	/*remove the read handler*/
-	gaim_input_remove(soapconn->input_handler);
-	soapconn->input_handler = -1;
-	//	gaim_ssl_close(soapconn->gsc);
-	//	soapconn->gsc = NULL;
-#endif
 	}
 	return;
 }
@@ -437,6 +431,8 @@ msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	if(soapconn->written_cb != NULL){
 		soapconn->written_cb(soapconn, source, 0);
 	}
+	/*maybe we need to read the input?*/
+	msn_soap_read_cb(soapconn,source,0);
 }
 
 /*write the buffer to SOAP connection*/
@@ -495,6 +491,8 @@ msn_soap_request_free(MsnSoapReq *request)
 void
 msn_soap_post_head_request(MsnSoapConn *soapconn)
 {
+	g_return_if_fail(soapconn->soap_queue != NULL);
+
 	if(!g_queue_is_empty(soapconn->soap_queue)){
 		MsnSoapReq *request;
 		if((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){

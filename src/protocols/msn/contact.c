@@ -206,7 +206,7 @@ msn_get_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish contact written\n");
 	soapconn->read_cb = msn_get_contact_list_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 void
@@ -343,7 +343,7 @@ msn_parse_addressbook(MsnContact * contact)
 
 		displayName = xmlnode_get_child(contactInfo,"displayName");
 		if(displayName == NULL)
-			Name = "";
+			Name = passport;
 		else
 			Name =xmlnode_get_data(displayName);	
 
@@ -430,7 +430,7 @@ msn_address_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish contact written\n");
 	soapconn->read_cb = msn_get_address_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*get the address book*/
@@ -462,7 +462,7 @@ msn_add_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish unblock written\n");
 	soapconn->read_cb = msn_add_contact_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*add a Contact */
@@ -511,7 +511,7 @@ msn_delete_contact_written_cb(gpointer data, gint source, GaimInputCondition con
 
 	gaim_debug_info("MaYuan","delete contact written\n");
 	soapconn->read_cb = msn_delete_contact_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*delete a Contact*/
@@ -550,7 +550,7 @@ msn_block_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish unblock written\n");
 	soapconn->read_cb = msn_block_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*block a Contact*/
@@ -586,7 +586,7 @@ msn_unblock_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish unblock written\n");
 	soapconn->read_cb = msn_unblock_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*unblock a contact*/
@@ -623,7 +623,7 @@ msn_gleams_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish Group written\n");
 	soapconn->read_cb = msn_gleams_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*get the gleams info*/
@@ -658,7 +658,7 @@ msn_group_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish Group written\n");
 	soapconn->read_cb = msn_group_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*add group*/

@@ -151,7 +151,7 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	MsnSoapConn * soapconn = data;	
 
 	soapconn->read_cb = nexus_login_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 

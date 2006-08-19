@@ -104,7 +104,7 @@ msn_oim_send_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	MsnSoapConn * soapconn = data;	
 
 	soapconn->read_cb = msn_oim_send_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*pose single message to oim server*/
@@ -204,7 +204,7 @@ msn_oim_get_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	MsnSoapConn * soapconn = data;	
 
 	soapconn->read_cb = msn_oim_get_read_cb;
-	msn_soap_read_cb(data,source,cond);
+//	msn_soap_read_cb(data,source,cond);
 }
 
 /*parse the oim XML data*/
