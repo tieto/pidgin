@@ -56,7 +56,7 @@ if ENABLE_GNT
 GNT_DIR=console
 endif
 
-SUBDIRS = core doc $(GNT_DIR) $(GTK_DIR) m4macros po
+SUBDIRS = libgaim doc $(GNT_DIR) $(GTK_DIR) m4macros po
 
 docs: Doxyfile
 if HAVE_DOXYGEN

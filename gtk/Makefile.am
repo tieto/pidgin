@@ -163,7 +163,7 @@ gaim_LDADD = \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
-	-L$(top_srcdir)/core -lgaim
+	-L$(top_srcdir)/libgaim -lgaim
 
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
@@ -171,7 +171,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
-	-I$(top_srcdir)/core/ \
+	-I$(top_srcdir)/libgaim/ \
 	$(GSTREAMER_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \

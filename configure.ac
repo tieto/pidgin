@@ -1821,30 +1821,30 @@ AC_OUTPUT([Makefile
 		   gtk/plugins/musicmessaging/Makefile
 		   gtk/sounds/Makefile
 		   gtk/plugins/ticker/Makefile
-		   core/plugins/Makefile
-		   core/plugins/mono/Makefile
-		   core/plugins/mono/api/Makefile
-		   core/plugins/mono/loader/Makefile
-		   core/plugins/perl/Makefile
-		   core/plugins/perl/common/Makefile.PL
-		   core/plugins/ssl/Makefile
-		   core/plugins/tcl/Makefile
-		   core/Makefile
-		   core/protocols/Makefile
-		   core/protocols/bonjour/Makefile
-		   core/protocols/gg/Makefile
-		   core/protocols/irc/Makefile
-		   core/protocols/jabber/Makefile
-		   core/protocols/msn/Makefile
-		   core/protocols/novell/Makefile
-		   core/protocols/oscar/Makefile
-		   core/protocols/qq/Makefile
-		   core/protocols/sametime/Makefile
-		   core/protocols/silc/Makefile
-		   core/protocols/simple/Makefile
-		   core/protocols/toc/Makefile
-		   core/protocols/yahoo/Makefile
-		   core/protocols/zephyr/Makefile
+		   libgaim/plugins/Makefile
+		   libgaim/plugins/mono/Makefile
+		   libgaim/plugins/mono/api/Makefile
+		   libgaim/plugins/mono/loader/Makefile
+		   libgaim/plugins/perl/Makefile
+		   libgaim/plugins/perl/common/Makefile.PL
+		   libgaim/plugins/ssl/Makefile
+		   libgaim/plugins/tcl/Makefile
+		   libgaim/Makefile
+		   libgaim/protocols/Makefile
+		   libgaim/protocols/bonjour/Makefile
+		   libgaim/protocols/gg/Makefile
+		   libgaim/protocols/irc/Makefile
+		   libgaim/protocols/jabber/Makefile
+		   libgaim/protocols/msn/Makefile
+		   libgaim/protocols/novell/Makefile
+		   libgaim/protocols/oscar/Makefile
+		   libgaim/protocols/qq/Makefile
+		   libgaim/protocols/sametime/Makefile
+		   libgaim/protocols/silc/Makefile
+		   libgaim/protocols/simple/Makefile
+		   libgaim/protocols/toc/Makefile
+		   libgaim/protocols/yahoo/Makefile
+		   libgaim/protocols/zephyr/Makefile
 		   console/Makefile
 		   console/plugins/Makefile
 		   po/Makefile.in

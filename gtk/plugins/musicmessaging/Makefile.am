@@ -22,14 +22,14 @@ CLEANFILES              = music-messaging-bindings.c
 
 .PHONY: always
 
-$(top_builddir)/core/dbus-types.h: always
+$(top_builddir)/libgaim/dbus-types.h: always
 	cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 
-music-messaging-bindings.c: $(top_srcdir)/core/dbus-analyze-functions.py $(musicmessaging_la_SOURCES)
+music-messaging-bindings.c: $(top_srcdir)/libgaim/dbus-analyze-functions.py $(musicmessaging_la_SOURCES)
 	cat $(srcdir)/$(musicmessaging_la_SOURCES) | \
-	$(PYTHON) $(top_srcdir)/core/dbus-analyze-functions.py --export-only > $@
+	$(PYTHON) $(top_srcdir)/libgaim/dbus-analyze-functions.py --export-only > $@
 
-$(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c $(top_builddir)/core/dbus-types.h
+$(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c $(top_builddir)/libgaim/dbus-types.h
 
 endif
 endif
@@ -37,8 +37,8 @@ endif
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
-	-I$(top_builddir)/core \
-	-I$(top_srcdir)/core \
+	-I$(top_builddir)/libgaim \
+	-I$(top_srcdir)/libgaim \
 	-I$(top_srcdir)/gtk \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \

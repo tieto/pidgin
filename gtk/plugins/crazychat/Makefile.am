@@ -32,7 +32,7 @@ crazychat_la_LIBADD = $(GTKGLEXT_LIBS)
 #-I$(top_srcdir)/include
 
 AM_CPPFLAGS = -DGAIM_PLUGINS \
-	-I$(top_srcdir)/core \
+	-I$(top_srcdir)/libgaim \
 	-I$(top_srcdir)/gtk \
 	$(GTK_CFLAGS) \
 	$(GTKGLEXT_CFLAGS) \

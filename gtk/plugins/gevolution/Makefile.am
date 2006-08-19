@@ -25,7 +25,7 @@ gevolution_la_LIBADD =
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
-	-I$(top_srcdir)/core \
+	-I$(top_srcdir)/libgaim \
 	-I$(top_srcdir)/gtk \
 	$(EVOLUTION_ADDRESSBOOK_CFLAGS) \
 	$(DEBUG_CFLAGS) \

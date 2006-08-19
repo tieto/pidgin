@@ -67,7 +67,7 @@ AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_builddir)/src \
-	-I$(top_srcdir)/core \
+	-I$(top_srcdir)/libgaim \
 	-I$(top_srcdir)/gtk \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
