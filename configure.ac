@@ -189,7 +189,7 @@ PKG_CHECK_MODULES(LIBXML, [libxml-2.0], ,
 		  ])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
-AC_ARG_ENABLE(libxml,[  --disable-libxml     compile without libxml2 support],enable_libxml2=no)
+AC_ARG_ENABLE(libxml, [AC_HELP_STRING([--disable-libxml], [compile without libxml2 support])],enable_libxml2=no)
 if test "x$enable_libxml2" = "xyes"; then
 	AC_DEFINE(HAVE_LIBXML, 1, [Use libxml2 for xml parsing])
 fi
@@ -396,7 +396,7 @@ AC_SUBST(GADU_CFLAGS)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
-AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
+AC_ARG_ENABLE(prpls, [AC_HELP_STRING([--disable-prpls], [don't build dynamic protocol plugins])], , enable_prpls=yes)
 DYNAMIC_PRPLS=all
 AC_ARG_WITH(static-prpls, [AC_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
@@ -518,17 +518,17 @@ AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
-AC_ARG_ENABLE(mono,    [  --enable-mono           compile with Mono runtime support],,enable_mono=no)
-AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
-AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
-AC_ARG_ENABLE(tcl,     [  --disable-tcl           compile without Tcl scripting],,enable_tcl=yes)
+AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support])], , enable_mono=no)
+AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
+AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
+AC_ARG_ENABLE(tcl, [AC_HELP_STRING([--disable-tcl], [compile without Tcl scripting])], , enable_tcl=yes)
 AC_ARG_WITH(tclconfig, [  --with-tclconfig=DIR    directory containing tclConfig.sh])
 AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support for Tk],,enable_tk=yes)
 AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
-AC_ARG_ENABLE(gtkgaim, [  --disable-gtkgaim      compile without GtkGaim client],,enable_gtk=yes)
-AC_ARG_ENABLE(gntgaim, [  --disable-gntgaim      compile without GntGaim console client],,enable_gnt=yes)
+AC_ARG_ENABLE(gtkgaim, [AC_HELP_STRING([--disable-gtkgaim], [compile without GtkGaim client])], , enable_gtk=yes)
+AC_ARG_ENABLE(gntgaim, [AC_HELP_STRING([--disable-gntgaim], [compile without GntGaim console client])], , enable_gnt=yes)
 AC_ARG_ENABLE(fatal-asserts,   [  --enable-fatal-asserts  make assertions fatal (useful for debugging)],,enable_fatal_asserts=no)
 dnl We know Gaim won't compile with deprecated APIs disabled.
 dnl We have no desire to support two different versions of the
@@ -809,8 +809,10 @@ dnl #######################################################################
 dnl # GNT Gaim
 dnl #######################################################################
 if test "x$enable_gnt" = "xyes"; then
-AC_CHECK_LIB(ncursesw, initscr, , [enable_gnt=no])
-AC_CHECK_LIB(panelw, update_panels, , [enable_gnt=no])
+	AC_CHECK_LIB(ncursesw, initscr, , [enable_gnt=no])
+	AC_CHECK_LIB(panelw, update_panels, , [enable_gnt=no])
+else
+	enable_gnt=no
 fi
 AM_CONDITIONAL(ENABLE_GNT, test "x$enable_gnt" = "xyes")
 
@@ -1866,11 +1868,7 @@ echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo
-if test "x$enable_gtk" = "xyes" ; then
-echo GTK UI Library................ : GTK+ 2.x
-else
-echo GTK UI Library................ : None
-fi
+echo Build with GTK+ 2.x UI........ : $enable_gtk
 echo Build with GNT Console UI..... : $enable_gnt
 echo SSL Library/Libraries......... : $msg_ssl
 echo
