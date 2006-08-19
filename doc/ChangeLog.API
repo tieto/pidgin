@@ -90,7 +90,7 @@ version 2.0.0:
 	* gaim_pounce_new(): Added option argument for pounce options
 	* gaim_network_listen() and gaim_network_listen_range(): Added
 	  socket_type parameter to allow creation of UDP listening. Modified
-	  to be asynchronous with a Callback to allow for UPnP operation.
+	  to be asynchronous with a callback to allow for UPnP operation.
 	* GaimPrefCallback: val is now a gconstpointer instead of a gpointer
 	* gtk_imhtml_get_current_format(): the arguments are now set to TRUE or
 	  FALSE.  Previously they were set to TRUE or left alone.  Also, you
