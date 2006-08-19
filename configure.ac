@@ -1885,7 +1885,6 @@ echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Build with libxml2 support.... : $enable_libxml2
 echo Has you....................... : yes
 echo
-echo
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
 echo
