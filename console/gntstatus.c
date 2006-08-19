@@ -4,6 +4,7 @@
 #include <gntcombobox.h>
 #include <gntentry.h>
 #include <gntlabel.h>
+#include <gntline.h>
 #include <gnttree.h>
 
 #include <notify.h>
@@ -25,8 +26,19 @@ typedef struct
 	GntWidget *title;
 	GntWidget *type;
 	GntWidget *message;
-	/* XXX: Stuff needed for per-account statuses */
+	GntWidget *tree;
+	GHashTable *hash;  /* list of windows for substatuses */
 } EditStatus;
+
+typedef struct
+{
+	GntWidget *window;
+	GntWidget *type;
+	GntWidget *message;
+
+	EditStatus *parent;
+	GaimAccount *account;
+} EditSubStatus;
 
 static GList *edits;  /* List of opened edit-status dialogs */
 
@@ -171,10 +183,17 @@ void gg_savedstatus_show_all()
 }
 
 static void
+destroy_substatus_win(GaimAccount *account, EditSubStatus *sub, gpointer null)
+{
+	gnt_widget_destroy(sub->window);   /* the "destroy" callback will remove entry from the hashtable */
+}
+
+static void
 update_edit_list(GntWidget *widget, EditStatus *edit)
 {
 	edits = g_list_remove(edits, edit);
 	gaim_notify_close_with_handle(edit);
+	g_hash_table_foreach(edit->hash, (GHFunc)destroy_substatus_win, NULL);
 	g_free(edit);
 }
 
@@ -236,12 +255,154 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 	gnt_widget_destroy(edit->window);
 }
 
+static void
+add_substatus(EditStatus *edit, GaimAccount *account)
+{
+	char *name;
+	const char *type = NULL, *message = NULL;
+	GaimSavedStatusSub *sub = NULL;
+
+	if (!edit || !edit->tree)
+		return;
+
+	if (edit->saved)
+		sub = gaim_savedstatus_get_substatus(edit->saved, account);
+	
+	if (sub)
+	{
+		type = gaim_status_type_get_name(gaim_savedstatus_substatus_get_type(sub));
+		message = gaim_savedstatus_substatus_get_message(sub);
+	}
+
+	name = g_strdup_printf("%s (%s)", gaim_account_get_username(account),
+			gaim_account_get_protocol_name(account));
+	gnt_tree_add_choice(GNT_TREE(edit->tree), account,
+			gnt_tree_create_row(GNT_TREE(edit->tree), name, type, message), NULL, NULL);
+
+	if (sub)
+		gnt_tree_set_choice(GNT_TREE(edit->tree), account, TRUE);
+	g_free(name);
+}
+
+static void
+substatus_window_destroy_cb(GntWidget *window, EditSubStatus *sub)
+{
+	g_hash_table_remove(sub->parent->hash, sub->account);
+	g_free(sub);
+}
+
+static void
+save_substatus_cb(GntWidget *widget, EditSubStatus *sub)
+{
+	GaimSavedStatus *saved = sub->parent->saved;
+	GaimAccount *account = sub->account;
+	const char *message;
+	GaimStatusType *type;
+
+	type = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(sub->type));
+	message = gnt_entry_get_text(GNT_ENTRY(sub->message));
+
+	gaim_savedstatus_set_substatus(saved, account, type, message);
+
+	gnt_tree_set_choice(GNT_TREE(sub->parent->tree), account, TRUE);
+	gnt_tree_change_text(GNT_TREE(sub->parent->tree), account, 1,
+			gaim_status_type_get_name(type));
+	gnt_tree_change_text(GNT_TREE(sub->parent->tree), account, 2, message);
+	
+	gnt_widget_destroy(sub->window);
+}
+
+static gboolean
+popup_substatus(GntTree *tree, const char *key, EditStatus *edit)
+{
+	if (key[0] == ' ' && key[1] == 0)
+	{
+		EditSubStatus *sub;
+		GntWidget *window, *combo, *entry, *box, *button, *l;
+		GaimSavedStatusSub *substatus = NULL;
+		const GList *iter;
+		char *name;
+		GaimAccount *account = gnt_tree_get_selection_data(tree);
+
+		if (gnt_tree_get_choice(tree, account))
+		{
+			/* There was a savedstatus for this account. Now remove it. */
+			gaim_savedstatus_unset_substatus(edit->saved, account);
+			gnt_tree_change_text(tree, account, 1, NULL);
+			gnt_tree_change_text(tree, account, 2, NULL);
+			return FALSE;
+		}
+
+		if (g_hash_table_lookup(edit->hash, account))
+			return TRUE;
+
+		if (edit->saved)
+			substatus = gaim_savedstatus_get_substatus(edit->saved, account);
+
+		sub = g_new0(EditSubStatus, 1);
+		sub->parent = edit;
+		sub->account = account;
+
+		sub->window = window = gnt_vbox_new(FALSE);
+		gnt_box_set_toplevel(GNT_BOX(window), TRUE);
+		gnt_box_set_title(GNT_BOX(window), _("Substatus"));  /* XXX: a better title */
+
+		box = gnt_hbox_new(FALSE);
+		gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Account:")));
+		name = g_strdup_printf("%s (%s)", gaim_account_get_username(account),
+				gaim_account_get_protocol_name(account));
+		gnt_box_add_widget(GNT_BOX(box), gnt_label_new(name));
+		g_free(name);
+		gnt_box_add_widget(GNT_BOX(window), box);
+
+		box = gnt_hbox_new(FALSE);
+		gnt_box_add_widget(GNT_BOX(box), (l = gnt_label_new(_("Status:"))));
+		gnt_widget_set_size(l, 0, 1);   /* I don't like having to do this */
+		sub->type = combo = gnt_combo_box_new();
+		gnt_box_add_widget(GNT_BOX(box), combo);
+		gnt_box_add_widget(GNT_BOX(window), box);
+
+		for (iter = gaim_account_get_status_types(account); iter; iter = iter->next)
+		{
+			GaimStatusType *type = iter->data;
+			if (!gaim_status_type_is_user_settable(type))
+				continue;
+			gnt_combo_box_add_data(GNT_COMBO_BOX(combo), type, gaim_status_type_get_name(type));
+		}
+
+		box = gnt_hbox_new(FALSE);
+		gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Message:")));
+		sub->message = entry = gnt_entry_new(substatus ? gaim_savedstatus_substatus_get_message(substatus) : NULL);
+		gnt_box_add_widget(GNT_BOX(box), entry);
+		gnt_box_add_widget(GNT_BOX(window), box);
+
+		box  = gnt_hbox_new(FALSE);
+		button = gnt_button_new(_("Cancel"));
+		g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), window);
+		gnt_box_add_widget(GNT_BOX(box), button);
+		button = gnt_button_new(_("Save"));
+		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(save_substatus_cb), sub);
+		gnt_box_add_widget(GNT_BOX(box), button);
+		gnt_box_add_widget(GNT_BOX(window), box);
+
+		gnt_widget_show(window);
+
+		g_hash_table_insert(edit->hash, account, sub);
+
+		g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(substatus_window_destroy_cb), sub);
+
+		return TRUE;
+	}
+	return FALSE;
+}
+
 void gg_savedstatus_edit(GaimSavedStatus *saved)
 {
 	EditStatus *edit;
-	GntWidget *window, *box, *button, *entry, *combo, *label;
+	GntWidget *window, *box, *button, *entry, *combo, *label, *tree;
 	GaimStatusPrimitive prims[] = {GAIM_STATUS_AVAILABLE, GAIM_STATUS_AWAY,
 		GAIM_STATUS_INVISIBLE, GAIM_STATUS_OFFLINE, GAIM_STATUS_UNSET}, current;
+	GList *iter;
 	int i;
 
 	if (saved)
@@ -268,6 +429,7 @@ void gg_savedstatus_edit(GaimSavedStatus *saved)
 
 	/* Title */
 	box = gnt_hbox_new(FALSE);
+	gnt_box_set_alignment(GNT_BOX(box), GNT_ALIGN_LEFT);
 	gnt_box_add_widget(GNT_BOX(window), box);
 	gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Title")));
 
@@ -297,7 +459,26 @@ void gg_savedstatus_edit(GaimSavedStatus *saved)
 	gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Message")));
 
 	edit->message = entry = gnt_entry_new(saved ? gaim_savedstatus_get_message(saved) : NULL);
-	gnt_box_add_widget(GNT_BOX(box), entry);
+	gnt_box_add_widget(GNT_BOX(window), entry);
+
+	gnt_box_add_widget(GNT_BOX(window), gnt_hline_new());
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Use different status for following accounts")));
+
+	edit->hash = g_hash_table_new(g_direct_hash, g_direct_equal);
+	edit->tree = tree = gnt_tree_new_with_columns(3);
+	gnt_box_add_widget(GNT_BOX(window), tree);
+	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
+	gnt_tree_set_column_titles(GNT_TREE(tree), _("Account"), _("Status"), _("Message"));
+	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
+	gnt_tree_set_col_width(GNT_TREE(tree), 1, 10);
+	gnt_tree_set_col_width(GNT_TREE(tree), 2, 30);
+
+	for (iter = gaim_accounts_get_all(); iter; iter = iter->next)
+	{
+		add_substatus(edit, iter->data);
+	}
+
+	g_signal_connect(G_OBJECT(tree), "key_pressed", G_CALLBACK(popup_substatus), edit);
 
 	/* The buttons */
 	box = gnt_hbox_new(FALSE);
