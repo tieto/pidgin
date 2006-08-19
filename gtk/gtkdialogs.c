@@ -37,7 +37,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkutils.h"
-#include "gtkstock.h"
+#include "gaimstock.h"
 
 static GList *dialogwindows = NULL;
 
