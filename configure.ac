@@ -808,6 +808,10 @@ AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 dnl #######################################################################
 dnl # GNT Gaim
 dnl #######################################################################
+if test "x$enable_gnt" = "xyes"; then
+AC_CHECK_LIB(ncursesw, initscr, , [enable_gnt=no])
+AC_CHECK_LIB(panelw, update_panels, , [enable_gnt=no])
+fi
 AM_CONDITIONAL(ENABLE_GNT, test "x$enable_gnt" = "xyes")
 
 dnl #######################################################################

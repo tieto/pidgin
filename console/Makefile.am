@@ -1,5 +1,6 @@
-#libgnt currently needs to have autogen run for there to be a Makefile...
-# SUBDIRS = libgnt
+if ENABLE_GNT
+
+SUBDIRS = libgnt
 
 bin_PROGRAMS = gntgaim
 
@@ -63,3 +64,4 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) 
+endif
