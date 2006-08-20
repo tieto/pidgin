@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "dnsquery.h"
 #include "ft.h"
 #include "idle.h"
 #include "network.h"
@@ -39,10 +40,10 @@
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
+#include "sound.h"
 #include "sslconn.h"
 #include "status.h"
 #include "stun.h"
-#include "sound.h"
 
 #ifdef HAVE_DBUS
 #  include "dbus-server.h"
@@ -128,6 +129,7 @@ gaim_core_init(const char *ui)
 	gaim_privacy_init();
 	gaim_pounces_init();
 	gaim_proxy_init();
+	gaim_dnsquery_init();
 	gaim_sound_init();
 	gaim_ssl_init();
 	gaim_stun_init();
@@ -172,6 +174,8 @@ gaim_core_quit(void)
 	gaim_status_uninit();
 	gaim_prefs_uninit();
 	gaim_xfers_uninit();
+	gaim_proxy_uninit();
+	gaim_dnsquery_uninit();
 
 	gaim_debug_info("main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();

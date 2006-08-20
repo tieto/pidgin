@@ -1527,6 +1527,8 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 	int addr_size;
 
+	sip->query_data = NULL;
+
 	if (!hosts || !hosts->data) {
 		gaim_connection_error(sip->gc, _("Couldn't resolve host"));
 		return;
@@ -1622,7 +1624,10 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	} else { /* UDP */
 		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 
-		gaim_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
+		sip->query_data = gaim_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
+		if (sip->query_data == NULL) {
+			gaim_connection_error(sip->gc, _("Could not resolve hostname"));
+		}
 	}
 }
 
@@ -1688,6 +1693,9 @@ static void simple_close(GaimConnection *gc)
 		/* unregister */
 		do_register_exp(sip, 0);
 		connection_free_all(sip);
+
+		if (sip->query_data != NULL)
+			gaim_dnsquery_destroy(sip->query_data);
 
 		g_free(sip->servername);
 		g_free(sip->username);

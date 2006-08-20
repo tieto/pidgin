@@ -26,16 +26,31 @@
 
 #include "internal.h"
 #include "debug.h"
+#include "dnsquery.h"
 #include "notify.h"
 #include "prefs.h"
-#include "dnsquery.h"
 #include "util.h"
 
 /**************************************************************************
  * DNS query API
  **************************************************************************/
 
+typedef struct _GaimDnsQueryResolverProcess GaimDnsQueryResolverProcess;
+
 struct _GaimDnsQueryData {
+	char *hostname;
+	int port;
+	GaimDnsQueryConnectFunction callback;
+	gpointer data;
+	guint timeout;
+
+#if defined(__unix__) || defined(__APPLE__)
+	GaimDnsQueryResolverProcess *resolver;
+#elif defined _WIN32 /* end __unix__ || __APPLE__ */
+	GThread *resolver;
+	GSList *hosts;
+	gchar *error_message;
+#endif
 };
 
 #if defined(__unix__) || defined(__APPLE__)
@@ -43,34 +58,51 @@ struct _GaimDnsQueryData {
 #define MAX_DNS_CHILDREN 4
 
 /*
- * This structure represents both a pending DNS request and
- * a free child process.
+ * This structure keeps a reference to a child resolver process.
  */
-typedef struct {
-	char *host;
-	int port;
-	GaimDnsQueryConnectFunction callback;
-	gpointer data;
+struct _GaimDnsQueryResolverProcess {
 	guint inpa;
 	int fd_in, fd_out;
 	pid_t dns_pid;
-} pending_dns_request_t;
+};
 
 static GSList *free_dns_children = NULL;
 static GQueue *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
 
+/*
+ * This is a convenience struct used to pass data to
+ * the child resolver process.
+ */
 typedef struct {
 	char hostname[512];
 	int port;
 } dns_params_t;
+#endif
 
-typedef struct {
-	dns_params_t params;
-	GaimDnsQueryConnectFunction callback;
-	gpointer data;
-} queued_dns_request_t;
+static void
+gaim_dnsquery_resolved(GaimDnsQueryData *query_data, GSList *hosts)
+{
+	if (query_data->callback != NULL)
+		query_data->callback(hosts, query_data->data, NULL);
+	gaim_dnsquery_destroy(query_data);
+}
+
+static void
+gaim_dnsquery_failed(GaimDnsQueryData *query_data, const gchar *error_message)
+{
+	gaim_debug_info("dnsquery", "%s\n", error_message);
+	if (query_data->callback != NULL)
+		query_data->callback(NULL, query_data->data, error_message);
+	gaim_dnsquery_destroy(query_data);
+}
+
+#if defined(__unix__) || defined(__APPLE__)
+
+/*
+ * Unix!
+ */
 
 /*
  * Begin the DNS resolver child process functions.
@@ -95,35 +127,7 @@ trap_gdb_bug()
 #endif
 
 static void
-cope_with_gdb_brokenness()
-{
-#ifdef __linux__
-	static gboolean already_done = FALSE;
-	char s[256], e[512];
-	int n;
-	pid_t ppid;
-
-	if(already_done)
-		return;
-	already_done = TRUE;
-	ppid = getppid();
-	snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
-	n = readlink(s, e, sizeof(e));
-	if(n < 0)
-		return;
-
-	e[MIN(n,sizeof(e)-1)] = '\0';
-
-	if(strstr(e,"gdb")) {
-		gaim_debug_info("dns",
-				   "Debugger detected, performing useless query...\n");
-		gethostbyname("x.x.x.x.x");
-	}
-#endif
-}
-
-static void
-gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
+gaim_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 {
 	dns_params_t dns_params;
 	const size_t zero = 0;
@@ -244,11 +248,69 @@ gaim_dns_resolverthread(int child_out, int child_in, gboolean show_debug)
 
 	_exit(0);
 }
+/*
+ * End the DNS resolver child process functions.
+ */
 
-static pending_dns_request_t *
-gaim_dns_new_resolverthread(gboolean show_debug)
+/*
+ * Begin the functions for dealing with the DNS child processes.
+ */
+static void
+cope_with_gdb_brokenness()
 {
-	pending_dns_request_t *req;
+#ifdef __linux__
+	static gboolean already_done = FALSE;
+	char s[256], e[512];
+	int n;
+	pid_t ppid;
+
+	if(already_done)
+		return;
+	already_done = TRUE;
+	ppid = getppid();
+	snprintf(s, sizeof(s), "/proc/%d/exe", ppid);
+	n = readlink(s, e, sizeof(e));
+	if(n < 0)
+		return;
+
+	e[MIN(n,sizeof(e)-1)] = '\0';
+
+	if(strstr(e,"gdb")) {
+		gaim_debug_info("dns",
+				   "Debugger detected, performing useless query...\n");
+		gethostbyname("x.x.x.x.x");
+	}
+#endif
+}
+
+static void
+gaim_dnsquery_resolver_destroy(GaimDnsQueryResolverProcess *resolver)
+{
+	g_return_if_fail(resolver != NULL);
+
+	/*
+	 * We might as well attempt to kill our child process.  It really
+	 * doesn't matter if this fails, because children will expire on
+	 * their own after a few seconds.
+	 */
+	if (resolver->dns_pid > 0)
+		kill(resolver->dns_pid, SIGKILL);
+
+	if (resolver->inpa != 0)
+		gaim_input_remove(resolver->inpa);
+
+	close(resolver->fd_in);
+	close(resolver->fd_out);
+
+	g_free(resolver);
+
+	number_of_dns_children--;
+}
+
+static GaimDnsQueryResolverProcess *
+gaim_dnsquery_resolver_new(gboolean show_debug)
+{
+	GaimDnsQueryResolverProcess *resolver;
 	int child_out[2], child_in[2];
 
 	/* Create pipes for communicating with the child process */
@@ -258,318 +320,302 @@ gaim_dns_new_resolverthread(gboolean show_debug)
 		return NULL;
 	}
 
-	req = g_new(pending_dns_request_t, 1);
+	resolver = g_new(GaimDnsQueryResolverProcess, 1);
+	resolver->inpa = 0;
 
 	cope_with_gdb_brokenness();
 
-	/* Fork! */
-	req->dns_pid = fork();
+	/* "Go fork and multiply." --Tommy Caldwell (Emily's dad, not the climber) */
+	resolver->dns_pid = fork();
 
 	/* If we are the child process... */
-	if (req->dns_pid == 0) {
+	if (resolver->dns_pid == 0) {
 		/* We should not access the parent's side of the pipes, so close them */
 		close(child_out[0]);
 		close(child_in[1]);
 
-		gaim_dns_resolverthread(child_out[1], child_in[0], show_debug);
+		gaim_dnsquery_resolver_run(child_out[1], child_in[0], show_debug);
 		/* The thread calls _exit() rather than returning, so we never get here */
 	}
 
 	/* We should not access the child's side of the pipes, so close them */
 	close(child_out[1]);
 	close(child_in[0]);
-	if (req->dns_pid == -1) {
+	if (resolver->dns_pid == -1) {
 		gaim_debug_error("dns",
 				   "Could not create child process for DNS: %s\n",
 				   strerror(errno));
-		g_free(req);
+		gaim_dnsquery_resolver_destroy(resolver);
 		return NULL;
 	}
 
-	req->fd_out = child_out[0];
-	req->fd_in = child_in[1];
+	resolver->fd_out = child_out[0];
+	resolver->fd_in = child_in[1];
 	number_of_dns_children++;
 	gaim_debug_info("dns",
 			   "Created new DNS child %d, there are now %d children.\n",
-			   req->dns_pid, number_of_dns_children);
+			   resolver->dns_pid, number_of_dns_children);
 
-	return req;
-}
-/*
- * End the DNS resolver child process functions.
- */
-
-/*
- * Begin the functions for dealing with the DNS child processes.
- */
-static void
-req_free(pending_dns_request_t *req)
-{
-	g_return_if_fail(req != NULL);
-
-	close(req->fd_in);
-	close(req->fd_out);
-
-	g_free(req->host);
-	g_free(req);
-
-	number_of_dns_children--;
+	return resolver;
 }
 
-static int
-send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *dns_params)
+/**
+ * @return TRUE if the request was sent succesfully.  FALSE
+ *         if the request could not be sent.  This isn't
+ *         necessarily an error.  If the child has expired,
+ *         for example, we won't be able to send the message.
+ */
+static gboolean
+send_dns_request_to_child(GaimDnsQueryData *query_data,
+		GaimDnsQueryResolverProcess *resolver)
 {
-	char ch;
-	int rc;
 	pid_t pid;
+	dns_params_t dns_params;
+	int rc;
+	char ch;
 
 	/* This waitpid might return the child's PID if it has recently
 	 * exited, or it might return an error if it exited "long
 	 * enough" ago that it has already been reaped; in either
 	 * instance, we can't use it. */
-	if ((pid = waitpid (req->dns_pid, NULL, WNOHANG)) > 0) {
-		gaim_debug_warning("dns",
-				   "DNS child %d no longer exists\n", req->dns_pid);
-		return -1;
+	pid = waitpid(resolver->dns_pid, NULL, WNOHANG);
+	if (pid > 0) {
+		gaim_debug_warning("dns", "DNS child %d no longer exists\n",
+				resolver->dns_pid);
+		gaim_dnsquery_resolver_destroy(resolver);
+		return FALSE;
 	} else if (pid < 0) {
-		gaim_debug_warning("dns",
-		                   "Wait for DNS child %d failed: %s\n",
-		                   req->dns_pid, strerror(errno));
-		return -1;
+		gaim_debug_warning("dns", "Wait for DNS child %d failed: %s\n",
+				resolver->dns_pid, strerror(errno));
+		gaim_dnsquery_resolver_destroy(resolver);
+		return FALSE;
 	}
 
-	/* Let's contact this lost child! */
-	rc = write(req->fd_in, dns_params, sizeof(*dns_params));
+	/* Copy the hostname and port into a single data structure */
+	strncpy(dns_params.hostname, query_data->hostname, sizeof(dns_params.hostname) - 1);
+	dns_params.hostname[sizeof(dns_params.hostname) - 1] = '\0';
+	dns_params.port = query_data->port;
+
+	/* Send the data structure to the child */
+	rc = write(resolver->fd_in, &dns_params, sizeof(dns_params));
 	if (rc < 0) {
-		gaim_debug_error("dns",
-				   "Unable to write to DNS child %d: %d\n",
-				   req->dns_pid, strerror(errno));
-		close(req->fd_in);
-		return -1;
+		gaim_debug_error("dns", "Unable to write to DNS child %d: %d\n",
+				resolver->dns_pid, strerror(errno));
+		gaim_dnsquery_resolver_destroy(resolver);
+		return FALSE;
 	}
 
-	g_return_val_if_fail(rc == sizeof(*dns_params), -1);
+	g_return_val_if_fail(rc == sizeof(dns_params), -1);
 
 	/* Did you hear me? (This avoids some race conditions) */
-	rc = read(req->fd_out, &ch, sizeof(ch));
+	rc = read(resolver->fd_out, &ch, sizeof(ch));
 	if (rc != 1 || ch != 'Y')
 	{
 		gaim_debug_warning("dns",
-				   "DNS child %d not responding. Killing it!\n",
-				   req->dns_pid);
-		kill(req->dns_pid, SIGKILL);
-		return -1;
+				"DNS child %d not responding. Killing it!\n",
+				resolver->dns_pid);
+		gaim_dnsquery_resolver_destroy(resolver);
+		return FALSE;
 	}
 
 	gaim_debug_info("dns",
-			   "Successfully sent DNS request to child %d\n", req->dns_pid);
+			"Successfully sent DNS request to child %d\n",
+			resolver->dns_pid);
 
-	return 0;
+	query_data->resolver = resolver;
+
+	return TRUE;
 }
 
-static void
-host_resolved(gpointer data, gint source, GaimInputCondition cond);
+static void host_resolved(gpointer data, gint source, GaimInputCondition cond);
 
 static void
-release_dns_child(pending_dns_request_t *req)
+handle_next_queued_request()
 {
-	g_free(req->host);
-	req->host = NULL;
+	GaimDnsQueryData *query_data;
+	GaimDnsQueryResolverProcess *resolver;
 
-	if (queued_requests && !g_queue_is_empty(queued_requests)) {
-		queued_dns_request_t *r = g_queue_pop_head(queued_requests);
-		req->host = g_strdup(r->params.hostname);
-		req->port = r->params.port;
-		req->callback = r->callback;
-		req->data = r->data;
+	if ((queued_requests == NULL) || (g_queue_is_empty(queued_requests)))
+		/* No more DNS queries, yay! */
+		return;
 
-		gaim_debug_info("dns",
-				   "Processing queued DNS query for '%s' with child %d\n",
-				   req->host, req->dns_pid);
+	query_data = g_queue_pop_head(queued_requests);
 
-		if (send_dns_request_to_child(req, &(r->params)) != 0) {
-			req_free(req);
-			req = NULL;
+	/*
+	 * If we have any children, attempt to have them perform the DNS
+	 * query.  If we're able to send the query then resolver will be
+	 * set to the GaimDnsQueryResolverProcess.  Otherwise, resolver
+	 * will be NULL and we'll need to create a new DNS request child.
+	 */
+	while (free_dns_children != NULL)
+	{
+		resolver = free_dns_children->data;
+		free_dns_children = g_slist_remove(free_dns_children, resolver);
 
-			gaim_debug_warning("dns",
-					   "Intent of process queued query of '%s' failed, "
-					   "requeueing...\n", r->params.hostname);
-			g_queue_push_head(queued_requests, r);
-		} else {
-			req->inpa = gaim_input_add(req->fd_out, GAIM_INPUT_READ, host_resolved, req);
-			g_free(r);
+		if (send_dns_request_to_child(query_data, resolver))
+			/* We found an acceptable child, yay */
+			break;
+	}
+
+	/* We need to create a new DNS request child */
+	if (query_data->resolver == NULL)
+	{
+		if (number_of_dns_children >= MAX_DNS_CHILDREN)
+		{
+			/* Apparently all our children are busy */
+			g_queue_push_head(queued_requests, query_data);
+			return;
 		}
 
-	} else {
-		req->host = NULL;
-		req->callback = NULL;
-		req->data = NULL;
-		free_dns_children = g_slist_append(free_dns_children, req);
+		resolver = gaim_dnsquery_resolver_new(gaim_debug_is_enabled());
+		if (resolver == NULL)
+		{
+			gaim_dnsquery_failed(query_data, _("Unable to create new resolver process\n"));
+			return;
+		}
+		if (!send_dns_request_to_child(query_data, resolver))
+		{
+			gaim_dnsquery_failed(query_data, _("Unable to send request to resolver process\n"));
+			return;
+		}
 	}
+
+	query_data->resolver->inpa = gaim_input_add(query_data->resolver->fd_out,
+			GAIM_INPUT_READ, host_resolved, query_data);
 }
+
+/*
+ * End the functions for dealing with the DNS child processes.
+ */
 
 static void
 host_resolved(gpointer data, gint source, GaimInputCondition cond)
 {
-	pending_dns_request_t *req = (pending_dns_request_t*)data;
+	GaimDnsQueryData *query_data;
 	int rc, err;
 	GSList *hosts = NULL;
 	struct sockaddr *addr = NULL;
 	size_t addrlen;
+	char message[1024];
 
-	gaim_debug_info("dns", "Got response for '%s'\n", req->host);
-	gaim_input_remove(req->inpa);
+	query_data = data;
 
-	rc = read(req->fd_out, &err, sizeof(err));
+	gaim_debug_info("dns", "Got response for '%s'\n", query_data->hostname);
+	gaim_input_remove(query_data->resolver->inpa);
+	query_data->resolver->inpa = 0;
+
+	rc = read(query_data->resolver->fd_out, &err, sizeof(err));
 	if ((rc == 4) && (err != 0))
 	{
-		char message[1024];
 #ifdef HAVE_GETADDRINFO
-		g_snprintf(message, sizeof(message), "DNS error: %s (pid=%d)",
-				   gai_strerror(err), req->dns_pid);
+		g_snprintf(message, sizeof(message), _("Error resolving %s: %s"),
+				query_data->hostname, gai_strerror(err));
 #else
-		g_snprintf(message, sizeof(message), "DNS error: %d (pid=%d)",
-				   err, req->dns_pid);
+		g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
+				query_data->hostname, err);
 #endif
-		gaim_debug_error("dns", "%s\n", message);
-		req->callback(NULL, req->data, message);
-		release_dns_child(req);
-		return;
-	}
-	if (rc > 0)
-	{
+		gaim_dnsquery_failed(query_data, message);
+
+	} else if (rc > 0) {
+		/* Success! */
 		while (rc > 0) {
-			rc = read(req->fd_out, &addrlen, sizeof(addrlen));
+			rc = read(query_data->resolver->fd_out, &addrlen, sizeof(addrlen));
 			if (rc > 0 && addrlen > 0) {
 				addr = g_malloc(addrlen);
-				rc = read(req->fd_out, addr, addrlen);
+				rc = read(query_data->resolver->fd_out, addr, addrlen);
 				hosts = g_slist_append(hosts, GINT_TO_POINTER(addrlen));
 				hosts = g_slist_append(hosts, addr);
 			} else {
 				break;
 			}
 		}
+		/*	wait4(resolver->dns_pid, NULL, WNOHANG, NULL); */
+		gaim_dnsquery_resolved(query_data, hosts);
+
 	} else if (rc == -1) {
-		char message[1024];
-		g_snprintf(message, sizeof(message), "Error reading from DNS child: %s",strerror(errno));
-		gaim_debug_error("dns", "%s\n", message);
-		req->callback(NULL, req->data, message);
-		req_free(req);
-		return;
+		g_snprintf(message, sizeof(message), _("Error reading from resolver process: %s"), strerror(errno));
+		gaim_dnsquery_failed(query_data, message);
+
 	} else if (rc == 0) {
-		char message[1024];
-		g_snprintf(message, sizeof(message), "EOF reading from DNS child");
-		close(req->fd_out);
-		gaim_debug_error("dns", "%s\n", message);
-		req->callback(NULL, req->data, message);
-		req_free(req);
-		return;
+		g_snprintf(message, sizeof(message), _("EOF while reading from resolver process"));
+		gaim_dnsquery_failed(query_data, message);
 	}
 
-/*	wait4(req->dns_pid, NULL, WNOHANG, NULL); */
-
-	req->callback(hosts, req->data, NULL);
-
-	release_dns_child(req);
+	handle_next_queued_request();
 }
-/*
- * End the functions for dealing with the DNS child processes.
- */
+
+static gboolean
+resolve_host(gpointer data)
+{
+	GaimDnsQueryData *query_data;
+
+	query_data = data;
+	query_data->timeout = 0;
+
+	handle_next_queued_request();
+
+	return FALSE;
+}
 
 GaimDnsQueryData *
-gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryConnectFunction callback, gpointer data)
+gaim_dnsquery_a(const char *hostname, int port,
+				GaimDnsQueryConnectFunction callback, gpointer data)
 {
-	pending_dns_request_t *req = NULL;
-	dns_params_t dns_params;
-	gchar *host_temp;
-	gboolean show_debug;
+	GaimDnsQueryData *query_data;
 
-	show_debug = gaim_debug_is_enabled();
+	g_return_val_if_fail(hostname != NULL, NULL);
+	g_return_val_if_fail(port     != 0, NULL);
 
-	host_temp = g_strstrip(g_strdup(hostname));
-	strncpy(dns_params.hostname, host_temp, sizeof(dns_params.hostname) - 1);
-	g_free(host_temp);
-	dns_params.hostname[sizeof(dns_params.hostname) - 1] = '\0';
-	dns_params.port = port;
+	query_data = g_new(GaimDnsQueryData, 1);
+	query_data->hostname = g_strdup(hostname);
+	g_strstrip(query_data->hostname);
+	query_data->port = port;
+	query_data->callback = callback;
+	query_data->data = data;
+	query_data->resolver = NULL;
 
-	/*
-	 * If we have any children, attempt to have them perform the DNS
-	 * query.  If we're able to send the query to a child, then req
-	 * will be set to the pending_dns_request_t.  Otherwise, req will
-	 * be NULL and we'll need to create a new DNS request child.
-	 */
-	while (free_dns_children != NULL) {
-		req = free_dns_children->data;
-		free_dns_children = g_slist_remove(free_dns_children, req);
+	if (!queued_requests)
+		queued_requests = g_queue_new();
+	g_queue_push_tail(queued_requests, query_data);
 
-		if (send_dns_request_to_child(req, &dns_params) == 0)
-			/* We found an acceptable child, yay */
-			break;
+	gaim_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
 
-		req_free(req);
-		req = NULL;
-	}
+	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
 
-	/* We need to create a new DNS request child */
-	if (req == NULL) {
-		if (number_of_dns_children >= MAX_DNS_CHILDREN) {
-			queued_dns_request_t *r = g_new(queued_dns_request_t, 1);
-			memcpy(&(r->params), &dns_params, sizeof(dns_params));
-			r->callback = callback;
-			r->data = data;
-			if (!queued_requests)
-				queued_requests = g_queue_new();
-			g_queue_push_tail(queued_requests, r);
-
-			gaim_debug_info("dns",
-					   "DNS query for '%s' queued\n", dns_params.hostname);
-
-			return (GaimDnsQueryData *)1;
-		}
-
-		req = gaim_dns_new_resolverthread(show_debug);
-		if (req == NULL)
-		{
-			gaim_debug_error("proxy", "oh dear, this is going to explode, I give up\n");
-			return NULL;
-		}
-		send_dns_request_to_child(req, &dns_params);
-	}
-
-	req->host = g_strdup(hostname);
-	req->port = port;
-	req->callback = callback;
-	req->data = data;
-	req->inpa = gaim_input_add(req->fd_out, GAIM_INPUT_READ, host_resolved, req);
-
-	return (GaimDnsQueryData *)1;
+	return query_data;
 }
 
 #elif defined _WIN32 /* end __unix__ || __APPLE__ */
 
-typedef struct _dns_tdata {
-	char *hostname;
-	int port;
-	GaimDnsQueryConnectFunction callback;
-	gpointer data;
-	GSList *hosts;
-	char *errmsg;
-} dns_tdata;
+/*
+ * Windows!
+ */
 
-static gboolean dns_main_thread_cb(gpointer data) {
-	dns_tdata *td = (dns_tdata*)data;
-	if (td->errmsg != NULL) {
-		gaim_debug_info("dns", "%s\n", td->errmsg);
+static gboolean
+dns_main_thread_cb(gpointer data)
+{
+	GaimDnsQueryData *query_data;
+
+	query_data = data;
+
+	if (query_data->error_message != NULL)
+		gaim_dnsquery_failed(query_data, query_data->error_message);
+	else
+	{
+		GSList *hosts;
+		/* We don't want gaim_dns_query_resolved() to free(hosts) */
+		hosts = query_data->hosts;
+		query_data->hosts = NULL;
+		gaim_dnsquery_resolved(query_data, hosts);
 	}
-	td->callback(td->hosts, td->data, td->errmsg);
-	g_free(td->hostname);
-	g_free(td->errmsg);
-	g_free(td);
+
 	return FALSE;
 }
 
-static gpointer dns_thread(gpointer data) {
-
+static gpointer
+dns_thread(gpointer data)
+{
+	GaimDnsQueryData *query_data;
 #ifdef HAVE_GETADDRINFO
 	int rc;
 	struct addrinfo hints, *res, *tmp;
@@ -578,136 +624,240 @@ static gpointer dns_thread(gpointer data) {
 	struct sockaddr_in sin;
 	struct hostent *hp;
 #endif
-	dns_tdata *td = (dns_tdata*)data;
+
+	query_data = data;
 
 #ifdef HAVE_GETADDRINFO
-	g_snprintf(servname, sizeof(servname), "%d", td->port);
+	g_snprintf(servname, sizeof(servname), "%d", query_data->port);
 	memset(&hints,0,sizeof(hints));
 
-	/* This is only used to convert a service
+	/*
+	 * This is only used to convert a service
 	 * name to a port number. As we know we are
 	 * passing a number already, we know this
 	 * value will not be really used by the C
 	 * library.
 	 */
 	hints.ai_socktype = SOCK_STREAM;
-	if ((rc = getaddrinfo(td->hostname, servname, &hints, &res)) == 0) {
+	if ((rc = getaddrinfo(query_data->hostname, servname, &hints, &res)) == 0) {
 		tmp = res;
 		while(res) {
-			td->hosts = g_slist_append(td->hosts,
+			query_data->hosts = g_slist_append(query_data->hosts,
 				GSIZE_TO_POINTER(res->ai_addrlen));
-			td->hosts = g_slist_append(td->hosts,
+			query_data->hosts = g_slist_append(query_data->hosts,
 				g_memdup(res->ai_addr, res->ai_addrlen));
 			res = res->ai_next;
 		}
 		freeaddrinfo(tmp);
 	} else {
-		td->errmsg = g_strdup_printf("DNS getaddrinfo(\"%s\", \"%s\") error: %d", td->hostname, servname, rc);
+		query_data->error_message = g_strdup_printf(_("Error resolving %s: %s"), query_data->hostname, gai_strerror(rc));
 	}
 #else
-	if ((hp = gethostbyname(td->hostname))) {
+	if ((hp = gethostbyname(query_data->hostname))) {
 		memset(&sin, 0, sizeof(struct sockaddr_in));
 		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 		sin.sin_family = hp->h_addrtype;
-		sin.sin_port = htons(td->port);
+		sin.sin_port = htons(query_data->port);
 
-		td->hosts = g_slist_append(td->hosts,
+		query_data->hosts = g_slist_append(query_data->hosts,
 				GSIZE_TO_POINTER(sizeof(sin)));
-		td->hosts = g_slist_append(td->hosts,
+		query_data->hosts = g_slist_append(query_data->hosts,
 				g_memdup(&sin, sizeof(sin)));
 	} else {
-		td->errmsg = g_strdup_printf("DNS gethostbyname(\"%s\") error: %d", td->hostname, h_errno);
+		query_data->error_message = g_strdup_printf(_("Error resolving %s: %d"), query_data->hostname, h_errno);
 	}
 #endif
+
 	/* back to main thread */
-	g_idle_add(dns_main_thread_cb, td);
+	g_idle_add(dns_main_thread_cb, query_data);
+
 	return 0;
 }
 
-GaimDnsQueryData *
-gaim_dnsquery_a(const char *hostname, int port,
-							  GaimDnsQueryConnectFunction callback, gpointer data)
+static gboolean
+resolve_host(gpointer data)
 {
-	dns_tdata *td;
+	GaimDnsQueryData *query_data;
 	struct sockaddr_in sin;
-	GError* err = NULL;
+	GError *err = NULL;
 
-	if(inet_aton(hostname, &sin.sin_addr)) {
+	query_data = data;
+	query_data->timeout = 0;
+
+	if (inet_aton(query_data->hostname, &sin.sin_addr))
+	{
 		GSList *hosts = NULL;
 		sin.sin_family = AF_INET;
-		sin.sin_port = htons(port);
+		sin.sin_port = htons(query_data->port);
 		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
 		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
-		callback(hosts, data, NULL);
-		return (GaimDnsQueryData *)1;
+		gaim_dnsquery_resolved(query_data, hosts);
+	}
+	else
+	{
+		query_data->resolver = g_thread_create(dns_thread,
+				query_data, FALSE, &err);
+		if (query_data->resolver == NULL)
+		{
+			char message[1024];
+			g_snprintf(message, sizeof(message), _("Thread creation failure: %s"),
+					err ? err->message : _("Unknown reason"));
+			g_error_free(err);
+			gaim_dnsquery_failed(query_data, message);
+		}
 	}
 
-	gaim_debug_info("dns", "DNS Lookup for: %s\n", hostname);
-	td = g_new0(dns_tdata, 1);
-	td->hostname = g_strdup(hostname);
-	td->port = port;
-	td->callback = callback;
-	td->data = data;
-
-	if(!g_thread_create(dns_thread, td, FALSE, &err)) {
-		gaim_debug_error("dns", "DNS thread create failure: %s\n", err?err->message:"");
-		g_error_free(err);
-		g_free(td->hostname);
-		g_free(td);
-		return NULL;
-	}
-	return (GaimDnsQueryData *)1;
-}
-
-#else /* not __unix__ or __APPLE__ or _WIN32 */
-
-typedef struct {
-	gpointer data;
-	size_t addrlen;
-	struct sockaddr *addr;
-	GaimDnsQueryConnectFunction callback;
-} pending_dns_request_t;
-
-static gboolean host_resolved(gpointer data)
-{
-	pending_dns_request_t *req = (pending_dns_request_t*)data;
-	GSList *hosts = NULL;
-	hosts = g_slist_append(hosts, GINT_TO_POINTER(req->addrlen));
-	hosts = g_slist_append(hosts, req->addr);
-	req->callback(hosts, req->data, NULL);
-	g_free(req);
 	return FALSE;
 }
 
 GaimDnsQueryData *
 gaim_dnsquery_a(const char *hostname, int port,
-						 GaimDnsQueryConnectFunction callback, gpointer data)
+				GaimDnsQueryConnectFunction callback, gpointer data)
 {
-	struct sockaddr_in sin;
-	pending_dns_request_t *req;
+	GaimDnsQueryData *query_data;
 
-	if (!inet_aton(hostname, &sin.sin_addr)) {
+	g_return_val_if_fail(hostname != NULL, NULL);
+	g_return_val_if_fail(port     != 0, NULL);
+
+	query_data = g_new(GaimDnsQueryData, 1);
+	query_data->hostname = g_strdup(hostname);
+	g_strstrip(query_data->hostname);
+	query_data->port = port;
+	query_data->callback = callback;
+	query_data->data = data;
+	query_data->error_message = NULL;
+	query_data->hosts = NULL;
+
+	/* Don't call the callback before returning */
+	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
+
+	return query_data;
+}
+
+#else /* not __unix__ or __APPLE__ or _WIN32 */
+
+/*
+ * We weren't able to do anything fancier above, so use the
+ * fail-safe name resolution code, which is blocking.
+ */
+
+static gboolean
+resolve_host(gpointer data)
+{
+	GaimDnsQueryData *query_data;
+	struct sockaddr_in sin;
+	GSList *hosts = NULL;
+
+	query_data = data;
+	query_data->timeout = 0;
+
+	if (!inet_aton(query_data->hostname, &sin.sin_addr)) {
 		struct hostent *hp;
-		if(!(hp = gethostbyname(hostname))) {
-			gaim_debug_error("dns",
-					   "gaim_gethostbyname(\"%s\", %d) failed: %d\n",
-					   hostname, port, h_errno);
-			return NULL;
+		if(!(hp = gethostbyname(query_data->hostname))) {
+			char message[1024];
+			g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
+					query_data->hostname, h_errno);
+			gaim_dnsquery_failed(query_data, message);
+			return FALSE;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
 		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
 		sin.sin_family = hp->h_addrtype;
 	} else
 		sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
+	sin.sin_port = htons(query_data->port);
 
-	req = g_new(pending_dns_request_t, 1);
-	req->addr = (struct sockaddr*) g_memdup(&sin, sizeof(sin));
-	req->addrlen = sizeof(sin);
-	req->data = data;
-	req->callback = callback;
-	gaim_timeout_add(10, host_resolved, req);
-	return (GaimDnsQueryData *)1;
+	hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
+	hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
+
+	gaim_dnsquery_resolved(query_data, hosts);
+
+	return FALSE;
+}
+
+GaimDnsQueryData *
+gaim_dnsquery_a(const char *hostname, int port,
+				GaimDnsQueryConnectFunction callback, gpointer data)
+{
+	GaimDnsQueryData *query_data;
+
+	g_return_val_if_fail(hostname != NULL, NULL);
+	g_return_val_if_fail(port     != 0, NULL);
+
+	query_data = g_new(GaimDnsQueryData, 1);
+	query_data->hostname = g_strdup(hostname);
+	g_strstrip(query_data->hostname);
+	query_data->port = port;
+	query_data->callback = callback;
+	query_data->data = data;
+
+	/* Don't call the callback before returning */
+	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
+
+	return query_data;
 }
 
 #endif /* not __unix__ or __APPLE__ or _WIN32 */
+
+void
+gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
+{
+#if defined(__unix__) || defined(__APPLE__)
+	if (query_data->resolver != NULL)
+		/*
+		 * Ideally we would tell our resolver child to stop resolving
+		 * shit and then we would add it back to the free_dns_children
+		 * linked list.  However, it's hard to tell children stuff,
+		 * they just don't listen.
+		 */
+		gaim_dnsquery_resolver_destroy(query_data->resolver);
+#elif defined _WIN32 /* end __unix__ || __APPLE__ */
+	if (query_data->resolver != NULL)
+	{
+		/*
+		 * It's not really possible to kill a thread.  So instead we
+		 * just set the callback to NULL and let the DNS lookup
+		 * finish.
+		 */
+		query_data->callback = NULL;
+		return;
+	}
+
+	while (query_data->hosts != NULL)
+	{
+		/* Discard the length... */
+		query_data->hosts = g_slist_remove(query_data->hosts, query_data->hosts->data);
+		/* Free the address... */
+		g_free(query_data->hosts->data);
+		query_data->hosts = g_slist_remove(query_data->hosts, query_data->hosts->data);
+	}
+	g_free(query_data->error_message);
+#endif
+
+	if (query_data->timeout > 0)
+		gaim_timeout_remove(query_data->timeout);
+
+	g_free(query_data->hostname);
+	g_free(query_data);
+}
+
+void
+gaim_dnsquery_init(void)
+{
+#ifdef _WIN32
+	if (!g_thread_supported())
+		g_thread_init(NULL);
+#endif
+}
+
+void
+gaim_dnsquery_uninit(void)
+{
+#if defined(__unix__) || defined(__APPLE__)
+	while (free_dns_children != NULL)
+	{
+		gaim_dnsquery_resolver_destroy(free_dns_children->data);
+		free_dns_children = g_slist_remove(free_dns_children, free_dns_children->data);
+	}
+#endif
+}

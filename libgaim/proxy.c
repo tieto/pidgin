@@ -309,6 +309,9 @@ gaim_proxy_connect_info_destroy(GaimProxyConnectInfo *connect_info)
 
 	connect_infos = g_slist_remove(connect_infos, connect_info);
 
+	if (connect_info->query_data != NULL)
+		gaim_dnsquery_destroy(connect_info->query_data);
+
 	while (connect_info->hosts != NULL)
 	{
 		/* Discard the length... */
@@ -1571,13 +1574,18 @@ connection_host_resolved(GSList *hosts, gpointer data,
 {
 	GaimProxyConnectInfo *connect_info;
 
+	connect_info = data;
+	connect_info->query_data = NULL;
+
 	if (error_message != NULL)
 	{
-		gaim_debug_info("proxy", "Error while resolving hostname: %s\n", error_message);
-		/* TODO: Destroy connect_info and return? */
+		gchar *tmp;
+		tmp = g_strdup_printf("Error while resolving hostname: %s\n", error_message);
+		gaim_proxy_connect_info_error(connect_info, tmp);
+		g_free(tmp);
+		return;
 	}
 
-	connect_info = data;
 	connect_info->hosts = hosts;
 
 	try_connect(connect_info);
@@ -1821,10 +1829,6 @@ gaim_proxy_init(void)
 		proxy_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/core/proxy/password",
 		proxy_pref_cb, NULL);
-#ifdef _WIN32
-	if(!g_thread_supported())
-		g_thread_init(NULL);
-#endif
 }
 
 void

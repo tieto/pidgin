@@ -32,7 +32,8 @@ typedef struct _GaimDnsQueryData GaimDnsQueryData;
 
 /**
  * The "hosts" parameter is a linked list containing pairs of
- * one size_t addrlen and one struct sockaddr *addr.
+ * one size_t addrlen and one struct sockaddr *addr.  It should
+ * be free'd by the callback function.
  */
 typedef void (*GaimDnsQueryConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
 
@@ -49,18 +50,36 @@ extern "C" {
 /*@{*/
 
 /**
- * Do an async dns query
+ * Perform an asynchronous DNS query.
  *
- * @param hostname The hostname to resolve
- * @param port A portnumber which is stored in the struct sockaddr
- * @param callback Callback to call after resolving
- * @param data Extra data for the callback function
+ * @param hostname The hostname to resolve.
+ * @param port     A port number which is stored in the struct sockaddr.
+ * @param callback The callback function to call after resolving.
+ * @param data     Extra data to pass to the callback function.
  *
  * @return NULL if there was an error, otherwise return a reference to
  *         a data structure that can be used to cancel the pending
  *         DNS query, if needed.
  */
 GaimDnsQueryData *gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryConnectFunction callback, gpointer data);
+
+/**
+ * Cancel a DNS query and destroy the associated data structure.
+ *
+ * @param query_data The DNS query to cancel.  This data structure
+ *        is freed by this function.
+ */
+void gaim_dnsquery_destroy(GaimDnsQueryData *query_data);
+
+/**
+ * Initializes the DNS query subsystem.
+ */
+void gaim_dnsquery_init(void);
+
+/**
+ * Uninitializes the DNS query subsystem.
+ */
+void gaim_dnsquery_uninit(void);
 
 /*@}*/
 

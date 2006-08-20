@@ -28,6 +28,7 @@
 
 #include "cipher.h"
 #include "circbuffer.h"
+#include "dnsquery.h"
 #include "prpl.h"
 
 #include "sipmsg.h"
@@ -69,6 +70,7 @@ struct simple_account_data {
 	gchar *servername;
 	gchar *username;
 	gchar *password;
+	GaimDnsQueryData *query_data;
 	int fd;
 	int cseq;
 	time_t reregister;
