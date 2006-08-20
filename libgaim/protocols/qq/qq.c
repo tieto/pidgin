@@ -40,6 +40,7 @@
 #include "buddy_opt.h"
 #include "buddy_status.h"
 #include "char_conv.h"
+#include "crypt.h"
 #include "group.h"
 #include "group_find.h"
 #include "group_im.h"
@@ -582,22 +583,26 @@ static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored)
 }
 */
 
+/* attempt to output the value and byte length of a given field */
+/*
 static gboolean _qq_parse_custom_packet_field(GaimRequestFields *fields,
-		const gchar *id, guint8 **value)
+		const gchar *id, guint8 **value, gint *len, gboolean allow_null)
 {
 	GaimRequestField *field;
 	const gchar *str;
-	gint len, i;
+	gint i;
 	gboolean success;
 
 	success = FALSE;
 	field = gaim_request_fields_get_field(fields, id);
 	str = gaim_request_field_string_get_value(field);
-	if (str) {
+	if (!str && allow_null) {
+		return TRUE;
+	} else if (str) {
 		success = TRUE;
 		if (strcmp(id, "uid") != 0) {
-			*value = hex_str_to_bytes(str, &len);
-			if (!*value || len != 2)
+			*value = hex_str_to_bytes(str, len);
+			if (!*value)
 				success = FALSE;
 		} else {
 			for (i = 0; i < strlen(str); i++) {
@@ -617,64 +622,84 @@ static gboolean _qq_parse_custom_packet_field(GaimRequestFields *fields,
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid entry: %s\n", id);
 	return success;
 }
+*/
 
+/* attempt to output the field values and body length */
+/*
 static gboolean _qq_parse_custom_packet_fields(GaimRequestFields *fields,
 		guint8 **client, guint8 **cmd, guint8 **seq, guint32 *uid, 
-		guint8 **body, gint *body_len)
+		guint8 **body, guint8 **key, gint *body_len)
 {
-	GaimRequestField *field;
+	gint len;
 	gboolean success;
 
-	success = TRUE;
-	*client = *cmd = *seq = *body = NULL;
-	*uid = 0;
-	success = _qq_parse_custom_packet_field(fields, "client", client);
-	if (success)
-		success = _qq_parse_custom_packet_field(fields, "cmd", cmd);
-	if (success)
-		success = _qq_parse_custom_packet_field(fields, "uid", (guint8 **) uid);
-	if (success)
-		success = _qq_parse_custom_packet_field(fields, "seq", seq);
-	if (success) {
-		field = gaim_request_fields_get_field(fields, "body");
-		*body = hex_str_to_bytes(gaim_request_field_string_get_value(field), 
-				body_len);
-	} else {
+       success = FALSE;
+       *client = *cmd = *seq = *body = *key = NULL;
+       *uid = *body_len = 0;
+       if ((_qq_parse_custom_packet_field(fields, "client", client, &len, FALSE)
+               && len == 2
+               && _qq_parse_custom_packet_field(fields, "cmd", cmd, &len, FALSE)
+               && len == 2
+               && _qq_parse_custom_packet_field(fields, "uid", (guint8 **) uid, &len, FALSE)
+               && _qq_parse_custom_packet_field(fields, "seq", seq, &len, FALSE)
+               && len == 2
+               && _qq_parse_custom_packet_field(fields, "body", body, body_len, TRUE))) {
+               if (*body_len > MAX_PACKET_SIZE / 8) {
+                       g_free(*client);
+                       g_free(*cmd);
+                       g_free(*seq);
+                       g_free(*body);
+                       return FALSE;
+               }
+               if (!gaim_request_fields_get_bool(fields, "encrypt"))
+                       return TRUE;
+               else
+                       success = _qq_parse_custom_packet_field(fields,
+                                       "key", key, &len, FALSE)
+                               && len == 16
+                               && *body_len > 0;
+       }
+       if (!success) {
 		if (*client)
 			g_free(*client);
 		if (*cmd)
 			g_free(*cmd);
 		if (*seq)
 			g_free(*seq);
+		if (*key)
+			g_free(*key);
+		return FALSE;
 	}
-	return success;
+	return TRUE;
 }
+*/
 
+/* parses the request fields and attempts to send the packet */
+/*
 static void _qq_send_custom_packet_cb(GaimConnection *gc, GaimRequestFields *fields)
 {
 	guint32 uid;
-	guint8 *buf, *client, *cmd, *seq, *body, *cursor;
-	gint bytes, len;
+	guint8 *buf, *client, *cmd, *seq, *body, *encr_body, *key, *cursor;
+	gint bytes, len, encr_len;
 	qq_data *qd;
 	gboolean success;
 
 	qd = (qq_data *) gc->proto_data;
 
 	success = _qq_parse_custom_packet_fields(fields, &client, &cmd, 
-			&seq, &uid, &body, &len);
+			&seq, &uid, &body, &key, &len);
 	if (!success) {
-		gaim_notify_error(gc, _("Error"), _("Invalid packet entry"), NULL);
+		gaim_notify_error(gc, _("Error"), _("Invalid entry"), NULL);
 		return;
 	}
-
-	if (body)
-		g_return_if_fail(len+12 <= MAX_PACKET_SIZE);
 
 	bytes = 0;
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	cursor = buf;
+*/
         /* QQ TCP packet has two bytes in the beginning to define packet length
 	 * so I leave room here for size */
+/*
 	if (qd->use_tcp)
 		bytes += create_packet_w(buf, &cursor, 0x0000);
 	bytes += create_packet_b(buf, &cursor, QQ_PACKET_TAG);
@@ -683,7 +708,17 @@ static void _qq_send_custom_packet_cb(GaimConnection *gc, GaimRequestFields *fie
 	bytes += create_packet_w(buf, &cursor, *(guint16 *) seq);
 	bytes += create_packet_dw(buf, &cursor, uid);
 	if (body) {
-		bytes += create_packet_data(buf, &cursor, body, len);
+               if (gaim_request_fields_get_bool(fields, "encrypt")) {
+                       if (gaim_request_fields_get_bool(fields, "prepend"))
+                               bytes += create_packet_data(buf, &cursor, key, 16);
+                       encr_body = g_newa(guint8, MAX_PACKET_SIZE);
+                       qq_crypt(ENCRYPT, body, len, key, encr_body, &encr_len);
+                       bytes += create_packet_data(buf, &cursor, encr_body, encr_len);
+                       g_free(key);
+               } else {
+                       bytes += create_packet_data(buf, &cursor, body, len);
+               }
+
 		g_free(body);
 	}
 	bytes += create_packet_b(buf, &cursor, QQ_PACKET_TAIL);
@@ -696,8 +731,10 @@ static void _qq_send_custom_packet_cb(GaimConnection *gc, GaimRequestFields *fie
 	g_free(cmd);
 	g_free(seq);
 }
+*/
 
 /* send a custom packet to the server - for protocol testing */
+/*
 static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 {
 	GaimConnection *gc;
@@ -712,7 +749,7 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 	g_return_if_fail(gc != NULL && qd != NULL);
 
 	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(_("Packet Elements"));
+	group = gaim_request_field_group_new(_("Basic Elements"));
 	gaim_request_fields_add_group(fields, group);
 	tmp = g_strdup_printf("%04X", QQ_CLIENT);
 	field = gaim_request_field_string_new("client", _("Client (hex)"), tmp, FALSE);
@@ -726,8 +763,17 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 	field = gaim_request_field_string_new("uid", _("QQ Number (decimal)"), tmp, FALSE);
 	g_free(tmp);
 	gaim_request_field_group_add_field(group, field);
-	field = gaim_request_field_string_new("body", _("Body (hex)"), NULL, FALSE);
+	field = gaim_request_field_string_new("body", _("Body (hex)"), NULL, TRUE);
 	gaim_request_field_group_add_field(group, field);
+	group = gaim_request_field_group_new(_("Encryption"));
+	gaim_request_fields_add_group(fields, group);
+	field = gaim_request_field_bool_new("encrypt", _("Encrypt Packet Body"), FALSE);
+	gaim_request_field_group_add_field(group, field);
+	field = gaim_request_field_bool_new("prepend", _("Prepend Key to Body"), FALSE);
+	gaim_request_field_group_add_field(group, field);
+	field = gaim_request_field_string_new("key", _("Encryption Key (hex)"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
 
 	gaim_request_fields(gc, _("Send a custom packet"),
 			_("Send a custom packet"), NULL, fields,
@@ -735,6 +781,7 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 			_("Cancel"), NULL,
 			gc);
 }
+*/
 
 /* protocol related menus */
 static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
@@ -752,10 +799,10 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 	act = gaim_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);
 	m = g_list_append(m, act);
 
-	/*
+/*
 	act = gaim_plugin_action_new(_("Send Custom Packet"), _qq_menu_send_custom_packet);
 	m = g_list_append(m, act);
-	*/
+*/
 
 	/* XXX consider re-enabling this
 	act = gaim_plugin_action_new(_("Show System Message"), _qq_menu_show_system_message);

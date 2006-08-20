@@ -190,16 +190,16 @@ void try_dump_as_gbk(const guint8 *const data, gint len)
 static gchar *strstrip(const gchar *const buffer)
 {
 	GString *stripped;
-	gchar *ret;
-	int i;
+	gchar *ret, cur;
+	gint i;
 
 	g_return_val_if_fail(buffer != NULL, NULL);
 
         stripped = g_string_new("");
         for (i=0; i<strlen(buffer); i++) {
-                if ((int) buffer[i] != 32) {
+		cur = buffer[i];
+		if (cur != ' ' && cur != '\n')
                         g_string_append_c(stripped, buffer[i]);
-                }
         }
 	ret = stripped->str;
 	g_string_free(stripped, FALSE);
@@ -236,7 +236,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 			nibble1 = (gint) *cursor - 87;
 		} else {
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
-				"Invalid char found in hex string!\n");
+				"Invalid char \'%c\' found in hex string!\n", *cursor);
 			g_free(hex_str);
 			return NULL;
 		}
