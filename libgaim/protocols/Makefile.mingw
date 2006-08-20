@@ -1,0 +1,80 @@
+# Makefile.mingw
+#
+# Author: hermanator12002@yahoo.com
+# Date 9/11/02
+# Description: Top Makefile for win32 (mingw) port of Gaim
+#
+
+GAIM_TOP = ../..
+LIBGAIM_TOP = ../
+GAIM_PROTOS = .
+GAIM_INSTALL_DIR = $(GAIM_TOP)/win32-install-dir
+
+OSCAR = $(GAIM_PROTOS)/oscar
+YAHOO = $(GAIM_PROTOS)/yahoo
+MSN = $(GAIM_PROTOS)/msn
+TOC = $(GAIM_PROTOS)/toc
+IRC = $(GAIM_PROTOS)/irc
+JABBER = $(GAIM_PROTOS)/jabber
+GG = $(GAIM_PROTOS)/gg
+NOVELL = $(GAIM_PROTOS)/novell
+SILC = $(GAIM_PROTOS)/silc
+SIMPLE = $(GAIM_PROTOS)/simple
+SAMETIME = $(GAIM_PROTOS)/sametime
+
+VERSION := $(shell cat GAIM_TOP/VERSION)
+
+##
+## Don't forget to change STATIC_PROTO_INIT, in config.h.mingw if you
+## change the status of a protocol (static/plugin)
+##
+
+OSCAR_TYPE = PLUGIN
+YAHOO_TYPE = PLUGIN
+MSN_TYPE = PLUGIN
+TOC_TYPE = PLUGIN
+IRC_TYPE = PLUGIN
+JABBER_TYPE = PLUGIN
+GG_TYPE = PLUGIN
+NOVELL_TYPE = PLUGIN
+SILC_TYPE = PLUGIN
+SIMPLE_TYPE = PLUGIN
+SAMETIME_TYPE = PLUGIN
+
+all:
+	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f Makefile.mingw
+	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f Makefile.mingw
+	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f Makefile.mingw
+	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw
+	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw
+	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
+	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw
+	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw
+	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f Makefile.mingw
+	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw
+
+
+install: all
+	mkdir -p $(GAIM_INSTALL_DIR)/plugins
+	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f Makefile.mingw install
+	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f Makefile.mingw install
+	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f Makefile.mingw install
+	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw install
+	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw install
+	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
+	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw install
+	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw install
+	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f Makefile.mingw install
+	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw install
+
+clean:
+	$(MAKE) -C $(OSCAR) -f Makefile.mingw clean
+	$(MAKE) -C $(YAHOO) -f Makefile.mingw clean
+	$(MAKE) -C $(MSN) -f Makefile.mingw clean
+	$(MAKE) -C $(IRC) -f Makefile.mingw clean
+	$(MAKE) -C $(JABBER) -f Makefile.mingw clean
+	$(MAKE) -C $(GG) -f Makefile.mingw clean
+	$(MAKE) -C $(NOVELL) -f Makefile.mingw clean
+	$(MAKE) -C $(SILC) -f Makefile.mingw clean
+	$(MAKE) -C $(SIMPLE) -f Makefile.mingw clean
+	$(MAKE) -C $(SAMETIME) -f Makefile.mingw clean

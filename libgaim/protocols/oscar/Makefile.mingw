@@ -11,6 +11,7 @@
 OSCAR_ROOT :=		.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
 ##
@@ -40,7 +41,7 @@ endif
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -54,13 +55,13 @@ INCLUDE_PATHS +=	-I$(OSCAR_ROOT) \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GAIM_TOP)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src
+			-L$(LIBGAIM_TOP)
 
 
 ##
@@ -68,7 +69,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 
 C_SRC = \
-	bstream.c			\
+	bstream.c		\
 	family_admin.c		\
 	family_advert.c		\
 	family_alert.c		\
@@ -90,17 +91,17 @@ C_SRC = \
 	family_translate.c	\
 	family_userlookup.c	\
 	flap_connection.c	\
-	misc.c		\
-	msgcookie.c			\
-	odc.c				\
-	oft.c				\
-	oscar.c				\
+	misc.c			\
+	msgcookie.c		\
+	odc.c			\
+	oft.c			\
+	oscar.c			\
 	oscar_data.c		\
-	peer.c				\
+	peer.c			\
 	peer_proxy.c		\
 	rxhandlers.c		\
-	snac.c				\
-	tlv.c				\
+	snac.c			\
+	tlv.c			\
 	util.c
 
 
@@ -111,11 +112,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lintl \
 			-lws2_32 \
 			-lgaim
@@ -146,15 +144,15 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
@@ -163,4 +161,3 @@ $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
 clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).lib

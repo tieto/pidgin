@@ -134,8 +134,10 @@ LIBS =	\
 .PHONY: all clean include_path
 
 all: $(TARGET).dll
+	$(MAKE) -C protocols -f Makefile.mingw
 
 install: all
+	$(MAKE) -C protocols -f Makefile.mingw install
 	cp $(GAIM_SRC)/$(TARGET).dll $(GAIM_INSTALL_DIR)
 
 #
@@ -153,3 +155,4 @@ clean:
 	rm -rf *.o ./win32/*.o
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).dll.a
+	$(MAKE) -C protocols -f Makefile.mingw clean

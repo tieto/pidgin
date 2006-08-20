@@ -8,10 +8,10 @@
 # PATHS
 #
 
-INCLUDE_DIR :=		.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
 LIBXML2_DIR:=		../../../../win32-dev/libxml2
 GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
 JABBER_ROOT :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
@@ -27,7 +27,7 @@ CFLAGS =
 
 DEFINES =
 
-# Static or Plugin... 
+# Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
@@ -42,7 +42,7 @@ endif
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -54,14 +54,14 @@ INCLUDE_PATHS +=	-I$(JABBER_ROOT) \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(LIBXML2_DIR)/include \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GAIM_TOP)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(LIBXML2_DIR)/lib \
-			-L$(GAIM_TOP)/src
+			-L$(LIBGAIM_TOP)
 
 
 ##
@@ -124,15 +124,15 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
@@ -142,4 +142,3 @@ clean:
 	rm -rf *.o
 	rm -rf ./win32/*.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).lib
