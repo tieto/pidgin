@@ -75,7 +75,7 @@ static void _sort(guint32 *list)
 	gint i;
 	for (i = 0; list[i] < 0xffffffff; i++) {;
 	}
-	_quick_sort(list, 0, i - 1);
+	_quick_sort((gint *) list, 0, i - 1);
 }
 
 static void _qq_group_member_opt(GaimConnection *gc, qq_group *group, gint operation, guint32 *members)

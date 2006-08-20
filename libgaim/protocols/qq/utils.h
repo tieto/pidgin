@@ -33,6 +33,7 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount);
 gint qq_string_to_dec_value(const gchar *str);
 
 gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields);
+guint8 *_gen_session_md5(gint uid, guint8 *session_key);
 gchar *gen_ip_str(guint8 *ip);
 guint8 *str_ip_gen(gchar *str);
 gchar *uid_to_gaim_name(guint32 uid);

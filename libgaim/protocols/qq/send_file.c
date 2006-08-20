@@ -166,6 +166,7 @@ static void _qq_xfer_recv_packet(gpointer data, gint source, GaimInputCondition 
 }
 
 /* start file transfer process */
+/*
 static void _qq_xfer_send_start (GaimXfer *xfer)
 {
 	GaimAccount *account;
@@ -176,7 +177,9 @@ static void _qq_xfer_send_start (GaimXfer *xfer)
 	gc = gaim_account_get_connection(account);
 	info = (ft_info *) xfer->data;
 }
+*/
 
+/*
 static void _qq_xfer_send_ack (GaimXfer *xfer, const char *buffer, size_t len)
 {
 	GaimAccount *account;
@@ -186,10 +189,13 @@ static void _qq_xfer_send_ack (GaimXfer *xfer, const char *buffer, size_t len)
 	gc = gaim_account_get_connection(account);
 	qq_process_recv_file(gc, (guint8 *) buffer, len);
 }
+*/
 
+/*
 static void _qq_xfer_recv_start(GaimXfer *xfer)
 {
 }
+*/
 
 static void _qq_xfer_end(GaimXfer *xfer)
 {
@@ -269,15 +275,13 @@ gint qq_fill_conn_info(guint8 *raw_data, guint8 **cursor, ft_info *info)
 }
 
 
-extern gchar *_gen_session_md5(gint uid, guint8 *session_key);
-
 /* fill in the common information of file transfer */
 static gint _qq_create_packet_file_header
 (guint8 *raw_data, guint8 **cursor, guint32 to_uid, guint16 message_type, qq_data *qd, gboolean seq_ack)
 {
 	gint bytes;
 	time_t now;
-	gchar *md5;
+	guint8 *md5;
 	guint16 seq;
 	ft_info *info;
 
@@ -934,6 +938,7 @@ void qq_send_file(GaimConnection *gc, const char *who, const char *file)
 	gaim_xfer_request (xfer);
 }
 
+/*
 static void qq_send_packet_request_key(GaimConnection *gc, guint8 key)
 {
 	qq_send_cmd(gc, QQ_CMD_REQUEST_KEY, TRUE, 0, TRUE, &key, 1);
@@ -942,3 +947,4 @@ static void qq_send_packet_request_key(GaimConnection *gc, guint8 key)
 static void qq_process_recv_request_key(GaimConnection *gc)
 {
 }
+*/

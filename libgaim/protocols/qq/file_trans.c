@@ -38,8 +38,7 @@
 #include "proxy.h"
 #include "send_core.h"
 #include "send_file.h"
-
-extern gchar *hex_dump_to_str (const guint8 *buffer, gint bytes);
+#include "utils.h"
 
 struct _qq_file_header {
 	guint8 tag;
@@ -76,7 +75,7 @@ static guint32 _encrypt_qq_uid(guint32 uid, guint32 key)
 	return (~uid) ^ key;
 }
 
-static void _fill_filename_md5(const gchar *filename, gchar *md5)
+static void _fill_filename_md5(const gchar *filename, guint8 *md5)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -90,7 +89,7 @@ static void _fill_filename_md5(const gchar *filename, gchar *md5)
 	gaim_cipher_context_destroy(context);
 }
 
-static void _fill_file_md5(const gchar *filename, gint filelen, gchar *md5)
+static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 {
 	FILE *fp;
 	guint8 *buffer;
@@ -274,7 +273,6 @@ static gint _qq_send_file(GaimConnection *gc, guint8 *data, gint len, guint16 pa
 	bytes += create_packet_dw(buf, &cursor, _encrypt_qq_uid(to_uid, file_key));
 	bytes += create_packet_data(buf, &cursor, data, len);
 
-	ssize_t _qq_xfer_write(const char *buf, size_t len, GaimXfer *xfer);
 	if (bytes == len + 12) {
 		_qq_xfer_write(buf, bytes, qd->xfer);
 	} else
@@ -282,15 +280,12 @@ static gint _qq_send_file(GaimConnection *gc, guint8 *data, gint len, guint16 pa
 	return bytes;
 }
 
-extern gchar *_gen_session_md5(gint uid, guint8 *session_key);
-
 /* send a file to udp channel with QQ_FILE_CONTROL_PACKET_TAG */
 void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte)
 {
 	qq_data *qd;
 	gint bytes, bytes_expected, encrypted_len;
-	guint8 *raw_data, *cursor, *encrypted_data;
-	gchar *md5;
+	guint8 *raw_data, *cursor, *encrypted_data, *md5;
 	time_t now;
 	ft_info *info;
 	
@@ -393,9 +388,9 @@ static void _qq_send_file_data_packet(GaimConnection *gc, guint16 packet_type, g
 		guint32 fragment_index, guint16 seq, guint8 *data, gint len)
 {
 	gint bytes;
-	guint8 *raw_data, *cursor;
+	guint8 *raw_data, *cursor, filename_md5[QQ_KEY_LENGTH], file_md5[QQ_KEY_LENGTH];
 	guint32 fragment_size = 1000;
-	gchar file_md5[16], filename_md5[16], *filename;
+	gchar *filename;
 	gint filename_len, filesize;
 	qq_data *qd;
 	ft_info *info;
@@ -529,7 +524,7 @@ static void _qq_process_recv_file_ctl_packet(GaimConnection *gc, guint8 *data, g
 	guint16 packet_type;
 	guint16 seq;
 	guint8 hellobyte;
-	gchar *md5;
+	guint8 *md5;
 	ft_info *info = (ft_info *) qd->xfer->data;
 
 	decrypted_data = g_newa(guint8, len);

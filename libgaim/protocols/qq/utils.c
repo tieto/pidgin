@@ -20,8 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "stdlib.h"
+#include "cipher.h"
 #include "limits.h"
+#include "stdlib.h"
 #include "string.h"
 
 #ifdef _WIN32
@@ -31,6 +32,7 @@
 #include "char_conv.h"
 #include "debug.h"
 #include "prefs.h"
+#include "qq.h"
 #include "util.h"
 #include "utils.h"
 
@@ -107,6 +109,26 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	}
 
 	return segments;
+}
+
+/* generate a md5 key using uid and session_key */
+guint8 *_gen_session_md5(gint uid, guint8 *session_key)
+{
+        guint8 *src, md5_str[QQ_KEY_LENGTH];
+        GaimCipher *cipher;
+        GaimCipherContext *context;
+
+        src = g_newa(guint8, 20);
+	memcpy(src, &uid, 4);
+	memcpy(src, session_key, QQ_KEY_LENGTH);
+
+        cipher = gaim_ciphers_find_cipher("md5");
+        context = gaim_cipher_context_new(cipher, NULL);
+        gaim_cipher_context_append(context, src, 20);
+        gaim_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
+        gaim_cipher_context_destroy(context);
+
+        return g_memdup(md5_str, QQ_KEY_LENGTH);
 }
 
 /* given a four-byte ip data, convert it into a human readable ip string

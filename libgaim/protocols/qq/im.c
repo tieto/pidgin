@@ -23,7 +23,6 @@
 #include "conversation.h"
 #include "debug.h"
 #include "internal.h"
-#include "cipher.h"
 #include "notify.h"
 #include "server.h"
 #include "util.h"
@@ -207,27 +206,6 @@ static const gchar *qq_get_recv_im_type_str(gint type)
 	default:
 		return "QQ_RECV_IM_UNKNOWN";
 	}
-}
-
-/* generate a md5 key using uid and session_key */
-gchar *_gen_session_md5(gint uid, guint8 *session_key)
-{
-	guint8 *src, md5_str[QQ_KEY_LENGTH], *cursor;
-	GaimCipher *cipher;
-        GaimCipherContext *context;
-
-	src = g_newa(guint8, 20);
-	cursor = src;
-	create_packet_dw(src, &cursor, uid);
-	create_packet_data(src, &cursor, session_key, QQ_KEY_LENGTH);
-
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, src, 20);
-	gaim_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	gaim_cipher_context_destroy(context);
-
-	return g_memdup(md5_str, QQ_KEY_LENGTH);
 }
 
 /* when we receive a message,
@@ -449,11 +427,11 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data, *send_im_tail;
+	guint8 *cursor, *raw_data, *send_im_tail, *md5;
 	guint16 client_tag, normal_im_type;
 	gint msg_len, raw_len, font_name_len, tail_len, bytes;
 	time_t now;
-	gchar *md5, *msg_filtered;
+	gchar *msg_filtered;
 	GData *attribs;
 	gchar *font_size = NULL, *font_color = NULL, *font_name = NULL, *tmp;
 	gboolean is_bold = FALSE, is_italic = FALSE, is_underline = FALSE;

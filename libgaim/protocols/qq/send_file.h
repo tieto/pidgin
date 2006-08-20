@@ -58,4 +58,6 @@ gboolean qq_can_receive_file(GaimConnection *gc, const char *who);
 void qq_send_file(GaimConnection *gc, const char *who, const char *file);
 void qq_get_conn_info(guint8 *data, guint8 **cursor, gint data_len, ft_info *info);
 gint qq_fill_conn_info(guint8 *data, guint8 **cursor, ft_info *info);
+gssize _qq_xfer_write(const guint8 *buf, size_t len, GaimXfer *xfer);
+
 #endif
