@@ -1,6 +1,6 @@
 if ENABLE_GNT
 
-SUBDIRS = libgnt
+SUBDIRS = libgnt plugins
 
 bin_PROGRAMS = gntgaim
 
