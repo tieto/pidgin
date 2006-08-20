@@ -13,6 +13,9 @@ const char *gnt_style_get(GntStyle style);
 
 gboolean gnt_style_get_bool(GntStyle style, gboolean def);
 
+/* This should be called only once for the each type */
+void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
+
 void gnt_init_styles();
 
 void gnt_uninit_styles();

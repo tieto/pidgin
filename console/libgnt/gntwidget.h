@@ -76,6 +76,8 @@ struct _GnWidgetClass
 {
 	GObjectClass parent;
 
+	GHashTable *remaps;   /* Key remaps */
+
 	void (*map)(GntWidget *obj);
 	void (*show)(GntWidget *obj);		/* This will call draw() and take focus (if it can take focus) */
 	void (*destroy)(GntWidget *obj);

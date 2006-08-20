@@ -96,7 +96,6 @@ gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
 	return continue_emission;
 }
 
-
 static void
 gnt_widget_class_init(GntWidgetClass *klass)
 {
@@ -214,6 +213,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 gnt_boolean_handled_accumulator, NULL,
 					 gnt_closure_marshal_BOOLEAN__STRING,
 					 G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
+
 	DEBUG;
 }
 
@@ -231,7 +231,7 @@ gnt_widget_get_gtype(void)
 			NULL,					/* base_init		*/
 			NULL,					/* base_finalize	*/
 			(GClassInitFunc)gnt_widget_class_init,
-			NULL,					/* class_finalize	*/
+			NULL,
 			NULL,					/* class_data		*/
 			sizeof(GntWidget),
 			0,						/* n_preallocs		*/
@@ -244,6 +244,24 @@ gnt_widget_get_gtype(void)
 	}
 
 	return type;
+}
+
+static const char *
+gnt_widget_remap_keys(GntWidget *widget, const char *text)
+{
+	const char *remap = NULL;
+	GType type = G_OBJECT_TYPE(widget);
+	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
+
+	if (klass->remaps == NULL)
+	{
+		klass->remaps = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+		gnt_styles_get_keyremaps(type, klass->remaps);
+	}
+
+	remap = g_hash_table_lookup(klass->remaps, text);
+
+	return (remap ? remap : text);
 }
 
 static void
@@ -327,6 +345,8 @@ gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 	gboolean ret;
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		return FALSE;
+
+	keys = gnt_widget_remap_keys(widget, keys);
 	g_signal_emit(widget, signals[SIG_KEY_PRESSED], 0, keys, &ret);
 	return ret;
 }

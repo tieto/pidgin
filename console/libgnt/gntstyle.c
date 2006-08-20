@@ -3,6 +3,10 @@
 
 #include <string.h>
 
+#if GLIB_CHECK_VERSION(2,6,0)
+static GKeyFile *gkfile;
+#endif
+
 static char * str_styles[GNT_STYLES];
 static int int_styles[GNT_STYLES];
 static int bool_styles[GNT_STYLES];
@@ -41,6 +45,89 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 	return bool_styles[style];
 }
 
+void refine(char *text)
+{
+	char *s = text, *t = text;
+
+	while (*s)
+	{
+		if (*s == '^' && *(s + 1) == '[')
+		{
+			*t = '\033';  /* escape */
+			s++;
+		}
+		else if (*s == '\\')
+		{
+			if (*(s + 1) == '\0')
+				*t = ' ';
+			else
+			{
+				s++;
+				if (*s == 'r' || *s == 'n')
+					*t = '\r';
+				else if (*s == 't')
+					*t = '\t';
+				else
+					*t = *s;
+			}
+		}
+		else
+			*t = *s;
+		t++;
+		s++;
+	}
+	*t = '\0';
+}
+
+void gnt_styles_get_keyremaps(GType type, GHashTable *hash)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	char *name;
+	GError *error = NULL;
+	
+	name = g_strdup_printf("%s::remap", g_type_name(type));
+
+	if (g_key_file_has_group(gkfile, name))
+	{
+		unsigned int len = 0;
+		char **keys;
+		
+		keys = g_key_file_get_keys(gkfile, name, &len, &error);
+		if (error)
+		{
+			g_printerr("GntStyle: %s\n", error->message);
+			g_error_free(error);
+			return;
+		}
+
+		while (len--)
+		{
+			char *key, *replace;
+
+			key = g_strdup(keys[len]);
+			replace = g_key_file_get_string(gkfile, name, keys[len], &error);
+
+			if (error)
+			{
+				g_printerr("GntStyle: %s\n", error->message);
+				g_error_free(error);
+				error = NULL;
+				g_free(key);
+			}
+			else
+			{
+				refine(key);
+				refine(replace);
+				g_hash_table_insert(hash, key, replace);
+			}
+		}
+		g_strfreev(keys);
+	}
+
+	g_free(name);
+#endif
+}
+
 #if GLIB_CHECK_VERSION(2,6,0)
 static void
 read_general_style(GKeyFile *kfile)
@@ -58,7 +145,7 @@ read_general_style(GKeyFile *kfile)
 
 	if (error)
 	{
-		/* XXX: some error happened. */
+		g_printerr("GntStyle: %s\n", error->message);
 		g_error_free(error);
 	}
 	else
@@ -70,25 +157,24 @@ read_general_style(GKeyFile *kfile)
 					g_key_file_get_string(kfile, "general", styles[i].style, &error);
 		}
 	}
+	g_strfreev(keys);
 }
 #endif
 
 void gnt_style_read_configure_file(const char *filename)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
-	GKeyFile *kfile = g_key_file_new();
+	gkfile = g_key_file_new();
 	GError *error = NULL;
 
-	if (!g_key_file_load_from_file(kfile, filename, G_KEY_FILE_NONE, &error))
+	if (!g_key_file_load_from_file(gkfile, filename, G_KEY_FILE_NONE, &error))
 	{
-		/* XXX: Print the error or something */
+		g_printerr("GntStyle: %s\n", error->message);
 		g_error_free(error);
 		return;
 	}
-	gnt_colors_parse(kfile);
-	read_general_style(kfile);
-
-	g_key_file_free(kfile);
+	gnt_colors_parse(gkfile);
+	read_general_style(gkfile);
 #endif
 }
 
@@ -108,5 +194,9 @@ void gnt_uninit_styles()
 	int i;
 	for (i = 0; i < GNT_STYLES; i++)
 		g_free(str_styles[i]);
+
+#if GLIB_CHECK_VERSION(2,6,0)
+	g_key_file_free(gkfile);
+#endif
 }
 
