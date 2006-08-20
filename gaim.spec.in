@@ -27,7 +27,8 @@ Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
-BuildRequires: libtool, pkgconfig, intltool, gettext, gstreamer-devel
+BuildRequires: libtool, pkgconfig, intltool, gettext
+%{!?_without_gstreamer:BuildRequires: gstreamer-devel}
 %{?_with_avahi:BuildRequires: avahi-compat-howl avahi-compat-howl-devel}
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
@@ -179,7 +180,8 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{!?_with_tcl:--disable-tcl} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
-                                    %{?_with_sasl:--enable-cyrus-sasl}
+                                    %{?_with_sasl:--enable-cyrus-sasl} \
+                                    %{?_without_gstreamer:--disable-gstreamer}
 
 make %{?_smp_mflags}
 
@@ -323,21 +325,25 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
-* Tue Aug 15 2006 <thekingant@users.sourceforge.net>
+* Sun Aug 20 2006 Stu Tomlinson <stu@nosnilmot.com>
+- Make the gstreamer-devel dependency overridable with '--without-gstreamer'
+  to allow building on older distributions without suitable gstreamer
+
+* Tue Aug 15 2006 Mark Doliner <thekingant@users.sourceforge.net>
 - Add a BuildRequire for gstreamer-devel
 - Remove the BuildRequires for audiofile-devel and libao-devel
 
-* Mon May 8 2006 <thekingant@users.sourceforge.net>
+* Mon May 8 2006 Mark Doliner <thekingant@users.sourceforge.net>
 - Add --with avahi option to compile the gaim-bonjour package against
   Avahi's Howl compatibility layer
 
-* Wed Mar 29 2006 <stu@nosnilmot.com>
+* Wed Mar 29 2006 Stu Tomlinson <stu@nosnilmot.com>
 - Source RPM uses tar.bz2 now to save space
 - Update BuildRequires for new intltool dependencies
 - Add a --with perlmakehack option to allow builds to succeed on RH9
 - Add a --with gadugadu to build (separate) gaim-gadugadu package
 
-* Sat Dec 17 2005 <stu@nosnilmot.com>
+* Sat Dec 17 2005 Stu Tomlinson <stu@nosnilmot.com>
 - Add support for beta versions so the subsequent releases are seen as newer
   by RPM
 - Split of sametime support to gaim-meanwhile
@@ -345,19 +351,19 @@ rm -rf %{buildroot}
 - Default build to include cyrus-sasl support in Jabber
 - Add --with dbus to build with DBUS support
 
-* Sun Dec 04 2005 <siege@preoccupied.net>
+* Sun Dec 04 2005 Christopher O'Brien <siege@preoccupied.net>
 - Added obsoletes gaim-meanwhile
 
-* Sun Oct 30 2005 <stu@nosnilmot.com>
+* Sun Oct 30 2005 Stu Tomlinson <stu@nosnilmot.com>
 - Add separate gaim-bonjour package if built with --with-howl
 - Add separate gaim-mono package if built with --with-mono
 - Exclude some unwanted perl files
 
-* Sat Aug 20 2005 <stu@nosnilmot.com>
+* Sat Aug 20 2005 Stu Tomlinson <stu@nosnilmot.com>
 - Include libgaimperl.so
 - Include gaim.m4 in gaim-devel
 
-* Thu Apr 28 2005 <stu@nosnilmot.com>
+* Thu Apr 28 2005 Stu Tomlinson <stu@nosnilmot.com>
 - Use perl_vendorlib & perl_archlib for better 64bit compat (Jeff Mahoney)
 - Clean up Requires, most should be auto-detected
 - Restore gtkspell-devel build requirement (and add --without gtkspell option)
