@@ -12,6 +12,7 @@
 #include <locale.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 /**
  * Notes: Interesting functions to look at:
@@ -230,6 +231,27 @@ switch_window(int direction)
 	
 	if (focus_list)
 	{
+		bring_on_top(focus_list->data);
+	}
+
+	if (w && (!focus_list || w != focus_list->data))
+	{
+		gnt_widget_set_focus(w, FALSE);
+	}
+}
+
+static void
+switch_window_n(int n)
+{
+	GntWidget *w = NULL;
+	GList *l;
+
+	if (focus_list)
+		w = focus_list->data;
+
+	if ((l = g_list_nth(g_list_first(focus_list), n)) != NULL)
+	{
+		focus_list = l;
 		bring_on_top(focus_list->data);
 	}
 
@@ -530,6 +552,15 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					wrefresh(newscr);
 					update_screen(NULL);
 					draw_taskbar();
+				}
+				else if (strlen(buffer) == 2 && isdigit(*(buffer + 1)))
+				{
+					int n = *(buffer + 1) - '0';
+
+					if (n == 0)
+						n = 10;
+
+					switch_window_n(n - 1);
 				}
 			}
 		}
