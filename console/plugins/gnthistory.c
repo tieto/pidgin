@@ -50,6 +50,7 @@ static void historize(GaimConversation *c)
 	guint flags;
 	char *history;
 	char *header;
+	GaimMessageFlags mflag;
 
 	convtype = gaim_conversation_get_type(c);
 	if (convtype == GAIM_CONV_TYPE_IM)
@@ -112,18 +113,19 @@ static void historize(GaimConversation *c)
 	if (logs == NULL)
 		return;
 
+	mflag = GAIM_MESSAGE_NO_LOG | GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_DELAYED;
 	history = gaim_log_read((GaimLog*)logs->data, &flags);
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias,
 							 gaim_date_format_full(localtime(&((GaimLog *)logs->data)->time)));
-	gaim_conversation_write(c, "", header, GAIM_MESSAGE_NO_LOG, time(NULL));
+	gaim_conversation_write(c, "", header, mflag, time(NULL));
 	g_free(header);
 
 	g_strchomp(history);
-	gaim_conversation_write(c, "", history, GAIM_MESSAGE_NO_LOG, time(NULL));
+	gaim_conversation_write(c, "", history, mflag, time(NULL));
 	g_free(history);
 
-	gaim_conversation_write(c, "", "\n---------------\n", GAIM_MESSAGE_NO_LOG, time(NULL));
+	gaim_conversation_write(c, "", "<hr>", mflag, time(NULL));
 
 	g_list_foreach(logs, (GFunc)gaim_log_free, NULL);
 	g_list_free(logs);
