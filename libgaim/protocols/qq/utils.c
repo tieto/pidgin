@@ -125,7 +125,8 @@ gchar *gen_ip_str(guint8 *ip)
 
 guint8 *str_ip_gen(gchar *str) {
 	guint8 *ip = g_new(guint8, 4);
-	int a, b, c, d;
+	gint a, b, c, d;
+
 	sscanf(str, "%d.%d.%d.%d", &a, &b, &c, &d);
 	ip[0] = a;
 	ip[1] = b;
@@ -149,7 +150,7 @@ gchar *uid_to_gaim_name(guint32 uid)
 }
 
 /* convert GAIM name to original QQ UID */
-guint32 gaim_name_to_uid(const gchar *name)
+guint32 gaim_name_to_uid(const gchar *const name)
 {
 	gchar *p;
 
@@ -160,7 +161,7 @@ guint32 gaim_name_to_uid(const gchar *name)
 }
 
 /* try to dump the data as GBK */
-void try_dump_as_gbk(guint8 *data, gint len)
+void try_dump_as_gbk(const guint8 *const data, gint len)
 {
 	gint i;
 	guint8 *incoming;
@@ -186,7 +187,7 @@ void try_dump_as_gbk(guint8 *data, gint len)
 }
 
 /* strips whitespace */
-static gchar *strstrip(const gchar *buffer)
+static gchar *strstrip(const gchar *const buffer)
 {
 	GString *stripped;
 	gchar *ret;
@@ -206,10 +207,9 @@ static gchar *strstrip(const gchar *buffer)
         return ret;
 }
 
-/* Dumps an ASCII hex string to a string of bytes. The return should be freed later.
- * Returns NULL if a string with an odd number of nibbles is passed in or if buffer 
- * isn't a valid hex string */
-guint8 *hex_str_to_bytes(const gchar *buffer, gint *out_len)
+/* Attempts to dump an ASCII hex string to a string of bytes. 
+ * The return should be freed later. */
+guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 {
 	gchar *hex_str, *hex_buffer, *cursor, tmp;
 	guint8 *bytes, nibble1, nibble2;
@@ -259,8 +259,9 @@ guint8 *hex_str_to_bytes(const gchar *buffer, gint *out_len)
 	return g_memdup(bytes, *out_len);
 }
 
-/* Dumps a chunk of raw data into an ASCII hex string. The return should be freed later. */
-gchar *hex_dump_to_str(const guint8 *buffer, gint bytes)
+/* Dumps a chunk of raw data into an ASCII hex string. 
+ * The return should be freed later. */
+gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 {
 	GString *str;
 	gchar *ret;

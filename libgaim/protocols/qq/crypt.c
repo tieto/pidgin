@@ -49,10 +49,9 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
  * encryption 
  *******************************************************************/
 
-/* TODO: convert these data types to proper glib ones */
-static void qq_encipher(unsigned long *const v, const unsigned long *const k, unsigned long *const w)
+static void qq_encipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
-	register unsigned long y = ntohl(v[0]), 
+	register guint32 y = ntohl(v[0]), 
 		 z = ntohl(v[1]), 
 		 a = ntohl(k[0]), 
 		 b = ntohl(k[1]), 
@@ -72,13 +71,14 @@ static void qq_encipher(unsigned long *const v, const unsigned long *const k, un
 	w[1] = htonl(z);
 }
 
-static int rand(void) {	/* it can be the real random seed function */
+static gint rand(void) {	/* it can be the real random seed function */
 	return 0xdead;
 }			/* override with number, convenient for debug */
 
-/* we encrypt every eight byte block */
-static void encrypt_every_8_byte(unsigned char *plain, unsigned char *plain_pre_8, unsigned char **crypted, 
-		unsigned char **crypted_pre_8, unsigned char *key, int *count, int *pos_in_byte, int *is_header) 
+/* we encrypt every eight byte chunk */
+static void encrypt_every_8_byte(guint8 *plain, guint8 *plain_pre_8, guint8 **crypted, 
+		guint8 **crypted_pre_8, const guint8 *const key, gint *count, 
+		gint *pos_in_byte, gint *is_header) 
 {
 	/* prepare plain text */
 	for (*pos_in_byte = 0; *pos_in_byte < 8; (*pos_in_byte)++) {
@@ -89,7 +89,7 @@ static void encrypt_every_8_byte(unsigned char *plain, unsigned char *plain_pre_
 		}
 	}
 	/* encrypt it */
-	qq_encipher((unsigned long *) plain, (unsigned long *) key, (unsigned long *) *crypted);
+	qq_encipher((guint32 *) plain, (guint32 *) key, (guint32 *) *crypted);
 
 	for (*pos_in_byte = 0; *pos_in_byte < 8; (*pos_in_byte)++) {
 		(*crypted)[*pos_in_byte] ^= plain_pre_8[*pos_in_byte];
@@ -104,15 +104,16 @@ static void encrypt_every_8_byte(unsigned char *plain, unsigned char *plain_pre_
 }					/* encrypt_every_8_byte */
 
 
-static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key, 
-		unsigned char *outstr, int *outstrlen_prt)
+static void qq_encrypt(const guint8 *const instr, gint instrlen, 
+		const guint8 *const key, 
+		guint8 *outstr, gint *outstrlen_prt)
 {
-	unsigned char plain[8],		/* plain text buffer */
+	guint8 plain[8],		/* plain text buffer */
 		plain_pre_8[8],		/* plain text buffer, previous 8 bytes */
 		*crypted,		/* crypted text */
-		*crypted_pre_8,		/* crypted test, previous 8 bytes */
-		*inp;			/* current position in instr */
-	int pos_in_byte = 1,		/* loop in the byte */
+		*crypted_pre_8;		/* crypted test, previous 8 bytes */
+	const guint8 *inp;		/* current position in instr */
+	gint pos_in_byte = 1,		/* loop in the byte */
 		is_header = 1,		/* header is one byte */
 		count = 0,		/* number of bytes being crypted */
 		padding = 0;		/* number of padding stuff */
@@ -135,7 +136,8 @@ static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key,
 			padding++;
 		}
 		if (pos_in_byte == 8) {
-			encrypt_every_8_byte(plain, plain_pre_8, &crypted, &crypted_pre_8, key, &count, &pos_in_byte, &is_header);
+			encrypt_every_8_byte(plain, plain_pre_8, &crypted, &crypted_pre_8, 
+					key, &count, &pos_in_byte, &is_header);
 		}
 	}
 
@@ -146,7 +148,8 @@ static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key,
 			instrlen--;
 		}
 		if (pos_in_byte == 8) {
-			encrypt_every_8_byte(plain, plain_pre_8, &crypted, &crypted_pre_8, key, &count, &pos_in_byte, &is_header);
+			encrypt_every_8_byte(plain, plain_pre_8, &crypted, &crypted_pre_8, 
+					key, &count, &pos_in_byte, &is_header);
 		}
 	}
 
@@ -157,7 +160,8 @@ static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key,
 			padding++;
 		}
 		if (pos_in_byte == 8) {
-			encrypt_every_8_byte(plain, plain_pre_8, &crypted, &crypted_pre_8, key, &count, &pos_in_byte, &is_header);
+			encrypt_every_8_byte(plain, plain_pre_8, &crypted, &crypted_pre_8, 
+					key, &count, &pos_in_byte, &is_header);
 		}
 	}
 
@@ -169,9 +173,9 @@ static void qq_encrypt(unsigned char *instr, int instrlen, unsigned char *key,
  * decryption 
  ********************************************************************/
 
-static void qq_decipher(unsigned long *const v, const unsigned long *const k, unsigned long *const w)
+static void qq_decipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
-	register unsigned long y = ntohl(v[0]), 
+	register guint32 y = ntohl(v[0]), 
 		z = ntohl(v[1]), 
 		a = ntohl(k[0]), 
 		b = ntohl(k[1]), 
@@ -192,15 +196,16 @@ static void qq_decipher(unsigned long *const v, const unsigned long *const k, un
 	w[1] = htonl(z);
 }
 
-static int decrypt_every_8_byte(unsigned char **crypt_buff, const int instrlen, const unsigned char * const key, 
-	int *context_start, unsigned char *decrypted, int *pos_in_byte)
+static gint decrypt_every_8_byte(const guint8 **crypt_buff, const gint instrlen, 
+		const guint8 *const key, gint *context_start, 
+		guint8 *decrypted, gint *pos_in_byte)
 {
 	for (*pos_in_byte = 0; *pos_in_byte < 8; (*pos_in_byte)++) {
 		if (*context_start + *pos_in_byte >= instrlen)
 			return 1;
 		decrypted[*pos_in_byte] ^= (*crypt_buff)[*pos_in_byte];
 	}
-	qq_decipher((unsigned long *) decrypted, (unsigned long *) key, (unsigned long *) decrypted);
+	qq_decipher((guint32 *) decrypted, (guint32 *) key, (guint32 *) decrypted);
 
 	*context_start += 8;
 	*crypt_buff += 8;
@@ -210,25 +215,29 @@ static int decrypt_every_8_byte(unsigned char **crypt_buff, const int instrlen, 
 }
 
 /* return 0 if failed, 1 otherwise */
-static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key, 
-		unsigned char *outstr, int *outstrlen_ptr)
+static gint qq_decrypt(const guint8 *const instr, gint instrlen, 
+		const guint8 *const key,
+		guint8 *outstr, gint *outstrlen_ptr)
 {
-	unsigned char decrypted[8], m[8], *crypt_buff, *crypt_buff_pre_8, *outp;
-	int count, context_start, pos_in_byte, padding;
+	guint8 decrypted[8], m[8], *outp;
+	const guint8 *crypt_buff, *crypt_buff_pre_8;
+	gint count, context_start, pos_in_byte, padding;
 
 	/* at least 16 bytes and %8 == 0 */
 	if ((instrlen % 8) || (instrlen < 16)) { 
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-			"Packet len is either too short or not a multiple of 8 bytes, read %d bytes\n", instrlen);
+			"Packet len is either too short or not a multiple of 8 bytes, read %d bytes\n", 
+			instrlen);
 		return 0;
 	}
 	/* get information from header */
-	qq_decipher((unsigned long *) instr, (unsigned long *) key, (unsigned long *) decrypted);
+	qq_decipher((guint32 *) instr, (guint32 *) key, (guint32 *) decrypted);
 	pos_in_byte = decrypted[0] & 0x7;
 	count = instrlen - pos_in_byte - 10;	/* this is the plaintext length */
 	/* return if outstr buffer is not large enough or error plaintext length */
 	if (*outstrlen_ptr < count || count < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Buffer len %d is less than real len %d", *outstrlen_ptr, count);
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Buffer len %d is less than real len %d", 
+			*outstrlen_ptr, count);
 		return 0;
 	}
 
@@ -248,7 +257,8 @@ static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key,
 		}
 		if (pos_in_byte == 8) {
 			crypt_buff_pre_8 = instr;
-			if (!decrypt_every_8_byte(&crypt_buff, instrlen, key, &context_start, decrypted, &pos_in_byte)) {
+			if (!decrypt_every_8_byte(&crypt_buff, instrlen, key, 
+						&context_start, decrypted, &pos_in_byte)) {
 				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error A");
 				return 0;
 			}
@@ -265,7 +275,8 @@ static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key,
 		}
 		if (pos_in_byte == 8) {
 			crypt_buff_pre_8 = crypt_buff - 8;
-			if (!decrypt_every_8_byte(&crypt_buff, instrlen, key, &context_start, decrypted, &pos_in_byte)) {
+			if (!decrypt_every_8_byte(&crypt_buff, instrlen, key, 
+						&context_start, decrypted, &pos_in_byte)) {
 				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error B");
 				return 0;
 			}
@@ -280,7 +291,8 @@ static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key,
 		}
 		if (pos_in_byte == 8) {
 			crypt_buff_pre_8 = crypt_buff;
-			if (!decrypt_every_8_byte(&crypt_buff, instrlen, key, &context_start, decrypted, &pos_in_byte)) {
+			if (!decrypt_every_8_byte(&crypt_buff, instrlen, key, 
+						&context_start, decrypted, &pos_in_byte)) {
 				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error C");
 				return 0;
 			}
@@ -289,10 +301,11 @@ static int qq_decrypt(unsigned char *instr, int instrlen, unsigned char *key,
 	return 1;
 }
 
-/* This is the Public Function */
 /* return 1 is succeed, otherwise return 0 */
-int qq_crypt(unsigned char flag,
-	     unsigned char *instr, int instrlen, unsigned char *key, unsigned char *outstr, int *outstrlen_ptr)
+gint qq_crypt(gint flag,
+		const guint8 *const instr, gint instrlen, 
+		const guint8 *const key, 
+		guint8 *outstr, gint *outstrlen_ptr)
 {
 	if (flag == DECRYPT)
 		return qq_decrypt(instr, instrlen, key, outstr, outstrlen_ptr);

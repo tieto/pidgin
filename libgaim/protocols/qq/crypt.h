@@ -23,10 +23,14 @@
 #ifndef _QQ_CRYPT_H_
 #define _QQ_CRYPT_H_
 
+#include <glib.h>
+
 #define DECRYPT 0x00
 #define ENCRYPT 0x01
 
-int qq_crypt(unsigned char flag,
-	     unsigned char *instr, int instrlen, unsigned char *key, unsigned char *outstr, int *outstrlen_ptr);
+gint qq_crypt(gint flag,
+	     const guint8 *const instr, gint instrlen, 
+	     const guint8 *const key, 
+	     guint8 *outstr, gint *outstrlen_ptr);
 
 #endif

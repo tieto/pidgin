@@ -41,7 +41,7 @@ guint32 gaim_name_to_uid(const gchar *name);
 
 gchar *get_icon_name(gint set, gint suffix);
 
-void try_dump_as_gbk(guint8 *data, gint len);
+void try_dump_as_gbk(const guint8 *const data, gint len);
 
 guint8 *hex_str_to_bytes(const gchar *buf, gint *out_len);
 gchar *hex_dump_to_str(const guint8 *buf, gint buf_len);
