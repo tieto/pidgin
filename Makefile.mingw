@@ -5,96 +5,28 @@
 # Description: Top Makefile for win32 (mingw) port of Gaim
 #
 
-GAIM_SRC = ./src
-GAIM_PROTOS = $(GAIM_SRC)/protocols
-GAIM_PLUGINS = ./plugins
-GAIM_PIXMAPS = ./pixmaps
+LIBGAIM_TOP = ./libgaim
+GTKGAIM_TOP = ./gtk
 GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
-GTKSPELL_TOP = ../win32-dev/gtkspell-2.0.6/gtkspell
-LIBXML2_DIR = ../win32-dev/libxml2
-IDLETRACK_TOP = $(GAIM_SRC)/win32/IdleTracker
-GTKRC_TOP = ../win32-dev/gtkrc
-OSCAR = $(GAIM_PROTOS)/oscar
-YAHOO = $(GAIM_PROTOS)/yahoo
-MSN = $(GAIM_PROTOS)/msn
-TOC = $(GAIM_PROTOS)/toc
-IRC = $(GAIM_PROTOS)/irc
-JABBER = $(GAIM_PROTOS)/jabber
-GG = $(GAIM_PROTOS)/gg
-NOVELL = $(GAIM_PROTOS)/novell
-SILC = $(GAIM_PROTOS)/silc
-SIMPLE = $(GAIM_PROTOS)/simple
-SAMETIME = $(GAIM_PROTOS)/sametime
 PO = ./po
 
 MAKENSIS := makensis.exe
 
 VERSION := $(shell cat ./VERSION)
 
-NEEDED_DLLS =		$(GTKSPELL_TOP)/libgtkspell.dll \
-			$(IDLETRACK_TOP)/idletrack.dll \
-			$(LIBXML2_DIR)/bin/libxml2.dll
-
-SOUNDS =		$(GAIM_SOUNDS)/alert.wav \
-			$(GAIM_SOUNDS)/login.wav \
-			$(GAIM_SOUNDS)/logout.wav \
-			$(GAIM_SOUNDS)/receive.wav \
-			$(GAIM_SOUNDS)/send.wav
-
-
-##
-## Don't forget to change STATIC_PROTO_INIT, in config.h.mingw if you
-## change the status of a protocol (static/plugin)
-##
-
-OSCAR_TYPE = PLUGIN
-YAHOO_TYPE = PLUGIN
-MSN_TYPE = PLUGIN
-TOC_TYPE = PLUGIN
-IRC_TYPE = PLUGIN
-JABBER_TYPE = PLUGIN
-GG_TYPE = PLUGIN
-NOVELL_TYPE = PLUGIN
-SILC_TYPE = PLUGIN
-SIMPLE_TYPE = PLUGIN
-SAMETIME_TYPE = PLUGIN
 
 all:
 	cp config.h.mingw config.h
-	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f Makefile.mingw
-	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f Makefile.mingw
-	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f Makefile.mingw
-	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw
-	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw
-	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
-	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw
-	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw
-	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f Makefile.mingw
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw
-	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
-	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
-
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw
+	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw
 
 install: all
 	mkdir -p $(GAIM_INSTALL_DIR)/plugins
 	mkdir -p $(GAIM_INSTALL_DIR)/sounds/gaim
-	$(MAKE) -C $(GAIM_PIXMAPS) -f Makefile.mingw install
 	$(MAKE) -C $(PO) -f Makefile.mingw install
-	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw install
-	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw install
-	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f Makefile.mingw install
-	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f Makefile.mingw install
-	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f Makefile.mingw install
-	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f Makefile.mingw install
-	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f Makefile.mingw install
-	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
-	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw install
-	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw install
-	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f Makefile.mingw install
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw install
-	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
-	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw install
+	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw install
 
 installer:
 	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" /DWITH_GTK gaim-installer.nsi
@@ -110,17 +42,7 @@ installers: installer installer_nogtk
 
 clean:
 	$(MAKE) -C $(PO) -f Makefile.mingw clean
-	$(MAKE) -C $(OSCAR) -f Makefile.mingw clean
-	$(MAKE) -C $(YAHOO) -f Makefile.mingw clean
-	$(MAKE) -C $(MSN) -f Makefile.mingw clean
-	$(MAKE) -C $(IRC) -f Makefile.mingw clean
-	$(MAKE) -C $(JABBER) -f Makefile.mingw clean
-	$(MAKE) -C $(GG) -f Makefile.mingw clean
-	$(MAKE) -C $(NOVELL) -f Makefile.mingw clean
-	$(MAKE) -C $(SILC) -f Makefile.mingw clean
-	$(MAKE) -C $(SIMPLE) -f Makefile.mingw clean
-	$(MAKE) -C $(SAMETIME) -f Makefile.mingw clean
-	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
-	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw clean
+	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)
 	rm -rf gaim*.exe

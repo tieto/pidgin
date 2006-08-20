@@ -11,12 +11,24 @@
 GTK_TOP :=		../../win32-dev/gtk_2_0
 GAIM_TOP :=		..
 GTKGAIM_TOP :=		.
-LIBGAIM_TOP :=		../libgaim
+LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
+PLUGINS_TOP :=		$(GTKGAIM_TOP)/plugins
+PIXMAPS_TOP :=		$(GTKGAIM_TOP)/pixmaps
+SOUNDS_TOP :=		$(GTKGAIM_TOP)/sounds
 ASPELL_TOP :=		../../win32-dev/aspell-dev-0-50-3-3
 GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.6
 IDLETRACK_TOP :=	$(GTKGAIM_TOP)/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 #LIBXML2_DIR :=		../../win32-dev/libxml2
+
+NEEDED_DLLS =		$(GTKSPELL_TOP)/gtkspell/libgtkspell.dll \
+			$(IDLETRACK_TOP)/idletrack.dll
+
+SOUNDS =		$(SOUNDS_TOP)/alert.wav \
+			$(SOUNDS_TOP)/login.wav \
+			$(SOUNDS_TOP)/logout.wav \
+			$(SOUNDS_TOP)/receive.wav \
+			$(SOUNDS_TOP)/send.wav
 
 ##
 ## VARIABLE DEFINITIONS
@@ -181,12 +193,17 @@ EXE_LIBS =
 ## TARGET DEFINITIONS
 ##
 
-.PHONY: all clean libgaim_include_path gtkgaim_include_path
+.PHONY: all clean
 
 all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
+	$(MAKE) -C $(PLUGINS_TOP) -f Makefile.mingw
 
 install: all
+	$(MAKE) -C $(PLUGINS_TOP) -f Makefile.mingw install
+	$(MAKE) -C $(PIXMAPS_TOP) -f Makefile.mingw install
 	cp $(GTKGAIM_TOP)/$(EXE_TARGET).exe $(GTKGAIM_TOP)/$(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
+	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
 $(LIBGAIM_TOP)/libgaim.dll.a:
 	S(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
@@ -197,9 +214,6 @@ $(IDLETRACK_TOP)/idletrack.dll:
 #
 # BUILD DLL
 #
-#$(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: INCLUDE_PATHS = $(GTKGAIM_INCLUDE_PATHS)
-#Once the UI split has finished for server.c, this will be the correct line
-#$(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: $(LIBGAIM_TARGET).dll.a $(GTKGAIM_OBJECTS)
 $(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: $(LIBGAIM_TOP)/libgaim.dll.a $(GTKGAIM_OBJECTS) $(IDLETRACK_TOP)/idletrack.dll
 	$(CC) -shared $(LIBGAIM_OBJECTS) $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
 
@@ -224,6 +238,7 @@ clean:
 	rm -rf $(GTKGAIM_TARGET).dll
 	rm -rf $(GTKGAIM_TARGET).dll.a
 	rm -rf $(EXE_TARGET).exe
+	$(MAKE) -C $(PLUGINS_TOP) -f Makefile.mingw clean
 
 clean_exe:
 	rm -rf win_gaim.o
