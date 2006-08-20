@@ -54,6 +54,12 @@ version_fetch_cb(void *ud, const char *data, size_t len)
 
 	while(changelog[i] && changelog[i] != '\n') i++;
 
+	/* this basically means the version thing wasn't in the format we were
+	 * looking for so sourceforge is probably having web server issues, and
+	 * we should try again later */
+	if(i == 0)
+		return;
+
 	cur_ver = g_strndup(changelog, i);
 	changelog += i;
 
