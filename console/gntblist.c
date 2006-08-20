@@ -1092,7 +1092,7 @@ void gg_blist_init()
 	gaim_prefs_add_none(PREF_ROOT);
 	gaim_prefs_add_none(PREF_ROOT "/size");
 	gaim_prefs_add_int(PREF_ROOT "/size/width", 20);
-	gaim_prefs_add_int(PREF_ROOT "/size/height", 18);
+	gaim_prefs_add_int(PREF_ROOT "/size/height", 17);
 	gaim_prefs_add_none(PREF_ROOT "/position");
 	gaim_prefs_add_int(PREF_ROOT "/position/x", 0);
 	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
