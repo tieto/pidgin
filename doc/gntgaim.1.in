@@ -145,6 +145,39 @@ text = white; blue
 disabled = gray; black
 .br
 
+.br
+# Remap some keys for GntEntry
+.br
+[GntEntry::remap]
+.br
+# Remap the up-arrow to the left-arrow
+.br
+^[[A = ^[[D
+.br
+# Remap the down-arrow to the right-arrow
+.br
+^[[B = ^[[C
+.br
+# Remap 'a' to 'bcd'
+.br
+a = bcd
+.br
+# Completely ignore the key 'q'
+.br
+q = 
+.br
+# But the following will NOT work
+.br
+#abc = bcd
+.br
+
+# Hitting 'space' will activate a button
+.br
+[GntButton::remap]
+.br
+\\  = \\r
+.br
+
 .SH Conversation Commands
 There are a few helpful commands in addition to the regular commands. You can
 use these from any conversation to access other windows.
