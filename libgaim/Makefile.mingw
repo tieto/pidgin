@@ -1,0 +1,155 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Gaim
+#
+
+#
+# PATHS
+#
+
+INCLUDE_DIR :=		.
+GTK_TOP :=		../../win32-dev/gtk_2_0
+GAIM_TOP :=		..
+GAIM_SRC :=		.
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+LIBXML2_DIR :=		../../win32-dev/libxml2
+
+##
+## VARIABLE DEFINITIONS
+##
+
+TARGET = libgaim
+
+# Compiler and Linker Options
+
+CFLAGS =
+
+DEFINES =
+
+##
+## INCLUDE  MAKEFILES
+##
+
+include $(GAIM_TOP)/libgaim/win32/global.mak
+
+##
+## INCLUDE PATHS
+##
+
+INCLUDE_PATHS =	\
+			-I$(INCLUDE_DIR) \
+			-I$(INCLUDE_DIR)/win32 \
+			-I$(GAIM_TOP) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(LIBXML2_DIR)/include
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(GAIM_SRC) \
+			-L$(LIBXML2_DIR)/lib
+
+##
+##  SOURCES, OBJECTS
+##
+
+C_SRC =	\
+			account.c \
+			accountopt.c \
+			blist.c \
+			buddyicon.c \
+			cipher.c \
+			cmds.c \
+			connection.c \
+			conversation.c \
+			core.c \
+			debug.c \
+			dnsquery.c \
+			dnssrv.c \
+			eventloop.c \
+			ft.c \
+			circbuffer.c \
+			idle.c \
+			imgstore.c \
+			log.c \
+			mime.c \
+			network.c \
+			notify.c \
+			ntlm.c \
+			plugin.c \
+			pluginpref.c \
+			pounce.c \
+			prefs.c \
+			privacy.c \
+			proxy.c \
+			prpl.c \
+			request.c \
+			roomlist.c \
+			savedstatuses.c \
+			server.c \
+			signals.c \
+			sound.c \
+			sslconn.c \
+			status.c \
+			stringref.c \
+			stun.c \
+			upnp.c \
+			util.c \
+			value.c \
+			xmlnode.c \
+			whiteboard.c \
+			win32/libc_interface.c \
+			win32/win32dep.c
+
+
+OBJECTS = $(C_SRC:%.c=%.o)
+
+##
+## LIBRARIES
+##
+
+LIBS =	\
+		-lglib-2.0 \
+		-lgthread-2.0 \
+		-lgobject-2.0 \
+		-lgmodule-2.0 \
+		-lintl \
+		-lws2_32 \
+		-liberty \
+		-lxml2
+
+##
+## RULES
+##
+
+# How to make a C file
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(DEFINES) -c $< -o $@
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean include_path
+
+all: $(TARGET).dll
+
+install: all
+	cp $(GAIM_SRC)/$(TARGET).dll $(GAIM_INSTALL_DIR)
+
+#
+# BUILD DLL
+#
+$(TARGET).dll.a $(TARGET).dll:
+$(TARGET).dll.a $(TARGET).dll: $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -rf *.o ./win32/*.o
+	rm -rf $(TARGET).dll
+	rm -rf $(TARGET).dll.a

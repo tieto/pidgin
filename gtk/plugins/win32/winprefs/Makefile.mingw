@@ -1,15 +1,15 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for docklet plugin.
+# Description: Makefile for winprefs plugin.
 #
 
 #
 # PATHS
 #
 
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
+GTK_TOP :=		../../../../../win32-dev/gtk_2_0
+GAIM_TOP :=		../../../..
 LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
 GTKGAIM_TOP :=		$(GAIM_TOP)/gtk
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
@@ -19,13 +19,13 @@ DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 ## VARIABLE DEFINITIONS
 ##
 
-TARGET = docklet
+TARGET = winprefs
 
 # Compiler Options
 
 CFLAGS =
 
-DEFINES =
+DEFINES = -DWINVER=0x500
 
 ##
 ## INCLUDE  MAKEFILES
@@ -61,9 +61,8 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			docklet.c   \
-			docklet-win32.c \
-			MinimizeToTray.c
+C_SRC =			winprefs.c \
+			gtkappbar.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -76,7 +75,9 @@ OBJECTS = $(C_SRC:%.c=%.o)
 LIBS =			-lgtk-win32-2.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
+			-lgmodule-2.0 \
 			-lgobject-2.0 \
+			-lws2_32 \
 			-lintl \
 			-lgaim \
 			-lgtkgaim
@@ -99,7 +100,7 @@ LIBS =			-lgtk-win32-2.0 \
 
 all: $(TARGET).dll
 
-install: all
+install: $(TARGET).dll
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
 
@@ -109,7 +110,6 @@ install: all
 
 $(GTKGAIM_TOP)/gtkgaim.dll.a:
 	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw gtkgaim.dll.a
-
 
 ##
 ## BUILD DLL

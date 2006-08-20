@@ -8,10 +8,11 @@
 # PATHS
 #
 
-GTK_TOP :=		../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../..
-PERL_LIB_DIR :=		../../../win32-dev/perl58
-PERL_INCLUDE :=         $(PERL_LIB_DIR)/CORE
+GTK_TOP :=		../../../../win32-dev/gtk_2_0
+GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
+PERL_LIB_DIR :=		../../../../win32-dev/perl58
+PERL_INCLUDE :=		$(PERL_LIB_DIR)/CORE
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
@@ -33,7 +34,7 @@ DEFINES =
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 # Perl headers with /* /* */ type comments.. Turn off warnings.
 CFLAGS += -Wno-comment
@@ -44,15 +45,11 @@ CFLAGS += -Wno-comment
 
 INCLUDE_PATHS +=	-I. \
 			-I$(GAIM_TOP) \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(PERL_INCLUDE)
 
 
@@ -79,9 +76,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
 			-lgmodule-2.0 \
 			-lgobject-2.0 \
 			-lws2_32 \
@@ -116,15 +112,15 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(GAIM_TOP)/src/libgaim.dll.a:
+	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/libgaim.dll.a
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -o $(TARGET).dll
 
 
 ##

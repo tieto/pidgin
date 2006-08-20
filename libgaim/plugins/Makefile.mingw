@@ -1,0 +1,112 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Gaim Plugins 
+#
+
+#
+# PATHS
+#
+
+GAIM_PLUGINS := 	.
+GAIM_TOP :=		../..
+LIBGAIM_TOP :=		..
+GTK_TOP :=		../../../win32-dev/gtk_2_0
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+PERL_PLUGIN_LOADER :=	./perl
+TCL_PLUGIN_LOADER :=    ./tcl
+SSL :=			./ssl
+
+##
+## VARIABLE DEFINITIONS
+##
+
+# Compiler Options
+
+CFLAGS =
+
+DEFINES =
+
+.SUFFIXES:
+.SUFFIXES: .c .dll
+
+##
+## INCLUDE  MAKEFILES
+##
+
+include $(LIBGAIM_TOP)/win32/global.mak
+
+##
+## INCLUDE PATHS
+##
+
+INCLUDE_PATHS +=	\
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GAIM_TOP) \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32
+
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(LIBGAIM_TOP)
+
+
+##
+## LIBRARIES
+##
+
+LIBS =	\
+			-lglib-2.0 \
+			-lgobject-2.0 \
+			-lgmodule-2.0 \
+			-lintl \
+			-lws2_32 \
+			-lgaim
+
+##
+## RULES
+##
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean
+
+all: plugins
+#	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw
+	$(MAKE) -C $(TCL_PLUGIN_LOADER) -f Makefile.mingw
+	$(MAKE) -C $(SSL) -f Makefile.mingw
+
+install:
+	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
+#	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw install
+	$(MAKE) -C $(TCL_PLUGIN_LOADER) -f Makefile.mingw install
+	$(MAKE) -C $(SSL) -f Makefile.mingw install
+
+#
+# BUILD Plugin
+#
+
+.c.dll:
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
+	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
+
+plugins: \
+		idle.dll \
+		psychic.dll \
+		statenotify.dll
+
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -rf *.o
+	rm -rf *.dll
+	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw clean
+	$(MAKE) -C $(TCL_PLUGIN_LOADER) -f Makefile.mingw clean
+	$(MAKE) -C $(SSL) -f Makefile.mingw clean

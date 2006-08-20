@@ -38,6 +38,10 @@
 #include "gtknotify.h"
 #include "gtkutils.h"
 
+#ifdef _WIN32
+# include "gtkwin32dep.h"
+#endif
+
 typedef struct
 {
 	GaimConnection *gc;
@@ -116,7 +120,7 @@ email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
 	if (id == GTK_RESPONSE_YES)
 	{
 		GtkTreeSelection *selection;
-		
+
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 
 		if (gtk_tree_selection_get_selected(selection, NULL, &iter))
@@ -762,7 +766,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 				gaim_notify_searchresults_column_get_title(results, i-1),
 				renderer, "text", i, NULL);
 	}
-	
+
 	/* Setup the button area */
 	button_area = gtk_hbutton_box_new();
 	gtk_box_pack_start(GTK_BOX(vbox), button_area, FALSE, FALSE, 0);
@@ -1072,7 +1076,7 @@ gaim_gtk_notify_uri(const char *uri)
 	g_free(command);
 
 #else /* !_WIN32 */
-	wgaim_notify_uri(uri);
+	gtkwgaim_notify_uri(uri);
 #endif /* !_WIN32 */
 
 	return NULL;

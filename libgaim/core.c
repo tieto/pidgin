@@ -69,6 +69,10 @@ gaim_core_init(const char *ui)
 	g_return_val_if_fail(ui != NULL, FALSE);
 	g_return_val_if_fail(gaim_get_core() == NULL, FALSE);
 
+#ifdef _WIN32
+	wgaim_init();
+#endif
+
 	_core = core = g_new0(GaimCore, 1);
 	core->ui = g_strdup(ui);
 	core->reserved = NULL;
@@ -198,6 +202,10 @@ gaim_core_quit(void)
 
 	g_free(core->ui);
 	g_free(core);
+
+#ifdef _WIN32
+	wgaim_cleanup();
+#endif
 
 	_core = NULL;
 }

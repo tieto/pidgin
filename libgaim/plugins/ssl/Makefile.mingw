@@ -8,12 +8,13 @@
 # PATHS
 #
 
-GTK_TOP :=		../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../..
+GTK_TOP :=		../../../../win32-dev/gtk_2_0
+GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
-NSS_DIR :=              ../../../win32-dev/nss-3.9
-NSPR_DIR :=             ../../../win32-dev/nspr-4.4.1
+NSS_DIR :=              ../../../../win32-dev/nss-3.9
+NSPR_DIR :=             ../../../../win32-dev/nspr-4.4.1
 
 ##
 ## VARIABLE DEFINITIONS
@@ -40,7 +41,7 @@ DEFINES =
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -48,22 +49,18 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GAIM_TOP) \
-                        -I$(NSS_DIR)/include \
-                        -I$(NSPR_DIR)/include
+			-I$(NSS_DIR)/include \
+			-I$(NSPR_DIR)/include
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src \
-                        -L$(NSS_DIR)/lib \
-                        -L$(NSPR_DIR)/lib
+			-L$(LIBGAIM_TOP) \
+			-L$(NSS_DIR)/lib \
+			-L$(NSPR_DIR)/lib
 
 ##
 ##  SOURCES, OBJECTS
@@ -83,11 +80,8 @@ OBJECTS_NSS = $(C_SRC_NSS:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim \
@@ -122,17 +116,17 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
+$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
-$(TARGET_NSS).dll: $(OBJECTS_NSS) $(GAIM_TOP)/src/gaim.lib
+$(TARGET_NSS).dll: $(OBJECTS_NSS) $(LIBGAIM_TOP)/libgaim.dll.a
 	$(CC) -shared $(OBJECTS_NSS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET_NSS).dll
 
 ##

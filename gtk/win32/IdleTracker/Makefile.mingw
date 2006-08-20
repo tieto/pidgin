@@ -9,6 +9,7 @@
 #
 
 GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
 ##
@@ -27,7 +28,7 @@ DEFINES =
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -77,7 +78,7 @@ install:
 ##
 
 $(TARGET).dll: $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
@@ -86,5 +87,4 @@ $(TARGET).dll: $(OBJECTS)
 clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).lib
-	rm -rf $(TARGET).def
+	rm -rf $(TARGET).dll.a

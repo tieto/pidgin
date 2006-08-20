@@ -7,10 +7,13 @@
 
 CC = gcc.exe
 
+GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
+
 # Use -g flag when building debug version of Gaim (including plugins).
 # Use -fnative-struct instead of -mms-bitfields when using mingw 1.1
 # (gcc 2.95)
-CFLAGS += -O2 -Wall -pipe -mno-cygwin -mms-bitfields
+CFLAGS += -O2 -Wall $(GCCWARNINGS) -pipe -mno-cygwin -mms-bitfields -g
+
 
 # If not specified, dlls are built with the default base address of 0x10000000.
 # When loaded into a process address space a dll will be rebased if its base

@@ -8,9 +8,10 @@
 # PATHS
 #
 
-GTK_TOP :=		../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../..
-TCL_LIB_DIR :=		../../../win32-dev/tcl-8.4.5
+GTK_TOP :=		../../../../win32-dev/gtk_2_0
+GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
+TCL_LIB_DIR :=		../../../../win32-dev/tcl-8.4.5
 TCL_INC_DIR :=		$(TCL_LIB_DIR)/include
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
@@ -31,7 +32,7 @@ DEFINES = -DHAVE_TK -DUSE_TCL_STUBS -DUSE_TK_STUBS
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -39,20 +40,16 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS +=	-I. \
 			-I$(GAIM_TOP) \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(TCL_INC_DIR)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src \
+			-L$(LIBGAIM_TOP) \
 			-L$(TCL_LIB_DIR)
 
 
@@ -75,11 +72,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim \
@@ -111,14 +105,14 @@ install: $(TARGET).dll
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
+$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 

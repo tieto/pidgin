@@ -36,7 +36,6 @@
  ** win32dep.c
  **/
 /* Windows helper functions */
-HINSTANCE wgaim_hinstance(void);
 FARPROC   wgaim_find_and_loadproc(char*, char*);
 gboolean  wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);
 char*     wgaim_escape_dirsep(char*);
@@ -48,15 +47,8 @@ char*     wgaim_lib_dir(void);
 char*     wgaim_locale_dir(void);
 char*     wgaim_data_dir(void);
 
-/* Utility */
-int       wgaim_gz_decompress(const char* in, const char* out);
-int       wgaim_gz_untar(const char* filename, const char* destdir);
-
-/* Misc */
-void      wgaim_notify_uri(const char *uri);
-
 /* init / cleanup */
-void      wgaim_init(HINSTANCE);
+void      wgaim_init(void);
 void      wgaim_cleanup(void);
 
 

@@ -36,11 +36,6 @@
 #include "debug.h"
 #include "notify.h"
 
-#include "resource.h"
-#include "idletrack.h"
-#include "zlib.h"
-#include "untar.h"
-
 #include <libintl.h>
 
 #include "win32dep.h"
@@ -66,8 +61,7 @@ static char *app_data_dir, *install_dir, *lib_dir, *locale_dir;
 /*
  *  GLOBALS
  */
-HINSTANCE gaimexe_hInstance = 0;
-HINSTANCE gaimdll_hInstance = 0;
+HINSTANCE libgaimdll_hInstance = 0;
 
 /*
  *  PROTOS
@@ -98,10 +92,6 @@ static GaimDebugUiOps ops = {
 /*
  *  PUBLIC CODE
  */
-
-HINSTANCE wgaim_hinstance(void) {
-	return gaimexe_hInstance;
-}
 
 /* Escape windows dir separators.  This is needed when paths are saved,
    and on being read back have their '\' chars used as an escape char.
@@ -292,114 +282,7 @@ gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE d
 	return ret;
 }
 
-int wgaim_gz_decompress(const char* in, const char* out) {
-	gzFile fin;
-	FILE *fout;
-	char buf[1024];
-	int ret;
-
-	if((fin = gzopen(in, "rb"))) {
-		if(!(fout = g_fopen(out, "wb"))) {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error opening file: %s\n", out);
-			gzclose(fin);
-			return 0;
-		}
-	}
-	else {
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "gzopen failed to open: %s\n", in);
-		return 0;
-	}
-
-	while((ret = gzread(fin, buf, 1024))) {
-		if(fwrite(buf, 1, ret, fout) < ret) {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error writing %d bytes to file\n", ret);
-			gzclose(fin);
-			fclose(fout);
-			return 0;
-		}
-	}
-	fclose(fout);
-	gzclose(fin);
-
-	if(ret < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "gzread failed while reading: %s\n", in);
-		return 0;
-	}
-
-	return 1;
-}
-
-int wgaim_gz_untar(const char* filename, const char* destdir) {
-	char tmpfile[_MAX_PATH];
-	char template[]="wgaimXXXXXX";
-
-	sprintf(tmpfile, "%s%s%s", g_get_tmp_dir(), G_DIR_SEPARATOR_S, _mktemp(template));
-	if(wgaim_gz_decompress(filename, tmpfile)) {
-		int ret;
-		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
-			ret = 1;
-		else {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failure untaring %s\n", tmpfile);
-			ret = 0;
-		}
-		g_unlink(tmpfile);
-		return ret;
-	}
-	else {
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failed to gz decompress %s\n", filename);
-		return 0;
-	}
-}
-
-void wgaim_notify_uri(const char *uri) {
-
-	/* We'll allow whatever URI schemes are supported by the
-	 * default http browser.
-	 */
-
-	if (G_WIN32_HAVE_WIDECHAR_API()) {
-		SHELLEXECUTEINFOW wsinfo;
-		wchar_t *w_uri;
-
-		w_uri = g_utf8_to_utf16(uri, -1, NULL, NULL, NULL);
-
-		memset(&wsinfo, 0, sizeof(wsinfo));
-		wsinfo.cbSize = sizeof(wsinfo);
-		wsinfo.fMask = SEE_MASK_CLASSNAME;
-		wsinfo.lpVerb = L"open";
-		wsinfo.lpFile = w_uri;
-		wsinfo.nShow = SW_SHOWNORMAL;
-		wsinfo.lpClass = L"http";
-
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim_notify_uri", "The wide uri is %s\n", uri);
-		if(!ShellExecuteExW(&wsinfo))
-			gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
-				uri, (int) wsinfo.hInstApp);
-
-		g_free(w_uri);
-        } else {
-		SHELLEXECUTEINFOA sinfo;
-		gchar *locale_uri;
-
-		locale_uri = g_locale_from_utf8(uri, -1, NULL, NULL, NULL);
-
-		memset(&sinfo, 0, sizeof(sinfo));
-		sinfo.cbSize = sizeof(sinfo);
-		sinfo.fMask = SEE_MASK_CLASSNAME;
-		sinfo.lpVerb = "open";
-		sinfo.lpFile = locale_uri;
-		sinfo.nShow = SW_SHOWNORMAL;
-		sinfo.lpClass = "http";
-
-		if(!ShellExecuteExA(&sinfo))
-			gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
-				uri, (int) sinfo.hInstApp);
-
-		g_free(locale_uri);
-	}
-}
-
-void wgaim_init(HINSTANCE hint) {
+void wgaim_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	const char *perlenv;
@@ -410,8 +293,6 @@ void wgaim_init(HINSTANCE hint) {
 
 	gaim_debug_info("wgaim", "Glib:%u.%u.%u\n",
 		glib_major_version, glib_minor_version, glib_micro_version);
-
-	gaimexe_hInstance = hint;
 
 	/* Winsock init */
 	wVersionRequested = MAKEWORD(2, 2);
@@ -450,10 +331,6 @@ void wgaim_init(HINSTANCE hint) {
 
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
 
-	/* IdleTracker Initialization */
-	if(!wgaim_set_idlehooks())
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
-
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
@@ -465,14 +342,11 @@ void wgaim_cleanup(void) {
 	/* winsock cleanup */
 	WSACleanup();
 
-	/* Idle tracker cleanup */
-	wgaim_remove_idlehooks();
-
 	g_free(app_data_dir);
 }
 
 /* DLL initializer */
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
-	gaimdll_hInstance = hinstDLL;
+	libgaimdll_hInstance = hinstDLL;
 	return TRUE;
 }

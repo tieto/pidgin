@@ -1,0 +1,136 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Gaim Plugins 
+#
+
+#
+# PATHS
+#
+
+GAIM_PLUGINS := 	.
+GAIM_TOP :=		../..
+GTKGAIM_TOP :=		..
+LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
+GTK_TOP :=		../../../win32-dev/gtk_2_0
+#OSCAR_ROOT :=		../src/protocols/oscar
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+TICKER :=		./ticker
+TRANSPARENCY :=		./win32/transparency
+WINPREFS :=		./win32/winprefs
+#PERL_PLUGIN_LOADER :=	./perl
+DOCKLET :=		./docklet
+
+##
+## VARIABLE DEFINITIONS
+##
+
+# Compiler Options
+
+CFLAGS =
+
+DEFINES =
+
+.SUFFIXES:
+.SUFFIXES: .c .dll
+
+##
+## INCLUDE  MAKEFILES
+##
+
+include $(LIBGAIM_TOP)/win32/global.mak
+
+##
+## INCLUDE PATHS
+##
+
+INCLUDE_PATHS +=	\
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/gtk-2.0 \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(GAIM_TOP) \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GTKGAIM_TOP) \
+			-I$(GTKGAIM_TOP)/win32
+
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(LIBGAIM_TOP) \
+			-L$(GTKGAIM_TOP)
+
+
+##
+## LIBRARIES
+##
+
+LIBS =			-lgtk-win32-2.0 \
+			-lglib-2.0 \
+			-lgdk-win32-2.0 \
+			-lgobject-2.0 \
+			-lgmodule-2.0 \
+			-lgdk_pixbuf-2.0 \
+			-lpango-1.0 \
+			-lintl \
+			-lws2_32 \
+			-lgaim \
+			-lgtkgaim
+
+##
+## RULES
+##
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean
+
+all: plugins
+	$(MAKE) -C $(TICKER) -f Makefile.mingw
+	$(MAKE) -C $(WINPREFS) -f Makefile.mingw
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
+	$(MAKE) -C $(DOCKLET) -f Makefile.mingw
+
+install:
+	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
+	$(MAKE) -C $(TICKER) -f Makefile.mingw install
+	$(MAKE) -C $(WINPREFS) -f Makefile.mingw install
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
+	$(MAKE) -C $(DOCKLET) -f Makefile.mingw install
+
+#
+# BUILD Plugin
+#
+
+.c.dll:
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
+	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
+
+plugins: \
+		extplacement.dll \
+		gaimrc.dll \
+		history.dll \
+	 	iconaway.dll \
+		notify.dll \
+		relnot.dll \
+		spellchk.dll \
+		timestamp_format.dll \
+		timestamp.dll
+
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -rf *.o
+	rm -rf *.dll
+	$(MAKE) -C $(TICKER) -f Makefile.mingw clean
+	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw clean
+	$(MAKE) -C $(WINPREFS) -f Makefile.mingw clean
+	$(MAKE) -C $(DOCKLET) -f Makefile.mingw clean

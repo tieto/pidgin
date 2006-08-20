@@ -50,6 +50,10 @@
 #include "gtkutils.h"
 #include "gaimstock.h"
 
+#ifdef _WIN32
+# include "gtkwin32dep.h"
+#endif
+
 #define PROXYHOST 0
 #define PROXYPORT 1
 #define PROXYUSER 2
@@ -494,7 +498,7 @@ static void theme_install_theme(char *path, char *extn) {
 		g_free(path_escaped);
 		g_free(destdir_escaped);
 #else
-		if(!wgaim_gz_untar(path, destdir)) {
+		if(!gtkwgaim_gz_untar(path, destdir)) {
 			g_free(destdir);
 			return;
 		}

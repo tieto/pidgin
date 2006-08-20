@@ -78,7 +78,7 @@
 #endif
 
 #ifdef _WIN32
-# include "wspell.h"
+# include "gtkwin32dep.h"
 #endif
 
 
@@ -635,9 +635,6 @@ int main(int argc, char *argv[])
 
 	gaim_debug_set_enabled(debug_enabled);
 
-#ifdef _WIN32
-	wgaim_init(hint);
-#endif
 
 	search_path = g_build_filename(gaim_user_dir(), "gtkrc-2.0", NULL);
 	gtk_rc_add_default_file(search_path);
@@ -668,11 +665,7 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef _WIN32
-	/** TODO: Move this to a wgaim_gtk_init() if we need such a thing */
-	wgaim_gtkspell_init();
-	gaim_debug_info("wgaim", "GTK+ :%u.%u.%u\n",
-		gtk_major_version, gtk_minor_version, gtk_micro_version);
-
+	gtkwgaim_init(hint);
 #endif
 
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
@@ -784,7 +777,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef _WIN32
-	wgaim_cleanup();
+	gtkwgaim_cleanup();
 #endif
 
 	return 0;

@@ -1,0 +1,229 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Gaim
+#
+
+#
+# PATHS
+#
+
+GTK_TOP :=		../../win32-dev/gtk_2_0
+GAIM_TOP :=		..
+GTKGAIM_TOP :=		.
+LIBGAIM_TOP :=		../libgaim
+ASPELL_TOP :=		../../win32-dev/aspell-dev-0-50-3-3
+GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.6
+IDLETRACK_TOP :=	$(GTKGAIM_TOP)/win32/IdleTracker
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+#LIBXML2_DIR :=		../../win32-dev/libxml2
+
+##
+## VARIABLE DEFINITIONS
+##
+
+EXE_TARGET = gaim
+
+GTKGAIM_TARGET = gtkgaim
+
+# Compiler and Linker Options
+
+CFLAGS =
+
+DEFINES =
+
+ifeq ($(MAKECMDGOALS), $(EXE_TARGET)-portable.exe)
+DEFINES := $(DEFINES) -DPORTABLE
+endif
+
+WINAPP := -mwindows
+# The Debug version of gaim is a console app, always having a console
+CONSOLEAPP := -mconsole
+
+LDFLAGS := $(WINAPP)
+
+WINDRES := windres
+
+##
+## INCLUDE  MAKEFILES
+##
+
+include $(LIBGAIM_TOP)/win32/global.mak
+
+##
+## INCLUDE PATHS
+##
+
+LIBGAIM_INCLUDE_PATHS =	\
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GAIM_TOP) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include
+
+#			-I$(LIBXML2_DIR)/include
+
+INCLUDE_PATHS =	\
+			$(LIBGAIM_INCLUDE_PATHS) \
+			-I$(IDLETRACK_TOP) \
+			-I$(GTKGAIM_TOP) \
+			-I$(GTKGAIM_TOP)/win32 \
+			-I$(GTK_TOP)/include/gtk-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(GTKSPELL_TOP) \
+			-I$(ASPELL_TOP)/include
+
+
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(LIBGAIM_TOP) \
+			-L$(GTKGAIM_TOP) \
+			-L$(IDLETRACK_TOP) \
+			-L$(ASPELL_TOP)/lib
+
+#			-L$(LIBXML2_DIR)/lib
+
+##
+##  SOURCES, OBJECTS
+##
+
+GTKGAIM_C_SRC =	\
+			gaimstock.c \
+			gtkaccount.c \
+			gtkblist.c \
+			gtkconn.c \
+			gtkconv.c \
+			gtkcellrendererprogress.c \
+			gtkdebug.c \
+			gtkdialogs.c \
+			gtkdnd-hints.c \
+			gtkeventloop.c \
+			gtkexpander.c \
+			gtkft.c \
+			gtkidle.c \
+			gtkimhtml.c \
+			gtkimhtmltoolbar.c \
+			gtklog.c \
+			gtkmain.c \
+			gtkmenutray.c \
+			gtknotify.c \
+			gtkplugin.c \
+			gtkpluginpref.c \
+			gtkpounce.c \
+			gtkprefs.c \
+			gtkprivacy.c \
+			gtkrequest.c \
+			gtkroomlist.c \
+			gtksavedstatuses.c \
+			gtksound.c \
+			gtksourceiter.c \
+			gtkstatusbox.c \
+			gtkthemes.c \
+			gtkutils.c \
+			gtkwhiteboard.c \
+			win32/gtkwin32dep.c \
+			win32/untar.c \
+			win32/wspell.c
+
+RC_SRC =		win32/gaimrc.rc
+
+EXE_C_SRC = 		win32/win_gaim.c
+
+GTKGAIM_OBJECTS = $(GTKGAIM_C_SRC:%.c=%.o)
+
+EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
+
+##
+## LIBRARIES
+##
+
+LIBGAIM_LIBS =	\
+		-lgaim \
+		-lglib-2.0 \
+		-lgthread-2.0 \
+		-lgobject-2.0 \
+		-lgmodule-2.0 \
+		-lintl \
+		-lws2_32 \
+		-lwinmm \
+		-lz \
+		-liberty \
+		-lidletrack
+
+#		-lxml2
+
+GTKGAIM_LIBS =	\
+		$(LIBGAIM_LIBS) \
+		-lgtk-win32-2.0 \
+		-latk-1.0 \
+		-lpango-1.0 \
+		-lgdk-win32-2.0 \
+		-lgdk_pixbuf-2.0
+
+EXE_LIBS =
+
+##
+## RULES
+##
+
+# How to make a C file
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(DEFINES) -c $< -o $@
+
+# How to make an RC file
+%.o: %.rc
+	$(WINDRES) -i $< -o $@
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean libgaim_include_path gtkgaim_include_path
+
+all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
+
+install: all
+	cp $(GTKGAIM_TOP)/$(EXE_TARGET).exe $(GTKGAIM_TOP)/$(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
+
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	S(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
+
+$(IDLETRACK_TOP)/idletrack.dll:
+	$(MAKE) -C $(IDLETRACK_TOP) -f Makefile.mingw
+
+#
+# BUILD DLL
+#
+#$(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: INCLUDE_PATHS = $(GTKGAIM_INCLUDE_PATHS)
+#Once the UI split has finished for server.c, this will be the correct line
+#$(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: $(LIBGAIM_TARGET).dll.a $(GTKGAIM_OBJECTS)
+$(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: $(LIBGAIM_TOP)/libgaim.dll.a $(GTKGAIM_OBJECTS) $(IDLETRACK_TOP)/idletrack.dll
+	$(CC) -shared $(LIBGAIM_OBJECTS) $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
+
+#
+# BUILD EXE
+#
+
+$(EXE_TARGET).exe: $(GTKGAIM_TARGET).dll $(EXE_OBJECTS)
+	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET).exe
+
+$(EXE_TARGET)-portable.exe: clean_exe $(EXE_OBJECTS)
+	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET)-portable.exe
+	rm win_gaim.o
+
+##
+## CLEAN RULES
+##
+
+clean:
+	$(MAKE) -C $(IDLETRACK_TOP) -f Makefile.mingw clean
+	rm -rf *.o ./win32/*.o
+	rm -rf $(GTKGAIM_TARGET).dll
+	rm -rf $(GTKGAIM_TARGET).dll.a
+	rm -rf $(EXE_TARGET).exe
+
+clean_exe:
+	rm -rf win_gaim.o

@@ -36,6 +36,7 @@
 
 #include "resource.h"
 #include "MinimizeToTray.h"
+#include "gtkwin32dep.h"
 #include "docklet.h"
 
 /*
@@ -115,7 +116,7 @@ static HWND systray_create_hiddenwin() {
 	wcex.lpfnWndProc	= (WNDPROC)systray_mainmsg_handler;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= wgaim_hinstance();
+	wcex.hInstance		= gtkwgaim_hinstance();
 	wcex.hIcon		= NULL;
 	wcex.hCursor		= NULL,
 	wcex.hbrBackground	= NULL;
@@ -126,7 +127,7 @@ static HWND systray_create_hiddenwin() {
 	RegisterClassEx(&wcex);
 
 	/* Create the window */
-	return (CreateWindow(wname, "", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, wgaim_hinstance(), 0));
+	return (CreateWindow(wname, "", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, gtkwgaim_hinstance(), 0));
 }
 
 static void systray_init_icon(HWND hWnd, HICON icon) {
@@ -212,19 +213,19 @@ static void wgaim_tray_create() {
 	 *  but will scale it back to 4-bits for display.
 	 * That is why we use custom 4-bit icons for pre XP Windowses */
 	if (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion > 0) {
-		sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-		sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-		sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-		sysicon_pend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-		sysicon_awypend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_disconn = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_conn = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_away = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_pend = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_awypend = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 	} else {
-		sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
-		sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
-		sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
-		sysicon_pend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
-		sysicon_awypend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_disconn = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_conn = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_away = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_pend = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_awypend = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
 	}
-	sysicon_blank = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_BLANK_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+	sysicon_blank = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_BLANK_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
