@@ -236,6 +236,10 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 
 	g_return_if_fail(ggconv != NULL);
 
+	pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggconv->tv));
+
+	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
+
 	if (gaim_prefs_get_bool("/gaim/gnt/conversations/timestamps"))
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					gaim_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
@@ -254,14 +258,11 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 	if (flags & GAIM_MESSAGE_NICK)
 		fl |= GNT_TEXT_FLAG_UNDERLINE;
 
-	pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggconv->tv));
-
 	/* XXX: Remove this workaround when textview can parse messages. */
 	newline = gaim_strdup_withhtml(message);
 	strip = gaim_markup_strip_html(newline);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 				strip, fl);
-	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
 	if (pos <= 1)
 		gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
@@ -276,7 +277,7 @@ static void
 gg_write_chat(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
-	gg_write_common(conv, who, message, flags, mtime);
+	gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
 static void
@@ -301,7 +302,7 @@ gg_write_im(GaimConversation *conv, const char *who, const char *message,
 			who = gaim_buddy_get_contact_alias(buddy);
 	}
 
-	gg_write_common(conv, who, message, flags, mtime);
+	gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
 static void
