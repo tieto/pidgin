@@ -37,43 +37,6 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(strdup strstr atexit setlocale)
 
-dnl Check for inet_aton
-AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, ,
-				         [AC_ERROR(inet_aton not found)])])
-AC_CHECK_LIB(resolv, __res_query)
-AC_CHECK_LIB(nsl, gethostent)
-AC_CHECK_FUNC(socket, ,
-              [AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])
-dnl If all goes well, by this point the previous two checks will have
-dnl pulled in -lsocket and -lnsl if we need them.
-AC_CHECK_FUNC(getaddrinfo, [AC_DEFINE([HAVE_GETADDRINFO], [1],
-                                      [Define to 1 if you have the getaddrinfo function.])],
-              [AC_CHECK_LIB(socket, getaddrinfo,
-                            [AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
-
-dnl Check for socklen_t (in Unix98)
-AC_MSG_CHECKING(for socklen_t)
-AC_TRY_COMPILE([
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	socklen_t x;
-], [],
-[
-	AC_MSG_RESULT(yes)
-], [
-	AC_TRY_COMPILE([
-		#include <sys/types.h>
-		#include <sys/socket.h>
-		int accept(int, struct sockaddr *, size_t *);
-	], [], [
-		AC_MSG_RESULT(size_t)
-		AC_DEFINE(socklen_t, size_t, [socklen_t size])
-	], [
-		AC_MSG_RESULT(int)
-		AC_DEFINE(socklen_t, int, [socklen_t size])
-	])
-])
-
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE
