@@ -48,7 +48,7 @@ libgnt_la_LDFLAGS = -export-dynamic
 libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(STATIC_LINK_LIBS) \
-	-lncursesw -lpanelw
+	$(GNT_LIBS)
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \

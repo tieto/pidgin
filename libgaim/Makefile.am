@@ -256,9 +256,7 @@ libgaim_la_LIBADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
-	$(GMODULE_LIBS) \
-	$(GOBJECT_LIBS) \
-	$(GSTREAMER_LIBS) \
+	$(LIBXML_LIBS) \
 	$(STATIC_LINK_LIBS) \
 	$(INTLLIBS) \
 	-lm
@@ -270,7 +268,7 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/plugins \
-	$(GSTREAMER_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS)
