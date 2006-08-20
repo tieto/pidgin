@@ -1,27 +1,29 @@
 gntgf_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
+gnthistory_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
 
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	gntgf.la
+	gntgf.la \
+	gnthistory.la
 
 plugindir = $(libdir)/gaim
 
 gntgf_la_SOURCES             = gntgf.c
+gnthistory_la_SOURCES        = gnthistory.c
 
 endif # PLUGINS
 
 EXTRA_DIST = 
 
-GNT_CFLAGS = `pkg-config --cflags gnt` -I..
-
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
-	-I$(top_builddir)/src \
-	-I$(top_srcdir)/src \
+	-I$(top_builddir)/libgaim \
+	-I$(top_srcdir)/libgaim \
+	-I$(top_srcdir)/console \
+	-I$(top_srcdir)/console/libgnt \
 	$(DEBUG_CFLAGS) \
-	$(GNT_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 

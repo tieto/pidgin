@@ -18,7 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define GAIM_PLUGINS
+
+#include "internal.h"
 
 #define PLUGIN_STATIC_NAME	"GntGf"
 
@@ -46,8 +47,6 @@
 #include <gnttree.h>
 
 #include <gntplugin.h>
-
-#define _(X) X
 
 typedef struct
 {
@@ -202,10 +201,10 @@ static struct
 	char *display;
 } prefs[] =
 {
-	{PREFS_EVENT_SIGNONF, _("Buddy signs on/off")},
-	{PREFS_EVENT_IM_MSG, _("You receive an IM")},
-	{PREFS_EVENT_CHAT_MSG, _("Someone speaks in a chat")},
-	{PREFS_EVENT_CHAT_NICK, _("Someone says your name in a chat")},
+	{PREFS_EVENT_SIGNONF, N_("Buddy signs on/off")},
+	{PREFS_EVENT_IM_MSG, N_("You receive an IM")},
+	{PREFS_EVENT_CHAT_MSG, N_("Someone speaks in a chat")},
+	{PREFS_EVENT_CHAT_NICK, N_("Someone says your name in a chat")},
 	{NULL, NULL}
 };
 
