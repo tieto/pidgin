@@ -35,18 +35,16 @@ gntgaimincludedir=$(includedir)/gaim/gnt
 gntgaiminclude_HEADERS = \
 	$(gntgaim_headers)
 
-gntgaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS) $(MS_LIBS)
+gntgaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gntgaim_LDFLAGS = -export-dynamic
 gntgaim_LDADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
-	$(GSTREAMER_LIBS) \
 	$(STATIC_LINK_LIBS) \
-	$(XSS_LIBS) \
-	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
+	$(GNT_LIBS) \
 	-L./libgnt/ -lgnt \
 	-L$(top_srcdir)/libgaim -lgaim
 
@@ -59,7 +57,6 @@ AM_CPPFLAGS = \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libgaim/ \
 	-I ./libgnt/ \
-	$(GSTREAMER_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \

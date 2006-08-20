@@ -66,7 +66,7 @@
 #   include "gtkcellviewmenuitem.h"
 #   if !GTK_CHECK_VERSION(2,4,0)
 #       include "gtkcelllayout.h"
-#       include "gtkcombobox.h"
+#       include "gaimcombobox.h"
 #   endif /* Gtk 2.4 */
 #endif /* Gtk 2.6 */
 

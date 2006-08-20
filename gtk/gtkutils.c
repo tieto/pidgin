@@ -2228,7 +2228,7 @@ icon_filesel_delete_cb(GtkWidget *w, struct _icon_chooser *dialog)
 		gtk_widget_destroy(dialog->icon_filesel);
 
 	if (dialog->callback)
-		dialog->callback(NULL, data);
+		dialog->callback(NULL, dialog->data);
 
 	g_free(dialog);
 }
@@ -2262,7 +2262,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 
 #else /* FILECHOOSER */
 static void
-icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
+icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 {
 	char *filename, *current_folder;
 
@@ -2647,3 +2647,140 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	return NULL;
 #endif
 }
+
+#if !GTK_CHECK_VERSION(2,6,0)
+static void
+_gdk_file_scale_size_prepared_cb (GdkPixbufLoader *loader, 
+		  int              width,
+		  int              height,
+		  gpointer         data)
+{
+	struct {
+		gint width;
+		gint height;
+		gboolean preserve_aspect_ratio;
+	} *info = data;
+
+	g_return_if_fail (width > 0 && height > 0);
+
+	if (info->preserve_aspect_ratio && 
+		(info->width > 0 || info->height > 0)) {
+		if (info->width < 0)
+		{
+			width = width * (double)info->height/(double)height;
+			height = info->height;
+		}
+		else if (info->height < 0)
+		{
+			height = height * (double)info->width/(double)width;
+			width = info->width;
+		}
+		else if ((double)height * (double)info->width >
+				 (double)width * (double)info->height) {
+			width = 0.5 + (double)width * (double)info->height / (double)height;
+			height = info->height;
+		} else {
+			height = 0.5 + (double)height * (double)info->width / (double)width;
+			width = info->width;
+		}
+	} else {
+			if (info->width > 0)
+				width = info->width;
+			if (info->height > 0)
+				height = info->height;
+	}
+
+	gdk_pixbuf_loader_set_size (loader, width, height);
+}
+
+GdkPixbuf *
+gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
+				  				  gboolean preserve_aspect_ratio,
+								  GError **error)
+{
+	GdkPixbufLoader *loader;
+	GdkPixbuf       *pixbuf;
+	guchar buffer [4096];
+	int length;
+	FILE *f;
+	struct {
+		gint width;
+		gint height;
+		gboolean preserve_aspect_ratio;
+	} info;
+	GdkPixbufAnimation *animation;
+	GdkPixbufAnimationIter *iter;
+	gboolean has_frame;
+
+	g_return_val_if_fail (filename != NULL, NULL);
+	g_return_val_if_fail (width > 0 || width == -1, NULL);
+	g_return_val_if_fail (height > 0 || height == -1, NULL);
+
+	f = g_fopen (filename, "rb");
+	if (!f) {
+		gint save_errno = errno;
+		gchar *display_name = g_filename_to_utf8 (filename, -1, NULL, NULL, NULL);
+		g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (save_errno),
+					 _("Failed to open file '%s': %s"),
+					 display_name ? display_name : "(unknown)",
+					 g_strerror (save_errno));
+		g_free (display_name);
+		return NULL;
+	}
+
+	loader = gdk_pixbuf_loader_new ();
+
+	info.width = width;
+	info.height = height;
+	info.preserve_aspect_ratio = preserve_aspect_ratio;
+
+	g_signal_connect (loader, "size-prepared", G_CALLBACK (_gdk_file_scale_size_prepared_cb), &info);
+
+	has_frame = FALSE;
+	while (!has_frame && !feof (f) && !ferror (f)) {
+		length = fread (buffer, 1, sizeof (buffer), f);
+		if (length > 0)
+			if (!gdk_pixbuf_loader_write (loader, buffer, length, error)) {
+				gdk_pixbuf_loader_close (loader, NULL);
+				fclose (f);
+				g_object_unref (loader);
+				return NULL;
+			}
+
+		animation = gdk_pixbuf_loader_get_animation (loader);
+		if (animation) {
+			iter = gdk_pixbuf_animation_get_iter (animation, 0);
+			if (!gdk_pixbuf_animation_iter_on_currently_loading_frame (iter)) {
+				has_frame = TRUE;
+			}
+			g_object_unref (iter);
+		}
+	}
+
+	fclose (f);
+
+	if (!gdk_pixbuf_loader_close (loader, error) && !has_frame) {
+		g_object_unref (loader);
+		return NULL;
+	}
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+	if (!pixbuf) {
+		gchar *display_name = g_filename_to_utf8 (filename, -1, NULL, NULL, NULL);
+		g_object_unref (loader);
+		g_set_error (error, GDK_PIXBUF_ERROR, GDK_PIXBUF_ERROR_FAILED,
+					 _("Failed to load image '%s': reason not known, probably a corrupt image file"),
+					 display_name ? display_name : "(unknown)");
+		g_free (display_name);
+		return NULL;
+	}
+
+	g_object_ref (pixbuf);
+
+	g_object_unref (loader);
+
+	return pixbuf;
+}
+#endif
+

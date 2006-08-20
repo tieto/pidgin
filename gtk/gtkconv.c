@@ -4984,9 +4984,11 @@ gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *cbuddies, gboolean ne
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
 	ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list)));
-	
+
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),  GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
 										 GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID); 
+#endif
 
 	l = cbuddies;
 	while (l != NULL) {

@@ -479,4 +479,15 @@ GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(co
  */
 char* gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path);
 
+#if !GTK_CHECK_VERSION(2,6,0)
+/**
+ * Creates a new pixbuf by loading an image from a file. The image will
+ * be scaled to fit in the requested size, optionally preserving the image's
+ * aspect ratio.
+ */
+GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
+											 gboolean preserve_aspect_ratio,
+											 GError **error);
+#endif
+
 #endif /* _GAIM_GTKUTILS_H_ */

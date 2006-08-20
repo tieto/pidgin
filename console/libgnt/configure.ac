@@ -216,17 +216,15 @@ if test "x$GCC" = "xyes"; then
 fi
 AC_SUBST(CFLAGS)
 
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0],
-	[
-		AC_SUBST(GLIB_CFLAGS)
-		AC_SUBST(GLIB_LIBS)
-	],
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0],,
 	[
 		AC_MSG_ERROR([
 *** GLib 2.0 is required to build Gaim; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
 *** always available at http://www.gtk.org/.])
 	])
+AC_SUBST(GLIB_CFLAGS)
+AC_SUBST(GLIB_LIBS)
 
 
 AC_MSG_CHECKING(for me pot o' gold)

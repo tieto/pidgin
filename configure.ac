@@ -635,28 +635,20 @@ if test "x$GCC" = "xyes"; then
 fi
 AC_SUBST(CFLAGS)
 
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
-    [
-        AC_SUBST(GLIB_CFLAGS)
-        AC_SUBST(GLIB_LIBS)
-	    echo "GLib 2.0 check OK!"
-    ],
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],,
     [
         AC_MSG_ERROR([
 *** GLib 2.0 is required to build Gaim; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
 *** always available at http://www.gtk.org/.])
     ])
+AC_SUBST(GLIB_CFLAGS)
+AC_SUBST(GLIB_LIBS)
 
 AC_PATH_PROG(gaimpath, gaim)
 
-if test "$enable_gtk" = yes ; then
-    PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0],
-       [
-           AC_SUBST(GTK_CFLAGS)
-           AC_SUBST(GTK_LIBS)
-		   echo "GTK+ 2.0 check OK!"
-       ],
+if test "x$enable_gtk" = "xyes" ; then
+    PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0],,
        [
            AC_MSG_ERROR([
 *** GTK+ 2.0 is required to build Gaim. please make sure you have the GTK+
@@ -666,6 +658,8 @@ if test "$enable_gtk" = yes ; then
 *** If you wish to build just gntgaim or libgaim,
 *** configure with --disable-gtkgaim])
        ])
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
 fi
 
 AC_PATH_XTRA

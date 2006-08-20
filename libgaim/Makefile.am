@@ -250,7 +250,7 @@ libgaiminclude_HEADERS = \
 	$(gaim_coreheaders) \
 	$(dbus_headers)
 
-libgaim_la_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS) $(MS_LIBS)
+libgaim_la_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 libgaim_la_LDFLAGS = -export-dynamic
 libgaim_la_LIBADD = \
 	@LIBOBJS@ \
@@ -267,7 +267,6 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
-	-I$(top_srcdir)/plugins \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \

@@ -1,5 +1,12 @@
 #!/bin/sh
 
+(glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {
+	echo;
+	echo "You must have glib-gettextize installed to compile Gaim";
+	echo;
+	exit;
+}
+
 (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
 	echo "You must have intltool installed to compile Gaim";
@@ -46,6 +53,7 @@ do
 done
 
 libtoolize -c -f --automake
+glib-gettextize --force --copy
 intltoolize --force --copy
 aclocal $ACLOCAL_FLAGS || exit;
 autoheader || exit;

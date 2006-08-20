@@ -403,12 +403,15 @@ xmlnode_parser_element_start_libxml(void *user_data,
 		xmlnode_set_namespace(node, namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
+#ifdef HAVE_LIBXML
+			char *txt;
+#endif
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
 #ifdef HAVE_LIBXML
-			char *txt = attrib;
+			txt = attrib;
 			attrib = gaim_unescape_html(txt);
 			g_free(txt);
 #endif
