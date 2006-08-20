@@ -96,6 +96,7 @@ install:
 
 plugins: \
 		idle.dll \
+		log_reader.dll \
 		psychic.dll \
 		statenotify.dll
 

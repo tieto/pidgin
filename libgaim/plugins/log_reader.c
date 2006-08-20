@@ -327,6 +327,7 @@ static void adium_logger_finalize(GaimLog *log)
  * Fire Logger                                                               *
  *****************************************************************************/
 
+#if 0
 /* The fire logger doesn't write logs, only reads them.  This is to include
  * Fire logs in the log viewer transparently.
  */
@@ -371,12 +372,14 @@ static void fire_logger_finalize(GaimLog *log)
 
 	/* TODO: Do something here. */
 }
+#endif
 
 
 /*****************************************************************************
  * Messenger Plus! Logger                                                    *
  *****************************************************************************/
 
+#if 0
 /* The messenger_plus logger doesn't write logs, only reads them.  This is to include
  * Messenger Plus! logs in the log viewer transparently.
  */
@@ -421,6 +424,7 @@ static void messenger_plus_logger_finalize(GaimLog *log)
 
 	/* TODO: Do something here. */
 }
+#endif
 
 
 /*****************************************************************************
@@ -1846,6 +1850,7 @@ plugin_load(GaimPlugin *plugin)
 									   adium_logger_size);
 	gaim_log_logger_add(adium_logger);
 
+#if 0
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
@@ -1869,6 +1874,7 @@ plugin_load(GaimPlugin *plugin)
 												messenger_plus_logger_read,
 												messenger_plus_logger_size);
 	gaim_log_logger_add(messenger_plus_logger);
+#endif
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
@@ -1903,8 +1909,10 @@ plugin_unload(GaimPlugin *plugin)
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	gaim_log_logger_remove(adium_logger);
+#if 0
 	gaim_log_logger_remove(fire_logger);
 	gaim_log_logger_remove(messenger_plus_logger);
+#endif
 	gaim_log_logger_remove(msn_logger);
 	gaim_log_logger_remove(trillian_logger);
 
@@ -1945,6 +1953,7 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
+#if 0
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
 	gaim_plugin_pref_frame_add(frame, ppref);
@@ -1952,6 +1961,7 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
 	gaim_plugin_pref_frame_add(frame, ppref);
+#endif
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
@@ -1991,8 +2001,9 @@ static GaimPluginInfo info =
 	/** description */
 	N_("When viewing logs, this plugin will include "
 	   "logs from other IM clients. Currently, this "
-	   "includes Adium, Fire, Messenger Plus!, "
-	   "MSN Messenger, and Trillian."),
+	   "includes Adium, MSN Messenger, and Trillian.\n\n"
+	   "WARNING: This plugin is still alpha code and "
+	   "may crash frequently.  Use it at your own risk!"),
 
 	"Richard Laager <rlaager@users.sf.net>",          /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */

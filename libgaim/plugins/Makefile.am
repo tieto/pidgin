@@ -27,6 +27,7 @@ SUBDIRS = \
 plugindir = $(libdir)/gaim
 
 idle_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
+log_reader_la_LDFLAGS       = -module -avoid-version $(GLIB_LIBS)
 psychic_la_LDFLAGS          = -module -avoid-version $(GLIB_LIBS)
 statenotify_la_LDFLAGS      = -module -avoid-version $(GLIB_LIBS)
 
@@ -37,12 +38,14 @@ if PLUGINS
 
 plugin_LTLIBRARIES = \
 	idle.la             \
+	log_reader.la       \
 	psychic.la          \
 	statenotify.la      \
 	$(DBUS_LTLIB)
 
 
 idle_la_SOURCES             = idle.c
+log_reader_la_SOURCES       = log_reader.c
 psychic_la_SOURCES          = psychic.c
 statenotify_la_SOURCES      = statenotify.c
 

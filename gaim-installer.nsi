@@ -717,6 +717,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\notify.dll"
     Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\psychic.dll"
