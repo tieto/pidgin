@@ -2,6 +2,7 @@
 #include "gntmarshal.h"
 
 #include <string.h>
+#include <ctype.h>
 
 enum
 {
@@ -468,10 +469,10 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 	GntTree *tree = GNT_TREE(widget);
 	GntTreeRow *old = tree->current;
 	GntTreeRow *row;
+	int dist;
 
 	if (text[0] == 27)
 	{
-		int dist;
 		if (strcmp(text+1, GNT_KEY_DOWN) == 0 && (row = get_next(tree->current)) != NULL)
 		{
 			tree->current = row;
@@ -490,9 +491,29 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 				redraw_tree(tree);
 		}
 	}
-	else if (text[0] == '\r')
+	else if (iscntrl(text[0]))
 	{
-		gnt_widget_activate(widget);
+		if (strcmp(text, GNT_KEY_CTRL_N) == 0 && (row = get_next(tree->current)) != NULL)
+		{
+			tree->current = row;
+			if ((dist = get_distance(tree->current, tree->bottom)) < 0)
+				gnt_tree_scroll(tree, -dist);
+			else
+				redraw_tree(tree);
+		}
+		else if (strcmp(text, GNT_KEY_CTRL_P) == 0 && (row = get_prev(tree->current)) != NULL)
+		{
+			tree->current = row;
+
+			if ((dist = get_distance(tree->current, tree->top)) > 0)
+				gnt_tree_scroll(tree, -dist);
+			else
+				redraw_tree(tree);
+		}
+		else if (text[0] == '\r')
+		{
+			gnt_widget_activate(widget);
+		}
 	}
 	else if (text[0] == ' ' && text[1] == 0)
 	{
