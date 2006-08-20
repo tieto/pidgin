@@ -1092,7 +1092,7 @@ void gg_blist_init()
 	gaim_prefs_add_none(PREF_ROOT);
 	gaim_prefs_add_none(PREF_ROOT "/size");
 	gaim_prefs_add_int(PREF_ROOT "/size/width", 20);
-	gaim_prefs_add_int(PREF_ROOT "/size/height", 20);
+	gaim_prefs_add_int(PREF_ROOT "/size/height", 18);
 	gaim_prefs_add_none(PREF_ROOT "/position");
 	gaim_prefs_add_int(PREF_ROOT "/position/x", 0);
 	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
@@ -1294,8 +1294,6 @@ void gg_blist_show()
 			gaim_prefs_get_int(PREF_ROOT "/position/y"));
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
-
-	gnt_box_add_widget(GNT_BOX(ggblist->window), gnt_hline_new());
 
 	ggblist->status = gnt_combo_box_new();
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->status);
