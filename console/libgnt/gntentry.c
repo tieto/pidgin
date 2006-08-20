@@ -255,6 +255,16 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			move_forward(entry);
 			return TRUE;
 		}
+		else if (strcmp(text + 1, GNT_KEY_HOME) == 0)
+		{
+			move_start(entry);
+			return TRUE;
+		}
+		else if (strcmp(text + 1, GNT_KEY_END) == 0)
+		{
+			move_end(entry);
+			return TRUE;
+		}
 		else if (strcmp(text + 1, GNT_KEY_CTRL_DOWN) == 0 && entry->histlength)
 		{
 			if (entry->history->prev)
@@ -371,7 +381,14 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				entry->end += len;
 
 				while (str < next)
-					*(entry->cursor++) = *str++;
+				{
+					if (*str == '\r' || *str == '\n')
+						*entry->cursor = ' ';
+					else
+						*entry->cursor = *str;
+					entry->cursor++;
+					str++;
+				}
 
 				while (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
 					entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);

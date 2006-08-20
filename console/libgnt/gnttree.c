@@ -490,6 +490,41 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			else
 				redraw_tree(tree);
 		}
+		else if (strcmp(text+1, GNT_KEY_PGDOWN) == 0)
+		{
+			row = get_next(tree->bottom);
+			if (row)
+			{
+				int dist = get_distance(tree->top, tree->current);
+				tree->top = tree->bottom;
+				tree->current = get_next_n_opt(tree->top, dist, NULL);
+				redraw_tree(tree);
+			}
+			else if (tree->current != tree->bottom)
+			{
+				tree->current = tree->bottom;
+				redraw_tree(tree);
+			}
+		}
+		else if (strcmp(text+1, GNT_KEY_PGUP) == 0)
+		{
+			if (tree->top != tree->root)
+			{
+				int dist = get_distance(tree->top, tree->current);
+				row = get_prev_n(tree->top, widget->priv.height - 1 -
+					tree->show_title * 2 - 2 * (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER) == 0));
+				if (row == NULL)
+					row = tree->root;
+				tree->top = row;
+				tree->current = get_next_n_opt(tree->top, dist, NULL);
+				redraw_tree(tree);
+			}
+			else if (tree->current != tree->top)
+			{
+				tree->current = tree->top;
+				redraw_tree(tree);
+			}
+		}
 	}
 	else if (iscntrl(text[0]))
 	{

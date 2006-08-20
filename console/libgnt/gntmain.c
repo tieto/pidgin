@@ -681,7 +681,9 @@ void gnt_init()
 	
 	locale = setlocale(LC_ALL, "");
 
-	g_io_channel_unref(channel);
+#if 0
+	g_io_channel_unref(channel);  /* Apparently this causes crash for some people */
+#endif
 
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
