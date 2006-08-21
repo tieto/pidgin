@@ -93,6 +93,9 @@ right.
 .B Alt \+ ,
 Move the position of the current window in the window list one place to the
 left.
+.TP
+.B Alt \+ l
+Refresh the windows. This is useful after resizing the terminal window.
 
 .SH FILES
 \fI~/.gntrc\fR: configuration file for gnt applications.
