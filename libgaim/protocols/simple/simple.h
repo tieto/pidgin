@@ -1,10 +1,10 @@
 /**
  * @file simple.h
- * 
+ *
  * gaim
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -29,6 +29,8 @@
 #include "cipher.h"
 #include "circbuffer.h"
 #include "dnsquery.h"
+#include "network.h"
+#include "proxy.h"
 #include "prpl.h"
 
 #include "sipmsg.h"
@@ -71,6 +73,7 @@ struct simple_account_data {
 	gchar *username;
 	gchar *password;
 	GaimDnsQueryData *query_data;
+	GaimNetworkListenData *listen_data;
 	int fd;
 	int cseq;
 	time_t reregister;

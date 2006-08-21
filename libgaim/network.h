@@ -25,11 +25,6 @@
 #ifndef _GAIM_NETWORK_H_
 #define _GAIM_NETWORK_H_
 
-/*
- * TODO: This API needs a way to cancel pending calls to
- *       gaim_network_listen_range() and company.
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -38,6 +33,8 @@ extern "C" {
 /** @name Network API                                                     */
 /**************************************************************************/
 /*@{*/
+
+typedef struct _GaimNetworkListenData GaimNetworkListenData;
 
 typedef void (*GaimNetworkListenCallback) (int listenfd, gpointer data);
 
@@ -129,11 +126,12 @@ const char *gaim_network_get_my_ip(int fd);
  *           this callback, or -1 if no socket could be established.
  * @param cb_data extra data to be returned when cb is called
  *
- * @return TRUE if the callback will be invoked, or FALSE if unable to obtain
- *              a local socket to listen on.
+ * @return A pointer to a data structure that can be used to cancel
+ *         the pending listener, or NULL if unable to obtain a local
+ *         socket to listen on.
  */
-gboolean gaim_network_listen(unsigned short port, int socket_type,
-	GaimNetworkListenCallback cb, gpointer cb_data);
+GaimNetworkListenData *gaim_network_listen(unsigned short port,
+		int socket_type, GaimNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * Opens a listening port selected from a range of ports.  The range of
@@ -161,11 +159,23 @@ gboolean gaim_network_listen(unsigned short port, int socket_type,
  *           this callback, or -1 if no socket could be established.
  * @param cb_data extra data to be returned when cb is called
  *
- * @return TRUE if the callback will be invoked, or FALSE if unable to obtain
- *              a local socket to listen on.
+ * @return A pointer to a data structure that can be used to cancel
+ *         the pending listener, or NULL if unable to obtain a local
+ *         socket to listen on.
  */
-gboolean gaim_network_listen_range(unsigned short start, unsigned short end,
-	int socket_type, GaimNetworkListenCallback cb, gpointer cb_data);
+GaimNetworkListenData *gaim_network_listen_range(unsigned short start,
+		unsigned short end, int socket_type,
+		GaimNetworkListenCallback cb, gpointer cb_data);
+
+/**
+ * This can be used to cancel any in-progress listener connection
+ * by passing in the return value from either gaim_network_listen()
+ * or gaim_network_listen_range().
+ *
+ * @param listen_data This listener attempt will be canceled and
+ *        the struct will be freed.
+ */
+void gaim_network_listen_cancel(GaimNetworkListenData *listen_data);
 
 /**
  * Gets a port number from a file descriptor.

@@ -159,6 +159,7 @@ typedef GaimLogSet *			Gaim__LogSet;
 typedef GaimLogType			Gaim__LogType;
 
 /* network.h */
+typedef GaimNetworkListenData		Gaim__NetworkListenData;
 typedef GaimNetworkListenCallback	Gaim__NetworkListenCallback;
 
 /* notify.h */

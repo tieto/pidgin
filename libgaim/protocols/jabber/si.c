@@ -47,6 +47,7 @@ typedef struct _JabberSIXfer {
 	JabberStream *js;
 
 	GaimProxyConnectData *connect_data;
+	GaimNetworkListenData *listen_data;
 
 	gboolean accepted;
 
@@ -539,12 +540,13 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	xmlnode *query, *streamhost;
 	char *jid, *port;
 
+	jsx = xfer->data;
+	jsx->listen_data = NULL;
+
 	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) {
 		gaim_xfer_unref(xfer);
 		return;
 	}
-
-	jsx = xfer->data;
 
 	gaim_xfer_unref(xfer);
 
@@ -588,10 +590,14 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 static void
 jabber_si_xfer_bytestreams_send_init(GaimXfer *xfer)
 {
+	JabberSIXfer *jsx;
+
 	gaim_xfer_ref(xfer);
 
-	if(!gaim_network_listen_range(0, 0, SOCK_STREAM,
-				jabber_si_xfer_bytestreams_listen_cb, xfer)) {
+	jsx = xfer->data;
+	jsx->listen_data = gaim_network_listen_range(0, 0, SOCK_STREAM,
+				jabber_si_xfer_bytestreams_listen_cb, xfer);
+	if (jsx->listen_data == NULL) {
 		gaim_xfer_unref(xfer);
 		/* XXX: couldn't open a port, we're fscked */
 		gaim_xfer_cancel_local(xfer);
@@ -698,6 +704,8 @@ static void jabber_si_xfer_free(GaimXfer *xfer)
 
 	if (jsx->connect_data != NULL)
 		gaim_proxy_connect_cancel(jsx->connect_data);
+	if (jsx->listen_data != NULL)
+		gaim_network_listen_cancel(jsx->listen_data);
 
 	g_free(jsx->stream_id);
 	g_free(jsx->iq_id);

@@ -1506,6 +1506,8 @@ static gboolean simple_ht_equals_nick(const char *nick1, const char *nick2) {
 static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 
+	sip->listen_data = NULL;
+
 	if(listenfd == -1) {
 		gaim_connection_error(sip->gc, _("Could not create listen socket"));
 		return;
@@ -1546,8 +1548,9 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	}
 
 	/* create socket for incoming connections */
-	if(!gaim_network_listen_range(5060, 5160, SOCK_DGRAM,
-				simple_udp_host_resolved_listen_cb, sip)) {
+	sip->listen_data = gaim_network_listen_range(5060, 5160, SOCK_DGRAM,
+				simple_udp_host_resolved_listen_cb, sip);
+	if (sip->listen_data == NULL) {
 		gaim_connection_error(sip->gc, _("Could not create listen socket"));
 		return;
 	}
@@ -1557,6 +1560,8 @@ static void
 simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
 	GaimProxyConnectData *connect_data;
+
+	sip->listen_data = NULL;
 
 	sip->listenfd = listenfd;
 	if(sip->listenfd == -1) {
@@ -1616,8 +1621,9 @@ static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
 	/* TCP case */
 	if(!sip->udp) {
 		/* create socket for incoming connections */
-		if(!gaim_network_listen_range(5060, 5160, SOCK_STREAM,
-					simple_tcp_connect_listen_cb, sip)) {
+		sip->listen_data = gaim_network_listen_range(5060, 5160, SOCK_STREAM,
+					simple_tcp_connect_listen_cb, sip);
+		if (sip->listen_data == NULL) {
 			gaim_connection_error(sip->gc, _("Could not create listen socket"));
 			return;
 		}
@@ -1696,6 +1702,9 @@ static void simple_close(GaimConnection *gc)
 
 		if (sip->query_data != NULL)
 			gaim_dnsquery_destroy(sip->query_data);
+
+		if (sip->listen_data != NULL)
+			gaim_network_listen_cancel(sip->listen_data);
 
 		g_free(sip->servername);
 		g_free(sip->username);

@@ -142,6 +142,7 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
  *******************************************************************/
 
 struct irc_xfer_send_data {
+	GaimNetworkListenData *listen_data;
 	gint inpa;
 	int fd;
 	guchar *rxqueue;
@@ -155,6 +156,8 @@ static void irc_dccsend_send_destroy(GaimXfer *xfer)
 	if (xd == NULL)
 		return;
 
+	if (xd->listen_data != NULL)
+		gaim_network_listen_cancel(xd->listen_data);
 	if (xd->inpa > 0)
 		gaim_input_remove(xd->inpa);
 	if (xd->fd != -1)
@@ -271,6 +274,9 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	struct in_addr addr;
 	unsigned short int port;
 
+	xd = xfer->data;
+	xd->listen_data = NULL;
+
 	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL
 			|| gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_REMOTE) {
 		gaim_xfer_unref(xfer);
@@ -314,14 +320,16 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
  */
 static void irc_dccsend_send_init(GaimXfer *xfer) {
 	GaimConnection *gc = gaim_account_get_connection(gaim_xfer_get_account(xfer));
+	struct irc_xfer_send_data *xd = xfer->data;
 
 	xfer->filename = g_path_get_basename(xfer->local_filename);
 
 	gaim_xfer_ref(xfer);
 
 	/* Create a listening socket */
-	if (!gaim_network_listen_range(0, 0, SOCK_STREAM,
-			irc_dccsend_network_listen_cb, xfer)) {
+	xd->listen_data = gaim_network_listen_range(0, 0, SOCK_STREAM,
+			irc_dccsend_network_listen_cb, xfer);
+	if (xd->listen_data == NULL) {
 		gaim_xfer_unref(xfer);
 		gaim_notify_error(gc, NULL, _("File Transfer Failed"),
 		                  _("Gaim could not open a listening port."));

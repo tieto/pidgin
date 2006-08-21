@@ -25,14 +25,14 @@ const unsigned char *
 gaim_network_ip_atoi(ip)
 	const char *ip
 
-int
+Gaim::NetworkListenData *
 gaim_network_listen(port, socket_type, cb, cb_data)
 	unsigned short port
 	int socket_type
 	Gaim::NetworkListenCallback cb
 	gpointer cb_data
 
-int
+Gaim::NetworkListenData *
 gaim_network_listen_range(start, end, socket_type, cb, cb_data)
 	unsigned short start
 	unsigned short end

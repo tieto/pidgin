@@ -145,6 +145,12 @@ peer_connection_close(PeerConnection *conn)
 		conn->connect_data = NULL;
 	}
 
+	if (conn->listen_data != NULL)
+	{
+		gaim_network_listen_cancel(conn->listen_data);
+		conn->listen_data = NULL;
+	}
+
 	if (conn->connect_timeout_timer != 0)
 	{
 		gaim_timeout_remove(conn->connect_timeout_timer);
@@ -561,7 +567,6 @@ peer_connection_listen_cb(gpointer data, gint source, GaimInputCondition cond)
 static void
 peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 {
-	NewPeerConnectionData *new_conn_data;
 	PeerConnection *conn;
 	OscarData *od;
 	GaimConnection *gc;
@@ -572,17 +577,8 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	const char *listener_ip;
 	unsigned short listener_port;
 
-	new_conn_data = data;
-	gc = new_conn_data->gc;
-	conn = new_conn_data->conn;
-	g_free(new_conn_data);
-
-	if (!GAIM_CONNECTION_IS_VALID(gc))
-	{
-		if (listenerfd != -1)
-			close(listenerfd);
-		return;
-	}
+	conn = data;
+	conn->listen_data = NULL;
 
 	if (listenerfd == -1)
 	{
@@ -592,6 +588,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	}
 
 	od = conn->od;
+	gc = od->gc;
 	account = gaim_connection_get_account(gc);
 	conn->listenerfd = listenerfd;
 
@@ -757,12 +754,6 @@ peer_connection_trynext(PeerConnection *conn)
 	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_INCOMING) &&
 		(!conn->use_proxy))
 	{
-		NewPeerConnectionData *new_conn_data;
-
-		new_conn_data = g_new(NewPeerConnectionData, 1);
-		new_conn_data->gc = conn->od->gc;
-		new_conn_data->conn = conn;
-
 		conn->flags |= PEER_CONNECTION_FLAG_TRIED_INCOMING;
 
 		/*
@@ -771,14 +762,13 @@ peer_connection_trynext(PeerConnection *conn)
 		 */
 		conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
 
-		if (gaim_network_listen_range(5190, 5290, SOCK_STREAM,
-				peer_connection_establish_listener_cb, new_conn_data))
+		conn->listen_data = gaim_network_listen_range(5190, 5290, SOCK_STREAM,
+				peer_connection_establish_listener_cb, conn);
+		if (conn->listen_data != NULL)
 		{
 			/* Opening listener socket... */
 			return;
 		}
-
-		g_free(new_conn_data);
 	}
 
 	/*

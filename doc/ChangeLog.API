@@ -91,6 +91,8 @@ version 2.0.0:
 	* gaim_network_listen() and gaim_network_listen_range(): Added
 	  socket_type parameter to allow creation of UDP listening. Modified
 	  to be asynchronous with a callback to allow for UPnP operation.
+	  Returns a data structure that can be used to cancel the listen
+	  attempt using gaim_network_listen_cancel()
 	* GaimPrefCallback: val is now a gconstpointer instead of a gpointer
 	* gtk_imhtml_get_current_format(): the arguments are now set to TRUE or
 	  FALSE.  Previously they were set to TRUE or left alone.  Also, you
@@ -117,6 +119,9 @@ version 2.0.0:
 	* gaim_proxy_connect(): changed to return NULL on error and a pointer
 	  to a GaimProxyConnectInfo object which can be used to cancel
 	  connection attempts using gaim_proxy_connect_cancel().
+	* gaim_gethostbyname_async(): Renamed to gaim_dnsquery_a() and
+	  changed to return a pointer to a data structure that can be
+	  used to cancel the pending DNS query using gaim_dnsquery_destroy()
 	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 	* gaim_account_get_log(): Added create parameter
 	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH
@@ -296,6 +301,12 @@ version 2.0.0:
 	* gaim_proxy_get_setup()
 	* GaimNotifySearchResultsCallback: Added user_data.
 	* gaim_notify_searchresults: Added user_data.
+	* gaim_network_listen_cancel(): Can be used to cancel a previous
+	  call to gaim_network_listen() or gaim_network_listen_range()
+	* gaim_proxy_connect_cancel(): Can be used to cancel a pending
+	  gaim_proxy_connect() request
+	* gaim_dnsquery_destroy(): Can be used to cancel a pending DNS
+	  query.
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

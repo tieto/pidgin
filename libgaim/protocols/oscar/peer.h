@@ -26,11 +26,12 @@
 #define _PEER_H_
 
 #include "ft.h"
+#include "network.h"
+#include "proxy.h"
 
 typedef struct _OdcFrame              OdcFrame;
 typedef struct _OftFrame              OftFrame;
 typedef struct _ProxyFrame            ProxyFrame;
-typedef struct _NewPeerConnectionData NewPeerConnectionData;
 typedef struct _PeerConnection        PeerConnection;
 
 #define PEER_CONNECTION_FLAG_INITIATED_BY_ME  0x0001
@@ -132,12 +133,6 @@ struct _ProxyFrame
 	ByteStream payload;      /* 12 */
 };
 
-struct _NewPeerConnectionData
-{
-	GaimConnection *gc;
-	PeerConnection *conn;
-};
-
 struct _PeerConnection
 {
 	OscarData *od;
@@ -162,6 +157,12 @@ struct _PeerConnection
 	 * This is only used when the peer connection is being established.
 	 */
 	GaimProxyConnectData *connect_data;
+
+	/**
+	 * This is only used when the peer connection is being established.
+	 */
+	GaimNetworkListenData *listen_data;
+
 
 	/**
 	 * This is only used when the peer connection is being established.
