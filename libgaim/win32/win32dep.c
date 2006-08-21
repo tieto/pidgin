@@ -45,10 +45,6 @@
  */
 #define _(x) gettext(x)
 
-/*
- * DATA STRUCTS
- */
-
 /* For shfolder.dll */
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
@@ -56,32 +52,25 @@ typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWST
 /*
  * LOCALS
  */
-static char *app_data_dir, *install_dir, *lib_dir, *locale_dir;
+static char *app_data_dir = NULL, *install_dir = NULL,
+	*lib_dir = NULL, *locale_dir = NULL;
 
-/*
- *  GLOBALS
- */
-HINSTANCE libgaimdll_hInstance = 0;
+static HINSTANCE libgaimdll_hInstance = 0;
 
-/*
- *  PROTOS
- */
-
-FARPROC wgaim_find_and_loadproc(char*, char*);
-char* wgaim_data_dir(void);
 
 /*
  *  STATIC CODE
  */
 
-static void wgaim_debug_print(GaimDebugLevel level, const char *category, const char *format, va_list args) {
+static void wgaim_debug_print(GaimDebugLevel level, const char *category,
+		const char *format, va_list args) {
 	char *str = NULL;
-	if (args != NULL) {
+	if (args != NULL)
 		str = g_strdup_vprintf(format, args);
-	} else {
-		str = g_strdup(format);
-	}
-	printf("%s%s%s", category ? category : "", category ? ": " : "", str);
+	printf("%s%s%s",
+		category ? category : "",
+		category ? ": " : "",
+		str ? str : format);
 	g_free(str);
 }
 
@@ -263,6 +252,21 @@ char* wgaim_locale_dir(void) {
 }
 
 char* wgaim_data_dir(void) {
+
+	if (!app_data_dir) {
+		/* Set app data dir, used by gaim_home_dir */
+		const char *newenv = g_getenv("GAIMHOME");
+		if (newenv)
+			app_data_dir = g_strdup(newenv);
+		else {
+			app_data_dir = wgaim_get_special_folder(CSIDL_APPDATA);
+			if (!app_data_dir)
+				app_data_dir = g_strdup("C:");
+		}
+		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n",
+			app_data_dir);
+	}
+
 	return app_data_dir;
 }
 
@@ -318,19 +322,6 @@ void wgaim_init(void) {
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 	g_free(newenv);
 
-	/* Set app data dir, used by gaim_home_dir */
-	newenv = (char*) g_getenv("GAIMHOME");
-	if (newenv) {
-		app_data_dir = g_strdup(newenv);
-	} else {
-		app_data_dir = wgaim_get_special_folder(CSIDL_APPDATA);
-		if (!app_data_dir) {
-			app_data_dir = g_strdup("C:");
-		}
-	}
-
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
-
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
@@ -343,6 +334,9 @@ void wgaim_cleanup(void) {
 	WSACleanup();
 
 	g_free(app_data_dir);
+	app_data_dir = NULL;
+
+	libgaimdll_hInstance = NULL;
 }
 
 /* DLL initializer */
