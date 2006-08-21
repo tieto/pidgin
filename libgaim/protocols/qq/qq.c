@@ -176,13 +176,14 @@ static gchar *_qq_status_text(GaimBuddy *b)
 
 	switch(q_bud->status) {
 	case QQ_BUDDY_OFFLINE:
-		g_string_append(status, "My Offline");
+		g_string_append(status, "Offline");
 		break;
 	case QQ_BUDDY_ONLINE_NORMAL:
 		return NULL;
 		break;
+	/* TODO What does this status mean? Labelling it as offline... */
 	case QQ_BUDDY_ONLINE_OFFLINE:
-		g_string_append(status, "Online Offline");
+		g_string_append(status, "Offline");
 		break;
 	case QQ_BUDDY_ONLINE_AWAY:
 		g_string_append(status, "Away");
@@ -193,27 +194,6 @@ static gchar *_qq_status_text(GaimBuddy *b)
 	default:
 		g_string_printf(status, "Unknown-%d", q_bud->status);
 	}	
-	/*
-	switch (q_bud->gender) {
-	case QQ_BUDDY_GENDER_GG:
-		g_string_append(status, " GG");
-		break;
-	case QQ_BUDDY_GENDER_MM:
-		g_string_append(status, " MM");
-		break;
-	case QQ_BUDDY_GENDER_UNKNOWN:
-		g_string_append(status, "^_*");
-		break;
-	default:
-		g_string_append(status, "^_^");
-	}			
-
-	g_string_append_printf(status, " Age: %d", q_bud->age);
-	g_string_append_printf(status, " Client: %04x", q_bud->client_version);
-	having_video = q_bud->comm_flag & QQ_COMM_FLAG_VIDEO;
-	if (having_video)
-		g_string_append(status, " (video)");
-	*/
 
 	ret = status->str;
 	g_string_free(status, FALSE);
@@ -226,15 +206,12 @@ static gchar *_qq_status_text(GaimBuddy *b)
 static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 {
 	qq_buddy *q_bud;
-	/* gchar *country, *country_utf8, *city, *city_utf8; 
-	  guint32 ip_value;
-	 */
 	gchar *ip_str;
 
 	g_return_if_fail(b != NULL);
 
 	q_bud = (qq_buddy *) b->proto_data;
-	/* g_return_if_fail(q_bud != NULL); */
+	g_return_if_fail(q_bud != NULL);
 
 	if (GAIM_BUDDY_IS_ONLINE(b) && q_bud != NULL)
 	{
@@ -248,20 +225,23 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 		g_string_append_printf(tooltip, "\n<b>Age:</b> %d", q_bud->age);
         	switch (q_bud->gender) {
 	        case QQ_BUDDY_GENDER_GG:
-                	g_string_append(tooltip, "\n<b>Gender:</b> GG");
+                	g_string_append(tooltip, "\n<b>Gender:</b> Male");
         	        break;
 	        case QQ_BUDDY_GENDER_MM:
-                	g_string_append(tooltip, "\n<b>Gender:</b> MM");
+                	g_string_append(tooltip, "\n<b>Gender:</b> Female");
         	        break;
 	        case QQ_BUDDY_GENDER_UNKNOWN:
-                	g_string_append(tooltip, "\n<b>Gender:</b> UNKNOWN");
+                	g_string_append(tooltip, "\n<b>Gender:</b> Unknown");
         	        break;
 	        default:
                 	g_string_append_printf(tooltip, "\n<b>Gender:</b> ERROR(%d)", q_bud->gender);
-	        }                       /* switch gender */
+	        }
+		/* For debugging */
+		/*
 		g_string_append_printf(tooltip, "\n<b>Flag:</b> %01x", q_bud->flag1);
 		g_string_append_printf(tooltip, "\n<b>CommFlag:</b> %01x", q_bud->comm_flag);
 	        g_string_append_printf(tooltip, "\n<b>Client:</b> %04x", q_bud->client_version);
+		*/
 	}
 }
 
@@ -476,6 +456,7 @@ static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
 	g_free(prefix);
 }
 
+/* Change your status icon (face) */
 static void _qq_menu_change_face(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
@@ -898,7 +879,7 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 }
 
 /* chat-related (QQ Qun) menu shown up with right-click */
-/* XXX re-enable this
+/* TODO re-enable this
 static GList *_qq_chat_menu(GaimBlistNode *node)
 {
 	GList *m;
@@ -915,7 +896,7 @@ static GList *_qq_chat_menu(GaimBlistNode *node)
 }
 */
 /* buddy-related menu shown up with right-click */
-/* XXX re-enable this
+/* TODO re-enable this
 static GList *_qq_buddy_menu(GaimBlistNode * node)
 {
 	GList *m;
