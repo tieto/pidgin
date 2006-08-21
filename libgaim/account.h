@@ -56,7 +56,7 @@ struct _GaimAccountUiOps
 struct _GaimAccount
 {
 	char *username;             /**< The username.                          */
-	char *alias;                /**< The current alias.                     */
+	char *alias;                /**< How you appear to yourself.            */
 	char *password;             /**< The account password.                  */
 	char *user_info;            /**< User information.                      */
 
