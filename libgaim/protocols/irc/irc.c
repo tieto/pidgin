@@ -379,14 +379,6 @@ static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc,
 	GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
-	struct irc_conn *irc = gc->proto_data;
-
-	if(!g_list_find(gaim_connections_get_all(), gc)) {
-		gaim_ssl_close(gsc);
-		return;
-	}
-
-	irc->gsc = gsc;
 
 	if (do_login(gc)) {
 		gaim_ssl_input_add(gsc, irc_input_cb_ssl, gc);
