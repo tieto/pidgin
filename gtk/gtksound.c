@@ -55,6 +55,10 @@ struct gaim_sound_event {
 static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
 
+#ifdef USE_GSTREAMER
+static gboolean gst_init_failed;
+#endif /* USE_GSTREAMER */
+
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "login.wav"},
 	{N_("Buddy logs out"), "logout", "logout.wav"},
@@ -261,6 +265,9 @@ gaim_gtk_sound_init(void)
 	void *gtk_sound_handle = gaim_gtk_sound_get_handle();
 	void *blist_handle = gaim_blist_get_handle();
 	void *conv_handle = gaim_conversations_get_handle();
+#ifdef USE_GSTREAMER
+	GError *error = NULL;
+#endif
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gtk_sound_handle, GAIM_CALLBACK(account_signon_cb),
@@ -299,7 +306,16 @@ gaim_gtk_sound_init(void)
 
 #ifdef USE_GSTREAMER
 	gaim_debug_info("sound", "Initializing sound output drivers.\n");
-	gst_init(NULL, NULL);
+	if ((gst_init_failed = !gst_init_check(NULL, NULL, &error))) {
+		gaim_notify_error(NULL, _("GStreamer Failure"),
+					_("GStreamer failed to initialize."),
+					error ? error->message : "");
+		if (error) {
+			g_error_free(error);
+			error = NULL;
+		}
+		return;
+	}
 #endif /* USE_GSTREAMER */
 
 	gaim_signal_connect(blist_handle, "buddy-signed-on",
@@ -332,7 +348,8 @@ static void
 gaim_gtk_sound_uninit(void)
 {
 #ifdef USE_GSTREAMER
-	gst_deinit();
+	if (!gst_init_failed)
+		gst_deinit();
 #endif
 
 	gaim_signals_disconnect_by_handle(gaim_gtk_sound_get_handle());
@@ -428,6 +445,8 @@ gaim_gtk_sound_play_file(const char *filename)
 		return;
 	}
 #ifdef USE_GSTREAMER
+	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
+		return;
 	volume = (float)(CLAMP(gaim_prefs_get_int("/gaim/gtk/sound/volume"),0,100)) / 50;
 	if (!strcmp(method, "automatic")) {
 		if (gaim_running_gnome()) {
