@@ -163,7 +163,7 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	MsnSoapConn *soapconn;
 	MsnNexus * nexus;
 	MsnSession *session;
-	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
+	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf,*fs;
 	char *username, *password;
 	char *request_str, *head, *tail,*challenge_str;
 
@@ -187,6 +187,7 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	lc =	(char *)g_hash_table_lookup(nexus->challenge_data, "lc");
 	id =	(char *)g_hash_table_lookup(nexus->challenge_data, "id");
 	tw =	(char *)g_hash_table_lookup(nexus->challenge_data, "tw");
+	fs =	(char *)g_hash_table_lookup(nexus->challenge_data, "fs");
 	ru =	(char *)g_hash_table_lookup(nexus->challenge_data, "ru");
 	ct =	(char *)g_hash_table_lookup(nexus->challenge_data, "ct");
 	kpp=	(char *)g_hash_table_lookup(nexus->challenge_data, "kpp");
@@ -206,10 +207,14 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		return;
 	}
 
+	if(!fs){
+		fs =g_strdup_printf("1");
+	}
 	challenge_str = g_strdup_printf(
-		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=1&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
-		lc,id,tw,ru,ct,kpp,kv,ver,rn,tpf
+		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
+		lc,id,tw,fs,ru,ct,kpp,kv,ver,rn,tpf
 		);
+	g_free(fs);
 
 	/*build the SOAP windows Live ID XML body */
 	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE,username,password,challenge_str	);

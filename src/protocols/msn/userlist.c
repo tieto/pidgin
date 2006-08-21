@@ -90,16 +90,13 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 	pa->friendly = g_strdup(friendly);
 	pa->gc = gc;
 
-	if (friendly != NULL)
-	{
+	if (friendly != NULL){
 		msg = g_strdup_printf(
 				   _("The user %s (%s) wants to add %s to his or her "
 					 "buddy list."),
 				   passport, friendly,
 				   gaim_account_get_username(gc->account));
-	}
-	else
-	{
+	}else{
 		msg = g_strdup_printf(
 				   _("The user %s wants to add %s to his or "
 					 "her buddy list."),
