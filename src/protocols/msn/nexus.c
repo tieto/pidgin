@@ -208,13 +208,15 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 
 	if(!fs){
-		fs =g_strdup_printf("1");
+		fs =g_strdup("1");
 	}
 	challenge_str = g_strdup_printf(
 		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
 		lc,id,tw,fs,ru,ct,kpp,kv,ver,rn,tpf
 		);
-	g_free(fs);
+	if(!fs){
+		g_free(fs);
+	}
 
 	/*build the SOAP windows Live ID XML body */
 	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE,username,password,challenge_str	);
