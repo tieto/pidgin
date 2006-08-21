@@ -1,4 +1,4 @@
-#include <panel.h>
+#include <ncursesw/panel.h>
 
 #include "gnt.h"
 #include "gntbox.h"

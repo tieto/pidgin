@@ -360,7 +360,7 @@ gg_chat_add_users(GaimConversation *conv, GList *users, gboolean new_arrivals)
 static void
 gg_chat_rename_user(GaimConversation *conv, const char *old, const char *new_n, const char *new_a)
 {
-	/* XXX: Update the name for string completion */
+	/* Update the name for string completion */
 	GGConv *ggc = conv->ui_data;
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
 	gnt_entry_remove_suggest(entry, old);
@@ -371,7 +371,7 @@ gg_chat_rename_user(GaimConversation *conv, const char *old, const char *new_n, 
 static void
 gg_chat_remove_user(GaimConversation *conv, GList *list)
 {
-	/* XXX: Remove the name from string completion */
+	/* Remove the name from string completion */
 	GGConv *ggc = conv->ui_data;
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
 	for (; list; list = list->next)

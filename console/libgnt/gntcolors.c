@@ -40,7 +40,7 @@ void gnt_init_colors()
 	{
 		backup_colors();
 
-		/* XXX: Do some init_color()s */
+		/* Do some init_color()s */
 		init_color(GNT_COLOR_BLACK, 0, 0, 0);
 		init_color(GNT_COLOR_RED, 1000, 0, 0);
 		init_color(GNT_COLOR_GREEN, 0, 1000, 0);
@@ -115,8 +115,9 @@ void gnt_colors_parse(GKeyFile *kfile)
 
 	if (error)
 	{
-		/* XXX: some error happened. */
+		g_printerr("GntColors: %s\n", error->message);
 		g_error_free(error);
+		error = NULL;
 	}
 	else
 	{
@@ -156,7 +157,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 
 	if (error)
 	{
-		/* XXX: some error happened. */
+		g_printerr("GntColors: %s\n", error->message);
 		g_error_free(error);
 		return;
 	}

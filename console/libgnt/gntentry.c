@@ -304,7 +304,6 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				return TRUE;
 			}
 		}
-		/* XXX: handle other keys, like home/end, and ctrl+ goodness */
 		else if (text[1] == 0)
 		{
 			destroy_suggest(entry);
