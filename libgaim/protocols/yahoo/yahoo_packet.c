@@ -113,7 +113,8 @@ size_t yahoo_packet_length(struct yahoo_packet *pkt)
 void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 {
 	int pos = 0;
-	char key[64], *delimiter;
+	char key[64];
+	const guchar *delimiter;
 	gboolean accept;
 	int x;
 	struct yahoo_pair *pair;
@@ -160,7 +161,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		}
 
 		if (accept) {
-			delimiter = strstr((char *)&data[pos], "\xc0\x80");
+			delimiter = (const guchar *)strstr((char *)&data[pos], "\xc0\x80");
 			if (delimiter == NULL)
 			{
 				/* Malformed packet! (it doesn't end in 0xc0 0x80) */
@@ -168,7 +169,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 				pos = len;
 				continue;
 			}
-			x = (guint64)delimiter - (guint64)data;
+			x = delimiter - data;
 			pair->value = g_strndup((const gchar *)&data[pos], x - pos);
 			pos = x;
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
