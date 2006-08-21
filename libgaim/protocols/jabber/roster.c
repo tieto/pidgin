@@ -325,9 +325,7 @@ void jabber_roster_alias_change(GaimConnection *gc, const char *name, const char
 	GaimBuddy *b = gaim_find_buddy(gc->account, name);
 	char *a;
 
-	a = g_strdup(alias);
 	gaim_blist_alias_buddy(b, a);
-	g_free(a);
 
 	jabber_roster_update(gc->proto_data, name, NULL);
 }
