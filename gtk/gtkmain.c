@@ -640,18 +640,6 @@ int main(int argc, char *argv[])
 	gtk_rc_add_default_file(search_path);
 	g_free(search_path);
 
-#if (defined(G_THREADS_ENABLED) && !defined(G_THREADS_IMPL_NONE))
-	/* Since threads can be yanked in all unawares by other libraries,
-	 * and some libraries aren't smart enough to initialize the thread
-	 * subsystem when they need it, we need to do this here.  We also
-	 * threadify dbus when that gets initialized.  Ugh. */
-	if (!g_thread_supported())
-		g_thread_init(NULL);
-#ifndef _WIN32
-	gdk_threads_init();
-#endif
-#endif /* Glib has threads */
-
 	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
 		char *display = gdk_get_display();
