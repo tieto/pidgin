@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <unistd.h>
+#include <signal.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -59,6 +60,8 @@ static GHashTable *nodes;
 static void free_node(gpointer data);
 static void draw_taskbar(gboolean reposition);
 static void bring_on_top(GntWidget *widget);
+
+static gboolean refresh_screen();
 
 static gboolean
 update_screen(gpointer null)
@@ -572,17 +575,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				}
 				else if (strcmp(buffer + 1, "l") == 0)
 				{
-					update_screen(NULL);
-					werase(stdscr);
-					wrefresh(stdscr);
-
-					X_MAX = getmaxx(stdscr);
-					Y_MAX = getmaxy(stdscr) - 1;
-
-					g_hash_table_foreach(nodes, (GHFunc)refresh_node, NULL);
-
-					update_screen(NULL);
-					draw_taskbar(TRUE);
+					refresh_screen();
 				}
 				else if (strlen(buffer) == 2 && isdigit(*(buffer + 1)))
 				{
@@ -716,10 +709,40 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		}
 	}
 
-	refresh();
-
 	return TRUE;
 }
+
+static gboolean
+refresh_screen()
+{
+	endwin();
+	refresh();
+
+	X_MAX = getmaxx(stdscr);
+	Y_MAX = getmaxy(stdscr) - 1;
+
+	g_hash_table_foreach(nodes, (GHFunc)refresh_node, NULL);
+	update_screen(NULL);
+	draw_taskbar(TRUE);
+
+	return FALSE;
+}
+
+#ifdef SIGWINCH
+static void
+sighandler(int sig)
+{
+	if (sig == SIGWINCH)
+	{
+		werase(stdscr);
+		wrefresh(stdscr);
+
+		g_idle_add(refresh_screen, NULL);
+	}
+
+	signal(SIGWINCH, sighandler);
+}
+#endif
 
 void gnt_init()
 {
@@ -779,6 +802,10 @@ void gnt_init()
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(stdscr);
 	wrefresh(stdscr);
+
+#ifdef SIGWINCH
+	signal(SIGWINCH, sighandler);
+#endif
 
 	g_type_init();
 }
