@@ -89,22 +89,17 @@ dns_main_thread_cb(gpointer data)
 	return FALSE;
 }
 
+#ifdef HAVE_GETADDRINFO
 static gpointer
 dns_thread(gpointer data)
 {
 	GaimDnsQueryData *query_data;
-#ifdef HAVE_GETADDRINFO
 	int rc;
 	struct addrinfo hints, *res, *tmp;
 	char servname[20];
-#else
-	struct sockaddr_in sin;
-	struct hostent *hp;
-#endif
 
 	query_data = data;
 
-#ifdef HAVE_GETADDRINFO
 	g_snprintf(servname, sizeof(servname), "%d", query_data->port);
 	memset(&hints,0,sizeof(hints));
 
@@ -129,27 +124,13 @@ dns_thread(gpointer data)
 	} else {
 		query_data->error_message = g_strdup_printf(_("Error resolving %s: %s"), query_data->hostname, gai_strerror(rc));
 	}
-#else
-	if ((hp = gethostbyname(query_data->hostname))) {
-		memset(&sin, 0, sizeof(struct sockaddr_in));
-		memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
-		sin.sin_family = hp->h_addrtype;
-		sin.sin_port = htons(query_data->port);
 
-		query_data->hosts = g_slist_append(query_data->hosts,
-				GSIZE_TO_POINTER(sizeof(sin)));
-		query_data->hosts = g_slist_append(query_data->hosts,
-				g_memdup(&sin, sizeof(sin)));
-	} else {
-		query_data->error_message = g_strdup_printf(_("Error resolving %s: %d"), query_data->hostname, h_errno);
-	}
-#endif
-
-	/* back to main thread */
+	/* We're done, tell the main thread to look at our results */
 	g_idle_add(dns_main_thread_cb, query_data);
 
 	return 0;
 }
+#endif
 
 static gboolean
 resolve_host(gpointer data)
@@ -176,6 +157,7 @@ resolve_host(gpointer data)
 	}
 	else
 	{
+#ifdef HAVE_GETADDRINFO
 		/*
 		 * Spin off a separate thread to perform the DNS lookup so
 		 * that we don't block the UI.
@@ -190,6 +172,34 @@ resolve_host(gpointer data)
 			g_error_free(err);
 			gaim_dnsquery_failed(query_data, message);
 		}
+#else
+		struct sockaddr_in sin;
+		struct hostent *hp;
+
+		/*
+		 * gethostbyname() is not threadsafe, but gethostbyname_r() is a GNU
+		 * extension.  Unfortunately this means that we'll have to do a
+		 * blocking DNS query for systems without GETADDRINFO.  Fortunately
+		 * this should be a very small number of systems.
+		 */
+
+		if ((hp = gethostbyname(query_data->hostname))) {
+			memset(&sin, 0, sizeof(struct sockaddr_in));
+			memcpy(&sin.sin_addr.s_addr, hp->h_addr, hp->h_length);
+			sin.sin_family = hp->h_addrtype;
+			sin.sin_port = htons(query_data->port);
+
+			query_data->hosts = g_slist_append(query_data->hosts,
+					GSIZE_TO_POINTER(sizeof(sin)));
+			query_data->hosts = g_slist_append(query_data->hosts,
+					g_memdup(&sin, sizeof(sin)));
+		} else {
+			query_data->error_message = g_strdup_printf(_("Error resolving %s: %d"), query_data->hostname, h_errno);
+		}
+
+		/* We're done! */
+		dns_main_thread(query_data);
+#endif
 	}
 
 	return FALSE;
