@@ -73,7 +73,7 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 	qd = (qq_data *) gc->proto_data;
 
 	i = 0;
-	bytes += read_packet_b(data, cursor, len, &search_type);
+	read_packet_b(data, cursor, len, &search_type);
 	group = g_newa(qq_group, 1);
 
 	/* now it starts with group_info_entry */
