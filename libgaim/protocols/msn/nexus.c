@@ -45,6 +45,9 @@ msn_nexus_new(MsnSession *session)
 void
 msn_nexus_destroy(MsnNexus *nexus)
 {
+	if (nexus->gsc)
+		gaim_ssl_close(nexus->gsc);
+
 	g_free(nexus->login_host);
 
 	g_free(nexus->login_path);
@@ -99,7 +102,7 @@ nexus_write_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len <= 0) {
 		gaim_input_remove(nexus->input_handler);
-		nexus->input_handler = -1;
+		nexus->input_handler = 0;
 		/* TODO: notify of the error */
 		return;
 	}
@@ -109,7 +112,7 @@ nexus_write_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 
 	gaim_input_remove(nexus->input_handler);
-	nexus->input_handler = -1;
+	nexus->input_handler = 0;
 
 	g_free(nexus->write_buf);
 	nexus->write_buf = NULL;
@@ -135,6 +138,8 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	nexus = data;
 	g_return_if_fail(nexus != NULL);
 
+	nexus->gsc = NULL;
+
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
@@ -153,7 +158,8 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	if (nexus->input_handler == -1)
+	if (nexus->input_handler == 0)
+		//TODO: Use gaim_ssl_input_add()?
 		nexus->input_handler = gaim_input_add(nexus->gsc->fd,
 			GAIM_INPUT_READ, nexus_login_written_cb, nexus);
 
@@ -164,7 +170,7 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len < 0) {
 		gaim_input_remove(nexus->input_handler);
-		nexus->input_handler = -1;
+		nexus->input_handler = 0;
 		g_free(nexus->read_buf);
 		nexus->read_buf = NULL;
 		nexus->read_len = 0;
@@ -177,7 +183,7 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 
 	gaim_input_remove(nexus->input_handler);
-	nexus->input_handler = -1;
+	nexus->input_handler = 0;
 
 	gaim_ssl_close(nexus->gsc);
 	nexus->gsc = NULL;
@@ -218,9 +224,9 @@ nexus_login_written_cb(gpointer data, gint source, GaimInputCondition cond)
 		g_free(nexus->login_host);
 		nexus->login_host = g_strdup(location);
 
-		gaim_ssl_connect(session->account, nexus->login_host,
-			GAIM_SSL_DEFAULT_PORT, login_connect_cb,
-			login_error_cb, nexus);
+		nexus->gsc = gaim_ssl_connect(session->account,
+				nexus->login_host, GAIM_SSL_DEFAULT_PORT,
+				login_connect_cb, login_error_cb, nexus);
 	}
 	else if (strstr(nexus->read_buf, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
@@ -320,8 +326,6 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	nexus->gsc = gsc;
-
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username =
@@ -393,7 +397,8 @@ nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	char *da_login;
 	char *base, *c;
 
-	if (nexus->input_handler == -1)
+	if (nexus->input_handler == 0)
+		//TODO: Use gaim_ssl_input_add()?
 		nexus->input_handler = gaim_input_add(nexus->gsc->fd,
 			GAIM_INPUT_READ, nexus_connect_written_cb, nexus);
 
@@ -404,7 +409,7 @@ nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len < 0) {
 		gaim_input_remove(nexus->input_handler);
-		nexus->input_handler = -1;
+		nexus->input_handler = 0;
 		g_free(nexus->read_buf);
 		nexus->read_buf = NULL;
 		nexus->read_len = 0;
@@ -417,7 +422,7 @@ nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 
 	gaim_input_remove(nexus->input_handler);
-	nexus->input_handler = -1;
+	nexus->input_handler = 0;
 
 	base = strstr(nexus->read_buf, "PassportURLs");
 
@@ -451,12 +456,11 @@ nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
 	nexus->read_len = 0;
 
 	gaim_ssl_close(nexus->gsc);
-	nexus->gsc = NULL;
 
 	/* Now begin the connection to the login server. */
-	gaim_ssl_connect(nexus->session->account, nexus->login_host,
-		GAIM_SSL_DEFAULT_PORT, login_connect_cb, login_error_cb,
-		nexus);
+	nexus->gsc = gaim_ssl_connect(nexus->session->account,
+			nexus->login_host, GAIM_SSL_DEFAULT_PORT,
+			login_connect_cb, login_error_cb, nexus);
 }
 
 
@@ -477,8 +481,6 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	nexus->gsc = gsc;
-
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
 
 	nexus->write_buf = g_strdup("GET /rdr/pprdr.asp\r\n\r\n");
@@ -497,7 +499,7 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 void
 msn_nexus_connect(MsnNexus *nexus)
 {
-	gaim_ssl_connect(nexus->session->account, "nexus.passport.com",
-		GAIM_SSL_DEFAULT_PORT, nexus_connect_cb,
-		login_error_cb, nexus);
+	nexus->gsc = gaim_ssl_connect(nexus->session->account,
+			"nexus.passport.com", GAIM_SSL_DEFAULT_PORT,
+			nexus_connect_cb, login_error_cb, nexus);
 }
