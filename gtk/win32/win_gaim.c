@@ -409,14 +409,25 @@ static void wgaim_set_locale() {
 	putenv(envstr);
 }
 
+#define WM_FOCUS_REQUEST (WM_APP + 13)
+
 static BOOL wgaim_set_running() {
 	HANDLE h;
 
 	if ((h = CreateMutex(NULL, FALSE, "gaim_is_running"))) {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
+			HWND msg_win;
+
+			if((msg_win = FindWindow(TEXT("WingaimMsgWinCls"), NULL)))
+				if(SendMessage(msg_win, WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
+					return FALSE;
+
+			/* If we get here, the focus request wasn't successful */
+
 			MessageBox(NULL,
 				"An instance of Gaim is already running",
 				NULL, MB_OK | MB_TOPMOST);
+
 			return FALSE;
 		}
 	}

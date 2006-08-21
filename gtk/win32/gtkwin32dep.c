@@ -53,6 +53,7 @@
  */
 HINSTANCE gaimexe_hInstance = 0;
 HINSTANCE gtkgaimdll_hInstance = 0;
+HWND messagewin_hwnd;
 
 /*
  *  PUBLIC CODE
@@ -70,19 +71,19 @@ int gtkwgaim_gz_decompress(const char* in, const char* out) {
 
 	if((fin = gzopen(in, "rb"))) {
 		if(!(fout = g_fopen(out, "wb"))) {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error opening file: %s\n", out);
+			gaim_debug_error("gtkwgaim_gz_decompress", "Error opening file: %s\n", out);
 			gzclose(fin);
 			return 0;
 		}
 	}
 	else {
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "gzopen failed to open: %s\n", in);
+		gaim_debug_error("gtkwgaim_gz_decompress", "gzopen failed to open: %s\n", in);
 		return 0;
 	}
 
 	while((ret = gzread(fin, buf, 1024))) {
 		if(fwrite(buf, 1, ret, fout) < ret) {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "Error writing %d bytes to file\n", ret);
+			gaim_debug_error("wgaim_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
 			fclose(fout);
 			return 0;
@@ -92,7 +93,7 @@ int gtkwgaim_gz_decompress(const char* in, const char* out) {
 	gzclose(fin);
 
 	if(ret < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_decompress", "gzread failed while reading: %s\n", in);
+		gaim_debug_error("gtkwgaim_gz_decompress", "gzread failed while reading: %s\n", in);
 		return 0;
 	}
 
@@ -109,14 +110,14 @@ int gtkwgaim_gz_untar(const char* filename, const char* destdir) {
 		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
 			ret = 1;
 		else {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failure untaring %s\n", tmpfile);
+			gaim_debug_error("gtkwgaim_gz_untar", "Failure untaring %s\n", tmpfile);
 			ret = 0;
 		}
 		g_unlink(tmpfile);
 		return ret;
 	}
 	else {
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failed to gz decompress %s\n", filename);
+		gaim_debug_error("gtkwgaim_gz_untar", "Failed to gz decompress %s\n", filename);
 		return 0;
 	}
 }
@@ -141,9 +142,8 @@ void gtkwgaim_notify_uri(const char *uri) {
 		wsinfo.nShow = SW_SHOWNORMAL;
 		wsinfo.lpClass = L"http";
 
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim_notify_uri", "The wide uri is %s\n", uri);
 		if(!ShellExecuteExW(&wsinfo))
-			gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
+			gaim_debug_error("gtkwgaim", "Error opening URI: %s error: %d\n",
 				uri, (int) wsinfo.hInstApp);
 
 		g_free(w_uri);
@@ -162,12 +162,59 @@ void gtkwgaim_notify_uri(const char *uri) {
 		sinfo.lpClass = "http";
 
 		if(!ShellExecuteExA(&sinfo))
-			gaim_debug_error("wgaim", "Error opening URI: %s error: %d\n",
+			gaim_debug_error("gtkwgaim", "Error opening URI: %s error: %d\n",
 				uri, (int) sinfo.hInstApp);
 
 		g_free(locale_uri);
 	}
 }
+
+#define WM_FOCUS_REQUEST (WM_APP + 13)
+
+static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+
+	if (msg == WM_FOCUS_REQUEST) {
+		gaim_debug_info("gtkwgaim", "Got external Buddy List focus request.");
+		gaim_blist_set_visible(TRUE);
+		return TRUE;
+	}
+
+	return DefWindowProc(hwnd, msg, wparam, lparam);
+}
+
+static HWND wgaim_message_window_init(void) {
+	HWND win_hwnd;
+	WNDCLASSEX wcx;
+	LPCTSTR wname;
+
+	wname = TEXT("WingaimMsgWinCls");
+
+	wcx.cbSize = sizeof(wcx);
+	wcx.style = 0;
+	wcx.lpfnWndProc = message_window_handler;
+	wcx.cbClsExtra = 0;
+	wcx.cbWndExtra = 0;
+	wcx.hInstance = gtkwgaim_hinstance();
+	wcx.hIcon = NULL;
+	wcx.hCursor = NULL;
+	wcx.hbrBackground = NULL;
+	wcx.lpszMenuName = NULL;
+	wcx.lpszClassName = wname;
+	wcx.hIconSm = NULL;
+
+	RegisterClassEx(&wcx);
+
+	/* Create the window */
+	if(!(win_hwnd = CreateWindow(wname, TEXT("WingaimMsgWin"), 0, 0, 0, 0, 0,
+			NULL, NULL, gtkwgaim_hinstance(), 0))) {
+		gaim_debug_error("gtkwgaim",
+			"Unable to create message window.\n");
+		return NULL;
+	}
+
+	return win_hwnd;
+}
+
 
 void gtkwgaim_init(HINSTANCE hint) {
 	gaim_debug_info("gtkwgaim", "gtkwgaim_init start\n");
@@ -176,19 +223,24 @@ void gtkwgaim_init(HINSTANCE hint) {
 
 	/* IdleTracker Initialization */
 	if(!wgaim_set_idlehooks())
-			gaim_debug(GAIM_DEBUG_ERROR, "gtkwgaim", "Failed to initialize idle tracker\n");
+			gaim_debug_error("gtkwgaim", "Failed to initialize idle tracker\n");
 
 	wgaim_gtkspell_init();
 	gaim_debug_info("gtkwgaim", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
-	gaim_debug(GAIM_DEBUG_INFO, "gtkwgaim", "gtkwgaim_init end\n");
+	messagewin_hwnd = wgaim_message_window_init();
+
+	gaim_debug_info("gtkwgaim", "gtkwgaim_init end\n");
 }
 
 /* Windows Cleanup */
 
 void gtkwgaim_cleanup(void) {
-	gaim_debug(GAIM_DEBUG_INFO, "gtkwgaim", "gtkwgaim_cleanup\n");
+	gaim_debug_info("gtkwgaim", "gtkwgaim_cleanup\n");
+
+	if(messagewin_hwnd)
+		DestroyWindow(messagewin_hwnd);
 
 	/* Idle tracker cleanup */
 	wgaim_remove_idlehooks();
