@@ -1,4 +1,5 @@
 gaim.desktop.in
+plugins/cap/cap.c
 plugins/ciphertest.c
 plugins/contact_priority.c
 plugins/crazychat/cc_gaim_plugin.c

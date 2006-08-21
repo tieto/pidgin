@@ -1,4 +1,4 @@
-DIST_SUBDIRS = docklet gevolution gestures musicmessaging ticker
+DIST_SUBDIRS = cap docklet gevolution gestures musicmessaging ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -8,7 +8,12 @@ if ENABLE_DBUS
 MUSICMESSAGING_DIR = musicmessaging
 endif
 
+if ENABLE_CAP
+CAP_DIR = cap
+endif
+
 SUBDIRS = \
+	$(CAP_DIR) \
 	docklet \
 	$(GEVOLUTION_DIR) \
 	gestures \

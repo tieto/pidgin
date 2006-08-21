@@ -1,0 +1,27 @@
+Contact Availability Prediction
+Google Summer of Code 2006
+Student: Geoffrey Foster
+Mentor: Mark Doliner
+
+The Contact Availability Prediction plugin (CAP) attempts to provide feedback as to the availability of buddies in your buddy list beyond that of their status. It gathers various bits of information as you use Gaim (and the plugin is running) and provides a "Response Probability" value between 0.0 and 1.0. For those new to probability a value of 0 means 0% chance and 1 means 100% chance.
+
+Currently the probability value is only displayed in the tooltip of a buddy but in future graphs will be available showing usage patterns.
+
+In order to build CAP libdbi (http://libdbi.sourceforge.net) version 0.8.1 and the MySQL driver (http://libdbi-drivers.sourceforge.net) version 0.8.x are required to build and use the plugin. The --enable-cap option must also be set during the configure phase of building. At the moment MySQL is the only database backend that can be used but this will later be extended to both Postgres and SQLite.
+
+After installation the schema must also be created in the database. Adding code to automate this is on my todo list but executing the following command in the directory containing cap-mysql.sql will produce the correct tables in the desired database.
+	mysql -u username -p database < cap-mysql.sql
+
+Preferences: I currently don't have the best names for configuration options so they might require more explanation.
+* Maximum response timeout
+	This value is how much time will be allowed to pass after you message a buddy while waiting for a response from them. If from the time you message them to that time plus maximum response timeout value they have not yet responded to you a failure is logged. If they do respond within that timeframe then a success is logged.
+	
+* Maximum last-seen difference
+	This value is not currently used but will be used at a later date to prevent useless data from being recorded.
+
+* Threshold
+	This is how many minutes before and after the current time should be looked at when computing a buddies response probability. The larger the value the more data that is available but the larger the timeframe it will encompass and thus the less accurate the prediction will be. As data collection increases this value can be reduced for more fine tuned statistics.
+	
+Note: I realize the preferences UI sucks and needs to be straightened up.
+
+Bugs and Feedback are appreciated and may be sent to g-off_ at users.sourceforge.net.

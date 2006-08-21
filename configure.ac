@@ -519,6 +519,7 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support])], , enable_mono=no)
+AC_ARG_ENABLE(cap, [AC_HELP_STRING([--enable-cap], [compile with Contact Availability Prediction Plugin])], , enable_cap=no)
 AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
 AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
 AC_ARG_ENABLE(tcl, [AC_HELP_STRING([--disable-tcl], [compile without Tcl scripting])], , enable_tcl=yes)
@@ -973,6 +974,18 @@ AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtk" = "xyes")
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
 
 GC_TM_GMTOFF
+
+dnl #######################################################################
+dnl # Contact Availability Prediction (CAP)
+dnl #######################################################################
+if test "x$enable_cap" = "xyes"; then
+	AC_CHECK_HEADERS(dbi/dbi.h, [], enable_cap=no)
+fi
+if test "x$enable_cap" = "xyes"; then
+	AC_CHECK_LIB(dbi, dbi_result_field_is_null, [CAP_LIBS="-ldbi"], [enable_cap=no])
+fi
+AC_SUBST(CAP_LIBS)
+AM_CONDITIONAL(ENABLE_CAP, test "x$enable_cap" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Mono support
@@ -1819,6 +1832,7 @@ AC_OUTPUT([Makefile
 		   gtk/pixmaps/status/Makefile
 		   gtk/pixmaps/status/default/Makefile
 		   gtk/plugins/Makefile
+		   gtk/plugins/cap/Makefile
 		   gtk/plugins/docklet/Makefile
 		   gtk/plugins/gevolution/Makefile
 		   gtk/plugins/gestures/Makefile
