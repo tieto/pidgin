@@ -469,6 +469,65 @@ static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 	}
 }
 
+static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GHashTable *ht;
+	char *grp = NULL;
+	char *norm_bud = NULL;
+
+	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+		YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
+		                       /* But what if you had no friends? */
+		GaimBuddy *b;
+		GaimGroup *g;
+
+
+		l = l->next;
+
+		switch (pair->key) {
+		case 302: /* what is this? it's always 318 before a group, 319 before a s/n */
+		case 300: /* ditto */
+			break;
+		case 65: /* This is the group */
+			g_free(grp);
+			grp = yahoo_string_decode(gc, pair->value, FALSE);
+			break;
+		case 7: /* buddy's s/n */
+			g_free(norm_bud);
+			norm_bud = g_strdup(gaim_normalize(account, pair->value));
+			f = yahoo_friend_find_or_new(gc, norm_bud);
+			if (!(b = gaim_find_buddy(account, norm_bud))) {
+				if (!(g = gaim_find_group(grp))) {
+					g = gaim_group_new(grp);
+					gaim_blist_add_group(g, NULL);
+				}
+				b = gaim_buddy_new(account, norm_bud, NULL);
+				gaim_blist_add_buddy(b, NULL, g, NULL);
+			}
+			yahoo_do_group_check(account, ht, norm_bud, grp);
+
+			break;
+		case 241: /* msn user */
+			if (f && *pair->value == '1')
+				f->msn = TRUE;
+			break;
+		/* case 242: */ /* this seems related to 241 */
+			/* break; */
+		}
+	}
+
+	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
+	g_hash_table_destroy(ht);
+	g_free(grp);
+	g_free(norm_bud);
+}
+
 static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
@@ -1710,6 +1769,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 			yahoo_process_auth_old(gc, seed);
 			break;
 		case 1:
+		case 2: /* This case seems to work, could probably use testing */
 			yahoo_process_auth_new(gc, seed);
 			break;
 		default:
@@ -2042,6 +2102,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_CHATLOGON:
 	case YAHOO_SERVICE_CHATLOGOFF:
 	case YAHOO_SERVICE_Y6_STATUS_UPDATE:
+	case YAHOO_SERVICE_STATUS_15:
 		yahoo_process_status(gc, pkt);
 		break;
 	case YAHOO_SERVICE_NOTIFY:
@@ -2066,6 +2127,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_LIST:
 		yahoo_process_list(gc, pkt);
+		break;
+	case YAHOO_SERVICE_LIST_15:
+		yahoo_process_list_15(gc, pkt);
 		break;
 	case YAHOO_SERVICE_AUTH:
 		yahoo_process_auth(gc, pkt);
@@ -3121,10 +3185,14 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	gboolean utf8 = TRUE;
 	GaimWhiteboard *wb;
 	int ret = 1;
+	YahooFriend *f = NULL;
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
 	yahoo_packet_hash(pkt, "ss", 1, gaim_connection_get_display_name(gc), 5, who);
+	if ((f = yahoo_friend_find(gc, who)) && f->msn)
+		yahoo_packet_hash_str(pkt, 241, "1");
+
 	if (utf8)
 		yahoo_packet_hash_str(pkt, 97, "1");
 	yahoo_packet_hash_str(pkt, 14, msg2);
