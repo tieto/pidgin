@@ -1663,8 +1663,14 @@ static void
 novell_ssl_connect_error(GaimSslConnection * gsc,
 						 GaimSslErrorType error, gpointer data)
 {
-	gaim_connection_error((GaimConnection *)data,
-						  _("Unable to make SSL connection to server."));
+	GaimConnection *gc;
+	NMUser *user;
+
+	gc = data;
+	user = gc->proto_data;
+	user->conn->ssl_conn->data = NULL;
+
+	gaim_connection_error(gc, _("Unable to make SSL connection to server."));
 }
 
 static void
@@ -1717,7 +1723,6 @@ novell_ssl_connected_cb(gpointer data, GaimSslConnection * gsc,
 		return;
 
 	conn->ssl_conn = g_new0(NMSSLConn, 1);
-	conn->ssl_conn->data = gsc;
 	conn->ssl_conn->read = (nm_ssl_read_cb) gaim_ssl_read;
 	conn->ssl_conn->write = (nm_ssl_write_cb) gaim_ssl_write;
 
@@ -2182,9 +2187,10 @@ novell_login(GaimAccount * account)
 										1, NOVELL_CONNECT_STEPS);
 
 		user->conn->use_ssl = TRUE;
-		if (gaim_ssl_connect(user->client_data, user->conn->addr,
-							 user->conn->port, novell_ssl_connected_cb,
-							 novell_ssl_connect_error, gc) == NULL) {
+		user->conn->ssl_conn->data = gaim_ssl_connect(user->client_data,
+				user->conn->addr, user->conn->port,
+				novell_ssl_connected_cb, novell_ssl_connect_error, gc);
+		if (user->conn->ssl_conn->data == NULL) {
 			gaim_connection_error(gc, _("Error."
 										" SSL support is not installed."));
 		}

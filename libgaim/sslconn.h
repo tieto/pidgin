@@ -92,13 +92,18 @@ extern "C" {
 gboolean gaim_ssl_is_supported(void);
 
 /**
- * Makes a SSL connection to the specified host and port.
+ * Makes a SSL connection to the specified host and port.  The caller
+ * should keep track of the returned value and use it to cancel the
+ * connection, if needed.
  *
  * @param account    The account making the connection.
  * @param host       The destination host.
  * @param port       The destination port.
  * @param func       The SSL input handler function.
- * @param error_func The SSL error handler function.
+ * @param error_func The SSL error handler function.  This function
+ *                   should NOT call gaim_ssl_close().  In the event
+ *                   of an error the GaimSslConnection will be
+ *                   destroyed for you.
  * @param data       User-defined data.
  *
  * @return The SSL connection handle.

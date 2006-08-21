@@ -407,13 +407,6 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 	GaimConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 
-	if(!g_list_find(gaim_connections_get_all(), gc)) {
-		gaim_ssl_close(gsc);
-		return;
-	}
-
-	js->gsc = gsc;
-
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
@@ -450,6 +443,8 @@ jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 	GaimConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 
+	js->gsc = NULL;
+
 	switch(error) {
 		case GAIM_SSL_CONNECT_FAILED:
 			gaim_connection_error(gc, _("Connection Failed"));
@@ -458,8 +453,6 @@ jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 			gaim_connection_error(gc, _("SSL Handshake Failed"));
 			break;
 	}
-
-	js->gsc = NULL;
 }
 
 static void tls_init(JabberStream *js)
