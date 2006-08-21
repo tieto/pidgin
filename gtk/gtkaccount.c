@@ -1095,6 +1095,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *tmp;
 	gboolean new = FALSE, icon_change = FALSE;
 	GaimAccount *account;
+	GaimPluginProtocolInfo *prpl_info;
 
 	if (dialog->account == NULL)
 	{
@@ -1121,20 +1122,28 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	if (new || gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) ==
-	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check))) {
-		icon_change = TRUE;
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+	if ((prpl_info != NULL) && (prpl_info->options & OPT_PROTO_IM_IMAGE))
+	{
+		if (new || gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) ==
+			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
+		{
+			icon_change = TRUE;
+		}
+		gaim_account_set_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
+		gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon", dialog->icon_path);
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
+		{
+			gaim_account_set_buddy_icon(account, dialog->icon_path);
+		}
+		else if (gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon") && icon_change)
+		{
+			char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
+			gaim_account_set_buddy_icon(account, icon);
+			g_free(icon);
+		}
 	}
-	gaim_account_set_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
-	gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon", dialog->icon_path);
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check))) {
-		gaim_account_set_buddy_icon(account, dialog->icon_path);
-	} else if (gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon") && icon_change) {
-		char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
-		gaim_account_set_buddy_icon(account, icon);
-		g_free(icon);
-	}
-		
+
 
 	/* Remember Password */
 	gaim_account_set_remember_password(account,
