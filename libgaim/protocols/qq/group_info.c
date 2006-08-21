@@ -283,7 +283,6 @@ void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint le
 {
 	guint32 internal_group_id, member_uid;
 	guint16 unknown;
-	guint8 bar;
 	gint pascal_len, i;
 	qq_group *group;
 	qq_buddy *member;
@@ -305,8 +304,7 @@ void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint le
 		g_return_if_fail(member != NULL);
 
 		i++;
-		read_packet_b(data, cursor, len, &bar);
-		read_packet_b(data, cursor, len, &(member->icon));
+		read_packet_w(data, cursor, len, &(member->icon));
 		read_packet_b(data, cursor, len, &(member->age));
 		read_packet_b(data, cursor, len, &(member->gender));
 		pascal_len = convert_as_pascal_string(*cursor, &(member->nickname), QQ_CHARSET_DEFAULT);

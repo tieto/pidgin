@@ -120,20 +120,22 @@ gboolean is_online(guint8 status)
 	return FALSE;
 }
 
-/* the icon suffix is detemined by status
- * although QQ server may return the right icon, I set it here myself */
-gchar get_suffix_from_status(guint8 status)
+/* The QQ client seems to use a separate icon for each
+ * face/status combo, but we only use one and let Gaim
+ * handle the rest. We need to use this function to report 
+ * the correct icon file back to the server. */
+gint get_icon_offset_from_self_status(guint8 status)
 {
 	switch (status) {
-	case QQ_BUDDY_ONLINE_NORMAL:
-		return QQ_ICON_SUFFIX_NORMAL;
-	case QQ_BUDDY_ONLINE_AWAY:
-		return QQ_ICON_SUFFIX_AWAY;
-	case QQ_BUDDY_ONLINE_INVISIBLE:
-	case QQ_BUDDY_ONLINE_OFFLINE:
-		return QQ_ICON_SUFFIX_OFFLINE;
+	case QQ_SELF_STATUS_AVAILABLE:
+		return 0;
+	case QQ_SELF_STATUS_AWAY:
+	case QQ_SELF_STATUS_CUSTOM:
+		return 1;
+	case QQ_SELF_STATUS_INVISIBLE:
+		return 2;
 	default:
-		return QQ_ICON_SUFFIX_DEFAULT;
+		return 2;
 	}
 }
 

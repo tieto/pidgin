@@ -147,27 +147,17 @@ static void _qq_close(GaimConnection *gc)
 /* returns the icon name for a buddy or protocol */
 static const gchar *_qq_list_icon(GaimAccount *a, GaimBuddy *b)
 {
-	/* XXX temp commented out until we figure out what to do with
-	 * status icons */
-	/*
 	gchar *filename;
 	qq_buddy *q_bud;
-	gchar icon_suffix;
-	*/
 
 	/* do not use g_return_val_if_fail, as it is not assertion */
 	if (b == NULL || b->proto_data == NULL)
 		return "qq";
 
-	/*
 	q_bud = (qq_buddy *) b->proto_data;
-
-	icon_suffix = get_suffix_from_status(q_bud->status);
-	filename = get_icon_name(q_bud->icon / 3 + 1, icon_suffix);
+	filename = get_icon_name(q_bud->icon / 3 + 1);
 
 	return filename;
-	*/
-	return "qq";
 }
 
 
@@ -282,17 +272,20 @@ static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
 
 	qq_buddy *q_bud = b->proto_data;
         const char *emblems[4] = { NULL, NULL, NULL, NULL };
-        int i = 0;
+        int i = 1;
 
         if (q_bud == NULL) {
                 emblems[0] = "offline";
 	} else {
+		/* TODO the wireless icon is a bit too big to look good with QQ faces */
+		if (q_bud->status == QQ_BUDDY_ONLINE_AWAY || q_bud->status == QQ_SELF_STATUS_AWAY)
+			emblems[i++] = "away";
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 			emblems[i++] = "qq_member";
                 if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
                         emblems[i++] = "wireless";
 		if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
-			emblems[i++] = "video";
+			emblems[i%4] = "video";
 
         }
 
@@ -435,6 +428,85 @@ static void _qq_menu_modify_my_info(GaimPluginAction *action)
 
 	qd = (qq_data *) gc->proto_data;
 	qq_prepare_modify_info(gc);
+}
+
+static void _qq_change_face_cb(GaimConnection *gc, GaimRequestFields *fields)
+{
+	qq_data *qd;
+	GaimRequestField *field;
+	gint suffix;
+	
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	field = gaim_request_fields_get_field(fields, "face_num");
+	suffix = get_icon_offset_from_self_status(qd->status);
+	qd->my_icon = gaim_request_field_choice_get_value(field) * 3 + suffix;
+	qd->modifying_face = TRUE;
+	qq_send_packet_get_info(gc, qd->uid, FALSE);
+}
+
+static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
+{
+	GaimRequestField *field;
+	struct stat img_stat;
+	FILE *file;
+	gchar *filename, *prefix, *img_data, *face;
+	gint size;
+
+	face = g_strdup_printf("qq_%i.png", face_num);
+	prefix = br_extract_prefix(DATADIR);
+	filename = g_build_filename(prefix, "share","pixmaps",
+			"gaim","status","default", face, NULL);
+	g_free(face);
+	face = g_strdup_printf("%i", face_num);
+	stat(filename, &img_stat);
+	file = g_fopen(filename, "rb");
+	if (file) {
+		img_data = g_malloc(img_stat.st_size);
+		size = fread(img_data, 1, img_stat.st_size, file);
+
+		field = gaim_request_field_image_new(face, face, img_data, size);
+		gaim_request_field_group_add_field(group, field);
+
+		g_free(img_data);
+		fclose(file);
+	}
+	g_free(face);
+	g_free(prefix);
+}
+
+static void _qq_menu_change_face(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	qq_data *qd = (qq_data *) gc->proto_data;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+	gchar *label;
+	gint i;
+
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(_("Selection"));
+	gaim_request_fields_add_group(fields, group);
+	field = gaim_request_field_choice_new("face_num",
+		       	_("Select a number"), qd->my_icon / 3);
+	for(i = 1; i <= QQ_FACES; i++) {
+		label = g_strdup_printf("%i", i);
+		gaim_request_field_choice_add(field, label);
+		g_free(label);
+	}
+	gaim_request_field_group_add_field(group, field);
+	group = gaim_request_field_group_new(_("Faces"));
+	gaim_request_fields_add_group(fields, group);
+	for(i = 1; i <= QQ_FACES; i++)
+		_qq_add_face_choice(group, i);
+
+	gaim_request_fields(gc, _("Change Your QQ Face"),
+			_("Change Face"), NULL, fields,
+			_("Update"), G_CALLBACK(_qq_change_face_cb),
+			_("Cancel"), NULL,
+			gc);
 }
 
 static void _qq_menu_change_password(GaimPluginAction *action)
@@ -793,6 +865,9 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 
 	m = NULL;
 	act = gaim_plugin_action_new(_("Modify My Information"), _qq_menu_modify_my_info);
+	m = g_list_append(m, act);
+
+	act = gaim_plugin_action_new(_("Change My Face"), _qq_menu_change_face);
 	m = g_list_append(m, act);
 
 	act = gaim_plugin_action_new(_("Change Password"), _qq_menu_change_password);

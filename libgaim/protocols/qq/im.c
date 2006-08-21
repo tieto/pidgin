@@ -87,8 +87,7 @@ struct _qq_recv_normal_im_text {
 	/* now comes the part for text only */
 	guint16 msg_seq;
 	guint32 send_time;
-	guint8 unknown1;
-	guint8 sender_icon;
+	guint16 sender_icon;
 	guint8 unknown2[3];
 	guint8 is_there_font_attr;
 	guint8 unknown3[4];
@@ -268,8 +267,7 @@ static void _qq_process_recv_normal_im_text
 	/* push data into im_text */
 	read_packet_w(data, cursor, len, &(im_text->msg_seq));
 	read_packet_dw(data, cursor, len, &(im_text->send_time));
-	read_packet_b(data, cursor, len, &(im_text->unknown1));
-	read_packet_b(data, cursor, len, &(im_text->sender_icon));
+	read_packet_w(data, cursor, len, &(im_text->sender_icon));
 	read_packet_data(data, cursor, len, (guint8 *) & (im_text->unknown2), 3);
 	read_packet_b(data, cursor, len, &(im_text->is_there_font_attr));
 	/**
@@ -515,10 +513,8 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	bytes += create_packet_w(raw_data, &cursor, qd->send_seq);
 	/* 038-041: send time */
 	bytes += create_packet_dw(raw_data, &cursor, (guint32) now);
-	/* 042-042: always 0x00 */
-	bytes += create_packet_b(raw_data, &cursor, 0x00);
-	/* 043-043: sender icon */
-	bytes += create_packet_b(raw_data, &cursor, qd->my_icon);
+	/* 042-043: sender icon */
+	bytes += create_packet_w(raw_data, &cursor, qd->my_icon);
 	/* 044-046: always 0x00 */
 	bytes += create_packet_w(raw_data, &cursor, 0x0000);
 	bytes += create_packet_b(raw_data, &cursor, 0x00);

@@ -159,9 +159,9 @@ guint8 *str_ip_gen(gchar *str) {
 
 /* return the QQ icon file name
  * the return needs to be freed */
-gchar *get_icon_name(gint set, gint suffix)
+gchar *get_icon_name(gint set)
 {
-	return g_strdup_printf("qq_%d-%d", set, suffix);
+	return g_strdup_printf("qq_%d", set);
 }
 
 /* convert a QQ UID to a unique name of GAIM

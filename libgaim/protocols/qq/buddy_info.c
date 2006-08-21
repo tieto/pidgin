@@ -282,7 +282,7 @@ static GString *info_to_str(const gchar **info)
 /************************ packets and UI management **************************/
 
 /* send a packet to get detailed information of uid */
-void qq_send_packet_get_info(GaimConnection * gc, guint32 uid, gboolean show_window)
+void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window)
 {
 	qq_data *qd;
 	gchar *uid_str;
@@ -597,6 +597,14 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 			return;
 
 		info = (contact_info *) segments;
+		if (qd->modifying_face && strtol(info->face, NULL, 10) != qd->my_icon) {
+			gchar *icon = g_strdup_printf("%i", qd->my_icon);
+			qd->modifying_face = FALSE;
+			memcpy(info->face, icon, 2);
+			qq_send_packet_modify_info(gc, info);
+			g_free(icon);
+		}
+
 		qq_refresh_buddy_and_myself(info, gc);
 
 		query_list = qd->info_query;

@@ -29,6 +29,7 @@
 #include "proxy.h"
 #include "roomlist.h"
 
+#define QQ_FACES	    100
 #define QQ_KEY_LENGTH       16
 #define QQ_DEBUG            1	/* whether we are doing DEBUG */
 
@@ -37,7 +38,7 @@ typedef struct _qq_buddy qq_buddy;
 
 struct _qq_buddy {
 	guint32 uid;
-	guint8 icon;		/* index: 01 - 85 */
+	guint16 icon;		/* index: 01 - 85 */
 	guint8 age;
 	guint8 gender;
 	gchar *nickname;
@@ -83,7 +84,7 @@ struct _qq_data {
 	/* get from keep_alive packet */
 	gchar *my_ip;			/* my ip address detected by server */
 	guint16 my_port;		/* my port detected by server */
-	guint8 my_icon;			/* my icon index */
+	guint16 my_icon;			/* my icon index */
 	guint32 all_online;		/* the number of online QQ users */
 	time_t last_get_online;		/* last time send get_friends_online packet */
 
@@ -103,7 +104,9 @@ struct _qq_data {
 	GList *add_buddy_request;
 	GQueue *before_login_packets;
 
+	/* TODO is there a better way of handling these? */
 	gboolean modifying_info;
+	gboolean modifying_face;
 };
 
 void qq_function_not_implemented(GaimConnection *gc);

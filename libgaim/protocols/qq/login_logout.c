@@ -229,6 +229,7 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	qq_group_init(gc);
 
 	/* Now goes on updating my icon/nickname, not showing info_window */
+	qd->modifying_face = FALSE;
 	qq_send_packet_get_info(gc, qd->uid, FALSE);
 	/* change my status manually, even server may broadcast my online */
 	qd->status = (qd->login_mode == QQ_LOGIN_MODE_HIDDEN) ? QQ_SELF_STATUS_INVISIBLE : QQ_SELF_STATUS_AVAILABLE;

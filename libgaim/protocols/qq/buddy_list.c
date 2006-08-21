@@ -255,7 +255,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 	qq_buddy *q_bud;
 	gint len, bytes, bytes_expected, i;
 	guint16 position, unknown;
-	guint8 *data, *cursor, bar, pascal_len;
+	guint8 *data, *cursor, pascal_len;
 	gchar *name;
 	GaimBuddy *b;
 
@@ -276,10 +276,8 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 			bytes = 0;
 			/* 000-003: uid */
 			bytes += read_packet_dw(data, &cursor, len, &q_bud->uid);
-			/* 004-004: 0xff if buddy is self, 0x00 otherwise */
-			bytes += read_packet_b(data, &cursor, len, &bar);
-			/* 005-005: icon index (1-255) */
-			bytes += read_packet_b(data, &cursor, len, &q_bud->icon);
+			/* 004-005: icon index (1-255) */
+			bytes += read_packet_w(data, &cursor, len, &q_bud->icon);
 			/* 006-006: age */
 			bytes += read_packet_b(data, &cursor, len, &q_bud->age);
 			/* 007-007: gender */
