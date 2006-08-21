@@ -411,6 +411,8 @@ irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 	GaimConnection *gc = data;
 	struct irc_conn *irc = gc->proto_data;
 
+	irc->gsc = NULL;
+
 	switch(error) {
 		case GAIM_SSL_CONNECT_FAILED:
 			gaim_connection_error(gc, _("Connection Failed"));
@@ -419,8 +421,6 @@ irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 			gaim_connection_error(gc, _("SSL Handshake Failed"));
 			break;
 	}
-
-	irc->gsc = NULL;
 }
 
 static void irc_close(GaimConnection *gc)
