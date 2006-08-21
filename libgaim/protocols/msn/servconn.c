@@ -176,13 +176,15 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 
 	if (servconn->wasted)
 	{
+		if (source >= 0)
+			close(source);
 		msn_servconn_destroy(servconn);
 		return;
 	}
 
 	servconn->fd = source;
 
-	if (source > 0)
+	if (source >= 0)
 	{
 		servconn->connected = TRUE;
 
