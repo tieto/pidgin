@@ -106,11 +106,18 @@ void gg_debug_window_show()
 	gnt_widget_show(debug.window);
 }
 
+static gboolean
+start_with_debugwin(gpointer null)
+{
+	gg_debug_window_show();
+	return FALSE;
+}
+
 void gg_debug_init()
 {
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
 	if (gaim_debug_is_enabled())
-		gg_debug_window_show();
+		g_timeout_add(0, start_with_debugwin, NULL);
 }
 
 void gg_debug_uninit()

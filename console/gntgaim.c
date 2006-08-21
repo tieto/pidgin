@@ -153,7 +153,6 @@ show_usage(const char *name, gboolean terse)
 		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
-	gnt_quit();
 	gaim_print_utf8_to_console(stdout, text);
 	g_free(text);
 }
@@ -304,8 +303,6 @@ int main(int argc, char **argv)
 {
 	/* XXX: Don't puke */
 	freopen(".error", "w", stderr);
-
-	gnt_init();
 
 	/* Initialize the libgaim stuff */
 	if (!init_libgaim(argc, argv))
