@@ -252,8 +252,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 				gaim_conversation_destroy(swboard->conv);
 #endif
 
-			cmdproc->session->conv_seq++;
-			swboard->chat_id = cmdproc->session->conv_seq;
+			swboard->chat_id = cmdproc->session->conv_seq++;
 			swboard->flag |= MSN_SB_FLAG_IM;
 			swboard->conv = serv_got_joined_chat(account->gc,
 												 swboard->chat_id,
