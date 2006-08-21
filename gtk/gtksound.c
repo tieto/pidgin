@@ -314,7 +314,6 @@ gaim_gtk_sound_init(void)
 			g_error_free(error);
 			error = NULL;
 		}
-		return;
 	}
 #endif /* USE_GSTREAMER */
 

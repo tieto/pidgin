@@ -1055,9 +1055,9 @@ icon_choose_cb(const char *filename, gpointer data)
 				if (prplinfo && prplinfo->icon_spec.format) {
 					char *icon = gaim_gtk_convert_buddy_icon(plug, filename);
 					gaim_account_set_buddy_icon(box->account, icon);
-					g_free(icon);
 					gaim_account_set_ui_bool(box->account, GAIM_GTK_UI, "use-global-buddyicon", FALSE);
 					gaim_account_set_ui_string(box->account, GAIM_GTK_UI, "non-global-buddyicon", icon);
+					g_free(icon);
 				}
 			}
 		} else {
