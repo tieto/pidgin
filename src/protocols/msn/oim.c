@@ -196,6 +196,7 @@ msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 	/*we need to process the read message!*/
 	/*get next single Offline Message*/
 //	oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
+	msn_soap_post_head_request(soapconn);
 }
 
 static void

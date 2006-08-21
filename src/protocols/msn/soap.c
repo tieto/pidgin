@@ -26,6 +26,9 @@
 #include "msn.h"
 #include "soap.h"
 
+/*local function prototype*/
+void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
+
 /*setup the soap process step*/
 void
 msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step)
@@ -187,7 +190,6 @@ static gssize
 msn_soap_read(MsnSoapConn *soapconn)
 {
 	gssize len,requested_len;
-	gssize total_len = 0;
 	char temp_buf[MSN_SOAP_READ_BUFF_SIZE];
 
 //	requested_len = (soapconn->need_to_read > 0) ? soapconn->need_to_read : MSN_SOAP_READ_BUFF_SIZE;
@@ -198,7 +200,6 @@ msn_soap_read(MsnSoapConn *soapconn)
 		len = read(soapconn->fd, temp_buf,requested_len);
 	}
 	if(len >0){
-		total_len += len;
 		soapconn->read_buf = g_realloc(soapconn->read_buf,
 						soapconn->read_len + len + 1);
 //		strncpy(soapconn->read_buf + soapconn->read_len, temp_buf, len);
@@ -206,9 +207,9 @@ msn_soap_read(MsnSoapConn *soapconn)
 		soapconn->read_len += len;
 		soapconn->read_buf[soapconn->read_len] = '\0';
 	}
-	gaim_debug_info("MaYuan","++soap ssl read:{%d}\n",total_len);
+	gaim_debug_info("MaYuan","++soap ssl read:{%d}\n",len);
 //	gaim_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
-	return total_len;
+	return len;
 }
 
 /*read the whole SOAP server response*/
@@ -534,7 +535,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	char * soap_head = NULL;
 	char * request_str = NULL;
 
-	gaim_debug_info("MaYuan","msn_soap_post()...\n");
+	gaim_debug_info("MaYuan","msn_soap_post_request()...\n");
 	msn_soap_set_process_step(soapconn,MSN_SOAP_PROCESSING);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
