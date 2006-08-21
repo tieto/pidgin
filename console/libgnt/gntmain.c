@@ -57,7 +57,7 @@ typedef enum
 static GHashTable *nodes;
 
 static void free_node(gpointer data);
-static void draw_taskbar();
+static void draw_taskbar(gboolean reposition);
 static void bring_on_top(GntWidget *widget);
 
 static gboolean
@@ -88,7 +88,7 @@ void gnt_screen_take_focus(GntWidget *widget)
 	gnt_widget_set_focus(widget, TRUE);
 	if (w)
 		gnt_widget_set_focus(w, FALSE);
-	draw_taskbar();
+	draw_taskbar(FALSE);
 }
 
 void gnt_screen_remove_widget(GntWidget *widget)
@@ -112,7 +112,7 @@ void gnt_screen_remove_widget(GntWidget *widget)
 	{
 		bring_on_top(focus_list->data);
 	}
-	draw_taskbar();
+	draw_taskbar(FALSE);
 }
 
 static void
@@ -136,7 +136,7 @@ bring_on_top(GntWidget *widget)
 		top_panel(nd->panel);
 	}
 	update_screen(NULL);
-	draw_taskbar();
+	draw_taskbar(FALSE);
 }
 
 static void
@@ -156,7 +156,7 @@ update_window_in_list(GntWidget *wid)
 }
 
 static void
-draw_taskbar()
+draw_taskbar(gboolean reposition)
 {
 	static WINDOW *taskbar = NULL;
 	GList *iter;
@@ -166,6 +166,10 @@ draw_taskbar()
 	if (taskbar == NULL)
 	{
 		taskbar = newwin(1, getmaxx(stdscr), getmaxy(stdscr) - 1, 0);
+	}
+	else if (reposition)
+	{
+		mvwin(taskbar, Y_MAX, 0);
 	}
 
 	wbkgdset(taskbar, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
@@ -343,7 +347,7 @@ shift_window(GntWidget *widget, int dir)
 	all = g_list_delete_link(all, list);
 	if (focus_list == list)
 		focus_list = g_list_find(all, widget);
-	draw_taskbar();
+	draw_taskbar(FALSE);
 }
 
 static void
@@ -452,6 +456,27 @@ dump_screen()
 	fclose(file);
 }
 
+static void
+refresh_node(GntWidget *widget, GntNode *node, gpointer null)
+{
+	int x, y, w, h;
+	int nw, nh;
+
+	gnt_widget_get_position(widget, &x, &y);
+	gnt_widget_get_size(widget, &w, &h);
+
+	if (x + w >= X_MAX)
+		x = MAX(0, X_MAX - w);
+	if (y + h >= Y_MAX)
+		y = MAX(0, Y_MAX - h);
+	gnt_screen_move_widget(widget, x, y);
+
+	nw = MIN(w, X_MAX);
+	nh = MIN(h, Y_MAX);
+	if (nw != w || nh != h)
+		gnt_screen_resize_widget(widget, nw, nh);
+}
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
@@ -547,11 +572,17 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				}
 				else if (strcmp(buffer + 1, "l") == 0)
 				{
-					touchwin(stdscr);
-					touchwin(newscr);
-					wrefresh(newscr);
 					update_screen(NULL);
-					draw_taskbar();
+					werase(stdscr);
+					wrefresh(stdscr);
+
+					X_MAX = getmaxx(stdscr);
+					Y_MAX = getmaxy(stdscr) - 1;
+
+					g_hash_table_foreach(nodes, (GHFunc)refresh_node, NULL);
+
+					update_screen(NULL);
+					draw_taskbar(TRUE);
 				}
 				else if (strlen(buffer) == 2 && isdigit(*(buffer + 1)))
 				{
@@ -882,7 +913,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 		return;
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
-	draw_taskbar();
+	draw_taskbar(FALSE);
 }
 
 void gnt_quit()
