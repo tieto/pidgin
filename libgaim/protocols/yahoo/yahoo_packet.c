@@ -113,7 +113,7 @@ size_t yahoo_packet_length(struct yahoo_packet *pkt)
 void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 {
 	int pos = 0;
-	char key[64], *delimiter, *esc;
+	char key[64], *delimiter;
 	gboolean accept;
 	int x;
 	struct yahoo_pair *pair;
@@ -174,10 +174,13 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			pkt->hash = g_slist_prepend(pkt->hash, pair);
 
 #ifdef DEBUG
-			esc = g_strescape(pair->value, NULL);
-			gaim_debug(GAIM_DEBUG_MISC, "yahoo",
-					   "Key: %d  \tValue: %s\n", pair->key, esc);
-			g_free(esc);
+			{
+				char *esc;
+				esc = g_strescape(pair->value, NULL);
+				gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+						   "Key: %d  \tValue: %s\n", pair->key, esc);
+				g_free(esc);
+			}
 #endif
 		} else {
 			g_free(pair);

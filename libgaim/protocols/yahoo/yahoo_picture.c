@@ -464,7 +464,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 
 	pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, &pkt_buf);
 	yahoo_packet_free(pkt);
-	g_string_prepend_len(d->str, pkt_buf, pkt_buf_len);
+	g_string_prepend_len(d->str, (char *)pkt_buf, pkt_buf_len);
 	g_free(pkt_buf);
 
 	g_string_prepend(d->str, header);

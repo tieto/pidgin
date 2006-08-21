@@ -2382,7 +2382,7 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 		yd->rxqueue = g_realloc(yd->rxqueue, yd->rxlen + len + 1);
 		memcpy(yd->rxqueue + yd->rxlen, buf, len);
 		yd->rxlen += len;
-		i = buf = yd->rxqueue;
+		i = buf = (char *)yd->rxqueue;
 		len = yd->rxlen;
 	}
 	buf[len] = '\0';
