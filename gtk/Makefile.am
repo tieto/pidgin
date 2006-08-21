@@ -164,7 +164,7 @@ gaim_LDADD = \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
 	$(CAP_LIBS) \
-	-L$(top_srcdir)/libgaim -lgaim
+	-L$(top_builddir)/libgaim -lgaim
 
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \

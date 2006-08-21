@@ -46,7 +46,7 @@ gntgaim_LDADD = \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
 	-L./libgnt/ -lgnt \
-	-L$(top_srcdir)/libgaim -lgaim
+	-L$(top_builddir)/libgaim -lgaim
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
@@ -56,7 +56,8 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libgaim/ \
-	-I ./libgnt/ \
+	-I$(top_srcdir) \
+	-I$(srcdir)/libgnt/ \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \
