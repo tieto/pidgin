@@ -46,7 +46,7 @@ struct bytestreams_streamhost {
 typedef struct _JabberSIXfer {
 	JabberStream *js;
 
-	GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectData *connect_data;
 
 	gboolean accepted;
 
@@ -100,7 +100,7 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	struct bytestreams_streamhost *streamhost = jsx->streamhosts->data;
 
 	gaim_proxy_info_destroy(jsx->gpi);
-	jsx->connect_info = NULL;
+	jsx->connect_data = NULL;
 
 	if(source < 0) {
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
@@ -171,11 +171,11 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 	for(i=0; i<20; i++, p+=2)
 		snprintf(p, 3, "%02x", hashval[i]);
 
-	jsx->connect_info = gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0,
+	jsx->connect_data = gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0,
 			jabber_si_bytestreams_connect_cb, xfer);
 	g_free(dstaddr);
 
-	if (jsx->connect_info == NULL)
+	if (jsx->connect_data == NULL)
 	{
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
 		g_free(streamhost->jid);
@@ -696,8 +696,8 @@ static void jabber_si_xfer_free(GaimXfer *xfer)
 
 	js->file_transfers = g_list_remove(js->file_transfers, xfer);
 
-	if (jsx->connect_info != NULL)
-		gaim_proxy_connect_cancel(jsx->connect_info);
+	if (jsx->connect_data != NULL)
+		gaim_proxy_connect_cancel(jsx->connect_data);
 
 	g_free(jsx->stream_id);
 	g_free(jsx->iq_id);

@@ -161,7 +161,7 @@ struct _PeerConnection
 	/**
 	 * This is only used when the peer connection is being established.
 	 */
-	GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectData *connect_data;
 
 	/**
 	 * This is only used when the peer connection is being established.

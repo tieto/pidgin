@@ -140,17 +140,17 @@ flap_connection_new(OscarData *od, int type)
 void
 flap_connection_close(OscarData *od, FlapConnection *conn)
 {
-	if (conn->connect_info != NULL)
+	if (conn->connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->connect_info);
-		conn->connect_info = NULL;
+		gaim_proxy_connect_cancel(conn->connect_data);
+		conn->connect_data = NULL;
 	}
 
 	if (conn->connect_data != NULL)
 	{
 		if (conn->type == SNAC_FAMILY_CHAT)
 		{
-			oscar_chat_destroy(conn->connect_data);
+			oscar_chat_destroy(conn->new_conn_data);
 			conn->connect_data = NULL;
 		}
 	}

@@ -63,7 +63,7 @@ struct _MsnServConn
 	MsnSession *session;  /**< The MSN session of this connection. */
 	MsnCmdProc *cmdproc;  /**< The command processor of this connection. */
 
-	GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectData *connect_data;
 
 	gboolean connected;   /**< A flag that states if it's connected. */
 	gboolean processing;  /**< A flag that states if something is working

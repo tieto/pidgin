@@ -56,7 +56,7 @@ typedef struct
 
 } GaimProxyInfo;
 
-typedef struct _GaimProxyConnectInfo GaimProxyConnectInfo;
+typedef struct _GaimProxyConnectData GaimProxyConnectData;
 
 typedef void (*GaimProxyConnectFunction)(gpointer data, gint source, const gchar *error_message);
 
@@ -237,7 +237,7 @@ GaimProxyInfo *gaim_proxy_get_setup(GaimAccount *account);
  *         structure that can be used to cancel the pending
  *         connection, if needed.
  */
-GaimProxyConnectInfo *gaim_proxy_connect(GaimAccount *account,
+GaimProxyConnectData *gaim_proxy_connect(GaimAccount *account,
 			const char *host, int port,
 			GaimProxyConnectFunction connect_cb, gpointer data);
 
@@ -257,7 +257,7 @@ GaimProxyConnectInfo *gaim_proxy_connect(GaimAccount *account,
  *         structure that can be used to cancel the pending
  *         connection, if needed.
  */
-GaimProxyConnectInfo *gaim_proxy_connect_socks5(GaimProxyInfo *gpi,
+GaimProxyConnectData *gaim_proxy_connect_socks5(GaimProxyInfo *gpi,
 			const char *host, int port,
 			GaimProxyConnectFunction connect_cb, gpointer data);
 
@@ -270,7 +270,7 @@ GaimProxyConnectInfo *gaim_proxy_connect_socks5(GaimProxyInfo *gpi,
  * attempt early rather than just letting the OS's TCP/IP stack
  * time-out the connection.
  */
-void gaim_proxy_connect_cancel(GaimProxyConnectInfo *connect_info);
+void gaim_proxy_connect_cancel(GaimProxyConnectData *connect_data);
 
 /*@}*/
 

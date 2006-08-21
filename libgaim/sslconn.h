@@ -54,7 +54,7 @@ struct _GaimSslConnection
 
 	int fd;
 	int inpa;
-	GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectData *connect_data;
 
 	void *private_data;
 };

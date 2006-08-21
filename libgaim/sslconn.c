@@ -73,7 +73,7 @@ gaim_ssl_connect_cb(gpointer data, gint source, const gchar *error_message)
 	GaimSslOps *ops;
 
 	gsc = data;
-	gsc->connect_info = NULL;
+	gsc->connect_data = NULL;
 
 	if (source < 0)
 	{
@@ -117,9 +117,9 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 
-	gsc->connect_info = gaim_proxy_connect(account, host, port, gaim_ssl_connect_cb, gsc);
+	gsc->connect_data = gaim_proxy_connect(account, host, port, gaim_ssl_connect_cb, gsc);
 
-	if (gsc->connect_info == NULL)
+	if (gsc->connect_data == NULL)
 	{
 		g_free(gsc->host);
 		g_free(gsc);
@@ -192,8 +192,8 @@ gaim_ssl_close(GaimSslConnection *gsc)
 	ops = gaim_ssl_get_ops();
 	(ops->close)(gsc);
 
-	if (gsc->connect_info != NULL)
-		gaim_proxy_connect_cancel(gsc->connect_info);
+	if (gsc->connect_data != NULL)
+		gaim_proxy_connect_cancel(gsc->connect_data);
 
 	if (gsc->inpa > 0)
 		gaim_input_remove(gsc->inpa);

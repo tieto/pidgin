@@ -67,7 +67,7 @@ typedef struct SilcGaimStruct {
 	SilcClient client;
 	SilcClientConnection conn;
 
-	GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectData *connect_data;
 	guint scheduler;
 	GaimConnection *gc;
 	GaimAccount *account;

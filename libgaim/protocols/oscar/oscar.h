@@ -368,10 +368,10 @@ struct _FlapConnection
 	OscarDisconnectReason disconnect_reason;
 
 	/* A few variables that are only used when connecting */
-	GaimProxyConnectInfo *connect_info;
+	GaimProxyConnectData *connect_data;
 	guint16 cookielen;
 	guint8 *cookie;
-	gpointer connect_data;
+	gpointer new_conn_data;
 
 	int fd;
 	FlapFrame buffer_incoming;

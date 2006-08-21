@@ -361,7 +361,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	gaim_debug_misc("msn", "directconn: connect_cb: %d\n", source);
 
 	directconn = data;
-	directconn->connect_info = NULL;
+	directconn->connect_data = NULL;
 
 	if (TRUE)
 	{
@@ -423,10 +423,10 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 	}
 #endif
 
-	directconn->connect_info = gaim_proxy_connect(session->account, host, port,
+	directconn->connect_data = gaim_proxy_connect(session->account, host, port,
 						   connect_cb, directconn);
 
-	if (directconn->connect_info != NULL)
+	if (directconn->connect_data != NULL)
 	{
 		return TRUE;
 	}
@@ -476,8 +476,8 @@ msn_directconn_new(MsnSlpLink *slplink)
 void
 msn_directconn_destroy(MsnDirectConn *directconn)
 {
-	if (directconn->connect_info != NULL)
-		gaim_proxy_connect_cancel(directconn->connect_info);
+	if (directconn->connect_data != NULL)
+		gaim_proxy_connect_cancel(directconn->connect_data);
 
 	if (directconn->inpa != 0)
 		gaim_input_remove(directconn->inpa);

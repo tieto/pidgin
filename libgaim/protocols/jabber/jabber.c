@@ -420,7 +420,7 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	GaimConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 
-	js->connect_info = NULL;
+	js->connect_data = NULL;
 
 	if (source < 0) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
@@ -465,10 +465,10 @@ static void tls_init(JabberStream *js)
 
 static void jabber_login_connect(JabberStream *js, const char *server, int port)
 {
-	js->connect_info = gaim_proxy_connect(js->gc->account, server,
+	js->connect_data = gaim_proxy_connect(js->gc->account, server,
 			port, jabber_login_callback, js->gc);
 
-	if (js->connect_info == NULL)
+	if (js->connect_data == NULL)
 		gaim_connection_error(js->gc, _("Unable to create socket"));
 }
 
@@ -900,11 +900,11 @@ static void jabber_register_account(GaimAccount *account)
 	}
 
 	if(!js->gsc) {
-		js->connect_info = gaim_proxy_connect(account, server,
+		js->connect_data = gaim_proxy_connect(account, server,
 				gaim_account_get_int(account, "port", 5222),
 				jabber_login_callback, gc);
 
-		if (js->connect_info == NULL)
+		if (js->connect_data == NULL)
 			gaim_connection_error(gc, _("Unable to create socket"));
 	}
 }
@@ -920,8 +920,8 @@ static void jabber_close(GaimConnection *gc)
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
 
-	if (js->connect_info)
-		gaim_proxy_connect_cancel(js->connect_info);
+	if (js->connect_data)
+		gaim_proxy_connect_cancel(js->connect_data);
 
 	if(js->gsc) {
 #ifdef HAVE_OPENSSL

@@ -139,10 +139,10 @@ peer_connection_close(PeerConnection *conn)
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 		peer_oft_close(conn);
 
-	if (conn->connect_info != NULL)
+	if (conn->connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->connect_info);
-		conn->connect_info = NULL;
+		gaim_proxy_connect_cancel(conn->connect_data);
+		conn->connect_data = NULL;
 	}
 
 	if (conn->connect_timeout_timer != 0)
@@ -488,7 +488,7 @@ peer_connection_established_cb(gpointer data, gint source, const gchar *error_me
 
 	conn = data;
 
-	conn->connect_info = NULL;
+	conn->connect_data = NULL;
 	gaim_timeout_remove(conn->connect_timeout_timer);
 	conn->connect_timeout_timer = 0;
 
@@ -702,10 +702,10 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
-		conn->connect_info = gaim_proxy_connect(account,
+		conn->connect_data = gaim_proxy_connect(account,
 				conn->verifiedip, conn->port,
 				peer_connection_established_cb, conn);
-		if (conn->connect_info != NULL)
+		if (conn->connect_data != NULL)
 		{
 			/* Connecting... */
 			conn->connect_timeout_timer = gaim_timeout_add(15000,
@@ -737,10 +737,10 @@ peer_connection_trynext(PeerConnection *conn)
 				g_free(tmp);
 			}
 
-			conn->connect_info = gaim_proxy_connect(account,
+			conn->connect_data = gaim_proxy_connect(account,
 					conn->clientip, conn->port,
 					peer_connection_established_cb, conn);
-			if (conn->connect_info != NULL)
+			if (conn->connect_data != NULL)
 			{
 				/* Connecting... */
 				conn->connect_timeout_timer = gaim_timeout_add(15000,
@@ -808,11 +808,11 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
-		conn->connect_info = gaim_proxy_connect(account,
+		conn->connect_data = gaim_proxy_connect(account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
 				peer_proxy_connection_established_cb, conn);
-		if (conn->connect_info != NULL)
+		if (conn->connect_data != NULL)
 		{
 			/* Connecting... */
 			return;
