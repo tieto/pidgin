@@ -1577,6 +1577,7 @@ init_plugin(GaimPlugin *plugin)
 	char *path;
 #ifdef _WIN32
 	char *folder;
+	gboolean found = FALSE;
 #endif
 
 	g_return_if_fail(plugin != NULL);
@@ -1685,45 +1686,31 @@ init_plugin(GaimPlugin *plugin)
 	/* XXX: While a major hack, this is the most reliable way I could
 	 * think of to determine the Trillian installation directory.
 	 */
-	HKEY hKey;
-	char buffer[1024] = "";
-	DWORD size = (sizeof(buffer) - 1);
-	DWORD type;
-	gboolean found = FALSE;
 
 	path = NULL;
-	/* TODO: Test this after removing the trailing "\\". */
-	if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\",
-				0, KEY_QUERY_VALUE, &hKey)) {
+	if ((folder = wgaim_read_reg_string(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\", NULL))) {
+		char *value = folder;
+		char *temp;
 
-		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "", NULL, &type, (LPBYTE)buffer, &size)) {
-			char *value = buffer;
-			char *temp;
-
-			/* Ensure the data is null terminated. */
-			value[size] = '\0';
-
-			/* Break apart buffer. */
-			if (*value == '"') {
-				value++;
-				temp = value;
-				while (*temp && *temp != '"')
-					temp++;
-			} else {
-				temp = value;
-				while (*temp && *temp != ' ')
-					temp++;
-			}
-			*temp = '\0';
-
-			/* Set path. */
-			if (gaim_str_has_suffix(value, "trillian.exe"))
-			{
-				value[strlen(value) - (sizeof("trillian.exe") - 1)] = '\0';
-				path = g_build_filename(value, "users", "default", "talk.ini", NULL);
-			}
+		/* Break apart buffer. */
+		if (*value == '"') {
+			value++;
+			temp = value;
+			while (*temp && *temp != '"')
+				temp++;
+		} else {
+			temp = value;
+			while (*temp && *temp != ' ')
+				temp++;
 		}
-		RegCloseKey(hKey);
+		*temp = '\0';
+
+		/* Set path. */
+		if (gaim_str_has_suffix(value, "trillian.exe")) {
+			value[strlen(value) - (sizeof("trillian.exe") - 1)] = '\0';
+			path = g_build_filename(value, "users", "default", "talk.ini", NULL);
+		}
+		g_free(folder);
 	}
 
 	if (!path) {

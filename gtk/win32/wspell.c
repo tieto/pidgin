@@ -33,7 +33,7 @@
 
 /* GTKSPELL DUMMY FUNCS */
 GtkSpell* wgtkspell_new_attach(GtkTextView *view,
-			       const gchar *lang, 
+			       const gchar *lang,
 			       GError **error) {return NULL;}
 GtkSpell* wgtkspell_get_from_text_view(GtkTextView *view) {return NULL;}
 void      wgtkspell_detach(GtkSpell *spell) {}
@@ -44,7 +44,7 @@ void      wgtkspell_recheck_all(GtkSpell *spell) {}
 
 /* GTKSPELL PROTOS */
 GtkSpell*         (*wgaim_gtkspell_new_attach)              (GtkTextView *,
-							     const gchar *, 
+							     const gchar *,
 							     GError **) = wgtkspell_new_attach;
 
 GtkSpell*         (*wgaim_gtkspell_get_from_text_view)      (GtkTextView*) = wgtkspell_get_from_text_view;
@@ -66,75 +66,12 @@ static void load_gtkspell() {
 }
 
 static char* lookup_aspell_path() {
-	char *path = NULL;
 	const char *tmp;
-	HKEY reg_key;
-	DWORD type;
-	DWORD nbytes;
-	gboolean found_reg_key;
-	LPCTSTR subkey = NULL;
 
 	if ((tmp = g_getenv("GAIM_ASPELL_DIR")))
 		return g_strdup(tmp);
 
-	if (G_WIN32_HAVE_WIDECHAR_API ()) {
-		if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Aspell", 0,
-					KEY_QUERY_VALUE,
-					&reg_key) == ERROR_SUCCESS) {
-			subkey = (LPCTSTR) L"Path";
-			if (!(found_reg_key = RegQueryValueExW(reg_key,
-							(WCHAR*) subkey, NULL,
-							&type, NULL, &nbytes
-							) == ERROR_SUCCESS)) {
-				subkey = NULL;
-				found_reg_key = (RegQueryValueExW(reg_key,
-							(WCHAR*) subkey, NULL,
-							&type, NULL, &nbytes
-					     ) == ERROR_SUCCESS);
-			}
-			if (found_reg_key) {
-				wchar_t *wc_temp = g_new (wchar_t, (nbytes + 1) / 2 + 1);
-				RegQueryValueExW(reg_key, (WCHAR*) subkey,
-						NULL, &type, (LPBYTE) wc_temp,
-						&nbytes);
-				wc_temp[nbytes / 2] = '\0';
-				path = g_utf16_to_utf8(
-						wc_temp, -1, NULL, NULL, NULL);
-				g_free (wc_temp);
-			}
-		}
-    	} else {
-		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Aspell", 0,
-					KEY_QUERY_VALUE, &reg_key
-					) == ERROR_SUCCESS) {
-			subkey = "Path";
-			if (!(found_reg_key = RegQueryValueExA(reg_key, subkey,
-							NULL, &type, NULL,
-							&nbytes
-							) == ERROR_SUCCESS)) {
-				subkey = NULL;
-				found_reg_key = (RegQueryValueExA(reg_key,
-							subkey, NULL, &type,
-							NULL, &nbytes
-							) == ERROR_SUCCESS);
-			}
-			if (found_reg_key) {
-				char *cp_temp = g_malloc (nbytes + 1);
-				RegQueryValueExA(reg_key, subkey, NULL, &type,
-						cp_temp, &nbytes);
-				cp_temp[nbytes] = '\0';
-				path = g_locale_to_utf8(
-						cp_temp, -1, NULL, NULL, NULL);
-				g_free (cp_temp);
-			}
-		}
-	}
-
-	if (reg_key != NULL) {
-		RegCloseKey(reg_key);
-	}
-
-	return path;
+	return wgaim_read_reg_string(HKEY_LOCAL_MACHINE, "Software\\Aspell", "Path");
 }
 
 void wgaim_gtkspell_init() {

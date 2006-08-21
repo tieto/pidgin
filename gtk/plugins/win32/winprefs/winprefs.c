@@ -45,6 +45,8 @@
  */
 #define WINPREFS_PLUGIN_ID "gtk-win-prefs"
 
+#define RUNKEY "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"
+
 /*
  *  LOCALS
  */
@@ -209,51 +211,21 @@ static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
 
 }
 
-/* AUTOSTART */
-
-static gboolean open_run_key(PHKEY phKey, REGSAM samDesired) {
-	/* First try current user key (for WinNT & Win2k +), fall back to local machine */
-	if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER,
-		"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-		0, samDesired, phKey));
-	else if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-		0, samDesired, phKey));
-	else {
-		gaim_debug_error(WINPREFS_PLUGIN_ID, "open_run_key: Could not open key for writing value\n");
-		return FALSE;
-	}
-	return TRUE;
-}
-
 /* WIN PREFS GENERAL */
 
 static void
-winprefs_set_autostart(GtkWidget *w)
-{
-	HKEY hKey;
+winprefs_set_autostart(GtkWidget *w) {
+	char *runval = NULL;
 
-	if(!open_run_key(&hKey, KEY_SET_VALUE))
-		return;
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w))) {
-		char buffer[1024];
-		DWORD size;
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "gaim.exe", wgaim_install_dir());
 
-		if((size = GetModuleFileName(gtkwgaim_hinstance(),
-				(LPBYTE) buffer , sizeof(buffer))) == 0) {
-			gaim_debug_error(WINPREFS_PLUGIN_ID, "GetModuleFileName Error. Could not set Gaim autostart.\n");
-			RegCloseKey(hKey);
-			return;
-		}
-
-		/* Now set value of new key */
-		if(ERROR_SUCCESS != RegSetValueEx(hKey, "Gaim", 0, REG_SZ, buffer, size))
+	if(!wgaim_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Gaim", runval)
+		/* For Win98 */
+		&& !wgaim_write_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Gaim", runval))
 			gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
-	} else {
-		if(ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
-			gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
-	}
-	RegCloseKey(hKey);
+
+	g_free(runval);
 }
 
 static void
@@ -442,8 +414,8 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *button;
-	char* gtk_version = NULL;
-	HKEY hKey;
+	char *gtk_version = NULL;
+	char *run_key_val;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
@@ -466,11 +438,11 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	vbox = gaim_gtk_make_frame(ret, _("Startup"));
 	button = gtk_check_button_new_with_mnemonic(_("_Start Gaim on Windows startup"));
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-	if(open_run_key(&hKey, KEY_QUERY_VALUE)) {
-		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Gaim", 0, NULL, NULL, NULL)) {
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
-		}
-		RegCloseKey(hKey);
+
+	if ((run_key_val = wgaim_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Gaim"))
+			|| (run_key_val = wgaim_read_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Gaim"))) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
+		g_free(run_key_val);
 	}
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(winprefs_set_autostart), NULL);
 	gtk_widget_show(button);

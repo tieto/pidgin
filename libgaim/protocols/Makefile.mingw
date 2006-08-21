@@ -22,8 +22,6 @@ SILC = $(GAIM_PROTOS)/silc
 SIMPLE = $(GAIM_PROTOS)/simple
 SAMETIME = $(GAIM_PROTOS)/sametime
 
-VERSION := $(shell cat GAIM_TOP/VERSION)
-
 ##
 ## Don't forget to change STATIC_PROTO_INIT, in config.h.mingw if you
 ## change the status of a protocol (static/plugin)

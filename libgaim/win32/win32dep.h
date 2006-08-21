@@ -36,20 +36,21 @@
  ** win32dep.c
  **/
 /* Windows helper functions */
-FARPROC   wgaim_find_and_loadproc(char*, char*);
-gboolean  wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);
-char*     wgaim_escape_dirsep(char*);
+FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure);
+char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname); /* needs to be g_free'd */
+gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *valname, const char *value);
+char *wgaim_escape_dirsep(const char *filename); /* needs to be g_free'd */
 
 /* Determine Gaim paths */
-char*     wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
-char*     wgaim_install_dir(void);
-char*     wgaim_lib_dir(void);
-char*     wgaim_locale_dir(void);
-char*     wgaim_data_dir(void);
+char *wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
+const char *wgaim_install_dir(void);
+const char *wgaim_lib_dir(void);
+const char *wgaim_locale_dir(void);
+const char *wgaim_data_dir(void);
 
 /* init / cleanup */
-void      wgaim_init(void);
-void      wgaim_cleanup(void);
+void wgaim_init(void);
+void wgaim_cleanup(void);
 
 
 /*

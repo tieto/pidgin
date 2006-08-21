@@ -63,15 +63,11 @@ static HINSTANCE libgaimdll_hInstance = 0;
  */
 
 static void wgaim_debug_print(GaimDebugLevel level, const char *category,
-		const char *format, va_list args) {
-	char *str = NULL;
-	if (args != NULL)
-		str = g_strdup_vprintf(format, args);
-	printf("%s%s%s",
-		category ? category : "",
-		category ? ": " : "",
-		str ? str : format);
-	g_free(str);
+		const char *arg_s) {
+	if(category)
+		printf("%s: %s", category, arg_s);
+	else
+		printf(arg_s);
 }
 
 static GaimDebugUiOps ops = {
@@ -86,16 +82,18 @@ static GaimDebugUiOps ops = {
    and on being read back have their '\' chars used as an escape char.
    Returns an allocated string which needs to be freed.
 */
-char* wgaim_escape_dirsep(char* filename) {
+char *wgaim_escape_dirsep(const char *filename) {
 	int sepcount = 0;
-	char* ret = NULL;
+	const char *tmp = filename;
+	char *ret;
 	int cnt = 0;
 
-	ret = filename;
-	while(*ret) {
-		if(*ret == '\\')
+	g_return_val_if_fail(filename != NULL, NULL);
+
+	while(*tmp) {
+		if(*tmp == '\\')
 			sepcount++;
-		ret++;
+		tmp++;
 	}
 	ret = g_malloc0(strlen(filename) + sepcount + 1);
 	while(*filename) {
@@ -111,7 +109,7 @@ char* wgaim_escape_dirsep(char* filename) {
 
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
-FARPROC wgaim_find_and_loadproc(char* dllname, char* procedure) {
+FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure) {
 	HMODULE hmod;
 	BOOL did_load = FALSE;
 	FARPROC proc = 0;
@@ -182,7 +180,7 @@ char *wgaim_get_special_folder(int folder_type) {
 	return retval;
 }
 
-char* wgaim_install_dir(void) {
+const char *wgaim_install_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
@@ -219,11 +217,11 @@ char* wgaim_install_dir(void) {
 	return install_dir;
 }
 
-char* wgaim_lib_dir(void) {
+const char *wgaim_lib_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		char *inst_dir = wgaim_install_dir();
+		const char *inst_dir = wgaim_install_dir();
 		if (inst_dir != NULL) {
 			lib_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "plugins", inst_dir);
 			initialized = TRUE;
@@ -235,11 +233,11 @@ char* wgaim_lib_dir(void) {
 	return lib_dir;
 }
 
-char* wgaim_locale_dir(void) {
+const char *wgaim_locale_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		char *inst_dir = wgaim_install_dir();
+		const char *inst_dir = wgaim_install_dir();
 		if (inst_dir != NULL) {
 			locale_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "locale", inst_dir);
 			initialized = TRUE;
@@ -251,7 +249,7 @@ char* wgaim_locale_dir(void) {
 	return locale_dir;
 }
 
-char* wgaim_data_dir(void) {
+const char *wgaim_data_dir(void) {
 
 	if (!app_data_dir) {
 		/* Set app data dir, used by gaim_home_dir */
@@ -272,18 +270,142 @@ char* wgaim_data_dir(void) {
 
 /* Miscellaneous */
 
-gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
-	HKEY hkey;
-	gboolean ret = FALSE;
+gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *valname,
+		const char *value) {
+	HKEY reg_key;
+	gboolean success = FALSE;
 
-	if(ERROR_SUCCESS == RegOpenKeyEx(key, sub_key, 0,  KEY_QUERY_VALUE,
-			&hkey)) {
-		if(ERROR_SUCCESS == RegQueryValueEx(hkey, val_name, 0, NULL,
-				data, data_len))
-			ret = TRUE;
-		RegCloseKey(key);
+	if(G_WIN32_HAVE_WIDECHAR_API()) {
+		wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
+			NULL, NULL);
+
+		if(RegOpenKeyExW(rootkey, wc_subkey, 0,
+				KEY_SET_VALUE, &reg_key) == ERROR_SUCCESS) {
+			wchar_t *wc_valname = NULL;
+
+			if (valname)
+				wc_valname = g_utf8_to_utf16(valname, -1,
+					NULL, NULL, NULL);
+
+			if(value) {
+				wchar_t *wc_value = g_utf8_to_utf16(value, -1,
+					NULL, NULL, NULL);
+				int len = (wcslen(wc_value) * sizeof(wchar_t)) + 1;
+				if(RegSetValueExW(reg_key, wc_valname, 0, REG_SZ,
+						(LPBYTE)wc_value, len
+						) == ERROR_SUCCESS)
+					success = TRUE;
+				g_free(wc_value);
+			} else
+				if(RegDeleteValueW(reg_key, wc_valname) ==  ERROR_SUCCESS)
+					success = TRUE;
+
+			g_free(wc_valname);
+		}
+		g_free(wc_subkey);
+	} else {
+		char *cp_subkey = g_locale_from_utf8(subkey, -1, NULL,
+			NULL, NULL);
+		if(RegOpenKeyExA(rootkey, cp_subkey, 0,
+				KEY_SET_VALUE, &reg_key) == ERROR_SUCCESS) {
+			char *cp_valname = NULL;
+			if(valname)
+				cp_valname = g_locale_from_utf8(valname, -1,
+					NULL, NULL, NULL);
+
+			if (value) {
+				char *cp_value = g_locale_from_utf8(value, -1,
+					NULL, NULL, NULL);
+				int len = strlen(cp_value) + 1;
+				if(RegSetValueExA(reg_key, cp_valname, 0, REG_SZ,
+						cp_value, len
+						) == ERROR_SUCCESS)
+					success = TRUE;
+				g_free(cp_value);
+			} else
+				if(RegDeleteValueA(reg_key, cp_valname) ==  ERROR_SUCCESS)
+					success = TRUE;
+
+			g_free(cp_valname);
+		}
+		g_free(cp_subkey);
 	}
-	return ret;
+
+	if(reg_key != NULL)
+		RegCloseKey(reg_key);
+
+	return success;
+}
+
+char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname) {
+
+	DWORD type;
+	DWORD nbytes;
+	HKEY reg_key;
+	char *result = NULL;
+
+	if(G_WIN32_HAVE_WIDECHAR_API()) {
+		wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
+			NULL, NULL);
+
+		if(RegOpenKeyExW(rootkey, wc_subkey, 0,
+				KEY_QUERY_VALUE, &reg_key) == ERROR_SUCCESS) {
+			wchar_t *wc_valname = NULL;
+			if (valname)
+				wc_valname = g_utf8_to_utf16(valname, -1,
+					NULL, NULL, NULL);
+
+			if(RegQueryValueExW(reg_key, wc_valname, 0, &type,
+					NULL, &nbytes) == ERROR_SUCCESS
+					&& type == REG_SZ) {
+				wchar_t *wc_temp =
+					g_new(wchar_t, ((nbytes + 1) / sizeof(wchar_t)) + 1);
+
+				if(RegQueryValueExW(reg_key, wc_valname, 0,
+						&type, (LPBYTE) wc_temp,
+						&nbytes) == ERROR_SUCCESS) {
+					wc_temp[nbytes / sizeof(wchar_t)] = '\0';
+					result = g_utf16_to_utf8(wc_temp, -1,
+						NULL, NULL, NULL);
+				}
+				g_free(wc_temp);
+			}
+			g_free(wc_valname);
+		}
+		g_free(wc_subkey);
+	} else {
+		char *cp_subkey = g_locale_from_utf8(subkey, -1, NULL,
+			NULL, NULL);
+		if(RegOpenKeyExA(rootkey, cp_subkey, 0,
+				KEY_QUERY_VALUE, &reg_key) == ERROR_SUCCESS) {
+			char *cp_valname = NULL;
+			if(valname)
+				cp_valname = g_locale_from_utf8(valname, -1,
+					NULL, NULL, NULL);
+
+			if(RegQueryValueExA(reg_key, cp_valname, 0, &type,
+					NULL, &nbytes) == ERROR_SUCCESS
+					&& type == REG_SZ) {
+				char *cp_temp = g_malloc(nbytes + 1);
+
+				if(RegQueryValueExA(reg_key, cp_valname, 0,
+						&type, cp_temp,
+						&nbytes) == ERROR_SUCCESS) {
+					cp_temp[nbytes] = '\0';
+					result = g_locale_to_utf8(cp_temp, -1,
+						NULL, NULL, NULL);
+				}
+				g_free (cp_temp);
+			}
+			g_free(cp_valname);
+		}
+		g_free(cp_subkey);
+	}
+
+	if(reg_key != NULL)
+		RegCloseKey(reg_key);
+
+	return result;
 }
 
 void wgaim_init(void) {
@@ -314,11 +436,11 @@ void wgaim_init(void) {
 	/* Set Environmental Variables */
 	/* Tell perl where to find Gaim's perl modules */
 	perlenv = g_getenv("PERL5LIB");
-	newenv = g_strdup_printf("PERL5LIB=%s%s%s" G_DIR_SEPARATOR_S "perlmod;",
+	newenv = g_strdup_printf("%s%s%s" G_DIR_SEPARATOR_S "perlmod;",
 		perlenv ? perlenv : "",
 		perlenv ? ";" : "",
 		wgaim_install_dir());
-	if (putenv(newenv) < 0)
+	if (!g_setenv("PERL5LIB", newenv, TRUE))
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 	g_free(newenv);
 
