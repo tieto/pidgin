@@ -163,7 +163,8 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	MsnSoapConn *soapconn;
 	MsnNexus * nexus;
 	MsnSession *session;
-	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf,*fs;
+	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
+	char *fs0,*fs;
 	char *username, *password;
 	char *request_str, *head, *tail,*challenge_str;
 
@@ -187,15 +188,20 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	lc =	(char *)g_hash_table_lookup(nexus->challenge_data, "lc");
 	id =	(char *)g_hash_table_lookup(nexus->challenge_data, "id");
 	tw =	(char *)g_hash_table_lookup(nexus->challenge_data, "tw");
-	fs =	(char *)g_hash_table_lookup(nexus->challenge_data, "fs");
+	fs0=	(char *)g_hash_table_lookup(nexus->challenge_data, "fs");
 	ru =	(char *)g_hash_table_lookup(nexus->challenge_data, "ru");
 	ct =	(char *)g_hash_table_lookup(nexus->challenge_data, "ct");
 	kpp=	(char *)g_hash_table_lookup(nexus->challenge_data, "kpp");
 	kv =	(char *)g_hash_table_lookup(nexus->challenge_data, "kv");
-	ver= (char *)g_hash_table_lookup(nexus->challenge_data, "ver");
-	rn = (char *)g_hash_table_lookup(nexus->challenge_data, "rn");
+	ver=	(char *)g_hash_table_lookup(nexus->challenge_data, "ver");
+	rn =	(char *)g_hash_table_lookup(nexus->challenge_data, "rn");
 	tpf=	(char *)g_hash_table_lookup(nexus->challenge_data, "tpf");
 
+	/*
+	 * add some fail-safe code to avoid windows Gaim Crash bug #1540454
+	 * If any of these string is NULL, will return Authentication Fail!
+	 * for when windows g_strdup_printf() implementation get NULL point,It crashed!
+	 */
 	if(!(lc && id && tw && ru && ct && kpp && kv && ver && tpf)){
 		gaim_debug_error("MaYuan","WLM Authenticate Key Error!\n");
 		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication Failed"));
@@ -207,16 +213,20 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		return;
 	}
 
-	if(!fs){
-		fs =g_strdup("1");
+	/*
+	 * in old MSN NS server's "USR TWN S" return,didn't include fs string
+	 * so we use a default "1" for fs.
+	 */
+	if(fs0){
+		fs = g_strdup(fs0);
+	}else{
+		fs = g_strdup("1");
 	}
 	challenge_str = g_strdup_printf(
 		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
 		lc,id,tw,fs,ru,ct,kpp,kv,ver,rn,tpf
 		);
-	if(!fs){
-		g_free(fs);
-	}
+	g_free(fs);
 
 	/*build the SOAP windows Live ID XML body */
 	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE,username,password,challenge_str	);
@@ -230,7 +240,7 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 					"Content-Length: %d\r\n"
 					"Connection: Keep-Alive\r\n"
 					"Cache-Control: no-cache\r\n\r\n",
-					soapconn->login_path,soapconn->login_host,strlen(tail));
+					soapconn->login_path,soapconn->login_host,(int)strlen(tail));
 
 	request_str = g_strdup_printf("%s%s", head,tail);
 //	gaim_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
