@@ -3884,6 +3884,10 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
+	option = gaim_account_option_string_new(_("Encoding"), "local_charset", "ISO-8859-1");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+
 #if 0
 	option = gaim_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
