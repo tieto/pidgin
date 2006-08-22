@@ -8,9 +8,9 @@
 # PATHS
 #
 
-INCLUDE_DIR :=		.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
 BONJOUR_ROOT :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 HOWL_DIR := $(GAIM_TOP)/../win32-dev/howl-1.0.0
@@ -29,7 +29,7 @@ CFLAGS =
 
 DEFINES =
 
-# Static or Plugin... 
+# Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
@@ -44,7 +44,7 @@ endif
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -52,21 +52,17 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS +=	-I$(BONJOUR_ROOT) \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(HOWL_DIR)/include/howl \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(HOWL_DIR)/include \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GAIM_TOP)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(HOWL_DIR)/lib \
-			-L$(GAIM_TOP)/src
+			-L$(LIBGAIM_TOP)
 
 
 ##
@@ -86,11 +82,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lhowl \
@@ -123,15 +116,15 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
@@ -140,4 +133,3 @@ $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
 clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).lib

@@ -11,6 +11,7 @@
 INCLUDE_DIR :=		.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
+LIBGAIM_TOP :=		../..
 ZEPHYR_ROOT :=		.
 KRB4_TOP :=             ../../../../win32-dev/kfw-2.6.3-final.fixed
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
@@ -29,7 +30,7 @@ CFLAGS =
 
 DEFINES =
 
-# Static or Plugin... 
+# Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
@@ -39,7 +40,7 @@ ifeq ($(TYPE),PLUGIN)
 endif
 endif
 
-DEFINES += -DWIN32 -DKRB5_SYSTYPES__ 
+DEFINES += -DWIN32 -DKRB5_SYSTYPES__
 
 ifeq ($(USE_KRB4),true)
   DEFINES += -DZEPHYR_USES_KERBEROS
@@ -49,7 +50,7 @@ endif
 ## INCLUDE  MAKEFILES
 ##
 
-include $(GAIM_TOP)/src/win32/global.mak
+include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -57,14 +58,10 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS +=	-I$(ZEPHYR_ROOT) \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GAIM_TOP)/src \
-			-I$(GAIM_TOP)/src/win32 \
+			-I$(LIBGAIM_TOP) \
+			-I$(LIBGAIM_TOP)/win32 \
 			-I$(GAIM_TOP)
 
 ifeq ($(USE_KRB4), true)
@@ -72,7 +69,7 @@ ifeq ($(USE_KRB4), true)
 endif
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src
+			-L$(LIBGAIM_TOP)
 
 ifeq ($(USE_KRB4), true)
   LIB_PATHS+=-L$(KRB4_TOP)/lib/i386
@@ -145,17 +142,14 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim
 
-ifeq ($(USE_KRB4),true) 
-  LIBS+= -lkrbv4w32 
+ifeq ($(USE_KRB4),true)
+  LIBS+= -lkrbv4w32
 endif
 
 ##
@@ -183,15 +177,15 @@ install:
 ## BUILD Dependencies
 ##
 
-$(GAIM_TOP)/src/gaim.lib:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw gaim.lib
+$(LIBGAIM_TOP)/libgaim.dll.a:
+	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--enable-stdcall-fixup -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--enable-stdcall-fixup -o $(TARGET).dll
 
 
 ##
@@ -201,4 +195,3 @@ $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
 clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).lib
