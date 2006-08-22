@@ -670,8 +670,8 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	Tcl_Obj *list, *elem, *result = Tcl_GetObjResult(interp);
-	const char *cmds[] = { "find", "handle", "list", "new", "write", NULL };
-	enum { CMD_CONV_FIND, CMD_CONV_HANDLE, CMD_CONV_LIST, CMD_CONV_NEW, CMD_CONV_WRITE } cmd;
+	const char *cmds[] = { "find", "handle", "list", "new", "write", "name", "title", NULL };
+	enum { CMD_CONV_FIND, CMD_CONV_HANDLE, CMD_CONV_LIST, CMD_CONV_NEW, CMD_CONV_WRITE , CMD_CONV_NAME, CMD_CONV_TITLE } cmd;
 	const char *styles[] = { "send", "recv", "system", NULL };
 	enum { CMD_CONV_WRITE_SEND, CMD_CONV_WRITE_RECV, CMD_CONV_WRITE_SYSTEM } style;
 	const char *newopts[] = { "-chat", "-im" };
@@ -782,6 +782,26 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, what, flags, time(NULL));
 		else
 			gaim_conv_im_write(GAIM_CONV_IM(convo), from, what, flags, time(NULL));
+		break;
+	case CMD_CONV_NAME:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "conversation");
+			return TCL_ERROR;
+		}
+
+		if ((convo = tcl_validate_conversation(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, (char *)gaim_conversation_get_name(convo), -1);
+		break;
+	case CMD_CONV_TITLE:
+		if (objc != 3) {
+			Tcl_WrongNumArgs(interp, 2, objv, "conversation");
+			return TCL_ERROR;
+		}
+
+		if ((convo = tcl_validate_conversation(objv[2], interp)) == NULL)
+			return TCL_ERROR;
+		Tcl_SetStringObj(result, (char *)gaim_conversation_get_title(convo), -1);
 		break;
 	}
 
