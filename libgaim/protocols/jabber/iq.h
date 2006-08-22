@@ -34,6 +34,8 @@ typedef enum {
 	JABBER_IQ_NONE
 } JabberIqType;
 
+typedef void (JabberIqHandler)(JabberStream *js, xmlnode *packet);
+
 typedef void (JabberIqCallback)(JabberStream *js, xmlnode *packet, gpointer data);
 
 struct _JabberIq {
@@ -59,5 +61,10 @@ void jabber_iq_set_id(JabberIq *iq, const char *id);
 
 void jabber_iq_send(JabberIq *iq);
 void jabber_iq_free(JabberIq *iq);
+
+void jabber_iq_init(void);
+void jabber_iq_uninit(void);
+
+void jabber_iq_register_handler(const char *xmlns, JabberIqHandler *func);
 
 #endif /* _GAIM_JABBER_IQ_H_ */

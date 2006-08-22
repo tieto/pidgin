@@ -705,6 +705,10 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 
 void jabber_register_parse(JabberStream *js, xmlnode *packet)
 {
+	const char *type;
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+		return;
+
 	if(js->registration) {
 		GaimRequestFields *fields;
 		GaimRequestFieldGroup *group;
@@ -1957,6 +1961,8 @@ init_plugin(GaimPlugin *plugin)
 	sasl_client_init(NULL);
 #endif
 	jabber_register_commands();
+
+	jabber_iq_init();
 }
 
 GAIM_INIT_PLUGIN(jabber, init_plugin, info);

@@ -192,7 +192,11 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	GaimXfer *xfer;
 	char *filename;
 	char *url;
+	const char *type;
 	xmlnode *querynode, *urlnode;
+
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "set"))
+		return;
 
 	if(!(querynode = xmlnode_get_child(packet, "query")))
 		return;

@@ -34,6 +34,9 @@
 #include "utsname.h"
 #endif
 
+GHashTable *iq_handlers = NULL;
+
+
 JabberIq *jabber_iq_new(JabberStream *js, JabberIqType type)
 {
 	JabberIq *iq;
@@ -250,6 +253,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *query, *error, *x;
 	const char *xmlns;
 	const char *type, *id, *from;
+	JabberIqHandler *jih;
 
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
@@ -269,51 +273,16 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	/* Apparently not, so lets see if we have a pre-defined handler */
 
 	if(type && query && (xmlns = xmlnode_get_namespace(query))) {
-		if(!strcmp(type, "set")) {
-			if(!strcmp(xmlns, "jabber:iq:roster")) {
-				jabber_roster_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "jabber:iq:oob")) {
-				jabber_oob_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/bytestreams")) {
-				jabber_bytestreams_parse(js, packet);
-				return;
-			}
-		} else if(!strcmp(type, "get")) {
-			if(!strcmp(xmlns, "jabber:iq:last")) {
-				jabber_iq_last_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "jabber:iq:time")) {
-				jabber_iq_time_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "jabber:iq:version")) {
-				jabber_iq_version_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/disco#info")) {
-				jabber_disco_info_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/disco#items")) {
-				jabber_disco_items_parse(js, packet);
-				return;
-			}
-		} else if(!strcmp(type, "result")) {
-			if(!strcmp(xmlns, "jabber:iq:roster")) {
-				jabber_roster_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "jabber:iq:register")) {
-				jabber_register_parse(js, packet);
-				return;
-			} else if(!strcmp(xmlns, "http://jabber.org/protocol/disco#info")) {
-				jabber_disco_info_parse(js, packet);
-				return;
-			}
-		}
-	} else {
-		if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
-			jabber_si_parse(js, packet);
+		if((jih = g_hash_table_lookup(iq_handlers, xmlns))) {
+			jih(js, packet);
 			return;
 		}
+	}
+
+
+	if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
+		jabber_si_parse(js, packet);
+		return;
 	}
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
@@ -333,5 +302,30 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 		jabber_iq_send(iq);
 	}
+}
+
+void jabber_iq_register_handler(const char *xmlns, JabberIqHandler handlerfunc)
+{
+	g_hash_table_replace(iq_handlers, g_strdup(xmlns), handlerfunc);
+}
+
+void jabber_iq_init(void)
+{
+	iq_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
+	jabber_iq_register_handler("jabber:iq:roster", jabber_roster_parse);
+	jabber_iq_register_handler("jabber:iq:oob", jabber_oob_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
+	jabber_iq_register_handler("jabber:iq:last", jabber_iq_last_parse);
+	jabber_iq_register_handler("jabber:iq:time", jabber_iq_time_parse);
+	jabber_iq_register_handler("jabber:iq:version", jabber_iq_version_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
+	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
+	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
+}
+
+void jabber_iq_uninit(void)
+{
+	g_hash_table_destroy(iq_handlers);
 }
 

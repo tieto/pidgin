@@ -191,7 +191,10 @@ void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
 	GaimXfer *xfer;
 	JabberSIXfer *jsx;
 	xmlnode *query, *streamhost;
-	const char *sid, *from;
+	const char *sid, *from, *type;
+
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "set"))
+		return;
 
 	if(!(from = xmlnode_get_attrib(packet, "from")))
 		return;

@@ -200,7 +200,7 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
 
-	if(!strcmp(type, "get")) {
+	if(type && !strcmp(type, "get")) {
 		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
 				"http://jabber.org/protocol/disco#items");
 
