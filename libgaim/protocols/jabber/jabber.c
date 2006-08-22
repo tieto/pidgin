@@ -168,6 +168,12 @@ static void tls_init(JabberStream *js);
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet)
 {
+	gaim_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, &packet);
+
+	/* if the signal leaves us with a null packet, we're done */
+	if(NULL == packet)
+		return;
+
 	if(!strcmp(packet->name, "iq")) {
 		jabber_iq_parse(js, packet);
 	} else if(!strcmp(packet->name, "presence")) {
@@ -326,6 +332,12 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 {
 	char *txt;
 	int len;
+
+	gaim_signal_emit(my_protocol, "jabber-sending-xmlnode", js->gc, &packet);
+
+	/* if we get NULL back, we're done processing */
+	if(NULL == packet)
+		return;
 
 	txt = xmlnode_to_str(packet, &len);
 	jabber_send_raw(js, txt, len);
@@ -1882,6 +1894,30 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* whiteboard_prpl_ops */
 };
 
+static gboolean load_plugin(GaimPlugin *plugin)
+{
+	gaim_signal_register(plugin, "jabber-receiving-xmlnode",
+			gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
+			gaim_value_new_outgoing(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XMLNODE));
+
+	gaim_signal_register(plugin, "jabber-sending-xmlnode",
+			gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
+			gaim_value_new_outgoing(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XMLNODE));
+
+	return TRUE;
+}
+
+static gboolean unload_plugin(GaimPlugin *plugin)
+{
+	gaim_signal_unregister(plugin, "jabber-receiving-xmlnode");
+
+	gaim_signal_unregister(plugin, "jabber-sending-xmlnode");
+
+	return TRUE;
+}
+
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -1903,8 +1939,8 @@ static GaimPluginInfo info =
 	NULL,                                             /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
-	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
+	load_plugin,                                      /**< load           */
+	unload_plugin,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
