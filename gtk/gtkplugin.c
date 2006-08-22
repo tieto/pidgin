@@ -560,6 +560,8 @@ void gaim_gtk_plugin_dialog_show()
 
 	event_view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(ls));
 
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(event_view), TRUE);
+
 	g_signal_connect(G_OBJECT(event_view), "row-activated",
 				G_CALLBACK(show_plugin_prefs_cb), plugin_dialog);
 
