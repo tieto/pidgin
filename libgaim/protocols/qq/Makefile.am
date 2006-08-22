@@ -92,7 +92,8 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libgaim \
-        -DVERSION=\"$(VERSION)\" \
-        $(DEBUG_CFLAGS) \
-        $(GLIB_CFLAGS) \
+	-DVERSION=\"$(VERSION)\" \
+	-DDATADIR=\"$(datadir)\" \
+	$(DEBUG_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(GAIM_CFLAGS)

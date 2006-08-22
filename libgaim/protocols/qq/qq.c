@@ -431,12 +431,11 @@ static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
 	GaimRequestField *field;
 	struct stat img_stat;
 	FILE *file;
-	gchar *filename, *prefix, *img_data, *face;
+	gchar *filename, *img_data, *face;
 	gint size;
 
 	face = g_strdup_printf("qq_%i.png", face_num);
-	prefix = br_extract_prefix(DATADIR);
-	filename = g_build_filename(prefix, "share","pixmaps",
+	filename = g_build_filename(DATADIR, "pixmaps",
 			"gaim","status","default", face, NULL);
 	g_free(face);
 	face = g_strdup_printf("%i", face_num);
@@ -453,7 +452,6 @@ static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
 		fclose(file);
 	}
 	g_free(face);
-	g_free(prefix);
 }
 
 /* Change your status icon (face) */
