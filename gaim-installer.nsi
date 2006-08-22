@@ -44,7 +44,7 @@ SetDateSave on
 ;--------------------------------
 ;Defines
 
-!define GAIM_NSIS_INCLUDE_PATH			".\src\win32\nsis"
+!define GAIM_NSIS_INCLUDE_PATH			".\gtk\win32\nsis"
 !define GAIM_INSTALLER_DEPS			"..\win32-dev\gaim-inst-deps"
 
 !define GAIM_REG_KEY				"SOFTWARE\gaim"
@@ -70,11 +70,11 @@ SetDateSave on
 ;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_ICON				".\pixmaps\gaim-install.ico"
-  !define MUI_UNICON				".\pixmaps\gaim-install.ico"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\src\win32\nsis\gaim-intro.bmp"
+  !define MUI_ICON				".\gtk\pixmaps\gaim-install.ico"
+  !define MUI_UNICON				".\gtk\pixmaps\gaim-install.ico"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\gtk\win32\nsis\gaim-intro.bmp"
   !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_BITMAP		".\src\win32\nsis\gaim-header.bmp"
+  !define MUI_HEADERIMAGE_BITMAP		".\gtk\win32\nsis\gaim-header.bmp"
 
   ; Alter License section
   !define MUI_LICENSEPAGE_BUTTON		$(GAIM_LICENSE_BUTTON)
