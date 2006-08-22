@@ -758,7 +758,9 @@ void gnt_init()
 
 	g_io_channel_set_encoding(channel, NULL, NULL);
 	g_io_channel_set_buffered(channel, FALSE);
+#if 0
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
+#endif
 
 	result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI | G_IO_NVAL),
