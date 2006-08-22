@@ -163,7 +163,7 @@ msn_oim_get_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
-	msn_session_set_error(session, MSN_ERROR_SERV_DOWN, _("Unable to connect to OIM server"));
+//	msn_session_set_error(session, MSN_ERROR_SERV_DOWN, _("Unable to connect to OIM server"));
 }
 
 /*msn oim SOAP server connect process*/
@@ -188,13 +188,44 @@ void
 msn_oim_report_to_user(MsnOim *oim,char *msg_str)
 {
 	MsnMessage *message;
-	char * end,*endline;
+	char *date,*from,*decode_msg;
+	gsize body_len;
+	char **tokens;
+	char *start,*end;
+	int has_nick = 0;
+	char *passport_str,*passport;
 
 	message = msn_message_new(MSN_MSG_UNKNOWN);
 
 	msn_message_parse_payload(message,msg_str,strlen(msg_str),
 					MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	gaim_debug_info("MaYuan","oim body:{%s}\n",message->body);
+	decode_msg = gaim_base64_decode(message->body,&body_len);
+	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
+	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
+	if(strstr(from," ")){
+		has_nick = 1;
+	}
+	if(has_nick){
+		tokens = g_strsplit(from , " " , 2);
+		passport_str = g_strdup(tokens[1]);
+		gaim_debug_info("MaYuan","oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
+							date,tokens[0],tokens[1],passport_str);
+		g_strfreev(tokens);
+	}else{
+		passport_str = g_strdup(from);
+		gaim_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",
+					date,passport_str);
+	}
+	start = strstr(passport_str,"<");
+	start += 1;
+	end = strstr(passport_str,">");
+	passport = g_strndup(start,end - start);
+	g_free(passport_str);
+	gaim_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",date,passport);
+
+	msn_session_report_user(oim->session,passport,decode_msg,GAIM_MESSAGE_SYSTEM);
+	g_free(passport);
 }
 
 void

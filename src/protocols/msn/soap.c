@@ -89,13 +89,15 @@ static void
 msn_soap_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 {	
 	MsnSoapConn * soapconn = data;
+
 	g_return_if_fail(data != NULL);
 	gaim_debug_info("MaYuan","Soap connection error!\n");
+	msn_soap_set_process_step(soapconn, MSN_SOAP_UNCONNECTED);
+
 	/*error callback*/
 	if(soapconn->error_cb != NULL){
 		soapconn->error_cb(gsc,error,data);
 	}
-	msn_soap_set_process_step(soapconn, MSN_SOAP_UNCONNECTED);
 }
 
 /*init the soap connection*/
