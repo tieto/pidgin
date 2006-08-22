@@ -846,6 +846,8 @@ void gnt_screen_occupy(GntWidget *widget)
 
 	g_hash_table_replace(nodes, widget, node);
 
+	refresh_node(widget, node, NULL);
+
 	if (window_list.window)
 	{
 		if ((GNT_IS_BOX(widget) && GNT_BOX(widget)->title) && window_list.window != widget

@@ -331,6 +331,30 @@ gnt_widget_draw(GntWidget *widget)
 
 		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
 						widget->priv.y, widget->priv.x);
+		if (widget->window == NULL)     /* The size is probably too large for the screen */
+		{
+			int x = widget->priv.x, y = widget->priv.y;
+			int w = widget->priv.width + shadow, h = widget->priv.height + shadow;
+			int maxx, maxy;            /* Max-X is cool */
+
+			getmaxyx(stdscr, maxy, maxx);
+
+			if (x + w >= maxx)
+				x = MAX(0, maxx - w);
+			if (y + h >= maxy)
+				y = MAX(0, maxy - h);
+
+			w = MIN(w, maxx);
+			h = MIN(h, maxy);
+
+			widget->priv.x = x;
+			widget->priv.y = y;
+			widget->priv.width = w - shadow;
+			widget->priv.height = h - shadow;
+
+			widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
+							widget->priv.y, widget->priv.x);
+		}
 		init_widget(widget);
 	}
 

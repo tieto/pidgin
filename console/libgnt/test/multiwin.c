@@ -43,7 +43,7 @@ int main()
 	gnt_box_add_widget(GNT_BOX(box2), gnt_entry_new(NULL));
 
 	gnt_widget_show(hbox);
-	gnt_widget_set_position(box2, 35, 15);
+	gnt_widget_set_position(box2, 80, 40);
 	gnt_widget_show(box2);
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "a",
