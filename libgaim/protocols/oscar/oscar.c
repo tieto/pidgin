@@ -4135,6 +4135,13 @@ oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimMes
 					bi->ico_sent     = FALSE;
 				}
 
+				/*
+				 * TODO:
+				 * For some reason sending our icon to people only works
+				 * when we're the ones who initiated the conversation.  If
+				 * the other person sends the first IM then they never get
+				 * the icon.  We should fix that.
+				 */
 				if (!bi->ico_informed) {
 					gaim_debug_info("oscar",
 							   "Claiming to have a buddy icon\n");
