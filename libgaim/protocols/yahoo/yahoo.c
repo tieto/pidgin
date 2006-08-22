@@ -513,9 +513,9 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 			yahoo_do_group_check(account, ht, norm_bud, grp);
 
 			break;
-		case 241: /* msn user */
-			if (f && *pair->value == '1')
-				f->msn = TRUE;
+		case 241: /* another protocol user */
+			if (f)
+				f->protocol = strtol(pair->value, NULL, 10);
 			break;
 		/* case 242: */ /* this seems related to 241 */
 			/* break; */
@@ -3190,8 +3190,8 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
 	yahoo_packet_hash(pkt, "ss", 1, gaim_connection_get_display_name(gc), 5, who);
-	if ((f = yahoo_friend_find(gc, who)) && f->msn)
-		yahoo_packet_hash_str(pkt, 241, "1");
+	if ((f = yahoo_friend_find(gc, who)) && f->protocol)
+		yahoo_packet_hash_int(pkt, 241, f->protocol);
 
 	if (utf8)
 		yahoo_packet_hash_str(pkt, 97, "1");

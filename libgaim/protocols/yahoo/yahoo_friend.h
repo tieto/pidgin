@@ -47,7 +47,7 @@ typedef struct _YahooFriend {
 	char *ip;
 	gboolean bicon_sent_request;
 	YahooPresenceVisibility presence;
-	gboolean msn;
+	int protocol; /* 1=LCS, 2=MSN*/
 } YahooFriend;
 
 YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name);
