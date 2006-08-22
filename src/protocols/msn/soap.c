@@ -345,19 +345,22 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			/*remove the read handler*/
 			gaim_input_remove(soapconn->input_handler);
 			soapconn->input_handler = -1;
+			/*
+			 * close the soap connection,if more soap request came,
+			 * Just reconnect to do it,
+			 *
+			 * To solve the problem described below:
+			 * When I post the soap request in one socket one after the other,
+			 * The first read is ok, But the second soap read always got 0 bytes,
+			 * Weird!
+			 * */
+			msn_soap_close(soapconn);
 #endif
 
 			/*call the read callback*/
 			if(soapconn->read_cb != NULL){
 				soapconn->read_cb(soapconn,source,0);
 			}
-			/*clear the read buffer*/
-			msn_soap_free_read_buf(soapconn);
-#if 1
-//			msn_soap_close(soapconn);
-#endif
-			/*Process the next queued SOAP request*/
-//			msn_soap_post_head_request(soapconn);
 	}
 	return;
 }
@@ -510,9 +513,12 @@ void
 msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 				MsnSoapConnectInitFunction msn_soap_init_func)
 {
-	g_queue_push_tail(soapconn->soap_queue, request);
-	if(!msn_soap_connected(soapconn)&&(soapconn->step == MSN_SOAP_UNCONNECTED)){
-		/*not connected?connect it first*/
+	if(request != NULL){
+		g_queue_push_tail(soapconn->soap_queue, request);
+	}
+	if(!msn_soap_connected(soapconn)&&(soapconn->step == MSN_SOAP_UNCONNECTED)
+					&&(!g_queue_is_empty(soapconn->soap_queue))){
+		/*not connected?and we have something to process connect it first*/
 		gaim_debug_info("Ma Yuan","soap is not connected!\n");
 		msn_soap_init_func(soapconn);
 		msn_soap_connect(soapconn);

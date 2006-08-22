@@ -721,7 +721,8 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
-	msn_message_parse_payload(msg, payload, len);
+	msn_message_parse_payload(msg, payload, len,
+					MSG_LINE_DEM,MSG_BODY_DEM);
 #ifdef MSN_DEBUG_SB
 	msn_message_show_readable(msg, "SB RECV", FALSE);
 #endif

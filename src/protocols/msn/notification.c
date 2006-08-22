@@ -373,7 +373,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
-	msn_message_parse_payload(msg, payload, len);
+	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
 #ifdef MSN_DEBUG_NS
 	msn_message_show_readable(msg, "Notification", TRUE);
 #endif
@@ -436,7 +436,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	gaim_debug_info("MaYuan","Process UBM payload:%s\n",payload);
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
-	msn_message_parse_payload(msg, payload, len);
+	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
 #ifdef MSN_DEBUG_NS
 	msn_message_show_readable(msg, "Notification", TRUE);
 #endif

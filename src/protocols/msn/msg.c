@@ -206,7 +206,8 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 
 void
 msn_message_parse_payload(MsnMessage *msg,
-						  const char *payload, size_t payload_len)
+						  const char *payload, size_t payload_len,
+						  const char *line_dem,const char *body_dem)
 {
 	char *tmp_base, *tmp;
 	const char *content_type;
@@ -219,7 +220,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	memcpy(tmp_base, payload, payload_len);
 
 	/* Parse the attributes. */
-	end = strstr(tmp, "\r\n\r\n");
+	end = strstr(tmp, body_dem);
 	/* TODO? some clients use \r delimiters instead of \r\n, the official client
 	 * doesn't send such messages, but does handle receiving them. We'll just
 	 * avoid crashing for now */
@@ -229,7 +230,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 	*end = '\0';
 
-	elems = g_strsplit(tmp, "\r\n", 0);
+	elems = g_strsplit(tmp, line_dem, 0);
 
 	for (cur = elems; *cur != NULL; cur++){
 		const char *key, *value;
@@ -268,7 +269,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	g_strfreev(elems);
 
 	/* Proceed to the end of the "\r\n\r\n" */
-	tmp = end + 4;
+	tmp = end + strlen(body_dem);
 
 	/* Now we *should* be at the body. */
 	content_type = msn_message_get_content_type(msg);

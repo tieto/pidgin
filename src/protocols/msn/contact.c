@@ -179,8 +179,6 @@ msn_parse_contact_list(MsnContact * contact)
 	}
 
 	xmlnode_free(node);
-
-	msn_get_address_book(contact);
 }
 
 static void
@@ -197,6 +195,10 @@ msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
 
 //	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 	msn_parse_contact_list(contact);
+	/*free the read buffer*/
+	msn_soap_free_read_buf(soapconn);
+
+	msn_get_address_book(contact);
 }
 
 static void
@@ -420,6 +422,8 @@ msn_get_address_cb(gpointer data, gint source, GaimInputCondition cond)
 
 //	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 	msn_parse_addressbook(contact);
+	/*free the read buffer*/
+	msn_soap_free_read_buf(soapconn);
 }
 
 /**/

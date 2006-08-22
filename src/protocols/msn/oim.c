@@ -184,6 +184,37 @@ msn_oim_get_connect_cb(gpointer data, GaimSslConnection *gsc,
 	gaim_debug_info("MaYuan","oim get SOAP Server connected!\n");
 }
 
+void
+msn_oim_report_to_user(MsnOim *oim,char *msg_str)
+{
+	MsnMessage *message;
+	char * end,*endline;
+
+	message = msn_message_new(MSN_MSG_UNKNOWN);
+
+	msn_message_parse_payload(message,msg_str,strlen(msg_str),
+					MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
+	gaim_debug_info("MaYuan","oim body:{%s}\n",message->body);
+}
+
+void
+msn_oim_process(MsnOim *oim,char *oim_msg)
+{
+	xmlnode *oimNode,*bodyNode,*responseNode,*msgNode;
+	char *msg_data,*msg_str;
+
+	oimNode = xmlnode_from_str(oim_msg, strlen(oim_msg));
+	bodyNode = xmlnode_get_child(oimNode,"Body");
+//	gaim_debug_misc("xml","body{%p},name:%s\n",bodyNode,bodyNode->name);
+	responseNode = xmlnode_get_child(bodyNode,"GetMessageResponse");
+	msgNode = xmlnode_get_child(responseNode,"GetMessageResult");
+	msg_data = xmlnode_get_data(msgNode);
+	msg_str = g_strdup(msg_data);
+	gaim_debug_info("OIM","msg:{%s}\n",msg_str);
+	msn_oim_report_to_user(oim,msg_str);
+	g_free(msg_str);
+}
+
 static void
 msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
@@ -194,9 +225,11 @@ msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 	gaim_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
 
 	/*we need to process the read message!*/
+	msn_oim_process(oim,soapconn->body);
+	msn_soap_free_read_buf(soapconn);
 	/*get next single Offline Message*/
 //	oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
-	msn_soap_post_head_request(soapconn);
+	msn_soap_post(soapconn,NULL,msn_oim_retrieve_connect_init);
 }
 
 static void
