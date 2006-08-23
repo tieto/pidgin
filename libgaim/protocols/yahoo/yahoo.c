@@ -300,7 +300,8 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (strtol(pair->value, NULL, 10) == 0) {
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
-				gaim_prpl_got_user_status(account, name, "offline", NULL);
+				if (name)
+					gaim_prpl_got_user_status(account, name, "offline", NULL);
 				break;
 			}
 			break;
@@ -2786,6 +2787,8 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 			emblems[i++] = "wireless";
 		if (yahoo_friend_get_game(f))
 			emblems[i++] = "game";
+		if (f->protocol == 2)
+			emblems[i] = "msn";
 	}
 	*se = emblems[0];
 	*sw = emblems[1];

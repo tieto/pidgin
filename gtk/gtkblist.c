@@ -3014,19 +3014,27 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 			g_free(filename);
 			if(emblem) {
 				if(i == 0 && size == GAIM_STATUS_ICON_SMALL) {
+					double scale_factor = 0.6;
+					if(gdk_pixbuf_get_width(emblem) > 20)
+						scale_factor = 9.0 / gdk_pixbuf_get_width(emblem);
+
 					gdk_pixbuf_composite(emblem,
 							scale, 5, 5,
 							10, 10,
 							5, 5,
-							.6, .6,
+							scale_factor, scale_factor,
 							GDK_INTERP_BILINEAR,
 							255);
 				} else {
+					double scale_factor = 1.0;
+					if(gdk_pixbuf_get_width(emblem) > 20)
+						scale_factor = 15.0 / gdk_pixbuf_get_width(emblem);
+
 					gdk_pixbuf_composite(emblem,
 							scale, emblems[i].x, emblems[i].y,
 							15, 15,
 							emblems[i].x, emblems[i].y,
-							1, 1,
+							scale_factor, scale_factor,
 							GDK_INTERP_BILINEAR,
 							255);
 				}
