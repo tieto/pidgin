@@ -19,7 +19,7 @@ static int
 get_onscreen_width(const char *start, const char *end)
 {
 	wchar_t wch;
-	size_t size;
+	int size;
 	int width = 0;
 
 	while (start < end) {
@@ -351,7 +351,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			{
 				char *s = get_beginning_of_word(entry);
 				char *iter = text;
-				while (toupper(*s) == toupper(*iter))
+				while (*iter && toupper(*s) == toupper(*iter))
 				{
 					*s++ = *iter++;
 				}
