@@ -23,6 +23,12 @@ backup_colors()
 	}
 }
 
+static gboolean
+can_use_custom_color()
+{
+	return (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color());
+}
+
 static void
 restore_colors()
 {
@@ -36,8 +42,16 @@ restore_colors()
 
 void gnt_init_colors()
 {
+	static gboolean init = FALSE;
+
+	if (init)
+		return;
+	init = TRUE;
+
 	start_color();
-	if (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color())
+	use_default_colors();
+
+	if (can_use_custom_color())
 	{
 		backup_colors();
 
@@ -64,7 +78,6 @@ void gnt_init_colors()
 	}
 	else
 	{
-		use_default_colors();
 		init_pair(GNT_COLOR_NORMAL, COLOR_BLACK, COLOR_WHITE);
 		init_pair(GNT_COLOR_HIGHLIGHT, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_SHADOW, COLOR_BLACK, COLOR_BLACK);
@@ -79,7 +92,7 @@ void gnt_init_colors()
 void
 gnt_uninit_colors()
 {
-	if (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color())
+	if (can_use_custom_color())
 		restore_colors();
 }
 
@@ -87,23 +100,28 @@ static int
 get_color(char *key)
 {
 	int color;
+	gboolean custom = can_use_custom_color();
 
 	key = g_strstrip(key);
 
 	if (strcmp(key, "black") == 0)
-		color = GNT_COLOR_BLACK;
+		color = custom ? GNT_COLOR_BLACK : COLOR_BLACK;
 	else if (strcmp(key, "red") == 0)
-		color = GNT_COLOR_RED;
+		color = custom ? GNT_COLOR_RED : COLOR_RED;
 	else if (strcmp(key, "green") == 0)
-		color = GNT_COLOR_GREEN;
+		color = custom ? GNT_COLOR_GREEN : COLOR_GREEN;
 	else if (strcmp(key, "blue") == 0)
-		color = GNT_COLOR_BLUE;
+		color = custom ? GNT_COLOR_BLUE : COLOR_BLUE;
 	else if (strcmp(key, "white") == 0)
-		color = GNT_COLOR_WHITE;
+		color = custom ? GNT_COLOR_WHITE : COLOR_WHITE;
 	else if (strcmp(key, "gray") == 0)
-		color = GNT_COLOR_GRAY;
+		color = custom ? GNT_COLOR_GRAY : COLOR_YELLOW;  /* eh? */
 	else if (strcmp(key, "darkgray") == 0)
-		color = GNT_COLOR_DARK_GRAY;
+		color = custom ? GNT_COLOR_DARK_GRAY : COLOR_BLACK;
+	else if (strcmp(key, "magenta") == 0)
+		color = COLOR_MAGENTA;
+	else if (strcmp(key, "cyan") == 0)
+		color = COLOR_CYAN;
 	else
 		color = -1;
 	return color;
@@ -122,8 +140,9 @@ void gnt_colors_parse(GKeyFile *kfile)
 		g_error_free(error);
 		error = NULL;
 	}
-	else
+	else if (nkeys)
 	{
+		gnt_init_colors();
 		while (nkeys--)
 		{
 			gsize len;
@@ -164,6 +183,8 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 		g_error_free(error);
 		return;
 	}
+	else if (nkeys)
+		gnt_init_colors();
 
 	while (nkeys--)
 	{
