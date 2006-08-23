@@ -477,17 +477,16 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 	GHashTable *ht;
 	char *grp = NULL;
 	char *norm_bud = NULL;
+	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
+	                       /* But what if you had no friends? */
+	GaimBuddy *b;
+	GaimGroup *g;
+
 
 	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
-		YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
-		                       /* But what if you had no friends? */
-		GaimBuddy *b;
-		GaimGroup *g;
-
-
 		l = l->next;
 
 		switch (pair->key) {
@@ -514,8 +513,10 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 
 			break;
 		case 241: /* another protocol user */
-			if (f)
+			if (f) {
 				f->protocol = strtol(pair->value, NULL, 10);
+				gaim_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
+			}
 			break;
 		/* case 242: */ /* this seems related to 241 */
 			/* break; */
