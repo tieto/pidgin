@@ -48,6 +48,8 @@ struct _MsnUser
 	char * uid;				/*< User Id							*/
 
 	const char *status;     /**< The state of the user.         */
+	const char *statusline;	/**< The state of the user.	*/	
+
 	gboolean idle;          /**< The idle state of the user.    */
 
 	struct
@@ -104,6 +106,14 @@ void msn_user_destroy(MsnUser *user);
  * @param user The user to update.
  */
 void msn_user_update(MsnUser *user);
+
+ /**
+  *  Sets the new statusline of user.
+  * 
+  *  @param user The user.
+  *  @param state The statusline string.
+  */
+void msn_user_set_statusline(MsnUser *user, const char *statusline);
 
 /**
  * Sets the new state of user.

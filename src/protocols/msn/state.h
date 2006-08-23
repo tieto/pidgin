@@ -61,6 +61,9 @@ const char *msn_state_get_text(MsnAwayType state);
 
 void msn_set_psm(MsnSession *session);
 
+/*get the PSM info from the XML string*/
+const char * msn_get_psm(char *xml_str,gsize len);
+
 MsnAwayType msn_state_from_account(GaimAccount *account);
 
 #endif /* _MSN_STATE_H_ */

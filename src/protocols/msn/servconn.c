@@ -235,13 +235,12 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	r = gaim_proxy_connect(session->account, host, port, connect_cb,
 		servconn);
 
-	if (r == 0)
-	{
+	if (r == 0){
 		servconn->processing = TRUE;
 		return TRUE;
-	}
-	else
+	}else{
 		return FALSE;
+	}
 }
 
 void

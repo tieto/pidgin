@@ -1393,12 +1393,40 @@ sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/*get the payload content*/
 }
 
+/*
+ * Get the UBX's PSM info
+ * Post it to the User status
+ * Thanks for Chris <ukdrizzle@yahoo.co.uk>'s code
+ */
 static void
 ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
+	MsnSession *session;
+	GaimAccount *account;
+	GaimConnection *gc;
+	MsnUser *user;
+	MsnObject *msnobj;
+	int clientid;
+	int wlmclient;
+	const char *passport, *psm_str;
+
 	/*get the payload content*/
-	gaim_debug_info("MaYuan","ubx{%s}\n",cmd->payload);
+	gaim_debug_info("MaYuan","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = gaim_account_get_connection(account);
+
+	passport = cmd->params[0];
+	user = msn_userlist_find_user(session->userlist, passport);
+	
+	psm_str = msn_get_psm(cmd->payload,len);
+	gaim_debug_info("Ma Yuan","got psm {%s}\n", psm_str);
+	msn_user_set_statusline(user, psm_str);
+	msn_user_update(user);
+
+	g_free(psm_str);
 }
 
 static void

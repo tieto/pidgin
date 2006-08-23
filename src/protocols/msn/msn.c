@@ -517,18 +517,45 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	*ne = emblems[3];
 }
 
+/*
+ * Set the User status text
+ * Add the PSM String Using "Name - PSM String" format
+ */
 static char *
 msn_status_text(GaimBuddy *buddy)
 {
 	GaimPresence *presence;
 	GaimStatus *status;
+	char *msg, *psm_str, *tmp2, *text, *name;
 
 	presence = gaim_buddy_get_presence(buddy);
 	status = gaim_presence_get_active_status(presence);
 
-	if (!gaim_presence_is_available(presence) && !gaim_presence_is_idle(presence))
-	{
-		return g_strdup(gaim_status_get_name(status));
+	msg = gaim_status_get_attr_string(status, "message");
+	if (!gaim_presence_is_available(presence) && !gaim_presence_is_idle(presence)){
+		name = gaim_status_get_name(status);
+	}else{
+		name = NULL;
+	}
+
+	if (msg != NULL) {
+		tmp2 = gaim_markup_strip_html(msg);
+		if (name){
+			psm_str = g_strdup_printf("%s - %s", name, tmp2);
+			g_free(tmp2);
+		}else{
+			psm_str = tmp2;
+		}
+		text = g_markup_escape_text(psm_str, -1);
+		g_free(psm_str);
+		return text;
+	} else {
+		if (!gaim_presence_is_available(presence) && !gaim_presence_is_idle(presence)){
+			psm_str = g_strdup(gaim_status_get_name(status));
+			text = g_markup_escape_text(psm_str, -1);
+			g_free(psm_str);
+			return text;
+		}
 	}
 
 	return NULL;
@@ -574,29 +601,42 @@ msn_status_types(GaimAccount *account)
 {
 	GaimStatusType *status;
 	GList *types = NULL;
-
+#if 0
 	status = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
 			NULL, NULL, FALSE, TRUE, FALSE);
+#endif
+	status = gaim_status_type_new_with_attrs(
+				GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
+				"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+				NULL);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
-			NULL, NULL, FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
-			"brb", _("Be Right Back"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AWAY, "brb", _("Be Right Back"), TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
-			"busy", _("Busy"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AWAY, "busy", _("Busy"), TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
-
-	status = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
-			"phone", _("On the Phone"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AWAY, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
-
-	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
-			"lunch", _("Out to Lunch"), FALSE, TRUE, FALSE);
+	status = gaim_status_type_new_with_attrs(
+			GAIM_STATUS_AWAY, "lunch", _("Out to Lunch"), TRUE, TRUE, FALSE,
+			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE,

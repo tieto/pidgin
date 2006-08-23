@@ -84,13 +84,19 @@ msn_user_update(MsnUser *user)
 
 	account = user->userlist->session->account;
 
-	if (user->status != NULL)
+	if (user->statusline != NULL) {
+		char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
+		gaim_prpl_got_user_status(account, user->passport, user->status, "message", user->statusline, NULL);
+	}
+	else if (user->status != NULL) {
 		gaim_prpl_got_user_status(account, user->passport, user->status, NULL);
+	}
 
-	if (user->idle)
+	if (user->idle){
 		gaim_prpl_got_user_idle(account, user->passport, TRUE, -1);
-	else
+	}else{
 		gaim_prpl_got_user_idle(account, user->passport, FALSE, 0);
+	}
 }
 
 void
@@ -135,6 +141,15 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 
 	g_free(user->friendly_name);
 	user->friendly_name = g_strdup(name);
+}
+
+void
+msn_user_set_statusline(MsnUser *user, const char *statusline)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->statusline);
+	user->statusline = g_strdup(statusline);
 }
 
 void
