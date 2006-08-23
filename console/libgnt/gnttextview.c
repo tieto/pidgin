@@ -1,4 +1,5 @@
 #include "gnttextview.h"
+#include "gntutils.h"
 
 enum
 {
@@ -14,7 +15,7 @@ typedef struct
 typedef struct
 {
 	GList *segments;         /* A list of GntTextSegments */
-	int length;              /* The current length of the line so far */
+	int length;              /* The current length of the line so far (ie. onscreen width) */
 } GntTextLine;
 
 static GntWidgetClass *parent_class = NULL;
@@ -236,18 +237,23 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 
 		while (iter && *iter)
 		{
-			GntTextSegment *seg = g_new0(GntTextSegment, 1);
-			int len = g_utf8_offset_to_pointer(iter, widget->priv.width - line->length - 1) - iter;
-			seg->flags = fl;
-			seg->text = g_new0(char, len + 1);
-			g_utf8_strncpy(seg->text, iter, widget->priv.width - line->length - 1);
-			line->segments = g_list_append(line->segments, seg);
+			int len;
 
-			prev = g_utf8_strlen(seg->text, -1);
-			line->length += prev;
-			iter = g_utf8_offset_to_pointer(iter, prev);
-			if (line->length >= widget->priv.width - 1 && *iter)
-			{
+			len = gnt_util_onscreen_width_to_pointer(iter, widget->priv.width - line->length - 1, &prev) - iter;
+			if (len) {
+				GntTextSegment *seg = g_new0(GntTextSegment, 1);
+				seg->flags = fl;
+				seg->text = g_new0(char, len + 1);
+				g_utf8_strncpy(seg->text, iter, g_utf8_pointer_to_offset(iter, iter + len));
+				line->segments = g_list_append(line->segments, seg);
+
+				line->length += prev;
+				iter += len;
+				if (line->length >= widget->priv.width - 1 && *iter) {
+					line = g_new0(GntTextLine, 1);
+					view->list = g_list_prepend(g_list_first(view->list), line);
+				}
+			} else {
 				line = g_new0(GntTextLine, 1);
 				view->list = g_list_prepend(g_list_first(view->list), line);
 			}
