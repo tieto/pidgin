@@ -782,13 +782,13 @@ void gnt_init()
 	noecho();
 	curs_set(0);
 
-	gnt_init_colors();
 	gnt_init_styles();
 
 	filename = g_build_filename(g_get_home_dir(), ".gntrc", NULL);
 	gnt_style_read_configure_file(filename);
 	g_free(filename);
 
+	gnt_init_colors();
 	X_MIN = 0;
 	Y_MIN = 0;
 	X_MAX = getmaxx(stdscr);

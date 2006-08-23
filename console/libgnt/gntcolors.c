@@ -1,5 +1,6 @@
 #include <ncursesw/ncurses.h>
 #include "gntcolors.h"
+#include "gntstyle.h"
 
 #include <glib.h>
 
@@ -36,7 +37,7 @@ restore_colors()
 void gnt_init_colors()
 {
 	start_color();
-	if (can_change_color())
+	if (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color())
 	{
 		backup_colors();
 
@@ -63,6 +64,7 @@ void gnt_init_colors()
 	}
 	else
 	{
+		use_default_colors();
 		init_pair(GNT_COLOR_NORMAL, COLOR_BLACK, COLOR_WHITE);
 		init_pair(GNT_COLOR_HIGHLIGHT, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_SHADOW, COLOR_BLACK, COLOR_BLACK);
@@ -77,7 +79,8 @@ void gnt_init_colors()
 void
 gnt_uninit_colors()
 {
-	restore_colors();
+	if (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color())
+		restore_colors();
 }
 
 static int

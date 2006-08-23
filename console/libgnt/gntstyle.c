@@ -141,6 +141,7 @@ read_general_style(GKeyFile *kfile)
 		const char *style;
 		GntStyle en;
 	} styles[] = {{"shadow", GNT_STYLE_SHADOW},
+	              {"customcolor", GNT_STYLE_COLOR},
 	              {NULL, 0}};
 
 	if (error)
