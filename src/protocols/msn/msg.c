@@ -468,16 +468,14 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	}
 	else
 	{
-		if (body != NULL)
-		{
+		if (body != NULL){
 			memcpy(n, body, body_len);
 			n += body_len;
-//			n = '\0';
+			*n = '\0';
 		}
 	}
 
-	if (ret_size != NULL)
-	{
+	if (ret_size != NULL){
 		*ret_size = n - base;
 
 		if (*ret_size > 1664)
