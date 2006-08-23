@@ -86,20 +86,20 @@ msn_get_psm(char *xml_str,gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
 	char *psm_str,*psm;
-
+	
+	gaim_debug_info("Ma Yuan","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
 		gaim_debug_error("MaYuan","PSM XML parse Error!\n");
 		return NULL;
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
-	if (!psmNode){
+	if (psmNode == NULL){
 		gaim_debug_info("Ma Yuan","No PSM status Node");
 		g_free(payloadNode);
 		return NULL;
 	}
 	psm_str = xmlnode_get_data(psmNode);
-	gaim_debug_info("Ma Yuan","got PSM {%s}\n", psm_str);
 	psm = g_strdup(psm_str);
 
 	g_free(psmNode);

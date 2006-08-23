@@ -1406,9 +1406,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	GaimAccount *account;
 	GaimConnection *gc;
 	MsnUser *user;
-	MsnObject *msnobj;
-	int clientid;
-	int wlmclient;
 	const char *passport, *psm_str;
 
 	/*get the payload content*/
@@ -1422,7 +1419,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	user = msn_userlist_find_user(session->userlist, passport);
 	
 	psm_str = msn_get_psm(cmd->payload,len);
-	gaim_debug_info("Ma Yuan","got psm {%s}\n", psm_str);
 	msn_user_set_statusline(user, psm_str);
 	msn_user_update(user);
 
