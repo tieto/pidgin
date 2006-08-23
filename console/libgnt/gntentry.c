@@ -1,5 +1,7 @@
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "gntbox.h"
 #include "gntentry.h"
@@ -12,6 +14,25 @@ enum
 
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
+
+static int
+get_onscreen_width(const char *start, const char *end)
+{
+	wchar_t wch;
+	size_t size;
+	int width = 0;
+
+	while (start < end) {
+		if ((size = mbtowc(&wch, start, end - start)) > 0) {
+			start += size;
+			width += wcwidth(wch);
+		} else {
+			++width;
+			++start;
+		}
+	}
+	return width;
+}
 
 static void
 destroy_suggest(GntEntry *entry)
@@ -51,7 +72,7 @@ show_suggest_dropdown(GntEntry *entry)
 		char *s = get_beginning_of_word(entry);
 		suggest = g_strndup(s, entry->cursor - s);
 		if (entry->scroll < s)
-			offset = g_utf8_pointer_to_offset(entry->scroll, s);
+			offset = get_onscreen_width(entry->scroll, s);
 	}
 	else
 		suggest = g_strdup(entry->start);
@@ -118,14 +139,14 @@ gnt_entry_draw(GntWidget *widget)
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
 	else
-		mvwprintw(widget->window, 0, 0, entry->scroll);
+		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 
-	stop = g_utf8_pointer_to_offset(entry->scroll, entry->end);
+	stop = get_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
-		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
+		whline(widget->window, ENTRY_CHAR, widget->priv.width - stop);
 
 	if (focus)
-		mvwchgat(widget->window, 0, g_utf8_pointer_to_offset(entry->scroll, entry->cursor),
+		mvwchgat(widget->window, 0, get_onscreen_width(entry->scroll, entry->cursor),
 				1, A_REVERSE, COLOR_PAIR(GNT_COLOR_TEXT_NORMAL), NULL);
 
 	DEBUG;
@@ -173,7 +194,7 @@ move_forward(GntEntry *entry)
 	if (entry->cursor >= entry->end)
 		return;
 	entry->cursor = g_utf8_find_next_char(entry->cursor, NULL);
-	if (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
+	while (get_onscreen_width(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
 		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
 	entry_redraw(GNT_WIDGET(entry));
 }
@@ -228,7 +249,7 @@ move_end(GntEntry *entry)
 {
 	entry->cursor = entry->end;
 	/* This should be better than this */
-	while (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
+	while (get_onscreen_width(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
 		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
 	entry_redraw(GNT_WIDGET(entry));
 }
@@ -389,7 +410,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 					str++;
 				}
 
-				while (g_utf8_pointer_to_offset(entry->scroll, entry->cursor) >= widget->priv.width)
+				while (get_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width)
 					entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
 
 				if (entry->ddown)
