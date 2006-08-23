@@ -57,19 +57,22 @@ static void WINAPI (*MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
-struct resdata {
-	GaimSRVCallback cb;
+struct _GaimSrvQueryData {
+	GaimSrvCallback cb;
 	gpointer extradata;
 #ifndef _WIN32
 	guint handle;
 #else
+	GThread *resolver;
 	char *query;
-	char *errmsg;
+	char *error_message;
 	GSList *results;
 #endif
 };
 
-static gint responsecompare(gconstpointer ar, gconstpointer br) {
+static gint
+responsecompare(gconstpointer ar, gconstpointer br)
+{
 	GaimSrvResponse *a = (GaimSrvResponse*)ar;
 	GaimSrvResponse *b = (GaimSrvResponse*)br;
 
@@ -84,8 +87,12 @@ static gint responsecompare(gconstpointer ar, gconstpointer br) {
 		return -1;
 	return 1;
 }
+
 #ifndef _WIN32
-static void resolve(int in, int out) {
+
+static void
+resolve(int in, int out)
+{
 	GList *ret = NULL;
 	GaimSrvResponse *srvres;
 	queryans answer;
@@ -98,14 +105,13 @@ static void resolve(int in, int out) {
 	guint16 type, dlen, pref, weight, port;
 	gchar query[256];
 
-	if(read(in, query, 256) <= 0) {
+	if (read(in, query, 256) <= 0)
 		_exit(0);
-	}
+
 	size = res_query( query, C_IN, T_SRV, (u_char*)&answer, sizeof( answer));
 
 	qdcount = ntohs(answer.hdr.qdcount);
 	ancount = ntohs(answer.hdr.ancount);
-
 
 	cp = (guchar*)&answer + sizeof(HEADER);
 	end = (guchar*)&answer + size;
@@ -155,58 +161,60 @@ static void resolve(int in, int out) {
 			cp += dlen;
 		}
 	}
-end:	size = g_list_length(ret);
+
+end:
+	size = g_list_length(ret);
 	write(out, &size, sizeof(int));
-	while(g_list_first(ret)) {
-		write(out, g_list_first(ret)->data, sizeof(GaimSrvResponse));
-		g_free(g_list_first(ret)->data);
-		ret = g_list_remove(ret, g_list_first(ret)->data);
+	while (ret != NULL)
+	{
+		write(out, ret->data, sizeof(GaimSrvResponse));
+		g_free(ret->data);
+		ret = g_list_remove(ret, ret->data);
 	}
 
-	/* Should the resolver be reused?
-	 * There is most likely only 1 SRV queries per prpl...
-	 */
 	_exit(0);
 }
 
-static void resolved(gpointer data, gint source, GaimInputCondition cond) {
+static void
+resolved(gpointer data, gint source, GaimInputCondition cond)
+{
 	int size;
-	struct resdata *rdata = (struct resdata*)data;
+	GaimSrvQueryData *query_data = (GaimSrvQueryData*)data;
 	GaimSrvResponse *res;
 	GaimSrvResponse *tmp;
 	int i;
-	GaimSRVCallback cb = rdata->cb;
+	GaimSrvCallback cb = query_data->cb;
 
 	read(source, &size, sizeof(int));
-	gaim_debug_info("srv","found %d SRV entries\n", size);
+	gaim_debug_info("dnssrv","found %d SRV entries\n", size);
 	tmp = res = g_new0(GaimSrvResponse, size);
-	i = size;
-	while(i) {
+	for (i = 0; i < size; i++) {
 		read(source, tmp++, sizeof(GaimSrvResponse));
-		i--;
 	}
-	cb(res, size, rdata->extradata);
-	gaim_input_remove(rdata->handle);
-	g_free(rdata);
+
+	cb(res, size, query_data->extradata);
+
+	gaim_srv_cancel(query_data);
 }
 
 #else /* _WIN32 */
 
 /** The Jabber Server code was inspiration for parts of this. */
 
-static gboolean res_main_thread_cb(gpointer data) {
+static gboolean
+res_main_thread_cb(gpointer data)
+{
 	GaimSrvResponse *srvres = NULL;
 	int size = 0;
-	struct resdata *rdata = data;
+	GaimSrvQueryData *query_data = data;
 
-	if (rdata->errmsg != NULL) {
-		gaim_debug_error("srv", rdata->errmsg);
-		g_free(rdata->errmsg);
+	if (query_data->error_message != NULL) {
+		gaim_debug_error("dnssrv", query_data->error_message);
 	} else {
 		GaimSrvResponse *srvres_tmp;
-		GSList *lst = rdata->results;
+		GSList *lst = query_data->results;
 
-		size = g_slist_length(rdata->results);
+		size = g_slist_length(query_data->results);
 
 		srvres_tmp = srvres = g_new0(GaimSrvResponse, size);
 		while (lst) {
@@ -215,29 +223,30 @@ static gboolean res_main_thread_cb(gpointer data) {
 			lst = g_slist_remove(lst, lst->data);
 		}
 
-		rdata->results = lst;
+		query_data->results = lst;
 	}
 
-	gaim_debug_info("srv", "found %d SRV entries\n", size);
+	gaim_debug_info("dnssrv", "found %d SRV entries\n", size);
 
-	rdata->cb(srvres, size, rdata->extradata);
+	query_data->cb(srvres, size, query_data->extradata);
 
-	g_free(rdata->query);
-	g_free(rdata);
+	gaim_srv_cancel(query_data);
 
 	return FALSE;
 }
 
-static gpointer res_thread(gpointer data) {
+static gpointer
+res_thread(gpointer data)
+{
 	PDNS_RECORD dr = NULL;
 	int type = DNS_TYPE_SRV;
 	DNS_STATUS ds;
-	struct resdata *rdata = data;
+	GaimSrvQueryData *query_data = data;
 
-	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
+	ds = MyDnsQuery_UTF8(query_data->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		gchar *msg = g_win32_error_message(ds);
-		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. %s (%lu).\n", msg, ds);
+		query_data->error_message = g_strdup_printf("Couldn't look up SRV record. %s (%lu).\n", msg, ds);
 		g_free(msg);
 	} else {
 		PDNS_RECORD dr_tmp;
@@ -247,7 +256,7 @@ static gpointer res_thread(gpointer data) {
 
 		for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
 			/* Discard any incorrect entries. I'm not sure if this is necessary */
-			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, rdata->query) != 0) {
+			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, query_data->query) != 0) {
 				continue;
 			}
 
@@ -263,11 +272,11 @@ static gpointer res_thread(gpointer data) {
 		}
 
 		MyDnsRecordListFree(dr, DnsFreeRecordList);
-		rdata->results = lst;
+		query_data->results = lst;
 	}
 
 	/* back to main thread */
-	g_idle_add(res_main_thread_cb, rdata);
+	g_idle_add(res_main_thread_cb, query_data);
 
 	g_thread_exit(NULL);
 	return NULL;
@@ -275,36 +284,41 @@ static gpointer res_thread(gpointer data) {
 
 #endif
 
-/*
- * TODO: It would be really good if this returned some sort of handle
- *       that we could use to cancel the DNS query.  As it is now,
- *       each callback has to check to make sure gc is still valid.
- *       And that is ugly.
- */
-void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSRVCallback cb, gpointer extradata) {
-	char *query = g_strdup_printf("_%s._%s.%s",protocol, transport, domain);
-	struct resdata *rdata;
+GaimSrvQueryData *
+gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSrvCallback cb, gpointer extradata)
+{
+	char *query;
+	GaimSrvQueryData *query_data;
 #ifndef _WIN32
 	int in[2], out[2];
 	int pid;
-	gaim_debug_info("srv","querying SRV record for %s\n", query);
+#else
+	GError* err = NULL;
+	static gboolean initialized = FALSE;
+#endif
+
+#ifndef _WIN32
+	query = g_strdup_printf("_%s._%s.%s", protocol, transport, domain);
+	gaim_debug_info("dnssrv","querying SRV record for %s\n", query);
+
 	if(pipe(in) || pipe(out)) {
-		gaim_debug_error("srv", "Could not create pipe\n");
+		gaim_debug_error("dnssrv", "Could not create pipe\n");
 		g_free(query);
 		cb(NULL, 0, extradata);
-		return;
+		return NULL;
 	}
 
 	pid = fork();
-
-	if(pid == -1) {
-		gaim_debug_error("srv","Could not create process!\n");
+	if (pid == -1) {
+		gaim_debug_error("dnssrv", "Could not create process!\n");
 		cb(NULL, 0, extradata);
 		g_free(query);
-		return;
+		return NULL;
 	}
+
 	/* Child */
-	if( pid == 0 ) {
+	if (pid == 0)
+	{
 		close(out[0]);
 		close(in[1]);
 		resolve(in[0], out[1]);
@@ -313,22 +327,18 @@ void gaim_srv_resolve(const char *protocol, const char *transport, const char *d
 	close(out[1]);
 	close(in[0]);
 
-	if(write(in[1], query, strlen(query)+1)<0) {
-		gaim_debug_error("srv", "Could not write to SRV resolver\n");
-	}
-	rdata = g_new0(struct resdata,1);
-	rdata->cb = cb;
-	rdata->extradata = extradata;
-	rdata->handle = gaim_input_add(out[0], GAIM_INPUT_READ, resolved, rdata);
+	if (write(in[1], query, strlen(query)+1) < 0)
+		gaim_debug_error("dnssrv", "Could not write to SRV resolver\n");
+
+	query_data = g_new0(GaimSrvQueryData, 1);
+	query_data->cb = cb;
+	query_data->extradata = extradata;
+	query_data->handle = gaim_input_add(out[0], GAIM_INPUT_READ, resolved, query_data);
 
 	g_free(query);
+
+	return query_data;
 #else
-	GError* err = NULL;
-
-	static gboolean initialized = FALSE;
-
-	gaim_debug_info("srv","querying SRV record for %s\n", query);
-
 	if (!initialized) {
 		MyDnsQuery_UTF8 = (void*) wgaim_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF8");
 		MyDnsRecordListFree = (void*) wgaim_find_and_loadproc(
@@ -337,22 +347,49 @@ void gaim_srv_resolve(const char *protocol, const char *transport, const char *d
 	}
 
 	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree) {
-		gaim_debug_error("srv", "System missing DNS API (Requires W2K+)\n");
+		gaim_debug_error("dnssrv", "System missing DNS API (Requires W2K+)\n");
 		g_free(query);
 		cb(NULL, 0, extradata);
-		return;
+		return NULL;
 	}
 
-	rdata = g_new0(struct resdata, 1);
-	rdata->cb = cb;
-	rdata->query = query;
-	rdata->extradata = extradata;
+	query_data = g_new0(GaimSrvQueryData, 1);
+	query_data->cb = cb;
+	query_data->query = query;
+	query_data->extradata = extradata;
 
-	if (!g_thread_create(res_thread, rdata, FALSE, &err)) {
-		rdata->errmsg = g_strdup_printf("SRV thread create failure: %s\n", err ? err->message : "");
+	query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
+	if (query_data->resolver == NULL)
+	{
+		query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", err ? err->message : "");
 		g_error_free(err);
-		res_main_thread_cb(rdata);
+		res_main_thread_cb(query_data);
+		return NULL;
 	}
+
+	return query_data;
 #endif
 }
 
+void
+gaim_srv_cancel(GaimSrvQueryData *query_data)
+{
+#ifndef _WIN32
+	if (query_data->handle > 0)
+		gaim_input_remove(query_data->handle);
+#else
+	if (query_data->resolver != NULL)
+	{
+		/*
+		 * It's not really possible to kill a thread.  So instead we
+		 * just set the callback to NULL and let the DNS lookup
+		 * finish.
+		 */
+		query_data->callback = NULL;
+		return;
+	}
+	g_free(query_data->query);
+	g_free(query_data->error_message);
+#endif
+	g_free(query_data);
+}

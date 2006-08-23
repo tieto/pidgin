@@ -1,10 +1,10 @@
 /**
  * @file dnssrv.h
- * 
+ *
  * gaim
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
- * 
+ *i
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,7 @@
 #define _GAIM_DNSSRV_H
 
 typedef struct _GaimSrvResponse GaimSrvResponse;
+typedef struct _GaimSrvQueryData GaimSrvQueryData;
 
 struct _GaimSrvResponse {
 	char hostname[256];
@@ -32,17 +33,24 @@ struct _GaimSrvResponse {
 	int pref;
 };
 
-typedef void (*GaimSRVCallback)(GaimSrvResponse *resp, int results, gpointer data);
+typedef void (*GaimSrvCallback)(GaimSrvResponse *resp, int results, gpointer data);
 
 /**
  * Queries an SRV record.
  *
  * @param protocol Name of the protocol (e.g. "sip")
  * @param transport Name of the transport ("tcp" or "udp")
- * @param domain Domainname to query (e.g. "blubb.com")
+ * @param domain Domain name to query (e.g. "blubb.com")
  * @param cb A callback which will be called with the results
  * @param extradata Extra data to be passed to the callback
  */
-void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSRVCallback cb, gpointer extradata);
+GaimSrvQueryData *gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, GaimSrvCallback cb, gpointer extradata);
+
+/**
+ * Cancel an SRV DNS query.
+ *
+ * @param query_data The request to cancel.
+ */
+void gaim_srv_cancel(GaimSrvQueryData *query_data);
 
 #endif /* _GAIM_DNSSRV_H */

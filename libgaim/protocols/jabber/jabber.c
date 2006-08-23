@@ -486,18 +486,10 @@ static void jabber_login_connect(JabberStream *js, const char *server, int port)
 
 static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
 {
-	GaimConnection *gc;
 	JabberStream *js;
 
-	gc = data;
-	if (!GAIM_CONNECTION_IS_VALID(gc))
-	{
-		/* This connection has been closed */
-		g_free(resp);
-		return;
-	}
-
-	js = (JabberStream*)gc->proto_data;
+	js = data;
+	js->srv_query_data = NULL;
 
 	if(results) {
 		jabber_login_connect(js, resp->hostname, resp->port);
@@ -577,7 +569,8 @@ jabber_login(GaimAccount *account)
 		if(connect_server[0]) {
 			jabber_login_connect(js, connect_server, gaim_account_get_int(account, "port", 5222));
 		} else {
-			gaim_srv_resolve("xmpp-client", "tcp", js->user->domain, srv_resolved_cb, gc);
+			js->srv_query_data = gaim_srv_resolve("xmpp-client",
+					"tcp", js->user->domain, srv_resolved_cb, js);
 		}
 	}
 }
@@ -935,6 +928,9 @@ static void jabber_close(GaimConnection *gc)
 	 */
 	if (!gc->disconnect_timeout)
 		jabber_send_raw(js, "</stream:stream>", -1);
+
+	if (js->srv_query_data)
+		gaim_srv_cancel(js->srv_query_data);
 
 	if (js->connect_data)
 		gaim_proxy_connect_cancel(js->connect_data);

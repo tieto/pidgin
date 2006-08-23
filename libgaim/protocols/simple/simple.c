@@ -1584,20 +1584,13 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 }
 
 static void srvresolved(GaimSrvResponse *resp, int results, gpointer data) {
-	GaimConnection *gc;
 	struct simple_account_data *sip;
 	gchar *hostname;
 	int port;
 
-	gc = data;
-	if (!GAIM_CONNECTION_IS_VALID(gc))
-	{
-		/* This connection has been closed */
-		g_free(resp);
-		return;
-	}
+	sip = data;
+	sip->srv_query_data = NULL;
 
-	sip = gc->proto_data;
 	port = gaim_account_get_int(sip->account, "port", 0);
 
 	/* find the host to connect to */
@@ -1682,12 +1675,8 @@ static void simple_login(GaimAccount *account)
 		hosttoconnect = g_strdup(gaim_account_get_string(account, "proxy", sip->servername));
 	}
 
-	/* TCP case */
-	if(!sip->udp) {
-		gaim_srv_resolve("sip", "tcp", hosttoconnect, srvresolved, gc);
-	} else { /* UDP */
-		gaim_srv_resolve("sip", "udp", hosttoconnect, srvresolved, gc);
-	}
+	sip->srv_query_data = gaim_srv_resolve("sip",
+			sip->udp ? "udp" : "tcp", hosttoconnect, srvresolved, sip);
 	g_free(hosttoconnect);
 }
 
@@ -1702,6 +1691,9 @@ static void simple_close(GaimConnection *gc)
 
 		if (sip->query_data != NULL)
 			gaim_dnsquery_destroy(sip->query_data);
+
+		if (sip->srv_query_data != NULL)
+			gaim_srv_cancel(sip->srv_query_data);
 
 		if (sip->listen_data != NULL)
 			gaim_network_listen_cancel(sip->listen_data);

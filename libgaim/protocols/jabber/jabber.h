@@ -28,6 +28,7 @@
 #include <glib.h>
 #include "circbuffer.h"
 #include "connection.h"
+#include "dnssrv.h"
 #include "roomlist.h"
 #include "sslconn.h"
 
@@ -67,6 +68,7 @@ typedef struct _JabberStream
 {
 	int fd;
 
+	GaimSrvQueryData *srv_query_data;
 	GaimProxyConnectData *connect_data;
 
 #ifdef HAVE_LIBXML

@@ -29,6 +29,7 @@
 #include "cipher.h"
 #include "circbuffer.h"
 #include "dnsquery.h"
+#include "dnssrv.h"
 #include "network.h"
 #include "proxy.h"
 #include "prpl.h"
@@ -73,6 +74,7 @@ struct simple_account_data {
 	gchar *username;
 	gchar *password;
 	GaimDnsQueryData *query_data;
+	GaimSrvQueryData *srv_query_data;
 	GaimNetworkListenData *listen_data;
 	int fd;
 	int cseq;
