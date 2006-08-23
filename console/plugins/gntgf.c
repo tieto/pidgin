@@ -129,7 +129,7 @@ notify(const char *fmt, ...)
 	g_free(str);
 	gnt_widget_size_request(window);
 	gnt_widget_get_size(window, &w, &h);
-	for (i = 0; i < MAX_COLS && gpsy[i] + h > getmaxy(stdscr) ; ++i)
+	for (i = 0; i < MAX_COLS && gpsy[i] + h >= getmaxy(stdscr) ; ++i)
 		;
 	if (i >= MAX_COLS) {
 		gaim_debug_warning("GntGf", "Dude, that's way too many popups\n");
