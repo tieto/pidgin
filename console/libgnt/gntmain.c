@@ -560,7 +560,7 @@ detect_mouse_action(const char *buffer)
 		offset = 0;
 	} else
 		return FALSE;
-	return TRUE;
+	return FALSE; /* XXX: this should be TRUE */
 }
 
 static gboolean
@@ -885,8 +885,10 @@ void gnt_init()
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	refresh();
 
+#ifdef NCURSES_BUTTON_PRESSEDaa
 	if ((mouse_enabled = gnt_style_get_bool(GNT_STYLE_MOUSE, FALSE)))
-		mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED , NULL);
+		mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED | REPORT_MOUSE_POSITION, NULL);
+#endif
 
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(stdscr);
