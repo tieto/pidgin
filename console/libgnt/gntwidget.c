@@ -385,8 +385,8 @@ void
 gnt_widget_hide(GntWidget *widget)
 {
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
-#if 1
-	/* XXX: I have no clue why, but this seems to be necessary. */
+#if 0
+	/* XXX: I have no clue why, but this seemed to be necessary. */
 	if (gnt_widget_has_shadow(widget))
 		mvwvline(widget->window, 1, widget->priv.width, ' ', widget->priv.height);
 #endif
