@@ -31,12 +31,15 @@
 #define PREFS_EVENT_CHAT_NICK PREFS_EVENT "/chatnick"
 #define PREFS_BEEP            PREFS_PREFIX "/beep"
 
+#define MAX_COLS	3
+
 #include <glib.h>
 
 #include <plugin.h>
 #include <version.h>
 #include <blist.h>
 #include <conversation.h>
+#include <debug.h>
 #include <util.h>
 
 #include <gnt.h>
@@ -52,10 +55,12 @@ typedef struct
 {
 	GntWidget *window;
 	int timer;
+	int column;
 } GntToast;
 
 static GList *toasters;
-static int gpsy;
+static int gpsy[MAX_COLS];
+static int gpsw[MAX_COLS];
 
 static void
 destroy_toaster(GntToast *toast)
@@ -71,20 +76,29 @@ remove_toaster(GntToast *toast)
 {
 	GList *iter;
 	int h;
+	int col;
+	int nwin[MAX_COLS];
 
 	gnt_widget_get_size(toast->window, NULL, &h);
-	gpsy -= h;
+	gpsy[toast->column] -= h;
+	col = toast->column;
 
+	memset(&nwin, 0, sizeof(nwin));
 	destroy_toaster(toast);
 
 	for (iter = toasters; iter; iter = iter->next)
 	{
 		int x, y;
 		toast = iter->data;
+		nwin[toast->column]++;
+		if (toast->column != col) continue;
 		gnt_widget_get_position(toast->window, &x, &y);
 		y += h;
 		gnt_screen_move_widget(toast->window, x, y);
 	}
+
+	if (nwin[col] == 0)
+		gpsw[col] = 0;
 
 	return FALSE;
 }
@@ -93,15 +107,15 @@ static void
 notify(const char *fmt, ...)
 {
 	GntWidget *window;
-	GntToast *toast = g_new0(GntToast, 1);
+	GntToast *toast;
 	char *str;
-	int h, w;
+	int h, w, i;
 	va_list args;
 
 	if (gaim_prefs_get_bool(PREFS_BEEP))
 		beep();
 
-	toast->window = window = gnt_vbox_new(FALSE);
+	window = gnt_vbox_new(FALSE);
 	GNT_WIDGET_SET_FLAGS(window, GNT_WIDGET_TRANSIENT);
 	GNT_WIDGET_UNSET_FLAGS(window, GNT_WIDGET_NO_BORDER);
 
@@ -115,9 +129,33 @@ notify(const char *fmt, ...)
 	g_free(str);
 	gnt_widget_size_request(window);
 	gnt_widget_get_size(window, &w, &h);
-	gpsy += h;
-	gnt_widget_set_position(window, getmaxx(stdscr) - w - 1,
-			getmaxy(stdscr) - gpsy - 1);
+	for (i = 0; i < MAX_COLS && gpsy[i] + h > getmaxy(stdscr) ; ++i)
+		;
+	if (i >= MAX_COLS) {
+		gaim_debug_warning("GntGf", "Dude, that's way too many popups\n");
+		gnt_widget_destroy(window);
+		return;
+	}
+
+	toast = g_new0(GntToast, 1);
+	toast->window = window;
+	toast->column = i;
+	gpsy[i] += h;
+	if (w > gpsw[i]) {
+		if (i == 0)
+			gpsw[i] = w;
+		else
+			gpsw[i] = gpsw[i - 1] + w + 1;
+	}
+
+	if (i == 0 || (w + gpsw[i - 1] >= getmaxx(stdscr))) {
+		/* if it's going to be too far left, overlap. */
+		gnt_widget_set_position(window, getmaxx(stdscr) - w - 1,
+				getmaxy(stdscr) - gpsy[i] - 1);
+	} else {
+		gnt_widget_set_position(window, getmaxx(stdscr) - gpsw[i - 1] - w - 1,
+				getmaxy(stdscr) - gpsy[i] - 1);
+	}
 	gnt_widget_draw(window);
 
 	toast->timer = g_timeout_add(4000, (GSourceFunc)remove_toaster, toast);
@@ -179,7 +217,8 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(gaim_conversations_get_handle(), "received-chat-msg", plugin,
 			GAIM_CALLBACK(received_chat_msg), NULL);
 
-	gpsy = 0;
+	memset(&gpsy, 0, sizeof(gpsy));
+	memset(&gpsw, 0, sizeof(gpsw));
 
 	return TRUE;
 }
