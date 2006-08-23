@@ -10,7 +10,25 @@ print_keycode(GntEntry *entry, const char *text, gpointer null)
 	gnt_entry_set_text(entry, s);
 	g_free(s);
 	if (text[0] == 27)
-		return FALSE;
+	{
+		if (strncmp(text + 1, "[M ", 3) == 0)
+		{
+			int x = (unsigned)text[4];
+			int y = (unsigned)text[5];
+			if (x < 0)	x += 256;
+			if (y < 0)	y += 256;
+			x -= 33;
+			y -= 33;
+			s = g_strdup_printf("ldown %d %d", x, y);
+			gnt_entry_set_text(entry, s);
+			g_free(s);
+		}
+		else if (strncmp(text + 1, "[M#", 3) == 0)
+			gnt_entry_set_text(entry, "up");
+		else
+			return FALSE;
+		return TRUE;
+	}
 	else
 		return TRUE;
 }

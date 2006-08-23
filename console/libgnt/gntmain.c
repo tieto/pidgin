@@ -31,6 +31,7 @@ static int Y_MIN;
 static int Y_MAX;
 
 static gboolean ascii_only;
+static gboolean mouse_enabled;
 
 static GMainLoop *loop;
 static struct
@@ -480,6 +481,88 @@ refresh_node(GntWidget *widget, GntNode *node, gpointer null)
 		gnt_screen_resize_widget(widget, nw, nh);
 }
 
+/**
+ * Mouse support:
+ *  - bring a window on top if you click on its taskbar
+ *  - click on the top-bar of the active window and drag+drop to move a window
+ *  wishlist:
+ *   - have a little [X] on the windows, and clicking it will close that window.
+ *   - click on a window to bring it to focus
+ *   - allow scrolling in tree/textview on wheel-scroll event
+ *   - click to activate button or select a row in tree
+ *      - all these can be fulfilled by adding a "clicked" event for GntWidget
+ *        which will send the (x,y) to the widget. (look at "key_pressed" for hints)
+ */
+static gboolean
+detect_mouse_action(const char *buffer)
+{
+	int x, y;
+	static enum {
+		MOUSE_NONE,
+		MOUSE_LEFT,
+		MOUSE_RIGHT,
+		MOUSE_MIDDLE
+	} button = MOUSE_NONE;
+	static GntWidget *remember = NULL;
+	static int offset = 0;
+
+	if (buffer[0] != 27)
+		return FALSE;
+	
+	buffer++;
+	if (strlen(buffer) < 5)
+		return FALSE;
+
+	x = buffer[3];
+	y = buffer[4];
+	if (x < 0)	x += 256;
+	if (y < 0)	y += 256;
+	x -= 33;
+	y -= 33;
+
+	if (strncmp(buffer, "[M ", 3) == 0) {
+		/* left button down */
+		/* If you clicked on the top-bar of the active window, then you can move it by dragging it */
+		if (focus_list) {
+			GntWidget *wid = focus_list->data;
+			if (x >= wid->priv.x && x < wid->priv.x + wid->priv.width &&
+					y == wid->priv.y) {
+				offset = x - wid->priv.x;
+				remember = wid;
+				button = MOUSE_LEFT;
+			}
+		}
+	} else if (strncmp(buffer, "[M\"", 3) == 0) {
+		/* right button down */
+	} else if (strncmp(buffer, "[M!", 3) == 0) {
+		/* middle button down */
+	} else if (strncmp(buffer, "[M`", 3) == 0) {
+		/* wheel up*/
+	} else if (strncmp(buffer, "[Ma", 3) == 0) {
+		/* wheel down */
+	} else if (strncmp(buffer, "[M#", 3) == 0) {
+		/* button up */
+		if (button == MOUSE_NONE && y == getmaxy(stdscr) - 1) {
+			int n = g_list_length(g_list_first(focus_list));
+			if (n) {
+				int width = getmaxx(stdscr) / n;
+				switch_window_n(x / width);
+			}
+		} else if (button == MOUSE_LEFT && remember) {
+			x -= offset;
+			if (x < 0)	x = 0;
+			if (y < 0)	y = 0;
+			gnt_screen_move_widget(remember, x, y);
+			refresh_node(remember, NULL, NULL);
+		}
+		button = MOUSE_NONE;
+		remember = NULL;
+		offset = 0;
+	} else
+		return FALSE;
+	return TRUE;
+}
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
@@ -510,6 +593,9 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	}
 
 	gnt_keys_refine(buffer);
+
+	if (mouse_enabled && detect_mouse_action(buffer))
+		return TRUE;
 
 	if (mode == GNT_KP_MODE_NORMAL)
 	{
@@ -798,9 +884,10 @@ void gnt_init()
 
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	refresh();
-#if 0
-	mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED | REPORT_MOUSE_POSITION, NULL);
-#endif
+
+	if ((mouse_enabled = gnt_style_get_bool(GNT_STYLE_MOUSE, FALSE)))
+		mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED , NULL);
+
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(stdscr);
 	wrefresh(stdscr);

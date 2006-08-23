@@ -142,6 +142,7 @@ read_general_style(GKeyFile *kfile)
 		GntStyle en;
 	} styles[] = {{"shadow", GNT_STYLE_SHADOW},
 	              {"customcolor", GNT_STYLE_COLOR},
+	              {"mouse", GNT_STYLE_MOUSE},
 	              {NULL, 0}};
 
 	if (error)
