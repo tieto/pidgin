@@ -43,13 +43,14 @@ restore_colors()
 void gnt_init_colors()
 {
 	static gboolean init = FALSE;
+	int defaults;
 
 	if (init)
 		return;
 	init = TRUE;
 
 	start_color();
-	use_default_colors();
+	defaults = use_default_colors();
 
 	if (can_use_custom_color())
 	{
@@ -78,14 +79,22 @@ void gnt_init_colors()
 	}
 	else
 	{
-		init_pair(GNT_COLOR_NORMAL, COLOR_BLACK, COLOR_WHITE);
+		if (defaults == OK)
+		{
+			init_pair(GNT_COLOR_NORMAL, -1, -1);
+			init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, -1);
+		}
+		else
+		{
+			init_pair(GNT_COLOR_NORMAL, COLOR_BLACK, COLOR_WHITE);
+			init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, COLOR_WHITE);
+		}
 		init_pair(GNT_COLOR_HIGHLIGHT, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_SHADOW, COLOR_BLACK, COLOR_BLACK);
 		init_pair(GNT_COLOR_TITLE, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_TITLE_D, COLOR_WHITE, COLOR_BLACK);
 		init_pair(GNT_COLOR_TEXT_NORMAL, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_HIGHLIGHT_D, COLOR_CYAN, COLOR_BLACK);
-		init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, COLOR_WHITE);
 	}
 }
 
