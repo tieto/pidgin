@@ -1040,13 +1040,14 @@ char *jabber_get_next_id(JabberStream *js)
 	return g_strdup_printf("gaim%x", js->next_id++);
 }
 
-
+/*
 static void jabber_idle_set(GaimConnection *gc, int idle)
 {
 	JabberStream *js = gc->proto_data;
 
 	js->idle = idle ? time(NULL) - idle : idle;
 }
+*/
 
 static const char *jabber_list_icon(GaimAccount *a, GaimBuddy *b)
 {
@@ -1847,7 +1848,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
 	jabber_presence_send,			/* set_away */
-	jabber_idle_set,				/* set_idle */
+	NULL,							/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
 	NULL,							/* add_buddies */

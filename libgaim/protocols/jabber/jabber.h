@@ -111,8 +111,6 @@ typedef struct _JabberStream
 	GList *oob_file_transfers;
 	GList *file_transfers;
 
-	time_t idle;
-
 	JabberID *user;
 	GaimConnection *gc;
 	GaimSslConnection *gsc;

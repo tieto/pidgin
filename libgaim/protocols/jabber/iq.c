@@ -145,7 +145,7 @@ static void jabber_iq_last_parse(JabberStream *js, xmlnode *packet)
 	const char *from;
 	const char *id;
 	xmlnode *query;
-	char *idle_time;
+	GaimPresence *gpresence;
 
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
@@ -158,9 +158,18 @@ static void jabber_iq_last_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		idle_time = g_strdup_printf("%ld", js->idle ? time(NULL) - js->idle : 0);
-		xmlnode_set_attrib(query, "seconds", idle_time);
-		g_free(idle_time);
+		gpresence = gaim_account_get_presence(js->gc->account);
+
+		if(gaim_presence_is_idle(gpresence)) {
+			time_t idle_time = gaim_presence_get_idle_time(gpresence);
+			char *idle_str;
+
+			idle_str = g_strdup_printf("%ld", time(NULL) - idle_time);
+			xmlnode_set_attrib(query, "seconds", idle_str);
+			g_free(idle_str);
+		} else {
+			xmlnode_set_attrib(query, "seconds", "0");
+		}
 
 		jabber_iq_send(iq);
 	}
