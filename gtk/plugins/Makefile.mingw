@@ -4,46 +4,20 @@
 # Description: Makefile for win32 (mingw) version of Gaim Plugins 
 #
 
-#
-# PATHS
-#
+GAIM_TOP := ../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
-GAIM_PLUGINS := 	.
-GAIM_TOP :=		../..
-GTKGAIM_TOP :=		..
-LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
-GTK_TOP :=		../../../win32-dev/gtk_2_0
-#OSCAR_ROOT :=		../src/protocols/oscar
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-TICKER :=		./ticker
-TRANSPARENCY :=		./win32/transparency
-WINPREFS :=		./win32/winprefs
-#PERL_PLUGIN_LOADER :=	./perl
-DOCKLET :=		./docklet
-
-##
-## VARIABLE DEFINITIONS
-##
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
+DOCKLET_PLUGIN := $(GAIM_GTK_PLUGINS_TOP)/docklet
+TICKER_PLUGIN := $(GAIM_GTK_PLUGINS_TOP)/ticker
+TRANSPARENCY_PLUGIN := $(GAIM_GTK_PLUGINS_TOP)/win32/transparency
+WINPREFS_PLUGIN := $(GAIM_GTK_PLUGINS_TOP)/win32/winprefs
 
 .SUFFIXES:
 .SUFFIXES: .c .dll
 
 ##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
-
-##
 ## INCLUDE PATHS
 ##
-
 INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
@@ -53,21 +27,18 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GAIM_TOP) \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
-			-I$(GTKGAIM_TOP) \
-			-I$(GTKGAIM_TOP)/win32
-
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
+			-I$(GAIM_GTK_TOP) \
+			-I$(GAIM_GTK_TOP)/win32
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP) \
-			-L$(GTKGAIM_TOP)
-
+			-L$(GAIM_LIB_TOP) \
+			-L$(GAIM_GTK_TOP)
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =			-lgtk-win32-2.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
@@ -81,31 +52,22 @@ LIBS =			-lgtk-win32-2.0 \
 			-lgtkgaim
 
 ##
-## RULES
-##
-
-##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: plugins
-	$(MAKE) -C $(TICKER) -f Makefile.mingw
-	$(MAKE) -C $(WINPREFS) -f Makefile.mingw
-	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw
-	$(MAKE) -C $(DOCKLET) -f Makefile.mingw
+	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 
-install:
-	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
-	$(MAKE) -C $(TICKER) -f Makefile.mingw install
-	$(MAKE) -C $(WINPREFS) -f Makefile.mingw install
-	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw install
-	$(MAKE) -C $(DOCKLET) -f Makefile.mingw install
-
-#
-# BUILD Plugin
-#
+install: $(GAIM_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	cp $(GAIM_GTK_PLUGINS_TOP)/*.dll $(GAIM_INSTALL_PLUGINS_DIR)
 
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
@@ -115,22 +77,22 @@ plugins: \
 		extplacement.dll \
 		gaimrc.dll \
 		history.dll \
-	 	iconaway.dll \
+		iconaway.dll \
 		notify.dll \
 		relnot.dll \
 		spellchk.dll \
 		timestamp_format.dll \
 		timestamp.dll
 
-
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
-	rm -rf *.dll
-	$(MAKE) -C $(TICKER) -f Makefile.mingw clean
-	$(MAKE) -C $(TRANSPARENCY) -f Makefile.mingw clean
-	$(MAKE) -C $(WINPREFS) -f Makefile.mingw clean
-	$(MAKE) -C $(DOCKLET) -f Makefile.mingw clean
+	rm -rf $(GAIM_GTK_PLUGINS_TOP)/*.o
+	rm -rf $(GAIM_GTK_PLUGINS_TOP)/*.dll
+	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+
+include $(GAIM_COMMON_TARGETS)

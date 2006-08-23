@@ -4,42 +4,15 @@
 # Description: Makefile for ticker plugin.
 #
 
-#
-# PATHS
-#
-
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
-GTKGAIM_TOP :=		$(GAIM_TOP)/gtk
-LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
-TICKER_ROOT :=		.
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
-
-##
-## VARIABLE DEFINITIONS
-##
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = ticker
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
-
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
 ##
-
-INCLUDE_PATHS +=	-I$(TICKER_ROOT) \
+INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
@@ -47,33 +20,27 @@ INCLUDE_PATHS +=	-I$(TICKER_ROOT) \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
-			-I$(GTKGAIM_TOP) \
-			-I$(GTKGAIM_TOP)/win32 \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
+			-I$(GAIM_GTK_TOP) \
+			-I$(GAIM_GTK_TOP)/win32 \
 			-I$(GAIM_TOP)
 
-
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP) \
-			-L$(GTKGAIM_TOP)
-
+			-L$(GAIM_LIB_TOP) \
+			-L$(GAIM_GTK_TOP)
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 C_SRC =			ticker.c \
 			gtkticker.c
 
-
 OBJECTS = $(C_SRC:%.c=%.o)
-
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =			-lgtk-win32-2.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
@@ -83,45 +50,28 @@ LIBS =			-lgtk-win32-2.0 \
 			-lgaim \
 			-lgtkgaim
 
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll
 
-install:
-	cp $(TICKER_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+install: $(GAIM_INSTALL_PLUGINS_DIR)
+	cp $(TARGET).dll $(GAIM_INSTALL_PLUGINS_DIR)
 
+$(OBJECTS): $(GAIM_CONFIG_H)
 
-##
-## BUILD Dependencies
-##
-
-$(GTKGAIM_TOP)/gtkgaim.dll.a:
-	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw gtkgaim.dll.a
-
-##
-## BUILD DLL
-##
-
-$(TARGET).dll: $(OBJECTS) $(GTKGAIM_TOP)/gtkgaim.dll.a
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
+	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
+
+include $(GAIM_COMMON_TARGETS)

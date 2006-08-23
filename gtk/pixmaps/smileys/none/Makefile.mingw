@@ -4,9 +4,10 @@
 # Description: Makefile for win32 (mingw) version of Gaim pixmaps
 #
 
-GAIM_TOP = ../../../..
+GAIM_TOP := ../../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
-datadir = $(GAIM_TOP)/win32-install-dir
+datadir = $(GAIM_INSTALL_DIR)
 include ./Makefile.am
 
 install:

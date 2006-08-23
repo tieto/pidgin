@@ -5,44 +5,37 @@
 # Description: Top Makefile for win32 (mingw) port of Gaim
 #
 
-LIBGAIM_TOP = ./libgaim
-GTKGAIM_TOP = ./gtk
-GAIM_SOUNDS = ./sounds
-GAIM_INSTALL_DIR = ./win32-install-dir
-PO = ./po
+GAIM_TOP := .
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
-MAKENSIS := makensis.exe
+all: $(GAIM_CONFIG_H)
+	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE)
 
-VERSION := $(shell cat ./VERSION)
+install: all $(GAIM_INSTALL_DIR)
+	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 
+installer: install
+	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DWITH_GTK gaim-installer.nsi
 
-all:
-	cp config.h.mingw config.h
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw
-	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw
+installer_nogtk: install
+	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" gaim-installer.nsi
 
-install: all
-	mkdir -p $(GAIM_INSTALL_DIR)/plugins
-	mkdir -p $(GAIM_INSTALL_DIR)/sounds/gaim
-	$(MAKE) -C $(PO) -f Makefile.mingw install
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw install
-	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw install
-
-installer:
-	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" /DWITH_GTK gaim-installer.nsi
-
-installer_nogtk:
-	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" gaim-installer.nsi
-
-installer_debug:
-	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" /DDEBUG gaim-installer.nsi
+installer_debug: install
+	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DDEBUG gaim-installer.nsi
 
 installers: installer installer_nogtk
 
-
 clean:
-	$(MAKE) -C $(PO) -f Makefile.mingw clean
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw clean
-	$(MAKE) -C $(GTKGAIM_TOP) -f Makefile.mingw clean
-	rm -rf config.h $(GAIM_INSTALL_DIR)
+	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
+	rm -rf $(GAIM_CONFIG_H)
 	rm -rf gaim*.exe
+	rm -rf $(GAIM_INSTALL_PERLMOD_DIR) $(GAIM_INSTALL_PIXMAPS_DIR) $(GAIM_INSTALL_PLUGINS_DIR)
+	rm -rf $(GAIM_INSTALL_PO_DIR) $(GAIM_INSTALL_SOUNDS_DIR) $(GAIM_INSTALL_DIR)
+
+include $(GAIM_COMMON_TARGETS)

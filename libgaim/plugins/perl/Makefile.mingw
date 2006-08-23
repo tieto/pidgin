@@ -4,37 +4,10 @@
 # Description: Makefile for perl plugin loader plugin.
 #
 
-#
-# PATHS
-#
-
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
-LIBGAIM_TOP :=		../..
-PERL_LIB_DIR :=		../../../../win32-dev/perl58
-PERL_INCLUDE :=		$(PERL_LIB_DIR)/CORE
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
-
-##
-## VARIABLE DEFINITIONS
-##
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = perl
-
-CC := gcc.exe
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
 
 # Perl headers with /* /* */ type comments.. Turn off warnings.
 CFLAGS += -Wno-comment
@@ -42,40 +15,38 @@ CFLAGS += -Wno-comment
 ##
 ## INCLUDE PATHS
 ##
-
 INCLUDE_PATHS +=	-I. \
 			-I$(GAIM_TOP) \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
+			-I$(GAIM_GTK_TOP) \
+			-I$(GAIM_GTK_TOP)/win32 \
 			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PERL_INCLUDE)
-
-
-
+			-I$(PERL_LIB_TOP)/CORE
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src \
-			-L$(PERL_LIB_DIR)
-
+			-L$(GAIM_LIB_TOP) \
+			-L$(GAIM_GTK_TOP) \
+			-L$(PERL_LIB_TOP)
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 C_SRC =			perl.c \
 			perl-common.c \
 			perl-handlers.c
 
-
 OBJECTS = $(C_SRC:%.c=%.o)
-
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =	\
 			-lglib-2.0 \
 			-lgmodule-2.0 \
@@ -83,51 +54,37 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lgaim \
+			-lgtkgaim \
 			-lperl58
 
-
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll
-	$(MAKE) -C ./common -f Makefile.mingw
+	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE)
 
-install:
-	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-	$(MAKE) -C ./common -f Makefile.mingw install
+install: all $(GAIM_INSTALL_PLUGINS_DIR)
+	cp $(TARGET).dll $(GAIM_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) install
 
-##
-## BUILD Dependencies
-##
-
-$(GAIM_TOP)/src/libgaim.dll.a:
-	$(MAKE) -C $(GAIM_TOP)/src -f Makefile.mingw libgaim.dll.a
+$(OBJECTS): $(GAIM_CONFIG_H)
 
 ##
 ## BUILD DLL
 ##
-
-$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/libgaim.dll.a
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -o $(TARGET).dll
-
 
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
+	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll $(TARGET).lib
-	$(MAKE) -C ./common -f Makefile.mingw clean
+	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) clean
+
+include $(GAIM_COMMON_TARGETS)

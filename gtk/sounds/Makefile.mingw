@@ -1,0 +1,14 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Gaim
+#
+
+GAIM_TOP := ../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_GTK_SOUNDS_TOP)/Makefile.am
+
+install: $(GAIM_INSTALL_SOUNDS_DIR)
+	cp $(EXTRA_DIST) $(GAIM_INSTALL_SOUNDS_DIR)
+
+include $(GAIM_COMMON_TARGETS)

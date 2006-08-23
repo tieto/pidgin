@@ -4,59 +4,33 @@
 # Description: Makefile for win32 (mingw) version of Gaim Plugins 
 #
 
-#
-# PATHS
-#
+GAIM_TOP := ../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
-GAIM_PLUGINS := 	.
-GAIM_TOP :=		../..
-LIBGAIM_TOP :=		..
-GTK_TOP :=		../../../win32-dev/gtk_2_0
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-PERL_PLUGIN_LOADER :=	./perl
-TCL_PLUGIN_LOADER :=    ./tcl
-SSL :=			./ssl
-
-##
-## VARIABLE DEFINITIONS
-##
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
+PERL_PLUGIN := ./perl
+TCL_PLUGIN := ./tcl
+SSL_PLUGIN := ./ssl
 
 .SUFFIXES:
 .SUFFIXES: .c .dll
 
 ##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
-
-##
 ## INCLUDE PATHS
 ##
-
 INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GAIM_TOP) \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32
-
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP)
-
+			-L$(GAIM_LIB_TOP)
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =	\
 			-lglib-2.0 \
 			-lgobject-2.0 \
@@ -66,29 +40,20 @@ LIBS =	\
 			-lgaim
 
 ##
-## RULES
-##
-
-##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
-all: plugins
-#	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw
-	$(MAKE) -C $(TCL_PLUGIN_LOADER) -f Makefile.mingw
-	$(MAKE) -C $(SSL) -f Makefile.mingw
+all: $(GAIM_LIBGAIM_DLL).a plugins
+#	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 
-install:
-	cp $(GAIM_PLUGINS)/*.dll $(GAIM_INSTALL_DIR)/plugins
-#	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw install
-	$(MAKE) -C $(TCL_PLUGIN_LOADER) -f Makefile.mingw install
-	$(MAKE) -C $(SSL) -f Makefile.mingw install
-
-#
-# BUILD Plugin
-#
+install: all $(GAIM_INSTALL_PLUGINS_DIR)
+#	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
+	cp $(GAIM_LIB_PLUGINS_TOP)/*.dll $(GAIM_INSTALL_PLUGINS_DIR)
 
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
@@ -100,14 +65,14 @@ plugins: \
 		psychic.dll \
 		statenotify.dll
 
-
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
-	rm -rf *.dll
-	$(MAKE) -C $(PERL_PLUGIN_LOADER) -f Makefile.mingw clean
-	$(MAKE) -C $(TCL_PLUGIN_LOADER) -f Makefile.mingw clean
-	$(MAKE) -C $(SSL) -f Makefile.mingw clean
+	rm -rf $(GAIM_LIB_PLUGINS_TOP)/*.o
+	rm -rf $(GAIM_LIB_PLUGINS_TOP)/*.dll
+	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+
+include $(GAIM_COMMON_TARGETS)

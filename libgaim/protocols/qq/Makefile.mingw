@@ -4,33 +4,14 @@
 # Description: Makefile for win32 (mingw) version of OpenQ src
 #
 
-#
-# PATHS
-#
-
-INCLUDE_DIR :=		.
-OPENQ_TOP :=		../
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
-LIBGAIM_TOP :=		../..
-OPENQ_ROOT :=		.
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-
-##
-## VARIABLE DEFINITIONS
-##
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = openq
-
+OPENQ_TOP := ..
 TYPE = PLUGIN
-
 OPENQ_VERSION := $(shell cat $(OPENQ_TOP)/VERSION)
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES = -DOPENQ_VERSION=\"$(OPENQ_VERSION)\"
+DEFINES += -DOPENQ_VERSION=\"$(OPENQ_VERSION)\"
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -38,38 +19,29 @@ ifeq ($(TYPE),STATIC)
 	DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
-	DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)/plugins
+	DLL_INSTALL_DIR =	$(GAIM_INSTALL_PLUGINS_DIR)
 endif
 endif
-
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
 ##
-
 INCLUDE_PATHS += \
 	-I$(OPENQ_ROOT) \
 	-I$(GTK_TOP)/include \
 	-I$(GTK_TOP)/include/glib-2.0 \
 	-I$(GTK_TOP)/lib/glib-2.0/include \
-	-I$(LIBGAIM_TOP) \
-	-I$(LIBGAIM_TOP)/win32 \
+	-I$(GAIM_LIB_TOP) \
+	-I$(GAIM_LIB_TOP)/win32 \
 	-I$(GAIM_TOP)
 
 LIB_PATHS = \
 	-L$(GTK_TOP)/lib \
-	-L$(LIBGAIM_TOP)
+	-L$(GAIM_LIB_TOP)
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 C_SRC = \
 	buddy_info.c \
 	buddy_list.c \
@@ -111,54 +83,34 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 ## LIBRARIES
 ##
-
 LIBS = \
 	-lglib-2.0 \
 	-lws2_32 \
 	-lintl \
 	-lgaim
 
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll
 
-install:
-	mkdir -p $(DLL_INSTALL_DIR)
-	cp $(OPENQ_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+install: all $(DLL_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
+$(OBJECTS): $(GAIM_CONFIG_H)
 
-##
-## BUILD Dependencies
-##
-
-$(LIBGAIM_TOP)/libgaim.dll.a:
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
-
-##
-## BUILD DLL
-##
-
-$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
+	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
 
+include $(GAIM_COMMON_TARGETS)

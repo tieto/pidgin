@@ -4,45 +4,16 @@
 # Description: Makefile for win32 (mingw) version of Gaim
 #
 
-#
-# PATHS
-#
+GAIM_TOP := ..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
-GTK_TOP :=		../../win32-dev/gtk_2_0
-GAIM_TOP :=		..
-GTKGAIM_TOP :=		.
-LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
-PLUGINS_TOP :=		$(GTKGAIM_TOP)/plugins
-PIXMAPS_TOP :=		$(GTKGAIM_TOP)/pixmaps
-SOUNDS_TOP :=		$(GTKGAIM_TOP)/sounds
-ASPELL_TOP :=		../../win32-dev/aspell-dev-0-50-3-3
-GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.6
-IDLETRACK_TOP :=	$(GTKGAIM_TOP)/win32/IdleTracker
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-#LIBXML2_DIR :=		../../win32-dev/libxml2
-
-NEEDED_DLLS =		$(GTKSPELL_TOP)/gtkspell/libgtkspell.dll \
-			$(IDLETRACK_TOP)/idletrack.dll
-
-SOUNDS =		$(SOUNDS_TOP)/alert.wav \
-			$(SOUNDS_TOP)/login.wav \
-			$(SOUNDS_TOP)/logout.wav \
-			$(SOUNDS_TOP)/receive.wav \
-			$(SOUNDS_TOP)/send.wav
+NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
 
 ##
 ## VARIABLE DEFINITIONS
 ##
-
 EXE_TARGET = gaim
-
 GTKGAIM_TARGET = gtkgaim
-
-# Compiler and Linker Options
-
-CFLAGS =
-
-DEFINES =
 
 ifeq ($(MAKECMDGOALS), $(EXE_TARGET)-portable.exe)
 DEFINES := $(DEFINES) -DPORTABLE
@@ -54,33 +25,22 @@ CONSOLEAPP := -mconsole
 
 LDFLAGS := $(WINAPP)
 
-WINDRES := windres
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
-
 ##
 ## INCLUDE PATHS
 ##
-
 LIBGAIM_INCLUDE_PATHS =	\
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
 			-I$(GAIM_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include
 
-#			-I$(LIBXML2_DIR)/include
-
 INCLUDE_PATHS =	\
 			$(LIBGAIM_INCLUDE_PATHS) \
-			-I$(IDLETRACK_TOP) \
-			-I$(GTKGAIM_TOP) \
-			-I$(GTKGAIM_TOP)/win32 \
+			-I$(GAIM_GTK_IDLETRACK_TOP) \
+			-I$(GAIM_GTK_TOP) \
+			-I$(GAIM_GTK_TOP)/win32 \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
@@ -88,20 +48,15 @@ INCLUDE_PATHS =	\
 			-I$(GTKSPELL_TOP) \
 			-I$(ASPELL_TOP)/include
 
-
-
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP) \
-			-L$(GTKGAIM_TOP) \
-			-L$(IDLETRACK_TOP) \
+			-L$(GAIM_LIB_TOP) \
+			-L$(GAIM_GTK_TOP) \
+			-L$(GAIM_GTK_IDLETRACK_TOP) \
 			-L$(ASPELL_TOP)/lib
-
-#			-L$(LIBXML2_DIR)/lib
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 GTKGAIM_C_SRC =	\
 			gaimstock.c \
 			gtkaccount.c \
@@ -140,18 +95,14 @@ GTKGAIM_C_SRC =	\
 			win32/untar.c \
 			win32/wspell.c
 
-RC_SRC =		win32/gaimrc.rc
-
-EXE_C_SRC = 		win32/win_gaim.c
-
+RC_SRC = win32/gaimrc.rc
+EXE_C_SRC = win32/win_gaim.c
 GTKGAIM_OBJECTS = $(GTKGAIM_C_SRC:%.c=%.o)
-
 EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 
 ##
 ## LIBRARIES
 ##
-
 LIBGAIM_LIBS =	\
 		-lgaim \
 		-lglib-2.0 \
@@ -165,8 +116,6 @@ LIBGAIM_LIBS =	\
 		-liberty \
 		-lidletrack
 
-#		-lxml2
-
 GTKGAIM_LIBS =	\
 		$(LIBGAIM_LIBS) \
 		-lgtk-win32-2.0 \
@@ -175,70 +124,49 @@ GTKGAIM_LIBS =	\
 		-lgdk-win32-2.0 \
 		-lgdk_pixbuf-2.0
 
-EXE_LIBS =
-
-##
-## RULES
-##
-
-# How to make a C file
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(DEFINES) -c $< -o $@
-
-# How to make an RC file
-%.o: %.rc
-	$(WINDRES) -i $< -o $@
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
-	$(MAKE) -C $(PLUGINS_TOP) -f Makefile.mingw
+	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE)
 
-install: all
-	$(MAKE) -C $(PLUGINS_TOP) -f Makefile.mingw install
-	$(MAKE) -C $(PIXMAPS_TOP) -f Makefile.mingw install
-	cp $(GTKGAIM_TOP)/$(EXE_TARGET).exe $(GTKGAIM_TOP)/$(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
+install: all $(GAIM_INSTALL_DIR)
+	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(GAIM_GTK_PIXMAPS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(GAIM_GTK_SOUNDS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	cp $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
-	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
-$(LIBGAIM_TOP)/libgaim.dll.a:
-	S(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
+$(GTKGAIM_OBJECTS): $(GAIM_CONFIG_H)
 
-$(IDLETRACK_TOP)/idletrack.dll:
-	$(MAKE) -C $(IDLETRACK_TOP) -f Makefile.mingw
-
-#
-# BUILD DLL
-#
-$(GTKGAIM_TARGET).dll.a $(GTKGAIM_TARGET).dll: $(LIBGAIM_TOP)/libgaim.dll.a $(GTKGAIM_OBJECTS) $(IDLETRACK_TOP)/idletrack.dll
+$(GTKGAIM_TARGET).dll $(GTKGAIM_TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(GTKGAIM_OBJECTS)
 	$(CC) -shared $(LIBGAIM_OBJECTS) $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
 
-#
-# BUILD EXE
-#
-
-$(EXE_TARGET).exe: $(GTKGAIM_TARGET).dll $(EXE_OBJECTS)
+$(EXE_TARGET).exe: $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET).exe
 
-$(EXE_TARGET)-portable.exe: clean_exe $(EXE_OBJECTS)
+$(EXE_TARGET)-portable.exe: clean_exe $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET)-portable.exe
 	rm win_gaim.o
 
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	$(MAKE) -C $(IDLETRACK_TOP) -f Makefile.mingw clean
-	rm -rf *.o ./win32/*.o
-	rm -rf $(GTKGAIM_TARGET).dll
-	rm -rf $(GTKGAIM_TARGET).dll.a
-	rm -rf $(EXE_TARGET).exe
-	$(MAKE) -C $(PLUGINS_TOP) -f Makefile.mingw clean
+	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
+	rm -rf $(GTKGAIM_OBJECTS) $(EXE_OBJECTS)
+	rm $(GTKGAIM_TARGET).dll
+	rm $(GTKGAIM_TARGET).dll.a
+	rm $(EXE_TARGET).exe
+	rm $(EXE_TARGET)-portable.exe
 
 clean_exe:
-	rm -rf win_gaim.o
+	rm win_gaim.o
+
+include $(GAIM_COMMON_TARGETS)

@@ -4,32 +4,23 @@
 # Description: Makefile for Gaim perl module.
 #
 
+GAIM_TOP := ../../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
+
 TARGET = Gaim
 AUTOSPLIT = lib/auto/Gaim/autosplit.ix
-
-##
-## TOOLS
-##
-
-CC := gcc
-PERL := /cygdrive/c/perl/bin/perl
-
-##
-## PATHS
-##
-
 EXTUTILS := C:/perl/lib/ExtUtils
-GAIM_TOP := ../../..
-GTK_TOP := ../../../../win32-dev/gtk_2_0
-PERL_TOP := ../../../../win32-dev/perl58
 PERL_PLUGIN_TOP := ..
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-PERLMOD_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/perlmod
 
+CFLAGS += -Wno-comment
 
+##
+## INCLUDE PATHS
+##
 INCLUDE_PATHS =		-I. \
 			-I$(GAIM_TOP) \
-			-I$(GAIM_TOP)/src \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_GTK_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
@@ -37,18 +28,17 @@ INCLUDE_PATHS =		-I. \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(PERL_TOP)/CORE
+			-I$(PERL_LIB_TOP)/CORE
 
-LIB_PATHS = 		-L$(PERL_TOP) \
+LIB_PATHS = 		-L$(PERL_LIB_TOP) \
 			-L$(PERL_PLUGIN_TOP) \
-			-L$(GAIM_TOP)/src \
+			-L$(GAIM_LIB_TOP) \
+			-L$(GAIM_GTK_TOP) \
 			-L$(GTK_TOP)/lib
-
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 XS_FILES =		Account.xs \
 				AccountOpts.xs \
 				BuddyIcon.xs \
@@ -83,32 +73,20 @@ XS_FILES =		Account.xs \
 				Util.xs \
 				XMLNode.xs \
 
-FALLBACKS =		const-c.inc const-xs.inc
-
+FALLBACKS =	const-c.inc const-xs.inc
 C_FILES = $(XS_FILES:%.xs=%.c)
-
 OBJECTS = $(C_FILES:%.c=%.o)
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =			-lperl58 \
 			-lperl \
 			-lgaim \
+			-lgtkgaim \
 			-lglib-2.0
 
-##
-## RULES
-##
-
-# How to make a C file
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(DEFINES) -c $< -o $@
-
-# How to make a XS file
-%.c: %.xs
-	$(PERL) $(EXTUTILS)/xsubpp -typemap $(EXTUTILS)/typemap -typemap typemap $< > $@
+include $(GAIM_COMMON_RULES)
 
 %.inc:
 	cp fallback/$@ ./
@@ -116,27 +94,29 @@ LIBS =			-lperl58 \
 ##
 ## TARGETS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll $(AUTOSPLIT)
 	
-install:
-	rm -rf $(PERLMOD_INSTALL_DIR)
-	cp -R lib $(PERLMOD_INSTALL_DIR)
-	cp $(TARGET).dll $(PERLMOD_INSTALL_DIR)
-	
+install: all
+	rm -rf $(GAIM_INSTALL_PERLMOD_DIR)
+	cp -R lib $(GAIM_INSTALL_PERLMOD_DIR)
+	cp $(TARGET).dll $(GAIM_INSTALL_PERLMOD_DIR)
+
+$(C_FILES): $(GAIM_CONFIG_H)
+
 $(AUTOSPLIT): Gaim.pm
 	mkdir -p ./lib/auto
 	cp Gaim.pm ./lib
 	$(PERL) -MAutoSplit -e 'autosplit("lib/Gaim.pm")'
 
-$(TARGET).dll: $(FALLBACKS) $(OBJECTS)
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(FALLBACKS) $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
 
 ##
 ## CLEAN
 ##
-
 clean:
 	rm -rf *.o $(TARGET).dll $(FALLBACKS) lib
+
+include $(GAIM_COMMON_TARGETS)

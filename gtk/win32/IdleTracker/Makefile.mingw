@@ -4,63 +4,20 @@
 # Description: Makefile for idletrack
 #
 
-#
-# PATHS
-#
-
-GAIM_TOP :=		../../..
-LIBGAIM_TOP :=		$(GAIM_TOP)/libgaim
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-
-##
-## VARIABLE DEFINITIONS
-##
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = idletrack
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
-
-##
-## INCLUDE PATHS
-##
-
-INCLUDE_PATHS +=
-
-LIB_PATHS =
 
 ##
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			idletrack.c
+C_SRC =	idletrack.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
-
-##
-## LIBRARIES
-##
-
-LIBS =
-
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -70,14 +27,14 @@ LIBS =
 
 all: $(TARGET).dll
 
-install:
-
+install: $(GAIM_INSTALL_DIR)
+	cp $(TARGET).dll $(GAIM_INSTALL_DIR)
 
 ##
 ## BUILD DLL
 ##
 
-$(TARGET).dll: $(OBJECTS)
+$(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 ##
@@ -85,6 +42,8 @@ $(TARGET).dll: $(OBJECTS)
 ##
 
 clean:
-	rm -rf *.o
+	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).dll.a
+
+include $(GAIM_COMMON_TARGETS)

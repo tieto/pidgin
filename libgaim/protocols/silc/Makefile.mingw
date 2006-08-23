@@ -4,31 +4,12 @@
 # Description: Makefile for win32 (mingw) version of libsilc protocol plugin
 #
 
-#
-# PATHS
-#
-
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
-LIBGAIM_TOP :=		../..
-SILC_TOP :=		.
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-SILC_TOOLKIT :=		../../../../win32-dev/silc-toolkit-1.0.2
-
-##
-## VARIABLE DEFINITIONS
-##
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = libsilc
-
 NEEDED_DLLS =		$(SILC_TOOLKIT)/lib/silc.dll \
 			$(SILC_TOOLKIT)/lib/silcclient.dll
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -36,40 +17,29 @@ ifeq ($(TYPE),STATIC)
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
-  DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)/plugins
+  DLL_INSTALL_DIR =	$(GAIM_INSTALL_PLUGINS_DIR)
 endif
 endif
-
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
 ##
-
-INCLUDE_PATHS +=	-I$(SILC_TOP) \
+INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
 			-I$(GAIM_TOP) \
 			-I$(SILC_TOOLKIT)/include
 
-
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP) \
+			-L$(GAIM_LIB_TOP) \
 			-L$(SILC_TOOLKIT)/lib
-
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 C_SRC =			silc.c \
 			buddy.c \
 			chat.c \
@@ -79,14 +49,11 @@ C_SRC =			silc.c \
 			util.c \
 			wb.c
 
-
 OBJECTS = $(C_SRC:%.c=%.o)
-
 
 ##
 ## LIBRARIES
 ##
-
 LIBS = \
 			-lglib-2.0 \
 			-lws2_32 \
@@ -95,47 +62,29 @@ LIBS = \
 			-lsilc \
 			-lsilcclient
 
-
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll
 
-install:
-	cp $(SILC_TOP)/$(TARGET).dll $(DLL_INSTALL_DIR)
+install: all $(DLL_INSTALL_DIR) $(GAIM_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
+$(OBJECTS): $(GAIM_CONFIG_H)
 
-##
-## BUILD Dependencies
-##
-
-$(LIBGAIM_TOP)/libgaim.dll.a:
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
-
-##
-## BUILD DLL
-##
-
-$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--image-base,0x64000000 -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
+	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
+
+include $(GAIM_COMMON_TARGETS)

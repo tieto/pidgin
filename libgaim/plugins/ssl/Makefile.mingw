@@ -4,82 +4,52 @@
 # Description: Makefile for ssl plugin.
 #
 
-#
-# PATHS
-#
-
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
-LIBGAIM_TOP :=		../..
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
-NSS_DIR :=              ../../../../win32-dev/nss-3.9
-NSPR_DIR :=             ../../../../win32-dev/nspr-4.4.1
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 ##
 ## VARIABLE DEFINITIONS
 ##
-
 TARGET = ssl
 TARGET_NSS = ssl-nss
 
-NEEDED_DLLS =		$(NSS_DIR)/lib/nss3.dll \
-			$(NSS_DIR)/lib/nssckbi.dll \
-			$(NSS_DIR)/lib/softokn3.dll \
-			$(NSS_DIR)/lib/ssl3.dll \
-			$(NSPR_DIR)/lib/nspr4.dll \
-			$(NSPR_DIR)/lib/plc4.dll \
-			$(NSPR_DIR)/lib/plds4.dll
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
+NEEDED_DLLS =		$(NSS_TOP)/lib/nss3.dll \
+			$(NSS_TOP)/lib/nssckbi.dll \
+			$(NSS_TOP)/lib/softokn3.dll \
+			$(NSS_TOP)/lib/ssl3.dll \
+			$(NSPR_TOP)/lib/nspr4.dll \
+			$(NSPR_TOP)/lib/plc4.dll \
+			$(NSPR_TOP)/lib/plds4.dll
 
 ##
 ## INCLUDE PATHS
 ##
-
 INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
 			-I$(GAIM_TOP) \
-			-I$(NSS_DIR)/include \
-			-I$(NSPR_DIR)/include
+			-I$(NSS_TOP)/include \
+			-I$(NSPR_TOP)/include
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP) \
-			-L$(NSS_DIR)/lib \
-			-L$(NSPR_DIR)/lib
+			-L$(GAIM_LIB_TOP) \
+			-L$(NSS_TOP)/lib \
+			-L$(NSPR_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 C_SRC =			ssl.c
-
 C_SRC_NSS =		ssl-nss.c
-
-
 OBJECTS = $(C_SRC:%.c=%.o)
-
 OBJECTS_NSS = $(C_SRC_NSS:%.c=%.o)
-
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =	\
 			-lglib-2.0 \
 			-lws2_32 \
@@ -89,51 +59,36 @@ LIBS =	\
 			-lnspr4 \
 			-lssl3
 
-
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll $(TARGET_NSS).dll
 
-install:
-	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(TARGET_NSS).dll $(DLL_INSTALL_DIR)
+install: all $(GAIM_INSTALL_PLUGINS_DIR) $(GAIM_INSTALL_DIR)
+	cp $(TARGET).dll $(GAIM_INSTALL_PLUGINS_DIR)
+	cp $(TARGET_NSS).dll $(GAIM_INSTALL_PLUGINS_DIR)
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
-##
-## BUILD Dependencies
-##
-
-$(LIBGAIM_TOP)/libgaim.dll.a:
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
+$(OBJECTS) $(OBJECTS_NSS): $(GAIM_CONFIG_H)
 
 ##
 ## BUILD DLL
 ##
-
-$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
-$(TARGET_NSS).dll: $(OBJECTS_NSS) $(LIBGAIM_TOP)/libgaim.dll.a
+$(TARGET_NSS).dll: $(GAIM_LIBGAIM_DLL) $(OBJECTS_NSS)
 	$(CC) -shared $(OBJECTS_NSS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET_NSS).dll
 
 ##
 ## CLEAN RULES
 ##
-
 clean:
-	rm -rf *.o
-	rm -rf $(TARGET).dll
-	rm -rf $(TARGET_NSS).dll
+	rm -rf $(OBJECTS) $(OBJECTS_NSS)
+	rm -rf $(TARGET).dll $(TARGET_NSS).dll
+
+include $(GAIM_COMMON_TARGETS)

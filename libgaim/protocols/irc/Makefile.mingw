@@ -4,27 +4,10 @@
 # Description: Makefile for win32 (mingw) version of libirc
 #
 
-#
-# PATHS
-#
-
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
-LIBGAIM_TOP :=		../..
-IRC_ROOT :=		.
-GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-
-##
-## VARIABLE DEFINITIONS
-##
+GAIM_TOP := ../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = libirc
-
-# Compiler Options
-
-CFLAGS =
-
-DEFINES =
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -32,52 +15,38 @@ ifeq ($(TYPE),STATIC)
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
-  DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)/plugins
+  DLL_INSTALL_DIR =	$(GAIM_INSTALL_PLUGINS_DIR)
 endif
 endif
-
-
-##
-## INCLUDE  MAKEFILES
-##
-
-include $(LIBGAIM_TOP)/win32/global.mak
 
 ##
 ## INCLUDE PATHS
 ##
-
-INCLUDE_PATHS +=	-I$(IRC_ROOT) \
+INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(LIBGAIM_TOP) \
-			-I$(LIBGAIM_TOP)/win32 \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_LIB_TOP)/win32 \
 			-I$(GAIM_TOP)
 
-
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(LIBGAIM_TOP)
-
+			-L$(GAIM_LIB_TOP)
 
 ##
 ##  SOURCES, OBJECTS
 ##
-
 C_SRC =			cmds.c \
 			dcc_send.c \
 			irc.c \
 			msgs.c \
 			parse.c
 
-
 OBJECTS = $(C_SRC:%.c=%.o)
-
 
 ##
 ## LIBRARIES
 ##
-
 LIBS =	\
 			-lglib-2.0 \
 			-lgobject-2.0 \
@@ -85,40 +54,24 @@ LIBS =	\
 			-lintl \
 			-lgaim
 
-
-##
-## RULES
-##
-
-# How to make a C file
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+include $(GAIM_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-
 .PHONY: all clean
 
 all: $(TARGET).dll
 
-install:
-	cp $(IRC_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+install: all $(DLL_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
-
-##
-## BUILD Dependencies
-##
-
-$(LIBGAIM_TOP)/libgaim.dll.a:
-	$(MAKE) -C $(LIBGAIM_TOP) -f Makefile.mingw libgaim.dll.a
+$(OBJECTS): $(GAIM_CONFIG_H)
 
 ##
 ## BUILD DLL
 ##
-
-$(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
@@ -126,5 +79,7 @@ $(TARGET).dll: $(OBJECTS) $(LIBGAIM_TOP)/libgaim.dll.a
 ##
 
 clean:
-	rm -rf *.o
+	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
+
+include $(GAIM_COMMON_RULES)
