@@ -1853,7 +1853,7 @@ gaim_markup_linkify(const char *text)
 					t++;
 				}
 			}
-		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
+		} else if (!g_ascii_strncasecmp(c, "ftp://", 6) || !g_ascii_strncasecmp(c, "sftp://", 7)) {
 			t = c;
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
