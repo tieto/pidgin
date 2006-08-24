@@ -445,7 +445,6 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 	SilcHashTableList htl;
 	SilcChannelUser chu;
 	char buf[512], buf2[512], *tmp, *name;
-	SilcBuffer buffer;
 	SilcNotifyType notify;
 	GaimBuddy *b;
 	int i;
@@ -461,7 +460,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 	case SILC_NOTIFY_TYPE_INVITE:
 		{
 			GHashTable *components;
-			channel = va_arg(va, SilcChannelEntry);
+			va_arg(va, SilcChannelEntry);
 			name = va_arg(va, char *);
 			client_entry = va_arg(va, SilcClientEntry);
 
@@ -616,7 +615,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		(void)va_arg(va, char *);
 		(void)va_arg(va, char *);
 		(void)va_arg(va, SilcPublicKey);
-		buffer = va_arg(va, SilcBuffer);
+		(void)va_arg(va, SilcBuffer);
 		channel = va_arg(va, SilcChannelEntry);
 
 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
@@ -1509,7 +1508,6 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 	case SILC_COMMAND_INFO:
 		{
 
-			SilcServerEntry server_entry;
 			char *server_name;
 			char *server_info;
 			char tmp[256];
@@ -1521,7 +1519,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				return;
 			}
 
-			server_entry = va_arg(vp, SilcServerEntry);
+			(void)va_arg(vp, SilcServerEntry);
 			server_name = va_arg(vp, char *);
 			server_info = va_arg(vp, char *);
 
