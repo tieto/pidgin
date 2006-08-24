@@ -105,29 +105,36 @@
 #define NOTIFY_PLUGIN_ID "gtk-x11-notify"
 
 static GaimPlugin *my_plugin = NULL;
+static GdkAtom _Cardinal = GDK_NONE;
+static GdkAtom _GaimUnseenCount = GDK_NONE;
 
 /* notification set/unset */
 static int notify(GaimConversation *conv, gboolean increment);
 static void notify_win(GaimGtkWindow *gaimwin);
 static void unnotify(GaimConversation *conv, gboolean reset);
-static int unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv);
+static int unnotify_cb(GtkWidget *widget, gpointer data,
+                       GaimConversation *conv);
 
 /* gtk widget callbacks for prefs panel */
 static void type_toggle_cb(GtkWidget *widget, gpointer data);
 static void method_toggle_cb(GtkWidget *widget, gpointer data);
 static void notify_toggle_cb(GtkWidget *widget, gpointer data);
-static gboolean options_entry_cb(GtkWidget *widget, GdkEventFocus *event, gpointer data);
+static gboolean options_entry_cb(GtkWidget *widget, GdkEventFocus *event,
+                                 gpointer data);
 static void apply_method(void);
 static void apply_notify(void);
 
 /* string function */
 static void handle_string(GaimGtkWindow *gaimwin);
 
-/* count function */
-static void handle_count(GaimGtkWindow *gaimwin);
+/* count_title function */
+static void handle_count_title(GaimGtkWindow *gaimwin);
+
+/* count_xprop function */
+static void handle_count_xprop(GaimGtkWindow *gaimwin);
 
 /* urgent function */
-static void handle_urgent(GaimGtkWindow *gaimwin, gboolean add);
+static void handle_urgent(GaimGtkWindow *gaimwin, gboolean set);
 
 /* raise function */
 static void handle_raise(GaimGtkWindow *gaimwin);
@@ -135,10 +142,10 @@ static void handle_raise(GaimGtkWindow *gaimwin);
 /****************************************/
 /* Begin doing stuff below this line... */
 /****************************************/
-static int
+static guint
 count_messages(GaimGtkWindow *gaimwin)
 {
-	gint count = 0;
+	guint count = 0;
 	GList *convs = NULL, *l;
 
 	for (convs = gaimwin->gtkconvs; convs != NULL; convs = convs->next) {
@@ -154,9 +161,9 @@ count_messages(GaimGtkWindow *gaimwin)
 static int
 notify(GaimConversation *conv, gboolean increment)
 {
-	GaimGtkWindow *gaimwin = NULL;
 	gint count;
 	gboolean has_focus;
+	GaimGtkWindow *gaimwin = NULL;
 
 	if (conv == NULL)
 		return 0;
@@ -197,7 +204,9 @@ notify_win(GaimGtkWindow *gaimwin)
 		return;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_count"))
-		handle_count(gaimwin);
+		handle_count_title(gaimwin);
+	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_count_xprop"))
+		handle_count_xprop(gaimwin);
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_string"))
 		handle_string(gaimwin);
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent"))
@@ -221,11 +230,15 @@ unnotify(GaimConversation *conv, gboolean reset)
 	gaim_conversation_autoset_title(active_conv);
 
 	if (reset) {
-		/* Only need to actually remove the urgent hinting here, since removing it
-		 * just to have it readded in re-notify is an unnecessary couple extra RTs
-		 * to the server */
+		/* Only need to actually remove the urgent hinting here, since
+		 * removing it just to have it readded in re-notify is an
+		 * unnecessary couple extra RTs to the server */
 		handle_urgent(gaimwin, FALSE);
 		gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+		/* Same logic as for the urgent hint, xprops are also a RT.
+		 * This needs to go here so that it gets the updated message
+		 * count. */
+		handle_count_xprop(gaimwin);
 	}
 
 	return;
@@ -242,7 +255,7 @@ unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv)
 
 static gboolean
 message_displayed_cb(GaimAccount *account, const char *who, char *message,
-				GaimConversation *conv, GaimMessageFlags flags)
+                     GaimConversation *conv, GaimMessageFlags flags)
 {
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
 	     gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat_nick") &&
@@ -256,7 +269,8 @@ message_displayed_cb(GaimAccount *account, const char *who, char *message,
 }
 
 static void
-im_sent_im(GaimAccount *account, const char *receiver, const char *message) {
+im_sent_im(GaimAccount *account, const char *receiver, const char *message)
+{
 	GaimConversation *conv = NULL;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
@@ -293,9 +307,9 @@ attach_signals(GaimConversation *conv)
 	gtkwin  = gtkconv->win;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus")) {
-		/* TODO should really find a way to make this work no matter where the
-		 * focus is inside the conv window, without having to bind to
-		 * focus-in-event on the g(d|t)kwindow */
+		/* TODO should really find a way to make this work no matter
+		 * where the focus is inside the conv window, without having
+		 * to bind to focus-in-event on the g(d|t)kwindow */
 		/* try setting the signal on the focus-in-event for
 		 * gtkwin->notebook->container? */
 		id = g_signal_connect(G_OBJECT(gtkconv->entry), "focus-in-event",
@@ -308,8 +322,8 @@ attach_signals(GaimConversation *conv)
 	}
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click")) {
-		/* TODO similarly should really find a way to allow for clicking in other
-		 * places of the window */
+		/* TODO similarly should really find a way to allow for
+		 * clicking in other places of the window */
 		id = g_signal_connect(G_OBJECT(gtkconv->entry), "button-press-event",
 		                      G_CALLBACK(unnotify_cb), conv);
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
@@ -362,10 +376,11 @@ detach_signals(GaimConversation *conv)
 static void
 conv_created(GaimConversation *conv)
 {
-	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+	gaim_conversation_set_data(conv, "notify-message-count",
+	                           GINT_TO_POINTER(0));
 
-	/* always attach the signals, notify() will take care of conversation type
-	 * checking */
+	/* always attach the signals, notify() will take care of conversation
+	 * type checking */
 	attach_signals(conv);
 }
 
@@ -484,7 +499,7 @@ handle_string(GaimGtkWindow *gaimwin)
 }
 
 static void
-handle_count(GaimGtkWindow *gaimwin)
+handle_count_title(GaimGtkWindow *gaimwin)
 {
 	GtkWindow *window;
 	char newtitle[256];
@@ -500,7 +515,34 @@ handle_count(GaimGtkWindow *gaimwin)
 }
 
 static void
-handle_urgent(GaimGtkWindow *win, gboolean add)
+handle_count_xprop(GaimGtkWindow *gaimwin)
+{
+#ifndef _WIN32
+	guint count;
+	GtkWidget *window;
+	GdkWindow *gdkwin;
+
+	window = gaimwin->window;
+	g_return_if_fail(window != NULL);
+
+	if (_GaimUnseenCount == GDK_NONE) {
+		_GaimUnseenCount = gdk_atom_intern("_GAIM_UNSEEN_COUNT", FALSE);
+	}
+
+	if (_Cardinal == GDK_NONE) {
+		_Cardinal = gdk_atom_intern("CARDINAL", FALSE);
+	}
+
+	count = count_messages(gaimwin);
+	gdkwin = window->window;
+
+	gdk_property_change(gdkwin, _GaimUnseenCount, _Cardinal, 32,
+	                    GDK_PROP_MODE_REPLACE, (guchar *) &count, 1);
+#endif
+}
+
+static void
+handle_urgent(GaimGtkWindow *win, gboolean set)
 {
 #ifndef _WIN32
 	XWMHints *hints;
@@ -514,7 +556,7 @@ handle_urgent(GaimGtkWindow *win, gboolean add)
 	if(!hints)
 		hints = XAllocWMHints();
 
-	if (add)
+	if (set)
 		hints->flags |= XUrgencyHint;
 	else
 		hints->flags &= ~XUrgencyHint;
@@ -536,7 +578,8 @@ type_toggle_cb(GtkWidget *widget, gpointer data)
 	gboolean on = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 	gchar pref[256];
 
-	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s", (char *)data);
+	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s",
+	           (char *)data);
 
 	gaim_prefs_set_bool(pref, on);
 }
@@ -547,7 +590,8 @@ method_toggle_cb(GtkWidget *widget, gpointer data)
 	gboolean on = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 	gchar pref[256];
 
-	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s", (char *)data);
+	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s",
+	           (char *)data);
 
 	gaim_prefs_set_bool(pref, on);
 
@@ -567,7 +611,8 @@ notify_toggle_cb(GtkWidget *widget, gpointer data)
 	gboolean on = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 	gchar pref[256];
 
-	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s", (char *)data);
+	g_snprintf(pref, sizeof(pref), "/plugins/gtk/X11/notify/%s",
+	           (char *)data);
 
 	gaim_prefs_set_bool(pref, on);
 
@@ -581,7 +626,8 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 		return FALSE;
 
 	if (!strcmp(data, "method_string")) {
-		gaim_prefs_set_string("/plugins/gtk/X11/notify/title_string", gtk_entry_get_text(GTK_ENTRY(widget)));
+		gaim_prefs_set_string("/plugins/gtk/X11/notify/title_string",
+		                      gtk_entry_get_text(GTK_ENTRY(widget)));
 	}
 
 	apply_method();
@@ -590,11 +636,13 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 }
 
 static void
-apply_method() {
+apply_method()
+{
 	GList *convs;
 	GaimGtkWindow *gaimwin = NULL;
 
-	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next) {
+	for (convs = gaim_get_conversations(); convs != NULL;
+	     convs = convs->next) {
 		GaimConversation *conv = (GaimConversation *)convs->data;
 
 		/* remove notifications */
@@ -706,6 +754,14 @@ get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(method_toggle_cb), "method_count");
 
 #ifndef _WIN32
+	/* Count xprop method button */
+	toggle = gtk_check_button_new_with_mnemonic(_("Insert count of new message into _X property"));
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
+	                             gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_count_xprop"));
+	g_signal_connect(G_OBJECT(toggle), "toggled",
+	                 G_CALLBACK(method_toggle_cb), "method_count_xprop");
+
 	/* Urgent method button */
 	toggle = gtk_check_button_new_with_mnemonic(_("Set window manager \"_URGENT\" hint"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
@@ -856,8 +912,8 @@ static GaimPluginInfo info =
 	N_("Provides a variety of ways of notifying you of unread messages."),
 	                                                  /**  description    */
 	N_("Provides a variety of ways of notifying you of unread messages."),
-	"Etan Reisner <deryni@eden.rutgers.edu>\n\t\t\tBrian Tarricone <bjt23@cornell.edu>",
 	                                                  /**< author         */
+	"Etan Reisner <deryni@eden.rutgers.edu>\n\t\t\tBrian Tarricone <bjt23@cornell.edu>",
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
@@ -885,6 +941,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_urgent", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count_xprop", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_raise", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
