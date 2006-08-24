@@ -24,6 +24,7 @@
 
 static int lock_focus_list;
 static GList *focus_list;
+static GList *ordered;
 
 static int X_MIN;
 static int X_MAX;
@@ -64,6 +65,14 @@ static void bring_on_top(GntWidget *widget);
 
 static gboolean refresh_screen();
 
+static GList *
+g_list_bring_to_front(GList *list, gpointer data)
+{
+	list = g_list_remove(list, data);
+	list = g_list_prepend(list, data);
+	return list;
+}
+
 static gboolean
 update_screen(gpointer null)
 {
@@ -78,16 +87,15 @@ void gnt_screen_take_focus(GntWidget *widget)
 
 	if (lock_focus_list)
 		return;
-	if (g_list_find(g_list_first(focus_list), widget))
+	if (g_list_find(focus_list, widget))
 		return;
 
-	if (focus_list)
-		w = focus_list->data;
+	if (ordered)
+		w = ordered->data;
 
-	/* XXX: ew */
-	focus_list = g_list_first(focus_list);
 	focus_list = g_list_append(focus_list, widget);
-	focus_list = g_list_find(focus_list, w ? w : widget);
+
+	ordered = g_list_append(ordered, widget);
 
 	gnt_widget_set_focus(widget, TRUE);
 	if (w)
@@ -97,8 +105,7 @@ void gnt_screen_take_focus(GntWidget *widget)
 
 void gnt_screen_remove_widget(GntWidget *widget)
 {
-	int pos = g_list_index(g_list_first(focus_list), widget);
-	GList *next;
+	int pos = g_list_index(focus_list, widget);
 
 	if (lock_focus_list)
 		return;
@@ -106,15 +113,12 @@ void gnt_screen_remove_widget(GntWidget *widget)
 	if (pos == -1)
 		return;
 
-	focus_list = g_list_first(focus_list);
 	focus_list = g_list_remove(focus_list, widget);
-	next = g_list_nth(focus_list, pos - 1);
-	if (next)
-		focus_list = next;
+	ordered = g_list_remove(ordered, widget);
 
-	if (focus_list)
+	if (ordered)
 	{
-		bring_on_top(focus_list->data);
+		bring_on_top(ordered->data);
 	}
 	draw_taskbar(FALSE);
 }
@@ -124,14 +128,11 @@ bring_on_top(GntWidget *widget)
 {
 	GntNode *node = g_hash_table_lookup(nodes, widget);
 
-	g_return_if_fail(focus_list->data == widget);
-
 	if (!node)
 		return;
 
-	gnt_widget_set_focus(focus_list->data, TRUE);
-	gnt_widget_draw(focus_list->data);
-
+	gnt_widget_set_focus(widget, TRUE);
+	gnt_widget_draw(widget);
 	top_panel(node->panel);
 
 	if (window_list.window)
@@ -151,7 +152,7 @@ update_window_in_list(GntWidget *wid)
 	if (window_list.window == NULL)
 		return;
 
-	if (wid == focus_list->data)
+	if (wid == ordered->data)
 		flag |= GNT_TEXT_FLAG_DIM;
 	else if (GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_URGENT))
 		flag |= GNT_TEXT_FLAG_BOLD;
@@ -179,17 +180,17 @@ draw_taskbar(gboolean reposition)
 	wbkgdset(taskbar, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(taskbar);
 
-	n = g_list_length(g_list_first(focus_list));
+	n = g_list_length(focus_list);
 	if (n)
 		width = getmaxx(stdscr) / n;
 
-	for (i = 0, iter = g_list_first(focus_list); iter; iter = iter->next, i++)
+	for (i = 0, iter = focus_list; iter; iter = iter->next, i++)
 	{
 		GntWidget *w = iter->data;
 		int color;
 		const char *title;
 
-		if (w == focus_list->data)
+		if (w == ordered->data)
 		{
 			/* This is the current window in focus */
 			color = GNT_COLOR_TITLE;
@@ -218,31 +219,28 @@ draw_taskbar(gboolean reposition)
 static void
 switch_window(int direction)
 {
-	GntWidget *w = NULL;
-	if (focus_list)
-		w = focus_list->data;
+	GntWidget *w = NULL, *wid = NULL;
+	int pos;
 
-	if (direction == 1)
-	{
-		if (focus_list && focus_list->next)
-			focus_list = focus_list->next;
-		else
-			focus_list = g_list_first(focus_list);
-	}
-	else if (direction == -1)
-	{
-		if (focus_list && focus_list->prev)
-			focus_list = focus_list->prev;
-		else
-			focus_list = g_list_last(focus_list);
-	}
-	
-	if (focus_list)
-	{
-		bring_on_top(focus_list->data);
-	}
+	if (!ordered || !ordered->next)
+		return;
 
-	if (w && (!focus_list || w != focus_list->data))
+	w = ordered->data;
+	pos = g_list_index(focus_list, w);
+	pos += direction;
+
+	if (pos < 0)
+		wid = g_list_last(focus_list)->data;
+	else if (pos >= g_list_length(focus_list))
+		wid = focus_list->data;
+	else if (pos >= 0)
+		wid = g_list_nth_data(focus_list, pos);
+
+	ordered = g_list_bring_to_front(ordered, wid);
+
+	bring_on_top(ordered->data);
+
+	if (w != wid)
 	{
 		gnt_widget_set_focus(w, FALSE);
 	}
@@ -254,16 +252,18 @@ switch_window_n(int n)
 	GntWidget *w = NULL;
 	GList *l;
 
-	if (focus_list)
-		w = focus_list->data;
+	if (!ordered)
+		return;
+	
+	w = ordered->data;
 
-	if ((l = g_list_nth(g_list_first(focus_list), n)) != NULL)
+	if ((l = g_list_nth(focus_list, n)) != NULL)
 	{
-		focus_list = l;
-		bring_on_top(focus_list->data);
+		ordered = g_list_bring_to_front(ordered, l->data);
+		bring_on_top(ordered->data);
 	}
 
-	if (w && (!focus_list || w != focus_list->data))
+	if (l && w != l->data)
 	{
 		gnt_widget_set_focus(w, FALSE);
 	}
@@ -275,13 +275,14 @@ window_list_activate(GntTree *tree, gpointer null)
 	GntWidget *widget = gnt_tree_get_selection_data(GNT_TREE(tree));
 	GntWidget *old = NULL;
 
-	if (focus_list)
-		old = focus_list->data;
+	if (!ordered || !widget)
+		return;
 
-	focus_list = g_list_find(g_list_first(focus_list), widget);
+	old = ordered->data;
+	ordered = g_list_bring_to_front(ordered, widget);
 	bring_on_top(widget);
 
-	if (old && (!focus_list || old != focus_list->data))
+	if (old != widget)
 	{
 		gnt_widget_set_focus(old, FALSE);
 	}
@@ -303,7 +304,7 @@ show_window_list()
 
 	tree = window_list.tree = gnt_tree_new();
 
-	for (iter = g_list_first(focus_list); iter; iter = iter->next)
+	for (iter = focus_list; iter; iter = iter->next)
 	{
 		GntBox *box = GNT_BOX(iter->data);
 
@@ -312,7 +313,7 @@ show_window_list()
 		update_window_in_list(GNT_WIDGET(box));
 	}
 
-	gnt_tree_set_selected(GNT_TREE(tree), focus_list->data);
+	gnt_tree_set_selected(GNT_TREE(tree), ordered->data);
 	gnt_box_add_widget(GNT_BOX(win), tree);
 
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, getmaxx(stdscr) / 3);
@@ -329,7 +330,7 @@ show_window_list()
 static void
 shift_window(GntWidget *widget, int dir)
 {
-	GList *all = g_list_first(focus_list);
+	GList *all = focus_list;
 	GList *list = g_list_find(all, widget);
 	int length, pos;
 	if (!list)
@@ -349,8 +350,7 @@ shift_window(GntWidget *widget, int dir)
 
 	all = g_list_insert(all, widget, pos);
 	all = g_list_delete_link(all, list);
-	if (focus_list == list)
-		focus_list = g_list_find(all, widget);
+	focus_list = all;
 	draw_taskbar(FALSE);
 }
 
@@ -522,14 +522,26 @@ detect_mouse_action(const char *buffer)
 
 	if (strncmp(buffer, "[M ", 3) == 0) {
 		/* left button down */
-		/* If you clicked on the top-bar of the active window, then you can move it by dragging it */
-		if (focus_list) {
-			GntWidget *wid = focus_list->data;
-			if (x >= wid->priv.x && x < wid->priv.x + wid->priv.width &&
-					y == wid->priv.y) {
-				offset = x - wid->priv.x;
-				remember = wid;
-				button = MOUSE_LEFT;
+		/* Bring the window you clicked on to front */
+		/* If you click on the topbar, then you can drag to move the window */
+		GList *iter;
+		for (iter = ordered; iter; iter = iter->next) {
+			GntWidget *wid = iter->data;
+			if (x >= wid->priv.x && x < wid->priv.x + wid->priv.width) {
+				if (y >= wid->priv.y && y < wid->priv.y + wid->priv.height) {
+					if (iter != ordered) {
+						GntWidget *w = ordered->data;
+						ordered = g_list_bring_to_front(ordered, iter->data);
+						bring_on_top(ordered->data);
+						gnt_widget_set_focus(w, FALSE);
+					}
+					if (y == wid->priv.y) {
+						offset = x - wid->priv.x;
+						remember = wid;
+						button = MOUSE_LEFT;
+					}
+					break;
+				}
 			}
 		}
 	} else if (strncmp(buffer, "[M\"", 3) == 0) {
@@ -543,7 +555,7 @@ detect_mouse_action(const char *buffer)
 	} else if (strncmp(buffer, "[M#", 3) == 0) {
 		/* button up */
 		if (button == MOUSE_NONE && y == getmaxy(stdscr) - 1) {
-			int n = g_list_length(g_list_first(focus_list));
+			int n = g_list_length(focus_list);
 			if (n) {
 				int width = getmaxx(stdscr) / n;
 				switch_window_n(x / width);
@@ -599,9 +611,9 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	if (mode == GNT_KP_MODE_NORMAL)
 	{
-		if (focus_list)
+		if (ordered)
 		{
-			ret = gnt_widget_key_pressed(focus_list->data, buffer);
+			ret = gnt_widget_key_pressed(ordered->data, buffer);
 		}
 
 		if (!ret)
@@ -614,9 +626,9 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				else if (strcmp(buffer + 1, "c") == 0)
 				{
 					/* Alt + c was pressed. I am going to use it to close a window. */
-					if (focus_list)
+					if (ordered)
 					{
-						gnt_widget_destroy(focus_list->data);
+						gnt_widget_destroy(ordered->data);
 					}
 				}
 				else if (strcmp(buffer + 1, "q") == 0)
@@ -653,11 +665,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				else if (strcmp(buffer + 1, ",") == 0 && focus_list)
 				{
 					/* Re-order the list of windows */
-					shift_window(focus_list->data, -1);
+					shift_window(ordered->data, -1);
 				}
 				else if (strcmp(buffer + 1, ".") == 0 && focus_list)
 				{
-					shift_window(focus_list->data, 1);
+					shift_window(ordered->data, 1);
 				}
 				else if (strcmp(buffer + 1, "l") == 0)
 				{
@@ -681,7 +693,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		{
 			gboolean changed = FALSE;
 			int x, y, w, h;
-			GntWidget *widget = GNT_WIDGET(focus_list->data);
+			GntWidget *widget = GNT_WIDGET(ordered->data);
 
 			gnt_widget_get_position(widget, &x, &y);
 			gnt_widget_get_size(widget, &w, &h);
@@ -755,7 +767,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			mode = GNT_KP_MODE_NORMAL;
 		else if (buffer[0] == 27)
 		{
-			GntWidget *widget = focus_list->data;
+			GntWidget *widget = ordered->data;
 			gboolean changed = FALSE;
 			int width, height;
 
@@ -885,9 +897,9 @@ void gnt_init()
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	refresh();
 
-#ifdef NCURSES_BUTTON_PRESSEDaa
+#ifdef ALL_MOUSE_EVENTS
 	if ((mouse_enabled = gnt_style_get_bool(GNT_STYLE_MOUSE, FALSE)))
-		mousemask(NCURSES_BUTTON_PRESSED | NCURSES_BUTTON_RELEASED | REPORT_MOUSE_POSITION, NULL);
+		mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 #endif
 
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
@@ -1014,7 +1026,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	if (widget == window_list.window)
 		return TRUE;
 
-	if (focus_list && focus_list->data == widget)
+	if (ordered && ordered->data == widget)
 	{
 		if (GNT_IS_BOX(widget) &&
 				(GNT_BOX(widget)->active == w || widget == w))
@@ -1029,7 +1041,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 	while (widget->parent)
 		widget = widget->parent;
 
-	if (focus_list && focus_list->data == widget)
+	if (ordered && ordered->data == widget)
 		return;
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
