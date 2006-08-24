@@ -107,7 +107,7 @@
 static GaimPlugin *my_plugin = NULL;
 
 /* notification set/unset */
-static int notify(GaimConversation *conv);
+static int notify(GaimConversation *conv, gboolean increment);
 static void notify_win(GaimGtkWindow *gaimwin);
 static void unnotify(GaimConversation *conv, gboolean reset);
 static int unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv);
@@ -135,26 +135,28 @@ static void handle_raise(GaimGtkWindow *gaimwin);
 /****************************************/
 /* Begin doing stuff below this line... */
 /****************************************/
-static guint
+static int
 count_messages(GaimGtkWindow *gaimwin)
 {
-	guint count = 0;
-	GList *gtkconvs = NULL;
+	gint count = 0;
+	GList *convs = NULL, *l;
 
-	for (gtkconvs = gaimwin->gtkconvs; gtkconvs != NULL;
-	     gtkconvs = gtkconvs->next) {
-		GaimGtkConversation *gtkconv = gtkconvs->data;
-		count += gtkconv->unseen_count;
+	for (convs = gaimwin->gtkconvs; convs != NULL; convs = convs->next) {
+		GaimGtkConversation *conv = convs->data;
+		for (l = conv->convs; l != NULL; l = l->next) {
+			count += GPOINTER_TO_INT(gaim_conversation_get_data(l->data, "notify-message-count"));
+		}
 	}
 
 	return count;
 }
 
 static int
-notify(GaimConversation *conv)
+notify(GaimConversation *conv, gboolean increment)
 {
-	gboolean has_focus;
 	GaimGtkWindow *gaimwin = NULL;
+	gint count;
+	gboolean has_focus;
 
 	if (conv == NULL)
 		return 0;
@@ -176,6 +178,12 @@ notify(GaimConversation *conv)
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ||
 	    !has_focus) {
+		if (increment) {
+			count = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count"));
+			count++;
+			gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(count));
+		}
+
 		notify_win(gaimwin);
 	}
 
@@ -217,6 +225,7 @@ unnotify(GaimConversation *conv, gboolean reset)
 		 * just to have it readded in re-notify is an unnecessary couple extra RTs
 		 * to the server */
 		handle_urgent(gaimwin, FALSE);
+		gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
 	}
 
 	return;
@@ -225,11 +234,7 @@ unnotify(GaimConversation *conv, gboolean reset)
 static int
 unnotify_cb(GtkWidget *widget, gpointer data, GaimConversation *conv)
 {
-	GaimGtkConversation *gtkconv = NULL;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	if (gtkconv->unseen_count > 0)
+	if (GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count")) != 0)
 		unnotify(conv, TRUE);
 
 	return 0;
@@ -245,7 +250,7 @@ message_displayed_cb(GaimAccount *account, const char *who, char *message,
 	    return FALSE;
 
 	if ((flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_DELAYED))
-		notify(conv);
+		notify(conv, TRUE);
 
 	return FALSE;
 }
@@ -348,6 +353,8 @@ detach_signals(GaimConversation *conv)
 		g_signal_handler_disconnect(gtkconv->entry, GPOINTER_TO_INT(l->data));
 	g_slist_free(ids);
 
+	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+
 	gaim_conversation_set_data(conv, "notify-imhtml-signals", NULL);
 	gaim_conversation_set_data(conv, "notify-entry-signals", NULL);
 }
@@ -355,6 +362,8 @@ detach_signals(GaimConversation *conv)
 static void
 conv_created(GaimConversation *conv)
 {
+	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+
 	/* always attach the signals, notify() will take care of conversation type
 	 * checking */
 	attach_signals(conv);
@@ -371,7 +380,7 @@ conv_switched(GaimConversation *conv)
 	 * If the conversation was switched, then make sure we re-notify
 	 * because Gaim will have overwritten our custom window title.
 	 */
-	notify(conv);
+	notify(conv, FALSE);
 
 #if 0
 	printf("conv_switched - %p - %p\n", old_conv, new_conv);
@@ -397,6 +406,7 @@ deleting_conv(GaimConversation *conv)
 	gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
 
 	handle_urgent(gaimwin, FALSE);
+	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
 
 	return;
 
@@ -582,21 +592,18 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 static void
 apply_method() {
 	GList *convs;
+	GaimGtkWindow *gaimwin = NULL;
 
 	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next) {
-		GaimConversation *conv = NULL;
-		GaimGtkConversation *gtkconv = NULL;
-
-		conv = (GaimConversation *) convs->data;
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		GaimConversation *conv = (GaimConversation *)convs->data;
 
 		/* remove notifications */
 		unnotify(conv, FALSE);
 
-		if (gtkconv->unseen_count > 0) {
+		gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
+		if (GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count")) != 0)
 			/* reattach appropriate notifications */
-			notify(conv);
-		}
+			notify(conv, FALSE);
 	}
 }
 
