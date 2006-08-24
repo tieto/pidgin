@@ -570,7 +570,7 @@ xmlnode_from_str(const char *str, gssize size)
 	xpd = g_new0(struct _xmlnode_parser_data, 1);
 
 #ifdef HAVE_LIBXML
-	if (xmlSAXUserParseMemory(&xmlnode_parser_libxml, xpd, str, size) < 0) {
+	if (xmlSAXUserParseMemory(&xmlnode_parser_libxml, xpd, str, real_size) < 0) {
 		while(xpd->current && xpd->current->parent)
 			xpd->current = xpd->current->parent;
 		if(xpd->current)
