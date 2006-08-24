@@ -225,7 +225,7 @@ update_user_splits(AccountEditDialog *dialog)
 		return;
 	prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 	
-	username = g_strdup(gaim_account_get_username(dialog->account));
+	username = dialog->account ? g_strdup(gaim_account_get_username(dialog->account)) : NULL;
 
 	for (iter = prplinfo->user_splits; iter; iter = iter->next)
 	{
@@ -611,6 +611,9 @@ void gg_accounts_show_all()
 {
 	GList *iter;
 	GntWidget *box, *button;
+
+	if (accounts.window)
+		return;
 
 	accounts.window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);
