@@ -511,7 +511,7 @@ void qq_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 			gaim_blist_remove_buddy(b);
 		gaim_notify_error(gc, NULL,
 				  _("QQid Error"),
-				  _("Invalid QQid, to add buddy 1234567, \nyou should input qq-1234567"));
+				  _("Invalid QQid"));
 	}
 }
 

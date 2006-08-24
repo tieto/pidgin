@@ -374,7 +374,7 @@ static void _qq_get_info(GaimConnection *gc, const gchar *who)
 
 	if (uid <= 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Not valid QQid: %s\n", who);
-		gaim_notify_error(gc, NULL, _("Invalid name, please input in qq-xxxxxxxx format"), NULL);
+		gaim_notify_error(gc, NULL, _("Invalid name"), NULL);
 		return;
 	}
 

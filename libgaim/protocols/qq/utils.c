@@ -36,7 +36,7 @@
 #include "util.h"
 #include "utils.h"
 
-#define QQ_NAME_FORMAT    "qq-%d"
+#define QQ_NAME_FORMAT    "%d"
 
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 {
@@ -164,22 +164,24 @@ gchar *get_icon_name(gint set)
 	return g_strdup_printf("qq_%d", set);
 }
 
-/* convert a QQ UID to a unique name of GAIM
+/* convert a QQ UID to a unique name of Gaim
  * the return needs to be freed */
 gchar *uid_to_gaim_name(guint32 uid)
 {
 	return g_strdup_printf(QQ_NAME_FORMAT, uid);
 }
 
-/* convert GAIM name to original QQ UID */
+/* convert Gaim name to original QQ UID */
 guint32 gaim_name_to_uid(const gchar *const name)
 {
-	gchar *p;
+	guint32 ret;
+	g_return_val_if_fail(name != NULL, 0);
 
-	g_return_val_if_fail(gaim_str_has_prefix(name, QQ_NAME_PREFIX), 0);
-
-	p = g_strrstr(name, QQ_NAME_PREFIX);
-	return (p == NULL) ? 0 : strtol(p + strlen(QQ_NAME_PREFIX), NULL, 10);
+	ret = strtol(name, NULL, 10);
+	if (errno == ERANGE)
+		return 0;
+	else 
+		return ret;
 }
 
 /* try to dump the data as GBK */

@@ -38,10 +38,13 @@ gchar *qq_group_find_member_by_channel_and_nickname(GaimConnection *gc, gint cha
 
 	g_return_val_if_fail(gc != NULL && who != NULL, NULL);
 
+	/* TODO checkbox for this in UI */
 	/* if it starts with QQ_NAME_PREFIX, we think it is valid name already
 	 * otherwise we think it is nickname and try to find the matching gaim_name */
+	/*
 	if (gaim_str_has_prefix(who, QQ_NAME_PREFIX) && gaim_name_to_uid(who) > 0)
 		return (gchar *) who;
+		*/
 
 	group = qq_group_find_by_channel(gc, channel);
 	g_return_val_if_fail(group != NULL, NULL);

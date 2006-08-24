@@ -26,8 +26,6 @@
 #include <stdio.h>
 #include <glib.h>
 
-#define QQ_NAME_PREFIX    "qq-"
-
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount);
 gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount);
 gint qq_string_to_dec_value(const gchar *str);
