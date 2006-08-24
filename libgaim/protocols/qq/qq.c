@@ -965,7 +965,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	_qq_tooltip_text,		/* tooltip_text */
 	_qq_away_states,		/* away_states	*/
 	NULL,				/* blist_node_menu */
-	qq_chat_info,			/* chat_info */
+	NULL,				/* chat_info */
 	NULL,				/* chat_info_defaults */
 	_qq_login,			/* login */
 	_qq_close,			/* close */
