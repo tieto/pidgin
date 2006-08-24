@@ -1,4 +1,8 @@
+#ifdef HAVE_NCURSESW_INC
 #include <ncursesw/panel.h>
+#else
+#include <panel.h>
+#endif
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -485,9 +489,9 @@ refresh_node(GntWidget *widget, GntNode *node, gpointer null)
  * Mouse support:
  *  - bring a window on top if you click on its taskbar
  *  - click on the top-bar of the active window and drag+drop to move a window
+ *  - click on a window to bring it to focus
  *  wishlist:
  *   - have a little [X] on the windows, and clicking it will close that window.
- *   - click on a window to bring it to focus
  *   - allow scrolling in tree/textview on wheel-scroll event
  *   - click to activate button or select a row in tree
  *      - all these can be fulfilled by adding a "clicked" event for GntWidget

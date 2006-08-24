@@ -807,6 +807,9 @@ GNT_LIBS=
 if test "x$enable_gnt" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_gnt=no])
 	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_gnt=no])
+
+	# Some distros put the headers in ncursesw/, some don't
+	AC_CHECK_HEADER(ncursesw/ncurses.h, [AC_DEFINE(HAVE_NCURSESW_INC, 1, [Define if you have the ncursesw headers in ncursesw/])])
 else
 	enable_gnt=no
 fi

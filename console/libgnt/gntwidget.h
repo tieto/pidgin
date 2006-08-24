@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <glib.h>
 #include <glib-object.h>
-#include <ncursesw/curses.h>
+#ifdef HAVE_NCURSESW_INC
+#include <ncursesw/ncurses.h>
+#else
+#include <ncurses.h>
+#endif
 
 #define GNT_TYPE_WIDGET				(gnt_widget_get_gtype())
 #define GNT_WIDGET(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WIDGET, GntWidget))
