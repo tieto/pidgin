@@ -160,13 +160,13 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 			break;
 		default:
 			status_id = "invisible";
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown status by gfhuang: %x\n", q_bud->status);
+			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown status: %x\n", q_bud->status);
 			break;
 		}
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
 		gaim_prpl_got_user_status(gc->account, name, status_id, NULL);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown buddy by gfhuang: %d\n", q_bud->uid);
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
 	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "qq_update_buddy_contact, client=%04x\n", q_bud->client_version);

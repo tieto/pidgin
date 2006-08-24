@@ -35,15 +35,7 @@
 #include "qq_proxy.h"
 
 #define QQ_MISC_STATUS_HAVING_VIIDEO      0x00000001
-
-#define QQ_ICON_SUFFIX_DEFAULT            QQ_ICON_SUFFIX_OFFLINE
 #define QQ_CHANGE_ONLINE_STATUS_REPLY_OK 	0x30	/* ASCII value of "0" */
-
-enum {
-	QQ_ICON_SUFFIX_NORMAL = 1,
-	QQ_ICON_SUFFIX_OFFLINE = 2,
-	QQ_ICON_SUFFIX_AWAY = 3,
-};
 
 void qq_buddy_status_dump_unclear(qq_buddy_status *s)
 {
@@ -120,22 +112,25 @@ gboolean is_online(guint8 status)
 	return FALSE;
 }
 
-/* The QQ client seems to use a separate icon for each
- * face/status combo, but we only use one and let Gaim
- * handle the rest. We need to use this function to report 
- * the correct icon file back to the server. */
-gint get_icon_offset_from_self_status(guint8 status)
-{
-	switch (status) {
-	case QQ_SELF_STATUS_AVAILABLE:
-		return 0;
-	case QQ_SELF_STATUS_AWAY:
-	case QQ_SELF_STATUS_CUSTOM:
+ /* Help calculate the correct icon index to tell the server. */
+gint get_icon_offset(GaimConnection *gc)
+{ 
+	GaimAccount *account;
+	GaimPresence *presence; 
+
+	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, 2);
+
+	account = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
+
+	if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
+		return 2;
+	} else if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
+			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)
+			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_UNAVAILABLE)) {
 		return 1;
-	case QQ_SELF_STATUS_INVISIBLE:
-		return 2;
-	default:
-		return 2;
+        } else {
+		return 0;
 	}
 }
 
@@ -146,26 +141,25 @@ void qq_send_packet_change_status(GaimConnection *gc)
 	guint8 *raw_data, *cursor, away_cmd;
 	guint32 misc_status;
 	gboolean fake_video;
+	GaimAccount *account;
+	GaimPresence *presence; 
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+
+	account = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
 
 	qd = (qq_data *) gc->proto_data;
 	if (!qd->logged_in)
 		return;
 
-	switch (qd->status) {
-	case QQ_SELF_STATUS_AVAILABLE:
-		away_cmd = QQ_BUDDY_ONLINE_NORMAL;
-		break;
-	case QQ_SELF_STATUS_INVISIBLE:
+	if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
 		away_cmd = QQ_BUDDY_ONLINE_INVISIBLE;
-		break;
-	case QQ_SELF_STATUS_AWAY:
-	case QQ_SELF_STATUS_IDLE:
-	case QQ_SELF_STATUS_CUSTOM:
+	} else if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
+			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)
+			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_UNAVAILABLE)) {
 		away_cmd = QQ_BUDDY_ONLINE_AWAY;
-		break;
-	default:
+	} else {
 		away_cmd = QQ_BUDDY_ONLINE_NORMAL;
 	}
 
@@ -191,6 +185,9 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *g
 	qq_data *qd;
 	gint len;
 	guint8 *data, *cursor, reply;
+	GaimBuddy *b;
+	qq_buddy *q_bud;
+	gchar *name;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
@@ -204,11 +201,17 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *g
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_CHANGE_ONLINE_STATUS_REPLY_OK) {
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Change status fail\n");
-		} else
+		} else {
 			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Change status OK\n");
-	} else
+			name = uid_to_gaim_name(qd->uid);
+			b = gaim_find_buddy(gc->account, name);
+			g_free(name);
+			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+			qq_update_buddy_contact(gc, q_bud);
+		}
+	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt chg status reply\n");
-
+	}
 }
 
 /* it is a server message indicating that one of my buddies has changed its status */
@@ -236,11 +239,13 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 		bytes = 0;
 		/* 000-030: qq_buddy_status */
 		bytes += qq_buddy_status_read(data, &cursor, len, s);
-		/* 031-034: my uid */
+		/* 031-034: my uid */ 
+		/* This has a value of 0 when we've changed our status to 
+		 * QQ_BUDDY_ONLINE_INVISIBLE */
 		bytes += read_packet_dw(data, &cursor, len, &my_uid);
 
-		if (my_uid == 0 || bytes != 35) {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "my_uid == 0 || bytes(%d) != 35\n", bytes);
+		if (bytes != 35) {
+			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "bytes(%d) != 35\n", bytes);
 			g_free(s->ip);
 			g_free(s->unknown_key);
 			g_free(s);
@@ -263,7 +268,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 			qq_update_buddy_contact(gc, q_bud);
 		} else {
 			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-					"got information of unknown buddy by gfhuang %d\n", s->uid);
+					"got information of unknown buddy %d\n", s->uid);
 		}
 
 		g_free(s->ip);

@@ -231,11 +231,10 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	/* Now goes on updating my icon/nickname, not showing info_window */
 	qd->modifying_face = FALSE;
 	qq_send_packet_get_info(gc, qd->uid, FALSE);
-	/* change my status manually, even server may broadcast my online */
-	qd->status = (qd->login_mode == QQ_LOGIN_MODE_HIDDEN) ? QQ_SELF_STATUS_INVISIBLE : QQ_SELF_STATUS_AVAILABLE;
-	qq_send_packet_change_status(gc);
-	/* now refresh buddy list */
 
+	qq_send_packet_change_status(gc);
+
+	/* now refresh buddy list */
 	/* changed by gfhuang, using With Qun version, error, not working still */
 	qq_send_packet_get_buddies_list(gc, QQ_FRIENDS_LIST_POSITION_START);
 	/* qq_send_packet_get_all_list_with_group(gc, QQ_FRIENDS_LIST_POSITION_START); */

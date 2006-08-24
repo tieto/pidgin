@@ -94,7 +94,7 @@ static void _qq_login(GaimAccount *account)
 	qq_data *qd;
 	GaimConnection *gc;
 	GaimPresence *presence;	
-	gboolean login_hidden, use_tcp;
+	gboolean use_tcp;
 
 	g_return_if_fail(account != NULL);
 
@@ -111,16 +111,16 @@ static void _qq_login(GaimAccount *account)
 	qq_port = gaim_account_get_string(account, "port", NULL);
 	use_tcp = gaim_account_get_bool(account, "use_tcp", FALSE);
         presence = gaim_account_get_presence(account);
-        login_hidden = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE);
 
 	qd->use_tcp = use_tcp;
 
-	if (login_hidden) {
+	if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
 		qd->login_mode = QQ_LOGIN_MODE_HIDDEN;
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Login in hidden mode\n");
+	} else if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
+				|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)) {
+		qd->login_mode = QQ_LOGIN_MODE_AWAY;
 	} else {
 		qd->login_mode = QQ_LOGIN_MODE_NORMAL;
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Login in normal mode\n");
 	}
 
 	if (qq_server == NULL || strlen(qq_server) == 0)
@@ -258,7 +258,7 @@ static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
                 emblems[0] = "offline";
 	} else {
 		/* TODO the wireless icon is a bit too big to look good with QQ faces */
-		if (q_bud->status == QQ_BUDDY_ONLINE_AWAY || q_bud->status == QQ_SELF_STATUS_AWAY)
+		if (q_bud->status == QQ_BUDDY_ONLINE_AWAY)
 			emblems[i++] = "away";
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 			emblems[i++] = "qq_member";
@@ -306,23 +306,6 @@ static GList *_qq_away_states(GaimAccount *ga)
 static void _qq_set_away(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	const char *state = gaim_status_get_id(status);
-
-	qq_data *qd;
-	
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
-
-	if(0 == strcmp(state, "available"))
-		qd->status = QQ_SELF_STATUS_AVAILABLE;
-	else if (0 == strcmp(state, "away"))
-		qd->status = QQ_SELF_STATUS_AWAY;
-	else if (0 == strcmp(state, "invisible"))
-		qd->status = QQ_SELF_STATUS_INVISIBLE;
-	else
-		qd->status = QQ_SELF_STATUS_AVAILABLE;
 
 	qq_send_packet_change_status(gc);
 }
@@ -420,7 +403,7 @@ static void _qq_change_face_cb(GaimConnection *gc, GaimRequestFields *fields)
 	qd = (qq_data *) gc->proto_data;
 
 	field = gaim_request_fields_get_field(fields, "face_num");
-	suffix = get_icon_offset_from_self_status(qd->status);
+	suffix = get_icon_offset(gc);
 	qd->my_icon = gaim_request_field_choice_get_value(field) * 3 + suffix;
 	qd->modifying_face = TRUE;
 	qq_send_packet_get_info(gc, qd->uid, FALSE);

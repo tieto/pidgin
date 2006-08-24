@@ -47,19 +47,11 @@ enum {
 	QQ_BUDDY_ONLINE_INVISIBLE = 0x28
 };
 
-enum {
-	QQ_SELF_STATUS_AVAILABLE = 0x11,
-	QQ_SELF_STATUS_AWAY = 0x12,
-	QQ_SELF_STATUS_INVISIBLE = 0x13,
-	QQ_SELF_STATUS_CUSTOM = 0x14,
-	QQ_SELF_STATUS_IDLE = 0x15
-};
- 
 void qq_buddy_status_dump_unclear(qq_buddy_status *s);
 gboolean is_online(guint8 status);
 
 gint qq_buddy_status_read(guint8 *data, guint8 **cursor, gint len, qq_buddy_status *s);
-gint get_icon_offset_from_self_status(guint8 status);
+gint get_icon_offset(GaimConnection *gc);
 
 void qq_send_packet_change_status(GaimConnection *gc);
 

@@ -64,7 +64,6 @@ struct _qq_data {
 
 	guint16 send_seq;		/* send sequence number */
 	guint8 login_mode;		/* online of invisible */
-	guint8 status;
 	gboolean logged_in;		/* used by qq-add_buddy */
 	gboolean use_tcp;		/* network in tcp or udp */
 

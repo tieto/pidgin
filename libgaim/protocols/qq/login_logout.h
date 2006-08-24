@@ -27,6 +27,7 @@
 #include "connection.h"
 
 #define QQ_LOGIN_MODE_NORMAL        0x0a
+#define QQ_LOGIN_MODE_AWAY	    0x1e
 #define QQ_LOGIN_MODE_HIDDEN        0x28
 
 void qq_send_packet_request_login_token(GaimConnection *gc);
