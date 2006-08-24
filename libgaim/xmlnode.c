@@ -35,6 +35,7 @@
 #include <string.h>
 #include <glib.h>
 
+#include "dbus-maybe.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -51,6 +52,8 @@ new_node(const char *name, XMLNodeType type)
 
 	node->name = g_strdup(name);
 	node->type = type;
+
+	GAIM_DBUS_REGISTER_POINTER(node, xmlnode);
 
 	return node;
 }
@@ -218,6 +221,8 @@ xmlnode_free(xmlnode *node)
 #ifdef HAVE_LIBXML
 	g_free(node->namespace);
 #endif
+
+	GAIM_DBUS_UNREGISTER_POINTER(node);
 	g_free(node);
 }
 

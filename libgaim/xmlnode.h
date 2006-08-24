@@ -38,7 +38,8 @@ typedef enum _XMLNodeType
 /**
  * An xmlnode.
  */
-typedef struct _xmlnode
+typedef struct _xmlnode xmlnode;
+struct _xmlnode
 {
 	char *name;			/**< The name of the node. */
 #ifdef HAVE_LIBXML
@@ -51,7 +52,7 @@ typedef struct _xmlnode
 	struct _xmlnode *child;		/**< The child node or @c NULL.*/
 	struct _xmlnode *lastchild;	/**< The last child node or @c NULL.*/
 	struct _xmlnode *next;		/**< The next node or @c NULL. */
-} xmlnode;
+};
 
 /**
  * Creates a new xmlnode.
