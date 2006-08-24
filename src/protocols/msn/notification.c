@@ -1612,6 +1612,12 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 //	msn_add_group(session,"hello");
 }
 
+/*offline Message Notification*/
+static void
+delete_oim_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+}
+
 static void
 email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -1852,6 +1858,10 @@ msn_notification_init(void)
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsemailnotification",
 						   email_msg);
+	/*delete an offline Message notification*/
+	msn_table_add_msg_type(cbs_table,
+							"text/x-msmsgsactivemailnotification",
+						   delete_oim_msg);
 	msn_table_add_msg_type(cbs_table,
 						   "application/x-msmsgssystemmessage",
 						   system_msg);

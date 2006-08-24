@@ -25,10 +25,10 @@
 #ifndef _MSN_OIM_H_
 #define _MSN_OIM_H_
 
+/*OIM Retrieve SOAP Template*/
 #define MSN_OIM_RETRIEVE_HOST	"rsi.hotmail.com"
 #define MSN_OIM_RETRIEVE_URL	"/rsi/rsi.asmx"
 #define MSN_OIM_GET_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/GetMessage"
-#define MSN_OIM_DEL_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/DeleteMessages"
 
 #define MSN_OIM_GET_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
@@ -45,6 +45,9 @@
 		"</GetMessage>"\
 	"</soap:Body>"\
 "</soap:Envelope>"
+
+/*OIM Delete SOAP Template*/
+#define MSN_OIM_DEL_SOAP_ACTION	"http://www.hotmail.msn.com/ws/2004/09/oim/rsi/DeleteMessages"
 
 #define MSN_OIM_DEL_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
@@ -63,6 +66,7 @@
 	"</soap:Body>"\
 "</soap:Envelope>"
 
+/*OIM Send SOAP Template*/
 #define MSN_OIM_SEND_HOST	"ows.messenger.msn.com"
 #define MSN_OIM_SEND_URL	"/OimWS/oim.asmx"
 #define MSN_OIM_SEND_SOAP_ACTION	"http://messenger.msn.com/ws/2004/09/oim/Store"

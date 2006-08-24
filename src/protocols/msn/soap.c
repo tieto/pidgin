@@ -141,12 +141,23 @@ msn_soap_close(MsnSoapConn *soapconn)
 	msn_soap_set_process_step(soapconn,MSN_SOAP_UNCONNECTED);
 }
 
+/*clean the unhandled SOAP request*/
+void
+msn_soap_clean_unhandled_request(MsnSoapConn *soapconn)
+{
+	MsnSoapReq *request;
+
+	g_return_if_fail(soapconn != NULL);
+
+	while ((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
+		msn_soap_request_free(request);
+	}
+}
+
 /*destroy the soap connection*/
 void
 msn_soap_destroy(MsnSoapConn *soapconn)
 {
-	MsnSoapReq *request;
-
 	if(soapconn->login_host)
 		g_free(soapconn->login_host);
 
@@ -168,9 +179,8 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	msn_soap_close(soapconn);
 
 	/*process the unhandled soap request*/
-	while ((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
-		msn_soap_request_free(request);
-	}
+	msn_soap_clean_unhandled_request(soapconn);
+
 	g_queue_free(soapconn->soap_queue);
 	g_free(soapconn);
 }
@@ -551,7 +561,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 					"Content-Type:text/xml; charset=utf-8\r\n"
 					"Cookie: MSPAuth=%s\r\n"
 					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
-					"Accept: text/*\r\n"
+					"Accept: */*\r\n"
 					"Host: %s\r\n"
 					"Content-Length: %d\r\n"
 					"Connection: Keep-Alive\r\n"
