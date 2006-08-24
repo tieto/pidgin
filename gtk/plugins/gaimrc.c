@@ -104,22 +104,31 @@ gaimrc_make_changes()
 
 	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-font-name")) {
 		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
-		g_string_append_printf(style_string, "gtk-font-name = \"%s\"\n", pref);
+
+		if (pref != NULL && strcmp(pref, ""))
+			g_string_append_printf(style_string, "gtk-font-name = \"%s\"\n", pref);
 	}
 
 	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-key-theme-name")) {
 		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-key-theme-name");
-		g_string_append_printf(style_string, "gtk-key-theme-name = \"%s\"\n", pref);
+
+		if (pref != NULL && strcmp(pref, ""))
+			g_string_append_printf(style_string, "gtk-key-theme-name = \"%s\"\n", pref);
 	}
 
 	g_string_append(style_string, "style \"gaimrc_style\" {\n");
 
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
 		if (gaim_prefs_get_bool(color_prefs_set[i])) {
+			const char *pref;
+
 			prefbase = g_path_get_basename(color_prefs[i]);
-			g_string_append_printf(style_string,
-			                       "%s = \"%s\"\n", prefbase,
-			                       gaim_prefs_get_string(color_prefs[i]));
+			pref = gaim_prefs_get_string(color_prefs[i]);
+
+			if (pref != NULL && strcmp(pref, ""))
+			    g_string_append_printf(style_string,
+			                           "%s = \"%s\"\n",
+			                           prefbase, pref);
 			g_free(prefbase);
 		}
 	}
@@ -149,14 +158,19 @@ gaimrc_make_changes()
 
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
 		if (gaim_prefs_get_bool(font_prefs_set[i])) {
+			const char *pref;
+
 			prefbase = g_path_get_basename(font_prefs[i]);
-			g_string_append_printf(style_string,
-			                       "style \"%s_style\"\n"
-			                       "{font_name = \"%s\"}\n"
-			                       "widget \"%s\""
-			                       "style \"%s_style\"\n", prefbase,
-			                       gaim_prefs_get_string(font_prefs[i]),
-			                       prefbase, prefbase);
+			pref = gaim_prefs_get_string(font_prefs[i]);
+
+			if (pref != NULL && strcmp(pref, ""))
+				g_string_append_printf(style_string,
+				                       "style \"%s_style\"\n"
+				                       "{font_name = \"%s\"}\n"
+				                       "widget \"%s\""
+				                       "style \"%s_style\"\n",
+				                       prefbase, pref,
+				                       prefbase, prefbase);
 			g_free(prefbase);
 		}
 	}
@@ -179,22 +193,35 @@ gaimrc_write(GtkWidget *widget, gpointer data)
 
 	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-font-name")) {
 		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
-		g_string_append_printf(style_string, "gtk-font-name = \"%s\"\n", pref);
+
+		if (pref != NULL && strcmp(pref, ""))
+			g_string_append_printf(style_string,
+			                       "gtk-font-name = \"%s\"\n",
+			                       pref);
 	}
 
 	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-key-theme-name")) {
 		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-key-theme-name");
-		g_string_append_printf(style_string, "gtk-key-theme-name = \"%s\"\n", pref);
+
+		if (pref != NULL && strcmp(pref, ""))
+			g_string_append_printf(style_string,
+			                       "gtk-key-theme-name = \"%s\"\n",
+			                       pref);
 	}
 
 	g_string_append(style_string, "style \"gaimrc_style\" {\n");
 
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
 		if (gaim_prefs_get_bool(color_prefs_set[i])) {
+			const char *pref;
+
 			prefbase = g_path_get_basename(color_prefs[i]);
-			g_string_append_printf(style_string,
-			                       "%s = \"%s\"\n", prefbase,
-			                       gaim_prefs_get_string(color_prefs[i]));
+			pref = gaim_prefs_get_string(color_prefs[i]);
+
+			if (pref != NULL && strcmp(pref, ""))
+			    g_string_append_printf(style_string,
+			                           "%s = \"%s\"\n",
+			                           prefbase, pref);
 			g_free(prefbase);
 		}
 	}
@@ -224,14 +251,19 @@ gaimrc_write(GtkWidget *widget, gpointer data)
 
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
 		if (gaim_prefs_get_bool(font_prefs_set[i])) {
+			const char *pref;
+
 			prefbase = g_path_get_basename(font_prefs[i]);
-			g_string_append_printf(style_string,
-			                       "style \"%s_style\"\n"
-			                       "{font_name = \"%s\"}\n"
-			                       "widget \"%s\""
-			                       "style \"%s_style\"\n", prefbase,
-			                       gaim_prefs_get_string(font_prefs[i]),
-			                       prefbase, prefbase);
+			pref = gaim_prefs_get_string(font_prefs[i]);
+
+			if (pref != NULL && strcmp(pref, ""))
+				g_string_append_printf(style_string,
+				                       "style \"%s_style\"\n"
+				                       "{font_name = \"%s\"}\n"
+				                       "widget \"%s\""
+				                       "style \"%s_style\"\n",
+				                       prefbase, pref,
+				                       prefbase, prefbase);
 			g_free(prefbase);
 		}
 	}
@@ -282,6 +314,7 @@ gaimrc_set_color(GtkWidget *widget, gpointer data)
 	GtkWidget *color_dialog = NULL;
 	GdkColor color;
 	char title[128];
+	const char *pref = NULL;
 	int subscript = GPOINTER_TO_INT(data);
 
 	g_snprintf(title, sizeof(title), _("Select Color for %s"),
@@ -290,9 +323,12 @@ gaimrc_set_color(GtkWidget *widget, gpointer data)
 	g_signal_connect(G_OBJECT(color_dialog), "response",
 	                 G_CALLBACK(gaimrc_color_response), data);
 
-	if (gdk_color_parse(gaim_prefs_get_string(color_prefs[subscript]),
-	                    &color)) {
-		gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel), &color);
+	pref = gaim_prefs_get_string(color_prefs[subscript]);
+
+	if (pref != NULL && strcmp(pref, "")) {
+		if (gdk_color_parse(pref, &color)) {
+			gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(color_dialog)->colorsel), &color);
+		}
 	}
 
 	gtk_window_present(GTK_WINDOW(color_dialog));
@@ -319,6 +355,7 @@ gaimrc_set_font(GtkWidget *widget, gpointer data)
 {
 	GtkWidget *font_dialog = NULL;
 	char title[128];
+	const char *pref = NULL;
 	int subscript = GPOINTER_TO_INT(data);
 
 	g_snprintf(title, sizeof(title), _("Select Font for %s"),
@@ -327,12 +364,11 @@ gaimrc_set_font(GtkWidget *widget, gpointer data)
 	g_signal_connect(G_OBJECT(font_dialog), "response",
 	                 G_CALLBACK(gaimrc_font_response), data);
 
-	/* TODO Figure out a way to test for the presence of a value in the
-	 * actual pref
-	if (gaim_prefs_get_bool(font_prefs[subscript])) {
-		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), gaim_prefs_get_string(font_prefs[subscript]));
+	pref = gaim_prefs_get_string(font_prefs[subscript]);
+
+	if (pref != NULL && strcmp(pref, "")) {
+		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), pref);
 	}
-	*/
 
 	gtk_window_present(GTK_WINDOW(font_dialog));
 }
@@ -357,25 +393,17 @@ static void
 gaimrc_set_font_special(GtkWidget *widget, gpointer data)
 {
 	GtkWidget *font_dialog = NULL;
-#if 0
-	const char *font = NULL;
-#endif
+	const char *pref = NULL;
 
 	font_dialog = gtk_font_selection_dialog_new(_("Select Interface Font"));
 	g_signal_connect(G_OBJECT(font_dialog), "response",
 	                 G_CALLBACK(gaimrc_font_response_special), NULL);
 
-#if 0
-	/*
-	 * TODO Figure out a way to test for the presence of a value in the
-	 * actual pref
-	 */
-	font = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
-	printf("font - %s.\n", font);
-	if (font != NULL && font != "") {
-		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name"));
+	pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
+
+	if (pref != NULL && strcmp(pref, "")) {
+		gtk_font_selection_set_font_name(GTK_FONT_SELECTION(GTK_FONT_SELECTION_DIALOG(font_dialog)->fontsel), pref);
 	}
-#endif
 
 	gtk_window_present(GTK_WINDOW(font_dialog));
 }
