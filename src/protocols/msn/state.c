@@ -108,19 +108,32 @@ msn_get_psm(char *xml_str,gsize len)
 	return psm;
 }
 
+/* set the MSN's PSM info,Currently Read from the status Line 
+ * Thanks for Cris Code
+ */
 void
 msn_set_psm(MsnSession *session)
 {
+	GaimAccount *account = session->account;
+	GaimPresence *presence;
+	GaimStatus *status;
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
-	char *payload;
+	char *payload,*statusline;
+
+	g_return_if_fail(session != NULL);
+	g_return_if_fail(session->notification != NULL);
 
 	cmdproc = session->notification->cmdproc;
 	/*prepare PSM info*/
 	if(session->psm){
 		g_free(session->psm);
 	}
-	session ->psm = g_strdup(msn_build_psm("Hello",NULL,NULL));
+	/*Get the PSM string from Gaim's Status Line*/
+	presence = gaim_account_get_presence(account);
+	status = gaim_presence_get_active_status(presence);
+	statusline = gaim_status_get_attr_string(status, "message");
+	session ->psm = g_strdup(msn_build_psm(statusline,NULL,NULL));
 	payload = session->psm;
 
 	gaim_debug_info("MaYuan","UUX{%s}\n",payload);
@@ -166,6 +179,7 @@ msn_change_status(MsnSession *session)
 
 		g_free(msnobj_str);
 	}
+	msn_set_psm(session);
 }
 
 const char *
