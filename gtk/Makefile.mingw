@@ -160,13 +160,13 @@ $(EXE_TARGET)-portable.exe: clean_exe $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(G
 clean:
 	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	rm -rf $(GTKGAIM_OBJECTS) $(EXE_OBJECTS)
-	rm $(GTKGAIM_TARGET).dll
-	rm $(GTKGAIM_TARGET).dll.a
-	rm $(EXE_TARGET).exe
-	rm $(EXE_TARGET)-portable.exe
+	rm -f $(GTKGAIM_OBJECTS) $(EXE_OBJECTS)
+	rm -f $(GTKGAIM_TARGET).dll
+	rm -f $(GTKGAIM_TARGET).dll.a
+	rm -f $(EXE_TARGET).exe
+	rm -f $(EXE_TARGET)-portable.exe
 
 clean_exe:
-	rm win_gaim.o
+	rm -f win_gaim.o
 
 include $(GAIM_COMMON_TARGETS)
