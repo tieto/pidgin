@@ -2773,15 +2773,15 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					 * font-family
 					 * font-size
 					 * text-decoration: underline
+					 * font-weight: bold
 					 *
 					 * TODO:
 					 * background-color
 					 * font-style
-					 * font-weight
 					 */
 					{
 						gchar *style, *color, *background, *family, *size;
-						gchar *textdec;
+						gchar *textdec, *weight;
 						GtkIMHtmlFontDetail *font, *oldfont = NULL;
 						style = gtk_imhtml_get_html_opt (tag, "style=");
 
@@ -2793,8 +2793,9 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							"font-family:");
 						size = gtk_imhtml_get_css_opt (style, "font-size:");
 						textdec = gtk_imhtml_get_css_opt (style, "text-decoration:");
+						weight = gtk_imhtml_get_css_opt (style, "font-weight:");
 
-						if (!(color || family || size || background || textdec)) {
+						if (!(color || family || size || background || textdec || weight)) {
 							g_free(style);
 							break;
 						}
@@ -2879,6 +2880,34 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						    font->underline = 1;
 						}
 
+						if (oldfont)
+						{
+							font->bold = oldfont->bold;
+						}
+						if (weight)
+						{
+							if(!g_ascii_strcasecmp(weight, "normal")) {
+								font->bold = 0;
+							} else if(!g_ascii_strcasecmp(weight, "bold")) {
+								font->bold = 1;
+							} else if(!g_ascii_strcasecmp(weight, "bolder")) {
+								font->bold++;
+							} else if(!g_ascii_strcasecmp(weight, "lighter")) {
+								if(font->bold > 0)
+									font->bold--;
+							} else {
+								int num = atoi(weight);
+								if(num >= 700)
+									font->bold = 1;
+								else
+									font->bold = 0;
+							}
+							if((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold))
+							{
+								gtk_imhtml_toggle_bold(imhtml);
+							}
+						}
+
 						g_free(style);
 						g_free(size);
 						fonts = g_slist_prepend (fonts, font);
@@ -2900,6 +2929,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							gtk_imhtml_font_set_size(imhtml, 3);
 							if (font->underline)
 							    gtk_imhtml_toggle_underline(imhtml);
+							if (font->bold)
+								gtk_imhtml_toggle_bold(imhtml);
 							gtk_imhtml_toggle_fontface(imhtml, NULL);
 							gtk_imhtml_toggle_forecolor(imhtml, NULL);
 							gtk_imhtml_toggle_backcolor(imhtml, NULL);
@@ -2912,6 +2943,9 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 							if (font->underline != oldfont->underline)
 							    gtk_imhtml_toggle_underline(imhtml);
+
+							if ((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold))
+								gtk_imhtml_toggle_bold(imhtml);
 
 							if (font->face && (!oldfont->face || strcmp(font->face, oldfont->face) != 0))
 							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);

@@ -1271,9 +1271,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				}
 			} else { /* opening tag */
 				ALLOW_TAG("a");
-				ALLOW_TAG_ALT("b", "strong");
 				ALLOW_TAG("blockquote");
-				ALLOW_TAG_ALT("bold", "strong");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
 				ALLOW_TAG("em");
@@ -1310,6 +1308,15 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					xhtml = g_string_append(xhtml, "<br/>");
 					if(*c != '\n')
 						plain = g_string_append_c(plain, '\n');
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
+					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					pt->src_tag = *(c+2) == '>' ? "b" : "bold";
+					pt->dest_tag = "span";
+					tags = g_list_prepend(tags, pt);
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<span style='font-weight: bold;'>");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<u>", 3) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
