@@ -7352,11 +7352,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	g_return_if_fail(conv != NULL);
 
-	/*
-	 * Only set "unseen" to "none" if the window has focus
-	 */
-	if (gaim_gtk_conv_window_has_focus(win))
-		gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
+	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
 
 	/* Update the menubar */
 
