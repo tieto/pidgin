@@ -545,6 +545,11 @@ void gnt_widget_set_name(GntWidget *widget, const char *name)
 	widget->priv.name = g_strdup(name);
 }
 
+const char *gnt_widget_get_name(GntWidget *widget)
+{
+	return widget->priv.name;
+}
+
 void gnt_widget_activate(GntWidget *widget)
 {
 	g_signal_emit(widget, signals[SIG_ACTIVATE], 0);

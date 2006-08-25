@@ -5,12 +5,12 @@ typedef enum
 	GNT_STYLE_SHADOW = 0,
 	GNT_STYLE_COLOR = 1,
 	GNT_STYLE_MOUSE = 2,
+	GNT_STYLE_WM = 3,
 	GNT_STYLES
 } GntStyle;
 
 void gnt_style_read_configure_file(const char *filename);
 
-/* Returned strings are all lowercase */
 const char *gnt_style_get(GntStyle style);
 
 gboolean gnt_style_get_bool(GntStyle style, gboolean def);

@@ -4,12 +4,15 @@
 #include <panel.h>
 #endif
 
+#include <gmodule.h>
+
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntcolors.h"
 #include "gntkeys.h"
 #include "gntstyle.h"
 #include "gnttree.h"
+#include "gntwm.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +40,8 @@ static int Y_MAX;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
+
+static GntWM wm;
 
 static GMainLoop *loop;
 static struct
@@ -846,6 +851,24 @@ sighandler(int sig)
 }
 #endif
 
+static void
+init_wm()
+{
+	const char *name = gnt_style_get(GNT_STYLE_WM);
+	gpointer handle;
+	
+	if (!name || !*name)
+		return;
+	
+	handle = g_module_open(name, G_MODULE_BIND_LAZY);
+	if (handle) {
+		gboolean (*init)(GntWM *);
+		if (g_module_symbol(handle, "gntwm_init", &init)) {
+			init(&wm);
+		}
+	}
+}
+
 void gnt_init()
 {
 	static GIOChannel *channel = NULL;
@@ -915,6 +938,8 @@ void gnt_init()
 #endif
 
 	g_type_init();
+
+	init_wm();
 }
 
 void gnt_main()
@@ -999,7 +1024,10 @@ void gnt_screen_update(GntWidget *widget)
 	node = g_hash_table_lookup(nodes, widget);
 	if (node && !node->panel)
 	{
-		node->panel = new_panel(node->me->window);
+		if (wm.new_window)
+			node->panel = wm.new_window(node->me);
+		else
+			node->panel = new_panel(node->me->window);
 		if (!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT))
 		{
 			bottom_panel(node->panel);     /* New windows should not grab focus */

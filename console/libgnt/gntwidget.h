@@ -126,6 +126,8 @@ void gnt_widget_activate(GntWidget *widget);
 
 void gnt_widget_set_name(GntWidget *widget, const char *name);
 
+const char *gnt_widget_get_name(GntWidget *widget);
+
 /* Widget-subclasses should call this from the draw-callback.
  * Applications should just call gnt_widget_draw instead of this. */
 void gnt_widget_queue_update(GntWidget *widget);
