@@ -36,7 +36,7 @@ gnt_box_draw(GntWidget *widget)
 
 	gnt_box_sync_children(box);
 
-	if (box->title)
+	if (box->title && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 	{
 		gchar *title = g_strdup(box->title);
 		int pos = g_utf8_strlen(title, -1), right;
