@@ -661,6 +661,8 @@ if test "x$enable_gtk" = "xyes" ; then
        ])
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
+else
+	enable_gtk=no
 fi
 
 AC_PATH_XTRA
@@ -1869,6 +1871,7 @@ AC_OUTPUT([Makefile
 		   console/Makefile
 		   console/libgnt/Makefile
 		   console/libgnt/gnt.pc
+		   console/libgnt/wms/Makefile
 		   console/plugins/Makefile
 		   po/Makefile.in
 		   gaim.pc

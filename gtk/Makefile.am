@@ -1,3 +1,5 @@
+if ENABLE_GTK
+
 EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
@@ -181,3 +183,4 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS)
+endif  # ENABLE_GTK
