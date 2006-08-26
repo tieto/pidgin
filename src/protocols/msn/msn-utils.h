@@ -24,6 +24,9 @@
 #ifndef _MSN_UTILS_H_
 #define _MSN_UTILS_H_
 
+/*encode the str to RFC2047 style*/
+char * msn_encode_mime(char *str);
+
 /**
  * Generate the Random GUID
  */

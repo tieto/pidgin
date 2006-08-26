@@ -146,6 +146,18 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 		g_free(cur);
 }
 
+/*encode the str to RFC2047 style
+ * Currently only support the UTF-8 and base64 encode
+ */
+char *
+msn_encode_mime(char *str)
+{
+	char *base64;
+	
+	base64 = gaim_base64_encode(str,strlen(str));
+	return g_strdup_printf("=?utf-8?B?%s?=",base64);
+}
+
 /*
  * We need this because we're only supposed to encode spaces in the font
  * names. gaim_url_encode() isn't acceptable.

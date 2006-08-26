@@ -430,10 +430,6 @@ msn_parse_addressbook(MsnContact * contact)
 
 	xmlnode_free(node);
 	msn_soap_free_read_buf(contact->soapconn);
-
-	msn_notification_dump_contact(session);
-	msn_set_psm(session);
-	msn_session_finish_login(session);
 }
 
 static void
@@ -450,6 +446,11 @@ msn_get_address_cb(gpointer data, gint source, GaimInputCondition cond)
 
 //	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 	msn_parse_addressbook(contact);
+
+	msn_notification_dump_contact(session);
+	msn_set_psm(session);
+	msn_session_finish_login(session);
+
 	/*free the read buffer*/
 	msn_soap_free_read_buf(soapconn);
 }

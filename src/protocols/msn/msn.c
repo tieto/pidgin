@@ -893,7 +893,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		gaim_debug_info("MaYuan","prepare to send offline Message\n");		
 		session = gc->proto_data;
 		oim = session->oim;
-		friendname = g_strdup_printf("=?utf-8?B?Y2xpZW50?=");
+		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(oim,
 			gaim_account_get_username(account),friendname,who,
 			message);
