@@ -26,11 +26,13 @@
 #include "msn.h"
 #include "soap.h"
 #include "oim.h"
+#include "msn-utils.h"
 
 /*Local Function Prototype*/
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid);
 void msn_oim_retrieve_connect_init(MsnSoapConn *soapconn);
 void msn_oim_send_connect_init(MsnSoapConn *soapconn);
+void msn_oim_free_send_req(MsnOimSendReq *req);
 
 /*new a OIM object*/
 MsnOim *
@@ -41,9 +43,13 @@ msn_oim_new(MsnSession *session)
 	oim = g_new0(MsnOim, 1);
 	oim->session = session;
 	oim->retrieveconn = msn_soap_new(session,oim,1);
+	
 	oim->oim_list	= NULL;
 	oim->sendconn = msn_soap_new(session,oim,1);
-
+	oim->run_id = rand_guid();
+	oim->challenge = NULL;
+	oim->send_queue = g_queue_new();
+	oim->send_seq = 1;
 	return oim;
 }
 
@@ -51,14 +57,74 @@ msn_oim_new(MsnSession *session)
 void
 msn_oim_destroy(MsnOim *oim)
 {
+	MsnOimSendReq *request;
+	
 	msn_soap_destroy(oim->retrieveconn);
 	msn_soap_destroy(oim->sendconn);
+	g_free(oim->run_id);
+	g_free(oim->challenge);
+	
+	while((request = g_queue_pop_head(oim->send_queue)) != NULL){
+		msn_oim_free_send_req(request);
+	}
+	g_queue_free(oim->send_queue);
+	
 	g_free(oim);
+}
+
+MsnOimSendReq *
+msn_oim_new_send_req(char *from_member,
+				char*friendname,char* to_member,
+				gint send_seq,
+				char *msg)
+{
+	MsnOimSendReq *request;
+	
+	request = g_new0(MsnOimSendReq, 1);
+	request->from_member =g_strdup(from_member);
+	request->friendname = g_strdup(friendname);
+	request->to_member = g_strdup(to_member);
+	request->send_seq = send_seq;
+	request->oim_msg= g_strdup(msg);
+	return request;
+}
+
+void
+msn_oim_free_send_req(MsnOimSendReq *req)
+{
+	g_free(req->from_member);
+	g_free(req->friendname);
+	g_free(req->to_member);
+	g_free(req->oim_msg);
+	
+	g_free(req);
 }
 
 /****************************************
  * OIM send SOAP request
  * **************************************/
+/*encode the message to OIM Message Format*/
+char * 
+msn_oim_msg_to_str(MsnOim *oim,char *body)
+{
+	char *oim_body;
+	char *oim_base64,*oim_base16;
+	
+	gaim_debug_info("MaYuan","encode OIM Message...\n");	
+	gaim_debug_info("MaYuan","runid:{%s}\n",oim->run_id);	
+	gaim_debug_info("MaYuan","body:{%s}\n",body);	
+	oim_base64 = gaim_base64_encode((const guchar *)body, strlen(body));
+	gaim_debug_info("MaYuan","encode body:{%s}\n",oim_base64);	
+	oim_base16 = gaim_base16_encode((const guchar *)body, strlen(body));
+	gaim_debug_info("MaYuan","encode body:{%s}\n",oim_base16);	
+
+	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
+				oim->run_id,oim->send_seq,oim_base64);
+	gaim_debug_info("MaYuan","start base64 encode\n",body);	
+
+	return oim_body;
+}
+
 /*oim SOAP server login error*/
 static void
 msn_oim_send_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
@@ -88,14 +154,54 @@ msn_oim_send_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_return_if_fail(session != NULL);
 }
 
+void
+msn_oim_send_process(MsnOim *oim,char *body,int len)
+{
+	xmlnode *responseNode,*bodyNode,*faultNode;
+	xmlnode *detailNode,*challengeNode;
+	char *challenge;
+
+	responseNode = xmlnode_from_str(body,len);
+	g_return_if_fail(responseNode != NULL);
+	bodyNode = xmlnode_get_child(responseNode,"Body");
+	faultNode = xmlnode_get_child(bodyNode,"Fault");
+	if(faultNode == NULL){
+		/*Send OK! return*/
+		MsnOimSendReq *request;
+		
+		xmlnode_free(responseNode);
+		request = g_queue_pop_head(oim->send_queue);
+		msn_oim_free_send_req(request);
+		/*send next buffered Offline Message*/
+		msn_soap_post(oim->sendconn,NULL,msn_oim_send_connect_init);
+		return;
+	}
+	/*get the challenge,and repost it*/
+	detailNode = xmlnode_get_child(faultNode, "detail");
+	challengeNode = xmlnode_get_child(detailNode,"LockKeyChallenge");
+//	gaim_debug_info("MaYuan","challenge:{%s}\n",challenge);
+
+	gaim_debug_info("MaYuan","prepare to dup the challenge\n");
+	g_free(oim->challenge);
+	oim->challenge = xmlnode_get_data(challengeNode);
+	gaim_debug_info("MaYuan","lockkey:{%s}\n",oim->challenge);
+
+	xmlnode_free(responseNode);
+
+	/*repost the send*/
+	gaim_debug_info("MaYuan","prepare to repost the send...\n");
+	msn_oim_send_msg(oim);
+}
+
 static void
 msn_oim_send_read_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
-	MsnOim * msnoim;
+	MsnOim * oim;
 
 	gaim_debug_info("MaYuan","read buffer:{%s}\n",soapconn->body);
+	msn_oim_send_process(oim,soapconn->body,soapconn->body_len);
 }
 
 static void
@@ -107,43 +213,68 @@ msn_oim_send_written_cb(gpointer data, gint source, GaimInputCondition cond)
 //	msn_soap_read_cb(data,source,cond);
 }
 
-/*pose single message to oim server*/
+void
+msn_oim_prep_send_msg_info(MsnOim *oim,
+					char *membername,char*friendname,char *tomember,
+					char * msg)
+{
+	MsnOimSendReq *request;
+
+	request = msn_oim_new_send_req(membername,friendname,tomember,oim->send_seq,msg);
+	g_queue_push_tail(oim->send_queue,request);
+}
+
+/*post send single message request to oim server*/
 void 
-msn_oim_send_single_msg(MsnOim *oim,char * msg)
+msn_oim_send_msg(MsnOim *oim)
 {
 	MsnSoapReq *soap_request;
-	const char *soap_body,*t,*p;
-
+	MsnOimSendReq *oim_request;
+	char *soap_body,*mspauth;
+	char *msg_body;
+	char buf[33];
+	
+	oim_request = g_queue_pop_head(oim->send_queue);
+	if(oim_request == NULL){
+		return;
+	}
 	gaim_debug_info("MaYuan","send single OIM Message\n");
-	oim->sendconn->login_path = g_strdup(MSN_OIM_SEND_URL);
-	oim->sendconn->soap_action = g_strdup(MSN_OIM_SEND_SOAP_ACTION);
-	t = oim->session->passport_info.t;
-	p = oim->session->passport_info.p;
-#if 0
-	oimsoapbody = g_strdup_printf(MSN_OIM_SEND_TEMPLATE,
-					membername,
-					friendname,
-					tomember,
+	mspauth = g_strdup_printf("t=%s&amp;p=%s",
+		oim->session->passport_info.t,
+		oim->session->passport_info.p
+		);
+	gaim_debug_info("MaYuan","get mspauth...\n");	
+	if(oim->challenge != NULL){
+		msn_handle_chl(oim->challenge, buf);
+	}else{
+		g_queue_push_head(oim->send_queue,oim_request);
+		buf[0]='\0';
+	}
+	gaim_debug_info("MaYuan","get challenge...\n");	
+
+	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
+	gaim_debug_info("MaYuan","get body...\n");	
+	soap_body = g_strdup_printf(MSN_OIM_SEND_TEMPLATE,
+					oim_request->from_member,
+					oim_request->friendname,
+					oim_request->to_member,
 					mspauth,
-					prod_id,
-					lock_key,
-					msg_num,
-					msg
+					MSNP13_WLM_PRODUCT_ID,
+					buf,
+					oim_request->send_seq,
+					msg_body
 					);
-#endif
+	gaim_debug_info("MaYuan","post body...\n");
 	soap_request = msn_soap_request_new(MSN_OIM_SEND_HOST,
 					MSN_OIM_SEND_URL,MSN_OIM_SEND_SOAP_ACTION,
 					soap_body,
 					msn_oim_send_read_cb,
 					msn_oim_send_written_cb);
-	msn_soap_post(oim->sendconn,soap_request,msn_oim_send_connect_init);
-}
+	g_free(mspauth);
+	g_free(msg_body);
+	g_free(soap_body);
 
-void msn_oim_send_msg(MsnOim *oim,char *msg)
-{
-	if(msn_soap_connected(oim->sendconn) == -1){
-	}
-	
+	msn_soap_post(oim->sendconn,soap_request,msn_oim_send_connect_init);
 }
 
 /****************************************
@@ -304,6 +435,7 @@ msn_oim_get_process(MsnOim *oim,char *oim_msg)
 	msgNode = xmlnode_get_child(responseNode,"GetMessageResult");
 	msg_data = xmlnode_get_data(msgNode);
 	msg_str = g_strdup(msg_data);
+	g_free(msg_data);
 	gaim_debug_info("OIM","msg:{%s}\n",msg_str);
 	msn_oim_report_to_user(oim,msg_str);
 
@@ -342,14 +474,14 @@ msn_oim_get_written_cb(gpointer data, gint source, GaimInputCondition cond)
 void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
-	xmlnode *mdNode,*mNode,*INode,*nNode,*ENode,*rtNode;
+	xmlnode *mdNode,*mNode,*ENode,*INode,*rtNode,*nNode;
 	char *passport,*rTime,*msgid,*nickname;
 
 	mdNode = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
 	for(mNode = xmlnode_get_child(mdNode, "M"); mNode;
 					mNode = xmlnode_get_next_twin(mNode)){
-		INode = xmlnode_get_child(mNode,"E");
-		passport = xmlnode_get_data(INode);
+		ENode = xmlnode_get_child(mNode,"E");
+		passport = xmlnode_get_data(ENode);
 		INode = xmlnode_get_child(mNode,"I");
 		msgid = xmlnode_get_data(INode);
 		rtNode = xmlnode_get_child(mNode,"RT");
@@ -360,6 +492,10 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
 		msn_oim_post_single_get_msg(oim,msgid);
+		g_free(passport);
+		g_free(msgid);
+		g_free(rTime);
+		g_free(nickname);
 	}
 }
 

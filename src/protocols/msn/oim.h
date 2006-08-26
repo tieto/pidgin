@@ -67,18 +67,26 @@
 "</soap:Envelope>"
 
 /*OIM Send SOAP Template*/
+#define MSN_OIM_MSG_TEMPLATE "MIME-Version: 1.0\n"\
+	"Content-Type: text/plain; charset=UTF-8\n"\
+	"Content-Transfer-Encoding: base64\n"\
+	"X-OIM-Message-Type: OfflineMessage\n"\
+	"X-OIM-Run-Id: {%s}\n"\
+	"X-OIM-Sequence-Num: %d\n\n"\
+	"%s"
+
 #define MSN_OIM_SEND_HOST	"ows.messenger.msn.com"
 #define MSN_OIM_SEND_URL	"/OimWS/oim.asmx"
 #define MSN_OIM_SEND_SOAP_ACTION	"http://messenger.msn.com/ws/2004/09/oim/Store"
 #define MSN_OIM_SEND_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
-		"<From memberName=\"%s\" friendlyName=\"%s\" xml:lang=\"en-US\" proxy=\"MSNMSGR\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\" msnpVer=\"MSNP13\" buildVer=\"8.0.0689\"/>"\
+		"<From memberName=\"%s\" friendlyName=\"%s\" xml:lang=\"en-US\" proxy=\"MSNMSGR\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\" msnpVer=\"MSNP14\" buildVer=\"8.0.0792\"/>"\
 		"<To memberName=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
 		"<Ticket passport=\"%s\" appid=\"%s\" lockkey=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
 		"<Sequence xmlns=\"http://schemas.xmlsoap.org/ws/2003/03/rm\">"\
 			"<Identifier xmlns=\"http://schemas.xmlsoap.org/ws/2002/07/utility\">http://messenger.msn.com</Identifier>"\
-			"<MessageNumber>%s</MessageNumber>"\
+			"<MessageNumber>%d</MessageNumber>"\
 		"</Sequence>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -86,6 +94,17 @@
 		"<Content xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\">%s</Content>"\
 	"</soap:Body>"\
 "</soap:Envelope>"
+
+typedef struct _MsnOimSendReq MsnOimSendReq;
+
+struct _MsnOimSendReq
+{
+	char *from_member;
+	char *friendname;
+	char *to_member;
+	char *oim_msg;
+	gint send_seq;
+};
 
 typedef struct _MsnOim MsnOim;
 
@@ -97,7 +116,10 @@ struct _MsnOim
 	GList * oim_list;
 
 	MsnSoapConn *sendconn;
-	gint	LockKeyChallenge;
+	char *challenge;
+	char *run_id;
+	gint send_seq;
+	GQueue *send_queue;
 };
 
 /****************************************************
@@ -108,6 +130,13 @@ void msn_oim_destroy(MsnOim *oim);
 void msn_oim_connect(MsnOim *oim);
 
 void msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg);
+
+/*Send OIM Message*/
+void msn_oim_prep_send_msg_info(MsnOim *oim,
+					char *membername,char*friendname,char *tomember,
+					char * msg);
+
+void msn_oim_send_msg(MsnOim *oim);
 
 /*get the OIM message*/
 void msn_oim_get_msg(MsnOim *oim);

@@ -298,6 +298,16 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 	b->proto_data = user;
 }
 
+/*check if the msn user is online*/
+gboolean
+msn_user_is_online(GaimAccount *account, const char *name)
+{
+	GaimBuddy *buddy;
+
+	buddy =gaim_find_buddy(account,name);
+	return GAIM_BUDDY_IS_ONLINE(buddy);
+}
+
 void
 msn_user_remove_group_id(MsnUser *user, const char * id)
 {

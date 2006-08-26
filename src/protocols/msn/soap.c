@@ -324,7 +324,8 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, error);
 	}
-	else if (strstr(soapconn->read_buf, "HTTP/1.1 200 OK"))
+	else if ((strstr(soapconn->read_buf, "HTTP/1.1 200 OK"))
+		||(strstr(soapconn->read_buf, "HTTP/1.1 500")))
 	{
 			/*OK! process the SOAP body*/
 			body_start = (char *)g_strstr_len(soapconn->read_buf, soapconn->read_len,"\r\n\r\n");
