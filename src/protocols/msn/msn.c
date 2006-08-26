@@ -896,7 +896,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		friendname = g_strdup_printf("=?utf-8?B?Y2xpZW50?=");
 		msn_oim_prep_send_msg_info(oim,
 			gaim_account_get_username(account),friendname,who,
-			msg);
+			message);
 		msn_oim_send_msg(oim);
 	}
 	return 1;

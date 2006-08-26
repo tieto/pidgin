@@ -295,6 +295,12 @@ MsnObject *msn_user_get_object(const MsnUser *user);
  */
 GHashTable *msn_user_get_client_caps(const MsnUser *user);
 
+/**
+ * check to see if user is online
+ */
+gboolean
+msn_user_is_online(GaimAccount *account, const char *name);
+
 /*@}*/
 
 #endif /* _MSN_USER_H_ */

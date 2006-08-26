@@ -384,11 +384,11 @@ msn_parse_addressbook(MsnContact * contact)
 				g_free(group_id);
 			}
 		}else{
+			/*not in any group,Then set default group*/
 			group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
 			msn_user_add_group_id(user,group_id);
 			g_free(group_id);
 #if 0
-			/*not in any group,Then set default group*/
 			char *name,*group_id;
 
 			name = g_strdup(MSN_INDIVIDUALS_GROUP_NAME);

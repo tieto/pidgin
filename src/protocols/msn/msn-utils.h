@@ -25,6 +25,11 @@
 #define _MSN_UTILS_H_
 
 /**
+ * Generate the Random GUID
+ */
+char * rand_guid();
+
+/**
  * Parses the MSN message formatting into a format compatible with Gaim.
  *
  * @param mime     The mime header with the formatting.

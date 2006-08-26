@@ -279,7 +279,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 			 *       looked at this.  Maybe we should use the store
 			 *       name instead? --KingAnt
 			 */
-			got_new_entry(gc, passport, friendly);
+//			got_new_entry(gc, passport, friendly);
 		}
 	}
 
@@ -391,7 +391,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		 */
 
 		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP))){
-			got_new_entry(gc, passport, store);
+//			got_new_entry(gc, passport, store);
 		}
 	}
 

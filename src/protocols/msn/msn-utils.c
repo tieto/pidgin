@@ -26,6 +26,23 @@
 #include "time.h"
 //#include <openssl/md5.h>
 
+/**************************************************************************
+ * Util
+ **************************************************************************/
+char *
+rand_guid()
+{
+	return g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111,
+			rand() % 0xAAFF + 0x1111);
+}
+
 void
 msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 {

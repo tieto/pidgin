@@ -59,6 +59,7 @@ msn_oim_destroy(MsnOim *oim)
 {
 	MsnOimSendReq *request;
 	
+	gaim_debug_info("OIM","destroy the OIM \n");
 	msn_soap_destroy(oim->retrieveconn);
 	msn_soap_destroy(oim->sendconn);
 	g_free(oim->run_id);
@@ -81,17 +82,19 @@ msn_oim_new_send_req(char *from_member,
 	MsnOimSendReq *request;
 	
 	request = g_new0(MsnOimSendReq, 1);
-	request->from_member =g_strdup(from_member);
-	request->friendname = g_strdup(friendname);
-	request->to_member = g_strdup(to_member);
-	request->send_seq = send_seq;
-	request->oim_msg= g_strdup(msg);
+	request->from_member	=g_strdup(from_member);
+	request->friendname		= g_strdup(friendname);
+	request->to_member		= g_strdup(to_member);
+	request->send_seq		= send_seq;
+	request->oim_msg		= g_strdup(msg);
 	return request;
 }
 
 void
 msn_oim_free_send_req(MsnOimSendReq *req)
 {
+	g_return_if_fail(req != NULL);
+
 	g_free(req->from_member);
 	g_free(req->friendname);
 	g_free(req->to_member);
@@ -107,20 +110,14 @@ msn_oim_free_send_req(MsnOimSendReq *req)
 char * 
 msn_oim_msg_to_str(MsnOim *oim,char *body)
 {
-	char *oim_body;
-	char *oim_base64,*oim_base16;
+	char *oim_body,*oim_base64;
 	
 	gaim_debug_info("MaYuan","encode OIM Message...\n");	
-	gaim_debug_info("MaYuan","runid:{%s}\n",oim->run_id);	
-	gaim_debug_info("MaYuan","body:{%s}\n",body);	
 	oim_base64 = gaim_base64_encode((const guchar *)body, strlen(body));
-	gaim_debug_info("MaYuan","encode body:{%s}\n",oim_base64);	
-	oim_base16 = gaim_base16_encode((const guchar *)body, strlen(body));
-	gaim_debug_info("MaYuan","encode body:{%s}\n",oim_base16);	
+	gaim_debug_info("MaYuan","encoded base64 body:{%s}\n",oim_base64);	
 
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
-	gaim_debug_info("MaYuan","start base64 encode\n",body);	
 
 	return oim_body;
 }
@@ -154,6 +151,10 @@ msn_oim_send_connect_cb(gpointer data, GaimSslConnection *gsc,
 	g_return_if_fail(session != NULL);
 }
 
+/*
+ * Process the send return SOAP string
+ * If got SOAP Fault,get the lock key,and resend it.
+ */
 void
 msn_oim_send_process(MsnOim *oim,char *body,int len)
 {
@@ -169,6 +170,7 @@ msn_oim_send_process(MsnOim *oim,char *body,int len)
 		/*Send OK! return*/
 		MsnOimSendReq *request;
 		
+		gaim_debug_info("MaYuan","send OIM OK!");
 		xmlnode_free(responseNode);
 		request = g_queue_pop_head(oim->send_queue);
 		msn_oim_free_send_req(request);
@@ -179,9 +181,7 @@ msn_oim_send_process(MsnOim *oim,char *body,int len)
 	/*get the challenge,and repost it*/
 	detailNode = xmlnode_get_child(faultNode, "detail");
 	challengeNode = xmlnode_get_child(detailNode,"LockKeyChallenge");
-//	gaim_debug_info("MaYuan","challenge:{%s}\n",challenge);
 
-	gaim_debug_info("MaYuan","prepare to dup the challenge\n");
 	g_free(oim->challenge);
 	oim->challenge = xmlnode_get_data(challengeNode);
 	gaim_debug_info("MaYuan","lockkey:{%s}\n",oim->challenge);
@@ -197,8 +197,13 @@ static void
 msn_oim_send_read_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
-	MsnSoapConn * soapconn = data;	
+	MsnSoapConn * soapconn = data;
+	MsnSession 	*session = soapconn->session;
 	MsnOim * oim;
+
+	g_return_if_fail(session != NULL);
+	oim = soapconn->session->oim;
+	g_return_if_fail(oim != NULL);
 
 	gaim_debug_info("MaYuan","read buffer:{%s}\n",soapconn->body);
 	msn_oim_send_process(oim,soapconn->body,soapconn->body_len);
@@ -233,7 +238,9 @@ msn_oim_send_msg(MsnOim *oim)
 	char *soap_body,*mspauth;
 	char *msg_body;
 	char buf[33];
-	
+
+	g_return_if_fail(oim != NULL);
+	gaim_debug_info("MaYuan","queue:{%p}\n",oim->send_queue);
 	oim_request = g_queue_pop_head(oim->send_queue);
 	if(oim_request == NULL){
 		return;
@@ -243,17 +250,21 @@ msn_oim_send_msg(MsnOim *oim)
 		oim->session->passport_info.t,
 		oim->session->passport_info.p
 		);
-	gaim_debug_info("MaYuan","get mspauth...\n");	
+	g_queue_push_head(oim->send_queue,oim_request);
+
+	/* if we got the challenge lock key, we compute it
+	 * else we go for the SOAP fault and resend it.
+	 */
 	if(oim->challenge != NULL){
 		msn_handle_chl(oim->challenge, buf);
+		oim_request->send_seq++;
 	}else{
-		g_queue_push_head(oim->send_queue,oim_request);
+		gaim_debug_info("MaYuan","no lock key challenge,wait for SOAP Fault and Resend\n");
 		buf[0]='\0';
 	}
-	gaim_debug_info("MaYuan","get challenge...\n");	
+	gaim_debug_info("MaYuan","get the lock key challenge {%s}\n",buf);	
 
 	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
-	gaim_debug_info("MaYuan","get body...\n");	
 	soap_body = g_strdup_printf(MSN_OIM_SEND_TEMPLATE,
 					oim_request->from_member,
 					oim_request->friendname,
@@ -264,7 +275,6 @@ msn_oim_send_msg(MsnOim *oim)
 					oim_request->send_seq,
 					msg_body
 					);
-	gaim_debug_info("MaYuan","post body...\n");
 	soap_request = msn_soap_request_new(MSN_OIM_SEND_HOST,
 					MSN_OIM_SEND_URL,MSN_OIM_SEND_SOAP_ACTION,
 					soap_body,
