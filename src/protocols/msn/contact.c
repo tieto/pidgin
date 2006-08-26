@@ -106,6 +106,13 @@ msn_get_user_type(char * type)
 	if(!strcmp(type,"Regular")){
 		return 1;
 	}
+	if(!strcmp(type,"Live")){
+		return 1;
+	}
+	if(!strcmp(type,"LivePending")){
+		return 1;
+	}
+
 	return 0;
 }
 
@@ -324,6 +331,13 @@ msn_parse_addressbook(MsnContact * contact)
 		contactInfo = xmlnode_get_child(contactNode,"contactInfo");
 		contactType = xmlnode_get_child(contactInfo,"contactType");
 		type = xmlnode_get_data(contactType);
+
+		/*setup the Display Name*/
+		if (!strcmp(type, "Me")){
+			char *friendly = xmlnode_get_data(xmlnode_get_child(contactInfo,"displayName"));
+			gaim_connection_set_display_name(session->account->gc, gaim_url_decode(friendly));
+			g_free(friendly);
+		}
 
 		passportName = xmlnode_get_child(contactInfo,"passportName");
 		if(passportName == NULL){

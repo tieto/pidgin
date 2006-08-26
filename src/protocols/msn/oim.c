@@ -115,7 +115,7 @@ msn_oim_msg_to_str(MsnOim *oim,char *body)
 	gaim_debug_info("MaYuan","encode OIM Message...\n");	
 	oim_base64 = gaim_base64_encode((const guchar *)body, strlen(body));
 	gaim_debug_info("MaYuan","encoded base64 body:{%s}\n",oim_base64);	
-
+	gaim_debug_info("MaYuan","url_encode:{%s}\n",gaim_url_encode(body));
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 
@@ -257,7 +257,6 @@ msn_oim_send_msg(MsnOim *oim)
 	 */
 	if(oim->challenge != NULL){
 		msn_handle_chl(oim->challenge, buf);
-		oim_request->send_seq++;
 	}else{
 		gaim_debug_info("MaYuan","no lock key challenge,wait for SOAP Fault and Resend\n");
 		buf[0]='\0';
@@ -284,6 +283,10 @@ msn_oim_send_msg(MsnOim *oim)
 	g_free(msg_body);
 	g_free(soap_body);
 
+	/*increase the offline Sequence control*/
+	if(oim->challenge != NULL){
+		oim->send_seq++;
+	}
 	msn_soap_post(oim->sendconn,soap_request,msn_oim_send_connect_init);
 }
 
