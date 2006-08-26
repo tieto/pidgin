@@ -34,6 +34,25 @@
 #include "notify.h"
 #include "util.h"
 
+typedef struct _GaimGtkLogViewer GaimGtkLogViewer;
+
+/**
+ * A GTK+ Log Viewer.  You can look at logs with it.
+ */
+struct _GaimGtkLogViewer {
+	GList *logs;                 /**< The list of logs viewed in this viewer   */
+
+	GtkWidget        *window;    /**< The viewer's window                      */
+	GtkTreeStore     *treestore; /**< The treestore containing said logs       */
+	GtkWidget        *treeview;  /**< The treeview representing said treestore */
+	GtkWidget        *imhtml;    /**< The imhtml to display said logs          */
+	GtkWidget        *entry;     /**< The search entry, in which search terms
+	                              *   are entered                              */
+	GaimLogReadFlags flags;      /**< The most recently used log flags         */
+	char             *search;    /**< The string currently being searched for  */
+	GtkWidget        *label;     /**< The label at the top of the log viewer   */
+};
+
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(GaimGtkLogViewer *lv);
 static GaimGtkLogViewer *syslog_viewer = NULL;
