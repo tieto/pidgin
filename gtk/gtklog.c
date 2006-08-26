@@ -111,22 +111,31 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
 	GList *logs;
 
-	g_free(lv->search);
-
-	gtk_tree_store_clear(lv->treestore);
 	if (!(*search_term)) {
 		/* reset the tree */
+		gtk_tree_store_clear(lv->treestore);
 		populate_log_tree(lv);
+		g_free(lv->search);
 		lv->search = NULL;
 		gtk_imhtml_search_clear(GTK_IMHTML(lv->imhtml));
 		select_first_log(lv);
 		return;
 	}
 
-	lv->search = g_strdup(search_term);
-	gtk_imhtml_clear(GTK_IMHTML(lv->imhtml));
+	if (lv->search != NULL && !strcmp(lv->search, search_term))
+	{
+		/* Searching for the same term acts as "Find Next" */
+		gtk_imhtml_search_find(GTK_IMHTML(lv->imhtml), lv->search);
+		return;	
+	}
 
 	gaim_gtk_set_cursor(lv->window, GDK_WATCH);
+
+	g_free(lv->search);
+	lv->search = g_strdup(search_term);
+
+	gtk_tree_store_clear(lv->treestore);
+	gtk_imhtml_clear(GTK_IMHTML(lv->imhtml));
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
 		char *read = gaim_log_read((GaimLog*)logs->data, NULL);
@@ -174,6 +183,13 @@ static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeView
 		gtk_tree_view_collapse_row(tv, path);
 	else
 		gtk_tree_view_expand_row(tv, path, FALSE);
+}
+
+static gboolean search_find_cb(gpointer data)
+{
+	GaimGtkLogViewer *viewer = data;
+	gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
+	return FALSE;
 }
 
 static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
@@ -230,7 +246,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 
 	if (viewer->search != NULL) {
 		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
-		gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
+		g_idle_add(search_find_cb, viewer);
 	}
 
 	gaim_gtk_clear_cursor(viewer->window);
@@ -291,7 +307,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	GtkWidget *vbox;
 	GtkWidget *frame;
 	GtkWidget *hbox;
-	GtkWidget *button;
+	GtkWidget *find_button;
 	GtkWidget *size_label;
 
 	if (logs == NULL)
@@ -417,10 +433,10 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	lv->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);
-	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	find_button = gtk_button_new_from_stock(GTK_STOCK_FIND);
+	gtk_box_pack_start(GTK_BOX(hbox), find_button, FALSE, FALSE, 0);
 	g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
-	g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(search_cb), lv);
+	g_signal_connect(GTK_BUTTON(find_button), "clicked", G_CALLBACK(search_cb), lv);
 
 	select_first_log(lv);
 

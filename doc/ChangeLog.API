@@ -125,6 +125,8 @@ version 2.0.0:
 	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 	* gaim_account_get_log(): Added create parameter
 	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH
+	* gtk_imhtml_search_find(): Now wraps around to the top instead of
+	  clearing the search at the end.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
