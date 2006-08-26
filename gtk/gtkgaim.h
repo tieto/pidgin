@@ -78,7 +78,11 @@
 #define GAIM_HIG_BORDER        12
 #define GAIM_HIG_BOX_SPACE      6
 
-#define GAIM_INVISIBLE_CHAR (gunichar)0x25cf
+/*
+ * See GNOME bug #307304 for some discussion about the invisible
+ * character.  0x25cf is a good choice, too.
+ */
+#define GAIM_INVISIBLE_CHAR (gunichar)0x2022
 
 #endif /* _GAIM_GTKGAIM_H_ */
 
