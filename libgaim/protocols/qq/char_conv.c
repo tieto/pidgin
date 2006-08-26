@@ -136,14 +136,14 @@ gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_chars
 	return len + 1;
 }
 
-/* convert QQ formatted msg to GAIM formatted msg (and UTF-8) */
+/* convert QQ formatted msg to Gaim formatted msg (and UTF-8) */
 gchar *qq_encode_to_gaim(guint8 *data, gint len, const gchar *msg)
 {
 	GString *encoded;
 	guint8 font_attr, font_size, color[3], bar, *cursor;
 	gboolean is_bold, is_italic, is_underline;
 	guint16 charset_code;
-	gchar *font_name, *color_code, *msg_utf8, *ret;
+	gchar *font_name, *color_code, *msg_utf8, *tmp, *ret;
 
 	cursor = data;
 	_qq_show_packet("QQ_MESG recv for font style", data, len);
@@ -155,7 +155,9 @@ gchar *qq_encode_to_gaim(guint8 *data, gint len, const gchar *msg)
 	read_packet_b(data, &cursor, len, &bar);	/* skip, not sure of its use */
 	read_packet_w(data, &cursor, len, &charset_code);
 
-	font_name = g_strndup((gchar *) cursor, data + len - cursor);
+	tmp = g_strndup((gchar *) cursor, data + len - cursor);
+	font_name = qq_to_utf8(tmp, QQ_CHARSET_DEFAULT);
+	g_free(tmp);
 
 	font_size = _get_size(font_attr);
 	is_bold = _check_bold(font_attr);
