@@ -173,12 +173,18 @@ void msn_get_contact_list(MsnContact * contact);
 void msn_get_address_book(MsnContact *contact);
 
 /*contact SOAP Operation*/
-void msn_add_contact(MsnContact *contact,const char *passport,char *groupId);
+void msn_add_contact(MsnContact *contact,const char *passport,const char *groupId);
 void msn_delete_contact(MsnContact *contact,const char *contactId);
 
 
 /*group operation*/
 void msn_add_group(MsnSession *session,const char* group_name);
 void msn_del_group(MsnSession *session,const char *guid);
+
+/*contact Block/unblock operation*/
+void msn_block_contact(MsnContact *contact,const char* membership_id);
+void msn_unblock_contact(MsnContact *contact,const char* passport);
+
+
 #endif/* _MSN_CMDPROC_H_*/
 

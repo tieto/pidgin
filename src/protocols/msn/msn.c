@@ -1401,9 +1401,14 @@ msn_remove_group(GaimConnection *gc, GaimGroup *group)
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
+	/*we can't delete the default group*/
+	if(!strcmp(group->name,MSN_INDIVIDUALS_GROUP_NAME)||
+		!strcmp(group->name,MSN_NON_IM_GROUP_NAME)){
+		return ;
+	}
 	group_id = msn_userlist_find_group_id(session->userlist, group->name);
 	if (group_id != NULL){
-		msn_cmdproc_send(cmdproc, "RMG", "%d", group_id);
+		msn_del_group(session,group_id);
 	}
 }
 

@@ -183,18 +183,24 @@ static void
 msn_request_add_group(MsnUserList *userlist, const char *who,
 					  const char *old_group_name, const char *new_group_name)
 {
+	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnMoveBuddy *data;
 
-	cmdproc = userlist->session->notification->cmdproc;
+	session = userlist->session;
+	cmdproc = session->notification->cmdproc;
 	data = g_new0(MsnMoveBuddy, 1);
 
 	data->who = g_strdup(who);
 
-	if (old_group_name)
+	if (old_group_name){
 		data->old_group_name = g_strdup(old_group_name);
+		/*delete the old group via SOAP action*/
+		msn_del_group(session,old_group_name);
+	}
 
-	/*TODO:add new group via SOAP action*/
+	/*add new group via SOAP action*/
+	msn_add_group(session, new_group_name);
 
 }
 
@@ -687,8 +693,10 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	gaim_debug_info("MaYuan", "add user:{%s} to group id {%s}\n",store_name ,group_id);
 	msn_add_contact(userlist->session->contact,who,group_id);
+#if 0
 	msn_notification_add_buddy(userlist->session->notification, list, who,
 							   store_name, group_id);
+#endif
 }
 
 void

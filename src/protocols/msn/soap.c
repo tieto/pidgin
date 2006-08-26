@@ -27,7 +27,7 @@
 #include "soap.h"
 
 /*define this Macro to debug soap server action*/
-#define MSN_SOAP_DEBUG
+#undef MSN_SOAP_DEBUG
 
 /*local function prototype*/
 void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
