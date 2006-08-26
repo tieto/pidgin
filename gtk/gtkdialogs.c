@@ -809,6 +809,7 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 {
 	char *username;
 	GaimAccount *account;
+	GSList *cur;
 
 	account  = gaim_request_fields_get_account(fields, "account");
 
@@ -818,8 +819,24 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 	if (username != NULL && *username != '\0' && account != NULL)
 	{
 		GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+		GSList *buddies;
 
 		gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
+
+		buddies = gaim_find_buddies(account, username);
+		for (cur = buddies; cur != NULL; cur = cur->next)
+		{
+			GaimBlistNode *node = cur->data;
+			if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
+			{
+				gaim_gtk_log_show_contact((GaimContact *)node->parent);
+				g_slist_free(buddies);
+				gaim_gtk_clear_cursor(gtkblist->window);
+				g_free(username);
+				return;
+			}
+		}
+		g_slist_free(buddies);
 
 		gaim_gtk_log_show(GAIM_LOG_IM, username, account);
 
