@@ -195,7 +195,7 @@ static void _qq_process_msg_sys_add_contact_approved(GaimConnection *gc, gchar *
 	qd = (qq_data *) gc->proto_data;
 	qq_add_buddy_by_recv_packet(gc, strtol(from, NULL, 10), TRUE, TRUE);
 
-	message = g_strdup_printf(_("Use %s has approved your request"), from);
+	message = g_strdup_printf(_("User %s has approved your request"), from);
 	_qq_sys_msg_log_write(gc, message, from);
 	gaim_notify_info(gc, NULL, message, NULL);
 

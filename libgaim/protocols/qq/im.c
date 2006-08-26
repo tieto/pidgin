@@ -310,7 +310,7 @@ static void _qq_process_recv_normal_im_text
 
 	/* send encoded to gaim, note that we use im_text->send_time,
 	 * not the time we receive the message
-	 * as it may have been dealyed when I am not online. */
+	 * as it may have been delayed when I am not online. */
 	serv_got_im(gc, name, msg_utf8_encoded, gaim_msg_type, (time_t) im_text->send_time);
 
 	g_free(msg_utf8_encoded);
