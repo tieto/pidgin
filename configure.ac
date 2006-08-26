@@ -528,8 +528,10 @@ AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support fo
 AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
-AC_ARG_ENABLE(gtkgaim, [AC_HELP_STRING([--disable-gtkgaim], [compile without GtkGaim client])], , enable_gtk=yes)
-AC_ARG_ENABLE(gntgaim, [AC_HELP_STRING([--disable-gntgaim], [compile without GntGaim console client])], , enable_gnt=yes)
+AC_ARG_ENABLE(gtkgaim, [AC_HELP_STRING([--disable-gtkgaim], [compile without GtkGaim client])],
+		enable_gtk=$enableval, enable_gtk=yes)
+AC_ARG_ENABLE(gntgaim, [AC_HELP_STRING([--disable-gntgaim], [compile without GntGaim console client])],
+		enable_gnt=$enableval, enable_gnt=yes)
 AC_ARG_ENABLE(fatal-asserts,   [  --enable-fatal-asserts  make assertions fatal (useful for debugging)],,enable_fatal_asserts=no)
 dnl We know Gaim won't compile with deprecated APIs disabled.
 dnl We have no desire to support two different versions of the
@@ -661,8 +663,6 @@ if test "x$enable_gtk" = "xyes" ; then
        ])
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
-else
-	enable_gtk=no
 fi
 
 AC_PATH_XTRA
@@ -812,8 +812,6 @@ if test "x$enable_gnt" = "xyes"; then
 
 	# Some distros put the headers in ncursesw/, some don't
 	AC_CHECK_HEADER(ncursesw/ncurses.h, [AC_DEFINE(HAVE_NCURSESW_INC, 1, [Define if you have the ncursesw headers in ncursesw/])])
-else
-	enable_gnt=no
 fi
 AC_SUBST(GNT_LIBS)
 AM_CONDITIONAL(ENABLE_GNT, test "x$enable_gnt" = "xyes")
