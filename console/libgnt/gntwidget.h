@@ -45,6 +45,16 @@ typedef enum _GnWidgetFlags
 	GNT_WIDGET_TRANSIENT      = 1 << 11,
 } GntWidgetFlags;
 
+typedef enum _GnMouseEvent
+{
+	GNT_LEFT_MOUSE_DOWN = 1,
+	GNT_RIGHT_MOUSE_DOWN,
+	GNT_MIDDLE_MOUSE_DOWN,
+	GNT_MOUSE_UP,
+	GNT_MOUSE_SCROLL_UP,
+	GNT_MOUSE_SCROLL_DOWN
+} GntMouseEvent;
+
 /* XXX: I'll have to ask grim what he's using this for in guifications. */
 typedef enum _GnParamFlags
 {
@@ -96,6 +106,7 @@ struct _GnWidgetClass
 	void (*set_position)(GntWidget *widget, int x, int y);
 	gboolean (*key_pressed)(GntWidget *widget, const char *key);
 	void (*activate)(GntWidget *widget);
+	gboolean (*clicked)(GntWidget *widget, GntMouseEvent event, int x, int y);
 
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
@@ -120,6 +131,8 @@ gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
 gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
 
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
+
+gboolean gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y);
 
 gboolean gnt_widget_set_focus(GntWidget *widget, gboolean set);
 void gnt_widget_activate(GntWidget *widget);

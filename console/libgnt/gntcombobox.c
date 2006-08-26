@@ -91,6 +91,26 @@ gnt_combo_box_map(GntWidget *widget)
 	DEBUG;
 }
 
+static void
+popup_dropdown(GntComboBox *box)
+{
+	GntWidget *widget = GNT_WIDGET(box);
+	GntWidget *parent = box->dropdown->parent;
+	int height = g_list_length(GNT_TREE(box->dropdown)->list);
+	int y = widget->priv.y + widget->priv.height - 1;
+	gnt_widget_set_size(box->dropdown, widget->priv.width, height + 2);
+
+	if (y + height + 2 >= getmaxy(stdscr))
+		y = widget->priv.y - height - 1;
+	gnt_widget_set_position(parent, widget->priv.x, y);
+	if (parent->window)
+	{
+		mvwin(parent->window, y, widget->priv.x);
+	}
+
+	gnt_widget_draw(parent);
+}
+
 static gboolean
 gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 {
@@ -121,20 +141,7 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 			if (strcmp(text + 1, GNT_KEY_UP) == 0 ||
 					strcmp(text + 1, GNT_KEY_DOWN) == 0)
 			{
-				GntWidget *parent = box->dropdown->parent;
-				int height = g_list_length(GNT_TREE(box->dropdown)->list);
-				int y = widget->priv.y + widget->priv.height - 1;
-				gnt_widget_set_size(box->dropdown, widget->priv.width, height + 2);
-
-				if (y + height + 2 >= getmaxy(stdscr))
-					y = widget->priv.y - height - 1;
-				gnt_widget_set_position(parent, widget->priv.x, y);
-				if (parent->window)
-				{
-					mvwin(parent->window, y, widget->priv.x);
-				}
-
-				gnt_widget_draw(parent);
+				popup_dropdown(box);
 				return TRUE;
 			}
 		}
@@ -158,6 +165,32 @@ gnt_combo_box_lost_focus(GntWidget *widget)
 	widget_lost_focus(widget);
 }
 
+static gboolean
+gnt_combo_box_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	GntComboBox *box = GNT_COMBO_BOX(widget);
+	gboolean dshowing = GNT_WIDGET_IS_FLAG_SET(box->dropdown->parent, GNT_WIDGET_MAPPED);
+
+	if (event == GNT_MOUSE_SCROLL_UP) {
+		if (dshowing)
+			gnt_widget_key_pressed(box->dropdown, "\033" GNT_KEY_UP);
+	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
+		if (dshowing)
+			gnt_widget_key_pressed(box->dropdown, "\033" GNT_KEY_DOWN);
+	} else if (event == GNT_LEFT_MOUSE_DOWN) {
+		if (dshowing) {
+			set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
+			gnt_tree_set_selected(GNT_TREE(box->dropdown), box->selected);
+			gnt_widget_hide(box->dropdown->parent);
+		} else {
+			popup_dropdown(GNT_COMBO_BOX(widget));
+			return TRUE;
+		}
+	} else
+		return FALSE;
+	return TRUE;
+}
+
 static void
 gnt_combo_box_class_init(GntComboBoxClass *klass)
 {
@@ -168,6 +201,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 	parent_class->map = gnt_combo_box_map;
 	parent_class->size_request = gnt_combo_box_size_request;
 	parent_class->key_pressed = gnt_combo_box_key_pressed;
+	parent_class->clicked = gnt_combo_box_clicked;
 
 	widget_lost_focus = parent_class->lost_focus;
 	parent_class->lost_focus = gnt_combo_box_lost_focus;

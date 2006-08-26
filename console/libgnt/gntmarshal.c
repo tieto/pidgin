@@ -166,3 +166,40 @@ void gnt_closure_marshal_BOOLEAN__INT_INT(GClosure *closure,
 }
 
 
+void gnt_closure_marshal_BOOLEAN__INT_INT_INT(GClosure *closure,
+										GValue *ret_value,
+										guint n_param_values,
+										const GValue *param_values,
+										gpointer invocation_hint,
+										gpointer marshal_data)
+{
+	typedef gboolean (*func) (gpointer data1, int, int, int, gpointer data2);
+	register func callback;
+	register GCClosure *cc = (GCClosure*)closure;
+	register gpointer data1, data2;
+	gboolean ret;
+
+	g_return_if_fail(ret_value != NULL);
+	g_return_if_fail(n_param_values == 4);
+
+	if (G_CCLOSURE_SWAP_DATA(closure))
+	{
+		data1 = closure->data;
+		data2 = g_value_peek_pointer(param_values + 0);
+	}
+	else
+	{
+		data1 = g_value_peek_pointer(param_values + 0);
+		data2 = closure->data;
+	}
+
+	callback = (func) (marshal_data ? marshal_data : cc->callback);
+	ret = callback(data1,
+			g_value_get_int(param_values + 1) ,
+			g_value_get_int(param_values + 2) ,
+			g_value_get_int(param_values + 3) ,
+			data2);
+	g_value_set_boolean(ret_value, ret);
+}
+
+

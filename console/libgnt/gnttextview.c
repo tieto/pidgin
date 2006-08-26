@@ -135,6 +135,18 @@ gnt_text_view_destroy(GntWidget *widget)
 	g_list_free(view->list);
 }
 
+static gboolean
+gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	if (event == GNT_MOUSE_SCROLL_UP) {
+		gnt_text_view_scroll(GNT_TEXT_VIEW(widget), -1);
+	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
+		gnt_text_view_scroll(GNT_TEXT_VIEW(widget), 1);
+	} else
+		return FALSE;
+	return TRUE;
+}
+
 static void
 gnt_text_view_class_init(GntTextViewClass *klass)
 {
@@ -144,6 +156,7 @@ gnt_text_view_class_init(GntTextViewClass *klass)
 	parent_class->map = gnt_text_view_map;
 	parent_class->size_request = gnt_text_view_size_request;
 	parent_class->key_pressed = gnt_text_view_key_pressed;
+	parent_class->clicked = gnt_text_view_clicked;
 
 	DEBUG;
 }

@@ -41,8 +41,6 @@ static int Y_MAX;
 static gboolean ascii_only;
 static gboolean mouse_enabled;
 
-static GntWM wm;
-
 static GMainLoop *loop;
 static struct
 {
@@ -73,6 +71,23 @@ static void draw_taskbar(gboolean reposition);
 static void bring_on_top(GntWidget *widget);
 
 static gboolean refresh_screen();
+static const GList *list_all_windows();
+
+static GntWM wm = 
+{
+	NULL,   /* new_window */
+	NULL,   /* close_window */
+	NULL,   /* key_pressed */
+	NULL,   /* mouse clicked */
+	bring_on_top, /* give_focus */
+	NULL,   /* uninit */
+	list_all_windows,  /* window_list */
+};
+
+static const GList *list_all_windows()
+{
+	return focus_list;
+}
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -127,7 +142,7 @@ void gnt_screen_remove_widget(GntWidget *widget)
 
 	if (ordered)
 	{
-		bring_on_top(ordered->data);
+		wm.give_focus(ordered->data);
 	}
 	draw_taskbar(FALSE);
 }
@@ -139,6 +154,12 @@ bring_on_top(GntWidget *widget)
 
 	if (!node)
 		return;
+	
+	if (ordered->data != widget) {
+		GntWidget *w = ordered->data;
+		ordered = g_list_bring_to_front(ordered, widget);
+		gnt_widget_set_focus(w, FALSE);
+	}
 
 	gnt_widget_set_focus(widget, TRUE);
 	gnt_widget_draw(widget);
@@ -247,7 +268,7 @@ switch_window(int direction)
 
 	ordered = g_list_bring_to_front(ordered, wid);
 
-	bring_on_top(ordered->data);
+	wm.give_focus(ordered->data);
 
 	if (w != wid)
 	{
@@ -269,7 +290,7 @@ switch_window_n(int n)
 	if ((l = g_list_nth(focus_list, n)) != NULL)
 	{
 		ordered = g_list_bring_to_front(ordered, l->data);
-		bring_on_top(ordered->data);
+		wm.give_focus(ordered->data);
 	}
 
 	if (l && w != l->data)
@@ -289,7 +310,7 @@ window_list_activate(GntTree *tree, gpointer null)
 
 	old = ordered->data;
 	ordered = g_list_bring_to_front(ordered, widget);
-	bring_on_top(widget);
+	wm.give_focus(widget);
 
 	if (old != widget)
 	{
@@ -514,8 +535,9 @@ detect_mouse_action(const char *buffer)
 	} button = MOUSE_NONE;
 	static GntWidget *remember = NULL;
 	static int offset = 0;
+	GntMouseEvent event;
 
-	if (buffer[0] != 27)
+	if (!ordered || buffer[0] != 27)
 		return FALSE;
 	
 	buffer++;
@@ -541,7 +563,7 @@ detect_mouse_action(const char *buffer)
 					if (iter != ordered) {
 						GntWidget *w = ordered->data;
 						ordered = g_list_bring_to_front(ordered, iter->data);
-						bring_on_top(ordered->data);
+						wm.give_focus(ordered->data);
 						gnt_widget_set_focus(w, FALSE);
 					}
 					if (y == wid->priv.y) {
@@ -553,14 +575,19 @@ detect_mouse_action(const char *buffer)
 				}
 			}
 		}
+		event = GNT_LEFT_MOUSE_DOWN;
 	} else if (strncmp(buffer, "[M\"", 3) == 0) {
 		/* right button down */
+		event = GNT_RIGHT_MOUSE_DOWN;
 	} else if (strncmp(buffer, "[M!", 3) == 0) {
 		/* middle button down */
+		event = GNT_MIDDLE_MOUSE_DOWN;
 	} else if (strncmp(buffer, "[M`", 3) == 0) {
 		/* wheel up*/
+		event = GNT_MOUSE_SCROLL_UP;
 	} else if (strncmp(buffer, "[Ma", 3) == 0) {
 		/* wheel down */
+		event = GNT_MOUSE_SCROLL_DOWN;
 	} else if (strncmp(buffer, "[M#", 3) == 0) {
 		/* button up */
 		if (button == MOUSE_NONE && y == getmaxy(stdscr) - 1) {
@@ -579,19 +606,23 @@ detect_mouse_action(const char *buffer)
 		button = MOUSE_NONE;
 		remember = NULL;
 		offset = 0;
+		event = GNT_MOUSE_UP;
 	} else
 		return FALSE;
+
+	gnt_widget_clicked(ordered->data, event, x, y);
 	return FALSE; /* XXX: this should be TRUE */
 }
 
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
-	char buffer[256];
+	char keys[256];
 	gboolean ret = FALSE;
 	static GntKeyPressMode mode = GNT_KP_MODE_NORMAL;
+	const char *buffer;
 
-	int rd = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
+	int rd = read(STDIN_FILENO, keys, sizeof(keys) - 1);
 	if (rd < 0)
 	{
 		endwin();
@@ -605,18 +636,25 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		exit(1);
 	}
 
-	buffer[rd] = 0;
+	keys[rd] = 0;
 
-	if (buffer[0] == 27 && buffer[1] == 'd' && buffer[2] == 0)
+	if (keys[0] == 27 && keys[1] == 'd' && keys[2] == 0)
 	{
 		/* This dumps the screen contents in an html file */
 		dump_screen();
 	}
 
-	gnt_keys_refine(buffer);
+	gnt_keys_refine(keys);
 
-	if (mouse_enabled && detect_mouse_action(buffer))
+	if (mouse_enabled && detect_mouse_action(keys))
 		return TRUE;
+	
+	if (wm.key_pressed) {
+		buffer = wm.key_pressed(keys);
+		if (buffer == NULL)
+			return TRUE;
+	} else
+		buffer = keys;
 
 	if (mode == GNT_KP_MODE_NORMAL)
 	{

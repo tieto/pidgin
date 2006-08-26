@@ -35,3 +35,10 @@ void gnt_closure_marshal_BOOLEAN__INT_INT(GClosure *closure,
 										gpointer invocation_hint,
 										gpointer marshal_data);
 
+void gnt_closure_marshal_BOOLEAN__INT_INT_INT(GClosure *closure,
+										GValue *ret_value,
+										guint n_param_values,
+										const GValue *param_values,
+										gpointer invocation_hint,
+										gpointer marshal_data);
+

@@ -58,6 +58,16 @@ gnt_button_key_pressed(GntWidget *widget, const char *key)
 	return FALSE;
 }
 
+static gboolean
+gnt_button_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	if (event == GNT_LEFT_MOUSE_DOWN) {
+		gnt_widget_activate(widget);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static void
 gnt_button_class_init(GntWidgetClass *klass)
 {
@@ -66,6 +76,7 @@ gnt_button_class_init(GntWidgetClass *klass)
 	parent_class->map = gnt_button_map;
 	parent_class->size_request = gnt_button_size_request;
 	parent_class->key_pressed = gnt_button_key_pressed;
+	parent_class->clicked = gnt_button_clicked;
 
 	DEBUG;
 }

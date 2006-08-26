@@ -454,6 +454,30 @@ gnt_box_size_changed(GntWidget *widget, int oldw, int oldh)
 	reposition_children(widget);
 }
 
+static gboolean
+gnt_box_clicked(GntWidget *widget, GntMouseEvent event, int cx, int cy)
+{
+	GList *iter;
+	for (iter = GNT_BOX(widget)->list; iter; iter = iter->next) {
+		int x, y, w, h;
+		GntWidget *wid = iter->data;
+
+		gnt_widget_get_position(wid, &x, &y);
+		gnt_widget_get_size(wid, &w, &h);
+
+		if (cx >= x && cx < x + w && cy >= y && cy < y + h) {
+			if (event <= GNT_MIDDLE_MOUSE_DOWN &&
+				GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_CAN_TAKE_FOCUS)) {
+				while (widget->parent)
+					widget = widget->parent;
+				gnt_box_give_focus_to_child(GNT_BOX(widget), wid);
+			}
+			return gnt_widget_clicked(wid, event, cx, cy);
+		}
+	}
+	return FALSE;
+}
+
 static void
 gnt_box_class_init(GntBoxClass *klass)
 {
@@ -465,6 +489,7 @@ gnt_box_class_init(GntBoxClass *klass)
 	parent_class->size_request = gnt_box_size_request;
 	parent_class->set_position = gnt_box_set_position;
 	parent_class->key_pressed = gnt_box_key_pressed;
+	parent_class->clicked = gnt_box_clicked;
 	parent_class->lost_focus = gnt_box_lost_focus;
 	parent_class->gained_focus = gnt_box_gained_focus;
 	parent_class->confirm_size = gnt_box_confirm_size;
@@ -603,6 +628,7 @@ void gnt_box_sync_children(GntBox *box)
 
 		if (box->vertical)
 		{
+			x = pos;
 			if (box->alignment == GNT_ALIGN_RIGHT)
 				x += widget->priv.width - width;
 			else if (box->alignment == GNT_ALIGN_MID)
@@ -612,6 +638,7 @@ void gnt_box_sync_children(GntBox *box)
 		}
 		else
 		{
+			y = pos;
 			if (box->alignment == GNT_ALIGN_BOTTOM)
 				y += widget->priv.height - height;
 			else if (box->alignment == GNT_ALIGN_MID)
@@ -622,6 +649,7 @@ void gnt_box_sync_children(GntBox *box)
 
 		copywin(w->window, widget->window, 0, 0,
 				y, x, y + height - 1, x + width - 1, FALSE);
+		gnt_widget_set_position(w, x + widget->priv.x, y + widget->priv.y);
 	}
 }
 

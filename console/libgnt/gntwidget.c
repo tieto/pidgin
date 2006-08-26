@@ -19,6 +19,7 @@ enum
 	SIG_CONFIRM_SIZE,
 	SIG_SIZE_CHANGED,
 	SIG_POSITION,
+	SIG_CLICKED,
 	SIGS
 };
 
@@ -116,6 +117,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 	
 	klass->key_pressed = NULL;
 	klass->activate = NULL;
+	klass->clicked = NULL;
 	
 	signals[SIG_DESTROY] = 
 		g_signal_new("destroy",
@@ -213,6 +215,15 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 gnt_boolean_handled_accumulator, NULL,
 					 gnt_closure_marshal_BOOLEAN__STRING,
 					 G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
+
+	signals[SIG_CLICKED] = 
+		g_signal_new("clicked",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntWidgetClass, clicked),
+					 gnt_boolean_handled_accumulator, NULL,
+					 gnt_closure_marshal_BOOLEAN__INT_INT_INT,
+					 G_TYPE_BOOLEAN, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 
 	DEBUG;
 }
@@ -372,6 +383,14 @@ gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 
 	keys = gnt_widget_remap_keys(widget, keys);
 	g_signal_emit(widget, signals[SIG_KEY_PRESSED], 0, keys, &ret);
+	return ret;
+}
+
+gboolean
+gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	gboolean ret;
+	g_signal_emit(widget, signals[SIG_CLICKED], 0, event, x, y, &ret);
 	return ret;
 }
 

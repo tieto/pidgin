@@ -463,6 +463,34 @@ get_nth_row(GntTree *tree, int n)
 	return g_hash_table_lookup(tree->hash, key);
 }
 
+static void
+action_down(GntTree *tree)
+{
+	int dist;
+	GntTreeRow *row = get_next(tree->current);
+	if (row == NULL)
+		return;
+	tree->current = row;
+	if ((dist = get_distance(tree->current, tree->bottom)) < 0)
+		gnt_tree_scroll(tree, -dist);
+	else
+		redraw_tree(tree);
+}
+
+static void
+action_up(GntTree *tree)
+{
+	int dist;
+	GntTreeRow *row = get_prev(tree->current);
+	if (!row)
+		return;
+	tree->current = row;
+	if ((dist = get_distance(tree->current, tree->top)) > 0)
+		gnt_tree_scroll(tree, -dist);
+	else
+		redraw_tree(tree);
+}
+
 static gboolean
 gnt_tree_key_pressed(GntWidget *widget, const char *text)
 {
@@ -473,22 +501,13 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 
 	if (text[0] == 27)
 	{
-		if (strcmp(text+1, GNT_KEY_DOWN) == 0 && (row = get_next(tree->current)) != NULL)
+		if (strcmp(text+1, GNT_KEY_DOWN) == 0)
 		{
-			tree->current = row;
-			if ((dist = get_distance(tree->current, tree->bottom)) < 0)
-				gnt_tree_scroll(tree, -dist);
-			else
-				redraw_tree(tree);
+			action_down(tree);
 		}
-		else if (strcmp(text+1, GNT_KEY_UP) == 0 && (row = get_prev(tree->current)) != NULL)
+		else if (strcmp(text+1, GNT_KEY_UP) == 0)
 		{
-			tree->current = row;
-
-			if ((dist = get_distance(tree->current, tree->top)) > 0)
-				gnt_tree_scroll(tree, -dist);
-			else
-				redraw_tree(tree);
+			action_up(tree);
 		}
 		else if (strcmp(text+1, GNT_KEY_PGDOWN) == 0)
 		{
@@ -592,6 +611,39 @@ gnt_tree_destroy(GntWidget *widget)
 	g_free(tree->columns);
 }
 
+static gboolean
+gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	if (event == GNT_MOUSE_SCROLL_UP) {
+		action_up(GNT_TREE(widget));
+	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
+		action_down(GNT_TREE(widget));
+	} else if (event == GNT_LEFT_MOUSE_DOWN) {
+		GntTreeRow *row;
+		GntTree *tree = GNT_TREE(widget);
+		int pos = 1;
+		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
+			pos = 0;
+		if (tree->show_title)
+			pos += 2;
+		pos = y - widget->priv.y - pos;
+		row = get_next_n(tree->top, pos);
+		if (row && tree->current != row) {
+			GntTreeRow *old = tree->current;
+			tree->current = row;
+			redraw_tree(tree);
+			tree_selection_changed(tree, old, tree->current);
+		} else if (row == tree->current && row->choice) {
+			row->isselected = !row->isselected;
+			g_signal_emit(tree, signals[SIG_TOGGLED], 0, row->key);
+			redraw_tree(tree);
+		}
+	} else {
+		return FALSE;
+	}
+	return TRUE;
+}
+
 static void
 gnt_tree_class_init(GntTreeClass *klass)
 {
@@ -601,6 +653,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 	parent_class->map = gnt_tree_map;
 	parent_class->size_request = gnt_tree_size_request;
 	parent_class->key_pressed = gnt_tree_key_pressed;
+	parent_class->clicked = gnt_tree_clicked;
 
 	signals[SIG_SELECTION_CHANGED] = 
 		g_signal_new("selection-changed",

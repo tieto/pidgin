@@ -46,17 +46,33 @@ gnt_check_box_map(GntWidget *widget)
 	DEBUG;
 }
 
+static void
+toggle_selection(GntWidget *widget)
+{
+	GNT_CHECK_BOX(widget)->checked = !GNT_CHECK_BOX(widget)->checked;
+	g_signal_emit(widget, signals[SIG_TOGGLED], 0);
+	gnt_widget_draw(widget);
+}
+
 static gboolean
 gnt_check_box_key_pressed(GntWidget *widget, const char *text)
 {
 	if (text[0] == ' ' && text[1] == '\0')
 	{
-		GNT_CHECK_BOX(widget)->checked = !GNT_CHECK_BOX(widget)->checked;
-		g_signal_emit(widget, signals[SIG_TOGGLED], 0);
-		gnt_widget_draw(widget);
+		toggle_selection(widget);
 		return TRUE;
 	}
 
+	return FALSE;
+}
+
+static gboolean
+gnt_check_box_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	if (event == GNT_LEFT_MOUSE_DOWN) {
+		toggle_selection(widget);
+		return TRUE;
+	}
 	return FALSE;
 }
 
@@ -76,6 +92,7 @@ gnt_check_box_class_init(GntCheckBoxClass *klass)
 	/*parent_class->map = gnt_check_box_map;*/
 	/*parent_class->size_request = gnt_check_box_size_request;*/
 	wclass->key_pressed = gnt_check_box_key_pressed;
+	wclass->clicked = gnt_check_box_clicked;
 
 	signals[SIG_TOGGLED] = 
 		g_signal_new("toggled",
