@@ -67,7 +67,7 @@ aim_chat_getname(FlapConnection *conn)
 FlapConnection *
 aim_chat_getconn(OscarData *od, const char *name)
 {
-	GList *cur;
+	GSList *cur;
 
 	for (cur = od->oscar_connections; cur; cur = cur->next)
 	{

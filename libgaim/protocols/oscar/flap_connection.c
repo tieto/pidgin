@@ -124,7 +124,7 @@ flap_connection_new(OscarData *od, int type)
 	conn->subtype = -1;
 	conn->type = type;
 
-	od->oscar_connections = g_list_prepend(od->oscar_connections, conn);
+	od->oscar_connections = g_slist_prepend(od->oscar_connections, conn);
 
 	return conn;
 }
@@ -220,10 +220,10 @@ flap_connection_destroy_cb(gpointer data)
 	if (conn->type == SNAC_FAMILY_CHAT)
 		flap_connection_destroy_chat(od, conn);
 
-	g_list_free(conn->groups);
+	g_slist_free(conn->groups);
 	flap_connection_destroy_rates(conn->rates);
 
-	od->oscar_connections = g_list_remove(od->oscar_connections, conn);
+	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
 
 	account = gaim_connection_get_account(od->gc);
 
@@ -351,12 +351,12 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 FlapConnection *
 flap_connection_findbygroup(OscarData *od, guint16 group)
 {
-	GList *cur;
+	GSList *cur;
 
 	for (cur = od->oscar_connections; cur != NULL; cur = cur->next)
 	{
 		FlapConnection *conn;
-		GList *l;
+		GSList *l;
 
 		conn = cur->data;
 
@@ -385,7 +385,7 @@ flap_connection_findbygroup(OscarData *od, guint16 group)
 FlapConnection *
 flap_connection_getbytype(OscarData *od, int type)
 {
-	GList *cur;
+	GSList *cur;
 
 	for (cur = od->oscar_connections; cur != NULL; cur = cur->next)
 	{
@@ -401,7 +401,7 @@ flap_connection_getbytype(OscarData *od, int type)
 FlapConnection *
 flap_connection_getbytype_all(OscarData *od, int type)
 {
-	GList *cur;
+	GSList *cur;
 
 	for (cur = od->oscar_connections; cur; cur = cur->next)
 	{

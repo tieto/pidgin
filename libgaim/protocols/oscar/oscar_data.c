@@ -139,7 +139,7 @@ oscar_data_addhandler(OscarData *od, guint16 family, guint16 type, aim_rxcallbac
 	snac_handler->flags = flags;
 	snac_handler->handler = newhandler;
 
-	od->handlerlist = g_list_prepend(od->handlerlist, snac_handler);
+	od->handlerlist = g_slist_prepend(od->handlerlist, snac_handler);
 
 	return 0;
 }
@@ -152,7 +152,7 @@ aim_clearhandlers(OscarData *od)
 	while (od->handlerlist != NULL)
 	{
 		snac_handler = od->handlerlist->data;
-		od->handlerlist = g_list_remove(od->handlerlist, snac_handler);
+		od->handlerlist = g_slist_remove(od->handlerlist, snac_handler);
 		g_free(snac_handler);
 	}
 	od->handlerlist = NULL;
@@ -161,7 +161,7 @@ aim_clearhandlers(OscarData *od)
 aim_rxcallback_t
 aim_callhandler(OscarData *od, guint16 family, guint16 type)
 {
-	GList *cur;
+	GSList *cur;
 	SnacHandler *snac_handler;
 
 	for (cur = od->handlerlist; cur != NULL; cur = cur->next)

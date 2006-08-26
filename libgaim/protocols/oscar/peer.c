@@ -71,7 +71,7 @@
 PeerConnection *
 peer_connection_find_by_type(OscarData *od, const char *sn, OscarCapability type)
 {
-	GList *cur;
+	GSList *cur;
 	PeerConnection *conn;
 
 	for (cur = od->peer_connections; cur != NULL; cur = cur->next)
@@ -90,7 +90,7 @@ peer_connection_find_by_type(OscarData *od, const char *sn, OscarCapability type
 PeerConnection *
 peer_connection_find_by_cookie(OscarData *od, const char *sn, const guchar *cookie)
 {
-	GList *cur;
+	GSList *cur;
 	PeerConnection *conn;
 
 	for (cur = od->peer_connections; cur != NULL; cur = cur->next)
@@ -126,7 +126,7 @@ peer_connection_new(OscarData *od, OscarCapability type, const char *sn)
 	else if (type == OSCAR_CAPABILITY_SENDFILE)
 		memcpy(conn->magic, "OFT2", 4);
 
-	od->peer_connections = g_list_prepend(od->peer_connections, conn);
+	od->peer_connections = g_slist_prepend(od->peer_connections, conn);
 
 	return conn;
 }
@@ -224,7 +224,7 @@ peer_connection_destroy_cb(gpointer data)
 	g_free(conn->verifiedip);
 	gaim_circ_buffer_destroy(conn->buffer_outgoing);
 
-	conn->od->peer_connections = g_list_remove(conn->od->peer_connections, conn);
+	conn->od->peer_connections = g_slist_remove(conn->od->peer_connections, conn);
 
 	g_free(conn);
 

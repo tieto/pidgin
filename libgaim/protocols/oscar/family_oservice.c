@@ -33,7 +33,7 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	GList *cur;
+	GSList *cur;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
@@ -82,7 +82,7 @@ hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	while (byte_stream_empty(bs))
 	{
 		group = byte_stream_get16(bs);
-		conn->groups = g_list_prepend(conn->groups, GUINT_TO_POINTER(group));
+		conn->groups = g_slist_prepend(conn->groups, GUINT_TO_POINTER(group));
 	}
 
 	/*
@@ -500,7 +500,7 @@ aim_sendpauseack(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	GList *cur;
+	GSList *cur;
 
 	frame = flap_frame_new(od, 0x02, 1024);
 
@@ -742,7 +742,7 @@ aim_setversions(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	GList *cur;
+	GSList *cur;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 

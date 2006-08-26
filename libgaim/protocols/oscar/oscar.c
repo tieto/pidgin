@@ -972,7 +972,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	}
 	else if (conn->type == SNAC_FAMILY_CHAT)
 	{
-		od->oscar_chats = g_slist_append(od->oscar_chats, conn->new_conn_data);
+		od->oscar_chats = g_slist_prepend(od->oscar_chats, conn->new_conn_data);
 		conn->new_conn_data = NULL;
 	}
 }
@@ -5174,7 +5174,7 @@ oscar_join_chat(GaimConnection *gc, GHashTable *data)
 		gaim_debug_info("oscar", "chatnav does not exist, opening chatnav\n");
 		cr->exchange = atoi(exchange);
 		cr->name = g_strdup(name);
-		od->create_rooms = g_slist_append(od->create_rooms, cr);
+		od->create_rooms = g_slist_prepend(od->create_rooms, cr);
 		aim_reqservice(od, SNAC_FAMILY_CHATNAV);
 	}
 }
@@ -5600,24 +5600,24 @@ oscar_status_types(GaimAccount *account)
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
 									 OSCAR_STATUS_ID_FREE4CHAT,
 									 _("Free For Chat"), TRUE, is_icq, FALSE);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
 										   OSCAR_STATUS_ID_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE,
 									 OSCAR_STATUS_ID_INVISIBLE,
 									 NULL, TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	/* ICQ-specific status types */
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE,
@@ -5625,26 +5625,28 @@ oscar_status_types(GaimAccount *account)
 				_("Occupied"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
 				gaim_value_new(GAIM_TYPE_STRING), NULL);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY,
 				OSCAR_STATUS_ID_DND,
 				_("Do Not Disturb"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
 				gaim_value_new(GAIM_TYPE_STRING), NULL);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY,
 				OSCAR_STATUS_ID_NA,
 				_("Not Available"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
 				gaim_value_new(GAIM_TYPE_STRING), NULL);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
 									 NULL, TRUE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
+	status_types = g_list_prepend(status_types, type);
+
+	status_types = g_list_reverse(status_types);
 
 	return status_types;
 }
@@ -5779,27 +5781,27 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 
 	GaimConnection *gc;
 	OscarData *od;
-	GList *m;
+	GList *menu;
 	GaimMenuAction *act;
 	aim_userinfo_t *userinfo;
 
 	gc = gaim_account_get_connection(buddy->account);
 	od = gc->proto_data;
 	userinfo = aim_locate_finduserinfo(od, buddy->name);
-	m = NULL;
+	menu = NULL;
 
 	if (od->icq && aim_sn_is_icq(gaim_buddy_get_name(buddy)))
 	{
 		act = gaim_menu_action_new(_("Get AIM Info"),
 								   GAIM_CALLBACK(oscar_get_aim_info_cb),
 								   NULL, NULL);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 	}
 
 	act = gaim_menu_action_new(_("Edit Buddy Comment"),
 	                           GAIM_CALLBACK(oscar_buddycb_edit_comment),
 	                           NULL, NULL);
-	m = g_list_append(m, act);
+	menu = g_list_prepend(menu, act);
 
 #if 0
 	if (od->icq)
@@ -5807,7 +5809,7 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 		act = gaim_menu_action_new(_("Get Status Msg"),
 		                           GAIM_CALLBACK(oscar_get_icqstatusmsg),
 		                           NULL, NULL);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 	}
 #endif
 
@@ -5820,7 +5822,7 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 			act = gaim_menu_action_new(_("Direct IM"),
 			                           GAIM_CALLBACK(oscar_ask_directim),
 			                           NULL, NULL);
-			m = g_list_append(m, act);
+			menu = g_list_prepend(menu, act);
 		}
 #if 0
 		/* TODO: This menu item should be added by the core */
@@ -5828,7 +5830,7 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 			act = gaim_menu_action_new(_("Get File"),
 			                           GAIM_CALLBACK(oscar_ask_getfile),
 			                           NULL, NULL);
-			m = g_list_append(m, act);
+			menu = g_list_prepend(menu, act);
 		}
 #endif
 	}
@@ -5842,11 +5844,13 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 			act = gaim_menu_action_new(_("Re-request Authorization"),
 			                           GAIM_CALLBACK(gaim_auth_sendrequest_menu),
 			                           NULL, NULL);
-			m = g_list_append(m, act);
+			menu = g_list_prepend(menu, act);
 		}
 	}
 
-	return m;
+	menu = g_list_reverse(menu);
+
+	return menu;
 }
 
 
@@ -6213,83 +6217,85 @@ oscar_actions(GaimPlugin *plugin, gpointer context)
 {
 	GaimConnection *gc = (GaimConnection *) context;
 	OscarData *od = gc->proto_data;
-	GList *m = NULL;
+	GList *menu = NULL;
 	GaimPluginAction *act;
 
 	act = gaim_plugin_action_new(_("Set User Info..."),
 			oscar_show_set_info);
-	m = g_list_append(m, act);
+	menu = g_list_prepend(menu, act);
 
 	if (od->icq)
 	{
 		act = gaim_plugin_action_new(_("Set User Info (URL)..."),
 				oscar_show_set_info_icqurl);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 	}
 
 	act = gaim_plugin_action_new(_("Change Password..."),
 			oscar_change_pass);
-	m = g_list_append(m, act);
+	menu = g_list_prepend(menu, act);
 
 	if (od->authinfo->chpassurl != NULL)
 	{
 		act = gaim_plugin_action_new(_("Change Password (URL)"),
 				oscar_show_chpassurl);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 
 		act = gaim_plugin_action_new(_("Configure IM Forwarding (URL)"),
 				oscar_show_imforwardingurl);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 	}
 
-	m = g_list_append(m, NULL);
+	menu = g_list_prepend(menu, NULL);
 
 	if (od->icq)
 	{
 		/* ICQ actions */
 		act = gaim_plugin_action_new(_("Set Privacy Options..."),
 				oscar_show_icq_privacy_opts);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 	}
 	else
 	{
 		/* AIM actions */
 		act = gaim_plugin_action_new(_("Format Screen Name..."),
 				oscar_show_format_screenname);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 
 		act = gaim_plugin_action_new(_("Confirm Account"),
 				oscar_confirm_account);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 
 		act = gaim_plugin_action_new(_("Display Currently Registered E-Mail Address"),
 				oscar_show_email);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 
 		act = gaim_plugin_action_new(_("Change Currently Registered E-Mail Address..."),
 				oscar_show_change_email);
-		m = g_list_append(m, act);
+		menu = g_list_prepend(menu, act);
 	}
 
-	m = g_list_append(m, NULL);
+	menu = g_list_prepend(menu, NULL);
 
 	act = gaim_plugin_action_new(_("Show Buddies Awaiting Authorization"),
 			oscar_show_awaitingauth);
-	m = g_list_append(m, act);
+	menu = g_list_prepend(menu, act);
 
-	m = g_list_append(m, NULL);
+	menu = g_list_prepend(menu, NULL);
 
 	act = gaim_plugin_action_new(_("Search for Buddy by E-Mail Address..."),
 			oscar_show_find_email);
-	m = g_list_append(m, act);
+	menu = g_list_prepend(menu, act);
 
 #if 0
 	act = gaim_plugin_action_new(_("Search for Buddy by Information"),
 			show_find_info);
-	m = g_list_append(m, act);
+	menu = g_list_prepend(menu, act);
 #endif
 
-	return m;
+	menu = g_list_reverse(menu);
+
+	return menu;
 }
 
 static void oscar_change_passwd(GaimConnection *gc, const char *old, const char *new)

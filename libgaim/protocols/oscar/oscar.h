@@ -383,7 +383,7 @@ struct _FlapConnection
 	guint16 subtype;
 	flap_seqnum_t seqnum;
 	guint32 status;
-	GList *groups;
+	GSList *groups;
 	struct rateclass *rates;
 
 	void *internal; /* internal conn-specific libfaim data */
@@ -492,13 +492,13 @@ struct _OscarData
 	} ssi;
 
 	/* TODO: Implement this as a HashTable for HUGE speed improvement! */
-	GList *handlerlist;
+	GSList *handlerlist;
 
 	/** A linked list containing FlapConnections. */
-	GList *oscar_connections;
+	GSList *oscar_connections;
 
 	/** A linked list containing PeerConnections. */
-	GList *peer_connections;
+	GSList *peer_connections;
 };
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
