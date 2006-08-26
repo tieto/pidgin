@@ -26,6 +26,9 @@
 #include "msn.h"
 #include "soap.h"
 
+/*define this Macro to debug soap server action*/
+#define MSN_SOAP_DEBUG
+
 /*local function prototype*/
 void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
 
@@ -111,7 +114,6 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
 	soapconn->error_cb = error_cb;
-	gaim_debug_info("MaYuan","msn_soap_init...done\n");
 }
 
 /*connect the soap connection*/
@@ -214,13 +216,14 @@ msn_soap_read(MsnSoapConn *soapconn)
 	if(len >0){
 		soapconn->read_buf = g_realloc(soapconn->read_buf,
 						soapconn->read_len + len + 1);
-//		strncpy(soapconn->read_buf + soapconn->read_len, temp_buf, len);
 		memcpy(soapconn->read_buf + soapconn->read_len, temp_buf, len);
 		soapconn->read_len += len;
 		soapconn->read_buf[soapconn->read_len] = '\0';
 	}
+#ifdef MSN_SOAP_DEBUG
 	gaim_debug_info("MaYuan","++soap ssl read:{%d}\n",len);
-//	gaim_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
+	gaim_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
+#endif
 	return len;
 }
 
@@ -345,16 +348,15 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			/*setup the conn body */
 			soapconn->body		= body_start;
 			soapconn->body_len	= atoi(body_len);
+#ifdef MSN_SOAP_DEBUG
 			gaim_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
-
+#endif
 			soapconn->need_to_read = (body_start - soapconn->read_buf +soapconn->body_len) - soapconn->read_len;
-			if(soapconn->read_len < body_start - soapconn->read_buf + soapconn->body_len){
-//			if(soapconn->need_to_read >0){
+			if(soapconn->need_to_read >0){
 				return;
 			}
 			g_free(body_len);
 
-#if 1
 			/*remove the read handler*/
 			gaim_input_remove(soapconn->input_handler);
 			soapconn->input_handler = -1;
@@ -368,7 +370,6 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			 * Weird!
 			 * */
 			msn_soap_close(soapconn);
-#endif
 
 			/*call the read callback*/
 			if(soapconn->read_cb != NULL){
@@ -538,13 +539,17 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 		return;
 	}
 	gaim_debug_info("Ma Yuan","soap  connected!\n");
+
 	/*if connected, what we only needed to do is to queue the request, 
 	 * when SOAP request in the queue processed done, will do this command.
 	 * we just waiting...
+	 * If we send the request this time,error may occure
 	 */
+#if 0
 	if(soapconn->step == MSN_SOAP_CONNECTED_IDLE){
 		msn_soap_post_head_request(soapconn);
 	}
+#endif
 }
 
 /*Post the soap request action*/
@@ -576,9 +581,13 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	request_str = g_strdup_printf("%s%s", soap_head,request->body);
 	g_free(soap_head);
 
+#ifdef MSN_SOAP_DEBUG
+	gaim_debug_info("MaYuan","send to  server{%s}\n",request_str);
+#endif
+
 	/*free read buffer*/
 	msn_soap_free_read_buf(soapconn);
-	gaim_debug_info("MaYuan","send to  server{%s}\n",request_str);
+	/*post it to server*/
 	msn_soap_write(soapconn,request_str,request->written_cb);
 }
 

@@ -30,6 +30,9 @@
 #include "xmlnode.h"
 #include "group.h"
 
+/*define This to debug the Contact Server*/
+#undef  MSN_CONTACT_SOAP_DEBUG
+
 void msn_contact_connect_init(MsnSoapConn *soapconn);
 
 /*new a contact*/
@@ -207,7 +210,9 @@ msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
-//	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
+#ifdef  MSN_CONTACT_SOAP_DEBUG
+	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
+#endif
 	msn_parse_contact_list(contact);
 	/*free the read buffer*/
 	msn_soap_free_read_buf(soapconn);
@@ -463,7 +468,6 @@ msn_address_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	gaim_debug_info("MaYuan","finish contact written\n");
 	soapconn->read_cb = msn_get_address_cb;
-//	msn_soap_read_cb(data,source,cond);
 }
 
 /*get the address book*/

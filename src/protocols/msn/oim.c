@@ -115,7 +115,6 @@ msn_oim_msg_to_str(MsnOim *oim,char *body)
 	gaim_debug_info("MaYuan","encode OIM Message...\n");	
 	oim_base64 = gaim_base64_encode((const guchar *)body, strlen(body));
 	gaim_debug_info("MaYuan","encoded base64 body:{%s}\n",oim_base64);	
-	gaim_debug_info("MaYuan","url_encode:{%s}\n",gaim_url_encode(body));
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 
@@ -240,11 +239,9 @@ msn_oim_send_msg(MsnOim *oim)
 	char buf[33];
 
 	g_return_if_fail(oim != NULL);
-	gaim_debug_info("MaYuan","queue:{%p}\n",oim->send_queue);
 	oim_request = g_queue_pop_head(oim->send_queue);
-	if(oim_request == NULL){
-		return;
-	}
+	g_return_if_fail(oim_request != NULL);
+
 	gaim_debug_info("MaYuan","send single OIM Message\n");
 	mspauth = g_strdup_printf("t=%s&amp;p=%s",
 		oim->session->passport_info.t,
