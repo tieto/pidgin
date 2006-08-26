@@ -225,7 +225,7 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, source, NULL);
+			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
 		g_free(phb->host);
