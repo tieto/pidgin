@@ -2,6 +2,7 @@
 #include "gntcombobox.h"
 #include "gnttree.h"
 #include "gntmarshal.h"
+#include "gntutils.h"
 
 #include <string.h>
 
@@ -39,14 +40,11 @@ gnt_combo_box_draw(GntWidget *widget)
 	GntColorType type;
 	int len;
 	
-	if (box->dropdown)
-	{
+	if (box->dropdown && box->selected)
 		text = gnt_tree_get_selection_text(GNT_TREE(box->dropdown));
-		box->selected = gnt_tree_get_selection_data(GNT_TREE(box->dropdown));
-	}
 
 	if (text == NULL)
-		text = g_strdup(text);
+		text = g_strdup("");
 
 	if (gnt_widget_has_focus(widget))
 		type = GNT_COLOR_HIGHLIGHT;
@@ -57,7 +55,7 @@ gnt_combo_box_draw(GntWidget *widget)
 
 	if ((len = g_utf8_strlen(text, -1)) > widget->priv.width - 4)
 	{
-		char *s = g_utf8_offset_to_pointer(text, widget->priv.width - 4);
+		char *s = gnt_util_onscreen_width_to_pointer(text, widget->priv.width - 4, NULL);
 		*s = '\0';
 		len = widget->priv.width - 4;
 	}
@@ -106,6 +104,7 @@ popup_dropdown(GntComboBox *box)
 	if (parent->window)
 	{
 		mvwin(parent->window, y, widget->priv.x);
+		wresize(parent->window, height+2, widget->priv.width);
 	}
 
 	gnt_widget_draw(parent);
@@ -180,11 +179,9 @@ gnt_combo_box_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 	} else if (event == GNT_LEFT_MOUSE_DOWN) {
 		if (dshowing) {
 			set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
-			gnt_tree_set_selected(GNT_TREE(box->dropdown), box->selected);
 			gnt_widget_hide(box->dropdown->parent);
 		} else {
 			popup_dropdown(GNT_COMBO_BOX(widget));
-			return TRUE;
 		}
 	} else
 		return FALSE;
