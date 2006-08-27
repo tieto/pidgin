@@ -212,7 +212,7 @@ static void wgaim_tray_create() {
 	 *  2K and ME will use the highest color depth that the desktop will support,
 	 *  but will scale it back to 4-bits for display.
 	 * That is why we use custom 4-bit icons for pre XP Windowses */
-	if (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion > 0) {
+	if (osinfo.dwMajorVersion >= 5 && osinfo.dwMinorVersion > 0) {
 		sysicon_disconn = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 		sysicon_conn = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 		sysicon_away = (HICON)LoadImage(gtkwgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
