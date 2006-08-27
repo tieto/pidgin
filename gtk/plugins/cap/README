@@ -21,7 +21,5 @@ Preferences: I currently don't have the best names for configuration options so 
 
 * Threshold
 	This is how many minutes before and after the current time should be looked at when computing a buddies response probability. The larger the value the more data that is available but the larger the timeframe it will encompass and thus the less accurate the prediction will be. As data collection increases this value can be reduced for more fine tuned statistics.
-	
-Note: I realize the preferences UI sucks and needs to be straightened up.
 
 Bugs and Feedback are appreciated and may be sent to g-off_ at users.sourceforge.net.

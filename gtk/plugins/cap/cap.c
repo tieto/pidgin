@@ -79,12 +79,10 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 			if(!dbi_result_field_is_null(result, "failed_count"))
 				failures += dbi_result_get_int(result, "failed_count");
 		}
-		gaim_debug_info("cap", "Successes = %d; Failures = %d\n", successes, failures);
 		if(failures + successes > 0) {
 			prediction *= ((double)successes/((double)(successes + failures)));
 			generated = TRUE;
 		}
-		gaim_debug_info("cap", "After message value prediction is %0.4f.\n", prediction);
 		dbi_result_free(result);
 	}
 
@@ -126,12 +124,10 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 		if(!dbi_result_field_is_null(result, "failed_count"))
 			failures = dbi_result_get_int(result, "failed_count");
 
-		gaim_debug_info("cap", "Successes = %d; Failures = %d\n", successes, failures);
 		if(successes + failures > 0) {
 			prediction *= ((double)successes/(double)(successes + failures));
 			generated = TRUE;
 		}
-		gaim_debug_info("cap", "After status value prediction is %0.4f.\n", prediction);
 		dbi_result_free(result);
 	}
 
@@ -142,7 +138,6 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 
 	if(strcmp(gaim_status_get_id(get_status_for(buddy)), "offline") == 0) {
 		//This is kind of stupid, change it.
-		gaim_debug_info("cap", "Buddy is offline.\n");
 		if(prediction == 1.0f)
 			prediction = 0.0f;
 	}
@@ -161,7 +156,6 @@ static CapStatistics * get_stats_for(GaimBuddy *buddy) {
 	stats = g_hash_table_lookup(_buddy_stats, buddy_name);
 	if(!stats) {
 		dbi_result result;
-		gaim_debug_info("cap", "Creating stats for %s\n", buddy->name);
 		stats = g_malloc(sizeof(CapStatistics));
 		stats->last_message = -1;
 		stats->last_message_status_id = NULL;
@@ -432,9 +426,7 @@ static void signed_on(GaimConnection *gc) {
 	dbi_result result;
 
 	result = dbi_conn_queryf(_conn, "insert into cap_my_usage values(%s, %s, %d, now());", account_id, protocol_id, 1);
-	if(!result)
-		gaim_debug_error("cap", "Could not insert sign on into cap_my_usage\n");
-	else
+	if(result)
 		dbi_result_free(result);
 
 	if(last_offline) {
@@ -461,9 +453,7 @@ static void signed_off(GaimConnection *gc) {
 	dbi_result result;
 
 	result = dbi_conn_queryf(_conn, "insert into cap_my_usage values(%s, %s, %d, now());", account_id, protocol_id, 0);
-	if(!result)
-		gaim_debug_error("cap", "Could not insert sign off into cap_my_usage\n");
-	else
+	if(result)
 		dbi_result_free(result);
 
 	time(offline_time);
@@ -508,16 +498,15 @@ static void create_tables() {
 static gboolean create_database_connection() {
 	int rc;
 	int driver_type;
+
+	if(_conn)
+		return TRUE;
+
 	//make database connection here
-	/*
-	 * conn = dbi_conn_new("mysql");
-	 * dbi_conn_set_option(conn, "host", "localhost");
-	 * dbi_conn_set_option(conn, "username", "root");
-	 * dbi_conn_set_option(conn, "password", "b1qywm96");
-	 * dbi_conn_set_option(conn, "dbname", "mysql");
-	 * dbi_conn_set_option(conn, "encoding", "auto");
-	 */
 	_conn = dbi_conn_new(gaim_prefs_get_string("/plugins/gtk/cap/db_driver"));
+	if(!_conn)
+		return FALSE;
+	
 	_driver = dbi_conn_get_driver(_conn);
 	gaim_debug_info("cap", "Using driver: %s\n", gaim_prefs_get_string("/plugins/gtk/cap/db_driver"));
 	if(strcmp(gaim_prefs_get_string("/plugins/gtk/cap/db_driver"), "mysql") == 0) {
@@ -536,6 +525,7 @@ static gboolean create_database_connection() {
 		gaim_debug_error("cap", "CAP could not create database connection. %d\n", rc);
 		//set_error_msg(_("Could not create database connection. Reason: "));
 		//append_error_msg(err_msg);
+		_conn = NULL;
 		return FALSE;
 	} else {
 		//Add tables here
@@ -543,6 +533,12 @@ static gboolean create_database_connection() {
 	}
 	gaim_debug_info("cap", "Database connection successfully made.\n");
 	return TRUE;
+}
+static void destroy_database_connection() {
+	if(_conn)
+		dbi_conn_close(_conn);
+
+	_conn = NULL;
 }
 
 static guint word_count(const gchar *string) {
@@ -598,10 +594,21 @@ static void insert_status_change(CapStatistics *statistics) {
 
 static void insert_status_change_from_gaim_status(CapStatistics *statistics, GaimStatus *status) {
 	dbi_result result;
-	gchar *status_id = quote_string(gaim_status_get_id(status));
-	gchar *buddy_name = quote_string(statistics->buddy->name);
-	gchar *protocol_id = quote_string(gaim_account_get_protocol_id(statistics->buddy->account));
-	gchar *account_id = quote_string(gaim_account_get_username(statistics->buddy->account));
+	gchar *status_id;
+	gchar *buddy_name;
+	gchar *protocol_id;
+	gchar *account_id;
+
+	/* It would seem that some protocols receive periodic updates of the buddies status.
+	 * Check to make sure the last status is not the same as current status to prevent
+	 * to many duplicated useless database entries. */
+	if(strcmp(statistics->last_status_id, gaim_status_get_id(status)) == 0)
+		return;
+
+	status_id = quote_string(gaim_status_get_id(status));
+	buddy_name = quote_string(statistics->buddy->name);
+	protocol_id = quote_string(gaim_account_get_protocol_id(statistics->buddy->account));
+	account_id = quote_string(gaim_account_get_username(statistics->buddy->account));
 
 	statistics->last_status_id = gaim_status_get_id(status);
 	gaim_debug_info("cap", "Executing: insert into cap_status (buddy, account, protocol, status, event_time) values(%s, %s, %s, %s, now());\n", buddy_name, account_id, protocol_id, status_id);
@@ -639,62 +646,46 @@ void display_statistics_action_cb(GaimBlistNode *node, gpointer data) {
 /* Gaim plugin specific code */
 
 static gboolean plugin_load(GaimPlugin *plugin) {
-	dbi_driver driver = dbi_driver_list(NULL);
-	gboolean drivers_available = FALSE;
-	int rc = dbi_initialize(gaim_prefs_get_string("/plugins/gtk/cap/libdbi_drivers"));
-
-	if(rc == -1) {
-		gaim_debug_error("cap", "Error initializing dbi.\n");
-		set_error_msg(_("Error initializing libdbi."));
-		return FALSE;
-	}
-
 	_plugin_pointer = plugin;
 	_signals_connected = FALSE;
-
-	while(driver != NULL) {
-		gaim_debug_info("cap", "Located driver: %s\n", dbi_driver_get_name(driver));
-		if(strcmp("mysql", dbi_driver_get_name(driver)) == 0)
-			drivers_available = TRUE;
-	
-		driver = dbi_driver_list(driver);
-	}
-	if(!drivers_available)
-		return FALSE;
-
-
-	if(gaim_prefs_get_bool("/plugins/gtk/cap/configured")) {
-		if(!add_plugin_functionality(plugin)) {	
-			return FALSE;
-		}
-	}
-	return TRUE;
-}
-
-static gboolean add_plugin_functionality(GaimPlugin *plugin) {
-	if(_signals_connected)
-		return TRUE;
-	
-	if(!create_database_connection()) {
-		/*
-		GtkWidget *dialog = gtk_message_dialog_new("title",
-			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_ERROR,
-			GTK_BUTTONS_CLOSE,
-			get_error_msg());
-		gtk_dialog_run(GTK_DIALOG(dialog));
-		gtk_widget_destroy(dialog);
-		*/
-		return FALSE;
-	}
 
 	/* buddy_stats is a hashtable where strings are keys
 	 * and the keys are a buddies account id (GaimBuddy.name).
 	 * keys/values are automatically deleted */
 	_buddy_stats = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, destroy_stats);
-
+	
+	/* ? - Can't remember at the moment
+	 */
 	_my_offline_times = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
+	if(gaim_prefs_exists("/plugins/gtk/cap/libdbi_drivers"))
+		_num_drivers = dbi_initialize(gaim_prefs_get_string("/plugins/gtk/cap/libdbi_drivers"));
+	else
+		_num_drivers = dbi_initialize(NULL);
+
+	if(_num_drivers == -1) {
+		gaim_debug_error("cap", "Error initializing dbi.\n");
+		gaim_prefs_set_bool("/plugins/gtk/cap/configured", FALSE);
+		_dbi_initialized = FALSE;
+	} else {
+		_dbi_initialized = TRUE;
+	}
+
+
+	if(gaim_prefs_get_bool("/plugins/gtk/cap/configured") && gaim_prefs_get_bool("/plugins/gtk/cap/connected")) {
+		if(create_database_connection()) {
+			add_plugin_functionality(plugin);
+		}
+	}
+	return TRUE;
+}
+
+static void add_plugin_functionality(GaimPlugin *plugin) {
+	if(_signals_connected)
+		return;
+
+	gaim_debug_info("cap", "Adding plugin functionality.\n");
+	
 	/* Connect all the signals */
 	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg", plugin,
 			GAIM_CALLBACK(sent_im_msg), NULL);
@@ -727,13 +718,61 @@ static gboolean add_plugin_functionality(GaimPlugin *plugin) {
 			GAIM_CALLBACK(buddy_idle), NULL);
 
 	_signals_connected = TRUE;
+}
 
-	return TRUE;
+static void cancel_conversation_timeouts(gpointer key, gpointer value, gpointer user_data) {
+	CapStatistics *stats = value;
+	if(stats->timeout_source_id != 0) {
+		g_source_remove(stats->timeout_source_id);
+		stats->timeout_source_id = 0;
+	}
+}
+
+static void remove_plugin_functionality(GaimPlugin *plugin) {
+	if(!_signals_connected)
+		return;
+
+	gaim_debug_info("cap", "Removing plugin functionality.\n");
+
+	/* If there are any timeouts waiting to be processed then cancel them */
+	g_hash_table_foreach(_buddy_stats, cancel_conversation_timeouts, NULL);
+	
+	/* Connect all the signals */
+	gaim_signal_disconnect(gaim_conversations_get_handle(), "sent-im-msg", plugin,
+			GAIM_CALLBACK(sent_im_msg));
+
+	gaim_signal_disconnect(gaim_conversations_get_handle(), "received-im-msg", plugin,
+			GAIM_CALLBACK(received_im_msg));
+
+	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-status-changed", plugin,
+			GAIM_CALLBACK(buddy_status_changed));
+
+	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-signed-on", plugin,
+			GAIM_CALLBACK(buddy_signed_on));
+
+	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-signed-off", plugin,
+			GAIM_CALLBACK(buddy_signed_off));
+
+	//gaim_signal_disconnect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
+	//		GAIM_CALLBACK(blist_node_extended_menu));
+
+	gaim_signal_disconnect(gaim_gtk_blist_get_handle(), "drawing-tooltip", plugin,
+			GAIM_CALLBACK(drawing_tooltip));
+
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on", plugin,
+			GAIM_CALLBACK(signed_on));
+	
+	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off", plugin,
+			GAIM_CALLBACK(signed_off));
+
+	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-idle-changed", plugin,
+			GAIM_CALLBACK(buddy_idle));
+
+	_signals_connected = FALSE;
 }
 
 static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_data) {
 	CapStatistics *stats = value;
-	gaim_debug_info("cap", "Unloading, last message time %d\n", stats->last_message);
 	if(stats->last_message != -1 && stats->buddy != NULL) {
 		insert_cap_failure(stats);
 	}
@@ -741,160 +780,289 @@ static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_da
 
 static gboolean plugin_unload(GaimPlugin *plugin) {
 	gaim_debug_info("cap", "CAP plugin unloading\n");
-	//TODO: foreach stats object in hashtable:
-	//			if stats->last_message != -1 then update for that time the failed counter...maybe?
-	g_hash_table_foreach(_buddy_stats, write_stats_on_unload, NULL);
+	
 	//clean up memory allocations
-	if(_buddy_stats)
+	if(_buddy_stats) {
+		g_hash_table_foreach(_buddy_stats, write_stats_on_unload, NULL);
 		g_hash_table_destroy(_buddy_stats);
-	/*while(g_list_length(plugin_actions) > 0) {
-	  GaimPluginAction *action = g_list_first(plugin_actions)->data;
-	  gaim_plugin_action_free(action);
-	  }
-	  _plugin_pointer = NULL;*/
+	}
 	 
 	 //close database connection
 	 dbi_conn_close(_conn);
+	 _conn = NULL;
 	 dbi_shutdown();
 
 	return TRUE;
 }
 
 static GtkWidget * get_config_frame(GaimPlugin *plugin) {
-	GtkWidget *ret;
-	GtkWidget *vbox;
+	CapPrefsUI *ui = create_cap_prefs_ui();
 
-	GtkWidget *driver_vbox;
-	GtkWidget *driver_select_hbox;
-	GtkWidget *driver_choice;
-	GtkWidget *driver_label;
-	GtkWidget *driver_config_hbox;
-	GtkWidget *driver_config;
+	/* Since we are editing the database setup we will disable the plugin.
+	 * This will prevent database updates from occuring while there is potentially
+	 * no connection to the database.
+	 */
+	remove_plugin_functionality(_plugin_pointer);
 
-	GtkWidget *threshold_label;
-	GtkWidget *threshold_input;
-	GtkWidget *threshold_hbox;
-	GtkWidget *threshold_minutes_label;
+	return ui->ret;
+}
 
-	GtkWidget *msg_difference_label;
-	GtkWidget *msg_difference_input;
-	GtkWidget *msg_difference_hbox;
-	GtkWidget *msg_difference_minutes_label;
-
-	GtkWidget *last_seen_label;
-	GtkWidget *last_seen_input;
-	GtkWidget *last_seen_hbox;
-	GtkWidget *last_seen_minutes_label;
-
-	GtkWidget *dbd_label;
-	GtkWidget *dbd_input;
-	GtkWidget *dbd_hbox;
-	
-	ret = gtk_vbox_new(FALSE, 18);
-	g_signal_connect(G_OBJECT(ret), "destroy",
-		G_CALLBACK(prefs_closed_cb), "/plugins/gtk/cap/configured");
-	gtk_container_set_border_width(GTK_CONTAINER(ret), 10);
-	vbox = gaim_gtk_make_frame(ret, _("Contact Availability Prediction Configuration"));
-
-	driver_vbox = gtk_vbox_new(FALSE, 18);
-	//Driver selection and configuration
-	driver_choice = gtk_combo_box_new_text();
-	g_signal_connect(G_OBJECT(driver_choice), "changed",
-		G_CALLBACK(combobox_prefs_cb), "/plugins/gtk/cap/db_driver");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(driver_choice), _("mysql"));
-	gtk_combo_box_set_active(GTK_COMBO_BOX(driver_choice), 0);
-	//gtk_combo_box_append_text(GTK_COMBO_BOX(driver_choice), _("pgsql"));
-	//gtk_combo_box_append_text(GTK_COMBO_BOX(driver_choice), _("sqlite"));
-	driver_label = gtk_label_new(_("Driver:"));
-	driver_select_hbox = gtk_hbox_new(FALSE, 18);
-	if(gaim_prefs_exists("/plugins/gtk/cap/db_driver")) {
-		const char *driver_string = gaim_prefs_get_string("/plugins/gtk/cap/db_driver");
-		if(g_ascii_strcasecmp(driver_string, "mysql") == 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(driver_choice), 0);
-		}
+static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data) {
+	CapPrefsUI *ui = user_data;
+	if(_conn) {
+		add_plugin_functionality(_plugin_pointer);
 	}
-	gtk_box_pack_start(GTK_BOX(driver_select_hbox), driver_label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(driver_select_hbox), driver_choice, FALSE, FALSE, 0);
+	g_free(ui);
+}
 
-	driver_config = gtk_expander_new_with_mnemonic(_("_Configure"));
-	g_signal_connect(driver_config, "notify::expanded",
-		G_CALLBACK(driver_config_expanded), gtk_combo_box_get_active_text(GTK_COMBO_BOX(driver_choice)));
-	driver_config_hbox = gtk_hbox_new(FALSE, 18);
-	gtk_box_pack_start(GTK_BOX(driver_config_hbox), driver_config, FALSE, FALSE, 0);
+static CapPrefsUI * create_cap_prefs_ui() {
+	CapPrefsUI *ui = g_malloc(sizeof(CapPrefsUI));
 
-	gtk_box_pack_start(GTK_BOX(driver_vbox), driver_select_hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(driver_vbox), driver_config_hbox, FALSE, FALSE, 0);
+	ui->ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width(GTK_CONTAINER(ui->ret), 10);
+	ui->db_vbox = gaim_gtk_make_frame(ui->ret, _("Database Configuration"));
+	ui->cap_vbox = gaim_gtk_make_frame(ui->ret, _("Statistics Configuration"));
 
-	//msg_difference
-	msg_difference_label = gtk_label_new(_("Maximum response timeout:"));
-	//FIXME: better maximum value
-	msg_difference_input = gtk_spin_button_new_with_range(1, 1440, 1);
-	msg_difference_hbox = gtk_hbox_new(FALSE, 18);
-	msg_difference_minutes_label = gtk_label_new(_("minutes"));
+	/* dbd path input folder selector button */
+	ui->dbd_label = gtk_label_new(_("libdbi driver path:"));
+	gtk_misc_set_alignment(GTK_MISC(ui->dbd_label), 0, 0.5);
+	ui->dbd_input = gtk_file_chooser_button_new(_("libdbi Drivers Path"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+	ui->dbd_button = gtk_button_new_with_label(_("Verify"));
+	ui->dbd_hbox = gtk_hbox_new(FALSE, 18);
+	gtk_box_pack_start(GTK_BOX(ui->dbd_hbox), ui->dbd_label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->dbd_hbox), ui->dbd_input, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->dbd_hbox), ui->dbd_button, FALSE, FALSE, 0);
+
+	/* Setup the driver selection widget */
+	ui->driver_choice = gtk_combo_box_new_text();
+	
+	ui->driver_vbox = gtk_vbox_new(FALSE, 18);
+	ui->driver_label = gtk_label_new(_("Driver:"));
+	gtk_misc_set_alignment(GTK_MISC(ui->driver_label), 0, 0.5);
+	ui->driver_select_hbox = gtk_hbox_new(FALSE, 18);
+	ui->driver_connect_button = gtk_toggle_button_new_with_label(_("Connected"));
+
+	gtk_box_pack_start(GTK_BOX(ui->driver_select_hbox), ui->driver_label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->driver_select_hbox), ui->driver_choice, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->driver_select_hbox), ui->driver_connect_button, FALSE, FALSE, 0);
+
+	ui->driver_config = gtk_expander_new_with_mnemonic(_("Configure"));
+	ui->driver_config_hbox = gtk_hbox_new(FALSE, 18);
+	gtk_box_pack_start(GTK_BOX(ui->driver_config_hbox), ui->driver_config, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(ui->driver_vbox), ui->driver_select_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->driver_vbox), ui->driver_config_hbox, FALSE, FALSE, 0);
+
+	/* msg_difference spinner */
+	ui->msg_difference_label = gtk_label_new(_("Maximum response timeout:"));
+	gtk_misc_set_alignment(GTK_MISC(ui->msg_difference_label), 0, 0.5);
+	ui->msg_difference_input = gtk_spin_button_new_with_range(1, 1440, 1);
+	ui->msg_difference_minutes_label = gtk_label_new(_("minutes"));
+	gtk_misc_set_alignment(GTK_MISC(ui->msg_difference_minutes_label), 0, 0.5);
+
+	/* last_seen spinner */
+	ui->last_seen_label = gtk_label_new(_("Maximum last-seen difference:"));
+	gtk_misc_set_alignment(GTK_MISC(ui->last_seen_label), 0, 0.5);
+	ui->last_seen_input = gtk_spin_button_new_with_range(1, 1440, 1);
+	ui->last_seen_minutes_label = gtk_label_new(_("minutes"));
+	gtk_misc_set_alignment(GTK_MISC(ui->last_seen_minutes_label), 0, 0.5);
+
+	/* threshold spinner */
+	ui->threshold_label = gtk_label_new(_("Threshold:"));
+	gtk_misc_set_alignment(GTK_MISC(ui->threshold_label), 0, 0.5);
+	ui->threshold_input = gtk_spin_button_new_with_range(1, 1440, 1);
+	ui->threshold_minutes_label = gtk_label_new(_("minutes"));
+	gtk_misc_set_alignment(GTK_MISC(ui->threshold_minutes_label), 0, 0.5);
+
+	/* Layout threshold/last-seen/response-timeout input items */
+	ui->table_layout = gtk_table_new(3, 3, FALSE);
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->threshold_label, 0, 1, 0, 1,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->threshold_input, 1, 2, 0, 1,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->threshold_minutes_label, 2, 3, 0, 1,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->msg_difference_label, 0, 1, 1, 2,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->msg_difference_input, 1, 2, 1, 2,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->msg_difference_minutes_label, 2, 3, 1, 2,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->last_seen_label, 0, 1, 2,3,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->last_seen_input, 1, 2, 2, 3,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(GTK_TABLE(ui->table_layout), ui->last_seen_minutes_label, 2, 3, 2, 3,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+
+
+	/* Config window - lay it out */
+	gtk_box_pack_start(GTK_BOX(ui->db_vbox), ui->dbd_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->db_vbox), ui->driver_vbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(ui->cap_vbox), ui->table_layout, FALSE, FALSE, 0);
+
+	/* Set the input areas to contain the configuration values from
+	 * gaim prefs.
+	 */
+	if(gaim_prefs_exists("/plugins/gtk/cap/libdbi_drivers")) {
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(ui->dbd_input), gaim_prefs_get_string("/plugins/gtk/cap/libdbi_drivers"));
+	}
 	if(gaim_prefs_exists("/plugins/gtk/cap/max_msg_difference")) {
 		int max_msg_diff = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference");
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(msg_difference_input),  max_msg_diff);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->msg_difference_input),  max_msg_diff);
 	}
-	g_signal_connect(G_OBJECT(msg_difference_input), "value-changed",
-		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/max_msg_difference");
-	gtk_box_pack_start(GTK_BOX(msg_difference_hbox), msg_difference_label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(msg_difference_hbox), msg_difference_input, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(msg_difference_hbox), msg_difference_minutes_label, FALSE, FALSE, 0);
-
-	//last_seen
-	last_seen_label = gtk_label_new(_("Maximum last-seen difference:"));
-	last_seen_input = gtk_spin_button_new_with_range(1, 1440, 1);
-	last_seen_hbox = gtk_hbox_new(FALSE, 18);
-	last_seen_minutes_label = gtk_label_new(_("minutes"));
 	if(gaim_prefs_exists("/plugins/gtk/cap/max_seen_difference")) {
 		int max_seen_diff = gaim_prefs_get_int("/plugins/gtk/cap/max_seen_difference");
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(last_seen_input), max_seen_diff);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->last_seen_input), max_seen_diff);
 	}
-	g_signal_connect(G_OBJECT(last_seen_input), "value-changed",
-		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/max_seen_difference");
-	gtk_box_pack_start(GTK_BOX(last_seen_hbox), last_seen_label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(last_seen_hbox), last_seen_input, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(last_seen_hbox), last_seen_minutes_label, FALSE, FALSE, 0);
-
-	//threshold
-	threshold_label = gtk_label_new(_("Threshold:"));
-	threshold_input = gtk_spin_button_new_with_range(1, 1440, 1);
-	threshold_hbox = gtk_hbox_new(FALSE, 18);
-	threshold_minutes_label = gtk_label_new(_("minutes"));
 	if(gaim_prefs_exists("/plugins/gtk/cap/threshold")) {
 		int threshold = gaim_prefs_get_int("/plugins/gtk/cap/threshold");
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(threshold_input), threshold);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->threshold_input), threshold);
 	}
-	g_signal_connect(G_OBJECT(threshold_input), "value-changed",
+
+	/* Add the signals */
+	g_signal_connect(G_OBJECT(ui->ret), "destroy",
+		G_CALLBACK(cap_prefs_ui_destroy_cb), ui);
+
+	g_signal_connect(G_OBJECT(ui->driver_choice), "changed",
+		G_CALLBACK(driver_choice_changed_cb), ui);	
+	
+	g_signal_connect(G_OBJECT(ui->driver_config), "notify::expanded",
+		G_CALLBACK(driver_config_expanded_cb), ui);
+
+	g_signal_connect(G_OBJECT(ui->driver_connect_button), "toggled",
+		G_CALLBACK(connect_toggled_cb), ui);
+
+	g_signal_connect(G_OBJECT(ui->msg_difference_input), "value-changed",
+		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/max_msg_difference");
+	
+	g_signal_connect(G_OBJECT(ui->last_seen_input), "value-changed",
+		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/max_seen_difference");
+	
+	g_signal_connect(G_OBJECT(ui->threshold_input), "value-changed",
 		G_CALLBACK(numeric_spinner_prefs_cb), "/plugins/gtk/cap/threshold");
-	gtk_box_pack_start(GTK_BOX(threshold_hbox), threshold_label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(threshold_hbox), threshold_input, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(threshold_hbox), threshold_minutes_label, FALSE, FALSE, 0);
-
-	//dbd path input
-	dbd_label = gtk_label_new(_("libdbi driver path:"));
-	dbd_input = gtk_entry_new();
-	if(gaim_prefs_exists("/plugins/gtk/cap/libdbi_drivers")) {
-		gtk_entry_set_text(GTK_ENTRY(dbd_input), gaim_prefs_get_string("/plugins/gtk/cap/libdbi_drivers"));
+	
+	g_signal_connect(G_OBJECT(ui->dbd_button), "clicked",
+		G_CALLBACK(driver_location_verify_cb), ui);
+	
+	/* libdbi was not successfully initialized so disable the driver selection.
+	 * Also disable the configuration for the database.
+	 */
+	if(!_dbi_initialized || _num_drivers <= 0) {
+		/* Since DBI is not available disable database configuration */
+		gtk_widget_set_sensitive(ui->driver_choice, FALSE);
+		gtk_widget_set_sensitive(ui->driver_config, FALSE);
+		gtk_widget_set_sensitive(ui->driver_connect_button, FALSE);
+	} else {
+		set_driver_choice_options(GTK_COMBO_BOX(ui->driver_choice));
 	}
-	dbd_hbox = gtk_hbox_new(FALSE, 18);
-	g_signal_connect(G_OBJECT(dbd_input), "focus-out-event",
-		G_CALLBACK(text_entry_prefs_cb), "/plugins/gtk/cap/libdbi_drivers");
-	gtk_box_pack_start(GTK_BOX(dbd_hbox), dbd_label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(dbd_hbox), dbd_input, FALSE, FALSE, 0);
+	
+	if(_conn) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->driver_connect_button), TRUE);
+		gtk_widget_set_sensitive(ui->driver_choice, FALSE);
+		gtk_widget_set_sensitive(ui->driver_config, FALSE);
+	} else {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ui->driver_connect_button), FALSE);
+	}
 
-	//Config window
-	gtk_box_pack_start(GTK_BOX(vbox), driver_vbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), msg_difference_hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), last_seen_hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), threshold_hbox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), dbd_hbox, FALSE, FALSE, 0);
+	return ui;
+}
 
-	return ret;
+static void driver_choice_changed_cb(GtkComboBox *widget, gpointer user_data) {
+	CapPrefsUI *ui = user_data;
+	if(strcmp(gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui->driver_choice)), "mysql") == 0) {
+		gtk_widget_set_sensitive(ui->driver_config, TRUE);
+		gtk_widget_set_sensitive(ui->driver_connect_button, TRUE);
+	} else {
+		gtk_widget_set_sensitive(ui->driver_config, FALSE);
+		gtk_widget_set_sensitive(ui->driver_connect_button, FALSE);
+	}
+}
+
+static void driver_config_expanded_cb(GObject *object, GParamSpec *param_spec, gpointer user_data) {
+	CapPrefsUI *ui = user_data;
+	GtkExpander *expander;
+	gchar *driver = gtk_combo_box_get_active_text(GTK_COMBO_BOX(ui->driver_choice));
+	expander = GTK_EXPANDER(object);
+	if(gtk_expander_get_expanded(expander)) {
+		if(strcmp(driver, "mysql") == 0) {
+			gtk_container_add(GTK_CONTAINER(expander), get_mysql_config());
+		}
+	} else {
+		gtk_container_remove(GTK_CONTAINER(expander), gtk_bin_get_child(GTK_BIN(expander)));
+	}
+}
+
+static void connect_toggled_cb(GtkToggleButton *togglebutton, gpointer user_data) {
+	CapPrefsUI *ui = user_data;
+	if(gtk_toggle_button_get_active(togglebutton)) {
+		//connect
+		if(create_database_connection()) {
+			gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_choice), FALSE);
+			gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_config), FALSE);
+			gtk_widget_set_sensitive(GTK_WIDGET(ui->dbd_input), FALSE);
+			gtk_widget_set_sensitive(GTK_WIDGET(ui->dbd_button), FALSE);
+			gaim_prefs_set_bool("/plugins/gtk/cap/connected", TRUE);
+		} else {
+			gtk_toggle_button_set_active(togglebutton, FALSE);
+		}
+	} else {
+		//disconnect
+		destroy_database_connection();
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_choice), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_config), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->dbd_input), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->dbd_button), TRUE);
+		gaim_prefs_set_bool("/plugins/gtk/cap/connected", FALSE);
+	}
 }
 
 static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data) {
 	gaim_prefs_set_int(user_data, gtk_spin_button_get_value_as_int(spinbutton));
+}
+
+static void driver_location_verify_cb(GtkButton *button, gpointer user_data) {
+	CapPrefsUI *ui = user_data;
+	gchar *path = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(ui->dbd_input));
+	
+	if(_dbi_initialized)
+		dbi_shutdown();
+
+	gaim_prefs_set_string("/plugins/gtk/cap/libdbi_drivers", path);
+	_num_drivers = dbi_initialize(path);
+	if(_num_drivers == -1) {
+		_dbi_initialized = FALSE;
+	} else {
+		_dbi_initialized = TRUE;
+	}
+	if(_num_drivers > 0) {
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_choice), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_config), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_connect_button), TRUE);
+		set_driver_choice_options(GTK_COMBO_BOX(ui->driver_choice));
+	} else {
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_choice), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_config), FALSE);
+		gtk_expander_set_expanded(GTK_EXPANDER(ui->driver_config), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(ui->driver_connect_button), FALSE);
+	}
 }
 
 static gboolean text_entry_prefs_cb(GtkWidget *widget, GdkEventFocus *event, gpointer user_data) {
@@ -902,33 +1070,30 @@ static gboolean text_entry_prefs_cb(GtkWidget *widget, GdkEventFocus *event, gpo
 	return FALSE;
 }
 
-static void combobox_prefs_cb(GtkComboBox *widget, gpointer user_data) {
-	gaim_prefs_set_string(user_data, gtk_combo_box_get_active_text(widget));
-}
+void set_driver_choice_options(GtkComboBox *chooser) {
+	dbi_driver driver = NULL;
+	GtkListStore *list_store;
+	gint index = 0;
+	gint selected = 0;
 
-static void prefs_closed_cb(GtkObject *widget, gpointer user_data) {
-	gboolean successfully_configured = FALSE;
-	successfully_configured = add_plugin_functionality(_plugin_pointer);
-	gaim_debug_info("cap", "Configured? %s\n", ((successfully_configured) ? "yes" : "no"));
-	if(!successfully_configured) {
-		if(error_msg) {
-			GtkWidget *error_dialog = gtk_message_dialog_new(
-				NULL,
-				GTK_DIALOG_DESTROY_WITH_PARENT, 
-				GTK_MESSAGE_ERROR,
-				GTK_BUTTONS_CLOSE,
-				"%s\n%s",
-				_("Contact Availability Prediction configuration error."), get_error_msg());
-			gtk_dialog_run(GTK_DIALOG(error_dialog));
-			gtk_widget_destroy(error_dialog);
+	list_store = GTK_LIST_STORE(gtk_combo_box_get_model(chooser));
+	gtk_list_store_clear(list_store);
+
+	if(!_dbi_initialized)
+		return;
+	
+	while((driver = dbi_driver_list(driver)) != NULL) {
+		gtk_combo_box_append_text(chooser, dbi_driver_get_name(driver));
+		if(strcmp(dbi_driver_get_name(driver), gaim_prefs_get_string("/plugins/gtk/cap/db_driver")) == 0) {
+			selected = index;
 		}
+		++index;
 	}
-			
-	gaim_prefs_set_bool(user_data, successfully_configured);
+	gtk_combo_box_set_active(chooser, selected);
 }
 
 static GtkWidget * get_mysql_config() {
-	GtkWidget *config_area = gtk_table_new(5, 2, TRUE);
+	GtkWidget *config_area = gtk_table_new(5, 2, FALSE);
 	GtkWidget *username_label = gtk_label_new(_("Username:"));
 	GtkWidget *username_input = gtk_entry_new();
 	GtkWidget *password_label = gtk_label_new(_("Password:"));
@@ -942,16 +1107,51 @@ static GtkWidget * get_mysql_config() {
 
 	gtk_entry_set_visibility(GTK_ENTRY(password_input), FALSE);
 
-	gtk_table_attach_defaults(GTK_TABLE(config_area), host_label, 0, 1, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), host_input, 1, 2, 0, 1);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), port_label, 0, 1, 1, 2);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), port_input, 1, 2, 1, 2);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), db_label, 0, 1, 2, 3);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), db_input, 1, 2, 2, 3);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), username_label, 0, 1, 3, 4);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), username_input, 1, 2, 3, 4);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), password_label, 0, 1, 4, 5);
-	gtk_table_attach_defaults(GTK_TABLE(config_area), password_input, 1, 2, 4, 5);
+	gtk_misc_set_alignment(GTK_MISC(username_label), 0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(username_label), 10, 0);
+
+	gtk_misc_set_alignment(GTK_MISC(password_label), 0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(password_label), 10, 0);
+
+	gtk_misc_set_alignment(GTK_MISC(host_label), 0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(host_label), 10, 0);
+
+	gtk_misc_set_alignment(GTK_MISC(db_label), 0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(db_label), 10, 0);
+
+	gtk_misc_set_alignment(GTK_MISC(port_label), 0, 0.5);
+	gtk_misc_set_padding(GTK_MISC(port_label), 10, 0);
+
+	gtk_table_attach(GTK_TABLE(config_area), host_label, 0, 1, 0, 1,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), host_input, 1, 2, 0, 1,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), port_label, 0, 1, 1, 2,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), port_input, 1, 2, 1, 2,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), db_label, 0, 1, 2, 3,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), db_input, 1, 2, 2, 3,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), username_label, 0, 1, 3, 4,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), username_input, 1, 2, 3, 4,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), password_label, 0, 1, 4, 5,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(GTK_TABLE(config_area), password_input, 1, 2, 4, 5,
+		(GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+		(GtkAttachOptions) (0), 0, 0);
 
 	//Initialize with data
 	if(gaim_prefs_exists("/plugins/gtk/cap/mysql/db_host")) {
@@ -997,19 +1197,6 @@ static GtkWidget * get_mysql_config() {
 	return config_area;
 }
 
-static void driver_config_expanded(GObject *object, GParamSpec *param_spec, gpointer user_data) {
-	GtkExpander *expander;
-	gchar *driver = user_data;
-	expander = GTK_EXPANDER(object);
-	if(gtk_expander_get_expanded(expander)) {
-		if(g_ascii_strcasecmp(driver, "mysql") == 0) {
-			gtk_container_add(GTK_CONTAINER(expander), get_mysql_config());
-		}
-	} else {
-		gtk_container_remove(GTK_CONTAINER(expander), gtk_bin_get_child(GTK_BIN(expander)));
-	}
-}
-
 static GaimGtkPluginUiInfo ui_info = {
 	get_config_frame,
 	0 /* page_num (reserved) */
@@ -1042,12 +1229,10 @@ static GaimPluginInfo info = {
 };
 
 static void init_plugin(GaimPlugin *plugin) {
-	/* TODO: change this before distributing */
 	gaim_prefs_add_none("/plugins/gtk/cap");
 	gaim_prefs_add_int("/plugins/gtk/cap/max_seen_difference", 1);
 	gaim_prefs_add_int("/plugins/gtk/cap/max_msg_difference", 10);
 	gaim_prefs_add_int("/plugins/gtk/cap/threshold", 5);
-	gaim_prefs_add_string("/plugins/gtk/cap/libdbi_drivers", "/usr/lib/dbd");
 	gaim_prefs_add_bool("/plugins/gtk/cap/configured", FALSE);
 	gaim_prefs_add_string("/plugins/gtk/cap/db_driver", "mysql");
 	gaim_prefs_add_none("/plugins/gtk/cap/mysql");

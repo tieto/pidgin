@@ -48,27 +48,24 @@
 
 /* Variables used throughout lifetime of the plugin */
 GaimPlugin *_plugin_pointer;
-dbi_conn _conn; /**< The database connection */
-dbi_driver _driver; /**< The database driver */
+dbi_conn _conn = NULL; /**< The database connection */
+dbi_driver _driver = NULL; /**< The database driver */
 GHashTable *_buddy_stats = NULL;
 GHashTable *_my_offline_times = NULL;
 GString *error_msg = NULL;
 gboolean _signals_connected;
+gboolean _dbi_initialized;
+int _num_drivers;
 
 enum driver_types {MYSQL};
 
 /* Function definitions */
 static char * quote_string(const char *str);
 static gboolean plugin_load(GaimPlugin *plugin);
-static gboolean add_plugin_functionality(GaimPlugin *plugin);
+static void add_plugin_functionality(GaimPlugin *plugin);
+static void cancel_conversation_timeouts(gpointer key, gpointer value, gpointer user_data);
+static void remove_plugin_functionality(GaimPlugin *plugin);
 static gboolean plugin_unload(GaimPlugin *plugin);
-static GtkWidget * get_config_frame(GaimPlugin *plugin);
-static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data);
-static gboolean text_entry_prefs_cb(GtkWidget *widget, GdkEventFocus *event, gpointer user_data);
-static void combobox_prefs_cb(GtkComboBox *widget, gpointer user_data);
-static void prefs_closed_cb(GtkObject *widget, gpointer user_data);
-static GtkWidget * get_mysql_config();
-static void driver_config_expanded(GObject *object, GParamSpec *param_spec, gpointer user_data);
 static void init_plugin(GaimPlugin *plugin);
 static void generate_prediction(CapStatistics *statistics);
 static double generate_prediction_for(GaimBuddy *buddy);
@@ -84,12 +81,13 @@ static void insert_cap_failure(CapStatistics *stats);
 static gboolean max_message_difference_cb(gpointer data);
 
 /* Various CAP helper functions */
-static const gchar * get_error_msg();
+static const gchar * get_error_msg(void);
 static void set_error_msg(const gchar *msg);
 static void reset_all_last_message_times(gpointer key, gpointer value, gpointer user_data);
 static GaimStatus * get_status_for(GaimBuddy *buddy);
-static void create_tables();
-static gboolean create_database_connection();
+static void create_tables(void);
+static gboolean create_database_connection(void);
+static void destroy_database_connection(void);
 static guint word_count(const gchar *string);
 static gboolean last_message_time_in_range(CapStatistics *statistics, gdouble max_difference);
 static gboolean last_seen_time_in_range(CapStatistics *statistics, gdouble max_difference);
@@ -112,5 +110,54 @@ static void signed_off(GaimConnection *gc);
 
 /* Call backs */
 void display_statistics_action_cb(GaimBlistNode *node, gpointer data);
+
+/* Prefs UI */
+typedef struct _CapPrefsUI CapPrefsUI;
+
+struct _CapPrefsUI {
+	GtkWidget *ret;
+	GtkWidget *db_vbox;
+	GtkWidget *cap_vbox;
+	GtkWidget *table_layout;
+
+	GtkWidget *driver_vbox;
+	GtkWidget *driver_select_hbox;
+	GtkWidget *driver_choice;
+	GtkWidget *driver_label;
+	GtkWidget *driver_config_hbox;
+	GtkWidget *driver_config;
+	GtkWidget *driver_connect_button;
+
+	GtkWidget *dbd_label;
+	GtkWidget *dbd_input;
+	GtkWidget *dbd_hbox;
+	GtkWidget *dbd_button;
+
+	GtkWidget *threshold_label;
+	GtkWidget *threshold_input;
+	GtkWidget *threshold_minutes_label;
+
+	GtkWidget *msg_difference_label;
+	GtkWidget *msg_difference_input;
+	GtkWidget *msg_difference_minutes_label;
+
+	GtkWidget *last_seen_label;
+	GtkWidget *last_seen_input;
+	GtkWidget *last_seen_minutes_label;
+};
+
+static GtkWidget * get_config_frame(GaimPlugin *plugin);
+static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data);
+static CapPrefsUI * create_cap_prefs_ui(void);
+
+static void driver_choice_changed_cb(GtkComboBox *widget, gpointer user_data);
+static void driver_config_expanded_cb(GObject *object, GParamSpec *param_spec, gpointer user_data);
+static void connect_toggled_cb(GtkToggleButton *togglebutton, gpointer user_data);
+static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data);
+static void driver_location_verify_cb(GtkButton *button, gpointer user_data);
+static gboolean text_entry_prefs_cb(GtkWidget *widget, GdkEventFocus *event, gpointer user_data);
+
+static void set_driver_choice_options(GtkComboBox *chooser); 
+static GtkWidget * get_mysql_config(void);
 
 #endif
