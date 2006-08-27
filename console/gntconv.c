@@ -191,7 +191,7 @@ gg_create_conversation(GaimConversation *conv)
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
-	gnt_widget_set_name(ggc->window, title);
+	gnt_widget_set_name(ggc->window, "conversation-window");
 
 	ggc->tv = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);

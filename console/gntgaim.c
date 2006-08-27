@@ -224,7 +224,7 @@ init_libgaim(int argc, char **argv)
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("Gaim %s\n", VERSION);
+		printf("gntgaim %s\n", VERSION);
 		return 0;
 	}
 

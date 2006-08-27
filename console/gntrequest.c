@@ -361,8 +361,12 @@ gg_request_fields(const char *title, const char *primary,
 			}
 			else if (type == GAIM_REQUEST_FIELD_INTEGER)
 			{
-				GntWidget *entry = gnt_entry_new(
-							gaim_request_field_string_get_default_value(field));
+				char str[256];
+				int val = gaim_request_field_int_get_default_value(field);
+				GntWidget *entry;
+				
+				snprintf(str, sizeof(str), "%d", val);
+				entry = gnt_entry_new(str);
 				gnt_entry_set_flag(GNT_ENTRY(entry), GNT_ENTRY_FLAG_INT);
 				gnt_box_add_widget(GNT_BOX(hbox), entry);
 				field->ui_data = entry;

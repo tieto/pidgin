@@ -210,6 +210,72 @@ gg_request_add_buddy(GaimAccount *account, const char *username, const char *grp
 }
 
 static void
+add_chat_cb(void *data, GaimRequestFields *allfields)
+{
+	GaimAccount *account;
+	const char *alias, *name, *group;
+	GaimChat *chat;
+	GaimGroup *grp;
+	GHashTable *hash = NULL;
+	GaimConnection *gc;
+
+	account = gaim_request_fields_get_account(allfields, "account");
+	name = gaim_request_fields_get_string(allfields, "name");
+	alias = gaim_request_fields_get_string(allfields, "alias");
+	group = gaim_request_fields_get_string(allfields, "group");
+
+	if (!gaim_account_is_connected(account) || !name || !*name)
+		return;
+	
+	if (!group || !*group)
+		group = _("Chats");
+
+	gc = gaim_account_get_connection(account);
+
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+		hash = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, name);
+	
+	chat = gaim_chat_new(account, name, hash);
+
+	if (chat != NULL) {
+		if ((grp = gaim_find_group(group)) == NULL) {
+			grp = gaim_group_new(group);
+			gaim_blist_add_group(grp, NULL);
+		}
+		gaim_blist_add_chat(chat, grp, NULL);
+	}
+}
+
+static void
+gg_request_add_chat(GaimAccount *account, GaimGroup *grp, const char *alias, const char *name)
+{
+	GaimRequestFields *fields = gaim_request_fields_new();
+	GaimRequestFieldGroup *group = gaim_request_field_group_new(NULL);
+	GaimRequestField *field;
+
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_account_new("account", _("Account"), NULL);
+	gaim_request_field_account_set_show_all(field, FALSE);
+	if (account)
+		gaim_request_field_account_set_value(field, account);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("name", _("Name"), name, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("alias", _("Alias"), alias, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("group", _("Group"), grp->name, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(NULL, _("Add Chat"), NULL,
+			_("You can edit more information from the context menu later."),
+			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL, NULL);
+}
+
+static void
 add_group_cb(gpointer null, const char *group)
 {
 	GaimGroup *grp;
@@ -252,7 +318,7 @@ static GaimBlistUiOps blist_ui_ops =
 	NULL,
 	NULL,
 	.request_add_buddy = gg_request_add_buddy,
-	NULL,
+	.request_add_chat = gg_request_add_chat,
 	.request_add_group = gg_request_add_group
 };
 
@@ -466,15 +532,77 @@ context_menu_toggle(GntTree *tree, GaimMenuAction *action, gpointer null)
 }
 
 static void
+chat_components_edit_ok(GaimChat *chat, GaimRequestFields *allfields)
+{
+	GList *groups, *fields;
+
+	for (groups = gaim_request_fields_get_groups(allfields); groups; groups = groups->next) {
+		fields = gaim_request_field_group_get_fields(groups->data);
+		for (; fields; fields = fields->next) {
+			GaimRequestField *field = fields->data;
+			const char *id;
+			char *val;
+
+			id = gaim_request_field_get_id(field);
+			if (gaim_request_field_get_type(field) == GAIM_REQUEST_FIELD_INTEGER)
+				val = g_strdup_printf("%d", gaim_request_field_int_get_value(field));
+			else
+				val = g_strdup(gaim_request_field_string_get_value(field));
+
+			g_hash_table_replace(chat->components, g_strdup(id), val);  /* val should not be free'd */
+		}
+	}
+}
+
+static void
+chat_components_edit(GaimChat *chat, GaimBlistNode *null)
+{
+	GaimRequestFields *fields = gaim_request_fields_new();
+	GaimRequestFieldGroup *group = gaim_request_field_group_new(NULL);
+	GaimRequestField *field;
+	GList *parts, *iter;
+	struct proto_chat_entry *pce;
+
+	gaim_request_fields_add_group(fields, group);
+
+	parts = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
+
+	for (iter = parts; iter; iter = iter->next) {
+		pce = iter->data;
+		if (pce->is_int) {
+			int val;
+			const char *str = g_hash_table_lookup(chat->components, pce->identifier);
+			if (!str || sscanf(str, "%d", &val) != 1)
+				val = pce->min;
+			field = gaim_request_field_int_new(pce->identifier, pce->label, val);
+		} else {
+			field = gaim_request_field_string_new(pce->identifier, pce->label,
+					g_hash_table_lookup(chat->components, pce->identifier), FALSE);
+		}
+
+		gaim_request_field_group_add_field(group, field);
+		g_free(pce);
+	}
+
+	g_list_free(parts);
+
+	gaim_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
+			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL, chat);
+}
+
+static void
 create_chat_menu(GntTree *tree, GaimChat *chat)
 {
 	GaimMenuAction *action = gaim_menu_action_new(_("Auto-join"), NULL, chat, NULL);
 
 	gnt_tree_add_choice(tree, action, gnt_tree_create_row(tree, action->label), NULL, NULL);
 	gnt_tree_set_choice(tree, action, gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"));
-	
+
 	g_signal_connect_swapped(G_OBJECT(tree), "destroy",
 			G_CALLBACK(gaim_menu_action_free), action);
+
+	add_custom_action(tree, _("Edit Settings"), (GaimCallback)chat_components_edit, chat);
+	
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(context_menu_toggle), NULL);
 }
 
@@ -491,10 +619,18 @@ gg_add_group(GaimGroup *grp, GaimBlistNode *node)
 }
 
 static void
+gg_add_chat(GaimGroup *grp, GaimBlistNode *node)
+{
+	gaim_blist_request_add_chat(NULL, grp, NULL, NULL);
+}
+
+static void
 create_group_menu(GntTree *tree, GaimGroup *group)
 {
 	add_custom_action(tree, _("Add Buddy"),
 			GAIM_CALLBACK(gg_add_buddy), group);
+	add_custom_action(tree, _("Add Chat"),
+			GAIM_CALLBACK(gg_add_chat), group);
 	add_custom_action(tree, _("Add Group"),
 			GAIM_CALLBACK(gg_add_group), group);
 }
@@ -1005,7 +1141,8 @@ reset_blist_window(GntWidget *window, gpointer null)
 		node = gaim_blist_node_next(node, TRUE);
 	}
 
-	remove_typing_cb(NULL);
+	if (ggblist->typing)
+		g_source_remove(ggblist->typing);
 	remove_peripherals(ggblist);
 	g_free(ggblist);
 	ggblist = NULL;
@@ -1359,9 +1496,12 @@ void gg_blist_uninit()
 	ggblist = NULL;
 }
 
-void gg_blist_get_position(int *x, int *y)
+gboolean gg_blist_get_position(int *x, int *y)
 {
+	if (!ggblist || !ggblist->window)
+		return FALSE;
 	gnt_widget_get_position(ggblist->window, x, y);
+	return TRUE;
 }
 
 void gg_blist_set_position(int x, int y)
@@ -1369,9 +1509,12 @@ void gg_blist_set_position(int x, int y)
 	gnt_widget_set_position(ggblist->window, x, y);
 }
 
-void gg_blist_get_size(int *width, int *height)
+gboolean gg_blist_get_size(int *width, int *height)
 {
+	if (!ggblist || !ggblist->window)
+		return FALSE;
 	gnt_widget_get_size(ggblist->window, width, height);
+	return TRUE;
 }
 
 void gg_blist_set_size(int width, int height)

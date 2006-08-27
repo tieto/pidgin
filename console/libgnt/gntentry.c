@@ -349,7 +349,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		{
 			const char *str, *next;
 
-			for (str = text; *str;)
+			for (str = text; *str; str = next)
 			{
 				int len;
 				next = g_utf8_find_next_char(str, NULL);

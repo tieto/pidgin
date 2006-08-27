@@ -633,10 +633,14 @@ gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 			tree->current = row;
 			redraw_tree(tree);
 			tree_selection_changed(tree, old, tree->current);
-		} else if (row == tree->current && row->choice) {
-			row->isselected = !row->isselected;
-			g_signal_emit(tree, signals[SIG_TOGGLED], 0, row->key);
-			redraw_tree(tree);
+		} else if (row && row == tree->current) {
+			if (row->choice) {
+				row->isselected = !row->isselected;
+				g_signal_emit(tree, signals[SIG_TOGGLED], 0, row->key);
+				redraw_tree(tree);
+			} else {
+				gnt_widget_activate(widget);
+			}
 		}
 	} else {
 		return FALSE;
