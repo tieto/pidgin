@@ -76,7 +76,9 @@ msn_object_new_from_string(const char *str)
 	char *tag, *c;
 
 	g_return_val_if_fail(str != NULL, NULL);
-	g_return_val_if_fail(!strncmp(str, "<msnobj ", 8), NULL);
+
+	if (strncmp(str, "<msnobj ", 8))
+		return NULL;
 
 	obj = msn_object_new();
 
