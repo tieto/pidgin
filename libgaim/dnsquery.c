@@ -87,6 +87,21 @@ gaim_dnsquery_resolved(GaimDnsQueryData *query_data, GSList *hosts)
 	gaim_debug_info("dnsquery", "IP resolved for %s\n", query_data->hostname);
 	if (query_data->callback != NULL)
 		query_data->callback(hosts, query_data->data, NULL);
+	else
+	{
+		/*
+		 * Callback is a required parameter, but it can get set to
+		 * NULL if we cancel a thread-based DNS lookup.  So we need
+		 * to free hosts.
+		 */
+		while (hosts != NULL)
+		{
+			hosts = g_slist_remove(hosts, hosts->data);
+			g_free(hosts->data);
+			hosts = g_slist_remove(hosts, hosts->data);
+		}
+	}
+
 	gaim_dnsquery_destroy(query_data);
 }
 
@@ -566,6 +581,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 
 	g_return_val_if_fail(hostname != NULL, NULL);
 	g_return_val_if_fail(port     != 0, NULL);
+	g_return_val_if_fail(callback != NULL, NULL);
 
 	query_data = g_new(GaimDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
@@ -728,6 +744,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 
 	g_return_val_if_fail(hostname != NULL, NULL);
 	g_return_val_if_fail(port     != 0, NULL);
+	g_return_val_if_fail(callback != NULL, NULL);
 
 	gaim_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
 
