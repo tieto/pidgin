@@ -1739,15 +1739,17 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
-	xmlnode_set_attrib(adl_node, "l", "1");
 
-	msn_add_contact_xml(adl_node,who,3,1);
+	msn_add_contact_xml(adl_node,who,1,1);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
-
-	msn_notification_post_adl(notification->servconn->cmdproc,
+	if(msn_user_is_yahoo(notification->session->account,who)){
+		msn_notification_fqy_yahoo(notification->session, who);
+	}else{
+		msn_notification_post_adl(notification->servconn->cmdproc,
 							payload,payload_len);
+	}
 }
 
 void
@@ -1764,9 +1766,8 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
-	xmlnode_set_attrib(rml_node, "l", "1");
 
-	msn_add_contact_xml(rml_node,who,3,1);
+	msn_add_contact_xml(rml_node,who,1,1);
 
 	payload = xmlnode_to_str(rml_node,&payload_len);
 	xmlnode_free(rml_node);

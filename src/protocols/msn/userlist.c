@@ -610,6 +610,8 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 
 	user = msn_userlist_find_user(userlist, who);
 
+	g_return_if_fail(user != NULL);
+
 	/*delete the contact from address book via soap action*/
 	msn_delete_contact(userlist->session->contact,user->uid);
 
@@ -636,7 +638,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 	/* Then request the rem to the server. */
 	list = lists[list_id];
 
-//	msn_notification_rem_buddy(userlist->session->notification, list, who, group_id);
+	msn_notification_rem_buddy(userlist->session->notification, list, who, group_id);
 }
 
 /*add buddy*/
@@ -693,7 +695,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	gaim_debug_info("MaYuan", "add user:{%s} to group id {%s}\n",store_name ,group_id);
 	msn_add_contact(userlist->session->contact,who,group_id);
-#if 0
+#if 1
 	msn_notification_add_buddy(userlist->session->notification, list, who,
 							   store_name, group_id);
 #endif

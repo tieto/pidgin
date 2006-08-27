@@ -554,7 +554,7 @@ msn_delete_contact(MsnContact *contact,const char *contactId)
 	char *contact_xml = NULL ;
 	MsnSoapReq *soap_request;
 
-	g_return_if_fail(contactId == NULL);
+	g_return_if_fail(contactId != NULL);
 	gaim_debug_info("MaYuan","msn delete a contact,contactId:{%s}...\n",contactId);
 	contact_xml = g_strdup_printf(MSN_CONTACTS_DEL_XML,contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE,contact_xml);

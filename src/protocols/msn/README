@@ -30,7 +30,11 @@ Till now, This project has implemented the following Feature:
 * Windows Live ID authentication.
 
 * Offline Instant Message
-Now can send and receive the Offline Instant Message.
+Now can send and receive the Offline Instant Message to MSN user and Yahoo User.
+
+*contact management
+Can add/delete Contact
+Can add/delete Group
 
 * Communicate with Yahoo User
 Can send/receive Message/Nudge to Yahoo User.
