@@ -350,9 +350,18 @@ gaim_proxy_connect_data_connected(GaimProxyConnectData *connect_data)
  *       good error_message.
  */
 static void
-gaim_proxy_connect_data_error(GaimProxyConnectData *connect_data, const gchar *error_message)
+gaim_proxy_connect_data_error(GaimProxyConnectData *connect_data, const char *format, ...)
 {
+	gchar *error_message;
+	va_list args;
+
+	va_start(args, format);
+	error_message = g_strdup_vprintf(format, args);
+	va_end(args);
+
 	connect_data->connect_cb(connect_data->data, -1, error_message);
+	g_free(error_message);
+
 	gaim_proxy_connect_data_destroy(connect_data);
 }
 
@@ -509,7 +518,6 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	GaimProxyConnectData *connect_data = data;
 	guchar *p;
 	gsize max_read;
-	gchar *msg;
 
 	if(connect_data->read_buffer == NULL) {
 		connect_data->read_buf_len = 8192;
@@ -587,10 +595,9 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (error)
 	{
-		msg = g_strdup_printf("Unable to parse response from HTTP proxy: %s\n",
+		gaim_proxy_connect_data_error(connect_data,
+				_("Unable to parse response from HTTP proxy: %s\n"),
 				connect_data->read_buffer);
-		gaim_proxy_connect_data_error(connect_data, msg);
-		g_free(msg);
 		return;
 	}
 	else if (status != 200)
@@ -612,9 +619,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
-					msg = g_strdup_printf(_("HTTP proxy connection error %d"), status);
-					gaim_proxy_connect_data_error(connect_data, msg);
-					g_free(msg);
+					gaim_proxy_connect_data_error(connect_data,
+							_("HTTP proxy connection error %d"), status);
 					return;
 				}
 				*username = '\0';
@@ -661,9 +667,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
-					msg = g_strdup_printf(_("HTTP proxy connection error %d"), status);
-					gaim_proxy_connect_data_error(connect_data, msg);
-					g_free(msg);
+					gaim_proxy_connect_data_error(connect_data,
+							_("HTTP proxy connection error %d"), status);
 					return;
 				}
 				*username = '\0';
@@ -700,20 +705,18 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else {
-				msg = g_strdup_printf(_("HTTP proxy connection error %d"), status);
-				gaim_proxy_connect_data_error(connect_data, msg);
-				g_free(msg);
+				gaim_proxy_connect_data_error(connect_data,
+						_("HTTP proxy connection error %d"), status);
 				return;
 			}
 		}
 		if(status == 403 /* Forbidden */ ) {
-			msg = g_strdup_printf(_("Access denied: HTTP proxy server forbids port %d tunnelling."), connect_data->port);
-			gaim_proxy_connect_data_error(connect_data, msg);
-			g_free(msg);
+			gaim_proxy_connect_data_error(connect_data,
+					_("Access denied: HTTP proxy server forbids port %d tunnelling."),
+					connect_data->port);
 		} else {
-			msg = g_strdup_printf(_("HTTP proxy connection error %d"), status);
-			gaim_proxy_connect_data_error(connect_data, msg);
-			g_free(msg);
+			gaim_proxy_connect_data_error(connect_data,
+					_("HTTP proxy connection error %d"), status);
 		}
 	} else {
 		gaim_input_remove(connect_data->inpa);
@@ -1579,10 +1582,8 @@ connection_host_resolved(GSList *hosts, gpointer data,
 
 	if (error_message != NULL)
 	{
-		gchar *tmp;
-		tmp = g_strdup_printf("Error while resolving hostname: %s\n", error_message);
-		gaim_proxy_connect_data_error(connect_data, tmp);
-		g_free(tmp);
+		gaim_proxy_connect_data_error(connect_data,
+				_("Error while resolving hostname: %s\n"), error_message);
 		return;
 	}
 
