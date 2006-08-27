@@ -157,6 +157,7 @@ const Gaim::StatusType			T_GaimObj
 
 Gaim::StoredImage			T_GaimObj
 Gaim::Stringref				T_GaimObj
+Gaim::Util::FetchUrlData	T_PTR
 Gaim::Util::InfoFieldFormatCallback	T_PTR
 Gaim::Value				T_GaimObj
 
