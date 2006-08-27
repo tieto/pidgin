@@ -36,6 +36,7 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
+/* typedef struct _GaimUPnPRequestData GaimUPnPRequestData; */
 
 typedef void (*GaimUPnPCallback) (gboolean success, gpointer data);
 
@@ -56,12 +57,11 @@ void gaim_upnp_discover(GaimUPnPCallback cb, gpointer cb_data);
  * Retrieve the current UPnP control info, if there is any available.
  * This will only be filled in if gaim_upnp_discover() had been called,
  * and finished discovering.
- * 
+ *
  * @return The control URL for the IGD we'll use to use the IGD services
  */
 const GaimUPnPControlInfo* gaim_upnp_get_control_info(void);
 #endif
-
 
 /**
  * Gets the IP address from a UPnP enabled IGD that sits on the local
@@ -72,7 +72,6 @@ const GaimUPnPControlInfo* gaim_upnp_get_control_info(void);
  * @return The IP address of the network, or NULL if something went wrong
  */
 const gchar* gaim_upnp_get_public_ip(void);
-
 
 /**
  * Maps Ports in a UPnP enabled IGD that sits on the local network to
@@ -90,7 +89,7 @@ void gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 
 /**
  * Deletes a port mapping in a UPnP enabled IGD that sits on the local network
- * to this gaim client. Essentially, this function takes care of deleting the 
+ * to this gaim client. Essentially, this function takes care of deleting the
  * port forwarding after they have completed a connection so another client on
  * the local network can take advantage of the port forwarding
  *
@@ -102,6 +101,7 @@ void gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
  */
 void gaim_upnp_remove_port_mapping(unsigned short portmap,
 		const gchar* protocol, GaimUPnPCallback cb, gpointer cb_data);
+
 /*@}*/
 
 #ifdef __cplusplus

@@ -812,7 +812,12 @@ gaim_savedstatus_set_idleaway(gboolean idleaway)
 
 	old = gaim_savedstatus_get_current();
 	gaim_prefs_set_bool("/core/savedstatus/isidleaway", idleaway);
-	saved_status = gaim_savedstatus_get_current();
+	saved_status = idleaway ? gaim_savedstatus_get_idleaway()
+			: gaim_savedstatus_get_default();
+
+	if (idleaway && (gaim_savedstatus_get_type(old) != GAIM_STATUS_AVAILABLE))
+		/* Our global status is already "away," so don't change anything */
+		return;
 
 	accounts = gaim_accounts_get_all_active();
 	for (node = accounts; node != NULL; node = node->next)
