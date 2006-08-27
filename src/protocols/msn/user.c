@@ -60,8 +60,13 @@ msn_user_destroy(MsnUser *user)
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
 
-	if (user->group_ids != NULL)
+	if (user->group_ids != NULL){
+		GList *l;
+		for (l = user->group_ids; l != NULL; l = l->next){
+			g_free(l->data);
+		}
 		g_list_free(user->group_ids);
+	}
 
 	if (user->msnobj != NULL)
 		msn_object_destroy(user->msnobj);
@@ -265,20 +270,22 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 	GaimBuddy *b;
 	GaimGroup *g;
 	const char *passport;
+	const char *group_id;
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
 	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_append(user->group_ids,id);
+	group_id = g_strdup(id);
+	user->group_ids = g_list_append(user->group_ids,group_id);
 
 	userlist = user->userlist;
 	account = userlist->session->account;
 	passport = msn_user_get_passport(user);
 
-	group_name = msn_userlist_find_group_name(userlist, id);
+	group_name = msn_userlist_find_group_name(userlist, group_id);
 
-	gaim_debug_info("User","group id:%s,name:%s,user:%s\n",id,group_name,passport);
+	gaim_debug_info("User","group id:%s,name:%s,user:%s\n",group_id,group_name,passport);
 
 	g = gaim_find_group(group_name);
 
@@ -315,6 +322,7 @@ msn_user_remove_group_id(MsnUser *user, const char * id)
 	g_return_if_fail(id != NULL);
 
 	user->group_ids = g_list_remove(user->group_ids, id);
+	g_free(id);
 }
 
 void

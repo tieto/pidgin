@@ -114,10 +114,11 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	if (group_name != NULL)
 		group = gaim_find_group(group_name);
 
-	if (group != NULL)
+	if (group != NULL){
 		buddy = gaim_find_buddy_in_group(account, passport, group);
-	else
+	}else{
 		buddy = gaim_find_buddy(account, passport);
+	}
 
 	if (buddy != NULL)
 		gaim_blist_remove_buddy(buddy);

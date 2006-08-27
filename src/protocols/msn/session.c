@@ -270,7 +270,8 @@ msn_session_sync_users(MsnSession *session)
 
 	/* The core used to use msn_add_buddy to add all buddies before
 	 * being logged in. This no longer happens, so we manually iterate
-	 * over the whole buddy list to identify sync issues. */
+	 * over the whole buddy list to identify sync issues. 
+	 */
 	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next){
 		GaimGroup *group = (GaimGroup *)gnode;
 		const char *group_name = group->name;
@@ -299,13 +300,16 @@ msn_session_sync_users(MsnSession *session)
 						const char *group_id;
 						GList *l;
 
+						gaim_debug_info("MaYuan","remote user:{%s}\n",b->name);
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
 						if(group_id == NULL){
 							continue;
 						}
+						gaim_debug_info("MaYuan","group_id:{%s}\n",group_id);
 
 						for (l = remote_user->group_ids; l != NULL; l = l->next){
+							gaim_debug_info("MaYuan","l->data:{%s}\n",l->data);
 							if (!g_strcasecmp(group_id ,l->data)){
 								found = TRUE;
 								break;
