@@ -526,26 +526,29 @@ static void theme_install_theme(char *path, char *extn) {
 }
 
 static void
-theme_got_url(void *data, const char *themedata, size_t len)
+theme_got_url(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *themedata, size_t len, const gchar *error_message)
 {
 	FILE *f;
 	gchar *path;
 
-	if (len == 0)
+	if ((error_message != NULL) || (len == 0))
 		return;
 
 	f = gaim_mkstemp(&path, TRUE);
 	fwrite(themedata, len, 1, f);
 	fclose(f);
 
-	theme_install_theme(path, data);
+	theme_install_theme(path, user_data);
 
 	g_unlink(path);
 	g_free(path);
 }
 
-static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd,
-				guint info, guint t, gpointer data) {
+static void
+theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
+		GtkSelectionData *sd, guint info, guint t, gpointer data)
+{
 	gchar *name = (gchar *)sd->data;
 
 	if ((sd->length >= 0) && (sd->format == 8)) {
@@ -568,9 +571,9 @@ static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint
 		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			gaim_url_fetch(name, TRUE, NULL, FALSE, theme_got_url, ".tgz");
+			gaim_util_fetch_url(name, TRUE, NULL, FALSE, theme_got_url, ".tgz");
 		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
-			/* gaim_url_fetch() doesn't support HTTPS, but we want users
+			/* gaim_util_fetch_url() doesn't support HTTPS, but we want users
 			 * to be able to drag and drop links from the SF trackers, so
 			 * we'll try it as an HTTP URL. */
 			char *tmp = g_strdup(name + 1);
@@ -578,7 +581,7 @@ static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint
 			tmp[1] = 't';
 			tmp[2] = 't';
 			tmp[3] = 'p';
-			gaim_url_fetch(tmp, TRUE, NULL, FALSE, theme_got_url, ".tgz");
+			gaim_util_fetch_url(tmp, TRUE, NULL, FALSE, theme_got_url, ".tgz");
 			g_free(tmp);
 		}
 

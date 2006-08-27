@@ -1372,7 +1372,7 @@ gaim_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame *
 	return 1;
 }
 
-/* XXX - Should use gaim_url_fetch for the below stuff */
+/* XXX - Should use gaim_util_fetch_url for the below stuff */
 struct pieceofcrap {
 	GaimConnection *gc;
 	unsigned long offset;

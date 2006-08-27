@@ -37,6 +37,8 @@
 extern "C" {
 #endif
 
+typedef struct _GaimUtilFetchUrlData GaimUtilFetchUrlData;
+
 typedef struct _GaimMenuAction
 {
 	char *label;
@@ -823,7 +825,22 @@ char *gaim_str_binary_to_ascii(const unsigned char *binary, guint len);
 gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 						char **ret_path, char **ret_user, char **ret_passwd);
 
-typedef void (*GaimURLFetchCallback) (gpointer data, const char *buf, gsize len);
+/**
+ * This is the signature used for functions that act as the callback
+ * to gaim_util_fetch_url() or gaim_util_fetch_url_request().
+ *
+ * @param url_data      The same value that was returned when you called
+ *                      gaim_fetch_url() or gaim_fetch_url_request().
+ * @param user_data     The user data that your code passed into either
+ *                      gaim_util_fetch_url() or gaim_util_fetch_url_request().
+ * @param url_text      This will be NULL on error.  Otherwise this
+ *                      will contain the contents of the URL.
+ * @param len           0 on error, otherwise this is the length of buf.
+ * @param error_message If something went wrong then this will contain
+ *                      a descriptive error message, and buf will be
+ *                      NULL and len will be 0.
+ */
+typedef void (*GaimUtilFetchUrlCallback)(GaimUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message);
 
 /**
  * Fetches the data from a URL, and passes it to a callback function.
@@ -836,8 +853,8 @@ typedef void (*GaimURLFetchCallback) (gpointer data, const char *buf, gsize len)
  * @param cb         The callback function.
  * @param data       The user data to pass to the callback function.
  */
-#define gaim_url_fetch(url, full, user_agent, http11, cb, data) \
-	gaim_url_fetch_request(url, full, user_agent, http11, NULL, \
+#define gaim_util_fetch_url(url, full, user_agent, http11, cb, data) \
+	gaim_util_fetch_url_request(url, full, user_agent, http11, NULL, \
 		FALSE, cb, data);
 
 /**
@@ -850,15 +867,23 @@ typedef void (*GaimURLFetchCallback) (gpointer data, const char *buf, gsize len)
  * @param http11     TRUE if HTTP/1.1 should be used to download the file.
  * @param request    A HTTP request to send to the server instead of the
  *                   standard GET
- * @param include_headers if TRUE, include the HTTP headers in the
- *                   response
- * @param cb         The callback function.
+ * @param include_headers
+ *                   If TRUE, include the HTTP headers in the response.
+ * @param callback   The callback function.
  * @param data       The user data to pass to the callback function.
  */
-void gaim_url_fetch_request(const char *url, gboolean full,
-		const char *user_agent, gboolean http11,
-		const char *request, gboolean include_headers,
-		GaimURLFetchCallback cb, void *data);
+GaimUtilFetchUrlData *gaim_util_fetch_url_request(const gchar *url,
+		gboolean full, const gchar *user_agent, gboolean http11,
+		const gchar *request, gboolean include_headers,
+		GaimUtilFetchUrlCallback callback, gpointer data);
+
+/**
+ * Cancel a pending URL request started with either
+ * gaim_util_fetch_url_request() or gaim_util_fetch_url().
+ *
+ * @param url_data The data returned when you initiated the URL fetch.
+ */
+void gaim_util_fetch_url_cancel(GaimUtilFetchUrlData *url_data);
 
 /**
  * Decodes a URL into a plain string.

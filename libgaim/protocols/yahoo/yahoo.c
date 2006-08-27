@@ -52,7 +52,7 @@
 /* #define YAHOO_DEBUG */
 
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
-static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len);
+static void yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
 static void yahoo_set_status(GaimAccount *account, GaimStatus *status);
 
 static void
@@ -1885,13 +1885,16 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case 13:
 		if (!yd->wm) {
+			GaimUtilFetchUrlData *url_data;
 			yd->wm = TRUE;
 			if (yd->fd >= 0)
 				close(yd->fd);
 			if (gc->inpa)
 				gaim_input_remove(gc->inpa);
-			gaim_url_fetch(WEBMESSENGER_URL, TRUE, "Gaim/" VERSION, FALSE,
-			               yahoo_login_page_cb, gc);
+			url_data = gaim_util_fetch_url(WEBMESSENGER_URL, TRUE,
+					"Gaim/" VERSION, FALSE, yahoo_login_page_cb, gc);
+			if (url_data != NULL)
+				yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 			gaim_notify_warning(gc, NULL, _("Normal authentication failed!"),
 			                    _("The normal authentication method has failed. "
 			                      "This means either your password is incorrect, "
@@ -2523,20 +2526,24 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 	return hash;
 }
 
-static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
+static void
+yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	GaimConnection *gc = (GaimConnection *)user_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	const char *sn = gaim_account_get_username(account);
 	const char *pass = gaim_connection_get_password(gc);
-	GHashTable *hash = yahoo_login_page_hash(buf, len);
+	GHashTable *hash = yahoo_login_page_hash(url_text, len);
 	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
 	char md5[33], *hashp = md5, *chal;
 	int i;
 	GaimCipher *cipher;
 	GaimCipherContext *context;
 	guchar digest[16];
+
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	url = g_string_append(url, sn);
 	url = g_string_append(url, "&passwd=");
@@ -2708,6 +2715,11 @@ static void yahoo_close(GaimConnection *gc) {
 
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);
+
+	while (yd->url_datas) {
+		gaim_util_fetch_url_cancel(yd->url_datas->data);
+		yd->url_datas = g_slist_delete_link(yd->url_datas, yd->url_datas);
+	}
 
 	for (l = yd->confs; l; l = l->next) {
 		GaimConversation *conv = l->data;

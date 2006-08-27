@@ -742,13 +742,16 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 	return it;
 }
 
-static void yahoo_got_photo(void *data, const char *url_text, size_t len);
+static void
+yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
+		const gchar *url_text, size_t len, const gchar *error_message);
 
 #endif /* PHOTO_SUPPORT */
 
-static void yahoo_got_info(void *data, const char *url_text, size_t len)
+static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *url_text, size_t len, const gchar *error_message)
 {
-	YahooGetInfoData *info_data = (YahooGetInfoData *)data;
+	YahooGetInfoData *info_data = (YahooGetInfoData *)user_data;
 	char *p;
 	char buf[1024];
 #if PHOTO_SUPPORT
@@ -771,26 +774,22 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	const char *title;
 	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
 
-	if (!GAIM_CONNECTION_IS_VALID(info_data->gc)) {
-		g_free(info_data->name);
-		g_free(info_data);
-		return;
-	}
-
 	gaim_debug_info("yahoo", "In yahoo_got_info\n");
 
 	yd = info_data->gc->proto_data;
-	title = (yd->jp? _("Yahoo! Japan Profile") :
-					 _("Yahoo! Profile"));
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+
+	title = yd->jp ? _("Yahoo! Japan Profile") :
+					 _("Yahoo! Profile");
 
 	/* Get the tooltip info string */
 	tooltip_text = yahoo_tooltip_info_text(info_data);
-	
+
 	/* We failed to grab the profile URL.  This is not expected to actually
 	 * happen except under unusual error conditions, as Yahoo is observed
 	 * to send back HTML, with a 200 status code.
 	 */
-	if (url_text == NULL || strcmp(url_text, "") == 0) {
+	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
 
@@ -920,21 +919,32 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
+		GaimUtilFetchUrlData *url_data;
 		/* User-uploaded photos use a different server that requires the Host
 		 * header, but Yahoo Japan will use the "chunked" content encoding if
-		 * we specify HTTP 1.1. So we have to specify 1.0 & fix gaim_url_fetch
+		 * we specify HTTP 1.1. So we have to specify 1.0 & fix gaim_util_fetch_url
 		 */
-		gaim_url_fetch(photo_url_text, FALSE, NULL, FALSE, yahoo_got_photo,
-				info2_data);
+		url_data = gaim_util_fetch_url(photo_url_text, FALSE, NULL,
+				FALSE, yahoo_got_photo, info2_data);
+		if (url_data != NULL)
+			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+		else {
+			g_free(info2_data->info_data->name);
+			g_free(info2_data->info_data);
+			g_free(info2_data);
+		}
 	} else {
 		/* Emulate a callback */
-		yahoo_got_photo(info2_data, NULL, 0);
+		yahoo_got_photo(NULL, info2_data, NULL, 0, NULL);
 	}
 }
 
-static void yahoo_got_photo(void *data, const char *url_text, size_t len)
+static void
+yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
+		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
+	struct yahoo_data *yd;
 	gboolean found = FALSE;
 	int id = -1;
 
@@ -962,6 +972,10 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* </dd> and not \n. The prpl's need to be audited before it can be moved */
 	/* in to gaim_markup_strip_html*/
 	char *fudged_buffer;
+
+	yd = info_data->gc->proto_data;
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+
 	fudged_buffer = gaim_strcasereplace(url_buffer, "</dd>", "</dd><br>");
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
 	stripped = gaim_markup_strip_html(fudged_buffer);
@@ -1197,7 +1211,6 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 					  "however, Yahoo! sometimes does fail to find a user's "
 					  "profile. If you know that the user exists, "
 					  "please try again later."));
-		
 		} else {
 			g_string_append_printf(s, "%s<br><br>",
 					_("The user's profile is empty."));
@@ -1245,15 +1258,22 @@ void yahoo_get_info(GaimConnection *gc, const char *name)
 	struct yahoo_data *yd = gc->proto_data;
 	YahooGetInfoData *data;
 	char *url;
+	GaimUtilFetchUrlData *url_data;
 
 	data       = g_new0(YahooGetInfoData, 1);
 	data->gc   = gc;
 	data->name = g_strdup(name);
 
 	url = g_strdup_printf("%s%s",
-			(yd->jp? YAHOOJP_PROFILE_URL: YAHOO_PROFILE_URL), name);
+			(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name);
 
-	gaim_url_fetch(url, TRUE, NULL, FALSE, yahoo_got_info, data);
+	url_data = gaim_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
+	if (url_data != NULL)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	else {
+		g_free(data->name);
+		g_free(data);
+	}
 
 	g_free(url);
 }

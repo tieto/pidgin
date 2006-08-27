@@ -122,6 +122,9 @@ version 2.0.0:
 	* gaim_gethostbyname_async(): Renamed to gaim_dnsquery_a() and
 	  changed to return a pointer to a data structure that can be
 	  used to cancel the pending DNS query using gaim_dnsquery_destroy()
+	* gaim_url_fetch(): Renamed to gaim_util_fetch_url() and changed
+	  to return a pointer to a data structer that can be used to cancel
+	  the pending HTTP request using gaim_util_fetch_url_cancel().
 	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 	* gaim_account_get_log(): Added create parameter
 	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH
@@ -283,7 +286,7 @@ version 2.0.0:
 	* gaim_gtk_log_init()
 	* gaim_gtk_log_get_handle()
 	* gaim_gtk_log_uninit()
-	* gaim_url_fetch_request()
+	* gaim_util_fetch_url_request()
 	* GaimMenuAction
 	* gaim_menu_action_new()
 	* gaim_menu_action_free()
@@ -310,6 +313,8 @@ version 2.0.0:
 	  gaim_proxy_connect() request
 	* gaim_dnsquery_destroy(): Can be used to cancel a pending DNS
 	  query.
+	* gaim_util_fetch_url_cancel(): Can be used to cancel a pending
+	  call to gaim_util_fetch_url() or gaim_util_fetch_url_request().
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

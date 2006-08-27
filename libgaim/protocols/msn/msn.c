@@ -1402,7 +1402,8 @@ msn_get_photo_url(const char *url_text)
 	return NULL;
 }
 
-static void msn_got_photo(void *data, const char *url_text, size_t len);
+static void msn_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
+		const gchar *url_text, size_t len, const gchar *error_message);
 
 #endif
 
@@ -1424,7 +1425,8 @@ static char *msn_info_date_reformat(const char *field, size_t len)
 		sect_info = TRUE;
 
 static void
-msn_got_info(void *data, const char *url_text, size_t len)
+msn_got_info(GaimUtilFetchUrlData *url_data, gpointer data,
+		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	MsnGetInfoData *info_data = (MsnGetInfoData *)data;
 	char *stripped, *p, *q;
@@ -1459,7 +1461,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	tooltip_text = msn_tooltip_info_text(info_data);
 	title = _("MSN Profile");
 
-	if (url_text == NULL || strcmp(url_text, "") == 0)
+	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0)
 	{
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
@@ -1824,20 +1826,22 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text)
 	{
-		gaim_url_fetch(photo_url_text, FALSE, NULL, FALSE, msn_got_photo,
+		gaim_util_fetch_url(photo_url_text, FALSE, NULL, FALSE, msn_got_photo,
 					   info2_data);
 	}
 	else
 	{
 		/* Emulate a callback */
-		msn_got_photo(info2_data, NULL, 0);
+		/* TODO: Huh? */
+		msn_got_photo(NULL, info2_data, NULL, 0, NULL);
 	}
 }
 
 static void
-msn_got_photo(void *data, const char *url_text, size_t len)
+msn_got_photo(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *url_text, size_t len, const gchar *error_message)
 {
-	MsnGetInfoStepTwoData *info2_data = (MsnGetInfoStepTwoData *)data;
+	MsnGetInfoStepTwoData *info2_data = (MsnGetInfoStepTwoData *)user_data;
 	int id = -1;
 
 	/* Unmarshall the saved state */
@@ -1849,7 +1853,7 @@ msn_got_photo(void *data, const char *url_text, size_t len)
 	char *tooltip_text = info2_data->tooltip_text;
 
 	/* Make sure the connection is still valid if we got here by fetching a photo url */
-	if (url_text &&
+	if (error_message == NULL || url_text != NULL ||
 		g_list_find(gaim_connections_get_all(), info_data->gc) == NULL)
 	{
 		gaim_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
@@ -1866,7 +1870,7 @@ msn_got_photo(void *data, const char *url_text, size_t len)
 	}
 
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (data && url_text && len != 0)
+	if (user_data && url_text && len != 0)
 	{
 		if (strstr(url_text, "400 Bad Request")
 			|| strstr(url_text, "403 Forbidden")
@@ -1918,7 +1922,7 @@ msn_get_info(GaimConnection *gc, const char *name)
 
 	url = g_strdup_printf("%s%s", PROFILE_URL, name);
 
-	gaim_url_fetch(url, FALSE,
+	gaim_util_fetch_url(url, FALSE,
 				   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",
 				   TRUE, msn_got_info, data);
 

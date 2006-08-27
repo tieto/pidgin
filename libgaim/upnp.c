@@ -150,7 +150,6 @@ static void gaim_upnp_discover_send_broadcast(UPnPDiscoveryData *dd);
 static void lookup_public_ip(void);
 static void lookup_internal_ip(void);
 
-
 static void
 fire_discovery_callbacks(gboolean success)
 {
@@ -163,7 +162,6 @@ fire_discovery_callbacks(gboolean success)
 		cb(success, data);
 	}
 }
-
 
 static gboolean
 gaim_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
@@ -182,7 +180,6 @@ gaim_upnp_compare_device(const xmlnode* device, const gchar* deviceType)
 
 	return ret;
 }
-
 
 static gboolean
 gaim_upnp_compare_service(const xmlnode* service, const gchar* serviceType)
@@ -207,7 +204,6 @@ gaim_upnp_compare_service(const xmlnode* service, const gchar* serviceType)
 
 	return ret;
 }
-
 
 static gchar*
 gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
@@ -358,9 +354,10 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 }
 
 static void
-upnp_parse_description_cb(void *data, const char *httpResponse, gsize len)
+upnp_parse_description_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *httpResponse, gsize len, const gchar *error_message)
 {
-	UPnPDiscoveryData *dd = data;
+	UPnPDiscoveryData *dd = user_data;
 	gchar *control_url = NULL;
 
 	if (len > 0)
@@ -431,7 +428,7 @@ gaim_upnp_parse_description(const gchar* descriptionURL, UPnPDiscoveryData *dd)
 	gaim_timeout_remove(dd->tima);
 	dd->tima = 0;
 
-	gaim_url_fetch_request(descriptionURL, TRUE, NULL, TRUE, httpRequest,
+	gaim_util_fetch_url_request(descriptionURL, TRUE, NULL, TRUE, httpRequest,
 			TRUE, upnp_parse_description_cb, dd);
 
 	g_free(httpRequest);
@@ -548,7 +545,7 @@ gaim_upnp_discover_udp_read(gpointer data, gint sock, GaimInputCondition cond)
 	/* We'll either time out or continue successfully */
 }
 
-void
+static void
 gaim_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 {
 	gchar *sendMessage = NULL;
@@ -597,7 +594,6 @@ gaim_upnp_discover_send_broadcast(UPnPDiscoveryData *dd)
 	 * doesn't get called before the original function returns */
 	gaim_timeout_add(10, gaim_upnp_discover_timeout, dd);
 }
-
 
 void
 gaim_upnp_discover(GaimUPnPCallback cb, gpointer cb_data)
@@ -661,7 +657,7 @@ gaim_upnp_discover(GaimUPnPCallback cb, gpointer cb_data)
 
 static void
 gaim_upnp_generate_action_message_and_send(const gchar* actionName,
-		const gchar* actionParams, GaimURLFetchCallback cb,
+		const gchar* actionParams, GaimUtilFetchUrlCallback cb,
 		gpointer cb_data)
 {
 
@@ -678,7 +674,7 @@ gaim_upnp_generate_action_message_and_send(const gchar* actionName,
 			"generate_action_message_and_send(): Failed In Parse URL\n\n");
 		/* XXX: This should probably be async */
 		if(cb)
-			cb(cb_data, NULL, 0);
+			cb(NULL, cb_data, NULL, 0, NULL);
 	}
 	if(port == 0 || port == -1) {
 		port = DEFAULT_HTTP_PORT;
@@ -696,13 +692,12 @@ gaim_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(pathOfControl);
 	g_free(soapMessage);
 
-	gaim_url_fetch_request(control_info.control_url, FALSE, NULL, TRUE,
+	gaim_util_fetch_url_request(control_info.control_url, FALSE, NULL, TRUE,
 			totalSendMessage, TRUE, cb, cb_data);
 
 	g_free(totalSendMessage);
 	g_free(addressOfControl);
 }
-
 
 const gchar *
 gaim_upnp_get_public_ip()
@@ -722,11 +717,12 @@ gaim_upnp_get_public_ip()
 }
 
 static void
-looked_up_public_ip_cb(gpointer data, const char *httpResponse, gsize len)
+looked_up_public_ip_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *httpResponse, gsize len, const gchar *error_message)
 {
 	gchar* temp, *temp2;
 
-	if(!httpResponse)
+	if ((error_message != NULL) || (httpResponse == NULL))
 		return;
 
 	/* extract the ip, or see if there is an error */
@@ -754,7 +750,7 @@ looked_up_public_ip_cb(gpointer data, const char *httpResponse, gsize len)
 	gaim_debug_info("upnp", "NAT Returned IP: %s\n", control_info.publicip);
 }
 
-void
+static void
 lookup_public_ip()
 {
 	gaim_upnp_generate_action_message_and_send("GetExternalIPAddress", "",
@@ -794,7 +790,7 @@ looked_up_internal_ip_cb(gpointer data, gint source, const gchar *error_message)
 
 }
 
-void
+static void
 lookup_internal_ip()
 {
 	gchar* addressOfControl;
@@ -821,14 +817,17 @@ lookup_internal_ip()
 }
 
 static void
-done_port_mapping_cb(gpointer data, const gchar *httpResponse, gsize len)
+done_port_mapping_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *httpResponse, gsize len, const gchar *error_message)
 {
-	UPnPMappingAddRemove *ar = data;
+	UPnPMappingAddRemove *ar = user_data;
 
 	gboolean success = TRUE;
 
 	/* determine if port mapping was a success */
-	if(!httpResponse || g_strstr_len(httpResponse, len, HTTP_OK) == NULL) {
+	if ((error_message != NULL) || (httpResponse == NULL) ||
+		(g_strstr_len(httpResponse, len, HTTP_OK) == NULL))
+	{
 		gaim_debug_error("upnp",
 			"gaim_upnp_set_port_mapping(): Failed HTTP_OK\n\n%s\n\n",
 			httpResponse ? httpResponse : "(null)");

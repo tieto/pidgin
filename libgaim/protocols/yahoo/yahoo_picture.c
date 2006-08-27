@@ -43,18 +43,27 @@ struct yahoo_fetch_picture_data {
 	int checksum;
 };
 
-static void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
+static void
+yahoo_fetch_picture_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *pic_data, size_t len, const gchar *error_message)
 {
-	struct yahoo_fetch_picture_data *d = user_data;
+	struct yahoo_fetch_picture_data *d;
+	struct yahoo_data *yd;
 	GaimBuddy *b;
 
-	if (GAIM_CONNECTION_IS_VALID(d->gc) && len) {
+	d = user_data;
+	yd = d->gc->proto_data;
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
+
+	if (error_message != NULL) {
+		gaim_debug_error("yahoo", "Fetching buddy icon failed: %s\n", error_message);
+	} else if (len == 0) {
+		gaim_debug_error("yahoo", "Fetched an icon with length 0.  Strange.\n");
+	} else {
 		gaim_buddy_icons_set_for_user(gaim_connection_get_account(d->gc), d->who, (void *)pic_data, len);
 		b = gaim_find_buddy(gaim_connection_get_account(d->gc), d->who);
 		if (b)
 			gaim_blist_node_set_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY, d->checksum);
-	} else {
-		gaim_debug_error("yahoo", "Fetching buddy icon failed.\n");
 	}
 
 	g_free(d->who);
@@ -63,6 +72,7 @@ static void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t
 
 void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+	struct yahoo_data *yd;
 	GSList *l = pkt->hash;
 	char *who = NULL, *us = NULL;
 	gboolean got_icon_info = FALSE, send_icon_info = FALSE;
@@ -104,6 +114,7 @@ void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 	/* Yahoo IM 6 spits out 0.png as the URL if the buddy icon is not set */
 	if (who && got_icon_info && url && !strncasecmp(url, "http://", 7)) {
 		/* TODO: make this work p2p, try p2p before the url */
+		GaimUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
 		GaimBuddy *b = gaim_find_buddy(gc->account, who);
 		if (b && (checksum == gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
@@ -113,8 +124,16 @@ void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		gaim_url_fetch(url, FALSE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
-		               yahoo_fetch_picture_cb, data);
+		url_data = gaim_util_fetch_url(url, FALSE,
+				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+				yahoo_fetch_picture_cb, data);
+		if (url_data != NULL) {
+			yd = gc->proto_data;
+			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+		} else {
+			g_free(data->who);
+			g_free(data);
+		}
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);
 	}

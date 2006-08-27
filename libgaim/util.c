@@ -29,9 +29,9 @@
 #include "prefs.h"
 #include "util.h"
 
-typedef struct
+struct _GaimUtilFetchUrlData
 {
-	void (*callback)(void *, const char *, size_t);
+	GaimUtilFetchUrlCallback callback;
 	void *user_data;
 
 	struct
@@ -52,15 +52,16 @@ typedef struct
 	gsize request_written;
 	gboolean include_headers;
 
-	int inpa;
+	GaimProxyConnectData *connect_data;
+	int fd;
+	guint inpa;
 
 	gboolean got_headers;
 	gboolean has_explicit_data_len;
 	char *webdata;
 	unsigned long len;
 	unsigned long data_len;
-
-} GaimFetchUrlData;
+};
 
 static char custom_home_dir[MAXPATHLEN];
 static char home_dir[MAXPATHLEN];
@@ -3059,24 +3060,28 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 	return TRUE;
 }
 
+/**
+ * The arguments to this function are similar to printf.
+ */
 static void
-destroy_fetch_url_data(GaimFetchUrlData *gfud)
+gaim_util_fetch_url_error(GaimUtilFetchUrlData *gfud, const char *format, ...)
 {
-	g_free(gfud->webdata);
-	g_free(gfud->url);
-	g_free(gfud->user_agent);
-	g_free(gfud->website.address);
-	g_free(gfud->website.page);
-	g_free(gfud->website.user);
-	g_free(gfud->website.passwd);
-	g_free(gfud->request);
+	gchar *error_message;
+	va_list args;
 
-	g_free(gfud);
+	va_start(args, format);
+	error_message = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	gfud->callback(gfud, gfud->user_data, NULL, 0, error_message);
+	g_free(error_message);
+	gaim_util_fetch_url_cancel(gfud);
 }
 
+/* TODO: This totally destroys cancelability. */
 static gboolean
 parse_redirect(const char *data, size_t data_len, gint sock,
-			   GaimFetchUrlData *gfud)
+			   GaimUtilFetchUrlData *gfud)
 {
 	gchar *s;
 
@@ -3116,20 +3121,16 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 			full = FALSE;
 		}
 
-		/* Close the existing stuff. */
-		gaim_input_remove(gfud->inpa);
-		close(sock);
-
-		gaim_debug_info("gaim_url_fetch", "Redirecting to %s\n", new_url);
+		gaim_debug_info("util", "Redirecting to %s\n", new_url);
 
 		/* Try again, with this new location. */
-		gaim_url_fetch_request(new_url, full, gfud->user_agent,
+		gaim_util_fetch_url_request(new_url, full, gfud->user_agent,
 				gfud->http11, NULL, gfud->include_headers,
 				gfud->callback, gfud->user_data);
 
-		/* Free up. */
+		/* Free the old connection */
 		g_free(new_url);
-		destroy_fetch_url_data(gfud);
+		gaim_util_fetch_url_cancel(gfud);
 
 		return TRUE;
 	}
@@ -3173,7 +3174,7 @@ parse_content_len(const char *data, size_t data_len)
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
 		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
-		gaim_debug_misc("parse_content_len", "parsed %u\n", content_len);
+		gaim_debug_misc("util", "parsed %u\n", content_len);
 	}
 
 	return content_len;
@@ -3183,14 +3184,14 @@ parse_content_len(const char *data, size_t data_len)
 static void
 url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 {
-	GaimFetchUrlData *gfud = url_data;
+	GaimUtilFetchUrlData *gfud = url_data;
 	int len;
 	char buf[4096];
 	char *data_cursor;
 	gboolean got_eof = FALSE;
 
 	while((len = read(source, buf, sizeof(buf))) > 0) {
-		/* If we've filled up our butfer, make it bigger */
+		/* If we've filled up our buffer, make it bigger */
 		if((gfud->len + len) >= gfud->data_len) {
 			while((gfud->len + len) >= gfud->data_len)
 				gfud->data_len += sizeof(buf);
@@ -3209,13 +3210,13 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 		if(!gfud->got_headers) {
 			char *tmp;
 
-			/** See if we've reached the end of the headers yet */
+			/* See if we've reached the end of the headers yet */
 			if((tmp = strstr(gfud->webdata, "\r\n\r\n"))) {
 				char * new_data;
 				guint header_len = (tmp + 4 - gfud->webdata);
 				size_t content_len;
 
-				gaim_debug_misc("gaim_url_fetch", "Response headers: '%.*s'\n",
+				gaim_debug_misc("util", "Response headers: '%.*s'\n",
 					header_len, gfud->webdata);
 
 				/* See if we can find a redirect. */
@@ -3249,12 +3250,14 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 
 					new_data = g_try_malloc(content_len);
 					if(new_data == NULL) {
-						gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n",
-							content_len, strerror(errno));
-						gaim_input_remove(gfud->inpa);
-						close(source);
-						gfud->callback(gfud->user_data, NULL, 0);
-						destroy_fetch_url_data(gfud);
+						gaim_debug_error("util",
+								"Failed to allocate %u bytes: %s\n",
+								content_len, strerror(errno));
+						gaim_util_fetch_url_error(gfud,
+								_("Unable to allocate enough memory to hold "
+								  "the contents from %s.  The web server may "
+								  "be trying something malicious."),
+								gfud->website.address);
 
 						return;
 					}
@@ -3288,12 +3291,8 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 		} else if(errno != ETIMEDOUT) {
 			got_eof = TRUE;
 		} else {
-			gaim_input_remove(gfud->inpa);
-			close(source);
-
-			gfud->callback(gfud->user_data, NULL, 0);
-
-			destroy_fetch_url_data(gfud);
+			gaim_util_fetch_url_error(gfud, _("Error reading from %s: %s"),
+					gfud->website.address, strerror(errno));
 			return;
 		}
 	}
@@ -3302,62 +3301,58 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
 		gfud->webdata[gfud->len] = '\0';
 
-		/* gaim_debug_misc("gaim_url_fetch", "Received: '%s'\n", gfud->webdata); */
-
-		gaim_input_remove(gfud->inpa);
-		close(source);
-		gfud->callback(gfud->user_data, gfud->webdata, gfud->len);
-
-		destroy_fetch_url_data(gfud);
+		gfud->callback(gfud, gfud->user_data, gfud->webdata, gfud->len, NULL);
+		gaim_util_fetch_url_cancel(gfud);
 	}
 }
 
 static void
 url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	GaimFetchUrlData *gfud;
+	GaimUtilFetchUrlData *gfud;
 	int len, total_len;
 
 	gfud = data;
 
 	total_len = strlen(gfud->request);
 
-	len = write(source, gfud->request + gfud->request_written,
+	len = write(gfud->fd, gfud->request + gfud->request_written,
 			total_len - gfud->request_written);
 
-	if(len < 0 && errno == EAGAIN)
+	if (len < 0 && errno == EAGAIN)
 		return;
-	else if(len < 0) {
-		gaim_input_remove(gfud->inpa);
-		close(source);
-		gfud->callback(gfud->user_data, NULL, 0);
-		destroy_fetch_url_data(gfud);
+	else if (len < 0) {
+		gaim_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
+				gfud->website.address, strerror(errno));
 		return;
 	}
 	gfud->request_written += len;
 
-	if(gfud->request_written != total_len)
+	if (gfud->request_written != total_len)
 		return;
 
-	/* We're done writing, now start reading */
+	/* We're done writing our request, now start reading the response */
 	gaim_input_remove(gfud->inpa);
-	gfud->inpa = gaim_input_add(source, GAIM_INPUT_READ, url_fetch_recv_cb,
+	gfud->inpa = gaim_input_add(gfud->fd, GAIM_INPUT_READ, url_fetch_recv_cb,
 		gfud);
 }
 
 static void
 url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 {
-	GaimFetchUrlData *gfud;
+	GaimUtilFetchUrlData *gfud;
 
 	gfud = url_data;
+	gfud->connect_data = NULL;
 
 	if (source == -1)
 	{
-		gfud->callback(gfud->user_data, NULL, 0);
-		destroy_fetch_url_data(gfud);
+		gaim_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
+				gfud->website.address, error_message);
 		return;
 	}
+
+	gfud->fd = source;
 
 	if (!gfud->request)
 	{
@@ -3390,31 +3385,31 @@ url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 		}
 	}
 
-	gaim_debug_misc("gaim_url_fetch", "Request: '%s'\n", gfud->request);
+	gaim_debug_misc("util", "Request: '%s'\n", gfud->request);
 
 	gfud->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
 								url_fetch_send_cb, gfud);
 	url_fetch_send_cb(gfud, source, GAIM_INPUT_WRITE);
 }
 
-void
-gaim_url_fetch_request(const char *url, gboolean full,
+GaimUtilFetchUrlData *
+gaim_util_fetch_url_request(const char *url, gboolean full,
 		const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers,
-		GaimURLFetchCallback cb, void *user_data)
+		GaimUtilFetchUrlCallback callback, void *user_data)
 {
-	GaimFetchUrlData *gfud;
+	GaimUtilFetchUrlData *gfud;
 
-	g_return_if_fail(url != NULL);
-	g_return_if_fail(cb  != NULL);
+	g_return_val_if_fail(url      != NULL, NULL);
+	g_return_val_if_fail(callback != NULL, NULL);
 
-	gaim_debug_info("gaim_url_fetch",
+	gaim_debug_info("util",
 			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
 			 url, full, user_agent?user_agent:"(null)", http11);
 
-	gfud = g_new0(GaimFetchUrlData, 1);
+	gfud = g_new0(GaimUtilFetchUrlData, 1);
 
-	gfud->callback = cb;
+	gfud->callback = callback;
 	gfud->user_data  = user_data;
 	gfud->url = g_strdup(url);
 	gfud->user_agent = g_strdup(user_agent);
@@ -3426,13 +3421,42 @@ gaim_url_fetch_request(const char *url, gboolean full,
 	gaim_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
-	if (gaim_proxy_connect(NULL, gfud->website.address,
-		gfud->website.port, url_fetch_connect_cb, gfud) == NULL)
-	{
-		destroy_fetch_url_data(gfud);
+	gfud->connect_data = gaim_proxy_connect(NULL,
+			gfud->website.address, gfud->website.port,
+			url_fetch_connect_cb, gfud);
 
-		cb(user_data, g_strdup(_("g003: Error opening connection.\n")), 0);
+	if (gfud->connect_data == NULL)
+	{
+		gaim_util_fetch_url_error(gfud, _("Unable to connect to %s"),
+				gfud->website.address);
+		return NULL;
 	}
+
+	return gfud;
+}
+
+void
+gaim_util_fetch_url_cancel(GaimUtilFetchUrlData *gfud)
+{
+	if (gfud->connect_data != NULL)
+		gaim_proxy_connect_cancel(gfud->connect_data);
+
+	if (gfud->inpa > 0)
+		gaim_input_remove(gfud->inpa);
+
+	if (gfud->fd >= 0)
+		close(gfud->fd);
+
+	g_free(gfud->website.user);
+	g_free(gfud->website.passwd);
+	g_free(gfud->website.address);
+	g_free(gfud->website.page);
+	g_free(gfud->url);
+	g_free(gfud->user_agent);
+	g_free(gfud->request);
+	g_free(gfud->webdata);
+
+	g_free(gfud);
 }
 
 const char *

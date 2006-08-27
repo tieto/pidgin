@@ -42,14 +42,14 @@
 #define MIN_CHECK_INTERVAL 60 * 60 * 24
 
 static void
-version_fetch_cb(void *ud, const char *data, size_t len)
+version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *changelog, size_t len, const gchar *error_message)
 {
-	const char *changelog = data;
 	char *cur_ver, *formatted;
 	GString *message;
 	int i=0;
 
-	if(!changelog || !len)
+	if(error_message || !changelog || !len)
 		return;
 
 	while(changelog[i] && changelog[i] != '\n') i++;
@@ -101,7 +101,7 @@ do_check(void)
 				"gaim"
 #endif
 		);
-		gaim_url_fetch(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
+		gaim_util_fetch_url(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
 		gaim_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
 		g_free(url);
 	}

@@ -139,6 +139,12 @@ struct yahoo_data {
 	struct yahoo_buddy_icon_upload_data *picture_upload_todo;
 
 	struct _YchtConn *ycht;
+
+	/**
+	 * This linked list contains GaimUtilFetchUrlData structs
+	 * for when we lookup people profile or photo information.
+	 */
+	GSList *url_datas;
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
