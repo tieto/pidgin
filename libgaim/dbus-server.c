@@ -39,6 +39,7 @@
 #include "internal.h"
 #include "savedstatuses.h"
 #include "value.h"
+#include "xmlnode.h"
 
 
 /**************************************************************************/

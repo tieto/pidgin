@@ -117,7 +117,7 @@ class Binding:
                 return self.inputhash(type, name)
                 
             # known object types are transformed to integer handles
-            elif type[0].startswith("Gaim"):
+            elif type[0].startswith("Gaim") or type[0] == "xmlnode":
                 return self.inputgaimstructure(type, name)
 
             # unknown pointers are always replaced with NULL
