@@ -315,6 +315,15 @@ msn_user_is_online(GaimAccount *account, const char *name)
 	return GAIM_BUDDY_IS_ONLINE(buddy);
 }
 
+/*check to see if user is yahoo user?
+ * TODO: we need to identify it via contact  parse
+ */
+gboolean
+msn_user_is_yahoo(GaimAccount *account ,const char *name)
+{
+	return (strstr(name,"yahoo") != NULL);
+}
+
 void
 msn_user_remove_group_id(MsnUser *user, const char * id)
 {

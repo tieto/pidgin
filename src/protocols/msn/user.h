@@ -301,6 +301,11 @@ GHashTable *msn_user_get_client_caps(const MsnUser *user);
 gboolean
 msn_user_is_online(GaimAccount *account, const char *name);
 
+/**
+ * check to see if user is Yahoo User
+ */
+gboolean
+msn_user_is_yahoo(GaimAccount *account ,const char *name);
 /*@}*/
 
 #endif /* _MSN_USER_H_ */

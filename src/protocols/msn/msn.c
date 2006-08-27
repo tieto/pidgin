@@ -824,7 +824,8 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	account = gaim_connection_get_account(gc);
 
 	msn_import_html(message, &msgformat, &msgtext);
-	if(msn_user_is_online(account, who)){
+	if(msn_user_is_online(account, who)||
+		msn_user_is_yahoo(account, who)){
 		/*User online,then send Online Instant Message*/
 
 		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
@@ -849,8 +850,9 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 			MsnSwitchBoard *swboard;
 
 			session = gc->proto_data;
-			if(strstr(who,"yahoo") != NULL){
-				gaim_debug_info("MaYuan","send to Yahoo!\n");
+			if(msn_user_is_yahoo(account,who)){
+				/*we send the online and offline Message to Yahoo User via UBM*/
+				gaim_debug_info("MaYuan","send to Yahoo User\n");
 				uum_send_msg(session,msg);
 			}else{
 				gaim_debug_info("MaYuan","send via switchboard\n");
@@ -885,7 +887,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 
 		msn_message_destroy(msg);
 	}else	{
-		/*send Offline Instant Message*/
+		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
 		MsnOim *oim;
 		char *friendname;
