@@ -245,9 +245,16 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 			gaim_prefs_get_bool("/gaim/gnt/conversations/timestamps"))
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					gaim_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
+
 	if (who && *who && (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV)))
 	{
-		char * name = g_strdup_printf("%s: ", who);
+		char * name = NULL;
+
+		if (gaim_message_meify((char*)message, -1))
+			name = g_strdup_printf("*** %s ", who);
+		else
+			name =  g_strdup_printf("%s: ", who);
+
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 				name, GNT_TEXT_FLAG_BOLD);
 		g_free(name);
