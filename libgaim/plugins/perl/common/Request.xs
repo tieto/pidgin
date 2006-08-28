@@ -46,6 +46,10 @@ gaim_perl_request_ok_cb(void * data, GaimRequestFields *fields)
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
+
+	g_free(gpr->ok_cb);
+	g_free(gpr->cancel_cb);
+	g_free(gpr);
 }
 
 static void
@@ -67,6 +71,10 @@ gaim_perl_request_cancel_cb(void * data, GaimRequestFields *fields)
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
+
+	g_free(gpr->ok_cb);
+	g_free(gpr->cancel_cb);
+	g_free(gpr);
 }
 
 MODULE = Gaim::Request  PACKAGE = Gaim::Request  PREFIX = gaim_request_
@@ -89,14 +97,14 @@ gaim_request_input(handle, title, primary, secondary, default_value, multiline, 
 CODE:
 	GaimPerlRequestData *gpr;
 	STRLEN len;
-	char *basename, *package;
+	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	gaim_perl_normalize_script_name(basename);
-	package = g_strdup_printf("Gaim::Script::%s", basename);
 	gpr = g_new(GaimPerlRequestData, 1);
-	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
-	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
+	gpr->ok_cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	g_free(basename);
 
 	RETVAL = gaim_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, G_CALLBACK(gaim_perl_request_ok_cb), cancel_text, G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
 OUTPUT:
@@ -113,14 +121,14 @@ gaim_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb)
 CODE:
 	GaimPerlRequestData *gpr;
 	STRLEN len;
-	char *basename, *package;
+	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	gaim_perl_normalize_script_name(basename);
-	package = g_strdup_printf("Gaim::Script::%s", basename);
 	gpr = g_new(GaimPerlRequestData, 1);
-	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
-	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
+	gpr->ok_cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	g_free(basename);
 
 	RETVAL = gaim_request_file(handle, title, filename, savedialog, G_CALLBACK(gaim_perl_request_ok_cb), G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
 OUTPUT:
@@ -140,14 +148,14 @@ gaim_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, c
 CODE:
 	GaimPerlRequestData *gpr;
 	STRLEN len;
-	char *basename, *package;
+	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	gaim_perl_normalize_script_name(basename);
-	package = g_strdup_printf("Gaim::Script::%s", basename);
 	gpr = g_new(GaimPerlRequestData, 1);
-	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
-	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
+	gpr->ok_cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	g_free(basename);
 
 	RETVAL = gaim_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(gaim_perl_request_ok_cb), cancel_text, G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
 OUTPUT:

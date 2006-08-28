@@ -104,11 +104,13 @@ static GaimPluginUiInfo ui_info =
 	NULL /* frame (Reserved)    */
 };
 
+#ifdef GAIM_GTKPERL
 static GaimGtkPluginUiInfo gtk_ui_info =
 {
 	gaim_perl_gtk_get_plugin_frame,
 	0 /* page_num (Reserved) */
 };
+#endif
 
 static void
 #ifdef OLD_PERL
@@ -366,6 +368,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 				info->prefs_info = &ui_info;
 			}
 
+#ifdef GAIM_GTKPERL
 			if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
 			                    strlen("gtk_prefs_info"), 0))) {
 				/* key now is the name of the Perl sub that
@@ -375,6 +378,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 				                                     SvPV(*key, len));
 				info->ui_info = &gtk_ui_info;
 			}
+#endif
 
 			if ((key = hv_fetch(plugin_info, "plugin_action_sub",
 			                    strlen("plugin_action_sub"), 0))) {
@@ -538,7 +542,9 @@ destroy_perl_plugin(GaimPlugin *plugin)
 			g_free(gps->unload_sub);
 			g_free(gps->package);
 			g_free(gps->prefs_sub);
+#ifdef GAIM_GTKPERL
 			g_free(gps->gtk_prefs_sub);
+#endif
 			g_free(gps);
 			plugin->info->extra_info = NULL;
 		}

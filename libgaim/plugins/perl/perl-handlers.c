@@ -103,6 +103,7 @@ gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
 	return l;
 }
 
+#ifdef GAIM_GTKPERL
 GtkWidget *
 gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
 {
@@ -138,6 +139,7 @@ gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
 
 	return ret;
 }
+#endif
 
 GaimPluginPrefFrame *
 gaim_perl_get_plugin_frame(GaimPlugin *plugin)

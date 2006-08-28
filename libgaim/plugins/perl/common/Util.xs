@@ -4,18 +4,21 @@ typedef struct {
 	char *cb;
 } GaimPerlUrlData;
 
-static void gaim_perl_util_url_cb(Gaim::Util::FetchUrlData *url_data, void *user_data, const gchar *url_data, size_t size, const gchar *error_message) {
+static void gaim_perl_util_url_cb(GaimUtilFetchUrlData *url_data, void *user_data, const gchar *url_text, size_t size, const gchar *error_message) {
 	GaimPerlUrlData *gpr = (GaimPerlUrlData *)user_data;
 	dSP;
 	ENTER;
 	SAVETMPS;
-	PUSHMARK(sp);
+	PUSHMARK(SP);
 
-	XPUSHs(sv_2mortal(newSVpv(url_data, 0)));
+	XPUSHs(sv_2mortal(newSVpvn(url_text, size)));
 	PUTBACK;
 
 	call_pv(gpr->cb, G_EVAL | G_SCALAR);
 	SPAGAIN;
+
+	g_free(gpr->cb);
+	g_free(gpr);
 
 	PUTBACK;
 	FREETMPS;
@@ -36,14 +39,14 @@ gaim_util_fetch_url(handle, url, full, user_agent, http11, cb)
 CODE:
 	GaimPerlUrlData *gpr;
 	STRLEN len;
-	char *basename, *package;
+	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	gaim_perl_normalize_script_name(basename);
-	package = g_strdup_printf("Gaim::Script::%s", basename);
 	gpr = g_new(GaimPerlUrlData, 1);
 
-	gpr->cb = g_strdup_printf("%s::%s", package, SvPV(cb, len));
+	gpr->cb = g_strdup_printf("Gaim::Script::%s::%s", basename, SvPV(cb, len));
+	g_free(basename);
 	gaim_util_fetch_url(url, full, user_agent, http11, gaim_perl_util_url_cb, gpr);
 
 int

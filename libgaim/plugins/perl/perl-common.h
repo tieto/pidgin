@@ -31,7 +31,9 @@ typedef struct
 	char *load_sub;
 	char *unload_sub;
 	char *prefs_sub;
+#ifdef GAIM_GTKPERL
 	char *gtk_prefs_sub;
+#endif
 	char *plugin_action_sub;
 } GaimPerlScript;
 
