@@ -77,6 +77,7 @@ static GntWM wm =
 {
 	NULL,   /* new_window */
 	NULL,   /* close_window */
+	NULL,   /* window_resized */
 	NULL,   /* key_pressed */
 	NULL,   /* mouse clicked */
 	bring_on_top, /* give_focus */
@@ -516,12 +517,10 @@ refresh_node(GntWidget *widget, GntNode *node, gpointer null)
  *  - bring a window on top if you click on its taskbar
  *  - click on the top-bar of the active window and drag+drop to move a window
  *  - click on a window to bring it to focus
- *  wishlist:
- *   - have a little [X] on the windows, and clicking it will close that window.
  *   - allow scrolling in tree/textview on wheel-scroll event
  *   - click to activate button or select a row in tree
- *      - all these can be fulfilled by adding a "clicked" event for GntWidget
- *        which will send the (x,y) to the widget. (look at "key_pressed" for hints)
+ *  wishlist:
+ *   - have a little [X] on the windows, and clicking it will close that window.
  */
 static gboolean
 detect_mouse_action(const char *buffer)
@@ -536,6 +535,8 @@ detect_mouse_action(const char *buffer)
 	static GntWidget *remember = NULL;
 	static int offset = 0;
 	GntMouseEvent event;
+	GntWidget *widget = NULL;
+	GList *iter;
 
 	if (!ordered || buffer[0] != 27)
 		return FALSE;
@@ -551,30 +552,19 @@ detect_mouse_action(const char *buffer)
 	x -= 33;
 	y -= 33;
 
+	for (iter = ordered; iter; iter = iter->next) {
+		GntWidget *wid = iter->data;
+		if (x >= wid->priv.x && x < wid->priv.x + wid->priv.width) {
+			if (y >= wid->priv.y && y < wid->priv.y + wid->priv.height) {
+				widget = wid;
+				break;
+			}
+		}
+	}
 	if (strncmp(buffer, "[M ", 3) == 0) {
 		/* left button down */
 		/* Bring the window you clicked on to front */
 		/* If you click on the topbar, then you can drag to move the window */
-		GList *iter;
-		for (iter = ordered; iter; iter = iter->next) {
-			GntWidget *wid = iter->data;
-			if (x >= wid->priv.x && x < wid->priv.x + wid->priv.width) {
-				if (y >= wid->priv.y && y < wid->priv.y + wid->priv.height) {
-					if (iter != ordered) {
-						GntWidget *w = ordered->data;
-						ordered = g_list_bring_to_front(ordered, iter->data);
-						wm.give_focus(ordered->data);
-						gnt_widget_set_focus(w, FALSE);
-					}
-					if (y == wid->priv.y) {
-						offset = x - wid->priv.x;
-						remember = wid;
-						button = MOUSE_LEFT;
-					}
-					break;
-				}
-			}
-		}
 		event = GNT_LEFT_MOUSE_DOWN;
 	} else if (strncmp(buffer, "[M\"", 3) == 0) {
 		/* right button down */
@@ -590,7 +580,28 @@ detect_mouse_action(const char *buffer)
 		event = GNT_MOUSE_SCROLL_DOWN;
 	} else if (strncmp(buffer, "[M#", 3) == 0) {
 		/* button up */
+		event = GNT_MOUSE_UP;
+	} else
+		return FALSE;
+	
+	if (wm.mouse_clicked && wm.mouse_clicked(event, x, y, widget))
+		return TRUE;
+	
+	if (event == GNT_LEFT_MOUSE_DOWN && widget) {
+		if (widget != ordered->data) {
+			GntWidget *w = ordered->data;
+			ordered = g_list_bring_to_front(ordered, widget);
+			wm.give_focus(ordered->data);
+			gnt_widget_set_focus(w, FALSE);
+		}
+		if (y == widget->priv.y) {
+			offset = x - widget->priv.x;
+			remember = widget;
+			button = MOUSE_LEFT;
+		}
+	} else if (event == GNT_MOUSE_UP) {
 		if (button == MOUSE_NONE && y == getmaxy(stdscr) - 1) {
+			/* Clicked on the taskbar */
 			int n = g_list_length(focus_list);
 			if (n) {
 				int width = getmaxx(stdscr) / n;
@@ -606,9 +617,7 @@ detect_mouse_action(const char *buffer)
 		button = MOUSE_NONE;
 		remember = NULL;
 		offset = 0;
-		event = GNT_MOUSE_UP;
-	} else
-		return FALSE;
+	}
 
 	gnt_widget_clicked(ordered->data, event, x, y);
 	return FALSE; /* XXX: this should be TRUE */
@@ -1141,7 +1150,10 @@ void gnt_screen_resize_widget(GntWidget *widget, int width, int height)
 		hide_panel(node->panel);
 		gnt_widget_set_size(widget, width, height);
 		gnt_widget_draw(widget);
-		replace_panel(node->panel, widget->window);
+		if (wm.window_resized)
+			node->panel = wm.window_resized(node->panel, widget);
+		else
+			replace_panel(node->panel, widget->window);
 		show_panel(node->panel);
 		update_screen(NULL);
 	}

@@ -16,6 +16,10 @@ struct _GntWM
 	/* This is called when a window is being closed */
 	gboolean (*close_window)(GntWidget *win);
 
+	/* Can del_panel the old panel and return a new_panel.
+	 * Otherwise, this should at least do a replace_panel. */
+	PANEL *(*window_resized)(PANEL *pan, GntWidget *win);
+
 	/* This should usually return NULL if the keys were processed by the WM.
 	 * If not, the WM can simply return the original string, which will be
 	 * processed by the default WM. The custom WM can also return a different
@@ -23,8 +27,7 @@ struct _GntWM
 	 */
 	const char *(*key_pressed)(const char *key);
 
-	/* Not decided yet */
-	gboolean (*mouse_clicked)(void);
+	gboolean (*mouse_clicked)(GntMouseEvent event, int x, int y, GntWidget *widget);
 
 	/* Whatever the WM wants to do when a window is given focus */
 	void (*give_focus)(GntWidget *widget);

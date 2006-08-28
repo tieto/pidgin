@@ -7,6 +7,43 @@
 
 static GntWM *gwm;
 
+static void
+envelope_buddylist(GntWidget *win)
+{
+	int w, h;
+	gnt_widget_get_size(win, &w, &h);
+	wresize(win->window, h, w + 1);
+	mvwvline(win->window, 0, w, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL), h);
+}
+
+static void
+envelope_normal_window(GntWidget *win)
+{
+	int w, h;
+
+	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
+		return;
+
+	gnt_widget_get_size(win, &w, &h);
+	wbkgdset(win->window, ' ' | COLOR_PAIR(GNT_COLOR_NORMAL));
+	mvwprintw(win->window, 0, w - 4, "[X]");
+}
+
+static PANEL *
+s_resize_window(PANEL *panel, GntWidget *win)
+{
+	const char *name;
+
+	name = gnt_widget_get_name(win);
+	if (name && strcmp(name, "buddylist") == 0) {
+		envelope_buddylist(win);
+	} else {
+		envelope_normal_window(win);
+	}
+	replace_panel(panel, win->window);
+	return panel;
+}
+
 static PANEL *
 s_new_window(GntWidget *win)
 {
@@ -36,6 +73,7 @@ s_new_window(GntWidget *win)
 
 		gnt_widget_set_size(win, w, h);
 		gnt_widget_draw(win);
+		envelope_buddylist(win);
 	} else if (name && strcmp(name, "conversation-window") == 0) {
 		/* Put the conversation windows to the far-right */
 		x = maxx - w;
@@ -43,6 +81,7 @@ s_new_window(GntWidget *win)
 		gnt_widget_set_position(win, x, y);
 		mvwin(win->window, y, x);
 		gnt_widget_draw(win);
+		envelope_normal_window(win);
 	} else if (!GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
 		/* In the middle of the screen */
 		x = (maxx - w) / 2;
@@ -50,6 +89,7 @@ s_new_window(GntWidget *win)
 
 		gnt_widget_set_position(win, x, y);
 		mvwin(win->window, y, x);
+		envelope_normal_window(win);
 	}
 
 	return new_panel(win->window);
@@ -69,6 +109,13 @@ find_widget(const char *wname)
 	return NULL;
 }
 
+static gboolean
+give_the_darned_focus(gpointer w)
+{
+	gwm->give_focus(w);
+	return FALSE;
+}
+
 static const char*
 s_key_pressed(const char *key)
 {
@@ -78,7 +125,7 @@ s_key_pressed(const char *key)
 		if (w == NULL) {
 			gg_blist_show();
 			w = find_widget("buddylist");
-			gwm->give_focus(w);
+			g_timeout_add(0, give_the_darned_focus, w);
 		} else {
 			gnt_widget_destroy(w);
 		}
@@ -87,10 +134,34 @@ s_key_pressed(const char *key)
 	return key;
 }
 
+static gboolean
+s_mouse_clicked(GntMouseEvent event, int cx, int cy, GntWidget *widget)
+{
+	int x, y, w, h;
+
+	if (!widget)
+		return FALSE;       /* This might a place to bring up a context menu */
+	
+	if (event != GNT_LEFT_MOUSE_DOWN ||
+			GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
+		return FALSE;       /* For now, just the left-button to close a window */
+	
+	gnt_widget_get_position(widget, &x, &y);
+	gnt_widget_get_size(widget, &w, &h);
+
+	if (cy == y && cx == x + w - 3) {
+		gnt_widget_destroy(widget);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 void gntwm_init(GntWM *wm)
 {
 	gwm = wm;
 	wm->new_window = s_new_window;
+	wm->window_resized = s_resize_window;
 	wm->key_pressed = s_key_pressed;
+	wm->mouse_clicked = s_mouse_clicked;
 }
 
