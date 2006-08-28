@@ -4,6 +4,10 @@
 #include <string.h>
 #include <wchar.h>
 
+#ifndef __USE_XOPEN
+#define wcwidth(X) 1
+#endif
+
 void gnt_util_get_text_bound(const char *text, int *width, int *height)
 {
 	const char *s = text, *last;
