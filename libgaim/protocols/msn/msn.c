@@ -1420,7 +1420,7 @@ static char *msn_info_date_reformat(const char *field, size_t len)
 
 #define MSN_GOT_INFO_GET_FIELD(a, b) \
 	found = gaim_markup_extract_info_field(stripped, stripped_len, s, \
-			"\n" a "\t", 0, "\n", 0, "Undisclosed", b, 0, NULL, NULL); \
+			"\n" a ":", 0, "\n", 0, "Undisclosed", b, 0, NULL, NULL); \
 	if (found) \
 		sect_info = TRUE;
 
@@ -1469,6 +1469,8 @@ msn_got_info(GaimUtilFetchUrlData *url_data, gpointer data,
 		gaim_notify_userinfo(info_data->gc, info_data->name, buf, NULL, NULL);
 
 		g_free(tooltip_text);
+		g_free(info_data->name);
+		g_free(info_data);
 		return;
 	}
 
@@ -1599,6 +1601,7 @@ msn_got_info(GaimUtilFetchUrlData *url_data, gpointer data,
 		personal = g_strdup_printf(_("<br><b>Personal</b><br>%s"), s->str);
 		s = g_string_truncate(s, 0);
 		sect_info = FALSE;
+		has_info = TRUE;
 	}
 
 	/* Business */
