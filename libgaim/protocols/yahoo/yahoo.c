@@ -499,6 +499,8 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 			grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
+			if (!grp) /* this buddy isn't in a group?! */
+				break;
 			g_free(norm_bud);
 			norm_bud = g_strdup(gaim_normalize(account, pair->value));
 			f = yahoo_friend_find_or_new(gc, norm_bud);
