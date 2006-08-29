@@ -28,11 +28,13 @@ typedef struct group *Gaim__Group;
 #include "desktopitem.h"
 #include "eventloop.h"
 #include "ft.h"
+#ifdef GAIM_GTKPERL
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkconn.h"
 #include "gtkconv.h"
 #include "gtkutils.h"
+#endif
 #include "imgstore.h"
 #include "network.h"
 #include "notify.h"
@@ -96,7 +98,6 @@ typedef GaimConnectionUiOps *		Gaim__Connection__UiOps;
 
 /* conversation.h */
 typedef GaimConversationType		Gaim__ConversationType;
-typedef GaimUnseenState			Gaim__UnseenState;
 typedef GaimConvUpdateType		Gaim__ConvUpdateType;
 typedef GaimTypingState			Gaim__TypingState;
 typedef GaimMessageFlags		Gaim__MessageFlags;
@@ -124,6 +125,7 @@ typedef GaimXferType			Gaim__XferType;
 typedef GaimXferStatusType		Gaim__XferStatusType;
 typedef GaimXferUiOps *			Gaim__XferUiOps;
 
+#ifdef GAIM_GTKPERL
 /* gtkblish.h */
 typedef GaimGtkBuddyList *		Gaim__GTK__BuddyList;
 typedef GaimStatusIconSize		Gaim__StatusIconSize;
@@ -136,6 +138,7 @@ typedef GaimBrowserPlace		Gaim__BrowserPlace;
 #endif /* _WIN32 */
 
 /* gtkconv.h */
+typedef GaimUnseenState			Gaim__UnseenState;
 typedef GaimGtkConversation *		Gaim__GTK__Conversation;
 typedef GdkPixbuf *			Gaim__GDK__Pixbuf;
 typedef GtkWidget *			Gaim__GTK__Widget;
@@ -146,6 +149,7 @@ typedef GtkSelectionData *		Gaim__GTK__SelectionData;
 typedef GtkTextView *			Gaim__GTK__TextView;
 
 /* gtkconn.h */
+#endif
 
 /* imgstore.h */
 typedef GaimStoredImage *		Gaim__StoredImage;
@@ -159,7 +163,7 @@ typedef GaimLogSet *			Gaim__LogSet;
 typedef GaimLogType			Gaim__LogType;
 
 /* network.h */
-typedef GaimNetworkListenData		Gaim__NetworkListenData;
+typedef GaimNetworkListenData *		Gaim__NetworkListenData;
 typedef GaimNetworkListenCallback	Gaim__NetworkListenCallback;
 
 /* notify.h */

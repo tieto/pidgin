@@ -92,6 +92,7 @@ Gaim::Log::Set				T_GaimObj
 
 Gaim::Menu::Action			T_GaimObj
 
+Gaim::NetworkListenData			T_GaimObj
 Gaim::NetworkListenCallback		T_PTR
 
 Gaim::NotifyCloseCallback		T_PTR

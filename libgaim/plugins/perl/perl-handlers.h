@@ -5,8 +5,10 @@
 #include "plugin.h"
 #include "prefs.h"
 #include "pluginpref.h"
+#ifdef GAIM_GTKPERL
 #include "gtkplugin.h"
 #include "gtkutils.h"
+#endif
 
 typedef struct
 {
@@ -42,7 +44,9 @@ GList *gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context);
 
 GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin);
 
+#ifdef GAIM_GTKPERL
 GtkWidget *gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin);
+#endif
 
 void gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback,
                            SV *data);

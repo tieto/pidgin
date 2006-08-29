@@ -304,9 +304,11 @@ probe_perl_plugin(GaimPlugin *plugin)
 			/* Set id here in case we don't find one later. */
 			info->id = g_strdup(SvPV(*key, len));
 
+#ifdef GAIM_GTKPERL
 			if ((key = hv_fetch(plugin_info, "GTK_UI",
 			                    strlen("GTK_UI"), 0)))
 				info->ui_requirement = GAIM_GTK_PLUGIN_TYPE;
+#endif
 
 			if ((key = hv_fetch(plugin_info, "url",
 			                    strlen("url"), 0)))

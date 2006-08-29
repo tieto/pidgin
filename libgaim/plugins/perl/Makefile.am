@@ -158,8 +158,7 @@ AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libgaim \
-	-I$(top_srcdir)/gtk \  # FIXME
 	$(DEBUG_CFLAGS) \
-	$(GTK_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(PERL_CFLAGS)

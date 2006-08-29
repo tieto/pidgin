@@ -1,9 +1,7 @@
 DIST_SUBDIRS = mono perl ssl tcl
 
 if USE_PERL
-# Fix the perl plugin to not use gtk first
-# PERL_DIR = perl
-PERL_DIR = 
+PERL_DIR = perl
 endif
 
 if USE_TCL
