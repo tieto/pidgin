@@ -142,13 +142,6 @@ struct _GaimGtkConversation
 	GaimUnseenState unseen_state;
 	guint unseen_count;
 
-	struct
-	{
-		GtkWidget *image;
-		GtkWidget *search;
-
-	} dialogs;
-
 	union
 	{
 		GaimGtkImPane   *im;

@@ -193,6 +193,7 @@ version 2.0.0:
 	  GaimConversation
 	* Removed ui_ops from GaimBuddyList. Use gaim_blist_get_ui_ops() instead
 	* GaimGtkLogViewer hidden... You weren't using it anyway.
+	* GaimGtkConversation: dialogs (dialogs.search moved to GaimGtkWindow)
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -315,6 +316,7 @@ version 2.0.0:
 	  query.
 	* gaim_util_fetch_url_cancel(): Can be used to cancel a pending
 	  call to gaim_util_fetch_url() or gaim_util_fetch_url_request().
+	* GaimGtkWindow: dialogs.search (previously in GaimGtkConversation)
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

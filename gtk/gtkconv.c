@@ -1039,25 +1039,53 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 struct _search {
-	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 	GtkWidget *entry;
 };
 
 static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 {
-	switch (resp) {
-	case GTK_RESPONSE_OK:
-	    gtk_imhtml_search_find(GTK_IMHTML(s->gtkconv->imhtml),
-							   gtk_entry_get_text(GTK_ENTRY(s->entry)));
-		break;
+	GaimConversation *conv;
+	GaimGtkConversation *gtk_active_conv;
+	GList *iter;
 
-	case GTK_RESPONSE_DELETE_EVENT:
-	case GTK_RESPONSE_CLOSE:
-		gtk_imhtml_search_clear(GTK_IMHTML(s->gtkconv->imhtml));
-		gtk_widget_destroy(s->gtkconv->dialogs.search);
-		s->gtkconv->dialogs.search = NULL;
-		g_free(s);
-		break;
+	conv = gaim_gtk_conv_window_get_active_conversation(s->gtkwin);
+	gtk_active_conv = GAIM_GTK_CONVERSATION(conv);
+
+	switch (resp)
+	{
+		case GTK_RESPONSE_OK:
+			/* clear highlighting except the active conversation window
+			 * highlight the keywords in the active conversation window */
+			for (iter = gaim_gtk_conv_window_get_gtkconvs(s->gtkwin) ; iter ; iter = iter->next)
+			{
+				GaimGtkConversation *gtkconv = iter->data;
+
+				if (gtkconv != gtk_active_conv)
+				{
+					gtk_imhtml_search_clear(GTK_IMHTML(gtkconv->imhtml));
+				}
+				else
+				{
+					gtk_imhtml_search_find(GTK_IMHTML(gtk_active_conv->imhtml),
+					                       gtk_entry_get_text(GTK_ENTRY(s->entry)));
+				}
+			}
+			break;
+
+		case GTK_RESPONSE_DELETE_EVENT:
+		case GTK_RESPONSE_CLOSE:
+			/* clear the keyword highlighting in all the conversation windows */
+			for (iter = gaim_gtk_conv_window_get_gtkconvs(s->gtkwin); iter; iter=iter->next)
+			{
+				GaimGtkConversation *gconv = iter->data;
+				gtk_imhtml_search_clear(GTK_IMHTML(gconv->imhtml));
+			}
+
+			gtk_widget_destroy(s->gtkwin->dialogs.search);
+			s->gtkwin->dialogs.search = NULL;
+			g_free(s);
+			break;
 	}
 }
 
@@ -1065,45 +1093,43 @@ static void
 menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimGtkWindow *gtkwin = data;
-	GaimConversation *conv = gaim_gtk_conv_window_get_active_conversation(gtkwin);
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 	GtkWidget *hbox;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
 											  GTK_ICON_SIZE_DIALOG);
 	GtkWidget *label;
 	struct _search *s;
 
-	if (gtkconv->dialogs.search) {
-		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.search));
+	if (gtkwin->dialogs.search) {
+		gtk_window_present(GTK_WINDOW(gtkwin->dialogs.search));
 		return;
 	}
 
 	s = g_malloc(sizeof(struct _search));
-	s->gtkconv = gtkconv;
+	s->gtkwin = gtkwin;
 
-	gtkconv->dialogs.search = gtk_dialog_new_with_buttons(_("Find"),
+	gtkwin->dialogs.search = gtk_dialog_new_with_buttons(_("Find"),
 			GTK_WINDOW(gtkwin->window), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 			GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response(GTK_DIALOG(gtkconv->dialogs.search),
+	gtk_dialog_set_default_response(GTK_DIALOG(gtkwin->dialogs.search),
 									GTK_RESPONSE_OK);
-	g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "response",
+	g_signal_connect(G_OBJECT(gtkwin->dialogs.search), "response",
 					 G_CALLBACK(do_search_cb), s);
 
-	gtk_container_set_border_width(GTK_CONTAINER(gtkconv->dialogs.search), GAIM_HIG_BOX_SPACE);
-	gtk_window_set_resizable(GTK_WINDOW(gtkconv->dialogs.search), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(gtkconv->dialogs.search), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkconv->dialogs.search)->vbox), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->dialogs.search), GAIM_HIG_BOX_SPACE);
+	gtk_window_set_resizable(GTK_WINDOW(gtkwin->dialogs.search), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(gtkwin->dialogs.search), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkwin->dialogs.search)->vbox), GAIM_HIG_BORDER);
 	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), GAIM_HIG_BOX_SPACE);
+		GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox), GAIM_HIG_BOX_SPACE);
 
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox),
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox),
 					  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	gtk_dialog_set_response_sensitive(GTK_DIALOG(gtkconv->dialogs.search),
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(gtkwin->dialogs.search),
 									  GTK_RESPONSE_OK, FALSE);
 
 	label = gtk_label_new(NULL);
@@ -1115,10 +1141,10 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(s->entry));
 	g_signal_connect(G_OBJECT(s->entry), "changed",
 					 G_CALLBACK(gaim_gtk_set_sensitive_if_input),
-					 gtkconv->dialogs.search);
+					 gtkwin->dialogs.search);
 	gtk_box_pack_start(GTK_BOX(hbox), s->entry, FALSE, FALSE, 0);
 
-	gtk_widget_show_all(gtkconv->dialogs.search);
+	gtk_widget_show_all(gtkwin->dialogs.search);
 	gtk_widget_grab_focus(s->entry);
 }
 
@@ -4474,10 +4500,6 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	gaim_request_close_with_handle(gtkconv);
 	gaim_notify_close_with_handle(gtkconv);
 
-	/* Close the "Find" dialog if it's open */
-	if (gtkconv->dialogs.search)
-		gtk_widget_destroy(gtkconv->dialogs.search);
-
 	gtk_widget_destroy(gtkconv->tab_cont);
 	g_object_unref(gtkconv->tab_cont);
 
@@ -7480,6 +7502,10 @@ gaim_gtk_conv_window_destroy(GaimGtkWindow *win)
 {
 	gaim_prefs_disconnect_by_handle(win);
 	window_list = g_list_remove(window_list, win);
+
+	/* Close the "Find" dialog if it's open */
+	if (win->dialogs.search)
+		gtk_widget_destroy(win->dialogs.search);
 
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
