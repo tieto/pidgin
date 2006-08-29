@@ -8,7 +8,8 @@ enum
 
 typedef struct
 {
-	GntTextFormatFlags flags;
+	GntTextFormatFlags tvflag;
+	chtype flags;
 	char *text;
 } GntTextSegment;
 
@@ -16,6 +17,7 @@ typedef struct
 {
 	GList *segments;         /* A list of GntTextSegments */
 	int length;              /* The current length of the line so far (ie. onscreen width) */
+	gboolean soft;           /* TRUE if it's an overflow from prev. line */
 } GntTextLine;
 
 static GntWidgetClass *parent_class = NULL;
@@ -148,6 +150,59 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 }
 
 static void
+gnt_text_view_reflow(GntTextView *view)
+{
+	/* This is pretty ugly, and inefficient. Someone do something about it. */
+	GntTextLine *line;
+	GList *back, *iter, *list;
+	int pos = 0;
+
+	list = view->list;
+	while (list->prev) {
+		line = list->data;
+		if (!line->soft)
+			pos++;
+		list = list->prev;
+	}
+
+	back = g_list_last(view->list);
+	view->list = NULL;
+	gnt_text_view_clear(view);
+
+	for (; back; back = back->prev) {
+		line = back->data;
+
+		if (back->next && !line->soft)
+			gnt_text_view_next_line(view);
+
+		for (iter = line->segments; iter; iter = iter->next) {
+			GntTextSegment *seg = iter->data;
+			gnt_text_view_append_text_with_flags(view, seg->text, seg->tvflag);
+		}
+
+		free_text_line(line, NULL);
+	}
+	g_list_free(list);
+
+	list = view->list = g_list_first(view->list);
+	while (pos--) {
+		while (((GntTextLine*)list->data)->soft)
+			list = list->next;
+		list = list->next;
+	}
+	view->list = list;
+	gnt_widget_draw(GNT_WIDGET(view));
+}
+
+static void
+gnt_text_view_size_changed(GntWidget *widget, int w, int h)
+{
+	if (w != widget->priv.width) {
+		gnt_text_view_reflow(GNT_TEXT_VIEW(widget));
+	}
+}
+
+static void
 gnt_text_view_class_init(GntTextViewClass *klass)
 {
 	parent_class = GNT_WIDGET_CLASS(klass);
@@ -157,6 +212,7 @@ gnt_text_view_class_init(GntTextViewClass *klass)
 	parent_class->size_request = gnt_text_view_size_request;
 	parent_class->key_pressed = gnt_text_view_key_pressed;
 	parent_class->clicked = gnt_text_view_clicked;
+	parent_class->size_changed = gnt_text_view_size_changed;
 
 	DEBUG;
 }
@@ -166,9 +222,7 @@ gnt_text_view_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
 	
-	/* XXX: For now, resizing the width is not permitted. This is because
-	 * of the way I am handling wrapped lines. */
-	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_Y);
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_Y | GNT_WIDGET_GROW_X);
 
 	widget->priv.minw = 5;
 	widget->priv.minh = 2;
@@ -256,6 +310,7 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 			if (len) {
 				GntTextSegment *seg = g_new0(GntTextSegment, 1);
 				seg->flags = fl;
+				seg->tvflag = flags;
 				seg->text = g_new0(char, len + 1);
 				g_utf8_strncpy(seg->text, iter, g_utf8_pointer_to_offset(iter, iter + len));
 				line->segments = g_list_append(line->segments, seg);
@@ -264,10 +319,12 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 				iter += len;
 				if (line->length >= widget->priv.width - 1 && *iter) {
 					line = g_new0(GntTextLine, 1);
+					line->soft = TRUE;
 					view->list = g_list_prepend(g_list_first(view->list), line);
 				}
 			} else {
 				line = g_new0(GntTextLine, 1);
+				line->soft = TRUE;
 				view->list = g_list_prepend(g_list_first(view->list), line);
 			}
 		}
