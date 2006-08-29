@@ -107,6 +107,14 @@ A sample file looks like:
 .br
 shadow = 0
 .br
+# There is experimental mouse support
+.br
+mouse = 1
+.br
+# To use some custom window-manager
+.br
+wm = /usr/local/lib/gaim/s.so
+.br
 
 .br
 [colors]
@@ -181,6 +189,23 @@ q =
 \\  = \\r
 .br
 
+.SH Mouse Support
+There is experimental mouse support. You can focus windows, activate buttons,
+select rows in a list, scroll using the wheel-scroll etc. Mouse support is
+disabled by default, so you need to enable it in ~/.gntrc (see the sample
+above).
+
+.SH Window Management
+The default window management is very limited. But it is possible to write
+custom window managers to suit your needs. There is a sample window-manager
+included (named \fIs.so\fR) which adds a little 'close-button' for the windows,
+removes the borders from the buddylist and pops up new windows in the middle of
+the screen, instead of at the upper-left corder. It is provided as a sample
+simple manager, but it should be possible to write more complex managers, and
+it's very possible that the window-manager API will need to be enhanced. Look at
+the sample ~/.gntrc file above to see how to select a window-manager.
+
+
 .SH Conversation Commands
 There are a few helpful commands in addition to the regular commands. You can
 use these from any conversation to access other windows.
@@ -225,6 +250,9 @@ Before sending a bug report, please verify that you have the latest
 version of \fBgntgaim\fR and \fBlibgaim\fR.  Many bugs (major and minor) are
 fixed at each release, and if yours is out of date, the problem may already have
 been solved.
+
+You are also encouraged to drop by at \fB#gaim\fR on \fIirc.freenode.net\fR to
+discuss about development.
 
 .SH SEE ALSO
 \fIhttp://gaim.sourceforge.net/\fR
