@@ -19,20 +19,13 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GAIM_TOP) \
 			-I$(GAIM_LIB_TOP) \
 			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_GTK_TOP) \
-			-I$(GAIM_GTK_TOP)/win32 \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(PERL_LIB_TOP)/CORE
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_LIB_TOP) \
-			-L$(GAIM_GTK_TOP) \
 			-L$(PERL_LIB_TOP)
 
 ##
@@ -54,7 +47,6 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lgaim \
-			-lgtkgaim \
 			-lperl58
 
 include $(GAIM_COMMON_RULES)
@@ -76,7 +68,7 @@ $(OBJECTS): $(GAIM_CONFIG_H)
 ##
 ## BUILD DLL
 ##
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -o $(TARGET).dll
 
 ##
@@ -84,7 +76,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(OBJECTS)
 ##
 clean:
 	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll $(TARGET).lib
+	rm -rf $(TARGET).dll
 	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) clean
 
 include $(GAIM_COMMON_TARGETS)

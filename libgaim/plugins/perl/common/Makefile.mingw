@@ -20,20 +20,14 @@ CFLAGS += -Wno-comment
 INCLUDE_PATHS =		-I. \
 			-I$(GAIM_TOP) \
 			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_GTK_TOP) \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(PERL_LIB_TOP)/CORE
 
 LIB_PATHS = 		-L$(PERL_LIB_TOP) \
 			-L$(PERL_PLUGIN_TOP) \
 			-L$(GAIM_LIB_TOP) \
-			-L$(GAIM_GTK_TOP) \
 			-L$(GTK_TOP)/lib
 
 ##
@@ -83,7 +77,6 @@ OBJECTS = $(C_FILES:%.c=%.o)
 LIBS =			-lperl58 \
 			-lperl \
 			-lgaim \
-			-lgtkgaim \
 			-lglib-2.0
 
 include $(GAIM_COMMON_RULES)
@@ -110,7 +103,7 @@ $(AUTOSPLIT): Gaim.pm
 	cp Gaim.pm ./lib
 	$(PERL) -MAutoSplit -e 'autosplit("lib/Gaim.pm")'
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(FALLBACKS) $(OBJECTS)
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(FALLBACKS) $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
 
 ##
