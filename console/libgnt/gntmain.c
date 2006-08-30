@@ -21,6 +21,10 @@
 #include <signal.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
+
+#include <sys/types.h>
+#include <sys/wait.h>
 
 /**
  * Notes: Interesting functions to look at:
@@ -882,21 +886,42 @@ refresh_screen()
 	return FALSE;
 }
 
-#ifdef SIGWINCH
+/* Xerox */
+static void
+clean_pid(void)
+{
+	int status;
+	pid_t pid;
+
+	do {
+		pid = waitpid(-1, &status, WNOHANG);
+	} while (pid != 0 && pid != (pid_t)-1);
+
+	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
+		char errmsg[BUFSIZ];
+		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
+		perror(errmsg);
+	}
+}
+
 static void
 sighandler(int sig)
 {
-	if (sig == SIGWINCH)
-	{
+	switch (sig) {
+#ifdef SIGWINCH
+	case SIGWINCH:
 		werase(stdscr);
 		wrefresh(stdscr);
-
 		g_idle_add(refresh_screen, NULL);
-	}
-
-	signal(SIGWINCH, sighandler);
-}
+		signal(SIGWINCH, sighandler);
+		break;
 #endif
+	case SIGCHLD:
+		clean_pid();
+		signal(SIGCHLD, sighandler);
+		break;
+	}
+}
 
 static void
 init_wm()
@@ -910,7 +935,7 @@ init_wm()
 	handle = g_module_open(name, G_MODULE_BIND_LAZY);
 	if (handle) {
 		gboolean (*init)(GntWM *);
-		if (g_module_symbol(handle, "gntwm_init", &init)) {
+		if (g_module_symbol(handle, "gntwm_init", (gpointer)&init)) {
 			init(&wm);
 		}
 	}
@@ -983,6 +1008,7 @@ void gnt_init()
 #ifdef SIGWINCH
 	signal(SIGWINCH, sighandler);
 #endif
+	signal(SIGCHLD, sighandler);
 
 	g_type_init();
 
