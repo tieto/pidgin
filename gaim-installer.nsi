@@ -10,7 +10,6 @@
 Var name
 Var GTK_FOLDER
 Var GTK_THEME_SEL
-Var LANG_IS_SET
 Var ISSILENT
 Var STARTUP_RUN_KEY
 Var SPELLCHECK_SEL
@@ -40,6 +39,11 @@ SetDateSave on
 
 !include "MUI.nsh"
 !include "Sections.nsh"
+!include "FileFunc.nsh"
+
+!insertmacro GetParameters
+!insertmacro GetOptions
+!insertmacro GetParent
 
 ;--------------------------------
 ;Defines
@@ -937,9 +941,7 @@ Function VerifyDir
   Loop:
     IfFileExists $0 dir_exists
     StrCpy $1 $0 ; save last
-    Push $0
-    Call GetParent
-    Pop $0
+    ${GetParent} $0 $0
     StrLen $2 $0
     ; IfFileExists "C:" on xp returns true and on win2k returns false
     ; So we're done in such a case..
@@ -1001,35 +1003,6 @@ Function .onVerifyInstDir
   dir_good:
   Pop $0
 FunctionEnd
-
-; GetParent
-; input, top of stack  (e.g. C:\Program Files\Poop)
-; output, top of stack (replaces, with e.g. C:\Program Files)
-; modifies no other variables.
-;
-; Usage:
-;   Push "C:\Program Files\Directory\Whatever"
-;   Call GetParent
-;   Pop $R0
-;   ; at this point $R0 will equal "C:\Program Files\Directory"
-Function GetParent
-   Exch $0 ; old $0 is on top of stack
-   Push $1
-   Push $2
-   StrCpy $1 -1
-   loop:
-     StrCpy $2 $0 1 $1
-     StrCmp $2 "" exit
-     StrCmp $2 "\" exit
-     IntOp $1 $1 - 1
-   Goto loop
-   exit:
-     StrCpy $0 $0 $1
-     Pop $2
-     Pop $1
-     Exch $0 ; put $0 on top of stack, restore $0 to original value
-FunctionEnd
-
 
 ; CheckGtkVersion
 ; inputs: Push 2 GTK+ version strings to check. The major value needs to
@@ -1221,10 +1194,12 @@ Function .onInit
       StrCpy $ISSILENT "/S"
   set_gtk_normal:
 
-  Call ParseParameters
+  ${GetParameters} $R0
+  ClearErrors
+  ${GetOptions} $R0 "/L=" $LANGUAGE
+  IfErrors 0 skip_lang
 
   ; Select Language
-  IntCmp $LANG_IS_SET 1 skip_lang
     ; Display Language selection dialog
     !insertmacro MUI_LANGDLL_DISPLAY
     skip_lang:
@@ -1250,9 +1225,8 @@ Function .onInit
     Goto instdir_done
   user_dir:
     Push $SMPROGRAMS
-    Call GetParent
-    Call GetParent
-    Pop $R2
+    ${GetParent} $SMPROGRAMS $R2
+    ${GetParent} $R2 $R2
     StrCpy $INSTDIR "$R2\Gaim"
 
   instdir_done:
@@ -1381,11 +1355,8 @@ Function preGtkDirPage
     no_gtk_cont:
       ; Suggest path..
       StrCmp $R1 "HKCU" 0 hklm1
-        StrCpy $R0 "$SMPROGRAMS"
-        Push $R0
-        Call GetParent
-        Call GetParent
-        Pop $R0
+        ${GetParent} $SMPROGRAMS $R0
+        ${GetParent} $R0 $R0
         StrCpy $R0 "$R0\GTK\2.0"
         Goto got_path
       hklm1:
@@ -1411,112 +1382,6 @@ Function postGtkDirPage
   Pop $R0
 FunctionEnd
 !endif
-
-; GetParameters
-; input, none
-; output, top of stack (replaces, with e.g. whatever)
-; modifies no other variables.
-Function GetParameters
-
-   Push $R0
-   Push $R1
-   Push $R2
-   Push $R3
-
-   StrCpy $R2 1
-   StrLen $R3 $CMDLINE
-
-   ;Check for quote or space
-   StrCpy $R0 $CMDLINE $R2
-   StrCmp $R0 '"' 0 +3
-     StrCpy $R1 '"'
-     Goto loop
-   StrCpy $R1 " "
-
-   loop:
-     IntOp $R2 $R2 + 1
-     StrCpy $R0 $CMDLINE 1 $R2
-     StrCmp $R0 $R1 get
-     StrCmp $R2 $R3 get
-     Goto loop
-
-   get:
-     IntOp $R2 $R2 + 1
-     StrCpy $R0 $CMDLINE 1 $R2
-     StrCmp $R0 " " get
-     StrCpy $R0 $CMDLINE "" $R2
-
-   Pop $R3
-   Pop $R2
-   Pop $R1
-   Exch $R0
-
-FunctionEnd
-
- ; StrStr
- ; input, top of stack = string to search for
- ;        top of stack-1 = string to search in
- ; output, top of stack (replaces with the portion of the string remaining)
- ; modifies no other variables.
- ;
- ; Usage:
- ;   Push "this is a long ass string"
- ;   Push "ass"
- ;   Call StrStr
- ;   Pop $R0
- ;  ($R0 at this point is "ass string")
-
-Function StrStr
-   Exch $R1 ; st=haystack,old$R1, $R1=needle
-   Exch    ; st=old$R1,haystack
-   Exch $R2 ; st=old$R1,old$R2, $R2=haystack
-   Push $R3
-   Push $R4
-   Push $R5
-   StrLen $R3 $R1
-   StrCpy $R4 0
-   ; $R1=needle
-   ; $R2=haystack
-   ; $R3=len(needle)
-   ; $R4=cnt
-   ; $R5=tmp
-   loop:
-     StrCpy $R5 $R2 $R3 $R4
-     StrCmp $R5 $R1 done
-     StrCmp $R5 "" done
-     IntOp $R4 $R4 + 1
-     Goto loop
-   done:
-   StrCpy $R1 $R2 "" $R4
-   Pop $R5
-   Pop $R4
-   Pop $R3
-   Pop $R2
-   Exch $R1
-FunctionEnd
-
-;
-; Parse the Command line
-;
-; Unattended install command line parameters
-; /L=Language e.g.: /L=1033
-;
-Function ParseParameters
-  Push $R0
-  IntOp $LANG_IS_SET 0 + 0
-  Call GetParameters
-  ;Pop $R0
-  ;Push $R0
-  Push "L="
-  Call StrStr
-  Pop $R0
-  StrCmp $R0 "" next
-  StrCpy $R0 $R0 4 2 ; Strip first 2 chars of string
-  StrCpy $LANGUAGE $R0
-  IntOp $LANG_IS_SET 0 + 1
-  next:
-  Pop $R0
-FunctionEnd
 
 ; GetWindowsVersion
 ;
