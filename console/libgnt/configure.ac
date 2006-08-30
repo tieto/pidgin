@@ -205,5 +205,6 @@ AC_CHECK_LIB(ncursesw, initscr, , [AC_MSG_ERROR([
 
 AC_OUTPUT([Makefile
            gnt.pc
+           wms/Makefile
 		  ])
 
