@@ -614,6 +614,8 @@ gnt_tree_destroy(GntWidget *widget)
 static gboolean
 gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 {
+	GntTree *tree = GNT_TREE(widget);
+	GntTreeRow *old = tree->current;
 	if (event == GNT_MOUSE_SCROLL_UP) {
 		action_up(GNT_TREE(widget));
 	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
@@ -644,6 +646,9 @@ gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		}
 	} else {
 		return FALSE;
+	}
+	if (old != tree->current) {
+		tree_selection_changed(tree, old, tree->current);
 	}
 	return TRUE;
 }

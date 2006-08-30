@@ -977,9 +977,11 @@ draw_tooltip(GGBlist *ggblist)
 			if (gaim_presence_is_idle(pre))
 			{
 				time_t idle = gaim_presence_get_idle_time(pre);
-				char *st = gaim_str_seconds_to_string(time(NULL) - idle);
-				g_string_append_printf(str, _("\nIdle: %s"), st);
-				g_free(st);
+				if (idle > 0) {
+					char *st = gaim_str_seconds_to_string(time(NULL) - idle);
+					g_string_append_printf(str, _("\nIdle: %s"), st);
+					g_free(st);
+				}
 			}
 		}
 
