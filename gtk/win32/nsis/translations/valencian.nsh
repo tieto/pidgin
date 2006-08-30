@@ -50,8 +50,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (nomes borrar)"
-!define GAIM_PROMPT_WIPEOUT			"El teu directori antiu de Gaim sera borrat. ¿Vols continuar?$\r$\rNota: Qualsevol plugin no estandar que tingues instalat sera borrat.$\rLes preferencies d'usuari de Gaim no es voran afectades."
-!define GAIM_PROMPT_DIR_EXISTS			"El directori d'instalacio que especificares ya existix. Qualsevol contingut$\rsera borrat. ¿Vols continuar?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro instalant l'entorn GTK+."

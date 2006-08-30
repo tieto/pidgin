@@ -42,8 +42,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (alleen verwijderen)"
-!define GAIM_PROMPT_WIPEOUT			"Uw oude Gaim map staat op het punt om verwijderd te worden. Wilt u doorgaan?$\r$\rLet op: Alle door uzelf geïnstalleerde plugins zullen ook verwijderd worden.$\rDe gebruikersinstellingen van Gaim worden niet aangeraakt."
-!define GAIM_PROMPT_DIR_EXISTS		"De gegeven installatiemap bestaat al. Eventuele inhoud zal verwijderd worden. Wilt u doorgaan?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fout bij installatie van GTK+ runtime omgeving."

@@ -39,8 +39,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (fjern)"
-!define GAIM_PROMPT_WIPEOUT			"Din gamle Gaim folder vil blive slettet. Ønsker du at fortsætte? $\r$\rNB: Alle ikke-standard plugins du måtte have installeret vil blive slettet.$\rGaim brugerindstillinger vil ikke blive påvirket af dette."
-!define GAIM_PROMPT_DIR_EXISTS		"Den ønskede installationsfolder eksisterer allerede. Ethvert indhold$\ri folderen vil blive slettet. Ønsker du at fortsætte?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fejl under installeringen af GTK+ runtime."

@@ -47,8 +47,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (samo odstrani)"
-!define GAIM_PROMPT_WIPEOUT			"Vaš star imenik Gaim bo zbrisan. Želite nadaljevati?$\r$\rOpomba: Vsi nestandardni vtièniki, ki ste jih namestili, bodo zbrisani.$\rUporabniške nastavitve za Gaim se bodo ohranile."
-!define GAIM_PROMPT_DIR_EXISTS			"Namestitveni imenik, ki ste ga navedli, že obstaja. Vsa vsebina$\rbo zbrisana. Želite nadaljevati?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Napaka pri namestitvi izvajalnega okolja GTK+."

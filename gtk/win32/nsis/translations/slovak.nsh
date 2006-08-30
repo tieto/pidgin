@@ -47,8 +47,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (len odstráni)"
-!define GAIM_PROMPT_WIPEOUT			"Váš adresár Gaim bude zmazanı. Chcete pokraèova?$\r$\rPoznámka: Všetky prídavne pluginy, ktoré ste nainštalovali budú tie zmazané.$\rNastavenia uivate¾ského úètu Gaim-u budú ponechané."
-!define GAIM_PROMPT_DIR_EXISTS			"Adresár, ktorı ste zadali, u existuje. Jeho obsah bude zmazanı. Chcete pokraèova?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Chyba pri inštalácii GTK+ runtime."

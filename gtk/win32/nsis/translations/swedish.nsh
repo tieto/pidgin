@@ -50,8 +50,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (enbart för avinstallation)"
-!define GAIM_PROMPT_WIPEOUT			"Din gamla Gaim-katalog kommer att raderas, vill du fortsätta?$\r$\rOBS! om du har installerat några extra insticksmoduler kommer de raderas.$\rGaims användarinställningar kommer inte påverkas."
-!define GAIM_PROMPT_DIR_EXISTS		"Den katalog du vill installera i finns redan. Allt i katalogen$\rkommer att raderas, vill du fortsätta?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fel vid installation av GTK+ runtime."

@@ -40,8 +40,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (chỉ bỏ cài đặt)"
-!define GAIM_PROMPT_WIPEOUT			"Thư mục Gaim cũ sẽ bị xóa. Bạn muốn tiếp tục không?$\r$\rNote: Mọi plugin không chuẩn mà bạn đã cài sẽ bị xóa.$\rCác thiết lập người dùng Gaim sẽ không còn tác dụng."
-!define GAIM_PROMPT_DIR_EXISTS		"Thư mục cài đặt mà bạn định ra đã tồn tại rồi. Mọi nội dung$\rsẽ bị xóa. Bạn muốn tiếp tục không?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Lỗi cài đặt GTK+ runtime."

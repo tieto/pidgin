@@ -39,8 +39,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (vain poisto)"
-!define GAIM_PROMPT_WIPEOUT			"Vanha Gaim-hakemistosi poistetaan. Tahdotko jatkaa?$\r$\rHuomio: Jokainen jälkeenpäin asennettu lisäosa poistetaan.$\rGaimin käyttäjäasetuksissa ei tapahdu muutoksia."
-!define GAIM_PROMPT_DIR_EXISTS		"Antamasti hakemisto on jo olemassa. Kaikki tiedot poistetaan $\r. Tahdotko jatkaa?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Virhe asennettaessa GTK+ runtime."

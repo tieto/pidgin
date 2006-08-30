@@ -48,8 +48,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (bi tenê rake)"
-!define GAIM_PROMPT_WIPEOUT			"Peldanka Gaim ya kevn ya te niha tê jêbirin. Tu dixwazî bidomînî?$\r$\rNot: Plugin yên nestandart yên te tên jêbirin. .$\rVêbijerkên bikarhêner ên Gaim nayên guherandin."
-!define GAIM_PROMPT_DIR_EXISTS		"Peldanka sazkirinê ya tu hilbijartî heye. Naveroka wê $\rtê jêbirin. Tu dixwazî bidomînî?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Di sazkirina GTK+ de çewtî derket."

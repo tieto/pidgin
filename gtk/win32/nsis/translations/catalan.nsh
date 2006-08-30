@@ -49,8 +49,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (només esborrar)"
-!define GAIM_PROMPT_WIPEOUT			"El teu directori antic de Gaim serà esborrat. Vols continuar?$\r$\rNota: Els plugins no estàndards que tinguis instal.lats seran esborrats.$\rLes preferències d'usuari de Gaim no es veruan afectades."
-!define GAIM_PROMPT_DIR_EXISTS			"El directori d'instal.lació que has especificat ja existeix. Tots els continguts$\rseran esborrats. Vols continuar?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Error installlant l'entorn d'execució GTK+."

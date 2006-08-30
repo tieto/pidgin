@@ -39,8 +39,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (sólo eliminar)"
-!define GAIM_PROMPT_WIPEOUT			"Su directorio antigüo de Gaim va a ser borrado. ¿Desea continuar?$\r$\rObservación: cualquier aplique no estándar que pudiera haber instalado será borrado.$\rÉsto no afectará a sus preferencias de usuario en Gaim."
-!define GAIM_PROMPT_DIR_EXISTS		"El directorio de instalación que ha especificado ya existe. Todos los contenidos$\rserá borrados. ¿Desea continuar?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Error al instalar el ejecutable GTK+."

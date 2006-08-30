@@ -39,8 +39,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (usuñ program)"
-!define GAIM_PROMPT_WIPEOUT			"Stary katalog Gaim zosta³ usuniêty. Czy chcesz kontunuowaæ?$\r$\rNote: Wszystkie stare - niestandardowe plugin-y zosta³y usuniête.$\r Ustawienia u¿utkownika Gaim bêd¹ wy³¹czone."
-!define GAIM_PROMPT_DIR_EXISTS		"Wybrany katalog instalacyjny ju¿ istnieje. Jego zawartoœæ $\r zostanie skasowana. Czy chcesz kontunuowaæ?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"B³¹d instalacji runtime-a GTK+."

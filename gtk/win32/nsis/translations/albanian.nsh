@@ -39,8 +39,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (vetëm hiq)"
-!define GAIM_PROMPT_WIPEOUT			"Është gati për t'u fshirë drejtoria juaj e vjetër Gaim. Doni të vazhdohet?$\r$\rShënim: Do të fshihet çfarëdo shtojceë jo standarde që mund të keni instaluar.$\rNuk do të preken rregullime Gaim përdoruesash."
-!define GAIM_PROMPT_DIR_EXISTS		"Drejtoria e instalimit që treguat ekziston tashmë. Çfarëdo përmbajtje$\rdo të fshihet. Do të donit të vazhdohet?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"gabim gjatë instalimit të GTK+ runtime."

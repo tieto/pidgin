@@ -47,8 +47,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (只能删除)"
-!define GAIM_PROMPT_WIPEOUT			"即将删除您的旧 Gaim 目录。您想要继续吗?$\r$\r注意: 您所安装的任何非标准的插件都将被删除。$\r但是不会影响 Gaim 用户设置。"
-!define GAIM_PROMPT_DIR_EXISTS		"您指定的安装目录已经存在。$\r所有内容都将被删除。您想要继续吗?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"安装 GTK+ 运行时刻失败。"

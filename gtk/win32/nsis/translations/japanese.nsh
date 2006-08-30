@@ -48,8 +48,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (削除のみ)"
-!define GAIM_PROMPT_WIPEOUT			"古いGaimのフォルダの削除に関して。続行しますか?$\r$\r注意: あなたのインストールしたすべての非標準なプラグインは削除されます。$\rGaimの設定は影響を受けません。"
-!define GAIM_PROMPT_DIR_EXISTS			"あなたの指定したインストール先のフォルダはすでに存在しています。内容はすべて$\r削除されます。続行しますか?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ランタイムのインストールでエラーが発生しました。"

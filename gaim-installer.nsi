@@ -224,6 +224,7 @@ Section -SecUninstallOldGaim
   IfErrors +3
   StrCpy $STARTUP_RUN_KEY "HKCU"
   Goto +4
+  ClearErrors
   ReadRegStr $STARTUP_RUN_KEY HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
   IfErrors +2
   StrCpy $STARTUP_RUN_KEY "HKLM"
@@ -269,26 +270,9 @@ Section -SecUninstallOldGaim
               Goto uninstall_problem
 
         uninstall_problem:
-          ; In this case just wipe out previous Gaim install dir..
-          ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
-          ; and versions 0.60 and lower did not correctly set the uninstall reg string
-          ; (the string was set in quotes)
-          IfSilent do_wipeout
-          MessageBox MB_YESNO $(GAIM_PROMPT_WIPEOUT) IDYES do_wipeout IDNO cancel_install
-          cancel_install:
-            Quit
-
-          do_wipeout:
-            StrCmp $R0 "HKLM" gaim_del_lm_reg gaim_del_cu_reg
-            gaim_del_cu_reg:
-              DeleteRegKey HKCU ${GAIM_REG_KEY}
-              Goto uninstall_prob_cont
-            gaim_del_lm_reg:
-              DeleteRegKey HKLM ${GAIM_REG_KEY}
-
-            uninstall_prob_cont:
-              RMDir /r "$R1"
-
+          ; We can't uninstall.  Either the user must manually uninstall or we ignore and reinstall over it.
+          MessageBox MB_OKCANCEL $(GAIM_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
+          Quit
   done:
 SectionEnd
 
@@ -327,9 +311,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
 
   upgrade_gtk:
     StrCpy $GTK_FOLDER $R6
-    IfSilent skip_mb
-    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) IDNO done
-    skip_mb:
+    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
     Goto gtk_install_cont
@@ -341,9 +323,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
 
     gtk_install_error:
       Delete "$TEMP\gtk-runtime.exe"
-      IfSilent skip_mb1
-      MessageBox MB_OK $(GTK_INSTALL_ERROR) IDOK
-      skip_mb1:
+      MessageBox MB_OK $(GTK_INSTALL_ERROR) /SD IDOK
       Quit
 
   have_gtk:
@@ -771,15 +751,11 @@ Section Uninstall
     Goto done
 
   cant_uninstall:
-    IfSilent skip_mb
-    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_1) IDOK
-    skip_mb:
+    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_1) /SD IDOK
     Quit
 
   no_rights:
-    IfSilent skip_mb1
-    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_2) IDOK
-    skip_mb1:
+    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_2) /SD IDOK
     Quit
 
   done:
@@ -901,9 +877,7 @@ Function CanWeInstallATheme
       Goto done
 
     no_rights:
-      IfSilent skip_mb
-      MessageBox MB_OK $(GTK_NO_THEME_INSTALL_RIGHTS) IDOK
-      skip_mb:
+      MessageBox MB_OK $(GTK_NO_THEME_INSTALL_RIGHTS) /SD IDOK
       StrCpy $1 ""
 
     done:
@@ -1209,7 +1183,7 @@ Function ${UN}RunCheck
   Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
-  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
+  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) /SD IDOK
     Abort
   done:
   Pop $R0
@@ -1223,7 +1197,7 @@ Function .onInit
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "gaim_installer_running") i .r1 ?e'
   Pop $R0
   StrCmp $R0 0 +3
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING)
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDOK
     Abort
   Call RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
@@ -1263,6 +1237,7 @@ Function .onInit
   ReadRegStr $INSTDIR HKCU "${GAIM_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
+  ClearErrors
   ReadRegStr $INSTDIR HKLM "${GAIM_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
@@ -1375,9 +1350,7 @@ Function preWelcomePage
 
     StrCmp $R0 "0" have_gtk need_gtk
     need_gtk:
-      IfSilent skip_mb
-      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
-      skip_mb:
+      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) /SD IDOK
       Quit
     have_gtk:
     Pop $R0
@@ -1432,9 +1405,7 @@ Function postGtkDirPage
   Call VerifyDir
   Pop $R0
   StrCmp $R0 "0" 0 done
-    IfSilent skip_mb
-    MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) IDOK
-    skip_mb:
+    MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) /SD IDOK
     Abort
   done:
   Pop $R0
@@ -1768,7 +1739,7 @@ Function InstallAspellAndDict
     Pop $R1
     StrCmp $R1 "" +3
     StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
   retry_dict:
     Push $R0
@@ -1776,7 +1747,7 @@ Function InstallAspellAndDict
     Pop $R1
     StrCmp $R1 "" +3
     StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" IDRETRY retry_dict
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" /SD IDCANCEL IDRETRY retry_dict
 
   done:
 

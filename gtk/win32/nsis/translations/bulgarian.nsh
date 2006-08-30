@@ -32,8 +32,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (само премахване)"
-!define GAIM_PROMPT_WIPEOUT			"Вашата стара Gaim директория ще бъде изтрита. Искате ли да продължите?$\r$\rЗабележка: Всички нестандартни добавки които сте инсталирали ще бъдат изтрити.$\rНастройките на Gaim няма да бъдат повлияни."
-!define GAIM_PROMPT_DIR_EXISTS		"Директорията която избрахте съществува. Всичко което е в нея$\rще бъде изтрито. Желаете ли да продължите?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Грешка при инсталиране на GTK+ runtime."

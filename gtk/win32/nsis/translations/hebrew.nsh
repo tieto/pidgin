@@ -39,8 +39,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"GAIM (מחיקה בלבד)"
-!define GAIM_PROMPT_WIPEOUT			"?הישנה הולכת להימחק. להמשיך GAIM תיקיית$\r$\rNote: הערה: תוספות לא רגילות ימחקו.$\r.הגדרות המשתמש לא ישתנו"
-!define GAIM_PROMPT_DIR_EXISTS		"תיקיית ההתקנה כבר קיימת. כל משבתוכה $\r?ימחק. להמשיך"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			".GTK+ שגיאה בהתקנת סביבת"

@@ -31,8 +31,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (samo uklanjanje)"
-!define GAIM_PROMPT_WIPEOUT			"Vaš stari Gaim direktorijum æe biti obrisan. Da li želite da nastavite?$\r$\rPrimedba: Svi nestandardni dodaci koje ste instalirali æe biti obrisani.$\rGaim postavke korisnika neæe biti promenjene."
-!define GAIM_PROMPT_DIR_EXISTS		"Instalacioni direktorijum koji ste naveli veæ postoji. Sav sadržaj$\ræe biti obrisan. Da li želite da nastavite?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Greška prilikom instalacije GTK+ okoline za izvršavanje."

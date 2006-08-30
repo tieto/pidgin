@@ -45,8 +45,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (tik paðalinti)"
-!define GAIM_PROMPT_WIPEOUT			"Jûsø senasis Gaim katalogas tuoj turëtø bûti iðtrintas. Ar norite tæsti?$\r$\rPastaba: bet kokie nestandartiniai papildiniai, jeigu tokiø ádiegëte, bus paðalinti.$\rGaim vartotojo nustatymai nebus paliesti."
-!define GAIM_PROMPT_DIR_EXISTS			"Nurodytas diegimo katalogas jau yra. Jo turinys$\rbus paðalintas. Ar norite tæsti?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ vykdymo meto aplinkos diegimo klaida."

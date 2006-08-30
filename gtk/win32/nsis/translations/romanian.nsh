@@ -46,8 +46,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (doar dezinstalare)"
-!define GAIM_PROMPT_WIPEOUT			"Vechiul director Gaim va fi ºters. Doriþi sã continuaþi?$\r$\rNotã: Orice module externe vor fi ºterse.$\rSetãrile utilizatorilor Gaim nu vor fi afectate."
-!define GAIM_PROMPT_DIR_EXISTS		"Directorul ales pentru instalare existã deja.$\rConþinutul sãu va fi ºters. Doriþi sã continuaþi?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Eroare la instalarea mediului GTK+."

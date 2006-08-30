@@ -47,8 +47,6 @@
 
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (csak eltávolítás)"
-!define GAIM_PROMPT_WIPEOUT			"Az Ön korábbi Gaim könyvtára törölve lesz. Folytatni szeretné?$\r$\rMegjegyzés: Minden Ön által telepített bovítmény törölve lesz.$\rA Gaim felhasználói beállításokra ez nincs hatással."
-!define GAIM_PROMPT_DIR_EXISTS			"A megadott telepítési könyvtár már létezik. A tartalma törölve lesz.$\rFolytatni szeretné?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Hiba a GTK+ futtatókörnyezet telepítése közben."
