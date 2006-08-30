@@ -10,4 +10,4 @@ Description: Gaim Ncurses Toolkit is a collection of curses-widgets.
 Version: @VERSION@
 Requires: glib-2.0
 Cflags: -I${includedir}/gnt
-Libs: -L${libdir} -lgnt -lncursesw
+Libs: -L${libdir} -lgnt

@@ -25,6 +25,7 @@ struct _GnTextView
 {
 	GntWidget parent;
 
+	GString *string;
 	GList *list;        /* List of GntTextLine */
 };
 

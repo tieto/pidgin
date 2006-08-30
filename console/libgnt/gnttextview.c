@@ -10,7 +10,8 @@ typedef struct
 {
 	GntTextFormatFlags tvflag;
 	chtype flags;
-	char *text;
+	int start;
+	int end;     /* This is the next byte of the last character of this segment */
 } GntTextSegment;
 
 typedef struct
@@ -43,10 +44,14 @@ gnt_text_view_draw(GntWidget *widget)
 		for (iter = line->segments; iter; iter = iter->next)
 		{
 			GntTextSegment *seg = iter->data;
+			char *end = view->string->str + seg->end;
+			char back = *end;
+			*end = '\0';
 			wattrset(widget->window, seg->flags);
-			wprintw(widget->window, "%s", seg->text);
+			wprintw(widget->window, "%s", (view->string->str + seg->start));
 			if (!iter->next)
 				whline(widget->window, ' ' | seg->flags, widget->priv.width - line->length - 1);
+			*end = back;
 		}
 	}
 
@@ -115,7 +120,6 @@ static void
 free_text_segment(gpointer data, gpointer null)
 {
 	GntTextSegment *seg = data;
-	g_free(seg->text);
 	g_free(seg);
 }
 
@@ -135,6 +139,7 @@ gnt_text_view_destroy(GntWidget *widget)
 	view->list = g_list_first(view->list);
 	g_list_foreach(view->list, free_text_line, NULL);
 	g_list_free(view->list);
+	g_string_free(view->string, TRUE);
 }
 
 static gboolean
@@ -155,6 +160,7 @@ gnt_text_view_reflow(GntTextView *view)
 	/* This is pretty ugly, and inefficient. Someone do something about it. */
 	GntTextLine *line;
 	GList *back, *iter, *list;
+	GString *string;
 	int pos = 0;
 
 	list = view->list;
@@ -167,19 +173,30 @@ gnt_text_view_reflow(GntTextView *view)
 
 	back = g_list_last(view->list);
 	view->list = NULL;
+
+	string = view->string;
+	view->string = NULL;
 	gnt_text_view_clear(view);
+
+	view->string = g_string_set_size(view->string, string->len);
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(view), GNT_WIDGET_DRAWING);
 
 	for (; back; back = back->prev) {
 		line = back->data;
-
-		if (back->next && !line->soft)
-			gnt_text_view_next_line(view);
-
+		if (back->next && !line->soft) {
+			GList *llist = g_list_first(view->list);
+			llist = g_list_prepend(llist, g_new0(GntTextLine, 1));
+		}
+		
 		for (iter = line->segments; iter; iter = iter->next) {
 			GntTextSegment *seg = iter->data;
-			gnt_text_view_append_text_with_flags(view, seg->text, seg->tvflag);
+			char *start = string->str + seg->start;
+			char *end = string->str + seg->end;
+			char back = *end;
+			*end = '\0';
+			gnt_text_view_append_text_with_flags(view, start, seg->tvflag);
+			*end = back;
 		}
-
 		free_text_line(line, NULL);
 	}
 	g_list_free(list);
@@ -191,7 +208,9 @@ gnt_text_view_reflow(GntTextView *view)
 		list = list->next;
 	}
 	view->list = list;
+	GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(view), GNT_WIDGET_DRAWING);
 	gnt_widget_draw(GNT_WIDGET(view));
+	g_string_free(string, TRUE);
 }
 
 static void
@@ -267,6 +286,7 @@ GntWidget *gnt_text_view_new()
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 
+	view->string = g_string_new(NULL);
 	view->list = g_list_append(view->list, line);
 
 	return widget;
@@ -276,61 +296,53 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 {
 	GntWidget *widget = GNT_WIDGET(view);
 	int fl = 0;
-	char **split;
-	int i;
+	const char *start, *end;
 	GList *list = view->list;
+	GntTextLine *line;
+	int len;
 
 	if (text == NULL || *text == '\0')
 		return;
 
 	fl = gnt_text_format_flag_to_chtype(flags);
 
+	len = view->string->len;
+	g_string_append(view->string, text);
+
 	view->list = g_list_first(view->list);
 
-	split = g_strsplit(text, "\n", -1);
-	for (i = 0; split[i]; i++)
-	{
-		GntTextLine *line;
-		char *iter = split[i];
-		int prev = 0;
+	start = end = view->string->str + len;
 
-		if (i)
-		{
-			line = g_new0(GntTextLine, 1);
-			view->list = g_list_prepend(g_list_first(view->list), line);
+	while (*start) {
+		GntTextSegment *seg;
+
+		if (*end == '\n' || *end == '\r') {
+			end++;
+			start = end;
+			gnt_text_view_next_line(view);
+			continue;
 		}
 
 		line = view->list->data;
+		end = gnt_util_onscreen_width_to_pointer(start,
+				widget->priv.width - line->length - 1, &len);
 
-		while (iter && *iter)
-		{
-			int len;
+		seg = g_new0(GntTextSegment, 1);
+		seg->start = start - view->string->str;
+		seg->end = end - view->string->str;
+		seg->tvflag = flags;
+		seg->flags = fl;
+		line->segments = g_list_append(line->segments, seg);
+		line->length += len;
 
-			len = gnt_util_onscreen_width_to_pointer(iter, widget->priv.width - line->length - 1, &prev) - iter;
-			if (len) {
-				GntTextSegment *seg = g_new0(GntTextSegment, 1);
-				seg->flags = fl;
-				seg->tvflag = flags;
-				seg->text = g_new0(char, len + 1);
-				g_utf8_strncpy(seg->text, iter, g_utf8_pointer_to_offset(iter, iter + len));
-				line->segments = g_list_append(line->segments, seg);
-
-				line->length += prev;
-				iter += len;
-				if (line->length >= widget->priv.width - 1 && *iter) {
-					line = g_new0(GntTextLine, 1);
-					line->soft = TRUE;
-					view->list = g_list_prepend(g_list_first(view->list), line);
-				}
-			} else {
-				line = g_new0(GntTextLine, 1);
-				line->soft = TRUE;
-				view->list = g_list_prepend(g_list_first(view->list), line);
-			}
+		start = end;
+		if (*end && *end != '\n' && *end != '\r') {
+			line = g_new0(GntTextLine, 1);
+			line->soft = TRUE;
+			view->list = g_list_prepend(view->list, line);
 		}
 	}
 
-	g_strfreev(split);
 	view->list = list;
 
 	gnt_widget_draw(widget);
@@ -401,6 +413,9 @@ void gnt_text_view_clear(GntTextView *view)
 
 	line = g_new0(GntTextLine, 1);
 	view->list = g_list_append(view->list, line);
+	if (view->string)
+		g_string_free(view->string, TRUE);
+	view->string = g_string_new(NULL);
 
 	if (GNT_WIDGET(view)->window)
 		gnt_widget_draw(GNT_WIDGET(view));
