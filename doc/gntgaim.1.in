@@ -28,11 +28,11 @@ GntGaim \- A Pimpin' Penguin console frontend for Instant Messaging client Gaim.
 
 .SH DESCRIPTION
 .PP
-\fBgntgaim\fR is a console-based frontend for Instant Messaging (IM)
-application Gaim.  It supports multiple protocols via modules, including AIM,
-ICQ, Yahoo!, MSN, Jabber, IRC, Gadu-Gadu and Zephyr.  It has many
-common features found in other clients, as well as many unique features.  Gaim
-is not endorsed by or affiliated with America Online, ICQ, Microsoft, or Yahoo.
+\fBgntgaim\fR is a console-based modular messaging client capable of using
+AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime,
+Zephyr, Gadu-Gadu, and QQ all at once. It has many common features found in
+other clients, as well as many unique features.  Gaim is not endorsed by or
+affiliated with America Online, ICQ, Microsoft, or Yahoo.
 
 .SH OPTIONS
 The following options are provided by \fBgntgaim\fR using the standard GNU
