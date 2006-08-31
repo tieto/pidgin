@@ -16,6 +16,7 @@ typedef enum
 	GNT_COLOR_SHADOW,
 	GNT_COLOR_TITLE,
 	GNT_COLOR_TITLE_D,
+	GNT_COLOR_URGENT,       /* this is for the 'urgent' windows */
 	GNT_COLORS
 } GntColorType;
 

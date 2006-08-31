@@ -81,19 +81,22 @@ void gnt_init_colors()
 		init_pair(GNT_COLOR_TEXT_NORMAL, GNT_COLOR_WHITE, GNT_COLOR_BLUE);
 		init_pair(GNT_COLOR_HIGHLIGHT_D, GNT_COLOR_BLACK, GNT_COLOR_GRAY);
 		init_pair(GNT_COLOR_DISABLED, GNT_COLOR_GRAY, GNT_COLOR_WHITE);
+		init_pair(GNT_COLOR_URGENT, GNT_COLOR_WHITE, GNT_COLOR_RED);
 	}
 	else
 	{
-		if (defaults == OK)
-		{
+		int bg;
+
+		if (defaults == OK) {
 			init_pair(GNT_COLOR_NORMAL, -1, -1);
-			init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, -1);
-		}
-		else
-		{
+			bg = -1;
+		} else {
 			init_pair(GNT_COLOR_NORMAL, COLOR_BLACK, COLOR_WHITE);
-			init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, COLOR_WHITE);
+			bg = COLOR_WHITE;
 		}
+		init_pair(GNT_COLOR_DISABLED, COLOR_YELLOW, bg);
+		init_pair(GNT_COLOR_URGENT, COLOR_GREEN, bg);
+
 		init_pair(GNT_COLOR_HIGHLIGHT, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_SHADOW, COLOR_BLACK, COLOR_BLACK);
 		init_pair(GNT_COLOR_TITLE, COLOR_WHITE, COLOR_BLUE);
@@ -231,6 +234,8 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 				type = GNT_COLOR_TEXT_NORMAL;
 			else if (strcmp(key, "disabled") == 0)
 				type = GNT_COLOR_DISABLED;
+			else if (strcmp(key, "urgent") == 0)
+				type = GNT_COLOR_URGENT;
 			else
 				continue;
 

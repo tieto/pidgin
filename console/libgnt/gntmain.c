@@ -225,19 +225,14 @@ draw_taskbar(gboolean reposition)
 		int color;
 		const char *title;
 
-		if (w == ordered->data)
-		{
+		if (w == ordered->data) {
 			/* This is the current window in focus */
 			color = GNT_COLOR_TITLE;
 			GNT_WIDGET_UNSET_FLAGS(w, GNT_WIDGET_URGENT);
-		}
-		else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT))
-		{
+		} else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT)) {
 			/* This is a window with the URGENT hint set */
-			color = GNT_COLOR_TITLE_D;
-		}
-		else
-		{
+			color = GNT_COLOR_URGENT;
+		} else {
 			color = GNT_COLOR_NORMAL;
 		}
 		wbkgdset(taskbar, '\0' | COLOR_PAIR(color));
