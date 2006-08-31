@@ -123,22 +123,20 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 	if (list->ui_data == NULL)
 		return;
 
-	if (node->ui_data != NULL)
-	{
+	if (node->ui_data != NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
 				0, get_display_name(node));
 	}
 
-	if (GAIM_BLIST_NODE_IS_BUDDY(node))
-	{
+	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy = (GaimBuddy*)node;
 		if (gaim_presence_is_online(gaim_buddy_get_presence(buddy)))
 			add_node((GaimBlistNode*)buddy, list->ui_data);
 		else
 			node_remove(gaim_get_blist(), node);
-	}
-	else if (GAIM_BLIST_NODE_IS_CHAT(node))
-	{
+
+		node_update(list, node->parent);
+	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		add_chat((GaimChat *)node, list->ui_data);
 	}
 }
@@ -316,7 +314,7 @@ static GaimBlistUiOps blist_ui_ops =
 	new_list,
 	new_node,
 	NULL,
-	node_update,		/* This doesn't do crap */
+	node_update,
 	node_remove,
 	NULL,
 	NULL,
@@ -426,7 +424,6 @@ add_contact(GaimContact *contact, GGBlist *ggblist)
 {
 	GaimGroup *group;
 	GaimBlistNode *node = (GaimBlistNode*)contact;
-	GaimBuddy *buddy;
 
 	if (node->ui_data)
 		return;
@@ -439,12 +436,6 @@ add_contact(GaimContact *contact, GGBlist *ggblist)
 				group, NULL);
 
 	gnt_tree_set_expanded(GNT_TREE(ggblist->tree), contact, FALSE);
-
-	buddy = gaim_contact_get_priority_buddy(contact);
-	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, GNT_TEXT_FLAG_DIM);
-	else
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, 0);
 }
 
 static void
@@ -462,10 +453,13 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				contact, NULL);
-	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
+	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy))) {
 		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
-	else
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, GNT_TEXT_FLAG_DIM);
+	} else {
 		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, 0);
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, 0);
+	}
 }
 
 #if 0
@@ -529,8 +523,8 @@ gnt_append_menu_action(GntTree *tree, GaimMenuAction *action, gpointer parent)
 	if (action == NULL)
 		return;
 
-	gnt_tree_add_row_after(tree, action,
-			gnt_tree_create_row(tree, action->label), parent, NULL);
+	gnt_tree_add_row_last(tree, action,
+			gnt_tree_create_row(tree, action->label), parent);
 	for (list = action->children; list; list = list->next)
 		gnt_append_menu_action(tree, list->data, action);
 }
@@ -905,24 +899,19 @@ draw_context_menu(GGBlist *ggblist)
 	gnt_widget_set_name(context, "context menu");
 	g_signal_connect(G_OBJECT(context), "activate", G_CALLBACK(context_menu_callback), ggblist);
 
-	/* XXX: For now, for a contact, the context menu for the priority buddy will popup */
-	if (GAIM_BLIST_NODE_IS_CONTACT(node))
-		node = (GaimBlistNode*)gaim_contact_get_priority_buddy((GaimContact*)node);
-
-	if (GAIM_BLIST_NODE_IS_BUDDY(node))
-	{
+	if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		create_buddy_menu(GNT_TREE(context),
+			gaim_contact_get_priority_buddy((GaimContact*)node));
+		title = g_strdup(gaim_contact_get_alias((GaimContact*)node));
+	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy = (GaimBuddy *)node;
 		create_buddy_menu(GNT_TREE(context), buddy);
 		title = g_strdup(gaim_buddy_get_name(buddy));
-	}
-	else if (GAIM_BLIST_NODE_IS_CHAT(node))
-	{
+	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		GaimChat *chat = (GaimChat*)node;
 		create_chat_menu(GNT_TREE(context), chat);
 		title = g_strdup(gaim_chat_get_name(chat));
-	}
-	else if (GAIM_BLIST_NODE_IS_GROUP(node))
-	{
+	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		GaimGroup *group = (GaimGroup *)node;
 		create_group_menu(GNT_TREE(context), group);
 		title = g_strdup(group->name);
@@ -1038,6 +1027,7 @@ draw_tooltip(GGBlist *ggblist)
 			if (node == (GaimBlistNode*)pr || !GAIM_BUDDY_IS_ONLINE((GaimBuddy*)node))
 				continue;
 			str = g_string_append(str, "\n----------\n");
+			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name((GaimBuddy*)node));
 			tooltip_for_buddy((GaimBuddy*)node, str);
 		}
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
@@ -1136,14 +1126,23 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 static void
 update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist)
 {
+	GaimContact *contact;
+	
+	contact = gaim_buddy_get_contact(buddy);
+
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, 0, get_display_name((GaimBlistNode*)buddy));
+	gnt_tree_change_text(GNT_TREE(ggblist->tree), contact, 0, get_display_name((GaimBlistNode*)contact));
+
 	if (ggblist->tnode == (GaimBlistNode*)buddy)
 		draw_tooltip(ggblist);
 
-	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy)))
+	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy))) {
 		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
-	else
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, GNT_TEXT_FLAG_DIM);
+	} else {
 		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, 0);
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, 0);
+	}
 }
 
 static void
@@ -1444,8 +1443,13 @@ blist_node_compare(GaimBlistNode *n1, GaimBlistNode *n2)
 			s2 = gaim_chat_get_name((GaimChat*)n2);
 			break;
 		case GAIM_BLIST_BUDDY_NODE:
-			s1 = gaim_buddy_get_alias((GaimBuddy*)n1);
-			s2 = gaim_buddy_get_alias((GaimBuddy*)n2);
+			/* XXX: reordering existing rows don't do well in GntTree */
+			return gaim_presence_compare(gaim_buddy_get_presence((GaimBuddy*)n1),
+					gaim_buddy_get_presence((GaimBuddy*)n2));
+			break;
+		case GAIM_BLIST_CONTACT_NODE:
+			s1 = gaim_contact_get_alias((GaimContact*)n1);
+			s2 = gaim_contact_get_alias((GaimContact*)n2);
 			break;
 		default:
 			return -1;
