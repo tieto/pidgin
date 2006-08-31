@@ -118,6 +118,8 @@ void gnt_tree_set_show_title(GntTree *tree, gboolean set);
 
 void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func);
 
+void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded);
+
 G_END_DECLS
 
 #endif /* GNT_TREE_H */

@@ -111,7 +111,7 @@ get_last_child(GntTreeRow *row)
 
 	while(row->next)
 		row = row->next;
-	if (row->child)
+	if (!row->collapsed && row->child)
 		row = get_last_child(row->child);
 	return row;
 }
@@ -1215,3 +1215,12 @@ void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func)
 	tree->compare = func;
 }
 
+void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	if (row) {
+		row->collapsed = !expanded;
+		if (GNT_WIDGET(tree)->window)
+			gnt_widget_draw(GNT_WIDGET(tree));
+	}
+}
