@@ -130,6 +130,8 @@ version 2.0.0:
 	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH
 	* gtk_imhtml_search_find(): Now wraps around to the top instead of
 	  clearing the search at the end.
+	* gaim_gtkxfer_dialog_show: Can now take NULL to show (and possibly
+	  create) a default gtkxfer dialog.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -194,6 +196,7 @@ version 2.0.0:
 	* Removed ui_ops from GaimBuddyList. Use gaim_blist_get_ui_ops() instead
 	* GaimGtkLogViewer hidden... You weren't using it anyway.
 	* GaimGtkConversation: dialogs (dialogs.search moved to GaimGtkWindow)
+	* gaim_show_xfer_dialog: Use gaim_gtk_xfer_dialog_show(NULL) instead.
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -373,6 +376,7 @@ version 2.0.0:
 	* "gtkblist-unhiding"
 	* "log-displaying"
 	* "savedstatus-changed"
+	* "sendto-extended-menu"
 
 	Signals - Removed:
 	* "account-away": replaced by account-status-changed

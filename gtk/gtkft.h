@@ -55,7 +55,8 @@ GaimGtkXferDialog *gaim_gtkxfer_dialog_new(void);
 void gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog);
 
 /**
- * Displays the file transfer dialog.
+ * Displays the file transfer dialog given.
+ * If dialog is @c NULL, displays the default dialog, creating one if necessary
  *
  * @param dialog The file transfer dialog to show.
  */
@@ -67,11 +68,6 @@ void gaim_gtkxfer_dialog_show(GaimGtkXferDialog *dialog);
  * @param dialog The file transfer dialog to hide.
  */
 void gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog);
-
-/**
- * Shows the file transfer dialog, creating a new one if necessary
- */
-void gaim_show_xfer_dialog(void);
 
 /**
  * Adds a file transfer to the dialog.

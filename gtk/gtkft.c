@@ -844,9 +844,20 @@ gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog)
 void
 gaim_gtkxfer_dialog_show(GaimGtkXferDialog *dialog)
 {
-	g_return_if_fail(dialog != NULL);
+	GaimGtkXferDialog *tmp;
 
-	gtk_widget_show(dialog->window);
+	if (dialog == NULL) {
+		tmp = gaim_get_gtkxfer_dialog();
+
+		if (tmp == NULL) {
+			tmp = gaim_gtkxfer_dialog_new();
+			gaim_set_gtkxfer_dialog(tmp);
+		}
+
+		gtk_widget_show(tmp->window);
+	} else {
+		gtk_widget_show(dialog->window);
+	}
 }
 
 void
@@ -857,22 +868,6 @@ gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog)
 	gaim_notify_close_with_handle(dialog);
 
 	gtk_widget_hide(dialog->window);
-}
-
-void
-gaim_show_xfer_dialog()
-{
-	GaimGtkXferDialog *dialog;
-
-	dialog = gaim_get_gtkxfer_dialog();
-
-	if (dialog == NULL) {
-		dialog = gaim_gtkxfer_dialog_new();
-
-		gaim_set_gtkxfer_dialog(dialog);
-	}
-
-	gaim_gtkxfer_dialog_show(dialog);
 }
 
 void
