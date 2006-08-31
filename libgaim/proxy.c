@@ -1582,8 +1582,7 @@ connection_host_resolved(GSList *hosts, gpointer data,
 
 	if (error_message != NULL)
 	{
-		gaim_proxy_connect_data_error(connect_data,
-				_("Error while resolving hostname: %s\n"), error_message);
+		gaim_proxy_connect_data_error(connect_data, error_message);
 		return;
 	}
 

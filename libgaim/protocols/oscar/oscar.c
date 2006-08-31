@@ -897,7 +897,7 @@ oscar_chat_kill(GaimConnection *gc, struct chat_connection *cc)
 
 	/* Destroy the chat_connection */
 	od->oscar_chats = g_slist_remove(od->oscar_chats, cc);
-	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE);
+	flap_connection_schedule_destroy(cc->conn, OSCAR_DISCONNECT_DONE, NULL);
 	oscar_chat_destroy(cc);
 }
 
@@ -927,12 +927,27 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 		gaim_debug_error("oscar", "unable to connect FLAP server "
 				"of type 0x%04hx\n", conn->type);
 		if (conn->type == SNAC_FAMILY_AUTH)
-			gaim_connection_error(gc, _("Could not connect to authentication server"));
-		if (conn->type == SNAC_FAMILY_LOCATE)
-			gaim_connection_error(gc, _("Could not connect to BOS server"));
-		else /* Maybe we should call this for BOS connections, too? */
+		{
+			gchar *msg;
+			msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
+					error_message);
+			gaim_connection_error(gc, msg);
+			g_free(msg);
+		}
+		else if (conn->type == SNAC_FAMILY_LOCATE)
+		{
+			gchar *msg;
+			msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
+					error_message);
+			gaim_connection_error(gc, msg);
+			g_free(msg);
+		}
+		else
+		{
+			/* Maybe we should call this for BOS connections, too? */
 			flap_connection_schedule_destroy(conn,
-					OSCAR_DISCONNECT_COULD_NOT_CONNECT);
+					OSCAR_DISCONNECT_COULD_NOT_CONNECT, error_message);
+		}
 		return;
 	}
 
@@ -1302,7 +1317,7 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 					(info->email != NULL) ? info->email : "null");
 	gaim_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
 	gaim_debug_info("oscar", "Closing auth connection...\n");
-	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE);
+	flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_DONE, NULL);
 
 	for (i = 0; i < strlen(info->bosip); i++) {
 		if (info->bosip[i] == ':') {
@@ -1617,7 +1632,9 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			connection_established_cb, newconn);
 	if (newconn->connect_data == NULL)
 	{
-		flap_connection_schedule_destroy(newconn, OSCAR_DISCONNECT_COULD_NOT_CONNECT);
+		flap_connection_schedule_destroy(newconn,
+				OSCAR_DISCONNECT_COULD_NOT_CONNECT,
+				_("gaim_proxy_connect() failed"));
 		gaim_debug_error("oscar", "Unable to connect to FLAP server "
 				"of type 0x%04hx\n", redir->group);
 	}
@@ -6515,7 +6532,7 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_bool_new(
-		_("Always use AIM/ICQ proxy server\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
+		_("Always use AIM/ICQ proxy server for file transfers\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 

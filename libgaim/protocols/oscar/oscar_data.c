@@ -109,7 +109,7 @@ oscar_data_destroy(OscarData *od)
 		gaim_timeout_remove(od->getinfotimer);
 	while (od->oscar_connections != NULL)
 		flap_connection_destroy(od->oscar_connections->data,
-				OSCAR_DISCONNECT_DONE);
+				OSCAR_DISCONNECT_DONE, NULL);
 
 	while (od->peer_connections != NULL)
 		peer_connection_destroy(od->peer_connections->data,

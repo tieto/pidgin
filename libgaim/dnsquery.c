@@ -524,7 +524,7 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	if ((rc == 4) && (err != 0))
 	{
 #ifdef HAVE_GETADDRINFO
-		g_snprintf(message, sizeof(message), _("Error resolving %s: %s"),
+		g_snprintf(message, sizeof(message), _("Error resolving %s:\n%s"),
 				query_data->hostname, gai_strerror(err));
 #else
 		g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
@@ -549,7 +549,7 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		gaim_dnsquery_resolved(query_data, hosts);
 
 	} else if (rc == -1) {
-		g_snprintf(message, sizeof(message), _("Error reading from resolver process: %s"), strerror(errno));
+		g_snprintf(message, sizeof(message), _("Error reading from resolver process:\n%s"), strerror(errno));
 		gaim_dnsquery_failed(query_data, message);
 
 	} else if (rc == 0) {
@@ -668,7 +668,7 @@ dns_thread(gpointer data)
 		}
 		freeaddrinfo(tmp);
 	} else {
-		query_data->error_message = g_strdup_printf(_("Error resolving %s: %s"), query_data->hostname, gai_strerror(rc));
+		query_data->error_message = g_strdup_printf(_("Error resolving %s:\n%s"), query_data->hostname, gai_strerror(rc));
 	}
 #else
 	if ((hp = gethostbyname(query_data->hostname))) {

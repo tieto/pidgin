@@ -366,6 +366,7 @@ struct _FlapConnection
 	time_t lastactivity;             /**< Time of last transmit. */
 	guint destroy_timeout;
 	OscarDisconnectReason disconnect_reason;
+	gchar *error_message;
 
 	/* A few variables that are only used when connecting */
 	GaimProxyConnectData *connect_data;
@@ -571,8 +572,8 @@ void aim_clearhandlers(OscarData *od);
 /* flap_connection.c */
 FlapConnection *flap_connection_new(OscarData *, int type);
 void flap_connection_close(OscarData *od, FlapConnection *conn);
-void flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason);
-void flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason);
+void flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message);
+void flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message);
 FlapConnection *flap_connection_findbygroup(OscarData *od, guint16 group);
 FlapConnection *flap_connection_getbytype(OscarData *, int type);
 FlapConnection *flap_connection_getbytype_all(OscarData *, int type);

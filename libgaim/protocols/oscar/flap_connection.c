@@ -163,6 +163,24 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		close(conn->fd);
 		conn->fd = -1;
 	}
+
+	if (conn->watcher_incoming != 0)
+	{
+		gaim_input_remove(conn->watcher_incoming);
+		conn->watcher_incoming = 0;
+	}
+
+	if (conn->watcher_outgoing != 0)
+	{
+		gaim_input_remove(conn->watcher_outgoing);
+		conn->watcher_outgoing = 0;
+	}
+
+	g_free(conn->buffer_incoming.data.data);
+	conn->buffer_incoming.data.data = NULL;
+
+	gaim_circ_buffer_destroy(conn->buffer_outgoing);
+	conn->buffer_outgoing = NULL;
 }
 
 static void
@@ -199,20 +217,50 @@ flap_connection_destroy_cb(gpointer data)
 
 	conn = data;
 	od = conn->od;
+	account = gaim_connection_get_account(od->gc);
 
 	gaim_debug_info("oscar", "Destroying oscar connection of "
 			"type 0x%04hx\n", conn->type);
 
+	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
+
+	/*
+	 * TODO: If we don't have a SNAC_FAMILY_LOCATE connection then
+	 * we should try to request one instead of disconnecting.
+	 */
+	if (!account->disconnecting && ((od->oscar_connections == NULL)
+			|| (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
+	{
+		/* No more FLAP connections!  Sign off this GaimConnection! */
+		gchar *tmp;
+		if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
+			tmp = g_strdup(_("Server closed the connection."));
+		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
+			tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
+					conn->error_message);
+		else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
+			tmp = g_strdup(_("Received invalid data on connection with server."));
+		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
+			tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+					conn->error_message);
+		else
+			/*
+			 * We shouldn't print a message for some disconnect_reasons.
+			 * Like OSCAR_DISCONNECT_LOCAL_CLOSED.
+			 */
+			tmp = NULL;
+
+		if (tmp != NULL)
+		{
+			gaim_connection_error(od->gc, tmp);
+			g_free(tmp);
+		}
+	}
+
 	flap_connection_close(od, conn);
 
+	g_free(conn->error_message);
 	g_free(conn->cookie);
-
-	if (conn->watcher_incoming != 0)
-		gaim_input_remove(conn->watcher_incoming);
-	if (conn->watcher_outgoing != 0)
-		gaim_input_remove(conn->watcher_outgoing);
-	g_free(conn->buffer_incoming.data.data);
-	gaim_circ_buffer_destroy(conn->buffer_outgoing);
 
 	/*
 	 * Free conn->internal, if necessary
@@ -223,49 +271,23 @@ flap_connection_destroy_cb(gpointer data)
 	g_slist_free(conn->groups);
 	flap_connection_destroy_rates(conn->rates);
 
-	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
-
-	account = gaim_connection_get_account(od->gc);
-
-	/*
-	 * TODO: If we don't have a SNAC_FAMILY_LOCATE connection then
-	 * we should try to request one instead of disconnecting.
-	 */
-	if (!account->disconnecting && ((od->oscar_connections == NULL)
-			|| (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
-	{
-		/* No more FLAP connections!  Sign off this GaimConnection! */
-		const gchar *tmp;
-		if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
-			tmp = _("Server closed the connection.");
-		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
-			tmp = _("Lost connection with server for an unknown reason.");
-		else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
-			tmp = _("Received invalid data on connection with server.");
-		else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-			tmp = _("Could not establish a connection with the server.");
-		else
-			/*
-			 * We shouldn't print a message for some disconnect_reasons.
-			 * Like OSCAR_DISCONNECT_LOCAL_CLOSED.
-			 */
-			tmp = NULL;
-
-		if (tmp != NULL)
-			gaim_connection_error(od->gc, tmp);
-	}
-
 	g_free(conn);
 
 	return FALSE;
 }
 
+/**
+ * See the comments for the parameters of
+ * flap_connection_schedule_destroy().
+ */
 void
-flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason)
+flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
 {
 	if (conn->destroy_timeout != 0)
 		gaim_timeout_remove(conn->destroy_timeout);
 	conn->disconnect_reason = reason;
+	g_free(conn->error_message);
+	conn->error_message = g_strdup(error_message);
 	flap_connection_destroy_cb(conn);
 }
 
@@ -274,9 +296,18 @@ flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason)
  * return control back to the program's main loop.  We must do this
  * if we want to destroy the connection but we are still using it
  * for some reason.
+ *
+ * @param reason The reason for the disconnection.
+ * @param error_message A brief error message that gives more detail
+ *        regarding the reason for the disconnecting.  This should
+ *        be NULL for everything except OSCAR_DISCONNECT_LOST_CONNECTION,
+ *        in which case it should contain the value of strerror(errno),
+ *        and OSCAR_DISCONNECT_COULD_NOT_CONNECT, in which case it
+ *        should contain the error_message passed back from the call
+ *        to gaim_proxy_connect().
  */
 void
-flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason)
+flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
 {
 	if (conn->destroy_timeout != 0)
 		/* Already taken care of */
@@ -285,6 +316,7 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 	gaim_debug_info("oscar", "Scheduling destruction of FLAP "
 			"connection of type 0x%04hx\n", conn->type);
 	conn->disconnect_reason = reason;
+	conn->error_message = g_strdup(error_message);
 	conn->destroy_timeout = gaim_timeout_add(0, flap_connection_destroy_cb, conn);
 }
 
@@ -571,7 +603,7 @@ parse_flap(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 					"0x00000001 but received FLAP version %08lx.  Closing connection.\n",
 					flap_version);
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_INVALID_DATA);
+						OSCAR_DISCONNECT_INVALID_DATA, NULL);
 		}
 		else
 			conn->connected = TRUE;
@@ -616,7 +648,7 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			if (read == 0)
 			{
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_REMOTE_CLOSED);
+						OSCAR_DISCONNECT_REMOTE_CLOSED, NULL);
 				break;
 			}
 
@@ -629,7 +661,7 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 
 				/* Error! */
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_LOST_CONNECTION);
+						OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
 				break;
 			}
 
@@ -644,7 +676,7 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			if (aimutil_get8(&header[0]) != 0x2a)
 			{
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_INVALID_DATA);
+						OSCAR_DISCONNECT_INVALID_DATA, NULL);
 				break;
 			}
 
@@ -668,7 +700,7 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			if (read == 0)
 			{
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_REMOTE_CLOSED);
+						OSCAR_DISCONNECT_REMOTE_CLOSED, NULL);
 				break;
 			}
 
@@ -680,7 +712,7 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 
 				/* Error! */
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_LOST_CONNECTION);
+						OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
 				break;
 			}
 
@@ -724,7 +756,8 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		flap_connection_schedule_destroy(conn, OSCAR_DISCONNECT_LOST_CONNECTION);
+		flap_connection_schedule_destroy(conn,
+				OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
 		return;
 	}
 
