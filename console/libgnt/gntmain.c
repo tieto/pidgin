@@ -81,7 +81,11 @@ static GntWM wm =
 {
 	NULL,   /* new_window */
 	NULL,   /* close_window */
+	NULL,   /* window_resize_confirm */
 	NULL,   /* window_resized */
+	NULL,   /* window_move_confirm */
+	NULL,   /* window_moved */
+	NULL,   /* window_update */
 	NULL,   /* key_pressed */
 	NULL,   /* mouse clicked */
 	bring_on_top, /* give_focus */
@@ -229,6 +233,10 @@ draw_taskbar(gboolean reposition)
 			/* This is the current window in focus */
 			color = GNT_COLOR_TITLE;
 			GNT_WIDGET_UNSET_FLAGS(w, GNT_WIDGET_URGENT);
+			if (wm.window_update) {
+				GntNode *node = g_hash_table_lookup(nodes, w);
+				wm.window_update(node->panel, w);
+			}
 		} else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT)) {
 			/* This is a window with the URGENT hint set */
 			color = GNT_COLOR_URGENT;
@@ -1145,6 +1153,12 @@ void gnt_widget_set_urgent(GntWidget *widget)
 		return;
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
+
+	if (wm.window_update) {
+		GntNode *node = g_hash_table_lookup(nodes, widget);
+		wm.window_update(node->panel, widget);
+	}
+
 	draw_taskbar(FALSE);
 }
 
@@ -1168,6 +1182,9 @@ void gnt_screen_resize_widget(GntWidget *widget, int width, int height)
 		if (!node)
 			return;
 
+		if (wm.window_resize_confirm && !wm.window_resize_confirm(widget, &width, &height))
+			return;
+
 		hide_panel(node->panel);
 		gnt_widget_set_size(widget, width, height);
 		gnt_widget_draw(widget);
@@ -1183,8 +1200,16 @@ void gnt_screen_resize_widget(GntWidget *widget, int width, int height)
 void gnt_screen_move_widget(GntWidget *widget, int x, int y)
 {
 	GntNode *node = g_hash_table_lookup(nodes, widget);
+
+	if (wm.window_move_confirm && !wm.window_move_confirm(widget, &x, &y))
+		return;
+
 	gnt_widget_set_position(widget, x, y);
 	move_panel(node->panel, y, x);
+
+	if (wm.window_moved)
+		wm.window_moved(node->panel, widget);
+
 	update_screen(NULL);
 }
 
@@ -1192,6 +1217,12 @@ void gnt_screen_rename_widget(GntWidget *widget, const char *text)
 {
 	gnt_box_set_title(GNT_BOX(widget), text);
 	gnt_widget_draw(widget);
+
+	if (wm.window_update) {
+		GntNode *node = g_hash_table_lookup(nodes, widget);
+		wm.window_update(node->panel, widget);
+	}
+
 	draw_taskbar(FALSE);
 }
 

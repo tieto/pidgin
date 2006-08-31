@@ -156,6 +156,14 @@ s_mouse_clicked(GntMouseEvent event, int cx, int cy, GntWidget *widget)
 	return FALSE;
 }
 
+static void
+s_window_update(PANEL *panel, GntWidget *window)
+{
+	const char *name = gnt_widget_get_name(window);
+	if (name && strcmp(name, "buddylist"))
+		envelope_normal_window(window);
+}
+
 void gntwm_init(GntWM *wm)
 {
 	gwm = wm;
@@ -163,5 +171,6 @@ void gntwm_init(GntWM *wm)
 	wm->window_resized = s_resize_window;
 	wm->key_pressed = s_key_pressed;
 	wm->mouse_clicked = s_mouse_clicked;
+	wm->window_update = s_window_update;
 }
 
