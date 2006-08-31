@@ -599,7 +599,8 @@ method_toggle_cb(GtkWidget *widget, gpointer data)
 		GtkWidget *entry = g_object_get_data(G_OBJECT(widget), "title-entry");
 		gtk_widget_set_sensitive(entry, on);
 
-		gaim_prefs_set_string("/plugins/gtk/X11/notify/title_string", gtk_entry_get_text(GTK_ENTRY(entry)));
+		gaim_prefs_set_string("/plugins/gtk/X11/notify/title_string",
+		                      gtk_entry_get_text(GTK_ENTRY(entry)));
 	}
 
 	apply_method();
