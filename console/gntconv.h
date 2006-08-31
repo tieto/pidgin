@@ -9,4 +9,7 @@ void gg_conversation_init(void);
 
 void gg_conversation_uninit(void);
 
+/* Set a conversation as active in a contactized conversation */
+void gg_conversation_set_active(GaimConversation *conv);
+
 #endif

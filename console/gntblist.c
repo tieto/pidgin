@@ -17,6 +17,7 @@
 #include "gnttree.h"
 
 #include "gntblist.h"
+#include "gntconv.h"
 #include "gntstatus.h"
 #include <string.h>
 
@@ -496,9 +497,10 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
 		GaimBuddy *buddy = (GaimBuddy *)node;
-		gaim_conversation_new(GAIM_CONV_TYPE_IM,
-				gaim_buddy_get_account(buddy),
-				gaim_buddy_get_name(buddy));
+		GaimConversation *conv =  gaim_conversation_new(GAIM_CONV_TYPE_IM,
+					gaim_buddy_get_account(buddy),
+					gaim_buddy_get_name(buddy));
+		gg_conversation_set_active(conv);
 	}
 	else if (GAIM_BLIST_NODE_IS_CHAT(node))
 	{

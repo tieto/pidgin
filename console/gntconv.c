@@ -22,15 +22,15 @@
 
 #include "config.h"
 
-GHashTable *ggconvs;
-
 typedef struct _GGConv GGConv;
 typedef struct _GGConvChat GGConvChat;
 typedef struct _GGConvIm GGConvIm;
 
 struct _GGConv
 {
-	GaimConversation *conv;
+	GList *list;
+	GaimConversation *active_conv;
+	/*GaimConversation *conv;*/
 
 	GntWidget *window;        /* the container */
 	GntWidget *entry;         /* entry */
@@ -61,7 +61,7 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 		const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
 		if (*text == '/')
 		{
-			GaimConversation *conv = ggconv->conv;
+			GaimConversation *conv = ggconv->active_conv;
 			GaimCmdStatus status;
 			const char *cmdline = text + 1;
 			char *error = NULL, *escape;
@@ -112,13 +112,13 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 		else
 		{
 			char *escape = g_markup_escape_text(text, -1);
-			switch (gaim_conversation_get_type(ggconv->conv))
+			switch (gaim_conversation_get_type(ggconv->active_conv))
 			{
 				case GAIM_CONV_TYPE_IM:
-					gaim_conv_im_send_with_flags(GAIM_CONV_IM(ggconv->conv), escape, GAIM_MESSAGE_SEND);
+					gaim_conv_im_send_with_flags(GAIM_CONV_IM(ggconv->active_conv), escape, GAIM_MESSAGE_SEND);
 					break;
 				case GAIM_CONV_TYPE_CHAT:
-					gaim_conv_chat_send(GAIM_CONV_CHAT(ggconv->conv), escape);
+					gaim_conv_chat_send(GAIM_CONV_CHAT(ggconv->active_conv), escape);
 					break;
 				default:
 					g_free(escape);
@@ -151,8 +151,13 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 static void
 closing_window(GntWidget *window, GGConv *ggconv)
 {
+	GList *list = ggconv->list;
 	ggconv->window = NULL;
-	gaim_conversation_destroy(ggconv->conv);
+	while (list) {
+		GaimConversation *conv = list->data;
+		list = list->next;
+		gaim_conversation_destroy(conv);
+	}
 }
 
 static void
@@ -169,24 +174,55 @@ save_position_cb(GntWidget *w, int x, int y)
 	gaim_prefs_set_int(PREF_ROOT "/position/y", y);
 }
 
+static GaimConversation *
+find_conv_with_contact(GaimConversation *conv)
+{
+	GaimBlistNode *node;
+	GaimBuddy *buddy = gaim_find_buddy(conv->account, conv->name);
+	GaimConversation *ret = NULL;
+
+	if (!buddy)
+		return NULL;
+
+	for (node = ((GaimBlistNode*)buddy)->parent->child; node; node = node->next) {
+		if (node == (GaimBlistNode*)buddy)
+			continue;
+		if ((ret = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+				((GaimBuddy*)node)->name, ((GaimBuddy*)node)->account)) != NULL)
+			break;
+	}
+	return ret;
+}
+
 static void
 gg_create_conversation(GaimConversation *conv)
 {
-	GGConv *ggc = g_hash_table_lookup(ggconvs, conv);
+	GGConv *ggc = conv->ui_data;
 	char *title;
 	GaimConversationType type;
+	GaimConversation *cc;
 
 	if (ggc)
 		return;
 
-	ggc = g_new0(GGConv, 1);
-	g_hash_table_insert(ggconvs, conv, ggc);
+	cc = find_conv_with_contact(conv);
+	if (cc && cc->ui_data)
+		ggc = cc->ui_data;
+	else
+		ggc = g_new0(GGConv, 1);
 
-	ggc->conv = conv;
+	ggc->list = g_list_prepend(ggc->list, conv);
+	ggc->active_conv = conv;
 	conv->ui_data = ggc;
+
+	if (cc && cc->ui_data) {
+		gg_conversation_set_active(conv);
+		return;
+	}
 
 	type = gaim_conversation_get_type(conv);
 	title = g_strdup_printf(_("%s"), gaim_conversation_get_title(conv));
+	
 	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
@@ -222,19 +258,35 @@ gg_create_conversation(GaimConversation *conv)
 static void
 gg_destroy_conversation(GaimConversation *conv)
 {
-	g_hash_table_remove(ggconvs, conv);
+	/* do stuff here */
+	GGConv *ggc = conv->ui_data;
+	ggc->list = g_list_remove(ggc->list, conv);
+	if (ggc->list && conv == ggc->active_conv)
+		ggc->active_conv = ggc->list->data;
+	
+	if (ggc->list == NULL) {
+		gnt_widget_destroy(ggc->window);
+		g_free(ggc);
+	}
 }
 
 static void
 gg_write_common(GaimConversation *conv, const char *who, const char *message,
 		GaimMessageFlags flags, time_t mtime)
 {
-	GGConv *ggconv = g_hash_table_lookup(ggconvs, conv); /* XXX: ggconv = conv->ui_data; should do */
+	GGConv *ggconv = conv->ui_data;
 	char *strip, *newline;
 	GntTextFormatFlags fl = 0;
 	int pos;
 
 	g_return_if_fail(ggconv != NULL);
+
+	if (ggconv->active_conv != conv) {
+		if (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV))
+			gg_conversation_set_active(conv);
+		else
+			return;
+	}
 
 	pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggconv->tv));
 
@@ -408,14 +460,6 @@ static GaimConversationUiOps conv_ui_ops =
 	.custom_smiley_close = NULL
 };
 
-static void
-destroy_ggconv(gpointer data)
-{
-	GGConv *ggconv = data;
-	gnt_widget_destroy(ggconv->window);
-	g_free(ggconv);
-}
-
 GaimConversationUiOps *gg_conv_get_ui_ops()
 {
 	return &conv_ui_ops;
@@ -536,8 +580,6 @@ cmd_show_window(GaimConversation *conv, const char *cmd, char **args, char **err
 
 void gg_conversation_init()
 {
-	ggconvs = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, destroy_ggconv);
-
 	gaim_prefs_add_none(PREF_ROOT);
 	gaim_prefs_add_none(PREF_ROOT "/size");
 	gaim_prefs_add_int(PREF_ROOT "/size/width", 70);
@@ -586,7 +628,16 @@ void gg_conversation_init()
 
 void gg_conversation_uninit()
 {
-	g_hash_table_destroy(ggconvs);
-	ggconvs = NULL;
+}
+
+void gg_conversation_set_active(GaimConversation *conv)
+{
+	GGConv *ggconv = conv->ui_data;
+
+	g_return_if_fail(ggconv);
+	g_return_if_fail(g_list_find(ggconv->list, conv));
+
+	ggconv->active_conv = conv;
+	gnt_screen_rename_widget(ggconv->window, gaim_conversation_get_title(conv));
 }
 

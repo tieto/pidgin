@@ -21,6 +21,8 @@ void gnt_screen_resize_widget(GntWidget *widget, int width, int height);
 
 void gnt_screen_move_widget(GntWidget *widget, int x, int y);
 
+void gnt_screen_rename_widget(GntWidget *widget, const char *text);
+
 gboolean gnt_widget_has_focus(GntWidget *widget);
 
 void gnt_widget_set_urgent(GntWidget *widget);

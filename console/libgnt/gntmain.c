@@ -1188,3 +1188,10 @@ void gnt_screen_move_widget(GntWidget *widget, int x, int y)
 	update_screen(NULL);
 }
 
+void gnt_screen_rename_widget(GntWidget *widget, const char *text)
+{
+	gnt_box_set_title(GNT_BOX(widget), text);
+	gnt_widget_draw(widget);
+	draw_taskbar(FALSE);
+}
+

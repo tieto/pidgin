@@ -41,6 +41,9 @@ gnt_box_draw(GntWidget *widget)
 		gchar *title = g_strdup(box->title);
 		int pos = g_utf8_strlen(title, -1), right;
 
+		mvwhline(widget->window, 0, 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
+				widget->priv.width - 2);
+
 		if (pos >= widget->priv.width - 4)
 		{
 			g_utf8_strncpy(title, box->title, widget->priv.width - 4);
