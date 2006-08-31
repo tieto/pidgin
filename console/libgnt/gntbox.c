@@ -25,6 +25,32 @@ add_to_focus(gpointer value, gpointer data)
 }
 
 static void
+get_title_thingies(GntBox *box, char *title, int *p, int *r)
+{
+	GntWidget *widget = GNT_WIDGET(box);
+	int pos = g_utf8_strlen(title, -1), right;
+
+	if (pos >= widget->priv.width - 4)
+	{
+		g_utf8_strncpy(title, title, widget->priv.width - 4);
+		pos = 2;
+		right = pos + g_utf8_strlen(title, -1);
+	}
+	else
+	{
+		/* XXX: Position of the title might be configurable */
+		right = pos;
+		pos = (widget->priv.width - pos) / 2;
+		right += pos;
+	}
+
+	if (p)
+		*p = pos;
+	if (r)
+		*r = right;
+}
+
+static void
 gnt_box_draw(GntWidget *widget)
 {
 	GntBox *box = GNT_BOX(widget);
@@ -38,25 +64,10 @@ gnt_box_draw(GntWidget *widget)
 
 	if (box->title && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
 	{
-		gchar *title = g_strdup(box->title);
-		int pos = g_utf8_strlen(title, -1), right;
-
-		mvwhline(widget->window, 0, 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
-				widget->priv.width - 2);
-
-		if (pos >= widget->priv.width - 4)
-		{
-			g_utf8_strncpy(title, box->title, widget->priv.width - 4);
-			pos = 2;
-			right = pos + g_utf8_strlen(title, -1);
-		}
-		else
-		{
-			/* XXX: Position of the title might be configurable */
-			right = pos;
-			pos = (widget->priv.width - pos) / 2;
-			right += pos;
-		}
+		int pos, right;
+		char *title = g_strdup(box->title);
+		
+		get_title_thingies(box, title, &pos, &right);
 
 		if (gnt_widget_has_focus(widget))
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
@@ -578,8 +589,17 @@ void gnt_box_add_widget(GntBox *b, GntWidget *widget)
 
 void gnt_box_set_title(GntBox *b, const char *title)
 {
-	g_free(b->title);
+	char *prev = b->title;
+	GntWidget *w = GNT_WIDGET(b);
 	b->title = g_strdup(title);
+	if (w->window && !GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_NO_BORDER)) {
+		/* Erase the old title */
+		int pos, right;
+		get_title_thingies(b, prev, &pos, &right);
+		mvwhline(w->window, 0, pos - 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
+				right - pos + 2);
+		g_free(prev);
+	}
 }
 
 void gnt_box_set_pad(GntBox *box, int pad)
