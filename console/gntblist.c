@@ -121,6 +121,11 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 static void
 node_update(GaimBuddyList *list, GaimBlistNode *node)
 {
+	/* It really looks like this should never happen ... but it does.
+           This will at least emit a warning to the log when it
+           happens, so maybe someone will figure it out. */
+	g_return_if_fail(node != NULL);
+
 	if (list->ui_data == NULL)
 		return;
 
