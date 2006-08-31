@@ -41,7 +41,7 @@ static const char *away_text[] =
 void
 msn_change_status(MsnSession *session)
 {
-	GaimAccount *account = session->account;
+	GaimAccount *account;
 	MsnCmdProc *cmdproc;
 	MsnUser *user;
 	MsnObject *msnobj;
@@ -50,6 +50,7 @@ msn_change_status(MsnSession *session)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
 
+	account = session->account;
 	cmdproc = session->notification->cmdproc;
 	user = session->user;
 	state_text = msn_state_get_text(msn_state_from_account(account));

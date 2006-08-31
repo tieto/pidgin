@@ -3363,9 +3363,6 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	char *msg = NULL, *msg2 = NULL;
 	GaimStatus *status = NULL;
 
-	if (!yd)
-		return;
-
 	if (idle && yd->current_status != YAHOO_STATUS_CUSTOM)
 		yd->current_status = YAHOO_STATUS_IDLE;
 	else if (!idle && yd->current_status == YAHOO_STATUS_IDLE) {

@@ -1388,11 +1388,11 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 
 		gc = gaim_account_get_connection(account);
 
-		if (gc != NULL && gc->prpl != NULL)
+		if (gc != NULL && GAIM_CONNECTION_IS_CONNECTED(gc) &&
+				gc->prpl != NULL)
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-		if (prpl_info && g_list_find(gaim_connections_get_all(), gc) &&
-				prpl_info->set_idle)
+		if (prpl_info && prpl_info->set_idle)
 			prpl_info->set_idle(gc, (idle ? (time(NULL) - idle_time) : 0));
 	}
 }
