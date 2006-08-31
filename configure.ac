@@ -1030,17 +1030,12 @@ AC_SUBST(MONO_CFLAGS)
 AC_SUBST(MONO_LIBS)
 AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 
-if test "x$enable_gtk" = "xyes"; then  # This is for now, since perl still requires GTK+
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
 if test "$enable_plugins" = no ; then
 	enable_perl=no
 fi
-
-else # GTK
-	enable_perl=no
-fi # GTK
 
 if test "$enable_perl" = yes ; then
 	AC_PATH_PROG(perlpath, perl)
@@ -1897,7 +1892,7 @@ echo Build with Tk support......... : $enable_tk
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
-eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
+eval eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
 fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Build with libxml2 support.... : $enable_libxml2
