@@ -32,8 +32,14 @@ enum {
 	STATUS_ICON_VISIBLE_COLUMN,
 	NAME_COLUMN,
 	IDLE_COLUMN,
+	IDLE_VISIBLE_COLUMN,
 	BUDDY_ICON_COLUMN,
+	BUDDY_ICON_VISIBLE_COLUMN,
 	NODE_COLUMN,
+	BGCOLOR_COLUMN,
+	GROUP_EXPANDER_COLUMN,
+	CONTACT_EXPANDER_COLUMN,
+	CONTACT_EXPANDER_VISIBLE_COLUMN,
 	BLIST_COLUMNS
 
 };
@@ -93,7 +99,8 @@ struct _GaimGtkBuddyList {
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
 	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
-
+	GdkPixbuf *expander_collapsed;   /**< A collapsed expander */
+	GdkPixbuf *expander_expanded;    /**< An expanded expander */  
 };
 
 #define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)
