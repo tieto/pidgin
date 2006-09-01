@@ -83,6 +83,18 @@ int main()
 	gnt_entry_set_history_length(GNT_ENTRY(entry), -1);
 	g_signal_connect_after(G_OBJECT(entry), "key_pressed", G_CALLBACK(key_pressed), view);
 
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 1st line\n", GNT_TEXT_FLAG_NORMAL);
+
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 2nd line\n", GNT_TEXT_FLAG_NORMAL);
+
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 3rd line\n", GNT_TEXT_FLAG_NORMAL);
+
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 4th line\n", GNT_TEXT_FLAG_NORMAL);
+
 #ifdef STANDALONE
 	gnt_main();
 

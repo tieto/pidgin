@@ -324,8 +324,17 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 		}
 
 		line = view->list->data;
-		end = gnt_util_onscreen_width_to_pointer(start,
-				widget->priv.width - line->length - 1, &len);
+		if ((end = strchr(start, '\n')) != NULL ||
+			(end = strchr(start, '\r')) != NULL) {
+			int l = gnt_util_onscreen_width(start, end - 1);
+			if (l >= widget->priv.width - line->length - 1) {
+				end = NULL;
+			}
+		}
+
+		if (end == NULL)
+			end = gnt_util_onscreen_width_to_pointer(start,
+					widget->priv.width - line->length - 1, &len);
 
 		seg = g_new0(GntTextSegment, 1);
 		seg->start = start - view->string->str;
