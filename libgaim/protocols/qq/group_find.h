@@ -27,12 +27,14 @@
 #include "connection.h"
 #include "group.h"
 
-gchar *qq_group_find_member_by_channel_and_nickname(GaimConnection *gc, gint channel, const gchar *who);
+#define QQ_INTERNAL_ID 0
+#define QQ_EXTERNAL_ID 1
+
 qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid);
 void qq_group_remove_member_by_uid(qq_group *group, guint32 uid);
 qq_buddy *qq_group_find_or_add_member(GaimConnection *gc, qq_group *group, guint32 member_uid);
 gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq, guint32 *internal_group_id);
 qq_group *qq_group_find_by_channel(GaimConnection *gc, gint channel);
-qq_group *qq_group_find_by_internal_group_id(GaimConnection *gc, guint32 internal_group_id);
+qq_group *qq_group_find_by_id(GaimConnection *gc, guint32 id, gboolean flag);
 
 #endif

@@ -95,9 +95,11 @@ struct _qq_data {
 
 	GList *groups;
 	GList *group_packets;
+	GSList *joining_groups;
+	GSList *adding_groups_from_server; /* internal ids of groups the server wants in my blist */
 	GList *buddies;
 	GList *contact_info_window;
-	GList *qun_info_window;
+	GList *group_info_window;
 	GList *sendqueue;
 	GList *info_query;
 	GList *add_buddy_request;

@@ -37,7 +37,7 @@
 #include "qq.h"	
 #include "group.h"
 #include "group_find.h"
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_info.h"
 
 #include "qq_proxy.h"
@@ -222,7 +222,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 			}
 			else {
 				gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-						"Got an online buddy %d, but not in my buddy list", fe->s->uid);
+						"Got an online buddy %d, but not in my buddy list\n", fe->s->uid);
 			}
 
 			g_free(fe->s->ip);
@@ -231,11 +231,11 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 		
 		if(cursor > (data + len)) {
 			 gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-					"qq_process_get_buddies_online_reply: Dangerous error! maybe protocol changed, notify developers!");
+					"qq_process_get_buddies_online_reply: Dangerous error! maybe protocol changed, notify developers!\n");
 		}
 
 		if (position != QQ_FRIENDS_ONLINE_POSITION_END) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Has more online buddies, position from %d", position);
+			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Has more online buddies, position from %d\n", position);
 
 			qq_send_packet_get_buddies_online(gc, position);
 		}
@@ -352,10 +352,6 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 	guint32 unknown, position;
 	guint32 uid;
 	guint8 type, groupid;
-
-	qq_buddy *q_bud;
-	gchar *name;
-	GaimBuddy *b;
 	qq_group *group;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
@@ -384,41 +380,28 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 			read_packet_dw(data, &cursor, len, &uid);
 			/* 04: type 0x1:buddy 0x4:Qun */
 			read_packet_b(data, &cursor, len, &type);
-			/* 05: groupid*4 */
+			/* 05: groupid*4 */ /* seems to always be 0 */
 			read_packet_b(data, &cursor, len, &groupid);
-			groupid >>= 2;   /* these 2 bits might not be 0, faint! */
+			/*
+			gaim_debug(GAIM_DEBUG_INFO, "QQ", "groupid: %i\n", groupid);
+			groupid >>= 2;
+			*/
 			if (uid == 0 || (type != 0x1 && type != 0x4)) {
-				gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+				gaim_debug(GAIM_DEBUG_INFO, "QQ",
 					   "Buddy entry, uid=%d, type=%d", uid, type);
 				continue;
 			} 
 			if(0x1 == type) { /* a buddy */
-				name = uid_to_gaim_name(uid);
-				b = gaim_find_buddy(gc->account, name);
-				g_free(name);
-
-				if (b == NULL) {
-					b = qq_add_buddy_by_recv_packet(gc, uid, TRUE, TRUE);
-					q_bud = b->proto_data;
-				}
-				else {
-					q_bud = NULL;
-					b->proto_data = q_bud;	/* wrong !!!! */
-				}
-				qd->buddies = g_list_append(qd->buddies, q_bud);
-				qq_update_buddy_contact(gc, q_bud);
+				/* don't do anything but count - buddies are handled by 
+				 * qq_send_packet_get_buddies_list */
 				++i;
 			} else { /* a group */
-				group = qq_group_find_by_internal_group_id(gc, uid);
+				group = qq_group_find_by_id(gc, uid, QQ_INTERNAL_ID);
 				if(group == NULL) {
-					/*XXX not working
-					group = qq_group_create_by_id(gc, uid, 0);
+					qq_set_pending_id(&qd->adding_groups_from_server, uid, TRUE);
+					group = g_newa(qq_group, 1);
+					group->internal_group_id = uid;
 					qq_send_cmd_group_get_group_info(gc, group);
-					*/
-					gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-							"Get a Qun with internal group %d\n", uid);
-					gaim_notify_info(gc, _("QQ Qun Operation"), 
-							_("Find one Qun in the server list, but i don't know its external id, please re-rejoin it manually"), NULL);
 				} else {
 					group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 					qq_group_refresh(gc, group);

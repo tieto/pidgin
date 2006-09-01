@@ -153,7 +153,7 @@ static const gchar *_qq_list_icon(GaimAccount *a, GaimBuddy *b)
 	/* do not use g_return_val_if_fail, as it is not assertion */
 	if (b == NULL || b->proto_data == NULL)
 		return "qq";
-
+	
 	q_bud = (qq_buddy *) b->proto_data;
 	filename = get_icon_name(q_bud->icon / 3 + 1);
 
@@ -565,7 +565,6 @@ static void _qq_menu_create_permanent_group(GaimPluginAction * action)
 }
 */
 
-/* XXX re-enable this
 static void _qq_menu_unsubscribe_group(GaimBlistNode * node)
 {
 	GaimChat *chat = (GaimChat *)node;
@@ -578,7 +577,7 @@ static void _qq_menu_unsubscribe_group(GaimBlistNode * node)
 	qq_group_exit(gc, components);
 }
 
-// XXX re-enable this
+/*
 static void _qq_menu_manage_group(GaimBlistNode * node)
 {
 	GaimChat *chat = (GaimChat *)node;
@@ -860,7 +859,6 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 }
 
 /* chat-related (QQ Qun) menu shown up with right-click */
-/* TODO re-enable this
 static GList *_qq_chat_menu(GaimBlistNode *node)
 {
 	GList *m;
@@ -870,14 +868,15 @@ static GList *_qq_chat_menu(GaimBlistNode *node)
 	act = gaim_menu_action_new(_("Exit this QQ Qun"), GAIM_CALLBACK(_qq_menu_unsubscribe_group), NULL, NULL);
 	m = g_list_append(m, act);
 
+	/* TODO: enable this
 	act = gaim_menu_action_new(_("Show Details"), GAIM_CALLBACK(_qq_menu_manage_group), NULL, NULL);
 	m = g_list_append(m, act);
+	*/
 
 	return m;
 }
-*/
+
 /* buddy-related menu shown up with right-click */
-/* TODO re-enable this
 static GList *_qq_buddy_menu(GaimBlistNode * node)
 {
 	GList *m;
@@ -886,7 +885,9 @@ static GList *_qq_buddy_menu(GaimBlistNode * node)
 		return _qq_chat_menu(node);
 	
 	m = NULL;
-*/
+	return m;
+}
+
 /* TODO : not working, temp commented out by gfhuang 
 
 	act = gaim_menu_action_new(_("Block this buddy"), GAIM_CALLBACK(_qq_menu_block_buddy), NULL, NULL); //add NULL by gfhuang
@@ -918,7 +919,7 @@ static void _qq_keep_alive(GaimConnection *gc)
 		if (group->my_status == QQ_GROUP_MEMBER_STATUS_IS_MEMBER ||
 		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
 			/* no need to get info time and time again, online members enough */
-			qq_send_cmd_group_get_online_member(gc, group);
+			qq_send_cmd_group_get_online_members(gc, group);
 	
 		list = list->next;
 	}
@@ -934,7 +935,7 @@ static void _qq_get_chat_buddy_info(GaimConnection *gc, gint channel, const gcha
 	gchar *gaim_name;
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL);
 
-	gaim_name = qq_group_find_member_by_channel_and_nickname(gc, channel, who);
+	gaim_name = chat_name_to_gaim_name(who);
 	if (gaim_name != NULL)
 		_qq_get_info(gc, gaim_name);
 }
@@ -944,7 +945,7 @@ static void _qq_get_chat_buddy_info(GaimConnection *gc, gint channel, const gcha
 static gchar *_qq_get_chat_buddy_real_name(GaimConnection *gc, gint channel, const gchar *who)
 {
 	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL, NULL);
-	return qq_group_find_member_by_channel_and_nickname(gc, channel, who);
+	return chat_name_to_gaim_name(who);
 }
 
 void qq_function_not_implemented(GaimConnection *gc)
@@ -964,9 +965,9 @@ static GaimPluginProtocolInfo prpl_info	= {
 	_qq_status_text,		/* status_text	*/
 	_qq_tooltip_text,		/* tooltip_text */
 	_qq_away_states,		/* away_states	*/
-	NULL,				/* blist_node_menu */
-	NULL,				/* chat_info */
-	NULL,				/* chat_info_defaults */
+	_qq_buddy_menu,			/* blist_node_menu */
+	qq_chat_info,			/* chat_info */
+	qq_chat_info_defaults,		/* chat_info_defaults */
 	_qq_login,			/* login */
 	_qq_close,			/* close */
 	_qq_send_im,			/* send_im */
@@ -1043,7 +1044,7 @@ static GaimPluginInfo info = {
 
 	NULL,				/**< ui_info		*/
 	&prpl_info,			/**< extra_info		*/
-	NULL,			/**< prefs_info		*/
+	NULL,				/**< prefs_info		*/
 	_qq_actions
 };
 

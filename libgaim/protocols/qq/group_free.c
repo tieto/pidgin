@@ -23,12 +23,11 @@
 #include "debug.h"
 
 #include "buddy_status.h"
-#include "group.h"
 #include "group_free.h"
 #include "group_network.h"
 
 /* gracefully free all members in a group */
-static void _qq_group_free_member(qq_group *group)
+static void qq_group_free_member(qq_group *group)
 {
 	gint i;
 	GList *list;
@@ -48,10 +47,10 @@ static void _qq_group_free_member(qq_group *group)
 }
 
 /* gracefully free the memory for one qq_group */
-static void _qq_group_free(qq_group *group)
+void qq_group_free(qq_group *group)
 {
 	g_return_if_fail(group != NULL);
-	_qq_group_free_member(group);
+	qq_group_free_member(group);
 	g_free(group->group_name_utf8);
 	g_free(group->group_desc_utf8);
 	g_free(group);
@@ -73,25 +72,6 @@ void qq_group_packets_free(qq_data *qd)
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d group packets are freed!\n", i);
 }
 
-void qq_group_remove_by_internal_group_id(qq_data *qd, guint32 internal_group_id)
-{
-	qq_group *group;
-	GList *list;
-	g_return_if_fail(qd != NULL);
-
-	list = qd->groups;
-	while (list != NULL) {
-		group = (qq_group *) qd->groups->data;
-		if (internal_group_id == group->internal_group_id) {
-			qd->groups = g_list_remove(qd->groups, group);
-			_qq_group_free(group);
-			break;
-		} else {
-			list = list->next;
-		}
-	}
-}
-
 void qq_group_free_all(qq_data *qd)
 {
 	qq_group *group;
@@ -103,7 +83,7 @@ void qq_group_free_all(qq_data *qd)
 		i++;
 		group = (qq_group *) qd->groups->data;
 		qd->groups = g_list_remove(qd->groups, group);
-		_qq_group_free(group);
+		qq_group_free(group);
 	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d groups are freed\n", i);

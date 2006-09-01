@@ -22,15 +22,15 @@ QQSOURCES = \
 	crypt.c \
 	crypt.h \
 	group.c \
+	group.h \
 	group_conv.c \
 	group_conv.h \
 	group_find.c \
 	group_find.h \
 	group_free.c \
 	group_free.h \
-	group.h \
-	group_hash.c \
-	group_hash.h \
+	group_internal.c \
+	group_internal.h \
 	group_im.c \
 	group_im.h \
 	group_info.c \

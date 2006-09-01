@@ -30,11 +30,12 @@
 #include "group_conv.h"
 #include "group_find.h"
 #include "group_free.h"
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_info.h"
 #include "group_join.h"
 #include "group_opt.h"
 #include "group_network.h"
+#include "group_search.h"
 
 enum {
 	QQ_GROUP_JOIN_OK = 0x01,
@@ -51,22 +52,35 @@ static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
 	gc = g->gc;
 	internal_group_id = g->uid;
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	qq_send_cmd_group_exit_group(gc, group);
 }
 
 /* send packet to join a group without auth */
-static void _qq_send_cmd_group_join_group(GaimConnection *gc, qq_group *group)
+void qq_send_cmd_group_join_group(GaimConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
 
 	g_return_if_fail(gc != NULL && group != NULL);
+
 	if (group->my_status == QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_APPLYING;
 		qq_group_refresh(gc, group);
+	}
+
+	switch (group->auth_type) {
+	case QQ_GROUP_AUTH_TYPE_NO_AUTH:
+	case QQ_GROUP_AUTH_TYPE_NEED_AUTH:
+		break;
+	case QQ_GROUP_AUTH_TYPE_NO_ADD:
+		gaim_notify_warning(gc, NULL, _("This group does not allow others to join"), NULL);
+		return;
+	default:
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown group auth type: %d\n", group->auth_type);
+		break;
 	}
 
 	data_len = 5;
@@ -94,7 +108,7 @@ static void _qq_group_join_auth_with_gc_and_id(gc_and_uid *g, const gchar *reaso
 	gc = g->gc;
 	internal_group_id = g->uid;
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group == NULL) {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Can not find qq_group by internal_id: %d\n", internal_group_id);
 		return;
@@ -163,15 +177,7 @@ void qq_send_cmd_group_auth(GaimConnection *gc, qq_group *group, guint8 opt, gui
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 }
 
-/* send packet to exit one group
- * In fact, this will never be used for GAIM
- * when we remove a GaimChat node, there is no user controlable callback
- * so we only remove the GaimChat node,
- * but we never use this cmd to update the server side
- * anyway, it is function, as when we remove the GaimChat node,
- * user has no way to start up the chat conversation window
- * therefore even we are still in it, 
- * the group IM will not show up to bother us. (Limited by GAIM) */
+/* send a packet to exit a group */
 void qq_send_cmd_group_exit_group(GaimConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
@@ -212,16 +218,16 @@ void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, Ga
 	bytes += read_packet_dw(data, cursor, len, &internal_group_id);
 
 	if (bytes == expected_bytes) {
-		group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 		if (group != NULL) {
 			chat =
 			    gaim_blist_find_chat
 			    (gaim_connection_get_account(gc), g_strdup_printf("%d", group->external_group_id));
 			if (chat != NULL)
 				gaim_blist_remove_chat(chat);
-			qq_group_remove_by_internal_group_id(qd, internal_group_id);
+			qq_group_delete_internal_record(qd, internal_group_id);
 		}
-		gaim_notify_info(gc, _("QQ Qun Operation"), _("You have successfully exit group"), NULL);
+		gaim_notify_info(gc, _("QQ Qun Operation"), _("You have successfully exited the group"), NULL);
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
 			   "Invalid exit group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
@@ -246,7 +252,8 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint le
 
 	if (bytes == expected_bytes)
 		gaim_notify_info
-		    (gc, _("QQ Group Auth"), _("You authorization operation has been accepted by QQ server"), NULL);
+		    (gc, _("QQ Group Auth"), 
+		     _("Your authorization operation has been accepted by the QQ server"), NULL);
 	else
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
 			   "Invalid join group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
@@ -272,7 +279,7 @@ void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, Ga
 			   "Invalid join group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
 		return;
 	} else {		/* join group OK */
-		group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 		/* need to check if group is NULL or not. */
 		g_return_if_fail(group != NULL);
 		switch (reply) {
@@ -280,7 +287,7 @@ void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, Ga
 			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed joining group \"%s\"\n", group->group_name_utf8);
 			group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 			qq_group_refresh(gc, group);
-			/* this must be show before getting online member */
+			/* this must be shown before getting online members */
 			qq_group_conv_show_window(gc, group);
 			qq_send_cmd_group_get_group_info(gc, group);
 			break;
@@ -300,38 +307,33 @@ void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, Ga
 	}
 }
 
-/* Apply to join one group without auth */
+/* Attempt to join a group without auth */
 void qq_group_join(GaimConnection *gc, GHashTable *data)
 {
-	gchar *internal_group_id_ptr;
-	guint32 internal_group_id;
+	qq_data *qd;
+	gchar *external_group_id_ptr;
+	guint32 external_group_id;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && data != NULL);
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL && data != NULL);
+	qd = (qq_data *) gc->proto_data;
 
-	internal_group_id_ptr = g_hash_table_lookup(data, "internal_group_id");
-	internal_group_id = strtol(internal_group_id_ptr, NULL, 10);
+	external_group_id_ptr = g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID);
+	g_return_if_fail(external_group_id_ptr != NULL);
+	errno = 0;
+	external_group_id = strtol(external_group_id_ptr, NULL, 10);
+	if (errno != 0) {
+		gaim_notify_error(gc, _("Error"), 
+				_("You inputted a group id outside the acceptable range"), NULL);
+		return;
+	}
 
-	g_return_if_fail(internal_group_id > 0);
-
-	/* for those we have subscribed, they should have been put into
-	 * qd->groups in qq_group_init subroutine */
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
-	if (group == NULL)
-		group = qq_group_from_hashtable(gc, data);
-
-	g_return_if_fail(group != NULL);
-
-	switch (group->auth_type) {
-	case QQ_GROUP_AUTH_TYPE_NO_AUTH:
-	case QQ_GROUP_AUTH_TYPE_NEED_AUTH:
-		_qq_send_cmd_group_join_group(gc, group);
-		break;
-	case QQ_GROUP_AUTH_TYPE_NO_ADD:
-		gaim_notify_warning(gc, NULL, _("This group does not allow others to join"), NULL);
-		break;
-	default:
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown group auth type: %d\n", group->auth_type);
+	group = qq_group_find_by_id(gc, external_group_id, QQ_EXTERNAL_ID);
+	if (group) {
+		qq_send_cmd_group_join_group(gc, group);
+	} else {
+		qq_set_pending_id(&qd->joining_groups, external_group_id, TRUE);
+		qq_send_cmd_group_search_group(gc, external_group_id);
 	}
 }
 

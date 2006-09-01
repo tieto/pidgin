@@ -26,7 +26,7 @@
 #include "prpl.h"
 #include "request.h"
 
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_info.h"
 #include "group_search.h"
 #include "utils.h"
@@ -43,6 +43,15 @@ static void _qq_group_search_callback(GaimConnection *gc, const gchar *input)
 	qq_send_cmd_group_search_group(gc, external_group_id);
 }
 
+static void _qq_group_search_cancel_callback(GaimConnection *gc, const gchar *input)
+{
+	qq_data *qd;
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+
+	qd = (qq_data *) gc->proto_data;
+	gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
+}
+
 /* This is needed for GaimChat node to be valid */
 GList *qq_chat_info(GaimConnection *gc)
 {
@@ -55,18 +64,20 @@ GList *qq_chat_info(GaimConnection *gc)
 	pce->label = _("ID: ");
 	pce->identifier = QQ_GROUP_KEY_EXTERNAL_ID;
 	m = g_list_append(m, pce);
-
-	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Admin: ");
-	pce->identifier = QQ_GROUP_KEY_CREATOR_UID;
-	m = g_list_append(m, pce);
-
-	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Status: ");
-	pce->identifier = QQ_GROUP_KEY_MEMBER_STATUS_DESC;
-	m = g_list_append(m, pce);
-
+	
 	return m;
+}
+
+GHashTable *qq_chat_info_defaults(GaimConnection *gc, const gchar *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, QQ_GROUP_KEY_EXTERNAL_ID, g_strdup(chat_name));
+
+	return defaults;
 }
 
 /*  get a list of qq groups */
@@ -107,9 +118,11 @@ GaimRoomlist *qq_roomlist_get_list(GaimConnection *gc)
 
 	gaim_request_input(gc, _("QQ Qun"),
 			   _("Please input external group ID"),
-			   _("You can only search for permanent QQ group\nInput 0 or leave it blank to search for demo groups"),
-			   NULL, FALSE, FALSE, NULL, _("Search"),
-			   G_CALLBACK(_qq_group_search_callback), _("Cancel"), NULL, gc);
+			   _("You can only search for permanent QQ groups\n"),
+			   NULL, FALSE, FALSE, NULL, 
+			   _("Search"), G_CALLBACK(_qq_group_search_callback), 
+			   _("Cancel"), G_CALLBACK(_qq_group_search_cancel_callback), 
+			   gc);
 
 	return qd->roomlist;
 }

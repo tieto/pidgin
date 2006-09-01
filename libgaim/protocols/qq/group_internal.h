@@ -37,10 +37,16 @@
 #define QQ_GROUP_KEY_GROUP_NAME_UTF8    "group_name_utf8"
 #define QQ_GROUP_KEY_GROUP_DESC_UTF8    "group_desc_utf8"
 
-qq_group *qq_group_create_by_id(GaimConnection *gc, guint32 internal_id, guint32 external_id);
-GHashTable *qq_group_to_hashtable(qq_group *group);
+qq_group *qq_group_create_internal_record(GaimConnection *gc, 
+		guint32 internal_id, guint32 external_id, gchar *group_name_utf8);
+void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id);
 
+GHashTable *qq_group_to_hashtable(qq_group *group);
 qq_group *qq_group_from_hashtable(GaimConnection *gc, GHashTable *data);
+
 void qq_group_refresh(GaimConnection *gc, qq_group *group);
+
+void qq_set_pending_id(GSList **list, guint32 id, gboolean pending);
+GSList *qq_get_pending_id(GSList *list, guint32 id);
 
 #endif

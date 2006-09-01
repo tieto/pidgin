@@ -41,6 +41,7 @@ enum {
 
 void qq_send_cmd_group_auth(GaimConnection *gc, qq_group *group, guint8 opt, guint32 uid, const gchar *reason_utf8);
 void qq_group_join(GaimConnection *gc, GHashTable *data);
+void qq_send_cmd_group_join_group(GaimConnection *gc, qq_group *group);
 void qq_group_exit(GaimConnection *gc, GHashTable *data);
 void qq_send_cmd_group_exit_group(GaimConnection *gc, qq_group *group);
 void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);

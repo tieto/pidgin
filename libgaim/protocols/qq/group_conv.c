@@ -37,7 +37,8 @@ void qq_group_conv_show_window(GaimConnection *gc, qq_group *group)
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL && group != NULL);
 	qd = (qq_data *) gc->proto_data;
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, group->group_name_utf8, gaim_connection_get_account(gc));
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, 
+			group->group_name_utf8, gaim_connection_get_account(gc));
 	if (conv == NULL)	/* show only one window per group */
 		serv_got_joined_chat(gc, qd->channel++, group->group_name_utf8);
 }
@@ -54,17 +55,19 @@ void qq_group_conv_refresh_online_member(GaimConnection *gc, qq_group *group)
 
 	names = NULL;
 	flags = NULL;
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, group->group_name_utf8, gaim_connection_get_account(gc));
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, 
+			group->group_name_utf8, gaim_connection_get_account(gc));
 	if (conv != NULL && group->members != NULL) {
 		list = group->members;
 		while (list != NULL) {
 			member = (qq_buddy *) list->data;
 			/* always put it even offline */
 			names = g_list_append(names,
-					      (member->nickname !=
-					      NULL) ?
-					      g_strdup(member->nickname) : uid_to_gaim_name(member->uid));
-		
+					/* we need unique identifiers for everyone in the chat or else we'll 
+ 					* run into problems with functions like get_cb_real_name from qq.c */
+					(member->nickname != NULL && *(member->nickname) != '\0') ?
+					g_strdup_printf("%s (qq-%u)", member->nickname, member->uid) :
+					g_strdup_printf("(qq-%u)", member->uid));
 			flag = 0;
 			/* TYPING to put online above OP and FOUNDER */
 			if (is_online(member->status)) flag |= (GAIM_CBFLAGS_TYPING | GAIM_CBFLAGS_VOICE);

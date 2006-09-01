@@ -26,9 +26,8 @@
 
 #include "buddy_info.h"
 #include "char_conv.h"
-/*#include "group_admindlg.h"	*/
 #include "group_find.h"
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_info.h"
 #include "group_join.h"
 #include "group_network.h"
@@ -108,7 +107,7 @@ static void _qq_group_reject_application_real(group_member_opt *g, gchar *msg_ut
 {
 	qq_group *group;
 	g_return_if_fail(g != NULL && g->gc != NULL && g->internal_group_id > 0 && g->member > 0);
-	group = qq_group_find_by_internal_group_id(g->gc, g->internal_group_id);
+	group = qq_group_find_by_id(g->gc, g->internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 	qq_send_cmd_group_auth(g->gc, group, QQ_GROUP_AUTH_REQUEST_REJECT, g->member, msg_utf8);
 	g_free(g);
@@ -148,7 +147,7 @@ void qq_group_approve_application_with_struct(group_member_opt *g)
 {
 	qq_group *group;
 	g_return_if_fail(g != NULL && g->gc != NULL && g->internal_group_id > 0 && g->member > 0);
-	group = qq_group_find_by_internal_group_id(g->gc, g->internal_group_id);
+	group = qq_group_find_by_id(g->gc, g->internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 	qq_send_cmd_group_auth(g->gc, group, QQ_GROUP_AUTH_REQUEST_APPROVE, g->member, "");
 	qq_group_find_or_add_member(g->gc, group, g->member);
@@ -221,7 +220,7 @@ void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint l
 	g_return_if_fail(internal_group_id > 0);
 
 	/* we should have its info locally */
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in modify members for Qun %d\n", group->external_group_id);
@@ -290,7 +289,7 @@ void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len,
 	g_return_if_fail(internal_group_id > 0);
 
 	/* we should have its info locally */
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in modify info for Qun %d\n", group->external_group_id);
@@ -345,10 +344,10 @@ static void qq_group_setup_with_gc_and_uid(gc_and_uid *g)
 	qq_group *group;
 	g_return_if_fail(g != NULL && g->gc != NULL && g->uid > 0);
 
-	group = qq_group_find_by_internal_group_id(g->gc, g->uid);
+	group = qq_group_find_by_id(g->gc, g->uid, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
-	/* XXX insert UI code here */
+	/* TODO insert UI code here */
 	/* qq_group_detail_window_show(g->gc, group); */
 	g_free(g);
 }
@@ -368,7 +367,7 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	read_packet_dw(data, cursor, len, &external_group_id);
 	g_return_if_fail(internal_group_id > 0 && external_group_id);
 
-	group = qq_group_create_by_id(gc, internal_group_id, external_group_id);
+	group = qq_group_create_internal_record(gc, internal_group_id, external_group_id, NULL);
 	group->my_status = QQ_GROUP_MEMBER_STATUS_IS_ADMIN;
 	group->creator_uid = qd->uid;
 	qq_group_refresh(gc, group);
@@ -427,7 +426,7 @@ void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint l
 	g_return_if_fail(internal_group_id > 0);
 
 	/* we should have its info locally */
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in activate Qun %d\n", group->external_group_id);
@@ -445,7 +444,7 @@ void qq_group_manage_group(GaimConnection *gc, GHashTable *data)
 	internal_group_id = strtol(internal_group_id_ptr, NULL, 10);
 	g_return_if_fail(internal_group_id > 0);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	/* XXX insert UI code here */

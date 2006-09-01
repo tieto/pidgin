@@ -29,38 +29,6 @@
 #include "qq.h"
 #include "utils.h"
 
-/* find a chat member's valid gaim_name of its nickname and chat room channel */
-gchar *qq_group_find_member_by_channel_and_nickname(GaimConnection *gc, gint channel, const gchar *who) 
-{
-	qq_group *group;
-	qq_buddy *member;
-	GList *list;
-
-	g_return_val_if_fail(gc != NULL && who != NULL, NULL);
-
-	/* TODO checkbox for this in UI */
-	/* if it starts with QQ_NAME_PREFIX, we think it is valid name already
-	 * otherwise we think it is nickname and try to find the matching gaim_name */
-	/*
-	if (gaim_str_has_prefix(who, QQ_NAME_PREFIX) && gaim_name_to_uid(who) > 0)
-		return (gchar *) who;
-		*/
-
-	group = qq_group_find_by_channel(gc, channel);
-	g_return_val_if_fail(group != NULL, NULL);
-
-	list = group->members;
-	member = NULL;
-	while (list != NULL) {
-		member = (qq_buddy *) list->data;
-		if (member->nickname != NULL && !g_ascii_strcasecmp(member->nickname, who))
-			break;
-		list = list->next;
-	}
-
-	return (member == NULL) ? NULL : uid_to_gaim_name(member->uid);
-}
-
 /* find the internal_group_id by the reply packet sequence
  * return TRUE if we have a record of it, return FALSE if not */
 gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq, guint32 *internal_group_id)
@@ -69,7 +37,10 @@ gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq,
 	qq_data *qd;
 	group_packet *p;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL && internal_group_id != NULL, FALSE);
+	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
+
+	if (internal_group_id == NULL)
+		return FALSE;
 	qd = (qq_data *) gc->proto_data;
 
 	list = qd->group_packets;
@@ -87,7 +58,7 @@ gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq,
 	return FALSE;
 }
 
-/* find a qq_buddy by uid, called by qq_im.c */
+/* find a qq_buddy by uid, called by im.c */
 qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid)
 {
 	GList *list;
@@ -138,7 +109,7 @@ qq_buddy *qq_group_find_or_add_member(GaimConnection *gc, qq_group *group, guint
 		buddy = gaim_find_buddy(gaim_connection_get_account(gc), uid_to_gaim_name(member_uid));
 		if (buddy != NULL) {
 			q_bud = (qq_buddy *) buddy->proto_data;
-			if (q_bud != NULL)
+			if (q_bud != NULL && q_bud->nickname != NULL)
 				member->nickname = g_strdup(q_bud->nickname);
 			else if (buddy->alias != NULL)
 				member->nickname = g_strdup(buddy->alias);
@@ -175,23 +146,24 @@ qq_group *qq_group_find_by_channel(GaimConnection *gc, gint channel)
 	return group;
 }
 
-/* find a qq_group by internal_group_id */
-qq_group *qq_group_find_by_internal_group_id(GaimConnection *gc, guint32 internal_group_id)
+/* find a qq_group by its id, flag is QQ_INTERNAL_ID or QQ_EXTERNAL_ID */
+qq_group *qq_group_find_by_id(GaimConnection *gc, guint32 id, gboolean flag)
 {
 	GList *list;
 	qq_group *group;
 	qq_data *qd;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL && internal_group_id > 0, NULL);
-
+	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
-	if (qd->groups == NULL)
+
+	if (qd->groups == NULL || id <= 0)
 		return NULL;
 
 	list = qd->groups;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
-		if (group->internal_group_id == internal_group_id)
+		if (flag == QQ_INTERNAL_ID ? 
+				(group->internal_group_id == id) : (group->external_group_id == id))
 			return group;
 		list = list->next;
 	}

@@ -23,7 +23,10 @@
 #include "debug.h"
 
 #include "char_conv.h"
+#include "group_find.h"
 #include "group_free.h"
+#include "group_internal.h"
+#include "group_join.h"
 #include "group_network.h"
 #include "group_search.h"
 #include "utils.h"
@@ -58,6 +61,37 @@ void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_i
 		qq_send_group_cmd(gc, NULL, raw_data, data_len);
 }
 
+static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
+{
+	GaimRoomlistRoom *room;
+	gchar *field;
+
+	room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
+	field = g_strdup_printf("%d", group->external_group_id);
+	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	g_free(field);
+	field = g_strdup_printf("%d", group->creator_uid);
+	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	g_free(field);
+	gaim_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
+	field = g_strdup_printf("%d", group->internal_group_id);
+	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	g_free(field);
+	field = g_strdup_printf("%d", group->group_type);
+	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	g_free(field);
+	field = g_strdup_printf("%d", group->auth_type);
+	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	g_free(field);
+	field = g_strdup_printf("%d", group->group_category);
+	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	g_free(field);
+	gaim_roomlist_room_add_field(qd->roomlist, room, group->group_name_utf8);
+	gaim_roomlist_room_add(qd->roomlist, room);
+
+	gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
+}
+
 /* process group cmd reply "search group" */
 void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
 {
@@ -65,56 +99,51 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 	guint16 unknown;
 	gint bytes, pascal_len, i;
 	qq_data *qd;
-	GaimRoomlistRoom *room;
 	qq_group *group;
+	GSList *pending_id;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
-	i = 0;
 	read_packet_b(data, cursor, len, &search_type);
 	group = g_newa(qq_group, 1);
 
 	/* now it starts with group_info_entry */
-	while (*cursor < (data + len)) {	/* still have data to read */
-		/* begin of one qq_group */
-		bytes = 0;
-		i++;
-		bytes += read_packet_dw(data, cursor, len, &(group->internal_group_id));
-		bytes += read_packet_dw(data, cursor, len, &(group->external_group_id));
-		bytes += read_packet_b(data, cursor, len, &(group->group_type));
-		bytes += read_packet_w(data, cursor, len, &(unknown));
-		bytes += read_packet_w(data, cursor, len, &(unknown));
-		bytes += read_packet_dw(data, cursor, len, &(group->creator_uid));
-		bytes += read_packet_w(data, cursor, len, &(unknown));
-		bytes += read_packet_w(data, cursor, len, &(unknown));
-		bytes += read_packet_w(data, cursor, len, &(unknown));
-		bytes += read_packet_dw(data, cursor, len, &(group->group_category));
-		pascal_len = convert_as_pascal_string(*cursor, &(group->group_name_utf8), QQ_CHARSET_DEFAULT);
-		bytes += pascal_len;
-		*cursor += pascal_len;
-		bytes += read_packet_w(data, cursor, len, &(unknown));
-		bytes += read_packet_b(data, cursor, len, &(group->auth_type));
-		pascal_len = convert_as_pascal_string(*cursor, &(group->group_desc_utf8), QQ_CHARSET_DEFAULT);
-		bytes += pascal_len;
-		*cursor += pascal_len;
-		/* end of one qq_group */
-		room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
-		gaim_roomlist_room_add_field(qd->roomlist, room, g_strdup_printf("%d", group->external_group_id));
-		gaim_roomlist_room_add_field(qd->roomlist, room, g_strdup_printf("%d", group->creator_uid));
-		gaim_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
-		gaim_roomlist_room_add_field(qd->roomlist, room, g_strdup_printf("%d", group->internal_group_id));
-		gaim_roomlist_room_add_field(qd->roomlist, room, g_strdup_printf("%d", group->group_type));
-		gaim_roomlist_room_add_field(qd->roomlist, room, g_strdup_printf("%d", group->auth_type));
-		gaim_roomlist_room_add_field(qd->roomlist, room, g_strdup_printf("%d", group->group_category));
-		gaim_roomlist_room_add_field(qd->roomlist, room, group->group_name_utf8);
-		gaim_roomlist_room_add(qd->roomlist, room);
-	}
-        if(*cursor > (data + len)) {
+	bytes = 0;
+	i++;
+	bytes += read_packet_dw(data, cursor, len, &(group->internal_group_id));
+	bytes += read_packet_dw(data, cursor, len, &(group->external_group_id));
+	bytes += read_packet_b(data, cursor, len, &(group->group_type));
+	bytes += read_packet_w(data, cursor, len, &(unknown));
+	bytes += read_packet_w(data, cursor, len, &(unknown));
+	bytes += read_packet_dw(data, cursor, len, &(group->creator_uid));
+	bytes += read_packet_w(data, cursor, len, &(unknown));
+	bytes += read_packet_w(data, cursor, len, &(unknown));
+	bytes += read_packet_w(data, cursor, len, &(unknown));
+	bytes += read_packet_dw(data, cursor, len, &(group->group_category));
+	pascal_len = convert_as_pascal_string(*cursor, &(group->group_name_utf8), QQ_CHARSET_DEFAULT);
+	bytes += pascal_len;
+	*cursor += pascal_len;
+	bytes += read_packet_w(data, cursor, len, &(unknown));
+	bytes += read_packet_b(data, cursor, len, &(group->auth_type));
+	pascal_len = convert_as_pascal_string(*cursor, &(group->group_desc_utf8), QQ_CHARSET_DEFAULT);
+	bytes += pascal_len;
+	*cursor += pascal_len;
+	/* end of one qq_group */
+        if(*cursor != (data + len)) {
                          gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
 					 "group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
         }
-	gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Search group reply: %d groups\n", i);
+
+	pending_id = qq_get_pending_id(qd->joining_groups, group->external_group_id);
+	if (pending_id != NULL) {
+		qq_set_pending_id(&qd->joining_groups, group->external_group_id, FALSE);
+		if (qq_group_find_by_id(gc, group->internal_group_id, QQ_INTERNAL_ID) == NULL)
+			qq_group_create_internal_record(gc, 
+					group->internal_group_id, group->external_group_id, group->group_name_utf8);
+		qq_send_cmd_group_join_group(gc, group);
+	} else {
+		_qq_setup_roomlist(qd, group);
+	}
 }

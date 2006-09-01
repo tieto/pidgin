@@ -164,13 +164,6 @@ gchar *get_icon_name(gint set)
 	return g_strdup_printf("qq_%d", set);
 }
 
-/* convert a QQ UID to a unique name of Gaim
- * the return needs to be freed */
-gchar *uid_to_gaim_name(guint32 uid)
-{
-	return g_strdup_printf(QQ_NAME_FORMAT, uid);
-}
-
 /* convert Gaim name to original QQ UID */
 guint32 gaim_name_to_uid(const gchar *const name)
 {
@@ -182,6 +175,27 @@ guint32 gaim_name_to_uid(const gchar *const name)
 		return 0;
 	else 
 		return ret;
+}
+
+/* convert a QQ UID to a unique name of Gaim
+ * the return needs to be freed */
+gchar *uid_to_gaim_name(guint32 uid)
+{
+	return g_strdup_printf(QQ_NAME_FORMAT, uid);
+}
+
+/* convert name displayed in a chat channel to original QQ UID */
+gchar *chat_name_to_gaim_name(const gchar *const name)
+{
+	const gchar *tmp; 
+	gchar *ret;
+
+	g_return_val_if_fail(name != NULL, NULL);
+
+	tmp = (gchar *) gaim_strcasestr(name, "(qq-");
+	ret = g_strndup(tmp + 4, strlen(name) - (tmp - name) - 4 - 1);
+
+	return ret;
 }
 
 /* try to dump the data as GBK */

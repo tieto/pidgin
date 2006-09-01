@@ -234,10 +234,10 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 
 	qq_send_packet_change_status(gc);
 
-	/* now refresh buddy list */
-	/* changed by gfhuang, using With Qun version, error, not working still */
+	/* refresh buddies */
 	qq_send_packet_get_buddies_list(gc, QQ_FRIENDS_LIST_POSITION_START);
-	/* qq_send_packet_get_all_list_with_group(gc, QQ_FRIENDS_LIST_POSITION_START); */
+	/* refresh groups */
+	qq_send_packet_get_all_list_with_group(gc, QQ_FRIENDS_LIST_POSITION_START);
 
 	return QQ_LOGIN_REPLY_OK;
 }

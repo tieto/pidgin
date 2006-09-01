@@ -28,10 +28,10 @@
 #include "group.h"
 
 void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group);
-void qq_send_cmd_group_get_online_member(GaimConnection *gc, qq_group *group);
-void qq_send_cmd_group_get_member_info(GaimConnection *gc, qq_group *group);
+void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group);
+void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group);
 void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
-void qq_process_group_cmd_get_online_member(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
-void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
 
 #endif

@@ -39,7 +39,7 @@ typedef enum {
 } qq_group_member_status;
 
 typedef struct _qq_group {
-	/* all these will be saved when exit GAIM */
+	/* all these will be saved when we exit Gaim */
 	qq_group_member_status my_status;	/* my status for this group */
 	gchar *my_status_desc;			/* my status description */
 	guint32 internal_group_id;
@@ -50,12 +50,13 @@ typedef struct _qq_group {
 	guint8 auth_type;
 	gchar *group_name_utf8;
 	gchar *group_desc_utf8;
-	/* all these will loaded from network only */
+	/* all these will be loaded from the network */
 	gchar *notice_utf8;	/* group notice by admin */
-	GList *members;		/* those evert appear in the group */
+	GList *members;	
 } qq_group;
 
 GList *qq_chat_info(GaimConnection *gc);
+GHashTable *qq_chat_info_defaults(GaimConnection *gc, const gchar *chat_name);
 
 void qq_group_init(GaimConnection *gc);
 

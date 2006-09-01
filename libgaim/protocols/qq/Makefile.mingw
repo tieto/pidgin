@@ -54,7 +54,7 @@ C_SRC = \
 	group_conv.c \
 	group_find.c \
 	group_free.c \
-	group_hash.c \
+	group_internal.c \
 	group_im.c \
 	group_info.c \
 	group_join.c \

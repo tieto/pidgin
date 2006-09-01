@@ -25,11 +25,11 @@
 
 #include <glib.h>
 #include "qq.h"
+#include "group.h"
 
 void qq_group_packets_free(qq_data *qd);
 
+void qq_group_free(qq_group *group);
 void qq_group_free_all(qq_data *qd);
-
-void qq_group_remove_by_internal_group_id(qq_data *qd, guint32 internal_group_id);
 
 #endif

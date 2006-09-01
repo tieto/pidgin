@@ -26,7 +26,7 @@
 #include "buddy_status.h"
 #include "char_conv.h"
 #include "group_find.h"
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_info.h"
 #include "buddy_status.h"
 #include "group_network.h"
@@ -42,7 +42,7 @@ static gboolean _is_group_member_need_update_info(qq_buddy *member)
 	    (time(NULL) - member->last_refresh) > QQ_GROUP_CHAT_REFRESH_NICKNAME_INTERNAL;
 }
 
-/* this is done when we receive the reply to get_online_member sub_cmd
+/* this is done when we receive the reply to get_online_members sub_cmd
  * all member are set offline, and then only those in reply packets are online */
 static void _qq_group_set_members_all_offline(qq_group *group)
 {
@@ -82,7 +82,7 @@ void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group)
 }
 
 /* send packet to get online group member, called by keep_alive */
-void qq_send_cmd_group_get_online_member(GaimConnection *gc, qq_group *group)
+void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
@@ -111,8 +111,8 @@ void qq_send_cmd_group_get_online_member(GaimConnection *gc, qq_group *group)
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 }
 
-/* send packet to get group member info */
-void qq_send_cmd_group_get_member_info(GaimConnection *gc, qq_group *group)
+/* send packet to get info for each group member */
+void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len, i;
@@ -160,9 +160,10 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 	qq_buddy *member;
 	qq_data *qd;
 	GaimConversation *gaim_conv;
-	guint8 orgnization, role;
-	guint16 unknown;
-	guint32 member_uid, internal_group_id;
+	guint8 organization, role;
+	guint16 unknown, max_members;
+	guint32 member_uid, internal_group_id, external_group_id;
+	GSList *pending_id;
 	gint pascal_len, i;
 	guint32 unknown4;
 	guint8 unknown1;
@@ -173,11 +174,18 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 
 	read_packet_dw(data, cursor, len, &(internal_group_id));
 	g_return_if_fail(internal_group_id > 0);
+	read_packet_dw(data, cursor, len, &(external_group_id));
+	g_return_if_fail(internal_group_id > 0);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	pending_id = qq_get_pending_id(qd->adding_groups_from_server, internal_group_id);
+	if (pending_id != NULL) {
+		qq_set_pending_id(&qd->adding_groups_from_server, internal_group_id, FALSE);
+		qq_group_create_internal_record(gc, internal_group_id, external_group_id, NULL);
+	}
+
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
-	read_packet_dw(data, cursor, len, &(group->external_group_id));
 	read_packet_b(data, cursor, len, &(group->group_type));
 	read_packet_dw(data, cursor, len, &unknown4);	/* unknown 4 bytes */
 	read_packet_dw(data, cursor, len, &(group->creator_uid));
@@ -185,7 +193,7 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 	read_packet_dw(data, cursor, len, &unknown4);	/* oldCategory */
 	read_packet_w(data, cursor, len, &unknown);	
 	read_packet_dw(data, cursor, len, &(group->group_category));
-	read_packet_w(data, cursor, len, &(unknown));	/* 0x0000 */
+	read_packet_w(data, cursor, len, &max_members);
 	read_packet_b(data, cursor, len, &unknown1);
 	read_packet_dw(data, cursor, len, &(unknown4));	/* versionID */
 
@@ -202,17 +210,18 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 	while (*cursor < data + len) {
 		read_packet_dw(data, cursor, len, &member_uid);
 		i++;
-		read_packet_b(data, cursor, len, &orgnization);
+		read_packet_b(data, cursor, len, &organization);
 		read_packet_b(data, cursor, len, &role);
 
-		if(orgnization != 0 || role != 0) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "group member %d: orgnizatio=%d, role=%d\n", member_uid, orgnization, role);
+		if(organization != 0 || role != 0) {
+			gaim_debug(GAIM_DEBUG_INFO, "QQ", "group member %d: organization=%d, role=%d\n", member_uid, organization, role);
 		}
 		member = qq_group_find_or_add_member(gc, group, member_uid);
-		member->role = role;
+		if (member != NULL)
+			member->role = role;
 	}
         if(*cursor > (data + len)) {
-                         gaim_debug(GAIM_DEBUG_ERROR, "QQ", "group_cmd_get_group_info: Dangerous error! maybe protocal changed, notify me!");
+                         gaim_debug(GAIM_DEBUG_ERROR, "QQ", "group_cmd_get_group_info: Dangerous error! maybe protocol changed, notify me!");
         }
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "group \"%s\" has %d members\n", group->group_name_utf8, i);
@@ -233,7 +242,7 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 	}
 }
 
-void qq_process_group_cmd_get_online_member(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
 {
 	guint32 internal_group_id, member_uid;
 	guint8 unknown;
@@ -254,7 +263,7 @@ void qq_process_group_cmd_get_online_member(guint8 *data, guint8 **cursor, gint 
 	bytes += read_packet_b(data, cursor, len, &unknown);	/* 0x3c ?? */
 	g_return_if_fail(internal_group_id > 0);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group == NULL) {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
 				"We have no group info for internal id [%d]\n", internal_group_id);
@@ -272,14 +281,14 @@ void qq_process_group_cmd_get_online_member(guint8 *data, guint8 **cursor, gint 
 	}
         if(*cursor > (data + len)) {
                          gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-					 "group_cmd_get_online_member: Dangerous error! maybe protocol changed, notify developers!");
+					 "group_cmd_get_online_members: Dangerous error! maybe protocol changed, notify developers!");
         }
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Group \"%s\" has %d online members\n", group->group_name_utf8, i);
 }
 
-/* process the reply to get_member_info packet */
-void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+/* process the reply to get_members_info packet */
+void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
 {
 	guint32 internal_group_id, member_uid;
 	guint16 unknown;
@@ -292,10 +301,13 @@ void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint le
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	g_return_if_fail(internal_group_id > 0);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	i = 0;
+	/* TODO: Something is off. I get an entry with strange values 
+	 * (including a nick of "") buried in here. I need to find more 
+	 * groups to join before I can figure this out */
 	/* now starts the member info, as get buddy list reply */
 	while (*cursor < data + len) {
 		read_packet_dw(data, cursor, len, &member_uid);
@@ -317,7 +329,7 @@ void qq_process_group_cmd_get_member_info(guint8 *data, guint8 **cursor, gint le
 	}
         if(*cursor > (data + len)) {
                          gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
-					 "group_cmd_get_member_info: Dangerous error! maybe protocol changed, notify developers!");
+					 "group_cmd_get_members_info: Dangerous error! maybe protocol changed, notify developers!");
         }
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Group \"%s\" obtained %d member info\n", group->group_name_utf8, i);
 }

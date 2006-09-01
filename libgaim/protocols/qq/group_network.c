@@ -27,7 +27,7 @@
 #include "crypt.h"
 #include "group_conv.h"
 #include "group_find.h"
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_im.h"
 #include "group_info.h"
 #include "group_join.h"
@@ -40,6 +40,7 @@
 
 enum {
 	QQ_GROUP_CMD_REPLY_OK = 0x00,
+	QQ_GROUP_CMD_REPLY_SEARCH_ERROR = 0x02,
 	QQ_GROUP_CMD_REPLY_NOT_MEMBER = 0x0a
 };
 
@@ -154,11 +155,15 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 		bytes += read_packet_b(data, &cursor, len, &sub_cmd);
 		bytes += read_packet_b(data, &cursor, len, &reply);
 
-		group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 
 		if (reply != QQ_GROUP_CMD_REPLY_OK) {
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 				   "Group cmd reply says cmd %s fails\n", qq_group_cmd_get_desc(sub_cmd));
+
+			if (group != NULL)
+				qq_set_pending_id(&qd->joining_groups, group->external_group_id, FALSE);
+
 			switch (reply) {	/* this should be all errors */
 			case QQ_GROUP_CMD_REPLY_NOT_MEMBER:
 				if (group != NULL) {
@@ -169,19 +174,26 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 					qq_group_refresh(gc, group);
 				}
 				break;
+			case QQ_GROUP_CMD_REPLY_SEARCH_ERROR:
+				if (qd->roomlist != NULL) {
+					if (gaim_roomlist_get_in_progress(qd->roomlist))
+						gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
+				}
+				_qq_process_group_cmd_reply_error_default(reply, cursor, len - bytes, gc);
+				break;
 			default:
 				_qq_process_group_cmd_reply_error_default(reply, cursor, len - bytes, gc);
 			}
 			return;
 		}
 
-		/* seems to ok so far, so we process the reply according to sub_cmd */
+		/* seems ok so far, so we process the reply according to sub_cmd */
 		switch (sub_cmd) {
 		case QQ_GROUP_CMD_GET_GROUP_INFO:
 			qq_process_group_cmd_get_group_info(data, &cursor, len, gc);
 			if (group != NULL) {
-				qq_send_cmd_group_get_member_info(gc, group);
-				qq_send_cmd_group_get_online_member(gc, group);
+				qq_send_cmd_group_get_members_info(gc, group);
+				qq_send_cmd_group_get_online_members(gc, group);
 			}
 			break;
 		case QQ_GROUP_CMD_CREATE_GROUP:
@@ -212,12 +224,12 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 			qq_process_group_cmd_im(data, &cursor, len, gc);
 			break;
 		case QQ_GROUP_CMD_GET_ONLINE_MEMBER:
-			qq_process_group_cmd_get_online_member(data, &cursor, len, gc);
+			qq_process_group_cmd_get_online_members(data, &cursor, len, gc);
 			if (group != NULL)
 				qq_group_conv_refresh_online_member(gc, group);
 			break;
 		case QQ_GROUP_CMD_GET_MEMBER_INFO:
-			qq_process_group_cmd_get_member_info(data, &cursor, len, gc);
+			qq_process_group_cmd_get_members_info(data, &cursor, len, gc);
 			if (group != NULL)
 				qq_group_conv_refresh_online_member(gc, group);
 			break;

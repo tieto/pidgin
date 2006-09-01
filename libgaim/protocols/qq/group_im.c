@@ -29,7 +29,7 @@
 
 #include "char_conv.h"
 #include "group_find.h"
-#include "group_hash.h"
+#include "group_internal.h"
 #include "group_info.h"
 #include "group_im.h"
 #include "group_network.h"
@@ -171,7 +171,7 @@ void qq_process_recv_group_im_been_rejected
 
 	gaim_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
 		qq_group_refresh(gc, group);
@@ -211,7 +211,7 @@ void qq_process_recv_group_im_been_approved
 
 	gaim_notify_warning(gc, _("QQ Qun Operation"), msg, NULL);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
@@ -246,7 +246,7 @@ void qq_process_recv_group_im_been_removed
 	msg = g_strdup_printf(_("You [%d] has exit group \"%d\""), uid, external_group_id);
 	gaim_notify_info(gc, _("QQ Qun Operation"), msg, NULL);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
 		qq_group_refresh(gc, group);
@@ -278,14 +278,14 @@ void qq_process_recv_group_im_been_added
 	g_return_if_fail(external_group_id > 0 && uid > 0);
 
 	msg = g_strdup_printf(_("You [%d] has been added by group \"%d\""), uid, external_group_id);
-	gaim_notify_info(gc, _("QQ Qun Operation"), msg, _("OpenQ has added this group to your buddy list"));
+	gaim_notify_info(gc, _("QQ Qun Operation"), msg, _("This group has been added to your buddy list"));
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group != NULL) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
 	} else {		/* no such group, try to create a dummy first, and then update */
-		group = qq_group_create_by_id(gc, internal_group_id, external_group_id);
+		group = qq_group_create_internal_record(gc, internal_group_id, external_group_id, NULL);
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_MEMBER;
 		qq_group_refresh(gc, group);
 		qq_send_cmd_group_get_group_info(gc, group);
@@ -379,7 +379,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	else
 		msg_utf8_encoded = qq_to_utf8(msg_with_gaim_smiley, QQ_CHARSET_DEFAULT);
 
-	group = qq_group_find_by_internal_group_id(gc, internal_group_id);
+	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, group->group_name_utf8, gaim_connection_get_account(gc));
