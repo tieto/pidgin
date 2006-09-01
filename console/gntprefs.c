@@ -14,9 +14,6 @@ void gg_prefs_init()
 	gaim_prefs_add_none("/gaim/gnt/plugins");
 	gaim_prefs_add_string_list("/gaim/gnt/plugins/loaded", NULL);
 
-	gaim_prefs_add_none("/gaim/gnt/blist");
-	gaim_prefs_add_bool("/gaim/gnt/blist/idletime", TRUE);
-	
 	gaim_prefs_add_none("/gaim/gnt/conversations");
 	gaim_prefs_add_bool("/gaim/gnt/conversations/timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gnt/conversations/notify_typing", FALSE); /* XXX: Not functional yet */
@@ -99,6 +96,7 @@ get_pref_field(Prefs *prefs)
 static Prefs blist[] = 
 {
 	{GAIM_PREF_BOOLEAN, "/gaim/gnt/blist/idletime", N_("Show Idle Time"), NULL},
+	{GAIM_PREF_BOOLEAN, "/gaim/gnt/blist/showoffline", N_("Show Offline Buddies"), NULL},
 	{GAIM_PREF_NONE, NULL, NULL, NULL}
 };
 

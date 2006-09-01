@@ -100,7 +100,7 @@ gnt_text_view_size_request(GntWidget *widget)
 {
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
 	{
-		gnt_widget_set_size(widget, 64, 24);
+		gnt_widget_set_size(widget, 64, 20);
 	}
 }
 

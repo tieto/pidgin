@@ -109,11 +109,15 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 	gnt_tree_remove(GNT_TREE(ggblist->tree), node);
 	node->ui_data = NULL;
 
-	if (GAIM_BLIST_NODE_IS_BUDDY(node))
-	{
+	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimContact *contact = (GaimContact*)node->parent;
 		if (contact->online < 1)
 			node_remove(list, (GaimBlistNode*)contact);
+	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		GaimGroup *group = (GaimGroup*)node->parent;
+		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && group->online < 1) ||
+				group->currentsize < 1)
+			node_remove(list, node->parent);
 	}
 	draw_tooltip(ggblist);
 }
@@ -136,7 +140,8 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy = (GaimBuddy*)node;
-		if (gaim_presence_is_online(gaim_buddy_get_presence(buddy)))
+		if (gaim_account_is_connected(buddy->account) &&
+				(GAIM_BUDDY_IS_ONLINE(buddy) || gaim_prefs_get_bool(PREF_ROOT "/showoffline")))
 			add_node((GaimBlistNode*)buddy, list->ui_data);
 		else
 			node_remove(gaim_get_blist(), node);
@@ -343,7 +348,6 @@ add_group(GaimGroup *group, GGBlist *ggblist)
 	GaimBlistNode *node = (GaimBlistNode *)group;
 	if (node->ui_data)
 		return;
-	gnt_tree_remove(GNT_TREE(ggblist->tree), group);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), group,
 			gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)), NULL, NULL);
 }
@@ -416,7 +420,6 @@ add_chat(GaimChat *chat, GGBlist *ggblist)
 	group = gaim_chat_get_group(chat);
 	add_node((GaimBlistNode*)group, ggblist);
 
-	gnt_tree_remove(GNT_TREE(ggblist->tree), chat);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), chat,
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				group, NULL);
@@ -430,15 +433,20 @@ add_contact(GaimContact *contact, GGBlist *ggblist)
 {
 	GaimGroup *group;
 	GaimBlistNode *node = (GaimBlistNode*)contact;
+	const char *name;
 
 	if (node->ui_data)
+		return;
+	
+	name = get_display_name(node);
+	if (name == NULL)
 		return;
 	
 	group = (GaimGroup*)node->parent;
 	add_node((GaimBlistNode*)group, ggblist);
 
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), contact,
-				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
+				gnt_tree_create_row(GNT_TREE(ggblist->tree), name),
 				group, NULL);
 
 	gnt_tree_set_expanded(GNT_TREE(ggblist->tree), contact, FALSE);
@@ -455,7 +463,6 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 	contact = (GaimContact*)node->parent;
 	add_node((GaimBlistNode*)contact, ggblist);
 
-	gnt_tree_remove(GNT_TREE(ggblist->tree), buddy);
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				contact, NULL);
@@ -1195,8 +1202,7 @@ reset_blist_window(GntWidget *window, gpointer null)
 	gaim_get_blist()->ui_data = NULL;
 
 	node = gaim_blist_get_root();
-	while (node)
-	{
+	while (node) {
 		node->ui_data = NULL;
 		node = gaim_blist_node_next(node, TRUE);
 	}
@@ -1284,6 +1290,20 @@ populate_status_dropdown()
 			items, (GDestroyNotify)destroy_status_list);
 }
 
+static void
+redraw_blist(const char *name, GaimPrefType type, gconstpointer val, gpointer data)
+{
+	GaimBlistNode *node;
+	if (ggblist == NULL)
+		return;
+
+	gnt_tree_remove_all(GNT_TREE(ggblist->tree));
+	node = gaim_blist_get_root();
+	for (; node; node = gaim_blist_node_next(node, TRUE))
+		node->ui_data = NULL;
+	populate_buddylist();
+}
+
 void gg_blist_init()
 {
 	gaim_prefs_add_none(PREF_ROOT);
@@ -1293,8 +1313,13 @@ void gg_blist_init()
 	gaim_prefs_add_none(PREF_ROOT "/position");
 	gaim_prefs_add_int(PREF_ROOT "/position/x", 0);
 	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
+	gaim_prefs_add_bool(PREF_ROOT "/idletime", TRUE);
+	gaim_prefs_add_bool(PREF_ROOT "/showoffline", FALSE);
 
 	gg_blist_show();
+
+	gaim_prefs_connect_callback(gg_blist_get_handle(),
+			PREF_ROOT "/showoffline", redraw_blist, NULL);
 
 	return;
 }
