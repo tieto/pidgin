@@ -201,6 +201,7 @@ gg_create_conversation(GaimConversation *conv)
 	char *title;
 	GaimConversationType type;
 	GaimConversation *cc;
+	GaimAccount *account;
 
 	if (ggc)
 		return;
@@ -220,8 +221,10 @@ gg_create_conversation(GaimConversation *conv)
 		return;
 	}
 
+	account = gaim_conversation_get_account(conv);
 	type = gaim_conversation_get_type(conv);
-	title = g_strdup_printf(_("%s"), gaim_conversation_get_title(conv));
+	title = g_strdup_printf(_("%s (%s -- %s)"), gaim_conversation_get_title(conv),
+			gaim_account_get_username(account), gaim_account_get_protocol_name(account));
 	
 	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
@@ -633,11 +636,17 @@ void gg_conversation_uninit()
 void gg_conversation_set_active(GaimConversation *conv)
 {
 	GGConv *ggconv = conv->ui_data;
+	GaimAccount *account;
+	char *title;
 
 	g_return_if_fail(ggconv);
 	g_return_if_fail(g_list_find(ggconv->list, conv));
 
 	ggconv->active_conv = conv;
-	gnt_screen_rename_widget(ggconv->window, gaim_conversation_get_title(conv));
+	account = gaim_conversation_get_account(conv);
+	title = g_strdup_printf(_("%s (%s -- %s)"), gaim_conversation_get_title(conv),
+			gaim_account_get_username(account), gaim_account_get_protocol_name(account));
+	gnt_screen_rename_widget(ggconv->window, title);
+	g_free(title);
 }
 
