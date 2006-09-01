@@ -373,3 +373,14 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 19:49 <someusr> OH!
 19:49 <someusr> haha
 19:49 <someusr> thanks!
+
+14:12 <colorshape> Is it possible for me to see my friends webcam via
+                   msn in gaim?
+14:12 <Paco-Paco> no
+14:13 <colorshape> not voice either then i guess?
+14:13 <Paco-Paco> correct
+14:13 <colorshape> ok, then not much to do.
+14:13 <Err> there's always seppuku
+14:14 <Paco-Paco> so true
+14:14 <colorshape> ok, is that another client?
+14:14 <Err> something like that
