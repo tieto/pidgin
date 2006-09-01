@@ -1,4 +1,4 @@
-gntgf_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
+gntgf_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS) $(X11_LIBS)
 gnthistory_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
 
 if PLUGINS

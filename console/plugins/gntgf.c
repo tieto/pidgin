@@ -33,6 +33,13 @@
 
 #define MAX_COLS	3
 
+#ifdef HAVE_X11
+#define PREFS_URGENT          PREFS_PREFIX "/urgent"
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#endif
+
 #include <glib.h>
 
 #include <plugin.h>
@@ -103,6 +110,35 @@ remove_toaster(GntToast *toast)
 	return FALSE;
 }
 
+#ifdef HAVE_X11
+static void
+urgent()
+{
+	/* This is from deryni/tuomov's urgent_test.c */
+	Display *dpy;
+	Window id;
+	const char *ids;
+	XWMHints *hints;
+
+	ids = getenv("WINDOWID");
+	if (ids == NULL)
+		return;
+	
+	id = atoi(ids);
+
+	dpy = XOpenDisplay(NULL);
+	if (dpy == NULL)
+		return;
+
+	hints = XGetWMHints(dpy, id);
+	hints->flags|=XUrgencyHint;
+	XSetWMHints(dpy, id, hints);
+
+	XFlush(dpy);
+	XCloseDisplay(dpy);
+}
+#endif
+
 static void
 notify(const char *fmt, ...)
 {
@@ -114,6 +150,10 @@ notify(const char *fmt, ...)
 
 	if (gaim_prefs_get_bool(PREFS_BEEP))
 		beep();
+#ifdef HAVE_X11
+	if (gaim_prefs_get_bool(PREFS_URGENT))
+		urgent();
+#endif
 
 	window = gnt_vbox_new(FALSE);
 	GNT_WIDGET_SET_FLAGS(window, GNT_WIDGET_TRANSIENT);
@@ -254,9 +294,9 @@ pref_toggled(GntTree *tree, char *key, gpointer null)
 }
 
 static void
-beep_toggled(GntCheckBox *check, gpointer null)
+toggle_option(GntCheckBox *check, gpointer str)
 {
-	gaim_prefs_set_bool(PREFS_BEEP, gnt_check_box_get_checked(check));
+	gaim_prefs_set_bool(str, gnt_check_box_get_checked(check));
 }
 
 static GntWidget *
@@ -288,8 +328,15 @@ config_frame()
 
 	check = gnt_check_box_new(_("Beep too!"));
 	gnt_check_box_set_checked(GNT_CHECK_BOX(check), gaim_prefs_get_bool(PREFS_BEEP));
-	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(beep_toggled), NULL);
+	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(toggle_option), PREFS_BEEP);
 	gnt_box_add_widget(GNT_BOX(window), check);
+
+#ifdef HAVE_X11
+	check = gnt_check_box_new(_("Set URGENT for the terminal window."));
+	gnt_check_box_set_checked(GNT_CHECK_BOX(check), gaim_prefs_get_bool(PREFS_URGENT));
+	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(toggle_option), PREFS_URGENT);
+	gnt_box_add_widget(GNT_BOX(window), check);
+#endif
 
 	return window;
 }
@@ -335,6 +382,9 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool(PREFS_EVENT_CHAT_NICK, TRUE);
 
 	gaim_prefs_add_bool(PREFS_BEEP, TRUE);
+#ifdef HAVE_X11
+	gaim_prefs_add_bool(PREFS_URGENT, TRUE);
+#endif
 }
 
 GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

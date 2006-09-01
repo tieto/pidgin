@@ -67,7 +67,6 @@ gnt_box_draw(GntWidget *widget)
 		int pos, right;
 		char *title = g_strdup(box->title);
 		
-		mvwhline(widget->window, 0, 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL), widget->priv.width - 2);
 		get_title_thingies(box, title, &pos, &right);
 
 		if (gnt_widget_has_focus(widget))

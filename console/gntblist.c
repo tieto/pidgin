@@ -127,7 +127,7 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 	g_return_if_fail(node != NULL);
 
 	if (list->ui_data == NULL)
-		return;
+		return;   /* XXX: this is probably the place to auto-join chats */
 
 	if (node->ui_data != NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
@@ -1417,9 +1417,11 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 		StatusBoxItem *item = list->data;
 		if (item->type == STATUS_PRIMITIVE && item->u.prim == prim)
 		{
+			char *mess = gaim_unescape_html(message);
 			gnt_combo_box_set_selected(GNT_COMBO_BOX(ggblist->status), item);
-			gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), message);
+			gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), mess);
 			gnt_widget_draw(ggblist->status);
+			g_free(mess);
 			break;
 		}
 	}

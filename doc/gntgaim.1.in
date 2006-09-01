@@ -96,6 +96,9 @@ left.
 .TP
 .B Alt \+ l
 Refresh the windows. This is useful after resizing the terminal window.
+.TP
+.B Alt \+ 1 2 ... 0
+Jump to the 1st, 2nd ... 10th window.
 
 .SH FILES
 \fI~/.gntrc\fR: configuration file for gnt applications.

@@ -680,6 +680,11 @@ else
 	x_incpath_add="-I$x_includes"
 fi
 
+PKG_CHECK_MODULES(X11, x11, 
+	[AC_DEFINE(HAVE_X11, 1, [Define to 1 if you have X11])], [AC_MSG_RESULT(no)])
+AC_SUBST(X11_LIBS)
+AC_SUBST(X11_CFLAGS)
+
 dnl #######################################################################
 dnl # Check for DBUS libraries
 dnl #######################################################################
@@ -822,21 +827,6 @@ dnl # XScreenSaver, X session management, GtkSpell only if GTK+ was found
 dnl #######################################################################
 
 if test "x$enable_gtk" = "xyes"; then
-
-AC_PATH_XTRA
-# We can't assume that $x_libraries will be set, because autoconf does not
-# set it in the case when the X libraries are in a standard place.
-# Ditto for $x_includes
-if test X"$x_libraries" = X"" || test X"$x_libraries" = XNONE; then
-	x_libpath_add=
-else
-	x_libpath_add="-L$x_libraries"
-fi
-if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
-	x_incpath_add=
-else
-	x_incpath_add="-I$x_includes"
-fi
 
 dnl #######################################################################
 dnl # Check for startup notification
