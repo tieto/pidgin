@@ -24,7 +24,6 @@ char *					T_PV
 int *					T_PTR
 long *					T_PTR
 size_t *				T_PTR
-Gaim::GTK::Widget *			T_PTR
 GCallback				T_PTR
 va_list					T_PTR
 GString *				T_PTR
@@ -72,14 +71,6 @@ Gaim::Conversation::UiOps		T_GaimObj
 
 Gaim::Desktop::Item			T_GaimObj
 Gaim::DesktopItemType			T_IV
-
-Gaim::GTK::BuddyList			T_GaimObj
-Gaim::GDK::Pixbuf			T_GaimObj
-Gaim::GTK::Conversation			T_GaimObj
-Gaim::GTK::Widget			T_GaimObj
-Gaim::GTK::FileSelection		T_GaimObj
-Gaim::GTK::SelectionData		T_GaimObj
-Gaim::GTK::TextView			T_GaimObj
 
 Gaim::IconScaleRules			T_IV
 
@@ -190,11 +181,6 @@ Gaim::UnseenState			T_IV
 /* connection.h */
 Gaim::ConnectionFlags			T_IV
 Gaim::ConnectionState			T_IV
-
-/* gtkutils.h */
-Gaim::ButtonOrientation			T_IV
-Gaim::ButtonStyle			T_IV
-Gaim::BrowserPlace			T_IV
 
 INPUT
 
