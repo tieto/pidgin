@@ -316,6 +316,7 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 	gaim_debug_info("oscar", "Scheduling destruction of FLAP "
 			"connection of type 0x%04hx\n", conn->type);
 	conn->disconnect_reason = reason;
+	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
 	conn->destroy_timeout = gaim_timeout_add(0, flap_connection_destroy_cb, conn);
 }

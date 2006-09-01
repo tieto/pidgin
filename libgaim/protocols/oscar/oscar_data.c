@@ -113,7 +113,7 @@ oscar_data_destroy(OscarData *od)
 
 	while (od->peer_connections != NULL)
 		peer_connection_destroy(od->peer_connections->data,
-				OSCAR_DISCONNECT_LOCAL_CLOSED);
+				OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
 
 	if (od->handlerlist != NULL)
 		aim_clearhandlers(od);

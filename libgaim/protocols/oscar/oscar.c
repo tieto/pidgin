@@ -2044,7 +2044,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			 */
 			if (conn != NULL)
 			{
-				peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED);
+				peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED, NULL);
 			}
 		}
 		else if (args->status == AIM_RENDEZVOUS_CONNECTED)
@@ -2275,6 +2275,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
 		gaim_str_strip_char(msg1[i], '\r');
+		/* TODO: Should use an encoding other than ASCII? */
 		msg2[i] = gaim_plugin_oscar_decode_im_part(account, "1", AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
 	}
 	msg2[i] = NULL;
@@ -2583,7 +2584,7 @@ gaim_parse_clientauto_ch2(OscarData *od, const char *who, guint16 reason, const 
 		}
 		else
 		{
-			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_REFUSED);
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_REFUSED, NULL);
 		}
 	}
 	else
@@ -6349,7 +6350,7 @@ oscar_convo_closed(GaimConnection *gc, const char *who)
 		if (!conn->ready)
 			aim_im_sendch2_cancel(conn);
 
-		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
 	}
 }
 

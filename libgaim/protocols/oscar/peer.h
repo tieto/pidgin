@@ -147,6 +147,7 @@ struct _PeerConnection
 	time_t lastactivity;             /**< Time of last transmit. */
 	guint destroy_timeout;
 	OscarDisconnectReason disconnect_reason;
+	char *error_message;
 
 	/**
 	 * A pointer to either an OdcFrame or an OftFrame.
@@ -221,8 +222,8 @@ struct _PeerConnection
  */
 PeerConnection *peer_connection_new(OscarData *od, OscarCapability type, const char *sn);
 
-void peer_connection_destroy(PeerConnection *conn, OscarDisconnectReason reason);
-void peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason reason);
+void peer_connection_destroy(PeerConnection *conn, OscarDisconnectReason reason, const gchar *error_message);
+void peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason reason, const gchar *error_message);
 PeerConnection *peer_connection_find_by_type(OscarData *od, const char *sn, OscarCapability type);
 PeerConnection *peer_connection_find_by_cookie(OscarData *od, const char *sn, const guchar *cookie);
 

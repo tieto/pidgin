@@ -34,18 +34,19 @@
 void
 peer_odc_close(PeerConnection *conn)
 {
-	const gchar *tmp;
+	gchar *tmp;
 
 	if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
-		tmp = _("The remote user has closed the connection.");
+		tmp = g_strdup(_("The remote user has closed the connection."));
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_REFUSED)
-		tmp = _("The remote user has declined your request.");
+		tmp = g_strdup(_("The remote user has declined your request."));
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
-		tmp = _("Lost connection with the remote user for an unknown reason.");
+		tmp = g_strdup_printf(_("Lost connection with the remote user:<br>%s"),
+				conn->error_message);
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_INVALID_DATA)
-		tmp = _("Received invalid data on connection with remote user.");
+		tmp = g_strdup(_("Received invalid data on connection with remote user."));
 	else if (conn->disconnect_reason == OSCAR_DISCONNECT_COULD_NOT_CONNECT)
-		tmp = _("Could not establish a connection with the remote user.");
+		tmp = g_strdup(_("Could not establish a connection with the remote user."));
 	else
 		/*
 		 * We shouldn't print a message for some disconnect_reasons.
@@ -61,6 +62,7 @@ peer_odc_close(PeerConnection *conn)
 		account = gaim_connection_get_account(conn->od->gc);
 		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		g_free(tmp);
 	}
 
 	if (conn->frame != NULL)
@@ -442,7 +444,7 @@ peer_odc_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 	/* Check if the remote user closed the connection */
 	if (read == 0)
 	{
-		peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED, NULL);
 		return;
 	}
 
@@ -452,7 +454,8 @@ peer_odc_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			/* No worries */
 			return;
 
-		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOST_CONNECTION);
+		peer_connection_destroy(conn,
+				OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
 		return;
 	}
 
@@ -526,7 +529,8 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 				 */
 				gaim_debug_info("oscar", "Received an incorrect cookie.  "
 					"Closing connection.\n");
-				peer_connection_destroy(conn, OSCAR_DISCONNECT_INVALID_DATA);
+				peer_connection_destroy(conn,
+						OSCAR_DISCONNECT_INVALID_DATA, NULL);
 				g_free(frame);
 				return;
 			}
