@@ -1,6 +1,8 @@
 #include "gnttextview.h"
 #include "gntutils.h"
 
+#include <string.h>
+
 enum
 {
 	SIGS = 1,
@@ -320,14 +322,15 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 			end++;
 			start = end;
 			gnt_text_view_next_line(view);
+			view->list = g_list_first(view->list);
 			continue;
 		}
 
 		line = view->list->data;
 		if ((end = strchr(start, '\n')) != NULL ||
 			(end = strchr(start, '\r')) != NULL) {
-			int l = gnt_util_onscreen_width(start, end - 1);
-			if (l >= widget->priv.width - line->length - 1) {
+			len = gnt_util_onscreen_width(start, end - 1);
+			if (len >= widget->priv.width - line->length - 1) {
 				end = NULL;
 			}
 		}
