@@ -3078,7 +3078,8 @@ gaim_util_fetch_url_error(GaimUtilFetchUrlData *gfud, const char *format, ...)
 	gaim_util_fetch_url_cancel(gfud);
 }
 
-/* TODO: This totally destroys cancelability. */
+static void url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message);
+
 static gboolean
 parse_redirect(const char *data, size_t data_len, gint sock,
 			   GaimUtilFetchUrlData *gfud)
@@ -3123,14 +3124,33 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 
 		gaim_debug_info("util", "Redirecting to %s\n", new_url);
 
-		/* Try again, with this new location. */
-		gaim_util_fetch_url_request(new_url, full, gfud->user_agent,
-				gfud->http11, NULL, gfud->include_headers,
-				gfud->callback, gfud->user_data);
+		/*
+		 * Try again, with this new location.  This code is somewhat
+		 * ugly, but we need to reuse the gfud because whoever called
+		 * us is holding a reference to it.
+		 */
+		g_free(gfud->url);
+		gfud->url = new_url;
+		gfud->full = full;
+		g_free(gfud->request);
+		gfud->request = NULL;
 
-		/* Free the old connection */
-		g_free(new_url);
-		gaim_util_fetch_url_cancel(gfud);
+		g_free(gfud->website.user);
+		g_free(gfud->website.passwd);
+		g_free(gfud->website.address);
+		g_free(gfud->website.page);
+		gaim_url_parse(new_url, &gfud->website.address, &gfud->website.port,
+					   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
+
+		gfud->connect_data = gaim_proxy_connect(NULL,
+				gfud->website.address, gfud->website.port,
+				url_fetch_connect_cb, gfud);
+
+		if (gfud->connect_data == NULL)
+		{
+			gaim_util_fetch_url_error(gfud, _("Unable to connect to %s"),
+					gfud->website.address);
+		}
 
 		return TRUE;
 	}
