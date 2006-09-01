@@ -383,7 +383,7 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_add_bool(PREFS_BEEP, TRUE);
 #ifdef HAVE_X11
-	gaim_prefs_add_bool(PREFS_URGENT, TRUE);
+	gaim_prefs_add_bool(PREFS_URGENT, FALSE);
 #endif
 }
 
