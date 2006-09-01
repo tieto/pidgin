@@ -72,6 +72,30 @@ static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
 static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
 
+static gboolean
+is_contact_online(GaimContact *contact)
+{
+	GaimBlistNode *node;
+	for (node = ((GaimBlistNode*)contact)->child; node; node = node->next) {
+		if (GAIM_BUDDY_IS_ONLINE((GaimBuddy*)node))
+			return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+is_group_online(GaimGroup *group)
+{
+	GaimBlistNode *node;
+	for (node = ((GaimBlistNode*)group)->child; node; node = node->next) {
+		if (GAIM_BLIST_NODE_IS_CHAT(node))
+			return TRUE;
+		else if (is_contact_online((GaimContact*)node))
+			return TRUE;
+	}
+	return FALSE;
+}
+
 static void
 new_node(GaimBlistNode *node)
 {
@@ -111,11 +135,12 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimContact *contact = (GaimContact*)node->parent;
-		if (contact->online < 1)
+		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_contact_online(contact)) ||
+				contact->currentsize < 1)
 			node_remove(list, (GaimBlistNode*)contact);
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimGroup *group = (GaimGroup*)node->parent;
-		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && group->online < 1) ||
+		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
 				group->currentsize < 1)
 			node_remove(list, node->parent);
 	}
@@ -149,6 +174,16 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 		node_update(list, node->parent);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		add_chat((GaimChat *)node, list->ui_data);
+	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		GaimContact *contact = (GaimContact*)node;
+		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_contact_online(contact)) ||
+				contact->currentsize < 1)
+			node_remove(gaim_get_blist(), node);
+	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		GaimGroup *group = (GaimGroup*)node;
+		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
+				group->currentsize < 1)
+			node_remove(list, node);
 	}
 }
 
