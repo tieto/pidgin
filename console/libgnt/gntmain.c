@@ -46,11 +46,12 @@ static gboolean ascii_only;
 static gboolean mouse_enabled;
 
 static GMainLoop *loop;
+
 static struct
 {
 	GntWidget *window;
 	GntWidget *tree;
-} window_list;
+} _list, *window_list, *action_list;
 
 typedef struct
 {
@@ -76,6 +77,8 @@ static void bring_on_top(GntWidget *widget);
 
 static gboolean refresh_screen();
 static const GList *list_all_windows();
+
+static void show_actions_list();
 
 static GntWM wm = 
 {
@@ -174,9 +177,9 @@ bring_on_top(GntWidget *widget)
 	gnt_widget_draw(widget);
 	top_panel(node->panel);
 
-	if (window_list.window)
+	if (_list.window)
 	{
-		GntNode *nd = g_hash_table_lookup(nodes, window_list.window);
+		GntNode *nd = g_hash_table_lookup(nodes, _list.window);
 		top_panel(nd->panel);
 	}
 	update_screen(NULL);
@@ -188,7 +191,7 @@ update_window_in_list(GntWidget *wid)
 {
 	GntTextFormatFlags flag = 0;
 
-	if (window_list.window == NULL)
+	if (window_list == NULL)
 		return;
 
 	if (wid == ordered->data)
@@ -196,7 +199,7 @@ update_window_in_list(GntWidget *wid)
 	else if (GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_URGENT))
 		flag |= GNT_TEXT_FLAG_BOLD;
 
-	gnt_tree_set_row_flags(GNT_TREE(window_list.tree), wid, flag);
+	gnt_tree_set_row_flags(GNT_TREE(window_list->tree), wid, flag);
 }
 
 static void
@@ -327,20 +330,34 @@ window_list_activate(GntTree *tree, gpointer null)
 }
 
 static void
+setup__list()
+{
+	GntWidget *tree, *win;
+	win = _list.window = gnt_box_new(FALSE, FALSE);
+	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
+	gnt_box_set_pad(GNT_BOX(win), 0);
+
+	tree = _list.tree = gnt_tree_new();
+	gnt_box_add_widget(GNT_BOX(win), tree);
+}
+
+static void
 show_window_list()
 {
 	GntWidget *tree, *win;
 	GList *iter;
 
-	if (window_list.window)
+	if (window_list)
 		return;
+	
+	setup__list();
 
-	win = window_list.window = gnt_box_new(FALSE, FALSE);
-	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
+	window_list = &_list;
+
+	win = window_list->window;
+	tree = window_list->tree;
+
 	gnt_box_set_title(GNT_BOX(win), "Window List");
-	gnt_box_set_pad(GNT_BOX(win), 0);
-
-	tree = window_list.tree = gnt_tree_new();
 
 	for (iter = focus_list; iter; iter = iter->next)
 	{
@@ -352,7 +369,7 @@ show_window_list()
 	}
 
 	gnt_tree_set_selected(GNT_TREE(tree), ordered->data);
-	gnt_box_add_widget(GNT_BOX(win), tree);
+	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(window_list_activate), NULL);
 
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, getmaxx(stdscr) / 3);
 	gnt_widget_set_size(tree, 0, getmaxy(stdscr) / 2);
@@ -361,8 +378,6 @@ show_window_list()
 	lock_focus_list = 1;
 	gnt_widget_show(win);
 	lock_focus_list = 0;
-
-	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(window_list_activate), NULL);
 }
 
 static void
@@ -720,6 +735,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					mode = GNT_KP_MODE_WINDOW_LIST;
 					show_window_list();
 				}
+				else if (strcmp(buffer + 1, "a") == 0)
+				{
+					mode = GNT_KP_MODE_WINDOW_LIST;
+					show_actions_list();
+				}
 				else if (strcmp(buffer + 1, "r") == 0 && focus_list)
 				{
 					/* Resize window */
@@ -810,18 +830,20 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			mode = GNT_KP_MODE_NORMAL;
 		}
 	}
-	else if (mode == GNT_KP_MODE_WINDOW_LIST && window_list.window)
+	else if (mode == GNT_KP_MODE_WINDOW_LIST && _list.window)
 	{
-		gnt_widget_key_pressed(window_list.window, buffer);
+		gnt_widget_key_pressed(_list.window, buffer);
 
 		if (buffer[0] == '\r' || (buffer[0] == 27 && buffer[1] == 0))
 		{
 			mode = GNT_KP_MODE_NORMAL;
 			lock_focus_list = 1;
-			gnt_widget_destroy(window_list.window);
-			window_list.window = NULL;
-			window_list.tree = NULL;
+			gnt_widget_destroy(_list.window);
+			_list.window = NULL;
+			_list.tree = NULL;
 			lock_focus_list = 0;
+			window_list = NULL;
+			action_list = NULL;
 		}
 	}
 	else if (mode == GNT_KP_MODE_RESIZE)
@@ -1054,13 +1076,13 @@ void gnt_screen_occupy(GntWidget *widget)
 
 	refresh_node(widget, node, NULL);
 
-	if (window_list.window)
+	if (window_list)
 	{
-		if ((GNT_IS_BOX(widget) && GNT_BOX(widget)->title) && window_list.window != widget
+		if ((GNT_IS_BOX(widget) && GNT_BOX(widget)->title) && window_list->window != widget
 				&& GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		{
-			gnt_tree_add_row_last(GNT_TREE(window_list.tree), widget,
-					gnt_tree_create_row(GNT_TREE(window_list.tree), GNT_BOX(widget)->title),
+			gnt_tree_add_row_last(GNT_TREE(window_list->tree), widget,
+					gnt_tree_create_row(GNT_TREE(window_list->tree), GNT_BOX(widget)->title),
 					NULL);
 			update_window_in_list(widget);
 		}
@@ -1081,9 +1103,9 @@ void gnt_screen_release(GntWidget *widget)
 
 	g_hash_table_remove(nodes, widget);
 
-	if (window_list.window)
+	if (window_list)
 	{
-		gnt_tree_remove(GNT_TREE(window_list.tree), widget);
+		gnt_tree_remove(GNT_TREE(window_list->tree), widget);
 	}
 
 	update_screen(NULL);
@@ -1100,7 +1122,7 @@ void gnt_screen_update(GntWidget *widget)
 	node = g_hash_table_lookup(nodes, widget);
 	if (node && !node->panel)
 	{
-		if (wm.new_window)
+		if (wm.new_window && node->me != _list.window)
 			node->panel = wm.new_window(node->me);
 		else
 			node->panel = new_panel(node->me->window);
@@ -1111,9 +1133,9 @@ void gnt_screen_update(GntWidget *widget)
 		}
 	}
 
-	if (window_list.window)
+	if (_list.window)
 	{
-		GntNode *nd = g_hash_table_lookup(nodes, window_list.window);
+		GntNode *nd = g_hash_table_lookup(nodes, _list.window);
 		top_panel(nd->panel);
 	}
 
@@ -1131,7 +1153,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	while (widget->parent)
 		widget = widget->parent;
 
-	if (widget == window_list.window)
+	if (widget == _list.window)
 		return TRUE;
 
 	if (ordered && ordered->data == widget)
@@ -1224,5 +1246,76 @@ void gnt_screen_rename_widget(GntWidget *widget, const char *text)
 	}
 
 	draw_taskbar(FALSE);
+}
+
+/**
+ * An application can register actions which will show up in a 'start-menu' like popup
+ */
+typedef struct _GnAction
+{
+	const char *label;
+	void (*callback)();
+} GntAction;
+
+static GList *actions;
+
+void gnt_register_action(const char *label, void (*callback)())
+{
+	GntAction *action = g_new0(GntAction, 1);
+	action->label = g_strdup(label);
+	action->callback = callback;
+
+	actions = g_list_append(actions, action);
+}
+
+static void
+action_list_activate(GntTree *tree, gpointer null)
+{
+	GntAction *action = gnt_tree_get_selection_data(tree);
+	action->callback();
+}
+
+static int
+compare_action(gconstpointer p1, gconstpointer p2)
+{
+	const GntAction *a1 = p1;
+	const GntAction *a2 = p2;
+
+	return g_utf8_collate(a1->label, a2->label);
+}
+
+static void
+show_actions_list()
+{
+	GntWidget *tree, *win;
+	GList *iter;
+	int h;
+
+	if (action_list)
+		return;
+	
+	setup__list();
+	action_list = &_list;
+	win = action_list->window;
+	tree = action_list->tree;
+
+	gnt_box_set_title(GNT_BOX(win), "Available Actions");
+	GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
+	/* XXX: Do we really want this? */
+	gnt_tree_set_compare_func(GNT_TREE(tree), compare_action);
+
+	for (iter = actions; iter; iter = iter->next) {
+		GntAction *action = iter->data;
+		gnt_tree_add_row_last(GNT_TREE(tree), action,
+				gnt_tree_create_row(GNT_TREE(tree), action->label), NULL);
+	}
+	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(action_list_activate), NULL);
+	gnt_widget_set_size(tree, 0, g_list_length(actions));
+	gnt_widget_get_size(win, NULL, &h);
+	gnt_widget_set_position(win, 0, getmaxy(stdscr) - 1 - h);
+
+	lock_focus_list = 1;
+	gnt_widget_show(win);
+	lock_focus_list = 0;
 }
 

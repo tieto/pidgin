@@ -27,5 +27,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget);
 
 void gnt_widget_set_urgent(GntWidget *widget);
 
+void gnt_register_action(const char *label, void (*callback)());
+
 void gnt_quit();
 

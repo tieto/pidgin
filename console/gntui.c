@@ -4,9 +4,14 @@
 #include "gntblist.h"
 #include "gntconn.h"
 #include "gntconv.h"
+#include "gntdebug.h"
 #include "gntnotify.h"
 #include "gntplugin.h"
+#include "gntprefs.h"
 #include "gntrequest.h"
+#include "gntstatus.h"
+
+#include "internal.h"
 
 #include <prefs.h>
 
@@ -41,7 +46,12 @@ void init_gnt_ui()
 	gg_request_init();
 	gaim_request_set_ui_ops(gg_request_get_ui_ops());
 
-	gg_plugins_show_all();
+	gnt_register_action(_("Accounts"), gg_accounts_show_all);
+	gnt_register_action(_("Buddy List"), gg_blist_show);
+	gnt_register_action(_("Debug Window"), gg_debug_window_show);
+	gnt_register_action(_("Plugins"), gg_plugins_show_all);
+	gnt_register_action(_("Preferences"), gg_prefs_show_all);
+	gnt_register_action(_("Statuses"), gg_savedstatus_show_all);
 
 #ifdef STANDALONE
 

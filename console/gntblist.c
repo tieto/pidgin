@@ -1130,6 +1130,13 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 			ret = TRUE;
 		}
 	}
+	else if (strcmp(text, GNT_KEY_CTRL_O) == 0)
+	{
+		gaim_prefs_set_bool(PREF_ROOT "/showoffline",
+				!gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
+		ret = TRUE;
+		stop = TRUE;
+	}
 
 	if (stop)
 		g_signal_stop_emission_by_name(G_OBJECT(widget), "key_pressed");
