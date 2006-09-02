@@ -20,15 +20,15 @@ void gnt_util_get_text_bound(const char *text, int *width, int *height)
 			if (*s == '\n' || *s == '\r')
 			{
 				count++;
-				len = g_utf8_pointer_to_offset(last, s);
+				len = gnt_util_onscreen_width(last, s);
 				if (max < len)
 					max = len;
 				last = s + 1;
 			}
-			s++;
+			s = g_utf8_next_char(s);
 		}
 
-		len = g_utf8_pointer_to_offset(last, s);
+		len = gnt_util_onscreen_width(last, s);
 		if (max < len)
 			max = len;
 	}
@@ -50,11 +50,11 @@ int gnt_util_onscreen_width(const char *start, const char *end)
 	return width;
 }
 
-char *gnt_util_onscreen_width_to_pointer(const char *string, int len, int *w)
+const char *gnt_util_onscreen_width_to_pointer(const char *string, int len, int *w)
 {
 	int size;
 	int width = 0;
-	char *str = (char*)string;
+	const char *str = string;
 
 	while (width < len && *str) {
 		size = g_unichar_iswide(g_utf8_get_char(str)) ? 2 : 1;

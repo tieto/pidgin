@@ -36,7 +36,7 @@ static void
 gnt_combo_box_draw(GntWidget *widget)
 {
 	GntComboBox *box = GNT_COMBO_BOX(widget);
-	char *text = NULL;
+	char *text = NULL, *s;
 	GntColorType type;
 	int len;
 	
@@ -53,12 +53,8 @@ gnt_combo_box_draw(GntWidget *widget)
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
 
-	if ((len = g_utf8_strlen(text, -1)) > widget->priv.width - 4)
-	{
-		char *s = gnt_util_onscreen_width_to_pointer(text, widget->priv.width - 4, NULL);
-		*s = '\0';
-		len = widget->priv.width - 4;
-	}
+	s = (char*)gnt_util_onscreen_width_to_pointer(text, widget->priv.width - 4, &len);
+	*s = '\0';
 
 	mvwprintw(widget->window, 1, 1, text);
 	whline(widget->window, ' ' | COLOR_PAIR(type), widget->priv.width - 4 - len);

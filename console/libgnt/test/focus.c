@@ -25,7 +25,7 @@ int main()
 	gnt_init();
 #endif
 	
-	GntWidget *label = gnt_label_new("So wassup dudes and dudettes!!\nSo this is, like,\nthe third line!! \\o/");
+	GntWidget *label = gnt_label_new("So wassup dudes and dudettes!!\u4e0a1\u6d772\u67003\u4f4e4\u67085\nSo this is, like,\nthe third line!! \\o/");
 	GntWidget *vbox, *hbox, *tree, *box, *button;
 	WINDOW *test;
 
@@ -61,7 +61,7 @@ int main()
 	gnt_tree_add_choice(GNT_TREE(tree), "b", gnt_tree_create_row(GNT_TREE(tree), "b"), "d", NULL);
 
 	GNT_WIDGET_UNSET_FLAGS(hbox, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
-	gnt_box_set_title(GNT_BOX(hbox), "This is the title …");
+	gnt_box_set_title(GNT_BOX(hbox), "\u4e0a\u6d77\u6700\u4f4e\u6708\u5de5 …");
 
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(toggled), NULL);
 
