@@ -1822,11 +1822,13 @@ AC_OUTPUT([Makefile
 		   gtk/plugins/Makefile
 		   gtk/plugins/cap/Makefile
 		   gtk/plugins/docklet/Makefile
-		   gtk/plugins/gevolution/Makefile
 		   gtk/plugins/gestures/Makefile
+		   gtk/plugins/gevolution/Makefile
 		   gtk/plugins/musicmessaging/Makefile
-		   gtk/sounds/Makefile
+		   gtk/plugins/perl/Makefile
+		   gtk/plugins/perl/common/Makefile.PL
 		   gtk/plugins/ticker/Makefile
+		   gtk/sounds/Makefile
 		   libgaim/plugins/Makefile
 		   libgaim/plugins/mono/Makefile
 		   libgaim/plugins/mono/api/Makefile
