@@ -301,6 +301,10 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					gaim_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
 
+	if (flags & GAIM_MESSAGE_AUTO_RESP)
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+					_("<AUTO-REPLY> "), GNT_TEXT_FLAG_BOLD);
+
 	if (who && *who && (flags & (GAIM_MESSAGE_SEND | GAIM_MESSAGE_RECV)))
 	{
 		char * name = NULL;

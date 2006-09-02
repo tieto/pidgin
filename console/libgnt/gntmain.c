@@ -1,3 +1,5 @@
+#include "config.h"
+
 #ifdef HAVE_NCURSESW_INC
 #include <ncursesw/panel.h>
 #else
@@ -655,7 +657,7 @@ window_reverse(GntWidget *win, gboolean set)
 	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
 		return;
 	
-	d = dupwin(win->window);
+	d = win->window;
 	gnt_widget_get_size(win, &w, &h);
 
 #define DECIDE(ch) (set ? ((ch) | A_REVERSE) : ((ch) & ~A_REVERSE))
@@ -677,7 +679,6 @@ window_reverse(GntWidget *win, gboolean set)
 	}
 
 	wrefresh(win->window);
-	delwin(d);
 }
 
 static gboolean
