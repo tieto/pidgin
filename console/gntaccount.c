@@ -693,6 +693,8 @@ account_removed_callback(GaimAccount *account)
 
 void gg_accounts_init()
 {
+	GList *iter;
+
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
 			gg_accounts_get_handle(), GAIM_CALLBACK(account_added_callback),
 			NULL);
@@ -700,7 +702,12 @@ void gg_accounts_init()
 			gg_accounts_get_handle(), GAIM_CALLBACK(account_removed_callback),
 			NULL);
 	
-	gg_accounts_show_all();
+	for (iter = gaim_accounts_get_all(); iter; iter = iter->next) {
+		if (gaim_account_get_enabled(iter->data, GAIM_GNT_UI))
+			break;
+	}
+	if (!iter)
+		gg_accounts_show_all();
 }
 
 void gg_accounts_uninit()

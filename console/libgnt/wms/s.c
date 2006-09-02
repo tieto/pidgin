@@ -14,6 +14,7 @@ envelope_buddylist(GntWidget *win)
 	gnt_widget_get_size(win, &w, &h);
 	wresize(win->window, h, w + 1);
 	mvwvline(win->window, 0, w, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL), h);
+	touchwin(win->window);
 }
 
 static void
