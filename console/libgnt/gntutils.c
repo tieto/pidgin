@@ -82,17 +82,18 @@ char *gnt_util_onscreen_fit_string(const char *string, int maxw)
 	while (*start) {
 		if ((end = strchr(start, '\n')) != NULL ||
 			(end = strchr(start, '\r')) != NULL) {
-			if (gnt_util_onscreen_width(start, end) <= maxw) {
-				++end;
-			} else
+			if (gnt_util_onscreen_width(start, end) > maxw)
 				end = NULL;
 		}
 		if (end == NULL)
 			end = gnt_util_onscreen_width_to_pointer(start, maxw, NULL);
 		str = g_string_append_len(str, start, end - start);
-		start = end;
-		if (*end && *end != '\n' && *end != '\r')
+		if (*end) {
 			str = g_string_append_c(str, '\n');
+			if (*end == '\n' || *end == '\r')
+				end++;
+		}
+		start = end;
 	}
 	return g_string_free(str, FALSE);
 }
