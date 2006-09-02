@@ -2,13 +2,16 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "config.h"
 
 #ifndef HAVE_WCWIDTH
 #define wcwidth(X) 1
+#else
+#define __USE_XOPEN
 #endif
+
+#include <wchar.h>
 
 void gnt_util_get_text_bound(const char *text, int *width, int *height)
 {
