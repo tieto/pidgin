@@ -101,7 +101,7 @@ GntWidget *gnt_label_new_with_format(const char *text, GntTextFormatFlags flags)
 	GntWidget *widget = g_object_new(GNT_TYPE_LABEL, NULL);
 	GntLabel *label = GNT_LABEL(widget);
 
-	label->text = g_strdup(text);
+	label->text = gnt_util_onscreen_fit_string(text, -1);
 	label->flags = flags;
 	gnt_widget_set_take_focus(widget, FALSE);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
@@ -112,7 +112,7 @@ GntWidget *gnt_label_new_with_format(const char *text, GntTextFormatFlags flags)
 void gnt_label_set_text(GntLabel *label, const char *text)
 {
 	g_free(label->text);
-	label->text = g_strdup(text);
+	label->text = gnt_util_onscreen_fit_string(text, -1);
 
 	if (GNT_WIDGET(label)->window)
 	{

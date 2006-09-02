@@ -68,3 +68,32 @@ const char *gnt_util_onscreen_width_to_pointer(const char *string, int len, int 
 	return str;
 }
 
+char *gnt_util_onscreen_fit_string(const char *string, int maxw)
+{
+	const char *start, *end;
+	GString *str;
+
+	if (maxw <= 0)
+		maxw = getmaxx(stdscr) - 4;
+
+	start = string;
+	str = g_string_new(NULL);
+
+	while (*start) {
+		if ((end = strchr(start, '\n')) != NULL ||
+			(end = strchr(start, '\r')) != NULL) {
+			if (gnt_util_onscreen_width(start, end) <= maxw) {
+				++end;
+			} else
+				end = NULL;
+		}
+		if (end == NULL)
+			end = gnt_util_onscreen_width_to_pointer(start, maxw, NULL);
+		str = g_string_append_len(str, start, end - start);
+		start = end;
+		if (*end && *end != '\n' && *end != '\r')
+			str = g_string_append_c(str, '\n');
+	}
+	return g_string_free(str, FALSE);
+}
+
