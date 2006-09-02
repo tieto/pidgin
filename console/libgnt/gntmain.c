@@ -645,6 +645,41 @@ detect_mouse_action(const char *buffer)
 	return FALSE; /* XXX: this should be TRUE */
 }
 
+static void
+window_reverse(GntWidget *win, gboolean set)
+{
+	int i;
+	int w, h;
+	WINDOW *d;
+
+	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
+		return;
+	
+	d = dupwin(win->window);
+	gnt_widget_get_size(win, &w, &h);
+
+#define DECIDE(ch) (set ? ((ch) | A_REVERSE) : ((ch) & ~A_REVERSE))
+
+	/* the top and bottom */
+	for (i = 0; i < w; i++) {
+		chtype ch = mvwinch(d, 0, i);
+		mvwaddch(win->window, 0, i, DECIDE(ch));
+		ch = mvwinch(d, h-1, i);
+		mvwaddch(win->window, h-1, i, DECIDE(ch));
+	}
+
+	/* the left an right */
+	for (i = 0; i < h; i++) {
+		chtype ch = mvwinch(d, i, 0);
+		mvwaddch(win->window, i, 0, DECIDE(ch));
+		ch = mvwinch(d, i, w-1);
+		mvwaddch(win->window, i, w-1, DECIDE(ch));
+	}
+
+	wrefresh(win->window);
+	delwin(d);
+}
+
 static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
@@ -728,6 +763,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				{
 					/* Move a window */
 					mode = GNT_KP_MODE_MOVE;
+					window_reverse(ordered->data, TRUE);
 				}
 				else if (strcmp(buffer + 1, "w") == 0 && focus_list)
 				{
@@ -744,6 +780,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 				{
 					/* Resize window */
 					mode = GNT_KP_MODE_RESIZE;
+					window_reverse(ordered->data, TRUE);
 				}
 				else if (strcmp(buffer + 1, ",") == 0 && focus_list)
 				{
@@ -828,6 +865,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		else if (*buffer == '\r')
 		{
 			mode = GNT_KP_MODE_NORMAL;
+			window_reverse(ordered->data, FALSE);
 		}
 	}
 	else if (mode == GNT_KP_MODE_WINDOW_LIST && _list.window)
@@ -848,10 +886,10 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	}
 	else if (mode == GNT_KP_MODE_RESIZE)
 	{
-		if (buffer[0] == '\r' || (buffer[0] == 27 && buffer[1] == 0))
+		if (buffer[0] == '\r' || (buffer[0] == 27 && buffer[1] == 0)) {
 			mode = GNT_KP_MODE_NORMAL;
-		else if (buffer[0] == 27)
-		{
+			window_reverse(ordered->data, FALSE);
+		} else if (buffer[0] == 27) {
 			GntWidget *widget = ordered->data;
 			gboolean changed = FALSE;
 			int width, height;
@@ -888,6 +926,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			if (changed)
 			{
 				gnt_screen_resize_widget(widget, width, height);
+				window_reverse(widget, TRUE);
 			}
 		}
 	}
@@ -1299,7 +1338,7 @@ show_actions_list()
 	win = action_list->window;
 	tree = action_list->tree;
 
-	gnt_box_set_title(GNT_BOX(win), "Available Actions");
+	gnt_box_set_title(GNT_BOX(win), "Actions");
 	GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
 	/* XXX: Do we really want this? */
 	gnt_tree_set_compare_func(GNT_TREE(tree), compare_action);
