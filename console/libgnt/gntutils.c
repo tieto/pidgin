@@ -4,7 +4,9 @@
 #include <string.h>
 #include <wchar.h>
 
-#ifndef __USE_XOPEN
+#include "config.h"
+
+#ifndef HAVE_WCWIDTH
 #define wcwidth(X) 1
 #endif
 

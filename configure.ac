@@ -820,6 +820,7 @@ if test "x$enable_gnt" = "xyes"; then
 fi
 AC_SUBST(GNT_LIBS)
 AM_CONDITIONAL(ENABLE_GNT, test "x$enable_gnt" = "xyes")
+AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
 
 dnl #######################################################################
 dnl # Look for startup-notification, evolution integration, X-libraries,

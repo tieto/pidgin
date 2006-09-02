@@ -1,4 +1,5 @@
 #include "gntbox.h"
+#include "gntutils.h"
 
 #include <string.h>
 
@@ -28,26 +29,14 @@ static void
 get_title_thingies(GntBox *box, char *title, int *p, int *r)
 {
 	GntWidget *widget = GNT_WIDGET(box);
-	int pos = g_utf8_strlen(title, -1), right;
-
-	if (pos >= widget->priv.width - 4)
-	{
-		g_utf8_strncpy(title, title, widget->priv.width - 4);
-		pos = 2;
-		right = pos + g_utf8_strlen(title, -1);
-	}
-	else
-	{
-		/* XXX: Position of the title might be configurable */
-		right = pos;
-		pos = (widget->priv.width - pos) / 2;
-		right += pos;
-	}
-
+	int len;
+	char *end = gnt_util_onscreen_width_to_pointer(title, widget->priv.width - 4, &len);
+	
 	if (p)
-		*p = pos;
+		*p = (widget->priv.width - len) / 2;
 	if (r)
-		*r = right;
+		*r = (widget->priv.width + len) / 2;
+	*end = '\0';
 }
 
 static void
