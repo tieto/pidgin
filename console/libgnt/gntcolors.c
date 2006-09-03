@@ -1,10 +1,6 @@
 #include "config.h"
 
-#ifdef HAVE_NCURSESW_INC
-#include <ncursesw/ncurses.h>
-#else
 #include <ncurses.h>
-#endif
 
 #include "gntcolors.h"
 #include "gntstyle.h"

@@ -1,10 +1,6 @@
 #include "config.h"
 
-#ifdef HAVE_NCURSESW_INC
-#include <ncursesw/panel.h>
-#else
 #include <panel.h>
-#endif
 
 #include "gntwidget.h"
 
