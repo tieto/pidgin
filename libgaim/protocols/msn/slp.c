@@ -422,7 +422,8 @@ got_invite(MsnSlpCall *slpcall,
 
 		context = get_token(content, "Context: ", "\r\n");
 
-		got_sessionreq(slpcall, branch, euf_guid, context);
+		if (context != NULL)
+			got_sessionreq(slpcall, branch, euf_guid, context);
 
 		g_free(context);
 		g_free(euf_guid);
