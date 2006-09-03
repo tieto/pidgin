@@ -1045,6 +1045,7 @@ draw_tooltip(GGBlist *ggblist)
 	GntTree *tree;
 	GntWidget *widget, *box;
 	char *title = NULL;
+	int lastseen = 0;
 
 	widget = ggblist->tree;
 	tree = GNT_TREE(widget);
@@ -1070,10 +1071,20 @@ draw_tooltip(GGBlist *ggblist)
 
 	if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBuddy *pr = gaim_contact_get_priority_buddy((GaimContact*)node);
+		gboolean offline = !GAIM_BUDDY_IS_ONLINE(pr);
+		gboolean showoffline = gaim_prefs_get_bool(PREF_ROOT "/showoffline");
+
 		title = g_strdup(gaim_contact_get_alias((GaimContact*)node));
 		tooltip_for_buddy(pr, str);
 		for (node = node->child; node; node = node->next) {
-			if (node == (GaimBlistNode*)pr || !GAIM_BUDDY_IS_ONLINE((GaimBuddy*)node))
+			if (offline) {
+				int value = gaim_blist_node_get_int(node, "last_seen");
+				if (value > lastseen)
+					lastseen = value;
+			}
+			if (node == (GaimBlistNode*)pr)
+				continue;
+			if (!showoffline && !GAIM_BUDDY_IS_ONLINE((GaimBuddy*)node))
 				continue;
 			str = g_string_append(str, "\n----------\n");
 			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name((GaimBuddy*)node));
@@ -1083,6 +1094,8 @@ draw_tooltip(GGBlist *ggblist)
 		GaimBuddy *buddy = (GaimBuddy *)node;
 		tooltip_for_buddy(buddy, str);
 		title = g_strdup(gaim_buddy_get_name(buddy));
+		if (!GAIM_BUDDY_IS_ONLINE((GaimBuddy*)node))
+			lastseen = gaim_blist_node_get_int(node, "last_seen");
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		GaimGroup *group = (GaimGroup *)node;
 
@@ -1103,6 +1116,12 @@ draw_tooltip(GGBlist *ggblist)
 	} else {
 		g_string_free(str, TRUE);
 		return;
+	}
+
+	if (lastseen > 0) {
+		char *tmp = gaim_str_seconds_to_string(time(NULL) - lastseen);
+		g_string_append_printf(str, _("\nLast Seen: %s ago"), tmp);
+		g_free(tmp);
 	}
 
 	gnt_widget_get_position(widget, &x, &y);
