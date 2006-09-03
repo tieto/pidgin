@@ -2233,8 +2233,20 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 	len = read(yd->fd, buf, sizeof(buf));
 
-	if (len <= 0) {
-		gaim_connection_error(gc, _("Unable to read"));
+	if (len < 0) {
+		gchar *tmp;
+
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
+				strerror(errno));
+		gaim_connection_error(gc, tmp);
+		g_free(tmp);
+		return;
+	} else if (len == 0) {
+		gaim_connection_error(gc, _("Server closed the connection."));
 		return;
 	}
 
@@ -2378,10 +2390,21 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	GString *s;
 
 	len = read(source, bufread, sizeof(bufread) - 1);
-	if (len < 0 && errno == EAGAIN)
+
+	if (len < 0) {
+		gchar *tmp;
+
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
+				strerror(errno));
+		gaim_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
-	else if (len <= 0) {
-		gaim_connection_error(gc, _("Unable to read"));
+	} else if (len == 0) {
+		gaim_connection_error(gc, _("Server closed the connection."));
 		return;
 	}
 
@@ -2396,7 +2419,7 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 
 	if ((strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
-		gaim_connection_error(gc, _("Unable to read"));
+		gaim_connection_error(gc, _("Received unexpected HTTP response from server."));
 		return;
 	}
 

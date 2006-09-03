@@ -465,11 +465,20 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 
 	len = read(ycht->fd, buf, sizeof(buf));
 
-	if (len < 0 && errno == EAGAIN)
-		return;
+	if (len < 0) {
+		gchar *tmp;
 
-	if (len <= 0) {
-		ycht_connection_error(ycht, _("Unable to read"));
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		tmp = g_strdup_printf(_("Lost connection with server\n%s"),
+				strerror(errno));
+		ycht_connection_error(ycht, tmp);
+		g_free(tmp);
+		return;
+	} else if (len == 0) {
+		ycht_connection_error(ycht, _("Server closed the connection."));
 		return;
 	}
 
