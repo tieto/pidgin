@@ -3,8 +3,6 @@
 
 #include "config.h"
 
-#include <panel.h>
-
 #include <gmodule.h>
 
 #include "gnt.h"
@@ -14,6 +12,8 @@
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntwm.h"
+
+#include <panel.h>
 
 #include <stdio.h>
 #include <stdlib.h>
