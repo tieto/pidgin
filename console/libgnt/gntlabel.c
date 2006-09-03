@@ -27,7 +27,7 @@ gnt_label_draw(GntWidget *widget)
 	wbkgdset(widget->window, '\0' | flag);
 	mvwprintw(widget->window, 0, 0, label->text);
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -48,7 +48,7 @@ gnt_label_class_init(GntLabelClass *klass)
 	parent_class->map = NULL;
 	parent_class->size_request = gnt_label_size_request;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -58,7 +58,7 @@ gnt_label_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X);
 	widget->priv.minw = 3;
 	widget->priv.minh = 1;
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

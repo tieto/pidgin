@@ -129,7 +129,7 @@ gnt_entry_draw(GntWidget *widget)
 		mvwchgat(widget->window, 0, gnt_util_onscreen_width(entry->scroll, entry->cursor),
 				1, A_REVERSE, COLOR_PAIR(GNT_COLOR_TEXT_NORMAL), NULL);
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -147,7 +147,7 @@ gnt_entry_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -502,7 +502,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	parent_class->key_pressed = gnt_entry_key_pressed;
 	parent_class->lost_focus = gnt_entry_lost_focus;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -528,7 +528,7 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	widget->priv.minw = 3;
 	widget->priv.minh = 1;
 	
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

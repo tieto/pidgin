@@ -62,7 +62,7 @@ gnt_combo_box_draw(GntWidget *widget)
 	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | COLOR_PAIR(GNT_COLOR_NORMAL));
 
 	g_free(text);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -82,7 +82,7 @@ gnt_combo_box_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -208,7 +208,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -229,7 +229,7 @@ gnt_combo_box_init(GTypeInstance *instance, gpointer class)
 	
 	widget->priv.minw = 4;
 	widget->priv.minh = 3;
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

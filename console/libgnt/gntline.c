@@ -40,7 +40,7 @@ gnt_line_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -51,7 +51,7 @@ gnt_line_class_init(GntLineClass *klass)
 	parent_class->map = gnt_line_map;
 	parent_class->size_request = gnt_line_size_request;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -61,7 +61,7 @@ gnt_line_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER);
 	widget->priv.minw = 1;
 	widget->priv.minh = 1;
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

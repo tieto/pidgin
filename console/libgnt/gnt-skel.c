@@ -11,7 +11,7 @@ static guint signals[SIGS] = { 0 };
 static void
 gnt_skel_draw(GntWidget *widget)
 {
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -24,7 +24,7 @@ gnt_skel_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static gboolean
@@ -50,13 +50,13 @@ gnt_skel_class_init(GntSkelClass *klass)
 	parent_class->size_request = gnt_skel_size_request;
 	parent_class->key_pressed = gnt_skel_key_pressed;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
 gnt_skel_init(GTypeInstance *instance, gpointer class)
 {
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

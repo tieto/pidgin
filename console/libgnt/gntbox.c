@@ -68,7 +68,7 @@ gnt_box_draw(GntWidget *widget)
 		g_free(title);
 	}
 	
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -215,7 +215,7 @@ gnt_box_map(GntWidget *widget)
 		gnt_widget_size_request(widget);
 		find_focusable_widget(GNT_BOX(widget));
 	}
-	DEBUG;
+	GNTDEBUG;
 }
 
 /* Ensures that the current widget can take focus */
@@ -498,7 +498,7 @@ gnt_box_class_init(GntBoxClass *klass)
 	parent_class->confirm_size = gnt_box_confirm_size;
 	parent_class->size_changed = gnt_box_size_changed;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -507,7 +507,7 @@ gnt_box_init(GTypeInstance *instance, gpointer class)
 	/* Initially make both the height and width resizable.
 	 * Update the flags as necessary when widgets are added to it. */
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

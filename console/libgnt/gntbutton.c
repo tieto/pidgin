@@ -25,7 +25,7 @@ gnt_button_draw(GntWidget *widget)
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
 	mvwprintw(widget->window, 1, 2, button->priv->text);
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -44,7 +44,7 @@ gnt_button_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static gboolean
@@ -78,7 +78,7 @@ gnt_button_class_init(GntWidgetClass *klass)
 	parent_class->key_pressed = gnt_button_key_pressed;
 	parent_class->clicked = gnt_button_clicked;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -92,7 +92,7 @@ gnt_button_init(GTypeInstance *instance, gpointer class)
 
 	widget->priv.minw = 4;
 	widget->priv.minh = 3;
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

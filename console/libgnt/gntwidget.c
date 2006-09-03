@@ -33,14 +33,14 @@ gnt_widget_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
 	widget->priv.name = NULL;
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
 gnt_widget_map(GntWidget *widget)
 {
 	/* Get some default size for the widget */
-	DEBUG;
+	GNTDEBUG;
 	g_signal_emit(widget, signals[SIG_MAP], 0);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_MAPPED);
 }
@@ -59,7 +59,7 @@ gnt_widget_dispose(GObject *obj)
 	}
 
 	parent_class->dispose(obj);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -225,7 +225,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 gnt_closure_marshal_BOOLEAN__INT_INT_INT,
 					 G_TYPE_BOOLEAN, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************
@@ -305,7 +305,7 @@ gnt_widget_destroy(GntWidget *obj)
 	delwin(obj->window);
 	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING))
 		g_object_run_dispose(G_OBJECT(obj));
-	DEBUG;
+	GNTDEBUG;
 }
 
 void

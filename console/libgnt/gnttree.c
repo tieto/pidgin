@@ -419,7 +419,7 @@ gnt_tree_draw(GntWidget *widget)
 
 	redraw_tree(tree);
 	
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -447,7 +447,7 @@ gnt_tree_map(GntWidget *widget)
 	}
 	tree->top = tree->root;
 	tree->current = tree->root;
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -689,7 +689,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -699,7 +699,7 @@ gnt_tree_init(GTypeInstance *instance, gpointer class)
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	widget->priv.minw = 4;
 	widget->priv.minh = 4;
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

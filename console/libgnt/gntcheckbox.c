@@ -30,7 +30,7 @@ gnt_check_box_draw(GntWidget *widget)
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	mvwprintw(widget->window, 0, 4, GNT_BUTTON(cb)->priv->text);
 	
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -43,7 +43,7 @@ gnt_check_box_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -102,14 +102,14 @@ gnt_check_box_class_init(GntCheckBoxClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
 gnt_check_box_init(GTypeInstance *instance, gpointer class)
 {
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

@@ -92,7 +92,7 @@ gnt_text_view_draw(GntWidget *widget)
 			((view->list && view->list->prev) ? ACS_DARROW : ' ') |
 				COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -109,7 +109,7 @@ gnt_text_view_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static gboolean
@@ -235,7 +235,7 @@ gnt_text_view_class_init(GntTextViewClass *klass)
 	parent_class->clicked = gnt_text_view_clicked;
 	parent_class->size_changed = gnt_text_view_size_changed;
 
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -247,7 +247,7 @@ gnt_text_view_init(GTypeInstance *instance, gpointer class)
 
 	widget->priv.minw = 5;
 	widget->priv.minh = 2;
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

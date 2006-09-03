@@ -19,7 +19,8 @@
 #define GNT_WIDGET_SET_FLAGS(obj, flags)		(GNT_WIDGET_FLAGS(obj) |= flags)
 #define GNT_WIDGET_UNSET_FLAGS(obj, flags)	(GNT_WIDGET_FLAGS(obj) &= ~(flags))
 #define GNT_WIDGET_IS_FLAG_SET(obj, flags)	(GNT_WIDGET_FLAGS(obj) & (flags))
-#define	DEBUG	fprintf(stderr, "%s\n", __FUNCTION__)
+
+#define	GNTDEBUG	fprintf(stderr, "%s\n", __FUNCTION__)
 
 typedef struct _GnWidget			GntWidget;
 typedef struct _GnWidgetPriv		GntWidgetPriv;
