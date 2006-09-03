@@ -1,3 +1,6 @@
+#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE_EXTENDED
+
 #include "config.h"
 
 #ifdef HAVE_NCURSESW_INC
@@ -27,6 +30,8 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+
+#include <wchar.h>
 
 /**
  * Notes: Interesting functions to look at:
@@ -647,6 +652,28 @@ detect_mouse_action(const char *buffer)
 	return FALSE; /* XXX: this should be TRUE */
 }
 
+/* Returns the onscreen width of the character at the position */
+static int
+reverse_char(WINDOW *d, int y, int x, gboolean set)
+{
+	/* This is supposed to simply in_wch the cchar_t, set the attribute,
+	 * and add_wch. But that doesn't currently work, possibly because of
+	 * a bug in ncurses. This is an ugly hack to work around that. */
+	cchar_t ch;
+	int wc = 1, j;
+
+#define DECIDE(ch) (set ? ((ch) | WA_REVERSE) : ((ch) & ~WA_REVERSE))
+
+	if (mvwin_wch(d, y, x, &ch) == OK) {
+		wc = wcswidth(ch.chars, CCHARW_MAX);
+		for (j = 0; j < wc; j++)
+			mvwdelch(d, y, x);
+		ch.attr = DECIDE(ch.attr);
+		mvwins_wch(d, y, x, &ch);
+	}
+	return wc;
+}
+
 static void
 window_reverse(GntWidget *win, gboolean set)
 {
@@ -660,23 +687,13 @@ window_reverse(GntWidget *win, gboolean set)
 	d = win->window;
 	gnt_widget_get_size(win, &w, &h);
 
-#define DECIDE(ch) (set ? ((ch) | A_REVERSE) : ((ch) & ~A_REVERSE))
-
 	/* the top and bottom */
-	for (i = 0; i < w; i++) {
-		chtype ch = mvwinch(d, 0, i);
-		mvwaddch(win->window, 0, i, DECIDE(ch));
-		ch = mvwinch(d, h-1, i);
-		mvwaddch(win->window, h-1, i, DECIDE(ch));
-	}
+	for (i = 0; i < w; i += reverse_char(d, 0, i, set));
+	for (i = 0; i < w; i += reverse_char(d, h-1, i, set));
 
-	/* the left an right */
-	for (i = 0; i < h; i++) {
-		chtype ch = mvwinch(d, i, 0);
-		mvwaddch(win->window, i, 0, DECIDE(ch));
-		ch = mvwinch(d, i, w-1);
-		mvwaddch(win->window, i, w-1, DECIDE(ch));
-	}
+	/* the left and right */
+	for (i = 0; i < h; i += reverse_char(d, i, 0, set));
+	for (i = 0; i < h; i += reverse_char(d, i, w-1, set));
 
 	wrefresh(win->window);
 }
@@ -854,8 +871,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			else if (buffer[1] == 0)
 			{
 				mode = GNT_KP_MODE_NORMAL;
-				changed = TRUE;
-				gnt_widget_draw(widget);
+				window_reverse(widget, FALSE);
 			}
 
 			if (changed)
@@ -964,7 +980,7 @@ clean_pid(void)
 
 	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
 		char errmsg[BUFSIZ];
-		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
+		g_snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
 }
