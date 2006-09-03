@@ -821,7 +821,7 @@ if test "x$enable_gnt" = "xyes"; then
 
 	dnl # Some distros put the headers in ncursesw/, some don't
 	found_ncurses_h=no
-	for f in ncurses.h ncursesw/ncurses.h
+	for f in /usr/include/ncurses.h /usr/include/ncursesw/ncurses.h
 	do
 		AC_CHECK_HEADER($f,[
 			AC_MSG_CHECKING([if $f supports wide characters])
@@ -835,7 +835,7 @@ if test "x$enable_gnt" = "xyes"; then
 			], [
 				dir=`dirname $f`
 				if test x"$dir" != x"." ; then
-					GNT_CFLAGS="-I $dir/"
+					GNT_CFLAGS="-I$dir/"
 				else
 					GNT_CFLAGS=""
 				fi
