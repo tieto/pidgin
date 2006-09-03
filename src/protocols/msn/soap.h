@@ -123,6 +123,7 @@ void msn_soap_destroy(MsnSoapConn *soapconn);
 /*init a soap conneciton */
 void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,GaimSslInputFunction connect_cb,GaimSslErrorFunction error_cb);
 void msn_soap_connect(MsnSoapConn *soapconn);
+void msn_soap_close(MsnSoapConn *soapconn);
 
 /*write to soap*/
 void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction written_cb);

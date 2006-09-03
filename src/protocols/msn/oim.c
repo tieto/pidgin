@@ -425,6 +425,7 @@ msn_oim_report_to_user(MsnOim *oim,char *msg_str)
 		msg_id = oim->oim_list->data;
 		msn_oim_post_delete_msg(oim,msg_id);
 		oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
+		g_free(msg_id);
 	}
 
 	g_free(passport);
@@ -503,7 +504,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
 		msn_oim_post_single_get_msg(oim,msgid);
 		g_free(passport);
-		g_free(msgid);
+//		g_free(msgid);
 		g_free(rTime);
 		g_free(nickname);
 	}

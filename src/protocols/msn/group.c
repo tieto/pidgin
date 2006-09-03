@@ -76,7 +76,7 @@ msn_group_set_name(MsnGroup *group, const char *name)
 char*
 msn_group_get_id(const MsnGroup *group)
 {
-	g_return_val_if_fail(group != NULL, -1);
+	g_return_val_if_fail(group != NULL, NULL);
 
 	return group->id;
 }

@@ -24,6 +24,10 @@
 #include "msn.h"
 #include "command.h"
 
+/*local Function prototype*/
+int msn_get_payload_position(char *str);
+int msn_set_payload_len(MsnCommand *cmd);
+
 static gboolean
 is_num(char *str)
 {
