@@ -127,7 +127,9 @@ msn_parse_contact_list(MsnContact * contact)
 	int list_op =0;
 	char * passport;
 	xmlnode * node,*body,*response,*result,*services,*service,*memberships;
+	xmlnode *LastChangeNode;
 	xmlnode *membershipnode,*members,*member,*passportNode;
+	char *lastchange;
 
 	session = contact->session;
 	gaim_debug_misc("xml","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
@@ -149,6 +151,12 @@ msn_parse_contact_list(MsnContact * contact)
 	gaim_debug_misc("xml","services{%p},name:%s\n",services,services->name);
 	service =xmlnode_get_child(services,"Service");
 	gaim_debug_misc("xml","service{%p},name:%s\n",service,service->name);
+	
+	/*Last Change Node*/
+	LastChangeNode = xmlnode_get_child(service,"LastChange");
+	lastchange = xmlnode_get_data(LastChangeNode);
+	gaim_debug_misc("MSNContact","LastChangeNode %s\n",lastchange);
+	
 	memberships =xmlnode_get_child(service,"Memberships");
 	gaim_debug_misc("xml","memberships{%p},name:%s\n",memberships,memberships->name);
 	for(membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
@@ -251,7 +259,8 @@ msn_parse_addressbook(MsnContact * contact)
 	xmlnode * node,*body,*response,*result;
 	xmlnode *groups,*group,*groupname,*groupId,*groupInfo;
 	xmlnode	*contacts,*contactNode,*contactId,*contactInfo,*contactType,*passportName,*displayName,*groupIds,*guid;
-	xmlnode *ab;
+	xmlnode *abNode,*LastChangeNode;
+	char *lastchange;
 	char *group_name,*group_id;
 
 	session = contact->session;
@@ -426,7 +435,12 @@ msn_parse_addressbook(MsnContact * contact)
 		}
 	}
 
-	ab =xmlnode_get_child(result,"ab");
+	abNode =xmlnode_get_child(result,"ab");
+	if(abNode != NULL){
+		LastChangeNode = xmlnode_get_child(abNode,"lastChange");
+		lastchange = xmlnode_get_data(LastChangeNode);
+		gaim_debug_info("MsnAB"," lastchange:{%s}\n",lastchange);
+	}
 
 	xmlnode_free(node);
 	msn_soap_free_read_buf(contact->soapconn);
