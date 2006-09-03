@@ -53,4 +53,5 @@ libgnt_la_LIBADD = \
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
+	$(GNT_CFLAGS) \
 	-Wall
