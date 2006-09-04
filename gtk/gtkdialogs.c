@@ -558,12 +558,6 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 #endif
 
-#ifdef HAVE_LIBXML
-	g_string_append(str, "    <b>XML Parser:</b> libxml2<br/>");
-#else
-	g_string_append(str, "    <b>XML Parser:</b> GMarkup<br/>");
-#endif
-
 #ifndef _WIN32
 #ifdef USE_SM
 	g_string_append(str, "    <b>X Session Management:</b> Enabled<br/>");

@@ -9,8 +9,8 @@ version 2.0.0:
 	  (Sadrul Habib Chowdhury, Google Summer of Code)
 	* Reorganized the source tree to split apart the code for the UI
 	  changes and libgaim targets
-	* libxml2 can now be used in place of gmarkup for expanded XML parsing
-	  features
+	* libxml2 is now required.  We switched from gmarkup to libxml2 for
+	  more correct XML parsing.
 
 	Status System:
 	* The code dealing with buddy and account status, away messages,

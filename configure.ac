@@ -183,16 +183,15 @@ dnl # LibXML2
 dnl #################
 enable_libxml2=yes
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0], ,
-		  [
-		   AC_MSG_RESULT(no)
-		   enable_libxml2=no
-		  ])
+	[
+		AC_MSG_ERROR([
+*** libxml2 is required to build Gaim; please make sure you have the
+*** libxml2 development headers installed.])
+	])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
-AC_ARG_ENABLE(libxml, [AC_HELP_STRING([--disable-libxml], [compile without libxml2 support])],enable_libxml2=no)
-if test "x$enable_libxml2" = "xyes"; then
-	AC_DEFINE(HAVE_LIBXML, 1, [Use libxml2 for xml parsing])
-fi
+
+
 
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
@@ -1933,7 +1932,6 @@ if test "x$enable_dbus" = "xyes" ; then
 eval eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
 fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
-echo Build with libxml2 support.... : $enable_libxml2
 echo Has you....................... : yes
 echo
 echo Use kerberos 4 with zephyr.... : $kerberos

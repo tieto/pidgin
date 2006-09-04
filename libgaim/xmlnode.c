@@ -29,9 +29,7 @@
 
 #include "internal.h"
 
-#ifdef HAVE_LIBXML
 #include <libxml/parser.h>
-#endif
 #include <string.h>
 #include <glib.h>
 
@@ -181,25 +179,17 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 
 void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 {
-#ifdef HAVE_LIBXML
 	g_return_if_fail(node != NULL);
 
 	g_free(node->namespace);
 	node->namespace = g_strdup(xmlns);
-#else
-	xmlnode_set_attrib(node, "xmlns", xmlns);
-#endif
 }
 
 const char *xmlnode_get_namespace(xmlnode *node)
 {
-#ifdef HAVE_LIBXML
 	g_return_val_if_fail(node != NULL, NULL);
 
 	return node->namespace;
-#else
-	return xmlnode_get_attrib(node, "xmlns");
-#endif
 }
 
 void
@@ -218,9 +208,7 @@ xmlnode_free(xmlnode *node)
 
 	g_free(node->name);
 	g_free(node->data);
-#ifdef HAVE_LIBXML
 	g_free(node->namespace);
-#endif
 
 	GAIM_DBUS_UNREGISTER_POINTER(node);
 	g_free(node);
@@ -305,13 +293,11 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	node_name = g_markup_escape_text(node->name, -1);
 	g_string_append_printf(text, "<%s", node_name);
 
-#ifdef HAVE_LIBXML
 	if (node->namespace) {
 		char *namespace = g_markup_escape_text(node->namespace, -1);
 		g_string_append_printf(text, " xmlns='%s'", namespace);
 		g_free(namespace);
 	}
-#endif
 	for(c = node->child; c; c = c->next)
 	{
 		if(c->type == XMLNODE_TYPE_ATTRIB) {
@@ -386,7 +372,6 @@ struct _xmlnode_parser_data {
 	xmlnode *current;
 };
 
-#ifdef HAVE_LIBXML
 static void
 xmlnode_parser_element_start_libxml(void *user_data,
 				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *namespace,
@@ -408,18 +393,14 @@ xmlnode_parser_element_start_libxml(void *user_data,
 		xmlnode_set_namespace(node, namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
-#ifdef HAVE_LIBXML
 			char *txt;
-#endif
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
-#ifdef HAVE_LIBXML
 			txt = attrib;
 			attrib = gaim_unescape_html(txt);
 			g_free(txt);
-#endif
 			xmlnode_set_attrib(node, attributes[i], attrib);
 			g_free(attrib);
 		}
@@ -457,64 +438,6 @@ xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 	xmlnode_insert_data(xpd->current, text, text_len);
 }
 
-#else
-
-static void
-xmlnode_parser_element_start(GMarkupParseContext *context,
-		const char *element_name, const char **attrib_names,
-		const char **attrib_values, gpointer user_data, GError **error)
-{
-	struct _xmlnode_parser_data *xpd = user_data;
-	xmlnode *node;
-	int i;
-
-	if(!element_name) {
-		return;
-	} else {
-		if(xpd->current)
-			node = xmlnode_new_child(xpd->current, element_name);
-		else
-			node = xmlnode_new(element_name);
-
-		for(i=0; attrib_names[i]; i++)
-			xmlnode_set_attrib(node, attrib_names[i], attrib_values[i]);
-
-		xpd->current = node;
-	}
-}
-
-static void
-xmlnode_parser_element_end(GMarkupParseContext *context,
-		const char *element_name, gpointer user_data, GError **error)
-{
-	struct _xmlnode_parser_data *xpd = user_data;
-
-	if(!element_name || !xpd->current)
-		return;
-
-	if(xpd->current->parent) {
-		if(!strcmp(xpd->current->name, element_name))
-			xpd->current = xpd->current->parent;
-	}
-}
-
-static void
-xmlnode_parser_element_text(GMarkupParseContext *context, const char *text,
-		gsize text_len, gpointer user_data, GError **error)
-{
-	struct _xmlnode_parser_data *xpd = user_data;
-
-	if(!xpd->current)
-		return;
-
-	if(!text || !text_len)
-		return;
-
-	xmlnode_insert_data(xpd->current, text, text_len);
-}
-#endif
-
-#ifdef HAVE_LIBXML
 static xmlSAXHandler xmlnode_parser_libxml = {
 	.internalSubset         = NULL,
 	.isStandalone           = NULL,
@@ -549,24 +472,12 @@ static xmlSAXHandler xmlnode_parser_libxml = {
 	.endElementNs           = xmlnode_parser_element_end_libxml,
 	.serror                 = NULL
 };
-#else
-static GMarkupParser xmlnode_parser = {
-	xmlnode_parser_element_start,
-	xmlnode_parser_element_end,
-	xmlnode_parser_element_text,
-	NULL,
-	NULL
-};
-#endif
 
 xmlnode *
 xmlnode_from_str(const char *str, gssize size)
 {
 	struct _xmlnode_parser_data *xpd;
 	xmlnode *ret;
-#ifndef HAVE_LIBXML
-	GMarkupParseContext *context;
-#endif
 	gsize real_size;
 
 	g_return_val_if_fail(str != NULL, NULL);
@@ -574,7 +485,6 @@ xmlnode_from_str(const char *str, gssize size)
 	real_size = size < 0 ? strlen(str) : size;
 	xpd = g_new0(struct _xmlnode_parser_data, 1);
 
-#ifdef HAVE_LIBXML
 	if (xmlSAXUserParseMemory(&xmlnode_parser_libxml, xpd, str, real_size) < 0) {
 		while(xpd->current && xpd->current->parent)
 			xpd->current = xpd->current->parent;
@@ -582,18 +492,6 @@ xmlnode_from_str(const char *str, gssize size)
 			xmlnode_free(xpd->current);
 		xpd->current = NULL;
 	}
-#else
-	context = g_markup_parse_context_new(&xmlnode_parser, 0, xpd, NULL);
-
-	if(!g_markup_parse_context_parse(context, str, real_size, NULL)) {
-		while(xpd->current && xpd->current->parent)
-			xpd->current = xpd->current->parent;
-		if(xpd->current)
-			xmlnode_free(xpd->current);
-		xpd->current = NULL;
-	}
-	g_markup_parse_context_free(context);
-#endif
 	ret = xpd->current;
 	g_free(xpd);
 	return ret;

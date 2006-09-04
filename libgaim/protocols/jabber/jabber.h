@@ -22,9 +22,7 @@
 #ifndef _GAIM_JABBER_H_
 #define _GAIM_JABBER_H_
 
-#ifdef HAVE_LIBXML
 #include <libxml/parser.h>
-#endif
 #include <glib.h>
 #include "circbuffer.h"
 #include "connection.h"
@@ -71,11 +69,7 @@ typedef struct _JabberStream
 	GaimSrvQueryData *srv_query_data;
 	GaimProxyConnectData *connect_data;
 
-#ifdef HAVE_LIBXML
 	xmlParserCtxt *context;
-#else
-	GMarkupParseContext *context;
-#endif
 	xmlnode *current;
 
 	enum {

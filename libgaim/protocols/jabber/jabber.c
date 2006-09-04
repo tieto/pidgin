@@ -945,10 +945,6 @@ static void jabber_close(GaimConnection *gc)
 			gaim_input_remove(js->gc->inpa);
 		close(js->fd);
 	}
-#ifndef HAVE_LIBXML
-	if(js->context)
-		g_markup_parse_context_free(js->context);
-#endif
 	if(js->iq_callbacks)
 		g_hash_table_destroy(js->iq_callbacks);
 	if(js->disco_callbacks)

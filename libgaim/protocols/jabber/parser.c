@@ -20,96 +20,13 @@
  */
 #include "internal.h"
 
-#ifdef HAVE_LIBXML
 #include <libxml/parser.h>
-#endif
 
 #include "connection.h"
 #include "debug.h"
 #include "jabber.h"
 #include "parser.h"
 #include "xmlnode.h"
-
-#ifndef HAVE_LIBXML
-static void
-jabber_parser_element_start(GMarkupParseContext *context,
-		const char *element_name, const char **attrib_names,
-		const char **attrib_values, gpointer user_data, GError **error)
-{
-	JabberStream *js = user_data;
-	xmlnode *node;
-	int i;
-
-	if(!element_name) {
-		return;
-	} else if(!strcmp(element_name, "stream:stream")) {
-		js->protocol_version = JABBER_PROTO_0_9;
-		for(i=0; attrib_names[i]; i++) {
-			if(!strcmp(attrib_names[i], "version")
-					&& !strcmp(attrib_values[i], "1.0")) {
-				js->protocol_version = JABBER_PROTO_1_0;
-			} else if(!strcmp(attrib_names[i], "id")) {
-				if(js->stream_id)
-					g_free(js->stream_id);
-				js->stream_id = g_strdup(attrib_values[i]);
-			}
-		}
-		if(js->protocol_version == JABBER_PROTO_0_9)
-			js->auth_type = JABBER_AUTH_IQ_AUTH;
-
-		if(js->state == JABBER_STREAM_INITIALIZING)
-			jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
-	} else {
-
-		if(js->current)
-			node = xmlnode_new_child(js->current, element_name);
-		else
-			node = xmlnode_new(element_name);
-
-		for(i=0; attrib_names[i]; i++) {
-			xmlnode_set_attrib(node, attrib_names[i], attrib_values[i]);
-		}
-
-		js->current = node;
-	}
-}
-
-static void
-jabber_parser_element_end(GMarkupParseContext *context,
-		const char *element_name, gpointer user_data, GError **error)
-{
-	JabberStream *js = user_data;
-
-	if(!js->current)
-		return;
-
-	if(js->current->parent) {
-		if(!strcmp(js->current->name, element_name))
-			js->current = js->current->parent;
-	} else {
-		xmlnode *packet = js->current;
-		js->current = NULL;
-		jabber_process_packet(js, packet);
-		xmlnode_free(packet);
-	}
-}
-
-static void
-jabber_parser_element_text(GMarkupParseContext *context, const char *text,
-		gsize text_len, gpointer user_data, GError **error)
-{
-	JabberStream *js = user_data;
-
-	if(!js->current)
-		return;
-
-	if(!text || !text_len)
-		return;
-
-	xmlnode_insert_data(js->current, text, text_len);
-}
-
-#else  /* HAVE_LIBXML */
 
 static void
 jabber_parser_element_start_libxml(void *user_data,
@@ -130,7 +47,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			char *attrib = g_malloc(attrib_len + 1);
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
-			       
+
 			if(!strcmp(attributes[i], "version")
 					&& !strcmp(attrib, "1.0")) {
 				js->protocol_version = JABBER_PROTO_1_0;
@@ -168,7 +85,7 @@ jabber_parser_element_start_libxml(void *user_data,
 }
 
 static void
-jabber_parser_element_end_libxml(void *user_data, const xmlChar *element_name, 
+jabber_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 				 const xmlChar *prefix, const xmlChar *namespace)
 {
 	JabberStream *js = user_data;
@@ -200,10 +117,7 @@ jabber_parser_element_text_libxml(void *user_data, const xmlChar *text, int text
 
 	xmlnode_insert_data(js->current, text, text_len);
 }
-#endif  /* HAVE_LIBXML */
 
-
-#ifdef HAVE_LIBXML
 static xmlSAXHandler jabber_parser_libxml = {
 	.internalSubset         = NULL,
 	.isStandalone           = NULL,
@@ -238,20 +152,10 @@ static xmlSAXHandler jabber_parser_libxml = {
 	.endElementNs           = jabber_parser_element_end_libxml,
 	.serror                 = NULL
 };
-#else
-static GMarkupParser jabber_parser = {
-	jabber_parser_element_start,
-	jabber_parser_element_end,
-	jabber_parser_element_text,
-	NULL,
-	NULL
-};
-#endif
 
 void
 jabber_parser_setup(JabberStream *js)
 {
-#ifdef HAVE_LIBXML
 	/* This seems backwards, but it makes sense. The libxml code creates the parser
 	 * context when you try to use it (this way, it can figure out the encoding at
 	 * creation time. So, setting up the parser is just a matter of destroying any
@@ -261,24 +165,11 @@ jabber_parser_setup(JabberStream *js)
 		xmlFreeParserCtxt(js->context);
 		js->context = NULL;
 	}
-#else
-	if(!js->context)
-		js->context = g_markup_parse_context_new(&jabber_parser, 0, js, NULL);
-#endif
 }
 
 
 void jabber_parser_process(JabberStream *js, const char *buf, int len)
 {
-
-#ifndef HAVE_LIBXML
-	/* May need to check for other encodings and do the conversion here */
-	if(!g_markup_parse_context_parse(js->context, buf, len, NULL)) {
-		g_markup_parse_context_free(js->context);
-		js->context = NULL;
-		gaim_connection_error(js->gc, _("XML Parse error"));
-	}
-#else
 	if (js->context ==  NULL) {
 		/* libxml inconsistently starts parsing on creating the parser, so so a ParseChunk
 		 * right afterwards to force it. */
@@ -286,6 +177,5 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
 		gaim_connection_error(js->gc, _("XML Parse error"));
 	}
-#endif
 }
 
