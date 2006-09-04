@@ -212,7 +212,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
 
-	pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, &pkt_buf);
+	pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, yd->jp, &pkt_buf);
 	yahoo_packet_free(pkt);
 
 	host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST);

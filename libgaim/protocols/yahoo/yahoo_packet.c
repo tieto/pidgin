@@ -294,7 +294,7 @@ yahoo_packet_send_can_write(gpointer data, gint source, GaimInputCondition cond)
 
 
 size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
-			 guchar **buf)
+			 gboolean jp, guchar **buf)
 {
 	size_t pktlen = yahoo_packet_length(pkt);
 	size_t len = YAHOO_PACKET_HDRLEN + pktlen;
@@ -307,6 +307,8 @@ size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 
 	if (wm)
 		pos += yahoo_put16(data + pos, YAHOO_WEBMESSENGER_PROTO_VER);
+	else if (jp)
+		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER_JAPAN);		
 	else
 		pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
 	pos += yahoo_put16(data + pos, 0x0000);
@@ -331,7 +333,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	if (yd->fd < 0)
 		return -1;
 
-	len = yahoo_packet_build(pkt, 0, yd->wm, &data);
+	len = yahoo_packet_build(pkt, 0, yd->wm, yd->jp, &data);
 
 	yahoo_packet_dump(data, len);
 	if (yd->txhandler == -1)
