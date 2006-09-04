@@ -173,7 +173,7 @@ PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], ,
 		  ])
 AC_SUBST(GSTREAMER_CFLAGS)
 AC_SUBST(GSTREAMER_LIBS)
-AC_ARG_ENABLE(gstreamer,[  --disable-gstreamer     compile without GStreamer audio support],enable_gst=no)
+AC_ARG_ENABLE(gstreamer, [AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])], enable_gst=no)
 if test "x$enable_gst" = "xyes"; then
   AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for making sounds])
 fi
@@ -522,27 +522,27 @@ AC_ARG_ENABLE(cap, [AC_HELP_STRING([--enable-cap], [compile with Contact Availab
 AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
 AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
 AC_ARG_ENABLE(tcl, [AC_HELP_STRING([--disable-tcl], [compile without Tcl scripting])], , enable_tcl=yes)
-AC_ARG_WITH(tclconfig, [  --with-tclconfig=DIR    directory containing tclConfig.sh])
-AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support for Tk],,enable_tk=yes)
-AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
-AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
-AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
+AC_ARG_WITH(tclconfig, [AC_HELP_STRING([--with-tclconfig=DIR], [directory containing tclConfig.sh])])
+AC_ARG_ENABLE(tk, [AC_HELP_STRING([--disable-tk], [compile without Tcl support for Tk])], , enable_tk=yes)
+AC_ARG_WITH(tkconfig, [AC_HELP_STRING([--with-tkconfig=DIR], [directory containing tkConfig.sh])])
+AC_ARG_ENABLE(gtkspell, [AC_HELP_STRING([--disable-gtkspell], [compile without GtkSpell automatic spell checking])], , enable_gtkspell=yes)
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [compile with debugging support])], , enable_debug=no)
 AC_ARG_ENABLE(gtkgaim, [AC_HELP_STRING([--disable-gtkgaim], [compile without GtkGaim client])],
 		enable_gtk=$enableval, enable_gtk=yes)
 AC_ARG_ENABLE(gntgaim, [AC_HELP_STRING([--disable-gntgaim], [compile without GntGaim console client])],
 		enable_gnt=$enableval, enable_gnt=yes)
-AC_ARG_ENABLE(fatal-asserts,   [  --enable-fatal-asserts  make assertions fatal (useful for debugging)],,enable_fatal_asserts=no)
+AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts], [make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
 dnl We know Gaim won't compile with deprecated APIs disabled.
 dnl We have no desire to support two different versions of the
 dnl same code when it's not necessary, so we're sticking with
 dnl the deprecated APIs in many cases.
 dnl This option is being left in case things change.
-dnl AC_ARG_ENABLE(deprecated,    [  --disable-deprecated    compile without deprecated API usage],,enable_deprecated=yes)
-AC_ARG_ENABLE(fortify, [  --disable-fortify       compile without FORTIFY_SOURCE support],,enable_fortify=yes)
-AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
-AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
-AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
-AC_ARG_WITH(zephyr,    [  --with-zephyr=PREFIX    compile Zephyr plugin against external libzephyr],zephyr="$withval",zephyr="no")
+dnl AC_ARG_ENABLE(deprecated, [AC_HELP_STRING([--disable-deprecated], [compile without deprecated API usage])], , enable_deprecated=yes)
+AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
+AC_ARG_ENABLE(screensaver, [AC_HELP_STRING([--disable-screensaver], [compile without X screensaver extension])], , enable_xss=yes)
+AC_ARG_ENABLE(sm, [AC_HELP_STRING([--disable-sm], [compile without X session management support])], , enable_sm=yes)
+AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin with Kerberos 4 support])], kerberos="$withval", kerberos="no")
+AC_ARG_WITH(zephyr, [AC_HELP_STRING([--with-zephyr=PREFIX], [compile Zephyr plugin against external libzephyr])], zephyr="$withval", zephyr="no")
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
 AC_CHECK_HEADER(sys/utsname.h)
@@ -688,7 +688,7 @@ dnl #######################################################################
 dnl # Check for DBUS libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus,     [  --enable-dbus           enable DBUS support],,enable_dbus=yes)
+AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable DBUS support])], , enable_dbus=yes)
 
 if test "x$enable_dbus" = "xyes" ; then
    AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -758,7 +758,7 @@ dnl # This is still prone to error if one of the legacy directories exist
 dnl # although a newer dbus is installed.  But I have tried to order the
 dnl # directory searching to keep this situation at a minimum.
 dnl ###########################################################################
-AC_ARG_WITH(dbus-services, [  --with-dbus-services=<dir>      where the D-Bus services directory is located.])
+AC_ARG_WITH(dbus-services, [AC_HELP_STRING([--with-dbus-services=<dir>], [where the D-Bus services directory is located.])])
 
 DBUS_SERVICES_DIR=""
 
@@ -897,7 +897,7 @@ dnl #######################################################################
 dnl # Check for stuff needed by the evolution integration plugin.
 dnl #######################################################################
 build_gevo=no
-AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Evolution plugin],,enable_gevolution=yes)
+AC_ARG_ENABLE(gevolution, [AC_HELP_STRING([--disable-gevolution], [compile without the Gaim-Evolution plugin])], , enable_gevolution=yes)
 
 if test "x$enable_gevolution" = "xyes"; then
 	evo_deps="libebook-1.2 libedata-book-1.2"
@@ -1142,8 +1142,8 @@ if test "$enable_perl" = yes ; then
 		fi
 
 		AC_ARG_WITH(perl-lib,
-		[  --with-perl-lib=[site|vendor|DIR] specify where to install the
-                                  Perl libraries for gaim. Default is site.],
+		[AC_HELP_STRING([--with-perl-lib=[site|vendor|DIR]], [specify where to install the
+                                  Perl libraries for gaim. Default is site.])],
 		[
 			if test "x$withval" = xsite; then
 				PERL_MM_PARAMS=""
@@ -1257,7 +1257,7 @@ if test "x$enable_gnutls" != "xno"; then
 	fi
 
 	AC_ARG_WITH(gnutls-libs,
-		[  --with-gnutls-libs=PREFIX       location of GnuTLS libraries.],
+		[AC_HELP_STRING([--with-gnutls-libs=PREFIX], [location of GnuTLS libraries.])],
 		[ with_gnutls_libs="$withval" ])
 
 	if test "x$with_gnutls_libs"     != "xno" -a \
@@ -1309,19 +1309,19 @@ dnl #
 if test "x$enable_nss" != "xno"; then
 
 	AC_ARG_WITH(nspr-includes,
-		[  --with-nspr-includes=PREFIX     specify location of Mozilla nspr4 includes.],
+		[AC_HELP_STRING([--with-nspr-includes=PREFIX], [specify location of Mozilla nspr4 includes.])],
 		[with_nspr_includes="$withval"])
 
 	AC_ARG_WITH(nspr-libs,
-		[  --with-nspr-libs=PREFIX         specify location of Mozilla nspr4 libs.],
+		[AC_HELP_STRING([--with-nspr-libs=PREFIX], [specify location of Mozilla nspr4 libs.])],
 		[with_nspr_libs="$withval"])
 
 	AC_ARG_WITH(nss-includes,
-		[  --with-nss-includes=PREFIX      specify location of Mozilla nss3 includes.],
+		[AC_HELP_STRING([--with-nss-includes=PREFIX], [specify location of Mozilla nss3 includes.])],
 		[with_nss_includes="$withval"])
 
 	AC_ARG_WITH(nss-libs,
-		[  --with-nss-libs=PREFIX          specify location of Mozilla nss3 libs.],
+		[AC_HELP_STRING([--with-nss-libs=PREFIX], [specify location of Mozilla nss3 libs.])],
 		[with_nss_libs="$withval"])
 
 
