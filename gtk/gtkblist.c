@@ -4366,13 +4366,6 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	int count;
 	gboolean show = FALSE;
 	GaimBlistNode* gnode;
-	GdkColor bgcolor;
-	GdkColor textcolor;
-	
-	if (gtkblist) {
-		bgcolor = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
-		textcolor = gtkblist->treeview->style->text[GTK_STATE_ACTIVE];
-	}
 
 	g_return_if_fail(node != NULL);
 
@@ -4403,12 +4396,17 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded; 
-
+		GdkColor bgcolor;
+		GdkColor textcolor;
+	
 		if(!insert_node(list, gnode, &iter))
 			return;
 
-		path = gtk_tree_model_get_path(gtkblist->treemodel, &iter);
-		expanded = gtk_tree_view_row_expanded(gtkblist->treeview, path);
+		bgcolor = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
+		textcolor = gtkblist->treeview->style->text[GTK_STATE_ACTIVE];
+
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
 		gtk_tree_path_free(path);
 
 		esc = g_markup_escape_text(group->name, -1);
@@ -4518,13 +4516,6 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 	GaimContact *contact;
 	GaimBuddy *buddy;
 	struct _gaim_gtk_blist_node *gtknode;
-	GdkColor bgcolor;
-	GdkColor textcolor;
-	
-	if (gtkblist) {
-		bgcolor = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
-		textcolor = gtkblist->treeview->style->text[GTK_STATE_ACTIVE];
-	}
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
 		cnode = node->parent;
@@ -4555,6 +4546,11 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 			GdkPixbuf *status;
 			char *mark;
 			char *white;
+			GdkColor bgcolor;
+			GdkColor textcolor;
+	
+			bgcolor = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
+			textcolor = gtkblist->treeview->style->text[GTK_STATE_ACTIVE];
 
 			status = gaim_gtk_blist_get_status_icon(cnode,
 					(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons") ?
