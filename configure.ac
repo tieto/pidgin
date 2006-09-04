@@ -178,7 +178,7 @@ dnl #######################################################################
 AC_ARG_ENABLE(gtkgaim,
 	[AC_HELP_STRING([--disable-gtkgaim],
 		[compile without GtkGaim client])],
-	enable_gtk="$enableval", enable_gtk="yes")
+	enable_gtkui="$enableval", enable_gtkui="yes")
 AC_ARG_ENABLE(screensaver,
 	[AC_HELP_STRING([--disable-screensaver],
 		[compile without X screensaver extension (used to detect idleness)])],
@@ -204,7 +204,7 @@ AC_ARG_ENABLE(cap,
 		[compile without Contact Availability Prediction plugin])],
 	enable_cap="no", enable_cap="yes")
 
-if test "x$enable_gtk" = "xyes" ; then
+if test "x$enable_gtkui" = "xyes" ; then
 	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0], , [
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
@@ -325,10 +325,8 @@ specify --disable-gtkgaim when running configure.
 	dnl #######################################################################
 	if test "x$enable_cap" = "xyes"; then
 		AC_CHECK_HEADERS(dbi/dbi.h, , enable_cap="no")
-		if test "x$enable_cap" = "xyes"; then
-			AC_CHECK_LIB(dbi, dbi_result_field_is_null, CAP_LIBS="-ldbi", enable_cap="no")
-			AC_SUBST(CAP_LIBS)
-		fi
+		AC_CHECK_LIB(dbi, dbi_result_field_is_null, CAP_LIBS="-ldbi", enable_cap="no")
+		AC_SUBST(CAP_LIBS)
 	fi
 
 else # GTK
@@ -339,16 +337,78 @@ else # GTK
 	enable_gevolution=no
 fi	# GTK
 
-AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtk" = "xyes")
+AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$enable_gevolution" = "xyes")
 AM_CONDITIONAL(ENABLE_CAP, test "x$enable_cap" = "xyes")
 
 dnl #######################################################################
-dnl # Check for ncurses?
+dnl # Check for ncurses and other things used by the console UI
 dnl #######################################################################
-AC_ARG_ENABLE(gntgaim,
-	[AC_HELP_STRING([--disable-gntgaim], [compile without GntGaim console client])],
-	enable_gnt=$enableval, enable_gnt=yes)
+AC_ARG_ENABLE(consolegaim,
+	[AC_HELP_STRING([--disable-consolegaim], [compile without console client])],
+	enable_console=$enableval, enable_console=yes)
+
+GNT_LIBS=""
+GNT_CFLAGS=""
+if test "x$enable_console" = "xyes"; then
+	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_console=no])
+	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_console=no])
+
+	LIBS_save="$LIBS"
+	LIBS="$LIBS $GNT_LIBS"
+
+	dnl # Some distros put the headers in ncursesw/, some don't
+	found_ncurses_h=no
+	for f in /usr/include/ncursesw/ncurses.h /usr/include/ncurses.h
+	do
+		AC_CHECK_HEADER($f,[
+			AC_MSG_CHECKING([if $f supports wide characters])
+			AC_TRY_COMPILE([
+				#define _XOPEN_SOURCE_EXTENDED
+				#include <$f>
+			], [
+				#ifndef get_wch
+				# error get_wch not found!
+				#endif
+			], [
+				dir=`dirname $f`
+				if test x"$dir" != x"." ; then
+					GNT_CFLAGS="-I$dir/"
+				else
+					GNT_CFLAGS=""
+				fi
+
+				found_ncurses_h=yes
+				AC_MSG_RESULT([yes])
+				break
+			], [
+				AC_MSG_RESULT([no])
+			])
+		])
+	done
+
+	LIBS="$LIBS_save"
+
+	if test x"$found_ncurses_h" = x"no" ; then
+		GNT_LIBS=""
+		GNT_CFLAGS=""
+		enable_console=no
+		AC_MSG_RESULT([no])
+	else
+		AC_MSG_RESULT([yes])
+	fi
+
+	PKG_CHECK_MODULES(X11, x11,
+		[AC_DEFINE(HAVE_X11, 1, [Define to 1 if you have X11])], [AC_MSG_RESULT(no)])
+	AC_SUBST(X11_LIBS)
+	AC_SUBST(X11_CFLAGS)
+fi
+
+AC_SUBST(GNT_LIBS)
+AC_SUBST(GNT_CFLAGS)
+AM_CONDITIONAL(ENABLE_GNT, test "x$enable_console" = "xyes")
+
+AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
 
 dnl #######################################################################
 dnl # Check for LibXML2 (required)
@@ -574,7 +634,6 @@ AC_SUBST(GADU_CFLAGS)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
-AC_ARG_ENABLE(prpls, [AC_HELP_STRING([--disable-prpls], [don't build dynamic protocol plugins])], , enable_prpls=yes)
 DYNAMIC_PRPLS=all
 AC_ARG_WITH(static-prpls, [AC_HELP_STRING([--with-static-prpls], [Link to certain protocols statically])], [STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`], [STATIC_PRPLS=""])
 if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
@@ -697,20 +756,6 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(plugins, [AC_HELP_STRING([--disable-plugins], [compile without plugin support])], , enable_plugins=yes)
-AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
-AC_ARG_ENABLE(tcl, [AC_HELP_STRING([--disable-tcl], [compile without Tcl scripting])], , enable_tcl=yes)
-AC_ARG_WITH(tclconfig, [AC_HELP_STRING([--with-tclconfig=DIR], [directory containing tclConfig.sh])])
-AC_ARG_ENABLE(tk, [AC_HELP_STRING([--disable-tk], [compile without Tcl support for Tk])], , enable_tk=yes)
-AC_ARG_WITH(tkconfig, [AC_HELP_STRING([--with-tkconfig=DIR], [directory containing tkConfig.sh])])
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [compile with debugging support])], , enable_debug=no)
-AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts], [make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
-dnl We know Gaim won't compile with deprecated APIs disabled.
-dnl We have no desire to support two different versions of the
-dnl same code when it's not necessary, so we're sticking with
-dnl the deprecated APIs in many cases.
-dnl This option is being left in case things change.
-dnl AC_ARG_ENABLE(deprecated, [AC_HELP_STRING([--disable-deprecated], [compile without deprecated API usage])], , enable_deprecated=yes)
-AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin with Kerberos 4 support])], kerberos="$withval", kerberos="no")
 AC_ARG_WITH(zephyr, [AC_HELP_STRING([--with-zephyr=PREFIX], [compile Zephyr plugin against external libzephyr])], zephyr="$withval", zephyr="no")
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
@@ -718,17 +763,19 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
+	[compile with debugging support])], , enable_debug=no)
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
+	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
 if test "x$enable_fatal_asserts" = "xyes" ; then
 	AC_DEFINE(GAIM_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
-if test "x$enable_deprecated" = "xno"; then
-	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
-fi
+AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
@@ -823,11 +870,6 @@ if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
 else
 	x_incpath_add="-I$x_includes"
 fi
-
-PKG_CHECK_MODULES(X11, x11,
-	[AC_DEFINE(HAVE_X11, 1, [Define to 1 if you have X11])], [AC_MSG_RESULT(no)])
-AC_SUBST(X11_LIBS)
-AC_SUBST(X11_CFLAGS)
 
 dnl #######################################################################
 dnl # Check for DBUS libraries
@@ -952,66 +994,6 @@ fi
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 
 dnl #######################################################################
-dnl # GNT Gaim
-dnl #######################################################################
-GNT_LIBS=""
-GNT_CFLAGS=""
-if test "x$enable_gnt" = "xyes"; then
-	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_gnt=no])
-	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_gnt=no])
-
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $GNT_LIBS"
-
-	dnl # Some distros put the headers in ncursesw/, some don't
-	found_ncurses_h=no
-	for f in /usr/include/ncurses.h /usr/include/ncursesw/ncurses.h
-	do
-		AC_CHECK_HEADER($f,[
-			AC_MSG_CHECKING([if $f supports wide characters])
-			AC_TRY_COMPILE([
-				#define _XOPEN_SOURCE_EXTENDED
-				#include <$f>
-			], [
-				#ifndef get_wch
-				# error get_wch not found!
-				#endif
-			], [
-				dir=`dirname $f`
-				if test x"$dir" != x"." ; then
-					GNT_CFLAGS="-I$dir/"
-				else
-					GNT_CFLAGS=""
-				fi
-
-				found_ncurses_h=yes
-				AC_MSG_RESULT([yes])
-				break
-			], [
-				AC_MSG_RESULT([no])
-			])
-		])
-	done
-
-	LIBS="$LIBS_save"
-
-	if test x"$found_ncurses_h" = x"no" ; then
-		GNT_LIBS=""
-		GNT_CFLAGS=""
-		enable_gnt=no
-		AC_MSG_RESULT([no])
-	else
-		AC_MSG_RESULT([yes])
-	fi
-fi
-
-AC_SUBST(GNT_LIBS)
-AC_SUBST(GNT_CFLAGS)
-AM_CONDITIONAL(ENABLE_GNT, test "x$enable_gnt" = "xyes")
-
-AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
-
-dnl #######################################################################
 dnl # Check for Mono support
 dnl #######################################################################
 AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support])], , enable_mono=no)
@@ -1054,6 +1036,8 @@ AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
+AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scripting])], , enable_perl=yes)
+
 if test "$enable_plugins" = no ; then
 	enable_perl=no
 fi
@@ -1568,6 +1552,11 @@ fi
 dnl #######################################################################
 dnl # Check for Tcl
 dnl #######################################################################
+AC_ARG_ENABLE(tcl, [AC_HELP_STRING([--disable-tcl],
+	[compile without Tcl scripting])], enable_tcl="no", enable_tcl="yes")
+AC_ARG_WITH(tclconfig, [AC_HELP_STRING([--with-tclconfig=DIR],
+	[directory containing tclConfig.sh])])
+
 if test "$enable_plugins" = no; then
 	enable_tcl=no
 fi
@@ -1632,6 +1621,11 @@ fi
 dnl #######################################################################
 dnl # Check for Tk
 dnl #######################################################################
+AC_ARG_ENABLE(tk, [AC_HELP_STRING([--disable-tk],
+	[compile without Tcl support for Tk])], enable_tk="no", enable_tk="yes")
+AC_ARG_WITH(tkconfig, [AC_HELP_STRING([--with-tkconfig=DIR],
+	[directory containing tkConfig.sh])])
+
 if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	AC_MSG_CHECKING([for tkConfig.sh])
 	TKCONFIG=no
@@ -1689,18 +1683,9 @@ AC_SUBST(LIBS)
 
 if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(GAIM_PLUGINS, 1, [Define if plugins are enabled.])
-	AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
+	AM_CONDITIONAL(PLUGINS, true)
 else
 	AM_CONDITIONAL(PLUGINS, false)
-	enable_plugins=no
-	enable_prpls=no
-fi
-
-if test "x$enable_prpls" = "xyes" ; then
-	AM_CONDITIONAL(PRPLS, test "x$enable_plugins" = "xyes")
-else
-	AM_CONDITIONAL(PRPLS, false)
-	enable_prpls=no
 fi
 
 dnl #######################################################################
@@ -1802,42 +1787,41 @@ AC_VAR_TIMEZONE_EXTERNALS
 dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
-AC_ARG_ENABLE(doxygen, [AC_HELP_STRING([--enable-doxygen], [enable documentation with doxygen])],,enable_doxygen=yes)
-AC_ARG_ENABLE(dot, [AC_HELP_STRING([--enable-dot], [enable graphs in doxygen via 'dot'])],,enable_dot=yes)
+AC_ARG_ENABLE(doxygen,
+	[AC_HELP_STRING([--disable-doxygen],
+		[enable documentation with doxygen])],
+	enable_doxygen="no", enable_doxygen="yes")
+AC_ARG_ENABLE(dot,
+	[AC_HELP_STRING([--enable-dot],
+		[enable graphs in doxygen via 'dot'])],
+	enable_dot="no", enable_dot="yes")
 
 if test "x$enable_doxygen" = xyes; then
 	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
 	if test $DOXYGEN = false; then
-		AC_MSG_WARN([*** doxygen not found, docs will not be available])
-		enable_doxygen=no
+		AC_MSG_WARN([*** Doxygen not found, docs will not be available])
+		enable_doxygen="no"
 	else
 		AC_DEFINE_UNQUOTED(HAVE_DOXYGEN, 1, [whether or not we have doxygen])
 
-		if test "x$enable_dot" = xyes; then
+		if test "x$enable_dot" = "xyes"; then
 			AC_CHECK_PROG(DOT, dot, true, false)
 
 			if test $DOT = false; then
 				enable_dot="no";
-				AC_MSG_WARN([*** dot not found, graphs will not be available])
+				AC_MSG_WARN([*** GraphViz dot not found, docs will not have graphs])
 			else
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
 			fi
-		else
-			AC_MSG_WARN([*** dot not found, graphs will not be available])
 		fi
 	fi
 else
 	enable_dot="no"
 fi
 
-if test "x$enable_doxygen" = xyes; then
-	AM_CONDITIONAL(HAVE_DOXYGEN, true)
-else
-	AM_CONDITIONAL(HAVE_DOXYGEN, false)
-fi
-
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
+AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 
 AC_CONFIG_COMMANDS_PRE([
 	if test -e VERSION; then
@@ -1913,34 +1897,33 @@ echo
 echo $PACKAGE $VERSION
 
 echo
-echo Build Protocol Plugins........ : $enable_prpls
-echo Protocols to link statically.. : $STATIC_PRPLS
-echo Protocols to build dynamically : $DYNAMIC_PRPLS
+echo Build GTK+ 2.x UI............. : $enable_gtkui
+echo Build console UI.............. : $enable_console
 echo
-echo Build with GTK+ 2.x UI........ : $enable_gtk
-echo Build with GNT Console UI..... : $enable_gnt
-echo SSL Library/Libraries......... : $msg_ssl
+echo Protocols to build dynamically : $DYNAMIC_PRPLS
+echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
-echo Build with Plugin support..... : $enable_plugins
-echo Build with Mono support....... : $enable_mono
-echo Build with Perl support....... : $enable_perl
-echo Build with Tcl support........ : $enable_tcl
-echo Build with Tk support......... : $enable_tk
-echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
-eval eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
+	eval eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
 fi
+echo SSL Library/Libraries......... : $msg_ssl
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
-echo Has you....................... : yes
-echo
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
+echo Has you....................... : yes
 echo
 echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
+echo Build with GtkSpell support... : $enable_gtkspell
+echo
+echo Build with plugin support..... : $enable_plugins
+echo Build with Mono support....... : $enable_mono
+echo Build with Perl support....... : $enable_perl
+echo Build with Tcl support........ : $enable_tcl
+echo Build with Tk support......... : $enable_tk
 echo
 echo Print debugging messages...... : $enable_debug
 echo Assertions are fatal.......... : $enable_fatal_asserts
