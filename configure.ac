@@ -172,13 +172,16 @@ You must have the GLib 2.0 development headers installed to build Gaim.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
+		[compile without GTK+ user interface])],
+	enable_gtkui="$enableval", enable_gtkui="yes")
+AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
+		[compile without console user interface])],
+	enable_consoleui=$enableval, enable_consoleui=yes)
+
 dnl #######################################################################
 dnl # Check for GTK+ 2.0 and other things used by the GTK UI
 dnl #######################################################################
-AC_ARG_ENABLE(gtkgaim,
-	[AC_HELP_STRING([--disable-gtkgaim],
-		[compile without GtkGaim client])],
-	enable_gtkui="$enableval", enable_gtkui="yes")
 AC_ARG_ENABLE(screensaver,
 	[AC_HELP_STRING([--disable-screensaver],
 		[compile without X screensaver extension (used to detect idleness)])],
@@ -211,7 +214,7 @@ if test "x$enable_gtkui" = "xyes" ; then
 
 You must have the GTK+ 2.0 development headers installed to compile Gaim's
 GTK+ interface.  If you only want to build the console interface then
-specify --disable-gtkgaim when running configure.
+specify --disable-gtkui when running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
@@ -344,15 +347,11 @@ AM_CONDITIONAL(ENABLE_CAP, test "x$enable_cap" = "xyes")
 dnl #######################################################################
 dnl # Check for ncurses and other things used by the console UI
 dnl #######################################################################
-AC_ARG_ENABLE(consolegaim,
-	[AC_HELP_STRING([--disable-consolegaim], [compile without console client])],
-	enable_console=$enableval, enable_console=yes)
-
 GNT_LIBS=""
 GNT_CFLAGS=""
-if test "x$enable_console" = "xyes"; then
-	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_console=no])
-	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_console=no])
+if test "x$enable_consoleui" = "xyes"; then
+	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
+	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_consoleui=no])
 
 	LIBS_save="$LIBS"
 	LIBS="$LIBS $GNT_LIBS"
@@ -392,7 +391,7 @@ if test "x$enable_console" = "xyes"; then
 	if test x"$found_ncurses_h" = x"no" ; then
 		GNT_LIBS=""
 		GNT_CFLAGS=""
-		enable_console=no
+		enable_consoleui=no
 		AC_MSG_RESULT([no])
 	else
 		AC_MSG_RESULT([yes])
@@ -406,7 +405,7 @@ fi
 
 AC_SUBST(GNT_LIBS)
 AC_SUBST(GNT_CFLAGS)
-AM_CONDITIONAL(ENABLE_GNT, test "x$enable_console" = "xyes")
+AM_CONDITIONAL(ENABLE_GNT, test "x$enable_consoleui" = "xyes")
 
 AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
 
@@ -762,18 +761,6 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
-
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
-	[compile with debugging support])], , enable_debug=no)
-if test "x$enable_debug" = "xyes" ; then
-	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-fi
-
-AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
-	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
-if test "x$enable_fatal_asserts" = "xyes" ; then
-	AC_DEFINE(GAIM_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
-fi
 
 AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
@@ -1823,6 +1810,18 @@ AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
 AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
+	[compile with debugging support])], , enable_debug=no)
+if test "x$enable_debug" = "xyes" ; then
+	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+fi
+
+AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
+	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
+if test "x$enable_fatal_asserts" = "xyes" ; then
+	AC_DEFINE(GAIM_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
+fi
+
 AC_CONFIG_COMMANDS_PRE([
 	if test -e VERSION; then
 		cp -p VERSION VERSION.ac-save
@@ -1898,7 +1897,7 @@ echo $PACKAGE $VERSION
 
 echo
 echo Build GTK+ 2.x UI............. : $enable_gtkui
-echo Build console UI.............. : $enable_console
+echo Build console UI.............. : $enable_consoleui
 echo
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
