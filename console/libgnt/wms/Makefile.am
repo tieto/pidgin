@@ -17,5 +17,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/console/libgnt \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
+	$(GNT_CFLAGS) \
 	$(PLUGIN_CFLAGS)
 
