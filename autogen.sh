@@ -2,35 +2,35 @@
 
 (glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have glib-gettextize installed to compile Gaim";
+	echo "You must have glib-gettextize installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have intltool installed to compile Gaim";
+	echo "You must have intltool installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have libtool installed to compile Gaim";
+	echo "You must have libtool installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have automake installed to compile Gaim";
+	echo "You must have automake installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have autoconf installed to compile Gaim";
+	echo "You must have autoconf installed to compile Gaim.";
 	echo;
 	exit;
 }
