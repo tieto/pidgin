@@ -45,8 +45,8 @@ gntgaim_LDADD = \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
-	-L./libgnt/ -lgnt \
-	-L$(top_builddir)/libgaim -lgaim
+	./libgnt/libgnt.la \
+	$(top_builddir)/libgaim/libgaim.la
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
