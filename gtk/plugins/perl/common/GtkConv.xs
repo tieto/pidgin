@@ -50,8 +50,11 @@ void
 gaim_gtkconv_switch_active_conversation(conv)
 	Gaim::Conversation conv
 
+#if 0
 void
 gaim_gtkconv_update_tabs()
+
+#endif
 
 void
 gaim_gtkconv_update_buttons_by_protocol(conv)

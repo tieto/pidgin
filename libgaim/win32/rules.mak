@@ -4,7 +4,7 @@
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
 
 %.c: %.xs
-	$(PERL) $(EXTUTILS)/xsubpp -typemap $(EXTUTILS)/typemap -typemap typemap $< > $@
+	$(PERL) $(EXTUTILS)/xsubpp -typemap $(EXTUTILS)/typemap -typemap $(GAIM_LIB_PERL_TOP)/common/typemap $< > $@
 
 %.o: %.rc
 	$(WINDRES) -i $< -o $@

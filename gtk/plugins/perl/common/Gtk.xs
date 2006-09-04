@@ -38,7 +38,9 @@ GAIM_PERL_BOOT_PROTO(Gtk__Prefs);
 GAIM_PERL_BOOT_PROTO(Gtk__Privacy);
 GAIM_PERL_BOOT_PROTO(Gtk__Roomlist);
 GAIM_PERL_BOOT_PROTO(Gtk__Status);
+#ifndef _WIN32
 GAIM_PERL_BOOT_PROTO(Gtk__Session);
+#endif
 GAIM_PERL_BOOT_PROTO(Gtk__Sound);
 GAIM_PERL_BOOT_PROTO(Gtk__StatusBox);
 GAIM_PERL_BOOT_PROTO(Gtk__Themes);
@@ -68,7 +70,9 @@ GAIM_PERL_BOOT(Gtk__Prefs);
 GAIM_PERL_BOOT(Gtk__Privacy);
 GAIM_PERL_BOOT(Gtk__Roomlist);
 GAIM_PERL_BOOT(Gtk__Status);
+#ifndef _WIN32
 GAIM_PERL_BOOT(Gtk__Session);
+#endif
 GAIM_PERL_BOOT(Gtk__Sound);
 GAIM_PERL_BOOT(Gtk__StatusBox);
 GAIM_PERL_BOOT(Gtk__Themes);

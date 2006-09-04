@@ -113,11 +113,11 @@ LIBGAIM_LIBS =	\
 		-lws2_32 \
 		-lwinmm \
 		-lz \
-		-liberty \
-		-lidletrack
+		-liberty
 
 GTKGAIM_LIBS =	\
 		$(LIBGAIM_LIBS) \
+		-lidletrack \
 		-lgtk-win32-2.0 \
 		-latk-1.0 \
 		-lpango-1.0 \
@@ -145,7 +145,7 @@ install: all $(GAIM_INSTALL_DIR)
 $(GTKGAIM_OBJECTS): $(GAIM_CONFIG_H)
 
 $(GTKGAIM_TARGET).dll $(GTKGAIM_TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(GTKGAIM_OBJECTS)
-	$(CC) -shared $(LIBGAIM_OBJECTS) $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
+	$(CC) -shared $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
 
 $(EXE_TARGET).exe: $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET).exe

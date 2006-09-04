@@ -98,12 +98,12 @@ install: all
 
 $(C_FILES): $(GAIM_CONFIG_H)
 
-$(AUTOSPLIT): Gaim.pm
+$(AUTOSPLIT):
 	mkdir -p ./lib/auto
 	cp Gaim.pm ./lib
 	$(PERL) -MAutoSplit -e 'autosplit("lib/Gaim.pm")'
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(FALLBACKS) $(OBJECTS)
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_LIBGAIM_PERL_DLL).a $(FALLBACKS) $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
 
 ##

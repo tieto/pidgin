@@ -1,0 +1,108 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for Gaim perl module.
+#
+
+GAIM_TOP := ../../../..
+include $(GAIM_TOP)/libgaim/win32/global.mak
+
+TARGET = Gtk
+EXTUTILS := C:/perl/lib/ExtUtils
+
+CFLAGS += -Wno-comment
+
+##
+## INCLUDE PATHS
+##
+INCLUDE_PATHS =		-I. \
+			-I$(GAIM_TOP) \
+			-I$(GAIM_LIB_TOP) \
+			-I$(GAIM_GTK_TOP) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/include/gtk-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(PERL_LIB_TOP)/CORE
+
+LIB_PATHS = 		-L$(PERL_LIB_TOP) \
+			-L$(GAIM_LIB_TOP) \
+			-L$(GAIM_GTK_TOP) \
+			-L$(GAIM_LIB_PERL_TOP) \
+			-L$(GTK_TOP)/lib
+
+##
+##  SOURCES, OBJECTS
+##
+XS_FILES = \
+	Gtk.xs \
+	GtkAccount.xs \
+	GtkBlist.xs \
+	GtkConn.xs \
+	GtkConv.xs \
+	GtkConvWin.xs \
+	GtkDebug.xs \
+	GtkDialogs.xs \
+	GtkFt.xs \
+	GtkIMHtml.xs \
+	GtkIMHtmlToolbar.xs \
+	GtkLog.xs \
+	GtkMenuTray.xs \
+	GtkPlugin.xs \
+	GtkPluginPref.xs \
+	GtkPounce.xs \
+	GtkPrefs.xs \
+	GtkPrivacy.xs \
+	GtkRoomlist.xs \
+	GtkSavedStatuses.xs \
+	GtkSound.xs \
+	GtkStatusBox.xs \
+	GtkThemes.xs \
+	GtkUtils.xs
+
+
+C_FILES = $(XS_FILES:%.xs=%.c)
+OBJECTS = $(C_FILES:%.c=%.o)
+
+##
+## LIBRARIES
+##
+LIBS =			-lperl58 \
+			-lperl \
+			-lgaim \
+			-lgtkgaim \
+			-lglib-2.0
+
+include $(GAIM_COMMON_RULES)
+
+##
+## TARGETS
+##
+.PHONY: all clean
+
+all: $(TARGET).dll
+
+$(GAIM_INSTALL_PERLMOD_DIR)/Gaim.pm:
+	$(MAKE) -C $(GAIM_LIB_PERL_TOP)/common -f $(GAIM_WIN32_MAKEFILE) install
+
+install: all $(GAIM_INSTALL_PERLMOD_DIR)/Gaim.pm
+	rm -f $(GAIM_INSTALL_PERLMOD_DIR)/Gaim/$(TARGET).dll $(GAIM_INSTALL_PERLMOD_DIR)/Gaim/$(TARGET).pm
+	mkdir -p $(GAIM_INSTALL_PERLMOD_DIR)/Gaim
+	cp $(TARGET).pm $(GAIM_INSTALL_PERLMOD_DIR)/Gaim/
+	cp $(TARGET).dll $(GAIM_INSTALL_PERLMOD_DIR)/Gaim/
+
+$(C_FILES): $(GAIM_CONFIG_H)
+
+$(TARGET).dll: $(GAIM_GTKGAIM_DLL).a $(GAIM_LIBGAIM_PERL_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
+
+##
+## CLEAN
+##
+clean:
+	rm -f *.o $(TARGET).dll
+
+include $(GAIM_COMMON_TARGETS)

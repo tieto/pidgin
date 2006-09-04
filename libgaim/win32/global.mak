@@ -31,6 +31,7 @@ GAIM_INSTALL_SOUNDS_DIR := $(GAIM_INSTALL_DIR)/sounds
 # Important (enough) locations in our source code
 GAIM_LIB_TOP := $(GAIM_TOP)/libgaim
 GAIM_LIB_PLUGINS_TOP := $(GAIM_LIB_TOP)/plugins
+GAIM_LIB_PERL_TOP := $(GAIM_LIB_PLUGINS_TOP)/perl
 GAIM_GTK_TOP := $(GAIM_TOP)/gtk
 GAIM_GTK_IDLETRACK_TOP := $(GAIM_GTK_TOP)/win32/IdleTracker
 GAIM_GTK_PIXMAPS_TOP := $(GAIM_GTK_TOP)/pixmaps
@@ -43,6 +44,7 @@ GAIM_PROTOS_TOP := $(GAIM_LIB_TOP)/protocols
 GAIM_CONFIG_H := $(GAIM_TOP)/config.h
 GAIM_IDLETRACK_DLL := $(GAIM_GTK_IDLETRACK_TOP)/idletrack.dll
 GAIM_LIBGAIM_DLL := $(GAIM_LIB_TOP)/libgaim.dll
+GAIM_LIBGAIM_PERL_DLL := $(GAIM_LIB_PERL_TOP)/perl.dll
 GAIM_GTKGAIM_DLL := $(GAIM_GTK_TOP)/gtkgaim.dll
 GAIM_EXE := $(GAIM_GTK_TOP)/gaim.exe
 GAIM_PORTABLE_EXE := $(GAIM_GTK_TOP)/gaim-portable.exe

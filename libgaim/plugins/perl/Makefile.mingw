@@ -68,8 +68,8 @@ $(OBJECTS): $(GAIM_CONFIG_H)
 ##
 ## BUILD DLL
 ##
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -o $(TARGET).dll
+$(TARGET).dll $(TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 ##
 ## CLEAN RULES

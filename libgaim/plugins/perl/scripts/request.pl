@@ -17,17 +17,6 @@ use Gaim;
 	plugin_action_sub => "plugin_action_names"
 );
 
-
-	# These names must already exist
-	my $GROUP		= "UIUC Buddies";
-	my $USERNAME 		= "johnhkelm2";
-
-	# We will create these on load then destroy them on unload
-	my $TEST_GROUP		= "perlTestGroup";
-	my $TEST_NAME	 	= "perlTestName";
-	my $TEST_ALIAS	 	= "perlTestAlias";
-	my $PROTOCOL_ID 	= "prpl-oscar";
-
 %plugin_actions = (
 	"Plugin Action Test Label" => \&plugin_action_test,
 );
