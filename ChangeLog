@@ -122,6 +122,10 @@ version 2.0.0:
 	* The system tray icon is now transparent (Dan Winship)
 	* New Log Reader plugin that can read and display logs from Adium,
 	  MSN Messenger, and Trillian in the log viewer
+	* New Contact Availability plugin that attempts to predict the
+	  times when people in your buddylist will most likely respond
+	  to you, based on times in the past when they have responded
+	  (Geoffrey Foster, Google Summer of Code)
 
 	MSN Features:
 	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)
