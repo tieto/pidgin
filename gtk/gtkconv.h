@@ -179,12 +179,6 @@ void gaim_gtkconv_update_buddy_icon(GaimConversation *conv);
 void gaim_gtkconv_switch_active_conversation(GaimConversation *conv);
 
 /**
- * Updates the tab positions on all conversation windows to reflect any
- * changed preferences.
- */
-void gaim_gtkconv_update_tabs(void);
-
-/**
  * Updates conversation buttons by protocol.
  *
  * @param conv The conversation.

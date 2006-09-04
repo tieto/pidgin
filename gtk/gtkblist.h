@@ -163,12 +163,6 @@ void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean 
  */
 void gaim_gtk_blist_refresh(GaimBuddyList *list);
 
-/**
- * Tells the buddy list to update its toolbar based on the preferences
- *
- */
-void gaim_gtk_blist_update_toolbar(void);
-
 void gaim_gtk_blist_update_columns(void);
 void gaim_gtk_blist_update_refresh_timeout(void);
 

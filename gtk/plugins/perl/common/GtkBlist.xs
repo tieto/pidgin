@@ -51,12 +51,6 @@ void
 gaim_gtk_blist_refresh(list)
 	Gaim::BuddyList list
 
-#if 0
-void
-gaim_gtk_blist_update_toolbar()
-
-#endif
-
 void
 gaim_gtk_blist_update_columns()
 
