@@ -28,12 +28,12 @@ common_sources = \
 	common/GtkThemes.xs \
 	common/GtkUtils.xs \
 	common/gtkmodule.h \
+	common/Makefile.PL.in \
 	common/typemap
 
 EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
-	common/Makefile.Pl.in \
 	$(common_sources)
 
 all-local: common/Makefile

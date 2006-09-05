@@ -6,58 +6,13 @@ EXTRA_DIST = \
 		gaim-send \
 		gaim-send-async \
 		Makefile.mingw \
-		win_gaim.c \
-		win32/IdleTracker/Makefile.mingw \
-		win32/IdleTracker/idletrack.c \
-		win32/IdleTracker/idletrack.h \
-		win32/gaimrc.rc \
 		win32/global.mak \
 		win32/libc_interface.c \
 		win32/libc_interface.h \
 		win32/libc_internal.h \
-		win32/resource.h \
-		win32/untar.c \
-		win32/untar.h \
 		win32/wgaimerror.h \
 		win32/win32dep.c \
-		win32/win32dep.h \
-		win32/wspell.c \
-		win32/wspell.h \
-		win32/nsis/gaim-header.bmp \
-		win32/nsis/gaim-intro.bmp \
-		win32/nsis/gaim-plugin.nsh \
-		win32/nsis/langmacros.nsh \
-		win32/nsis/translations/albanian.nsh \
-		win32/nsis/translations/bulgarian.nsh \
-		win32/nsis/translations/catalan.nsh \
-		win32/nsis/translations/czech.nsh \
-		win32/nsis/translations/danish.nsh \
-		win32/nsis/translations/dutch.nsh \
-		win32/nsis/translations/english.nsh \
-		win32/nsis/translations/finnish.nsh \
-		win32/nsis/translations/french.nsh \
-		win32/nsis/translations/german.nsh \
-		win32/nsis/translations/hebrew.nsh \
-		win32/nsis/translations/hungarian.nsh \
-		win32/nsis/translations/italian.nsh \
-		win32/nsis/translations/japanese.nsh \
-		win32/nsis/translations/korean.nsh \
-		win32/nsis/translations/kurdish.nsh \
-		win32/nsis/translations/lithuanian.nsh \
-		win32/nsis/translations/norwegian.nsh \
-		win32/nsis/translations/polish.nsh \
-		win32/nsis/translations/portuguese.nsh \
-		win32/nsis/translations/portuguese-br.nsh \
-		win32/nsis/translations/romanian.nsh \
-		win32/nsis/translations/russian.nsh \
-		win32/nsis/translations/serbian-latin.nsh \
-		win32/nsis/translations/simp-chinese.nsh \
-		win32/nsis/translations/slovak.nsh \
-		win32/nsis/translations/slovenian.nsh \
-		win32/nsis/translations/spanish.nsh \
-		win32/nsis/translations/swedish.nsh \
-		win32/nsis/translations/trad-chinese.nsh \
-		win32/nsis/translations/vietnamese.nsh
+		win32/win32dep.h
 
 SUBDIRS = plugins protocols
 

@@ -64,8 +64,6 @@ timestamp_format_la_SOURCES = timestamp_format.c
 endif # PLUGINS
 
 EXTRA_DIST = \
-	ChangeLog HOWTO \
-	ChangeLog.API \
 	Makefile.mingw \
 	contact_priority.c \
 	gaiminc.c \
