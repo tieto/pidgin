@@ -16,7 +16,6 @@ EXTRA_DIST = \
 		config.h.mingw \
 		Makefile.mingw \
 		README.mingw \
-		VERSION \
 		VERSION.in \
 		gtk/plugins/win32/transparency/Makefile.mingw \
 		gtk/plugins/win32/transparency/win2ktrans.c \

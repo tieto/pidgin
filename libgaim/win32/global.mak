@@ -50,7 +50,17 @@ GAIM_EXE := $(GAIM_GTK_TOP)/gaim.exe
 GAIM_PORTABLE_EXE := $(GAIM_GTK_TOP)/gaim-portable.exe
 
 GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
-GAIM_VERSION := $(shell cat $(GAIM_TOP)/VERSION)
+
+# parse the version number from the configure.ac file if it is newer
+#AC_INIT([gaim], [2.0.0dev], [gaim-devel@lists.sourceforge.net])
+GAIM_VERSION := $(shell \
+  if [ ! $(GAIM_TOP)/VERSION -nt $(GAIM_TOP)/configure.ac ]; then \
+    awk 'BEGIN {FS="\\] *, *\\["} /^AC_INIT\(.+\)/ {printf("%s",$$2); exit}' \
+      $(GAIM_TOP)/configure.ac > $(GAIM_TOP)/VERSION; \
+  fi; \
+  cat $(GAIM_TOP)/VERSION \
+)
+
 DEFINES += 	-DVERSION=\"$(GAIM_VERSION)\" \
 		-DHAVE_CONFIG_H
 
