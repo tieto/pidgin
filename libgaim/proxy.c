@@ -42,7 +42,7 @@
 struct _GaimProxyConnectData {
 	GaimProxyConnectFunction connect_cb;
 	gpointer data;
-	char *host;
+	gchar *host;
 	int port;
 	int fd;
 	guint inpa;
@@ -274,39 +274,13 @@ gaim_gnome_proxy_get_info(void)
  * Proxy API
  **************************************************************************/
 
-/*
- * This is used when the connection attempt to one particular IP
- * address fails.  We close the socket, remove the watcher and get
- * rid of input and output buffers.  Normally try_connect() will
- * be called immediately after this.
+/**
+ * Whoever calls this needs to have called
+ * gaim_proxy_connect_data_disconnect() beforehand.
  */
-static void
-gaim_proxy_connect_data_disconnect(GaimProxyConnectData *connect_data)
-{
-	if (connect_data->inpa > 0)
-	{
-		gaim_input_remove(connect_data->inpa);
-		connect_data->inpa = 0;
-	}
-
-	if (connect_data->fd >= 0)
-	{
-		close(connect_data->fd);
-		connect_data->fd = -1;
-	}
-
-	g_free(connect_data->write_buffer);
-	connect_data->write_buffer = NULL;
-
-	g_free(connect_data->read_buffer);
-	connect_data->read_buffer = NULL;
-}
-
 static void
 gaim_proxy_connect_data_destroy(GaimProxyConnectData *connect_data)
 {
-	gaim_proxy_connect_data_disconnect(connect_data);
-
 	connect_datas = g_slist_remove(connect_datas, connect_data);
 
 	if (connect_data->query_data != NULL)
@@ -325,6 +299,77 @@ gaim_proxy_connect_data_destroy(GaimProxyConnectData *connect_data)
 	g_free(connect_data);
 }
 
+/**
+ * Free all information dealing with a connection attempt and
+ * reset the connect_data to prepare for it to try to connect
+ * to another IP address.
+ *
+ * If an error message is passed in, then we know the connection
+ * attempt failed.  If the connection attempt failed and
+ * connect_data->hosts is not empty then we try the next IP address.
+ * If the connection attempt failed and we have no more hosts
+ * try try then we call the callback with the given error message,
+ * then destroy the connect_data.
+ *
+ * @param error_message An error message explaining why the connection
+ *        failed.  This will be passed to the callback function
+ *        specified in the call to gaim_proxy_connect().  If the
+ *        connection was successful then pass in null.
+ */
+static void
+gaim_proxy_connect_data_disconnect(GaimProxyConnectData *connect_data, const gchar *error_message)
+{
+	if (connect_data->inpa > 0)
+	{
+		gaim_input_remove(connect_data->inpa);
+		connect_data->inpa = 0;
+	}
+
+	if (connect_data->fd >= 0)
+	{
+		close(connect_data->fd);
+		connect_data->fd = -1;
+	}
+
+	g_free(connect_data->write_buffer);
+	connect_data->write_buffer = NULL;
+
+	g_free(connect_data->read_buffer);
+	connect_data->read_buffer = NULL;
+
+	if (error_message != NULL)
+	{
+		gaim_debug_info("proxy", "Connection attempt failed: %s\n",
+				error_message);
+		if (connect_data->hosts != NULL)
+			try_connect(connect_data);
+		else
+		{
+			/* Everything failed!  Tell the originator of the request. */
+			connect_data->connect_cb(connect_data->data, -1, error_message);
+			gaim_proxy_connect_data_destroy(connect_data);
+		}
+	}
+}
+
+/**
+ * This calls gaim_proxy_connect_data_disconnect(), but it lets you
+ * specify the error_message using a printf()-like syntax.
+ */
+static void
+gaim_proxy_connect_data_disconnect_formatted(GaimProxyConnectData *connect_data, const char *format, ...)
+{
+	va_list args;
+	gchar *tmp;
+
+	va_start(args, format);
+	tmp = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	gaim_proxy_connect_data_disconnect(connect_data, tmp);
+	g_free(tmp);
+}
+
 static void
 gaim_proxy_connect_data_connected(GaimProxyConnectData *connect_data)
 {
@@ -337,44 +382,19 @@ gaim_proxy_connect_data_connected(GaimProxyConnectData *connect_data)
 	 */
 	connect_data->fd = -1;
 
-	gaim_proxy_connect_data_destroy(connect_data);
-}
-
-/**
- * @param error An error message explaining why the connection
- *        failed.  This will be passed to the callback function
- *        specified in the call to gaim_proxy_connect().
- */
-/*
- * TODO: Make sure all callers of this function pass a really really
- *       good error_message.
- */
-static void
-gaim_proxy_connect_data_error(GaimProxyConnectData *connect_data, const char *format, ...)
-{
-	gchar *error_message;
-	va_list args;
-
-	va_start(args, format);
-	error_message = g_strdup_vprintf(format, args);
-	va_end(args);
-
-	connect_data->connect_cb(connect_data->data, -1, error_message);
-	g_free(error_message);
-
+	gaim_proxy_connect_data_disconnect(connect_data, NULL);
 	gaim_proxy_connect_data_destroy(connect_data);
 }
 
 static void
-no_one_calls(gpointer data, gint source, GaimInputCondition cond)
+socket_ready_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimProxyConnectData *connect_data = data;
 	socklen_t len;
-	int error=0, ret;
+	int error = 0;
+	int ret;
 
 	gaim_debug_info("proxy", "Connected.\n");
-
-	len = sizeof(error);
 
 	/*
 	 * getsockopt after a non-blocking connect returns -1 if something is
@@ -387,23 +407,20 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	 * be overly optimistic sometimes. select is just a hint that you might be
 	 * able to do something.)
 	 */
+	len = sizeof(error);
 	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+
 	if (ret == 0 && error == EINPROGRESS)
-		return; /* we'll be called again later */
-	if (ret < 0 || error != 0) {
-		if (ret!=0)
+		/* No worries - we'll be called again later */
+		/* TODO: Does this ever happen? */
+		return;
+
+	if (ret != 0 || error != 0) {
+		if (ret != 0)
 			error = errno;
-
-		gaim_debug_error("proxy",
-			   "getsockopt SO_ERROR check: %s\n", strerror(error));
-
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
-
-	gaim_input_remove(connect_data->inpa);
-	connect_data->inpa = 0;
 
 	gaim_proxy_connect_data_connected(connect_data);
 }
@@ -411,15 +428,12 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 static gboolean
 clean_connect(gpointer data)
 {
-	GaimProxyConnectData *connect_data;
-
-	connect_data = data;
-	gaim_proxy_connect_data_connected(connect_data);
+	gaim_proxy_connect_data_connected(data);
 
 	return FALSE;
 }
 
-static int
+static void
 proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
 	gaim_debug_info("proxy", "Connecting to %s:%d with no proxy\n",
@@ -428,27 +442,27 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
-		gaim_debug_error("proxy",
-				   "Unable to create socket: %s\n", strerror(errno));
-		return -1;
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Unable to create socket:\n%s"), strerror(errno));
+		return;
 	}
+
 	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
 #ifndef _WIN32
 	fcntl(connect_data->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (connect(connect_data->fd, (struct sockaddr *)addr, addrlen) != 0)
+	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
-		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+		if ((errno == EINPROGRESS) || (errno == EINTR))
+		{
 			gaim_debug_info("proxy", "Connection in progress\n");
-			connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, no_one_calls, connect_data);
+			connect_data->inpa = gaim_input_add(connect_data->fd,
+					GAIM_INPUT_WRITE, socket_ready_cb, connect_data);
 		}
-		else {
-			gaim_debug_error("proxy",
-					   "Connect failed: %s\n", strerror(errno));
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
+		else
+		{
+			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
 	else
@@ -458,14 +472,18 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 		 */
 		socklen_t len;
 		int error = ETIMEDOUT;
+		int ret;
+
 		gaim_debug_info("proxy", "Connected immediately.\n");
+
 		len = sizeof(error);
-		if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
+		ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+		if ((ret != 0) || (error != 0))
 		{
-			gaim_debug_error("proxy", "getsockopt failed.\n");
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
+			if (ret != 0)
+				error = errno;
+			gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
+			return;
 		}
 
 		/*
@@ -474,42 +492,57 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 		 */
 		gaim_timeout_add(10, clean_connect, connect_data);
 	}
-
-	return connect_data->fd;
 }
 
+/**
+ * This is a utility function used by the HTTP, SOCKS4 and SOCKS5
+ * connect functions.  It writes data from a buffer to a socket.
+ * When all the data is written it sets up a watcher to read a
+ * response and call a specified function.
+ */
 static void
 proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
 {
-	GaimProxyConnectData *connect_data = data;
-	const guchar *request = connect_data->write_buffer + connect_data->written_len;
-	gsize request_len = connect_data->write_buf_len - connect_data->written_len;
+	GaimProxyConnectData *connect_data;
+	const guchar *request;
+	gsize request_len;
+	int ret;
 
-	int ret = write(connect_data->fd, request, request_len);
+	connect_data = data;
+	request = connect_data->write_buffer + connect_data->written_len;
+	request_len = connect_data->write_buf_len - connect_data->written_len;
 
-	if(ret < 0 && errno == EAGAIN)
+	ret = write(connect_data->fd, request, request_len);
+	if (ret <= 0)
+	{
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		/* Error! */
+		gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		return;
-	else if(ret < 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
-		return;
-	} else if (ret < request_len) {
+	}
+	if (ret < request_len) {
 		connect_data->written_len += ret;
 		return;
 	}
 
-	gaim_input_remove(connect_data->inpa);
+	/* We're done writing data!  Wait for a response. */
 	g_free(connect_data->write_buffer);
 	connect_data->write_buffer = NULL;
-
-	/* register the response handler for the response */
-	connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_READ, connect_data->read_cb, connect_data);
+	gaim_input_remove(connect_data->inpa);
+	connect_data->inpa = gaim_input_add(connect_data->fd,
+			GAIM_INPUT_READ, connect_data->read_cb, connect_data);
 }
 
 #define HTTP_GOODSTRING "HTTP/1.0 200"
 #define HTTP_GOODSTRING2 "HTTP/1.1 200"
 
-/* read the response to the CONNECT request, if we are requesting a non-port-80 tunnel */
+/**
+ * We're using an HTTP proxy for a non-port 80 tunnel.  Read the
+ * response to the CONNECT request.
+ */
 static void
 http_canread(gpointer data, gint source, GaimInputCondition cond)
 {
@@ -519,7 +552,8 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	guchar *p;
 	gsize max_read;
 
-	if(connect_data->read_buffer == NULL) {
+	if (connect_data->read_buffer == NULL)
+	{
 		connect_data->read_buf_len = 8192;
 		connect_data->read_buffer = g_malloc(connect_data->read_buf_len);
 		connect_data->read_len = 0;
@@ -529,17 +563,32 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	max_read = connect_data->read_buf_len - connect_data->read_len - 1;
 
 	len = read(connect_data->fd, p, max_read);
-	if(len < 0 && errno == EAGAIN)
+
+	if (len == 0)
+	{
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Server closed the connection."));
 		return;
-	else if(len <= 0) {
-		gaim_proxy_connect_data_error(connect_data, _("Lost connection with server for an unknown reason."));
-		return;
-	} else {
-		connect_data->read_len += len;
 	}
+
+	if (len < 0)
+	{
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		/* Error! */
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Lost connection with server:\n%s"), strerror(errno));
+		return;
+	}
+
+	connect_data->read_len += len;
 	p[len] = '\0';
 
-	if((p = (guchar *)g_strstr_len((const gchar *)connect_data->read_buffer, connect_data->read_len, "\r\n\r\n"))) {
+	p = (guchar *)g_strstr_len((const gchar *)connect_data->read_buffer,
+			connect_data->read_len, "\r\n\r\n");
+	if (p != NULL) {
 		*p = '\0';
 		headers_len = (p - connect_data->read_buffer) + 4;
 	} else if(len == max_read)
@@ -586,7 +635,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		len -= connect_data->read_len - headers_len;
 		/* I'm assuming that we're doing this to prevent the server from
 		   complaining / breaking since we don't read the whole page */
-		while(len--) {
+		while (len--) {
 			/* TODO: deal with EAGAIN (and other errors) better */
 			if (read(connect_data->fd, &tmpc, 1) < 0 && errno != EAGAIN)
 				break;
@@ -595,7 +644,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (error)
 	{
-		gaim_proxy_connect_data_error(connect_data,
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to parse response from HTTP proxy: %s\n"),
 				connect_data->read_buffer);
 		return;
@@ -606,10 +655,14 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				"Proxy server replied with:\n%s\n",
 				connect_data->read_buffer);
 
-
-		if(status == 407 /* Proxy Auth */) {
+		if (status == 407 /* Proxy Auth */)
+		{
 			gchar *ntlm;
-			if((ntlm = g_strrstr((const gchar *)connect_data->read_buffer, "Proxy-Authenticate: NTLM "))) { /* Check for Type-2 */
+			ntlm = g_strrstr((const gchar *)connect_data->read_buffer,
+					"Proxy-Authenticate: NTLM ");
+			if (ntlm != NULL)
+			{
+				/* Check for Type-2 */
 				gchar *tmp = ntlm;
 				guint8 *nonce;
 				gchar *domain = (gchar*)gaim_proxy_info_get_username(connect_data->gpi);
@@ -619,7 +672,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
-					gaim_proxy_connect_data_error(connect_data,
+					gaim_proxy_connect_data_disconnect_formatted(connect_data,
 							_("HTTP proxy connection error %d"), status);
 					return;
 				}
@@ -644,19 +697,17 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 					connect_data->port, response);
 				g_free(response);
 
-				gaim_input_remove(connect_data->inpa);
 				g_free(connect_data->read_buffer);
 				connect_data->read_buffer = NULL;
 
 				connect_data->write_buffer = (guchar *)request;
 				connect_data->write_buf_len = strlen(request);
 				connect_data->written_len = 0;
-
 				connect_data->read_cb = http_canread;
 
+				gaim_input_remove(connect_data->inpa);
 				connect_data->inpa = gaim_input_add(connect_data->fd,
 					GAIM_INPUT_WRITE, proxy_do_write, connect_data);
-
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
@@ -667,7 +718,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
-					gaim_proxy_connect_data_error(connect_data,
+					gaim_proxy_connect_data_disconnect_formatted(connect_data,
 							_("HTTP proxy connection error %d"), status);
 					return;
 				}
@@ -705,17 +756,19 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else {
-				gaim_proxy_connect_data_error(connect_data,
+				gaim_proxy_connect_data_disconnect_formatted(connect_data,
 						_("HTTP proxy connection error %d"), status);
 				return;
 			}
 		}
-		if(status == 403 /* Forbidden */ ) {
-			gaim_proxy_connect_data_error(connect_data,
-					_("Access denied: HTTP proxy server forbids port %d tunnelling."),
+		if (status == 403)
+		{
+			/* Forbidden */
+			gaim_proxy_connect_data_disconnect_formatted(connect_data,
+					_("Access denied: HTTP proxy server forbids port %d tunneling."),
 					connect_data->port);
 		} else {
-			gaim_proxy_connect_data_error(connect_data,
+			gaim_proxy_connect_data_disconnect_formatted(connect_data,
 					_("HTTP proxy connection error %d"), status);
 		}
 	} else {
@@ -729,18 +782,18 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 }
 
-
-
 static void
 http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
-	char request[8192];
-	int request_len = 0;
-	GaimProxyConnectData *connect_data = data;
+	GString *request;
+	GaimProxyConnectData *connect_data;
 	socklen_t len;
 	int error = ETIMEDOUT;
+	int ret;
 
-	gaim_debug_info("http proxy", "Connected.\n");
+	gaim_debug_info("proxy", "Connected.\n");
+
+	connect_data = data;
 
 	if (connect_data->inpa > 0)
 	{
@@ -749,66 +802,72 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	len = sizeof(error);
-
-	if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	if ((ret != 0) || (error != 0))
+	{
+		if (ret != 0)
+			error = errno;
+		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
-	gaim_debug_info("proxy", "using CONNECT tunnelling for %s:%d\n",
+	gaim_debug_info("proxy", "Using CONNECT tunneling for %s:%d\n",
 		connect_data->host, connect_data->port);
-	request_len = g_snprintf(request, sizeof(request),
-				 "CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n",
-				 connect_data->host, connect_data->port, connect_data->host, connect_data->port);
 
-	if (gaim_proxy_info_get_username(connect_data->gpi) != NULL) {
+	request = g_string_sized_new(4096);
+	g_string_append_printf(request,
+			"CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n",
+			connect_data->host, connect_data->port,
+			connect_data->host, connect_data->port);
+
+	if (gaim_proxy_info_get_username(connect_data->gpi) != NULL)
+	{
 		char *t1, *t2;
+
 		t1 = g_strdup_printf("%s:%s",
 			gaim_proxy_info_get_username(connect_data->gpi),
 			gaim_proxy_info_get_password(connect_data->gpi) ?
 				gaim_proxy_info_get_password(connect_data->gpi) : "");
 		t2 = gaim_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
-		g_return_if_fail(request_len < sizeof(request));
 
-		request_len += g_snprintf(request + request_len,
-			sizeof(request) - request_len,
+		g_string_append_printf(request,
 			"Proxy-Authorization: Basic %s\r\n"
 			"Proxy-Authorization: NTLM %s\r\n"
-			"Proxy-Connection: Keep-Alive\r\n", t2,
-			gaim_ntlm_gen_type1(
-				(gchar*)gaim_proxy_info_get_host(connect_data->gpi),""));
+			"Proxy-Connection: Keep-Alive\r\n",
+			t2, gaim_ntlm_gen_type1(
+					gaim_proxy_info_get_host(connect_data->gpi), ""));
 		g_free(t2);
 	}
 
-	g_return_if_fail(request_len < sizeof(request));
-	strcpy(request + request_len, "\r\n");
-	request_len += 2;
-	connect_data->write_buffer = g_memdup(request, request_len);
-	connect_data->write_buf_len = request_len;
-	connect_data->written_len = 0;
+	g_string_append(request, "\r\n");
 
+	connect_data->write_buf_len = request->len;
+	connect_data->write_buffer = (guchar *)g_string_free(request, FALSE);
+	connect_data->written_len = 0;
 	connect_data->read_cb = http_canread;
 
-	connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, proxy_do_write,
-		connect_data);
-
+	connect_data->inpa = gaim_input_add(connect_data->fd,
+			GAIM_INPUT_WRITE, proxy_do_write, connect_data);
 	proxy_do_write(connect_data, connect_data->fd, cond);
 }
 
-static int
+static void
 proxy_connect_http(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("http proxy",
+	gaim_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using HTTP\n",
-			   (connect_data->host ? connect_data->host : "(null)"), connect_data->port,
+			   connect_data->host, connect_data->port,
 			   (gaim_proxy_info_get_host(connect_data->gpi) ? gaim_proxy_info_get_host(connect_data->gpi) : "(null)"),
 			   gaim_proxy_info_get_port(connect_data->gpi));
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
-		return -1;
+	{
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Unable to create socket:\n%s"), strerror(errno));
+		return;
+	}
 
 	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
 #ifndef _WIN32
@@ -818,41 +877,39 @@ proxy_connect_http(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			gaim_debug_info("http proxy", "Connection in progress\n");
+			gaim_debug_info("proxy", "Connection in progress\n");
 
-			if (connect_data->port != 80) {
+			if (connect_data->port != 80)
+			{
 				/* we need to do CONNECT first */
-				connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE,
-							   http_canwrite, connect_data);
-			} else {
+				connect_data->inpa = gaim_input_add(connect_data->fd,
+						GAIM_INPUT_WRITE, http_canwrite, connect_data);
+			}
+			else
+			{
+				/*
+				 * TODO: Uh, is this a good idea?  For something like
+				 *       oscar, for example, we end up sending binary
+				 *       oscar protocol data to the proxy server, which
+				 *       has no idea what we're talking about, since
+				 *       the proxy server is expecting an HTTP request.
+				 */
 				gaim_debug_info("proxy", "HTTP proxy connection established\n");
 				gaim_proxy_connect_data_connected(connect_data);
 			}
-		} else {
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
+		}
+		else
+		{
+			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
-	else {
-		socklen_t len;
-		int error = ETIMEDOUT;
+	else
+	{
+		gaim_debug_info("proxy", "Connected immediately.\n");
 
-		gaim_debug_info("http proxy", "Connected immediately.\n");
-
-		len = sizeof(error);
-		if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
-		{
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
-		}
 		http_canwrite(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
 	}
-
-	return connect_data->fd;
 }
-
 
 static void
 s4_canread(gpointer data, gint source, GaimInputCondition cond)
@@ -884,8 +941,7 @@ s4_canread(gpointer data, gint source, GaimInputCondition cond)
 		}
 	}
 
-	gaim_proxy_connect_data_disconnect(connect_data);
-	try_connect(connect_data);
+	gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
 }
 
 static void
@@ -896,6 +952,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	GaimProxyConnectData *connect_data = data;
 	socklen_t len;
 	int error = ETIMEDOUT;
+	int ret;
 
 	gaim_debug_info("socks4 proxy", "Connected.\n");
 
@@ -906,10 +963,12 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	len = sizeof(error);
-
-	if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	if ((ret != 0) || (error != 0))
+	{
+		if (ret != 0)
+			error = errno;
+		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
@@ -921,11 +980,11 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	 * with an option, or some detection mechanism - in the
 	 * meantime, stick with plain old SOCKS4.
 	 */
-	/* TODO: This needs to be non-blocking! */
+	/* TODO: Use gaim_dnsquery_a() */
 	hp = gethostbyname(connect_data->host);
 	if (hp == NULL) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Error resolving %s"), connect_data->host);
 		return;
 	}
 
@@ -949,10 +1008,10 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	proxy_do_write(connect_data, connect_data->fd, cond);
 }
 
-static int
+static void
 proxy_connect_socks4(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("socks4 proxy",
+	gaim_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS4\n",
 			   connect_data->host, connect_data->port,
 			   gaim_proxy_info_get_host(connect_data->gpi),
@@ -960,7 +1019,11 @@ proxy_connect_socks4(GaimProxyConnectData *connect_data, struct sockaddr *addr, 
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
-		return -1;
+	{
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Unable to create socket:\n%s"), strerror(errno));
+		return;
+	}
 
 	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
 #ifndef _WIN32
@@ -969,34 +1032,23 @@ proxy_connect_socks4(GaimProxyConnectData *connect_data, struct sockaddr *addr, 
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
-		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			gaim_debug_info("socks4 proxy", "Connection in progress.\n");
-			connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, s4_canwrite, connect_data);
-		}
-		else {
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
-		}
-	} else {
-		socklen_t len;
-		int error = ETIMEDOUT;
-
-		gaim_debug_info("socks4 proxy", "Connected immediately.\n");
-
-		len = sizeof(error);
-
-		if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
+		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
+			gaim_debug_info("proxy", "Connection in progress.\n");
+			connect_data->inpa = gaim_input_add(connect_data->fd,
+					GAIM_INPUT_WRITE, s4_canwrite, connect_data);
 		}
+		else
+		{
+			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+		}
+	}
+	else
+	{
+		gaim_debug_info("proxy", "Connected immediately.\n");
 
 		s4_canwrite(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
 	}
-
-	return connect_data->fd;
 }
 
 static void
@@ -1018,26 +1070,41 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 	gaim_debug_info("socks5 proxy", "Able to read again.\n");
 
 	len = read(connect_data->fd, dest, (connect_data->read_buf_len - connect_data->read_len));
-	if(len < 0 && errno == EAGAIN)
-		return;
-	else if(len <= 0) {
-		gaim_debug_warning("socks5 proxy", "or not...\n");
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+
+	if (len == 0)
+	{
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Server closed the connection."));
 		return;
 	}
+
+	if (len < 0)
+	{
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		/* Error! */
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Lost connection with server:\n%s"), strerror(errno));
+		return;
+	}
+
 	connect_data->read_len += len;
 
 	if(connect_data->read_len < 4)
 		return;
 
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
-		if ((buf[0] == 0x05) && (buf[1] < 0x09))
+		if ((buf[0] == 0x05) && (buf[1] < 0x09)) {
 			gaim_debug_error("socks5 proxy", socks5errors[buf[1]]);
-		else
+			gaim_proxy_connect_data_disconnect(connect_data,
+					socks5errors[buf[1]]);
+		} else {
 			gaim_debug_error("socks5 proxy", "Bad data.\n");
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+			gaim_proxy_connect_data_disconnect(connect_data,
+					_("Received invalid data on connection with server."));
+		}
 		return;
 	}
 
@@ -1114,15 +1181,27 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 
 	len = read(connect_data->fd, connect_data->read_buffer + connect_data->read_len,
 		connect_data->read_buf_len - connect_data->read_len);
-	if(len < 0 && errno == EAGAIN)
-		return;
-	else if(len <= 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+
+	if (len == 0)
+	{
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Server closed the connection."));
 		return;
 	}
-	connect_data->read_len += len;
 
+	if (len < 0)
+	{
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		/* Error! */
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Lost connection with server:\n%s"), strerror(errno));
+		return;
+	}
+
+	connect_data->read_len += len;
 	if (connect_data->read_len < 2)
 		return;
 
@@ -1130,8 +1209,8 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	connect_data->inpa = 0;
 
 	if ((connect_data->read_buffer[0] != 0x01) || (connect_data->read_buffer[1] != 0x00)) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Received invalid data on connection with server."));
 		return;
 	}
 
@@ -1203,23 +1282,34 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 	len = read(connect_data->fd, connect_data->read_buffer + connect_data->read_len,
 		connect_data->read_buf_len - connect_data->read_len);
 
-	if(len < 0 && errno == EAGAIN)
-		return;
-	else if(len <= 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+	if (len == 0)
+	{
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Server closed the connection."));
 		return;
 	}
-	connect_data->read_len += len;
 
+	if (len < 0)
+	{
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		/* Error! */
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Lost connection with server:\n%s"), strerror(errno));
+		return;
+	}
+
+	connect_data->read_len += len;
 	if (connect_data->read_len < 2)
 		return;
 
 	cmdbuf = connect_data->read_buffer;
 
 	if (*cmdbuf != 0x01) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Received invalid data on connection with server."));
 		return;
 	}
 	cmdbuf++;
@@ -1249,8 +1339,8 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 					gaim_debug_warning("proxy",
 						"socks5 CHAP authentication "
 						"failed.  Disconnecting...");
-					gaim_proxy_connect_data_disconnect(connect_data);
-					try_connect(connect_data);
+					gaim_proxy_connect_data_disconnect(connect_data,
+							_("Authentication failed"));
 					return;
 				}
 				break;
@@ -1290,8 +1380,8 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 						"as supporting.  This is a violation "
 						"of the socks5 CHAP specification.  "
 						"Disconnecting...");
-					gaim_proxy_connect_data_disconnect(connect_data);
-					try_connect(connect_data);
+					gaim_proxy_connect_data_disconnect(connect_data,
+							_("Received invalid data on connection with server."));
 					return;
 				}
 				break;
@@ -1319,15 +1409,27 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	len = read(connect_data->fd, connect_data->read_buffer + connect_data->read_len,
 		connect_data->read_buf_len - connect_data->read_len);
-	if(len < 0 && errno == EAGAIN)
-		return;
-	else if(len <= 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+
+	if (len == 0)
+	{
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Server closed the connection."));
 		return;
 	}
-	connect_data->read_len += len;
 
+	if (len < 0)
+	{
+		if (errno == EAGAIN)
+			/* No worries */
+			return;
+
+		/* Error! */
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Lost connection with server:\n%s"), strerror(errno));
+		return;
+	}
+
+	connect_data->read_len += len;
 	if (connect_data->read_len < 2)
 		return;
 
@@ -1335,8 +1437,8 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	connect_data->inpa = 0;
 
 	if ((connect_data->read_buffer[0] != 0x05) || (connect_data->read_buffer[1] == 0xff)) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+		gaim_proxy_connect_data_disconnect(connect_data,
+				_("Received invalid data on connection with server."));
 		return;
 	}
 
@@ -1418,6 +1520,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	GaimProxyConnectData *connect_data = data;
 	socklen_t len;
 	int error = ETIMEDOUT;
+	int ret;
 
 	gaim_debug_info("socks5 proxy", "Connected.\n");
 
@@ -1428,9 +1531,12 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	len = sizeof(error);
-	if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-		gaim_proxy_connect_data_disconnect(connect_data);
-		try_connect(connect_data);
+	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	if ((ret != 0) || (error != 0))
+	{
+		if (ret != 0)
+			error = errno;
+		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
@@ -1460,10 +1566,10 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	proxy_do_write(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
 }
 
-static int
+static void
 proxy_connect_socks5(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("socks5 proxy",
+	gaim_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
 			   connect_data->host, connect_data->port,
 			   gaim_proxy_info_get_host(connect_data->gpi),
@@ -1471,7 +1577,11 @@ proxy_connect_socks5(GaimProxyConnectData *connect_data, struct sockaddr *addr, 
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
-		return -1;
+	{
+		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				_("Unable to create socket:\n%s"), strerror(errno));
+		return;
+	}
 
 	fcntl(connect_data->fd, F_SETFL, O_NONBLOCK);
 #ifndef _WIN32
@@ -1480,95 +1590,70 @@ proxy_connect_socks5(GaimProxyConnectData *connect_data, struct sockaddr *addr, 
 
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
-		if ((errno == EINPROGRESS) || (errno == EINTR)) {
+		if ((errno == EINPROGRESS) || (errno == EINTR))
+		{
 			gaim_debug_info("socks5 proxy", "Connection in progress\n");
-			connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, s5_canwrite, connect_data);
+			connect_data->inpa = gaim_input_add(connect_data->fd,
+					GAIM_INPUT_WRITE, s5_canwrite, connect_data);
 		}
-		else {
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
+		else
+		{
+			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
-	else {
-		socklen_t len;
-		int error = ETIMEDOUT;
-
-		gaim_debug_info("socks5 proxy", "Connected immediately.\n");
-
-		len = sizeof(error);
-
-		if (getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len) != 0)
-		{
-			close(connect_data->fd);
-			connect_data->fd = -1;
-			return -1;
-		}
+	else
+	{
+		gaim_debug_info("proxy", "Connected immediately.\n");
 
 		s5_canwrite(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
 	}
-
-	return connect_data->fd;
 }
 
 /**
- * This function iterates through a list of IP addresses and attempts
+ * This function attempts to connect to the next IP address in the list
+ * of IP addresses returned to us by gaim_dnsquery_a() and attemps
  * to connect to each one.  This is called after the hostname is
- * resolved, and if a connection attempt fails.
+ * resolved, and each time a connection attempt fails (assuming there
+ * is another IP address to try).
  */
 static void try_connect(GaimProxyConnectData *connect_data)
 {
 	size_t addrlen;
 	struct sockaddr *addr;
-	int ret = -1;
 
-	if (connect_data->hosts == NULL)
-	{
-		gaim_proxy_connect_data_error(connect_data, _("Could not resolve host name"));
-		return;
-	}
+	addrlen = GPOINTER_TO_INT(connect_data->hosts->data);
+	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
+	addr = connect_data->hosts->data;
+	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 
-	while (connect_data->hosts)
-	{
-		addrlen = GPOINTER_TO_INT(connect_data->hosts->data);
-		connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
-		addr = connect_data->hosts->data;
-		connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
+	gaim_debug_info("proxy", "Attempting connection to %s\n", "TODO");
 
-		switch (gaim_proxy_info_get_type(connect_data->gpi)) {
-			case GAIM_PROXY_NONE:
-				ret = proxy_connect_none(connect_data, addr, addrlen);
-				break;
+	switch (gaim_proxy_info_get_type(connect_data->gpi)) {
+		case GAIM_PROXY_NONE:
+			proxy_connect_none(connect_data, addr, addrlen);
+			break;
 
-			case GAIM_PROXY_HTTP:
-				ret = proxy_connect_http(connect_data, addr, addrlen);
-				break;
+		case GAIM_PROXY_HTTP:
+			proxy_connect_http(connect_data, addr, addrlen);
+			break;
 
-			case GAIM_PROXY_SOCKS4:
-				ret = proxy_connect_socks4(connect_data, addr, addrlen);
-				break;
+		case GAIM_PROXY_SOCKS4:
+			proxy_connect_socks4(connect_data, addr, addrlen);
+			break;
 
-			case GAIM_PROXY_SOCKS5:
-				ret = proxy_connect_socks5(connect_data, addr, addrlen);
-				break;
+		case GAIM_PROXY_SOCKS5:
+			proxy_connect_socks5(connect_data, addr, addrlen);
+			break;
 
-			case GAIM_PROXY_USE_ENVVAR:
-				ret = proxy_connect_http(connect_data, addr, addrlen);
-				break;
+		case GAIM_PROXY_USE_ENVVAR:
+			proxy_connect_http(connect_data, addr, addrlen);
+			break;
 
-			default:
-				break;
-		}
-
-		g_free(addr);
-
-		if (ret >= 0)
+		default:
 			break;
 	}
 
-	if (ret < 0) {
-		gaim_proxy_connect_data_error(connect_data, _("Unable to establish a connection"));
-	}
+	g_free(addr);
 }
 
 static void
@@ -1582,7 +1667,13 @@ connection_host_resolved(GSList *hosts, gpointer data,
 
 	if (error_message != NULL)
 	{
-		gaim_proxy_connect_data_error(connect_data, error_message);
+		gaim_proxy_connect_data_disconnect(connect_data, error_message);
+		return;
+	}
+
+	if (hosts == NULL)
+	{
+		gaim_proxy_connect_data_disconnect(connect_data, _("Could not resolve host name"));
 		return;
 	}
 
@@ -1756,6 +1847,7 @@ gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 void
 gaim_proxy_connect_cancel(GaimProxyConnectData *connect_data)
 {
+	gaim_proxy_connect_data_disconnect(connect_data, NULL);
 	gaim_proxy_connect_data_destroy(connect_data);
 }
 
@@ -1835,5 +1927,8 @@ void
 gaim_proxy_uninit(void)
 {
 	while (connect_datas != NULL)
+	{
+		gaim_proxy_connect_data_disconnect(connect_datas->data, NULL);
 		gaim_proxy_connect_data_destroy(connect_datas->data);
+	}
 }
