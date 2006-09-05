@@ -3,7 +3,7 @@
 ;; Copyright 2005, Daniel Atallah <daniel_atallah@yahoo.com>
 ;;
 ;; Include in plugin installer scripts using:
-;;   !addincludedir "${PATH_TO_GAIM_SRC}\src\win32\nsis"
+;;   !addincludedir "${PATH_TO_GAIM_SRC}\gtkgaim\win32\nsis"
 ;;   !include "gaim-plugin.nsh"
 ;;
 
@@ -41,7 +41,7 @@ FunctionEnd
 ; Push the Plugin's Gaim Version onto the Stack before calling
 ; After calling, the top of the Stack will contain the result of the check:
 ;   GAIM_VERSION_OK - If the installed gaim version is compatible w/ the version specified
-;   GAIM_VERSION_INCOMPATIBLE - If the installed gaim version isn't compatible w/ the ersion specified
+;   GAIM_VERSION_INCOMPATIBLE - If the installed gaim version isn't compatible w/ the version specified
 ;   GAIM_VERSION_UNDEFINED - If the installed gaim version can't be determined 
 Function CheckGaimVersion
   ; Save the Variable values that we will use in the stack
@@ -121,7 +121,7 @@ Function GetVersionComponent
 
   ; Save the Variable values that we will use in the stack
   Push $1
-  Exch  
+  Exch
   Pop $1 ;The version component which we want to extract (0, 1, 2)
   Exch
   Push $0

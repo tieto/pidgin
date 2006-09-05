@@ -39,11 +39,14 @@ SetDateSave on
 
 !include "MUI.nsh"
 !include "Sections.nsh"
-!include "FileFunc.nsh"
 
+!include "FileFunc.nsh"
 !insertmacro GetParameters
 !insertmacro GetOptions
 !insertmacro GetParent
+
+!include "WordFunc.nsh"
+!insertmacro VersionCompare
 
 ;--------------------------------
 ;Defines
@@ -998,58 +1001,11 @@ Function .onVerifyInstDir
   Call VerifyDir
   Pop $0
   StrCmp $0 "0" 0 dir_good
-    Abort
+  Pop $0
+  Abort
 
   dir_good:
   Pop $0
-FunctionEnd
-
-; CheckGtkVersion
-; inputs: Push 2 GTK+ version strings to check. The major value needs to
-; be equal and the minor value needs to be greater or equal.
-;
-; Usage:
-;   Push "2.1.0"  ; Reference version
-;   Push "2.2.1"  ; Version to check
-;   Call CheckGtkVersion
-;   Pop $R0
-;   $R0 will now equal "1", because 2.2 is greater than 2.1
-;
-Function CheckGtkVersion
-  ; Version we want to check
-  Exch $R0
-  Exch
-  ; Reference version
-  Exch $R1
-  Push $R2
-  Push $R3
-
-  ; Check that the string to check is at least 5 chars long (i.e. x.x.x)
-  StrLen $R2 $R0
-  IntCmp $R2 5 0 bad_version
-
-  ; Major version check
-  StrCpy $R2 $R0 1
-  StrCpy $R3 $R1 1
-  IntCmp $R2 $R3 check_minor bad_version bad_version
-
-  check_minor:
-    StrCpy $R2 $R0 1 2
-    StrCpy $R3 $R1 1 2
-    IntCmp $R2 $R3 good_version bad_version good_version
-
-  bad_version:
-    StrCpy $R0 "0"
-    Goto done
-
-  good_version:
-    StrCpy $R0 "1"
-
-  done:
-    Pop $R3
-    Pop $R2
-    Pop $R1
-    Exch $R0
 FunctionEnd
 
 ;
@@ -1077,77 +1033,68 @@ Function DoWeNeedGtk
   ;   - If no rights
   ;     - Check HKLM
   Push $0
+  Push $1
   Push $2
-  Push $3
-  Push $4
-  Push $5
 
   Call CheckUserInstallRights
-  Pop $3
-  StrCmp $3 "HKLM" check_hklm
-  StrCmp $3 "HKCU" check_hkcu check_hklm
+  Pop $1
+  StrCmp $1 "HKLM" check_hklm
+  StrCmp $1 "HKCU" check_hkcu check_hklm
     check_hkcu:
       ReadRegStr $0 HKCU ${GTK_REG_KEY} "Version"
-      StrCpy $5 "HKCU"
+      StrCpy $2 "HKCU"
       StrCmp $0 "" check_hklm have_gtk
 
     check_hklm:
       ReadRegStr $0 HKLM ${GTK_REG_KEY} "Version"
-      StrCpy $5 "HKLM"
+      StrCpy $2 "HKLM"
       StrCmp $0 "" no_gtk have_gtk
 
 
   have_gtk:
     ; GTK+ is already installed.. check version.
-    Push ${GTK_VERSION} ; Minimum GTK+ version needed
-    Push $0
-    Call CheckGtkVersion
-    Pop $2
-    StrCmp $2 "1" good_version bad_version
+    ${VersionCompare} ${GTK_VERSION} $0 $0
+    IntCmp $0 1 bad_version good_version good_version
+
     bad_version:
       ; Bad version. If hklm ver and we have hkcu or no rights.. return no gtk
-      StrCmp $3 "NONE" no_gtk  ; if no rights.. can't upgrade
-      StrCmp $3 "HKCU" 0 upgrade_gtk ; if HKLM can upgrade..
-        StrCmp $5 "HKLM" no_gtk upgrade_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
+      StrCmp $1 "NONE" no_gtk  ; if no rights.. can't upgrade
+      StrCmp $1 "HKCU" 0 upgrade_gtk ; if HKLM can upgrade..
+        StrCmp $2 "HKLM" no_gtk upgrade_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
 
       upgrade_gtk:
-        StrCpy $2 "1"
-        Push $5
         Push $2
+        Push "1"
         Goto done
 
   good_version:
-    StrCmp $5 "HKLM" have_hklm_gtk have_hkcu_gtk
+    StrCmp $2 "HKLM" have_hklm_gtk have_hkcu_gtk
       have_hkcu_gtk:
         ; Have HKCU version
-        ReadRegStr $4 HKCU ${GTK_REG_KEY} "Path"
+        ReadRegStr $0 HKCU ${GTK_REG_KEY} "Path"
         Goto good_version_cont
 
       have_hklm_gtk:
-        ReadRegStr $4 HKLM ${GTK_REG_KEY} "Path"
+        ReadRegStr $0 HKLM ${GTK_REG_KEY} "Path"
         Goto good_version_cont
 
     good_version_cont:
-      StrCpy $2 "0"
-      Push $4  ; The path to existing GTK+
-      Push $2
+      Push $0  ; The path to existing GTK+
+      Push "0"
       Goto done
 
   no_gtk:
-    StrCpy $2 "2"
-    Push $3 ; our rights
-    Push $2
+    Push $1 ; our rights
+    Push "2"
     Goto done
 
   done:
   ; The top two items on the stack are what we want to return
-  Exch 5
+  Exch 3
   Pop $0
-  Exch 5
+  Exch 3
   Pop $2
-  Pop $5
-  Pop $4
-  Pop $3
+  Pop $1
 FunctionEnd
 
 
@@ -1156,7 +1103,7 @@ Function ${UN}RunCheck
   Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
-  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) /SD IDOK
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) /SD IDOK
     Abort
   done:
   Pop $R0
@@ -1346,11 +1293,15 @@ Function preGtkDirPage
   ; Don't show dir selector.. Upgrades are done to existing path..
   have_gtk:
   upgrade_gtk:
+    Pop $R1
+    Pop $R0
     Abort
 
   no_gtk:
     StrCmp $R1 "NONE" 0 no_gtk_cont
       ; Got no install rights..
+      Pop $R1
+      Pop $R0
       Abort
     no_gtk_cont:
       ; Suggest path..
@@ -1377,6 +1328,7 @@ Function postGtkDirPage
   Pop $R0
   StrCmp $R0 "0" 0 done
     MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) /SD IDOK
+    Pop $R0
     Abort
   done:
   Pop $R0
