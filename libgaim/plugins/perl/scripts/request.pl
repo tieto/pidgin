@@ -5,7 +5,7 @@ use Gaim;
 # All the information Gaim gets about our nifty plugin
 %PLUGIN_INFO = (
 	perl_api_version => 2,
-	name => " Perl: $MODULE_NAME",
+	name => "Perl: $MODULE_NAME",
 	version => "0.1",
 	summary => "Test plugin for the Perl interpreter.",
 	description => "Implements a set of test proccedures to ensure all functions that work in the C API still work in the Perl plugin interface.  As XSUBs are added, this *should* be updated to test the changes.  Furthermore, this will function as the tutorial perl plugin.",
