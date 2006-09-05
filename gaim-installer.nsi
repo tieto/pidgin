@@ -59,7 +59,6 @@ SetDateSave on
 !define HKLM_APP_PATHS_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
 !define GAIM_STARTUP_RUN_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
-!define GAIM_REG_LANG				"Installer Language"
 
 !define GTK_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
@@ -75,6 +74,23 @@ SetDateSave on
 !define DOWNLOADER_URL				"http://gaim.sourceforge.net/win32/download_redir.php"
 
 ;--------------------------------
+;Version resource
+VIProductVersion "${GAIM_PRODUCT_VERSION}"
+VIAddVersionKey "ProductName" "Gaim"
+VIAddVersionKey "FileVersion" "${GAIM_VERSION}"
+VIAddVersionKey "ProductVersion" "${GAIM_VERSION}"
+VIAddVersionKey "LegalCopyright" ""
+!ifdef WITH_GTK
+VIAddVersionKey "FileDescription" "Gaim Installer (w/ GTK+ Installer)"
+!else
+!ifdef DEBUG
+VIAddVersionKey "FileDescription" "Gaim Installer (Debug Version)"
+!else
+VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
+!endif
+!endif
+
+;--------------------------------
 ;Modern UI Configuration
 
   !define MUI_ICON				".\gtk\pixmaps\gaim-install.ico"
@@ -86,6 +102,10 @@ SetDateSave on
   ; Alter License section
   !define MUI_LICENSEPAGE_BUTTON		$(GAIM_LICENSE_BUTTON)
   !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(GAIM_LICENSE_BOTTOM_TEXT)
+
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU"
+  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
   !define MUI_ABORTWARNING
@@ -458,9 +478,6 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     ; If we don't have install rights.. we're done
     StrCmp $R0 "NONE" done
     SetOverwrite off
-
-    ; Write out installer language
-    WriteRegStr HKCU "${GAIM_REG_KEY}" "${GAIM_REG_LANG}" "$LANGUAGE"
 
     ; write out uninstaller
     SetOverwrite on
@@ -1184,8 +1201,8 @@ Function un.onInit
   Call un.RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
 
-  ; Get stored language prefrence
-  ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
+  ; Get stored language preference
+  !insertmacro MUI_UNGETLANGUAGE
 
 FunctionEnd
 

@@ -8,6 +8,30 @@
 GAIM_TOP := .
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
+# Generate a X.X.X.X version for the installer file versioning header
+# The last digit will be 99 for a final release, 0 for dev or unknown, or the beta number
+GAIM_PRODUCT_VERSION = $(shell \
+awk 'BEGIN {FS="."} { \
+    if (int($$3) == $$3) { \
+        $$4 = "99"; \
+    } else { \
+        $$5 = $$3; \
+        sub(int($$3), "", $$5); \
+        if ($$5 == "dev") { \
+            $$4 = "0"; \
+        } else { \
+            if (sub("beta", "", $$5) > 0) { \
+                $$4 = $$5; \
+            } else { \
+                $$4 = "0"; \
+            } \
+        } \
+    } \
+    printf("%s.%s.%s.%s", $$1, $$2, int($$3), $$4); \
+    exit; \
+}' VERSION)
+
+
 all: $(GAIM_CONFIG_H)
 	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE)
 	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE)
@@ -19,13 +43,13 @@ install: all $(GAIM_INSTALL_DIR)
 	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 
 installer: install
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DWITH_GTK gaim-installer.nsi
+	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DWITH_GTK gaim-installer.nsi
 
 installer_nogtk: install
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" gaim-installer.nsi
+	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" gaim-installer.nsi
 
 installer_debug: install
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DDEBUG gaim-installer.nsi
+	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DDEBUG gaim-installer.nsi
 
 installers: installer installer_nogtk
 
