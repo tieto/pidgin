@@ -224,6 +224,7 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 			} else {
 				arg = Tcl_NewIntObj(va_arg(args, int));
 			}
+			break;
 		case GAIM_TYPE_INT64:
 		case GAIM_TYPE_UINT64:
 			/* Tcl < 8.4 doesn't have wide ints, so we have ugly
