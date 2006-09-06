@@ -2902,7 +2902,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 								else
 									font->bold = 0;
 							}
-							if((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold))
+							if ((font->bold && oldfont && !oldfont->bold) || (oldfont && oldfont->bold && !font->bold) || (font->bold && !oldfont))
 							{
 								gtk_imhtml_toggle_bold(imhtml);
 							}
