@@ -3525,28 +3525,6 @@ gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node)
 	return ((struct _gaim_gtk_blist_node *)node->ui_data)->contact_expanded;
 }
 
-void gaim_gtk_blist_update_columns()
-{
-	if(!gtkblist)
-		return;
-
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
-		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
-		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
-	} else {
-		gtk_tree_view_column_set_visible(gtkblist->idle_column,
-			gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time"));
-		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
-	}
-}
-
-static void
-show_buddy_icons_pref_cb(const char *name, GaimPrefType type,
-						 gconstpointer val, gpointer data)
-{
-	gaim_gtk_blist_update_columns();
-}
-
 enum {
 	DRAG_BUDDY,
 	DRAG_ROW,
@@ -3953,6 +3931,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtk_widget_show(gtkblist->treeview);
 	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
+/*	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(gtkblist->treeview), TRUE); */
 
 	/* Set up selection stuff */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
@@ -4057,7 +4036,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
-	gaim_gtk_blist_update_columns();
 
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
@@ -4119,12 +4097,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	/* sorting */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/sort_type",
 			_prefs_change_sort_method, NULL);
-
-	/* things that affect what columns are displayed */
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
-			show_buddy_icons_pref_cb, NULL);
-	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_idle_time",
-			show_buddy_icons_pref_cb, NULL);
 
 	/* menus */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/sound/mute",
@@ -4720,8 +4692,6 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	gtkblist->drag_timeout = 0;
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
 	gtkblist->treemodel = NULL;
-	gtkblist->idle_column = NULL;
-	gtkblist->buddy_icon_column = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	g_free(gtkblist);
 	accountmenu = NULL;

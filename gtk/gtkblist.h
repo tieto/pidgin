@@ -66,10 +66,7 @@ struct _GaimGtkBuddyList {
 
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
-	GtkTreeViewColumn *idle_column,
-		*warning_column,
-		*buddy_icon_column,
-		*text_column;
+	GtkTreeViewColumn *text_column; /**< Column */
 
 	GtkCellRenderer *text_rend;
 
