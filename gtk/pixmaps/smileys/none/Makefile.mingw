@@ -11,11 +11,6 @@ datadir = $(GAIM_INSTALL_DIR)
 include ./Makefile.am
 
 install:
-	if test '$(SUBDIRS)'; then \
-	  list='$(SUBDIRS)'; for subdir in $$list; do \
-	    $(MAKE) -C $$subdir -f Makefile.mingw install; \
-	  done; \
-	fi;
 	if test '$(gaimsmileypix_DATA)'; then \
 	  mkdir -p $(gaimsmileypixdir); \
 	  cp $(gaimsmileypix_DATA) $(gaimsmileypixdir); \

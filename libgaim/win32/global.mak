@@ -23,10 +23,8 @@ TCL_LIB_TOP := $(WIN32_DEV_TOP)/tcl-8.4.5
 # Where we installing this stuff to?
 GAIM_INSTALL_DIR := $(GAIM_TOP)/win32-install-dir
 GAIM_INSTALL_PERLMOD_DIR := $(GAIM_INSTALL_DIR)/perlmod
-GAIM_INSTALL_PIXMAPS_DIR := $(GAIM_INSTALL_DIR)/pixmaps
 GAIM_INSTALL_PLUGINS_DIR := $(GAIM_INSTALL_DIR)/plugins
 GAIM_INSTALL_PO_DIR := $(GAIM_INSTALL_DIR)/locale
-GAIM_INSTALL_SOUNDS_DIR := $(GAIM_INSTALL_DIR)/sounds
 
 # Important (enough) locations in our source code
 GAIM_LIB_TOP := $(GAIM_TOP)/libgaim

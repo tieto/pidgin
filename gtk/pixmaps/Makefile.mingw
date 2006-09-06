@@ -7,13 +7,13 @@
 GAIM_TOP := ../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
-datadir = $(GAIM_INSTALL_DIR)
+datadir := $(GAIM_INSTALL_DIR)
 include ./Makefile.am
 
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
-	    $(MAKE) -C $$subdir -f Makefile.mingw install; \
+	    $(MAKE) -C $$subdir -f $(GAIM_WIN32_MAKEFILE) install; \
 	  done; \
 	fi;
 	if test '$(gaimbuttonpix_DATA)'; then \
