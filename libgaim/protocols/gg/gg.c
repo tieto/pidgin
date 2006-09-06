@@ -1547,7 +1547,7 @@ static char *ggp_status_text(GaimBuddy *b)
 
 		return text;
 	} else {
-		tmp = g_strdup(gaim_status_get_name(status));
+		tmp = gaim_utf8_salvage(gaim_status_get_name(status));
 		text = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
 
