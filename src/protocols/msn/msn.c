@@ -572,6 +572,12 @@ msn_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
 
 	if (gaim_presence_is_online(presence))
 	{
+		char *psm;
+		psm = msn_status_text(buddy);
+		if (psm)
+			g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Psm"),psm);
+		g_free(psm);
+
 		g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Status"),
 							   gaim_presence_is_idle(presence) ?
 							   _("Idle") : gaim_status_get_name(status));
@@ -592,8 +598,6 @@ msn_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
 							   (user->list_op & (1 << MSN_LIST_BL)) ?
 							   _("Yes") : _("No"));
 	}
-
-	gaim_debug_info("MaYuan","tooltip string:{%s}\n",str);
 }
 
 static GList *

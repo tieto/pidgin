@@ -491,15 +491,20 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	mdNode = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
 	for(mNode = xmlnode_get_child(mdNode, "M"); mNode;
 					mNode = xmlnode_get_next_twin(mNode)){
+		/*email Node*/
 		ENode = xmlnode_get_child(mNode,"E");
 		passport = xmlnode_get_data(ENode);
+		/*Index */
 		INode = xmlnode_get_child(mNode,"I");
 		msgid = xmlnode_get_data(INode);
-		rtNode = xmlnode_get_child(mNode,"RT");
-		rTime = xmlnode_get_data(rtNode);
+		/*Nickname*/
 		nNode = xmlnode_get_child(mNode,"N");
 		nickname = xmlnode_get_data(nNode);
-		gaim_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);
+		/*receive time*/
+		rtNode = xmlnode_get_child(mNode,"RT");
+		if(rtNode != NULL)
+			rTime = xmlnode_get_data(rtNode);
+/*		gaim_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);*/
 
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
 		msn_oim_post_single_get_msg(oim,msgid);
