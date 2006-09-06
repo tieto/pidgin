@@ -32,6 +32,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,
 		const char *type);
 void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *status);
-void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, const char **msg, int *priority);
+void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, char **msg, int *priority);
 
 #endif /* _GAIM_JABBER_PRESENCE_H_ */

@@ -658,6 +658,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				purdy = gaim_strdup_withhtml(jbr->status);
 			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
 					_("Resource"), jbr->name);
+			g_string_append_printf(info_text, "<b>%s:</b> %d<br/>",
+					_("Priority"), jbr->priority);
 			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
 					_("Status"), jabber_buddy_state_get_name(jbr->state),
 					purdy ? ": " : "",
@@ -1190,7 +1192,7 @@ static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 	JabberBuddy *jb = jabber_buddy_find(js, who, TRUE);
 	xmlnode *presence;
 	JabberBuddyState state;
-	const char *msg;
+	char *msg;
 	int priority;
 
 	account   = gaim_connection_get_account(js->gc);
@@ -1199,6 +1201,8 @@ static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 
 	gaim_status_to_jabber(status, &state, &msg, &priority);
 	presence = jabber_presence_create(state, msg, priority);
+
+	g_free(msg);
 
 	xmlnode_set_attrib(presence, "to", who);
 	if(invisible) {

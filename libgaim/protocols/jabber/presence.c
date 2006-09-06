@@ -66,7 +66,7 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 		JabberBuddyResource *jbr;
 		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
 			JabberBuddyState state;
-			const char *msg;
+			char *msg;
 			int priority;
 
 			gaim_status_to_jabber(gstatus, &state, &msg, &priority);
@@ -81,6 +81,8 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 			} else {
 				gaim_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
 			}
+
+			g_free(msg);
 		}
 	}
 	g_free(my_base_jid);
@@ -95,7 +97,6 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 	int primitive;
 	xmlnode *presence, *x, *photo;
 	char *stripped = NULL;
-	const char *msg;
 	JabberBuddyState state;
 	int priority;
 
@@ -111,10 +112,8 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 	gc = gaim_account_get_connection(account);
 	js = gc->proto_data;
 
-	gaim_status_to_jabber(status, &state, &msg, &priority);
+	gaim_status_to_jabber(status, &state, &stripped, &priority);
 
-	if(msg)
-		gaim_markup_html_to_xhtml(msg, NULL, &stripped);
 
 	presence = jabber_presence_create(state, stripped, priority);
 	g_free(stripped);
@@ -604,9 +603,10 @@ void jabber_presence_subscription_set(JabberStream *js, const char *who, const c
 	xmlnode_free(presence);
 }
 
-void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, const char **msg, int *priority)
+void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, char **msg, int *priority)
 {
 	const char *status_id = NULL;
+	const char *formatted_msg = NULL;
 
 	if(state) *state = JABBER_BUDDY_STATE_UNKNOWN;
 	if(msg) *msg = NULL;
@@ -621,11 +621,14 @@ void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, co
 		}
 
 		if(msg) {
-			*msg = gaim_status_get_attr_string(status, "message");
+			formatted_msg = gaim_status_get_attr_string(status, "message");
 
 			/* if the message is blank, then there really isn't a message */
-			if(*msg && !**msg)
-				*msg = NULL;
+			if(formatted_msg && !*formatted_msg)
+				formatted_msg = NULL;
+
+			if(formatted_msg)
+				gaim_markup_html_to_xhtml(formatted_msg, NULL, msg);
 		}
 
 		if(priority)

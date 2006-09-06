@@ -205,7 +205,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	GaimPresence *gpresence;
 	GaimStatus *status;
 	JabberBuddyState state;
-	const char *msg;
+	char *msg;
 	int priority;
 
 	room = g_hash_table_lookup(data, "room");
@@ -265,6 +265,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
+	g_free(msg);
 
 	x = xmlnode_new_child(presence, "x");
 	xmlnode_set_namespace(x, "http://jabber.org/protocol/muc");
@@ -618,7 +619,7 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 	GaimPresence *gpresence;
 	GaimStatus *status;
 	JabberBuddyState state;
-	const char *msg;
+	char *msg;
 	int priority;
 
 	if(!chat->muc) {
@@ -637,6 +638,7 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, nick);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
+	g_free(msg);
 
 	jabber_send(chat->js, presence);
 	xmlnode_free(presence);
