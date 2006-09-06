@@ -1001,7 +1001,7 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 	}
 }
 
-void
+static void
 gaim_gtkdialogs_merge_groups_cb(struct _GaimGroupMergeObject *GGP)
 {
 	gaim_blist_rename_group(GGP->parent, GGP->new_name);
