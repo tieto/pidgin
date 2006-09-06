@@ -52,9 +52,6 @@ gaim_gtk_blist_refresh(list)
 	Gaim::BuddyList list
 
 void
-gaim_gtk_blist_update_columns()
-
-void
 gaim_gtk_blist_update_refresh_timeout()
 
 gboolean
