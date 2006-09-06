@@ -591,6 +591,12 @@ gaim_dnsquery_a(const char *hostname, int port,
 	query_data->data = data;
 	query_data->resolver = NULL;
 
+	if (strlen(query_data->hostname) == 0)
+	{
+		gaim_dnsquery_destroy(query_data);
+		g_return_val_if_reached(NULL);
+	}
+
 	if (!queued_requests)
 		queued_requests = g_queue_new();
 	g_queue_push_tail(queued_requests, query_data);
@@ -757,6 +763,12 @@ gaim_dnsquery_a(const char *hostname, int port,
 	query_data->error_message = NULL;
 	query_data->hosts = NULL;
 
+	if (strlen(query_data->hostname) == 0)
+	{
+		gaim_dnsquery_destroy(query_data);
+		g_return_val_if_reached(NULL);
+	}
+
 	/* Don't call the callback before returning */
 	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
 
@@ -812,6 +824,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 
 	g_return_val_if_fail(hostname != NULL, NULL);
 	g_return_val_if_fail(port     != 0, NULL);
+	g_return_val_if_fail(callback != NULL, NULL);
 
 	query_data = g_new(GaimDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
@@ -819,6 +832,12 @@ gaim_dnsquery_a(const char *hostname, int port,
 	query_data->port = port;
 	query_data->callback = callback;
 	query_data->data = data;
+
+	if (strlen(query_data->hostname) == 0)
+	{
+		gaim_dnsquery_destroy(query_data);
+		g_return_val_if_reached(NULL);
+	}
 
 	/* Don't call the callback before returning */
 	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
