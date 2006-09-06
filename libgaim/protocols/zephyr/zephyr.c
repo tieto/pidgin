@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * gaim
  *
@@ -117,10 +117,19 @@ struct _zframe {
 	/* true for everything but @color, since inside the parens of that one is
 	 * the color. */
 	gboolean has_closer;
+	/* @i, @b, etc. */
+	const char *env;
+	/* }=1, ]=2, )=4, >=8 */
+	int closer_mask;
+	/* }, ], ), > */
+	char *closer;
 	/* </i>, </font>, </b>, etc. */
-	char *closing;
+	const char *closing;
 	/* text including the opening html thingie. */
 	GString *text;
+	/* href for links */
+	gboolean is_href;
+	GString *href;
 	struct _zframe *enclosing;
 };
 
@@ -351,11 +360,6 @@ static gchar *zephyr_recv_convert(GaimConnection *gc,gchar *string, int len)
 	}
 }
 
-/* utility macros that are useful for zephyr_to_html */
-
-#define IS_OPENER(c) ((c == '{') || (c == '[') || (c == '(') || (c == '<'))
-#define IS_CLOSER(c) ((c == '}') || (c == ']') || (c == ')') || (c == '>'))
-
 /* This parses HTML formatting (put out by one of the gtkimhtml widgets 
    And converts it to zephyr formatting.
    It currently deals properly with <b>, <br>, <i>, <font face=...>, <font color=...>,
@@ -364,146 +368,239 @@ static gchar *zephyr_recv_convert(GaimConnection *gc,gchar *string, int len)
    <font size = "1 or 2" -> @small
    3 or 4  @medium()
    5,6, or 7 @large()
-   <a href is dealt with by ignoring the description and outputting the link
+   <a href is dealt with by outputting "description <link>" or just "description" as appropriate
 */
 
 static char *html_to_zephyr(const char *message)
 {
-	int len, cnt, retcount;
+	zframe *frames, *new_f;
 	char *ret;
 
-	len = strlen(message);
-	if (!len) 
+	if (*message == '\0')
 		return g_strdup("");
 
-	ret = g_new0(char, len * 3);
+	frames = g_new(zframe, 1);
+	frames->text = g_string_new("");
+	frames->href = NULL;
+	frames->is_href = FALSE;
+	frames->enclosing = NULL;
+	frames->closing = NULL;
+	frames->env = "";
+	frames->has_closer = FALSE;
+	frames->closer_mask = 15;
 
-	bzero(ret, len * 3);
-	retcount = 0;
-	cnt = 0;
 	gaim_debug_info("zephyr","html received %s\n",message);
-	while (cnt <= len) {
-		if (message[cnt] == '<') {
-			if (!g_ascii_strncasecmp(message + cnt + 1, "i>", 2)) {
-				strncpy(ret + retcount, "@i(", 3);
-				cnt += 3;
-				retcount += 3;
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "b>", 2)) {
-				strncpy(ret + retcount, "@b(", 3);
-				cnt += 3;
-				retcount += 3;
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "br>", 3)) {
-				strncpy(ret + retcount, "\n", 1);
-				cnt += 4;
-				retcount += 1;
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "a href=\"mailto:", 15)) {
-				cnt += 16;
-				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
-					ret[retcount] = message[cnt];
-					retcount++;
-					cnt++;
+	while (*message) {
+		if (frames->closing && !g_ascii_strncasecmp(message, frames->closing, strlen(frames->closing))) {
+			zframe *popped;
+			message += strlen(frames->closing);
+			popped = frames;
+			frames = frames->enclosing;
+			if (popped->is_href) {
+				frames->href = popped->text;
+			} else {
+				g_string_append(frames->text, popped->env);
+				if (popped->has_closer) {
+					g_string_append_c(frames->text,
+							  (popped->closer_mask & 1) ? '{' :
+							  (popped->closer_mask & 2) ? '[' :
+							  (popped->closer_mask & 4) ? '(' :
+							  '<');
 				}
-				if (message[cnt] != '\0')
-					cnt += 2;
-				/* ignore descriptive string */
-				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "</a>", 4) != 0) {
-					cnt++;
-				}
-				if (message[cnt] != '\0')
-					cnt += 4;
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "a href=\"", 8)) {
-				cnt += 9;
-				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
-					ret[retcount] = message[cnt];
-					retcount++;
-					cnt++;
-				}
-				if (message[cnt] != '\0')
-					cnt += 2;
-				/* ignore descriptive string */
-				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "</a>", 4) != 0) {
-					cnt++;
-				}
-				if (message[cnt] != '\0')
-					cnt += 4;
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "font", 4)) {
-				cnt += 5;
-				while ((message[cnt] != '\0') && (message[cnt] != ' '))
-					cnt++;
-				if ((message[cnt] != '\0') && !g_ascii_strncasecmp(message + cnt, "color=\"", 7)) {
-					cnt += 7;
-					strncpy(ret + retcount, "@color(", 7);
-					retcount += 7;
-					while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
-						ret[retcount] = message[cnt];
-						retcount++;
-						cnt++;
+				g_string_append(frames->text, popped->text->str);
+				if (popped->href)
+				{
+					int text_len = strlen(popped->text->str), href_len = strlen(popped->href->str);
+					if (!((text_len == href_len && !strncmp(popped->href->str, popped->text->str, text_len)) ||
+					      (7 + text_len == href_len && !strncmp(popped->href->str, "http://", 7) &&
+					       !strncmp(popped->href->str + 7, popped->text->str, text_len)) ||
+					      (7 + text_len == href_len && !strncmp(popped->href->str, "mailto:", 7) &&
+					       !strncmp(popped->href->str + 7, popped->text->str, text_len)))) {
+						g_string_append(frames->text, " <");
+						g_string_append(frames->text, popped->href->str);
+						if (popped->closer_mask & ~8) {
+							g_string_append_c(frames->text, '>');
+							popped->closer_mask &= ~8;
+						} else {
+							g_string_append(frames->text, "@{>}");
+						}
 					}
-					ret[retcount] = ')';
-					retcount++;
-					if (message[cnt] != '\0')
-						cnt += 2;
-				} else if (!g_ascii_strncasecmp(message + cnt, "face=\"", 6)) {
-					cnt += 6;
-					strncpy(ret + retcount, "@font(", 6);
-					retcount += 6;
-					while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
-						ret[retcount] = message[cnt];
-						retcount++;
-						cnt++;
+					g_string_free(popped->href, TRUE);
+				}
+				if (popped->has_closer) {
+					g_string_append_c(frames->text,
+							  (popped->closer_mask & 1) ? '}' :
+							  (popped->closer_mask & 2) ? ']' :
+							  (popped->closer_mask & 4) ? ')' :
+							  '>');
+				}
+				if (!popped->has_closer)
+					frames->closer_mask = popped->closer_mask;
+				g_string_free(popped->text, TRUE);
+			}
+			g_free(popped);
+		} else if (*message == '<') {
+			if (!g_ascii_strncasecmp(message + 1, "i>", 2)) {
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("");
+				new_f->href = NULL;
+				new_f->is_href = FALSE;
+				new_f->closing = "</i>";
+				new_f->env = "@i";
+				new_f->has_closer = TRUE;
+				new_f->closer_mask = 15;
+				frames = new_f;
+				message += 3;
+			} else if (!g_ascii_strncasecmp(message + 1, "b>", 2)) {
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("");
+				new_f->href = NULL;
+				new_f->is_href = FALSE;
+				new_f->closing = "</b>";
+				new_f->env = "@b";
+				new_f->has_closer = TRUE;
+				new_f->closer_mask = 15;
+				frames = new_f;
+				message += 3;
+			} else if (!g_ascii_strncasecmp(message + 1, "br>", 3)) {
+				g_string_append_c(frames->text, '\n');
+				message += 4;
+			} else if (!g_ascii_strncasecmp(message + 1, "a href=\"", 8)) {
+				message += 9;
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("");
+				new_f->href = NULL;
+				new_f->is_href = FALSE;
+				new_f->closing = "</a>";
+				new_f->env = "";
+				new_f->has_closer = FALSE;
+				new_f->closer_mask = frames->closer_mask;
+				frames = new_f;
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("");
+				new_f->href = NULL;
+				new_f->is_href = TRUE;
+				new_f->closing = "\">";
+				new_f->has_closer = FALSE;
+				new_f->closer_mask = frames->closer_mask;
+				frames = new_f;
+			} else if (!g_ascii_strncasecmp(message + 1, "font", 4)) {
+				new_f = g_new(zframe, 1);
+				new_f->enclosing = frames;
+				new_f->text = g_string_new("");
+				new_f->href = NULL;
+				new_f->is_href = FALSE;
+				new_f->closing = "</font>";
+				new_f->has_closer = TRUE;
+				new_f->closer_mask = 15;
+				message += 5;
+				while (*message == ' ')
+					message++;
+				if (!g_ascii_strncasecmp(message, "color=\"", 7)) {
+					message += 7;
+					new_f->env = "@";
+					frames = new_f;
+					new_f = g_new(zframe, 1);
+					new_f->enclosing = frames;
+					new_f->env = "@color";
+					new_f->text = g_string_new("");
+					new_f->href = NULL;
+					new_f->is_href = FALSE;
+					new_f->closing = "\">";
+					new_f->has_closer = TRUE;
+					new_f->closer_mask = 15;
+				} else if (!g_ascii_strncasecmp(message, "face=\"", 6)) {
+					message += 6;
+					new_f->env = "@";
+					frames = new_f;
+					new_f = g_new(zframe, 1);
+					new_f->enclosing = frames;
+					new_f->env = "@font";
+					new_f->text = g_string_new("");
+					new_f->href = NULL;
+					new_f->is_href = FALSE;
+					new_f->closing = "\">";
+					new_f->has_closer = TRUE;
+					new_f->closer_mask = 15;
+				} else if (!g_ascii_strncasecmp(message, "size=\"", 6)) {
+					message += 6;
+					if ((*message == '1') || (*message == '2')) {
+						new_f->env = "@small";
+					} else if ((*message == '3')
+						   || (*message == '4')) {
+						new_f->env = "@medium";
+					} else if ((*message == '5')
+						   || (*message == '6')
+						   || (*message == '7')) {
+						new_f->env = "@large";
+					} else {
+						new_f->env = "";
+						new_f->has_closer = FALSE;
+						new_f->closer_mask = frames->closer_mask;
 					}
-					ret[retcount] = ')';
-					retcount++;
-					if (message[cnt] != '\0')
-						cnt += 2;
-				} else if (!g_ascii_strncasecmp(message + cnt, "size=\"", 6)) {
-					cnt += 6;
-					if ((message[cnt] == '1') || (message[cnt] == '2')) {
-						strncpy(ret + retcount, "@small(", 7);
-						retcount += 7;
-					} else if ((message[cnt] == '3')
-						   || (message[cnt] == '4')) {
-						strncpy(ret + retcount, "@medium(", 8);
-						retcount += 8;
-					} else if ((message[cnt] == '5')
-						   || (message[cnt] == '6')
-						   || (message[cnt] == '7')) {
-						strncpy(ret + retcount, "@large(", 7);
-						retcount += 7;
-					}
-					cnt += 3;
+					message += 3;
 				} else {
 					/* Drop all unrecognized/misparsed font tags */
-					while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
-						cnt++;
+					new_f->env = "";
+					new_f->has_closer = FALSE;
+					new_f->closer_mask = frames->closer_mask;
+					while (g_ascii_strncasecmp(message, "\">", 2) != 0) {
+						message++;
 					}
-					if (message[cnt] != '\0')
-						cnt += 2;
+					if (*message != '\0')
+						message += 2;
 				}
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "/i>", 3)
-				   || !g_ascii_strncasecmp(message + cnt + 1, "/b>", 3)) {
-				cnt += 4;
-				ret[retcount] = ')';
-				retcount++;
-			} else if (!g_ascii_strncasecmp(message + cnt + 1, "/font>", 6)) {
-				cnt += 7;
-				strncpy(ret + retcount, "@font(fixed)", 12);
-				retcount += 12;
+				frames = new_f;
 			} else {
 				/* Catch all for all unrecognized/misparsed <foo> tage */
-				while ((message[cnt] != '\0') && (message[cnt] != '>')) {
-					ret[retcount] = message[cnt];
-					retcount++;
-					cnt++;
-				}
+				g_string_append_c(frames->text, *message++);
+			}
+		} else if (*message == '@') {
+			g_string_append(frames->text, "@@");
+			message++;
+		} else if (*message == '}') {
+			if (frames->closer_mask & ~1) {
+				frames->closer_mask &= ~1;
+				g_string_append_c(frames->text, *message++);
+			} else {
+				g_string_append(frames->text, "@[}]");
+				message++;
+			}
+		} else if (*message == ']') {
+			if (frames->closer_mask & ~2) {
+				frames->closer_mask &= ~2;
+				g_string_append_c(frames->text, *message++);
+			} else {
+				g_string_append(frames->text, "@{]}");
+				message++;
+			}
+		} else if (*message == ')') {
+			if (frames->closer_mask & ~4) {
+				frames->closer_mask &= ~4;
+				g_string_append_c(frames->text, *message++);
+			} else {
+				g_string_append(frames->text, "@{)}");
+				message++;
+			}
+		} else if (!g_ascii_strncasecmp(message, "&gt;", 4)) {
+			if (frames->closer_mask & ~8) {
+				frames->closer_mask &= ~8;
+				g_string_append_c(frames->text, *message++);
+			} else {
+				g_string_append(frames->text, "@{>}");
+				message += 4;
 			}
 		} else {
-			/* Duh */
-			ret[retcount] = message[cnt];
-			retcount++;
-			cnt++;
+			g_string_append_c(frames->text, *message++);
 		}
 	}
+	ret = frames->text->str;
+	g_string_free(frames->text, FALSE);
+	g_free(frames);
 	gaim_debug_info("zephyr","zephyr outputted  %s\n",ret);
 	return ret;
 }
@@ -511,9 +608,8 @@ static char *html_to_zephyr(const char *message)
 /* this parses zephyr formatting and converts it to html. For example, if
  * you pass in "@{@color(blue)@i(hello)}" you should get out
  * "<font color=blue><i>hello</i></font>". */
-static char *zephyr_to_html(char *message)
+static char *zephyr_to_html(const char *message)
 {
-	int len, cnt;
 	zframe *frames, *curr;
 	char *ret;
 
@@ -522,126 +618,83 @@ static char *zephyr_to_html(char *message)
 	frames->enclosing = NULL;
 	frames->closing = "";
 	frames->has_closer = FALSE;
+	frames->closer = NULL;
 
-	len = strlen(message);
-	cnt = 0;
-	while (cnt <= len) {
-		if (message[cnt] == '@') {
-			zframe *new_f;
-			char *buf;
+	while (*message) {
+		if (*message == '@' && message[1] == '@') {
+			g_string_append(frames->text, "@");
+			message += 2;
+		} else if (*message == '@') {
 			int end;
-
-			for (end = 1; (cnt + end) <= len && !IS_OPENER(message[cnt + end])
-				     && !IS_CLOSER(message[cnt + end]); end++);
-			buf = g_new0(char, end);
-
-			if (end) {
-				g_snprintf(buf, end, "%s", message + cnt + 1);
-			}
-			if (!g_ascii_strcasecmp(buf, "italic") || !g_ascii_strcasecmp(buf, "i")) {
+			for (end = 1; message[end] && (isalnum(message[end]) || message[end] == '_'); end++);
+			if (message[end] &&
+			    (message[end] == '{' || message[end] == '[' || message[end] == '(' ||
+			     !g_ascii_strncasecmp(message + end, "&lt;", 4))) {
+				zframe *new_f;
+				char *buf;
+				buf = g_new0(char, end);
+				g_snprintf(buf, end, "%s", message + 1);
+				message += end;
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
-				new_f->text = g_string_new("<i>");
-				new_f->closing = "</i>";
 				new_f->has_closer = TRUE;
-				frames = new_f;
-				cnt += end + 1;	/* cnt points to char after opener */
-			} else if (!g_ascii_strcasecmp(buf, "small")) {
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("<font size=\"1\">");
-				new_f->closing = "</font>";
-				frames = new_f;
-				cnt += end + 1;
-			} else if (!g_ascii_strcasecmp(buf, "medium")) {
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("<font size=\"3\">");
-				new_f->closing = "</font>";
-				frames = new_f;
-				cnt += end + 1;
-			} else if (!g_ascii_strcasecmp(buf, "large")) {
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("<font size=\"7\">");
-				new_f->closing = "</font>";
-				frames = new_f;
-				cnt += end + 1;
-			} else if (!g_ascii_strcasecmp(buf, "bold")
-				   || !g_ascii_strcasecmp(buf, "b")) {
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("<b>");
-				new_f->closing = "</b>";
-				new_f->has_closer = TRUE;
-				frames = new_f;
-				cnt += end + 1;
-			} else if (!g_ascii_strcasecmp(buf, "font")) {
-				cnt += end + 1;
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("<font face=");
-				for (; (cnt <= len) && !IS_CLOSER(message[cnt]); cnt++) {
-					g_string_append_c(new_f->text, message[cnt]);
-				}
-				cnt++;			/* point to char after closer */
-				g_string_append_c(new_f->text, '>');
-				new_f->closing = "</font>";
-				new_f->has_closer = FALSE;
-				frames = new_f;
-			} else if (!g_ascii_strcasecmp(buf, "color")) {
-				cnt += end + 1;
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("<font color=");
-				for (; (cnt <= len) && !IS_CLOSER(message[cnt]); cnt++) {
-					g_string_append_c(new_f->text, message[cnt]);
-				}
-				cnt++;			/* point to char after closer */
-				g_string_append_c(new_f->text, '>');
-				new_f->closing = "</font>";
-				new_f->has_closer = FALSE;
-				frames = new_f;
-			} else if (!g_ascii_strcasecmp(buf, "")) {
-				new_f = g_new(zframe, 1);
-				new_f->enclosing = frames;
-				new_f->text = g_string_new("");
-				new_f->closing = "";
-				new_f->has_closer = TRUE;
-				frames = new_f;
-				cnt += end + 1;	/* cnt points to char after opener */
-			} else {
-				if ((cnt + end) > len) {
-					g_string_append_c(frames->text, '@');
-					cnt++;
-				} else if (IS_CLOSER(message[cnt + end])) {
-					/* We have @chars..closer . This is 
-					   merely a sequence of chars that isn't a formatting tag
-					*/
-					int tmp = cnt;
-
-					while (tmp <= cnt + end) {
-						g_string_append_c(frames->text, message[tmp]);
-						tmp++;
-					}
-					cnt += end + 1;
+				new_f->closer = (*message == '{' ? "}" :
+						 *message == '[' ? "]" :
+						 *message == '(' ? ")" :
+						 "&gt;");
+				message += (*message == '&' ? 4 : 1);
+				if (!g_ascii_strcasecmp(buf, "italic") || !g_ascii_strcasecmp(buf, "i")) {
+					new_f->text = g_string_new("<i>");
+					new_f->closing = "</i>";
+				} else if (!g_ascii_strcasecmp(buf, "small")) {
+					new_f->text = g_string_new("<font size=\"1\">");
+					new_f->closing = "</font>";
+				} else if (!g_ascii_strcasecmp(buf, "medium")) {
+					new_f->text = g_string_new("<font size=\"3\">");
+					new_f->closing = "</font>";
+				} else if (!g_ascii_strcasecmp(buf, "large")) {
+					new_f->text = g_string_new("<font size=\"7\">");
+					new_f->closing = "</font>";
+				} else if (!g_ascii_strcasecmp(buf, "bold")
+					   || !g_ascii_strcasecmp(buf, "b")) {
+					new_f->text = g_string_new("<b>");
+					new_f->closing = "</b>";
+				} else if (!g_ascii_strcasecmp(buf, "font")) {
+					zframe *extra_f;
+					extra_f = g_new(zframe, 1);
+					extra_f->enclosing = frames;
+					new_f->enclosing = extra_f;
+					extra_f->text = g_string_new("");
+					extra_f->has_closer = FALSE;
+					extra_f->closer = frames->closer;
+					extra_f->closing = "</font>";
+					new_f->text = g_string_new("<font face=\"");
+					new_f->closing = "\">";
+				} else if (!g_ascii_strcasecmp(buf, "color")) {
+					zframe *extra_f;
+					extra_f = g_new(zframe, 1);
+					extra_f->enclosing = frames;
+					new_f->enclosing = extra_f;
+					extra_f->text = g_string_new("");
+					extra_f->has_closer = FALSE;
+					extra_f->closer = frames->closer;
+					extra_f->closing = "</font>";
+					new_f->text = g_string_new("<font color=\"");
+					new_f->closing = "\">";
 				} else {
-					/* unrecognized thingie. act like it's not there, but we
-					 * still need to take care of the corresponding closer,
-					 * make a frame that does nothing. */
-					new_f = g_new(zframe, 1);
-					new_f->enclosing = frames;
 					new_f->text = g_string_new("");
 					new_f->closing = "";
-					new_f->has_closer = TRUE;
-					frames = new_f;
-					cnt += end + 1;	/* cnt points to char after opener */
 				}
+				frames = new_f;
+			} else {
+				/* Not a formatting tag, add the character as normal. */
+				g_string_append_c(frames->text, *message++);
 			}
-		} else if (IS_CLOSER(message[cnt])) {
+		} else if (frames->closer && !g_ascii_strncasecmp(message, frames->closer, strlen(frames->closer))) {
 			zframe *popped;
 			gboolean last_had_closer;
 
+			message += strlen(frames->closer);
 			if (frames && frames->enclosing) {
 				do {
 					popped = frames;
@@ -653,14 +706,13 @@ static char *zephyr_to_html(char *message)
 					g_free(popped);
 				} while (frames && frames->enclosing && !last_had_closer);
 			} else {
-				g_string_append_c(frames->text, message[cnt]);
+				g_string_append_c(frames->text, *message);
 			}
-			cnt++;
-		} else if (message[cnt] == '\n') {
+		} else if (*message == '\n') {
 			g_string_append(frames->text, "<br>");
-			cnt++;
+			message++;
 		} else {
-			g_string_append_c(frames->text, message[cnt++]);
+			g_string_append_c(frames->text, *message++);
 		}
 	}
 	/* go through all the stuff that they didn't close */
