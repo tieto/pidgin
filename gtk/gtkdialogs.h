@@ -44,6 +44,7 @@ void gaim_gtkdialogs_remove_buddy(GaimBuddy *);
 void gaim_gtkdialogs_remove_group(GaimGroup *);
 void gaim_gtkdialogs_remove_chat(GaimChat *);
 void gaim_gtkdialogs_remove_contact(GaimContact *);
+void gaim_gtkdialogs_merge_groups(GaimGroup *, const char *);
 
 /* Everything after this should probably be moved elsewhere */
 

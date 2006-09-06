@@ -317,6 +317,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	GtkTreePath *path;
 	GValue val;
 	GaimBlistNode *node;
+	GaimGroup *dest;
 
 	path = gtk_tree_path_new_from_string (arg1);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
@@ -350,7 +351,11 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 			serv_alias_buddy((GaimBuddy *)node);
 			break;
 		case GAIM_BLIST_GROUP_NODE:
-			gaim_blist_rename_group((GaimGroup*)node, arg2);
+			dest = gaim_find_group(arg2);
+			if (dest != NULL && strcmp(arg2, ((GaimGroup*) node)->name)) {
+				gaim_gtkdialogs_merge_groups((GaimGroup*) node, arg2);
+			} else
+				gaim_blist_rename_group((GaimGroup*)node, arg2);
 			break;
 		case GAIM_BLIST_CHAT_NODE:
 			gaim_blist_alias_chat((GaimChat*)node, arg2);
