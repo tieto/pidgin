@@ -1324,7 +1324,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 
 					gaim_debug_info("gg",
 						"notify: (%d) status: %d; descr: %s\n",
-						n->uin, n->status, descr);
+						n->uin, n->status, descr ? descr : "(null)");
 
 					ggp_generic_status_handler(gc,
 						n->uin, n->status, descr);
@@ -1335,7 +1335,8 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			gaim_debug_info("gg",
 				"notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
 				ev->event.notify60->uin, ev->event.notify60->status,
-				ev->event.notify60->version, ev->event.notify60->descr);
+				ev->event.notify60->version,
+				ev->event.notify60->descr ? ev->event.notify60->descr : "(null)");
 
 			for (i = 0; ev->event.notify60[i].uin; i++) {
 				gaim_debug_info("gg",
@@ -1343,7 +1344,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 					ev->event.notify60[i].uin,
 					ev->event.notify60[i].status,
 					ev->event.notify60[i].version,
-					ev->event.notify60[i].descr);
+					ev->event.notify60[i].descr ? ev->event.notify60[i].descr : "(null)");
 
 				ggp_generic_status_handler(gc, ev->event.notify60[i].uin,
 					ev->event.notify60[i].status,
@@ -1353,7 +1354,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 		case GG_EVENT_STATUS:
 			gaim_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
 					ev->event.status.uin, ev->event.status.status,
-					ev->event.status.descr);
+					ev->event.status.descr ? ev->event.status.descr : "(null)");
 
 			ggp_generic_status_handler(gc, ev->event.status.uin,
 				ev->event.status.status, ev->event.status.descr);
@@ -1362,7 +1363,8 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			gaim_debug_info("gg",
 				"status60: (%d) status=%d; version=%d; descr=%s\n",
 				ev->event.status60.uin, ev->event.status60.status,
-				ev->event.status60.version, ev->event.status60.descr);
+				ev->event.status60.version,
+				ev->event.status60.descr ? ev->event.status60.descr : "(null)");
 
 			ggp_generic_status_handler(gc, ev->event.status60.uin,
 				ev->event.status60.status, ev->event.status60.descr);
