@@ -636,7 +636,7 @@ chat_components_edit_ok(GaimChat *chat, GaimRequestFields *allfields)
 }
 
 static void
-chat_components_edit(GaimChat *chat, GaimBlistNode *null)
+chat_components_edit(GaimChat *chat, GaimBlistNode *selected)
 {
 	GaimRequestFields *fields = gaim_request_fields_new();
 	GaimRequestFieldGroup *group = gaim_request_field_group_new(NULL);
@@ -688,19 +688,19 @@ create_chat_menu(GntTree *tree, GaimChat *chat)
 }
 
 static void
-gg_add_buddy(GaimGroup *grp, GaimBlistNode *node)
+gg_add_buddy(GaimGroup *grp, GaimBlistNode *selected)
 {
 	gaim_blist_request_add_buddy(NULL, NULL, grp->name, NULL);
 }
 
 static void
-gg_add_group(GaimGroup *grp, GaimBlistNode *node)
+gg_add_group(GaimGroup *grp, GaimBlistNode *selected)
 {
 	gaim_blist_request_add_group();
 }
 
 static void
-gg_add_chat(GaimGroup *grp, GaimBlistNode *node)
+gg_add_chat(GaimGroup *grp, GaimBlistNode *selected)
 {
 	gaim_blist_request_add_chat(NULL, grp, NULL, NULL);
 }
@@ -717,7 +717,7 @@ create_group_menu(GntTree *tree, GaimGroup *group)
 }
 
 static void
-gg_blist_get_buddy_info_cb(GaimBuddy *buddy, GaimBlistNode *null)
+gg_blist_get_buddy_info_cb(GaimBuddy *buddy, GaimBlistNode *selected)
 {
 	serv_get_info(buddy->account->gc, gaim_buddy_get_name(buddy));
 }
@@ -779,7 +779,7 @@ context_menu_callback(GntTree *tree, GGBlist *ggblist)
 		void (*callback)(GaimBlistNode *, gpointer);
 		callback = (void (*)(GaimBlistNode *, gpointer))action->callback;
 		if (callback)
-			callback(node, action->data);
+			callback(action->data, node);
 		else
 			return;
 	}
@@ -807,7 +807,7 @@ rename_blist_node(GaimBlistNode *node, const char *newname)
 }
 
 static void
-gg_blist_rename_node_cb(GaimBlistNode *node, GaimBlistNode *null)
+gg_blist_rename_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
 {
 	const char *name = NULL;
 	char *prompt;
@@ -888,7 +888,7 @@ gg_blist_remove_node(GaimBlistNode *node)
 }
 
 static void
-gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *null)
+gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
 {
 	char *primary;
 	const char *name, *sec = NULL;
@@ -1354,15 +1354,18 @@ populate_status_dropdown()
 static void
 redraw_blist(const char *name, GaimPrefType type, gconstpointer val, gpointer data)
 {
-	GaimBlistNode *node;
+	GaimBlistNode *node, *sel;
 	if (ggblist == NULL)
 		return;
 
+	sel = gnt_tree_get_selection_data(GNT_TREE(ggblist->tree));
 	gnt_tree_remove_all(GNT_TREE(ggblist->tree));
 	node = gaim_blist_get_root();
 	for (; node; node = gaim_blist_node_next(node, TRUE))
 		node->ui_data = NULL;
 	populate_buddylist();
+	gnt_tree_set_selected(GNT_TREE(ggblist->tree), sel);
+	draw_tooltip(ggblist);
 }
 
 void gg_blist_init()
