@@ -1,0 +1,47 @@
+#include <winver.h>
+#include "resource.h"
+#include "version.h"
+
+#define PIXMAPDIR "pixmaps/"
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION GAIM_MAJOR_VERSION,GAIM_MINOR_VERSION,GAIM_MICRO_VERSION,0
+  PRODUCTVERSION GAIM_MAJOR_VERSION,GAIM_MINOR_VERSION,GAIM_MICRO_VERSION,0
+  FILEFLAGSMASK 0
+  FILEFLAGS 0
+  FILEOS VOS__WINDOWS32
+  FILETYPE VFT_APP
+  FILESUBTYPE VFT2_UNKNOWN
+  BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+      BLOCK "040904B0"
+      BEGIN
+        VALUE "CompanyName", "The Gaim developer community"
+        VALUE "FileDescription", "Gaim Executable"
+        VALUE "FileVersion", "@GAIM_VERSION@"
+        VALUE "InternalName", "gaim"
+        VALUE "LegalCopyright", "Copyright (C) 1998-2006 The Gaim developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "OriginalFilename", "@ORIGINAL_FILENAME@"
+        VALUE "ProductName", "Gaim"
+        VALUE "ProductVersion", "@GAIM_VERSION@"
+      END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+      VALUE "Translation", 0x409, 1200
+    END
+  END
+
+GAIM_ICON			ICON PIXMAPDIR "gaim.ico"
+GAIM_TRAY_ICON			ICON PIXMAPDIR "gaim_16.ico"
+GAIM_OFFLINE_TRAY_ICON		ICON PIXMAPDIR "gaim_offline_16.ico"
+GAIM_AWAY_TRAY_ICON		ICON PIXMAPDIR "gaim_away_16.ico"
+GAIM_PEND_TRAY_ICON		ICON PIXMAPDIR "gaim_msgunread_16.ico"
+GAIM_AWAYPEND_TRAY_ICON 	ICON PIXMAPDIR "gaim_msgpend_16.ico"
+GAIM_BLANK_TRAY_ICON		ICON PIXMAPDIR "gaim_blank_4bit_16.ico"
+GAIM_TRAY_ICON_4BIT		ICON PIXMAPDIR "gaim_4bit_16.ico"
+GAIM_OFFLINE_TRAY_ICON_4BIT	ICON PIXMAPDIR "gaim_offline_4bit_16.ico"
+GAIM_AWAY_TRAY_ICON_4BIT	ICON PIXMAPDIR "gaim_away_4bit_16.ico"
+GAIM_PEND_TRAY_ICON_4BIT	ICON PIXMAPDIR "gaim_msgunread_4bit_16.ico"
+GAIM_AWAYPEND_TRAY_ICON_4BIT	ICON PIXMAPDIR "gaim_msgpend_4bit_16.ico"

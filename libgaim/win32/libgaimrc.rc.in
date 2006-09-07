@@ -1,0 +1,32 @@
+#include <winver.h>
+#include "version.h"
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION GAIM_MAJOR_VERSION,GAIM_MINOR_VERSION,GAIM_MICRO_VERSION,0
+  PRODUCTVERSION GAIM_MAJOR_VERSION,GAIM_MINOR_VERSION,GAIM_MICRO_VERSION,0
+  FILEFLAGSMASK 0
+  FILEFLAGS 0
+  FILEOS VOS__WINDOWS32
+  FILETYPE VFT_DLL
+  FILESUBTYPE VFT2_UNKNOWN
+  BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+      BLOCK "040904B0"
+      BEGIN
+        VALUE "CompanyName", "The Gaim developer community"
+        VALUE "FileDescription", "Libgaim Library"
+        VALUE "FileVersion", "@GAIM_VERSION@"
+        VALUE "InternalName", "libgaim"
+        VALUE "LegalCopyright", "Copyright (C) 1998-2006 The Gaim developer community (See the COPYRIGHT file in the source distribution)."
+        VALUE "OriginalFilename", "libgaim.dll"
+        VALUE "ProductName", "Gaim"
+        VALUE "ProductVersion", "@GAIM_VERSION@"
+      END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+      VALUE "Translation", 0x409, 1200
+    END
+  END
+

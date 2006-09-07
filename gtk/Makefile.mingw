@@ -12,12 +12,9 @@ NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
 ##
 ## VARIABLE DEFINITIONS
 ##
-EXE_TARGET = gaim
-GTKGAIM_TARGET = gtkgaim
-
-ifeq ($(MAKECMDGOALS), $(EXE_TARGET)-portable.exe)
-DEFINES := $(DEFINES) -DPORTABLE
-endif
+EXE_TARGET := gaim
+GTKGAIM_TARGET := gtkgaim
+EXE_NAME := $(EXE_TARGET).exe
 
 WINAPP := -mwindows
 # The Debug version of gaim is a console app, always having a console
@@ -95,10 +92,12 @@ GTKGAIM_C_SRC =	\
 			win32/untar.c \
 			win32/wspell.c
 
-RC_SRC = win32/gaimrc.rc
+GTKGAIM_RC_SRC = win32/gtkgaimrc.rc
+GTKGAIM_OBJECTS = $(GTKGAIM_C_SRC:%.c=%.o) $(GTKGAIM_RC_SRC:%.rc=%.o)
+
+EXE_RC_SRC = win32/gaimrc.rc
 EXE_C_SRC = win32/win_gaim.c
-GTKGAIM_OBJECTS = $(GTKGAIM_C_SRC:%.c=%.o)
-EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
+EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(EXE_RC_SRC:%.rc=%.o)
 
 ##
 ## LIBRARIES
@@ -129,7 +128,12 @@ include $(GAIM_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean
+.PHONY: all clean clean_exe
+
+./win32/gaimrc.rc: ./win32/gaimrc.rc.in $(GAIM_TOP)/VERSION
+	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
+	    -e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
+	    $@.in > $@
 
 all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE)
@@ -142,17 +146,23 @@ install: all $(GAIM_INSTALL_DIR)
 	cp $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
-$(GTKGAIM_OBJECTS): $(GAIM_CONFIG_H)
+./win32/gtkgaimrc.rc: ./win32/gtkgaimrc.rc.in $(GAIM_TOP)/VERSION
+	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
+	    $@.in > $@
+
+$(EXE_OBJECTS) $(GTKGAIM_OBJECTS): $(GAIM_CONFIG_H)
 
 $(GTKGAIM_TARGET).dll $(GTKGAIM_TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(GTKGAIM_OBJECTS)
 	$(CC) -shared $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
 
 $(EXE_TARGET).exe: $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
-	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET).exe
+	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe
 
+$(EXE_TARGET)-portable.exe: DEFINES += -DPORTABLE
+$(EXE_TARGET)-portable.exe: EXE_NAME := $(EXE_TARGET)-portable.exe
 $(EXE_TARGET)-portable.exe: clean_exe $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
-	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(EXE_TARGET)-portable.exe
-	rm win_gaim.o
+	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET)-portable.exe
+	$(MAKE) -f $(GAIM_WIN32_MAKEFILE) clean_exe
 
 ##
 ## CLEAN RULES
@@ -160,13 +170,11 @@ $(EXE_TARGET)-portable.exe: clean_exe $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(G
 clean:
 	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	rm -f $(GTKGAIM_OBJECTS) $(EXE_OBJECTS)
-	rm -f $(GTKGAIM_TARGET).dll
-	rm -f $(GTKGAIM_TARGET).dll.a
-	rm -f $(EXE_TARGET).exe
-	rm -f $(EXE_TARGET)-portable.exe
+	rm -f $(GTKGAIM_OBJECTS) $(GTKGAIM_RC_SRC) $(EXE_OBJECTS) $(EXE_RC_SRC)
+	rm -f $(GTKGAIM_TARGET).dll $(GTKGAIM_TARGET).dll.a
+	rm -f $(EXE_TARGET).exe $(EXE_TARGET)-portable.exe
 
 clean_exe:
-	rm -f win_gaim.o
+	rm -f $(EXE_OBJECTS) $(EXE_RC_SRC)
 
 include $(GAIM_COMMON_TARGETS)

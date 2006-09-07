@@ -76,7 +76,9 @@ C_SRC =	\
 			win32/libc_interface.c \
 			win32/win32dep.c
 
-OBJECTS = $(C_SRC:%.c=%.o)
+RC_SRC = win32/libgaimrc.rc
+
+OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 
 ##
 ## LIBRARIES
@@ -108,6 +110,10 @@ install: all $(GAIM_INSTALL_DIR)
 	cp $(TARGET).dll $(GAIM_INSTALL_DIR)
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
+./win32/libgaimrc.rc: ./win32/libgaimrc.rc.in $(GAIM_TOP)/VERSION
+	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
+	    $@.in > $@
+
 $(OBJECTS): $(GAIM_CONFIG_H)
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
@@ -117,9 +123,8 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).dll.a
+	rm -f $(OBJECTS) $(RC_SRC)
+	rm -f $(TARGET).dll $(TARGET).dll.a
 	$(MAKE) -C $(GAIM_PROTOS_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_LIB_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 

@@ -8,7 +8,8 @@ EXTRA_DIST = \
 		win32/IdleTracker/Makefile.mingw \
 		win32/IdleTracker/idletrack.c \
 		win32/IdleTracker/idletrack.h \
-		win32/gaimrc.rc \
+		win32/gaimrc.rc.in \
+		win32/gtkgaimrc.rc.in \
 		win32/gtkwin32dep.c \
 		win32/gtkwin32dep.h \
 		win32/resource.h \

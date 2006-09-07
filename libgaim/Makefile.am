@@ -10,6 +10,9 @@ EXTRA_DIST = \
 		win32/libc_interface.c \
 		win32/libc_interface.h \
 		win32/libc_internal.h \
+		win32/libgaimrc.rc.in \
+		win32/rules.mak \
+		win32/targets.mak \
 		win32/wgaimerror.h \
 		win32/win32dep.c \
 		win32/win32dep.h
