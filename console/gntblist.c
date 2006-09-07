@@ -591,6 +591,7 @@ append_proto_menu(GntTree *tree, GaimConnection *gc, GaimBlistNode *node)
 			list = g_list_delete_link(list, list))
 	{
 		GaimMenuAction *act = (GaimMenuAction *) list->data;
+		act->data = node;
 		gnt_append_menu_action(tree, act, NULL);
 	}
 }
