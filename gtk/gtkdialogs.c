@@ -1001,10 +1001,17 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 	}
 }
 
+static void free_ggmo(struct _GaimGroupMergeObject *ggp)
+{
+	g_free(ggp->new_name);
+	g_free(ggp);
+}
+
 static void
 gaim_gtkdialogs_merge_groups_cb(struct _GaimGroupMergeObject *GGP)
 {
 	gaim_blist_rename_group(GGP->parent, GGP->new_name);
+	free_ggmo(GGP);
 }
 
 void
@@ -1017,8 +1024,8 @@ gaim_gtkdialogs_merge_groups(GaimGroup *source, const char *new_name)
 	g_return_if_fail(new_name != NULL);
 
 	text = g_strdup_printf(
-				"You are about to merge the group called %s into the group "
-				"called %s. Do you want to continue?", source->name, new_name);
+				_("You are about to merge the group called %s into the group "
+				"called %s. Do you want to continue?"), source->name, new_name);
 
 	ggp = g_new(struct _GaimGroupMergeObject, 1);
 	ggp->parent = source;
@@ -1026,7 +1033,7 @@ gaim_gtkdialogs_merge_groups(GaimGroup *source, const char *new_name)
 	
 	gaim_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(gaim_gtkdialogs_merge_groups_cb),
-			_("Cancel"), NULL);
+			_("Cancel"), G_CALLBACK(free_ggmo));
 
 	g_free(text);
 }
