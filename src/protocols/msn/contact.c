@@ -134,10 +134,9 @@ msn_parse_contact_list(MsnContact * contact)
 	session = contact->session;
 	gaim_debug_misc("xml","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
 	node = 	xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
-//	node = 	xmlnode_from_str(contact->soapconn->body, -1);
 
 	if(node == NULL){
-		gaim_debug_misc("xml","parse from str err!\n");
+		gaim_debug_misc("xml","parse contact from str err!\n");
 		return;
 	}
 	gaim_debug_misc("xml","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
@@ -333,6 +332,7 @@ msn_parse_addressbook(MsnContact * contact)
 	g_free(group_id);
 
 	/*Process contact List*/
+	gaim_debug_info("MSNAB","process contact list...\n");
 	contacts =xmlnode_get_child(result,"contacts");
 	for(contactNode = xmlnode_get_child(contacts, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)){
@@ -365,6 +365,10 @@ msn_parse_addressbook(MsnContact * contact)
 			/*TODO: add it to the none-instant Messenger group and recognize as email Membership*/
 			/*Yahoo User?*/
 			emailsNode = xmlnode_get_child(contactInfo,"emails");
+			if(emailsNode == NULL){
+				/*TODO:  need to support the Mobile type*/
+				continue;
+			}
 			for(contactEmailNode = xmlnode_get_child(emailsNode,"ContactEmail");contactEmailNode;
 					contactEmailNode = xmlnode_get_next_twin(contactEmailNode) ){
 				messengerEnabledNode = xmlnode_get_child(contactEmailNode,"isMessengerEnabled");
@@ -408,16 +412,12 @@ msn_parse_addressbook(MsnContact * contact)
 		msn_user_set_uid(user,uid);
 		msn_user_set_type(user,msn_get_user_type(type));
 		user->list_op |= MSN_LIST_FL_OP;
-		gaim_debug_info("MsnAB","prepare to free Name...\n");
 		g_free(Name);
-		gaim_debug_info("MsnAB","prepare to free passport...\n");
 		g_free(passport);
-		gaim_debug_info("MsnAB","prepare to free uid...\n");
 		g_free(uid);
-		gaim_debug_info("MsnAB","prepare to free type...\n");
 		g_free(type);
 
-		gaim_debug_misc("MsnAB","prepare for guid parse...\n");
+		gaim_debug_misc("MsnAB","parse guid...\n");
 		groupIds = xmlnode_get_child(contactInfo,"groupIds");
 		if(groupIds){
 			for(guid = xmlnode_get_child(groupIds, "guid");guid;
@@ -439,7 +439,7 @@ msn_parse_addressbook(MsnContact * contact)
 	if(abNode != NULL){
 		LastChangeNode = xmlnode_get_child(abNode,"lastChange");
 		lastchange = xmlnode_get_data(LastChangeNode);
-		gaim_debug_info("MsnAB"," lastchange:{%s}\n",lastchange);
+		gaim_debug_info("MsnAB"," lastchanged Time:{%s}\n",lastchange);
 	}
 
 	xmlnode_free(node);
