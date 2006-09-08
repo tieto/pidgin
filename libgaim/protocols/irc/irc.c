@@ -81,6 +81,7 @@ static void irc_view_motd(GaimPluginAction *action)
 	}
 	title = g_strdup_printf(_("MOTD for %s"), irc->server);
 	gaim_notify_formatted(gc, title, title, NULL, irc->motd->str, NULL, NULL);
+	g_free(title);
 }
 
 static int do_send(struct irc_conn *irc, const char *buf, gsize len)
