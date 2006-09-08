@@ -795,11 +795,16 @@ rename_blist_node(GaimBlistNode *node, const char *newname)
 	if (name && !*name)
 		name = NULL;
 
-	if (GAIM_BLIST_NODE_IS_CONTACT(node))
-		gaim_blist_alias_contact((GaimContact*)node, name);
-	else if (GAIM_BLIST_NODE_IS_BUDDY(node))
+	if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		GaimContact *contact = (GaimContact*)node;
+		GaimBuddy *buddy = gaim_contact_get_priority_buddy(contact);
+		gaim_blist_alias_contact(contact, name);
+		gaim_blist_alias_buddy(buddy, name);
+		serv_alias_buddy(buddy);
+	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		gaim_blist_alias_buddy((GaimBuddy*)node, name);
-	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		serv_alias_buddy((GaimBuddy*)node);
+	} else if (GAIM_BLIST_NODE_IS_CHAT(node))
 		gaim_blist_alias_chat((GaimChat*)node, name);
 	else if (GAIM_BLIST_NODE_IS_GROUP(node))
 		gaim_blist_rename_group((GaimGroup*)node, name);
