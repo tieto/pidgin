@@ -183,6 +183,58 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 }
 
 static void
+update_title_progress(GaimGtkXferDialog *dialog)
+{
+	gboolean valid;
+	GtkTreeIter iter;
+	int num_active_xfers = 0;
+	guint64 total_bytes_xferred = 0;
+	guint64 total_file_size = 0;
+
+	if (dialog->window == NULL)
+		return;
+
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(dialog->model), &iter);
+
+	/* Find all active transfers */
+	while (valid) {
+		GValue val;
+		GaimXfer *xfer = NULL;
+
+		val.g_type = 0;
+		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model),
+				&iter, COLUMN_DATA, &val);
+
+		xfer = g_value_get_pointer(&val);
+		if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_STARTED) {
+			num_active_xfers++;
+			total_bytes_xferred += gaim_xfer_get_bytes_sent(xfer);
+			total_file_size += gaim_xfer_get_size(xfer);
+		}
+
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(dialog->model), &iter);
+	}
+
+	/* Update the title */
+	if (num_active_xfers > 0)
+	{
+		gchar *title;
+		int total_pct = 0;
+
+		if (total_file_size > 0) {
+			total_pct = 100 * total_bytes_xferred / total_file_size;
+		}
+
+		title = g_strdup_printf(_("File Transfers - %d%% of %d files"),
+				total_pct, num_active_xfers);
+		gtk_window_set_title(GTK_WINDOW(dialog->window), title);
+		g_free(title);
+	} else {
+		gtk_window_set_title(GTK_WINDOW(dialog->window), _("File Transfers"));
+	}
+}
+
+static void
 update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 {
 	GaimGtkXferUiData *data;
@@ -530,6 +582,7 @@ close_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 	gaim_gtkxfer_dialog_hide(dialog);
 }
+
 
 /**************************************************************************
  * Dialog Building Functions
@@ -929,6 +982,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 	dialog->num_transfers++;
 
 	ensure_row_selected(dialog);
+	update_title_progress(dialog);
 }
 
 void
@@ -959,6 +1013,7 @@ gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
 	else
 		ensure_row_selected(dialog);
 
+	update_title_progress(dialog);
 	gaim_xfer_unref(xfer);
 }
 
@@ -989,6 +1044,7 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 	data = GAIM_GTKXFER(xfer);
 
 	update_detailed_info(dialog, xfer);
+	update_title_progress(dialog);
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									GAIM_STOCK_FILE_CANCELED,
@@ -1063,6 +1119,7 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(xfer_dialog->tree));
 
+	update_title_progress(dialog);
 	if (xfer == dialog->selected_xfer)
 		update_detailed_info(xfer_dialog, xfer);
 
