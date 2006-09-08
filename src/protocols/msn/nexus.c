@@ -26,6 +26,8 @@
 #include "nexus.h"
 #include "notification.h"
 
+#define NEXUS_LOGIN_TWN	1
+
 /*Local Function Prototype*/
 static void nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,GaimInputCondition cond);
 
@@ -95,15 +97,21 @@ nexus_login_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-//	gaim_debug_misc("msn", "TWN Server Reply: {%s}\n", soapconn->read_buf);
+	gaim_debug_misc("msn", "TWN Server Reply: {%s}\n", soapconn->read_buf);
 
 	/*reply OK, we should process the SOAP body*/
 	gaim_debug_info("MaYuan","Windows Live ID Reply OK!\n");
 
 	//TODO: we should parse it using XML
+#ifdef NEXUS_LOGIN_TWN
 	base  = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_START_TOKEN);
 	base += strlen(TWN_START_TOKEN);
 	c     = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_END_TOKEN);
+#else
+	base  = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_LIVE_START_TOKEN);
+	base += strlen(TWN_LIVE_START_TOKEN);
+	c     = g_strstr_len(soapconn->read_buf, soapconn->read_len, TWN_LIVE_END_TOKEN);
+#endif
 	login_params = g_strndup(base, c - base);
 
 	//		gaim_debug_info("msn", "TWN Cert: {%s}\n", login_params);
@@ -166,7 +174,12 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
 	char *fs0,*fs;
 	char *username, *password;
-	char *request_str, *head, *tail,*challenge_str;
+	char *request_str, *head, *tail;
+#ifdef NEXUS_LOGIN_TWN
+	char *challenge_str;
+#else
+	char *rst1_str,*rst2_str,*rst3_str;
+#endif
 
 	gaim_debug_info("MaYuan","starting Windows Live ID authentication\n");
 
@@ -222,14 +235,32 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}else{
 		fs = g_strdup("1");
 	}
+
+#ifdef NEXUS_LOGIN_TWN
 	challenge_str = g_strdup_printf(
 		"lc=%s&amp;id=%s&amp;tw=%s&amp;fs=%s&amp;ru=%s&amp;ct=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s&amp;tpf=%s\r\n",
 		lc,id,tw,fs,ru,ct,kpp,kv,ver,rn,tpf
 		);
-	g_free(fs);
 
 	/*build the SOAP windows Live ID XML body */
 	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE,username,password,challenge_str	);
+	g_free(challenge_str);
+#else
+	rst1_str = g_strdup_printf(
+		"id=%s&amp;tw=%s&amp;fs=%s&amp;kpp=%s&amp;kv=%s&amp;ver=%s&amp;rn=%s",
+		id,tw,fs,kpp,kv,ver,rn
+		);
+	rst2_str = g_strdup_printf(
+		"fs=%s&amp;id=%s&amp;kv=%s&amp;rn=%s&amp;tw=%s&amp;ver=%s",
+		fs,id,kv,rn,tw,ver
+		);
+	rst3_str = g_strdup_printf("id=%s",id);
+	tail = g_strdup_printf(TWN_LIVE_ENVELOP_TEMPLATE,username,password,rst1_str,rst2_str,rst3_str);
+	g_free(rst1_str);
+	g_free(rst2_str);
+	g_free(rst3_str);
+#endif
+	g_free(fs);
 
 	soapconn->login_path = g_strdup(TWN_POST_URL);
 	head = g_strdup_printf(
@@ -243,7 +274,7 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 					soapconn->login_path,soapconn->login_host,(int)strlen(tail));
 
 	request_str = g_strdup_printf("%s%s", head,tail);
-//	gaim_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
+	gaim_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
 
 	g_free(head);
 	g_free(tail);
