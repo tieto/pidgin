@@ -26,7 +26,7 @@
 #include "nexus.h"
 #include "notification.h"
 
-#define NEXUS_LOGIN_TWN	1
+#undef NEXUS_LOGIN_TWN
 
 /*Local Function Prototype*/
 static void nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,GaimInputCondition cond);

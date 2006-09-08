@@ -110,7 +110,7 @@
             "<wsa:Address>messenger.msn.com</wsa:Address>"\
           "</wsa:EndpointReference>"\
         "</wsp:AppliesTo>"\
-        "<wsse:PolicyReference URI=\"%s\"></wsse:PolicyReference>"\
+        "<wsse:PolicyReference URI=\"?%s\"></wsse:PolicyReference>"\
       "</wst:RequestSecurityToken>"\
       "<wst:RequestSecurityToken Id=\"RST2\">"\
         "<wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType>"\
