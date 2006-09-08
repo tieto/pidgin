@@ -888,11 +888,12 @@ proxy_connect_http(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 			else
 			{
 				/*
-				 * TODO: Uh, is this a good idea?  For something like
-				 *       oscar, for example, we end up sending binary
-				 *       oscar protocol data to the proxy server, which
-				 *       has no idea what we're talking about, since
-				 *       the proxy server is expecting an HTTP request.
+				 * If we're trying to connect to something running on
+				 * port 80 then we assume the traffic using this
+				 * connection is going to be HTTP traffic.  If it's
+				 * not then this will fail (uglily).  But it's good
+				 * to avoid using the CONNECT method because it's
+				 * not always allowed.
 				 */
 				gaim_debug_info("proxy", "HTTP proxy connection established\n");
 				gaim_proxy_connect_data_connected(connect_data);
