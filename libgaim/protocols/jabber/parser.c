@@ -156,10 +156,10 @@ static xmlSAXHandler jabber_parser_libxml = {
 void
 jabber_parser_setup(JabberStream *js)
 {
-	/* This seems backwards, but it makes sense. The libxml code creates the parser
-	 * context when you try to use it (this way, it can figure out the encoding at
-	 * creation time. So, setting up the parser is just a matter of destroying any
-	 * current parser. */
+	/* This seems backwards, but it makes sense. The libxml code creates
+	 * the parser context when you try to use it (this way, it can figure
+	 * out the encoding at creation time. So, setting up the parser is
+	 * just a matter of destroying any current parser. */
 	if (js->context) {
 		xmlParseChunk(js->context, NULL,0,1);
 		xmlFreeParserCtxt(js->context);
@@ -171,9 +171,10 @@ jabber_parser_setup(JabberStream *js)
 void jabber_parser_process(JabberStream *js, const char *buf, int len)
 {
 	if (js->context ==  NULL) {
-		/* libxml inconsistently starts parsing on creating the parser, so so a ParseChunk
-		 * right afterwards to force it. */
+		/* libxml inconsistently starts parsing on creating the
+		 * parser, so do a ParseChunk right afterwards to force it. */
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
+		xmlParseChunk(js->context, NULL, 0, 0);
 	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
 		gaim_connection_error(js->gc, _("XML Parse error"));
 	}
