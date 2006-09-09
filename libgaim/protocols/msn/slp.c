@@ -954,17 +954,18 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		/* It seems the user has not set a msnobject */
 		GSList *sl, *list;
 
-		/* TODO: I think we need better buddy icon core functions. */
-		gaim_buddy_icons_set_for_user(account, user->passport, NULL, -1);
-
 		list = gaim_find_buddies(account, user->passport);
 
 		for (sl = list; sl != NULL; sl = sl->next)
 		{
 			GaimBuddy *buddy = (GaimBuddy *)sl->data;
-			gaim_blist_node_remove_setting((GaimBlistNode*)buddy, "icon_checksum");
+			if (buddy->icon)
+				gaim_blist_node_remove_setting((GaimBlistNode*)buddy, "icon_checksum");
 		}
 		g_slist_free(list);
+
+		/* TODO: I think we need better buddy icon core functions. */
+		gaim_buddy_icons_set_for_user(account, user->passport, NULL, 0);
 
 		return;
 	}
