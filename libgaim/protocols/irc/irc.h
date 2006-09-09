@@ -83,6 +83,8 @@ struct irc_conn {
 
 	GaimCircBuffer *outbuf;
 	guint writeh;
+
+	time_t recv_time;
 };
 
 struct irc_buddy {

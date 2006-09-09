@@ -37,6 +37,8 @@
 
 #include "irc.h"
 
+#define PING_TIMEOUT 60
+
 static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
 
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b);
@@ -372,6 +374,8 @@ static gboolean do_login(GaimConnection *gc) {
 		return FALSE;
 	}
 	g_free(buf);
+
+	irc->recv_time = time(NULL);
 
 	return TRUE;
 }
@@ -787,6 +791,13 @@ static void irc_roomlist_cancel(GaimRoomlist *list)
 	}
 }
 
+static void irc_keepalive(GaimConnection *gc)
+{
+	struct irc_conn *irc = gc->proto_data;
+	if ((time(NULL) - irc->recv_time) > PING_TIMEOUT)
+		irc_cmd_ping(irc, NULL, NULL, NULL);
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
@@ -826,7 +837,7 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_chat_leave,		/* chat_leave */
 	NULL,					/* chat_whisper */
 	irc_chat_send,		/* chat_send */
-	NULL,					/* keepalive */
+	irc_keepalive,		/* keepalive */
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */

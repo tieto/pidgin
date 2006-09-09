@@ -533,6 +533,8 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	char *cur, *end, *tmp, *from, *msgname, *fmt, **args, *msg;
 	guint i;
 
+	irc->recv_time = time(NULL);
+
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
 		irc_send(irc, msg);
