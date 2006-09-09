@@ -65,6 +65,7 @@ typedef struct
 #else
 	GtkWidget *find;
 #endif /* HAVE_REGEX_H */
+	GtkWidget *filterlevel;
 } DebugWindow;
 
 static char debug_fg_colors[][8] = {
@@ -379,10 +380,12 @@ regex_filter_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
 {
 	DebugWindow *win = (DebugWindow *)data;
 	gchar *text;
+	GaimDebugLevel level;
 
-	gtk_tree_model_get(m, iter, 0, &text, -1);
+	gtk_tree_model_get(m, iter, 0, &text, 1, &level, -1);
 
-	regex_match(win, text);
+	if (level >= gaim_prefs_get_int("/gaim/gtk/debug/filterlevel"))
+		regex_match(win, text);
 
 	g_free(text);
 
@@ -406,9 +409,11 @@ regex_show_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
 {
 	DebugWindow *win = (DebugWindow *)data;
 	gchar *text;
+	GaimDebugLevel level;
 
-	gtk_tree_model_get(m, iter, 0, &text, -1);
-	gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
+	gtk_tree_model_get(m, iter, 0, &text, 1, &level, -1);
+	if (level >= gaim_prefs_get_int("/gaim/gtk/debug/filterlevel"))
+		gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
 	g_free(text);
 
 	return FALSE;
@@ -512,6 +517,7 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 					 GtkTreeIter *iter, DebugWindow *win)
 {
 	gchar *text;
+	GaimDebugLevel level;
 
 	if(!win || !win->window)
 		return;
@@ -525,12 +531,14 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 	if(win->paused)
 		return;
 
-	gtk_tree_model_get(model, iter, 0, &text, -1);
+	gtk_tree_model_get(model, iter, 0, &text, 1, &level, -1);
 
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
-		regex_match(win, text);
-	} else {
-		gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
+	if (level >= gaim_prefs_get_int("/gaim/gtk/debug/filterlevel")) {
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
+			regex_match(win, text);
+		} else {
+			gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
+		}
 	}
 
 	g_free(text);
@@ -608,7 +616,71 @@ regex_filter_toggled_cb(GtkToggleButton *button, DebugWindow *win) {
 		regex_show_all(win);
 }
 
+static void
+filter_level_pref_changed(const char *name, GaimPrefType type, gconstpointer value, gpointer data)
+{
+	DebugWindow *win = data;
+
+	if (GPOINTER_TO_INT(value) != gtk_combo_box_get_active(GTK_COMBO_BOX(win->filterlevel)))
+		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel), GPOINTER_TO_INT(value));
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+		regex_filter_all(win);
+	else
+		regex_show_all(win);
+}
 #endif /* HAVE_REGEX_H */
+
+static void
+filter_level_changed_cb(GtkWidget *combo, gpointer null)
+{
+	gaim_prefs_set_int("/gaim/gtk/debug/filterlevel",
+				gtk_combo_box_get_active(GTK_COMBO_BOX(combo)));
+}
+
+static void
+toolbar_style_pref_changed_cb(const char *name, GaimPrefType type, gconstpointer value, gpointer data)
+{
+	gtk_toolbar_set_style(GTK_TOOLBAR(data), GPOINTER_TO_INT(value));
+}
+
+static void
+toolbar_icon_pref_changed(GtkWidget *item, GtkWidget *toolbar)
+{
+	int style = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "user_data"));
+	gaim_prefs_set_int("/gaim/gtk/debug/style", style);
+}
+
+static gboolean
+toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
+{
+	GtkWidget *menu, *item;
+	const char *text[3];
+	GtkToolbarStyle value[3];
+	int i;
+
+	if (!(event->button == 3 && event->type == GDK_BUTTON_PRESS))
+		return FALSE;
+
+	text[0] = _("_Icon Only");          value[0] = GTK_TOOLBAR_ICONS;
+	text[1] = _("_Text Only");          value[1] = GTK_TOOLBAR_TEXT;
+	text[2] = _("_Both Icon & Text");   value[2] = GTK_TOOLBAR_BOTH_HORIZ;
+
+	menu = gtk_menu_new();
+
+	for (i = 0; i < 3; i++) {
+		item = gtk_check_menu_item_new_with_mnemonic(text[i]);
+		g_object_set_data(G_OBJECT(item), "user_data", GINT_TO_POINTER(value[i]));
+		g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(toolbar_icon_pref_changed), toolbar);
+		if (value[i] == gaim_prefs_get_int("/gaim/gtk/debug/style"))
+			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	}
+
+	gtk_widget_show_all(menu);
+
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+	return FALSE;
+}
 
 static DebugWindow *
 debug_window_new(void)
@@ -644,7 +716,7 @@ debug_window_new(void)
 	
 #ifdef HAVE_REGEX_H
 	/* the list store for all the messages */
-	win->store = gtk_list_store_new(1, G_TYPE_STRING);
+	win->store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
 
 	/* row-changed gets called when we do gtk_list_store_set, and row-inserted
 	 * gets called with gtk_list_store_append, which is a
@@ -664,9 +736,15 @@ debug_window_new(void)
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
 		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
+#if GTK_CHECK_VERSION(2,4,0)
+		gtk_toolbar_set_show_arrow(GTK_TOOLBAR(toolbar), TRUE);
+#endif
+		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar),
-		                      GTK_TOOLBAR_BOTH_HORIZ);
+		                      gaim_prefs_get_int("/gaim/gtk/debug/style"));
+		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/style",
+	                                toolbar_style_pref_changed_cb, toolbar);
 		gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
 		                          GTK_ICON_SIZE_SMALL_TOOLBAR);
 
@@ -766,6 +844,33 @@ debug_window_new(void)
 									regex_pref_highlight_cb, win);
 
 #endif /* HAVE_REGEX_H */
+
+		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+
+		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+		                           GTK_TOOLBAR_CHILD_WIDGET, gtk_label_new(_("Level ")),
+		                           NULL, _("Select the debug filter level."),
+		                           NULL, NULL, NULL, NULL);
+		
+		win->filterlevel = gtk_combo_box_new_text();
+		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+		                           GTK_TOOLBAR_CHILD_WIDGET, win->filterlevel,
+		                           NULL, _("Select the debug filter level."),
+		                           NULL, NULL, NULL, NULL);
+		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("All"));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Misc"));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Info"));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Warning"));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Error "));
+		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Fatal Error"));
+		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel),
+					gaim_prefs_get_int("/gaim/gtk/debug/filterlevel"));
+#ifdef HAVE_REGEX_H
+		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/filterlevel",
+						filter_level_pref_changed, win);
+#endif
+		g_signal_connect(G_OBJECT(win->filterlevel), "changed",
+						 G_CALLBACK(filter_level_changed_cb), NULL);
 	}
 
 	/* Add the gtkimhtml */
@@ -865,6 +970,8 @@ gaim_gtk_debug_init(void)
 
 	/* Controls printing to the debug window */
 	gaim_prefs_add_bool("/gaim/gtk/debug/enabled", FALSE);
+	gaim_prefs_add_int("/gaim/gtk/debug/filterlevel", GAIM_DEBUG_ALL);
+	gaim_prefs_add_int("/gaim/gtk/debug/style", GTK_TOOLBAR_BOTH_HORIZ);
 
 	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/debug/width",  450);
@@ -988,9 +1095,9 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 #ifdef HAVE_REGEX_H
 	/* add the text to the list store */
 	gtk_list_store_append(debug_win->store, &iter);
-	gtk_list_store_set(debug_win->store, &iter, 0, s, -1);
+	gtk_list_store_set(debug_win->store, &iter, 0, s, 1, level, -1);
 #else /* HAVE_REGEX_H */
-	if(!debug_win->paused)
+	if(!debug_win->paused && level >= gaim_prefs_get_int("/gaim/gtk/debug/filterlevel"))
 		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
 #endif /* !HAVE_REGEX_H */
 
