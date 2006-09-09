@@ -1,5 +1,5 @@
 /*
- * @file gtksound.h GTK+ Sound
+ * @file gtksound.c GTK+ Sound
  * @ingroup gtkui
  *
  * gaim
