@@ -17,7 +17,6 @@ Sean Egan <seanegan@gmail.com> - Lead Developer
 
 Daniel 'datallah' Atallah
 Ethan 'Paco-Paco' Blanton - Developer
-Herman Bloggs - Win32 Port
 Thomas Butter - Developer
 Mark 'KingAnt' Doliner - Developer
 Christian 'ChipX86' Hammond - Developer & Webmaster
@@ -34,7 +33,6 @@ Nathan 'faceprint' Walp - Developer
 
 Crazy Patch Writers:
 --------------------
-
 Ka-Hing 'javabsp' Cheung
 Sadrul Habib Chowdhury
 Felipe 'shx' Contreras
@@ -46,6 +44,7 @@ Kevin 'SimGuy' Stange
 
 Retired Developers:
 --------
+Herman Bloggs - Win32 Port
 Jim Duchek <jim@linuxpimps.com> - maintainer
 Rob Flynn <gaim@robflynn.com> - maintainer
 Adam Fritzler - libfaim maintainer

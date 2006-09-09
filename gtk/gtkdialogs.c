@@ -66,7 +66,6 @@ static struct developer developers[] = {
 	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
-	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
 	{"Thomas Butter",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
@@ -99,8 +98,9 @@ static struct developer patch_writers[] = {
 
 /* Order: Alphabetical by Last Name */
 static struct developer retired_developers[] = {
+	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
-	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
+	{"Rob Flynn",			N_("maintainer"), "gaim@robflynn.com"},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
