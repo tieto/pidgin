@@ -28,7 +28,6 @@
 #include "connection.h"
 #include "dbus-maybe.h"
 #include "debug.h"
-#include "gaim.h"
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"

@@ -59,13 +59,14 @@ SUBDIRS = pixmaps plugins sounds
 bin_PROGRAMS = gaim
 
 gaim_SOURCES = \
+	gaimcombobox.c \
+	gaimstock.c \
 	gtkaccount.c \
 	gtkblist.c \
 	gtkcelllayout.c \
 	gtkcellrendererprogress.c \
 	gtkcellview.c \
 	gtkcellviewmenuitem.c \
-	gaimcombobox.c \
 	gtkconn.c \
 	gtkconv.c \
 	gtkdebug.c \
@@ -83,9 +84,9 @@ gaim_SOURCES = \
 	gtknotify.c \
 	gtkplugin.c \
 	gtkpluginpref.c \
+	gtkpounce.c \
 	gtkprefs.c \
 	gtkprivacy.c \
-	gtkpounce.c \
 	gtkrequest.c \
 	gtkroomlist.c \
 	gtksavedstatuses.c \
@@ -93,7 +94,6 @@ gaim_SOURCES = \
 	gtksound.c \
 	gtksourceiter.c \
 	gtkstatusbox.c \
-	gaimstock.c \
 	gtkthemes.c \
 	gtkutils.c \
 	gtkwhiteboard.c

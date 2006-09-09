@@ -38,6 +38,7 @@ libgnt_la_headers = \
 	gnttextview.h \
 	gnttree.h \
 	gntutils.h \
+	gntwm.h \
 	gnt.h
 
 libgnt_laincludedir=$(includedir)/gnt

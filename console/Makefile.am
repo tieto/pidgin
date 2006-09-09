@@ -25,7 +25,7 @@ gntgaim_headers = \
 	gntconv.h \
 	gntdebug.h \
 	gntnotify.h \
-	gntplugin.c \
+	gntplugin.h \
 	gntprefs.h \
 	gntrequest.h \
 	gntstatus.h \
