@@ -97,7 +97,7 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 {
 	guint8 search_type;
 	guint16 unknown;
-	gint bytes, pascal_len, i;
+	gint bytes, pascal_len;
 	qq_data *qd;
 	qq_group *group;
 	GSList *pending_id;
@@ -111,7 +111,6 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 
 	/* now it starts with group_info_entry */
 	bytes = 0;
-	i++;
 	bytes += read_packet_dw(data, cursor, len, &(group->internal_group_id));
 	bytes += read_packet_dw(data, cursor, len, &(group->external_group_id));
 	bytes += read_packet_b(data, cursor, len, &(group->group_type));
