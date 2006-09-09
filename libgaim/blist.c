@@ -2014,6 +2014,16 @@ const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 	return buddy->name;
 }
 
+const char *gaim_buddy_get_server_alias(GaimBuddy *buddy)
+{
+        g_return_val_if_fail(buddy != NULL, NULL);
+
+	if ((buddy->server_alias) && (*buddy->server_alias))
+	    return buddy->server_alias;
+
+	return NULL;
+}
+
 const char *gaim_buddy_get_local_alias(GaimBuddy *buddy)
 {
 	GaimContact *c;

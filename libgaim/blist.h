@@ -545,6 +545,13 @@ void gaim_blist_remove_group(GaimGroup *group);
  */
 const char *gaim_buddy_get_alias_only(GaimBuddy *buddy);
 
+/**
+ * Gets the server alias for a buddy.
+ *
+ * @param buddy  The buddy whose name will be returned
+ * @return  The server alias, or NULL if it is not set.
+ */
+const char *gaim_buddy_get_server_alias(GaimBuddy *buddy);
 
 /**
  * Returns the correct name to display for a buddy, taking the contact alias
