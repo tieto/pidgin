@@ -8,7 +8,7 @@ WriteMakefile(
     'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => '@srcdir@/Gaim.pm', # retrieve abstract from module
-       AUTHOR     => 'Christian Hammond <chipx86@gnupdate.org>') : ()),
+       AUTHOR     => 'Gaim <http://gaim.sourceforge.net/>') : ()),
     'LIBS'		=> [''], # e.g., '-lm'
     'DEFINE'		=> '@DEBUG_CFLAGS@', # e.g., '-DHAVE_SOMETHING'
     'INC'		=> '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libgaim @GLIB_CFLAGS@', # e.g., '-I. -I/usr/include/other'
