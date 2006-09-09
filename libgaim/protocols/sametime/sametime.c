@@ -33,7 +33,6 @@
 
 /* gaim includes */
 #include "internal.h"
-#include "gaim.h"
 #include "config.h"
 
 #include "account.h"
