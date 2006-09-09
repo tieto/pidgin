@@ -89,6 +89,8 @@ static SnDisplay *sn_display = NULL;
 #endif
 
 #ifdef HAVE_SIGNAL_H
+static guint clean_pid_timeout = 0;
+
 /*
  * Lists of signals we wish to catch and those we wish to ignore.
  * Each list terminated with -1
@@ -143,11 +145,43 @@ dologin_named(const char *name)
 }
 
 #ifdef HAVE_SIGNAL_H
-static void
-clean_pid(void)
+static void sighandler(int sig);
+
+/**
+ * Reap all our dead children.  Sometimes Gaim forks off a separate
+ * process to do some stuff.  When that process exits we are
+ * informed about it so that we can call waitpid() and let it
+ * stop being a zombie.
+ *
+ * We used to do this immediately when our signal handler was
+ * called, but because of GStreamer we now wait one second before
+ * reaping anything.  Why?  For some reason GStreamer fork()s
+ * during their initialization process.  I don't understand why...
+ * but they do it, and there's nothing we can do about it.
+ *
+ * Anyway, so then GStreamer waits for its child to die and then
+ * it continues with the initialization process.  This means that
+ * we have a race condition where GStreamer is waitpid()ing for its
+ * child to die and we're catching the SIGCHLD signal.  If GStreamer
+ * is awarded the zombied process then everything is ok.  But if Gaim
+ * reaps the zombie process then the GStreamer initialization sequence
+ * fails.
+ *
+ * So the ugly solution is to wait a second to give GStreamer time to
+ * reap that bad boy.
+ *
+ * GStreamer 0.10.10 and newer have a gst_register_fork_set_enabled()
+ * function that can be called by applications to disable forking
+ * during initialization.  But it's not in 0.10.0, so we shouldn't
+ * use it.
+ */
+static gboolean
+clean_pid(gpointer data)
 {
 	int status;
 	pid_t pid;
+
+	clean_pid_timeout = 0;
 
 	do {
 		pid = waitpid(-1, &status, WNOHANG);
@@ -158,6 +192,12 @@ clean_pid(void)
 		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
+
+	/* Restore signal catching */
+	signal(SIGCHLD, sighandler);
+
+	/* This timer should not be called again by glib */
+	return FALSE;
 }
 
 char *segfault_message;
@@ -175,8 +215,9 @@ sighandler(int sig)
 		abort();
 		break;
 	case SIGCHLD:
-		clean_pid();
-		signal(SIGCHLD, sighandler);    /* restore signal catching on this one! */
+		if (clean_pid_timeout > 0)
+			gaim_timeout_remove(clean_pid_timeout);
+		clean_pid_timeout = gaim_timeout_add(1000, clean_pid, NULL);
 		break;
 	default:
 		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
@@ -761,6 +802,8 @@ int main(int argc, char *argv[])
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H
+	if (clean_pid_timeout > 0)
+		gaim_timeout_remove(clean_pid_timeout);
 	g_free(segfault_message);
 #endif
 
