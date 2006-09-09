@@ -61,6 +61,14 @@ send_keepalive(gpointer data)
 static void
 update_keepalive(GaimConnection *gc, gboolean on)
 {
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (!prpl_info || !prpl_info->keepalive)
+		return;
+
 	if (on && !gc->keepalive)
 	{
 		gaim_debug_info("connection", "Activating keepalive.\n");
