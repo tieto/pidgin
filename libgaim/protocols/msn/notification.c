@@ -664,7 +664,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	int clientid;
-	const char *state, *passport, *friendly;
+	const char *state, *passport, *friendly, *old_friendly;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -676,9 +676,12 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
-	serv_got_alias(gc, passport, friendly);
-
-	msn_user_set_friendly_name(user, friendly);
+	old_friendly = msn_user_get_friendly_name(user);
+	if (old_friendly && strcmp(old_friendly, friendly))
+	{
+		serv_got_alias(gc, passport, friendly);
+		msn_user_set_friendly_name(user, friendly);
+	}
 
 	if (session->protocol_ver >= 9)
 	{

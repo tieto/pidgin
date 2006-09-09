@@ -215,12 +215,13 @@ serv_got_alias(GaimConnection *gc, const char *who, const char *alias)
 	for (buds = buddies; buds; buds = buds->next)
 	{
 		b = buds->data;
+		if (b->server_alias && !strcmp(b->server_alias, alias))
+			continue;
 		gaim_blist_server_alias_buddy(b, alias);
 
 		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, b->name, account);
 
-		if (conv != NULL && b->server_alias != NULL &&
-			strcmp(b->server_alias, alias))
+		if (conv != NULL)
 		{
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										who, alias);
