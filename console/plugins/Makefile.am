@@ -9,7 +9,7 @@ plugin_LTLIBRARIES = \
 
 plugindir = $(libdir)/gaim
 
-gntgf_la_SOURCES             = gntgf.c
+gntgf_la_SOURCES        = gntgf.c
 gnthistory_la_SOURCES        = gnthistory.c
 
 endif # PLUGINS

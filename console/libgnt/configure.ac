@@ -182,7 +182,7 @@ AC_SUBST(CFLAGS)
 PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0],,
 	[
 		AC_MSG_ERROR([
-*** GLib 2.0 is required to build Gaim; please make sure you have the GLib
+*** GLib 2.0 is required to build LibGNT; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
 *** always available at http://www.gtk.org/.])
 	])
@@ -201,8 +201,54 @@ AC_CHECK_HEADERS(termios.h)
 #AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
 #AC_VAR_TIMEZONE_EXTERNALS
 
-AC_CHECK_LIB(ncursesw, initscr, , [AC_MSG_ERROR([
-*** You need ncursesw. ])])
+GNT_CFLAGS=
+GNT_LIBS=
+AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_gnt=no])
+AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_gnt=no])
+
+# If ncursesw is not found, look for plain old ncurses
+if test "x$enable_gnt" = "xno"; then
+	AC_CHECK_LIB(ncurses, initscr, [[GNT_LIBS="-lncurses"] [enable_gnt=yes]], [enable_gnt=no])
+	AC_CHECK_LIB(panel, update_panels, [[GNT_LIBS="$GNT_LIBS -lpanel"] [enable_gnt=yes]], [enable_gnt=no])
+	AC_DEFINE(NO_WIDECHAR, [1], [Define to 1 if you do not have ncursesw.])
+else
+	dnl # Some distros put the headers in ncursesw/, some don't
+	found_ncurses_h=no
+	for f in /usr/include/ncursesw/ncurses.h /usr/include/ncurses.h
+	do
+		AC_CHECK_HEADER($f,[
+			AC_MSG_CHECKING([if $f supports wide characters])
+			AC_TRY_COMPILE([
+				#define _XOPEN_SOURCE_EXTENDED
+				#include <$f>
+			], [
+				#ifndef get_wch
+				# error get_wch not found!
+				#endif
+			], [
+				dir=`dirname $f`
+				if test x"$dir" != x"." ; then
+					GNT_CFLAGS="-I$dir/"
+				else
+					GNT_CFLAGS=""
+				fi
+
+				found_ncurses_h=yes
+				AC_MSG_RESULT([yes])
+				break
+			], [
+				AC_MSG_RESULT([no])
+			])
+		])
+	done
+fi
+AC_SUBST(GNT_CFLAGS)
+AC_SUBST(GNT_LIBS)
+
+if test "x$enable_gnt" = "xno"; then
+	AC_MSG_ERROR([
+*** You need ncursesw or ncurses.])
+fi
 
 AC_OUTPUT([Makefile
            gnt.pc

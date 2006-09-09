@@ -353,48 +353,51 @@ if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
 	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_consoleui=no])
 
-	LIBS_save="$LIBS"
-	LIBS="$LIBS $GNT_LIBS"
+	if test "x$enable_consoleui" = "xyes"; then
+		dnl # Some distros put the headers in ncursesw/, some don't
+		found_ncurses_h=no
+		for f in /usr/include/ncursesw/ncurses.h /usr/include/ncurses.h
+		do
+			AC_CHECK_HEADER($f,[
+				AC_MSG_CHECKING([if $f supports wide characters])
+				AC_TRY_COMPILE([
+					#define _XOPEN_SOURCE_EXTENDED
+					#include <$f>
+				], [
+					#ifndef get_wch
+					# error get_wch not found!
+					#endif
+				], [
+					dir=`dirname $f`
+					if test x"$dir" != x"." ; then
+						GNT_CFLAGS="-I$dir/"
+					else
+						GNT_CFLAGS=""
+					fi
 
-	dnl # Some distros put the headers in ncursesw/, some don't
-	found_ncurses_h=no
-	for f in /usr/include/ncursesw/ncurses.h /usr/include/ncurses.h
-	do
-		AC_CHECK_HEADER($f,[
-			AC_MSG_CHECKING([if $f supports wide characters])
-			AC_TRY_COMPILE([
-				#define _XOPEN_SOURCE_EXTENDED
-				#include <$f>
-			], [
-				#ifndef get_wch
-				# error get_wch not found!
-				#endif
-			], [
-				dir=`dirname $f`
-				if test x"$dir" != x"." ; then
-					GNT_CFLAGS="-I$dir/"
-				else
-					GNT_CFLAGS=""
-				fi
-
-				found_ncurses_h=yes
-				AC_MSG_RESULT([yes])
-				break
-			], [
-				AC_MSG_RESULT([no])
+					found_ncurses_h=yes
+					AC_MSG_RESULT([yes])
+					break
+				], [
+					AC_MSG_RESULT([no])
+				])
 			])
-		])
-	done
+		done
 
-	LIBS="$LIBS_save"
-
-	if test x"$found_ncurses_h" = x"no" ; then
-		GNT_LIBS=""
-		GNT_CFLAGS=""
-		enable_consoleui=no
-		AC_MSG_RESULT([no])
+		if test x"$found_ncurses_h" = x"no" ; then
+			GNT_LIBS=""
+			GNT_CFLAGS=""
+			enable_consoleui=no
+			AC_MSG_RESULT([no])
+		else
+			AC_MSG_RESULT([yes])
+		fi
 	else
-		AC_MSG_RESULT([yes])
+		# ncursesw was not found. Look for plain old ncurses
+		enable_consoleui=yes
+		AC_CHECK_LIB(ncurses, initscr, [GNT_LIBS="-lncurses"], [enable_consoleui=no])
+		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"], [enable_consoleui=no])
+		AC_DEFINE(NO_WIDECHAR, 1, [Define to 1 if you don't have wide-character support.])
 	fi
 
 	PKG_CHECK_MODULES(X11, x11,
@@ -407,7 +410,7 @@ AC_SUBST(GNT_LIBS)
 AC_SUBST(GNT_CFLAGS)
 AM_CONDITIONAL(ENABLE_GNT, test "x$enable_consoleui" = "xyes")
 
-AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
+#AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
 
 dnl #######################################################################
 dnl # Check for LibXML2 (required)

@@ -64,6 +64,7 @@ show_suggest_dropdown(GntEntry *entry)
 		entry->ddown = gnt_tree_new();
 		gnt_tree_set_compare_func(GNT_TREE(entry->ddown), (GCompareFunc)g_utf8_collate);
 		gnt_box_add_widget(GNT_BOX(box), entry->ddown);
+		/* XXX: Connect to the "activate" signal for the dropdown tree */
 
 		GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_TRANSIENT);
 

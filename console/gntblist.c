@@ -1160,6 +1160,8 @@ draw_tooltip(GGBlist *ggblist)
 static void
 selection_changed(GntWidget *widget, gpointer old, gpointer current, GGBlist *ggblist)
 {
+	if (ggblist->context)
+		remove_context_menu(ggblist);
 	draw_tooltip(ggblist);
 }
 
@@ -1568,6 +1570,15 @@ blist_node_compare(GaimBlistNode *n1, GaimBlistNode *n2)
 	return ret;
 }
 
+static gboolean
+blist_clicked(GntTree *tree, GntMouseEvent event, int x, int y, gpointer ggblist)
+{
+	if (event == GNT_RIGHT_MOUSE_DOWN) {
+		draw_context_menu(ggblist);
+	}
+	return FALSE;
+}
+
 void gg_blist_show()
 {
 	if (ggblist)
@@ -1626,6 +1637,7 @@ void gg_blist_show()
 
 	g_signal_connect(G_OBJECT(ggblist->tree), "selection_changed", G_CALLBACK(selection_changed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "key_pressed", G_CALLBACK(key_pressed), ggblist);
+	g_signal_connect_after(G_OBJECT(ggblist->tree), "clicked", G_CALLBACK(blist_clicked), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);

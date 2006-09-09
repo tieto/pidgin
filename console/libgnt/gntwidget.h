@@ -1,8 +1,6 @@
 #ifndef GNT_WIDGET_H
 #define GNT_WIDGET_H
 
-#include "config.h"
-
 #include <stdio.h>
 #include <glib.h>
 #include <glib-object.h>

@@ -1,5 +1,4 @@
-#define _XOPEN_SOURCE
-#define _XOPEN_SOURCE_EXTENDED
+#define _GNU_SOURCE
 
 #include "config.h"
 
@@ -11,6 +10,7 @@
 #include "gntkeys.h"
 #include "gntstyle.h"
 #include "gnttree.h"
+#include "gntutils.h"
 #include "gntwm.h"
 
 #include <panel.h>
@@ -26,8 +26,6 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
-
-#include <wchar.h>
 
 /**
  * Notes: Interesting functions to look at:
@@ -253,6 +251,8 @@ draw_taskbar(gboolean reposition)
 		mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
 		title = GNT_BOX(w)->title;
 		mvwprintw(taskbar, 0, width * i, "%s", title ? title : "<gnt>");
+		if (i)
+			mvwaddch(taskbar, 0, width *i - 1, ACS_VLINE | A_STANDOUT | COLOR_PAIR(GNT_COLOR_NORMAL));
 
 		update_window_in_list(w);
 	}
@@ -423,7 +423,7 @@ dump_screen()
 		for (x = 0; x < getmaxx(stdscr); x++)
 		{
 			char ch;
-			now = mvwinch(newscr, y, x);
+			now = mvwinch(curscr, y, x);
 			ch = now & A_CHARTEXT;
 			now ^= ch;
 
@@ -561,7 +561,7 @@ detect_mouse_action(const char *buffer)
 	static int offset = 0;
 	GntMouseEvent event;
 	GntWidget *widget = NULL;
-	GList *iter;
+	PANEL *p = NULL;
 
 	if (!ordered || buffer[0] != 27)
 		return FALSE;
@@ -577,8 +577,14 @@ detect_mouse_action(const char *buffer)
 	x -= 33;
 	y -= 33;
 
-	for (iter = ordered; iter; iter = iter->next) {
-		GntWidget *wid = iter->data;
+	/* It might be a better idea to use panel_below. That would allow mouse-clicks
+	 * to be operated on transient windows, which would be cool.*/
+	while ((p = panel_below(p)) != NULL) {
+		const GntNode *node = panel_userptr(p);
+		GntWidget *wid;
+		if (!node)
+			continue;
+		wid = node->me;
 		if (x >= wid->priv.x && x < wid->priv.x + wid->priv.width) {
 			if (y >= wid->priv.y && y < wid->priv.y + wid->priv.height) {
 				widget = wid;
@@ -586,6 +592,7 @@ detect_mouse_action(const char *buffer)
 			}
 		}
 	}
+
 	if (strncmp(buffer, "[M ", 3) == 0) {
 		/* left button down */
 		/* Bring the window you clicked on to front */
@@ -612,7 +619,8 @@ detect_mouse_action(const char *buffer)
 	if (wm.mouse_clicked && wm.mouse_clicked(event, x, y, widget))
 		return TRUE;
 	
-	if (event == GNT_LEFT_MOUSE_DOWN && widget) {
+	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != _list.window &&
+			!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
 		if (widget != ordered->data) {
 			GntWidget *w = ordered->data;
 			ordered = g_list_bring_to_front(ordered, widget);
@@ -644,30 +652,49 @@ detect_mouse_action(const char *buffer)
 		offset = 0;
 	}
 
-	gnt_widget_clicked(ordered->data, event, x, y);
-	return FALSE; /* XXX: this should be TRUE */
+	gnt_widget_clicked(widget, event, x, y);
+	return TRUE; /* XXX: this should be TRUE */
 }
+
+#ifndef NO_WIDECHAR
+static int
+widestringwidth(wchar_t *wide)
+{
+	int len, ret;
+	char *string;
+
+	len = wcstombs(NULL, wide, 0) + 1;
+	string = g_new0(char, len);
+	wcstombs(string, wide, len);
+	ret = gnt_util_onscreen_width(string, NULL);
+	g_free(string);
+	return ret;
+}
+#endif
 
 /* Returns the onscreen width of the character at the position */
 static int
 reverse_char(WINDOW *d, int y, int x, gboolean set)
 {
-	/* This is supposed to simply in_wch the cchar_t, set the attribute,
-	 * and add_wch. But that doesn't currently work, possibly because of
-	 * a bug in ncurses. This is an ugly hack to work around that. */
-	cchar_t ch;
-	int wc = 1, j;
-
 #define DECIDE(ch) (set ? ((ch) | WA_REVERSE) : ((ch) & ~WA_REVERSE))
 
+#ifdef NO_WIDECHAR
+	chtype ch;
+	ch = mvwinch(d, y, x);
+	mvwaddch(d, y, x, DECIDE(ch));
+	return 1;
+#else
+	cchar_t ch;
+	int wc = 1;
 	if (mvwin_wch(d, y, x, &ch) == OK) {
-		wc = wcswidth(ch.chars, CCHARW_MAX);
-		for (j = 0; j < wc; j++)
-			mvwdelch(d, y, x);
+		wc = widestringwidth(ch.chars);
 		ch.attr = DECIDE(ch.attr);
-		mvwins_wch(d, y, x, &ch);
+		ch.attr &= WA_ATTRIBUTES;   /* XXX: This is a workaround for a bug */
+		mvwadd_wch(d, y, x, &ch);
 	}
+
 	return wc;
+#endif
 }
 
 static void
@@ -1178,6 +1205,7 @@ void gnt_screen_update(GntWidget *widget)
 			node->panel = wm.new_window(node->me);
 		else
 			node->panel = new_panel(node->me->window);
+		set_panel_userptr(node->panel, node);
 		if (!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT))
 		{
 			bottom_panel(node->panel);     /* New windows should not grab focus */

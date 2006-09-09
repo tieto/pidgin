@@ -1,5 +1,3 @@
-#include "config.h"
-
 #include <panel.h>
 
 #include "gntwidget.h"

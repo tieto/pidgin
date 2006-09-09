@@ -43,6 +43,9 @@ int gnt_util_onscreen_width(const char *start, const char *end)
 {
 	int width = 0;
 
+	if (end == NULL)
+		end = start + strlen(start);
+
 	while (start < end) {
 		width += g_unichar_iswide(g_utf8_get_char(start)) ? 2 : 1;
 		start = g_utf8_next_char(start);
