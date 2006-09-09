@@ -6,7 +6,7 @@ WriteMakefile(
     'VERSION_FROM'  => '@srcdir@/Gtk.pm', # finds $VERSION
     ($] >= 5.005 ? ## Add these new keywords supported since 5.005
 	('ABSTRACT_FROM' => '@srcdir@/Gtk.pm', # finds $ABSTRACT
-	'AUTHOR'        => 'Etan Reisner <deryni@gmail.com>') :  ()),
+	'AUTHOR'        => 'Gaim <http://gaim.sourceforge.net/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@',
     'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libgaim -I@top_srcdir@/gtk @GTK_CFLAGS@',
 #    'PREREQ_PM'     => { 'Gaim' => '@VERSION@'},

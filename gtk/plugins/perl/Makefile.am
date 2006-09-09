@@ -1,4 +1,4 @@
-SUBDIRS = . common
+perl_dirs = common
 
 common_sources = \
 	common/Gtk.pm \
@@ -36,13 +36,58 @@ EXTRA_DIST = \
 	common/Makefile.mingw \
 	$(common_sources)
 
-all-local: common/Makefile
-
 common/Makefile: common/Makefile.PL
 	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
 
 common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am_depfiles_maybe)
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+
+all-local: common/Makefile
+	@for dir in $(perl_dirs); do \
+		cd $$dir && \
+		if [ ~ -f Makefile ]; then \
+			$(perlpath) Makefile.PL $(PERL_MM_PARAMS); \
+		fi && \
+		($(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS) || \
+		$(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
+		cd ..; \
+	done
+
+install-exec-local:
+	@for dir in $(perl_dirs); do \
+		cd $$dir; \
+		$(MAKE) install; \
+		cd ..; \
+	done
+
+# Evil Hack (TM)
+# ... which doesn't work with DESTDIR installs.  FIXME?
+uninstall-local:
+	@for dir in $(perl_dirs); do \
+		cd $$dir && \
+		`$(MAKE) uninstall | grep unlink | sed -e 's#/usr#${prefix}#' -e 's#unlink#rm -f#'` && \
+		cd ..; \
+	done
+
+clean-generic:
+	@for dir in $(perl_dirs); do \
+		cd $$dir; \
+		$(MAKE) clean; \
+		cd ..; \
+	done
+	rm -f *.so
+
+distclean-generic:
+	@for dir in $(perl_dirs); do \
+		cd $$dir; \
+		$(MAKE) realclean; \
+		rm -f Makefile.PL; \
+		rm -f Makefile.old; \
+		rm -f Makefile; \
+		cd ..; \
+	done
+
+	@rm -f Makefile
 
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
