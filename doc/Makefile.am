@@ -2,7 +2,6 @@ man_MANS = gaim.1 gntgaim.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
-	CREDITS \
 	FAQ \
 	PERL-HOWTO.dox \
 	TCL-HOWTO.dox \

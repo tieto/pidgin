@@ -1,22 +1,26 @@
 EXTRA_DIST = \
 		COPYRIGHT \
+		ChangeLog.API \
+		ChangeLog.win32 \
 		Doxyfile.in \
+		HACKING \
+		Makefile.mingw \
+		PLUGIN_HOWTO \
+		PROGRAMMING_NOTES \
+		README.SVN \
+		README.dbus \
+		README.mingw \
+		VERSION.in \
 		gaim.pc.in \
 		gaim.spec.in \
 		gaim.apspec.in \
 		gaim.desktop.in \
 		gaim.service.in \
 		gaim-installer.nsi \
-		HACKING \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
-		PROGRAMMING_NOTES \
-		ChangeLog.win32 \
 		config.h.mingw \
-		Makefile.mingw \
-		README.mingw \
-		VERSION.in \
 		gtk/plugins/win32/transparency/Makefile.mingw \
 		gtk/plugins/win32/transparency/win2ktrans.c \
 		gtk/plugins/win32/winprefs/gtkappbar.c \
