@@ -851,6 +851,8 @@ void
 gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 {
 #if defined(__unix__) || defined(__APPLE__)
+	g_queue_remove(queued_requests, query_data);
+
 	if (query_data->resolver != NULL)
 		/*
 		 * Ideally we would tell our resolver child to stop resolving
