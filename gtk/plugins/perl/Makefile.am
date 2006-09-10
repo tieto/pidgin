@@ -45,7 +45,7 @@ common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
 all-local: common/Makefile
 	@for dir in $(perl_dirs); do \
 		cd $$dir && \
-		if [ ~ -f Makefile ]; then \
+		if [ ! -f Makefile ]; then \
 			$(perlpath) Makefile.PL $(PERL_MM_PARAMS); \
 		fi && \
 		($(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS) || \
