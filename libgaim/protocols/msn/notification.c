@@ -677,7 +677,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	user = msn_userlist_find_user(session->userlist, passport);
 
 	old_friendly = msn_user_get_friendly_name(user);
-	if (old_friendly && strcmp(old_friendly, friendly))
+	if (!old_friendly || (old_friendly && strcmp(old_friendly, friendly)))
 	{
 		serv_got_alias(gc, passport, friendly);
 		msn_user_set_friendly_name(user, friendly);
