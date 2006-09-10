@@ -1856,8 +1856,8 @@ msn_got_photo(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	char *tooltip_text = info2_data->tooltip_text;
 
 	/* Make sure the connection is still valid if we got here by fetching a photo url */
-	if (error_message == NULL || url_text != NULL ||
-		g_list_find(gaim_connections_get_all(), info_data->gc) == NULL)
+	if (url_text && (error_message != NULL ||
+					 g_list_find(gaim_connections_get_all(), info_data->gc) == NULL))
 	{
 		gaim_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
