@@ -1,8 +1,10 @@
 gaim - the Pimpin' Penguin IM Clone that's Good for the Soul
 ============================================================
 
-We've got an IRC room now too, #gaim on irc.freenode.net (#wingaim for Windows
-users). Come check us out.
+For a complete list of all contributors, see the COPYRIGHT file.
+
+We've got an IRC room now too, #gaim on irc.freenode.net (#wingaim for
+Windows users). Come check us out.
 
 Current Developers:
 ------------------
@@ -32,7 +34,7 @@ Stu 'nosnilmot' Tomlinson - Developer
 Nathan 'faceprint' Walp - Developer
 
 Crazy Patch Writers:
---------------------
+-------------------
 Ka-Hing 'javabsp' Cheung
 Sadrul Habib Chowdhury
 Felipe 'shx' Contreras
@@ -43,7 +45,7 @@ Benjamin Miller
 Kevin 'SimGuy' Stange
 
 Retired Developers:
---------
+------------------
 Herman Bloggs - Win32 Port
 Jim Duchek <jim@linuxpimps.com> - maintainer
 Rob Flynn <gaim@robflynn.com> - maintainer
@@ -52,3 +54,71 @@ Syd Logan - hacker and designated driver [lazy bum]
 Jim Seymour - Jabber developer
 Mark Spencer <markster@marko.net> - original author
 Eric Warmenhoven <eric@warmenhoven.org> - lead developer
+
+Other Contributions:
+-------------------
+Much thanks to Evan Martin <martine@cs.washington.edu> for writing 
+GtkSpell <http://gtkspell.sourceforge.net> responsible for the 
+"Highlight misspelled words" feature and for gtk-nativewin
+<http://bunny.darktech.org/cvs/gtk-nativewin/> the default GTK+-2.0
+engine used in our win32 port.
+
+** LOGO DESIGNED BY: Naru Sundar **
+
+Peter Teichiman <peter@helixcode.com>
+Larry Ewing 
+Jeramey A. Crawford
+	Thanks to these boys.  Peter and Larry managed to stomp
+	out a large list of Mem Leaks.  Jeramey found the remaining
+	onees and pointed me to those.  Props to the boys at 
+	Helix Code.  Thanks guys.
+
+Nathan Walp
+	A healthy amount of patches for the Jabber plugin
+
+Neil Sanchala
+	Wrote most of the Zephyr plugin
+
+Arkadiusz Miskiewicz
+	Wrote the Gadu-Gadu plugin
+	
+David Prater    <IM: dRaven43>          draven@tcsx.net   
+	Log and Colour Button Images
+
+Sébastien Carpe <IM: Seb Carpe>
+	Base HTTP Proxy Support
+
+Ari Pollak      <IM: Ari Pollak>	compwiz.dhs.org
+	Resize conversation window patch   
+
+Decklin Foster
+	Many GUI improvements, other nifty additions and fixes
+
+David <IM: CrazyDavy>
+	The neato-bigger text box
+
+S D Erle
+	Writing a cool perl script to translate WinAIM lists to gaim
+
+BMiller
+	A good collection of stuff. %n for away messages, import winaim
+	lists, pic/text/pic+text for buttons, among others
+
+Lance Rocker
+	Improved HTML formatting in logs, plus lots of debugging on *BSD.
+
+ergofobe:
+	GNOME Url handler patch
+
+Justin M. Ward <justin@yossman.net>:
+	Alphabetical Away Messages patch
+
+G. Sumner Hayes <IM: SumnerFool> Security Patches
+
+Brian Ryner for a little make file patch :)
+
+Ryan C. Gordon - I still think you look like Silent Bob.
+
+Elliot Tobin <elliot@bha.udel.edu>
+
+Thanks to Jeroen van der Vegt for the initial smiley plugin and images.
