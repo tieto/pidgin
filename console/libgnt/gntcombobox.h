@@ -48,6 +48,10 @@ GntWidget *gnt_combo_box_new();
 
 void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text);
 
+void gnt_combo_box_remove(GntComboBox *box, gpointer key);
+
+void gnt_combo_box_remove_all(GntComboBox *box);
+
 gpointer gnt_combo_box_get_selected_data(GntComboBox *box);
 
 void gnt_combo_box_set_selected(GntComboBox *box, gpointer key);

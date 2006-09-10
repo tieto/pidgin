@@ -1317,6 +1317,8 @@ populate_status_dropdown()
 	GaimStatusPrimitive prims[] = {GAIM_STATUS_AVAILABLE, GAIM_STATUS_AWAY,
 			GAIM_STATUS_INVISIBLE, GAIM_STATUS_OFFLINE, GAIM_STATUS_UNSET};
 
+	gnt_combo_box_remove_all(GNT_COMBO_BOX(ggblist->status));
+
 	for (i = 0; prims[i] != GAIM_STATUS_UNSET; i++)
 	{
 		item = g_new0(StatusBoxItem, 1);
@@ -1492,7 +1494,6 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 static void
 savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 {
-	/* Block the signals we don't want to emit */
 	GList *list;
 	GaimStatusPrimitive prim;
 	const char *message;
@@ -1500,6 +1501,7 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 	if (!ggblist)
 		return;
 
+	/* Block the signals we don't want to emit */
 	g_signal_handlers_block_matched(ggblist->status, G_SIGNAL_MATCH_FUNC,
 			0, 0, NULL, status_selection_changed, NULL);
 	g_signal_handlers_block_matched(ggblist->statustext, G_SIGNAL_MATCH_FUNC,
@@ -1507,6 +1509,9 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 
 	prim = gaim_savedstatus_get_type(now);
 	message = gaim_savedstatus_get_message(now);
+
+	/* Rebuild the status dropdown */
+	populate_status_dropdown();
 
 	list = g_object_get_data(G_OBJECT(ggblist->status), "list of statuses");
 	for (; list; list = list->next)
@@ -1609,8 +1614,6 @@ void gg_blist_show()
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->status);
 	ggblist->statustext = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->statustext);
-
-	populate_status_dropdown();
 
 	gnt_widget_show(ggblist->window);
 

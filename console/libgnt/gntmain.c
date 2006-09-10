@@ -577,8 +577,6 @@ detect_mouse_action(const char *buffer)
 	x -= 33;
 	y -= 33;
 
-	/* It might be a better idea to use panel_below. That would allow mouse-clicks
-	 * to be operated on transient windows, which would be cool.*/
 	while ((p = panel_below(p)) != NULL) {
 		const GntNode *node = panel_userptr(p);
 		GntWidget *wid;

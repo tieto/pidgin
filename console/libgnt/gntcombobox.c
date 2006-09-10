@@ -287,3 +287,16 @@ void gnt_combo_box_set_selected(GntComboBox *box, gpointer key)
 	set_selection(box, key);
 }
 
+void gnt_combo_box_remove(GntComboBox *box, gpointer key)
+{
+	gnt_tree_remove(GNT_TREE(box->dropdown), key);
+	if (box->selected == key)
+		set_selection(box, NULL);
+}
+
+void gnt_combo_box_remove_all(GntComboBox *box)
+{
+	gnt_tree_remove_all(GNT_TREE(box->dropdown));
+	set_selection(box, NULL);
+}
+
