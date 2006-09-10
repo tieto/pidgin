@@ -33,16 +33,6 @@ EXTRA_DIST = \
 	op.png \
 	pending.png \
 	qq.png \
-	secure.png \
-	silc.png \
-	simple.png \
-	unavailable.png \
-	voice.png \
-	wireless.png \
-	yahoo.png \
-	zephyr.png
-
-QQ_FACES = \
 	qq_1.png \
 	qq_2.png \
 	qq_3.png \
@@ -143,7 +133,15 @@ QQ_FACES = \
 	qq_98.png \
 	qq_99.png \
 	qq_100.png
+	secure.png \
+	silc.png \
+	simple.png \
+	unavailable.png \
+	voice.png \
+	wireless.png \
+	yahoo.png \
+	zephyr.png
 
 gaimstatuspixdir = $(datadir)/pixmaps/gaim/status/default
 
-gaimstatuspix_DATA = $(EXTRA_DIST) $(QQ_FACES)
+gaimstatuspix_DATA = $(EXTRA_DIST)
