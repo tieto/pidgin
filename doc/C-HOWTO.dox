@@ -8,12 +8,12 @@
  @section getting_started Getting Started
   To develop a plugin you need to have the Gaim source code.  It is generally a
   good idea to compile against the same version of Gaim that you are running.
-  You may also want to develop against CVS.  While we do NOT recomend this for
-  normal users, it makes sense for plugin developers to use CVS to ensure their
+  You may also want to develop against SVN.  While we do NOT recomend this for
+  normal users, it makes sense for plugin developers to use SVN to ensure their
   plugins works with the most recent changes in Gaim.  A lot tends to
   change between versions and it's much easier to fix your plugin as things
-  change rather than waiting until the release.  But please do not abuse CVS.
-  Gaim puts a lot of strain on Source Forge's servers, and we do not need to
+  change rather than waiting until the release.  But please do not abuse SVN.
+  Gaim puts a lot of strain on SourceForge's servers, and we do not need to
   add anymore to it.
 
   If you choose not to head my warnings and develop against a version of Gaim
