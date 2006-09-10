@@ -166,7 +166,6 @@ static gchar *_qq_status_text(GaimBuddy *b)
 {
 	qq_buddy *q_bud;
 	GString *status;
-	gchar *ret;
 
 	q_bud = (qq_buddy *) b->proto_data;
 	if (q_bud == NULL)
@@ -195,10 +194,7 @@ static gchar *_qq_status_text(GaimBuddy *b)
 		g_string_printf(status, "Unknown-%d", q_bud->status);
 	}	
 
-	ret = status->str;
-	g_string_free(status, FALSE);
-
-	return ret;
+	return g_string_free(status, FALSE);
 }
 
 
@@ -414,17 +410,16 @@ static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
 	GaimRequestField *field;
 	struct stat img_stat;
 	FILE *file;
-	gchar *filename, *img_data, *face;
+	gchar *filename, *img_data;
+	gchar face[15];
 	gint size;
 
-	face = g_strdup_printf("qq_%i.png", face_num);
+	g_snprintf(face, sizeof(face), "qq_%i.png", face_num);
 	filename = g_build_filename(DATADIR, "pixmaps",
 			"gaim","status","default", face, NULL);
-	g_free(face);
-	face = g_strdup_printf("%i", face_num);
-	stat(filename, &img_stat);
+	g_snprintf(face, sizeof(face), "%i", face_num);
 	file = g_fopen(filename, "rb");
-	if (file) {
+	if (file && fstat(fileno(file), &img_stat) == 0) {
 		img_data = g_malloc(img_stat.st_size);
 		size = fread(img_data, 1, img_stat.st_size, file);
 
@@ -434,7 +429,6 @@ static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
 		g_free(img_data);
 		fclose(file);
 	}
-	g_free(face);
 }
 
 /* Change your status icon (face) */
@@ -445,7 +439,7 @@ static void _qq_menu_change_face(GaimPluginAction *action)
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
-	gchar *label;
+	gchar label[15];
 	gint i;
 
 	fields = gaim_request_fields_new();
@@ -454,9 +448,8 @@ static void _qq_menu_change_face(GaimPluginAction *action)
 	field = gaim_request_field_choice_new("face_num",
 		       	_("Select a number"), qd->my_icon / 3);
 	for(i = 1; i <= QQ_FACES; i++) {
-		label = g_strdup_printf("%i", i);
+		g_snprintf(label, sizeof(label), "%i", i);
 		gaim_request_field_choice_add(field, label);
-		g_free(label);
 	}
 	gaim_request_field_group_add_field(group, field);
 	group = gaim_request_field_group_new(_("Faces"));
@@ -776,9 +769,9 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
-	gchar *tmp;
+	gchar tmp[15];
 	qq_data *qd;
-       
+
 	gc = (GaimConnection *) action->context;
 	qd = (qq_data *) gc->proto_data;
 	g_return_if_fail(gc != NULL && qd != NULL);
@@ -786,17 +779,15 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 	fields = gaim_request_fields_new();
 	group = gaim_request_field_group_new(_("Basic Elements"));
 	gaim_request_fields_add_group(fields, group);
-	tmp = g_strdup_printf("%04X", QQ_CLIENT);
+	g_snprintf(tmp, sizeof(tmp), "%04X", QQ_CLIENT);
 	field = gaim_request_field_string_new("client", _("Client (hex)"), tmp, FALSE);
-	g_free(tmp);
 	gaim_request_field_group_add_field(group, field);
 	field = gaim_request_field_string_new("cmd", _("Command (hex)"), "0000", FALSE);
 	gaim_request_field_group_add_field(group, field);
 	field = gaim_request_field_string_new("seq", _("Sequence (hex)"), "0000", FALSE);
 	gaim_request_field_group_add_field(group, field);
-	tmp = g_strdup_printf("%u", qd->uid);
+	g_snprintf(tmp, sizeof(tmp), "%u", qd->uid);
 	field = gaim_request_field_string_new("uid", _("QQ Number (decimal)"), tmp, FALSE);
-	g_free(tmp);
 	gaim_request_field_group_add_field(group, field);
 	field = gaim_request_field_string_new("body", _("Body (hex)"), NULL, TRUE);
 	gaim_request_field_group_add_field(group, field);
