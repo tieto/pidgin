@@ -131,6 +131,7 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 	char *dstaddr, *p;
 	int i;
 	unsigned char hashval[20];
+	JabberID *dstjid;
 
 	if(!jsx->streamhosts) {
 		JabberIq *iq = jabber_iq_new(jsx->js, JABBER_IQ_ERROR);
@@ -156,25 +157,33 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 
 	streamhost = jsx->streamhosts->data;
 
-	jsx->gpi = gaim_proxy_info_new();
-	gaim_proxy_info_set_type(jsx->gpi, GAIM_PROXY_SOCKS5);
-	gaim_proxy_info_set_host(jsx->gpi, streamhost->host);
-	gaim_proxy_info_set_port(jsx->gpi, streamhost->port);
+	dstjid = jabber_id_new(xfer->who);
 
-	dstaddr = g_strdup_printf("%s%s%s@%s/%s", jsx->stream_id, xfer->who, jsx->js->user->node,
-			jsx->js->user->domain, jsx->js->user->resource);
+	if(dstjid != NULL) {
+		jsx->gpi = gaim_proxy_info_new();
+		gaim_proxy_info_set_type(jsx->gpi, GAIM_PROXY_SOCKS5);
+		gaim_proxy_info_set_host(jsx->gpi, streamhost->host);
+		gaim_proxy_info_set_port(jsx->gpi, streamhost->port);
 
-	gaim_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
-							  sizeof(hashval), hashval, NULL);
-	g_free(dstaddr);
-	dstaddr = g_malloc(41);
-	p = dstaddr;
-	for(i=0; i<20; i++, p+=2)
-		snprintf(p, 3, "%02x", hashval[i]);
 
-	jsx->connect_data = gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0,
-			jabber_si_bytestreams_connect_cb, xfer);
-	g_free(dstaddr);
+
+		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, dstjid->node, dstjid->domain, dstjid->resource, jsx->js->user->node,
+				jsx->js->user->domain, jsx->js->user->resource);
+
+		gaim_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
+				sizeof(hashval), hashval, NULL);
+		g_free(dstaddr);
+		dstaddr = g_malloc(41);
+		p = dstaddr;
+		for(i=0; i<20; i++, p+=2)
+			snprintf(p, 3, "%02x", hashval[i]);
+
+		jsx->connect_data = gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0,
+				jabber_si_bytestreams_connect_cb, xfer);
+		g_free(dstaddr);
+
+		jabber_id_free(dstjid);
+	}
 
 	if (jsx->connect_data == NULL)
 	{
