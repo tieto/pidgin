@@ -83,6 +83,7 @@ gaim_coreheaders = \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
+	gaim.h \
 	idle.h \
 	imgstore.h \
 	log.h \
