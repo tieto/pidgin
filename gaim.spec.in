@@ -42,6 +42,9 @@ BuildRequires: libtool, pkgconfig, intltool, gettext
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
+# For gconftool-2
+Requires: GConf2
+
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft" || "%{_vendor}" == "Mandriva"
 # Mandrake/Mandriva requirements
