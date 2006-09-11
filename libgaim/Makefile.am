@@ -192,7 +192,7 @@ gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 
 # scripts
 
-bin_SCRIPTS = gaim-notifications-example gaim-remote gaim-send gaim-send-async gaim-url-handler
+bin_SCRIPTS = gaim-remote gaim-send gaim-send-async gaim-url-handler
 
 endif
 

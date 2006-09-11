@@ -28,17 +28,17 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext
-%{!?_without_gstreamer:BuildRequires: gstreamer-devel}
 %{?_with_avahi:BuildRequires: avahi-compat-howl avahi-compat-howl-devel}
-%{?_with_howl:BuildRequires: howl-devel}
-%{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
-%{?_with_meanwhile:BuildRequires: meanwhile-devel}
-%{?_with_gadugadu:BuildRequires: libgadu-devel}
-%{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
-%{?_with_mono:BuildRequires: mono-devel}
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
+%{?_with_gadugadu:BuildRequires: libgadu-devel}
+%{!?_without_gstreamer:BuildRequires: gstreamer-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
+%{?_with_howl:BuildRequires: howl-devel}
+%{?_with_meanwhile:BuildRequires: meanwhile-devel}
+%{?_with_mono:BuildRequires: mono-devel}
 %{?_with_sasl:BuildRequires: cyrus-sasl-devel >= 2}
+%{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
+%{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
@@ -63,23 +63,14 @@ BuildRequires: mozilla-nss-devel
 %endif
 %endif
 
+%package devel
+Summary:    Development headers, documentation, and libraries for Gaim.
+Group:      Applications/Internet
+Requires:   pkgconfig, gaim = %{epoch}:%{version}
+
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package bonjour
 Summary:    Bonjour plugin for Gaim
-Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
-%endif
-
-%if 0%{?_with_silc:1}
-%package silc
-Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
-Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
-%endif
-
-%if 0%{?_with_meanwhile:1}
-%package meanwhile
-Summary:    Lotus Sametime plugin for Gaim using the Meanwhile library
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
@@ -91,9 +82,9 @@ Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
 
-%if 0%{?_with_tcl:1}
-%package tcl
-Summary:    Tcl scripting support for Gaim
+%if 0%{?_with_meanwhile:1}
+%package meanwhile
+Summary:    Lotus Sametime plugin for Gaim using the Meanwhile library
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
@@ -105,10 +96,19 @@ Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
 
-%package devel
-Summary:    Development headers, documentation, and libraries for Gaim.
+%if 0%{?_with_silc:1}
+%package silc
+Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
 Group:      Applications/Internet
-Requires:   pkgconfig, gaim = %{epoch}:%{version}
+Requires:   gaim = %{epoch}:%{version}
+%endif
+
+%if 0%{?_with_tcl:1}
+%package tcl
+Summary:    Tcl scripting support for Gaim
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
+%endif
 
 %description
 Gaim allows you to talk to anyone using a variety of messaging
@@ -123,19 +123,14 @@ unique features, such as perl scripting, TCL scripting and C plugins.
 Gaim is NOT affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
+%description devel
+The gaim-devel package contains the header files, developer
+documentation, and libraries required for development of gaim scripts
+and plugins.
+
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %description bonjour
 Bonjour plugin for Gaim
-%endif
-
-%if 0%{?_with_silc:1}
-%description silc
-SILC (Secure Internet Live Conferencing) plugin for Gaim
-%endif
-
-%if 0%{?_with_meanwhile:1}
-%description meanwhile
-Lotus Sametime plugin for Gaim using the Meanwhile library
 %endif
 
 %if 0%{?_with_gadugadu:1}
@@ -143,10 +138,9 @@ Lotus Sametime plugin for Gaim using the Meanwhile library
 Gadu-Gadu plugin for Gaim using the libgadu library
 %endif
 
-%if 0%{?_with_tcl:1}
-%description tcl
-Tcl plugin loader for Gaim.  This package will allow you to write or
-use Gaim plugins written in the Tcl programming language.
+%if 0%{?_with_meanwhile:1}
+%description meanwhile
+Lotus Sametime plugin for Gaim using the Meanwhile library
 %endif
 
 %if 0%{?_with_mono:1}
@@ -155,10 +149,16 @@ Mono plugin loader for Gaim.  This package will allow you to write or
 use Gaim plugins written in the .NET programming language.
 %endif
 
-%description devel
-The gaim-devel package contains the header files, developer
-documentation, and libraries required for development of gaim scripts
-and plugins.
+%if 0%{?_with_silc:1}
+%description silc
+SILC (Secure Internet Live Conferencing) plugin for Gaim
+%endif
+
+%if 0%{?_with_tcl:1}
+%description tcl
+Tcl plugin loader for Gaim.  This package will allow you to write or
+use Gaim plugins written in the Tcl programming language.
+%endif
 
 %prep
 %setup -q -n %{name}-@VERSION@
@@ -171,17 +171,16 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --libdir=%{_libdir} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
-                                    --with-ao=%{_libdir} \
-                                    %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
+                                    %{!?_with_dbus:--disable-dbus} \
+                                    %{?_without_gstreamer:--disable-gstreamer} \
+                                    %{?_without_gtkspell:--disable-gtkspell} \
+                                    %{?_with_mono:--enable-mono} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
+                                    %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
+                                    %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
-                                    %{?_with_mono:--enable-mono} \
-                                    %{!?_with_tcl:--disable-tcl} \
-                                    %{!?_with_dbus:--disable-dbus} \
-                                    %{?_without_gtkspell:--disable-gtkspell} \
-                                    %{?_with_sasl:--enable-cyrus-sasl} \
-                                    %{?_without_gstreamer:--disable-gstreamer}
+                                    %{!?_with_tcl:--disable-tcl}
 
 make %{?_smp_mflags}
 
@@ -197,35 +196,36 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
 make DESTDIR=$RPM_BUILD_ROOT install
 %endif
 
+# Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
-%if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
+%if 0%{!?_with_gadugadu:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libgg.so
 %endif
 
-%if 0%{!?_with_silc:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
+%if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
 %endif
 
 %if 0%{!?_with_meanwhile:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsametime.so
 %endif
 
-%if 0%{!?_with_gadugadu:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libgg.so
+%if 0%{!?_with_mono:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/mono.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.dll
+%endif
+
+%if 0%{!?_with_silc:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
 %endif
 
 %if 0%{!?_with_tcl:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
-%endif
-
-%if 0%{!?_with_mono:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/mono.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.dll
 %endif
 
 
@@ -275,49 +275,7 @@ rm -rf %{buildroot}
 %{_libdir}/libgaim-client.so.*
 %{_datadir}/dbus-1/services/gaim.service
 %doc README.dbus
-%endif
-
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
-%files bonjour
-%defattr(-, root, root)
-
-%{_libdir}/gaim/libbonjour.*
-%endif
-
-%if 0%{?_with_silc:1}
-%files silc
-%defattr(-, root, root)
-
-%{_libdir}/gaim/libsilcgaim.*
-%endif
-
-%if 0%{?_with_meanwhile:1}
-%files meanwhile
-%defattr(-, root, root)
-
-%{_libdir}/gaim/libsametime.*
-%endif
-
-%if 0%{?_with_gadugadu:1}
-%files gadugadu
-%defattr(-, root, root)
-
-%{_libdir}/gaim/libgg.*
-%endif
-
-%if 0%{?_with_tcl:1}
-%files tcl
-%defattr(-, root, root)
-
-%{_libdir}/gaim/tcl.so
-%endif
-
-%if 0%{?_with_mono:1}
-%files mono
-%defattr(-, root, root)
-
-%{_libdir}/gaim/mono.so
-%{_libdir}/gaim/*.dll
+%doc libgaim/gaim-notifications-example
 %endif
 
 %files devel
@@ -341,6 +299,49 @@ rm -rf %{buildroot}
 %{_datadir}/aclocal/gaim.m4
 %if 0%{?_with_dbus:1}
 %{_libdir}/libgaim-client.so
+%endif
+
+%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%files bonjour
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libbonjour.*
+%endif
+
+%if 0%{?_with_gadugadu:1}
+%files gadugadu
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libgg.*
+%endif
+
+%if 0%{?_with_meanwhile:1}
+%files meanwhile
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libsametime.*
+%endif
+
+%if 0%{?_with_mono:1}
+%files mono
+%defattr(-, root, root)
+
+%{_libdir}/gaim/mono.so
+%{_libdir}/gaim/*.dll
+%endif
+
+%if 0%{?_with_silc:1}
+%files silc
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libsilcgaim.*
+%endif
+
+%if 0%{?_with_tcl:1}
+%files tcl
+%defattr(-, root, root)
+
+%{_libdir}/gaim/tcl.so
 %endif
 
 %changelog
