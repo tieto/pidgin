@@ -584,15 +584,6 @@ static void _qq_menu_manage_group(GaimBlistNode * node)
 }
 */
 
-/*
-static void _qq_menu_show_system_message(GaimPluginAction *action)
-{
-	GaimConnection *gc = (GaimConnection *) action->context;
-	g_return_if_fail ( gc != NULL );
-	gaim_gtk_log_show(GAIM_LOG_IM, "systemim", gaim_connection_get_account(gc));
-}
-*/
-
 /* TODO: re-enable this
 static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored)
 {
@@ -832,11 +823,6 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 	act = gaim_plugin_action_new(_("Send Custom Packet"), _qq_menu_send_custom_packet);
 	m = g_list_append(m, act);
 */
-
-	/* XXX consider re-enabling this
-	act = gaim_plugin_action_new(_("Show System Message"), _qq_menu_show_system_message);
-	m = g_list_append(m, act);
-	*/
 
 	/*
 	act = gaim_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
