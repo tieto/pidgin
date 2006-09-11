@@ -4082,6 +4082,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_blist_refresh(list);
 	gaim_gtk_blist_restore_position();
 	gtk_widget_show_all(GTK_WIDGET(gtkblist->vbox));
+	gtk_widget_realize(GTK_WIDGET(gtkblist->window));
 	gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 
 	/* start the refresh timer */
