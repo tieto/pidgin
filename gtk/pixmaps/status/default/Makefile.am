@@ -132,7 +132,7 @@ EXTRA_DIST = \
 	qq_97.png \
 	qq_98.png \
 	qq_99.png \
-	qq_100.png
+	qq_100.png \
 	secure.png \
 	silc.png \
 	simple.png \
