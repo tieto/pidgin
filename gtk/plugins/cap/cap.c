@@ -568,10 +568,14 @@ static gboolean create_database_connection() {
 	if(_db)
 		return TRUE;
 
-	//make database connection here
+	//build the path
 	path = g_string_new(gaim_user_dir());
-	g_string_append(path, "/cap.db");
+	g_string_append(path, G_DIR_SEPARATOR_S);
+	g_string_append(path, "cap.db");
+
+	//make database connection here
 	rc = sqlite3_open(path->str, &_db);
+	g_string_free(path, TRUE);
 	if(rc != SQLITE_OK)
 		return FALSE;
 	
