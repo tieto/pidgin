@@ -59,15 +59,13 @@ typedef struct _qq_add_buddy_request {
 /* send packet to remove a buddy from my buddy list */
 static void _qq_send_packet_remove_buddy(GaimConnection *gc, guint32 uid)
 {
-	gchar *uid_str;
+	gchar uid_str[11];
 
 	g_return_if_fail(gc != NULL && uid > 0);
 
-	uid_str = g_strdup_printf("%d", uid);
+	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	qq_send_cmd(gc, QQ_CMD_DEL_FRIEND, TRUE, 0, 
 			TRUE, (guint8 *) uid_str, strlen(uid_str));
-
-	g_free(uid_str);
 }
 
 /* try to remove myself from someone's buddy list */
@@ -89,15 +87,14 @@ static void _qq_send_packet_add_buddy(GaimConnection *gc, guint32 uid)
 {
 	qq_data *qd;
 	qq_add_buddy_request *req;
-	gchar *uid_str;
+	gchar uid_str[11];
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL && uid > 0);
 
 	/* we need to send the ascii code of this uid to qq server */
-	uid_str = g_strdup_printf("%d", uid);
+	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	qq_send_cmd(gc, QQ_CMD_ADD_FRIEND_WO_AUTH, TRUE, 0, 
 			TRUE, (guint8 *) uid_str, strlen(uid_str));
-	g_free(uid_str);
 
 	/* must be set after sending packet to get the correct send_seq */
 	qd = (qq_data *) gc->proto_data;
@@ -110,12 +107,12 @@ static void _qq_send_packet_add_buddy(GaimConnection *gc, guint32 uid)
 /* this buddy needs authentication, text conversion is done at lowest level */
 static void _qq_send_packet_buddy_auth(GaimConnection *gc, guint32 uid, const gchar response, const gchar *text)
 {
-	gchar *text_qq, *uid_str;
+	gchar *text_qq, uid_str[11];
 	guint8 bar, *cursor, *raw_data;
 
 	g_return_if_fail(gc != NULL && uid != 0);
 
-	uid_str = g_strdup_printf("%d", uid);
+	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	bar = 0x1f;
 	raw_data = g_newa(guint8, QQ_MSG_IM_MAX);
 	cursor = raw_data;
@@ -132,7 +129,6 @@ static void _qq_send_packet_buddy_auth(GaimConnection *gc, guint32 uid, const gc
 	}
 
 	qq_send_cmd(gc, QQ_CMD_BUDDY_AUTH, TRUE, 0, TRUE, raw_data, cursor - raw_data);
-	g_free(uid_str);
 }
 
 static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const gchar *text)

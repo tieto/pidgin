@@ -285,13 +285,13 @@ static GString *info_to_str(const gchar **info)
 void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window)
 {
 	qq_data *qd;
-	gchar *uid_str;
+	gchar uid_str[11];
 	qq_info_query *query;
 
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL && uid != 0);
 
 	qd = (qq_data *) gc->proto_data;
-	uid_str = g_strdup_printf("%d", uid);
+	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	qq_send_cmd(gc, QQ_CMD_GET_USER_INFO, TRUE, 0, TRUE, (guint8 *) uid_str, strlen(uid_str));
 
 	query = g_new0(qq_info_query, 1);
@@ -299,8 +299,6 @@ void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_wind
 	query->show_window = show_window;
 	query->modify_info = FALSE;
 	qd->info_query = g_list_append(qd->info_query, query);
-
-	g_free(uid_str);
 }
 
 /* set up the fields requesting personal information and send a get_info packet

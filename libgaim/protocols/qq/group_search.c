@@ -64,28 +64,22 @@ void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_i
 static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 {
 	GaimRoomlistRoom *room;
-	gchar *field;
+	gchar field[11];
 
 	room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
-	field = g_strdup_printf("%d", group->external_group_id);
+	g_snprintf(field, sizeof(field), "%d", group->external_group_id);
 	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	g_free(field);
-	field = g_strdup_printf("%d", group->creator_uid);
+	g_snprintf(field, sizeof(field), "%d", group->creator_uid);
 	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	g_free(field);
 	gaim_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
-	field = g_strdup_printf("%d", group->internal_group_id);
+	g_snprintf(field, sizeof(field), "%d", group->internal_group_id);
 	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	g_free(field);
-	field = g_strdup_printf("%d", group->group_type);
+	g_snprintf(field, sizeof(field), "%d", group->group_type);
 	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	g_free(field);
-	field = g_strdup_printf("%d", group->auth_type);
+	g_snprintf(field, sizeof(field), "%d", group->auth_type);
 	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	g_free(field);
-	field = g_strdup_printf("%d", group->group_category);
+	g_snprintf(field, sizeof(field), "%d", group->group_category);
 	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	g_free(field);
 	gaim_roomlist_room_add_field(qd->roomlist, room, group->group_name_utf8);
 	gaim_roomlist_room_add(qd->roomlist, room);
 
