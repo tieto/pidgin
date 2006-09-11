@@ -37,6 +37,22 @@
 
 #define WIN32_PROXY_REGKEY "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
 
+/* These will hopefully be in the win32api next time it is updated - at which point, we'll remove them */
+#ifndef LANG_PERSIAN
+#define LANG_PERSIAN 0x29
+#endif
+#ifndef LANG_BOSNIAN
+#define SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN	0x05
+#define SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC	0x08
+#endif
+#ifndef SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN
+#define SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN	0x04
+#endif
+#ifndef LANG_XHOSA
+#define LANG_XHOSA 0x34
+#endif
+
+
 typedef int (CALLBACK* LPFNGAIMMAIN)(HINSTANCE, int, char**);
 typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCTSTR);
 typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
@@ -234,7 +250,9 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 	int sub_id = SUBLANGID(lcid);
 
 	switch (lang_id) {
-		case LANG_ARABIC: break;
+		case LANG_ARABIC: posix = "ar"; break;
+		case LANG_AZERI: posix = "az"; break;
+		case LANG_BENGALI: posix = "bn"; break;
 		case LANG_BULGARIAN: posix = "bg"; break;
 		case LANG_CATALAN: posix = "ca"; break;
 		case LANG_CHINESE:
@@ -249,6 +267,8 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 			break;
 		case LANG_CZECH: posix = "cs"; break;
 		case LANG_DANISH: posix = "da"; break;
+		case LANG_ESTONIAN: posix = "et"; break;
+		case LANG_PERSIAN: posix = "fa"; break;
 		case LANG_GERMAN: posix = "de"; break;
 		case LANG_GREEK: posix = "el"; break;
 		case LANG_ENGLISH:
@@ -264,15 +284,23 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 			}
 			break;
 		case LANG_SPANISH: posix = "es"; break;
+		case LANG_BASQUE: posix = "eu"; break;
 		case LANG_FINNISH: posix = "fi"; break;
 		case LANG_FRENCH: posix = "fr"; break;
+		case LANG_GALICIAN: posix = "gl"; break;
+		case LANG_GUJARATI: posix = "gu"; break;
 		case LANG_HEBREW: posix = "he"; break;
+		case LANG_HINDI: posix = "hi"; break;
 		case LANG_HUNGARIAN: posix = "hu"; break;
 		case LANG_ICELANDIC: break;
 		case LANG_ITALIAN: posix = "it"; break;
 		case LANG_JAPANESE: posix = "ja"; break;
+		case LANG_GEORGIAN: posix = "ka"; break;
 		case LANG_KOREAN: posix = "ko"; break;
+		case LANG_LITHUANIAN: posix = "lt"; break;
+		case LANG_MACEDONIAN: posix = "mk"; break;
 		case LANG_DUTCH: posix = "nl"; break;
+		case LANG_NEPALI: posix = "ne"; break;
 		case LANG_NORWEGIAN:
 			switch (sub_id) {
 				case SUBLANG_NORWEGIAN_BOKMAL:
@@ -281,6 +309,7 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 					posix = "nn"; break;
 			}
 			break;
+		case LANG_PUNJABI: posix = "pa"; break;
 		case LANG_POLISH: posix = "pl"; break;
 		case LANG_PORTUGUESE:
 			switch (sub_id) {
@@ -292,73 +321,63 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 			break;
 		case LANG_ROMANIAN: posix = "ro"; break;
 		case LANG_RUSSIAN: posix = "ru"; break;
-		/* LANG_CROATIAN == LANG_SERBIAN for some reason
-		 * We'll need to do something here if we ever get a croatian translation */
-		/* case LANG_CROATIAN: posix = "hr"; break;*/
+		/* LANG_CROATIAN == LANG_SERBIAN == LANG_BOSNIAN */
 		case LANG_SERBIAN:
 			switch (sub_id) {
 				case SUBLANG_SERBIAN_LATIN:
 					posix = "sr@Latn"; break;
 				case SUBLANG_SERBIAN_CYRILLIC:
 					posix = "sr"; break;
+				case SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC:
+				case SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN:
+					posix = "bs"; break;
+				case SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN:
+					posix = "hr"; break;
 			}
 			break;
 		case LANG_SLOVAK: posix = "sk"; break;
+		case LANG_SLOVENIAN: posix = "sl"; break;
 		case LANG_ALBANIAN: posix = "sq"; break;
 		case LANG_SWEDISH: posix = "sv"; break;
+		case LANG_TAMIL: posix = "ta"; break;
+		case LANG_TELUGU: posix = "te"; break;
 		case LANG_THAI: posix = "th"; break;
 		case LANG_TURKISH: posix = "tr"; break;
+		case LANG_UKRAINIAN: posix = "uk"; break;
+		case LANG_VIETNAMESE: posix = "vi"; break;
+		case LANG_XHOSA: posix = "xh"; break;
 		case LANG_URDU: break;
 		case LANG_INDONESIAN: break;
-		case LANG_UKRAINIAN: posix = "uk"; break;
 		case LANG_BELARUSIAN: break;
-		case LANG_SLOVENIAN: posix = "sl"; break;
-		case LANG_ESTONIAN: posix = "et"; break;
 		case LANG_LATVIAN: break;
-		case LANG_LITHUANIAN: posix = "lt"; break;
-		case LANG_FARSI: break;
-		case LANG_VIETNAMESE: posix = "vi"; break;
 		case LANG_ARMENIAN: break;
-		case LANG_AZERI: posix = "az"; break;
-		case LANG_BASQUE: break;
-		case LANG_MACEDONIAN: posix = "mk"; break;
 		case LANG_AFRIKAANS: break;
-		case LANG_GEORGIAN: posix = "ka"; break;
 		case LANG_FAEROESE: break;
-		case LANG_HINDI: posix = "hi"; break;
 		case LANG_MALAY: break;
 		case LANG_KAZAK: break;
 		case LANG_KYRGYZ: break;
 		case LANG_SWAHILI: break;
 		case LANG_UZBEK: break;
 		case LANG_TATAR: break;
-		case LANG_BENGALI: break;
-		case LANG_PUNJABI: posix = "pa"; break;
-		case LANG_GUJARATI: posix = "gu"; break;
 		case LANG_ORIYA: break;
-		case LANG_TAMIL: posix = "ta"; break;
-		case LANG_TELUGU: break;
 		case LANG_KANNADA: break;
 		case LANG_MALAYALAM: break;
 		case LANG_ASSAMESE: break;
 		case LANG_MARATHI: break;
 		case LANG_SANSKRIT: break;
 		case LANG_MONGOLIAN: break;
-		case LANG_GALICIAN: posix = "gl"; break;
 		case LANG_KONKANI: break;
 		case LANG_MANIPURI: break;
 		case LANG_SINDHI: break;
 		case LANG_SYRIAC: break;
 		case LANG_KASHMIRI: break;
-		case LANG_NEPALI: break;
 		case LANG_DIVEHI: break;
 	}
 
 	/* Deal with exceptions */
 	if (posix == NULL) {
 		switch (lcid) {
-			case 2125: posix = "my_MM"; break; /* Myanmar (Burmese) */
-			case 1076: posix = "xh"; break; /* Xhosa */
+			case 0x0455: posix = "my_MM"; break; /* Myanmar (Burmese) */
 			case 9999: posix = "ku"; break; /* Kurdish (from NSIS) */
 		}
 	}
