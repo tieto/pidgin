@@ -89,7 +89,6 @@ static SnDisplay *sn_display = NULL;
 #endif
 
 #ifdef HAVE_SIGNAL_H
-static guint clean_pid_timeout = 0;
 
 /*
  * Lists of signals we wish to catch and those we wish to ignore.
@@ -102,6 +101,7 @@ static int catch_sig_list[] = {
 	SIGTERM,
 	SIGQUIT,
 	SIGCHLD,
+	SIGALRM,
 	-1
 };
 
@@ -175,13 +175,11 @@ static void sighandler(int sig);
  * during initialization.  But it's not in 0.10.0, so we shouldn't
  * use it.
  */
-static gboolean
-clean_pid(gpointer data)
+static void
+clean_pid()
 {
 	int status;
 	pid_t pid;
-
-	clean_pid_timeout = 0;
 
 	do {
 		pid = waitpid(-1, &status, WNOHANG);
@@ -194,10 +192,7 @@ clean_pid(gpointer data)
 	}
 
 	/* Restore signal catching */
-	signal(SIGCHLD, sighandler);
-
-	/* This timer should not be called again by glib */
-	return FALSE;
+	signal(SIGALRM, sighandler);
 }
 
 char *segfault_message;
@@ -215,9 +210,12 @@ sighandler(int sig)
 		abort();
 		break;
 	case SIGCHLD:
-		if (clean_pid_timeout > 0)
-			gaim_timeout_remove(clean_pid_timeout);
-		clean_pid_timeout = gaim_timeout_add(1000, clean_pid, NULL);
+		/* Restore signal catching */
+		signal(SIGCHLD, sighandler);
+		alarm(1);
+		break;
+	case SIGALRM:
+		clean_pid();
 		break;
 	default:
 		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
@@ -802,8 +800,6 @@ int main(int argc, char *argv[])
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H
-	if (clean_pid_timeout > 0)
-		gaim_timeout_remove(clean_pid_timeout);
 	g_free(segfault_message);
 #endif
 
