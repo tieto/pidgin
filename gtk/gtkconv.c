@@ -5396,6 +5396,14 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 
 }
 
+static void
+gaim_gtkconv_send_confirm(GaimConversation *conv, const char *message)
+{
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->entry), message, 0);
+}
+
 /*
  * Makes sure all the menu items and all the buttons are hidden/shown and
  * sensitive/insensitive.  This is called after changing tabs and when an
@@ -5780,7 +5788,8 @@ static GaimConversationUiOps conversation_ui_ops =
 	gaim_gtkconv_has_focus,            /* has_focus            */
 	gaim_gtkconv_custom_smiley_add,    /* custom_smiley_add    */
 	gaim_gtkconv_custom_smiley_write,  /* custom_smiley_write  */
-	gaim_gtkconv_custom_smiley_close   /* custom_smiley_close  */
+	gaim_gtkconv_custom_smiley_close,  /* custom_smiley_close  */
+	gaim_gtkconv_send_confirm,         /* send_confirm         */
 };
 
 GaimConversationUiOps *

@@ -5,6 +5,7 @@ EXTRA_DIST = \
 		gaim-remote \
 		gaim-send \
 		gaim-send-async \
+		gaim-url-handler \
 		Makefile.mingw \
 		win32/global.mak \
 		win32/libc_interface.c \
@@ -17,7 +18,11 @@ EXTRA_DIST = \
 		win32/win32dep.c \
 		win32/win32dep.h
 
-SUBDIRS = plugins protocols
+if USE_GCONFTOOL
+GCONF_DIR=gconf
+endif
+
+SUBDIRS = $(GCONF_DIR) plugins protocols
 
 gaim_coresources = \
 	account.c \
@@ -187,7 +192,7 @@ gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 
 # scripts
 
-bin_SCRIPTS = gaim-notifications-example gaim-remote gaim-send gaim-send-async
+bin_SCRIPTS = gaim-notifications-example gaim-remote gaim-send gaim-send-async gaim-url-handler
 
 endif
 

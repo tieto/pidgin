@@ -174,6 +174,8 @@ struct _GaimConversationUiOps
 	void (*custom_smiley_write)(GaimConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(GaimConversation *conv, const char *smile);
+
+	void (*send_confirm)(GaimConversation *conv, const char *message);
 };
 
 /**
@@ -756,6 +758,20 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
  * @param message The message to send.
  */
 void gaim_conv_im_send(GaimConvIm *im, const char *message);
+
+/**
+ * Sends a message to a conversation after confirming with
+ * the user.
+ *
+ * This function is intended for use in cases where the user
+ * hasn't explicitly and knowingly caused a message to be sent.
+ * The confirmation ensures that the user isn't sending a
+ * message by mistake.
+ *
+ * @param conv    The conversation.
+ * @param message The message to send.
+ */
+void gaim_conv_send_confirm(GaimConversation *conv, const char *message);
 
 /**
  * Sends a message to this IM conversation with specified flags.

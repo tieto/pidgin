@@ -423,6 +423,13 @@ AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
 dnl #######################################################################
+dnl # GConf schemas
+dnl #######################################################################
+AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
+AM_CONDITIONAL(USE_GCONFTOOL, test "x$GCONFTOOL" != "xno")
+AM_GCONF_SOURCE_2
+
+dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
@@ -577,7 +584,7 @@ else
 	gadu_manual_check="no"
 fi
 if test "x$gadu_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(GADU, libgadu, [
+	PKG_CHECK_MODULES(LIBGADU, libgadu, [
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
@@ -1870,6 +1877,7 @@ AC_OUTPUT([Makefile
 		   gtk/plugins/perl/common/Makefile.PL
 		   gtk/plugins/ticker/Makefile
 		   gtk/sounds/Makefile
+		   libgaim/gconf/Makefile
 		   libgaim/plugins/Makefile
 		   libgaim/plugins/mono/Makefile
 		   libgaim/plugins/mono/api/Makefile

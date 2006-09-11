@@ -28,6 +28,7 @@
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
+#include "request.h"
 #include "signals.h"
 #include "util.h"
 
@@ -337,6 +338,8 @@ gaim_conversation_destroy(GaimConversation *conv)
 	const char *name;
 
 	g_return_if_fail(conv != NULL);
+
+	gaim_request_close_with_handle(conv);
 
 	ops  = gaim_conversation_get_ui_ops(conv);
 	gc   = gaim_conversation_get_gc(conv);
@@ -1124,6 +1127,41 @@ void
 gaim_conv_im_send(GaimConvIm *im, const char *message)
 {
 	gaim_conv_im_send_with_flags(im, message, 0);
+}
+
+static void
+gaim_conv_send_confirm_cb(gpointer *data)
+{
+	GaimConversation *conv = data[0];
+	char *message = data[1];
+
+	g_free(data);
+	common_send(conv, message, 0);
+}
+
+void
+gaim_conv_send_confirm(GaimConversation *conv, const char *message)
+{
+	char *text;
+	gpointer *data;
+
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(message != NULL);
+
+	if (conv->ui_ops != NULL && conv->ui_ops->send_confirm != NULL)
+	{
+		conv->ui_ops->send_confirm(conv, message);
+		return;
+	}
+
+	text = g_strdup_printf("You are about to send the following message:\n%s", message);
+	data = g_new0(gpointer, 2);
+	data[0] = conv;
+	data[1] = (gpointer)message;
+
+	gaim_request_action(conv, NULL, _("Send Message"), text, 0, data, 2,
+	                    _("_Send Message"), G_CALLBACK(gaim_conv_send_confirm_cb),
+	                    _("Cancel"), NULL);
 }
 
 void

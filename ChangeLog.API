@@ -321,6 +321,8 @@ version 2.0.0:
 	  call to gaim_util_fetch_url() or gaim_util_fetch_url_request().
 	* GaimGtkWindow: dialogs.search (previously in GaimGtkConversation)
 	* gaim_buddy_get_server_alias()
+	* gaim_conv_send_confirm()
+	* GaimConversationUiOps.send_confirm
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
