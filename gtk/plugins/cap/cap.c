@@ -563,20 +563,18 @@ static void create_tables() {
 }
 
 static gboolean create_database_connection() {
-	GString *path;
+	gchar *path;
 	int rc;
 
 	if(_db)
 		return TRUE;
 
 	/* build the path */
-	path = g_string_new(gaim_user_dir());
-	g_string_append(path, G_DIR_SEPARATOR_S);
-	g_string_append(path, "cap.db");
+	path = g_build_filename(gaim_user_dir(), "cap.db", (gchar *)NULL);
 
 	/* make database connection here */
-	rc = sqlite3_open(path->str, &_db);
-	g_string_free(path, TRUE);
+	rc = sqlite3_open(path, &_db);
+	g_free(path);
 	if(rc != SQLITE_OK)
 		return FALSE;
 	
