@@ -246,8 +246,15 @@ rm -rf %{buildroot}
 %files -f %{name}-%{version}-coreplugins
 %defattr(-, root, root)
 
-%doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS COPYRIGHT
-%doc README ChangeLog
+%doc AUTHORS
+%doc COPYING
+%doc COPYRIGHT
+%doc ChangeLog
+%doc NEWS
+%doc README
+%doc README.SVN
+%doc doc/FAQ
+%doc doc/the_penguin.txt
 %doc %{_mandir}/man1/*
 %doc %{_mandir}/man3*/*
 
@@ -261,10 +268,13 @@ rm -rf %{buildroot}
 %dir %{_datadir}/sounds/gaim
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
+%{_libdir}/libgaim.so.*
+%{_libdir}/libgnt.so.*
 
 %if 0%{?_with_dbus:1}
 %{_libdir}/libgaim-client.so.*
 %{_datadir}/dbus-1/services/gaim.service
+%doc README.dbus
 %endif
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
@@ -313,12 +323,21 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-, root, root)
 
-%doc plugins/HOWTO
-%doc HACKING PROGRAMMING_NOTES
+%doc ChangeLog.API
+%doc HACKING
+%doc PLUGIN_HOWTO
+%doc PROGRAMMING_NOTES
 
 %dir %{_includedir}/gaim
 %{_includedir}/gaim/*.h
+%dir %{_includedir}/gaim/gnt
+%{_includedir}/gaim/gnt/*.h
+%dir %{_includedir}/gnt
+%{_includedir}/gnt/*.h
+%{_libdir}/libgaim.so
+%{_libdir}/libgnt.so
 %{_libdir}/pkgconfig/gaim.pc
+%{_libdir}/pkgconfig/gnt.pc
 %{_datadir}/aclocal/gaim.m4
 %if 0%{?_with_dbus:1}
 %{_libdir}/libgaim-client.so
