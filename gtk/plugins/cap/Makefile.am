@@ -15,9 +15,7 @@ cap_la_SOURCES = \
 
 endif
 
-CAP_LIBS = -ldl -ldbi
-
-cap_la_LIBADD = $(CAP_LIBS)
+cap_la_LIBADD = $(SQLITE3_LIBS)
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
@@ -26,4 +24,4 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/gtk \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
-	$(CAP_CFLAGS)
+	$(SQLITE3_CFLAGS)

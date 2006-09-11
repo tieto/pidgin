@@ -324,12 +324,10 @@ specify --disable-gtkui when running configure.
 	fi
 
 	dnl #######################################################################
-	dnl # Check for libdbi (for the Contact Availability Prediction plugin)
+	dnl # Check for libsqlite3 (for the Contact Availability Prediction plugin)
 	dnl #######################################################################
 	if test "x$enable_cap" = "xyes"; then
-		AC_CHECK_HEADERS(dbi/dbi.h, , enable_cap="no")
-		AC_CHECK_LIB(dbi, dbi_result_field_is_null, CAP_LIBS="-ldbi", enable_cap="no")
-		AC_SUBST(CAP_LIBS)
+		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3, , enable_cap="no")
 	fi
 
 else # GTK

@@ -161,7 +161,6 @@ gaim_LDADD = \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
-	$(CAP_LIBS) \
 	$(top_builddir)/libgaim/libgaim.la
 
 AM_CPPFLAGS = \
