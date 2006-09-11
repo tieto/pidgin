@@ -305,9 +305,6 @@ void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint l
 	g_return_if_fail(group != NULL);
 
 	i = 0;
-	/* TODO: Something is off. I get an entry with strange values 
-	 * (including a nick of "") buried in here. I need to find more 
-	 * groups to join before I can figure this out */
 	/* now starts the member info, as get buddy list reply */
 	while (*cursor < data + len) {
 		read_packet_dw(data, cursor, len, &member_uid);
