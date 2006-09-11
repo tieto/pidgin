@@ -95,7 +95,7 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 
 	
 	if(strcmp(gaim_status_get_id(get_status_for(buddy)), "offline") == 0) {
-		//This is kind of stupid, change it.
+		/* This is kind of stupid, change it. */
 		if(prediction == 1.0f)
 			prediction = 0.0f;
 	}
@@ -131,8 +131,8 @@ static CapStatistics * get_stats_for(GaimBuddy *buddy) {
 static void destroy_stats(gpointer data) {
 	CapStatistics *stats = data;
 	g_free(stats->prediction);
-	//g_free(stats->hourly_usage);
-	//g_free(stats->daily_usage);
+	/* g_free(stats->hourly_usage); */
+	/* g_free(stats->daily_usage); */
 	g_free(stats);
 }
 
@@ -338,7 +338,7 @@ static gboolean max_message_difference_cb(gpointer data) {
 
 /* Gaim Signal Handlers */
 
-//sent-im-msg
+/* sent-im-msg */
 static void sent_im_msg(GaimAccount *account, const char *receiver, const char *message) {
 	GaimBuddy *buddy = gaim_find_buddy(account, receiver);
 	guint interval = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 1000 * 60;
@@ -354,17 +354,17 @@ static void sent_im_msg(GaimAccount *account, const char *receiver, const char *
 	stats->timeout_source_id = g_timeout_add(interval, max_message_difference_cb, stats);
 }
 
-//received-im-msg
+/* received-im-msg */
 static void
 received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversation *conv, GaimMessageFlags flags) {
 	GaimBuddy *buddy = gaim_find_buddy(account, sender);
-	//guint words = word_count(message);
+	/* guint words = word_count(message); */
 	CapStatistics *stats = get_stats_for(buddy);
 
-	//insert_word_count(sender, buddy_name, words);
+	/* insert_word_count(sender, buddy_name, words); */
 	
-	//If we are waiting for a response from a prior message
-	// then cancel the timeout callback.
+	/* If we are waiting for a response from a prior message
+	 * then cancel the timeout callback. */
 	if(stats->timeout_source_id != 0) {
 		gaim_debug_info("cap", "Cancelling timeout callback\n");
 		g_source_remove(stats->timeout_source_id);
@@ -373,24 +373,25 @@ received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversat
 
 	insert_cap_success(stats);
 
-	stats->last_message = -1; //Reset the last_message value
-	stats->last_message_status_id = NULL; //Reset the last status id value
+	/* Reset the last_message value */
+	stats->last_message = -1;
+	/* Reset the last status id value */
+	stats->last_message_status_id = NULL;
 }
 
-//buddy-status-changed
+/* buddy-status-changed */
 static void buddy_status_changed(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status) {
 	CapStatistics *stats = get_stats_for(buddy);
 	insert_status_change_from_gaim_status(stats, status);
 }
 
-//buddy-signed-on
+/* buddy-signed-on */
 static void buddy_signed_on(GaimBuddy *buddy) {
 	CapStatistics *stats = get_stats_for(buddy);
 	
 	/* If the statistic object existed but doesn't have a buddy pointer associated
 	 * with it then reassociate one with it. The pointer being null is a result
-	 * of a buddy with existing stats signing off and Gaim sticking around.
-	 */
+	 * of a buddy with existing stats signing off and Gaim sticking around. */
 	if(!stats->buddy) {
 		stats->buddy = buddy;
 	}
@@ -398,7 +399,7 @@ static void buddy_signed_on(GaimBuddy *buddy) {
 	insert_status_change(stats);
 }
 
-//buddy-signed-off
+/* buddy-signed-off */
 static void buddy_signed_off(GaimBuddy *buddy) {
 	CapStatistics *stats = get_stats_for(buddy);
 
@@ -407,7 +408,7 @@ static void buddy_signed_off(GaimBuddy *buddy) {
 	 * them up again and continue using their statistics.
 	 */
 	insert_status_change(stats);
-	//stats->buddy = NULL;
+	/* stats->buddy = NULL; */
 	stats->last_seen = time(NULL);
 }
 
@@ -429,12 +430,12 @@ static void blist_node_extended_menu(GaimBlistNode *node, GList **menu) {
 	*menu = g_list_append(*menu, menu_action);
 }
 
-//drawing-tooltip
+/* drawing-tooltip */
 static void drawing_tooltip(GaimBlistNode *node, GString *text, gboolean full) {
 	if(node->type == GAIM_BLIST_BUDDY_NODE) {
 		GaimBuddy *buddy = (GaimBuddy *)node;
 		CapStatistics *stats = get_stats_for(buddy);
-		// get the probability that this buddy will respond and add to the tooltip
+		/* get the probability that this buddy will respond and add to the tooltip */
 		if(stats->prediction->probability >= 0.0) {
 			g_string_append_printf(text, "\n<b>%s</b> %3.0f %%", _("Response Probability:"),
 				100 * stats->prediction->probability);
@@ -444,7 +445,7 @@ static void drawing_tooltip(GaimBlistNode *node, GString *text, gboolean full) {
 	}
 }
 
-//signed-on
+/* signed-on */
 static void signed_on(GaimConnection *gc) {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const char *my_gaim_name = gaim_account_get_username(account);
@@ -461,7 +462,7 @@ static void signed_on(GaimConnection *gc) {
 
 	if(last_offline) {
 		if(difftime(*last_offline, time(NULL)) > gaim_prefs_get_int("/plugins/gtk/cap/max_seen_difference") * 60) {
-			//reset all of the last_message times to -1
+			/* reset all of the last_message times to -1 */
 			g_hash_table_foreach(_my_offline_times, reset_all_last_message_times, NULL);
 		}
 		g_hash_table_remove(_my_offline_times, my_name);
@@ -469,7 +470,7 @@ static void signed_on(GaimConnection *gc) {
 	g_free(my_name);
 }
 
-//signed-off
+/* signed-off */
 static void signed_off(GaimConnection *gc) {
 	/* Here we record the time you (the user) sign off of an account.
 	 * The account username is the key in the hashtable and the sign off time_t
@@ -568,18 +569,18 @@ static gboolean create_database_connection() {
 	if(_db)
 		return TRUE;
 
-	//build the path
+	/* build the path */
 	path = g_string_new(gaim_user_dir());
 	g_string_append(path, G_DIR_SEPARATOR_S);
 	g_string_append(path, "cap.db");
 
-	//make database connection here
+	/* make database connection here */
 	rc = sqlite3_open(path->str, &_db);
 	g_string_free(path, TRUE);
 	if(rc != SQLITE_OK)
 		return FALSE;
 	
-	//Add tables here
+	/* Add tables here */
 	create_tables();
 	gaim_debug_info("cap", "Database connection successfully made.\n");
 	return TRUE;
@@ -592,7 +593,7 @@ static void destroy_database_connection() {
 }
 
 static guint word_count(const gchar *string) {
-	//TODO: doesn't really work, should use regex instead (#include <regex.h>)
+	/*TODO: doesn't really work, should use regex instead (#include <regex.h>)*/
 	gchar **result = g_strsplit_set(string, " ", -1);
 	guint count = g_strv_length(result);
 
@@ -634,9 +635,9 @@ static void insert_status_change_from_gaim_status(CapStatistics *statistics, Gai
 }
 
 static void insert_word_count(const char *sender, const char *receiver, guint count) {
-	//TODO!
-	//dbi_result result;
-	//result = dbi_conn_queryf(_conn, "insert into cap_message values(\'%s\', \'%s\', %d, now());", sender, receiver, count);
+	/* TODO! */
+	/* dbi_result result; */
+	/* result = dbi_conn_queryf(_conn, "insert into cap_message values(\'%s\', \'%s\', %d, now());", sender, receiver, count); */
 }
 
 /* Callbacks */
@@ -691,8 +692,8 @@ static void add_plugin_functionality(GaimPlugin *plugin) {
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-off", plugin,
 			GAIM_CALLBACK(buddy_signed_off), NULL);
 
-	//gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
-	//		GAIM_CALLBACK(blist_node_extended_menu), NULL);
+	/*gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
+			GAIM_CALLBACK(blist_node_extended_menu), NULL);*/
 
 	gaim_signal_connect(gaim_gtk_blist_get_handle(), "drawing-tooltip", plugin,
 			GAIM_CALLBACK(drawing_tooltip), NULL);
@@ -742,8 +743,8 @@ static void remove_plugin_functionality(GaimPlugin *plugin) {
 	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-signed-off", plugin,
 			GAIM_CALLBACK(buddy_signed_off));
 
-	//gaim_signal_disconnect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
-	//		GAIM_CALLBACK(blist_node_extended_menu));
+	/*gaim_signal_disconnect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
+			GAIM_CALLBACK(blist_node_extended_menu));*/
 
 	gaim_signal_disconnect(gaim_gtk_blist_get_handle(), "drawing-tooltip", plugin,
 			GAIM_CALLBACK(drawing_tooltip));
@@ -770,13 +771,13 @@ static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_da
 static gboolean plugin_unload(GaimPlugin *plugin) {
 	gaim_debug_info("cap", "CAP plugin unloading\n");
 	
-	//clean up memory allocations
+	/* clean up memory allocations */
 	if(_buddy_stats) {
 		g_hash_table_foreach(_buddy_stats, write_stats_on_unload, NULL);
 		g_hash_table_destroy(_buddy_stats);
 	}
 	 
-	 //close database connection
+	 /* close database connection */
 	 destroy_database_connection();
 
 	return TRUE;

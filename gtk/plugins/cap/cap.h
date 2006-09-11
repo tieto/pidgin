@@ -88,23 +88,23 @@ static void insert_cap_success(CapStatistics *stats);
 static void insert_cap_failure(CapStatistics *stats);
 static gboolean max_message_difference_cb(gpointer data);
 /* Gaim Signal Handlers */
-//sent-im-msg
+/* sent-im-msg */
 static void sent_im_msg(GaimAccount *account, const char *receiver, const char *message);
-//received-im-msg
+/* received-im-msg */
 static void received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversation *conv, GaimMessageFlags flags);
-//buddy-status-changed
+/* buddy-status-changed */
 static void buddy_status_changed(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status);
-//buddy-signed-on
+/* buddy-signed-on */
 static void buddy_signed_on(GaimBuddy *buddy);
-//buddy-signed-off
+/* buddy-signed-off */
 static void buddy_signed_off(GaimBuddy *buddy);
 static void buddy_idle(GaimBuddy *buddy, gboolean old_idle, gboolean idle);
 static void blist_node_extended_menu(GaimBlistNode *node, GList **menu);
-//drawing-tooltip
+/* drawing-tooltip */
 static void drawing_tooltip(GaimBlistNode *node, GString *text, gboolean full);
-//signed-on
+/* signed-on */
 static void signed_on(GaimConnection *gc);
-//signed-off
+/* signed-off */
 static void signed_off(GaimConnection *gc);
 static void reset_all_last_message_times(gpointer key, gpointer value, gpointer user_data);
 static GaimStatus * get_status_for(GaimBuddy *buddy);
