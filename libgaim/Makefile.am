@@ -187,10 +187,7 @@ gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 
 # scripts
 
-bin_SCRIPTS = gaim-remote gaim-send gaim-send-async
-
-exampledir = $(datadir)/doc/@PACKAGE@/examples
-example_DATA = gaim-notifications-example
+bin_SCRIPTS = gaim-notifications-example gaim-remote gaim-send gaim-send-async
 
 endif
 
