@@ -112,6 +112,7 @@ static struct developer retired_developers[] = {
 
 /* Order: Code, then Alphabetical by Last Name */
 static struct translator current_translators[] = {
+	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
 	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
