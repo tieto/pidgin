@@ -46,6 +46,13 @@ static int Y_MAX;
 static gboolean ascii_only;
 static gboolean mouse_enabled;
 
+/**
+ * 'event_stack' will be set to TRUE when a user-event, ie. a mouse-click
+ * or a key-press is being processed. This variable will be used to determine
+ * whether to give focus to a new window.
+ */
+static gboolean event_stack;
+
 static GMainLoop *loop;
 
 static struct
@@ -132,7 +139,11 @@ void gnt_screen_take_focus(GntWidget *widget)
 
 	focus_list = g_list_append(focus_list, widget);
 
-	ordered = g_list_append(ordered, widget);
+	if (event_stack) {
+		ordered = g_list_prepend(ordered, widget);
+		g_object_set_data(G_OBJECT(widget), "give_focus", GINT_TO_POINTER(event_stack));
+	} else
+		ordered = g_list_append(ordered, widget);
 
 	gnt_widget_set_focus(widget, TRUE);
 	if (w)
@@ -741,6 +752,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		exit(1);
 	}
 
+	event_stack = TRUE;
 	keys[rd] = 0;
 
 	if (keys[0] == 27 && keys[1] == 'd' && keys[2] == 0)
@@ -756,8 +768,10 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	
 	if (wm.key_pressed) {
 		buffer = wm.key_pressed(keys);
-		if (buffer == NULL)
+		if (buffer == NULL) {
+			event_stack = FALSE;
 			return TRUE;
+		}
 	} else
 		buffer = keys;
 
@@ -969,6 +983,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		}
 	}
 
+	event_stack = FALSE;
 	return TRUE;
 }
 
@@ -1204,10 +1219,14 @@ void gnt_screen_update(GntWidget *widget)
 		else
 			node->panel = new_panel(node->me->window);
 		set_panel_userptr(node->panel, node);
-		if (!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT))
-		{
-			bottom_panel(node->panel);     /* New windows should not grab focus */
-			gnt_widget_set_urgent(node->me);
+		if (!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT)) {
+			if (!g_object_get_data(G_OBJECT(node->me), "give_focus")) {
+				bottom_panel(node->panel);     /* New windows should not grab focus */
+				gnt_widget_set_urgent(node->me);
+			}
+			else {
+				bring_on_top(node->me);
+			}
 		}
 	}
 
