@@ -4380,8 +4380,8 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		if(!insert_node(list, gnode, &iter))
 			return;
 
-		bgcolor = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
-		textcolor = gtkblist->treeview->style->text[GTK_STATE_ACTIVE];
+		bgcolor = gtkblist->treeview->style->bg[GTK_STATE_ACTIVE];
+		textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
@@ -4414,11 +4414,10 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 {
 	GaimPresence *presence;
-	GdkColor expandcolor;
 	GdkPixbuf *status, *avatar;
 	char *mark;
 	char *idle = NULL;
-	gboolean expanded = ((struct _gaim_gtk_blist_node*)(node->parent->ui_data))->contact_expanded;
+	gboolean expanded = ((struct _gaim_gtk_blist_node *)(node->parent->ui_data))->contact_expanded;
 	gboolean selected = (gtkblist->selected_node == node);
 	gboolean biglist = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
 	presence = gaim_buddy_get_presence(buddy);
@@ -4456,15 +4455,6 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 		}
 	}
 
-	if (expanded) {
-		GdkColor fore = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
-		GdkColor back = gtkblist->treeview->style->base[GTK_STATE_NORMAL];
-		expandcolor.red = (fore.red + back.red) / 2;
-		expandcolor.green = (fore.green + back.green) / 2;
-		expandcolor.blue = (fore.blue + back.blue) / 2;
-	}
-			
-
 	gtk_tree_store_set(gtkblist->treemodel, iter,
 			   STATUS_ICON_COLUMN, status,
 			   STATUS_ICON_VISIBLE_COLUMN, TRUE,
@@ -4473,7 +4463,7 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			   IDLE_VISIBLE_COLUMN, !biglist && idle,
 			   BUDDY_ICON_COLUMN, avatar,
 			   BUDDY_ICON_VISIBLE_COLUMN, biglist,
-			   BGCOLOR_COLUMN, expanded ? &expandcolor : NULL,
+			   BGCOLOR_COLUMN, NULL,
 			   CONTACT_EXPANDER_COLUMN, NULL,
 			   CONTACT_EXPANDER_VISIBLE_COLUMN, expanded,
 			-1);
@@ -4524,33 +4514,24 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 			GdkPixbuf *status;
 			char *mark;
 			char *white;
-			GdkColor bgcolor;
-			GdkColor textcolor;
-	
-			bgcolor = gtkblist->treeview->style->base[GTK_STATE_ACTIVE];
-			textcolor = gtkblist->treeview->style->text[GTK_STATE_ACTIVE];
 
 			status = gaim_gtk_blist_get_status_icon(cnode,
 					(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons") ?
 					 GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL));
 
 			mark = g_markup_escape_text(gaim_contact_get_alias(contact), -1);
-			white = g_strdup_printf("<span color='#%02x%02x%02x'>%s</span>",
-						textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-						mark);
-			g_free(mark);
 			gtk_tree_store_set(gtkblist->treemodel, &iter,
 					   STATUS_ICON_COLUMN, status,
 					   STATUS_ICON_VISIBLE_COLUMN, TRUE,
-					   NAME_COLUMN, white,
+					   NAME_COLUMN, mark,
 					   IDLE_COLUMN, NULL,
 					   IDLE_VISIBLE_COLUMN, FALSE,
-					   BGCOLOR_COLUMN, &bgcolor,
+					   BGCOLOR_COLUMN, NULL,
 					   BUDDY_ICON_COLUMN, NULL,
 					   CONTACT_EXPANDER_COLUMN, gtkblist->expander_expanded,
 					   CONTACT_EXPANDER_VISIBLE_COLUMN, TRUE,
 					-1);
-			g_free(white);
+			g_free(mark);
 			if(status)
 				g_object_unref(status);
 		} else {
