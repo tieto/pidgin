@@ -82,4 +82,4 @@ clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
 
-include $(GAIM_COMMON_RULES)
+include $(GAIM_COMMON_TARGETS)
