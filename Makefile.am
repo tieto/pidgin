@@ -10,7 +10,6 @@ EXTRA_DIST = \
 		README.SVN \
 		README.dbus \
 		README.mingw \
-		VERSION.in \
 		gaim.pc.in \
 		gaim.spec.in \
 		gaim.apspec.in \

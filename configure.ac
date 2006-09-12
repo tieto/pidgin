@@ -1841,17 +1841,6 @@ if test "x$enable_fatal_asserts" = "xyes" ; then
 	AC_DEFINE(GAIM_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
-AC_CONFIG_COMMANDS_PRE([
-	if test -e VERSION; then
-		cp -p VERSION VERSION.ac-save
-	fi
-])
-
-AC_CONFIG_COMMANDS_POST([
-	cmp VERSION VERSION.ac-save || touch -r VERSION.ac-save VERSION
-	rm -f VERSION.ac-save
-])
-
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   gaim.apspec
