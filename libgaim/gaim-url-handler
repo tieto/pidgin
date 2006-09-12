@@ -234,7 +234,7 @@ def ymsgr(uri):
 
     account = findaccount(protocol)
 
-    if command.lower() == "sendIM":
+    if command.lower() == "sendim":
         goim(account, screenname, params.get("m"))
     elif command.lower() == "chat":
         gochat(account, {"room": screenname})
