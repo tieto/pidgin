@@ -56,6 +56,8 @@
 #include "oscar.h"
 #include "peer.h"
 
+#include "util.h"
+
 /**
  * Calculate oft checksum of buffer
  *
@@ -440,17 +442,37 @@ void
 peer_oft_sendcb_init(GaimXfer *xfer)
 {
 	PeerConnection *conn;
+	size_t size;
 
 	conn = xfer->data;
 	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
+
+	/* Make sure the file size can be represented in 32 bits */
+	size = gaim_xfer_get_size(xfer);
+	if (size > G_MAXUINT32)
+	{
+		gchar *tmp, *size1, *size2;
+		size1 = gaim_str_size_to_units(size);
+		size2 = gaim_str_size_to_units(G_MAXUINT32);
+		tmp = g_strdup_printf(_("File %s is %s, which is larger than "
+				"the maximum size of %s."),
+				xfer->local_filename, size1, size2);
+		gaim_xfer_error(gaim_xfer_get_type(xfer),
+				gaim_xfer_get_account(xfer), xfer->who, tmp);
+		g_free(size1);
+		g_free(size2);
+		g_free(tmp);
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
+		return;
+	}
 
 	/* Keep track of file transfer info */
 	conn->xferdata.totfiles = 1;
 	conn->xferdata.filesleft = 1;
 	conn->xferdata.totparts = 1;
 	conn->xferdata.partsleft = 1;
-	conn->xferdata.totsize = gaim_xfer_get_size(xfer);
-	conn->xferdata.size = gaim_xfer_get_size(xfer);
+	conn->xferdata.totsize = size;
+	conn->xferdata.size = size;
 	conn->xferdata.checksum = 0xffff0000;
 	conn->xferdata.rfrcsum = 0xffff0000;
 	conn->xferdata.rfcsum = 0xffff0000;
