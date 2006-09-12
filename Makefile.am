@@ -30,7 +30,7 @@ EXTRA_DIST = \
 		po/Makefile.mingw
 
 gaimincludedir=$(includedir)/gaim
-gaiminclude_HEADERS = config.h
+nodist_gaiminclude_HEADERS = config.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gaim.pc

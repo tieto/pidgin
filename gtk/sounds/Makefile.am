@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+		Makefile.mingw \
 		alert.wav \
 		login.wav \
 		logout.wav \
