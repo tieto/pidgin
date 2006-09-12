@@ -99,6 +99,12 @@ static int do_send(struct irc_conn *irc, const char *buf, gsize len)
 	return ret;
 }
 
+static int irc_send_raw(GaimConnection *gc, const char *buf, int len)
+{
+	struct irc_conn *irc = (struct irc_conn*)gc->proto_data;
+	return do_send(irc, buf, len);
+}
+
 static void
 irc_send_cb(gpointer data, gint source, GaimInputCondition cond)
 {
@@ -860,6 +866,7 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_dccsend_new_xfer,	/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
+	irc_send_raw,				/* send_raw */
 };
 
 

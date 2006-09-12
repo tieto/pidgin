@@ -521,6 +521,12 @@ static void sendout_pkt(GaimConnection *gc, const char *buf) {
 	}
 }
 
+static void simple_send_raw(GaimConnection *gc, const char *buf, int len)
+{
+	sendout_pkt(gc, buf);
+	return len;
+}
+
 static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) {
 	GSList *tmp = msg->headers;
 	gchar *name;
@@ -1792,6 +1798,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
+	simple_send_raw,			/* send_raw */
 };
 
 

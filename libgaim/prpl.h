@@ -298,6 +298,9 @@ struct _GaimPluginProtocolInfo
 	gboolean (*offline_message)(const GaimBuddy *buddy);
 
 	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
+
+	/* For use in plugins that may understand the underlying protocol */
+	int (*send_raw)(GaimConnection *gc, const char *buf, int len);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

@@ -881,6 +881,14 @@ msn_send_typing(GaimConnection *gc, const char *who, GaimTypingState state)
 	return MSN_TYPING_SEND_TIMEOUT;
 }
 
+static int 
+msn_send_raw(GaimConnection *gc, const char *buf, int len)
+{
+	MsnServConn *servconn = (MsnServConn*)gc->proto_data;
+	return msn_servconn_write(servconn, buf, len);
+}
+	
+
 static void
 msn_set_status(GaimAccount *account, GaimStatus *status)
 {
@@ -2012,6 +2020,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_new_xfer,			/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
+	msn_send_raw,				/* send_raw */
 };
 
 static GaimPluginInfo info =

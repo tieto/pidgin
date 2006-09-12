@@ -325,7 +325,14 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		gaim_circ_buffer_append(js->write_buffer,
 			data + ret, len - ret);
 	}
+	return;
+}
 
+int jabber_prpl_send_raw(GaimConnection *gc, const char *buf, int len)
+{
+	JabberStream *js = (JabberStream*)gc->proto_data;
+	jabber_send_raw(js, buf, len);
+	return len;
 }
 
 void jabber_send(JabberStream *js, xmlnode *packet)
@@ -1884,6 +1891,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
 	NULL,							/* whiteboard_prpl_ops */
+	jabber_send_raw,			/* send_raw */
 };
 
 static gboolean load_plugin(GaimPlugin *plugin)

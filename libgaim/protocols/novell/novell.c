@@ -3529,6 +3529,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* new_xfer */
 	NULL,						/* offline_message */
 	NULL,						/* whiteboard_prpl_ops */
+	NULL,						/* send_raw */
 };
 
 static GaimPluginInfo info = {

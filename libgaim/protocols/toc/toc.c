@@ -414,6 +414,11 @@ static int sflap_send(GaimConnection *gc, const char *buf, int olen, int type)
 	return ret;
 }
 
+static int toc_send_raw(GaimConnection *gc, const char *buf, int len)
+{
+	return sflap_send(gc, buf, len, 2);
+}
+
 static int wait_reply(GaimConnection *gc, char *buffer, size_t buflen)
 {
 	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
@@ -2068,7 +2073,7 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	hdr->magic[0] = 'O'; hdr->magic[1] = 'F'; hdr->magic[2] = 'T'; hdr->magic[3] = '2';
 	hdr->hdrlen = htons(256);
 	hdr->hdrtype = htons(0x1108);
-	frombase64(ft->cookie, &buf, NULL);
+	rombase64(ft->cookie, &buf, NULL);
 	g_snprintf(hdr->bcookie, 8, "%s", buf);
 	g_free(buf);
 	hdr->totfiles = htons(1); hdr->filesleft = htons(1);
@@ -2300,6 +2305,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
+	toc_send_raw,				/* send_raw */
 };
 
 static GaimPluginInfo info =

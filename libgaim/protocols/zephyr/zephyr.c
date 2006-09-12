@@ -2915,6 +2915,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,					/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
+	NULL,					/* send_raw */
 };
 
 static GaimPluginInfo info = {
@@ -2944,7 +2945,7 @@ static GaimPluginInfo info = {
 	NULL,						  /**< ui_info	      */
 	&prpl_info,					  /**< extra_info     */
 	NULL,
-	zephyr_actions
+	zephyr_actions,
 };
 
 static void init_plugin(GaimPlugin * plugin)
