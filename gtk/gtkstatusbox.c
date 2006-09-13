@@ -1252,27 +1252,33 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	GtkRequisition req = {0,0};
 	GtkAllocation parent_alc, box_alc, icon_alc;
 	GdkPixbuf *scaled;
+	gint border_width = GTK_CONTAINER (widget)->border_width;
 
 	combo_box_size_request(widget, &req);
 
 	box_alc = *allocation;
-	box_alc.height = MAX(1, (allocation->height - req.height - 6));
-	box_alc.y += req.height + 6;
+	
+	box_alc.width -= (border_width * 2);
+	box_alc.height = MAX(1, ((allocation->height - req.height) - (border_width*2)));
+	box_alc.x += border_width;
+	box_alc.y += req.height + border_width;
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
 
 	parent_alc = *allocation;
-	parent_alc.height = MAX(1,req.height);
-	parent_alc.y += 3;
+	parent_alc.height = MAX(1,req.height - (border_width ));
+	parent_alc.width -= (border_width * 2);
+	parent_alc.x += border_width;
+	parent_alc.y += border_width;
 
 	if (status_box->icon_box)
 	{
-		parent_alc.width -= (parent_alc.height + 3);
+		parent_alc.width -= (parent_alc.height + border_width);
 		icon_alc = *allocation;
-		icon_alc.height = MAX(1,req.height);
+		icon_alc.height = MAX(1,req.height) - (border_width);
 		icon_alc.width = icon_alc.height;
-		icon_alc.x = allocation->width - icon_alc.width;
-		icon_alc.y += 3;
-
+		icon_alc.x = allocation->width - (icon_alc.width + border_width);
+		icon_alc.y += border_width;
+	       
 		if (status_box->icon_size != icon_alc.height)
 		{
 			if (status_box->buddy_icon_hover)
