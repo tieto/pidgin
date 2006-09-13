@@ -124,6 +124,8 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 
 		sep = gtk_hseparator_new();
 		gtk_box_pack_start(GTK_BOX(vbox), sep, FALSE, FALSE, 0);
+		g_signal_connect_swapped(G_OBJECT(toolbar), "show", G_CALLBACK(gtk_widget_show), sep);
+		g_signal_connect_swapped(G_OBJECT(toolbar), "hide", G_CALLBACK(gtk_widget_hide), sep);
 		gtk_widget_show(sep);
 	}
 
