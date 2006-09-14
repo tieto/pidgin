@@ -194,6 +194,46 @@ find_conv_with_contact(GaimConversation *conv)
 	return ret;
 }
 
+static char *
+get_conversation_title(GaimConversation *conv, GaimAccount *account)
+{
+	return g_strdup_printf(_("%s (%s -- %s)"), gaim_conversation_get_title(conv),
+		gaim_account_get_username(account), gaim_account_get_protocol_name(account));
+}
+
+static void
+update_buddy_typing(GaimAccount *account, const char *who, gpointer null)
+{
+	GaimConversation *conv;
+	GGConv *ggc;
+	GaimConvIm *im = NULL;
+	char *title, *old_title;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, account);
+	im = GAIM_CONV_IM(conv);
+
+	if (!conv)
+		return;
+
+	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
+		old_title = get_conversation_title(conv, account);
+		title = g_strdup_printf(_("%s [%s]"), old_title,
+			gnt_ascii_only() ? "T" : "\342\243\277");
+		g_free(old_title);
+ 	} else
+		title = get_conversation_title(conv, account);
+	ggc = conv->ui_data;
+	gnt_screen_rename_widget(ggc->window, title);
+	g_free(title);
+}
+
+static gpointer
+gg_conv_get_handle()
+{
+	static int handle;
+	return &handle;
+}
+
 static void
 gg_create_conversation(GaimConversation *conv)
 {
@@ -223,9 +263,8 @@ gg_create_conversation(GaimConversation *conv)
 
 	account = gaim_conversation_get_account(conv);
 	type = gaim_conversation_get_type(conv);
-	title = g_strdup_printf(_("%s (%s -- %s)"), gaim_conversation_get_title(conv),
-			gaim_account_get_username(account), gaim_account_get_protocol_name(account));
-	
+	title = get_conversation_title(conv, account);
+
 	ggc->window = gnt_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
@@ -254,6 +293,11 @@ gg_create_conversation(GaimConversation *conv)
 
 	g_signal_connect(G_OBJECT(ggc->tv), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggc->window), "position_set", G_CALLBACK(save_position_cb), NULL);
+
+	gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing", gg_conv_get_handle(),
+	                GAIM_CALLBACK(update_buddy_typing), NULL);
+	gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing-stopped", gg_conv_get_handle(),
+	                GAIM_CALLBACK(update_buddy_typing), NULL);
 
 	g_free(title);
 }
@@ -648,8 +692,7 @@ void gg_conversation_set_active(GaimConversation *conv)
 
 	ggconv->active_conv = conv;
 	account = gaim_conversation_get_account(conv);
-	title = g_strdup_printf(_("%s (%s -- %s)"), gaim_conversation_get_title(conv),
-			gaim_account_get_username(account), gaim_account_get_protocol_name(account));
+	title = get_conversation_title(conv, account);
 	gnt_screen_rename_widget(ggconv->window, title);
 	g_free(title);
 }
