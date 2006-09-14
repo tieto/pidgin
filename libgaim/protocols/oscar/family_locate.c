@@ -181,17 +181,17 @@ static const struct {
 	  0x88, 0x6f, 0xea, 0x35, 0x95, 0xfd, 0xb6, 0xdf}},
 
 	/*
+	{OSCAR_CAPABILITY_ICQ2GO,
+	 {0x56, 0x3f, 0xc8, 0x09, 0x0b, 0x6f, 0x41, 0xbd,
+	  0x9f, 0x79, 0x42, 0x26, 0x09, 0xdf, 0xa2, 0xf3}},
+	*/
+
+	/*
 	 * Chat is oddball.
 	 */
 	{OSCAR_CAPABILITY_CHAT,
 	 {0x74, 0x8f, 0x24, 0x20, 0x62, 0x87, 0x11, 0xd1,
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
-
-	/*
-	{OSCAR_CAPABILITY_ICQ2GO,
-	 {0x56, 0x3f, 0xc8, 0x09, 0x0b, 0x6f, 0x41, 0xbd,
-	  0x9f, 0x79, 0x42, 0x26, 0x09, 0xdf, 0xa2, 0xf3}},
-	*/
 
 	{OSCAR_CAPABILITY_ICQRTF,
 	 {0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
@@ -611,7 +611,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		if (type == 0x0001) {
 			/*
-			 * Type = 0x0001: User flags
+			 * User flags
 			 *
 			 * Specified as any of the following ORed together:
 			 *      0x0001  Trial (user less than 60days)
@@ -621,14 +621,13 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 *      0x0010  Free (AIM) user
 			 *      0x0020  Away
 			 *      0x0400  ActiveBuddy
-			 *
 			 */
 			outinfo->flags = byte_stream_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_FLAGS;
 
 		} else if (type == 0x0002) {
 			/*
-			 * Type = 0x0002: Account creation time.
+			 * Account creation time
 			 *
 			 * The time/date that the user originally registered for
 			 * the service, stored in time_t format.
@@ -645,7 +644,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x0003) {
 			/*
-			 * Type = 0x0003: On-Since date.
+			 * On-Since date
 			 *
 			 * The time/date that the user started their current
 			 * session, stored in time_t format.
@@ -655,7 +654,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x0004) {
 			/*
-			 * Type = 0x0004: Idle time.
+			 * Idle time
 			 *
 			 * Number of minutes since the user actively used the
 			 * service.
@@ -669,7 +668,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x0005) {
 			/*
-			 * Type = 0x0005: Member since date.
+			 * Member since date
 			 *
 			 * The time/date that the user originally registered for
 			 * the service, stored in time_t format.
@@ -683,7 +682,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x0006) {
 			/*
-			 * Type = 0x0006: ICQ Online Status
+			 * ICQ Online Status
 			 *
 			 * ICQ's Away/DND/etc "enriched" status. Some decoding
 			 * of values done by Scott <darkagl@pcnet.com>
@@ -694,16 +693,13 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x0008) {
 			/*
-			 * Type = 0x0008
-			 *
 			 * Client type, or some such.
 			 */
 
 		} else if (type == 0x000a) {
 			/*
-			 * Type = 0x000a
+			 * ICQ User IP Address
 			 *
-			 * ICQ User IP Address.
 			 * Ahh, the joy of ICQ security.
 			 */
 			outinfo->icqinfo.ipaddr = byte_stream_get32(bs);
@@ -711,35 +707,25 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x000c) {
 			/*
-			 * Type = 0x000c
-			 *
-			 * random crap containing the IP address,
+			 * Random crap containing the IP address,
 			 * apparently a port number, and some Other Stuff.
 			 *
 			 * Format is:
 			 * 4 bytes - Our IP address, 0xc0 a8 01 2b for 192.168.1.43
-			 *
-			 *
 			 */
 			byte_stream_getrawbuf(bs, outinfo->icqinfo.crap, 0x25);
 			outinfo->present |= AIM_USERINFO_PRESENT_ICQDATA;
 
 		} else if (type == 0x000d) {
 			/*
-			 * Type = 0x000d
-			 *
-			 * OSCAR Capability information.
-			 *
+			 * OSCAR Capability information
 			 */
 			outinfo->capabilities |= aim_locate_getcaps(od, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
 		} else if (type == 0x000e) {
 			/*
-			 * Type = 0x000e
-			 *
-			 * AOL capability information.
-			 *
+			 * AOL capability information
 			 */
 
 		} else if ((type == 0x000f) || (type == 0x0010)) {
@@ -752,22 +738,19 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 *
 			 * Which TLV type this comes in depends on the
 			 * service the user is using (AIM or AOL).
-			 *
 			 */
 			outinfo->sessionlen = byte_stream_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
 		} else if (type == 0x0019) {
 			/*
-			 * Type = 0x0019
-			 *
 			 * OSCAR short capability information.  A shortened
 			 * form of the normal capabilities.
 			 */
 			outinfo->capabilities |= aim_locate_getcaps_short(od, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
-		} else if (type == 0x001b) {
+		} else if (type == 0x001a) {
 			/*
 			 * Type = 0x001a
 			 *
@@ -777,15 +760,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x001b) {
 			/*
-			 * Type = 0x0019
-			 *
 			 * Encryption certification MD5 checksum.
 			 */
 
 		} else if (type == 0x001d) {
 			/*
-			 * Type = 0x001d
-			 *
 			 * Buddy icon information and status/available messages.
 			 *
 			 * This almost seems like the AIM protocol guys gave
@@ -852,15 +831,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 
 		} else if (type == 0x001e) {
 			/*
-			 * Type 30: Unknown.
-			 *
 			 * Always four bytes, but it doesn't look like an int.
 			 */
 
 		} else if (type == 0x001f) {
 			/*
-			 * Type 31: Unknown.
-			 *
 			 * Seen on a buddy using DeadAIM.  Data was 4 bytes:
 			 * 0x00 00 00 10
 			 */
