@@ -68,7 +68,7 @@
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 
-static OscarCapability gaim_caps = OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_ICQUTF8 | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
+static OscarCapability gaim_caps = OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_UNICODE | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01, 0x06};
@@ -460,7 +460,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc,
 	if ((destsn != NULL) && aim_sn_is_icq(destsn))
 		userinfo = aim_locate_finduserinfo(od, destsn);
 
-	if ((userinfo != NULL) && (userinfo->capabilities & OSCAR_CAPABILITY_ICQUTF8))
+	if ((userinfo != NULL) && (userinfo->capabilities & OSCAR_CAPABILITY_UNICODE))
 	{
 		GaimBuddy *b;
 		b = gaim_find_buddy(account, destsn);
@@ -639,13 +639,13 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 			case OSCAR_CAPABILITY_ICQSERVERRELAY:
 				tmp = _("ICQ Server Relay");
 				break;
-			case OSCAR_CAPABILITY_ICQUTF8OLD:
+			case OSCAR_CAPABILITY_UNICODEOLD:
 				tmp = _("Old ICQ UTF8");
 				break;
 			case OSCAR_CAPABILITY_TRILLIANCRYPT:
 				tmp = _("Trillian Encryption");
 				break;
-			case OSCAR_CAPABILITY_ICQUTF8:
+			case OSCAR_CAPABILITY_UNICODE:
 				tmp = _("ICQ UTF8");
 				break;
 			case OSCAR_CAPABILITY_HIPTOP:
