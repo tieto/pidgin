@@ -68,8 +68,7 @@
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 
-static int caps_aim = OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
-static int caps_icq = OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_ICQUTF8 | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
+static OscarCapability gaim_caps = OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_ICQUTF8 | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
 
 static guint8 features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static guint8 features_icq[] = {0x01, 0x06};
@@ -584,7 +583,7 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 	return g_string_free(cpy, FALSE);
 }
 
-static gchar *oscar_caps_to_string(guint caps)
+static gchar *oscar_caps_to_string(OscarCapability caps)
 {
 	GString *str;
 	const gchar *tmp;
@@ -1806,9 +1805,9 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 static void gaim_check_comment(OscarData *od, const char *str) {
 	if ((str == NULL) || strcmp(str, (const char *)ck))
-		aim_locate_setcaps(od, caps_aim);
+		aim_locate_setcaps(od, gaim_caps);
 	else
-		aim_locate_setcaps(od, caps_aim | OSCAR_CAPABILITY_SECUREIM);
+		aim_locate_setcaps(od, gaim_caps | OSCAR_CAPABILITY_SECUREIM);
 }
 
 static int gaim_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
@@ -3470,10 +3469,7 @@ static int gaim_parse_locaterights(OscarData *od, FlapConnection *conn, FlapFram
 
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
-	if (od->icq)
-		aim_locate_setcaps(od, caps_icq);
-	else
-		aim_locate_setcaps(od, caps_aim);
+	aim_locate_setcaps(od, gaim_caps);
 	oscar_set_info_and_status(account, TRUE, account->user_info, TRUE,
 							  gaim_account_get_active_status(account));
 
@@ -4804,8 +4800,11 @@ static int gaim_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *fr
 					}
 					if (!aim_sncmp(curitem->name, account->username)) {
 						char *comment = aim_ssi_getcomment(od->ssi.local, gname, curitem->name);
-						gaim_check_comment(od, comment);
-						g_free(comment);
+						if (comment != NULL)
+						{
+							gaim_check_comment(od, comment);
+							g_free(comment);
+						}
 					}
 					g_free(gname_utf8);
 					g_free(alias_utf8);

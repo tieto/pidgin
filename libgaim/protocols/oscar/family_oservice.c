@@ -801,6 +801,8 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
  *
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
+ *
+ * TODO: Combine this with the function below.
  */
 int
 aim_setextstatus(OscarData *od, guint32 status)
@@ -843,6 +845,8 @@ aim_setextstatus(OscarData *od, guint32 status)
  *
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
+ *
+ * TODO: Combine this with the above function.
  */
 int
 aim_srv_setstatusmsg(OscarData *od, const char *msg)
@@ -850,37 +854,30 @@ aim_srv_setstatusmsg(OscarData *od, const char *msg)
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
+	int msglen;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
 		return -EINVAL;
 
-	if ((msg != NULL) && *msg != '\0') {
-		frame = flap_frame_new(od, 0x02, 10 + 4 + strlen(msg) + 8);
+	if (msg == NULL)
+		msglen = 0;
+	else
+		msglen = strlen(msg);
 
-		snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
-		aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
+	frame = flap_frame_new(od, 0x02, 10 + 4 + msglen + 8);
 
-		byte_stream_put16(&frame->data, 0x001d); /* userinfo TLV type */
-		byte_stream_put16(&frame->data, strlen(msg)+8); /* total length of userinfo TLV data */
-		byte_stream_put16(&frame->data, 0x0002);
-		byte_stream_put8(&frame->data, 0x04);
-		byte_stream_put8(&frame->data, strlen(msg)+4);
-		byte_stream_put16(&frame->data, strlen(msg));
+	snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
+
+	byte_stream_put16(&frame->data, 0x001d); /* userinfo TLV type */
+	byte_stream_put16(&frame->data, msglen + 8); /* total length of userinfo TLV data */
+	byte_stream_put16(&frame->data, 0x0002);
+	byte_stream_put8(&frame->data, 0x04);
+	byte_stream_put8(&frame->data, msglen+4);
+	byte_stream_put16(&frame->data, msglen);
+	if (msglen > 0)
 		byte_stream_putstr(&frame->data, msg);
-		byte_stream_put16(&frame->data, 0x0000);
-	} else {
-		frame = flap_frame_new(od, 0x02, 10 + 4 + 8);
-
-		snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
-		aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
-
-		byte_stream_put16(&frame->data, 0x001d);
-		byte_stream_put16(&frame->data, 0x0008);
-		byte_stream_put16(&frame->data, 0x0002);
-		byte_stream_put16(&frame->data, 0x0404);
-		byte_stream_put16(&frame->data, 0x0000);
-		byte_stream_put16(&frame->data, 0x0000);
-	}
+	byte_stream_put16(&frame->data, 0x0000);
 
 	flap_connection_send(conn, frame);
 
