@@ -8,8 +8,9 @@ GAIM_TOP := ../../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = libmsn
+TYPE = PLUGIN
 
-# Static or Plugin... 
+# Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
@@ -98,7 +99,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)

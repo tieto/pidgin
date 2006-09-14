@@ -11,6 +11,7 @@ TARGET = libzephyr
 KRB4_TOP := $(WIN32_DEV_TOP)/kfw-2.6.3-final.fixed
 USE_KRB4 := false
 DEFINES += -DWIN32 -DKRB5_SYSTYPES__
+TYPE = PLUGIN
 
 ifeq ($(USE_KRB4),true)
   DEFINES += -DZEPHYR_USES_KERBEROS
@@ -142,7 +143,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)

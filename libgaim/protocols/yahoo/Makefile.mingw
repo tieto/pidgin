@@ -8,6 +8,7 @@ GAIM_TOP := ../../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = libyahoo
+TYPE = PLUGIN
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -56,7 +57,6 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 LIBS =			\
 			-lglib-2.0 \
-			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim
@@ -83,7 +83,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)

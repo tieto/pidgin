@@ -10,6 +10,7 @@ include $(GAIM_TOP)/libgaim/win32/global.mak
 TARGET = libsilc
 NEEDED_DLLS =		$(SILC_TOOLKIT)/lib/silc.dll \
 			$(SILC_TOOLKIT)/lib/silcclient.dll
+TYPE = PLUGIN
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -84,7 +85,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)

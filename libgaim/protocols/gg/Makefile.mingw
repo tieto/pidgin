@@ -9,6 +9,7 @@ include $(GAIM_TOP)/libgaim/win32/global.mak
 
 TARGET = libgg
 CFLAGS += -include win32dep.h
+TYPE = PLUGIN
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -59,8 +60,6 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ##
 LIBS =	\
 			-lglib-2.0 \
-			-lgmodule-2.0 \
-			-lgobject-2.0 \
 			-lintl \
 			-lgaim \
 			-lws2_32
@@ -86,7 +85,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)
