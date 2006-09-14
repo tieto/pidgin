@@ -38,7 +38,11 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 0x61C88647 is what we can track on the ASM codes.!!
 */
 
+#ifdef _WIN32
+#include "win32dep.h"
+#else
 #include <arpa/inet.h>
+#endif
 
 #include <string.h>
 

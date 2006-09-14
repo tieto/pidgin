@@ -1,17 +1,14 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of OpenQ src
+# Description: Makefile for win32 (mingw) version of the QQ prpl
 #
 
 GAIM_TOP := ../../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
-TARGET = openq
-OPENQ_TOP := ..
+TARGET = libqq
 TYPE = PLUGIN
-OPENQ_VERSION := $(shell cat $(OPENQ_TOP)/VERSION)
-DEFINES += -DOPENQ_VERSION=\"$(OPENQ_VERSION)\"
 
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
@@ -27,7 +24,6 @@ endif
 ## INCLUDE PATHS
 ##
 INCLUDE_PATHS += \
-	-I$(OPENQ_ROOT) \
 	-I$(GTK_TOP)/include \
 	-I$(GTK_TOP)/include/glib-2.0 \
 	-I$(GTK_TOP)/lib/glib-2.0/include \
@@ -73,7 +69,6 @@ C_SRC = \
 	send_core.c \
 	send_file.c \
 	sendqueue.c \
-	show.c \
 	sys_msg.c \
 	udp_proxy_s5.c \
 	utils.c
@@ -110,7 +105,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -f $(OBJECTS)
+	rm -f $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)
