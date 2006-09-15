@@ -130,8 +130,6 @@ static struct StockIcon
 	{ GAIM_STOCK_STATUS_CONNECT2, "gaim",    "status-connect2.png"      },
 	{ GAIM_STOCK_STATUS_CONNECT3, "gaim",    "status-connect3.png"      },
 	{ GAIM_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
-	{ GAIM_STOCK_EXPANDER_EXPANDED,"gaim",   "expander-expanded.png"    },
-	{ GAIM_STOCK_EXPANDER_COLLAPSED,"gaim",  "expander-collapsed.png"   },
 };
 
 static const GtkStockItem stock_items[] =

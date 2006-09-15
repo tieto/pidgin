@@ -64,6 +64,7 @@ gaim_SOURCES = \
 	gtkaccount.c \
 	gtkblist.c \
 	gtkcelllayout.c \
+	gtkcellrendererexpander.c \
 	gtkcellrendererprogress.c \
 	gtkcellview.c \
 	gtkcellviewmenuitem.c \
@@ -102,6 +103,7 @@ gaim_headers = \
 	gtkaccount.h \
 	gtkblist.h \
 	gtkcelllayout.h \
+	gtkcellrendererexpander.h \
 	gtkcellrendererprogress.h \
 	gtkcellview.h \
 	gtkcellviewmenuitem.h \

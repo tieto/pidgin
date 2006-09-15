@@ -796,7 +796,6 @@ int main(int argc, char *argv[])
 #ifdef HAVE_STARTUP_NOTIFICATION
 	startup_notification_complete();
 #endif
-
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H

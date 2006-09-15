@@ -41,6 +41,7 @@
 
 #include "gtkaccount.h"
 #include "gtkblist.h"
+#include "gtkcellrendererexpander.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
@@ -810,10 +811,10 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		gtk_blist_join_chat((GaimChat *)node);
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		if (gtk_tree_view_row_expanded(tv, path))
+/*		if (gtk_tree_view_row_expanded(tv, path))
 			gtk_tree_view_collapse_row(tv, path);
 		else
-			gtk_tree_view_expand_row(tv,path,FALSE);
+			gtk_tree_view_expand_row(tv,path,FALSE);*/
 	}
 }
 
@@ -3928,10 +3929,18 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS,
-						 GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, G_TYPE_STRING, 
-						 G_TYPE_STRING, G_TYPE_BOOLEAN, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN,
-						 G_TYPE_POINTER, GDK_TYPE_COLOR, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF,
-						 G_TYPE_BOOLEAN);
+						 GDK_TYPE_PIXBUF, /* Status icon */
+						 G_TYPE_BOOLEAN,  /* Status icon visible */
+						 G_TYPE_STRING,   /* Name */ 
+						 G_TYPE_STRING,   /* Idle */
+						 G_TYPE_BOOLEAN,  /* Idle visible */
+						 GDK_TYPE_PIXBUF, /* Buddy icon */
+						 G_TYPE_BOOLEAN,  /* Buddy icon visible */
+						 G_TYPE_POINTER,  /* Node */
+						 GDK_TYPE_COLOR,  /* bgcolor */
+						 G_TYPE_BOOLEAN,  /* Group expander */
+						 G_TYPE_BOOLEAN,  /* Contact expander */
+						 G_TYPE_BOOLEAN); /* Contact expander visible */
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
 
@@ -3971,17 +3980,17 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_set_expander_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 
 	gtkblist->text_column = column = gtk_tree_view_column_new ();
-	rend = gtk_cell_renderer_pixbuf_new();
+	rend = gaim_gtk_cell_renderer_expander_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
-					    "pixbuf", GROUP_EXPANDER_COLUMN,
+					    "expander-visible", GROUP_EXPANDER_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 					    NULL);
 
-	rend = gtk_cell_renderer_pixbuf_new();
+	rend = gaim_gtk_cell_renderer_expander_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
-					    "pixbuf", CONTACT_EXPANDER_COLUMN,
+					    "expander-visible", CONTACT_EXPANDER_COLUMN,
 					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 					    NULL);
@@ -4025,9 +4034,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 					    "visible", BUDDY_ICON_VISIBLE_COLUMN,
 					    NULL);
 	
-
-	gtkblist->expander_expanded = gtk_widget_render_icon(gtkblist->treeview, GAIM_STOCK_EXPANDER_EXPANDED, -1, NULL);
-	gtkblist->expander_collapsed = gtk_widget_render_icon(gtkblist->treeview, GAIM_STOCK_EXPANDER_COLLAPSED, -1, NULL);
 
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-activated", G_CALLBACK(gtk_blist_row_activated_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-expanded", G_CALLBACK(gtk_blist_row_expanded_cb), NULL);
@@ -4412,7 +4418,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 				   NAME_COLUMN, mark,
 				   NODE_COLUMN, gnode,
 				   BGCOLOR_COLUMN, &bgcolor,
-				   GROUP_EXPANDER_COLUMN, expanded ? gtkblist->expander_expanded : gtkblist->expander_collapsed,
+				   GROUP_EXPANDER_COLUMN, TRUE,
 				   CONTACT_EXPANDER_VISIBLE_COLUMN, FALSE,
 				   BUDDY_ICON_VISIBLE_COLUMN, FALSE,
 				   IDLE_VISIBLE_COLUMN, FALSE,
@@ -4540,7 +4546,7 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 					   IDLE_VISIBLE_COLUMN, FALSE,
 					   BGCOLOR_COLUMN, NULL,
 					   BUDDY_ICON_COLUMN, NULL,
-					   CONTACT_EXPANDER_COLUMN, gtkblist->expander_expanded,
+					   CONTACT_EXPANDER_COLUMN, TRUE,
 					   CONTACT_EXPANDER_VISIBLE_COLUMN, TRUE,
 					-1);
 			g_free(mark);

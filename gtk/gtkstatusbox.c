@@ -238,6 +238,36 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *bo
 	return FALSE;
 }
 
+static void
+icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
+		GtkSelectionData *sd, guint info, guint t, GtkGaimStatusBox *box)
+{
+	gchar *name = (gchar *)sd->data;
+
+	if ((sd->length >= 0) && (sd->format == 8)) {
+		/* Well, it looks like the drag event was cool.
+		 * Let's do something with it */
+		if (!g_ascii_strncasecmp(name, "file://", 7)) {
+			GError *converr = NULL;
+			gchar *tmp, *rtmp;
+		
+			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
+				gaim_debug(GAIM_DEBUG_ERROR, "buddyicon", "%s\n",
+					   (converr ? converr->message :
+					    "g_filename_from_uri error"));
+				return;
+			}
+			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
+				*rtmp = '\0';
+			icon_choose_cb(tmp, box);
+			g_free(tmp);
+		}
+		gtk_drag_finish(dc, TRUE, FALSE, t);
+	}
+	gtk_drag_finish(dc, FALSE, FALSE, t);
+}
+
+
 static gboolean
 icon_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *box)
 {
@@ -253,6 +283,13 @@ icon_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *
 	gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon) ;
 	return FALSE;
 }
+
+
+static const GtkTargetEntry dnd_targets[] = {
+       {"text/plain", 0, 0},
+	{"text/uri-list", 0, 1},
+	{"STRING", 0, 2}
+};
 
 static void
 setup_icon_box(GtkGaimStatusBox *status_box)
@@ -273,9 +310,19 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 	}
 	status_box->icon = gtk_image_new_from_pixbuf(status_box->buddy_icon);
 	status_box->icon_box = gtk_event_box_new();
+	
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	status_box->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
+	/* Set up DND */
+	gtk_drag_dest_set(status_box->icon_box,
+			  GTK_DEST_DEFAULT_MOTION |
+			  GTK_DEST_DEFAULT_DROP,
+			  dnd_targets,
+			  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
+			  GDK_ACTION_COPY);
+	
+	g_signal_connect(G_OBJECT(status_box->icon_box), "drag_data_received", G_CALLBACK(icon_box_dnd_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->icon_box), "enter-notify-event", G_CALLBACK(icon_box_enter_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->icon_box), "leave-notify-event", G_CALLBACK(icon_box_leave_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->icon_box), "button-press-event", G_CALLBACK(icon_box_press_cb), status_box);
@@ -1272,11 +1319,17 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 
 	if (status_box->icon_box)
 	{
+		GtkTextDirection dir = gtk_widget_get_direction(widget);
 		parent_alc.width -= (parent_alc.height + border_width);
 		icon_alc = *allocation;
 		icon_alc.height = MAX(1,req.height) - (border_width);
 		icon_alc.width = icon_alc.height;
-		icon_alc.x = allocation->width - (icon_alc.width + border_width);
+		if (dir == GTK_TEXT_DIR_RTL) {
+			icon_alc.x = parent_alc.x;
+			parent_alc.x += icon_alc.width + border_width;
+		} else {
+			icon_alc.x = allocation->width - (icon_alc.width + border_width);
+		}
 		icon_alc.y += border_width;
 	       
 		if (status_box->icon_size != icon_alc.height)

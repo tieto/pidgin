@@ -94,10 +94,6 @@ struct _GaimGtkBuddyList {
 	GaimBlistNode *selected_node;    /**< The currently selected node */
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
-	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
-	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
-	GdkPixbuf *expander_collapsed;   /**< A collapsed expander */
-	GdkPixbuf *expander_expanded;    /**< An expanded expander */  
 };
 
 #define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)

@@ -98,8 +98,6 @@
 #define GAIM_STOCK_TYPING          "gaim-typing"
 #define GAIM_STOCK_UPLOAD          "gaim-upload"
 #define GAIM_STOCK_VOICE_CHAT      "gaim-voice-chat"
-#define GAIM_STOCK_EXPANDER_EXPANDED "gaim-stock-expander-expanded"
-#define GAIM_STOCK_EXPANDER_COLLAPSED "gaim-stock-expander-collapsed"
 /*@}*/
 
 /**
