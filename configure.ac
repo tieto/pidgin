@@ -207,6 +207,22 @@ AC_ARG_ENABLE(cap,
 		[compile without Contact Availability Prediction plugin])],
 	enable_cap="no", enable_cap="yes")
 
+
+AC_PATH_XTRA
+# We can't assume that $x_libraries will be set, because autoconf does not
+# set it in the case when the X libraries are in a standard place.
+# Ditto for $x_includes
+if test X"$x_libraries" = X"" || test X"$x_libraries" = XNONE; then
+    x_libpath_add=
+else
+    x_libpath_add="-L$x_libraries"
+fi
+if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
+    x_incpath_add=
+else
+    x_incpath_add="-I$x_includes"
+fi
+
 if test "x$enable_gtkui" = "xyes" ; then
 	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0], , [
 		AC_MSG_RESULT(no)
@@ -413,11 +429,11 @@ AM_CONDITIONAL(ENABLE_GNT, test "x$enable_consoleui" = "xyes")
 dnl #######################################################################
 dnl # Check for LibXML2 (required)
 dnl #######################################################################
-PKG_CHECK_MODULES(LIBXML, [libxml-2.0], , [
+PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.6.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have the libxml2 development headers installed to build Gaim.
+You must have libxml2 >= 2.6.0 development headers installed to build Gaim.
 ])])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
@@ -850,21 +866,6 @@ fi
 AC_SUBST(CFLAGS)
 
 AC_PATH_PROG(gaimpath, gaim)
-
-AC_PATH_XTRA
-# We can't assume that $x_libraries will be set, because autoconf does not
-# set it in the case when the X libraries are in a standard place.
-# Ditto for $x_includes
-if test X"$x_libraries" = X"" || test X"$x_libraries" = XNONE; then
-	x_libpath_add=
-else
-	x_libpath_add="-L$x_libraries"
-fi
-if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
-	x_incpath_add=
-else
-	x_incpath_add="-I$x_includes"
-fi
 
 dnl #######################################################################
 dnl # Check for DBUS libraries
