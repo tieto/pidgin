@@ -4349,6 +4349,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	int count;
 	gboolean show = FALSE;
 	GaimBlistNode* gnode;
+	gboolean selected = gtkblist ? (gtkblist->selected_node == node) : FALSE;
 
 	g_return_if_fail(node != NULL);
 
@@ -4393,10 +4394,16 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		gtk_tree_path_free(path);
 
 		esc = g_markup_escape_text(group->name, -1);
-		mark = g_strdup_printf("<span color='#%02x%02x%02x'><span weight='bold'>%s</span> (%d/%d)</span>",
-				       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-				       esc, gaim_blist_get_group_online_count(group),
-				       gaim_blist_get_group_size(group, FALSE));
+		if (selected)
+			mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)",
+					       esc, gaim_blist_get_group_online_count(group),
+					       gaim_blist_get_group_size(group, FALSE));	
+		else
+			mark = g_strdup_printf("<span color='#%02x%02x%02x'><span weight='bold'>%s</span> (%d/%d)</span>",
+					       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
+					       esc, gaim_blist_get_group_online_count(group),
+					       gaim_blist_get_group_size(group, FALSE));
+		
 		g_free(esc);
 		
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
