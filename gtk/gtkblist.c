@@ -3984,6 +3984,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "expander-visible", GROUP_EXPANDER_COLUMN,
+					    "sensitive", GROUP_EXPANDER_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 					    NULL);
 
@@ -3991,6 +3992,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "expander-visible", CONTACT_EXPANDER_COLUMN,
+					    "sensitive", CONTACT_EXPANDER_COLUMN,
 					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 					    NULL);
@@ -4528,7 +4530,6 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 		if(gtknode->contact_expanded) {
 			GdkPixbuf *status;
 			char *mark;
-			char *white;
 
 			status = gaim_gtk_blist_get_status_icon(cnode,
 					(gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons") ?

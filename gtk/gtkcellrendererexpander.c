@@ -265,7 +265,7 @@ static void gaim_gtk_cell_renderer_expander_render (GtkCellRenderer *cell,
 			    cell->is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
 }
 
-static gint gaim_gtk_cell_renderer_expander_activate(GtkCellRenderer *r,
+static gboolean gaim_gtk_cell_renderer_expander_activate(GtkCellRenderer *r,
 						     GdkEvent *event,
 						     GtkWidget *widget,
 						     const gchar *p,
@@ -280,4 +280,5 @@ printf("!! Activated!\n");
 	else
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(widget),path,FALSE);
 	gtk_tree_path_free(path);
+	return FALSE;
 }
