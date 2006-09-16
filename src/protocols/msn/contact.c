@@ -585,6 +585,43 @@ msn_delete_contact(MsnContact *contact,const char *contactId)
 }
 
 static void
+msn_update_contact_read_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	gaim_debug_info("MaYuan","update contact read done\n");
+}
+
+static void
+msn_update_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnSoapConn * soapconn = data;	
+
+	gaim_debug_info("MaYuan","update contact written\n");
+	soapconn->read_cb = msn_update_contact_read_cb;
+//	msn_soap_read_cb(data,source,cond);
+}
+
+/*update a contact's Nickname*/
+void
+msn_update_contact(MsnContact *contact,const char* nickname)
+{
+	MsnSoapReq *soap_request;
+	char *body = NULL;
+
+	gaim_debug_info("MaYuan","msn unblock a contact...\n");
+
+	body = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE,nickname);
+	/*build SOAP and POST it*/
+	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
+					MSN_ADDRESS_BOOK_POST_URL,MSN_CONTACT_UPDATE_SOAP_ACTION,
+					body,
+					msn_update_contact_read_cb,
+					msn_update_contact_written_cb);
+	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+
+	g_free(body);
+}
+
+static void
 msn_block_read_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	gaim_debug_info("MaYuan","block read done\n");

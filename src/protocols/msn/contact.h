@@ -142,6 +142,36 @@
 #define MSN_CONTACT_UNBLOCK_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/DeleteMember"
 #define MSN_UNBLOCK_CONTACT_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>BlockUnblock</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><DeleteMember xmlns=\"http://www.msn.com/webservices/AddressBook\"><serviceHandle><Id>0</Id><Type>Messenger</Type><ForeignId></ForeignId></serviceHandle><memberships><Membership><MemberRole>Block</MemberRole><Members>%s</Members></Membership></memberships></DeleteMember></soap:Body></soap:Envelope>"
 
+/*Update Contact Nickname*/
+#define MSN_CONTACT_UPDATE_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABContactUpdate"
+#define MSN_CONTACT_UPDATE_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
+"<soap:Header>"\
+	"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+           "<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+           "<IsMigration>false</IsMigration>"\
+           "<PartnerScenario>Timer</PartnerScenario>"\
+       "</ABApplicationHeader>"\
+       "<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+           "<ManagedGroupRequest>false</ManagedGroupRequest>"\
+       "</ABAuthHeader>"\
+   "</soap:Header>"\
+   "<soap:Body>"\
+       "<ABContactUpdate xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+           "<abId>00000000-0000-0000-0000-000000000000</abId>"\
+           "<contacts>"\
+               "<Contact xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+                   "<contactInfo>"\
+                       "<contactType>Me</contactType>"\
+                       "<displayName>%s</displayName>"\
+                  "</contactInfo>"\
+                   "<propertiesChanged>DisplayName</propertiesChanged>"\
+               "</Contact>"\
+           "</contacts>"\
+       "</ABContactUpdate>"\
+   "</soap:Body>"\
+"</soap:Envelope> "
+
 /*******************************************************
  * Group SOAP Action
  *******************************************************/
