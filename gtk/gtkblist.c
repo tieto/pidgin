@@ -4401,14 +4401,11 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 
 		esc = g_markup_escape_text(group->name, -1);
 		if (selected)
-			mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)",
-					       esc, gaim_blist_get_group_online_count(group),
-					       gaim_blist_get_group_size(group, FALSE));	
+			mark = g_strdup_printf("<span weight='bold'>%s</span>",esc);
 		else
-			mark = g_strdup_printf("<span color='#%02x%02x%02x'><span weight='bold'>%s</span> (%d/%d)</span>",
+			mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>",
 					       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-					       esc, gaim_blist_get_group_online_count(group),
-					       gaim_blist_get_group_size(group, FALSE));
+					       esc);
 		
 		g_free(esc);
 		
