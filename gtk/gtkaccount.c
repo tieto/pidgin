@@ -1123,7 +1123,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* Buddy Icon */
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
-	if ((prpl_info != NULL) && (prpl_info->options & OPT_PROTO_IM_IMAGE))
+	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL)
 	{
 		if (new || gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) ==
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
