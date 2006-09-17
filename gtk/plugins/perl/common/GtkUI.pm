@@ -1,4 +1,4 @@
-package Gaim::Gtk;
+package Gaim::GtkUI;
 
 use 5.008;
 use strict;
@@ -10,18 +10,18 @@ our $VERSION = '0.01';
 use Gaim;
 
 require XSLoader;
-XSLoader::load('Gaim::Gtk', $VERSION);
+XSLoader::load('Gaim::GtkUI', $VERSION);
 
 1;
 __END__
 
 =head1 NAME
 
-Gaim::Gtk - Perl extension for the Gaim instant messenger.
+Gaim::GtkUI - Perl extension for the Gaim instant messenger.
 
 =head1 SYNOPSIS
 
-    use Gaim::Gtk;
+    use Gaim::GtkUI;
 
 =head1 ABSTRACT
 

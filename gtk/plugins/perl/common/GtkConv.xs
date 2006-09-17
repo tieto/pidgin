@@ -33,13 +33,13 @@ gaim_gtkconv_get_tab_icon(conv, small_icon)
 /* This can't work at the moment since I don't have a typemap for gboolean *.
 int
 gaim_gtkconv_get_tab_at_xy(win, x, y, to_right)
-	Gaim::Gtk::Conversation::Window win
+	Gaim::GtkUI::Conversation::Window win
 	int x
 	int y
 	gboolean * to_right
 */
 
-MODULE = Gaim::Gtk::Conversation  PACKAGE = Gaim::Gtk::Conversation  PREFIX = gaim_gtkconv_
+MODULE = Gaim::GtkUI::Conversation  PACKAGE = Gaim::GtkUI::Conversation  PREFIX = gaim_gtkconv_
 PROTOTYPES: ENABLE
 
 void
@@ -58,9 +58,9 @@ void
 gaim_gtkconv_present_conversation(conv)
 	Gaim::Conversation conv
 
-Gaim::Gtk::Conversation::Window
+Gaim::GtkUI::Conversation::Window
 gaim_gtkconv_get_window(conv)
-	Gaim::Gtk::Conversation conv
+	Gaim::GtkUI::Conversation conv
 
 void
 gaim_gtkconv_new(conv)
@@ -68,9 +68,9 @@ gaim_gtkconv_new(conv)
 
 gboolean
 gaim_gtkconv_is_hidden(gtkconv)
-	Gaim::Gtk::Conversation gtkconv
+	Gaim::GtkUI::Conversation gtkconv
 
-MODULE = Gaim::Gtk::Conversation  PACKAGE = Gaim::Gtk::Conversations  PREFIX = gaim_gtk_conversations_
+MODULE = Gaim::GtkUI::Conversation  PACKAGE = Gaim::GtkUI::Conversations  PREFIX = gaim_gtk_conversations_
 PROTOTYPES: ENABLE
 
 void

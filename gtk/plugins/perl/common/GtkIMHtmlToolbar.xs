@@ -9,14 +9,14 @@ gtk_imhtmltoolbar_new()
 
 void
 gtk_imhtmltoolbar_attach(toolbar, imhtml)
-	Gaim::Gtk::IMHtmlToolbar toolbar
+	Gaim::GtkUI::IMHtmlToolbar toolbar
 	Gtk::Widget imhtml
 */
 
-MODULE = Gaim::Gtk::IMHtmlToolbar  PACKAGE = Gaim::Gtk::IMHtmlToolbar  PREFIX = gtk_imhtmltoolbar_
+MODULE = Gaim::GtkUI::IMHtmlToolbar  PACKAGE = Gaim::GtkUI::IMHtmlToolbar  PREFIX = gtk_imhtmltoolbar_
 PROTOTYPES: ENABLE
 
 void
 gtk_imhtmltoolbar_associate_smileys(toolbar, proto_id)
-	Gaim::Gtk::IMHtmlToolbar toolbar
+	Gaim::GtkUI::IMHtmlToolbar toolbar
 	const char * proto_id

@@ -1,4 +1,4 @@
-typedef struct group *Gaim__Gtk__Group;
+typedef struct group *Gaim__GtkUI__Group;
 
 #define group perl_group
 
@@ -41,39 +41,39 @@ typedef struct group *Gaim__Gtk__Group;
 #include "gtkutils.h"
 
 /* gtkaccount.h */
-typedef GaimGtkAccountDialogType			Gaim__Gtk__Account__Dialog__Type;
+typedef GaimGtkAccountDialogType			Gaim__GtkUI__Account__Dialog__Type;
 
 /* gtkblist.h */
-typedef GaimGtkBuddyList *				Gaim__Gtk__BuddyList;
-typedef gaim_gtk_blist_sort_function			Gaim__Gtk__BuddyList__SortFunction;
+typedef GaimGtkBuddyList *				Gaim__GtkUI__BuddyList;
+typedef gaim_gtk_blist_sort_function			Gaim__GtkUI__BuddyList__SortFunction;
 
 /* gtkconv.h */
-typedef GaimGtkConversation *				Gaim__Gtk__Conversation;
+typedef GaimGtkConversation *				Gaim__GtkUI__Conversation;
 typedef GaimUnseenState					Gaim__UnseenState;
 
 /* gtkconvwin.h */
-typedef GaimGtkWindow *					Gaim__Gtk__Conversation__Window;
+typedef GaimGtkWindow *					Gaim__GtkUI__Conversation__Window;
 typedef GaimConvPlacementFunc				Gaim__Conversation__PlacementFunc;
 
 /* gtkft.h */
-typedef GaimGtkXferDialog *				Gaim__Gtk__Xfer__Dialog;
+typedef GaimGtkXferDialog *				Gaim__GtkUI__Xfer__Dialog;
 
 /* gtkimhtml.h */
-typedef GtkIMHtml *					Gaim__Gtk__IMHtml;
-typedef GtkIMHtmlButtons					Gaim__Gtk__IMHtml__Buttons;
-typedef GtkIMHtmlFuncs *					Gaim__Gtk__IMHtml__Funcs;
-typedef GtkIMHtmlScalable *					Gaim__Gtk__IMHtml__Scalable;
-typedef GtkIMHtmlSmiley *					Gaim__Gtk__IMHtml__Smiley;
-typedef GtkIMHtmlOptions					Gaim__Gtk__IMHtml__Options;
+typedef GtkIMHtml *					Gaim__GtkUI__IMHtml;
+typedef GtkIMHtmlButtons				Gaim__GtkUI__IMHtml__Buttons;
+typedef GtkIMHtmlFuncs *				Gaim__GtkUI__IMHtml__Funcs;
+typedef GtkIMHtmlScalable *				Gaim__GtkUI__IMHtml__Scalable;
+typedef GtkIMHtmlSmiley *				Gaim__GtkUI__IMHtml__Smiley;
+typedef GtkIMHtmlOptions				Gaim__GtkUI__IMHtml__Options;
 
 /* gtkimhtmltoolbar.h */
-typedef GtkIMHtmlToolbar *					Gaim__Gtk__IMHtmlToolbar;
+typedef GtkIMHtmlToolbar *				Gaim__GtkUI__IMHtmlToolbar;
 
 /* gtkmenutray.h */
-typedef GaimGtkMenuTray *					Gaim__Gtk__MenuTray;
+typedef GaimGtkMenuTray *				Gaim__GtkUI__MenuTray;
 
 /* gtkroomlist.h */
-typedef GaimGtkRoomlistDialog *					Gaim__Gtk__Roomlist__Dialog;
+typedef GaimGtkRoomlistDialog *				Gaim__GtkUI__Roomlist__Dialog;
 
 /* gtkstatusbox.h */
-typedef GtkGaimStatusBox *						Gaim__Gtk__StatusBox;
+typedef GtkGaimStatusBox *				Gaim__GtkUI__StatusBox;

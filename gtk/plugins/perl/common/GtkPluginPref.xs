@@ -8,5 +8,5 @@ gaim_gtk_plugin_pref_create_frame(frame)
 	Gaim::PluginPref::Frame frame
 */
 
-MODULE = Gaim::Gtk::PluginPref  PACKAGE = Gaim::Gtk::PluginPref  PREFIX = gaim_gtk_plugin_pref_
+MODULE = Gaim::GtkUI::PluginPref  PACKAGE = Gaim::GtkUI::PluginPref  PREFIX = gaim_gtk_plugin_pref_
 PROTOTYPES: ENABLE

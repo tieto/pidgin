@@ -8,16 +8,16 @@ gaim_gtk_plugin_get_config_frame(plugin)
 	Gaim::Plugin plugin
 */
 
-MODULE = Gaim::Gtk::Plugin  PACKAGE = Gaim::Gtk::Plugin  PREFIX = gaim_gtk_plugin_
+MODULE = Gaim::GtkUI::Plugin  PACKAGE = Gaim::GtkUI::Plugin  PREFIX = gaim_gtk_plugin_
 PROTOTYPES: ENABLE
 
-MODULE = Gaim::Gtk::Plugin  PACKAGE = Gaim::Gtk::Plugins  PREFIX = gaim_gtk_plugins_
+MODULE = Gaim::GtkUI::Plugin  PACKAGE = Gaim::GtkUI::Plugins  PREFIX = gaim_gtk_plugins_
 PROTOTYPES: ENABLE
 
 void
 gaim_gtk_plugins_save()
 
-MODULE = Gaim::Gtk::Plugin  PACKAGE = Gaim::Gtk::Plugin::Dialog  PREFIX = gaim_gtk_plugin_dialog_
+MODULE = Gaim::GtkUI::Plugin  PACKAGE = Gaim::GtkUI::Plugin::Dialog  PREFIX = gaim_gtk_plugin_dialog_
 PROTOTYPES: ENABLE
 
 void

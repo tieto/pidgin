@@ -11,13 +11,13 @@ gaim_gtk_status_menu(status, callback)
 	GCallback callback
 */
 
-MODULE = Gaim::Gtk::Status  PACKAGE = Gaim::Gtk::Status  PREFIX = gaim_gtk_status_
+MODULE = Gaim::GtkUI::Status  PACKAGE = Gaim::GtkUI::Status  PREFIX = gaim_gtk_status_
 PROTOTYPES: ENABLE
 
 void *
 gaim_gtk_status_get_handle()
 
-MODULE = Gaim::Gtk::Status  PACKAGE = Gaim::Gtk::Status::Editor  PREFIX = gaim_gtk_status_editor_
+MODULE = Gaim::GtkUI::Status  PACKAGE = Gaim::GtkUI::Status::Editor  PREFIX = gaim_gtk_status_editor_
 PROTOTYPES: ENABLE
 
 void
@@ -25,7 +25,7 @@ gaim_gtk_status_editor_show(edit, status)
 	gboolean edit
 	Gaim::SavedStatus status
 
-MODULE = Gaim::Gtk::Status  PACKAGE = Gaim::Gtk::Status::Window  PREFIX = gaim_gtk_status_window_
+MODULE = Gaim::GtkUI::Status  PACKAGE = Gaim::GtkUI::Status::Window  PREFIX = gaim_gtk_status_window_
 PROTOTYPES: ENABLE
 
 void

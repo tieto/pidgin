@@ -1,12 +1,12 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::Gtk::Debug  PACKAGE = Gaim::Gtk::Debug  PREFIX = gaim_gtk_debug_
+MODULE = Gaim::GtkUI::Debug  PACKAGE = Gaim::GtkUI::Debug  PREFIX = gaim_gtk_debug_
 PROTOTYPES: ENABLE
 
 void *
 gaim_gtk_debug_get_handle()
 
-MODULE = Gaim::Gtk::Debug  PACKAGE = Gaim::Gtk::Debug::Window  PREFIX = gaim_gtk_debug_window_
+MODULE = Gaim::GtkUI::Debug  PACKAGE = Gaim::GtkUI::Debug::Window  PREFIX = gaim_gtk_debug_window_
 PROTOTYPES: ENABLE
 
 void

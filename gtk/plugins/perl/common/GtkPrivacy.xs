@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::Gtk::Privacy  PACKAGE = Gaim::Gtk::Privacy  PREFIX = gaim_gtk_
+MODULE = Gaim::GtkUI::Privacy  PACKAGE = Gaim::GtkUI::Privacy  PREFIX = gaim_gtk_
 PROTOTYPES: ENABLE
 
 void
@@ -13,7 +13,7 @@ gaim_gtk_request_add_block(account, name)
 	Gaim::Account account
 	const char * name
 
-MODULE = Gaim::Gtk::Privacy  PACKAGE = Gaim::Gtk::Privacy::Dialog  PREFIX = gaim_gtk_privacy_dialog_
+MODULE = Gaim::GtkUI::Privacy  PACKAGE = Gaim::GtkUI::Privacy::Dialog  PREFIX = gaim_gtk_privacy_dialog_
 PROTOTYPES: ENABLE
 
 void

@@ -38,13 +38,13 @@ gaim_gtk_append_blist_node_extended_menu(menu, node)
 	Gaim::BuddyList::Node node
 */
 
-MODULE = Gaim::Gtk::BuddyList  PACKAGE = Gaim::Gtk::BuddyList  PREFIX = gaim_gtk_blist_
+MODULE = Gaim::GtkUI::BuddyList  PACKAGE = Gaim::GtkUI::BuddyList  PREFIX = gaim_gtk_blist_
 PROTOTYPES: ENABLE
 
 void *
 gaim_gtk_blist_get_handle()
 
-Gaim::Gtk::BuddyList
+Gaim::GtkUI::BuddyList
 gaim_gtk_blist_get_default_gtk_blist()
 
 void
@@ -73,14 +73,14 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = gaim_gtk_blist_get_sort_methods(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Gtk::BuddyList::SortMethod")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::GtkUI::BuddyList::SortMethod")));
 	}
 
 void
 gaim_gtk_blist_sort_method_reg(id, name, func)
 	const char * id
 	const char * name
-	Gaim::Gtk::BuddyList::SortFunction func
+	Gaim::GtkUI::BuddyList::SortFunction func
 
 void
 gaim_gtk_blist_sort_method_unreg(id)

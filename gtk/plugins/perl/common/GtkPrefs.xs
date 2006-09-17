@@ -67,7 +67,7 @@ OUTPUT:
 	RETVAL
 */
 
-MODULE = Gaim::Gtk::Prefs  PACKAGE = Gaim::Gtk::Prefs  PREFIX = gaim_gtk_prefs_
+MODULE = Gaim::GtkUI::Prefs  PACKAGE = Gaim::GtkUI::Prefs  PREFIX = gaim_gtk_prefs_
 PROTOTYPES: ENABLE
 
 void

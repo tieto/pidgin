@@ -192,7 +192,7 @@ gaim_gtk_clear_cursor(widget)
 	Gtk::Widget widget
 */
 
-MODULE = Gaim::Gtk::Utils  PACKAGE = Gaim::Gtk::Utils  PREFIX = gaim_gtk_utils_
+MODULE = Gaim::GtkUI::Utils  PACKAGE = Gaim::GtkUI::Utils  PREFIX = gaim_gtk_utils_
 PROTOTYPES: ENABLE
 
 gboolean

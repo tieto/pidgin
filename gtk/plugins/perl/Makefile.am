@@ -1,8 +1,6 @@
 perl_dirs = common
 
 common_sources = \
-	common/Gtk.pm \
-	common/Gtk.xs \
 	common/GtkAccount.xs \
 	common/GtkBlist.xs \
 	common/GtkConn.xs \
@@ -26,9 +24,11 @@ common_sources = \
 	common/GtkSound.xs \
 	common/GtkStatusBox.xs \
 	common/GtkThemes.xs \
+	common/GtkUI.pm \
+	common/GtkUI.xs \
 	common/GtkUtils.xs \
-	common/gtkmodule.h \
 	common/Makefile.PL.in \
+	common/gtkmodule.h \
 	common/typemap
 
 EXTRA_DIST = \

@@ -8,7 +8,7 @@ gaim_gtkthemes_smiley_themeize(widget)
 	Gtk::Widget * widget
 */
 
-MODULE = Gaim::Gtk::Themes  PACKAGE = Gaim::Gtk::Themes  PREFIX = gaim_gtkthemes_
+MODULE = Gaim::GtkUI::Themes  PACKAGE = Gaim::GtkUI::Themes  PREFIX = gaim_gtkthemes_
 PROTOTYPES: ENABLE
 
 void

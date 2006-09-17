@@ -2,10 +2,10 @@ use 5.006;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'NAME'          => 'Gaim::Gtk',
-    'VERSION_FROM'  => '@srcdir@/Gtk.pm', # finds $VERSION
+    'NAME'          => 'Gaim::GtkUI',
+    'VERSION_FROM'  => '@srcdir@/GtkUI.pm', # finds $VERSION
     ($] >= 5.005 ? ## Add these new keywords supported since 5.005
-	('ABSTRACT_FROM' => '@srcdir@/Gtk.pm', # finds $ABSTRACT
+	('ABSTRACT_FROM' => '@srcdir@/GtkUI.pm', # finds $ABSTRACT
 	'AUTHOR'        => 'Gaim <http://gaim.sourceforge.net/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@',
     'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libgaim -I@top_srcdir@/gtk @GTK_CFLAGS@',

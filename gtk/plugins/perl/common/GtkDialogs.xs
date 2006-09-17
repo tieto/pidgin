@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::Gtk::Dialogs  PACKAGE = Gaim::Gtk::Dialogs  PREFIX = gaim_gtkdialogs_
+MODULE = Gaim::GtkUI::Dialogs  PACKAGE = Gaim::GtkUI::Dialogs  PREFIX = gaim_gtkdialogs_
 PROTOTYPES: ENABLE
 
 void

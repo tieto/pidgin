@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::Gtk::Sound  PACKAGE = Gaim::Gtk::Sound  PREFIX = gaim_gtk_sound_
+MODULE = Gaim::GtkUI::Sound  PACKAGE = Gaim::GtkUI::Sound  PREFIX = gaim_gtk_sound_
 PROTOTYPES: ENABLE
 
 const char *
