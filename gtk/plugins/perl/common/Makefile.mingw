@@ -7,7 +7,7 @@
 GAIM_TOP := ../../../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
-TARGET = Gtk
+TARGET = GtkUI
 EXTUTILS := C:/perl/lib/ExtUtils
 
 CFLAGS += -Wno-comment
@@ -38,7 +38,7 @@ LIB_PATHS = 		-L$(PERL_LIB_TOP) \
 ##  SOURCES, OBJECTS
 ##
 XS_FILES = \
-	Gtk.xs \
+	GtkUI.xs \
 	GtkAccount.xs \
 	GtkBlist.xs \
 	GtkConn.xs \

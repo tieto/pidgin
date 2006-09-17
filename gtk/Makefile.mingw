@@ -60,6 +60,7 @@ GTKGAIM_C_SRC =	\
 			gtkblist.c \
 			gtkconn.c \
 			gtkconv.c \
+			gtkcellrendererexpander.c \
 			gtkcellrendererprogress.c \
 			gtkdebug.c \
 			gtkdialogs.c \
