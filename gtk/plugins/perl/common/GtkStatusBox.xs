@@ -20,7 +20,7 @@ gtk_gaim_status_box_add(status_box, type, pixbuf, text, sec_text, data)
 	gpointer data
 */
 
-MODULE = Gaim::GtkUI::StatusBox  PACKAGE = Gaim::GtkUI::StatusBox  PREFIX = gtk_gaim_status_box
+MODULE = Gaim::GtkUI::StatusBox  PACKAGE = Gaim::GtkUI::StatusBox  PREFIX = gtk_gaim_status_box_
 PROTOTYPES: ENABLE
 
 void
