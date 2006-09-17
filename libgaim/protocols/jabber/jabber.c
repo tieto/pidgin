@@ -328,7 +328,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	return;
 }
 
-int jabber_prpl_send_raw(GaimConnection *gc, const char *buf, int len)
+static int jabber_prpl_send_raw(GaimConnection *gc, const char *buf, int len)
 {
 	JabberStream *js = (JabberStream*)gc->proto_data;
 	jabber_send_raw(js, buf, len);
@@ -1891,7 +1891,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
 	NULL,							/* whiteboard_prpl_ops */
-	jabber_send_raw,			/* send_raw */
+	jabber_prpl_send_raw,			/* send_raw */
 };
 
 static gboolean load_plugin(GaimPlugin *plugin)
