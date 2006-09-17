@@ -38,10 +38,6 @@
 #include "gtknotify.h"
 #include "gtkutils.h"
 
-#ifdef _WIN32
-# include "gtkwin32dep.h"
-#endif
-
 typedef struct
 {
 	GaimConnection *gc;

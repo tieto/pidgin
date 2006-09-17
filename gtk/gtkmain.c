@@ -77,10 +77,6 @@
 # include <gdk/gdkx.h>
 #endif
 
-#ifdef _WIN32
-# include "gtkwin32dep.h"
-#endif
-
 
 
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -476,17 +472,15 @@ int main(int argc, char *argv[])
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
 	RETSIGTYPE (*prev_sig_disp)(int);
-#endif
-	int opt;
-	gboolean gui_check;
-	gboolean debug_enabled;
-#ifdef HAVE_SIGNAL_H
 	char errmsg[BUFSIZ];
 #ifndef DEBUG
 	char *segfault_message_tmp;
 	GError *error = NULL;
 #endif
 #endif
+	int opt;
+	gboolean gui_check;
+	gboolean debug_enabled;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},

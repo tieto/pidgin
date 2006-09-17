@@ -23,6 +23,9 @@
  *
  */
 #define _WIN32_IE 0x500
+#ifndef WINVER
+#define WINVER 0x0500 /* W2K */
+#endif
 #include <windows.h>
 #include <io.h>
 #include <stdlib.h>
@@ -32,6 +35,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkwin32.h>
 
 #include "gaim.h"
 #include "debug.h"
@@ -45,6 +49,8 @@
 #include <libintl.h>
 
 #include "gtkwin32dep.h"
+
+#include "win32dep.h"
 
 #include "wspell.h"
 
@@ -147,7 +153,7 @@ void gtkwgaim_notify_uri(const char *uri) {
 				uri, (int) wsinfo.hInstApp);
 
 		g_free(w_uri);
-        } else {
+	} else {
 		SHELLEXECUTEINFOA sinfo;
 		gchar *locale_uri;
 
@@ -248,7 +254,85 @@ void gtkwgaim_cleanup(void) {
 }
 
 /* DLL initializer */
-BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 	gtkgaimdll_hInstance = hinstDLL;
 	return TRUE;
 }
+
+typedef HMONITOR WINAPI gaim_MonitorFromWindow(HWND, DWORD);
+typedef BOOL WINAPI gaim_GetMonitorInfo(HMONITOR, LPMONITORINFO);
+
+static gboolean
+get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
+	static gaim_MonitorFromWindow *the_MonitorFromWindow;
+	static gaim_GetMonitorInfo *the_GetMonitorInfo;
+	static gboolean initialized = FALSE;
+
+	HMONITOR monitor;
+	MONITORINFO info;
+
+	if(!initialized) {
+		the_MonitorFromWindow = (gaim_MonitorFromWindow*)
+			wgaim_find_and_loadproc("user32", "MonitorFromWindow");
+		the_GetMonitorInfo = (gaim_GetMonitorInfo*)
+			wgaim_find_and_loadproc("user32", "GetMonitorInfoA");
+		initialized = TRUE;
+	}
+
+	if(!the_MonitorFromWindow)
+		return FALSE;
+
+	if(!the_GetMonitorInfo)
+		return FALSE;
+
+	monitor = the_MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
+
+	info.cbSize = sizeof(info);
+	if(!the_GetMonitorInfo(monitor, &info))
+		return FALSE;
+
+	CopyRect(workingAreaRc, &(info.rcWork));
+	return TRUE;
+}
+
+void gtkwgaim_ensure_onscreen(GtkWidget *win) {
+	RECT windowRect, workingAreaRect, intersectionRect;
+	HWND hwnd = GDK_WINDOW_HWND(win->window);
+
+	g_return_if_fail(hwnd != NULL);
+	GetWindowRect(hwnd, &windowRect);
+
+	gaim_debug_info("win32placement",
+			"Window RECT: L:%ld R:%ld T:%ld B:%ld\n",
+			windowRect.left, windowRect.right,
+			windowRect.top, windowRect.bottom);
+
+	if(!get_WorkingAreaRectForWindow(hwnd, &workingAreaRect)) {
+		gaim_debug_info("win32placement",
+				"Couldn't get multimonitor working area\n");
+		if(!SystemParametersInfo(SPI_GETWORKAREA, 0, &workingAreaRect, FALSE)) {
+			/* I don't think this will ever happen */
+			workingAreaRect.left = 0;
+			workingAreaRect.top = 0;
+			workingAreaRect.bottom = GetSystemMetrics(SM_CYSCREEN);
+			workingAreaRect.right = GetSystemMetrics(SM_CXSCREEN);
+		}
+	}
+
+	gaim_debug_info("win32placement",
+			"Working Area RECT: L:%ld R:%ld T:%ld B:%ld\n",
+			workingAreaRect.left, workingAreaRect.right,
+			workingAreaRect.top, workingAreaRect.bottom);
+
+	/** If the conversation window doesn't intersect perfectly with the working area,
+	 *  move it to the top left corner of the working area */
+	if(!(IntersectRect(&intersectionRect, &windowRect, &workingAreaRect)
+				&& EqualRect(&intersectionRect, &windowRect))) {
+		gaim_debug_info("win32placement",
+				"conversation window out of working area, relocating\n");
+		MoveWindow(hwnd, workingAreaRect.left, workingAreaRect.top,
+				(windowRect.right - windowRect.left),
+				(windowRect.bottom - windowRect.top), TRUE);
+	}
+}
+

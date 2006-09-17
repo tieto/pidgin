@@ -5550,7 +5550,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 									 (gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
 		}
 
-  
 	} else {
 		/* Account is offline */
 		/* Or it's a chat that we've left. */
@@ -7502,6 +7501,11 @@ gaim_gtk_conv_window_new()
 	gtk_container_add(GTK_CONTAINER(win->window), testidea);
 
 	gtk_widget_show(testidea);
+
+#ifdef _WIN32
+	g_signal_connect(G_OBJECT(win->window), "show",
+	                 G_CALLBACK(gtkwgaim_ensure_onscreen), win->window);
+#endif
 
 	return win;
 }

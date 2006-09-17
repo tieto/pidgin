@@ -50,10 +50,6 @@
 #include "gtkutils.h"
 #include "gaimstock.h"
 
-#ifdef _WIN32
-# include "gtkwin32dep.h"
-#endif
-
 #define PROXYHOST 0
 #define PROXYPORT 1
 #define PROXYUSER 2
@@ -2080,7 +2076,7 @@ void gaim_gtk_prefs_update_old() {
 
 	/* Convert old queuing prefs to hide_new 3-way pref. */
 	if (gaim_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
-	    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))     
+	    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))
 	{
 		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "always");
 	}

@@ -28,6 +28,7 @@ HINSTANCE gtkwgaim_hinstance(void);
 /* Utility */
 int       gtkwgaim_gz_decompress(const char* in, const char* out);
 int       gtkwgaim_gz_untar(const char* filename, const char* destdir);
+void gtkwgaim_ensure_onscreen(GtkWidget *win);
 
 /* Misc */
 void      gtkwgaim_notify_uri(const char *uri);

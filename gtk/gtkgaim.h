@@ -32,6 +32,10 @@
 
 #include <gtk/gtk.h>
 
+#ifdef _WIN32
+# include "gtkwin32dep.h"
+#endif
+
 /**
  * Our UI's identifier.
  */
