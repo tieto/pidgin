@@ -307,7 +307,7 @@ char *
 gtk_imhtml_get_markup(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
-# ETAN Test this, and document well that it returns an arrayref
+# /* ETAN Test this, and document well that it returns an arrayref */
 void
 gtk_imhtml_get_markup_lines(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
@@ -318,7 +318,7 @@ PREINIT:
 PPCODE:
 	bufs = gtk_imhtml_get_markup_lines(imhtml);
 	lines = newAV();
-	for (i = 0; bufs[i]; i++) {
+	for (i = 0; bufs[i] != NULL; i++) {
 	    av_push(lines, newSVpv(bufs[i], 0));
 	}
 	XPUSHs(sv_2mortal(newRV_noinc((SV *)lines)));
