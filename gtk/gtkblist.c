@@ -4357,7 +4357,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	int count;
 	gboolean show = FALSE;
 	GaimBlistNode* gnode;
-	gboolean selected = gtkblist ? (gtkblist->selected_node == node) : FALSE;
+	gboolean selected;
 
 	g_return_if_fail(node != NULL);
 
@@ -4370,6 +4370,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	else
 		return;
 
+	selected = gtkblist ? (gtkblist->selected_node == gnode) : FALSE;
 	group = (GaimGroup*)gnode;
 
 	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies"))
