@@ -25,8 +25,8 @@
 */
 
 #include <glib.h>
-#include <debug.h>
-#include <imgstore.h>
+#include "debug.h"
+#include "imgstore.h"
 
 static GSList *imgstore = NULL;
 static int nextid = 0;
