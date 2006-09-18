@@ -61,7 +61,7 @@ install-exec-local:
 	done
 
 # Evil Hack (TM)
-# ... which doesn't work with DESTDIR installs.  FIXME?
+# ... which doesn't work with DESTDIR installs. FIXME?
 uninstall-local:
 	@for dir in $(perl_dirs); do \
 		cd $$dir && \

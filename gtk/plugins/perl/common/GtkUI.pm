@@ -33,7 +33,7 @@ Gaim::GtkUI - Perl extension for the Gaim instant messenger.
 This module provides the interface for using perl scripts as plugins in Gaim,
 with access to the Gaim Gtk interface functions. With this, developers can
 write perl scripts that can be loaded in Gaim as plugins. The script can
-interact with IMs, chats, accoutns, the buddy list, gaim signals, and more.
+interact with IMs, chats, accounts, the buddy list, gaim signals, and more.
 
 The API for the perl interface is very similar to that of the Gaim C API,
 which can be viewed at http://gaim.sourceforge.net/api/ or in the header files
