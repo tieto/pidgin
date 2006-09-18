@@ -24,8 +24,10 @@ gaim_gtkconv_get_window(conv)
 	Gaim::GtkUI::Conversation conv
 
 void
-gaim_gtkconv_new(conv)
+gaim_gtkconv_new(class, conv)
 	Gaim::Conversation conv
+    C_ARGS:
+	conv
 
 gboolean
 gaim_gtkconv_is_hidden(gtkconv)

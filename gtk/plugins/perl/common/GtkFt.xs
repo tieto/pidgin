@@ -14,7 +14,8 @@ MODULE = Gaim::GtkUI::Xfer  PACKAGE = Gaim::GtkUI::Xfer::Dialog  PREFIX = gaim_g
 PROTOTYPES: ENABLE
 
 Gaim::GtkUI::Xfer::Dialog
-gaim_gtkxfer_dialog_new()
+gaim_gtkxfer_dialog_new(class)
+    C_ARGS: /* void */
 
 void
 gaim_gtkxfer_dialog_destroy(dialog)

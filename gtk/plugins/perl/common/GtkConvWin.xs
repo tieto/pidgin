@@ -4,7 +4,8 @@ MODULE = Gaim::GtkUI::Conversation::Window  PACKAGE = Gaim::GtkUI::Conversation:
 PROTOTYPES: ENABLE
 
 Gaim::GtkUI::Conversation::Window
-gaim_gtk_conv_window_new()
+gaim_gtk_conv_window_new(class)
+    C_ARGS: /* void */
 
 void
 gaim_gtk_conv_window_destroy(win)
