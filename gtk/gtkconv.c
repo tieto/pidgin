@@ -3352,7 +3352,7 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
 		                                  CHAT_USERS_NAME_COLUMN,  name,
 		                                  CHAT_USERS_FLAGS_COLUMN, flags,
 		                                  CHAT_USERS_COLOR_COLUMN, &send_color,
-		                                  CHAT_USERS_WEIGHT_COLUMN ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, is_buddy,
+		                                  CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
 		                                  -1);
 	}
 	else
