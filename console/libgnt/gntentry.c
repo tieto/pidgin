@@ -31,7 +31,7 @@ get_beginning_of_word(GntEntry *entry)
 	while (s > entry->start)
 	{
 		char *t = g_utf8_find_prev_char(entry->start, s);
-		if ((*t < 'A' || *t > 'Z') && (*t < 'a' || *t > 'z'))
+		if (isspace(*t))
 			break;
 		s = t;
 	}
