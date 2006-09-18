@@ -27,9 +27,6 @@
 
 #include "roomlist.h"
 
-
-typedef struct _GaimGtkRoomlistDialog GaimGtkRoomlistDialog;
-
 /**
  * Initializes the room list subsystem.
  */
@@ -44,24 +41,16 @@ void gaim_gtk_roomlist_init(void);
 gboolean gaim_gtk_roomlist_is_showable(void);
 
 /**
- * Shows the roomlist dialog.
+ * Shows a new roomlist dialog.
  */
 void gaim_gtk_roomlist_dialog_show(void);
 
 /**
- * Creates a new room list dialog.
- *
- * @return The new dialog.
- */
-GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new(void);
-
-/**
- * Creates a new room list dialog and fetch the list on
- * the specified account.
+ * Shows a new room list dialog and fetches the list for the specified account.
  *
  * @param account The account to force.
  * @return The new dialog.
  */
-GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account);
+void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account);
 
 #endif /* _GAIM_GTKROOMLIST_H_ */

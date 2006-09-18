@@ -34,15 +34,7 @@
 
 #include "gtkroomlist.h"
 
-typedef struct _GaimGtkRoomlist {
-	GaimGtkRoomlistDialog *dialog;
-	GtkTreeStore *model;
-	GtkWidget *tree;
-	GHashTable *cats; /**< Meow. */
-	gint num_rooms, total_rooms;
-} GaimGtkRoomlist;
-
-struct _GaimGtkRoomlistDialog {
+typedef struct _GaimGtkRoomlistDialog {
 	GtkWidget *window;
 	GtkWidget *account_widget;
 	GtkWidget *progress;
@@ -60,7 +52,15 @@ struct _GaimGtkRoomlistDialog {
 	gboolean pg_needs_pulse;
 	gboolean pg_to_active;
 	guint pg_update_to;
-};
+} GaimGtkRoomlistDialog;
+
+typedef struct _GaimGtkRoomlist {
+	GaimGtkRoomlistDialog *dialog;
+	GtkTreeStore *model;
+	GtkWidget *tree;
+	GHashTable *cats; /**< Meow. */
+	gint num_rooms, total_rooms;
+} GaimGtkRoomlist;
 
 enum {
 	NAME_COLUMN = 0,
@@ -335,7 +335,8 @@ gaim_gtk_roomlist_is_showable()
 	return FALSE;
 }
 
-GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
+static GaimGtkRoomlistDialog *
+gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
 {
 	GaimGtkRoomlistDialog *dialog;
 	GtkWidget *window;
@@ -459,12 +460,7 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	return dialog;
 }
 
-GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new(void)
-{
-	return gaim_gtk_roomlist_dialog_new_with_account(NULL);
-}
-
-static void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account)
+void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account)
 {
 	GaimGtkRoomlistDialog *dialog;
 
@@ -477,7 +473,7 @@ static void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account)
 
 void gaim_gtk_roomlist_dialog_show(void)
 {
-	gaim_gtk_roomlist_dialog_new();
+	gaim_gtk_roomlist_dialog_new_with_account(NULL);
 }
 
 static void gaim_gtk_roomlist_new(GaimRoomlist *list)

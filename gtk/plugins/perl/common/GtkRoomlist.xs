@@ -10,15 +10,8 @@ MODULE = Gaim::GtkUI::Roomlist  PACKAGE = Gaim::GtkUI::Roomlist::Dialog  PREFIX 
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_roomlist_dialog_show(class)
-    C_ARGS: /* void */
+gaim_gtk_roomlist_dialog_show()
 
-Gaim::GtkUI::Roomlist::Dialog
-gaim_gtk_roomlist_dialog_new(class)
-    C_ARGS: /* void */
-
-Gaim::GtkUI::Roomlist::Dialog
-gaim_gtk_roomlist_dialog_new_with_account(class, account)
+void
+gaim_gtk_roomlist_dialog_show_with_account(account)
 	Gaim::Account account
-    C_ARGS:
-	account

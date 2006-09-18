@@ -72,8 +72,5 @@ typedef GtkIMHtmlToolbar *				Gaim__GtkUI__IMHtmlToolbar;
 /* gtkmenutray.h */
 typedef GaimGtkMenuTray *				Gaim__GtkUI__MenuTray;
 
-/* gtkroomlist.h */
-typedef GaimGtkRoomlistDialog *				Gaim__GtkUI__Roomlist__Dialog;
-
 /* gtkstatusbox.h */
 typedef GtkGaimStatusBox *				Gaim__GtkUI__StatusBox;

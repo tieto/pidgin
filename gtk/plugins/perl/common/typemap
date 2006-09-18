@@ -17,5 +17,4 @@ Gaim::GtkUI::IMHtml::Smiley             T_GaimObj
 Gaim::GtkUI::IMHtml::Options            T_IV
 Gaim::GtkUI::IMHtmlToolbar              T_GaimObj
 Gaim::GtkUI::MenuTray                   T_GaimObj
-Gaim::GtkUI::Roomlist::Dialog           T_GaimObj
 Gaim::GtkUI::StatusBox                  T_GaimObj

@@ -199,6 +199,9 @@ version 2.0.0:
 	* GaimGtkLogViewer hidden... You weren't using it anyway.
 	* GaimGtkConversation: dialogs (dialogs.search moved to GaimGtkWindow)
 	* gaim_show_xfer_dialog: Use gaim_gtk_xfer_dialog_show(NULL) instead.
+	* GaimGtkRoomlistDialog: Nothing used it outside of the file it was in.
+	* gaim_gtk_roomlist_dialog_new: use gaim_gtk_roomlist_show
+	* gaim_gtk_roomlist_dialog_new_with_account: use gaim_gtk_roomlist_show_with_account
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -325,6 +328,7 @@ version 2.0.0:
 	* gaim_buddy_get_server_alias()
 	* gaim_conv_send_confirm()
 	* GaimConversationUiOps.send_confirm
+	* gaim_gtk_roomlist_dialog_show_with_account
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
