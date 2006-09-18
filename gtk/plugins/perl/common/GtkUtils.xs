@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Utils  PACKAGE = Gaim::GtkUI::Utils  PREFIX = gaim_gtk_utils_
+MODULE = Gaim::GtkUI::Utils  PACKAGE = Gaim::GtkUI::Utils  PREFIX = gaim_gtk_
 PROTOTYPES: ENABLE
 
 gboolean
