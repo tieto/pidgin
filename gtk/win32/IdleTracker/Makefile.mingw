@@ -23,7 +23,7 @@ include $(GAIM_COMMON_RULES)
 ## TARGET DEFINITIONS
 ##
 
-.PHONY: all clean
+.PHONY: all install clean
 
 all: $(TARGET).dll
 
@@ -42,8 +42,6 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ##
 
 clean:
-	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).dll.a
+	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
 
 include $(GAIM_COMMON_TARGETS)

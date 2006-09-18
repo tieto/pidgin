@@ -22,6 +22,8 @@
  */
 #ifndef _GTKWIN32DEP_H_
 #define _GTKWIN32DEP_H_
+#include <windows.h>
+#include <gtk/gtk.h>
 
 HINSTANCE gtkwgaim_hinstance(void);
 

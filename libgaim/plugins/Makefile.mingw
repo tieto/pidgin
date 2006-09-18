@@ -42,7 +42,7 @@ LIBS =	\
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean
+.PHONY: all clean plugins install
 
 all: $(GAIM_LIBGAIM_DLL).a plugins
 	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
@@ -53,7 +53,7 @@ install: all $(GAIM_INSTALL_PLUGINS_DIR)
 	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	cp $(GAIM_LIB_PLUGINS_TOP)/*.dll $(GAIM_INSTALL_PLUGINS_DIR)
+	cp *.dll $(GAIM_INSTALL_PLUGINS_DIR)
 
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
@@ -69,8 +69,7 @@ plugins: \
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(GAIM_LIB_PLUGINS_TOP)/*.o
-	rm -rf $(GAIM_LIB_PLUGINS_TOP)/*.dll
+	rm -f *.o *.dll
 	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean

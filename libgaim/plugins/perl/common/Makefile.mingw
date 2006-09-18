@@ -87,7 +87,7 @@ include $(GAIM_COMMON_RULES)
 ##
 ## TARGETS
 ##
-.PHONY: all clean
+.PHONY: all install clean
 
 all: $(TARGET).dll $(AUTOSPLIT)
 	

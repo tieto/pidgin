@@ -55,7 +55,7 @@ LIBS =			-lgtk-win32-2.0 \
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean
+.PHONY: all clean plugins install
 
 all: plugins
 	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
@@ -64,7 +64,7 @@ all: plugins
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 
-install: $(GAIM_INSTALL_PLUGINS_DIR)
+install: all $(GAIM_INSTALL_PLUGINS_DIR)
 	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
@@ -91,8 +91,7 @@ plugins: \
 ## CLEAN RULES
 ##
 clean:
-	rm -f *.o
-	rm -f *.dll
+	rm -f *.o *.dll
 	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean

@@ -6,6 +6,8 @@
 
 include ./Makefile.am
 
+.PHONY: install
+
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \

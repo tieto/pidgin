@@ -10,7 +10,7 @@ include $(GAIM_TOP)/libgaim/win32/global.mak
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean
+.PHONY: all install clean
 
 all:
 	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE)

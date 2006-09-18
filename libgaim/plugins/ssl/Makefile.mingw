@@ -64,7 +64,7 @@ include $(GAIM_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean
+.PHONY: all install clean
 
 all: $(TARGET).dll $(TARGET_NSS).dll
 
@@ -88,7 +88,6 @@ $(TARGET_NSS).dll: $(GAIM_LIBGAIM_DLL) $(OBJECTS_NSS)
 ## CLEAN RULES
 ##
 clean:
-	rm -rf $(OBJECTS) $(OBJECTS_NSS)
-	rm -rf $(TARGET).dll $(TARGET_NSS).dll
+	rm -f $(OBJECTS) $(OBJECTS_NSS) $(TARGET).dll $(TARGET_NSS).dll
 
 include $(GAIM_COMMON_TARGETS)

@@ -98,7 +98,7 @@ include $(GAIM_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean
+.PHONY: all install clean
 
 all: $(TARGET).dll
 	$(MAKE) -C $(GAIM_PROTOS_TOP) -f $(GAIM_WIN32_MAKEFILE)

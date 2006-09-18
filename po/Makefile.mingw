@@ -1,5 +1,5 @@
 # Makefile.mingw
-# 
+#
 # Description: Makefile to generate mo files
 #
 
@@ -27,6 +27,8 @@ CATALOGS = $(patsubst %.po,%.gmo,$(wildcard *.po))
 ##
 ## TARGETS
 ##
+
+.PHONY: all install clean
 
 all: $(CATALOGS)
 

@@ -31,6 +31,7 @@ awk 'BEGIN {FS="."} { \
     exit; \
 }' VERSION)
 
+.PHONY: all install installer installer_nogtk installer_debug installers clean
 
 all: $(GAIM_CONFIG_H)
 	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE)
@@ -57,8 +58,7 @@ clean:
 	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	rm -rf $(GAIM_CONFIG_H)
-	rm -rf gaim*.exe
+	rm -f $(GAIM_CONFIG_H) gaim*.exe
 	rm -rf $(GAIM_INSTALL_PERLMOD_DIR) $(GAIM_INSTALL_PLUGINS_DIR) $(GAIM_INSTALL_PO_DIR) $(GAIM_INSTALL_DIR)
 
 include $(GAIM_COMMON_TARGETS)

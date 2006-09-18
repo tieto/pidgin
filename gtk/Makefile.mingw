@@ -129,7 +129,7 @@ include $(GAIM_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all clean clean_exe
+.PHONY: all install clean clean_exe
 
 all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE)
