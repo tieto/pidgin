@@ -1,43 +1,5 @@
 #include "gtkmodule.h"
 
-/* This can't work at the moment since I don't have a typemap for Gtk::Widget.
- * I thought about using the one from libgtk2-perl but wasn't sure how to go
- * about doing that.
-
-void
-gaim_gtk_blist_make_buddy_menu(menu, buddy, sub)
-	Gtk::Widget menu
-	Gaim::Buddy buddy
-	gboolean sub
-*/
-
-/* This can't work at the moment since I don't have a typemap for Gdk::Pixbuf.
- * I thought about using the one from libgtk2-perl but wasn't sure how to go
- * about doing that.
-
-GdkPixbuf
-gaim_gtk_blist_get_status_icon(node, size)
-	Gaim::BuddyList::Node node
-	Gaim::Status::IconSize size
-*/
-
-/* This can't work at the moment since I don't have a typemap for Gtk::Widget.
- * I thought about using the one from libgtk2-perl but wasn't sure how to go
- * about doing that.
-
-void
-gaim_gtk_append_blist_node_proto_menu(menu, gc, node)
-	Gtk::Widget menu
-	Gaim::Connection gc
-	Gaim::BuddyList::Node node
-
-void
-gaim_gtk_append_blist_node_extended_menu(menu, node)
-	Gtk::Widget menu
-	Gaim::Connection gc
-	Gaim::BuddyList::Node node
-*/
-
 MODULE = Gaim::GtkUI::BuddyList  PACKAGE = Gaim::GtkUI::BuddyList  PREFIX = gaim_gtk_blist_
 PROTOTYPES: ENABLE
 

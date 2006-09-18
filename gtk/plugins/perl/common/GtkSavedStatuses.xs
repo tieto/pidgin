@@ -1,16 +1,5 @@
 #include "gtkmodule.h"
 
-/* This can't work at the moment since I don't have a typemap for Gtk::Widget.
- * I thought about using the one from libgtk2-perl but wasn't sure how to go
- * about doing that.
- * This also has a GCallback issue that I have no idea how to deal with,
- * though the core-perl typemap has a mapping for them.
-Gtk::Widget
-gaim_gtk_status_menu(status, callback)
-	Gaim::SavedStatus status
-	GCallback callback
-*/
-
 MODULE = Gaim::GtkUI::Status  PACKAGE = Gaim::GtkUI::Status  PREFIX = gaim_gtk_status_
 PROTOTYPES: ENABLE
 
