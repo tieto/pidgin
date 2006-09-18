@@ -5,7 +5,7 @@ version 2.0.0:
 	* With the Core/UI split completed, it is now possible to build Gaim
 	  without any UIs, creating a libgaim library upon which other UIs
 	  may be constructed
-	* A new ncurses-based console UI called gntgaim is now available
+	* A new ncurses-based console UI called gaim-text is now available
 	  (Sadrul Habib Chowdhury, Google Summer of Code)
 	* Reorganized the source tree to split apart the code for the UI
 	  changes and libgaim targets

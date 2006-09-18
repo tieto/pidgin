@@ -2,9 +2,9 @@ if ENABLE_GNT
 
 SUBDIRS = libgnt plugins
 
-bin_PROGRAMS = gntgaim
+bin_PROGRAMS = gaim-text
 
-gntgaim_SOURCES = \
+gaim_text_SOURCES = \
 	gntaccount.c \
 	gntblist.c \
 	gntconn.c \
@@ -18,7 +18,7 @@ gntgaim_SOURCES = \
 	gntstatus.c \
 	gntui.c
 
-gntgaim_headers = \
+gaim_text_headers = \
 	gntaccount.h \
 	gntblist.h \
 	gntconn.h \
@@ -32,13 +32,13 @@ gntgaim_headers = \
 	gntstatus.h \
 	gntui.h
 
-gntgaimincludedir=$(includedir)/gaim/gnt
-gntgaiminclude_HEADERS = \
-	$(gntgaim_headers)
+gaim_textincludedir=$(includedir)/gaim/gnt
+gaim_textinclude_HEADERS = \
+	$(gaim_text_headers)
 
-gntgaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
-gntgaim_LDFLAGS = -export-dynamic
-gntgaim_LDADD = \
+gaim_text_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
+gaim_text_LDFLAGS = -export-dynamic
+gaim_text_LDADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
 	$(STATIC_LINK_LIBS) \

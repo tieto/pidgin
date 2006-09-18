@@ -3,6 +3,7 @@ AC_INIT([gaim], [2.0.0dev], [gaim-devel@lists.sourceforge.net])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+#AM_INIT_AUTOMAKE([foreign dist-bzip2])
 
 AC_PREREQ([2.50])
 
@@ -1848,7 +1849,7 @@ AC_OUTPUT([Makefile
 		   gaim.service
 		   doc/Makefile
 		   doc/gaim.1
-		   doc/gntgaim.1
+		   doc/gaim-text.1
 		   m4macros/Makefile
 		   gtk/Makefile
 		   gtk/pixmaps/Makefile

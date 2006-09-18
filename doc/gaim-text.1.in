@@ -19,23 +19,23 @@
 .\" License along with this manual; if not, write to the Free
 .\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
 .\" USA.
-.TH gntgaim 1
+.TH gaim-text 1
 .SH NAME
 GntGaim \- A Pimpin' Penguin console frontend for Instant Messaging client Gaim.
 .SH SYNOPSIS
 .TP 5
-\fBgntgaim \fI[options]\fR
+\fBgaim-text \fI[options]\fR
 
 .SH DESCRIPTION
 .PP
-\fBgntgaim\fR is a console-based modular messaging client capable of using
+\fBgaim-text\fR is a console-based modular messaging client capable of using
 AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime,
 Zephyr, Gadu-Gadu, and QQ all at once. It has many common features found in
 other clients, as well as many unique features.  Gaim is not endorsed by or
 affiliated with America Online, ICQ, Microsoft, or Yahoo.
 
 .SH OPTIONS
-The following options are provided by \fBgntgaim\fR using the standard GNU
+The following options are provided by \fBgaim-text\fR using the standard GNU
 command line syntax:
 .TP
 .B \-d, \-\-debug
@@ -50,7 +50,7 @@ Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
 Print this help and exit.
 .TP
 .B \-n, \-\-nologin
-Don't automatically login when \fBgntgaim\fR starts.  Sets all accounts to
+Don't automatically login when \fBgaim-text\fR starts.  Sets all accounts to
 Offline.
 .TP
 .B \-v, \-\-version
@@ -243,14 +243,14 @@ Known bugs are listed at
 \fIhttp://sourceforge.net/tracker/?group_id=235&atid=100235\fR
 
 .SH PATCHES
-If you fix a bug in \fBgntgaim\fR (or otherwise enhance it), please submit a
+If you fix a bug in \fBgaim-text\fR (or otherwise enhance it), please submit a
 patch (using \fIsvn diff > my.diff\fR against the latest SVN version)
 at
 .br
 \fIhttp://sourceforge.net/tracker/?func=add&group_id=235&atid=300235\fR
 
 Before sending a bug report, please verify that you have the latest
-version of \fBgntgaim\fR and \fBlibgaim\fR.  Many bugs (major and minor) are
+version of \fBgaim-text\fR and \fBlibgaim\fR.  Many bugs (major and minor) are
 fixed at each release, and if yours is out of date, the problem may already have
 been solved.
 
