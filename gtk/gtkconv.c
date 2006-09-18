@@ -3337,9 +3337,7 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
 		gdk_color_parse(SEND_COLOR, &send_color);
 		
 #if GTK_CHECK_VERSION(2,6,0) 
-		gtk_list_store_insert_with_values 
-                                            (ls,
-                                             &iter,
+		gtk_list_store_insert_with_values(ls, &iter,
 /* 
  * The GTK docs are mute about the effects of the "row" value for performance.
  * X-Chat hardcodes their value to 0 (prepend) and -1 (append), so we will too.
@@ -3347,55 +3345,52 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
  * but no one in #gtk+ seems to know anything about it either.
  * Inserting in the "wrong" location has no visible ill effects. - F.P.
  */
-                                             -1, /* "row" */
-							CHAT_USERS_ICON_COLUMN,  pixbuf,
-							CHAT_USERS_ALIAS_COLUMN, alias,
-							CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
-							CHAT_USERS_NAME_COLUMN,  name,
-							CHAT_USERS_FLAGS_COLUMN, flags,
-							CHAT_USERS_COLOR_COLUMN, &send_color,
-							CHAT_USERS_BUDDY_COLUMN, is_buddy,
-                                             -1);
- }
- else {
-		gtk_list_store_insert_with_values
-                                            (ls,
-                                             &iter,
-                                              -1, /* "row" */
-							CHAT_USERS_ICON_COLUMN,  pixbuf,
-							CHAT_USERS_ALIAS_COLUMN, alias,
-							CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
-							CHAT_USERS_NAME_COLUMN,  name,
-							CHAT_USERS_FLAGS_COLUMN, flags,
-							CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, name),
-							CHAT_USERS_BUDDY_COLUMN, is_buddy,
-							-1);
-	 
+		                                  -1, /* "row" */
+		                                  CHAT_USERS_ICON_COLUMN,  pixbuf,
+		                                  CHAT_USERS_ALIAS_COLUMN, alias,
+		                                  CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
+		                                  CHAT_USERS_NAME_COLUMN,  name,
+		                                  CHAT_USERS_FLAGS_COLUMN, flags,
+		                                  CHAT_USERS_COLOR_COLUMN, &send_color,
+		                                  CHAT_USERS_WEIGHT_COLUMN ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, is_buddy,
+		                                  -1);
+	}
+	else
+	{
+		gtk_list_store_insert_with_values(ls, &iter,
+		                                  -1, /* "row" */
+		                                  CHAT_USERS_ICON_COLUMN,  pixbuf,
+		                                  CHAT_USERS_ALIAS_COLUMN, alias,
+		                                  CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
+		                                  CHAT_USERS_NAME_COLUMN,  name,
+		                                  CHAT_USERS_FLAGS_COLUMN, flags,
+		                                  CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, name),
+		                                  CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
+		                                  -1);
 #else
 		gtk_list_store_append(ls, &iter);
 		gtk_list_store_set(ls, &iter,
-							CHAT_USERS_ICON_COLUMN,  pixbuf,
-							CHAT_USERS_ALIAS_COLUMN, alias,
-							CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
-							CHAT_USERS_NAME_COLUMN,  name,
-							CHAT_USERS_FLAGS_COLUMN, flags,
-							CHAT_USERS_COLOR_COLUMN, &send_color,
-							CHAT_USERS_BUDDY_COLUMN, is_buddy,
-							-1);
+		                   CHAT_USERS_ICON_COLUMN,  pixbuf,
+		                   CHAT_USERS_ALIAS_COLUMN, alias,
+		                   CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
+		                   CHAT_USERS_NAME_COLUMN,  name,
+		                   CHAT_USERS_FLAGS_COLUMN, flags,
+		                   CHAT_USERS_COLOR_COLUMN, &send_color,
+		                   CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
+		                   -1);
 	}
-
-	else {
-
+	else
+	{
 		gtk_list_store_append(ls, &iter);
 		gtk_list_store_set(ls, &iter,
-							CHAT_USERS_ICON_COLUMN,  pixbuf,
-							CHAT_USERS_ALIAS_COLUMN, alias,
-							CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
-							CHAT_USERS_NAME_COLUMN,  name,
-							CHAT_USERS_FLAGS_COLUMN, flags,
-							CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, name),
-							CHAT_USERS_BUDDY_COLUMN, is_buddy,
-							-1);
+		                   CHAT_USERS_ICON_COLUMN,  pixbuf,
+		                   CHAT_USERS_ALIAS_COLUMN, alias,
+		                   CHAT_USERS_ALIAS_KEY_COLUMN, alias_key,
+		                   CHAT_USERS_NAME_COLUMN,  name,
+		                   CHAT_USERS_FLAGS_COLUMN, flags,
+		                   CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, name),
+		                   CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
+		                   -1);
 #endif
 	}
 
@@ -3655,15 +3650,15 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 	gint ret = 0;
 
 	gtk_tree_model_get(model, a,
-						CHAT_USERS_ALIAS_KEY_COLUMN, &user1,
-						CHAT_USERS_FLAGS_COLUMN, &f1,
-						CHAT_USERS_BUDDY_COLUMN, &buddy1,
-						-1);
+	                   CHAT_USERS_ALIAS_KEY_COLUMN, &user1,
+	                   CHAT_USERS_FLAGS_COLUMN, &f1,
+	                   CHAT_USERS_WEIGHT_COLUMN, &buddy1,
+	                   -1);
 	gtk_tree_model_get(model, b,
-						CHAT_USERS_ALIAS_KEY_COLUMN, &user2,
-						CHAT_USERS_FLAGS_COLUMN, &f2,
-						CHAT_USERS_BUDDY_COLUMN, &buddy2,
-						-1);
+	                   CHAT_USERS_ALIAS_KEY_COLUMN, &user2,
+	                   CHAT_USERS_FLAGS_COLUMN, &f2,
+	                   CHAT_USERS_WEIGHT_COLUMN, &buddy2,
+	                   -1);
 
 	if (user1 == NULL || user2 == NULL) {
 		if (!(user1 == NULL && user2 == NULL))
@@ -3672,7 +3667,7 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 		/* sort more important users first */
 		ret = (f1 > f2) ? -1 : 1;
 	} else if (buddy1 != buddy2) {
-		ret = buddy1 ? -1 : 1;
+		ret = (buddy1 > buddy2) ? -1 : 1;
 	} else {
 		ret = strcasecmp(user1, user2);
 	}
@@ -3803,7 +3798,8 @@ buddy_cb_common(GaimBuddy *buddy, GaimConversation *conv, gboolean is_buddy)
 		gtk_tree_model_get(model, &iter, CHAT_USERS_NAME_COLUMN, &name, -1);
 
 		if (!strcmp(normalized_name, gaim_normalize(conv->account, name))) {
-			gtk_list_store_set(GTK_LIST_STORE(model), &iter, CHAT_USERS_BUDDY_COLUMN, is_buddy, -1);
+			gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+			                   CHAT_USERS_WEIGHT_COLUMN, is_buddy ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, -1);
 			g_free(name);
 			break;
 		}
@@ -3968,7 +3964,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 
 	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, 
-							GDK_TYPE_COLOR, G_TYPE_BOOLEAN);
+							GDK_TYPE_COLOR, G_TYPE_INT);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(ls), CHAT_USERS_ALIAS_KEY_COLUMN,
 									sort_chat_users, NULL, NULL);
 
@@ -3990,13 +3986,13 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 
 	g_object_set(rend,
 				 "foreground-set", TRUE,
-				 "weight", PANGO_WEIGHT_BOLD,
+				 "weight-set", TRUE,
 				 NULL);
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
-												   "text", CHAT_USERS_ALIAS_COLUMN,
-												   "foreground-gdk", CHAT_USERS_COLOR_COLUMN,
-												   "weight-set", CHAT_USERS_BUDDY_COLUMN,
-												   NULL);
+	                                               "text", CHAT_USERS_ALIAS_COLUMN,
+	                                               "foreground-gdk", CHAT_USERS_COLOR_COLUMN,
+	                                               "weight", CHAT_USERS_WEIGHT_COLUMN,
+	                                               NULL);
 
 	gaim_signal_connect(blist_handle, "buddy-added",
 						gtkchat, GAIM_CALLBACK(buddy_added_cb), conv);

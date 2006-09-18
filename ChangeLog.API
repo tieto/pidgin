@@ -132,6 +132,8 @@ version 2.0.0:
 	  clearing the search at the end.
 	* gaim_gtkxfer_dialog_show: Can now take NULL to show (and possibly
 	  create) a default gtkxfer dialog.
+	* CHAT_USERS_BUDDY_COLUMN became CHAT_USERS_WEIGHT_COLUMN, along with
+	  a change in the values stored in the column.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
