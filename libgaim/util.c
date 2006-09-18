@@ -2413,7 +2413,7 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 			gchar *filename_temp;
 
 			filename_temp = g_strdup_printf("%s~", filename);
-			gaim_debug_error("util", "Error parsing file %s.  Rrenaming old "
+			gaim_debug_error("util", "Error parsing file %s.  Renaming old "
 							 "file to %s\n", filename_full, filename_temp);
 			gaim_util_write_data_to_file(filename_temp, contents, length);
 			g_free(filename_temp);
