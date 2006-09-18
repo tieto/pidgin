@@ -48,7 +48,7 @@ void gaim_gtk_roomlist_dialog_show(void);
 /**
  * Shows a new room list dialog and fetches the list for the specified account.
  *
- * @param account The account use force.
+ * @param account The account to use.
  */
 void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account);
 
