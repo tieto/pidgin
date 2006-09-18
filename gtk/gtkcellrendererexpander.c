@@ -108,7 +108,7 @@ GType  gaim_gtk_cell_renderer_expander_get_type (void)
 static void gaim_gtk_cell_renderer_expander_init (GaimGtkCellRendererExpander *cellexpander)
 {
 	GTK_CELL_RENDERER(cellexpander)->mode = GTK_CELL_RENDERER_MODE_ACTIVATABLE;
-	GTK_CELL_RENDERER(cellexpander)->xpad = 2;
+	GTK_CELL_RENDERER(cellexpander)->xpad = 0;
 	GTK_CELL_RENDERER(cellexpander)->ypad = 2;
 }
 

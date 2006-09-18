@@ -235,6 +235,8 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
+		if (w == gtkconv->u.chat->list)
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/userlist_width", allocation->width == 1 ? 0 : allocation->width);
 	}
 
 	return FALSE;
@@ -3976,12 +3978,16 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 												   "pixbuf", CHAT_USERS_ICON_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
+	gtk_widget_set_size_request(lbox, 
+	                            gaim_prefs_get_int("/gaim/gtk/conversations/chat/userlist_width"), -1);
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
-
+        g_signal_connect(G_OBJECT(list), "size-allocate", G_CALLBACK(size_allocate_cb), gtkconv);
+	      
+	
 	rend = gtk_cell_renderer_text_new();
 
 	g_object_set(rend,
@@ -4007,8 +4013,6 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 #endif
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
-
-	gtk_widget_set_size_request(list, 150, -1);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list), FALSE);
 	gtk_widget_show(list);
@@ -6482,7 +6486,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_width", 410);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/default_height", 160);
 	gaim_prefs_add_int("/gaim/gtk/conversations/chat/entry_height", 50);
-
+	gaim_prefs_add_int("/gaim/gtk/conversations/chat/userlist_width", 80);
 	/* Conversations -> IM */
 	gaim_prefs_add_none("/gaim/gtk/conversations/im");
 
