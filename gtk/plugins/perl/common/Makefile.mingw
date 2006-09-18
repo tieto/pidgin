@@ -19,6 +19,7 @@ INCLUDE_PATHS =		-I. \
 			-I$(GAIM_TOP) \
 			-I$(GAIM_LIB_TOP) \
 			-I$(GAIM_GTK_TOP) \
+			-I$(GAIM_GTK_TOP)/win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
