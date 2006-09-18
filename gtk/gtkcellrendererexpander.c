@@ -274,7 +274,6 @@ static gboolean gaim_gtk_cell_renderer_expander_activate(GtkCellRenderer *r,
 						     GtkCellRendererState flags)
 {
 	GtkTreePath *path = gtk_tree_path_new_from_string(p);
-printf("!! Activated!\n");
 	if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(widget), path))
 		gtk_tree_view_collapse_row(GTK_TREE_VIEW(widget), path);
 	else

@@ -127,7 +127,11 @@ struct _GaimGtkConversation
 	GtkWidget *imhtml;
 	GtkTextBuffer *entry_buffer;
 	GtkWidget *entry;
-
+	gboolean auto_resize;   /* this is set to TRUE if the conversation
+		 	 	 * is being resized by a non-user-initiated
+		 		 * event, such as the buddy icon appearing
+				 */
+	
 	GtkWidget *close; /* "x" on the tab */
 	GtkWidget *icon;
 	GtkWidget *tab_label;

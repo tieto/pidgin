@@ -212,6 +212,10 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return FALSE;
 
+	if (gtkconv->auto_resize) {
+		return FALSE;
+	}
+	
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
 	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
 	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
@@ -224,7 +228,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
 		}
-		if (w == gtkconv->entry)
+		if (w == gtkconv->lower_hbox)
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height", allocation->height);
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
@@ -233,7 +237,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
 		}
-		if (w == gtkconv->entry)
+		if (w == gtkconv->lower_hbox)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
 		if (w == gtkconv->u.chat->list)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/userlist_width", allocation->width == 1 ? 0 : allocation->width);
@@ -2259,6 +2263,19 @@ update_tab_icon(GaimConversation *conv)
 	}
 }
 
+/* This gets added as an idle handler when doing something that 
+ * redraws the icon. It sets the auto_resize gboolean to TRUE.
+ * This way, when the size_allocate callback gets triggered, it notices
+ * that this is an autoresize, and after the main loop iterates, it
+ * gets set back to FALSE
+ */
+static gboolean reset_auto_resize_cb(gpointer data)
+{
+	GaimGtkConversation *gtkconv = (GaimGtkConversation *)data;
+	gtkconv->auto_resize = FALSE;
+	return FALSE;
+}
+
 static gboolean
 redraw_icon(gpointer data)
 {
@@ -2277,6 +2294,9 @@ redraw_icon(gpointer data)
 	if(account && account->gc)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
+	gtkconv->auto_resize = TRUE;
+	g_idle_add(reset_auto_resize_cb, gtkconv);
+	
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
@@ -4045,7 +4065,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
-	gtk_widget_set_size_request(gtkconv->entry, -1,
+	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"));
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4057,7 +4077,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	                       G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
+	g_signal_connect(G_OBJECT(gtkconv->lower_hbox), "size-allocate",
 	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
 	default_formatize(gtkconv);
@@ -4142,7 +4162,7 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_set_name(gtkconv->entry, "gaim_gtkconv_entry");
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 								 gaim_account_get_protocol_name(conv->account));
-	gtk_widget_set_size_request(gtkconv->entry, -1,
+	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4154,7 +4174,7 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	                       G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
+	g_signal_connect(G_OBJECT(gtkconv->lower_hbox), "size-allocate",
 	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
@@ -5929,6 +5949,11 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
+	gtkconv->auto_resize = TRUE;
+	/* Reset the size request to allow the buddy icon to resize */
+	gtk_widget_set_size_request(gtkconv->lower_hbox, -1, -1);
+	g_idle_add(reset_auto_resize_cb, gtkconv);
+	printf("Auto resize true\n");
 	gtk_widget_set_size_request(gtkconv->u.im->icon, scale_width, scale_height);
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
