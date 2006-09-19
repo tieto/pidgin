@@ -1961,11 +1961,6 @@ init_plugin(GaimPlugin *plugin)
 	split = gaim_account_user_split_new(_("Resource"), "Home", '/');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = gaim_account_option_bool_new(_("Use TLS if available"), "use_tls",
-			TRUE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-			option);
-
 	option = gaim_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);

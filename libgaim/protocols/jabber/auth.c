@@ -41,17 +41,12 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	xmlnode *starttls;
 
 	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(gaim_account_get_bool(js->gc->account, "use_tls", TRUE) &&
-						gaim_ssl_is_supported()) {
+		if(gaim_ssl_is_supported()) {
 			jabber_send_raw(js,
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
-			if(gaim_ssl_is_supported()) {
-				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  Select \"Use TLS if available\" in account properties"));
-			} else {
-				gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
-			}
+			gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
 		}
 	}
