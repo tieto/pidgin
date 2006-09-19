@@ -2014,8 +2014,11 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 
 	gc = gaim_account_get_connection((GaimAccount *) user->client_data);
 	if (gc)
+	{
+		gc->wants_to_die = TRUE; /* we don't want to reconnect in this case */
 		gaim_connection_error(gc, _("You have been logged out because you"
 									" logged in at another workstation."));
+	}
 }
 
 static void
