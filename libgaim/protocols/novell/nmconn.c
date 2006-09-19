@@ -232,7 +232,7 @@ nm_read_all(NMConn * conn, char *buff, int len)
 	int bytes_left = len;
 	int bytes_read;
 	int total_bytes = 0;
-	int retry = 10;
+	int retry = 1000;
 
 	if (conn == NULL || buff == NULL)
 		return NMERR_BAD_PARM;
@@ -250,7 +250,7 @@ nm_read_all(NMConn * conn, char *buff, int len)
 					break;
 				}
 #ifdef _WIN32
-				Sleep(1000);
+				Sleep(1);
 #else
 				usleep(1000);
 #endif

@@ -997,7 +997,6 @@ nm_process_new_data(NMUser * user)
 {
 	NMConn *conn;
 	NMERR_T rc = NM_OK;
-	int ret;
 	guint32 val;
 
 	if (user == NULL)
@@ -1006,16 +1005,18 @@ nm_process_new_data(NMUser * user)
 	conn = user->conn;
 
 	/* Check to see if this is an event or a response */
-	ret = nm_tcp_read(conn, (char *) &val, sizeof(val));
-	if (ret == sizeof(val)) {
-
+	rc = nm_read_all(conn, (char *) &val, sizeof(val));
+	if (rc == NM_OK) {
 		if (strncmp((char *) &val, "HTTP", strlen("HTTP")) == 0)
 			rc = nm_process_response(user);
 		else
 			rc = nm_process_event(user, GUINT32_FROM_LE(val));
 
 	} else {
-		rc = NMERR_PROTOCOL;
+		if (errno == EAGAIN)
+			rc = NM_OK;
+		else
+			rc = NMERR_PROTOCOL;
 	}
 
 	return rc;
