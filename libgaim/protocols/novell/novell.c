@@ -1722,10 +1722,6 @@ novell_ssl_connected_cb(gpointer data, GaimSslConnection * gsc,
 	if ((user == NULL) || (conn = user->conn) == NULL)
 		return;
 
-	conn->ssl_conn = g_new0(NMSSLConn, 1);
-	conn->ssl_conn->read = (nm_ssl_read_cb) gaim_ssl_read;
-	conn->ssl_conn->write = (nm_ssl_write_cb) gaim_ssl_write;
-
 	gaim_connection_update_progress(gc, _("Authenticating..."),
 									2, NOVELL_CONNECT_STEPS);
 
@@ -2181,7 +2177,7 @@ novell_login(GaimAccount * account)
 	name = gaim_account_get_username(account);
 
 	user = nm_initialize_user(name, server, port, account, _event_callback);
-	if (user) {
+	if (user && user->conn) {
 		/* save user */
 		gc->proto_data = user;
 
@@ -2190,9 +2186,14 @@ novell_login(GaimAccount * account)
 										1, NOVELL_CONNECT_STEPS);
 
 		user->conn->use_ssl = TRUE;
+
+		user->conn->ssl_conn = g_new0(NMSSLConn, 1);
+		user->conn->ssl_conn->read = (nm_ssl_read_cb) gaim_ssl_read;
+		user->conn->ssl_conn->write = (nm_ssl_write_cb) gaim_ssl_write;
+
 		user->conn->ssl_conn->data = gaim_ssl_connect(user->client_data,
-				user->conn->addr, user->conn->port,
-				novell_ssl_connected_cb, novell_ssl_connect_error, gc);
+													  user->conn->addr, user->conn->port,
+													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
 			gaim_connection_error(gc, _("Error."
 										" SSL support is not installed."));
