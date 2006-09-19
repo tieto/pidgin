@@ -224,7 +224,7 @@ static void dll_prep() {
 				printf("Trying to set SafeDllSearchMode to 0\n");
 				regval = 0;
 				if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-					"System\\CurrentControlSet\\Control\\Session Manager", 
+					"System\\CurrentControlSet\\Control\\Session Manager",
 					0,  KEY_SET_VALUE, &hkey
 				) == ERROR_SUCCESS) {
 					if (RegSetValueEx(hkey,
@@ -511,15 +511,21 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	/* If debug or help or version flag used, create console for output */
 	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h") || strstr(lpszCmdLine, "-v")) {
-		LPFNATTACHCONSOLE MyAttachConsole = NULL;
-		if ((hmod = GetModuleHandle("kernel32.dll"))) {
-			MyAttachConsole =
-				(LPFNATTACHCONSOLE)
-				GetProcAddress(hmod, "AttachConsole");
+		/* If stdout hasn't been redirected to a file, alloc a console
+		 *  (_istty() doesn't work for stuff using the GUI subsystem) */
+		if (_fileno(stdout) == -1) {
+			LPFNATTACHCONSOLE MyAttachConsole = NULL;
+			if ((hmod = GetModuleHandle("kernel32.dll"))) {
+				MyAttachConsole =
+					(LPFNATTACHCONSOLE)
+					GetProcAddress(hmod, "AttachConsole");
+			}
+			if ((MyAttachConsole && MyAttachConsole(ATTACH_PARENT_PROCESS))
+					|| AllocConsole()) {
+				freopen("CONOUT$", "w", stdout);
+				freopen("CONOUT$", "w", stderr);
+			}
 		}
-		if ((MyAttachConsole && MyAttachConsole(ATTACH_PARENT_PROCESS))
-				|| AllocConsole())
-			freopen("CONOUT$", "w", stdout);
 	}
 
 	/* Load exception handler if we have it */
