@@ -652,6 +652,8 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS_save"
 fi
 
+AM_CONDITIONAL(USE_INTERNAL_LIBGG, test "x$gadu_libs" != "xyes")
+
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
@@ -675,9 +677,6 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
-fi
-if test "x$gadu_libs" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/gg//'`
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -740,9 +739,6 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
-fi
-if test "x$gadu_libs" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/gg//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do

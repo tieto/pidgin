@@ -27,6 +27,23 @@ GGSOURCES = \
 	gg.h \
 	gg.c
 
+if USE_INTERNAL_LIBGG
+GGSOURCES += \
+	lib/common.c \
+	lib/compat.h \
+	lib/dcc.c \
+	lib/events.c \
+	lib/http.c \
+	lib/libgadu.c \
+	lib/libgadu-config.h \
+	lib/libgadu.h \
+	lib/obsolete.c \
+	lib/pubdir50.c \
+	lib/pubdir.c
+
+INTGG_CFLAGS = -I$(top_srcdir)/libgaim/protocols/gg/lib
+endif
+
 AM_CFLAGS = $(st)
 
 libgg_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
@@ -54,6 +71,7 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libgaim \
+	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)
 
