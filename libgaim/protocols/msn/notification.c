@@ -999,17 +999,20 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 				gaim_account_get_username(account));
 		fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n",
 				gaim_account_get_username(account));
-		fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n",
-				session->passport_info.sid);
-		fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n",
-				session->passport_info.kv);
+		if (session->passport_info.sid != NULL)
+			fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n",
+					session->passport_info.sid);
+		if (session->passport_info.kv != NULL)
+			fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n",
+					session->passport_info.kv);
 		fprintf(fd, "<input type=\"hidden\" name=\"id\" value=\"2\">\n");
 		fprintf(fd, "<input type=\"hidden\" name=\"sl\" value=\"%ld\">\n",
 				time(NULL) - session->passport_info.sl);
 		fprintf(fd, "<input type=\"hidden\" name=\"rru\" value=\"%s\">\n",
 				rru);
-		fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n",
-				session->passport_info.mspauth);
+		if (session->passport_info.mspauth != NULL)
+			fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n",
+					session->passport_info.mspauth);
 		fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n",
 				sendbuf); /* TODO Digest me (huh? -- ChipX86) */
 		fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
