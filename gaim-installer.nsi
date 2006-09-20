@@ -444,19 +444,14 @@ Section $(GAIM_SECTION_TITLE) SecGaim
       SetOutPath "$INSTDIR"
     got_shfolder:
 
-    ; Check if Perl is installed, If not remove perl plugin
+    ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
     StrCmp $R2 "" 0 perl_exists
       ReadRegStr $R2 HKCU ${PERL_REG_KEY} ""
-      StrCmp $R2 "" perl_remove perl_exists
-
-      perl_remove:
-        Delete "$INSTDIR\plugins\perl.dll"
-        RMDir /r "$INSTDIR\perlmod"
-        Goto perl_done
+      StrCmp $R2 "" perl_done perl_exists
 
       perl_exists:
-        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_remove
+        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_done
         StrCmp $R0 "HKLM" 0 perl_done
           ReadRegStr $R3 HKLM "${HKLM_APP_PATHS_KEY}" "Path"
           WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
