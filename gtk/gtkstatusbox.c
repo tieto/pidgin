@@ -75,6 +75,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box);
 static void gtk_gaim_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void gtk_gaim_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
 static gboolean gtk_gaim_status_box_expose_event (GtkWidget *widget, GdkEventExpose *event);
+static void gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_forall (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 
 static void do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift);
@@ -308,9 +309,9 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 	{
 		gtk_gaim_status_box_set_buddy_icon(status_box, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
 	}
-	status_box->icon = gtk_image_new_from_pixbuf(status_box->buddy_icon);
+	status_box->icon = gtk_image_new();
 	status_box->icon_box = gtk_event_box_new();
-	
+
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	status_box->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 
@@ -321,7 +322,7 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 			  dnd_targets,
 			  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
 			  GDK_ACTION_COPY);
-	
+
 	g_signal_connect(G_OBJECT(status_box->icon_box), "drag_data_received", G_CALLBACK(icon_box_dnd_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->icon_box), "enter-notify-event", G_CALLBACK(icon_box_enter_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->icon_box), "leave-notify-event", G_CALLBACK(icon_box_leave_cb), status_box);
@@ -1124,6 +1125,8 @@ icon_choose_cb(const char *filename, gpointer data)
 			}
 		}
 		gtk_gaim_status_box_set_buddy_icon(box, filename);
+		if (box->account == NULL)
+			gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
 	}
 
 	box->buddy_icon_sel = NULL;
@@ -1298,13 +1301,12 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
 	GtkRequisition req = {0,0};
 	GtkAllocation parent_alc, box_alc, icon_alc;
-	GdkPixbuf *scaled;
 	gint border_width = GTK_CONTAINER (widget)->border_width;
 
 	combo_box_size_request(widget, &req);
 
 	box_alc = *allocation;
-	
+
 	box_alc.width -= (border_width * 2);
 	box_alc.height = MAX(1, ((allocation->height - req.height) - (border_width*2)));
 	box_alc.x += border_width;
@@ -1331,27 +1333,11 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 			icon_alc.x = allocation->width - (icon_alc.width + border_width);
 		}
 		icon_alc.y += border_width;
-	       
+
 		if (status_box->icon_size != icon_alc.height)
 		{
-			if (status_box->buddy_icon_hover)
-				g_object_unref(status_box->buddy_icon_hover);
-			if ((status_box->buddy_icon_path != NULL) &&
-				(*status_box->buddy_icon_path != '\0'))
-			{
-				scaled = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
-									   icon_alc.height, icon_alc.width, FALSE, NULL);
-				if (scaled != NULL)
-				{
-					status_box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
-					do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
-					if (status_box->buddy_icon)
-						g_object_unref(status_box->buddy_icon);
-					status_box->buddy_icon = scaled;
-					gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
-				}
-			}
 			status_box->icon_size = icon_alc.height;
+			gtk_gaim_status_box_redisplay_buddy_icon(status_box);
 		}
 		gtk_widget_size_allocate(status_box->icon_box, &icon_alc);
 	}
@@ -1497,34 +1483,50 @@ gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connec
 	gtk_gaim_status_box_refresh(status_box);
 }
 
-void
-gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *box, const char *filename)
+static void
+gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box)
 {
-	GdkPixbuf *scaled;
-	g_free(box->buddy_icon_path);
-	box->buddy_icon_path = g_strdup(filename);
 
-	if ((filename != NULL) && (*filename != '\0'))
+	/* This is sometimes called before the box is shown, and we will not have a size */
+	if (status_box->icon_size <= 0)
+		return;
+
+	if (status_box->buddy_icon)
+		g_object_unref(status_box->buddy_icon);
+	if (status_box->buddy_icon_hover)
+		g_object_unref(status_box->buddy_icon_hover);
+	status_box->buddy_icon = NULL;
+	status_box->buddy_icon_hover = NULL;
+
+	if ((status_box->buddy_icon_path != NULL) &&
+			(*status_box->buddy_icon_path != '\0'))
+		status_box->buddy_icon = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
+				status_box->icon_size, status_box->icon_size, FALSE, NULL);
+
+	if (status_box->buddy_icon == NULL)
 	{
-		if (box->buddy_icon != NULL)
-			g_object_unref(box->buddy_icon);
-
-		/* This will get called before the box is shown and will not have a size */
-		if (box->icon_size > 0) {
-			scaled = gdk_pixbuf_new_from_file_at_scale(filename,
-				box->icon_size, box->icon_size, FALSE, NULL);
-			if (scaled != NULL)
-			{
-				box->buddy_icon_hover = gdk_pixbuf_copy(scaled);
-				do_colorshift(box->buddy_icon_hover, box->buddy_icon_hover, 30);
-				box->buddy_icon = scaled;
-				gtk_image_set_from_pixbuf(GTK_IMAGE(box->icon), box->buddy_icon);
-			}
-		}
+		/* Show a placeholder icon */
+		gchar *filename;
+		filename = g_build_filename(DATADIR, "pixmaps",
+				"gaim", "insert-image.png", NULL);
+		status_box->buddy_icon = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
 	}
 
-	if (box->account == NULL)
-		gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
+	if (status_box->buddy_icon != NULL) {
+		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
+		status_box->buddy_icon_hover = gdk_pixbuf_copy(status_box->buddy_icon);
+		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
+	}
+}
+
+void
+gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *status_box, const char *filename)
+{
+	g_free(status_box->buddy_icon_path);
+	status_box->buddy_icon_path = g_strdup(filename);
+
+	gtk_gaim_status_box_redisplay_buddy_icon(status_box);
 }
 
 const char*
