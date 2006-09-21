@@ -27,7 +27,7 @@ GGSOURCES = \
 	gg.h \
 	gg.c
 
-if USE_INTERNAL_LIBGG
+if USE_INTERNAL_LIBGADU
 GGSOURCES += \
 	lib/common.c \
 	lib/compat.h \

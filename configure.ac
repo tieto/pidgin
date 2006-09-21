@@ -652,7 +652,7 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS="$CPPFLAGS_save"
 fi
 
-AM_CONDITIONAL(USE_INTERNAL_LIBGG, test "x$gadu_libs" != "xyes")
+AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)

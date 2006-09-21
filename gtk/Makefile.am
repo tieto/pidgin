@@ -165,6 +165,10 @@ gaim_LDADD = \
 	$(GTK_LIBS) \
 	$(top_builddir)/libgaim/libgaim.la
 
+if USE_INTERNAL_LIBGADU
+INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
+endif
+
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
@@ -179,5 +183,6 @@ AM_CPPFLAGS = \
 	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
-	$(LIBXML_CFLAGS)
+	$(LIBXML_CFLAGS) \
+	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK
