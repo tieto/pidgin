@@ -255,7 +255,9 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
-
+	
+	gaim_signal_emit(my_protocol, "jabber-sending-text", js->gc, data);
+	
 #ifdef HAVE_CYRUS_SASL
 	if (js->sasl_maxbuf>0) {
 		int pos;
@@ -1906,6 +1908,12 @@ static gboolean load_plugin(GaimPlugin *plugin)
 			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
 			gaim_value_new_outgoing(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XMLNODE));
 
+	gaim_signal_register(plugin, "jabber-sending-text",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
+			     gaim_value_new(GAIM_TYPE_STRING));
+			   
+
 	return TRUE;
 }
 
@@ -1914,7 +1922,9 @@ static gboolean unload_plugin(GaimPlugin *plugin)
 	gaim_signal_unregister(plugin, "jabber-receiving-xmlnode");
 
 	gaim_signal_unregister(plugin, "jabber-sending-xmlnode");
-
+	
+	gaim_signal_unregister(plugin, "jabber-sending-text");
+	
 	return TRUE;
 }
 
