@@ -173,8 +173,7 @@ void serv_set_info(GaimConnection *gc, const char *info)
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) &&
-		prpl_info->set_info) {
+	if (prpl_info && prpl_info->set_info) {
 
 		account = gaim_connection_get_account(gc);
 
@@ -270,7 +269,7 @@ void serv_add_permit(GaimConnection *g, const char *name)
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_permit)
+	if (prpl_info && prpl_info->add_permit)
 		prpl_info->add_permit(g, name);
 }
 
@@ -281,7 +280,7 @@ void serv_add_deny(GaimConnection *g, const char *name)
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_deny)
+	if (prpl_info && prpl_info->add_deny)
 		prpl_info->add_deny(g, name);
 }
 
@@ -292,7 +291,7 @@ void serv_rem_permit(GaimConnection *g, const char *name)
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->rem_permit)
+	if (prpl_info && prpl_info->rem_permit)
 		prpl_info->rem_permit(g, name);
 }
 
@@ -303,7 +302,7 @@ void serv_rem_deny(GaimConnection *g, const char *name)
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->rem_deny)
+	if (prpl_info && prpl_info->rem_deny)
 		prpl_info->rem_deny(g, name);
 }
 
@@ -320,7 +319,7 @@ void serv_set_permit_deny(GaimConnection *g)
 	 * in the prefs. In either case you should probably be resetting and
 	 * resending the permit/deny info when you get this.
 	 */
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_permit_deny)
+	if (prpl_info && prpl_info->set_permit_deny)
 		prpl_info->set_permit_deny(g);
 }
 
@@ -331,7 +330,7 @@ void serv_join_chat(GaimConnection *g, GHashTable *data)
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->join_chat)
+	if (prpl_info && prpl_info->join_chat)
 		prpl_info->join_chat(g, data);
 }
 
@@ -343,7 +342,7 @@ void serv_reject_chat(GaimConnection *g, GHashTable *data)
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->reject_chat)
+	if (prpl_info && prpl_info->reject_chat)
 		prpl_info->reject_chat(g, data);
 }
 
@@ -364,7 +363,7 @@ void serv_chat_invite(GaimConnection *g, int id, const char *message, const char
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-inviting-user",
 					 conv, name, &buffy);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->chat_invite)
+	if (prpl_info && prpl_info->chat_invite)
 		prpl_info->chat_invite(g, id, buffy, name);
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-invited-user",
@@ -382,9 +381,6 @@ void serv_chat_invite(GaimConnection *g, int id, const char *message, const char
 void serv_chat_leave(GaimConnection *g, int id)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (!g_list_find(gaim_connections_get_all(), g))
-		return;
 
 	if (g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);

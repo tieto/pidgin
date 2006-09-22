@@ -428,7 +428,6 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	GaimConnectionUiOps *ops;
 
 	g_return_if_fail(gc   != NULL);
-	g_return_if_fail(GAIM_CONNECTION_IS_VALID(gc));
 	g_return_if_fail(text != NULL);
 
 	/* If we've already got one error, we don't need any more */

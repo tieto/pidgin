@@ -506,14 +506,8 @@ jabber_format_info(GaimConnection *gc, GaimRequestFields *fields)
 	p = xmlnode_to_str(vc_node, NULL);
 	xmlnode_free(vc_node);
 
-	if (gc != NULL) {
-		GaimAccount *account = gaim_connection_get_account(gc);
-
-		if (account != NULL) {
-			gaim_account_set_user_info(account, p);
-			serv_set_info(gc, p);
-		}
-	}
+	gaim_account_set_user_info(gaim_connection_get_account(gc), p);
+	serv_set_info(gc, p);
 
 	g_free(p);
 }

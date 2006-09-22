@@ -46,10 +46,10 @@ gaim_privacy_permit_add(GaimAccount *account, const char *who,
 			break;
 	}
 
- 	if (l != NULL)
+	if (l != NULL)
 	{
 		g_free(name);
- 		return FALSE;
+		return FALSE;
 	}
 
 	account->permit = g_slist_append(account->permit, name);

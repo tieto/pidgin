@@ -1141,11 +1141,8 @@ set_user_info_cb(GaimAccount *account, const char *user_info)
 	GaimConnection *gc;
 
 	gaim_account_set_user_info(account, user_info);
-
 	gc = gaim_account_get_connection(account);
-
-	if (gc != NULL)
-		serv_set_info(gc, user_info);
+	serv_set_info(gc, user_info);
 }
 
 void
@@ -1959,8 +1956,7 @@ gaim_account_add_buddy(GaimAccount *account, GaimBuddy *buddy)
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info != NULL && g_list_find(gaim_connections_get_all(), gc) &&
-			prpl_info->add_buddy != NULL)
+	if (prpl_info != NULL && prpl_info->add_buddy != NULL)
 		prpl_info->add_buddy(gc, buddy, gaim_buddy_get_group(buddy));
 }
 
@@ -1973,7 +1969,7 @@ gaim_account_add_buddies(GaimAccount *account, GList *buddies)
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
+	if (prpl_info) {
 		GList *cur, *groups = NULL;
 
 		/* Make a list of what group each buddy is in */
@@ -2008,7 +2004,7 @@ gaim_account_remove_buddy(GaimAccount *account, GaimBuddy *buddy,
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->remove_buddy)
+	if (prpl_info && prpl_info->remove_buddy)
 		prpl_info->remove_buddy(gc, buddy, group);
 }
 
@@ -2018,13 +2014,10 @@ gaim_account_remove_buddies(GaimAccount *account, GList *buddies, GList *groups)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc = gaim_account_get_connection(account);
 
-	if (!g_list_find(gaim_connections_get_all(), gc))
-		return;
-
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
+	if (prpl_info) {
 		if (prpl_info->remove_buddies)
 			prpl_info->remove_buddies(gc, buddies, groups);
 		else {
@@ -2048,7 +2041,7 @@ gaim_account_remove_group(GaimAccount *account, GaimGroup *group)
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->remove_group)
+	if (prpl_info && prpl_info->remove_group)
 		prpl_info->remove_group(gc, group);
 }
 
@@ -2064,7 +2057,7 @@ gaim_account_change_password(GaimAccount *account, const char *orig_pw,
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->change_passwd)
+	if (prpl_info && prpl_info->change_passwd)
 		prpl_info->change_passwd(gc, orig_pw, new_pw);
 }
 
