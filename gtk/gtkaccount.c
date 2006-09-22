@@ -189,16 +189,24 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 }
 
 static void
-set_dialog_icon(AccountPrefsDialog *dialog)
+set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_icon_path)
 {
-	char *filename = gaim_buddy_icons_get_full_path(dialog->icon_path);
+	char *filename;
 	GdkPixbuf *pixbuf = NULL;
-	if (filename)
+
+	g_free(dialog->icon_path);
+	dialog->icon_path = new_icon_path;
+
+	filename = gaim_buddy_icons_get_full_path(dialog->icon_path);
+	if (filename != NULL) {
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+	}
 
 	if (pixbuf && dialog->prpl_info &&
 	    (dialog->prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY))
 	{
+		/* Scale the icon to something reasonable */
 		int width, height;
 		GdkPixbuf *scale;
 
@@ -210,10 +218,19 @@ set_dialog_icon(AccountPrefsDialog *dialog)
 		pixbuf = scale;
 	}
 
+	if (pixbuf == NULL)
+	{
+		/* Show a placeholder icon */
+		gchar *filename;
+		filename = g_build_filename(DATADIR, "pixmaps",
+				"gaim", "insert-image.png", NULL);
+		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+	}
+
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_entry), pixbuf);
 	if (pixbuf != NULL)
 		g_object_unref(G_OBJECT(pixbuf));
-	g_free(filename);
 }
 
 static void
@@ -279,12 +296,7 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 
 	dialog = data;
 
-	if (filename) {
-		g_free(dialog->icon_path);
-		dialog->icon_path = gaim_gtk_convert_buddy_icon(dialog->plugin, filename);
-		set_dialog_icon(dialog);
-		gtk_widget_show(dialog->icon_entry);
-	}
+	set_dialog_icon(dialog, gaim_gtk_convert_buddy_icon(dialog->plugin, filename));
 
 	dialog->icon_filesel = NULL;
 }
@@ -299,12 +311,8 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 static void
 icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-	g_free(dialog->icon_path);
-	dialog->icon_path = NULL;
-
-	gtk_widget_hide(dialog->icon_entry);
+	set_dialog_icon(dialog, NULL);
 }
-
 
 static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
@@ -328,11 +336,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
-			g_free(dialog->icon_path);
-
-			dialog->icon_path = gaim_gtk_convert_buddy_icon(dialog->plugin, tmp);
-			set_dialog_icon(dialog);
-			gtk_widget_show(dialog->icon_entry);
+			set_dialog_icon(dialog, gaim_gtk_convert_buddy_icon(dialog->plugin, tmp));
 			g_free(tmp);
 		}
 		gtk_drag_finish(dc, TRUE, FALSE, t);
@@ -612,8 +616,9 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					     !gaim_account_get_ui_bool(dialog->account, GAIM_GTK_UI, "use-global-buddyicon",
 								       TRUE));
 
-		dialog->icon_path = g_strdup(gaim_account_get_ui_string(dialog->account, GAIM_GTK_UI, "non-global-buddyicon", NULL));
-		set_dialog_icon(dialog);
+		set_dialog_icon(dialog,
+				g_strdup(gaim_account_get_ui_string(dialog->account,
+						GAIM_GTK_UI, "non-global-buddyicon", NULL)));
 	}
 
 	if (!dialog->prpl_info ||
