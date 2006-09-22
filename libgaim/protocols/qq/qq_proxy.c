@@ -50,7 +50,7 @@ static void _qq_show_socket(gchar *desc, gint fd) {
 	socklen_t len = sizeof(sin);
 	getsockname(fd, (struct sockaddr *)&sin, &len);
 	gaim_debug(GAIM_DEBUG_INFO, desc, "%s:%d\n",
-            inet_ntoa(sin.sin_addr), ntohs(sin.sin_port));
+            inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
 }
 */
 

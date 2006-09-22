@@ -67,11 +67,11 @@ static int _qq_xfer_init_udp_channel(ft_info *info)
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
 	if (!_qq_in_same_lan(info)) {
-		sin.sin_port = htons(info->remote_major_port);
-		sin.sin_addr.s_addr = htonl(info->remote_internet_ip);
+		sin.sin_port = g_htons(info->remote_major_port);
+		sin.sin_addr.s_addr = g_htonl(info->remote_internet_ip);
 	} else {
-		sin.sin_port = htons(info->remote_minor_port);
-		sin.sin_addr.s_addr = htonl(info->remote_real_ip);
+		sin.sin_port = g_htons(info->remote_minor_port);
+		sin.sin_addr.s_addr = g_htonl(info->remote_real_ip);
 	}
 	return 0;
 }
@@ -89,7 +89,7 @@ static ssize_t _qq_xfer_udp_recv(guint8 *buf, size_t len, GaimXfer *xfer)
 	r = recvfrom(info->recv_fd, buf, len, 0, (struct sockaddr *) &sin, &sinlen);
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", 
 			"==> recv %d bytes from File UDP Channel, remote ip[%s], remote port[%d]\n",
-			r, inet_ntoa(sin.sin_addr), ntohs(sin.sin_port));
+			r, inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
 	return r;
 }
 
@@ -111,21 +111,21 @@ static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, GaimXfer *xfer)
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
 	if (!_qq_in_same_lan(info)) {
-		sin.sin_port = htons(info->remote_major_port);
-		sin.sin_addr.s_addr = htonl(info->remote_internet_ip);
+		sin.sin_port = g_htons(info->remote_major_port);
+		sin.sin_addr.s_addr = g_htonl(info->remote_internet_ip);
 	} else if (info->use_major) {
-		sin.sin_port = htons(info->remote_major_port);
-		sin.sin_addr.s_addr = htonl(info->remote_real_ip);
+		sin.sin_port = g_htons(info->remote_major_port);
+		sin.sin_addr.s_addr = g_htonl(info->remote_real_ip);
 	} else {
-		sin.sin_port = htons(info->remote_minor_port);
-		sin.sin_addr.s_addr = htonl(info->remote_real_ip);
+		sin.sin_port = g_htons(info->remote_minor_port);
+		sin.sin_addr.s_addr = g_htonl(info->remote_real_ip);
 	}
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "sending to channel: %d.%d.%d.%d:%d\n",
 			sin.sin_addr.s_addr & 0xff,
 			(sin.sin_addr.s_addr >> 8) & 0xff,
 			(sin.sin_addr.s_addr >> 16) & 0xff,
 			sin.sin_addr.s_addr >> 24,
-			ntohs(sin.sin_port)
+			g_ntohs(sin.sin_port)
 		  );
 	return sendto(info->sender_fd, buf, len, 0, (struct sockaddr *) &sin, sizeof(sin));
 }
@@ -230,9 +230,9 @@ static void qq_show_conn_info(ft_info *info)
 	gchar *internet_ip_str, *real_ip_str;
 	guint32 ip;
 
-	ip = htonl(info->remote_real_ip);
+	ip = g_htonl(info->remote_real_ip);
 	real_ip_str = gen_ip_str((guint8 *) &ip);
-	ip = htonl(info->remote_internet_ip);
+	ip = g_htonl(info->remote_internet_ip);
 	internet_ip_str = gen_ip_str((guint8 *) &ip);
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "remote internet ip[%s:%d], major port[%d], real ip[%s], minor port[%d]\n",
 			internet_ip_str, info->remote_internet_port,
@@ -369,7 +369,7 @@ in_addr_t get_real_ip()
 		if (ioctl(fd, SIOCGIFADDR, (char *) &buf[i]) >= 0)
 		{
 			ret = (((struct sockaddr_in *)(&buf[i].ifr_addr))->sin_addr).s_addr;
-			if (ret == ntohl(0x7f000001)) continue;
+			if (ret == g_ntohl(0x7f000001)) continue;
 			return ret;
 		}
 	}
@@ -391,7 +391,7 @@ static void _qq_xfer_init_socket(GaimXfer *xfer)
 	/* debug 
 	info->local_real_ip = 0x7f000001;
 	*/
-	info->local_real_ip = ntohl(inet_addr(gaim_network_get_my_ip(-1)));
+	info->local_real_ip = g_ntohl(inet_addr(gaim_network_get_my_ip(-1)));
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "local real ip is %x", info->local_real_ip);
 
 	for (i = 0; i < 2; i++) {
@@ -405,7 +405,7 @@ static void _qq_xfer_init_socket(GaimXfer *xfer)
 		sin_len = sizeof(sin);
 		bind(sockfd, (struct sockaddr *) &sin, sin_len);
 		getsockname(sockfd, (struct sockaddr *) &sin, &sin_len);
-		listen_port = ntohs(sin.sin_port);
+		listen_port = g_ntohs(sin.sin_port);
 
 		switch (i) {
 			case 0:
@@ -445,7 +445,7 @@ static void _qq_send_packet_file_request (GaimConnection *gc, guint32 to_uid, gc
 	info = g_new0(ft_info, 1);
 	info->to_uid = to_uid;
 	info->send_seq = qd->send_seq;
-	info->local_internet_ip = ntohl(inet_addr(qd->my_ip));
+	info->local_internet_ip = g_ntohl(inet_addr(qd->my_ip));
 	info->local_internet_port = qd->my_port;
 	info->local_real_ip = 0x00000000;
 	info->conn_method = 0x00;
@@ -800,7 +800,7 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 	}
 
 	info = g_new0(ft_info, 1);
-	info->local_internet_ip = ntohl(inet_addr(qd->my_ip));
+	info->local_internet_ip = g_ntohl(inet_addr(qd->my_ip));
 	info->local_internet_port = qd->my_port;
 	info->local_real_ip = 0x00000000;
 	info->to_uid = sender_uid;

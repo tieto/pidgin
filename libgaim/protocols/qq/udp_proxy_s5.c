@@ -134,11 +134,11 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 
 	fcntl(phb->udpsock, F_SETFL, O_NONBLOCK);
 
-	port = ntohs(ctlsin.sin_port) + 1;
+	port = g_ntohs(ctlsin.sin_port) + 1;
 	while (1) {
 		inet_aton("0.0.0.0", &(sin.sin_addr));
 		sin.sin_family = AF_INET;
-		sin.sin_port = htons(port);
+		sin.sin_port = g_htons(port);
 		if (bind(phb->udpsock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
 			port++;
 			if (port > 65500) {

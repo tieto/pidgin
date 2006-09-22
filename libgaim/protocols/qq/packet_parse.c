@@ -20,12 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _WIN32
-#include <arpa/inet.h>
-#else
-#include "win32dep.h"
-#endif
-
 #include <string.h>
 
 #include "packet_parse.h"
@@ -48,7 +42,7 @@ gint read_packet_b(guint8 *buf, guint8 **cursor, gint buflen, guint8 *b)
 gint read_packet_w(guint8 *buf, guint8 **cursor, gint buflen, guint16 *w)
 {
 	if (*cursor <= buf + buflen - sizeof(*w)) {
-		*w = ntohs(**(guint16 **) cursor);
+		*w = g_ntohs(**(guint16 **) cursor);
 		*cursor += sizeof(*w);
 		return sizeof(*w);
 	} else {
@@ -61,7 +55,7 @@ gint read_packet_w(guint8 *buf, guint8 **cursor, gint buflen, guint16 *w)
 gint read_packet_dw(guint8 *buf, guint8 **cursor, gint buflen, guint32 *dw)
 {
 	if (*cursor <= buf + buflen - sizeof(*dw)) {
-		*dw = ntohl(**(guint32 **) cursor);
+		*dw = g_ntohl(**(guint32 **) cursor);
 		*cursor += sizeof(*dw);
 		return sizeof(*dw);
 	} else {
@@ -99,7 +93,7 @@ gint create_packet_b(guint8 *buf, guint8 **cursor, guint8 b)
 gint create_packet_w(guint8 *buf, guint8 **cursor, guint16 w)
 {
 	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint16)) {
-		**(guint16 **) cursor = htons(w);
+		**(guint16 **) cursor = g_htons(w);
 		*cursor += sizeof(guint16);
 		return sizeof(guint16);
 	} else {
@@ -112,7 +106,7 @@ gint create_packet_w(guint8 *buf, guint8 **cursor, guint16 w)
 gint create_packet_dw(guint8 *buf, guint8 **cursor, guint32 dw)
 {
 	if (*cursor <= buf + MAX_PACKET_SIZE - sizeof(guint32)) {
-		**(guint32 **) cursor = htonl(dw);
+		**(guint32 **) cursor = g_htonl(dw);
 		*cursor += sizeof(guint32);
 		return sizeof(guint32);
 	} else {

@@ -38,12 +38,6 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 0x61C88647 is what we can track on the ASM codes.!!
 */
 
-#ifdef _WIN32
-#include "win32dep.h"
-#else
-#include <arpa/inet.h>
-#endif
-
 #include <string.h>
 
 #include "crypt.h"
@@ -56,12 +50,12 @@ the golden ratio: Sqrt(5/4) - 1/2 ~ 0.618034 multiplied by 2^32.
 /* Tiny Encryption Algorithm (TEA) */
 static void qq_encipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
-	register guint32 y = ntohl(v[0]), 
-		 z = ntohl(v[1]), 
-		 a = ntohl(k[0]), 
-		 b = ntohl(k[1]), 
-		 c = ntohl(k[2]), 
-		 d = ntohl(k[3]), 
+	register guint32 y = g_ntohl(v[0]), 
+		 z = g_ntohl(v[1]), 
+		 a = g_ntohl(k[0]), 
+		 b = g_ntohl(k[1]), 
+		 c = g_ntohl(k[2]), 
+		 d = g_ntohl(k[3]), 
 		 n = 0x10, 
 		 sum = 0, 
 		 delta = 0x9E3779B9;	/*  0x9E3779B9 - 0x100000000 = -0x61C88647 */
@@ -72,8 +66,8 @@ static void qq_encipher(guint32 *const v, const guint32 *const k, guint32 *const
 		z += ((y << 4) + c) ^ (y + sum) ^ ((y >> 5) + d);
 	}
 
-	w[0] = htonl(y);
-	w[1] = htonl(z);
+	w[0] = g_htonl(y);
+	w[1] = g_htonl(z);
 }
 
 static gint rand(void) {	/* it can be the real random seed function */
@@ -175,12 +169,12 @@ static void qq_encrypt(const guint8 *const instr, gint instrlen,
 
 static void qq_decipher(guint32 *const v, const guint32 *const k, guint32 *const w)
 {
-	register guint32 y = ntohl(v[0]), 
-		z = ntohl(v[1]), 
-		a = ntohl(k[0]), 
-		b = ntohl(k[1]), 
-		c = ntohl(k[2]), 
-		d = ntohl(k[3]), 
+	register guint32 y = g_ntohl(v[0]), 
+		z = g_ntohl(v[1]), 
+		a = g_ntohl(k[0]), 
+		b = g_ntohl(k[1]), 
+		c = g_ntohl(k[2]), 
+		d = g_ntohl(k[3]), 
 		n = 0x10, 
 		sum = 0xE3779B90,	/* why this ? must be related with n value */
 		delta = 0x9E3779B9;
@@ -192,8 +186,8 @@ static void qq_decipher(guint32 *const v, const guint32 *const k, guint32 *const
 		sum -= delta;
 	}
 
-	w[0] = htonl(y);
-	w[1] = htonl(z);
+	w[0] = g_htonl(y);
+	w[1] = g_htonl(z);
 }
 
 static gint decrypt_block(const guint8 **crypt_buff, const gint instrlen, 
