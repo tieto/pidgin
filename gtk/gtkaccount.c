@@ -607,7 +607,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->account != NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
 					     gaim_account_get_check_mail(dialog->account));
-		
+
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->icon_check),
 					     !gaim_account_get_ui_bool(dialog->account, GAIM_GTK_UI, "use-global-buddyicon",
 								       TRUE));
@@ -1063,7 +1063,6 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 			/* The user set an icon, which would've been cached by convert_buddy_icon,
 			 * but didn't save the changes. Delete the cache file. */
 			char *filename = g_build_filename(gaim_buddy_icons_get_cache_dir(), dialog->icon_path, NULL);
-			printf("Deleting\n");
 			g_unlink(filename);
 			g_free(filename);
 		}
