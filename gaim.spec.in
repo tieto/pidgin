@@ -14,7 +14,7 @@
 %define gaimver @VERSION@
 %endif
 
-Summary:    A Gtk+ based multiprotocol instant messaging client
+Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    %gaimver
 Release:    0%{?beta:.beta%{beta}}
@@ -39,22 +39,21 @@ BuildRequires: libtool, pkgconfig, intltool, gettext
 %{?_with_sasl:BuildRequires: cyrus-sasl-devel >= 2}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
-# For some reason perl isn't always automatically detected as a requirement :(
-Requires: perl
+%{!?_without_text:BuildRequires: ncurses-devel}
 
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft" || "%{_vendor}" == "Mandriva"
-# Mandrake/Mandriva requirements
+# For Mandrake/Mandriva:
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
 %else
-
-# SuSE & Red Hat / Fedora requirements
+# For SuSE, Red Hat, Fedora and others:
 BuildRequires: gtk2-devel
-
 %if "%{_vendor}" == "suse"
+# For SuSE:
 BuildRequires: gnutls-devel
 %else
+# For Red Hat, Fedora and others:
 # let's assume RH & FC1 are the only brain-dead distros missing the
 # perl-XML-Parser dependency on intltool and that other RH/FC releases
 # don't care if we specify it here
@@ -62,6 +61,9 @@ BuildRequires: perl-XML-Parser
 BuildRequires: mozilla-nss-devel
 %endif
 %endif
+
+# For some reason perl isn't always automatically detected as a requirement :(
+Requires: perl
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Gaim.
@@ -110,37 +112,45 @@ Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
 
+%if 0%{!?_without_text:1}
+%package text
+Summary:    A text-based user interface for Gaim
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
+%endif
+
 %description
 Gaim allows you to talk to anyone using a variety of messaging
-protocols, including AIM, ICQ, IRC, Yahoo!, Novell Groupwise, MSN
-Messenger, Jabber, Gadu-Gadu, Lotus Sametime and Zephyr.
-These protocols are implemented using a modular, easy to use design.
-To use a protocol, just add an account using the account editor.
+protocols including AIM, MSN, Yahoo!, Jabber, Bonjour, Gadu-Gadu,
+ICQ, IRC, Novell Groupwise, QQ, Lotus Sametime, SILC, Simple and
+Zephyr.  These protocols are implemented using a modular, easy to
+use design.  To use a protocol, just add an account using the
+account editor.
 
 Gaim supports many common features of other clients, as well as many
 unique features, such as perl scripting, TCL scripting and C plugins.
 
-Gaim is NOT affiliated with or endorsed by America Online, Inc.,
+Gaim is not affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
 %description devel
 The gaim-devel package contains the header files, developer
-documentation, and libraries required for development of gaim scripts
+documentation, and libraries required for development of Gaim scripts
 and plugins.
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %description bonjour
-Bonjour plugin for Gaim
+Bonjour plugin for Gaim.
 %endif
 
 %if 0%{?_with_gadugadu:1}
 %description gadugadu
-Gadu-Gadu plugin for Gaim using the libgadu library
+Gadu-Gadu plugin for Gaim using the libgadu library.
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %description meanwhile
-Lotus Sametime plugin for Gaim using the Meanwhile library
+Lotus Sametime plugin for Gaim using the Meanwhile library.
 %endif
 
 %if 0%{?_with_mono:1}
@@ -151,7 +161,15 @@ use Gaim plugins written in the .NET programming language.
 
 %if 0%{?_with_silc:1}
 %description silc
-SILC (Secure Internet Live Conferencing) plugin for Gaim
+SILC (Secure Internet Live Conferencing) plugin for Gaim.
+%endif
+
+%if 0%{!?without_text:1}
+%description text
+A text-based user interface for Gaim.  This can be run from a
+standard text console or from a terminal within X Windows.  It
+uses ncurses and our homegrown gnt library for drawing windows
+and text.
 %endif
 
 %if 0%{?_with_tcl:1}
@@ -232,12 +250,15 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
 
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
-        grep -v libbonjour.so | \
-        grep -v libsilcgaim.so | \
-        grep -v libsametime.so | \
-        grep -v libgg.so | \
-        grep -v tcl.so | \
-        grep -v mono.so | \
+        grep -v /gntgf.so | \
+        grep -v /gnthistory.so | \
+        grep -v /libbonjour.so | \
+        grep -v /libgg.so | \
+        grep -v /libsilcgaim.so | \
+        grep -v /libsametime.so | \
+        grep -v /mono.so | \
+        grep -v /s.so | \
+        grep -v /tcl.so | \
         grep -v ".dll$" | \
         grep -v ".tcl$" > %{name}-%{version}-coreplugins
 
@@ -260,21 +281,25 @@ rm -rf %{buildroot}
 %doc README.SVN
 %doc doc/FAQ
 %doc doc/the_penguin.txt
-%doc %{_mandir}/man1/*
+%doc %{_mandir}/man1/gaim.*
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/gaim
 %attr(755, root, root) %{perl_vendorarch}/Gaim*
 %attr(755, root, root) %{perl_vendorarch}/auto/Gaim
 
-%{_bindir}/*
+%{_bindir}/gaim
+%{_bindir}/gaim-client-example
+%{_bindir}/gaim-remote
+%{_bindir}/gaim-send
+%{_bindir}/gaim-send-async
+%{_bindir}/gaim-url-handler
 %{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
 %dir %{_datadir}/sounds/gaim
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 %{_libdir}/libgaim.so.*
-%{_libdir}/libgnt.so.*
 %{_sysconfdir}/gconf/schemas/gaim.schemas
 
 %if 0%{?_with_dbus:1}
@@ -348,6 +373,18 @@ rm -rf %{buildroot}
 %defattr(-, root, root)
 
 %{_libdir}/gaim/tcl.so
+%endif
+
+%if 0%{!?without_text:1}
+%files text
+%defattr(-, root, root)
+
+%doc %{_mandir}/man1/gaim-text.*
+%{_bindir}/gaim-text
+%{_libdir}/gaim/gntgf.so
+%{_libdir}/gaim/gnthistory.so
+%{_libdir}/gaim/s.so
+%{_libdir}/libgnt.so.*
 %endif
 
 %changelog
