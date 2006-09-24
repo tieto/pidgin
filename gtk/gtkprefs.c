@@ -1184,7 +1184,7 @@ static GList *get_available_browsers()
 		{N_("Firebird"), "mozilla-firebird"},
 		{N_("Epiphany"), "epiphany"}
 	};
-	static const int num_possible_browsers = 9;
+	static const int num_possible_browsers = G_N_ELEMENTS(possible_browsers);
 
 	GList *browsers = NULL;
 	int i = 0;
