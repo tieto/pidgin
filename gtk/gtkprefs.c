@@ -1171,16 +1171,18 @@ static GList *get_available_browsers()
 		char *command;
 	};
 
+	/* Sorted reverse alphabetically */
 	static struct browser possible_browsers[] = {
-		{N_("Epiphany"), "epiphany"},
-		{N_("Firebird"), "mozilla-firebird"},
-		{N_("Firefox"), "firefox"},
-		{N_("Galeon"), "galeon"},
-		{N_("GNOME Default"), "gnome-open"},
-		{N_("Konqueror"), "kfmclient"},
-		{N_("Mozilla"), "mozilla"},
+		{N_("Seamonkey"), "seamonkey"},
+		{N_("Opera"), "opera"},
 		{N_("Netscape"), "netscape"},
-		{N_("Opera"), "opera"}
+		{N_("Mozilla"), "mozilla"},
+		{N_("Konqueror"), "kfmclient"},
+		{N_("GNOME Default"), "gnome-open"},
+		{N_("Galeon"), "galeon"},
+		{N_("Firefox"), "firefox"},
+		{N_("Firebird"), "mozilla-firebird"},
+		{N_("Epiphany"), "epiphany"}
 	};
 	static const int num_possible_browsers = 9;
 

@@ -966,7 +966,8 @@ gaim_gtk_notify_uri(const char *uri)
 	}
 	else if (!strcmp(web_browser, "mozilla") ||
 			 !strcmp(web_browser, "mozilla-firebird") ||
-			 !strcmp(web_browser, "firefox"))
+			 !strcmp(web_browser, "firefox") ||
+			 !strcmp(web_browser, "seamonkey"))
 	{
 		char *args = "";
 
