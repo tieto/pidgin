@@ -10,10 +10,10 @@ enum
 static GntTreeClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
-void (*org_draw)(GntWidget *wid);
-void (*org_destroy)(GntWidget *wid);
-void (*org_map)(GntWidget *wid);
-gboolean (*org_key_pressed)(GntWidget *w, const char *t);
+static void (*org_draw)(GntWidget *wid);
+static void (*org_destroy)(GntWidget *wid);
+static void (*org_map)(GntWidget *wid);
+static gboolean (*org_key_pressed)(GntWidget *w, const char *t);
 
 static void
 gnt_menu_draw(GntWidget *widget)
@@ -89,6 +89,7 @@ gnt_menu_map(GntWidget *widget)
 			menu_tree_add(menu, item, NULL);
 		}
 		org_map(widget);
+		gnt_tree_adjust_columns(GNT_TREE(widget));
 	}
 	GNTDEBUG;
 }
@@ -267,7 +268,7 @@ GntWidget *gnt_menu_new(GntMenuType type)
 	GntWidget *widget = g_object_new(GNT_TYPE_MENU, NULL);
 	GntMenu *menu = GNT_MENU(widget);
 	menu->list = NULL;
-	menu->selected = -1;
+	menu->selected = 0;
 	menu->type = type;
 
 	if (type == GNT_MENU_TOPLEVEL) {

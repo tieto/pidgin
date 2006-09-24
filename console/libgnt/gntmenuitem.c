@@ -56,14 +56,14 @@ gnt_menuitem_get_gtype(void)
 	return type;
 }
 
-GObject *gnt_menuitem_new(const char *text)
+GntMenuItem *gnt_menuitem_new(const char *text)
 {
 	GObject *item = g_object_new(GNT_TYPE_MENUITEM, NULL);
 	GntMenuItem *menuitem = GNT_MENUITEM(item);
 
 	menuitem->text = g_strdup(text);
 
-	return item;
+	return menuitem;
 }
 
 void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, gpointer data)

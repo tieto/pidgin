@@ -10,8 +10,8 @@ enum
 static GntBoxClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
-gboolean (*org_keypress)(GntWidget *widget, const char *text);
-void (*org_destroy)(GntWidget *widget);
+static gboolean (*org_keypress)(GntWidget *widget, const char *text);
+static void (*org_destroy)(GntWidget *widget);
 
 static gboolean
 gnt_window_key_pressed(GntWidget *widget, const char *text)
@@ -108,6 +108,9 @@ GntWidget *gnt_window_box_new(gboolean homo, gboolean vert)
 
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu)
 {
+	/* If a menu already existed, then destroy that first. */
+	if (window->menu)
+		gnt_widget_destroy(GNT_WIDGET(window->menu));
 	window->menu = menu;
 }
 

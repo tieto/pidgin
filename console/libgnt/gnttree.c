@@ -1,5 +1,6 @@
 #include "gnttree.h"
 #include "gntmarshal.h"
+#include "gntutils.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -1140,6 +1141,7 @@ void _gnt_tree_init_internals(GntTree *tree, int col)
 	{
 		tree->columns[col].width = 15;
 	}
+	tree->list = NULL;
 	tree->show_title = FALSE;
 }
 
@@ -1239,5 +1241,35 @@ void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded)
 void gnt_tree_set_show_separator(GntTree *tree, gboolean set)
 {
 	tree->show_separator = set;
+}
+
+void gnt_tree_adjust_columns(GntTree *tree)
+{
+	GntTreeRow *row = tree->root;
+	int *widths, i, twidth, height;
+
+	widths = g_new0(int, tree->ncol);
+	while (row) {
+		GList *iter;
+		for (i = 0, iter = row->columns; iter; iter = iter->next, i++) {
+			GntTreeCol *col = iter->data;
+			int w = gnt_util_onscreen_width(col->text, NULL);
+			if (widths[i] < w)
+				widths[i] = w;
+		}
+		row = row->next;
+	}
+
+	twidth = 1 + 2 * (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_NO_BORDER));
+	for (i = 0; i < tree->ncol; i++) {
+		gnt_tree_set_col_width(tree, i, widths[i]);
+		twidth += widths[i] + (tree->show_separator ? 1 : 0) + 1;
+		fprintf(stderr, "column width for col %d: %d\n", i, widths[i]);
+	}
+	g_free(widths);
+
+	fprintf(stderr, "tree width: %d\n", twidth);
+	gnt_widget_get_size(GNT_WIDGET(tree), NULL, &height);
+	gnt_widget_set_size(GNT_WIDGET(tree), twidth, height);
 }
 

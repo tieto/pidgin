@@ -48,7 +48,6 @@ int main()
 
 	gnt_screen_menu_show(menu);
 
-
 	GntWidget *win = gnt_window_new();
 	gnt_box_add_widget(GNT_BOX(win),
 		gnt_label_new("..."));

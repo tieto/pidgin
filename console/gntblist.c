@@ -39,6 +39,7 @@
 #include "gntlabel.h"
 #include "gntline.h"
 #include "gnttree.h"
+#include "gntwindow.h"
 
 #include "gntblist.h"
 #include "gntconv.h"
@@ -483,6 +484,8 @@ add_chat(GaimChat *chat, GGBlist *ggblist)
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				group, NULL);
 
+	/* XXX: This causes problem because you can close a chat window, hide the buddylist.
+	 * When you show the buddylist, you automatically join the chat again. */
 	if (gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"))
 		serv_join_chat(gaim_account_get_connection(chat->account), chat->components);
 }
@@ -1608,6 +1611,75 @@ blist_clicked(GntTree *tree, GntMouseEvent event, int x, int y, gpointer ggblist
 	return FALSE;
 }
 
+static void
+plugin_action(GntMenuItem *item, gpointer data)
+{
+	GaimPluginAction *action = data;
+	if (action && action->callback)
+		action->callback(action);
+}
+
+static void
+reconstruct_accounts_menu()
+{
+	GntWidget *menu, *sub;
+	GntMenuItem *item;
+	GntWindow *window;
+	GList *iter;
+
+	if (!ggblist)
+		return;
+
+	window  = GNT_WINDOW(ggblist->window);
+
+	menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
+	gnt_window_set_menu(window, GNT_MENU(menu));
+
+	item = gnt_menuitem_new(_("Accounts"));
+	gnt_menu_add_item(GNT_MENU(menu), item);
+
+	sub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+	for (iter = gaim_accounts_get_all_active(); iter;
+			iter = g_list_delete_link(iter, iter)) {
+		GaimAccount *account = iter->data;
+		GaimConnection *gc = gaim_account_get_connection(account);
+		GaimPlugin *prpl;
+		
+		if (!GAIM_CONNECTION_IS_CONNECTED(gc))
+			continue;
+		prpl = gc->prpl;
+
+		if (GAIM_PLUGIN_HAS_ACTIONS(prpl)) {
+			GList *acts;
+			GntWidget *s;
+
+			item = gnt_menuitem_new(gaim_account_get_username(account));
+			s = gnt_menu_new(GNT_MENU_POPUP);
+			gnt_menuitem_set_submenu(item, GNT_MENU(s));
+			gnt_menu_add_item(GNT_MENU(sub), item);
+
+			for (acts = GAIM_PLUGIN_ACTIONS(prpl, gc); acts;
+					acts = g_list_delete_link(acts, acts)) {
+				GaimPluginAction *action = acts->data;
+				if (!action)
+					continue;
+
+				action->plugin = prpl;
+				action->context = gc;
+
+				item = gnt_menuitem_new(action->label);
+				gnt_menuitem_set_callback(item, plugin_action, action);
+				/* This is to make sure the action is freed when the menu is destroyed */
+				g_object_set_data_full(G_OBJECT(item), "plugin_action", action,
+					(GDestroyNotify)gaim_plugin_action_free);
+				gnt_menu_add_item(GNT_MENU(s), item);
+			}
+		}
+	}
+}
+
 void gg_blist_show()
 {
 	if (ggblist)
@@ -1617,7 +1689,7 @@ void gg_blist_show()
 
 	gaim_get_blist()->ui_data = ggblist;
 
-	ggblist->window = gnt_vbox_new(FALSE);
+	ggblist->window = gnt_vwindow_new(FALSE);
 	gnt_widget_set_name(ggblist->window, "buddylist");
 	gnt_box_set_toplevel(GNT_BOX(ggblist->window), TRUE);
 	gnt_box_set_title(GNT_BOX(ggblist->window), _("Buddy List"));
@@ -1641,6 +1713,10 @@ void gg_blist_show()
 
 	gnt_widget_show(ggblist->window);
 
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", gg_blist_get_handle(),
+				GAIM_CALLBACK(reconstruct_accounts_menu), NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", gg_blist_get_handle(),
+				GAIM_CALLBACK(reconstruct_accounts_menu), NULL);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_status_changed), ggblist);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-idle-changed", gg_blist_get_handle(),
@@ -1681,6 +1757,8 @@ void gg_blist_show()
 				G_CALLBACK(status_selection_changed), NULL);
 	g_signal_connect(G_OBJECT(ggblist->statustext), "key_pressed",
 				G_CALLBACK(status_text_changed), NULL);
+
+	reconstruct_accounts_menu(ggblist);
 
 	populate_buddylist();
 
