@@ -288,8 +288,10 @@ redraw_tree(GntTree *tree)
 			tree_mark_columns(tree, pos, widget->priv.height - pos,
 					ACS_BTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
 		}
-		tree_mark_columns(tree, pos, pos + 1, ACS_PLUS | COLOR_PAIR(GNT_COLOR_NORMAL));
-		tree_mark_columns(tree, pos, pos, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
+		tree_mark_columns(tree, pos, pos + 1,
+			(tree->show_separator ? ACS_PLUS : ACS_HLINE) | COLOR_PAIR(GNT_COLOR_NORMAL));
+		tree_mark_columns(tree, pos, pos,
+			(tree->show_separator ? ACS_VLINE : ' ') | COLOR_PAIR(GNT_COLOR_NORMAL));
 		start = 2;
 	}
 
@@ -356,7 +358,8 @@ redraw_tree(GntTree *tree)
 		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1) - 1);
 		tree->bottom = row;
 		g_free(str);
-		tree_mark_columns(tree, pos, i, ACS_VLINE | attr);
+		tree_mark_columns(tree, pos, i,
+			(tree->show_separator ? ACS_VLINE : ' ') | attr);
 	}
 
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
@@ -364,7 +367,8 @@ redraw_tree(GntTree *tree)
 	{
 		mvwhline(widget->window, i, pos, ' ',
 				widget->priv.width - pos * 2 - 1);
-		tree_mark_columns(tree, pos, i, ACS_VLINE);
+		tree_mark_columns(tree, pos, i,
+			(tree->show_separator ? ACS_VLINE : ' '));
 		i++;
 	}
 
@@ -696,6 +700,8 @@ static void
 gnt_tree_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
+	GntTree *tree = GNT_TREE(widget);
+	tree->show_separator = TRUE;
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	widget->priv.minw = 4;
 	widget->priv.minh = 4;
@@ -1125,19 +1131,24 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 		redraw_tree(tree);
 }
 
-GntWidget *gnt_tree_new_with_columns(int col)
+void _gnt_tree_init_internals(GntTree *tree, int col)
 {
-	GntWidget *widget = g_object_new(GNT_TYPE_TREE, NULL);
-	GntTree *tree = GNT_TREE(widget);
-
-	tree->hash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_tree_row);
 	tree->ncol = col;
+	tree->hash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_tree_row);
 	tree->columns = g_new0(struct _GntTreeColInfo, col);
 	while (col--)
 	{
 		tree->columns[col].width = 15;
 	}
 	tree->show_title = FALSE;
+}
+
+GntWidget *gnt_tree_new_with_columns(int col)
+{
+	GntWidget *widget = g_object_new(GNT_TYPE_TREE, NULL);
+	GntTree *tree = GNT_TREE(widget);
+
+	_gnt_tree_init_internals(tree, col);
 	
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
 	gnt_widget_set_take_focus(widget, TRUE);
@@ -1224,3 +1235,9 @@ void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded)
 			gnt_widget_draw(GNT_WIDGET(tree));
 	}
 }
+
+void gnt_tree_set_show_separator(GntTree *tree, gboolean set)
+{
+	tree->show_separator = set;
+}
+

@@ -8,6 +8,7 @@
 #include "gntbox.h"
 #include "gntcolors.h"
 #include "gntkeys.h"
+#include "gntmenu.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
@@ -33,6 +34,14 @@
  *
  * 	Need to wattrset for colors to use with PDCurses.
  */
+
+/**
+ * There can be at most one menu at a time on the screen.
+ * If there is a menu being displayed, then all the keystrokes will be sent to
+ * the menu until it is closed, either when the user activates a menuitem, or
+ * presses Escape to cancel the menu.
+ */
+static GntMenu *menu;
 
 static int lock_focus_list;
 static GList *focus_list;
@@ -120,6 +129,15 @@ g_list_bring_to_front(GList *list, gpointer data)
 static gboolean
 update_screen(gpointer null)
 {
+	if (menu) {
+		GntMenu *top = menu;
+		while (top) {
+			GntNode *node = g_hash_table_lookup(nodes, top);
+			if (node)
+				top_panel(node->panel);
+			top = top->submenu;
+		}
+	}
 	update_panels();
 	doupdate();
 	return TRUE;
@@ -685,7 +703,7 @@ widestringwidth(wchar_t *wide)
 static int
 reverse_char(WINDOW *d, int y, int x, gboolean set)
 {
-#define DECIDE(ch) (set ? ((ch) | WA_REVERSE) : ((ch) & ~WA_REVERSE))
+#define DECIDE(ch) (set ? ((ch) | A_REVERSE) : ((ch) & ~A_REVERSE))
 
 #ifdef NO_WIDECHAR
 	chtype ch;
@@ -777,8 +795,9 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	if (mode == GNT_KP_MODE_NORMAL)
 	{
-		if (ordered)
-		{
+		if (menu) {
+			ret = gnt_widget_key_pressed(GNT_WIDGET(menu), buffer);
+		} else if (ordered) {
 			ret = gnt_widget_key_pressed(ordered->data, buffer);
 		}
 
@@ -1209,8 +1228,8 @@ void gnt_screen_update(GntWidget *widget)
 	
 	while (widget->parent)
 		widget = widget->parent;
-	
-	gnt_box_sync_children(GNT_BOX(widget));
+	if (!GNT_IS_MENU(widget))
+		gnt_box_sync_children(GNT_BOX(widget));
 	node = g_hash_table_lookup(nodes, widget);
 	if (node && !node->panel)
 	{
@@ -1244,6 +1263,9 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 	GntWidget *w;
 	if (!widget)
 		return FALSE;
+	
+	if (GNT_IS_MENU(widget))
+		return TRUE;
 
 	w = widget;
 
@@ -1414,5 +1436,27 @@ show_actions_list()
 	lock_focus_list = 1;
 	gnt_widget_show(win);
 	lock_focus_list = 0;
+}
+
+static void
+reset_menu(GntWidget *widget, gpointer null)
+{
+	menu = NULL;
+}
+
+gboolean gnt_screen_menu_show(gpointer newmenu)
+{
+	if (menu) {
+		/* For now, if a menu is being displayed, then another menu
+		 * can NOT take over. */
+		return FALSE;
+	}
+
+	menu = newmenu;
+	gnt_widget_draw(GNT_WIDGET(menu));
+
+	g_signal_connect(G_OBJECT(menu), "hide", G_CALLBACK(reset_menu), NULL);
+
+	return TRUE;
 }
 

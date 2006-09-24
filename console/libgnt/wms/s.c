@@ -1,4 +1,6 @@
+#include "gnt.h"
 #include "gntbox.h"
+#include "gntmenu.h"
 #include "gntwm.h"
 
 #include "gntblist.h"
@@ -52,6 +54,8 @@ s_new_window(GntWidget *win)
 	int maxx, maxy;
 	const char *name;
 
+	if (GNT_IS_MENU(win))
+		return new_panel(win->window);
 	getmaxyx(stdscr, maxy, maxx);
 
 	gnt_widget_get_position(win, &x, &y);

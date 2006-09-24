@@ -46,6 +46,7 @@ struct _GnTree
 		char *title;
 	} *columns;             /* Would a GList be better? */
 	gboolean show_title;
+	gboolean show_separator; /* Whether to show column separators */
 
 	GCompareFunc compare;
 };
@@ -54,7 +55,7 @@ struct _GnTreeClass
 {
 	GntWidgetClass parent;
 
-	void (*selection_changed)(int old, int current);
+	void (*selection_changed)(GntTreeRow *old, GntTreeRow * current);
 
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);
@@ -120,6 +121,13 @@ void gnt_tree_set_compare_func(GntTree *tree, GCompareFunc func);
 
 void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded);
 
+void gnt_tree_set_show_separator(GntTree *tree, gboolean set);
+
 G_END_DECLS
+
+/* The following functions should NOT be used by applications. */
+
+/* This should be called by the subclasses of GntTree's in their _new function */
+void _gnt_tree_init_internals(GntTree *tree, int col);
 
 #endif /* GNT_TREE_H */

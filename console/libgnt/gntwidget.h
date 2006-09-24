@@ -93,6 +93,7 @@ struct _GnWidgetClass
 	void (*show)(GntWidget *obj);		/* This will call draw() and take focus (if it can take focus) */
 	void (*destroy)(GntWidget *obj);
 	void (*draw)(GntWidget *obj);		/* This will draw the widget */
+	void (*hide)(GntWidget *obj);
 	void (*expose)(GntWidget *widget, int x, int y, int width, int height);
 	void (*gained_focus)(GntWidget *widget);
 	void (*lost_focus)(GntWidget *widget);

@@ -9,6 +9,7 @@ enum
 {
 	SIG_DESTROY,
 	SIG_DRAW,
+	SIG_HIDE,
 	SIG_GIVE_FOCUS,
 	SIG_LOST_FOCUS,
 	SIG_KEY_PRESSED,
@@ -164,6 +165,14 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWidgetClass, draw),
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	signals[SIG_HIDE] = 
+		g_signal_new("hide",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntWidgetClass, hide),
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
@@ -403,6 +412,7 @@ gnt_widget_expose(GntWidget *widget, int x, int y, int width, int height)
 void
 gnt_widget_hide(GntWidget *widget)
 {
+	g_signal_emit(widget, signals[SIG_HIDE], 0);
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 #if 0
 	/* XXX: I have no clue why, but this seemed to be necessary. */

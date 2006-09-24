@@ -29,5 +29,7 @@ void gnt_widget_set_urgent(GntWidget *widget);
 
 void gnt_register_action(const char *label, void (*callback)());
 
+gboolean gnt_screen_menu_show(gpointer menu);
+
 void gnt_quit();
 

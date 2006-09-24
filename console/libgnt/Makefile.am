@@ -16,10 +16,13 @@ libgnt_la_SOURCES = \
 	gntlabel.c \
 	gntline.c \
 	gntmarshal.c \
+	gntmenu.c \
+	gntmenuitem.c \
 	gntstyle.c \
 	gnttextview.c \
 	gnttree.c \
 	gntutils.c \
+	gntwindow.c \
 	gntmain.c
 
 libgnt_la_headers = \
@@ -34,10 +37,13 @@ libgnt_la_headers = \
 	gntlabel.h \
 	gntline.h \
 	gntmarshal.h \
+	gntmenu.h \
+	gntmenuitem.h \
 	gntstyle.h \
 	gnttextview.h \
 	gnttree.h \
 	gntutils.h \
+	gntwindow.h \
 	gntwm.h \
 	gnt.h
 

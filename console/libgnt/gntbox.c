@@ -504,9 +504,15 @@ gnt_box_class_init(GntBoxClass *klass)
 static void
 gnt_box_init(GTypeInstance *instance, gpointer class)
 {
+	GntWidget *widget = GNT_WIDGET(instance);
+	GntBox *box = GNT_BOX(widget);
 	/* Initially make both the height and width resizable.
 	 * Update the flags as necessary when widgets are added to it. */
-	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+	box->pad = 1;
+	box->fill = TRUE;
 	GNTDEBUG;
 }
 
@@ -547,14 +553,7 @@ GntWidget *gnt_box_new(gboolean homo, gboolean vert)
 
 	box->homogeneous = homo;
 	box->vertical = vert;
-	box->pad = 1;
-	box->fill = TRUE;
-	gnt_widget_set_take_focus(widget, TRUE);
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
-	if (vert)
-		box->alignment = GNT_ALIGN_LEFT;
-	else
-		box->alignment = GNT_ALIGN_MID;
+	box->alignment = vert ? GNT_ALIGN_LEFT : GNT_ALIGN_MID;
 
 	return widget;
 }
