@@ -144,7 +144,7 @@ int irc_send(struct irc_conn *irc, const char *buf)
 	int ret, buflen;
  	char *tosend= g_strdup(buf);
 
-	gaim_signal_emit(_irc_plugin, "irc-sending_text", gaim_account_get_connection(irc->account), &tosend);
+	gaim_signal_emit(_irc_plugin, "irc-sending-text", gaim_account_get_connection(irc->account), &tosend);
 	if (tosend == NULL)
 		return 0;
 	
