@@ -8,7 +8,7 @@
 
  @signaldef log-timestamp
   @signalproto
-char *(*log_timestamp)(GaimConversation *conv, time_t when);
+char *(*log_timestamp)(GaimLog *log, time_t when);
   @endsignalproto
   @signaldesc
    Emitted to allow plugins to customize the timestamp on a message
