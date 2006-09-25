@@ -5483,23 +5483,26 @@ void gaim_gtk_blist_init(void)
 
 	/* Register our signals */
 	gaim_signal_register(gtk_blist_handle, "gtkblist-hiding",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_BLIST));
 
 	gaim_signal_register(gtk_blist_handle, "gtkblist-unhiding",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_BLIST));
 
 	gaim_signal_register(gtk_blist_handle, "gtkblist-created",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-						 GAIM_SUBTYPE_BLIST));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_BLIST));
 
 	gaim_signal_register(gtk_blist_handle, "drawing-tooltip",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
-						 gaim_value_new_outgoing(GAIM_TYPE_BOXED, "GString *"),
-						 gaim_value_new(GAIM_TYPE_BOOLEAN));
+	                     gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_BLIST_NODE),
+	                     gaim_value_new_outgoing(GAIM_TYPE_BOXED, "GString *"),
+	                     gaim_value_new(GAIM_TYPE_BOOLEAN));
 
 
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, GAIM_CALLBACK(buddy_signonoff_cb), NULL);
