@@ -1183,41 +1183,41 @@ gaim_xfers_init(void) {
 
 	/* register signals */
 	gaim_signal_register(handle, "file-recv-accept",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-accept",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-start",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-start",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-cancel",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-cancel",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-send-complete",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-complete",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 	gaim_signal_register(handle, "file-recv-request",
-						 gaim_marshal_VOID__POINTER,
-						 NULL, 1,
-						 gaim_value_new(GAIM_TYPE_POINTER, GAIM_SUBTYPE_XFER));
+	                     gaim_marshal_VOID__POINTER, NULL, 1,
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_XFER));
 }
 
 void

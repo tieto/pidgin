@@ -103,7 +103,8 @@ gaim_sound_init()
 	                     gaim_marshal_BOOLEAN__INT_POINTER,
 	                     gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
 	                     gaim_value_new(GAIM_TYPE_INT),
-	                     gaim_value_new(GAIM_TYPE_POINTER));
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                                    GAIM_SUBTYPE_ACCOUNT));
 
 	gaim_prefs_add_none("/core/sound");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
