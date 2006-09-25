@@ -6573,7 +6573,7 @@ gaim_gtk_conversations_init(void)
 #endif
 	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                                    GAIM_SUBTYPE_LOG),
+	                                    GAIM_SUBTYPE_CONVERSATION),
 #if SIZEOF_TIME_T == 4
 	                     gaim_value_new(GAIM_TYPE_INT));
 #elif SIZEOF_TIME_T == 8
