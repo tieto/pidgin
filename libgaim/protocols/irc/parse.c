@@ -44,6 +44,8 @@ static char *irc_mirc_colors[16] = {
 		"orange", "yellow", "green", "teal", "cyan", "light blue",
 		"pink", "grey", "light grey" };
 
+extern GaimPlugin *_irc_plugin;
+
 /*typedef void (*IRCMsgCallback)(struct irc_conn *irc, char *from, char *name, char **args);*/
 static struct _irc_msg {
 	char *name;
@@ -534,7 +536,8 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	guint i;
 
 	irc->recv_time = time(NULL);
-
+	gaim_signal_emit(_irc_plugin, "irc-receiving-text", gaim_account_get_connection(irc->account), &input);
+	
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
 		irc_send(irc, msg);

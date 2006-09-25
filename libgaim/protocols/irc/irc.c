@@ -61,7 +61,7 @@ static guint irc_nick_hash(const char *nick);
 static gboolean irc_nick_equal(const char *nick1, const char *nick2);
 static void irc_buddy_free(struct irc_buddy *ib);
 
-static GaimPlugin *_irc_plugin = NULL;
+GaimPlugin *_irc_plugin = NULL;
 
 static const char *status_chars = "@+%&";
 
@@ -141,18 +141,26 @@ irc_send_cb(gpointer data, gint source, GaimInputCondition cond)
 
 int irc_send(struct irc_conn *irc, const char *buf)
 {
-	int ret, buflen = strlen(buf);
+	int ret, buflen;
+ 	char *tosend= g_strdup(buf);
 
+	gaim_signal_emit(_irc_plugin, "irc-sending_text", gaim_account_get_connection(irc->account), &tosend);
+	if (tosend == NULL)
+		return 0;
+	
+	buflen = strlen(tosend);
+	
+	
 	/* If we're not buffering writes, try to send immediately */
 	if (!irc->writeh)
-		ret = do_send(irc, buf, buflen);
+		ret = do_send(irc, tosend, buflen);
 	else {
 		ret = -1;
 		errno = EAGAIN;
 	}
 
 	/* gaim_debug(GAIM_DEBUG_MISC, "irc", "sent%s: %s",
-		irc->gsc ? " (ssl)" : "", buf); */
+		irc->gsc ? " (ssl)" : "", tosend); */
 	if (ret <= 0 && errno != EAGAIN) {
 		gaim_connection_error(gaim_account_get_connection(irc->account),
 				      _("Server has disconnected"));
@@ -163,10 +171,10 @@ int irc_send(struct irc_conn *irc, const char *buf)
 			irc->writeh = gaim_input_add(
 				irc->gsc ? irc->gsc->fd : irc->fd,
 				GAIM_INPUT_WRITE, irc_send_cb, irc);
-		gaim_circ_buffer_append(irc->outbuf, buf + ret,
+		gaim_circ_buffer_append(irc->outbuf, tosend + ret,
 			buflen - ret);
 	}
-
+	g_free(tosend);
 	return ret;
 }
 
@@ -869,6 +877,19 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_send_raw,				/* send_raw */
 };
 
+static gboolean load_plugin (GaimPlugin *plugin) {
+
+	gaim_signal_register(plugin, "irc-sending-text",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
+			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
+	gaim_signal_register(plugin, "irc-receiving-text",
+			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
+			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
+	return TRUE;
+}
+
 
 static GaimPluginInfo info =
 {
@@ -889,7 +910,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
-	NULL,                                             /**< load           */
+	load_plugin,                                      /**< load           */
 	NULL,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 
