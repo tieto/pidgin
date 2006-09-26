@@ -438,8 +438,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	GaimAccount *account;
 	struct yahoo_data *yd;
 
-	if (!d)
-		return;
+	g_return_if_fail(d != NULL);
 
 	gc = d->gc;
 	account = gaim_connection_get_account(gc);
@@ -499,6 +498,8 @@ void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
+
+	g_return_if_fail(d != NULL);
 
 	if (yd->jp) {
 		if (gaim_proxy_connect(account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
