@@ -1647,7 +1647,7 @@ reconstruct_accounts_menu()
 		GaimConnection *gc = gaim_account_get_connection(account);
 		GaimPlugin *prpl;
 		
-		if (!GAIM_CONNECTION_IS_CONNECTED(gc))
+		if (!gc || !GAIM_CONNECTION_IS_CONNECTED(gc))
 			continue;
 		prpl = gc->prpl;
 
