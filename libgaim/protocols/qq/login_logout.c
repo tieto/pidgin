@@ -157,8 +157,6 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	qq_data *qd;
 	qq_login_reply_ok_packet lrop;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, QQ_LOGIN_REPLY_MISC_ERROR);
-
 	qd = (qq_data *) gc->proto_data;
 	cursor = data;
 	bytes = 0;
@@ -251,8 +249,6 @@ static gint _qq_process_login_redirect(GaimConnection *gc, guint8 *data, gint le
 	qq_data *qd;
 	qq_login_reply_redirect_packet lrrp;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, QQ_LOGIN_REPLY_MISC_ERROR);
-
 	qd = (qq_data *) gc->proto_data;
 	cursor = data;
 	bytes = 0;
@@ -304,8 +300,6 @@ void qq_send_packet_request_login_token(GaimConnection *gc)
 	guint16 seq_ret;
 	gint bytes;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) gc->proto_data;
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 
@@ -334,8 +328,6 @@ static void qq_send_packet_login(GaimConnection *gc, guint8 token_length, guint8
 	guint16 seq_ret;
 	gint encrypted_len, bytes;
 	gint pos;
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
@@ -391,7 +383,6 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnect
 {
         qq_data *qd;
 
-        g_return_if_fail(gc != NULL && gc->proto_data != NULL);
         g_return_if_fail(buf != NULL && buf_len != 0);
 
         qd = (qq_data *) gc->proto_data;
@@ -422,8 +413,6 @@ void qq_send_packet_logout(GaimConnection *gc)
 	gint i;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) gc->proto_data;
 	for (i = 0; i < 4; i++)
 		qq_send_cmd(gc, QQ_CMD_LOGOUT, FALSE, 0xffff, FALSE, qd->pwkey, QQ_KEY_LENGTH);
@@ -438,7 +427,6 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	guint8 *data;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

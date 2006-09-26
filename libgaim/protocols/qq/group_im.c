@@ -58,7 +58,7 @@ void qq_send_packet_group_im(GaimConnection *gc, qq_group *group, const gchar *m
 	guint16 msg_len;
 	gchar *msg_filtered;
 
-	g_return_if_fail(gc != NULL && group != NULL && msg != NULL);
+	g_return_if_fail(group != NULL && msg != NULL);
 
 	msg_filtered = gaim_markup_strip_html(msg);
 	msg_len = strlen(msg_filtered);
@@ -102,7 +102,7 @@ void qq_process_recv_group_im_apply_join
 	gchar *reason_utf8, *msg, *reason;
 	group_member_opt *g;
 
-	g_return_if_fail(gc != NULL && internal_group_id > 0 && data != NULL && len > 0);
+	g_return_if_fail(internal_group_id > 0 && data != NULL && len > 0);
 
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg apply_join is empty\n");
@@ -150,7 +150,7 @@ void qq_process_recv_group_im_been_rejected
 	gchar *reason_utf8, *msg, *reason;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_rejected is empty\n");
@@ -191,7 +191,7 @@ void qq_process_recv_group_im_been_approved
 	gchar *reason_utf8, *msg;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_approved is empty\n");
@@ -230,7 +230,7 @@ void qq_process_recv_group_im_been_removed
 	gchar *msg;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_removed is empty\n");
@@ -264,7 +264,7 @@ void qq_process_recv_group_im_been_added
 	qq_group *group;
 	gchar *msg;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	if (*cursor >= (data + len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group msg been_added is empty\n");
@@ -309,7 +309,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	qq_recv_group_im *im_group;
 	gint skip_len;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && data != NULL && data_len > 0);
+	g_return_if_fail(data != NULL && data_len > 0);
 	qd = (qq_data *) gc->proto_data;
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ",

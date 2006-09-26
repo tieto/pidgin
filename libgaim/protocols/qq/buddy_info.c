@@ -235,7 +235,7 @@ void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_wind
 	gchar uid_str[11];
 	qq_info_query *query;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	qd = (qq_data *) gc->proto_data;
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
@@ -272,7 +272,7 @@ static void qq_send_packet_modify_info(GaimConnection *gc, gchar **segments)
 	gint i;
 	guint8 *raw_data, *cursor, bar;
 
-	g_return_if_fail(gc != NULL && segments != NULL);
+	g_return_if_fail(segments != NULL);
 
 	bar = 0x1f;
 	raw_data = g_newa(guint8, MAX_PACKET_SIZE - 128);
@@ -489,7 +489,6 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	gint len;
 	guint8 *data;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -515,7 +514,6 @@ void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc)
 	qq_buddy *q_bud;
 	gchar *alias_utf8;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	alias_utf8 = qq_to_utf8(info->nick, QQ_CHARSET_DEFAULT);
@@ -550,7 +548,6 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	GList *list, *query_list;
 	GString *info_text;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

@@ -80,7 +80,7 @@ const gchar *qq_group_cmd_get_desc(qq_group_cmd cmd)
 static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *cursor, gint len, GaimConnection *gc)
 {
 	gchar *msg, *msg_utf8;
-	g_return_if_fail(cursor != NULL && len > 0 && gc != NULL);
+	g_return_if_fail(cursor != NULL && len > 0);
 
 	msg = g_strndup((gchar *) cursor, len);	/* it will append 0x00 */
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
@@ -94,7 +94,7 @@ static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *curs
 /* default process, dump only */
 static void _qq_process_group_cmd_reply_default(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
 {
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump_to_str(data, len));
 }
 
@@ -104,11 +104,9 @@ void qq_send_group_cmd(GaimConnection *gc, qq_group *group, guint8 *raw_data, gi
 	qq_data *qd;
 	group_packet *p;
 
-	g_return_if_fail(gc != NULL);
 	g_return_if_fail(raw_data != NULL && data_len > 0);
 
 	qd = (qq_data *) gc->proto_data;
-	g_return_if_fail(qd != NULL);
 
 	qq_send_cmd(gc, QQ_CMD_GROUP_CMD, TRUE, 0, TRUE, raw_data, data_len);
 
@@ -132,7 +130,6 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 	guint32 internal_group_id;
 	guint8 *data, *cursor, sub_cmd, reply;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

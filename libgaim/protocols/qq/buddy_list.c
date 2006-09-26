@@ -62,8 +62,6 @@ void qq_send_packet_get_buddies_online(GaimConnection *gc, guint8 position)
 	qq_data *qd;
 	guint8 *raw_data, *cursor;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) gc->proto_data;
 	raw_data = g_newa(guint8, 5);
 	cursor = raw_data;
@@ -91,8 +89,6 @@ void qq_send_packet_get_buddies_list(GaimConnection *gc, guint16 position)
 	guint8 *raw_data, *cursor;
 	gint data_len;
 
-	g_return_if_fail(gc != NULL);
-
 	data_len = 3;
 	raw_data = g_newa(guint8, data_len);
 	cursor = raw_data;
@@ -113,8 +109,6 @@ void qq_send_packet_get_all_list_with_group(GaimConnection *gc, guint32 position
 {
 	guint8 *raw_data, *cursor;
 	gint data_len;
-
-	g_return_if_fail(gc != NULL);
 
 	data_len = 10;
 	raw_data = g_newa(guint8, data_len);
@@ -159,7 +153,6 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 	qq_buddy *q_bud;
 	qq_friends_online_entry *fe;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -259,7 +252,6 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 	gchar *name;
 	GaimBuddy *b;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -354,7 +346,6 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 	guint8 type, groupid;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

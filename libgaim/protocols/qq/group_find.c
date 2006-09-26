@@ -37,8 +37,6 @@ gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq,
 	qq_data *qd;
 	group_packet *p;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
-
 	if (internal_group_id == NULL)
 		return FALSE;
 	qd = (qq_data *) gc->proto_data;
@@ -100,7 +98,7 @@ qq_buddy *qq_group_find_or_add_member(GaimConnection *gc, qq_group *group, guint
 {
 	qq_buddy *member, *q_bud;
 	GaimBuddy *buddy;
-	g_return_val_if_fail(gc != NULL && group != NULL && member_uid > 0, NULL);
+	g_return_val_if_fail(group != NULL && member_uid > 0, NULL);
 
 	member = qq_group_find_member_by_uid(group, member_uid);
 	if (member == NULL) {	/* first appear during my session */
@@ -128,7 +126,6 @@ qq_group *qq_group_find_by_channel(GaimConnection *gc, gint channel)
 	qq_group *group;
 	GList *list;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	conv = gaim_find_chat(gc, channel);
@@ -153,7 +150,6 @@ qq_group *qq_group_find_by_id(GaimConnection *gc, guint32 id, gboolean flag)
 	qq_group *group;
 	qq_data *qd;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	if (qd->groups == NULL || id <= 0)

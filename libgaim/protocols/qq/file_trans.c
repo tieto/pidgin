@@ -256,9 +256,8 @@ static gint _qq_send_file(GaimConnection *gc, guint8 *data, gint len, guint16 pa
 	qq_data *qd;
 	ft_info *info;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
 	qd = (qq_data *) gc->proto_data;
-	g_return_val_if_fail(qd != NULL && qd->session_key != NULL, -1);
+	g_return_val_if_fail(qd->session_key != NULL, -1);
 	info = (ft_info *) qd->xfer->data;
 	bytes = 0;
 
@@ -289,7 +288,6 @@ void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to
 	time_t now;
 	ft_info *info;
 	
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 	info = (ft_info *) qd->xfer->data;
 
@@ -395,7 +393,6 @@ static void _qq_send_file_data_packet(GaimConnection *gc, guint16 packet_type, g
 	qq_data *qd;
 	ft_info *info;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 	info = (ft_info *) qd->xfer->data;
 
@@ -820,7 +817,6 @@ void qq_process_recv_file(GaimConnection *gc, guint8 *data, gint len)
 	qq_file_header fh;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	cursor = data;

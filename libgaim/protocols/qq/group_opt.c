@@ -81,7 +81,7 @@ static void _qq_group_member_opt(GaimConnection *gc, qq_group *group, gint opera
 {
 	guint8 *data, *cursor;
 	gint i, count, data_len;
-	g_return_if_fail(gc != NULL && group != NULL && members != NULL);
+	g_return_if_fail(members != NULL);
 
 	for (i = 0; members[i] != 0xffffffff; i++) {;
 	}
@@ -162,7 +162,7 @@ void qq_group_modify_members(GaimConnection *gc, qq_group *group, guint32 *new_m
 	gint i = 0, old = 0, new = 0, del = 0, add = 0;
 	GList *list;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 	qd = (qq_data *) gc->proto_data;
 	if (new_members[0] == 0xffffffff)
 		return;
@@ -214,7 +214,7 @@ void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint l
 {
 	guint32 internal_group_id;
 	qq_group *group;
-	g_return_if_fail(data != NULL && gc != NULL);
+	g_return_if_fail(data != NULL);
 
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	g_return_if_fail(internal_group_id > 0);
@@ -234,7 +234,7 @@ void qq_group_modify_info(GaimConnection *gc, qq_group *group)
 	guint8 *data, *cursor;
 	gchar *group_name, *group_desc, *notice;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	group_name = group->group_name_utf8 == NULL ? "" : utf8_to_qq(group->group_name_utf8, QQ_CHARSET_DEFAULT);
 	group_desc = group->group_desc_utf8 == NULL ? "" : utf8_to_qq(group->group_desc_utf8, QQ_CHARSET_DEFAULT);
@@ -283,7 +283,7 @@ void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len,
 {
 	guint32 internal_group_id;
 	qq_group *group;
-	g_return_if_fail(data != NULL && gc != NULL);
+	g_return_if_fail(data != NULL);
 
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	g_return_if_fail(internal_group_id > 0);
@@ -304,7 +304,7 @@ void qq_group_create_with_name(GaimConnection *gc, const gchar *name)
 	gint data_len, data_written;
 	guint8 *data, *cursor;
 	qq_data *qd;
-	g_return_if_fail(gc != NULL && name != NULL);
+	g_return_if_fail(name != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	data_len = 7 + 1 + strlen(name) + 2 + 1 + 1 + 4;
@@ -359,7 +359,7 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	gc_and_uid *g;
 	qq_data *qd;
 
-	g_return_if_fail(data != NULL && gc != NULL);
+	g_return_if_fail(data != NULL);
 	g_return_if_fail(gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
@@ -395,7 +395,7 @@ void qq_group_activate_group(GaimConnection *gc, guint32 internal_group_id)
 {
 	gint data_len, data_written;
 	guint8 *data, *cursor;
-	g_return_if_fail(gc != NULL && internal_group_id > 0);
+	g_return_if_fail(internal_group_id > 0);
 
 	data_len = 5;
 	data = g_newa(guint8, data_len);
@@ -420,7 +420,7 @@ void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint l
 {
 	guint32 internal_group_id;
 	qq_group *group;
-	g_return_if_fail(data != NULL && gc != NULL);
+	g_return_if_fail(data != NULL);
 
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	g_return_if_fail(internal_group_id > 0);
@@ -438,7 +438,7 @@ void qq_group_manage_group(GaimConnection *gc, GHashTable *data)
 	guint32 internal_group_id;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && data != NULL);
+	g_return_if_fail(data != NULL);
 
 	internal_group_id_ptr = g_hash_table_lookup(data, "internal_group_id");
 	internal_group_id = strtol(internal_group_id_ptr, NULL, 10);

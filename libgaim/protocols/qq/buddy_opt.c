@@ -61,7 +61,7 @@ static void _qq_send_packet_remove_buddy(GaimConnection *gc, guint32 uid)
 {
 	gchar uid_str[11];
 
-	g_return_if_fail(gc != NULL && uid > 0);
+	g_return_if_fail(uid > 0);
 
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	qq_send_cmd(gc, QQ_CMD_DEL_FRIEND, TRUE, 0, 
@@ -73,7 +73,7 @@ static void _qq_send_packet_remove_self_from(GaimConnection *gc, guint32 uid)
 {
 	guint8 *raw_data, *cursor;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && uid > 0);
+	g_return_if_fail(uid > 0);
 
 	raw_data = g_newa(guint8, 4);
 	cursor = raw_data;
@@ -89,7 +89,7 @@ static void _qq_send_packet_add_buddy(GaimConnection *gc, guint32 uid)
 	qq_add_buddy_request *req;
 	gchar uid_str[11];
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && uid > 0);
+	g_return_if_fail(uid > 0);
 
 	/* we need to send the ascii code of this uid to qq server */
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
@@ -110,7 +110,7 @@ static void _qq_send_packet_buddy_auth(GaimConnection *gc, guint32 uid, const gc
 	gchar *text_qq, uid_str[11];
 	guint8 bar, *cursor, *raw_data;
 
-	g_return_if_fail(gc != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	bar = 0x1f;
@@ -139,7 +139,7 @@ static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const 
 
 	gc = g->gc;
 	uid = g->uid;
-	g_return_if_fail(gc != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	_qq_send_packet_buddy_auth(gc, uid, QQ_MY_AUTH_REQUEST, text);
 	g_free(g);
@@ -155,7 +155,7 @@ static void _qq_reject_add_request_real(gc_and_uid *g, const gchar *reason)
 
 	gc = g->gc;
 	uid = g->uid;
-	g_return_if_fail(gc != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	_qq_send_packet_buddy_auth(gc, uid, QQ_MY_AUTH_REJECT, reason);
 	g_free(g);
@@ -171,7 +171,7 @@ void qq_approve_add_request_with_gc_and_uid(gc_and_uid *g)
 
 	gc = g->gc;
 	uid = g->uid;
-	g_return_if_fail(gc != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	_qq_send_packet_buddy_auth(gc, uid, QQ_MY_AUTH_APPROVE, NULL);
 	g_free(g);
@@ -194,7 +194,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 
 	gc = g->gc;
 	uid = g->uid;
-	g_return_if_fail(gc != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	g_free(g);
 
@@ -219,7 +219,7 @@ void qq_add_buddy_with_gc_and_uid(gc_and_uid *g)
 
 	gc = g->gc;
 	uid = g->uid;
-	g_return_if_fail(gc != NULL && uid != 0);
+	g_return_if_fail(uid != 0);
 
 	_qq_send_packet_add_buddy(gc, uid);
 	g_free(g);
@@ -236,7 +236,7 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g)
 
 	gc = g->gc;
 	uid = g->uid;
-	g_return_if_fail(gc != NULL && uid > 0);
+	g_return_if_fail(uid > 0);
 
 	buddy.name = uid_to_gaim_name(uid);
 	group.name = GAIM_GROUP_QQ_BLOCKED;
@@ -253,7 +253,6 @@ void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, GaimConnection *
 	guint8 *data, *cursor, reply;
 	gchar **segments, *msg_utf8;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -285,7 +284,6 @@ void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, GaimConnection *gc
 	gint len;
 	guint8 *data, *cursor, reply;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -314,7 +312,6 @@ void qq_process_remove_self_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	gint len;
 	guint8 *data, *cursor, reply;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -347,7 +344,6 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 	gc_and_uid *g;
 	qq_add_buddy_request *req;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	for_uid = 0;
@@ -442,8 +438,6 @@ GaimBuddy *qq_add_buddy_by_recv_packet(GaimConnection *gc, guint32 uid, gboolean
 	qq_buddy *q_bud;
 	gchar *name, *group_name;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
-
 	a = gc->account;
 	qd = (qq_data *) gc->proto_data;
 	g_return_val_if_fail(a != NULL && uid != 0, NULL);
@@ -492,8 +486,6 @@ void qq_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	guint32 uid;
 	GaimBuddy *b;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) gc->proto_data;
 	if (!qd->logged_in)
 		return;		/* IMPORTANT ! */
@@ -518,8 +510,6 @@ void qq_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	GaimBuddy *b;
 	qq_buddy *q_bud;
 	guint32 uid;
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	uid = gaim_name_to_uid(buddy->name);
@@ -551,8 +541,6 @@ void qq_add_buddy_request_free(qq_data *qd)
 	gint i;
 	qq_add_buddy_request *p;
 
-	g_return_if_fail(qd != NULL);
-
 	i = 0;
 	while (qd->add_buddy_request) {
 		p = (qq_add_buddy_request *) (qd->add_buddy_request->data);
@@ -570,8 +558,6 @@ void qq_buddies_list_free(GaimAccount *account, qq_data *qd)
 	qq_buddy *p;
 	gchar *name;
 	GaimBuddy *b;
-
-	g_return_if_fail(qd != NULL);
 
 	i = 0;
 	while (qd->buddies) {

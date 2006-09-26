@@ -46,8 +46,6 @@ void qq_send_packet_keep_alive(GaimConnection *gc)
 	qq_data *qd;
 	guint8 *raw_data, *cursor;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) gc->proto_data;
 	raw_data = g_newa(guint8, 4);
 	cursor = raw_data;
@@ -67,7 +65,6 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc) 
 	gchar **segments;
 	guint8 *data;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -104,12 +101,9 @@ void qq_refresh_all_buddy_status(GaimConnection *gc)
 	qq_data *qd;
 	qq_buddy *q_bud;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) (gc->proto_data);
 	now = time(NULL);
 	list = qd->buddies;
-	g_return_if_fail(qd != NULL);
 
 	while (list != NULL) {
 		q_bud = (qq_buddy *) list->data;
@@ -128,7 +122,7 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 	GaimBuddy *bud;
 	gchar *status_id;
 	
-	g_return_if_fail(gc != NULL && q_bud != NULL);
+	g_return_if_fail(q_bud != NULL);
 
 	name = uid_to_gaim_name(q_bud->uid);
 	bud = gaim_find_buddy(gc->account, name);

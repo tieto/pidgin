@@ -314,7 +314,7 @@ static gint _qq_send_im(GaimConnection *gc, const gchar *who, const gchar *messa
 	gchar *msg, *msg_with_qq_smiley;
 	qq_data *qd;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL, -1);
+	g_return_val_if_fail(who != NULL, -1);
 
 	qd = (qq_data *) gc->proto_data;
 
@@ -343,7 +343,7 @@ static int _qq_chat_send(GaimConnection *gc, int channel, const char *message, G
 	gchar *msg, *msg_with_qq_smiley;
 	qq_group *group;
 
-	g_return_val_if_fail(gc != NULL && message != NULL, -1);
+	g_return_val_if_fail(message != NULL, -1);
 	g_return_val_if_fail(strlen(message) <= QQ_MSG_IM_MAX, -E2BIG);
 
 	group = qq_group_find_by_channel(gc, channel);
@@ -364,7 +364,6 @@ static void _qq_get_info(GaimConnection *gc, const gchar *who)
 	guint32 uid;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = gc->proto_data;
 	uid = gaim_name_to_uid(who);
 
@@ -383,8 +382,6 @@ static void _qq_menu_modify_my_info(GaimPluginAction *action)
 	GaimConnection *gc = (GaimConnection *) action->context;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
 	qd = (qq_data *) gc->proto_data;
 	qq_prepare_modify_info(gc);
 }
@@ -395,7 +392,6 @@ static void _qq_change_face_cb(GaimConnection *gc, GaimRequestFields *fields)
 	GaimRequestField *field;
 	gint suffix;
 	
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	field = gaim_request_fields_get_field(fields, "face_num");
@@ -485,7 +481,7 @@ static void _qq_menu_block_buddy(GaimBlistNode * node)
 	buddy = (GaimBuddy *) node;
 	gc = gaim_account_get_connection(buddy->account);
 	who = buddy->name;
-	g_return_if_fail(gc != NULL && who != NULL);
+	g_return_if_fail(who != NULL);
 
 	uid = gaim_name_to_uid(who);
 	g_return_if_fail(uid > 0);
@@ -509,8 +505,6 @@ static void _qq_menu_show_login_info(GaimPluginAction *action)
 	GaimConnection *gc = (GaimConnection *) action->context;
 	qq_data *qd;
 	GString *info;
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	info = g_string_new("<html><body>\n");
@@ -549,7 +543,6 @@ static void _qq_menu_search_or_add_permanent_group(GaimPluginAction *action)
 static void _qq_menu_create_permanent_group(GaimPluginAction * action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
-	g_return_if_fail(gc != NULL);
 	gaim_request_input(gc, _("Create QQ Qun"),
 			   _("Input Qun name here"),
 			   _("Only QQ member can create permanent Qun"),
@@ -566,7 +559,7 @@ static void _qq_menu_unsubscribe_group(GaimBlistNode * node)
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
 
-	g_return_if_fail(gc != NULL && components != NULL);
+	g_return_if_fail(components != NULL);
 	qq_group_exit(gc, components);
 }
 
@@ -579,7 +572,7 @@ static void _qq_menu_manage_group(GaimBlistNode * node)
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
 
-	g_return_if_fail(gc != NULL && components != NULL);
+	g_return_if_fail(components != NULL);
 	qq_group_manage_group(gc, components);
 }
 */
@@ -765,7 +758,6 @@ static void _qq_menu_send_custom_packet(GaimPluginAction *action)
 
 	gc = (GaimConnection *) action->context;
 	qd = (qq_data *) gc->proto_data;
-	g_return_if_fail(gc != NULL && qd != NULL);
 
 	fields = gaim_request_fields_new();
 	group = gaim_request_field_group_new(_("Basic Elements"));
@@ -886,7 +878,6 @@ static void _qq_keep_alive(GaimConnection *gc)
 	qq_data *qd;
 	GList *list;
 
-	g_return_if_fail(gc != NULL);
 	if (NULL == (qd = (qq_data *) gc->proto_data))
 		return;
 
@@ -910,7 +901,7 @@ static void _qq_keep_alive(GaimConnection *gc)
 static void _qq_get_chat_buddy_info(GaimConnection *gc, gint channel, const gchar *who)
 {
 	gchar *gaim_name;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL);
+	g_return_if_fail(who != NULL);
 
 	gaim_name = chat_name_to_gaim_name(who);
 	if (gaim_name != NULL)
@@ -921,7 +912,7 @@ static void _qq_get_chat_buddy_info(GaimConnection *gc, gint channel, const gcha
 /* who is the nickname of buddy in QQ chat-room (Qun) */
 static gchar *_qq_get_chat_buddy_real_name(GaimConnection *gc, gint channel, const gchar *who)
 {
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL && who != NULL, NULL);
+	g_return_val_if_fail(who != NULL, NULL);
 	return chat_name_to_gaim_name(who);
 }
 

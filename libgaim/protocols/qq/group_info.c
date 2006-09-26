@@ -64,7 +64,7 @@ void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group)
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	data_len = 5;
 	raw_data = g_newa(guint8, data_len);
@@ -87,7 +87,7 @@ void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group)
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	/* only get online members when conversation window is on */
 	if (NULL == gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,group->group_name_utf8, gaim_connection_get_account(gc))) {
@@ -119,7 +119,7 @@ void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group)
 	GList *list;
 	qq_buddy *member;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 	for (i = 0, list = group->members; list != NULL; list = list->next) {
 		member = (qq_buddy *) list->data;
 		if (_is_group_member_need_update_info(member))
@@ -168,7 +168,6 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 	guint32 unknown4;
 	guint8 unknown1;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
@@ -250,7 +249,7 @@ void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint
 	qq_group *group;
 	qq_buddy *member;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	if (data + len - *cursor < 4) {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid group online member reply, discard it!\n");
@@ -296,7 +295,7 @@ void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint l
 	qq_group *group;
 	qq_buddy *member;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	g_return_if_fail(internal_group_id > 0);

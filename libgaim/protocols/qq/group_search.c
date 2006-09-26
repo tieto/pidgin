@@ -42,8 +42,6 @@ void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_i
 	guint8 *raw_data, *cursor, type;
 	gint bytes, data_len;
 
-	g_return_if_fail(gc != NULL);
-
 	data_len = 6;
 	raw_data = g_newa(guint8, data_len);
 	cursor = raw_data;
@@ -96,7 +94,6 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 	qq_group *group;
 	GSList *pending_id;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 

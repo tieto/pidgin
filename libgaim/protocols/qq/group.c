@@ -37,7 +37,7 @@ static void _qq_group_search_callback(GaimConnection *gc, const gchar *input)
 {
 	guint32 external_group_id;
 
-	g_return_if_fail(gc != NULL && input != NULL);
+	g_return_if_fail(input != NULL);
 	external_group_id = qq_string_to_dec_value(input);
 	/* 0x00000000 means search for demo group */
 	qq_send_cmd_group_search_group(gc, external_group_id);
@@ -46,7 +46,6 @@ static void _qq_group_search_callback(GaimConnection *gc, const gchar *input)
 static void _qq_group_search_cancel_callback(GaimConnection *gc, const gchar *input)
 {
 	qq_data *qd;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
@@ -88,7 +87,6 @@ GaimRoomlist *qq_roomlist_get_list(GaimConnection *gc)
 	GaimRoomlist *rl;
 	GaimRoomlistField *f;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	fields = NULL;
@@ -136,9 +134,7 @@ void qq_roomlist_cancel(GaimRoomlist *list)
 	g_return_if_fail(list != NULL);
 	gc = gaim_account_get_connection(list->account);
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
-
 	gaim_roomlist_set_in_progress(list, FALSE);
 	gaim_roomlist_unref(list);
 }
@@ -153,9 +149,7 @@ void qq_group_init(GaimConnection *gc)
 	GaimBlistNode *node;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL);
 	account = gaim_connection_get_account(gc);
-
 
 	gaim_group = gaim_find_group(GAIM_GROUP_QQ_QUN);
 	if (gaim_group == NULL) {

@@ -76,7 +76,6 @@ qq_group *qq_group_create_internal_record(GaimConnection *gc,
         qq_group *group;
         qq_data *qd;
 
-        g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
         g_return_val_if_fail(internal_id > 0, NULL);
         qd = (qq_data *) gc->proto_data;
 
@@ -104,7 +103,6 @@ void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id)
 {
         qq_group *group;
         GList *list;
-        g_return_if_fail(qd != NULL);
 
         list = qd->groups;
         while (list != NULL) {
@@ -148,7 +146,6 @@ qq_group *qq_group_from_hashtable(GaimConnection *gc, GHashTable *data)
 	qq_data *qd;
 	qq_group *group;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
 	g_return_val_if_fail(data != NULL, NULL);
 	qd = (qq_data *) gc->proto_data;
 
@@ -181,7 +178,7 @@ void qq_group_refresh(GaimConnection *gc, qq_group *group)
 {
 	GaimChat *chat;
 	gchar *external_group_id;
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	external_group_id = g_strdup_printf("%d", group->external_group_id);
 	chat = gaim_blist_find_chat(gaim_connection_get_account(gc), external_group_id);

@@ -118,8 +118,6 @@ gint get_icon_offset(GaimConnection *gc)
 	GaimAccount *account;
 	GaimPresence *presence; 
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, 2);
-
 	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
 
@@ -143,8 +141,6 @@ void qq_send_packet_change_status(GaimConnection *gc)
 	gboolean fake_video;
 	GaimAccount *account;
 	GaimPresence *presence; 
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	account = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
@@ -189,7 +185,6 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *g
 	qq_buddy *q_bud;
 	gchar *name;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;
@@ -226,7 +221,6 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 	qq_buddy_status *s;
 	gchar *name;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

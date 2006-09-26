@@ -52,7 +52,6 @@ static void _qq_sys_msg_log_write(GaimConnection *gc, gchar *msg, gchar *from)
 	GaimAccount *account;
 
 	account = gaim_connection_get_account(gc);
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	log = gaim_log_new(GAIM_LOG_IM,
 			"systemim",
@@ -141,7 +140,7 @@ static void _qq_process_msg_sys_being_added(GaimConnection *gc, gchar *from, gch
 	gc_and_uid *g;
 	gchar *name;
 
-	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
+	g_return_if_fail(from != NULL && to != NULL);
 
 	uid = strtol(from, NULL, 10);
 	name = uid_to_gaim_name(uid);
@@ -173,7 +172,7 @@ static void _qq_process_msg_sys_add_contact_rejected(GaimConnection *gc, gchar *
 {
 	gchar *message, *reason;
 
-	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
+	g_return_if_fail(from != NULL && to != NULL);
 
 	message = g_strdup_printf(_("User %s rejected your request"), from);
 	reason = g_strdup_printf(_("Reason: %s"), msg_utf8);
@@ -190,7 +189,7 @@ static void _qq_process_msg_sys_add_contact_approved(GaimConnection *gc, gchar *
 	gchar *message;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
+	g_return_if_fail(from != NULL && to != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	qq_add_buddy_by_recv_packet(gc, strtol(from, NULL, 10), TRUE, TRUE);
@@ -211,7 +210,7 @@ static void _qq_process_msg_sys_add_contact_request(GaimConnection *gc, gchar *f
 	GaimBuddy *b;
 	gchar *name;
 
-	g_return_if_fail(gc != NULL && from != NULL && to != NULL);
+	g_return_if_fail(from != NULL && to != NULL);
 
 	uid = strtol(from, NULL, 10);
 	g = g_new0(gc_and_uid, 1);
@@ -258,7 +257,6 @@ void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *
 	guint8 *data;
 	gchar **segments, *code, *from, *to, *msg, *msg_utf8;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

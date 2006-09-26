@@ -496,7 +496,6 @@ static void _qq_send_packet_file_accept(GaimConnection *gc, guint32 to_uid)
 	gint packet_len, bytes;
 	ft_info *info;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 	info = (ft_info *) qd->xfer->data;
 
@@ -567,7 +566,6 @@ static void _qq_send_packet_file_reject (GaimConnection *gc, guint32 to_uid)
 	gint packet_len, bytes;
 
 	gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_reject", "start");
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	packet_len = 64;
@@ -594,7 +592,6 @@ static void _qq_send_packet_file_cancel (GaimConnection *gc, guint32 to_uid)
 	gint packet_len, bytes;
 
 	gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_cancel", "start\n");
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	packet_len = 64;
@@ -631,7 +628,6 @@ _qq_xfer_init (GaimXfer * xfer)
 	g_return_if_fail (xfer != NULL);
 	account = gaim_xfer_get_account(xfer);
 	gc = gaim_account_get_connection(account);
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
 
 	to_uid = gaim_name_to_uid (xfer->who);
 	g_return_if_fail (to_uid != 0);
@@ -700,9 +696,9 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 	gchar *msg, *filename;
 	qq_data *qd;
 
-	g_return_if_fail (gc != NULL && data != NULL && data_len != 0);
+	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
-	g_return_if_fail (qd != NULL && qd->xfer != NULL);
+	g_return_if_fail (qd->xfer != NULL);
 
 	if (*cursor >= (data + data_len - 1)) {
 		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
@@ -724,14 +720,14 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 
 /* process cancel im for file transfer request */
 void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection * gc)
+		guint32 sender_uid, GaimConnection *gc)
 {
 	gchar *msg, *filename;
 	qq_data *qd;
 
-	g_return_if_fail (gc != NULL && data != NULL && data_len != 0);
+	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
-	g_return_if_fail (qd != NULL && qd->xfer != NULL
+	g_return_if_fail (qd->xfer != NULL
 			&& gaim_xfer_get_filename(qd->xfer) != NULL);
 
 	if (*cursor >= (data + data_len - 1)) {
@@ -753,13 +749,13 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 
 /* process accept im for file transfer request */
 void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection * gc)
+		guint32 sender_uid, GaimConnection *gc)
 {
 	qq_data *qd;
 	ft_info *info;
 	GaimXfer *xfer;
 
-	g_return_if_fail (gc != NULL && data != NULL && data_len != 0);
+	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 	xfer = qd->xfer;
 
@@ -790,7 +786,7 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 	GaimBuddy *b;
 	qq_buddy *q_bud;
 
-	g_return_if_fail (gc != NULL && data != NULL && data_len != 0);
+	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 
 	if (*cursor >= (data + data_len - 1)) {
@@ -892,7 +888,7 @@ void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len,
 	ft_info *info;
 	GaimXfer *xfer;
 
-	g_return_if_fail (gc != NULL && data != NULL && data_len != 0);
+	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 
 	if (*cursor >= (data + data_len - 1)) {
@@ -925,7 +921,6 @@ void qq_send_file(GaimConnection *gc, const char *who, const char *file)
 	qq_data *qd;
 	GaimXfer *xfer;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	xfer = gaim_xfer_new (gc->account, GAIM_XFER_SEND,

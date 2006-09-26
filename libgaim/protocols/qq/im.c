@@ -252,7 +252,7 @@ static void _qq_process_recv_normal_im_text
 	qq_data *qd;
 	qq_recv_normal_im_text *im_text;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && common != NULL);
+	g_return_if_fail(common != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	/* now it is QQ_NORMAL_IM_TEXT */
@@ -402,7 +402,7 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 	guint8 reply;
 	gchar **segments, *msg_utf8;
 
-	g_return_if_fail(gc != NULL && data != NULL && data_len != 0);
+	g_return_if_fail(data != NULL && data_len != 0);
 
 	if (*cursor >= (data + data_len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received sys IM is empty\n");
@@ -434,8 +434,6 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	gchar *font_size = NULL, *font_color = NULL, *font_name = NULL, *tmp;
 	gboolean is_bold = FALSE, is_italic = FALSE, is_underline = FALSE;
 	const gchar *start, *end, *last;
-
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	qd = (qq_data *) gc->proto_data;
 	client_tag = QQ_CLIENT;
@@ -554,7 +552,6 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	gint len;
 	guint8 *data, *cursor, reply;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = gc->proto_data;
@@ -584,7 +581,6 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *
 	guint8 *data, *cursor;
 	qq_recv_im_header *im_header;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	qd = (qq_data *) gc->proto_data;

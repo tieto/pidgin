@@ -40,8 +40,7 @@ gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
 	qq_data *qd;
 	gint bytes_expected, bytes_written;
 
-	g_return_val_if_fail(gc != NULL &&
-			     gc->proto_data != NULL && buf != NULL && cursor != NULL && *cursor != NULL, -1);
+	g_return_val_if_fail(buf != NULL && cursor != NULL && *cursor != NULL, -1);
 
 	qd = (qq_data *) gc->proto_data;
 	if (is_auto_seq)
@@ -79,8 +78,6 @@ gint _qq_send_packet(GaimConnection *gc, guint8 *buf, gint len, guint16 cmd)
 	qq_sendpacket *p;
 	gint bytes_sent;
 	guint8 *cursor;
-
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
 
 	qd = (qq_data *) gc->proto_data;
 
@@ -123,8 +120,6 @@ gint qq_send_cmd(GaimConnection *gc, guint16 cmd,
 	guint8 *buf, *cursor, *encrypted_data;
 	guint16 seq_ret;
 	gint encrypted_len, bytes_written, bytes_expected, bytes_sent;
-
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
 
 	qd = (qq_data *) gc->proto_data;
 	g_return_val_if_fail(qd->session_key != NULL, -1);

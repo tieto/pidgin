@@ -46,8 +46,6 @@ void qq_sendqueue_remove(qq_data *qd, guint16 send_seq)
 	GList *list;
 	qq_sendpacket *p;
 
-	g_return_if_fail(qd != NULL);
-
 	list = qd->sendqueue;
 	while (list != NULL) {
 		p = (qq_sendpacket *) (list->data);

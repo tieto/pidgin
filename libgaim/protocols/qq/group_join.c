@@ -48,7 +48,6 @@ static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
 	guint32 internal_group_id;
 	qq_group *group;
 
-	g_return_if_fail(g != NULL && g->gc != NULL && g->uid > 0);
 	gc = g->gc;
 	internal_group_id = g->uid;
 
@@ -64,7 +63,7 @@ void qq_send_cmd_group_join_group(GaimConnection *gc, qq_group *group)
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	if (group->my_status == QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) {
 		group->my_status = QQ_GROUP_MEMBER_STATUS_APPLYING;
@@ -104,7 +103,6 @@ static void _qq_group_join_auth_with_gc_and_id(gc_and_uid *g, const gchar *reaso
 	qq_group *group;
 	guint32 internal_group_id;
 
-	g_return_if_fail(g != NULL && g->gc != NULL && g->uid > 0);
 	gc = g->gc;
 	internal_group_id = g->uid;
 
@@ -121,7 +119,7 @@ static void _qq_group_join_auth(GaimConnection *gc, qq_group *group)
 {
 	gchar *msg;
 	gc_and_uid *g;
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", 
 			"Group (internal id: %d) needs authentication\n", group->internal_group_id);
@@ -145,7 +143,7 @@ void qq_send_cmd_group_auth(GaimConnection *gc, qq_group *group, guint8 opt, gui
 	gchar *reason_qq;
 	gint bytes, data_len;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	if (reason_utf8 == NULL || strlen(reason_utf8) == 0)
 		reason_qq = g_strdup("");
@@ -183,7 +181,7 @@ void qq_send_cmd_group_exit_group(GaimConnection *gc, qq_group *group)
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
 
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	data_len = 5;
 	raw_data = g_newa(guint8, data_len);
@@ -209,7 +207,6 @@ void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, Ga
 	qq_group *group;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
@@ -241,7 +238,6 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint le
 	guint32 internal_group_id;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	g_return_if_fail(data != NULL && len > 0);
 	qd = (qq_data *) gc->proto_data;
 
@@ -267,7 +263,7 @@ void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, Ga
 	guint8 reply;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && data != NULL && len > 0);
+	g_return_if_fail(data != NULL && len > 0);
 
 	bytes = 0;
 	expected_bytes = 5;
@@ -315,7 +311,7 @@ void qq_group_join(GaimConnection *gc, GHashTable *data)
 	guint32 external_group_id;
 	qq_group *group;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && data != NULL);
+	g_return_if_fail(data != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	external_group_id_ptr = g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID);
@@ -343,7 +339,7 @@ void qq_group_exit(GaimConnection *gc, GHashTable *data)
 	guint32 internal_group_id;
 	gc_and_uid *g;
 
-	g_return_if_fail(gc != NULL && data != NULL);
+	g_return_if_fail(data != NULL);
 
 	internal_group_id_ptr = g_hash_table_lookup(data, "internal_group_id");
 	internal_group_id = strtol(internal_group_id_ptr, NULL, 10);

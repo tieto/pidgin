@@ -34,7 +34,7 @@ void qq_group_conv_show_window(GaimConnection *gc, qq_group *group)
 	GaimConversation *conv;
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 	qd = (qq_data *) gc->proto_data;
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, 
@@ -51,7 +51,7 @@ void qq_group_conv_refresh_online_member(GaimConnection *gc, qq_group *group)
 	gchar *member_name;
 	GaimConversation *conv;
 	gint flag;
-	g_return_if_fail(gc != NULL && group != NULL);
+	g_return_if_fail(group != NULL);
 
 	names = NULL;
 	flags = NULL;
