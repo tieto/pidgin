@@ -137,6 +137,7 @@ struct yahoo_data {
 	/* ew. we have to check the icon before we connect,
 	 * but can't upload it til we're connected. */
 	struct yahoo_buddy_icon_upload_data *picture_upload_todo;
+	GaimProxyConnectData *buddy_icon_connect_data;
 
 	struct _YchtConn *ycht;
 

@@ -2778,6 +2778,8 @@ static void yahoo_close(GaimConnection *gc) {
 	yd->rxlen = 0;
 	g_free(yd->picture_url);
 
+	if (yd->buddy_icon_connect_data)
+		gaim_proxy_connect_cancel(yd->buddy_icon_connect_data);
 	if (yd->picture_upload_todo)
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (yd->ycht)
