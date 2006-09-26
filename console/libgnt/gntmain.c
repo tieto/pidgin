@@ -474,7 +474,8 @@ dump_screen()
 			CHECK(A_UNDERLINE, "<u>", "</u>");
 			CHECK(A_BLINK, "<blink>", "</blink>");
 
-			if ((now & A_COLOR) != (old & A_COLOR))
+			if ((now & A_COLOR) != (old & A_COLOR) ||
+				(now & A_REVERSE) != (old & A_REVERSE))
 			{
 				int ret;
 				short fgp, bgp, r, g, b;
@@ -484,6 +485,12 @@ dump_screen()
 				} fg, bg;
 
 				ret = pair_content(PAIR_NUMBER(now & A_COLOR), &fgp, &bgp);
+				if (fgp == -1)
+					fgp = COLOR_BLACK;
+				if (bgp == -1)
+					bgp = COLOR_WHITE;
+				if (now & A_REVERSE)
+					fgp ^= bgp ^= fgp ^= bgp;  /* *wink* */
 				ret = color_content(fgp, &r, &g, &b);
 				fg.r = r; fg.b = b; fg.g = g;
 				ret = color_content(bgp, &r, &g, &b);
