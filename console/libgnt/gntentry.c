@@ -128,7 +128,7 @@ gnt_entry_draw(GntWidget *widget)
 
 	if (focus)
 		mvwchgat(widget->window, 0, gnt_util_onscreen_width(entry->scroll, entry->cursor),
-				1, A_REVERSE, COLOR_PAIR(GNT_COLOR_TEXT_NORMAL), NULL);
+				1, A_REVERSE, GNT_COLOR_TEXT_NORMAL, NULL);
 
 	GNTDEBUG;
 }
