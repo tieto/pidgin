@@ -744,6 +744,11 @@ window_reverse(GntWidget *win, gboolean set)
 	d = win->window;
 	gnt_widget_get_size(win, &w, &h);
 
+	if (gnt_widget_has_shadow(win)) {
+		--w;
+		--h;
+	}
+
 	/* the top and bottom */
 	for (i = 0; i < w; i += reverse_char(d, 0, i, set));
 	for (i = 0; i < w; i += reverse_char(d, h-1, i, set));
