@@ -51,12 +51,12 @@ jabber_parser_element_start_libxml(void *user_data,
 			if(!strcmp(attributes[i], "version")
 					&& !strcmp(attrib, "1.0")) {
 				js->protocol_version = JABBER_PROTO_1_0;
+				g_free(attrib);
 			} else if(!strcmp(attributes[i], "id")) {
 				if(js->stream_id)
 					g_free(js->stream_id);
-				js->stream_id = g_strdup(attrib);
+				js->stream_id = attrib;
 			}
-			g_free(attrib);
 		}
 		if(js->protocol_version == JABBER_PROTO_0_9)
 			js->auth_type = JABBER_AUTH_IQ_AUTH;
