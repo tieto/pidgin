@@ -40,7 +40,7 @@ jabber_parser_element_start_libxml(void *user_data,
 
 	if(!element_name) {
 		return;
-	} else if(!strcmp(element_name, "stream")) {
+	} else if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
 		js->protocol_version = JABBER_PROTO_0_9;
 		for(i=0; i < nb_attributes * 5; i += 5) {
 			int attrib_len = attributes[i+4] - attributes[i+3];
@@ -48,11 +48,11 @@ jabber_parser_element_start_libxml(void *user_data,
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
 
-			if(!strcmp(attributes[i], "version")
+			if(!xmlStrcmp(attributes[i], (xmlChar*) "version")
 					&& !strcmp(attrib, "1.0")) {
 				js->protocol_version = JABBER_PROTO_1_0;
 				g_free(attrib);
-			} else if(!strcmp(attributes[i], "id")) {
+			} else if(!xmlStrcmp(attributes[i], (xmlChar*) "id")) {
 				if(js->stream_id)
 					g_free(js->stream_id);
 				js->stream_id = attrib;
@@ -66,17 +66,17 @@ jabber_parser_element_start_libxml(void *user_data,
 	} else {
 
 		if(js->current)
-			node = xmlnode_new_child(js->current, element_name);
+			node = xmlnode_new_child(js->current, (const char*) element_name);
 		else
-			node = xmlnode_new(element_name);
-		xmlnode_set_namespace(node, namespace);
+			node = xmlnode_new((const char*) element_name);
+		xmlnode_set_namespace(node, (const char*) namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
-			xmlnode_set_attrib(node, attributes[i], attrib);
+			xmlnode_set_attrib(node, (const char*) attributes[i], attrib);
 			g_free(attrib);
 		}
 
@@ -94,7 +94,7 @@ jabber_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		return;
 
 	if(js->current->parent) {
-		if(!strcmp(js->current->name, element_name))
+		if(!xmlStrcmp((xmlChar*) js->current->name, element_name))
 			js->current = js->current->parent;
 	} else {
 		xmlnode *packet = js->current;
@@ -115,7 +115,7 @@ jabber_parser_element_text_libxml(void *user_data, const xmlChar *text, int text
 	if(!text || !text_len)
 		return;
 
-	xmlnode_insert_data(js->current, text, text_len);
+	xmlnode_insert_data(js->current, (const char*) text, text_len);
 }
 
 static xmlSAXHandler jabber_parser_libxml = {

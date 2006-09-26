@@ -386,11 +386,11 @@ xmlnode_parser_element_start_libxml(void *user_data,
 		return;
 	} else {
 		if(xpd->current)
-			node = xmlnode_new_child(xpd->current, element_name);
+			node = xmlnode_new_child(xpd->current, (const char*) element_name);
 		else
-			node = xmlnode_new(element_name);
+			node = xmlnode_new((const char *) element_name);
 
-		xmlnode_set_namespace(node, namespace);
+		xmlnode_set_namespace(node, (const char *) namespace);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
 			char *txt;
@@ -401,7 +401,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			txt = attrib;
 			attrib = gaim_unescape_html(txt);
 			g_free(txt);
-			xmlnode_set_attrib(node, attributes[i], attrib);
+			xmlnode_set_attrib(node, (const char*) attributes[i], attrib);
 			g_free(attrib);
 		}
 
@@ -419,7 +419,7 @@ xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		return;
 
 	if(xpd->current->parent) {
-		if(!strcmp(xpd->current->name, element_name))
+		if(!xmlStrcmp((xmlChar*) xpd->current->name, element_name))
 			xpd->current = xpd->current->parent;
 	}
 }
@@ -435,7 +435,7 @@ xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 	if(!text || !text_len)
 		return;
 
-	xmlnode_insert_data(xpd->current, text, text_len);
+	xmlnode_insert_data(xpd->current, (const char*) text, text_len);
 }
 
 static xmlSAXHandler xmlnode_parser_libxml = {
