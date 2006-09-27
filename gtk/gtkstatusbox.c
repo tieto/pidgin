@@ -298,6 +298,8 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 	if (status_box->icon_box != NULL)
 		return;
 
+	status_box->icon = gtk_image_new();
+	status_box->icon_box = gtk_event_box_new();
 	if (status_box->account &&
 		!gaim_account_get_ui_bool(status_box->account, GAIM_GTK_UI, "use-global-buddyicon", TRUE))
 	{
@@ -309,8 +311,6 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 	{
 		gtk_gaim_status_box_set_buddy_icon(status_box, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
 	}
-	status_box->icon = gtk_image_new();
-	status_box->icon_box = gtk_event_box_new();
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	status_box->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
@@ -352,6 +352,7 @@ destroy_icon_box(GtkGaimStatusBox *statusbox)
 
 	g_free(statusbox->buddy_icon_path);
 
+	statusbox->icon = NULL;
 	statusbox->icon_box = NULL;
 	statusbox->buddy_icon_path = NULL;
 	statusbox->buddy_icon = NULL;
@@ -1087,7 +1088,7 @@ toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 }
 
 static void
-icon_choose_cb(const char *filename, gpointer data)
+buddy_icon_set_cb(const char *filename, gpointer data)
 {
 	GtkGaimStatusBox *box;
 
@@ -1125,11 +1126,27 @@ icon_choose_cb(const char *filename, gpointer data)
 			}
 		}
 		gtk_gaim_status_box_set_buddy_icon(box, filename);
-		if (box->account == NULL)
-			gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
 	}
 
 	box->buddy_icon_sel = NULL;
+}
+
+static void
+icon_choose_cb(const char *filename, gpointer data)
+{
+	GtkGaimStatusBox *box = data;
+	if (box->account == NULL)
+		/* The pref-connect callback does the actual work */
+		gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
+	else
+		buddy_icon_set_cb(filename, data);
+}
+
+static void
+update_buddyicon_cb(const char *name, GaimPrefType type,
+				    gconstpointer value, gpointer data)
+{
+	buddy_icon_set_cb(value, data);
 }
 
 static void
@@ -1234,6 +1251,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 								buddy_list_details_pref_changed_cb, status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/conversations/spellcheck",
 								spellcheck_prefs_cb, status_box);
+	gaim_prefs_connect_callback(status_box, "/gaim/gtk/accounts/buddyicon",
+	                            update_buddyicon_cb, status_box);
 }
 
 static void
