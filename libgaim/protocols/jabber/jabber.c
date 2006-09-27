@@ -402,10 +402,10 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 #ifdef HAVE_CYRUS_SASL
 		if (js->sasl_maxbuf>0) {
 			const char *out;
-			int olen;
+			unsigned int olen;
 			sasl_decode(js->sasl, buf, len, &out, &olen);
 			if (olen>0) {
-				gaim_debug(GAIM_DEBUG_INFO, "jabber", "RecvSASL (%d): %s\n", olen, out);
+				gaim_debug(GAIM_DEBUG_INFO, "jabber", "RecvSASL (%u): %s\n", olen, out);
 				jabber_parser_process(js,out,olen);
 			}
 			return;

@@ -143,7 +143,7 @@ static gssize jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
 
 			tmp += 4;
 
-			*buffer = g_strdup(tmp);
+			*buffer = (unsigned char*) g_strdup(tmp);
 			return strlen(tmp);
 		}
 		return 0;
