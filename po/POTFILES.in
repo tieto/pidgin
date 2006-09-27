@@ -145,14 +145,15 @@ libgaim/protocols/novell/nmuser.c
 libgaim/protocols/novell/novell.c
 libgaim/protocols/oscar/flap_connection.c
 libgaim/protocols/oscar/odc.c
+libgaim/protocols/oscar/oft.c
 libgaim/protocols/oscar/oscar.c
 libgaim/protocols/oscar/peer.c
 libgaim/protocols/qq/buddy_info.c
 libgaim/protocols/qq/buddy_list.c
 libgaim/protocols/qq/buddy_opt.c
 libgaim/protocols/qq/group.c
-libgaim/protocols/qq/group_hash.c
 libgaim/protocols/qq/group_im.c
+libgaim/protocols/qq/group_internal.c
 libgaim/protocols/qq/group_join.c
 libgaim/protocols/qq/group_network.c
 libgaim/protocols/qq/group_opt.c
