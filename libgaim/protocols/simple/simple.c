@@ -521,7 +521,7 @@ static void sendout_pkt(GaimConnection *gc, const char *buf) {
 	}
 }
 
-static void simple_send_raw(GaimConnection *gc, const char *buf, int len)
+static int simple_send_raw(GaimConnection *gc, const char *buf, int len)
 {
 	sendout_pkt(gc, buf);
 	return len;
