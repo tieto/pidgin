@@ -281,13 +281,11 @@ static gint _qq_create_packet_file_header
 {
 	gint bytes;
 	time_t now;
-	guint8 *md5;
 	guint16 seq;
 	ft_info *info;
 
 	bytes = 0;
 	now = time(NULL);
-	md5 = _gen_session_md5(qd->uid, qd->session_key);
 	if (!seq_ack) seq = qd->send_seq;
 	else {
 		info = (ft_info *) qd->xfer->data;
@@ -305,7 +303,7 @@ static gint _qq_create_packet_file_header
 	/* 014-017: sender uid */
 	bytes += create_packet_dw (raw_data, cursor, to_uid);
 	/* 018-033: md5 of (uid+session_key) */
-	bytes += create_packet_data (raw_data, cursor, md5, 16);
+	bytes += create_packet_data (raw_data, cursor, qd->session_md5, 16);
 	/* 034-035: message type */
 	bytes += create_packet_w (raw_data, cursor, message_type);
 	/* 036-037: sequence number */
@@ -332,7 +330,6 @@ static gint _qq_create_packet_file_header
 	/* 063: transfer_type,  0x65: FILE 0x6b: FACE */
 	bytes += create_packet_b (raw_data, cursor, QQ_FILE_TRANSFER_FILE); /* FIXME */
 
-	g_free (md5);
 	return bytes;
 }
 

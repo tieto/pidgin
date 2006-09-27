@@ -284,7 +284,7 @@ void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to
 {
 	qq_data *qd;
 	gint bytes, bytes_expected, encrypted_len;
-	guint8 *raw_data, *cursor, *encrypted_data, *md5;
+	guint8 *raw_data, *cursor, *encrypted_data;
 	time_t now;
 	ft_info *info;
 	
@@ -296,9 +296,8 @@ void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to
 	
 	bytes = 0;
 	now = time(NULL);
-	md5 = _gen_session_md5(qd->uid, qd->session_key);
 
-	bytes += create_packet_data(raw_data, &cursor, md5, 16);
+	bytes += create_packet_data(raw_data, &cursor, qd->session_md5, 16);
 	bytes += create_packet_w(raw_data, &cursor, packet_type);
 	switch (packet_type) {
 		case QQ_FILE_CMD_SENDER_SAY_HELLO:
@@ -377,8 +376,6 @@ void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to
 	else
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "qq_send_file_ctl_packet: Expected to get %d bytes, but get %d",
 				bytes_expected, bytes);
-
-	g_free(md5);
 }
 
 /* send a file to udp channel with QQ_FILE_DATA_PACKET_TAG */
@@ -521,14 +518,12 @@ static void _qq_process_recv_file_ctl_packet(GaimConnection *gc, guint8 *data, g
 	guint16 packet_type;
 	guint16 seq;
 	guint8 hellobyte;
-	guint8 *md5;
 	ft_info *info = (ft_info *) qd->xfer->data;
 
 	decrypted_data = g_newa(guint8, len);
 	decrypted_len = len;
 
-	md5 = _gen_session_md5(qd->uid, qd->session_key);
-	if (qq_crypt(DECRYPT, cursor, len - (cursor - data), md5, decrypted_data, &decrypted_len)) {
+	if (qq_crypt(DECRYPT, cursor, len - (cursor - data), qd->session_md5, decrypted_data, &decrypted_len)) {
 		cursor = decrypted_data + 16;	/* skip md5 section */
 		read_packet_w(decrypted_data, &cursor, decrypted_len, &packet_type);
 		read_packet_w(decrypted_data, &cursor, decrypted_len, &seq);
@@ -577,7 +572,6 @@ static void _qq_process_recv_file_ctl_packet(GaimConnection *gc, guint8 *data, g
 				gaim_debug(GAIM_DEBUG_INFO, "QQ", "unprocess file command %d\n", packet_type);
 		}
 	} 
-	g_free(md5);
 }
 
 static void _qq_recv_file_progess(GaimConnection *gc, guint8 *buffer, guint16 len, guint32 index, guint32 offset)

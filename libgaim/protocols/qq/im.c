@@ -425,7 +425,7 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data, *send_im_tail, *md5;
+	guint8 *cursor, *raw_data, *send_im_tail;
 	guint16 client_tag, normal_im_type;
 	gint msg_len, raw_len, font_name_len, tail_len, bytes;
 	time_t now;
@@ -483,7 +483,6 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	msg_filtered = gaim_markup_strip_html(msg);
 	msg_len = strlen(msg_filtered);
 	now = time(NULL);
-	md5 = _gen_session_md5(qd->uid, qd->session_key);
 
 	font_name_len = (font_name) ? strlen(font_name) : DEFAULT_FONT_NAME_LEN;
 	tail_len = font_name_len + QQ_SEND_IM_AFTER_MSG_HEADER_LEN + 1;
@@ -504,7 +503,7 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	/* 014-017: sender uid */
 	bytes += create_packet_dw(raw_data, &cursor, to_uid);
 	/* 018-033: md5 of (uid+session_key) */
-	bytes += create_packet_data(raw_data, &cursor, md5, 16);
+	bytes += create_packet_data(raw_data, &cursor, qd->session_md5, 16);
 	/* 034-035: message type */
 	bytes += create_packet_w(raw_data, &cursor, normal_im_type);
 	/* 036-037: sequence number */

@@ -171,23 +171,23 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	/* 017-020: login uid */
 	bytes += read_packet_dw(data, &cursor, len, &lrop.uid);
 	/* 021-024: server detected user public IP */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.client_ip, 4);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.client_ip, 4);
 	/* 025-026: server detected user port */
 	bytes += read_packet_w(data, &cursor, len, &lrop.client_port);
 	/* 027-030: server detected itself ip 127.0.0.1 ? */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.server_ip, 4);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.server_ip, 4);
 	/* 031-032: server listening port */
 	bytes += read_packet_w(data, &cursor, len, &lrop.server_port);
 	/* 033-036: login time for current session */
-	bytes += read_packet_dw(data, &cursor, len, (guint32 *) & lrop.login_time);
+	bytes += read_packet_dw(data, &cursor, len, (guint32 *) &lrop.login_time);
 	/* 037-062: 26 bytes, unknown */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.unknown1, 26);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown1, 26);
 	/* 063-066: unknown server1 ip address */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.unknown_server1_ip, 4);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown_server1_ip, 4);
 	/* 067-068: unknown server1 port */
 	bytes += read_packet_w(data, &cursor, len, &lrop.unknown_server1_port);
 	/* 069-072: unknown server2 ip address */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.unknown_server2_ip, 4);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown_server2_ip, 4);
 	/* 073-074: unknown server2 port */
 	bytes += read_packet_w(data, &cursor, len, &lrop.unknown_server2_port);
 	/* 075-076: 2 bytes unknown */
@@ -195,15 +195,15 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	/* 077-078: 2 bytes unknown */
 	bytes += read_packet_w(data, &cursor, len, &lrop.unknown3);
 	/* 079-110: 32 bytes unknown */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.unknown4, 32);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown4, 32);
 	/* 111-122: 12 bytes unknown */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.unknown5, 12);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown5, 12);
 	/* 123-126: login IP of last session */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.last_client_ip, 4);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.last_client_ip, 4);
 	/* 127-130: login time of last session */
-	bytes += read_packet_dw(data, &cursor, len, (guint32 *) & lrop.last_login_time);
+	bytes += read_packet_dw(data, &cursor, len, (guint32 *) &lrop.last_login_time);
 	/* 131-138: 8 bytes unknown */
-	bytes += read_packet_data(data, &cursor, len, (guint8 *) & lrop.unknown6, 8);
+	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown6, 8);
 
 	if (bytes != QQ_LOGIN_REPLY_OK_PACKET_LEN) {	/* fail parsing login info */
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
@@ -211,14 +211,13 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 			   QQ_LOGIN_REPLY_OK_PACKET_LEN, bytes);
 	}			/* but we still go on as login OK */
 
-	qd->session_key = g_memdup(lrop.session_key, QQ_KEY_LENGTH);
+	qd->session_key = lrop.session_key;
+	qd->session_md5 = _gen_session_md5(qd->uid, qd->session_key);
 	qd->my_ip = gen_ip_str(lrop.client_ip);
 	qd->my_port = lrop.client_port;
 	qd->login_time = lrop.login_time;
 	qd->last_login_time = lrop.last_login_time;
 	qd->last_login_ip = gen_ip_str(lrop.last_client_ip);
-
-	g_free(lrop.session_key);
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 	qd->logged_in = TRUE;	/* must be defined after sev_finish_login */
@@ -279,7 +278,7 @@ static gint _qq_process_login_redirect(GaimConnection *gc, guint8 *data, gint le
 }
 
 /* process login reply which says wrong password */
-static gint _qq_process_login_wrong_pwd(GaimConnection * gc, guint8 * data, gint len)
+static gint _qq_process_login_wrong_pwd(GaimConnection *gc, guint8 *data, gint len)
 {
 	gchar *server_reply, *server_reply_utf8;
 	server_reply = g_new0(gchar, len);
@@ -315,10 +314,6 @@ void qq_send_packet_request_login_token(GaimConnection *gc)
 	else
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail create request login token packet\n");
 }
-
-/* TODO: The login packet and its response have changed by QQ2006 Beta2. In that version,
- * the login OK response packet does not appear to be decryptable with qd->pwkey or qd->inikey.
- * Fortunately, this older system still works. */
 
 /* send login packet to QQ server */
 static void qq_send_packet_login(GaimConnection *gc, guint8 token_length, guint8 *token)

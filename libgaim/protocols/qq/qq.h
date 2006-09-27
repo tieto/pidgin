@@ -61,6 +61,7 @@ struct _qq_data {
 	guint8 *inikey;			/* initial key to encrypt login packet */
 	guint8 *pwkey;			/* password in md5 (or md5' md5) */
 	guint8 *session_key;		/* later use this as key in this session */
+	guint8 *session_md5;		/* concatenate my uid with session_key and md5 it */
 
 	guint16 send_seq;		/* send sequence number */
 	guint8 login_mode;		/* online of invisible */

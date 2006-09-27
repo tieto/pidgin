@@ -457,6 +457,7 @@ void qq_disconnect(GaimConnection *gc)
 	g_free(qd->inikey);
 	g_free(qd->pwkey);
 	g_free(qd->session_key);
+	g_free(qd->session_md5);
 	g_free(qd->my_ip);
 	g_free(qd);
 
