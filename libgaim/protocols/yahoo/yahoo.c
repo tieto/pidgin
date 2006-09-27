@@ -491,29 +491,48 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 
 		switch (pair->key) {
-		case 302: /* what is this? it's always 318 before a group, 319 before a s/n */
-		case 300: /* ditto */
+		case 302: 
+			/* This is always 318 before a group, 319 before the first s/n in a group, 320 before any ignored s/n.
+			 * It is not sent for s/n's in a group after the first.
+			 * All ignored s/n's are listed last, so when we see a 320 we clear the group and begin marking the
+			 * s/n's as ignored.  It is always followed by an identical 300 key.
+			 */
+			if (pair->value && !strcmp(pair->value, "320")) {
+				/* No longer in any group; this indicates the start of the ignore list. */
+				g_free(grp);
+				grp = NULL;
+			}
+
+			break;
+		case 301: /* This is 319 before all s/n's in a group after the first. It is followed by an identical 300. */
+			break;
+		case 300: /* This is 318 before a group, 319 before any s/n in a group, and 320 before any ignored s/n. */
 			break;
 		case 65: /* This is the group */
 			g_free(grp);
 			grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
-			if (!grp) /* this buddy isn't in a group?! */
-				break;
 			g_free(norm_bud);
 			norm_bud = g_strdup(gaim_normalize(account, pair->value));
-			f = yahoo_friend_find_or_new(gc, norm_bud);
-			if (!(b = gaim_find_buddy(account, norm_bud))) {
-				if (!(g = gaim_find_group(grp))) {
-					g = gaim_group_new(grp);
-					gaim_blist_add_group(g, NULL);
-				}
-				b = gaim_buddy_new(account, norm_bud, NULL);
-				gaim_blist_add_buddy(b, NULL, g, NULL);
-			}
-			yahoo_do_group_check(account, ht, norm_bud, grp);
 
+			if (grp) {
+				/* This buddy is in a group */
+				f = yahoo_friend_find_or_new(gc, norm_bud);
+				if (!(b = gaim_find_buddy(account, norm_bud))) {
+					if (!(g = gaim_find_group(grp))) {
+						g = gaim_group_new(grp);
+						gaim_blist_add_group(g, NULL);
+					}
+					b = gaim_buddy_new(account, norm_bud, NULL);
+					gaim_blist_add_buddy(b, NULL, g, NULL);
+				}
+				yahoo_do_group_check(account, ht, norm_bud, grp);
+
+			} else {
+				/* This buddy is on the ignore list (and therefore in no group) */
+				gaim_privacy_deny_add(account, norm_bud, 1);				
+			}
 			break;
 		case 241: /* another protocol user */
 			if (f) {
