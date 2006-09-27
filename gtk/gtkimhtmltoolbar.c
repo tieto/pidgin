@@ -986,7 +986,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			_("Font Face"), NULL);
+			_("Font face"), NULL);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(toggle_font), toolbar);
