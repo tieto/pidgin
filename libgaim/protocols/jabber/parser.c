@@ -174,7 +174,7 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		/* libxml inconsistently starts parsing on creating the
 		 * parser, so do a ParseChunk right afterwards to force it. */
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
-		xmlParseChunk(js->context, NULL, 0, 0);
+		xmlParseChunk(js->context, "", 0, 0);
 	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
 		gaim_connection_error(js->gc, _("XML Parse error"));
 	}
