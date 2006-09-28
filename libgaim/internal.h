@@ -121,6 +121,10 @@
 #define PATHSIZE 1024
 
 #include <glib.h>
+#if !GLIB_CHECK_VERSION(2,4,0)
+#	define G_MAXUINT32 ((guint32) 0xffffffff)
+#endif
+
 #if GLIB_CHECK_VERSION(2,6,0)
 #	include <glib/gstdio.h>
 #endif
