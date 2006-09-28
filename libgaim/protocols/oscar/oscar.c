@@ -1279,7 +1279,7 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		case 0x01:
 			/* Unregistered screen name */
 			gc->wants_to_die = TRUE;
-			gaim_connection_error(gc, _("Incorrect screen name."));
+			gaim_connection_error(gc, _("Invalid screen name."));
 			break;
 		case 0x05:
 			/* Incorrect nick/password */
