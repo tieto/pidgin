@@ -287,7 +287,7 @@ icon_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GtkGaimStatusBox *
 
 
 static const GtkTargetEntry dnd_targets[] = {
-       {"text/plain", 0, 0},
+	{"text/plain", 0, 0},
 	{"text/uri-list", 0, 1},
 	{"STRING", 0, 2}
 };
@@ -817,12 +817,89 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	g_list_free(list);
 }
 
+/* This returns NULL if the active accounts don't have identical
+ * statuses and a token account if they do */
+static GaimAccount* check_active_accounts_for_identical_statuses()
+{
+	GaimAccount *acct = NULL, *acct2;
+	GList *tmp, *tmp2, *active_accts = gaim_accounts_get_all_active();
+	const GList *s, *s1, *s2;
+
+	for (tmp = active_accts; tmp; tmp = tmp->next) {
+		acct = tmp->data;
+		s = gaim_account_get_status_types(acct);
+		for (tmp2 = tmp->next; tmp2; tmp2 = tmp2->next) {
+			acct2 = tmp2->data;
+
+			/* Only actually look at the statuses if the accounts use the same prpl */
+			if (strcmp(gaim_account_get_protocol_id(acct), gaim_account_get_protocol_id(acct2))) {
+				acct = NULL;
+				break;
+			}
+
+			s2 = gaim_account_get_status_types(acct2);
+
+			s1 = s;
+			while (s1 && s2) {
+				GaimStatusType *st1 = s1->data, *st2 = s2->data;
+				/* TODO: Are these enough to consider the statuses identical? */
+				if (gaim_status_type_get_primitive(st1) != gaim_status_type_get_primitive(st2)
+						|| strcmp(gaim_status_type_get_id(st1), gaim_status_type_get_id(st2))
+						|| strcmp(gaim_status_type_get_name(st1), gaim_status_type_get_name(st2))) {
+					acct = NULL;
+					break;
+				}
+
+				s1 = s1->next;
+				s2 = s2->next;
+			}
+
+			if (s1 != s2) {/* Will both be NULL if matched */
+				acct = NULL;
+				break;
+			}
+		}
+		if (!acct)
+			break;
+	}
+	g_list_free(active_accts);
+
+	return acct;
+}
+
+static void
+add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account, gboolean show_buddy_icons)
+{
+	/* Per-account */
+	const GList *l;
+	GdkPixbuf *tmp;
+
+	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
+	{
+		GaimStatusType *status_type = (GaimStatusType *)l->data;
+
+		if (!gaim_status_type_is_user_settable(status_type))
+			continue;
+
+		tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type,
+				show_buddy_icons ? 1.0 : 0.5);
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
+					GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, tmp,
+					gaim_status_type_get_name(status_type),
+					NULL,
+					GINT_TO_POINTER(gaim_status_type_get_primitive(status_type)));
+		if (tmp != NULL)
+			g_object_unref(tmp);
+	}
+	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
+}
+
 static void
 gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 {
 	gboolean show_buddy_icons;
 	GaimAccount *account;
-	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4, *tmp;
+	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 
 	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
@@ -842,20 +919,27 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	account = GTK_GAIM_STATUS_BOX(status_box)->account;
 	if (account == NULL)
 	{
-		/* Global */
 		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_ONLINE,
 		                                 icon_size, "GtkGaimStatusBox");
-		pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AWAY,
-		                                  icon_size, "GtkGaimStatusBox");
-		pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
-		                                  icon_size, "GtkGaimStatusBox");
-		pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_INVISIBLE,
-		                                  icon_size, "GtkGaimStatusBox");
+		/* Do all the currently enabled accounts have the same statuses?
+		 * If so, display them instead of our global list.
+		 */
+		if ((account = check_active_accounts_for_identical_statuses()))
+			add_account_statuses(status_box, account, show_buddy_icons);
+		else {
+			/* Global */
+			pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AWAY,
+			                                  icon_size, "GtkGaimStatusBox");
+			pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
+			                                  icon_size, "GtkGaimStatusBox");
+			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_INVISIBLE,
+			                                  icon_size, "GtkGaimStatusBox");
 
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(GAIM_STATUS_AWAY));
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(GAIM_STATUS_INVISIBLE));
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(GAIM_STATUS_OFFLINE));
+			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
+			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(GAIM_STATUS_AWAY));
+			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(GAIM_STATUS_INVISIBLE));
+			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(GAIM_STATUS_OFFLINE));
+		}
 
 		add_popular_statuses(status_box);
 
@@ -867,27 +951,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		status_menu_refresh_iter(status_box);
 
 	} else {
-		/* Per-account */
-		const GList *l;
-
-		for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
-		{
-			GaimStatusType *status_type = (GaimStatusType *)l->data;
-
-			if (!gaim_status_type_is_user_settable(status_type))
-				continue;
-
-			tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type,
-					show_buddy_icons ? 1.0 : 0.5);
-			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
-									GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, tmp,
-									gaim_status_type_get_name(status_type),
-									NULL,
-									GINT_TO_POINTER(gaim_status_type_get_primitive(status_type)));
-			if (tmp != NULL)
-				g_object_unref(tmp);
-		}
-		gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
+		add_account_statuses(status_box, account, show_buddy_icons);
 		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));
 	}
 }
@@ -1010,11 +1074,23 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 								     icon_size, "GtkGaimStatusBox");
 }
 
-static void
-current_savedstatus_changed_cb(GaimSavedStatus *now, GaimSavedStatus *old, gpointer data)
-{
-	GtkGaimStatusBox *status_box = data;
+static void account_enabled_cb(GaimAccount *acct, GtkGaimStatusBox *status_box) {
+	/* Make sure our current status is added to the list of popular statuses */
+	gtk_gaim_status_box_regenerate(status_box);
 
+	if (status_box->account != NULL)
+		update_to_reflect_account_status(status_box, status_box->account,
+						gaim_account_get_active_status(status_box->account));
+	else
+		status_menu_refresh_iter(status_box);
+
+	gtk_gaim_status_box_refresh(status_box);
+
+}
+
+static void
+current_savedstatus_changed_cb(GaimSavedStatus *now, GaimSavedStatus *old, GtkGaimStatusBox *status_box)
+{
 	/* Make sure our current status is added to the list of popular statuses */
 	gtk_gaim_status_box_regenerate(status_box);
 
@@ -1246,6 +1322,12 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gaim_signal_connect(gaim_savedstatuses_get_handle(), "savedstatus-changed",
 						status_box,
 						GAIM_CALLBACK(current_savedstatus_changed_cb),
+						status_box);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled", status_box,
+						GAIM_CALLBACK(account_enabled_cb),
+						status_box);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled", status_box,
+						GAIM_CALLBACK(account_enabled_cb),
 						status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/blist/show_buddy_icons",
 								buddy_list_details_pref_changed_cb, status_box);
