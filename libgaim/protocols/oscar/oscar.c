@@ -1276,10 +1276,15 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
 		char buf[256];
 		switch (info->errorcode) {
+		case 0x01:
+			/* Unregistered screen name */
+			gc->wants_to_die = TRUE;
+			gaim_connection_error(gc, _("Incorrect screen name."));
+			break;
 		case 0x05:
 			/* Incorrect nick/password */
 			gc->wants_to_die = TRUE;
-			gaim_connection_error(gc, _("Incorrect nickname or password."));
+			gaim_connection_error(gc, _("Incorrect password."));
 			break;
 		case 0x11:
 			/* Suspended account */
