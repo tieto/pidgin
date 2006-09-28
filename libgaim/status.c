@@ -718,14 +718,11 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 	const gchar *id;
 	gpointer data;
 
-	if (args != NULL)
+	while ((id = va_arg(args, const char *)) != NULL)
 	{
-		while ((id = va_arg(args, const char *)) != NULL)
-		{
-			attrs = g_list_append(attrs, (char *)id);
-			data = va_arg(args, void *);
-			attrs = g_list_append(attrs, data);
-		}
+		attrs = g_list_append(attrs, (char *)id);
+		data = va_arg(args, void *);
+		attrs = g_list_append(attrs, data);
 	}
 	gaim_status_set_active_with_attrs_list(status, active, attrs);
 	g_list_free(attrs);

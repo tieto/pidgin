@@ -287,8 +287,7 @@ void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status_vargs
- * or gaim_account_set_status_list.
+ * an account go through this function or gaim_account_set_status_list.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.
@@ -296,8 +295,8 @@ void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
  * @param account   The account.
  * @param status_id The ID of the status.
  * @param active    The active state.
- * @param ...       Optional NULL-terminated attributes passed for the
- *                  new status, in an id, value pair.
+ * @param ...       Pairs of attributes for the new status passed in
+ *                  as a NULL-terminated list of id/value pairs.
  */
 void gaim_account_set_status(GaimAccount *account, const char *status_id,
 							 gboolean active, ...);
@@ -305,25 +304,7 @@ void gaim_account_set_status(GaimAccount *account, const char *status_id,
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status or
- * gaim_account_set_status_list.
- *
- * Only independent statuses can be deactivated with this. To deactivate
- * an exclusive status, activate a different (and exclusive?) status.
- *
- * @param account   The account.
- * @param status_id The ID of the status.
- * @param active    The active state.
- * @param args      The va_list of attributes.
- */
-void gaim_account_set_status_vargs(GaimAccount *account,
-								   const char *status_id,
-								   gboolean active, va_list args);
-
-/**
- * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status or
- * gaim_account_set_status_vargs.
+ * an account go through this function or gaim_account_set_status.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.

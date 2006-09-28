@@ -1369,32 +1369,21 @@ void
 gaim_account_set_status(GaimAccount *account, const char *status_id,
 						gboolean active, ...)
 {
-	va_list args;
-
-	va_start(args, active);
-	gaim_account_set_status_vargs(account, status_id, active, args);
-	va_end(args);
-}
-
-void
-gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
-							  gboolean active, va_list args)
-{
 	GList *attrs = NULL;
 	const gchar *id;
 	gpointer data;
+	va_list args;
 
-	if (args != NULL)
+	va_start(args, active);
+	while ((id = va_arg(args, const char *)) != NULL)
 	{
-		while ((id = va_arg(args, const char *)) != NULL)
-		{
-			attrs = g_list_append(attrs, (char *)id);
-			data = va_arg(args, void *);
-			attrs = g_list_append(attrs, data);
-		}
+		attrs = g_list_append(attrs, (char *)id);
+		data = va_arg(args, void *);
+		attrs = g_list_append(attrs, data);
 	}
 	gaim_account_set_status_list(account, status_id, active, attrs);
 	g_list_free(attrs);
+	va_end(args);
 }
 
 void
