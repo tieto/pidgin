@@ -2561,12 +2561,14 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 			g_free(random);
 			g_free(filename);
+			g_free(contents);
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 			g_object_unref(G_OBJECT(pixbuf));
 #endif
 			return NULL;
 		}
 		fclose(image);
+		g_free(contents);
 
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 		g_object_unref(G_OBJECT(pixbuf));
