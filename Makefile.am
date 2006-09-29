@@ -28,8 +28,7 @@ EXTRA_DIST = \
 		gtk/plugins/win32/winprefs/winprefs.c \
 		po/Makefile.mingw
 
-gaimincludedir=$(includedir)/gaim
-nodist_gaiminclude_HEADERS = config.h
+noinst_HEADERS = config.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gaim.pc

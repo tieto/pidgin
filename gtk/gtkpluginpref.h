@@ -26,10 +26,6 @@
 #ifndef _GAIM_GTKPLUGINPREF_H_
 #define _GAIM_GTKPLUGINPREF_H_
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #include "pluginpref.h"
 
 #include "gtkgaim.h"
