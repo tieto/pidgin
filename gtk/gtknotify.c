@@ -942,6 +942,10 @@ gaim_gtk_notify_uri(const char *uri)
 	{
 		command = g_strdup_printf("gnome-open %s", escaped);
 	}
+	else if (gaim_running_osx() == TRUE)
+	{
+		command = g_strdup_printf("open %s", escaped);
+	}
 	else if (!strcmp(web_browser, "epiphany") ||
 		!strcmp(web_browser, "galeon"))
 	{

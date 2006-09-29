@@ -1887,8 +1887,8 @@ static void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
-	/* if the user is running gnome 2.x, hide the browsers tab */
-	if (gaim_running_gnome() == FALSE) {
+	/* if the user is running gnome 2.x or Mac OS X, hide the browsers tab */
+	if ((gaim_running_gnome() == FALSE) && (gaim_running_osx() == FALSE)) {
 		prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, notebook_page++);
 	}
 #endif
