@@ -15,20 +15,8 @@ EXTRA_DIST = \
 
 pkgdir = $(libdir)/gaim
 
-GGSOURCES = \
-	gg-utils.h \
-	gg-utils.c \
-	confer.h \
-	confer.c \
-	search.h \
-	search.c \
-	buddylist.h \
-	buddylist.c \
-	gg.h \
-	gg.c
-
 if USE_INTERNAL_LIBGADU
-GGSOURCES += \
+INTGGSOURCES = \
 	lib/common.c \
 	lib/compat.h \
 	lib/dcc.c \
@@ -43,6 +31,19 @@ GGSOURCES += \
 
 INTGG_CFLAGS = -I$(top_srcdir)/libgaim/protocols/gg/lib
 endif
+
+GGSOURCES = \
+	$(INTGGSOURCES) \
+	gg-utils.h \
+	gg-utils.c \
+	confer.h \
+	confer.c \
+	search.h \
+	search.c \
+	buddylist.h \
+	buddylist.c \
+	gg.h \
+	gg.c
 
 AM_CFLAGS = $(st)
 
