@@ -27,7 +27,7 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-extplacement_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS)
+extplacement_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
 gaimrc_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
 history_la_LDFLAGS          = -module -avoid-version $(GTK_LIBS)
 iconaway_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
