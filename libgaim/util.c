@@ -2577,6 +2577,16 @@ gaim_running_kde(void)
 #endif
 }
 
+gboolean
+gaim_running_osx(void)
+{
+#if defined(__APPLE__)	
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
 char *
 gaim_fd_get_ip(int fd)
 {

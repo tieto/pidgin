@@ -215,7 +215,7 @@ aim_reqrates(OscarData *od, FlapConnection *conn)
  * rate limiting properties (limit level, alert level, disconnect
  * level, etc), and a set of SNAC family/type pairs associated with
  * it.  The rate classes, their limiting properties, and the definitions
- * of which SNACs are belong to which class, are defined in the
+ * of which SNACs belong to which class are defined in the
  * Rate Response packet at login to each host.
  *
  * Logically, all rate offenses within one class count against further

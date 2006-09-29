@@ -584,6 +584,13 @@ gboolean gaim_running_gnome(void);
 gboolean gaim_running_kde(void);
 
 /**
+ * Check if running OS X.
+ *
+ * @return TRUE if running OS X, FALSE otherwise.
+ */
+gboolean gaim_running_osx(void);
+
+/**
  * Returns the IP address from a socket file descriptor.
  *
  * @param fd The socket file descriptor.
