@@ -99,11 +99,6 @@ class Binding:
             if (type[0] in simpletypes) or (type[0].startswith("Gaim")):
                 return self.inputsimple(type, name)
 
-
-            # va_list, replace by NULL
-            if type[0] == "va_list":
-                return self.inputvalist(type, name)
-
         # pointers ... 
         if (len(type) == 2) and (type[1] == pointer):
             # strings
@@ -209,9 +204,6 @@ class ClientBinding (Binding):
     def inputsimple(self, type, name):
         self.paramshdr.append("%s %s" % (type[0], name))
         self.inputparams.append(("G_TYPE_INT", name))
-
-    def inputvalist(self, type, name):
-        self.paramshdr.append("va_list %s_NULL" % name)
 
     def inputstring(self, type, name):
         self.paramshdr.append("const char *%s" % name)
@@ -329,10 +321,6 @@ class ServerBinding (Binding):
         self.cdecls.append("\tdbus_int32_t %s;" % name)
         self.cparams.append(("INT32", name))
         self.addintype("i", name)
-
-    def inputvalist(self, type, name):
-        self.cdecls.append("\tvoid * %s;" % name);
-        self.ccode.append("\t%s = NULL;" % name);
 
     def inputstring(self, type, name):
         self.cdecls.append("\tconst char *%s;" % name)
