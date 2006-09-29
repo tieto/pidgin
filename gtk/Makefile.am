@@ -1,5 +1,3 @@
-if ENABLE_GTK
-
 EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
@@ -53,6 +51,8 @@ EXTRA_DIST = \
 		win32/nsis/translations/swedish.nsh \
 		win32/nsis/translations/trad-chinese.nsh \
 		win32/nsis/translations/vietnamese.nsh
+
+if ENABLE_GTK
 
 SUBDIRS = pixmaps plugins sounds
 
