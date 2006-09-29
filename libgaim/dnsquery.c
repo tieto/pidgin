@@ -67,7 +67,7 @@ struct _GaimDnsQueryResolverProcess {
 };
 
 static GSList *free_dns_children = NULL;
-static GQueue *queued_requests = NULL;
+static GSList *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
 
@@ -451,11 +451,12 @@ handle_next_queued_request()
 	GaimDnsQueryData *query_data;
 	GaimDnsQueryResolverProcess *resolver;
 
-	if ((queued_requests == NULL) || (g_queue_is_empty(queued_requests)))
+	if (queued_requests == NULL)
 		/* No more DNS queries, yay! */
 		return;
 
-	query_data = g_queue_pop_head(queued_requests);
+	query_data = queued_requests->data;
+	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
 
 	/*
 	 * If we have any children, attempt to have them perform the DNS
@@ -479,7 +480,7 @@ handle_next_queued_request()
 		if (number_of_dns_children >= MAX_DNS_CHILDREN)
 		{
 			/* Apparently all our children are busy */
-			g_queue_push_head(queued_requests, query_data);
+			queued_requests = g_slist_prepend(queued_requests, query_data);
 			return;
 		}
 
@@ -597,9 +598,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 		g_return_val_if_reached(NULL);
 	}
 
-	if (!queued_requests)
-		queued_requests = g_queue_new();
-	g_queue_push_tail(queued_requests, query_data);
+	queued_requests = g_slist_append(queued_requests, query_data);
 
 	gaim_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
 
@@ -851,7 +850,7 @@ void
 gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 {
 #if defined(__unix__) || defined(__APPLE__)
-	g_queue_remove(queued_requests, query_data);
+	queued_requests = g_slist_remove(queued_requests, query_data);
 
 	if (query_data->resolver != NULL)
 		/*
