@@ -14,7 +14,7 @@
     </schema>
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/aim/command</key>
-im      <applyto>/desktop/gnome/url-handlers/aim/command</applyto>
+      <applyto>/desktop/gnome/url-handlers/aim/command</applyto>
       <owner>gaim</owner>
       <type>string</type>
       <default>gaim-url-handler "%s"</default>

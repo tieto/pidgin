@@ -93,6 +93,7 @@ libgaim/desktopitem.c
 libgaim/dbus-server.c
 libgaim/dnsquery.c
 libgaim/ft.c
+libgaim/gconf/gaim.schemas.in
 libgaim/log.c
 libgaim/plugin.c
 libgaim/plugins/ciphertest.c

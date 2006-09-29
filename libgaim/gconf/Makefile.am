@@ -1,7 +1,10 @@
 schemadir = @GCONF_SCHEMA_FILE_DIR@
-schema_DATA = gaim.schemas
 
-EXTRA_DIST = gaim.schemas
+EXTRA_DIST = gaim.schemas.in
+
+schema_in_files = gaim.schemas.in
+schema_DATA = $(schema_in_files:.schemas.in=.schemas)
+@INTLTOOL_SCHEMAS_RULE@
 
 if GCONF_SCHEMAS_INSTALL
 install-data-local:
