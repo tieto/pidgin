@@ -28,6 +28,7 @@
  * Jonathon Blandford <jrb@redhat.com> for RedHat, Inc.
  */
 
+#include <gtk/gtk.h>
 #include <gtk/gtktreeview.h>
 #include "gtkcellrendererexpander.h"
 
@@ -245,8 +246,13 @@ static void gaim_gtk_cell_renderer_expander_render (GtkCellRenderer *cell,
 	width = cell_area->width;
 	height = cell_area->height;
 	
+#if GTK_CHECK_VERSION(2,6,0)
 	if (!cell->sensitive)
 		state = GTK_STATE_INSENSITIVE;
+#else
+	if (GTK_WIDGET_STATE(widget) == GTK_STATE_INSENSITIVE)
+		state = GTK_STATE_INSENSITIVE;
+#endif
 	else if (flags & GTK_CELL_RENDERER_PRELIT)
 		state = GTK_STATE_PRELIGHT;
 	else if (GTK_WIDGET_HAS_FOCUS (widget) && flags & GTK_CELL_RENDERER_SELECTED)
