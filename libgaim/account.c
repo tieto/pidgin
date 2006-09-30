@@ -1354,7 +1354,7 @@ gaim_account_set_status_types(GaimAccount *account, GList *status_types)
 {
 	g_return_if_fail(account != NULL);
 
-	/* Old with the old... */
+	/* Out with the old... */
 	if (account->status_types != NULL)
 	{
 		g_list_foreach(account->status_types, (GFunc)gaim_status_type_destroy, NULL);
