@@ -406,7 +406,12 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 	gtk_widget_grab_focus(gtkblist->treeview);
+#if GTK_CHECK_VERSION(2,2,0)
+	gtk_tree_view_set_cursor_on_cell(GTK_TREE_VIEW(gtkblist->treeview), path,
+			gtkblist->text_column, gtkblist->text_rend, TRUE);
+#else
 	gtk_tree_view_set_cursor(GTK_TREE_VIEW(gtkblist->treeview), path, gtkblist->text_column, TRUE);
+#endif
 	gtk_tree_path_free(path);
 }
 
@@ -3984,17 +3989,21 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "expander-visible", GROUP_EXPANDER_COLUMN,
+#if GTK_CHECK_VERSION(2,6,0)
 					    "sensitive", GROUP_EXPANDER_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
+#endif
 					    NULL);
 
 	rend = gaim_gtk_cell_renderer_expander_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "expander-visible", CONTACT_EXPANDER_COLUMN,
+#if GTK_CHECK_VERSION(2,6,0)
 					    "sensitive", CONTACT_EXPANDER_COLUMN,
-					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    "cell-background-gdk", BGCOLOR_COLUMN,
+#endif
+					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    NULL);
 
 	rend = gtk_cell_renderer_pixbuf_new();
@@ -4002,14 +4011,18 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_column_set_attributes(column, rend,
 					    "pixbuf", STATUS_ICON_COLUMN,
 					    "visible", STATUS_ICON_VISIBLE_COLUMN,
+#if GTK_CHECK_VERSION(2,6,0)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
+#endif
 					    NULL);
 	g_object_set(rend, "xalign", 0.0, "ypad", 0, NULL);
 
 	gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start (column, rend, TRUE);
 	gtk_tree_view_column_set_attributes(column, rend,
+#if GTK_CHECK_VERSION(2,6,0)
 					    	    "cell-background-gdk", BGCOLOR_COLUMN,
+#endif
 										"markup", NAME_COLUMN,
 										NULL);
 	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), NULL);
@@ -4025,14 +4038,18 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_column_set_attributes(column, rend, 
 					    "markup", IDLE_COLUMN, 
 					    "visible", IDLE_VISIBLE_COLUMN,
+#if GTK_CHECK_VERSION(2,6,0)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
+#endif
 					    NULL);
 	
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend, "pixbuf", BUDDY_ICON_COLUMN, 
+#if GTK_CHECK_VERSION(2,6,0)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
+#endif
 					    "visible", BUDDY_ICON_VISIBLE_COLUMN,
 					    NULL);
 	
@@ -4416,7 +4433,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 			mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>%s",
 					       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
 					       esc, group_count);
-		
+
 		g_free(esc);
 		
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
