@@ -4385,10 +4385,11 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 			show = TRUE;}
 
 	if (show) {
+		char group_count[12] = "";
 		char *mark, *esc;
 		GtkTreeIter iter;
 		GtkTreePath *path;
-		gboolean expanded; 
+		gboolean expanded;
 		GdkColor bgcolor;
 		GdkColor textcolor;
 	
@@ -4402,13 +4403,19 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
 		gtk_tree_path_free(path);
 
+		if (!expanded) {
+			g_snprintf(group_count, sizeof(group_count), " (%d/%d)",
+			           gaim_blist_get_group_online_count(group),
+			           gaim_blist_get_group_size(group, FALSE));
+		}
+
 		esc = g_markup_escape_text(group->name, -1);
 		if (selected)
-			mark = g_strdup_printf("<span weight='bold'>%s</span>",esc);
+			mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc, group_count);
 		else
-			mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>",
+			mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>%s",
 					       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-					       esc);
+					       esc, group_count);
 		
 		g_free(esc);
 		
