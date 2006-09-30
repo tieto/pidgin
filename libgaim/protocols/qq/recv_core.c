@@ -90,9 +90,11 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 
 	_qq_show_packet("Processing unknown packet", buf, len);
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+		gchar *hex_dump = hex_dump_to_str(data, len);
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
 			   ">>> [%d] %s, %d bytes -> [default] decrypt and dump\n%s",
-			   seq, qq_get_cmd_desc(cmd), buf_len, hex_dump_to_str(data, len));
+			   seq, qq_get_cmd_desc(cmd), buf_len, hex_dump);
+		g_free(hex_dump);
 		try_dump_as_gbk(data, len);
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail decrypt packet with default process\n");
@@ -115,8 +117,10 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 	bytes_expected = qd->use_tcp ? QQ_TCP_HEADER_LENGTH : QQ_UDP_HEADER_LENGTH;
 
 	if (buf_len < bytes_expected) {
+		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
 		gaim_debug(GAIM_DEBUG_ERROR,
-			   "QQ", "Received packet is too short, dump and drop\n%s", hex_dump_to_str(buf, buf_len));
+			   "QQ", "Received packet is too short, dump and drop\n%s", hex_dump);
+		g_free(hex_dump);
 		return;
 	}
 	/* initialize */
@@ -149,8 +153,10 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 	}
 
 	if ((buf[buf_len - 1] != QQ_PACKET_TAIL) || (header.header_tag != QQ_PACKET_TAG)) {
+		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
 		gaim_debug(GAIM_DEBUG_ERROR,
-			   "QQ", "Unknown QQ proctocol, dump and drop\n%s", hex_dump_to_str(buf, buf_len));
+			   "QQ", "Unknown QQ proctocol, dump and drop\n%s", hex_dump);
+		g_free(hex_dump);
 		return;
 	}
 

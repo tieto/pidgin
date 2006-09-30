@@ -327,6 +327,7 @@ static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, 
 	gint bytes;
 	qq_recv_normal_im_common *common;
 	qq_recv_normal_im_unprocessed *im_unprocessed;
+	gchar *hex_dump;
 
 	g_return_if_fail (data != NULL && len != 0);
 
@@ -384,10 +385,9 @@ static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, 
 		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
 			    "Normal IM, unprocessed type [0x%04x]\n",
 			    common->normal_im_type);
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
-			    "Dump unknown part.\n%s",
-			    hex_dump_to_str (im_unprocessed->unknown,
-					     im_unprocessed->length));
+	       	hex_dump = hex_dump_to_str(im_unprocessed->unknown, im_unprocessed->length);
+		gaim_debug (GAIM_DEBUG_WARNING, "QQ", "Dump unknown part.\n%s", hex_dump);
+		g_free(hex_dump);
 		g_free (common->session_md5);
 		return;
 	}

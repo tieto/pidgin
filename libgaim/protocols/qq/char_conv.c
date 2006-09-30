@@ -112,10 +112,10 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	if (error == NULL)
 		return ret;	/* conversion is OK */
 	else {			/* conversion error */
+		gchar *failed = hex_dump_to_str((guint8 *) str, (len == -1) ? strlen(str) : len);
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", error->message);
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
-			   "Dump failed text\n%s", 
-			   hex_dump_to_str((guint8 *) str, (len == -1) ? strlen(str) : len));
+		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Dump failed text\n%s", failed);
+		g_free(failed);
 		g_error_free(error);
 		return g_strdup(QQ_NULL_MSG);
 	}

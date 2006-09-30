@@ -299,7 +299,7 @@ void qq_process_recv_group_im_been_added
 void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len, 
 		guint32 internal_group_id, GaimConnection *gc, guint16 im_type)
 {
-	gchar *msg_with_gaim_smiley, *msg_utf8_encoded, *im_src_name;
+	gchar *msg_with_gaim_smiley, *msg_utf8_encoded, *im_src_name, *hex_dump;
 	guint16 unknown;
 	guint32 unknown4;
 	GaimConversation *conv;
@@ -312,8 +312,8 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	g_return_if_fail(data != NULL && data_len > 0);
 	qd = (qq_data *) gc->proto_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ",
-			   "group im hex dump\n%s\n", hex_dump_to_str(*cursor, data_len - (*cursor - data)));
+	hex_dump = hex_dump_to_str(*cursor, data_len - (*cursor - data));
+	gaim_debug(GAIM_DEBUG_INFO, "QQ", "group im hex dump\n%s\n", hex_dump);
 
 	if (*cursor >= (data + data_len - 1)) {
 		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received group im_group is empty\n");
@@ -399,6 +399,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 						       (conv)), im_src_name, 0, msg_utf8_encoded, im_group->send_time);
 		g_free(im_src_name);
 	}
+	g_free(hex_dump);
 	g_free(msg_with_gaim_smiley);
 	g_free(msg_utf8_encoded);
 	g_free(im_group->msg);

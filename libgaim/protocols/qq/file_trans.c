@@ -344,26 +344,29 @@ void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to
 	}
 	
 	if (bytes == bytes_expected) {
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "sending packet[%s]: \n%s", qq_get_file_cmd_desc(packet_type),
-				hex_dump_to_str(raw_data, bytes));
+		gchar *hex_dump = hex_dump_to_str(raw_data, bytes);
+		gaim_debug(GAIM_DEBUG_INFO, "QQ", "sending packet[%s]: \n%s", qq_get_file_cmd_desc(packet_type), hex_dump);
+		g_free(hex_dump);
 		encrypted_len = bytes + 16;
 		encrypted_data = g_newa(guint8, encrypted_len);
 		qq_crypt(ENCRYPT, raw_data, bytes, info->file_session_key, encrypted_data, &encrypted_len);
 		/*debug: try to decrypt it */
 		/*
 		if (QQ_DEBUG) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "encrypted packet: \n%s",
-				hex_dump_to_str(encrypted_data, encrypted_len));
 			guint8 *buf;
 			int buflen;
+			hex_dump = hex_dump_to_str(encrypted_data, encrypted_len);
+			gaim_debug(GAIM_DEBUG_INFO, "QQ", "encrypted packet: \n%s", hex_dump);
+			g_free(hex_dump);
 			buf = g_newa(guint8, MAX_PACKET_SIZE);
 			buflen = encrypted_len;
 			if (qq_crypt(DECRYPT, encrypted_data, encrypted_len, info->file_session_key, buf, &buflen)) {
 				gaim_debug(GAIM_DEBUG_INFO, "QQ", "decrypt success\n");
 				if (buflen == bytes && memcmp(raw_data, buf, buflen) == 0)
 					gaim_debug(GAIM_DEBUG_INFO, "QQ", "checksum ok\n");
-				gaim_debug(GAIM_DEBUG_INFO, "QQ", "decrypted packet: \n%s",
-					hex_dump_to_str(buf, buflen));
+				hex_dump = hex_dump_to_str(buf, buflen);
+				gaim_debug(GAIM_DEBUG_INFO, "QQ", "decrypted packet: \n%s", hex_dump);
+				g_free(hex_dump);
 			} else {
 				gaim_debug(GAIM_DEBUG_INFO, "QQ", "decrypt fail\n");
 			}
@@ -524,13 +527,15 @@ static void _qq_process_recv_file_ctl_packet(GaimConnection *gc, guint8 *data, g
 	decrypted_len = len;
 
 	if (qq_crypt(DECRYPT, cursor, len - (cursor - data), qd->session_md5, decrypted_data, &decrypted_len)) {
+		gchar *hex_dump;
 		cursor = decrypted_data + 16;	/* skip md5 section */
 		read_packet_w(decrypted_data, &cursor, decrypted_len, &packet_type);
 		read_packet_w(decrypted_data, &cursor, decrypted_len, &seq);
 		cursor += 4+1+1+19+1;
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "==> [%d] receive %s packet\n", seq, qq_get_file_cmd_desc(packet_type));
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "decrypted control packet received: \n%s",
-			hex_dump_to_str(decrypted_data, decrypted_len));
+		hex_dump = hex_dump_to_str(decrypted_data, decrypted_len);
+		gaim_debug(GAIM_DEBUG_INFO, "QQ", "decrypted control packet received: \n%s", hex_dump);
+		g_free(hex_dump);
 		switch (packet_type) {
 			case QQ_FILE_CMD_NOTIFY_IP_ACK:
 				cursor = decrypted_data;

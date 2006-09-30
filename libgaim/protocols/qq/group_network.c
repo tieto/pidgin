@@ -94,8 +94,12 @@ static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *curs
 /* default process, dump only */
 static void _qq_process_group_cmd_reply_default(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
 {
+	gchar *hex_dump;
 	g_return_if_fail(data != NULL && len > 0);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump_to_str(data, len));
+
+	hex_dump = hex_dump_to_str(data, len);
+	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump);
+	g_free(hex_dump);
 }
 
 /* The lower layer command of send group cmd */
