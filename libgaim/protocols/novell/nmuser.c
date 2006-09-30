@@ -1137,17 +1137,27 @@ nm_user_add_contact(NMUser * user, NMContact * contact)
 void
 nm_user_add_user_record(NMUser * user, NMUserRecord * user_record)
 {
+	const char *display_id;
+	const char *dn;
+
+	if (!user || !user_record)
+		return;
+
+	display_id = nm_user_record_get_display_id(user_record);
+	dn = nm_user_record_get_dn(user_record);
+
+	if (!dn || !display_id)
+		return;
+
 	nm_user_record_add_ref(user_record);
 
 	g_hash_table_insert(user->user_records,
-						g_utf8_strdown(nm_user_record_get_dn(user_record), -1),
+						g_utf8_strdown(dn, -1),
 						user_record);
 
 	g_hash_table_insert(user->display_id_to_dn,
-						g_utf8_strdown(nm_user_record_get_display_id(user_record),
-									   -1),
-						g_utf8_strdown(nm_user_record_get_dn(user_record), -1));
-
+						g_utf8_strdown(display_id, -1),
+						g_utf8_strdown(dn, -1));
 }
 
 nm_event_cb
