@@ -910,6 +910,7 @@ gaim_savedstatus_find_transient_by_type_and_message(GaimStatusPrimitive type,
 	{
 		status = (GaimSavedStatus *)iter->data;
 		if ((status->type == type) && gaim_savedstatus_is_transient(status) &&
+			!gaim_savedstatus_has_substatuses(status) &&
 			(((status->message == NULL) && (message == NULL)) ||
 			((status->message != NULL) && (message != NULL) && !strcmp(status->message, message))))
 		{

@@ -81,6 +81,10 @@ struct _GtkGaimStatusBox
 
 	GaimAccount *account;
 
+	/* This will be non-NULL and contain a sample account
+	 * when all enabled accounts use the same statuses */
+	GaimAccount *token_status_account;
+
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
 

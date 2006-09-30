@@ -500,6 +500,9 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	char *primary, *secondary, *text;
 	GdkPixbuf *pixbuf;
 	GtkTreePath *path;
+	gboolean account_status = FALSE;
+	GaimAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
+
 
 	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
 	if (show_buddy_icons)
@@ -514,6 +517,10 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
 
 	saved_status = gaim_savedstatus_get_current();
+
+	if (status_box->account || (status_box->token_status_account
+			&& gaim_savedstatus_is_transient(saved_status)))
+		account_status = TRUE;
 
 	/* Primary */
 	if (status_box->typing != 0)
@@ -534,10 +541,8 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 			/* This should never happen, but just in case... */
 			primary = g_strdup("New status");
 	}
-	else if (status_box->account != NULL)
-	{
-		primary = g_strdup(gaim_status_get_name(gaim_account_get_active_status(status_box->account)));
-	}
+	else if (account_status)
+		primary = g_strdup(gaim_status_get_name(gaim_account_get_active_status(acct)));
 	else if (gaim_savedstatus_is_transient(saved_status))
 		primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
 	else
@@ -573,9 +578,9 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
 	else
 	{
-		if (status_box->account != NULL)
-			pixbuf = gaim_gtk_create_prpl_icon_with_status(status_box->account,
-						gaim_status_get_type(gaim_account_get_active_status(status_box->account)),
+		if (account_status)
+			pixbuf = gaim_gtk_create_prpl_icon_with_status(acct,
+						gaim_status_get_type(gaim_account_get_active_status(acct)),
 						show_buddy_icons ? 1.0 : 0.5);
 		else
 			pixbuf = gaim_gtk_create_gaim_icon_with_status(
@@ -638,6 +643,25 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	update_size(status_box);
 }
 
+static GaimStatusType *
+find_status_type_by_index(const GaimAccount *account, gint active)
+{
+	const GList *l = gaim_account_get_status_types(account);
+	gint i;
+
+	for (i = 0; l; l = l->next) {
+		GaimStatusType *status_type = l->data;
+		if (!gaim_status_type_is_user_settable(status_type))
+			continue;
+
+		if (active == i)
+			return status_type;
+		i++;
+	}
+
+	return NULL;
+}
+
 /**
  * This updates the GtkTreeView so that it correctly shows the state
  * we are currently using.  It is used when the current state is
@@ -675,7 +699,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 	 * popular status in the dropdown menu.
 	 */
 	primitive = gaim_savedstatus_get_type(saved_status);
-	if (gaim_savedstatus_is_transient(saved_status) &&
+	if (!status_box->token_status_account && gaim_savedstatus_is_transient(saved_status) &&
 		((primitive == GAIM_STATUS_AVAILABLE) || (primitive == GAIM_STATUS_AWAY) ||
 		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
 		(!gaim_savedstatus_has_substatuses(saved_status)))
@@ -688,6 +712,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 		GtkTreeIter iter;
 		GtkGaimStatusBoxItemType type;
 		gpointer data;
+		const char *name;
 
 		/* Unset the active item */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), -1);
@@ -699,10 +724,24 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 			{
 				gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 							TYPE_COLUMN, &type,
+							TEXT_COLUMN, &name,
 							DATA_COLUMN, &data,
 							-1);
-				if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
-					(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
+				if (status_box->token_status_account && gaim_savedstatus_is_transient(saved_status)
+					&& type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
+				{
+					const char *acct_status_name = gaim_status_get_name(
+						gaim_account_get_active_status(status_box->token_status_account));
+					if (!gaim_savedstatus_has_substatuses(saved_status)
+						|| !strcmp(name, acct_status_name))
+					{
+						/* Found! */
+						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+						break;
+					}
+				}
+				else if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
+						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
 				{
 					/* Found! */
 					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
@@ -898,7 +937,6 @@ static void
 gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 {
 	gboolean show_buddy_icons;
-	GaimAccount *account;
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 
@@ -916,17 +954,16 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	 * if we do this here. */
 	/* gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store)); */
 
-	account = GTK_GAIM_STATUS_BOX(status_box)->account;
-	if (account == NULL)
+	if (status_box->account == NULL)
 	{
 		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_ONLINE,
 		                                 icon_size, "GtkGaimStatusBox");
 		/* Do all the currently enabled accounts have the same statuses?
 		 * If so, display them instead of our global list.
 		 */
-		if ((account = check_active_accounts_for_identical_statuses()))
-			add_account_statuses(status_box, account, show_buddy_icons);
-		else {
+		if (status_box->token_status_account) {
+			add_account_statuses(status_box, status_box->token_status_account, show_buddy_icons);
+		} else {
 			/* Global */
 			pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AWAY,
 			                                  icon_size, "GtkGaimStatusBox");
@@ -951,8 +988,9 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		status_menu_refresh_iter(status_box);
 
 	} else {
-		add_account_statuses(status_box, account, show_buddy_icons);
-		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));
+		add_account_statuses(status_box, status_box->account, show_buddy_icons);
+		update_to_reflect_account_status(status_box, status_box->account,
+			gaim_account_get_active_status(status_box->account));
 	}
 }
 
@@ -1075,16 +1113,14 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 }
 
 static void account_enabled_cb(GaimAccount *acct, GtkGaimStatusBox *status_box) {
-	/* Make sure our current status is added to the list of popular statuses */
-	gtk_gaim_status_box_regenerate(status_box);
+	GaimAccount *initial_token_acct = status_box->token_status_account;
 
-	if (status_box->account != NULL)
-		update_to_reflect_account_status(status_box, status_box->account,
-						gaim_account_get_active_status(status_box->account));
-	else
-		status_menu_refresh_iter(status_box);
+	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
-	gtk_gaim_status_box_refresh(status_box);
+	/* Regenerate the list if it has changed */
+	if (initial_token_acct != status_box->token_status_account) {
+		gtk_gaim_status_box_regenerate(status_box);
+	}
 
 }
 
@@ -1093,14 +1129,6 @@ current_savedstatus_changed_cb(GaimSavedStatus *now, GaimSavedStatus *old, GtkGa
 {
 	/* Make sure our current status is added to the list of popular statuses */
 	gtk_gaim_status_box_regenerate(status_box);
-
-	if (status_box->account != NULL)
-		update_to_reflect_account_status(status_box, status_box->account,
-						gaim_account_get_active_status(status_box->account));
-	else
-		status_menu_refresh_iter(status_box);
-
-	gtk_gaim_status_box_refresh(status_box);
 }
 
 static void
@@ -1111,7 +1139,6 @@ buddy_list_details_pref_changed_cb(const char *name, GaimPrefType type,
 
 	cache_pixbufs(status_box);
 	gtk_gaim_status_box_regenerate(status_box);
-	gtk_gaim_status_box_refresh(status_box);
 }
 
 static void
@@ -1315,9 +1342,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
 #endif
 
+	status_box->token_status_account = check_active_accounts_for_identical_statuses();
+
 	cache_pixbufs(status_box);
 	gtk_gaim_status_box_regenerate(status_box);
-	gtk_gaim_status_box_refresh(status_box);
 
 	gaim_signal_connect(gaim_savedstatuses_get_handle(), "savedstatus-changed",
 						status_box,
@@ -1658,25 +1686,6 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
-static GaimStatusType *
-find_status_type_by_index(const GaimAccount *account, gint active)
-{
-	const GList *l = gaim_account_get_status_types(account);
-	gint i;
-
-	for (i = 0; l; l = l->next) {
-		GaimStatusType *status_type = l->data;
-		if (!gaim_status_type_is_user_settable(status_type))
-			continue;
-
-		if (active == i)
-			return status_type;
-		i++;
-	}
-
-	return NULL;
-}
-
 static gboolean
 message_changed(const char *one, const char *two)
 {
@@ -1697,7 +1706,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	gchar *title;
 	GtkTreeIter iter;
 	char *message;
-	GaimSavedStatus *saved_status;
+	GaimSavedStatus *saved_status = NULL;
 	gboolean changed = TRUE;
 
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
@@ -1735,29 +1744,93 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	}
 
 	if (status_box->account == NULL) {
+		GaimStatusType *acct_status_type = NULL;
+		GaimStatusPrimitive primitive = GPOINTER_TO_INT(data);
 		/* Global */
 		/* Save the newly selected status to prefs.xml and status.xml */
 
 		/* Has the status really been changed? */
-		saved_status = gaim_savedstatus_get_current();
-		if (gaim_savedstatus_get_type(saved_status) == GPOINTER_TO_INT(data) &&
-		    !gaim_savedstatus_has_substatuses(saved_status))
-		{
-			if (!message_changed(gaim_savedstatus_get_message(saved_status), message))
-				changed = FALSE;
+		if (status_box->token_status_account) {
+			gint active;
+			GaimStatus *status;
+			const char *id = NULL;
+
+			status = gaim_account_get_active_status(status_box->token_status_account);
+			g_object_get(G_OBJECT(status_box), "active", &active, NULL);
+
+			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
+			id = gaim_status_type_get_id(acct_status_type);
+
+			if (strncmp(id, gaim_status_get_id(status), strlen(id)) == 0)
+			{
+				/* Selected status and previous status is the same */
+				if (!message_changed(message, gaim_status_get_attr_string(status, "message")))
+					changed = FALSE;
+			}
+		} else {
+			saved_status = gaim_savedstatus_get_current();
+			if (gaim_savedstatus_get_type(saved_status) == primitive &&
+			    !gaim_savedstatus_has_substatuses(saved_status))
+			{
+				if (!message_changed(gaim_savedstatus_get_message(saved_status), message))
+					changed = FALSE;
+			}
 		}
 
 		if (changed)
 		{
-			/* If we've used this type+message before, lookup the transient status */
-			saved_status = gaim_savedstatus_find_transient_by_type_and_message(
-										GPOINTER_TO_INT(data), message);
+			/* Manually find the appropriate transient acct */
+			if (status_box->token_status_account) {
+				const GList *iter = gaim_savedstatuses_get_all();
+				GList *tmp, *active_accts = gaim_accounts_get_all_active();
+
+				for (; iter != NULL; iter = iter->next) {
+					GaimSavedStatus *ss= iter->data;
+					const char *ss_msg = gaim_savedstatus_get_message(ss);
+					if ((gaim_savedstatus_get_type(ss) == primitive) && gaim_savedstatus_is_transient(ss) &&
+						gaim_savedstatus_has_substatuses(ss) && /* Must have substatuses */
+						(((ss_msg == NULL) && (message == NULL)) ||
+						((ss_msg != NULL) && (message != NULL) && !strcmp(ss_msg, message))))
+					{
+						gboolean found = FALSE;
+						/* The currently enabled accounts must have substatuses for all the active accts */
+						for(tmp = active_accts; tmp != NULL; tmp = tmp->next) {
+							GaimAccount *acct = tmp->data;
+							GaimSavedStatusSub *sub = gaim_savedstatus_get_substatus(ss, acct);
+							if (sub) {
+								const GaimStatusType *sub_type = gaim_savedstatus_substatus_get_type(sub);
+								if (!strcmp(gaim_status_type_get_id(sub_type),
+										gaim_status_type_get_id(acct_status_type)))
+									found = TRUE;
+							}
+						}
+						if (!found)
+							continue;
+						saved_status = ss;
+						break;
+					}
+				}
+
+				g_list_free(active_accts);
+
+			} else {
+				/* If we've used this type+message before, lookup the transient status */
+				saved_status = gaim_savedstatus_find_transient_by_type_and_message(primitive, message);
+			}
 
 			/* If this type+message is unique then create a new transient saved status */
 			if (saved_status == NULL)
 			{
-				saved_status = gaim_savedstatus_new(NULL, GPOINTER_TO_INT(data));
+				saved_status = gaim_savedstatus_new(NULL, primitive);
 				gaim_savedstatus_set_message(saved_status, message);
+				if (status_box->token_status_account) {
+					GList *tmp, *active_accts = gaim_accounts_get_all_active();
+					for (tmp = active_accts; tmp != NULL; tmp = tmp->next) {
+						gaim_savedstatus_set_substatus(saved_status,
+							(GaimAccount*) tmp->data, acct_status_type, message);
+					}
+					g_list_free(active_accts);
+				}
 			}
 
 			/* Set the status for each account */
@@ -1939,17 +2012,15 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		if (status_box->imhtml_visible)
 		{
 			gtk_widget_show_all(status_box->vbox);
-			if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
-				status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
-			}
+			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 			gtk_widget_grab_focus(status_box->imhtml);
 			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		}
 		else
 		{
 			gtk_widget_hide_all(status_box->vbox);
-			if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
-				activate_currently_selected_status(status_box); /* This is where we actually set the status */
+			activate_currently_selected_status(status_box); /* This is where we actually set the status */
+			return;
 		}
 	}
 	gtk_gaim_status_box_refresh(status_box);
