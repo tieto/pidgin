@@ -879,6 +879,11 @@ gaim_gtkxfer_dialog_new(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_button_cb), dialog);
 
+#ifdef _WIN32
+	g_signal_connect(G_OBJECT(dialog->window), "show",
+		G_CALLBACK(gtkwgaim_ensure_onscreen), dialog->window);
+#endif
+
 	return dialog;
 }
 
