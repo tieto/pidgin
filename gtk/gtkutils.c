@@ -2458,13 +2458,13 @@ str_array_match(char **a, char **b)
 char *
 gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
+	GaimPluginProtocolInfo *prpl_info;
+	char **prpl_formats;
 #if GTK_CHECK_VERSION(2,2,0)
 	int width, height;
 	char **pixbuf_formats = NULL;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
-	GaimPluginProtocolInfo *prpl_info;
-	char **prpl_formats;
 #if !GTK_CHECK_VERSION(2,4,0)
 	GdkPixbufLoader *loader;
 	FILE *file;
@@ -2694,7 +2694,12 @@ _gdk_file_scale_size_prepared_cb (GdkPixbufLoader *loader,
 				height = info->height;
 	}
 
+#if GTK_CHECK_VERSION(2,2,0) /* 2.0 users are going to have very strangely sized things */
 	gdk_pixbuf_loader_set_size (loader, width, height);
+#else
+#warning  nosnilmot could not be bothered to fix this properly for you
+#warning  ... good luck ... your images may end up strange sizes
+#endif
 }
 
 GdkPixbuf *
