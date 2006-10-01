@@ -412,7 +412,8 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 	/* Add button */
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	dialog->add_button = button;
-	gtk_widget_set_sensitive(button, FALSE);
+	if (username == NULL || *username == '\0')
+		gtk_widget_set_sensitive(button, FALSE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
