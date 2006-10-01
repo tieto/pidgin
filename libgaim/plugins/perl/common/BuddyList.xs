@@ -333,6 +333,10 @@ gaim_buddy_new(account, screenname, alias)
 	const char *screenname
 	const char *alias
 
+const char *
+gaim_buddy_get_server_alias(buddy)
+    Gaim::BuddyList::Buddy buddy
+
 void
 gaim_buddy_set_icon(buddy, icon)
 	Gaim::BuddyList::Buddy buddy
