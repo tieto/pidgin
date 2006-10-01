@@ -839,10 +839,12 @@ void gaim_blist_alias_contact(GaimContact *contact, const char *alias)
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 	GaimConversation *conv;
-	char *old_alias = contact->alias;
 	GaimBlistNode *bnode;
+	char *old_alias;
 
 	g_return_if_fail(contact != NULL);
+
+	old_alias = contact->alias;
 
 	if ((alias != NULL) && (*alias != '\0'))
 		contact->alias = g_strdup(alias);
@@ -872,9 +874,11 @@ void gaim_blist_alias_contact(GaimContact *contact, const char *alias)
 void gaim_blist_alias_chat(GaimChat *chat, const char *alias)
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
-	char *old_alias = chat->alias;
+	char *old_alias;
 
 	g_return_if_fail(chat != NULL);
+
+	old_alias = chat->alias;
 
 	if ((alias != NULL) && (*alias != '\0'))
 		chat->alias = g_strdup(alias);
@@ -895,9 +899,11 @@ void gaim_blist_alias_buddy(GaimBuddy *buddy, const char *alias)
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 	GaimConversation *conv;
-	char *old_alias = buddy->alias;
+	char *old_alias;
 
 	g_return_if_fail(buddy != NULL);
+
+	old_alias = buddy->alias;
 
 	if ((alias != NULL) && (*alias != '\0'))
 		buddy->alias = g_strdup(alias);
@@ -923,9 +929,11 @@ void gaim_blist_server_alias_buddy(GaimBuddy *buddy, const char *alias)
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 	GaimConversation *conv;
-	char *old_alias = buddy->server_alias;
+	char *old_alias;
 
 	g_return_if_fail(buddy != NULL);
+
+	old_alias = buddy->server_alias;
 
 	if ((alias != NULL) && (*alias != '\0') && g_utf8_validate(alias, -1, NULL))
 		buddy->server_alias = g_strdup(alias);
@@ -1404,9 +1412,11 @@ GaimContact *gaim_contact_new()
 void gaim_contact_set_alias(GaimContact *contact, const char *alias)
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
-	char *old_alias = contact->alias;
+	char *old_alias;
 
 	g_return_if_fail(contact != NULL);
+
+	old_alias = contact->alias;
 
 	if ((alias != NULL) && (*alias != '\0'))
 		contact->alias = g_strdup(alias);
