@@ -841,6 +841,7 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
 
 	} else {
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gaim_account_get_connection(irc->account),
 				      _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
 	}
