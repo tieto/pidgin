@@ -1,4 +1,4 @@
-s_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
+s_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS) $(GNT_LIBS)
 
 plugin_LTLIBRARIES = \
 	s.la

@@ -73,7 +73,7 @@ QQSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libqq_la_LDFLAGS = -module -avoid-version
+libqq_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_QQ
 
