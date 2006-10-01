@@ -27,15 +27,15 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-extplacement_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
-gaimrc_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
-history_la_LDFLAGS          = -module -avoid-version $(GTK_LIBS)
-iconaway_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
-notify_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
-relnot_la_LDFLAGS           = -module -avoid-version $(GLIB_LIBS)
-spellchk_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
-timestamp_la_LDFLAGS        = -module -avoid-version $(GTK_LIBS)
-timestamp_format_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+extplacement_la_LDFLAGS     = -module -avoid-version
+gaimrc_la_LDFLAGS           = -module -avoid-version
+history_la_LDFLAGS          = -module -avoid-version
+iconaway_la_LDFLAGS         = -module -avoid-version
+notify_la_LDFLAGS           = -module -avoid-version
+relnot_la_LDFLAGS           = -module -avoid-version
+spellchk_la_LDFLAGS         = -module -avoid-version
+timestamp_la_LDFLAGS        = -module -avoid-version
+timestamp_format_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -60,6 +60,16 @@ relnot_la_SOURCES           = relnot.c
 spellchk_la_SOURCES         = spellchk.c
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
+
+extplacement_la_LIBADD      = $(GTK_LIBS)
+gaimrc_la_LIBADD            = $(GTK_LIBS)
+history_la_LIBADD           = $(GTK_LIBS)
+iconaway_la_LIBADD          = $(GTK_LIBS)
+notify_la_LIBADD            = $(GTK_LIBS)
+relnot_la_LIBADD            = $(GLIB_LIBS)
+spellchk_la_LIBADD          = $(GTK_LIBS)
+timestamp_la_LIBADD         = $(GTK_LIBS)
+timestamp_format_la_LIBADD  = $(GTK_LIBS)
 
 endif # PLUGINS
 

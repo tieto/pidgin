@@ -6,7 +6,7 @@ IRCSOURCES = irc.c parse.c cmds.c msgs.c irc.h dcc_send.c
 
 AM_CFLAGS = $(st)
 
-libirc_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libirc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_IRC
 
@@ -24,6 +24,7 @@ pkg_LTLIBRARIES = libirc.la
 noinst_LIBRARIES =
 
 libirc_la_SOURCES = $(IRCSOURCES)
+libirc_la_LIBADD  = $(GLIB_LIBS)
 
 endif
 

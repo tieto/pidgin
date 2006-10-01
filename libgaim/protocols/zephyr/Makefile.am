@@ -73,7 +73,7 @@ ZEPHYRLIBS = $(KRB4_LDFLAGS) $(KRB4_LIBS)
 
 ZEPHYRLIBSEXT = $(ZEPHYR_LDFLAGS) $(ZEPHYR_LIBS)
 
-libzephyr_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libzephyr_la_LDFLAGS = -module -avoid-version
 
 if STATIC_ZEPHYR
 
@@ -90,10 +90,10 @@ pkg_LTLIBRARIES = libzephyr.la
 
 if EXTERNAL_LIBZEPHYR
 libzephyr_la_SOURCES = $(ZEPHYRSOURCESEXT)
-libzephyr_la_LIBADD = $(ZEPHYRLIBSEXT)
+libzephyr_la_LIBADD = $(GLIB_LIBS) $(ZEPHYRLIBSEXT)
 else
 libzephyr_la_SOURCES = $(ZEPHYRSOURCES)
-libzephyr_la_LIBADD  = $(ZEPHYRLIBS)
+libzephyr_la_LIBADD  = $(GLIB_LIBS) $(ZEPHYRLIBS)
 endif
 
 

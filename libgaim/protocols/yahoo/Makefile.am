@@ -29,7 +29,7 @@ YAHOOSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libyahoo_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libyahoo_la_LDFLAGS = -module -avoid-version
 
 if STATIC_YAHOO
 
@@ -43,6 +43,7 @@ else
 st =
 pkg_LTLIBRARIES     = libyahoo.la
 libyahoo_la_SOURCES = $(YAHOOSOURCES)
+libyahoo_la_LIBADD  = $(GLIB_LIBS)
 
 endif
 

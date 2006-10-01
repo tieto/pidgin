@@ -15,7 +15,7 @@ BONJOURSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libbonjour_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(HOWL_LIBS)
+libbonjour_la_LDFLAGS = -module -avoid-version
 
 if STATIC_BONJOUR
 
@@ -30,6 +30,7 @@ else
 st =
 pkg_LTLIBRARIES       = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
+libbonjour_la_LIBADD   = $(GLIB_LIBS) $(HOWL_LIBS)
 
 endif
 

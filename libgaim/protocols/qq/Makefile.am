@@ -73,7 +73,7 @@ QQSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libqq_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libqq_la_LDFLAGS = -module -avoid-version
 
 if STATIC_QQ
 
@@ -87,6 +87,7 @@ else
 st =
 pkg_LTLIBRARIES  = libqq.la
 libqq_la_SOURCES = $(QQSOURCES)
+libqq_la_LIBADD  = $(GLIB_LIBS)
 
 endif
 

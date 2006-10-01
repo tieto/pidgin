@@ -24,13 +24,13 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-idle_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
-log_reader_la_LDFLAGS       = -module -avoid-version $(GLIB_LIBS)
-psychic_la_LDFLAGS          = -module -avoid-version $(GLIB_LIBS)
-statenotify_la_LDFLAGS      = -module -avoid-version $(GLIB_LIBS)
+idle_la_LDFLAGS             = -module -avoid-version
+log_reader_la_LDFLAGS       = -module -avoid-version
+psychic_la_LDFLAGS          = -module -avoid-version
+statenotify_la_LDFLAGS      = -module -avoid-version
 
 # this can't be in a conditional otherwise automake 1.4 yells
-dbus_example_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
+dbus_example_la_LDFLAGS     = -module -avoid-version
 
 if PLUGINS
 
@@ -47,10 +47,17 @@ log_reader_la_SOURCES       = log_reader.c
 psychic_la_SOURCES          = psychic.c
 statenotify_la_SOURCES      = statenotify.c
 
+idle_la_LIBADD              = $(GLIB_LIBS)
+log_reader_la_LIBADD        = $(GLIB_LIBS)
+psychic_la_LIBADD           = $(GLIB_LIBS)
+statenotify_la_LIBADD       = $(GLIB_LIBS)
+
 if ENABLE_DBUS
 
 CLEANFILES              = dbus-example-bindings.c
 dbus_example_la_SOURCES = dbus-example.c
+
+dbus_example_la_LIBADD      = $(GLIB_LIBS) $(DBUS_LIBS)
 
 .PHONY: always
 

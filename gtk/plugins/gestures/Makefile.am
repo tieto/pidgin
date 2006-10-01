@@ -1,6 +1,6 @@
 plugindir = $(libdir)/gaim
 
-gestures_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+gestures_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -12,6 +12,8 @@ gestures_la_SOURCES = \
 	gstroke-internal.h \
 	stroke.c \
 	stroke-draw.c
+
+gestures_la_LIBADD = $(GTK_LIBS)
 
 endif
 

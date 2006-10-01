@@ -3,7 +3,7 @@ EXTRA_DIST = \
 
 musicmessagingdir = $(libdir)/gaim
 
-musicmessaging_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(DBUS_LIBS)
+musicmessaging_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 if ENABLE_DBUS
@@ -16,7 +16,7 @@ musicmessaging_LTLIBRARIES = musicmessaging.la
 musicmessaging_la_SOURCES = \
 	musicmessaging.c
 
-
+musicmessaging_la_LIBADD = $(GTK_LIBS) $(DBUS_LIBS)
 
 CLEANFILES              = music-messaging-bindings.c
 

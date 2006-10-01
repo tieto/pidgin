@@ -36,7 +36,7 @@ JABBERSOURCES = auth.c \
 
 AM_CFLAGS = $(st)
 
-libjabber_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
+libjabber_la_LDFLAGS = -module -avoid-version
 
 if STATIC_JABBER
 
@@ -54,6 +54,7 @@ pkg_LTLIBRARIES = libjabber.la
 noinst_LIBRARIES =
 
 libjabber_la_SOURCES = $(JABBERSOURCES)
+libjabber_la_LIBADD = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
 
 endif
 

@@ -6,7 +6,7 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/gaim
 
-docklet_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+docklet_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -18,6 +18,8 @@ docklet_la_SOURCES = \
 	docklet.h \
 	docklet.c \
 	docklet-x11.c
+
+docklet_la_LIBADD = $(GTK_LIBS)
 
 endif
 

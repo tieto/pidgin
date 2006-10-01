@@ -1,9 +1,6 @@
 plugindir = $(libdir)/gaim
 
-gevolution_la_LDFLAGS = \
-	-module -avoid-version \
-	$(EVOLUTION_ADDRESSBOOK_LIBS) \
-	$(GTK_LIBS)
+gevolution_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -18,9 +15,9 @@ gevolution_la_SOURCES = \
 	new_person_dialog.c \
 	eds-utils.c
 
-endif
+gevolution_la_LIBADD = $(EVOLUTION_ADDRESSBOOK_LIBS) $(GTK_LIBS)
 
-gevolution_la_LIBADD = 
+endif
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \

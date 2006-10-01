@@ -1,5 +1,5 @@
-gntgf_la_LDFLAGS      = -module -avoid-version $(GLIB_LIBS) $(X11_LIBS) $(GNT_LIBS)
-gnthistory_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+gntgf_la_LDFLAGS      = -module -avoid-version
+gnthistory_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -11,6 +11,9 @@ plugindir = $(libdir)/gaim
 
 gntgf_la_SOURCES      = gntgf.c
 gnthistory_la_SOURCES = gnthistory.c
+
+gntgf_la_LIBADD       = $(GLIB_LIBS) $(X11_LIBS) $(top_builddir)/console/libgnt/libgnt.la
+gnthistory_la_LIBADD  = $(GLIB_LIBS)
 
 endif # PLUGINS
 

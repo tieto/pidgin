@@ -3,7 +3,7 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/gaim
 
-ticker_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+ticker_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -13,6 +13,8 @@ ticker_la_SOURCES = \
 	gtkticker.c \
 	gtkticker.h \
 	ticker.c
+
+ticker_la_LIBADD = $(GTK_LIBS)
 
 endif
 

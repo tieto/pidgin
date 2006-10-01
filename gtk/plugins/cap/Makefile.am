@@ -1,6 +1,6 @@
 capdir = $(libdir)/gaim
 
-cap_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+cap_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
@@ -15,7 +15,7 @@ cap_la_SOURCES = \
 
 endif
 
-cap_la_LIBADD = $(SQLITE3_LIBS)
+cap_la_LIBADD = $(GTK_LIBS) $(SQLITE3_LIBS)
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \

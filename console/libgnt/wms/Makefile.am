@@ -1,11 +1,12 @@
-s_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS) $(GNT_LIBS)
+s_la_LDFLAGS             = -module -avoid-version
 
 plugin_LTLIBRARIES = \
 	s.la
 
 plugindir = $(libdir)/gaim
 
-s_la_SOURCES             = s.c
+s_la_SOURCES       = s.c
+s_la_LIBADD        = $(GLIB_LIBS) $(top_builddir)/console/libgnt/libgnt.la
 
 EXTRA_DIST = 
 

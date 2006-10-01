@@ -3,9 +3,9 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/gaim
 
-ssl_la_LDFLAGS        = -module -avoid-version $(GLIB_LIBS)
-ssl_gnutls_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
-ssl_nss_la_LDFLAGS    = -module -avoid-version $(GLIB_LIBS)
+ssl_la_LDFLAGS        = -module -avoid-version
+ssl_gnutls_la_LDFLAGS = -module -avoid-version
+ssl_nss_la_LDFLAGS    = -module -avoid-version
 
 if PLUGINS
 
@@ -18,8 +18,9 @@ ssl_la_SOURCES        = ssl.c
 ssl_gnutls_la_SOURCES = ssl-gnutls.c
 ssl_nss_la_SOURCES    = ssl-nss.c
 
-ssl_gnutls_la_LIBADD = $(GNUTLS_LIBS)
-ssl_nss_la_LIBADD    = $(NSS_LIBS)
+ssl_la_LIBADD        = $(GLIB_LIBS)
+ssl_gnutls_la_LIBADD = $(GLIB_LIBS) $(GNUTLS_LIBS)
+ssl_nss_la_LIBADD    = $(GLIB_LIBS) $(NSS_LIBS)
 
 endif # PLUGINS
 

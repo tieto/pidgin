@@ -47,7 +47,7 @@ GGSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libgg_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libgg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_GG
 
@@ -66,7 +66,7 @@ pkg_LTLIBRARIES = libgg.la
 noinst_LIBRARIES =
 
 libgg_la_SOURCES = $(GGSOURCES)
-libgg_la_LIBADD  = $(GADU_LIBS)
+libgg_la_LIBADD  = $(GLIB_LIBS) $(GADU_LIBS)
 
 endif
 

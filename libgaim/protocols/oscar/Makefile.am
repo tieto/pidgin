@@ -46,7 +46,7 @@ OSCARSOURCES = \
 
 AM_CFLAGS = $(st)
 
-liboscar_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+liboscar_la_LDFLAGS = -module -avoid-version
 
 if STATIC_OSCAR
 
@@ -60,6 +60,7 @@ else
 st =
 pkg_LTLIBRARIES     = liboscar.la
 liboscar_la_SOURCES = $(OSCARSOURCES)
+liboscar_la_LIBADD  = $(GLIB_LIBS)
 
 endif
 

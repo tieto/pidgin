@@ -1,11 +1,13 @@
 plugindir = $(libdir)/gaim
 
-tcl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(TCL_LIBS) $(TK_LIBS)
+tcl_la_LDFLAGS = -module -avoid-version
 
 plugin_LTLIBRARIES = tcl.la
 
 tcl_la_SOURCES = tcl.c tcl_glib.c tcl_glib.h tcl_cmds.c tcl_signals.c tcl_gaim.h \
                  tcl_ref.c tcl_cmd.c
+
+tcl_la_LIBADD = $(GLIB_LIBS) $(TCL_LIBS) $(TK_LIBS)
 
 EXTRA_DIST = signal-test.tcl Makefile.mingw
 

@@ -1,11 +1,13 @@
 plugindir = $(libdir)/gaim
+hackdir = $(plugindir)/private
 
 perl_dirs = common
 
-plugin_LTLIBRARIES = perl.la libgaimperl.la
+plugin_LTLIBRARIES = perl.la
+hack_LTLIBRARIES = libgaimperl.la
 
-perl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(PERL_LIBS)
-perl_la_LIBADD = $(PERL_LIBS) -L. -L.libs -lgaimperl
+perl_la_LDFLAGS = -module -avoid-version
+perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS) libgaimperl.la
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -18,7 +20,8 @@ perl_la_DEPENDENCIES = \
 	.libs/DynaLoader.a \
 	libgaimperl.la
 
-libgaimperl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libgaimperl_la_LDFLAGS = -module -avoid-version
+libgaimperl_la_LIBADD = $(GLIB_LIBS)
 libgaimperl_la_SOURCES = libgaimperl.c
 
 .libs/libperl_orig.a:

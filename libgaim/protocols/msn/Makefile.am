@@ -65,7 +65,7 @@ MSNSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libmsn_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libmsn_la_LDFLAGS = -module -avoid-version
 
 if STATIC_MSN
 
@@ -79,6 +79,7 @@ else
 st =
 pkg_LTLIBRARIES   = libmsn.la
 libmsn_la_SOURCES = $(MSNSOURCES)
+libmsn_la_LIBADD  = $(GLIB_LIBS)
 
 endif
 
