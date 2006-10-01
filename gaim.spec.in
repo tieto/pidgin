@@ -28,9 +28,8 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext
-%{?_with_avahi:BuildRequires: avahi-compat-howl avahi-compat-howl-devel}
+%{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
-%{?_with_gadugadu:BuildRequires: libgadu-devel}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
@@ -64,6 +63,8 @@ BuildRequires: mozilla-nss-devel
 
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
+# Gadu-Gadu support was split out temporarily
+Provides: gaim-gadugadu = %{epoch}:%{version}-%{release}
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Gaim.
@@ -73,13 +74,6 @@ Requires:   pkgconfig, gaim = %{epoch}:%{version}
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package bonjour
 Summary:    Bonjour plugin for Gaim
-Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
-%endif
-
-%if 0%{?_with_gadugadu:1}
-%package gadugadu
-Summary:    Gadu-Gadu plugin for Gaim using the libgadu library
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
@@ -143,11 +137,6 @@ and plugins.
 Bonjour plugin for Gaim.
 %endif
 
-%if 0%{?_with_gadugadu:1}
-%description gadugadu
-Gadu-Gadu plugin for Gaim using the libgadu library.
-%endif
-
 %if 0%{?_with_meanwhile:1}
 %description meanwhile
 Lotus Sametime plugin for Gaim using the Meanwhile library.
@@ -199,13 +188,14 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
-                                    %{!?_with_tcl:--disable-tcl}
+                                    %{!?_with_tcl:--disable-tcl} \
+                                    %{?_without_text:--disable-consoleui}
 
 make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-%if 0%{?_with_perlmakehack}
+%if 0%{?_with_perlmakehack:1}
 make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
      libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
@@ -221,10 +211,6 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
-
-%if 0%{!?_with_gadugadu:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libgg.so
-%endif
 
 %if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
@@ -247,13 +233,22 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
 %endif
 
+%if 0%{?_without_text:1}
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gaim-text.*
+rm -f $RPM_BUILD_ROOT%{_bindir}/gaim-text
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/gntgf.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/gnthistory.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/s.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
+%endif
+
+%find_lang %{name}
 
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v /gntgf.so | \
         grep -v /gnthistory.so | \
         grep -v /libbonjour.so | \
-        grep -v /libgg.so | \
         grep -v /libsilcgaim.so | \
         grep -v /libsametime.so | \
         grep -v /mono.so | \
@@ -262,12 +257,35 @@ find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         grep -v ".dll$" | \
         grep -v ".tcl$" > %{name}-%{version}-coreplugins
 
+# files -f file can only take one filename :(
+cat %{name}.lang >> %{name}-%{version}-coreplugins
+
 %clean
 rm -rf %{buildroot}
 
+%pre
+if [ "$1" -gt 1 -a -n "`which gconftool-2 2>/dev/null`" ]; then
+    export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
+    gconftool-2 --makefile-uninstall-rule \
+        %{_sysconfdir}/gconf/schemas/gaim.schemas >/dev/null || :
+    killall -HUP gconfd-2 || :
+fi
+
 %post
-# Modified from the sample at: http://www.gnome.org/projects/gconf/
-[ -n "`which gconftool-2 2>/dev/null`" ] && GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null
+if [ -n "`which gconftool-2 2>/dev/null`" ]; then
+    export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
+    gconftool-2 --makefile-install-rule \
+        %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null || :
+    killall -HUP gconfd-2 || :
+fi
+
+%preun
+if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
+    export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
+    gconftool-2 --makefile-uninstall-rule \
+      %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null || :
+    killall -HUP gconfd-2 || :
+fi
 
 %files -f %{name}-%{version}-coreplugins
 %defattr(-, root, root)
@@ -289,12 +307,6 @@ rm -rf %{buildroot}
 %attr(755, root, root) %{perl_vendorarch}/auto/Gaim
 
 %{_bindir}/gaim
-%{_bindir}/gaim-client-example
-%{_bindir}/gaim-remote
-%{_bindir}/gaim-send
-%{_bindir}/gaim-send-async
-%{_bindir}/gaim-url-handler
-%{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
 %dir %{_datadir}/sounds/gaim
 %{_datadir}/sounds/gaim/*
@@ -303,6 +315,11 @@ rm -rf %{buildroot}
 %{_sysconfdir}/gconf/schemas/gaim.schemas
 
 %if 0%{?_with_dbus:1}
+%{_bindir}/gaim-client-example
+%{_bindir}/gaim-remote
+%{_bindir}/gaim-send
+%{_bindir}/gaim-send-async
+%{_bindir}/gaim-url-handler
 %{_libdir}/libgaim-client.so.*
 %{_datadir}/dbus-1/services/gaim.service
 %doc README.dbus
@@ -339,13 +356,6 @@ rm -rf %{buildroot}
 %{_libdir}/gaim/libbonjour.*
 %endif
 
-%if 0%{?_with_gadugadu:1}
-%files gadugadu
-%defattr(-, root, root)
-
-%{_libdir}/gaim/libgg.*
-%endif
-
 %if 0%{?_with_meanwhile:1}
 %files meanwhile
 %defattr(-, root, root)
@@ -375,7 +385,7 @@ rm -rf %{buildroot}
 %{_libdir}/gaim/tcl.so
 %endif
 
-%if 0%{!?without_text:1}
+%if 0%{!?_without_text:1}
 %files text
 %defattr(-, root, root)
 
@@ -388,6 +398,11 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Sun Oct  1 2006 Stu Tomlinson <stu@nosnilmot.com>
+- We can build with internal gadu gadu again, so bring it back into the
+  main package
+- Deal with gconf schame uninstallation on package upgrade and removal
+
 * Sun Aug 20 2006 Stu Tomlinson <stu@nosnilmot.com>
 - Make the gstreamer-devel dependency overridable with '--without-gstreamer'
   to allow building on older distributions without suitable gstreamer
