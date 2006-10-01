@@ -344,15 +344,19 @@ specify --disable-gtkui when running configure.
 	dnl # Check for libsqlite3 (for the Contact Availability Prediction plugin)
 	dnl #######################################################################
 	if test "x$enable_cap" = "xyes"; then
-		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3, , enable_cap="no")
+		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3,,[
+													AC_MSG_RESULT(no)
+													enable_cap="no"
+													])
 	fi
 
 else # GTK
+	enable_cap=no
+	enable_gevolution=no
+	enable_gtkspell=no
 	enable_screensaver=no
 	enable_sm=no
 	enable_startup_notification=no
-	enable_gtkspell=no
-	enable_gevolution=no
 fi	# GTK
 
 AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtkui" = "xyes")
