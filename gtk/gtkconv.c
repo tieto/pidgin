@@ -7545,6 +7545,8 @@ gaim_gtk_conv_window_destroy(GaimGtkWindow *win)
 	if (win->dialogs.search)
 		gtk_widget_destroy(win->dialogs.search);
 
+	gtk_widget_hide_all(win->window);
+
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
 			GList *nextgtk = win->gtkconvs->next;
