@@ -135,7 +135,7 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 
 	if(!jsx->streamhosts) {
 		JabberIq *iq = jabber_iq_new(jsx->js, JABBER_IQ_ERROR);
-		xmlnode *error, *condition;
+		xmlnode *error, *inf;
 
 		if(jsx->iq_id)
 			jabber_iq_set_id(iq, jsx->iq_id);
@@ -144,9 +144,8 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 		error = xmlnode_new_child(iq->node, "error");
 		xmlnode_set_attrib(error, "code", "404");
 		xmlnode_set_attrib(error, "type", "cancel");
-		condition = xmlnode_new_child(error, "condition");
-		xmlnode_set_namespace(condition, "urn:ietf:params:xml:ns:xmpp-stanzas");
-		xmlnode_new_child(condition, "item-not-found");
+		inf = xmlnode_new_child(error, "item-not-found");
+		xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
 
 		jabber_iq_send(iq);
 
