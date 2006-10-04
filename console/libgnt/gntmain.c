@@ -772,7 +772,8 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (rd < 0)
 	{
 		endwin();
-		printf("ERROR!\n");
+		printf("ERROR: %s\n", strerror(errno));
+		printf("File descriptor is: %d\n\nGIOChannel is: %p", STDIN_FILENO, source);
 		exit(1);
 	}
 	else if (rd == 0)
