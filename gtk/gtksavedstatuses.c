@@ -1537,19 +1537,61 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
  * Utilities                                                              *
  **************************************************************************/
 
+enum {
+	SS_MENU_ENTRY_TYPE_PRIMITIVE,
+	SS_MENU_ENTRY_TYPE_SAVEDSTATUS
+};
+
+enum {
+	/** _SSMenuEntryType */
+	SS_MENU_TYPE_COLUMN,
+
+	/**
+	 * This is a GdkPixbuf (the other columns are strings).
+	 * This column is visible.
+	 */
+	SS_MENU_ICON_COLUMN,
+
+	/** The text displayed on the status box.  This column is visible. */
+	SS_MENU_TEXT_COLUMN,
+
+	/*
+	 * This value depends on SS_MENU_TYPE_COLUMN.  For _SAVEDSTATUS types,
+	 * this is the creation time.  For _PRIMITIVE types,
+	 * this is the GaimStatusPrimitive.
+	 */
+	SS_MENU_DATA_COLUMN,
+
+	SS_MENU_NUM_COLUMNS
+};
+
 static void
 status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 {
 	GtkTreeIter iter;
-	gchar *title = NULL;
+	int type;
+	gpointer data;
+	GaimSavedStatus *status = NULL;
 
 	if (!gtk_combo_box_get_active_iter(widget, &iter))
 		return;
 
 	gtk_tree_model_get(gtk_combo_box_get_model(widget), &iter,
-					   STATUS_WINDOW_COLUMN_TITLE, &title, -1);
-	callback(gaim_savedstatus_find(title));
-	g_free(title);
+			   SS_MENU_TYPE_COLUMN, &type,
+			   SS_MENU_DATA_COLUMN, &data,
+			   -1);
+
+	if (type == SS_MENU_ENTRY_TYPE_PRIMITIVE)
+	{
+		GaimStatusPrimitive primitive = GPOINTER_TO_INT(data);
+		status = gaim_savedstatus_find_transient_by_type_and_message(primitive, NULL);
+		if (status == NULL)
+			status = gaim_savedstatus_new(NULL, primitive);
+	}
+	else if (type == SS_MENU_ENTRY_TYPE_SAVEDSTATUS)
+		status = gaim_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+
+	callback(status);
 }
 
 static gint
@@ -1561,32 +1603,109 @@ saved_status_sort_alphabetically_func(gconstpointer a, gconstpointer b)
 				  gaim_savedstatus_get_title(saved_status_b));
 }
 
+static gboolean gaim_gtk_status_menu_add_primitive(GtkListStore *model, GaimStatusPrimitive primitive,
+	GaimSavedStatus *current_status)
+{
+	GtkTreeIter iter;
+	gboolean currently_selected = FALSE;
+	GdkPixbuf *pixbuf = gaim_gtk_create_gaim_icon_with_status(primitive, 0.5);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+			   SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_PRIMITIVE,
+			   SS_MENU_ICON_COLUMN, pixbuf,
+			   SS_MENU_TEXT_COLUMN, gaim_primitive_get_name_from_type(primitive),
+			   SS_MENU_DATA_COLUMN, GINT_TO_POINTER(primitive),
+			   -1);
+
+	if (gaim_savedstatus_is_transient(current_status)
+			&& !gaim_savedstatus_has_substatuses(current_status)
+			&& gaim_savedstatus_get_type(current_status) == primitive)
+		currently_selected = TRUE;
+
+	return currently_selected;
+}
+
 GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callback)
 {
 	GtkWidget *combobox;
+	GtkListStore *model;
 	GList *sorted, *cur;
-	int i;
+	int i = 0;
 	int index = -1;
+	GdkPixbuf *pixbuf, *emblem;
+	GtkTreeIter iter;
+	GtkCellRenderer *text_rend;
+	GtkCellRenderer *icon_rend;
 
-	combobox = gtk_combo_box_new_text();
+	model = gtk_list_store_new(SS_MENU_NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+
+	combobox = gtk_combo_box_new();
+
+	if (gaim_gtk_status_menu_add_primitive(model, GAIM_STATUS_AVAILABLE, current_status))
+		index = i;
+	i++;
+
+	if (gaim_gtk_status_menu_add_primitive(model, GAIM_STATUS_AWAY, current_status))
+		index = i;
+	i++;
+
+	if (gaim_gtk_status_menu_add_primitive(model, GAIM_STATUS_INVISIBLE, current_status))
+		index = i;
+	i++;
+
+	if (gaim_gtk_status_menu_add_primitive(model, GAIM_STATUS_OFFLINE, current_status))
+		index = i;
+	i++;
 
 	sorted = g_list_copy((GList *)gaim_savedstatuses_get_all());
 	sorted = g_list_sort(sorted, saved_status_sort_alphabetically_func);
-	for (cur = sorted, i = 0;
-	     cur != NULL;
-	     cur = g_list_next(cur))
+	for (cur = sorted; cur; cur = cur->next)
 	{
-		GaimSavedStatus *status = (GaimSavedStatus *)cur->data;
+		GaimSavedStatus *status = (GaimSavedStatus *) cur->data;
 		if (!gaim_savedstatus_is_transient(status))
 		{
-			gtk_combo_box_append_text(GTK_COMBO_BOX(combobox),
-						  gaim_savedstatus_get_title(status));
+			/* Get an appropriate status icon */
+			pixbuf = gaim_gtk_create_gaim_icon_with_status(
+					gaim_savedstatus_get_type(status), 0.5);
+
+			/* Overlay a disk in the bottom left corner */
+			emblem = gtk_widget_render_icon(GTK_WIDGET(combobox),
+						GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU, "GtkGaimStatusMenu");
+			if (emblem != NULL)
+			{
+				int width = gdk_pixbuf_get_width(pixbuf) / 2;
+				int height = gdk_pixbuf_get_height(pixbuf) / 2;
+				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
+						     width, height, 0, height,
+						     0.5, 0.5, GDK_INTERP_BILINEAR, 255);
+				g_object_unref(G_OBJECT(emblem));
+			}
+
+			gtk_list_store_append(model, &iter);
+			gtk_list_store_set(model, &iter,
+				SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
+				SS_MENU_ICON_COLUMN, pixbuf,
+				SS_MENU_TEXT_COLUMN, gaim_savedstatus_get_title(status),
+				SS_MENU_DATA_COLUMN, GINT_TO_POINTER(gaim_savedstatus_get_creation_time(status)),
+				-1);
+
 			if (status == current_status)
 				index = i;
 			i++;
 		}
 	}
 	g_list_free(sorted);
+
+	gtk_combo_box_set_model(GTK_COMBO_BOX(combobox), GTK_TREE_MODEL(model));
+
+	text_rend = gtk_cell_renderer_text_new();
+	icon_rend = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), icon_rend, FALSE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), text_rend, TRUE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), icon_rend, "pixbuf", SS_MENU_ICON_COLUMN, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), text_rend, "markup", SS_MENU_TEXT_COLUMN, NULL);
+
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
