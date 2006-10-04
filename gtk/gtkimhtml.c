@@ -120,7 +120,7 @@ static void imhtml_clear_formatting(GtkIMHtml *imhtml);
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
-static gdouble _point_sizes [] = { .69444444, .8333333, 1, 1.2, 1.44, 1.728, 2.0736};
+static gdouble _point_sizes [] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736};
 
 enum {
 	TARGET_HTML,
