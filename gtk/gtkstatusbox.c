@@ -712,7 +712,6 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 		GtkTreeIter iter;
 		GtkGaimStatusBoxItemType type;
 		gpointer data;
-		const char *name;
 
 		/* Unset the active item */
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), -1);
@@ -724,21 +723,27 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 			{
 				gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 							TYPE_COLUMN, &type,
-							TEXT_COLUMN, &name,
 							DATA_COLUMN, &data,
 							-1);
 				if (status_box->token_status_account && gaim_savedstatus_is_transient(saved_status)
 					&& type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
 				{
+					char *name;
 					const char *acct_status_name = gaim_status_get_name(
 						gaim_account_get_active_status(status_box->token_status_account));
+
+					gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+							TEXT_COLUMN, &name, -1);
+
 					if (!gaim_savedstatus_has_substatuses(saved_status)
 						|| !strcmp(name, acct_status_name))
 					{
 						/* Found! */
 						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+						g_free(name);
 						break;
 					}
+					g_free(name);
 				}
 				else if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
 						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
