@@ -46,6 +46,7 @@
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
+#include "gtkdocklet.h"
 #include "gtkeventloop.h"
 #include "gtkft.h"
 #include "gtkidle.h"
@@ -310,6 +311,7 @@ gaim_gtk_quit(void)
 	gaim_gtk_conversations_uninit();
 	gaim_gtk_status_uninit();
 	gaim_gtk_blist_uninit();
+	gaim_gtk_docklet_uninit();
 	gaim_gtk_connection_uninit();
 	gaim_gtk_account_uninit();
 	gaim_gtk_xfers_uninit();
@@ -719,6 +721,7 @@ int main(int argc, char *argv[])
 
 	/* load plugins we had when we quit */
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
+	gaim_gtk_docklet_init();
 
 	/* TODO: Move pounces loading into gaim_pounces_init() */
 	gaim_pounces_load();

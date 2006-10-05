@@ -1,11 +1,11 @@
-/*
+/* 
  * System tray icon (aka docklet) plugin for Gaim
- *
+ * 
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
  * Inspired by a similar plugin by:
  *  John (J5) Palmieri <johnp@martianrock.com>
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -15,17 +15,48 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-#include "internal.h"
-#include "gtkgaim.h"
-#include "gtkplugin.h"
-#include "core.h"
-#include "version.h"
+
+#ifndef _GTKDOCKLET_H_
+#define _GTKDOCKLET_H_
+
+typedef enum
+{
+	DOCKLET_STATUS_OFFLINE,
+	DOCKLET_STATUS_ONLINE,
+	DOCKLET_STATUS_ONLINE_PENDING,
+	DOCKLET_STATUS_AWAY,
+	DOCKLET_STATUS_AWAY_PENDING,
+	DOCKLET_STATUS_CONNECTING
+} DockletStatus;
+
+struct docklet_ui_ops
+{
+	void (*create)(void);
+	void (*destroy)(void);
+	void (*update_icon)(DockletStatus);
+	void (*blank_icon)(void);
+	void (*set_tooltip)(gchar *);
+	GtkMenuPositionFunc position_menu;
+};
 
 
+/* functions in docklet.c */
+void gaim_gtk_docklet_clicked(int);
+void gaim_gtk_docklet_embedded(void);
+void gaim_gtk_docklet_remove(void);
+void gaim_gtk_docklet_set_ui_ops(struct docklet_ui_ops *);
+void gaim_gtk_docklet_unload(void);
+void gaim_gtk_docklet_init();
+void gaim_gtk_docklet_uninit();
+void*gaim_gtk_docklet_get_handle();
 
+/* function in docklet-{x11,win32}.c */
+void docklet_ui_init(void);
+
+#endif /* _GTKDOCKLET_H_ */

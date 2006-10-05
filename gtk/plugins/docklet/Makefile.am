@@ -1,8 +1,4 @@
-EXTRA_DIST = \
-		Makefile.mingw   \
-		docklet-win32.c  \
-		MinimizeToTray.c \
-		MinimizeToTray.h
+EXTRA_DIST = Makefile.mingw   
 
 plugindir = $(libdir)/gaim
 
@@ -12,12 +8,7 @@ if PLUGINS
 
 plugin_LTLIBRARIES = docklet.la
 
-docklet_la_SOURCES = \
-	eggtrayicon.h \
-	eggtrayicon.c \
-	docklet.h \
-	docklet.c \
-	docklet-x11.c
+docklet_la_SOURCES = docklet.c 
 
 docklet_la_LIBADD = $(GTK_LIBS)
 

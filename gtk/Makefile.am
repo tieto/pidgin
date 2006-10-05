@@ -59,6 +59,7 @@ SUBDIRS = pixmaps plugins sounds
 bin_PROGRAMS = gaim
 
 gaim_SOURCES = \
+	eggtrayicon.c \
 	gaimcombobox.c \
 	gaimstock.c \
 	gtkaccount.c \
@@ -73,6 +74,8 @@ gaim_SOURCES = \
 	gtkdebug.c \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
+	gtkdocklet.c \
+	gtkdocklet-x11.c \
 	gtkeventloop.c \
 	gtkexpander.c \
 	gtkft.c \
@@ -100,6 +103,7 @@ gaim_SOURCES = \
 	gtkwhiteboard.c
 
 gaim_headers = \
+	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
 	gtkcelllayout.h \
@@ -116,6 +120,7 @@ gaim_headers = \
 	gtkdebug.h \
 	gtkdialogs.h \
 	gtkdnd-hints.h \
+	gtkdocklet.h \
 	gtkeventloop.h \
 	gtkexpander.h \
 	gtkft.h \
