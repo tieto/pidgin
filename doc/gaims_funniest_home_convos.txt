@@ -397,3 +397,22 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (17:49:25) seanegan: hell yeah!
 (17:49:25) elb: awesome, thanks
 (17:49:28) elb: Kanon in D
+
+edited for brevity, and name changed.
+(13:51:31) l33t_h4x0r: Is there such thing as a gaim ip sniffer for linux?
+(13:51:40) LSchiere: no
+(13:51:46) l33t_h4x0r: You sure?
+(13:51:50) LSchiere: though if there were, I'd still say no
+(13:51:55) l33t_h4x0r: Why?
+(13:52:00) LSchiere: since there's no good reason to be looking for one
+(13:55:12) l33t_h4x0r: Is...this a sensitive subject?
+(13:55:29) seanegan: l33t_h4x0r: not as sensitive as someone's IP address, apparently.
+(13:55:31) Err: no, "needing" to know what someone's IP is without asking them is totally sane, rational, and socially normal
+(13:55:42) l33t_h4x0r: I want to use it for destruive purposes?
+(13:55:50) l33t_h4x0r: Morally wrong.
+(13:56:01) l33t_h4x0r: I'll admit, but a valid reason.
+(13:57:04) l33t_h4x0r: Asking someone would give away my position...
+(13:57:33) l33t_h4x0r: Arlight, nevermind.
+(13:57:36) l33t_h4x0r left the room ("Leaving").
+(13:58:58) LSchiere: *amused* that's the first time in a while that the requester has *agreed* that there is no legit reason to want the feature
+(13:59:19) Err: he was not the sharpest knife in the drawer
