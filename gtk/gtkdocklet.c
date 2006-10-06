@@ -30,12 +30,10 @@
 #include "prefs.h"
 #include "signals.h"
 #include "sound.h"
-#include "version.h"
 
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
-#include "gtkft.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
 #include "gtksavedstatuses.h"
@@ -43,8 +41,6 @@
 #include "gtkutils.h"
 #include "gaimstock.h"
 #include "gtkdocklet.h"
-
-#include "gaim.h"
 #include "gtkdialogs.h"
 
 #ifndef DOCKLET_TOOLTIP_LINE_LIMIT
@@ -256,21 +252,16 @@ online_account_supports_chat()
 /**************************************************************************
  * callbacks and signal handlers
  **************************************************************************/
+#if 0
 static void 
 gaim_quit_cb() 
 {
 	/* TODO: confirm quit while pending */
 }
+#endif
 
 static void
 docklet_update_status_cb(void *data)
-{
-	docklet_update_status();
-}
-
-static void
-docklet_prefs_cb(const char *name, GaimPrefType type,
-				 gconstpointer val, gpointer data)
 {
 	docklet_update_status();
 }
@@ -602,26 +593,23 @@ gaim_gtk_docklet_get_handle()
 	return &i;
 }
 
-void 
+void
 gaim_gtk_docklet_init()
 {
 	void *conn_handle = gaim_connections_get_handle();
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
-	void *core_handle = gaim_get_core();
 	void *docklet_handle = gaim_gtk_docklet_get_handle();
-	
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "plugin loaded\n");
 
-        gaim_prefs_add_none("/plugins/gtk/docklet");
-        gaim_prefs_add_string("/plugins/gtk/docklet/blink_im", "hidden");
-        gaim_prefs_add_string("/plugins/gtk/docklet/blink_chat", "never");
-	
+	gaim_prefs_add_none("/plugins/gtk/docklet");
+	gaim_prefs_add_string("/plugins/gtk/docklet/blink_im", "hidden");
+	gaim_prefs_add_string("/plugins/gtk/docklet/blink_chat", "never");
+
 	docklet_ui_init();
 	if (ui_ops && ui_ops->create)
 		ui_ops->create();
 	gaim_signal_connect(conn_handle, "signed-on",
-	    		    docklet_handle, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
+			    docklet_handle, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
 	gaim_signal_connect(conn_handle, "signed-off",
 			    docklet_handle, GAIM_CALLBACK(docklet_signed_off_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-status-changed",
@@ -634,9 +622,10 @@ gaim_gtk_docklet_init()
 			    docklet_handle, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "conversation-updated",
 			    docklet_handle, GAIM_CALLBACK(docklet_conv_updated_cb), NULL);
-
-	gaim_signal_connect(core_handle, "quitting",
-						NULL, GAIM_CALLBACK(gaim_quit_cb), NULL);
+#if 0
+	gaim_signal_connect(gaim_get_core(), "quitting",
+			    docklet_handle, GAIM_CALLBACK(gaim_quit_cb), NULL);
+#endif
 
 /*	gaim_prefs_connect_callback(plugin, "/plugins/gtk/docklet/blink_im",
 								docklet_prefs_cb, NULL);
@@ -653,6 +642,7 @@ gaim_gtk_docklet_uninit()
 		ui_ops->destroy();
 }
 
+#if 0
 static GtkWidget *
 plugin_config_frame(GaimPlugin *plugin)
 {
@@ -686,9 +676,5 @@ plugin_config_frame(GaimPlugin *plugin)
 	gtk_widget_show_all(frame);
 	return frame;
 }
+#endif
 
-static GaimGtkPluginUiInfo ui_info =
-{
-	plugin_config_frame,
-	0 /* page_num (Reserved) */
-};

@@ -65,6 +65,7 @@ GTKGAIM_C_SRC =	\
 			gtkdebug.c \
 			gtkdialogs.c \
 			gtkdnd-hints.c \
+			gtkdocklet.c \
 			gtkeventloop.c \
 			gtkexpander.c \
 			gtkft.c \
@@ -89,6 +90,8 @@ GTKGAIM_C_SRC =	\
 			gtkthemes.c \
 			gtkutils.c \
 			gtkwhiteboard.c \
+			win32/MinimizeToTray.c \
+			win32/gtkdocklet-win32.c \
 			win32/gtkwin32dep.c \
 			win32/untar.c \
 			win32/wspell.c
@@ -129,7 +132,7 @@ include $(GAIM_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all install clean clean_exe
+.PHONY: all install install_shallow clean clean_exe
 
 all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE)
@@ -139,13 +142,15 @@ all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
 	    -e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
 	    $@.in > $@
 
-install: all $(GAIM_INSTALL_DIR)
+install_shallow: $(GAIM_INSTALL_DIR) $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
+	cp $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
+
+install: install_shallow all
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(GAIM_GTK_PIXMAPS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(GAIM_GTK_SOUNDS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) install
-	cp $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
 ./win32/gtkgaimrc.rc: ./win32/gtkgaimrc.rc.in $(GAIM_TOP)/VERSION
 	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \

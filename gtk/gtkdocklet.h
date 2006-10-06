@@ -46,17 +46,17 @@ struct docklet_ui_ops
 };
 
 
-/* functions in docklet.c */
+/* functions in gtkdocklet.c */
 void gaim_gtk_docklet_clicked(int);
 void gaim_gtk_docklet_embedded(void);
 void gaim_gtk_docklet_remove(void);
 void gaim_gtk_docklet_set_ui_ops(struct docklet_ui_ops *);
 void gaim_gtk_docklet_unload(void);
-void gaim_gtk_docklet_init();
-void gaim_gtk_docklet_uninit();
-void*gaim_gtk_docklet_get_handle();
+void gaim_gtk_docklet_init(void);
+void gaim_gtk_docklet_uninit(void);
+void*gaim_gtk_docklet_get_handle(void);
 
-/* function in docklet-{x11,win32}.c */
+/* function in gtkdocklet-{x11,win32}.c */
 void docklet_ui_init(void);
 
 #endif /* _GTKDOCKLET_H_ */

@@ -28,16 +28,12 @@
 
 #include "internal.h"
 #include "gtkblist.h"
-#include "gtkprefs.h"
 #include "debug.h"
-
-#include "gaim.h"
-#include "gtkdialogs.h"
 
 #include "resource.h"
 #include "MinimizeToTray.h"
 #include "gtkwin32dep.h"
-#include "docklet.h"
+#include "gtkdocklet.h"
 
 /*
  *  DEFINES, MACROS & DATA TYPES
@@ -47,13 +43,13 @@
 /*
  *  LOCALS
  */
-static HWND systray_hwnd=0;
-static HICON sysicon_disconn=0;
-static HICON sysicon_conn=0;
-static HICON sysicon_away=0;
-static HICON sysicon_pend=0;
-static HICON sysicon_awypend=0;
-static HICON sysicon_blank=0;
+static HWND systray_hwnd = 0;
+static HICON sysicon_disconn = 0;
+static HICON sysicon_conn = 0;
+static HICON sysicon_away = 0;
+static HICON sysicon_pend = 0;
+static HICON sysicon_awypend = 0;
+static HICON sysicon_blank = 0;
 static NOTIFYICONDATA wgaim_nid;
 
 
@@ -79,23 +75,23 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 		int type = 0;
 
 		/* We'll use Double Click - Single click over on linux */
-		if( lparam == WM_LBUTTONDBLCLK )
+		if(lparam == WM_LBUTTONDBLCLK)
 			type = 1;
-		else if( lparam == WM_MBUTTONUP )
+		else if(lparam == WM_MBUTTONUP)
 			type = 2;
-		else if( lparam == WM_RBUTTONUP )
+		else if(lparam == WM_RBUTTONUP)
 			type = 3;
 		else
 			break;
 
-		docklet_clicked(type);
+		gaim_gtk_docklet_clicked(type);
 		break;
 	}
-	default: 
+	default:
 		if (msg == taskbarRestartMsg) {
-			/* explorer crashed and left us hanging... 
+			/* explorer crashed and left us hanging...
 			   This will put the systray icon back in it's place, when it restarts */
-			Shell_NotifyIcon(NIM_ADD,&wgaim_nid);
+			Shell_NotifyIcon(NIM_ADD, &wgaim_nid);
 		}
 		break;
 	}/* end switch */
@@ -106,14 +102,14 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 /* Create hidden window to process systray messages */
 static HWND systray_create_hiddenwin() {
 	WNDCLASSEX wcex;
-	TCHAR wname[32];
+	LPCTSTR wname;
 
-	strcpy(wname, "GaimWin");
+	wname = TEXT("WingaimSystrayWinCls");
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
 
+	wcex.cbSize = sizeof(wcex);
 	wcex.style		= 0;
-	wcex.lpfnWndProc	= (WNDPROC)systray_mainmsg_handler;
+	wcex.lpfnWndProc	= systray_mainmsg_handler;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= gtkwgaim_hinstance();
@@ -131,25 +127,25 @@ static HWND systray_create_hiddenwin() {
 }
 
 static void systray_init_icon(HWND hWnd, HICON icon) {
-	ZeroMemory(&wgaim_nid,sizeof(wgaim_nid));
-	wgaim_nid.cbSize=sizeof(NOTIFYICONDATA);
-	wgaim_nid.hWnd=hWnd;
-	wgaim_nid.uID=0;
-	wgaim_nid.uFlags=NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	wgaim_nid.uCallbackMessage=WM_TRAYMESSAGE;
-	wgaim_nid.hIcon=icon;
+	ZeroMemory(&wgaim_nid, sizeof(wgaim_nid));
+	wgaim_nid.cbSize = sizeof(NOTIFYICONDATA);
+	wgaim_nid.hWnd = hWnd;
+	wgaim_nid.uID = 0;
+	wgaim_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+	wgaim_nid.uCallbackMessage = WM_TRAYMESSAGE;
+	wgaim_nid.hIcon = icon;
 	lstrcpy(wgaim_nid.szTip, "Gaim");
-	Shell_NotifyIcon(NIM_ADD,&wgaim_nid);
-	docklet_embedded();
+	Shell_NotifyIcon(NIM_ADD, &wgaim_nid);
+	gaim_gtk_docklet_embedded();
 }
 
 static void systray_change_icon(HICON icon) {
 	wgaim_nid.hIcon = icon;
-	Shell_NotifyIcon(NIM_MODIFY,&wgaim_nid);
+	Shell_NotifyIcon(NIM_MODIFY, &wgaim_nid);
 }
 
 static void systray_remove_nid(void) {
-	Shell_NotifyIcon(NIM_DELETE,&wgaim_nid);
+	Shell_NotifyIcon(NIM_DELETE, &wgaim_nid);
 }
 
 static void wgaim_tray_update_icon(DockletStatus icon) {
@@ -182,7 +178,7 @@ static void wgaim_tray_set_tooltip(gchar *tooltip) {
 	if (tooltip) {
 		char *locenc = NULL;
 		locenc = g_locale_from_utf8(tooltip, -1, NULL, NULL, NULL);
-		lstrcpyn(wgaim_nid.szTip, locenc, sizeof(wgaim_nid.szTip)/sizeof(TCHAR));
+		lstrcpyn(wgaim_nid.szTip, locenc, sizeof(wgaim_nid.szTip) / sizeof(TCHAR));
 		g_free(locenc);
 	} else {
 		lstrcpy(wgaim_nid.szTip, "Gaim");
@@ -190,11 +186,11 @@ static void wgaim_tray_set_tooltip(gchar *tooltip) {
 	Shell_NotifyIcon(NIM_MODIFY, &wgaim_nid);
 }
 
-void wgaim_tray_minimize(GaimGtkBuddyList *gtkblist) {
+static void wgaim_tray_minimize(GaimGtkBuddyList *gtkblist) {
 	MinimizeWndToTray(GDK_WINDOW_HWND(gtkblist->window->window));
 }
 
-void wgaim_tray_maximize(GaimGtkBuddyList *gtkblist) {
+static void wgaim_tray_maximize(GaimGtkBuddyList *gtkblist) {
 	RestoreWndFromTray(GDK_WINDOW_HWND(gtkblist->window->window));
 }
 
@@ -232,19 +228,18 @@ static void wgaim_tray_create() {
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
 
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-hiding", 
-			&handle, GAIM_CALLBACK(wgaim_tray_minimize), NULL);
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-unhiding", 
-			&handle, GAIM_CALLBACK(wgaim_tray_maximize), NULL);
+	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-hiding",
+			gaim_gtk_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_minimize), NULL);
+	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-unhiding",
+			gaim_gtk_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_maximize), NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
 }
 
 static void wgaim_tray_destroy() {
-	gaim_signals_disconnect_by_handle(&handle);
 	systray_remove_nid();
 	DestroyWindow(systray_hwnd);
-	docklet_remove();
+	gaim_gtk_docklet_remove();
 }
 
 static struct docklet_ui_ops wgaim_tray_ops =
@@ -259,5 +254,5 @@ static struct docklet_ui_ops wgaim_tray_ops =
 
 /* Used by docklet's plugin load func */
 void docklet_ui_init() {
-	docklet_set_ui_ops(&wgaim_tray_ops);
+	gaim_gtk_docklet_set_ui_ops(&wgaim_tray_ops);
 }

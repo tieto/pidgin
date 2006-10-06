@@ -7,7 +7,6 @@
 GAIM_TOP := ../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
-DOCKLET_PLUGIN := ./docklet
 GTKPERL_PLUGIN := ./perl
 TICKER_PLUGIN := ./ticker
 TRANSPARENCY_PLUGIN := ./win32/transparency
@@ -58,14 +57,12 @@ LIBS =			-lgtk-win32-2.0 \
 .PHONY: all clean plugins install
 
 all: plugins
-	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
 
 install: all $(GAIM_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
@@ -92,7 +89,6 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
-	$(MAKE) -C $(DOCKLET_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
