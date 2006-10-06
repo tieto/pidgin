@@ -261,6 +261,9 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 	{
 		gaim_debug_error("buddyicon", "Unable to create file %s: %s\n",
 						 filename, strerror(errno));
+		g_free(filename);
+		g_free(random);
+		return;
 	}
 
 	g_free(filename);
