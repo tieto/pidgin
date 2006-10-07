@@ -105,7 +105,11 @@ clear_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 static void
 selected_cb(GtkTreeSelection *sel, GevoAssociateBuddyDialog *dialog)
 {
-	gtk_widget_set_sensitive(dialog->assoc_button, TRUE);
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+	gtk_widget_set_sensitive(dialog->assoc_button,
+							 gtk_tree_selection_get_selected(selection, NULL, NULL));
 }
 
 static void
@@ -276,7 +280,8 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 
-	gtk_tree_selection_get_selected(selection, NULL, &iter);
+	if (!gtk_tree_selection_get_selected(selection, NULL, &iter))
+		return;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
 					   COLUMN_NAME, &fullname,
