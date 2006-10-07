@@ -315,6 +315,7 @@ add_chat_cb(void *data, GaimRequestFields *allfields)
 			gaim_blist_add_group(grp, NULL);
 		}
 		gaim_blist_add_chat(chat, grp, NULL);
+		gaim_blist_alias_chat(chat, alias);
 	}
 }
 
@@ -833,7 +834,7 @@ rename_blist_node(GaimBlistNode *node, const char *newname)
 		serv_alias_buddy((GaimBuddy*)node);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node))
 		gaim_blist_alias_chat((GaimChat*)node, name);
-	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+	else if (GAIM_BLIST_NODE_IS_GROUP(node) && (name != NULL))
 		gaim_blist_rename_group((GaimGroup*)node, name);
 	else
 		g_return_if_reached();
