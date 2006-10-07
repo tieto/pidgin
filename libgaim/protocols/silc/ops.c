@@ -890,8 +890,9 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 							if (b->account != gc->account)
 								continue;
 							f = gaim_blist_node_get_string(bnode, "public-key");
-							if (!strcmp(f, buf))
+							if (f && !strcmp(f, buf))
 								goto cont;
+							b = NULL;
 						}
 					}
 				}
