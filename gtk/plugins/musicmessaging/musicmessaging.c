@@ -523,7 +523,7 @@ static void run_editor (MMConversation *mmconv)
 	if (!(g_spawn_async (".", args, NULL, 4, NULL, NULL, &(mmconv->pid), &spawn_error)))
 	{
 		gaim_notify_error(plugin_pointer, _("Error Running Editor"),
-				  _("The following error has occured:"), spawn_error->message);
+				  _("The following error has occurred:"), spawn_error->message);
 		mmconv->started = FALSE;
 	}
 	else

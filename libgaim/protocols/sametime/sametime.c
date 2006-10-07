@@ -1638,7 +1638,7 @@ static void read_cb(gpointer data, gint source, GaimInputCondition cond) {
   /* fetch the global error value */
   err = errno;
 
-  /* read problem occured if we're here, so we'll need to take care of
+  /* read problem occurred if we're here, so we'll need to take care of
      it and clean up internal state */
 
   if(pd->socket) {

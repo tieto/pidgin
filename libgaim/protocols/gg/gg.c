@@ -713,7 +713,7 @@ static void ggp_callback_change_passwd_ok(GaimConnection *gc, GaimRequestFields 
 
 	if (h == NULL) {
 		gaim_notify_error(account, NULL,
-			_("Unable to change password. Error occured.\n"),
+			_("Unable to change password. Error occurred.\n"),
 			NULL);
 		goto exit_err;
 	}

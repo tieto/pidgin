@@ -518,7 +518,7 @@ Timeouts allow a perl subroutine to be exectued after a specified time.  They on
 @code
 sub timeout_cb {
 	my $plugin = shift;
-	print "Timeout occured.";
+	print "Timeout occurred.";
 	
 	# Reschedule timeout 
         Gaim::timeout_add($plugin, 10, \&timeout_cb, $plugin); 
