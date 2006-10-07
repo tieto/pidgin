@@ -286,7 +286,7 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 					iter = gaim_request_field_list_get_items(field);
 					for (; iter; iter = iter->next)
 					{
-						const char *text = list->data;
+						const char *text = iter->data;
 						gpointer key = gaim_request_field_list_get_data(field, text);
 						if (gnt_tree_get_choice(GNT_TREE(tree), key))
 							list = g_list_prepend(list, key);
