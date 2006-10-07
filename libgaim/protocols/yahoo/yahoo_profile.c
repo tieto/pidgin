@@ -1167,15 +1167,17 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 		}
 	}
 
-	/* see if Member Since is there, and if so, extract it. */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
-			"Member Since:", 1, last_updated_utf8_string,
-			'\n', NULL, _("Member Since"), 0, NULL, yahoo_info_date_reformat);
+	if (last_updated_utf8_string != NULL) {
+		/* see if Member Since is there, and if so, extract it. */
+		found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+				"Member Since:", 1, last_updated_utf8_string,
+				'\n', NULL, _("Member Since"), 0, NULL, yahoo_info_date_reformat);
 
-	/* extract the Last Updated date and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
-			last_updated_utf8_string, 1, " ", '\n', NULL,
-			_("Last Update"), 0, NULL, yahoo_info_date_reformat);
+		/* extract the Last Updated date and put it in */
+		found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
+				last_updated_utf8_string, 1, " ", '\n', NULL,
+				_("Last Update"), 0, NULL, yahoo_info_date_reformat);
+	}
 	} /* if (profile_state == PROFILE_STATE_DEFAULT) */
 
 	if(!found)
