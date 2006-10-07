@@ -234,10 +234,11 @@ update_buddy_typing(GaimAccount *account, const char *who, gpointer null)
 	char *title, *old_title;
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, account);
-	im = GAIM_CONV_IM(conv);
 
 	if (!conv)
 		return;
+
+	im = GAIM_CONV_IM(conv);
 
 	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
 		old_title = get_conversation_title(conv, account);
