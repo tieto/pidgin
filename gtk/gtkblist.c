@@ -907,8 +907,6 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	GaimBlistNode *bnode;
 	GtkTreePath *path;
 
-	struct _expand *ex = g_new0(struct _expand, 1);
-
 	if(!GAIM_BLIST_NODE_IS_CONTACT(node))
 		return;
 
@@ -921,16 +919,19 @@ gaim_gtk_blist_expand_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	}
 
 	/* This ensures that the bottom buddy is visible, i.e. not scrolled off the alignment */
-	get_iter_from_node(node, &parent);
-	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent,
-			  gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
-	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	if (get_iter_from_node(node, &parent)) {
+		struct _expand *ex = g_new0(struct _expand, 1);
 
-	/* Let the treeview draw so it knows where to scroll */
-	ex->treeview = GTK_TREE_VIEW(gtkblist->treeview);
-	ex->path = path;
-	ex->node = node->child;
-	g_idle_add(scroll_to_expanded_cell, ex);
+		gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter, &parent,
+				  gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &parent) -1);
+		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+
+		/* Let the treeview draw so it knows where to scroll */
+		ex->treeview = GTK_TREE_VIEW(gtkblist->treeview);
+		ex->path = path;
+		ex->node = node->child;
+		g_idle_add(scroll_to_expanded_cell, ex);
+	}
 }
 
 static void
