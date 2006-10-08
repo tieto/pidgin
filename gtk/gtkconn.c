@@ -101,13 +101,6 @@ gaim_gtk_connection_disconnected(GaimConnection *gc)
 }
 
 static void
-gaim_gtk_connection_notice(GaimConnection *gc,
-		const char *text)
-{
-}
-
-
-static void
 free_auto_recon(gpointer data)
 {
 	GaimAutoRecon *info = data;
@@ -201,6 +194,32 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	}
 }
 
+static void gaim_gtk_connection_network_connected () 
+{
+	GList *list = gaim_accounts_get_all_active();
+	while (list) {
+		GaimAccount *account = (GaimAccount*)list->data;
+		GaimAutoRecon *info = g_hash_table_lookup(hash, account);
+		if (info)
+			free_auto_recon(info);
+		do_signon(account);
+		list = list->next;
+ 	}
+}
+
+static void gaim_gtk_connection_network_disconnected () 
+{
+	GList *l = gaim_accounts_get_all_active();
+	while (l) {
+		GaimAccount *a = (GaimAccount*)l->data;
+		gaim_account_disconnect(a);
+		l = l->next;
+	}
+}
+
+static void gaim_gtk_connection_notice(GaimConnection *gc, const char *text)
+{ }
+
 static GaimConnectionUiOps conn_ui_ops =
 {
 	gaim_gtk_connection_connect_progress,
@@ -208,6 +227,8 @@ static GaimConnectionUiOps conn_ui_ops =
 	gaim_gtk_connection_disconnected,
 	gaim_gtk_connection_notice,
 	gaim_gtk_connection_report_disconnect,
+	gaim_gtk_connection_network_connected,
+	gaim_gtk_connection_network_disconnected
 };
 
 GaimConnectionUiOps *

@@ -27,6 +27,7 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "network.h"
 #include "notify.h"
 #include "pounce.h"
 #include "prefs.h"
@@ -2241,6 +2242,13 @@ gaim_accounts_restore_current_statuses()
 {
 	GList *l;
 	GaimAccount *account;
+
+	/* If we're not connected to the Internet right now, we bail on this */
+	if (!gaim_network_is_available())
+	{
+		fprintf(stderr, "Network not connected; skipping reconnect\n");
+		return;
+	}
 
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
 	{

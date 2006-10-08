@@ -42,6 +42,14 @@
 #include "stun.h"
 #include "upnp.h"
 
+#ifdef HAVE_LIBNM
+#include <libnm_glib.h>
+
+libnm_glib_ctx *nm_context = NULL;
+guint nm_callback_idx = 0;
+
+#endif
+
 struct _GaimNetworkListenData {
 	int listenfd;
 	int socket_type;
@@ -50,6 +58,10 @@ struct _GaimNetworkListenData {
 	GaimNetworkListenCallback cb;
 	gpointer cb_data;
 };
+
+#ifdef HAVE_LIBNM
+void nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data);
+#endif
 
 const unsigned char *
 gaim_network_ip_atoi(const char *ip)
@@ -360,6 +372,60 @@ gaim_network_get_port_from_fd(int fd)
 	return ntohs(addr.sin_port);
 }
 
+gboolean
+gaim_network_is_available(void)
+{
+#ifdef HAVE_LIBNM
+	/* Try NetworkManager first, maybe we'll get lucky */
+	int libnm_retval = -1;
+
+	if (nm_context)
+	{
+		if ((libnm_retval = libnm_glib_get_network_state(nm_context)) == LIBNM_NO_NETWORK_CONNECTION)
+		{
+			gaim_debug_warning("network", "NetworkManager not active or reports no connection (retval = %i)\n", libnm_retval);
+			return FALSE;
+		}
+		if (libnm_retval == LIBNM_ACTIVE_NETWORK_CONNECTION)	return TRUE;
+	}
+#endif
+	return TRUE;
+}
+
+#ifdef HAVE_LIBNM
+void
+nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
+{
+	GList *l;
+	GaimAccount *account;
+	static libnm_glib_state prev = LIBNM_NO_DBUS;
+	libnm_glib_state current;
+	GaimConnectionUiOps *ui_ops = gaim_connections_get_ui_ops();
+
+	current = libnm_glib_get_network_state(ctx);
+	gaim_debug_info("network","Entering nm_callback_func!\n");
+
+	switch(current)
+	{
+	case LIBNM_ACTIVE_NETWORK_CONNECTION:
+		ui_ops->network_connected();
+		prev = current;
+		break;
+	case LIBNM_NO_NETWORK_CONNECTION:
+		if (prev != LIBNM_ACTIVE_NETWORK_CONNECTION)
+			break;
+		ui_ops->network_disconnected();
+		prev = current;
+		break;
+	case LIBNM_NO_DBUS:
+	case LIBNM_NO_NETWORKMANAGER:
+	case LIBNM_INVALID_CONTEXT:
+	default:
+		break;
+	}
+}
+#endif
+
 void
 gaim_network_init(void)
 {
@@ -371,4 +437,24 @@ gaim_network_init(void)
 	gaim_prefs_add_int   ("/core/network/ports_range_end", 2048);
 
 	gaim_upnp_discover(NULL, NULL);
+
+#ifdef HAVE_LIBNM
+	nm_context = libnm_glib_init();
+	if(nm_context)
+		nm_callback_idx = libnm_glib_register_callback(nm_context, nm_callback_func, NULL, g_main_context_default());
+#endif
+}
+
+void
+gaim_network_uninit(void)
+{
+#ifdef HAVE_LIBNM
+	/* FIXME: If anyone can think of a more clever way to shut down libnm without
+	 * using a global variable + this function, please do. */
+	if(nm_context && nm_callback_idx)
+		libnm_glib_unregister_callback(nm_context, nm_callback_idx);
+
+	if(nm_context)
+		libnm_glib_shutdown(nm_context);
+#endif
 }

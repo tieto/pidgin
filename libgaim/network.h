@@ -188,9 +188,23 @@ void gaim_network_listen_cancel(GaimNetworkListenData *listen_data);
 unsigned short gaim_network_get_port_from_fd(int fd);
 
 /**
+ * Detects if there is an available Internet connection. Note that this call
+ * could block for the amount of time specified in inet_detect_timeout, so
+ * using it in a UI thread may cause uncomfortableness
+ *
+ * @return TRUE if the Internet is available
+ */
+gboolean gaim_network_is_available(void);
+
+/**
  * Initializes the network subsystem.
  */
 void gaim_network_init(void);
+
+/**
+ * Shuts down the network subsystem.
+ */
+void gaim_network_uninit(void);
 
 /*@}*/
 

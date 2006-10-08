@@ -218,6 +218,7 @@ libgaim_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
+	$(LIBNM_LIBS) \
 	$(STATIC_LINK_LIBS) \
 	$(INTLLIBS) \
 	-lm
@@ -231,4 +232,5 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
-	$(LIBXML_CFLAGS)
+	$(LIBXML_CFLAGS) \
+	$(LIBNM_CFLAGS)

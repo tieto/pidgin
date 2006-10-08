@@ -68,6 +68,8 @@ typedef struct
 	void (*disconnected)(GaimConnection *gc);
 	void (*notice)(GaimConnection *gc, const char *text);
 	void (*report_disconnect)(GaimConnection *gc, const char *text);
+	void (*network_connected)();
+	void (*network_disconnected)();
 
 } GaimConnectionUiOps;
 
