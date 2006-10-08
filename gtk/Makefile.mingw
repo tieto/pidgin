@@ -17,8 +17,6 @@ GTKGAIM_TARGET := gtkgaim
 EXE_NAME := $(EXE_TARGET).exe
 
 WINAPP := -mwindows
-# The Debug version of gaim is a console app, always having a console
-CONSOLEAPP := -mconsole
 
 LDFLAGS := $(WINAPP)
 
@@ -115,8 +113,7 @@ LIBGAIM_LIBS =	\
 		-lintl \
 		-lws2_32 \
 		-lwinmm \
-		-lz \
-		-liberty
+		-lz
 
 GTKGAIM_LIBS =	\
 		$(LIBGAIM_LIBS) \

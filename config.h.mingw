@@ -629,7 +629,7 @@
 /* #undef size_t */
 
 /* socklen_t size */
-#define socklen_t int
+/* #define socklen_t int */
 
 /* Define to unsigned long or unsigned long long if <stdint.h> and
    <inttypes.h> don't define. */
