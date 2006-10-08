@@ -222,6 +222,25 @@ update_edit_list(GntWidget *widget, EditStatus *edit)
 }
 
 static void
+use_trans_status_cb(GntWidget *button, EditStatus *edit)
+{
+	const char *message;
+	GaimStatusPrimitive prim;
+	GaimSavedStatus *saved;
+
+	message = gnt_entry_get_text(GNT_ENTRY(edit->message));
+	prim = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(edit->type)));
+
+	saved = gaim_savedstatus_find_transient_by_type_and_message(prim, message);
+	if (saved == NULL) {
+		saved = gaim_savedstatus_new(NULL, prim);
+	}
+	gaim_savedstatus_set_message(saved, message);
+	gaim_savedstatus_activate(saved);
+	gnt_widget_destroy(edit->window);
+}
+
+static void
 save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 {
 	const char *title, *message;
@@ -507,6 +526,11 @@ void gg_savedstatus_edit(GaimSavedStatus *saved)
 	/* The buttons */
 	box = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), box);
+
+	/* Use */
+	button = gnt_button_new(_("Use"));
+	gnt_box_add_widget(GNT_BOX(box), button);
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(use_trans_status_cb), edit);
 
 	/* Save */
 	button = gnt_button_new(_("Save"));
