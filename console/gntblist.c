@@ -31,6 +31,7 @@
 #include <signal.h>
 #include <status.h>
 #include <util.h>
+#include "debug.h"
 
 #include "gntgaim.h"
 #include "gntbox.h"
@@ -56,6 +57,7 @@ typedef struct
 
 	GntWidget *tooltip;
 	GaimBlistNode *tnode;		/* Who is the tooltip being displayed for? */
+	GaimBuddy *tagged;
 
 	GntWidget *context;
 	GaimBlistNode *cnode;
@@ -340,7 +342,7 @@ gg_request_add_chat(GaimAccount *account, GaimGroup *grp, const char *alias, con
 	field = gaim_request_field_string_new("alias", _("Alias"), alias, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("group", _("Group"), grp->name, FALSE);
+	field = gaim_request_field_string_new("group", _("Group"), grp ? grp->name : NULL, FALSE);
 	gaim_request_field_group_add_field(group, field);
 
 	gaim_request_fields(NULL, _("Add Chat"), NULL,
@@ -719,7 +721,7 @@ create_chat_menu(GntTree *tree, GaimChat *chat)
 static void
 gg_add_buddy(GaimGroup *grp, GaimBlistNode *selected)
 {
-	gaim_blist_request_add_buddy(NULL, NULL, grp->name, NULL);
+	gaim_blist_request_add_buddy(NULL, NULL, grp ? grp->name : NULL, NULL);
 }
 
 static void
@@ -816,6 +818,23 @@ context_menu_callback(GntTree *tree, GGBlist *ggblist)
 	remove_context_menu(ggblist);
 }
 
+/* Xerox'd from gtkdialogs.c:gaim_gtkdialogs_remove_contact_cb */
+static void
+remove_contact(GaimContact *contact)
+{
+	GaimBlistNode *bnode, *cnode;
+	GaimGroup *group;
+
+	cnode = (GaimBlistNode *)contact;
+	group = (GaimGroup*)cnode->parent;
+	for (bnode = cnode->child; bnode; bnode = bnode->next) {
+		GaimBuddy *buddy = (GaimBuddy*)bnode;
+		if (gaim_account_is_connected(buddy->account))
+			gaim_account_remove_buddy(buddy->account, buddy, group);
+	}
+	gaim_blist_remove_contact(contact);
+}
+
 static void
 rename_blist_node(GaimBlistNode *node, const char *newname)
 {
@@ -908,7 +927,7 @@ static void
 gg_blist_remove_node(GaimBlistNode *node)
 {
 	if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
-		gaim_blist_remove_contact((GaimContact*)node);
+		remove_contact((GaimContact*)node);
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy = (GaimBuddy*)node;
 		GaimGroup *group = gaim_buddy_get_group(buddy);
@@ -928,9 +947,12 @@ gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
 	const char *name, *sec = NULL;
 
 	/* XXX: could be a contact */
-	if (GAIM_BLIST_NODE_IS_CONTACT(node))
-		name = gaim_contact_get_alias((GaimContact*)node);
-	else if (GAIM_BLIST_NODE_IS_BUDDY(node))
+	if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+		GaimContact *c = (GaimContact*)node;
+		name = gaim_contact_get_alias(c);
+		if (c->totalsize > 1)
+			sec = _("Removing this contact will also remove all the buddies in the contact");
+	} else if (GAIM_BLIST_NODE_IS_BUDDY(node))
 		name = gaim_buddy_get_name((GaimBuddy*)node);
 	else if (GAIM_BLIST_NODE_IS_CHAT(node))
 		name = gaim_chat_get_name((GaimChat*)node);
@@ -954,6 +976,27 @@ gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
 }
 
 static void
+gg_blist_tag_buddy(GaimBlistNode *node)
+{
+	ggblist->tagged = (GaimBuddy *)node;
+	gaim_debug_info("blist", "Tagged buddy\n");
+}
+
+static void
+gg_blist_place_tagged(GaimBlistNode *node)
+{
+	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		gaim_blist_add_buddy(ggblist->tagged, NULL, (GaimGroup *)node, NULL);
+	} else {
+		GaimContact *contact = (GaimContact *)node;
+		gaim_blist_add_buddy(ggblist->tagged, contact,
+			gaim_buddy_get_group(gaim_contact_get_priority_buddy(contact)), NULL);
+	}
+	ggblist->tagged = NULL;
+	gaim_debug_info("blist", "Placed buddy\n");
+}
+
+static void
 draw_context_menu(GGBlist *ggblist)
 {
 	GaimBlistNode *node = NULL;
@@ -971,8 +1014,6 @@ draw_context_menu(GGBlist *ggblist)
 
 	node = gnt_tree_get_selection_data(tree);
 
-	if (node == NULL)
-		return;
 	if (ggblist->tooltip)
 		remove_tooltip(ggblist);
 
@@ -982,7 +1023,10 @@ draw_context_menu(GGBlist *ggblist)
 	gnt_widget_set_name(context, "context menu");
 	g_signal_connect(G_OBJECT(context), "activate", G_CALLBACK(context_menu_callback), ggblist);
 
-	if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
+	if (!node) {
+		create_group_menu(GNT_TREE(context), NULL);
+		title = g_strdup(_("Buddy List"));
+	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		create_buddy_menu(GNT_TREE(context),
 			gaim_contact_get_priority_buddy((GaimContact*)node));
 		title = g_strdup(gaim_contact_get_alias((GaimContact*)node));
@@ -1003,10 +1047,20 @@ draw_context_menu(GGBlist *ggblist)
 	append_extended_menu(GNT_TREE(context), node);
 
 	/* These are common for everything */
-	add_custom_action(GNT_TREE(context), _("Rename"),
-			GAIM_CALLBACK(gg_blist_rename_node_cb), node);
-	add_custom_action(GNT_TREE(context), _("Remove"),
-			GAIM_CALLBACK(gg_blist_remove_node_cb), node);
+	if (node) {
+		add_custom_action(GNT_TREE(context), _("Rename"),
+				GAIM_CALLBACK(gg_blist_rename_node_cb), node);
+		add_custom_action(GNT_TREE(context), _("Remove"),
+				GAIM_CALLBACK(gg_blist_remove_node_cb), node);
+		if (ggblist->tagged && (GAIM_BLIST_NODE_IS_CONTACT(node)
+				|| GAIM_BLIST_NODE_IS_GROUP(node))) {
+			add_custom_action(GNT_TREE(context), _("Place tagged"),
+					GAIM_CALLBACK(gg_blist_place_tagged), node);
+		} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
+			add_custom_action(GNT_TREE(context), _("Tag"),
+					GAIM_CALLBACK(gg_blist_tag_buddy), node);
+		}
+	}
 
 	window = gnt_vbox_new(FALSE);
 	GNT_WIDGET_SET_FLAGS(window, GNT_WIDGET_TRANSIENT);
