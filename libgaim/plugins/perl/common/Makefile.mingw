@@ -110,6 +110,7 @@ $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_LIBGAIM_PERL_DLL).a $(FALLBACKS) $(O
 ## CLEAN
 ##
 clean:
-	rm -rf *.o $(TARGET).dll $(FALLBACKS) lib
+	rm -rf $(TARGET).dll $(FALLBACKS) lib
+	rm -f *.o $(C_FILES)
 
 include $(GAIM_COMMON_TARGETS)

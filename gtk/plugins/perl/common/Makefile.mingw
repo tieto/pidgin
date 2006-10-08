@@ -104,6 +104,6 @@ $(TARGET).dll: $(GAIM_GTKGAIM_DLL).a $(GAIM_LIBGAIM_PERL_DLL).a $(OBJECTS)
 ## CLEAN
 ##
 clean:
-	rm -f *.o $(TARGET).dll
+	rm -f *.o $(C_FILES) $(TARGET).dll
 
 include $(GAIM_COMMON_TARGETS)
