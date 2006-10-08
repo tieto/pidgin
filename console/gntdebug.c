@@ -25,9 +25,13 @@
 #include <gnt.h>
 #include <gntbox.h>
 #include <gnttextview.h>
+#include <gntbutton.h>
+#include <gntcheckbox.h>
+#include <gntline.h>
 
 #include "gntdebug.h"
 #include "gntgaim.h"
+#include "util.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -36,6 +40,8 @@ static struct
 {
 	GntWidget *window;
 	GntWidget *tview;
+	gboolean paused;
+	gboolean timestamps;
 } debug;
 
 static gboolean
@@ -62,15 +68,24 @@ static void
 gg_debug_print(GaimDebugLevel level, const char *category,
 		const char *args)
 {
-	if (debug.window)
+	if (debug.window && !debug.paused)
 	{
+		int pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(debug.tview));
 		GntTextFormatFlags flag = GNT_TEXT_FLAG_NORMAL;
+
+		if (debug.timestamps) {
+			const char *mdate;
+			time_t mtime = time(NULL);
+			mdate = gaim_utf8_strftime("%H:%M:%S ", localtime(&mtime));
+			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
+					mdate, flag);
+		}
 
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
 				category, GNT_TEXT_FLAG_BOLD);
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
 				": ", GNT_TEXT_FLAG_BOLD);
-		
+
 		switch (level)
 		{
 			case GAIM_DEBUG_WARNING:
@@ -82,13 +97,14 @@ gg_debug_print(GaimDebugLevel level, const char *category,
 			default:
 				break;
 		}
-		
+
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview), args, flag);
-		gnt_text_view_scroll(GNT_TEXT_VIEW(debug.tview), 0);
+		if (pos <= 1)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(debug.tview), 0);
 	}
 }
 
-static GaimDebugUiOps uiops = 
+static GaimDebugUiOps uiops =
 {
 	gg_debug_print,
 };
@@ -105,23 +121,75 @@ reset_debug_win(GntWidget *w, gpointer null)
 }
 
 static void
+clear_debug_win(GntWidget *w, GntTextView *tv)
+{
+	gnt_text_view_clear(tv);
+}
+
+static void
 print_stderr(const char *string)
 {
 	g_printerr("%s", string);
 }
 
+static void
+toggle_pause(GntWidget *w, gpointer n)
+{
+	debug.paused = !debug.paused;
+}
+
+static void
+toggle_timestamps(GntWidget *w, gpointer n)
+{
+	debug.timestamps = !debug.timestamps;
+	gaim_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
+}
+
 void gg_debug_window_show()
 {
+	debug.paused = false;
+	debug.timestamps = gaim_prefs_get_bool("/core/debug/timestamps");
 	if (debug.window == NULL)
 	{
+		GntWidget *wid, *box;
 		debug.window = gnt_vbox_new(FALSE);
 		gnt_box_set_toplevel(GNT_BOX(debug.window), TRUE);
 		gnt_box_set_title(GNT_BOX(debug.window), _("Debug Window"));
+		gnt_box_set_pad(GNT_BOX(debug.window), 0);
+		gnt_box_set_alignment(GNT_BOX(debug.window), GNT_ALIGN_MID);
 
 		debug.tview = gnt_text_view_new();
 		gnt_box_add_widget(GNT_BOX(debug.window), debug.tview);
 
-		/* XXX: Add checkboxes/buttons for Clear, Pause, Timestamps */
+		gnt_box_add_widget(GNT_BOX(debug.window), gnt_line_new(FALSE));
+
+		box = gnt_hbox_new(FALSE);
+		gnt_box_set_alignment(GNT_BOX(box), GNT_ALIGN_MID);
+
+		/* XXX: Setting the GROW_Y for the following widgets don't make sense. But right now
+		 * it's necessary to make the width of the debug window resizable ... like I said,
+		 * it doesn't make sense. The bug is likely in the packing in gntbox.c.
+		 */
+		wid = gnt_button_new(_("Clear"));
+		g_signal_connect(G_OBJECT(wid), "activate", G_CALLBACK(clear_debug_win), debug.tview);
+		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
+		gnt_box_add_widget(GNT_BOX(box), wid);
+
+		wid = gnt_check_box_new(_("Pause"));
+		g_signal_connect(G_OBJECT(wid), "toggled", G_CALLBACK(toggle_pause), NULL);
+		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
+		gnt_box_add_widget(GNT_BOX(box), wid);
+
+		wid = gnt_check_box_new(_("Timestamps"));
+		gnt_check_box_set_checked(GNT_CHECK_BOX(wid), debug.timestamps);
+		g_signal_connect(G_OBJECT(wid), "toggled", G_CALLBACK(toggle_timestamps), NULL);
+		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
+		gnt_box_add_widget(GNT_BOX(box), wid);
+
+		gnt_box_add_widget(GNT_BOX(debug.window), box);
+		GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_GROW_Y);
+
+		gnt_widget_set_name(debug.window, "debug-window");
 
 		g_signal_connect(G_OBJECT(debug.window), "destroy", G_CALLBACK(reset_debug_win), NULL);
 		g_signal_connect(G_OBJECT(debug.window), "key_pressed", G_CALLBACK(debug_window_kpress_cb), debug.tview);

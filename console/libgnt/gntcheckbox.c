@@ -108,7 +108,10 @@ gnt_check_box_class_init(GntCheckBoxClass *klass)
 static void
 gnt_check_box_init(GTypeInstance *instance, gpointer class)
 {
-	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+	GntWidget *widget = GNT_WIDGET(instance);
+	widget->priv.minh = 1;
+	widget->priv.minw = 4;
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	GNTDEBUG;
 }
 
