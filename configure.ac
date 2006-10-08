@@ -889,9 +889,14 @@ if test "x$enable_dbus" = "xyes" ; then
 	])
 
 dnl     Check for libnm_glib; if we don't have it, oh well
+	LIBNM_CFLAGS=""
+	LIBNM_LIBS=""
 	PKG_CHECK_MODULES(LIBNM, libnm_glib,
 	[
     		AC_DEFINE(HAVE_LIBNM, 1, [Check to see if we have NetworkManager])
+	],
+	[
+                AC_MSG_RESULT(no)
 	])
 	AC_SUBST(LIBNM_CFLAGS)
 	AC_SUBST(LIBNM_LIBS)
