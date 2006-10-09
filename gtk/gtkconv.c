@@ -215,7 +215,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 	if (gtkconv->auto_resize) {
 		return FALSE;
 	}
-	
+
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
 	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
 	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
@@ -2263,7 +2263,7 @@ update_tab_icon(GaimConversation *conv)
 	}
 }
 
-/* This gets added as an idle handler when doing something that 
+/* This gets added as an idle handler when doing something that
  * redraws the icon. It sets the auto_resize gboolean to TRUE.
  * This way, when the size_allocate callback gets triggered, it notices
  * that this is an autoresize, and after the main loop iterates, it
@@ -2296,7 +2296,7 @@ redraw_icon(gpointer data)
 
 	gtkconv->auto_resize = TRUE;
 	g_idle_add(reset_auto_resize_cb, gtkconv);
-	
+
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
@@ -3329,7 +3329,7 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
 	gboolean is_buddy;
 	gchar *alias_key, *name, *alias;
 	int flags;
-	
+
 	alias = cb->alias;
 	name  = cb->name;
 	flags = GPOINTER_TO_INT(cb->flags);
@@ -3357,10 +3357,10 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
 	{
 		GdkColor send_color;
 		gdk_color_parse(SEND_COLOR, &send_color);
-		
-#if GTK_CHECK_VERSION(2,6,0) 
+
+#if GTK_CHECK_VERSION(2,6,0)
 		gtk_list_store_insert_with_values(ls, &iter,
-/* 
+/*
  * The GTK docs are mute about the effects of the "row" value for performance.
  * X-Chat hardcodes their value to 0 (prepend) and -1 (append), so we will too.
  * It *might* be faster to search the gtk_list_store and set row accurately,
@@ -3985,7 +3985,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtk_widget_show(sw);
 
 	ls = gtk_list_store_new(CHAT_USERS_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING,
-							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, 
+							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT,
 							GDK_TYPE_COLOR, G_TYPE_INT);
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(ls), CHAT_USERS_ALIAS_KEY_COLUMN,
 									sort_chat_users, NULL, NULL);
@@ -3998,7 +3998,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 												   "pixbuf", CHAT_USERS_ICON_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
-	gtk_widget_set_size_request(lbox, 
+	gtk_widget_set_size_request(lbox,
 	                            gaim_prefs_get_int("/gaim/gtk/conversations/chat/userlist_width"), -1);
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
@@ -4006,8 +4006,8 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
         g_signal_connect(G_OBJECT(list), "size-allocate", G_CALLBACK(size_allocate_cb), gtkconv);
-	      
-	
+
+
 	rend = gtk_cell_renderer_text_new();
 
 	g_object_set(rend,
@@ -4478,7 +4478,7 @@ gaim_gtkconv_new(GaimConversation *conv)
 
 static void
 received_im_msg_cb(GaimAccount *account, char *sender, char *message,
-				   GaimConversation *conv, int flags)
+				   GaimConversation *conv, GaimMessageFlags flags)
 {
 	GaimConversationUiOps *ui_ops = gaim_gtk_conversations_get_conv_ui_ops();
 	if (conv != NULL)
@@ -5029,7 +5029,7 @@ gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *cbuddies, gboolean ne
 
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),  GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
-										 GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID); 
+										 GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID);
 #endif
 
 	l = cbuddies;
@@ -5038,7 +5038,7 @@ gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *cbuddies, gboolean ne
 		l = l->next;
 	}
 
-	/* Currently GTK+ maintains our sorted list after it's in the tree. 
+	/* Currently GTK+ maintains our sorted list after it's in the tree.
 	 * This may change if it turns out we can manage it faster ourselves.
  	 */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),  CHAT_USERS_ALIAS_KEY_COLUMN,
@@ -5321,10 +5321,10 @@ add_custom_smiley_for_imhtml(GtkIMHtml *imhtml, const char *sml, const char *smi
 	g_signal_connect(smiley->loader, "closed", G_CALLBACK(gaim_gtkconv_custom_smiley_closed), smiley);
 
 	gtk_imhtml_associate_smiley(imhtml, sml, smiley);
- 
+
 	return TRUE;
 }
- 
+
 static gboolean
 gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile, gboolean remote)
 {
@@ -5335,26 +5335,26 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile, gboole
 	if (!conv || !smile || !*smile) {
 		return FALSE;
 	}
- 
+
 	/* If smileys are off, return false */
 	if (gaim_gtkthemes_smileys_disabled())
 		return FALSE;
- 
+
 	/* If possible add this smiley to the current theme.
 	 * The addition is only temporary: custom smilies aren't saved to disk. */
 	conv_sml = gaim_account_get_protocol_name(conv->account);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
- 
+
 	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
 		if (!strcmp(list->sml, conv_sml)) {
 			sml = list->sml;
 			break;
 		}
 	}
- 
+
 	if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->imhtml), sml, smile))
 		return FALSE;
- 
+
 	if (!remote)	/* If it's a local custom smiley, then add it for the entry */
 		if (!add_custom_smiley_for_imhtml(GTK_IMHTML(gtkconv->entry), sml, smile))
 			return FALSE;
@@ -6229,7 +6229,7 @@ conv_placement_usetabs_cb(const char *name, GaimPrefType type,
 }
 
 static void
-account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, 
+account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
                           GaimStatus *newstatus)
 {
 	GList *l;
@@ -6404,7 +6404,7 @@ update_buddy_idle_changed(GaimBuddy *buddy, gboolean old, gboolean newidle)
 	if (conv)
 		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON);
 }
-	
+
 static void
 update_buddy_icon(GaimBuddy *buddy)
 {
@@ -6660,7 +6660,7 @@ gaim_gtk_conversations_init(void)
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", handle,
 						G_CALLBACK(account_signed_off_cb),
 						GINT_TO_POINTER(GAIM_CONV_ACCOUNT_OFFLINE));
-	
+
 	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg",
 						handle, G_CALLBACK(received_im_msg_cb), NULL);
 

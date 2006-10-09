@@ -144,7 +144,7 @@ buddy_state_cb(GaimBuddy *buddy, GaimSoundEventID event)
 static void
 im_msg_received_cb(GaimAccount *account, char *sender,
 				   char *message, GaimConversation *conv,
-				   int flags, GaimSoundEventID event)
+				   GaimMessageFlags flags, GaimSoundEventID event)
 {
 	if (flags & GAIM_MESSAGE_DELAYED)
 		return;

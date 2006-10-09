@@ -243,7 +243,7 @@ sent_im_msg_cb(GaimAccount *account, const char *recipient, const char *buffer, 
 
 static gboolean
 receiving_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
-				    GaimConversation *conv, int *flags, void *data)
+				    GaimConversation *conv, GaimMessageFlags *flags, void *data)
 {
 	gaim_debug_misc("signals test", "receiving-im-msg (%s, %s, %s, %s, %d)\n",
 					gaim_account_get_username(account), *sender, *buffer,
@@ -254,7 +254,7 @@ receiving_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
 
 static void
 received_im_msg_cb(GaimAccount *account, char *sender, char *buffer,
-				   GaimConversation *conv, int flags, void *data)
+				   GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	gaim_debug_misc("signals test", "received-im-msg (%s, %s, %s, %s, %d)\n",
 					gaim_account_get_username(account), sender, buffer,
@@ -297,7 +297,7 @@ sent_chat_msg_cb(GaimAccount *account, const char *buffer, int id, void *data)
 
 static gboolean
 receiving_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
-					 GaimConversation *chat, int *flags, void *data)
+					 GaimConversation *chat, GaimMessageFlags *flags, void *data)
 {
 	gaim_debug_misc("signals test",
 					"receiving-chat-msg (%s, %s, %s, %s, %d)\n",
@@ -309,7 +309,7 @@ receiving_chat_msg_cb(GaimAccount *account, char **sender, char **buffer,
 
 static void
 received_chat_msg_cb(GaimAccount *account, char *sender, char *buffer,
-					 GaimConversation *chat, int flags, void *data)
+					 GaimConversation *chat, GaimMessageFlags flags, void *data)
 {
 	gaim_debug_misc("signals test",
 					"received-chat-msg (%s, %s, %s, %s, %d)\n",

@@ -55,7 +55,6 @@ static const char *PREF_DBLIST_DOCKED = "/plugins/gtk/win32/winprefs/dblist_dock
 static const char *PREF_DBLIST_HEIGHT = "/plugins/gtk/win32/winprefs/dblist_height";
 static const char *PREF_DBLIST_SIDE = "/plugins/gtk/win32/winprefs/dblist_side";
 static const char *PREF_BLIST_ON_TOP = "/plugins/gtk/win32/winprefs/blist_on_top";
-static const char *PREF_IM_BLINK = "/plugins/gtk/win32/winprefs/im_blink";
 static const char *PREF_CHAT_BLINK = "/plugins/gtk/win32/winprefs/chat_blink";
 
 /* Deprecated */
@@ -66,24 +65,11 @@ static GtkAppBar *blist_ab = NULL;
 static GtkWidget *blist = NULL;
 static guint blist_visible_cb_id = 0;
 
-/* flash info */
-
-struct _WGAIM_FLASH_INFO {
-	guint t_handle;
-	guint sig_handler;
-};
-
 enum {
 	BLIST_TOP_NEVER = 0,
 	BLIST_TOP_ALWAYS,
 	BLIST_TOP_DOCKED,
 };
-
-typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
-
-typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
-
-static LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
 
 /*
  *  CODE
@@ -247,117 +233,14 @@ winprefs_set_blist_ontop(const char *pref, GaimPrefType type,
 		blist_set_ontop(FALSE);
 }
 
-static void load_winver_specific_procs(void) {
-	/* Used for Win98+ and WinNT5+ */
-	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wgaim_find_and_loadproc("user32.dll", "FlashWindowEx");
-}
-
-/* Window flasher */
-static gboolean flash_window_cb(gpointer data) {
-	FlashWindow((HWND) data, TRUE);
-	return TRUE;
-}
-
-static int
-halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data)
-{
-	if(MyFlashWindowEx) {
-		HWND hWnd = data;
-		FLASHWINFO info;
-
-		if(!IsWindow(hWnd))
-			return 0;
-
-		memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = hWnd;
-		info.dwFlags = FLASHW_STOP;
-		info.dwTimeout = 0;
-		MyFlashWindowEx(&info);
-
-	} else {
-		WGAIM_FLASH_INFO *finfo = data;
-		/* Stop flashing and remove filter */
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
-		gaim_timeout_remove(finfo->t_handle);
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
-		g_signal_handler_disconnect(G_OBJECT(widget),
-			finfo->sig_handler);
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
-		g_free(finfo);
-	}
-	return 0;
-}
-
-/* FlashWindowEx is only supported by Win98+ and WinNT5+. If it's
-   not supported we do it our own way */
 static gboolean
-wgaim_conv_blink(GaimConversation *conv, int flags)
-{
-	GaimGtkWindow *win;
-	GtkWidget *window;
-
-	/* Don't flash for our own messages or system messages */
-	if(flags & GAIM_MESSAGE_SEND || flags & GAIM_MESSAGE_SYSTEM)
-		return FALSE;
-
-	if(conv == NULL) {
-		gaim_debug_info("winprefs", "gar!\n");
-		return FALSE;
-	}
-	win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(conv));
-	if(win == NULL) {
-		gaim_debug_info("winprefs", "gar2!\n");
-		return FALSE;
-	}
-	window = win->window;
-
-	if(MyFlashWindowEx) {
-		FLASHWINFO info;
-		if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
-			return FALSE;
-
-		memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = GDK_WINDOW_HWND(window->window);
-		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
-		info.dwTimeout = 0;
-		MyFlashWindowEx(&info);
-		/* Stop flashing when window receives focus */
-		g_signal_connect(G_OBJECT(window), "focus-in-event",
-			G_CALLBACK(halt_flash_filter), info.hwnd);
-	} else {
-		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
-
-		/* Start Flashing window */
-		finfo->t_handle = gaim_timeout_add(1000, flash_window_cb,
-			GDK_WINDOW_HWND(window->window));
-		finfo->sig_handler = g_signal_connect(G_OBJECT(window),
-			"focus-in-event", G_CALLBACK(halt_flash_filter), finfo);
-	}
-
-	return FALSE;
-}
-
-static gboolean
-wgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
-		GaimConversation *conv, int flags, void *data)
-{
-	if(!gaim_prefs_get_bool(PREF_IM_BLINK))
-		return FALSE;
-
-	return wgaim_conv_blink(conv, flags);
-
-}
-
-static gboolean
-wgaim_conv_chat_blink(GaimAccount *account, const char *who, char **message,
-		GaimConversation *conv, int flags, void *data)
+gtkwgaim_conv_chat_blink(GaimAccount *account, const char *who, char **message,
+		GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	if(!gaim_prefs_get_bool(PREF_CHAT_BLINK))
-		return FALSE;
+		gtkwgaim_conv_blink(conv, flags);
 
-	return wgaim_conv_blink(conv, flags);
+	return FALSE;
 }
 
 
@@ -366,9 +249,6 @@ wgaim_conv_chat_blink(GaimAccount *account, const char *who, char **message,
  */
 
 static gboolean plugin_load(GaimPlugin *plugin) {
-	/* Find out how to go blinky */
-	load_winver_specific_procs();
-
 	handle = plugin;
 
 	/* blist docking init */
@@ -383,11 +263,7 @@ static gboolean plugin_load(GaimPlugin *plugin) {
 		plugin, GAIM_CALLBACK(blist_create_cb), NULL);
 
 	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
-		"displaying-im-msg", plugin, GAIM_CALLBACK(wgaim_conv_im_blink),
-		NULL);
-
-	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
-		"displaying-chat-msg", plugin, GAIM_CALLBACK(wgaim_conv_chat_blink),
+		"displaying-chat-msg", plugin, GAIM_CALLBACK(gtkwgaim_conv_chat_blink),
 		NULL);
 
 	gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin,
@@ -463,8 +339,6 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
 	/* Conversations */
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
-	gaim_gtk_prefs_checkbox(_("_Flash window when IMs are received"),
-							PREF_IM_BLINK, vbox);
 	gaim_gtk_prefs_checkbox(_("_Flash window when chat messages are received"),
 							PREF_CHAT_BLINK, vbox);
 
@@ -492,7 +366,7 @@ static GaimPluginInfo info =
 	N_("WinGaim Options"),
 	VERSION,
 	N_("Options specific to Windows Gaim."),
-	N_("Provides options specific to Windows Gaim, such as buddy list docking and conversation flashing."),
+	N_("Provides options specific to Windows Gaim, such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	GAIM_WEBSITE,
 	plugin_load,
@@ -514,7 +388,6 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
 	gaim_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
 	gaim_prefs_add_int(PREF_DBLIST_SIDE, 0);
-	gaim_prefs_add_bool(PREF_IM_BLINK, TRUE);
 	gaim_prefs_add_bool(PREF_CHAT_BLINK, FALSE);
 
 	/* Convert old preferences */

@@ -49,9 +49,8 @@
 #include <libintl.h>
 
 #include "gtkwin32dep.h"
-
 #include "win32dep.h"
-
+#include "gtkconv.h"
 #include "wspell.h"
 
 /*
@@ -60,6 +59,11 @@
 HINSTANCE gaimexe_hInstance = 0;
 HINSTANCE gtkgaimdll_hInstance = 0;
 HWND messagewin_hwnd;
+static int gtkwin32_handle;
+
+typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
+static LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
+
 
 /*
  *  PUBLIC CODE
@@ -221,15 +225,82 @@ static HWND wgaim_message_window_init(void) {
 	return win_hwnd;
 }
 
+static int
+halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
+	if(MyFlashWindowEx) {
+		HWND hWnd = data;
+		FLASHWINFO info;
+
+		if(!IsWindow(hWnd))
+			return 0;
+
+		memset(&info, 0, sizeof(FLASHWINFO));
+		info.cbSize = sizeof(FLASHWINFO);
+		info.hwnd = hWnd;
+		info.dwFlags = FLASHW_STOP;
+		info.dwTimeout = 0;
+		MyFlashWindowEx(&info);
+	}
+	return 0;
+}
+
+void
+gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
+	GaimGtkWindow *win;
+	GtkWidget *window;
+
+	/* Don't flash for our own messages or system messages */
+	if(flags & GAIM_MESSAGE_SEND || flags & GAIM_MESSAGE_SYSTEM)
+		return;
+
+	if(conv == NULL) {
+		gaim_debug_info("gtkwgaim", "No conversation found to blink.\n");
+		return;
+	}
+
+	win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(conv));
+	if(win == NULL) {
+		gaim_debug_info("gtkwgaim", "No conversation windows found to blink.\n");
+		return;
+	}
+
+	window = win->window;
+
+	if(MyFlashWindowEx) {
+		FLASHWINFO info;
+		/* Don't flash if we have the window focused */
+		if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
+			return;
+
+		memset(&info, 0, sizeof(FLASHWINFO));
+		info.cbSize = sizeof(FLASHWINFO);
+		info.hwnd = GDK_WINDOW_HWND(window->window);
+		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
+		info.dwTimeout = 0;
+		MyFlashWindowEx(&info);
+		/* Stop flashing when window receives focus */
+		g_signal_connect(G_OBJECT(window), "focus-in-event",
+			G_CALLBACK(halt_flash_filter), info.hwnd);
+	}
+}
+
+static gboolean
+gtkwgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
+		GaimConversation *conv, GaimMessageFlags flags, void *data)
+{
+	gtkwgaim_conv_blink(conv, flags);
+	return FALSE;
+}
 
 void gtkwgaim_init(HINSTANCE hint) {
+
 	gaim_debug_info("gtkwgaim", "gtkwgaim_init start\n");
 
 	gaimexe_hInstance = hint;
 
 	/* IdleTracker Initialization */
 	if(!wgaim_set_idlehooks())
-			gaim_debug_error("gtkwgaim", "Failed to initialize idle tracker\n");
+		gaim_debug_error("gtkwgaim", "Failed to initialize idle tracker\n");
 
 	wgaim_gtkspell_init();
 	gaim_debug_info("gtkwgaim", "GTK+ :%u.%u.%u\n",
@@ -237,7 +308,17 @@ void gtkwgaim_init(HINSTANCE hint) {
 
 	messagewin_hwnd = wgaim_message_window_init();
 
+	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wgaim_find_and_loadproc("user32.dll", "FlashWindowEx");
+
 	gaim_debug_info("gtkwgaim", "gtkwgaim_init end\n");
+}
+
+void gtkwgaim_post_init(void) {
+
+	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+		"displaying-im-msg", &gtkwin32_handle, GAIM_CALLBACK(gtkwgaim_conv_im_blink),
+		NULL);
+
 }
 
 /* Windows Cleanup */

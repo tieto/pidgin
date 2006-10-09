@@ -24,20 +24,23 @@
 #define _GTKWIN32DEP_H_
 #include <windows.h>
 #include <gtk/gtk.h>
+#include "conversation.h"
 
 HINSTANCE gtkwgaim_hinstance(void);
 
 /* Utility */
-int       gtkwgaim_gz_decompress(const char* in, const char* out);
-int       gtkwgaim_gz_untar(const char* filename, const char* destdir);
-void gtkwgaim_ensure_onscreen(GtkWidget *win);
+int gtkwgaim_gz_decompress(const char* in, const char* out);
+int gtkwgaim_gz_untar(const char* filename, const char* destdir);
 
 /* Misc */
-void      gtkwgaim_notify_uri(const char *uri);
+void gtkwgaim_notify_uri(const char *uri);
+void gtkwgaim_ensure_onscreen(GtkWidget *win);
+void gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags);
 
 /* init / cleanup */
-void      gtkwgaim_init(HINSTANCE);
-void      gtkwgaim_cleanup(void);
+void gtkwgaim_init(HINSTANCE);
+void gtkwgaim_post_init(void);
+void gtkwgaim_cleanup(void);
 
 #endif /* _WIN32DEP_H_ */
 
