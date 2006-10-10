@@ -573,10 +573,16 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
+	button = gtk_button_new();
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+	g_signal_connect(G_OBJECT(button), "clicked",
+	                 G_CALLBACK(icon_select_cb), dialog);
+
 	dialog->icon_entry = gtk_image_new();
-	gtk_box_pack_start(GTK_BOX(hbox), dialog->icon_entry,
-					   FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(button), dialog->icon_entry);
 	gtk_widget_show(dialog->icon_entry);
+	/* TODO: Uh, isn't this next line pretty useless? */
 	gaim_set_accessible_label (dialog->icon_entry, label);
 	dialog->icon_path = NULL;
 
@@ -587,12 +593,6 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	hbox2 = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, GAIM_HIG_BORDER);
 	gtk_widget_show(hbox2);
-
-	button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
-	gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(icon_select_cb), dialog);
-	gtk_widget_show(button);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
 	g_signal_connect(G_OBJECT(button), "clicked",
