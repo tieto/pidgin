@@ -202,6 +202,14 @@ close_conv_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 }
 
 static gboolean
+lbox_size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, gpointer data)
+{
+	gaim_prefs_set_int("/gaim/gtk/conversations/chat/userlist_width", allocation->width == 1 ? 0 : allocation->width);
+
+	return FALSE;
+}
+
+static gboolean
 size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
@@ -239,8 +247,6 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 		}
 		if (w == gtkconv->lower_hbox)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
-		if (w == gtkconv->u.chat->list)
-			gaim_prefs_set_int("/gaim/gtk/conversations/chat/userlist_width", allocation->width == 1 ? 0 : allocation->width);
 	}
 
 	return FALSE;
@@ -4005,7 +4011,7 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
-        g_signal_connect(G_OBJECT(list), "size-allocate", G_CALLBACK(size_allocate_cb), gtkconv);
+	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
 
 
 	rend = gtk_cell_renderer_text_new();
