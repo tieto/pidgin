@@ -296,7 +296,8 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 
 	dialog = data;
 
-	set_dialog_icon(dialog, gaim_gtk_convert_buddy_icon(dialog->plugin, filename));
+	if (filename != NULL)
+		set_dialog_icon(dialog, gaim_gtk_convert_buddy_icon(dialog->plugin, filename));
 
 	dialog->icon_filesel = NULL;
 }
