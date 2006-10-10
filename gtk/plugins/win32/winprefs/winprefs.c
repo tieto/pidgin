@@ -237,7 +237,7 @@ static gboolean
 gtkwgaim_conv_chat_blink(GaimAccount *account, const char *who, char **message,
 		GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
-	if(!gaim_prefs_get_bool(PREF_CHAT_BLINK))
+	if(gaim_prefs_get_bool(PREF_CHAT_BLINK))
 		gtkwgaim_conv_blink(conv, flags);
 
 	return FALSE;
