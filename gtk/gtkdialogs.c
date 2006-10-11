@@ -64,9 +64,10 @@ struct translator {
 /* Order: Lead Developer, then Alphabetical by Last Name */
 static struct developer developers[] = {
 	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
-	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
+	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
-	{"Thomas Butter",		N_("developer"), NULL},
+	{"Thomas Butter",				N_("developer"), NULL},
+	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
@@ -85,7 +86,6 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
-	{"Sadrul Habib Chowdhury",      NULL,   NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Casey Harkins",               NULL,   NULL},
