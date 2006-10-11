@@ -2246,7 +2246,7 @@ gaim_accounts_restore_current_statuses()
 	/* If we're not connected to the Internet right now, we bail on this */
 	if (!gaim_network_is_available())
 	{
-		fprintf(stderr, "Network not connected; skipping reconnect\n");
+		gaim_debug_info("account", "Network not connected; skipping reconnect\n");
 		return;
 	}
 

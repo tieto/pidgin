@@ -43,6 +43,7 @@
 
 #include "account.h"
 #include "internal.h"
+#include "network.h"
 #include "savedstatuses.h"
 #include "status.h"
 #include "debug.h"
@@ -553,6 +554,8 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		secondary = g_strdup(_("Typing"));
 	else if (status_box->connecting)
 		secondary = g_strdup(_("Connecting"));
+	else if (!status_box->network_available)
+		secondary = g_strdup(_("Waiting for network connection"));
 	else if (gaim_savedstatus_is_transient(saved_status))
 		secondary = NULL;
 	else
@@ -1265,6 +1268,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	GtkTextBuffer *buffer;
 
 	status_box->imhtml_visible = FALSE;
+	status_box->network_available = gaim_network_is_available();
 	status_box->connecting = FALSE;
 	status_box->typing = 0;
 	status_box->toggle_button = gtk_toggle_button_new();
@@ -1606,6 +1610,15 @@ gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box)
 			   TYPE_COLUMN, GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR,
 			   -1);
 #endif
+}
+
+void
+gtk_gaim_status_box_set_network_available(GtkGaimStatusBox *status_box, gboolean available)
+{
+	if (!status_box)
+		return;
+	status_box->network_available = available;
+	gtk_gaim_status_box_refresh(status_box);
 }
 
 void

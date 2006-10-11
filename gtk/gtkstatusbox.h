@@ -110,6 +110,7 @@ struct _GtkGaimStatusBox
 	int typing_index;
 	GdkPixbuf *typing_pixbufs[4];
 
+	gboolean network_available;
 	gboolean connecting;
 	guint typing;
 
@@ -154,6 +155,9 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 
 void
 gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box);
+
+void
+gtk_gaim_status_box_set_network_available(GtkGaimStatusBox *status_box, gboolean available);
 
 void
 gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connecting);

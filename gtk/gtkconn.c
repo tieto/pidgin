@@ -194,9 +194,14 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	}
 }
 
-static void gaim_gtk_connection_network_connected () 
+static void gaim_gtk_connection_network_connected ()
 {
 	GList *list = gaim_accounts_get_all_active();
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+
+	if(gtkblist)
+		gtk_gaim_status_box_set_network_available(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), TRUE);
+
 	while (list) {
 		GaimAccount *account = (GaimAccount*)list->data;
 		GaimAutoRecon *info = g_hash_table_lookup(hash, account);
@@ -204,12 +209,17 @@ static void gaim_gtk_connection_network_connected ()
 			free_auto_recon(info);
 		do_signon(account);
 		list = list->next;
- 	}
+	}
 }
 
-static void gaim_gtk_connection_network_disconnected () 
+static void gaim_gtk_connection_network_disconnected ()
 {
 	GList *l = gaim_accounts_get_all_active();
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+
+	if(gtkblist)
+		gtk_gaim_status_box_set_network_available(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), FALSE);
+
 	while (l) {
 		GaimAccount *a = (GaimAccount*)l->data;
 		gaim_account_disconnect(a);
