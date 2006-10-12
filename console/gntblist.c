@@ -206,6 +206,8 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_contact_online(contact)) ||
 				contact->currentsize < 1)
 			node_remove(gaim_get_blist(), node);
+		else
+			add_node(node, list->ui_data);
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		GaimGroup *group = (GaimGroup*)node;
 		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
@@ -526,6 +528,8 @@ add_buddy(GaimBuddy *buddy, GGBlist *ggblist)
 		return;
 
 	contact = (GaimContact*)node->parent;
+	if (!contact)   /* When a new buddy is added and show-offline is set */
+		return;
 	add_node((GaimBlistNode*)contact, ggblist);
 
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
