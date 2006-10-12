@@ -33,7 +33,7 @@ PPCODE:
 MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversations  PREFIX = gaim_conversations_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_conversations_get_handle()
 
 void

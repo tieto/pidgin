@@ -276,9 +276,6 @@ probe_perl_plugin(GaimPlugin *plugin)
 			char *basename;
 			STRLEN len;
 
-			gaim_debug(GAIM_DEBUG_INFO, "perl",
-			           "Found plugin info\n");
-
 			info = g_new0(GaimPluginInfo, 1);
 			gps  = g_new0(GaimPerlScript, 1);
 

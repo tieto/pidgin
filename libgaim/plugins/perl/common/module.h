@@ -263,4 +263,5 @@ typedef GaimValue *			Gaim__Value;
 typedef xmlnode *			Gaim__XMLNode;
 typedef XMLNodeType			XMLNode__Type;
 
-/* other.h */
+/* other */
+typedef void *				Gaim__Handle;

@@ -216,23 +216,13 @@ void
 gaim_blist_request_add_group()
 
 void
-gaim_blist_node_get_extended_menu(node)
-	Gaim::BuddyList::Node node
-PREINIT:
-	GList *l;
-PPCODE:
-	for (l = gaim_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Menu::Action")));
-	}
-
-void
 gaim_blist_set_ui_ops(ops)
 	Gaim::BuddyList::UiOps ops
 
 Gaim::BuddyList::UiOps
 gaim_blist_get_ui_ops()
 
-void *
+Gaim::Handle
 gaim_blist_get_handle()
 
 void
@@ -243,6 +233,16 @@ gaim_blist_uninit()
 
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Node  PREFIX = gaim_blist_node_
 PROTOTYPES: ENABLE
+
+void
+gaim_blist_node_get_extended_menu(node)
+	Gaim::BuddyList::Node node
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = gaim_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Menu::Action")));
+	}
 
 void
 gaim_blist_node_set_bool(node, key, value)

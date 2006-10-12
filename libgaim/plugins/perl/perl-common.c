@@ -447,6 +447,9 @@ gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
 		case GAIM_SUBTYPE_XFER:
 			stash = "Gaim::Xfer";
 			break;
+		case GAIM_SUBTYPE_XMLNODE:
+			stash = "Gaim::XMLNode";
+			break;
 
 		default:
 			stash = "Gaim"; /* ? */

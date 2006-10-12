@@ -73,7 +73,7 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Pounce")));
 	}
 
-void *
+Gaim::Handle
 gaim_pounces_get_handle()
 
 void

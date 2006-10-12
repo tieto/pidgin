@@ -85,5 +85,5 @@ gaim_connections_init()
 void
 gaim_connections_uninit()
 
-void *
+Gaim::Handle
 gaim_connections_get_handle()

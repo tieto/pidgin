@@ -80,7 +80,7 @@ gaim_buddy_icons_set_cache_dir(cache_dir)
 const char *
 gaim_buddy_icons_get_cache_dir();
 
-void *
+Gaim::Handle
 gaim_buddy_icons_get_handle();
 
 void

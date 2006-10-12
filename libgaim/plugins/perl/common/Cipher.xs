@@ -45,7 +45,7 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Cipher")));
 	}
 
-gpointer
+Gaim::Handle
 gaim_ciphers_get_handle()
 
 void

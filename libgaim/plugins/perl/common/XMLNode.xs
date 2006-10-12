@@ -5,13 +5,13 @@ PROTOTYPES: ENABLE
 
 Gaim::XMLNode
 xmlnode_copy(class, src)
-	xmlnode *src
+	Gaim::XMLNode src
     C_ARGS:
 	src
 
 void
 xmlnode_free(node)
-	xmlnode *node
+	Gaim::XMLNode node
 
 Gaim::XMLNode
 xmlnode_from_str(class, str, size)
@@ -22,36 +22,36 @@ xmlnode_from_str(class, str, size)
 
 const char *
 xmlnode_get_attrib(node, attr)
-	xmlnode *node
+	Gaim::XMLNode node
 	const char *attr
 
 Gaim::XMLNode
 xmlnode_get_child(parent, name)
-	const xmlnode *parent
+	Gaim::XMLNode parent
 	const char *name
 
 Gaim::XMLNode
 xmlnode_get_child_with_namespace(parent, name, xmlns)
-	const xmlnode *parent
+	Gaim::XMLNode parent
 	const char *name
 	const char *xmlns
 
 char *
 xmlnode_get_data(node)
-	xmlnode *node
+	Gaim::XMLNode node
 
 Gaim::XMLNode
 xmlnode_get_next_twin(node)
-	xmlnode *node
+	Gaim::XMLNode node
 
 void
 xmlnode_insert_child(parent, child)
-	xmlnode *parent
-	xmlnode *child
+	Gaim::XMLNode parent
+	Gaim::XMLNode child
 
 void
 xmlnode_insert_data(node, data, size)
-	xmlnode *node
+	Gaim::XMLNode node
 	const char *data
 	gssize size
 
@@ -63,26 +63,26 @@ xmlnode_new(class, name)
 
 Gaim::XMLNode
 xmlnode_new_child(parent, name)
-	xmlnode *parent
+	Gaim::XMLNode parent
 	const char *name
 
 void
 xmlnode_remove_attrib(node, attr)
-	xmlnode *node
+	Gaim::XMLNode node
 	const char *attr
 
 void
 xmlnode_set_attrib(node, attr, value)
-	xmlnode *node
+	Gaim::XMLNode node
 	const char *attr
 	const char *value
 
 char *
 xmlnode_to_formatted_str(node, len)
-	xmlnode *node
+	Gaim::XMLNode node
 	int *len
 
 char *
 xmlnode_to_str(node, len)
-	xmlnode *node
+	Gaim::XMLNode node
 	int *len

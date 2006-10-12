@@ -6,7 +6,7 @@ PROTOTYPES: ENABLE
 
 void
 gaim_signal_connect_priority(instance, signal, plugin, callback, priority, data = 0)
-	void *instance
+	Gaim::Handle instance
 	const char *signal
 	Gaim::Plugin plugin
 	SV *callback
@@ -17,7 +17,7 @@ CODE:
 
 void
 gaim_signal_connect(instance, signal, plugin, callback, data = 0)
-	void *instance
+	Gaim::Handle instance
 	const char *signal
 	Gaim::Plugin plugin
 	SV *callback
@@ -27,7 +27,7 @@ CODE:
 
 void
 gaim_signal_disconnect(instance, signal, plugin)
-	void *instance
+	Gaim::Handle instance
 	const char *signal
 	Gaim::Plugin plugin
 CODE:

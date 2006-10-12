@@ -48,7 +48,7 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::SavedStatus")));
 	}
 
-void *
+Gaim::Handle
 gaim_savedstatuses_get_handle()
 
 void

@@ -72,6 +72,8 @@ Gaim::Conversation::UiOps		T_GaimObj
 Gaim::Desktop::Item			T_GaimObj
 Gaim::DesktopItemType			T_IV
 
+Gaim::Handle				T_GaimObj
+
 Gaim::IconScaleRules			T_IV
 
 Gaim::Log				T_GaimObj

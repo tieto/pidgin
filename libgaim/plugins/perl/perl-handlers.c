@@ -71,7 +71,8 @@ gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
 	/* XXX This *will* cease working correctly if context gets changed to
 	 * ever be able to hold anything other than a GaimConnection */
 	if (context != NULL)
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(context, "Gaim::Connection")));
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(context,
+		                                         "Gaim::Connection")));
 	else
 		XPUSHs(&PL_sv_undef);
 	PUTBACK;

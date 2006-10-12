@@ -263,7 +263,7 @@ gaim_status_get_attr_value(status, id)
 	Gaim::Status status
 	const char *id
 
-void *
+Gaim::Handle
 gaim_status_get_handle()
 
 const char *

@@ -6,7 +6,7 @@ PROTOTYPES: ENABLE
 Gaim::ProxyInfo
 gaim_global_proxy_get_info()
 
-void *
+Gaim::Handle
 gaim_proxy_get_handle()
 
 void

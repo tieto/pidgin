@@ -58,7 +58,7 @@ gboolean
 gaim_prefs_get_bool(name)
 	const char *name
 
-void *
+Gaim::Handle
 gaim_prefs_get_handle()
 
 int

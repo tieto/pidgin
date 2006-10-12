@@ -146,7 +146,7 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Plugin")));
 	}
 
-void *
+Gaim::Handle
 gaim_plugins_get_handle()
 
 void
