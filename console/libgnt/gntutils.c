@@ -59,6 +59,10 @@ const char *gnt_util_onscreen_width_to_pointer(const char *string, int len, int 
 	int width = 0;
 	const char *str = string;
 
+	if (len <= 0) {
+		len = g_utf8_strlen(string, -1);
+	}
+
 	while (width < len && *str) {
 		size = g_unichar_iswide(g_utf8_get_char(str)) ? 2 : 1;
 		if (width + size > len)
