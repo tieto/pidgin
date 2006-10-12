@@ -3,7 +3,7 @@
 MODULE = Gaim::GtkUI::BuddyList  PACKAGE = Gaim::GtkUI::BuddyList  PREFIX = gaim_gtk_blist_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_gtk_blist_get_handle()
 
 Gaim::GtkUI::BuddyList

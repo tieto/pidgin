@@ -3,7 +3,7 @@
 MODULE = Gaim::GtkUI::Status  PACKAGE = Gaim::GtkUI::Status  PREFIX = gaim_gtk_status_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_gtk_status_get_handle()
 
 MODULE = Gaim::GtkUI::Status  PACKAGE = Gaim::GtkUI::Status::Editor  PREFIX = gaim_gtk_status_editor_

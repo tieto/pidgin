@@ -43,5 +43,5 @@ gaim_gtk_conversations_find_unseen_list(type, min_state, hidden_only, max_count)
 	gboolean hidden_only
 	guint max_count
 
-void *
+Gaim::Handle
 gaim_gtk_conversations_get_handle()

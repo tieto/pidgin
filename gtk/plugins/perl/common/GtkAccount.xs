@@ -3,7 +3,7 @@
 MODULE = Gaim::GtkUI::Account  PACKAGE = Gaim::GtkUI::Account  PREFIX = gaim_gtk_account_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_gtk_account_get_handle()
 
 MODULE = Gaim::GtkUI::Account  PACKAGE = Gaim::GtkUI::Account::Dialog  PREFIX = gaim_gtk_account_dialog_

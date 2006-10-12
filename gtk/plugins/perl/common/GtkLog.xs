@@ -3,7 +3,7 @@
 MODULE = Gaim::GtkUI::Log  PACKAGE = Gaim::GtkUI::Log  PREFIX = gaim_gtk_log_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_gtk_log_get_handle()
 
 void

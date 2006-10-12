@@ -11,5 +11,5 @@ char *
 gaim_gtk_sound_get_event_label(event)
 	Gaim::SoundEventID event
 
-void *
+Gaim::Handle
 gaim_gtk_sound_get_handle()

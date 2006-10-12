@@ -12,7 +12,7 @@ gaim_gtk_pounce_editor_show(account, name, cur_pounce)
 MODULE = Gaim::GtkUI::Pounce  PACKAGE = Gaim::GtkUI::Pounces  PREFIX = gaim_gtk_pounces_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_gtk_pounces_get_handle()
 
 MODULE = Gaim::GtkUI::Pounce  PACKAGE = Gaim::GtkUI::Pounces::Manager  PREFIX = gaim_gtk_pounces_manager_

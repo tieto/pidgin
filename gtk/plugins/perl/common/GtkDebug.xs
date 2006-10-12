@@ -3,7 +3,7 @@
 MODULE = Gaim::GtkUI::Debug  PACKAGE = Gaim::GtkUI::Debug  PREFIX = gaim_gtk_debug_
 PROTOTYPES: ENABLE
 
-void *
+Gaim::Handle
 gaim_gtk_debug_get_handle()
 
 MODULE = Gaim::GtkUI::Debug  PACKAGE = Gaim::GtkUI::Debug::Window  PREFIX = gaim_gtk_debug_window_
