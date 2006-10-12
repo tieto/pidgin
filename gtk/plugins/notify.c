@@ -944,7 +944,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count_xprop", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_raise", FALSE);
-	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", TRUE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_type", TRUE);
 	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_send", TRUE);
