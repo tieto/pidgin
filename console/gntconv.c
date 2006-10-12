@@ -46,37 +46,6 @@
 
 #include "config.h"
 
-typedef struct _GGConv GGConv;
-typedef struct _GGConvChat GGConvChat;
-typedef struct _GGConvIm GGConvIm;
-
-struct _GGConv
-{
-	GList *list;
-	GaimConversation *active_conv;
-	/*GaimConversation *conv;*/
-
-	GntWidget *window;        /* the container */
-	GntWidget *entry;         /* entry */
-	GntWidget *tv;            /* text-view */
-
-	union
-	{
-		GGConvChat *chat;
-		GGConvIm *im;
-	} u;
-};
-
-struct _GGConvChat
-{
-	GntWidget *userlist;       /* the userlist */
-};
-
-struct _GGConvIm
-{
-	void *nothing_for_now;
-};
-
 static gboolean
 entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 {
@@ -362,7 +331,7 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 
 	pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggconv->tv));
 
-	gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), "\n", GNT_TEXT_FLAG_NORMAL);
 
 	/* Unnecessary to print the timestamp for delayed message */
 	if (!(flags & GAIM_MESSAGE_DELAYED) &&

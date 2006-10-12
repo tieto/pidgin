@@ -25,12 +25,45 @@
 #ifndef _GNT_CONV_H
 #define _GNT_CONV_H
 
+#include <gnt.h>
+#include <gntwidget.h>
+
 #include "conversation.h"
 
 /***************************************************************************
  * @name GNT Conversations API
  ***************************************************************************/
 /*@{*/
+
+typedef struct _GGConv GGConv;
+typedef struct _GGConvChat GGConvChat;
+typedef struct _GGConvIm GGConvIm;
+
+struct _GGConv
+{
+	GList *list;
+	GaimConversation *active_conv;
+
+	GntWidget *window;        /* the container */
+	GntWidget *entry;         /* entry */
+	GntWidget *tv;            /* text-view */
+
+	union
+	{
+		GGConvChat *chat;
+		GGConvIm *im;
+	} u;
+};
+
+struct _GGConvChat
+{
+	GntWidget *userlist;       /* the userlist */
+};
+
+struct _GGConvIm
+{
+	void *nothing_for_now;
+};
 
 /**
  * Get the ui-functions.
