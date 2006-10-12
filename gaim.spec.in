@@ -278,6 +278,7 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
         %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
+/sbin/ldconfig
 
 %preun
 if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
@@ -286,6 +287,8 @@ if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
       %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
+
+%postun -p /sbin/ldconfig
 
 %files -f %{name}-%{version}-coreplugins
 %defattr(-, root, root)
