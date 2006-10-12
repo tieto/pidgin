@@ -145,6 +145,52 @@ toggle_timestamps(GntWidget *w, gpointer n)
 	gaim_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
 }
 
+/* Xerox */
+static void
+gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+					  const gchar *msg, gpointer user_data)
+{
+	GaimDebugLevel level;
+	char *new_msg = NULL;
+	char *new_domain = NULL;
+
+	if ((flags & G_LOG_LEVEL_ERROR) == G_LOG_LEVEL_ERROR)
+		level = GAIM_DEBUG_ERROR;
+	else if ((flags & G_LOG_LEVEL_CRITICAL) == G_LOG_LEVEL_CRITICAL)
+		level = GAIM_DEBUG_FATAL;
+	else if ((flags & G_LOG_LEVEL_WARNING) == G_LOG_LEVEL_WARNING)
+		level = GAIM_DEBUG_WARNING;
+	else if ((flags & G_LOG_LEVEL_MESSAGE) == G_LOG_LEVEL_MESSAGE)
+		level = GAIM_DEBUG_INFO;
+	else if ((flags & G_LOG_LEVEL_INFO) == G_LOG_LEVEL_INFO)
+		level = GAIM_DEBUG_INFO;
+	else if ((flags & G_LOG_LEVEL_DEBUG) == G_LOG_LEVEL_DEBUG)
+		level = GAIM_DEBUG_MISC;
+	else
+	{
+		gaim_debug_warning("gntdebug",
+				   "Unknown glib logging level in %d\n", flags);
+
+		level = GAIM_DEBUG_MISC; /* This will never happen. */
+	}
+
+	if (msg != NULL)
+		new_msg = gaim_utf8_try_convert(msg);
+
+	if (domain != NULL)
+		new_domain = gaim_utf8_try_convert(domain);
+
+	if (new_msg != NULL)
+	{
+		gaim_debug(level, (new_domain != NULL ? new_domain : "g_log"),
+				   "%s\n", new_msg);
+
+		g_free(new_msg);
+	}
+
+	g_free(new_domain);
+}
+
 void gg_debug_window_show()
 {
 	debug.paused = false;
@@ -207,6 +253,19 @@ start_with_debugwin(gpointer null)
 
 void gg_debug_init()
 {
+/* Xerox */
+#define REGISTER_G_LOG_HANDLER(name) \
+	g_log_set_handler((name), G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
+					  | G_LOG_FLAG_RECURSION, \
+					  gaim_glib_log_handler, NULL)
+
+	/* Register the glib log handlers. */
+	REGISTER_G_LOG_HANDLER(NULL);
+	REGISTER_G_LOG_HANDLER("GLib");
+	REGISTER_G_LOG_HANDLER("GModule");
+	REGISTER_G_LOG_HANDLER("GLib-GObject");
+	REGISTER_G_LOG_HANDLER("GThread");
+
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
 	if (gaim_debug_is_enabled())
 		g_timeout_add(0, start_with_debugwin, NULL);
