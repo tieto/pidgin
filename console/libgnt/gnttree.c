@@ -45,6 +45,18 @@ struct _GnTreeCol
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
+/* Move the item at position old to position new */
+static GList *
+g_list_reposition_child(GList *list, int old, int new)
+{
+	gpointer item = g_list_nth_data(list, old);
+	list = g_list_remove(list, item);
+	if (old < new)
+		new--;   /* because the positions would have shifted after removing the item */
+	list = g_list_insert(list, item, new);
+	return list;
+}
+
 static GntTreeRow *
 _get_next(GntTreeRow *row, gboolean godeep)
 {
@@ -835,6 +847,75 @@ find_position(GntTree *tree, gpointer key, gpointer parent)
 			return row->key;
 	}
 	return NULL;
+}
+
+void gnt_tree_sort_row(GntTree *tree, gpointer key)
+{
+	GntTreeRow *row, *q, *s;
+	int current, newp;
+
+	if (!tree->compare)
+		return;
+
+	row = g_hash_table_lookup(tree->hash, key);
+	g_return_if_fail(row != NULL);
+
+	current = g_list_index(tree->list, key);
+
+	if (row->parent)
+		s = row->parent->child;
+	else
+		s = tree->root;
+
+	q = NULL;
+	while (s) {
+		if (tree->compare(row->key, s->key) < 0)
+			break;
+		q = s;
+		s = s->next;
+	}
+
+	/* Move row between q and s */
+	if (row == q || row == s)
+		return;
+
+	if (q == NULL) {
+		/* row becomes the first child of its parent */
+		row->prev->next = row->next;  /* row->prev cannot be NULL at this point */
+		if (row->next)
+			row->next->prev = row->prev;
+		if (row->parent)
+			row->parent->child = row;
+		else
+			tree->root = row;
+		row->next = s;
+		s->prev = row;  /* s cannot be NULL */
+		row->prev = NULL;
+		newp = g_list_index(tree->list, s) - 1;
+	} else {
+		if (row->prev) {
+			row->prev->next = row->next;
+		} else {
+			/* row was the first child of its parent */
+			if (row->parent)
+				row->parent->child = row->next;
+			else
+				tree->top = row->next;
+		}
+
+		if (row->next)
+			row->next->prev = row->prev;
+
+		q->next = row;
+		row->prev = q;
+		if (s)
+			s->prev = row;
+		row->next = s;
+		newp = g_list_index(tree->list, q) + 1;
+	}
+	tree->list = g_list_reposition_child(tree->list, current, newp);
+
+	redraw_tree(tree);
 }
 
 GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, void *parent, void *bigbro)

@@ -123,6 +123,8 @@ void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded);
 
 void gnt_tree_set_show_separator(GntTree *tree, gboolean set);
 
+void gnt_tree_sort_row(GntTree *tree, void *row);
+
 /* This will try to automatically adjust the width of the columns in the tree */
 void gnt_tree_adjust_columns(GntTree *tree);
 

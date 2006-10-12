@@ -99,6 +99,11 @@ static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
 static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
 
+/* Sort functions */
+static int blist_node_compare_text(GaimBlistNode *n1, GaimBlistNode *n2);
+static int blist_node_compare_status(GaimBlistNode *n1, GaimBlistNode *n2);
+static int blist_node_compare_log(GaimBlistNode *n1, GaimBlistNode *n2);
+
 static gboolean
 is_contact_online(GaimContact *contact)
 {
@@ -188,6 +193,7 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 	if (node->ui_data != NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
 				0, get_display_name(node));
+		gnt_tree_sort_row(GNT_TREE(ggblist->tree), node);
 	}
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
@@ -1375,6 +1381,17 @@ populate_buddylist()
 	GaimBlistNode *node;
 	GaimBuddyList *list;
 
+	if (strcmp(gaim_prefs_get_string(PREF_ROOT "/sort_type"), "text") == 0) {
+		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
+			(GCompareFunc)blist_node_compare_text);
+	} else if (strcmp(gaim_prefs_get_string(PREF_ROOT "/sort_type"), "status") == 0) {
+		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
+			(GCompareFunc)blist_node_compare_status);
+	} else if (strcmp(gaim_prefs_get_string(PREF_ROOT "/sort_type"), "log") == 0) {
+		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
+			(GCompareFunc)blist_node_compare_log);
+	}
+	
 	list = gaim_get_blist();
 	node = gaim_blist_get_root();
 	while (node)
@@ -1475,11 +1492,14 @@ void gg_blist_init()
 	gaim_prefs_add_int(PREF_ROOT "/position/y", 0);
 	gaim_prefs_add_bool(PREF_ROOT "/idletime", TRUE);
 	gaim_prefs_add_bool(PREF_ROOT "/showoffline", FALSE);
+	gaim_prefs_add_string(PREF_ROOT "/sort_type", "text");
 
 	gg_blist_show();
 
 	gaim_prefs_connect_callback(gg_blist_get_handle(),
 			PREF_ROOT "/showoffline", redraw_blist, NULL);
+	gaim_prefs_connect_callback(gg_blist_get_handle(),
+			PREF_ROOT "/sort_type", redraw_blist, NULL);
 
 	return;
 }
@@ -1621,7 +1641,7 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 }
 
 static int
-blist_node_compare(GaimBlistNode *n1, GaimBlistNode *n2)
+blist_node_compare_text(GaimBlistNode *n1, GaimBlistNode *n2)
 {
 	const char *s1, *s2;
 	char *us1, *us2;
@@ -1640,7 +1660,6 @@ blist_node_compare(GaimBlistNode *n1, GaimBlistNode *n2)
 			s2 = gaim_chat_get_name((GaimChat*)n2);
 			break;
 		case GAIM_BLIST_BUDDY_NODE:
-			/* XXX: reordering existing rows don't do well in GntTree */
 			return gaim_presence_compare(gaim_buddy_get_presence((GaimBuddy*)n1),
 					gaim_buddy_get_presence((GaimBuddy*)n2));
 			break;
@@ -1661,6 +1680,77 @@ blist_node_compare(GaimBlistNode *n1, GaimBlistNode *n2)
 	return ret;
 }
 
+static int
+blist_node_compare_status(GaimBlistNode *n1, GaimBlistNode *n2)
+{
+	int ret;
+
+	g_return_val_if_fail(n1->type == n2->type, -1);
+
+	switch (n1->type) {
+		case GAIM_BLIST_CONTACT_NODE:
+			n1 = (GaimBlistNode*)gaim_contact_get_priority_buddy((GaimContact*)n1);
+			n2 = (GaimBlistNode*)gaim_contact_get_priority_buddy((GaimContact*)n2);
+			/* now compare the presence of the priority buddies */
+		case GAIM_BLIST_BUDDY_NODE:
+			ret = gaim_presence_compare(gaim_buddy_get_presence((GaimBuddy*)n1),
+					gaim_buddy_get_presence((GaimBuddy*)n2));
+			if (ret != 0)
+				return ret;
+			break;
+		default:
+			break;
+	}
+
+	/* Sort alphabetically if presence is not comparable */
+	ret = blist_node_compare_text(n1, n2);
+
+	return ret;
+}
+
+static int
+get_contact_log_size(GaimBlistNode *c)
+{
+	int log = 0;
+	GaimBlistNode *node;
+
+	for (node = c->child; node; node = node->next) {
+		GaimBuddy *b = (GaimBuddy*)node;
+		log += gaim_log_get_total_size(GAIM_LOG_IM, b->name, b->account);
+	}
+
+	return log;
+}
+
+static int
+blist_node_compare_log(GaimBlistNode *n1, GaimBlistNode *n2)
+{
+	int ret;
+	GaimBuddy *b1, *b2;
+
+	g_return_val_if_fail(n1->type == n2->type, -1);
+
+	switch (n1->type) {
+		case GAIM_BLIST_BUDDY_NODE:
+			b1 = (GaimBuddy*)n1;
+			b2 = (GaimBuddy*)n2;
+			ret = gaim_log_get_total_size(GAIM_LOG_IM, b2->name, b2->account) - 
+					gaim_log_get_total_size(GAIM_LOG_IM, b1->name, b1->account);
+			if (ret != 0)
+				return ret;
+			break;
+		case GAIM_BLIST_CONTACT_NODE:
+			ret = get_contact_log_size(n2) - get_contact_log_size(n1);
+			if (ret != 0)
+				return ret;
+			break;
+		default:
+			break;
+	}
+	ret = blist_node_compare_text(n1, n2);
+	return ret;
+}
+
 static gboolean
 blist_clicked(GntTree *tree, GntMouseEvent event, int x, int y, gpointer ggblist)
 {
@@ -1678,27 +1768,19 @@ plugin_action(GntMenuItem *item, gpointer data)
 		action->callback(action);
 }
 
-static void
-reconstruct_accounts_menu()
+static GntMenuItem *reconstruct_accounts_menu()
 {
-	GntWidget *menu, *sub;
-	GntMenuItem *item;
-	GntWindow *window;
+	GntWidget *sub;
+	GntMenuItem *acc, *item;
 	GList *iter;
 
 	if (!ggblist)
-		return;
+		return NULL;
 
-	window  = GNT_WINDOW(ggblist->window);
-
-	menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
-	gnt_window_set_menu(window, GNT_MENU(menu));
-
-	item = gnt_menuitem_new(_("Accounts"));
-	gnt_menu_add_item(GNT_MENU(menu), item);
+	acc = gnt_menuitem_new(_("Accounts"));
 
 	sub = gnt_menu_new(GNT_MENU_POPUP);
-	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+	gnt_menuitem_set_submenu(acc, GNT_MENU(sub));
 
 	for (iter = gaim_accounts_get_all_active(); iter;
 			iter = g_list_delete_link(iter, iter)) {
@@ -1737,6 +1819,58 @@ reconstruct_accounts_menu()
 			}
 		}
 	}
+	return acc;
+}
+
+static void show_offline_cb(GntMenuItem *item, gpointer n)
+{
+	gaim_prefs_set_bool(PREF_ROOT "/showoffline",
+		!gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
+}
+
+static void sort_blist_change_cb(GntMenuItem *item, gpointer n)
+{
+	gaim_prefs_set_string(PREF_ROOT "/sort_type", n);
+}
+
+static void
+create_menu()
+{
+	GntWidget *menu, *sub;
+	GntMenuItem *item;
+	GntWindow *window;
+
+	if (!ggblist)
+		return;
+
+	window = GNT_WINDOW(ggblist->window);
+	menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
+	gnt_window_set_menu(window, GNT_MENU(menu));
+
+	item = gnt_menuitem_new(_("Options"));
+	gnt_menu_add_item(GNT_MENU(menu), item);
+
+	sub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+	item = gnt_menuitem_new(_("Toggle offline buddies"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENUITEM(item), show_offline_cb, NULL);
+
+	item = gnt_menuitem_new(_("Sort by status"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "status");
+
+	item = gnt_menuitem_new(_("Sort alphabetically"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "text");
+
+	item = gnt_menuitem_new(_("Sort by log size"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "log");
+
+	item = reconstruct_accounts_menu();
+	gnt_menu_add_item(GNT_MENU(menu), item);
 }
 
 void gg_blist_show()
@@ -1755,7 +1889,7 @@ void gg_blist_show()
 	gnt_box_set_pad(GNT_BOX(ggblist->window), 0);
 
 	ggblist->tree = gnt_tree_new();
-	gnt_tree_set_compare_func(GNT_TREE(ggblist->tree), (GCompareFunc)blist_node_compare);
+
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
 	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, 25);
 	gnt_widget_set_size(ggblist->tree, gaim_prefs_get_int(PREF_ROOT "/size/width"),
@@ -1773,9 +1907,9 @@ void gg_blist_show()
 	gnt_widget_show(ggblist->window);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", gg_blist_get_handle(),
-				GAIM_CALLBACK(reconstruct_accounts_menu), NULL);
+				GAIM_CALLBACK(create_menu), NULL);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", gg_blist_get_handle(),
-				GAIM_CALLBACK(reconstruct_accounts_menu), NULL);
+				GAIM_CALLBACK(create_menu), NULL);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_status_changed), ggblist);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-idle-changed", gg_blist_get_handle(),
@@ -1817,7 +1951,7 @@ void gg_blist_show()
 	g_signal_connect(G_OBJECT(ggblist->statustext), "key_pressed",
 				G_CALLBACK(status_text_changed), NULL);
 
-	reconstruct_accounts_menu(ggblist);
+	create_menu();
 
 	populate_buddylist();
 
