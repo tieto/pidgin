@@ -298,7 +298,6 @@ spellchk_free(spellchk *spell)
 	g_free(spell);
 }
 
-/* Pango doesn't know about the "'" character.  Let's fix that. */
 static gboolean
 spellchk_inside_word(GtkTextIter *iter)
 {
@@ -328,16 +327,6 @@ spellchk_inside_word(GtkTextIter *iter)
 
 	if (gtk_text_iter_inside_word (iter) == TRUE)
 		return TRUE;
-
-	if (c == '\'') {
-		result = gtk_text_iter_backward_char(iter);
-		output = gtk_text_iter_inside_word(iter);
-
-		if (result)
-			gtk_text_iter_forward_char(iter);
-
-		return output;
-	}
 
 	return FALSE;
 
