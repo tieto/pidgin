@@ -211,6 +211,7 @@ void gg_debug_window_show()
 
 		box = gnt_hbox_new(FALSE);
 		gnt_box_set_alignment(GNT_BOX(box), GNT_ALIGN_MID);
+		gnt_box_set_fill(GNT_BOX(box), FALSE);
 
 		/* XXX: Setting the GROW_Y for the following widgets don't make sense. But right now
 		 * it's necessary to make the width of the debug window resizable ... like I said,
