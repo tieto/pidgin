@@ -29,6 +29,16 @@
 typedef struct _GaimPluginPrefFrame		GaimPluginPrefFrame;
 typedef struct _GaimPluginPref			GaimPluginPref;
 
+/**
+ * String format for preferences.
+ */
+typedef enum
+{
+	GAIM_STRING_FORMAT_TYPE_NONE      = 0,
+	GAIM_STRING_FORMAT_TYPE_MULTILINE = 1 << 0,
+	GAIM_STRING_FORMAT_TYPE_HTML      = 1 << 1
+} GaimStringFormatType;
+
 typedef enum {
 	GAIM_PLUGIN_PREF_NONE,
 	GAIM_PLUGIN_PREF_CHOICE,
