@@ -7082,6 +7082,19 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimGtkWindow *win)
 	GtkWidget *page;
 	GtkWidget *tab;
 
+	if (e->button == 2) {
+		GaimGtkConversation *gtkconv;
+		tab_clicked = gaim_gtkconv_get_tab_at_xy(win, e->x_root, e->y_root, NULL);
+
+		if (tab_clicked == -1)
+			return FALSE;
+		
+		gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, tab_clicked);
+		close_conv_cb(NULL, gtkconv);
+		return TRUE;
+	}
+
+
 	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
