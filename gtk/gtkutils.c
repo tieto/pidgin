@@ -847,13 +847,15 @@ gaim_gtk_setup_gtkspell(GtkTextView *textview)
 
 void
 gaim_gtk_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
-														 GdkModifierType arg2, GClosure *arg3,
-														 gpointer data)
+                         GdkModifierType arg2, GClosure *arg3,
+                         gpointer data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "accels", "accel changed, scheduling save.\n");
+	gaim_debug(GAIM_DEBUG_MISC, "accels",
+	           "accel changed, scheduling save.\n");
 
 	if (!accels_save_timer)
-		accels_save_timer = g_timeout_add(5000, gaim_gtk_save_accels, NULL);
+		accels_save_timer = g_timeout_add(5000, gaim_gtk_save_accels,
+		                                  NULL);
 }
 
 gboolean
@@ -862,7 +864,7 @@ gaim_gtk_save_accels(gpointer data)
 	char *filename = NULL;
 
 	filename = g_build_filename(gaim_user_dir(), G_DIR_SEPARATOR_S,
-															"accels", NULL);
+	                            "accels", NULL);
 	gaim_debug(GAIM_DEBUG_MISC, "accels", "saving accels to %s\n", filename);
 	gtk_accel_map_save(filename);
 	g_free(filename);
@@ -877,7 +879,7 @@ gaim_gtk_load_accels()
 	char *filename = NULL;
 
 	filename = g_build_filename(gaim_user_dir(), G_DIR_SEPARATOR_S,
-															"accels", NULL);
+	                            "accels", NULL);
 	gtk_accel_map_load(filename);
 	g_free(filename);
 }

@@ -352,7 +352,7 @@ gaim_mime_part_get_data_decoded(GaimMimePart *part, guchar **data, gsize *len)
 		*data = gaim_base16_decode(part->data->str, len);
 
 	} else if(! g_ascii_strcasecmp(enc, "base64")) {
-	*data = gaim_base64_decode(part->data->str, len);
+		*data = gaim_base64_decode(part->data->str, len);
 
 	} else if(! g_ascii_strcasecmp(enc, "quoted-printable")) {
 		*data = gaim_quotedp_decode(part->data->str, len);
