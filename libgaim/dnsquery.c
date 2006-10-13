@@ -893,10 +893,6 @@ gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 void
 gaim_dnsquery_init(void)
 {
-#ifdef _WIN32
-	if (!g_thread_supported())
-		g_thread_init(NULL);
-#endif
 }
 
 void

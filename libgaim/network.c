@@ -28,6 +28,8 @@
 #ifndef _WIN32
 #include <net/if.h>
 #include <sys/ioctl.h>
+#else
+#include <nspapi.h>
 #endif
 
 /* Solaris */
@@ -48,6 +50,8 @@
 libnm_glib_ctx *nm_context = NULL;
 guint nm_callback_idx = 0;
 
+#elif defined _WIN32
+static int current_network_count;
 #endif
 
 struct _GaimNetworkListenData {
@@ -372,6 +376,103 @@ gaim_network_get_port_from_fd(int fd)
 	return ntohs(addr.sin_port);
 }
 
+#ifdef _WIN32
+static guint
+wgaim_get_connected_network_count(void)
+{
+	guint net_cnt = 0;
+
+	WSAQUERYSET qs;
+	HANDLE h;
+	int retval;
+
+	memset(&qs, 0, sizeof(WSAQUERYSET));
+	qs.dwSize = sizeof(WSAQUERYSET);
+	qs.dwNameSpace = NS_ALL;
+
+	retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
+	if (retval != ERROR_SUCCESS) {
+		gchar *msg = g_win32_error_message(retval);
+		gaim_debug_warning("network", "Couldn't look up connected networks. %s (%lu).\n", msg, retval);
+		g_free(msg);
+	} else {
+		char buf[1024];
+		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
+		DWORD size = sizeof(buf);
+		while (WSALookupServiceNext(h, 0, &size, res) == ERROR_SUCCESS) {
+			net_cnt++;
+			gaim_debug_info("network", "found network '%s'\n",
+					res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)");
+			size = sizeof(buf);
+		}
+
+		WSALookupServiceEnd(h);
+	}
+
+	return net_cnt;
+
+}
+
+static gboolean wgaim_network_change_thread_cb(gpointer data)
+{
+	guint new_count;
+	GaimConnectionUiOps *ui_ops = gaim_connections_get_ui_ops();
+
+	new_count = wgaim_get_connected_network_count();
+
+	gaim_debug_info("network", "Received Network Change Notification. Current network count is %d, previous count was %d.\n", new_count, current_network_count);
+
+	if (new_count > 0) {
+		ui_ops->network_connected();
+	} else if (new_count == 0 && current_network_count > 0) {
+		ui_ops->network_disconnected();
+	}
+
+	current_network_count = new_count;
+
+	return FALSE;
+}
+
+static gpointer wgaim_network_change_thread(gpointer data)
+{
+	HANDLE h;
+	WSAQUERYSET qs;
+
+	int WSAAPI (*MyWSANSPIoctl) (
+	HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
+	DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
+	LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
+ 
+	MyWSANSPIoctl = (void*) wgaim_find_and_loadproc("ws2_32.dll", "WSANSPIoctl");
+	if (!MyWSANSPIoctl) {
+		gaim_debug_error("network", "Couldn't load WSANSPIoctl from ws2_32.dll.\n");
+		g_thread_exit(NULL);
+		return NULL;
+	}
+
+	while (TRUE) {
+		int retval;
+		DWORD retLen = 0;
+
+		memset(&qs, 0, sizeof(WSAQUERYSET));
+		qs.dwSize = sizeof(WSAQUERYSET);
+		qs.dwNameSpace = NS_ALL;
+
+		retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
+
+		/* This will block until there is a network change */
+		/* This is missing from the MinGW libws2_32.a as of version 3.7.
+		 * When this patch: http://sourceforge.net/tracker/index.php?func=detail&aid=1576083&group_id=2435&atid=302435 gets into a release, we can call this directly
+		 * retval = WSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);*/
+		 retval = MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);
+
+		retval = WSALookupServiceEnd(h);
+
+		g_idle_add(wgaim_network_change_thread_cb, NULL);
+	}
+}
+#endif
+
 gboolean
 gaim_network_is_available(void)
 {
@@ -388,6 +489,8 @@ gaim_network_is_available(void)
 		}
 		if (libnm_retval == LIBNM_ACTIVE_NETWORK_CONNECTION)	return TRUE;
 	}
+#elif _WIN32
+	return (current_network_count > 0);
 #endif
 	return TRUE;
 }
@@ -429,6 +532,13 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 void
 gaim_network_init(void)
 {
+#ifdef _WIN32
+	GError *err = NULL;
+	current_network_count = wgaim_get_connected_network_count();
+	if (!g_thread_create(wgaim_network_change_thread, NULL, FALSE, &err))
+		gaim_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+#endif
+
 	gaim_prefs_add_none  ("/core/network");
 	gaim_prefs_add_bool  ("/core/network/auto_ip", TRUE);
 	gaim_prefs_add_string("/core/network/public_ip", "");

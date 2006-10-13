@@ -79,8 +79,7 @@ gaim_gtk_connection_connected(GaimConnection *gc)
 		gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 
-	if (hash != NULL)
-		g_hash_table_remove(hash, account);
+	g_hash_table_remove(hash, account);
 
 	gaim_gtk_blist_update_account_error_state(account, NULL);
 }
@@ -204,10 +203,9 @@ static void gaim_gtk_connection_network_connected ()
 
 	while (list) {
 		GaimAccount *account = (GaimAccount*)list->data;
-		GaimAutoRecon *info = g_hash_table_lookup(hash, account);
-		if (info)
-			free_auto_recon(info);
-		do_signon(account);
+		g_hash_table_remove(hash, account);
+		if (gaim_account_is_disconnected(account))
+			do_signon(account);
 		list = list->next;
 	}
 }
@@ -222,7 +220,8 @@ static void gaim_gtk_connection_network_disconnected ()
 
 	while (l) {
 		GaimAccount *a = (GaimAccount*)l->data;
-		gaim_account_disconnect(a);
+		if (!gaim_account_is_disconnected(a))
+			gaim_account_disconnect(a);
 		l = l->next;
 	}
 }

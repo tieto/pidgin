@@ -444,6 +444,9 @@ void wgaim_init(void) {
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
 	g_free(newenv);
 
+	if (!g_thread_supported())
+		g_thread_init(NULL);
+
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
