@@ -1450,6 +1450,7 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	const char *value;
+	const char *clLastChange;
 
 	gaim_debug_info("MaYuan","profile_msg... \n");
 	session = cmdproc->session;
@@ -1495,8 +1496,12 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		session->passport_info.sl = atol(value);
 
 	/*starting retrieve the contact list*/
+	msn_userlist_load(session);
+	
+	msn_session_set_bnode(session);
 	session->contact = msn_contact_new(session);
-	msn_get_contact_list(session->contact);
+	clLastChange = gaim_blist_node_get_string(msn_session_get_bnode(session),"CLLastChange");
+	msn_get_contact_list(session->contact,clLastChange);
 //	msn_contact_connect(session->contact);
 }
 

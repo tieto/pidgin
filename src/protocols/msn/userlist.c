@@ -718,3 +718,46 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 	msn_userlist_rem_buddy(userlist, who, MSN_LIST_FL, old_group_name);
 }
 
+/*load userlist from the Blist file cache*/
+void
+msn_userlist_load(MsnSession *session)
+{
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimConnection *gc = gaim_account_get_connection(session->account);
+	GSList *l;
+	MsnUser * user;
+
+	g_return_if_fail(gc != NULL);
+
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next){
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy *)bnode;
+				if(b->account == gc->account){
+					user = msn_userlist_find_add_user(session->userlist,
+						b->name,NULL);
+					msn_user_set_op(user,MSN_LIST_FL_OP);
+				}
+			}
+		}
+	}
+	for (l = session->account->permit; l != NULL; l = l->next) {
+		user = msn_userlist_find_add_user(session->userlist,
+						(char *)l->data,NULL);
+		msn_user_set_op(user,MSN_LIST_AL_OP);
+	}
+	for (l = session->account->deny; l != NULL; l = l->next) {
+		user = msn_userlist_find_add_user(session->userlist,
+						(char *)l->data,NULL);
+		msn_user_set_op(user,MSN_LIST_BL_OP);
+	}
+	
+}
+

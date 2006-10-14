@@ -186,6 +186,13 @@ msn_user_set_type(MsnUser *user,int type)
 }
 
 void
+msn_user_set_op(MsnUser *user,int list_op)
+{
+	g_return_if_fail(list_op != NULL);
+	user->list_op |= list_op;
+}
+
+void
 msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 {
 	struct stat st;
@@ -295,14 +302,13 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 	}
 
 	b = gaim_find_buddy_in_group(account, passport, g);
-
 	if (b == NULL){
 		b = gaim_buddy_new(account, passport, NULL);
-
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 	}
-
 	b->proto_data = user;
+	/*Update the blist Node info*/
+//	gaim_blist_node_set_string(&(b->node), "", "");
 }
 
 /*check if the msn user is online*/

@@ -42,7 +42,8 @@ msn_session_new(GaimAccount *account)
 
 	session->user = msn_user_new(session->userlist,
 								 gaim_account_get_username(account), NULL);
-
+	session->bnode = NULL;
+	
 	/*if you want to chat with Yahoo Messenger*/
 	//session->protocol_ver = WLM_YAHOO_PROT_VER;
 	session->protocol_ver = WLM_PROT_VER;
@@ -258,6 +259,47 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 	swboard->flag |= flag;
 
 	return swboard;
+}
+
+/*setup the bnode, for MSN SOAP contact/address book op*/
+void 
+msn_session_set_bnode(MsnSession *session)
+{
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimConnection *gc = gaim_account_get_connection(session->account);
+
+	g_return_if_fail(gc != NULL);
+
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next){
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy *)bnode;
+				if(b->account == gc->account){
+					session->bnode = bnode;
+					return;
+				}
+			}
+		}
+	}
+	session->bnode = NULL;
+}
+
+/*get bnode*/
+GaimBlistNode *
+msn_session_get_bnode(MsnSession *session)
+{
+#if 1
+	return session->bnode;
+#else
+	return gaim_get_blist()->root;
+#endif
 }
 
 static void

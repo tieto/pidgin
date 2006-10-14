@@ -103,5 +103,6 @@ void msn_userlist_add_buddy(MsnUserList *userlist, const char *who,
 void msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 							 const char *old_group_name,
 							 const char *new_group_name);
+void msn_userlist_load(MsnSession *session);
 
 #endif /* _MSN_USERLIST_H_ */

@@ -306,6 +306,10 @@ msn_user_is_online(GaimAccount *account, const char *name);
  */
 gboolean
 msn_user_is_yahoo(GaimAccount *account ,const char *name);
+
+void msn_user_set_op(MsnUser *user,int list_op);
+
 /*@}*/
+
 
 #endif /* _MSN_USER_H_ */

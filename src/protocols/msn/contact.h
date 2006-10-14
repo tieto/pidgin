@@ -30,6 +30,9 @@
 /*get contact list soap request template*/
 #define MSN_GET_CONTACT_POST_URL	"/abservice/SharingService.asmx"
 #define MSN_GET_CONTACT_SOAP_ACTION "http://www.msn.com/webservices/AddressBook/FindMembership"
+#define MSN_GET_CONTACT_UPDATE_XML "<View>Full</View>"\
+	"<deltasOnly>true</deltasOnly>"\
+	"<lastChange>%s</lastChange>"
 #define MSN_GET_CONTACT_TEMPLATE	"<?xml version='1.0' encoding='utf-8'?>"\
 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
@@ -53,6 +56,7 @@
 				"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Profile</ServiceType>"\
 			"</Types>"\
 			"</serviceFilter>"\
+			"%s"\
 		"</FindMembership>"\
 	"</soap:Body>"\
 "</soap:Envelope>"
@@ -63,6 +67,15 @@
 #define MSN_ADDRESS_BOOK_POST_URL	"/abservice/abservice.asmx"
 /*get addressbook soap request template*/
 #define MSN_GET_ADDRESS_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABFindAll"
+#define MSN_GET_ADDRESS_FULL_TIME "0001-01-01T00:00:00.0000000-08:00"
+#define MSN_GET_ADDRESS_UPDATE_XML "<deltasOnly>true</deltasOnly>"\
+	"<lastChange>%s</lastChange>"
+
+#define MSN_GET_GLEAM_UPDATE_XML \
+	"%s"\
+	"<dynamicItemView>Gleam</dynamicItemView>"\
+	"<dynamicItemLastChange>%s</dynamicItemLastChange>"
+
 #define MSN_GET_ADDRESS_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
 	"<soap:Header>"\
@@ -79,6 +92,7 @@
 		"<ABFindAll xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<abId>00000000-0000-0000-0000-000000000000</abId>"\
 			"<abView>Full</abView>"\
+			"%s"\
 		"</ABFindAll>"\
 	"</soap:Body>"\
 "</soap:Envelope>"
@@ -199,8 +213,8 @@ MsnContact * msn_contact_new(MsnSession *session);
 void msn_contact_destroy(MsnContact *contact);
 
 void msn_contact_connect(MsnContact *contact);
-void msn_get_contact_list(MsnContact * contact);
-void msn_get_address_book(MsnContact *contact);
+void msn_get_contact_list(MsnContact * contact,char * update);
+void msn_get_address_book(MsnContact *contact,char * update, char * gupdate);
 
 /*contact SOAP Operation*/
 void msn_add_contact(MsnContact *contact,const char *passport,const char *groupId);
