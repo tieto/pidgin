@@ -40,7 +40,7 @@ struct _GaimGtkPluginUiInfo
 	int page_num;                                         /**< Reserved */
 };
 
-#define GAIM_GTK_PLUGIN_TYPE "gtk"
+#define GAIM_GTK_PLUGIN_TYPE GAIM_GTK_UI
 
 #define GAIM_IS_GTK_PLUGIN(plugin) \
 	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \

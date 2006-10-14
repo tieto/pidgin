@@ -22,6 +22,7 @@
 #include "internal.h"
 
 #include "accountopt.h"
+#include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "notify.h"
@@ -357,6 +358,14 @@ gaim_plugin_probe(const char *filename)
 	{
 		gaim_plugin_destroy(plugin);
 		return NULL;
+	}
+	else if (plugin->info->ui_requirement &&
+			strcmp(plugin->info->ui_requirement, gaim_core_get_ui()))
+	{
+		plugin->error = g_strdup_printf("The UI requirement for this plugin is not met.");
+		gaim_debug_error("plugins", "%s is not loadable: The UI requirement is not met.", plugin->path);
+		plugin->unloadable = TRUE;
+		return plugin;
 	}
 
 	/* Really old plugins. */

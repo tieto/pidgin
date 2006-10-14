@@ -31,6 +31,8 @@
 
 #include <string.h>
 
+#include "gntgaim.h"
+
 /**********************************************************************
  * @name GNT Plugins API
  **********************************************************************/
@@ -39,7 +41,7 @@
 typedef GntWidget* (*GGPluginFrame) ();
 
 /* Guess where these came from */
-#define GAIM_GNT_PLUGIN_TYPE "gnt"
+#define GAIM_GNT_PLUGIN_TYPE GAIM_GNT_UI
 
 /**
  * Decide whether a plugin is a GNT-plugin.
