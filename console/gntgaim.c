@@ -252,6 +252,7 @@ init_libgaim(int argc, char **argv)
 	/* set a user-specified config directory */
 	if (opt_config_dir_arg != NULL) {
 		gaim_util_set_user_dir(opt_config_dir_arg);
+		g_free(opt_config_dir_arg);
 	}
 
 	/*
