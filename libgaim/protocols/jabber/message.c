@@ -138,7 +138,7 @@ static void handle_headline(JabberMessage *jm)
 			desctxt = xmlnode_get_data(desc);
 
 			/* I'm all about ugly hacks */
-			if(body->len && !strcmp(body->str, jm->body))
+			if(body->len && jm->body && !strcmp(body->str, jm->body))
 				g_string_printf(body, "<a href='%s'>%s</a>",
 						urltxt, desctxt);
 			else
