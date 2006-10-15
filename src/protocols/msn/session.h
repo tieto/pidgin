@@ -245,4 +245,9 @@ GaimConversation *msn_session_get_conv(MsnSession *session,const char *passport)
 /*post message to User*/
 void msn_session_report_user(MsnSession *session,const char *passport,
 							char *msg,GaimMessageFlags flags);
+
+void msn_session_set_bnode(MsnSession *session);
+
+GaimBlistNode *msn_session_get_bnode(MsnSession *session);
+
 #endif /* _MSN_SESSION_H_ */
