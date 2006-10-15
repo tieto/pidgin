@@ -51,10 +51,10 @@ gnt_text_view_draw(GntWidget *widget)
 			*end = '\0';
 			wattrset(widget->window, seg->flags);
 			wprintw(widget->window, "%s", (view->string->str + seg->start));
-			if (!iter->next)
-				whline(widget->window, ' ' | seg->flags, widget->priv.width - line->length - 1);
 			*end = back;
 		}
+		wattroff(widget->window, A_UNDERLINE | A_BLINK | A_REVERSE);
+		whline(widget->window, ' ', widget->priv.width - line->length - 1);
 	}
 
 	scrcol = widget->priv.width - 1;
