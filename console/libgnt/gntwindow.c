@@ -8,7 +8,6 @@ enum
 };
 
 static GntBoxClass *parent_class = NULL;
-static guint signals[SIGS] = { 0 };
 
 static gboolean (*org_keypress)(GntWidget *widget, const char *text);
 static void (*org_destroy)(GntWidget *widget);

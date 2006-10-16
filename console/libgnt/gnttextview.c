@@ -24,7 +24,6 @@ typedef struct
 } GntTextLine;
 
 static GntWidgetClass *parent_class = NULL;
-static guint signals[SIGS] = { 0 };
 
 static void
 gnt_text_view_draw(GntWidget *widget)

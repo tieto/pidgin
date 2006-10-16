@@ -304,8 +304,6 @@ spellchk_inside_word(GtkTextIter *iter)
 	gunichar ucs4_char = gtk_text_iter_get_char(iter);
 	gchar *utf8_str;
 	gchar c = 0;
-	gboolean result;
-	gboolean output;
 
 	utf8_str = g_ucs4_to_utf8(&ucs4_char, 1, NULL, NULL, NULL);
 	if (utf8_str != NULL)

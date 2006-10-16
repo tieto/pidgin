@@ -8,7 +8,6 @@ enum
 };
 
 static GntTreeClass *parent_class = NULL;
-static guint signals[SIGS] = { 0 };
 
 static void (*org_draw)(GntWidget *wid);
 static void (*org_destroy)(GntWidget *wid);
