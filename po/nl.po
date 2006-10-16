@@ -11318,7 +11318,7 @@ msgstr "Bestanden sturen"
 
 #: ../libgaim/protocols/qq/send_file.c:744
 #, c-format
-msgid "The sending process of file[%s] has been cancaled by buddy[%d]"
+msgid "The sending process of file[%s] has been canceled by buddy[%d]"
 msgstr "het oversturen van het bestand[%s] is afgebroken door de gebruiker[%d]"
 
 #: ../libgaim/protocols/qq/sendqueue.c:169

@@ -11649,7 +11649,7 @@ msgstr "Envoi de fichier"
 
 #: ../libgaim/protocols/qq/send_file.c:737
 #, c-format
-msgid "The sending process of file[%s] has been cancaled by buddy[%d]"
+msgid "The sending process of file[%s] has been canceled by buddy[%d]"
 msgstr "L'encoi du fichier (%s) a été annulé par le contact (%d)."
 
 #: ../libgaim/protocols/qq/sendqueue.c:167

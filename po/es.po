@@ -11659,7 +11659,7 @@ msgstr "Archivo enviado"
 
 #: ../libgaim/protocols/qq/send_file.c:737
 #, c-format
-msgid "The sending process of file[%s] has been cancaled by buddy[%d]"
+msgid "The sending process of file[%s] has been canceled by buddy[%d]"
 msgstr "El proceso de envío de fichero[%s] ha sido cancelado por el amigo[%d]"
 
 #: ../libgaim/protocols/qq/sendqueue.c:167
