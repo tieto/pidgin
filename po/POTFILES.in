@@ -29,6 +29,8 @@ console/libgnt/gntutils.c
 console/libgnt/gntwidget.c
 console/plugins/gntgf.c
 console/plugins/gnthistory.c
+console/plugins/lastlog.c
+gtk/eggtrayicon.c
 gtk/gaimcombobox.c
 gtk/gaimstock.c
 gtk/gtkaccount.c
@@ -38,6 +40,7 @@ gtk/gtkconn.c
 gtk/gtkconv.c
 gtk/gtkdebug.c
 gtk/gtkdialogs.c
+gtk/gtkdocklet.c
 gtk/gtkexpander.c
 gtk/gtkft.c
 gtk/gtkimhtml.c
@@ -60,7 +63,6 @@ gtk/plugins/cap/cap.c
 gtk/plugins/contact_priority.c
 gtk/plugins/crazychat/cc_gaim_plugin.c
 gtk/plugins/docklet/docklet.c
-gtk/plugins/docklet/eggtrayicon.c
 gtk/plugins/extplacement.c
 gtk/plugins/gaiminc.c
 gtk/plugins/gaimrc.c
