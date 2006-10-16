@@ -449,7 +449,7 @@ static void _qq_send_packet_file_request (GaimConnection *gc, guint32 to_uid, gc
 	qd->xfer->data = info;
 
 	filename_len = strlen(filename);
-	filelen_str = g_strdup_printf("%d ×Ö½Ú", filesize);
+	filelen_str = g_strdup_printf("%d ?Ö½?", filesize);
 	filelen_strlen = strlen(filelen_str);
 
 	packet_len = 82 + filename_len + filelen_strlen;
@@ -734,7 +734,7 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 	}
 	filename = strrchr(gaim_xfer_get_local_filename(qd->xfer), '/') + 1;
 	msg = g_strdup_printf
-		(_("The sending process of file[%s] has been cancaled by buddy[%d]"),
+		(_("The sending process of file[%s] has been canceled by buddy[%d]"),
 		 filename, sender_uid);
 
 	gaim_notify_warning (gc, _("File Send"), msg, NULL);
