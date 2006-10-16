@@ -16,6 +16,7 @@ EXTRA_DIST = \
 		win32/targets.mak \
 		win32/wgaimerror.h \
 		win32/win32dep.c \
+		win32/giowin32.c \
 		win32/win32dep.h
 
 if USE_GCONFTOOL

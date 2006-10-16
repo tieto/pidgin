@@ -26,6 +26,7 @@
 #include <glib.h>
 #include "gtkeventloop.h"
 #include "eventloop.h"
+#include "win32dep.h"
 
 #define GAIM_GTK_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
 #define GAIM_GTK_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
@@ -92,7 +93,11 @@ static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInput
 	if (condition & GAIM_INPUT_WRITE)
 		cond |= GAIM_GTK_WRITE_COND;
 
+#ifdef _WIN32
+	channel = wgaim_g_io_channel_win32_new_socket(fd);
+#else
 	channel = g_io_channel_unix_new(fd);
+#endif
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      gaim_gtk_io_invoke, closure, gaim_gtk_io_destroy);
 

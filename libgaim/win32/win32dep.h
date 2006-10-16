@@ -40,6 +40,7 @@ FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure);
 char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname); /* needs to be g_free'd */
 gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *valname, const char *value);
 char *wgaim_escape_dirsep(const char *filename); /* needs to be g_free'd */
+GIOChannel *wgaim_g_io_channel_win32_new_socket(int socket); /* Until we get the post-2.8 glib win32 giochannel implementation working, use the thread-based one */
 
 /* Determine Gaim paths */
 char *wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
