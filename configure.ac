@@ -1243,7 +1243,7 @@ if test "x$enable_gnutls" != "xno"; then
 	if test "x$with_gnutls_libs"     != "xno" -a \
 	        "x$have_gnutls_includes" != "xno"; then
 
-		LDFLAGS_save="$LDFLAGS"
+		LIBS_save="$LIBS"
 
 		case $with_gnutls_libs in
 			""|-L*) ;;
@@ -1252,9 +1252,9 @@ if test "x$enable_gnutls" != "xno"; then
 
 		AC_CACHE_CHECK([for GnuTLS libraries], gnutls_libs,
 		[
-			LDFLAGS="$LDFLAGS $with_gnutls_libs -lgnutls -lgcrypt"
+			LIBS="$LIBS $with_gnutls_libs -lgnutls -lgcrypt"
 			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
-			LDFLAGS="$LDFLAGS_save"
+			LIBS="$LIBS_save"
 		])
 
 		if test "x$gnutls_libs" != "xno"; then
@@ -1498,7 +1498,7 @@ if test "x$enable_nss" != "xno"; then
 			AC_CACHE_CHECK([for Mozilla nss libraries], moz_nss_libs,
 			[
 				LIBS_save=$LIBS
-				LDFLAGS="$LDFLAGS -L$with_nspr_libs $nsprlibs -L$with_nss_libs $nsslibs"
+				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 				LIBS="$nsslibs $nsprlibs"
 
 				AC_TRY_LINK_FUNC(NSS_Init,
@@ -1507,7 +1507,8 @@ if test "x$enable_nss" != "xno"; then
 
 				if test "x$moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
-					LDFLAGS="$LDFLAGS -L$with_nspr_libs $nsprlibs -L$with_nss_libs $nsslibs"
+					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
+					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
 						[moz_nss_libs="yes"],
 						[moz_nss_libs="no"])
