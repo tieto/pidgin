@@ -227,10 +227,7 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatu
 	if (status_box->account == account)
 		update_to_reflect_account_status(status_box, account, newstatus);
 	else if (status_box->token_status_account == account)
-	{
-		gtk_gaim_status_box_refresh(status_box);
 		status_menu_refresh_iter(status_box);
-	}
 }
 
 static gboolean
