@@ -696,19 +696,16 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 
 	/*
-	 * If the saved_status is transient, is Available, Away, Invisible
-	 * or Offline, and it does not have an substatuses, then select
-	 * the primitive in the dropdown menu.  Otherwise select the
-	 * popular status in the dropdown menu.
+	 * If there is a token-account, then select the primitive from the
+	 * dropdown using a loop. Otherwise select from the default list.
 	 */
 	primitive = gaim_savedstatus_get_type(saved_status);
-	if (!status_box->token_status_account && gaim_savedstatus_is_transient(saved_status) &&
-		((primitive == GAIM_STATUS_AVAILABLE) || (primitive == GAIM_STATUS_AWAY) ||
-		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
-		(!gaim_savedstatus_has_substatuses(saved_status)))
+	if (!status_box->token_status_account)
 	{
 		index = get_statusbox_index(status_box, saved_status);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
+		if (index == -1)
+			gtk_gaim_status_box_refresh(status_box);
 	}
 	else
 	{
@@ -728,8 +725,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 							TYPE_COLUMN, &type,
 							DATA_COLUMN, &data,
 							-1);
-				if (status_box->token_status_account && gaim_savedstatus_is_transient(saved_status)
-					&& type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
+				if (type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
 				{
 					char *name;
 					const char *acct_status_name = gaim_status_get_name(
@@ -738,8 +734,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 					gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 							TEXT_COLUMN, &name, -1);
 
-					if (!gaim_savedstatus_has_substatuses(saved_status)
-						|| !strcmp(name, acct_status_name))
+					if (!strcmp(name, acct_status_name))
 					{
 						/* Found! */
 						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
@@ -747,13 +742,6 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						break;
 					}
 					g_free(name);
-				}
-				else if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
-						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
-				{
-					/* Found! */
-					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
-					break;
 				}
 			}
 			while (gtk_tree_model_iter_next(GTK_TREE_MODEL(status_box->dropdown_store), &iter));
@@ -984,6 +972,10 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(GAIM_STATUS_AWAY));
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(GAIM_STATUS_INVISIBLE));
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(GAIM_STATUS_OFFLINE));
+
+			if (pixbuf2)	g_object_unref(G_OBJECT(pixbuf2));
+			if (pixbuf3)	g_object_unref(G_OBJECT(pixbuf3));
+			if (pixbuf4)	g_object_unref(G_OBJECT(pixbuf4));
 		}
 
 		add_popular_statuses(status_box);
@@ -991,6 +983,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		gtk_gaim_status_box_add_separator(GTK_GAIM_STATUS_BOX(status_box));
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("New..."), NULL, NULL);
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
+		if (pixbuf)	g_object_unref(G_OBJECT(pixbuf));
 
 		gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 		status_menu_refresh_iter(status_box);
