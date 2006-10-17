@@ -1,4 +1,7 @@
 #define _GNU_SOURCE
+#if defined(__APPLE__)
+#define _XOPEN_SOURCE_EXTENDED
+#endif
 
 #include "config.h"
 
