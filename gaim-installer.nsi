@@ -48,6 +48,10 @@ SetDateSave on
 !include "WordFunc.nsh"
 !insertmacro VersionCompare
 
+!include "TextFunc.nsh"
+!insertmacro ConfigRead
+!insertmacro ConfigWriteS
+
 ;--------------------------------
 ;Defines
 
@@ -60,15 +64,12 @@ SetDateSave on
 !define GAIM_STARTUP_RUN_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
 
-!define GTK_VERSION				"2.6.10"
+!define GTK_VERSION				"2.10.6"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER			"..\gtk_installer\gtk-runtime*.exe"
-!define GTK_THEME_DIR				"..\gtk_installer\gtk_themes"
-!define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
-!define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.4.0\engines"
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
 !define DOWNLOADER_URL				"http://gaim.sourceforge.net/win32/download_redir.php"
@@ -510,59 +511,23 @@ SubSectionEnd
 
 SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
   Section /o $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    CopyFiles $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.plain $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc
-    SetOverwrite off
-    done:
+    Push "Raleigh"
+    Call WriteGtkThemeConfig
   SectionEnd
 
   Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
-    File ${GTK_THEME_DIR}\engines\libwimp.dll
-    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
-    File ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
-    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
-    SetOverwrite off
-    done:
+    Push "MS-Windows"
+    Call WriteGtkThemeConfig
   SectionEnd
 
   Section /o $(GTK_BLUECURVE_SECTION_TITLE) SecGtkBluecurve
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
-    File ${GTK_THEME_DIR}\engines\libbluecurve.dll
-    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
-    File ${GTK_THEME_DIR}\themes\gtkrc.bluecurve
-    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.bluecurve
-    SetOverwrite off
-    done:
+    Push "Bluecurve"
+    Call WriteGtkThemeConfig
   SectionEnd
 
   Section /o $(GTK_LIGHTHOUSEBLUE_SECTION_TITLE) SecGtkLighthouseblue
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
-    File ${GTK_THEME_DIR}\engines\liblighthouseblue.dll
-    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
-    File ${GTK_THEME_DIR}\themes\gtkrc.lighthouseblue
-    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.lighthouseblue
-    SetOverwrite off
-    done:
+    Push "Lighthouseblue"
+    Call WriteGtkThemeConfig
   SectionEnd
 SubSectionEnd
 
@@ -758,6 +723,7 @@ Section Uninstall
     !ifdef DEBUG
     Delete "$INSTDIR\exchndl.dll"
     !endif
+    Delete "$INSTDIR\install.log"
 
     ;Try to remove Gaim install dir .. if empty
     RMDir "$INSTDIR"
@@ -857,50 +823,26 @@ SectionEnd ; end of uninstall section
 ;--------------------------------
 ;Functions
 
-;
-; Usage:
-;
-; Call CanWeInstallATheme
-; Pop $R0
-;
-; Return:
-;   "" - If no
-;   "root path of GTK+ installation" - if yes
-;
-Function CanWeInstallATheme
-    Push $1
-    Push $0
+Function WriteGtkThemeConfig
+Exch $0
+Push $1
 
-    ; Set default.. no rights
-    StrCpy $1 ""
+ClearErrors
+${ConfigRead} "$PROFILE\.gtkrc-2.0" "gtk-theme-name =" $1
+IfErrors new_file
+${ConfigWriteS} "$PROFILE\.gtkrc-2.0" "gtk-theme-name =" "$\"$0$\"" $1
+Goto done
 
-    Call CheckUserInstallRights
-    Pop $0
+new_file:
+ClearErrors
+FileOpen $1 "$PROFILE\.gtkrc-2.0" w
+FileWrite $1 "gtk-theme-name = $\"$0$\""
+FileClose $1
+Goto done
 
-    ; If no rights check if gtk was installed to gaim dir..
-    StrCmp $0 "NONE" 0 themes_cont
-      StrCmp $GTK_FOLDER $INSTDIR 0 no_rights
-        StrCpy $1 $INSTDIR
-        Goto done
-    themes_cont:
-
-    StrCmp $0 "HKCU" hkcu hklm
-
-    hkcu:
-      ReadRegStr $1 HKCU ${GTK_REG_KEY} "Path"
-      StrCmp $1 "" no_rights done
-
-    hklm:
-      ReadRegStr $1 HKLM ${GTK_REG_KEY} "Path"
-      Goto done
-
-    no_rights:
-      MessageBox MB_OK $(GTK_NO_THEME_INSTALL_RIGHTS) /SD IDOK
-      StrCpy $1 ""
-
-    done:
-      Pop $0
-      Exch $1
+done:
+Pop $1
+Pop $0
 FunctionEnd
 
 !macro CheckUserInstallRightsMacro UN
