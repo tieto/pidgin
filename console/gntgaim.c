@@ -79,12 +79,12 @@ typedef struct _GaimGtkIOClosure {
 
 } GaimGtkIOClosure;
 
-static void gaim_gtk_io_destroy(gpointer data)
+static void gaim_gnt_io_destroy(gpointer data)
 {
 	g_free(data);
 }
 
-static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
+static gboolean gaim_gnt_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	GaimGtkIOClosure *closure = data;
 	GaimInputCondition gaim_cond = 0;
@@ -103,7 +103,7 @@ static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, g
 #ifdef _WIN32
 	if(! gaim_cond) {
 #if DEBUG
-		gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
+		gaim_debug_misc("gnt_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
 			   condition, GAIM_GTK_READ_COND, GAIM_GTK_WRITE_COND);
@@ -136,7 +136,7 @@ static guint gnt_input_add(gint fd, GaimInputCondition condition, GaimInputFunct
 
 	channel = g_io_channel_unix_new(fd);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      gaim_gtk_io_invoke, closure, gaim_gtk_io_destroy);
+					      gaim_gnt_io_invoke, closure, gaim_gnt_io_destroy);
 
 	g_io_channel_unref(channel);
 	return closure->result;
@@ -325,6 +325,8 @@ int main(int argc, char **argv)
 {
 	/* XXX: Don't puke */
 	freopen(".error", "w", stderr);
+
+	signal(SIGPIPE, SIG_IGN);
 
 	/* Initialize the libgaim stuff */
 	if (!init_libgaim(argc, argv))
