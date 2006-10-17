@@ -703,10 +703,8 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 		return;
 	}
 	filename = strrchr(gaim_xfer_get_local_filename(qd->xfer), '/') + 1;
-	msg = g_strdup_printf
-		(_
-		 ("Your request to send file[%s] has been rejected by buddy[%d]"),
-		 filename, sender_uid);
+	msg = g_strdup_printf(_("%d has declined the file %s"),
+		 sender_uid, filename);
 
 	gaim_notify_warning (gc, _("File Send"), msg, NULL);
 	gaim_xfer_request_denied(qd->xfer);
@@ -734,8 +732,8 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 	}
 	filename = strrchr(gaim_xfer_get_local_filename(qd->xfer), '/') + 1;
 	msg = g_strdup_printf
-		(_("The sending process of file[%s] has been canceled by buddy[%d]"),
-		 filename, sender_uid);
+		(_("%d canceled the transfer of %s"),
+		 sender_uid, filename);
 
 	gaim_notify_warning (gc, _("File Send"), msg, NULL);
 	gaim_xfer_cancel_remote(qd->xfer);
