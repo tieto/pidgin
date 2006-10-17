@@ -268,7 +268,8 @@ draw_taskbar(gboolean reposition)
 			GNT_WIDGET_UNSET_FLAGS(w, GNT_WIDGET_URGENT);
 			if (wm.window_update) {
 				GntNode *node = g_hash_table_lookup(nodes, w);
-				wm.window_update(node->panel, w);
+				if (node)
+					wm.window_update(node->panel, w);
 			}
 		} else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT)) {
 			/* This is a window with the URGENT hint set */
@@ -1158,6 +1159,7 @@ void gnt_init()
 	signal(SIGWINCH, sighandler);
 #endif
 	signal(SIGCHLD, sighandler);
+	signal(SIGPIPE, SIG_IGN);
 
 	g_type_init();
 
@@ -1224,6 +1226,9 @@ void gnt_screen_release(GntWidget *widget)
 
 	if (node == NULL)	/* Yay! Nothing to do. */
 		return;
+
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DESTROYING) && wm.close_window)
+		wm.close_window(widget);
 
 	g_hash_table_remove(nodes, widget);
 
