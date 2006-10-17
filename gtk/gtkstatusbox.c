@@ -71,6 +71,7 @@ static gint get_statusbox_index(GtkGaimStatusBox *box, GaimSavedStatus *saved_st
 
 static void gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box);
+static void status_menu_refresh_iter(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_changed(GtkComboBox *box);
 static void gtk_gaim_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
@@ -225,6 +226,11 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatu
 {
 	if (status_box->account == account)
 		update_to_reflect_account_status(status_box, account, newstatus);
+	else if (status_box->token_status_account == account)
+	{
+		gtk_gaim_status_box_refresh(status_box);
+		status_menu_refresh_iter(status_box);
+	}
 }
 
 static gboolean
@@ -388,17 +394,6 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
 
-		if (statusbox->status_changed_signal) {
-			gaim_signal_disconnect(gaim_accounts_get_handle(), "account-status-changed",
-			                        statusbox, GAIM_CALLBACK(account_status_changed_cb));
-			statusbox->status_changed_signal = 0;
-		}
-
-		if (statusbox->account) {
-			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
-			                                                       statusbox, GAIM_CALLBACK(account_status_changed_cb),
-			                                                       statusbox);
-		}
 		gtk_gaim_status_box_regenerate(statusbox);
 
 		break;
@@ -413,11 +408,6 @@ gtk_gaim_status_box_finalize(GObject *obj)
 {
 	GtkGaimStatusBox *statusbox = GTK_GAIM_STATUS_BOX(obj);
 
-	if (statusbox->status_changed_signal) {
-		gaim_signal_disconnect(gaim_accounts_get_handle(), "account-status-changed",
-								statusbox, GAIM_CALLBACK(account_status_changed_cb));
-		statusbox->status_changed_signal = 0;
-	}
 	gaim_signals_disconnect_by_handle(statusbox);
 	gaim_prefs_disconnect_by_handle(statusbox);
 
@@ -1359,6 +1349,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled", status_box,
 						GAIM_CALLBACK(account_enabled_cb),
 						status_box);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed", status_box,
+						GAIM_CALLBACK(account_status_changed_cb),
+						status_box);
+
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/blist/show_buddy_icons",
 								buddy_list_details_pref_changed_cb, status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/conversations/spellcheck",

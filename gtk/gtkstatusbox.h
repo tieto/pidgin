@@ -117,8 +117,6 @@ struct _GtkGaimStatusBox
 	GtkTreeIter iter;
 	char *error;
 
-	gulong status_changed_signal;
-
 	/*
 	 * These widgets are made for renderin'
 	 * That's just what they'll do
