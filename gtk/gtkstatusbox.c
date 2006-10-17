@@ -689,10 +689,13 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 	primitive = gaim_savedstatus_get_type(saved_status);
 	if (!status_box->token_status_account)
 	{
-		index = get_statusbox_index(status_box, saved_status);
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
-		if (index == -1)
+		if (gaim_savedstatus_is_transient(saved_status)) {
+			index = get_statusbox_index(status_box, saved_status);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box),
+			                         index);
+		} else {
 			gtk_gaim_status_box_refresh(status_box);
+		}
 	}
 	else
 	{
