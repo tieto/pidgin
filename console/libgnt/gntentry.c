@@ -370,9 +370,10 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->max && g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->max)
 					continue;
 
-				if (entry->end - entry->start >= entry->buffer)
+				if (entry->end + len - entry->start >= entry->buffer)
 				{
-					char *tmp = g_strdup_printf(entry->start);
+					/* This will cause the buffer to grow */
+					char *tmp = g_strdup_printf("%s%*s", entry->start, len, "");
 					gnt_entry_set_text(entry, tmp);
 					g_free(tmp);
 				}
