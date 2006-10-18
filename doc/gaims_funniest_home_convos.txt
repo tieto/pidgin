@@ -424,3 +424,18 @@ edited for brevity, and name changed.
 14:59 <itchypants> seanegan, ah okay thanks
 15:00 <seanegan> no problem
 
+(15:57:11) sadrul: the files (at least a couple) in the tar.bz2 are different
+(15:57:23) datallah: right.. that is the problem - the code in svn is fine
+(15:57:31) seanegan: oh, what the hell?
+(15:57:41) seanegan: don't tell me I make dist'ed the wrong tree
+(15:57:46) LSchiere: how does the code in svn differ except in gaim's
+funniest and the spec.in?
+(15:57:50) LSchiere: seanegan: sounds like it
+(15:57:53) datallah: you are such a screw up!
+(15:58:12) seanegan: I sure am
+(15:58:32) seanegan: Ugh!
+(15:58:37) datallah: you must have been distracted by um... plugins
+(15:58:45) seanegan: Don't I test these things?
+(15:58:51) LSchiere: you test things?
+(15:59:06) SimGuy: seanegan: by experience, I think we've determined you do
+not :)
