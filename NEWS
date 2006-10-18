@@ -12,6 +12,10 @@
 
 	Nathan: I don't have much to say, but yay for another beta!
 
+	Etan: I did a bunch of perl work for this beta again, there is now
+	some support for perl scripts to call functions in the gtk ui, it
+	still needs work.
+
 2.0.0beta3 (03/25/2006):
 	Mark: Yeah, I know, another beta.  Don't worry, we'll get this
 	puppy out the door eventually.
