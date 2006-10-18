@@ -134,6 +134,8 @@ version 2.0.0:
 	  create) a default gtkxfer dialog.
 	* CHAT_USERS_BUDDY_COLUMN became CHAT_USERS_WEIGHT_COLUMN, along with
 	  a change in the values stored in the column.
+	* gaim_find_buddies() returns a list of all buddies in the account if name
+	  is NULL.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
