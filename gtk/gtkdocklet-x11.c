@@ -56,7 +56,7 @@ docklet_x11_create_cb()
 static void
 docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "embedded\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "embedded\n");
 	
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
@@ -66,7 +66,7 @@ docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 static void
 docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "destroyed\n");
 
 	gaim_gtk_docklet_remove();
 
@@ -222,7 +222,7 @@ docklet_x11_destroy()
 
 	image = NULL;
 
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "destroyed\n");
 }
 
 static gboolean
@@ -233,7 +233,7 @@ docklet_x11_embed_timeout_cb()
 	 * loaded so that it can embed automatically if/when a notification
 	 * area becomes available.
 	 */
-	gaim_debug_info("tray icon", "failed to embed within timeout\n");
+	gaim_debug_info("docklet", "failed to embed within timeout\n");
 	gaim_gtk_docklet_remove();
 	
 	return FALSE;
@@ -248,7 +248,7 @@ docklet_x11_create()
 		/* if this is being called when a tray icon exists, it's because
 		   something messed up. try destroying it before we proceed,
 		   although docklet_refcount may be all hosed. hopefully won't happen. */
-		gaim_debug(GAIM_DEBUG_WARNING, "tray icon", "trying to create icon but it already exists?\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "docklet", "trying to create icon but it already exists?\n");
 		docklet_x11_destroy();
 	}
 
@@ -281,7 +281,7 @@ docklet_x11_create()
 	gaim_gtk_docklet_embedded();
 	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "created\n");
 }
 
 static struct docklet_ui_ops ui_ops =

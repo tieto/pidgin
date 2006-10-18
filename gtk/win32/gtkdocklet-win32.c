@@ -58,16 +58,16 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 
 	switch(msg) {
 	case WM_CREATE:
-		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "WM_CREATE\n");
+		gaim_debug(GAIM_DEBUG_INFO, "docklet", "WM_CREATE\n");
 		taskbarRestartMsg = RegisterWindowMessage("TaskbarCreated");
 		break;
 		
 	case WM_TIMER:
-		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "WM_TIMER\n");
+		gaim_debug(GAIM_DEBUG_INFO, "docklet", "WM_TIMER\n");
 		break;
 
 	case WM_DESTROY:
-		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "WM_DESTROY\n");
+		gaim_debug(GAIM_DEBUG_INFO, "docklet", "WM_DESTROY\n");
 		break;
 
 	case WM_TRAYMESSAGE:
@@ -233,7 +233,7 @@ static void wgaim_tray_create() {
 	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-unhiding",
 			gaim_gtk_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_maximize), NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "created\n");
 }
 
 static void wgaim_tray_destroy() {
