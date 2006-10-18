@@ -97,7 +97,6 @@ libgaim/ft.c
 libgaim/gconf/gaim.schemas.in
 libgaim/log.c
 libgaim/plugin.c
-libgaim/plugins/ciphertest.c
 libgaim/plugins/dbus-example.c
 libgaim/plugins/filectl.c
 libgaim/plugins/idle.c
