@@ -27,7 +27,7 @@ Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
-BuildRequires: libtool, pkgconfig, intltool, gettext
+BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 %{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel}
