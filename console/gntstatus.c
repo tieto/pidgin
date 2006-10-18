@@ -56,12 +56,19 @@ typedef struct
 
 typedef struct
 {
+	GaimAccount *account;
+	const GaimStatusType *type;
+	char *message;
+} RowInfo;
+
+typedef struct
+{
 	GntWidget *window;
 	GntWidget *type;
 	GntWidget *message;
 
 	EditStatus *parent;
-	GaimAccount *account;
+	RowInfo *key;
 } EditSubStatus;
 
 static GList *edits;  /* List of opened edit-status dialogs */
@@ -213,13 +220,36 @@ destroy_substatus_win(GaimAccount *account, EditSubStatus *sub, gpointer null)
 }
 
 static void
+free_key(gpointer key, gpointer n)
+{
+	RowInfo *row = key;
+	g_free(row->message);
+	g_free(key);
+}
+
+
+static void
 update_edit_list(GntWidget *widget, EditStatus *edit)
 {
 	edits = g_list_remove(edits, edit);
 	gaim_notify_close_with_handle(edit);
 	g_hash_table_foreach(edit->hash, (GHFunc)destroy_substatus_win, NULL);
+	g_list_foreach((GList*)gnt_tree_get_rows(GNT_TREE(edit->tree)), free_key, NULL);
 	g_free(edit);
 }
+
+static void
+set_substatuses(EditStatus *edit)
+{
+	const GList *iter;
+	for (iter = gnt_tree_get_rows(GNT_TREE(edit->tree)); iter; iter = iter->next) {
+		RowInfo *key = iter->data;
+		if (gnt_tree_get_choice(GNT_TREE(edit->tree), key)) {
+			gaim_savedstatus_set_substatus(edit->saved, key->account, key->type, key->message);
+		}
+	}
+}
+
 
 static void
 use_trans_status_cb(GntWidget *button, EditStatus *edit)
@@ -234,6 +264,8 @@ use_trans_status_cb(GntWidget *button, EditStatus *edit)
 	saved = gaim_savedstatus_find_transient_by_type_and_message(prim, message);
 	if (saved == NULL) {
 		saved = gaim_savedstatus_new(NULL, prim);
+		edit->saved = saved;
+		set_substatuses(edit);
 	}
 	gaim_savedstatus_set_message(saved, message);
 	gaim_savedstatus_activate(saved);
@@ -273,6 +305,7 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 	{
 		edit->saved = gaim_savedstatus_new(title, prim);
 		gaim_savedstatus_set_message(edit->saved, message);
+		set_substatuses(edit);
 		if (statuses.tree)
 			gnt_tree_add_row_last(GNT_TREE(statuses.tree), edit->saved,
 					gnt_tree_create_row(GNT_TREE(statuses.tree), title,
@@ -304,33 +337,39 @@ add_substatus(EditStatus *edit, GaimAccount *account)
 	char *name;
 	const char *type = NULL, *message = NULL;
 	GaimSavedStatusSub *sub = NULL;
+	RowInfo *key;
 
 	if (!edit || !edit->tree)
 		return;
 
 	if (edit->saved)
 		sub = gaim_savedstatus_get_substatus(edit->saved, account);
-	
+
+	key = g_new0(RowInfo, 1);
+	key->account = account;
+
 	if (sub)
 	{
-		type = gaim_status_type_get_name(gaim_savedstatus_substatus_get_type(sub));
+		key->type = gaim_savedstatus_substatus_get_type(sub);
+		type = gaim_status_type_get_name(key->type);
 		message = gaim_savedstatus_substatus_get_message(sub);
+		key->message = g_strdup(message);
 	}
 
 	name = g_strdup_printf("%s (%s)", gaim_account_get_username(account),
 			gaim_account_get_protocol_name(account));
-	gnt_tree_add_choice(GNT_TREE(edit->tree), account,
+	gnt_tree_add_choice(GNT_TREE(edit->tree), key,
 			gnt_tree_create_row(GNT_TREE(edit->tree), name, type, message), NULL, NULL);
 
 	if (sub)
-		gnt_tree_set_choice(GNT_TREE(edit->tree), account, TRUE);
+		gnt_tree_set_choice(GNT_TREE(edit->tree), key, TRUE);
 	g_free(name);
 }
 
 static void
 substatus_window_destroy_cb(GntWidget *window, EditSubStatus *sub)
 {
-	g_hash_table_remove(sub->parent->hash, sub->account);
+	g_hash_table_remove(sub->parent->hash, sub->key->account);
 	g_free(sub);
 }
 
@@ -338,19 +377,23 @@ static void
 save_substatus_cb(GntWidget *widget, EditSubStatus *sub)
 {
 	GaimSavedStatus *saved = sub->parent->saved;
-	GaimAccount *account = sub->account;
+	RowInfo *row = sub->key;
 	const char *message;
 	GaimStatusType *type;
 
 	type = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(sub->type));
 	message = gnt_entry_get_text(GNT_ENTRY(sub->message));
 
-	gaim_savedstatus_set_substatus(saved, account, type, message);
+	row->type = type;
+	row->message = g_strdup(message);
 
-	gnt_tree_set_choice(GNT_TREE(sub->parent->tree), account, TRUE);
-	gnt_tree_change_text(GNT_TREE(sub->parent->tree), account, 1,
+	if (saved)    /* Save the substatus if the savedstatus actually exists. */
+		gaim_savedstatus_set_substatus(saved, row->account, type, message);
+
+	gnt_tree_set_choice(GNT_TREE(sub->parent->tree), row, TRUE);
+	gnt_tree_change_text(GNT_TREE(sub->parent->tree), row, 1,
 			gaim_status_type_get_name(type));
-	gnt_tree_change_text(GNT_TREE(sub->parent->tree), account, 2, message);
+	gnt_tree_change_text(GNT_TREE(sub->parent->tree), row, 2, message);
 	
 	gnt_widget_destroy(sub->window);
 }
@@ -365,11 +408,16 @@ popup_substatus(GntTree *tree, const char *key, EditStatus *edit)
 		GaimSavedStatusSub *substatus = NULL;
 		const GList *iter;
 		char *name;
-		GaimAccount *account = gnt_tree_get_selection_data(tree);
+		RowInfo *selected = gnt_tree_get_selection_data(tree);
+		GaimAccount *account = selected->account;
 
-		if (gnt_tree_get_choice(tree, account))
+		if (gnt_tree_get_choice(tree, selected))
 		{
 			/* There was a savedstatus for this account. Now remove it. */
+			g_free(selected->message);
+			selected->type = NULL;
+			selected->message = NULL;
+			/* XXX: should we really be saving it right now? */
 			gaim_savedstatus_unset_substatus(edit->saved, account);
 			gnt_tree_change_text(tree, account, 1, NULL);
 			gnt_tree_change_text(tree, account, 2, NULL);
@@ -384,7 +432,7 @@ popup_substatus(GntTree *tree, const char *key, EditStatus *edit)
 
 		sub = g_new0(EditSubStatus, 1);
 		sub->parent = edit;
-		sub->account = account;
+		sub->key = selected;
 
 		sub->window = window = gnt_vbox_new(FALSE);
 		gnt_box_set_toplevel(GNT_BOX(window), TRUE);

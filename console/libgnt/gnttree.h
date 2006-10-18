@@ -88,6 +88,8 @@ char *gnt_tree_get_selection_text(GntTree *tree);
 
 GList *gnt_tree_get_selection_text_list(GntTree *tree);
 
+const GList *gnt_tree_get_rows(GntTree *tree);
+
 void gnt_tree_remove(GntTree *tree, gpointer key);
 
 void gnt_tree_remove_all(GntTree *tree);
