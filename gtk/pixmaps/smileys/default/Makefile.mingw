@@ -12,9 +12,11 @@ include ./Makefile.am
 
 .PHONY: install
 
+#Exclude 132k of qq smileys that aren't used on wingaim
 install:
 	if test '$(gaimsmileypix_DATA)'; then \
 	  mkdir -p $(gaimsmileypixdir); \
 	  cp $(gaimsmileypix_DATA) $(gaimsmileypixdir); \
+	  rm -f $(gaimsmileypixdir)/qq_*; \
 	fi;
 
