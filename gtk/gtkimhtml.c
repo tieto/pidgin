@@ -2599,22 +2599,20 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 						if (font->face && (imhtml->format_functions & GTK_IMHTML_FACE)) {
 							gtk_imhtml_toggle_fontface(imhtml, NULL);
-							g_free (font->face);
 						}
+						g_free (font->face);
 						if (font->fore && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
 							gtk_imhtml_toggle_forecolor(imhtml, NULL);
-							g_free (font->fore);
 						}
+						g_free (font->fore);
 						if (font->back && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
 							gtk_imhtml_toggle_backcolor(imhtml, NULL);
-							g_free (font->back);
 						}
-						if (font->sml)
-							g_free (font->sml);
+						g_free (font->back);
+						g_free (font->sml);
 
 						if ((font->size != 3) && (imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK)))
 							gtk_imhtml_font_set_size(imhtml, 3);
-
 
 						fonts = g_slist_remove (fonts, font);
 						g_free(font);
@@ -2680,17 +2678,20 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
 							font->fore = color;
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
-						}
+						} else
+							g_free(color);
 
 						if (back && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
 							font->back = back;
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
-						}
+						} else
+							g_free(back);
 
 						if (face && !(options & GTK_IMHTML_NO_FONTS) && (imhtml->format_functions & GTK_IMHTML_FACE)) {
 							font->face = face;
 							gtk_imhtml_toggle_fontface(imhtml, font->face);
-						}
+						} else
+							g_free(face);
 
 						if (sml)
 							font->sml = sml;
@@ -2706,7 +2707,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 								font->size = MAX (0, 3 - font->size);
 							} else if (isdigit (*size)) {
 								sscanf (size, "%hd", &font->size);
-					}
+							}
 							if (font->size > 100)
 								font->size = 100;
 						} else if (oldfont)
@@ -2729,7 +2730,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							g_free(bg);
 							bg = bgcolor;
 							gtk_imhtml_toggle_background(imhtml, bg);
-						}
+						} else
+							g_free(bgcolor);
 					}
 					break;
 				case 45:	/* A (opt) */
@@ -2809,29 +2811,32 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						if (fonts)
 							oldfont = fonts->data;
 
-						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR))
-						{
+						if (color && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_FORECOLOR)) {
 							font->fore = color;
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
+						} else {
+							if (oldfont && oldfont->fore)
+								font->fore = g_strdup(oldfont->fore);
+							g_free(color);
 						}
-						else if (oldfont && oldfont->fore)
-							font->fore = g_strdup(oldfont->fore);
 
-						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR))
-						{
+						if (background && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
 							font->back = background;
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
+						} else {
+							if (oldfont && oldfont->back)
+								font->back = g_strdup(oldfont->back);
+							g_free(background);
 						}
-						else if (oldfont && oldfont->back)
-							font->back = g_strdup(oldfont->back);
 
-						if (family && !(options & GTK_IMHTML_NO_FONTS) && (imhtml->format_functions & GTK_IMHTML_FACE))
-						{
+						if (family && !(options & GTK_IMHTML_NO_FONTS) && (imhtml->format_functions & GTK_IMHTML_FACE)) {
 							font->face = family;
 							gtk_imhtml_toggle_fontface(imhtml, font->face);
+						} else {
+							if (oldfont && oldfont->face)
+								font->face = g_strdup(oldfont->face);
+							g_free(family);
 						}
-						else if (oldfont && oldfont->face)
-							font->face = g_strdup(oldfont->face);
 						if (font->face && (atoi(font->face) > 100)) {
 							/* WTF is this? */
 							/* Maybe it sets a max size on the font face?  I seem to
@@ -2878,7 +2883,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						{
 						    gtk_imhtml_toggle_underline(imhtml);
 						    font->underline = 1;
-						}
+						} else
+							g_free(textdec);
 
 						if (oldfont)
 						{
@@ -2906,6 +2912,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							{
 								gtk_imhtml_toggle_bold(imhtml);
 							}
+							g_free(weight);
 						}
 
 						g_free(style);
