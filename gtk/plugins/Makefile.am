@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap docklet gestures gevolution musicmessaging perl ticker
+DIST_SUBDIRS = cap gestures gevolution musicmessaging perl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -18,7 +18,6 @@ endif
 
 SUBDIRS = \
 	$(CAP_DIR) \
-	docklet \
 	gestures \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
