@@ -57,23 +57,6 @@ static char *app_data_dir = NULL, *install_dir = NULL,
 
 static HINSTANCE libgaimdll_hInstance = 0;
 
-
-/*
- *  STATIC CODE
- */
-
-static void wgaim_debug_print(GaimDebugLevel level, const char *category,
-		const char *arg_s) {
-	if(category)
-		printf("%s: %s", category, arg_s);
-	else
-		printf(arg_s);
-}
-
-static GaimDebugUiOps ops = {
-	wgaim_debug_print
-};
-
 /*
  *  PUBLIC CODE
  */
@@ -115,9 +98,9 @@ FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure) {
 	FARPROC proc = 0;
 
 	if(!(hmod = GetModuleHandle(dllname))) {
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "%s not already loaded; loading it...\n", dllname);
+		gaim_debug_warning("wgaim", "%s not already loaded; loading it...\n", dllname);
 		if(!(hmod = LoadLibrary(dllname))) {
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Could not load: %s\n", dllname);
+			gaim_debug_error("wgaim", "Could not load: %s\n", dllname);
 			return NULL;
 		}
 		else
@@ -125,12 +108,12 @@ FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure) {
 	}
 
 	if((proc = GetProcAddress(hmod, procedure))) {
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "This version of %s contains %s\n",
+		gaim_debug_info("wgaim", "This version of %s contains %s\n",
 			dllname, procedure);
 		return proc;
 	}
 	else {
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Function %s not found in dll %s\n",
+		gaim_debug_warning("wgaim", "Function %s not found in dll %s\n",
 			procedure, dllname);
 		if(did_load) {
 			/* unload dll */
@@ -203,7 +186,7 @@ const char *wgaim_install_dir(void) {
 
 		if (tmp == NULL) {
 			tmp = g_win32_error_message(GetLastError());
-			gaim_debug(GAIM_DEBUG_ERROR, "wgaim",
+			gaim_debug_error("wgaim",
 				"GetModuleFileName error: %s\n", tmp);
 			g_free(tmp);
 			return NULL;
@@ -261,7 +244,7 @@ const char *wgaim_data_dir(void) {
 			if (!app_data_dir)
 				app_data_dir = g_strdup("C:");
 		}
-		gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n",
+		gaim_debug_info("wgaim", "Gaim settings dir: %s\n",
 			app_data_dir);
 	}
 
@@ -414,8 +397,9 @@ void wgaim_init(void) {
 	const char *perlenv;
 	char *newenv;
 
-	gaim_debug_set_ui_ops(&ops);
 	gaim_debug_info("wgaim", "wgaim_init start\n");
+	gaim_debug_info("wgaim", "libgaim version: " VERSION "\n");
+
 
 	gaim_debug_info("wgaim", "Glib:%u.%u.%u\n",
 		glib_major_version, glib_minor_version, glib_micro_version);
@@ -429,7 +413,7 @@ void wgaim_init(void) {
 	   2.2 in addition to 2.2, it will still return 2.2 in
 	   wVersion since that is the version we requested. */
 	if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2) {
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
+		gaim_debug_error("wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
 		WSACleanup();
 	}
 
@@ -441,19 +425,19 @@ void wgaim_init(void) {
 		perlenv ? ";" : "",
 		wgaim_install_dir());
 	if (!g_setenv("PERL5LIB", newenv, TRUE))
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
+		gaim_debug_warning("wgaim", "putenv failed for PERL5LIB\n");
 	g_free(newenv);
 
 	if (!g_thread_supported())
 		g_thread_init(NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
+	gaim_debug_info("wgaim", "wgaim_init end\n");
 }
 
 /* Windows Cleanup */
 
 void wgaim_cleanup(void) {
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_cleanup\n");
+	gaim_debug_info("wgaim", "wgaim_cleanup\n");
 
 	/* winsock cleanup */
 	WSACleanup();
@@ -465,7 +449,7 @@ void wgaim_cleanup(void) {
 }
 
 /* DLL initializer */
-BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 	libgaimdll_hInstance = hinstDLL;
 	return TRUE;
 }

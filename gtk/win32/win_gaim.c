@@ -81,7 +81,7 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 					NULL, retv, 0,
 					(LPTSTR) &szBuf, sizeof(szBuf), NULL);
 
-			printf("Could not read reg key '%s' subkey '%s' value: '%s'\nError: (%ld) %s\n",
+			printf("Could not read reg key '%s' subkey '%s' value: '%s'.\nMessage: (%ld) %s\n",
 					((key == HKEY_LOCAL_MACHINE) ? "HKLM" :
 					 (key == HKEY_CURRENT_USER) ? "HKCU" :
 					 "???"),
