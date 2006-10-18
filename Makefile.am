@@ -75,3 +75,5 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Gaim.3pm
 
+DISTCLEANFILES= gaim.desktop libgaim/gconf/gaim.schemas intltool-extract \
+			intltool-merge intltool-update
