@@ -2,8 +2,13 @@
 
 2.0.0beta4 (10/17/2006)
 	Sean: Still beta. Maybe the next one should be a gamma.. :)
+
 	Daniel: I'm super chuffed to announce that this will work with newer
 	(i.e. >= 2.8.0) versions of GTK+ on Windows.
+
+	Luke: Several significant changes in this one, including no longer
+	using libao for sound!  There are no doubt bugs here, but hopefully
+	nothing major.
 
 2.0.0beta3 (03/25/2006):
 	Mark: Yeah, I know, another beta.  Don't worry, we'll get this
