@@ -40,6 +40,7 @@ endif
 
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
+	rm $(distdir)/config.h
 
 distcheck-hook: plugins/perl/common/Gaim.pm
 #	cp plugins/perl/common/Gaim.pm $(distdir)/plugins/perl/common
