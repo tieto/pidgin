@@ -700,10 +700,7 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 	GList *popular = NULL;
 	GList *cur;
 	int i;
-	GaimSavedStatus *current, *next;
-
-	/* We don't want the current status to be in the GList */
-	current = gaim_savedstatus_get_current();
+	GaimSavedStatus *next;
 
 	/* Copy 'how_many' elements to a new list */
 	i = 0;
@@ -711,7 +708,7 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 	while ((i < how_many) && (cur != NULL))
 	{
 		next = cur->data;
-		if ((next != current) && (!gaim_savedstatus_is_transient(next)
+		if ((!gaim_savedstatus_is_transient(next)
 			|| gaim_savedstatus_get_message(next) != NULL))
 		{
 			popular = g_list_prepend(popular, cur->data);

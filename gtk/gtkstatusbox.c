@@ -687,15 +687,13 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 	 * dropdown using a loop. Otherwise select from the default list.
 	 */
 	primitive = gaim_savedstatus_get_type(saved_status);
-	if (!status_box->token_status_account)
+	if (!status_box->token_status_account && gaim_savedstatus_is_transient(saved_status) &&
+		((primitive == GAIM_STATUS_AVAILABLE) || (primitive == GAIM_STATUS_AWAY) ||
+		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
+		(!gaim_savedstatus_has_substatuses(saved_status)))
 	{
-		if (gaim_savedstatus_is_transient(saved_status)) {
-			index = get_statusbox_index(status_box, saved_status);
-			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box),
-			                         index);
-		} else {
-			gtk_gaim_status_box_refresh(status_box);
-		}
+		index = get_statusbox_index(status_box, saved_status);
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
 	}
 	else
 	{
@@ -715,7 +713,11 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 							TYPE_COLUMN, &type,
 							DATA_COLUMN, &data,
 							-1);
-				if (type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
+
+				/* This is a special case because Primitives for the token_status_account are actually
+				 * saved statuses with substatuses for the enabled accounts */
+				if (status_box->token_status_account && gaim_savedstatus_is_transient(saved_status)
+					&& type == GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
 				{
 					char *name;
 					const char *acct_status_name = gaim_status_get_name(
@@ -724,7 +726,8 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 					gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 							TEXT_COLUMN, &name, -1);
 
-					if (!strcmp(name, acct_status_name))
+					if (!gaim_savedstatus_has_substatuses(saved_status)
+						|| !strcmp(name, acct_status_name))
 					{
 						/* Found! */
 						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
@@ -732,6 +735,13 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						break;
 					}
 					g_free(name);
+				}
+				else if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
+						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
+				{
+					/* Found! */
+					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+					break;
 				}
 			}
 			while (gtk_tree_model_iter_next(GTK_TREE_MODEL(status_box->dropdown_store), &iter));
@@ -1770,7 +1780,16 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 			{
 				/* Selected status and previous status is the same */
 				if (!message_changed(message, gaim_status_get_attr_string(status, "message")))
-					changed = FALSE;
+				{
+					GaimSavedStatus *ss = gaim_savedstatus_get_current();
+					/* Make sure that statusbox displays the correct thing.
+					 * It can get messed up if the previous selection was a
+					 * saved status that wasn't supported by this account */
+					if ((gaim_savedstatus_get_type(ss) == primitive)
+							&& gaim_savedstatus_is_transient(ss)
+							&& gaim_savedstatus_has_substatuses(ss))
+						changed = FALSE;
+				}
 			}
 		} else {
 			saved_status = gaim_savedstatus_get_current();
@@ -1790,12 +1809,11 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 				GList *tmp, *active_accts = gaim_accounts_get_all_active();
 
 				for (; iter != NULL; iter = iter->next) {
-					GaimSavedStatus *ss= iter->data;
+					GaimSavedStatus *ss = iter->data;
 					const char *ss_msg = gaim_savedstatus_get_message(ss);
 					if ((gaim_savedstatus_get_type(ss) == primitive) && gaim_savedstatus_is_transient(ss) &&
 						gaim_savedstatus_has_substatuses(ss) && /* Must have substatuses */
-						(((ss_msg == NULL) && (message == NULL)) ||
-						((ss_msg != NULL) && (message != NULL) && !strcmp(ss_msg, message))))
+						!message_changed(ss_msg, message))
 					{
 						gboolean found = FALSE;
 						/* The currently enabled accounts must have substatuses for all the active accts */
