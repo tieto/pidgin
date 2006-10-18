@@ -416,3 +416,11 @@ edited for brevity, and name changed.
 (13:57:36) l33t_h4x0r left the room ("Leaving").
 (13:58:58) LSchiere: *amused* that's the first time in a while that the requester has *agreed* that there is no legit reason to want the feature
 (13:59:19) Err: he was not the sharpest knife in the drawer
+
+14:57 <itchypants> [blah blah blah simple question]
+      [other traffic]
+14:57 <itchypants> [retransmit simple question]
+14:59 <seanegan> itchypants: you need to chill the hell out
+14:59 <itchypants> seanegan, ah okay thanks
+15:00 <seanegan> no problem
+
