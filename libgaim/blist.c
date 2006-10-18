@@ -65,6 +65,11 @@ static GaimBlistNode *gaim_blist_get_last_child(GaimBlistNode *node)
 	return gaim_blist_get_last_sibling(node->child);
 }
 
+struct _list_account_buddies {
+	GSList *list;
+	GaimAccount *account;
+};
+
 struct _gaim_hbuddy {
 	char *name;
 	GaimAccount *account;
@@ -2119,26 +2124,46 @@ GaimBuddy *gaim_find_buddy_in_group(GaimAccount *account, const char *name,
 	return ret;
 }
 
+static void find_acct_buddies(gpointer key, gpointer value, gpointer data)
+{
+	struct _gaim_hbuddy *hb = key;
+	GaimBuddy *buddy = value;
+	struct _list_account_buddies *ab = data;
+
+	if (hb->account == ab->account) {
+		ab->list = g_slist_prepend(ab->list, buddy);
+	}
+}
+
 GSList *gaim_find_buddies(GaimAccount *account, const char *name)
 {
-	struct buddy *buddy;
-	struct _gaim_hbuddy hb;
+	GaimBuddy *buddy;
 	GaimBlistNode *node;
 	GSList *ret = NULL;
 
 	g_return_val_if_fail(gaimbuddylist != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
-	hb.name = g_strdup(gaim_normalize(account, name));
-	hb.account = account;
 
-	for (node = gaimbuddylist->root; node != NULL; node = node->next) {
-		hb.group = node;
-		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb)) != NULL)
-			ret = g_slist_append(ret, buddy);
+	if ((name != NULL) && (*name != '\0')) {
+		struct _gaim_hbuddy hb;
+
+		hb.name = g_strdup(gaim_normalize(account, name));
+		hb.account = account;
+
+		for (node = gaimbuddylist->root; node != NULL; node = node->next) {
+			hb.group = node;
+			if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb)) != NULL)
+				ret = g_slist_prepend(ret, buddy);
+		}
+		g_free(hb.name);
+	} else {
+		struct _list_account_buddies *ab = g_new0(struct _list_account_buddies, 1);
+		ab->account = account;
+		g_hash_table_foreach(gaimbuddylist->buddies, find_acct_buddies, ab);
+		ret = ab->list;
+		g_free(ab);
 	}
-	g_free(hb.name);
 
 	return ret;
 }

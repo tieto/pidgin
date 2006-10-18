@@ -160,6 +160,7 @@ void
 gaim_connection_destroy(GaimConnection *gc)
 {
 	GaimAccount *account;
+	GSList *buddies, *tmp;
 #if 0
 	GList *wins;
 #endif
@@ -194,6 +195,14 @@ gaim_connection_destroy(GaimConnection *gc)
 		if (prpl_info->close)
 			(prpl_info->close)(gc);
 	}
+
+	/* Clear out the proto data that was freed in the prpl close method*/
+	buddies = gaim_find_buddies(account, NULL);
+	for (tmp = buddies; tmp; tmp = tmp->next) {
+		GaimBuddy *buddy = tmp->data;
+		buddy->proto_data = NULL;
+	}
+	g_slist_free(buddies);
 
 	connections = g_list_remove(connections, gc);
 
