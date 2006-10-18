@@ -42,7 +42,7 @@ dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
 	rm $(distdir)/config.h
 
-distcheck-hook: libgaim/plugins/perl/common/Gaim.pm
+distcheck-hook: libgaim/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/GtkUI.pm
 #	cp libgaim/plugins/perl/common/Gaim.pm $(distdir)/libgaim/plugins/perl/common
 
 appsdir = $(datadir)/applications

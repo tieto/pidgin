@@ -28,6 +28,7 @@ AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_builddir)/libgaim \
 	-I$(top_srcdir)/libgaim \
+	-I$(top_srcdir) \
 	-I$(top_srcdir)/console \
 	-I$(top_srcdir)/console/libgnt \
 	$(DEBUG_CFLAGS) \

@@ -37,6 +37,11 @@ EXTRA_DIST = \
 	$(common_sources)
 
 common/Makefile: common/Makefile.PL
+	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
+		for f in ${common_sources}; do \
+			${LN_S} -f ../${srcdir}/$$f $$f; \
+		done; \
+	fi
 	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
 
 common/Makefile.PL: common/Makefile.PL.in $(top_builddir)/config.status
