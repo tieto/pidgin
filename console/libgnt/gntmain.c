@@ -271,8 +271,7 @@ draw_taskbar(gboolean reposition)
 			GNT_WIDGET_UNSET_FLAGS(w, GNT_WIDGET_URGENT);
 			if (wm.window_update) {
 				GntNode *node = g_hash_table_lookup(nodes, w);
-				if (node)
-					wm.window_update(node->panel, w);
+				wm.window_update(node ? node->panel : NULL, w);
 			}
 		} else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT)) {
 			/* This is a window with the URGENT hint set */
@@ -1318,7 +1317,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 
 	if (wm.window_update) {
 		GntNode *node = g_hash_table_lookup(nodes, widget);
-		wm.window_update(node->panel, widget);
+		wm.window_update(node ? node->panel : NULL, widget);
 	}
 
 	draw_taskbar(FALSE);
@@ -1382,7 +1381,7 @@ void gnt_screen_rename_widget(GntWidget *widget, const char *text)
 
 	if (wm.window_update) {
 		GntNode *node = g_hash_table_lookup(nodes, widget);
-		wm.window_update(node->panel, widget);
+		wm.window_update(node ? node->panel : NULL, widget);
 	}
 
 	draw_taskbar(FALSE);
