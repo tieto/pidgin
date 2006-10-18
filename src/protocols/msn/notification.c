@@ -1409,7 +1409,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	const char *passport, *psm_str;
 
 	/*get the payload content*/
-	gaim_debug_info("MaYuan","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
+//	gaim_debug_info("MaYuan","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
 
 	session = cmdproc->session;
 	account = session->account;

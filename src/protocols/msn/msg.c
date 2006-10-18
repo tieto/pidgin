@@ -215,7 +215,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	char **elems, **cur, **tokens;
 
 	g_return_if_fail(payload != NULL);
-	gaim_debug_info("MaYuan","payload:{%s}\n",payload);
+//	gaim_debug_info("MaYuan","payload:{%s}\n",payload);
 	tmp_base = tmp = g_malloc0(payload_len + 1);
 	memcpy(tmp_base, payload, payload_len);
 

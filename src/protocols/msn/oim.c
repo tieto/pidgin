@@ -157,8 +157,10 @@ msn_oim_send_connect_cb(gpointer data, GaimSslConnection *gsc,
 void
 msn_oim_send_process(MsnOim *oim,char *body,int len)
 {
-	xmlnode *responseNode,*bodyNode,*faultNode;
+	xmlnode *responseNode,*bodyNode;
+	xmlnode	*faultNode,*faultCodeNode,*faultstringNode;
 	xmlnode *detailNode,*challengeNode;
+	char *faultCodeStr,*faultstring;
 	char *challenge;
 
 	responseNode = xmlnode_from_str(body,len);
@@ -178,18 +180,43 @@ msn_oim_send_process(MsnOim *oim,char *body,int len)
 		return;
 	}
 	/*get the challenge,and repost it*/
+	faultCodeNode = xmlnode_get_child(faultNode,"faultcode");
+	if(faultCodeNode == NULL){
+		gaim_debug_info("MaYuan","faultcode Node is NULL\n");
+		goto oim_send_process_fail;
+	}
+	faultCodeStr = xmlnode_get_data(faultCodeNode);
+	gaim_debug_info("MaYuan","fault code:{%s}\n",faultCodeStr);
+
+	if(strcmp(faultCodeStr,"q0:AuthenticationFailed")){
+		/*other Fault Reason?*/
+		goto oim_send_process_fail;
+	}
+
+	faultstringNode = xmlnode_get_child(faultNode,"faultstring");
+	faultstring = xmlnode_get_data(faultstringNode);
+	gaim_debug_info("MaYuan","fault string :{%s}\n",faultstring);
+
+	/* lock key fault reason,
+	 * compute the challenge and resend it
+	 */
 	detailNode = xmlnode_get_child(faultNode, "detail");
+	if(detailNode == NULL){
+			goto oim_send_process_fail;
+	}
 	challengeNode = xmlnode_get_child(detailNode,"LockKeyChallenge");
 
 	g_free(oim->challenge);
 	oim->challenge = xmlnode_get_data(challengeNode);
 	gaim_debug_info("MaYuan","lockkey:{%s}\n",oim->challenge);
 
-	xmlnode_free(responseNode);
-
 	/*repost the send*/
 	gaim_debug_info("MaYuan","prepare to repost the send...\n");
 	msn_oim_send_msg(oim);
+
+oim_send_process_fail:
+	xmlnode_free(responseNode);
+	return ;
 }
 
 static void
