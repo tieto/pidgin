@@ -34,8 +34,6 @@
 
 #include "gntplugin.h"
 
-#include <gnttextview.h>
-
 #define HISTORY_PLUGIN_ID "gnt-history"
 
 #define HISTORY_SIZE (4 * 1024)
