@@ -489,7 +489,7 @@ gaim_network_is_available(void)
 		}
 		if (libnm_retval == LIBNM_ACTIVE_NETWORK_CONNECTION)	return TRUE;
 	}
-#elif define _WIN32
+#elif defined _WIN32
 	return (current_network_count > 0);
 #endif
 	return TRUE;
