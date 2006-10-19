@@ -377,7 +377,7 @@ gaim_network_get_port_from_fd(int fd)
 }
 
 #ifdef _WIN32
-static guint
+static gint
 wgaim_get_connected_network_count(void)
 {
 	guint net_cnt = 0;
@@ -397,7 +397,7 @@ wgaim_get_connected_network_count(void)
 		gaim_debug_warning("network", "Couldn't look up connected networks. %s (%d).\n", msg, errorid);
 		g_free(msg);
 
-		net_cnt = 1; /* Assume something is connected */
+		return -1;
 	} else {
 		char buf[1024];
 		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
@@ -418,10 +418,13 @@ wgaim_get_connected_network_count(void)
 
 static gboolean wgaim_network_change_thread_cb(gpointer data)
 {
-	guint new_count;
+	gint new_count;
 	GaimConnectionUiOps *ui_ops = gaim_connections_get_ui_ops();
 
 	new_count = wgaim_get_connected_network_count();
+
+	if (new_count < 0)
+		return FALSE;
 
 	gaim_debug_info("network", "Received Network Change Notification. Current network count is %d, previous count was %d.\n", new_count, current_network_count);
 
@@ -440,6 +443,7 @@ static gpointer wgaim_network_change_thread(gpointer data)
 {
 	HANDLE h;
 	WSAQUERYSET qs;
+	time_t last_trigger = time(NULL);
 
 	int WSAAPI (*MyWSANSPIoctl) (
 	HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
@@ -463,12 +467,20 @@ static gpointer wgaim_network_change_thread(gpointer data)
 
 		retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
 
+		/* Make sure at least 30 seconds have elapsed since the last
+		 * notification so we don't peg the cpu if this keeps changing. */
+		if ((time(NULL) - last_trigger) < 30)
+			Sleep(30000);
+
+		last_trigger = time(NULL);
+
 		/* This will block until there is a network change */
 		retval = MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);
 
 		retval = WSALookupServiceEnd(h);
 
 		g_idle_add(wgaim_network_change_thread_cb, NULL);
+
 	}
 }
 #endif
@@ -534,9 +546,17 @@ gaim_network_init(void)
 {
 #ifdef _WIN32
 	GError *err = NULL;
-	current_network_count = wgaim_get_connected_network_count();
-	if (!g_thread_create(wgaim_network_change_thread, NULL, FALSE, &err))
-		gaim_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+	gint cnt = wgaim_get_connected_network_count();
+
+	if (cnt < 0) /* Assume there is a network */
+		current_network_count = 1;
+	/* Don't listen for network changes if we can't tell anyway */
+	else
+	{
+		current_network_count = cnt;
+		if (!g_thread_create(wgaim_network_change_thread, NULL, FALSE, &err))
+			gaim_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+	}
 #endif
 
 	gaim_prefs_add_none  ("/core/network");
