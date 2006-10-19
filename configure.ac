@@ -1930,7 +1930,7 @@ echo
 echo Build with GStreamer support.. : $enable_gst
 echo Build with DBUS support....... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
-	eval eval echo DBUS services directory........ : $DBUS_SERVICES_DIR
+	eval eval echo DBUS services directory....... : $DBUS_SERVICES_DIR
 fi
 echo SSL Library/Libraries......... : $msg_ssl
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
