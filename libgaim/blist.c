@@ -1808,7 +1808,7 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	gaim_blist_schedule_save();
 
 	/* Re-sort the contact */
-	if (contact->priority == buddy) {
+	if (cnode->child && contact->priority == buddy) {
 		gaim_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
 			ops->update(gaimbuddylist, cnode);
