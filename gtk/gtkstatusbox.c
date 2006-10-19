@@ -1231,19 +1231,19 @@ buddy_icon_set_cb(const char *filename, gpointer data)
 		}
 		gtk_gaim_status_box_set_buddy_icon(box, filename);
 	}
-
-	box->buddy_icon_sel = NULL;
 }
 
 static void
 icon_choose_cb(const char *filename, gpointer data)
 {
 	GtkGaimStatusBox *box = data;
-	if (box->account == NULL)
+	if (box->account == NULL && filename)
 		/* The pref-connect callback does the actual work */
 		gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
 	else
 		buddy_icon_set_cb(filename, data);
+
+	box->buddy_icon_sel = NULL;
 }
 
 static void
