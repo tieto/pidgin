@@ -1874,7 +1874,6 @@ AC_OUTPUT([Makefile
 		   gtk/pixmaps/status/default/Makefile
 		   gtk/plugins/Makefile
 		   gtk/plugins/cap/Makefile
-		   gtk/plugins/docklet/Makefile
 		   gtk/plugins/gestures/Makefile
 		   gtk/plugins/gevolution/Makefile
 		   gtk/plugins/musicmessaging/Makefile
