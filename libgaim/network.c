@@ -392,9 +392,12 @@ wgaim_get_connected_network_count(void)
 
 	retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
 	if (retval != ERROR_SUCCESS) {
-		gchar *msg = g_win32_error_message(retval);
-		gaim_debug_warning("network", "Couldn't look up connected networks. %s (%lu).\n", msg, retval);
+		int errorid = WSAGetLastError();
+		gchar *msg = g_win32_error_message(errorid);
+		gaim_debug_warning("network", "Couldn't look up connected networks. %s (%d).\n", msg, errorid);
 		g_free(msg);
+
+		net_cnt = 1; /* Assume something is connected */
 	} else {
 		char buf[1024];
 		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
@@ -461,10 +464,7 @@ static gpointer wgaim_network_change_thread(gpointer data)
 		retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
 
 		/* This will block until there is a network change */
-		/* This is missing from the MinGW libws2_32.a as of version 3.7.
-		 * When this patch: http://sourceforge.net/tracker/index.php?func=detail&aid=1576083&group_id=2435&atid=302435 gets into a release, we can call this directly
-		 * retval = WSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);*/
-		 retval = MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);
+		retval = MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);
 
 		retval = WSALookupServiceEnd(h);
 
@@ -489,7 +489,7 @@ gaim_network_is_available(void)
 		}
 		if (libnm_retval == LIBNM_ACTIVE_NETWORK_CONNECTION)	return TRUE;
 	}
-#elif _WIN32
+#elif define _WIN32
 	return (current_network_count > 0);
 #endif
 	return TRUE;
