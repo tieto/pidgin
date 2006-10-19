@@ -79,7 +79,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 	{
 		GaimConnection *gc = (GaimConnection *)l->data;
 		GaimAccount *account = gaim_connection_get_account(gc);
-		char *me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
+		char *me;
 
 		if (strcmp(gaim_account_get_protocol_id(account), prpl_id))
 			continue;
@@ -87,6 +87,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 		if (!gaim_account_get_bool(account, "gevo-autoadd", FALSE))
 			continue;
 
+		me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
 		for (l2 = ims; l2 != NULL; l2 = l2->next)
 		{
 			if (gaim_find_buddy(account, l2->data) != NULL ||
