@@ -45,7 +45,7 @@ static void historize(GaimConversation *c)
 	GaimConversationType convtype;
 	GList *logs = NULL;
 	const char *alias = name;
-	guint flags;
+	GaimLogReadFlags flags;
 	char *history;
 	char *header;
 	GaimMessageFlags mflag;
@@ -119,7 +119,8 @@ static void historize(GaimConversation *c)
 	gaim_conversation_write(c, "", header, mflag, time(NULL));
 	g_free(header);
 
-	g_strchomp(history);
+	if (flags & GAIM_LOG_READ_NO_NEWLINE)
+		gaim_str_strip_char(history, '\n');
 	gaim_conversation_write(c, "", history, mflag, time(NULL));
 	g_free(history);
 
