@@ -1028,10 +1028,10 @@ static void init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Login Hidden"), "hidden", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("QQ Server"), "server", NULL);
+	option = gaim_account_option_string_new(_("Server"), "server", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("QQ Port"), "port", NULL);
+	option = gaim_account_option_string_new(_("Port"), "port", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
