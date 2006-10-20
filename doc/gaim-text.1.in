@@ -21,7 +21,7 @@
 .\" USA.
 .TH gaim-text 1
 .SH NAME
-GntGaim \- A Pimpin' Penguin console frontend for Instant Messaging client Gaim.
+Gaim-Text \- A Pimpin' Penguin console frontend for Instant Messaging client Gaim.
 .SH SYNOPSIS
 .TP 5
 \fBgaim-text \fI[options]\fR
