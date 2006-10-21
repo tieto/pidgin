@@ -20,12 +20,6 @@ EXTRA_DIST = \
 		intltool-merge.in \
 		intltool-update.in \
 		config.h.mingw \
-		gtk/plugins/win32/transparency/Makefile.mingw \
-		gtk/plugins/win32/transparency/win2ktrans.c \
-		gtk/plugins/win32/winprefs/gtkappbar.c \
-		gtk/plugins/win32/winprefs/gtkappbar.h \
-		gtk/plugins/win32/winprefs/Makefile.mingw \
-		gtk/plugins/win32/winprefs/winprefs.c \
 		po/Makefile.mingw
 
 noinst_HEADERS = config.h

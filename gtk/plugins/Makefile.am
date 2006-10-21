@@ -78,7 +78,13 @@ EXTRA_DIST = \
 	gaiminc.c \
 	gtk-signals-test.c \
 	mailchk.c \
-	raw.c
+	raw.c \
+	win32/transparency/Makefile.mingw \
+	win32/transparency/win2ktrans.c \
+	win32/winprefs/gtkappbar.c \
+	win32/winprefs/gtkappbar.h \
+	win32/winprefs/Makefile.mingw \
+	win32/winprefs/winprefs.c
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
