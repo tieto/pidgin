@@ -88,6 +88,8 @@ struct _GnWidgetClass
 	GObjectClass parent;
 
 	GHashTable *remaps;   /* Key remaps */
+	GHashTable *actions;  /* name -> Action */
+	GHashTable *bindings; /* key -> ActionParam */
 
 	void (*map)(GntWidget *obj);
 	void (*show)(GntWidget *obj);		/* This will call draw() and take focus (if it can take focus) */
@@ -148,6 +150,40 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 void gnt_widget_set_visible(GntWidget *widget, gboolean set);
 
 gboolean gnt_widget_has_shadow(GntWidget *widget);
+
+/******************/
+/* Widget Actions */
+/******************/
+typedef gboolean (*GntWidgetActionCallback) (GntWidget *widget, GList *params);
+typedef gboolean (*GntWidgetActionCallbackNoParam)(GntWidget *widget);
+
+typedef struct _GnWidgetAction GntWidgetAction;
+typedef struct _GnWidgetActionParam GntWidgetActionParam;
+
+struct _GnWidgetAction
+{
+	char *name;        /* The name of the action */
+	union {
+		gboolean (*action)(GntWidget *widget, GList *params);
+		gboolean (*action_noparam)(GntWidget *widget);
+	} u;
+};
+
+struct _GnWidgetActionParam
+{
+	GntWidgetAction *action;
+	GList *list;
+};
+
+
+GntWidgetAction *gnt_widget_action_parse(const char *name);
+
+void gnt_widget_action_free(GntWidgetAction *action);
+void gnt_widget_action_param_free(GntWidgetActionParam *param);
+
+
+void gnt_widget_class_register_action(GntWidgetClass *klass, const char *name,
+			GntWidgetActionCallback callback, const char *trigger, ...);
 
 G_END_DECLS
 

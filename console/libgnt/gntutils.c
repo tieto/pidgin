@@ -105,3 +105,17 @@ char *gnt_util_onscreen_fit_string(const char *string, int maxw)
 	return g_string_free(str, FALSE);
 }
 
+static void
+duplicate_values(gpointer key, gpointer value, gpointer data)
+{
+	g_hash_table_insert(data, key, value);
+}
+
+GHashTable *g_hash_table_duplicate(GHashTable *src, GHashFunc hash,
+		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d)
+{
+	GHashTable *dest = g_hash_table_new_full(hash, equal, key_d, value_d);
+	g_hash_table_foreach(src, duplicate_values, dest);
+	return dest;
+}
+

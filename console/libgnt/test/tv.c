@@ -13,7 +13,7 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 	{
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view),
 				gnt_entry_get_text(GNT_ENTRY(w)),
-				GNT_TEXT_FLAG_HIGHLIGHT);
+				GNT_TEXT_FLAG_UNDERLINE | GNT_TEXT_FLAG_HIGHLIGHT);
 		gnt_entry_add_to_history(GNT_ENTRY(w), gnt_entry_get_text(GNT_ENTRY(w)));
 		gnt_text_view_next_line(GNT_TEXT_VIEW(view));
 		gnt_entry_clear(GNT_ENTRY(w));

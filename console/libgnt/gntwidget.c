@@ -234,6 +234,13 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 gnt_closure_marshal_BOOLEAN__INT_INT_INT,
 					 G_TYPE_BOOLEAN, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 
+	klass->actions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+				(GDestroyNotify)gnt_widget_action_free);
+	klass->bindings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+				(GDestroyNotify)gnt_widget_action_param_free);
+
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
+
 	GNTDEBUG;
 }
 
@@ -384,11 +391,55 @@ gnt_widget_draw(GntWidget *widget)
 }
 
 gboolean
+gnt_widget_perform_action_named(GntWidget *widget, const char *name, ...)
+{
+	GType type = G_OBJECT_TYPE(widget);
+	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
+	GList *list = NULL;
+	va_list args;
+	GntWidgetAction *action;
+	void *p;
+
+	va_start(args, name);
+	while ((p = va_arg(args, void *)) != NULL)
+		list = g_list_append(list, p);
+	va_end(args);
+	
+	action = g_hash_table_lookup(klass->actions, name);
+	if (action && action->u.action) {
+		if (list)
+			return action->u.action(widget, list);
+		else
+			return action->u.action_noparam(widget);
+	}
+	return FALSE;
+}
+
+static gboolean
+gnt_widget_perform_action(GntWidget *widget, const char *keys)
+{
+	GType type = G_OBJECT_TYPE(widget);
+	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
+	GntWidgetActionParam *param = g_hash_table_lookup(klass->bindings, keys);
+
+	if (param && param->action) {
+		if (param->list)
+			return param->action->u.action(widget, param->list);
+		else
+			return param->action->u.action_noparam(widget);
+	}
+	return FALSE;
+}
+
+gboolean
 gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 {
 	gboolean ret;
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		return FALSE;
+
+	if (gnt_widget_perform_action(widget, keys))
+		return TRUE;
 
 	keys = gnt_widget_remap_keys(widget, keys);
 	g_signal_emit(widget, signals[SIG_KEY_PRESSED], 0, keys, &ret);
@@ -630,5 +681,73 @@ gboolean gnt_widget_has_shadow(GntWidget *widget)
 {
 	return (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW) &&
 			gnt_style_get_bool(GNT_STYLE_SHADOW, FALSE));
+}
+
+static void
+register_binding(GntWidgetClass *klass, const char *name, const char *trigger, GList *list)
+{
+	GntWidgetActionParam *param;
+
+	if (name == NULL || *name == '\0') {
+		g_hash_table_remove(klass->bindings, (char*)trigger);
+		return;
+	}
+
+	param = g_new0(GntWidgetActionParam, 1);
+	param->action = g_hash_table_lookup(klass->actions, name);
+	param->list = list;
+	g_hash_table_replace(klass->bindings, g_strdup(trigger), param);
+}
+
+void gnt_widget_register_binding(GntWidgetClass *klass, const char *name,
+			const char *trigger, ...)
+{
+	GList *list = NULL;
+	va_list args;
+	void *data;
+
+	va_start(args, trigger);
+	while ((data = va_arg(args, void *))) {
+		list = g_list_append(list, data);
+	}
+	va_end(args);
+
+	register_binding(klass, name, trigger, list);
+}
+
+void gnt_widget_class_register_action(GntWidgetClass *klass, const char *name,
+			GntWidgetActionCallback callback,
+			const char *trigger, ...)
+{
+	void *data;
+	va_list args;
+	GntWidgetAction *action = g_new0(GntWidgetAction, 1);
+	GList *list;
+
+	action->name = g_strdup(name);
+	action->u.action = callback;
+
+	g_hash_table_replace(klass->actions, g_strdup(name), action);
+
+	list = NULL;
+	va_start(args, trigger);
+	while ((data = va_arg(args, void *))) {
+		list = g_list_append(list, data);
+	}
+	va_end(args);
+
+	register_binding(klass, name, trigger, list);
+}
+
+void gnt_widget_action_free(GntWidgetAction *action)
+{
+	g_free(action->name);
+	g_free(action);
+}
+
+void gnt_widget_action_param_free(GntWidgetActionParam *param)
+{
+	g_list_free(param->list);   /* XXX: There may be a leak here for string parameters */
+	g_free(param);
 }
 

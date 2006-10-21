@@ -192,6 +192,63 @@ q =
 \\  = \\r
 .br
 
+.SH Widget Actions
+You can specifiy key-bindings for specific widgets. The following entries in
+\fI~/.gntrc\fR correspond to the default keybindings for the actions:
+
+.br
+[GntEntry::binding]
+.br
+c-a = cursor-home
+.br
+home = cursor-home
+.br
+c-e = cursor-end
+.br
+end = cursor-end
+.br
+backspace = delete-prev
+.br
+del = delete-next
+.br
+c-d = delete-next
+.br
+c-u = delete-start
+.br
+c-k = delete-end
+.br
+left = cursor-prev
+.br
+right = cursor-next
+.br
+tab = suggest-show
+.br
+down = suggest-next
+.br
+up = suggest-prev
+.br
+
+.br
+[GntTree::binding]
+.br
+up = move-up
+.br
+down = move-down
+.br
+c-n = move-down
+.br
+c-p = move-up
+.br
+pageup = page-up
+.br
+pagedown = page-down
+.br
+
+The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
+or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use
+one of \fBa-\fR, \fBalt-\fR, \fBm-\fR or \fBmeta-\fR. You can also use
+\fBhome\fR, \fBend\fR, \fBleft\fR, \fBright\fR etc. keys.
+
 .SH Mouse Support
 There is experimental mouse support. You can focus windows, activate buttons,
 select rows in a list, scroll using the wheel-scroll etc. Mouse support is
