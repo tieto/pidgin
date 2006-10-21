@@ -377,6 +377,9 @@ gaim_network_get_port_from_fd(int fd)
 }
 
 #ifdef _WIN32
+#ifndef NS_NLA
+#define NS_NLA 15
+#endif
 static gint
 wgaim_get_connected_network_count(void)
 {
@@ -388,13 +391,15 @@ wgaim_get_connected_network_count(void)
 
 	memset(&qs, 0, sizeof(WSAQUERYSET));
 	qs.dwSize = sizeof(WSAQUERYSET);
-	qs.dwNameSpace = NS_ALL;
+	qs.dwNameSpace = NS_NLA;
 
 	retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
 	if (retval != ERROR_SUCCESS) {
 		int errorid = WSAGetLastError();
 		gchar *msg = g_win32_error_message(errorid);
-		gaim_debug_warning("network", "Couldn't look up connected networks. %s (%d).\n", msg, errorid);
+		gaim_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
+						"NLA service is probably not running. Message: %s (%d).\n",
+						msg, errorid);
 		g_free(msg);
 
 		return -1;
@@ -446,13 +451,11 @@ static gpointer wgaim_network_change_thread(gpointer data)
 	time_t last_trigger = time(NULL);
 
 	int WSAAPI (*MyWSANSPIoctl) (
-	HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
-	DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
-	LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
+		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
+		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
+		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
  
-	MyWSANSPIoctl = (void*) wgaim_find_and_loadproc("ws2_32.dll", "WSANSPIoctl");
-	if (!MyWSANSPIoctl) {
-		gaim_debug_error("network", "Couldn't load WSANSPIoctl from ws2_32.dll.\n");
+	if (!(MyWSANSPIoctl = (void*) wgaim_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
 		g_thread_exit(NULL);
 		return NULL;
 	}
@@ -463,9 +466,17 @@ static gpointer wgaim_network_change_thread(gpointer data)
 
 		memset(&qs, 0, sizeof(WSAQUERYSET));
 		qs.dwSize = sizeof(WSAQUERYSET);
-		qs.dwNameSpace = NS_ALL;
-
-		retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
+		qs.dwNameSpace = NS_NLA;
+		if (WSALookupServiceBegin(&qs, 0, &h) == SOCKET_ERROR) {
+			int errorid = WSAGetLastError();
+			gchar *msg = g_win32_error_message(errorid);
+			gaim_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
+				"NLA service is probably not running. Message: %s (%d).\n",
+				msg, errorid);
+			g_free(msg);
+			g_thread_exit(NULL);
+			return NULL;
+		}
 
 		/* Make sure at least 30 seconds have elapsed since the last
 		 * notification so we don't peg the cpu if this keeps changing. */
@@ -475,13 +486,22 @@ static gpointer wgaim_network_change_thread(gpointer data)
 		last_trigger = time(NULL);
 
 		/* This will block until there is a network change */
-		retval = MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL);
+		if (MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL) == SOCKET_ERROR) {
+			int errorid = WSAGetLastError();
+			gchar *msg = g_win32_error_message(errorid);
+			gaim_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
+				msg, errorid);
+			g_free(msg);
+		}
 
 		retval = WSALookupServiceEnd(h);
 
 		g_idle_add(wgaim_network_change_thread_cb, NULL);
 
 	}
+
+	g_thread_exit(NULL);
+	return NULL;
 }
 #endif
 
