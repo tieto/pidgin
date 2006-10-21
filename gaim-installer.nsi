@@ -64,7 +64,8 @@ SetDateSave on
 !define GAIM_STARTUP_RUN_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
 
-!define GTK_VERSION				"2.10.6"
+!define GTK_MIN_VERSION				"2.6.10"
+!define GTK_INSTALL_VERSION			"2.10.6"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
@@ -320,34 +321,28 @@ Section $(GTK_SECTION_TITLE) SecGtk
   File /oname=gtk-runtime.exe ${GTK_RUNTIME_INSTALLER}
   SetOverwrite off
 
-  ; This keeps track whether we install GTK+ or not..
-  StrCpy $R5 "0"
-
   Call DoWeNeedGtk
   Pop $R0
   Pop $R6
 
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
-  StrCmp $R0 "2" no_gtk no_gtk
+  StrCmp $R0 "2" upgrade_gtk
+  StrCmp $R0 "3" no_gtk no_gtk
 
   no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
-    Goto gtk_install_cont
+    IfErrors gtk_install_error done
 
   upgrade_gtk:
     StrCpy $GTK_FOLDER $R6
+    StrCmp $R0 "2" +2 ; Upgrade isn't optional
     MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
-    Goto gtk_install_cont
-
-  gtk_install_cont:
-    IfErrors gtk_install_error
-      StrCpy $R5 "1"  ; marker that says we installed...
-      Goto done
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE /S /D=$GTK_FOLDER'
+    IfErrors gtk_install_error done
 
     gtk_install_error:
       Delete "$TEMP\gtk-runtime.exe"
@@ -967,9 +962,11 @@ FunctionEnd
 ; First Pop:
 ;   0 - We have the correct version
 ;       Second Pop: Key where Version was found
-;   1 - We have an old version that needs to be upgraded
+;   1 - We have an old version that should work, prompt user for optional upgrade
 ;       Second Pop: HKLM or HKCU depending on where GTK was found.
-;   2 - We don't have Gtk+ at all
+;   2 - We have an old version that needs to be upgraded
+;       Second Pop: HKLM or HKCU depending on where GTK was found.
+;   3 - We don't have Gtk+ at all
 ;       Second Pop: "NONE, HKLM or HKCU" depending on our rights..
 ;
 Function DoWeNeedGtk
@@ -988,6 +985,7 @@ Function DoWeNeedGtk
   Push $0
   Push $1
   Push $2
+  Push $3
 
   Call CheckUserInstallRights
   Pop $1
@@ -1003,22 +1001,22 @@ Function DoWeNeedGtk
       StrCpy $2 "HKLM"
       StrCmp $0 "" no_gtk have_gtk
 
-
   have_gtk:
     ; GTK+ is already installed.. check version.
-    ${VersionCompare} ${GTK_VERSION} $0 $0
-    IntCmp $0 1 bad_version good_version good_version
+    ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
+    IntCmp $3 1 +1 good_version good_version
+    ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
 
-    bad_version:
       ; Bad version. If hklm ver and we have hkcu or no rights.. return no gtk
-      StrCmp $1 "NONE" no_gtk  ; if no rights.. can't upgrade
-      StrCmp $1 "HKCU" 0 upgrade_gtk ; if HKLM can upgrade..
-        StrCmp $2 "HKLM" no_gtk upgrade_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
-
-      upgrade_gtk:
-        Push $2
-        Push "1"
-        Goto done
+      StrCmp $1 "NONE" no_gtk ; if no rights.. can't upgrade
+      StrCmp $1 "HKCU" 0 +2   ; if HKLM can upgrade..
+      StrCmp $2 "HKLM" no_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
+      Push $2
+    IntCmp $3 1 +3
+      Push "1" ; Optional Upgrade
+      Goto done
+      Push "2" ; Mandatory Upgrade
+      Goto done
 
   good_version:
     StrCmp $2 "HKLM" have_hklm_gtk have_hkcu_gtk
@@ -1038,14 +1036,15 @@ Function DoWeNeedGtk
 
   no_gtk:
     Push $1 ; our rights
-    Push "2"
+    Push "3"
     Goto done
 
   done:
   ; The top two items on the stack are what we want to return
-  Exch 3
+  Exch 4 
   Pop $0
-  Exch 3
+  Exch 4
+  Pop $3
   Pop $2
   Pop $1
 FunctionEnd
@@ -1222,8 +1221,8 @@ Function preWelcomePage
     Pop $R0
     Pop $GTK_FOLDER
 
-    StrCmp $R0 "0" have_gtk need_gtk
-    need_gtk:
+    IntCmp $R0 1 have_gtk have_gtk
+
       MessageBox MB_OK $(GTK_INSTALLER_NEEDED) /SD IDOK
       Quit
     have_gtk:
@@ -1239,16 +1238,13 @@ Function preGtkDirPage
   Pop $R0
   Pop $R1
 
-  StrCmp $R0 "0" have_gtk
-  StrCmp $R0 "1" upgrade_gtk
-  StrCmp $R0 "2" no_gtk no_gtk
+  IntCmp $R0 2 +2 +2 no_gtk
+  StrCmp $R0 "3" no_gtk no_gtk
 
   ; Don't show dir selector.. Upgrades are done to existing path..
-  have_gtk:
-  upgrade_gtk:
-    Pop $R1
-    Pop $R0
-    Abort
+  Pop $R1
+  Pop $R0
+  Abort
 
   no_gtk:
     StrCmp $R1 "NONE" 0 no_gtk_cont
@@ -1267,7 +1263,7 @@ Function preGtkDirPage
         StrCpy $R0 "${GTK_DEFAULT_INSTALL_PATH}"
 
    got_path:
-     StrCpy $name "GTK+ ${GTK_VERSION}"
+     StrCpy $name "GTK+ ${GTK_INSTALL_VERSION}"
      StrCpy $GTK_FOLDER $R0
      Pop $R1
      Pop $R0
