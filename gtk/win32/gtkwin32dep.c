@@ -225,25 +225,6 @@ static HWND wgaim_message_window_init(void) {
 	return win_hwnd;
 }
 
-static int
-halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
-	if(MyFlashWindowEx) {
-		HWND hWnd = data;
-		FLASHWINFO info;
-
-		if(!IsWindow(hWnd))
-			return 0;
-
-		memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = hWnd;
-		info.dwFlags = FLASHW_STOP;
-		info.dwTimeout = 0;
-		MyFlashWindowEx(&info);
-	}
-	return 0;
-}
-
 void
 gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 	GaimGtkWindow *win;
@@ -266,21 +247,19 @@ gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 
 	window = win->window;
 
+	/* Don't flash if we have the window focused */
+	if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
+		return;
+
 	if(MyFlashWindowEx) {
 		FLASHWINFO info;
-		/* Don't flash if we have the window focused */
-		if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
-			return;
 
 		memset(&info, 0, sizeof(FLASHWINFO));
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = GDK_WINDOW_HWND(window->window);
-		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
+		info.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
 		info.dwTimeout = 0;
 		MyFlashWindowEx(&info);
-		/* Stop flashing when window receives focus */
-		g_signal_connect(G_OBJECT(window), "focus-in-event",
-			G_CALLBACK(halt_flash_filter), info.hwnd);
 	}
 }
 
