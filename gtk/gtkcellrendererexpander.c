@@ -62,7 +62,7 @@ static gboolean gaim_gtk_cell_renderer_expander_activate  (GtkCellRenderer      
 						      const gchar                *path,
 						      GdkRectangle               *background_area,
 						      GdkRectangle               *cell_area,
-						      guint                       flags);
+						      GtkCellRendererState        flags);
 static void  gaim_gtk_cell_renderer_expander_finalize (GObject *gobject);
 
 enum {
