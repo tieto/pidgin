@@ -543,6 +543,8 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 	switch(current)
 	{
 	case LIBNM_ACTIVE_NETWORK_CONNECTION:
+		/* Call res_init in case DNS servers have changed */
+		res_init();
 		ui_ops->network_connected();
 		prev = current;
 		break;
