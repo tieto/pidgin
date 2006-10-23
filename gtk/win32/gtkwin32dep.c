@@ -267,7 +267,8 @@ static gboolean
 gtkwgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
 		GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
-	gtkwgaim_conv_blink(conv, flags);
+	if (gaim_prefs_get_bool("/gaim/gtk/win32/blink_im"))
+		gtkwgaim_conv_blink(conv, flags);
 	return FALSE;
 }
 
@@ -293,6 +294,9 @@ void gtkwgaim_init(HINSTANCE hint) {
 }
 
 void gtkwgaim_post_init(void) {
+
+	gaim_prefs_add_none("/gaim/gtk/win32");
+	gaim_prefs_add_bool("/gaim/gtk/win32/blink_im", TRUE);
 
 	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
 		"displaying-im-msg", &gtkwin32_handle, GAIM_CALLBACK(gtkwgaim_conv_im_blink),
