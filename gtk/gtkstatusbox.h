@@ -65,7 +65,7 @@ typedef struct _GtkGaimStatusBoxClass GtkGaimStatusBoxClass;
 
 struct _GtkGaimStatusBox
 {
-	GtkComboBox parent_instance;
+	GtkContainer parent_instance;
 
 	/**
 	 * This GtkListStore contains only one row--the currently selected status.
@@ -131,7 +131,7 @@ struct _GtkGaimStatusBox
 
 struct _GtkGaimStatusBoxClass
 {
-	GtkComboBoxClass parent_class;
+	GtkContainerClass parent_class;
 
 	/* signals */
 	void     (* changed)          (GtkComboBox *combo_box);

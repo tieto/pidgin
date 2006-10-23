@@ -2078,6 +2078,7 @@ struct tooltip_data {
 	GdkPixbuf *status_icon;
 	GdkPixbuf *avatar;
 	int avatar_width;
+	int avatar_height;
 	int width;
 	int height;
 };
@@ -2101,6 +2102,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 
 	if(td->avatar) {
 		td->avatar_width = gdk_pixbuf_get_width(td->avatar);
+		td->avatar_height = gdk_pixbuf_get_height(td->avatar);
 		td->width += td->avatar_width + 8;
 		td->height = MAX(td->height, gdk_pixbuf_get_height(td->avatar) + 8);
 	}
@@ -2134,6 +2136,8 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	{
 		struct tooltip_data *td = l->data;
 
+
+
 #if GTK_CHECK_VERSION(2,2,0)
 		gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
 			0, 0, 4, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
@@ -2148,7 +2152,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 					max_width - (td->avatar_width + 4),
 					current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
-
+	
 		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				NULL, gtkblist->tipwindow, "tooltip", 38 + 4, current_height, td->layout);
 
@@ -3860,6 +3864,10 @@ gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *text
 			create_connection_error_buttons, NULL);
 }
 
+void gaim_gtk_blist_add_alert(GtkWidget *alert) {
+	gtk_notebook_append_page(gtkblist->alert_notebook, alert, NULL);
+}
+
 /******************************************/
 /* End of connection error handling stuff */
 /******************************************/
@@ -3872,6 +3880,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkWidget *menu;
 	GtkWidget *sw;
 	GtkWidget *sep;
+	GtkWidget *hbox;
+	GtkWidget *label, *arrow;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -4075,6 +4085,22 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
+
+	/* Create an area for showing buddy list alerts */
+	hbox = gtk_hbox_new(FALSE,0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), hbox, FALSE, FALSE, 0);
+	arrow = gtk_arrow_new(GTK_ARROW_RIGHT,GTK_SHADOW_NONE);
+	gtk_box_pack_end(GTK_BOX(hbox),arrow,FALSE,FALSE,0);
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), "<span size='smaller'><b>(2/3)</b></span>");
+	gtk_box_pack_end(GTK_BOX(hbox),label,FALSE,FALSE,0);
+	arrow = gtk_arrow_new(GTK_ARROW_LEFT,GTK_SHADOW_NONE);
+	gtk_box_pack_end(GTK_BOX(hbox),arrow,FALSE,FALSE,0);
+
+	gtkblist->alert_notebook = gtk_notebook_new();
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkblist->alert_notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(gtkblist->alert_notebook), FALSE);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->alert_notebook, FALSE, FALSE, 0);
 
 	/* Add the statusbox */
 	gtkblist->statusbox = gtk_gaim_status_box_new();

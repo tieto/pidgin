@@ -26,6 +26,9 @@
 #include "internal.h"
 
 #ifndef _WIN32
+#include <resolv.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #else

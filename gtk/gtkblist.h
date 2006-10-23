@@ -94,6 +94,8 @@ struct _GaimGtkBuddyList {
 	GaimBlistNode *selected_node;    /**< The currently selected node */
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
+
+	GtkWidget *alert_notebook;       /**< The notebook for alerts */
 };
 
 #define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)
@@ -300,5 +302,12 @@ void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *no
  *        account is no longer in an error state.
  */
 void gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *message);
+
+/**
+ * Adds a widget to the alert area of the buddy list
+ *
+ * @param widget The widget to add
+ */
+void gaim_gtk_blist_add_alert(GtkWidget *alert);
 
 #endif /* _GAIM_GTKBLIST_H_ */
