@@ -198,7 +198,6 @@ version 2.0.0:
 	* gaim_conversation_get_send_history(), and send_history from
 	  GaimConversation
 	* Removed ui_ops from GaimBuddyList. Use gaim_blist_get_ui_ops() instead
-	* GaimGtkLogViewer hidden... You weren't using it anyway.
 	* GaimGtkConversation: dialogs (dialogs.search moved to GaimGtkWindow)
 	* gaim_show_xfer_dialog: Use gaim_gtk_xfer_dialog_show(NULL) instead.
 	* GaimGtkRoomlistDialog: Nothing used it outside of the file it was in.
