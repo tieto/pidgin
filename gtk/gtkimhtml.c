@@ -3531,22 +3531,25 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 {
 	GtkTextIter iter, start, end;
 	gboolean new_search = TRUE;
+	GtkTextMark *start_mark;
 
 	g_return_val_if_fail(imhtml != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
 
-	if (imhtml->search_string && !strcmp(text, imhtml->search_string))
+	start_mark = gtk_text_buffer_get_mark(imhtml->text_buffer, "search");
+
+	if (start_mark && imhtml->search_string && !strcmp(text, imhtml->search_string))
 		new_search = FALSE;
 
 	if (new_search) {
 		gtk_imhtml_search_clear(imhtml);
+		g_free(imhtml->search_string);
+		imhtml->search_string = g_strdup(text);
 		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
 	} else {
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter,
-						 gtk_text_buffer_get_mark(imhtml->text_buffer, "search"));
+						 start_mark);
 	}
-	g_free(imhtml->search_string);
-	imhtml->search_string = g_strdup(text);
 
 	if (gtk_source_iter_forward_search(&iter, imhtml->search_string,
 	                                   GTK_SOURCE_SEARCH_VISIBLE_ONLY | GTK_SOURCE_SEARCH_CASE_INSENSITIVE,
