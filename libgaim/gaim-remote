@@ -101,7 +101,7 @@ def execute(uri):
             status_id = params["status"]
             status_type = gaim.GaimPrimitiveGetTypeFromId(status_id)
         else:
-            status_type = gaim.GaimSavedStatusGetType(current)
+            status_type = gaim.GaimSavedstatusGetType(current)
             status_id = gaim.GaimPrimitiveGetIdFromType(status_type)
 
         if "message" in params:
