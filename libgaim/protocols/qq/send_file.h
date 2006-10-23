@@ -40,7 +40,7 @@ typedef struct _ft_info {
 	union {
 		FILE *dest_fp;
 		guint8 *buffer;
-	};
+	} u;
 	gboolean use_major;
 } ft_info;
 

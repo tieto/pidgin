@@ -204,8 +204,8 @@ static void _qq_xfer_end(GaimXfer *xfer)
 	info = (ft_info *) xfer->data;
 
 	qq_xfer_close_file(xfer);
-	if (info->dest_fp != NULL) {
-		fclose(info->dest_fp);
+	if (info->u.dest_fp != NULL) {
+		fclose(info->u.dest_fp);
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "file closed\n");
 	}
 	if (info->major_fd != 0) {
