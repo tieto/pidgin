@@ -196,137 +196,83 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, GaimNotifySearchResultsButt
 	g_list_free(row);
 }
 
-
 static void *
 gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
-                                                const char *primary, const char *secondary)
+						const char *primary, const char *secondary)
 {
-        GtkStyle *style;
-        GdkColor color;
-        GtkWidget *ebox;
-        GtkWidget *vbox;
-        GtkWidget *hbox;
-        GtkWidget *bbox;
-        GtkWidget *label;
-        GtkWidget *button;
-        GtkWidget *alignment;
-        GtkWidget *img = NULL;
-        GtkStockItem close_item;
-        char label_text[2048];
-        const char *icon_name = NULL;
-        char *primary_esc, *secondary_esc;
+	GtkWidget *dialog;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *img = NULL;
+	char label_text[2048];
+	const char *icon_name = NULL;
+	char *primary_esc, *secondary_esc;
 
-        switch (type)
-        {
-                case GAIM_NOTIFY_MSG_ERROR:
-                        icon_name = GAIM_STOCK_DIALOG_ERROR;
-                        break;
+	switch (type)
+	{
+		case GAIM_NOTIFY_MSG_ERROR:
+			icon_name = GAIM_STOCK_DIALOG_ERROR;
+			break;
 
-                case GAIM_NOTIFY_MSG_WARNING:
-                        icon_name = GAIM_STOCK_DIALOG_WARNING;
-                        break;
+		case GAIM_NOTIFY_MSG_WARNING:
+			icon_name = GAIM_STOCK_DIALOG_WARNING;
+			break;
 
-                case GAIM_NOTIFY_MSG_INFO:
-                        icon_name = GAIM_STOCK_DIALOG_INFO;
-                        break;
+		case GAIM_NOTIFY_MSG_INFO:
+			icon_name = GAIM_STOCK_DIALOG_INFO;
+			break;
 
-                default:
-                        icon_name = NULL;
-                        break;
-        }
+		default:
+			icon_name = NULL;
+			break;
+	}
 
-        if (icon_name != NULL)
-        {
-                img = gtk_image_new_from_stock(icon_name, GTK_ICON_SIZE_BUTTON);
-                gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-        }
+	if (icon_name != NULL)
+	{
+		img = gtk_image_new_from_stock(icon_name, GTK_ICON_SIZE_DIALOG);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	}
 
-        ebox = gtk_event_box_new();
-        vbox = gtk_vbox_new(FALSE,0);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
-        color.red = 65535;
-        //      gtk_widget_modify_bg(ebox, GTK_STATE_NORMAL, &(vbox->style->base[GTK_STATE_SELECTED]));
-        gtk_container_add(GTK_CONTAINER(ebox),vbox);
+	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
+										 NULL, 0, GTK_STOCK_CLOSE,
+										 GTK_RESPONSE_CLOSE, NULL);
 
-        hbox = gtk_hbox_new(FALSE, 0);
-        gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	gtk_window_set_role(GTK_WINDOW(dialog), "notify_dialog");
 
-        if (img != NULL)
-                gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
- primary_esc = g_markup_escape_text(primary, -1);
-        if (secondary)
-                secondary_esc = g_markup_escape_text(secondary, -1);
-        g_snprintf(label_text, sizeof(label_text),
-                   "<span weight=\"bold\" size=\"smaller\">%s</span>%s<span size=\"smaller\">%s</span>",
-                   primary_esc,
-                   secondary ? "\n" : "",
-                   secondary ? secondary_esc : "");
-        g_free(primary_esc);
-        label = gtk_label_new(NULL);
-        gtk_widget_modify_text(vbox, GTK_STATE_NORMAL, &(label->style->white));
-        gtk_label_set_markup(GTK_LABEL(label), label_text);
-        gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-        gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-        gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-#if GTK_CHECK_VERSION(2,6,0)
-        g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
-#if 0
-        if (secondary) {
-                secondary_esc = g_markup_escape_text(secondary, -1);
-                g_snprintf(label_text, sizeof(label_text),
-                           "<span size=\"smaller\">%s</span>",
-                           secondary_esc);
-                g_free(secondary_esc);
-                label = gtk_label_new(NULL);
-                gtk_label_set_markup(GTK_LABEL(label), label_text);
-                gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-                gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-                gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
-#if GTK_CHECK_VERSION(2,6,0)
-                g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
-        }
-#endif
-        bbox = gtk_hbutton_box_new();
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
-        gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	g_signal_connect(G_OBJECT(dialog), "response",
+					 G_CALLBACK(message_response_cb), dialog);
 
-        button = gtk_button_new();
-        g_signal_connect_swapped(G_OBJECT(button), "activate", gtk_widget_destroy, ebox);
-        alignment = gtk_alignment_new(0.5, 0.5, 0, 0);
-        gtk_container_add(GTK_CONTAINER(button), alignment);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER);
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BOX_SPACE);
 
-        hbox = gtk_hbox_new(FALSE, 0);
-        gtk_container_add(GTK_CONTAINER(alignment), hbox);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
-        img = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-        gtk_misc_set_alignment(GTK_MISC(img), 0.5, 0.5);
-        gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	if (img != NULL)
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
-        gtk_stock_lookup(GTK_STOCK_CLOSE, &close_item);
-        g_snprintf(label_text, sizeof(label_text),
-                   "<span size=\"smaller\">%s</span>", close_item.label);
-        label = gtk_label_new(NULL);
-        gtk_misc_set_alignment(GTK_MISC(img), 0.5, 0.5);
-        gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	primary_esc = g_markup_escape_text(primary, -1);
+	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
+	g_snprintf(label_text, sizeof(label_text),
+			   "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
+			   primary_esc, (secondary ? secondary_esc : ""));
+	g_free(primary_esc);
+	g_free(secondary_esc);
 
-        gtk_stock_lookup(GTK_STOCK_CLOSE, &close_item);
-        g_snprintf(label_text, sizeof(label_text),
-                   "<span size=\"smaller\">%s</span>", close_item.label);
-        label = gtk_label_new(NULL);
-        gtk_misc_set_alignment(GTK_MISC(img), 0.5, 0.5);
-        gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), label_text);
-        gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	label = gtk_label_new(NULL);
 
-        gtk_container_add(GTK_CONTAINER(bbox), button);
+	gtk_label_set_markup(GTK_LABEL(label), label_text);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
-        gtk_widget_show_all(ebox);
-        gaim_gtk_blist_add_alert(ebox);
+	gtk_widget_show_all(dialog);
 
-        return ebox;
+	return dialog;
 }
-
 
 static void
 selection_changed_cb(GtkTreeSelection *sel, GaimMailDialog *dialog)
