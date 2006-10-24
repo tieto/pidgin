@@ -61,7 +61,6 @@ gtk/gtkutils.c
 gtk/gtkwhiteboard.c
 gtk/plugins/cap/cap.c
 gtk/plugins/contact_priority.c
-gtk/plugins/docklet/docklet.c
 gtk/plugins/extplacement.c
 gtk/plugins/gaiminc.c
 gtk/plugins/gaimrc.c
