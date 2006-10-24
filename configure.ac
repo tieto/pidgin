@@ -47,7 +47,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="am ar az bg bn bs ca ca@valencia cs da de el en_AU en_CA en_GB es et eu fa fi fr gl gu he hi hu it ja ka ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
+ALL_LINGUAS="am ar az bg bn bs ca ca@valencia cs da de el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu it ja ka ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl we don't use autobreak on cygwin!!
