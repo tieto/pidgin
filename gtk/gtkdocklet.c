@@ -111,7 +111,7 @@ get_pending_list(guint max)
 static gboolean
 docklet_update_status()
 {
-	GList *convs;
+	GList *convs = NULL;
 	GList *l;
 	int count;
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
@@ -208,9 +208,10 @@ docklet_update_status()
 			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
-		if ((status == DOCKLET_STATUS_ONLINE_PENDING
-				|| status == DOCKLET_STATUS_AWAY_PENDING)
-			&& docklet_blinking_timer == 0) {
+ 		if (gaim_prefs_get_bool("/gaim/gtk/docklet/blink") &&
+                    (status == DOCKLET_STATUS_ONLINE_PENDING
+	             || status == DOCKLET_STATUS_AWAY_PENDING)
+		     && docklet_blinking_timer == 0) {
 				docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
 		}
 	}
@@ -286,6 +287,12 @@ static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
 	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
+}
+
+static void
+docklet_toggle_blink(GtkWidget *toggle, void *data)
+{
+	gaim_prefs_set_bool("/gaim/gtk/docklet/blink", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void
@@ -502,6 +509,11 @@ docklet_menu() {
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	
+	menuitem = gtk_check_menu_item_new_with_label(_("Blink on new message"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/docklet/blink"));
+	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gaim_separator(menu);
 
@@ -586,6 +598,10 @@ gaim_gtk_docklet_init()
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *docklet_handle = gaim_gtk_docklet_get_handle();
+	
+	gaim_prefs_add_none("/gaim/gtk/docklet");
+        gaim_prefs_add_bool("/gaim/gtk/docklet/blink", FALSE);
+        gaim_prefs_add_string("/gaim/gtk/docklet/show", "always");
 
 	docklet_ui_init();
 	if (ui_ops && ui_ops->create)
