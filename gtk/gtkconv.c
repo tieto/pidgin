@@ -4627,11 +4627,9 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 static GtkTextTag *get_buddy_tag(GaimConversation *conv, const char *who) {
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 	GtkTextTag *buddytag;
-	/* strlen("BUDDY ") == 6 */
-	gchar str[strlen(who) + 7];
+	gchar *str;
 
-	g_snprintf(str, sizeof(str), "BUDDY %s", who);
-	str[sizeof(str)] = '\0';
+	str = g_strdup_printf("BUDDY %s", who);
 
 	buddytag = gtk_text_tag_table_lookup(
 			gtk_text_buffer_get_tag_table(
