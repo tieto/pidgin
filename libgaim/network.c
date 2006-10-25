@@ -436,9 +436,10 @@ static gboolean wgaim_network_change_thread_cb(gpointer data)
 
 	gaim_debug_info("network", "Received Network Change Notification. Current network count is %d, previous count was %d.\n", new_count, current_network_count);
 
-	if (new_count > 0) {
+	if (new_count > 0 && ui_ops != NULL && ui_ops->network_connected != NULL) {
 		ui_ops->network_connected();
-	} else if (new_count == 0 && current_network_count > 0) {
+	} else if (new_count == 0 && current_network_count > 0 &&
+			   ui_ops != NULL && ui_ops->network_disconnected != NULL) {
 		ui_ops->network_disconnected();
 	}
 
@@ -548,13 +549,15 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 	case LIBNM_ACTIVE_NETWORK_CONNECTION:
 		/* Call res_init in case DNS servers have changed */
 		res_init();
-		ui_ops->network_connected();
+		if (ui_ops != NULL && ui_ops->network_connected != NULL)
+			ui_ops->network_connected();
 		prev = current;
 		break;
 	case LIBNM_NO_NETWORK_CONNECTION:
 		if (prev != LIBNM_ACTIVE_NETWORK_CONNECTION)
 			break;
-		ui_ops->network_disconnected();
+		if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
+			ui_ops->network_disconnected();
 		prev = current;
 		break;
 	case LIBNM_NO_DBUS:
