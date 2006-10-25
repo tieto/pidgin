@@ -4643,6 +4643,8 @@ static GtkTextTag *get_buddy_tag(GaimConversation *conv, const char *who) {
 				G_CALLBACK(buddytag_event), conv);
 	}
 
+	g_free(str);
+
 	return buddytag;
 }
 
