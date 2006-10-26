@@ -1897,7 +1897,7 @@ static void prefs_notebook_init() {
 	}
 #endif
 	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("State / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 }
 
 void gaim_gtk_prefs_show(void)
