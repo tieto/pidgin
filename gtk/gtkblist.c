@@ -4191,6 +4191,8 @@ static void redo_buddy_list(GaimBuddyList *list, gboolean remove, gboolean reren
 			gaim_gtk_blist_update_buddy(list, node, rerender);
 		else if (GAIM_BLIST_NODE_IS_CHAT(node))
 			gaim_gtk_blist_update(list, node);
+		else if (GAIM_BLIST_NODE_IS_GROUP(node))
+			gaim_gtk_blist_update(list, node);
 		node = gaim_blist_node_next(node, FALSE);
 	}
 
