@@ -534,6 +534,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Mono:</b> Disabled<br/>");
 #endif
 
+#ifdef HAVE_LIBNM
+	g_string_append(str, "    <b>NetworkManager:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>NetworkManager:</b> Disabled<br/>");
+#endif
+
 #ifdef HAVE_NSS
 	g_string_append(str, "    <b>Network Security Services (NSS):</b> Enabled<br/>");
 #else
