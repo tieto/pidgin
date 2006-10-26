@@ -109,6 +109,9 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 static CapStatistics * get_stats_for(GaimBuddy *buddy) {
 	gchar *buddy_name;
 	CapStatistics *stats;
+
+	g_return_val_if_fail(buddy != NULL, NULL);
+
 	buddy_name = g_strdup(buddy->name);
 	stats = g_hash_table_lookup(_buddy_stats, buddy_name);
 	if(!stats) {
@@ -340,9 +343,17 @@ static gboolean max_message_difference_cb(gpointer data) {
 
 /* sent-im-msg */
 static void sent_im_msg(GaimAccount *account, const char *receiver, const char *message) {
-	GaimBuddy *buddy = gaim_find_buddy(account, receiver);
-	guint interval = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 1000 * 60;
-	guint words = word_count(message);
+	GaimBuddy *buddy;
+	guint interval, words;
+
+	buddy = gaim_find_buddy(account, receiver);
+
+	if (buddy == NULL)
+		return;
+
+	interval = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 1000 * 60;
+	words = word_count(message);
+
 	CapStatistics *stats = get_stats_for(buddy);
 
 	insert_word_count(gaim_account_get_username(account), receiver, words);
@@ -357,9 +368,16 @@ static void sent_im_msg(GaimAccount *account, const char *receiver, const char *
 /* received-im-msg */
 static void
 received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversation *conv, GaimMessageFlags flags) {
-	GaimBuddy *buddy = gaim_find_buddy(account, sender);
+	GaimBuddy *buddy;
+	CapStatistics *stats;
 	/* guint words = word_count(message); */
-	CapStatistics *stats = get_stats_for(buddy);
+
+	buddy = gaim_find_buddy(account, sender);
+
+	if (buddy == NULL)
+		return;
+
+	stats = get_stats_for(buddy);
 
 	/* insert_word_count(sender, buddy_name, words); */
 	
