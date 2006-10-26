@@ -105,6 +105,9 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 		else
 		{
 			char *escape = g_markup_escape_text(text, -1);
+			char *apos = gaim_strreplace(escape, "&apos;", "'");
+			g_free(escape);
+			escape = apos;
 			switch (gaim_conversation_get_type(ggconv->active_conv))
 			{
 				case GAIM_CONV_TYPE_IM:
