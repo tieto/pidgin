@@ -60,7 +60,7 @@ const char *gnt_util_onscreen_width_to_pointer(const char *string, int len, int 
 	const char *str = string;
 
 	if (len <= 0) {
-		len = g_utf8_strlen(string, -1);
+		len = gnt_util_onscreen_width(string, NULL);
 	}
 
 	while (width < len && *str) {

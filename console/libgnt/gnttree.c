@@ -196,8 +196,8 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 	for (i = 0, iter = row->columns; i < tree->ncol && iter; i++, iter = iter->next)
 	{
 		GntTreeCol *col = iter->data;
-		char *text;
-		int len = g_utf8_strlen(col->text, -1);
+		const char *text;
+		int len = gnt_util_onscreen_width(col->text, NULL);
 		int fl = 0;
 
 		if (i == 0)
@@ -235,7 +235,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 			len = tree->columns[i].width;
 		}
 
-		text = g_utf8_offset_to_pointer(col->text, len - fl);
+		text = gnt_util_onscreen_width_to_pointer(col->text, len - fl, NULL);
 		string = g_string_append_len(string, col->text, text - col->text);
 		if (len < tree->columns[i].width && iter->next)
 			g_string_append_printf(string, "%*s", tree->columns[i].width - len, "");
@@ -324,6 +324,7 @@ redraw_tree(GntTree *tree)
 		tree->top = get_prev_n(tree->current, rows);
 
 	row = tree->top;
+	scrcol = widget->priv.width - 1 - 2 * pos;  /* exclude the borders and the scrollbar */
 	for (i = start + pos; row && i < widget->priv.height - pos;
 				i++, row = get_next(row))
 	{
@@ -335,10 +336,10 @@ redraw_tree(GntTree *tree)
 
 		str = update_row_text(tree, row);
 
-		if ((wr = g_utf8_strlen(str, -1)) >= widget->priv.width - 1 - pos)
+		if ((wr = gnt_util_onscreen_width(str, NULL)) > scrcol)
 		{
 			/* XXX: ellipsize */
-			char *s = g_utf8_offset_to_pointer(str, widget->priv.width - 1 - pos);
+			char *s = (char*)gnt_util_onscreen_width_to_pointer(str, scrcol, &wr);
 			*s = '\0';
 		}
 
@@ -368,7 +369,7 @@ redraw_tree(GntTree *tree)
 
 		wbkgdset(widget->window, '\0' | attr);
 		mvwprintw(widget->window, i, pos, str);
-		whline(widget->window, ' ', widget->priv.width - pos * 2 - g_utf8_strlen(str, -1) - 1);
+		whline(widget->window, ' ', scrcol - wr);
 		tree->bottom = row;
 		g_free(str);
 		tree_mark_columns(tree, pos, i,
@@ -385,7 +386,7 @@ redraw_tree(GntTree *tree)
 		i++;
 	}
 
-	scrcol = widget->priv.width - pos - 1;
+	scrcol = widget->priv.width - pos - 1;  /* position of the scrollbar */
 	rows--;
 	if (rows > 0)
 	{
