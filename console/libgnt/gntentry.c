@@ -523,9 +523,9 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_widget_class_register_action(parent_class, "suggest-prev", suggest_prev,
 				"\033" GNT_KEY_UP, NULL);
 	gnt_widget_class_register_action(parent_class, "history-prev", history_prev,
-				"\033" GNT_KEY_CTRL_UP, NULL);
-	gnt_widget_class_register_action(parent_class, "history-next", history_next,
 				"\033" GNT_KEY_CTRL_DOWN, NULL);
+	gnt_widget_class_register_action(parent_class, "history-next", history_next,
+				"\033" GNT_KEY_CTRL_UP, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
 
