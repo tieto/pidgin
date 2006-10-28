@@ -3,6 +3,7 @@
 
 #include "gntbox.h"
 #include "gntentry.h"
+#include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
 
@@ -339,7 +340,7 @@ begin_word(const char *text, const char *begin)
 {
 	char ch;
 	ch = *text;
-#define SAME(a,b)    ((isalpha(a) && isalpha(b)) || (isdigit(a) && isdigit(b)) || (isblank(a) && isblank(b)))
+#define SAME(a,b)    ((isalpha(a) && isalpha(b)) || (isdigit(a) && isdigit(b)) || (isspace(a) && isspace(b)))
 	while (--text >= begin) {
 		if (!SAME(ch, *text))
 			break;
@@ -354,7 +355,6 @@ move_back_word(GntWidget *widget, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(widget);
 	const char *iter = entry->cursor - 1;
-	int count;
 
 	if (iter < entry->start)
 		return TRUE;
@@ -586,7 +586,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_widget_class_register_action(parent_class, "history-next", history_next,
 				"\033" GNT_KEY_CTRL_UP, NULL);
 
-	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), parent_class);
 
 	GNTDEBUG;
 }

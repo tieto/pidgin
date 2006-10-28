@@ -415,7 +415,6 @@ gnt_widget_draw(GntWidget *widget)
 gboolean
 gnt_widget_perform_action_named(GntWidget *widget, const char *name, ...)
 {
-	GType type = G_OBJECT_TYPE(widget);
 	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
 	GList *list = NULL;
 	va_list args;
@@ -440,7 +439,6 @@ gnt_widget_perform_action_named(GntWidget *widget, const char *name, ...)
 static gboolean
 gnt_widget_perform_action(GntWidget *widget, const char *keys)
 {
-	GType type = G_OBJECT_TYPE(widget);
 	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
 	GntWidgetActionParam *param = g_hash_table_lookup(klass->bindings, keys);
 

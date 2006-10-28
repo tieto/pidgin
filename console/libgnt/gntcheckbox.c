@@ -34,19 +34,6 @@ gnt_check_box_draw(GntWidget *widget)
 }
 
 static void
-gnt_check_box_size_request(GntWidget *widget)
-{
-}
-
-static void
-gnt_check_box_map(GntWidget *widget)
-{
-	if (widget->priv.width == 0 || widget->priv.height == 0)
-		gnt_widget_size_request(widget);
-	GNTDEBUG;
-}
-
-static void
 toggle_selection(GntWidget *widget)
 {
 	GNT_CHECK_BOX(widget)->checked = !GNT_CHECK_BOX(widget)->checked;
@@ -74,11 +61,6 @@ gnt_check_box_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		return TRUE;
 	}
 	return FALSE;
-}
-
-static void
-gnt_check_box_destroy(GntWidget *widget)
-{
 }
 
 static void

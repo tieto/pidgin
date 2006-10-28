@@ -1,6 +1,7 @@
 #include "gntstyle.h"
 #include "gntcolors.h"
 
+#include <ctype.h>
 #include <string.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)

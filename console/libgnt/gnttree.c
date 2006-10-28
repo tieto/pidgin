@@ -1,5 +1,6 @@
-#include "gnttree.h"
 #include "gntmarshal.h"
+#include "gntstyle.h"
+#include "gnttree.h"
 #include "gntutils.h"
 
 #include <string.h>
@@ -474,13 +475,6 @@ tree_selection_changed(GntTree *tree, GntTreeRow *old, GntTreeRow *current)
 	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old->key, current->key);
 }
 
-static GntTreeRow *
-get_nth_row(GntTree *tree, int n)
-{
-	gpointer key = g_list_nth_data(tree->list, n);
-	return g_hash_table_lookup(tree->hash, key);
-}
-
 static gboolean
 action_down(GntWidget *widget, GList *null)
 {
@@ -577,8 +571,6 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 {
 	GntTree *tree = GNT_TREE(widget);
 	GntTreeRow *old = tree->current;
-	GntTreeRow *row;
-	int dist;
 
 	if (text[0] == '\r')
 	{
@@ -720,7 +712,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 	gnt_widget_class_register_action(parent_class, "page-down", action_page_down,
 				"\033" GNT_KEY_PGDOWN, NULL);
 
-	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), parent_class);
 
 	GNTDEBUG;
 }

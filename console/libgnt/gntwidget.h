@@ -181,9 +181,13 @@ GntWidgetAction *gnt_widget_action_parse(const char *name);
 void gnt_widget_action_free(GntWidgetAction *action);
 void gnt_widget_action_param_free(GntWidgetActionParam *param);
 
+void gnt_widget_register_binding(GntWidgetClass *klass, const char *name,
+			const char *trigger, ...);
 
 void gnt_widget_class_register_action(GntWidgetClass *klass, const char *name,
 			GntWidgetActionCallback callback, const char *trigger, ...);
+
+gboolean gnt_widget_perform_action_named(GntWidget *widget, const char *name, ...);
 
 G_END_DECLS
 

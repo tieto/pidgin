@@ -6,7 +6,6 @@ enum
 };
 
 static GntWidgetClass *parent_class = NULL;
-static guint signals[SIGS] = { 0 };
 
 static void
 gnt_line_draw(GntWidget *widget)
