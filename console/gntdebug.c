@@ -193,7 +193,7 @@ gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 
 void gg_debug_window_show()
 {
-	debug.paused = false;
+	debug.paused = FALSE;
 	debug.timestamps = gaim_prefs_get_bool("/core/debug/timestamps");
 	if (debug.window == NULL)
 	{
