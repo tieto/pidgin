@@ -729,14 +729,16 @@ void gnt_widget_class_register_action(GntWidgetClass *klass, const char *name,
 
 	g_hash_table_replace(klass->actions, g_strdup(name), action);
 
-	list = NULL;
-	va_start(args, trigger);
-	while ((data = va_arg(args, void *))) {
-		list = g_list_append(list, data);
-	}
-	va_end(args);
+	if (trigger) {
+		list = NULL;
+		va_start(args, trigger);
+		while ((data = va_arg(args, void *))) {
+			list = g_list_append(list, data);
+		}
+		va_end(args);
 
-	register_binding(klass, name, trigger, list);
+		register_binding(klass, name, trigger, list);
+	}
 }
 
 void gnt_widget_action_free(GntWidgetAction *action)
