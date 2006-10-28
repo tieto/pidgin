@@ -119,8 +119,8 @@ version 2.0.0:
 	* gaim_proxy_connect(): changed to return NULL on error and a pointer
 	  to a GaimProxyConnectInfo object which can be used to cancel
 	  connection attempts using gaim_proxy_connect_cancel().  Also added
-	  a 'handle' parameter that can be used to cancel to cancel the
-	  connection attempt using gaim_proxy_connect_cancel_with_handle().
+	  a 'handle' parameter that can be used to cancel the connection
+	  attempt using gaim_proxy_connect_cancel_with_handle().
 	* gaim_gethostbyname_async(): Renamed to gaim_dnsquery_a() and
 	  changed to return a pointer to a data structure that can be
 	  used to cancel the pending DNS query using gaim_dnsquery_destroy()
