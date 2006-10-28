@@ -334,6 +334,63 @@ del_to_end(GntWidget *widget, GList *null)
 	return TRUE;
 }
 
+static const char *
+begin_word(const char *text, const char *begin)
+{
+	char ch;
+	ch = *text;
+#define SAME(a,b)    ((isalpha(a) && isalpha(b)) || (isdigit(a) && isdigit(b)) || (isblank(a) && isblank(b)))
+	while (--text >= begin) {
+		if (!SAME(ch, *text))
+			break;
+	}
+#undef SAME
+
+	return ++text;
+}
+
+static gboolean
+move_back_word(GntWidget *widget, GList *null)
+{
+	GntEntry *entry = GNT_ENTRY(widget);
+	const char *iter = entry->cursor - 1;
+	int count;
+
+	if (iter < entry->start)
+		return TRUE;
+	iter = begin_word(iter, entry->start);
+	entry->cursor = (char*)iter;
+	if (entry->cursor < entry->scroll)
+		entry->scroll = entry->cursor;
+	entry_redraw(widget);
+	return TRUE;
+}
+
+static gboolean
+del_prev_word(GntWidget *widget, GList *null)
+{
+	GntEntry *entry = GNT_ENTRY(widget);
+	char *iter = entry->cursor - 1;
+	int count;
+
+	if (iter < entry->start)
+		return TRUE;
+	iter = (char*)begin_word(iter, entry->start);
+	count = entry->cursor - iter;
+	memmove(iter, entry->cursor, entry->end - entry->cursor);
+	entry->end -= count;
+	entry->cursor = iter;
+	if (entry->cursor <= entry->scroll) {
+		entry->scroll = entry->cursor - widget->priv.width + 2;
+		if (entry->scroll < entry->start)
+			entry->scroll = entry->start;
+	}
+	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
+	entry_redraw(widget);
+
+	return TRUE;
+}
+
 static gboolean
 gnt_entry_key_pressed(GntWidget *widget, const char *text)
 {
@@ -506,12 +563,14 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_U, NULL);
 	gnt_widget_class_register_action(parent_class, "delete-end", del_to_end,
 				GNT_KEY_CTRL_K, NULL);
-#if 0
 	gnt_widget_class_register_action(parent_class, "delete-prev-word", del_prev_word,
-				NULL, 1, NULL);
+				NULL, NULL);
+#if 0
 	gnt_widget_class_register_action(parent_class, "delete-next-word", del_next_word,
 				NULL, 1, NULL);
 #endif
+	gnt_widget_class_register_action(parent_class, "cursor-prev-word", move_back_word,
+				NULL, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-prev", move_back,
 				"\033" GNT_KEY_LEFT, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-next", move_forward,
