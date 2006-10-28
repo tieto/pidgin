@@ -1258,6 +1258,13 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, GGBlist *gg
 }
 
 static gboolean
+context_menu(GntWidget *widget, GGBlist *ggblist)
+{
+	draw_context_menu(ggblist);
+	return TRUE;
+}
+
+static gboolean
 key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 {
 	gboolean stop = FALSE, ret = FALSE;
@@ -1275,16 +1282,7 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 		stop = TRUE;
 	}
 
-	if (text[0] == 27)
-	{
-		if (strcmp(text + 1, GNT_KEY_POPUP) == 0)
-		{
-			draw_context_menu(ggblist);
-			stop = TRUE;
-			ret = TRUE;
-		}
-	}
-	else if (strcmp(text, GNT_KEY_CTRL_O) == 0)
+	if (strcmp(text, GNT_KEY_CTRL_O) == 0)
 	{
 		gaim_prefs_set_bool(PREF_ROOT "/showoffline",
 				!gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
@@ -1933,6 +1931,7 @@ void gg_blist_show()
 
 	g_signal_connect(G_OBJECT(ggblist->tree), "selection_changed", G_CALLBACK(selection_changed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "key_pressed", G_CALLBACK(key_pressed), ggblist);
+	g_signal_connect(G_OBJECT(ggblist->tree), "context-menu", G_CALLBACK(context_menu), ggblist);
 	g_signal_connect_after(G_OBJECT(ggblist->tree), "clicked", G_CALLBACK(blist_clicked), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),

@@ -21,6 +21,7 @@ enum
 	SIG_SIZE_CHANGED,
 	SIG_POSITION,
 	SIG_CLICKED,
+	SIG_CONTEXT_MENU,
 	SIGS
 };
 
@@ -80,6 +81,14 @@ gnt_widget_dummy_confirm_size(GntWidget *widget, int width, int height)
 	if (widget->priv.height != height && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
 		return FALSE;
 	return TRUE;
+}
+
+static gboolean
+context_menu(GntWidget *widget, GList *null)
+{
+	gboolean ret = FALSE;
+	g_signal_emit(widget, signals[SIG_CONTEXT_MENU], 0, &ret);
+	return ret;
 }
 
 static gboolean
@@ -234,10 +243,23 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 gnt_closure_marshal_BOOLEAN__INT_INT_INT,
 					 G_TYPE_BOOLEAN, 3, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
 
+	signals[SIG_CONTEXT_MENU] = 
+		g_signal_new("context-menu",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 gnt_boolean_handled_accumulator, NULL,
+					 gnt_closure_marshal_BOOLEAN__VOID,
+					 G_TYPE_BOOLEAN, 0);
+
 	klass->actions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 				(GDestroyNotify)gnt_widget_action_free);
 	klass->bindings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 				(GDestroyNotify)gnt_widget_action_param_free);
+
+	/* This is relevant for all widgets */
+	gnt_widget_class_register_action(klass, "context-menu", context_menu,
+				"\033" GNT_KEY_POPUP, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
 
