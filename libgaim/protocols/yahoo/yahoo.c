@@ -1170,7 +1170,7 @@ static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 /* This is the y64 alphabet... it's like base64, but has a . and a _ */
-char base64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._";
+static const char base64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._";
 
 /* This is taken from Sylpheed by Hiroyuki Yamamoto.  We have our own tobase64 function
  * in util.c, but it has a bug I don't feel like finding right now ;) */

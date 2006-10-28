@@ -342,7 +342,7 @@ char *yahoo_codes_to_html(const char *x)
 /* borrowed from gtkimhtml */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
-static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
+static const gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
 enum fatype { size, color, face, junk };
 typedef struct {
