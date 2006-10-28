@@ -31,6 +31,7 @@
 #include "log.h"
 #include "notify.h"
 #include "prefs.h"
+#include "proxy.h"
 #include "request.h"
 #include "server.h"
 #include "signals.h"
@@ -188,13 +189,11 @@ gaim_connection_destroy(GaimConnection *gc)
 
 	update_keepalive(gc, FALSE);
 
-	if (gc->prpl != NULL)
-	{
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	gaim_proxy_connect_cancel_with_handle(gc);
 
-		if (prpl_info->close)
-			(prpl_info->close)(gc);
-	}
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl_info->close)
+		(prpl_info->close)(gc);
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = gaim_find_buddies(account, NULL);
