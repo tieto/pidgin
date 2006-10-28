@@ -8,69 +8,22 @@
 GAIM_TOP := ../..
 include $(GAIM_TOP)/libgaim/win32/global.mak
 
-GG = $(GAIM_PROTOS_TOP)/gg
-IRC = $(GAIM_PROTOS_TOP)/irc
-JABBER = $(GAIM_PROTOS_TOP)/jabber
-MSN = $(GAIM_PROTOS_TOP)/msn
-NOVELL = $(GAIM_PROTOS_TOP)/novell
-OSCAR = $(GAIM_PROTOS_TOP)/oscar
-SAMETIME = $(GAIM_PROTOS_TOP)/sametime
-SILC = $(GAIM_PROTOS_TOP)/silc
-SIMPLE = $(GAIM_PROTOS_TOP)/simple
-TOC = $(GAIM_PROTOS_TOP)/toc
-YAHOO = $(GAIM_PROTOS_TOP)/yahoo
-
-##
-## Don't forget to change STATIC_PROTO_INIT, in config.h.mingw if you
-## change the status of a protocol (static/plugin)
-##
-
-GG_TYPE = PLUGIN
-IRC_TYPE = PLUGIN
-JABBER_TYPE = PLUGIN
-MSN_TYPE = PLUGIN
-NOVELL_TYPE = PLUGIN
-OSCAR_TYPE = PLUGIN
-SAMETIME_TYPE = PLUGIN
-SILC_TYPE = PLUGIN
-SIMPLE_TYPE = PLUGIN
-TOC_TYPE = PLUGIN
-YAHOO_TYPE = PLUGIN
+SUBDIRS = gg irc jabber msn novell oscar qq sametime silc simple yahoo
 
 .PHONY: all install clean
 
 all:
-	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f $(GAIM_WIN32_MAKEFILE)
+	for subdir in $(SUBDIRS); do \
+		$(MAKE) -C $$subdir -f $(GAIM_WIN32_MAKEFILE) || exit 1; \
+	done;
 
 install: all
-	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f $(GAIM_WIN32_MAKEFILE) install
+	for subdir in $(SUBDIRS); do \
+		$(MAKE) -C $$subdir -f $(GAIM_WIN32_MAKEFILE) install || exit 1; \
+	done;
 
 clean:
-	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(IRC_TYPE)' -C $(IRC) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(JABBER_TYPE)' -C $(JABBER) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(MSN_TYPE)' -C $(MSN) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(OSCAR_TYPE)' -C $(OSCAR) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) TYPE='$(YAHOO_TYPE)' -C $(YAHOO) -f $(GAIM_WIN32_MAKEFILE) clean
+	for subdir in $(SUBDIRS); do \
+		$(MAKE) -C $$subdir -f $(GAIM_WIN32_MAKEFILE) clean || exit 1; \
+	done;
+

@@ -528,16 +528,20 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 #endif
 
+#ifndef _WIN32
 #ifdef ENABLE_MONO
 	g_string_append(str, "    <b>Mono:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>Mono:</b> Disabled<br/>");
 #endif
+#endif
 
+#ifndef _WIN32
 #ifdef HAVE_LIBNM
 	g_string_append(str, "    <b>NetworkManager:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>NetworkManager:</b> Disabled<br/>");
+#endif
 #endif
 
 #ifdef HAVE_NSS
