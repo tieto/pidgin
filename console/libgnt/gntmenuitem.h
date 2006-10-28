@@ -19,6 +19,8 @@ typedef struct _GnMenuItem			GntMenuItem;
 typedef struct _GnMenuItemPriv		GntMenuItemPriv;
 typedef struct _GnMenuItemClass		GntMenuItemClass;
 
+#include "gntmenu.h"
+
 struct _GnMenuItemPriv
 {
 	/* These will be used to determine the position of the submenu */

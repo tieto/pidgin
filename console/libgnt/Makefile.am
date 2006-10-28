@@ -18,6 +18,7 @@ libgnt_la_SOURCES = \
 	gntmarshal.c \
 	gntmenu.c \
 	gntmenuitem.c \
+	gntmenuitemcheck.c \
 	gntstyle.c \
 	gnttextview.c \
 	gnttree.c \
@@ -39,6 +40,7 @@ libgnt_la_headers = \
 	gntmarshal.h \
 	gntmenu.h \
 	gntmenuitem.h \
+	gntmenuitemcheck.h \
 	gntstyle.h \
 	gnttextview.h \
 	gnttree.h \

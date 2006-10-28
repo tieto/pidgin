@@ -56,6 +56,7 @@ struct _GnTreeClass
 	GntWidgetClass parent;
 
 	void (*selection_changed)(GntTreeRow *old, GntTreeRow * current);
+	void (*toggled)(GntTree *tree, gpointer key);
 
 	void (*gnt_reserved1)(void);
 	void (*gnt_reserved2)(void);

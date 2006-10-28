@@ -1,4 +1,5 @@
 #include "gntmenu.h"
+#include "gntmenuitemcheck.h"
 
 #include <string.h>
 
@@ -60,8 +61,14 @@ gnt_menu_size_request(GntWidget *widget)
 static void
 menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 {
-	gnt_tree_add_row_last(GNT_TREE(menu), item,
-		gnt_tree_create_row(GNT_TREE(menu), item->text, item->submenu ? ">" : " "), parent);
+	if (GNT_IS_MENUITEM_CHECK(item)) {
+		gnt_tree_add_choice(GNT_TREE(menu), item,
+			gnt_tree_create_row(GNT_TREE(menu), item->text, " "), parent, NULL);
+		gnt_tree_set_choice(GNT_TREE(menu), item, gnt_menuitem_check_get_checked(GNT_MENUITEM_CHECK(item)));
+	} else
+		gnt_tree_add_row_last(GNT_TREE(menu), item,
+			gnt_tree_create_row(GNT_TREE(menu), item->text, item->submenu ? ">" : " "), parent);
+
 	if (0 && item->submenu) {
 		GntMenu *sub = GNT_MENU(item->submenu);
 		GList *iter;
@@ -126,8 +133,6 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 	int current = menu->selected;
 
 	if (menu->submenu) {
-		/*if (gnt_widget_key_pressed(GNT_WIDGET(menu->submenu), text))*/
-			/*return TRUE;*/
 		return (gnt_widget_key_pressed(GNT_WIDGET(menu->submenu), text));
 	}
 
@@ -178,6 +183,21 @@ gnt_menu_destroy(GntWidget *widget)
 }
 
 static void
+gnt_menu_toggled(GntTree *tree, gpointer key)
+{
+	GntMenuItem *item = GNT_MENUITEM(key);
+	GntMenu *menu = GNT_MENU(tree);
+	gboolean check = gnt_menuitem_check_get_checked(GNT_MENUITEM_CHECK(item));
+	gnt_menuitem_check_set_checked(GNT_MENUITEM_CHECK(item), !check);
+	if (item->callback)
+		item->callback(item, item->callbackdata);
+	while (menu) {
+		gnt_widget_hide(GNT_WIDGET(menu));
+		menu = menu->parentmenu;
+	}
+}
+
+static void
 gnt_menu_activate(GntWidget *widget)
 {
 	GntMenu *menu = GNT_MENU(widget);
@@ -189,8 +209,12 @@ gnt_menu_activate(GntWidget *widget)
 		item = gnt_tree_get_selection_data(GNT_TREE(menu));
 	}
 
-	if (item)
-		menuitem_activate(menu, item);
+	if (item) {
+		if (GNT_MENUITEM_CHECK(item))
+			gnt_menu_toggled(GNT_TREE(widget), item);
+		else
+			menuitem_activate(menu, item);
+	}
 }
 
 static void
@@ -219,6 +243,8 @@ gnt_menu_class_init(GntMenuClass *klass)
 	wid_class->key_pressed = gnt_menu_key_pressed;
 	wid_class->activate = gnt_menu_activate;
 	wid_class->hide = gnt_menu_hide;
+
+	parent_class->toggled = gnt_menu_toggled;
 
 	GNTDEBUG;
 }

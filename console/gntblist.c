@@ -39,6 +39,9 @@
 #include "gntentry.h"
 #include "gntlabel.h"
 #include "gntline.h"
+#include "gntmenu.h"
+#include "gntmenuitem.h"
+#include "gntmenuitemcheck.h"
 #include "gnttree.h"
 #include "gntwindow.h"
 
@@ -597,29 +600,39 @@ selection_activate(GntWidget *widget, GGBlist *ggblist)
 }
 
 static void
-remove_context_menu(GGBlist *ggblist)
+context_menu_callback(GntMenuItem *item, gpointer data)
 {
-	if (ggblist->context)
-		gnt_widget_destroy(ggblist->context->parent);
-	ggblist->context = NULL;
-	ggblist->cnode = NULL;
+	GaimMenuAction *action = data;
+	GaimBlistNode *node = ggblist->cnode;
+	if (action) {
+		void (*callback)(GaimBlistNode *, gpointer);
+		callback = (void (*)(GaimBlistNode *, gpointer))action->callback;
+		if (callback)
+			callback(action->data, node);
+		else
+			return;
+	}
 }
 
 static void
-gnt_append_menu_action(GntTree *tree, GaimMenuAction *action, gpointer parent)
+gnt_append_menu_action(GntMenu *menu, GaimMenuAction *action, gpointer parent)
 {
 	GList *list;
+	GntMenuItem *item;
+
 	if (action == NULL)
 		return;
 
-	gnt_tree_add_row_last(tree, action,
-			gnt_tree_create_row(tree, action->label), parent);
+	item = gnt_menuitem_new(action->label);
+	gnt_menuitem_set_callback(GNT_MENUITEM(item), context_menu_callback, action);
+	gnt_menu_add_item(menu, GNT_MENUITEM(item));
+
 	for (list = action->children; list; list = list->next)
-		gnt_append_menu_action(tree, list->data, action);
+		gnt_append_menu_action(menu, list->data, action);
 }
 
 static void
-append_proto_menu(GntTree *tree, GaimConnection *gc, GaimBlistNode *node)
+append_proto_menu(GntMenu *menu, GaimConnection *gc, GaimBlistNode *node)
 {
 	GList *list;
 	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -632,25 +645,18 @@ append_proto_menu(GntTree *tree, GaimConnection *gc, GaimBlistNode *node)
 	{
 		GaimMenuAction *act = (GaimMenuAction *) list->data;
 		act->data = node;
-		gnt_append_menu_action(tree, act, NULL);
+		gnt_append_menu_action(menu, act, NULL);
 	}
 }
 
 static void
-add_custom_action(GntTree *tree, const char *label, GaimCallback callback,
+add_custom_action(GntMenu *menu, const char *label, GaimCallback callback,
 		gpointer data)
 {
 	GaimMenuAction *action = gaim_menu_action_new(label, callback, data, NULL);
-	gnt_append_menu_action(tree, action, NULL);
-	g_signal_connect_swapped(G_OBJECT(tree), "destroy",
+	gnt_append_menu_action(menu, action, NULL);
+	g_signal_connect_swapped(G_OBJECT(menu), "destroy",
 			G_CALLBACK(gaim_menu_action_free), action);
-}
-
-static void
-context_menu_toggle(GntTree *tree, GaimMenuAction *action, gpointer null)
-{
-	gboolean sel = gnt_tree_get_choice(tree, action);
-	gaim_blist_node_set_bool(action->data, "gnt-autojoin", sel);
 }
 
 static void
@@ -713,19 +719,26 @@ chat_components_edit(GaimChat *chat, GaimBlistNode *selected)
 }
 
 static void
-create_chat_menu(GntTree *tree, GaimChat *chat)
+autojoin_toggled(GntMenuItem *item, gpointer data)
+{
+	GaimMenuAction *action = data;
+	gaim_blist_node_set_bool(action->data, "gnt-autojoin",
+				gnt_menuitem_check_get_checked(GNT_MENUITEM_CHECK(item)));
+}
+
+static void
+create_chat_menu(GntMenu *menu, GaimChat *chat)
 {
 	GaimMenuAction *action = gaim_menu_action_new(_("Auto-join"), NULL, chat, NULL);
-
-	gnt_tree_add_choice(tree, action, gnt_tree_create_row(tree, action->label), NULL, NULL);
-	gnt_tree_set_choice(tree, action, gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"));
-
-	g_signal_connect_swapped(G_OBJECT(tree), "destroy",
+	GntMenuItem *check = gnt_menuitem_check_new(action->label);
+	gnt_menuitem_check_set_checked(GNT_MENUITEM_CHECK(check),
+				gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"));
+	gnt_menu_add_item(menu, check);
+	gnt_menuitem_set_callback(check, autojoin_toggled, action);
+	g_signal_connect_swapped(G_OBJECT(menu), "destroy",
 			G_CALLBACK(gaim_menu_action_free), action);
 
-	add_custom_action(tree, _("Edit Settings"), (GaimCallback)chat_components_edit, chat);
-	
-	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(context_menu_toggle), NULL);
+	add_custom_action(menu, _("Edit Settings"), (GaimCallback)chat_components_edit, chat);
 }
 
 static void
@@ -747,13 +760,13 @@ gg_add_chat(GaimGroup *grp, GaimBlistNode *selected)
 }
 
 static void
-create_group_menu(GntTree *tree, GaimGroup *group)
+create_group_menu(GntMenu *menu, GaimGroup *group)
 {
-	add_custom_action(tree, _("Add Buddy"),
+	add_custom_action(menu, _("Add Buddy"),
 			GAIM_CALLBACK(gg_add_buddy), group);
-	add_custom_action(tree, _("Add Chat"),
+	add_custom_action(menu, _("Add Chat"),
 			GAIM_CALLBACK(gg_add_chat), group);
-	add_custom_action(tree, _("Add Group"),
+	add_custom_action(menu, _("Add Group"),
 			GAIM_CALLBACK(gg_add_group), group);
 }
 
@@ -764,14 +777,14 @@ gg_blist_get_buddy_info_cb(GaimBuddy *buddy, GaimBlistNode *selected)
 }
 
 static void
-create_buddy_menu(GntTree *tree, GaimBuddy *buddy)
+create_buddy_menu(GntMenu *menu, GaimBuddy *buddy)
 {
 	GaimPluginProtocolInfo *prpl_info;
 
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(buddy->account->gc->prpl);
 	if (prpl_info && prpl_info->get_info)
 	{
-		add_custom_action(tree, _("Get Info"),
+		add_custom_action(menu, _("Get Info"),
 				GAIM_CALLBACK(gg_blist_get_buddy_info_cb), buddy);
 	}
 
@@ -792,40 +805,21 @@ create_buddy_menu(GntTree *tree, GaimBuddy *buddy)
 #endif
 
 	/* Protocol actions */
-	append_proto_menu(tree,
+	append_proto_menu(menu,
 			gaim_account_get_connection(gaim_buddy_get_account(buddy)),
 			(GaimBlistNode*)buddy);
 }
 
 static void
-append_extended_menu(GntTree *tree, GaimBlistNode *node)
+append_extended_menu(GntMenu *menu, GaimBlistNode *node)
 {
 	GList *iter;
 
 	for (iter = gaim_blist_node_get_extended_menu(node);
 			iter; iter = g_list_delete_link(iter, iter))
 	{
-		gnt_append_menu_action(tree, iter->data, NULL);
+		gnt_append_menu_action(menu, iter->data, NULL);
 	}
-}
-
-static void
-context_menu_callback(GntTree *tree, GGBlist *ggblist)
-{
-	GaimMenuAction *action = gnt_tree_get_selection_data(tree);
-	GaimBlistNode *node = ggblist->cnode;
-
-	if (action)
-	{
-		void (*callback)(GaimBlistNode *, gpointer);
-		callback = (void (*)(GaimBlistNode *, gpointer))action->callback;
-		if (callback)
-			callback(action->data, node);
-		else
-			return;
-	}
-
-	remove_context_menu(ggblist);
 }
 
 /* Xerox'd from gtkdialogs.c:gaim_gtkdialogs_remove_contact_cb */
@@ -1007,20 +1001,21 @@ gg_blist_place_tagged(GaimBlistNode *node)
 }
 
 static void
+context_menu_destroyed(GntWidget *widget, GGBlist *ggblist)
+{
+	ggblist->context = NULL;
+}
+
+static void
 draw_context_menu(GGBlist *ggblist)
 {
 	GaimBlistNode *node = NULL;
-	GntWidget *context = NULL, *window = NULL;
+	GntWidget *context = NULL;
 	GntTree *tree = NULL;
 	int x, y, top, width;
 	char *title = NULL;
 
 	tree = GNT_TREE(ggblist->tree);
-
-	if (ggblist->context)
-	{
-		remove_context_menu(ggblist);
-	}
 
 	node = gnt_tree_get_selection_data(tree);
 
@@ -1028,57 +1023,48 @@ draw_context_menu(GGBlist *ggblist)
 		remove_tooltip(ggblist);
 
 	ggblist->cnode = node;
-	ggblist->context = context = gnt_tree_new();
-	GNT_WIDGET_SET_FLAGS(context, GNT_WIDGET_NO_BORDER);
-	gnt_widget_set_name(context, "context menu");
-	g_signal_connect(G_OBJECT(context), "activate", G_CALLBACK(context_menu_callback), ggblist);
+
+	ggblist->context = context = gnt_menu_new(GNT_MENU_POPUP);
+	g_signal_connect(G_OBJECT(context), "destroy", G_CALLBACK(context_menu_destroyed), ggblist);
 
 	if (!node) {
-		create_group_menu(GNT_TREE(context), NULL);
+		create_group_menu(GNT_MENU(context), NULL);
 		title = g_strdup(_("Buddy List"));
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
-		create_buddy_menu(GNT_TREE(context),
+		create_buddy_menu(GNT_MENU(context),
 			gaim_contact_get_priority_buddy((GaimContact*)node));
 		title = g_strdup(gaim_contact_get_alias((GaimContact*)node));
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy = (GaimBuddy *)node;
-		create_buddy_menu(GNT_TREE(context), buddy);
+		create_buddy_menu(GNT_MENU(context), buddy);
 		title = g_strdup(gaim_buddy_get_name(buddy));
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		GaimChat *chat = (GaimChat*)node;
-		create_chat_menu(GNT_TREE(context), chat);
+		create_chat_menu(GNT_MENU(context), chat);
 		title = g_strdup(gaim_chat_get_name(chat));
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		GaimGroup *group = (GaimGroup *)node;
-		create_group_menu(GNT_TREE(context), group);
+		create_group_menu(GNT_MENU(context), group);
 		title = g_strdup(group->name);
 	}
 
-	append_extended_menu(GNT_TREE(context), node);
+	append_extended_menu(GNT_MENU(context), node);
 
 	/* These are common for everything */
 	if (node) {
-		add_custom_action(GNT_TREE(context), _("Rename"),
+		add_custom_action(GNT_MENU(context), _("Rename"),
 				GAIM_CALLBACK(gg_blist_rename_node_cb), node);
-		add_custom_action(GNT_TREE(context), _("Remove"),
+		add_custom_action(GNT_MENU(context), _("Remove"),
 				GAIM_CALLBACK(gg_blist_remove_node_cb), node);
 		if (ggblist->tagged && (GAIM_BLIST_NODE_IS_CONTACT(node)
 				|| GAIM_BLIST_NODE_IS_GROUP(node))) {
-			add_custom_action(GNT_TREE(context), _("Place tagged"),
+			add_custom_action(GNT_MENU(context), _("Place tagged"),
 					GAIM_CALLBACK(gg_blist_place_tagged), node);
 		} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			add_custom_action(GNT_TREE(context), _("Tag"),
+			add_custom_action(GNT_MENU(context), _("Tag"),
 					GAIM_CALLBACK(gg_blist_tag_buddy), node);
 		}
 	}
-
-	window = gnt_vbox_new(FALSE);
-	GNT_WIDGET_SET_FLAGS(window, GNT_WIDGET_TRANSIENT);
-	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
-	gnt_box_set_title(GNT_BOX(window), title);
-
-	gnt_widget_set_size(context, 0, g_list_length(GNT_TREE(context)->list));
-	gnt_box_add_widget(GNT_BOX(window), context);
 
 	/* Set the position for the popup */
 	gnt_widget_get_position(GNT_WIDGET(tree), &x, &y);
@@ -1088,8 +1074,8 @@ draw_context_menu(GGBlist *ggblist)
 	x += width;
 	y += top - 1;
 
-	gnt_widget_set_position(window, x, y);
-	gnt_widget_draw(window);
+	gnt_widget_set_position(context, x, y);
+	gnt_screen_menu_show(GNT_MENU(context));
 	g_free(title);
 }
 
@@ -1149,9 +1135,6 @@ draw_tooltip(GGBlist *ggblist)
 	tree = GNT_TREE(widget);
 
 	if (!gnt_widget_has_focus(ggblist->tree))
-		return;
-
-	if (ggblist->context)
 		return;
 
 	if (ggblist->tooltip)
@@ -1252,8 +1235,6 @@ draw_tooltip(GGBlist *ggblist)
 static void
 selection_changed(GntWidget *widget, gpointer old, gpointer current, GGBlist *ggblist)
 {
-	if (ggblist->context)
-		remove_context_menu(ggblist);
 	draw_tooltip(ggblist);
 }
 
@@ -1274,12 +1255,6 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 		remove_peripherals(ggblist);
 		stop = TRUE;
 		ret = TRUE;
-	}
-
-	if (ggblist->context)
-	{
-		ret = gnt_widget_key_pressed(ggblist->context, text);
-		stop = TRUE;
 	}
 
 	if (strcmp(text, GNT_KEY_CTRL_O) == 0)
@@ -1336,7 +1311,7 @@ remove_peripherals(GGBlist *ggblist)
 	if (ggblist->tooltip)
 		remove_tooltip(ggblist);
 	else if (ggblist->context)
-		remove_context_menu(ggblist);
+		gnt_widget_destroy(ggblist->context);
 }
 
 static void

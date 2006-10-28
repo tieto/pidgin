@@ -691,7 +691,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 		g_signal_new("toggled",
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
-					 0,
+					 G_STRUCT_OFFSET(GntTreeClass, toggled),
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
