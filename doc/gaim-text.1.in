@@ -166,6 +166,8 @@ text = white; blue
 .br
 disabled = gray; black
 .br
+urgent = green; black
+.br
 
 .br
 # Remap some keys for GntEntry
