@@ -118,7 +118,9 @@ version 2.0.0:
 	  gaim_proxy_connect() and gaim_network_listen*().
 	* gaim_proxy_connect(): changed to return NULL on error and a pointer
 	  to a GaimProxyConnectInfo object which can be used to cancel
-	  connection attempts using gaim_proxy_connect_cancel().
+	  connection attempts using gaim_proxy_connect_cancel().  Also added
+	  a 'handle' parameter that can be used to cancel to cancel the
+	  connection attempt using gaim_proxy_connect_cancel_with_handle().
 	* gaim_gethostbyname_async(): Renamed to gaim_dnsquery_a() and
 	  changed to return a pointer to a data structure that can be
 	  used to cancel the pending DNS query using gaim_dnsquery_destroy()
@@ -321,6 +323,8 @@ version 2.0.0:
 	  call to gaim_network_listen() or gaim_network_listen_range()
 	* gaim_proxy_connect_cancel(): Can be used to cancel a pending
 	  gaim_proxy_connect() request
+	* gaim_proxy_connect_cancel_with_handle(): Can be used to cancel
+	  a previous gaim_proxy_connect() request using a specified handle
 	* gaim_dnsquery_destroy(): Can be used to cancel a pending DNS
 	  query.
 	* gaim_util_fetch_url_cancel(): Can be used to cancel a pending

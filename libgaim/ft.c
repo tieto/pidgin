@@ -945,7 +945,7 @@ gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 			xfer->remote_port = port;
 
 			/* Establish a file descriptor. */
-			gaim_proxy_connect(xfer->account, xfer->remote_ip,
+			gaim_proxy_connect(NULL, xfer->account, xfer->remote_ip,
 							   xfer->remote_port, connect_cb, xfer);
 
 			return;

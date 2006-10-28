@@ -511,7 +511,7 @@ void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_
 	}
 
 	if (yd->jp) {
-		if ((connect_data = gaim_proxy_connect(account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
+		if ((connect_data = gaim_proxy_connect(NULL, account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
 											   gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 											   yahoo_buddy_icon_upload_connected, d)) == NULL)
 		{
@@ -519,7 +519,7 @@ void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_
 			yahoo_buddy_icon_upload_data_free(d);
 		}
 	} else {
-		if ((connect_data = gaim_proxy_connect(account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
+		if ((connect_data = gaim_proxy_connect(NULL, account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
 											   gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 											   yahoo_buddy_icon_upload_connected, d)) == NULL)
 		{

@@ -40,6 +40,7 @@
 #include "util.h"
 
 struct _GaimProxyConnectData {
+	void *handle;
 	GaimProxyConnectFunction connect_cb;
 	gpointer data;
 	gchar *host;
@@ -82,12 +83,7 @@ static const char *socks5errors[] = {
 
 static GaimProxyInfo *global_proxy_info = NULL;
 
-/*
- * TODO: Once all callers of gaim_proxy_connect() are keeping track
- *       of the return value from that function this linked list
- *       will no longer be needed.
- */
-static GSList *connect_datas = NULL;
+static GSList *handles = NULL;
 
 static void try_connect(GaimProxyConnectData *connect_data);
 
@@ -281,7 +277,7 @@ gaim_gnome_proxy_get_info(void)
 static void
 gaim_proxy_connect_data_destroy(GaimProxyConnectData *connect_data)
 {
-	connect_datas = g_slist_remove(connect_datas, connect_data);
+	handles = g_slist_remove(handles, connect_data);
 
 	if (connect_data->query_data != NULL)
 		gaim_dnsquery_destroy(connect_data->query_data);
@@ -1750,7 +1746,8 @@ gaim_proxy_get_setup(GaimAccount *account)
 }
 
 GaimProxyConnectData *
-gaim_proxy_connect(GaimAccount *account, const char *host, int port,
+gaim_proxy_connect(void *handle, GaimAccount *account,
+				   const char *host, int port,
 				   GaimProxyConnectFunction connect_cb, gpointer data)
 {
 	const char *connecthost = host;
@@ -1763,6 +1760,7 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 
 	connect_data = g_new0(GaimProxyConnectData, 1);
 	connect_data->fd = -1;
+	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
 	connect_data->host = g_strdup(host);
@@ -1804,7 +1802,7 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 		return NULL;
 	}
 
-	connect_datas = g_slist_prepend(connect_datas, connect_data);
+	handles = g_slist_prepend(handles, connect_data);
 
 	return connect_data;
 }
@@ -1813,8 +1811,10 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
  * Combine some of this code with gaim_proxy_connect()
  */
 GaimProxyConnectData *
-gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
-				   GaimProxyConnectFunction connect_cb, gpointer data)
+gaim_proxy_connect_socks5(void *handle, GaimProxyInfo *gpi,
+						  const char *host, int port,
+						  GaimProxyConnectFunction connect_cb,
+						  gpointer data)
 {
 	GaimProxyConnectData *connect_data;
 
@@ -1824,6 +1824,7 @@ gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 
 	connect_data = g_new0(GaimProxyConnectData, 1);
 	connect_data->fd = -1;
+	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
 	connect_data->host = g_strdup(host);
@@ -1840,7 +1841,7 @@ gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 		return NULL;
 	}
 
-	connect_datas = g_slist_prepend(connect_datas, connect_data);
+	handles = g_slist_prepend(handles, connect_data);
 
 	return connect_data;
 }
@@ -1850,6 +1851,21 @@ gaim_proxy_connect_cancel(GaimProxyConnectData *connect_data)
 {
 	gaim_proxy_connect_data_disconnect(connect_data, NULL);
 	gaim_proxy_connect_data_destroy(connect_data);
+}
+
+void
+gaim_proxy_connect_cancel_with_handle(void *handle)
+{
+	GSList *l, *l_next;
+
+	for (l = handles; l != NULL; l = l_next) {
+		GaimProxyConnectData *connect_data = l->data;
+
+		l_next = l->next;
+
+		if (connect_data->handle == handle)
+			gaim_proxy_connect_cancel(connect_data);
+	}
 }
 
 static void
@@ -1927,9 +1943,9 @@ gaim_proxy_init(void)
 void
 gaim_proxy_uninit(void)
 {
-	while (connect_datas != NULL)
+	while (handles != NULL)
 	{
-		gaim_proxy_connect_data_disconnect(connect_datas->data, NULL);
-		gaim_proxy_connect_data_destroy(connect_datas->data);
+		gaim_proxy_connect_data_disconnect(handles->data, NULL);
+		gaim_proxy_connect_data_destroy(handles->data);
 	}
 }

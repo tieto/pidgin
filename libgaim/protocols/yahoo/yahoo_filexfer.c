@@ -261,7 +261,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
 		if (yd->jp) {
-			if (gaim_proxy_connect(account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
+			if (gaim_proxy_connect(NULL, account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
 			                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 			                       yahoo_sendfile_connected, xfer) == NULL)
 			{
@@ -270,7 +270,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 				gaim_xfer_cancel_remote(xfer);
 			}
 		} else {
-			if (gaim_proxy_connect(account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
+			if (gaim_proxy_connect(NULL, account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
 			                       gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
 			                       yahoo_sendfile_connected, xfer) == NULL)
 			{
@@ -281,7 +281,7 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 		}
 	} else {
 		/* TODO: Using xfer->fd like this is probably a bad thing... */
-		if (gaim_proxy_connect(account, xfer_data->host, xfer_data->port,
+		if (gaim_proxy_connect(NULL, account, xfer_data->host, xfer_data->port,
 		                              yahoo_receivefile_connected, xfer) == NULL)
 			xfer->fd = -1;
 		else

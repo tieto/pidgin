@@ -341,11 +341,10 @@ static void irc_login(GaimAccount *account)
 
 	if (!irc->gsc) {
 
-		irc->connect_data = gaim_proxy_connect(account, irc->server,
+		if (gaim_proxy_connect(gc, account, irc->server,
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
-				 irc_login_cb, gc);
-
-		if (!irc->connect_data || !gaim_account_get_connection(account)) {
+				 irc_login_cb, gc) == NULL)
+		{
 			gaim_connection_error(gc, _("Couldn't create socket"));
 			return;
 		}
@@ -409,8 +408,6 @@ static void irc_login_cb(gpointer data, gint source, const gchar *error_message)
 	GaimConnection *gc = data;
 	struct irc_conn *irc = gc->proto_data;
 
-	irc->connect_data = NULL;
-
 	if (source < 0) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
@@ -451,9 +448,6 @@ static void irc_close(GaimConnection *gc)
 
 	if (irc->gsc || (irc->fd >= 0))
 		irc_cmd_quit(irc, "quit", NULL, NULL);
-
-	if (irc->connect_data)
-		gaim_proxy_connect_cancel(irc->connect_data);
 
 	if (gc->inpa)
 		gaim_input_remove(gc->inpa);

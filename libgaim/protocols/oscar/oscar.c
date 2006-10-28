@@ -1211,7 +1211,7 @@ oscar_login(GaimAccount *account)
 	gaim_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
 
 	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
-	newconn->connect_data = gaim_proxy_connect(account,
+	newconn->connect_data = gaim_proxy_connect(NULL, account,
 			gaim_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
 			gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 			connection_established_cb, newconn);
@@ -1333,7 +1333,7 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	newconn = flap_connection_new(od, SNAC_FAMILY_LOCATE);
 	newconn->cookielen = info->cookielen;
 	newconn->cookie = g_memdup(info->cookie, info->cookielen);
-	newconn->connect_data = gaim_proxy_connect(account, host, port,
+	newconn->connect_data = gaim_proxy_connect(NULL, account, host, port,
 			connection_established_cb, newconn);
 	g_free(host);
 	if (newconn->connect_data == NULL)
@@ -1546,7 +1546,7 @@ int gaim_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->modname = g_strdup(modname);
 
 	/* TODO: Keep track of this return value. */
-	if (gaim_proxy_connect(pos->gc->account, "gaim.sourceforge.net", 80,
+	if (gaim_proxy_connect(NULL, pos->gc->account, "gaim.sourceforge.net", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
@@ -1632,13 +1632,13 @@ gaim_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		gaim_debug_info("oscar", "Connecting to chat room %s exchange %hu\n", cc->name, cc->exchange);
 	}
 
-	newconn->connect_data = gaim_proxy_connect(account, host, port,
+	newconn->connect_data = gaim_proxy_connect(NULL, account, host, port,
 			connection_established_cb, newconn);
 	if (newconn->connect_data == NULL)
 	{
 		flap_connection_schedule_destroy(newconn,
 				OSCAR_DISCONNECT_COULD_NOT_CONNECT,
-				_("gaim_proxy_connect() failed"));
+				_("Unable to initialize connection"));
 		gaim_debug_error("oscar", "Unable to connect to FLAP server "
 				"of type 0x%04hx\n", redir->group);
 	}

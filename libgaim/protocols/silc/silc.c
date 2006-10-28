@@ -154,7 +154,6 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 	g_return_if_fail(gc != NULL);
 
 	sg = gc->proto_data;
-	sg->connect_data = NULL;
 
 	if (source < 0) {
 		gaim_connection_error(gc, _("Connection failed"));
@@ -357,12 +356,11 @@ silcgaim_login(GaimAccount *account)
 	gc->proto_data = sg;
 
 	/* Connect to the SILC server */
-	sg->connect_data = gaim_proxy_connect(account,
+	if (gaim_proxy_connect(gc, account,
 			       gaim_account_get_string(account, "server",
 						       "silc.silcnet.org"),
 			       gaim_account_get_int(account, "port", 706),
-			       silcgaim_login_connected, gc);
-	if (sg->connect_data == NULL)
+			       silcgaim_login_connected, gc) == NULL)
 	{
 		gaim_connection_error(gc, _("Unable to create connection"));
 		return;
@@ -382,8 +380,6 @@ silcgaim_close_final(gpointer *context)
 	SilcGaim sg = (SilcGaim)context;
 	silc_client_stop(sg->client);
 	silc_client_free(sg->client);
-	if (sg->connect_data != NULL)
-		gaim_proxy_connect_cancel(sg->connect_data);
 #ifdef HAVE_SILCMIME_H
 	if (sg->mimeass)
 		silc_mime_assembler_free(sg->mimeass);

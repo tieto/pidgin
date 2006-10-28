@@ -213,9 +213,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	if (servconn->connected)
 		msn_servconn_disconnect(servconn);
 
-	if (servconn->host != NULL)
-		g_free(servconn->host);
-
+	g_free(servconn->host);
 	servconn->host = g_strdup(host);
 
 	if (session->http_method)
@@ -235,8 +233,8 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 		return TRUE;
 	}
 
-	servconn->connect_data = gaim_proxy_connect(session->account, host, port,
-		connect_cb, servconn);
+	servconn->connect_data = gaim_proxy_connect(NULL, session->account,
+			host, port, connect_cb, servconn);
 
 	if (servconn->connect_data != NULL)
 	{

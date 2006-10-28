@@ -67,7 +67,6 @@ typedef struct _JabberStream
 	int fd;
 
 	GaimSrvQueryData *srv_query_data;
-	GaimProxyConnectData *connect_data;
 
 	xmlParserCtxt *context;
 	xmlnode *current;

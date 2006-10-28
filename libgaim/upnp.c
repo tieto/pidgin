@@ -215,14 +215,14 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	/* make sure we have a valid http response */
 	if(g_strstr_len(httpResponse, len, HTTP_OK) == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): Failed In HTTP_OK\n\n");
+			"parse_description_response(): Failed In HTTP_OK\n");
 		return NULL;
 	}
 
 	/* find the root of the xml document */
 	if((xmlRoot = g_strstr_len(httpResponse, len, "<root")) == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): Failed finding root\n\n");
+			"parse_description_response(): Failed finding root\n");
 		return NULL;
 	}
 
@@ -230,7 +230,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	if((xmlRootNode = xmlnode_from_str(xmlRoot,
 			len - (xmlRoot - httpResponse))) == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): Could not parse xml root node\n\n");
+			"parse_description_response(): Could not parse xml root node\n");
 		return NULL;
 	}
 
@@ -252,7 +252,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	}
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 1\n\n");
+			"parse_description_response(): could not get serviceTypeNode 1\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -260,7 +260,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "deviceList");
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 2\n\n");
+			"parse_description_response(): could not get serviceTypeNode 2\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -275,7 +275,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	}
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 3\n\n");
+			"parse_description_response(): could not get serviceTypeNode 3\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -283,7 +283,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "deviceList");
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 4\n\n");
+			"parse_description_response(): could not get serviceTypeNode 4\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -297,7 +297,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	}
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 5\n\n");
+			"parse_description_response(): could not get serviceTypeNode 5\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -305,7 +305,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	serviceTypeNode = xmlnode_get_child(serviceTypeNode, "serviceList");
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 6\n\n");
+			"parse_description_response(): could not get serviceTypeNode 6\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -322,7 +322,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	g_free(service);
 	if(serviceTypeNode == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): could not get serviceTypeNode 7\n\n");
+			"parse_description_response(): could not get serviceTypeNode 7\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -332,7 +332,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	if((controlURLNode = xmlnode_get_child(serviceTypeNode,
 			"controlURL")) == NULL) {
 		gaim_debug_error("upnp",
-			"parse_description_response(): Could not find controlURL\n\n");
+			"parse_description_response(): Could not find controlURL\n");
 		g_free(baseURL);
 		xmlnode_free(xmlRootNode);
 		return NULL;
@@ -367,7 +367,7 @@ upnp_parse_description_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 
 	if(control_url == NULL) {
 		gaim_debug_error("upnp",
-			"gaim_upnp_parse_description(): control URL is NULL\n\n");
+			"gaim_upnp_parse_description(): control URL is NULL\n");
 	}
 
 	control_info.status = control_url ? GAIM_UPNP_STATUS_DISCOVERED
@@ -444,13 +444,13 @@ gaim_upnp_parse_discover_response(const gchar* buf, unsigned int buf_len,
 
 	if(g_strstr_len(buf, buf_len, HTTP_OK) == NULL) {
 		gaim_debug_error("upnp",
-			"parse_discover_response(): Failed In HTTP_OK\n\n");
+			"parse_discover_response(): Failed In HTTP_OK\n");
 		return;
 	}
 
 	if((startDescURL = g_strstr_len(buf, buf_len, "http://")) == NULL) {
 		gaim_debug_error("upnp",
-			"parse_discover_response(): Failed In finding http://\n\n");
+			"parse_discover_response(): Failed In finding http://\n");
 		return;
 	}
 
@@ -461,7 +461,7 @@ gaim_upnp_parse_discover_response(const gchar* buf, unsigned int buf_len,
 				buf_len - (startDescURL - buf), "\n");
 		if(endDescURL == NULL) {
 			gaim_debug_error("upnp",
-				"parse_discover_response(): Failed In endDescURL\n\n");
+				"parse_discover_response(): Failed In endDescURL\n");
 			return;
 		}
 	}
@@ -469,7 +469,7 @@ gaim_upnp_parse_discover_response(const gchar* buf, unsigned int buf_len,
 	/* XXX: I'm not sure how this could ever happen */
 	if(endDescURL == startDescURL) {
 		gaim_debug_error("upnp",
-			"parse_discover_response(): endDescURL == startDescURL\n\n");
+			"parse_discover_response(): endDescURL == startDescURL\n");
 		return;
 	}
 
@@ -492,6 +492,7 @@ gaim_upnp_discover_timeout(gpointer data)
 	dd->tima = 0;
 
 	if (dd->retry_count < NUM_UDP_ATTEMPTS) {
+		/* TODO: We probably shouldn't be incrementing retry_count in two places */
 		dd->retry_count++;
 		gaim_upnp_discover_send_broadcast(dd);
 	} else {
@@ -625,7 +626,7 @@ gaim_upnp_discover(GaimUPnPCallback cb, gpointer cb_data)
 	sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if(sock == -1) {
 		gaim_debug_error("upnp",
-			"gaim_upnp_discover(): Failed In sock creation\n\n");
+			"gaim_upnp_discover(): Failed In sock creation\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
 		gaim_timeout_add(10, gaim_upnp_discover_timeout, dd);
@@ -634,10 +635,10 @@ gaim_upnp_discover(GaimUPnPCallback cb, gpointer cb_data)
 
 	dd->fd = sock;
 
-	/* This shouldn't block */
+	/* TODO: Non-blocking! */
 	if((hp = gethostbyname(HTTPMU_HOST_ADDRESS)) == NULL) {
 		gaim_debug_error("upnp",
-			"gaim_upnp_discover(): Failed In gethostbyname\n\n");
+			"gaim_upnp_discover(): Failed In gethostbyname\n");
 		/* Short circuit the retry attempts */
 		dd->retry_count = NUM_UDP_ATTEMPTS;
 		gaim_timeout_add(10, gaim_upnp_discover_timeout, dd);
@@ -670,7 +671,7 @@ gaim_upnp_generate_action_message_and_send(const gchar* actionName,
 	if(!gaim_url_parse(control_info.control_url, &addressOfControl,
 			&port, &pathOfControl, NULL, NULL)) {
 		gaim_debug_error("upnp",
-			"generate_action_message_and_send(): Failed In Parse URL\n\n");
+			"generate_action_message_and_send(): Failed In Parse URL\n");
 		/* XXX: This should probably be async */
 		if(cb)
 			cb(NULL, cb_data, NULL, 0, NULL);
@@ -728,17 +729,17 @@ looked_up_public_ip_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	if((temp = g_strstr_len(httpResponse, len,
 			"<NewExternalIPAddress")) == NULL) {
 		gaim_debug_error("upnp",
-			"looked_up_public_ip_cb(): Failed Finding <NewExternalIPAddress\n\n");
+			"looked_up_public_ip_cb(): Failed Finding <NewExternalIPAddress\n");
 		return;
 	}
 	if(!(temp = g_strstr_len(temp, len - (temp - httpResponse), ">"))) {
 		gaim_debug_error("upnp",
-			"looked_up_public_ip_cb(): Failed In Finding >\n\n");
+			"looked_up_public_ip_cb(): Failed In Finding >\n");
 		return;
 	}
 	if(!(temp2 = g_strstr_len(temp, len - (temp - httpResponse), "<"))) {
 		gaim_debug_error("upnp",
-			"looked_up_public_ip_cb(): Failed In Finding <\n\n");
+			"looked_up_public_ip_cb(): Failed In Finding <\n");
 		return;
 	}
 	*temp2 = '\0';
@@ -798,14 +799,14 @@ lookup_internal_ip()
 	if(!gaim_url_parse(control_info.control_url, &addressOfControl, &port,
 			NULL, NULL, NULL)) {
 		gaim_debug_error("upnp",
-			"lookup_internal_ip(): Failed In Parse URL\n\n");
+			"lookup_internal_ip(): Failed In Parse URL\n");
 		return;
 	}
 	if(port == 0 || port == -1) {
 		port = DEFAULT_HTTP_PORT;
 	}
 
-	if(gaim_proxy_connect(NULL, addressOfControl, port,
+	if(gaim_proxy_connect(NULL, NULL, addressOfControl, port,
 			looked_up_internal_ip_cb, NULL) == NULL)
 	{
 		gaim_debug_error("upnp", "Get Local IP Connect Failed: Address: %s @@@ Port %d\n",
@@ -828,7 +829,7 @@ done_port_mapping_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 		(g_strstr_len(httpResponse, len, HTTP_OK) == NULL))
 	{
 		gaim_debug_error("upnp",
-			"gaim_upnp_set_port_mapping(): Failed HTTP_OK\n\n%s\n\n",
+			"gaim_upnp_set_port_mapping(): Failed HTTP_OK\n%s\n",
 			httpResponse ? httpResponse : "(null)");
 		success =  FALSE;
 	} else
@@ -852,7 +853,7 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 			/* get the internal IP */
 			if(!(internal_ip = gaim_upnp_get_internal_ip())) {
 				gaim_debug_error("upnp",
-					"gaim_upnp_set_port_mapping(): couldn't get local ip\n\n");
+					"gaim_upnp_set_port_mapping(): couldn't get local ip\n");
 				/* UGLY */
 				if (ar->cb)
 					ar->cb(FALSE, ar->cb_data);

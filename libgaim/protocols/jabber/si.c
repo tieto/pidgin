@@ -177,7 +177,8 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 		for(i=0; i<20; i++, p+=2)
 			snprintf(p, 3, "%02x", hashval[i]);
 
-		jsx->connect_data = gaim_proxy_connect_socks5(jsx->gpi, dstaddr, 0,
+		jsx->connect_data = gaim_proxy_connect_socks5(NULL, jsx->gpi,
+				dstaddr, 0,
 				jabber_si_bytestreams_connect_cb, xfer);
 		g_free(dstaddr);
 

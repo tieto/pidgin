@@ -457,12 +457,10 @@ static void send_later_cb(gpointer data, gint source, const gchar *error) {
 
 static void sendlater(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
-	GaimProxyConnectData *connect_data;
 
 	if(!sip->connecting) {
 		gaim_debug_info("simple", "connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
-		connect_data = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
-		if(connect_data == NULL) {
+		if (gaim_proxy_connect(gc, sip->account, sip->realhostname, sip->realport, send_later_cb, gc) == NULL) {
 			gaim_connection_error(gc, _("Couldn't create socket"));
 		}
 		sip->connecting = TRUE;
@@ -1565,7 +1563,6 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 static void
 simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	struct simple_account_data *sip = (struct simple_account_data*) data;
-	GaimProxyConnectData *connect_data;
 
 	sip->listen_data = NULL;
 
@@ -1582,9 +1579,8 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	gaim_debug_info("simple", "connecting to %s port %d\n",
 			sip->realhostname, sip->realport);
 	/* open tcp connection to the server */
-	connect_data = gaim_proxy_connect(sip->account, sip->realhostname,
-			sip->realport, login_cb, sip->gc);
-	if(connect_data == NULL) {
+	if (gaim_proxy_connect(sip->gc, sip->account, sip->realhostname,
+			sip->realport, login_cb, sip->gc) == NULL) {
 		gaim_connection_error(sip->gc, _("Couldn't create socket"));
 	}
 }

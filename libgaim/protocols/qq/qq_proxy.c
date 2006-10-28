@@ -420,7 +420,7 @@ static gint _proxy_connect_full (GaimAccount *account, const gchar *host, guint1
 	qd->server_port = port;
 
 	if(use_tcp)
-		return (gaim_proxy_connect(account, host, port, func, data) == NULL);
+		return (gaim_proxy_connect(NULL, account, host, port, func, data) == NULL);
 	else
 		return _qq_udp_proxy_connect(account, host, port, func, data);
 }

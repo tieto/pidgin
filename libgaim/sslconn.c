@@ -117,7 +117,7 @@ gaim_ssl_connect(GaimAccount *account, const char *host, int port,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 
-	gsc->connect_data = gaim_proxy_connect(account, host, port, gaim_ssl_connect_cb, gsc);
+	gsc->connect_data = gaim_proxy_connect(NULL, account, host, port, gaim_ssl_connect_cb, gsc);
 
 	if (gsc->connect_data == NULL)
 	{
