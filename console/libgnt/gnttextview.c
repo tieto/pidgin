@@ -162,7 +162,7 @@ gnt_text_view_reflow(GntTextView *view)
 	GntTextLine *line;
 	GList *back, *iter, *list;
 	GString *string;
-	int pos = 0;
+	int pos = 0;    /* no. of 'real' lines */
 
 	list = view->list;
 	while (list->prev) {
@@ -180,15 +180,15 @@ gnt_text_view_reflow(GntTextView *view)
 	gnt_text_view_clear(view);
 
 	view->string = g_string_set_size(view->string, string->len);
+	view->string->len = 0;
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(view), GNT_WIDGET_DRAWING);
 
 	for (; back; back = back->prev) {
 		line = back->data;
 		if (back->next && !line->soft) {
-			GList *llist = g_list_first(view->list);
-			llist = g_list_prepend(llist, g_new0(GntTextLine, 1));
+			gnt_text_view_append_text_with_flags(view, "\n", GNT_TEXT_FLAG_NORMAL);
 		}
-		
+
 		for (iter = line->segments; iter; iter = iter->next) {
 			GntTextSegment *seg = iter->data;
 			char *start = string->str + seg->start;
@@ -203,6 +203,7 @@ gnt_text_view_reflow(GntTextView *view)
 	g_list_free(list);
 
 	list = view->list = g_list_first(view->list);
+	/* Go back to the line that was in view before resizing started */
 	while (pos--) {
 		while (((GntTextLine*)list->data)->soft)
 			list = list->next;
@@ -308,14 +309,14 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 	fl = gnt_text_format_flag_to_chtype(flags);
 
 	len = view->string->len;
-	g_string_append(view->string, text);
+	view->string = g_string_append(view->string, text);
 
 	view->list = g_list_first(view->list);
 
 	start = end = view->string->str + len;
 
 	while (*start) {
-		GntTextSegment *seg;
+		GntTextSegment *seg = NULL;
 
 		if (*end == '\n' || *end == '\r') {
 			end++;
@@ -326,6 +327,13 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 		}
 
 		line = view->list->data;
+		if (line->length == widget->priv.width - 1) {
+			/* The last added line was exactly the same width as the widget */
+			line = g_new0(GntTextLine, 1);
+			line->soft = TRUE;
+			view->list = g_list_prepend(view->list, line);
+		}
+
 		if ((end = strchr(start, '\n')) != NULL ||
 			(end = strchr(start, '\r')) != NULL) {
 			len = gnt_util_onscreen_width(start, end - 1);
@@ -338,12 +346,21 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 			end = gnt_util_onscreen_width_to_pointer(start,
 					widget->priv.width - line->length - 1, &len);
 
-		seg = g_new0(GntTextSegment, 1);
-		seg->start = start - view->string->str;
+		/* Try to append to the previous segment if possible */
+		if (line->segments) {
+			seg = g_list_last(line->segments)->data;
+			if (seg->flags != fl)
+				seg = NULL;
+		}
+
+		if (seg == NULL) {
+			seg = g_new0(GntTextSegment, 1);
+			seg->start = start - view->string->str;
+			seg->tvflag = flags;
+			seg->flags = fl;
+			line->segments = g_list_append(line->segments, seg);
+		}
 		seg->end = end - view->string->str;
-		seg->tvflag = flags;
-		seg->flags = fl;
-		line->segments = g_list_append(line->segments, seg);
 		line->length += len;
 
 		start = end;
