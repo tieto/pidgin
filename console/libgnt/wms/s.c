@@ -169,6 +169,7 @@ s_window_update(PANEL *panel, GntWidget *window)
 		envelope_normal_window(window);
 }
 
+void gntwm_init(GntWM *wm);
 void gntwm_init(GntWM *wm)
 {
 	gwm = wm;

@@ -171,7 +171,7 @@ void gnt_style_read_actions(GType type, GntWidgetClass *klass)
 
 	if (g_key_file_has_group(gkfile, name))
 	{
-		unsigned int len = 0;
+		gsize len = 0;
 		char **keys;
 		
 		keys = g_key_file_get_keys(gkfile, name, &len, &error);
@@ -225,7 +225,7 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash)
 
 	if (g_key_file_has_group(gkfile, name))
 	{
-		unsigned int len = 0;
+		gsize len = 0;
 		char **keys;
 		
 		keys = g_key_file_get_keys(gkfile, name, &len, &error);
@@ -304,8 +304,8 @@ read_general_style(GKeyFile *kfile)
 void gnt_style_read_configure_file(const char *filename)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
-	gkfile = g_key_file_new();
 	GError *error = NULL;
+	gkfile = g_key_file_new();
 
 	if (!g_key_file_load_from_file(gkfile, filename, G_KEY_FILE_NONE, &error))
 	{
