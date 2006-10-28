@@ -59,6 +59,10 @@ Display the version information window.
 .SH GNT Shortcuts
 You can use the following shortcuts:
 .TP
+.B Alt \+ a
+Bring up a list of available actions. You can use this list to access the
+accounts window, plugins window, preference window etc.
+.TP
 .B Alt \+ n
 Go to the next window.
 .TP
@@ -99,6 +103,10 @@ Refresh the windows. This is useful after resizing the terminal window.
 .TP
 .B Alt \+ 1 2 ... 0
 Jump to the 1st, 2nd ... 10th window.
+.TP
+.B Ctrl \+ o
+Bring up the menu (if there is one) for a window. Note that currently only the
+buddylist has a menu.
 
 .SH FILES
 \fI~/.gntrc\fR: configuration file for gnt applications.
@@ -227,6 +235,11 @@ down = suggest-next
 .br
 up = suggest-prev
 .br
+# The following actions don't have any default binding:
+.br
+# delete-prev-word
+.br
+# cursor-prev-word
 
 .br
 [GntTree::binding]
