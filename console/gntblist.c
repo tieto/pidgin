@@ -643,11 +643,16 @@ gnt_append_menu_action(GntMenu *menu, GaimMenuAction *action, gpointer parent)
 		return;
 
 	item = gnt_menuitem_new(action->label);
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), context_menu_callback, action);
+	if (action->callback)
+		gnt_menuitem_set_callback(GNT_MENUITEM(item), context_menu_callback, action);
 	gnt_menu_add_item(menu, GNT_MENUITEM(item));
 
-	for (list = action->children; list; list = list->next)
-		gnt_append_menu_action(menu, list->data, action);
+	if (action->children) {
+		GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
+		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+		for (list = action->children; list; list = list->next)
+			gnt_append_menu_action(GNT_MENU(sub), list->data, action);
+	}
 }
 
 static void
