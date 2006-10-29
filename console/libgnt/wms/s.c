@@ -76,7 +76,7 @@ s_new_window(GntWidget *win)
 		gnt_widget_set_position(win, x, y);
 		mvwin(win->window, y, x);
 
-		gnt_widget_set_size(win, w, h);
+		gnt_widget_set_size(win, -1, h);
 		gnt_widget_draw(win);
 		envelope_buddylist(win);
 	} else if (name && strcmp(name, "conversation-window") == 0) {

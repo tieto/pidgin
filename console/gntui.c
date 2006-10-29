@@ -36,7 +36,7 @@
 
 #include <prefs.h>
 
-void init_gnt_ui()
+void gnt_ui_init()
 {
 #ifdef STANDALONE
 	gnt_init();
@@ -77,9 +77,10 @@ void init_gnt_ui()
 #ifdef STANDALONE
 
 	gg_plugins_save_loaded();
+}
 
-	gnt_main();
-
+void gnt_ui_uninit()
+{
 	gaim_accounts_set_ui_ops(NULL);
 	gg_accounts_uninit();
 

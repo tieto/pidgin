@@ -101,6 +101,7 @@ static gboolean remove_typing_cb(gpointer null);
 static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
 static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
+static void blist_show(GaimBuddyList *list);
 
 /* Sort functions */
 static int blist_node_compare_text(GaimBlistNode *n1, GaimBlistNode *n2);
@@ -228,6 +229,11 @@ node_update(GaimBuddyList *list, GaimBlistNode *node)
 static void
 new_list(GaimBuddyList *list)
 {
+	if (ggblist)
+		return;
+
+	ggblist = g_new0(GGBlist, 1);
+	list->ui_data = ggblist;
 }
 
 static void
@@ -398,7 +404,7 @@ static GaimBlistUiOps blist_ui_ops =
 {
 	new_list,
 	new_node,
-	NULL,
+	blist_show,
 	node_update,
 	node_remove,
 	NULL,
@@ -1470,8 +1476,6 @@ void gg_blist_init()
 	gaim_prefs_add_bool(PREF_ROOT "/showoffline", FALSE);
 	gaim_prefs_add_string(PREF_ROOT "/sort_type", "text");
 
-	gg_blist_show();
-
 	gaim_prefs_connect_callback(gg_blist_get_handle(),
 			PREF_ROOT "/showoffline", redraw_blist, NULL);
 	gaim_prefs_connect_callback(gg_blist_get_handle(),
@@ -1851,12 +1855,16 @@ create_menu()
 
 void gg_blist_show()
 {
-	if (ggblist)
+	blist_show(gaim_get_blist());
+}
+
+static void
+blist_show(GaimBuddyList *list)
+{
+	if (ggblist == NULL)
+		new_list(list);
+	else if (ggblist->window)
 		return;
-
-	ggblist = g_new0(GGBlist, 1);
-
-	gaim_get_blist()->ui_data = ggblist;
 
 	ggblist->window = gnt_vwindow_new(FALSE);
 	gnt_widget_set_name(ggblist->window, "buddylist");

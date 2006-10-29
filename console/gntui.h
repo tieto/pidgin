@@ -24,6 +24,7 @@
 
 #include "gnt.h"
 
-void init_gnt_ui(void);
+void gnt_ui_init(void);
+void gnt_ui_uninit(void);
 
 #endif

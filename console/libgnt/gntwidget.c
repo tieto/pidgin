@@ -581,6 +581,10 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 		width--;
 		height--;
 	}
+	if (width <= 0)
+		width = widget->priv.width;
+	if (height <= 0)
+		height = widget->priv.height;
 
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
 	{

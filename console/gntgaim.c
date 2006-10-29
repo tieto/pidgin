@@ -57,8 +57,8 @@ static GaimCoreUiOps core_ops =
 {
 	gg_prefs_init,
 	debug_init,
-	NULL, /*gaim_gtk_ui_init,*/
-	NULL, /*gaim_gtk_quit*/
+	gnt_ui_init,
+	gnt_ui_uninit
 };
 
 static GaimCoreUiOps *
@@ -332,8 +332,9 @@ int main(int argc, char **argv)
 	if (!init_libgaim(argc, argv))
 		return 0;
 
-	/* Initialize and run the UI */
-	init_gnt_ui();
+	gaim_blist_show();
+	gnt_main();
+
 #ifdef STANDALONE
 	gaim_core_quit();
 #endif
