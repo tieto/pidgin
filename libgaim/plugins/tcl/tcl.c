@@ -437,36 +437,50 @@ LPFNTKINIT wtk_Init = NULL;
 #define Tk_Init wtk_Init
 
 static gboolean tcl_win32_init() {
-	gaim_debug(GAIM_DEBUG_INFO, "tcl",
-		"Initializing the Tcl runtime.  If Gaim doesn't load, it is "
-		"most likely because you have cygwin in your PATH and you "
-		"should remove it. See http://gaim.sf.net/win32 for more "
-		"information\n");
+	const char regkey[] = "SOFTWARE\\ActiveState\\ActiveTcl\\";
+	char *version = NULL;
+	gboolean retval = FALSE;
 
-	if(!(wtcl_CreateInterp = (LPFNTCLCREATEINTERP) wgaim_find_and_loadproc("tcl84.dll", "Tcl_CreateInterp"))) {
-		gaim_debug(GAIM_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tcl_CreateInterp\n");
-		return FALSE;
+	if ((version = wgaim_read_reg_string(HKEY_LOCAL_MACHINE, regkey, "CurrentVersion"))
+			|| (version = wgaim_read_reg_string(HKEY_CURRENT_USER, regkey, "CurrentVersion"))) {
+		char *path;
+		char *regkey2;
+
+		regkey2 = g_strdup_printf("%s%s\\", regkey, version);
+		if ((path = wgaim_read_reg_string(HKEY_LOCAL_MACHINE, regkey2, NULL)) || (path = wgaim_read_reg_string(HKEY_CURRENT_USER, regkey2, NULL))) {
+			char *tclpath;
+			char *tkpath;
+
+			gaim_debug(GAIM_DEBUG_INFO, "tcl", "Loading ActiveTCL version %s from \"%s\"\n", version, path);
+
+			tclpath = g_build_filename(path, "bin", "tcl84.dll", NULL);
+			tkpath = g_build_filename(path, "bin", "tk84.dll", NULL);
+
+			if(!(wtcl_CreateInterp = (LPFNTCLCREATEINTERP) wgaim_find_and_loadproc(tclpath, "Tcl_CreateInterp"))) {
+				gaim_debug(GAIM_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tcl_CreateInterp\n");
+			} else {
+				if(!(wtk_Init = (LPFNTKINIT) wgaim_find_and_loadproc(tkpath, "Tk_Init"))) {
+					HMODULE mod;
+					gaim_debug(GAIM_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tk_Init\n");
+					if((mod = GetModuleHandle("tcl84.dll")))
+						FreeLibrary(mod);
+				} else {
+					retval = TRUE;
+				}
+			}
+			g_free(tclpath);
+			g_free(tkpath);
+		}
+		g_free(path);
+		g_free(regkey2);
 	}
 
-	if(!(wtk_Init = (LPFNTKINIT) wgaim_find_and_loadproc("tk84.dll", "Tk_Init"))) {
-		HMODULE mod;
-		gaim_debug(GAIM_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tk_Init\n");
-		if((mod = GetModuleHandle("tcl84.dll")))
-			FreeLibrary(mod);
-		return FALSE;
-	}
+	g_free(version);
 
-	if (GetModuleHandle("cygwin1.dll")) {
-		HMODULE mod;
-		gaim_debug(GAIM_DEBUG_INFO, "tcl", "Cygwin has been loaded by tcl84.dll and/or tk84.dll. Disabling Tcl support to avoid problems.\n");
-		if((mod = GetModuleHandle("tcl84.dll")))
-			FreeLibrary(mod);
-		if((mod = GetModuleHandle("tk84.dll")))
-			FreeLibrary(mod);
-		return FALSE;
-	}
+	if (!retval)
+		gaim_debug(GAIM_DEBUG_INFO, "tcl", _("Unable to detect ActiveTCL installation. If you wish to use TCL plugins, install ActiveTCL from http://www.activestate.com\n"));
 
-	return TRUE;
+	return retval;
 }
 
 #endif /* _WIN32 */

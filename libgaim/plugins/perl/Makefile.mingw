@@ -76,7 +76,7 @@ $(TARGET).dll $(TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 ##
 clean:
 	rm -rf $(OBJECTS)
-	rm -rf $(TARGET).dll
+	rm -rf $(TARGET).dll $(TARGET).dll.a
 	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) clean
 
 include $(GAIM_COMMON_TARGETS)
