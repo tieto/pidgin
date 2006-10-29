@@ -158,6 +158,13 @@ remove_tooltip(GGBlist *ggblist)
 	ggblist->tnode = NULL;
 }
 
+static gboolean
+_draw_tooltip(gpointer data)
+{
+	draw_tooltip(data);
+	return FALSE;
+}
+
 static void
 node_remove(GaimBuddyList *list, GaimBlistNode *node)
 {
@@ -180,7 +187,13 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 				group->currentsize < 1)
 			node_remove(list, node->parent);
 	}
-	draw_tooltip(ggblist);
+
+	/* When an account has signed off, it removes one buddy at a time.
+	 * Drawing the tooltip after removing each buddy is expensive. On
+	 * top of that, if the selected buddy belongs to the disconnected
+	 * account, then retreiving the tooltip for that causes crash. So
+	 * let's make sure we wait for all the buddies to be removed first.*/
+	g_timeout_add(0, _draw_tooltip, ggblist);
 }
 
 static void
@@ -1450,7 +1463,7 @@ static void
 redraw_blist(const char *name, GaimPrefType type, gconstpointer val, gpointer data)
 {
 	GaimBlistNode *node, *sel;
-	if (ggblist == NULL)
+	if (ggblist == NULL || ggblist->window == NULL)
 		return;
 
 	sel = gnt_tree_get_selection_data(GNT_TREE(ggblist->tree));
