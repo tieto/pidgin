@@ -210,7 +210,7 @@ gnt_menu_activate(GntWidget *widget)
 	}
 
 	if (item) {
-		if (GNT_MENUITEM_CHECK(item))
+		if (GNT_IS_MENUITEM_CHECK(item))
 			gnt_menu_toggled(GNT_TREE(widget), item);
 		else
 			menuitem_activate(menu, item);

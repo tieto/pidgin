@@ -704,8 +704,6 @@ void gnt_box_readjust(GntBox *box)
 	GntWidget *wid;
 	int width, height;
 
-	g_return_if_fail(GNT_WIDGET(box)->parent == NULL);
-
 	for (iter = box->list; iter; iter = iter->next)
 	{
 		GntWidget *w = iter->data;
