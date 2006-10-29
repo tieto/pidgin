@@ -1315,10 +1315,13 @@ remove_peripherals(GGBlist *ggblist)
 }
 
 static void
-size_changed_cb(GntWidget *w, int width, int height)
+size_changed_cb(GntWidget *w, int wi, int h)
 {
+	int width, height;
+	gnt_widget_get_size(w, &width, &height);
 	gaim_prefs_set_int(PREF_ROOT "/size/width", width);
 	gaim_prefs_set_int(PREF_ROOT "/size/height", height);
+	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, width - 1);
 }
 
 static void
@@ -1864,11 +1867,13 @@ void gg_blist_show()
 	ggblist->tree = gnt_tree_new();
 
 	GNT_WIDGET_SET_FLAGS(ggblist->tree, GNT_WIDGET_NO_BORDER);
-	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, 25);
 	gnt_widget_set_size(ggblist->tree, gaim_prefs_get_int(PREF_ROOT "/size/width"),
 			gaim_prefs_get_int(PREF_ROOT "/size/height"));
 	gnt_widget_set_position(ggblist->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
 			gaim_prefs_get_int(PREF_ROOT "/position/y"));
+
+	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0,
+			gaim_prefs_get_int(PREF_ROOT "/size/width") - 1);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 

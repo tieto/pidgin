@@ -21,7 +21,6 @@
 /* Ripped from gtk/plugins/history.c */
 
 #include "internal.h"
-#include "gntgaim.h"
 
 #include "conversation.h"
 #include "debug.h"

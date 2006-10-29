@@ -200,6 +200,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		const char *text;
 		int len = gnt_util_onscreen_width(col->text, NULL);
 		int fl = 0;
+		gboolean cut = FALSE;
 
 		if (i == 0)
 		{
@@ -231,13 +232,20 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		else
 			g_string_append_c(string, '|');
 
-		if (len > tree->columns[i].width)
-		{
-			len = tree->columns[i].width;
+		if (len > tree->columns[i].width) {
+			len = tree->columns[i].width - 1;
+			cut = TRUE;
 		}
-
 		text = gnt_util_onscreen_width_to_pointer(col->text, len - fl, NULL);
 		string = g_string_append_len(string, col->text, text - col->text);
+		if (cut) { /* ellipsis */
+			if (gnt_ascii_only())
+				g_string_append_c(string, '~');
+			else
+				string = g_string_append(string, "\342\200\246");
+			len++;
+		}
+
 		if (len < tree->columns[i].width && iter->next)
 			g_string_append_printf(string, "%*s", tree->columns[i].width - len, "");
 	}
@@ -339,7 +347,6 @@ redraw_tree(GntTree *tree)
 
 		if ((wr = gnt_util_onscreen_width(str, NULL)) > scrcol)
 		{
-			/* XXX: ellipsize */
 			char *s = (char*)gnt_util_onscreen_width_to_pointer(str, scrcol, &wr);
 			*s = '\0';
 		}
