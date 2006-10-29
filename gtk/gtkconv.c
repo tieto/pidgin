@@ -2354,7 +2354,7 @@ start_anim(GtkObject *obj, GaimGtkConversation *gtkconv)
 }
 
 static void
-remove_icon(GaimGtkConversation *gtkconv)
+remove_icon(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkWindow *gtkwin;
@@ -2412,6 +2412,53 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	fclose(fp);
 }
 
+static const char *
+custom_icon_pref_name(GaimGtkConversation *gtkconv)
+{
+	GaimConversation *conv;
+	GaimAccount *account;
+	GaimBuddy *buddy;
+
+	conv = gtkconv->active_conv;
+	account = gaim_conversation_get_account(conv);
+	buddy = gaim_find_buddy(account, gaim_conversation_get_name(conv));
+	if (buddy) {
+		GaimContact *contact = gaim_buddy_get_contact(buddy);
+		return gaim_blist_node_get_string((GaimBlistNode*)contact, "custom_buddy_icon");
+	}
+	return NULL;
+}
+
+static void
+custom_icon_sel_cb(const char *filename, gpointer data)
+{
+	if (filename) {
+		GaimGtkConversation *gtkconv = data;
+		GaimConversation *conv = gtkconv->active_conv;
+		GaimAccount *account = gaim_conversation_get_account(conv);
+		gaim_gtk_set_custom_buddy_icon(account, gaim_conversation_get_name(conv), filename);
+	}
+}
+
+static void
+set_custom_icon_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
+{
+	GtkWidget *win = gaim_gtk_buddy_icon_chooser_new(GTK_WINDOW(gtkconv->win->window),
+						custom_icon_sel_cb, gtkconv);
+	gtk_widget_show_all(win);
+}
+
+static void
+remove_custom_icon_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
+{
+	GaimConversation *conv;
+	GaimAccount *account;
+
+	conv = gtkconv->active_conv;
+	account = gaim_conversation_get_account(conv);
+	gaim_gtk_set_custom_buddy_icon(account, gaim_conversation_get_name(conv), NULL);
+}
+
 static void
 icon_menu_save_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
@@ -2459,7 +2506,7 @@ static gboolean
 icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 {
 	static GtkWidget *menu = NULL;
-	GtkWidget *item;
+	const char *pref;
 
 	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
@@ -2481,15 +2528,24 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 							gtkconv->u.im->icon_timer);
 	}
 
-	item = gtk_menu_item_new_with_label(_("Hide Icon"));
-	g_signal_connect_swapped(G_OBJECT(item), "activate",
-							 G_CALLBACK(remove_icon), gtkconv);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
+	gaim_new_item_from_stock(menu, _("Hide Icon"), NULL, G_CALLBACK(remove_icon),
+							 gtkconv, 0, 0, NULL);
 
 	gaim_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
 							 G_CALLBACK(icon_menu_save_cb), gtkconv,
 							 0, 0, NULL);
+
+	gaim_new_item_from_stock(menu, _("Set Custom Icon..."), NULL,
+							 G_CALLBACK(set_custom_icon_cb), gtkconv,
+							 0, 0, NULL);
+
+	/* Is there a custom icon for this person? */
+	pref = custom_icon_pref_name(gtkconv);
+	if (pref && *pref) {
+		gaim_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
+							G_CALLBACK(remove_custom_icon_cb), gtkconv,
+							0, 0, NULL);
+	}
 
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
 
@@ -2518,7 +2574,7 @@ menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
 	if (active)
 		gaim_gtkconv_update_buddy_icon(conv);
 	else
-		remove_icon(gtkconv);
+		remove_icon(NULL, gtkconv);
 }
 
 /**************************************************************************
@@ -5836,7 +5892,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GdkPixbufAnimation *anim;
 	GError *err = NULL;
 
-	const void *data;
+	const char *custom = NULL;
+	const void *data = NULL;
 	size_t len;
 
 	GdkPixbuf *buf;
@@ -5893,12 +5950,28 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	if (gaim_conversation_get_gc(conv) == NULL)
 		return;
 
-	icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
+	custom = custom_icon_pref_name(gtkconv);
+	if (custom) {
+		/* There is a custom icon for this user */
+		char *contents = NULL;
+		if (!g_file_get_contents(custom, &contents, &len, &err)) {
+			gaim_debug_warning("custom icon", "could not load custom icon %s for %s\n",
+						custom, gaim_conversation_get_name(conv));
+			g_error_free(err);
+			err = NULL;
+		} else
+			data = contents;
+	}
 
-	if (icon == NULL)
-		return;
+	if (data == NULL) {
+		icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
 
-	data = gaim_buddy_icon_get_data(icon, &len);
+		if (icon == NULL)
+			return;
+
+		data = gaim_buddy_icon_get_data(icon, &len);
+		custom = NULL;
+	}
 
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
@@ -5907,6 +5980,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	if (anim)
 		g_object_ref(G_OBJECT(anim));
 	g_object_unref(loader);
+
+	if (custom)
+		g_free((void*)data);
 
 	if (!anim)
 		return;

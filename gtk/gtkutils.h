@@ -475,7 +475,7 @@ GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(co
  * 
  * @param plugin     The prpl to conver the icon
  * @param path       The path of a buddy icon to convert
- * @return           The path of a new buddy icon
+ * @return           The name of a new buddy icon
  */
 char* gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path);
 
@@ -491,3 +491,13 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
 #endif
 
 #endif /* _GAIM_GTKUTILS_H_ */
+
+/**
+ * Set or unset a custom buddyicon for a user.
+ *
+ * @param account   The account the user belongs to.
+ * @param who       The name of the user.
+ * @param filename  The path of the custom icon. If this is @c NULL, then any
+ *                  previously set custom buddy icon for the user is removed.
+ */
+void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename);

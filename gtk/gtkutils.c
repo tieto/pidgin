@@ -1,5 +1,5 @@
 /**
- * @file gtkutils.h GTK+ utility functions
+ * @file gtkutils.c GTK+ utility functions
  * @ingroup gtkui
  *
  * gaim
@@ -1296,6 +1296,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 {
 	char *filedata;
 	size_t size;
+	struct stat st;
 	GError *err = NULL;
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
@@ -1303,23 +1304,20 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	int id;
 	switch (choice) {
 	case DND_BUDDY_ICON:
-		if (!g_file_get_contents(data->filename, &filedata, &size,
-					 &err)) {
+		if (g_stat(data->filename, &st)) {
 			char *str;
 
-			str = g_strdup_printf(_("The following error has occurred loading %s: %s"), data->filename, err->message);
+			str = g_strdup_printf(_("The following error has occurred loading %s: %s"),
+						data->filename, strerror(errno));
 			gaim_notify_error(NULL, NULL,
 					  _("Failed to load image"),
 					  str);
-
-			g_error_free(err);
 			g_free(str);
 
 			return;
 		}
 
-		gaim_buddy_icons_set_for_user(data->account, data->who, filedata, size);
-		g_free(filedata);
+		gaim_gtk_set_custom_buddy_icon(data->account, data->who, data->filename);
 		break;
 	case DND_FILE_TRANSFER:
 		serv_send_file(gaim_account_get_connection(data->account), data->who, data->filename);
@@ -2794,4 +2792,49 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 	return pixbuf;
 }
 #endif
+
+void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename)
+{
+	GaimConversation *conv;
+	GaimBuddy *buddy;
+	GaimBlistNode *node;
+	char *path = NULL;
+
+	buddy = gaim_find_buddy(account, who);
+	if (!buddy) {
+		gaim_debug_info("custom-icon", "You can only set custom icon for someone in your buddylist.\n");
+		return;
+	}
+
+	node = (GaimBlistNode*)gaim_buddy_get_contact(buddy);
+	path = (char*)gaim_blist_node_get_string(node, "custom_buddy_icon");
+	if (path) {
+		struct stat st;
+		if (g_stat(path, &st) == 0)
+			g_unlink(path);
+		path = NULL;
+	}
+
+	if (filename) {
+		char *newfile;
+		
+		newfile = gaim_gtk_convert_buddy_icon(gaim_find_prpl(gaim_account_get_protocol_id(account)),
+						filename);
+		path = gaim_buddy_icons_get_full_path(newfile);
+		g_free(newfile);
+	}
+
+	gaim_blist_node_set_string(node, "custom_buddy_icon", path);
+	g_free(path);
+
+	/* Update the conversation */
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, account);
+	if (conv)
+		gaim_conversation_update(conv, GAIM_CONV_UPDATE_ICON);
+
+	/* Update the buddylist */
+	if (buddy)
+		gaim_blist_update_buddy_icon(buddy);
+}
+
 

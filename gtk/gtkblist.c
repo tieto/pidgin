@@ -1992,12 +1992,12 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 }
 
 static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
-		gboolean scaled, gboolean greyed)
+		gboolean scaled, gboolean greyed, gboolean custom)
 {
 	GdkPixbuf *buf, *ret = NULL;
 	GdkPixbufLoader *loader;
 	GaimBuddyIcon *icon;
-	const guchar *data;
+	const guchar *data = NULL;
 	gsize len;
 	GaimBuddy *buddy = (GaimBuddy *)node;
 
@@ -2014,12 +2014,30 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 		return NULL;
 #endif
 
-	if (!(icon = gaim_buddy_get_icon(buddy)))
-		if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-			return NULL;
+	if (custom) {
+		const char *file = gaim_blist_node_get_string((GaimBlistNode*)gaim_buddy_get_contact(buddy),
+							"custom_buddy_icon");
+		if (file && *file) {
+			char *contents;
+			GError *err  = NULL;
+			if (!g_file_get_contents(file, &contents, &len, &err)) {
+				gaim_debug_info("custom -icon", "Could not open custom-icon %s for %s\n",
+							file, gaim_buddy_get_name(buddy), err->message);
+				g_error_free(err);
+			} else
+				data = (const guchar*)contents;
+		}
+	}
+
+	if (data == NULL) {
+		if (!(icon = gaim_buddy_get_icon(buddy)))
+			if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
+				return NULL;
+		data = gaim_buddy_icon_get_data(icon, &len);
+		custom = FALSE;  /* We are not using the custom icon */
+	}
 
 	loader = gdk_pixbuf_loader_new();
-	data = gaim_buddy_icon_get_data(icon, &len);
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
 	gdk_pixbuf_loader_close(loader, NULL);
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
@@ -2027,6 +2045,8 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 		g_object_ref(G_OBJECT(buf));
 	g_object_unref(G_OBJECT(loader));
 
+	if (custom)
+		g_free((void*)data);
 	if (buf) {
 		GaimAccount *account = gaim_buddy_get_account(buddy);
 		GaimPluginProtocolInfo *prpl_info = NULL;
@@ -2088,7 +2108,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
 
 	td->status_icon = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
-	td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE);
+	td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE, FALSE);
 	tooltip_text = gaim_get_tooltip_text(node, full);
 	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	pango_layout_set_markup(td->layout, tooltip_text, -1);
@@ -4470,7 +4490,7 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	status = gaim_gtk_blist_get_status_icon((GaimBlistNode*)buddy,
 						biglist ? GAIM_STATUS_ICON_LARGE : GAIM_STATUS_ICON_SMALL);
 
-	avatar = gaim_gtk_blist_get_buddy_icon((GaimBlistNode *)buddy, TRUE, TRUE);
+	avatar = gaim_gtk_blist_get_buddy_icon((GaimBlistNode *)buddy, TRUE, TRUE, TRUE);
 	mark = gaim_gtk_blist_get_name_markup(buddy, selected);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") &&
