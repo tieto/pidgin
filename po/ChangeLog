@@ -1,6 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 2.0.0:
+	* Albanian translation updated (Programe Shqip)
 	* Arabic translation added (Mohamed Magdy)
 	* Bengali translation added (INDRANIL DAS GUPTA and Samia Nimatullah)
 	* Bosnian translation added (Lejla Hadzialic)
@@ -36,7 +37,8 @@ version 2.0.0:
 	* Lithuanian win32 translation added (Laurynas Biveinis)
 	* Macedonian translation updated (Арангел Ангов)
 	* Nepali translation added (Shyam Krishna Bal)
-	* Persian translation added (Elnaz Sarbar, Meelad Zakaria)
+	* Persian translation added (Elnaz Sarbar, Meelad Zakaria, Roozbeh
+	  Pournader)
 	* Polish translation updated (Emil Nowak)
 	* Portuguese translation updated (Duarte Henriques)
 	* Portuguese (Brazilian) translation updated (Rodrigo Torres,  Mauricio de
