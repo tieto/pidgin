@@ -217,8 +217,8 @@ static void _qq_xfer_end(GaimXfer *xfer)
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "minor port closed\n");
 	}
 	/*
-	if (info->buffer != NULL) {
-		munmap(info->buffer, gaim_xfer_get_size(xfer));
+	if (info->u.buffer != NULL) {
+		munmap(info->u.buffer, gaim_xfer_get_size(xfer));
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "file mapping buffer is freed.\n");
 	}
 	*/
