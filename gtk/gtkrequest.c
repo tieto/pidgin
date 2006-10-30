@@ -1528,7 +1528,7 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	}
 
 	if (filename != NULL)
-		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
 	if ((current_folder != NULL) && (*current_folder != '\0')) {
 		folder_set = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
 	}
