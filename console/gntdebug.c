@@ -36,6 +36,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define PREF_ROOT "/gaim/gnt/debug"
+
 static struct
 {
 	GntWidget *window;
@@ -191,6 +193,15 @@ gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 	g_free(new_domain);
 }
 
+static void
+size_changed_cb(GntWidget *widget, int oldw, int oldh)
+{
+	int w, h;
+	gnt_widget_get_size(widget, &w, &h);
+	gaim_prefs_set_int(PREF_ROOT "/size/width", w);
+	gaim_prefs_set_int(PREF_ROOT "/size/height", h);
+}
+
 void gg_debug_window_show()
 {
 	debug.paused = FALSE;
@@ -206,6 +217,10 @@ void gg_debug_window_show()
 
 		debug.tview = gnt_text_view_new();
 		gnt_box_add_widget(GNT_BOX(debug.window), debug.tview);
+		gnt_widget_set_size(debug.tview,
+				gaim_prefs_get_int(PREF_ROOT "/size/width"),
+				gaim_prefs_get_int(PREF_ROOT "/size/height"));
+		g_signal_connect(G_OBJECT(debug.tview), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 
 		gnt_box_add_widget(GNT_BOX(debug.window), gnt_line_new(FALSE));
 
@@ -268,6 +283,12 @@ void gg_debug_init()
 	REGISTER_G_LOG_HANDLER("GThread");
 
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
+
+	gaim_prefs_add_none(PREF_ROOT);
+	gaim_prefs_add_none(PREF_ROOT "/size");
+	gaim_prefs_add_int(PREF_ROOT "/size/width", 60);
+	gaim_prefs_add_int(PREF_ROOT "/size/height", 15);
+
 	if (gaim_debug_is_enabled())
 		g_timeout_add(0, start_with_debugwin, NULL);
 }

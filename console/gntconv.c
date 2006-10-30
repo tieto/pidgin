@@ -157,10 +157,12 @@ closing_window(GntWidget *window, GGConv *ggconv)
 }
 
 static void
-size_changed_cb(GntWidget *w, int width, int height)
+size_changed_cb(GntWidget *widget, int width, int height)
 {
-	gaim_prefs_set_int(PREF_ROOT "/size/width", width);
-	gaim_prefs_set_int(PREF_ROOT "/size/height", height);
+	int w, h;
+	gnt_widget_get_size(widget, &w, &h);
+	gaim_prefs_set_int(PREF_ROOT "/size/width", w);
+	gaim_prefs_set_int(PREF_ROOT "/size/height", h);
 }
 
 static void
