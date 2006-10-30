@@ -2056,9 +2056,13 @@ create_accounts_list(AccountsWindow *dialog)
 
 	/* Create the list model. */
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
-									   GDK_TYPE_PIXBUF, G_TYPE_STRING,
-									   G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_POINTER,
-									   G_TYPE_POINTER);
+					GDK_TYPE_PIXBUF,   /* COLUMN_ICON */
+					G_TYPE_STRING,     /* COLUMN_SCREENNAME */
+					G_TYPE_BOOLEAN,    /* COLUMN_ENABLED */
+					G_TYPE_STRING,     /* COLUMN_PROTOCOL */
+					G_TYPE_POINTER,    /* COLUMN_DATA */
+					G_TYPE_POINTER     /* COLUMN_PULSE_DATA */
+					);
 
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
