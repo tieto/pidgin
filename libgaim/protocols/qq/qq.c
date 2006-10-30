@@ -519,7 +519,7 @@ static void _qq_menu_show_login_info(GaimPluginAction *action)
 	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), qd->my_ip);
 
 	g_string_append(info, "<hr>\n");
-	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");
+	g_string_append(info, _("<i>Information below may not be accurate</i><br>\n"));
 
 	g_string_append_printf(info, _("<b>Login Time</b>: %s<br>\n"), ctime(&qd->login_time));
 	g_string_append_printf(info, _("<b>Last Login IP</b>: %s<br>\n"), qd->last_login_ip);
