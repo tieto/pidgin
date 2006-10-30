@@ -362,7 +362,7 @@ gaim_plugin_probe(const char *filename)
 	else if (plugin->info->ui_requirement &&
 			strcmp(plugin->info->ui_requirement, gaim_core_get_ui()))
 	{
-		plugin->error = g_strdup_printf("You are using %s, but this plugin requires %s.",
+		plugin->error = g_strdup_printf(_("You are using %s, but this plugin requires %s."),
 					gaim_core_get_ui(), plugin->info->ui_requirement);
 		gaim_debug_error("plugins", "%s is not loadable: The UI requirement is not met.\n", plugin->path);
 		plugin->unloadable = TRUE;
