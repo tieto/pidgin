@@ -166,6 +166,7 @@ static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer 
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 static void gaim_gtkconv_update_fields(GaimConversation *conv, GaimGtkConvFields fields);
+static void focus_out_from_menubar(GtkWidget *wid, GaimGtkWindow *win);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -2844,15 +2845,24 @@ regenerate_options_items(GaimGtkWindow *win)
 
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
-	regenerate_options_items(data);
+	GaimGtkWindow *win = data;
+	regenerate_options_items(win);
+
+	/* The following are to make sure the 'More' submenu is not regenerated every time
+	 * the focus shifts from 'Conversations' to some other menu and back. */
 	g_signal_handlers_block_by_func(G_OBJECT(item), G_CALLBACK(menubar_activated), data);
+	g_signal_connect(G_OBJECT(win->menu.menubar), "deactivate", G_CALLBACK(focus_out_from_menubar), data);
 }
 
 static void
 focus_out_from_menubar(GtkWidget *wid, GaimGtkWindow *win)
 {
+	/* The menubar has been deactivated. Make sure the 'More' submenu is regenerated next time
+	 * the 'Conversation' menu pops up. */
 	GtkWidget *menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
 	g_signal_handlers_unblock_by_func(G_OBJECT(menuitem), G_CALLBACK(menubar_activated), win);
+	g_signal_handlers_disconnect_by_func(G_OBJECT(win->menu.menubar),
+				G_CALLBACK(focus_out_from_menubar), win);
 }
 
 static GtkWidget *
@@ -2878,13 +2888,14 @@ setup_menubar(GaimGtkWindow *win)
 	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
 	                 G_CALLBACK(gaim_gtk_save_accels_cb), NULL);
 
+	/* Make sure the 'Conversation -> More' menuitems are regenerated whenever
+	 * the 'Conversation' menu pops up because the entries can change after the
+	 * conversation is created. */
 	menuitem = gtk_item_factory_get_item(win->menu.item_factory, N_("/Conversation"));
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(menubar_activated), win);
 
 	win->menu.menubar =
 		gtk_item_factory_get_widget(win->menu.item_factory, "<main>");
-
-	g_signal_connect(G_OBJECT(win->menu.menubar), "deactivate", G_CALLBACK(focus_out_from_menubar), win);
 
 	win->menu.view_log =
 		gtk_item_factory_get_widget(win->menu.item_factory,
@@ -7510,6 +7521,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	                               gaim_conversation_is_logging(conv));
 
 	generate_send_to_items(win);
+	regenerate_options_items(win);
 
 	gaim_gtkconv_switch_active_conversation(conv);
 
