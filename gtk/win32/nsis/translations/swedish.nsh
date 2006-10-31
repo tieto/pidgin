@@ -14,7 +14,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Installationsprogrammet körs redan."
 !define GAIM_IS_RUNNING			"En instans av Giam körs redan. Avsluta Gaim och försök igen."
-!define GTK_INSTALLER_NEEDED			"Körmiljön GTK+ är antingen inte installerat eller behöver uppgraderas.$\rVar god installera v${GTK_VERSION} eller högre av GTK+-körmiljön."
+!define GTK_INSTALLER_NEEDED			"Körmiljön GTK+ är antingen inte installerat eller behöver uppgraderas.$\rVar god installera v${GTK_MIN_VERSION} eller högre av GTK+-körmiljön."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Nästa >"

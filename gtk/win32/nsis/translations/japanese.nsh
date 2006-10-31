@@ -12,7 +12,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"インストーラが既に実行されています"
 !define GAIM_IS_RUNNING				"Gaim が実行されています。Gaim を終了してから再度実行してください"
-!define GTK_INSTALLER_NEEDED			"GTK+ランタイム環境が無いかもしくはアップグレードする必要があります。$\rv${GTK_VERSION}もしくはそれ以上のGTK+ランタイムをインストールしてください。"
+!define GTK_INSTALLER_NEEDED			"GTK+ランタイム環境が無いかもしくはアップグレードする必要があります。$\rv${GTK_MIN_VERSION}もしくはそれ以上のGTK+ランタイムをインストールしてください。"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"次へ >"

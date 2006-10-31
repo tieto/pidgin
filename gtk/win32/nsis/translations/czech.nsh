@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime buïto chybí, nebo je potøeba provést upgrade.$\rProveïte instalaci verze${GTK_VERSION} nebo vyšší."
+!define GTK_INSTALLER_NEEDED			"GTK+ runtime buïto chybí, nebo je potøeba provést upgrade.$\rProveïte instalaci verze${GTK_MIN_VERSION} nebo vyšší."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Další >"

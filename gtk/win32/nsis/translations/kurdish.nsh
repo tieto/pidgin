@@ -12,7 +12,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Sazker jixwe dimeþe."
 !define GAIM_IS_RUNNING			"Gaim niha jixwe dimeþe. Ji Gaimê derkeve û careke din biceribîne."
-!define GTK_INSTALLER_NEEDED			"Derdora runtime ya GTK+ an tune an rojanekirina wê pêwîst e. $\rJi kerema xwe v${GTK_VERSION} an bilindtir a GTK+ saz bike."
+!define GTK_INSTALLER_NEEDED			"Derdora runtime ya GTK+ an tune an rojanekirina wê pêwîst e. $\rJi kerema xwe v${GTK_MIN_VERSION} an bilindtir a GTK+ saz bike."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Pêþ >"

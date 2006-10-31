@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"Runtime œrodowiska GTK+ zosta³ zagubiony lub wymaga upgrade-u.$\r Proszê zainstaluj v${GTK_VERSION} albo wy¿sz¹ wersjê runtime-u GTK+."
+!define GTK_INSTALLER_NEEDED			"Runtime œrodowiska GTK+ zosta³ zagubiony lub wymaga upgrade-u.$\r Proszê zainstaluj v${GTK_MIN_VERSION} albo wy¿sz¹ wersjê runtime-u GTK+."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Dalej >"

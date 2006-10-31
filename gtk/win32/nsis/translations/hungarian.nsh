@@ -9,7 +9,7 @@
 ;;
 
 ; Startup Checks
-!define GTK_INSTALLER_NEEDED			"A GTK+ futtató környezet hiányzik vagy frissítése szükséges.$\rKérem telepítse a v${GTK_VERSION} vagy magasabb verziójú GTK+ futtató környezetet."
+!define GTK_INSTALLER_NEEDED			"A GTK+ futtató környezet hiányzik vagy frissítése szükséges.$\rKérem telepítse a v${GTK_MIN_VERSION} vagy magasabb verziójú GTK+ futtató környezetet."
 !define INSTALLER_IS_RUNNING			"A telepíto már fut."
 !define GAIM_IS_RUNNING				"Jelenleg fut a Gaim egy példánya. Lépjen ki a Gaimból és azután próbálja újra."
 

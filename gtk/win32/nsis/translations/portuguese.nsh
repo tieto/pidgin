@@ -11,7 +11,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"O instalador já está a ser executado."
 !define GAIM_IS_RUNNING			"Uma instância do Gaim já está a ser executada. Saia do Gaim e tente de novo."
-!define GTK_INSTALLER_NEEDED			"O ambiente de GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_VERSION} ou mais recente do ambiente de GTK+."
+!define GTK_INSTALLER_NEEDED			"O ambiente de GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_MIN_VERSION} ou mais recente do ambiente de GTK+."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Seguinte >"

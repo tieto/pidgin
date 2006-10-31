@@ -10,7 +10,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"The GTK+ runtime environment không có hoặc cần được nâng cấp.$\rHãy cài đặt GTK+ runtime v${GTK_VERSION} hoặc mới hơn"
+!define GTK_INSTALLER_NEEDED			"The GTK+ runtime environment không có hoặc cần được nâng cấp.$\rHãy cài đặt GTK+ runtime v${GTK_MIN_VERSION} hoặc mới hơn"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Tiếp theo >"

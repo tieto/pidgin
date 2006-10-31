@@ -12,7 +12,7 @@
 ; Startup checks
 !define INSTALLER_IS_RUNNING			"Der Installer läuft schon."
 !define GAIM_IS_RUNNING				"Eine Instanz von Gaim läuft momentan schon. Beenden Sie Gaim und versuchen Sie es nochmal."
-!define GTK_INSTALLER_NEEDED			"Die GTK+ Runtime Umgebung fehlt entweder oder muß aktualisiert werden.$\rBitte installieren Sie v${GTK_VERSION} oder höher der GTK+ Runtime"
+!define GTK_INSTALLER_NEEDED			"Die GTK+ Runtime Umgebung fehlt entweder oder muß aktualisiert werden.$\rBitte installieren Sie v${GTK_MIN_VERSION} oder höher der GTK+ Runtime"
  
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Weiter >"

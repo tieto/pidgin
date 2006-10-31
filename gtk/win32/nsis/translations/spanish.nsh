@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"El entorno de ejecución de GTK+ falta o necesita ser actualizado.$\rPor favor, instale la versión v${GTK_VERSION} del ejecutable GTK+ o alguna posterior."
+!define GTK_INSTALLER_NEEDED			"El entorno de ejecución de GTK+ falta o necesita ser actualizado.$\rPor favor, instale la versión v${GTK_MIN_VERSION} del ejecutable GTK+ o alguna posterior."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Siguiente >"

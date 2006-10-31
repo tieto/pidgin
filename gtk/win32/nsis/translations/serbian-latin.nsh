@@ -8,7 +8,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ okolina za izvršavanje ili nije naðena ili se moraunaprediti.$\rMolimo instalirajte v${GTK_VERSION} ili veæu GTK+ okoline za izvršavanje"
+!define GTK_INSTALLER_NEEDED			"GTK+ okolina za izvršavanje ili nije naðena ili se moraunaprediti.$\rMolimo instalirajte v${GTK_MIN_VERSION} ili veæu GTK+ okoline za izvršavanje"
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"Gaim klijent za brze poruke (neophodno)"

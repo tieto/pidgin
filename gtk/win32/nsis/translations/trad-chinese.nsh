@@ -13,7 +13,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"安裝程式正在執行中。"
 !define GAIM_IS_RUNNING				"Gaim 正在執行中，請先結束這個程式後再行安裝。"
-!define GTK_INSTALLER_NEEDED			"找不到符合的 GTK+ 執行環境或是需要被更新。$\r請安裝 v${GTK_VERSION} 以上版本的 GTK+ 執行環境。"
+!define GTK_INSTALLER_NEEDED			"找不到符合的 GTK+ 執行環境或是需要被更新。$\r請安裝 v${GTK_MIN_VERSION} 以上版本的 GTK+ 執行環境。"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"下一步 >"

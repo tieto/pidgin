@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"Ose mungon mjedisi GTK+ runtime ose lyp përditësim.$\rJu lutem instaloni GTK+ runtime v${GTK_VERSION} ose më të vonshëm"
+!define GTK_INSTALLER_NEEDED			"Ose mungon mjedisi GTK+ runtime ose lyp përditësim.$\rJu lutem instaloni GTK+ runtime v${GTK_MIN_VERSION} ose më të vonshëm"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Më tej >"

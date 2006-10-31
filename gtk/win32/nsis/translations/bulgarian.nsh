@@ -9,7 +9,7 @@
 
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime липсва или трябва да бъде обновена.$\rМоля инсталирайте версия v${GTK_VERSION} или по-нова"
+!define GTK_INSTALLER_NEEDED			"GTK+ runtime липсва или трябва да бъде обновена.$\rМоля инсталирайте версия v${GTK_MIN_VERSION} или по-нова"
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"Gaim Клиент за Бързи Съобщения (изисква се)"

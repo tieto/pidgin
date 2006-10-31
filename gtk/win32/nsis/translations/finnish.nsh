@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime ympäristö joko puuttuu tai tarvitsee päivitystä.$\rOle hyvä ja asenna v${GTK_VERSION} tai uudempi GTK+ runtime"
+!define GTK_INSTALLER_NEEDED			"GTK+ runtime ympäristö joko puuttuu tai tarvitsee päivitystä.$\rOle hyvä ja asenna v${GTK_MIN_VERSION} tai uudempi GTK+ runtime"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Seuraava >"

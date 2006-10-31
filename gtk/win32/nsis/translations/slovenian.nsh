@@ -11,7 +11,7 @@
 ; Startup GTK+ check
 !define INSTALLER_IS_RUNNING			"Namešèanje že poteka."
 !define GAIM_IS_RUNNING				"Trenutno že teèe razlièica Gaima. Prosimo zaprite Gaim in poskusite znova."
-!define GTK_INSTALLER_NEEDED			"Izvajalno okolje GTK+ manjka ali pa ga je potrebno nadgraditi.$\rProsimo namestite v${GTK_VERSION} ali višjo razlièico izvajalnega okolja GTK+"
+!define GTK_INSTALLER_NEEDED			"Izvajalno okolje GTK+ manjka ali pa ga je potrebno nadgraditi.$\rProsimo namestite v${GTK_MIN_VERSION} ali višjo razlièico izvajalnega okolja GTK+"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Naprej >"

@@ -1096,8 +1096,10 @@ Function .onInit
 
   ${GetParameters} $R0
   ClearErrors
-  ${GetOptions} $R0 "/L=" $LANGUAGE
-  IfErrors 0 skip_lang
+  ${GetOptions} $R0 "/L=" $R0
+  IfErrors +3
+  StrCpy $LANGUAGE $R0
+  Goto skip_lang
 
   ; Select Language
     ; Display Language selection dialog

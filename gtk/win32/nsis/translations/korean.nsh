@@ -8,7 +8,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ 런타임 환경에 문제가 있거나 업그레이드가 필요합니다.$\rGTK+ 런타임 환경을 v${GTK_VERSION}이나 그 이상 버전으로 설치해주세요."
+!define GTK_INSTALLER_NEEDED			"GTK+ 런타임 환경에 문제가 있거나 업그레이드가 필요합니다.$\rGTK+ 런타임 환경을 v${GTK_MIN_VERSION}이나 그 이상 버전으로 설치해주세요."
 
 ; Components Page
 !define GAIM_SECTION_TITLE			"가임 메신저 (필수)"

@@ -12,7 +12,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"L'instal.lador encara està executant-se."
 !define GAIM_IS_RUNNING				"Hi ha una instància del Gaim executant-se. Surt del Gaim i torna a intentar-ho."
-!define GTK_INSTALLER_NEEDED			"L'entorn d'execució GTK+ no existeix o necessita ésser actualitzat.$\rSius plau instal.la la versió${GTK_VERSION} o superior de l'entonr GTK+"
+!define GTK_INSTALLER_NEEDED			"L'entorn d'execució GTK+ no existeix o necessita ésser actualitzat.$\rSius plau instal.la la versió${GTK_MIN_VERSION} o superior de l'entonr GTK+"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Següent >"

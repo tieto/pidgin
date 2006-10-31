@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			".לא נמצאת או צריכה שידרוג GTK+ סביבת$\rבבקשה התקן v${GTK_VERSION} .GTK+ או גבוהה יותר של סביבת"
+!define GTK_INSTALLER_NEEDED			".לא נמצאת או צריכה שידרוג GTK+ סביבת$\rבבקשה התקן v${GTK_MIN_VERSION} .GTK+ או גבוהה יותר של סביבת"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"הבא >"

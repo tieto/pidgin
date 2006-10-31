@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime environment enten mangler eller skal opgraderes.$\rInstallér venligst GTK+ runtime version v${GTK_VERSION} eller højere."
+!define GTK_INSTALLER_NEEDED			"GTK+ runtime environment enten mangler eller skal opgraderes.$\rInstallér venligst GTK+ runtime version v${GTK_MIN_VERSION} eller højere."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Næste >"

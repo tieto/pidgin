@@ -10,7 +10,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING                     "Instalarea este deja pornitã."
 !define GAIM_IS_RUNNING                  "O instanþã a programului Gaim este deja pornitã. Închideþi-o ºi încercaþi din nou."
-!define GTK_INSTALLER_NEEDED			"Mediul GTK+ nu e prezent sau aveþi o versiune prea veche.$\rInstalaþi cel puþin versiunea v${GTK_VERSION} a mediului GTK+"
+!define GTK_INSTALLER_NEEDED			"Mediul GTK+ nu e prezent sau aveþi o versiune prea veche.$\rInstalaþi cel puþin versiunea v${GTK_MIN_VERSION} a mediului GTK+"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON                      "Înainte >"

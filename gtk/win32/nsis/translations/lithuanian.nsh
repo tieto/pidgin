@@ -9,7 +9,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Diegimo programa jau paleista."
 !define GAIM_IS_RUNNING				"Ðiuo metu Gaim yra paleistas. Uþdarykite ðià programà ir pabandykite ið naujo."
-!define GTK_INSTALLER_NEEDED			"GTK+ vykdymo meto aplinkos nëra arba ji turi bûti atnaujinta.$\rÁdiekite v${GTK_VERSION} arba naujesnæ GTK+ vykdymo meto aplinkos versijà"
+!define GTK_INSTALLER_NEEDED			"GTK+ vykdymo meto aplinkos nëra arba ji turi bûti atnaujinta.$\rÁdiekite v${GTK_MIN_VERSION} arba naujesnæ GTK+ vykdymo meto aplinkos versijà"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Toliau >"

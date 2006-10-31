@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"Окружение для запуска GTK+ недоступно или нуждается в обновлении.$\rПожалуйста установите v${GTK_VERSION} или более старшую версию GTK+."
+!define GTK_INSTALLER_NEEDED			"Окружение для запуска GTK+ недоступно или нуждается в обновлении.$\rПожалуйста установите v${GTK_MIN_VERSION} или более старшую версию GTK+."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Следующее >"

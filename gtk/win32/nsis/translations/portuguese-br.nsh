@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"O ambiente de tempo de execução do GTK+ está ausente ou precisa ser atualizado.$\rFavor instalar a versão v${GTK_VERSION} ou superior do ambiente de tempo de execução do GTK+."
+!define GTK_INSTALLER_NEEDED			"O ambiente de tempo de execução do GTK+ está ausente ou precisa ser atualizado.$\rFavor instalar a versão v${GTK_MIN_VERSION} ou superior do ambiente de tempo de execução do GTK+."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Avançar >"

@@ -11,7 +11,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Er is al een installatie actief."
 !define GAIM_IS_RUNNING			"Gaim wordt op dit moment uitgevoerd. Sluit Gaim af en start de installatie opnieuw."
-!define GTK_INSTALLER_NEEDED			"De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_VERSION} of nieuwer van de GTK+ runtime-omgeving"
+!define GTK_INSTALLER_NEEDED			"De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_MIN_VERSION} of nieuwer van de GTK+ runtime-omgeving"
 
 
 ; License Page

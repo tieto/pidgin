@@ -11,7 +11,7 @@
 ; Startup GTK+ check
 !define INSTALLER_IS_RUNNING			"安装程序已经运行。"
 !define GAIM_IS_RUNNING			"Gaim 的实例正在运行中。请退出 Gaim 然后再试一次。"
-!define GTK_INSTALLER_NEEDED			"可能缺少 GTK+ 运行时刻环境，或者需要更新该环境。$\r请安装 v${GTK_VERSION} 或更高版本的 GTK+ 运行时刻环境"
+!define GTK_INSTALLER_NEEDED			"可能缺少 GTK+ 运行时刻环境，或者需要更新该环境。$\r请安装 v${GTK_MIN_VERSION} 或更高版本的 GTK+ 运行时刻环境"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"下一步 >"

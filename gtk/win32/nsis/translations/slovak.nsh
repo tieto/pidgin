@@ -11,7 +11,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Inštalácia je už spustená"
 !define GAIM_IS_RUNNING				"Gaim je práve spustený. Vypnite ho a skúste znova."
-!define GTK_INSTALLER_NEEDED			"GTK+ runtime prostredie chýba alebo musí by upgradované.$\rNainštalujte, prosím, GTK+ runtime verziu v${GTK_VERSION}, alebo novšiu"
+!define GTK_INSTALLER_NEEDED			"GTK+ runtime prostredie chýba alebo musí by upgradované.$\rNainštalujte, prosím, GTK+ runtime verziu v${GTK_MIN_VERSION}, alebo novšiu"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Ïalej >"

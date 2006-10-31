@@ -15,7 +15,7 @@
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Le programme d'installation est déjà en cours d'exécution."
 !define GAIM_IS_RUNNING				"Une instance de Gaim est en cours d'exécution. Veuillez quitter Gaim et réessayer."
-!define GTK_INSTALLER_NEEDED			"Les bibliothèques de l'environnement GTK+ ne sont pas installées ou ont besoin d'une mise à jour.$\rVeuillez installer la version ${GTK_VERSION} ou plus récente des bibliothèques GTK+."
+!define GTK_INSTALLER_NEEDED			"Les bibliothèques de l'environnement GTK+ ne sont pas installées ou ont besoin d'une mise à jour.$\rVeuillez installer la version ${GTK_MIN_VERSION} ou plus récente des bibliothèques GTK+."
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Suivant >"

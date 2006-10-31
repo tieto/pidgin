@@ -9,7 +9,7 @@
 ;;
 
 ; Startup GTK+ check
-!define GTK_INSTALLER_NEEDED			"L'ambiente di runtime GTK+ non è presente o deve essere aggiornato.$\rInstallare GTK+ versione ${GTK_VERSION} o maggiore"
+!define GTK_INSTALLER_NEEDED			"L'ambiente di runtime GTK+ non è presente o deve essere aggiornato.$\rInstallare GTK+ versione ${GTK_MIN_VERSION} o maggiore"
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Avanti >"
