@@ -224,6 +224,11 @@ GaimProxyInfo *gaim_proxy_get_setup(GaimAccount *account);
  * connect," it is used for establishing any outgoing TCP connection,
  * whether through a proxy or not.
  *
+ * @param handle     A handle that should be associated with this
+ *                   connection attempt.  The handle can be used
+ *                   to cancel the connection attempt using the
+ *                   gaim_proxy_connect_cancel_with_handle()
+ *                   function.
  * @param account    The account making the connection.
  * @param host       The destination host.
  * @param port       The destination port.
