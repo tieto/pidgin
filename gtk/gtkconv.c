@@ -276,8 +276,15 @@ default_formatize(GaimGtkConversation *c)
 			gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
 
 		if (!(conv->features & GAIM_CONNECTION_NO_FONTSIZE))
-			gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
-				gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
+		{
+			int size = gaim_prefs_get_int("/gaim/gtk/conversations/font_size");
+
+			/* 3 is the default. */
+			if (size != 3)
+			{
+				gtk_imhtml_font_set_size(GTK_IMHTML(c->entry), size);
+			}
+		}
 
 		if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
 		{
