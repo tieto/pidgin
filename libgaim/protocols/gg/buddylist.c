@@ -106,6 +106,16 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 
 		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
 		name = data_tbl[6];
+		if (NULL == name || '\0' == *name) {
+			gaim_debug_warning("gg",
+				"Something is wrong on line %d of the buddylist. Skipping.\n",
+				i + 1);
+			continue;
+		}
+
+		if (NULL == show || '\0' == *show) {
+			show = g_strdup(name);
+		}
 
 		gaim_debug_info("gg", "got buddy: name=%s show=%s\n", name, show);
 
