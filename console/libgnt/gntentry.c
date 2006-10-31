@@ -573,8 +573,12 @@ gnt_entry_class_init(GntEntryClass *klass)
 				NULL, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-prev", move_back,
 				"\033" GNT_KEY_LEFT, NULL);
+	gnt_widget_class_register_action(parent_class, "cursor-prev", move_back,
+				GNT_KEY_CTRL_B, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-next", move_forward,
 				"\033" GNT_KEY_RIGHT, NULL);
+	gnt_widget_class_register_action(parent_class, "cursor-next", move_forward,
+				GNT_KEY_CTRL_F, NULL);
 	gnt_widget_class_register_action(parent_class, "suggest-show", suggest_show,
 				"\t", NULL);
 	gnt_widget_class_register_action(parent_class, "suggest-next", suggest_next,
