@@ -710,10 +710,10 @@ gnt_tree_class_init(GntTreeClass *klass)
 
 	gnt_widget_class_register_action(parent_class, "move-up", action_up,
 				"\033" GNT_KEY_UP, NULL);
-	gnt_widget_register_binding(parent_class, "move-up", GNT_KEY_CTRL_N, NULL);
+	gnt_widget_register_binding(parent_class, "move-up", GNT_KEY_CTRL_P, NULL);
 	gnt_widget_class_register_action(parent_class, "move-down", action_down,
 				"\033" GNT_KEY_DOWN, NULL);
-	gnt_widget_register_binding(parent_class, "move-down", GNT_KEY_CTRL_P, NULL);
+	gnt_widget_register_binding(parent_class, "move-down", GNT_KEY_CTRL_N, NULL);
 	gnt_widget_class_register_action(parent_class, "page-up", action_page_up,
 				"\033" GNT_KEY_PGUP, NULL);
 	gnt_widget_class_register_action(parent_class, "page-down", action_page_down,
