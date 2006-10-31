@@ -70,6 +70,7 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_AUTHRESP = 0x54,
 	YAHOO_SERVICE_LIST = 0x55,
 	YAHOO_SERVICE_AUTH = 0x57,
+	YAHOO_SERVICE_AUTHBUDDY = 0x6d,
 	YAHOO_SERVICE_ADDBUDDY = 0x83,
 	YAHOO_SERVICE_REMBUDDY = 0x84,
 	YAHOO_SERVICE_IGNORECONTACT,    /* > 1, 7, 13 < 1, 66, 13, 0*/
@@ -116,7 +117,7 @@ struct yahoo_packet {
 };
 
 #define YAHOO_WEBMESSENGER_PROTO_VER 0x0065
-#define YAHOO_PROTO_VER 0x000f
+#define YAHOO_PROTO_VER 0x000c
 #define YAHOO_PROTO_VER_JAPAN 0x000c
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
