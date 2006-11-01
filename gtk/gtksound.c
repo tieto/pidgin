@@ -361,7 +361,7 @@ bus_call (GstBus     *bus,
 	  gpointer    data)
 {
 	GstElement *play = data;
-	GError *err;
+	GError *err = NULL;
 
 	switch (GST_MESSAGE_TYPE (msg)) {
 	case GST_MESSAGE_EOS:
