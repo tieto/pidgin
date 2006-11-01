@@ -711,14 +711,24 @@ static void
 register_binding(GntWidgetClass *klass, const char *name, const char *trigger, GList *list)
 {
 	GntWidgetActionParam *param;
+	GntWidgetAction *action;
 
 	if (name == NULL || *name == '\0') {
 		g_hash_table_remove(klass->bindings, (char*)trigger);
 		return;
 	}
 
+	action = g_hash_table_lookup(klass->actions, name);
+	if (!action) {
+		g_printerr("GntWidget: Invalid action name %s for %s\n",
+				name, g_type_name(G_OBJECT_CLASS_TYPE(klass)));
+		if (list)
+			g_list_free(list);
+		return;
+	}
+
 	param = g_new0(GntWidgetActionParam, 1);
-	param->action = g_hash_table_lookup(klass->actions, name);
+	param->action = action;
 	param->list = list;
 	g_hash_table_replace(klass->bindings, g_strdup(trigger), param);
 }

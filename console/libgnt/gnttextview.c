@@ -211,7 +211,8 @@ gnt_text_view_reflow(GntTextView *view)
 	}
 	view->list = list;
 	GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(view), GNT_WIDGET_DRAWING);
-	gnt_widget_draw(GNT_WIDGET(view));
+	if (GNT_WIDGET(view)->window)
+		gnt_widget_draw(GNT_WIDGET(view));
 	g_string_free(string, TRUE);
 }
 

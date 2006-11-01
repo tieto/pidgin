@@ -774,16 +774,17 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	int rd = read(STDIN_FILENO, keys, sizeof(keys) - 1);
 	if (rd < 0)
 	{
+		int ch = getch(); /* This should return ERR, but let's see what it really returns */
 		endwin();
 		printf("ERROR: %s\n", strerror(errno));
-		printf("File descriptor is: %d\n\nGIOChannel is: %p", STDIN_FILENO, source);
-		exit(1);
+		printf("File descriptor is: %d\n\nGIOChannel is: %p\ngetch() = %d\n", STDIN_FILENO, source, ch);
+		raise(SIGABRT);
 	}
 	else if (rd == 0)
 	{
 		endwin();
 		printf("EOF\n");
-		exit(1);
+		raise(SIGABRT);
 	}
 
 	event_stack = TRUE;
@@ -1115,11 +1116,11 @@ void gnt_init()
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI | G_IO_NVAL),
 					io_invoke, NULL, NULL);
 	
-	locale = setlocale(LC_ALL, "");
+	g_io_channel_unref(channel);  /* Apparently this caused crashes for some people.
+	                                 But irssi does this, so I am going to assume the
+	                                 crashes were caused by some other stuff. */
 
-#if 0
-	g_io_channel_unref(channel);  /* Apparently this causes crash for some people */
-#endif
+	locale = setlocale(LC_ALL, "");
 
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
