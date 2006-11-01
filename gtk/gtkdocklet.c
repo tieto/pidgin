@@ -120,6 +120,18 @@ docklet_update_status()
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
+	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
+		if (convs && ui_ops->create && !visibility_manager) {
+	 		ui_ops->create();
+	   		return FALSE;
+		} else if (!convs && ui_ops->destroy && visibility_manager) {
+	  		ui_ops->destroy();
+	  	 	return FALSE;
+	  	} else if (!visibility_manager) {
+			return FALSE;
+		}
+	}
+
 	if (convs != NULL) {
 		pending = TRUE;
 
@@ -561,7 +573,8 @@ void
 gaim_gtk_docklet_embedded()
 {
 	if (!visibility_manager) {
-		gaim_gtk_blist_visibility_manager_add();
+		if (strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"),"pending"))
+			gaim_gtk_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}
 	docklet_update_status();
@@ -574,7 +587,12 @@ gaim_gtk_docklet_remove()
 {
 	if (visibility_manager) {
 		gaim_gtk_blist_visibility_manager_remove();
+		if (docklet_blinking_timer) {
+			g_source_remove(docklet_blinking_timer);
+			docklet_blinking_timer = 0;
+		}
 		visibility_manager = FALSE;
+		status = DOCKLET_STATUS_OFFLINE;
 	}
 }
 
@@ -604,8 +622,9 @@ gaim_gtk_docklet_init()
         gaim_prefs_add_string("/gaim/gtk/docklet/show", "always");
 
 	docklet_ui_init();
-	if (ui_ops && ui_ops->create)
+	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "always") && ui_ops && ui_ops->create)
 		ui_ops->create();
+	
 	gaim_signal_connect(conn_handle, "signed-on",
 			    docklet_handle, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
 	gaim_signal_connect(conn_handle, "signed-off",
@@ -631,6 +650,6 @@ gaim_gtk_docklet_init()
 void
 gaim_gtk_docklet_uninit()
 {
-	if (ui_ops && ui_ops->destroy)
+	if (visibility_manager && ui_ops && ui_ops->destroy)
 		ui_ops->destroy();
 }

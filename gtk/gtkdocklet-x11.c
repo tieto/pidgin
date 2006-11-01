@@ -208,8 +208,11 @@ docklet_x11_destroy()
 {
 	g_return_if_fail(docklet != NULL);
 
+	if (embed_timeout)
+		g_source_remove(embed_timeout);
+	
 	gaim_gtk_docklet_remove();
-
+	
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_x11_destroyed_cb), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));
 
