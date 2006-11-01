@@ -1116,6 +1116,14 @@ gaim_prefs_update_old()
 	gaim_prefs_remove("/plugins/core/autorecon/hide_reconnecting_dialog");
 	gaim_prefs_remove("/plugins/core/autorecon/restore_state");
 	gaim_prefs_remove("/plugins/core/autorecon");
+
+	/* Convert old sounds while_away pref to new 3-way pref. */
+	if (gaim_prefs_exists("/core/sound/while_away") &&
+	    gaim_prefs_get_bool("/core/sound/while_away"))
+	{
+		gaim_prefs_set_int("/core/sound/while_status", 3);
+	}
+	gaim_prefs_remove("/core/sound/while_away");
 }
 
 void *

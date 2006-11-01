@@ -1606,8 +1606,12 @@ sound_page()
 	vbox = gaim_gtk_make_frame (ret, _("Sound Options"));
 	gaim_gtk_prefs_checkbox(_("Sounds when conversation has _focus"),
 				   "/gaim/gtk/sound/conv_focus", vbox);
-	gaim_gtk_prefs_checkbox(_("_Sounds while away"),
-				   "/core/sound/while_away", vbox);
+	gaim_gtk_prefs_dropdown(vbox, _("Enable sounds:"),
+				 GAIM_PREF_INT, "/core/sound/while_status",
+				_("Only when available"), 1,
+				_("Only when not available"), 2,
+				_("Always"), 3,
+				NULL);
 
 #ifdef USE_GSTREAMER
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);

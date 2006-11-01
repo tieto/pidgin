@@ -28,17 +28,44 @@
 
 static GaimSoundUiOps *sound_ui_ops = NULL;
 
+#define STATUS_AVAILABLE 1
+#define STATUS_AWAY 2
+
+static gboolean
+gaim_sound_play_required(const GaimAccount *account)
+{
+	gint pref_status = gaim_prefs_get_int("/core/sound/while_status");
+
+	if (pref_status == 3)
+	{
+		/* Play sounds: Always */
+		return TRUE;
+	}
+
+	if (account != NULL)
+	{
+		GaimStatus *status = gaim_account_get_active_status(account);
+
+		if (gaim_status_is_online(status))
+		{
+			gboolean available = gaim_status_is_available(status);
+			return (( available && pref_status == STATUS_AVAILABLE) ||
+			        (!available && pref_status == STATUS_AWAY));
+		}
+	}
+
+	/* We get here a couple of ways.  Either the request has been OK'ed
+	 * by gaim_sound_play_event() and we're here because the UI has
+	 * called gaim_sound_play_file(), or we're here for something
+	 * not related to an account (like testing a sound). */
+	return TRUE;
+}
+
 void
 gaim_sound_play_file(const char *filename, const GaimAccount *account)
 {
-	GaimStatus *status;
-
-	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sound/while_away")))
-	{
-		status = gaim_account_get_active_status(account);
-		if (gaim_status_is_online(status) && !gaim_status_is_available(status))
-			return;
-	}
+	if (!gaim_sound_play_required(account))
+		return;
 
 	if(sound_ui_ops && sound_ui_ops->play_file)
 		sound_ui_ops->play_file(filename);
@@ -47,16 +74,8 @@ gaim_sound_play_file(const char *filename, const GaimAccount *account)
 void
 gaim_sound_play_event(GaimSoundEventID event, const GaimAccount *account)
 {
-	GaimStatus *status;
-
-	if ((account != NULL) &&
-	    (!gaim_prefs_get_bool("/core/sound/while_away")))
-	{
-		status = gaim_account_get_active_status(account);
-		if (gaim_status_is_online(status) &&
-		    !gaim_status_is_available(status))
-			return;
-	}
+	if (!gaim_sound_play_required(account))
+		return;
 
 	if(sound_ui_ops && sound_ui_ops->play_event) {
 		int plugin_return;
@@ -107,8 +126,7 @@ gaim_sound_init()
 	                                    GAIM_SUBTYPE_ACCOUNT));
 
 	gaim_prefs_add_none("/core/sound");
-	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
-
+	gaim_prefs_add_int("/core/sound/while_status", STATUS_AVAILABLE);
 }
 
 void
