@@ -2376,7 +2376,7 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 {
 	const char *user_dir = gaim_user_dir();
 	gchar *filename_full;
-	GError *error;
+	GError *error = NULL;
 	gchar *contents = NULL;
 	gsize length;
 	xmlnode *node = NULL;
