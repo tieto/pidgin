@@ -259,7 +259,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 
 	/* This is relevant for all widgets */
 	gnt_widget_class_register_action(klass, "context-menu", context_menu,
-				"\033" GNT_KEY_POPUP, NULL);
+				GNT_KEY_POPUP, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
 

@@ -135,8 +135,8 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 	{
 		if (text[0] == 27)
 		{
-			if (strcmp(text + 1, GNT_KEY_UP) == 0 ||
-					strcmp(text + 1, GNT_KEY_DOWN) == 0)
+			if (strcmp(text, GNT_KEY_UP) == 0 ||
+					strcmp(text, GNT_KEY_DOWN) == 0)
 			{
 				popup_dropdown(box);
 				return TRUE;
@@ -170,10 +170,10 @@ gnt_combo_box_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 
 	if (event == GNT_MOUSE_SCROLL_UP) {
 		if (dshowing)
-			gnt_widget_key_pressed(box->dropdown, "\033" GNT_KEY_UP);
+			gnt_widget_key_pressed(box->dropdown, GNT_KEY_UP);
 	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
 		if (dshowing)
-			gnt_widget_key_pressed(box->dropdown, "\033" GNT_KEY_DOWN);
+			gnt_widget_key_pressed(box->dropdown, GNT_KEY_DOWN);
 	} else if (event == GNT_LEFT_MOUSE_DOWN) {
 		if (dshowing) {
 			set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));

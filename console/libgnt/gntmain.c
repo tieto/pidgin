@@ -822,7 +822,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			if (buffer[0] == 27)
 			{
 				/* Some special key has been pressed */
-				if (strcmp(buffer+1, GNT_KEY_POPUP) == 0)
+				if (strcmp(buffer, GNT_KEY_POPUP) == 0)
 				{}
 				else if (strcmp(buffer + 1, "c") == 0)
 				{
@@ -906,7 +906,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 			gnt_widget_get_position(widget, &x, &y);
 			gnt_widget_get_size(widget, &w, &h);
 
-			if (strcmp(buffer + 1, GNT_KEY_LEFT) == 0)
+			if (strcmp(buffer, GNT_KEY_LEFT) == 0)
 			{
 				if (x > X_MIN)
 				{
@@ -914,7 +914,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					changed = TRUE;
 				}
 			}
-			else if (strcmp(buffer + 1, GNT_KEY_RIGHT) == 0)
+			else if (strcmp(buffer, GNT_KEY_RIGHT) == 0)
 			{
 				if (x + w < X_MAX)
 				{
@@ -922,7 +922,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					changed = TRUE;
 				}
 			}
-			else if (strcmp(buffer + 1, GNT_KEY_UP) == 0)
+			else if (strcmp(buffer, GNT_KEY_UP) == 0)
 			{
 				if (y > Y_MIN)
 				{
@@ -930,7 +930,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					changed = TRUE;
 				}						
 			}
-			else if (strcmp(buffer + 1, GNT_KEY_DOWN) == 0)
+			else if (strcmp(buffer, GNT_KEY_DOWN) == 0)
 			{
 				if (y + h < Y_MAX)
 				{
@@ -983,7 +983,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 			gnt_widget_get_size(widget, &width, &height);
 
-			if (strcmp(buffer + 1, GNT_KEY_DOWN) == 0)
+			if (strcmp(buffer, GNT_KEY_DOWN) == 0)
 			{
 				if (widget->priv.y + height < Y_MAX)
 				{
@@ -991,17 +991,17 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 					changed = TRUE;
 				}
 			}
-			else if (strcmp(buffer + 1, GNT_KEY_UP) == 0)
+			else if (strcmp(buffer, GNT_KEY_UP) == 0)
 			{
 				height--;
 				changed = TRUE;
 			}
-			else if (strcmp(buffer + 1, GNT_KEY_LEFT) == 0)
+			else if (strcmp(buffer, GNT_KEY_LEFT) == 0)
 			{
 				width--;
 				changed = TRUE;
 			}
-			else if (strcmp(buffer + 1, GNT_KEY_RIGHT) == 0)
+			else if (strcmp(buffer, GNT_KEY_RIGHT) == 0)
 			{
 				if (widget->priv.x + width < X_MAX)
 				{

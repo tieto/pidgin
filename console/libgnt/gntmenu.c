@@ -148,17 +148,15 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 	}
 
 	if (menu->type == GNT_MENU_TOPLEVEL) {
-		if (text[0] == 27) {
-			if (strcmp(text + 1, GNT_KEY_LEFT) == 0) {
-				menu->selected--;
-				if (menu->selected < 0)
-					menu->selected = g_list_length(menu->list) - 1;
-			} else if (strcmp(text + 1, GNT_KEY_RIGHT) == 0) {
-				menu->selected++;
-				if (menu->selected >= g_list_length(menu->list))
-					menu->selected = 0;
-			}
-		} else if (text[0] == '\r' && text[1] == 0) {
+		if (strcmp(text, GNT_KEY_LEFT) == 0) {
+			menu->selected--;
+			if (menu->selected < 0)
+				menu->selected = g_list_length(menu->list) - 1;
+		} else if (strcmp(text, GNT_KEY_RIGHT) == 0) {
+			menu->selected++;
+			if (menu->selected >= g_list_length(menu->list))
+				menu->selected = 0;
+		} else if (strcmp(text, GNT_KEY_ENTER) == 0) {
 			gnt_widget_activate(widget);
 		}
 

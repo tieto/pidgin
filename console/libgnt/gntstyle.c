@@ -94,33 +94,33 @@ parse_key(const char *key)
 			return g_strdup(code); \
 	} while (0)
 
-	SPECIAL_KEY("home",     "\033" GNT_KEY_HOME);
-	SPECIAL_KEY("end",      "\033" GNT_KEY_END);
-	SPECIAL_KEY("pageup",   "\033" GNT_KEY_PGUP);
-	SPECIAL_KEY("pagedown", "\033" GNT_KEY_PGDOWN);
-	SPECIAL_KEY("insert",   "\033" GNT_KEY_INS);
-	SPECIAL_KEY("delete",   "\033" GNT_KEY_DEL);
+	SPECIAL_KEY("home",     GNT_KEY_HOME);
+	SPECIAL_KEY("end",      GNT_KEY_END);
+	SPECIAL_KEY("pageup",   GNT_KEY_PGUP);
+	SPECIAL_KEY("pagedown", GNT_KEY_PGDOWN);
+	SPECIAL_KEY("insert",   GNT_KEY_INS);
+	SPECIAL_KEY("delete",   GNT_KEY_DEL);
 
-	SPECIAL_KEY("left",   "\033" GNT_KEY_LEFT);
-	SPECIAL_KEY("right",  "\033" GNT_KEY_RIGHT);
-	SPECIAL_KEY("up",     "\033" GNT_KEY_UP);
-	SPECIAL_KEY("down",   "\033" GNT_KEY_DOWN);
+	SPECIAL_KEY("left",   GNT_KEY_LEFT);
+	SPECIAL_KEY("right",  GNT_KEY_RIGHT);
+	SPECIAL_KEY("up",     GNT_KEY_UP);
+	SPECIAL_KEY("down",   GNT_KEY_DOWN);
 
 	SPECIAL_KEY("tab",    "\t");
-	SPECIAL_KEY("menu",   "\033" GNT_KEY_POPUP);
+	SPECIAL_KEY("menu",   GNT_KEY_POPUP);
 
-	SPECIAL_KEY("f1",   "\033" GNT_KEY_F1);
-	SPECIAL_KEY("f2",   "\033" GNT_KEY_F2);
-	SPECIAL_KEY("f3",   "\033" GNT_KEY_F3);
-	SPECIAL_KEY("f4",   "\033" GNT_KEY_F4);
-	SPECIAL_KEY("f5",   "\033" GNT_KEY_F5);
-	SPECIAL_KEY("f6",   "\033" GNT_KEY_F6);
-	SPECIAL_KEY("f7",   "\033" GNT_KEY_F7);
-	SPECIAL_KEY("f8",   "\033" GNT_KEY_F8);
-	SPECIAL_KEY("f9",   "\033" GNT_KEY_F9);
-	SPECIAL_KEY("f10",  "\033" GNT_KEY_F10);
-	SPECIAL_KEY("f11",  "\033" GNT_KEY_F11);
-	SPECIAL_KEY("f12",  "\033" GNT_KEY_F12);
+	SPECIAL_KEY("f1",   GNT_KEY_F1);
+	SPECIAL_KEY("f2",   GNT_KEY_F2);
+	SPECIAL_KEY("f3",   GNT_KEY_F3);
+	SPECIAL_KEY("f4",   GNT_KEY_F4);
+	SPECIAL_KEY("f5",   GNT_KEY_F5);
+	SPECIAL_KEY("f6",   GNT_KEY_F6);
+	SPECIAL_KEY("f7",   GNT_KEY_F7);
+	SPECIAL_KEY("f8",   GNT_KEY_F8);
+	SPECIAL_KEY("f9",   GNT_KEY_F9);
+	SPECIAL_KEY("f10",  GNT_KEY_F10);
+	SPECIAL_KEY("f11",  GNT_KEY_F11);
+	SPECIAL_KEY("f12",  GNT_KEY_F12);
 
 #undef SPECIAL_KEY
 

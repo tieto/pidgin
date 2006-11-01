@@ -285,11 +285,11 @@ gnt_box_key_pressed(GntWidget *widget, const char *text)
 
 	if (text[0] == 27)
 	{
-		if (strcmp(text+1, GNT_KEY_LEFT) == 0)
+		if (strcmp(text, GNT_KEY_LEFT) == 0)
 		{
 			find_prev_focus(box);
 		}
-		else if (strcmp(text+1, GNT_KEY_RIGHT) == 0)
+		else if (strcmp(text, GNT_KEY_RIGHT) == 0)
 		{
 			find_next_focus(box);
 		}

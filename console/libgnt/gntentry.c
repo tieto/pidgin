@@ -550,14 +550,14 @@ gnt_entry_class_init(GntEntryClass *klass)
 
 	gnt_widget_class_register_action(parent_class, "cursor-home", move_start,
 				GNT_KEY_CTRL_A, NULL);
-	gnt_widget_register_binding(parent_class, "cursor-home", "\033" GNT_KEY_HOME, NULL);
+	gnt_widget_register_binding(parent_class, "cursor-home", GNT_KEY_HOME, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-end", move_end,
 				GNT_KEY_CTRL_E, NULL);
-	gnt_widget_register_binding(parent_class, "cursor-end", "\033" GNT_KEY_END, NULL);
+	gnt_widget_register_binding(parent_class, "cursor-end", GNT_KEY_END, NULL);
 	gnt_widget_class_register_action(parent_class, "delete-prev", backspace,
 				GNT_KEY_BACKSPACE, NULL);
 	gnt_widget_class_register_action(parent_class, "delete-next", delkey,
-				"\033" GNT_KEY_DEL, NULL);
+				GNT_KEY_DEL, NULL);
 	gnt_widget_register_binding(parent_class, "delete-next", GNT_KEY_CTRL_D, NULL);
 	gnt_widget_class_register_action(parent_class, "delete-start", del_to_home,
 				GNT_KEY_CTRL_U, NULL);
@@ -572,17 +572,17 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_widget_class_register_action(parent_class, "cursor-prev-word", move_back_word,
 				NULL, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-prev", move_back,
-				"\033" GNT_KEY_LEFT, NULL);
+				GNT_KEY_LEFT, NULL);
 	gnt_widget_register_binding(parent_class, "cursor-prev", GNT_KEY_CTRL_B, NULL);
 	gnt_widget_class_register_action(parent_class, "cursor-next", move_forward,
-				"\033" GNT_KEY_RIGHT, NULL);
+				GNT_KEY_RIGHT, NULL);
 	gnt_widget_register_binding(parent_class, "cursor-next", GNT_KEY_CTRL_F, NULL);
 	gnt_widget_class_register_action(parent_class, "suggest-show", suggest_show,
 				"\t", NULL);
 	gnt_widget_class_register_action(parent_class, "suggest-next", suggest_next,
-				"\033" GNT_KEY_DOWN, NULL);
+				GNT_KEY_DOWN, NULL);
 	gnt_widget_class_register_action(parent_class, "suggest-prev", suggest_prev,
-				"\033" GNT_KEY_UP, NULL);
+				GNT_KEY_UP, NULL);
 	gnt_widget_class_register_action(parent_class, "history-prev", history_prev,
 				"\033" GNT_KEY_CTRL_DOWN, NULL);
 	gnt_widget_class_register_action(parent_class, "history-next", history_next,

@@ -1,29 +1,34 @@
 #ifndef GNT_KEYS_H
 #define GNT_KEYS_H
 
-#define GNT_KEY_POPUP   "[29~"
+#include <curses.h>
+#include <term.h>
+
+#define SAFE(x)   ((x) ? (x) : "")
+
+#define GNT_KEY_POPUP   SAFE(key_f16)   /* Apparently */
 
 /* Arrow keys */
-#define GNT_KEY_LEFT   "[D"
-#define GNT_KEY_RIGHT  "[C"
-#define GNT_KEY_UP     "[A"
-#define GNT_KEY_DOWN   "[B"
+#define GNT_KEY_LEFT   SAFE(key_left)
+#define GNT_KEY_RIGHT  SAFE(key_right)
+#define GNT_KEY_UP     SAFE(key_up)
+#define GNT_KEY_DOWN   SAFE(key_down)
 
 #define GNT_KEY_CTRL_UP     "[1;5A"
 #define GNT_KEY_CTRL_DOWN   "[1;5B"
 #define GNT_KEY_CTRL_RIGHT  "[1;5C"
 #define GNT_KEY_CTRL_LEFT   "[1;5D"
 
-#define GNT_KEY_PGUP   "[5~"
-#define GNT_KEY_PGDOWN "[6~"
-#define GNT_KEY_HOME   "[7~"
-#define GNT_KEY_END    "[8~"
+#define GNT_KEY_PGUP   SAFE(key_ppage)
+#define GNT_KEY_PGDOWN SAFE(key_npage)
+#define GNT_KEY_HOME   SAFE(key_home)
+#define GNT_KEY_END    SAFE(key_end)
 
-#define GNT_KEY_ENTER  "\r"
+#define GNT_KEY_ENTER  carriage_return
 
-#define GNT_KEY_BACKSPACE "\177"
-#define GNT_KEY_DEL    "[3~"
-#define GNT_KEY_INS    "[2~"
+#define GNT_KEY_BACKSPACE SAFE(key_backspace)
+#define GNT_KEY_DEL    SAFE(key_dc)
+#define GNT_KEY_INS    SAFE(key_ic)
 
 #define GNT_KEY_CTRL_A     "\001"
 #define GNT_KEY_CTRL_B     "\002"
@@ -48,18 +53,18 @@
 #define GNT_KEY_CTRL_X     "\030"
 #define GNT_KEY_CTRL_Y     "\031"
 
-#define GNT_KEY_F1         "[[A"
-#define GNT_KEY_F2         "[[B"
-#define GNT_KEY_F3         "[[C"
-#define GNT_KEY_F4         "[[D"
-#define GNT_KEY_F5         "[[E"
-#define GNT_KEY_F6         "[17~"
-#define GNT_KEY_F7         "[18~"
-#define GNT_KEY_F8         "[19~"
-#define GNT_KEY_F9         "[20~"
-#define GNT_KEY_F10        "[21~"
-#define GNT_KEY_F11        "[23~"
-#define GNT_KEY_F12        "[24~"
+#define GNT_KEY_F1         SAFE(key_f1)
+#define GNT_KEY_F2         SAFE(key_f2)
+#define GNT_KEY_F3         SAFE(key_f3)
+#define GNT_KEY_F4         SAFE(key_f4)
+#define GNT_KEY_F5         SAFE(key_f5)
+#define GNT_KEY_F6         SAFE(key_f6)
+#define GNT_KEY_F7         SAFE(key_f7)
+#define GNT_KEY_F8         SAFE(key_f8)
+#define GNT_KEY_F9         SAFE(key_f9)
+#define GNT_KEY_F10        SAFE(key_f10)
+#define GNT_KEY_F11        SAFE(key_f11)
+#define GNT_KEY_F12        SAFE(key_f12)
 
 /**
  * This will do stuff with the terminal settings and stuff.
