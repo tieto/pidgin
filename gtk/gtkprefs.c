@@ -828,8 +828,6 @@ conv_page()
 		_("Always"), "always",
 		NULL);
 
-	gaim_gtk_prefs_checkbox(_("Send unknown \"_slash\" commands as messages"),
-	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
 	gaim_gtk_prefs_checkbox(_("Show _formatting on incoming messages"),
 				"/gaim/gtk/conversations/show_incoming_formatting", vbox);
 
@@ -2079,6 +2077,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
+	gaim_prefs_remove("/gaim/gtk/conversations/passthrough_unknown_commands");
 	gaim_prefs_remove("/gaim/gtk/idle");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");

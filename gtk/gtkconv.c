@@ -488,12 +488,6 @@ check_for_and_do_command(GaimConversation *conv)
 			case GAIM_CMD_STATUS_OK:
 				return TRUE;
 			case GAIM_CMD_STATUS_NOT_FOUND:
-				if (!gaim_prefs_get_bool("/gaim/gtk/conversations/passthrough_unknown_commands")) {
-					gaim_conversation_write(conv, "", _("No such command."),
-							GAIM_MESSAGE_NO_LOG, time(NULL));
-
-					return TRUE;
-				}
 				return FALSE;
 			case GAIM_CMD_STATUS_WRONG_ARGS:
 				gaim_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
@@ -6594,7 +6588,6 @@ gaim_gtk_conversations_init(void)
 
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/passthrough_unknown_commands", FALSE);
 
 	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "last");
 	gaim_prefs_add_int("/gaim/gtk/conversations/placement_number", 1);
