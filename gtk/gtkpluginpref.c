@@ -154,7 +154,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 								"changed", G_CALLBACK(imhtml_cb), imhtml);
 				g_signal_connect(G_OBJECT(imhtml),
 								"format_function_toggle", G_CALLBACK(imhtml_format_cb), imhtml);
-				gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+				gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 			}
 
 			break;
