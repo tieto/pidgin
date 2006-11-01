@@ -71,4 +71,13 @@
  */
 void gnt_keys_refine(char *text);
 
+
+/* A lot of commonly used variable names are defined in <term.h>. 
+ * #undef them to make life easier for everyone. */
+
+#undef columns
+#undef lines
+#undef buttons
+#undef newline
+
 #endif

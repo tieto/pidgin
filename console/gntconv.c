@@ -128,13 +128,13 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 	}
 	else if (key[0] == 27)
 	{
-		if (strcmp(key+1, GNT_KEY_DOWN) == 0)
+		if (strcmp(key, GNT_KEY_DOWN) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 1);
-		else if (strcmp(key+1, GNT_KEY_UP) == 0)
+		else if (strcmp(key, GNT_KEY_UP) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), -1);
-		else if (strcmp(key+1, GNT_KEY_PGDOWN) == 0)
+		else if (strcmp(key, GNT_KEY_PGDOWN) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), ggconv->tv->priv.height - 2);
-		else if (strcmp(key+1, GNT_KEY_PGUP) == 0)
+		else if (strcmp(key, GNT_KEY_PGUP) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), -(ggconv->tv->priv.height - 2));
 		else
 			return FALSE;

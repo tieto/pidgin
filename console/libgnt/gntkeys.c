@@ -1,5 +1,6 @@
 #include "gntkeys.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 const char *term;
