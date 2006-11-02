@@ -127,10 +127,11 @@ docklet_update_status()
 		} else if (!convs && ui_ops->destroy && visibility_manager) {
 	  		ui_ops->destroy();
 	  	 	return FALSE;
-	  	} else if (!visibility_manager) {
-			return FALSE;
 		}
 	}
+
+	if (!visibility_manager)
+		return FALSE;
 
 	if (convs != NULL) {
 		pending = TRUE;
@@ -290,6 +291,23 @@ docklet_signed_off_cb(GaimConnection *gc)
 			enable_join_chat = online_account_supports_chat();
 	}
 	docklet_update_status();
+}
+
+static void
+docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
+			     gconstpointer value, gpointer data)
+{
+	const char *val = value;
+	if (!strcmp(val, "always")) {
+		if (!visibility_manager && ui_ops->create)
+			ui_ops->create();
+	} else if (!strcmp(val, "never")) {
+		if (visibility_manager && ui_ops->destroy)
+			ui_ops->destroy();
+	} else {
+		docklet_update_status();
+	}
+			
 }
 
 /**************************************************************************
@@ -620,6 +638,8 @@ gaim_gtk_docklet_init()
 	gaim_prefs_add_none("/gaim/gtk/docklet");
         gaim_prefs_add_bool("/gaim/gtk/docklet/blink", FALSE);
         gaim_prefs_add_string("/gaim/gtk/docklet/show", "always");
+	gaim_prefs_connect_callback(docklet_handle, "/gaim/gtk/docklet/show",
+				    docklet_show_pref_changed_cb, NULL);
 
 	docklet_ui_init();
 	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "always") && ui_ops && ui_ops->create)

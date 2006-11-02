@@ -70,9 +70,6 @@ static GtkTreeRowReference *previous_smiley_row = NULL;
 /*
  * PROTOTYPES
  */
-static int prefs_notebook_add_page(const char*, GdkPixbuf*,
-									GtkWidget*, GtkTreeIter*,
-									GtkTreeIter*, int);
 static void delete_prefs(GtkWidget *, void *);
 
 static void
@@ -802,19 +799,85 @@ conversation_usetabs_cb(const char *name, GaimPrefType type,
 }
 
 static GtkWidget *
+interface_page()
+{
+	GtkWidget *ret;
+	GtkWidget *vbox;
+	GtkWidget *vbox2;
+	GtkWidget *label;
+	GList *names = NULL;
+
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+
+	vbox = gaim_gtk_make_frame(ret, _("System Tray Icon"));
+	label = gaim_gtk_prefs_dropdown(vbox, _("_Show System Tray Icon:"), GAIM_PREF_STRING,
+					"/gaim/gtk/docklet/show",
+					_("Always"), "always",
+					_("Never"), "never",
+					_("On unread messages"), "pending",
+					NULL);
+
+	vbox = gaim_gtk_make_frame(ret, _("Conversation Window Hiding"));
+	gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations"),
+				GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
+				_("Never"), "never",
+				_("When away"), "away",
+				_("Always"), "always",
+				NULL);
+
+
+	/* All the tab options! */
+	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
+	
+	gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
+							"/gaim/gtk/conversations/tabs", vbox);
+
+	/*
+	 * Connect a signal to the above preference.  When conversations are not
+	 * shown in a tabbed window then all tabbing options should be disabled.
+	 */
+	vbox2 = gtk_vbox_new(FALSE, 9);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
+	gaim_prefs_connect_callback(prefs, "/gaim/gtk/conversations/tabs",
+	                            conversation_usetabs_cb, vbox2);
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
+	  gtk_widget_set_sensitive(vbox2, FALSE);
+
+	gaim_gtk_prefs_checkbox(_("Show close b_utton on tabs"),
+				"/gaim/gtk/conversations/close_on_tabs", vbox2);
+
+	label = gaim_gtk_prefs_dropdown(vbox2, _("_Placement:"), GAIM_PREF_INT,
+					"/gaim/gtk/conversations/tab_side",
+					_("Top"), GTK_POS_TOP,
+					_("Bottom"), GTK_POS_BOTTOM,
+					_("Left"), GTK_POS_LEFT,
+					_("Right"), GTK_POS_RIGHT,
+#if GTK_CHECK_VERSION(2,6,0)
+					_("Left Vertical"), GTK_POS_LEFT|8,
+					_("Right Vertical"), GTK_POS_RIGHT|8,
+#endif
+					NULL);
+
+	names = gaim_gtkconv_placement_get_options();
+	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
+						  GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
+	g_list_free(names);
+
+	gtk_widget_show_all(ret);
+	return ret;
+}
+
+static GtkWidget *
 conv_page()
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-	GtkWidget *label;
-	GList *names = NULL;
-	GtkWidget *frame;
-	GtkWidget *imhtml;
 	GtkWidget *toolbar;
-	GtkWidget *hbox;
-	GtkWidget *vbox2;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
+	GtkWidget *imhtml;
+	GtkWidget *frame;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
@@ -888,45 +951,6 @@ conv_page()
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear",
 					 G_CALLBACK(formatting_clear_cb), NULL);
 
-	/* All the tab options! */
-	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
-
-	gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
-							"/gaim/gtk/conversations/tabs", vbox);
-
-	/*
-	 * Connect a signal to the above preference.  When conversations are not
-	 * shown in a tabbed window then all tabbing options should be disabled.
-	 */
-	vbox2 = gtk_vbox_new(FALSE, 9);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/conversations/tabs",
-	                            conversation_usetabs_cb, vbox2);
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
-		gtk_widget_set_sensitive(vbox2, FALSE);
-
-	gaim_gtk_prefs_checkbox(_("Show close b_utton on tabs"),
-							"/gaim/gtk/conversations/close_on_tabs", vbox2);
-
-	hbox = gtk_hbox_new(FALSE, 9);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
-
-	label = gaim_gtk_prefs_dropdown(hbox, _("_Placement:"), GAIM_PREF_INT,
-			"/gaim/gtk/conversations/tab_side",
-			_("Top"), GTK_POS_TOP,
-			_("Bottom"), GTK_POS_BOTTOM,
-			_("Left"), GTK_POS_LEFT,
-			_("Right"), GTK_POS_RIGHT,
-#if GTK_CHECK_VERSION(2,6,0)
-	                _("Left Vertical"), GTK_POS_LEFT|8,
-	                _("Right Vertical"), GTK_POS_RIGHT|8,
-#endif
-			NULL);
-
-	names = gaim_gtkconv_placement_get_options();
-	label = gaim_gtk_prefs_dropdown_from_list(hbox, _("N_ew conversations:"),
-			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
-	g_list_free(names);
 
 	gtk_widget_show_all(ret);
 
@@ -1861,21 +1885,10 @@ away_page()
 	return ret;
 }
 
-int prefs_notebook_add_page(const char *text,
-				     GdkPixbuf *pixbuf,
-				     GtkWidget *page,
-				     GtkTreeIter *iter,
-				     GtkTreeIter *parent,
-				     int ind) {
-	GdkPixbuf *icon = NULL;
-
-	if (pixbuf)
-		icon = gdk_pixbuf_scale_simple (pixbuf, 18, 18, GDK_INTERP_BILINEAR);
-
-	if (pixbuf)
-		g_object_unref(pixbuf);
-	if (icon)
-		g_object_unref(icon);
+static int 
+prefs_notebook_add_page(const char *text,
+  		        GtkWidget *page,
+			int ind) {
 
 #if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
@@ -1886,20 +1899,20 @@ int prefs_notebook_add_page(const char *text,
 }
 
 static void prefs_notebook_init() {
-	GtkTreeIter p, c, c2;
-	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c2, &c, notebook_page++);
-	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Interface"), interface_page(), notebook_page++);
+	prefs_notebook_add_page(_("Conversations"), conv_page(), notebook_page++);
+	prefs_notebook_add_page(_("Smiley Themes"), theme_page(), notebook_page++);
+	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
+	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
 	/* if the user is running gnome 2.x or Mac OS X, hide the browsers tab */
 	if ((gaim_running_gnome() == FALSE) && (gaim_running_osx() == FALSE)) {
-		prefs_notebook_add_page(_("Browser"), NULL, browser_page(), &p, NULL, notebook_page++);
+		prefs_notebook_add_page(_("Browser"), browser_page(), notebook_page++);
 	}
 #endif
-	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Status / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
+	prefs_notebook_add_page(_("Logging"), logging_page(), notebook_page++);
+	prefs_notebook_add_page(_("Status / Idle"), away_page(), notebook_page++);
 }
 
 void gaim_gtk_prefs_show(void)
