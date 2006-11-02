@@ -69,6 +69,11 @@ typedef struct
 	GntWidget *status;          /* Dropdown with the statuses  */
 	GntWidget *statustext;      /* Status message */
 	int typing;
+
+	GntWidget *menu;
+	/* These are the menuitems that get regenerated */
+	GntMenuItem *accounts;
+	GntMenuItem *plugins;
 } GGBlist;
 
 typedef enum
@@ -1766,17 +1771,76 @@ plugin_action(GntMenuItem *item, gpointer data)
 		action->callback(action);
 }
 
-static GntMenuItem *reconstruct_accounts_menu()
+static void
+build_plugin_actions(GntMenuItem *item, GaimPlugin *plugin, gpointer context)
+{
+	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
+	GList *actions;
+	GntMenuItem *menuitem;
+
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+	for (actions = GAIM_PLUGIN_ACTIONS(plugin, context); actions;
+			actions = g_list_delete_link(actions, actions)) {
+		if (actions->data) {
+			GaimPluginAction *action = actions->data;
+			action->plugin = plugin;
+			action->context = context;
+			menuitem = gnt_menuitem_new(action->label);
+			gnt_menu_add_item(GNT_MENU(sub), menuitem);
+
+			gnt_menuitem_set_callback(menuitem, plugin_action, action);
+			g_object_set_data_full(G_OBJECT(menuitem), "plugin_action",
+								   action, (GDestroyNotify)gaim_plugin_action_free);
+		}
+	}
+}
+
+static void
+reconstruct_plugins_menu()
+{
+	GntWidget *sub;
+	GntMenuItem *plg;
+	GList *iter;
+
+	if (!ggblist)
+		return;
+
+	if (ggblist->plugins == NULL)
+		ggblist->plugins = gnt_menuitem_new(_("Plugins"));
+
+	plg = ggblist->plugins;
+	sub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(plg, GNT_MENU(sub));
+
+	for (iter = gaim_plugins_get_loaded(); iter; iter = iter->next) {
+		GaimPlugin *plugin = iter->data;
+		GntMenuItem *item;
+		if (GAIM_IS_PROTOCOL_PLUGIN(plugin))
+			continue;
+
+		if (!GAIM_PLUGIN_HAS_ACTIONS(plugin))
+			continue;
+
+		item = gnt_menuitem_new(_(plugin->info->name));
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		build_plugin_actions(item, plugin, NULL);
+	}
+}
+
+static void
+reconstruct_accounts_menu()
 {
 	GntWidget *sub;
 	GntMenuItem *acc, *item;
 	GList *iter;
 
 	if (!ggblist)
-		return NULL;
+		return;
 
-	acc = gnt_menuitem_new(_("Accounts"));
+	if (ggblist->accounts == NULL)
+		ggblist->accounts = gnt_menuitem_new(_("Accounts"));
 
+	acc = ggblist->accounts;
 	sub = gnt_menu_new(GNT_MENU_POPUP);
 	gnt_menuitem_set_submenu(acc, GNT_MENU(sub));
 
@@ -1791,33 +1855,11 @@ static GntMenuItem *reconstruct_accounts_menu()
 		prpl = gc->prpl;
 
 		if (GAIM_PLUGIN_HAS_ACTIONS(prpl)) {
-			GList *acts;
-			GntWidget *s;
-
 			item = gnt_menuitem_new(gaim_account_get_username(account));
-			s = gnt_menu_new(GNT_MENU_POPUP);
-			gnt_menuitem_set_submenu(item, GNT_MENU(s));
 			gnt_menu_add_item(GNT_MENU(sub), item);
-
-			for (acts = GAIM_PLUGIN_ACTIONS(prpl, gc); acts;
-					acts = g_list_delete_link(acts, acts)) {
-				GaimPluginAction *action = acts->data;
-				if (!action)
-					continue;
-
-				action->plugin = prpl;
-				action->context = gc;
-
-				item = gnt_menuitem_new(action->label);
-				gnt_menuitem_set_callback(item, plugin_action, action);
-				/* This is to make sure the action is freed when the menu is destroyed */
-				g_object_set_data_full(G_OBJECT(item), "plugin_action", action,
-					(GDestroyNotify)gaim_plugin_action_free);
-				gnt_menu_add_item(GNT_MENU(s), item);
-			}
+			build_plugin_actions(item, prpl, gc);
 		}
 	}
-	return acc;
 }
 
 static void show_offline_cb(GntMenuItem *item, gpointer n)
@@ -1842,7 +1884,7 @@ create_menu()
 		return;
 
 	window = GNT_WINDOW(ggblist->window);
-	menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
+	ggblist->menu = menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
 	gnt_window_set_menu(window, GNT_MENU(menu));
 
 	item = gnt_menuitem_new(_("Options"));
@@ -1867,8 +1909,11 @@ create_menu()
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "log");
 
-	item = reconstruct_accounts_menu();
-	gnt_menu_add_item(GNT_MENU(menu), item);
+	reconstruct_accounts_menu();
+	gnt_menu_add_item(GNT_MENU(menu), ggblist->accounts);
+
+	reconstruct_plugins_menu();
+	gnt_menu_add_item(GNT_MENU(menu), ggblist->plugins);
 }
 
 void gg_blist_show()
@@ -1911,13 +1956,18 @@ blist_show(GaimBuddyList *list)
 	gnt_widget_show(ggblist->window);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", gg_blist_get_handle(),
-				GAIM_CALLBACK(create_menu), NULL);
+				GAIM_CALLBACK(reconstruct_accounts_menu), NULL);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", gg_blist_get_handle(),
-				GAIM_CALLBACK(create_menu), NULL);
+				GAIM_CALLBACK(reconstruct_accounts_menu), NULL);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_status_changed), ggblist);
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-idle-changed", gg_blist_get_handle(),
 				GAIM_CALLBACK(buddy_idle_changed), ggblist);
+
+	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-load", gg_blist_get_handle(),
+				GAIM_CALLBACK(reconstruct_plugins_menu), NULL);
+	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-unload", gg_blist_get_handle(),
+				GAIM_CALLBACK(reconstruct_plugins_menu), NULL);
 
 #if 0
 	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gg_blist_get_handle(),

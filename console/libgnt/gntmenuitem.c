@@ -74,6 +74,8 @@ void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, 
 
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu)
 {
+	if (item->submenu)
+		gnt_widget_destroy(item->submenu);
 	item->submenu = menu;
 }
 
