@@ -805,10 +805,13 @@ interface_page()
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *label;
+	GtkSizeGroup *sg;
 	GList *names = NULL;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame(ret, _("System Tray Icon"));
 	label = gaim_gtk_prefs_dropdown(vbox, _("_Show System Tray Icon:"), GAIM_PREF_STRING,
@@ -817,15 +820,19 @@ interface_page()
 					_("Never"), "never",
 					_("On unread messages"), "pending",
 					NULL);
-
+	gtk_size_group_add_widget(sg, label);
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	
 	vbox = gaim_gtk_make_frame(ret, _("Conversation Window Hiding"));
-	gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations"),
-				GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
-				_("Never"), "never",
-				_("When away"), "away",
-				_("Always"), "always",
-				NULL);
-
+	label = gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations"),
+					GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
+					_("Never"), "never",
+					_("When away"), "away",
+					_("Always"), "always",
+					NULL);
+	gtk_size_group_add_widget(sg, label);
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+			
 
 	/* All the tab options! */
 	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
@@ -858,10 +865,16 @@ interface_page()
 					_("Right Vertical"), GTK_POS_RIGHT|8,
 #endif
 					NULL);
-
+	gtk_size_group_add_widget(sg, label);
+        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+		
 	names = gaim_gtkconv_placement_get_options();
 	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
-						  GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
+				GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+			
+	gtk_size_group_add_widget(sg, label);
+
 	g_list_free(names);
 
 	gtk_widget_show_all(ret);
