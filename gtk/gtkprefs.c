@@ -897,13 +897,6 @@ conv_page()
 
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
-	gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations"),
-		GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
-		_("Never"), "never",
-		_("When away"), "away",
-		_("Always"), "always",
-		NULL);
-
 	gaim_gtk_prefs_checkbox(_("Show _formatting on incoming messages"),
 				"/gaim/gtk/conversations/show_incoming_formatting", vbox);
 
