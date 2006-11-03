@@ -632,7 +632,7 @@ theme_page()
 	GtkWidget *label;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
@@ -808,13 +808,13 @@ interface_page()
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 	
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame(ret, _("System Tray Icon"));
-	label = gaim_gtk_prefs_dropdown(vbox, _("_Show System Tray Icon:"), GAIM_PREF_STRING,
+	label = gaim_gtk_prefs_dropdown(vbox, _("_Show system tray icon:"), GAIM_PREF_STRING,
 					"/gaim/gtk/docklet/show",
 					_("Always"), "always",
 					_("Never"), "never",
@@ -824,7 +824,7 @@ interface_page()
         gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	
 	vbox = gaim_gtk_make_frame(ret, _("Conversation Window Hiding"));
-	label = gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations"),
+	label = gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
 					GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
 					_("Never"), "never",
 					_("When away"), "away",
@@ -835,7 +835,7 @@ interface_page()
 			
 
 	/* All the tab options! */
-	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
+	vbox = gaim_gtk_make_frame(ret, _("Tabs"));
 	
 	gaim_gtk_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							"/gaim/gtk/conversations/tabs", vbox);
@@ -892,7 +892,7 @@ conv_page()
 	GtkWidget *imhtml;
 	GtkWidget *frame;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
@@ -921,6 +921,8 @@ conv_page()
 #ifdef _WIN32
 	gaim_gtk_prefs_checkbox(_("F_lash window when IMs are received"), "/gaim/gtk/win32/blink_im", vbox);
 #endif
+
+	vbox = gaim_gtk_make_frame(ret, _("Default Formatting"));
 
 	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");
@@ -1002,7 +1004,7 @@ network_page()
 	GtkSizeGroup *sg;
 	GaimProxyInfo *proxy_info = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	vbox = gaim_gtk_make_frame (ret, _("IP Address"));
@@ -1342,6 +1344,7 @@ logging_page()
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+
 
 	vbox = gaim_gtk_make_frame (ret, _("Logging"));
 	names = gaim_log_logger_get_options();
@@ -1761,6 +1764,7 @@ sound_page()
 	button = gtk_button_new_with_label(_("Choose..."));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
+
 	gtk_widget_show_all(ret);
 
 	return ret;
