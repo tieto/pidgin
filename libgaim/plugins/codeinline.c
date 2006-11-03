@@ -51,6 +51,8 @@ plugin_load(GaimPlugin *plugin)
      plugin_handle = plugin;
      gaim_signal_connect(handle, "writing-im-msg", plugin,
                 GAIM_CALLBACK(outgoing_msg_cb), NULL);
+     gaim_signal_connect(handle, "sending-im-msg", plugin,
+		GAIM_CALLBACK(outgoing_msg_cb), NULL);
 
      return TRUE;
 }
