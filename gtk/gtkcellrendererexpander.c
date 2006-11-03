@@ -56,12 +56,12 @@ static void gaim_gtk_cell_renderer_expander_render     (GtkCellRenderer         
 						   GdkRectangle               *cell_area,
 						   GdkRectangle               *expose_area,
 						   guint                       flags);
-static gboolean gaim_gtk_cell_renderer_expander_activate  (GtkCellRenderer            *cell,
+static gboolean gaim_gtk_cell_renderer_expander_activate  (GtkCellRenderer            *r,
 						      GdkEvent                   *event,
 						      GtkWidget                  *widget,
-						      const gchar                *path,
-						      GdkRectangle               *background_area,
-						      GdkRectangle               *cell_area,
+						      const gchar                *p,
+						      GdkRectangle               *bg,
+						      GdkRectangle               *cell,
 						      GtkCellRendererState        flags);
 static void  gaim_gtk_cell_renderer_expander_finalize (GObject *gobject);
 
