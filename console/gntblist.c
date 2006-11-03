@@ -1873,6 +1873,54 @@ static void sort_blist_change_cb(GntMenuItem *item, gpointer n)
 	gaim_prefs_set_string(PREF_ROOT "/sort_type", n);
 }
 
+/* XXX: send_im_select* -- Xerox */
+static void
+send_im_select_cb(gpointer data, GaimRequestFields *fields)
+{
+	GaimAccount *account;
+	const char *username;
+
+	account  = gaim_request_fields_get_account(fields, "account");
+	username = gaim_request_fields_get_string(fields,  "screenname");
+
+	gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
+}
+
+static void
+send_im_select(void)
+{
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	fields = gaim_request_fields_new();
+
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
+	gaim_request_field_set_type_hint(field, "screenname");
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_type_hint(field, "account");
+	gaim_request_field_set_visible(field,
+		(gaim_connections_get_all() != NULL &&
+		 gaim_connections_get_all()->next != NULL));
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(gaim_get_blist(), _("New Instant Message"),
+						NULL,
+						_("Please enter the screen name or alias of the person "
+						  "you would like to IM."),
+						fields,
+						_("OK"), G_CALLBACK(send_im_select_cb),
+						_("Cancel"), NULL,
+						NULL);
+}
+
 static void
 create_menu()
 {
@@ -1892,6 +1940,10 @@ create_menu()
 
 	sub = gnt_menu_new(GNT_MENU_POPUP);
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+	item = gnt_menuitem_new(_("Send IM..."));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENUITEM(item), send_im_select, NULL);
 
 	item = gnt_menuitem_new(_("Toggle offline buddies"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
