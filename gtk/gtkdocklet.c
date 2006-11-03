@@ -604,7 +604,8 @@ void
 gaim_gtk_docklet_remove()
 {
 	if (visibility_manager) {
-		gaim_gtk_blist_visibility_manager_remove();
+	        if (strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"),"pending"))
+			gaim_gtk_blist_visibility_manager_remove();
 		if (docklet_blinking_timer) {
 			g_source_remove(docklet_blinking_timer);
 			docklet_blinking_timer = 0;
