@@ -1,6 +1,3 @@
-EXTRA_DIST = \
-		Makefile.mingw
-
 soundsdir =	$(datadir)/sounds/gaim
 sounds_DATA =	\
 		alert.wav \
@@ -8,3 +5,8 @@ sounds_DATA =	\
 		logout.wav \
 		receive.wav \
 		send.wav
+
+EXTRA_DIST = \
+		Makefile.mingw \
+                $(sounds_DATA)
+
