@@ -390,7 +390,8 @@ wgaim_get_connected_network_count(void)
 
 	WSAQUERYSET qs;
 	HANDLE h;
-	int retval;
+	gint retval;
+	int errorid;
 
 	memset(&qs, 0, sizeof(WSAQUERYSET));
 	qs.dwSize = sizeof(WSAQUERYSET);
@@ -398,8 +399,9 @@ wgaim_get_connected_network_count(void)
 
 	retval = WSALookupServiceBegin(&qs, LUP_RETURN_ALL, &h);
 	if (retval != ERROR_SUCCESS) {
-		int errorid = WSAGetLastError();
-		gchar *msg = g_win32_error_message(errorid);
+		gchar *msg;
+		errorid = WSAGetLastError();
+		msg = g_win32_error_message(errorid);
 		gaim_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
 						"NLA service is probably not running. Message: %s (%d).\n",
 						msg, errorid);
@@ -410,14 +412,23 @@ wgaim_get_connected_network_count(void)
 		char buf[1024];
 		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
 		DWORD size = sizeof(buf);
-		while (WSALookupServiceNext(h, 0, &size, res) == ERROR_SUCCESS) {
+		while ((retval = WSALookupServiceNext(h, 0, &size, res)) == ERROR_SUCCESS) {
 			net_cnt++;
 			gaim_debug_info("network", "found network '%s'\n",
 					res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)");
 			size = sizeof(buf);
 		}
 
-		WSALookupServiceEnd(h);
+		errorid = WSAGetLastError();
+		if (!(errorid == WSA_E_NO_MORE || errorid == WSAENOMORE)) {
+			gchar *msg = g_win32_error_message(errorid);
+			gaim_debug_error("network", "got unexpected NLA response %s (%d)\n", msg, errorid);
+			g_free(msg);
+
+			net_cnt = -1;
+		}
+
+		retval = WSALookupServiceEnd(h);
 	}
 
 	return net_cnt;
