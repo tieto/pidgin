@@ -409,7 +409,7 @@ wgaim_get_connected_network_count(void)
 
 		return -1;
 	} else {
-		char buf[1024];
+		char buf[4096];
 		WSAQUERYSET *res = (LPWSAQUERYSET) buf;
 		DWORD size = sizeof(buf);
 		while ((retval = WSALookupServiceNext(h, 0, &size, res)) == ERROR_SUCCESS) {
