@@ -105,6 +105,7 @@ popup_dropdown(GntComboBox *box)
 	parent->priv.width = widget->priv.width;
 	parent->priv.height = height + 2;
 
+	GNT_WIDGET_UNSET_FLAGS(parent, GNT_WIDGET_INVISIBLE);
 	gnt_widget_draw(parent);
 }
 

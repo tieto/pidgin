@@ -25,9 +25,9 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 	}
 	else if (key[0] == 27)
 	{
-		if (strcmp(key+1, GNT_KEY_UP) == 0)
+		if (strcmp(key, GNT_KEY_UP) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(view), -1);
-		else if (strcmp(key+1, GNT_KEY_DOWN) == 0)
+		else if (strcmp(key, GNT_KEY_DOWN) == 0)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(view), 1);
 		else
 			return FALSE;

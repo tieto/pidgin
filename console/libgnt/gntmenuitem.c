@@ -11,14 +11,16 @@ gnt_menuitem_destroy(GObject *obj)
 	item->text = NULL;
 	if (item->submenu)
 		gnt_widget_destroy(GNT_WIDGET(item->submenu));
+	parent_class->dispose(obj);
 }
 
 static void
 gnt_menuitem_class_init(GntMenuItemClass *klass)
 {
-	parent_class = G_OBJECT_CLASS(klass);
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	parent_class = g_type_class_peek_parent(klass);
 
-	parent_class->dispose = gnt_menuitem_destroy;
+	obj_class->dispose = gnt_menuitem_destroy;
 }
 
 static void
@@ -75,7 +77,7 @@ void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, 
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu)
 {
 	if (item->submenu)
-		gnt_widget_destroy(item->submenu);
+		gnt_widget_destroy(GNT_WIDGET(item->submenu));
 	item->submenu = menu;
 }
 

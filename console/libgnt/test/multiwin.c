@@ -62,7 +62,6 @@ int main()
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6", " long text", "a2"), "4", NULL);
 
-	gnt_tree_add_row_after(GNT_TREE(tree), NULL, NULL, NULL, "4");
 	int i;
 	for (i = 110; i < 430; i++)
 	{

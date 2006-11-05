@@ -84,27 +84,11 @@ gnt_widget_dummy_confirm_size(GntWidget *widget, int width, int height)
 }
 
 static gboolean
-context_menu(GntWidget *widget, GList *null)
+context_menu(GntBindable *bind, GList *null)
 {
 	gboolean ret = FALSE;
-	g_signal_emit(widget, signals[SIG_CONTEXT_MENU], 0, &ret);
+	g_signal_emit(bind, signals[SIG_CONTEXT_MENU], 0, &ret);
 	return ret;
-}
-
-static gboolean
-gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
-				  GValue                *return_accu,
-				  const GValue          *handler_return,
-				  gpointer               dummy)
-{
-	gboolean continue_emission;
-	gboolean signal_handled;
-
-	signal_handled = g_value_get_boolean (handler_return);
-	g_value_set_boolean (return_accu, signal_handled);
-	continue_emission = !signal_handled;
-
-	return continue_emission;
 }
 
 static void
@@ -252,17 +236,11 @@ gnt_widget_class_init(GntWidgetClass *klass)
 					 gnt_closure_marshal_BOOLEAN__VOID,
 					 G_TYPE_BOOLEAN, 0);
 
-	klass->actions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-				(GDestroyNotify)gnt_widget_action_free);
-	klass->bindings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-				(GDestroyNotify)gnt_widget_action_param_free);
-
 	/* This is relevant for all widgets */
-	gnt_widget_class_register_action(klass, "context-menu", context_menu,
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "context-menu", context_menu,
 				GNT_KEY_POPUP, NULL);
 
-	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), klass);
-
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
 }
 
@@ -287,36 +265,12 @@ gnt_widget_get_gtype(void)
 			gnt_widget_init,					/* instance_init	*/
 		};
 
-		type = g_type_register_static(G_TYPE_OBJECT,
+		type = g_type_register_static(GNT_TYPE_BINDABLE,
 									  "GntWidget",
 									  &info, G_TYPE_FLAG_ABSTRACT);
 	}
 
 	return type;
-}
-
-static const char *
-gnt_widget_remap_keys(GntWidget *widget, const char *text)
-{
-	const char *remap = NULL;
-	GType type = G_OBJECT_TYPE(widget);
-	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
-
-	if (klass->remaps == NULL)
-	{
-		klass->remaps = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-		gnt_styles_get_keyremaps(type, klass->remaps);
-	}
-
-	remap = g_hash_table_lookup(klass->remaps, text);
-
-	return (remap ? remap : text);
-}
-
-static void
-gnt_widget_take_focus(GntWidget *widget)
-{
-	gnt_screen_take_focus(widget);
 }
 
 void gnt_widget_set_take_focus(GntWidget *widget, gboolean can)
@@ -350,10 +304,9 @@ void
 gnt_widget_show(GntWidget *widget)
 {
 	/* Draw the widget and take focus */
-	if (GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_CAN_TAKE_FOCUS)
-	{
-		gnt_widget_take_focus(widget);
-	}
+	/*if (GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_CAN_TAKE_FOCUS) {*/
+		/*gnt_widget_take_focus(widget);*/
+	/*}*/
 	gnt_widget_draw(widget);
 }
 
@@ -365,10 +318,8 @@ gnt_widget_draw(GntWidget *widget)
 		return;
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_DRAWING);
-	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_MAPPED))
-	{
+	if (!(GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_MAPPED)) {
 		gnt_widget_map(widget);
-		gnt_screen_occupy(widget);
 	}
 
 	if (widget->window == NULL)
@@ -405,50 +356,12 @@ gnt_widget_draw(GntWidget *widget)
 							widget->priv.y, widget->priv.x);
 		}
 		init_widget(widget);
+		gnt_screen_occupy(widget);
 	}
 
 	g_signal_emit(widget, signals[SIG_DRAW], 0);
 	gnt_widget_queue_update(widget);
 	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DRAWING);
-}
-
-gboolean
-gnt_widget_perform_action_named(GntWidget *widget, const char *name, ...)
-{
-	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
-	GList *list = NULL;
-	va_list args;
-	GntWidgetAction *action;
-	void *p;
-
-	va_start(args, name);
-	while ((p = va_arg(args, void *)) != NULL)
-		list = g_list_append(list, p);
-	va_end(args);
-	
-	action = g_hash_table_lookup(klass->actions, name);
-	if (action && action->u.action) {
-		if (list)
-			return action->u.action(widget, list);
-		else
-			return action->u.action_noparam(widget);
-	}
-	return FALSE;
-}
-
-static gboolean
-gnt_widget_perform_action(GntWidget *widget, const char *keys)
-{
-	GntWidgetClass *klass = GNT_WIDGET_CLASS(G_OBJECT_GET_CLASS(widget));
-	GntWidgetActionParam *param = g_hash_table_lookup(klass->bindings, keys);
-
-	if (param && param->action) {
-		if (param->list)
-			return param->action->u.action(widget, param->list);
-		else
-			return param->action->u.action_noparam(widget);
-	}
-	return FALSE;
 }
 
 gboolean
@@ -458,10 +371,10 @@ gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		return FALSE;
 
-	if (gnt_widget_perform_action(widget, keys))
+	if (gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
 		return TRUE;
 
-	keys = gnt_widget_remap_keys(widget, keys);
+	keys = gnt_bindable_remap_keys(GNT_BINDABLE(widget), keys);
 	g_signal_emit(widget, signals[SIG_KEY_PRESSED], 0, keys, &ret);
 	return ret;
 }
@@ -705,85 +618,5 @@ gboolean gnt_widget_has_shadow(GntWidget *widget)
 {
 	return (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_SHADOW) &&
 			gnt_style_get_bool(GNT_STYLE_SHADOW, FALSE));
-}
-
-static void
-register_binding(GntWidgetClass *klass, const char *name, const char *trigger, GList *list)
-{
-	GntWidgetActionParam *param;
-	GntWidgetAction *action;
-
-	if (name == NULL || *name == '\0') {
-		g_hash_table_remove(klass->bindings, (char*)trigger);
-		return;
-	}
-
-	action = g_hash_table_lookup(klass->actions, name);
-	if (!action) {
-		g_printerr("GntWidget: Invalid action name %s for %s\n",
-				name, g_type_name(G_OBJECT_CLASS_TYPE(klass)));
-		if (list)
-			g_list_free(list);
-		return;
-	}
-
-	param = g_new0(GntWidgetActionParam, 1);
-	param->action = action;
-	param->list = list;
-	g_hash_table_replace(klass->bindings, g_strdup(trigger), param);
-}
-
-void gnt_widget_register_binding(GntWidgetClass *klass, const char *name,
-			const char *trigger, ...)
-{
-	GList *list = NULL;
-	va_list args;
-	void *data;
-
-	va_start(args, trigger);
-	while ((data = va_arg(args, void *))) {
-		list = g_list_append(list, data);
-	}
-	va_end(args);
-
-	register_binding(klass, name, trigger, list);
-}
-
-void gnt_widget_class_register_action(GntWidgetClass *klass, const char *name,
-			GntWidgetActionCallback callback,
-			const char *trigger, ...)
-{
-	void *data;
-	va_list args;
-	GntWidgetAction *action = g_new0(GntWidgetAction, 1);
-	GList *list;
-
-	action->name = g_strdup(name);
-	action->u.action = callback;
-
-	g_hash_table_replace(klass->actions, g_strdup(name), action);
-
-	if (trigger) {
-		list = NULL;
-		va_start(args, trigger);
-		while ((data = va_arg(args, void *))) {
-			list = g_list_append(list, data);
-		}
-		va_end(args);
-
-		register_binding(klass, name, trigger, list);
-	}
-}
-
-void gnt_widget_action_free(GntWidgetAction *action)
-{
-	g_free(action->name);
-	g_free(action);
-}
-
-void gnt_widget_action_param_free(GntWidgetActionParam *param)
-{
-	g_list_free(param->list);   /* XXX: There may be a leak here for string parameters */
-	g_free(param);
 }
 

@@ -6,6 +6,7 @@ lib_LTLIBRARIES = libgnt.la
 
 libgnt_la_SOURCES = \
 	gntwidget.c \
+	gntbindable.c \
 	gntbox.c \
 	gntbutton.c \
 	gntcheckbox.c \
@@ -24,10 +25,12 @@ libgnt_la_SOURCES = \
 	gnttree.c \
 	gntutils.c \
 	gntwindow.c \
+	gntwm.c \
 	gntmain.c
 
 libgnt_la_headers = \
 	gntwidget.h \
+	gntbindable.h \
 	gntbox.h \
 	gntbutton.h \
 	gntcheckbox.h \

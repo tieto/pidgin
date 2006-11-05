@@ -161,7 +161,7 @@ parse_key(const char *key)
 	return ret;
 }
 
-void gnt_style_read_actions(GType type, GntWidgetClass *klass)
+void gnt_style_read_actions(GType type, GntBindableClass *klass)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
 	char *name;
@@ -202,7 +202,7 @@ void gnt_style_read_actions(GType type, GntWidgetClass *klass)
 				if (keycode == NULL) {
 					g_printerr("GntStyle: Invalid key-binding %s\n", key);
 				} else {
-					gnt_widget_register_binding(klass, action, keycode, NULL);
+					gnt_bindable_register_binding(klass, action, keycode, NULL);
 					g_free(keycode);
 				}
 			}

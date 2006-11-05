@@ -3,22 +3,21 @@
 
 #include <stdio.h>
 #include <glib.h>
-#include <glib-object.h>
 #include <ncurses.h>
+
+#include "gntbindable.h"
 
 #define GNT_TYPE_WIDGET				(gnt_widget_get_gtype())
 #define GNT_WIDGET(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WIDGET, GntWidget))
 #define GNT_WIDGET_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_WIDGET, GntWidgetClass))
 #define GNT_IS_WIDGET(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_WIDGET))
-#define GNT_IS_OBJECT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_WIDGET))
+#define GNT_IS_WIDGET_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_WIDGET))
 #define GNT_WIDGET_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_WIDGET, GntWidgetClass))
 
 #define GNT_WIDGET_FLAGS(obj)				(GNT_WIDGET(obj)->priv.flags)
 #define GNT_WIDGET_SET_FLAGS(obj, flags)		(GNT_WIDGET_FLAGS(obj) |= flags)
 #define GNT_WIDGET_UNSET_FLAGS(obj, flags)	(GNT_WIDGET_FLAGS(obj) &= ~(flags))
 #define GNT_WIDGET_IS_FLAG_SET(obj, flags)	(GNT_WIDGET_FLAGS(obj) & (flags))
-
-#define	GNTDEBUG	fprintf(stderr, "%s\n", __FUNCTION__)
 
 typedef struct _GnWidget			GntWidget;
 typedef struct _GnWidgetPriv		GntWidgetPriv;
@@ -42,6 +41,7 @@ typedef enum _GnWidgetFlags
 	GNT_WIDGET_TRANSIENT      = 1 << 11,
 } GntWidgetFlags;
 
+/* XXX: This will probably move elsewhere */
 typedef enum _GnMouseEvent
 {
 	GNT_LEFT_MOUSE_DOWN = 1,
@@ -70,7 +70,7 @@ struct _GnWidgetPriv
 
 struct _GnWidget
 {
-	GObject inherit;
+	GntBindable inherit;
 
 	GntWidget *parent;
 
@@ -85,11 +85,7 @@ struct _GnWidget
 
 struct _GnWidgetClass
 {
-	GObjectClass parent;
-
-	GHashTable *remaps;   /* Key remaps */
-	GHashTable *actions;  /* name -> Action */
-	GHashTable *bindings; /* key -> ActionParam */
+	GntBindableClass parent;
 
 	void (*map)(GntWidget *obj);
 	void (*show)(GntWidget *obj);		/* This will call draw() and take focus (if it can take focus) */
@@ -150,44 +146,6 @@ void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 void gnt_widget_set_visible(GntWidget *widget, gboolean set);
 
 gboolean gnt_widget_has_shadow(GntWidget *widget);
-
-/******************/
-/* Widget Actions */
-/******************/
-typedef gboolean (*GntWidgetActionCallback) (GntWidget *widget, GList *params);
-typedef gboolean (*GntWidgetActionCallbackNoParam)(GntWidget *widget);
-
-typedef struct _GnWidgetAction GntWidgetAction;
-typedef struct _GnWidgetActionParam GntWidgetActionParam;
-
-struct _GnWidgetAction
-{
-	char *name;        /* The name of the action */
-	union {
-		gboolean (*action)(GntWidget *widget, GList *params);
-		gboolean (*action_noparam)(GntWidget *widget);
-	} u;
-};
-
-struct _GnWidgetActionParam
-{
-	GntWidgetAction *action;
-	GList *list;
-};
-
-
-GntWidgetAction *gnt_widget_action_parse(const char *name);
-
-void gnt_widget_action_free(GntWidgetAction *action);
-void gnt_widget_action_param_free(GntWidgetActionParam *param);
-
-void gnt_widget_register_binding(GntWidgetClass *klass, const char *name,
-			const char *trigger, ...);
-
-void gnt_widget_class_register_action(GntWidgetClass *klass, const char *name,
-			GntWidgetActionCallback callback, const char *trigger, ...);
-
-gboolean gnt_widget_perform_action_named(GntWidget *widget, const char *name, ...);
 
 G_END_DECLS
 

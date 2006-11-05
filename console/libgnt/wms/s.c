@@ -1,13 +1,30 @@
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntmenu.h"
+#include "gntstyle.h"
 #include "gntwm.h"
 
 #include "gntblist.h"
 
 #include <string.h>
 
-static GntWM *gwm;
+#define TYPE_S				(s_get_gtype())
+
+typedef struct _S
+{
+	GntWM inherit;
+} S;
+
+typedef struct _SClass
+{
+	GntWMClass inherit;
+} SClass;
+
+GType s_get_gtype(void);
+void gntwm_init(GntWM **wm);
+
+static void (*org_new_window)(GntWM *wm, GntWidget *win);
+static gboolean (*org_mouse_clicked)(GntWM *wm, GntMouseEvent event, int cx, int cy, GntWidget *widget);
 
 static void
 envelope_buddylist(GntWidget *win)
@@ -24,7 +41,7 @@ envelope_normal_window(GntWidget *win)
 {
 	int w, h;
 
-	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
+	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER | GNT_WIDGET_TRANSIENT))
 		return;
 
 	gnt_widget_get_size(win, &w, &h);
@@ -32,8 +49,8 @@ envelope_normal_window(GntWidget *win)
 	mvwprintw(win->window, 0, w - 4, "[X]");
 }
 
-static PANEL *
-s_resize_window(PANEL *panel, GntWidget *win)
+static void
+s_decorate_window(GntWM *wm, GntWidget *win)
 {
 	const char *name;
 
@@ -43,67 +60,69 @@ s_resize_window(PANEL *panel, GntWidget *win)
 	} else {
 		envelope_normal_window(win);
 	}
-	replace_panel(panel, win->window);
-	return panel;
 }
 
-static PANEL *
-s_new_window(GntWidget *win)
+static void
+s_window_update(GntWM *wm, GntNode *node)
+{
+	s_decorate_window(wm, node->me);
+}
+
+static void
+s_new_window(GntWM *wm, GntWidget *win)
 {
 	int x, y, w, h;
 	int maxx, maxy;
 	const char *name;
+	gboolean blist = FALSE;
 
-	if (GNT_IS_MENU(win))
-		return new_panel(win->window);
-	getmaxyx(stdscr, maxy, maxx);
+	if (!GNT_IS_MENU(win)) {
+		getmaxyx(stdscr, maxy, maxx);
 
-	gnt_widget_get_position(win, &x, &y);
-	gnt_widget_get_size(win, &w, &h);
+		gnt_widget_get_position(win, &x, &y);
+		gnt_widget_get_size(win, &w, &h);
 
-	name = gnt_widget_get_name(win);
+		name = gnt_widget_get_name(win);
 
-	if (name && strcmp(name, "buddylist") == 0) {
-		/* The buddylist doesn't have no border nor nothing! */
-		x = 0;
-		y = 0;
-		h = maxy - 1;
+		if (name && strcmp(name, "buddylist") == 0) {
+			/* The buddylist doesn't have no border nor nothing! */
+			x = 0;
+			y = 0;
+			h = maxy - 1;
+			blist = TRUE;
 
-		gnt_box_set_toplevel(GNT_BOX(win), FALSE);
-		GNT_WIDGET_SET_FLAGS(win, GNT_WIDGET_CAN_TAKE_FOCUS);
-		gnt_box_readjust(GNT_BOX(win));
+			gnt_box_set_toplevel(GNT_BOX(win), FALSE);
+			GNT_WIDGET_SET_FLAGS(win, GNT_WIDGET_CAN_TAKE_FOCUS);
 
-		gnt_widget_set_position(win, x, y);
-		mvwin(win->window, y, x);
+			gnt_widget_set_position(win, x, y);
+			mvwin(win->window, y, x);
 
-		gnt_widget_set_size(win, -1, h);
-		gnt_widget_draw(win);
-		envelope_buddylist(win);
-	} else if (name && strcmp(name, "conversation-window") == 0) {
-		/* Put the conversation windows to the far-right */
-		x = maxx - w;
-		y = 0;
-		gnt_widget_set_position(win, x, y);
-		mvwin(win->window, y, x);
-		gnt_widget_draw(win);
-		envelope_normal_window(win);
-	} else if (!GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
-		/* In the middle of the screen */
-		x = (maxx - w) / 2;
-		y = (maxy - h) / 2;
+			gnt_widget_set_size(win, -1, h + 2);  /* XXX: Why is the +2 needed here? -- sadrul */
+		} else if (name && strcmp(name, "conversation-window") == 0) {
+			/* Put the conversation windows to the far-right */
+			x = maxx - w;
+			y = 0;
+			gnt_widget_set_position(win, x, y);
+			mvwin(win->window, y, x);
+		} else if (!GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
+			/* In the middle of the screen */
+			x = (maxx - w) / 2;
+			y = (maxy - h) / 2;
 
-		gnt_widget_set_position(win, x, y);
-		mvwin(win->window, y, x);
-		envelope_normal_window(win);
+			gnt_widget_set_position(win, x, y);
+			mvwin(win->window, y, x);
+		}
 	}
+	org_new_window(wm, win);
 
-	return new_panel(win->window);
+	if (blist)
+		gnt_wm_raise_window(wm, win);
 }
 
 static GntWidget *
-find_widget(const char *wname)
+find_widget(GntWM *wm, const char *wname)
 {
-	const GList *iter = gwm->window_list();
+	const GList *iter = wm->list;
 	for (; iter; iter = iter->next) {
 		GntWidget *widget = iter->data;
 		const char *name = gnt_widget_get_name(widget);
@@ -115,41 +134,17 @@ find_widget(const char *wname)
 }
 
 static gboolean
-give_the_darned_focus(gpointer w)
-{
-	gwm->give_focus(w);
-	return FALSE;
-}
-
-static const char*
-s_key_pressed(const char *key)
-{
-	/* Alt+b to toggle the buddylist */
-	if (key[0] == 27 && key[1] == 'b' && key[2] == '\0') {
-		GntWidget *w = find_widget("buddylist");
-		if (w == NULL) {
-			gg_blist_show();
-			w = find_widget("buddylist");
-			g_timeout_add(0, give_the_darned_focus, w);
-		} else {
-			gnt_widget_destroy(w);
-		}
-		return NULL;
-	}
-	return key;
-}
-
-static gboolean
-s_mouse_clicked(GntMouseEvent event, int cx, int cy, GntWidget *widget)
+s_mouse_clicked(GntWM *wm, GntMouseEvent event, int cx, int cy, GntWidget *widget)
 {
 	int x, y, w, h;
 
 	if (!widget)
-		return FALSE;       /* This might a place to bring up a context menu */
+		return org_mouse_clicked(wm, event, cx, cy, widget);
+		/* This might be a place to bring up a context menu */
 	
 	if (event != GNT_LEFT_MOUSE_DOWN ||
 			GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
-		return FALSE;       /* For now, just the left-button to close a window */
+		return org_mouse_clicked(wm, event, cx, cy, widget);
 	
 	gnt_widget_get_position(widget, &x, &y);
 	gnt_widget_get_size(widget, &w, &h);
@@ -158,25 +153,69 @@ s_mouse_clicked(GntMouseEvent event, int cx, int cy, GntWidget *widget)
 		gnt_widget_destroy(widget);
 		return TRUE;
 	}
-	return FALSE;
+
+	return org_mouse_clicked(wm, event, cx, cy, widget);
+}
+
+static gboolean
+toggle_buddylist(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *blist = find_widget(wm, "buddylist");
+	if (blist)
+		gnt_widget_destroy(blist);
+	else
+		gg_blist_show();
+	return TRUE;
 }
 
 static void
-s_window_update(PANEL *panel, GntWidget *window)
+s_class_init(SClass *klass)
 {
-	const char *name = gnt_widget_get_name(window);
-	if (name && strcmp(name, "buddylist"))
-		envelope_normal_window(window);
+	GntWMClass *pclass = GNT_WM_CLASS(klass);
+
+	org_new_window = pclass->new_window;
+	org_mouse_clicked = pclass->mouse_clicked;
+
+	pclass->new_window = s_new_window;
+	pclass->decorate_window = s_decorate_window;
+	pclass->window_update = s_window_update;
+	pclass->mouse_clicked = s_mouse_clicked;
+
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-buddylist",
+				toggle_buddylist, "\033" "b", NULL);
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
+	GNTDEBUG;
 }
 
-void gntwm_init(GntWM *wm);
-void gntwm_init(GntWM *wm)
+void gntwm_init(GntWM **wm)
 {
-	gwm = wm;
-	wm->new_window = s_new_window;
-	wm->window_resized = s_resize_window;
-	wm->key_pressed = s_key_pressed;
-	wm->mouse_clicked = s_mouse_clicked;
-	wm->window_update = s_window_update;
+	*wm = g_object_new(TYPE_S, NULL);
+}
+
+GType s_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(SClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)s_class_init,
+			NULL,
+			NULL,                   /* class_data		*/
+			sizeof(S),
+			0,                      /* n_preallocs		*/
+			NULL,	            /* instance_init	*/
+			NULL
+		};
+
+		type = g_type_register_static(GNT_TYPE_WM,
+									  "GntS",
+									  &info, 0);
+	}
+
+	return type;
 }
 

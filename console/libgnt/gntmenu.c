@@ -175,7 +175,7 @@ static void
 gnt_menu_destroy(GntWidget *widget)
 {
 	GntMenu *menu = GNT_MENU(widget);
-	g_list_foreach(menu->list, (GFunc)g_object_run_dispose, NULL);
+	g_list_foreach(menu->list, (GFunc)g_object_unref, NULL);
 	g_list_free(menu->list);
 	org_destroy(widget);
 }
@@ -252,7 +252,7 @@ gnt_menu_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW | GNT_WIDGET_NO_BORDER |
-			GNT_WIDGET_CAN_TAKE_FOCUS);
+			GNT_WIDGET_CAN_TAKE_FOCUS | GNT_WIDGET_TRANSIENT);
 	GNTDEBUG;
 }
 

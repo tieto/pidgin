@@ -483,10 +483,10 @@ tree_selection_changed(GntTree *tree, GntTreeRow *old, GntTreeRow *current)
 }
 
 static gboolean
-action_down(GntWidget *widget, GList *null)
+action_down(GntBindable *bind, GList *null)
 {
 	int dist;
-	GntTree *tree = GNT_TREE(widget);
+	GntTree *tree = GNT_TREE(bind);
 	GntTreeRow *old = tree->current;
 	GntTreeRow *row = get_next(tree->current);
 	if (row == NULL)
@@ -502,10 +502,10 @@ action_down(GntWidget *widget, GList *null)
 }
 
 static gboolean
-action_up(GntWidget *widget, GList *list)
+action_up(GntBindable *bind, GList *list)
 {
 	int dist;
-	GntTree *tree = GNT_TREE(widget);
+	GntTree *tree = GNT_TREE(bind);
 	GntTreeRow *old = tree->current;
 	GntTreeRow *row = get_prev(tree->current);
 	if (!row)
@@ -522,9 +522,9 @@ action_up(GntWidget *widget, GList *list)
 }
 
 static gboolean
-action_page_down(GntWidget *widget, GList *null)
+action_page_down(GntBindable *bind, GList *null)
 {
-	GntTree *tree = GNT_TREE(widget);
+	GntTree *tree = GNT_TREE(bind);
 	GntTreeRow *old = tree->current;
 	GntTreeRow *row = get_next(tree->bottom);
 	if (row)
@@ -546,9 +546,10 @@ action_page_down(GntWidget *widget, GList *null)
 }
 
 static gboolean
-action_page_up(GntWidget *widget, GList *null)
+action_page_up(GntBindable *bind, GList *null)
 {
-	GntTree *tree = GNT_TREE(widget);
+	GntWidget *widget = GNT_WIDGET(bind);
+	GntTree *tree = GNT_TREE(bind);
 	GntTreeRow *row;
 	GntTreeRow *old = tree->current;
 
@@ -631,9 +632,9 @@ gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 	GntTree *tree = GNT_TREE(widget);
 	GntTreeRow *old = tree->current;
 	if (event == GNT_MOUSE_SCROLL_UP) {
-		action_up(widget, NULL);
+		action_up(GNT_BINDABLE(widget), NULL);
 	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
-		action_down(widget, NULL);
+		action_down(GNT_BINDABLE(widget), NULL);
 	} else if (event == GNT_LEFT_MOUSE_DOWN) {
 		GntTreeRow *row;
 		GntTree *tree = GNT_TREE(widget);
@@ -670,6 +671,7 @@ gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 static void
 gnt_tree_class_init(GntTreeClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_tree_destroy;
 	parent_class->draw = gnt_tree_draw;
@@ -703,24 +705,18 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
-	parent_class->actions = g_hash_table_duplicate(parent_class->actions, g_str_hash,
-				g_str_equal, g_free, (GDestroyNotify)gnt_widget_action_free);
-	parent_class->bindings = g_hash_table_duplicate(parent_class->bindings, g_str_hash,
-				g_str_equal, g_free, (GDestroyNotify)gnt_widget_action_param_free);
-
-	gnt_widget_class_register_action(parent_class, "move-up", action_up,
+	gnt_bindable_class_register_action(bindable, "move-up", action_up,
 				GNT_KEY_UP, NULL);
-	gnt_widget_register_binding(parent_class, "move-up", GNT_KEY_CTRL_P, NULL);
-	gnt_widget_class_register_action(parent_class, "move-down", action_down,
+	gnt_bindable_register_binding(bindable, "move-up", GNT_KEY_CTRL_P, NULL);
+	gnt_bindable_class_register_action(bindable, "move-down", action_down,
 				GNT_KEY_DOWN, NULL);
-	gnt_widget_register_binding(parent_class, "move-down", GNT_KEY_CTRL_N, NULL);
-	gnt_widget_class_register_action(parent_class, "page-up", action_page_up,
+	gnt_bindable_register_binding(bindable, "move-down", GNT_KEY_CTRL_N, NULL);
+	gnt_bindable_class_register_action(bindable, "page-up", action_page_up,
 				GNT_KEY_PGUP, NULL);
-	gnt_widget_class_register_action(parent_class, "page-down", action_page_down,
+	gnt_bindable_class_register_action(bindable, "page-down", action_page_down,
 				GNT_KEY_PGDOWN, NULL);
 
-	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), parent_class);
-
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 	GNTDEBUG;
 }
 

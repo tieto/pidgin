@@ -74,8 +74,6 @@ show_suggest_dropdown(GntEntry *entry)
 		if (y + 10 >= getmaxy(stdscr))
 			y -= 11;
 		gnt_widget_set_position(box, x, y);
-		
-		gnt_widget_draw(box);
 	}
 	else
 		gnt_tree_remove_all(GNT_TREE(entry->ddown));
@@ -99,6 +97,7 @@ show_suggest_dropdown(GntEntry *entry)
 		return FALSE;
 	}
 
+	gnt_widget_draw(entry->ddown->parent);
 	return TRUE;
 }
 
@@ -159,9 +158,9 @@ entry_redraw(GntWidget *widget)
 }
 
 static gboolean
-move_back(GntWidget *widget, GList *null)
+move_back(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->cursor <= entry->start)
 		return FALSE;
 	entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
@@ -172,9 +171,9 @@ move_back(GntWidget *widget, GList *null)
 }
 
 static gboolean
-move_forward(GntWidget *widget, GList *list)
+move_forward(GntBindable *bind, GList *list)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->cursor >= entry->end)
 		return FALSE;
 	entry->cursor = g_utf8_find_next_char(entry->cursor, NULL);
@@ -185,10 +184,10 @@ move_forward(GntWidget *widget, GList *list)
 }
 
 static gboolean
-backspace(GntWidget *widget, GList *null)
+backspace(GntBindable *bind, GList *null)
 {
 	int len;
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 
 	if (entry->cursor <= entry->start)
 		return TRUE;
@@ -208,10 +207,10 @@ backspace(GntWidget *widget, GList *null)
 }
 
 static gboolean
-delkey(GntWidget *widget, GList *null)
+delkey(GntBindable *bind, GList *null)
 {
 	int len;
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 
 	if (entry->cursor >= entry->end)
 		return FALSE;
@@ -227,18 +226,18 @@ delkey(GntWidget *widget, GList *null)
 }
 
 static gboolean
-move_start(GntWidget *widget, GList *null)
+move_start(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	entry->scroll = entry->cursor = entry->start;
 	entry_redraw(GNT_WIDGET(entry));
 	return TRUE;
 }
 
 static gboolean
-move_end(GntWidget *widget, GList *null)
+move_end(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	entry->cursor = entry->end;
 	/* This should be better than this */
 	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
@@ -248,9 +247,9 @@ move_end(GntWidget *widget, GList *null)
 }
 
 static gboolean
-history_prev(GntWidget *widget, GList *null)
+history_prev(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->histlength && entry->history->prev)
 	{
 		entry->history = entry->history->prev;
@@ -263,9 +262,9 @@ history_prev(GntWidget *widget, GList *null)
 }
 
 static gboolean
-history_next(GntWidget *widget, GList *null)
+history_next(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->histlength && entry->history->next)
 	{
 		if (entry->history->prev == NULL)
@@ -286,52 +285,52 @@ history_next(GntWidget *widget, GList *null)
 }
 
 static gboolean
-suggest_show(GntWidget *widget, GList *null)
+suggest_show(GntBindable *bind, GList *null)
 {
-	return show_suggest_dropdown(GNT_ENTRY(widget));
+	return show_suggest_dropdown(GNT_ENTRY(bind));
 }
 
 static gboolean
-suggest_next(GntWidget *widget, GList *null)
+suggest_next(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
-		gnt_widget_perform_action_named(entry->ddown, "move-down", NULL);
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down", NULL);
 		return TRUE;
 	}
 	return FALSE;
 }
 
 static gboolean
-suggest_prev(GntWidget *widget, GList *null)
+suggest_prev(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
-		gnt_widget_perform_action_named(entry->ddown, "move-up", NULL);
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-up", NULL);
 		return TRUE;
 	}
 	return FALSE;
 }
 
 static gboolean
-del_to_home(GntWidget *widget, GList *null)
+del_to_home(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	memmove(entry->start, entry->cursor, entry->end - entry->cursor);
 	entry->end -= (entry->cursor - entry->start);
 	entry->cursor = entry->scroll = entry->start;
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
-	entry_redraw(widget);
+	entry_redraw(GNT_WIDGET(bind));
 	return TRUE;
 }
 
 static gboolean
-del_to_end(GntWidget *widget, GList *null)
+del_to_end(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	entry->end = entry->cursor;
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
-	entry_redraw(widget);
+	entry_redraw(GNT_WIDGET(bind));
 	return TRUE;
 }
 
@@ -351,9 +350,9 @@ begin_word(const char *text, const char *begin)
 }
 
 static gboolean
-move_back_word(GntWidget *widget, GList *null)
+move_back_word(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntEntry *entry = GNT_ENTRY(bind);
 	const char *iter = entry->cursor - 1;
 
 	if (iter < entry->start)
@@ -362,14 +361,15 @@ move_back_word(GntWidget *widget, GList *null)
 	entry->cursor = (char*)iter;
 	if (entry->cursor < entry->scroll)
 		entry->scroll = entry->cursor;
-	entry_redraw(widget);
+	entry_redraw(GNT_WIDGET(bind));
 	return TRUE;
 }
 
 static gboolean
-del_prev_word(GntWidget *widget, GList *null)
+del_prev_word(GntBindable *bind, GList *null)
 {
-	GntEntry *entry = GNT_ENTRY(widget);
+	GntWidget *widget = GNT_WIDGET(bind);
+	GntEntry *entry = GNT_ENTRY(bind);
 	char *iter = entry->cursor - 1;
 	int count;
 
@@ -535,6 +535,7 @@ gnt_entry_lost_focus(GntWidget *widget)
 static void
 gnt_entry_class_init(GntEntryClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_entry_destroy;
 	parent_class->draw = gnt_entry_draw;
@@ -543,53 +544,47 @@ gnt_entry_class_init(GntEntryClass *klass)
 	parent_class->key_pressed = gnt_entry_key_pressed;
 	parent_class->lost_focus = gnt_entry_lost_focus;
 
-	parent_class->actions = g_hash_table_duplicate(parent_class->actions, g_str_hash,
-				g_str_equal, g_free, (GDestroyNotify)gnt_widget_action_free);
-	parent_class->bindings = g_hash_table_duplicate(parent_class->bindings, g_str_hash,
-				g_str_equal, g_free, (GDestroyNotify)gnt_widget_action_param_free);
-
-	gnt_widget_class_register_action(parent_class, "cursor-home", move_start,
+	gnt_bindable_class_register_action(bindable, "cursor-home", move_start,
 				GNT_KEY_CTRL_A, NULL);
-	gnt_widget_register_binding(parent_class, "cursor-home", GNT_KEY_HOME, NULL);
-	gnt_widget_class_register_action(parent_class, "cursor-end", move_end,
+	gnt_bindable_register_binding(bindable, "cursor-home", GNT_KEY_HOME, NULL);
+	gnt_bindable_class_register_action(bindable, "cursor-end", move_end,
 				GNT_KEY_CTRL_E, NULL);
-	gnt_widget_register_binding(parent_class, "cursor-end", GNT_KEY_END, NULL);
-	gnt_widget_class_register_action(parent_class, "delete-prev", backspace,
+	gnt_bindable_register_binding(bindable, "cursor-end", GNT_KEY_END, NULL);
+	gnt_bindable_class_register_action(bindable, "delete-prev", backspace,
 				GNT_KEY_BACKSPACE, NULL);
-	gnt_widget_class_register_action(parent_class, "delete-next", delkey,
+	gnt_bindable_class_register_action(bindable, "delete-next", delkey,
 				GNT_KEY_DEL, NULL);
-	gnt_widget_register_binding(parent_class, "delete-next", GNT_KEY_CTRL_D, NULL);
-	gnt_widget_class_register_action(parent_class, "delete-start", del_to_home,
+	gnt_bindable_register_binding(bindable, "delete-next", GNT_KEY_CTRL_D, NULL);
+	gnt_bindable_class_register_action(bindable, "delete-start", del_to_home,
 				GNT_KEY_CTRL_U, NULL);
-	gnt_widget_class_register_action(parent_class, "delete-end", del_to_end,
+	gnt_bindable_class_register_action(bindable, "delete-end", del_to_end,
 				GNT_KEY_CTRL_K, NULL);
-	gnt_widget_class_register_action(parent_class, "delete-prev-word", del_prev_word,
+	gnt_bindable_class_register_action(bindable, "delete-prev-word", del_prev_word,
 				NULL, NULL);
 #if 0
-	gnt_widget_class_register_action(parent_class, "delete-next-word", del_next_word,
+	gnt_bindable_class_register_action(bindable, "delete-next-word", del_next_word,
 				NULL, 1, NULL);
 #endif
-	gnt_widget_class_register_action(parent_class, "cursor-prev-word", move_back_word,
+	gnt_bindable_class_register_action(bindable, "cursor-prev-word", move_back_word,
 				NULL, NULL);
-	gnt_widget_class_register_action(parent_class, "cursor-prev", move_back,
+	gnt_bindable_class_register_action(bindable, "cursor-prev", move_back,
 				GNT_KEY_LEFT, NULL);
-	gnt_widget_register_binding(parent_class, "cursor-prev", GNT_KEY_CTRL_B, NULL);
-	gnt_widget_class_register_action(parent_class, "cursor-next", move_forward,
+	gnt_bindable_register_binding(bindable, "cursor-prev", GNT_KEY_CTRL_B, NULL);
+	gnt_bindable_class_register_action(bindable, "cursor-next", move_forward,
 				GNT_KEY_RIGHT, NULL);
-	gnt_widget_register_binding(parent_class, "cursor-next", GNT_KEY_CTRL_F, NULL);
-	gnt_widget_class_register_action(parent_class, "suggest-show", suggest_show,
+	gnt_bindable_register_binding(bindable, "cursor-next", GNT_KEY_CTRL_F, NULL);
+	gnt_bindable_class_register_action(bindable, "suggest-show", suggest_show,
 				"\t", NULL);
-	gnt_widget_class_register_action(parent_class, "suggest-next", suggest_next,
+	gnt_bindable_class_register_action(bindable, "suggest-next", suggest_next,
 				GNT_KEY_DOWN, NULL);
-	gnt_widget_class_register_action(parent_class, "suggest-prev", suggest_prev,
+	gnt_bindable_class_register_action(bindable, "suggest-prev", suggest_prev,
 				GNT_KEY_UP, NULL);
-	gnt_widget_class_register_action(parent_class, "history-prev", history_prev,
+	gnt_bindable_class_register_action(bindable, "history-prev", history_prev,
 				"\033" GNT_KEY_CTRL_DOWN, NULL);
-	gnt_widget_class_register_action(parent_class, "history-next", history_next,
+	gnt_bindable_class_register_action(bindable, "history-next", history_next,
 				"\033" GNT_KEY_CTRL_UP, NULL);
 
-	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), parent_class);
-
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
 }
 
