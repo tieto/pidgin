@@ -1617,13 +1617,16 @@ static void try_connect(GaimProxyConnectData *connect_data)
 {
 	size_t addrlen;
 	struct sockaddr *addr;
+	char ipaddr[INET6_ADDRSTRLEN];
 
 	addrlen = GPOINTER_TO_INT(connect_data->hosts->data);
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 	addr = connect_data->hosts->data;
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 
-	gaim_debug_info("proxy", "Attempting connection to %s\n", "TODO");
+	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
+			ipaddr, sizeof(ipaddr));
+	gaim_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
 
 	switch (gaim_proxy_info_get_type(connect_data->gpi)) {
 		case GAIM_PROXY_NONE:
