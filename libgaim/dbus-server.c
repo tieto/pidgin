@@ -579,6 +579,10 @@ gaim_dbus_dispatch_init(void)
 		return;
 	}
 
+	/* Do not allow libdbus to exit on connection failure (This may
+	   work around random exit(1) on SIGPIPE errors) */
+	dbus_connection_set_exit_on_disconnect (gaim_dbus_connection, FALSE);
+
 	if (!dbus_connection_register_object_path(gaim_dbus_connection,
 			DBUS_PATH_GAIM, &vtable, NULL))
 	{
