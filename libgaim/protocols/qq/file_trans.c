@@ -218,8 +218,8 @@ void qq_xfer_close_file(GaimXfer *xfer)
 static int _qq_xfer_open_file(const gchar *filename, const gchar *method, GaimXfer *xfer)
 {
 	ft_info *info = xfer->data;
-	info->u.dest_fp = fopen(gaim_xfer_get_local_filename(xfer), method);
-	if (info->u.dest_fp == NULL) {
+	info->dest_fp = fopen(gaim_xfer_get_local_filename(xfer), method);
+	if (info->dest_fp == NULL) {
 		return -1;
 	}
 	return 0;
@@ -229,22 +229,22 @@ static gint _qq_xfer_read_file(guint8 *buffer, guint index, guint len, GaimXfer 
 {
 	ft_info *info = xfer->data;
 
-	fseek(info->u.dest_fp, index * len, SEEK_SET);
-	return fread(buffer, 1, len, info->u.dest_fp);
+	fseek(info->dest_fp, index * len, SEEK_SET);
+	return fread(buffer, 1, len, info->dest_fp);
 }
 
 static gint _qq_xfer_write_file(guint8 *buffer, guint index, guint len, GaimXfer *xfer)
 {
 	ft_info *info = xfer->data;
-	fseek(info->u.dest_fp, index * len, SEEK_SET);
-	return fwrite(buffer, 1, len, info->u.dest_fp);
+	fseek(info->dest_fp, index * len, SEEK_SET);
+	return fwrite(buffer, 1, len, info->dest_fp);
 }
 
 void qq_xfer_close_file(GaimXfer *xfer)
 {
 	ft_info *info = xfer->data;
 
-	if (info->u.dest_fp) fclose(info->u.dest_fp);
+	if (info->dest_fp) fclose(info->dest_fp);
 }
 #endif
 

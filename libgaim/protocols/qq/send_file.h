@@ -37,10 +37,8 @@ typedef struct _ft_info {
 	int minor_fd;
 	int sender_fd;
 	int recv_fd;
-	union {
-		FILE *dest_fp;
-		guint8 *buffer;
-	} u;
+	FILE *dest_fp;
+	/* guint8 *buffer; */
 	gboolean use_major;
 } ft_info;
 
