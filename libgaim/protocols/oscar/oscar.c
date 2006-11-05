@@ -1284,7 +1284,8 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		case 0x05:
 			/* Incorrect password */
 			gc->wants_to_die = TRUE;
-			gaim_account_set_password(account, NULL);
+			if (!gaim_account_get_remember_password(account))
+				gaim_account_set_password(account, NULL);
 			gaim_connection_error(gc, _("Incorrect password."));
 			break;
 		case 0x11:
