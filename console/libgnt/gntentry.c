@@ -536,6 +536,8 @@ static void
 gnt_entry_class_init(GntEntryClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
+	char s[2] = {erasechar(), 0};
+
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_entry_destroy;
 	parent_class->draw = gnt_entry_draw;
@@ -552,6 +554,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_register_binding(bindable, "cursor-end", GNT_KEY_END, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev", backspace,
 				GNT_KEY_BACKSPACE, NULL);
+	gnt_bindable_register_binding(bindable, "delete-prev", s, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-next", delkey,
 				GNT_KEY_DEL, NULL);
 	gnt_bindable_register_binding(bindable, "delete-next", GNT_KEY_CTRL_D, NULL);
