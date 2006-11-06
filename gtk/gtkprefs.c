@@ -1403,10 +1403,8 @@ sound_changed3_cb(const char *name, GaimPrefType type,
 	const char *method = value;
 
 	gtk_widget_set_sensitive(hbox,
-				 !strcmp(method, "automatic") ||
-				 !strcmp(method, "arts") ||
-				 !strcmp(method, "esd") ||
-				 !strcmp(method, "nas"));
+			!strcmp(method, "automatic") ||
+			!strcmp(method, "esd"));
 }
 #endif /* USE_GSTREAMER */
 #endif /* !_WIN32 */
@@ -1595,9 +1593,7 @@ sound_page()
 			_("Console beep"), "beep",
 #ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
-			"Arts", "arts",
 			"ESD", "esd",
-			"NAS", "nas",
 #endif
 			_("Command"), "custom",
 			_("No sounds"), "none",

@@ -451,12 +451,10 @@ gaim_gtk_sound_play_file(const char *filename)
 		if (gaim_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
 		}
+		if (!sink)
+			sink = gst_element_factory_make("autoaudiosink", "sink");
 	} else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
-	} else if (!strcmp(method, "arts")) {
-		sink = gst_element_factory_make("artssink", "sink");
-	} else if (!strcmp(method, "nas")) {
-		sink = gst_element_factory_make("nassink", "sink");
 	}
 
 	uri = g_strdup_printf("file://%s", filename);
