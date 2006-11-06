@@ -129,10 +129,6 @@
 #	include <glib/gstdio.h>
 #endif
 
-#ifdef _WIN32
-#include "win32dep.h"
-#endif
-
 #if !GLIB_CHECK_VERSION(2,6,0)
 #	define g_freopen freopen
 #	define g_fopen fopen
@@ -146,10 +142,18 @@
 #	define g_open open
 #endif
 
+#if !GLIB_CHECK_VERSION(2,8,0)
+#	define g_access access
+#endif
+
 #if !GLIB_CHECK_VERSION(2,10,0)
 #	define g_slice_new(type) g_new(type, 1)
 #	define g_slice_new0(type) g_new0(type, 1)
 #	define g_slice_free(type, mem) g_free(mem)
+#endif
+
+#ifdef _WIN32
+#include "win32dep.h"
 #endif
 
 /* ugly ugly ugly */

@@ -72,14 +72,15 @@ int wgaim_fcntl(int socket, int command, int val);
 #define fcntl( fd, command, val ) \
 wgaim_fcntl( fd, command, val )
 
-#if !GLIB_CHECK_VERSION(2,6,0)
-#	define open( args... ) _open( args )
-#endif
-
 /* arpa/inet.h */
 int wgaim_inet_aton(const char *name, struct in_addr *addr);
 #define inet_aton( name, addr ) \
 wgaim_inet_aton( name, addr )
+
+const char *
+wgaim_inet_ntop (int af, const void *src, char *dst, socklen_t cnt);
+#define inet_ntop( af, src, dst, cnt ) \
+wgaim_inet_ntop( af, src, dst, cnt )
 
 /* netdb.h */
 struct hostent* wgaim_gethostbyname(const char *name);
@@ -120,6 +121,13 @@ int wgaim_close(int fd);
 #define close( fd ) \
 wgaim_close( fd )
 
+#if !GLIB_CHECK_VERSION(2,8,0)
+int wgaim_g_access(const gchar *filename, int mode);
+#undef g_access
+#define g_access( filename, mode) \
+wgaim_g_access( filename, mode )
+#endif
+
 #ifndef sleep
 #define sleep(x) Sleep((x)*1000)
 #endif
@@ -153,9 +161,6 @@ wgaim_rename(oldname, newname)
 
 /* sys/stat.h */
 
-#if !GLIB_CHECK_VERSION(2,6,0)
-#define mkdir(a,b) _mkdir((a))
-#endif
 #define fchmod(a,b)
 
 /* time.h */

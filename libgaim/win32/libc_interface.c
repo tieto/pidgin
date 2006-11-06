@@ -232,6 +232,44 @@ int wgaim_inet_aton(const char *name, struct in_addr *addr) {
 		return 1;
 }
 
+/* Thanks to GNU wget for this inet_ntop() implementation */
+const char *
+wgaim_inet_ntop (int af, const void *src, char *dst, socklen_t cnt)
+{
+  /* struct sockaddr can't accomodate struct sockaddr_in6. */
+  union {
+    struct sockaddr_in6 sin6;
+    struct sockaddr_in sin;
+  } sa;
+  DWORD dstlen = cnt;
+  size_t srcsize;
+
+  ZeroMemory(&sa, sizeof(sa));
+  switch (af)
+    {
+    case AF_INET:
+      sa.sin.sin_family = AF_INET;
+      sa.sin.sin_addr = *(struct in_addr *) src;
+      srcsize = sizeof (sa.sin);
+      break;
+    case AF_INET6:
+      sa.sin6.sin6_family = AF_INET6;
+      sa.sin6.sin6_addr = *(struct in6_addr *) src;
+      srcsize = sizeof (sa.sin6);
+      break;
+    default:
+      abort ();
+    }
+
+  if (WSAAddressToString ((struct sockaddr *) &sa, srcsize, NULL, dst, &dstlen) != 0)
+    {
+      errno = WSAGetLastError();
+      return NULL;
+    }
+  return (const char *) dst;
+}
+
+
 /* netdb.h */
 struct hostent* wgaim_gethostbyname(const char *name) {
 	struct hostent *hp;
@@ -987,4 +1025,73 @@ wgaim_get_timezone_abbreviation(const struct tm *tm)
 	gaim_debug_warning("wgaim", "could not find a match for Windows timezone \"%s\"\n", tzname);
 	return "";
 }
+
+#if !GLIB_CHECK_VERSION(2,8,0)
+/**
+ * g_access:
+ * @filename: a pathname in the GLib file name encoding (UTF-8 on Windows)
+ * @mode: as in access()
+ *
+ * A wrapper for the POSIX access() function. This function is used to
+ * test a pathname for one or several of read, write or execute
+ * permissions, or just existence. On Windows, the underlying access()
+ * function in the C library only checks the READONLY attribute, and
+ * does not look at the ACL at all. Software that needs to handle file
+ * permissions on Windows more exactly should use the Win32 API.
+ *
+ * See the C library manual for more details about access().
+ *
+ * Returns: zero if the pathname refers to an existing file system
+ * object that has all the tested permissions, or -1 otherwise or on
+ * error.
+ * 
+ * Since: 2.8
+ */
+int
+wgaim_g_access (const gchar *filename,
+	  int          mode)
+{
+  if (G_WIN32_HAVE_WIDECHAR_API ())
+    {
+      wchar_t *wfilename = g_utf8_to_utf16 (filename, -1, NULL, NULL, NULL);
+      int retval;
+      int save_errno;
+      
+      if (wfilename == NULL)
+	{
+	  errno = EINVAL;
+	  return -1;
+	}
+
+      retval = _waccess (wfilename, mode);
+      save_errno = errno;
+
+      g_free (wfilename);
+
+      errno = save_errno;
+      return retval;
+    }
+  else
+    {    
+      gchar *cp_filename = g_locale_from_utf8 (filename, -1, NULL, NULL, NULL);
+      int retval;
+      int save_errno;
+
+      if (cp_filename == NULL)
+	{
+	  errno = EINVAL;
+	  return -1;
+	}
+
+      retval = access (cp_filename, mode);
+      save_errno = errno;
+
+      g_free (cp_filename);
+
+      errno = save_errno;
+      return retval;
+    }
+}
+#endif
+
 
