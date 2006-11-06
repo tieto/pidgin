@@ -141,14 +141,11 @@
 /* keys to get/set gaim plugin information */
 #define MW_KEY_HOST        "server"
 #define MW_KEY_PORT        "port"
-#define MW_KEY_ACTIVE_MSG  "active_msg"
-#define MW_KEY_AWAY_MSG    "away_msg"
-#define MW_KEY_BUSY_MSG    "busy_msg"
-#define MW_KEY_MSG_PROMPT  "msg_prompt"
-#define MW_KEY_INVITE      "conf_invite"
-#define MW_KEY_ENCODING    "encoding"
 #define MW_KEY_FORCE       "force_login"
 #define MW_KEY_FAKE_IT     "fake_client_id"
+#define MW_KEY_CLIENT      "client_id_val"
+#define MW_KEY_MAJOR       "client_major"
+#define MW_KEY_MINOR       "client_minor"
 
 
 /** number of seconds from the first blist change before a save to the
@@ -231,6 +228,12 @@ struct mwGaimPluginData {
 
   GaimConnection *gc;
 };
+
+
+typedef struct {
+  GaimBuddy *buddy;
+  GaimGroup *group;
+} BuddyAddData;
 
 
 /* blist and aware functions */
@@ -486,7 +489,7 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
   GaimAccount *acct;
     
   struct mwGaimPluginData *pd;
-  time_t idle;
+  guint32 idle;
   guint stat;
   const char *id;
   const char *status = MW_STATE_ACTIVE;
@@ -500,12 +503,39 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
   id = aware->id.user;
 
   if(idle) {
+    guint32 idle_len;       /*< how long a client has been idle */
+    guint32 ugly_idle_len;  /*< how long a broken client has been idle */
+    
     DEBUG_INFO("%s has idle value 0x%x\n", NSTR(id), idle);
 
+    idle_len = time(NULL) - idle;
+    ugly_idle_len = ((time(NULL) * 1000) - idle) / 1000;
+
+    /* 
+       what's the deal here? Well, good clients are smart enough to
+       publish their idle time by using an attribute to indicate that
+       they went idle at some time UTC, in seconds since epoch. Bad
+       clients use milliseconds since epoch. So we're going to compute
+       the idle time for either method, then figure out the lower of
+       the two and use that. Blame the ST 7.5 development team for
+       this.
+     */
+
+    DEBUG_INFO("idle time: %u, ugly idle time: %u\n", idle_len, ugly_idle_len);
+
+#if 1
+    if(idle_len <= ugly_idle_len) {
+      ; /* DEBUG_INFO("sane idle value, let's use it\n"); */
+    } else {
+      idle = time(NULL) - ugly_idle_len;
+    }
+
+#else
     if(idle < 0 || idle > time(NULL)) {
       DEBUG_INFO("hiding a messy idle value 0x%x\n", NSTR(id), idle);
       idle = -1;
     }
+#endif
   }
 
   switch(stat) {
@@ -559,7 +589,7 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
   
   if(aware->online) {
     gaim_prpl_got_user_status(acct, id, status, NULL);
-    gaim_prpl_got_user_idle(acct, id, !!idle, idle);
+    gaim_prpl_got_user_idle(acct, id, !!idle, (time_t) idle);
 
   } else {
     gaim_prpl_got_user_status(acct, id, MW_STATE_OFFLINE, NULL);
@@ -1401,14 +1431,22 @@ static void session_loginRedirect(struct mwSession *session,
   GaimConnection *gc;
   GaimAccount *account;
   guint port;
+  const char *current_host;
 
   pd = mwSession_getClientData(session);
   gc = pd->gc;
   account = gaim_connection_get_account(gc);
   port = gaim_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
+  current_host = gaim_account_get_string(account, MW_KEY_HOST,
+					 MW_PLUGIN_DEFAULT_HOST);
 
   if(gaim_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
+     (! strcmp(current_host, host)) ||
      (gaim_proxy_connect(NULL, account, host, port, connect_cb, pd) == NULL)) {
+
+    /* if we're configured to force logins, or if we're being
+       redirected to the already configured host, or if we couldn't
+       connect to the new host, we'll force the login instead */
 
     mwSession_forceLogin(session);
   }
@@ -3625,7 +3663,7 @@ static void mw_prpl_login(GaimAccount *account) {
   struct mwGaimPluginData *pd;
 
   char *user, *pass, *host;
-  guint port, client;
+  guint port;
 
   gc = gaim_account_get_connection(account);
   pd = mwGaimPluginData_new(gc);
@@ -3666,14 +3704,29 @@ static void mw_prpl_login(GaimAccount *account) {
   mwSession_setProperty(pd->session, mwSession_AUTH_USER_ID, user, g_free);
   mwSession_setProperty(pd->session, mwSession_AUTH_PASSWORD, pass, g_free);
 
-  client = mwLogin_MEANWHILE;
-  if(gaim_account_get_bool(account, MW_KEY_FAKE_IT, FALSE))
-    client = mwLogin_BINARY;
+  if(gaim_account_get_bool(account, MW_KEY_FAKE_IT, FALSE)) {
+    guint client, major, minor;
 
-  DEBUG_INFO("client id: 0x%04x\n", client);
+    /* if we're faking the login, let's also fake the version we're
+       reporting. Let's also allow the actual values to be specified */
 
-  mwSession_setProperty(pd->session, mwSession_CLIENT_TYPE_ID,
-			GUINT_TO_POINTER(client), NULL);
+    client = gaim_account_get_int(account, MW_KEY_CLIENT, mwLogin_BINARY);
+    major = gaim_account_get_int(account, MW_KEY_MAJOR, 0x001e);
+    minor = gaim_account_get_int(account, MW_KEY_MINOR, 0x001d);
+
+    DEBUG_INFO("client id: 0x%04x\n", client);
+    DEBUG_INFO("client major: 0x%04x\n", major);
+    DEBUG_INFO("client minor: 0x%04x\n", minor);
+  
+    mwSession_setProperty(pd->session, mwSession_CLIENT_TYPE_ID,
+			  GUINT_TO_POINTER(client), NULL);
+    
+    mwSession_setProperty(pd->session, mwSession_CLIENT_VER_MAJOR,
+			  GUINT_TO_POINTER(major), NULL);
+
+    mwSession_setProperty(pd->session, mwSession_CLIENT_VER_MINOR,
+			  GUINT_TO_POINTER(minor), NULL);
+  }
 
   gaim_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
@@ -3958,8 +4011,9 @@ static int mw_prpl_send_im(GaimConnection *gc,
 }
 
 
-static unsigned int mw_prpl_send_typing(GaimConnection *gc, const char *name,
-			       GaimTypingState state) {
+static unsigned int mw_prpl_send_typing(GaimConnection *gc,
+					const char *name,
+					GaimTypingState state) {
   
   struct mwGaimPluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
@@ -3974,27 +4028,22 @@ static unsigned int mw_prpl_send_typing(GaimConnection *gc, const char *name,
 
   conv = mwServiceIm_getConversation(pd->srvc_im, &who);
 
-  if(mwConversation_isOpen(conv))
-    return ! mwConversation_send(conv, mwImSend_TYPING, t);
-
-  if ((state == GAIM_TYPING) || (state == GAIM_TYPED)) {
-    /* let's only open a channel for typing, not for not-typing.
-       Otherwise two users in psychic mode will continually open
-       conversations to each other, never able to get rid of them, as
-       when the other person closes, it psychicaly opens again */
-
+  if(mwConversation_isOpen(conv)) {
+    mwConversation_send(conv, mwImSend_TYPING, t);
+    
+  } else if((state == GAIM_TYPING) || (state == GAIM_TYPED)) {
+    /* only open a channel for sending typing notification, not for
+       when typing has stopped. There's no point in re-opening a
+       channel just to tell someone that this side isn't typing. */
+    
     convo_queue(conv, mwImSend_TYPING, t);
-
-    if(! mwConversation_isPending(conv))
+    
+    if(! mwConversation_isPending(conv)) {
       mwConversation_open(conv);
+    }
   }
 
-  /*
-   * TODO: This should probably be "0."  When it's set to 1, the Gaim
-   *       core will call serv_send_typing(gc, who, GAIM_TYPING) once
-   *       every second until the Gaim user stops typing. --KingAnt
-   */
-  return 1;
+  return 0;
 }
 
 
@@ -4030,6 +4079,11 @@ static const char *mw_client_name(guint16 type) {
   case mwLogin_NOTESBUDDY_4_15:
   case mwLogin_NOTESBUDDY_4_16:
     return "Alphaworks NotesBuddy";
+
+  case 0x1305:
+  case 0x1306:
+  case 0x1307:
+    return "Lotus Sametime Connect 7.5";
 
   case mwLogin_SANITY:
     return "Sanity";
@@ -4228,19 +4282,28 @@ static void notify_im(GaimConnection *gc, GList *row, void *user_data) {
 
 
 static void notify_add(GaimConnection *gc, GList *row, void *user_data) {
+  BuddyAddData *data = user_data;
+  char *group_name = NULL;
+  
+  if (data && data->group) {
+    group_name = data->group->name;
+  }
+
   gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
-			       g_list_nth_data(row, 1), NULL,
+			       g_list_nth_data(row, 1), group_name,
 			       g_list_nth_data(row, 0));
 }
 
 
 static void notify_close(gpointer data) {
-  ;
+  if (data) {
+    g_free(data);
+  }
 }
 
 
 static void multi_resolved_query(struct mwResolveResult *result,
-				 GaimConnection *gc) {
+				 GaimConnection *gc, gpointer data) {
   GList *l;
   const char *msgA;
   const char *msgB;
@@ -4285,7 +4348,7 @@ static void multi_resolved_query(struct mwResolveResult *result,
   msg = g_strdup_printf(msgB, result->name);
 
   gaim_notify_searchresults(gc, _("Select User"),
-			    msgA, msg, sres, notify_close, NULL);
+			    msgA, msg, sres, notify_close, data);
 
   g_free(msg);
 }
@@ -4296,9 +4359,14 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 			       gpointer b) {
 
   struct mwResolveResult *res = NULL;
-  GaimBuddy *buddy = b;
+  BuddyAddData *data = b;
+  GaimBuddy *buddy = NULL;
   GaimConnection *gc;
   struct mwGaimPluginData *pd;
+
+  if (data) {
+    buddy = data->buddy;
+  }
 
   gc = gaim_account_get_connection(buddy->account);
   pd = gc->proto_data;
@@ -4316,7 +4384,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 	   term, better safe then sorry, so let's make sure it's who
 	   the user meant to add */
 	gaim_blist_remove_buddy(buddy);
-	multi_resolved_query(res, gc);
+	multi_resolved_query(res, gc, data);
 	
       } else {
 
@@ -4329,12 +4397,14 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 	buddy_add(pd, buddy);
 
 	blist_schedule(pd);
+
+        g_free(data);
       }
       
     } else {
       /* prompt user if more than one match was returned */
       gaim_blist_remove_buddy(buddy);
-      multi_resolved_query(res, gc);
+      multi_resolved_query(res, gc, data);
     }
     
     return;
@@ -4378,6 +4448,12 @@ static void mw_prpl_add_buddy(GaimConnection *gc,
   enum mwResolveFlag flags;
   guint32 req;
 
+  BuddyAddData *data;
+
+  data = g_new0(BuddyAddData, 1);
+  data->buddy = buddy;
+  data->group = group;
+
   pd = gc->proto_data;
   srvc = pd->srvc_resolve;
 
@@ -4391,7 +4467,7 @@ static void mw_prpl_add_buddy(GaimConnection *gc,
   flags = mwResolveFlag_FIRST | mwResolveFlag_USERS;
 
   req = mwServiceResolve_resolve(srvc, query, flags, add_buddy_resolved,
-				 buddy, NULL);
+				 data, NULL);
   g_list_free(query);
 
   if(req == SEARCH_ERROR) {
@@ -4728,25 +4804,32 @@ static void mw_prpl_chat_whisper(GaimConnection *gc,
 static int mw_prpl_chat_send(GaimConnection *gc,
 			     int id,
 			     const char *message,
-				 GaimMessageFlags flags) {
+			     GaimMessageFlags flags) {
 
   struct mwGaimPluginData *pd;
   struct mwConference *conf;
+  char *msg;
+  int ret;
 
   pd = gc->proto_data;
 
   g_return_val_if_fail(pd != NULL, 0);
   conf = ID_TO_CONF(pd, id);
 
+  msg = gaim_markup_strip_html(message);
+
   if(conf) {
-    return ! mwConference_sendText(conf, message);
+    ret = ! mwConference_sendText(conf, message);
 
   } else {
     struct mwPlace *place = ID_TO_PLACE(pd, id);
     g_return_val_if_fail(place != NULL, 0);
 
-    return ! mwPlace_sendText(place, message);
+    ret = ! mwPlace_sendText(place, message);
   }
+
+  g_free(msg);
+  return ret;
 }
 
 
