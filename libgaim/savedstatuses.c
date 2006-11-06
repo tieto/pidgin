@@ -655,6 +655,27 @@ gaim_savedstatus_unset_substatus(GaimSavedStatus *saved_status,
 	}
 }
 
+/*
+ * This gets called when an account is deleted.  We iterate through
+ * all of our saved statuses and delete any substatuses that may
+ * exist for this account.
+ */
+static void
+gaim_savedstatus_unset_all_substatuses(const GaimAccount *account,
+		gpointer user_data)
+{
+	GList *iter;
+	GaimSavedStatus *status;
+
+	g_return_if_fail(account != NULL);
+
+	for (iter = saved_statuses; iter != NULL; iter = iter->next)
+	{
+		status = (GaimSavedStatus *)iter->data;
+		gaim_savedstatus_unset_substatus(status, account);
+	}
+}
+
 gboolean
 gaim_savedstatus_delete(const char *title)
 {
@@ -1142,6 +1163,11 @@ gaim_savedstatuses_init(void)
 									GAIM_SUBTYPE_SAVEDSTATUS),
 					 gaim_value_new(GAIM_TYPE_SUBTYPE,
 									GAIM_SUBTYPE_SAVEDSTATUS));
+
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+			handle,
+			GAIM_CALLBACK(gaim_savedstatus_unset_all_substatuses),
+			NULL);
 }
 
 void
