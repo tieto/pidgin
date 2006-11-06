@@ -3,6 +3,8 @@
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 
+#include "config.h"
+
 #include "gntwm.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
