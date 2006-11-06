@@ -33,6 +33,8 @@
 
 static GaimXferUiOps *xfer_ui_ops = NULL;
 
+static int gaim_xfer_choose_file(GaimXfer *xfer);
+
 GaimXfer *
 gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 {
@@ -210,13 +212,26 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 {
 	GaimXfer *xfer;
 	struct stat st;
+	gchar *dir;
 
 	xfer = (GaimXfer *)user_data;
 
 	if (g_stat(filename, &st) != 0) {
 		/* File not found. */
 		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			gaim_xfer_request_accepted(xfer, filename);
+			dir = g_path_get_dirname(filename);
+
+			if (g_access(dir, W_OK) == 0) {
+				gaim_xfer_request_accepted(xfer, filename);
+			} else {
+				gaim_xfer_ref(xfer);
+				gaim_notify_message(
+					NULL, GAIM_NOTIFY_MSG_ERROR, NULL,
+					_("Directory is not writable."), NULL,
+					(GaimNotifyCloseCallback)gaim_xfer_choose_file, xfer);
+			}
+
+			g_free(dir);
 		}
 		else {
 			gaim_xfer_show_file_error(xfer, filename);
