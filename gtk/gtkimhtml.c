@@ -813,6 +813,11 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);
+	/*
+	 * TODO: gtk_clipboard_wait_is_text_available() iterates the glib
+	 *       mainloop, which tends to be a source of bugs.  It would
+	 *       be good to audit this or change it to not wait.
+	 */
 	gtk_widget_set_sensitive(menuitem,
 	                        (imhtml->editable &&
 	                        gtk_clipboard_wait_is_text_available(
