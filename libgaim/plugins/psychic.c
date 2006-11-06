@@ -28,6 +28,7 @@
 #define PREF_BUDDIES  PREFS_BASE "/buddies_only"
 #define PREF_NOTICE   PREFS_BASE "/show_notice"
 #define PREF_STATUS   PREFS_BASE "/activate_online"
+#define PREF_RAISE    PREFS_BASE "/raise_conv"
 
 
 static void
@@ -50,16 +51,18 @@ buddy_typing_cb(GaimAccount *acct, const char *name, void *data) {
   if(! gconv) {
     gaim_debug_info("psychic", "no previous conversation exists\n");
     gconv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, name);
-    gaim_conversation_present(gconv);
+
+    if(gaim_prefs_get_bool(PREF_RAISE)) {
+      gaim_conversation_present(gconv);
+    }
 
     if(gaim_prefs_get_bool(PREF_NOTICE)) {
+
+      /* This is a quote from Star Wars.  You should probably not
+	 translate it literally.  If you can't find a fitting cultural
+	 reference in your language, consider translating something
+	 like this instead: "You feel a new message coming." */
       gaim_conversation_write(gconv, NULL,
-			      /* This is a quote from Star Wars.  You should
-			         probably not translate it literally.  If
-				 you can't find a fitting cultural reference
-				 in your language, consider translating
-				 something like this instead:
-				 "You feel a new message coming." */
 			      _("You feel a disturbance in the force..."),
 			      GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG | GAIM_MESSAGE_ACTIVE_ONLY,
 			      time(NULL));
@@ -90,6 +93,10 @@ get_plugin_pref_frame(GaimPlugin *plugin) {
   pref = gaim_plugin_pref_new_with_name(PREF_NOTICE);
   gaim_plugin_pref_set_label(pref, _("Display notification message in"
 				     " conversations"));
+  gaim_plugin_pref_frame_add(frame, pref);
+
+  pref = gaim_plugin_pref_new_with_name(PREF_RAISE);
+  gaim_plugin_pref_set_label(pref, _("Raise psychic conversations"));
   gaim_plugin_pref_frame_add(frame, pref);
 
   return frame;
