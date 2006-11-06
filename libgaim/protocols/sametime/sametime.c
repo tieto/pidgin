@@ -4410,9 +4410,16 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
     return;
   }
 
+#if 0
   /* fall-through indicates that we couldn't find a matching user in
      the resolve service (ether error or zero results), so we remove
      this buddy */
+
+  /* note: I can't really think of a good reason to alter the buddy
+     list in any way. There has been at least one report where the
+     resolve service isn't returning correct results anyway, so let's
+     just leave them in the list. I'm just going to if0 this section
+     out unless I can think of a very good reason to do this. -siege */
 
   DEBUG_INFO("no such buddy in community\n");
   gaim_blist_remove_buddy(buddy);
@@ -4435,6 +4442,7 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
 
     g_free(msg);
   }
+#endif
 }
 
 
