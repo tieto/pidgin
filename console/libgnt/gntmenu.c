@@ -115,6 +115,7 @@ menuitem_activate(GntMenu *menu, GntMenuItem *item)
 				item->priv.y = widget->priv.y + gnt_tree_get_selection_visible_line(GNT_TREE(menu));
 			}
 			gnt_widget_set_position(GNT_WIDGET(sub), item->priv.x, item->priv.y);
+			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(sub), GNT_WIDGET_INVISIBLE);
 			gnt_widget_draw(GNT_WIDGET(sub));
 		} else if (item->callback) {
 			item->callback(item, item->callbackdata);

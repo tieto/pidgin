@@ -466,6 +466,7 @@ gboolean gnt_screen_menu_show(gpointer newmenu)
 	}
 
 	wm->menu = newmenu;
+	GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(wm->menu), GNT_WIDGET_INVISIBLE);
 	gnt_widget_draw(GNT_WIDGET(wm->menu));
 
 	g_signal_connect(G_OBJECT(wm->menu), "hide", G_CALLBACK(reset_menu), NULL);
