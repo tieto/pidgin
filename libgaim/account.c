@@ -2112,9 +2112,6 @@ gaim_accounts_delete(GaimAccount *account)
 	 */
 	gaim_account_set_enabled(account, gaim_core_get_ui(), FALSE);
 
-	if (gaim_account_is_connected(account))
-		gaim_account_disconnect(account);
-
 	gaim_notify_close_with_handle(account);
 	gaim_request_close_with_handle(account);
 
