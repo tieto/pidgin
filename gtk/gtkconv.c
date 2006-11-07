@@ -3765,7 +3765,7 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 	} else if (buddy1 != buddy2) {
 		ret = (buddy1 > buddy2) ? -1 : 1;
 	} else {
-		ret = strcasecmp(user1, user2);
+		ret = strcmp(user1, user2);
 	}
 
 	g_free(user1);
