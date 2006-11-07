@@ -26,26 +26,11 @@
 #ifndef _GAIM_STRINGREF_H_
 #define _GAIM_STRINGREF_H_
 
-/**
- * The internal representation of a stringref.
- *
- * @note For this structure to be useful, the string contained within
- * it must be immutable -- for this reason, do _not_ access it
- * directly!
- */
-typedef struct _GaimStringref {
-	guint32 ref;	/**< The reference count of this string.
-					 *   Note that reference counts are only
-					 *   31 bits, and the high-order bit
-					 *   indicates whether this string is up
-					 *   for GC at the next idle handler...
-					 *   But you aren't going to touch this
-					 *   anyway, right? */
-	char value[1];	/**< The string contained in this ref.
-					 *   Notice that it is simply "hanging
-					 *   off the end" of the ref ... this
-					 *   is to save an allocation. */
-} GaimStringref;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct _GaimStringref GaimStringref;
 
 /**
  * Creates an immutable reference-counted string object.  The newly
@@ -142,5 +127,9 @@ int gaim_stringref_cmp(const GaimStringref *s1, const GaimStringref *s2);
  * @return The length of the string in stringref
  */
 size_t gaim_stringref_len(const GaimStringref *stringref);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_STRINGREF_H_ */

@@ -23,6 +23,10 @@
 #ifndef _GAIM_DNSSRV_H
 #define _GAIM_DNSSRV_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GaimSrvResponse GaimSrvResponse;
 typedef struct _GaimSrvQueryData GaimSrvQueryData;
 
@@ -52,5 +56,9 @@ GaimSrvQueryData *gaim_srv_resolve(const char *protocol, const char *transport, 
  * @param query_data The request to cancel.
  */
 void gaim_srv_cancel(GaimSrvQueryData *query_data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_DNSSRV_H */

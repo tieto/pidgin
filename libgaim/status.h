@@ -113,6 +113,10 @@ typedef enum
 #include "conversation.h"
 #include "value.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name GaimStatusPrimitive API                                         */
 /**************************************************************************/

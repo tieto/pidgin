@@ -26,6 +26,10 @@
 #ifndef _GAIM_NTLM_H
 #define _GAIM_NTLM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Generates the base64 encoded type 1 message needed for NTLM authentication
  *
@@ -60,5 +64,9 @@ guint8 *gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags);
  *         the caller.
  */
 gchar *gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_NTLM_H */

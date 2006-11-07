@@ -27,6 +27,10 @@
 #include <glib.h>
 #include <glib/glist.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @file mime.h
  * @ingroup core
@@ -207,5 +211,9 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
 gsize gaim_mime_part_get_length(GaimMimePart *part);
 
 void gaim_mime_part_set_data(GaimMimePart *part, const char *data);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -25,6 +25,10 @@
 #ifndef _GAIM_XMLNODE_H_
 #define _GAIM_XMLNODE_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * The valid types for an xmlnode
  */
@@ -223,5 +227,9 @@ xmlnode *xmlnode_copy(xmlnode *src);
  * @param node The node to free.
  */
 void xmlnode_free(xmlnode *node);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_XMLNODE_H_ */

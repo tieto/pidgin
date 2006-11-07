@@ -25,6 +25,10 @@
 #ifndef _GAIM_STUN_H_
 #define _GAIM_STUN_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name STUN API                                                        */
 /**************************************************************************/
@@ -75,5 +79,9 @@ GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb);
 void gaim_stun_init(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_STUN_H_ */

@@ -32,6 +32,27 @@
 #include "debug.h"
 #include "stringref.h"
 
+/**
+ * The internal representation of a stringref.
+ *
+ * @note For this structure to be useful, the string contained within
+ * it must be immutable -- for this reason, do _not_ access it
+ * directly!
+ */
+struct _GaimStringref {
+	guint32 ref;	/**< The reference count of this string.
+					 *   Note that reference counts are only
+					 *   31 bits, and the high-order bit
+					 *   indicates whether this string is up
+					 *   for GC at the next idle handler...
+					 *   But you aren't going to touch this
+					 *   anyway, right? */
+	char value[1];	/**< The string contained in this ref.
+					 *   Notice that it is simply "hanging
+					 *   off the end" of the ref ... this
+					 *   is to save an allocation. */
+};
+
 #define REFCOUNT(x) ((x) & 0x7fffffff)
 
 static GList *gclist = NULL;
