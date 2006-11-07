@@ -1526,9 +1526,9 @@ _handle_multiple_get_details_joinconf_cb(NMUser * user, NMERR_T ret_code,
 		for (node = list; node; node = node->next) {
 			if (nm_utf8_str_equal(nm_user_record_get_dn(user_record),
 								  (const char *) node->data)) {
+				g_free(node->data);
 				list = g_slist_remove(list, node->data);
 				nm_request_set_user_define(request, list);
-				g_free(node->data);
 				break;
 			}
 		}
