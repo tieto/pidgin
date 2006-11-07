@@ -934,7 +934,7 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
 }
 
 /**
- * Move a buddy from one group to another group.  This basically just deletes the 
+ * Move a buddy from one group to another group.  This basically just deletes the
  * buddy and re-adds it.
  *
  * @param od The oscar odion.
@@ -965,7 +965,7 @@ int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const
  * @param od The oscar odion.
  * @param gn The group that the buddy is currently in.
  * @param sn The screen name of the buddy.
- * @param alias The new alias for the buddy, or NULL if you want to remove 
+ * @param alias The new alias for the buddy, or NULL if you want to remove
  *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
@@ -997,7 +997,7 @@ int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *sn, const char
  * @param od The oscar odion.
  * @param gn The group that the buddy is currently in.
  * @param sn The screen name of the buddy.
- * @param alias The new comment for the buddy, or NULL if you want to remove 
+ * @param alias The new comment for the buddy, or NULL if you want to remove
  *        a buddy's comment.
  * @return Return 0 if no errors, otherwise return the error number.
  */
@@ -1142,7 +1142,7 @@ int aim_ssi_delicon(OscarData *od)
 }
 
 /**
- * Stores your setting for various SSI settings.  Whether you 
+ * Stores your setting for various SSI settings.  Whether you
  * should show up as idle or not, etc.
  *
  * @param od The oscar odion.
@@ -1676,7 +1676,8 @@ static int parsedataunchanged(OscarData *od, FlapConnection *conn, aim_module_t 
 /*
  * Subtype 0x0011 - SSI Begin Data Modification.
  *
- * Tell the server you're going to start modifying data.
+ * Tell the server you're going to start modifying data.  This marks
+ * the beginning of a transaction.
  */
 int aim_ssi_modbegin(OscarData *od)
 {
@@ -1691,8 +1692,8 @@ int aim_ssi_modbegin(OscarData *od)
 /*
  * Subtype 0x0012 - SSI End Data Modification.
  *
- * Tell the server you're finished modifying data.
- *
+ * Tell the server you're finished modifying data.  The marks the end
+ * of a transaction.
  */
 int aim_ssi_modend(OscarData *od)
 {
@@ -1854,7 +1855,7 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 /*
  * Subtype 0x001a - Send authorization reply
  *
- * Sends a reply to a request for authorization.  The reply can either 
+ * Sends a reply to a request for authorization.  The reply can either
  * grant authorization or deny authorization.
  *
  * if reply=0x00 then deny
@@ -1899,7 +1900,8 @@ int aim_ssi_sendauthreply(OscarData *od, char *sn, guint8 reply, const char *msg
 
 /*
  * Subtype 0x001b - Receive an authorization reply
- * You get this bad boy when other people respond to the authorization 
+ *
+ * You get this bad boy when other people respond to the authorization
  * request that you have previously sent them.
  */
 static int receiveauthreply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
