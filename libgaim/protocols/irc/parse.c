@@ -536,6 +536,13 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	guint i;
 
 	irc->recv_time = time(NULL);
+
+	/*
+	 * ari seems to think that we should convert input to UTF8 before
+	 * emitting it with the signal.  Mark Doliner doesn't know if that
+	 * would be an improvement or not, so he decided to put this
+	 * comment here so that people in the future can decide.
+	 */
 	gaim_signal_emit(_irc_plugin, "irc-receiving-text", gaim_account_get_connection(irc->account), &input);
 	
 	if (!strncmp(input, "PING ", 5)) {
