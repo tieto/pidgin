@@ -58,6 +58,10 @@ typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
 
 #include "status.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************/
 /** @name Saved status subsystem                                          */
 /**************************************************************************/
@@ -404,5 +408,9 @@ void gaim_savedstatuses_init(void);
 void gaim_savedstatuses_uninit(void);
 
 /*@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GAIM_SAVEDSTATUSES_H_ */
