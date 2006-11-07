@@ -1032,7 +1032,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				gaim_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
 				if(sip->registrar.retries > 3) {
 					sip->gc->wants_to_die = TRUE;
-					gaim_connection_error(sip->gc, _("Wrong Password"));
+					gaim_connection_error(sip->gc, _("Incorrect password."));
 					return TRUE;
 				}
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");

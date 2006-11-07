@@ -476,7 +476,7 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	switch (ret) {
 	case QQ_LOGIN_REPLY_PWD_ERROR:
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("Wrong password!"));
+		gaim_connection_error(gc, _("Incorrect password."));
 		break;
 	case QQ_LOGIN_REPLY_MISC_ERROR:
 		gaim_connection_error(gc, _("Unable to login, check debug log"));
