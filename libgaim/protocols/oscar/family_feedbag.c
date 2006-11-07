@@ -565,7 +565,16 @@ static int aim_ssi_sync(OscarData *od)
 	/* We're out of stuff to do, so tell the AIM servers we're done and exit */
 	if (!od->ssi.pending) {
 		aim_ssi_modend(od);
+		od->ssi.in_transaction = FALSE;
 		return 0;
+	}
+
+	/* If this is the first in a series of add/mod/del
+	 * requests then send the "begin transaction" message. */
+	if (!od->ssi.in_transaction)
+	{
+		aim_ssi_modbegin(od);
+		od->ssi.in_transaction = TRUE;
 	}
 
 	/* Make sure we don't send anything else between now

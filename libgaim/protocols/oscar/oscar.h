@@ -490,6 +490,7 @@ struct _OscarData
 		struct aim_ssi_tmp *pending;
 		time_t timestamp;
 		gboolean waiting_for_ack;
+		gboolean in_transaction;
 	} ssi;
 
 	/* TODO: Implement this as a HashTable for HUGE speed improvement! */
