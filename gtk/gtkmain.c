@@ -310,8 +310,8 @@ gaim_gtk_quit(void)
 	/* Uninit */
 	gaim_gtk_conversations_uninit();
 	gaim_gtk_status_uninit();
-	gaim_gtk_blist_uninit();
 	gaim_gtk_docklet_uninit();
+	gaim_gtk_blist_uninit();
 	gaim_gtk_connection_uninit();
 	gaim_gtk_account_uninit();
 	gaim_gtk_xfers_uninit();
