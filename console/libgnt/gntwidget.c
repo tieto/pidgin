@@ -303,11 +303,8 @@ gnt_widget_destroy(GntWidget *obj)
 void
 gnt_widget_show(GntWidget *widget)
 {
-	/* Draw the widget and take focus */
-	/*if (GNT_WIDGET_FLAGS(widget) & GNT_WIDGET_CAN_TAKE_FOCUS) {*/
-		/*gnt_widget_take_focus(widget);*/
-	/*}*/
 	gnt_widget_draw(widget);
+	gnt_screen_occupy(widget);
 }
 
 void
@@ -324,39 +321,38 @@ gnt_widget_draw(GntWidget *widget)
 
 	if (widget->window == NULL)
 	{
+		int x, y, maxx, maxy, w, h;
 		gboolean shadow = TRUE;
 
 		if (!gnt_widget_has_shadow(widget))
 			shadow = FALSE;
 
+		x = widget->priv.x;
+		y = widget->priv.y;
+		w = widget->priv.width + shadow;
+		h = widget->priv.height + shadow;
+
+		getmaxyx(stdscr, maxy, maxx);
+		maxy -= 1;		/* room for the taskbar */
+
+		x = MAX(0, x);
+		y = MAX(0, y);
+		if (x + w >= maxx)
+			x = MAX(0, maxx - w);
+		if (y + h >= maxy)
+			y = MAX(0, maxy - h);
+
+		w = MIN(w, maxx);
+		h = MIN(h, maxy);
+
+		widget->priv.x = x;
+		widget->priv.y = y;
+		widget->priv.width = w - shadow;
+		widget->priv.height = h - shadow;
+
 		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
 						widget->priv.y, widget->priv.x);
-		if (widget->window == NULL)     /* The size is probably too large for the screen */
-		{
-			int x = widget->priv.x, y = widget->priv.y;
-			int w = widget->priv.width + shadow, h = widget->priv.height + shadow;
-			int maxx, maxy;            /* Max-X is cool */
-
-			getmaxyx(stdscr, maxy, maxx);
-
-			if (x + w >= maxx)
-				x = MAX(0, maxx - w);
-			if (y + h >= maxy)
-				y = MAX(0, maxy - h);
-
-			w = MIN(w, maxx);
-			h = MIN(h, maxy);
-
-			widget->priv.x = x;
-			widget->priv.y = y;
-			widget->priv.width = w - shadow;
-			widget->priv.height = h - shadow;
-
-			widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
-							widget->priv.y, widget->priv.x);
-		}
 		init_widget(widget);
-		gnt_screen_occupy(widget);
 	}
 
 	g_signal_emit(widget, signals[SIG_DRAW], 0);

@@ -1163,7 +1163,8 @@ draw_tooltip(GGBlist *ggblist)
 	widget = ggblist->tree;
 	tree = GNT_TREE(widget);
 
-	if (!gnt_widget_has_focus(ggblist->tree))
+	if (!gnt_widget_has_focus(ggblist->tree) || 
+			(ggblist->context && !GNT_WIDGET_IS_FLAG_SET(ggblist->context, GNT_WIDGET_INVISIBLE)))
 		return;
 
 	if (ggblist->tooltip)
@@ -1183,8 +1184,12 @@ draw_tooltip(GGBlist *ggblist)
 		GaimBuddy *pr = gaim_contact_get_priority_buddy((GaimContact*)node);
 		gboolean offline = !GAIM_BUDDY_IS_ONLINE(pr);
 		gboolean showoffline = gaim_prefs_get_bool(PREF_ROOT "/showoffline");
+		const char *alias = gaim_contact_get_alias((GaimContact*)node);
+		const char *name = gaim_buddy_get_name(pr);
 
-		title = g_strdup(gaim_contact_get_alias((GaimContact*)node));
+		title = g_strdup(alias);
+		if (g_utf8_collate(alias, name))
+			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name(pr));
 		tooltip_for_buddy(pr, str);
 		for (node = node->child; node; node = node->next) {
 			if (offline) {
@@ -1887,7 +1892,7 @@ send_im_select_cb(gpointer data, GaimRequestFields *fields)
 }
 
 static void
-send_im_select(void)
+send_im_select(GntMenuItem *item, gpointer n)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
