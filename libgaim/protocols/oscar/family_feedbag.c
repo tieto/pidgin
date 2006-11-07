@@ -1645,7 +1645,6 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 	/* If we're not waiting for any more acks, then send more SNACs */
 	if (!od->ssi.pending) {
-		od->ssi.pending = NULL;
 		od->ssi.waiting_for_ack = 0;
 		aim_ssi_sync(od);
 	}
