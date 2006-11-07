@@ -478,18 +478,18 @@ struct _OscarData
 		struct aim_userinfo_s *userinfo;
 		struct userinfo_node *torequest;
 		struct userinfo_node *requested;
-		int waiting_for_response;
+		gboolean waiting_for_response;
 	} locate;
 
 	/* Server-stored information (ssi) */
 	struct {
-		int received_data;
+		gboolean received_data;
 		guint16 numitems;
 		struct aim_ssi_item *official;
 		struct aim_ssi_item *local;
 		struct aim_ssi_tmp *pending;
 		time_t timestamp;
-		int waiting_for_ack;
+		gboolean waiting_for_ack;
 	} ssi;
 
 	/* TODO: Implement this as a HashTable for HUGE speed improvement! */

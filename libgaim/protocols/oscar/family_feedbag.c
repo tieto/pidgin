@@ -570,7 +570,7 @@ static int aim_ssi_sync(OscarData *od)
 
 	/* Make sure we don't send anything else between now
 	 * and when we receive the ack for the following operation */
-	od->ssi.waiting_for_ack = 1;
+	od->ssi.waiting_for_ack = TRUE;
 
 	/* Now go mail off our data and wait 4 to 6 weeks */
 	aim_ssi_addmoddel(od);
@@ -1316,7 +1316,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		for (cur=od->ssi.official; cur; cur=cur->next)
 			aim_ssi_itemlist_add(&od->ssi.local, cur->name, cur->gid, cur->bid, cur->type, cur->data);
 
-		od->ssi.received_data = 1;
+		od->ssi.received_data = TRUE;
 
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 			ret = userfunc(od, conn, frame, fmtver, od->ssi.numitems, od->ssi.timestamp);
@@ -1645,7 +1645,7 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 	/* If we're not waiting for any more acks, then send more SNACs */
 	if (!od->ssi.pending) {
-		od->ssi.waiting_for_ack = 0;
+		od->ssi.waiting_for_ack = FALSE;
 		aim_ssi_sync(od);
 	}
 
@@ -1664,7 +1664,7 @@ static int parsedataunchanged(OscarData *od, FlapConnection *conn, aim_module_t 
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 
-	od->ssi.received_data = 1;
+	od->ssi.received_data = TRUE;
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame);
