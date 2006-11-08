@@ -3401,7 +3401,7 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
 	GtkTreeIter iter;
 	gboolean is_me = FALSE;
 	gboolean is_buddy;
-	gchar *alias_key, *name, *alias;
+	gchar *tmp, *alias_key, *name, *alias;
 	int flags;
 
 	alias = cb->alias;
@@ -3425,7 +3425,9 @@ add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char 
 
 	is_buddy = (gaim_find_buddy(conv->account, name) != NULL);
 
-	alias_key = g_utf8_collate_key(alias, strlen(alias));
+	tmp = g_utf8_casefold(alias, -1);
+	alias_key = g_utf8_collate_key(tmp, -1);
+	g_free(tmp);
 
 	if (is_me)
 	{
@@ -3802,6 +3804,7 @@ update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, 
 
 		if (!strcmp(normalized_name, gaim_normalize(conv->account, name))) {
 			const char *alias = name;
+			char *tmp;
 			char *alias_key = NULL;
 			GaimBuddy *buddy2;
 
@@ -3812,7 +3815,9 @@ update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, 
 					alias = gaim_buddy_get_contact_alias(buddy2);
 				}
 
-				alias_key = g_utf8_collate_key(alias, strlen(alias));
+				tmp = g_utf8_casefold(alias, -1);
+				alias_key = g_utf8_collate_key(tmp, -1);
+				g_free(tmp);
 
 				gtk_list_store_set(GTK_LIST_STORE(model), &iter,
 								CHAT_USERS_ALIAS_COLUMN, alias,
