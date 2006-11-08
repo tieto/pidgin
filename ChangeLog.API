@@ -139,6 +139,8 @@ version 2.0.0:
 	* gaim_find_buddies() returns a list of all buddies in the account if name
 	  is NULL.
 	* gaim_gtk_set_custom_buddy_icon() sets custom icon for a user.
+	* Hid the definition of _GaimStringref, which already had a warning to
+	  avoid accessing it directly.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
