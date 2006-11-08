@@ -538,7 +538,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	irc->recv_time = time(NULL);
 
 	/*
-	 * The data based to irc-receiving-text is the raw protocol data.
+	 * The data passed to irc-receiving-text is the raw protocol data.
 	 * TODO: It should be passed as an array of bytes and a length
 	 * instead of a null terminated string.
 	 */
