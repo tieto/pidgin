@@ -322,6 +322,7 @@ gnt_widget_draw(GntWidget *widget)
 	if (widget->window == NULL)
 	{
 		int x, y, maxx, maxy, w, h;
+		int oldw, oldh;
 		gboolean shadow = TRUE;
 
 		if (!gnt_widget_has_shadow(widget))
@@ -329,8 +330,8 @@ gnt_widget_draw(GntWidget *widget)
 
 		x = widget->priv.x;
 		y = widget->priv.y;
-		w = widget->priv.width + shadow;
-		h = widget->priv.height + shadow;
+		w = oldw = widget->priv.width + shadow;
+		h = oldh = widget->priv.height + shadow;
 
 		getmaxyx(stdscr, maxy, maxx);
 		maxy -= 1;		/* room for the taskbar */
@@ -347,8 +348,11 @@ gnt_widget_draw(GntWidget *widget)
 
 		widget->priv.x = x;
 		widget->priv.y = y;
-		widget->priv.width = w - shadow;
-		widget->priv.height = h - shadow;
+		if (w != oldw || h != oldh) {
+			widget->priv.width = w - shadow;
+			widget->priv.height = h - shadow;
+			g_signal_emit(widget, signals[SIG_SIZE_CHANGED], 0, oldw, oldh);
+		}
 
 		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
 						widget->priv.y, widget->priv.x);
