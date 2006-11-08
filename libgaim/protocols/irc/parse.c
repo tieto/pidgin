@@ -538,10 +538,9 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	irc->recv_time = time(NULL);
 
 	/*
-	 * ari seems to think that we should convert input to UTF8 before
-	 * emitting it with the signal.  Mark Doliner doesn't know if that
-	 * would be an improvement or not, so he decided to put this
-	 * comment here so that people in the future can decide.
+	 * The data based to irc-receiving-text is the raw protocol data.
+	 * TODO: It should be passed as an array of bytes and a length
+	 * instead of a null terminated string.
 	 */
 	gaim_signal_emit(_irc_plugin, "irc-receiving-text", gaim_account_get_connection(irc->account), &input);
 	
