@@ -18,7 +18,7 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName", "The Gaim developer community"
-        VALUE "FileDescription", "Gaim Executable"
+        VALUE "FileDescription", "Gaim"
         VALUE "FileVersion", "@GAIM_VERSION@"
         VALUE "InternalName", "gaim"
         VALUE "LegalCopyright", "Copyright (C) 1998-2006 The Gaim developer community (See the COPYRIGHT file in the source distribution)."
