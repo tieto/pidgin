@@ -24,7 +24,6 @@ GType s_get_gtype(void);
 void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
-static gboolean (*org_mouse_clicked)(GntWM *wm, GntMouseEvent event, int cx, int cy, GntWidget *widget);
 
 static void
 envelope_buddylist(GntWidget *win)
@@ -139,12 +138,12 @@ s_mouse_clicked(GntWM *wm, GntMouseEvent event, int cx, int cy, GntWidget *widge
 	int x, y, w, h;
 
 	if (!widget)
-		return org_mouse_clicked(wm, event, cx, cy, widget);
+		return FALSE;
 		/* This might be a place to bring up a context menu */
 	
 	if (event != GNT_LEFT_MOUSE_DOWN ||
 			GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
-		return org_mouse_clicked(wm, event, cx, cy, widget);
+		return FALSE;
 	
 	gnt_widget_get_position(widget, &x, &y);
 	gnt_widget_get_size(widget, &w, &h);
@@ -154,7 +153,7 @@ s_mouse_clicked(GntWM *wm, GntMouseEvent event, int cx, int cy, GntWidget *widge
 		return TRUE;
 	}
 
-	return org_mouse_clicked(wm, event, cx, cy, widget);
+	return FALSE;
 }
 
 static gboolean
@@ -175,7 +174,6 @@ s_class_init(SClass *klass)
 	GntWMClass *pclass = GNT_WM_CLASS(klass);
 
 	org_new_window = pclass->new_window;
-	org_mouse_clicked = pclass->mouse_clicked;
 
 	pclass->new_window = s_new_window;
 	pclass->decorate_window = s_decorate_window;
