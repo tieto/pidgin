@@ -48,8 +48,8 @@ typedef enum {
  */
 typedef struct {
 	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
-					     * The core nor the prpl will actually check to see if the data it's given matches this, it's entirely
-					     * up to the UI to do what it wants */
+					     * Neither the core nor the prpl will actually check to see if the data it's given matches this; it's
+					     * entirely up to the UI to do what it wants */
 	int min_width;                          /**< The minimum width of this icon  */
 	int min_height;                         /**< The minimum height of this icon */
 	int max_width;                          /**< The maximum width of this icon  */
