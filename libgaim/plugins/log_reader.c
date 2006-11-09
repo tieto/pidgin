@@ -848,7 +848,7 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 			if (friendly_name != NULL) {
 				int friendly_name_length = strlen(friendly_name);
-				int alias_length         = strlen(log->account->alias);
+				int alias_length         = log->account->alias ? strlen(log->account->alias) : 0;
 				GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
 				gboolean from_name_matches;
 				gboolean to_name_matches;
@@ -972,8 +972,12 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 		if (from_name) {
 			text = g_string_append(text, "<b>");
 
-			if (name_guessed == NAME_GUESS_ME)
-				text = g_string_append(text, log->account->alias);
+			if (name_guessed == NAME_GUESS_ME) {
+				if (log->account->alias)
+					text = g_string_append(text, log->account->alias);
+				else
+					text = g_string_append(text, log->account->username);
+			}
 			else if (name_guessed == NAME_GUESS_THEM)
 				text = g_string_append(text, their_name);
 			else
@@ -1500,11 +1504,16 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 					while (*line2 && *line2 != ':')
 						line2++;
 					if (*line2 == ':') {
+						char *acct_name;
 						line2++;
 						line = line2;
+						acct_name = gaim_account_get_alias(log->account);
+						if (!acct_name)
+							acct_name = gaim_account_get_username(log->account);
+
 						g_string_append_printf(formatted,
 							"<span style=\"color: #16569E;\">"
-							"<b>%s</b></span>:", log->account->alias);
+							"<b>%s</b></span>:", acct_name);
 					}
 				}
 			}
