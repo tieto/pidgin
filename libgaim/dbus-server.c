@@ -38,6 +38,7 @@
 #include "core.h"
 #include "internal.h"
 #include "savedstatuses.h"
+#include "util.h"
 #include "value.h"
 #include "xmlnode.h"
 
@@ -667,6 +668,7 @@ gaim_dbus_message_append_gaim_values(DBusMessageIter *iter,
 		guint xuint;
 		gboolean xboolean;
 		gpointer ptr = NULL;
+		gboolean allocated = FALSE;
 
 		if (gaim_value_is_outgoing(gaim_values[i]))
 		{
@@ -690,7 +692,14 @@ gaim_dbus_message_append_gaim_values(DBusMessageIter *iter,
 			break;
 		case GAIM_TYPE_STRING:
 			str = null_to_empty(my_arg(char*));
+			if (!g_utf8_validate(str, -1, NULL)) {
+				gaim_debug_error("dbus", "Invalid UTF-8 string passed to signal, emitting salvaged string!\n");
+				str = gaim_utf8_salvage(str);
+				allocated = TRUE;
+			}
 			dbus_message_iter_append_basic(iter, DBUS_TYPE_STRING, &str);
+			if (allocated)
+				g_free(str);
 			break;
 		case GAIM_TYPE_SUBTYPE: /* registered pointers only! */
 		case GAIM_TYPE_POINTER:
