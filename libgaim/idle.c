@@ -143,6 +143,16 @@ check_idleness()
 
 	/* Auto-away stuff */
 	auto_away = gaim_prefs_get_bool("/core/away/away_when_idle");
+
+	/* If we're not reporting idle, we can still do auto-away.
+	 * First try "system" and if that isn't possible, use "gaim" */
+	if (!report_idle && auto_away) {
+		if ((idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
+			time_idle = idle_ui_ops->get_time_idle();
+		else
+			time_idle = time(NULL) - last_active_time;
+	}
+
 	if (auto_away &&
 		(time_idle > (60 * gaim_prefs_get_int("/core/away/mins_before_away"))))
 	{
