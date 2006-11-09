@@ -1565,6 +1565,12 @@ static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 	char *text;
 	const char *msg, *name;
 
+	g_return_if_fail(b != NULL);
+
+	if (!GAIM_BUDDY_IS_ONLINE(b)) {
+		return;
+	}
+
 	status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
 	msg = gaim_status_get_attr_string(status, "message");
 	name = gaim_status_get_name(status);
