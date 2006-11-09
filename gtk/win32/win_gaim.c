@@ -63,6 +63,17 @@ typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
 static LPFNGAIMMAIN gaim_main = NULL;
 static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
+static const char *get_win32_error_message(DWORD err) {
+	static char err_msg[512];
+
+	FormatMessage(
+		FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, err,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &err_msg, sizeof(err_msg), NULL);
+
+	return err_msg;
+}
 
 static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len) {
 	HKEY hkey;
@@ -75,17 +86,13 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 						NULL, NULL, data, data_len)))
 			ret = TRUE;
 		else {
-			TCHAR szBuf[80];
-
-			FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
-					NULL, retv, 0,
-					(LPTSTR) &szBuf, sizeof(szBuf), NULL);
+			const char *err_msg = get_win32_error_message(retv);
 
 			printf("Could not read reg key '%s' subkey '%s' value: '%s'.\nMessage: (%ld) %s\n",
 					((key == HKEY_LOCAL_MACHINE) ? "HKLM" :
 					 (key == HKEY_CURRENT_USER) ? "HKCU" :
 					 "???"),
-					sub_key, val_name, retv, szBuf);
+					sub_key, val_name, retv, err_msg);
 		}
 		RegCloseKey(hkey);
 	}
@@ -545,9 +552,11 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 				printf("Loaded exchndl.dll\n");
 		}
 	} else {
+		DWORD dw = GetLastError();
+		const char *err_msg = get_win32_error_message(dw);
 		snprintf(errbuf, 512,
-			"Error getting module filename. Error: %u",
-			(UINT) GetLastError());
+			"Error getting module filename.\nError: (%u) %s",
+			(UINT) dw, err_msg);
 		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
 	}
 
@@ -570,9 +579,16 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	}
 
 	if (!gaim_main) {
-		snprintf(errbuf, 512, "Error loading gaim.dll. Error: %u",
-			(UINT) GetLastError());
-		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
+		DWORD dw = GetLastError();
+		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
+		const char *err_msg = get_win32_error_message(dw);
+
+		snprintf(errbuf, 512, "Error loading gtkgaim.dll.\nError: (%u) %s%s%s",
+			(UINT) dw, err_msg,
+			mod_not_found ? "\n" : "",
+			mod_not_found ? "This probably means that GTK+ can't be found." : "");
+		MessageBox(NULL, errbuf, TEXT("Error"), MB_OK | MB_TOPMOST);
+
 		return 0;
 	}
 
