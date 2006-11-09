@@ -43,6 +43,7 @@
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
 #include "gnttree.h"
+#include "gntutils.h"
 #include "gntwindow.h"
 
 #include "gntblist.h"
@@ -163,13 +164,6 @@ remove_tooltip(GGBlist *ggblist)
 	ggblist->tnode = NULL;
 }
 
-static gboolean
-_draw_tooltip(gpointer data)
-{
-	draw_tooltip(data);
-	return FALSE;
-}
-
 static void
 node_remove(GaimBuddyList *list, GaimBlistNode *node)
 {
@@ -193,12 +187,7 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 			node_remove(list, node->parent);
 	}
 
-	/* When an account has signed off, it removes one buddy at a time.
-	 * Drawing the tooltip after removing each buddy is expensive. On
-	 * top of that, if the selected buddy belongs to the disconnected
-	 * account, then retreiving the tooltip for that causes crash. So
-	 * let's make sure we wait for all the buddies to be removed first.*/
-	g_timeout_add(0, _draw_tooltip, ggblist);
+	draw_tooltip(ggblist);
 }
 
 static void
@@ -1149,14 +1138,24 @@ tooltip_for_buddy(GaimBuddy *buddy, GString *str)
 	}
 }
 
-static void
-draw_tooltip(GGBlist *ggblist)
+static GString*
+make_sure_text_fits(GString *string)
+{
+	int maxw = getmaxx(stdscr) - 3;
+	char *str = gnt_util_onscreen_fit_string(string->str, maxw);
+	string = g_string_assign(string, str);
+	g_free(str);
+	return string;
+}
+
+static gboolean
+draw_tooltip_real(GGBlist *ggblist)
 {
 	GaimBlistNode *node;
-	int x, y, top, width;
+	int x, y, top, width, w, h;
 	GString *str;
 	GntTree *tree;
-	GntWidget *widget, *box;
+	GntWidget *widget, *box, *tv;
 	char *title = NULL;
 	int lastseen = 0;
 
@@ -1165,7 +1164,7 @@ draw_tooltip(GGBlist *ggblist)
 
 	if (!gnt_widget_has_focus(ggblist->tree) || 
 			(ggblist->context && !GNT_WIDGET_IS_FLAG_SET(ggblist->context, GNT_WIDGET_INVISIBLE)))
-		return;
+		return FALSE;
 
 	if (ggblist->tooltip)
 	{
@@ -1176,7 +1175,7 @@ draw_tooltip(GGBlist *ggblist)
 
 	node = gnt_tree_get_selection_data(tree);
 	if (!node)
-		return;
+		return FALSE;
 
 	str = g_string_new("");
 
@@ -1192,6 +1191,7 @@ draw_tooltip(GGBlist *ggblist)
 			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name(pr));
 		tooltip_for_buddy(pr, str);
 		for (node = node->child; node; node = node->next) {
+			GaimBuddy *buddy = (GaimBuddy*)node;
 			if (offline) {
 				int value = gaim_blist_node_get_int(node, "last_seen");
 				if (value > lastseen)
@@ -1199,11 +1199,13 @@ draw_tooltip(GGBlist *ggblist)
 			}
 			if (node == (GaimBlistNode*)pr)
 				continue;
-			if (!showoffline && !GAIM_BUDDY_IS_ONLINE((GaimBuddy*)node))
+			if (!gaim_account_is_connected(buddy->account))
+				continue;
+			if (!showoffline && !GAIM_BUDDY_IS_ONLINE(buddy))
 				continue;
 			str = g_string_append(str, "\n----------\n");
-			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name((GaimBuddy*)node));
-			tooltip_for_buddy((GaimBuddy*)node, str);
+			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name(buddy));
+			tooltip_for_buddy(buddy, str);
 		}
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *buddy = (GaimBuddy *)node;
@@ -1230,7 +1232,7 @@ draw_tooltip(GGBlist *ggblist)
 		title = g_strdup(gaim_chat_get_name(chat));
 	} else {
 		g_string_free(str, TRUE);
-		return;
+		return FALSE;
 	}
 
 	if (lastseen > 0) {
@@ -1251,12 +1253,20 @@ draw_tooltip(GGBlist *ggblist)
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_NO_SHADOW);
 	gnt_box_set_title(GNT_BOX(box), title);
 
-	gnt_box_add_widget(GNT_BOX(box), gnt_label_new(str->str));
+	str = make_sure_text_fits(str);
+	gnt_util_get_text_bound(str->str, &w, &h);
+	h = MAX(2, h);
+	tv = gnt_text_view_new();
+	gnt_widget_set_size(tv, w + 1, h);
+	gnt_box_add_widget(GNT_BOX(box), tv);
 
 	gnt_widget_set_position(box, x, y);
 	GNT_WIDGET_UNSET_FLAGS(box, GNT_WIDGET_CAN_TAKE_FOCUS);
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_TRANSIENT);
 	gnt_widget_draw(box);
+
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), str->str, GNT_TEXT_FLAG_NORMAL);
+	gnt_text_view_scroll(GNT_TEXT_VIEW(tv), 0);
 
 	g_free(title);
 	g_string_free(str, TRUE);
@@ -1264,6 +1274,20 @@ draw_tooltip(GGBlist *ggblist)
 	ggblist->tnode = node;
 
 	gnt_widget_set_name(ggblist->tooltip, "tooltip");
+	return FALSE;
+}
+
+static void
+draw_tooltip(GGBlist *ggblist)
+{
+	/* When an account has signed off, it removes one buddy at a time.
+	 * Drawing the tooltip after removing each buddy is expensive. On
+	 * top of that, if the selected buddy belongs to the disconnected
+	 * account, then retreiving the tooltip for that causes crash. So
+	 * let's make sure we wait for all the buddies to be removed first.*/
+	int id = g_timeout_add(0, draw_tooltip_real, ggblist);
+	g_object_set_data_full(G_OBJECT(ggblist->window), "draw_tooltip_calback",
+				GINT_TO_POINTER(id), (GDestroyNotify)g_source_remove);
 }
 
 static void
