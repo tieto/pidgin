@@ -104,7 +104,7 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) 
 	memcpy(buf->inptr, src, len_stored);
 
 	if (len_stored < len) {
-		memcpy(buf->buffer, src + len_stored, len - len_stored);
+		memcpy(buf->buffer, (char*)src + len_stored, len - len_stored);
 		buf->inptr = buf->buffer + (len - len_stored);
 	} else if ((buf->buffer - buf->inptr) == len_stored) {
 		buf->inptr = buf->buffer;
