@@ -1822,7 +1822,7 @@ gaim_proxy_connect_socks5(void *handle, GaimProxyInfo *gpi,
 	GaimProxyConnectData *connect_data;
 
 	g_return_val_if_fail(host       != NULL, NULL);
-	g_return_val_if_fail(port       >  0,    NULL);
+	g_return_val_if_fail(port       >= 0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
 
 	connect_data = g_new0(GaimProxyConnectData, 1);
