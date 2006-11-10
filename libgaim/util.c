@@ -2577,7 +2577,7 @@ gaim_running_kde(void)
 #endif
 }
 
-inline gboolean
+gboolean
 gaim_running_osx(void)
 {
 #if defined(__APPLE__)	
