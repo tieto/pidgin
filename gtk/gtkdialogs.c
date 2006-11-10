@@ -77,7 +77,7 @@ static struct developer developers[] = {
 	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
-	{"Megan 'Cae' Schneider",       N_("support/Q&A") NULL},
+	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
 	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
