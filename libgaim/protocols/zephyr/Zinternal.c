@@ -893,7 +893,7 @@ Code_t Z_SendFragmentedNotice(notice, len, cert_func, send_func)
 			  sizeof(__My_addr));
 	}
 	message_len = min(notice->z_message_len-offset, fragsize);
-	partnotice.z_message = notice->z_message+offset;
+	partnotice.z_message = (char*)notice->z_message+offset;
 	partnotice.z_message_len = message_len;
 	if ((retval = Z_FormatAuthHeader(&partnotice, buffer, Z_MAXHEADERLEN,
 					 &ret_len, cert_func)) != ZERR_NONE) {
