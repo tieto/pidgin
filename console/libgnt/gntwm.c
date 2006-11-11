@@ -1015,8 +1015,8 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 		if (strcmp(keys, "\r") == 0 || strcmp(keys, "\033") == 0) {
 			window_reverse(widget, FALSE);
 			wm->mode = GNT_KP_MODE_NORMAL;
-			return;
 		}
+		return;
 	}
 
 	wm->event_stack = TRUE;
