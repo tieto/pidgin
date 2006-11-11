@@ -1527,8 +1527,12 @@ gaim_gtk_request_file(const char *title, const char *filename,
 		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_open_folder");
 	}
 
-	if (filename != NULL)
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
+	if (filename != NULL) {
+		if (savedialog)
+			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
+		else
+			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
+	}
 	if ((current_folder != NULL) && (*current_folder != '\0')) {
 		folder_set = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
 	}
