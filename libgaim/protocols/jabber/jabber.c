@@ -430,7 +430,15 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 		GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js;
+
+	/* TODO: It should be possible to make this check unnecessary */
+	if(!GAIM_CONNECTION_IS_VALID(gc)) {
+		gaim_ssl_close(gsc);
+		return;
+	}	
+
+	js = gc->proto_data;
 
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
