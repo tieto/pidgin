@@ -124,6 +124,7 @@ GList *gevo_get_groups(void);
 EContactField gevo_prpl_get_field(GaimAccount *account, GaimBuddy *buddy);
 gboolean gevo_prpl_is_supported(GaimAccount *account, GaimBuddy *buddy);
 gboolean gevo_load_addressbook(const gchar *uri, EBook **book, GError **error);
+char *gevo_get_email_for_buddy(GaimBuddy *buddy);
 
 GevoAssociateBuddyDialog *gevo_associate_buddy_dialog_new(GaimBuddy *buddy);
 

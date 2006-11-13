@@ -218,33 +218,9 @@ static void
 menu_item_send_mail_activate_cb(GaimBlistNode *node, gpointer user_data)
 {
 	GaimBuddy *buddy = (GaimBuddy *)node;
-	EContact *contact;
 	char *mail = NULL;
 
-	contact = gevo_search_buddy_in_contacts(buddy, NULL);
-
-	if (contact != NULL)
-	{
-		mail = g_strdup(e_contact_get(contact, E_CONTACT_EMAIL_1));
-		g_object_unref(contact);
-	}
-	else
-	{
-		GaimAccount *account = gaim_buddy_get_account(buddy);
-		const char *prpl_id = gaim_account_get_protocol_id(account);
-
-		if (!strcmp(prpl_id, "prpl-msn"))
-		{
-			mail = g_strdup(gaim_normalize(account,
-										   gaim_buddy_get_name(buddy)));
-		}
-		else if (!strcmp(prpl_id, "prpl-yahoo"))
-		{
-			mail = g_strdup_printf("%s@yahoo.com",
-								   gaim_normalize(account,
-												  gaim_buddy_get_name(buddy)));
-		}
-	}
+	mail = gevo_get_email_for_buddy(buddy);
 
 	if (mail != NULL)
 	{
@@ -267,7 +243,7 @@ menu_item_send_mail_activate_cb(GaimBlistNode *node, gpointer user_data)
 	else
 	{
 		gaim_notify_error(NULL, NULL, _("Unable to send e-mail"),
-						  _("The specified buddy was not found in the Evolution Contacts."));
+						  _("An e-mail address was not found for this buddy."));
 	}
 }
 
@@ -276,14 +252,17 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 {
 	GaimMenuAction *act;
 	GaimBuddy *buddy;
+	GaimAccount *account;
 	EContact *contact;
+	char *mail;
 
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return;
 
 	buddy = (GaimBuddy *)node;
+	account = gaim_buddy_get_account(buddy);
 
-	if (!gevo_prpl_is_supported(gaim_buddy_get_account(buddy), buddy))
+	if (!gevo_prpl_is_supported(account, buddy))
 		return;
 
 	contact = gevo_search_buddy_in_contacts(buddy, NULL);
@@ -295,11 +274,18 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 		                           NULL, NULL);
 		*menu = g_list_append(*menu, act);
 	}
+	else
+		g_object_unref(contact);
 
-	act = gaim_menu_action_new(_("Send E-Mail"),
-							   GAIM_CALLBACK(menu_item_send_mail_activate_cb),
-							   NULL, NULL);
-	*menu = g_list_append(*menu, act);
+	mail = gevo_get_email_for_buddy(buddy);
+
+	if (mail != NULL)
+	{
+		act = gaim_menu_action_new(_("Send E-Mail"),
+			GAIM_CALLBACK(menu_item_send_mail_activate_cb), NULL, NULL);
+		*menu = g_list_append(*menu, act);
+		g_free(mail);
+	}
 }
 
 /* TODO: Something in here leaks 1 reference to a bonobo object! */

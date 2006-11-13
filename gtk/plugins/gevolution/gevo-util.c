@@ -146,3 +146,38 @@ gevo_load_addressbook(const gchar* uri, EBook **book, GError **error)
 
 	return result;
 }
+
+char *
+gevo_get_email_for_buddy(GaimBuddy *buddy)
+{
+	EContact *contact;
+	char *mail = NULL;
+
+	contact = gevo_search_buddy_in_contacts(buddy, NULL);
+
+	if (contact != NULL)
+	{
+		mail = g_strdup(e_contact_get(contact, E_CONTACT_EMAIL_1));
+		g_object_unref(contact);
+	}
+
+	if (mail == NULL)
+	{
+		GaimAccount *account = gaim_buddy_get_account(buddy);
+		const char *prpl_id = gaim_account_get_protocol_id(account);
+
+		if (!strcmp(prpl_id, "prpl-msn"))
+		{
+			mail = g_strdup(gaim_normalize(account,
+										   gaim_buddy_get_name(buddy)));
+		}
+		else if (!strcmp(prpl_id, "prpl-yahoo"))
+		{
+			mail = g_strdup_printf("%s@yahoo.com",
+								   gaim_normalize(account,
+												  gaim_buddy_get_name(buddy)));
+		}
+	}
+
+	return mail;
+}
