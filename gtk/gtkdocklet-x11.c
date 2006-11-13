@@ -27,7 +27,6 @@
 #include "debug.h"
 #include "gaimstock.h"
 
-#include "gaim.h"
 #include "gtkdialogs.h"
 
 #include "eggtrayicon.h"

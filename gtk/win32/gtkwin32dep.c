@@ -37,7 +37,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
 
-#include "gaim.h"
 #include "debug.h"
 #include "notify.h"
 
