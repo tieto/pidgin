@@ -7337,7 +7337,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimGtkWindow *win)
 		dest_page_num = gaim_gtkconv_get_tab_at_xy(dest_win,
 		                                           e->x_root, e->y_root, &to_right);
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, win->drag_tab);
 
 	if (win == dest_win) {
 		gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, dest_page_num);
