@@ -276,23 +276,30 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 {
 	GaimMenuAction *act;
 	GaimBuddy *buddy;
+	EContact *contact;
 
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return;
 
 	buddy = (GaimBuddy *)node;
 
-	if (gevo_prpl_is_supported(buddy->account, buddy))
+	if (!gevo_prpl_is_supported(gaim_buddy_get_account(buddy), buddy))
+		return;
+
+	contact = gevo_search_buddy_in_contacts(buddy, NULL);
+
+	if (contact == NULL)
 	{
 		act = gaim_menu_action_new(_("Add to Address Book"),
 		                           GAIM_CALLBACK(menu_item_activate_cb),
 		                           NULL, NULL);
 		*menu = g_list_append(*menu, act);
-		act = gaim_menu_action_new(_("Send E-Mail"),
-		                           GAIM_CALLBACK(menu_item_send_mail_activate_cb),
-		                           NULL, NULL);
-		*menu = g_list_append(*menu, act);
 	}
+
+	act = gaim_menu_action_new(_("Send E-Mail"),
+							   GAIM_CALLBACK(menu_item_send_mail_activate_cb),
+							   NULL, NULL);
+	*menu = g_list_append(*menu, act);
 }
 
 /* TODO: Something in here leaks 1 reference to a bonobo object! */
@@ -531,7 +538,7 @@ static GaimPluginInfo info =
 	N_("Provides integration with Evolution."),
 	                                                  /**  description    */
 	N_("Provides integration with Evolution."),
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	"Christian Hammond <chipx86@chipx86.com>",        /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
