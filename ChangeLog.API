@@ -125,7 +125,7 @@ version 2.0.0:
 	  changed to return a pointer to a data structure that can be
 	  used to cancel the pending DNS query using gaim_dnsquery_destroy()
 	* gaim_url_fetch(): Renamed to gaim_util_fetch_url() and changed
-	  to return a pointer to a data structer that can be used to cancel
+	  to return a pointer to a data structure that can be used to cancel
 	  the pending HTTP request using gaim_util_fetch_url_cancel().
 	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 	* gaim_account_get_log(): Added create parameter
