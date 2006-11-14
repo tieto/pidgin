@@ -25,6 +25,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
 #include "internal.h"
 
 #include "account.h"
@@ -44,6 +45,7 @@
 #include "util.h"
 #include "version.h"
 
+#include "oscarcommon.h"
 #include "oscar.h"
 #include "peer.h"
 
@@ -202,7 +204,7 @@ static int gaim_ssi_gotadded     (OscarData *, FlapConnection *, FlapFrame *, ..
 static gboolean gaim_icon_timerfunc(gpointer data);
 
 static void recent_buddies_cb(const char *name, GaimPrefType type, gconstpointer value, gpointer data);
-static void oscar_set_info(GaimConnection *gc, const char *info);
+void oscar_set_info(GaimConnection *gc, const char *info);
 static void oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, GaimStatus *status);
 static void oscar_set_extendedstatus(GaimConnection *gc);
 static gboolean gaim_ssi_rerequestdata(gpointer data);
@@ -1117,7 +1119,7 @@ flap_connection_established(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	return 1;
 }
 
-static void
+void
 oscar_login(GaimAccount *account)
 {
 	GaimConnection *gc;
@@ -1225,7 +1227,7 @@ oscar_login(GaimAccount *account)
 	ck[0] = 0x5a;
 }
 
-static void
+void
 oscar_close(GaimConnection *gc)
 {
 	OscarData *od;
@@ -3930,7 +3932,7 @@ static int gaim_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	return 1;
 }
 
-static void
+void
 oscar_keepalive(GaimConnection *gc)
 {
 	OscarData *od;
@@ -3942,7 +3944,7 @@ oscar_keepalive(GaimConnection *gc)
 		flap_connection_send_keepalive(od, conn);
 }
 
-static unsigned int
+unsigned int
 oscar_send_typing(GaimConnection *gc, const char *name, GaimTypingState state)
 {
 	OscarData *od;
@@ -4060,7 +4062,7 @@ gaim_odc_send_im(PeerConnection *conn, const char *message, GaimMessageFlags imf
 	g_string_free(msg, TRUE);
 }
 
-static int
+int
 oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimMessageFlags imflags)
 {
 	OscarData *od;
@@ -4221,7 +4223,7 @@ oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimMes
  * everyone, and can request ICQ info from ICQ users, and
  * AIM users can only request AIM info.
  */
-static void oscar_get_info(GaimConnection *gc, const char *name) {
+void oscar_get_info(GaimConnection *gc, const char *name) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->icq && aim_sn_is_icq(name))
@@ -4240,7 +4242,7 @@ static void oscar_set_dir(GaimConnection *gc, const char *first, const char *mid
 }
 #endif
 
-static void oscar_set_idle(GaimConnection *gc, int time) {
+void oscar_set_idle(GaimConnection *gc, int time) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_srv_setidle(od, time);
 }
@@ -4267,7 +4269,7 @@ gchar *gaim_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, cha
 	return encoded;
 }
 
-static void
+void
 oscar_set_info(GaimConnection *gc, const char *rawinfo)
 {
 	GaimAccount *account;
@@ -4453,7 +4455,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	oscar_set_extendedstatus(gc);
 }
 
-static void
+void
 oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
 	gaim_debug_info("oscar", "Set status to %s\n", gaim_status_get_name(status));
@@ -4473,14 +4475,14 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 }
 
 #ifdef CRAZY_WARN
-static void
+void
 oscar_warn(GaimConnection *gc, const char *name, gboolean anonymous) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_im_warn(od, od->conn, name, anonymous ? AIM_WARN_ANON : 0);
 }
 #endif
 
-static void
+void
 oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
@@ -4508,7 +4510,7 @@ oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 		aim_icq_getalias(od, buddy->name);
 }
 
-static void oscar_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
+void oscar_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->ssi.received_data) {
@@ -4518,7 +4520,7 @@ static void oscar_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *
 	}
 }
 
-static void oscar_move_buddy(GaimConnection *gc, const char *name, const char *old_group, const char *new_group) {
+void oscar_move_buddy(GaimConnection *gc, const char *name, const char *old_group, const char *new_group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->ssi.received_data && strcmp(old_group, new_group)) {
 		gaim_debug_info("oscar",
@@ -4527,7 +4529,7 @@ static void oscar_move_buddy(GaimConnection *gc, const char *name, const char *o
 	}
 }
 
-static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *alias) {
+void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *alias) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->ssi.received_data) {
 		char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
@@ -4542,7 +4544,7 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 /*
  * FYI, the OSCAR SSI code removes empty groups automatically.
  */
-static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGroup *group, GList *moved_buddies) {
+void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGroup *group, GList *moved_buddies) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
 	if (od->ssi.received_data) {
@@ -5131,7 +5133,7 @@ static int gaim_ssi_gotadded(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	return 1;
 }
 
-static GList *oscar_chat_info(GaimConnection *gc) {
+GList *oscar_chat_info(GaimConnection *gc) {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
 
@@ -5153,7 +5155,7 @@ static GList *oscar_chat_info(GaimConnection *gc) {
 	return m;
 }
 
-static GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 
@@ -5165,13 +5167,13 @@ static GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat
 	return defaults;
 }
 
-static char *
+char *
 oscar_get_chat_name(GHashTable *data)
 {
 	return g_strdup(g_hash_table_lookup(data, "room"));
 }
 
-static void
+void
 oscar_join_chat(GaimConnection *gc, GHashTable *data)
 {
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -5203,7 +5205,7 @@ oscar_join_chat(GaimConnection *gc, GHashTable *data)
 	}
 }
 
-static void
+void
 oscar_chat_invite(GaimConnection *gc, int id, const char *message, const char *name)
 {
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -5216,7 +5218,7 @@ oscar_chat_invite(GaimConnection *gc, int id, const char *message, const char *n
 			ccon->exchange, ccon->name, 0x0);
 }
 
-static void
+void
 oscar_chat_leave(GaimConnection *gc, int id)
 {
 	GaimConversation *conv;
@@ -5232,7 +5234,7 @@ oscar_chat_leave(GaimConnection *gc, int id)
 	oscar_chat_kill(gc, cc);
 }
 
-static int oscar_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags) {
+int oscar_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimConversation *conv = NULL;
 	struct chat_connection *c = NULL;
@@ -5278,7 +5280,22 @@ static int oscar_send_chat(GaimConnection *gc, int id, const char *message, Gaim
 	return 0;
 }
 
-static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b)
+const char *oscar_list_icon_icq(GaimAccount *a, GaimBuddy *b)
+{
+	if ((b == NULL) || (b->name == NULL) || aim_sn_is_sms(b->name))
+	{
+		if (a == NULL || aim_sn_is_icq(gaim_account_get_username(a)))
+			return "icq";
+		else
+			return "aim";
+	}
+
+	if (aim_sn_is_icq(b->name))
+		return "icq";
+	return "aim";
+}
+
+const char *oscar_list_icon_aim(GaimAccount *a, GaimBuddy *b)
 {
 	if ((b == NULL) || (b->name == NULL) || aim_sn_is_sms(b->name))
 	{
@@ -5293,7 +5310,7 @@ static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "aim";
 }
 
-static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
+void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
 	GaimConnection *gc = NULL;
 	OscarData *od = NULL;
@@ -5370,7 +5387,7 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	*ne = emblems[3];
 }
 
-static void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
+void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 	GaimConnection *gc = b->account->gc;
 	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od, b->name);
@@ -5420,7 +5437,7 @@ static void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 	}
 }
 
-static char *oscar_status_text(GaimBuddy *b)
+char *oscar_status_text(GaimBuddy *b)
 {
 	GaimConnection *gc;
 	GaimAccount *account;
@@ -5549,7 +5566,7 @@ static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	return 0;
 }
 
-static void oscar_set_permit_deny(GaimConnection *gc) {
+void oscar_set_permit_deny(GaimConnection *gc) {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
 
@@ -5577,35 +5594,35 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 	}
 }
 
-static void oscar_add_permit(GaimConnection *gc, const char *who) {
+void oscar_add_permit(GaimConnection *gc, const char *who) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to add a permit\n");
 	if (od->ssi.received_data)
 		aim_ssi_addpermit(od, who);
 }
 
-static void oscar_add_deny(GaimConnection *gc, const char *who) {
+void oscar_add_deny(GaimConnection *gc, const char *who) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to add a deny\n");
 	if (od->ssi.received_data)
 		aim_ssi_adddeny(od, who);
 }
 
-static void oscar_rem_permit(GaimConnection *gc, const char *who) {
+void oscar_rem_permit(GaimConnection *gc, const char *who) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to delete a permit\n");
 	if (od->ssi.received_data)
 		aim_ssi_delpermit(od, who);
 }
 
-static void oscar_rem_deny(GaimConnection *gc, const char *who) {
+void oscar_rem_deny(GaimConnection *gc, const char *who) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to delete a deny\n");
 	if (od->ssi.received_data)
 		aim_ssi_deldeny(od, who);
 }
 
-static GList *
+GList *
 oscar_status_types(GaimAccount *account)
 {
 	gboolean is_icq;
@@ -5801,7 +5818,7 @@ oscar_get_aim_info_cb(GaimBlistNode *node, gpointer ignore)
 	aim_locate_getinfoshort(gc->proto_data, gaim_buddy_get_name(buddy), 0x00000003);
 }
 
-static GList *oscar_buddy_menu(GaimBuddy *buddy) {
+GList *oscar_buddy_menu(GaimBuddy *buddy) {
 
 	GaimConnection *gc;
 	OscarData *od;
@@ -5878,7 +5895,7 @@ static GList *oscar_buddy_menu(GaimBuddy *buddy) {
 }
 
 
-static GList *oscar_blist_node_menu(GaimBlistNode *node) {
+GList *oscar_blist_node_menu(GaimBlistNode *node) {
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		return oscar_buddy_menu((GaimBuddy *) node);
 	} else {
@@ -6121,7 +6138,7 @@ static void oscar_show_imforwardingurl(GaimPluginAction *action)
 	gaim_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1");
 }
 
-static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
+void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 {
 	OscarData *od = gc->proto_data;
 	FILE *file;
@@ -6162,7 +6179,7 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
  * Called by the Gaim core to determine whether or not we're
  * allowed to send a file to this user.
  */
-static gboolean
+gboolean
 oscar_can_receive_file(GaimConnection *gc, const char *who)
 {
 	OscarData *od;
@@ -6191,7 +6208,7 @@ oscar_can_receive_file(GaimConnection *gc, const char *who)
 	return FALSE;
 }
 
-static GaimXfer *
+GaimXfer *
 oscar_new_xfer(GaimConnection *gc, const char *who)
 {
 	GaimXfer *xfer;
@@ -6223,7 +6240,7 @@ oscar_new_xfer(GaimConnection *gc, const char *who)
  * Called by the Gaim core when the user indicates that a
  * file is to be sent to a special someone.
  */
-static void
+void
 oscar_send_file(GaimConnection *gc, const char *who, const char *file)
 {
 	GaimXfer *xfer;
@@ -6236,7 +6253,7 @@ oscar_send_file(GaimConnection *gc, const char *who, const char *file)
 		gaim_xfer_request(xfer);
 }
 
-static GList *
+GList *
 oscar_actions(GaimPlugin *plugin, gpointer context)
 {
 	GaimConnection *gc = (GaimConnection *) context;
@@ -6322,7 +6339,7 @@ oscar_actions(GaimPlugin *plugin, gpointer context)
 	return menu;
 }
 
-static void oscar_change_passwd(GaimConnection *gc, const char *old, const char *new)
+void oscar_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
 	OscarData *od = gc->proto_data;
 
@@ -6342,7 +6359,7 @@ static void oscar_change_passwd(GaimConnection *gc, const char *old, const char 
 	}
 }
 
-static void
+void
 oscar_convo_closed(GaimConnection *gc, const char *who)
 {
 	OscarData *od;
@@ -6387,7 +6404,7 @@ recent_buddies_cb(const char *name, GaimPrefType type,
 	gaim_plugin_pref_frame_add(frame, ppref);
 #endif
 
-static const char *
+const char *
 oscar_normalize(const GaimAccount *account, const char *str)
 {
 	static char buf[BUF_LEN];
@@ -6414,7 +6431,7 @@ oscar_normalize(const GaimAccount *account, const char *str)
 	return buf;
 }
 
-static gboolean
+gboolean
 oscar_offline_message(const GaimBuddy *buddy)
 {
 	OscarData *od;
@@ -6428,127 +6445,3 @@ oscar_offline_message(const GaimBuddy *buddy)
 	return (od->icq && aim_sn_is_icq(gaim_account_get_username(account)));
 }
 
-static GaimPluginProtocolInfo prpl_info =
-{
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
-	NULL,					/* user_splits */
-	NULL,					/* protocol_options */
-	{"gif,jpeg,bmp,ico", 48, 48, 50, 50,
-		GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY},	/* icon_spec */
-	oscar_list_icon,		/* list_icon */
-	oscar_list_emblems,		/* list_emblems */
-	oscar_status_text,		/* status_text */
-	oscar_tooltip_text,		/* tooltip_text */
-	oscar_status_types,		/* status_types */
-	oscar_blist_node_menu,	/* blist_node_menu */
-	oscar_chat_info,		/* chat_info */
-	oscar_chat_info_defaults, /* chat_info_defaults */
-	oscar_login,			/* login */
-	oscar_close,			/* close */
-	oscar_send_im,			/* send_im */
-	oscar_set_info,			/* set_info */
-	oscar_send_typing,		/* send_typing */
-	oscar_get_info,			/* get_info */
-	oscar_set_status,		/* set_status */
-	oscar_set_idle,			/* set_idle */
-	oscar_change_passwd,	/* change_passwd */
-	oscar_add_buddy,		/* add_buddy */
-	NULL,					/* add_buddies */
-	oscar_remove_buddy,		/* remove_buddy */
-	NULL,					/* remove_buddies */
-	oscar_add_permit,		/* add_permit */
-	oscar_add_deny,			/* add_deny */
-	oscar_rem_permit,		/* rem_permit */
-	oscar_rem_deny,			/* rem_deny */
-	oscar_set_permit_deny,	/* set_permit_deny */
-	oscar_join_chat,		/* join_chat */
-	NULL,					/* reject_chat */
-	oscar_get_chat_name,	/* get_chat_name */
-	oscar_chat_invite,		/* chat_invite */
-	oscar_chat_leave,		/* chat_leave */
-	NULL,					/* chat_whisper */
-	oscar_send_chat,		/* chat_send */
-	oscar_keepalive,		/* keepalive */
-	NULL,					/* register_user */
-	NULL,					/* get_cb_info */
-	NULL,					/* get_cb_away */
-	oscar_alias_buddy,		/* alias_buddy */
-	oscar_move_buddy,		/* group_buddy */
-	oscar_rename_group,		/* rename_group */
-	NULL,					/* buddy_free */
-	oscar_convo_closed,		/* convo_closed */
-	oscar_normalize,		/* normalize */
-	oscar_set_icon,			/* set_buddy_icon */
-	NULL,					/* remove_group */
-	NULL,					/* get_cb_real_name */
-	NULL,					/* set_chat_topic */
-	NULL,					/* find_blist_chat */
-	NULL,					/* roomlist_get_list */
-	NULL,					/* roomlist_cancel */
-	NULL,					/* roomlist_expand_category */
-	oscar_can_receive_file,	/* can_receive_file */
-	oscar_send_file,		/* send_file */
-	oscar_new_xfer,			/* new_xfer */
-	oscar_offline_message,	/* offline_message */
-	NULL,					/* whiteboard_prpl_ops */
-	NULL,				/* send_raw */
-};
-
-static GaimPluginInfo info =
-{
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
-	NULL,                                             /**< ui_requirement */
-	0,                                                /**< flags          */
-	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
-
-	"prpl-oscar",                                     /**< id             */
-	"AIM/ICQ",                                        /**< name           */
-	VERSION,                                          /**< version        */
-	                                                  /**  summary        */
-	N_("AIM/ICQ Protocol Plugin"),
-	                                                  /**  description    */
-	N_("AIM/ICQ Protocol Plugin"),
-	NULL,                                             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
-
-	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
-	NULL,                                             /**< destroy        */
-
-	NULL,                                             /**< ui_info        */
-	&prpl_info,                                       /**< extra_info     */
-	NULL,
-	oscar_actions
-};
-
-static void
-init_plugin(GaimPlugin *plugin)
-{
-	GaimAccountOption *option;
-
-	option = gaim_account_option_string_new(_("Server"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = gaim_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = gaim_account_option_bool_new(
-		_("Always use AIM/ICQ proxy server for file transfers\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
-		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	/* Preferences */
-	gaim_prefs_add_none("/plugins/prpl/oscar");
-	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
-	gaim_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
-}
-
-GAIM_INIT_PLUGIN(oscar, init_plugin, info);
