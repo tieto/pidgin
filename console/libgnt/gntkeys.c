@@ -3,17 +3,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *term;
+static const char *term;
 
 void gnt_keys_refine(char *text)
 {
+	if (term == NULL) {
+		term = getenv("TERM");
+		if (!term)
+			term = "";  /* Just in case */
+	}
+
 	if (*text == 27 && *(text + 1) == '[' && *(text + 3) == '\0' &&
 			(*(text + 2) >= 'A' || *(text + 2) <= 'D')) {
-		if (term == NULL)
-			term = getenv("TERM");
-		/* Apparently this is necessary for urxvt and screen */
-		if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0)
+		/* Apparently this is necessary for urxvt and screen and xterm */
+		if (strcmp(term, "screen") == 0 || strcmp(term, "rxvt-unicode") == 0 ||
+				strcmp(term, "xterm") == 0)
 			*(text + 1) = 'O';
+	} else if (*(unsigned char*)text == 195) {
+		if (*(text + 2) == 0 && strcmp(term, "xterm") == 0) {
+			*(text) = 27;
+			*(text + 1) -= 64;  /* Say wha? */
+		}
 	}
 }
 
