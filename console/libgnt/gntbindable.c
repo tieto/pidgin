@@ -185,7 +185,7 @@ void gnt_bindable_class_register_action(GntBindableClass *klass, const char *nam
 
 	g_hash_table_replace(klass->actions, g_strdup(name), action);
 
-	if (trigger) {
+	if (trigger && *trigger) {
 		list = NULL;
 		va_start(args, trigger);
 		while ((data = va_arg(args, void *))) {

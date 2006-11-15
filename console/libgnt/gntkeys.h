@@ -4,6 +4,16 @@
 #include <curses.h>
 #include <term.h>
 
+/**
+ * terminfo/termcap doesn't provide all the information that I want to use, eg.
+ * ctrl-up, ctrl-down etc. So I am going to hard-code some of the information
+ * for some popular $TERMs
+ */
+char *gnt_key_cup;
+char *gnt_key_cdown;
+char *gnt_key_cleft;
+char *gnt_key_cright;
+
 #define SAFE(x)   ((x) ? (x) : "")
 
 #define GNT_KEY_POPUP   SAFE(key_f16)   /* Apparently */
@@ -14,10 +24,10 @@
 #define GNT_KEY_UP     SAFE(key_up)
 #define GNT_KEY_DOWN   SAFE(key_down)
 
-#define GNT_KEY_CTRL_UP     "[1;5A"
-#define GNT_KEY_CTRL_DOWN   "[1;5B"
-#define GNT_KEY_CTRL_RIGHT  "[1;5C"
-#define GNT_KEY_CTRL_LEFT   "[1;5D"
+#define GNT_KEY_CTRL_UP     SAFE(gnt_key_cup)
+#define GNT_KEY_CTRL_DOWN   SAFE(gnt_key_cdown)
+#define GNT_KEY_CTRL_RIGHT  SAFE(gnt_key_cright)
+#define GNT_KEY_CTRL_LEFT   SAFE(gnt_key_cleft)
 
 #define GNT_KEY_PGUP   SAFE(key_ppage)
 #define GNT_KEY_PGDOWN SAFE(key_npage)
@@ -69,6 +79,7 @@
 /**
  * This will do stuff with the terminal settings and stuff.
  */
+void gnt_init_keys();
 void gnt_keys_refine(char *text);
 
 

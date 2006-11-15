@@ -585,9 +585,9 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_class_register_action(bindable, "suggest-prev", suggest_prev,
 				GNT_KEY_UP, NULL);
 	gnt_bindable_class_register_action(bindable, "history-prev", history_prev,
-				"\033" GNT_KEY_CTRL_DOWN, NULL);
+				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
-				"\033" GNT_KEY_CTRL_UP, NULL);
+				GNT_KEY_CTRL_UP, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;

@@ -324,6 +324,7 @@ void gnt_init()
 	g_free(filename);
 
 	gnt_init_colors();
+	gnt_init_keys();
 
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	refresh();
