@@ -244,7 +244,7 @@ struct _GaimPluginProtocolInfo
 	void (*reject_chat)(GaimConnection *, GHashTable *components);
 	char *(*get_chat_name)(GHashTable *components);
 	void (*chat_invite)(GaimConnection *, int id,
-						const char *who, const char *message);
+						const char *message, const char *who);
 	void (*chat_leave)(GaimConnection *, int id);
 	void (*chat_whisper)(GaimConnection *, int id,
 						 const char *who, const char *message);
