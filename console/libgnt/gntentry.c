@@ -338,6 +338,8 @@ static const char *
 begin_word(const char *text, const char *begin)
 {
 	char ch;
+	while (text > begin && (isspace(*text) || !*text))
+		text--;
 	ch = *text;
 #define SAME(a,b)    ((isalpha(a) && isalpha(b)) || (isdigit(a) && isdigit(b)) || (isspace(a) && isspace(b)))
 	while (--text >= begin) {
@@ -563,7 +565,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_class_register_action(bindable, "delete-end", del_to_end,
 				GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-prev-word", del_prev_word,
-				NULL, NULL);
+				GNT_KEY_CTRL_W, NULL);
 #if 0
 	gnt_bindable_class_register_action(bindable, "delete-next-word", del_next_word,
 				NULL, 1, NULL);
