@@ -258,6 +258,9 @@ pageup = page-up
 .br
 pagedown = page-down
 .br
+# The following will let you open the context-menu in the buddylist with c-b
+.br
+c-b = context-menu
 
 The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
 or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use
@@ -267,7 +270,7 @@ one of \fBa-\fR, \fBalt-\fR, \fBm-\fR or \fBmeta-\fR. You can also use
 .SH Mouse Support
 There is experimental mouse support. You can focus windows, activate buttons,
 select rows in a list, scroll using the wheel-scroll etc. Mouse support is
-disabled by default, so you need to enable it in ~/.gntrc (see the sample
+disabled by default, so you need to enable it in \fI~/.gntrc\fR (see the sample
 above).
 
 .SH Window Management
@@ -278,8 +281,47 @@ removes the borders from the buddylist and pops up new windows in the middle of
 the screen, instead of at the upper-left corder. It is provided as a sample
 simple manager, but it should be possible to write more complex managers, and
 it's very possible that the window-manager API will need to be enhanced. Look at
-the sample ~/.gntrc file above to see how to select a window-manager.
+the sample \fI~/.gntrc\fR file above to see how to select a window-manager.
 
+It is also possible to rebind the window-manager actions in \fI~/.gntrc\fR, eg:
+
+.br
+[GntWM::binding]
+.br
+a-n = window-next
+.br
+a-p = window-prev
+.br
+a-c = window-close
+.br
+a-w = window-list
+.br
+a-d = dump-screen
+.br
+a-, = shift-left
+.br
+a-. = shift-right
+.br
+a-a = action-list
+.br
+a-m = start-move
+.br
+a-r = start-resize
+.br
+a-q = wm-quit
+.br
+a-l = refresh-screen
+.br
+# The following action is still incomplete, and doesn't have a default binding
+.br
+# switch-window-n
+.br
+
+# For the sample custom window manager
+.br
+[GntS::binding]
+.br
+c-t = toggle-buddylist
 
 .SH Conversation Commands
 There are a few helpful commands in addition to the regular commands. You can
