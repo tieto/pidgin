@@ -1688,6 +1688,13 @@ gaim_proxy_get_setup(GaimAccount *account)
 	GaimProxyInfo *gpi;
 	const gchar *tmp;
 
+	/* This is used as a fallback so we don't overwrite the selected proxy type */
+	static GaimProxyInfo *tmp_none_proxy_info = NULL;
+	if (!tmp_none_proxy_info) {
+		tmp_none_proxy_info = gaim_proxy_info_new();
+		gaim_proxy_info_set_type(tmp_none_proxy_info, GAIM_PROXY_NONE);
+	}
+
 	if (account && gaim_account_get_proxy_info(account) != NULL)
 		gpi = gaim_account_get_proxy_info(account);
 	else if (gaim_running_gnome())
@@ -1696,41 +1703,41 @@ gaim_proxy_get_setup(GaimAccount *account)
 		gpi = gaim_global_proxy_get_info();
 
 	if (gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_ENVVAR) {
+#ifdef _WIN32
+		wgaim_check_for_proxy_changes();
+#endif
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
 			(tmp = g_getenv("HTTPPROXY")) != NULL) {
-			char *proxyhost,*proxypath,*proxyuser,*proxypasswd;
+			char *proxyhost, *proxyuser, *proxypasswd;
 			int proxyport;
 
 			/* http_proxy-format:
 			 * export http_proxy="http://user:passwd@your.proxy.server:port/"
 			 */
-			if(gaim_url_parse(tmp, &proxyhost, &proxyport, &proxypath, &proxyuser, &proxypasswd)) {
+			if(gaim_url_parse(tmp, &proxyhost, &proxyport, NULL, &proxyuser, &proxypasswd)) {
 				gaim_proxy_info_set_host(gpi, proxyhost);
 				g_free(proxyhost);
-				g_free(proxypath);
-				if (proxyuser != NULL) {
-					gaim_proxy_info_set_username(gpi, proxyuser);
-					g_free(proxyuser);
-				}
-				if (proxypasswd != NULL) {
-					gaim_proxy_info_set_password(gpi, proxypasswd);
-					g_free(proxypasswd);
-				}
+
+				gaim_proxy_info_set_username(gpi, proxyuser);
+				g_free(proxyuser);
+
+				gaim_proxy_info_set_password(gpi, proxypasswd);
+				g_free(proxypasswd);
 
 				/* only for backward compatibility */
 				if (proxyport == 80 &&
 				    ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
 				     (tmp = g_getenv("http_proxy_port")) != NULL ||
 				     (tmp = g_getenv("HTTPPROXYPORT")) != NULL))
-				    proxyport = atoi(tmp);
+					proxyport = atoi(tmp);
 
 				gaim_proxy_info_set_port(gpi, proxyport);
 			}
 		} else {
 			/* no proxy environment variable found, don't use a proxy */
 			gaim_debug_info("proxy", "No environment settings found, not using a proxy\n");
-			gaim_proxy_info_set_type(gpi, GAIM_PROXY_NONE);
+			gpi = tmp_none_proxy_info;
 		}
 
 		/* XXX: Do we want to skip this step if user/password were part of url? */

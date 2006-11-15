@@ -35,8 +35,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#define WIN32_PROXY_REGKEY "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
-
 /* These will hopefully be in the win32api next time it is updated - at which point, we'll remove them */
 #ifndef LANG_PERSIAN
 #define LANG_PERSIAN 0x29
@@ -460,48 +458,6 @@ static BOOL wgaim_set_running() {
 	return TRUE;
 }
 
-static void wgaim_set_proxy() {
-	DWORD regval = 1;
-	DWORD reglen = sizeof(DWORD);
-
-	/* If the proxy server environment variables are already set,
-	 * we shouldn't override them */
-	if (getenv("HTTP_PROXY") || getenv("http_proxy") || getenv("HTTPPROXY"))
-		return;
-
-	if (read_reg_string(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
-				"ProxyEnable",
-				(LPBYTE) &regval, &reglen) && (regval & 1)) {
-		char proxy_server[2048];
-		char *c = NULL;
-		reglen = sizeof(proxy_server);
-
-		if (!read_reg_string(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
-				"ProxyServer", (LPBYTE) &proxy_server, &reglen))
-			return;
-
-		if ((reglen > strlen("http="))
-				&& (c = strstr(proxy_server, "http="))) {
-			char *d;
-			c += strlen("http=");
-			d = strchr(c, ';');
-			if (d) {
-				*d = '\0';
-			}
-			/* c now points the proxy server (and port) */
-		}
-
-		if (c) {
-			const char envstr_prefix[] = "HTTP_PROXY=http://";
-			char envstr[sizeof(envstr_prefix) + strlen(c) + 1];
-			snprintf(envstr, sizeof(envstr), "%s%s",
-				envstr_prefix, c);
-			printf("Setting HTTP Proxy: %s\n", envstr);
-			putenv(envstr);
-		}
-	}
-
-}
 
 #ifdef __GNUC__
 #  ifndef _stdcall
@@ -571,8 +527,6 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
 		if (!getenv("GAIM_MULTI_INST") && !wgaim_set_running())
 			return 0;
-
-	wgaim_set_proxy();
 
 	/* Now we are ready for Gaim .. */
 	if ((hmod = LoadLibrary("gtkgaim.dll"))) {

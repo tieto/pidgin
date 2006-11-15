@@ -44,6 +44,8 @@
  */
 #define _(x) gettext(x)
 
+#define WIN32_PROXY_REGKEY "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
+
 /* For shfolder.dll */
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
@@ -55,6 +57,9 @@ static char *app_data_dir = NULL, *install_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL;
 
 static HINSTANCE libgaimdll_hInstance = 0;
+
+static HANDLE proxy_change_event = NULL;
+static HKEY proxy_regkey = NULL;
 
 /*
  *  PUBLIC CODE
@@ -319,75 +324,196 @@ gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *va
 	return success;
 }
 
-char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname) {
-
-	DWORD type;
-	DWORD nbytes;
-	HKEY reg_key;
-	char *result = NULL;
+static HKEY _reg_open_key(HKEY rootkey, const char *subkey, REGSAM access) {
+	HKEY reg_key = NULL;
+	LONG rv;
 
 	if(G_WIN32_HAVE_WIDECHAR_API()) {
 		wchar_t *wc_subkey = g_utf8_to_utf16(subkey, -1, NULL,
 			NULL, NULL);
-
-		if(RegOpenKeyExW(rootkey, wc_subkey, 0,
-				KEY_QUERY_VALUE, &reg_key) == ERROR_SUCCESS) {
-			wchar_t *wc_valname = NULL;
-			if (valname)
-				wc_valname = g_utf8_to_utf16(valname, -1,
-					NULL, NULL, NULL);
-
-			if(RegQueryValueExW(reg_key, wc_valname, 0, &type,
-					NULL, &nbytes) == ERROR_SUCCESS
-					&& type == REG_SZ) {
-				wchar_t *wc_temp =
-					g_new(wchar_t, ((nbytes + 1) / sizeof(wchar_t)) + 1);
-
-				if(RegQueryValueExW(reg_key, wc_valname, 0,
-						&type, (LPBYTE) wc_temp,
-						&nbytes) == ERROR_SUCCESS) {
-					wc_temp[nbytes / sizeof(wchar_t)] = '\0';
-					result = g_utf16_to_utf8(wc_temp, -1,
-						NULL, NULL, NULL);
-				}
-				g_free(wc_temp);
-			}
-			g_free(wc_valname);
-		}
+		rv = RegOpenKeyExW(rootkey, wc_subkey, 0, access, &reg_key);
 		g_free(wc_subkey);
 	} else {
 		char *cp_subkey = g_locale_from_utf8(subkey, -1, NULL,
 			NULL, NULL);
-		if(RegOpenKeyExA(rootkey, cp_subkey, 0,
-				KEY_QUERY_VALUE, &reg_key) == ERROR_SUCCESS) {
-			char *cp_valname = NULL;
-			if(valname)
-				cp_valname = g_locale_from_utf8(valname, -1,
-					NULL, NULL, NULL);
+		rv = RegOpenKeyExA(rootkey, cp_subkey, 0, access, &reg_key);
+		g_free(cp_subkey);
+	}
 
-			if(RegQueryValueExA(reg_key, cp_valname, 0, &type,
-					NULL, &nbytes) == ERROR_SUCCESS
-					&& type == REG_SZ) {
-				char *cp_temp = g_malloc(nbytes + 1);
+	if (rv != ERROR_SUCCESS) {
+		char *errmsg = g_win32_error_message(rv);
+		gaim_debug_info("wgaim", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
+					((rootkey == HKEY_LOCAL_MACHINE) ? "HKLM" :
+					 (rootkey == HKEY_CURRENT_USER) ? "HKCU" :
+					  (rootkey == HKEY_CLASSES_ROOT) ? "HKCR" : "???"),
+					subkey, rv, errmsg);
+		g_free(errmsg);
+	}
 
-				if(RegQueryValueExA(reg_key, cp_valname, 0,
-						&type, cp_temp,
-						&nbytes) == ERROR_SUCCESS) {
+	return reg_key;
+}
+
+static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYTE data, LPDWORD data_len) {
+	LONG rv;
+
+	if(G_WIN32_HAVE_WIDECHAR_API()) {
+		wchar_t *wc_valname = NULL;
+		if (valname)
+			wc_valname = g_utf8_to_utf16(valname, -1, NULL, NULL, NULL);
+		rv = RegQueryValueExW(reg_key, wc_valname, 0, type, data, data_len);
+		g_free(wc_valname);
+	} else {
+		char *cp_valname = NULL;
+		if(valname)
+			cp_valname = g_locale_from_utf8(valname, -1, NULL, NULL, NULL);
+		rv = RegQueryValueExA(reg_key, cp_valname, 0, type, data, data_len);
+		g_free(cp_valname);
+	}
+
+	if (rv != ERROR_SUCCESS) {
+		char *errmsg = g_win32_error_message(rv);
+		gaim_debug_info("wgaim", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
+					valname, rv, errmsg);
+		g_free(errmsg);
+	}
+
+	return (rv == ERROR_SUCCESS);
+}
+
+gboolean wgaim_read_reg_dword(HKEY rootkey, const char *subkey, const char *valname, LPDWORD result) {
+
+	DWORD type;
+	DWORD nbytes;
+	HKEY reg_key = _reg_open_key(rootkey, subkey, KEY_QUERY_VALUE);
+	gboolean success = FALSE;
+
+	if(reg_key) {
+		if(_reg_read(reg_key, valname, &type, (LPBYTE)result, &nbytes))
+			success = TRUE;
+		RegCloseKey(reg_key);
+	}
+
+	return success;
+}
+
+char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname) {
+
+	DWORD type;
+	DWORD nbytes;
+	HKEY reg_key = _reg_open_key(rootkey, subkey, KEY_QUERY_VALUE);
+	char *result = NULL;
+
+	if(reg_key) {
+		if(_reg_read(reg_key, valname, &type, NULL, &nbytes) && type == REG_SZ) {
+			LPBYTE data;
+			if(G_WIN32_HAVE_WIDECHAR_API())
+				data = (LPBYTE) g_new(wchar_t, ((nbytes + 1) / sizeof(wchar_t)) + 1);
+			else
+				data = (LPBYTE) g_malloc(nbytes + 1);
+
+			if(_reg_read(reg_key, valname, &type, data, &nbytes)) {
+				if(G_WIN32_HAVE_WIDECHAR_API()) {
+					wchar_t *wc_temp = (wchar_t*) data;
+					wc_temp[nbytes / sizeof(wchar_t)] = '\0';
+					result = g_utf16_to_utf8(wc_temp, -1,
+						NULL, NULL, NULL);
+				} else {
+					char *cp_temp = (char*) data;
 					cp_temp[nbytes] = '\0';
 					result = g_locale_to_utf8(cp_temp, -1,
 						NULL, NULL, NULL);
 				}
-				g_free (cp_temp);
 			}
-			g_free(cp_valname);
+			g_free(data);
 		}
-		g_free(cp_subkey);
+		RegCloseKey(reg_key);
 	}
 
-	if(reg_key != NULL)
-		RegCloseKey(reg_key);
-
 	return result;
+}
+
+static void wgaim_refresh_proxy(void) {
+	gboolean set_proxy = FALSE;
+	DWORD enabled = 0;
+
+	wgaim_read_reg_dword(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
+				"ProxyEnable", &enabled);
+
+	if (enabled & 1) {
+		char *c = NULL;
+		char *tmp = wgaim_read_reg_string(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
+				"ProxyServer");
+
+		/* There are proxy settings for several protocols */
+		if (tmp && (c = g_strstr_len(tmp, strlen(tmp), "http="))) {
+			char *d;
+			c += strlen("http=");
+			d = strchr(c, ';');
+			if (d)
+				*d = '\0';
+			/* c now points the proxy server (and port) */
+
+		/* There is only a global proxy */
+		} else if (tmp && strlen(tmp) > 0 && !strchr(tmp, ';')) {
+			c = tmp;
+		}
+
+		if (c) {
+			gaim_debug_info("wgaim", "Setting HTTP Proxy: 'http://%s'\n", c);
+			g_setenv("HTTP_PROXY", c, TRUE);
+			set_proxy = TRUE;
+		}
+		g_free(tmp);
+	}
+
+	/* If there previously was a proxy set and there isn't one now, clear it */
+	if (getenv("HTTP_PROXY") && !set_proxy) {
+		gaim_debug_info("wgaim", "Clearing HTTP Proxy\n");
+		g_unsetenv("HTTP_PROXY");
+	}
+}
+
+static void watch_for_proxy_changes(void) {
+	LONG rv;
+	DWORD filter = REG_NOTIFY_CHANGE_NAME |
+			REG_NOTIFY_CHANGE_LAST_SET;
+
+	if (!proxy_regkey &&
+			!(proxy_regkey = _reg_open_key(HKEY_CURRENT_USER,
+				WIN32_PROXY_REGKEY, KEY_NOTIFY))) {
+		return;
+	}
+
+	if (!(proxy_change_event = CreateEvent(NULL, TRUE, FALSE, NULL))) {
+		char *errmsg = g_win32_error_message(GetLastError());
+		gaim_debug_error("wgaim", "Unable to watch for proxy changes: %s\n", errmsg);
+		g_free(errmsg);
+		return;
+	}
+
+	rv = RegNotifyChangeKeyValue(proxy_regkey, TRUE, filter, proxy_change_event, TRUE);
+	if (rv != ERROR_SUCCESS) {
+		char *errmsg = g_win32_error_message(rv);
+		gaim_debug_error("wgaim", "Unable to watch for proxy changes: %s\n", errmsg);
+		g_free(errmsg);
+		CloseHandle(proxy_change_event);
+		proxy_change_event = NULL;
+	}
+
+}
+
+gboolean wgaim_check_for_proxy_changes(void) {
+	gboolean changed = FALSE;
+
+	if (proxy_change_event && WaitForSingleObject(proxy_change_event, 0) == WAIT_OBJECT_0) {
+		CloseHandle(proxy_change_event);
+		proxy_change_event = NULL;
+		changed = TRUE;
+		wgaim_refresh_proxy();
+		watch_for_proxy_changes();
+	}
+
+	return changed;
 }
 
 void wgaim_init(void) {
@@ -430,6 +556,15 @@ void wgaim_init(void) {
 	if (!g_thread_supported())
 		g_thread_init(NULL);
 
+	/* If the proxy server environment variables are already set,
+	 * we shouldn't override them */
+	if (!getenv("HTTP_PROXY") && !getenv("http_proxy") && !getenv("HTTPPROXY")) {
+		wgaim_refresh_proxy();
+		watch_for_proxy_changes();
+	} else {
+		gaim_debug_info("wgaim", "HTTP_PROXY env. var already set.  Ignoring win32 Internet Settings.\n");
+	}
+
 	gaim_debug_info("wgaim", "wgaim_init end\n");
 }
 
@@ -443,6 +578,11 @@ void wgaim_cleanup(void) {
 
 	g_free(app_data_dir);
 	app_data_dir = NULL;
+
+	if (proxy_regkey) {
+		RegCloseKey(proxy_regkey);
+		proxy_regkey = NULL;
+	}
 
 	libgaimdll_hInstance = NULL;
 }

@@ -41,6 +41,8 @@ char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valnam
 gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *valname, const char *value);
 char *wgaim_escape_dirsep(const char *filename); /* needs to be g_free'd */
 GIOChannel *wgaim_g_io_channel_win32_new_socket(int socket); /* Until we get the post-2.8 glib win32 giochannel implementation working, use the thread-based one */
+/** Check for changes to the system proxy settings and update the HTTP_PROXY env. var. if there have been changes */
+gboolean wgaim_check_for_proxy_changes(void);
 
 /* Determine Gaim paths */
 char *wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
