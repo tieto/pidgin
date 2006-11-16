@@ -261,6 +261,11 @@ pagedown = page-down
 # The following will let you open the context-menu in the buddylist with c-b
 .br
 c-b = context-menu
+.br
+
+[GntWindow::binding]
+.br
+c-o = show-menu
 
 The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
 or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use

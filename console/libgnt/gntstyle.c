@@ -46,7 +46,8 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 	return bool_styles[style];
 }
 
-void refine(char *text)
+static void
+refine(char *text)
 {
 	char *s = text, *t = text;
 

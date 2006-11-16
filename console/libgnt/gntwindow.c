@@ -9,18 +9,17 @@ enum
 
 static GntBoxClass *parent_class = NULL;
 
-static gboolean (*org_keypress)(GntWidget *widget, const char *text);
 static void (*org_destroy)(GntWidget *widget);
 
 static gboolean
-gnt_window_key_pressed(GntWidget *widget, const char *text)
+show_menu(GntBindable *bind, GList *null)
 {
-	if (strcmp(text, GNT_KEY_CTRL_O) == 0 && GNT_WINDOW(widget)->menu) {
-		gnt_screen_menu_show(GNT_WINDOW(widget)->menu);
+	GntWindow *win = GNT_WINDOW(bind);
+	if (win->menu) {
+		gnt_screen_menu_show(win->menu);
 		return TRUE;
-	} else
-		return org_keypress(widget, text);
-		
+	}
+	return FALSE;
 }
 
 static void
@@ -35,14 +34,16 @@ gnt_window_destroy(GntWidget *widget)
 static void
 gnt_window_class_init(GntWindowClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 	GntWidgetClass *wid_class = GNT_WIDGET_CLASS(klass);
 	parent_class = GNT_BOX_CLASS(klass);
 
-	org_keypress = wid_class->key_pressed;
-	wid_class->key_pressed = gnt_window_key_pressed;
-
 	org_destroy = wid_class->destroy;
 	wid_class->destroy = gnt_window_destroy;
+
+	gnt_bindable_class_register_action(bindable, "show-menu", show_menu,
+				GNT_KEY_CTRL_O, NULL);
+	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 
 	GNTDEBUG;
 }
