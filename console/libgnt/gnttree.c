@@ -1058,13 +1058,22 @@ GList *gnt_tree_get_selection_text_list(GntTree *tree)
 	return list;
 }
 
-/* XXX: Should this also remove all the children of the row being removed? */
 void gnt_tree_remove(GntTree *tree, gpointer key)
 {
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
 	if (row)
 	{
 		gboolean redraw = FALSE;
+
+		if (row->child) {
+			GntTreeRow *ch = row->child;
+			while (ch) {
+				GntTreeRow *n = ch->next;
+				tree->list = g_list_remove(tree->list, ch->key);
+				g_hash_table_remove(tree->hash, ch->key);
+				ch = n;
+			}
+		}
 
 		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
 			redraw = TRUE;
@@ -1146,7 +1155,7 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 		g_free(col->text);
 		col->text = g_strdup(text);
 
-		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) > 0)
+		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
 			redraw_tree(tree);
 	}
 }

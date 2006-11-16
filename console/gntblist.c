@@ -61,7 +61,7 @@ typedef struct
 
 	GntWidget *tooltip;
 	GaimBlistNode *tnode;		/* Who is the tooltip being displayed for? */
-	GaimBuddy *tagged;
+	GList *tagged;          /* A list of tagged blistnodes */
 
 	GntWidget *context;
 	GaimBlistNode *cnode;
@@ -108,6 +108,7 @@ static void remove_peripherals(GGBlist *ggblist);
 static const char * get_display_name(GaimBlistNode *node);
 static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
 static void blist_show(GaimBuddyList *list);
+static void update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist);
 
 /* Sort functions */
 static int blist_node_compare_text(GaimBlistNode *n1, GaimBlistNode *n2);
@@ -174,6 +175,8 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 
 	gnt_tree_remove(GNT_TREE(ggblist->tree), node);
 	node->ui_data = NULL;
+	if (ggblist->tagged)
+		ggblist->tagged = g_list_remove(ggblist->tagged, node);
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimContact *contact = (GaimContact*)node->parent;
@@ -185,6 +188,8 @@ node_remove(GaimBuddyList *list, GaimBlistNode *node)
 		if ((!gaim_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
 				group->currentsize < 1)
 			node_remove(list, node->parent);
+		for (node = node->child; node; node = node->next)
+			node->ui_data = NULL;
 	}
 
 	draw_tooltip(ggblist);
@@ -998,23 +1003,52 @@ gg_blist_remove_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
 }
 
 static void
-gg_blist_tag_buddy(GaimBlistNode *node)
+gg_blist_toggle_tag_buddy(GaimBlistNode *node)
 {
-	ggblist->tagged = (GaimBuddy *)node;
+	GList *iter;
+	if (ggblist->tagged && (iter = g_list_find(ggblist->tagged, node)) != NULL) {
+		ggblist->tagged = g_list_delete_link(ggblist->tagged, iter);
+	} else {
+		ggblist->tagged = g_list_prepend(ggblist->tagged, node);
+	}
+	if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		node = (GaimBlistNode*)gaim_contact_get_priority_buddy((GaimContact*)node);
+	update_buddy_display((GaimBuddy*)node, ggblist);
 	gaim_debug_info("blist", "Tagged buddy\n");
 }
 
 static void
-gg_blist_place_tagged(GaimBlistNode *node)
+gg_blist_place_tagged(GaimBlistNode *target)
 {
-	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		gaim_blist_add_buddy(ggblist->tagged, NULL, (GaimGroup *)node, NULL);
-	} else {
-		GaimContact *contact = (GaimContact *)node;
-		gaim_blist_add_buddy(ggblist->tagged, contact,
-			gaim_buddy_get_group(gaim_contact_get_priority_buddy(contact)), NULL);
+	GaimGroup *tg = NULL;
+	GaimContact *tc = NULL;
+
+	if (GAIM_BLIST_NODE_IS_GROUP(target))
+		tg = (GaimGroup*)target;
+	else
+		tc = (GaimContact*)target;
+
+	if (ggblist->tagged) {
+		GList *list = ggblist->tagged;
+		ggblist->tagged = NULL;
+
+		while (list) {
+			GaimBlistNode *node = list->data;
+			list = g_list_delete_link(list, list);
+			if (tg) {
+				if (GAIM_BLIST_NODE_IS_CONTACT(node))
+					gaim_blist_add_contact((GaimContact*)node, tg, NULL);
+				else
+					gaim_blist_add_buddy((GaimBuddy*)node, NULL, tg, NULL);
+			} else {
+				if (GAIM_BLIST_NODE_IS_BUDDY(node))
+					gaim_blist_add_buddy((GaimBuddy*)node, tc,
+						gaim_buddy_get_group(gaim_contact_get_priority_buddy(tc)), NULL);
+				else if (GAIM_BLIST_NODE_IS_CONTACT(node))
+					gaim_blist_merge_contact((GaimContact*)node, target);
+			}
+		}
 	}
-	ggblist->tagged = NULL;
 	gaim_debug_info("blist", "Placed buddy\n");
 }
 
@@ -1074,13 +1108,16 @@ draw_context_menu(GGBlist *ggblist)
 				GAIM_CALLBACK(gg_blist_rename_node_cb), node);
 		add_custom_action(GNT_MENU(context), _("Remove"),
 				GAIM_CALLBACK(gg_blist_remove_node_cb), node);
+
 		if (ggblist->tagged && (GAIM_BLIST_NODE_IS_CONTACT(node)
 				|| GAIM_BLIST_NODE_IS_GROUP(node))) {
 			add_custom_action(GNT_MENU(context), _("Place tagged"),
 					GAIM_CALLBACK(gg_blist_place_tagged), node);
-		} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			add_custom_action(GNT_MENU(context), _("Tag"),
-					GAIM_CALLBACK(gg_blist_tag_buddy), node);
+		}
+		
+		if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
+			add_custom_action(GNT_MENU(context), _("Toggle Tag"),
+					GAIM_CALLBACK(gg_blist_toggle_tag_buddy), node);
 		}
 	}
 
@@ -1285,7 +1322,7 @@ draw_tooltip(GGBlist *ggblist)
 	 * top of that, if the selected buddy belongs to the disconnected
 	 * account, then retreiving the tooltip for that causes crash. So
 	 * let's make sure we wait for all the buddies to be removed first.*/
-	int id = g_timeout_add(0, draw_tooltip_real, ggblist);
+	int id = g_timeout_add(0, (GSourceFunc)draw_tooltip_real, ggblist);
 	g_object_set_data_full(G_OBJECT(ggblist->window), "draw_tooltip_calback",
 				GINT_TO_POINTER(id), (GDestroyNotify)g_source_remove);
 }
@@ -1306,48 +1343,50 @@ context_menu(GntWidget *widget, GGBlist *ggblist)
 static gboolean
 key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 {
-	gboolean stop = FALSE, ret = FALSE;
-	if (text[0] == 27 && text[1] == 0)
-	{
+	if (text[0] == 27 && text[1] == 0) {
 		/* Escape was pressed */
 		remove_peripherals(ggblist);
-		stop = TRUE;
-		ret = TRUE;
-	}
-
-	if (strcmp(text, GNT_KEY_CTRL_O) == 0)
-	{
+	} else if (strcmp(text, GNT_KEY_CTRL_O) == 0) {
 		gaim_prefs_set_bool(PREF_ROOT "/showoffline",
 				!gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
-		ret = TRUE;
-		stop = TRUE;
-	}
+	} else if (strcmp(text, "t") == 0) {
+		gg_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
+	} else if (strcmp(text, "a") == 0) {
+		gg_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
+	} else
+		return FALSE;
 
-	if (stop)
-		g_signal_stop_emission_by_name(G_OBJECT(widget), "key_pressed");
-
-	return ret;
+	return TRUE;
 }
 
 static void
 update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist)
 {
 	GaimContact *contact;
+	GntTextFormatFlags bflag = 0, cflag = 0;
 	
 	contact = gaim_buddy_get_contact(buddy);
 
+	gaim_debug_fatal("sadrul", "updating display for %s\n", gaim_buddy_get_name(buddy));
+	g_printerr("sadrul:  updating display for %s\n", gaim_buddy_get_name(buddy));
+
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, 0, get_display_name((GaimBlistNode*)buddy));
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), contact, 0, get_display_name((GaimBlistNode*)contact));
+
+	if (ggblist->tagged && g_list_find(ggblist->tagged, buddy))
+		bflag |= GNT_TEXT_FLAG_BOLD;
+	if (ggblist->tagged && g_list_find(ggblist->tagged, contact))
+		cflag |= GNT_TEXT_FLAG_BOLD;
 
 	if (ggblist->tnode == (GaimBlistNode*)buddy)
 		draw_tooltip(ggblist);
 
 	if (gaim_presence_is_idle(gaim_buddy_get_presence(buddy))) {
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, GNT_TEXT_FLAG_DIM);
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, bflag | GNT_TEXT_FLAG_DIM);
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, cflag | GNT_TEXT_FLAG_DIM);
 	} else {
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, 0);
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, 0);
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, bflag);
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, cflag);
 	}
 }
 
