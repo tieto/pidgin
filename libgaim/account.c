@@ -1270,9 +1270,18 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 	account->buddy_icon = g_strdup(icon);
 	if (gaim_account_is_connected(account))
 	{
-		char *filename = gaim_buddy_icons_get_full_path(icon);
-		serv_set_buddyicon(gaim_account_get_connection(account), filename);
-		g_free(filename);
+		GaimConnection *gc;
+		GaimPluginProtocolInfo *prpl_info;
+
+		gc = gaim_account_get_connection(account);
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		if (prpl_info && prpl_info->set_buddy_icon)
+		{
+			char *filename = gaim_buddy_icons_get_full_path(icon);
+			prpl_info->set_buddy_icon(gc, filename);
+			g_free(filename);
+		}
 	}
 
 	schedule_accounts_save();

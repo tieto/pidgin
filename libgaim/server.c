@@ -414,18 +414,6 @@ int serv_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageF
 	return val;
 }
 
-void serv_set_buddyicon(GaimConnection *gc, const char *filename)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (prpl_info && prpl_info->set_buddy_icon)
-		prpl_info->set_buddy_icon(gc, filename);
-
-}
-
 /*
  * woo. i'm actually going to comment this function. isn't that fun. make
  * sure to follow along, kids

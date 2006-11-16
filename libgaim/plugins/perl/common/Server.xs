@@ -206,11 +206,6 @@ serv_send_typing(con, a, state)
 	Gaim::TypingState state
 
 void 
-serv_set_buddyicon(gc, filename)
-	Gaim::Connection gc
-	const char *filename
-
-void 
 serv_set_info(con, a)
 	Gaim::Connection con 
 	const char * a
