@@ -475,10 +475,7 @@ msn_httpconn_proxy_auth(MsnHttpConn *httpconn)
 
 	account = httpconn->session->account;
 
-	if (gaim_account_get_proxy_info(account) == NULL)
-		gpi = gaim_global_proxy_get_info();
-	else
-		gpi = gaim_account_get_proxy_info(account);
+	gpi = gaim_proxy_get_setup(account);
 
 	if (gpi == NULL || !(gaim_proxy_info_get_type(gpi) == GAIM_PROXY_HTTP ||
 						 gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_ENVVAR))

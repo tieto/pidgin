@@ -1004,6 +1004,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		(proxy_info = gaim_account_get_proxy_info(dialog->account)) != NULL) {
 
 		GaimProxyType type = gaim_proxy_info_get_type(proxy_info);
+		const char *value;
+		int int_val;
 
 		/* Hah! */
 		/* I dunno what you're laughing about, fuzz ball. */
@@ -1012,30 +1014,26 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				type + 1);
 
 		if (type == GAIM_PROXY_USE_GLOBAL || type == GAIM_PROXY_NONE ||
-			type == GAIM_PROXY_USE_ENVVAR) {
+				type == GAIM_PROXY_USE_ENVVAR)
 			gtk_widget_hide_all(vbox2);
+
+
+		if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
+
+		if ((int_val = gaim_proxy_info_get_port(proxy_info)) != 0) {
+			char buf[11];
+
+			g_snprintf(buf, sizeof(buf), "%d", int_val);
+
+			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_port_entry), buf);
 		}
-		else {
-			const char *value;
-			int int_val;
 
-			if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
-				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
+		if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_user_entry), value);
 
-			if ((int_val = gaim_proxy_info_get_port(proxy_info)) != 0) {
-				char buf[32];
-
-				g_snprintf(buf, sizeof(buf), "%d", int_val);
-
-				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_port_entry), buf);
-			}
-
-			if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
-				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_user_entry), value);
-
-			if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
-				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
-		}
+		if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
+			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
 	}
 	else {
 		dialog->new_proxy_type = GAIM_PROXY_USE_GLOBAL;
@@ -1258,53 +1256,60 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* Set the proxy stuff. */
-	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL) {
+	proxy_info = gaim_account_get_proxy_info(account);
+
+	/* Create the proxy info if it doesn't exist. */
+	if (proxy_info == NULL) {
+		proxy_info = gaim_proxy_info_new();
+		gaim_account_set_proxy_info(account, proxy_info);
+	}
+
+	/* Set the proxy info type. */
+	gaim_proxy_info_set_type(proxy_info, dialog->new_proxy_type);
+
+	/* Host */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_host_entry));
+
+	if (*value != '\0')
+		gaim_proxy_info_set_host(proxy_info, value);
+	else
+		gaim_proxy_info_set_host(proxy_info, NULL);
+
+	/* Port */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_port_entry));
+
+	if (*value != '\0')
+		gaim_proxy_info_set_port(proxy_info, atoi(value));
+	else
+		gaim_proxy_info_set_port(proxy_info, 0);
+
+	/* Username */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_user_entry));
+
+	if (*value != '\0')
+		gaim_proxy_info_set_username(proxy_info, value);
+	else
+		gaim_proxy_info_set_username(proxy_info, NULL);
+
+	/* Password */
+	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_pass_entry));
+
+	if (*value != '\0')
+		gaim_proxy_info_set_password(proxy_info, value);
+	else
+		gaim_proxy_info_set_password(proxy_info, NULL);
+
+	/* If there are no values set then proxy_info NULL */
+	if ((gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_GLOBAL) &&
+		(gaim_proxy_info_get_host(proxy_info) == NULL) &&
+		(gaim_proxy_info_get_port(proxy_info) == 0) &&
+		(gaim_proxy_info_get_username(proxy_info) == NULL) &&
+		(gaim_proxy_info_get_password(proxy_info) == NULL))
+	{
 		gaim_account_set_proxy_info(account, NULL);
+		proxy_info = NULL;
 	}
-	else {
-		proxy_info = gaim_account_get_proxy_info(account);
 
-		/* Create the proxy info if it doesn't exist. */
-		if (proxy_info == NULL) {
-			proxy_info = gaim_proxy_info_new();
-			gaim_account_set_proxy_info(account, proxy_info);
-		}
-
-		/* Set the proxy info type. */
-		gaim_proxy_info_set_type(proxy_info, dialog->new_proxy_type);
-
-		/* Host */
-		value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_host_entry));
-
-		if (*value != '\0')
-			gaim_proxy_info_set_host(proxy_info, value);
-		else
-			gaim_proxy_info_set_host(proxy_info, NULL);
-
-		/* Port */
-		value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_port_entry));
-
-		if (*value != '\0')
-			gaim_proxy_info_set_port(proxy_info, atoi(value));
-		else
-			gaim_proxy_info_set_port(proxy_info, 0);
-
-		/* Username */
-		value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_user_entry));
-
-		if (*value != '\0')
-			gaim_proxy_info_set_username(proxy_info, value);
-		else
-			gaim_proxy_info_set_username(proxy_info, NULL);
-
-		/* Password */
-		value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_pass_entry));
-
-		if (*value != '\0')
-			gaim_proxy_info_set_password(proxy_info, value);
-		else
-			gaim_proxy_info_set_password(proxy_info, NULL);
-	}
 
 	/* We no longer need the data from the dialog window */
 	account_win_destroy_cb(NULL, NULL, dialog);

@@ -1685,7 +1685,7 @@ connection_host_resolved(GSList *hosts, gpointer data,
 GaimProxyInfo *
 gaim_proxy_get_setup(GaimAccount *account)
 {
-	GaimProxyInfo *gpi;
+	GaimProxyInfo *gpi = NULL;
 	const gchar *tmp;
 
 	/* This is used as a fallback so we don't overwrite the selected proxy type */
@@ -1695,12 +1695,17 @@ gaim_proxy_get_setup(GaimAccount *account)
 		gaim_proxy_info_set_type(tmp_none_proxy_info, GAIM_PROXY_NONE);
 	}
 
-	if (account && gaim_account_get_proxy_info(account) != NULL)
+	if (account && gaim_account_get_proxy_info(account) != NULL) {
 		gpi = gaim_account_get_proxy_info(account);
-	else if (gaim_running_gnome())
-		gpi = gaim_gnome_proxy_get_info();
-	else
-		gpi = gaim_global_proxy_get_info();
+		if (gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_GLOBAL)
+			gpi = NULL;
+	}
+	if (gpi == NULL) {
+		if (gaim_running_gnome())
+			gpi = gaim_gnome_proxy_get_info();
+		else
+			gpi = gaim_global_proxy_get_info();
+	}
 
 	if (gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_ENVVAR) {
 #ifdef _WIN32
@@ -1733,6 +1738,18 @@ gaim_proxy_get_setup(GaimAccount *account)
 					proxyport = atoi(tmp);
 
 				gaim_proxy_info_set_port(gpi, proxyport);
+
+				/* XXX: Do we want to skip this step if user/password were part of url? */
+				if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
+					(tmp = g_getenv("http_proxy_user")) != NULL ||
+					(tmp = g_getenv("HTTPPROXYUSER")) != NULL)
+					gaim_proxy_info_set_username(gpi, tmp);
+
+				if ((tmp = g_getenv("HTTP_PROXY_PASS")) != NULL ||
+					(tmp = g_getenv("http_proxy_pass")) != NULL ||
+					(tmp = g_getenv("HTTPPROXYPASS")) != NULL)
+					gaim_proxy_info_set_password(gpi, tmp);
+
 			}
 		} else {
 			/* no proxy environment variable found, don't use a proxy */
@@ -1740,16 +1757,6 @@ gaim_proxy_get_setup(GaimAccount *account)
 			gpi = tmp_none_proxy_info;
 		}
 
-		/* XXX: Do we want to skip this step if user/password were part of url? */
-		if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
-			(tmp = g_getenv("http_proxy_user")) != NULL ||
-			(tmp = g_getenv("HTTPPROXYUSER")) != NULL)
-			gaim_proxy_info_set_username(gpi, tmp);
-
-		if ((tmp = g_getenv("HTTP_PROXY_PASS")) != NULL ||
-			(tmp = g_getenv("http_proxy_pass")) != NULL ||
-			(tmp = g_getenv("HTTPPROXYPASS")) != NULL)
-			gaim_proxy_info_set_password(gpi, tmp);
 	}
 
 	return gpi;

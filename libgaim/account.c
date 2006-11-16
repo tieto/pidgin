@@ -269,34 +269,29 @@ proxy_settings_to_xmlnode(GaimProxyInfo *proxy_info)
 			 proxy_type == GAIM_PROXY_SOCKS5     ? "socks5" :
 			 proxy_type == GAIM_PROXY_USE_ENVVAR ? "envvar" : "unknown"), -1);
 
-	if (proxy_type != GAIM_PROXY_USE_GLOBAL &&
-		proxy_type != GAIM_PROXY_NONE &&
-		proxy_type != GAIM_PROXY_USE_ENVVAR)
+	if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
 	{
-		if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
-		{
-			child = xmlnode_new_child(node, "host");
-			xmlnode_insert_data(child, value, -1);
-		}
+		child = xmlnode_new_child(node, "host");
+		xmlnode_insert_data(child, value, -1);
+	}
 
-		if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
-		{
-			snprintf(buf, sizeof(buf), "%d", int_value);
-			child = xmlnode_new_child(node, "port");
-			xmlnode_insert_data(child, buf, -1);
-		}
+	if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
+	{
+		snprintf(buf, sizeof(buf), "%d", int_value);
+		child = xmlnode_new_child(node, "port");
+		xmlnode_insert_data(child, buf, -1);
+	}
 
-		if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
-		{
-			child = xmlnode_new_child(node, "username");
-			xmlnode_insert_data(child, value, -1);
-		}
+	if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
+	{
+		child = xmlnode_new_child(node, "username");
+		xmlnode_insert_data(child, value, -1);
+	}
 
-		if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
-		{
-			child = xmlnode_new_child(node, "password");
-			xmlnode_insert_data(child, value, -1);
-		}
+	if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
+	{
+		child = xmlnode_new_child(node, "password");
+		xmlnode_insert_data(child, value, -1);
 	}
 
 	return node;
@@ -657,7 +652,7 @@ parse_proxy_info(xmlnode *node, GaimAccount *account)
 		g_free(data);
 	}
 
-	/* If there are no values set then proxy_infourn NULL */
+	/* If there are no values set then proxy_info NULL */
 	if ((gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_GLOBAL) &&
 		(gaim_proxy_info_get_host(proxy_info) == NULL) &&
 		(gaim_proxy_info_get_port(proxy_info) == 0) &&
@@ -1031,7 +1026,7 @@ gaim_account_disconnect(GaimAccount *account)
 	gc = gaim_account_get_connection(account);
 	gaim_connection_destroy(gc);
 	if (!gaim_account_get_remember_password(account))
-	  gaim_account_set_password(account, NULL);
+		gaim_account_set_password(account, NULL);
 	gaim_account_set_connection(account, NULL);
 
 	account->disconnecting = FALSE;
