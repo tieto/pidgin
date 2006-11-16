@@ -561,7 +561,6 @@ void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 			int expire = gaim_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
 			const char *oldurl = gaim_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
 
-			g_string_set_size(s, st.st_size);
 			len = fread(s->str, 1, st.st_size, file);
 			fclose(file);
 			g_string_set_size(s, len);
