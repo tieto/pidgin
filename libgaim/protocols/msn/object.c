@@ -22,6 +22,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "object.h"
+#include "debug.h"
 
 #define GET_STRING_TAG(field, id) \
 	if ((tag = strstr(str, id "=\"")) != NULL) \
@@ -94,6 +95,7 @@ msn_object_new_from_string(const char *str)
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
 			|| obj->location == NULL || obj->friendly == NULL
 			|| obj->sha1d == NULL || obj->sha1c == NULL) {
+		gaim_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
 		msn_object_destroy(obj);
 		obj = NULL;
 	}
@@ -106,23 +108,12 @@ msn_object_destroy(MsnObject *obj)
 {
 	g_return_if_fail(obj != NULL);
 
-	if (obj->creator != NULL)
-		g_free(obj->creator);
-
-	if (obj->location != NULL)
-		g_free(obj->location);
-
-	if (obj->real_location != NULL)
-		g_free(obj->real_location);
-
-	if (obj->friendly != NULL)
-		g_free(obj->friendly);
-
-	if (obj->sha1d != NULL)
-		g_free(obj->sha1d);
-
-	if (obj->sha1c != NULL)
-		g_free(obj->sha1c);
+	g_free(obj->creator);
+	g_free(obj->location);
+	g_free(obj->real_location);
+	g_free(obj->friendly);
+	g_free(obj->sha1d);
+	g_free(obj->sha1c);
 
 	if (obj->local)
 		local_objs = g_list_remove(local_objs, obj);

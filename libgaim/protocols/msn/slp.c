@@ -819,6 +819,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		smile = tokens[tok];
 		obj = msn_object_new_from_string(gaim_url_decode(tokens[tok + 1]));
 
+		if (obj == NULL)
+			break;
+
 		who = msn_object_get_creator(obj);
 		sha1c = msn_object_get_sha1c(obj);
 

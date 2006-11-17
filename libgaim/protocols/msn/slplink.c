@@ -147,6 +147,9 @@ msn_session_get_slplink(MsnSession *session, const char *username)
 {
 	MsnSlpLink *slplink;
 
+	g_return_val_if_fail(session != NULL, NULL);
+	g_return_val_if_fail(username != NULL, NULL);
+
 	slplink = msn_session_find_slplink(session, username);
 
 	if (slplink == NULL)
