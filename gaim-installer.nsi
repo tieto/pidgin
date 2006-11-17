@@ -49,7 +49,6 @@ SetDateSave on
 !insertmacro VersionCompare
 
 !include "TextFunc.nsh"
-!insertmacro ConfigRead
 !insertmacro ConfigWriteS
 
 ;--------------------------------
@@ -487,7 +486,7 @@ SectionEnd ; end of default Gaim section
 ;--------------------------------
 ;Shortcuts
 
-SubSection /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
+SectionGroup /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
   Section /o $(GAIM_DESKTOP_SHORTCUT_SECTION_TITLE) SecDesktopShortcut
     SetOverwrite on
     CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
@@ -499,12 +498,12 @@ SubSection /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
     CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
     SetOverwrite off
   SectionEnd
-SubSectionEnd
+SectionGroupEnd
 
 ;--------------------------------
 ;GTK+ Themes
 
-SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
+SectionGroup /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
   Section /o $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
     Push "Raleigh"
     Call WriteGtkThemeConfig
@@ -524,12 +523,12 @@ SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
     Push "Lighthouseblue"
     Call WriteGtkThemeConfig
   SectionEnd
-SubSectionEnd
+SectionGroupEnd
 
 ;--------------------------------
 ;Spell Checking
 
-SubSection /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+SectionGroup /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
   Section /o $(GAIM_SPELLCHECK_BRETON) SecSpellCheckBreton
     Push ${SecSpellCheckBreton}
     Call InstallAspellAndDict
@@ -618,7 +617,7 @@ SubSection /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
     Push ${SecSpellCheckUkrainian}
     Call InstallAspellAndDict
   SectionEnd
-SubSectionEnd
+SectionGroupEnd
 
 ;--------------------------------
 ;Uninstaller Section
@@ -822,25 +821,37 @@ SectionEnd ; end of uninstall section
 ;Functions
 
 Function WriteGtkThemeConfig
-Exch $0
-Push $1
+  Exch $0
+  Push $1
+  Push $2
+  Push $3
 
-ClearErrors
-${ConfigRead} "$PROFILE\.gtkrc-2.0" "gtk-theme-name =" $1
-IfErrors new_file
-${ConfigWriteS} "$PROFILE\.gtkrc-2.0" "gtk-theme-name =" "$\"$0$\"" $1
-Goto done
+  Call CheckUserInstallRights
+  Pop $2
+  StrCmp $2 "HKLM" 0 user_theme
 
-new_file:
-ClearErrors
-FileOpen $1 "$PROFILE\.gtkrc-2.0" w
-FileWrite $1 "gtk-theme-name = $\"$0$\""
-FileClose $1
-Goto done
+  ; Global Theme
+  ReadRegStr $2 HKLM ${GTK_REG_KEY} "Path"
+  StrCpy $3 "$2\etc\gtk-2.0\gtkrc"
+  Goto update_theme
+  user_theme:
+  StrCpy $3 "$PROFILE\.gtkrc-2.0"
 
-done:
-Pop $1
-Pop $0
+  update_theme:
+  IfFileExists $3 0 new_file
+  ${ConfigWriteS} $3 "gtk-theme-name =" " $\"$0$\"" $1
+  Goto done
+
+  new_file:
+  FileOpen $1 $3 w
+  FileWrite $1 "gtk-theme-name = $\"$0$\""
+  FileClose $1
+
+  done:
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
 FunctionEnd
 
 !macro CheckUserInstallRightsMacro UN
@@ -1177,7 +1188,7 @@ Function .onSelChange
   Push $1
   Push $2
 
-  !insertmacro StartRadioButtons $GTK_THEME_SEL
+  !insertmacro StartRadioButtonsUnselectable $GTK_THEME_SEL
     !insertmacro RadioButton ${SecGtkNone}
     !insertmacro RadioButton ${SecGtkWimp}
     !insertmacro RadioButton ${SecGtkBluecurve}
