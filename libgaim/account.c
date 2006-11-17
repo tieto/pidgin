@@ -697,19 +697,6 @@ parse_account(xmlnode *node)
 		return NULL;
 	}
 
-
-	/* HACK BY SEANEGAN: special case prpl-oscar to either prpl-icq
-	 * prpl-aim for users upgrading to 2.0.0. This can probably
-	 * be removed after a while
-	 */
-	if (!strcmp(protocol_id, "prpl-oscar")) {
-		g_free(protocol_id);
-		if (isdigit(name[0]))
-			protocol_id = g_strdup("prpl-icq");
-		else 
-			protocol_id = g_strdup("prpl-aim");
-	}
-
 	ret = gaim_account_new(name, protocol_id);
 	g_free(name);
 	g_free(protocol_id);
@@ -1663,7 +1650,15 @@ const char *
 gaim_account_get_protocol_id(const GaimAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
-
+	/*
+	 * HACK by Seanegan
+	 */
+	if (!strcmp(account->protocol_id, "prpl-oscar")) {
+		if (isdigit(account->username[0]))
+			return "prpl-icq";
+		else
+			return "prpl-aim";
+	}
 	return account->protocol_id;
 }
 

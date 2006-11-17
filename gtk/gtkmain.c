@@ -726,6 +726,22 @@ int main(int argc, char *argv[])
 	/* TODO: Move pounces loading into gaim_pounces_init() */
 	gaim_pounces_load();
 
+	
+	/* HACK BY SEANEGAN:
+	 * We've renamed prpl-oscar to prpl-aim and prpl-icq, accordingly.
+	 * Let's do that change right here... after everything's loaded, but
+	 * before anything has happened
+	 */
+	for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+		GaimAccount *account = accounts->data;
+		if (!strcmp(gaim_account_get_protocol_id(account), "prpl-oscar")) {
+			if (isdigit(gaim_account_get_username(account)))
+				gaim_account_set_protocol_id(account, "prpl-icq");
+			else 
+				gaim_account_set_protocol_id(account, "prpl-aim");
+		}
+	}
+	
 	ui_main();
 
 #ifdef USE_SM
