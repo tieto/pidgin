@@ -72,6 +72,7 @@ typedef struct
 
 	GtkWidget *modify_button;
 	GtkWidget *delete_button;
+	GtkWidget *notebook;
 
 	GtkListStore *model;
 	GtkTreeIter drag_iter;
@@ -1601,6 +1602,9 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 	/* Remove the account from the GtkListStore */
 	if (accounts_window_find_account_in_treemodel(&iter, account))
 		gtk_list_store_remove(accounts_window->model, &iter);
+	
+	if (gaim_accounts_get_all() == NULL)
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 0);
 }
 
 static void
@@ -1969,19 +1973,25 @@ add_account_to_liststore(GaimAccount *account, gpointer user_data)
 		return;
 
 	gtk_list_store_append(accounts_window->model, &iter);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook),1);
 
 	set_account(accounts_window->model, &iter, account);
 }
 
-static void
+static gboolean
 populate_accounts_list(AccountsWindow *dialog)
 {
 	GList *l;
-
+	gboolean ret = FALSE;
+	
 	gtk_list_store_clear(dialog->model);
 
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+		ret = TRUE;
 		add_account_to_liststore((GaimAccount *)l->data, NULL);
+	}
+
+	return ret;
 }
 
 #if !GTK_CHECK_VERSION(2,2,0)
@@ -2045,10 +2055,41 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 static GtkWidget *
 create_accounts_list(AccountsWindow *dialog)
 {
+	GtkWidget *frame;
 	GtkWidget *sw;
+	GtkWidget *label;
 	GtkWidget *treeview;
+	GdkColor color;
 	GtkTreeSelection *sel;
 	GtkTargetEntry gte[] = {{"GAIM_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+
+	accounts_window->notebook = gtk_notebook_new();
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(accounts_window->notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(accounts_window->notebook), FALSE);
+	gtk_container_add(GTK_CONTAINER(frame), accounts_window->notebook);
+
+       	
+	/* Create a helpful first-time-use label */
+       	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _(
+						 "<span size='larger' weight='bold'>Welcome to Gaim!</span>\n\n"
+						 
+						 "You have no IM accounts configured. To start connecting with Gaim "
+						 "press the <b>Add</b> button below and configure your first "
+						 "account. If you want Gaim to connect to multiple IM accounts, "
+						 "press <b>Add</b> again to configure them all.\n\n"
+						 
+						 "You can come back to this window to add, edit, or remove "
+						 "accounts from <b>Accounts \342\207\250 Add/Edit</b> in the Buddy "
+						 "List window"));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_widget_show(label);
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook), label, NULL);
 
 	/* Create the scrolled window. */
 	sw = gtk_scrolled_window_new(0, 0);
@@ -2056,7 +2097,8 @@ create_accounts_list(AccountsWindow *dialog)
 					GTK_POLICY_AUTOMATIC,
 					GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-					GTK_SHADOW_IN);
+					GTK_SHADOW_NONE);
+	gtk_notebook_append_page(GTK_NOTEBOOK(accounts_window->notebook), sw, NULL);
 	gtk_widget_show(sw);
 
 	/* Create the list model. */
@@ -2084,11 +2126,13 @@ create_accounts_list(AccountsWindow *dialog)
 					 G_CALLBACK(account_treeview_double_click_cb), dialog);
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
-	gtk_widget_show(treeview);
 
 	add_columns(treeview, dialog);
 
-	populate_accounts_list(dialog);
+	if (populate_accounts_list(dialog))
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 1);
+	else 
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 0);
 
 	/* Setup DND. I wanna be an orc! */
 	gtk_tree_view_enable_model_drag_source(
@@ -2102,8 +2146,9 @@ create_accounts_list(AccountsWindow *dialog)
 					 G_CALLBACK(drag_data_received_cb), dialog);
 	g_signal_connect(G_OBJECT(treeview), "drag-data-get",
 					 G_CALLBACK(drag_data_get_cb), dialog);
-
-	return sw;
+	
+	gtk_widget_show_all(frame);
+	return frame;
 }
 
 static void
