@@ -120,9 +120,7 @@ VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
 ;--------------------------------
 ;Pages
 
-!ifndef WITH_GTK
   !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
-!endif
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"./COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
@@ -831,7 +829,9 @@ Function WriteGtkThemeConfig
   StrCmp $2 "HKLM" 0 user_theme
 
   ; Global Theme
+  ClearErrors
   ReadRegStr $2 HKLM ${GTK_REG_KEY} "Path"
+  IfErrors user_theme
   StrCpy $3 "$2\etc\gtk-2.0\gtkrc"
   Goto update_theme
   user_theme:
@@ -1227,24 +1227,56 @@ FunctionEnd
 
 ; Page enter and exit functions..
 
-!ifndef WITH_GTK
 Function preWelcomePage
+  Push R0
+
+!ifndef WITH_GTK
   ; If this installer dosn't have GTK, check whether we need it.
   ; We do this here an not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
-    Push $R0
+  Call DoWeNeedGtk
+  Pop $R0
+  Pop $GTK_FOLDER
+
+  IntCmp $R0 1 done done
+  MessageBox MB_OK $(GTK_INSTALLER_NEEDED) /SD IDOK
+  Quit
+
+  done:
+
+!else
+  Push R1
+
+  ; If on Win95/98/ME warn them that the GTK+ version wont work
+  Call GetWindowsVersion
+  Pop $R1
+  StrCmp $R1 "95" win_ver_bad
+  StrCmp $R1 "98" win_ver_bad
+  StrCmp $R1 "ME" win_ver_bad
+  Goto done
+
+  win_ver_bad:
+    !insertmacro UnselectSection ${SecGtk}
+    !insertmacro SetSectionFlag ${SecGtkNone} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkNone}
+    !insertmacro SetSectionFlag ${SecGtkWimp} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkWimp}
+    !insertmacro SetSectionFlag ${SecGtkBluecurve} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkBluecurve}
+    !insertmacro SetSectionFlag ${SecGtkLighthouseblue} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkLighthouseblue}
+    MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
     Call DoWeNeedGtk
     Pop $R0
-    Pop $GTK_FOLDER
+    Pop $R1
+    IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
+    Quit
 
-    IntCmp $R0 1 have_gtk have_gtk
-
-      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) /SD IDOK
-      Quit
-    have_gtk:
-    Pop $R0
-FunctionEnd
+  done:
+  Pop $R1
 !endif
+  Pop $R0
+FunctionEnd
 
 !ifdef WITH_GTK
 Function preGtkDirPage
@@ -1307,7 +1339,7 @@ FunctionEnd
 ;
 ; Returns on top of stack
 ;
-; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
+; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
 ; or
 ; '' (Unknown Windows Version)
 ;
@@ -1361,7 +1393,8 @@ Function GetWindowsVersion
 
     StrCmp $R1 '5.0' lbl_winnt_2000
     StrCmp $R1 '5.1' lbl_winnt_XP
-    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+    StrCmp $R1 '5.2' lbl_winnt_2003
+    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
 
   lbl_winnt_x:
     StrCpy $R0 "NT $R0" 6
@@ -1377,6 +1410,10 @@ Function GetWindowsVersion
 
   lbl_winnt_2003:
     Strcpy $R0 '2003'
+  Goto lbl_done
+
+  lbl_winnt_vista:
+    Strcpy $R0 'Vista'
   Goto lbl_done
 
   lbl_error:

@@ -44,6 +44,7 @@
 
 ; GTK+ Directory Page
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_UPGRADE_PROMPT			"An old version of the GTK+ runtime was found. Do you wish to upgrade?$\rNote: Gaim may not work unless you do."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WINDOWS_INCOMPATIBLE			"Windows 95/98/Me are incompatible with GTK+ 2.8.0 or newer.  GTK+ ${GTK_INSTALL_VERSION} will not be installed.$\rIf you don't have GTK+ ${GTK_MIN_VERSION} or newer already installed, installation will now abort."
 
 ; Installer Finish Page
 !insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_FINISH_VISIT_WEB_SITE		"Visit the Windows Gaim Web Page"
