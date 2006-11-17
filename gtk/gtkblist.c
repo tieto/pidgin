@@ -5965,8 +5965,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 		menuitem = l->data;
 
 		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Add\\/Edit")))
-			gtk_container_remove(GTK_CONTAINER(accountmenu),
-			                     menuitem);
+			gtk_widget_destroy(menuitem);
 	}
 
 	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
