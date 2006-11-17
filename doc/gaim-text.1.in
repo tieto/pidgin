@@ -227,7 +227,11 @@ c-u = delete-start
 .br
 c-k = delete-end
 .br
+c-b = cursor-prev
+.br
 left = cursor-prev
+.br
+c-f = cursor-next
 .br
 right = cursor-next
 .br
