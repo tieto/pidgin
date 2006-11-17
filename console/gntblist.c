@@ -1006,6 +1006,8 @@ static void
 gg_blist_toggle_tag_buddy(GaimBlistNode *node)
 {
 	GList *iter;
+	if (GAIM_BLIST_NODE_IS_CHAT(node) || GAIM_BLIST_NODE_IS_GROUP(node))
+		return;
 	if (ggblist->tagged && (iter = g_list_find(ggblist->tagged, node)) != NULL) {
 		ggblist->tagged = g_list_delete_link(ggblist->tagged, iter);
 	} else {
@@ -1444,6 +1446,8 @@ reset_blist_window(GntWidget *window, gpointer null)
 	if (ggblist->typing)
 		g_source_remove(ggblist->typing);
 	remove_peripherals(ggblist);
+	if (ggblist->tagged)
+		g_list_free(ggblist->tagged);
 	g_free(ggblist);
 	ggblist = NULL;
 }
