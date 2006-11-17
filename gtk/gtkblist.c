@@ -560,7 +560,7 @@ static void
 rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 {
 	GaimConnection *gc;
-	GList *list = NULL, *tmp = NULL;
+	GList *list = NULL, *tmp;
 	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
@@ -569,11 +569,8 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 	gc = gaim_account_get_connection(data->account);
 
-	while (GTK_BOX(data->entries_box)->children)
-	{
-		gtk_container_remove(GTK_CONTAINER(data->entries_box),
-			((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
-	}
+	while ((tmp = gtk_container_get_children(GTK_CONTAINER(data->entries_box))))
+		gtk_widget_destroy(tmp->data);
 
 	g_list_free(data->entries);
 	data->entries = NULL;
@@ -5111,7 +5108,7 @@ static void
 rebuild_addchat_entries(GaimGtkAddChatData *data)
 {
 	GaimConnection *gc;
-	GList *list = NULL, *tmp = NULL;
+	GList *list = NULL, *tmp;
 	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
@@ -5120,11 +5117,8 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 
 	gc = gaim_account_get_connection(data->account);
 
-	while (GTK_BOX(data->entries_box)->children)
-	{
-		gtk_container_remove(GTK_CONTAINER(data->entries_box),
-			((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
-	}
+	while ((tmp = gtk_container_get_children(GTK_CONTAINER(data->entries_box))))
+		gtk_widget_destroy(tmp->data);
 
 	g_list_free(data->entries);
 
@@ -6126,17 +6120,14 @@ gaim_gtk_blist_update_plugin_actions(void)
 
 		submenu = l->data;
 
-		menuitems = gtk_container_get_children(GTK_CONTAINER(submenu));
-		while (menuitems != NULL)
+		while ((menuitems = gtk_container_get_children(GTK_CONTAINER(submenu))) != NULL)
 		{
-			GaimPluginAction *action;
 			menuitem = menuitems->data;
-			action = g_object_get_data(G_OBJECT(menuitem), "plugin_action");
-			g_free(action);
-			menuitems = g_list_delete_link(menuitems, menuitems);
+			g_free(g_object_get_data(G_OBJECT(menuitem), "plugin_action"));
+			gtk_widget_destroy(menuitem);
 		}
 
-		gtk_container_remove(GTK_CONTAINER(pluginmenu), GTK_WIDGET(submenu));
+		gtk_widget_destroy(GTK_WIDGET(submenu));
 	}
 	g_list_free(plugin_submenus);
 	plugin_submenus = NULL;
