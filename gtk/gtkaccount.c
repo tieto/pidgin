@@ -2059,7 +2059,6 @@ create_accounts_list(AccountsWindow *dialog)
 	GtkWidget *sw;
 	GtkWidget *label;
 	GtkWidget *treeview;
-	GdkColor color;
 	GtkTreeSelection *sel;
 	GtkTargetEntry gte[] = {{"GAIM_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
 
