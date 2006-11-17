@@ -154,13 +154,9 @@ version 2.0.0:
 	* gaim_connection_register
 	* gaim_accounts_auto_login
 	* gaim_find_conversation, use gaim_find_conversation_with_account instead
-	* serv_login
-	* serv_close
-	* serv_finish_login
 	* gaim_chat_get_display_name
 	* gaim_conversation_set_history, gaim_conversation_get_history, and
 	  GaimConversation->history.  Use gtk_imhtml_get_markup instead.
-	* serv_rename_group
 	* set_gaim_user_dir to gaim_util_set_user_dir
 	* create_prpl_icon to gaim_gtk_create_prpl_icon
 	* Window flashing support in the core: gaim_conv_window_flash, and flash UI
@@ -174,9 +170,14 @@ version 2.0.0:
 	* gaim_debug_vargs()
 	* serv_add_buddy(); use gaim_account_add_buddy() instead
 	* serv_add_buddies(); use gaim_account_add_buddies() instead
+	* serv_change_passwd(); use gaim_account_change_password() instead
+	* serv_close()
+	* serv_finish_login()
+	* serv_login()
 	* serv_remove_buddy(); use gaim_account_remove_buddy() instead
 	* serv_remove_buddies(); use gaim_account_remove_buddies() instead
-	* serv_change_passwd(); use gaim_account_change_password() instead
+	* serv_rename_group()
+	* serv_set_buddyicon(): use gaim_account_set_buddy_icon() instead
 	* serv_touch_idle(): use gaim_gtk_check_idle() instead
 	* GaimGtkImPane->a_virgin
 	* gaim_str_strip_cr(); use gaim_str_strip_char(str, '\r') instead
