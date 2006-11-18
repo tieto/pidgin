@@ -1,11 +1,14 @@
 monodir=$(libdir)/gaim
 mono_sources = \
-	GaimPlugin.cs \
-	Debug.cs \
+	BlistNode.cs \
 	BuddyList.cs \
 	Buddy.cs \
-	Signal.cs \
+	Contact.cs \
+	Debug.cs \
 	Event.cs \
+	GaimPlugin.cs \
+	Group.cs \
+	Signal.cs \
 	Status.cs
 
 EXTRA_DIST = $(mono_sources)
