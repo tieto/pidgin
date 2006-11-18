@@ -189,15 +189,26 @@ def sip(uri):
 
 def xmpp(uri):
     protocol = "prpl-jabber"
-    match = re.match(r"^xmpp:(//([^/?#]*))?(/?([^?#]*))(\?([^;#]*)(;([^#]*))?)?(#(.*))?", uri)
+    match = re.match(r"^xmpp:((//)?([^/?#]*))?(/?([^?#]*))(\?([^;#]*)(;([^#]*))?)?(#(.*))?", uri)
     if not match:
         print "Invalid xmpp URI: %s" % uri
         return
 
-    accountname = urllib.unquote_plus(match.group(2)) or ""
-    screenname = urllib.unquote_plus(match.group(4))
-    command = urllib.unquote_plus(match.group(6))
-    paramstring = match.group(8)
+    tmp = match.group(3)
+    if (tmp):
+        accountname = urllib.unquote_plus(tmp)
+    else:
+        accountname = ""
+
+    screenname = urllib.unquote_plus(match.group(5))
+
+    tmp = match.group(7)
+    if (tmp):
+        command = urllib.unquote_plus(tmp)
+    else:
+        command = ""
+
+    paramstring = match.group(9)
     params = {}
     if paramstring:
         for param in paramstring.split(";"):
