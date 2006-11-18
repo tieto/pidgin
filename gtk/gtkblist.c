@@ -6115,20 +6115,7 @@ gaim_gtk_blist_update_plugin_actions(void)
 
 	/* Remove old plugin action submenus from the Tools menu */
 	for (l = plugin_submenus; l; l = l->next)
-	{
-		GList *menuitems;
-
-		submenu = l->data;
-
-		while ((menuitems = gtk_container_get_children(GTK_CONTAINER(submenu))) != NULL)
-		{
-			menuitem = menuitems->data;
-			g_free(g_object_get_data(G_OBJECT(menuitem), "plugin_action"));
-			gtk_widget_destroy(menuitem);
-		}
-
-		gtk_widget_destroy(GTK_WIDGET(submenu));
-	}
+		gtk_widget_destroy(GTK_WIDGET(l->data));
 	g_list_free(plugin_submenus);
 	plugin_submenus = NULL;
 

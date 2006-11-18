@@ -735,7 +735,7 @@ int main(int argc, char *argv[])
 	for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 		GaimAccount *account = accounts->data;
 		if (!strcmp(gaim_account_get_protocol_id(account), "prpl-oscar")) {
-			if (isdigit(gaim_account_get_username(account)))
+			if (isdigit(*gaim_account_get_username(account)))
 				gaim_account_set_protocol_id(account, "prpl-icq");
 			else 
 				gaim_account_set_protocol_id(account, "prpl-aim");
