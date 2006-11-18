@@ -182,9 +182,6 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 
 	account = gaim_pounce_get_pouncer(pounce);
 
-	if (gaim_account_is_disconnected(account))
-		return;
-
 	events = gaim_pounce_get_events(pounce);
 
 	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
@@ -462,8 +459,9 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	GPtrArray *sound_widgets;
 	GPtrArray *exec_widgets;
 
-	g_return_if_fail((cur_pounce != NULL) || (account != NULL) ||
-					 (gaim_connections_get_all() != NULL));
+	g_return_if_fail((cur_pounce != NULL) ||
+	                 (account != NULL) ||
+	                 (gaim_accounts_get_all() != NULL));
 
 	dialog = g_new0(GaimGtkPounceDialog, 1);
 
@@ -479,12 +477,18 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	}
 	else
 	{
+		GList *connections = gaim_connections_get_all();
 		GaimConnection *gc;
 
-		gc = (GaimConnection *)gaim_connections_get_all()->data;
+		if (connections != NULL)
+		{
+			gc = (GaimConnection *)connections->data;
+			dialog->account = gaim_connection_get_account(gc);
+		}
+		else
+			dialog->account = gaim_accounts_get_all()->data;
 
 		dialog->pounce  = NULL;
-		dialog->account = gaim_connection_get_account(gc);
 	}
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -527,7 +531,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_size_group_add_widget(sg, label);
 
 	dialog->account_menu =
-		gaim_gtk_account_option_menu_new(dialog->account, FALSE,
+		gaim_gtk_account_option_menu_new(dialog->account, TRUE,
 										 G_CALLBACK(pounce_choose_cb),
 										 NULL, dialog);
 
@@ -1339,7 +1343,7 @@ gaim_gtk_pounces_manager_show(void)
 	/* Add button */
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(button, (gaim_connections_get_all() != NULL));
+	gtk_widget_set_sensitive(button, (gaim_accounts_get_all() != NULL));
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						pounces_manager, GAIM_CALLBACK(pounces_manager_connection_cb), button);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",

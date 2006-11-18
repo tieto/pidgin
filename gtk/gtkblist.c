@@ -3394,7 +3394,7 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 	gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounces"));
-	gtk_widget_set_sensitive(widget, (gaim_connections_get_all() != NULL));
+	gtk_widget_set_sensitive(widget, (gaim_accounts_get_all() != NULL));
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, (gaim_connections_get_all() != NULL));
