@@ -445,51 +445,173 @@ struct msn_logger_data {
 	GString *text;
 };
 
-static time_t msn_logger_parse_timestamp(xmlnode *message)
+/* This function is really confusing.  It makes baby rlaager cry...
+   In other news: "You lost a lot of blood but we found most of it."
+ */
+static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 {
+	const char *datetime;
+	static struct tm tm2;
+	time_t stamp;
 	const char *date;
 	const char *time;
-	struct tm tm;
+	int month;
+	int day;
+	int year;
+	int hour;
+	int min;
+	int sec;
 	char am_pm;
+	char *str;
+	static struct tm tm;
+	time_t t;
+	time_t diff;
 
-	g_return_val_if_fail(message != NULL, (time_t)0);
+#ifndef G_DISABLE_CHECKS
+	if (message != NULL)
+	{
+		*tm_out = NULL;
+
+		/* Trigger the usual warning. */
+		g_return_val_if_fail(message != NULL, (time_t)0);
+	}
+#endif
+
+	datetime = xmlnode_get_attrib(message, "DateTime");
+	if (!(datetime && *datetime))
+	{
+		gaim_debug_error("MSN log timestamp parse",
+		                 "Attribute missing: %s\n", "DateTime");
+		return (time_t)0;
+	}
+
+	stamp = gaim_str_to_time(datetime, TRUE, &tm2, NULL, NULL);
+#ifdef HAVE_TM_GMTOFF
+	tm2.tm_gmtoff = 0;
+#endif
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+	/* This is used in the place of a timezone abbreviation if the
+	 * offset is way off.  The user should never really see it, but
+	 * it's here just in case.  The parens are to make it clear it's
+	 * not a real timezone. */
+	tm2.tm_zone = _("(UTC)");
+#endif
+
 
 	date = xmlnode_get_attrib(message, "Date");
-	if (!(date && *date)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "MSN log timestamp parse",
-			"Attribute missing: %s\n", "Date");
-		return (time_t)0;
+	if (!(date && *date))
+	{
+		gaim_debug_error("MSN log timestamp parse",
+		                 "Attribute missing: %s\n", "Date");
+		*tm_out = &tm2;
+		return stamp;
 	}
 
 	time = xmlnode_get_attrib(message, "Time");
-	if (!(time && *time)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "MSN log timestamp parse",
-			"Attribute missing: %s\n", "Time");
-		return (time_t)0;
+	if (!(time && *time))
+	{
+		gaim_debug_error("MSN log timestamp parse",
+		                 "Attribute missing: %s\n", "Time");
+		*tm_out = &tm2;
+		return stamp;
 	}
 
-	if (sscanf(date, "%u/%u/%u", &tm.tm_mon, &tm.tm_mday, &tm.tm_year) != 3)
-		gaim_debug(GAIM_DEBUG_ERROR, "MSN log timestamp parse",
-			"%s parsing error\n", "Date");
-
-	if (sscanf(time, "%u:%u:%u %c", &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &am_pm) != 4)
-		gaim_debug(GAIM_DEBUG_ERROR, "MSN log timestamp parse",
-			"%s parsing error\n", "Time");
-
-	tm.tm_year -= 1900;
-	tm.tm_mon  -= 1;
-	if (am_pm == 'P') {
-		tm.tm_hour += 12;
-	} else if (tm.tm_hour == 12) {
-		/* 12 AM = 00 hr */
-		tm.tm_hour = 0;
+	if (sscanf(date, "%u/%u/%u", &month, &day, &year) != 3)
+	{
+		gaim_debug_error("MSN log timestamp parse",
+		                 "%s parsing error\n", "Date");
+		*tm_out = &tm2;
+		return stamp;
 	}
-	/* Let the C library deal with daylight savings time. */
-	tm.tm_isdst = -1;
+	else
+	{
+		if (month > 12)
+		{
+			int tmp = day;
+			day = month;
+			month = tmp;
+		}
+	}
 
-	return mktime(&tm);
+	if (sscanf(time, "%u:%u:%u %c", &hour, &min, &sec, &am_pm) != 4)
+	{
+		gaim_debug_error("MSN log timestamp parse",
+		                 "%s parsing error\n", "Time");
+		*tm_out = &tm2;
+		return stamp;
+	}
+
+        if (am_pm == 'P') {
+                hour += 12;
+        } else if (hour == 12) {
+                /* 12 AM = 00 hr */
+                hour = 0;
+        }
+
+	str = g_strdup_printf("%04i-%02i-%02iT%02i:%02i:%02i", year, month, day, hour, min, sec);
+	t = gaim_str_to_time(str, TRUE, &tm, NULL, NULL);
+
+
+	if (stamp > t)
+		diff = stamp - t;
+	else
+		diff = t - stamp;
+
+	if (diff > (14 * 60 * 60))
+	{
+		if (day <= 12)
+		{
+			/* Swap day & month variables, to see if it's a non-US date. */
+			g_free(str);
+			str = g_strdup_printf("%04i-%02i-%02iT%02i:%02i:%02i", year, month, day, hour, min, sec);
+			t = gaim_str_to_time(str, TRUE, &tm, NULL, NULL);
+
+			if (stamp > t)
+				diff = stamp - t;
+			else
+				diff = t - stamp;
+
+			if (diff > (14 * 60 * 60))
+			{
+				/* We got a time, it's not impossible, but
+				 * the diff is too large.  Display the UTC time. */
+				g_free(str);
+				*tm_out = &tm2;
+				return stamp;
+			}
+			else
+			{
+				/* Legal time */
+				/* Fall out */
+			}
+		}
+		else
+		{
+			/* We got a time, it's not impossible, but
+			 * the diff is too large.  Display the UTC time. */
+			g_free(str);
+			*tm_out = &tm2;
+			return stamp;
+		}
+	}
+
+	/* If we got here, the time is legal with a reasonable offset.
+	 * Let's find out if it's in our TZ. */
+	if (gaim_str_to_time(str, FALSE, &tm, NULL, NULL) == stamp)
+	{
+		g_free(str);
+		*tm_out = &tm;
+		return stamp;
+	}
+	g_free(str);
+
+	/* The time isn't in our TZ, but it's reasonable. */
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+	tm.tm_zone = "   ";
+#endif
+	*tm_out = &tm;
+	return stamp;
 }
-
 
 static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
@@ -725,6 +847,8 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			 * The session ID differs from the last message.
 			 * Thus, this is the start of a new conversation.
 			 */
+			struct tm *tm;
+			time_t stamp;
 			GaimLog *log;
 
 			data = g_new0(struct msn_logger_data, 1);
@@ -734,8 +858,9 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			data->text = NULL;
 			data->last_log = FALSE;
 
-			/* XXX: Look into this later... Should we pass in a struct tm? */
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, msn_logger_parse_timestamp(message), NULL);
+			stamp = msn_logger_parse_timestamp(message, &tm);
+
+			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, stamp, tm);
 			log->logger = msn_logger;
 			log->logger_data = data;
 
@@ -792,7 +917,7 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 		enum name_guesses name_guessed = NAME_GUESS_UNKNOWN;
 		const char *their_name;
 		time_t time_unix;
-		struct tm *tm_new;
+		struct tm *tm;
 		char *timestamp;
 		char *tmp;
 		const char *style;
@@ -961,11 +1086,10 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 			text = g_string_append(text, ";\">");
 		}
 
-		time_unix = msn_logger_parse_timestamp(message);
-		tm_new = localtime(&time_unix);
+		time_unix = msn_logger_parse_timestamp(message, &tm);
 
 		timestamp = g_strdup_printf("<font size=\"2\">(%02u:%02u:%02u)</font> ",
-				tm_new->tm_hour, tm_new->tm_min, tm_new->tm_sec);
+				tm->tm_hour, tm->tm_min, tm->tm_sec);
 		text = g_string_append(text, timestamp);
 		g_free(timestamp);
 
