@@ -106,6 +106,14 @@ static void select_first_log(GaimGtkLogViewer *lv)
 	gtk_tree_path_free(path);
 }
 
+static const char *log_get_date(GaimLog *log)
+{
+	if (log->tm)
+		return gaim_date_format_full(log->tm);
+	else
+		return gaim_date_format_full(localtime(&log->time));
+}
+
 static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 {
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
@@ -145,7 +153,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
-					   0, gaim_date_format_full(localtime(&log->time)),
+					   0, log_get_date(log),
 					   1, log, -1);
 		}
 		g_free(read);
@@ -217,14 +225,10 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 		char *title;
 		if (log->type == GAIM_LOG_CHAT)
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation in %s on %s</span>"),
-									log->name,
-									log->tm ? gaim_date_format_full(log->tm) :
-									          gaim_date_format_full(localtime(&log->time)));
+									log->name, log_get_date(log));
 		else
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation with %s on %s</span>"),
-									log->name,
-									log->tm ? gaim_date_format_full(log->tm) :
-									          gaim_date_format_full(localtime(&log->time)));
+									log->name, log_get_date(log));
 
 		gtk_label_set_markup(GTK_LABEL(viewer->label), title);
 		g_free(title);
@@ -285,7 +289,7 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 		/* sub */
 		gtk_tree_store_append(lv->treestore, &child, &toplevel);
 		gtk_tree_store_set(lv->treestore, &child,
-						   0, log->tm ? gaim_date_format_full(log->tm) : gaim_date_format_full(localtime(&log->time)),
+						   0, log_get_date(log),
 						   1, log,
 						   -1);
 
