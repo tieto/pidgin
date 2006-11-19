@@ -791,6 +791,10 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 				 * if we know the UTC offset already. */
 				t->tm_isdst = 0;
 			}
+			else if (utc)
+			{
+				t->tm_isdst = 0;
+			}
 
 			if (rest != NULL && *c != '\0')
 			{
