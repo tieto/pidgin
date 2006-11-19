@@ -1902,7 +1902,7 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	switch (err) {
 	case 3:
-		msg = g_strdup(_("Invalid username."));
+		msg = g_strdup(_("Invalid screen name."));
 		break;
 	case 13:
 		if (!yd->wm) {

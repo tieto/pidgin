@@ -46,19 +46,19 @@ msn_error_get_text(unsigned int type)
 			break;
 		case 206:
 			g_snprintf(msg, sizeof(msg),
-					   _("Fully Qualified Domain Name missing"));
+					   _("Fully qualified domain name missing"));
 			break;
 		case 207:
-			g_snprintf(msg, sizeof(msg), _("Already Logged In"));
+			g_snprintf(msg, sizeof(msg), _("Already logged in"));
 			break;
 		case 208:
-			g_snprintf(msg, sizeof(msg), _("Invalid Username"));
+			g_snprintf(msg, sizeof(msg), _("Invalid screen name"));
 			break;
 		case 209:
-			g_snprintf(msg, sizeof(msg), _("Invalid Friendly Name"));
+			g_snprintf(msg, sizeof(msg), _("Invalid friendly name"));
 			break;
 		case 210:
-			g_snprintf(msg, sizeof(msg), _("List Full"));
+			g_snprintf(msg, sizeof(msg), _("List full"));
 			break;
 		case 215:
 			g_snprintf(msg, sizeof(msg), _("Already there"));
@@ -99,7 +99,7 @@ msn_error_get_text(unsigned int type)
 			g_snprintf(msg, sizeof(msg), _("Switchboard failed"));
 			break;
 		case 281:
-			g_snprintf(msg, sizeof(msg), _("Notify Transfer failed"));
+			g_snprintf(msg, sizeof(msg), _("Notify transfer failed"));
 			break;
 
 		case 300:
@@ -113,7 +113,7 @@ msn_error_get_text(unsigned int type)
 			break;
 
 		case 500:
-			g_snprintf(msg, sizeof(msg), _("Service Temporarily Unavailable"));
+			g_snprintf(msg, sizeof(msg), _("Service temporarily unavailable"));
 			break;
 		case 501:
 			g_snprintf(msg, sizeof(msg), _("Database server error"));
@@ -138,7 +138,7 @@ msn_error_get_text(unsigned int type)
 			g_snprintf(msg, sizeof(msg), _("Server unavailable"));
 			break;
 		case 602:
-			g_snprintf(msg, sizeof(msg), _("Peer Notification server down"));
+			g_snprintf(msg, sizeof(msg), _("Peer notification server down"));
 			break;
 		case 603:
 			g_snprintf(msg, sizeof(msg), _("Database connect error"));

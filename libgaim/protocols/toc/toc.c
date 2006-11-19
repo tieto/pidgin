@@ -546,7 +546,7 @@ static char *show_error_message()
 			g_snprintf(buf, sizeof(buf), _("Failure unknown: %s."), w);
 			break;
 		case 980:
-			g_snprintf(buf, sizeof(buf), _("Incorrect nickname or password."));
+			g_snprintf(buf, sizeof(buf), _("Incorrect screen name or password."));
 			break;
 		case 981:
 			g_snprintf(buf, sizeof(buf), _("The service is temporarily unavailable."));

@@ -1644,7 +1644,7 @@ static void simple_login(GaimAccount *account)
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
+		gaim_connection_error(gc, _("SIP screen names may not contain whitespaces or @ symbols"));
 		return;
 	}
 
