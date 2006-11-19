@@ -1888,6 +1888,11 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 			else
 				gaim_account_set_status(status_box->account, id,
 										TRUE, NULL);
+
+			saved_status = gaim_savedstatus_get_current();
+			if (gaim_savedstatus_is_transient(saved_status))
+				gaim_savedstatus_set_substatus(saved_status, status_box->account,
+						status_type, message);
 		}
 	}
 
