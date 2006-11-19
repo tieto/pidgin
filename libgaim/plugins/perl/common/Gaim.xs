@@ -11,6 +11,7 @@ GAIM_PERL_BOOT_PROTO(Cipher);
 GAIM_PERL_BOOT_PROTO(Cmd);
 GAIM_PERL_BOOT_PROTO(Connection);
 GAIM_PERL_BOOT_PROTO(Conversation);
+GAIM_PERL_BOOT_PROTO(Core);
 GAIM_PERL_BOOT_PROTO(Debug);
 GAIM_PERL_BOOT_PROTO(Xfer);
 GAIM_PERL_BOOT_PROTO(ImgStore);
@@ -50,6 +51,7 @@ BOOT:
 	GAIM_PERL_BOOT(Cmd);
 	GAIM_PERL_BOOT(Connection);
 	GAIM_PERL_BOOT(Conversation);
+	GAIM_PERL_BOOT(Core);
 	GAIM_PERL_BOOT(Debug);
 	GAIM_PERL_BOOT(Xfer);
 	GAIM_PERL_BOOT(ImgStore);
@@ -88,3 +90,10 @@ void
 deinit()
 CODE:
 	gaim_perl_timeout_clear();
+
+
+MODULE = Gaim  PACKAGE = Gaim  PREFIX = gaim_
+PROTOTYPES: ENABLE
+
+Gaim::Core
+gaim_get_core()

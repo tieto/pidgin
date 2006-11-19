@@ -50,6 +50,7 @@ common_sources = \
         common/BuddyList.xs \
         common/Cipher.xs \
         common/Cmds.xs \
+        common/Core.xs \
         common/Connection.xs \
         common/Conversation.xs \
         common/Debug.xs \

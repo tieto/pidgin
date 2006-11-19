@@ -68,6 +68,8 @@ Gaim::Conversation::Chat		T_GaimObj
 Gaim::Conversation::ChatBuddy		T_GaimObj
 Gaim::Conversation::IM			T_GaimObj
 Gaim::Conversation::UiOps		T_GaimObj
+Gaim::Core				T_GaimObj
+Gaim::Core::UiOps			T_GaimObj
 
 Gaim::Desktop::Item			T_GaimObj
 Gaim::DesktopItemType			T_IV

@@ -24,6 +24,7 @@ typedef struct group *Gaim__Group;
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
+#include "core.h"
 #include "debug.h"
 #include "desktopitem.h"
 #include "eventloop.h"
@@ -107,6 +108,11 @@ typedef GaimConversationUiOps *		Gaim__Conversation__UiOps;
 typedef GaimConvIm *			Gaim__Conversation__IM;
 typedef GaimConvChat *			Gaim__Conversation__Chat;
 typedef GaimConvChatBuddy *		Gaim__Conversation__ChatBuddy;
+
+/* core.h */
+
+typedef GaimCore *			Gaim__Core;
+typedef GaimCoreUiOps *		Gaim__Core__UiOps;
 
 /* debug.h */
 typedef GaimDebugLevel			Gaim__DebugLevel;
