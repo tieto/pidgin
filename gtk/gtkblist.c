@@ -5948,6 +5948,7 @@ void
 gaim_gtk_blist_update_accounts_menu(void)
 {
 	GtkWidget *menuitem = NULL, *submenu = NULL;
+	GtkAccelGroup *accel_group = NULL;
 	GList *l = NULL, *accounts = NULL;
 	gboolean disabled_accounts = FALSE;
 
@@ -5964,6 +5965,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 
 	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
 		char *buf = NULL;
+		char *accel_path_buf = NULL;
 		GtkWidget *image = NULL;
 		GaimConnection *gc = NULL;
 		GaimAccount *account = NULL;
@@ -5971,11 +5973,13 @@ gaim_gtk_blist_update_accounts_menu(void)
 		GdkPixbuf *pixbuf = NULL;
 
 		account = accounts->data;
+		accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
 		if(gaim_account_get_enabled(account, GAIM_GTK_UI)) {
 			buf = g_strconcat(gaim_account_get_username(account), " (",
 					gaim_account_get_protocol_name(account), ")", NULL);
 			menuitem = gtk_image_menu_item_new_with_label(buf);
+			accel_path_buf = g_strconcat(N_("<GaimMain>/Accounts/"), buf, NULL);
 			g_free(buf);
 			status = gaim_account_get_active_status(account);
 			pixbuf = gaim_gtk_create_prpl_icon_with_status(account, gaim_status_get_type(status), 0.5);
@@ -5993,6 +5997,9 @@ gaim_gtk_blist_update_accounts_menu(void)
 			gtk_widget_show(menuitem);
 
 			submenu = gtk_menu_new();
+			gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+			gtk_menu_set_accel_path(GTK_MENU(submenu), accel_path_buf);
+			g_free(accel_path_buf);
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 			gtk_widget_show(submenu);
 
@@ -6061,6 +6068,8 @@ gaim_gtk_blist_update_accounts_menu(void)
 		gtk_widget_show(menuitem);
 
 		submenu = gtk_menu_new();
+		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+		gtk_menu_set_accel_path(GTK_MENU(submenu), N_("<GaimMain>/Accounts/Enable Account"));
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 		gtk_widget_show(submenu);
 
