@@ -41,6 +41,7 @@ XS_FILES =		Account.xs \
 				Cmds.xs \
 				Connection.xs \
 				Conversation.xs \
+				Core.xs \
 				Debug.xs \
 				FT.xs \
 				Gaim.xs \
