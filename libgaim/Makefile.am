@@ -181,10 +181,9 @@ $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 
 gaim_client_example_SOURCES = gaim-client-example.c
 
-gaim_client_example_DEPENDENCIES = @LIBOBJS@ libgaim-client.la
+gaim_client_example_DEPENDENCIES = libgaim-client.la
 
 gaim_client_example_LDADD = \
-	@LIBOBJS@ \
 	libgaim-client.la \
 	$(GLIB_LIBS) \
 	$(DBUS_LIBS)
@@ -214,10 +213,9 @@ libgaiminclude_HEADERS = \
 	$(gaim_coreheaders) \
 	$(dbus_headers)
 
-libgaim_la_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
+libgaim_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
 libgaim_la_LDFLAGS = -export-dynamic
 libgaim_la_LIBADD = \
-	@LIBOBJS@ \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
