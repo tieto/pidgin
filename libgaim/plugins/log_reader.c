@@ -973,13 +973,25 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 			if (friendly_name != NULL) {
 				int friendly_name_length = strlen(friendly_name);
-				int alias_length         = log->account->alias ? strlen(log->account->alias) : 0;
+				const char *alias;
+				int alias_length;
 				GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
 				gboolean from_name_matches;
 				gboolean to_name_matches;
 
 				if (buddy && buddy->alias)
 					their_name = buddy->alias;
+
+				if (log->account->alias)
+				{
+					alias = log->account->alias;
+					alias_length = strlen(alias);
+				}
+				else
+				{
+					alias = "";
+					alias_length = 0;
+				}
 
 				/* Try to guess which user is me.
 				 * The first step is to determine if either of the names matches either my
@@ -988,13 +1000,13 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 				 */
 				from_name_matches = (gaim_str_has_prefix(from_name, friendly_name) &&
 				                      !isalnum(*(from_name + friendly_name_length))) ||
-				                     (gaim_str_has_prefix(from_name, log->account->alias) &&
+				                     (gaim_str_has_prefix(from_name, alias) &&
 				                      !isalnum(*(from_name + alias_length)));
 
 				to_name_matches = to_name != NULL && (
 				                   (gaim_str_has_prefix(to_name, friendly_name) &&
 				                    !isalnum(*(to_name + friendly_name_length))) ||
-				                   (gaim_str_has_prefix(to_name, log->account->alias) &&
+				                   (gaim_str_has_prefix(to_name, alias) &&
 				                    !isalnum(*(to_name + alias_length))));
 
 				if (from_name_matches) {
