@@ -926,10 +926,17 @@ static void jabber_register_account(GaimAccount *account)
 	}
 
 	if(!js->gsc) {
-		if (gaim_proxy_connect(gc, account, server,
-				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback, gc) == NULL)
-			gaim_connection_error(gc, _("Unable to create socket"));
+		if (connect_server[0]) {
+			jabber_login_connect(js, server,
+			                     gaim_account_get_int(account,
+			                                          "port", 5222));
+		} else {
+			js->srv_query_data = gaim_srv_resolve("xmpp-client",
+			                                      "tcp",
+			                                      js->user->domain,
+			                                      srv_resolved_cb,
+			                                      js);
+		}
 	}
 }
 
