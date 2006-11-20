@@ -309,9 +309,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		serv_set_permit_deny(gc);
 
 		update_keepalive(gc, TRUE);
-
-		if (gaim_account_get_user_info(account) != NULL)
-			serv_set_info(gc, gaim_account_get_user_info(account));
 	}
 	else if (gc->state == GAIM_DISCONNECTED) {
 		GaimAccount *account = gaim_connection_get_account(gc);
