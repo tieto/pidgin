@@ -43,6 +43,7 @@ gnt_window_class_init(GntWindowClass *klass)
 
 	gnt_bindable_class_register_action(bindable, "show-menu", show_menu,
 				GNT_KEY_CTRL_O, NULL);
+	gnt_bindable_register_binding(bindable, "show-menu", GNT_KEY_F10, NULL);
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 
 	GNTDEBUG;

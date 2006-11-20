@@ -239,6 +239,7 @@ gnt_widget_class_init(GntWidgetClass *klass)
 	/* This is relevant for all widgets */
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "context-menu", context_menu,
 				GNT_KEY_POPUP, NULL);
+	gnt_bindable_register_binding(GNT_BINDABLE_CLASS(klass), "context-menu", GNT_KEY_F11, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;

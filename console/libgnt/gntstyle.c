@@ -91,7 +91,7 @@ parse_key(const char *key)
 	/* XXX: Need to do something about ctrl/alt+home, end etc. */
 
 #define SPECIAL_KEY(k, code) do { \
-		if (strncasecmp(key, k, sizeof(k) - 1) == 0) \
+		if (strcasecmp(key, k) == 0) \
 			return g_strdup(code); \
 	} while (0)
 
