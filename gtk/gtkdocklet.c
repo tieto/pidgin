@@ -52,6 +52,7 @@ static struct docklet_ui_ops *ui_ops = NULL;
 static DockletStatus status = DOCKLET_STATUS_OFFLINE;
 static gboolean enable_join_chat = FALSE;
 static guint docklet_blinking_timer = 0;
+static gboolean visible = FALSE;
 static gboolean visibility_manager = FALSE;
 
 /**************************************************************************
@@ -93,12 +94,12 @@ get_pending_list(guint max)
 	GList *l_chat = NULL;
 
 	l_im = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
-	   					       GAIM_UNSEEN_TEXT,
+						       GAIM_UNSEEN_TEXT,
 						       FALSE, max);
 
 	l_chat = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
 		 					 GAIM_UNSEEN_NICK,
-			    			         FALSE, max);
+							 FALSE, max);
 
 	if (l_im != NULL && l_chat != NULL)
 		return g_list_concat(l_im, l_chat);
@@ -111,8 +112,7 @@ get_pending_list(guint max)
 static gboolean
 docklet_update_status()
 {
-	GList *convs = NULL;
-	GList *l;
+	GList *convs, *l;
 	int count;
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
 	gboolean pending = FALSE;
@@ -121,17 +121,17 @@ docklet_update_status()
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
 	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
-		if (convs && ui_ops->create && !visibility_manager) {
+		if (convs && ui_ops->create && !visible) {
 			g_list_free(convs);
 			ui_ops->create();
 			return FALSE;
-		} else if (!convs && ui_ops->destroy && visibility_manager) {
+		} else if (!convs && ui_ops->destroy && visible) {
 			ui_ops->destroy();
 			return FALSE;
 		}
 	}
 
-	if (!visibility_manager) {
+	if (!visible) {
 		g_list_free(convs);
 		return FALSE;
 	}
@@ -224,11 +224,11 @@ docklet_update_status()
 			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
- 		if (gaim_prefs_get_bool("/gaim/gtk/docklet/blink") &&
-                    (status == DOCKLET_STATUS_ONLINE_PENDING
-	             || status == DOCKLET_STATUS_AWAY_PENDING)
-		     && docklet_blinking_timer == 0) {
-				docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
+		if (gaim_prefs_get_bool("/gaim/gtk/docklet/blink") &&
+		    (status == DOCKLET_STATUS_ONLINE_PENDING
+		     || status == DOCKLET_STATUS_AWAY_PENDING)
+		    && docklet_blinking_timer == 0) {
+			docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
 		}
 	}
 
@@ -256,8 +256,8 @@ online_account_supports_chat()
  * callbacks and signal handlers
  **************************************************************************/
 #if 0
-static void 
-gaim_quit_cb() 
+static void
+gaim_quit_cb()
 {
 	/* TODO: confirm quit while pending */
 }
@@ -302,12 +302,22 @@ docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
 {
 	const char *val = value;
 	if (!strcmp(val, "always")) {
-		if (!visibility_manager && ui_ops->create)
-			ui_ops->create();
+		if (ui_ops->create) {
+			if (!visible)
+				ui_ops->create();
+			else if (!visibility_manager) {
+				gaim_gtk_blist_visibility_manager_add();
+				visibility_manager = TRUE;
+			}
+		}
 	} else if (!strcmp(val, "never")) {
-		if (visibility_manager && ui_ops->destroy)
+		if (visible && ui_ops->destroy)
 			ui_ops->destroy();
 	} else {
+		if (visibility_manager) {
+			gaim_gtk_blist_visibility_manager_remove();
+			visibility_manager = FALSE;
+		}
 		docklet_update_status();
 	}
 
@@ -338,7 +348,7 @@ docklet_toggle_blist(GtkWidget *toggle, void *data)
 /* This is a workaround for a bug in windows GTK+. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
    pointer leaves the menu. */
-static gboolean 
+static gboolean
 hide_docklet_menu(gpointer data)
 {
 	if (data != NULL) {
@@ -542,7 +552,7 @@ docklet_menu() {
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	
+
 	menuitem = gtk_check_menu_item_new_with_label(_("Blink on new message"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/docklet/blink"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
@@ -550,7 +560,7 @@ docklet_menu() {
 
 	gaim_separator(menu);
 
-	/* TODO: need a submenu to change status, this needs to "link" 
+	/* TODO: need a submenu to change status, this needs to "link"
 	 * to the status in the buddy list gtkstatusbox
 	 */
 
@@ -562,8 +572,8 @@ docklet_menu() {
 #endif
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-				   ui_ops->position_menu,
-				   NULL, 0, gtk_get_current_event_time());
+		       ui_ops->position_menu,
+		       NULL, 0, gtk_get_current_event_time());
 }
 
 /**************************************************************************
@@ -593,11 +603,12 @@ gaim_gtk_docklet_clicked(int button_type)
 void
 gaim_gtk_docklet_embedded()
 {
-	if (!visibility_manager) {
-		if (strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"),"pending"))
-			gaim_gtk_blist_visibility_manager_add();
+	if (!visibility_manager
+	    && strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
+		gaim_gtk_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}
+	visible = TRUE;
 	docklet_update_status();
 	if (ui_ops && ui_ops->update_icon)
 		ui_ops->update_icon(status);
@@ -606,14 +617,16 @@ gaim_gtk_docklet_embedded()
 void
 gaim_gtk_docklet_remove()
 {
-	if (visibility_manager) {
-	        if (strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"),"pending"))
+	if (visible) {
+		if (visibility_manager) {
 			gaim_gtk_blist_visibility_manager_remove();
+			visibility_manager = FALSE;
+		}
 		if (docklet_blinking_timer) {
 			g_source_remove(docklet_blinking_timer);
 			docklet_blinking_timer = 0;
 		}
-		visibility_manager = FALSE;
+		visible = FALSE;
 		status = DOCKLET_STATUS_OFFLINE;
 	}
 }
@@ -638,17 +651,17 @@ gaim_gtk_docklet_init()
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *docklet_handle = gaim_gtk_docklet_get_handle();
-	
+
 	gaim_prefs_add_none("/gaim/gtk/docklet");
-        gaim_prefs_add_bool("/gaim/gtk/docklet/blink", FALSE);
-        gaim_prefs_add_string("/gaim/gtk/docklet/show", "always");
+	gaim_prefs_add_bool("/gaim/gtk/docklet/blink", FALSE);
+	gaim_prefs_add_string("/gaim/gtk/docklet/show", "always");
 	gaim_prefs_connect_callback(docklet_handle, "/gaim/gtk/docklet/show",
 				    docklet_show_pref_changed_cb, NULL);
 
 	docklet_ui_init();
 	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "always") && ui_ops && ui_ops->create)
 		ui_ops->create();
-	
+
 	gaim_signal_connect(conn_handle, "signed-on",
 			    docklet_handle, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
 	gaim_signal_connect(conn_handle, "signed-off",
@@ -674,6 +687,6 @@ gaim_gtk_docklet_init()
 void
 gaim_gtk_docklet_uninit()
 {
-	if (visibility_manager && ui_ops && ui_ops->destroy)
+	if (visible && ui_ops && ui_ops->destroy)
 		ui_ops->destroy();
 }
