@@ -810,7 +810,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					if (node->data != NULL) {
 						kvp = (GaimKeyValuePair *) node->data;
 						if ((kvp->value != NULL) && (str_value != NULL) &&
-							!g_utf8_collate(kvp->value, str_value))
+						    !g_utf8_collate(kvp->value, str_value))
 							idx = i;
 
 						gtk_list_store_append(model, &iter);
@@ -1247,7 +1247,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
 					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
 					gaim_account_set_string(account, setting, value2);
-					g_free(value2);
 					break;
 
 				default:
