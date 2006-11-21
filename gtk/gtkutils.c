@@ -2837,4 +2837,17 @@ void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const
 		gaim_blist_update_buddy_icon(buddy);
 }
 
+char *gaim_gtk_make_pretty_arrows(const char *str)
+{
+	char *ret;
+	char **split = g_strsplit(str, "->", -1);
+	ret = g_strjoinv("\342\207\250", split);
+	g_strfreev(split);
 
+	split = g_strsplit(ret, "<-", -1);
+	g_free(ret);
+	ret = g_strjoinv("\342\207\246", split);
+	g_strfreev(split);
+
+	return ret;
+}

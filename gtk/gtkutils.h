@@ -501,3 +501,12 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
  *                  previously set custom buddy icon for the user is removed.
  */
 void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename);
+
+/**
+ * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing
+ * menu items.
+ *
+ * @param str      The text to convert
+ * @return         A newly allocated string with unicode arrow characters
+ */
+char *gaim_gtk_make_pretty_arrows(const char *str);

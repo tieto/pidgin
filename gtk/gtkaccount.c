@@ -2072,7 +2072,8 @@ create_accounts_list(AccountsWindow *dialog)
        	
 	/* Create a helpful first-time-use label */
        	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), _(
+	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
+	gtk_label_set_markup(GTK_LABEL(label), gaim_gtk_make_pretty_arrows(_(
 						 "<span size='larger' weight='bold'>Welcome to Gaim!</span>\n\n"
 						 
 						 "You have no IM accounts configured. To start connecting with Gaim "
@@ -2081,8 +2082,8 @@ create_accounts_list(AccountsWindow *dialog)
 						 "press <b>Add</b> again to configure them all.\n\n"
 						 
 						 "You can come back to this window to add, edit, or remove "
-						 "accounts from <b>Accounts \342\207\250 Add/Edit</b> in the Buddy "
-						 "List window"));
+						 "accounts from <b>Accounts->Add/Edit</b> in the Buddy "
+						 "List window")));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_widget_show(label);
 
