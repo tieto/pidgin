@@ -870,12 +870,12 @@ silcgaim_create_keypair_cb(GaimConnection *gc, GaimRequestFields *fields)
 	if (f)
 		c = gaim_request_field_string_get_value(f);
 
-	identifier = silc_pkcs_encode_identifier((char *)un, (char *)hn, 
+	identifier = silc_pkcs_encode_identifier((char *)un, (char *)hn,
 						 (char *)rn, (char *)e, (char *)o, (char *)c);
 
 	/* Create the key pair */
 	if (!silc_create_key_pair(SILCGAIM_DEF_PKCS, keylen, pkfile, prfile,
-				  identifier, pass1, NULL, &public_key, NULL, 
+				  identifier, pass1, NULL, &public_key, NULL,
 				  FALSE)) {
 		gaim_notify_error(
 		     gc, _("Create New SILC Key Pair"), _("Key Pair Generation failed"), NULL);
@@ -1086,7 +1086,7 @@ silcgaim_send_im_resolved(SilcClient client,
 
 			silc_dlist_start(list);
 			while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
-				silc_client_send_private_message(client, conn, 
+				silc_client_send_private_message(client, conn,
 								 client_entry, im->flags,
 								 buf->data, buf->len,
 								 TRUE);
@@ -1198,7 +1198,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 			silc_dlist_start(list);
 			while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
 				ret =
-			 	silc_client_send_private_message(client, conn, 
+			 	silc_client_send_private_message(client, conn,
 								 clients[0], mflags,
 								 buf->data, buf->len,
 								 TRUE);
@@ -1864,9 +1864,9 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	for (i = 0; silc_default_ciphers[i].name; i++) {
-		kvp = silc_calloc(1, sizeof(*kvp));
-		kvp->key = strdup(silc_default_ciphers[i].name);
-		kvp->value = strdup(silc_default_ciphers[i].name);
+		kvp = g_new0(GaimKeyValuePair, 1);
+		kvp->key = g_strdup(silc_default_ciphers[i].name);
+		kvp->value = g_strdup(silc_default_ciphers[i].name);
 		list = g_list_append(list, kvp);
 	}
 	option = gaim_account_option_list_new(_("Cipher"), "cipher", list);
@@ -1874,9 +1874,9 @@ init_plugin(GaimPlugin *plugin)
 
 	list = NULL;
 	for (i = 0; silc_default_hmacs[i].name; i++) {
-		kvp = silc_calloc(1, sizeof(*kvp));
-		kvp->key = strdup(silc_default_hmacs[i].name);
-		kvp->value = strdup(silc_default_hmacs[i].name);
+		kvp = g_new0(GaimKeyValuePair, 1);
+		kvp->key = g_strdup(silc_default_hmacs[i].name);
+		kvp->value = g_strdup(silc_default_hmacs[i].name);
 		list = g_list_append(list, kvp);
 	}
 	option = gaim_account_option_list_new(_("HMAC"), "hmac", list);
