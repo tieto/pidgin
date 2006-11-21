@@ -122,16 +122,19 @@ docklet_update_status()
 
 	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
 		if (convs && ui_ops->create && !visibility_manager) {
-	 		ui_ops->create();
-	   		return FALSE;
+			g_list_free(convs);
+			ui_ops->create();
+			return FALSE;
 		} else if (!convs && ui_ops->destroy && visibility_manager) {
-	  		ui_ops->destroy();
-	  	 	return FALSE;
+			ui_ops->destroy();
+			return FALSE;
 		}
 	}
 
-	if (!visibility_manager)
+	if (!visibility_manager) {
+		g_list_free(convs);
 		return FALSE;
+	}
 
 	if (convs != NULL) {
 		pending = TRUE;
@@ -307,7 +310,7 @@ docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
 	} else {
 		docklet_update_status();
 	}
-			
+
 }
 
 /**************************************************************************
