@@ -1153,7 +1153,7 @@ gaim_gtk_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	/* Create the treeview */
 	dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(dialog->treeview), TRUE);
-	gtk_widget_set_size_request(dialog->treeview, 400, 250);
+	gtk_widget_set_size_request(dialog->treeview, -1, 150);
 	gtk_container_add(GTK_CONTAINER(sw), dialog->treeview);
 
 	/* Add columns */
