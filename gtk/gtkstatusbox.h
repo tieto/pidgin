@@ -94,6 +94,7 @@ struct _GtkGaimStatusBox
 	GtkWidget *buddy_icon_sel;
 	GtkWidget *icon;
 	GtkWidget *icon_box;
+	GtkWidget *icon_box_menu;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
 	int icon_size;
