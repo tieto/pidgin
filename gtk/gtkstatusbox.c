@@ -82,6 +82,7 @@ static void gtk_gaim_status_box_forall (GtkContainer *container, gboolean includ
 
 static void do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift);
 static void icon_choose_cb(const char *filename, gpointer data);
+static void remove_buddy_icon_cb(GtkWidget *w, GtkGaimStatusBox *box);
 
 static void (*combo_box_size_request)(GtkWidget *widget, GtkRequisition *requisition);
 static void (*combo_box_size_allocate)(GtkWidget *widget, GtkAllocation *allocation);
@@ -228,16 +229,6 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatu
 		update_to_reflect_account_status(status_box, account, newstatus);
 	else if (status_box->token_status_account == account)
 		status_menu_refresh_iter(status_box);
-}
-
-static void
-remove_buddy_icon_cb(GtkWidget *w, GtkGaimStatusBox *box)
-{
-	/* The pref-connect callback does the actual work */
-	gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", NULL);
-
-	gtk_widget_destroy(box->icon_box_menu);
-	box->icon_box_menu = NULL;
 }
 
 static gboolean
@@ -1225,11 +1216,8 @@ toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 }
 
 static void
-buddy_icon_set_cb(const char *filename, gpointer data)
+buddy_icon_set_cb(const char *filename, GtkGaimStatusBox *box)
 {
-	GtkGaimStatusBox *box;
-
-	box = data;
 
 	if (box->account) {
 		GaimPlugin *plug = gaim_find_prpl(gaim_account_get_protocol_id(box->account));
@@ -1268,6 +1256,19 @@ buddy_icon_set_cb(const char *filename, gpointer data)
 }
 
 static void
+remove_buddy_icon_cb(GtkWidget *w, GtkGaimStatusBox *box)
+{
+	if (box->account == NULL)
+		/* The pref-connect callback does the actual work */
+		gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", NULL);
+	else
+		buddy_icon_set_cb(NULL, box);
+
+	gtk_widget_destroy(box->icon_box_menu);
+	box->icon_box_menu = NULL;
+}
+
+static void
 icon_choose_cb(const char *filename, gpointer data)
 {
 	GtkGaimStatusBox *box = data;
@@ -1276,7 +1277,7 @@ icon_choose_cb(const char *filename, gpointer data)
 			/* The pref-connect callback does the actual work */
 			gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
 		else
-			buddy_icon_set_cb(filename, data);
+			buddy_icon_set_cb(filename, box);
 	}
 
 	box->buddy_icon_sel = NULL;
@@ -1286,7 +1287,7 @@ static void
 update_buddyicon_cb(const char *name, GaimPrefType type,
 				    gconstpointer value, gpointer data)
 {
-	buddy_icon_set_cb(value, data);
+	buddy_icon_set_cb(value, (GtkGaimStatusBox*) data);
 }
 
 static void
