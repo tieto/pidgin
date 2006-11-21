@@ -1025,10 +1025,18 @@ gg_blist_place_tagged(GaimBlistNode *target)
 	GaimGroup *tg = NULL;
 	GaimContact *tc = NULL;
 
+	/* This target resolution probably needs more clarification; for
+	 * example, if I tag a buddy in a contact, then place on
+	 * another buddy in the same contact, I probably intend to
+	 * place the tagged buddy immediately after (before?) the
+	 * target buddy -- this will simply move the tagged buddy
+	 * within the same contact without reference to position. */
 	if (GAIM_BLIST_NODE_IS_GROUP(target))
 		tg = (GaimGroup*)target;
-	else
+	else if (GAIM_BLIST_NODE_IS_CONTACT(target))
 		tc = (GaimContact*)target;
+	else /* Buddy or Chat */
+		tc = (GaimContact*)target->parent;
 
 	if (ggblist->tagged) {
 		GList *list = ggblist->tagged;
