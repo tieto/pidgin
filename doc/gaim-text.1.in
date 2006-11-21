@@ -267,9 +267,16 @@ pagedown = page-down
 c-b = context-menu
 .br
 
+.br
+[GntWidget::binding]
+.br
+f11 = context-menu
+
 [GntWindow::binding]
 .br
 c-o = show-menu
+.br
+f10 = show-menu
 
 The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
 or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use
