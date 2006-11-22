@@ -602,7 +602,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	GString *info_text;
 	char *resource_name;
 	JabberBuddyResource *jbr;
-	JabberBuddyInfoResource *jbir;
+	JabberBuddyInfoResource *jbir = NULL;
 	GList *resources;
 
 	/* not yet */
@@ -650,8 +650,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			jbr = resources->data;
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
-			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-					_("Resource"), jbr->name);
+			if(jbr->name)
+				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
+						_("Resource"), jbr->name);
 			g_string_append_printf(info_text, "<b>%s:</b> %d<br/>",
 					_("Priority"), jbr->priority);
 			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
@@ -661,7 +662,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			if(purdy)
 				g_free(purdy);
 
-			jbir = g_hash_table_lookup(jbi->resources, jbr->name);
+			if(jbr->name)
+				jbir = g_hash_table_lookup(jbi->resources, jbr->name);
+
 			if(jbir) {
 				if(jbir->idle_seconds > 0) {
 					g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
