@@ -3550,24 +3550,24 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 		gtk_imhtml_search_clear(imhtml);
 		g_free(imhtml->search_string);
 		imhtml->search_string = g_strdup(text);
-		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
+		gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
 	} else {
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter,
 						 start_mark);
 	}
 
-	if (gtk_source_iter_forward_search(&iter, imhtml->search_string,
+	if (gtk_source_iter_backward_search(&iter, imhtml->search_string,
 	                                   GTK_SOURCE_SEARCH_VISIBLE_ONLY | GTK_SOURCE_SEARCH_CASE_INSENSITIVE,
 	                                   &start, &end, NULL))
 	{
 		gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(imhtml), &start, 0, TRUE, 0, 0);
-		gtk_text_buffer_create_mark(imhtml->text_buffer, "search", &end, FALSE);
+		gtk_text_buffer_create_mark(imhtml->text_buffer, "search", &start, FALSE);
 		if (new_search)
 		{
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "search", &iter, &end);
 			do
 				gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "search", &start, &end);
-			while (gtk_source_iter_forward_search(&end, imhtml->search_string,
+			while (gtk_source_iter_backward_search(&start, imhtml->search_string,
 							      GTK_SOURCE_SEARCH_VISIBLE_ONLY |
 							      GTK_SOURCE_SEARCH_CASE_INSENSITIVE,
 							      &start, &end, NULL));
@@ -3577,14 +3577,14 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 	else if (!new_search)
 	{
 		/* We hit the end, so start at the beginning again. */
-		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
+		gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
 
-		if (gtk_source_iter_forward_search(&iter, imhtml->search_string,
+		if (gtk_source_iter_backward_search(&iter, imhtml->search_string,
 		                                   GTK_SOURCE_SEARCH_VISIBLE_ONLY | GTK_SOURCE_SEARCH_CASE_INSENSITIVE,
 		                                   &start, &end, NULL))
 		{
 			gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(imhtml), &start, 0, TRUE, 0, 0);
-			gtk_text_buffer_create_mark(imhtml->text_buffer, "search", &end, FALSE);
+			gtk_text_buffer_create_mark(imhtml->text_buffer, "search", &start, FALSE);
 
 			return TRUE;
 		}
