@@ -214,14 +214,25 @@ static void gaim_gtk_connection_network_disconnected ()
 {
 	GList *l = gaim_accounts_get_all_active();
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = NULL;
+	
 	if(gtkblist)
 		gtk_gaim_status_box_set_network_available(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), FALSE);
 
 	while (l) {
 		GaimAccount *a = (GaimAccount*)l->data;
-		if (!gaim_account_is_disconnected(a))
-			gaim_account_disconnect(a);
+		if (!gaim_account_is_disconnected(a)) {
+			gc = gaim_account_get_connection(a);
+			if (gc && gc->prpl) 
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+			if (prpl_info) {
+				if (prpl_info->keepalive)
+					prpl_info->keepalive(gc);
+				else
+					gaim_account_disconnect(a);
+			}
+		}
 		l = l->next;
 	}
 }
