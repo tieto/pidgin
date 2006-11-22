@@ -2060,6 +2060,7 @@ create_accounts_list(AccountsWindow *dialog)
 	GtkWidget *treeview;
 	GtkTreeSelection *sel;
 	GtkTargetEntry gte[] = {{"GAIM_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
+	char *pretty;
 
 	frame = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
@@ -2073,7 +2074,7 @@ create_accounts_list(AccountsWindow *dialog)
 	/* Create a helpful first-time-use label */
        	label = gtk_label_new(NULL);
 	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
-	gtk_label_set_markup(GTK_LABEL(label), gaim_gtk_make_pretty_arrows(_(
+	pretty = gaim_gtk_make_pretty_arrows(_(
 						 "<span size='larger' weight='bold'>Welcome to Gaim!</span>\n\n"
 						 
 						 "You have no IM accounts configured. To start connecting with Gaim "
@@ -2083,7 +2084,10 @@ create_accounts_list(AccountsWindow *dialog)
 						 
 						 "You can come back to this window to add, edit, or remove "
 						 "accounts from <b>Accounts->Add/Edit</b> in the Buddy "
-						 "List window")));
+						 "List window"));
+	gtk_label_set_markup(GTK_LABEL(label), pretty);
+	g_free(pretty);
+
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_widget_show(label);
 

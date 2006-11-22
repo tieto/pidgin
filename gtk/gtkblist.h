@@ -61,8 +61,11 @@ typedef enum {
  */
 struct _GaimGtkBuddyList {
 	GtkWidget *window;
-	GtkWidget *vbox;                /**< This is the vbox that everything gets packed into.  Your plugin might
-					   want to pack something in it itself.  Go, plugins! */
+	GtkWidget *notebook;            /**< The notebook that switches between the real buddy list and the helpful 
+					   instructions page */
+	GtkWidget *main_vbox;           /**< This vbox contains the menu and notebook */
+	GtkWidget *vbox;                /**< This is the vbox that everything important gets packed into.  
+					   Your plugin might want to pack something in it itself.  Go, plugins! */
 
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */

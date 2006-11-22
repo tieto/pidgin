@@ -3730,6 +3730,11 @@ static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 	if (!gtkblist)
 		return;
 
+	if (gaim_accounts_get_all_active())
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
+	else
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 0);
+
 	update_menu_bar(gtkblist);
 }
 
@@ -3877,9 +3882,57 @@ gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *text
 			create_connection_error_buttons, NULL);
 }
 
+
 /******************************************/
 /* End of connection error handling stuff */
 /******************************************/
+
+#if 0
+static GtkWidget *
+kiosk_page()
+{
+	GtkWidget *ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	GtkWidget *label;
+	GtkWidget *entry;
+	GtkWidget *bbox;
+	GtkWidget *button;
+
+	label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(ret), label, TRUE, TRUE, 0);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Username:</b>"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(ret), entry, FALSE, FALSE, 0);
+
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Password:</b>"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
+	entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+	gtk_box_pack_start(GTK_BOX(ret), entry, FALSE, FALSE, 0);
+
+	label = gtk_label_new(" ");
+	gtk_box_pack_start(GTK_BOX(ret), label, FALSE, FALSE, 0);
+
+	bbox = gtk_hbutton_box_new();
+	button = gtk_button_new_with_mnemonic(_("_Login"));
+	gtk_box_pack_start(GTK_BOX(ret), bbox, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(bbox), button);
+
+	
+	label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(ret), label, TRUE, TRUE, 0);
+
+	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+
+	gtk_widget_show_all(ret);
+	return ret;
+}
+#endif
 
 static void gaim_gtk_blist_show(GaimBuddyList *list)
 {
@@ -3889,6 +3942,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkWidget *menu;
 	GtkWidget *sw;
 	GtkWidget *sep;
+	GtkWidget *label;
+	char *pretty;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -3911,9 +3966,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 
-	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
-	gtk_widget_show(gtkblist->vbox);
-	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
+	gtkblist->main_vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(gtkblist->main_vbox);
+	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->main_vbox);
 
 	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "configure_event", G_CALLBACK(gtk_blist_configure_cb), NULL);
@@ -3940,9 +3995,38 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtkblist->menutray);
 	gtk_widget_show(gtkblist->menutray);
 	gtk_widget_show(menu);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->main_vbox), menu, FALSE, FALSE, 0);
 
 	accountmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts"));
+
+
+	/****************************** Notebook *************************************/
+	gtkblist->notebook = gtk_notebook_new();
+	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkblist->notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(gtkblist->notebook), FALSE);
+	gtk_box_pack_start(GTK_BOX(gtkblist->main_vbox), gtkblist->notebook, TRUE, TRUE, 0);
+
+#if 0
+	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook), kiosk_page(), NULL);
+#endif
+
+	/* Translators: Please maintain the use of -> and <- to refer to menu heirarchy */
+	pretty = gaim_gtk_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to Gaim!</span>\n\n"
+					       
+					       "You have no accounts enabled. Enable your IM accounts from the "
+					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "
+					       "enable accounts, you'll be able to sign on, set your status, "
+					       "and talk to your friends."));
+	label = gtk_label_new(NULL);
+	gtk_widget_set_size_request(label, gaim_prefs_get_int("/gaim/gtk/blist/width") - 12, -1);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.2);
+	gtk_label_set_markup(GTK_LABEL(label), pretty);
+	g_free(pretty);
+	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook),label, NULL);
+	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
+	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook), gtkblist->vbox, NULL);
+	gtk_widget_show_all(gtkblist->notebook);
 
 
 	/****************************** GtkTreeView **********************************/
@@ -5518,8 +5602,8 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "alphabetical");
 	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
-	gaim_prefs_add_int("/gaim/gtk/blist/width", 309); /* Golden ratio, baby */
-	gaim_prefs_add_int("/gaim/gtk/blist/height", 500); /* Golden ratio, baby */
+	gaim_prefs_add_int("/gaim/gtk/blist/width", 250); /* Golden ratio, baby */
+	gaim_prefs_add_int("/gaim/gtk/blist/height", 405); /* Golden ratio, baby */
 	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */
