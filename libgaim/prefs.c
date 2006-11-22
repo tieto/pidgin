@@ -617,6 +617,7 @@ static void
 remove_pref(struct gaim_pref *pref)
 {
 	char *name;
+	GSList *l;
 
 	if(!pref || pref == &prefs)
 		return;
@@ -643,7 +644,11 @@ remove_pref(struct gaim_pref *pref)
 
 	free_pref_value(pref);
 
-	g_slist_free(pref->callbacks);
+	while((l = pref->callbacks) != NULL) {
+		pref->callbacks = pref->callbacks->next;
+		g_free(l->data);
+		g_slist_free_1(l);
+	}
 	g_free(pref->name);
 	g_free(pref);
 }
@@ -1007,6 +1012,9 @@ gaim_prefs_connect_callback(void *handle, const char *name, GaimPrefCallback fun
 	struct gaim_pref *pref;
 	struct pref_cb *cb;
 	static guint cb_id = 0;
+
+	g_return_val_if_fail(name != NULL, 0);
+	g_return_val_if_fail(func != NULL, 0);
 
 	pref = find_pref(name);
 	if (pref == NULL)
