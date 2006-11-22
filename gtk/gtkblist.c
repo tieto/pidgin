@@ -4029,7 +4029,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook), gtkblist->vbox, NULL);
 	gtk_widget_show_all(gtkblist->notebook);
-
+	if (gaim_accounts_get_all_active())
+		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
