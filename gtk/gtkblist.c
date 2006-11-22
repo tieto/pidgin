@@ -3727,12 +3727,14 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 
 static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 {
+	GList *list;
 	if (!gtkblist)
 		return;
 
-	if (gaim_accounts_get_all_active())
+	if ((list = gaim_accounts_get_all_active()) != NULL) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
-	else
+		g_list_free(list);
+	} else
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 0);
 
 	update_menu_bar(gtkblist);
