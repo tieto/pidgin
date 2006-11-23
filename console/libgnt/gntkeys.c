@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+char *gnt_key_cup;
+char *gnt_key_cdown;
+char *gnt_key_cleft;
+char *gnt_key_cright;
+
+
 static const char *term;
 
 void gnt_init_keys()

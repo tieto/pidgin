@@ -9,10 +9,10 @@
  * ctrl-up, ctrl-down etc. So I am going to hard-code some of the information
  * for some popular $TERMs
  */
-char *gnt_key_cup;
-char *gnt_key_cdown;
-char *gnt_key_cleft;
-char *gnt_key_cright;
+extern char *gnt_key_cup;
+extern char *gnt_key_cdown;
+extern char *gnt_key_cleft;
+extern char *gnt_key_cright;
 
 #define SAFE(x)   ((x) ? (x) : "")
 
