@@ -2316,7 +2316,7 @@ make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
 	                        : (gaim_connection_get_display_name(gc) != NULL
 	                           ? gaim_connection_get_display_name(gc)
 	                           : gaim_account_get_username(account))),
-	                       (msg != NULL ? ":\n" : "."),
+	                       (msg != NULL ? ": " : "."),
 	                       (msg != NULL ? msg  : ""));
 }
 

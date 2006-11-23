@@ -44,7 +44,7 @@ struct _GaimAccountUiOps
 {
 	/* A buddy we already have added us to their buddy list. */
 	void (*notify_added)(GaimAccount *account, const char *remote_user,
-	                     const char *id, const char *alias,
+	                    const char *id, const char *alias,
 	                     const char *message);
 	void (*status_changed)(GaimAccount *account, GaimStatus *status);
 	/* Someone we don't have on our list added us. Will prompt to add them. */
