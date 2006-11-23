@@ -54,6 +54,7 @@
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
 #include "gtkstatusbox.h"
+#include "gtkscrollbook.h"
 #include "gtkutils.h"
 
 #include <gdk/gdkkeysyms.h>
@@ -4030,7 +4031,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook), gtkblist->vbox, NULL);
 	gtk_widget_show_all(gtkblist->notebook);
-	if (accounts = gaim_accounts_get_all_active()) {
+	if ((accounts = gaim_accounts_get_all_active())) {
 		g_list_free(accounts);
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
 	}
@@ -4178,6 +4179,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sep, FALSE, FALSE, 0);
+
+	gtkblist->scrollbook = gtk_gaim_scroll_book_new();
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 	
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
@@ -4278,6 +4282,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 						gtkblist, GAIM_CALLBACK(conversation_deleting_cb),
 						gtkblist);
 
+	gtk_widget_hide(gtkblist->scrollbook);
+	
 	/* emit our created signal */
 	gaim_signal_emit(handle, "gtkblist-created", list);
 }
@@ -5495,6 +5501,11 @@ gaim_gtk_blist_visibility_manager_remove()
 	if (!visibility_manager_count)
 		gaim_blist_set_visible(TRUE);
 	gaim_debug_info("gtkblist", "removed visibility manager: %d\n", visibility_manager_count);
+}
+
+void gaim_gtk_blist_add_alert(GtkWidget *widget)
+{
+	gtk_container_add(GTK_CONTAINER(gtkblist->scrollbook), widget);
 }
 
 

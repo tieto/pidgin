@@ -95,6 +95,9 @@ struct _GaimGtkBuddyList {
 	GList *tooltipdata;              /**< The data for each "chunk" of the tooltip */
 
 	GaimBlistNode *selected_node;    /**< The currently selected node */
+	
+	GtkWidget *scrollbook;          /**< Scrollbook for alerts */
+
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 };
@@ -201,6 +204,13 @@ void gaim_gtk_blist_visibility_manager_add(void);
  * drops below zero, the buddy list is shown.
  */
 void gaim_gtk_blist_visibility_manager_remove(void);
+
+/**
+ * Adds a mini-alert to the blist scrollbook
+ *
+ * @param widget   The widget to add
+ */
+void gaim_gtk_blist_add_alert(GtkWidget *widget);
 
 
 /**************************************************************************

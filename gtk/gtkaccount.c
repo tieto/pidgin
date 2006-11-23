@@ -2176,6 +2176,7 @@ gaim_gtk_accounts_window_show(void)
 	GtkWidget *button;
 	int width, height;
 
+
 	if (accounts_window != NULL) {
 		gtk_window_present(GTK_WINDOW(accounts_window->window));
 		return;
@@ -2315,7 +2316,7 @@ make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
 	                        : (gaim_connection_get_display_name(gc) != NULL
 	                           ? gaim_connection_get_display_name(gc)
 	                           : gaim_account_get_username(account))),
-	                       (msg != NULL ? ": " : "."),
+	                       (msg != NULL ? ":\n" : "."),
 	                       (msg != NULL ? msg  : ""));
 }
 
@@ -2326,12 +2327,14 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 {
 	char *buffer;
 	GaimConnection *gc;
+	GtkWidget *alert;
 
 	gc = gaim_account_get_connection(account);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-
-	gaim_notify_info(NULL, NULL, buffer, NULL);
+	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_INFO, buffer,
+					  NULL, NULL, _("Close"), NULL, NULL);
+	gaim_gtk_blist_add_alert(alert);
 
 	g_free(buffer);
 }
@@ -2344,6 +2347,7 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	char *buffer;
 	GaimConnection *gc;
 	GaimGtkAccountAddUserData *data;
+	GtkWidget *alert;
 
 	gc = gaim_account_get_connection(account);
 
@@ -2351,14 +2355,14 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	data->account  = account;
 	data->username = g_strdup(remote_user);
 	data->alias    = g_strdup(alias);
-
+	
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-
-	gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
-	                    buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
-	                    _("Add"),    G_CALLBACK(add_user_cb),
-	                    _("Cancel"), G_CALLBACK(free_add_user_data));
-
+	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_INFO,
+					  _("Add buddy to your list?"), buffer, data, 
+					  _("Cancel"), G_CALLBACK(free_add_user_data),
+					  _("Add"), G_CALLBACK(add_user_cb), NULL);
+	gaim_gtk_blist_add_alert(alert);
+        
 	g_free(buffer);
 }
 

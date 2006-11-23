@@ -2851,3 +2851,114 @@ char *gaim_gtk_make_pretty_arrows(const char *str)
 
 	return ret;
 }
+
+GSList *minidialogs = NULL;
+
+static void *
+gaim_gtk_utils_get_handle()
+{
+	static int handle;
+
+	return &handle;
+}
+
+static void connection_signed_off_cb(GaimConnection *gc) 
+{
+	GSList *list;
+	for (list = minidialogs; list; list = list->next) {
+		if (g_object_get_data(G_OBJECT(list->data), "gc") == gc) {
+				gtk_widget_destroy(GTK_WIDGET(list->data));
+		}
+	}
+}
+
+static void alert_killed_cb(GtkWidget *widget)
+{
+	minidialogs = g_slist_remove(minidialogs, widget);
+}
+
+void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
+				const char *primary, const char *secondary,
+				void *user_data,  ...)
+{
+	GtkWidget *vbox;
+        GtkWidget *hbox;
+        GtkWidget *bbox;
+        GtkWidget *label;
+        GtkWidget *button;
+        GtkWidget *img = NULL;
+	char label_text[2048];
+	const char *button_text;
+	GCallback callback;
+	char *primary_esc, *secondary_esc;
+	va_list args;
+	static gboolean first_call = TRUE;
+
+	img = gtk_image_new_from_stock(icon_name, GTK_ICON_SIZE_BUTTON);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+
+	vbox = gtk_vbox_new(FALSE,0);
+        gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
+
+	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
+	minidialogs = g_slist_prepend(minidialogs, vbox);
+	g_signal_connect(G_OBJECT(vbox), "destroy", G_CALLBACK(alert_killed_cb), NULL);
+
+	if (first_call) {
+		first_call = FALSE;
+		gaim_signal_connect(gaim_connections_get_handle(), "signed-off", 
+				    gaim_gtk_utils_get_handle(),
+				    GAIM_CALLBACK(connection_signed_off_cb), NULL);
+	}
+	
+      	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	
+        if (img != NULL)
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	
+	primary_esc = g_markup_escape_text(primary, -1);
+
+	if (secondary)
+		secondary_esc = g_markup_escape_text(secondary, -1);
+	g_snprintf(label_text, sizeof(label_text),
+		   "<span weight=\"bold\" size=\"smaller\">%s</span>%s<span size=\"smaller\">%s</span>",
+		   primary_esc, secondary ? "\n" : "", secondary?secondary_esc:"");
+	g_free(primary_esc);
+	label = gtk_label_new(NULL);
+        gtk_widget_modify_text(vbox, GTK_STATE_NORMAL, &(label->style->white));
+        gtk_label_set_markup(GTK_LABEL(label), label_text);
+        gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+        gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+        gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+#if GTK_CHECK_VERSION(2,6,0)
+	 g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
+
+        bbox = gtk_hbutton_box_new();
+        gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
+        gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	
+	va_start(args, user_data);
+	while ((button_text = va_arg(args, char*))) {
+		callback = va_arg(args, GCallback);
+		button = gtk_button_new();
+		gtk_container_set_border_width(GTK_CONTAINER(button), 0);
+		if (callback)
+			g_signal_connect_swapped(G_OBJECT(button), "clicked", callback, user_data);
+		g_signal_connect_swapped(G_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), vbox);
+		hbox = gtk_hbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER(button), hbox);
+		g_snprintf(label_text, sizeof(label_text),
+			   "<span size=\"smaller\">%s</span>", button_text);
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), label_text);
+		gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		gtk_container_add(GTK_CONTAINER(bbox), button);
+	}
+	va_end(args);
+
+	return vbox;
+}

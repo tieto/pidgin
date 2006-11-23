@@ -82,6 +82,7 @@ GTKGAIM_C_SRC =	\
 			gtkrequest.c \
 			gtkroomlist.c \
 			gtksavedstatuses.c \
+			gtkscrollbook.c \
 			gtksound.c \
 			gtksourceiter.c \
 			gtkstatusbox.c \

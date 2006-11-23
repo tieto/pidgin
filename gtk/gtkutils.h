@@ -510,3 +510,16 @@ void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const
  * @return         A newly allocated string with unicode arrow characters
  */
 char *gaim_gtk_make_pretty_arrows(const char *str);
+
+/**
+ * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
+ *
+ * @param handle         A handle
+ * @param primary        The primary text
+ * @param secondary      The secondary text
+ * @param user_data      Data to pass to the callbacks
+ * @param ...            a NULL-terminated list of button labels and callbacks
+ */
+void *gaim_gtk_make_mini_dialog(GaimConnection *handle, const char* stock_id, 
+				const char *primary, const char *secondary,
+				void *user_data,  ...);

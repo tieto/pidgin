@@ -97,6 +97,7 @@ gaim_SOURCES = \
 	gtkrequest.c \
 	gtkroomlist.c \
 	gtksavedstatuses.c \
+	gtkscrollbook.c \
 	gtksession.c \
 	gtksound.c \
 	gtksourceiter.c \
@@ -143,6 +144,7 @@ gaim_headers = \
 	gtkrequest.h \
 	gtkroomlist.h \
 	gtksavedstatuses.h \
+	gtkscrollbook.h \
 	gtksession.h \
 	gtksound.h \
 	gtksourceiter.h \
