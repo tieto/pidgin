@@ -263,6 +263,16 @@ init_libgaim(int argc, char **argv)
 
 	gaim_br_set_locate_fallback_func(gnt_find_binary_location, argv[0]);
 
+#ifdef ENABLE_NLS
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset(PACKAGE, "UTF-8");
+	textdomain(PACKAGE);
+#endif
+
+#ifdef HAVE_SETLOCALE
+	setlocale(LC_ALL, "");
+#endif
+
 	/* scan command-line options */
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
