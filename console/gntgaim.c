@@ -27,6 +27,7 @@
 #include "ft.h"
 #include "log.h"
 #include "notify.h"
+#include "prefix.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "pounce.h"
@@ -156,6 +157,66 @@ gnt_eventloop_get_ui_ops(void)
 	return &eventloop_ops;
 }
 
+/* This is copied from gtkgaim */
+static char *
+gnt_find_binary_location(void *symbol, void *data)
+{
+	static char *fullname = NULL;
+	static gboolean first = TRUE;
+
+	char *argv0 = data;
+	struct stat st;
+	char *basebuf, *linkbuf, *fullbuf;
+
+	if (!first)
+		/* We've already been through this. */
+		return strdup(fullname);
+
+	first = FALSE;
+
+	if (!argv0)
+		return NULL;
+
+
+	basebuf = g_find_program_in_path(argv0);
+
+	/* But we still need to deal with symbolic links */
+	g_lstat(basebuf, &st);
+	while ((st.st_mode & S_IFLNK) == S_IFLNK) {
+		int written;
+		linkbuf = g_malloc(1024);
+		written = readlink(basebuf, linkbuf, 1024 - 1);
+		if (written == -1)
+		{
+			/* This really shouldn't happen, but do we
+			 * need something better here? */
+			g_free(linkbuf);
+			continue;
+		}
+		linkbuf[written] = '\0';
+		if (linkbuf[0] == G_DIR_SEPARATOR) {
+			/* an absolute path */
+			fullbuf = g_strdup(linkbuf);
+		} else {
+			char *dirbuf = g_path_get_dirname(basebuf);
+			/* a relative path */
+			fullbuf = g_strdup_printf("%s%s%s",
+					dirbuf, G_DIR_SEPARATOR_S,
+					linkbuf);
+			g_free(dirbuf);
+		}
+		/* There's no memory leak here.  Really! */
+		g_free(linkbuf);
+		g_free(basebuf);
+		basebuf = fullbuf;
+		g_lstat(basebuf, &st);
+	}
+
+	fullname = basebuf;
+	return strdup(fullname);
+}
+
+
 /* This is mostly copied from gtkgaim's source tree */
 static void
 show_usage(const char *name, gboolean terse)
@@ -199,6 +260,8 @@ init_libgaim(int argc, char **argv)
 		{"version",  no_argument,       NULL, 'v'},
 		{0, 0, 0, 0}
 	};
+
+	gaim_br_set_locate_fallback_func(gnt_find_binary_location, argv[0]);
 
 	/* scan command-line options */
 	opterr = 1;
