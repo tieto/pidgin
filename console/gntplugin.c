@@ -115,8 +115,8 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
 	text = g_strdup_printf(_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n"),
-			plugin->info->name, plugin->info->version, plugin->info->description,
-			plugin->info->author, plugin->info->homepage, plugin->path);
+			SAFE(plugin->info->name), SAFE(plugin->info->version), SAFE(plugin->info->description),
+			SAFE(plugin->info->author), SAFE(plugin->info->homepage), SAFE(plugin->path));
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
