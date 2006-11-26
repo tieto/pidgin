@@ -1,3 +1,4 @@
+#include "gntstyle.h"
 #include "gntwindow.h"
 
 #include <string.h>
