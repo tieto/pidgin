@@ -118,7 +118,7 @@ gaim_base16_decode(const char *str, gsize *ret_len)
 	len = strlen(str);
 
 	g_return_val_if_fail(strlen(str) > 0, 0);
-	g_return_val_if_fail(len % 2 > 0,       0);
+	g_return_val_if_fail(len % 2 == 0,    0);
 
 	data = g_malloc(len / 2);
 
