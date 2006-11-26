@@ -617,11 +617,11 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->icon_check),
 					     !gaim_account_get_ui_bool(dialog->account, GAIM_GTK_UI, "use-global-buddyicon",
 								       TRUE));
-
-		set_dialog_icon(dialog,
-				g_strdup(gaim_account_get_ui_string(dialog->account,
-						GAIM_GTK_UI, "non-global-buddyicon", NULL)));
 	}
+
+	set_dialog_icon(dialog, dialog->account ?
+			g_strdup(gaim_account_get_ui_string(dialog->account,
+					GAIM_GTK_UI, "non-global-buddyicon", NULL)) : NULL);
 
 	if (!dialog->prpl_info ||
 			(!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
