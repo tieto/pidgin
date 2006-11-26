@@ -23,7 +23,7 @@ if USE_GCONFTOOL
 GCONF_DIR=gconf
 endif
 
-SUBDIRS = $(GCONF_DIR) plugins protocols
+SUBDIRS = $(GCONF_DIR) plugins protocols tests
 
 gaim_coresources = \
 	account.c \

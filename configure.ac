@@ -1807,6 +1807,14 @@ if test $ac_cv_struct_tm_gmtoff = yes; then
 fi
 
 dnl #######################################################################
+dnl # Check for check
+dnl #######################################################################
+PKG_CHECK_MODULES(CHECK, check >= 0.9.4, have_check=yes, have_check=no)
+AM_CONDITIONAL(HAVE_CHECK, test "x$have_check" = "xyes")
+AC_SUBST(CHECK_CFLAGS)
+AC_SUBST(CHECK_LIBS)
+
+dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
 AC_ARG_ENABLE(doxygen,
@@ -1906,6 +1914,7 @@ AC_OUTPUT([Makefile
 		   libgaim/protocols/toc/Makefile
 		   libgaim/protocols/yahoo/Makefile
 		   libgaim/protocols/zephyr/Makefile
+		   libgaim/tests/Makefile
 		   console/Makefile
 		   console/libgnt/Makefile
 		   console/libgnt/gnt.pc
