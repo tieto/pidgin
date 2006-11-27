@@ -7,6 +7,7 @@
 /* define the test suites here */
 /* remember to add the suite to the runner in check_libgaim.c */
 Suite * util_suite(void);
+Suite * cipher_suite(void);
 
 /* helper macros */
 #define assert_string_equal(expected, actual) { \
