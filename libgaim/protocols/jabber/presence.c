@@ -185,7 +185,7 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 
 	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 			"subscribed");
-
+#if 0
 	buddy = gaim_find_buddy(jap->gc->account, jap->who);
 
 	if (buddy) {
@@ -206,7 +206,7 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 		gaim_account_request_add(jap->gc->account, jap->who,
 		                         NULL, NULL, NULL);
 	}
-
+#endif
 	g_free(jap->who);
 	g_free(jap);
 }
