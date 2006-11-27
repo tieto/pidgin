@@ -16,9 +16,9 @@ Suite * cipher_suite(void);
 }
 
 #define assert_string_equal_free(expected, actual) { \
-	gchar *a = actual; \
-	assert_string_equal(expected, a); \
-	g_free(a); \
+	gchar *b = actual; \
+	assert_string_equal(expected, b); \
+	g_free(b); \
 }
 
 
