@@ -199,7 +199,7 @@ cipher_suite(void) {
 	Suite *s = suite_create("Cipher Suite");
 	TCase *tc = NULL;
 	
-	/* md5 tests */
+	/* md4 tests */
 	tc = tcase_create("MD4");
 	tcase_add_test(tc, test_md4_empty_string);
 	tcase_add_test(tc, test_md4_a);
