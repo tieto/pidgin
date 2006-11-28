@@ -492,12 +492,10 @@ gaim_buddy_icons_get_cache_dir(void)
 }
 
 char *gaim_buddy_icons_get_full_path(const char *icon) {
-	struct stat st;
-
 	if (icon == NULL)
 		return NULL;
 
-	if (g_stat(icon, &st) == 0)
+	if (g_file_test(icon, G_FILE_TEST_IS_REGULAR))
 		return g_strdup(icon);
 	else
 		return g_build_filename(gaim_buddy_icons_get_cache_dir(), icon, NULL);

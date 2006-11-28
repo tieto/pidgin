@@ -1232,9 +1232,8 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 	if (account->buddy_icon != NULL && (icon == NULL || strcmp(account->buddy_icon, icon)))
 	{
 		const char *dirname = gaim_buddy_icons_get_cache_dir();
-		struct stat st;
 
-		if (g_stat(account->buddy_icon, &st) == 0)
+		if (g_file_test(account->buddy_icon, G_FILE_TEST_IS_REGULAR))
 		{
 			/* The file exists. This is a full path. */
 
