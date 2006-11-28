@@ -753,7 +753,9 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	 * should try one more round against it
 	 */
 	if (js->sasl_state != SASL_OK) {
-		js->sasl_state = sasl_client_step(js->sasl, NULL, 0, NULL, NULL, NULL);
+		const char *c_out;
+		unsigned int clen;
+		js->sasl_state = sasl_client_step(js->sasl, NULL, 0, NULL, &c_out, &clen);
 		if (js->sasl_state != SASL_OK) {
 			/* This should never happen! */
 			gaim_connection_error(js->gc, _("Invalid response from server."));
