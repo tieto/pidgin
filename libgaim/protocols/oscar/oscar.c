@@ -2147,16 +2147,6 @@ gaim_auth_request(struct name_data *data, char *msg)
 }
 
 static void
-gaim_auth_request_msgprompt(struct name_data *data)
-{
-	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
-					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(gaim_auth_request),
-					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
-					   data);
-}
-
-static void
 gaim_auth_dontrequest(struct name_data *data)
 {
 	GaimConnection *gc = data->gc;
@@ -2170,31 +2160,19 @@ gaim_auth_dontrequest(struct name_data *data)
 
 
 static void
-gaim_auth_sendrequest(GaimConnection *gc, char *name)
+gaim_auth_sendrequest(GaimConnection *gc, const char *name)
 {
-	struct name_data *data = g_new0(struct name_data, 1);
-	GaimBuddy *buddy;
-	gchar *dialog_msg, *nombre;
+	struct name_data *data;
 
-	buddy = gaim_find_buddy(gc->account, name);
-	if (buddy && (gaim_buddy_get_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", name, gaim_buddy_get_alias_only(buddy));
-	else
-		nombre = NULL;
-
-	dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), (nombre ? nombre : name));
+	data = g_new0(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(name);
-	data->nick = NULL;
 
-	gaim_request_action(gc, NULL, _("Request Authorization"), dialog_msg,
-						0, data, 2,
-						_("_Request Authorization"),
-						G_CALLBACK(gaim_auth_request_msgprompt),
-						_("Cancel"), G_CALLBACK(gaim_auth_dontrequest));
-
-	g_free(dialog_msg);
-	g_free(nombre);
+	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
+					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
+					   _("OK"), G_CALLBACK(gaim_auth_request),
+					   _("Cancel"), G_CALLBACK(gaim_auth_dontrequest),
+					   data);
 }
 
 
@@ -5821,7 +5799,8 @@ oscar_get_aim_info_cb(GaimBlistNode *node, gpointer ignore)
 	aim_locate_getinfoshort(gc->proto_data, gaim_buddy_get_name(buddy), 0x00000003);
 }
 
-GList *oscar_buddy_menu(GaimBuddy *buddy) {
+static GList *
+oscar_buddy_menu(GaimBuddy *buddy) {
 
 	GaimConnection *gc;
 	OscarData *od;
