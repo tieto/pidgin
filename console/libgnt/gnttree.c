@@ -669,6 +669,22 @@ gnt_tree_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 }
 
 static void
+gnt_tree_size_changed(GntWidget *widget, int w, int h)
+{
+	GntTree *tree = GNT_TREE(widget);
+	int i;
+	int n = 0;
+	if (widget->priv.width <= 0)
+		return;
+	for (i = 0; i < tree->ncol; ++i)
+		n += tree->columns[i].width;
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
+		tree->columns[tree->ncol - 1].width += widget->priv.width - n - 1 * tree->ncol;
+	else
+		tree->columns[tree->ncol - 1].width += widget->priv.width - n - 2 - 1 * tree->ncol;
+}
+
+static void
 gnt_tree_class_init(GntTreeClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
@@ -679,6 +695,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 	parent_class->size_request = gnt_tree_size_request;
 	parent_class->key_pressed = gnt_tree_key_pressed;
 	parent_class->clicked = gnt_tree_clicked;
+	parent_class->size_changed = gnt_tree_size_changed;
 
 	signals[SIG_SELECTION_CHANGED] = 
 		g_signal_new("selection-changed",

@@ -359,7 +359,8 @@ add_substatus(EditStatus *edit, GaimAccount *account)
 	name = g_strdup_printf("%s (%s)", gaim_account_get_username(account),
 			gaim_account_get_protocol_name(account));
 	gnt_tree_add_choice(GNT_TREE(edit->tree), key,
-			gnt_tree_create_row(GNT_TREE(edit->tree), name, type, message), NULL, NULL);
+			gnt_tree_create_row(GNT_TREE(edit->tree),
+				name, type ? type : "", message ? message : ""), NULL, NULL);
 
 	if (sub)
 		gnt_tree_set_choice(GNT_TREE(edit->tree), key, TRUE);

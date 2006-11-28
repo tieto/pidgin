@@ -1016,7 +1016,6 @@ gg_blist_toggle_tag_buddy(GaimBlistNode *node)
 	if (GAIM_BLIST_NODE_IS_CONTACT(node))
 		node = (GaimBlistNode*)gaim_contact_get_priority_buddy((GaimContact*)node);
 	update_buddy_display((GaimBuddy*)node, ggblist);
-	gaim_debug_info("blist", "Tagged buddy\n");
 }
 
 static void
@@ -1059,7 +1058,6 @@ gg_blist_place_tagged(GaimBlistNode *target)
 			}
 		}
 	}
-	gaim_debug_info("blist", "Placed buddy\n");
 }
 
 static void
@@ -1150,9 +1148,12 @@ tooltip_for_buddy(GaimBuddy *buddy, GString *str)
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
 	GaimAccount *account;
+	const char *alias = gaim_buddy_get_alias(buddy);
 
 	account = gaim_buddy_get_account(buddy);
-	
+
+	if (g_utf8_collate(gaim_buddy_get_name(buddy), alias))
+		g_string_append_printf(str, _("Nickname: %s\n"), alias);
 	g_string_append_printf(str, _("Account: %s (%s)"),
 			gaim_account_get_username(account),
 			gaim_account_get_protocol_name(account));
@@ -1230,12 +1231,9 @@ draw_tooltip_real(GGBlist *ggblist)
 		GaimBuddy *pr = gaim_contact_get_priority_buddy((GaimContact*)node);
 		gboolean offline = !GAIM_BUDDY_IS_ONLINE(pr);
 		gboolean showoffline = gaim_prefs_get_bool(PREF_ROOT "/showoffline");
-		const char *alias = gaim_contact_get_alias((GaimContact*)node);
 		const char *name = gaim_buddy_get_name(pr);
 
-		title = g_strdup(alias);
-		if (g_utf8_collate(alias, name))
-			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name(pr));
+		title = g_strdup(name);
 		tooltip_for_buddy(pr, str);
 		for (node = node->child; node; node = node->next) {
 			GaimBuddy *buddy = (GaimBuddy*)node;
@@ -1251,7 +1249,6 @@ draw_tooltip_real(GGBlist *ggblist)
 			if (!showoffline && !GAIM_BUDDY_IS_ONLINE(buddy))
 				continue;
 			str = g_string_append(str, "\n----------\n");
-			g_string_append_printf(str, _("Nickname: %s\n"), gaim_buddy_get_name(buddy));
 			tooltip_for_buddy(buddy, str);
 		}
 	} else if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
@@ -1361,6 +1358,7 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 				!gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
 	} else if (strcmp(text, "t") == 0) {
 		gg_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
+		gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");
 	} else if (strcmp(text, "a") == 0) {
 		gg_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
 	} else
@@ -1376,9 +1374,6 @@ update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist)
 	GntTextFormatFlags bflag = 0, cflag = 0;
 	
 	contact = gaim_buddy_get_contact(buddy);
-
-	gaim_debug_fatal("sadrul", "updating display for %s\n", gaim_buddy_get_name(buddy));
-	g_printerr("sadrul:  updating display for %s\n", gaim_buddy_get_name(buddy));
 
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, 0, get_display_name((GaimBlistNode*)buddy));
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), contact, 0, get_display_name((GaimBlistNode*)contact));
@@ -1428,7 +1423,6 @@ size_changed_cb(GntWidget *w, int wi, int h)
 	gnt_widget_get_size(w, &width, &height);
 	gaim_prefs_set_int(PREF_ROOT "/size/width", width);
 	gaim_prefs_set_int(PREF_ROOT "/size/height", height);
-	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0, width - 1);
 }
 
 static void
