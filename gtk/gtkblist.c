@@ -3424,17 +3424,18 @@ unseen_conv_menu()
 	static GtkWidget *menu = NULL;
 	GList *convs = NULL;
 
-	if (menu)
+	if (menu) {
 		gtk_widget_destroy(menu);
+		menu = NULL;
+	}
+
+	convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, TRUE, 0);
+	if (!convs)
+		/* no conversations added, don't show the menu */
+		return;
 
 	menu = gtk_menu_new();
 
-	convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, TRUE, 0);
-	if (!convs) {
-		/* no conversations added, don't show the menu */
-		gtk_widget_destroy(menu);
-		return;
-	}
 	gaim_gtk_conversations_fill_menu(menu, convs);
 	g_list_free(convs);
 	gtk_widget_show_all(menu);

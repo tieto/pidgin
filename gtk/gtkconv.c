@@ -74,9 +74,9 @@ typedef  enum
 {
 	GAIM_GTKCONV_SET_TITLE 			= 1 << 0,
 	GAIM_GTKCONV_BUDDY_ICON			= 1 << 1,
-	GAIM_GTKCONV_MENU				= 1 << 2,
+	GAIM_GTKCONV_MENU			= 1 << 2,
 	GAIM_GTKCONV_TAB_ICON			= 1 << 3,
-	GAIM_GTKCONV_TOPIC				= 1 << 4,
+	GAIM_GTKCONV_TOPIC			= 1 << 4,
 	GAIM_GTKCONV_SMILEY_THEME		= 1 << 5,
 	GAIM_GTKCONV_COLORIZE_TITLE		= 1 << 6
 }GaimGtkConvFields;
@@ -6356,6 +6356,10 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 
 		gaim_gtk_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
 		gaim_gtkconv_placement_place(gtkconv);
+
+		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
+		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
+		gaim_conversation_update(conv, GAIM_CONV_UPDATE_UNSEEN);
 	}
 }
 
@@ -7180,7 +7184,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimGtkWindow *win)
 
 		if (tab_clicked == -1)
 			return FALSE;
-		
+
 		gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, tab_clicked);
 		close_conv_cb(NULL, gtkconv);
 		return TRUE;
