@@ -142,7 +142,11 @@ enum {
 static guint signals [LAST_SIGNAL] = { 0 };
 
 static GtkTargetEntry selection_targets[] = {
+#ifndef _WIN32
 	{ "text/html", 0, TARGET_HTML },
+#else
+	{ "HTML Format", 0, TARGET_HTML },
+#endif
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
 	{ "STRING", 0, TARGET_STRING },
@@ -153,11 +157,6 @@ static GtkTargetEntry link_drag_drop_targets[] = {
 };
 
 #ifdef _WIN32
-/* Win32 clipboard format value, and functions to convert back and
- * forth between HTML and the clipboard format.
- */
-static UINT win_html_fmt;
-
 static gchar *
 clipboard_win32_to_html(char *clipboard) {
 	const char *header;
@@ -241,37 +240,17 @@ clipboard_html_to_win32(char *html) {
 	return g_string_free(clipboard, FALSE);
 }
 
-static void clipboard_copy_html_win32(GtkIMHtml *imhtml) {
-	gchar *clipboard = clipboard_html_to_win32(imhtml->clipboard_html_string);
-	if (clipboard != NULL) {
-		HWND hwnd = GDK_WINDOW_HWND(GTK_WIDGET(imhtml)->window);
-		if (OpenClipboard(hwnd)) {
-			if (EmptyClipboard()) {
-				gint length = strlen(clipboard);
-				HGLOBAL hdata = GlobalAlloc(GMEM_MOVEABLE, length);
-				if (hdata != NULL) {
-					gchar *buffer = GlobalLock(hdata);
-					memcpy(buffer, clipboard, length);
-					GlobalUnlock(hdata);
-
-					if (SetClipboardData(win_html_fmt, hdata) == NULL) {
-						gchar *err_msg =
-							g_win32_error_message(GetLastError());
-						gaim_debug_info("html clipboard",
-								"Unable to set clipboard data: %s\n",
-								err_msg ? err_msg : "Unknown Error");
-						g_free(err_msg);
-					}
-				}
-			}
-			CloseClipboard();
-		}
-		g_free(clipboard);
-	}
-}
-
 static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 	gboolean pasted = FALSE;
+
+	/* Win32 clipboard format value, and functions to convert back and
+	 * forth between HTML and the clipboard format.
+	 */
+	static UINT win_html_fmt = 0;
+
+	/* Register HTML Format as desired clipboard format */
+	if (!win_html_fmt)
+		win_html_fmt = RegisterClipboardFormat("HTML Format");
 
 	if (gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml))
 				&& IsClipboardFormatAvailable(win_html_fmt)) {
@@ -281,7 +260,8 @@ static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 		if (OpenClipboard(hwnd)) {
 			HGLOBAL hdata = GetClipboardData(win_html_fmt);
 			if (hdata == NULL) {
-				error_reading_clipboard = TRUE;
+				if (GetLastError() != ERROR_SUCCESS)
+					error_reading_clipboard = TRUE;
 			} else {
 				char *buffer = GlobalLock(hdata);
 				if (buffer == NULL) {
@@ -298,7 +278,6 @@ static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 			}
 
 			CloseClipboard();
-
 		} else {
 			error_reading_clipboard = TRUE;
 		}
@@ -892,7 +871,7 @@ ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
 
 
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
-	char *text;
+	char *text = NULL;
 	gboolean primary;
 	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
@@ -903,8 +882,9 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	primary = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY) == clipboard;
 
 	if (info == TARGET_HTML) {
-		gsize len;
 		char *selection;
+#ifndef _WIN32
+		gsize len;
 		GString *str = g_string_new(NULL);
 		if (primary) {
 			text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
@@ -918,6 +898,10 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, (const guchar *)selection, len);
 		g_string_free(str, TRUE);
+#else
+		selection = clipboard_html_to_win32(imhtml->clipboard_html_string);
+		gtk_selection_data_set(selection_data, gdk_atom_intern("HTML Format", FALSE), 8, (const guchar *)selection, strlen(selection));
+#endif
 		g_free(selection);
 	} else {
 		if (primary) {
@@ -968,12 +952,6 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 	imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
 
-#ifdef _WIN32
-	/* We're going to still copy plain text, but let's toss the "HTML Format"
-	   we need into the windows clipboard now as well.	*/
-	clipboard_copy_html_win32(imhtml);
-#endif
-
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
 }
 
@@ -998,12 +976,6 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 
 	imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 	imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
-
-#ifdef _WIN32
-	/* We're going to still copy plain text, but let's toss the "HTML Format"
-	   we need into the windows clipboard now as well.	*/
-	clipboard_copy_html_win32(imhtml);
-#endif
 
 	if (imhtml->editable)
 		gtk_text_buffer_delete_selection(imhtml->text_buffer, FALSE, FALSE);
@@ -1431,11 +1403,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_imhtml_set_editable(imhtml, FALSE);
 	g_signal_connect(G_OBJECT(imhtml), "populate-popup",
 					 G_CALLBACK(hijack_menu_cb), NULL);
-
-#ifdef _WIN32
-	/* Register HTML Format as desired clipboard format */
-	win_html_fmt = RegisterClipboardFormat("HTML Format");
-#endif
 }
 
 GtkWidget *gtk_imhtml_new(void *a, void *b)
