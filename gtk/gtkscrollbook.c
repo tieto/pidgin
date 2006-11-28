@@ -89,7 +89,7 @@ refresh_scroll_box(GtkGaimScrollBook *scroll_book, int index, int count)
 {
 	char *label;
 
-	gtk_widget_show_all(scroll_book);
+	gtk_widget_show_all(GTK_WIDGET(scroll_book));
 	if (count <= 1)
 		gtk_widget_hide(GTK_WIDGET(scroll_book->hbox));
 	else

@@ -2957,7 +2957,7 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), label_text);
 		gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
 		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-		gtk_box_pack_end(GTK_CONTAINER(hbox2), button, FALSE, FALSE, 0);
+		gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 		gtk_size_group_add_widget(sg, button);
 	}
 	va_end(args);
