@@ -967,6 +967,11 @@ conv_page()
 
 static void network_ip_changed(GtkEntry *entry, gpointer data)
 {
+	/*
+	 * TODO: It would be nice if we could validate this and show a
+	 *       red background in the box when the IP address is invalid
+	 *       and a green background when the IP address is valid.
+	 */
 	gaim_network_set_public_ip(gtk_entry_get_text(entry));
 }
 

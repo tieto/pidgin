@@ -136,7 +136,10 @@ gaim_core_init(const char *ui)
 	gaim_xfers_init();
 	gaim_idle_init();
 
-	/* Call this early on to try to auto-detect our IP address */
+	/*
+	 * Call this early on to try to auto-detect our IP address and
+	 * hopefully save some time later.
+	 */
 	gaim_network_get_my_ip(-1);
 
 	if (ops != NULL && ops->ui_init != NULL)

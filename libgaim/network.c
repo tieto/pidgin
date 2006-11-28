@@ -166,7 +166,8 @@ gaim_network_get_my_ip(int fd)
 	/* Check if the user specified an IP manually */
 	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
 		ip = gaim_network_get_public_ip();
-		if ((ip != NULL) && (*ip != '\0'))
+		/* Make sure the IP address entered by the user is valid */
+		if ((ip != NULL) && (gaim_network_ip_atoi(ip) != NULL))
 			return ip;
 	}
 
