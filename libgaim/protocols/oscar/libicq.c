@@ -150,4 +150,4 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 }
 
-GAIM_INIT_PLUGIN(oscar, init_plugin, info);
+GAIM_INIT_PLUGIN(icq, init_plugin, info);
