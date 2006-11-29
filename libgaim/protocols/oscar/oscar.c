@@ -62,13 +62,6 @@
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
 #define OSCAR_CONNECT_STEPS 6
-#define OSCAR_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
-#define OSCAR_DEFAULT_LOGIN_PORT 5190
-#define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
-#define OSCAR_DEFAULT_AUTHORIZATION TRUE
-#define OSCAR_DEFAULT_HIDE_IP TRUE
-#define OSCAR_DEFAULT_WEB_AWARE FALSE
-#define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 
 static OscarCapability gaim_caps = OSCAR_CAPABILITY_CHAT | OSCAR_CAPABILITY_BUDDYICON | OSCAR_CAPABILITY_DIRECTIM | OSCAR_CAPABILITY_SENDFILE | OSCAR_CAPABILITY_UNICODE | OSCAR_CAPABILITY_INTEROPERATE | OSCAR_CAPABILITY_ICHAT;
 
@@ -214,6 +207,15 @@ static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->nick);
 	g_free(data);
 }
+
+#ifdef _WIN32
+const char *oscar_get_locale_charset(void) {
+	static const char *charset = NULL;
+	if (charset == NULL)
+		g_get_charset(&charset);
+	return charset;
+}
+#endif
 
 /**
  * Determine how we can send this message.  Per the warnings elsewhere
@@ -2316,12 +2318,10 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			if (i >= 6) {
 				struct name_data *data = g_new(struct name_data, 1);
 				gchar *sn = g_strdup_printf("%u", args->uin);
-				gchar *reason;
+				gchar *reason = NULL;
 
 				if (msg2[5] != NULL)
 					reason = gaim_plugin_oscar_decode_im_part(account, sn, AIM_CHARSET_CUSTOM, 0x0000, msg2[5], strlen(msg2[5]));
-				else
-					reason = NULL; 
 
 				gaim_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
@@ -2329,7 +2329,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				data->gc = gc;
 				data->name = sn;
 				data->nick = NULL;
-				
+
 				gaim_account_request_authorization(gaim_connection_get_account(gc), sn, NULL, NULL, reason,
 						G_CALLBACK(gaim_auth_grant), G_CALLBACK(gaim_auth_dontgrant_msgprompt), data);
 				g_free(reason);
@@ -3503,9 +3503,9 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 
 	aim_clientready(od, conn);
 
-        if (gaim_account_get_user_info(account) != NULL)
-        	serv_set_info(gc, gaim_account_get_user_info(account));
-	
+	if (gaim_account_get_user_info(account) != NULL)
+		serv_set_info(gc, gaim_account_get_user_info(account));
+
 	/* Set our available message based on the current status */
 	status = gaim_account_get_active_status(account);
 	if (gaim_status_is_available(status))
@@ -5031,7 +5031,7 @@ static int gaim_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->name = g_strdup(sn);
 	data->nick = NULL;
 
-	gaim_account_request_authorization(gaim_connection_get_account(gc), nombre, NULL, NULL, reason, 
+	gaim_account_request_authorization(gaim_connection_get_account(gc), nombre, NULL, NULL, reason,
 			G_CALLBACK(gaim_auth_grant), G_CALLBACK(gaim_auth_dontgrant_msgprompt), data);
 	g_free(nombre);
 	g_free(reason);

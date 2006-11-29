@@ -31,12 +31,19 @@
 
 #define OSCAR_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
+#ifndef _WIN32
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
+#else
+#define OSCAR_DEFAULT_CUSTOM_ENCODING oscar_get_locale_charset()
+#endif
 #define OSCAR_DEFAULT_AUTHORIZATION TRUE
 #define OSCAR_DEFAULT_HIDE_IP TRUE
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
 
+#ifdef _WIN32
+const char *oscar_get_locale_charset(void);
+#endif
 const char *oscar_list_icon_icq(GaimAccount *a, GaimBuddy *b);
 const char *oscar_list_icon_aim(GaimAccount *a, GaimBuddy *b);
 void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne);
