@@ -1051,6 +1051,23 @@ gaim_account_request_add(GaimAccount *account, const char *remote_user,
 		ui_ops->request_add(account, remote_user, id, alias, message);
 }
 
+void
+gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
+			           const char *id, const char *alias, const char *message,
+				   GCallback auth_cb, GCallback deny_cb, void *user_data)
+{
+        GaimAccountUiOps *ui_ops;
+
+	g_return_if_fail(account     != NULL);
+        g_return_if_fail(remote_user != NULL);
+
+        ui_ops = gaim_accounts_get_ui_ops();
+
+        if (ui_ops != NULL && ui_ops->request_authorize != NULL)
+               ui_ops->request_authorize(account, remote_user, id, alias, message, auth_cb, deny_cb, user_data);
+						
+}
+
 static void
 change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 {

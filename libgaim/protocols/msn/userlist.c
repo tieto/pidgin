@@ -42,18 +42,8 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 {
 	MsnSession *session = pa->gc->proto_data;
 	MsnUserList *userlist = session->userlist;
-	GaimBuddy *buddy;
 
 	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
-
-	buddy = gaim_find_buddy(pa->gc->account, pa->who);
-
-	if (buddy != NULL)
-		gaim_account_notify_added(pa->gc->account, pa->who,
-			NULL, pa->friendly, NULL);
-	else
-		gaim_account_request_add(pa->gc->account, pa->who,
-			NULL, pa->friendly, NULL);
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -77,35 +67,14 @@ static void
 got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 {
 	MsnPermitAdd *pa;
-	char *msg;
 
 	pa = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
 	pa->friendly = g_strdup(friendly);
 	pa->gc = gc;
-
-	if (friendly != NULL)
-	{
-		msg = g_strdup_printf(
-				   _("The user %s (%s) wants to add %s to his or her "
-					 "buddy list."),
-				   passport, friendly,
-				   gaim_account_get_username(gc->account));
-	}
-	else
-	{
-		msg = g_strdup_printf(
-				   _("The user %s wants to add %s to his or "
-					 "her buddy list."),
-				   passport, gaim_account_get_username(gc->account));
-	}
-
-	gaim_request_action(gc, NULL, msg, NULL,
-						GAIM_DEFAULT_ACTION_NONE, pa, 2,
-						_("Authorize"), G_CALLBACK(msn_accept_add_cb),
-						_("Deny"), G_CALLBACK(msn_cancel_add_cb));
-
-	g_free(msg);
+	
+	gaim_account_request_authorization(gaim_connection_get_account(gc), passport, NULL, friendly, NULL,
+					   msn_accept_add_cb, msn_cancel_add_cb, pa);
 }
 
 /**************************************************************************

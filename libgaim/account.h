@@ -27,6 +27,7 @@
 #ifndef _GAIM_ACCOUNT_H_
 #define _GAIM_ACCOUNT_H_
 
+#include <glib-object.h>
 #include <glib.h>
 
 typedef struct _GaimAccountUiOps GaimAccountUiOps;
@@ -51,6 +52,9 @@ struct _GaimAccountUiOps
 	void (*request_add)(GaimAccount *account, const char *remote_user,
 	                    const char *id, const char *alias,
 	                    const char *message);
+	void (*request_authorize)(GaimAccount *account, const char *remote_user, const char *id,
+				 const char *alias, const char *message, 
+				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
 };
 
 struct _GaimAccount
@@ -170,6 +174,27 @@ void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
 void gaim_account_request_add(GaimAccount *account, const char *remote_user,
                               const char *id, const char *alias,
                               const char *message);
+
+/**
+ * Notifies the user that a remote user has wants to add the local user
+ * to his or her buddy list and requires authorization to d oso.
+ *
+ * This will present a dialog informing the usre of this and ask if the 
+ * user authorizes or denies the remote user from adding him.
+ *
+ * @param account      The account that was added
+ * @param remote_user  The name of the usre that added this account.
+ * @param id           The optional ID of the local account. Rarely used.
+ * @param alias        The optional alias of the remote user.
+ * @param message      The optional message sent from the uer requesting you
+ * @param auth_cb      The callback called when the local user accepts
+ * @param deny_cb      The callback called when the local user rejects
+ * @param user_data    Data to be passed back to the above callbacks
+ */
+void gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
+					const char *id, const char *alias, const char *message,
+					GCallback auth_cb, GCallback deny_cb, void *user_data);
+
 /**
  * Requests information from the user to change the account's password.
  *

@@ -910,16 +910,7 @@ struct yahoo_add_request {
 };
 
 static void
-yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req, const char *msg) {
-	GaimBuddy *buddy = gaim_find_buddy(add_req->gc->account, add_req->who);
-
-	if (buddy != NULL)
-		gaim_account_notify_added(add_req->gc->account, add_req->who,
-			add_req->id, NULL, add_req->msg);
-	else
-		gaim_account_request_add(add_req->gc->account, add_req->who,
-			add_req->id, NULL, add_req->msg);
-
+yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req) {
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req->msg);
@@ -956,6 +947,20 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
 	g_free(add_req);
 }
 
+static void
+yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*msg)
+{
+	yahoo_buddy_add_deny_cb(add_req, NULL);
+}
+
+static void
+yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
+	gaim_request_input(add_req->gc, NULL, _("Authorization denied message:"),
+			NULL, _("No reason given."), TRUE, FALSE, NULL, 
+			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
+			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb), add_req);
+}
+
 static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_add_request *add_req;
 	char *msg = NULL;
@@ -984,27 +989,16 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	}
 
 	if (add_req->id) {
-		char *prompt_msg;
 		if (msg)
 			add_req->msg = yahoo_string_decode(gc, msg, FALSE);
 
-		/* TODO: this is almost exactly the same as what MSN does,
+		/* DONE! this is almost exactly the same as what MSN does,
 		 * this should probably be moved to the core.
 		 */
-		prompt_msg = g_strdup_printf(_("The user %s wants to add %s to "
-					"his or her buddy list%s%s."),
-				add_req->who, add_req->id,
-				add_req->msg ? ": " : "",
-				add_req->msg ? add_req->msg : "");
-		gaim_request_input(gc, NULL, prompt_msg,
-				_("Message (optional) :"),
-				NULL, TRUE, FALSE, NULL,
-				_("Authorize"), G_CALLBACK(
-					yahoo_buddy_add_authorize_cb),
-				_("Deny"), G_CALLBACK(
-					yahoo_buddy_add_deny_cb),
-				add_req);
-		g_free(prompt_msg);
+		 gaim_account_request_authorization(gaim_connection_get_account(gc), add_req->who, add_req->id,
+                                                    NULL, add_req->msg, G_CALLBACK(yahoo_buddy_add_authorize_cb), 
+						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
+                                                    add_req);
 	} else {
 		g_free(add_req->id);
 		g_free(add_req->who);

@@ -181,32 +181,8 @@ struct _jabber_add_permit {
 
 static void authorize_add_cb(struct _jabber_add_permit *jap)
 {
-	GaimBuddy *buddy = NULL;
-
 	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 			"subscribed");
-#if 0
-	buddy = gaim_find_buddy(jap->gc->account, jap->who);
-
-	if (buddy) {
-		JabberBuddy *jb = NULL;
-
-		jb = jabber_buddy_find(jap->js, jap->who, TRUE);
-
-		if ((jb->subscription & JABBER_SUB_TO) == 0) {
-			gaim_account_request_add(jap->gc->account,
-				                         jap->who, NULL,
-			                         NULL, NULL);
-		} else {
-			gaim_account_notify_added(jap->gc->account,
-			                          jap->who, NULL,
-			                          NULL, NULL);
-		}
-	} else {
-		gaim_account_request_add(jap->gc->account, jap->who,
-		                         NULL, NULL, NULL);
-	}
-#endif
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -304,20 +280,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
 	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
-		char *msg;
 
-		msg = g_strdup_printf(_("The user %s wants to add %s to his or "
-								"her buddy list."),
-							  from, gaim_account_get_username(js->gc->account));
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
 		jap->js = js;
 
-		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE,
-				jap, 2,
-				_("_Authorize"), G_CALLBACK(authorize_add_cb),
-				_("_Deny"), G_CALLBACK(deny_add_cb));
-		g_free(msg);
+		gaim_account_request_authorization(gaim_connection_get_account(js->gc), from, NULL, NULL, NULL,
+				G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
 		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {

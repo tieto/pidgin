@@ -2358,12 +2358,95 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	data->alias    = g_strdup(alias);
 	
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_INFO,
+	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
 					  _("Add buddy to your list?"), buffer, data, 
-					  _("Cancel"), G_CALLBACK(free_add_user_data),
-					  _("Add"), G_CALLBACK(add_user_cb), NULL);
+					  _("Add"), G_CALLBACK(add_user_cb),
+					  _("Cancel"), G_CALLBACK(free_add_user_data), NULL);
 	gaim_gtk_blist_add_alert(alert);
         
+	g_free(buffer);
+}
+
+struct auth_and_add {
+	void(*auth_cb)(void*);
+        void(*deny_cb)(void*);
+	void *data;
+	char *username;
+	char *alias;
+	GaimAccount *account;
+};
+
+static void
+authorize_and_add_cb(struct auth_and_add *aa)
+{
+	aa->auth_cb(aa->data);
+	gaim_blist_request_add_buddy(aa->account, aa->username,
+	 	                    NULL, aa->alias);
+
+	g_free(aa->username);
+	g_free(aa->alias);
+	g_free(aa);
+}
+
+static void
+deny_no_add_cb(struct auth_and_add *aa)
+{
+	aa->deny_cb(aa->data);
+
+	g_free(aa->username);
+	g_free(aa->alias);
+	g_free(aa);
+}
+
+static void
+gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote_user,
+					const char *id, const char *alias, const char *message,
+					GCallback auth_cb, GCallback deny_cb, void *user_data)
+{
+	char *buffer;
+	GaimConnection *gc;
+	GtkWidget *alert;
+
+	gc = gaim_account_get_connection(account);
+	if (message != NULL && *message == '\0')
+		message = NULL;
+	
+	buffer = g_strdup_printf(_("%s%s%s%s wants to add %s to his or her buddy list%s%s"),
+				remote_user,
+	 	                (alias != NULL ? " ("  : ""),
+		                (alias != NULL ? alias : ""),
+		                (alias != NULL ? ")"   : ""),
+		                (id != NULL
+		                ? id
+		                : (gaim_connection_get_display_name(gc) != NULL
+		                ? gaim_connection_get_display_name(gc)
+		                : gaim_account_get_username(account))),
+		                (message != NULL ? ": " : "."),
+		                (message != NULL ? message  : ""));
+
+
+	if (!gaim_find_buddy(account, remote_user)) {
+		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
+		aa->auth_cb = auth_cb;
+		aa->deny_cb = deny_cb;
+		aa->data = user_data;
+		aa->username = g_strdup(remote_user);
+		aa->alias = g_strdup(alias);
+		aa->account = account;
+		alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+						  _("Authorize buddy?"), buffer, aa,
+						  _("Authorize"), authorize_and_add_cb, 
+						  _("Deny"), deny_no_add_cb, 
+						  NULL);
+	} else {
+		alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+						  _("Authorize buddy?"), buffer, user_data,
+						  _("Authorize"), auth_cb, 
+						  _("Deny"), deny_cb, 
+						  NULL);
+	}
+	gaim_gtk_blist_add_alert(alert);
+
 	g_free(buffer);
 }
 
@@ -2371,7 +2454,8 @@ static GaimAccountUiOps ui_ops =
 {
 	gaim_gtk_accounts_notify_added,
 	NULL,
-	gaim_gtk_accounts_request_add
+	gaim_gtk_accounts_request_add,
+	gaim_gtk_accounts_request_authorization
 };
 
 GaimAccountUiOps *
