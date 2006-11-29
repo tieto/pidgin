@@ -1,5 +1,5 @@
 /*
- * @file gtkscrollbook.c GTK+ Status Selection Widget
+ * @file gtkscrollbook.c GTK+ Scrolling notebook widget 
  * @ingroup gtkui
  *
  * gaim
