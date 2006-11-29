@@ -33,7 +33,9 @@ void
 gaim_plugin_pref_add_choice(pref, label, choice)
 	Gaim::PluginPref pref
 	const char *label
-	gpointer choice
+# Do the appropriate conversion based on the perl type specified.
+# Currently only Strings and Ints will work.
+	gpointer choice = (SvPOKp($arg) ? SvPV($arg, PL_na) : (SvIOKp($arg) ? GINT_TO_POINTER(SvIV($arg)) : NULL));
 
 void
 gaim_plugin_pref_destroy(pref)

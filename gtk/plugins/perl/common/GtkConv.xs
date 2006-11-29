@@ -33,6 +33,15 @@ gboolean
 gaim_gtkconv_is_hidden(gtkconv)
 	Gaim::GtkUI::Conversation gtkconv
 
+void
+gaim_gtkconv_get_gtkconv(conv)
+	Gaim::Conversation conv
+PPCODE:
+	if (conv != NULL && GAIM_IS_GTK_CONVERSATION(conv))
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(
+				GAIM_GTK_CONVERSATION(conv),
+				"Gaim::GtkUI::Conversation")));
+
 MODULE = Gaim::GtkUI::Conversation  PACKAGE = Gaim::GtkUI::Conversations  PREFIX = gaim_gtk_conversations_
 PROTOTYPES: ENABLE
 

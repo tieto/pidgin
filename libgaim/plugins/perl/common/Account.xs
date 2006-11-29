@@ -78,6 +78,11 @@ gaim_account_set_check_mail(account, value)
     Gaim::Account account
     gboolean value
 
+void gaim_account_set_enabled(account, ui, value)
+    Gaim::Account account
+    const char *ui
+    gboolean value
+
 void
 gaim_account_set_proxy_info(account, info)
     Gaim::Account account
@@ -161,6 +166,11 @@ gaim_account_get_remember_password(account)
 gboolean
 gaim_account_get_check_mail(account)
     Gaim::Account account
+
+gboolean
+gaim_account_get_enabled(account, ui)
+    Gaim::Account account
+    const char *ui
 
 Gaim::ProxyInfo
 gaim_account_get_proxy_info(account)
