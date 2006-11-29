@@ -89,7 +89,7 @@ gaim_account_set_status(account, status_id, active)
     const char *status_id
     gboolean active
 CODE:
-    gaim_account_set_status(account, status_id, active);
+    gaim_account_set_status(account, status_id, active, NULL);
 
 void
 gaim_account_set_status_types(account, status_types)
