@@ -1021,4 +1021,8 @@ void gaim_status_uninit(void);
 
 /*@}*/
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* _GAIM_STATUS_H_ */
