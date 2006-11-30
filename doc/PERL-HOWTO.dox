@@ -1,13 +1,13 @@
 /** @page perl-howto Perl Scripting HOWTO
 
 @section Introduction
-Gaim Perl Plugins are setup very similarly to their C counterparts.  Most of the API calls are implemented and are divided into pacakges.  There are some significant differences between the Perl and C API.  Much like the C API, the best place to seek guidances is the source located in the plugins/perl/common directory.  The tutorial that follows will be example based and attempt to touch on the salient features of the embedded perl interpreter.  It is also important to note that some of the C API is missing in Gaim's perl API.
+Gaim Perl Plugins are set up very similarly to their C counterparts.  Most of the API calls are implemented and are divided into packages.  There are some significant differences between the Perl and C API.  Much like the C API, the best place to seek guidance is the source, which is located in the *.xs files in the [libgaim|gtk]/plugins/perl/common directories.  The tutorial that follows will be example based and attempt to touch on some of the notable features of the embedded perl interpreter.  It is also important to note that some of the C API is missing in Gaim's perl API.
 
-It is possible to get Gtk2-Perl to work with Gaim's perl API, however you must not load the module with @c use but with @c require.  If you are uninterested in using Gtk with your perl plugins than this still has bearing on you if you would like to use certain perl modules that are dynamically loaded.  By always using @c require instead of @c use the problem is avoided.
+It is possible to get Gtk2-Perl to work with Gaim's Perl API, however you must not load the module with @c use, but rather with @c require.  Keep this in mind if you would like to use other perl modules that are dynamically loaded.  You can avoid the problem by always using @c require instead of @c use.
 
 @section first-script Writing your first script
 
-Let us start with a simple example of a Gaim perl plugin.  The following code sample is a complete plugin that can be copied and used as is.
+Let us start with a simple example of a Gaim perl plugin.  The following code sample is a complete plugin that can be copied and used as-is.
 
 @code
 use Gaim;
@@ -40,34 +40,32 @@ sub plugin_unload {
 }
 @endcode
 
-It is necessary to load the libgaim perl package with the line @code use Gaim; @endcode which will make all the libgaim perl API available to the script.  The @c \%PLUGIN_INFO has contains all the information that will be displayed in the Plugin frame of the Preferences dialog.  In addition to information needed to describe the plugin to the user, information about how the plugin is to be handled is present.  The keys @c load and @c unload specify and action to take when the plugin is loaded and when it is unloaded from the Preferences dialog respectively.  There are other key values that may be present in the @c \%PLUGIN_INFO hash that will be covered in the following sections.
+It is necessary to load the libgaim perl package with the @code use Gaim; @endcode line; this makes all the libgaim perl API available to the script.  The @c \%PLUGIN_INFO hash contains all the information that will be displayed in the Plugin frame of the Preferences dialog, it also contains information about how the plugin is to be handled.  The @c load and @c unload keys specify subroutines to be called when the plugin is loaded and unloaded.  There are other key values that may be present in the @c \%PLUGIN_INFO hash; some of those will be covered in the following sections.
 
-The Perl subroutine @c plugin_init is executed when the plugin is probed by the plugin subsystem.  What this means is as soon as Gaim is started, this subroutine is run once, regardless of whether the plugin is loaded or not. The other two subroutines present are those defined by the @c \%PLUGIN_INFO hash and take the plugin handle as an argument.  When the plugin is loaded and subsequently unloaded it will print a message to the debug window using the @c Gaim::Debug::info() Gaim perl API call.
+The Perl subroutine @c plugin_init is executed when the plugin is probed by the plugin subsystem.  What this means is that as soon as gaim is started, this subroutine is run once, regardless of whether or not the plugin is actually loaded. The other two subroutines present are the @c load and @c unload routines specified in the @c \%PLUGIN_INFO hash and will receive the plugin handle as an argument.  When the plugin is loaded and subsequently unloaded, it will print a message to the debug window using the @c Gaim::Debug::info() Gaim perl API call.
 
-The last step is to save the script with a .pl file extention in your ~/.gaim/plugins directory.  After restarting gaim the plugin "Perl Test Plugin" should now appear under "Tools -> Plugins".  To view the messages make sure you run Gaim from the console with the '-d' flag or open the Debug Window from inside Gaim under "Help".  When you enable the checkbox next the plugin you should see a message appear in the Debug Window (or console) and when you disable the checkbox you should see another message appear.  You have now created the framework that will allow you to create almost any kind of Gaim plugin you can imagine.
+In order to use this simple plugin, save the script text in a file with a @c .pl extension in your ~/.gaim/plugins directory.  After restarting gaim, you should see the plugin  ("Perl Test Plugin") listed in the plugin list under "Tools -> Plugins".  To view the debug output, make sure you run Gaim from the console with the '-d' flag or open the Debug Window which is available in the "Help" menu.  When you check the checkbox next the plugin, you should see a message appear in the Debug Window (or console); similarly, when you uncheck the checkbox you should see another message appear.  You have now created a framework that will allow you to create almost any kind of Gaim plugin you can imagine.
 
 @section account-api Account and Account Option Functions
 
-The Account API is in the @c Gaim::Account:: and @c Gaim::Accounts:: packages
-and both are nearly identical to their C counterparts @c gaim_account_ and @c
-gaim_accounts_.  The Account Option API is in the package @c
-Gaim::Account::Option and is identical to its C implementation @c
-gaim_account_option.
+The Account API is in the @c Gaim::Account:: and @c Gaim::Accounts:: packages;
+both are nearly identical to their C counterparts, @c gaim_account_ and @c
+gaim_accounts_.  The Account Option API is in the @c Gaim::Account::Option
+package and is identical to the C implementation, @c gaim_account_option.
 
-The Account* APIs allow for scripts to create, remove, and edit accounts of the
-type GaimAccount. (Note: Gaim types have no real meaning in perl scripts other
-than the types of the arguments of the perl subroutines need to be of the
-expected type.)  This section will not go into detail about the @c
-Gaim::Account::Option package for its use in building protocol plugins which
-are outside the scope of this document.  However, most of the API calls for the
-@c Gaim::Account::Option package should function as expected so if there is a
-need to access any of the Account Options the function calls necessary are
-avaialbe in the Gaim perl API.
+The Account* APIs allow scripts to create, remove, and edit accounts.  An
+account will have the Perl type of "GaimAccount". (Note: Gaim types have no real
+meaning in perl scripts, other than that the types passed to perl subroutines
+need to be correct.)  This section will not go into detail about the @c
+Gaim::Account::Option package since its use is mainly in building protocol
+plugins, which are outside the scope of this document.  However, the API for the
+@c Gaim::Account::Option package should function as expected, should you need to
+use it.
 
-To reduce redundant code the following code examples are going to use the
-template shown in the previous section.  To highlight some of the more useful
-features of the Account API we will be replacing the @c plugin_load perl
-subroutine.  For testing purposes we will display output on the command line by
+To reduce redundant code, the following code examples will use the simple plugin
+from the previous section as a template.  To highlight some of the more useful
+features of the Account API, we will be replacing the @c plugin_load perl
+subroutine.  For testing purposes, we will display output on the command line by
 using perl @c print commands.
 
 @code
@@ -119,7 +117,7 @@ sub plugin_load {
 		print "Failed!\n";
 	}
 
-	# It follows that to connect a user you mest set the account status to
+	# It follows that to connect a user you must set the account status to
 	# "available" similarly we can disconnect a user by setting the account
 	# status to "offline"
 
@@ -132,17 +130,20 @@ sub plugin_load {
 }
 @endcode
 
-For the most part the code listed above is explained by the comments, however
-there are a few other points to make.  The variables above are all specialized
-Perl types that contain pointers to the actual Gaim types.  They can be
-reasigned at will just like any other variable in Perl.  The only way to edit
-the values of a Gaim type from within perl are through accessor methods such as
-@c Gaim::Account::get_username().  For arguments that you would make @c NULL in
-C should be set to @c undef in Perl.
+The above code is mostly explained in the comments, however there are a few
+notable points to make.  The variables above are all specialized Perl types that
+contain pointers to the actual Gaim types.  They can be reassigned at will, just
+like any other variable in Perl.  The only way to edit the internal values of a
+Gaim type from within perl is to use the accessor methods, e.g.
+@c Gaim::Account::get_username().  If you would like to assign a C @c NULL value,
+simply use @c undef.
 
 @section buddylist-api Buddylist, Group and Chat API
 
-The BuddyList, Group and Chat APIs are very similar and whatever is shown for the @c Gaim::BuddyList API should carry over to @c Gaim::BuddyList::Chat and @c Gaim::BuddyList::Group.  Note that there is a @c Gaim::Find package that was created to keep the naming consistent with how these functions are named in the C API.
+The BuddyList, Group and Chat APIs are very similar and whatever is shown for
+the @c Gaim::BuddyList API should carry over to @c Gaim::BuddyList::Chat and
+@c Gaim::BuddyList::Group.  Note that a @c Gaim::Find package was created to
+keep the naming consistent with the C API.
 
 @code
 sub plugin_load {
@@ -187,7 +188,7 @@ sub plugin_load {
 	Gaim::Debug::info("testplugin", "Testing: Gaim::BuddyList::add_buddy...\n");
 	Gaim::BuddyList::add_buddy($buddy, undef, $group, $group);
 
-	# The example that follows gives an indiction of how an API call that returns a list is handled.
+	# The example that follows gives an indication of how an API call that returns a list is handled.
 	#  In this case the buddies of the account found earlier are retrieved and put in an array '@buddy_array'
 	#  Further down an accessor method is used, 'get_name()' -- see source for details on the full set of methods
 	Gaim::Debug::info("testplugin",  "Testing: Gaim::Find::buddies...\n");
@@ -201,21 +202,27 @@ sub plugin_load {
 }
 @endcode
 
-The BuddyList API allows for plugins to edit buddies in the list, find the buddies on a given account, set alias, and manipulate the structure as needed.  It is also contains the methods for accessing @c Gaim::BuddyList::Group and @c Gaim::BuddyList::Chat types.
+The BuddyList API allows plugins to edit buddies in the list, find the buddies
+for a given account, assign aliases, and further manipulate the structure
+as needed.  It is also contains methods for accessing @c Gaim::BuddyList::Group
+and @c Gaim::BuddyList::Chat types.
 
 @section conn-api Connection API
 
-The @c Gaim::Connection API is one of the many packages that will not be covered in depth in this tutorial.  They are more useful to protocol plugin developers.  However, the entire @c gaim_connection_ API has corresponding, functioning perl subroutines.
+The @c Gaim::Connection API is one of the many packages that will not be covered
+in-depth in this tutorial.  It is most useful to protocol plugin developers.
+However, the entire @c gaim_connection_ API has corresponding, functioning perl subroutines.
 
 @section conv-api Conversation API
 
-The Gaim perl API for @c gaim_conversation_ and @c gaim_conv_window_ allow
-plugins to interact with open conversations, create new conversations, and
+The Gaim perl APIs for @c gaim_conversation_ and @c gaim_conv_window_ allow
+plugins to interact with existing conversations, create new conversations, and
 modify conversations at will.  In the example script, a new window is created,
 displayed and a new conversation instant message is created.  The following
-example again replaces the @c plugin_load subroutine.  The
-@c Gaim::Conversation::Chat package handles the @c gaim_conv_chat_ portion of
-the API very similarly to the examples that follow.
+example again replaces the @c plugin_load subroutine in the simple plugin
+template.  The @c Gaim::Conversation::Chat package handles the
+@c gaim_conv_chat_ portion of the API very similarly to how the
+Gaim::Conversation::IM package is used in the examples that follow.
 
 Notice that the interaction with the conversation window is in the @c Gaim::GtkUI package as it
 is UI-specific code interacting with gtkgaim and not libgaim.
@@ -290,9 +297,15 @@ The next block of code shows how a script can close a known conversation window
 
 @section plugin-pref-api Plugin Preference and Gtk Preference API
 
-The plugin preference API allows the plugin to display options in a preference pane that the user can change to manipulate the behaviour of the particular perl plugin.  The method used for creating the pane in C does not allow a direct mapping into perl.  Therefore perl plugin writers must be aware that there will be significant differences in how they create plugin preference panes.
+The plugin preference API allows plugins to display options for manipulating the
+plugin's behavior in a popup window.  The method used for creating the pane in
+native C plugins does not allow a direct mapping into perl. Therefore, perl
+plugin writers must be aware that there will be significant differences in how
+they create plugin preference panes.
 
-To first create a standard plugin preference tab we need to add some key/value pairs to the @c \%PLUGIN_INFO hash.  The first line contains the perl subroutine that must be provided and will return a @c Gaim::Pref::Frame.
+To first create a standard plugin preference tab, we need specify the
+@c prefs_info key/value pair in the @c \%PLUGIN_INFO hash.  This specifies the
+name of the perl subroutine that will build and return a @c Gaim::Pref::Frame.
 
 @code
 %PLUGIN_INFO = {
@@ -301,7 +314,10 @@ To first create a standard plugin preference tab we need to add some key/value p
 };
 @endcode
 
-The perl subroutine @c prefs_info_cb will be called to create the tab for the perl plugin in the Preferences dialog.  An example of this function will explain the details of creating a preference frame.  However, it is necessary to first create the preferences from @c plugin_load as follows.
+The perl subroutine @c prefs_info_cb will be called to create the preferences
+popup for the perl plugin.  The following example will demonstrate creating a
+preference frame. It is necessary to first initialize the preferences to be used
+in the @c plugin_load subroutine, as follows.
 
 @code
 sub plugin_load {
@@ -317,7 +333,8 @@ sub plugin_load {
 }
 @endcode
 
-Now we can add these preferences from inside our function specified in @c \%PLUGIN_INFO .
+Now we can provide an UI for manipulating these preferences in our @prefs_info
+function.
 
 @code
 sub prefs_info_cb {
@@ -333,7 +350,7 @@ sub prefs_info_cb {
 		"/plugins/core/perl_test/bool", "Boolean Preference");
 	$frame->add($ppref);
 
-	# Create a set of choices.  To do so we must set the type to 1 which is
+	# Create a set of choices.  To do so, we must set the type to 1 which is
 	# the numerical equivalent of the GaimPrefType for choice.
 	$ppref = Gaim::PluginPref->new_with_name_and_label(
 		"/plugins/core/perl_test/choice_str", "Choice Preference");
@@ -411,7 +428,11 @@ sub gtk_prefs_info_cb {
 
 @section request-api Request Dialog Box API
 
-The @c Gaim::Request package allows for plugins to have interactive dialog boxes without the need for creating them in Gtk creating a seperation between the user interfaace and the plugin.  The portion of the Request API available to perl scripts is listed below followed by an example illustrating their use.
+The @c Gaim::Request package allows plugins to have interactive dialog boxes
+without the need to directly interact with the UI (e.g. GTK+).  This allows core
+(libgaim) plugins to create a UI that can be displayed on whichever UI frontend
+is being used.  The portion of the Request API available to perl scripts is
+listed below, followed by an example illustrating its use.
 
 These arguments are the same for each of the three request types:
 	@arg @em handle 	- The plugin handle.
@@ -426,7 +447,7 @@ These arguments are the same for each of the three request types:
 	@arg @em multiline 	- Boolean where true indicates multiple line input boxes are allowed.
 	@arg @em masked 	- Boolean indicating if the user can edit the text.
 	@arg @em hint 	- See source for more information - can be left blank.
-	@arg @em filename 	- String defualt file name value.
+	@arg @em filename 	- String default file name value.
 	@arg @em savedialog 	- Boolean where true indicates use as a save file dialog and false indicates an open file dialog.
 
 @code
@@ -440,12 +461,13 @@ Gaim::Request::file(handle, title, filename, savedialog, ok_cb, cancel_cb);
 Gaim::Request::fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb);
 @endcode
 
-What follows is an example of a @c Gaim::Request::fields() dialog box with two callbacks for an OK button and a Cancel Button.
+The following is an example of a @c Gaim::Request::fields() dialog box with a
+callback for the OK button and another for the Cancel Button.
 
 @code
 sub ok_cb_test{
 	# The $fields is passed to the callback function when the button is clicked.
-	#  To get the values they must be extracted from $fields by name.
+	# To access a specific field, it must be extracted from $fields by name.
 	$fields = shift;
 	$account = Gaim::Request::Fields::get_account($fields, "acct_test");
 	$int = Gaim::Request::Fields::get_integer($fields, "int_test");
@@ -453,19 +475,19 @@ sub ok_cb_test{
 }
 
 sub cancel_cb_test{
-	# Cancel does nothing but is symmetric to the ok_cb_test
+	# Cancel does nothing but is equivalent to the ok_cb_test
 }
 
 sub plugin_load {
 	my $plugin = shift;
 
-	# Create a group to pool together mutltiple fields.
+	# Create a group to pool together multiple fields.
 	$group = Gaim::Request::Field::Group::new("Group Name");
 
-	# Each fields is created with Gaim::Request::*_new(), is made viewable with Gaim::Request::field_*_set_show_all()
+	# Each field is created with Gaim::Request::*_new(), is made viewable with Gaim::Request::field_*_set_show_all()
 	#  and is then added to the group with Gaim::Request::field_group_add_field()
 
-	# Add an account drop down list showing all active accounts
+	# Add an account combobox containing all active accounts
 	$field = Gaim::Request::Field::account_new("acct_test", "Account Text", undef);
 	Gaim::Request::Field::account_set_show_all($field, 0);
 	Gaim::Request::Field::Group::add_field($group, $field);
@@ -500,9 +522,20 @@ sub plugin_load {
 
 @section timeout-cb Misc: Plugin Actions, Timeouts and Callbacks
 
-This section of the manual covers some of the more important features that can be added to Gaim perl Plugins.  Plugin actions are callback functions that are accessible to the user from the Gaim main window under "Tools -> [Plugin Name]".  Timeouts allow a plugin to exectue a perl subroutine after a given period of time.  Note that timeouts only occur once, so if the timeout must occur periodically just add a new timeout at the end of the timeout callback function.  Callbacks are functions that are called when an event occurs such as a buddy signing-on or a message being received.  These three tools will be discussed in the following three examples.
+This section of the manual covers some of the important features that can be
+added to Gaim perl Plugins.  Plugin actions are callback functions that are
+accessible to the user from the Buddy List window under "Tools -> [Plugin Name]".
+Timeouts allow a plugin to execute a perl subroutine after a given period of time.
+Note that timeouts only occur once, so if the timeout must occur periodically,
+the timeout needs to be re-added at the end of the timeout callback function.
+Callbacks are functions that are called when an event occurs (such as a buddy
+signing-on, or a message being received).  The following three examples will
+demonstrate the usage of these features.
 
-Plugin actions require the @c \%PLUGIN_INFO hash to have a key/value pair added and a callback perl subroutine defined to list the available actions, as well as one callback subroutine for each action.  Also, a @c \%plugin_actions hash needs to be defined relating the action names returned by the callback to the appropriate callback subroutines for each action.
+Plugin actions require the @c \%PLUGIN_INFO hash to have a key/value pair added,
+specifying a perl subroutine which will list the available actions; each action
+listed must have a definition, including a reference to a callback subroutine,
+added to the @c \%plugin_actions hash.
 
 @code
 %PLUGIN_INFO = {
@@ -530,7 +563,7 @@ sub action2_cb {
 }
 @endcode
 
-Timeouts allow a perl subroutine to be exectued after a specified time.  They only occur once, so as stated earlier the timeout must be reregistered after every time it is called.
+Timeouts allow a perl subroutine to be executed after a specified time.  They only occur once, so, as stated earlier, the timeout must be re-registered after every time it is called.
 
 @code
 sub timeout_cb {
@@ -549,7 +582,8 @@ sub plugin_load {
 }
 @endcode
 
-Callbacks are handled by creating a perl subroutine to serve as the callback and then attaching the callback to a signal.  To use callbacks it is necessary to first obtain the plugin handle with the @c Gaim::Plugin::get_handle() subroutine to pass as an argument for the callback.
+Callbacks are handled by creating a perl subroutine to serve as the callback and
+then attaching the callback to a signal.
 
 @code
 sub signal_cb {
