@@ -27,6 +27,12 @@ typedef struct
 
 typedef struct _GntWM GntWM;
 
+typedef struct _GnPosition
+{
+	int x;
+	int y;
+} GntPosition;
+
 /**
  * An application can register actions which will show up in a 'start-menu' like popup
  */
@@ -72,6 +78,8 @@ struct _GntWM
 	gboolean event_stack;
 	
 	GntKeyPressMode mode;
+
+	GHashTable *positions;
 
 	void *res1;
 	void *res2;

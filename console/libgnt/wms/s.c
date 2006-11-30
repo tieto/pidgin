@@ -97,19 +97,16 @@ s_new_window(GntWM *wm, GntWidget *win)
 			mvwin(win->window, y, x);
 
 			gnt_widget_set_size(win, -1, h + 2);  /* XXX: Why is the +2 needed here? -- sadrul */
-		} else if (name && strcmp(name, "conversation-window") == 0) {
-			/* Put the conversation windows to the far-right */
-			x = maxx - w;
-			y = 0;
-			gnt_widget_set_position(win, x, y);
-			mvwin(win->window, y, x);
 		} else if (!GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
-			/* In the middle of the screen */
-			x = (maxx - w) / 2;
-			y = (maxy - h) / 2;
+			const char *title = GNT_BOX(win)->title;
+			if (title == NULL || !g_hash_table_lookup(wm->positions, title)) {
+				/* In the middle of the screen */
+				x = (maxx - w) / 2;
+				y = (maxy - h) / 2;
 
-			gnt_widget_set_position(win, x, y);
-			mvwin(win->window, y, x);
+				gnt_widget_set_position(win, x, y);
+				mvwin(win->window, y, x);
+			}
 		}
 	}
 	org_new_window(wm, win);

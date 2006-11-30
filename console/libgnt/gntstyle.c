@@ -282,6 +282,7 @@ read_general_style(GKeyFile *kfile)
 	              {"customcolor", GNT_STYLE_COLOR},
 	              {"mouse", GNT_STYLE_MOUSE},
 	              {"wm", GNT_STYLE_WM},
+	              {"remember_position", GNT_STYLE_REMPOS},
 	              {NULL, 0}};
 
 	if (error)

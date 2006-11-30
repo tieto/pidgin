@@ -42,6 +42,9 @@ static void gnt_wm_win_moved(GntWM *wm, GntNode *node);
 static void gnt_wm_give_focus(GntWM *wm, GntWidget *widget);
 static void update_window_in_list(GntWM *wm, GntWidget *wid);
 
+static gboolean write_already(gpointer data);
+static int write_timeout;
+
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
 {
@@ -124,31 +127,105 @@ update_screen(GntWM *wm)
 	doupdate();
 	return TRUE;
 }
+
+static gboolean
+sanitize_position(GntWidget *widget, int *x, int *y)
+{
+	int X_MAX = getmaxx(stdscr);
+	int Y_MAX = getmaxy(stdscr) - 1;
+	int w, h;
+	int nx, ny;
+	gboolean changed = FALSE;
+
+	gnt_widget_get_size(widget, &w, &h);
+	if (x) {
+		if (*x + w > X_MAX) {
+			nx = MAX(0, X_MAX - w);
+			if (nx != *x) {
+				*x = nx;
+				changed = TRUE;
+			}
+		}
+	}
+	if (y) {
+		if (*y + h > Y_MAX) {
+			ny = MAX(0, Y_MAX - h);
+			if (ny != *y) {
+				*y = ny;
+				changed = TRUE;
+			}
+		}
+	}
+	return changed;
+}
+
 static void
 refresh_node(GntWidget *widget, GntNode *node, gpointer null)
 {
 	int x, y, w, h;
-	int nw, nh, nx, ny;
+	int nw, nh;
 
 	int X_MAX = getmaxx(stdscr);
 	int Y_MAX = getmaxy(stdscr) - 1;
 
 	gnt_widget_get_position(widget, &x, &y);
 	gnt_widget_get_size(widget, &w, &h);
-	nx = x; ny = y;
 
-	if (x + w >= X_MAX)
-		nx = MAX(0, X_MAX - w);
-	if (y + h >= Y_MAX)
-		ny = MAX(0, Y_MAX - h);
-	if (x != nx || y != ny)
-		gnt_screen_move_widget(widget, nx, ny);
+	if (sanitize_position(widget, &x, &y))
+		gnt_screen_move_widget(widget, x, y);
 
 	nw = MIN(w, X_MAX);
 	nh = MIN(h, Y_MAX);
 	if (nw != w || nh != h)
 		gnt_screen_resize_widget(widget, nw, nh);
 }
+
+static void
+read_window_positions(GntWM *wm)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	GKeyFile *gfile = g_key_file_new();
+	char *filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
+	GError *error = NULL;
+	char **keys;
+	int nk;
+
+	if (!g_key_file_load_from_file(gfile, filename, G_KEY_FILE_NONE, &error)) {
+		g_printerr("GntWM: %s\n", error->message);
+		g_error_free(error);
+		g_free(filename);
+		return;
+	}
+
+	keys = g_key_file_get_keys(gfile, "positions", &nk, &error);
+	if (error) {
+		g_printerr("GntWM: %s\n", error->message);
+		g_error_free(error);
+		error = NULL;
+	} else {
+		while (nk--) {
+			char *title = keys[nk];
+			int l;
+			char **coords = g_key_file_get_string_list(gfile, "positions", title, &l, NULL);
+			if (l == 2) {
+				int x = atoi(coords[0]);
+				int y = atoi(coords[1]);
+				GntPosition *p = g_new0(GntPosition, 1);
+				p->x = x;
+				p->y = y;
+				g_hash_table_replace(wm->positions, g_strdup(title + 1), p);
+			} else {
+				g_printerr("GntWM: Invalid number of arguments for positioing a window.\n");
+			}
+			g_strfreev(coords);
+		}
+		g_strfreev(keys);
+	}
+
+	g_free(filename);
+#endif
+}
+
 static void
 gnt_wm_init(GTypeInstance *instance, gpointer class)
 {
@@ -159,6 +236,9 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 	wm->windows = NULL;
 	wm->actions = NULL;
 	wm->nodes = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_node);
+	wm->positions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE))
+		read_window_positions(wm);
 }
 
 static void
@@ -645,6 +725,8 @@ static gboolean
 wm_quit(GntBindable *bindable, GList *list)
 {
 	GntWM *wm = GNT_WM(bindable);
+	if (write_timeout)
+		write_already(wm);
 	g_main_loop_quit(wm->loop);
 	return TRUE;
 }
@@ -905,6 +987,16 @@ void gnt_wm_new_window(GntWM *wm, GntWidget *widget)
 		return;
 	}
 
+	if (GNT_IS_BOX(widget)) {
+		const char *title = GNT_BOX(widget)->title;
+		GntPosition *p = NULL;
+		if (title && (p = g_hash_table_lookup(wm->positions, title)) != NULL) {
+			sanitize_position(widget, &p->x, &p->y);
+			gnt_widget_set_position(widget, p->x, p->y);
+			mvwin(widget->window, p->y, p->x);
+		}
+	}
+
 	g_signal_emit(wm, signals[SIG_NEW_WIN], 0, widget);
 	g_signal_emit(wm, signals[SIG_DECORATE_WIN], 0, widget);
 
@@ -1088,6 +1180,46 @@ void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height)
 	update_screen(wm);
 }
 
+static void
+write_gdi(gpointer key, gpointer value, gpointer data)
+{
+	GntPosition *p = value;
+	fprintf(data, ".%s = %d;%d\n", key, p->x, p->y);
+}
+
+static gboolean
+write_already(gpointer data)
+{
+	GntWM *wm = data;
+	FILE *file;
+	char *filename;
+
+	filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
+
+	file = fopen(filename, "wb");
+	if (file == NULL) {
+		g_printerr("GntWM: error opening file to save positions\n");
+	} else {
+		fprintf(file, "[positions]\n");
+		g_hash_table_foreach(wm->positions, write_gdi, file);
+		fclose(file);
+	}
+
+	g_free(filename);
+	g_source_remove(write_timeout);
+	write_timeout = 0;
+	return FALSE;
+}
+
+static void
+write_positions_to_file(GntWM *wm)
+{
+	if (write_timeout) {
+		g_source_remove(write_timeout);
+	}
+	write_timeout = g_timeout_add(10000, write_already, wm);
+}
+
 void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y)
 {
 	gboolean ret = TRUE;
@@ -1107,6 +1239,17 @@ void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y)
 	move_panel(node->panel, y, x);
 
 	g_signal_emit(wm, signals[SIG_MOVED], 0, node);
+	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE) && GNT_IS_BOX(widget)) {
+		const char *title = GNT_BOX(widget)->title;
+		if (title) {
+			GntPosition *p = g_new0(GntPosition, 1);
+			GntWidget *wid = node->me;
+			p->x = wid->priv.x;
+			p->y = wid->priv.y;
+			g_hash_table_replace(wm->positions, g_strdup(title), p);
+			write_positions_to_file(wm);
+		}
+	}
 
 	update_screen(wm);
 }

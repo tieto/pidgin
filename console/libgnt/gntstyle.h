@@ -6,6 +6,7 @@ typedef enum
 	GNT_STYLE_COLOR = 1,
 	GNT_STYLE_MOUSE = 2,
 	GNT_STYLE_WM = 3,
+	GNT_STYLE_REMPOS = 4,
 	GNT_STYLES
 } GntStyle;
 
