@@ -245,15 +245,18 @@ static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
         if (q_bud == NULL) {
                 emblems[0] = "offline";
 	} else {
-		/* TODO the wireless icon is a bit too big to look good with QQ faces */
 		if (q_bud->status == QQ_BUDDY_ONLINE_AWAY)
 			emblems[i++] = "away";
+		/*
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 			emblems[i++] = "qq_member";
+		*/
                 if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
                         emblems[i++] = "wireless";
+		/*
 		if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
 			emblems[i%4] = "video";
+		*/
 
         }
 
