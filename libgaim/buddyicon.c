@@ -347,7 +347,7 @@ gaim_buddy_icon_set_path(GaimBuddyIcon *icon, const gchar *path)
 	g_return_if_fail(icon != NULL);
 	
 	g_free(icon->path);
-	icon->path = (path != NULL ? g_strdup(path) : NULL);
+	icon->path = g_strdup(path);
 }
 
 GaimAccount *

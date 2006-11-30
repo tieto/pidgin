@@ -118,11 +118,11 @@ typedef struct
 	GtkWidget *icon_hbox;
 	GtkWidget *icon_check;
 	GtkWidget *icon_entry;
-	char *cached_icon_path;
-	char *icon_path;
 	GtkWidget *icon_filesel;
 	GtkWidget *icon_preview;
 	GtkWidget *icon_text;
+	char *cached_icon_path;
+	char *icon_path;
 
 	/* Protocol Options */
 	GtkWidget *protocol_frame;
@@ -1083,8 +1083,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 		g_free(dialog->cached_icon_path);
 	}
 
-	if (dialog->cached_icon_path != NULL)
-		g_free(dialog->icon_path);
+	g_free(dialog->icon_path);
 
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);
