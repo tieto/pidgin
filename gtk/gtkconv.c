@@ -6121,6 +6121,10 @@ gaim_gtkconv_get_tab_at_xy(GaimGtkWindow *win, int x, int y, gboolean *to_right)
 		page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(notebook), i);
 		tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook), page);
 
+		/* Make sure the tab is not hidden beyond an arrow */
+		if (!GTK_WIDGET_DRAWABLE(tab))
+			continue;
+
 		if (horiz) {
 			if (x_rel >= tab->allocation.x - GAIM_HIG_BOX_SPACE &&
 					x_rel <= tab->allocation.x + tab->allocation.width + GAIM_HIG_BOX_SPACE) {
