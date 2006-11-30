@@ -314,7 +314,7 @@ void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint l
 		g_return_if_fail(member != NULL);
 
 		i++;
-		read_packet_w(data, cursor, len, &(member->icon));
+		read_packet_w(data, cursor, len, &(member->face));
 		read_packet_b(data, cursor, len, &(member->age));
 		read_packet_b(data, cursor, len, &(member->gender));
 		pascal_len = convert_as_pascal_string(*cursor, &(member->nickname), QQ_CHARSET_DEFAULT);

@@ -1,4 +1,4 @@
-SUBDIRS = smileys status
+SUBDIRS = buddy_icons smileys status
 
 EXTRA_DIST = \
 		about_menu.png			\

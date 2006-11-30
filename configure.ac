@@ -1875,6 +1875,8 @@ AC_OUTPUT([Makefile
 		   m4macros/Makefile
 		   gtk/Makefile
 		   gtk/pixmaps/Makefile
+		   gtk/pixmaps/buddy_icons/Makefile
+		   gtk/pixmaps/buddy_icons/qq/Makefile
 		   gtk/pixmaps/smileys/Makefile
 		   gtk/pixmaps/smileys/default/Makefile
 		   gtk/pixmaps/smileys/none/Makefile

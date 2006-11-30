@@ -31,6 +31,7 @@
 #include "debug.h"
 #include "server.h"
 
+#include "buddy_info.h"
 #include "buddy_list.h"
 #include "buddy_status.h"
 #include "crypt.h"
@@ -118,6 +119,20 @@ void qq_refresh_all_buddy_status(GaimConnection *gc)
 	}
 }
 
+static void _qq_update_buddy_icon(GaimAccount *account, const gchar *name, gint face)
+{
+	GaimBuddyIcon *icon = gaim_buddy_icons_find(account, name);
+	gchar *icon_num_str = face_to_icon_str(face);
+	gchar *icon_path = g_strconcat(QQBUDDYICONDIR, G_DIR_SEPARATOR_S,
+			QQ_ICON_PREFIX, icon_num_str, QQ_ICON_SUFFIX, NULL);
+	const gchar *old_path = gaim_buddy_icon_get_path(icon);
+	if (icon == NULL || old_path == NULL 
+		|| g_ascii_strcasecmp(icon_path, old_path) != 0)
+		qq_set_buddy_icon_for_user(account, name, icon_path);
+	g_free(icon_num_str);
+	g_free(icon_path);
+}
+
 void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 {
 	gchar *name;
@@ -161,6 +176,7 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 		}
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
 		gaim_prpl_got_user_status(gc->account, name, status_id, NULL);
+		_qq_update_buddy_icon(gc->account, name, q_bud->face);
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
 	}

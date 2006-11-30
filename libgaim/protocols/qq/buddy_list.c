@@ -271,7 +271,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 			/* 000-003: uid */
 			bytes += read_packet_dw(data, &cursor, len, &q_bud->uid);
 			/* 004-005: icon index (1-255) */
-			bytes += read_packet_w(data, &cursor, len, &q_bud->icon);
+			bytes += read_packet_w(data, &cursor, len, &q_bud->face);
 			/* 006-006: age */
 			bytes += read_packet_b(data, &cursor, len, &q_bud->age);
 			/* 007-007: gender */

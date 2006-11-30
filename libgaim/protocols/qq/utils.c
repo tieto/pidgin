@@ -159,13 +159,6 @@ guint8 *str_ip_gen(gchar *str) {
 	return ip;
 }
 
-/* return the QQ icon file name
- * the return needs to be freed */
-gchar *get_icon_name(gint set)
-{
-	return g_strdup_printf("qq_%d", set);
-}
-
 /* convert Gaim name to original QQ UID */
 guint32 gaim_name_to_uid(const gchar *const name)
 {
@@ -337,3 +330,22 @@ gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 
 	return ret;
 }
+
+/* convert face num from packet (0-299) to local face (1-100) */
+gchar *face_to_icon_str(gint face)
+{
+	gchar *icon_num_str;
+	gint icon_num = face / 3 + 1;
+	icon_num_str = g_strdup_printf("%d", icon_num);
+	return icon_num_str;
+}
+
+/*
+gint face_to_icon_num(const gchar *face)
+{
+	gchar *icon_str = face_to_icon_str(face);
+	gint icon_num = strtol(icon_str, NULL, 10);
+	g_free(icon_str);
+	return icon_num;
+}
+*/

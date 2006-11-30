@@ -42,7 +42,7 @@ guint32 gaim_name_to_uid(const gchar *name);
 gchar *uid_to_gaim_name(guint32 uid);
 gchar *chat_name_to_gaim_name(const gchar *const name);
 
-gchar *get_icon_name(gint set);
+gchar *face_to_icon_str(gint face);
 
 void try_dump_as_gbk(const guint8 *const data, gint len);
 

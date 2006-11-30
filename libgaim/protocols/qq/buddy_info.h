@@ -41,6 +41,9 @@
 #define QQ_BUDDY_GENDER_MM          0x01
 #define QQ_BUDDY_GENDER_UNKNOWN     0xff
 
+#define QQ_ICON_PREFIX "qq_"
+#define QQ_ICON_SUFFIX ".png"
+
 typedef struct _contact_info {
         gchar *uid;
         gchar *nick;
@@ -83,6 +86,8 @@ typedef struct _contact_info {
 
 void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc);
 void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window);
+void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile);
+void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gchar *iconfile);
 void qq_prepare_modify_info(GaimConnection *gc);
 void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
 void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);

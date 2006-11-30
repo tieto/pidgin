@@ -4,10 +4,6 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 QQSOURCES = \
-	utils.c \
-	utils.h \
-	packet_parse.c \
-	packet_parse.h \
 	buddy_info.c \
 	buddy_info.h \
 	buddy_list.c \
@@ -16,11 +12,12 @@ QQSOURCES = \
 	buddy_opt.h \
 	buddy_status.c \
 	buddy_status.h \
-	qq.c \
 	char_conv.c \
 	char_conv.h \
 	crypt.c \
 	crypt.h \
+	file_trans.c \
+	file_trans.h \
 	group.c \
 	group.h \
 	group_conv.c \
@@ -45,7 +42,6 @@ QQSOURCES = \
 	group_opt.h \
 	group_search.c \
 	group_search.h \
-	qq.h \
 	header_info.c \
 	header_info.h \
 	im.c \
@@ -54,22 +50,26 @@ QQSOURCES = \
 	keep_alive.h \
 	login_logout.c \
 	login_logout.h \
+	packet_parse.c \
+	packet_parse.h \
+	qq.c \
+	qq.h \
 	qq_proxy.c \
 	qq_proxy.h \
 	recv_core.c \
 	recv_core.h \
 	send_core.c \
 	send_core.h \
+	send_file.c \
+	send_file.h \
 	sendqueue.c \
 	sendqueue.h \
 	sys_msg.c \
 	sys_msg.h \
 	udp_proxy_s5.c \
 	udp_proxy_s5.h \
-	send_file.c \
-	send_file.h \
-	file_trans.c \
-	file_trans.h
+	utils.c \
+	utils.h
 
 AM_CFLAGS = $(st)
 
@@ -94,7 +94,7 @@ endif
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libgaim \
 	-DVERSION=\"$(VERSION)\" \
-	-DDATADIR=\"$(datadir)\" \
+	-DQQBUDDYICONDIR=\"$(datadir)/pixmaps/gaim/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GAIM_CFLAGS)

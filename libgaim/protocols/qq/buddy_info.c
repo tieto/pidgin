@@ -508,33 +508,114 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	}
 }
 
+static void _qq_send_packet_modify_face(GaimConnection *gc, gint face_num)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimPresence *presence = gaim_account_get_presence(account);
+	qq_data *qd = (qq_data *) gc->proto_data;
+	gint offset;
+
+        if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
+		offset = 2;
+        } else if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
+                                || gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)) {
+		offset = 1;
+        } else {
+		offset = 0;
+        }
+
+	qd->my_icon = 3 * (face_num - 1) + offset;
+	qd->modifying_face = TRUE;
+	qq_send_packet_get_info(gc, qd->uid, FALSE);
+}
+
+void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gchar *iconfile)
+{
+        FILE *file;
+        struct stat st; 
+
+        g_return_if_fail(g_stat(iconfile, &st) == 0);
+        file = g_fopen(iconfile, "rb");
+        if (file) {
+		GaimBuddyIcon *icon;
+                size_t data_len;
+                gchar *data = g_new(gchar, st.st_size + 1);
+                data_len = fread(data, 1, st.st_size, file);
+                fclose(file);
+                gaim_buddy_icons_set_for_user(account, who, data, data_len);
+		icon = gaim_buddy_icons_find(account, who);
+		gaim_buddy_icon_set_path(icon, iconfile);
+        }
+}
+
+/* TODO: figure out how/when we can use a custom face
+ *  for now, only allow the stock icons */
+void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
+{
+        gchar *icon;
+        gint icon_num;
+        GaimAccount *account = gaim_connection_get_account(gc);
+        const gchar *icon_path = gaim_account_get_buddy_icon_path(account);
+        gint prefix_len = strlen(QQ_ICON_PREFIX);
+        gint suffix_len = strlen(QQ_ICON_SUFFIX);
+        gint dir_len = strlen(QQBUDDYICONDIR);
+        gint icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
+        gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), QQBUDDYICONDIR, ".", NULL);
+
+        /* make sure we're using an appropriate icon */
+        if (!(g_ascii_strncasecmp(icon_path, QQBUDDYICONDIR, dir_len) == 0 
+                        && icon_path[dir_len] == G_DIR_SEPARATOR
+                        && g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
+                        && g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
+                        && icon_len <= 3)) {
+                gaim_notify_error(gc, _("Invalid QQ Facea"), errmsg, NULL);
+                return;
+        }
+        /* strip everything but number */
+        icon = g_strndup(icon_path + dir_len + 1 + prefix_len, icon_len);
+        icon_num = strtol(icon, NULL, 10);
+        g_free(icon);
+        /* ensure face number in proper range */
+        if (icon_num > QQ_FACES) {
+                gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
+                return;
+        }
+        /* tell server my icon changed */
+        _qq_send_packet_modify_face(gc, icon_num);
+        /* display in blist */
+	qq_set_buddy_icon_for_user(account, account->username, icon_path);
+}
+
 /* after getting info or modify myself, refresh the buddy list accordingly */
 void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc)
 {
 	GaimBuddy *b;
 	qq_data *qd;
 	qq_buddy *q_bud;
-	gchar *alias_utf8;
+	gchar *alias_utf8, *gaim_name;
+	GaimAccount *account = gaim_connection_get_account(gc);
 
 	qd = (qq_data *) gc->proto_data;
+	gaim_name = uid_to_gaim_name(strtol(info->uid, NULL, 10));
 
 	alias_utf8 = qq_to_utf8(info->nick, QQ_CHARSET_DEFAULT);
 	if (qd->uid == strtol(info->uid, NULL, 10)) {	/* it is me */
 		qd->my_icon = strtol(info->face, NULL, 10);
 		if (alias_utf8 != NULL)
-			gaim_account_set_alias(gc->account, alias_utf8);
+			gaim_account_set_alias(account, alias_utf8);
 	}
 	/* update buddy list (including myself, if myself is the buddy) */
-	b = gaim_find_buddy(gc->account, uid_to_gaim_name(strtol(info->uid, NULL, 10)));
+	b = gaim_find_buddy(gc->account, gaim_name);
 	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 	if (q_bud != NULL) {	/* I have this buddy */
 		q_bud->age = strtol(info->age, NULL, 10);
 		q_bud->gender = strtol(info->gender, NULL, 10);
-		q_bud->icon = strtol(info->face, NULL, 10);
+		q_bud->face = strtol(info->face, NULL, 10);
 		if (alias_utf8 != NULL)
 			q_bud->nickname = g_strdup(alias_utf8);
 		qq_update_buddy_contact(gc, q_bud);
 	}
+	g_free(gaim_name);
 	g_free(alias_utf8);
 }
 
@@ -564,11 +645,11 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 
 		info = (contact_info *) segments;
 		if (qd->modifying_face && strtol(info->face, NULL, 10) != qd->my_icon) {
-			gchar *icon = g_strdup_printf("%i", qd->my_icon);
+			gchar *icon = g_strdup_printf("%d", qd->my_icon);
 			qd->modifying_face = FALSE;
-			memcpy(info->face, icon, 2);
+			g_free(info->face);
+			info->face = icon;
 			qq_send_packet_modify_info(gc, segments);
-			g_free(icon);
 		}
 
 		qq_refresh_buddy_and_myself(info, gc);

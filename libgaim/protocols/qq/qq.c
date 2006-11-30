@@ -149,17 +149,7 @@ static void _qq_close(GaimConnection *gc)
 /* returns the icon name for a buddy or protocol */
 static const gchar *_qq_list_icon(GaimAccount *a, GaimBuddy *b)
 {
-	gchar *filename;
-	qq_buddy *q_bud;
-
-	/* do not use g_return_val_if_fail, as it is not assertion */
-	if (b == NULL || b->proto_data == NULL)
-		return "qq";
-	
-	q_bud = (qq_buddy *) b->proto_data;
-	filename = get_icon_name(q_bud->icon / 3 + 1);
-
-	return filename;
+	return "qq";
 }
 
 
@@ -246,7 +236,7 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 /* we can show tiny icons on the four corners of buddy icon, */
 static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
-	/* each char ** are refering to filename in pixmaps/gaim/status/default/ *png */
+	/* each char** are refering to a filename in pixmaps/gaim/status/default/ */
 
 	qq_buddy *q_bud = b->proto_data;
         const char *emblems[4] = { NULL, NULL, NULL, NULL };
@@ -388,80 +378,6 @@ static void _qq_menu_modify_my_info(GaimPluginAction *action)
 	qq_prepare_modify_info(gc);
 }
 
-static void _qq_change_face_cb(GaimConnection *gc, GaimRequestFields *fields)
-{
-	qq_data *qd;
-	GaimRequestField *field;
-	gint suffix;
-	
-	qd = (qq_data *) gc->proto_data;
-
-	field = gaim_request_fields_get_field(fields, "face_num");
-	suffix = get_icon_offset(gc);
-	qd->my_icon = gaim_request_field_choice_get_value(field) * 3 + suffix;
-	qd->modifying_face = TRUE;
-	qq_send_packet_get_info(gc, qd->uid, FALSE);
-}
-
-static void _qq_add_face_choice(GaimRequestFieldGroup *group, gint face_num)
-{
-	GaimRequestField *field;
-	struct stat img_stat;
-	FILE *file;
-	gchar *filename, *img_data;
-	gchar face[15];
-	gint size;
-
-	g_snprintf(face, sizeof(face), "qq_%i.png", face_num);
-	filename = g_build_filename(DATADIR, "pixmaps",
-			"gaim","status","default", face, NULL);
-	g_snprintf(face, sizeof(face), "%i", face_num);
-	file = g_fopen(filename, "rb");
-	if (file && fstat(fileno(file), &img_stat) == 0) {
-		img_data = g_malloc(img_stat.st_size);
-		size = fread(img_data, 1, img_stat.st_size, file);
-
-		field = gaim_request_field_image_new(face, face, img_data, size);
-		gaim_request_field_group_add_field(group, field);
-
-		g_free(img_data);
-		fclose(file);
-	}
-}
-
-/* Change your status icon (face) */
-static void _qq_menu_change_face(GaimPluginAction *action)
-{
-	GaimConnection *gc = (GaimConnection *) action->context;
-	qq_data *qd = (qq_data *) gc->proto_data;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
-	gchar label[15];
-	gint i;
-
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(_("Selection"));
-	gaim_request_fields_add_group(fields, group);
-	field = gaim_request_field_choice_new("face_num",
-		       	_("Select a number"), qd->my_icon / 3);
-	for(i = 1; i <= QQ_FACES; i++) {
-		g_snprintf(label, sizeof(label), "%i", i);
-		gaim_request_field_choice_add(field, label);
-	}
-	gaim_request_field_group_add_field(group, field);
-	group = gaim_request_field_group_new(_("Faces"));
-	gaim_request_fields_add_group(fields, group);
-	for(i = 1; i <= QQ_FACES; i++)
-		_qq_add_face_choice(group, i);
-
-	gaim_request_fields(gc, _("Change Your QQ Face"),
-			_("Change Face"), NULL, fields,
-			_("Update"), G_CALLBACK(_qq_change_face_cb),
-			_("Cancel"), NULL,
-			gc);
-}
-
 static void _qq_menu_change_password(GaimPluginAction *action)
 {
 	gaim_notify_uri(NULL, "https://password.qq.com");
@@ -521,7 +437,7 @@ static void _qq_menu_show_login_info(GaimPluginAction *action)
 	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), qd->my_ip);
 
 	g_string_append(info, "<hr>\n");
-	g_string_append(info, _("<i>Information below may not be accurate</i><br>\n"));
+	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");
 
 	g_string_append_printf(info, _("<b>Login Time</b>: %s<br>\n"), ctime(&qd->login_time));
 	g_string_append_printf(info, _("<b>Last Login IP</b>: %s<br>\n"), qd->last_login_ip);
@@ -597,203 +513,6 @@ static void _qq_menu_send_file(GaimBlistNode * node, gpointer ignored)
 }
 */
 
-/* attempt to output the value and byte length of a given field */
-/*
-static gboolean _qq_parse_custom_packet_field(GaimRequestFields *fields,
-		const gchar *id, guint8 **value, gint *len, gboolean allow_null)
-{
-	GaimRequestField *field;
-	const gchar *str;
-	gint i;
-	gboolean success;
-
-	success = FALSE;
-	field = gaim_request_fields_get_field(fields, id);
-	str = gaim_request_field_string_get_value(field);
-	if (!str && allow_null) {
-		return TRUE;
-	} else if (str) {
-		success = TRUE;
-		if (strcmp(id, "uid") != 0) {
-			*value = hex_str_to_bytes(str, len);
-			if (!*value)
-				success = FALSE;
-		} else {
-			for (i = 0; i < strlen(str); i++) {
-				if (!g_ascii_isdigit(str[i])) {
-					success = FALSE;
-					break;
-				}
-			}
-			if (success) {
-				*(guint32 *) value = strtoul(str, NULL, 10);
-				if (errno == ERANGE)
-					success = FALSE;
-			}
-		}
-	}
-	if (!success)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid entry: %s\n", id);
-	return success;
-}
-*/
-
-/* attempt to output the field values and body length */
-/*
-static gboolean _qq_parse_custom_packet_fields(GaimRequestFields *fields,
-		guint8 **client, guint8 **cmd, guint8 **seq, guint32 *uid, 
-		guint8 **body, guint8 **key, gint *body_len)
-{
-	gint len;
-	gboolean success;
-
-       success = FALSE;
-       *client = *cmd = *seq = *body = *key = NULL;
-       *uid = *body_len = 0;
-       if ((_qq_parse_custom_packet_field(fields, "client", client, &len, FALSE)
-               && len == 2
-               && _qq_parse_custom_packet_field(fields, "cmd", cmd, &len, FALSE)
-               && len == 2
-               && _qq_parse_custom_packet_field(fields, "uid", (guint8 **) uid, &len, FALSE)
-               && _qq_parse_custom_packet_field(fields, "seq", seq, &len, FALSE)
-               && len == 2
-               && _qq_parse_custom_packet_field(fields, "body", body, body_len, TRUE))) {
-               if (*body_len > MAX_PACKET_SIZE / 8) {
-                       g_free(*client);
-                       g_free(*cmd);
-                       g_free(*seq);
-                       g_free(*body);
-                       return FALSE;
-               }
-               if (!gaim_request_fields_get_bool(fields, "encrypt"))
-                       return TRUE;
-               else
-                       success = _qq_parse_custom_packet_field(fields,
-                                       "key", key, &len, FALSE)
-                               && len == 16
-                               && *body_len > 0;
-       }
-       if (!success) {
-		if (*client)
-			g_free(*client);
-		if (*cmd)
-			g_free(*cmd);
-		if (*seq)
-			g_free(*seq);
-		if (*key)
-			g_free(*key);
-		return FALSE;
-	}
-	return TRUE;
-}
-*/
-
-/* parses the request fields and attempts to send the packet */
-/*
-static void _qq_send_custom_packet_cb(GaimConnection *gc, GaimRequestFields *fields)
-{
-	guint32 uid;
-	guint8 *buf, *client, *cmd, *seq, *body, *encr_body, *key, *cursor;
-	gint bytes, len, encr_len;
-	qq_data *qd;
-	gboolean success;
-
-	qd = (qq_data *) gc->proto_data;
-
-	success = _qq_parse_custom_packet_fields(fields, &client, &cmd, 
-			&seq, &uid, &body, &key, &len);
-	if (!success) {
-		gaim_notify_error(gc, _("Error"), _("Invalid entry"), NULL);
-		return;
-	}
-
-	bytes = 0;
-	buf = g_newa(guint8, MAX_PACKET_SIZE);
-	cursor = buf;
-*/
-        /* QQ TCP packet has two bytes in the beginning to define packet length
-	 * so I leave room here for size */
-/*
-	if (qd->use_tcp)
-		bytes += create_packet_w(buf, &cursor, 0x0000);
-	bytes += create_packet_b(buf, &cursor, QQ_PACKET_TAG);
-	bytes += create_packet_w(buf, &cursor, *(guint16 *) client);
-	bytes += create_packet_w(buf, &cursor, *(guint16 *) cmd);
-	bytes += create_packet_w(buf, &cursor, *(guint16 *) seq);
-	bytes += create_packet_dw(buf, &cursor, uid);
-	if (body) {
-               if (gaim_request_fields_get_bool(fields, "encrypt")) {
-                       if (gaim_request_fields_get_bool(fields, "prepend"))
-                               bytes += create_packet_data(buf, &cursor, key, 16);
-                       encr_body = g_newa(guint8, MAX_PACKET_SIZE);
-                       qq_crypt(ENCRYPT, body, len, key, encr_body, &encr_len);
-                       bytes += create_packet_data(buf, &cursor, encr_body, encr_len);
-                       g_free(key);
-               } else {
-                       bytes += create_packet_data(buf, &cursor, body, len);
-               }
-
-		g_free(body);
-	}
-	bytes += create_packet_b(buf, &cursor, QQ_PACKET_TAIL);
-
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Custom packet of length %i\n", bytes);
-	_qq_show_packet("Outgoing custom packet", buf, bytes);
-	
-	_qq_send_packet(gc, buf, bytes, *(guint16 *) cmd);
-	g_free(client);
-	g_free(cmd);
-	g_free(seq);
-}
-*/
-
-/* send a custom packet to the server - for protocol testing */
-/*
-static void _qq_menu_send_custom_packet(GaimPluginAction *action)
-{
-	GaimConnection *gc;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
-	gchar tmp[15];
-	qq_data *qd;
-
-	gc = (GaimConnection *) action->context;
-	qd = (qq_data *) gc->proto_data;
-
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(_("Basic Elements"));
-	gaim_request_fields_add_group(fields, group);
-	g_snprintf(tmp, sizeof(tmp), "%04X", QQ_CLIENT);
-	field = gaim_request_field_string_new("client", _("Client (hex)"), tmp, FALSE);
-	gaim_request_field_group_add_field(group, field);
-	field = gaim_request_field_string_new("cmd", _("Command (hex)"), "0000", FALSE);
-	gaim_request_field_group_add_field(group, field);
-	field = gaim_request_field_string_new("seq", _("Sequence (hex)"), "0000", FALSE);
-	gaim_request_field_group_add_field(group, field);
-	g_snprintf(tmp, sizeof(tmp), "%u", qd->uid);
-	field = gaim_request_field_string_new("uid", _("QQ Number (decimal)"), tmp, FALSE);
-	gaim_request_field_group_add_field(group, field);
-	field = gaim_request_field_string_new("body", _("Body (hex)"), NULL, TRUE);
-	gaim_request_field_group_add_field(group, field);
-	group = gaim_request_field_group_new(_("Encryption"));
-	gaim_request_fields_add_group(fields, group);
-	field = gaim_request_field_bool_new("encrypt", _("Encrypt Packet Body"), FALSE);
-	gaim_request_field_group_add_field(group, field);
-	field = gaim_request_field_bool_new("prepend", _("Prepend Key to Body"), FALSE);
-	gaim_request_field_group_add_field(group, field);
-	field = gaim_request_field_string_new("key", _("Encryption Key (hex)"), NULL, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-
-	gaim_request_fields(gc, _("Send a custom packet"),
-			_("Send a custom packet"), NULL, fields,
-			_("Send"), G_CALLBACK(_qq_send_custom_packet_cb),
-			_("Cancel"), NULL,
-			gc);
-}
-*/
-
 /* protocol related menus */
 static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 {
@@ -804,19 +523,11 @@ static GList *_qq_actions(GaimPlugin *plugin, gpointer context)
 	act = gaim_plugin_action_new(_("Modify My Information"), _qq_menu_modify_my_info);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Change My Face"), _qq_menu_change_face);
-	m = g_list_append(m, act);
-
 	act = gaim_plugin_action_new(_("Change Password"), _qq_menu_change_password);
 	m = g_list_append(m, act);
 
 	act = gaim_plugin_action_new(_("Show Login Information"), _qq_menu_show_login_info);
 	m = g_list_append(m, act);
-
-/*
-	act = gaim_plugin_action_new(_("Send Custom Packet"), _qq_menu_send_custom_packet);
-	m = g_list_append(m, act);
-*/
 
 	/*
 	act = gaim_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
@@ -918,75 +629,69 @@ static gchar *_qq_get_chat_buddy_real_name(GaimConnection *gc, gint channel, con
 	return chat_name_to_gaim_name(who);
 }
 
-void qq_function_not_implemented(GaimConnection *gc)
-{
-	gaim_notify_warning(gc, NULL, 
-			_("This function has not be implemented yet"), _("Please wait for new version"));
-}
-
 GaimPlugin *my_protocol = NULL;
 static GaimPluginProtocolInfo prpl_info	= {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
-	NULL,				/* user_splits	*/
-	NULL,				/* protocol_options */
-	NO_BUDDY_ICONS,			/* icon_spec */
-	_qq_list_icon,			/* list_icon */
-	_qq_list_emblems,		/* list_emblems */
-	_qq_status_text,		/* status_text	*/
-	_qq_tooltip_text,		/* tooltip_text */
-	_qq_away_states,		/* away_states	*/
-	_qq_buddy_menu,			/* blist_node_menu */
-	qq_chat_info,			/* chat_info */
-	qq_chat_info_defaults,		/* chat_info_defaults */
-	_qq_login,			/* login */
-	_qq_close,			/* close */
-	_qq_send_im,			/* send_im */
-	NULL,				/* set_info */
-	NULL,				/* send_typing	*/
-	_qq_get_info,			/* get_info */
-	_qq_set_away,			/* set_away */
-	NULL,				/* set_idle */
-	NULL,				/* change_passwd */
-	qq_add_buddy,			/* add_buddy */
-	NULL,				/* add_buddies	*/
-	qq_remove_buddy,		/* remove_buddy */
-	NULL,				/* remove_buddies */
-	NULL,				/* add_permit */
-	NULL,				/* add_deny */
-	NULL,				/* rem_permit */
-	NULL,				/* rem_deny */
-	NULL,				/* set_permit_deny */
-	qq_group_join,			/* join_chat */
-	NULL,				/* reject chat	invite */
-	NULL,				/* get_chat_name */
-	NULL,				/* chat_invite	*/
-	NULL,				/* chat_leave */
-	NULL,				/* chat_whisper */
-	_qq_chat_send,			/* chat_send */
-	_qq_keep_alive,			/* keepalive */
-	NULL,				/* register_user */
-	_qq_get_chat_buddy_info,	/* get_cb_info	*/
-	NULL,				/* get_cb_away	*/
-	NULL,				/* alias_buddy	*/
-	NULL,				/* group_buddy	*/
-	NULL,				/* rename_group */
-	NULL,				/* buddy_free */     
-	NULL,				/* convo_closed */
-	NULL,				/* normalize */
-	NULL,				/* set_buddy_icon */
-	NULL,				/* remove_group */
-	_qq_get_chat_buddy_real_name,	/* get_cb_real_name */
-	NULL,				/* set_chat_topic */
-	NULL,				/* find_blist_chat */
-	qq_roomlist_get_list,		/* roomlist_get_list */
-	qq_roomlist_cancel,		/* roomlist_cancel */
-	NULL,				/* roomlist_expand_category */
-	NULL,				/* can_receive_file */
-	qq_send_file,			/* send_file */
-	NULL,                           /* new xfer */
-	NULL,				/* offline_message */
-	NULL,				/* GaimWhiteboardPrplOps */
-	NULL,				/* send_raw */
+	NULL,							/* user_splits	*/
+	NULL,							/* protocol_options */
+	{"png", 96, 96, 96, 96, GAIM_ICON_SCALE_SEND},		/* icon_spec */
+	_qq_list_icon,						/* list_icon */
+	_qq_list_emblems,					/* list_emblems */
+	_qq_status_text,					/* status_text	*/
+	_qq_tooltip_text,					/* tooltip_text */
+	_qq_away_states,					/* away_states	*/
+	_qq_buddy_menu,						/* blist_node_menu */
+	qq_chat_info,						/* chat_info */
+	qq_chat_info_defaults,					/* chat_info_defaults */
+	_qq_login,						/* login */
+	_qq_close,						/* close */
+	_qq_send_im,						/* send_im */
+	NULL,							/* set_info */
+	NULL,							/* send_typing	*/
+	_qq_get_info,						/* get_info */
+	_qq_set_away,						/* set_away */
+	NULL,							/* set_idle */
+	NULL,							/* change_passwd */
+	qq_add_buddy,						/* add_buddy */
+	NULL,							/* add_buddies	*/
+	qq_remove_buddy,					/* remove_buddy */
+	NULL,							/* remove_buddies */
+	NULL,							/* add_permit */
+	NULL,							/* add_deny */
+	NULL,							/* rem_permit */
+	NULL,							/* rem_deny */
+	NULL,							/* set_permit_deny */
+	qq_group_join,						/* join_chat */
+	NULL,							/* reject chat	invite */
+	NULL,							/* get_chat_name */
+	NULL,							/* chat_invite	*/
+	NULL,							/* chat_leave */
+	NULL,							/* chat_whisper */
+	_qq_chat_send,						/* chat_send */
+	_qq_keep_alive,						/* keepalive */
+	NULL,							/* register_user */
+	_qq_get_chat_buddy_info,				/* get_cb_info	*/
+	NULL,							/* get_cb_away	*/
+	NULL,							/* alias_buddy	*/
+	NULL,							/* group_buddy	*/
+	NULL,							/* rename_group */
+	NULL,							/* buddy_free */     
+	NULL,							/* convo_closed */
+	NULL,							/* normalize */
+	qq_set_my_buddy_icon,					/* set_buddy_icon */
+	NULL,							/* remove_group */
+	_qq_get_chat_buddy_real_name,				/* get_cb_real_name */
+	NULL,							/* set_chat_topic */
+	NULL,							/* find_blist_chat */
+	qq_roomlist_get_list,					/* roomlist_get_list */
+	qq_roomlist_cancel,					/* roomlist_cancel */
+	NULL,							/* roomlist_expand_category */
+	NULL,							/* can_receive_file */
+	qq_send_file,						/* send_file */
+	NULL,                           			/* new xfer */
+	NULL,							/* offline_message */
+	NULL,							/* GaimWhiteboardPrplOps */
+	NULL,							/* send_raw */
 };
 
 static GaimPluginInfo info = {

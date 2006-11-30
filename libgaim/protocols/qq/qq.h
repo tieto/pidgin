@@ -40,7 +40,7 @@ typedef struct _qq_buddy qq_buddy;
 
 struct _qq_buddy {
 	guint32 uid;
-	guint16 icon;		/* index: 01 - 85 */
+	guint16 face;		/* index: 0 - 299 */
 	guint8 age;
 	guint8 gender;
 	gchar *nickname;
@@ -86,7 +86,7 @@ struct _qq_data {
 	/* get from keep_alive packet */
 	gchar *my_ip;			/* my ip address detected by server */
 	guint16 my_port;		/* my port detected by server */
-	guint16 my_icon;			/* my icon index */
+	guint16 my_icon;		/* my icon index */
 	guint32 all_online;		/* the number of online QQ users */
 	time_t last_get_online;		/* last time send get_friends_online packet */
 
@@ -108,7 +108,7 @@ struct _qq_data {
 	GList *add_buddy_request;
 	GQueue *before_login_packets;
 
-	/* TODO is there a better way of handling these? */
+	/* TODO pass qq_send_packet_get_info() a callback and use signals to get rid of these */
 	gboolean modifying_info;
 	gboolean modifying_face;
 };
