@@ -126,6 +126,10 @@ mouse = 1
 .br
 wm = /usr/local/lib/gaim/s.so
 .br
+# Remember window-positions based on the titles (on by default)
+.br
+remember_position = 1
+.br
 
 .br
 [colors]
