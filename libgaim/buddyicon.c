@@ -77,6 +77,7 @@ gaim_buddy_icon_new(GaimAccount *account, const char *username,
 
 	gaim_buddy_icon_ref(icon);
 	gaim_buddy_icon_set_data(icon, icon_data, icon_len);
+	gaim_buddy_icon_set_path(icon, NULL);
 
 	/* gaim_buddy_icon_set_data() makes blist.c or
 	 * conversation.c, or both, take a reference.
@@ -134,6 +135,7 @@ gaim_buddy_icon_destroy(GaimBuddyIcon *icon)
 
 	g_free(icon->username);
 	g_free(icon->data);
+	g_free(icon->path);
 	GAIM_DBUS_UNREGISTER_POINTER(icon);
 	g_free(icon);
 }
@@ -339,6 +341,15 @@ gaim_buddy_icon_set_data(GaimBuddyIcon *icon, void *data, size_t len)
 	gaim_buddy_icon_update(icon);
 }
 
+void 
+gaim_buddy_icon_set_path(GaimBuddyIcon *icon, const gchar *path)
+{
+	g_return_if_fail(icon != NULL);
+	
+	g_free(icon->path);
+	icon->path = (path != NULL ? g_strdup(path) : NULL);
+}
+
 GaimAccount *
 gaim_buddy_icon_get_account(const GaimBuddyIcon *icon)
 {
@@ -364,6 +375,14 @@ gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len)
 		*len = icon->len;
 
 	return icon->data;
+}
+
+const char *
+gaim_buddy_icon_get_path(GaimBuddyIcon *icon)
+{
+	g_return_val_if_fail(icon != NULL, NULL);
+
+	return icon->path;
 }
 
 const char *
@@ -394,7 +413,7 @@ gaim_buddy_icon_get_type(const GaimBuddyIcon *icon)
 
 void
 gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
-							  void *icon_data, size_t icon_len)
+							void *icon_data, size_t icon_len)
 {
 	g_return_if_fail(account  != NULL);
 	g_return_if_fail(username != NULL);

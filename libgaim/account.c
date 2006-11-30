@@ -872,6 +872,8 @@ gaim_account_destroy(GaimAccount *account)
 	g_free(account->alias);
 	g_free(account->password);
 	g_free(account->user_info);
+	g_free(account->buddy_icon);
+	g_free(account->buddy_icon_path);
 	g_free(account->protocol_id);
 
 	g_hash_table_destroy(account->settings);
@@ -1281,11 +1283,21 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 
 		if (prpl_info && prpl_info->set_buddy_icon)
 		{
-			char *filename = gaim_buddy_icons_get_full_path(icon);
-			prpl_info->set_buddy_icon(gc, filename);
-			g_free(filename);
+			char *cached_path = gaim_buddy_icons_get_full_path(icon);
+			prpl_info->set_buddy_icon(gc, cached_path);
+			g_free(cached_path);
 		}
 	}
+
+	schedule_accounts_save();
+}
+
+void gaim_account_set_buddy_icon_path(GaimAccount *account, const char *path)
+{
+	g_return_if_fail(account != NULL);
+
+	g_free(account->buddy_icon_path);
+	account->buddy_icon_path = g_strdup(path);
 
 	schedule_accounts_save();
 }
@@ -1660,6 +1672,14 @@ gaim_account_get_buddy_icon(const GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	return account->buddy_icon;
+}
+
+const char *
+gaim_account_get_buddy_icon_path(const GaimAccount *account)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+
+	return account->buddy_icon_path;
 }
 
 const char *

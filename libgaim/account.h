@@ -64,7 +64,8 @@ struct _GaimAccount
 	char *password;             /**< The account password.                  */
 	char *user_info;            /**< User information.                      */
 
-	char *buddy_icon;           /**< The buddy icon.                        */
+	char *buddy_icon;           /**< The buddy icon's cached path.          */
+	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
 
 	gboolean remember_pass;     /**< Remember the password.                 */
 
@@ -249,6 +250,14 @@ void gaim_account_set_user_info(GaimAccount *account, const char *user_info);
  * @param icon    The buddy icon file.
  */
 void gaim_account_set_buddy_icon(GaimAccount *account, const char *icon);
+
+/**
+ * Sets the account's buddy icon path.
+ *
+ * @param account The account.
+ * @param info	  The buddy icon non-cached path.
+ */
+void gaim_account_set_buddy_icon_path(GaimAccount *account, const char *path);
 
 /**
  * Sets the account's protocol ID.
@@ -483,6 +492,15 @@ const char *gaim_account_get_user_info(const GaimAccount *account);
  * @return The buddy icon filename.
  */
 const char *gaim_account_get_buddy_icon(const GaimAccount *account);
+
+/**
+ * Gets the account's buddy icon path.
+ *
+ * @param account The account.
+ *
+ * @return The buddy icon's non-cached path.
+ */
+const char *gaim_account_get_buddy_icon_path(const GaimAccount *account);
 
 /**
  * Returns the account's protocol ID.

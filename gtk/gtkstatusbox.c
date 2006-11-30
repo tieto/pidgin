@@ -1228,7 +1228,8 @@ buddy_icon_set_cb(const char *filename, GtkGaimStatusBox *box)
 				if (filename)
 					icon = gaim_gtk_convert_buddy_icon(plug, filename);
 				gaim_account_set_ui_bool(box->account, GAIM_GTK_UI, "use-global-buddyicon", (filename != NULL));
-				gaim_account_set_ui_string(box->account, GAIM_GTK_UI, "non-global-buddyicon", icon);
+				gaim_account_set_ui_string(box->account, GAIM_GTK_UI, "non-global-buddyicon-cached-path", icon);
+				gaim_account_set_buddy_icon_path(box->account, filename);
 				gaim_account_set_buddy_icon(box->account, icon);
 				g_free(icon);
 			}
@@ -1246,6 +1247,7 @@ buddy_icon_set_cb(const char *filename, GtkGaimStatusBox *box)
 					char *icon = NULL;
 					if (filename)
 						icon = gaim_gtk_convert_buddy_icon(plug, filename);
+					gaim_account_set_buddy_icon_path(account, filename);
 					gaim_account_set_buddy_icon(account, icon);
 					g_free(icon);
 				}

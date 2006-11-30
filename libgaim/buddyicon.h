@@ -38,6 +38,7 @@ struct _GaimBuddyIcon
 
 	void  *data;           /**< The buddy icon data.               */
 	size_t len;            /**< The length of the buddy icon data. */
+	char *path;	       /**< The buddy icon's non-cached path.  */
 
 	int ref_count;         /**< The buddy icon reference count.    */
 };
@@ -62,7 +63,7 @@ extern "C" {
  * @return The buddy icon structure.
  */
 GaimBuddyIcon *gaim_buddy_icon_new(GaimAccount *account, const char *username,
-								   void *icon_data, size_t icon_len);
+								void *icon_data, size_t icon_len);
 
 /**
  * Destroys a buddy icon structure.
@@ -142,6 +143,14 @@ void gaim_buddy_icon_set_username(GaimBuddyIcon *icon, const char *username);
 void gaim_buddy_icon_set_data(GaimBuddyIcon *icon, void *data, size_t len);
 
 /**
+ * Sets the buddy icon's path.
+ *
+ * @param icon The buddy icon.
+ * @param path The buddy icon's non-cached path.
+ */
+void gaim_buddy_icon_set_path(GaimBuddyIcon *icon, const gchar *path);
+
+/**
  * Returns the buddy icon's account.
  *
  * @param icon The buddy icon.
@@ -170,6 +179,15 @@ const char *gaim_buddy_icon_get_username(const GaimBuddyIcon *icon);
 const guchar *gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len);
 
 /**
+ * Returns the buddy icon's path.
+ *
+ * @param icon The buddy icon.
+ * 
+ * @preturn The buddy icon's non-cached path.
+ */
+const gchar *gaim_buddy_icon_get_path(GaimBuddyIcon *icon);
+
+/**
  * Returns an extension corresponding to the buddy icon's file type.
  *
  * @param icon The buddy icon.
@@ -192,9 +210,11 @@ const char *gaim_buddy_icon_get_type(const GaimBuddyIcon *icon);
  * @param username  The username of the user.
  * @param icon_data The icon data.
  * @param icon_len  The length of the icon data.
+ *
+ * @return The buddy icon set, or NULL if no icon was set.
  */
 void gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
-								   void *icon_data, size_t icon_len);
+									void *icon_data, size_t icon_len);
 
 /**
  * Returns the buddy icon information for a user.

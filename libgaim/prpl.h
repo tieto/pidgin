@@ -276,7 +276,7 @@ struct _GaimPluginProtocolInfo
 
 	const char *(*normalize)(const GaimAccount *, const char *);
 
-	void (*set_buddy_icon)(GaimConnection *, const char *filename);
+	void (*set_buddy_icon)(GaimConnection *, const char *cached_path);
 
 	void (*remove_group)(GaimConnection *gc, GaimGroup *group);
 
