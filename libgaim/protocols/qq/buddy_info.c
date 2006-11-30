@@ -29,7 +29,7 @@
 
 #include "utils.h"
 #include "packet_parse.h"
-#include "buddy_info.h"		
+#include "buddy_info.h"
 #include "char_conv.h"
 #include "crypt.h"
 #include "header_info.h"
@@ -89,16 +89,16 @@ static const gchar *genders[] = {
 /* There is no user id stored in the reply packet for information query
  * we have to manually store the query, so that we know the query source */
 typedef struct _qq_info_query {
-        guint32 uid;
-        gboolean show_window;
-        gboolean modify_info;
+	guint32 uid;
+	gboolean show_window;
+	gboolean modify_info;
 } qq_info_query;
 
 /* We get an info packet on ourselves before we modify our information.
  * Even though not all of the information is modifiable, it still
  * all needs to be there when we send out the modify info packet */
 typedef struct _modify_info_data {
-        GaimConnection *gc;
+	GaimConnection *gc;
 	contact_info *info;
 } modify_info_data;
 
@@ -110,7 +110,7 @@ static gint choice_index(const gchar *value, const gchar **choice, gint choice_s
 	len = strlen(value);
 	if (len > 3 || len == 0) return -1;
 	for (i = 0; i < len; i++) {
-		if (!g_ascii_isdigit(value[i])) 
+		if (!g_ascii_isdigit(value[i]))
 			return -1;
 	}
 	i = strtol(value, NULL, 10);
@@ -153,11 +153,11 @@ static gchar *field_value(const gchar *field, const gchar **choice, gint choice_
 	}
 }
 
-static void append_field_value(GString *info_text, const gchar *field, 
+static void append_field_value(GString *info_text, const gchar *field,
 		const gchar *title, const gchar **choice, gint choice_size)
 {
 	gchar *value = field_value(field, choice, choice_size);
-	
+
 	if (value != NULL) {
 		g_string_append_printf(info_text, "<br /><b>%s:</b> %s", title, value);
 		g_free(value);
@@ -263,7 +263,7 @@ void qq_prepare_modify_info(GaimConnection *gc)
 	/* traverse backwards so we get the most recent info_query */
 	for (ql = g_list_last(qd->info_query); ql != NULL; ql = g_list_previous(ql)) {
 		query = ql->data;
-		if (query->uid == qd->uid) 
+		if (query->uid == qd->uid)
 			query->modify_info = TRUE;
 	}
 }
@@ -314,9 +314,9 @@ static gchar *parse_field(GList **list, gboolean choice)
 		value = g_strdup_printf("%d", gaim_request_field_choice_get_value(field));
 	} else {
 		value = (gchar *) gaim_request_field_string_get_value(field);
-		if (value == NULL) 
+		if (value == NULL)
 			value = g_strdup("-");
-		else 
+		else
 			value = utf8_to_qq(value, QQ_CHARSET_DEFAULT);
 	}
 	*list = g_list_remove_link(*list, *list);
@@ -382,25 +382,25 @@ static GaimRequestFieldGroup *setup_field_group(GaimRequestFields *fields, const
 	return group;
 }
 
-static void add_string_field_to_group(GaimRequestFieldGroup *group, 
+static void add_string_field_to_group(GaimRequestFieldGroup *group,
 		const gchar *id, const gchar *title, const gchar *value)
 {
 	GaimRequestField *field;
 	gchar *utf8_value;
-       
+
 	utf8_value = qq_to_utf8(value, QQ_CHARSET_DEFAULT);
 	field = gaim_request_field_string_new(id, title, utf8_value, FALSE);
 	gaim_request_field_group_add_field(group, field);
 	g_free(utf8_value);
 }
 
-static void add_choice_field_to_group(GaimRequestFieldGroup *group, 
-		const gchar *id, const gchar *title, const gchar *value, 
+static void add_choice_field_to_group(GaimRequestFieldGroup *group,
+		const gchar *id, const gchar *title, const gchar *value,
 		const gchar **choice, gint choice_size)
 {
 	GaimRequestField *field;
 	gint i, index;
-	
+
 	index = choice_index(value, choice, choice_size);
 	field = gaim_request_field_choice_new(id, title, index);
 	for (i = 0; i < choice_size; i++)
@@ -475,7 +475,7 @@ static void create_modify_info_dialogue(GaimConnection *gc, const contact_info *
 		mid->info->is_open_contact = g_strdup(info->is_open_contact);
 		mid->info->qq_show = g_strdup(info->qq_show);
 		mid->info->unknown6 = g_strdup(info->unknown6);
-	
+
 		gaim_request_fields(gc, _("Modify my information"),
 			_("Modify my information"), NULL, fields,
 			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
@@ -515,14 +515,14 @@ static void _qq_send_packet_modify_face(GaimConnection *gc, gint face_num)
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gint offset;
 
-        if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
+	if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
 		offset = 2;
-        } else if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
-                                || gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)) {
+	} else if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
+			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)) {
 		offset = 1;
-        } else {
+	} else {
 		offset = 0;
-        }
+	}
 
 	qd->my_icon = 3 * (face_num - 1) + offset;
 	qd->modifying_face = TRUE;
@@ -531,58 +531,61 @@ static void _qq_send_packet_modify_face(GaimConnection *gc, gint face_num)
 
 void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gchar *iconfile)
 {
-        FILE *file;
-        struct stat st; 
+	FILE *file;
+	struct stat st;
 
-        g_return_if_fail(g_stat(iconfile, &st) == 0);
-        file = g_fopen(iconfile, "rb");
-        if (file) {
+	g_return_if_fail(g_stat(iconfile, &st) == 0);
+	file = g_fopen(iconfile, "rb");
+	if (file) {
 		GaimBuddyIcon *icon;
-                size_t data_len;
-                gchar *data = g_new(gchar, st.st_size + 1);
-                data_len = fread(data, 1, st.st_size, file);
-                fclose(file);
-                gaim_buddy_icons_set_for_user(account, who, data, data_len);
+		size_t data_len;
+		gchar *data = g_new(gchar, st.st_size + 1);
+		data_len = fread(data, 1, st.st_size, file);
+		fclose(file);
+		gaim_buddy_icons_set_for_user(account, who, data, data_len);
 		icon = gaim_buddy_icons_find(account, who);
 		gaim_buddy_icon_set_path(icon, iconfile);
-        }
+	}
 }
 
 /* TODO: figure out how/when we can use a custom face
  *  for now, only allow the stock icons */
 void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 {
-        gchar *icon;
-        gint icon_num;
-        GaimAccount *account = gaim_connection_get_account(gc);
-        const gchar *icon_path = gaim_account_get_buddy_icon_path(account);
-        gint prefix_len = strlen(QQ_ICON_PREFIX);
-        gint suffix_len = strlen(QQ_ICON_SUFFIX);
-        gint dir_len = strlen(QQBUDDYICONDIR);
-        gint icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
-        gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), QQBUDDYICONDIR, ".", NULL);
+	gchar *icon;
+	gint icon_num;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	const gchar *icon_path = gaim_account_get_buddy_icon_path(account);
+	gint prefix_len = strlen(QQ_ICON_PREFIX);
+	gint suffix_len = strlen(QQ_ICON_SUFFIX);
+	gint dir_len = strlen(QQBUDDYICONDIR);
+	gint icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
+	gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), QQBUDDYICONDIR, ".", NULL);
 
-        /* make sure we're using an appropriate icon */
-        if (!(g_ascii_strncasecmp(icon_path, QQBUDDYICONDIR, dir_len) == 0 
-                        && icon_path[dir_len] == G_DIR_SEPARATOR
-                        && g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
-                        && g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
-                        && icon_len <= 3)) {
-                gaim_notify_error(gc, _("Invalid QQ Facea"), errmsg, NULL);
-                return;
-        }
-        /* strip everything but number */
-        icon = g_strndup(icon_path + dir_len + 1 + prefix_len, icon_len);
-        icon_num = strtol(icon, NULL, 10);
-        g_free(icon);
-        /* ensure face number in proper range */
-        if (icon_num > QQ_FACES) {
-                gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
-                return;
-        }
-        /* tell server my icon changed */
-        _qq_send_packet_modify_face(gc, icon_num);
-        /* display in blist */
+	/* make sure we're using an appropriate icon */
+	if (!(g_ascii_strncasecmp(icon_path, QQBUDDYICONDIR, dir_len) == 0
+		&& icon_path[dir_len] == G_DIR_SEPARATOR
+			&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
+			&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
+			&& icon_len <= 3)) {
+		gaim_notify_error(gc, _("Invalid QQ Facea"), errmsg, NULL);
+		g_free(errmsg);
+		return;
+	}
+	/* strip everything but number */
+	icon = g_strndup(icon_path + dir_len + 1 + prefix_len, icon_len);
+	icon_num = strtol(icon, NULL, 10);
+	g_free(icon);
+	/* ensure face number in proper range */
+	if (icon_num > QQ_FACES) {
+		gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
+		g_free(errmsg);
+		return;
+	}
+	g_free(errmsg);
+	/* tell server my icon changed */
+	_qq_send_packet_modify_face(gc, icon_num);
+	/* display in blist */
 	qq_set_buddy_icon_for_user(account, account->username, icon_path);
 }
 
@@ -695,3 +698,14 @@ void qq_info_query_free(qq_data *qd)
 	}
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d info queries are freed!\n", i);
 }
+
+#ifdef _WIN32
+const char *qq_win32_buddy_icon_dir(void)
+{
+	static char *dir = NULL;
+	if (dir == NULL)
+		dir = g_build_filename(wgaim_install_dir(), "pixmaps",
+			"gaim", "buddy_icons", "qq", NULL);
+	return dir;
+}
+#endif

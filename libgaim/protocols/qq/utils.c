@@ -51,7 +51,7 @@ gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 	return array[index];
 }
 
-gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount) 
+gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount)
 {
 	gint index;
 
@@ -106,7 +106,7 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "field[%d] is %s\n", j, segments[j]);
 			g_free(segments[j]);
 		}
-		
+
 		segments[expected_fields] = NULL;
 	}
 
@@ -116,21 +116,21 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 /* generate a md5 key using uid and session_key */
 guint8 *_gen_session_md5(gint uid, guint8 *session_key)
 {
-        guint8 *src, md5_str[QQ_KEY_LENGTH];
-        GaimCipher *cipher;
-        GaimCipherContext *context;
+	guint8 *src, md5_str[QQ_KEY_LENGTH];
+	GaimCipher *cipher;
+	GaimCipherContext *context;
 
-        src = g_newa(guint8, 20);
+	src = g_newa(guint8, 20);
 	memcpy(src, &uid, 4);
 	memcpy(src, session_key, QQ_KEY_LENGTH);
 
-        cipher = gaim_ciphers_find_cipher("md5");
-        context = gaim_cipher_context_new(cipher, NULL);
-        gaim_cipher_context_append(context, src, 20);
-        gaim_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-        gaim_cipher_context_destroy(context);
+	cipher = gaim_ciphers_find_cipher("md5");
+	context = gaim_cipher_context_new(cipher, NULL);
+	gaim_cipher_context_append(context, src, 20);
+	gaim_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
+	gaim_cipher_context_destroy(context);
 
-        return g_memdup(md5_str, QQ_KEY_LENGTH);
+	return g_memdup(md5_str, QQ_KEY_LENGTH);
 }
 
 /* given a four-byte ip data, convert it into a human readable ip string
@@ -141,7 +141,7 @@ gchar *gen_ip_str(guint8 *ip)
 	if (ip == NULL || ip[0] == 0) {
 		ret = g_new(gchar, 1);
 		*ret = '\0';
-	       	return ret;
+		return ret;
 	} else {
 		return g_strdup_printf("%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
 	}
@@ -168,7 +168,7 @@ guint32 gaim_name_to_uid(const gchar *const name)
 	ret = strtol(name, NULL, 10);
 	if (errno == ERANGE)
 		return 0;
-	else 
+	else
 		return ret;
 }
 
@@ -182,7 +182,7 @@ gchar *uid_to_gaim_name(guint32 uid)
 /* convert name displayed in a chat channel to original QQ UID */
 gchar *chat_name_to_gaim_name(const gchar *const name)
 {
-	const gchar *tmp; 
+	const gchar *tmp;
 	gchar *ret;
 
 	g_return_val_if_fail(name != NULL, NULL);
@@ -203,7 +203,7 @@ void try_dump_as_gbk(const guint8 *const data, gint len)
 	incoming = g_newa(guint8, len + 1);
 	g_memmove(incoming, data, len);
 	incoming[len] = 0x00;
-	/* GBK code: 
+	/* GBK code:
 	 * Single-byte ASCII:      0x21-0x7E
 	 * GBK first byte range:   0x81-0xFE
 	 * GBK second byte range:  0x40-0x7E and 0x80-0xFE */
@@ -228,19 +228,19 @@ static gchar *strstrip(const gchar *const buffer)
 
 	g_return_val_if_fail(buffer != NULL, NULL);
 
-        stripped = g_string_new("");
-        for (i=0; i<strlen(buffer); i++) {
+	stripped = g_string_new("");
+	for (i=0; i<strlen(buffer); i++) {
 		cur = buffer[i];
 		if (cur != ' ' && cur != '\n')
-                        g_string_append_c(stripped, buffer[i]);
-        }
+			g_string_append_c(stripped, buffer[i]);
+	}
 	ret = stripped->str;
 	g_string_free(stripped, FALSE);
 
-        return ret;
+	return ret;
 }
 
-/* Attempts to dump an ASCII hex string to a string of bytes. 
+/* Attempts to dump an ASCII hex string to a string of bytes.
  * The return should be freed later. */
 guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 {
@@ -249,7 +249,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 	gint index;
 
 	g_return_val_if_fail(buffer != NULL, NULL);
-	
+
 	hex_buffer = strstrip(buffer);
 
 	if (strlen(hex_buffer) % 2 != 0) {
@@ -292,7 +292,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 	return g_memdup(bytes, *out_len);
 }
 
-/* Dumps a chunk of raw data into an ASCII hex string. 
+/* Dumps a chunk of raw data into an ASCII hex string.
  * The return should be freed later. */
 gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 {

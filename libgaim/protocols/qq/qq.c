@@ -95,7 +95,7 @@ static void _qq_login(GaimAccount *account)
 	const gchar *qq_server, *qq_port;
 	qq_data *qd;
 	GaimConnection *gc;
-	GaimPresence *presence;	
+	GaimPresence *presence;
 	gboolean use_tcp;
 
 	g_return_if_fail(account != NULL);
@@ -112,7 +112,7 @@ static void _qq_login(GaimAccount *account)
 	qq_server = gaim_account_get_string(account, "server", NULL);
 	qq_port = gaim_account_get_string(account, "port", NULL);
 	use_tcp = gaim_account_get_bool(account, "use_tcp", FALSE);
-        presence = gaim_account_get_presence(account);
+	presence = gaim_account_get_presence(account);
 
 	qd->use_tcp = use_tcp;
 
@@ -127,14 +127,14 @@ static void _qq_login(GaimAccount *account)
 
 	if (qq_server == NULL || strlen(qq_server) == 0)
 		qq_server = use_tcp ?
-		    tcp_server_list[random() % tcp_server_amount] : 
+		    tcp_server_list[random() % tcp_server_amount] :
 		    udp_server_list[random() % udp_server_amount];
 
 	if (qq_port == NULL || strtol(qq_port, NULL, 10) == 0)
 		qq_port = use_tcp ? QQ_TCP_QUERY_PORT : QQ_UDP_PORT;
 
 	gaim_connection_update_progress(gc, _("Connecting"), 0, QQ_CONNECT_STEPS);
- 
+
 	if (qq_connect(account, qq_server, strtol(qq_port, NULL, 10), use_tcp, FALSE) < 0)
 		gaim_connection_error(gc, _("Unable to connect."));
 }
@@ -184,7 +184,7 @@ static gchar *_qq_status_text(GaimBuddy *b)
 		break;
 	default:
 		g_string_printf(status, "Unknown-%d", q_bud->status);
-	}	
+	}
 
 	return g_string_free(status, FALSE);
 }
@@ -205,30 +205,30 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 	{
 		ip_str = gen_ip_str(q_bud->ip);
 		if (strlen(ip_str) != 0) {
-			g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d", 
+			g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d",
 					(q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
 				       ? "TCP" : "UDP", ip_str, q_bud->port);
 		}
 		g_free(ip_str);
 		g_string_append_printf(tooltip, "\n<b>Age:</b> %d", q_bud->age);
-        	switch (q_bud->gender) {
-	        case QQ_BUDDY_GENDER_GG:
-                	g_string_append(tooltip, "\n<b>Gender:</b> Male");
-        	        break;
-	        case QQ_BUDDY_GENDER_MM:
-                	g_string_append(tooltip, "\n<b>Gender:</b> Female");
-        	        break;
-	        case QQ_BUDDY_GENDER_UNKNOWN:
-                	g_string_append(tooltip, "\n<b>Gender:</b> Unknown");
-        	        break;
-	        default:
-                	g_string_append_printf(tooltip, "\n<b>Gender:</b> ERROR(%d)", q_bud->gender);
-	        }
+		switch (q_bud->gender) {
+		case QQ_BUDDY_GENDER_GG:
+			g_string_append(tooltip, "\n<b>Gender:</b> Male");
+			break;
+		case QQ_BUDDY_GENDER_MM:
+			g_string_append(tooltip, "\n<b>Gender:</b> Female");
+			break;
+		case QQ_BUDDY_GENDER_UNKNOWN:
+			g_string_append(tooltip, "\n<b>Gender:</b> Unknown");
+			break;
+		default:
+			g_string_append_printf(tooltip, "\n<b>Gender:</b> ERROR(%d)", q_bud->gender);
+		}
 		/* For debugging */
 		/*
 		g_string_append_printf(tooltip, "\n<b>Flag:</b> %01x", q_bud->flag1);
 		g_string_append_printf(tooltip, "\n<b>CommFlag:</b> %01x", q_bud->comm_flag);
-	        g_string_append_printf(tooltip, "\n<b>Client:</b> %04x", q_bud->client_version);
+		g_string_append_printf(tooltip, "\n<b>Client:</b> %04x", q_bud->client_version);
 		*/
 	}
 }
@@ -239,11 +239,11 @@ static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
 	/* each char** are refering to a filename in pixmaps/gaim/status/default/ */
 
 	qq_buddy *q_bud = b->proto_data;
-        const char *emblems[4] = { NULL, NULL, NULL, NULL };
-        int i = 1;
+	const char *emblems[4] = { NULL, NULL, NULL, NULL };
+	int i = 1;
 
-        if (q_bud == NULL) {
-                emblems[0] = "offline";
+	if (q_bud == NULL) {
+		emblems[0] = "offline";
 	} else {
 		if (q_bud->status == QQ_BUDDY_ONLINE_AWAY)
 			emblems[i++] = "away";
@@ -251,25 +251,25 @@ static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 			emblems[i++] = "qq_member";
 		*/
-                if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
-                        emblems[i++] = "wireless";
+		if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
+			emblems[i++] = "wireless";
 		/*
 		if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
 			emblems[i%4] = "video";
 		*/
 
-        }
+	}
 
-        *se = emblems[0];
-        *sw = emblems[1];
-        *nw = emblems[2];
-        *ne = emblems[3];
+	*se = emblems[0];
+	*sw = emblems[1];
+	*nw = emblems[2];
+	*ne = emblems[3];
 
 	return;
 }
 
 /* QQ away status (used to initiate QQ away packet) */
-static GList *_qq_away_states(GaimAccount *ga) 
+static GList *_qq_away_states(GaimAccount *ga)
 {
 	GaimStatusType *status;
 	GList *types = NULL;
@@ -278,17 +278,17 @@ static GList *_qq_away_states(GaimAccount *ga)
 			"available", _("QQ: Available"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-        status = gaim_status_type_new_full(GAIM_STATUS_AWAY, 
+	status = gaim_status_type_new_full(GAIM_STATUS_AWAY,
 			"away", _("QQ: Away"), FALSE, TRUE, FALSE);
-        types = g_list_append(types, status);
+	types = g_list_append(types, status);
 
-        status = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE, 
+	status = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE,
 			"invisible", _("QQ: Invisible"), FALSE, TRUE, FALSE);
-        types = g_list_append(types, status);
+	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
-                        "offline", _("QQ: Offline"), FALSE, TRUE, FALSE);
-        types = g_list_append(types, status);
+			"offline", _("QQ: Offline"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, status);
 
 	return types;
 }
@@ -568,12 +568,12 @@ static GList *_qq_buddy_menu(GaimBlistNode * node)
 
 	if(GAIM_BLIST_NODE_IS_CHAT(node))
 		return _qq_chat_menu(node);
-	
+
 	m = NULL;
 	return m;
 }
 
-/* TODO : not working, temp commented out by gfhuang 
+/* TODO : not working, temp commented out by gfhuang
 
 	act = gaim_menu_action_new(_("Block this buddy"), GAIM_CALLBACK(_qq_menu_block_buddy), NULL, NULL); //add NULL by gfhuang
 	m = g_list_append(m, act);
@@ -604,7 +604,7 @@ static void _qq_keep_alive(GaimConnection *gc)
 		    group->my_status == QQ_GROUP_MEMBER_STATUS_IS_ADMIN)
 			/* no need to get info time and time again, online members enough */
 			qq_send_cmd_group_get_online_members(gc, group);
-	
+
 		list = list->next;
 	}
 
@@ -678,7 +678,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	NULL,							/* alias_buddy	*/
 	NULL,							/* group_buddy	*/
 	NULL,							/* rename_group */
-	NULL,							/* buddy_free */     
+	NULL,							/* buddy_free */
 	NULL,							/* convo_closed */
 	NULL,							/* normalize */
 	qq_set_my_buddy_icon,					/* set_buddy_icon */
@@ -691,7 +691,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	NULL,							/* roomlist_expand_category */
 	NULL,							/* can_receive_file */
 	qq_send_file,						/* send_file */
-	NULL,                           			/* new xfer */
+	NULL,							/* new xfer */
 	NULL,							/* offline_message */
 	NULL,							/* GaimWhiteboardPrplOps */
 	NULL,							/* send_raw */

@@ -35,6 +35,11 @@
 #define QQ_KEY_LENGTH       16
 #define QQ_DEBUG            1	/* whether we are doing DEBUG */
 
+#ifdef _WIN32
+const char *qq_win32_buddy_icon_dir(void);
+#define QQBUDDYICONDIR qq_win32_buddy_icon_dir()
+#endif
+
 typedef struct _qq_data qq_data;
 typedef struct _qq_buddy qq_buddy;
 
