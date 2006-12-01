@@ -2381,8 +2381,8 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 }
 
 struct auth_and_add {
-	void(*auth_cb)(void*);
-        void(*deny_cb)(void*);
+	GaimAccountRequestAuthorizationCb auth_cb;
+	GaimAccountRequestAuthorizationCb deny_cb;
 	void *data;
 	char *username;
 	char *alias;
@@ -2440,8 +2440,8 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 
 	if (!gaim_find_buddy(account, remote_user)) {
 		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
-		aa->auth_cb = auth_cb;
-		aa->deny_cb = deny_cb;
+		aa->auth_cb = (GaimAccountRequestAuthorizationCb)auth_cb;
+		aa->deny_cb = (GaimAccountRequestAuthorizationCb)deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);

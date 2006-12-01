@@ -1640,7 +1640,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 					while (*line2 && *line2 != ':')
 						line2++;
 					if (*line2 == ':') {
-						char *acct_name;
+						const char *acct_name;
 						line2++;
 						line = line2;
 						acct_name = gaim_account_get_alias(log->account);
