@@ -697,6 +697,7 @@ Section Uninstall
     Delete "$INSTDIR\sounds\gaim\send.wav"
     RMDir "$INSTDIR\sounds\gaim"
     RMDir "$INSTDIR\sounds"
+    Delete "$INSTDIR\freebl3.dll"
     Delete "$INSTDIR\gaim.exe"
     Delete "$INSTDIR\gtkgaim.dll"
     Delete "$INSTDIR\idletrack.dll"

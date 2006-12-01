@@ -13,7 +13,9 @@ include $(GAIM_TOP)/libgaim/win32/global.mak
 TARGET = ssl
 TARGET_NSS = ssl-nss
 
-NEEDED_DLLS =		$(NSS_TOP)/lib/nss3.dll \
+NEEDED_DLLS = \
+			$(NSS_TOP)/lib/freebl3.dll \
+			$(NSS_TOP)/lib/nss3.dll \
 			$(NSS_TOP)/lib/nssckbi.dll \
 			$(NSS_TOP)/lib/softokn3.dll \
 			$(NSS_TOP)/lib/ssl3.dll \
