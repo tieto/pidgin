@@ -3527,7 +3527,17 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	}
 
 	aim_reqservice(od, SNAC_FAMILY_CHATNAV);
-	if (od->authinfo->email != NULL)
+
+	/*
+	 * The "if" statement here is a pathetic attempt to not attempt to
+	 * connect to the alerts servce (aka email notification) if this
+	 * screen name does not support it.  I think mail notification
+	 * works for @mac.com accounts but does not work for the newer
+	 * @anythingelse.com accounts.  If that's true then this change
+	 * breaks mail notification for @mac.com accounts, but it gets rid
+	 * of an annoying error at signon for @anythingelse.com accounts.
+	 */
+	if ((od->authinfo->email != NULL) && ((strchr(gc->account->username, '@') == NULL)))
 		aim_reqservice(od, SNAC_FAMILY_ALERT);
 
 	return 1;
