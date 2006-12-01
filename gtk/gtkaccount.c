@@ -1155,7 +1155,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		else if (gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon") && icon_change)
 		{
 			const char *filename = gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon");
-			char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, gaim_prefs_get_string(filename));
+			char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, filename);
 			gaim_account_set_buddy_icon_path(account, filename);
 			gaim_account_set_buddy_icon(account, icon);
 			g_free(icon);
