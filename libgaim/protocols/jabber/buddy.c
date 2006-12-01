@@ -68,6 +68,9 @@ JabberBuddy *jabber_buddy_find(JabberStream *js, const char *name,
 	JabberBuddy *jb;
 	const char *realname;
 
+	if (js->buddies == NULL)
+		return NULL;
+
 	if(!(realname = jabber_normalize(js->gc->account, name)))
 		return NULL;
 
