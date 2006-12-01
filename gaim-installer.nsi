@@ -424,7 +424,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     SetOutPath "$INSTDIR"
     ; Gaim files
     SetOverwrite on
-    File /r .\win32-install-dir\*.*
+    File /r ${GAIM_INSTALL_DIR}\*.*
     !ifdef DEBUG
     File "${GAIM_INSTALLER_DEPS}\exchndl.dll"
     !endif
