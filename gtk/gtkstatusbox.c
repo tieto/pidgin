@@ -73,20 +73,18 @@ static void gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box);
 static void status_menu_refresh_iter(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box);
-static void gtk_gaim_status_box_changed(GtkComboBox *box);
+static void gtk_gaim_status_box_changed(GtkGaimStatusBox *box);
 static void gtk_gaim_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void gtk_gaim_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
 static gboolean gtk_gaim_status_box_expose_event (GtkWidget *widget, GdkEventExpose *event);
 static void gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_forall (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
+static void gaim_gtk_status_box_popup(GtkGaimStatusBox *box);
+static void gaim_gtk_status_box_popdown(GtkGaimStatusBox *box);
 
 static void do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift);
 static void icon_choose_cb(const char *filename, gpointer data);
 static void remove_buddy_icon_cb(GtkWidget *w, GtkGaimStatusBox *box);
-
-static void (*combo_box_size_request)(GtkWidget *widget, GtkRequisition *requisition);
-static void (*combo_box_size_allocate)(GtkWidget *widget, GtkAllocation *allocation);
-static void (*combo_box_forall) (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 
 enum {
 	/** A GtkGaimStatusBoxItemType */
@@ -123,7 +121,7 @@ enum {
 	PROP_ICON_SEL,
 };
 
-GtkComboBoxClass *parent_class = NULL;
+GtkContainerClass *parent_class = NULL;
 
 static void gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass);
 static void gtk_gaim_status_box_init (GtkGaimStatusBox *status_box);
@@ -149,7 +147,7 @@ gtk_gaim_status_box_get_type (void)
 			NULL  /* value_table */
 		};
 
-		status_box_type = g_type_register_static(GTK_TYPE_COMBO_BOX,
+		status_box_type = g_type_register_static(GTK_TYPE_CONTAINER,
 												 "GtkGaimStatusBox",
 												 &status_box_info,
 												 0);
@@ -199,8 +197,13 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 	}
 
 	if (status_no != -1) {
+		GtkTreePath *path;
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), status_no);
+		path = gtk_tree_path_new_from_indices(status_no, -1);
+		if (status_box->active_row)
+			gtk_tree_row_reference_free(status_box->active_row);
+		status_box->active_row = gtk_tree_row_reference_new(status_box->dropdown_store, path);
+		gtk_tree_path_free(path);
 
 		message = gaim_status_get_attr_string(newstatus, "message");
 
@@ -324,6 +327,9 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 
 	status_box->icon = gtk_image_new();
 	status_box->icon_box = gtk_event_box_new();
+	gtk_widget_set_parent(status_box->icon_box, GTK_WIDGET(status_box));
+	gtk_widget_show(status_box->icon_box);
+
 	if (status_box->account &&
 		!gaim_account_get_ui_bool(status_box->account, GAIM_GTK_UI, "use-global-buddyicon", TRUE))
 	{
@@ -353,9 +359,7 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->icon_box), "button-press-event", G_CALLBACK(icon_box_press_cb), status_box);
 
 	gtk_container_add(GTK_CONTAINER(status_box->icon_box), status_box->icon);
-
-	gtk_widget_show_all(status_box->icon_box);
-	gtk_widget_set_parent(status_box->icon_box, GTK_WIDGET(status_box));
+	gtk_widget_show(status_box->icon);
 }
 
 static void
@@ -446,27 +450,27 @@ gtk_gaim_status_box_finalize(GObject *obj)
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
+static GType
+gtk_gaim_status_box_child_type (GtkContainer *container)
+{
+    return GTK_TYPE_WIDGET;
+}
+
 static void
 gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 {
 	GObjectClass *object_class;
-	GtkComboBoxClass *combo_class;
 	GtkWidgetClass *widget_class;
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	combo_class = (GtkComboBoxClass*)klass;
-	combo_class->changed = gtk_gaim_status_box_changed;
-
 	widget_class = (GtkWidgetClass*)klass;
-	combo_box_size_request = widget_class->size_request;
 	widget_class->size_request = gtk_gaim_status_box_size_request;
-	combo_box_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_gaim_status_box_size_allocate;
 	widget_class->expose_event = gtk_gaim_status_box_expose_event;
 
-	combo_box_forall = container_class->forall;
+	container_class->child_type = gtk_gaim_status_box_child_type;
 	container_class->forall = gtk_gaim_status_box_forall;
 	container_class->remove = NULL;
 
@@ -504,7 +508,6 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 static void
 gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 {
-	gboolean show_buddy_icons;
 	GtkIconSize icon_size;
 	GtkStyle *style;
 	char aa_color[8];
@@ -515,13 +518,8 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	gboolean account_status = FALSE;
 	GaimAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
 
-
-	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
-	if (show_buddy_icons)
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
-	else
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
-
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
+	
 	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 		 style->text_aa[GTK_STATE_NORMAL].red >> 8,
@@ -542,7 +540,11 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		gpointer data;
 
 		/* Primary (get the status selected in the dropdown) */
-		gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
+		path = gtk_tree_row_reference_get_path(status_box->active_row);
+		if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
+			return;
+		gtk_tree_path_free(path);
+		
 		gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 						   TYPE_COLUMN, &type,
 						   DATA_COLUMN, &data,
@@ -595,11 +597,11 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		if (account_status)
 			pixbuf = gaim_gtk_create_prpl_icon_with_status(acct,
 						gaim_status_get_type(gaim_account_get_active_status(acct)),
-						show_buddy_icons ? 1.0 : 0.5);
+						0.5);
 		else
 			pixbuf = gaim_gtk_create_gaim_icon_with_status(
 						gaim_savedstatus_get_type(saved_status),
-						show_buddy_icons ? 1.0 : 0.5);
+						0.5);
 
 		if (!gaim_savedstatus_is_transient(saved_status))
 		{
@@ -622,15 +624,12 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	}
 
 	if (status_box->account != NULL) {
-		text = g_strdup_printf("%s%s<span size=\"smaller\" color=\"%s\">%s</span>",
-						gaim_account_get_username(status_box->account),
-						show_buddy_icons ? "\n" : " - ", aa_color,
-						secondary ? secondary : primary);
+		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
+				       gaim_account_get_username(status_box->account),
+				       aa_color, secondary ? secondary : primary);
 	} else if (secondary != NULL) {
-		char *separator;
-		separator = show_buddy_icons ? "\n" : " - ";
-		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\">%s%s</span>",
-							  primary, aa_color, separator, secondary);
+		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\"> - %s</span>",
+				       primary, aa_color, secondary);
 	} else {
 		text = g_strdup(primary);
 	}
@@ -716,8 +715,14 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
 		(!gaim_savedstatus_has_substatuses(saved_status)))
 	{
+		GtkTreePath *path;
 		index = get_statusbox_index(status_box, saved_status);
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), index);
+		path = gtk_tree_path_new_from_indices(index, -1);
+		if (status_box->active_row)
+			gtk_tree_row_reference_free(status_box->active_row);
+		status_box->active_row = gtk_tree_row_reference_new(status_box->dropdown_store, path);
+		gtk_tree_path_free(path);
+
 	}
 	else
 	{
@@ -726,7 +731,9 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 		gpointer data;
 
 		/* Unset the active item */
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), -1);
+		if (status_box->active_row)
+			gtk_tree_row_reference_free(status_box->active_row);
+		status_box->active_row = NULL;
 
 		/* If this saved status is in the list store, then set it as the active item */
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(status_box->dropdown_store), &iter))
@@ -754,7 +761,8 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						|| !strcmp(name, acct_status_name))
 					{
 						/* Found! */
-						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+						//						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+					
 						g_free(name);
 						break;
 					}
@@ -764,7 +772,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
 				{
 					/* Found! */
-					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+				  //					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
 					break;
 				}
 			}
@@ -804,8 +812,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 static void
 add_popular_statuses(GtkGaimStatusBox *statusbox)
 {
-	gboolean show_buddy_icons;
-	GtkIconSize icon_size;
+       	GtkIconSize icon_size;
 	GList *list, *cur;
 	GdkPixbuf *pixbuf, *emblem;
 	int width, height;
@@ -815,11 +822,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		/* Odd... oh well, nothing we can do about it. */
 		return;
 
-	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
-	if (show_buddy_icons)
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
-	else
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
 
 	gtk_gaim_status_box_add_separator(statusbox);
 
@@ -832,7 +835,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		/* Get an appropriate status icon */
 		pixbuf = gaim_gtk_create_gaim_icon_with_status(
 					gaim_savedstatus_get_type(saved),
-					show_buddy_icons ? 1.0 : 0.5);
+					0.5);
 
 		if (gaim_savedstatus_is_transient(saved))
 		{
@@ -927,7 +930,7 @@ static GaimAccount* check_active_accounts_for_identical_statuses()
 }
 
 static void
-add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account, gboolean show_buddy_icons)
+add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account)
 {
 	/* Per-account */
 	const GList *l;
@@ -940,8 +943,7 @@ add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account, gboolea
 		if (!gaim_status_type_is_user_settable(status_type))
 			continue;
 
-		tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type,
-				show_buddy_icons ? 1.0 : 0.5);
+		tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
 					GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, tmp,
 					gaim_status_type_get_name(status_type),
@@ -950,24 +952,18 @@ add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account, gboolea
 		if (tmp != NULL)
 			g_object_unref(tmp);
 	}
-	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 }
 
 static void
 gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 {
-	gboolean show_buddy_icons;
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 
-	show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
-	if (show_buddy_icons)
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
-	else
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
 
 	/* Unset the model while clearing it */
-	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), NULL);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), NULL);
 	gtk_list_store_clear(status_box->dropdown_store);
 	/* Don't set the model until the new statuses have been added to the box.
 	 * What is presumably a bug in Gtk < 2.4 causes things to get all confused
@@ -982,7 +978,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		 * If so, display them instead of our global list.
 		 */
 		if (status_box->token_status_account) {
-			add_account_statuses(status_box, status_box->token_status_account, show_buddy_icons);
+			add_account_statuses(status_box, status_box->token_status_account);
 		} else {
 			/* Global */
 			pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AWAY,
@@ -1009,19 +1005,19 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
 		if (pixbuf)	g_object_unref(G_OBJECT(pixbuf));
 
-		gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 		status_menu_refresh_iter(status_box);
 
 	} else {
-		add_account_statuses(status_box, status_box->account, show_buddy_icons);
+		add_account_statuses(status_box, status_box->account);
 		update_to_reflect_account_status(status_box, status_box->account,
 			gaim_account_get_active_status(status_box->account));
 	}
+	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), status_box->dropdown_store);
 }
 
 static gboolean combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
 {
-	gtk_combo_box_popup(GTK_COMBO_BOX(w));
+  	gaim_gtk_status_box_popup(GTK_GAIM_STATUS_BOX(w));
 	return TRUE;
 }
 
@@ -1088,15 +1084,9 @@ static void
 cache_pixbufs(GtkGaimStatusBox *status_box)
 {
 	GtkIconSize icon_size;
-
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
-	{
-		g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 6, NULL);
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_TWO_LINE);
-	} else {
-		g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
-		icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE);
-	}
+	
+	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE);
 
 	if (status_box->connecting_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);
@@ -1157,16 +1147,6 @@ current_savedstatus_changed_cb(GaimSavedStatus *now, GaimSavedStatus *old, GtkGa
 }
 
 static void
-buddy_list_details_pref_changed_cb(const char *name, GaimPrefType type,
-								   gconstpointer val, gpointer data)
-{
-	GtkGaimStatusBox *status_box = (GtkGaimStatusBox *)data;
-
-	cache_pixbufs(status_box);
-	gtk_gaim_status_box_regenerate(status_box);
-}
-
-static void
 spellcheck_prefs_cb(const char *name, GaimPrefType type,
 					gconstpointer value, gpointer data)
 {
@@ -1190,7 +1170,6 @@ static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, Gtk
 
 	if (event->button != 1)
 		return FALSE;
-	gtk_combo_box_popdown(GTK_COMBO_BOX(box));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
 	if (!box->imhtml_visible)
 		g_signal_emit_by_name(G_OBJECT(box), "changed", NULL, NULL);
@@ -1209,10 +1188,101 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, GtkG
 #endif
 
 static void
+gtk_gaim_status_box_list_position (GtkGaimStatusBox *status_box, int *x, int *y, int *width, int *height)
+{
+  GdkScreen *screen;
+  gint monitor_num;
+  GdkRectangle monitor;
+  GtkRequisition popup_req;
+  GtkPolicyType hpolicy, vpolicy;
+  
+  gdk_window_get_origin (GTK_WIDGET(status_box)->window, x, y);
+
+  *x += GTK_WIDGET(status_box)->allocation.x;
+  *y += GTK_WIDGET(status_box)->allocation.y;
+ 
+  *width = GTK_WIDGET(status_box)->allocation.width;
+  
+  hpolicy = vpolicy = GTK_POLICY_NEVER;
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+				  hpolicy, vpolicy);
+  gtk_widget_size_request (status_box->popup_frame, &popup_req);
+
+  if (popup_req.width > *width)
+    {
+      hpolicy = GTK_POLICY_ALWAYS;
+      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+				      hpolicy, vpolicy);
+      gtk_widget_size_request (status_box->popup_frame, &popup_req);
+    }
+
+  *height = popup_req.height;
+
+  screen = gtk_widget_get_screen (GTK_WIDGET (status_box));
+  monitor_num = gdk_screen_get_monitor_at_window (screen, 
+						  GTK_WIDGET (status_box)->window);
+  gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
+
+  if (*x < monitor.x)
+    *x = monitor.x;
+  else if (*x + *width > monitor.x + monitor.width)
+    *x = monitor.x + monitor.width - *width;
+  
+  if (*y + GTK_WIDGET(status_box)->allocation.height + *height <= monitor.y + monitor.height)
+	  *y += GTK_WIDGET(status_box)->allocation.height;
+  else if (*y - *height >= monitor.y)
+	  *y -= *height;
+  else if (monitor.y + monitor.height - (*y + GTK_WIDGET(status_box)->allocation.height) > *y - monitor.y)
+    {
+	    *y += GTK_WIDGET(status_box)->allocation.height;
+	    *height = monitor.y + monitor.height - *y;
+    }
+  else 
+    {
+	    *height = *y - monitor.y;
+	    *y = monitor.y;
+    }
+
+  if (popup_req.height > *height)
+    {
+      vpolicy = GTK_POLICY_ALWAYS;
+      
+      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+				      hpolicy, vpolicy);
+    }
+}
+
+static void
+gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
+{
+	int width, height, x, y;
+	gtk_gaim_status_box_list_position (box, &x, &y, &width, &height);
+  
+	gtk_widget_set_size_request (box->popup_window, width, height);  
+	gtk_window_move (GTK_WINDOW (box->popup_window), x, y);
+	gtk_widget_show(box->popup_window);
+	box->popup_in_progress = TRUE;
+}
+
+static void
+gaim_gtk_status_box_popdown(GtkGaimStatusBox *box) {
+	gtk_widget_hide(box->popup_window);
+	box->popup_in_progress = FALSE;
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
+				      FALSE);
+
+}
+
+
+static void
 toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 {
-	gtk_combo_box_popup(GTK_COMBO_BOX(box));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))  {
+		if (!box->popup_in_progress) 
+			gaim_gtk_status_box_popup (box);
+	}  else {
+		gaim_gtk_status_box_popdown(box);
+	}
 }
 
 static void
@@ -1287,9 +1357,33 @@ icon_choose_cb(const char *filename, gpointer data)
 
 static void
 update_buddyicon_cb(const char *name, GaimPrefType type,
-				    gconstpointer value, gpointer data)
+		    gconstpointer value, gpointer data)
 {
 	buddy_icon_set_cb(value, (GtkGaimStatusBox*) data);
+}
+
+static gboolean 
+treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *status_box) 
+{
+	GtkTreePath *path = NULL;
+	int ret = gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (status_box->tree_view),
+					     event->x, event->y,
+					     &path,
+					     NULL, NULL, NULL);
+	
+	if (!ret)
+		return TRUE; /* clicked outside window? */
+	
+	if (status_box->active_row)
+		gtk_tree_row_reference_free(status_box->active_row);
+	
+	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
+	gtk_tree_path_free (path);
+	
+	gaim_gtk_status_box_popdown (status_box);
+	gtk_gaim_status_box_changed(status_box);
+
+	return TRUE;
 }
 
 static void
@@ -1298,7 +1392,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
 	GtkTextBuffer *buffer;
+	GtkWidget *toplevel;
+	GtkTreeSelection *sel;
 
+	GTK_WIDGET_SET_FLAGS (status_box, GTK_NO_WINDOW);
 	status_box->imhtml_visible = FALSE;
 	status_box->network_available = gaim_network_is_available();
 	status_box->connecting = FALSE;
@@ -1308,12 +1405,11 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->cell_view = gtk_cell_view_new();
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
-
+	
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
+;
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
-	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
 	gtk_list_store_append(status_box->store, &(status_box->iter));
 
 	gtk_container_add(GTK_CONTAINER(status_box->toggle_button), status_box->hbox);
@@ -1327,10 +1423,59 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), icon_rend, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), text_rend, TRUE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), icon_rend, "pixbuf", ICON_COLUMN, NULL);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), text_rend, "markup", TEXT_COLUMN, NULL);
+
+	
+          status_box->popup_window = gtk_window_new (GTK_WINDOW_POPUP);
+
+	  toplevel = gtk_widget_get_toplevel (GTK_WIDGET (status_box));
+	  if (GTK_IS_WINDOW (toplevel))  {
+		  gtk_window_set_transient_for (GTK_WINDOW (status_box->popup_window),
+						GTK_WINDOW (toplevel));
+	  }
+
+	  gtk_window_set_resizable (GTK_WINDOW (status_box->popup_window), FALSE);
+          gtk_window_set_screen (GTK_WINDOW (status_box->popup_window),
+                                 gtk_widget_get_screen (GTK_WIDGET (status_box)));
+	  status_box->popup_frame = gtk_frame_new (NULL);
+          gtk_frame_set_shadow_type (GTK_FRAME (status_box->popup_frame),
+                                     GTK_SHADOW_ETCHED_IN);
+          gtk_container_add (GTK_CONTAINER (status_box->popup_window),
+                             status_box->popup_frame);
+
+          gtk_widget_show (status_box->popup_frame);
+
+	  status_box->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+	  
+	  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+					  GTK_POLICY_NEVER,
+					  GTK_POLICY_NEVER);
+	  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+					       GTK_SHADOW_NONE);
+
+          gtk_widget_show (status_box->scrolled_window);
+	  
+	  gtk_container_add (GTK_CONTAINER (status_box->popup_frame),
+			     status_box->scrolled_window);
+        
+	  status_box->tree_view = gtk_tree_view_new ();
+	  sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (status_box->tree_view));
+	  gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
+	  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (status_box->tree_view),
+					     FALSE);
+	  gtk_tree_view_set_hover_selection (GTK_TREE_VIEW (status_box->tree_view),
+					     TRUE);
+	  gtk_tree_view_set_model (GTK_TREE_VIEW (status_box->tree_view),
+				   status_box->dropdown_store);
+	  status_box->column = gtk_tree_view_column_new ();
+	  gtk_tree_view_append_column (GTK_TREE_VIEW (status_box->tree_view),
+				       status_box->column);
+	  gtk_tree_view_column_pack_start(status_box->column, icon_rend, FALSE);
+	  gtk_tree_view_column_pack_start(status_box->column, text_rend, TRUE);
+	  gtk_tree_view_column_set_attributes(GTK_CELL_LAYOUT(status_box->column), icon_rend, "pixbuf", ICON_COLUMN, NULL);
+	  gtk_tree_view_column_set_attributes(GTK_CELL_LAYOUT(status_box->column), text_rend, "markup", TEXT_COLUMN, NULL);
+	  gtk_container_add(GTK_CONTAINER(status_box->scrolled_window), status_box->tree_view);
+	  gtk_widget_show(status_box->tree_view);
+	  
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
@@ -1370,17 +1515,19 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
 #endif
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
+	gtk_widget_show_all(status_box->vbox);
+
 	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
-	GTK_BIN(status_box)->child = status_box->toggle_button;
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
 
 	g_signal_connect(G_OBJECT(status_box), "scroll_event", G_CALLBACK(combo_box_scroll_event_cb), NULL);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",
 					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
+	g_signal_connect(G_OBJECT(status_box->tree_view), "button_release_event", G_CALLBACK(treeview_button_release_cb), status_box);
 
 #if GTK_CHECK_VERSION(2,6,0)
-	gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
+	gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(status_box->tree_view), dropdown_store_row_separator_func, NULL, NULL);
 #endif
 
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
@@ -1402,8 +1549,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 						GAIM_CALLBACK(account_status_changed_cb),
 						status_box);
 
-	gaim_prefs_connect_callback(status_box, "/gaim/gtk/blist/show_buddy_icons",
-								buddy_list_details_pref_changed_cb, status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/conversations/spellcheck",
 								spellcheck_prefs_cb, status_box);
 	gaim_prefs_connect_callback(status_box, "/gaim/gtk/accounts/buddyicon",
@@ -1415,8 +1560,13 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 								 GtkRequisition *requisition)
 {
 	GtkRequisition box_req;
-	combo_box_size_request(widget, requisition);
-	requisition->height += 3;
+	gint border_width = GTK_CONTAINER (widget)->border_width;
+
+	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toggle_button, requisition);
+
+	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
+	if ( gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+		requisition->height = MAX(requisition->height, 30 + (border_width*2));
 
 	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
@@ -1424,8 +1574,6 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 		requisition->height += box_req.height + 3;
 
 	requisition->width = 1;
-
-
 }
 
 /* From gnome-panel */
@@ -1477,7 +1625,11 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	GtkAllocation parent_alc, box_alc, icon_alc;
 	gint border_width = GTK_CONTAINER (widget)->border_width;
 
-	combo_box_size_request(widget, &req);
+	gtk_widget_size_request(status_box->toggle_button, &req);
+	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
+
+	if ( gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
+		req.height = MAX(req.height, 30 + (border_width*2));
 
 	box_alc = *allocation;
 
@@ -1488,7 +1640,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
 
 	parent_alc = *allocation;
-	parent_alc.height = MAX(1,req.height - (border_width ));
+	parent_alc.height = MAX(1,req.height - (border_width *2));
 	parent_alc.width -= (border_width * 2);
 	parent_alc.x += border_width;
 	parent_alc.y += border_width;
@@ -1498,7 +1650,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 		GtkTextDirection dir = gtk_widget_get_direction(widget);
 		parent_alc.width -= (parent_alc.height + border_width);
 		icon_alc = *allocation;
-		icon_alc.height = MAX(1,req.height) - (border_width);
+		icon_alc.height = MAX(1,req.height) - (border_width*2);
 		icon_alc.width = icon_alc.height;
 		if (dir == GTK_TEXT_DIR_RTL) {
 			icon_alc.x = parent_alc.x;
@@ -1516,7 +1668,6 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 		gtk_widget_size_allocate(status_box->icon_box, &icon_alc);
 	}
 
-	combo_box_size_allocate(widget, &parent_alc);
 	gtk_widget_size_allocate(status_box->toggle_button, &parent_alc);
 	widget->allocation = *allocation;
 }
@@ -1543,14 +1694,12 @@ gtk_gaim_status_box_forall(GtkContainer *container,
 
 	if (include_internals)
 	{
-		(* callback) (status_box->vbox, callback_data);
+	  	(* callback) (status_box->vbox, callback_data);
 		(* callback) (status_box->toggle_button, callback_data);
 		(* callback) (status_box->arrow, callback_data);
 		if (status_box->icon_box)
 			(* callback) (status_box->icon_box, callback_data);
 	}
-
-	combo_box_forall(container, include_internals, callback, callback_data);
 }
 
 GtkWidget *
@@ -1599,12 +1748,10 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 	}
 	else
 	{
-		gboolean show_buddy_icons;
 		GtkStyle *style;
 		char aa_color[8];
 		gchar *escaped_title, *escaped_desc;
 
-		show_buddy_icons = gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons");
 		style = gtk_widget_get_style(GTK_WIDGET(status_box));
 		snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
@@ -1613,10 +1760,9 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 
 		escaped_title = g_markup_escape_text(title, -1);
 		escaped_desc = g_markup_escape_text(desc, -1);
-		text = g_strdup_printf("%s%s<span color=\"%s\" size=\"smaller\">%s</span>",
+		text = g_strdup_printf("%s - <span color=\"%s\" size=\"smaller\">%s</span>",
 					escaped_title,
-					show_buddy_icons ? "\n" : " - ",
-					aa_color, escaped_desc);
+				       aa_color, escaped_desc);
 		g_free(escaped_title);
 		g_free(escaped_desc);
 	}
@@ -1759,12 +1905,15 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	gpointer data;
 	gchar *title;
 	GtkTreeIter iter;
+	GtkTreePath *path;
 	char *message;
 	GaimSavedStatus *saved_status = NULL;
 	gboolean changed = TRUE;
-
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
+	
+	path = gtk_tree_row_reference_get_path(status_box->active_row);
+	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
 		return;
+	gtk_tree_path_free(path);
 
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 					   TYPE_COLUMN, &type,
@@ -1808,11 +1957,14 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 			gint active;
 			GaimStatus *status;
 			const char *id = NULL;
+			GtkTreePath *path = gtk_tree_row_reference_get_path(status_box->active_row);
+			active = gtk_tree_path_get_indices(path)[0];
+			
+			gtk_tree_path_free(path);
 
 			status = gaim_account_get_active_status(status_box->token_status_account);
-			g_object_get(G_OBJECT(status_box), "active", &active, NULL);
 
-			acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
+			 acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
 			id = gaim_status_type_get_id(acct_status_type);
 
 			if (strncmp(id, gaim_status_get_id(status), strlen(id)) == 0)
@@ -1998,18 +2150,19 @@ static void remove_typing_cb(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
-static void gtk_gaim_status_box_changed(GtkComboBox *box)
+static void gtk_gaim_status_box_changed(GtkGaimStatusBox *status_box)
 {
-	GtkGaimStatusBox *status_box;
+	GtkTreePath *path = gtk_tree_row_reference_get_path(status_box->active_row);
 	GtkTreeIter iter;
 	GtkGaimStatusBoxItemType type;
 	gpointer data;
 	GList *accounts = NULL, *node;
 
-	status_box = GTK_GAIM_STATUS_BOX(box);
-
-	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
+	
+	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
 		return;
+	gtk_tree_path_free(path);
+	
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
 			   DATA_COLUMN, &data,

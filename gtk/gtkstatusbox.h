@@ -65,7 +65,7 @@ typedef struct _GtkGaimStatusBoxClass GtkGaimStatusBoxClass;
 
 struct _GtkGaimStatusBox
 {
-	GtkComboBox parent_instance;
+	GtkContainer parent_instance;
 
 	/**
 	 * This GtkListStore contains only one row--the currently selected status.
@@ -128,11 +128,20 @@ struct _GtkGaimStatusBox
 	GtkWidget *toggle_button;
 	GtkWidget *vsep;
 	GtkWidget *arrow;
+
+	GtkWidget *popup_window;
+	GtkWidget *popup_frame;
+	GtkWidget *scrolled_window;
+	GtkWidget *cell_view_frame;
+	GtkTreeViewColumn *column;
+	GtkWidget *tree_view;
+	gboolean popup_in_progress;
+	GtkTreeRowReference *active_row;
 };
 
 struct _GtkGaimStatusBoxClass
 {
-	GtkComboBoxClass parent_class;
+	GtkContainerClass parent_class;
 
 	/* signals */
 	void     (* changed)          (GtkComboBox *combo_box);
