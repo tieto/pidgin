@@ -767,8 +767,8 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						break;
 					}
 					g_free(name);
-				}
-				else if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
+				
+				} else if ((type == GTK_GAIM_STATUS_BOX_TYPE_POPULAR) &&
 						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
 				{
 					/* Found! */
@@ -1252,6 +1252,31 @@ gtk_gaim_status_box_list_position (GtkGaimStatusBox *status_box, int *x, int *y,
     }
 }
 
+popup_grab_on_window (GdkWindow *window,
+		      guint32    activate_time,
+		      gboolean   grab_keyboard)
+{
+  if ((gdk_pointer_grab (window, TRUE,
+			 GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK |
+			 GDK_POINTER_MOTION_MASK,
+			 NULL, NULL, activate_time) == 0))
+    {
+      if (!grab_keyboard ||
+	  gdk_keyboard_grab (window, TRUE,
+			     activate_time) == 0)
+	return TRUE;
+      else
+	{
+	  gdk_display_pointer_ungrab (gdk_drawable_get_display (window),
+				      activate_time);
+	  return FALSE;
+	}
+    }
+
+  return FALSE;
+}
+
+
 static void
 gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
 {
@@ -1261,7 +1286,17 @@ gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
 	gtk_widget_set_size_request (box->popup_window, width, height);  
 	gtk_window_move (GTK_WINDOW (box->popup_window), x, y);
 	gtk_widget_show(box->popup_window);
+	gtk_widget_grab_focus (box->tree_view);
+	if (!popup_grab_on_window (box->popup_window->window,
+				   GDK_CURRENT_TIME, TRUE)) {
+		gtk_widget_hide (box->popup_window);
+		return;
+	}
+	gtk_grab_add (box->popup_window);
 	box->popup_in_progress = TRUE;
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
+				      TRUE);
+
 }
 
 static void
@@ -1270,7 +1305,7 @@ gaim_gtk_status_box_popdown(GtkGaimStatusBox *box) {
 	box->popup_in_progress = FALSE;
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
 				      FALSE);
-
+	gtk_grab_remove (box->popup_window);
 }
 
 
@@ -1366,10 +1401,32 @@ static gboolean
 treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *status_box) 
 {
 	GtkTreePath *path = NULL;
-	int ret = gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (status_box->tree_view),
+	int ret;
+	GtkWidget *ewidget = gtk_get_event_widget ((GdkEvent *)event);
+	
+	if (ewidget != status_box->tree_view) {
+		if (ewidget == status_box->toggle_button && 
+		    !status_box->popup_in_progress &&
+		    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (status_box->toggle_button))) {
+			gaim_gtk_status_box_popdown (status_box);
+			return TRUE;
+		}
+		
+		/* released outside treeview */
+		if (ewidget != status_box->toggle_button) 
+			{
+				gaim_gtk_status_box_popdown (status_box);
+				return TRUE;
+			}
+		
+		return FALSE;
+	}
+	
+	ret = gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (status_box->tree_view),
 					     event->x, event->y,
 					     &path,
 					     NULL, NULL, NULL);
+	
 	
 	if (!ret)
 		return TRUE; /* clicked outside window? */
@@ -1524,7 +1581,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box), "scroll_event", G_CALLBACK(combo_box_scroll_event_cb), NULL);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",
 					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
-	g_signal_connect(G_OBJECT(status_box->tree_view), "button_release_event", G_CALLBACK(treeview_button_release_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->popup_window), "button_release_event", G_CALLBACK(treeview_button_release_cb), status_box);
 
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(status_box->tree_view), dropdown_store_row_separator_func, NULL, NULL);
@@ -1571,7 +1628,7 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
-		requisition->height += box_req.height + 3;
+		requisition->height += box_req.height + border_width;
 
 	requisition->width = 1;
 }
