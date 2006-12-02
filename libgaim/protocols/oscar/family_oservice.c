@@ -266,10 +266,10 @@ static struct rateclass *
 rateclass_find(GSList *rateclasses, guint16 id)
 {
 	GSList *tmp;
-	struct rateclass *rateclass;
 
 	for (tmp = rateclasses; tmp != NULL; tmp = tmp->next)
 	{
+		struct rateclass *rateclass;
 		rateclass = tmp->data;
 		if (rateclass->classid == id)
 			return rateclass;

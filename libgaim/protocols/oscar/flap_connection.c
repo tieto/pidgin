@@ -72,6 +72,42 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	flap_connection_send(conn, frame);
 }
 
+static void
+update_rate_class(FlapConnection *conn, guint16 family, guint16 subtype)
+{
+	GSList *tmp1, *tmp2;
+
+	for (tmp1 = conn->rateclasses; tmp1 != NULL; tmp1 = tmp1->next)
+	{
+		struct rateclass *rateclass;
+		rateclass = tmp1->data;
+
+		for (tmp2 = rateclass->members; tmp2 != NULL; tmp2 = tmp2->next)
+		{
+			struct snacpair *snacpair;
+			snacpair = tmp2->data;
+			if ((snacpair->group == family) && (snacpair->subtype == subtype))
+			{
+				/*
+				 * We've found the rateclass for this SNAC family and
+				 * subtype!  Update our "current" average by calculating
+				 * a rolling average.  This is pretty shoddy.  We should
+				 * really keep track of the times when the last last
+				 * windowsize messages that were sent and just calculate
+				 * the REAL average.
+				 */
+				time_t now;
+				now = time(NULL);
+				/* This formula is taken from the joscar API docs. */
+				rateclass->current = MIN(((rateclass->current * (rateclass->windowsize - 1)) + (now - rateclass->last)) / rateclass->windowsize, rateclass->max);
+				rateclass->last = now;
+				return;
+			}
+		}
+	}
+}
+
+
 /**
  * This sends a channel 2 FLAP containing a SNAC.  The SNAC family and
  * subtype are looked up in the rate info for this connection, and if
@@ -96,6 +132,7 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 	}
 
 	/* TODO: Outgoing message throttling */
+	update_rate_class(conn, family, subtype);
 
 	flap_connection_send(conn, frame);
 }
