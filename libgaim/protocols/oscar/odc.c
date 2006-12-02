@@ -96,8 +96,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 	memcpy(frame->cookie, conn->cookie, 8);
 
 	length = 76;
-	byte_stream_init(&bs, malloc(length + frame->payload.len),
-			length + frame->payload.len);
+	byte_stream_new(&bs, length + frame->payload.len);
 	byte_stream_putraw(&bs, conn->magic, 4);
 	byte_stream_put16(&bs, length);
 	byte_stream_put16(&bs, frame->type);
@@ -120,7 +119,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	free(bs.data);
+	g_free(bs.data);
 }
 
 /**
@@ -188,7 +187,7 @@ peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encoding, g
 	frame.payload.len = len;
 	frame.encoding = encoding;
 	frame.flags = autoreply;
-	byte_stream_init(&frame.payload, malloc(len), len);
+	byte_stream_new(&frame.payload, len);
 	byte_stream_putraw(&frame.payload, (guint8 *)msg, len);
 
 	peer_odc_send(conn, &frame);

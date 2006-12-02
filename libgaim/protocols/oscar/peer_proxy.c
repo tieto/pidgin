@@ -38,7 +38,7 @@ peer_proxy_send(PeerConnection *conn, ProxyFrame *frame)
 			frame->flags, frame->payload.len);
 
 	length = 12 + frame->payload.len;
-	byte_stream_init(&bs, malloc(length), length);
+	byte_stream_new(&bs, length);
 	byte_stream_put16(&bs, length - 2);
 	byte_stream_put16(&bs, PEER_PROXY_PACKET_VERSION);
 	byte_stream_put16(&bs, frame->type);
@@ -48,7 +48,7 @@ peer_proxy_send(PeerConnection *conn, ProxyFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	free(bs.data);
+	g_free(bs.data);
 }
 
 /**
@@ -65,7 +65,6 @@ peer_proxy_send_create_new_conn(PeerConnection *conn)
 	GaimAccount *account;
 	const gchar *sn;
 	guint8 sn_length;
-	size_t length;
 
 	memset(&frame, 0, sizeof(ProxyFrame));
 	frame.type = PEER_PROXY_TYPE_CREATE;
@@ -74,8 +73,7 @@ peer_proxy_send_create_new_conn(PeerConnection *conn)
 	account = gaim_connection_get_account(conn->od->gc);
 	sn = gaim_account_get_username(account);
 	sn_length = strlen(sn);
-	length = 1 + sn_length + 8 + 20;
-	byte_stream_init(&frame.payload, malloc(length), length);
+	byte_stream_new(&frame.payload, 1 + sn_length + 8 + 20);
 	byte_stream_put8(&frame.payload, sn_length);
 	byte_stream_putraw(&frame.payload, (const guint8 *)sn, sn_length);
 	byte_stream_putraw(&frame.payload, conn->cookie, 8);
@@ -103,7 +101,6 @@ peer_proxy_send_join_existing_conn(PeerConnection *conn, guint16 pin)
 	GaimAccount *account;
 	const gchar *sn;
 	guint8 sn_length;
-	size_t length;
 
 	memset(&frame, 0, sizeof(ProxyFrame));
 	frame.type = PEER_PROXY_TYPE_JOIN;
@@ -112,8 +109,7 @@ peer_proxy_send_join_existing_conn(PeerConnection *conn, guint16 pin)
 	account = gaim_connection_get_account(conn->od->gc);
 	sn = gaim_account_get_username(account);
 	sn_length = strlen(sn);
-	length = 1 + sn_length + 2 + 8 + 20;
-	byte_stream_init(&frame.payload, malloc(length), length);
+	byte_stream_new(&frame.payload, 1 + sn_length + 2 + 8 + 20);
 	byte_stream_put8(&frame.payload, sn_length);
 	byte_stream_putraw(&frame.payload, (const guint8 *)sn, sn_length);
 	byte_stream_put16(&frame.payload, pin);

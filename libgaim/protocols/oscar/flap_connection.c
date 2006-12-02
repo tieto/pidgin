@@ -480,11 +480,7 @@ flap_frame_new(OscarData *od, guint16 channel, int datalen)
 	frame->channel = channel;
 
 	if (datalen > 0)
-	{
-		guint8 *data;
-		data = g_malloc(datalen);
-		byte_stream_init(&frame->data, data, datalen);
-	}
+		byte_stream_new(&frame->data, datalen);
 
 	return frame;
 }
@@ -819,7 +815,7 @@ sendframe_flap(FlapConnection *conn, FlapFrame *frame)
 
 	payloadlen = byte_stream_curpos(&frame->data);
 
-	byte_stream_init(&bs, malloc(6 + payloadlen), 6 + payloadlen);
+	byte_stream_new(&bs, 6 + payloadlen);
 
 	/* FLAP header */
 	byte_stream_put8(&bs, 0x2a);
@@ -835,7 +831,7 @@ sendframe_flap(FlapConnection *conn, FlapFrame *frame)
 	byte_stream_rewind(&bs);
 	flap_connection_send_byte_stream(&bs, conn, bslen);
 
-	free(bs.data); /* XXX byte_stream_free */
+	g_free(bs.data); /* XXX byte_stream_free */
 }
 
 void

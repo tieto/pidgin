@@ -1356,15 +1356,13 @@ int
 aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 {
 	FlapConnection *conn;
-	unsigned int length;
 	ByteStream data;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	length = 4 + 1 + strlen(sn);
-	byte_stream_init(&data, g_malloc(length), length);
+	byte_stream_new(&data, 4 + 1 + strlen(sn));
 	byte_stream_put32(&data, flags);
 	byte_stream_put8(&data, strlen(sn));
 	byte_stream_putstr(&data, sn);

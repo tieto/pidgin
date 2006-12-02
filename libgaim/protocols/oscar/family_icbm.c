@@ -313,7 +313,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 		msgtlvlen += 4 /* charset */ + args->msglen;
 	}
 
-	byte_stream_init(&data, g_malloc(msgtlvlen + 128), msgtlvlen + 128);
+	byte_stream_new(&data, msgtlvlen + 128);
 
 	/* Generate an ICBM cookie */
 	aim_icbm_makecookie(cookie);
@@ -452,8 +452,6 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	struct aim_invite_priv *priv;
 	guchar cookie[8];
 	aim_tlvlist_t *otl = NULL, *itl = NULL;
-	guint8 *hdr;
-	int hdrlen;
 	ByteStream hdrbs;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
@@ -494,9 +492,7 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	 * raw data, followed by a series of TLVs.
 	 *
 	 */
-	hdrlen = 2+8+16+6+4+4+strlen(msg)+4+2+1+strlen(roomname)+2;
-	hdr = malloc(hdrlen);
-	byte_stream_init(&hdrbs, hdr, hdrlen);
+	byte_stream_new(&hdrbs, 2+8+16+6+4+4+strlen(msg)+4+2+1+strlen(roomname)+2);
 
 	byte_stream_put16(&hdrbs, 0x0000); /* Unknown! */
 	byte_stream_putraw(&hdrbs, cookie, sizeof(cookie)); /* I think... */
@@ -508,11 +504,11 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	aim_tlvlist_add_chatroom(&itl, 0x2711, exchange, roomname, instance);
 	aim_tlvlist_write(&hdrbs, &itl);
 
-	aim_tlvlist_add_raw(&otl, 0x0005, byte_stream_curpos(&hdrbs), hdr);
+	aim_tlvlist_add_raw(&otl, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
+	g_free(hdrbs.data);
 
 	aim_tlvlist_write(&frame->data, &otl);
 
-	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&otl);
 
@@ -694,8 +690,6 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL, *itl = NULL;
-	int hdrlen;
-	guint8 *hdr;
 	ByteStream hdrbs;
 
 	od = peer_conn->od;
@@ -713,9 +707,7 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 
 	aim_tlvlist_add_noval(&tl, 0x0003);
 
-	hdrlen = 64;
-	hdr = malloc(hdrlen);
-	byte_stream_init(&hdrbs, hdr, hdrlen);
+	byte_stream_new(&hdrbs, 64);
 
 	byte_stream_put16(&hdrbs, AIM_RENDEZVOUS_CANCEL);
 	byte_stream_putraw(&hdrbs, peer_conn->cookie, 8);
@@ -725,11 +717,11 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 	aim_tlvlist_add_16(&itl, 0x000b, 0x0001);
 	aim_tlvlist_write(&hdrbs, &itl);
 
-	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdr);
+	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
+	g_free(hdrbs.data);
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&tl);
 
@@ -784,8 +776,6 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL, *itl = NULL;
-	int hdrlen;
-	guint8 *hdr;
 	ByteStream hdrbs;
 
 	conn = flap_connection_findbygroup(od, 0x0004);
@@ -802,9 +792,7 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
 
 	aim_tlvlist_add_noval(&tl, 0x0003);
 
-	hdrlen = 128;
-	hdr = malloc(hdrlen);
-	byte_stream_init(&hdrbs, hdr, hdrlen);
+	byte_stream_new(&hdrbs, 128);
 
 	byte_stream_put16(&hdrbs, AIM_RENDEZVOUS_PROPOSE);
 	byte_stream_putraw(&hdrbs, cookie, 8);
@@ -817,11 +805,11 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
 	aim_tlvlist_add_noval(&itl, 0x000f);
 	aim_tlvlist_write(&hdrbs, &itl);
 
-	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdr);
+	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
+	g_free(hdrbs.data);
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&tl);
 
@@ -839,8 +827,6 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL, *itl = NULL;
-	int hdrlen;
-	guint8 *hdr;
 	ByteStream hdrbs;
 	guint8 ip_comp[4];
 
@@ -858,9 +844,7 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
 
 	aim_tlvlist_add_noval(&tl, 0x0003);
 
-	hdrlen = 128;
-	hdr = malloc(hdrlen);
-	byte_stream_init(&hdrbs, hdr, hdrlen);
+	byte_stream_new(&hdrbs, 128);
 
 	byte_stream_put16(&hdrbs, AIM_RENDEZVOUS_PROPOSE);
 	byte_stream_putraw(&hdrbs, cookie, 8);
@@ -883,11 +867,11 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
 
 	aim_tlvlist_write(&hdrbs, &itl);
 
-	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdr);
+	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
+	g_free(hdrbs.data);
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&tl);
 
@@ -905,8 +889,6 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL, *itl = NULL;
-	int hdrlen, buflen;
-	guint8 *hdr;
 	ByteStream hdrbs;
 
 	conn = flap_connection_findbygroup(od, 0x0004);
@@ -923,9 +905,7 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 
 	aim_tlvlist_add_noval(&tl, 0x0003);
 
-	hdrlen = 512;
-	hdr = malloc(hdrlen);
-	byte_stream_init(&hdrbs, hdr, hdrlen);
+	byte_stream_new(&hdrbs, 512);
 
 	byte_stream_put16(&hdrbs, AIM_RENDEZVOUS_PROPOSE);
 	byte_stream_putraw(&hdrbs, cookie, 8);
@@ -954,8 +934,7 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 		ByteStream bs;
 
 		/* Begin TLV t(2711) */
-		buflen = 2+2+4+strlen(filename)+1;
-		byte_stream_init(&bs, malloc(buflen), buflen);
+		byte_stream_new(&bs, 2+2+4+strlen(filename)+1);
 		byte_stream_put16(&bs, (numfiles > 1) ? 0x0002 : 0x0001);
 		byte_stream_put16(&bs, numfiles);
 		byte_stream_put32(&bs, size);
@@ -965,16 +944,16 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 		byte_stream_put8(&bs, 0x00);
 
 		aim_tlvlist_add_raw(&itl, 0x2711, bs.len, bs.data);
-		free(bs.data);
+		g_free(bs.data);
 		/* End TLV t(2711) */
 	}
 
 	aim_tlvlist_write(&hdrbs, &itl);
-	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdr);
+	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
+	g_free(hdrbs.data);
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&tl);
 
@@ -992,8 +971,6 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL, *itl = NULL;
-	int hdrlen, buflen;
-	guint8 *hdr;
 	ByteStream hdrbs;
 	guint8 ip_comp[4];
 
@@ -1011,9 +988,7 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 
 	aim_tlvlist_add_noval(&tl, 0x0003);
 
-	hdrlen = 512;
-	hdr = malloc(hdrlen);
-	byte_stream_init(&hdrbs, hdr, hdrlen);
+	byte_stream_new(&hdrbs, 512);
 
 	byte_stream_put16(&hdrbs, AIM_RENDEZVOUS_PROPOSE);
 	byte_stream_putraw(&hdrbs, cookie, 8);
@@ -1050,8 +1025,7 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 		ByteStream bs;
 
 		/* Begin TLV t(2711) */
-		buflen = 2+2+4+strlen(filename)+1;
-		byte_stream_init(&bs, malloc(buflen), buflen);
+		byte_stream_new(&bs, 2+2+4+strlen(filename)+1);
 		byte_stream_put16(&bs, (numfiles > 1) ? 0x0002 : 0x0001);
 		byte_stream_put16(&bs, numfiles);
 		byte_stream_put32(&bs, size);
@@ -1061,17 +1035,17 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 		byte_stream_put8(&bs, 0x00);
 
 		aim_tlvlist_add_raw(&itl, 0x2711, bs.len, bs.data);
-		free(bs.data);
+		g_free(bs.data);
 		/* End TLV t(2711) */
 	}
 
 	aim_tlvlist_write(&hdrbs, &itl);
 
-	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdr);
+	aim_tlvlist_add_raw(&tl, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
+	g_free(hdrbs.data);
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&tl);
 

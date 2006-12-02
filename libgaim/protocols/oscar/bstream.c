@@ -24,10 +24,18 @@
 
 #include "oscar.h"
 
+int byte_stream_new(ByteStream *bs, guint32 len)
+{
+	if (bs == NULL)
+		return -1;
+
+	return byte_stream_init(bs, g_malloc(len), len);
+}
+
 int byte_stream_init(ByteStream *bs, guint8 *data, int len)
 {
 
-	if (!bs)
+	if (bs == NULL)
 		return -1;
 
 	bs->data = data;

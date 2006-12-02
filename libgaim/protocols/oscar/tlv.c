@@ -264,8 +264,8 @@ int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 	if (aim_tlvlist_size(&one) != aim_tlvlist_size(&two))
 		return 1;
 
-	byte_stream_init(&bs1, ((guint8 *)malloc(aim_tlvlist_size(&one)*sizeof(guint8))), aim_tlvlist_size(&one));
-	byte_stream_init(&bs2, ((guint8 *)malloc(aim_tlvlist_size(&two)*sizeof(guint8))), aim_tlvlist_size(&two));
+	byte_stream_new(&bs1, aim_tlvlist_size(&one));
+	byte_stream_new(&bs2, aim_tlvlist_size(&two));
 
 	aim_tlvlist_write(&bs1, &one);
 	aim_tlvlist_write(&bs2, &two);
@@ -276,8 +276,8 @@ int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 		return 1;
 	}
 
-	free(bs1.data);
-	free(bs2.data);
+	g_free(bs1.data);
+	g_free(bs2.data);
 
 	return 0;
 }
@@ -512,23 +512,19 @@ int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t 
  */
 int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance)
 {
-	guint8 *buf;
 	int len;
 	ByteStream bs;
 
-	len = 2 + 1 + strlen(roomname) + 2;
-
-	buf = malloc(len);
-	byte_stream_init(&bs, buf, len);
+	byte_stream_new(&bs, 2 + 1 + strlen(roomname) + 2);
 
 	byte_stream_put16(&bs, exchange);
 	byte_stream_put8(&bs, strlen(roomname));
 	byte_stream_putstr(&bs, roomname);
 	byte_stream_put16(&bs, instance);
 
-	len = aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
+	len = aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
 
-	free(buf);
+	g_free(bs.data);
 
 	return len;
 }
@@ -563,7 +559,6 @@ int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type)
  */
 int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlist_t **tl)
 {
-	guint8 *buf;
 	int buflen;
 	ByteStream bs;
 
@@ -572,15 +567,13 @@ int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlis
 	if (buflen <= 0)
 		return 0;
 
-	buf = malloc(buflen);
-
-	byte_stream_init(&bs, buf, buflen);
+	byte_stream_new(&bs, buflen);
 
 	aim_tlvlist_write(&bs, tl);
 
-	aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
+	aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), bs.data);
 
-	free(buf);
+	g_free(bs.data);
 
 	return buflen;
 }

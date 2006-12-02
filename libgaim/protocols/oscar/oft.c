@@ -160,7 +160,7 @@ peer_oft_send(PeerConnection *conn, OftFrame *frame)
 	ByteStream bs;
 
 	length = 192 + MAX(64, frame->name_length + 1);
-	byte_stream_init(&bs, malloc(length), length);
+	byte_stream_new(&bs, length);
 	byte_stream_putraw(&bs, conn->magic, 4);
 	byte_stream_put16(&bs, length);
 	byte_stream_put16(&bs, frame->type);
@@ -197,7 +197,7 @@ peer_oft_send(PeerConnection *conn, OftFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	free(bs.data);
+	g_free(bs.data);
 }
 
 void

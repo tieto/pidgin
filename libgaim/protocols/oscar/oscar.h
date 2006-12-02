@@ -1504,6 +1504,7 @@ void aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint
 void aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *);
 
 /* bstream.c */
+int byte_stream_new(ByteStream *bs, guint32 len);
 int byte_stream_init(ByteStream *bs, guint8 *data, int len);
 int byte_stream_empty(ByteStream *bs);
 int byte_stream_curpos(ByteStream *bs);
