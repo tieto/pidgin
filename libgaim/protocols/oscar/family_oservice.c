@@ -262,57 +262,32 @@ aim_srv_reqrates(OscarData *od, FlapConnection *conn)
  * http://dscoder.com/RateClassInfo.html
  */
 
-static void
-rc_addclass(struct rateclass **head, struct rateclass *inrc)
-{
-	struct rateclass *rc, *rc2;
-
-	rc = g_memdup(inrc, sizeof(struct rateclass));
-	rc->next = NULL;
-
-	for (rc2 = *head; rc2 && rc2->next; rc2 = rc2->next)
-		;
-
-	if (!rc2)
-		*head = rc;
-	else
-		rc2->next = rc;
-
-	return;
-}
-
 static struct rateclass *
-rc_findclass(struct rateclass **head, guint16 id)
+rateclass_find(GSList *rateclasses, guint16 id)
 {
-	struct rateclass *rc;
+	GSList *tmp;
+	struct rateclass *rateclass;
 
-	for (rc = *head; rc; rc = rc->next) {
-		if (rc->classid == id)
-			return rc;
+	for (tmp = rateclasses; tmp != NULL; tmp = tmp->next)
+	{
+		rateclass = tmp->data;
+		if (rateclass->classid == id)
+			return rateclass;
 	}
 
 	return NULL;
 }
 
 static void
-rc_addpair(struct rateclass *rc, guint16 group, guint16 type)
+rateclass_addpair(struct rateclass *rateclass, guint16 group, guint16 type)
 {
-	struct snacpair *sp, *sp2;
+	struct snacpair *snacpair;
 
-	sp = g_new0(struct snacpair, 1);
-	sp->group = group;
-	sp->subtype = type;
-	sp->next = NULL;
+	snacpair = g_new(struct snacpair, 1);
+	snacpair->group = group;
+	snacpair->subtype = type;
 
-	for (sp2 = rc->members; sp2 && sp2->next; sp2 = sp2->next)
-		;
-
-	if (!sp2)
-		rc->members = sp;
-	else
-		sp2->next = sp;
-
-	return;
+	rateclass->members = g_slist_prepend(rateclass->members, snacpair);
 }
 
 /* Subtype 0x0007 - Rate Parameters */
@@ -326,19 +301,20 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	 * First are the parameters for each rate class.
 	 */
 	numclasses = byte_stream_get16(bs);
-	for (i = 0; i < numclasses; i++) {
-		struct rateclass rc;
+	for (i = 0; i < numclasses; i++)
+	{
+		struct rateclass *rateclass;
 
-		memset(&rc, 0, sizeof(struct rateclass));
+		rateclass = g_new0(struct rateclass, 1);
 
-		rc.classid = byte_stream_get16(bs);
-		rc.windowsize = byte_stream_get32(bs);
-		rc.clear = byte_stream_get32(bs);
-		rc.alert = byte_stream_get32(bs);
-		rc.limit = byte_stream_get32(bs);
-		rc.disconnect = byte_stream_get32(bs);
-		rc.current = byte_stream_get32(bs);
-		rc.max = byte_stream_get32(bs);
+		rateclass->classid = byte_stream_get16(bs);
+		rateclass->windowsize = byte_stream_get32(bs);
+		rateclass->clear = byte_stream_get32(bs);
+		rateclass->alert = byte_stream_get32(bs);
+		rateclass->limit = byte_stream_get32(bs);
+		rateclass->disconnect = byte_stream_get32(bs);
+		rateclass->current = byte_stream_get32(bs);
+		rateclass->max = byte_stream_get32(bs);
 
 		/*
 		 * The server will send an extra five bytes of parameters
@@ -348,39 +324,43 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		 * the new version hardcoded here.
 		 */
 		if (mod->version >= 3)
-			byte_stream_getrawbuf(bs, rc.unknown, sizeof(rc.unknown));
+			byte_stream_getrawbuf(bs, rateclass->unknown, sizeof(rateclass->unknown));
 
-		rc_addclass(&conn->rates, &rc);
+		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
 	}
+	conn->rateclasses = g_slist_reverse(conn->rateclasses);
 
 	/*
 	 * Then the members of each class.
 	 */
-	for (i = 0; i < numclasses; i++) {
+	for (i = 0; i < numclasses; i++)
+	{
 		guint16 classid, count;
-		struct rateclass *rc;
+		struct rateclass *rateclass;
 		int j;
 
 		classid = byte_stream_get16(bs);
 		count = byte_stream_get16(bs);
 
-		rc = rc_findclass(&conn->rates, classid);
+		rateclass = rateclass_find(conn->rateclasses, classid);
 
-		for (j = 0; j < count; j++) {
+		for (j = 0; j < count; j++)
+		{
 			guint16 group, subtype;
 
 			group = byte_stream_get16(bs);
 			subtype = byte_stream_get16(bs);
 
-			if (rc)
-				rc_addpair(rc, group, subtype);
+			if (rateclass != NULL)
+				rateclass_addpair(rateclass, group, subtype);
 		}
+		rateclass->members = g_slist_reverse(rateclass->members);
 	}
 
 	/*
 	 * We don't pass the rate information up to the client, as it really
 	 * doesn't care.  The information is stored in the connection, however
-	 * so that we can do more fun stuff later (not really).
+	 * so that we can do rate limiting management when sending SNACs.
 	 */
 
 	/*
@@ -404,15 +384,19 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	struct rateclass *rc;
+	GSList *tmp;
 
 	frame = flap_frame_new(od, 0x02, 512);
 
 	snacid = aim_cachesnac(od, 0x0001, 0x0008, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0001, 0x0008, 0x0000, snacid);
 
-	for (rc = conn->rates; rc; rc = rc->next)
-		byte_stream_put16(&frame->data, rc->classid);
+	for (tmp = conn->rateclasses; tmp != NULL; tmp = tmp->next)
+	{
+		struct rateclass *rateclass;
+		rateclass = tmp->data;
+		byte_stream_put16(&frame->data, rateclass->classid);
+	}
 
 	flap_connection_send(conn, frame);
 }
@@ -423,15 +407,19 @@ aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	struct rateclass *rc;
+	GSList *tmp;
 
 	frame = flap_frame_new(od, 0x02, 512);
 
 	snacid = aim_cachesnac(od, 0x0001, 0x0009, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0001, 0x0009, 0x0000, snacid);
 
-	for (rc = conn->rates; rc; rc = rc->next)
-		byte_stream_put16(&frame->data, rc->classid);
+	for (tmp = conn->rateclasses; tmp != NULL; tmp = tmp->next)
+	{
+		struct rateclass *rateclass;
+		rateclass = tmp->data;
+		byte_stream_put16(&frame->data, rateclass->classid);
+	}
 
 	flap_connection_send(conn, frame);
 }

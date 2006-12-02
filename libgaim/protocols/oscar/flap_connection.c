@@ -184,28 +184,15 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 }
 
 static void
-flap_connection_destroy_rates(struct rateclass *head)
+flap_connection_destroy_rateclass(struct rateclass *rateclass)
 {
-	struct rateclass *rc;
-
-	for (rc = head; rc; )
+	while (rateclass->members != NULL)
 	{
-		struct rateclass *tmp;
-		struct snacpair *sp;
-
-		tmp = rc->next;
-
-		for (sp = rc->members; sp; ) {
-			struct snacpair *tmpsp;
-
-			tmpsp = sp->next;
-			free(sp);
-			sp = tmpsp;
-		}
-		free(rc);
-
-		rc = tmp;
+		g_free(rateclass->members->data);
+		rateclass->members = g_slist_delete_link(rateclass->members, rateclass->members);
 	}
+
+	free(rateclass);
 }
 
 static gboolean
@@ -269,7 +256,11 @@ flap_connection_destroy_cb(gpointer data)
 		flap_connection_destroy_chat(od, conn);
 
 	g_slist_free(conn->groups);
-	flap_connection_destroy_rates(conn->rates);
+	while (conn->rateclasses != NULL)
+	{
+		flap_connection_destroy_rateclass(conn->rateclasses->data);
+		conn->rateclasses = g_slist_delete_link(conn->rateclasses, conn->rateclasses);
+	}
 
 	g_free(conn);
 

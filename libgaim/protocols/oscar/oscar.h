@@ -384,7 +384,8 @@ struct _FlapConnection
 	guint16 seqnum; /**< The sequence number of most recent outgoing packet. */
 	guint32 status;
 	GSList *groups;
-	struct rateclass *rates;
+	GSList *rateclasses; /* Contains nodes of struct rateclass */
+	/* TODO: Maybe use a GHashTable for rateclasses */
 
 	void *internal; /* internal conn-specific libfaim data */
 };
@@ -1560,7 +1561,6 @@ struct chatsnacinfo {
 struct snacpair {
 	guint16 group;
 	guint16 subtype;
-	struct snacpair *next;
 };
 
 struct rateclass {
@@ -1573,8 +1573,8 @@ struct rateclass {
 	guint32 current;
 	guint32 max;
 	guint8 unknown[5]; /* only present in versions >= 3 */
-	struct snacpair *members;
-	struct rateclass *next;
+	GSList *members; /* Contains node of struct snacpair */
+	/* TODO: Maybe use a GHashTable for members */
 };
 
 int aim_cachecookie(OscarData *od, IcbmCookie *cookie);
