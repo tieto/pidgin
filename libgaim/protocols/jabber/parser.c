@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "jabber.h"
 #include "parser.h"
+#include "util.h"
 #include "xmlnode.h"
 
 static void
