@@ -963,6 +963,8 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	if(!(query = xmlnode_get_child(packet, "query")))
 		return;
 
+	/* disabling this until more MUC servers support
+	 * announcing this
 	chat->xhtml = FALSE;
 
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {
@@ -972,6 +974,7 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 			chat->xhtml = TRUE;
 		}
 	}
+	*/
 }
 
 void jabber_chat_disco_traffic(JabberChat *chat)
