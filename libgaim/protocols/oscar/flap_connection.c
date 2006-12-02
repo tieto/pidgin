@@ -51,7 +51,7 @@ flap_connection_send_version(OscarData *od, FlapConnection *conn)
 }
 
 /**
- * This sends a channel 1 SNAC containing the FLAP version and
+ * This sends a channel 1 FLAP containing the FLAP version and
  * the authentication cookie.  This is sent when connecting to
  * any FLAP server after the initial connection to the auth
  * server.  It is always the very first packet sent by both the
@@ -73,7 +73,35 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 }
 
 /**
- * This sends an empty channel 4 SNAC.  This is sent to signify
+ * This sends a channel 2 FLAP containing a SNAC.  The SNAC family and
+ * subtype are looked up in the rate info for this connection, and if
+ * sending this SNAC will induce rate limiting then we delay sending
+ * of the SNAC by putting it into an outgoing holding queue.
+ */
+void
+flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
+{
+	FlapFrame *frame;
+	guint32 length;
+
+	length = data != NULL ? data->offset : 0;
+
+	frame = flap_frame_new(od, 0x02, 10 + length);
+	aim_putsnac(&frame->data, family, subtype, flags, snacid);
+
+	if (length > 0)
+	{
+		byte_stream_rewind(data);
+		byte_stream_putbs(&frame->data, data, length);
+	}
+
+	/* TODO: Outgoing message throttling */
+
+	flap_connection_send(conn, frame);
+}
+
+/**
+ * This sends an empty channel 4 FLAP.  This is sent to signify
  * that we're logging off.  This shouldn't really be necessary--
  * usually the AIM server will detect that the TCP connection has
  * been destroyed--but it's good practice.
@@ -88,7 +116,7 @@ flap_connection_send_close(OscarData *od, FlapConnection *conn)
 }
 
 /**
- * This sends an empty channel 5 SNAC.  This is used as a keepalive
+ * This sends an empty channel 5 FLAP.  This is used as a keepalive
  * packet in FLAP connections.  WinAIM 4.x and higher send these
  * _every minute_ to keep the connection alive.
  */

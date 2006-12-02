@@ -269,8 +269,8 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
 	aim_snacid_t snacid;
+	ByteStream data;
 	guchar cookie[8];
 	int msgtlvlen;
 	static const guint8 deffeatures[] = { 0x01, 0x01, 0x01, 0x02 };
@@ -313,30 +313,26 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 		msgtlvlen += 4 /* charset */ + args->msglen;
 	}
 
-	frame = flap_frame_new(od, 0x02, msgtlvlen+128);
-
-	/* XXX - should be optional */
-	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
+	byte_stream_init(&data, g_malloc(msgtlvlen + 128), msgtlvlen + 128);
 
 	/* Generate an ICBM cookie */
 	aim_icbm_makecookie(cookie);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0001, args->destsn);
+	aim_im_puticbm(&data, cookie, 0x0001, args->destsn);
 
 	/* Message TLV (type 0x0002) */
-	byte_stream_put16(&frame->data, 0x0002);
-	byte_stream_put16(&frame->data, msgtlvlen);
+	byte_stream_put16(&data, 0x0002);
+	byte_stream_put16(&data, msgtlvlen);
 
 	/* Features TLV (type 0x0501) */
-	byte_stream_put16(&frame->data, 0x0501);
+	byte_stream_put16(&data, 0x0501);
 	if (args->flags & AIM_IMFLAGS_CUSTOMFEATURES) {
-		byte_stream_put16(&frame->data, args->featureslen);
-		byte_stream_putraw(&frame->data, args->features, args->featureslen);
+		byte_stream_put16(&data, args->featureslen);
+		byte_stream_putraw(&data, args->features, args->featureslen);
 	} else {
-		byte_stream_put16(&frame->data, sizeof(deffeatures));
-		byte_stream_putraw(&frame->data, deffeatures, sizeof(deffeatures));
+		byte_stream_put16(&data, sizeof(deffeatures));
+		byte_stream_putraw(&data, deffeatures, sizeof(deffeatures));
 	}
 
 	if (args->flags & AIM_IMFLAGS_MULTIPART) {
@@ -344,42 +340,42 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 
 		/* Insert each message part in a TLV (type 0x0101) */
 		for (sec = args->mpmsg->parts; sec; sec = sec->next) {
-			byte_stream_put16(&frame->data, 0x0101);
-			byte_stream_put16(&frame->data, sec->datalen + 4);
-			byte_stream_put16(&frame->data, sec->charset);
-			byte_stream_put16(&frame->data, sec->charsubset);
-			byte_stream_putraw(&frame->data, (guchar *)sec->data, sec->datalen);
+			byte_stream_put16(&data, 0x0101);
+			byte_stream_put16(&data, sec->datalen + 4);
+			byte_stream_put16(&data, sec->charset);
+			byte_stream_put16(&data, sec->charsubset);
+			byte_stream_putraw(&data, (guchar *)sec->data, sec->datalen);
 		}
 
 	} else {
 
 		/* Insert message text in a TLV (type 0x0101) */
-		byte_stream_put16(&frame->data, 0x0101);
+		byte_stream_put16(&data, 0x0101);
 
 		/* Message block length */
-		byte_stream_put16(&frame->data, args->msglen + 0x04);
+		byte_stream_put16(&data, args->msglen + 0x04);
 
 		/* Character set */
-		byte_stream_put16(&frame->data, args->charset);
-		byte_stream_put16(&frame->data, args->charsubset);
+		byte_stream_put16(&data, args->charset);
+		byte_stream_put16(&data, args->charsubset);
 
 		/* Message.  Not terminated */
-		byte_stream_putraw(&frame->data, (guchar *)args->msg, args->msglen);
+		byte_stream_putraw(&data, (guchar *)args->msg, args->msglen);
 	}
 
 	/* Set the Autoresponse flag */
 	if (args->flags & AIM_IMFLAGS_AWAY) {
-		byte_stream_put16(&frame->data, 0x0004);
-		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&data, 0x0004);
+		byte_stream_put16(&data, 0x0000);
 	} else if (args->flags & AIM_IMFLAGS_ACK) {
 		/* Set the Request Acknowledge flag */
-		byte_stream_put16(&frame->data, 0x0003);
-		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&data, 0x0003);
+		byte_stream_put16(&data, 0x0000);
 	}
 
 	if (args->flags & AIM_IMFLAGS_OFFLINE) {
-		byte_stream_put16(&frame->data, 0x0006);
-		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&data, 0x0006);
+		byte_stream_put16(&data, 0x0000);
 	}
 
 	/*
@@ -388,12 +384,12 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	 * IMs and when you change your icon.
 	 */
 	if (args->flags & AIM_IMFLAGS_HASICON) {
-		byte_stream_put16(&frame->data, 0x0008);
-		byte_stream_put16(&frame->data, 0x000c);
-		byte_stream_put32(&frame->data, args->iconlen);
-		byte_stream_put16(&frame->data, 0x0001);
-		byte_stream_put16(&frame->data, args->iconsum);
-		byte_stream_put32(&frame->data, args->iconstamp);
+		byte_stream_put16(&data, 0x0008);
+		byte_stream_put16(&data, 0x000c);
+		byte_stream_put32(&data, args->iconlen);
+		byte_stream_put16(&data, 0x0001);
+		byte_stream_put16(&data, args->iconsum);
+		byte_stream_put32(&data, args->iconstamp);
 	}
 
 	/*
@@ -401,11 +397,15 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	 * XXX - Every time?  Surely not...
 	 */
 	if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
-		byte_stream_put16(&frame->data, 0x0009);
-		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&data, 0x0009);
+		byte_stream_put16(&data, 0x0000);
 	}
 
-	flap_connection_send(conn, frame);
+	/* XXX - should be optional */
+	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
+
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &data);
+	g_free(data.data);
 
 	/* clean out SNACs over 60sec old */
 	aim_cleansnacs(od, 60);

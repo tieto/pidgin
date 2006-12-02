@@ -1356,22 +1356,23 @@ int
 aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	unsigned int length;
+	ByteStream data;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE)) || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+4+1+strlen(sn));
+	length = 4 + 1 + strlen(sn);
+	byte_stream_init(&data, g_malloc(length), length);
+	byte_stream_put32(&data, flags);
+	byte_stream_put8(&data, strlen(sn));
+	byte_stream_putstr(&data, sn);
 
 	snacid = aim_cachesnac(od, 0x0002, 0x0015, 0x0000, sn, strlen(sn)+1);
+	flap_connection_send_snac(od, conn, 0x0002, 0x0015, 0x0000, snacid, &data);
 
-	aim_putsnac(&frame->data, 0x0002, 0x0015, 0x0000, snacid);
-	byte_stream_put32(&frame->data, flags);
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
-
-	flap_connection_send(conn, frame);
+	g_free(data.data);
 
 	return 0;
 }
