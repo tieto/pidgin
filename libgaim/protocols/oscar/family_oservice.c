@@ -430,22 +430,27 @@ ratechange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 {
 	int ret = 0;
 	aim_rxcallback_t userfunc;
-	guint16 code, rateclass;
-	guint32 currentavg, maxavg, windowsize, clear, alert, limit, disconnect;
+	guint16 code, classid;
+	struct rateclass *rateclass;
 
 	code = byte_stream_get16(bs);
-	rateclass = byte_stream_get16(bs);
+	classid = byte_stream_get16(bs);
 
-	windowsize = byte_stream_get32(bs);
-	clear = byte_stream_get32(bs);
-	alert = byte_stream_get32(bs);
-	limit = byte_stream_get32(bs);
-	disconnect = byte_stream_get32(bs);
-	currentavg = byte_stream_get32(bs);
-	maxavg = byte_stream_get32(bs);
+	rateclass = rateclass_find(conn->rateclasses, classid);
+	if (rateclass == NULL)
+		/* This should never really happen */
+		return 0;
+
+	rateclass->windowsize = byte_stream_get32(bs);
+	rateclass->clear = byte_stream_get32(bs);
+	rateclass->alert = byte_stream_get32(bs);
+	rateclass->limit = byte_stream_get32(bs);
+	rateclass->disconnect = byte_stream_get32(bs);
+	rateclass->current = byte_stream_get32(bs);
+	rateclass->max = byte_stream_get32(bs);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
+		ret = userfunc(od, conn, frame, code, classid, rateclass->windowsize, rateclass->clear, rateclass->alert, rateclass->limit, rateclass->disconnect, rateclass->current, rateclass->max);
 
 	return ret;
 }
