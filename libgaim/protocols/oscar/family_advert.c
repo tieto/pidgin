@@ -25,9 +25,10 @@
 
 #include "oscar.h"
 
-int aim_ads_requestads(OscarData *od, FlapConnection *conn)
+void
+aim_ads_requestads(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n(od, conn, 0x0005, 0x0002);
+	aim_genericreq_n(od, conn, 0x0005, 0x0002);
 }
 
 static int snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)

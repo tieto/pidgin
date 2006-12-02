@@ -78,9 +78,10 @@ static int rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
  * a bitwise OR of all the user classes you want to see you.
  *
  */
-int aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask)
+void
+aim_bos_setgroupperm(OscarData *od, FlapConnection *conn, guint32 mask)
 {
-	return aim_genericreq_l(od, conn, 0x0009, 0x0004, &mask);
+	aim_genericreq_l(od, conn, 0x0009, 0x0004, &mask);
 }
 
 /*

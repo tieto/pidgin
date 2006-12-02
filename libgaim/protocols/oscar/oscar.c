@@ -1000,7 +1000,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 {
 	GaimConnection *gc = od->gc;
 
-	aim_reqpersonalinfo(od, conn);
+	aim_srv_reqpersonalinfo(od, conn);
 
 	gaim_debug_info("oscar", "ssi: requesting rights and list\n");
 	aim_ssi_reqrights(od);
@@ -3202,7 +3202,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 	conn = flap_connection_getbytype(od, SNAC_FAMILY_BART);
 	if (!conn) {
 		if (!od->iconconnecting) {
-			aim_reqservice(od, SNAC_FAMILY_BART);
+			aim_srv_requestnew(od, SNAC_FAMILY_BART);
 			od->iconconnecting = TRUE;
 		}
 		return FALSE;
@@ -3527,7 +3527,7 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 			gaim_account_get_bool(account, "web_aware", OSCAR_DEFAULT_WEB_AWARE));
 	}
 
-	aim_reqservice(od, SNAC_FAMILY_CHATNAV);
+	aim_srv_requestnew(od, SNAC_FAMILY_CHATNAV);
 
 	/*
 	 * The "if" statement here is a pathetic attempt to not attempt to
@@ -3539,7 +3539,7 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	 * of an annoying error at signon for @anythingelse.com accounts.
 	 */
 	if ((od->authinfo->email != NULL) && ((strchr(gc->account->username, '@') == NULL)))
-		aim_reqservice(od, SNAC_FAMILY_ALERT);
+		aim_srv_requestnew(od, SNAC_FAMILY_ALERT);
 
 	return 1;
 }
@@ -4299,7 +4299,7 @@ oscar_set_extendedstatus(GaimConnection *gc)
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
-	aim_setextstatus(od, data);
+	aim_srv_setextstatus(od, data);
 }
 
 static void
@@ -5174,7 +5174,7 @@ oscar_join_chat(GaimConnection *gc, GHashTable *data)
 		cr->exchange = atoi(exchange);
 		cr->name = g_strdup(name);
 		od->create_rooms = g_slist_prepend(od->create_rooms, cr);
-		aim_reqservice(od, SNAC_FAMILY_CHATNAV);
+		aim_srv_requestnew(od, SNAC_FAMILY_CHATNAV);
 	}
 }
 
@@ -5493,7 +5493,7 @@ static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 				if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
 					od->iconconnecting = TRUE;
 					od->set_icon = TRUE;
-					aim_reqservice(od, SNAC_FAMILY_BART);
+					aim_srv_requestnew(od, SNAC_FAMILY_BART);
 				} else {
 					struct stat st;
 					char *iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gaim_connection_get_account(gc)));
@@ -5935,7 +5935,7 @@ static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 		if (!flap_connection_getbytype(od, SNAC_FAMILY_ADMIN)) {
 			od->setnick = TRUE;
 			od->newsn = g_strdup(nick);
-			aim_reqservice(od, SNAC_FAMILY_ADMIN);
+			aim_srv_requestnew(od, SNAC_FAMILY_ADMIN);
 		} else {
 			aim_admin_setnick(od, flap_connection_getbytype(od, SNAC_FAMILY_ADMIN), nick);
 		}
@@ -5969,7 +5969,7 @@ static void oscar_confirm_account(GaimPluginAction *action)
 		aim_admin_reqconfirm(od, conn);
 	} else {
 		od->conf = TRUE;
-		aim_reqservice(od, SNAC_FAMILY_ADMIN);
+		aim_srv_requestnew(od, SNAC_FAMILY_ADMIN);
 	}
 }
 
@@ -5983,7 +5983,7 @@ static void oscar_show_email(GaimPluginAction *action)
 		aim_admin_getinfo(od, conn, 0x11);
 	} else {
 		od->reqemail = TRUE;
-		aim_reqservice(od, SNAC_FAMILY_ADMIN);
+		aim_srv_requestnew(od, SNAC_FAMILY_ADMIN);
 	}
 }
 
@@ -5997,7 +5997,7 @@ static void oscar_change_email(GaimConnection *gc, const char *email)
 	} else {
 		od->setemail = TRUE;
 		od->email = g_strdup(email);
-		aim_reqservice(od, SNAC_FAMILY_ADMIN);
+		aim_srv_requestnew(od, SNAC_FAMILY_ADMIN);
 	}
 }
 
@@ -6328,7 +6328,7 @@ void oscar_change_passwd(GaimConnection *gc, const char *old, const char *new)
 			od->chpass = TRUE;
 			od->oldp = g_strdup(old);
 			od->newp = g_strdup(new);
-			aim_reqservice(od, SNAC_FAMILY_ADMIN);
+			aim_srv_requestnew(od, SNAC_FAMILY_ADMIN);
 		}
 	}
 }

@@ -1350,7 +1350,9 @@ int aim_ssi_enable(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, 0x0007);
+	aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, 0x0007);
+
+	return 0;
 }
 
 /*
@@ -1694,7 +1696,9 @@ int aim_ssi_modbegin(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_EDITSTART);
+	aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_EDITSTART);
+
+	return 0;
 }
 
 /*
@@ -1710,7 +1714,9 @@ int aim_ssi_modend(OscarData *od)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	return aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_EDITSTOP);
+	aim_genericreq_n(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_EDITSTOP);
+
+	return 0;
 }
 
 /*

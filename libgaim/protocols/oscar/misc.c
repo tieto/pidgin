@@ -36,7 +36,7 @@
  * back to the single.  I don't see any advantage to doing it either way.
  *
  */
-int
+void
 aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype)
 {
 	FlapFrame *frame;
@@ -47,8 +47,6 @@ aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 void
@@ -65,7 +63,7 @@ aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, gui
 	flap_connection_send(conn, frame);
 }
 
-int
+void
 aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *longdata)
 {
 	FlapFrame *frame;
@@ -82,11 +80,9 @@ aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	byte_stream_put32(&frame->data, *longdata);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
-int
+void
 aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *shortdata)
 {
 	FlapFrame *frame;
@@ -103,8 +99,6 @@ aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	byte_stream_put16(&frame->data, *shortdata);
 
 	flap_connection_send(conn, frame);
-
-	return 0;
 }
 
 /*

@@ -681,6 +681,8 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 				break;
 			}
 
+			/* TODO: Verify the sequence number sent by the server. */
+
 			/* Initialize a new temporary FlapFrame for incoming data */
 			conn->buffer_incoming.channel = aimutil_get8(&header[1]);
 			conn->buffer_incoming.seqnum = aimutil_get16(&header[2]);

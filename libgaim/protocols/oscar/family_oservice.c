@@ -93,19 +93,20 @@ hostonline(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	 * give it.
 	 *
 	 */
-	aim_setversions(od, conn);
+	aim_srv_setversions(od, conn);
 
 	return 1;
 }
 
 /* Subtype 0x0004 - Service request */
-int aim_reqservice(OscarData *od, guint16 serviceid)
+void
+aim_srv_requestnew(OscarData *od, guint16 serviceid)
 {
 	FlapConnection *conn;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
 
-	return aim_genericreq_s(od, conn, 0x0001, 0x0004, &serviceid);
+	aim_genericreq_s(od, conn, 0x0001, 0x0004, &serviceid);
 }
 
 /*
@@ -205,7 +206,7 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 /* Subtype 0x0006 - Request Rate Information. */
 void
-aim_reqrates(OscarData *od, FlapConnection *conn)
+aim_srv_reqrates(OscarData *od, FlapConnection *conn)
 {
 	aim_genericreq_n_snacid(od, conn, 0x0001, 0x0006);
 }
@@ -256,6 +257,9 @@ aim_reqrates(OscarData *od, FlapConnection *conn)
  * system is how the actual numbers relate to the passing of time.  This
  * seems to be a big mystery.
  *
+ * See joscar's javadoc for the RateClassInfo class for a great
+ * explanation.  You might be able to find it at
+ * http://dscoder.com/RateClassInfo.html
  */
 
 static void
@@ -383,7 +387,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	 * Last step in the conn init procedure is to acknowledge that we
 	 * agree to these draconian limitations.
 	 */
-	aim_rates_addparam(od, conn);
+	aim_srv_rates_addparam(od, conn);
 
 	/*
 	 * Finally, tell the client it's ready to go...
@@ -396,7 +400,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 /* Subtype 0x0008 - Add Rate Parameter */
 void
-aim_rates_addparam(OscarData *od, FlapConnection *conn)
+aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
@@ -415,7 +419,7 @@ aim_rates_addparam(OscarData *od, FlapConnection *conn)
 
 /* Subtype 0x0009 - Delete Rate Parameter */
 void
-aim_rates_delparam(OscarData *od, FlapConnection *conn)
+aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
@@ -487,7 +491,7 @@ serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 /*
  * Subtype 0x000c - Service Pause Acknowledgement
  *
- * It is rather important that aim_sendpauseack() gets called for the exact
+ * It is rather important that aim_srv_sendpauseack() gets called for the exact
  * same connection that the Server Pause callback was called for, since
  * libfaim extracts the data for the SNAC from the connection structure.
  *
@@ -496,7 +500,7 @@ serverpause(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
  *
  */
 void
-aim_sendpauseack(OscarData *od, FlapConnection *conn)
+aim_srv_sendpauseack(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
@@ -533,7 +537,7 @@ serverresume(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 
 /* Subtype 0x000e - Request self-info */
 void
-aim_reqpersonalinfo(OscarData *od, FlapConnection *conn)
+aim_srv_reqpersonalinfo(OscarData *od, FlapConnection *conn)
 {
 	aim_genericreq_n_snacid(od, conn, 0x0001, 0x000e);
 }
@@ -589,15 +593,13 @@ evilnotify(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
  * call it again with zero when you're back.
  *
  */
-int
+void
 aim_srv_setidle(OscarData *od, guint32 idletime)
 {
 	FlapConnection *conn;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS)))
-		return -EINVAL;
-
-	return aim_genericreq_l(od, conn, 0x0001, 0x0011, &idletime);
+	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
+	aim_genericreq_l(od, conn, 0x0001, 0x0011, &idletime);
 }
 
 /*
@@ -703,10 +705,10 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
  *  Bit 2:  Allows other AIM users to see how long you've been a member.
  *
  */
-int
-aim_bos_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
+void
+aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
 {
-	return aim_genericreq_l(od, conn, 0x0001, 0x0014, &flags);
+	aim_genericreq_l(od, conn, 0x0001, 0x0014, &flags);
 }
 
 /*
@@ -718,10 +720,10 @@ aim_bos_setprivacyflags(OscarData *od, FlapConnection *conn, guint32 flags)
  * Wha?  No?  Since when?  I think WinAIM sends an empty channel 5
  * FLAP as a no-op...
  */
-int
-aim_nop(OscarData *od, FlapConnection *conn)
+void
+aim_srv_nop(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n(od, conn, 0x0001, 0x0016);
+	aim_genericreq_n(od, conn, 0x0001, 0x0016);
 }
 
 /*
@@ -738,7 +740,7 @@ aim_nop(OscarData *od, FlapConnection *conn)
  *
  */
 void
-aim_setversions(OscarData *od, FlapConnection *conn)
+aim_srv_setversions(OscarData *od, FlapConnection *conn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
@@ -782,7 +784,7 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 	/*
 	 * Now request rates.
 	 */
-	aim_reqrates(od, conn);
+	aim_srv_reqrates(od, conn);
 
 	return 1;
 }
@@ -805,7 +807,7 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
  * TODO: Combine this with the function below.
  */
 int
-aim_setextstatus(OscarData *od, guint32 status)
+aim_srv_setextstatus(OscarData *od, guint32 status)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;

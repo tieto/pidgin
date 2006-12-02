@@ -207,10 +207,10 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
  * get the TRIAL flag removed from your account.
  *
  */
-int
+void
 aim_admin_reqconfirm(OscarData *od, FlapConnection *conn)
 {
-	return aim_genericreq_n(od, conn, 0x0007, 0x0006);
+	aim_genericreq_n(od, conn, 0x0007, 0x0006);
 }
 
 /*
