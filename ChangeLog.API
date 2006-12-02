@@ -127,6 +127,9 @@ version 2.0.0:
 	* gaim_url_fetch(): Renamed to gaim_util_fetch_url() and changed
 	  to return a pointer to a data structure that can be used to cancel
 	  the pending HTTP request using gaim_util_fetch_url_cancel().
+	  Corresponding callback has changed to accept this data structure
+	  as its first argument, and to accept an error message as an
+	  additional final argument.
 	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
 	* gaim_account_get_log(): Added create parameter
 	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH
