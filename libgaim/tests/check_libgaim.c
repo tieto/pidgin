@@ -54,8 +54,9 @@ int main(void)
 	int number_failed;
 	SRunner *sr = srunner_create (master_suite());
 
-	srunner_add_suite(sr, util_suite());
 	srunner_add_suite(sr, cipher_suite());
+	srunner_add_suite(sr, jabber_jutil_suite());
+	srunner_add_suite(sr, util_suite());
 
 	/* make this a libgaim "ui" */
 	gaim_check_init();
