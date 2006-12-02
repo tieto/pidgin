@@ -89,18 +89,25 @@ update_rate_class(FlapConnection *conn, guint16 family, guint16 subtype)
 			if ((snacpair->group == family) && (snacpair->subtype == subtype))
 			{
 				/*
-				 * We've found the rateclass for this SNAC family and
-				 * subtype!  Update our "current" average by calculating
-				 * a rolling average.  This is pretty shoddy.  We should
-				 * really keep track of the times when the last last
-				 * windowsize messages that were sent and just calculate
-				 * the REAL average.
+				 * We've found the rateclass for this SNAC family
+				 * and subtype!  Update our "current" average by
+				 * calculating a rolling average.  This is pretty
+				 * shoddy.  We should really keep track of the times
+				 * when the last windowsize messages that were sent
+				 * and just calculate the REAL average.
 				 */
-				time_t now;
-				now = time(NULL);
+				struct timeval now;
+				struct timezone tz;
+				unsigned long timediff; /* In milliseconds */
+
+				gettimeofday(&now, &tz);
+				timediff = MIN((now.tv_sec - rateclass->last.tv_sec) * 1000 + (now.tv_usec - rateclass->last.tv_usec) / 1000, rateclass->max);
+
 				/* This formula is taken from the joscar API docs. */
-				rateclass->current = MIN(((rateclass->current * (rateclass->windowsize - 1)) + (now - rateclass->last)) / rateclass->windowsize, rateclass->max);
-				rateclass->last = now;
+				rateclass->current = MIN(((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize, rateclass->max);
+				rateclass->last.tv_sec = now.tv_sec;
+				rateclass->last.tv_usec = now.tv_usec;
+
 				return;
 			}
 		}

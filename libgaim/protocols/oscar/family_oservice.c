@@ -326,6 +326,8 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		if (mod->version >= 3)
 			byte_stream_getrawbuf(bs, rateclass->unknown, sizeof(rateclass->unknown));
 
+		rateclass->last.tv_sec = 0;
+		rateclass->last.tv_usec = 0;
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
 	}
 	conn->rateclasses = g_slist_reverse(conn->rateclasses);

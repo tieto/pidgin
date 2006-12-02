@@ -1578,7 +1578,7 @@ struct rateclass {
 	GSList *members; /* Contains node of struct snacpair */
 	/* TODO: Maybe use a GHashTable for members */
 
-	time_t last; /**< The time when we last sent a SNAC of this rate class. */
+	struct timeval last; /**< The time when we last sent a SNAC of this rate class. */
 };
 
 int aim_cachecookie(OscarData *od, IcbmCookie *cookie);
