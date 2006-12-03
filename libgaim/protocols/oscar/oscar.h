@@ -382,7 +382,6 @@ struct _FlapConnection
 	guint16 type;
 	guint16 subtype;
 	guint16 seqnum; /**< The sequence number of most recent outgoing packet. */
-	guint32 status;
 	GSList *groups;
 	GSList *rateclasses; /* Contains nodes of struct rateclass */
 	/* TODO: Maybe use a GHashTable for rateclasses */
