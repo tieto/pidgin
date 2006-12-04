@@ -1192,6 +1192,10 @@ gaim_account_set_username(GaimAccount *account, const char *username)
 	account->username = g_strdup(username);
 
 	schedule_accounts_save();
+
+	/* if the name changes, we should re-write the buddy list
+	 * to disk with the new name */
+	gaim_blist_schedule_save();
 }
 
 void
