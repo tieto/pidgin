@@ -142,7 +142,7 @@
 #	define g_open open
 #endif
 
-#if !GLIB_CHECK_VERSION(2,8,0)
+#if !GLIB_CHECK_VERSION(2,8,0) && !defined _WIN32
 #	define g_access access
 #endif
 

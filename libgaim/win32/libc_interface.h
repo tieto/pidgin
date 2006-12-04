@@ -123,7 +123,6 @@ wgaim_close( fd )
 
 #if !GLIB_CHECK_VERSION(2,8,0)
 int wgaim_g_access(const gchar *filename, int mode);
-#undef g_access
 #define g_access( filename, mode) \
 wgaim_g_access( filename, mode )
 #endif

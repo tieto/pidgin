@@ -219,9 +219,14 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 	if (g_stat(filename, &st) != 0) {
 		/* File not found. */
 		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+#ifndef _WIN32
+			int mode = W_OK;
+#else
+			int mode = F_OK;
+#endif
 			dir = g_path_get_dirname(filename);
 
-			if (g_access(dir, W_OK) == 0) {
+			if (g_access(dir, mode) == 0) {
 				gaim_xfer_request_accepted(xfer, filename);
 			} else {
 				gaim_xfer_ref(xfer);
