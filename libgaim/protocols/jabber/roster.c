@@ -262,8 +262,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	xmlnode_set_attrib(item, "jid", name);
 
-	if(b->alias)
-		xmlnode_set_attrib(item, "name", b->alias);
+	xmlnode_set_attrib(item, "name", b->alias ? b->alias : "");
 
 	for(l = groups; l; l = l->next) {
 		group = xmlnode_new_child(item, "group");
