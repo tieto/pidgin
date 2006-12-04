@@ -716,6 +716,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 		js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen,
 						  NULL, &c_out, &clen);
+		g_free(enc_in);
 		g_free(dec_in);
 		if (js->sasl_state != SASL_CONTINUE && js->sasl_state != SASL_OK) {
 			gaim_debug_error("jabber", "Error is %d : %s\n",js->sasl_state,sasl_errdetail(js->sasl));
@@ -753,9 +754,20 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	 * should try one more round against it
 	 */
 	if (js->sasl_state != SASL_OK) {
+		char *enc_in = xmlnode_get_data(packet);
+		unsigned char *dec_in = NULL;
 		const char *c_out;
 		unsigned int clen;
-		js->sasl_state = sasl_client_step(js->sasl, NULL, 0, NULL, &c_out, &clen);
+		gsize declen = 0;
+
+		if(enc_in != NULL)
+			dec_in = gaim_base64_decode(enc_in, &declen);
+
+		js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen, NULL, &c_out, &clen);
+
+		g_free(enc_in);
+		g_free(dec_in);
+
 		if (js->sasl_state != SASL_OK) {
 			/* This should never happen! */
 			gaim_connection_error(js->gc, _("Invalid response from server."));
