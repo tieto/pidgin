@@ -136,6 +136,9 @@ typedef struct
 	GtkWidget *proxy_user_entry;
 	GtkWidget *proxy_pass_entry;
 
+	/* Are we registering? */
+	gboolean   registering;
+
 } AccountPrefsDialog;
 
 typedef struct
@@ -1335,7 +1338,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
 
 	/* If this is a new account, then sign on! */
-	if (new) {
+	if (new && !dialog->registering) {
 		const GaimSavedStatus *saved_status;
 
 		saved_status = gaim_savedstatus_get_current();
@@ -1351,7 +1354,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 static void
 register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	GaimAccount *account = ok_account_prefs_cb(NULL, dialog);
+	GaimAccount *account;
+
+	dialog->registering = TRUE;
+
+	account = ok_account_prefs_cb(NULL, dialog);
 
 	gaim_account_register(account);
 }
