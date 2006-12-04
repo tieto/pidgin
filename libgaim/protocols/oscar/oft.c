@@ -550,7 +550,7 @@ peer_oft_cb_generic_cancel(GaimXfer *xfer)
 /* End GaimXfer callbacks for use when sending and receiving       */
 /*******************************************************************/
 
-#if 0
+#ifdef TODOFT
 /*
  * This little area in oscar.c is the nexus of file transfer code,
  * so I wrote a little explanation of what happens.  I am such a

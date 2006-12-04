@@ -817,7 +817,17 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 				break;
 			}
 
-			/* TODO: Verify the sequence number sent by the server. */
+			/* Verify the sequence number sent by the server. */
+#if 0
+			/* TODO: Need to initialize conn->seqnum_in somewhere before we can use this. */
+			if (aimutil_get16(&header[1]) != conn->seqnum_in++)
+			{
+				/* Received an out-of-order FLAP! */
+				flap_connection_schedule_destroy(conn,
+						OSCAR_DISCONNECT_INVALID_DATA, NULL);
+				break;
+			}
+#endif
 
 			/* Initialize a new temporary FlapFrame for incoming data */
 			conn->buffer_incoming.channel = aimutil_get8(&header[1]);
@@ -958,7 +968,7 @@ sendframe_flap(FlapConnection *conn, FlapFrame *frame)
 void
 flap_connection_send(FlapConnection *conn, FlapFrame *frame)
 {
-	frame->seqnum = ++(conn->seqnum);
+	frame->seqnum = ++(conn->seqnum_out);
 	sendframe_flap(conn, frame);
 	flap_frame_destroy(frame);
 }

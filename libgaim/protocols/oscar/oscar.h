@@ -389,7 +389,8 @@ struct _FlapConnection
 
 	guint16 type;
 	guint16 subtype;
-	guint16 seqnum; /**< The sequence number of most recent outgoing packet. */
+	guint16 seqnum_out; /**< The sequence number of most recently sent packet. */
+	guint16 seqnum_in; /**< The sequence number of most recently received packet. */
 	GSList *groups;
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
 
@@ -502,6 +503,7 @@ struct _OscarData
 		gboolean in_transaction;
 	} ssi;
 
+	/** Contains pointers to handler functions for each family/subtype. */
 	GHashTable *handlerlist;
 
 	/** A linked list containing FlapConnections. */
