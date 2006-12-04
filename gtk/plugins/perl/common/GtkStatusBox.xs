@@ -45,6 +45,6 @@ const char *
 gtk_gaim_status_box_get_buddy_icon(status_box)
 	Gaim::GtkUI::StatusBox status_box
 
-char *
+gchar_own *
 gtk_gaim_status_box_get_message(status_box)
 	Gaim::GtkUI::StatusBox status_box

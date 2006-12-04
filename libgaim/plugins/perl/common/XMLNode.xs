@@ -36,7 +36,7 @@ xmlnode_get_child_with_namespace(parent, name, xmlns)
 	const char *name
 	const char *xmlns
 
-char *
+gchar_own *
 xmlnode_get_data(node)
 	Gaim::XMLNode node
 
@@ -77,12 +77,12 @@ xmlnode_set_attrib(node, attr, value)
 	const char *attr
 	const char *value
 
-char *
+gchar_own *
 xmlnode_to_formatted_str(node, len)
 	Gaim::XMLNode node
 	int *len
 
-char *
+gchar_own *
 xmlnode_to_str(node, len)
 	Gaim::XMLNode node
 	int *len

@@ -271,3 +271,6 @@ typedef XMLNodeType			XMLNode__Type;
 
 /* other */
 typedef void *				Gaim__Handle;
+
+typedef gchar gchar_own;
+

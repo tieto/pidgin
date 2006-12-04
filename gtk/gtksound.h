@@ -46,7 +46,7 @@ const char *gaim_gtk_sound_get_event_option(GaimSoundEventID event);
  * @param event The event.
  * @return The label.
  */
-char *gaim_gtk_sound_get_event_label(GaimSoundEventID event);
+const char *gaim_gtk_sound_get_event_label(GaimSoundEventID event);
 
 /**
  * Gets GTK+ sound UI ops.

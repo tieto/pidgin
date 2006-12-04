@@ -7,7 +7,7 @@ const char *
 gaim_gtk_sound_get_event_option(event)
 	Gaim::SoundEventID event
 
-char *
+const char *
 gaim_gtk_sound_get_event_label(event)
 	Gaim::SoundEventID event
 

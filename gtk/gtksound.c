@@ -242,7 +242,7 @@ gaim_gtk_sound_get_event_option(GaimSoundEventID event)
 	return sounds[event].pref;
 }
 
-char *
+const char *
 gaim_gtk_sound_get_event_label(GaimSoundEventID event)
 {
 	if(event >= GAIM_NUM_SOUNDS)

@@ -21,7 +21,7 @@ void
 gaim_log_free(log)
 	Gaim::Log log
 
-char *
+gchar_own *
 gaim_log_get_log_dir(type, name, account)
 	Gaim::LogType type
 	const char *name
@@ -83,7 +83,7 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
 	}
 
-char *
+gchar_own *
 gaim_log_read(log, flags)
 	Gaim::Log log
 	Gaim::Log::ReadFlags flags

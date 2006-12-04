@@ -10,7 +10,7 @@ gaim_gtk_save_accels(data)
 void
 gaim_gtk_load_accels()
 
-char *
+gchar_own *
 gaim_gtk_convert_buddy_icon(plugin, path)
 	Gaim::Plugin plugin
 	const char * path

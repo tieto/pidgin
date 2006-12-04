@@ -60,7 +60,7 @@ gtk_imhtml_insert_image_at_iter(imhtml, id, iter)
 /* This can't work at the moment since I don't have a typemap for Gtk::Widget.
  * I thought about using the one from libgtk2-perl but wasn't sure how to go
  * about doing that.
-char *
+gchar_own *
 gtk_imhtml_get_markup_range(imhtml, start, end)
 	Gaim::GtkUI::IMHtml imhtml
 	Gtk::TextIter start
@@ -70,7 +70,7 @@ gtk_imhtml_get_markup_range(imhtml, start, end)
 /* This can't work at the moment since I don't have a typemap for Gtk::Widget.
  * I thought about using the one from libgtk2-perl but wasn't sure how to go
  * about doing that.
-char *
+gchar_own *
 gtk_imhtml_get_text(imhtml, start, end)
 	Gaim::GtkUI::IMHtml imhtml
 	Gtk::TextIter start
@@ -215,19 +215,19 @@ Gaim::GtkUI::IMHtml::Buttons
 gtk_imhtml_get_format_functions(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
-char *
+gchar_own *
 gtk_imhtml_get_current_fontface(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
-char *
+gchar_own *
 gtk_imhtml_get_current_forecolor(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
-char *
+gchar_own *
 gtk_imhtml_get_current_backcolor(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
-char *
+gchar_own *
 gtk_imhtml_get_current_background(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
@@ -303,7 +303,7 @@ void
 gtk_imhtml_font_grow(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 
-char *
+gchar_own *
 gtk_imhtml_get_markup(imhtml)
 	Gaim::GtkUI::IMHtml imhtml
 

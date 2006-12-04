@@ -16,6 +16,7 @@ const char **				T_PTR
 char **					T_PTR
 gchar					T_IV
 gchar *					T_PV
+gchar_own *				T_GCHAR_OWN
 guchar					T_IV
 guchar *				T_PTR
 guchar **				T_PTR
@@ -195,3 +196,12 @@ OUTPUT
 
 T_GaimObj
 	$arg = gaim_perl_bless_object($var, \"$type\");
+
+T_GCHAR_OWN
+	/* used when we can directly own the returned string. */
+	/* we have to copy in the case when perl's malloc != gtk's malloc,
+	 * so best copy all the time. */
+	sv_setpv ((SV*)$arg, $var);
+	SvUTF8_on ($arg);
+	g_free ($var);
+

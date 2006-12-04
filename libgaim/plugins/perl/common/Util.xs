@@ -74,7 +74,7 @@ const char *
 gaim_escape_filename(str)
 	const char *str
 
-char *
+gchar_own *
 gaim_fd_get_ip(fd)
 	int fd
 
@@ -104,7 +104,7 @@ gaim_markup_find_tag(needle, haystack, start, end, attributes)
 	const char **end
 	GData **attributes
 
-char *
+gchar_own *
 gaim_markup_get_tag_name(tag)
 	const char *tag
 
@@ -114,17 +114,17 @@ gaim_markup_html_to_xhtml(html, dest_xhtml, dest_plain)
 	char **dest_xhtml
 	char **dest_plain
 
-char *
+gchar_own *
 gaim_markup_linkify(str)
 	const char *str
 
-char *
+gchar_own *
 gaim_markup_slice(str, x, y)
 	const char *str
 	guint x
 	guint y
 
-char *
+gchar_own *
 gaim_markup_strip_html(str)
 	const char *str
 
@@ -147,11 +147,11 @@ gboolean
 gaim_program_is_valid(program)
 	const char *program
 
-char *
+gchar_own *
 gaim_str_add_cr(str)
 	const char *str
 
-char *
+gchar_own *
 gaim_str_binary_to_ascii(binary, len)
 	const unsigned char *binary
 	guint len
@@ -166,11 +166,11 @@ gaim_str_has_suffix(s, x)
 	const char *s
 	const char *x
 
-char *
+gchar_own *
 gaim_str_seconds_to_string(sec)
 	guint sec
 
-char *
+gchar_own *
 gaim_str_size_to_units(size)
 	size_t size
 
@@ -187,7 +187,7 @@ gaim_str_to_time(timestamp, utc = FALSE, tm = NULL, tz_off = NULL, rest = NULL)
 	long *tz_off
 	const char **rest
 
-gchar *
+gchar_own *
 gaim_strcasereplace(string, delimiter, replacement)
 	const char *string
 	const char *delimiter
@@ -198,17 +198,17 @@ gaim_strcasestr(haystack, needle)
 	const char *haystack
 	const char *needle
 
-gchar *
+gchar_own *
 gaim_strdup_withhtml(src)
 	const gchar *src
 
-gchar *
+gchar_own *
 gaim_strreplace(string, delimiter, replacement)
 	const char *string
 	const char *delimiter
 	const char *replacement
 
-char *
+gchar_own *
 gaim_text_strip_mnemonic(in)
 	const char *in
 
@@ -229,7 +229,7 @@ const char *
 gaim_unescape_filename(str)
 	const char *str
 
-char *
+gchar_own *
 gaim_unescape_html(html)
 	const char *html
 
