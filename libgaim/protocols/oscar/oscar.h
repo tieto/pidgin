@@ -56,11 +56,12 @@
 
 typedef struct _ByteStream         ByteStream;
 typedef struct _ClientInfo         ClientInfo;
-typedef struct _FlapFrame          FlapFrame;
-typedef struct _IcbmCookie         IcbmCookie;
 typedef struct _FlapConnection     FlapConnection;
-typedef struct _OscarData          OscarData;
+typedef struct _FlapFrame          FlapFrame;
 typedef struct _IcbmArgsCh2        IcbmArgsCh2;
+typedef struct _IcbmCookie         IcbmCookie;
+typedef struct _OscarData          OscarData;
+typedef struct _QueuedSnac         QueuedSnac;
 
 typedef guint32 aim_snacid_t;
 
@@ -351,6 +352,13 @@ struct _ByteStream
 	guint32 offset;
 };
 
+struct _QueuedSnac
+{
+	guint16 family;
+	guint16 subtype;
+	FlapFrame *frame;
+};
+
 struct _FlapFrame
 {
 	guint8 channel;
@@ -383,8 +391,12 @@ struct _FlapConnection
 	guint16 subtype;
 	guint16 seqnum; /**< The sequence number of most recent outgoing packet. */
 	GSList *groups;
-	GSList *rateclasses; /* Contains nodes of struct rateclass */
+	GSList *rateclasses; /* Contains nodes of struct rateclass. */
 	/* TODO: Maybe use a GHashTable for rateclasses */
+
+	GSList *queued_snacs; /**< Contains QueuedSnacs. */
+	guint outgoing_timeout;
+	/* TODO: Maybe use a GQueue for outgoing_snacs */
 
 	void *internal; /* internal conn-specific libfaim data */
 };

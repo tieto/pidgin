@@ -72,8 +72,8 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 	flap_connection_send(conn, frame);
 }
 
-static void
-update_rate_class(FlapConnection *conn, guint16 family, guint16 subtype)
+static struct rateclass *
+flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subtype)
 {
 	GSList *tmp1, *tmp2;
 
@@ -88,44 +88,85 @@ update_rate_class(FlapConnection *conn, guint16 family, guint16 subtype)
 			snacpair = tmp2->data;
 			if ((snacpair->group == family) && (snacpair->subtype == subtype))
 			{
-				/*
-				 * We've found the rateclass for this SNAC family
-				 * and subtype!  Update our "current" average by
-				 * calculating a rolling average.  This is pretty
-				 * shoddy.  We should really keep track of the times
-				 * when the last windowsize messages that were sent
-				 * and just calculate the REAL average.
-				 */
-				struct timeval now;
-				struct timezone tz;
-				unsigned long timediff; /* In milliseconds */
-
-				gettimeofday(&now, &tz);
-				timediff = MIN((now.tv_sec - rateclass->last.tv_sec) * 1000 + (now.tv_usec - rateclass->last.tv_usec) / 1000, rateclass->max);
-
-				/* This formula is taken from the joscar API docs. */
-				rateclass->current = MIN(((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize, rateclass->max);
-				rateclass->last.tv_sec = now.tv_sec;
-				rateclass->last.tv_usec = now.tv_usec;
-
-				return;
+				return rateclass;
 			}
 		}
 	}
+
+	return NULL;
 }
 
+/*
+ * Attempt to calculate what our new current average would be if we
+ * were to send a SNAC in this rateclass at the given time.
+ */
+static guint32
+rateclass_get_new_current(FlapConnection *conn, struct rateclass *rateclass, struct timeval now)
+{
+	unsigned long timediff; /* In milliseconds */
+
+	timediff = (now.tv_sec - rateclass->last.tv_sec) * 1000 + (now.tv_usec - rateclass->last.tv_usec) / 1000;
+
+	/* This formula is taken from the joscar API docs. Preesh. */
+	return MIN(((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize, rateclass->max);
+}
+
+static gboolean flap_connection_send_queued(gpointer data)
+{
+	FlapConnection *conn;
+	struct timeval now;
+
+	conn = data;
+	gettimeofday(&now, NULL);
+
+	while (conn->queued_snacs != NULL)
+	{
+		QueuedSnac *queued_snac;
+		struct rateclass *rateclass;
+
+		queued_snac = conn->queued_snacs->data;
+
+		rateclass = flap_connection_get_rateclass(conn, queued_snac->family, queued_snac->subtype);
+		if (rateclass != NULL)
+		{
+			guint32 new_current;
+
+			new_current = rateclass_get_new_current(conn, rateclass, now);
+
+			if (new_current < rateclass->alert)
+				/* Not ready to send this SNAC yet--keep waiting. */
+				return TRUE;
+
+			rateclass->current = new_current;
+			rateclass->last.tv_sec = now.tv_sec;
+			rateclass->last.tv_usec = now.tv_usec;
+		}
+
+		flap_connection_send(conn, queued_snac->frame);
+		g_free(queued_snac);
+		conn->queued_snacs = g_slist_delete_link(conn->queued_snacs, conn->queued_snacs);
+	}
+
+	conn->outgoing_timeout = 0;
+	return FALSE;
+}
 
 /**
  * This sends a channel 2 FLAP containing a SNAC.  The SNAC family and
  * subtype are looked up in the rate info for this connection, and if
  * sending this SNAC will induce rate limiting then we delay sending
  * of the SNAC by putting it into an outgoing holding queue.
+ *
+ * @param data The optional bytestream that makes up the data portion
+ *        of this SNAC.  For empty SNACs this should be NULL.
  */
 void
 flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
 {
 	FlapFrame *frame;
 	guint32 length;
+	gboolean enqueue = FALSE;
+	struct rateclass *rateclass;
 
 	length = data != NULL ? data->offset : 0;
 
@@ -138,8 +179,44 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		byte_stream_putbs(&frame->data, data, length);
 	}
 
-	/* TODO: Outgoing message throttling */
-	update_rate_class(conn, family, subtype);
+	if (conn->outgoing_timeout != 0)
+		enqueue = TRUE;
+	else if ((rateclass = flap_connection_get_rateclass(conn, family, subtype)) != NULL)
+	{
+		struct timeval now;
+		guint32 new_current;
+
+		gettimeofday(&now, NULL);
+		new_current = rateclass_get_new_current(conn, rateclass, now);
+
+		if (new_current < rateclass->alert)
+		{
+			enqueue = TRUE;
+		}
+		else
+		{
+			rateclass->current = new_current;
+			rateclass->last.tv_sec = now.tv_sec;
+			rateclass->last.tv_usec = now.tv_usec;
+		}
+	}
+
+	if (enqueue)
+	{
+		/* We've been sending too fast, so delay this message */
+		QueuedSnac *queued_snac;
+
+		queued_snac = g_new(QueuedSnac, 1);
+		queued_snac->family = family;
+		queued_snac->subtype = subtype;
+		queued_snac->frame = frame;
+		conn->queued_snacs = g_slist_append(conn->queued_snacs, queued_snac);
+
+		if (conn->outgoing_timeout == 0)
+			conn->outgoing_timeout = gaim_timeout_add(500, flap_connection_send_queued, conn);
+
+		return;
+	}
 
 	flap_connection_send(conn, frame);
 }
@@ -267,6 +344,18 @@ flap_connection_destroy_rateclass(struct rateclass *rateclass)
 	free(rateclass);
 }
 
+/**
+ * Free a FlapFrame
+ *
+ * @param frame The frame to free.
+ */
+static void
+flap_frame_destroy(FlapFrame *frame)
+{
+	free(frame->data.data);
+	free(frame);
+}
+
 static gboolean
 flap_connection_destroy_cb(gpointer data)
 {
@@ -333,6 +422,17 @@ flap_connection_destroy_cb(gpointer data)
 		flap_connection_destroy_rateclass(conn->rateclasses->data);
 		conn->rateclasses = g_slist_delete_link(conn->rateclasses, conn->rateclasses);
 	}
+
+	while (conn->queued_snacs != NULL)
+	{
+		QueuedSnac *queued_snac;
+		queued_snac = conn->queued_snacs->data;
+		flap_frame_destroy(queued_snac->frame);
+		g_free(queued_snac);
+		conn->queued_snacs = g_slist_delete_link(conn->queued_snacs, conn->queued_snacs);
+	}
+	if (conn->outgoing_timeout > 0)
+		gaim_timeout_remove(conn->outgoing_timeout);
 
 	g_free(conn);
 
@@ -527,21 +627,6 @@ flap_frame_new(OscarData *od, guint16 channel, int datalen)
 		byte_stream_new(&frame->data, datalen);
 
 	return frame;
-}
-
-/**
- * Free a FlapFrame
- *
- * @param frame The frame to free.
- * @return -1 on error; 0 on success.
- */
-static void
-flap_frame_destroy(FlapFrame *frame)
-{
-	free(frame->data.data);
-	free(frame);
-
-	return;
 }
 
 static void
