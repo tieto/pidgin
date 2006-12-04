@@ -75,22 +75,18 @@ flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, gu
 static struct rateclass *
 flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subtype)
 {
-	GSList *tmp1, *tmp2;
+	GSList *tmp1;
+	gconstpointer key;
+
+	key = GUINT_TO_POINTER((family << 16) + subtype);
 
 	for (tmp1 = conn->rateclasses; tmp1 != NULL; tmp1 = tmp1->next)
 	{
 		struct rateclass *rateclass;
 		rateclass = tmp1->data;
 
-		for (tmp2 = rateclass->members; tmp2 != NULL; tmp2 = tmp2->next)
-		{
-			struct snacpair *snacpair;
-			snacpair = tmp2->data;
-			if ((snacpair->group == family) && (snacpair->subtype == subtype))
-			{
-				return rateclass;
-			}
-		}
+		if (g_hash_table_lookup(rateclass->members, key))
+			return rateclass;
 	}
 
 	return NULL;
@@ -119,12 +115,12 @@ static gboolean flap_connection_send_queued(gpointer data)
 	conn = data;
 	gettimeofday(&now, NULL);
 
-	while (conn->queued_snacs != NULL)
+	while (!g_queue_is_empty(conn->queued_snacs))
 	{
 		QueuedSnac *queued_snac;
 		struct rateclass *rateclass;
 
-		queued_snac = conn->queued_snacs->data;
+		queued_snac = g_queue_peek_head(conn->queued_snacs);
 
 		rateclass = flap_connection_get_rateclass(conn, queued_snac->family, queued_snac->subtype);
 		if (rateclass != NULL)
@@ -144,10 +140,10 @@ static gboolean flap_connection_send_queued(gpointer data)
 
 		flap_connection_send(conn, queued_snac->frame);
 		g_free(queued_snac);
-		conn->queued_snacs = g_slist_delete_link(conn->queued_snacs, conn->queued_snacs);
+		g_queue_pop_head(conn->queued_snacs);
 	}
 
-	conn->outgoing_timeout = 0;
+	conn->queued_timeout = 0;
 	return FALSE;
 }
 
@@ -179,7 +175,7 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		byte_stream_putbs(&frame->data, data, length);
 	}
 
-	if (conn->outgoing_timeout != 0)
+	if (conn->queued_timeout != 0)
 		enqueue = TRUE;
 	else if ((rateclass = flap_connection_get_rateclass(conn, family, subtype)) != NULL)
 	{
@@ -210,10 +206,10 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		queued_snac->family = family;
 		queued_snac->subtype = subtype;
 		queued_snac->frame = frame;
-		conn->queued_snacs = g_slist_append(conn->queued_snacs, queued_snac);
+		g_queue_push_tail(conn->queued_snacs, queued_snac);
 
-		if (conn->outgoing_timeout == 0)
-			conn->outgoing_timeout = gaim_timeout_add(500, flap_connection_send_queued, conn);
+		if (conn->queued_timeout == 0)
+			conn->queued_timeout = gaim_timeout_add(500, flap_connection_send_queued, conn);
 
 		return;
 	}
@@ -272,6 +268,7 @@ flap_connection_new(OscarData *od, int type)
 	conn->fd = -1;
 	conn->subtype = -1;
 	conn->type = type;
+	conn->queued_snacs = g_queue_new();
 
 	od->oscar_connections = g_slist_prepend(od->oscar_connections, conn);
 
@@ -335,13 +332,8 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_destroy_rateclass(struct rateclass *rateclass)
 {
-	while (rateclass->members != NULL)
-	{
-		g_free(rateclass->members->data);
-		rateclass->members = g_slist_delete_link(rateclass->members, rateclass->members);
-	}
-
-	free(rateclass);
+	g_hash_table_destroy(rateclass->members);
+	g_free(rateclass);
 }
 
 /**
@@ -352,8 +344,8 @@ flap_connection_destroy_rateclass(struct rateclass *rateclass)
 static void
 flap_frame_destroy(FlapFrame *frame)
 {
-	free(frame->data.data);
-	free(frame);
+	g_free(frame->data.data);
+	g_free(frame);
 }
 
 static gboolean
@@ -423,16 +415,16 @@ flap_connection_destroy_cb(gpointer data)
 		conn->rateclasses = g_slist_delete_link(conn->rateclasses, conn->rateclasses);
 	}
 
-	while (conn->queued_snacs != NULL)
+	while (!g_queue_is_empty(conn->queued_snacs))
 	{
 		QueuedSnac *queued_snac;
-		queued_snac = conn->queued_snacs->data;
+		queued_snac = g_queue_pop_head(conn->queued_snacs);
 		flap_frame_destroy(queued_snac->frame);
 		g_free(queued_snac);
-		conn->queued_snacs = g_slist_delete_link(conn->queued_snacs, conn->queued_snacs);
 	}
-	if (conn->outgoing_timeout > 0)
-		gaim_timeout_remove(conn->outgoing_timeout);
+	g_queue_free(conn->queued_snacs);
+	if (conn->queued_timeout > 0)
+		gaim_timeout_remove(conn->queued_timeout);
 
 	g_free(conn);
 

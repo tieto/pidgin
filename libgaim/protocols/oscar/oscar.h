@@ -392,11 +392,9 @@ struct _FlapConnection
 	guint16 seqnum; /**< The sequence number of most recent outgoing packet. */
 	GSList *groups;
 	GSList *rateclasses; /* Contains nodes of struct rateclass. */
-	/* TODO: Maybe use a GHashTable for rateclasses */
 
-	GSList *queued_snacs; /**< Contains QueuedSnacs. */
-	guint outgoing_timeout;
-	/* TODO: Maybe use a GQueue for outgoing_snacs */
+	GQueue *queued_snacs; /**< Contains QueuedSnacs. */
+	guint queued_timeout;
 
 	void *internal; /* internal conn-specific libfaim data */
 };
@@ -504,8 +502,7 @@ struct _OscarData
 		gboolean in_transaction;
 	} ssi;
 
-	/* TODO: Implement this as a HashTable for HUGE speed improvement! */
-	GSList *handlerlist;
+	GHashTable *handlerlist;
 
 	/** A linked list containing FlapConnections. */
 	GSList *oscar_connections;
@@ -578,8 +575,8 @@ int aim_send_login(OscarData *, FlapConnection *, const char *, const char *, Cl
 
 void aim_cleansnacs(OscarData *, int maxage);
 
-int oscar_data_addhandler(OscarData *od, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags);
-void aim_clearhandlers(OscarData *od);
+void oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags);
+aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 subtype);
 
 /* flap_connection.c */
 FlapConnection *flap_connection_new(OscarData *, int type);
@@ -1542,9 +1539,6 @@ int byte_stream_putstr(ByteStream *bs, const char *str);
 int byte_stream_putbs(ByteStream *bs, ByteStream *srcbs, int len);
 int byte_stream_putcaps(ByteStream *bs, guint32 caps);
 
-/* rxhandlers.c */
-aim_rxcallback_t aim_callhandler(OscarData *od, guint16 family, guint16 type);
-
 /*
  * Generic SNAC structure.  Rarely if ever used.
  */
@@ -1571,11 +1565,6 @@ struct chatsnacinfo {
 	guint16 instance;
 };
 
-struct snacpair {
-	guint16 group;
-	guint16 subtype;
-};
-
 struct rateclass {
 	guint16 classid;
 	guint32 windowsize;
@@ -1586,8 +1575,7 @@ struct rateclass {
 	guint32 current;
 	guint32 max;
 	guint8 unknown[5]; /* only present in versions >= 3 */
-	GSList *members; /* Contains node of struct snacpair */
-	/* TODO: Maybe use a GHashTable for members */
+	GHashTable *members; /* Key is family and subtype, value is TRUE. */
 
 	struct timeval last; /**< The time when we last sent a SNAC of this rate class. */
 };

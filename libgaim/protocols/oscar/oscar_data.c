@@ -25,17 +25,10 @@ typedef struct _SnacHandler SnacHandler;
 struct _SnacHandler
 {
 	guint16 family;
-	guint16 type;
+	guint16 subtype;
 	aim_rxcallback_t handler;
 	guint16 flags;
 };
-
-static void
-oscar_free_buddyinfo(void *data)
-{
-	struct buddyinfo *bi = data;
-	g_free(bi);
-}
 
 /**
  * Allocates a new OscarData and initializes it with default values.
@@ -49,7 +42,8 @@ oscar_data_new(void)
 
 	aim_initsnachash(od);
 	od->snacid_next = 0x00000001;
-	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
+	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	od->handlerlist = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
 
 	/*
 	 * Register all the modules for this session...
@@ -115,61 +109,39 @@ oscar_data_destroy(OscarData *od)
 		peer_connection_destroy(od->peer_connections->data,
 				OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
 
-	if (od->handlerlist != NULL)
-		aim_clearhandlers(od);
-
 	aim__shutdownmodules(od);
 
 	g_hash_table_destroy(od->buddyinfo);
+	g_hash_table_destroy(od->handlerlist);
 
 	g_free(od);
 }
 
-int
-oscar_data_addhandler(OscarData *od, guint16 family, guint16 type, aim_rxcallback_t newhandler, guint16 flags)
+void
+oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcallback_t newhandler, guint16 flags)
 {
 	SnacHandler *snac_handler;
 
-	gaim_debug_misc("oscar", "Adding handler for %04x/%04x\n", family, type);
+	gaim_debug_misc("oscar", "Adding handler for %04x/%04x\n", family, subtype);
 
 	snac_handler = g_new0(SnacHandler, 1);
 
 	snac_handler->family = family;
-	snac_handler->type = type;
+	snac_handler->subtype = subtype;
 	snac_handler->flags = flags;
 	snac_handler->handler = newhandler;
 
-	od->handlerlist = g_slist_prepend(od->handlerlist, snac_handler);
-
-	return 0;
-}
-
-void
-aim_clearhandlers(OscarData *od)
-{
-	SnacHandler *snac_handler;
-
-	while (od->handlerlist != NULL)
-	{
-		snac_handler = od->handlerlist->data;
-		od->handlerlist = g_slist_remove(od->handlerlist, snac_handler);
-		g_free(snac_handler);
-	}
-	od->handlerlist = NULL;
+	g_hash_table_insert(od->handlerlist,
+			GUINT_TO_POINTER((family << 16) + subtype),
+			snac_handler);
 }
 
 aim_rxcallback_t
-aim_callhandler(OscarData *od, guint16 family, guint16 type)
+aim_callhandler(OscarData *od, guint16 family, guint16 subtype)
 {
-	GSList *cur;
 	SnacHandler *snac_handler;
 
-	for (cur = od->handlerlist; cur != NULL; cur = cur->next)
-	{
-		snac_handler = cur->data;
-		if ((snac_handler->family == family) && (snac_handler->type == type))
-			return snac_handler->handler;
-	}
+	snac_handler = g_hash_table_lookup(od->handlerlist, GUINT_TO_POINTER((family << 16) + subtype));
 
-	return NULL;
+	return snac_handler ? snac_handler->handler : NULL;
 }

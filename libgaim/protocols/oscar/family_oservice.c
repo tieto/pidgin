@@ -278,18 +278,6 @@ rateclass_find(GSList *rateclasses, guint16 id)
 	return NULL;
 }
 
-static void
-rateclass_addpair(struct rateclass *rateclass, guint16 group, guint16 type)
-{
-	struct snacpair *snacpair;
-
-	snacpair = g_new(struct snacpair, 1);
-	snacpair->group = group;
-	snacpair->subtype = type;
-
-	rateclass->members = g_slist_prepend(rateclass->members, snacpair);
-}
-
 /* Subtype 0x0007 - Rate Parameters */
 static int
 rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -326,6 +314,7 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		if (mod->version >= 3)
 			byte_stream_getrawbuf(bs, rateclass->unknown, sizeof(rateclass->unknown));
 
+		rateclass->members = g_hash_table_new(g_direct_hash, g_direct_equal);
 		rateclass->last.tv_sec = 0;
 		rateclass->last.tv_usec = 0;
 		conn->rateclasses = g_slist_prepend(conn->rateclasses, rateclass);
@@ -354,9 +343,10 @@ rateresp(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 			subtype = byte_stream_get16(bs);
 
 			if (rateclass != NULL)
-				rateclass_addpair(rateclass, group, subtype);
+				g_hash_table_insert(rateclass->members,
+						GUINT_TO_POINTER((group << 16) + subtype),
+						GUINT_TO_POINTER(TRUE));
 		}
-		rateclass->members = g_slist_reverse(rateclass->members);
 	}
 
 	/*
