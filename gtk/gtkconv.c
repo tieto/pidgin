@@ -7526,7 +7526,10 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	g_return_if_fail(conv != NULL);
 
-	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
+	/* clear unseen flag if conversation is not hidden */
+	if(!gaim_gtkconv_is_hidden(gtkconv)) {
+		gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
+	}
 
 	/* Update the menubar */
 
