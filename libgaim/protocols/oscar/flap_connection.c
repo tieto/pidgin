@@ -97,11 +97,11 @@ flap_connection_get_rateclass(FlapConnection *conn, guint16 family, guint16 subt
  * were to send a SNAC in this rateclass at the given time.
  */
 static guint32
-rateclass_get_new_current(FlapConnection *conn, struct rateclass *rateclass, struct timeval now)
+rateclass_get_new_current(FlapConnection *conn, struct rateclass *rateclass, struct timeval *now)
 {
 	unsigned long timediff; /* In milliseconds */
 
-	timediff = (now.tv_sec - rateclass->last.tv_sec) * 1000 + (now.tv_usec - rateclass->last.tv_usec) / 1000;
+	timediff = (now->tv_sec - rateclass->last.tv_sec) * 1000 + (now->tv_usec - rateclass->last.tv_usec) / 1000;
 
 	/* This formula is taken from the joscar API docs. Preesh. */
 	return MIN(((rateclass->current * (rateclass->windowsize - 1)) + timediff) / rateclass->windowsize, rateclass->max);
@@ -127,7 +127,7 @@ static gboolean flap_connection_send_queued(gpointer data)
 		{
 			guint32 new_current;
 
-			new_current = rateclass_get_new_current(conn, rateclass, now);
+			new_current = rateclass_get_new_current(conn, rateclass, &now);
 
 			if (new_current < rateclass->alert)
 				/* Not ready to send this SNAC yet--keep waiting. */
@@ -183,7 +183,7 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		guint32 new_current;
 
 		gettimeofday(&now, NULL);
-		new_current = rateclass_get_new_current(conn, rateclass, now);
+		new_current = rateclass_get_new_current(conn, rateclass, &now);
 
 		if (new_current < rateclass->alert)
 		{

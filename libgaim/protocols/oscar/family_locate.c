@@ -393,7 +393,7 @@ aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
 		 * requesting away messages and info too quickly.
 		 */
 		if (od->getinfotimer == 0)
-			od->getinfotimer = gaim_timeout_add(10000,
+			od->getinfotimer = gaim_timeout_add(500,
 					gaim_reqinfo_timeout_cb, od);
 	}
 
