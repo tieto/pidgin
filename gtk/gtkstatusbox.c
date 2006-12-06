@@ -1406,7 +1406,7 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStat
 	
 	if (ewidget != status_box->tree_view) {
 		if (ewidget == status_box->toggle_button && 
-		    !status_box->popup_in_progress &&
+		    status_box->popup_in_progress &&
 		    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (status_box->toggle_button))) {
 			gaim_gtk_status_box_popdown (status_box);
 			return TRUE;
