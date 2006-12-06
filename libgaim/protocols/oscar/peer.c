@@ -528,10 +528,14 @@ peer_connection_common_established_cb(gpointer data, gint source, const gchar *e
 	gaim_timeout_remove(conn->connect_timeout_timer);
 	conn->connect_timeout_timer = 0;
 
-	if (verified) {
+	if (conn->client_connect_data != NULL)
+	{
 		gaim_proxy_connect_cancel(conn->client_connect_data);
 		conn->client_connect_data = NULL;
-	} else {
+	}
+
+	if (conn->verified_connect_data != NULL)
+	{
 		gaim_proxy_connect_cancel(conn->verified_connect_data);
 		conn->verified_connect_data = NULL;
 	}
