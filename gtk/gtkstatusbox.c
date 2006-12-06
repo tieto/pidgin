@@ -1622,8 +1622,7 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toggle_button, requisition);
 
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
-	if ( gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
-		requisition->height = MAX(requisition->height, 30 + (border_width*2));
+	requisition->height = MAX(requisition->height, 30 + (border_width*2));
 
 	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
@@ -1685,8 +1684,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	gtk_widget_size_request(status_box->toggle_button, &req);
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
 
-	if ( gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
-		req.height = MAX(req.height, 30 + (border_width*2));
+	req.height = MAX(req.height, 30 + (border_width*2));
 
 	box_alc = *allocation;
 
