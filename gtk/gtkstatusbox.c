@@ -1013,6 +1013,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			gaim_account_get_active_status(status_box->account));
 	}
 	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), status_box->dropdown_store);
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
 }
 
 static gboolean combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
@@ -1397,6 +1398,18 @@ update_buddyicon_cb(const char *name, GaimPrefType type,
 	buddy_icon_set_cb(value, (GtkGaimStatusBox*) data);
 }
 
+static void
+treeview_activate_current_selection(GtkGaimStatusBox *status_box, GtkTreePath *path)
+{
+	if (status_box->active_row)
+		gtk_tree_row_reference_free(status_box->active_row);
+	
+	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
+	
+	gaim_gtk_status_box_popdown (status_box);
+	gtk_gaim_status_box_changed(status_box);
+}
+
 static gboolean 
 treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *status_box) 
 {
@@ -1426,21 +1439,38 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStat
 					     event->x, event->y,
 					     &path,
 					     NULL, NULL, NULL);
-	
-	
+
 	if (!ret)
 		return TRUE; /* clicked outside window? */
 	
-	if (status_box->active_row)
-		gtk_tree_row_reference_free(status_box->active_row);
-	
-	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
+	treeview_activate_current_selection(status_box, path);
 	gtk_tree_path_free (path);
-	
-	gaim_gtk_status_box_popdown (status_box);
-	gtk_gaim_status_box_changed(status_box);
 
 	return TRUE;
+}
+
+static gboolean
+treeview_key_press_event(GtkWidget *widget,
+			GdkEventKey *event, GtkGaimStatusBox *box)
+{
+	if (box->popup_in_progress) {
+		if (event->keyval == GDK_Escape) {
+			gaim_gtk_status_box_popdown(box);
+			return TRUE;
+		} else if (event->keyval == GDK_Return) {
+			GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(box->tree_view));
+			GtkTreeIter iter;
+			GtkTreePath *path;
+
+			if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+				path = gtk_tree_model_get_path(GTK_TREE_MODEL(box->dropdown_store), &iter);
+				treeview_activate_current_selection(box, path);
+				gtk_tree_path_free (path);
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
 }
 
 static void
@@ -1528,10 +1558,13 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 				       status_box->column);
 	  gtk_tree_view_column_pack_start(status_box->column, icon_rend, FALSE);
 	  gtk_tree_view_column_pack_start(status_box->column, text_rend, TRUE);
-	  gtk_tree_view_column_set_attributes(GTK_CELL_LAYOUT(status_box->column), icon_rend, "pixbuf", ICON_COLUMN, NULL);
-	  gtk_tree_view_column_set_attributes(GTK_CELL_LAYOUT(status_box->column), text_rend, "markup", TEXT_COLUMN, NULL);
+	  gtk_tree_view_column_set_attributes(status_box->column, icon_rend, "pixbuf", ICON_COLUMN, NULL);
+	  gtk_tree_view_column_set_attributes(status_box->column, text_rend, "markup", TEXT_COLUMN, NULL);
 	  gtk_container_add(GTK_CONTAINER(status_box->scrolled_window), status_box->tree_view);
 	  gtk_widget_show(status_box->tree_view);
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(status_box->tree_view),
+				gaim_gtk_tree_view_search_equal_func, NULL, NULL);
 	  
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
@@ -1582,6 +1615,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",
 					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
 	g_signal_connect(G_OBJECT(status_box->popup_window), "button_release_event", G_CALLBACK(treeview_button_release_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->popup_window), "key_press_event", G_CALLBACK(treeview_key_press_event), status_box);
 
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(status_box->tree_view), dropdown_store_row_separator_func, NULL, NULL);

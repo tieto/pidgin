@@ -3622,111 +3622,6 @@ static void _prefs_change_sort_method(const char *pref_name, GaimPrefType type,
 		gaim_gtk_blist_sort_method_set(val);
 }
 
-/*
- * "This is so dead sexy."
- * "Two thumbs up."
- * "Best movie of the year."
- *
- * This is the function that handles CTRL+F searching in the buddy list.
- * It finds the top-most buddy/group/chat/whatever containing the
- * entered string.
- *
- * It's somewhat ineffecient, because we strip all the HTML from the
- * "name" column of the buddy list (because the GtkTreeModel does not
- * contain the screen name in a non-markedup format).  But the alternative
- * is to add an extra column to the GtkTreeModel.  And this function is
- * used rarely, so it shouldn't matter TOO much.
- */
-static gboolean
-_search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
-{
-	gchar *enteredstring;
-	gchar *tmp;
-	gchar *withmarkup;
-	gchar *nomarkup;
-	gchar *normalized;
-	gboolean result;
-	size_t i;
-	size_t len;
-	PangoLogAttr *log_attrs;
-	gchar *word;
-
-	if (strcasecmp(key, "Global Thermonuclear War") == 0)
-	{
-		gaim_notify_info(NULL, "WOPR",
-				"Wouldn't you prefer a nice game of chess?", NULL);
-		return FALSE;
-	}
-
-	gtk_tree_model_get(model, iter, column, &withmarkup, -1);
-
-	tmp = g_utf8_normalize(key, -1, G_NORMALIZE_DEFAULT);
-	enteredstring = g_utf8_casefold(tmp, -1);
-	g_free(tmp);
-
-	nomarkup = gaim_markup_strip_html(withmarkup);
-	tmp = g_utf8_normalize(nomarkup, -1, G_NORMALIZE_DEFAULT);
-	g_free(nomarkup);
-	normalized = g_utf8_casefold(tmp, -1);
-	g_free(tmp);
-
-	if (gaim_str_has_prefix(normalized, enteredstring))
-	{
-		g_free(withmarkup);
-		g_free(enteredstring);
-		g_free(normalized);
-		return FALSE;
-	}
-
-
-	/* Use Pango to separate by words. */
-	len = g_utf8_strlen(normalized, -1);
-	log_attrs = g_new(PangoLogAttr, len + 1);
-
-	pango_get_log_attrs(normalized, strlen(normalized), -1, NULL, log_attrs, len + 1);
-
-	word = normalized;
-	result = TRUE;
-	for (i = 0; i < (len - 1) ; i++)
-	{
-		if (log_attrs[i].is_word_start &&
-		    gaim_str_has_prefix(word, enteredstring))
-		{
-			result = FALSE;
-			break;
-		}
-		word = g_utf8_next_char(word);
-	}
-	g_free(log_attrs);
-
-/* The non-Pango version. */
-#if 0
-	word = normalized;
-	result = TRUE;
-	while (word[0] != '\0')
-	{
-		gunichar c = g_utf8_get_char(word);
-		if (!g_unichar_isalnum(c))
-		{
-			word = g_utf8_find_next_char(word, NULL);
-			if (gaim_str_has_prefix(word, enteredstring))
-			{
-				result = FALSE;
-				break;
-			}
-		}
-		else
-			word = g_utf8_find_next_char(word, NULL);
-	}
-#endif
-
-	g_free(withmarkup);
-	g_free(enteredstring);
-	g_free(normalized);
-
-	return result;
-}
-
 static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 {
 	GList *list;
@@ -4173,7 +4068,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Enable CTRL+F searching */
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(gtkblist->treeview), NAME_COLUMN);
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview), _search_func, NULL, NULL);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview), gaim_gtk_tree_view_search_equal_func, NULL, NULL);
 
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);

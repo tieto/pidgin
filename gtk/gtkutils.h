@@ -490,8 +490,6 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
 											 GError **error);
 #endif
 
-#endif /* _GAIM_GTKUTILS_H_ */
-
 /**
  * Set or unset a custom buddyicon for a user.
  *
@@ -523,3 +521,17 @@ char *gaim_gtk_make_pretty_arrows(const char *str);
 void *gaim_gtk_make_mini_dialog(GaimConnection *handle, const char* stock_id, 
 				const char *primary, const char *secondary,
 				void *user_data,  ...);
+
+/**
+ * This is a callback function to be used for Ctrl+F searching in treeviews.
+ * Sample Use:
+ * 		gtk_tree_view_set_search_equal_func(treeview,
+ * 				gaim_gtk_tree_view_search_equal_func,
+ * 				search_data, search_data_destroy_cb);
+ *
+ */
+gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
+			const gchar *key, GtkTreeIter *iter, gpointer data);
+
+#endif /* _GAIM_GTKUTILS_H_ */
+

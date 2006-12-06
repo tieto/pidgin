@@ -599,6 +599,9 @@ void gaim_gtk_plugin_dialog_show()
 	gtk_tree_view_column_set_sort_column_id(col, 1);
 	g_object_unref(G_OBJECT(ls));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(event_view), 1);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(event_view),
+				gaim_gtk_tree_view_search_equal_func, NULL, NULL);
 
 	expander = gtk_expander_new(_("<b>Plugin Details</b>"));
 	gtk_expander_set_use_markup(GTK_EXPANDER(expander), TRUE);
