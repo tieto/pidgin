@@ -328,7 +328,7 @@ peer_proxy_connection_established_cb(gpointer data, gint source, const gchar *er
 
 	conn = data;
 
-	conn->connect_data = NULL;
+	conn->verified_connect_data = NULL;
 
 	if (source < 0)
 	{

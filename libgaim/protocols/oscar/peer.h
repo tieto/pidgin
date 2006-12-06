@@ -36,11 +36,10 @@ typedef struct _PeerConnection        PeerConnection;
 
 #define PEER_CONNECTION_FLAG_INITIATED_BY_ME  0x0001
 #define PEER_CONNECTION_FLAG_APPROVED         0x0002
-#define PEER_CONNECTION_FLAG_TRIED_VERIFIEDIP 0x0004
-#define PEER_CONNECTION_FLAG_TRIED_CLIENTIP   0x0008
-#define PEER_CONNECTION_FLAG_TRIED_INCOMING   0x0010
-#define PEER_CONNECTION_FLAG_TRIED_PROXY      0x0020
-#define PEER_CONNECTION_FLAG_IS_INCOMING      0x0040
+#define PEER_CONNECTION_FLAG_TRIED_DIRECT     0x0004
+#define PEER_CONNECTION_FLAG_TRIED_INCOMING   0x0008
+#define PEER_CONNECTION_FLAG_TRIED_PROXY      0x0010
+#define PEER_CONNECTION_FLAG_IS_INCOMING      0x0020
 
 #define PEER_TYPE_PROMPT 0x0101 /* "I am going to send you this file, is that ok?" */
 #define PEER_TYPE_RESUMESOMETHING 0x0106 /* I really don't know */
@@ -157,8 +156,9 @@ struct _PeerConnection
 	/**
 	 * This is only used when the peer connection is being established.
 	 */
-	GaimProxyConnectData *connect_data;
-
+	GaimProxyConnectData *client_connect_data;
+	GaimProxyConnectData *verified_connect_data;
+	
 	/**
 	 * This is only used when the peer connection is being established.
 	 */

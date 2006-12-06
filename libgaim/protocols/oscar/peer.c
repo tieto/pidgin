@@ -139,10 +139,16 @@ peer_connection_close(PeerConnection *conn)
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 		peer_oft_close(conn);
 
-	if (conn->connect_data != NULL)
+	if (conn->verified_connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->connect_data);
-		conn->connect_data = NULL;
+		gaim_proxy_connect_cancel(conn->verified_connect_data);
+		conn->verified_connect_data = NULL;
+	}
+
+	if (conn->client_connect_data != NULL)
+	{
+		gaim_proxy_connect_cancel(conn->client_connect_data);
+		conn->client_connect_data = NULL;
 	}
 
 	if (conn->listen_data != NULL)
@@ -497,13 +503,17 @@ peer_connection_finalize_connection(PeerConnection *conn)
  * either connected or failed to connect.
  */
 static void
-peer_connection_established_cb(gpointer data, gint source, const gchar *error_message)
+peer_connection_common_established_cb(gpointer data, gint source, const gchar *error_message, gboolean verified)
 {
 	PeerConnection *conn;
 
 	conn = data;
 
-	conn->connect_data = NULL;
+	if (verified)
+		conn->verified_connect_data = NULL;
+	else
+		conn->client_connect_data = NULL;
+	
 	gaim_timeout_remove(conn->connect_timeout_timer);
 	conn->connect_timeout_timer = 0;
 
@@ -512,10 +522,30 @@ peer_connection_established_cb(gpointer data, gint source, const gchar *error_me
 		peer_connection_trynext(conn);
 		return;
 	}
-
+	
+	if (verified) {
+		gaim_proxy_connect_cancel(conn->client_connect_data);
+		conn->client_connect_data = NULL;
+	} else {
+		gaim_proxy_connect_cancel(conn->verified_connect_data);
+		conn->verified_connect_data = NULL;
+	}
+	
 	conn->fd = source;
 
 	peer_connection_finalize_connection(conn);
+}
+
+static void
+peer_connection_verified_established_cb(gpointer data, gint source, const gchar *error_message)
+{
+	peer_connection_common_established_cb(data, source, error_message, TRUE);
+}
+	
+static void
+peer_connection_client_established_cb(gpointer data, gint source, const gchar *error_message)
+{
+	peer_connection_common_established_cb(data, source, error_message, FALSE);
 }
 
 /**
@@ -639,7 +669,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 /**
  * This is a callback function used when we're connecting to a peer
  * using either the client IP or the verified IP and the connection
- * took longer than 15 seconds to complete.  We do this because
+ * took longer than 5 seconds to complete.  We do this because
  * waiting for the OS to time out the connection attempt is not
  * practical--the default timeout on many OSes can be 3 minutes or
  * more, and users are impatient.
@@ -653,6 +683,12 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
  * I suppose this line of thinking is discriminatory against people
  * with very high lag but decent throughput who are transferring
  * large files.  But we don't care about those people.
+ *
+ * I (Sean) changed the timeout from 15 to 5 seconds, as 60 seconds is
+ * too long for a user to wait to send a file. I'm also parallelizing
+ * requests when possible. The longest we should have to wait now is 10
+ * seconds. We shouldn't make it shorter than this.
+ * 
  */
 static gboolean
 peer_connection_tooktoolong(gpointer data)
@@ -689,12 +725,14 @@ peer_connection_trynext(PeerConnection *conn)
 	peer_connection_close(conn);
 
 	/*
-	 * 1. Attempt to connect to the remote user using their verifiedip.
+	 * 1. Attempt to connect to the remote user using their verifiedip and clientip.
+	 *    We try these at the same time and use whichever succeeds first, so we don't
+	 *    have to wait for a timeout.
 	 */
-	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_VERIFIEDIP) &&
+	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_DIRECT) &&
 		(conn->verifiedip != NULL) && (conn->port != 0) && (!conn->use_proxy))
 	{
-		conn->flags |= PEER_CONNECTION_FLAG_TRIED_VERIFIEDIP;
+		conn->flags |= PEER_CONNECTION_FLAG_TRIED_DIRECT;
 
 		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 		{
@@ -708,48 +746,26 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
-		conn->connect_data = gaim_proxy_connect(NULL, account,
+		conn->verified_connect_data = gaim_proxy_connect(NULL, account,
 				conn->verifiedip, conn->port,
-				peer_connection_established_cb, conn);
-		if (conn->connect_data != NULL)
+				peer_connection_verified_established_cb, conn);
+		if (conn->verified_connect_data != NULL)
 		{
 			/* Connecting... */
-			conn->connect_timeout_timer = gaim_timeout_add(15000,
+			conn->connect_timeout_timer = gaim_timeout_add(5000,
 					peer_connection_tooktoolong, conn);
-			return;
 		}
-	}
-
-	/*
-	 * 2. Attempt to connect to the remote user using their clientip.
-	 */
-	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_CLIENTIP) &&
-		(conn->clientip != NULL) && (conn->port != 0) && (!conn->use_proxy))
-	{
-		conn->flags |= PEER_CONNECTION_FLAG_TRIED_CLIENTIP;
 
 		if ((conn->verifiedip == NULL) ||
 			strcmp(conn->verifiedip, conn->clientip))
 		{
-			if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
-			{
-				gchar *tmp;
-				GaimConversation *conv;
-				tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
-						conn->clientip, conn->port);
-				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
-				gaim_conversation_write(conv, NULL, tmp,
-						GAIM_MESSAGE_SYSTEM, time(NULL));
-				g_free(tmp);
-			}
-
-			conn->connect_data = gaim_proxy_connect(NULL, account,
+			conn->client_connect_data = gaim_proxy_connect(NULL, account,
 					conn->clientip, conn->port,
-					peer_connection_established_cb, conn);
-			if (conn->connect_data != NULL)
+					peer_connection_client_established_cb, conn);
+			if (conn->connect_timeout_timer == 0 && conn->verified_connect_data != NULL)
 			{
 				/* Connecting... */
-				conn->connect_timeout_timer = gaim_timeout_add(15000,
+				conn->connect_timeout_timer = gaim_timeout_add(5000,
 						peer_connection_tooktoolong, conn);
 				return;
 			}
@@ -757,7 +773,7 @@ peer_connection_trynext(PeerConnection *conn)
 	}
 
 	/*
-	 * 3. Attempt to have the remote user connect to us (using both
+	 * 2. Attempt to have the remote user connect to us (using both
 	 *    our verifiedip and our clientip).
 	 */
 	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_INCOMING) &&
@@ -781,7 +797,7 @@ peer_connection_trynext(PeerConnection *conn)
 	}
 
 	/*
-	 * 4. Attempt to have both users connect to an intermediate proxy
+	 * 3. Attempt to have both users connect to an intermediate proxy
 	 *    server.
 	 */
 	if (!(conn->flags & PEER_CONNECTION_FLAG_TRIED_PROXY))
@@ -807,11 +823,11 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
-		conn->connect_data = gaim_proxy_connect(NULL, account,
+		conn->verified_connect_data = gaim_proxy_connect(NULL, account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
 				peer_proxy_connection_established_cb, conn);
-		if (conn->connect_data != NULL)
+		if (conn->verified_connect_data != NULL)
 		{
 			/* Connecting... */
 			return;
