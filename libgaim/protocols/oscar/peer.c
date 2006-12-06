@@ -513,16 +513,21 @@ peer_connection_common_established_cb(gpointer data, gint source, const gchar *e
 		conn->verified_connect_data = NULL;
 	else
 		conn->client_connect_data = NULL;
-	
-	gaim_timeout_remove(conn->connect_timeout_timer);
-	conn->connect_timeout_timer = 0;
 
 	if (source < 0)
 	{
-		peer_connection_trynext(conn);
+		if ((conn->verified_connect_data == NULL) &&
+			(conn->client_connect_data == NULL))
+		{
+			/* Our parallel connection attemps have both failed. */
+			peer_connection_trynext(conn);
+		}
 		return;
 	}
-	
+
+	gaim_timeout_remove(conn->connect_timeout_timer);
+	conn->connect_timeout_timer = 0;
+
 	if (verified) {
 		gaim_proxy_connect_cancel(conn->client_connect_data);
 		conn->client_connect_data = NULL;
@@ -530,7 +535,7 @@ peer_connection_common_established_cb(gpointer data, gint source, const gchar *e
 		gaim_proxy_connect_cancel(conn->verified_connect_data);
 		conn->verified_connect_data = NULL;
 	}
-	
+
 	conn->fd = source;
 
 	peer_connection_finalize_connection(conn);
@@ -541,7 +546,7 @@ peer_connection_verified_established_cb(gpointer data, gint source, const gchar 
 {
 	peer_connection_common_established_cb(data, source, error_message, TRUE);
 }
-	
+
 static void
 peer_connection_client_established_cb(gpointer data, gint source, const gchar *error_message)
 {
@@ -688,7 +693,6 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
  * too long for a user to wait to send a file. I'm also parallelizing
  * requests when possible. The longest we should have to wait now is 10
  * seconds. We shouldn't make it shorter than this.
- * 
  */
 static gboolean
 peer_connection_tooktoolong(gpointer data)
@@ -697,7 +701,7 @@ peer_connection_tooktoolong(gpointer data)
 
 	conn = data;
 
-	gaim_debug_info("oscar", "Peer connection timed out after 15 seconds.  "
+	gaim_debug_info("oscar", "Peer connection timed out after 5 seconds.  "
 			"Trying next method...\n");
 
 	peer_connection_close(conn);
@@ -749,12 +753,6 @@ peer_connection_trynext(PeerConnection *conn)
 		conn->verified_connect_data = gaim_proxy_connect(NULL, account,
 				conn->verifiedip, conn->port,
 				peer_connection_verified_established_cb, conn);
-		if (conn->verified_connect_data != NULL)
-		{
-			/* Connecting... */
-			conn->connect_timeout_timer = gaim_timeout_add(5000,
-					peer_connection_tooktoolong, conn);
-		}
 
 		if ((conn->verifiedip == NULL) ||
 			strcmp(conn->verifiedip, conn->clientip))
@@ -762,13 +760,15 @@ peer_connection_trynext(PeerConnection *conn)
 			conn->client_connect_data = gaim_proxy_connect(NULL, account,
 					conn->clientip, conn->port,
 					peer_connection_client_established_cb, conn);
-			if (conn->connect_timeout_timer == 0 && conn->verified_connect_data != NULL)
-			{
-				/* Connecting... */
-				conn->connect_timeout_timer = gaim_timeout_add(5000,
-						peer_connection_tooktoolong, conn);
-				return;
-			}
+		}
+
+		if ((conn->verified_connect_data != NULL) ||
+			(conn->client_connect_data != NULL))
+		{
+			/* Connecting... */
+			conn->connect_timeout_timer = gaim_timeout_add(5000,
+					peer_connection_tooktoolong, conn);
+			return;
 		}
 	}
 
