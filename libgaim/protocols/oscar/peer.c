@@ -421,8 +421,14 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		if (conn->ready)
+		{
+			gaim_input_remove(conn->watcher_outgoing);
+			conn->watcher_outgoing = 0;
+			close(conn->fd);
+			conn->fd = -1;
 			peer_connection_schedule_destroy(conn,
 					OSCAR_DISCONNECT_LOST_CONNECTION, NULL);
+		}
 		else
 		{
 			/*
@@ -450,7 +456,7 @@ peer_connection_send(PeerConnection *conn, ByteStream *bs)
 	gaim_circ_buffer_append(conn->buffer_outgoing, bs->data, bs->len);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if (conn->watcher_outgoing == 0)
+	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
 	{
 		conn->watcher_outgoing = gaim_input_add(conn->fd,
 				GAIM_INPUT_WRITE, send_cb, conn);
@@ -707,8 +713,6 @@ peer_connection_tooktoolong(gpointer data)
 
 	gaim_debug_info("oscar", "Peer connection timed out after 5 seconds.  "
 			"Trying next method...\n");
-
-	peer_connection_close(conn);
 
 	peer_connection_trynext(conn);
 

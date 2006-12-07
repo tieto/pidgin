@@ -129,7 +129,8 @@ static gboolean flap_connection_send_queued(gpointer data)
 
 			new_current = rateclass_get_new_current(conn, rateclass, &now);
 
-			if (new_current < rateclass->alert)
+			if (new_current < rateclass->alert + 100)
+				/* (Add 100ms padding to account for inaccuracies in the calculation) */
 				/* Not ready to send this SNAC yet--keep waiting. */
 				return TRUE;
 
@@ -185,8 +186,9 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		gettimeofday(&now, NULL);
 		new_current = rateclass_get_new_current(conn, rateclass, &now);
 
-		if (new_current < rateclass->alert)
+		if (new_current < rateclass->alert + 100)
 		{
+			/* (Add 100ms padding to account for inaccuracies in the calculation) */
 			enqueue = TRUE;
 		}
 		else
@@ -905,6 +907,10 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
+		gaim_input_remove(conn->watcher_outgoing);
+		conn->watcher_outgoing = 0;
+		close(conn->fd);
+		conn->fd = -1;
 		flap_connection_schedule_destroy(conn,
 				OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
 		return;
@@ -930,7 +936,7 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 	gaim_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if (conn->watcher_outgoing == 0)
+	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
 	{
 		conn->watcher_outgoing = gaim_input_add(conn->fd,
 				GAIM_INPUT_WRITE, send_cb, conn);
