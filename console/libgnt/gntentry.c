@@ -334,28 +334,49 @@ del_to_end(GntBindable *bind, GList *null)
 	return TRUE;
 }
 
+#define SAME(a,b)    ((g_unichar_isalpha(a) && g_unichar_isalpha(b)) || \
+				(g_unichar_isdigit(a) && g_unichar_isdigit(b)) || \
+				(g_unichar_isspace(a) && g_unichar_isspace(b)) || \
+				(g_unichar_iswide(a) && g_unichar_iswide(b)))
+
 static const char *
 begin_word(const char *text, const char *begin)
 {
-	char ch;
-	while (text > begin && (isspace(*text) || !*text))
-		text--;
-	ch = *text;
-#define SAME(a,b)    ((isalpha(a) && isalpha(b)) || (isdigit(a) && isdigit(b)) || (isspace(a) && isspace(b)))
-	while (--text >= begin) {
-		if (!SAME(ch, *text))
+	gunichar ch = 0;
+	while (text > begin && (!*text || g_unichar_isspace(g_utf8_get_char(text))))
+		text = g_utf8_find_prev_char(begin, text);
+	ch = g_utf8_get_char(text);
+	while ((text = g_utf8_find_prev_char(begin, text)) >= begin) {
+		gunichar cur = g_utf8_get_char(text);
+		if (!SAME(ch, cur))
 			break;
 	}
-#undef SAME
 
-	return ++text;
+	return (text ? g_utf8_find_next_char(text, NULL) : begin);
 }
 
+static const char *
+next_begin_word(const char *text, const char *end)
+{
+	gunichar ch = 0;
+	ch = g_utf8_get_char(text);
+	while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
+		gunichar cur = g_utf8_get_char(text);
+		if (!SAME(ch, cur))
+			break;
+	}
+
+	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
+		text = g_utf8_find_next_char(text, end);
+	return (text ? text : end);
+}
+
+#undef SAME
 static gboolean
 move_back_word(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
-	const char *iter = entry->cursor - 1;
+	const char *iter = g_utf8_find_prev_char(entry->start, entry->cursor);
 
 	if (iter < entry->start)
 		return TRUE;
@@ -372,7 +393,7 @@ del_prev_word(GntBindable *bind, GList *null)
 {
 	GntWidget *widget = GNT_WIDGET(bind);
 	GntEntry *entry = GNT_ENTRY(bind);
-	char *iter = entry->cursor - 1;
+	char *iter = g_utf8_find_prev_char(entry->start, entry->cursor);
 	int count;
 
 	if (iter < entry->start)
@@ -390,6 +411,32 @@ del_prev_word(GntBindable *bind, GList *null)
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 	entry_redraw(widget);
 
+	return TRUE;
+}
+
+static gboolean
+move_forward_word(GntBindable *bind, GList *list)
+{
+	GntEntry *entry = GNT_ENTRY(bind);
+	GntWidget *widget = GNT_WIDGET(bind);
+	entry->cursor = (char *)next_begin_word(entry->cursor, entry->end);
+	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width) {
+		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+	}
+	entry_redraw(widget);
+	return TRUE;
+}
+
+static gboolean
+move_forward_word(GntBindable *bind, GList *list)
+{
+	GntEntry *entry = GNT_ENTRY(bind);
+	GntWidget *widget = GNT_WIDGET(bind);
+	entry->cursor = (char *)next_begin_word(entry->cursor, entry->end);
+	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width) {
+		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+	}
+	entry_redraw(widget);
 	return TRUE;
 }
 
@@ -571,13 +618,17 @@ gnt_entry_class_init(GntEntryClass *klass)
 				NULL, 1, NULL);
 #endif
 	gnt_bindable_class_register_action(bindable, "cursor-prev-word", move_back_word,
-				NULL, NULL);
+				"\033" "b", NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-prev", move_back,
 				GNT_KEY_LEFT, NULL);
 	gnt_bindable_register_binding(bindable, "cursor-prev", GNT_KEY_CTRL_B, NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-next", move_forward,
 				GNT_KEY_RIGHT, NULL);
 	gnt_bindable_register_binding(bindable, "cursor-next", GNT_KEY_CTRL_F, NULL);
+	gnt_bindable_class_register_action(bindable, "cursor-next-word", move_forward_word,
+				"\033" "f", NULL);
+	gnt_bindable_class_register_action(bindable, "cursor-next-word", delete_forward_word,
+				"\033" "d", NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-show", suggest_show,
 				"\t", NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-next", suggest_next,
