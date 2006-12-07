@@ -294,9 +294,12 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	g_string_append_printf(text, "<%s", node_name);
 
 	if (node->namespace) {
-		char *namespace = g_markup_escape_text(node->namespace, -1);
-		g_string_append_printf(text, " xmlns='%s'", namespace);
-		g_free(namespace);
+		if(!node->parent || !node->parent->namespace || strcmp(node->namespace, node->parent->namespace))
+		{
+			char *namespace = g_markup_escape_text(node->namespace, -1);
+			g_string_append_printf(text, " xmlns='%s'", namespace);
+			g_free(namespace);
+		}
 	}
 	for(c = node->child; c; c = c->next)
 	{
