@@ -773,7 +773,6 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 		gtk_tree_row_reference_free(status_box->active_row);
 	if (path) {   /* path should never be NULL */
 		status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
-		gaim_debug_fatal("XXXX", "%s\n", gtk_tree_path_to_string(path));
 		gtk_tree_path_free(path);
 	} else
 		status_box->active_row = NULL;
@@ -1519,57 +1518,56 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
 
-	
-          status_box->popup_window = gtk_window_new (GTK_WINDOW_POPUP);
+	status_box->popup_window = gtk_window_new (GTK_WINDOW_POPUP);
 
-	  toplevel = gtk_widget_get_toplevel (GTK_WIDGET (status_box));
-	  if (GTK_IS_WINDOW (toplevel))  {
-		  gtk_window_set_transient_for (GTK_WINDOW (status_box->popup_window),
-						GTK_WINDOW (toplevel));
-	  }
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (status_box));
+	if (GTK_IS_WINDOW (toplevel))  {
+		gtk_window_set_transient_for (GTK_WINDOW (status_box->popup_window),
+				GTK_WINDOW (toplevel));
+	}
 
-	  gtk_window_set_resizable (GTK_WINDOW (status_box->popup_window), FALSE);
-          gtk_window_set_screen (GTK_WINDOW (status_box->popup_window),
-                                 gtk_widget_get_screen (GTK_WIDGET (status_box)));
-	  status_box->popup_frame = gtk_frame_new (NULL);
-          gtk_frame_set_shadow_type (GTK_FRAME (status_box->popup_frame),
-                                     GTK_SHADOW_ETCHED_IN);
-          gtk_container_add (GTK_CONTAINER (status_box->popup_window),
-                             status_box->popup_frame);
+	gtk_window_set_resizable (GTK_WINDOW (status_box->popup_window), FALSE);
+	gtk_window_set_screen (GTK_WINDOW (status_box->popup_window),
+			gtk_widget_get_screen (GTK_WIDGET (status_box)));
+	status_box->popup_frame = gtk_frame_new (NULL);
+	gtk_frame_set_shadow_type (GTK_FRAME (status_box->popup_frame),
+			GTK_SHADOW_ETCHED_IN);
+	gtk_container_add (GTK_CONTAINER (status_box->popup_window),
+			status_box->popup_frame);
 
-          gtk_widget_show (status_box->popup_frame);
+	gtk_widget_show (status_box->popup_frame);
 
-	  status_box->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-	  
-	  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
-					  GTK_POLICY_NEVER,
-					  GTK_POLICY_NEVER);
-	  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
-					       GTK_SHADOW_NONE);
+	status_box->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 
-          gtk_widget_show (status_box->scrolled_window);
-	  
-	  gtk_container_add (GTK_CONTAINER (status_box->popup_frame),
-			     status_box->scrolled_window);
-        
-	  status_box->tree_view = gtk_tree_view_new ();
-	  sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (status_box->tree_view));
-	  gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
-	  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (status_box->tree_view),
-					     FALSE);
-	  gtk_tree_view_set_hover_selection (GTK_TREE_VIEW (status_box->tree_view),
-					     TRUE);
-	  gtk_tree_view_set_model (GTK_TREE_VIEW (status_box->tree_view),
-				   GTK_TREE_MODEL(status_box->dropdown_store));
-	  status_box->column = gtk_tree_view_column_new ();
-	  gtk_tree_view_append_column (GTK_TREE_VIEW (status_box->tree_view),
-				       status_box->column);
-	  gtk_tree_view_column_pack_start(status_box->column, icon_rend, FALSE);
-	  gtk_tree_view_column_pack_start(status_box->column, text_rend, TRUE);
-	  gtk_tree_view_column_set_attributes(status_box->column, icon_rend, "pixbuf", ICON_COLUMN, NULL);
-	  gtk_tree_view_column_set_attributes(status_box->column, text_rend, "markup", TEXT_COLUMN, NULL);
-	  gtk_container_add(GTK_CONTAINER(status_box->scrolled_window), status_box->tree_view);
-	  gtk_widget_show(status_box->tree_view);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+			GTK_POLICY_NEVER,
+			GTK_POLICY_NEVER);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
+			GTK_SHADOW_NONE);
+
+	gtk_widget_show (status_box->scrolled_window);
+
+	gtk_container_add (GTK_CONTAINER (status_box->popup_frame),
+			status_box->scrolled_window);
+
+	status_box->tree_view = gtk_tree_view_new ();
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (status_box->tree_view));
+	gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (status_box->tree_view),
+			FALSE);
+	gtk_tree_view_set_hover_selection (GTK_TREE_VIEW (status_box->tree_view),
+			TRUE);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (status_box->tree_view),
+			GTK_TREE_MODEL(status_box->dropdown_store));
+	status_box->column = gtk_tree_view_column_new ();
+	gtk_tree_view_append_column (GTK_TREE_VIEW (status_box->tree_view),
+			status_box->column);
+	gtk_tree_view_column_pack_start(status_box->column, icon_rend, FALSE);
+	gtk_tree_view_column_pack_start(status_box->column, text_rend, TRUE);
+	gtk_tree_view_column_set_attributes(status_box->column, icon_rend, "pixbuf", ICON_COLUMN, NULL);
+	gtk_tree_view_column_set_attributes(status_box->column, text_rend, "markup", TEXT_COLUMN, NULL);
+	gtk_container_add(GTK_CONTAINER(status_box->scrolled_window), status_box->tree_view);
+	gtk_widget_show(status_box->tree_view);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(status_box->tree_view),
 				gaim_gtk_tree_view_search_equal_func, NULL, NULL);
