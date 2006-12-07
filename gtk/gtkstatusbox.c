@@ -202,7 +202,7 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 		path = gtk_tree_path_new_from_indices(status_no, -1);
 		if (status_box->active_row)
 			gtk_tree_row_reference_free(status_box->active_row);
-		status_box->active_row = gtk_tree_row_reference_new(status_box->dropdown_store, path);
+		status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
 		gtk_tree_path_free(path);
 
 		message = gaim_status_get_attr_string(newstatus, "message");
@@ -692,6 +692,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 	GaimStatusPrimitive primitive;
 	gint index;
 	const char *message;
+	GtkTreePath *path = NULL;
 
 	/* this function is inappropriate for ones with accounts */
 	if (status_box->account)
@@ -715,25 +716,14 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
 		(!gaim_savedstatus_has_substatuses(saved_status)))
 	{
-		GtkTreePath *path;
 		index = get_statusbox_index(status_box, saved_status);
 		path = gtk_tree_path_new_from_indices(index, -1);
-		if (status_box->active_row)
-			gtk_tree_row_reference_free(status_box->active_row);
-		status_box->active_row = gtk_tree_row_reference_new(status_box->dropdown_store, path);
-		gtk_tree_path_free(path);
-
 	}
 	else
 	{
 		GtkTreeIter iter;
 		GtkGaimStatusBoxItemType type;
 		gpointer data;
-
-		/* Unset the active item */
-		if (status_box->active_row)
-			gtk_tree_row_reference_free(status_box->active_row);
-		status_box->active_row = NULL;
 
 		/* If this saved status is in the list store, then set it as the active item */
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(status_box->dropdown_store), &iter))
@@ -761,8 +751,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						|| !strcmp(name, acct_status_name))
 					{
 						/* Found! */
-						//						gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
-					
+						path = gtk_tree_model_get_path(GTK_TREE_MODEL(status_box->dropdown_store), &iter);
 						g_free(name);
 						break;
 					}
@@ -772,13 +761,22 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
 				{
 					/* Found! */
-				  //					gtk_combo_box_set_active_iter(GTK_COMBO_BOX(status_box), &iter);
+					path = gtk_tree_model_get_path(GTK_TREE_MODEL(status_box->dropdown_store), &iter);
 					break;
 				}
 			}
 			while (gtk_tree_model_iter_next(GTK_TREE_MODEL(status_box->dropdown_store), &iter));
 		}
 	}
+
+	if (status_box->active_row)
+		gtk_tree_row_reference_free(status_box->active_row);
+	if (path) {   /* path should never be NULL */
+		status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
+		gaim_debug_fatal("XXXX", "%s\n", gtk_tree_path_to_string(path));
+		gtk_tree_path_free(path);
+	} else
+		status_box->active_row = NULL;
 
 	message = gaim_savedstatus_get_message(saved_status);
 	if (!gaim_savedstatus_is_transient(saved_status) || !message || !*message)
@@ -1006,13 +1004,14 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		if (pixbuf)	g_object_unref(G_OBJECT(pixbuf));
 
 		status_menu_refresh_iter(status_box);
+		gtk_gaim_status_box_refresh(status_box);
 
 	} else {
 		add_account_statuses(status_box, status_box->account);
 		update_to_reflect_account_status(status_box, status_box->account,
 			gaim_account_get_active_status(status_box->account));
 	}
-	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), status_box->dropdown_store);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
 }
 
@@ -1053,8 +1052,10 @@ static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, GtkGaimStatusBo
 		if (status_box->account != NULL)
 			update_to_reflect_account_status(status_box, status_box->account,
 							gaim_account_get_active_status(status_box->account));
-		else
+		else {
 			status_menu_refresh_iter(status_box);
+			gtk_gaim_status_box_refresh(status_box);
+		}
 		return TRUE;
 	}
 
@@ -1253,6 +1254,7 @@ gtk_gaim_status_box_list_position (GtkGaimStatusBox *status_box, int *x, int *y,
     }
 }
 
+static gboolean
 popup_grab_on_window (GdkWindow *window,
 		      guint32    activate_time,
 		      gboolean   grab_keyboard)
@@ -1298,6 +1300,12 @@ gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
 				      TRUE);
 
+	if (box->active_row) {
+		GtkTreePath *path = gtk_tree_row_reference_get_path(box->active_row);
+		GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (box->tree_view));
+		gtk_tree_selection_unselect_all(sel);
+		gtk_tree_selection_select_path(sel, path);
+	}
 }
 
 static void
@@ -1552,7 +1560,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	  gtk_tree_view_set_hover_selection (GTK_TREE_VIEW (status_box->tree_view),
 					     TRUE);
 	  gtk_tree_view_set_model (GTK_TREE_VIEW (status_box->tree_view),
-				   status_box->dropdown_store);
+				   GTK_TREE_MODEL(status_box->dropdown_store));
 	  status_box->column = gtk_tree_view_column_new ();
 	  gtk_tree_view_append_column (GTK_TREE_VIEW (status_box->tree_view),
 				       status_box->column);
