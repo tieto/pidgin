@@ -428,14 +428,16 @@ move_forward_word(GntBindable *bind, GList *list)
 }
 
 static gboolean
-move_forward_word(GntBindable *bind, GList *list)
+delete_forward_word(GntBindable *bind, GList *list)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	GntWidget *widget = GNT_WIDGET(bind);
-	entry->cursor = (char *)next_begin_word(entry->cursor, entry->end);
-	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width) {
-		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
-	}
+	char *iter = (char *)next_begin_word(entry->cursor, entry->end);
+	int len = entry->end - iter + 1;
+	memmove(entry->cursor, iter, len);
+	len = iter - entry->cursor;
+	entry->end -= len;
+	memset(entry->end, '\0', len);
 	entry_redraw(widget);
 	return TRUE;
 }
@@ -627,7 +629,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_register_binding(bindable, "cursor-next", GNT_KEY_CTRL_F, NULL);
 	gnt_bindable_class_register_action(bindable, "cursor-next-word", move_forward_word,
 				"\033" "f", NULL);
-	gnt_bindable_class_register_action(bindable, "cursor-next-word", delete_forward_word,
+	gnt_bindable_class_register_action(bindable, "delete-next-word", delete_forward_word,
 				"\033" "d", NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-show", suggest_show,
 				"\t", NULL);
