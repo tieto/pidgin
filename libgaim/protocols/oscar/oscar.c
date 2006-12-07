@@ -268,7 +268,7 @@ oscar_charset_check(const char *utf8)
  * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and
  * return a newly allocated string containing bleh.
  */
-static gchar *
+gchar *
 oscar_encoding_extract(const char *encoding)
 {
 	gchar *ret = NULL;
