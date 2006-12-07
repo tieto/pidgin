@@ -1661,7 +1661,7 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
-		requisition->height += box_req.height + border_width;
+		requisition->height += box_req.height + border_width * 2;
 
 	requisition->width = 1;
 }
@@ -1726,7 +1726,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	box_alc.height = MAX(1, ((allocation->height - req.height) - (border_width*2)));
 	box_alc.x += border_width;
 	box_alc.y += req.height + border_width;
-	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
+	gtk_widget_size_allocate(status_box->vbox, &box_alc);
 
 	parent_alc = *allocation;
 	parent_alc.height = MAX(1,req.height - (border_width *2));
@@ -2201,6 +2201,7 @@ static void update_size(GtkGaimStatusBox *status_box)
 
 	wrapped_lines = 1;
 	gtk_text_buffer_get_start_iter(buffer, &iter);
+	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
 	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter))
 		wrapped_lines++;
 
@@ -2209,9 +2210,6 @@ static void update_size(GtkGaimStatusBox *status_box)
 	/* Show a maximum of 4 lines */
 	lines = MIN(lines, 4);
 	wrapped_lines = MIN(wrapped_lines, 4);
-
-	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(status_box->imhtml));
