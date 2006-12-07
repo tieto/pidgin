@@ -868,7 +868,8 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_dccsend_new_xfer,	/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
-	irc_send_raw,				/* send_raw */
+	irc_send_raw,			/* send_raw */
+	NULL,					/* roomlist_room_serialize */
 };
 
 static gboolean load_plugin (GaimPlugin *plugin) {

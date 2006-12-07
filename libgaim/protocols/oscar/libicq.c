@@ -90,7 +90,8 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_new_xfer,			/* new_xfer */
 	oscar_offline_message,	/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
-	NULL,				/* send_raw */
+	NULL,					/* send_raw */
+	NULL,					/* roomlist_room_serialize */
 };
 
 static GaimPluginInfo info =

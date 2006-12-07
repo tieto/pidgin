@@ -84,6 +84,8 @@ GHashTable *jabber_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 			g_hash_table_insert(defaults, "room", g_strdup(jid->node));
 			if(jid->domain)
 				g_hash_table_replace(defaults, "server", g_strdup(jid->domain));
+			if(jid->resource)
+				g_hash_table_replace(defaults, "handle", g_strdup(jid->resource));
 			jabber_id_free(jid);
 		}
 	}
@@ -747,6 +749,12 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 	jabber_iq_set_callback(iq, roomlist_disco_result_cb, NULL);
 
 	jabber_iq_send(iq);
+}
+
+char *jabber_roomlist_room_serialize(GaimRoomlistRoom *room)
+{
+
+	return g_strdup_printf("%s@%s", (char*)room->fields->data, (char*)room->fields->next->data);
 }
 
 GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)

@@ -89,5 +89,7 @@ void jabber_roomlist_cancel(GaimRoomlist *list);
 
 void jabber_chat_disco_traffic(JabberChat *chat);
 
+char *jabber_roomlist_room_serialize(GaimRoomlistRoom *room);
+
 
 #endif /* _GAIM_JABBER_CHAT_H_ */

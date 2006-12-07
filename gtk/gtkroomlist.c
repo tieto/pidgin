@@ -199,7 +199,21 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
 
 static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
 {
-	gaim_blist_request_add_chat(info->list->account, NULL, NULL, info->room->name);
+	char *name;
+	GaimConnection *gc = gaim_account_get_connection(info->list->account);
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if(gc != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if(prpl_info != NULL && prpl_info->roomlist_room_serialize)
+		name = prpl_info->roomlist_room_serialize(info->room);
+	else
+		name = g_strdup(info->room->name);
+
+	gaim_blist_request_add_chat(info->list->account, NULL, NULL, name);
+
+	g_free(name);
 }
 
 static void add_room_to_blist_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)

@@ -695,6 +695,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	NULL,							/* offline_message */
 	NULL,							/* GaimWhiteboardPrplOps */
 	NULL,							/* send_raw */
+	NULL,							/* roomlist_room_serialize */
 };
 
 static GaimPluginInfo info = {

@@ -1794,7 +1794,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* new_xfer */
 	NULL,					/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
-	simple_send_raw,			/* send_raw */
+	simple_send_raw,		/* send_raw */
+	NULL,					/* roomlist_room_serialize */
 };
 
 

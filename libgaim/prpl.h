@@ -301,6 +301,9 @@ struct _GaimPluginProtocolInfo
 
 	/* For use in plugins that may understand the underlying protocol */
 	int (*send_raw)(GaimConnection *gc, const char *buf, int len);
+
+	/* room list serialize */
+	char *(*roomlist_room_serialize)(GaimRoomlistRoom *room);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \
