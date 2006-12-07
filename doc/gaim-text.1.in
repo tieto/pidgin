@@ -250,6 +250,8 @@ c-w = delete-prev-word
 a-b = cursor-prev-word
 .br
 a-f = cursor-next-word
+.br
+a-d = delete-next-word
 
 .br
 [GntTree::binding]
