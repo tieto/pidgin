@@ -1844,7 +1844,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png,jpg,gif", 0, 0, 96, 96, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"png,gif,jpeg", 0, 0, 96, 96, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblems,			/* list_emblems */
 	jabber_status_text,				/* status_text */

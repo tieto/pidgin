@@ -1955,7 +1955,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	{"png", 0, 0, 96, 96, GAIM_ICON_SCALE_SEND},	/* icon_spec */
+	{"png,gif,jpeg", 0, 0, 96, 96, GAIM_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
 	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */

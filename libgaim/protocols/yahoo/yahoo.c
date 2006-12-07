@@ -3821,7 +3821,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
-	{"png", 96, 96, 96, 96, GAIM_ICON_SCALE_SEND},
+	{"png,gif,jpeg", 96, 96, 96, 96, GAIM_ICON_SCALE_SEND},
 	yahoo_list_icon,
 	yahoo_list_emblems,
 	yahoo_status_text,
