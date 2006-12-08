@@ -997,6 +997,7 @@ static void jabber_close(GaimConnection *gc)
 	if(js->sasl_cb)
 		g_free(js->sasl_cb);
 #endif
+	g_free(js->server_name);
 	g_free(js);
 
 	gc->proto_data = NULL;
