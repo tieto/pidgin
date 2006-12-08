@@ -100,7 +100,10 @@ draw_taskbar(GntWM *wm, gboolean reposition)
 			color = GNT_COLOR_NORMAL;
 		}
 		wbkgdset(taskbar, '\0' | COLOR_PAIR(color));
-		mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
+		if (iter->next)
+			mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
+		else
+			mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), getmaxx(stdscr) - width * i);
 		title = GNT_BOX(w)->title;
 		mvwprintw(taskbar, 0, width * i, "%s", title ? title : "<gnt>");
 		if (i)
@@ -744,6 +747,7 @@ refresh_screen(GntBindable *bindable, GList *null)
 
 	endwin();
 	refresh();
+	curs_set(0);   /* endwin resets the cursor to normal */
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
 	update_screen(wm);
