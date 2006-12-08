@@ -1055,7 +1055,7 @@ gaim_account_request_add(GaimAccount *account, const char *remote_user,
 
 void
 gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
-			           const char *id, const char *alias, const char *message,
+			           const char *id, const char *alias, const char *message, gboolean on_list,
 				   GCallback auth_cb, GCallback deny_cb, void *user_data)
 {
         GaimAccountUiOps *ui_ops;
@@ -1066,7 +1066,7 @@ gaim_account_request_authorization(GaimAccount *account, const char *remote_user
         ui_ops = gaim_accounts_get_ui_ops();
 
         if (ui_ops != NULL && ui_ops->request_authorize != NULL)
-               ui_ops->request_authorize(account, remote_user, id, alias, message, auth_cb, deny_cb, user_data);
+               ui_ops->request_authorize(account, remote_user, id, alias, message, on_list, auth_cb, deny_cb, user_data);
 						
 }
 

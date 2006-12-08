@@ -54,7 +54,7 @@ struct _GaimAccountUiOps
 	                    const char *id, const char *alias,
 	                    const char *message);
 	void (*request_authorize)(GaimAccount *account, const char *remote_user, const char *id,
-				 const char *alias, const char *message, 
+				 const char *alias, const char *message, gboolean on_list, 
 				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
 };
 
@@ -194,7 +194,7 @@ void gaim_account_request_add(GaimAccount *account, const char *remote_user,
  * @param user_data    Data to be passed back to the above callbacks
  */
 void gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
-					const char *id, const char *alias, const char *message,
+					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data);
 
 /**

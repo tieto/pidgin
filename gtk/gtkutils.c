@@ -2927,15 +2927,12 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 		   primary_esc, secondary ? "\n" : "", secondary?secondary_esc:"");
 	g_free(primary_esc);
 	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, gaim_prefs_get_int("/gaim/gtk/blist/width")-16,-1);
+	gtk_widget_set_size_request(label, gaim_prefs_get_int("/gaim/gtk/blist/width")-25,-1);
         gtk_widget_modify_text(vbox, GTK_STATE_NORMAL, &(label->style->white));
         gtk_label_set_markup(GTK_LABEL(label), label_text);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-#if GTK_CHECK_VERSION(2,6,0)
-	//	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 	
 	hbox2 = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);

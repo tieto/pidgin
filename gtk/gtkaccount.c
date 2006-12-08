@@ -2420,7 +2420,7 @@ deny_no_add_cb(struct auth_and_add *aa)
 
 static void
 gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote_user,
-					const char *id, const char *alias, const char *message,
+					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data)
 {
 	char *buffer;
@@ -2445,7 +2445,7 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 		                (message != NULL ? message  : ""));
 
 
-	if (!gaim_find_buddy(account, remote_user)) {
+	if (!on_list) {
 		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
 		aa->auth_cb = (GaimAccountRequestAuthorizationCb)auth_cb;
 		aa->deny_cb = (GaimAccountRequestAuthorizationCb)deny_cb;

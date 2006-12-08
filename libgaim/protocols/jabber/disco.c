@@ -212,7 +212,48 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 }
 
 static void
-jabber_disco_server_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+  	xmlnode *query, *child;
+	const char *from = xmlnode_get_attrib(packet, "from");
+	const char *type = xmlnode_get_attrib(packet, "type");
+
+	if(!from || !type)
+		return;
+
+	if(strcmp(from, js->user->domain))
+		return;
+
+	if(strcmp(type, "result"))
+		return;
+
+	query = xmlnode_get_child(packet, "query");
+	
+	if (!query) return;
+	
+	for (child = xmlnode_get_child(query, "category"); child; 
+	     child = xmlnode_get_next_twin(child)) {
+		const char *category, *type, *name;
+		category = xmlnode_get_attrib(child, "category");
+		if (!category || strcmp(category, "server"))
+			continue;
+		type = xmlnode_get_attrib(child, "type");
+		if (!type || strcmp(type, "im"))
+			continue;
+		
+		name = xmlnode_get_attrib(child, "name");
+		if (!name)
+			continue;
+
+		g_free(js->server_name);
+		js->server_name = g_strdup(name);
+		if (!strcmp(name, "Google Talk"))
+			js->googletalk = TRUE;
+	}
+}
+
+static void
+jabber_disco_server_items_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	xmlnode *query, *child;
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -255,7 +296,13 @@ void jabber_disco_items_server(JabberStream *js)
 
 	xmlnode_set_attrib(iq->node, "to", js->user->domain);
 
-	jabber_iq_set_callback(iq, jabber_disco_server_result_cb, NULL);
+	jabber_iq_set_callback(iq, jabber_disco_server_items_result_cb, NULL);
+	jabber_iq_send(iq);
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET,
+		                 "http://jabber.org/protocol/disco#info");
+	xmlnode_set_attrib(iq->node, "to", js->user->domain);
+	jabber_iq_set_callback(iq, jabber_disco_server_info_result_cb, NULL);
 	jabber_iq_send(iq);
 }
 

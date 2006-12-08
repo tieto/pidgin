@@ -120,6 +120,9 @@ typedef struct _JabberStream
 
 	gboolean reinit;
 
+	gboolean googletalk;
+	char *server_name;
+
 	/* OK, this stays at the end of the struct, so plugins can depend
 	 * on the rest of the stuff being in the right place
 	 */

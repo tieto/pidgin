@@ -280,13 +280,22 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
 	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
+		gboolean onlist = FALSE;
+		GaimBuddy *buddy = gaim_find_buddy(gaim_connection_get_account(js->gc), from);
+		JabberBuddy *jb = NULL;
 
+		if (buddy) {
+			jb = jabber_buddy_find(js, from, TRUE);
+			if ((jb->subscription & JABBER_SUB_TO) == 0)
+				onlist = TRUE;
+		}
+		
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
 		jap->js = js;
 
-		gaim_account_request_authorization(gaim_connection_get_account(js->gc), from, NULL, NULL, NULL,
-				G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
+		gaim_account_request_authorization(gaim_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
+					   	   G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
 		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {
