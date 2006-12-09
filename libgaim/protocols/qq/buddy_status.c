@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "prefs.h"
 
+#include "buddy_info.h"
 #include "buddy_status.h"
 #include "crypt.h"
 #include "header_info.h"
@@ -261,6 +262,8 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 			q_bud->status = s->status;
 			if(0 != s->client_version) 
 				q_bud->client_version = s->client_version; 
+			if (q_bud->status == QQ_BUDDY_ONLINE_NORMAL)
+				qq_send_packet_get_level(gc, q_bud->uid);
 			qq_update_buddy_contact(gc, q_bud);
 		} else {
 			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 

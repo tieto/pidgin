@@ -42,6 +42,7 @@
 #include "utils.h"
 
 #define QQ_UPDATE_ONLINE_INTERVAL   300	/* in sec */
+#define QQ_UPDATE_LEVELS_INTERVAL   600	/* in sec */
 
 /* send keep-alive packet to QQ server (it is a heart-beat) */
 void qq_send_packet_keep_alive(GaimConnection *gc)
@@ -62,7 +63,8 @@ void qq_send_packet_keep_alive(GaimConnection *gc)
 }
 
 /* parse the return of keep-alive packet, it includes some system information */
-void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc) {
+void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc) 
+{
 	qq_data *qd;
 	gint len;
 	gchar **segments;
@@ -90,9 +92,11 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc) 
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt keep alive reply\n");
 
 	/* we refresh buddies's online status periodically */
-	/* qd->lasat_get_online is updated when setting get_buddies_online packet */
+	/* qd->last_get_online is updated when setting get_buddies_online packet */
 	if ((time(NULL) - qd->last_get_online) >= QQ_UPDATE_ONLINE_INTERVAL)
 		qq_send_packet_get_buddies_online(gc, QQ_FRIENDS_ONLINE_POSITION_START);
+	if ((time(NULL) - qd->last_get_levels) >= QQ_UPDATE_LEVELS_INTERVAL)
+		qq_send_packet_get_buddies_levels(gc);
 }
 
 /* refresh all buddies online/offline,
@@ -119,20 +123,7 @@ void qq_refresh_all_buddy_status(GaimConnection *gc)
 	}
 }
 
-static void _qq_update_buddy_icon(GaimAccount *account, const gchar *name, gint face)
-{
-	GaimBuddyIcon *icon = gaim_buddy_icons_find(account, name);
-	gchar *icon_num_str = face_to_icon_str(face);
-	gchar *icon_path = g_strconcat(QQBUDDYICONDIR, G_DIR_SEPARATOR_S,
-			QQ_ICON_PREFIX, icon_num_str, QQ_ICON_SUFFIX, NULL);
-	const gchar *old_path = gaim_buddy_icon_get_path(icon);
-	if (icon == NULL || old_path == NULL 
-		|| g_ascii_strcasecmp(icon_path, old_path) != 0)
-		qq_set_buddy_icon_for_user(account, name, icon_path);
-	g_free(icon_num_str);
-	g_free(icon_path);
-}
-
+/*TODO: maybe this should be qq_update_buddy_status() ?*/
 void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 {
 	gchar *name;
@@ -176,7 +167,6 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 		}
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
 		gaim_prpl_got_user_status(gc->account, name, status_id, NULL);
-		_qq_update_buddy_icon(gc->account, name, q_bud->face);
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
 	}

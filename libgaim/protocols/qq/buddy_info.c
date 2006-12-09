@@ -548,27 +548,27 @@ void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gc
 	}
 }
 
-/* TODO: figure out how/when we can use a custom face
- *  for now, only allow the stock icons */
+/* TODO: custom faces */
 void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 {
 	gchar *icon;
 	gint icon_num;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const gchar *icon_path = gaim_account_get_buddy_icon_path(account);
+	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
-	gint dir_len = strlen(QQBUDDYICONDIR);
+	gint dir_len = strlen(buddy_icon_dir);
 	gint icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
-	gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), QQBUDDYICONDIR, ".", NULL);
+	gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), buddy_icon_dir, ".", NULL);
 
 	/* make sure we're using an appropriate icon */
-	if (!(g_ascii_strncasecmp(icon_path, QQBUDDYICONDIR, dir_len) == 0
+	if (!(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
 		&& icon_path[dir_len] == G_DIR_SEPARATOR
 			&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
 			&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
 			&& icon_len <= 3)) {
-		gaim_notify_error(gc, _("Invalid QQ Facea"), errmsg, NULL);
+		gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
 		g_free(errmsg);
 		return;
 	}
@@ -587,6 +587,24 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 	_qq_send_packet_modify_face(gc, icon_num);
 	/* display in blist */
 	qq_set_buddy_icon_for_user(account, account->username, icon_path);
+}
+
+
+static void _qq_update_buddy_icon(GaimAccount *account, const gchar *name, gint face)
+{
+	gchar *icon_path;
+	GaimBuddyIcon *icon = gaim_buddy_icons_find(account, name);
+	gchar *icon_num_str = face_to_icon_str(face);
+	const gchar *old_path = gaim_buddy_icon_get_path(icon);
+	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
+
+	icon_path = g_strconcat(buddy_icon_dir, G_DIR_SEPARATOR_S, QQ_ICON_PREFIX, 
+			icon_num_str, QQ_ICON_SUFFIX, NULL);
+	if (icon == NULL || old_path == NULL 
+		|| g_ascii_strcasecmp(icon_path, old_path) != 0)
+		qq_set_buddy_icon_for_user(account, name, icon_path);
+	g_free(icon_num_str);
+	g_free(icon_path);
 }
 
 /* after getting info or modify myself, refresh the buddy list accordingly */
@@ -617,6 +635,7 @@ void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc)
 		if (alias_utf8 != NULL)
 			q_bud->nickname = g_strdup(alias_utf8);
 		qq_update_buddy_contact(gc, q_bud);
+		_qq_update_buddy_icon(gc->account, gaim_name, q_bud->face);
 	}
 	g_free(gaim_name);
 	g_free(alias_utf8);
@@ -699,13 +718,98 @@ void qq_info_query_free(qq_data *qd)
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d info queries are freed!\n", i);
 }
 
-#ifdef _WIN32
-const char *qq_win32_buddy_icon_dir(void)
+void qq_send_packet_get_level(GaimConnection *gc, guint32 uid)
 {
-	static char *dir = NULL;
-	if (dir == NULL)
-		dir = g_build_filename(wgaim_install_dir(), "pixmaps",
-			"gaim", "buddy_icons", "qq", NULL);
-	return dir;
+	guint8 buf[5];
+	guint32 tmp = g_htonl(uid);
+	buf[0] = 0;
+	memcpy(buf+1, &tmp, 4);
+	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, 5);
 }
-#endif
+
+void qq_send_packet_get_buddies_levels(GaimConnection *gc)
+{
+	guint8 *buf, *tmp, size;
+	qq_buddy *q_bud;
+	GList *node;
+	qq_data *qd = (qq_data *) gc->proto_data;
+
+	/* server only sends back levels for online buddies, no point
+ 	 * in asking for anyone else */
+	size = 4*g_list_length(qd->buddies) + 1;
+	buf = g_new0(guint8, size);
+	tmp = buf + 1;
+
+	for (node = qd->buddies; node != NULL; node = node->next) {
+		guint32 tmp4;
+                q_bud = (qq_buddy *) node->data;
+		if (q_bud != NULL) {
+			tmp4 = g_htonl(q_bud->uid);
+			memcpy(tmp, &tmp4, 4);
+			tmp += 4;
+		}
+        }
+	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, size);
+	qd->last_get_levels = time(NULL);
+	g_free(buf);
+}
+
+void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+{
+	guint32 uid, onlineTime;
+	guint16 level, timeRemainder;
+	gchar *gaim_name;
+	GaimBuddy *b;
+	qq_buddy *q_bud;
+	gint decr_len, i;
+	guint8 *decr_buf, *tmp;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	qq_data *qd = (qq_data *) gc->proto_data;
+	
+	decr_len = buf_len;
+	decr_buf = g_new0(guint8, buf_len);
+	if (!qq_crypt(DECRYPT, buf, buf_len, qd->session_key, decr_buf, &decr_len)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Couldn't decrypt get level packet\n");
+	}
+
+	decr_len--; 
+	if (decr_len % 12 != 0) {
+		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+			"Get levels list of abnormal length. Truncating last %d bytes.\n", decr_len % 12);
+		decr_len -= (decr_len % 12);
+	}
+		
+	tmp = decr_buf + 1;
+	/* this byte seems random */
+	/*
+	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Byte one of get_level packet: %d\n", buf[0]);
+	*/
+	for (i = 0; i < decr_len; i += 12) {
+		uid = g_ntohl(*(guint32 *) tmp);
+		tmp += 4;
+		onlineTime = g_ntohl(*(guint32 *) tmp);
+		tmp += 4;
+		level = g_ntohs(*(guint16 *) tmp);
+		tmp += 2;
+		timeRemainder = g_ntohs(*(guint16 *) tmp);
+		tmp += 2;
+		/*
+		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Level packet entry:\nuid: %d\nonlineTime: %d\nlevel: %d\ntimeRemainder: %d\n", 
+				uid, onlineTime, level, timeRemainder);
+		*/
+		gaim_name = uid_to_gaim_name(uid);
+		b = gaim_find_buddy(account, gaim_name);
+		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+
+		if (q_bud != NULL) {
+			q_bud->onlineTime = onlineTime;
+			q_bud->level = level;
+			q_bud->timeRemainder = timeRemainder;
+		} else {
+			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+				"Got an online buddy %d, but not in my buddy list\n", uid);
+		}
+		g_free(gaim_name);
+	}
+	g_free(decr_buf);
+}

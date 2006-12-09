@@ -49,4 +49,7 @@ void try_dump_as_gbk(const guint8 *const data, gint len);
 guint8 *hex_str_to_bytes(const gchar *buf, gint *out_len);
 gchar *hex_dump_to_str(const guint8 *buf, gint buf_len);
 
+const gchar *qq_buddy_icon_dir(void);
+const gchar *qq_win32_buddy_icon_dir(void);
+
 #endif

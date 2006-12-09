@@ -37,7 +37,7 @@
 
 #ifdef _WIN32
 const char *qq_win32_buddy_icon_dir(void);
-#define QQBUDDYICONDIR qq_win32_buddy_icon_dir()
+#define QQ_BUDDY_ICON_DIR qq_win32_buddy_icon_dir()
 #endif
 
 typedef struct _qq_data qq_data;
@@ -55,6 +55,9 @@ struct _qq_buddy {
 	guint8 flag1;
 	guint8 comm_flag;	/* details in qq_buddy_list.c */
 	guint16 client_version;
+	guint8 onlineTime;
+	guint16 level;
+	guint16 timeRemainder;
 	time_t signon;
 	time_t idle;
 	time_t last_refresh;
@@ -94,6 +97,7 @@ struct _qq_data {
 	guint16 my_icon;		/* my icon index */
 	guint32 all_online;		/* the number of online QQ users */
 	time_t last_get_online;		/* last time send get_friends_online packet */
+	time_t last_get_levels;		/* last time send get_buddies_levels packet */
 
 	guint8 window[1 << 13];		/* check up for duplicated packet */
 	gint sendqueue_timeout;

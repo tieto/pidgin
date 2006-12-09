@@ -32,6 +32,7 @@
 #define QQ_CLIENT_0B2F 0x0b2f	/* GB QQ2003iii build 0117 */
 #define QQ_CLIENT_0B35 0x0b35	/* GB QQ2003iii build 0304 (offical release) */
 #define QQ_CLIENT_0B37 0x0b37	/* GB QQ2003iii build 0304 (April 05 updates) */
+
 #define QQ_SERVER_0100 0x0100	/* server */
 
 /* given command alias, return the command name accordingly */
@@ -74,6 +75,8 @@ const gchar *qq_get_cmd_desc(gint type)
 		return "QQ_CMD_GROUP_CMD";
 	case QQ_CMD_GET_ALL_LIST_WITH_GROUP:
 		return "QQ_CMD_GET_ALL_LIST_WITH_GROUP";
+	case QQ_CMD_GET_LEVEL:
+		return "QQ_CMD_GET_LEVEL";
 	case QQ_CMD_REQUEST_LOGIN_TOKEN:
 		return "QQ_CMD_REQUEST_LOGIN_TOKEN";
 	case QQ_CMD_RECV_MSG_SYS:

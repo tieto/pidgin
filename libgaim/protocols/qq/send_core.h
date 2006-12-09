@@ -28,10 +28,6 @@
 #include <glib.h>
 #include "connection.h"
 
-
-#define	QQ_CLIENT	0x0E1B
-/* #define	QQ_CLIENT	0x0F3F */
-
 gint qq_send_cmd(GaimConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 seq, 
 		gboolean need_ack, guint8 *data, gint len);
 gint _qq_send_packet(GaimConnection * gc, guint8 *buf, gint len, guint16 cmd);

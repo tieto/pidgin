@@ -224,6 +224,8 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 		default:
 			g_string_append_printf(tooltip, "\n<b>Gender:</b> ERROR(%d)", q_bud->gender);
 		}
+		if (q_bud->level)
+			g_string_append_printf(tooltip, "\n<b>Level:</b> %d", q_bud->level);
 		/* For debugging */
 		/*
 		g_string_append_printf(tooltip, "\n<b>Flag:</b> %01x", q_bud->flag1);
@@ -368,6 +370,7 @@ static void _qq_get_info(GaimConnection *gc, const gchar *who)
 		return;
 	}
 
+	qq_send_packet_get_level(gc, uid);
 	qq_send_packet_get_info(gc, uid, TRUE);
 }
 
@@ -609,7 +612,6 @@ static void _qq_keep_alive(GaimConnection *gc)
 	}
 
 	qq_send_packet_keep_alive(gc);
-
 }
 
 /* convert chat nickname to qq-uid to get this buddy info */

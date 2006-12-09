@@ -263,6 +263,9 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 	case QQ_CMD_GET_ALL_LIST_WITH_GROUP:
 		qq_process_get_all_list_with_group_reply(cursor, len, gc);
 		break;
+	case QQ_CMD_GET_LEVEL:
+		qq_process_get_level_reply(cursor, len, gc);
+		break;
 	case QQ_CMD_REQUEST_LOGIN_TOKEN:
 		qq_process_request_login_token_reply(cursor, len, gc);
 		break;

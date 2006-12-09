@@ -349,3 +349,25 @@ gint face_to_icon_num(const gchar *face)
 	return icon_num;
 }
 */
+
+/* return the location of the buddy icon dir
+ * any application using libgaim but not installing the QQ buddy icons
+ * under datadir needs to set the pref below, or buddy icons won't work */
+const char *qq_buddy_icon_dir(void)
+{
+	if (gaim_prefs_exists("/prpl/qq/buddy_icon_dir"))
+		return gaim_prefs_get_string("/prpl/qq/buddy_icon_dir");
+	else
+		return QQ_BUDDY_ICON_DIR;
+}
+
+#ifdef _WIN32
+const char *qq_win32_buddy_icon_dir(void)
+{
+        static char *dir = NULL;
+        if (dir == NULL)
+                dir = g_build_filename(wgaim_install_dir(), "pixmaps",
+                        "gaim", "buddy_icons", "qq", NULL);
+        return dir;
+}
+#endif

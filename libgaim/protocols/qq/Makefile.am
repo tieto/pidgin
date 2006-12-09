@@ -94,7 +94,7 @@ endif
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libgaim \
 	-DVERSION=\"$(VERSION)\" \
-	-DQQBUDDYICONDIR=\"$(datadir)/pixmaps/gaim/buddy_icons/qq\" \
+	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/gaim/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GAIM_CFLAGS)
