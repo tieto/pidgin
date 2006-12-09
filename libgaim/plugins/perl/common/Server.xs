@@ -80,7 +80,7 @@ INIT:
 	char *t_key, *t_value;
 CODE:
 	t_HV =  (HV *)SvRV(components);
-	t_GHash = g_hash_table_new(NULL, NULL);
+	t_GHash = g_hash_table_new(g_str_hash, g_str_equal);
 
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);
@@ -135,7 +135,7 @@ INIT:
 	char *t_key, *t_value;
 CODE:
 	t_HV =  (HV *)SvRV(components);
-	t_GHash = g_hash_table_new(NULL, NULL);
+	t_GHash = g_hash_table_new(g_str_hash, g_str_equal);
 
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);
@@ -165,7 +165,7 @@ INIT:
 	char *t_key, *t_value;
 CODE:
 	t_HV =  (HV *)SvRV(components);
-	t_GHash = g_hash_table_new(NULL, NULL);
+	t_GHash = g_hash_table_new(g_str_hash, g_str_equal);
 
 	for (t_HE = hv_iternext(t_HV); t_HE != NULL; t_HE = hv_iternext(t_HV) ) {
 		t_key = hv_iterkey(t_HE, &len);

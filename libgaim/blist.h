@@ -314,7 +314,9 @@ void gaim_blist_rename_group(GaimGroup *group, const char *name);
  *
  * @param account    The account this chat will get added to
  * @param alias      The alias of the new chat
- * @param components The info the prpl needs to join the chat
+ * @param components The info the prpl needs to join the chat.  The
+ *                   hash function should be g_str_hash() and the
+ *                   equal function should be g_str_equal().
  * @return           A newly allocated chat
  */
 GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *components);

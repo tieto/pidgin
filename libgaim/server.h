@@ -59,8 +59,6 @@ void serv_add_deny(GaimConnection *, const char *);
 void serv_rem_permit(GaimConnection *, const char *);
 void serv_rem_deny(GaimConnection *, const char *);
 void serv_set_permit_deny(GaimConnection *);
-void serv_join_chat(GaimConnection *, GHashTable *);
-void serv_reject_chat(GaimConnection *, GHashTable *);
 void serv_chat_invite(GaimConnection *, int, const char *, const char *);
 void serv_chat_leave(GaimConnection *, int);
 void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
@@ -91,9 +89,27 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name);
 
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				 GaimMessageFlags flags, time_t mtime);
+
+/**
+ * @param data The hash function should be g_str_hash() and the equal
+ *             function should be g_str_equal().
+ */
+void serv_join_chat(GaimConnection *, GHashTable *);
+
+/**
+ * @param data The hash function should be g_str_hash() and the equal
+ *             function should be g_str_equal().
+ */
+void serv_reject_chat(GaimConnection *, GHashTable *);
+
+/**
+ * @param data The hash function should be g_str_hash() and the equal
+ *             function should be g_str_equal().
+ */
 void serv_got_chat_invite(GaimConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
+
 GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 									   int id, const char *name);
 void serv_got_chat_left(GaimConnection *g, int id);
