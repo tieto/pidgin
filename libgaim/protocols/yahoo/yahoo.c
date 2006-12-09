@@ -996,7 +996,7 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 		 * this should probably be moved to the core.
 		 */
 		 gaim_account_request_authorization(gaim_connection_get_account(gc), add_req->who, add_req->id,
-                                                    NULL, add_req->msg, gaim_find_buddy(gaim_connection_get_account(gc),add_req->who),
+                                                    NULL, add_req->msg, gaim_find_buddy(gaim_connection_get_account(gc),add_req->who) != NULL,
 						    G_CALLBACK(yahoo_buddy_add_authorize_cb), 
 						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
                                                     add_req);

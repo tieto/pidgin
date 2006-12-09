@@ -2330,8 +2330,9 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				data->name = sn;
 				data->nick = NULL;
 
-				gaim_account_request_authorization(account, sn,
-						NULL, NULL, reason, gaim_find_buddy(account, sn), G_CALLBACK(gaim_auth_grant),
+				gaim_account_request_authorization(account, sn, NULL, NULL,
+						reason, gaim_find_buddy(account, sn) != NULL,
+						G_CALLBACK(gaim_auth_grant),
 						G_CALLBACK(gaim_auth_dontgrant_msgprompt), data);
 				g_free(reason);
 			}
@@ -5042,8 +5043,8 @@ static int gaim_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->name = g_strdup(sn);
 	data->nick = NULL;
 
-	gaim_account_request_authorization(account, nombre,
-			NULL, NULL, reason, buddy, G_CALLBACK(gaim_auth_grant),
+	gaim_account_request_authorization(account, nombre, NULL, NULL,
+			reason, buddy != NULL, G_CALLBACK(gaim_auth_grant),
 			G_CALLBACK(gaim_auth_dontgrant_msgprompt), data);
 	g_free(nombre);
 	g_free(reason);

@@ -74,7 +74,7 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 	pa->gc = gc;
 	
 	gaim_account_request_authorization(gaim_connection_get_account(gc), passport, NULL, friendly, NULL,
-					   gaim_find_buddy(gaim_connection_get_account(gc), passport),
+					   gaim_find_buddy(gaim_connection_get_account(gc), passport) != NULL,
 					   G_CALLBACK(msn_accept_add_cb), G_CALLBACK(msn_cancel_add_cb), pa);
 }
 
