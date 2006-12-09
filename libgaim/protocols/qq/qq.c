@@ -167,23 +167,23 @@ static gchar *_qq_status_text(GaimBuddy *b)
 
 	switch(q_bud->status) {
 	case QQ_BUDDY_OFFLINE:
-		g_string_append(status, "Offline");
+		g_string_append(status, _("Offline"));
 		break;
 	case QQ_BUDDY_ONLINE_NORMAL:
 		return NULL;
 		break;
 	/* TODO What does this status mean? Labelling it as offline... */
 	case QQ_BUDDY_ONLINE_OFFLINE:
-		g_string_append(status, "Offline");
+		g_string_append(status, _("Offline"));
 		break;
 	case QQ_BUDDY_ONLINE_AWAY:
-		g_string_append(status, "Away");
+		g_string_append(status, _("Away"));
 		break;
 	case QQ_BUDDY_ONLINE_INVISIBLE:
-		g_string_append(status, "Invisible");
+		g_string_append(status, _("Invisible"));
 		break;
 	default:
-		g_string_printf(status, "Unknown-%d", q_bud->status);
+		g_string_printf(status, _("Unknown-%d"), q_bud->status);
 	}
 
 	return g_string_free(status, FALSE);
@@ -205,27 +205,27 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 	{
 		ip_str = gen_ip_str(q_bud->ip);
 		if (strlen(ip_str) != 0) {
-			g_string_append_printf(tooltip, "\n<b>%s Address:</b> %s:%d",
+			g_string_append_printf(tooltip, _("\n<b>%s Address:</b> %s:%d"),
 					(q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
 				       ? "TCP" : "UDP", ip_str, q_bud->port);
 		}
 		g_free(ip_str);
-		g_string_append_printf(tooltip, "\n<b>Age:</b> %d", q_bud->age);
+		g_string_append_printf(tooltip, _("\n<b>Age:</b> %d"), q_bud->age);
 		switch (q_bud->gender) {
 		case QQ_BUDDY_GENDER_GG:
-			g_string_append(tooltip, "\n<b>Gender:</b> Male");
+			g_string_append(tooltip, _("\n<b>Gender:</b> Male"));
 			break;
 		case QQ_BUDDY_GENDER_MM:
-			g_string_append(tooltip, "\n<b>Gender:</b> Female");
+			g_string_append(tooltip, _("\n<b>Gender:</b> Female"));
 			break;
 		case QQ_BUDDY_GENDER_UNKNOWN:
-			g_string_append(tooltip, "\n<b>Gender:</b> Unknown");
+			g_string_append(tooltip, _("\n<b>Gender:</b> Unknown"));
 			break;
 		default:
-			g_string_append_printf(tooltip, "\n<b>Gender:</b> ERROR(%d)", q_bud->gender);
+			g_string_append_printf(tooltip, _("\n<b>Gender:</b> ERROR(%d)"), q_bud->gender);
 		}
 		if (q_bud->level)
-			g_string_append_printf(tooltip, "\n<b>Level:</b> %d", q_bud->level);
+			g_string_append_printf(tooltip, _("\n<b>Level:</b> %d"), q_bud->level);
 		/* For debugging */
 		/*
 		g_string_append_printf(tooltip, "\n<b>Flag:</b> %01x", q_bud->flag1);

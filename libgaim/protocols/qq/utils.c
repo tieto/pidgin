@@ -340,16 +340,6 @@ gchar *face_to_icon_str(gint face)
 	return icon_num_str;
 }
 
-/*
-gint face_to_icon_num(const gchar *face)
-{
-	gchar *icon_str = face_to_icon_str(face);
-	gint icon_num = strtol(icon_str, NULL, 10);
-	g_free(icon_str);
-	return icon_num;
-}
-*/
-
 /* return the location of the buddy icon dir
  * any application using libgaim but not installing the QQ buddy icons
  * under datadir needs to set the pref below, or buddy icons won't work */
