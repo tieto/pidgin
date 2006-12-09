@@ -548,7 +548,7 @@ void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gc
 	}
 }
 
-/* TODO: custom faces */
+/* TODO: custom faces for QQ members and users with level >= 16 */
 void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 {
 	gchar *icon;
@@ -561,6 +561,7 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 	gint dir_len = strlen(buddy_icon_dir);
 	gint icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
 	gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), buddy_icon_dir, ".", NULL);
+	gboolean icon_global = gaim_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
 
 	/* make sure we're using an appropriate icon */
 	if (!(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
@@ -568,7 +569,10 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 			&& g_ascii_strncasecmp(icon_path + dir_len + 1, QQ_ICON_PREFIX, prefix_len) == 0
 			&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
 			&& icon_len <= 3)) {
-		gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
+		if (icon_global)
+			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", errmsg);
+		else
+			gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
 		g_free(errmsg);
 		return;
 	}
@@ -578,7 +582,10 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 	g_free(icon);
 	/* ensure face number in proper range */
 	if (icon_num > QQ_FACES) {
-		gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
+		if (icon_global)
+			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", errmsg);
+		else
+			gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
 		g_free(errmsg);
 		return;
 	}

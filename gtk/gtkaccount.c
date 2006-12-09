@@ -622,7 +622,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					     gaim_account_get_check_mail(dialog->account));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->icon_check),
-					     !gaim_account_get_ui_bool(dialog->account, GAIM_GTK_UI, "use-global-buddyicon",
+					     !gaim_account_get_bool(dialog->account, "use-global-buddyicon",
 								       TRUE));
 		set_dialog_icon(dialog,
 				g_strdup(gaim_account_get_ui_string(dialog->account,
@@ -1142,12 +1142,12 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL)
 	{
-		if (new || gaim_account_get_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", TRUE) ==
+		if (new || gaim_account_get_bool(account, "use-global-buddyicon", TRUE) ==
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
 			icon_change = TRUE;
 		}
-		gaim_account_set_ui_bool(account, GAIM_GTK_UI, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
+		gaim_account_set_bool(account, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
 		gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-cached-path", dialog->cached_icon_path);
 		gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", dialog->icon_path);
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
