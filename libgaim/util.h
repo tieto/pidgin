@@ -365,8 +365,8 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  *
  * @param str            The string to parse.
  * @param len            The size of str.
- * @param dest           The destination GString to append the new
- *                       field info to.
+ * @param user_info      The destination GaimNotifyUserInfo to which the new
+ *                       field info should be added.
  * @param start_token    The beginning token.
  * @param skip           The number of characters to skip after the
  *                       start token.
@@ -380,7 +380,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  *
  * @return TRUE if successful, or FALSE otherwise.
  */
-gboolean gaim_markup_extract_info_field(const char *str, int len, GString *dest,
+gboolean gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUserInfo *user_info,
                                         const char *start_token, int skip,
                                         const char *end_token, char check_value,
                                         const char *no_value_token,

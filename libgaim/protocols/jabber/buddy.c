@@ -602,17 +602,17 @@ void jabber_setup_set_info(GaimPluginAction *action)
 
 static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 {
-	GString *info_text;
-	char *resource_name;
+	char *resource_name, *tmp;
 	JabberBuddyResource *jbr;
 	JabberBuddyInfoResource *jbir = NULL;
 	GList *resources;
+	GaimNotifyUserInfo *user_info;
 
 	/* not yet */
 	if(jbi->ids)
 		return;
 
-	info_text = g_string_new("");
+	user_info = gaim_notify_user_info_new();
 	resource_name = jabber_get_resource(jbi->jid);
 
 	if(resource_name) {
@@ -622,29 +622,29 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			char *purdy = NULL;
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
-			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
-					_("Status"), jabber_buddy_state_get_name(jbr->state),
-					purdy ? ": " : "",
-					purdy ? purdy : "");
-			if(purdy)
-				g_free(purdy);
+			tmp = g_strdup_printf("%s%s%s", jabber_buddy_state_get_name(jbr->state),
+							(purdy ? ": " : ""),
+							(purdy ? purdy : ""));
+			gaim_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			g_free(tmp);
+			g_free(purdy);
 		} else {
-			g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-					_("Status"), _("Unknown"));
+			gaim_notify_user_info_add_pair(user_info, _("Status"), _("Unknown"));
 		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
+				gaim_notify_user_info_add_pair(user_info, _("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
 			}
 		}
 		if(jbr && jbr->client.name) {
-			g_string_append_printf(info_text, "<b>%s:</b> %s %s<br/>",
-					_("Client:"), jbr->client.name,
-					jbr->client.version ? jbr->client.version : "");
+			tmp = g_strdup_printf("%s%s%s", jbr->client.name,
+								  (jbr->client.version ? " " : ""),
+								  (jbr->client.version ? jbr->client.version : ""));
+			gaim_notify_user_info_add_pair(user_info, _("Client"), tmp);
+			g_free(tmp);
+
 			if(jbr->client.os) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Operating System"), jbr->client.os);
+				gaim_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 			}
 		}
 	} else {
@@ -654,53 +654,56 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
 			if(jbr->name)
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Resource"), jbr->name);
-			g_string_append_printf(info_text, "<b>%s:</b> %d<br/>",
-					_("Priority"), jbr->priority);
-			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/>",
-					_("Status"), jabber_buddy_state_get_name(jbr->state),
-					purdy ? ": " : "",
-					purdy ? purdy : "");
-			if(purdy)
-				g_free(purdy);
+				gaim_notify_user_info_add_pair(user_info, _("Resource"), jbr->name);
+			tmp = g_strdup_printf("%d", jbr->priority);
+			gaim_notify_user_info_add_pair(user_info, _("Priority"), tmp);
+			g_free(tmp);
+
+			tmp = g_strdup_printf("%s%s%s", jabber_buddy_state_get_name(jbr->state),
+								  (purdy ? ": " : ""),
+								  (purdy ? purdy : ""));
+			gaim_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			g_free(tmp);
+			g_free(purdy);
 
 			if(jbr->name)
 				jbir = g_hash_table_lookup(jbi->resources, jbr->name);
 
 			if(jbir) {
 				if(jbir->idle_seconds > 0) {
-					g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-							_("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
+					gaim_notify_user_info_add_pair(user_info, _("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
 				}
 			}
-			if(jbr->client.name) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s %s<br/>",
-						_("Client"), jbr->client.name,
-						jbr->client.version ? jbr->client.version : "");
+			if(jbr && jbr->client.name) {
+				tmp = g_strdup_printf("%s%s%s", jbr->client.name,
+									  (jbr->client.version ? " " : ""),
+									  (jbr->client.version ? jbr->client.version : ""));
+				gaim_notify_user_info_add_pair(user_info,
+											   _("Client"), tmp);
+				g_free(tmp);
+				
 				if(jbr->client.os) {
-					g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-							_("Operating System"), jbr->client.os);
+					gaim_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 				}
 			}
-
-			g_string_append_printf(info_text, "<br/>");
 		}
 	}
 
 	g_free(resource_name);
 
-	if (jbi->vcard_text != NULL)
-		info_text = g_string_append(info_text, jbi->vcard_text);
+	if (jbi->vcard_text != NULL) {
+		gaim_notify_user_info_add_section_break(user_info);
+		/* Should this have some sort of label? */
+		gaim_notify_user_info_add_pair(user_info, NULL, jbi->vcard_text);
+	}
 
-	gaim_notify_userinfo(jbi->js->gc, jbi->jid, info_text->str, NULL, NULL);
+	gaim_notify_userinfo(jbi->js->gc, jbi->jid, user_info, NULL, NULL);
+	gaim_notify_user_info_destroy(user_info);
 
 	while(jbi->vcard_imgids) {
 		gaim_imgstore_unref(GPOINTER_TO_INT(jbi->vcard_imgids->data));
 		jbi->vcard_imgids = g_slist_delete_link(jbi->vcard_imgids, jbi->vcard_imgids);
 	}
-
-	g_string_free(info_text, TRUE);
 
 	if (jbi->timeout_handle > 0)
 		gaim_timeout_remove(jbi->timeout_handle);

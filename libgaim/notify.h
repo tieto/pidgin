@@ -29,8 +29,10 @@
 #include <glib-object.h>
 #include <glib.h>
 
-#include "connection.h"
+typedef struct _GaimNotifyUserInfoEntry	GaimNotifyUserInfoEntry;
+typedef struct _GaimNotifyUserInfo	GaimNotifyUserInfo;
 
+#include "connection.h"
 
 /**
  * Notification close callbacks.
@@ -154,7 +156,7 @@ typedef struct
 	                                      void *data);
 
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
-	                         const char *text);
+	                         GaimNotifyUserInfo *user_info);
 
 	void *(*notify_uri)(const char *uri);
 
@@ -403,18 +405,111 @@ void *gaim_notify_formatted(void *handle, const char *title,
  * The text is essentially a stripped-down format of HTML, the same that
  * IMs may send.
  *
- * @param gc	    The GaimConnection handle associated with the information.
- * @param who	    The username associated with the information.
- * @param text      The formatted text.
- * @param cb        The callback to call when the user closes
- *                  the notification.
- * @param user_data The data to pass to the callback.
+ * @param gc		         The GaimConnection handle associated with the information.
+ * @param who				 The username associated with the information.
+ * @param user_info          The GaimNotifyUserInfo which contains the information
+ * @param cb                 The callback to call when the user closes
+ *                           the notification.
+ * @param user_data          The data to pass to the callback.
  *
  * @return A UI-specific handle.
  */
 void *gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *text, GaimNotifyCloseCallback cb,
+						   GaimNotifyUserInfo *user_info, GaimNotifyCloseCallback cb,
 						   gpointer user_data);
+
+/**
+ * Create a new GaimNotifyUserInfo which is suitable for passing to gaim_notify_userinfo()
+ *
+ * @return A new GaimNotifyUserInfo, which the caller must destroy when done
+ */
+GaimNotifyUserInfo *gaim_notify_user_info_new();
+
+/**
+ * Destroy a GaimNotifyUserInfo
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ */
+void gaim_notify_user_info_destroy(GaimNotifyUserInfo *user_info);
+
+/**
+ * Retrieve the array of GaimNotifyUserInfoEntry objects from a GaimNotifyUserInfo
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ *
+ * @result                   A GList of GaimNotifyUserInfoEntry objects
+ */
+GList *gaim_notify_user_info_get_entries(GaimNotifyUserInfo *user_info);
+
+/**
+ * Create a textual representation of a GaimNotifyUserInfo, separating entries with newline
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ * @param newline            The separation character
+ */
+char *gaim_notify_user_info_get_text_with_newline(GaimNotifyUserInfo *user_info, const char *newline);
+
+/**
+ * Add a label/value pair to a GaimNotifyUserInfo object.  GaimNotifyUserInfo keeps track of the order in which pairs are added.
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ * @param label              A label, which for example might be displayed by a UI with a colon after it ("Status:"). Do not include a colon.
+ *                           If NULL, value will be displayed without a label.
+ * @param value              The value, which might be displayed by a UI after the label.
+ *                           If NULL, label will still be displayed; the UI should then treat label as independent
+ *                           and not include a colon if it would otherwise.
+ */
+void gaim_notify_user_info_add_pair(GaimNotifyUserInfo *user_info, const char *label, const char *value);
+
+/**
+ * Prepend a label/value pair to a GaimNotifyUserInfo object
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ * @param label              A label, which for example might be displayed by a UI with a colon after it ("Status:"). Do not include a colon.
+ *                           If NULL, value will be displayed without a label.
+ * @param value              The value, which might be displayed by a UI after the label.
+ *                           If NULL, label will still be displayed; the UI should then treat label as independent
+ *                           and not include a colon if it would otherwise.
+ */
+void gaim_notify_user_info_prepend_pair(GaimNotifyUserInfo *user_info, const char *label, const char *value);
+
+/**
+ * Add a section break.  A UI might display this as a horizontal line.
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ */
+void gaim_notify_user_info_add_section_break(GaimNotifyUserInfo *user_info);
+
+/**
+ * Add a section header.  A UI might display this in a different font from other text.
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ * @param label              The name of the section
+ */
+void gaim_notify_user_info_add_section_header(GaimNotifyUserInfo *user_info, const char *label);
+
+/**
+ * Remove the last item which was added to a GaimNotifyUserInfo. This could be used to remove a section header which is not needed.
+ */
+void gaim_notify_user_info_remove_last_item(GaimNotifyUserInfo *user_info);
+
+/**
+ * Get the label for a GaimNotifyUserInfoEntry
+ *
+ * @param user_info_entry     The GaimNotifyUserInfoEntry
+ *
+ * @result                    The label
+ */
+gchar *gaim_notify_user_info_entry_get_label(GaimNotifyUserInfoEntry *user_info_entry);
+
+/**
+ * Get the value for a GaimNotifyUserInfoEntry
+ *
+ * @param user_info_entry     The GaimNotifyUserInfoEntry
+ *
+ * @result                    The value
+ */
+gchar *gaim_notify_user_info_entry_get_value(GaimNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Opens a URI or somehow presents it to the user.

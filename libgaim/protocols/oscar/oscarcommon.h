@@ -28,6 +28,7 @@
 #include "internal.h"
 #include "prpl.h"
 #include "version.h"
+#include "notify.h"
 
 #define OSCAR_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
@@ -48,7 +49,7 @@ const char *oscar_list_icon_icq(GaimAccount *a, GaimBuddy *b);
 const char *oscar_list_icon_aim(GaimAccount *a, GaimBuddy *b);
 void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne);
 char *oscar_status_text(GaimBuddy *b);
-void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full);
+void oscar_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full);
 GList *oscar_status_types(GaimAccount *account);
 GList *oscar_blist_node_menu(GaimBlistNode *node);
 GList *oscar_chat_info(GaimConnection *gc);

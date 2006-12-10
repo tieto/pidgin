@@ -1061,7 +1061,7 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 }
 
 gboolean
-gaim_markup_extract_info_field(const char *str, int len, GString *dest,
+gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUserInfo *user_info,
 							   const char *start_token, int skip,
 							   const char *end_token, char check_value,
 							   const char *no_value_token,
@@ -1072,7 +1072,7 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 	const char *p, *q;
 
 	g_return_val_if_fail(str          != NULL, FALSE);
-	g_return_val_if_fail(dest  != NULL, FALSE);
+	g_return_val_if_fail(user_info    != NULL, FALSE);
 	g_return_val_if_fail(start_token  != NULL, FALSE);
 	g_return_val_if_fail(end_token    != NULL, FALSE);
 	g_return_val_if_fail(display_name != NULL, FALSE);
@@ -1110,11 +1110,11 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 					  (no_value_token && strncmp(p, no_value_token,
 												 strlen(no_value_token)))))
 	{
-		g_string_append_printf(dest, _("<b>%s:</b> "), display_name);
+		GString *dest = g_string_new("");
 
 		if (is_link)
 		{
-			g_string_append(dest, "<br><a href=\"");
+			g_string_append(dest, "<a href=\"");
 
 			if (link_prefix)
 				g_string_append(dest, link_prefix);
@@ -1147,7 +1147,8 @@ gaim_markup_extract_info_field(const char *str, int len, GString *dest,
 				g_string_append_len(dest, p, q - p);
 		}
 
-		g_string_append(dest, "<br>\n");
+		gaim_notify_user_info_add_pair(user_info, display_name, dest->str);
+		g_string_free(dest, TRUE);
 
 		return TRUE;
 	}

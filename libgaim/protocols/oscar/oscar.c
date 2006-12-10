@@ -705,11 +705,22 @@ static char *oscar_icqstatus(int state) {
 }
 
 static void
-oscar_string_append(GString *str, const char *newline,
-					const char *name, const char *value)
+oscar_user_info_add_pair(GaimNotifyUserInfo *user_info, const char *name, const char *value)
 {
 	if (value && value[0]) {
-		g_string_append_printf(str, "%s<b>%s:</b> %s", newline, name, value);
+		gaim_notify_user_info_add_pair(user_info, name, value);
+	}
+}
+
+static void
+oscar_user_info_convert_and_add_pair(GaimAccount *account, GaimNotifyUserInfo *user_info,
+									 const char *name, const char *value)
+{
+	gchar *utf8;
+	
+	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, value))) {
+		gaim_notify_user_info_add_pair(user_info, name, utf8);
+		g_free(utf8);
 	}
 }
 
@@ -725,7 +736,19 @@ oscar_string_convert_and_append(GaimAccount *account, GString *str, const char *
 	}
 }
 
-static void oscar_string_append_info(GaimConnection *gc, GString *str, const char *newline, GaimBuddy *b, aim_userinfo_t *userinfo)
+static void
+oscar_user_info_convert_and_add(GaimAccount *account, GaimNotifyUserInfo *user_info,
+								const char *name, const char *value)
+{
+	gchar *utf8;
+	
+	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, value))) {
+		gaim_notify_user_info_add_pair(user_info, name, value);
+		g_free(utf8);
+	}
+}
+
+static void oscar_string_append_info(GaimConnection *gc, GaimNotifyUserInfo *user_info, GaimBuddy *b, aim_userinfo_t *userinfo)
 {
 	OscarData *od;
 	GaimAccount *account;
@@ -738,7 +761,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 	od = gc->proto_data;
 	account = gaim_connection_get_account(gc);
 
-	if ((str == NULL) || (newline == NULL) || ((b == NULL) && (userinfo == NULL)))
+	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
 
 	if (userinfo == NULL)
@@ -760,17 +783,14 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		if (gaim_presence_is_online(presence)) {
 			if (aim_sn_is_icq(b->name)) {
 				GaimStatus *status = gaim_presence_get_active_status(presence);
-				oscar_string_append(str, newline, _("Status"),
-									gaim_status_get_name(status));
+				oscar_user_info_add_pair(user_info, _("Status"),	gaim_status_get_name(status));
 			}
 		} else {
 			tmp = aim_ssi_itemlist_findparentname(od->ssi.local, b->name);
 			if (aim_ssi_waitingforauth(od->ssi.local, tmp, b->name))
-				oscar_string_append(str, newline, _("Status"),
-									_("Not Authorized"));
+				oscar_user_info_add_pair(user_info, _("Status"),	_("Not Authorized"));
 			else
-				oscar_string_append(str, newline, _("Status"),
-									_("Offline"));
+				oscar_user_info_add_pair(user_info, _("Status"),	_("Offline"));
 		}
 	}
 
@@ -780,14 +800,14 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(str, newline, _("IP Address"), tmp);
+		oscar_user_info_add_pair(user_info, _("IP Address"), tmp);
 		g_free(tmp);
 	}
 
 
 	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
 		tmp = g_strdup_printf("%d", (int)(userinfo->warnlevel/10.0 + .5));
-		oscar_string_append(str, newline, _("Warning Level"), tmp);
+		oscar_user_info_add_pair(user_info, _("Warning Level"), tmp);
 		g_free(tmp);
 	}
 
@@ -796,7 +816,8 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		if (tmp != NULL) {
 			char *tmp2 = g_markup_escape_text(tmp, strlen(tmp));
 			g_free(tmp);
-			oscar_string_convert_and_append(account, str, newline, _("Buddy Comment"), tmp2);
+
+			oscar_user_info_convert_and_add_pair(account, user_info, _("Buddy Comment"), tmp2);
 			g_free(tmp2);
 		}
 	}
@@ -2581,21 +2602,25 @@ static int gaim_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason, g
 
 	switch(reason) {
 		case 0x0003: { /* Reply from an ICQ status message request */
-			char *title, *statusmsg, **splitmsg, *dialogmsg;
-
-			title = g_strdup_printf(_("Info for %s"), who);
+			char *statusmsg, **splitmsg;
+			GaimNotifyUserInfo *user_info;
 
 			/* Split at (carriage return/newline)'s, then rejoin later with BRs between. */
 			statusmsg = oscar_icqstatus(state);
 			splitmsg = g_strsplit(msg, "\r\n", 0);
-			dialogmsg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, statusmsg, g_strjoinv("<BR>", splitmsg));
+			
+			user_info = gaim_notify_user_info_new();
+				
+			gaim_notify_user_info_add_pair(user_info, _("UIN"), who);
+			gaim_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			gaim_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
+
 			g_free(statusmsg);
 			g_strfreev(splitmsg);
 
-			gaim_notify_userinfo(gc, who, dialogmsg, NULL, NULL);
+			gaim_notify_userinfo(gc, who, user_info, NULL, NULL);
+			gaim_notify_user_info_destroy(user_info);
 
-			g_free(title);
-			g_free(dialogmsg);
 		} break;
 
 		default: {
@@ -2766,7 +2791,7 @@ static int gaim_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	GaimConnection *gc = od->gc;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	GString *str;
+	GaimNotifyUserInfo *user_info;
 	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
@@ -2775,33 +2800,36 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	str = g_string_new("");
-	g_string_append_printf(str, "<b>%s:</b> %s", _("Screen Name"), userinfo->sn);
-	g_string_append_printf(str, "\n<br><b>%s</b>: %d%%", _("Warning Level"), (int)((userinfo->warnlevel/10.0) + 0.5));
+	user_info = gaim_notify_user_info_new();
+	gaim_notify_user_info_add_pair(user_info, _("Screen Name"), userinfo->sn);
+
+	tmp = g_strdup_printf("%d", (int)((userinfo->warnlevel/10.0) + 0.5));
+	gaim_notify_user_info_add_pair(user_info, _("Warning Level"), tmp);
+	g_free(tmp);
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		time_t t = userinfo->onlinesince - od->timeoffset;
-		oscar_string_append(str, "\n<br>", _("Online Since"), gaim_date_format_full(localtime(&t)));
+		oscar_user_info_add_pair(user_info, _("Online Since"), gaim_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince - od->timeoffset;
-		oscar_string_append(str, "\n<br>", _("Member Since"), gaim_date_format_full(localtime(&t)));
+		oscar_user_info_add_pair(user_info, _("Member Since"), gaim_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->capabilities != 0) {
 		tmp = oscar_caps_to_string(userinfo->capabilities);
-		oscar_string_append(str, "\n<br>", _("Capabilities"), tmp);
+		oscar_user_info_add_pair(user_info, _("Capabilities"), tmp);
 		g_free(tmp);
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = gaim_str_seconds_to_string(userinfo->idletime*60);
-		oscar_string_append(str, "\n<br>", _("Idle"), tmp);
+		oscar_user_info_add_pair(user_info, _("Idle"), tmp);
 		g_free(tmp);
 	}
 
-	oscar_string_append_info(gc, str, "\n<br>", NULL, userinfo);
+	oscar_string_append_info(gc, user_info, NULL, userinfo);
 
 	/* Available message */
 	if ((userinfo->status != NULL) && !(userinfo->flags & AIM_FLAG_AWAY))
@@ -2809,7 +2837,7 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 		if (userinfo->status[0] != '\0')
 			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Available Message"), tmp);
+		oscar_user_info_add_pair(user_info, _("Available Message"), tmp);
 		g_free(tmp);
 	}
 
@@ -2819,7 +2847,9 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
 		g_free(tmp);
 		if (away_utf8 != NULL) {
-			g_string_append_printf(str, "\n<hr>%s", away_utf8);
+			tmp = gaim_str_sub_away_formatters(away_utf8, gaim_account_get_username(account));
+			oscar_user_info_add_pair(user_info, NULL, tmp);
+			g_free(tmp);
 			g_free(away_utf8);
 		}
 	}
@@ -2830,16 +2860,15 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 		info_utf8 = oscar_encoding_to_utf8(tmp, userinfo->info, userinfo->info_len);
 		g_free(tmp);
 		if (info_utf8 != NULL) {
-			g_string_append_printf(str, "\n<hr>%s", info_utf8);
+			tmp = gaim_str_sub_away_formatters(info_utf8, gaim_account_get_username(account));
+			oscar_user_info_add_pair(user_info, _("Profile"), tmp);
+			g_free(tmp);
 			g_free(info_utf8);
 		}
 	}
 
-	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
-	g_string_free(str, TRUE);
-	gaim_str_strip_char(tmp, '\r');
-	gaim_notify_userinfo(gc, userinfo->sn, tmp, NULL, NULL);
-	g_free(tmp);
+	gaim_notify_userinfo(gc, userinfo->sn, user_info, NULL, NULL);
+	gaim_notify_user_info_destroy(user_info);
 
 	return 1;
 }
@@ -3581,8 +3610,10 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	GaimBuddy *buddy;
 	struct buddyinfo *bi;
 	gchar who[16];
-	GString *str;
+	GaimNotifyUserInfo *user_info;
+	GString *tmp;
 	gchar *utf8;
+	gchar *buf;
 	const gchar *alias;
 	va_list ap;
 	struct aim_icq_info *info;
@@ -3597,7 +3628,8 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (!info->uin)
 		return 0;
 
-	str = g_string_sized_new(100);
+	user_info = gaim_notify_user_info_new();
+		
 	g_snprintf(who, sizeof(who), "%u", info->uin);
 	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
 	if (buddy != NULL)
@@ -3605,35 +3637,41 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	else
 		bi = NULL;
 
-	g_string_append_printf(str, "<b>%s:</b> %s", _("UIN"), who);
-	oscar_string_convert_and_append(account, str, "\n<br>", _("Nick"), info->nick);
+	gaim_notify_user_info_add_pair(user_info, _("UIN"), who);
+	oscar_user_info_convert_and_add(account, user_info, _("Nick"), info->nick);
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 						(bi->ipaddr & 0xff000000) >> 24,
 						(bi->ipaddr & 0x00ff0000) >> 16,
 						(bi->ipaddr & 0x0000ff00) >> 8,
 						(bi->ipaddr & 0x000000ff));
-		oscar_string_append(str, "\n<br>", _("IP Address"), tstr);
+		gaim_notify_user_info_add_pair(user_info, _("IP Address"), tstr);
 		g_free(tstr);
 	}
-	oscar_string_convert_and_append(account, str, "\n<br>", _("First Name"), info->first);
-	oscar_string_convert_and_append(account, str, "\n<br>", _("Last Name"), info->last);
+	oscar_user_info_convert_and_add(account, user_info, _("First Name"), info->first);
+	oscar_user_info_convert_and_add(account, user_info, _("Last Name"), info->last);
 	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email))) {
-		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("E-Mail Address"), utf8, utf8);
+		buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
+		gaim_notify_user_info_add_pair(user_info, _("E-Mail Address"), buf);
+		g_free(buf);
 		g_free(utf8);
 	}
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
 			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email2[i]))) {
-				g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"mailto:%s\">%s</a>", _("E-Mail Address"), utf8, utf8);
+				buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
+				gaim_notify_user_info_add_pair(user_info, _("E-Mail Address"), buf);
+				g_free(buf);
 				g_free(utf8);
 			}
 		}
 	}
-	oscar_string_convert_and_append(account, str, "\n<br>", _("Mobile Phone"), info->mobile);
+	oscar_user_info_convert_and_add(account, user_info, _("Mobile Phone"), info->mobile);
+
 	if (info->gender != 0)
-		oscar_string_append(str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
+		gaim_notify_user_info_add_pair(user_info, _("Gender"), (info->gender == 1 ? _("Female") : _("Male")));
+
 	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
 		/* Initialize the struct properly or strftime() will crash
 		 * under some conditions (e.g. Debian sarge w/ LANG=en_HK). */
@@ -3649,57 +3687,68 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 * feel free to remove it.  --rlaager */
 		mktime(tm);
 
-		oscar_string_append(str, "\n<br>", _("Birthday"),
-				    gaim_date_format_short(tm));
+		oscar_user_info_convert_and_add(account, user_info, _("Birthday"), gaim_date_format_short(tm));
 	}
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		oscar_string_append(str, "\n<br>", _("Age"), age);
+		gaim_notify_user_info_add_pair(user_info,
+													_("Age"), age);
 	}
 	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->personalwebpage))) {
-		g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Personal Web Page"), utf8, utf8);
+		buf = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
+		gaim_notify_user_info_add_pair(user_info, _("Personal Web Page"), buf);
+		g_free(buf);
 		g_free(utf8);
 	}
-	if (info->info && info->info[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->info))) {
-		g_string_append_printf(str, "<hr><b>%s:</b><br>%s", _("Additional Information"), utf8);
-		g_free(utf8);
-	}
-	g_string_append_printf(str, "<hr>");
+	
+	oscar_user_info_convert_and_add(account, user_info, _("Additional Information"), info->info);
+
+/*	g_string_append_printf(str, "<hr>"); */
+
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
-		g_string_append_printf(str, "<b>%s:</b>", _("Home Address"));
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Address"), info->homeaddr);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("City"), info->homecity);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("State"), info->homestate);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Zip Code"), info->homezip);
-		g_string_append_printf(str, "\n<hr>");
+		tmp = g_string_sized_new(100);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Address"), info->homeaddr);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("City"), info->homecity);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("State"), info->homestate);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Zip Code"), info->homezip);
+		
+		gaim_notify_user_info_add_pair(user_info, _("Home Address"), tmp->str);
+		
+		g_string_free(tmp, TRUE);
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
-		g_string_append_printf(str, "<b>%s:</b>", _("Work Address"));
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Address"), info->workaddr);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("City"), info->workcity);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("State"), info->workstate);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Zip Code"), info->workzip);
-		g_string_append_printf(str, "\n<hr>");
+		tmp = g_string_sized_new(100);
+
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Address"), info->workaddr);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("City"), info->workcity);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("State"), info->workstate);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Zip Code"), info->workzip);
+
+		gaim_notify_user_info_add_pair(user_info, _("Work Address"), tmp->str);
+		
+		g_string_free(tmp, TRUE);
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
-		g_string_append_printf(str, "<b>%s:</b>", _("Work Information"));
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Company"), info->workcompany);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Division"), info->workdivision);
-		oscar_string_convert_and_append(account, str, "\n<br>", _("Position"), info->workposition);
+		tmp = g_string_sized_new(100);
+		
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Company"), info->workcompany);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Division"), info->workdivision);
+		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Position"), info->workposition);
 		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->workwebpage))) {
-			g_string_append_printf(str, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
+			g_string_append_printf(tmp, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
 			g_free(utf8);
 		}
-		g_string_append_printf(str, "\n<hr>");
+		gaim_notify_user_info_add_pair(user_info, _("Work Information"), tmp->str);
+		g_string_free(tmp, TRUE);
 	}
 
 	if (buddy != NULL)
 		alias = gaim_buddy_get_alias(buddy);
 	else
 		alias = who;
-	gaim_notify_userinfo(gc, who, str->str, NULL, NULL);
-	g_string_free(str, TRUE);
+	gaim_notify_userinfo(gc, who, user_info, NULL, NULL);
+	gaim_notify_user_info_destroy(user_info);
 
 	return 1;
 }
@@ -5361,7 +5410,7 @@ void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const ch
 	*ne = emblems[3];
 }
 
-void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
+void oscar_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full) {
 	GaimConnection *gc = b->account->gc;
 	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od, b->name);
@@ -5372,7 +5421,7 @@ void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 		const char *message;
 
 		if (full)
-			oscar_string_append_info(gc, str, "\n", b, userinfo);
+			oscar_string_append_info(gc, user_info, b, userinfo);
 
 		presence = gaim_buddy_get_presence(b);
 		status = gaim_presence_get_active_status(presence);
@@ -5385,7 +5434,7 @@ void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 				/* Available status messages are plain text */
 				gchar *tmp;
 				tmp = g_markup_escape_text(message, -1);
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), tmp);
+				gaim_notify_user_info_add_pair(user_info, _("Message"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -5400,12 +5449,12 @@ void oscar_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 				g_free(tmp2);
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), tmp2);
+				gaim_notify_user_info_add_pair(user_info, _("Away Message"), tmp2);
 				g_free(tmp2);
 			}
 			else
 			{
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), _("<i>(retrieving)</i>"));
+				gaim_notify_user_info_add_pair(user_info, _("Away Message"), _("<i>(retrieving)</i>"));
 			}
 		}
 	}

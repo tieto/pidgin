@@ -2983,7 +2983,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 	}
 }
 
-void yahoo_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
+void yahoo_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
 {
 	YahooFriend *f;
 	char *escaped;
@@ -3024,14 +3024,13 @@ void yahoo_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 
 	if (status != NULL) {
 		escaped = g_markup_escape_text(status, strlen(status));
-		g_string_append_printf(str, _("\n<b>%s:</b> %s"), _("Status"), escaped);
+		gaim_notify_user_info_add_pair(user_info, _("Status"), escaped);
 		g_free(status);
 		g_free(escaped);
 	}
 
 	if (presence != NULL)
-		g_string_append_printf(str, _("\n<b>%s:</b> %s"),
-				_("Presence"), presence);
+		gaim_notify_user_info_add_pair(user_info, _("Presence"), presence);
 }
 
 static void yahoo_addbuddyfrommenu_cb(GaimBlistNode *node, gpointer data)

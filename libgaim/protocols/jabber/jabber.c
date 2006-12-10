@@ -1127,7 +1127,7 @@ static char *jabber_status_text(GaimBuddy *b)
 	return ret;
 }
 
-static void jabber_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
+static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
 
@@ -1160,12 +1160,14 @@ static void jabber_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 				else
 					sub = _("None");
 			}
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Subscription"), sub);
+			
+			gaim_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 		}
 
 		for(l=jb->resources; l; l = l->next) {
 			char *text = NULL;
 			char *res = NULL;
+			char *label, *value;
 			const char *state;
 
 			jbr = l->data;
@@ -1188,20 +1190,23 @@ static void jabber_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 				text = NULL;
 			}
 
-			g_string_append_printf(str, "\n<b>%s%s:</b> %s%s%s",
-					_("Status"),
-					res ? res : "",
-					state,
-					text ? ": " : "",
-					text ? text : "");
+			label = g_strdup_printf("%s%s",
+							_("Status"), (res ? res : ""));
+			value = g_strdup_printf("%s%s%s",
+							state,
+							(text ? ": " : ""),
+							(text ? text : ""));
 
+			gaim_notify_user_info_add_pair(user_info, label, value);
+
+			g_free(label);
+			g_free(value);
 			g_free(text);
 			g_free(res);
 		}
 
 		if(!GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s",
-					_("Error"), jb->error_msg);
+			gaim_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
 		}
 	}
 }

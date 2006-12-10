@@ -36,6 +36,21 @@ typedef struct
 	gpointer cb_user_data;
 } GaimNotifyInfo;
 
+/**
+ * Definition of a user info entry
+ */
+struct _GaimNotifyUserInfoEntry
+{
+	char *label;
+	char *value;
+	gboolean is_header;
+};
+
+struct _GaimNotifyUserInfo
+{
+	GList *user_info_entries;
+};
+
 void *
 gaim_notify_message(void *handle, GaimNotifyMsgType type,
 					const char *title, const char *primary,
@@ -416,7 +431,7 @@ gaim_notify_searchresults_row_get(GaimNotifySearchResults *results,
 
 void *
 gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *text, GaimNotifyCloseCallback cb, gpointer user_data)
+						   GaimNotifyUserInfo *user_info, GaimNotifyCloseCallback cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -426,20 +441,17 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 
 	if (ops != NULL && ops->notify_userinfo != NULL) {
 		GaimNotifyInfo *info;
-		char *infotext = g_strdup(text);
 
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_USERINFO;
 		info->handle    = gc;
 
 		gaim_signal_emit(gaim_notify_get_handle(), "displaying-userinfo",
-						 gaim_connection_get_account(gc), who, &infotext);
+						 gaim_connection_get_account(gc), who, user_info);
 
-		info->ui_handle = ops->notify_userinfo(gc, who, infotext);
+		info->ui_handle = ops->notify_userinfo(gc, who, user_info);
 		info->cb = cb;
 		info->cb_user_data = user_data;
-
-		g_free(infotext);
 
 		if (info->ui_handle != NULL) {
 			handles = g_list_append(handles, info);
@@ -461,6 +473,158 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 	}
 
 	return NULL;
+}
+
+static GaimNotifyUserInfoEntry *
+gaim_notify_user_info_entry_new(const char *label, const char *value)
+{
+	GaimNotifyUserInfoEntry *user_info_entry;
+	
+	user_info_entry = g_new0(GaimNotifyUserInfoEntry, 1);
+	user_info_entry->label = g_strdup(label);
+	user_info_entry->value = g_strdup(value);
+	user_info_entry->is_header = FALSE;
+
+	return user_info_entry;
+}
+
+static void
+gaim_notify_user_info_entry_destroy(GaimNotifyUserInfoEntry *user_info_entry)
+{
+	g_return_if_fail(user_info_entry != NULL);
+	
+	g_free(user_info_entry->label);
+	g_free(user_info_entry->value);	
+	g_free(user_info_entry);
+}
+
+GaimNotifyUserInfo *
+gaim_notify_user_info_new()
+{
+	GaimNotifyUserInfo *user_info;
+	
+	user_info = g_new0(GaimNotifyUserInfo, 1);
+	user_info->user_info_entries = NULL;
+	
+	return user_info;
+}
+
+void
+gaim_notify_user_info_destroy(GaimNotifyUserInfo *user_info)
+{
+	GList *l;
+
+	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
+		GaimNotifyUserInfoEntry *user_info_entry = l->data;
+		
+		gaim_notify_user_info_entry_destroy(user_info_entry);
+	}
+	
+	g_list_free(user_info->user_info_entries);
+}
+
+GList *
+gaim_notify_user_info_get_entries(GaimNotifyUserInfo *user_info)
+{
+	g_return_val_if_fail(user_info != NULL, NULL);
+
+	return user_info->user_info_entries;
+}
+
+char *
+gaim_notify_user_info_get_text_with_newline(GaimNotifyUserInfo *user_info, const char *newline)
+{
+	GList *l;
+	GString *text;
+	
+	text = g_string_new("");
+
+	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
+		GaimNotifyUserInfoEntry *user_info_entry = l->data;
+		if (user_info_entry->is_header)
+			g_string_append(text, newline);
+
+		if (user_info_entry->label)
+			g_string_append_printf(text, "<b>%s</b>", user_info_entry->label);
+		if (user_info_entry->label && user_info_entry->value)
+			g_string_append(text, ": ");
+		if (user_info_entry->value)
+			g_string_append(text, user_info_entry->value);			
+
+		if (user_info_entry->is_header)
+			g_string_append(text, newline);
+
+		if (l->next)
+			g_string_append(text, newline);
+	}
+
+	return g_string_free(text, FALSE);
+}
+
+
+gchar *
+gaim_notify_user_info_entry_get_label(GaimNotifyUserInfoEntry *user_info_entry)
+{
+	g_return_val_if_fail(user_info_entry != NULL, NULL);
+
+	return user_info_entry->label;
+}
+
+gchar *
+gaim_notify_user_info_entry_get_value(GaimNotifyUserInfoEntry *user_info_entry)
+{
+	g_return_val_if_fail(user_info_entry != NULL, NULL);
+	
+	return user_info_entry->value;
+}
+
+void
+gaim_notify_user_info_add_pair(GaimNotifyUserInfo *user_info, const char *label, const char *value)
+{
+	GaimNotifyUserInfoEntry *entry;
+	
+	entry = gaim_notify_user_info_entry_new(label, value);
+	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+}
+
+void
+gaim_notify_user_info_prepend_pair(GaimNotifyUserInfo *user_info, const char *label, const char *value)
+{
+	GaimNotifyUserInfoEntry *entry;
+
+	entry = gaim_notify_user_info_entry_new(label, value);
+	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+}
+
+void
+gaim_notify_user_info_add_section_header(GaimNotifyUserInfo *user_info, const char *label)
+{
+	GaimNotifyUserInfoEntry *entry;
+	
+	entry = gaim_notify_user_info_entry_new(label, NULL);
+	entry->is_header = TRUE;
+
+	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+}
+
+/**
+ * Remove the last item which was added to user_info
+ * This is helpful for removing a section header if the section was empty.
+ */
+void
+gaim_notify_user_info_remove_last_item(GaimNotifyUserInfo *user_info)
+{
+	user_info->user_info_entries = g_list_remove(user_info->user_info_entries,
+										 g_list_last(user_info->user_info_entries)->data);
+}
+
+void
+gaim_notify_user_info_add_section_break(GaimNotifyUserInfo *user_info)
+{
+	/* This is for future expansion; section breaks should be marked as such so the UI
+	* can format them differently if desired.
+	*/	
+	gaim_notify_user_info_add_pair(user_info, NULL, "<HR>");
 }
 
 void *

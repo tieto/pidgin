@@ -191,10 +191,11 @@ static gchar *_qq_status_text(GaimBuddy *b)
 
 
 /* a floating text when mouse is on the icon, show connection status here */
-static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
+static void _qq_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
 {
 	qq_buddy *q_bud;
 	gchar *ip_str;
+	char *tmp, *tmp2;
 
 	g_return_if_fail(b != NULL);
 
@@ -205,27 +206,40 @@ static void _qq_tooltip_text(GaimBuddy *b, GString *tooltip, gboolean full)
 	{
 		ip_str = gen_ip_str(q_bud->ip);
 		if (strlen(ip_str) != 0) {
-			g_string_append_printf(tooltip, _("\n<b>%s Address:</b> %s:%d"),
-					(q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
-				       ? "TCP" : "UDP", ip_str, q_bud->port);
+			tmp = g_strdup_printf(_("%s Address"),
+						  ((q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE) ? "TCP" : "UDP"));
+			tmp2 = g_strdup_printf("%s:%d", ip_str, q_bud->port);
+			gaim_notify_user_info_add_pair(user_info, tmp, tmp2);
+			g_free(tmp2);
+			g_free(tmp);
 		}
 		g_free(ip_str);
-		g_string_append_printf(tooltip, _("\n<b>Age:</b> %d"), q_bud->age);
+
+		tmp = g_strdup_printf("%d", q_bud->age);
+		gaim_notify_user_info_add_pair(user_info, _("Age"), tmp);
+		g_free(tmp);
+
 		switch (q_bud->gender) {
 		case QQ_BUDDY_GENDER_GG:
-			g_string_append(tooltip, _("\n<b>Gender:</b> Male"));
+			gaim_notify_user_info_add_pair(user_info, _("Gender"), _("Male"));
 			break;
 		case QQ_BUDDY_GENDER_MM:
-			g_string_append(tooltip, _("\n<b>Gender:</b> Female"));
+			gaim_notify_user_info_add_pair(user_info, _("Gender"), _("Female"));
 			break;
 		case QQ_BUDDY_GENDER_UNKNOWN:
-			g_string_append(tooltip, _("\n<b>Gender:</b> Unknown"));
+			gaim_notify_user_info_add_pair(user_info, _("Gender"), _("Unknown"));
 			break;
 		default:
-			g_string_append_printf(tooltip, _("\n<b>Gender:</b> ERROR(%d)"), q_bud->gender);
+			tmp = g_strdup_printf("Error (%d)", q_bud->gender);
+			gaim_notify_user_info_add_pair(user_info, _("Gender"), tmp);
+			g_free(tmp);
 		}
-		if (q_bud->level)
-			g_string_append_printf(tooltip, _("\n<b>Level:</b> %d"), q_bud->level);
+
+		if (q_bud->level) {
+			tmp = g_strdup_printf("%d", q_bud->level);
+			gaim_notify_user_info_add_pair(user_info, _("Level"), tmp);
+			g_free(tmp);			
+		}
 		/* For debugging */
 		/*
 		g_string_append_printf(tooltip, "\n<b>Flag:</b> %01x", q_bud->flag1);

@@ -3250,7 +3250,7 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
 }
 
 
-static void mw_prpl_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
+static void mw_prpl_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full) {
   GaimConnection *gc;
   struct mwGaimPluginData *pd;
   struct mwAwareIdBlock idb = { mwAware_USER, b->name, NULL };
@@ -3267,22 +3267,22 @@ static void mw_prpl_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {
 
   if(message != NULL && gaim_utf8_strcasecmp(status, message)) {
     tmp = g_markup_escape_text(message, -1);
-    g_string_append_printf(str, _("\n<b>%s:</b> %s"), status, tmp);
+	gaim_notify_user_info_add_pair(user_info, status, tmp);
     g_free(tmp);
 
   } else {
-    g_string_append_printf(str, _("\n<b>Status:</b> %s"), status);
+	gaim_notify_user_info_add_pair(user_info, _("Status"), status);
   }
 
   if(full) {
     tmp = user_supports_text(pd->srvc_aware, b->name);
     if(tmp) {
-      g_string_append_printf(str, _("\n<b>Supports:</b> %s"), tmp);
+	  gaim_notify_user_info_add_pair(user_info, _("Supports"), tmp);
       g_free(tmp);
     }
 
     if(buddy_is_external(b)) {
-      g_string_append(str, _("\n<b>External User</b>"));
+	  gaim_notify_user_info_add_pair(user_info, NULL, _("External User"));
     }
   }
 }
@@ -4111,9 +4111,9 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
   struct mwGaimPluginData *pd;
   GaimAccount *acct;
   GaimBuddy *b;
-  
-  GString *str;
-  const char *tmp;
+  GaimNotifyUserInfo *user_info;
+  char *tmp;
+  const char *tmp2;
 
   g_return_if_fail(who != NULL);
   g_return_if_fail(*who != '\0');
@@ -4122,64 +4122,57 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
 
   acct = gaim_connection_get_account(gc);
   b = gaim_find_buddy(acct, who);
-
-  str = g_string_new(NULL);
+  user_info = gaim_notify_user_info_new();
 
   if(gaim_str_has_prefix(who, "@E ")) {
-    g_string_append(str, _("<b>External User</b><br>"));
+	gaim_notify_user_info_add_pair(user_info, _("External User"), NULL);
   }
 
-  g_string_append_printf(str, _("<b>User ID:</b> %s<br>"), who);
+  gaim_notify_user_info_add_pair(user_info, _("User ID"), who);
 
   if(b) {
     guint32 type;
 
     if(b->server_alias) {
-      g_string_append_printf(str, _("<b>Full Name:</b> %s<br>"),
-			     b->server_alias);
+		gaim_notify_user_info_add_pair(user_info, _("Full Name"), b->server_alias);
     }
 
     type = gaim_blist_node_get_int((GaimBlistNode *) b, BUDDY_KEY_CLIENT);
     if(type) {
-      g_string_append(str, _("<b>Last Known Client:</b> "));
+	  tmp = g_strdup(mw_client_name(type));
+	  if (!tmp)
+		tmp = g_strdup_printf(_("Unknown (0x%04x)<br>"), type);
 
-      tmp = mw_client_name(type);
-      if(tmp) {
-	g_string_append(str, tmp);
-	g_string_append(str, "<br>");
-	
-      } else {
-	g_string_append_printf(str, _("Unknown (0x%04x)<br>"), type);
-      }
+	  gaim_notify_user_info_add_pair(user_info, _("Last Known Client"), tmp);
+		
+	  g_free(tmp);
     }
   }
-
+  
   tmp = user_supports_text(pd->srvc_aware, who);
   if(tmp) {
-    g_string_append_printf(str, _("<b>Supports:</b> %s<br>"), tmp);
-    g_free((char *) tmp);
+	gaim_notify_user_info_add_pair(user_info, _("Supports"), tmp);
+	g_free(tmp);
   }
 
   if(b) {
-    tmp = status_text(b);
-    g_string_append_printf(str, _("<b>Status:</b> %s"), tmp);
+	gaim_notify_user_info_add_pair(user_info, _("Status"), status_text(b));
 
-    g_string_append(str, "<hr>");
-    
-    tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
-    if(tmp) {
-      tmp = g_markup_escape_text(tmp, -1);
-      g_string_append(str, tmp);
-      g_free((char *) tmp);
+	/* XXX Is this adding a status message in its own section rather than with the "Status" label? */
+    tmp2 = mwServiceAware_getText(pd->srvc_aware, &idb);
+    if(tmp2) {
+      tmp = g_markup_escape_text(tmp2, -1);
+	  gaim_notify_user_info_add_section_break(user_info);
+	  gaim_notify_user_info_add_pair(user_info, NULL, tmp);
+      g_free(tmp);
     }
   }
 
   /* @todo emit a signal to allow a plugin to override the display of
      this notification, so that it can create its own */
 
-  gaim_notify_userinfo(gc, who, str->str, NULL, NULL);
-
-  g_string_free(str, TRUE);
+  gaim_notify_userinfo(gc, who, user_info, NULL, NULL);
+  gaim_notify_user_info_destroy(user_info);
 }
  
  

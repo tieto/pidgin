@@ -199,7 +199,8 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 {
 	GaimConnection *gc;
 	GString *info;
-	char *str, *tmp;
+	char *str, *tmp, *tmp2;
+	GaimNotifyUserInfo *user_info;
 
 	if (!irc->whois.nick) {
 		gaim_debug(GAIM_DEBUG_WARNING, "irc", "Unexpected End of WHOIS for %s\n", args[1]);
@@ -210,55 +211,59 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 		return;
 	}
 
-	info = g_string_new("");
-	tmp = g_markup_escape_text(args[1], -1);
-	g_string_append_printf(info, _("<b>%s:</b> %s"), _("Nick"), tmp);
+	user_info = gaim_notify_user_info_new();
+
+	tmp2 = g_markup_escape_text(args[1], -1);
+	tmp = g_strdup_printf("%s%s%s", tmp2,
+				(irc->whois.ircop ? _(" <i>(ircop)</i>") : ""),
+				(irc->whois.identified ? _(" <i>(identified)</i>") : ""));
+	gaim_notify_user_info_add_pair(user_info, _("Nick"), tmp);
+	g_free(tmp2);
 	g_free(tmp);
-	g_string_append_printf(info, "%s%s<br>",
-			       irc->whois.ircop ? _(" <i>(ircop)</i>") : "",
-			       irc->whois.identified ? _(" <i>(identified)</i>") : "");
+
 	if (irc->whois.away) {
 		tmp = g_markup_escape_text(irc->whois.away, strlen(irc->whois.away));
 		g_free(irc->whois.away);
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Away"), tmp);
+		gaim_notify_user_info_add_pair(user_info, _("Away"), tmp);
 		g_free(tmp);
 	}
 	if (irc->whois.userhost) {
 		tmp = g_markup_escape_text(irc->whois.name, strlen(irc->whois.name));
 		g_free(irc->whois.name);
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Username"), irc->whois.userhost);
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Real name"), tmp);
+		gaim_notify_user_info_add_pair(user_info, _("Username"), irc->whois.userhost);
+		gaim_notify_user_info_add_pair(user_info, _("Real name"), tmp);
 		g_free(irc->whois.userhost);
 		g_free(tmp);
 	}
 	if (irc->whois.server) {
-		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Server"), irc->whois.server);
-		g_string_append_printf(info, " (%s)<br>", irc->whois.serverinfo);
+		tmp = g_strdup_printf("%s (%s)", irc->whois.server, irc->whois.serverinfo);
+		gaim_notify_user_info_add_pair(user_info, _("Server"), tmp);
+		g_free(tmp);
 		g_free(irc->whois.server);
 		g_free(irc->whois.serverinfo);
 	}
 	if (irc->whois.channels) {
-		g_string_append_printf(info, _("<b>%s:</b> %s<br>"), _("Currently on"), irc->whois.channels);
+		gaim_notify_user_info_add_pair(user_info, _("Currently on"), irc->whois.channels);
 		g_free(irc->whois.channels);
 	}
 	if (irc->whois.idle) {
 		gchar *timex = gaim_str_seconds_to_string(irc->whois.idle);
-		g_string_append_printf(info, _("<b>Idle for:</b> %s<br>"), timex);
+		gaim_notify_user_info_add_pair(user_info, _("Idle for"), timex);
 		g_free(timex);
-		g_string_append_printf(info, _("<b>%s:</b> %s"), _("Online since"),
-		                       gaim_date_format_full(localtime(&irc->whois.signon)));
+		gaim_notify_user_info_add_pair(user_info,
+														_("Online since"), gaim_date_format_full(localtime(&irc->whois.signon)));
 	}
 	if (!strcmp(irc->whois.nick, "Paco-Paco")) {
-		g_string_append_printf(info, _("<br><b>Defining adjective:</b> Glorious<br>"));
+		gaim_notify_user_info_add_pair(user_info,
+																   _("<b>Defining adjective:</b>"), _("Glorious"));
 	}
 
 	gc = gaim_account_get_connection(irc->account);
-	str = g_string_free(info, FALSE);
 
-	gaim_notify_userinfo(gc, irc->whois.nick, str, NULL, NULL);
+	gaim_notify_userinfo(gc, irc->whois.nick, user_info, NULL, NULL);
+	gaim_notify_user_info_destroy(user_info);
 
 	g_free(irc->whois.nick);
-	g_free(str);
 	memset(&irc->whois, 0, sizeof(irc->whois));
 }
 

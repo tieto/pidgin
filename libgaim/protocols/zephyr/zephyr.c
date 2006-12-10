@@ -781,22 +781,27 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 			if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user)) {
 				ZLocations_t locs;
 				int one = 1;
-				GString *str = g_string_new("");
+				GaimNotifyUserInfo *user_info = gaim_notify_user_info_new();
+				char *tmp;
 
-				g_string_append_printf(str, _("<b>User:</b> %s<br>"), b ? b->name : user);
+				gaim_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
 				if (b && b->alias)
-					g_string_append_printf(str, _("<b>Alias:</b> %s<br>"), b->alias);
+					gaim_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
+
 				if (!nlocs) {
-					g_string_append_printf(str, _("<br>Hidden or not logged-in"));
+					gaim_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
 				}
 				for (; nlocs > 0; nlocs--) {
 					/* XXX add real error reporting */
+					
 					ZGetLocations(&locs, &one);
-					g_string_append_printf(str, _("<br>At %s since %s"), locs.host, locs.time);
+					tmp = g_strdup_printf(_("<br>At %s since %s"), locs.host, locs.time);	
+					gaim_notify_user_info_add_pair(user_info, _("Location"), tmp);
+					g_free(tmp);
 				}
-				gaim_notify_userinfo(gc, b ? b->name : user, 
-						     str->str, NULL, NULL);
-				g_string_free(str, TRUE);
+				gaim_notify_userinfo(gc, (b ? b->name : user), 
+						     user_info, NULL, NULL);
+				gaim_notify_user_info_destroy(user_info);
 			} else {
 				if (nlocs>0) 
 					gaim_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
@@ -1198,23 +1203,27 @@ static gint check_notify_tzc(gpointer data)
 				}
 	
 				if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user) || pending_zloc(zephyr,local_zephyr_normalize(zephyr,user))){
-					GString *str = g_string_new("");
+					GaimNotifyUserInfo *user_info = gaim_notify_user_info_new();
+					char *tmp;
 
-					g_string_append_printf(str, _("<b>User:</b> %s<br>"), b ? b->name : user);
+					gaim_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
+
 					if (b && b->alias)
-						g_string_append_printf(str, _("<b>Alias:</b> %s<br>"), b->alias);
+						gaim_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
 											
 					if (!nlocs) {
-						g_string_append_printf(str, _("<br>Hidden or not logged-in"));
+						gaim_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
 					} else {
-						g_string_append_printf(str, _("<br>At %s since %s"), 
-								       tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents, 
-								       tree_child(tree_child(tree_child(tree_child(locations,2),0),2),2)->contents);
+						tmp = g_strdup_printf(_("<br>At %s since %s"),
+									  tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents,
+									  tree_child(tree_child(tree_child(tree_child(locations,2),0),2),2)->contents);
+						gaim_notify_user_info_add_pair(user_info, _("Location"), tmp);
+						g_free(tmp);
 					}
 
 					gaim_notify_userinfo(gc, b ? b->name : user,
-							     str->str, NULL, NULL);
-					g_string_free(str, TRUE);
+							     user_info, NULL, NULL);
+					gaim_notify_user_info_destroy(user_info);
 				} else {
 					if (nlocs>0) 
 						gaim_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);

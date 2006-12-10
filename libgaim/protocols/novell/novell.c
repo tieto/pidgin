@@ -1494,6 +1494,7 @@ _map_property_tag(const char *tag)
 static void
 _show_info(GaimConnection * gc, NMUserRecord * user_record)
 {
+	GaimNotifyUserInfo *user_info =	gaim_notify_user_info_new();
 	GString *info_text;
 	int count, i;
 	NMProperty *property;
@@ -1504,21 +1505,20 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 	tag = _("User ID");
 	value = nm_user_record_get_userid(user_record);
 	if (value) {
-		g_string_append_printf(info_text, "<b>%s:</b> %s<br>", tag, value);
+		gaim_notify_user_info_add_pair(user_info, tag, value);
 	}
 
 /*	tag = _("DN");
 	value = nm_user_record_get_dn(user_record);
 	if (value) {
-	g_string_append_printf(info_text, "<b>%s:</b> %s<br>",
-	tag, value);
+		gaim_notify_user_info_add_pair(user_info, tag, value);
 	}
 */
 
 	tag = _("Full name");
 	value = nm_user_record_get_full_name(user_record);
 	if (value) {
-		g_string_append_printf(info_text, "<b>%s:</b> %s<br>", tag, value);
+		gaim_notify_user_info_add_pair(user_info, tag, value);
 	}
 
 	count = nm_user_record_get_property_count(user_record);
@@ -1528,17 +1528,15 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 			tag = _map_property_tag(nm_property_get_tag(property));
 			value = nm_property_get_value(property);
 			if (tag && value) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br>",
-									   tag, value);
+				gaim_notify_user_info_add_pair(user_info, tag, value);
 			}
 			nm_release_property(property);
 		}
 	}
 
 	gaim_notify_userinfo(gc, nm_user_record_get_userid(user_record), 
-						 info_text->str, NULL, NULL);
-
-	g_string_free(info_text, TRUE);
+						 user_info, NULL, NULL);
+	gaim_notify_user_info_destroy(user_info);
 }
 
 /* Send a join conference, the first item in the parms list is the
@@ -2826,7 +2824,7 @@ novell_list_icon(GaimAccount * account, GaimBuddy * buddy)
 }
 
 static void
-novell_tooltip_text(GaimBuddy * buddy, GString * str, gboolean full)
+novell_tooltip_text(GaimBuddy * buddy, GaimNotifyUserInfo * user_info, gboolean full)
 {
 	NMUserRecord *user_record = NULL;
 	GaimConnection *gc;
@@ -2869,14 +2867,10 @@ novell_tooltip_text(GaimBuddy * buddy, GString * str, gboolean full)
 					break;
 			}
 
+			gaim_notify_user_info_add_pair(user_info, _("Status"), status_str);
+			
 			if (text)
-				g_string_append_printf(str, "\n<b>%s:</b> %s"
-										    "\n<b>%s:</b> %s",
-										    _("Status"), status_str,
-										    _("Message"), text);
-			else
-				g_string_append_printf(str, "\n<b>%s:</b> %s",
-										    _("Status"), status_str);
+				gaim_notify_user_info_add_pair(user_info, _("Message"), text);
 		}
 	}
 }

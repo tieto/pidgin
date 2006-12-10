@@ -1013,56 +1013,47 @@ static const char *ggp_status_by_id(unsigned int id)
 static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
-	GString *text;
+	GaimNotifyUserInfo *user_info;
 	char *val, *who;
 
-	text = g_string_new("");
+	user_info = gaim_notify_user_info_new();
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
 	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
-	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-	                       _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
+	gaim_notify_user_info_add_pair(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
-	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-	                       _("UIN"), who);
+	gaim_notify_user_info_add_pair(user_info, _("UIN"), who);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
-	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-	                       _("First Name"), val);
+	gaim_notify_user_info_add_pair(user_info, _("First Name"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
-	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-	                       _("Nickname"), val);
+	gaim_notify_user_info_add_pair(user_info, _("Nickname"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
-	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-	                       _("City"), val);
+	gaim_notify_user_info_add_pair(user_info, _("City"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
-	if (strncmp(val, "0", 1) == 0) {
-		g_free(val);
-		val = g_strdup("");
+	if (strncmp(val, "0", 1)) {
+		gaim_notify_user_info_add_pair(user_info, _("Birth Year"), val);
 	}
-	g_string_append_printf(text, "<b>%s:</b> %s<br/>",
-			       _("Birth Year"), val);
 	g_free(val);
 
 	val = ggp_buddy_get_name(gc, ggp_str_to_uin(who));
 	g_free(who);
 	who = val;
 
-	val = gaim_strdup_withhtml(text->str);
+/*	val = gaim_strdup_withhtml(text->str); */
 
-	gaim_notify_userinfo(gc, who, val, ggp_sr_close_cb, form);
-
-	g_string_free(text, TRUE);
+	gaim_notify_userinfo(gc, who, user_info, ggp_sr_close_cb, form);
 	g_free(val);
 	g_free(who);
+	gaim_notify_user_info_destroy(user_info);
 }
 /* }}} */
 
@@ -1558,11 +1549,11 @@ static char *ggp_status_text(GaimBuddy *b)
 }
 /* }}} */
 
-/* static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full) {{{ */
-static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
+/* static void ggp_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full) {{{ */
+static void ggp_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
 {
 	GaimStatus *status;
-	char *text;
+	char *text, *tmp;
 	const char *msg, *name;
 
 	g_return_if_fail(b != NULL);
@@ -1574,16 +1565,15 @@ static void ggp_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 	if (msg != NULL) {
 		text = g_markup_escape_text(msg, -1);
 		if (GAIM_BUDDY_IS_ONLINE(b)) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s: %s",
-				 	       _("Status"), name, text);
+			tmp = g_strdup_printf("%s: %s", name, text);
+			gaim_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			g_free(tmp);
 		} else {
-			g_string_append_printf(str, "\n<b>%s:</b>: %s",
-					       _("Message"), text);
+			gaim_notify_user_info_add_pair(user_info, _("Message"), text);
 		}
 		g_free(text);
-	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
-		g_string_append_printf(str, "\n<b>%s:</b> %s",
-				       _("Status"), name);
+	} else {
+		gaim_notify_user_info_add_pair(user_info, _("Status"), name);
 	}
 }
 /* }}} */

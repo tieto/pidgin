@@ -66,6 +66,7 @@ typedef struct {
 #include "blist.h"
 #include "conversation.h"
 #include "ft.h"
+#include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
 #include "roomlist.h"
@@ -190,7 +191,7 @@ struct _GaimPluginProtocolInfo
 	/**
 	 * Allows the prpl to add text to a buddy's tooltip.
 	 */
-	void (*tooltip_text)(GaimBuddy *buddy, GString *str, gboolean full);
+	void (*tooltip_text)(GaimBuddy *buddy, GaimNotifyUserInfo *user_info, gboolean full);
 
 	/**
 	 * This must be implemented, and must add at least the offline

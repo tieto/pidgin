@@ -153,56 +153,58 @@ static gchar *field_value(const gchar *field, const gchar **choice, gint choice_
 	}
 }
 
-static void append_field_value(GString *info_text, const gchar *field,
+static gboolean append_field_value(GaimNotifyUserInfo *user_info, const gchar *field,
 		const gchar *title, const gchar **choice, gint choice_size)
 {
 	gchar *value = field_value(field, choice, choice_size);
 
 	if (value != NULL) {
-		g_string_append_printf(info_text, "<br /><b>%s:</b> %s", title, value);
+		gaim_notify_user_info_add_pair(user_info, title, value);
 		g_free(value);
+		
+		return TRUE;
 	}
+	
+	return FALSE;
 }
 
-static GString *info_to_str(const contact_info *info)
+static GaimNotifyUserInfo *
+info_to_notify_user_info(const contact_info *info)
 {
-	GString *info_text, *extra_info;
+	GaimNotifyUserInfo *user_info = gaim_notify_user_info_new();
 	const gchar *intro;
-	gint len;
+	gboolean has_extra_info = FALSE;
 
-	info_text = g_string_new("");
-	g_string_append_printf(info_text, "<b>%s</b><br /><br />", QQ_PRIMARY_INFORMATION);
-	g_string_append_printf(info_text, "<b>%s:</b> %s", QQ_NUMBER, info->uid);
-	append_field_value(info_text, info->nick, QQ_NICKNAME, NULL, 0);
-	append_field_value(info_text, info->name, QQ_NAME, NULL, 0);
-	append_field_value(info_text, info->age, QQ_AGE, NULL, 0);
-	append_field_value(info_text, info->gender, QQ_GENDER, genders, QQ_GENDER_SIZE);
-	append_field_value(info_text, info->country, QQ_COUNTRY, NULL, 0);
-	append_field_value(info_text, info->province, QQ_PROVINCE, NULL, 0);
-	append_field_value(info_text, info->city, QQ_CITY, NULL, 0);
+	gaim_notify_user_info_add_pair(user_info, QQ_NUMBER, info->uid);
 
-	extra_info = g_string_new("");
-	g_string_append_printf(extra_info, "<br /><br /><b>%s</b><br />", QQ_ADDITIONAL_INFORMATION);
-	len = extra_info->len;
-	append_field_value(extra_info, info->horoscope, QQ_HOROSCOPE, horoscope_names, QQ_HOROSCOPE_SIZE);
-	append_field_value(extra_info, info->occupation, QQ_OCCUPATION, NULL, 0);
-	append_field_value(extra_info, info->zodiac, QQ_ZODIAC, zodiac_names, QQ_ZODIAC_SIZE);
-	append_field_value(extra_info, info->blood, QQ_BLOOD, blood_types, QQ_BLOOD_SIZE);
-	append_field_value(extra_info, info->college, QQ_COLLEGE, NULL, 0);
-	append_field_value(extra_info, info->email, QQ_EMAIL, NULL, 0);
-	append_field_value(extra_info, info->address, QQ_ADDRESS, NULL, 0);
-	append_field_value(extra_info, info->zipcode, QQ_ZIPCODE, NULL, 0);
-	append_field_value(extra_info, info->hp_num, QQ_CELL, NULL, 0);
-	append_field_value(extra_info, info->tel, QQ_TELEPHONE, NULL, 0);
-	append_field_value(extra_info, info->homepage, QQ_HOMEPAGE, NULL, 0);
-	if (len != extra_info->len)
-		g_string_append(info_text, extra_info->str);
-	g_string_free(extra_info, TRUE);
+	append_field_value(user_info, info->nick, QQ_NICKNAME, NULL, 0);
+	append_field_value(user_info, info->name, QQ_NAME, NULL, 0);
+	append_field_value(user_info, info->age, QQ_AGE, NULL, 0);
+	append_field_value(user_info, info->gender, QQ_GENDER, genders, QQ_GENDER_SIZE);
+	append_field_value(user_info, info->country, QQ_COUNTRY, NULL, 0);
+	append_field_value(user_info, info->province, QQ_PROVINCE, NULL, 0);
+	append_field_value(user_info, info->city, QQ_CITY, NULL, 0);
+
+	gaim_notify_user_info_add_section_header(user_info, QQ_ADDITIONAL_INFORMATION);
+
+	has_extra_info |= append_field_value(user_info, info->horoscope, QQ_HOROSCOPE, horoscope_names, QQ_HOROSCOPE_SIZE);
+	has_extra_info |= append_field_value(user_info, info->occupation, QQ_OCCUPATION, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->zodiac, QQ_ZODIAC, zodiac_names, QQ_ZODIAC_SIZE);
+	has_extra_info |= append_field_value(user_info, info->blood, QQ_BLOOD, blood_types, QQ_BLOOD_SIZE);
+	has_extra_info |= append_field_value(user_info, info->college, QQ_COLLEGE, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->email, QQ_EMAIL, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->address, QQ_ADDRESS, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->zipcode, QQ_ZIPCODE, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->hp_num, QQ_CELL, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->tel, QQ_TELEPHONE, NULL, 0);
+	has_extra_info |= append_field_value(user_info, info->homepage, QQ_HOMEPAGE, NULL, 0);
+
+	if (!has_extra_info)
+		gaim_notify_user_info_remove_last_item(user_info);
 
 	intro = field_value(info->intro, NULL, 0);
 	if (intro) {
-		g_string_append_printf(info_text, "<br /><br /><b>%s</b><br /><br />", QQ_INTRO);
-		g_string_append(info_text, intro);
+		gaim_notify_user_info_add_pair(user_info, QQ_INTRO, intro);
 	}
 
 	/* for debugging */
@@ -227,7 +229,7 @@ static GString *info_to_str(const contact_info *info)
 	append_field_value(info_text, info->unknown6, "unknown6", NULL, 0);
 	*/
 
-	return info_text;
+	return user_info;
 }
 
 /* send a packet to get detailed information of uid */
@@ -658,7 +660,7 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	qq_data *qd;
 	contact_info *info;
 	GList *list, *query_list;
-	GString *info_text;
+	GaimNotifyUserInfo *user_info;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -689,9 +691,9 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 			query = (qq_info_query *) query_list->data;
 			if (query->uid == atoi(info->uid)) {
 				if (query->show_window) {
-					info_text = info_to_str(info);
-					gaim_notify_userinfo(gc, info->uid, info_text->str, NULL, NULL);
-					g_string_free(info_text, TRUE);
+					user_info = info_to_notify_user_info(info);
+					gaim_notify_userinfo(gc, info->uid, user_info, NULL, NULL);
+					gaim_notify_user_info_destroy(user_info);
 				} else if (query->modify_info) {
 					create_modify_info_dialogue(gc, info);
 				}
