@@ -3078,6 +3078,9 @@ static int gaim_conv_chat_info_update(OscarData *od, FlapConnection *conn, FlapF
 	GaimConnection *gc = od->gc;
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 
+	if (!ccon)
+		return 1;
+
 	va_start(ap, fr);
 	roominfo = va_arg(ap, struct aim_chat_roominfo *);
 	roomname = va_arg(ap, char *);
@@ -3111,6 +3114,9 @@ static int gaim_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, Flap
 	int len;
 	char *msg;
 	char *charset;
+
+	if (!ccon)
+		return 1;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
