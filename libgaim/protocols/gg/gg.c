@@ -1572,7 +1572,8 @@ static void ggp_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboole
 			gaim_notify_user_info_add_pair(user_info, _("Message"), text);
 		}
 		g_free(text);
-	} else {
+	/* We don't want to duplicate 'Status: Offline'. */
+	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
 		gaim_notify_user_info_add_pair(user_info, _("Status"), name);
 	}
 }
