@@ -2600,11 +2600,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 	}
 	else if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
-		/* NOTE: THIS FUNCTION IS NO LONGER CALLED FOR CONTACTS
-		 * See create_tip_for_node().
-		 *
-		 * create_tip_for_node() calls this function - what does the above mean? -evands */
-
+		/* NOTE: THIS FUNCTION IS NO LONGER CALLED FOR CONTACTS.
+		 * It is only called by create_tip_for_node(), and create_tip_for_node() is never called for a contact.
+		 */
 		GaimContact *c;
 		GaimBuddy *b;
 		GaimPresence *presence;
