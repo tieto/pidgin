@@ -84,8 +84,8 @@ version 2.0.0:
 	* GaimPluginProtocolInfo: Added offline_message
 	* GaimPluginProtocolInfo: Added whiteboard_prpl_ops
 	* GaimPluginProtocolInfo: Added media_prpl_ops
-	* GaimPluginProtocolInfo: Added "str" argument to tooltip_text, changed
-	                          the return type to void
+	* GaimPluginProtocolInfo: Added "user_info" argument to tooltip_text,
+	                          changed the return type to void
 	* GaimPluginProtocolInfo: Added "full" argument to tooltip_text
 	* gaim_pounce_new(): Added option argument for pounce options
 	* gaim_network_listen() and gaim_network_listen_range(): Added
@@ -100,6 +100,7 @@ version 2.0.0:
 	* Smiley Themes: Backslashes must be backslash-escaped.
 	* Plugins: Depedencies are now honored when unloading plugins.
 	* gaim_markup_extract_info_field(): Added format_cb parameter.
+	* gaim_markup_extract_info_field(): Changed GString parameter to a GaimNotifyUserInfo paramter.
 	* gaim_str_to_time(): Added support for parsing the MM/DD/YYYY format.
 	* gaim_plugin_action_new(): label is now const char *
 	* gaim_plugin_pref_new_with_name(): name is now const char *
@@ -144,6 +145,8 @@ version 2.0.0:
 	* gaim_gtk_set_custom_buddy_icon() sets custom icon for a user.
 	* Hid the definition of _GaimStringref, which already had a warning to
 	  avoid accessing it directly.
+    * notify_userinfo() UI op is passed a GaimNotifyUserInfo instead of a char*
+      for the user information
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -510,7 +513,8 @@ version 0.82 (08/26/2004):
 	* Renamed: show_confirm_del_contact to gaim_gtkdialogs_remove_contact
 	* Renamed: show_about to gaim_gtkdialogs_about
 	* Added: gaim_notify_userinfo() and the associated notify_userinfo() UI op
-			 (someone who knows just why we have this can edit here)
+	         which pass account and contact information associated with the
+	         userinfo
 
 	Buddy List API:
 	* Changed: gaim_blist_request_add_chat(), added name parameter
