@@ -3,6 +3,7 @@
 #include "gntwidget.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
+#include "gntutils.h"
 #include "gnt.h"
 
 enum
