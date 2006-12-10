@@ -52,6 +52,16 @@ libgnt_la_headers = \
 	gntwm.h \
 	gnt.h
 
+CLEANFILES = \
+	gntmarshal.h \
+	gntmarshal.c
+
+gntmarshal.c: genmarshal
+	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --body > $@
+
+gntmarshal.h: genmarshal
+	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --header > $@
+
 libgnt_laincludedir=$(includedir)/gnt
 libgnt_lainclude_HEADERS = \
 	$(libgnt_la_headers)

@@ -1005,6 +1005,8 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 			GntTreeRow *r = tree->root;
 			row->next = r;
 			if (r) r->prev = row;
+			if (tree->current == tree->root)
+				tree->current = row;
 			tree->root = row;
 			tree->list = g_list_prepend(tree->list, key);
 		}
@@ -1146,7 +1148,7 @@ return_true(gpointer key, gpointer data, gpointer null)
 void gnt_tree_remove_all(GntTree *tree)
 {
 	tree->root = NULL;
-	g_hash_table_foreach_remove(tree->hash, (GHRFunc)return_true, NULL);
+	g_hash_table_foreach_remove(tree->hash, (GHRFunc)return_true, tree);
 	g_list_free(tree->list);
 	tree->list = NULL;
 	tree->current = tree->top = tree->bottom = NULL;
@@ -1392,5 +1394,12 @@ void gnt_tree_adjust_columns(GntTree *tree)
 
 	gnt_widget_get_size(GNT_WIDGET(tree), NULL, &height);
 	gnt_widget_set_size(GNT_WIDGET(tree), twidth, height);
+}
+
+void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer kd)
+{
+	g_hash_table_foreach_remove(tree->hash, return_true, NULL);
+	g_hash_table_destroy(tree->hash);
+	tree->hash = g_hash_table_new_full(hash, eq, kd, free_tree_row);
 }
 

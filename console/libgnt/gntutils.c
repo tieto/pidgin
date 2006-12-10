@@ -119,3 +119,18 @@ GHashTable *g_hash_table_duplicate(GHashTable *src, GHashFunc hash,
 	return dest;
 }
 
+gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
+				  GValue                *return_accu,
+				  const GValue          *handler_return,
+				  gpointer               dummy)
+{
+	gboolean continue_emission;
+	gboolean signal_handled;
+
+	signal_handled = g_value_get_boolean (handler_return);
+	g_value_set_boolean (return_accu, signal_handled);
+	continue_emission = !signal_handled;
+
+	return continue_emission;
+}
+

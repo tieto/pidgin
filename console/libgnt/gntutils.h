@@ -20,3 +20,14 @@ char *gnt_util_onscreen_fit_string(const char *string, int maxw);
 
 GHashTable *g_hash_table_duplicate(GHashTable *src, GHashFunc hash,
 		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d);
+
+
+/**
+ * To be used with g_signal_new. Look in the key_pressed signal-definition in
+ * gntwidget.c for usage.
+ */
+gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
+				  GValue                *return_accu,
+				  const GValue          *handler_return,
+				  gpointer               dummy);
+

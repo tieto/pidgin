@@ -38,6 +38,10 @@ struct _GnTree
 	
 	GList *list;            /* List of GntTreeRow s */
 	GHashTable *hash;       /* We need this for quickly referencing the rows */
+	guint (*hash_func)(gconstpointer);
+	gboolean (*hash_eq_func)(gconstpointer, gconstpointer);
+	GDestroyNotify key_destroy;
+	GDestroyNotify value_destroy;
 
 	int ncol;               /* No. of columns */
 	struct _GntTreeColInfo
@@ -130,6 +134,8 @@ void gnt_tree_sort_row(GntTree *tree, void *row);
 
 /* This will try to automatically adjust the width of the columns in the tree */
 void gnt_tree_adjust_columns(GntTree *tree);
+
+void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer kd);
 
 G_END_DECLS
 
