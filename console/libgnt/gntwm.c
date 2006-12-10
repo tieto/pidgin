@@ -191,7 +191,7 @@ read_window_positions(GntWM *wm)
 	char *filename = g_build_filename(g_get_home_dir(), ".gntpositions", NULL);
 	GError *error = NULL;
 	char **keys;
-	int nk;
+	gsize nk;
 
 	if (!g_key_file_load_from_file(gfile, filename, G_KEY_FILE_NONE, &error)) {
 		g_printerr("GntWM: %s\n", error->message);
@@ -208,7 +208,7 @@ read_window_positions(GntWM *wm)
 	} else {
 		while (nk--) {
 			char *title = keys[nk];
-			int l;
+			gsize l;
 			char **coords = g_key_file_get_string_list(gfile, "positions", title, &l, NULL);
 			if (l == 2) {
 				int x = atoi(coords[0]);
