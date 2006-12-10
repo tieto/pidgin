@@ -743,7 +743,6 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	YahooGetInfoData *info_data = (YahooGetInfoData *)user_data;
 	GaimNotifyUserInfo *user_info;
 	char *p;
-	char buf[1024];
 #if PHOTO_SUPPORT
 	YahooGetInfoStepTwoData *info2_data;
 	char *photo_url_text = NULL;

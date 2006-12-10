@@ -198,8 +198,7 @@ void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, cha
 void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc;
-	GString *info;
-	char *str, *tmp, *tmp2;
+	char *tmp, *tmp2;
 	GaimNotifyUserInfo *user_info;
 
 	if (!irc->whois.nick) {

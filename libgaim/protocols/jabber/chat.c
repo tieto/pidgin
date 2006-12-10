@@ -954,7 +954,7 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *wh
 static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberChat *chat;
-	xmlnode *query, *x;
+	xmlnode *query;
 	int id = GPOINTER_TO_INT(data);
 
 	if(!(chat = jabber_chat_find_by_id(js, id)))

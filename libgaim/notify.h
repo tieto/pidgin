@@ -432,7 +432,7 @@ void *gaim_notify_userinfo(GaimConnection *gc, const char *who,
  *
  * @return A new GaimNotifyUserInfo, which the caller must destroy when done
  */
-GaimNotifyUserInfo *gaim_notify_user_info_new();
+GaimNotifyUserInfo *gaim_notify_user_info_new(void);
 
 /**
  * Destroy a GaimNotifyUserInfo
