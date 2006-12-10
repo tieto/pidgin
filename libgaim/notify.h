@@ -94,6 +94,15 @@ typedef struct
 
 } GaimNotifySearchResults;
 
+/**
+ * Types of GaimNotifyUserInfoEntry objects
+ */
+typedef enum
+{
+	GAIM_NOTIFY_USER_INFO_ENTRY_PAIR = 0,
+	GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK,
+	GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER
+} GaimNotifyUserInfoEntryType;
 
 /**
  * Single column of a search result.

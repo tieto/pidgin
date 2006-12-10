@@ -43,7 +43,7 @@ struct _GaimNotifyUserInfoEntry
 {
 	char *label;
 	char *value;
-	gboolean is_header;
+	GaimNotifyUserInfoEntryType type;
 };
 
 struct _GaimNotifyUserInfo
@@ -483,7 +483,7 @@ gaim_notify_user_info_entry_new(const char *label, const char *value)
 	user_info_entry = g_new0(GaimNotifyUserInfoEntry, 1);
 	user_info_entry->label = g_strdup(label);
 	user_info_entry->value = g_strdup(value);
-	user_info_entry->is_header = FALSE;
+	user_info_entry->type = GAIM_NOTIFY_USER_INFO_ENTRY_PAIR;
 
 	return user_info_entry;
 }
@@ -541,9 +541,12 @@ gaim_notify_user_info_get_text_with_newline(GaimNotifyUserInfo *user_info, const
 
 	for (l = user_info->user_info_entries; l != NULL; l = l->next) {
 		GaimNotifyUserInfoEntry *user_info_entry = l->data;
-		if (user_info_entry->is_header)
+		/* Add a newline before a section header */
+		if (user_info_entry->type == GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER)
 			g_string_append(text, newline);
 
+		/* Handle the label/value pair itself */
+		/* XXX Todo: Use a larger size for a section header? */
 		if (user_info_entry->label)
 			g_string_append_printf(text, "<b>%s</b>", user_info_entry->label);
 		if (user_info_entry->label && user_info_entry->value)
@@ -551,10 +554,17 @@ gaim_notify_user_info_get_text_with_newline(GaimNotifyUserInfo *user_info, const
 		if (user_info_entry->value)
 			g_string_append(text, user_info_entry->value);			
 
-		if (user_info_entry->is_header)
-			g_string_append(text, newline);
+		/* Display a section break as a horizontal line */
+		if (user_info_entry->type == GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK)
+			g_string_append(text, "<HR>");
 
-		if (l->next)
+		/* Don't insert a new line before or after a section break; <HR> does that for us */
+		if ((user_info_entry->type != GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK) &&
+			(l->next && ((((GaimNotifyUserInfoEntry *)(l->next->data))->type != GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK))))
+			g_string_append(text, newline);
+		
+		/* Add an extra newline after a section header */
+		if (user_info_entry->type == GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER)
 			g_string_append(text, newline);
 	}
 
@@ -602,29 +612,27 @@ gaim_notify_user_info_add_section_header(GaimNotifyUserInfo *user_info, const ch
 	GaimNotifyUserInfoEntry *entry;
 	
 	entry = gaim_notify_user_info_entry_new(label, NULL);
-	entry->is_header = TRUE;
+	entry->type = GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER;
 
 	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
-}
-
-/**
- * Remove the last item which was added to user_info
- * This is helpful for removing a section header if the section was empty.
- */
-void
-gaim_notify_user_info_remove_last_item(GaimNotifyUserInfo *user_info)
-{
-	user_info->user_info_entries = g_list_remove(user_info->user_info_entries,
-										 g_list_last(user_info->user_info_entries)->data);
 }
 
 void
 gaim_notify_user_info_add_section_break(GaimNotifyUserInfo *user_info)
 {
-	/* This is for future expansion; section breaks should be marked as such so the UI
-	* can format them differently if desired.
-	*/	
-	gaim_notify_user_info_add_pair(user_info, NULL, "<HR>");
+	GaimNotifyUserInfoEntry *entry;
+	
+	entry = gaim_notify_user_info_entry_new(NULL, NULL);
+	entry->type = GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK;
+
+	user_info->user_info_entries = g_list_append(user_info->user_info_entries, entry);
+}
+
+void
+gaim_notify_user_info_remove_last_item(GaimNotifyUserInfo *user_info)
+{
+	user_info->user_info_entries = g_list_remove(user_info->user_info_entries,
+												 g_list_last(user_info->user_info_entries)->data);
 }
 
 void *
