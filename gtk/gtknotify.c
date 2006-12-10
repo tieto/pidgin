@@ -841,13 +841,15 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 static void *
 gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
-						 const char *text)
+						 GaimNotifyUserInfo *user_info)
 {
-	char *primary;
+	char *primary, *info;
 	void *ui_handle;
 
 	primary = g_strdup_printf(_("Info for %s"), who);
-	ui_handle = gaim_gtk_notify_formatted(_("Buddy Information"), primary, NULL, text);
+	info = gaim_notify_user_info_get_text_with_newline(user_info, "<br />");
+	ui_handle = gaim_gtk_notify_formatted(_("Buddy Information"), primary, NULL, info);
+	g_free(info);
 	g_free(primary);
 	return ui_handle;
 }

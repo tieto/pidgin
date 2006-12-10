@@ -2601,11 +2601,14 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 	else if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_BUDDY(node))
 	{
 		/* NOTE: THIS FUNCTION IS NO LONGER CALLED FOR CONTACTS
-		 * See create_tip_for_node(). */
+		 * See create_tip_for_node().
+		 *
+		 * create_tip_for_node() calls this function - what does the above mean? -evands */
 
 		GaimContact *c;
 		GaimBuddy *b;
 		GaimPresence *presence;
+		GaimNotifyUserInfo *user_info;
 		char *tmp;
 		time_t idle_secs, signon;
 
@@ -2627,15 +2630,17 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 
 		/* Buddy Name */
 		tmp = g_markup_escape_text(gaim_buddy_get_name(b), -1);
-		g_string_append_printf(str, "<span size='larger' weight='bold'>%s</span>", tmp);
+		g_string_append_printf(str, "<span size='larger' weight='bold'>%s</span>\n", tmp);
 		g_free(tmp);
+
+		user_info = gaim_notify_user_info_new();
 
 		/* Account */
 		if (full && g_list_length(gaim_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(gaim_account_get_username(
 									   gaim_buddy_get_account(b)), -1);
-			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
+			gaim_notify_user_info_add_pair(user_info, _("Account"), tmp);
 			g_free(tmp);
 		}
 
@@ -2647,7 +2652,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		    strcmp(c->alias, b->alias) != 0)
 		{
 			tmp = g_markup_escape_text(b->alias, -1);
-			g_string_append_printf(str, _("\n<b>Buddy Alias:</b> %s"), tmp);
+			gaim_notify_user_info_add_pair(user_info, _("Buddy Alias"), tmp);
 			g_free(tmp);
 		}
 
@@ -2659,7 +2664,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		if (full && b->server_alias != NULL && b->server_alias[0] != '\0')
 		{
 			tmp = g_markup_escape_text(b->server_alias, -1);
-			g_string_append_printf(str, _("\n<b>Nickname:</b> %s"), tmp);
+			gaim_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
 			g_free(tmp);
 		}
 
@@ -2668,7 +2673,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		if (full && GAIM_BUDDY_IS_ONLINE(b) && signon > 0)
 		{
 			tmp = gaim_str_seconds_to_string(time(NULL) - signon);
-			g_string_append_printf(str, _("\n<b>Logged In:</b> %s"), tmp);
+			gaim_notify_user_info_add_pair(user_info, _("Logged In"), tmp);
 			g_free(tmp);
 		}
 
@@ -2679,7 +2684,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 			if (idle_secs > 0)
 			{
 				tmp = gaim_str_seconds_to_string(time(NULL) - idle_secs);
-				g_string_append_printf(str, _("\n<b>Idle:</b> %s"), tmp);
+				gaim_notify_user_info_add_pair(user_info, _("Idle"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -2714,7 +2719,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 			if (lastseen > 0)
 			{
 				tmp = gaim_str_seconds_to_string(time(NULL) - lastseen);
-				g_string_append_printf(str, _("\n<b>Last Seen:</b> %s ago"), tmp);
+				gaim_notify_user_info_add_pair(user_info, _("Last Seen"), tmp);
 				g_free(tmp);
 			}
 		}
@@ -2723,22 +2728,28 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		/* Offline? */
 		/* FIXME: Why is this status special-cased by the core? -- rlaager */
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
-			g_string_append_printf(str, _("\n<b>Status:</b> Offline"));
+			gaim_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
 		}
 
 		if (prpl_info && prpl_info->tooltip_text)
 		{
 			/* Additional text from the PRPL */
-			prpl_info->tooltip_text(b, str, full);
+			prpl_info->tooltip_text(b, user_info, full);
 		}
 
 		/* These are Easter Eggs.  Patches to remove them will be rejected. */
 		if (!g_ascii_strcasecmp(b->name, "robflynn"))
-			g_string_append(str, _("\n<b>Description:</b> Spooky"));
+			gaim_notify_user_info_add_pair(user_info, _("Description"), _("Spooky"));
 		if (!g_ascii_strcasecmp(b->name, "seanegn"))
-			g_string_append(str, _("\n<b>Status:</b> Awesome"));
+			gaim_notify_user_info_add_pair(user_info, _("Status"), _("Awesome"));
 		if (!g_ascii_strcasecmp(b->name, "chipx86"))
-			g_string_append(str, _("\n<b>Status:</b> Rockin'"));
+			gaim_notify_user_info_add_pair(user_info, _("Status"), _("Rockin'"));
+		
+		tmp = gaim_notify_user_info_get_text_with_newline(user_info, "\n");
+		g_string_append(str, tmp);
+		g_free(tmp);
+
+		gaim_notify_user_info_destroy(user_info);
 	}
 
 	gaim_signal_emit(gaim_gtk_blist_get_handle(),
