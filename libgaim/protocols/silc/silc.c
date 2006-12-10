@@ -1798,7 +1798,8 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_ftp_new_xfer,		/* new_xfer */
 	NULL,						/* offline_message */
 	&silcgaim_wb_ops,			/* whiteboard_prpl_ops */
-	NULL,					/* send_raw */
+	NULL,                       /* send_raw */
+	NULL,                       /* roomlist_room_serialize */
 };
 
 static GaimPluginInfo info =

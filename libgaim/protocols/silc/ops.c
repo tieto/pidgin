@@ -1151,9 +1151,9 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			SilcUInt32 idle, mode;
 			SilcBuffer channels, user_modes;
 			SilcClientEntry client_entry;
-			char *buf, tmp[1024], *tmp2;
+			char tmp[1024], *tmp2;
 			char *moodstr, *statusstr, *contactstr, *langstr, *devicestr, *tzstr, *geostr;
-			GString *s;
+			GaimNotifyUserInfo *user_info;
 
 			if (!success) {
 				gaim_notify_error(gc, _("User Information"),
@@ -1174,72 +1174,74 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			(void)va_arg(vp, unsigned char *);
 			user_modes = va_arg(vp, SilcBuffer);
 
-			s = g_string_new("");
+			user_info = gaim_notify_user_info_new();
 			tmp2 = g_markup_escape_text(client_entry->nickname, -1);
-			g_string_append_printf(s, "<b>%s:</b> %s", _("Nickname"), tmp2);
+			gaim_notify_user_info_add_pair(user_info, _("Nickname"), tmp2);
 			g_free(tmp2);
 			if (client_entry->realname) {
 				tmp2 = g_markup_escape_text(client_entry->realname, -1);
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Real Name"), tmp2);
+				gaim_notify_user_info_add_pair(user_info, _("Real Name"), tmp2);
 				g_free(tmp2);
 			}
 			if (client_entry->username) {
 				tmp2 = g_markup_escape_text(client_entry->username, -1);
-				if (client_entry->hostname)
-					g_string_append_printf(s, "<br><b>%s:</b> %s@%s", _("Username"), tmp2, client_entry->hostname);
-				else
-					g_string_append_printf(s, "<br><b>%s:</b> %s", _("Username"), tmp2);
+				if (client_entry->hostname) {
+					gchar *tmp3;
+					tmp3 = g_strdup_printf("%s@%s", tmp2, client_entry->hostname);
+					gaim_notify_user_info_add_pair(user_info, _("Username"), tmp3);
+					g_free(tmp3);
+				} else
+					gaim_notify_user_info_add_pair(user_info, _("Username"), tmp2);
 				g_free(tmp2);
 			}
 
 			if (client_entry->mode) {
-				g_string_append_printf(s, "<br><b>%s:</b> ", _("User Modes"));
 				memset(tmp, 0, sizeof(tmp));
 				silcgaim_get_umode_string(client_entry->mode,
 						tmp, sizeof(tmp) - strlen(tmp));
-				g_string_append_printf(s, "%s", tmp);
+				gaim_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
 			}
 
 			silcgaim_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
 			if (moodstr) {
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Mood"), moodstr);
+				gaim_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
 				g_free(moodstr);
 			}
 
 			if (statusstr) {
 				tmp2 = g_markup_escape_text(statusstr, -1);
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Status Text"), tmp2);
+				gaim_notify_user_info_add_pair(user_info, _("Status Text"), tmp2);
 				g_free(statusstr);
 				g_free(tmp2);
 			}
 
 			if (contactstr) {
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Preferred Contact"), contactstr);
+				gaim_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
 				g_free(contactstr);
 			}
 
 			if (langstr) {
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Preferred Language"), langstr);
+				gaim_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
 				g_free(langstr);
 			}
 
 			if (devicestr) {
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Device"), devicestr);
+				gaim_notify_user_info_add_pair(user_info, _("Device"), devicestr);
 				g_free(devicestr);
 			}
 
 			if (tzstr) {
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Timezone"), tzstr);
+				gaim_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
 				g_free(tzstr);
 			}
 
 			if (geostr) {
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Geolocation"), geostr);
+				gaim_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
 				g_free(geostr);
 			}
 
 			if (client_entry->server)
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Server"), client_entry->server);
+				gaim_notify_user_info_add_pair(user_info, _("Server"), client_entry->server);
 
 			if (channels && user_modes) {
 				SilcUInt32 *umodes;
@@ -1252,7 +1254,6 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 					SilcChannelPayload entry;
 					int i = 0;
 
-					g_string_append_printf(s, "<br><b>%s:</b> ", _("Currently on"));
 					memset(tmp, 0, sizeof(tmp));
 					silc_dlist_start(list);
 					while ((entry = silc_dlist_get(list))
@@ -1268,7 +1269,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 					}
 					tmp2 = g_markup_escape_text(tmp, -1);
-					g_string_append_printf(s, "%s", tmp2);
+					gaim_notify_user_info_add_pair(user_info, _("Currently on"), tmp2);
 					g_free(tmp2);
 					silc_free(umodes);
 				}
@@ -1281,14 +1282,13 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
 				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
-				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Fingerprint"), fingerprint);
-				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Babbleprint"), babbleprint);
+				gaim_notify_user_info_add_pair(user_info, _("Public Key Fingerprint"), fingerprint);
+				gaim_notify_user_info_add_pair(user_info, _("Public Key Babbleprint"), babbleprint);
 				silc_free(fingerprint);
 				silc_free(babbleprint);
 				silc_free(pk);
 			}
 
-			buf = g_string_free(s, FALSE);
 #if 0 /* XXX for now, let's not show attrs here */
 			if (client_entry->attrs)
 				gaim_request_action(gc, _("User Information"),
@@ -1298,16 +1298,16 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("_More..."), G_CALLBACK(silcgaim_whois_more));
 			else
 #endif
-			gaim_notify_userinfo(gc, client_entry->nickname, buf, NULL, NULL);
-			g_free(buf);
+			gaim_notify_userinfo(gc, client_entry->nickname, user_info, NULL, NULL);
+			gaim_notify_user_info_destroy(user_info);
 		}
 		break;
 
 	case SILC_COMMAND_WHOWAS:
 		{
 			SilcClientEntry client_entry;
-			char *buf, *nickname, *realname, *username, *tmp;
-			GString *s;
+			char *nickname, *realname, *username, *tmp;
+			GaimNotifyUserInfo *user_info;
 
 			if (!success) {
 				gaim_notify_error(gc, _("User Information"),
@@ -1323,25 +1323,28 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (!nickname)
 				break;
 
-			s = g_string_new("");
+			user_info = gaim_notify_user_info_new();
 			tmp = g_markup_escape_text(nickname, -1);
-			g_string_append_printf(s, "<b>%s:</b> %s", _("Nickname"), tmp);
+			gaim_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
 			g_free(tmp);
 			if (realname) {
 				tmp = g_markup_escape_text(realname, -1);
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Real Name"), tmp);
+				gaim_notify_user_info_add_pair(user_info, _("Real Name"), tmp);
 				g_free(tmp);
 			}
 			if (username) {
 				tmp = g_markup_escape_text(username, -1);
-				if (client_entry && client_entry->hostname)
-					g_string_append_printf(s, "<br><b>%s:</b> %s@%s", _("Username"), tmp, client_entry->hostname);
-				else
-					g_string_append_printf(s, "<br><b>%s:</b> %s", _("Username"), tmp);
+				if (client_entry && client_entry->hostname) {
+					gchar *tmp3;
+					tmp3 = g_strdup_printf("%s@%s", tmp, client_entry->hostname);
+					gaim_notify_user_info_add_pair(user_info, _("Username"), tmp3);
+					g_free(tmp3);
+				} else
+					gaim_notify_user_info_add_pair(user_info, _("Username"), tmp);
 				g_free(tmp);
 			}
 			if (client_entry && client_entry->server)
-				g_string_append_printf(s, "<br><b>%s:</b> %s", _("Server"), client_entry->server);
+				gaim_notify_user_info_add_pair(user_info, _("Server"), client_entry->server);
 
 
 			if (client_entry && client_entry->public_key) {
@@ -1351,16 +1354,15 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
 				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
-				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Fingerprint"), fingerprint);
-				g_string_append_printf(s, "<br><b>%s:</b><br>%s", _("Public Key Babbleprint"), babbleprint);
+				gaim_notify_user_info_add_pair(user_info, _("Public Key Fingerprint"), fingerprint);
+				gaim_notify_user_info_add_pair(user_info, _("Public Key Babbleprint"), babbleprint);
 				silc_free(fingerprint);
 				silc_free(babbleprint);
 				silc_free(pk);
 			}
 
-			buf = g_string_free(s, FALSE);
-			gaim_notify_userinfo(gc, nickname, buf, NULL, NULL);
-			g_free(buf);
+			gaim_notify_userinfo(gc, nickname, user_info, NULL, NULL);
+			gaim_notify_user_info_destroy(user_info);
 		}
 		break;
 
