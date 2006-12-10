@@ -52,6 +52,9 @@ struct _GnTree
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
 
+	GString *search;
+	int search_timeout;
+
 	GCompareFunc compare;
 };
 

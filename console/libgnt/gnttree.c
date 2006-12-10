@@ -6,6 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define SEARCH_TIMEOUT 4000   /* 4 secs */
+
 enum
 {
 	SIG_SELECTION_CHANGED,
@@ -35,6 +37,7 @@ struct _GnTreeRow
 	GntTreeRow *prev;
 
 	GList *columns;
+	GntTree *tree;
 };
 
 struct _GnTreeCol
@@ -70,12 +73,32 @@ _get_next(GntTreeRow *row, gboolean godeep)
 	return _get_next(row->parent, FALSE);
 }
 
+static gboolean
+row_matches_search(GntTreeRow *row)
+{
+	GntTree *t = row->tree;
+	if (t->search && t->search->len > 0) {
+		char *one = g_utf8_casefold(((GntTreeCol*)row->columns->data)->text, -1);
+		char *two = g_utf8_casefold(t->search->str, -1);
+		char *z = strstr(one, two);
+		g_free(one);
+		g_free(two);
+		if (z == NULL)
+			return FALSE;
+	}
+	return TRUE;
+}
+
 static GntTreeRow *
 get_next(GntTreeRow *row)
 {
 	if (row == NULL)
 		return NULL;
-	return _get_next(row, !row->collapsed);
+	while ((row = _get_next(row, !row->collapsed)) != NULL) {
+		if (row_matches_search(row))
+			break;
+	}
+	return row;
 }
 
 /* Returns the n-th next row. If it doesn't exist, returns NULL */
@@ -135,9 +158,15 @@ get_prev(GntTreeRow *row)
 {
 	if (row == NULL)
 		return NULL;
-	if (row->prev)
-		return get_last_child(row->prev);
-	return row->parent;
+	while (row) {
+		if (row->prev)
+			row = get_last_child(row->prev);
+		else
+			row = row->parent;
+		if (!row || row_matches_search(row))
+			break;
+	}
+	return row;
 }
 
 static GntTreeRow *
@@ -332,6 +361,8 @@ redraw_tree(GntTree *tree)
 	else if (up >= widget->priv.height - pos)
 		tree->top = get_prev_n(tree->current, rows);
 
+	if (tree->top && !row_matches_search(tree->top))
+		tree->top = get_next(tree->top);
 	row = tree->top;
 	scrcol = widget->priv.width - 1 - 2 * pos;  /* exclude the borders and the scrollbar */
 	for (i = start + pos; row && i < widget->priv.height - pos;
@@ -343,6 +374,8 @@ redraw_tree(GntTree *tree)
 		GntTextFormatFlags flags = row->flags;
 		int attr = 0;
 
+		if (!row_matches_search(row))
+			continue;
 		str = update_row_text(tree, row);
 
 		if ((wr = gnt_util_onscreen_width(str, NULL)) > scrcol)
@@ -574,18 +607,46 @@ action_page_up(GntBindable *bind, GList *null)
 	return TRUE;
 }
 
+static void
+end_search(GntTree *tree)
+{
+	if (tree->search) {
+		g_source_remove(tree->search_timeout);
+		g_string_free(tree->search, TRUE);
+		tree->search = NULL;
+		tree->search_timeout = 0;
+	}
+}
+
+static gboolean
+search_timeout(gpointer data)
+{
+	GntTree *tree = data;
+
+	end_search(tree);
+	redraw_tree(tree);
+
+	return FALSE;
+}
+
 static gboolean
 gnt_tree_key_pressed(GntWidget *widget, const char *text)
 {
 	GntTree *tree = GNT_TREE(widget);
 	GntTreeRow *old = tree->current;
 
-	if (text[0] == '\r')
-	{
+	if (text[0] == '\r') {
+		end_search(tree);
 		gnt_widget_activate(widget);
-	}
-	else if (text[0] == ' ' && text[1] == 0)
-	{
+	} else if (tree->search) {
+		if (isalnum(*text)) {
+			tree->search = g_string_append_c(tree->search, *text);
+			redraw_tree(tree);
+			g_source_remove(tree->search_timeout);
+			tree->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
+		}
+		return TRUE;
+	} else if (text[0] == ' ' && text[1] == 0) {
 		/* Space pressed */
 		GntTreeRow *row = tree->current;
 		if (row && row->child)
@@ -616,6 +677,7 @@ gnt_tree_destroy(GntWidget *widget)
 	GntTree *tree = GNT_TREE(widget);
 	int i;
 
+	end_search(tree);
 	g_hash_table_destroy(tree->hash);
 	g_list_free(tree->list);
 
@@ -684,6 +746,28 @@ gnt_tree_size_changed(GntWidget *widget, int w, int h)
 		tree->columns[tree->ncol - 1].width += widget->priv.width - n - 2 - 1 * tree->ncol;
 }
 
+static gboolean
+start_search(GntBindable *bindable, GList *list)
+{
+	GntTree *tree = GNT_TREE(bindable);
+	if (tree->search)
+		return FALSE;
+	tree->search = g_string_new(NULL);
+	tree->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
+	return TRUE;
+}
+
+static gboolean
+end_search_action(GntBindable *bindable, GList *list)
+{
+	GntTree *tree = GNT_TREE(bindable);
+	if (tree->search == NULL)
+		return FALSE;
+	end_search(tree);
+	redraw_tree(tree);
+	return TRUE;
+}
+
 static void
 gnt_tree_class_init(GntTreeClass *klass)
 {
@@ -732,6 +816,10 @@ gnt_tree_class_init(GntTreeClass *klass)
 				GNT_KEY_PGUP, NULL);
 	gnt_bindable_class_register_action(bindable, "page-down", action_page_down,
 				GNT_KEY_PGDOWN, NULL);
+	gnt_bindable_class_register_action(bindable, "start-search", start_search,
+				"/", NULL);
+	gnt_bindable_class_register_action(bindable, "end-search", end_search_action,
+				"\033", NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), bindable);
 	GNTDEBUG;
@@ -956,6 +1044,7 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 	GntTreeRow *pr = NULL;
 
 	g_hash_table_replace(tree->hash, key, row);
+	row->tree = tree;
 
 	if (bigbro == NULL && tree->compare)
 	{

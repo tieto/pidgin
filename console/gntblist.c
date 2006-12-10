@@ -1362,11 +1362,13 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 	} else if (strcmp(text, GNT_KEY_CTRL_O) == 0) {
 		gaim_prefs_set_bool(PREF_ROOT "/showoffline",
 				!gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
-	} else if (strcmp(text, "t") == 0) {
-		gg_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
-		gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");
-	} else if (strcmp(text, "a") == 0) {
-		gg_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
+	} else if (GNT_TREE(ggblist->tree)->search == NULL) {
+		if (strcmp(text, "t") == 0) {
+			gg_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
+			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");
+		} else if (strcmp(text, "a") == 0) {
+			gg_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
+		}
 	} else
 		return FALSE;
 
