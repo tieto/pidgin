@@ -50,6 +50,12 @@ typedef enum {
 	JABBER_CAP_CHAT_STATES    = 1 << 6,
 	JABBER_CAP_IQ_SEARCH      = 1 << 7,
 	JABBER_CAP_IQ_REGISTER    = 1 << 8,
+
+	/* Google Talk extensions: 
+	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
+	 */
+	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
+
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -120,8 +126,12 @@ typedef struct _JabberStream
 
 	gboolean reinit;
 
+	JabberCapabilities server_caps;
 	gboolean googletalk;
 	char *server_name;
+  
+	char *gmail_last_time;
+	char *gmail_last_tid;
 
 	/* OK, this stays at the end of the struct, so plugins can depend
 	 * on the rest of the stuff being in the right place

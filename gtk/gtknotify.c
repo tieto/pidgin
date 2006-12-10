@@ -313,9 +313,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	GaimNotifyMailData *data = NULL;
 	GtkWidget *dialog = NULL;
 	GtkWidget *vbox = NULL;
-	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *img;
 	char *detail_text;
 	char *label_text;
 	GtkTreeIter iter;
@@ -357,27 +355,15 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
 
-		/* Setup the main horizontal box */
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
-		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
-
-		/* Dialog icon */
-		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_INFO,
-									   GTK_ICON_SIZE_DIALOG);
-		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-
 		/* Vertical box */
-		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
-
-		gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+		vbox = GTK_DIALOG(dialog)->vbox;
 
 		if (mail_dialog == NULL && detailed)
 		{
 			GtkWidget *sw;
 
 			/* Golden ratio it up! */
-			gtk_widget_set_size_request(dialog, 475, 200);
+			gtk_widget_set_size_request(dialog, 550, 400);
 
 			sw = gtk_scrolled_window_new(NULL, NULL);
 			gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);

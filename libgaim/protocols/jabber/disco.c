@@ -23,6 +23,7 @@
 #include "prefs.h"
 
 #include "buddy.h"
+#include "google.h"
 #include "iq.h"
 #include "disco.h"
 #include "jabber.h"
@@ -249,6 +250,19 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		js->server_name = g_strdup(name);
 		if (!strcmp(name, "Google Talk"))
 			js->googletalk = TRUE;
+	}
+	
+	for (child = xmlnode_get_child(query, "feature"); child; 
+	     child = xmlnode_get_next_twin(child)) {
+		const char *var;
+		var = xmlnode_get_attrib(child, "var");
+		if (!var)
+			continue;
+
+		if (!strcmp("google:mail:notify", var)) {
+			js->server_caps |= JABBER_CAP_GMAIL_NOTIFY;
+			jabber_gmail_init(js);
+		}
 	}
 }
 

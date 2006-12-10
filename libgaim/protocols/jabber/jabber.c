@@ -998,6 +998,8 @@ static void jabber_close(GaimConnection *gc)
 		g_free(js->sasl_cb);
 #endif
 	g_free(js->server_name);
+	g_free(js->gmail_last_time);
+	g_free(js->gmail_last_tid);
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -1847,7 +1849,7 @@ static void jabber_register_commands(void)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"png,gif,jpeg", 0, 0, 96, 96, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */

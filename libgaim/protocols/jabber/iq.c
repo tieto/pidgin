@@ -25,6 +25,7 @@
 
 #include "buddy.h"
 #include "disco.h"
+#include "google.h"
 #include "iq.h"
 #include "oob.h"
 #include "roster.h"
@@ -279,9 +280,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-
 	if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
 		jabber_si_parse(js, packet);
+		return;
+	}
+
+	if(xmlnode_get_child_with_namespace(packet, "new-mail", "google:mail:notify")) {
+		jabber_gmail_poke(js, packet);
 		return;
 	}
 
