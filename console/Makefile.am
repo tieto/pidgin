@@ -36,12 +36,11 @@ gaim_textincludedir=$(includedir)/gaim/gnt
 gaim_textinclude_HEADERS = \
 	$(gaim_text_headers)
 
-gaim_text_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
+gaim_text_DEPENDENCIES = @LIBOBJS@
 gaim_text_LDFLAGS = -export-dynamic
 gaim_text_LDADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
-	$(STATIC_LINK_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \

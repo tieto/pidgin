@@ -159,13 +159,12 @@ gaiminclude_HEADERS = \
 	$(gaim_headers)
 
 
-gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
+gaim_DEPENDENCIES = @LIBOBJS@
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
-	$(STATIC_LINK_LIBS) \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \

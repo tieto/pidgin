@@ -56,11 +56,10 @@ libgnt_laincludedir=$(includedir)/gnt
 libgnt_lainclude_HEADERS = \
 	$(libgnt_la_headers)
 
-libgnt_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
+libgnt_la_DEPENDENCIES = 
 libgnt_la_LDFLAGS = -export-dynamic
 libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
-	$(STATIC_LINK_LIBS) \
 	$(GNT_LIBS)
 
 AM_CPPFLAGS = \
