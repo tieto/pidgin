@@ -898,7 +898,7 @@ gaim_account_register(GaimAccount *account)
 	gaim_debug_info("account", "Registering account %s\n",
 					gaim_account_get_username(account));
 
-	gaim_connection_new(account, TRUE, NULL);
+	gaim_connection_new(account, TRUE, gaim_account_get_password(account));
 }
 
 static void
