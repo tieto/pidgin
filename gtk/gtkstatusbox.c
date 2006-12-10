@@ -764,8 +764,7 @@ status_menu_refresh_iter(GtkGaimStatusBox *status_box)
 					path = gtk_tree_model_get_path(GTK_TREE_MODEL(status_box->dropdown_store), &iter);
 					break;
 				}
-			}
-			while (gtk_tree_model_iter_next(GTK_TREE_MODEL(status_box->dropdown_store), &iter));
+			} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(status_box->dropdown_store), &iter));
 		}
 	}
 
@@ -2154,7 +2153,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 		status = gaim_account_get_active_status(status_box->account);
 
-		g_object_get(G_OBJECT(status_box), "active", &active, NULL);
+		active = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(status_box), "active"));
 
 		status_type = find_status_type_by_index(status_box->account, active);
 		id = gaim_status_type_get_id(status_type);
@@ -2250,11 +2249,14 @@ static void gtk_gaim_status_box_changed(GtkGaimStatusBox *status_box)
 	GtkGaimStatusBoxItemType type;
 	gpointer data;
 	GList *accounts = NULL, *node;
+	int active;
 
 	
 	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
 		return;
+	active = gtk_tree_path_get_indices(path)[0];
 	gtk_tree_path_free(path);
+	g_object_set_data(G_OBJECT(status_box), "active", GINT_TO_POINTER(active));
 	
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
