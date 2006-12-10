@@ -2706,6 +2706,11 @@ gaim_blist_init(void)
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_BLIST_BUDDY));
 
+	gaim_signal_register(handle, "buddy-got-login-time",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
 	gaim_signal_register(handle, "buddy-added",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,

@@ -397,6 +397,7 @@ version 2.0.0:
 	* "buddy-status-changed"
 	* "buddy-idle-changed": A buddy's idle status changed.
 	* "buddy-icon-changed"
+	* "buddy-got-login-time": The login time for a buddy is now known
 	* "displaying-userinfo"
 	* "gtkblist-hiding"
 	* "gtkblist-unhiding"
