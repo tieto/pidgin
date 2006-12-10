@@ -316,7 +316,7 @@ bonjour_status_text(GaimBuddy *buddy)
 }
 
 static void
-bonjour_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
+bonjour_tooltip_text(GaimBuddy *buddy, GaimNotifyUserInfo *user_info, gboolean full)
 {
 	GaimPresence *presence;
 	GaimStatus *status;
@@ -334,9 +334,9 @@ bonjour_tooltip_text(GaimBuddy *buddy, GString *str, gboolean full)
 	else
 		status_description = gaim_status_get_name(status);
 
-	g_string_append_printf(str, _("\n<b>Status:</b> %s"), status_description);
+	gaim_notify_user_info_add_pair(user_info, _("Status"), status_description);
 	if (message != NULL)
-		g_string_append_printf(str, _("\n<b>Message:</b> %s"), message);
+		gaim_notify_user_info_add_pair(user_info, _("Message"), message);
 }
 
 static gboolean
@@ -414,7 +414,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,                                                    /* new_xfer */
 	NULL,                                                    /* offline_message */
 	NULL,                                                    /* whiteboard_prpl_ops */
-	NULL,							 /* send_raw */
+	NULL,                                                    /* send_raw */
+	NULL,                                                    /* roomlist_room_serialize */
 };
 
 static GaimPluginInfo info =
