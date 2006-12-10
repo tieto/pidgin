@@ -2613,6 +2613,7 @@ static int gaim_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason, g
 				
 			gaim_notify_user_info_add_pair(user_info, _("UIN"), who);
 			gaim_notify_user_info_add_pair(user_info, _("Status"), statusmsg);
+			gaim_notify_user_info_add_section_break(user_info);
 			gaim_notify_user_info_add_pair(user_info, NULL, g_strjoinv("<BR>", splitmsg));
 
 			g_free(statusmsg);
@@ -2848,6 +2849,7 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 		g_free(tmp);
 		if (away_utf8 != NULL) {
 			tmp = gaim_str_sub_away_formatters(away_utf8, gaim_account_get_username(account));
+			gaim_notify_user_info_add_section_break(user_info);
 			oscar_user_info_add_pair(user_info, NULL, tmp);
 			g_free(tmp);
 			g_free(away_utf8);
@@ -2861,6 +2863,7 @@ static int gaim_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *f
 		g_free(tmp);
 		if (info_utf8 != NULL) {
 			tmp = gaim_str_sub_away_formatters(info_utf8, gaim_account_get_username(account));
+			gaim_notify_user_info_add_section_break(user_info);
 			oscar_user_info_add_pair(user_info, _("Profile"), tmp);
 			g_free(tmp);
 			g_free(info_utf8);
@@ -3703,8 +3706,7 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	}
 	
 	oscar_user_info_convert_and_add(account, user_info, _("Additional Information"), info->info);
-
-/*	g_string_append_printf(str, "<hr>"); */
+	gaim_notify_user_info_add_section_break(user_info);
 
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
 		tmp = g_string_sized_new(100);
@@ -3714,7 +3716,8 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Zip Code"), info->homezip);
 		
 		gaim_notify_user_info_add_pair(user_info, _("Home Address"), tmp->str);
-		
+		gaim_notify_user_info_add_section_break(user_info);
+
 		g_string_free(tmp, TRUE);
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
@@ -3726,7 +3729,8 @@ static int gaim_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Zip Code"), info->workzip);
 
 		gaim_notify_user_info_add_pair(user_info, _("Work Address"), tmp->str);
-		
+		gaim_notify_user_info_add_section_break(user_info);
+
 		g_string_free(tmp, TRUE);
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
