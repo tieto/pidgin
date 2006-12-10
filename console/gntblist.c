@@ -1148,29 +1148,27 @@ tooltip_for_buddy(GaimBuddy *buddy, GString *str)
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
 	GaimAccount *account;
+	GaimNotifyUserInfo *user_info;
 	const char *alias = gaim_buddy_get_alias(buddy);
+	char *tmp, *strip;
+
+	user_info = gaim_notify_user_info_new();
 
 	account = gaim_buddy_get_account(buddy);
 
 	if (g_utf8_collate(gaim_buddy_get_name(buddy), alias))
-		g_string_append_printf(str, _("Nickname: %s\n"), alias);
-	g_string_append_printf(str, _("Account: %s (%s)"),
+		gaim_notify_user_info_add_pair(user_info, _("Nickname"), alias);
+
+	tmp = g_strdup_printf("%s (%s)",
 			gaim_account_get_username(account),
 			gaim_account_get_protocol_name(account));
+	gaim_notify_user_info_add_pair(user_info, _("Account"), tmp);
+	g_free(tmp);
 	
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info && prpl_info->tooltip_text) {
-		GString *tip = g_string_new("");
-		char *strip, *br;
-		prpl_info->tooltip_text(buddy, tip, TRUE);
-
-		br = gaim_strreplace(tip->str, "\n", "<br>");
-		strip = gaim_markup_strip_html(br);
-		g_string_append(str, strip);
-		g_string_free(tip, TRUE);
-		g_free(strip);
-		g_free(br);
+		prpl_info->tooltip_text(buddy, user_info, TRUE);
 	}
 
 	if (gaim_prefs_get_bool("/gaim/gnt/blist/idletime")) {
@@ -1179,11 +1177,19 @@ tooltip_for_buddy(GaimBuddy *buddy, GString *str)
 			time_t idle = gaim_presence_get_idle_time(pre);
 			if (idle > 0) {
 				char *st = gaim_str_seconds_to_string(time(NULL) - idle);
-				g_string_append_printf(str, _("\nIdle: %s"), st);
+				gaim_notify_user_info_add_pair(user_info, _("Idle"), st);
 				g_free(st);
 			}
 		}
 	}
+	
+	tmp = gaim_notify_user_info_get_text_with_newline(user_info, "\n");
+	gaim_notify_user_info_destroy(user_info);
+
+	strip = gaim_markup_strip_html(tmp);
+	g_string_append(str, strip);
+	g_free(strip);
+	g_free(tmp);
 }
 
 static GString*
