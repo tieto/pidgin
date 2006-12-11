@@ -1368,7 +1368,8 @@ key_pressed(GntWidget *widget, const char *text, GGBlist *ggblist)
 			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");
 		} else if (strcmp(text, "a") == 0) {
 			gg_blist_place_tagged(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
-		}
+		} else
+			return FALSE;
 	} else
 		return FALSE;
 
