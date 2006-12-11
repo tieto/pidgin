@@ -24,8 +24,13 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
+autoaccept_la_LDFLAGS       = -module -avoid-version
+autoreply_la_LDFLAGS        = -module -avoid-version
+buddynote_la_LDFLAGS        = -module -avoid-version
 idle_la_LDFLAGS             = -module -avoid-version
 log_reader_la_LDFLAGS       = -module -avoid-version
+newline_la_LDFLAGS          = -module -avoid-version
+offlinemsg_la_LDFLAGS       = -module -avoid-version
 psychic_la_LDFLAGS          = -module -avoid-version
 statenotify_la_LDFLAGS      = -module -avoid-version
 
@@ -35,20 +40,34 @@ dbus_example_la_LDFLAGS     = -module -avoid-version
 if PLUGINS
 
 plugin_LTLIBRARIES = \
+	autoaccept.la       \
+	autoreply.la        \
+	buddynote.la        \
 	idle.la             \
 	log_reader.la       \
+	newline.la          \
+	offlinemsg.la       \
 	psychic.la          \
 	statenotify.la      \
 	$(DBUS_LTLIB)
 
-
+autoaccept_la_SOURCES       = autoaccept.c
+autoreply_la_SOURCES        = autoreply.c
+buddynote_la_SOURCES        = buddynote.c
 idle_la_SOURCES             = idle.c
 log_reader_la_SOURCES       = log_reader.c
+newline_la_SOURCES          = newline.c
+offlinemsg_la_SOURCES       = offlinemsg.c
 psychic_la_SOURCES          = psychic.c
 statenotify_la_SOURCES      = statenotify.c
 
+autoaccept_la_LIBADD        = $(GLIB_LIBS)
+autoreply_la_LIBADD         = $(GLIB_LIBS)
+buddynote_la_LIBADD         = $(GLIB_LIBS)
 idle_la_LIBADD              = $(GLIB_LIBS)
 log_reader_la_LIBADD        = $(GLIB_LIBS)
+newline_la_LIBADD           = $(GLIB_LIBS)
+offlinemsg_la_LIBADD        = $(GLIB_LIBS)
 psychic_la_LIBADD           = $(GLIB_LIBS)
 statenotify_la_LIBADD       = $(GLIB_LIBS)
 

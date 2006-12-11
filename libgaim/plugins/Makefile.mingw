@@ -60,8 +60,13 @@ install: all $(GAIM_INSTALL_PLUGINS_DIR)
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 
 plugins: \
+		autoaccept.dll \
+		autoreply.dll \
+		buddynote.dll \
 		idle.dll \
 		log_reader.dll \
+		newline.dll \
+		offlinemsg.dll \
 		psychic.dll \
 		statenotify.dll
 
