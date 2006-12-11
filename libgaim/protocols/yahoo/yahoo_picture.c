@@ -345,7 +345,7 @@ struct yspufe {
 
 static void yahoo_send_picture_update_foreach(gpointer key, gpointer value, gpointer data)
 {
-	char *who = key;
+	const char *who = key;
 	YahooFriend *f = value;
 	struct yspufe *d = data;
 
@@ -438,8 +438,6 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	GaimAccount *account;
 	struct yahoo_data *yd;
 
-	g_return_if_fail(d != NULL);
-
 	gc = d->gc;
 	account = gaim_connection_get_account(gc);
 	yd = gc->proto_data;
@@ -448,7 +446,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	yd->buddy_icon_connect_data = NULL;
 
 	if (source < 0) {
-		gaim_debug_error("yahoo", "Buddy icon upload failed, no file desc.\n");
+		gaim_debug_error("yahoo", "Buddy icon upload failed: %s\n", error_message);
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
 	}
@@ -500,36 +498,23 @@ void yahoo_buddy_icon_upload(GaimConnection *gc, struct yahoo_buddy_icon_upload_
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	GaimProxyConnectData *connect_data = NULL;
 
-	g_return_if_fail(d != NULL);
-
-	if (yd->buddy_icon_connect_data) {
+	if (yd->buddy_icon_connect_data != NULL) {
 		/* Cancel any in-progress buddy icon upload */
 		gaim_proxy_connect_cancel(yd->buddy_icon_connect_data);
 		yd->buddy_icon_connect_data = NULL;
 	}
 
-	if (yd->jp) {
-		if ((connect_data = gaim_proxy_connect(NULL, account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
-											   gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-											   yahoo_buddy_icon_upload_connected, d)) == NULL)
-		{
-			gaim_debug_error("yahoo", "Uploading our buddy icon failed to connect.\n");
-			yahoo_buddy_icon_upload_data_free(d);
-		}
-	} else {
-		if ((connect_data = gaim_proxy_connect(NULL, account, gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
-											   gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
-											   yahoo_buddy_icon_upload_connected, d)) == NULL)
-		{
-			gaim_debug_error("yahoo", "Uploading our buddy icon failed to connect.\n");
-			yahoo_buddy_icon_upload_data_free(d);
-		}
-	}
+	yd->buddy_icon_connect_data = gaim_proxy_connect(NULL, account,
+			yd->jp ? gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST)
+			       : gaim_account_get_string(account, "xfer_host",  YAHOO_XFER_HOST),
+			gaim_account_get_int(account, "xfer_port", YAHOO_XFER_PORT),
+			yahoo_buddy_icon_upload_connected, d);
 
-	if (connect_data) {
-		yd->buddy_icon_connect_data = connect_data;
+	if (yd->buddy_icon_connect_data == NULL)
+	{
+		gaim_debug_error("yahoo", "Uploading our buddy icon failed to connect.\n");
+		yahoo_buddy_icon_upload_data_free(d);
 	}
 }
 
@@ -537,61 +522,56 @@ void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GaimAccount *account = gc->account;
-	FILE *file;
-	struct stat st;
+	gchar *icondata;
+	gsize len;
+	GError *error = NULL;
 
 	if (iconfile == NULL) {
-		if (yd->picture_url)
-			g_free(yd->picture_url);
+		g_free(yd->picture_url);
 		yd->picture_url = NULL;
 
 		gaim_account_set_string(account, YAHOO_PICURL_SETTING, NULL);
 		gaim_account_set_int(account, YAHOO_PICCKSUM_SETTING, 0);
 		gaim_account_set_int(account, YAHOO_PICEXPIRE_SETTING, 0);
 		if (yd->logged_in)
+			/* Tell everyone we ain't got one no more */
 			yahoo_send_picture_update(gc, 0);
-		/* TODO: check if we're connected and tell everyone we ain't not one no more */
-	} else if (!g_stat(iconfile, &st)) {
-		file = g_fopen(iconfile, "rb");
-		if (file) {
-			GString *s = g_string_sized_new(st.st_size);
-			size_t len;
-			struct yahoo_buddy_icon_upload_data *d;
-			int oldcksum = gaim_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);
-			int expire = gaim_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
-			const char *oldurl = gaim_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
 
-			len = fread(s->str, 1, st.st_size, file);
-			fclose(file);
-			g_string_set_size(s, len);
-			yd->picture_checksum = g_string_hash(s);
+	} else if (g_file_get_contents(iconfile, &icondata, &len, &error)) {
+		GString *s = g_string_new_len(icondata, len);
+		struct yahoo_buddy_icon_upload_data *d;
+		int oldcksum = gaim_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);
+		int expire = gaim_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
+		const char *oldurl = gaim_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
 
-			if ((yd->picture_checksum == oldcksum) && (expire > (time(NULL) + 60*60*24)) &&
-			    oldcksum && expire && oldurl) {
-				gaim_debug_misc("yahoo", "buddy icon is up to date. Not reuploading.\n");
-				g_string_free(s, TRUE);
-				if (yd->picture_url)
-					g_free(yd->picture_url);
-				yd->picture_url = g_strdup(oldurl);
-				return;
-			}
+		yd->picture_checksum = g_string_hash(s);
 
-			d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
-			d->gc = gc;
-			d->str = s;
-			d->fd = -1;
-			d->filename = g_strdup(iconfile);
+		if ((yd->picture_checksum == oldcksum) &&
+			(expire > (time(NULL) + 60*60*24)) && oldurl)
+		{
+			gaim_debug_misc("yahoo", "buddy icon is up to date. Not reuploading.\n");
+			g_string_free(s, TRUE);
+			g_free(yd->picture_url);
+			yd->picture_url = g_strdup(oldurl);
+			return;
+		}
 
-			if (!yd->logged_in) {
-				yd->picture_upload_todo = d;
-				return;
-			}
+		d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
+		d->gc = gc;
+		d->str = s;
+		d->fd = -1;
+		d->filename = g_strdup(iconfile);
 
-			yahoo_buddy_icon_upload(gc, d);
-		} else
-			gaim_debug_error("yahoo",
-				   "Can't open buddy icon file!\n");
+		if (!yd->logged_in) {
+			yd->picture_upload_todo = d;
+			return;
+		}
+
+		yahoo_buddy_icon_upload(gc, d);
+
 	} else
 		gaim_debug_error("yahoo",
-			   "Can't stat buddy icon file!\n");
-}
+				"Could not read buddy icon file '%s': %s\n",
+				iconfile, error->message);
+		g_error_free(error);
+	}
