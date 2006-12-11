@@ -107,7 +107,7 @@ void silcgaim_buddy_keyagr_request(SilcClient client,
 				   SilcClientEntry client_entry,
 				   const char *hostname, SilcUInt16 port);
 void silcgaim_idle_set(GaimConnection *gc, int idle);
-void silcgaim_tooltip_text(GaimBuddy *b, GString *str, gboolean full);
+void silcgaim_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full);
 char *silcgaim_status_text(GaimBuddy *b);
 gboolean silcgaim_ip_is_private(const char *ip);
 void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *file);

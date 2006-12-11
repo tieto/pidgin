@@ -1509,7 +1509,7 @@ char *silcgaim_status_text(GaimBuddy *b)
 	return NULL;
 }
 
-void silcgaim_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
+void silcgaim_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
 {
 	SilcGaim sg = b->account->gc->proto_data;
 	SilcClient client = sg->client;
@@ -1522,57 +1522,57 @@ void silcgaim_tooltip_text(GaimBuddy *b, GString *str, gboolean full)
 	/* Get the client entry. */
 	client_entry = silc_client_get_client_by_id(client, conn, client_id);
 	if (!client_entry)
-	  return;
+		return;
 
 	if (client_entry->nickname)
-	  g_string_append_printf(str, "\n<b>%s:</b> %s", _("Nickname"),
-				 client_entry->nickname);
-	if (client_entry->username && client_entry->hostname)
-	  g_string_append_printf(str, "\n<b>%s:</b> %s@%s", _("Username"),
-				 client_entry->username, client_entry->hostname);
+		gaim_notify_user_info_add_pair(user_info, _("Nickname"),
+					       client_entry->nickname);
+	if (client_entry->username && client_entry->hostname) {
+		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
+		gaim_notify_user_info_add_pair(user_info, _("Username"), tmp);
+	}
 	if (client_entry->mode) {
-	  g_string_append_printf(str, "\n<b>%s:</b> ", _("User Modes"));
-	  memset(tmp, 0, sizeof(tmp));
-	  silcgaim_get_umode_string(client_entry->mode,
-				    tmp, sizeof(tmp) - strlen(tmp));
-	  g_string_append_printf(str, "%s", tmp);
+		memset(tmp, 0, sizeof(tmp));
+		silcgaim_get_umode_string(client_entry->mode,
+					  tmp, sizeof(tmp) - strlen(tmp));
+		gaim_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
 	}
 
 	silcgaim_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
 
 	if (statusstr) {
-		g_string_append_printf(str, "\n<b>%s:</b> %s", _("Message"), statusstr);
+		gaim_notify_user_info_add_pair(user_info, _("Message"), statusstr);
 		g_free(statusstr);
 	}
 
 	if (full) {
 		if (moodstr) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Mood"), moodstr);
+			gaim_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
 			g_free(moodstr);
 		}
 
 		if (contactstr) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Preferred Contact"), contactstr);
+			gaim_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
 			g_free(contactstr);
 		}
 
 		if (langstr) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Preferred Language"), langstr);
+			gaim_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
 			g_free(langstr);
 		}
 
 		if (devicestr) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Device"), devicestr);
+			gaim_notify_user_info_add_pair(user_info, _("Device"), devicestr);
 			g_free(devicestr);
 		}
 
 		if (tzstr) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Timezone"), tzstr);
+			gaim_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
 			g_free(tzstr);
 		}
 
 		if (geostr) {
-			g_string_append_printf(str, "\n<b>%s:</b> %s", _("Geolocation"), geostr);
+			gaim_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
 			g_free(geostr);
 		}
 	}
