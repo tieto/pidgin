@@ -303,18 +303,20 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 		gaim_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
 	} else if (!strcasecmp(encoding, "iso-8859-1")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "iso-8859-1", NULL, NULL, NULL);
-	} else if (!strcasecmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1")) {
+	} else if (!strcasecmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1") ||
+	           !strcasecmp(encoding, "us-ascii"))
+	{
 		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
 	} else if (!strcasecmp(encoding, "unicode-2-0")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
-	} else if (strcasecmp(encoding, "us-ascii") && strcmp(encoding, "utf-8")) {
+	} else if (strcasecmp(encoding, "utf-8")) {
 		gaim_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
 						   "attempting to convert to UTF-8 anyway\n", encoding);
 		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
 	}
 
 	/*
-	 * If utf8 is still NULL then either the encoding is us-ascii/utf-8 or
+	 * If utf8 is still NULL then either the encoding is utf-8 or
 	 * we have been unable to convert the text to utf-8 from the encoding
 	 * that was specified.  So we check if the text is valid utf-8 then
 	 * just copy it.
