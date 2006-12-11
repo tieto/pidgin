@@ -46,7 +46,7 @@ typedef struct _xmlnode xmlnode;
 struct _xmlnode
 {
 	char *name;			/**< The name of the node. */
-	char *namespace;		/**< The namespace of the node */
+	char *xmlns;		/**< The namespace of the node */
 	XMLNodeType type;		/**< The type of the node. */
 	char *data;			/**< The data for the node. */
 	size_t data_sz;			/**< The size of the data. */

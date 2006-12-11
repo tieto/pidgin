@@ -181,15 +181,15 @@ void xmlnode_set_namespace(xmlnode *node, const char *xmlns)
 {
 	g_return_if_fail(node != NULL);
 
-	g_free(node->namespace);
-	node->namespace = g_strdup(xmlns);
+	g_free(node->xmlns);
+	node->xmlns = g_strdup(xmlns);
 }
 
 const char *xmlnode_get_namespace(xmlnode *node)
 {
 	g_return_val_if_fail(node != NULL, NULL);
 
-	return node->namespace;
+	return node->xmlns;
 }
 
 void
@@ -208,7 +208,7 @@ xmlnode_free(xmlnode *node)
 
 	g_free(node->name);
 	g_free(node->data);
-	g_free(node->namespace);
+	g_free(node->xmlns);
 
 	GAIM_DBUS_UNREGISTER_POINTER(node);
 	g_free(node);
@@ -293,12 +293,12 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	node_name = g_markup_escape_text(node->name, -1);
 	g_string_append_printf(text, "<%s", node_name);
 
-	if (node->namespace) {
-		if(!node->parent || !node->parent->namespace || strcmp(node->namespace, node->parent->namespace))
+	if (node->xmlns) {
+		if(!node->parent || !node->parent->xmlns || strcmp(node->xmlns, node->parent->xmlns))
 		{
-			char *namespace = g_markup_escape_text(node->namespace, -1);
-			g_string_append_printf(text, " xmlns='%s'", namespace);
-			g_free(namespace);
+			char *xmlns = g_markup_escape_text(node->xmlns, -1);
+			g_string_append_printf(text, " xmlns='%s'", xmlns);
+			g_free(xmlns);
 		}
 	}
 	for(c = node->child; c; c = c->next)
@@ -377,7 +377,7 @@ struct _xmlnode_parser_data {
 
 static void
 xmlnode_parser_element_start_libxml(void *user_data,
-				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *namespace,
+				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *xmlns,
 				   int nb_namespaces, const xmlChar **namespaces,
 				   int nb_attributes, int nb_defaulted, const xmlChar **attributes)
 {
@@ -393,7 +393,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 		else
 			node = xmlnode_new((const char *) element_name);
 
-		xmlnode_set_namespace(node, (const char *) namespace);
+		xmlnode_set_namespace(node, (const char *) xmlns);
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
 			char *txt;
@@ -414,7 +414,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 
 static void
 xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
-				 const xmlChar *prefix, const xmlChar *namespace)
+				 const xmlChar *prefix, const xmlChar *xmlns)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
