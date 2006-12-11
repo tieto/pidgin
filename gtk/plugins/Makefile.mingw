@@ -74,10 +74,12 @@ install: all $(GAIM_INSTALL_PLUGINS_DIR)
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 
 plugins: \
+		convcolors.dll \
 		extplacement.dll \
 		gaimrc.dll \
 		history.dll \
 		iconaway.dll \
+		markerline.dll \
 		notify.dll \
 		relnot.dll \
 		spellchk.dll \
