@@ -23,6 +23,13 @@ typedef struct
 	gboolean soft;           /* TRUE if it's an overflow from prev. line */
 } GntTextLine;
 
+typedef struct
+{
+	char *name;
+	int start;
+	int end;
+} GntTextTag;
+
 static GntWidgetClass *parent_class = NULL;
 
 static void
@@ -134,12 +141,22 @@ free_text_line(gpointer data, gpointer null)
 }
 
 static void
+free_tag(gpointer data, gpointer null)
+{
+	GntTextTag *tag = data;
+	g_free(tag->name);
+	g_free(tag);
+}
+
+static void
 gnt_text_view_destroy(GntWidget *widget)
 {
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	view->list = g_list_first(view->list);
 	g_list_foreach(view->list, free_text_line, NULL);
 	g_list_free(view->list);
+	g_list_foreach(view->tags, free_tag, NULL);
+	g_list_free(view->tags);
 	g_string_free(view->string, TRUE);
 }
 
@@ -297,6 +314,12 @@ GntWidget *gnt_text_view_new()
 
 void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags)
 {
+	gnt_text_view_append_text_with_tag(view, text, flags, NULL);
+}
+
+void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
+			GntTextFormatFlags flags, const char *tagname)
+{
 	GntWidget *widget = GNT_WIDGET(view);
 	int fl = 0;
 	const char *start, *end;
@@ -311,6 +334,14 @@ void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, G
 
 	len = view->string->len;
 	view->string = g_string_append(view->string, text);
+
+	if (tagname) {
+		GntTextTag *tag = g_new0(GntTextTag, 1);
+		tag->name = g_strdup(tagname);
+		tag->start = len;
+		tag->end = view->string->len;
+		view->tags = g_list_append(view->tags, tag);
+	}
 
 	view->list = g_list_first(view->list);
 
@@ -469,5 +500,75 @@ int gnt_text_view_get_lines_above(GntTextView *view)
 	while ((list = list->next))
 		++above;
 	return above;
+}
+
+/**
+ * XXX: There are quite possibly more than a few bugs here.
+ */
+int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all)
+{
+	GList *list, *next, *iter, *inext;
+	int count = 0;
+	for (list = view->tags; list; list = next) {
+		GntTextTag *tag = list->data;
+		next = list->next;
+		if (strcmp(tag->name, name) == 0) {
+			int change;
+			char *before, *after;
+
+			count++;
+
+			before = g_strndup(view->string->str, tag->start);
+			after = g_strdup(view->string->str + tag->end);
+			change = (tag->end - tag->start) - (text ? strlen(text) : 0);
+
+			g_string_printf(view->string, "%s%s%s", before, text ? text : "", after);
+			g_free(before);
+			g_free(after);
+
+			/* Update the offsets of the next tags */
+			for (iter = next; iter; iter = iter->next) {
+				GntTextTag *t = iter->data;
+				t->start -= change;
+				t->end -= change;
+			}
+
+			/* Update the offsets of the segments */
+			for (iter = view->list; iter; iter = inext) {
+				GList *segs, *snext;
+				GntTextLine *line = iter->data;
+				inext = iter->next;
+				for (segs = line->segments; segs; segs = snext) {
+					GntTextSegment *seg = segs->data;
+					snext = segs->next;
+					if (seg->start >= tag->end) {
+						seg->start -= change;
+						seg->end -= change;
+						continue;
+					}
+					if (seg->end < tag->start)
+						continue;
+					
+					if (seg->start >= tag->start && seg->end <= tag->end) {
+						free_text_segment(seg, NULL);
+						line->segments = g_list_delete_link(line->segments, segs);
+						if (line->segments == NULL) {
+							free_text_line(line, NULL);
+							view->list = g_list_delete_link(view->list, iter);
+						}
+					}
+					/* XXX: handle the rest of the conditions */
+				}
+			}
+			if (text == NULL) {
+				/* Remove the tag */
+				view->tags = g_list_delete_link(view->tags, list);
+				free_tag(tag, NULL);
+			}
+			if (!all)
+				break;
+		}
+	}
+	return count;
 }
 

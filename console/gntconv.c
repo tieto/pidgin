@@ -205,7 +205,7 @@ update_buddy_typing(GaimAccount *account, const char *who, gpointer null)
 	GaimConversation *conv;
 	GGConv *ggc;
 	GaimConvIm *im = NULL;
-	char *title, *old_title;
+	char *title, *str;
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, account);
 
@@ -213,15 +213,26 @@ update_buddy_typing(GaimAccount *account, const char *who, gpointer null)
 		return;
 
 	im = GAIM_CONV_IM(conv);
+	ggc = conv->ui_data;
 
 	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		old_title = get_conversation_title(conv, account);
-		title = g_strdup_printf(_("%s [%s]"), old_title,
+		int scroll;
+		str = get_conversation_title(conv, account);
+		title = g_strdup_printf(_("%s [%s]"), str,
 			gnt_ascii_only() ? "T" : "\342\243\277");
-		g_free(old_title);
- 	} else
+		g_free(str);
+
+		scroll = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggc->tv));
+		str = g_strdup_printf(_("\n%s is typing..."), gaim_conversation_get_name(conv));
+		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
+					str, GNT_TEXT_FLAG_DIM, "typing");
+		g_free(str);
+		if (scroll <= 1)
+			gnt_text_view_scroll(GNT_TEXT_VIEW(ggc->tv), 0);
+ 	} else {
 		title = get_conversation_title(conv, account);
-	ggc = conv->ui_data;
+		gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", NULL, TRUE);
+	}
 	gnt_screen_rename_widget(ggc->window, title);
 	g_free(title);
 }
@@ -324,6 +335,7 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 	char *strip, *newline;
 	GntTextFormatFlags fl = 0;
 	int pos;
+	gboolean notify;
 
 	g_return_if_fail(ggconv != NULL);
 
@@ -336,6 +348,7 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 
 	pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggconv->tv));
 
+	notify = !!gnt_text_view_tag_change(GNT_TEXT_VIEW(ggconv->tv), "typing", NULL, TRUE);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), "\n", GNT_TEXT_FLAG_NORMAL);
 
 	/* Unnecessary to print the timestamp for delayed message */
@@ -374,11 +387,19 @@ gg_write_common(GaimConversation *conv, const char *who, const char *message,
 	strip = gaim_markup_strip_html(newline);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 				strip, fl);
-	if (pos <= 1)
-		gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
 	g_free(newline);
 	g_free(strip);
+
+	if (notify) {
+		strip = g_strdup_printf(_("\n%s is typing..."), gaim_conversation_get_name(conv));
+		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggconv->tv),
+					strip, GNT_TEXT_FLAG_DIM, "typing");
+		g_free(strip);
+	}
+
+	if (pos <= 1)
+		gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
 
 	if (flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_NICK | GAIM_MESSAGE_ERROR))
 		gnt_widget_set_urgent(ggconv->tv);

@@ -27,6 +27,8 @@ struct _GnTextView
 
 	GString *string;
 	GList *list;        /* List of GntTextLine */
+
+	GList *tags;       /* A list of tags */
 };
 
 typedef enum
@@ -62,6 +64,8 @@ void gnt_text_view_scroll(GntTextView *view, int scroll);
 
 void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags);
 
+void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text, GntTextFormatFlags flags, const char *tag);
+
 /* Move the cursor to the beginning of the next line and resets text-attributes.
  * It first completes the current line with the current text-attributes. */
 void gnt_text_view_next_line(GntTextView *view);
@@ -73,6 +77,9 @@ void gnt_text_view_clear(GntTextView *view);
 int gnt_text_view_get_lines_below(GntTextView *view);
 
 int gnt_text_view_get_lines_above(GntTextView *view);
+
+/* If text is NULL, then the tag is removed. */
+int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all);
 
 G_END_DECLS
 
