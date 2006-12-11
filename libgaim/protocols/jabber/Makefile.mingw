@@ -44,6 +44,7 @@ C_SRC =			auth.c \
 			buddy.c \
 			chat.c \
 			disco.c \
+			google.c \
 			iq.c \
 			jabber.c \
 			jutil.c \
