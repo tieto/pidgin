@@ -49,6 +49,7 @@
 enum
 {
 	COLUMN_ICON,
+	COLUMN_BUDDYICON,
 	COLUMN_SCREENNAME,
 	COLUMN_ENABLED,
 	COLUMN_PROTOCOL,
@@ -1920,17 +1921,29 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 
+	/* Enabled */
+	renderer = gtk_cell_renderer_toggle_new();
+
+	g_signal_connect(G_OBJECT(renderer), "toggled",
+			 G_CALLBACK(enabled_cb), dialog);
+
+	column = gtk_tree_view_column_new_with_attributes(_("Enabled"),
+			 renderer, "active", COLUMN_ENABLED, NULL);
+
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	gtk_tree_view_column_set_resizable(column, TRUE);
+
 	/* Screen Name column */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Screen Name"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
 
-	/* Icon */
+	/* Status Icon */
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-					   "pixbuf", COLUMN_ICON);
+					   "pixbuf", COLUMN_BUDDYICON);
 
 	/* Screen Name */
 	renderer = gtk_cell_renderer_text_new();
@@ -1939,23 +1952,18 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 					   "text", COLUMN_SCREENNAME);
 	dialog->screenname_col = column;
 
-	/* Enabled */
-	renderer = gtk_cell_renderer_toggle_new();
-
-	g_signal_connect(G_OBJECT(renderer), "toggled",
-					 G_CALLBACK(enabled_cb), dialog);
-
-	column = gtk_tree_view_column_new_with_attributes(_("Enabled"),
-			renderer, "active", COLUMN_ENABLED, NULL);
-
-	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
-	gtk_tree_view_column_set_resizable(column, TRUE);
 
 	/* Protocol name */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Protocol"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
+
+	/* Icon */
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(column, renderer,
+					   "pixbuf", COLUMN_ICON);
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
@@ -1967,13 +1975,23 @@ static void
 set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 {
 	GdkPixbuf *pixbuf;
+	GdkPixbuf *statusicon_pixbuf;
+	GdkPixbuf *statusicon_pixbuf_scaled;
 
 	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
+	statusicon_pixbuf = gdk_pixbuf_new_from_file(gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL), NULL); 
+	if (statusicon_pixbuf) {
+		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 16, 16, GDK_INTERP_HYPER);
+	} else {
+		statusicon_pixbuf_scaled = NULL;
+	}
+
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, pixbuf,
+			COLUMN_BUDDYICON, statusicon_pixbuf_scaled,
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
 			COLUMN_ENABLED, gaim_account_get_enabled(account, GAIM_GTK_UI),
 			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
@@ -1982,6 +2000,10 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 
 	if (pixbuf != NULL)
 		g_object_unref(G_OBJECT(pixbuf));
+	if (statusicon_pixbuf != NULL)
+		g_object_unref(G_OBJECT(statusicon_pixbuf));
+	if (statusicon_pixbuf_scaled != NULL)
+		g_object_unref(G_OBJECT(statusicon_pixbuf_scaled));
 }
 
 static void
@@ -2128,6 +2150,7 @@ create_accounts_list(AccountsWindow *dialog)
 	/* Create the list model. */
 	dialog->model = gtk_list_store_new(NUM_COLUMNS,
 					GDK_TYPE_PIXBUF,   /* COLUMN_ICON */
+					GDK_TYPE_PIXBUF,   /* COLUMN_BUDDYICON */
 					G_TYPE_STRING,     /* COLUMN_SCREENNAME */
 					G_TYPE_BOOLEAN,    /* COLUMN_ENABLED */
 					G_TYPE_STRING,     /* COLUMN_PROTOCOL */

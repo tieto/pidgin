@@ -28,6 +28,10 @@
 
 static void gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book);
 static void gtk_gaim_scroll_book_class_init (GtkGaimScrollBookClass *klass);
+static void gtk_gaim_scroll_book_forall (GtkContainer *c, 
+					 gboolean include_internals,
+			 		 GtkCallback callback,
+					 gpointer user_data);
 
 GType
 gtk_gaim_scroll_book_get_type (void)
@@ -145,11 +149,25 @@ gtk_gaim_scroll_book_add(GtkContainer *container, GtkWidget *widget)
 }
 
 static void
+gtk_gaim_scroll_book_forall(GtkContainer *container,
+			   gboolean include_internals,
+			   GtkCallback callback,
+			   gpointer callback_data)
+{
+	GtkGaimScrollBook *scroll_book = GTK_GAIM_SCROLL_BOOK(container);
+	if (include_internals) {
+		(*callback)(scroll_book->hbox, callback_data);
+	}
+	(*callback)(scroll_book->notebook, callback_data);
+}
+
+static void
 gtk_gaim_scroll_book_class_init (GtkGaimScrollBookClass *klass)
 {
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
 	container_class->add = gtk_gaim_scroll_book_add;
+	container_class->forall = gtk_gaim_scroll_book_forall;	
 	
 }
 
@@ -186,7 +204,6 @@ gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book)
 	g_signal_connect_swapped(G_OBJECT(scroll_book->notebook), "add", G_CALLBACK(page_count_change_cb), scroll_book);
 	g_signal_connect_swapped(G_OBJECT(scroll_book->notebook), "remove", G_CALLBACK(page_count_change_cb), scroll_book);
 	g_signal_connect(G_OBJECT(scroll_book->notebook), "switch-page", G_CALLBACK(switch_page_cb), scroll_book);
-	gtk_widget_hide(scroll_book->hbox);
 }
 
 
