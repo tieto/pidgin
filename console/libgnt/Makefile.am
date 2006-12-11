@@ -5,6 +5,7 @@ pkgconfig_DATA = gnt.pc
 lib_LTLIBRARIES = libgnt.la
 
 libgnt_la_SOURCES = \
+	gntmarshal.c \
 	gntwidget.c \
 	gntbindable.c \
 	gntbox.c \
@@ -16,7 +17,6 @@ libgnt_la_SOURCES = \
 	gntkeys.c \
 	gntlabel.c \
 	gntline.c \
-	gntmarshal.c \
 	gntmenu.c \
 	gntmenuitem.c \
 	gntmenuitemcheck.c \
@@ -56,7 +56,7 @@ CLEANFILES = \
 	gntmarshal.h \
 	gntmarshal.c
 
-gntmarshal.c: genmarshal
+gntmarshal.c: genmarshal gntmarshal.h
 	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --body > $@
 
 gntmarshal.h: genmarshal
