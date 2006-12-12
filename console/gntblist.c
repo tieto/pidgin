@@ -109,6 +109,7 @@ static const char * get_display_name(GaimBlistNode *node);
 static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
 static void blist_show(GaimBuddyList *list);
 static void update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist);
+static void account_signed_on_cb();
 
 /* Sort functions */
 static int blist_node_compare_text(GaimBlistNode *n1, GaimBlistNode *n2);
@@ -515,11 +516,6 @@ add_chat(GaimChat *chat, GGBlist *ggblist)
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), chat,
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				group, NULL);
-
-	/* XXX: This causes problem because you can close a chat window, hide the buddylist.
-	 * When you show the buddylist, you automatically join the chat again. */
-	if (gaim_blist_node_get_bool((GaimBlistNode*)chat, "gnt-autojoin"))
-		serv_join_chat(gaim_account_get_connection(chat->account), chat->components);
 }
 
 static void
@@ -1587,6 +1583,8 @@ void gg_blist_init()
 	gaim_prefs_connect_callback(gg_blist_get_handle(),
 			PREF_ROOT "/sort_type", redraw_blist, NULL);
 
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", gaim_blist_get_handle(),
+			G_CALLBACK(account_signed_on_cb), NULL);
 	return;
 }
 
@@ -1941,6 +1939,21 @@ reconstruct_accounts_menu()
 			item = gnt_menuitem_new(gaim_account_get_username(account));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			build_plugin_actions(item, prpl, gc);
+		}
+	}
+}
+
+static void
+account_signed_on_cb()
+{
+	GaimBlistNode *node;
+
+	for (node = gaim_blist_get_root(); node;
+			node = gaim_blist_node_next(node, FALSE)) {
+		if (GAIM_BLIST_NODE_IS_CHAT(node)) {
+			GaimChat *chat = (GaimChat*)node;
+			if (gaim_blist_node_get_bool(node, "gnt-autojoin"))
+				serv_join_chat(gaim_account_get_connection(chat->account), chat->components);
 		}
 	}
 }
