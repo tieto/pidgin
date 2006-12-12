@@ -109,7 +109,7 @@ static const char * get_display_name(GaimBlistNode *node);
 static void savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old);
 static void blist_show(GaimBuddyList *list);
 static void update_buddy_display(GaimBuddy *buddy, GGBlist *ggblist);
-static void account_signed_on_cb();
+static void account_signed_on_cb(void);
 
 /* Sort functions */
 static int blist_node_compare_text(GaimBlistNode *n1, GaimBlistNode *n2);
