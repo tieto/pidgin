@@ -252,6 +252,7 @@ gaim_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 			sin.sin_family = AF_INET;
 
 		sin.sin_port = htons(dns_params.port);
+		write(child_out, &zero, sizeof(zero));
 		write(child_out, &addrlen, sizeof(addrlen));
 		write(child_out, &sin, addrlen);
 		write(child_out, &zero, sizeof(zero));
