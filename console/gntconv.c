@@ -140,6 +140,26 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 			return FALSE;
 		return TRUE;
 	}
+	else
+	{
+		gboolean first = !gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
+		if (gaim_prefs_get_bool("/gaim/gnt/conversations/notify_typing")) {
+			/* Xerox'ed */
+			GaimConversation *conv = ggconv->active_conv;
+			GaimConvIm *im = GAIM_CONV_IM(conv);
+
+			gaim_conv_im_stop_send_typed_timeout(im);
+			gaim_conv_im_start_send_typed_timeout(im);
+			if (first || (gaim_conv_im_get_type_again(im) != 0 &&
+						  time(NULL) > gaim_conv_im_get_type_again(im))) {
+				unsigned int timeout;
+				timeout = serv_send_typing(gaim_conversation_get_gc(conv),
+										   gaim_conversation_get_name(conv),
+										   GAIM_TYPING);
+				gaim_conv_im_set_type_again(im, timeout);
+			}
+		}
+	}
 
 	return FALSE;
 }
