@@ -3686,9 +3686,11 @@ headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GaimGtkBuddyLi
 }
 
 static gboolean
-headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, GaimGtkBuddyList *box)
+headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, GaimGtkBuddyList *gtkblist)
 {
 	gtk_widget_hide(gtkblist->headline_hbox);
+	if (gtkblist->headline_callback)
+		g_idle_add(G_CALLBACK(gtkblist->headline_callback), gtkblist->headline_data);
 }
 
 /***********************************/
@@ -3812,8 +3814,8 @@ gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *text
 
 static gboolean
 paint_headline_hbox  (GtkWidget      *widget,
-			  GdkEventExpose *event,
-			  gpointer        user_data)
+		      GdkEventExpose *event,
+		      gpointer        user_data)
 {
   gtk_paint_flat_box (widget->style, 
 		      widget->window,
@@ -3830,6 +3832,29 @@ paint_headline_hbox  (GtkWidget      *widget,
   return FALSE;		      
 }
 
+static void
+headline_style_set (GtkWidget *widget,
+		    GtkStyle  *prev_style)
+{
+	GtkTooltips *tooltips;
+	GtkStyle *style;
+	
+	if (gtkblist->changing_style)
+		return;
+	
+	tooltips = gtk_tooltips_new ();
+	g_object_ref_sink (tooltips);
+
+	gtk_tooltips_force_window (tooltips);
+	gtk_widget_ensure_style (tooltips->tip_window);
+	style = gtk_widget_get_style (tooltips->tip_window);
+	
+	gtkblist->changing_style = TRUE;
+	gtk_widget_set_style (gtkblist->headline_hbox, style);
+	gtkblist->changing_style = FALSE;	
+	
+	g_object_unref (tooltips);
+}
 
 /******************************************/
 /* End of connection error handling stuff */
@@ -3988,13 +4013,23 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline_hbox), 6);
 	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline_hbox);
 	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
+	gtk_misc_set_alignment(GTK_MISC(gtkblist->headline_image), 0.0, 0);
 	gtkblist->headline_label = gtk_label_new(NULL);
+	gtk_widget_set_size_request(gtkblist->headline_label,
+				    gaim_prefs_get_int("/gaim/gtk/blist/width")-25,-1);
+	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_label, TRUE, TRUE, 0);
+	g_signal_connect(gtkblist->headline_hbox,
+			 "style-set",
+			 G_CALLBACK(headline_style_set),
+			 NULL);
 	g_signal_connect (gtkblist->headline_hbox,
 			  "expose_event",
 			  G_CALLBACK (paint_headline_hbox),
 			  NULL);
+	gtk_widget_set_name(gtkblist->headline_hbox, "gtk-tooltips");
+
 	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
 	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
@@ -4247,7 +4282,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 						gtkblist, GAIM_CALLBACK(conversation_deleting_cb),
 						gtkblist);
 
-	gtk_widget_hide(gtkblist->scrollbook);
+//	gtk_widget_hide(gtkblist->scrollbook);
+	gtk_widget_hide(gtkblist->headline_hbox);
 	
 	/* emit our created signal */
 	gaim_signal_emit(handle, "gtkblist-created", list);
@@ -5481,8 +5517,8 @@ void gaim_gtk_blist_add_alert(GtkWidget *widget)
 void
 gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data)
 {
-	gtk_label_set_markup(gtkblist->headline_label, text);
-	gtk_image_set_from_pixbuf(gtkblist->headline_image, pixbuf);
+	gtk_label_set_markup(GTK_LABEL(gtkblist->headline_label), text);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkblist->headline_image), pixbuf);
 	
 	gtkblist->headline_callback = callback;
 	gtkblist->headline_data = user_data;

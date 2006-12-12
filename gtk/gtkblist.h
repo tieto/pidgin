@@ -105,6 +105,7 @@ struct _GaimGtkBuddyList {
 	GtkWidget *headline_image;      /**< Image for headline notifications */
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
+	gboolean changing_style;        /**< True when changing GTK+ theme style */
 	
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */

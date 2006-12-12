@@ -2928,8 +2928,7 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 	g_free(primary_esc);
 	label = gtk_label_new(NULL);
 	gtk_widget_set_size_request(label, gaim_prefs_get_int("/gaim/gtk/blist/width")-25,-1);
-        gtk_widget_modify_text(vbox, GTK_STATE_NORMAL, &(label->style->white));
-        gtk_label_set_markup(GTK_LABEL(label), label_text);
+	gtk_label_set_markup(GTK_LABEL(label), label_text);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);

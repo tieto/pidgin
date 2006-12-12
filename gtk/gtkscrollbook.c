@@ -203,7 +203,6 @@ gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book)
 	
 	g_signal_connect_swapped(G_OBJECT(scroll_book->notebook), "remove", G_CALLBACK(page_count_change_cb), scroll_book);
 	g_signal_connect(G_OBJECT(scroll_book->notebook), "switch-page", G_CALLBACK(switch_page_cb), scroll_book);
-	gtk_widget_show_all(scroll_book->hbox);
 	gtk_widget_show_all(scroll_book->notebook);
 }
 
