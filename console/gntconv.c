@@ -244,8 +244,10 @@ update_buddy_typing(GaimAccount *account, const char *who, gpointer null)
 
 		scroll = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggc->tv));
 		str = g_strdup_printf(_("\n%s is typing..."), gaim_conversation_get_name(conv));
-		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
-					str, GNT_TEXT_FLAG_DIM, "typing");
+		/* Update an existing notification if there's one. */
+		if (gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", str, TRUE) == 0)
+			gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
+						str, GNT_TEXT_FLAG_DIM, "typing");
 		g_free(str);
 		if (scroll <= 1)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggc->tv), 0);
