@@ -95,9 +95,17 @@ struct _GaimGtkBuddyList {
 	GList *tooltipdata;              /**< The data for each "chunk" of the tooltip */
 
 	GaimBlistNode *selected_node;    /**< The currently selected node */
+
+	GdkCursor *hand_cursor;         /**< Hand cursor */
+	GdkCursor *arrow_cursor;        /**< Arrow cursor */
 	
 	GtkWidget *scrollbook;          /**< Scrollbook for alerts */
-
+	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
+	GtkWidget *headline_label;	/**< Label for headline notifications */
+	GtkWidget *headline_image;      /**< Image for headline notifications */
+	GCallback headline_callback;    /**< Callback for headline notifications */
+	gpointer headline_data;         /**< User data for headline notifications */
+	
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 };
@@ -313,5 +321,18 @@ void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *no
  *        account is no longer in an error state.
  */
 void gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *message);
+
+/**
+ * Sets a headline notification
+ *
+ * This is currently used for mail notification, but could theoretically be used for anything.
+ * Only the most recent headline will be shown.
+ * 
+ * @param text	    Pango Markup for the label text
+ * @param pixbuf    The GdkPixbuf for the icon
+ * @param callback  The callback to call when headline is clicked
+ * @param user_data The userdata to include in the callback
+ */
+void gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data);
 
 #endif /* _GAIM_GTKBLIST_H_ */

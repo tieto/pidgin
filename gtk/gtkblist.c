@@ -3671,6 +3671,26 @@ gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, GaimGtkBuddyList
 	return FALSE;
 }
 
+static gboolean
+headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, GaimGtkBuddyList *gtkblist)
+{
+	gdk_window_set_cursor(widget->window, gtkblist->hand_cursor);
+	return FALSE;
+}
+
+static gboolean
+headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GaimGtkBuddyList *gtkblist)
+{
+	gdk_window_set_cursor(widget->window, gtkblist->arrow_cursor);
+	return FALSE;
+}
+
+static gboolean
+headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, GaimGtkBuddyList *box)
+{
+	gtk_widget_hide(gtkblist->headline_hbox);
+}
+
 /***********************************/
 /* Connection error handling stuff */
 /***********************************/
@@ -3790,6 +3810,26 @@ gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *text
 			create_connection_error_buttons, NULL);
 }
 
+static gboolean
+paint_headline_hbox  (GtkWidget      *widget,
+			  GdkEventExpose *event,
+			  gpointer        user_data)
+{
+  gtk_paint_flat_box (widget->style, 
+		      widget->window,
+		      GTK_STATE_NORMAL,
+		      GTK_SHADOW_OUT,
+		      NULL,
+		      widget,
+		      "tooltip",
+		      widget->allocation.x + 1,
+		      widget->allocation.y + 1,
+		      widget->allocation.width - 2,
+		      widget->allocation.height - 2);
+  
+  return FALSE;		      
+}
+
 
 /******************************************/
 /* End of connection error handling stuff */
@@ -3848,6 +3888,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
+	GtkWidget *ebox;
 	GtkWidget *sw;
 	GtkWidget *sep;
 	GtkWidget *label;
@@ -3941,6 +3982,25 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
 	}
 
+	ebox = gtk_event_box_new();
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), ebox, FALSE, FALSE, 0);
+	gtkblist->headline_hbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->headline_hbox), 6);
+	gtk_container_add(GTK_CONTAINER(ebox), gtkblist->headline_hbox);
+	gtkblist->headline_image = gtk_image_new_from_pixbuf(NULL);
+	gtkblist->headline_label = gtk_label_new(NULL);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_image, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_label, TRUE, TRUE, 0);
+	g_signal_connect (gtkblist->headline_hbox,
+			  "expose_event",
+			  G_CALLBACK (paint_headline_hbox),
+			  NULL);
+	gtkblist->hand_cursor = gdk_cursor_new (GDK_HAND2);
+	gtkblist->arrow_cursor = gdk_cursor_new (GDK_LEFT_PTR);
+	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
+	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
+	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
+	
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_show(sw);
@@ -4082,11 +4142,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 
-	gtkblist->scrollbook = gtk_gaim_scroll_book_new();
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
-
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sep, FALSE, FALSE, 0);
+
+	gtkblist->scrollbook = gtk_gaim_scroll_book_new();
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 	
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
@@ -4745,6 +4805,11 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	g_free(gtkblist);
 	accountmenu = NULL;
 	gtkblist = NULL;
+	
+	gdk_cursor_unref(gtkblist->hand_cursor);
+	gdk_cursor_unref(gtkblist->arrow_cursor);
+	gtkblist->hand_cursor = NULL;
+	gtkblist->arrow_cursor = NULL;
 
 	gaim_prefs_disconnect_by_handle(gaim_gtk_blist_get_handle());
 }
@@ -5413,6 +5478,16 @@ void gaim_gtk_blist_add_alert(GtkWidget *widget)
 	gtk_container_add(GTK_CONTAINER(gtkblist->scrollbook), widget);
 }
 
+void
+gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data)
+{
+	gtk_label_set_markup(gtkblist->headline_label, text);
+	gtk_image_set_from_pixbuf(gtkblist->headline_image, pixbuf);
+	
+	gtkblist->headline_callback = callback;
+	gtkblist->headline_data = user_data;
+	gtk_widget_show_all(gtkblist->headline_hbox);
+}
 
 static GaimBlistUiOps blist_ui_ops =
 {

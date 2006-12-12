@@ -92,7 +92,6 @@ static void
 refresh_scroll_box(GtkGaimScrollBook *scroll_book, int index, int count)
 {
 	char *label;
-
 	gtk_widget_show_all(GTK_WIDGET(scroll_book));
 	if (count <= 1)
 		gtk_widget_hide(GTK_WIDGET(scroll_book->hbox));
@@ -120,9 +119,10 @@ refresh_scroll_box(GtkGaimScrollBook *scroll_book, int index, int count)
 static void
 page_count_change_cb(GtkGaimScrollBook *scroll_book)
 {
+	int count;
 	int index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
 #if GTK_CHECK_VERSION(2,2,0)
-	int count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
+	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
 #else
 	count = g_list_length(GTK_NOTEBOOK(scroll_book->notebook)->children);
 #endif
@@ -146,6 +146,7 @@ gtk_gaim_scroll_book_add(GtkContainer *container, GtkWidget *widget)
 {
 	gtk_widget_show(widget);
 	gtk_notebook_append_page(GTK_NOTEBOOK(GTK_GAIM_SCROLL_BOOK(container)->notebook), widget, NULL);
+	page_count_change_cb(GTK_GAIM_SCROLL_BOOK(container));
 }
 
 static void
@@ -155,9 +156,8 @@ gtk_gaim_scroll_book_forall(GtkContainer *container,
 			   gpointer callback_data)
 {
 	GtkGaimScrollBook *scroll_book = GTK_GAIM_SCROLL_BOOK(container);
-	if (include_internals) {
+	if (include_internals)
 		(*callback)(scroll_book->hbox, callback_data);
-	}
 	(*callback)(scroll_book->notebook, callback_data);
 }
 
@@ -201,9 +201,10 @@ gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book)
 	
 	gtk_box_pack_start(GTK_BOX(scroll_book), scroll_book->notebook, TRUE, TRUE, 0);
 	
-	g_signal_connect_swapped(G_OBJECT(scroll_book->notebook), "add", G_CALLBACK(page_count_change_cb), scroll_book);
 	g_signal_connect_swapped(G_OBJECT(scroll_book->notebook), "remove", G_CALLBACK(page_count_change_cb), scroll_book);
 	g_signal_connect(G_OBJECT(scroll_book->notebook), "switch-page", G_CALLBACK(switch_page_cb), scroll_book);
+	gtk_widget_show_all(scroll_book->hbox);
+	gtk_widget_show_all(scroll_book->notebook);
 }
 
 
