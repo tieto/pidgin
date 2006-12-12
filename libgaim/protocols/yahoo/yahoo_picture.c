@@ -569,9 +569,10 @@ void yahoo_set_buddy_icon(GaimConnection *gc, const char *iconfile)
 
 		yahoo_buddy_icon_upload(gc, d);
 
-	} else
+	} else {
 		gaim_debug_error("yahoo",
 				"Could not read buddy icon file '%s': %s\n",
 				iconfile, error->message);
 		g_error_free(error);
 	}
+}
