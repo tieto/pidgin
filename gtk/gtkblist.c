@@ -2742,7 +2742,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 			gaim_notify_user_info_add_pair(user_info, _("Status"), _("Awesome"));
 		if (!g_ascii_strcasecmp(b->name, "chipx86"))
 			gaim_notify_user_info_add_pair(user_info, _("Status"), _("Rockin'"));
-		
+
 		tmp = gaim_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
 		g_free(tmp);
@@ -3825,7 +3825,7 @@ paint_headline_hbox  (GtkWidget      *widget,
 		      GdkEventExpose *event,
 		      gpointer        user_data)
 {
-  gtk_paint_flat_box (widget->style, 
+  gtk_paint_flat_box (widget->style,
 		      widget->window,
 		      GTK_STATE_NORMAL,
 		      GTK_SHADOW_OUT,
@@ -3836,8 +3836,8 @@ paint_headline_hbox  (GtkWidget      *widget,
 		      widget->allocation.y + 1,
 		      widget->allocation.width - 2,
 		      widget->allocation.height - 2);
-  
-  return FALSE;		      
+
+  return FALSE;
 }
 
 static void
@@ -3846,21 +3846,26 @@ headline_style_set (GtkWidget *widget,
 {
 	GtkTooltips *tooltips;
 	GtkStyle *style;
-	
+
 	if (gtkblist->changing_style)
 		return;
-	
+
 	tooltips = gtk_tooltips_new ();
+#if GLIB_CHECK_VERSION(2,10,0)
 	g_object_ref_sink (tooltips);
+#else
+	g_object_ref(tooltips);
+	gtk_object_sink(GTK_OBJECT(tooltips));
+#endif
 
 	gtk_tooltips_force_window (tooltips);
 	gtk_widget_ensure_style (tooltips->tip_window);
 	style = gtk_widget_get_style (tooltips->tip_window);
-	
+
 	gtkblist->changing_style = TRUE;
 	gtk_widget_set_style (gtkblist->headline_hbox, style);
-	gtkblist->changing_style = FALSE;	
-	
+	gtkblist->changing_style = FALSE;
+
 	g_object_unref (tooltips);
 }
 
@@ -3904,7 +3909,7 @@ kiosk_page()
 	gtk_box_pack_start(GTK_BOX(ret), bbox, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(bbox), button);
 
-	
+
 	label = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(ret), label, TRUE, TRUE, 0);
 
@@ -3995,7 +4000,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Translators: Please maintain the use of -> and <- to refer to menu heirarchy */
 	pretty = gaim_gtk_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to Gaim!</span>\n\n"
-					       
+
 					       "You have no accounts enabled. Enable your IM accounts from the "
 					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "
 					       "enable accounts, you'll be able to sign on, set your status, "
@@ -4043,7 +4048,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_signal_connect(G_OBJECT(ebox), "enter-notify-event", G_CALLBACK(headline_box_enter_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "leave-notify-event", G_CALLBACK(headline_box_leave_cb), gtkblist);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event", G_CALLBACK(headline_box_press_cb), gtkblist);
-	
+
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_show(sw);
@@ -4053,7 +4058,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS,
 						 GDK_TYPE_PIXBUF, /* Status icon */
 						 G_TYPE_BOOLEAN,  /* Status icon visible */
-						 G_TYPE_STRING,   /* Name */ 
+						 G_TYPE_STRING,   /* Name */
 						 G_TYPE_STRING,   /* Idle */
 						 G_TYPE_BOOLEAN,  /* Idle visible */
 						 GDK_TYPE_PIXBUF, /* Buddy icon */
@@ -4095,7 +4100,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "leave-notify-event", G_CALLBACK(gaim_gtk_blist_leave_cb), NULL);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
-	
+
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 	gtk_tree_view_column_set_visible(column, FALSE);
@@ -4152,24 +4157,24 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	rend = gtk_cell_renderer_text_new();
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
-	gtk_tree_view_column_set_attributes(column, rend, 
-					    "markup", IDLE_COLUMN, 
+	gtk_tree_view_column_set_attributes(column, rend,
+					    "markup", IDLE_COLUMN,
 					    "visible", IDLE_VISIBLE_COLUMN,
 #if GTK_CHECK_VERSION(2,6,0)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 #endif
 					    NULL);
-	
+
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
-	gtk_tree_view_column_set_attributes(column, rend, "pixbuf", BUDDY_ICON_COLUMN, 
+	gtk_tree_view_column_set_attributes(column, rend, "pixbuf", BUDDY_ICON_COLUMN,
 #if GTK_CHECK_VERSION(2,6,0)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 #endif
 					    "visible", BUDDY_ICON_VISIBLE_COLUMN,
 					    NULL);
-	
+
 
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-activated", G_CALLBACK(gtk_blist_row_activated_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "row-expanded", G_CALLBACK(gtk_blist_row_expanded_cb), NULL);
@@ -4190,7 +4195,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtkblist->scrollbook = gtk_gaim_scroll_book_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
-	
+
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
@@ -4292,7 +4297,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 //	gtk_widget_hide(gtkblist->scrollbook);
 	gtk_widget_hide(gtkblist->headline_hbox);
-	
+
 	/* emit our created signal */
 	gaim_signal_emit(handle, "gtkblist-created", list);
 }
@@ -4534,7 +4539,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		gboolean expanded;
 		GdkColor bgcolor;
 		GdkColor textcolor;
-	
+
 		if(!insert_node(list, gnode, &iter))
 			return;
 
@@ -4560,7 +4565,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 					       esc, group_count);
 
 		g_free(esc);
-		
+
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_VISIBLE_COLUMN, FALSE,
 				   STATUS_ICON_COLUMN, NULL,
@@ -4849,7 +4854,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	g_free(gtkblist);
 	accountmenu = NULL;
 	gtkblist = NULL;
-	
+
 	gdk_cursor_unref(gtkblist->hand_cursor);
 	gdk_cursor_unref(gtkblist->arrow_cursor);
 	gtkblist->hand_cursor = NULL;
@@ -5527,7 +5532,7 @@ gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callb
 {
 	gtk_label_set_markup(GTK_LABEL(gtkblist->headline_label), text);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkblist->headline_image), pixbuf);
-	
+
 	gtkblist->headline_callback = callback;
 	gtkblist->headline_data = user_data;
 	gtk_widget_show_all(gtkblist->headline_hbox);
