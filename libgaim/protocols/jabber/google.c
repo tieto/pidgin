@@ -70,7 +70,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	url = xmlnode_get_attrib(child, "url");
 	if (!url || !*url)
 		url = "http://www.gmail.com";
-
+	
 	message= xmlnode_get_child(child, "mail-thread-info");
 	for (i=0; message; message = xmlnode_get_next_twin(message), i++) {
 		subject_node = xmlnode_get_child(message, "subject");
@@ -106,9 +106,10 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 		}
 	}
 
-	if (i>0)
-		gaim_notify_emails(js->gc, returned_count, TRUE, subjects, froms, tos, 
-				   urls, NULL, js->gc->account);
+	if (i>0) 
+		gaim_notify_emails(js->gc, count, count == returned_count, subjects, froms, tos, 
+				   	   urls, NULL, NULL);
+
 	g_free(to_name);
 	g_free(tos);
 	g_free(froms);

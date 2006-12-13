@@ -306,6 +306,21 @@ gaim_gtk_notify_email(GaimConnection *gc, const char *subject, const char *from,
 								  (url     == NULL ? NULL : &url));
 }
 
+struct inbox_info {
+	char *url;
+	void *handle;
+};
+
+static void
+open_inbox_cb(struct inbox_info *inbox)
+{
+	if (inbox->url)
+		gaim_notify_uri(inbox->handle, inbox->url);
+	g_free(inbox->url);
+	g_free(inbox);
+}
+
+
 static void *
 gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 					   const char **subjects, const char **froms,
@@ -321,6 +336,22 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	GaimAccount *account;
 
 	account = gaim_connection_get_account(gc);
+
+	if (!detailed) {
+		struct inbox_info *inbox = g_new0(struct inbox_info, 1);
+		GdkPixbuf *pixbuf = gtk_widget_render_icon(gaim_gtk_blist_get_default_gtk_blist()->headline_hbox, 
+				                           GAIM_STOCK_ICON_ONLINE_MSG, GTK_ICON_SIZE_BUTTON, NULL);
+		char *label_text = g_strdup_printf(ngettext("<b>You have %d new e-mail.</b>",
+							    "<b>You have %d new e-mails.</b>",
+							    count),count);
+		
+		inbox->handle = gc;
+		inbox->url = urls ? g_strdup(urls[0]) : NULL;
+		gaim_gtk_blist_set_headline(label_text, 
+					    pixbuf, G_CALLBACK(open_inbox_cb), inbox);
+		g_object_unref(pixbuf);
+		return;
+	}
 
 	if (mail_dialog == NULL || !detailed)
 	{
