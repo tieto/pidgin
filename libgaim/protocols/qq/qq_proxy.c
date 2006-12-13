@@ -65,7 +65,7 @@ void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 		strcat(buf1, buf2);
 	}
 	strcat(buf1, "\n");
-	gaim_debug(GAIM_DEBUG_INFO, desc, buf1);
+	gaim_debug(GAIM_DEBUG_INFO, desc, "%s", buf1);
 }
 
 /* QQ 2003iii uses double MD5 for the pwkey to get the session key */

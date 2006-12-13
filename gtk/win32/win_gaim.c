@@ -145,7 +145,7 @@ static void dll_prep() {
 		putenv(settingsdir);
 
 		snprintf(aspelldir, sizeof(aspelldir), "GAIM_ASPELL_DIR=%s\\Aspell\\bin", path);
-		printf(aspelldir);
+		printf("%s", aspelldir);
 		putenv(aspelldir);
 
 		/* set the GTK+ path to be \\path\to\GTK\bin */
@@ -513,7 +513,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		snprintf(errbuf, 512,
 			"Error getting module filename.\nError: (%u) %s",
 			(UINT) dw, err_msg);
-		printf(errbuf);
+		printf("%s", errbuf);
 		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
 	}
 
@@ -542,7 +542,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			(UINT) dw, err_msg,
 			mod_not_found ? "\n" : "",
 			mod_not_found ? "This probably means that GTK+ can't be found." : "");
-		printf(errbuf);
+		printf("%s", errbuf);
 		MessageBox(NULL, errbuf, TEXT("Error"), MB_OK | MB_TOPMOST);
 
 		return 0;

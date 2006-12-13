@@ -431,11 +431,11 @@ dump_screen(GntBindable *bindable, GList *null)
 				if (now & attr)  \
 				{  \
 					if (!(old & attr))  \
-						fprintf(file, start);  \
+						fprintf(file, "%s", start);  \
 				}  \
 				else if (old & attr)  \
 				{  \
-					fprintf(file, end);  \
+					fprintf(file, "%s", end);  \
 				}  \
 			} while (0) 
 
