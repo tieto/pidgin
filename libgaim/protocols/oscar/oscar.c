@@ -4697,6 +4697,7 @@ static int gaim_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	GaimBuddy *b;
 	struct aim_ssi_item *curitem;
 	guint32 tmp;
+	const char *icon_path, *cached_icon_path;
 	va_list ap;
 	guint16 fmtver, numitems;
 	guint32 timestamp;
@@ -4923,6 +4924,15 @@ static int gaim_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	gaim_debug_info("oscar",
 			   "ssi: activating server-stored buddy list\n");
 	aim_ssi_enable(od);
+
+	/*
+	 * Make sure our server-stored icon is updated correctly in
+	 * the event that the local user set a new icon while this
+	 * account was offline.
+	 */
+	icon_path = gaim_account_get_buddy_icon(account);
+	cached_icon_path = gaim_buddy_icons_get_full_path(icon_path);
+	oscar_set_icon(gc, cached_icon_path);
 
 	return 1;
 }
