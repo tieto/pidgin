@@ -228,7 +228,7 @@ gg_notify_userinfo(GaimConnection *gc, const char *who, GaimNotifyUserInfo *user
 	void *ui_handle;
 	
 	primary = g_strdup_printf(_("Info for %s"), who);
-	info = gaim_notify_user_info_get_text_with_newline(user_info, "\n");
+	info = gaim_notify_user_info_get_text_with_newline(user_info, "<BR>");
 	ui_handle = gg_notify_formatted(_("Buddy Information"), primary, NULL, info);
 	g_free(info);
 	g_free(primary);
