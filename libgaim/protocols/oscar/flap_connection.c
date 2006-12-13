@@ -770,7 +770,6 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	FlapConnection *conn;
 	ssize_t read;
-	guint8 header[6];
 
 	conn = data;
 
@@ -780,8 +779,9 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* Start reading a new FLAP */
 		if (conn->buffer_incoming.data.data == NULL)
 		{
-			/* Peek at the first 6 bytes to get the length */
-			read = recv(conn->fd, &header, 6, MSG_PEEK);
+			/* Read the first 6 bytes (the FLAP header) */
+			read = recv(conn->fd, conn->header + conn->header_received,
+					6 - conn->header_received, 0);
 
 			/* Check if the FLAP server closed the connection */
 			if (read == 0)
@@ -805,14 +805,12 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			}
 
 			/* If we don't even have a complete FLAP header then do nothing */
-			if (read < 6)
+			conn->header_received += read;
+			if (conn->header_received < 6)
 				break;
 
-			/* Read the first 6 bytes (the FLAP header) */
-			read = recv(conn->fd, &header, 6, 0);
-
 			/* All FLAP frames must start with the byte 0x2a */
-			if (aimutil_get8(&header[0]) != 0x2a)
+			if (aimutil_get8(&conn->header[0]) != 0x2a)
 			{
 				flap_connection_schedule_destroy(conn,
 						OSCAR_DISCONNECT_INVALID_DATA, NULL);
@@ -822,7 +820,7 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 			/* Verify the sequence number sent by the server. */
 #if 0
 			/* TODO: Need to initialize conn->seqnum_in somewhere before we can use this. */
-			if (aimutil_get16(&header[1]) != conn->seqnum_in++)
+			if (aimutil_get16(&conn->header[1]) != conn->seqnum_in++)
 			{
 				/* Received an out-of-order FLAP! */
 				flap_connection_schedule_destroy(conn,
@@ -832,9 +830,9 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 #endif
 
 			/* Initialize a new temporary FlapFrame for incoming data */
-			conn->buffer_incoming.channel = aimutil_get8(&header[1]);
-			conn->buffer_incoming.seqnum = aimutil_get16(&header[2]);
-			conn->buffer_incoming.data.len = aimutil_get16(&header[4]);
+			conn->buffer_incoming.channel = aimutil_get8(&conn->header[1]);
+			conn->buffer_incoming.seqnum = aimutil_get16(&conn->header[2]);
+			conn->buffer_incoming.data.len = aimutil_get16(&conn->header[4]);
 			conn->buffer_incoming.data.data = g_new(guint8, conn->buffer_incoming.data.len);
 			conn->buffer_incoming.data.offset = 0;
 		}
@@ -880,6 +878,8 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 
 		g_free(conn->buffer_incoming.data.data);
 		conn->buffer_incoming.data.data = NULL;
+
+		conn->header_received = 0;
 	}
 }
 

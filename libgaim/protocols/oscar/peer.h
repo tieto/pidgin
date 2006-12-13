@@ -158,7 +158,7 @@ struct _PeerConnection
 	 */
 	GaimProxyConnectData *client_connect_data;
 	GaimProxyConnectData *verified_connect_data;
-	
+
 	/**
 	 * This is only used when the peer connection is being established.
 	 */
@@ -177,12 +177,14 @@ struct _PeerConnection
 	int listenerfd;
 
 	int fd;
-
-	guint watcher_incoming;
-	guint watcher_outgoing;
-
+	guint8 header[6];
+	ssize_t header_received;
+	guint8 proxy_header[12];
+	ssize_t proxy_header_received;
 	ByteStream buffer_incoming;
 	GaimCircBuffer *buffer_outgoing;
+	guint watcher_incoming;
+	guint watcher_outgoing;
 
 	/**
 	 * IP address of the proxy server, if applicable.

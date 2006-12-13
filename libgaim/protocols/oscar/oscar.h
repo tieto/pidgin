@@ -382,6 +382,8 @@ struct _FlapConnection
 	gpointer new_conn_data;
 
 	int fd;
+	guint8 header[6];
+	ssize_t header_received;
 	FlapFrame buffer_incoming;
 	GaimCircBuffer *buffer_outgoing;
 	guint watcher_incoming;

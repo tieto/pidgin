@@ -288,15 +288,15 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	PeerConnection *conn;
 	ssize_t read;
-	guint8 header[6];
 
 	conn = data;
 
 	/* Start reading a new ODC/OFT frame */
 	if (conn->buffer_incoming.data == NULL)
 	{
-		/* Peek at the first 6 bytes to get the length */
-		read = recv(conn->fd, &header, 6, MSG_PEEK);
+		/* Read the first 6 bytes (magic string and frame length) */
+		read = recv(conn->fd, conn->header + conn->header_received,
+				6 - conn->header_received, 0);
 
 		/* Check if the remote user closed the connection */
 		if (read == 0)
@@ -320,26 +320,25 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 		conn->lastactivity = time(NULL);
 
 		/* If we don't even have the first 6 bytes then do nothing */
-		if (read < 6)
+		conn->header_received += read;
+		if (conn->header_received < 6)
 			return;
 
-		/* Read the first 6 bytes (magic string and frame length) */
-		read = recv(conn->fd, &header, 6, 0);
-
 		/* All ODC/OFT frames must start with a magic string */
-		if (memcmp(conn->magic, header, 4))
+		if (memcmp(conn->magic, conn->header, 4))
 		{
 			gaim_debug_warning("oscar", "Expecting magic string to "
 				"be %c%c%c%c but received magic string %c%c%c%c.  "
 				"Closing connection.\n",
 				conn->magic[0], conn->magic[1], conn->magic[2],
-				conn->magic[3], header[0], header[1], header[2], header[3]);
+				conn->magic[3], conn->header[0], conn->header[1],
+				conn->header[2], conn->header[3]);
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_INVALID_DATA, NULL);
 			return;
 		}
 
 		/* Initialize a new temporary ByteStream for incoming data */
-		conn->buffer_incoming.len = aimutil_get16(&header[4]) - 6;
+		conn->buffer_incoming.len = aimutil_get16(&conn->header[4]) - 6;
 		conn->buffer_incoming.data = g_new(guint8, conn->buffer_incoming.len);
 		conn->buffer_incoming.offset = 0;
 	}
@@ -384,8 +383,11 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		peer_oft_recv_frame(conn, &conn->buffer_incoming);
 	}
+
 	g_free(conn->buffer_incoming.data);
 	conn->buffer_incoming.data = NULL;
+
+	conn->header_received = 0;
 }
 
 /*******************************************************************/

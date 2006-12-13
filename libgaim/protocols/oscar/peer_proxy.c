@@ -203,7 +203,6 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
 {
 	PeerConnection *conn;
 	ssize_t read;
-	guint8 header[12];
 	ProxyFrame *frame;
 
 	conn = data;
@@ -212,8 +211,9 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
 	/* Start reading a new proxy frame */
 	if (frame == NULL)
 	{
-		/* Peek at the first 12 bytes to get the length */
-		read = recv(conn->fd, &header, 12, MSG_PEEK);
+		/* Read the first 12 bytes (frame length and header) */
+		read = recv(conn->fd, conn->proxy_header + conn->proxy_header_received,
+				12 - conn->proxy_header_received, 0);
 
 		/* Check if the proxy server closed the connection */
 		if (read == 0)
@@ -238,30 +238,28 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
 		conn->lastactivity = time(NULL);
 
 		/* If we don't even have the first 12 bytes then do nothing */
-		if (read < 12)
+		conn->proxy_header_received += read;
+		if (conn->proxy_header_received < 12)
 			return;
 
-		/* Read the first 12 bytes (frame length and header) */
-		read = recv(conn->fd, &header, 12, 0);
-
 		/* We only support a specific version of the proxy protocol */
-		if (aimutil_get16(&header[2]) != PEER_PROXY_PACKET_VERSION)
+		if (aimutil_get16(&conn->proxy_header[2]) != PEER_PROXY_PACKET_VERSION)
 		{
 			gaim_debug_warning("oscar", "Expected peer proxy protocol "
 				"version %u but received version %u.  Closing "
 				"connection.\n", PEER_PROXY_PACKET_VERSION,
-				aimutil_get16(&header[2]));
+				aimutil_get16(&conn->proxy_header[2]));
 			peer_connection_trynext(conn);
 			return;
 		}
 
 		/* Initialize a new temporary ProxyFrame for incoming data */
 		frame = g_new0(ProxyFrame, 1);
-		frame->payload.len = aimutil_get16(&header[0]) - 10;
-		frame->version = aimutil_get16(&header[2]);
-		frame->type = aimutil_get16(&header[4]);
-		frame->unknown = aimutil_get16(&header[6]);
-		frame->flags = aimutil_get16(&header[10]);
+		frame->payload.len = aimutil_get16(&conn->proxy_header[0]) - 10;
+		frame->version = aimutil_get16(&conn->proxy_header[2]);
+		frame->type = aimutil_get16(&conn->proxy_header[4]);
+		frame->unknown = aimutil_get16(&conn->proxy_header[6]);
+		frame->flags = aimutil_get16(&conn->proxy_header[10]);
 		if (frame->payload.len > 0)
 			frame->payload.data = g_new(guint8, frame->payload.len);
 		conn->frame = frame;
@@ -313,8 +311,11 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, GaimInputCondition con
 	conn->frame = NULL;
 	byte_stream_rewind(&frame->payload);
 	peer_proxy_recv_frame(conn, frame);
+
 	g_free(frame->payload.data);
 	g_free(frame);
+
+	conn->proxy_header_received = 0;
 }
 
 /**
