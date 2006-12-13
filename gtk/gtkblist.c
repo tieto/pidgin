@@ -3686,11 +3686,19 @@ headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GaimGtkBuddyLi
 }
 
 static gboolean
+headline_click_callback(gpointer data)
+{
+	((GSourceFunc)gtkblist->headline_callback)(gtkblist->headline_data);
+	return FALSE;
+}
+
+static gboolean
 headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, GaimGtkBuddyList *gtkblist)
 {
 	gtk_widget_hide(gtkblist->headline_hbox);
 	if (gtkblist->headline_callback)
-		g_idle_add(G_CALLBACK(gtkblist->headline_callback), gtkblist->headline_data);
+		g_idle_add((GSourceFunc)headline_click_callback, gtkblist->headline_data);
+	return TRUE;
 }
 
 /***********************************/
