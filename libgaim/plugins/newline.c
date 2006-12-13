@@ -45,13 +45,9 @@ plugin_load(GaimPlugin *plugin)
 {
 	void *conversation = gaim_conversations_get_handle();
 
-	gaim_signal_connect(conversation, "displaying-im-msg",
+	gaim_signal_connect(conversation, "writing-im-msg",
 						plugin, GAIM_CALLBACK(addnewline_msg_cb), NULL);
-	gaim_signal_connect(conversation, "displaying-chat-msg",
-						plugin, GAIM_CALLBACK(addnewline_msg_cb), NULL);
-	gaim_signal_connect(conversation, "receiving-im-msg",
-						plugin, GAIM_CALLBACK(addnewline_msg_cb), NULL);
-	gaim_signal_connect(conversation, "receiving-chat-msg",
+	gaim_signal_connect(conversation, "writing-chat-msg",
 						plugin, GAIM_CALLBACK(addnewline_msg_cb), NULL);
 
 	return TRUE;
