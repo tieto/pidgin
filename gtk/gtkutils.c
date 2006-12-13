@@ -2492,9 +2492,7 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			gaim_debug_error("buddyicon",
 							 "Unable to create directory %s: %s\n",
 							 dirname, strerror(errno));
-#if GTK_CHECK_VERSION(2,2,0)
 			g_strfreev(prpl_formats);
-#endif
 			g_free(random);
 			g_free(filename);
 			return NULL;
