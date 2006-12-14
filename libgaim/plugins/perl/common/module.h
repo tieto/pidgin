@@ -181,6 +181,8 @@ typedef GaimNotifySearchColumn *	Gaim__NotifySearchColumn;
 typedef GaimNotifySearchButton *	Gaim__NotifySearchButton;
 typedef GaimNotifyType			Gaim__NotifyType;
 typedef GaimNotifyUiOps *		Gaim__NotifyUiOps;
+typedef GaimNotifyUserInfo *	Gaim__NotifyUserInfo;
+typedef GaimNotifyUserInfoEntry *	Gaim__NotifyUserInfoEntry;
 
 /* plugin.h */
 typedef GaimPlugin *			Gaim__Plugin;

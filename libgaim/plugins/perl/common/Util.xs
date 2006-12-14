@@ -82,10 +82,10 @@ const gchar *
 gaim_home_dir()
 
 gboolean
-gaim_markup_extract_info_field(str, len, dest, start_token, skip, end_token, check_value, no_value_token, display_name, is_link, link_prefix, format_cb)
+gaim_markup_extract_info_field(str, len, user_info, start_token, skip, end_token, check_value, no_value_token, display_name, is_link, link_prefix, format_cb)
 	const char *str
 	int len
-	GString *dest
+	Gaim::NotifyUserInfo user_info
 	const char *start_token
 	int skip
 	const char *end_token

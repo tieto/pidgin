@@ -44,6 +44,65 @@ gaim_notify_formatted(handle, title, primary, secondary, text, cb, user_data)
 	Gaim::NotifyCloseCallback cb
 	gpointer user_data
 
+void *
+gaim_notify_userinfo(gc, who, user_info, cb, user_data)
+	Gaim::Connection gc
+	const char *who
+	Gaim::NotifyUserInfo user_info
+	Gaim::NotifyCloseCallback cb
+	gpointer user_data
+
+Gaim::NotifyUserInfo
+gaim_notify_user_info_new()
+
+void
+gaim_notify_user_info_destroy(user_info)
+	Gaim::NotifyUserInfo user_info
+
+void
+gaim_notify_user_info_get_entries(user_info)
+	Gaim::NotifyUserInfo user_info
+PREINIT:
+	const GList *l;
+PPCODE:
+	l = gaim_notify_user_info_get_entries(user_info);
+	for (; l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::NotifyUserInfoEntry")));
+	}
+
+gchar_own *
+gaim_notify_user_info_get_text_with_newline(user_info, newline)
+	Gaim::NotifyUserInfo user_info
+	const char *newline
+
+void gaim_notify_user_info_add_pair(user_info, label, value)
+	Gaim::NotifyUserInfo user_info
+	const char *label
+	const char *value
+
+void gaim_notify_user_info_prepend_pair(user_info, label, value)
+	Gaim::NotifyUserInfo user_info
+	const char *label
+	const char *value
+
+void gaim_notify_user_info_add_section_break(user_info)
+	Gaim::NotifyUserInfo user_info
+
+void gaim_notify_user_info_add_section_header(user_info, label)
+	Gaim::NotifyUserInfo user_info
+	const char *label
+
+void gaim_notify_user_info_remove_last_item(user_info)
+	Gaim::NotifyUserInfo user_info
+
+gchar *
+gaim_notify_user_info_entry_get_label(user_info_entry)
+	Gaim::NotifyUserInfoEntry user_info_entry
+
+gchar *
+gaim_notify_user_info_entry_get_value(user_info_entry)
+	Gaim::NotifyUserInfoEntry user_info_entry
+
 Gaim::NotifyUiOps
 gaim_notify_get_ui_ops()
 
@@ -77,10 +136,3 @@ gaim_notify_uri(handle, uri)
 	void * handle
 	const char *uri
 
-void *
-gaim_notify_userinfo(gc, who, text, cb, user_data)
-	Gaim::Connection gc
-	const char *who
-	const char *text
-	Gaim::NotifyCloseCallback cb
-	gpointer user_data

@@ -99,6 +99,8 @@ Gaim::NotifySearchColumn		T_GaimObj
 Gaim::NotifySearchButton		T_GaimObj
 Gaim::NotifyType			T_IV
 Gaim::NotifyUiOps			T_GaimObj
+Gaim::NotifyUserInfo			T_GaimObj
+Gaim::NotifyUserInfoEntry		T_GaimObj
 
 Gaim::Plugin				T_GaimObj
 Gaim::PluginType			T_IV
