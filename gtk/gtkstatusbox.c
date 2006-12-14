@@ -1086,7 +1086,7 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 	GtkIconSize icon_size;
 	
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
 
 	if (status_box->connecting_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);
