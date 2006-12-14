@@ -24,6 +24,7 @@
 #include "util.h"
 
 #include "buddy.h"
+#include "google.h"
 #include "presence.h"
 #include "roster.h"
 #include "iq.h"
@@ -224,6 +225,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 				if (g_slist_find_custom(groups, group_name, (GCompareFunc)gaim_utf8_strcasecmp) == NULL)
 					groups = g_slist_append(groups, group_name);
 			}
+			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+				jabber_google_roster_incoming(js, item);
 			add_gaim_buddies_in_groups(js, jid, name, groups);
 		}
 	}
@@ -271,7 +274,12 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 
 	if(!grps)
 		g_slist_free(groups);
-
+	
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER) {
+		jabber_google_roster_outgoing(js, query, item);
+		xmlnode_set_attrib(query, "xmlns:gr", "google:roster");
+		xmlnode_set_attrib(query, "gr:ext", "2");
+	}
 	jabber_iq_send(iq);
 }
 

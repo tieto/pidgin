@@ -27,7 +27,7 @@
 #include "iq.h"
 #include "disco.h"
 #include "jabber.h"
-
+#include "roster.h"
 
 struct _jabber_disco_info_cb_data {
 	gpointer data;
@@ -262,8 +262,14 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		if (!strcmp("google:mail:notify", var)) {
 			js->server_caps |= JABBER_CAP_GMAIL_NOTIFY;
 			jabber_gmail_init(js);
+		} else if (!strcmp("google:roster", var)) {
+			js->server_caps |= JABBER_CAP_GOOGLE_ROSTER;
+			jabber_google_roster_init(js);
 		}
 	}
+
+	if (!js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+		jabber_roster_request(js);
 }
 
 static void

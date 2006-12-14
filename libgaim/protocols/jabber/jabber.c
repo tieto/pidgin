@@ -41,6 +41,7 @@
 #include "buddy.h"
 #include "chat.h"
 #include "disco.h"
+#include "google.h"
 #include "iq.h"
 #include "jutil.h"
 #include "message.h"
@@ -1041,7 +1042,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			
 			break;
 		case JABBER_STREAM_CONNECTED:
-			jabber_roster_request(js);
 			gpresence = gaim_account_get_presence(js->gc->account);
 			status = gaim_presence_get_active_status(gpresence);
 			jabber_presence_send(js->gc->account, status);
@@ -1875,9 +1875,9 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roster_remove_buddy,		/* remove_buddy */
 	NULL,							/* remove_buddies */
 	NULL,							/* add_permit */
-	NULL,							/* add_deny */
+	jabber_google_roster_add_deny,				/* add_deny */
 	NULL,							/* rem_permit */
-	NULL,							/* rem_deny */
+	jabber_google_roster_rem_deny,				/* rem_deny */
 	NULL,							/* set_permit_deny */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */

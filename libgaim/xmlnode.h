@@ -143,6 +143,16 @@ char *xmlnode_get_data(xmlnode *node);
 void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 
 /**
+ * Sets a namespaced attribute for a node
+ *
+ * @param node  The node to set an attribute for.
+ * @param attr  The name of the attribute to set
+ * @param xmlns The namespace of the attribute to ste
+ * @param value The value of the attribute
+ */
+void xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value);
+
+/**
  * Gets an attribute from a node.
  *
  * @param node The node to get an attribute from.
@@ -153,12 +163,32 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 const char *xmlnode_get_attrib(xmlnode *node, const char *attr);
 
 /**
+ * Gets a namespaced attribute from a node
+ *
+ * @param node  The node to get an attribute from.
+ * @param attr  The attribute to get
+ * @param xmlns The namespace of the attribute to get
+ *
+ * @return The value of the attribute/
+ */
+const char *xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns);
+
+/**
  * Removes an attribute from a node.
  *
  * @param node The node to remove an attribute from.
  * @param attr The attribute to remove.
  */
 void xmlnode_remove_attrib(xmlnode *node, const char *attr);
+
+/**
+ * Removes a namespaced attribute from a node
+ *
+ * @param node  The node to remove an attribute from
+ * @param attr  The attribute to remove
+ * @param xmlns The namespace of the attribute to remove
+ */
+void xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns);
 
 /**
  * Sets the namespace of a node

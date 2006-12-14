@@ -142,6 +142,34 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 	}
 }
 
+
+void
+xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
+{
+	xmlnode *attr_node, *sibling = NULL;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(attr != NULL);
+
+	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
+	{
+		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
+		   !strcmp(attr_node->name, attr) &&
+		   !strcmp(attr_node->xmlns, xmlns)) {
+			if(node->child == attr_node) {
+				node->child = attr_node->next;
+			} else if (node->lastchild == attr_node) {
+				node->lastchild = sibling;
+			} else {
+				sibling->next = attr_node->next;
+			}
+			xmlnode_free(attr_node);
+			return;
+		}
+		sibling = attr_node;
+	}
+}
+
 void
 xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 {
@@ -160,6 +188,25 @@ xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value)
 	xmlnode_insert_child(node, attrib_node);
 }
 
+void
+xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value)
+{
+	xmlnode *attrib_node;
+
+	g_return_if_fail(node != NULL);
+	g_return_if_fail(attr != NULL);
+	g_return_if_fail(value != NULL);
+
+	xmlnode_remove_attrib_with_namespace(node, attr, xmlns);
+
+	attrib_node = new_node(attr, XMLNODE_TYPE_ATTRIB);
+
+	attrib_node->data = g_strdup(value);
+	attrib_node->xmlns = g_strdup(xmlns);
+
+	xmlnode_insert_child(node, attrib_node);	
+}
+
 const char *
 xmlnode_get_attrib(xmlnode *node, const char *attr)
 {
@@ -174,6 +221,23 @@ xmlnode_get_attrib(xmlnode *node, const char *attr)
 	}
 
 	return NULL;
+}
+
+const char *
+xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
+{
+	xmlnode *x;
+
+	g_return_val_if_fail(node != NULL, NULL);
+
+	for(x = node->child; x; x = x->next) {
+		if(x->type == XMLNODE_TYPE_ATTRIB && 
+		   !strcmp(attr, x->name) && !strcmp(x->xmlns, xmlns)) {
+			return x->data;
+		}
+	}
+
+	return NULL;	
 }
 
 

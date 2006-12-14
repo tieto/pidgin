@@ -76,13 +76,21 @@ jabber_parser_element_start_libxml(void *user_data,
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
+			char *attrib_ns = NULL;
+
+			if (attributes[i+2]) {
+				attrib_ns = g_strdup(attributes[i+2]);;
+			}
+
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
+
 			txt = attrib;
 			attrib = gaim_unescape_html(txt);
 			g_free(txt);
-			xmlnode_set_attrib(node, (const char*) attributes[i], attrib);
+			xmlnode_set_attrib_with_namespace(node, (const char*) attributes[i], attrib_ns, attrib);
 			g_free(attrib);
+			g_free(attrib_ns);
 		}
 
 		js->current = node;

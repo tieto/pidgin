@@ -55,6 +55,7 @@ typedef enum {
 	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
 	 */
 	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
+	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
 
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;

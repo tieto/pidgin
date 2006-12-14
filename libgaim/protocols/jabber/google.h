@@ -29,4 +29,12 @@
 void jabber_gmail_init(JabberStream *js);
 void jabber_gmail_poke(JabberStream *js, xmlnode *node);
 
+void jabber_google_roster_init(JabberStream *js);
+void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);
+void jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
+void jabber_google_roster_add_deny(GaimConnection *gc, const char *who);
+void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who);
+
+
+
 #endif   /* _GAIM_GOOGLE_H_ */
