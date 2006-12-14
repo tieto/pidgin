@@ -2404,13 +2404,12 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
 	data = gaim_buddy_icon_get_data(icon, &len);
 
-	if ((len <= 0) || (data == NULL)) {
+	if ((len <= 0) || (data == NULL) || (fwrite(data, 1, len, fp) != 1)) {
 		gaim_notify_error(gtkconv, NULL, _("Unable to save icon file to disk."), NULL);
 		fclose(fp);
+		g_unlink(filename);
 		return;
 	}
-
-	fwrite(data, 1, len, fp);
 	fclose(fp);
 }
 
