@@ -47,6 +47,32 @@
 #include "config.h"
 
 static gboolean
+send_typing_notification(GntWidget *w, const char *key, GGConv *ggconv)
+{
+	if (key[0] != 27 && key[0] != '\r') {
+		const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
+		gboolean first = (!text || !*text);
+		if (gaim_prefs_get_bool("/gaim/gnt/conversations/notify_typing")) {
+			/* Xerox'ed */
+			GaimConversation *conv = ggconv->active_conv;
+			GaimConvIm *im = GAIM_CONV_IM(conv);
+
+			gaim_conv_im_stop_send_typed_timeout(im);
+			gaim_conv_im_start_send_typed_timeout(im);
+			if (first || (gaim_conv_im_get_type_again(im) != 0 &&
+						  time(NULL) > gaim_conv_im_get_type_again(im))) {
+				unsigned int timeout;
+				timeout = serv_send_typing(gaim_conversation_get_gc(conv),
+										   gaim_conversation_get_name(conv),
+										   GAIM_TYPING);
+				gaim_conv_im_set_type_again(im, timeout);
+			}
+		}
+	}
+	return FALSE;
+}
+
+static gboolean
 entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 {
 	if (key[0] == '\r' && key[1] == 0)
@@ -142,23 +168,6 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 	}
 	else
 	{
-		gboolean first = !gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-		if (gaim_prefs_get_bool("/gaim/gnt/conversations/notify_typing")) {
-			/* Xerox'ed */
-			GaimConversation *conv = ggconv->active_conv;
-			GaimConvIm *im = GAIM_CONV_IM(conv);
-
-			gaim_conv_im_stop_send_typed_timeout(im);
-			gaim_conv_im_start_send_typed_timeout(im);
-			if (first || (gaim_conv_im_get_type_again(im) != 0 &&
-						  time(NULL) > gaim_conv_im_get_type_again(im))) {
-				unsigned int timeout;
-				timeout = serv_send_typing(gaim_conversation_get_gc(conv),
-										   gaim_conversation_get_name(conv),
-										   GAIM_TYPING);
-				gaim_conv_im_set_type_again(im, timeout);
-			}
-		}
 	}
 
 	return FALSE;
@@ -244,10 +253,10 @@ update_buddy_typing(GaimAccount *account, const char *who, gpointer null)
 
 		scroll = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggc->tv));
 		str = g_strdup_printf(_("\n%s is typing..."), gaim_conversation_get_name(conv));
-		/* Update an existing notification if there's one. */
-		if (gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", str, TRUE) == 0)
-			gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
-						str, GNT_TEXT_FLAG_DIM, "typing");
+		/* Updating is a little buggy. So just remove and add a new one */
+		gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", NULL, TRUE);
+		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
+					str, GNT_TEXT_FLAG_DIM, "typing");
 		g_free(str);
 		if (scroll <= 1)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggc->tv), 0);
@@ -317,6 +326,7 @@ gg_create_conversation(GaimConversation *conv)
 	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
 
 	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
+	g_signal_connect(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(send_typing_notification), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
 	gnt_widget_set_position(ggc->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
