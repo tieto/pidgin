@@ -433,7 +433,8 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, gui
 		strncpy(str, datalen, data);
 		str[datalen] = '\0';
 		salvage = gaim_utf8_salvage(str);
-		ret = g_strdup_printf(_("%s (There was an error receiving this message.  Either you and the buddy you are speaking to have a different encoding selected, or the buddy has a buggy client.)"), salvage);
+		ret = g_strdup_printf("%s %s", salvage,
+		                      _("(There was an error receiving this message.  Either you and the buddy you are speaking to have a different encoding selected, or the buddy has a buggy client.)"));
 		g_free(str);
 		g_free(salvage);
         }
