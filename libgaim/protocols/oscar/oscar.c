@@ -427,7 +427,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, gui
 	if (ret == NULL)
 		ret = gaim_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
 	if (ret == NULL)
-		ret = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking to most likely has a buggy client.)"));
+		ret = g_strdup(_("(There was an error receiving this message.  Either you and the buddy you are speaking to have a different encoding selected, or the buddy has a buggy client.)"));
 
 	return ret;
 }
