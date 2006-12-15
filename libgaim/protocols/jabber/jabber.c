@@ -1852,7 +1852,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png,gif,jpeg", 32, 32, 96, 96, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"png,gif,jpeg", 32, 32, 96, 96, 8191, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblems,			/* list_emblems */
 	jabber_status_text,				/* status_text */

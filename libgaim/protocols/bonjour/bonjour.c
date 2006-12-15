@@ -356,7 +356,7 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
-	/* {"png", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, */    /* icon_spec */
+	/* {"png", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_DISPLAY}, */ /* icon_spec */
 	NO_BUDDY_ICONS, /* not yet */                            /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
 	bonjour_list_emblems,                                    /* list_emblems */

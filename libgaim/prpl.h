@@ -46,22 +46,15 @@ typedef enum {
  * it should give this prpl, and what kind of image file it should expect back.
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
-typedef struct {
-	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
-					     * Neither the core nor the prpl will actually check to see if the data it's given matches this; it's
-					     * entirely up to the UI to do what it wants */
-	int min_width;                          /**< The minimum width of this icon  */
-	int min_height;                         /**< The minimum height of this icon */
-	int max_width;                          /**< The maximum width of this icon  */
-	int max_height;                         /**< The maximum height of this icon */
-	GaimIconScaleRules scale_rules;		/**< How to stretch this icon */
-} GaimBuddyIconSpec;
+typedef struct _GaimBuddyIconSpec GaimBuddyIconSpec;
 
 /**
  * This \#define exists just to make it easier to fill out the buddy icon
  * field in the prpl info struct for protocols that couldn't care less.
  */
-#define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0}
+#define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0, 0}
+
+#include <unistd.h>
 
 #include "blist.h"
 #include "conversation.h"
@@ -72,6 +65,18 @@ typedef struct {
 #include "roomlist.h"
 #include "status.h"
 #include "whiteboard.h"
+
+struct _GaimBuddyIconSpec {
+	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
+					     * Neither the core nor the prpl will actually check to see if the data it's given matches this; it's
+					     * entirely up to the UI to do what it wants */
+	int min_width;                          /**< The minimum width of this icon  */
+	int min_height;                         /**< The minimum height of this icon */
+	int max_width;                          /**< The maximum width of this icon  */
+	int max_height;                         /**< The maximum height of this icon */
+	size_t max_filesize;                     /**< The maximum number of bytes    */
+	GaimIconScaleRules scale_rules;		/**< How to stretch this icon */
+};
 
 struct proto_chat_entry {
 	const char *label;

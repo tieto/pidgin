@@ -653,7 +653,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_USE_POINTSIZE,
 	NULL,							/* user_splits	*/
 	NULL,							/* protocol_options */
-	{"png", 96, 96, 96, 96, GAIM_ICON_SCALE_SEND},		/* icon_spec */
+	{"png", 96, 96, 96, 96, 0, GAIM_ICON_SCALE_SEND}, /* icon_spec */
 	_qq_list_icon,						/* list_icon */
 	_qq_list_emblems,					/* list_emblems */
 	_qq_status_text,					/* status_text	*/

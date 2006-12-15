@@ -1734,7 +1734,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
 #ifdef SILC_ATTRIBUTE_USER_ICON
-	{"jpeg,gif,png,bmp", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"jpeg,gif,png,bmp", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
 #else
 	NO_BUDDY_ICONS,
 #endif
