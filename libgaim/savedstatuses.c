@@ -373,7 +373,6 @@ parse_substatus(xmlnode *substatus)
 	char *data;
 
 	ret = g_new0(GaimSavedStatusSub, 1);
-	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatusSub);
 
 	/* Read the account */
 	node = xmlnode_get_child(substatus, "account");
@@ -410,6 +409,7 @@ parse_substatus(xmlnode *substatus)
 		ret->message = data;
 	}
 
+	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatusSub);
 	return ret;
 }
 
@@ -447,7 +447,6 @@ parse_status(xmlnode *status)
 	int i;
 
 	ret = g_new0(GaimSavedStatus, 1);
-	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatus);
 
 	attrib = xmlnode_get_attrib(status, "transient");
 	if ((attrib == NULL) || (strcmp(attrib, "true")))
@@ -506,6 +505,7 @@ parse_status(xmlnode *status)
 			ret->substatuses = g_list_prepend(ret->substatuses, new);
 	}
 
+	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatus);
 	return ret;
 }
 
