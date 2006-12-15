@@ -155,7 +155,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		pair->key = strtol(key, NULL, 10);
 		accept = x; /* if x is 0 there was no key, so don't accept it */
 
-		if (len - pos + 1 <= 0) {
+		if (pos > len) {
 			/* Truncated. Garbage or something. */
 			accept = FALSE;
 		}
