@@ -430,7 +430,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, gui
 		char *str, *salvage;
 
 		str = g_malloc(datalen + 1);
-		strncpy(str, datalen, data);
+		strncpy(str, data, datalen);
 		str[datalen] = '\0';
 		salvage = gaim_utf8_salvage(str);
 		ret = g_strdup_printf("%s %s", salvage,
