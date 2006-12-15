@@ -84,7 +84,7 @@ typedef struct
  */
 struct _GaimXfer
 {
-	guint ref;                    /**< The reference count.                 */
+	guint ref;                    /**< The reference count.                */
 	GaimXferType type;            /**< The type of transfer.               */
 
 	GaimAccount *account;         /**< The account.                        */
@@ -110,6 +110,9 @@ struct _GaimXfer
 	size_t bytes_remaining;       /**< The number of bytes remaining.      */
 	time_t start_time;            /**< When the transfer of data began.    */
 	time_t end_time;              /**< When the transfer of data ended.    */
+
+	size_t current_buffer_size;   /**< This gradually increases for fast
+	                                   network connections. */
 
 	GaimXferStatusType status;    /**< File Transfer's status.             */
 

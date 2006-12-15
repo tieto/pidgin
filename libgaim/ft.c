@@ -31,6 +31,9 @@
 #include "request.h"
 #include "util.h"
 
+#define FT_INITIAL_BUFFER_SIZE 4096
+#define FT_MAX_BUFFER_SIZE     65535
+
 static GaimXferUiOps *xfer_ui_ops = NULL;
 
 static int gaim_xfer_choose_file(GaimXfer *xfer);
@@ -53,6 +56,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	xfer->who     = g_strdup(who);
 	xfer->ui_ops  = gaim_xfers_get_ui_ops();
 	xfer->message = NULL;
+	xfer->current_buffer_size = FT_INITIAL_BUFFER_SIZE;
 
 	ui_ops = gaim_xfer_get_ui_ops(xfer);
 
@@ -781,6 +785,13 @@ gaim_xfer_set_cancel_recv_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 	xfer->ops.cancel_recv = fnc;
 }
 
+static void
+gaim_xfer_increase_buffer_size(GaimXfer *xfer)
+{
+	xfer->current_buffer_size = MIN(xfer->current_buffer_size * 1.5,
+			FT_MAX_BUFFER_SIZE);
+}
+
 gssize
 gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 {
@@ -790,9 +801,9 @@ gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 	g_return_val_if_fail(buffer != NULL, 0);
 
 	if (gaim_xfer_get_size(xfer) == 0)
-		s = 4096;
+		s = xfer->current_buffer_size;
 	else
-		s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
+		s = MIN(gaim_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
 	if (xfer->ops.read != NULL)
 		r = (xfer->ops.read)(buffer, xfer);
@@ -810,6 +821,14 @@ gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 		else if (r == 0)
 			r = -1;
 	}
+
+	if (r == xfer->current_buffer_size)
+		/*
+		 * We managed to read the entire buffer.  This means our this
+		 * network is fast and our buffer is too small, so make it
+		 * bigger.
+		 */
+		gaim_xfer_increase_buffer_size(xfer);
 
 	return r;
 }
@@ -857,7 +876,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	}
 
 	if (condition & GAIM_INPUT_WRITE) {
-		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
+		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
 		/* this is so the prpl can keep the connection open
 		   if it needs to for some odd reason. */
@@ -883,6 +902,13 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 		} else if (r < s) {
 			/* We have to seek back in the file now. */
 			fseek(xfer->dest_fp, r - s, SEEK_CUR);
+		} else {
+			/*
+			 * We managed to write the entire buffer.  This means our
+			 * network is fast and our buffer is too small, so make it
+			 * bigger.
+			 */
+			gaim_xfer_increase_buffer_size(xfer);
 		}
 	}
 
