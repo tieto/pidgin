@@ -386,8 +386,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	char *avatar_file = NULL;
 	struct tag_attr *tag_attr;
 
-	if(js->avatar_hash)
-		g_free(js->avatar_hash);
+	g_free(js->avatar_hash);
 	js->avatar_hash = NULL;
 
 	/*
@@ -396,55 +395,53 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	vc_node = info ? xmlnode_from_str(info, -1) : NULL;
 	avatar_file = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gc->account));
 
-	if(!vc_node && avatar_file) {
+	if(!vc_node) {
 		vc_node = xmlnode_new("vCard");
 		for(tag_attr = vcard_tag_attr_list; tag_attr->attr != NULL; ++tag_attr)
 			xmlnode_set_attrib(vc_node, tag_attr->attr, tag_attr->value);
 	}
 
-	if(vc_node) {
-		if (vc_node->name &&
-				!g_ascii_strncasecmp(vc_node->name, "vCard", 5)) {
-			GError *error = NULL;
-			gchar *avatar_data_tmp;
-			guchar *avatar_data;
-			gsize avatar_len;
+	if (vc_node->name &&
+			!g_ascii_strncasecmp(vc_node->name, "vCard", 5)) {
+		GError *error = NULL;
+		gchar *avatar_data_tmp;
+		guchar *avatar_data;
+		gsize avatar_len;
 
-			if(avatar_file && g_file_get_contents(avatar_file, &avatar_data_tmp, &avatar_len, &error)) {
-				xmlnode *photo, *binval;
-				gchar *enc;
-				int i;
-				unsigned char hashval[20];
-				char *p, hash[41];
+		if(avatar_file && g_file_get_contents(avatar_file, &avatar_data_tmp, &avatar_len, &error)) {
+			xmlnode *photo, *binval;
+			gchar *enc;
+			int i;
+			unsigned char hashval[20];
+			char *p, hash[41];
 
-				avatar_data = (guchar *) avatar_data_tmp;
-				photo = xmlnode_new_child(vc_node, "PHOTO");
-				binval = xmlnode_new_child(photo, "BINVAL");
-				enc = gaim_base64_encode(avatar_data, avatar_len);
+			avatar_data = (guchar *) avatar_data_tmp;
+			photo = xmlnode_new_child(vc_node, "PHOTO");
+			binval = xmlnode_new_child(photo, "BINVAL");
+			enc = gaim_base64_encode(avatar_data, avatar_len);
 
-				gaim_cipher_digest_region("sha1", (guchar *)avatar_data,
-										  avatar_len, sizeof(hashval),
-										  hashval, NULL);
+			gaim_cipher_digest_region("sha1", (guchar *)avatar_data,
+									  avatar_len, sizeof(hashval),
+									  hashval, NULL);
 
-				p = hash;
-				for(i=0; i<20; i++, p+=2)
-					snprintf(p, 3, "%02x", hashval[i]);
-				js->avatar_hash = g_strdup(hash);
+			p = hash;
+			for(i=0; i<20; i++, p+=2)
+				snprintf(p, 3, "%02x", hashval[i]);
+			js->avatar_hash = g_strdup(hash);
 
-				xmlnode_insert_data(binval, enc, -1);
-				g_free(enc);
-				g_free(avatar_data);
-			} else if (error != NULL) {
-				g_error_free(error);
-			}
-			g_free(avatar_file);
-
-			iq = jabber_iq_new(js, JABBER_IQ_SET);
-			xmlnode_insert_child(iq->node, vc_node);
-			jabber_iq_send(iq);
-		} else {
-			xmlnode_free(vc_node);
+			xmlnode_insert_data(binval, enc, -1);
+			g_free(enc);
+			g_free(avatar_data);
+		} else if (error != NULL) {
+			g_error_free(error);
 		}
+		g_free(avatar_file);
+
+		iq = jabber_iq_new(js, JABBER_IQ_SET);
+		xmlnode_insert_child(iq->node, vc_node);
+		jabber_iq_send(iq);
+	} else {
+		xmlnode_free(vc_node);
 	}
 }
 
