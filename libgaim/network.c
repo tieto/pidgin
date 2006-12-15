@@ -47,6 +47,16 @@
 #include "stun.h"
 #include "upnp.h"
 
+/*
+ * Calling sizeof(struct ifreq) isn't always correct on
+ * Mac OS X (and maybe others).
+ */
+#ifdef _SIZEOF_ADDR_IFREQ
+#  define HX_SIZE_OF_IFREQ(a) _SIZEOF_ADDR_IFREQ(a)
+#else
+#  define HX_SIZE_OF_IFREQ(a) sizeof(a)
+#endif
+
 #ifdef HAVE_LIBNM
 #include <libnm_glib.h>
 
@@ -135,7 +145,7 @@ gaim_network_get_local_system_ip(int fd)
 	while (tmp < buffer + ifc.ifc_len)
 	{
 		ifr = (struct ifreq *)tmp;
-		tmp += sizeof(struct ifreq);
+		tmp += HX_SIZE_OF_IFREQ(*ifr);
 
 		if (ifr->ifr_addr.sa_family == AF_INET)
 		{
