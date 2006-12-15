@@ -343,14 +343,14 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 				                           GAIM_STOCK_ICON_ONLINE_MSG, GTK_ICON_SIZE_BUTTON, NULL);
 		char *label_text = g_strdup_printf(ngettext("<b>You have %d new e-mail.</b>",
 							    "<b>You have %d new e-mails.</b>",
-							    count),count);
+							    count), (int)count);
 		
 		inbox->handle = gc;
 		inbox->url = urls ? g_strdup(urls[0]) : NULL;
 		gaim_gtk_blist_set_headline(label_text, 
 					    pixbuf, G_CALLBACK(open_inbox_cb), inbox);
 		g_object_unref(pixbuf);
-		return;
+		return NULL;
 	}
 
 	if (mail_dialog == NULL || !detailed)
