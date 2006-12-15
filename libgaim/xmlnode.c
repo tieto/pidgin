@@ -127,13 +127,15 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 	for(attr_node = node->child; attr_node; attr_node = attr_node->next)
 	{
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
-				!strcmp(attr_node->name, attr)) {
+				!strcmp(attr_node->name, attr))
+		{
 			if(node->child == attr_node) {
 				node->child = attr_node->next;
-			} else if (node->lastchild == attr_node) {
-				node->lastchild = sibling;
 			} else {
 				sibling->next = attr_node->next;
+			}
+			if (node->lastchild == attr_node) {
+				node->lastchild = sibling;
 			}
 			xmlnode_free(attr_node);
 			return;
@@ -155,13 +157,15 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 	{
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
 		   !strcmp(attr_node->name, attr) &&
-		   !strcmp(attr_node->xmlns, xmlns)) {
+		   !strcmp(attr_node->xmlns, xmlns))
+		{
 			if(node->child == attr_node) {
 				node->child = attr_node->next;
-			} else if (node->lastchild == attr_node) {
-				node->lastchild = sibling;
 			} else {
 				sibling->next = attr_node->next;
+			}
+			if (node->lastchild == attr_node) {
+				node->lastchild = sibling;
 			}
 			xmlnode_free(attr_node);
 			return;
@@ -204,7 +208,7 @@ xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 	attrib_node->data = g_strdup(value);
 	attrib_node->xmlns = g_strdup(xmlns);
 
-	xmlnode_insert_child(node, attrib_node);	
+	xmlnode_insert_child(node, attrib_node);
 }
 
 const char *
@@ -231,13 +235,13 @@ xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 	g_return_val_if_fail(node != NULL, NULL);
 
 	for(x = node->child; x; x = x->next) {
-		if(x->type == XMLNODE_TYPE_ATTRIB && 
+		if(x->type == XMLNODE_TYPE_ATTRIB &&
 		   !strcmp(attr, x->name) && !strcmp(x->xmlns, xmlns)) {
 			return x->data;
 		}
 	}
 
-	return NULL;	
+	return NULL;
 }
 
 
