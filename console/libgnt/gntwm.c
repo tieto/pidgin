@@ -300,10 +300,13 @@ switch_window_n(GntBindable *bind, GList *list)
 	GList *l;
 	int n;
 
-	if (!wm->ordered || !list)
+	if (!wm->ordered)
 		return TRUE;
 
-	n = GPOINTER_TO_INT(list->data);
+	if (list)
+		n = GPOINTER_TO_INT(list->data);
+	else
+		n = 0;
 	
 	w = wm->ordered->data;
 

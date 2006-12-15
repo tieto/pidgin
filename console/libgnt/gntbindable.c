@@ -107,10 +107,7 @@ gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...)
 	
 	action = g_hash_table_lookup(klass->actions, name);
 	if (action && action->u.action) {
-		if (list)
-			return action->u.action(bindable, list);
-		else
-			return action->u.action_noparam(bindable);
+		return action->u.action(bindable, list);
 	}
 	return FALSE;
 }
