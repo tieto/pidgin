@@ -4794,6 +4794,8 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 
 static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node)
 {
+	if (list)
+		gtkblist = GAIM_GTK_BLIST(list);
 	if(!gtkblist || !node)
 		return;
 
@@ -4828,10 +4830,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	if (!gtkblist)
 		return;
 
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on",
-						   gtkblist, GAIM_CALLBACK(sign_on_off_cb));
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off",
-						   gtkblist, GAIM_CALLBACK(sign_on_off_cb));
+	gaim_signals_disconnect_by_handle(gtkblist);
 
 	gtk_widget_destroy(gtkblist->window);
 
@@ -4851,15 +4850,15 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
 	gtkblist->treemodel = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
-	g_free(gtkblist);
-	accountmenu = NULL;
-	gtkblist = NULL;
 
 	gdk_cursor_unref(gtkblist->hand_cursor);
 	gdk_cursor_unref(gtkblist->arrow_cursor);
 	gtkblist->hand_cursor = NULL;
 	gtkblist->arrow_cursor = NULL;
 
+	g_free(gtkblist);
+	accountmenu = NULL;
+	gtkblist = NULL;
 	gaim_prefs_disconnect_by_handle(gaim_gtk_blist_get_handle());
 }
 
@@ -5684,6 +5683,7 @@ void gaim_gtk_blist_init(void)
 void
 gaim_gtk_blist_uninit(void) {
 	gaim_signals_unregister_by_instance(gaim_gtk_blist_get_handle());
+	gaim_signals_disconnect_by_handle(gaim_gtk_blist_get_handle());
 }
 
 /*********************************************************************
