@@ -48,7 +48,15 @@ apps_in_files = gaim.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
-SUBDIRS = doc m4macros pixmaps plugins po sounds src
+if ENABLE_GTK
+GTK_DIR=gtk
+endif
+
+if ENABLE_GNT
+GNT_DIR=console
+endif
+
+SUBDIRS = core doc $(GNT_DIR) $(GTK_DIR) m4macros po
 
 docs: Doxyfile
 if HAVE_DOXYGEN

@@ -1,12 +1,17 @@
-DIST_SUBDIRS = docklet gevolution gestures mono musicmessaging perl ssl tcl ticker
-
+if ENABLE_GTK
+	
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
-endif
+endif # GEvolution
 
 if USE_PERL
 PERL_DIR = perl
-endif
+endif # Perl
+
+gtk_dirs = docklet $(GEVOLUTION_DIR) gestures musicmessaging $(PERL_DIR) ticker
+endif # GTK
+
+DIST_SUBDIRS = mono ssl tcl $(gtk_dirs)
 
 if USE_TCL
 TCL_DIR = tcl
@@ -15,8 +20,10 @@ endif
 if ENABLE_DBUS
 DBUS_LTLIB = dbus-example.la
 
+if ENABLE_GTK
 # Only use music messaging if dbus is enabled
 MUSICMESSAGING_DIR = musicmessaging
+endif
 endif
 
 if USE_MONO
@@ -24,64 +31,66 @@ MONO_DIR = mono
 endif
 
 SUBDIRS = \
-	docklet \
-	$(GEVOLUTION_DIR) \
-	gestures \
 	$(MONO_DIR) \
-	$(MUSICMESSAGING_DIR) \
-	$(PERL_DIR) \
 	ssl \
 	$(TCL_DIR) \
-	ticker
+	$(gtk_dirs)
 
 plugindir = $(libdir)/gaim
 
-extplacement_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS)
-gaimrc_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
-history_la_LDFLAGS          = -module -avoid-version $(GTK_LIBS)
-iconaway_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
 idle_la_LDFLAGS             = -module -avoid-version $(GLIB_LIBS)
-notify_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
 psychic_la_LDFLAGS          = -module -avoid-version $(GLIB_LIBS)
 relnot_la_LDFLAGS           = -module -avoid-version $(GLIB_LIBS)
-spellchk_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
 statenotify_la_LDFLAGS      = -module -avoid-version $(GLIB_LIBS)
-timestamp_la_LDFLAGS        = -module -avoid-version $(GTK_LIBS)
-timestamp_format_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 # this can't be in a conditional otherwise automake 1.4 yells
 dbus_example_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
 
 if PLUGINS
 
-plugin_LTLIBRARIES = \
+if ENABLE_GTK
+gtk_plugins = \
 	extplacement.la     \
 	gaimrc.la           \
 	history.la          \
 	iconaway.la         \
-	idle.la             \
 	notify.la           \
-	psychic.la          \
-	relnot.la           \
 	spellchk.la         \
-	statenotify.la      \
 	timestamp.la        \
-	timestamp_format.la \
-	$(DBUS_LTLIB)
-
-
+	timestamp_format.la
+	
 extplacement_la_SOURCES     = extplacement.c
 gaimrc_la_SOURCES           = gaimrc.c
 history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
-idle_la_SOURCES             = idle.c
 notify_la_SOURCES           = notify.c
-psychic_la_SOURCES          = psychic.c
-relnot_la_SOURCES           = relnot.c
 spellchk_la_SOURCES         = spellchk.c
-statenotify_la_SOURCES      = statenotify.c
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
+
+extplacement_la_LDFLAGS     = -module -avoid-version $(GLIB_LIBS)
+gaimrc_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
+history_la_LDFLAGS          = -module -avoid-version $(GTK_LIBS)
+iconaway_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
+notify_la_LDFLAGS           = -module -avoid-version $(GTK_LIBS)
+spellchk_la_LDFLAGS         = -module -avoid-version $(GTK_LIBS)
+timestamp_la_LDFLAGS        = -module -avoid-version $(GTK_LIBS)
+timestamp_format_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+
+endif	# ENABLE_GTK
+
+plugin_LTLIBRARIES = \
+	idle.la             \
+	psychic.la          \
+	relnot.la           \
+	statenotify.la      \
+	$(gtk_plugins)		\
+	$(DBUS_LTLIB)
+
+idle_la_SOURCES             = idle.c
+psychic_la_SOURCES          = psychic.c
+relnot_la_SOURCES           = relnot.c
+statenotify_la_SOURCES      = statenotify.c
 
 if ENABLE_DBUS
 

@@ -23,6 +23,8 @@
 #define _GNU_SOURCE
 #include <getopt.h>
 
+#include "config.h"
+
 static void
 debug_init()
 {

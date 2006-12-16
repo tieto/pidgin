@@ -527,6 +527,8 @@ AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support fo
 AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
+AC_ARG_ENABLE(gtkgaim, [  --disable-gtkgaim      compile without GtkGaim client],,enable_gtk=yes)
+AC_ARG_ENABLE(gntgaim, [  --disable-gntgaim      compile without GntGaim console client],,enable_gnt=yes)
 AC_ARG_ENABLE(fatal-asserts,   [  --enable-fatal-asserts  make assertions fatal (useful for debugging)],,enable_fatal_asserts=no)
 dnl We know Gaim won't compile with deprecated APIs disabled.
 dnl We have no desire to support two different versions of the
@@ -633,18 +635,36 @@ if test "x$GCC" = "xyes"; then
 fi
 AC_SUBST(CFLAGS)
 
-AM_PATH_GLIB_2_0(2.0.0,,AC_MSG_ERROR([
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
+    [
+        AC_SUBST(GLIB_CFLAGS)
+        AC_SUBST(GLIB_LIBS)
+    ],
+    [
+        AC_MSG_ERROR([
 *** GLib 2.0 is required to build Gaim; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
-*** always available at http://www.gtk.org/.]),gthread)
-AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
-*** GTK+ 2.0 is required to build Gaim; please make sure you have the GTK+
-*** development headers installed. The latest version of GTK+ is
-*** always available at http://www.gtk.org/.]))
+*** always available at http://www.gtk.org/.])
+    ])
 
 AC_PATH_PROG(gaimpath, gaim)
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GLIB_CFLAGS)
+
+if test "$enable_gtk" = yes ; then
+    PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.0.0],
+       [
+           AC_SUBST(GTK_CFLAGS)
+           AC_SUBST(GTK_LIBS)
+       ],
+       [
+           AC_MSG_ERROR([
+*** GTK+ 2.0 is required to build Gaim. please make sure you have the GTK+
+*** development headers installed. The latest version of GTK+ is
+*** always available at http://www.gtk.org/.
+***
+*** If you wish to build just gntgaim or libgaim,
+*** configure with --disable-gtkgaim])
+       ])
+fi
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
@@ -784,6 +804,33 @@ fi
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 
 dnl #######################################################################
+dnl # GNT Gaim
+dnl #######################################################################
+AM_CONDITIONAL(ENABLE_GNT, test "x$enable_gnt" = "xyes")
+
+dnl #######################################################################
+dnl # Look for startup-notification, evolution integration, X-libraries,
+dnl # XScreenSaver, X session management, GtkSpell only if GTK+ was found
+dnl #######################################################################
+
+if test "x$enable_gtk" = "xyes"; then
+
+AC_PATH_XTRA
+# We can't assume that $x_libraries will be set, because autoconf does not
+# set it in the case when the X libraries are in a standard place.
+# Ditto for $x_includes
+if test X"$x_libraries" = X"" || test X"$x_libraries" = XNONE; then
+	x_libpath_add=
+else
+	x_libpath_add="-L$x_libraries"
+fi
+if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
+	x_incpath_add=
+else
+	x_incpath_add="-I$x_includes"
+fi
+
+dnl #######################################################################
 dnl # Check for startup notification
 dnl #######################################################################
 AC_ARG_ENABLE(startup-notification, [AC_HELP_STRING([--disable-startup-notification], [compile without startup notification support])], , enable_startup_notification=yes)
@@ -802,7 +849,6 @@ if test "x$enable_startup_notification" = "xyes"; then
 	AC_SUBST(STARTUP_NOTIFICATION_CFLAGS)
 	AC_SUBST(STARTUP_NOTIFICATION_LIBS)
 fi
-
 
 dnl #######################################################################
 dnl # Check for stuff needed by the evolution integration plugin.
@@ -833,8 +879,6 @@ if test "x$enable_gevolution" = "xyes"; then
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
 fi
-
-AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
 
 dnl #######################################################################
 dnl # Check for XScreenSaver
@@ -889,7 +933,6 @@ if test "$enable_sm" = "yes"; then
 	AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
 fi
 
-
 AC_DEFUN([GC_TM_GMTOFF],
 [AC_REQUIRE([AC_STRUCT_TM])dnl
 AC_CACHE_CHECK([for tm_gmtoff in struct tm], ac_cv_struct_tm_gmtoff,
@@ -900,6 +943,30 @@ if test "$ac_cv_struct_tm_gmtoff" = yes; then
   AC_DEFINE(HAVE_TM_GMTOFF, 1, [tm_gmtoff is available.])
 fi
 ])
+
+dnl Thanks, Evan.
+if test "$enable_gtkspell" = yes ; then
+	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, [], [
+		AC_MSG_RESULT(no)
+		enable_gtkspell=no
+	])
+	if test "$enable_gtkspell" = "yes" ; then
+		AC_SUBST(GTKSPELL_CFLAGS)
+		AC_SUBST(GTKSPELL_LIBS)
+		AC_DEFINE(USE_GTKSPELL,,[do we have gtkspell?])
+	fi
+fi
+else # GTK
+	enable_gevolution=no
+	enable_sm=no
+	enable_xss=no
+	enable_startup_notification=no
+	enable_gtkspell=no
+fi	# GTK
+
+AM_CONDITIONAL(ENABLE_GTK, test "x$enable_gtk" = "xyes")
+
+AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
 
 GC_TM_GMTOFF
 
@@ -943,12 +1010,17 @@ AC_SUBST(MONO_CFLAGS)
 AC_SUBST(MONO_LIBS)
 AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 
+if test "x$enable_gtk" = "xyes"; then  # This is for now, since perl still requires GTK+
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
 if test "$enable_plugins" = no ; then
 	enable_perl=no
 fi
+
+else # GTK
+	enable_perl=no
+fi # GTK
 
 if test "$enable_perl" = yes ; then
 	AC_PATH_PROG(perlpath, perl)
@@ -1566,19 +1638,6 @@ else
 	AM_CONDITIONAL(USE_TK, false)
 fi
 
-dnl Thanks, Evan.
-if test "$enable_gtkspell" = yes ; then
-	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, [], [
-		AC_MSG_RESULT(no)
-		enable_gtkspell=no
-	])
-	if test "$enable_gtkspell" = "yes" ; then
-		AC_SUBST(GTKSPELL_CFLAGS)
-		AC_SUBST(GTKSPELL_LIBS)
-		AC_DEFINE(USE_GTKSPELL,,[do we have gtkspell?])
-	fi
-fi
-
 if test "$ac_cv_cygwin" = yes ; then
 	LDADD="$LDADD -static"
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
@@ -1748,43 +1807,47 @@ AC_OUTPUT([Makefile
 		   doc/gaim.1
 		   doc/gntgaim.1
 		   m4macros/Makefile
-		   pixmaps/Makefile
-		   pixmaps/smileys/Makefile
-		   pixmaps/smileys/default/Makefile
-		   pixmaps/smileys/none/Makefile
-		   pixmaps/status/Makefile
-		   pixmaps/status/default/Makefile
-		   plugins/Makefile
-		   plugins/docklet/Makefile
-		   plugins/gevolution/Makefile
-		   plugins/gestures/Makefile
-		   plugins/mono/Makefile
-		   plugins/mono/api/Makefile
-		   plugins/mono/loader/Makefile
-		   plugins/musicmessaging/Makefile
-		   plugins/perl/Makefile
-		   plugins/perl/common/Makefile.PL
-		   plugins/ssl/Makefile
-		   plugins/tcl/Makefile
-		   plugins/ticker/Makefile
+		   gtk/Makefile
+		   gtk/pixmaps/Makefile
+		   gtk/pixmaps/smileys/Makefile
+		   gtk/pixmaps/smileys/default/Makefile
+		   gtk/pixmaps/smileys/none/Makefile
+		   gtk/pixmaps/status/Makefile
+		   gtk/pixmaps/status/default/Makefile
+		   gtk/plugins/Makefile
+		   gtk/plugins/docklet/Makefile
+		   gtk/plugins/gevolution/Makefile
+		   gtk/plugins/gestures/Makefile
+		   gtk/plugins/musicmessaging/Makefile
+		   gtk/sounds/Makefile
+		   gtk/plugins/ticker/Makefile
+		   core/plugins/Makefile
+		   core/plugins/mono/Makefile
+		   core/plugins/mono/api/Makefile
+		   core/plugins/mono/loader/Makefile
+		   core/plugins/perl/Makefile
+		   core/plugins/perl/common/Makefile.PL
+		   core/plugins/ssl/Makefile
+		   core/plugins/tcl/Makefile
+		   core/Makefile
+		   core/protocols/Makefile
+		   core/protocols/bonjour/Makefile
+		   core/protocols/gg/Makefile
+		   core/protocols/irc/Makefile
+		   core/protocols/jabber/Makefile
+		   core/protocols/msn/Makefile
+		   core/protocols/novell/Makefile
+		   core/protocols/oscar/Makefile
+		   core/protocols/qq/Makefile
+		   core/protocols/sametime/Makefile
+		   core/protocols/silc/Makefile
+		   core/protocols/simple/Makefile
+		   core/protocols/toc/Makefile
+		   core/protocols/yahoo/Makefile
+		   core/protocols/zephyr/Makefile
+		   console/Makefile
+		   console/plugins/Makefile
 		   po/Makefile.in
-		   sounds/Makefile
-		   src/Makefile
-		   src/protocols/Makefile
-		   src/protocols/bonjour/Makefile
-		   src/protocols/gg/Makefile
-		   src/protocols/irc/Makefile
-		   src/protocols/jabber/Makefile
-		   src/protocols/msn/Makefile
-		   src/protocols/novell/Makefile
-		   src/protocols/oscar/Makefile
-		   src/protocols/qq/Makefile
-		   src/protocols/sametime/Makefile
-		   src/protocols/silc/Makefile
-		   src/protocols/simple/Makefile
-		   src/protocols/toc/Makefile
-		   src/protocols/yahoo/Makefile
-		   src/protocols/zephyr/Makefile
 		   gaim.pc
 		   gaim.spec
 		  ])
@@ -1797,7 +1860,12 @@ echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo
-echo UI Library.................... : GTK+ 2.x
+if test "x$enable_gtk" = "xyes" ; then
+echo GTK UI Library................ : GTK+ 2.x
+else
+echo GTK UI Library................ : None
+fi
+echo Build with GNT Console UI..... : $enable_gnt
 echo SSL Library/Libraries......... : $msg_ssl
 echo
 echo Build with GStreamer support.. : $enable_gst
@@ -1808,7 +1876,7 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
-if test x$enable_dbus = xyes ; then
+if test "x$enable_dbus" = "xyes" ; then
 eval echo DBUS servies directory........ : $DBUS_SERVICES_DIR
 fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl

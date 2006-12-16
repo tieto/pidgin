@@ -20,6 +20,8 @@
 
 #define PREF_ROOT	"/gaim/gnt/conversations"
 
+#include "config.h"
+
 GHashTable *ggconvs;
 
 typedef struct _GGConv GGConv;
