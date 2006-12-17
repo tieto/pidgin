@@ -1761,24 +1761,31 @@ static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg,
 {
 	GGPInfo *info = gc->proto_data;
 	char *tmp, *plain;
+	int ret = 0;
 
-	if (strlen(msg) == 0)
-		return 1;
-
-	plain = gaim_unescape_html(msg);
-	gaim_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
-	tmp = charset_convert(plain, "UTF-8", "CP1250");
-	g_free(plain);
-
-	if (tmp != NULL && strlen(tmp) > 0) {
-		if (gg_send_message(info->session, GG_CLASS_CHAT,
-				ggp_str_to_uin(who), (unsigned char *)tmp) < 0) {
-			return -1;
-		}
+	if (strlen(msg) == 0) {
+		return 0;
 	}
+
+	gaim_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
+	plain = gaim_unescape_html(msg);
+	tmp = charset_convert(plain, "UTF-8", "CP1250");
+
+	if (NULL == tmp || strlen(tmp) == 0) {
+		ret = 0;
+	} else if (strlen(tmp) > GG_MSG_MAXSIZE) {
+		ret = -E2BIG;
+	} else if (gg_send_message(info->session, GG_CLASS_CHAT,
+				ggp_str_to_uin(who), (unsigned char *)tmp) < 0) {
+		ret = -1;
+	} else {
+		ret = 1;
+	}
+
+	g_free(plain);
 	g_free(tmp);
 
-	return 1;
+	return ret;
 }
 /* }}} */
 
