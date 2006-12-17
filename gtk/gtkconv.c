@@ -2308,8 +2308,9 @@ redraw_icon(gpointer data)
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
-	gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec :
-			NULL, &scale_width, &scale_height);
+	if (prpl_info && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY)
+		gaim_gtk_buddy_icon_get_scale_size(buf, &prpl_info->icon_spec,
+				&scale_width, &scale_height);
 
 	/* this code is ugly, and scares me */
 	scale = gdk_pixbuf_scale_simple(buf,
@@ -6024,8 +6025,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			start_anim(NULL, gtkconv);
 	}
 
-	gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec :
-			NULL, &scale_width, &scale_height);
+	if (prpl_info && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY)
+		gaim_gtk_buddy_icon_get_scale_size(buf, &prpl_info->icon_spec,
+			&scale_width, &scale_height);
 	scale = gdk_pixbuf_scale_simple(buf,
 				MAX(gdk_pixbuf_get_width(buf) * scale_width /
 				    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),

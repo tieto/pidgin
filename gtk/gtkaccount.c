@@ -218,8 +218,9 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 		int width, height;
 		GdkPixbuf *scale;
 
-		gaim_gtk_buddy_icon_get_scale_size(pixbuf,
-							&dialog->prpl_info->icon_spec, &width, &height);
+		if (dialog->prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY)
+			gaim_gtk_buddy_icon_get_scale_size(pixbuf,
+					&dialog->prpl_info->icon_spec, &width, &height);
 		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
 
 		g_object_unref(G_OBJECT(pixbuf));
@@ -614,7 +615,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		if (!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK))
 			gtk_widget_hide(dialog->new_mail_check);
 
-		if (!(dialog->prpl_info->icon_spec.format != NULL))
+		if (dialog->prpl_info->icon_spec.format == NULL)
 			gtk_widget_hide(dialog->icon_hbox);
 	}
 
@@ -1974,6 +1975,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 static void
 set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 {
+	const char *path;
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *statusicon_pixbuf;
 	GdkPixbuf *statusicon_pixbuf_scaled;
@@ -1982,7 +1984,12 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	statusicon_pixbuf = gdk_pixbuf_new_from_file(gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL), NULL); 
+	path = gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL);
+	if (path != NULL)
+		statusicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+	else
+		statusicon_pixbuf = NULL;
+
 	if (statusicon_pixbuf) {
 		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 16, 16, GDK_INTERP_HYPER);
 	} else {

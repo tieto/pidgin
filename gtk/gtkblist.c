@@ -2068,7 +2068,8 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 		scale_width = orig_width = gdk_pixbuf_get_width(buf);
 		scale_height = orig_height = gdk_pixbuf_get_height(buf);
 
-		gaim_buddy_icon_get_scale_size(prpl_info ? &prpl_info->icon_spec : NULL, &scale_width, &scale_height);
+		if (prpl_info && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY)
+			gaim_buddy_icon_get_scale_size(&prpl_info->icon_spec, &scale_width, &scale_height);
 
 		if (scaled) {
 			if(scale_height > scale_width) {

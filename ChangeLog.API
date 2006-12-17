@@ -145,8 +145,13 @@ version 2.0.0:
 	* gaim_gtk_set_custom_buddy_icon() sets custom icon for a user.
 	* Hid the definition of _GaimStringref, which already had a warning to
 	  avoid accessing it directly.
-    * notify_userinfo() UI op is passed a GaimNotifyUserInfo instead of a char*
-      for the user information
+	* notify_userinfo() UI op is passed a GaimNotifyUserInfo instead of a char*
+	  for the user information
+	* gaim_buddy_icon_get_scale_size() and
+	  gaim_gtk_buddy_icon_get_scale_size() were changed to ALWAYS scale
+	  the icon instead of only when icon_spec->scale_rules contains
+	  GAIM_ICON_SCALE_DISPLAY.  Callers should be changed to check the
+	  scale_rules before calling this function.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

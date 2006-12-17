@@ -2455,6 +2455,7 @@ str_array_match(char **a, char **b)
 }
 #endif
 
+/* TODO: Use icon_spec.filesize */
 char *
 gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
@@ -2467,11 +2468,10 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	GdkPixbuf *pixbuf;
 #if !GTK_CHECK_VERSION(2,4,0)
 	GdkPixbufLoader *loader;
-	FILE *file;
-	struct stat st;
-	void *data = NULL;
 #endif
 #endif
+	gchar *contents;
+	gsize length;
 	const char *dirname;
 	char *random;
 	char *filename;
@@ -2504,12 +2504,9 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	format = gdk_pixbuf_get_file_info (path, &width, &height);
 #else
 	loader = gdk_pixbuf_loader_new();
-	if (!g_stat(path, &st) && (file = g_fopen(path, "rb")) != NULL) {
-		data = g_malloc(st.st_size);
-		fread(data, 1, st.st_size, file);
-		fclose(file);
-		gdk_pixbuf_loader_write(loader, data, st.st_size, NULL);
-		g_free(data);
+	if (g_file_get_contents(path, &contents, &length, NULL)) {
+		gdk_pixbuf_loader_write(loader, contents, length, NULL);
+		g_free(contents);
 	}
 	gdk_pixbuf_loader_close(loader, NULL);
 	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
@@ -2530,8 +2527,6 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		   prpl_info->icon_spec.max_height >= height)))                   /* The icon is the correct size */
 #endif
 	{
-		gchar *contents;
-		gsize length;
 		FILE *image;
 
 #if GTK_CHECK_VERSION(2,2,0)
@@ -2539,13 +2534,15 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		g_strfreev(pixbuf_formats);
 #endif
 
-		/* Copy the image to the cache folder as "filename". */
+		/* We don't need to scale the image, so copy it to the cache folder verbatim */
 
+		contents = NULL;
 		if (!g_file_get_contents(path, &contents, &length, NULL) ||
 		    (image = g_fopen(filename, "wb")) == NULL)
 		{
 			g_free(random);
 			g_free(filename);
+			g_free(contents);
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 			g_object_unref(G_OBJECT(pixbuf));
 #endif
@@ -2592,22 +2589,7 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			int new_width = width;
 			int new_height = height;
 
-			if(new_width > prpl_info->icon_spec.max_width)
-				new_width = prpl_info->icon_spec.max_width;
-			else if(new_width < prpl_info->icon_spec.min_width)
-				new_width = prpl_info->icon_spec.min_width;
-			if(new_height > prpl_info->icon_spec.max_height)
-				new_height = prpl_info->icon_spec.max_height;
-			else if(new_height < prpl_info->icon_spec.min_height)
-				new_height = prpl_info->icon_spec.min_height;
-
-			/* preserve aspect ratio */
-			if ((double)height * (double)new_width >
-				(double)width * (double)new_height) {
-					new_width = 0.5 + (double)width * (double)new_height / (double)height;
-			} else {
-					new_height = 0.5 + (double)height * (double)new_width / (double)width;
-			}
+			gaim_buddy_icon_get_scale_size(&prpl_info->icon_spec, &new_width, &new_height);
 
 			scale = gdk_pixbuf_scale_simple (pixbuf, new_width, new_height,
 					GDK_INTERP_HYPER);
@@ -2625,10 +2607,9 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 		for (i = 0; prpl_formats[i]; i++) {
 			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
-			/* The gdk-pixbuf documentation is wrong. gdk_pixbuf_save returns TRUE if it was successful,
-			 * FALSE if an error was set. */
-			if (gdk_pixbuf_save (pixbuf, filename, prpl_formats[i], &error, NULL) == TRUE)
-					break;
+			if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i], &error, NULL))
+				/* Success! */
+				break;
 			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i], error->message);
 			g_error_free(error);
 			error = NULL;

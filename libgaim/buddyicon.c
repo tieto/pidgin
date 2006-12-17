@@ -546,32 +546,30 @@ gaim_buddy_icons_uninit()
 
 void gaim_buddy_icon_get_scale_size(GaimBuddyIconSpec *spec, int *width, int *height)
 {
-	if(spec && spec->scale_rules & GAIM_ICON_SCALE_DISPLAY) {
-		int new_width, new_height;
+	int new_width, new_height;
 
-		new_width = *width;
-		new_height = *height;
+	new_width = *width;
+	new_height = *height;
 
-		if(*width < spec->min_width)
-			new_width = spec->min_width;
-		else if(*width > spec->max_width)
-			new_width = spec->max_width;
+	if (*width < spec->min_width)
+		new_width = spec->min_width;
+	else if (*width > spec->max_width)
+		new_width = spec->max_width;
 
-		if(*height < spec->min_height)
-			new_height = spec->min_height;
-		else if(*height  > spec->max_height)
-			new_height = spec->max_height;
+	if (*height < spec->min_height)
+		new_height = spec->min_height;
+	else if (*height > spec->max_height)
+		new_height = spec->max_height;
 
-		/* preserve aspect ratio */
-		if ((double)*height * (double)new_width >
-			(double)*width * (double)new_height) {
-				new_width = 0.5 + (double)*width * (double)new_height / (double)*height;
-		} else {
-				new_height = 0.5 + (double)*height * (double)new_width / (double)*width;
-		}
-
-		*width = new_width;
-		*height = new_height;
+	/* preserve aspect ratio */
+	if ((double)*height * (double)new_width >
+		(double)*width * (double)new_height) {
+			new_width = 0.5 + (double)*width * (double)new_height / (double)*height;
+	} else {
+			new_height = 0.5 + (double)*height * (double)new_width / (double)*width;
 	}
+
+	*width = new_width;
+	*height = new_height;
 }
 
