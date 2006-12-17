@@ -155,8 +155,8 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		pair->key = strtol(key, NULL, 10);
 		accept = x; /* if x is 0 there was no key, so don't accept it */
 
-		if (pos > len) {
-			/* Truncated. Garbage or something. */
+		if (pos + 1 > len) {
+			/* Malformed packet! (Truncated--garbage or something) */
 			accept = FALSE;
 		}
 
@@ -164,7 +164,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			delimiter = (const guchar *)strstr((char *)&data[pos], "\xc0\x80");
 			if (delimiter == NULL)
 			{
-				/* Malformed packet! (it doesn't end in 0xc0 0x80) */
+				/* Malformed packet! (It doesn't end in 0xc0 0x80) */
 				g_free(pair);
 				pos = len;
 				continue;
