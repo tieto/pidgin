@@ -339,7 +339,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	}
 
 	tmp = xmlnode_get_data(controlURLNode);
-	if(!gaim_str_has_prefix(tmp, "http://") &&
+	if(baseURL && !gaim_str_has_prefix(tmp, "http://") &&
 	   !gaim_str_has_prefix(tmp, "HTTP://")) {
 		controlURL = g_strdup_printf("%s%s", baseURL, tmp);
 		g_free(tmp);
