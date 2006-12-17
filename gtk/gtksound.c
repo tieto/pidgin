@@ -394,6 +394,7 @@ gaim_gtk_sound_play_file(const char *filename)
 	char *uri;
 	GstElement *sink = NULL;
 	GstElement *play = NULL;
+	GstBus *bus = NULL;
 #endif
 
 	if (gaim_prefs_get_bool("/gaim/gtk/sound/mute"))
@@ -434,9 +435,8 @@ gaim_gtk_sound_play_file(const char *filename)
 			command = g_strdup_printf("%s %s", sound_cmd, filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
-			char *tmp = g_strdup_printf("sound command could not be launched: %s\n", error->message);
-			gaim_debug_error("gtksound", tmp);
-			g_free(tmp);
+			gaim_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
+			g_free(command);
 			g_error_free(error);
 		}
 
@@ -453,21 +453,35 @@ gaim_gtk_sound_play_file(const char *filename)
 		}
 		if (!sink)
 			sink = gst_element_factory_make("autoaudiosink", "sink");
+		if (!sink) {
+			gaim_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
 	} else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
+		if (!sink) {
+			gaim_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
+	} else {
+		gaim_debug_error("sound", "Unknown sound method '%s'\n", method);
+		return;
 	}
 
-	uri = g_strdup_printf("file://%s", filename);
 	play = gst_element_factory_make("playbin", "play");
+
+	uri = g_strdup_printf("file://%s", filename);
 
 	g_object_set(G_OBJECT(play), "uri", uri,
 		                     "volume", volume,
 		                     "audio-sink", sink, NULL);
 
-	gst_bus_add_watch(gst_pipeline_get_bus(GST_PIPELINE(play)),
-			  bus_call, play);
+	bus = gst_pipeline_get_bus(GST_PIPELINE(play));
+	gst_bus_add_watch(bus, bus_call, play);
+
 	gst_element_set_state(play, GST_STATE_PLAYING);
 
+	gst_object_unref(bus);
 	g_free(uri);
 
 #else /* USE_GSTREAMER */
