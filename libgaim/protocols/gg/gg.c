@@ -1046,13 +1046,11 @@ static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
 
 	val = ggp_buddy_get_name(gc, ggp_str_to_uin(who));
 	g_free(who);
-	who = val;
 
 /*	val = gaim_strdup_withhtml(text->str); */
 
-	gaim_notify_userinfo(gc, who, user_info, ggp_sr_close_cb, form);
+	gaim_notify_userinfo(gc, val, user_info, ggp_sr_close_cb, form);
 	g_free(val);
-	g_free(who);
 	gaim_notify_user_info_destroy(user_info);
 }
 /* }}} */
