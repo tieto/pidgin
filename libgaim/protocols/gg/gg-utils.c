@@ -50,6 +50,18 @@ uin_t ggp_str_to_uin(const char *str)
 }
 /* }}} */
 
+/* unsigned int ggp_array_size(char **array) {{{ */
+unsigned int ggp_array_size(char **array)
+{
+	unsigned int i;
+
+	for (i = 0; array[i] != NULL && i < UINT_MAX; i++)
+	{}
+
+	return i;
+}
+/* }}} */
+
 /* char *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst) {{{ */
 char *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
 {

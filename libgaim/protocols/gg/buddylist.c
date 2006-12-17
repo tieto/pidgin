@@ -90,10 +90,8 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 	gchar **users_tbl;
 	int i;
 
-	/*
-	 * XXX: Limit of entries in a buddylist that will be imported.
-	 */
-	users_tbl = g_strsplit(buddylist, "\r\n", 200);
+	/* Don't limit a number of records in a buddylist. */
+	users_tbl = g_strsplit(buddylist, "\r\n", -1);
 
 	for (i = 0; users_tbl[i] != NULL; i++) {
 		gchar **data_tbl;
@@ -103,17 +101,23 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 			continue;
 
 		data_tbl = g_strsplit(users_tbl[i], ";", 8);
+		if (ggp_array_size(data_tbl) < 8) {
+			gaim_debug_warning("gg", 
+				"Something is wrong on line %d of the buddylist. Skipping.\n",
+				i + 1);
+			continue;
+		}
 
 		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
 		name = data_tbl[6];
-		if (NULL == name || '\0' == *name) {
+		if ('\0' == *name) {
 			gaim_debug_warning("gg",
 				"Something is wrong on line %d of the buddylist. Skipping.\n",
 				i + 1);
 			continue;
 		}
 
-		if (NULL == show || '\0' == *show) {
+		if ('\0' == *show) {
 			show = g_strdup(name);
 		}
 
@@ -127,10 +131,11 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 
 		g = g_strdup("Gadu-Gadu");
 
-		if (strlen(data_tbl[5])) {
+		if ('\0' != data_tbl[5]) {
+			/* XXX: Probably buddy should be added to all the groups. */
 			/* Hard limit to at most 50 groups */
 			gchar **group_tbl = g_strsplit(data_tbl[5], ",", 50);
-			if (strlen(group_tbl[0]) > 0) {
+			if (ggp_array_size(group_tbl) > 0) {
 				g_free(g);
 				g = g_strdup(group_tbl[0]);
 			}

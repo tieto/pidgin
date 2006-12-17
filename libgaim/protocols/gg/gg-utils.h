@@ -38,14 +38,25 @@
 #include "gg.h"
 
 
-/*
+/**
  * Convert a base 10 string to a UIN.
  *
  * @param str The string to convert
- * @return    UIN or 0 if an error occurred.
+ *
+ * @return UIN or 0 if an error occurred.
  */
 uin_t
 ggp_str_to_uin(const char *str);
+
+/**
+ * Calculate size of a NULL-terminated array.
+ *
+ * @param array The array.
+ *
+ * @return Size of the array.
+ */
+unsigned int
+ggp_array_size(char **array);
 
 /**
  * Convert enconding of a given string.
