@@ -2455,13 +2455,12 @@ str_array_match(char **a, char **b)
 }
 #endif
 
-/* TODO: Use icon_spec.filesize */
 char *
 gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 {
 	GaimPluginProtocolInfo *prpl_info;
-	char **prpl_formats;
 #if GTK_CHECK_VERSION(2,2,0)
+	char **prpl_formats;
 	int width, height;
 	char **pixbuf_formats = NULL;
 	GdkPixbufFormat *format;
@@ -2475,16 +2474,13 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	const char *dirname;
 	char *random;
 	char *filename;
+	struct stat st;
 
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
 	g_return_val_if_fail(prpl_info->icon_spec.format != NULL, NULL);
 
-	prpl_formats = g_strsplit(prpl_info->icon_spec.format,",",0);
 	dirname = gaim_buddy_icons_get_cache_dir();
-	random = g_strdup_printf("%x", g_random_int());
-	filename = g_build_filename(dirname, random, NULL);
-
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
 		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
 
@@ -2492,16 +2488,16 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			gaim_debug_error("buddyicon",
 							 "Unable to create directory %s: %s\n",
 							 dirname, strerror(errno));
-			g_strfreev(prpl_formats);
-			g_free(random);
-			g_free(filename);
 			return NULL;
 		}
 	}
 
+	random = g_strdup_printf("%x", g_random_int());
+	filename = g_build_filename(dirname, random, NULL);
+
 #if GTK_CHECK_VERSION(2,2,0)
 #if GTK_CHECK_VERSION(2,4,0)
-	format = gdk_pixbuf_get_file_info (path, &width, &height);
+	format = gdk_pixbuf_get_file_info(path, &width, &height);
 #else
 	loader = gdk_pixbuf_loader_new();
 	if (g_file_get_contents(path, &contents, &length, NULL)) {
@@ -2517,8 +2513,9 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 #endif
 	if (format == NULL)
 		return NULL;
-	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
+	pixbuf_formats = gdk_pixbuf_format_get_extensions(format);
+	prpl_formats = g_strsplit(prpl_info->icon_spec.format,",",0);
 	if (str_array_match(pixbuf_formats, prpl_formats) &&                  /* This is an acceptable format AND */
 		 (!(prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) ||   /* The prpl doesn't scale before it sends OR */
 		  (prpl_info->icon_spec.min_width <= width &&
@@ -2568,9 +2565,6 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 		g_object_unref(G_OBJECT(pixbuf));
 #endif
-
-		g_free(filename);
-		return random;
 	}
 #if GTK_CHECK_VERSION(2,2,0)
 	else
@@ -2578,9 +2572,19 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		int i;
 		GError *error = NULL;
 		GdkPixbuf *scale;
-		pixbuf = gdk_pixbuf_new_from_file(path, &error);
 		g_strfreev(pixbuf_formats);
-		if (!error && (prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
+
+		pixbuf = gdk_pixbuf_new_from_file(path, &error);
+		if (error) {
+			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
+			g_error_free(error);
+			g_free(random);
+			g_free(filename);
+			g_strfreev(prpl_formats);
+			return NULL;
+		}
+
+		if ((prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
 			(width < prpl_info->icon_spec.min_width ||
 			 width > prpl_info->icon_spec.max_width ||
 			 height < prpl_info->icon_spec.min_height ||
@@ -2591,42 +2595,79 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 			gaim_buddy_icon_get_scale_size(&prpl_info->icon_spec, &new_width, &new_height);
 
-			scale = gdk_pixbuf_scale_simple (pixbuf, new_width, new_height,
+			scale = gdk_pixbuf_scale_simple(pixbuf, new_width, new_height,
 					GDK_INTERP_HYPER);
 			g_object_unref(G_OBJECT(pixbuf));
 			pixbuf = scale;
 		}
-		if (error) {
-			g_free(random);
-			g_free(filename);
-			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
-			g_error_free(error);
-			g_strfreev(prpl_formats);
-			return NULL;
-		}
 
 		for (i = 0; prpl_formats[i]; i++) {
 			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
-			if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i], &error, NULL))
+			if (strcmp(prpl_formats[i], "png") == 0) {
+				if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i],
+					&error, "compression", "9", NULL))
 				/* Success! */
 				break;
+			} else if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i],
+					&error, NULL)) {
+				/* Success! */
+				break;
+			}
 			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i], error->message);
 			g_error_free(error);
 			error = NULL;
 		}
 		g_strfreev(prpl_formats);
-		if (!error) {
-			g_object_unref(G_OBJECT(pixbuf));
-			g_free(filename);
-			return random;
-		} else {
+		g_object_unref(G_OBJECT(pixbuf));
+		if (error) {
 			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
 			g_error_free(error);
+			g_free(random);
+			g_free(filename);
+			return NULL;
 		}
+	}
+
+	if (g_stat(filename, &st) != 0) {
+		gaim_debug_error("buddyicon",
+				"Could not stat '%s', which we just wrote to disk: %s\n",
+				filename, strerror(errno));
 		g_free(random);
 		g_free(filename);
-		g_object_unref(G_OBJECT(pixbuf));
+		return NULL;
 	}
+
+	/* Check the file size */
+	/*
+	 * TODO: If the file is too big, it would be cool if we checked if
+	 *       the prpl supported jpeg, and then we could convert to that
+	 *       and use a lower quality setting.
+	 */
+	if (st.st_size > prpl_info->icon_spec.max_filesize)
+	{
+		gchar *tmp;
+		tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
+				path, plugin->info->name);
+		gaim_notify_error(NULL, _("Icon Error"),
+				_("Could not set icon"), tmp);
+		gaim_debug_info("buddyicon",
+				"'%s' was converted to an image which is %" G_GSIZE_FORMAT
+				" bytes, but the maximum icon size for %s is %" G_GSIZE_FORMAT
+				" bytes\n", path, st.st_size, plugin->info->name,
+				prpl_info->icon_spec.max_filesize);
+		g_free(tmp);
+		g_free(random);
+		g_free(filename);
+		return NULL;
+	}
+
+	g_free(filename);
+	return random;
+#else
+	/*
+	 * The chosen icon wasn't the right size, and we're using
+	 * GTK+ 2.0 so we can't scale it.
+	 */
 	return NULL;
 #endif
 }
