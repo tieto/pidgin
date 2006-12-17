@@ -6316,7 +6316,7 @@ gaim_gtk_blist_update_sort_methods(void)
 	GtkWidget *sortmenu;
 	const char *m = gaim_prefs_get_string("/gaim/gtk/blist/sort_type");
 
-	if (gtkblist == NULL)
+	if ((gtkblist == NULL) || (gtkblist->ift == NULL))
 		return;
 
 	sortmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Sort Buddies"));
