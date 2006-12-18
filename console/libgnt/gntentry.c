@@ -9,10 +9,14 @@
 
 enum
 {
-	SIGS = 1,
+	SIG_TEXT_CHANGED,
+	SIGS,
 };
+static guint signals[SIGS] = { 0 };
 
 static GntWidgetClass *parent_class = NULL;
+
+static void gnt_entry_set_text_internal(GntEntry *entry, const char *text);
 
 static void
 destroy_suggest(GntEntry *entry)
@@ -157,6 +161,12 @@ entry_redraw(GntWidget *widget)
 	gnt_widget_queue_update(widget);
 }
 
+static void
+entry_text_changed(GntEntry *entry)
+{
+	g_signal_emit(entry, signals[SIG_TEXT_CHANGED], 0);
+}
+
 static gboolean
 move_back(GntBindable *bind, GList *null)
 {
@@ -203,6 +213,7 @@ backspace(GntBindable *bind, GList *null)
 	entry_redraw(GNT_WIDGET(entry));
 	if (entry->ddown)
 		show_suggest_dropdown(entry);
+	entry_text_changed(entry);
 	return TRUE;
 }
 
@@ -222,6 +233,7 @@ delkey(GntBindable *bind, GList *null)
 
 	if (entry->ddown)
 		show_suggest_dropdown(entry);
+	entry_text_changed(entry);
 	return TRUE;
 }
 
@@ -253,8 +265,9 @@ history_prev(GntBindable *bind, GList *null)
 	if (entry->histlength && entry->history->prev)
 	{
 		entry->history = entry->history->prev;
-		gnt_entry_set_text(entry, entry->history->data);
+		gnt_entry_set_text_internal(entry, entry->history->data);
 		destroy_suggest(entry);
+		entry_text_changed(entry);
 
 		return TRUE;
 	}
@@ -276,8 +289,9 @@ history_next(GntBindable *bind, GList *null)
 		}
 
 		entry->history = entry->history->next;
-		gnt_entry_set_text(entry, entry->history->data);
+		gnt_entry_set_text_internal(entry, entry->history->data);
 		destroy_suggest(entry);
+		entry_text_changed(entry);
 
 		return TRUE;
 	}
@@ -316,11 +330,14 @@ static gboolean
 del_to_home(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
+	if (entry->cursor <= entry->start)
+		return TRUE;
 	memmove(entry->start, entry->cursor, entry->end - entry->cursor);
 	entry->end -= (entry->cursor - entry->start);
 	entry->cursor = entry->scroll = entry->start;
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 	entry_redraw(GNT_WIDGET(bind));
+	entry_text_changed(entry);
 	return TRUE;
 }
 
@@ -328,9 +345,12 @@ static gboolean
 del_to_end(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
+	if (entry->end <= entry->cursor)
+		return TRUE;
 	entry->end = entry->cursor;
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 	entry_redraw(GNT_WIDGET(bind));
+	entry_text_changed(entry);
 	return TRUE;
 }
 
@@ -410,6 +430,7 @@ del_prev_word(GntBindable *bind, GList *null)
 	}
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 	entry_redraw(widget);
+	entry_text_changed(entry);
 
 	return TRUE;
 }
@@ -434,11 +455,14 @@ delete_forward_word(GntBindable *bind, GList *list)
 	GntWidget *widget = GNT_WIDGET(bind);
 	char *iter = (char *)next_begin_word(entry->cursor, entry->end);
 	int len = entry->end - iter + 1;
+	if (len <= 0)
+		return TRUE;
 	memmove(entry->cursor, iter, len);
 	len = iter - entry->cursor;
 	entry->end -= len;
 	memset(entry->end, '\0', len);
 	entry_redraw(widget);
+	entry_text_changed(entry);
 	return TRUE;
 }
 
@@ -484,9 +508,10 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			}
 			else
 			{
-				gnt_entry_set_text(entry, text);
+				gnt_entry_set_text_internal(entry, text);
 			}
 			g_free(text);
+			entry_text_changed(entry);
 			return TRUE;
 		}
 
@@ -519,7 +544,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				{
 					/* This will cause the buffer to grow */
 					char *tmp = g_strdup_printf("%s%*s", entry->start, len, "");
-					gnt_entry_set_text(entry, tmp);
+					gnt_entry_set_text_internal(entry, tmp);
 					g_free(tmp);
 				}
 
@@ -543,6 +568,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 					show_suggest_dropdown(entry);
 			}
 			entry_redraw(widget);
+			entry_text_changed(entry);
 			return TRUE;
 		}
 	}
@@ -596,6 +622,15 @@ gnt_entry_class_init(GntEntryClass *klass)
 	parent_class->size_request = gnt_entry_size_request;
 	parent_class->key_pressed = gnt_entry_key_pressed;
 	parent_class->lost_focus = gnt_entry_lost_focus;
+
+	signals[SIG_TEXT_CHANGED] =
+		g_signal_new("text_changed",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntEntryClass, text_changed),
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
 
 	gnt_bindable_class_register_action(bindable, "cursor-home", move_start,
 				GNT_KEY_CTRL_A, NULL);
@@ -703,12 +738,13 @@ GntWidget *gnt_entry_new(const char *text)
 	GntWidget *widget = g_object_new(GNT_TYPE_ENTRY, NULL);
 	GntEntry *entry = GNT_ENTRY(widget);
 
-	gnt_entry_set_text(entry, text);
+	gnt_entry_set_text_internal(entry, text);
 
 	return widget;
 }
 
-void gnt_entry_set_text(GntEntry *entry, const char *text)
+static void
+gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 {
 	int len;
 	int scroll, cursor;
@@ -741,6 +777,18 @@ void gnt_entry_set_text(GntEntry *entry, const char *text)
 		entry_redraw(GNT_WIDGET(entry));
 }
 
+void gnt_entry_set_text(GntEntry *entry, const char *text)
+{
+	gboolean changed = TRUE;
+	if (text == NULL && entry->start == NULL)
+		changed = FALSE;
+	if (text && entry->start && g_utf8_collate(text, entry->start) == 0)
+		changed = FALSE;
+	gnt_entry_set_text_internal(entry, text);
+	if (changed)
+		entry_text_changed(entry);
+}
+
 void gnt_entry_set_max(GntEntry *entry, int max)
 {
 	entry->max = max;
@@ -759,10 +807,11 @@ const char *gnt_entry_get_text(GntEntry *entry)
 
 void gnt_entry_clear(GntEntry *entry)
 {
-	gnt_entry_set_text(entry, NULL);
+	gnt_entry_set_text_internal(entry, NULL);
 	entry->scroll = entry->cursor = entry->end = entry->start;
 	entry_redraw(GNT_WIDGET(entry));
 	destroy_suggest(entry);
+	entry_text_changed(entry);
 }
 
 void gnt_entry_set_masked(GntEntry *entry, gboolean set)
