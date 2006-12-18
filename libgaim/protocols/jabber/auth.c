@@ -65,7 +65,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		
 		xmlnode_set_attrib(auth, "xmlns:ga", "http://www.google.com/talk/protocol/auth");
-		xmlnode_set_attrib(auth, "ga:client-users-full-bind-result", "true");
+		xmlnode_set_attrib(auth, "ga:client-uses-full-bind-result", "true");
 		
 		response = g_string_new("");
 		response = g_string_append_len(response, "\0", 1);
