@@ -355,6 +355,8 @@ spellchk_inside_word(GtkTextIter *iter)
 
 		return output;
 	}
+	else if (c == '&')
+		return TRUE;
 
 	return FALSE;
 }
