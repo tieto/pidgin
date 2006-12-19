@@ -1014,6 +1014,7 @@ static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
 	GaimNotifyUserInfo *user_info;
+	GaimBuddy *buddy;
 	char *val, *who;
 
 	user_info = gaim_notify_user_info_new();
@@ -1044,13 +1045,29 @@ static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
 	}
 	g_free(val);
 
+	/*
+	 * Include a status message, if exists and buddy is in the blist.
+	 */
+	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
+	if (NULL != buddy) {
+		GaimStatus *status;
+		const char *msg;
+		char *text;
+
+		status = gaim_presence_get_active_status(gaim_buddy_get_presence(buddy));
+		msg = gaim_status_get_attr_string(status, "message");
+
+		if (msg != NULL) {
+			text = g_markup_escape_text(msg, -1);
+			gaim_notify_user_info_add_pair(user_info, _("Message"), text);
+			g_free(text);
+		}
+	}
+
 	val = ggp_buddy_get_name(gc, ggp_str_to_uin(who));
-	g_free(who);
-
-/*	val = gaim_strdup_withhtml(text->str); */
-
 	gaim_notify_userinfo(gc, val, user_info, ggp_sr_close_cb, form);
 	g_free(val);
+	g_free(who);
 	gaim_notify_user_info_destroy(user_info);
 }
 /* }}} */
