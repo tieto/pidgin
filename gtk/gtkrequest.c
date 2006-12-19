@@ -1528,7 +1528,7 @@ gaim_gtk_request_file(const char *title, const char *filename,
 		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_open_folder");
 	}
 
-	if (filename != NULL) {
+	if ((filename != NULL) && (*filename != '\0')) {
 		if (savedialog)
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
 		else
