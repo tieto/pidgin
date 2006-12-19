@@ -3957,6 +3957,47 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 1);
 }
 
+
+static void resize_imhtml_cb(GaimGtkConversation *gtkconv)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter iter;
+        int wrapped_lines;
+        int lines;
+        GdkRectangle oneline;
+	GtkRequisition sr;
+        int height;
+        int pad_top, pad_inside, pad_bottom;
+
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
+
+        wrapped_lines = 1;
+        gtk_text_buffer_get_start_iter(buffer, &iter);
+        gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
+        while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
+                wrapped_lines++;
+
+        lines = gtk_text_buffer_get_line_count(buffer);
+
+        /* Show a maximum of 4 lines */
+        lines = MIN(lines, 4);
+        wrapped_lines = MIN(wrapped_lines, 4);
+
+        pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
+        pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
+        pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
+
+        height = (oneline.height + pad_top + pad_bottom) * lines;
+        height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+
+	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
+	if (sr.height < height + GAIM_HIG_BOX_SPACE) {
+		gtkconv->auto_resize = TRUE;
+	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + GAIM_HIG_BOX_SPACE);
+	        g_idle_add(reset_auto_resize_cb, gtkconv);
+	}
+}
+
 static GtkWidget *
 setup_chat_pane(GaimGtkConversation *gtkconv)
 {
@@ -4149,7 +4190,9 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
-
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
+                                 G_CALLBACK(resize_imhtml_cb), gtkconv);
+	
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 	                 G_CALLBACK(entry_key_press_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "message_send",
@@ -4260,6 +4303,8 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	                 G_CALLBACK(insert_text_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
 	                 G_CALLBACK(delete_text_cb), gtkconv);
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
+				 G_CALLBACK(resize_imhtml_cb), gtkconv);
 
 	/* had to move this after the imtoolbar is attached so that the
 	 * signals get fired to toggle the buttons on the toolbar as well.
@@ -6053,7 +6098,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	/* Reset the size request to allow the buddy icon to resize */
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1, -1);
 	g_idle_add(reset_auto_resize_cb, gtkconv);
-	printf("Auto resize true\n");
 	gtk_widget_set_size_request(gtkconv->u.im->icon, scale_width, scale_height);
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
