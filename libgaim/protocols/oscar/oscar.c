@@ -427,17 +427,19 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, gui
 	if (ret == NULL)
 		ret = gaim_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
 	if (ret == NULL) {
-		char *str, *salvage;
+		char *str, *salvage, tmp;
 
 		str = g_malloc(datalen + 1);
 		strncpy(str, data, datalen);
 		str[datalen] = '\0';
 		salvage = gaim_utf8_salvage(str);
-		ret = g_strdup_printf("%s %s", salvage,
-		                      _("(There was an error receiving this message.  Either you and the buddy you are speaking to have a different encoding selected, or the buddy has a buggy client.)"));
+		tmp = g_strdup_printf(_("(There was an error receiving this message.  Either you and %s have different encodings selected, or %s has a buggy client.)"),
+					  sourcesn, sourcesn);
+		ret = g_strdup_printf("%s %s", salvage, tmp);
+		g_free(tmp);
 		g_free(str);
 		g_free(salvage);
-        }
+	}
 
 	return ret;
 }
@@ -2295,9 +2297,12 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	for (numtoks=0; msg1[numtoks]; numtoks++);
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
+		gchar *uin = g_strdup_printf("%u", args->uin);
+
 		gaim_str_strip_char(msg1[i], '\r');
 		/* TODO: Should use an encoding other than ASCII? */
-		msg2[i] = gaim_plugin_oscar_decode_im_part(account, "1", AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
+		msg2[i] = gaim_plugin_oscar_decode_im_part(account, uin, AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
+		g_free(uin);
 	}
 	msg2[i] = NULL;
 
