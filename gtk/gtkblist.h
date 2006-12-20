@@ -103,6 +103,7 @@ struct _GaimGtkBuddyList {
 	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
 	GtkWidget *headline_label;	/**< Label for headline notifications */
 	GtkWidget *headline_image;      /**< Image for headline notifications */
+	GdkPixbuf *headline_close;      /**< Close image for closing the headline without triggering the callback */
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
 	gboolean changing_style;        /**< True when changing GTK+ theme style */
