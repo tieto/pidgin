@@ -119,7 +119,7 @@ int gtkwgaim_gz_untar(const char* filename, const char* destdir) {
 		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
 			ret = 1;
 		else {
-			gaim_debug_error("gtkwgaim_gz_untar", "Failure untaring %s\n", tmpfile);
+			gaim_debug_error("gtkwgaim_gz_untar", "Failure untarring %s\n", tmpfile);
 			ret = 0;
 		}
 		g_unlink(tmpfile);
@@ -131,51 +131,66 @@ int gtkwgaim_gz_untar(const char* filename, const char* destdir) {
 	}
 }
 
-void gtkwgaim_notify_uri(const char *uri) {
+void gtkwgaim_shell_execute(const char *target, const char *verb, const char *clazz) {
 
-	/* We'll allow whatever URI schemes are supported by the
-	 * default http browser.
-	 */
+	g_return_if_fail(target != NULL);
+	g_return_if_fail(verb != NULL);
 
 	if (G_WIN32_HAVE_WIDECHAR_API()) {
 		SHELLEXECUTEINFOW wsinfo;
-		wchar_t *w_uri;
+		wchar_t *w_uri, *w_verb, *w_clazz = NULL;
 
-		w_uri = g_utf8_to_utf16(uri, -1, NULL, NULL, NULL);
+		w_uri = g_utf8_to_utf16(target, -1, NULL, NULL, NULL);
+		w_verb = g_utf8_to_utf16(verb, -1, NULL, NULL, NULL);
 
 		memset(&wsinfo, 0, sizeof(wsinfo));
 		wsinfo.cbSize = sizeof(wsinfo);
-		wsinfo.fMask = SEE_MASK_CLASSNAME;
-		wsinfo.lpVerb = L"open";
+		wsinfo.lpVerb = w_verb;
 		wsinfo.lpFile = w_uri;
 		wsinfo.nShow = SW_SHOWNORMAL;
-		wsinfo.lpClass = L"http";
+		if (clazz != NULL) {
+			w_clazz = g_utf8_to_utf16(clazz, -1, NULL, NULL, NULL);
+			wsinfo.fMask |= SEE_MASK_CLASSNAME;
+			wsinfo.lpClass = w_clazz;
+		}
 
 		if(!ShellExecuteExW(&wsinfo))
 			gaim_debug_error("gtkwgaim", "Error opening URI: %s error: %d\n",
-				uri, (int) wsinfo.hInstApp);
+				target, (int) wsinfo.hInstApp);
 
 		g_free(w_uri);
+		g_free(w_verb);
+		g_free(w_clazz);
 	} else {
 		SHELLEXECUTEINFOA sinfo;
 		gchar *locale_uri;
 
-		locale_uri = g_locale_from_utf8(uri, -1, NULL, NULL, NULL);
+		locale_uri = g_locale_from_utf8(target, -1, NULL, NULL, NULL);
 
 		memset(&sinfo, 0, sizeof(sinfo));
 		sinfo.cbSize = sizeof(sinfo);
-		sinfo.fMask = SEE_MASK_CLASSNAME;
-		sinfo.lpVerb = "open";
+		sinfo.lpVerb = verb;
 		sinfo.lpFile = locale_uri;
 		sinfo.nShow = SW_SHOWNORMAL;
-		sinfo.lpClass = "http";
+		if (clazz != NULL) {
+			sinfo.fMask |= SEE_MASK_CLASSNAME;
+			sinfo.lpClass = clazz;
+		}
 
 		if(!ShellExecuteExA(&sinfo))
 			gaim_debug_error("gtkwgaim", "Error opening URI: %s error: %d\n",
-				uri, (int) sinfo.hInstApp);
+				target, (int) sinfo.hInstApp);
 
 		g_free(locale_uri);
 	}
+
+}
+
+void gtkwgaim_notify_uri(const char *uri) {
+	/* We'll allow whatever URI schemes are supported by the
+	 * default http browser.
+	 */
+	gtkwgaim_shell_execute(uri, "open", "http");
 }
 
 #define WM_FOCUS_REQUEST (WM_APP + 13)

@@ -163,8 +163,17 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 	gaim_gtk_clear_cursor(lv->window);
 }
 
-static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
+static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 	GaimGtkLogViewer *lv = syslog_viewer;
+
+#ifdef _WIN32
+	if (resp == GTK_RESPONSE_HELP) {
+		char *logdir = g_build_filename(gaim_user_dir(), "logs", NULL);
+		gtkwgaim_shell_execute(logdir, "explore", NULL);
+		g_free(logdir);
+		return;
+	}
+#endif
 
 	if (ht != NULL) {
 		lv = g_hash_table_lookup(log_viewers, ht);
@@ -182,8 +191,6 @@ static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht
 	g_free(lv);
 
 	gtk_widget_destroy(w);
-
-	return TRUE;
 }
 
 static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, GaimGtkLogViewer *viewer) {
@@ -345,6 +352,10 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	/* Window ***********/
 	lv->window = gtk_dialog_new_with_buttons(title, NULL, 0,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+#ifdef _WIN32
+	/* Steal the "HELP" response and use it to trigger browsing to the logs folder */
+	gtk_dialog_add_button(GTK_DIALOG(lv->window), _("_Browse logs folder"), GTK_RESPONSE_HELP);
+#endif
 	gtk_container_set_border_width (GTK_CONTAINER(lv->window), GAIM_HIG_BOX_SPACE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
@@ -450,13 +461,15 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 }
 
 void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *account) {
-	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
+	struct log_viewer_hash_t *ht;
 	GaimGtkLogViewer *lv = NULL;
 	const char *name = screenname;
 	char *title;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
+
+	ht = g_new0(struct log_viewer_hash_t, 1);
 
 	ht->type = type;
 	ht->screenname = g_strdup(screenname);
@@ -466,6 +479,7 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 		log_viewers = g_hash_table_new(log_viewer_hash, log_viewer_equal);
 	} else if ((lv = g_hash_table_lookup(log_viewers, ht))) {
 		gtk_window_present(GTK_WINDOW(lv->window));
+		g_free(ht->screenname);
 		g_free(ht);
 		return;
 	}
