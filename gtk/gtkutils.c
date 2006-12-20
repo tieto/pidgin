@@ -2646,7 +2646,8 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	 *       the prpl supported jpeg, and then we could convert to that
 	 *       and use a lower quality setting.
 	 */
-	if (st.st_size > prpl_info->icon_spec.max_filesize)
+	if ((prpl_info->icon_spec.max_filesize != 0) &&
+		(st.st_size > prpl_info->icon_spec.max_filesize))
 	{
 		gchar *tmp;
 		tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
