@@ -218,9 +218,8 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 		int width, height;
 		GdkPixbuf *scale;
 
-		if (dialog->prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY)
-			gaim_gtk_buddy_icon_get_scale_size(pixbuf,
-					&dialog->prpl_info->icon_spec, &width, &height);
+		gaim_gtk_buddy_icon_get_scale_size(pixbuf, &dialog->prpl_info->icon_spec,
+				GAIM_ICON_SCALE_DISPLAY, &width, &height);
 		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
 
 		g_object_unref(G_OBJECT(pixbuf));

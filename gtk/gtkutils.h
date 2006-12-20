@@ -362,7 +362,7 @@ void gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char
 /**
  * Convenience wrapper for gaim_buddy_icon_get_scale_size
  */
-void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, int *width, int *height);
+void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, GaimIconScaleRules rules, int *width, int *height);
 
 /**
  * Returns the base image to represent the account, based on
