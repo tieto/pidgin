@@ -427,7 +427,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, gui
 	if (ret == NULL)
 		ret = gaim_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
 	if (ret == NULL) {
-		char *str, *salvage, tmp;
+		char *str, *salvage, *tmp;
 
 		str = g_malloc(datalen + 1);
 		strncpy(str, data, datalen);
