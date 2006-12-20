@@ -6070,9 +6070,14 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			start_anim(NULL, gtkconv);
 	}
 
-	if (prpl_info && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY)
+	if (prpl_info && prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY) {
 		gaim_gtk_buddy_icon_get_scale_size(buf, &prpl_info->icon_spec,
 			&scale_width, &scale_height);
+	} else {
+		scale_width = gdk_pixbuf_get_width(buf);
+		scale_height = gdk_pixbuf_get_height(buf);
+	}
+
 	scale = gdk_pixbuf_scale_simple(buf,
 				MAX(gdk_pixbuf_get_width(buf) * scale_width /
 				    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
