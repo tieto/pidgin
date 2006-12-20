@@ -19,7 +19,7 @@
 */
 
 /*
- * Family 0x0003 - Old-style Buddylist Management (non-SSI).
+ * Family 0x0003 (SNAC_FAMILY_BUDDY) - Old-style Buddylist Management (non-SSI).
  *
  */
 
@@ -36,7 +36,7 @@
 void
 aim_buddylist_reqrights(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n_snacid(od, conn, 0x0003, 0x0002);
+	aim_genericreq_n_snacid(od, conn, SNAC_FAMILY_BUDDY, SNAC_SUBTYPE_BUDDY_REQRIGHTS);
 }
 
 /*
@@ -88,7 +88,7 @@ rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame,
 }
 
 /*
- * Subtype 0x0004 - Add buddy to list.
+ * Subtype 0x0004 (SNAC_SUBTYPE_BUDDY_ADDBUDDY) - Add buddy to list.
  *
  * Adds a single buddy to your buddy list after login.
  * XXX This should just be an extension of setbuddylist()
@@ -117,7 +117,7 @@ aim_buddylist_addbuddy(OscarData *od, FlapConnection *conn, const char *sn)
 }
 
 /*
- * Subtype 0x0004 - Add multiple buddies to your buddy list.
+ * Subtype 0x0004 (SNAC_SUBTYPE_BUDDY_ADDBUDDY) - Add multiple buddies to your buddy list.
  *
  * This just builds the "set buddy list" command then queues it.
  *
@@ -168,7 +168,7 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 }
 
 /*
- * Subtype 0x0005 - Remove buddy from list.
+ * Subtype 0x0005 (SNAC_SUBTYPE_BUDDY_REMBUDDY) - Remove buddy from list.
  *
  * XXX generalise to support removing multiple buddies (basically, its
  * the same as setbuddylist() but with a different snac subtype).
@@ -197,7 +197,7 @@ aim_buddylist_removebuddy(OscarData *od, FlapConnection *conn, const char *sn)
 }
 
 /*
- * Subtypes 0x000b and 0x000c - Change in buddy status
+ * Subtypes 0x000b (SNAC_SUBTYPE_BUDDY_ONCOMING) and 0x000c (SNAC_SUBTYPE_BUDDY_OFFGOING) - Change in buddy status
  *
  * Oncoming Buddy notifications contain a subset of the
  * user information structure.  It's close enough to run
@@ -219,7 +219,7 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, &userinfo);
 
-	if (snac->subtype == 0x000b)
+	if (snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING)
 		aim_locate_requestuserinfo(od, userinfo.sn);
 	aim_info_free(&userinfo);
 
@@ -229,9 +229,9 @@ buddychange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if (snac->subtype == 0x0003)
+	if (snac->subtype == SNAC_SUBTYPE_BUDDY_RIGHTSINFO)
 		return rights(od, conn, mod, frame, snac, bs);
-	else if ((snac->subtype == 0x000b) || (snac->subtype == 0x000c))
+	else if ((snac->subtype == SNAC_SUBTYPE_BUDDY_ONCOMING) || (snac->subtype == SNAC_SUBTYPE_BUDDY_OFFGOING))
 		return buddychange(od, conn, mod, frame, snac, bs);
 
 	return 0;
