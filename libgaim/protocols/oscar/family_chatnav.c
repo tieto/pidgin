@@ -417,7 +417,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	}
 
 	if (snac2->family != 0x000d) {
-		gaim_debug_misc("oscar", "faim: chatnav_parse_info: recieved response that maps to corrupt request! (fam=%04x)\n", snac2->family);
+		gaim_debug_misc("oscar", "faim: chatnav_parse_info: received response that maps to corrupt request! (fam=%04x)\n", snac2->family);
 		return 0;
 	}
 

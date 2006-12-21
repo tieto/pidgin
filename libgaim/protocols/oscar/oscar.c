@@ -3330,7 +3330,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 }
 
 /*
- * Recieved in response to an IM sent with the AIM_IMFLAGS_ACK option.
+ * Received in response to an IM sent with the AIM_IMFLAGS_ACK option.
  */
 static int gaim_parse_msgack(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	va_list ap;
