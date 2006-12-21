@@ -4371,11 +4371,13 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove, gboolean rerender)
 {
+	GaimBlistNode *node;
+
 	gtkblist = GAIM_GTK_BLIST(list);
 	if(!gtkblist || !gtkblist->treeview)
 		return;
 
-	GaimBlistNode *node = list->root;
+	node = list->root;
 
 	while (node)
 	{
