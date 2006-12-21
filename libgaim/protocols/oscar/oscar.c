@@ -845,10 +845,13 @@ static char *extract_name(const char *name) {
 		return NULL;
 
 	x = strchr(name, '-');
+	if (!x)
+		return NULL;
 
-	if (!x) return NULL;
-	x = strchr(++x, '-');
-	if (!x) return NULL;
+	x = strchr(x + 1, '-');
+	if (!x)
+		return NULL;
+
 	tmp = g_strdup(++x);
 
 	for (i = 0, j = 0; x[i]; i++) {
@@ -857,7 +860,8 @@ static char *extract_name(const char *name) {
 			tmp[j++] = x[i];
 			continue;
 		}
-		strncpy(hex, x + ++i, 2); hex[2] = 0;
+		strncpy(hex, x + ++i, 2);
+		hex[2] = 0;
 		i++;
 		tmp[j++] = strtol(hex, NULL, 16);
 	}
@@ -2046,27 +2050,36 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 	if (args->type & OSCAR_CAPABILITY_CHAT)
 	{
-		char *name;
+		char *encoding, *utf8name, *tmp;
 		GHashTable *components;
 
 		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange) {
 			g_free(message);
 			return 1;
 		}
+		encoding = args->encoding ? oscar_encoding_extract(args->encoding) : NULL;
+		utf8name = oscar_encoding_to_utf8(encoding,
+				args->info.chat.roominfo.name,
+				args->info.chat.roominfo.namelen);
+		g_free(encoding);
+
+		tmp = extract_name(utf8name);
+		if (tmp != NULL)
+		{
+			g_free(utf8name);
+			utf8name = tmp;
+		}
+
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 				g_free);
-		name = extract_name(args->info.chat.roominfo.name);
-		g_hash_table_replace(components, g_strdup("room"),
-				g_strdup(name ? name : args->info.chat.roominfo.name));
+		g_hash_table_replace(components, g_strdup("room"), utf8name);
 		g_hash_table_replace(components, g_strdup("exchange"),
 				g_strdup_printf("%d", args->info.chat.roominfo.exchange));
 		serv_got_chat_invite(gc,
-				     name ? name : args->info.chat.roominfo.name,
+				     utf8name,
 				     userinfo->sn,
 				     message,
 				     components);
-		if (name)
-			g_free(name);
 	}
 
 	else if ((args->type & OSCAR_CAPABILITY_SENDFILE) ||

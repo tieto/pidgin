@@ -116,14 +116,12 @@ aim_chat_attachname(FlapConnection *conn, guint16 exchange, const char *roomname
 int
 aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 {
-	int namelen;
-
 	if (!bs || !outinfo)
 		return 0;
 
 	outinfo->exchange = byte_stream_get16(bs);
-	namelen = byte_stream_get8(bs);
-	outinfo->name = byte_stream_getstr(bs, namelen);
+	outinfo->namelen = byte_stream_get8(bs);
+	outinfo->name = byte_stream_getraw(bs, outinfo->namelen);
 	outinfo->instance = byte_stream_get16(bs);
 
 	return 0;

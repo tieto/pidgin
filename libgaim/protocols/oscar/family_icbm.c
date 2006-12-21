@@ -1915,7 +1915,12 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	 */
 	cookie2 = byte_stream_getraw(&bbs, 8);
 	if (memcmp(cookie, cookie2, 8) != 0)
-		gaim_debug_misc("oscar", "rend: warning cookies don't match!\n");
+	{
+		gaim_debug_warning("oscar",
+				"Cookies don't match in rendezvous ICBM, bailing out.\n");
+		free(cookie2);
+		return 1;
+	}
 	memcpy(args.cookie, cookie2, 8);
 	free(cookie2);
 
