@@ -2732,6 +2732,10 @@ static int gaim_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 			   "Message error with data %s and reason %hu\n",
 				(data != NULL ? data : ""), reason);
 
+	if ((data == NULL) || (*data == '\0'))
+		/* We can't do anything if data is empty */
+		return 1;
+
 #ifdef TODOFT
 	/* If this was a file transfer request, data is a cookie */
 	if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, data))) {
