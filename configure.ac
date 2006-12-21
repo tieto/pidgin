@@ -370,6 +370,9 @@ dnl # Check for ncurses and other things used by the console UI
 dnl #######################################################################
 GNT_LIBS=""
 GNT_CFLAGS=""
+AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
+		[compile gaim-text against the ncurses includes in DIR])],
+		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
 	AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_consoleui=no])
@@ -377,8 +380,9 @@ if test "x$enable_consoleui" = "xyes"; then
 	if test "x$enable_consoleui" = "xyes"; then
 		dnl # Some distros put the headers in ncursesw/, some don't
 		found_ncurses_h=no
-		for f in /usr/include/ncursesw/ncurses.h /usr/include/ncurses.h
+		for location in $ac_ncurses_includes $NCURSES_HEADERS /usr/include/ncursesw /usr/include
 		do
+			f="$location/ncurses.h"
 			AC_CHECK_HEADER($f,[
 				AC_MSG_CHECKING([if $f supports wide characters])
 				AC_TRY_COMPILE([
@@ -389,7 +393,7 @@ if test "x$enable_consoleui" = "xyes"; then
 					# error get_wch not found!
 					#endif
 				], [
-					dir=`dirname $f`
+					dir=location
 					if test x"$dir" != x"." ; then
 						GNT_CFLAGS="-I$dir/"
 					else
@@ -419,6 +423,13 @@ if test "x$enable_consoleui" = "xyes"; then
 		AC_CHECK_LIB(ncurses, initscr, [GNT_LIBS="-lncurses"], [enable_consoleui=no])
 		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"], [enable_consoleui=no])
 		AC_DEFINE(NO_WIDECHAR, 1, [Define to 1 if you don't have wide-character support.])
+		if test x"$ac_ncurses_includes" != "x"; then
+			GNT_CFLAGS="-I$ac_ncurses_includes"
+		else
+			if test x"$NCURSES_HEADERS" != "x"; then
+				GNT_CFLAGS="-I$NCURSES_HEADERS"
+			fi
+		fi
 	fi
 
 	PKG_CHECK_MODULES(X11, x11,
