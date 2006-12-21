@@ -4371,6 +4371,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove, gboolean rerender)
 {
+	gtkblist = GAIM_GTK_BLIST(list);
+	if(!gtkblist || !gtkblist->treeview)
+		return;
+
 	GaimBlistNode *node = list->root;
 
 	while (node)
@@ -4863,7 +4867,7 @@ static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node)
 {
 	if (list)
 		gtkblist = GAIM_GTK_BLIST(list);
-	if(!gtkblist || !node)
+	if(!gtkblist || !gtkblist->treeview || !node)
 		return;
 
 	if (node->ui_data == NULL)
