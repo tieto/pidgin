@@ -116,9 +116,12 @@ gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 
 	presence = gaim_buddy_get_presence(buddy);
 
-	gaim_presence_set_login_time(presence, login_time);
+	if (gaim_presence_get_login_time(presence) != login_time)
+	{
+		gaim_presence_set_login_time(presence, login_time);
 
-	gaim_signal_emit(gaim_blist_get_handle(), "buddy-got-login-time", buddy);
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-got-login-time", buddy);
+	}
 }
 
 void
