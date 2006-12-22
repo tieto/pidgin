@@ -154,6 +154,8 @@ filesel(GtkWidget *widget, gpointer data)
 
 	gaim_request_file(entry, _("Select a file"), name, FALSE,
 					  G_CALLBACK(pounce_update_entry_fields), NULL, entry);
+	g_signal_connect_swapped(G_OBJECT(entry), "destroy",
+			G_CALLBACK(gaim_request_close_with_handle), entry);
 }
 
 static void
