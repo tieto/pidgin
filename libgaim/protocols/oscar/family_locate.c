@@ -31,6 +31,9 @@
 #include "win32dep.h"
 #endif
 
+/* Define to log unknown TLVs */
+/* #define LOG_UNKNOWN_TLV */
+
 /*
  * Capability blocks.
  *
@@ -301,6 +304,21 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 			cur->away = NULL;
 		cur->away_encoding = strdup(userinfo->away_encoding);
 		cur->away_len = userinfo->away_len;
+
+	} else if (!(userinfo->flags & AIM_FLAG_AWAY)) {
+		/*
+		 * We don't have an away message specified in this user_info block.
+		 * If the user is not away, clear any cached away message now.
+		 */
+		if (cur->away) {
+			free(cur->away);
+			cur->away = NULL;
+		}
+		if (cur->away_encoding) {
+			free(cur->away_encoding);
+			cur->away_encoding = NULL;
+		}
+		cur->away_len = 0;
 	}
 
 	/*
@@ -525,7 +543,7 @@ byte_stream_putcaps(ByteStream *bs, guint32 caps)
 	return 0;
 }
 
-#if 0
+#ifdef LOG_UNKNOWN_TLV
 static void
 dumptlv(OscarData *od, guint16 type, ByteStream *bs, guint8 len)
 {
@@ -851,7 +869,7 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 * recovery.
 			 *
 			 */
-#if 0
+#ifdef LOG_UNKNOWN_TLV
 			gaim_debug_misc("oscar", "userinfo: **warning: unexpected TLV:\n");
 			gaim_debug_misc("oscar", "userinfo:   sn    =%s\n", outinfo->sn);
 			dumptlv(od, type, bs, length);
