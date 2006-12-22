@@ -121,7 +121,7 @@ aim_chat_readroominfo(ByteStream *bs, struct aim_chat_roominfo *outinfo)
 
 	outinfo->exchange = byte_stream_get16(bs);
 	outinfo->namelen = byte_stream_get8(bs);
-	outinfo->name = byte_stream_getraw(bs, outinfo->namelen);
+	outinfo->name = (char *)byte_stream_getraw(bs, outinfo->namelen);
 	outinfo->instance = byte_stream_get16(bs);
 
 	return 0;
