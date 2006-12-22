@@ -741,6 +741,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(dialog->exec_cmd_browse), "clicked",
 					 G_CALLBACK(filesel),
 					 dialog->exec_cmd_entry);
+	g_object_set_data_full(G_OBJECT(dialog->window), "exec-widgets",
+				exec_widgets, (GDestroyNotify)g_ptr_array_free);
 
 	sound_widgets = g_ptr_array_new();
 	g_ptr_array_add(sound_widgets,dialog->play_sound_entry);
@@ -756,6 +758,8 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	g_signal_connect(G_OBJECT(dialog->play_sound_test), "clicked",
 					 G_CALLBACK(pounce_test_sound),
 					 dialog->play_sound_entry);
+	g_object_set_data_full(G_OBJECT(dialog->window), "sound-widgets",
+				sound_widgets, (GDestroyNotify)g_ptr_array_free);
 
 	g_signal_connect(G_OBJECT(dialog->send_msg_entry), "activate",
 					 G_CALLBACK(save_pounce_cb), dialog);
