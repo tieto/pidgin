@@ -766,7 +766,6 @@ static void init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/prpl/qq");
 	gaim_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	gaim_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/qq/prompt_for_missing_packet", TRUE);
 	gaim_prefs_add_bool("/plugins/prpl/qq/prompt_group_msg_on_recv", TRUE);
 }
 

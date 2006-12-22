@@ -78,7 +78,7 @@ void qq_sendqueue_free(qq_data *qd)
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", i);
 }
 
-/* packet lost, agree to send again, (and will NOT prompt again)
+/* packet lost, agree to send again.
  * it is removed only when ack-ed by server */
 static void _qq_send_again(gc_and_packet *gp)
 {
@@ -125,16 +125,29 @@ static void _qq_send_cancel(gc_and_packet *gp)
 	g_free(gp);
 }
 
+static void _notify_packets_lost(GaimConnection *gc, const gchar *msg, qq_sendpacket *p)
+{
+	gc_and_packet *gp;
+
+	gp = g_new0(gc_and_packet, 1);
+	gp->gc = gc;
+	gp->packet = p;
+	gaim_request_action
+		(gc, NULL, _("Communication timed out"), msg,
+		0, gp, 2, _("Try again"), G_CALLBACK(_qq_send_again),
+		_("Cancel"), G_CALLBACK(_qq_send_cancel));
+	/* keep in sendqueue doing nothing until we hear back from the user */
+	p->resend_times++;
+}
+
 gboolean qq_sendqueue_timeout_callback(gpointer data)
 {
 	GaimConnection *gc;
 	qq_data *qd;
 	GList *list;
 	qq_sendpacket *p;
-	gc_and_packet *gp;
 	time_t now;
 	gint wait_time;
-	gboolean need_action;
 
 	gc = (GaimConnection *) data;
 	qd = (qq_data *) gc->proto_data;
@@ -166,44 +179,52 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 				case QQ_CMD_KEEP_ALIVE:
 					if (qd->logged_in) {
 						gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Connection lost!\n");
-						gaim_connection_error(gc, _("Connection lost!"));
+						gaim_connection_error(gc, _("Connection lost"));
 						qd->logged_in = FALSE;
 					}
 					p->resend_times = -1;
 					break;
 				case QQ_CMD_LOGIN:
+				case QQ_CMD_REQUEST_LOGIN_TOKEN:
 					if (!qd->logged_in)	/* cancel logging progress */
-						gaim_connection_error(gc, _("Login failed, no reply!"));
+						gaim_connection_error(gc, _("Login failed, no reply"));
 					p->resend_times = -1;
 					break;
 				case QQ_CMD_UPDATE_INFO:
-					gaim_notify_error(gc, NULL,
-							  _("Connection timeout!"), _("User info is not updated"));
-					p->resend_times = -1;
+					_notify_packets_lost(gc, 
+						_("Your attempt to update your info has timed out. Send the information again?"), p);
+					break;
+				case QQ_CMD_GET_USER_INFO:
+					_notify_packets_lost(gc, 
+						_("Your attempt to view a user's info has timed out. Try again?"), p);
+					break;
+				case QQ_CMD_ADD_FRIEND_WO_AUTH:
+					_notify_packets_lost(gc, 
+						_("Your attempt to add a buddy has timed out. Try again?"), p);
+					break;
+				case QQ_CMD_DEL_FRIEND:
+					_notify_packets_lost(gc, 
+						_("Your attempt to remove a buddy has timed out. Try again?"), p);
+					break;
+				case QQ_CMD_BUDDY_AUTH:
+					_notify_packets_lost(gc, 
+						_("Your attempt to add a buddy has timed out. Try again?"), p);
+					break;
+				case QQ_CMD_CHANGE_ONLINE_STATUS:
+					_notify_packets_lost(gc, 
+						_("Your attempt to change your online status has timed out. Send the information again?"), p);
+					break;
+				case QQ_CMD_SEND_IM:
+					_notify_packets_lost(gc, 
+						_("Your attempt to send an IM has timed out. Send it again?"), p);
+					break;
+				case QQ_CMD_REQUEST_KEY:
+					_notify_packets_lost(gc, 
+						_("Your request for a file transfer key has timed out. Request it again?"), p);
 					break;
 				default:{
-						need_action =
-						    gaim_prefs_get_bool("/plugins/prpl/qq/prompt_for_missing_packet");
-						if (!need_action)
-							p->resend_times = -1;	/* it will be removed next time */
-						else {	/* prompt for action */
-							gp = g_new0(gc_and_packet, 1);
-							gp->gc = gc;
-							gp->packet = p;
-							gaim_request_action
-							    (gc, NULL,
-							     _
-							     ("Send packet"),
-							     _
-							     ("Packets lost, send again?"),
-							     0, gp, 2,
-							     _("Send"),
-							     G_CALLBACK
-							     (_qq_send_again),
-							     _("Cancel"), G_CALLBACK(_qq_send_cancel));
-							/* will send once more, but only once */
-							p->resend_times++;
-						}
+					p->resend_times = -1;	/* it will be removed next time */
+					gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s packet lost!\n", qq_get_cmd_desc(p->cmd));
 					}
 				}
 			}

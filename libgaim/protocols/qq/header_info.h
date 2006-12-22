@@ -40,7 +40,7 @@ enum {
 	QQ_CMD_LOGOUT = 0x0001,				/* log out */
 	QQ_CMD_KEEP_ALIVE = 0x0002,			/* get onlines from tencent */
 	QQ_CMD_UPDATE_INFO = 0x0004,			/* update information */
-	QQ_CMD_SEARCH_USER = 0x0005,			/* serach for user */
+	QQ_CMD_SEARCH_USER = 0x0005,			/* search for user */
 	QQ_CMD_GET_USER_INFO = 0x0006,			/* get user information */
 	QQ_CMD_ADD_FRIEND_WO_AUTH = 0x0009,		/* add friend without auth */
 	QQ_CMD_DEL_FRIEND = 0x000a,			/* delete a friend  */
