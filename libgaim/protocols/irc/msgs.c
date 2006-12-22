@@ -434,6 +434,8 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 		if (!irc->names)
 			irc->names = g_string_new("");
 
+		if (irc->names->len && irc->names->str[irc->names->len - 1] != ' ')
+			irc->names = g_string_append_c(irc->names, ' ');
 		irc->names = g_string_append(irc->names, args[3]);
 	}
 }
