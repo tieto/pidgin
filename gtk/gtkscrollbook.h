@@ -28,6 +28,9 @@
 
 #include <gtk/gtk.h>
 
+#if !GTK_CHECK_VERSION(2,4,0)
+#include "gaimcombobox.h"
+#endif
 
 G_BEGIN_DECLS
 

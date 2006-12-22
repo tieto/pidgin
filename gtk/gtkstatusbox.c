@@ -1190,9 +1190,11 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, GtkG
 static void
 gtk_gaim_status_box_list_position (GtkGaimStatusBox *status_box, int *x, int *y, int *width, int *height)
 {
+#if GTK_CHECK_VERSION(2,2,0)
   GdkScreen *screen;
   gint monitor_num;
   GdkRectangle monitor;
+#endif
   GtkRequisition popup_req;
   GtkPolicyType hpolicy, vpolicy;
   
@@ -1218,6 +1220,7 @@ gtk_gaim_status_box_list_position (GtkGaimStatusBox *status_box, int *x, int *y,
 
   *height = popup_req.height;
 
+#if GTK_CHECK_VERSION(2,2,0)
   screen = gtk_widget_get_screen (GTK_WIDGET (status_box));
   monitor_num = gdk_screen_get_monitor_at_window (screen, 
 						  GTK_WIDGET (status_box)->window);
@@ -1250,6 +1253,7 @@ gtk_gaim_status_box_list_position (GtkGaimStatusBox *status_box, int *x, int *y,
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
 				      hpolicy, vpolicy);
     }
+#endif
 }
 
 static gboolean
@@ -1268,8 +1272,13 @@ popup_grab_on_window (GdkWindow *window,
 	return TRUE;
       else
 	{
+#if GTK_CHECK_VERSION(2,2,0)
 	  gdk_display_pointer_ungrab (gdk_drawable_get_display (window),
 				      activate_time);
+#else
+	  gdk_pointer_ungrab(activate_time);
+	  gdk_keyboard_ungrab(activate_time);
+#endif
 	  return FALSE;
 	}
     }
@@ -1526,8 +1535,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	}
 
 	gtk_window_set_resizable (GTK_WINDOW (status_box->popup_window), FALSE);
+#if GTK_CHECK_VERSION(2,2,0)
 	gtk_window_set_screen (GTK_WINDOW (status_box->popup_window),
 			gtk_widget_get_screen (GTK_WIDGET (status_box)));
+#endif
 	status_box->popup_frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (status_box->popup_frame),
 			GTK_SHADOW_ETCHED_IN);
@@ -1554,8 +1565,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_tree_selection_set_mode (sel, GTK_SELECTION_BROWSE);
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (status_box->tree_view),
 			FALSE);
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_hover_selection (GTK_TREE_VIEW (status_box->tree_view),
 			TRUE);
+#endif
 	gtk_tree_view_set_model (GTK_TREE_VIEW (status_box->tree_view),
 			GTK_TREE_MODEL(status_box->dropdown_store));
 	status_box->column = gtk_tree_view_column_new ();

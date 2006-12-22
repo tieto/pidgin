@@ -533,5 +533,20 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *handle, const char* stock_id,
 gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 			const gchar *key, GtkTreeIter *iter, gpointer data);
 
+#if !GTK_CHECK_VERSION(2,2,0)
+/**
+ * This is copied from Gtk to support Gtk 2.0
+ *
+ * Creates a new path with @first_index and @varargs as indices.
+ *
+ * @param first_index    first integer
+ * @param varargs        list of integers terminated by -1
+ *
+ * @return               A newly created GtkTreePath.
+ *
+ */
+GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
+#endif
+
 #endif /* _GAIM_GTKUTILS_H_ */
 

@@ -2466,6 +2466,7 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	char **prpl_formats;
 	int width, height;
 	char **pixbuf_formats = NULL;
+	struct stat st;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
 #if !GTK_CHECK_VERSION(2,4,0)
@@ -2477,7 +2478,6 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	const char *dirname;
 	char *random;
 	char *filename;
-	struct stat st;
 
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 
@@ -2815,7 +2815,7 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 
 	return pixbuf;
 }
-#endif
+#endif /* ! Gtk 2.6.0 */
 
 void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename)
 {
@@ -3092,3 +3092,28 @@ gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 	return result;
 }
 
+
+#if !GTK_CHECK_VERSION(2,2,0)
+GtkTreePath *
+gtk_tree_path_new_from_indices (gint first_index, ...)
+{
+	int arg;
+	va_list args;
+	GtkTreePath *path;
+
+	path = gtk_tree_path_new ();
+
+	va_start (args, first_index);
+	arg = first_index;
+
+	while (arg != -1)
+	{
+		gtk_tree_path_append_index (path, arg);
+		arg = va_arg (args, gint);
+	}
+
+	va_end (args);
+
+	return path;
+}
+#endif

@@ -133,8 +133,9 @@ page_count_change_cb(GtkGaimScrollBook *scroll_book)
 static void
 switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, GtkGaimScrollBook *scroll_book)
 {
+	int count;
 #if GTK_CHECK_VERSION(2,2,0)
-	int count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
+	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(scroll_book->notebook));
 #else
 	count = g_list_length(GTK_NOTEBOOK(scroll_book->notebook)->children);
 #endif
