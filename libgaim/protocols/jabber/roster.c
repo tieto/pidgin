@@ -331,9 +331,11 @@ void jabber_roster_alias_change(GaimConnection *gc, const char *name, const char
 {
 	GaimBuddy *b = gaim_find_buddy(gc->account, name);
 
-	gaim_blist_alias_buddy(b, alias);
+	if(b != NULL) {
+		gaim_blist_alias_buddy(b, alias);
 
-	jabber_roster_update(gc->proto_data, name, NULL);
+		jabber_roster_update(gc->proto_data, name, NULL);
+	}
 }
 
 void jabber_roster_group_change(GaimConnection *gc, const char *name,
