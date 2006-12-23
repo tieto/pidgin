@@ -42,11 +42,11 @@ typedef struct _PeerConnection        PeerConnection;
 #define PEER_CONNECTION_FLAG_IS_INCOMING      0x0020
 
 #define PEER_TYPE_PROMPT 0x0101 /* "I am going to send you this file, is that ok?" */
-#define PEER_TYPE_RESUMESOMETHING 0x0106 /* I really don't know */
+#define PEER_TYPE_RESUMEACCEPT 0x0106 /* We are accepting the resume */
 #define PEER_TYPE_ACK 0x0202 /* "Yes, it is ok for you to send me that file" */
 #define PEER_TYPE_DONE 0x0204 /* "I received that file with no problems, thanks a bunch" */
-#define PEER_TYPE_RESUME 0x0205 /* Resume transferring, sent by whoever paused? */
-#define PEER_TYPE_RESUMEACK 0x0207 /* Not really sure */
+#define PEER_TYPE_RESUME 0x0205 /* Resume transferring, sent by whoever receives */
+#define PEER_TYPE_RESUMEACK 0x0207 /* Our resume accept was ACKed */
 
 #define PEER_TYPE_GETFILE_REQUESTLISTING 0x1108 /* "I have a listing.txt file, do you want it?" */
 #define PEER_TYPE_GETFILE_RECEIVELISTING 0x1209 /* "Yes, please send me your listing.txt file" */

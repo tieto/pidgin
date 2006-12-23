@@ -698,10 +698,17 @@ gaim_xfer_set_size(GaimXfer *xfer, size_t size)
 {
 	g_return_if_fail(xfer != NULL);
 
-	if (xfer->size == 0)
-		xfer->bytes_remaining = size - xfer->bytes_sent;
-
 	xfer->size = size;
+	xfer->bytes_remaining = xfer->size - gaim_xfer_get_bytes_sent(xfer);
+}
+
+void
+gaim_xfer_set_bytes_sent(GaimXfer *xfer, size_t bytes_sent)
+{
+	g_return_if_fail(xfer != NULL);
+
+	xfer->bytes_sent = bytes_sent;
+	xfer->bytes_remaining = gaim_xfer_get_size(xfer) - bytes_sent;
 }
 
 GaimXferUiOps *
@@ -948,6 +955,8 @@ begin_transfer(GaimXfer *xfer, GaimInputCondition cond)
 		return;
 	}
 
+	fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
+
 	xfer->watcher = gaim_input_add(xfer->fd, cond, transfer_cb, xfer);
 
 	xfer->start_time = time(NULL);
@@ -977,9 +986,6 @@ gaim_xfer_start(GaimXfer *xfer, int fd, const char *ip,
 	g_return_if_fail(gaim_xfer_get_type(xfer) != GAIM_XFER_UNKNOWN);
 
 	type = gaim_xfer_get_type(xfer);
-
-	xfer->bytes_remaining = gaim_xfer_get_size(xfer);
-	xfer->bytes_sent      = 0;
 
 	gaim_xfer_set_status(xfer, GAIM_XFER_STATUS_STARTED);
 

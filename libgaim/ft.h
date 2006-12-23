@@ -376,6 +376,21 @@ void gaim_xfer_set_local_filename(GaimXfer *xfer, const char *filename);
 void gaim_xfer_set_size(GaimXfer *xfer, size_t size);
 
 /**
+ * Sets the current working position in the active file transfer.  This
+ * can be used to jump backward in the file if the protocol detects
+ * that some bit of data needs to be resent or has been sent twice.
+ *
+ * It's used for pausing and resuming an oscar file transfer.
+ *
+ * @param xfer       The file transfer.
+ * @param bytes_sent The new current position in the file.  If we're
+ *                   sending a file then this is the byte that we will
+ *                   send.  If we're receiving a file, this is the
+ *                   next byte that we expect to receive.
+ */
+void gaim_xfer_set_bytes_sent(GaimXfer *xfer, size_t bytes_sent);
+
+/**
  * Returns the UI operations structure for a file transfer.
  *
  * @param xfer The file transfer.

@@ -353,6 +353,8 @@ version 2.0.0:
 	* gaim_gtk_roomlist_dialog_show_with_account
 	* gaim_gtk_tree_view_search_equal_func to be used with
 	  gtk_tree_view_set_search_equal_func
+	* gaim_xfer_set_bytes_sent().  Sets the offset in the file to
+	  read from or write to.
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

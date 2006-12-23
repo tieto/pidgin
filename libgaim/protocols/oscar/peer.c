@@ -230,6 +230,7 @@ peer_connection_destroy_cb(gpointer data)
 	g_free(conn->proxyip);
 	g_free(conn->clientip);
 	g_free(conn->verifiedip);
+	g_free(conn->xferdata.name);
 	gaim_circ_buffer_destroy(conn->buffer_outgoing);
 
 	conn->od->peer_connections = g_slist_remove(conn->od->peer_connections, conn);

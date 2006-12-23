@@ -116,14 +116,24 @@ peer_oft_checksum_file(char *filename)
 	if ((fd = fopen(filename, "rb")))
 	{
 		int bytes;
-		guint8 buffer[1024];
+		guint8 *buffer = g_malloc(65536);
 
-		while ((bytes = fread(buffer, 1, 1024, fd)) != 0)
+		while ((bytes = fread(buffer, 1, 65536, fd)) != 0)
 			checksum = peer_oft_checksum_chunk(buffer, bytes, checksum);
+		g_free(buffer);
 		fclose(fd);
 	}
 
 	return checksum;
+}
+
+static void
+peer_oft_copy_xfer_data(PeerConnection *conn, OftFrame *frame)
+{
+	g_free(conn->xferdata.name);
+
+	memcpy(&(conn->xferdata), frame, sizeof(OftFrame));
+	conn->xferdata.name = g_memdup(frame->name, frame->name_length);
 }
 
 /**
@@ -219,6 +229,17 @@ peer_oft_send_ack(PeerConnection *conn)
 }
 
 static void
+peer_oft_send_resume_accept(PeerConnection *conn)
+{
+	conn->xferdata.type = PEER_TYPE_RESUMEACCEPT;
+
+	/* Fill in the cookie */
+	memcpy(conn->xferdata.cookie, conn->cookie, 8);
+
+	peer_oft_send(conn, &conn->xferdata);
+}
+
+static void
 peer_oft_send_done(PeerConnection *conn)
 {
 	conn->xferdata.type = PEER_TYPE_DONE;
@@ -288,7 +309,7 @@ static void
 peer_oft_recv_frame_prompt(PeerConnection *conn, OftFrame *frame)
 {
 	/* Record the file information and send an ack */
-	memcpy(&conn->xferdata, frame, sizeof(OftFrame));
+	peer_oft_copy_xfer_data(conn, frame);
 	peer_oft_send_ack(conn);
 
 	/* Remove our watchers and use the file transfer watchers in the core */
@@ -305,7 +326,7 @@ peer_oft_recv_frame_prompt(PeerConnection *conn, OftFrame *frame)
 static void
 peer_oft_recv_frame_ack(PeerConnection *conn, OftFrame *frame)
 {
-	if (memcmp(conn->cookie, frame->cookie, 8))
+	if (memcmp(conn->cookie, frame->cookie, 8) != 0)
 	{
 		gaim_debug_info("oscar", "Received an incorrect cookie.  "
 				"Closing connection.\n");
@@ -318,6 +339,36 @@ peer_oft_recv_frame_ack(PeerConnection *conn, OftFrame *frame)
 	conn->watcher_incoming = 0;
 	conn->sending_data_timer = gaim_timeout_add(100,
 			start_transfer_when_done_sending_data, conn);
+}
+
+/**
+ * We are sending a file to someone else.  They have just acknowledged our
+ * prompt and are asking to resume, so we accept their resume and await
+ * a resume ack.
+ */
+static void
+peer_oft_recv_frame_resume(PeerConnection *conn, OftFrame *frame)
+{
+	if (memcmp(conn->cookie, frame->cookie, 8) != 0)
+	{
+		gaim_debug_info("oscar", "Received an incorrect cookie.  "
+				"Closing connection.\n");
+		peer_connection_destroy(conn, OSCAR_DISCONNECT_INVALID_DATA, NULL);
+		return;
+	}
+
+	/*
+	 * TODO: Check the checksums here.  If they don't match then don't
+	 *       copy the data like below.
+	 */
+
+	/* Copy resume data into internal structure */
+	conn->xferdata.recvcsum = frame->recvcsum;
+	conn->xferdata.rfrcsum = frame->rfrcsum;
+	conn->xferdata.nrecvd = frame->nrecvd;
+
+	gaim_xfer_set_bytes_sent(conn->xfer, frame->nrecvd);
+	peer_oft_send_resume_accept(conn);
 }
 
 /*
@@ -378,12 +429,24 @@ peer_oft_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 	/* TODOFT: peer_oft_dirconvert_fromstupid(frame->name); */
 
-	if (frame.type == PEER_TYPE_PROMPT)
-		peer_oft_recv_frame_prompt(conn, &frame);
-	else if (frame.type == PEER_TYPE_ACK)
-		peer_oft_recv_frame_ack(conn, &frame);
-	else if (frame.type == PEER_TYPE_DONE)
-		peer_oft_recv_frame_done(conn, &frame);
+	switch(frame.type)
+	{
+		case PEER_TYPE_PROMPT:
+			peer_oft_recv_frame_prompt(conn, &frame);
+			break;
+		case PEER_TYPE_ACK:
+		case PEER_TYPE_RESUMEACK:
+			peer_oft_recv_frame_ack(conn, &frame);
+			break;
+		case PEER_TYPE_RESUME:
+			peer_oft_recv_frame_resume(conn, &frame);
+			break;
+		case PEER_TYPE_DONE:
+			peer_oft_recv_frame_done(conn, &frame);
+			break;
+		default:
+			break;
+	}
 
 	free(frame.name);
 }

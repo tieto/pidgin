@@ -145,8 +145,10 @@ version 2.0.0:
 	AIM/ICQ Features:
 	* ICQ file transfer support with newer ICQ clients (Jonathan Clark,
 	  Google Summer of Code)
-	* Many overall improvements to OSCAR file transfers (Jonathan Clark,
-	  Google Summer of Code)
+	* Many overall improvements to AIM and ICQ file transfers (Jonathan
+	  Clark, Google Summer of Code)
+	* Support for pausing and resuming AIM and ICQ file transfers
+	  (Graham Booker)
 	* Ability to set ICQ "require authorization" and "web aware"
 	  setting (Ettore Simone)
 	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
