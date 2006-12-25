@@ -268,7 +268,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		}
 	}
 
-	if (!js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
 		jabber_roster_request(js);
 }
 
