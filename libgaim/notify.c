@@ -585,11 +585,8 @@ gaim_notify_user_info_entry_set_label(GaimNotifyUserInfoEntry *user_info_entry, 
 {
 	g_return_if_fail(user_info_entry != NULL);
 
-	if (label != user_info_entry->label)
-	{
-		g_free(user_info_entry->label);
-		user_info_entry->label = g_strdup(label);
-	}
+	g_free(user_info_entry->label);
+	user_info_entry->label = g_strdup(label);
 }
 
 gchar *
@@ -605,18 +602,15 @@ gaim_notify_user_info_entry_set_value(GaimNotifyUserInfoEntry *user_info_entry, 
 {
 	g_return_if_fail(user_info_entry != NULL);
 
-	if (value != user_info_entry->value)
-	{
-		g_free(user_info_entry->value);
-		user_info_entry->value = g_strdup(value);
-	}
+	g_free(user_info_entry->value);
+	user_info_entry->value = g_strdup(value);
 }
 
 GaimNotifyUserInfoEntryType
 gaim_notify_user_info_entry_get_type(GaimNotifyUserInfoEntry *user_info_entry)
 {
-	g_return_val_if_fail(user_info_entry != NULL, NULL);
-	
+	g_return_val_if_fail(user_info_entry != NULL, GAIM_NOTIFY_USER_INFO_ENTRY_PAIR);
+
 	return user_info_entry->type;
 }
 
