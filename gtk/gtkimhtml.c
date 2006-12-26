@@ -2966,7 +2966,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			c += tlen;
 			pos += tlen;
 			g_free(tag); /* This was allocated back in VALID_TAG() */
-		} else if (gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
+		} else if (imhtml->edit.link == NULL &&
+				gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
 
 			gchar *sml = NULL;
