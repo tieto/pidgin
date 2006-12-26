@@ -580,12 +580,52 @@ gaim_notify_user_info_entry_get_label(GaimNotifyUserInfoEntry *user_info_entry)
 	return user_info_entry->label;
 }
 
+void
+gaim_notify_user_info_entry_set_label(GaimNotifyUserInfoEntry *user_info_entry, const char *label)
+{
+	g_return_if_fail(user_info_entry != NULL);
+
+	if (label != user_info_entry->label)
+	{
+		g_free(user_info_entry->label);
+		user_info_entry->label = g_strdup(label);
+	}
+}
+
 gchar *
 gaim_notify_user_info_entry_get_value(GaimNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, NULL);
 	
 	return user_info_entry->value;
+}
+
+void
+gaim_notify_user_info_entry_set_value(GaimNotifyUserInfoEntry *user_info_entry, const char *value)
+{
+	g_return_if_fail(user_info_entry != NULL);
+
+	if (value != user_info_entry->value)
+	{
+		g_free(user_info_entry->value);
+		user_info_entry->value = g_strdup(value);
+	}
+}
+
+GaimNotifyUserInfoEntryType
+gaim_notify_user_info_entry_get_type(GaimNotifyUserInfoEntry *user_info_entry)
+{
+	g_return_val_if_fail(user_info_entry != NULL, NULL);
+	
+	return user_info_entry->type;
+}
+
+void
+gaim_notify_user_info_entry_set_value(GaimNotifyUserInfoEntry *user_info_entry, GaimNotifyUserInfoEntryType type)
+{
+	g_return_if_fail(user_info_entry != NULL);
+
+	user_info_entry->type = type;
 }
 
 void
@@ -755,7 +795,8 @@ gaim_notify_init(void)
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
 						 gaim_value_new(GAIM_TYPE_STRING),
-						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_USERINFO));
 }
 
 void

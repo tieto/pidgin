@@ -444,6 +444,10 @@ void gaim_notify_user_info_destroy(GaimNotifyUserInfo *user_info);
 /**
  * Retrieve the array of GaimNotifyUserInfoEntry objects from a GaimNotifyUserInfo
  *
+ * This GList may be manipulated directly with normal GList functions such as g_list_insert(). Only 
+ * GaimNotifyUserInfoEntry are allowed in the list.  If a GaimNotifyUserInfoEntry item is added to the list,
+ * it should not be g_free()'d by the caller; GaimNotifyUserInfo will g_free it when destroyed.
+ *
  * @param user_info          The GaimNotifyUserInfo
  *
  * @result                   A GList of GaimNotifyUserInfoEntry objects
@@ -483,6 +487,23 @@ void gaim_notify_user_info_add_pair(GaimNotifyUserInfo *user_info, const char *l
 void gaim_notify_user_info_prepend_pair(GaimNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
+ * Create a new GaimNotifyUserInfoEntry
+ *
+ * If added to a GaimNotifyUserInfo object, this should not be free()'d, as GaimNotifyUserInfo will do so
+ * when destroyed.  gaim_notify_user_info_add_pair() and gaim_notify_user_info_prepend_pair() are convenience
+ * methods for creating entries and adding them to a GaimNotifyUserInfo.
+ *
+ * @param label              A label, which for example might be displayed by a UI with a colon after it ("Status:"). Do not include a colon.
+ *                           If NULL, value will be displayed without a label.
+ * @param value              The value, which might be displayed by a UI after the label.
+ *                           If NULL, label will still be displayed; the UI should then treat label as independent
+ *                           and not include a colon if it would otherwise.
+ *
+ * @result A new GaimNotifyUserInfoEntry
+ */
+GaimNotifyUserInfoEntry *gaim_notify_user_info_entry_new(const char *label, const char *value);
+
+/**
  * Add a section break.  A UI might display this as a horizontal line.
  *
  * @param user_info          The GaimNotifyUserInfo
@@ -512,6 +533,14 @@ void gaim_notify_user_info_remove_last_item(GaimNotifyUserInfo *user_info);
 gchar *gaim_notify_user_info_entry_get_label(GaimNotifyUserInfoEntry *user_info_entry);
 
 /**
+ * Set the label for a GaimNotifyUserInfoEntry
+ *
+ * @param user_info_entry     The GaimNotifyUserInfoEntry
+ * @param label			      The label
+ */
+void gaim_notify_user_info_entry_set_label(GaimNotifyUserInfoEntry *user_info_entry, const char *label);
+
+/**
  * Get the value for a GaimNotifyUserInfoEntry
  *
  * @param user_info_entry     The GaimNotifyUserInfoEntry
@@ -519,6 +548,33 @@ gchar *gaim_notify_user_info_entry_get_label(GaimNotifyUserInfoEntry *user_info_
  * @result                    The value
  */
 gchar *gaim_notify_user_info_entry_get_value(GaimNotifyUserInfoEntry *user_info_entry);
+
+/**
+ * Set the value for a GaimNotifyUserInfoEntry
+ *
+ * @param user_info_entry     The GaimNotifyUserInfoEntry
+ * @param value				  The value
+ */
+void gaim_notify_user_info_entry_set_value(GaimNotifyUserInfoEntry *user_info_entry, const char *value);
+
+
+/**
+ * Get the type of a GaimNotifyUserInfoEntry
+ *
+ * @param user_info_entry     The GaimNotifyUserInfoEntry
+ *
+ * @result					  The GaimNotifyUserInfoEntryType
+ */
+GaimNotifyUserInfoEntryType gaim_notify_user_info_entry_get_type(GaimNotifyUserInfoEntry *user_info_entry);
+
+/**
+ * Set the type of a GaimNotifyUserInfoEntry
+ *
+ * @param user_info_entry     The GaimNotifyUserInfoEntry
+ * @param					  The GaimNotifyUserInfoEntryType
+ */
+void gaim_notify_user_info_entry_set_type(GaimNotifyUserInfoEntry *user_info_entry,
+										  GaimNotifyUserInfoEntryType type);
 
 /**
  * Opens a URI or somehow presents it to the user.
