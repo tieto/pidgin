@@ -647,10 +647,10 @@ gaim_notify_user_info_prepend_pair(GaimNotifyUserInfo *user_info, const char *la
 }
 
 void
-gaim_notify_user_info_remove_entry(GaimNotifyUserInfo *user_info, GaimNotifyUserInfoEntry *user_info_entry)
+gaim_notify_user_info_remove_entry(GaimNotifyUserInfo *user_info, GaimNotifyUserInfoEntry *entry)
 {
 	g_return_if_fail(user_info != NULL);
-	g_return_if_fail(user_info_entry != NULL);
+	g_return_if_fail(entry != NULL);
 
 	user_info->user_info_entries = g_list_remove(user_info->user_info_entries, entry);
 }
