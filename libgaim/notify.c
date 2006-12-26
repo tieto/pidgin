@@ -475,7 +475,7 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 	return NULL;
 }
 
-static GaimNotifyUserInfoEntry *
+GaimNotifyUserInfoEntry *
 gaim_notify_user_info_entry_new(const char *label, const char *value)
 {
 	GaimNotifyUserInfoEntry *user_info_entry;
@@ -621,7 +621,7 @@ gaim_notify_user_info_entry_get_type(GaimNotifyUserInfoEntry *user_info_entry)
 }
 
 void
-gaim_notify_user_info_entry_set_value(GaimNotifyUserInfoEntry *user_info_entry, GaimNotifyUserInfoEntryType type)
+gaim_notify_user_info_entry_set_type(GaimNotifyUserInfoEntry *user_info_entry, GaimNotifyUserInfoEntryType type)
 {
 	g_return_if_fail(user_info_entry != NULL);
 
@@ -644,6 +644,15 @@ gaim_notify_user_info_prepend_pair(GaimNotifyUserInfo *user_info, const char *la
 
 	entry = gaim_notify_user_info_entry_new(label, value);
 	user_info->user_info_entries = g_list_prepend(user_info->user_info_entries, entry);
+}
+
+void
+gaim_notify_user_info_remove_entry(GaimNotifyUserInfo *user_info, GaimNotifyUserInfoEntry *user_info_entry)
+{
+	g_return_if_fail(user_info != NULL);
+	g_return_if_fail(user_info_entry != NULL);
+
+	user_info->user_info_entries = g_list_remove(user_info->user_info_entries, entry);
 }
 
 void

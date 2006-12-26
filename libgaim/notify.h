@@ -448,6 +448,8 @@ void gaim_notify_user_info_destroy(GaimNotifyUserInfo *user_info);
  * GaimNotifyUserInfoEntry are allowed in the list.  If a GaimNotifyUserInfoEntry item is added to the list,
  * it should not be g_free()'d by the caller; GaimNotifyUserInfo will g_free it when destroyed.
  *
+ * To remove a GaimNotifyUserInfoEntry, use gaim_notify_user_info_remove_entry(). Do not use the GList directly.
+ *
  * @param user_info          The GaimNotifyUserInfo
  *
  * @result                   A GList of GaimNotifyUserInfoEntry objects
@@ -463,7 +465,8 @@ GList *gaim_notify_user_info_get_entries(GaimNotifyUserInfo *user_info);
 char *gaim_notify_user_info_get_text_with_newline(GaimNotifyUserInfo *user_info, const char *newline);
 
 /**
- * Add a label/value pair to a GaimNotifyUserInfo object.  GaimNotifyUserInfo keeps track of the order in which pairs are added.
+ * Add a label/value pair to a GaimNotifyUserInfo object.
+ * GaimNotifyUserInfo keeps track of the order in which pairs are added.
  *
  * @param user_info          The GaimNotifyUserInfo
  * @param label              A label, which for example might be displayed by a UI with a colon after it ("Status:"). Do not include a colon.
@@ -486,6 +489,13 @@ void gaim_notify_user_info_add_pair(GaimNotifyUserInfo *user_info, const char *l
  */
 void gaim_notify_user_info_prepend_pair(GaimNotifyUserInfo *user_info, const char *label, const char *value);
 
+/**
+ * Remove a GaimNotifyUserInfoEntry from a GaimNotifyUserInfo object
+ *
+ * @param user_info          The GaimNotifyUserInfo
+ * @param user_info_entry    The GaimNotifyUserInfoEntry
+ */
+void gaim_notify_user_info_remove_entry(GaimNotifyUserInfo *user_info, GaimNotifyUserInfoEntry *user_info_entry);
 /**
  * Create a new GaimNotifyUserInfoEntry
  *
