@@ -393,7 +393,7 @@ if test "x$enable_consoleui" = "xyes"; then
 					# error get_wch not found!
 					#endif
 				], [
-					dir=location
+					dir=$location
 					if test x"$dir" != x"." ; then
 						GNT_CFLAGS="-I$dir/"
 					else
