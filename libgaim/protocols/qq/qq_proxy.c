@@ -156,7 +156,6 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	qd->logged_in = FALSE;
 	qd->channel = 1;
 	qd->uid = strtol(gaim_account_get_username(gaim_connection_get_account(gc)), NULL, 10);
-	qd->before_login_packets = g_queue_new();
 
 	/* now generate md5 processed passwd */
 	passwd = gaim_account_get_password(gaim_connection_get_account(gc));
@@ -432,6 +431,7 @@ gint qq_connect(GaimAccount *account, const gchar *host, guint16 port,
 		gboolean use_tcp, gboolean is_redirect)
 {
 	GaimConnection *gc;
+	qq_data *qd;
 
 	g_return_val_if_fail(host != NULL, -1);
 	g_return_val_if_fail(port > 0, -1);
@@ -441,6 +441,9 @@ gint qq_connect(GaimAccount *account, const gchar *host, guint16 port,
 
 	if (is_redirect)
 		_qq_common_clean(gc);
+
+	qd = (qq_data *) gc->proto_data;
+	qd->before_login_packets = g_queue_new();
 
 	return _proxy_connect_full(account, host, port, _qq_got_login, gc, use_tcp);
 }
