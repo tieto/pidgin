@@ -1309,8 +1309,7 @@ gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
 
 	if (box->active_row) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(box->active_row);
-		GtkTreeSelection *sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (box->tree_view));
-		gtk_tree_selection_select_path(sel, path);
+		gtk_tree_view_set_cursor(GTK_TREE_VIEW(box->tree_view), path, NULL, FALSE);
 		gtk_tree_path_free(path);
 	}
 }
