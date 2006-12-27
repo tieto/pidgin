@@ -78,68 +78,8 @@ void qq_sendqueue_free(qq_data *qd)
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", i);
 }
 
-/* packet lost, agree to send again.
- * it is removed only when ack-ed by server */
-static void _qq_send_again(gc_and_packet *gp)
-{
-	GaimConnection *gc;
-	qq_data *qd;
-	qq_sendpacket *packet;
-	GList *list;
-
-	g_return_if_fail(gp != NULL && gp->gc != NULL && gp->packet != NULL);
-	g_return_if_fail(gp->gc->proto_data != NULL);
-
-	gc = gp->gc;
-	packet = gp->packet;
-	qd = (qq_data *) gc->proto_data;
-
-	list = g_list_find(qd->sendqueue, packet);
-	if (list != NULL) {
-		packet->resend_times = 0;
-		packet->sendtime = time(NULL);
-		qq_proxy_write(qd, packet->buf, packet->len);
-	}
-	g_free(gp);
-}
-
-/* packet lost, do not send again */
-static void _qq_send_cancel(gc_and_packet *gp)
-{
-	GaimConnection *gc;
-	qq_data *qd;
-	qq_sendpacket *packet;
-	GList *list;
-
-	g_return_if_fail(gp != NULL && gp->gc != NULL && gp->packet != NULL);
-	g_return_if_fail(gp->gc->proto_data != NULL);
-
-	gc = gp->gc;
-	packet = gp->packet;
-	qd = (qq_data *) gc->proto_data;
-
-	list = g_list_find(qd->sendqueue, packet);
-	if (list != NULL)
-		qq_sendqueue_remove(qd, packet->send_seq);
-
-	g_free(gp);
-}
-
-static void _notify_packets_lost(GaimConnection *gc, const gchar *msg, qq_sendpacket *p)
-{
-	gc_and_packet *gp;
-
-	gp = g_new0(gc_and_packet, 1);
-	gp->gc = gc;
-	gp->packet = p;
-	gaim_request_action
-		(gc, NULL, _("Communication timed out"), msg,
-		0, gp, 2, _("Try again"), G_CALLBACK(_qq_send_again),
-		_("Cancel"), G_CALLBACK(_qq_send_cancel));
-	/* keep in sendqueue doing nothing until we hear back from the user */
-	p->resend_times++;
-}
-
+/* TODO drop get buddy list if we don't know about any buddies...
+ * I think the server won't ACK a get buddies request if we have none */
 gboolean qq_sendqueue_timeout_callback(gpointer data)
 {
 	GaimConnection *gc;
@@ -173,60 +113,28 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 	list = qd->sendqueue;
 	while (list != NULL) {
 		p = (qq_sendpacket *) list->data;
-		if (p->resend_times >= QQ_RESEND_MAX) {
-			if (p->resend_times == QQ_RESEND_MAX) {	/* reach max */
-				switch (p->cmd) {
-				case QQ_CMD_KEEP_ALIVE:
-					if (qd->logged_in) {
-						gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Connection lost!\n");
-						gaim_connection_error(gc, _("Connection lost"));
-						qd->logged_in = FALSE;
-					}
-					p->resend_times = -1;
-					break;
-				case QQ_CMD_LOGIN:
-				case QQ_CMD_REQUEST_LOGIN_TOKEN:
-					if (!qd->logged_in)	/* cancel logging progress */
-						gaim_connection_error(gc, _("Login failed, no reply"));
-					p->resend_times = -1;
-					break;
-				case QQ_CMD_UPDATE_INFO:
-					_notify_packets_lost(gc, 
-						_("Your attempt to update your info has timed out. Send the information again?"), p);
-					break;
-				case QQ_CMD_GET_USER_INFO:
-					_notify_packets_lost(gc, 
-						_("Your attempt to view a user's info has timed out. Try again?"), p);
-					break;
-				case QQ_CMD_ADD_FRIEND_WO_AUTH:
-					_notify_packets_lost(gc, 
-						_("Your attempt to add a buddy has timed out. Try again?"), p);
-					break;
-				case QQ_CMD_DEL_FRIEND:
-					_notify_packets_lost(gc, 
-						_("Your attempt to remove a buddy has timed out. Try again?"), p);
-					break;
-				case QQ_CMD_BUDDY_AUTH:
-					_notify_packets_lost(gc, 
-						_("Your attempt to add a buddy has timed out. Try again?"), p);
-					break;
-				case QQ_CMD_CHANGE_ONLINE_STATUS:
-					_notify_packets_lost(gc, 
-						_("Your attempt to change your online status has timed out. Send the information again?"), p);
-					break;
-				case QQ_CMD_SEND_IM:
-					_notify_packets_lost(gc, 
-						_("Your attempt to send an IM has timed out. Send it again?"), p);
-					break;
-				case QQ_CMD_REQUEST_KEY:
-					_notify_packets_lost(gc, 
-						_("Your request for a file transfer key has timed out. Request it again?"), p);
-					break;
-				default:{
-					p->resend_times = -1;	/* it will be removed next time */
-					gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s packet lost!\n", qq_get_cmd_desc(p->cmd));
-					}
+		if (p->resend_times == QQ_RESEND_MAX) {	/* reach max */
+			switch (p->cmd) {
+			case QQ_CMD_KEEP_ALIVE:
+				if (qd->logged_in) {
+					gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Connection lost!\n");
+					gaim_connection_error(gc, _("Connection lost"));
+					qd->logged_in = FALSE;
 				}
+				p->resend_times = -1;
+				break;
+			case QQ_CMD_LOGIN:
+			case QQ_CMD_REQUEST_LOGIN_TOKEN:
+				if (!qd->logged_in)	/* cancel login progress */
+					gaim_connection_error(gc, _("Login failed, no reply"));
+				p->resend_times = -1;
+				break;
+			default:{
+				gaim_debug(GAIM_DEBUG_WARNING, "QQ", 
+					"%s packet sent %d times but not acked. Resetting sendqueue life\n", 
+					qq_get_cmd_desc(p->cmd), QQ_RESEND_MAX);
+				}
+				p->resend_times = 0;
 			}
 		} else {	/* resend_times < QQ_RESEND_MAX, so sent it again */
 			wait_time = (gint) (QQ_SENDQUEUE_TIMEOUT / 1000);
