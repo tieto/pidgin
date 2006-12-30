@@ -129,9 +129,14 @@ update_plugin_list(void *data)
 		char *desc;
 		plug = probes->data;
 
-		if (plug->info->type != GAIM_PLUGIN_STANDARD ||
-			(plug->info->flags & GAIM_PLUGIN_FLAG_INVISIBLE))
-		{
+		if (plug->info->type == GAIM_PLUGIN_LOADER) {
+			GList *cur;
+			for (cur = GAIM_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
+					 cur = cur->next)
+				gaim_plugins_probe(cur->data);
+			continue;
+		} else if (plug->info->type != GAIM_PLUGIN_STANDARD ||
+			(plug->info->flags & GAIM_PLUGIN_FLAG_INVISIBLE)) {
 			continue;
 		}
 
