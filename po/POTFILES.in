@@ -23,7 +23,6 @@ console/libgnt/gntkeys.c
 console/libgnt/gntlabel.c
 console/libgnt/gntline.c
 console/libgnt/gntmain.c
-console/libgnt/gntmarshal.c
 console/libgnt/gntstyle.c
 console/libgnt/gnttextview.c
 console/libgnt/gnttree.c
