@@ -105,6 +105,8 @@ aim_srv_requestnew(OscarData *od, guint16 serviceid)
 	FlapConnection *conn;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
+	if(!conn)
+		return;
 
 	aim_genericreq_s(od, conn, 0x0001, 0x0004, &serviceid);
 }
@@ -584,6 +586,9 @@ aim_srv_setidle(OscarData *od, guint32 idletime)
 	FlapConnection *conn;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
+	if(!conn)
+		return;
+	
 	aim_genericreq_l(od, conn, 0x0001, 0x0011, &idletime);
 }
 
