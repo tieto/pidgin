@@ -21,6 +21,10 @@ T: 1998-2001
 E: josh a.t joshisanerd d.o.t com
 D: OFT/ODC (not quite finished yet..), random little things, Munger-At-Large, compile-time warnings.
 
+N: Daniel M. Pomerantz
+H: dmprantz
+D: Made initial versions cross platform
+
 N: Daniel Reed
 T: 1998-2001
 H: n, linuxkitty
