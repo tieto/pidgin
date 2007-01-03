@@ -119,9 +119,13 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 				theme->list = child;
 			list = child;
 		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
+			int len;
 			g_free(theme->name);
 			theme->name = g_strdup(i+ strlen("Name="));
-			theme->name[strlen(theme->name)-1] = 0;
+			len = strlen(theme->name);
+			theme->name[len-1] = 0;
+			if(len > 2 && theme->name[len-2] == '\r')
+				theme->name[len-2] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Description=", strlen("Description="))) {
 			g_free(theme->desc);
 			theme->desc = g_strdup(i + strlen("Description="));
