@@ -382,7 +382,8 @@ peer_oft_recv_frame_done(PeerConnection *conn, OftFrame *frame)
 	conn->watcher_incoming = 0;
 	conn->xfer->fd = conn->fd;
 	conn->fd = -1;
-	gaim_xfer_end(conn->xfer);
+	conn->disconnect_reason = OSCAR_DISCONNECT_DONE;
+	peer_connection_schedule_destroy(conn, conn->disconnect_reason, NULL);
 }
 
 /**
