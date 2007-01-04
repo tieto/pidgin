@@ -1008,9 +1008,6 @@ static void jabber_close(GaimConnection *gc)
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 {
-	GaimPresence *gpresence;
-	GaimStatus *status;
-
 	js->state = state;
 	switch(state) {
 		case JABBER_STREAM_OFFLINE:
@@ -1042,9 +1039,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			
 			break;
 		case JABBER_STREAM_CONNECTED:
-			gpresence = gaim_account_get_presence(js->gc->account);
-			status = gaim_presence_get_active_status(gpresence);
-			jabber_presence_send(js->gc->account, status);
 			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_disco_items_server(js);
 			break;

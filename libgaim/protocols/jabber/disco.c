@@ -27,6 +27,7 @@
 #include "iq.h"
 #include "disco.h"
 #include "jabber.h"
+#include "presence.h"
 #include "roster.h"
 
 struct _jabber_disco_info_cb_data {
@@ -215,6 +216,8 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 static void
 jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
+	GaimPresence *gpresence;
+	GaimStatus *status;
   	xmlnode *query, *child;
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
@@ -270,6 +273,10 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 
 	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
 		jabber_roster_request(js);
+
+	gpresence = gaim_account_get_presence(js->gc->account);
+	status = gaim_presence_get_active_status(gpresence);
+	jabber_presence_send(js->gc->account, status);	
 }
 
 static void
