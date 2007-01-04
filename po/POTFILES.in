@@ -1,5 +1,3 @@
-[encoding: UTF-8]
-
 gaim.desktop.in
 console/gntaccount.c
 console/gntblist.c
@@ -22,7 +20,6 @@ console/libgnt/gntentry.c
 console/libgnt/gntkeys.c
 console/libgnt/gntlabel.c
 console/libgnt/gntline.c
-console/libgnt/gntmain.c
 console/libgnt/gntstyle.c
 console/libgnt/gnttextview.c
 console/libgnt/gnttree.c
@@ -62,6 +59,7 @@ gtk/gtkutils.c
 gtk/gtkwhiteboard.c
 gtk/plugins/cap/cap.c
 gtk/plugins/contact_priority.c
+gtk/plugins/convcolors.c
 gtk/plugins/extplacement.c
 gtk/plugins/gaiminc.c
 gtk/plugins/gaimrc.c
@@ -76,6 +74,7 @@ gtk/plugins/gtk-signals-test.c
 gtk/plugins/history.c
 gtk/plugins/iconaway.c
 gtk/plugins/mailchk.c
+gtk/plugins/markerline.c
 gtk/plugins/musicmessaging/musicmessaging.c
 gtk/plugins/notify.c
 gtk/plugins/raw.c
@@ -97,6 +96,10 @@ libgaim/ft.c
 libgaim/gconf/gaim.schemas.in
 libgaim/log.c
 libgaim/plugin.c
+libgaim/plugins/autoaccept.c
+libgaim/plugins/autoreply.c
+libgaim/plugins/buddynote.c
+libgaim/plugins/ciphertest.c
 libgaim/plugins/dbus-example.c
 libgaim/plugins/filectl.c
 libgaim/plugins/idle.c
@@ -104,6 +107,8 @@ libgaim/plugins/ipc-test-client.c
 libgaim/plugins/ipc-test-server.c
 libgaim/plugins/log_reader.c
 libgaim/plugins/mono/loader/mono.c
+libgaim/plugins/newline.c
+libgaim/plugins/offlinemsg.c
 libgaim/plugins/perl/perl.c
 libgaim/plugins/psychic.c
 libgaim/plugins/signals-test.c
@@ -145,6 +150,8 @@ libgaim/protocols/msn/userlist.c
 libgaim/protocols/novell/nmuser.c
 libgaim/protocols/novell/novell.c
 libgaim/protocols/oscar/flap_connection.c
+libgaim/protocols/oscar/libaim.c
+libgaim/protocols/oscar/libicq.c
 libgaim/protocols/oscar/odc.c
 libgaim/protocols/oscar/oft.c
 libgaim/protocols/oscar/oscar.c
@@ -193,3 +200,5 @@ libgaim/savedstatuses.c
 libgaim/server.c
 libgaim/status.c
 libgaim/util.c
+
+ 	  	 
