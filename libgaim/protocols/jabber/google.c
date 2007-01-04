@@ -294,8 +294,11 @@ void jabber_google_roster_add_deny(GaimConnection *gc, const char *who)
 		GList *l = jb->resources;
 		while (l) {
 			jbr = l->data;
-			printf("ASDFA %s\n", jbr->name);
-			jabber_buddy_remove_resource(jb, jbr->name);
+			if (jbr && jbr->name)
+			{
+				gaim_debug(GAIM_DEBUG_MISC, "jabber", "Removing resource %s\n", jbr->name);
+				jabber_buddy_remove_resource(jb, jbr->name);
+			}
 			l = l->next;
 		}
 	}
