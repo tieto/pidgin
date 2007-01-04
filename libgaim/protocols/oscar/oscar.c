@@ -6308,18 +6308,21 @@ oscar_new_xfer(GaimConnection *gc, const char *who)
 	account = gaim_connection_get_account(gc);
 
 	xfer = gaim_xfer_new(account, GAIM_XFER_SEND, who);
-	gaim_xfer_ref(xfer);
-	gaim_xfer_set_init_fnc(xfer, peer_oft_sendcb_init);
-	gaim_xfer_set_cancel_send_fnc(xfer, peer_oft_cb_generic_cancel);
-	gaim_xfer_set_request_denied_fnc(xfer, peer_oft_cb_generic_cancel);
-	gaim_xfer_set_ack_fnc(xfer, peer_oft_sendcb_ack);
+	if (xfer)
+	{
+		gaim_xfer_ref(xfer);
+		gaim_xfer_set_init_fnc(xfer, peer_oft_sendcb_init);
+		gaim_xfer_set_cancel_send_fnc(xfer, peer_oft_cb_generic_cancel);
+		gaim_xfer_set_request_denied_fnc(xfer, peer_oft_cb_generic_cancel);
+		gaim_xfer_set_ack_fnc(xfer, peer_oft_sendcb_ack);
 
-	conn = peer_connection_new(od, OSCAR_CAPABILITY_SENDFILE, who);
-	conn->flags |= PEER_CONNECTION_FLAG_INITIATED_BY_ME;
-	conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
-	aim_icbm_makecookie(conn->cookie);
-	conn->xfer = xfer;
-	xfer->data = conn;
+		conn = peer_connection_new(od, OSCAR_CAPABILITY_SENDFILE, who);
+		conn->flags |= PEER_CONNECTION_FLAG_INITIATED_BY_ME;
+		conn->flags |= PEER_CONNECTION_FLAG_APPROVED;
+		aim_icbm_makecookie(conn->cookie);
+		conn->xfer = xfer;
+		xfer->data = conn;
+	}
 
 	return xfer;
 }

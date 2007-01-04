@@ -842,15 +842,17 @@ GaimXfer *jabber_si_new_xfer(GaimConnection *gc, const char *who)
 	js = gc->proto_data;
 
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
+	if (xfer)
+	{
+		xfer->data = jsx = g_new0(JabberSIXfer, 1);
+		jsx->js = js;
 
-	xfer->data = jsx = g_new0(JabberSIXfer, 1);
-	jsx->js = js;
+		gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+		gaim_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
+		gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
-	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-	gaim_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
-	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-
-	js->file_transfers = g_list_append(js->file_transfers, xfer);	
+		js->file_transfers = g_list_append(js->file_transfers, xfer);
+	}
 
 	return xfer;
 }
@@ -950,20 +952,23 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
 	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE, from);
-	xfer->data = jsx;
+	if (xfer)
+	{
+		xfer->data = jsx;
 
-	gaim_xfer_set_filename(xfer, filename);
-	if(filesize > 0)
-		gaim_xfer_set_size(xfer, filesize);
+		gaim_xfer_set_filename(xfer, filename);
+		if(filesize > 0)
+			gaim_xfer_set_size(xfer, filesize);
 
-	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-	gaim_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
-	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
-	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
+		gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+		gaim_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
+		gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
+		gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
-	js->file_transfers = g_list_append(js->file_transfers, xfer);
+		js->file_transfers = g_list_append(js->file_transfers, xfer);
 
-	gaim_xfer_request(xfer);
+		gaim_xfer_request(xfer);
+	}
 }
 
 

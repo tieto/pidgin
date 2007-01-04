@@ -339,31 +339,33 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE,
 							 slpcall->slplink->remote_user);
+		if (xfer)
+		{
+			bin = (char *)gaim_base64_decode(context, &bin_len);
+			file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
 
-		bin = (char *)gaim_base64_decode(context, &bin_len);
-		file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
+			uni_name = (gunichar2 *)(bin + 20);
+			while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {
+				*uni_name = GUINT16_FROM_LE(*uni_name);
+				uni_name++;
+			}
 
-		uni_name = (gunichar2 *)(bin + 20);
-		while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {
-			*uni_name = GUINT16_FROM_LE(*uni_name);
-			uni_name++;
+			file_name = g_utf16_to_utf8((const gunichar2 *)(bin + 20), -1,
+										NULL, NULL, NULL);
+
+			g_free(bin);
+
+			gaim_xfer_set_filename(xfer, file_name);
+			gaim_xfer_set_size(xfer, file_size);
+			gaim_xfer_set_init_fnc(xfer, msn_xfer_init);
+			gaim_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
+			gaim_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
+
+			slpcall->xfer = xfer;
+			xfer->data = slpcall;
+
+			gaim_xfer_request(xfer);
 		}
-
-		file_name = g_utf16_to_utf8((const gunichar2 *)(bin + 20), -1,
-									NULL, NULL, NULL);
-
-		g_free(bin);
-
-		gaim_xfer_set_filename(xfer, file_name);
-		gaim_xfer_set_size(xfer, file_size);
-		gaim_xfer_set_init_fnc(xfer, msn_xfer_init);
-		gaim_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
-		gaim_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
-
-		slpcall->xfer = xfer;
-		xfer->data = slpcall;
-
-		gaim_xfer_request(xfer);
 	}
 }
 

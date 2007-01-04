@@ -108,31 +108,34 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 	i++;
 
 	xfer = gaim_xfer_new(irc->account, GAIM_XFER_RECEIVE, from);
-	xd = g_new0(struct irc_xfer_rx_data, 1);
-	xfer->data = xd;
+	if (xfer)
+	{
+		xd = g_new0(struct irc_xfer_rx_data, 1);
+		xfer->data = xd;
 
-	gaim_xfer_set_filename(xfer, filename->str);
-	xfer->remote_port = atoi(token[i+1]);
+		gaim_xfer_set_filename(xfer, filename->str);
+		xfer->remote_port = atoi(token[i+1]);
 
-	nip = strtoul(token[i], NULL, 10);
-	if (nip) {
-		addr.s_addr = htonl(nip);
-		xd->ip = g_strdup(inet_ntoa(addr));
-	} else {
-		xd->ip = g_strdup(token[i]);
+		nip = strtoul(token[i], NULL, 10);
+		if (nip) {
+			addr.s_addr = htonl(nip);
+			xd->ip = g_strdup(inet_ntoa(addr));
+		} else {
+			xd->ip = g_strdup(token[i]);
+		}
+		gaim_debug(GAIM_DEBUG_INFO, "irc", "Receiving file from %s\n",
+				   xd->ip);
+		gaim_xfer_set_size(xfer, token[i+2] ? atoi(token[i+2]) : 0);
+		
+		gaim_xfer_set_init_fnc(xfer, irc_dccsend_recv_init);
+		gaim_xfer_set_ack_fnc(xfer, irc_dccsend_recv_ack);
+		
+		gaim_xfer_set_end_fnc(xfer, irc_dccsend_recv_destroy);
+		gaim_xfer_set_request_denied_fnc(xfer, irc_dccsend_recv_destroy);
+		gaim_xfer_set_cancel_send_fnc(xfer, irc_dccsend_recv_destroy);
+		
+		gaim_xfer_request(xfer);
 	}
-	gaim_debug(GAIM_DEBUG_INFO, "irc", "Receiving file from %s\n",
-		xd->ip);
-	gaim_xfer_set_size(xfer, token[i+2] ? atoi(token[i+2]) : 0);
-
-	gaim_xfer_set_init_fnc(xfer, irc_dccsend_recv_init);
-	gaim_xfer_set_ack_fnc(xfer, irc_dccsend_recv_ack);
-
-	gaim_xfer_set_end_fnc(xfer, irc_dccsend_recv_destroy);
-	gaim_xfer_set_request_denied_fnc(xfer, irc_dccsend_recv_destroy);
-	gaim_xfer_set_cancel_send_fnc(xfer, irc_dccsend_recv_destroy);
-
-	gaim_xfer_request(xfer);
 	g_strfreev(token);
 	g_string_free(filename, TRUE);
 }
@@ -344,17 +347,19 @@ GaimXfer *irc_dccsend_new_xfer(GaimConnection *gc, const char *who) {
 
 	/* Build the file transfer handle */
 	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, who);
+	if (xfer)
+	{
+		xd = g_new0(struct irc_xfer_send_data, 1);
+		xd->fd = -1;
+		xfer->data = xd;
 
-	xd = g_new0(struct irc_xfer_send_data, 1);
-	xd->fd = -1;
-	xfer->data = xd;
-
-	/* Setup our I/O op functions */
-	gaim_xfer_set_init_fnc(xfer, irc_dccsend_send_init);
-	gaim_xfer_set_write_fnc(xfer, irc_dccsend_send_write);
-	gaim_xfer_set_end_fnc(xfer, irc_dccsend_send_destroy);
-	gaim_xfer_set_request_denied_fnc(xfer, irc_dccsend_send_destroy);
-	gaim_xfer_set_cancel_send_fnc(xfer, irc_dccsend_send_destroy);
+		/* Setup our I/O op functions */
+		gaim_xfer_set_init_fnc(xfer, irc_dccsend_send_init);
+		gaim_xfer_set_write_fnc(xfer, irc_dccsend_send_write);
+		gaim_xfer_set_end_fnc(xfer, irc_dccsend_send_destroy);
+		gaim_xfer_set_request_denied_fnc(xfer, irc_dccsend_send_destroy);
+		gaim_xfer_set_cancel_send_fnc(xfer, irc_dccsend_send_destroy);
+	}
 
 	return xfer;
 }

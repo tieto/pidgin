@@ -215,25 +215,28 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 
 	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE,
 			xmlnode_get_attrib(packet, "from"));
-	xfer->data = jox;
+	if (xfer)
+	{
+		xfer->data = jox;
 
-	if(!(filename = g_strdup(g_strrstr(jox->page, "/"))))
-		filename = g_strdup(jox->page);
+		if(!(filename = g_strdup(g_strrstr(jox->page, "/"))))
+			filename = g_strdup(jox->page);
 
-	gaim_xfer_set_filename(xfer, filename);
+		gaim_xfer_set_filename(xfer, filename);
 
-	g_free(filename);
+		g_free(filename);
 
-	gaim_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
-	gaim_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
-	gaim_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
-	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
-	gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
-	gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
+		gaim_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
+		gaim_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
+		gaim_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
+		gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
+		gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
+		gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
 
-	js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
+		js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
 
-	gaim_xfer_request(xfer);
+		gaim_xfer_request(xfer);
+	}
 }
 
 

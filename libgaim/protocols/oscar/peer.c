@@ -1022,52 +1022,55 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 		gchar *filename;
 
 		conn->xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE, sn);
-		conn->xfer->data = conn;
-		gaim_xfer_ref(conn->xfer);
-		gaim_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
-
-		/* Set the file name */
-		if (g_utf8_validate(args->info.sendfile.filename, -1, NULL))
-			filename = g_strdup(args->info.sendfile.filename);
-		else
-			filename = gaim_utf8_salvage(args->info.sendfile.filename);
-
-		if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR)
+		if (conn->xfer)
 		{
+			conn->xfer->data = conn;
+			gaim_xfer_ref(conn->xfer);
+			gaim_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
+
+			/* Set the file name */
+			if (g_utf8_validate(args->info.sendfile.filename, -1, NULL))
+				filename = g_strdup(args->info.sendfile.filename);
+			else
+				filename = gaim_utf8_salvage(args->info.sendfile.filename);
+
+			if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR)
+			{
+				/*
+				 * If they are sending us a directory then the last character
+				 * of the file name will be an asterisk.  We don't want to
+				 * save stuff to a directory named "*" so we remove the
+				 * asterisk from the file name.
+				 */
+				char *tmp = strrchr(filename, '\\');
+				if ((tmp != NULL) && (tmp[1] == '*'))
+					tmp[0] = '\0';
+			}
+			gaim_xfer_set_filename(conn->xfer, filename);
+			g_free(filename);
+
 			/*
-			 * If they are sending us a directory then the last character
-			 * of the file name will be an asterisk.  We don't want to
-			 * save stuff to a directory named "*" so we remove the
-			 * asterisk from the file name.
+			 * Set the message, unless this is the dummy message from an
+			 * ICQ client or an empty message from an AIM client.
+			 * TODO: Maybe we should strip HTML and then see if strlen>0?
 			 */
-			char *tmp = strrchr(filename, '\\');
-			if ((tmp != NULL) && (tmp[1] == '*'))
-				tmp[0] = '\0';
+			if ((message != NULL) &&
+				(g_ascii_strncasecmp(message, "<ICQ_COOL_FT>", 13) != 0) &&
+				(g_ascii_strcasecmp(message, "<HTML>") != 0))
+			{
+				gaim_xfer_set_message(conn->xfer, message);
+			}
+
+			/* Setup our I/O op functions */
+			gaim_xfer_set_init_fnc(conn->xfer, peer_oft_recvcb_init);
+			gaim_xfer_set_end_fnc(conn->xfer, peer_oft_recvcb_end);
+			gaim_xfer_set_request_denied_fnc(conn->xfer, peer_oft_cb_generic_cancel);
+			gaim_xfer_set_cancel_recv_fnc(conn->xfer, peer_oft_cb_generic_cancel);
+			gaim_xfer_set_ack_fnc(conn->xfer, peer_oft_recvcb_ack_recv);
+
+			/* Now perform the request */
+			gaim_xfer_request(conn->xfer);
 		}
-		gaim_xfer_set_filename(conn->xfer, filename);
-		g_free(filename);
-
-		/*
-		 * Set the message (unless this is the dummy message from an
-		 * ICQ client or an empty message from an AIM client.
-		 * TODO: Maybe we should strip HTML and then see if strlen>0?
-		 */
-		if ((message != NULL) &&
-			(g_ascii_strncasecmp(message, "<ICQ_COOL_FT>", 13) != 0) &&
-			(g_ascii_strcasecmp(message, "<HTML>") != 0))
-		{
-			gaim_xfer_set_message(conn->xfer, message);
-		}
-
-		/* Setup our I/O op functions */
-		gaim_xfer_set_init_fnc(conn->xfer, peer_oft_recvcb_init);
-		gaim_xfer_set_end_fnc(conn->xfer, peer_oft_recvcb_end);
-		gaim_xfer_set_request_denied_fnc(conn->xfer, peer_oft_cb_generic_cancel);
-		gaim_xfer_set_cancel_recv_fnc(conn->xfer, peer_oft_cb_generic_cancel);
-		gaim_xfer_set_ack_fnc(conn->xfer, peer_oft_recvcb_ack_recv);
-
-		/* Now perform the request */
-		gaim_xfer_request(conn->xfer);
 	}
 }
 

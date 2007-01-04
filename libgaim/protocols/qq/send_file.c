@@ -841,19 +841,22 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 	xfer = gaim_xfer_new(gaim_connection_get_account(gc),
 			GAIM_XFER_RECEIVE,
 			sender_name);
-	gaim_xfer_set_filename(xfer, fileinfo[0]);
-	gaim_xfer_set_size(xfer, atoi(fileinfo[1]));
+	if (xfer)
+	{
+		gaim_xfer_set_filename(xfer, fileinfo[0]);
+		gaim_xfer_set_size(xfer, atoi(fileinfo[1]));
 
-	gaim_xfer_set_init_fnc(xfer, _qq_xfer_recv_init);
-	gaim_xfer_set_request_denied_fnc(xfer, _qq_xfer_cancel);
-	gaim_xfer_set_cancel_recv_fnc(xfer, _qq_xfer_cancel);
-	gaim_xfer_set_end_fnc(xfer, _qq_xfer_end);
-	gaim_xfer_set_write_fnc(xfer, _qq_xfer_write);
+		gaim_xfer_set_init_fnc(xfer, _qq_xfer_recv_init);
+		gaim_xfer_set_request_denied_fnc(xfer, _qq_xfer_cancel);
+		gaim_xfer_set_cancel_recv_fnc(xfer, _qq_xfer_cancel);
+		gaim_xfer_set_end_fnc(xfer, _qq_xfer_end);
+		gaim_xfer_set_write_fnc(xfer, _qq_xfer_write);
 
-	xfer->data = info;
-	qd->xfer = xfer;
+		xfer->data = info;
+		qd->xfer = xfer;
 
-	gaim_xfer_request(xfer);
+		gaim_xfer_request(xfer);
+	}
 
 	g_free(sender_name);
 	g_strfreev(fileinfo);
@@ -920,12 +923,15 @@ void qq_send_file(GaimConnection *gc, const char *who, const char *file)
 
 	xfer = gaim_xfer_new (gc->account, GAIM_XFER_SEND,
 			      who);
-	gaim_xfer_set_init_fnc (xfer, _qq_xfer_init);
-	gaim_xfer_set_cancel_send_fnc (xfer, _qq_xfer_cancel);
-	gaim_xfer_set_write_fnc(xfer, _qq_xfer_write);
+	if (xfer)
+	{
+		gaim_xfer_set_init_fnc (xfer, _qq_xfer_init);
+		gaim_xfer_set_cancel_send_fnc (xfer, _qq_xfer_cancel);
+		gaim_xfer_set_write_fnc(xfer, _qq_xfer_write);
 
-	qd->xfer = xfer;
-	gaim_xfer_request (xfer);
+		qd->xfer = xfer;
+		gaim_xfer_request(xfer);
+	}
 }
 
 /*

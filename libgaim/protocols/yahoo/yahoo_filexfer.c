@@ -575,43 +575,46 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	/* Build the file transfer handle. */
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, from);
-	xfer->data = xfer_data;
+	if (xfer)
+	{
+		xfer->data = xfer_data;
 
-	/* Set the info about the incoming file. */
-	if (filename) {
-		char *utf8_filename = yahoo_string_decode(gc, filename, TRUE);
-		gaim_xfer_set_filename(xfer, utf8_filename);
-		g_free(utf8_filename);
-	} else {
-		gchar *start, *end;
-	 	start = g_strrstr(xfer_data->path, "/");
-		if (start)
-			start++;
-		end = g_strrstr(xfer_data->path, "?");
-		if (start && *start && end) {
-			char *utf8_filename;
-			filename = g_strndup(start, end - start);
-			utf8_filename = yahoo_string_decode(gc, filename, TRUE);
-			g_free(filename);
+		/* Set the info about the incoming file. */
+		if (filename) {
+			char *utf8_filename = yahoo_string_decode(gc, filename, TRUE);
 			gaim_xfer_set_filename(xfer, utf8_filename);
 			g_free(utf8_filename);
-			filename = NULL;
+		} else {
+			gchar *start, *end;
+			start = g_strrstr(xfer_data->path, "/");
+			if (start)
+				start++;
+			end = g_strrstr(xfer_data->path, "?");
+			if (start && *start && end) {
+				char *utf8_filename;
+				filename = g_strndup(start, end - start);
+				utf8_filename = yahoo_string_decode(gc, filename, TRUE);
+				g_free(filename);
+				gaim_xfer_set_filename(xfer, utf8_filename);
+				g_free(utf8_filename);
+				filename = NULL;
+			}
 		}
+
+		gaim_xfer_set_size(xfer, filesize);
+
+		/* Setup our I/O op functions */
+		gaim_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
+		gaim_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
+		gaim_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
+		gaim_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
+		gaim_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
+		gaim_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
+		gaim_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
+
+		/* Now perform the request */
+		gaim_xfer_request(xfer);
 	}
-
-	gaim_xfer_set_size(xfer, filesize);
-
-	/* Setup our I/O op functions */
-	gaim_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
-	gaim_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
-	gaim_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
-	gaim_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
-	gaim_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
-	gaim_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
-	gaim_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
-
-	/* Now perform the request */
-	gaim_xfer_request(xfer);
 }
 
 GaimXfer *yahoo_new_xfer(GaimConnection *gc, const char *who)
@@ -626,16 +629,19 @@ GaimXfer *yahoo_new_xfer(GaimConnection *gc, const char *who)
 	
 	/* Build the file transfer handle. */
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
-	xfer->data = xfer_data;
-	
-	/* Setup our I/O op functions */
-	gaim_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
-	gaim_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
-	gaim_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
-	gaim_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
-	gaim_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
-	gaim_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
-	gaim_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
+	if (xfer)
+	{
+		xfer->data = xfer_data;
+
+		/* Setup our I/O op functions */
+		gaim_xfer_set_init_fnc(xfer,        yahoo_xfer_init);
+		gaim_xfer_set_start_fnc(xfer,       yahoo_xfer_start);
+		gaim_xfer_set_end_fnc(xfer,         yahoo_xfer_end);
+		gaim_xfer_set_cancel_send_fnc(xfer, yahoo_xfer_cancel_send);
+		gaim_xfer_set_cancel_recv_fnc(xfer, yahoo_xfer_cancel_recv);
+		gaim_xfer_set_read_fnc(xfer,        yahoo_xfer_read);
+		gaim_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
+	}
 
 	return xfer;
 }

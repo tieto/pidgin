@@ -2116,20 +2116,22 @@ static void mw_ft_offered(struct mwFileTransfer *ft) {
   DEBUG_INFO(" text: %s\n", NSTR(mwFileTransfer_getMessage(ft)));
 
   xfer = gaim_xfer_new(acct, GAIM_XFER_RECEIVE, who);
+  if (xfer)
+  {
+	gaim_xfer_ref(xfer);
+	mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) gaim_xfer_unref);
+	xfer->data = ft;
 
-  gaim_xfer_ref(xfer);
-  mwFileTransfer_setClientData(ft, xfer, (GDestroyNotify) gaim_xfer_unref);
-  xfer->data = ft;
+	gaim_xfer_set_init_fnc(xfer, ft_incoming_init);
+	gaim_xfer_set_cancel_recv_fnc(xfer, ft_incoming_cancel);
+	gaim_xfer_set_request_denied_fnc(xfer, ft_incoming_cancel);
 
-  gaim_xfer_set_init_fnc(xfer, ft_incoming_init);
-  gaim_xfer_set_cancel_recv_fnc(xfer, ft_incoming_cancel);
-  gaim_xfer_set_request_denied_fnc(xfer, ft_incoming_cancel);
+	gaim_xfer_set_filename(xfer, mwFileTransfer_getFileName(ft));
+	gaim_xfer_set_size(xfer, mwFileTransfer_getFileSize(ft));
+	gaim_xfer_set_message(xfer, mwFileTransfer_getMessage(ft));
 
-  gaim_xfer_set_filename(xfer, mwFileTransfer_getFileName(ft));
-  gaim_xfer_set_size(xfer, mwFileTransfer_getFileSize(ft));
-  gaim_xfer_set_message(xfer, mwFileTransfer_getMessage(ft));
-
-  gaim_xfer_request(xfer);
+	gaim_xfer_request(xfer);
+  }
 }
 
 
@@ -5056,9 +5058,12 @@ static GaimXfer *mw_prpl_new_xfer(GaimConnection *gc, const char *who) {
   acct = gaim_connection_get_account(gc);
 
   xfer = gaim_xfer_new(acct, GAIM_XFER_SEND, who);
-  gaim_xfer_set_init_fnc(xfer, ft_outgoing_init);
-  gaim_xfer_set_cancel_send_fnc(xfer, ft_outgoing_cancel);
-  
+  if (xfer)
+  {
+    gaim_xfer_set_init_fnc(xfer, ft_outgoing_init);
+    gaim_xfer_set_cancel_send_fnc(xfer, ft_outgoing_cancel);
+  }
+
   return xfer;
 }
 
