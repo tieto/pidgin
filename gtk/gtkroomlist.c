@@ -129,8 +129,15 @@ static void list_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 
 	gtk_container_add(GTK_CONTAINER(dialog->sw), rl->tree);
 
-	gtk_widget_set_sensitive(dialog->stop_button, TRUE);
-	gtk_widget_set_sensitive(dialog->list_button, FALSE);
+	/* some protocols (not bundled with libgaim) finish getting their
+	 * room list immediately */
+	if(gaim_roomlist_get_in_progress(dialog->roomlist)) {
+		gtk_widget_set_sensitive(dialog->stop_button, TRUE);
+		gtk_widget_set_sensitive(dialog->list_button, FALSE);
+	} else {
+		gtk_widget_set_sensitive(dialog->stop_button, FALSE);
+		gtk_widget_set_sensitive(dialog->list_button, TRUE);
+	}
 	gtk_widget_set_sensitive(dialog->add_button, FALSE);
 	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
