@@ -341,7 +341,18 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 	tmp = xmlnode_get_data(controlURLNode);
 	if(baseURL && !gaim_str_has_prefix(tmp, "http://") &&
 	   !gaim_str_has_prefix(tmp, "HTTP://")) {
-		controlURL = g_strdup_printf("%s%s", baseURL, tmp);
+		/* Handle absolute paths in a relative URL.  This probably
+		 * belongs in util.c. */
+		if (tmp[0] == '/') {
+			size_t length;
+			const char *path, *start = strstr(baseURL, "://");
+			start = start ? start + 3 : baseURL;
+			path = strchr(start, '/');
+			length = path ? path - baseURL : strlen(baseURL);
+			controlURL = g_strdup_printf("%.*s%s", length, baseURL, tmp);
+		} else {
+			controlURL = g_strdup_printf("%s%s", baseURL, tmp);
+		}
 		g_free(tmp);
 	}else{
 		controlURL = tmp;
