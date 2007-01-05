@@ -33,7 +33,7 @@
 #define QQ_PACKET_TAG           0x02	/* all QQ text packets starts with it */
 #define QQ_PACKET_TAIL          0x03	/* all QQ text packets end with it */
 
-#define QQ_CLIENT       0x0E1B
+#define QQ_CLIENT       0x0f5f
 
 /* list of known QQ commands */
 enum {
