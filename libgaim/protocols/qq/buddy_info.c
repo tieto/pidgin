@@ -555,15 +555,20 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 {
 	gchar *icon;
 	gint icon_num;
+	gint icon_len;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const gchar *icon_path = gaim_account_get_buddy_icon_path(account);
 	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
 	gint dir_len = strlen(buddy_icon_dir);
-	gint icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
 	gchar *errmsg = g_strconcat(_("You are attempting to set a custom face. Gaim currently only allows the standard faces. Please choose an image from "), buddy_icon_dir, ".", NULL);
 	gboolean icon_global = gaim_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
+
+	if (!icon_path)
+		icon_path = "";
+
+	icon_len = strlen(icon_path) - dir_len - 1 - prefix_len - suffix_len;
 
 	/* make sure we're using an appropriate icon */
 	if (!(g_ascii_strncasecmp(icon_path, buddy_icon_dir, dir_len) == 0
