@@ -1017,8 +1017,10 @@ gaim_prefs_connect_callback(void *handle, const char *name, GaimPrefCallback fun
 	g_return_val_if_fail(func != NULL, 0);
 
 	pref = find_pref(name);
-	if (pref == NULL)
+	if (pref == NULL) {
+		gaim_debug_error("prefs", "gaim_prefs_connect_callback: Unknown pref %s\n", name);
 		return 0;
+	}
 
 	cb = g_new0(struct pref_cb, 1);
 
