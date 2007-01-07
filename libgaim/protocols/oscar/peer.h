@@ -29,6 +29,7 @@
 #include "network.h"
 #include "proxy.h"
 
+typedef struct _ChecksumData          ChecksumData;
 typedef struct _OdcFrame              OdcFrame;
 typedef struct _OftFrame              OftFrame;
 typedef struct _ProxyFrame            ProxyFrame;
@@ -205,6 +206,11 @@ struct _PeerConnection
 	guint16 port;
 	gboolean use_proxy;
 
+	/**
+	 * Checksumming
+	 */
+	ChecksumData *checksum_data;
+
 	/* TODOFT */
 	GaimXfer *xfer;
 	OftFrame xferdata;
@@ -253,6 +259,7 @@ void peer_odc_send_im(PeerConnection *conn, const char *msg, int len, int encodi
 void peer_oft_close(PeerConnection *conn);
 void peer_oft_recv_frame(PeerConnection *conn, ByteStream *bs);
 void peer_oft_send_prompt(PeerConnection *conn);
+void peer_oft_checksum_destroy(ChecksumData *checksum_data);
 
 /* Xfer callbacks for receiving a file */
 void peer_oft_recvcb_init(GaimXfer *xfer);

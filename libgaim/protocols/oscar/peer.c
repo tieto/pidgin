@@ -206,6 +206,9 @@ peer_connection_destroy_cb(gpointer data)
 
 	peer_connection_close(conn);
 
+	if (conn->checksum_data != NULL)
+		peer_oft_checksum_destroy(conn->checksum_data);
+
 	if (conn->xfer != NULL)
 	{
 		GaimXferStatusType status;

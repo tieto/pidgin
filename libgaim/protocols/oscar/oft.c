@@ -58,6 +58,31 @@
 
 #include "util.h"
 
+#define CHECKSUM_BUFFER_SIZE 256 * 1024
+
+struct _ChecksumData
+{
+	PeerConnection *conn;
+	GaimXfer *xfer;
+	GSourceFunc callback;
+	size_t size;
+	guint32 checksum;
+	size_t total;
+	FILE *file;
+	guint8 buffer[CHECKSUM_BUFFER_SIZE];
+	guint timer;
+};
+
+void
+peer_oft_checksum_destroy(ChecksumData *checksum_data)
+{
+	checksum_data->conn->checksum_data = NULL;
+	fclose(checksum_data->file);
+	if (checksum_data->timer > 0)
+		gaim_timeout_remove(checksum_data->timer);
+	g_free(checksum_data);
+}
+
 /**
  * Calculate oft checksum of buffer
  *
@@ -78,16 +103,29 @@
  * @param buffer Buffer of data to checksum.  Man I'd like to buff her...
  * @param bufsize Size of buffer.
  * @param prevchecksum Previous checksum.
+ * @param odd Whether an odd number of bytes have been processed before this call
  */
 static guint32
-peer_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevchecksum)
+peer_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevchecksum, int odd)
 {
 	guint32 checksum, oldchecksum;
-	int i;
+	int i = 0;
 	unsigned short val;
 
 	checksum = (prevchecksum >> 16) & 0xffff;
-	for (i = 0; i < bufferlen; i++)
+	if (odd)
+	{
+		/*
+		 * This is one hell of a hack, but it should always work.
+		 * Essentially, I am reindexing the array so that index 1
+		 * is the first element.  Since the odd and even bytes are
+		 * detected by the index number.
+		 */
+		i = 1;
+		bufferlen++;
+		buffer--;
+	}
+	for (; i < bufferlen; i++)
 	{
 		oldchecksum = checksum;
 		if (i & 1)
@@ -107,24 +145,83 @@ peer_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevchecksu
 	return checksum << 16;
 }
 
-static guint32
-peer_oft_checksum_file(char *filename)
+static gboolean
+peer_oft_checksum_file_piece(gpointer data)
 {
-	FILE *fd;
-	guint32 checksum = 0xffff0000;
+	ChecksumData *checksum_data;
+	gboolean repeat;
 
-	if ((fd = fopen(filename, "rb")))
+	checksum_data = data;
+	repeat = FALSE;
+
+	if (checksum_data->total < checksum_data->size)
 	{
-		int bytes;
-		guint8 *buffer = g_malloc(65536);
+		size_t bytes = MIN(CHECKSUM_BUFFER_SIZE,
+				checksum_data->size - checksum_data->total);
 
-		while ((bytes = fread(buffer, 1, 65536, fd)) != 0)
-			checksum = peer_oft_checksum_chunk(buffer, bytes, checksum);
-		g_free(buffer);
-		fclose(fd);
+		bytes = fread(checksum_data->buffer, 1, bytes, checksum_data->file);
+		if (bytes != 0)
+		{
+			checksum_data->checksum = peer_oft_checksum_chunk(checksum_data->buffer, bytes, checksum_data->checksum, checksum_data->total & 1);
+			checksum_data->total += bytes;
+			repeat = TRUE;
+		}
 	}
 
-	return checksum;
+	if (!repeat)
+	{
+		gaim_debug_info("oscar", "Checksum of %s calculated\n",
+				gaim_xfer_get_local_filename(checksum_data->xfer));
+		if (checksum_data->callback != NULL)
+			checksum_data->callback(checksum_data);
+		peer_oft_checksum_destroy(checksum_data);
+	}
+
+	return repeat;
+}
+
+/**
+ * Calculate oft checksum of a file in a series of calls to
+ * peer_oft_checksum_file_piece().  We do it this way because
+ * calculating the checksum on large files can take a long time,
+ * and we want to return control to the UI so that the application
+ * doesn't appear completely frozen.
+ *
+ * @param conn The connection used for this file transfer.
+ * @param xfer The file transfer needing this checksum.
+ * @param callback The function to call upon calculation of the checksum.
+ * @param size The maximum size to check.
+ */
+
+static void
+peer_oft_checksum_file(PeerConnection *conn, GaimXfer *xfer, GSourceFunc callback, size_t size)
+{
+	ChecksumData *checksum_data;
+
+	gaim_debug_info("oscar", "Calculating checksum of %s\n",
+			gaim_xfer_get_local_filename(xfer));
+
+	checksum_data = g_malloc0(sizeof(ChecksumData));
+	checksum_data->conn = conn;
+	checksum_data->xfer = xfer;
+	checksum_data->callback = callback;
+	checksum_data->size = size;
+	checksum_data->checksum = 0xffff0000;
+	checksum_data->file = fopen(gaim_xfer_get_local_filename(xfer), "rb");
+
+	if (checksum_data->file == NULL)
+	{
+		gaim_debug_error("oscar", "Unable to open %s for checksumming: %s\n",
+				gaim_xfer_get_local_filename(xfer), strerror(errno));
+		callback(checksum_data);
+		g_free(checksum_data);
+	}
+	else
+	{
+		checksum_data->timer = gaim_timeout_add(10,
+				peer_oft_checksum_file_piece, checksum_data);
+		conn->checksum_data = checksum_data;
+	}
 }
 
 static void
@@ -341,6 +438,32 @@ peer_oft_recv_frame_ack(PeerConnection *conn, OftFrame *frame)
 			start_transfer_when_done_sending_data, conn);
 }
 
+static gboolean
+peer_oft_recv_frame_resume_checksum_calculated_cb(gpointer data)
+{
+	ChecksumData *checksum_data;
+	PeerConnection *conn;
+
+	checksum_data = data;
+	conn = checksum_data->conn;
+
+	/* Check the checksums here.  If not match, don't allow resume */
+	if (checksum_data->checksum != conn->xferdata.recvcsum || checksum_data->total != conn->xferdata.nrecvd)
+	{
+		/* Reset internal structure */
+		conn->xferdata.recvcsum = 0xffff0000;
+		conn->xferdata.rfrcsum = 0xffff0000;
+		conn->xferdata.nrecvd = 0;
+	}
+	else
+		/* Accept the change */
+		gaim_xfer_set_bytes_sent(checksum_data->xfer, conn->xferdata.nrecvd);
+
+	peer_oft_send_resume_accept(conn);
+
+	return FALSE;
+}
+
 /**
  * We are sending a file to someone else.  They have just acknowledged our
  * prompt and are asking to resume, so we accept their resume and await
@@ -357,18 +480,14 @@ peer_oft_recv_frame_resume(PeerConnection *conn, OftFrame *frame)
 		return;
 	}
 
-	/*
-	 * TODO: Check the checksums here.  If they don't match then don't
-	 *       copy the data like below.
-	 */
-
 	/* Copy resume data into internal structure */
 	conn->xferdata.recvcsum = frame->recvcsum;
 	conn->xferdata.rfrcsum = frame->rfrcsum;
 	conn->xferdata.nrecvd = frame->nrecvd;
 
-	gaim_xfer_set_bytes_sent(conn->xfer, frame->nrecvd);
-	peer_oft_send_resume_accept(conn);
+	peer_oft_checksum_file(conn, conn->xfer,
+			peer_oft_recv_frame_resume_checksum_calculated_cb,
+			frame->nrecvd);
 }
 
 /*
@@ -491,7 +610,7 @@ peer_oft_recvcb_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t size)
 	/* Update our rolling checksum.  Like Walmart, yo. */
 	conn = xfer->data;
 	conn->xferdata.recvcsum = peer_oft_checksum_chunk(buffer,
-			size, conn->xferdata.recvcsum);
+			size, conn->xferdata.recvcsum, gaim_xfer_get_bytes_sent(xfer) & 1);
 }
 
 /*******************************************************************/
@@ -501,6 +620,23 @@ peer_oft_recvcb_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t size)
 /*******************************************************************/
 /* Begin GaimXfer callbacks for use when sending a file            */
 /*******************************************************************/
+
+static gboolean
+peer_oft_checksum_calculated_cb(gpointer data)
+{
+	ChecksumData *checksum_data;
+	PeerConnection *conn;
+
+	checksum_data = data;
+	conn = checksum_data->conn;
+
+	conn->xferdata.checksum = checksum_data->checksum;
+
+	/* Start the connection process */
+	peer_connection_trynext(checksum_data->conn);
+
+	return FALSE;
+}
 
 void
 peer_oft_sendcb_init(GaimXfer *xfer)
@@ -548,13 +684,8 @@ peer_oft_sendcb_init(GaimXfer *xfer)
 	conn->xferdata.name = (guchar *)g_strdup(xfer->filename);
 	conn->xferdata.name_length = strlen(xfer->filename);
 
-	/* Calculating the checksum can take a very long time for large files */
-	gaim_debug_info("oscar","calculating file checksum\n");
-	conn->xferdata.checksum = peer_oft_checksum_file(xfer->local_filename);
-	gaim_debug_info("oscar","checksum calculated\n");
-
-	/* Start the connection process */
-	peer_connection_trynext(conn);
+	peer_oft_checksum_file(conn, xfer,
+			peer_oft_checksum_calculated_cb, G_MAXUINT32);
 }
 
 /*
