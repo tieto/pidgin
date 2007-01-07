@@ -1983,7 +1983,10 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	path = gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL);
+	if (gaim_account_get_bool(account, "use-global-buddyicon", TRUE))
+		path = gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon");
+	else
+		path = gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL);
 	if (path != NULL)
 		statusicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
 	else
@@ -2215,6 +2218,16 @@ account_modified_cb(GaimAccount *account, AccountsWindow *window)
 	set_account(window->model, &iter, account);
 }
 
+static void
+global_buddyicon_changed(const char *name, GaimPrefType type,
+			gconstpointer value, gpointer window)
+{
+	GList *list;
+	for (list = gaim_accounts_get_all(); list; list = list->next) {
+		account_modified_cb(list->data, window);
+	}
+}
+
 void
 gaim_gtk_accounts_window_show(void)
 {
@@ -2304,6 +2317,9 @@ gaim_gtk_accounts_window_show(void)
 	gaim_signal_connect(gaim_gtk_account_get_handle(), "account-modified",
 	                    accounts_window,
 	                    GAIM_CALLBACK(account_modified_cb), accounts_window);
+	gaim_prefs_connect_callback(accounts_window,
+	                    "/gaim/gtk/accounts/buddyicon",
+	                    global_buddyicon_changed, accounts_window);
 
 	gtk_widget_show(win);
 }
@@ -2315,6 +2331,7 @@ gaim_gtk_accounts_window_hide(void)
 		return;
 
 	gaim_signals_disconnect_by_handle(accounts_window);
+	gaim_prefs_disconnect_by_handle(accounts_window);
 
 	g_free(accounts_window);
 	accounts_window = NULL;
