@@ -1252,7 +1252,13 @@ void *gaim_request_choice_varg(void *handle, const char *title,
  * @param default_action The default value.
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
- * @param ...            A list of actions.
+ * @param ...            A list of actions.  These are pairs of
+ *                       arguments.  The first of each pair is the
+ *                       string that appears on the button.  It should
+ *                       have an underscore before the letter you want
+ *                       to use as the accelerator key for the button.
+ *                       The second of each pair is the callback
+ *                       function to use when the button is clicked.
  *
  * @return A UI-specific handle.
  */
@@ -1332,7 +1338,7 @@ void gaim_request_close_with_handle(void *handle);
 							default_action, user_data, yes_cb, no_cb) \
 	gaim_request_action((handle), (title), (primary), (secondary), \
 						(default_action), (user_data), 2, \
-						_("Yes"), (yes_cb), _("No"), (no_cb))
+						_("_Yes"), (yes_cb), _("_No"), (no_cb))
 
 /**
  * A wrapper for gaim_request_action() that uses @c OK and @c Cancel buttons.
@@ -1341,7 +1347,7 @@ void gaim_request_close_with_handle(void *handle);
 							default_action, user_data, ok_cb, cancel_cb) \
 	gaim_request_action((handle), (title), (primary), (secondary), \
 						(default_action), (user_data), 2, \
-						_("OK"), (ok_cb), _("Cancel"), (cancel_cb))
+						_("_OK"), (ok_cb), _("_Cancel"), (cancel_cb))
 
 /**
  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
@@ -1351,7 +1357,7 @@ void gaim_request_close_with_handle(void *handle);
 								   cancel_cb) \
 	gaim_request_action((handle), (title), (primary), (secondary), \
 						(default_action), (user_data), 2, \
-						_("_Accept"), (accept_cb), _("Cancel"), (cancel_cb))
+						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
 
 /**
  * Displays a file selector request dialog.  Returns the selected filename to

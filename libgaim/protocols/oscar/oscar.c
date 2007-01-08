@@ -1428,8 +1428,8 @@ gaim_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame *
 	gaim_request_input(gc, NULL, _("Enter SecurID"), primary,
 					   _("Enter the 6 digit number from the digital display."),
 					   FALSE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(gaim_parse_auth_securid_request_yes_cb),
-					   _("Cancel"), G_CALLBACK(gaim_parse_auth_securid_request_no_cb),
+					   _("_OK"), G_CALLBACK(gaim_parse_auth_securid_request_yes_cb),
+					   _("_Cancel"), G_CALLBACK(gaim_parse_auth_securid_request_no_cb),
 					   gc);
 	g_free(primary);
 
@@ -2230,8 +2230,8 @@ gaim_auth_sendrequest(GaimConnection *gc, const char *name)
 
 	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
 					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(gaim_auth_request),
-					   _("Cancel"), G_CALLBACK(gaim_auth_dontrequest),
+					   _("_OK"), G_CALLBACK(gaim_auth_request),
+					   _("_Cancel"), G_CALLBACK(gaim_auth_dontrequest),
 					   data);
 }
 
@@ -2276,8 +2276,8 @@ gaim_auth_dontgrant_msgprompt(struct name_data *data)
 {
 	gaim_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(gaim_auth_dontgrant),
-					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
+					   _("_OK"), G_CALLBACK(gaim_auth_dontgrant),
+					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
 }
 
@@ -2463,7 +2463,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 										_("Do you want to add this buddy "
 										  "to your buddy list?"),
 										GAIM_DEFAULT_ACTION_NONE, data, 2,
-										_("Add"), G_CALLBACK(gaim_icq_buddyadd),
+										_("_Add"), G_CALLBACK(gaim_icq_buddyadd),
 										_("_Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
 				}
@@ -5834,8 +5834,8 @@ static void oscar_buddycb_edit_comment(GaimBlistNode *node, gpointer ignore) {
 	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
 	gaim_request_input(gc, title, _("Buddy Comment:"), NULL,
 					   comment_utf8, TRUE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(oscar_ssi_editcomment),
-					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
+					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
+					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
 	g_free(title);
 
@@ -5886,8 +5886,8 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
 			0, data, 2,
-			_("_Connect"), G_CALLBACK(oscar_ask_directim_yes_cb),
-			_("Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));
+			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
+			_("_Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));
 	g_free(buf);
 }
 
@@ -6064,8 +6064,8 @@ static void oscar_show_format_screenname(GaimPluginAction *action)
 	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("New screen name formatting:"), NULL,
 					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(oscar_format_screenname),
-					   _("Cancel"), NULL,
+					   _("_OK"), G_CALLBACK(oscar_format_screenname),
+					   _("_Cancel"), NULL,
 					   gc);
 }
 
@@ -6120,8 +6120,8 @@ static void oscar_show_change_email(GaimPluginAction *action)
 	GaimConnection *gc = (GaimConnection *) action->context;
 	gaim_request_input(gc, NULL, _("Change Address To:"), NULL, NULL,
 					   FALSE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(oscar_change_email),
-					   _("Cancel"), NULL,
+					   _("_OK"), G_CALLBACK(oscar_change_email),
+					   _("_Cancel"), NULL,
 					   gc);
 }
 
@@ -6189,8 +6189,8 @@ static void oscar_show_find_email(GaimPluginAction *action)
 					   _("Type the e-mail address of the buddy you are "
 						 "searching for."),
 					   NULL, FALSE, FALSE, NULL,
-					   _("Search"), G_CALLBACK(search_by_email_cb),
-					   _("Cancel"), NULL, gc);
+					   _("_Search"), G_CALLBACK(search_by_email_cb),
+					   _("_Cancel"), NULL, gc);
 }
 
 static void oscar_show_set_info(GaimPluginAction *action)
