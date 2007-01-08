@@ -122,6 +122,8 @@ typedef struct _JabberStream
 	char *avatar_hash;
 	GSList *pending_avatar_requests;
 
+	GSList *pending_buddy_info_requests;
+		
 	GaimCircBuffer *write_buffer;
 	guint writeh;
 

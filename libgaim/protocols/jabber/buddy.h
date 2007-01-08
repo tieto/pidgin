@@ -101,4 +101,6 @@ JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
 void jabber_user_search_begin(GaimPluginAction *);
 
+void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js);
+
 #endif /* _GAIM_JABBER_BUDDY_H_ */

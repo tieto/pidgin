@@ -965,6 +965,9 @@ static void jabber_close(GaimConnection *gc)
 			gaim_input_remove(js->gc->inpa);
 		close(js->fd);
 	}
+
+	jabber_buddy_remove_all_pending_buddy_info_requests(js);
+
 	if(js->iq_callbacks)
 		g_hash_table_destroy(js->iq_callbacks);
 	if(js->disco_callbacks)
