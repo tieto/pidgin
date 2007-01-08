@@ -1204,7 +1204,6 @@ gaim_plugins_save_loaded(const char *key)
 {
 #ifdef GAIM_PLUGINS
 	GList *pl;
-	GList *f;
 	GList *files = NULL;
 	GaimPlugin *p;
 
@@ -1218,7 +1217,6 @@ gaim_plugins_save_loaded(const char *key)
 	}
 
 	gaim_prefs_set_string_list(key, files);
-	g_list_foreach(files, (GFunc)g_free, NULL);
 	g_list_free(files);
 #endif
 }
