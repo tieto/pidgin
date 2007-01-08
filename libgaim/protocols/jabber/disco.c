@@ -21,6 +21,7 @@
 
 #include "internal.h"
 #include "prefs.h"
+#include "debug.h"
 
 #include "buddy.h"
 #include "google.h"
@@ -214,27 +215,50 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 }
 
 static void
-jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
 	GaimPresence *gpresence;
 	GaimStatus *status;
+
+	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER)) {
+		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */
+		jabber_roster_request(js);
+	}
+	
+	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
+	gpresence = gaim_account_get_presence(js->gc->account);
+	status = gaim_presence_get_active_status(gpresence);
+	jabber_presence_send(js->gc->account, status);	
+}
+
+static void
+jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
   	xmlnode *query, *child;
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
 
-	if(!from || !type)
+	if(!from || !type) {
 		return;
+	}
 
-	if(strcmp(from, js->user->domain))
+	if(strcmp(from, js->user->domain)) {
 		return;
+	}
 
-	if(strcmp(type, "result"))
+	if(strcmp(type, "result")) {
+		/* A common way to get here is for the server not to support xmlns http://jabber.org/protocol/disco#info */
+		jabber_disco_finish_server_info_result_cb(js);
 		return;
+	}
 
 	query = xmlnode_get_child(packet, "query");
-	
-	if (!query) return;
-	
+
+	if (!query) {
+		jabber_disco_finish_server_info_result_cb(js);
+		return;
+	}
+
 	for (child = xmlnode_get_child(query, "category"); child; 
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
@@ -254,7 +278,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		if (!strcmp(name, "Google Talk"))
 			js->googletalk = TRUE;
 	}
-	
+
 	for (child = xmlnode_get_child(query, "feature"); child; 
 	     child = xmlnode_get_next_twin(child)) {
 		const char *var;
@@ -271,12 +295,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		}
 	}
 
-	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
-		jabber_roster_request(js);
-
-	gpresence = gaim_account_get_presence(js->gc->account);
-	status = gaim_presence_get_active_status(gpresence);
-	jabber_presence_send(js->gc->account, status);	
+	jabber_disco_finish_server_info_result_cb(js);
 }
 
 static void
