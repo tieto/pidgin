@@ -1200,6 +1200,30 @@ gaim_plugins_destroy_all(void)
 }
 
 void
+gaim_plugins_save_loaded(const char *key)
+{
+#ifdef GAIM_PLUGINS
+	GList *pl;
+	GList *f;
+	GList *files = NULL;
+	GaimPlugin *p;
+
+	for (pl = gaim_plugins_get_loaded(); pl != NULL; pl = pl->next) {
+		p = pl->data;
+
+		if (p->info->type != GAIM_PLUGIN_PROTOCOL &&
+			p->info->type != GAIM_PLUGIN_LOADER) {
+				files = g_list_append(files, p->path);
+		}
+	}
+
+	gaim_prefs_set_string_list(key, files);
+	g_list_foreach(files, (GFunc)g_free, NULL);
+	g_list_free(files);
+#endif
+}
+
+void
 gaim_plugins_load_saved(const char *key)
 {
 #ifdef GAIM_PLUGINS
@@ -1255,6 +1279,8 @@ gaim_plugins_load_saved(const char *key)
 		}
 
 		g_free(basename);
+
+		g_free(filename);
 
 		g_free(f->data);
 	}

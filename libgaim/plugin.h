@@ -469,6 +469,13 @@ void gaim_plugins_unload_all(void);
 void gaim_plugins_destroy_all(void);
 
 /**
+ * Saves the list of loaded plugins to the specified preference key
+ *
+ * @param key The preference key to save the list of plugins to.
+ */
+void gaim_plugins_save_loaded(const char *key);
+
+/**
  * Attempts to load all the plugins in the specified preference key
  * that were loaded when gaim last quit.
  *

@@ -90,22 +90,7 @@ gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 void
 gaim_gtk_plugins_save(void)
 {
-	GList *pl;
-	GList *files = NULL;
-	GaimPlugin *p;
-
-	for (pl = gaim_plugins_get_loaded(); pl != NULL; pl = pl->next) {
-		p = pl->data;
-
-		if (p->info->type != GAIM_PLUGIN_PROTOCOL &&
-			p->info->type != GAIM_PLUGIN_LOADER) {
-
-			files = g_list_append(files, p->path);
-		}
-	}
-
-	gaim_prefs_set_string_list("/gaim/gtk/plugins/loaded", files);
-	g_list_free(files);
+	gaim_plugins_save_loaded("/gaim/gtk/plugins/loaded");
 }
 
 static void
