@@ -1278,8 +1278,6 @@ gaim_plugins_load_saved(const char *key)
 
 		g_free(basename);
 
-		g_free(filename);
-
 		g_free(f->data);
 	}
 
