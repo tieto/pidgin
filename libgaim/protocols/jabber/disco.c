@@ -238,11 +238,9 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
 
-	if(!from || !type) {
-		return;
-	}
-
-	if(strcmp(from, js->user->domain)) {
+	if((!from || !type) ||
+	   (strcmp(from, js->user->domain))) {
+		jabber_disco_finish_server_info_result_cb(js);
 		return;
 	}
 
