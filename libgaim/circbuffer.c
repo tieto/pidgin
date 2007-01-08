@@ -34,14 +34,19 @@ gaim_circ_buffer_new(gsize growsize) {
 }
 
 void gaim_circ_buffer_destroy(GaimCircBuffer *buf) {
-	g_return_if_fail(buf);
+	g_return_if_fail(buf != NULL);
+
 	g_free(buf->buffer);
 	g_free(buf);
 }
 
 static void grow_circ_buffer(GaimCircBuffer *buf, gsize len) {
 	int in_offset = 0, out_offset = 0;
-	int start_buflen = buf->buflen;
+	int start_buflen;
+	
+	g_return_if_fail(buf != NULL);
+
+	start_buflen = buf->buflen;
 
 	while ((buf->buflen - buf->bufused) < len)
 		buf->buflen += buf->growsize;
@@ -87,6 +92,8 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) 
 
 	int len_stored;
 
+	g_return_if_fail(buf != NULL);
+	
 	/* Grow the buffer, if necessary */
 	if ((buf->buflen - buf->bufused) < len)
 		grow_circ_buffer(buf, len);
@@ -118,6 +125,8 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) 
 gsize gaim_circ_buffer_get_max_read(GaimCircBuffer *buf) {
 	int max_read;
 
+	g_return_val_if_fail(buf != NULL, 0);
+
 	if (buf->bufused == 0)
 		max_read = 0;
 	else if ((buf->outptr - buf->inptr) >= 0)
@@ -129,6 +138,7 @@ gsize gaim_circ_buffer_get_max_read(GaimCircBuffer *buf) {
 }
 
 gboolean gaim_circ_buffer_mark_read(GaimCircBuffer *buf, gsize len) {
+	g_return_val_if_fail(buf != NULL, FALSE);
 	g_return_val_if_fail(gaim_circ_buffer_get_max_read(buf) >= len, FALSE);
 
 	buf->outptr += len;
