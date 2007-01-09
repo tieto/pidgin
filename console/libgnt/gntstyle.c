@@ -145,7 +145,7 @@ parse_key(const char *key)
 	if (strlen(key) != 1)  /* We can only have stuff like "ctrl-alt-a" */
 		return NULL;
 
-	if (ctrl && (strchr("hijm", *key) != NULL || !isalpha(*key))) {
+	if (ctrl && !isalpha(*key)) {
 		/* These keys cannot be used with ctrl */
 		return NULL;
 	}
