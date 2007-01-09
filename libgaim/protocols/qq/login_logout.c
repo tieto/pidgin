@@ -230,6 +230,8 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	/* Now goes on updating my icon/nickname, not showing info_window */
 	qd->modifying_face = FALSE;
 	qq_send_packet_get_info(gc, qd->uid, FALSE);
+	/* grab my level */
+	qq_send_packet_get_level(gc, qd->uid);
 
 	qq_send_packet_change_status(gc);
 

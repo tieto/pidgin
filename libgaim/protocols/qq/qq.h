@@ -95,9 +95,9 @@ struct _qq_data {
 	gchar *my_ip;			/* my ip address detected by server */
 	guint16 my_port;		/* my port detected by server */
 	guint16 my_icon;		/* my icon index */
+	guint16 my_level;		/* my level */
 	guint32 all_online;		/* the number of online QQ users */
 	time_t last_get_online;		/* last time send get_friends_online packet */
-	time_t last_get_levels;		/* last time send get_buddies_levels packet */
 
 	guint8 window[1 << 13];		/* check up for duplicated packet */
 	gint sendqueue_timeout;

@@ -745,27 +745,29 @@ void qq_send_packet_get_buddies_levels(GaimConnection *gc)
 {
 	guint8 *buf, *tmp, size;
 	qq_buddy *q_bud;
-	GList *node;
 	qq_data *qd = (qq_data *) gc->proto_data;
+	GList *node = qd->buddies;
 
-	/* server only sends back levels for online buddies, no point
- 	 * in asking for anyone else */
-	size = 4*g_list_length(qd->buddies) + 1;
-	buf = g_new0(guint8, size);
-	tmp = buf + 1;
+	if (qd->buddies) {
+		/* server only sends back levels for online buddies, no point
+ 	 	* in asking for anyone else */
+		size = 4*g_list_length(qd->buddies) + 1;
+		buf = g_new0(guint8, size);
+		tmp = buf + 1;
 
-	for (node = qd->buddies; node != NULL; node = node->next) {
-		guint32 tmp4;
-                q_bud = (qq_buddy *) node->data;
-		if (q_bud != NULL) {
-			tmp4 = g_htonl(q_bud->uid);
-			memcpy(tmp, &tmp4, 4);
-			tmp += 4;
+		while (node != NULL) {
+			guint32 tmp4;
+			q_bud = (qq_buddy *) node->data;
+			if (q_bud != NULL) {
+				tmp4 = g_htonl(q_bud->uid);
+				memcpy(tmp, &tmp4, 4);
+				tmp += 4;
+			}
+			node = node->next;
 		}
+		qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, size);
+		g_free(buf);
         }
-	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, size);
-	qd->last_get_levels = time(NULL);
-	g_free(buf);
 }
 
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
@@ -815,10 +817,15 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 		b = gaim_find_buddy(account, gaim_name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 
-		if (q_bud != NULL) {
-			q_bud->onlineTime = onlineTime;
-			q_bud->level = level;
-			q_bud->timeRemainder = timeRemainder;
+		if (q_bud != NULL || uid == qd->uid) {
+			if (q_bud) {
+				q_bud->onlineTime = onlineTime;
+				q_bud->level = level;
+				q_bud->timeRemainder = timeRemainder;
+			}
+			if (uid == qd->uid) {
+				qd->my_level = level;
+			}
 		} else {
 			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
 				"Got an online buddy %d, but not in my buddy list\n", uid);

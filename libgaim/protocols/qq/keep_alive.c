@@ -42,7 +42,6 @@
 #include "utils.h"
 
 #define QQ_UPDATE_ONLINE_INTERVAL   300	/* in sec */
-#define QQ_UPDATE_LEVELS_INTERVAL   600	/* in sec */
 
 /* send keep-alive packet to QQ server (it is a heart-beat) */
 void qq_send_packet_keep_alive(GaimConnection *gc)
@@ -95,8 +94,6 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	/* qd->last_get_online is updated when setting get_buddies_online packet */
 	if ((time(NULL) - qd->last_get_online) >= QQ_UPDATE_ONLINE_INTERVAL)
 		qq_send_packet_get_buddies_online(gc, QQ_FRIENDS_ONLINE_POSITION_START);
-	if ((time(NULL) - qd->last_get_levels) >= QQ_UPDATE_LEVELS_INTERVAL)
-		qq_send_packet_get_buddies_levels(gc);
 }
 
 /* refresh all buddies online/offline,
