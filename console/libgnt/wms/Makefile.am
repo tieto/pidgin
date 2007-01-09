@@ -5,8 +5,11 @@ plugin_LTLIBRARIES = \
 
 plugindir = $(libdir)/gaim
 
-s_la_SOURCES       = s.c
-s_la_LIBADD        = $(GLIB_LIBS) $(top_builddir)/console/libgnt/libgnt.la
+s_la_SOURCES = s.c
+s_la_LIBADD =  \
+  $(GLIB_LIBS) \
+  $(top_builddir)/console/libgnt/libgnt.la \
+  $(top_builddir)/libgaim/libgaim.la
 
 EXTRA_DIST = 
 

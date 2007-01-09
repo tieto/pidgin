@@ -4,7 +4,7 @@
 #include "gntstyle.h"
 #include "gntwm.h"
 
-#include "gntblist.h"
+#include "blist.h"
 
 #include <string.h>
 
@@ -161,7 +161,7 @@ toggle_buddylist(GntBindable *bindable, GList *null)
 	if (blist)
 		gnt_widget_destroy(blist);
 	else
-		gg_blist_show();
+		gaim_blist_show();
 	return TRUE;
 }
 
