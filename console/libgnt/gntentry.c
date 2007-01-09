@@ -641,6 +641,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_class_register_action(bindable, "delete-prev", backspace,
 				GNT_KEY_BACKSPACE, NULL);
 	gnt_bindable_register_binding(bindable, "delete-prev", s, NULL);
+	gnt_bindable_register_binding(bindable, "delete-prev", GNT_KEY_CTRL_H, NULL);
 	gnt_bindable_class_register_action(bindable, "delete-next", delkey,
 				GNT_KEY_DEL, NULL);
 	gnt_bindable_register_binding(bindable, "delete-next", GNT_KEY_CTRL_D, NULL);
