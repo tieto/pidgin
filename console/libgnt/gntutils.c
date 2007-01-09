@@ -105,17 +105,28 @@ char *gnt_util_onscreen_fit_string(const char *string, int maxw)
 	return g_string_free(str, FALSE);
 }
 
+struct duplicate_fns
+{
+	GDupFunc key_dup;
+	GDupFunc value_dup;
+	GHashTable *table;
+};
+
 static void
 duplicate_values(gpointer key, gpointer value, gpointer data)
 {
-	g_hash_table_insert(data, key, value);
+	struct duplicate_fns *fns = data;
+	g_hash_table_insert(fns->table, fns->key_dup ? fns->key_dup(key) : key,
+			fns->value_dup ? fns->value_dup(value) : value);
 }
 
 GHashTable *g_hash_table_duplicate(GHashTable *src, GHashFunc hash,
-		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d)
+		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d,
+		GDupFunc key_dup, GDupFunc value_dup)
 {
 	GHashTable *dest = g_hash_table_new_full(hash, equal, key_d, value_d);
-	g_hash_table_foreach(src, duplicate_values, dest);
+	struct duplicate_fns fns = {key_dup, value_dup, dest};
+	g_hash_table_foreach(src, duplicate_values, &fns);
 	return dest;
 }
 

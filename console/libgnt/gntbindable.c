@@ -19,15 +19,35 @@ gnt_bindable_class_init(GntBindableClass *klass)
 	GNTDEBUG;
 }
 
+static gpointer
+bindable_clone(GntBindableAction *action)
+{
+	GntBindableAction *ret = g_new0(GntBindableAction, 1);
+	ret->name = g_strdup(action->name);
+	ret->u = action->u;
+	return ret;
+}
+
+static gpointer
+binding_clone(GntBindableActionParam *param)
+{
+	GntBindableActionParam *p = g_new0(GntBindableActionParam, 1);
+	p->list = g_list_copy(param->list);
+	p->action = param->action;
+	return p;
+}
+
 static void
 duplicate_hashes(GntBindableClass *klass)
 {
 	/* Duplicate the bindings from parent class */
 	if (klass->actions) {
 		klass->actions = g_hash_table_duplicate(klass->actions, g_str_hash,
-					g_str_equal, g_free, (GDestroyNotify)gnt_bindable_action_free);
+					g_str_equal, g_free, (GDestroyNotify)gnt_bindable_action_free,
+					(GDupFunc)g_strdup, (GDupFunc)bindable_clone);
 		klass->bindings = g_hash_table_duplicate(klass->bindings, g_str_hash,
-					g_str_equal, g_free, (GDestroyNotify)gnt_bindable_action_param_free);
+					g_str_equal, g_free, (GDestroyNotify)gnt_bindable_action_param_free,
+					(GDupFunc)g_strdup, (GDupFunc)binding_clone);
 	} else {
 		klass->actions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 					(GDestroyNotify)gnt_bindable_action_free);

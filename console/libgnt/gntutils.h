@@ -3,6 +3,8 @@
 #include "gnt.h"
 #include "gntwidget.h"
 
+typedef gpointer (*GDupFunc)(gconstpointer data);
+
 void gnt_util_get_text_bound(const char *text, int *width, int *height);
 
 /* excluding *end */
@@ -19,7 +21,8 @@ const char *gnt_util_onscreen_width_to_pointer(const char *str, int len, int *w)
 char *gnt_util_onscreen_fit_string(const char *string, int maxw);
 
 GHashTable *g_hash_table_duplicate(GHashTable *src, GHashFunc hash,
-		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d);
+		GEqualFunc equal, GDestroyNotify key_d, GDestroyNotify value_d,
+		GDupFunc key_dup, GDupFunc value_dup);
 
 
 /**
