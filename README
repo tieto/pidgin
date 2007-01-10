@@ -24,12 +24,10 @@ In order to compile Gaim, you need to have GTK+ 2.0 installed (as
 well as the development files!). The configure script will fail if you
 don't. You can get it from http://www.gtk.org/.
 
-For sound support, you also need libao
-(http://freshmeat.net/projects/libao/) and libaudiofile
-(http://www.68k.org/~michael/audiofile/). For spellchecking support, you
-need libgtkspell (http://gtkspell.sf.net/). Your distro of choice
-probably already includes these, just be sure to install the development
-packages.
+For sound support, you also need gstreamer 0.10 or higher. For
+spellchecking support, you need libgtkspell (http://gtkspell.sf.net/).
+Your distro of choice probably already includes these, just be sure to
+install the development packages.
 
 RUN
 ===
