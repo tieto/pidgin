@@ -931,24 +931,19 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 				send_inst_utf8 = "malformed instance";
 			}
 
-			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
-			g_free(send_inst);
 			gconv1 = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 														 zt2->name, gc->account);
 			gcc = gaim_conversation_get_chat_data(gconv1);
 
 			if (!gaim_conv_chat_find_user(gcc, sendertmp)) {
-				/* force interpretation in network byte order */
-				unsigned char *addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
-				gchar* ipaddr = g_strdup_printf("%hhd.%hhd.%hhd.%hhd", (unsigned char)addrs[0], 
-								(unsigned char)addrs[1], (unsigned char)addrs[2], 
-								(unsigned char) addrs[3]);
-					
+				gchar ipaddr[INET_ADDRSTRLEN];
+				inet_ntop(AF_INET, &notice.z_sender_addr.s_addr, ipaddr, sizeof(ipaddr));
+
 				gaim_conv_chat_add_user(gcc, sendertmp, ipaddr, GAIM_CBFLAGS_NONE, TRUE);
-				g_free(ipaddr); /* fix memory leak? */
-					
 			}
 			g_free(sendertmp);
+			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
+			g_free(send_inst);
 			g_free(send_inst_utf8);
 				
 			free_triple(zt1);
