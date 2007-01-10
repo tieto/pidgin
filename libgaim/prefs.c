@@ -134,6 +134,22 @@ pref_to_xmlnode(xmlnode *parent, struct gaim_pref *pref)
 			xmlnode_set_attrib(childnode, "value", cur->data ? cur->data : "");
 		}
 	}
+	else if (pref->type == GAIM_PREF_PATH) {
+		char *encoded = g_filename_to_utf8(pref->value.string ? pref->value.string : "", -1, NULL, NULL, NULL);
+		xmlnode_set_attrib(node, "type", "path");
+		xmlnode_set_attrib(node, "value", encoded);
+		g_free(encoded);
+	}
+	else if (pref->type == GAIM_PREF_PATH_LIST) {
+		xmlnode_set_attrib(node, "type", "pathlist");
+		for (cur = pref->value.stringlist; cur != NULL; cur = cur->next)
+		{
+			char *encoded = g_filename_to_utf8(cur->data ? cur->data : "", -1, NULL, NULL, NULL);
+			childnode = xmlnode_new_child(node, "item");
+			xmlnode_set_attrib(childnode, "value", encoded);
+			g_free(encoded);
+		}
+	}
 	else if (pref->type == GAIM_PREF_BOOLEAN) {
 		xmlnode_set_attrib(node, "type", "bool");
 		snprintf(buf, sizeof(buf), "%d", pref->value.boolean);
@@ -240,6 +256,10 @@ prefs_start_element_handler (GMarkupParseContext *context,
 				pref_type = GAIM_PREF_STRING;
 			else if(!strcmp(attribute_values[i], "stringlist"))
 				pref_type = GAIM_PREF_STRING_LIST;
+			else if(!strcmp(attribute_values[i], "path"))
+				pref_type = GAIM_PREF_PATH;
+			else if(!strcmp(attribute_values[i], "pathlist"))
+				pref_type = GAIM_PREF_PATH_LIST;
 			else
 				return;
 		} else if(!strcmp(attribute_names[i], "value")) {
@@ -260,10 +280,17 @@ prefs_start_element_handler (GMarkupParseContext *context,
 		pref = find_pref(pref_name_full->str);
 
 		if(pref) {
-			pref->value.stringlist = g_list_append(pref->value.stringlist,
-					g_strdup(pref_value));
+			if(pref->type == GAIM_PREF_STRING_LIST) {
+				pref->value.stringlist = g_list_append(pref->value.stringlist,
+						g_strdup(pref_value));
+			} else if(pref->type == GAIM_PREF_PATH_LIST) {
+				pref->value.stringlist = g_list_append(pref->value.stringlist,
+						g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL));
+			}
 		}
 	} else {
+		char *decoded;
+
 		if(!pref_name || !strcmp(pref_name, "/"))
 			return;
 
@@ -291,6 +318,14 @@ prefs_start_element_handler (GMarkupParseContext *context,
 				break;
 			case GAIM_PREF_STRING_LIST:
 				gaim_prefs_set_string_list(pref_name_full->str, NULL);
+				break;
+			case GAIM_PREF_PATH:
+				decoded = g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL);
+				gaim_prefs_set_path(pref_name_full->str, decoded);
+				g_free(decoded);
+				break;
+			case GAIM_PREF_PATH_LIST:
+				gaim_prefs_set_path_list(pref_name_full->str, NULL);
 				break;
 		}
 		prefs_stack = g_list_prepend(prefs_stack, g_strdup(pref_name));
@@ -506,10 +541,12 @@ free_pref_value(struct gaim_pref *pref)
 			pref->value.integer = 0;
 			break;
 		case GAIM_PREF_STRING:
+		case GAIM_PREF_PATH:
 			g_free(pref->value.string);
 			pref->value.string = NULL;
 			break;
 		case GAIM_PREF_STRING_LIST:
+		case GAIM_PREF_PATH_LIST:
 			{
 				g_list_foreach(pref->value.stringlist, (GFunc)g_free, NULL);
 				g_list_free(pref->value.stringlist);
@@ -591,7 +628,14 @@ gaim_prefs_add_int(const char *name, int value)
 void
 gaim_prefs_add_string(const char *name, const char *value)
 {
-	struct gaim_pref *pref = add_pref(GAIM_PREF_STRING, name);
+	struct gaim_pref *pref;
+
+	if(value != NULL && !g_utf8_validate(value, -1, NULL)) {
+		gaim_debug_error("prefs", "gaim_prefs_add_string: Cannot store invalid UTF8 for string pref %s\n", name);
+		return;
+	}
+
+	pref = add_pref(GAIM_PREF_STRING, name);
 
 	if(!pref)
 		return;
@@ -608,10 +652,41 @@ gaim_prefs_add_string_list(const char *name, GList *value)
 	if(!pref)
 		return;
 
+	for(tmp = value; tmp; tmp = tmp->next) {
+		if(tmp->data != NULL && !g_utf8_validate(tmp->data, -1, NULL)) {
+			gaim_debug_error("prefs", "gaim_prefs_add_string_list: Skipping invalid UTF8 for string list pref %s\n", name);
+			continue;
+		}
+		pref->value.stringlist = g_list_append(pref->value.stringlist,
+				g_strdup(tmp->data));
+	}
+}
+
+void
+gaim_prefs_add_path(const char *name, const char *value)
+{
+	struct gaim_pref *pref = add_pref(GAIM_PREF_PATH, name);
+
+	if(!pref)
+		return;
+
+	pref->value.string = g_strdup(value);
+}
+
+void
+gaim_prefs_add_path_list(const char *name, GList *value)
+{
+	struct gaim_pref *pref = add_pref(GAIM_PREF_PATH_LIST, name);
+	GList *tmp;
+
+	if(!pref)
+		return;
+
 	for(tmp = value; tmp; tmp = tmp->next)
 		pref->value.stringlist = g_list_append(pref->value.stringlist,
 				g_strdup(tmp->data));
 }
+
 
 static void
 remove_pref(struct gaim_pref *pref)
@@ -759,8 +834,13 @@ gaim_prefs_set_string(const char *name, const char *value)
 {
 	struct gaim_pref *pref = find_pref(name);
 
+	if(value != NULL && !g_utf8_validate(value, -1, NULL)) {
+		gaim_debug_error("prefs", "gaim_prefs_set_string: Cannot store invalid UTF8 for string pref %s\n", name);
+		return;
+	}
+
 	if(pref) {
-		if(pref->type != GAIM_PREF_STRING) {
+		if(pref->type != GAIM_PREF_STRING && pref->type != GAIM_PREF_PATH) {
 			gaim_debug_error("prefs",
 					"gaim_prefs_set_string: %s not a string pref\n", name);
 			return;
@@ -797,9 +877,14 @@ gaim_prefs_set_string_list(const char *name, GList *value)
 		g_list_free(pref->value.stringlist);
 		pref->value.stringlist = NULL;
 
-		for(tmp = value; tmp; tmp = tmp->next)
+		for(tmp = value; tmp; tmp = tmp->next) {
+			if(tmp->data != NULL && !g_utf8_validate(tmp->data, -1, NULL)) {
+				gaim_debug_error("prefs", "gaim_prefs_set_string_list: Skipping invalid UTF8 for string list pref %s\n", name);
+				continue;
+			}
 			pref->value.stringlist = g_list_prepend(pref->value.stringlist,
 					g_strdup(tmp->data));
+		}
 		pref->value.stringlist = g_list_reverse(pref->value.stringlist);
 
 		do_callbacks(name, pref);
@@ -808,6 +893,62 @@ gaim_prefs_set_string_list(const char *name, GList *value)
 		gaim_prefs_add_string_list(name, value);
 	}
 }
+
+void
+gaim_prefs_set_path(const char *name, const char *value)
+{
+	struct gaim_pref *pref = find_pref(name);
+
+	if(pref) {
+		if(pref->type != GAIM_PREF_STRING) {
+			gaim_debug_error("prefs",
+					"gaim_prefs_set_string: %s not a string pref\n", name);
+			return;
+		}
+
+		if((value && !pref->value.string) ||
+				(!value && pref->value.string) ||
+				(value && pref->value.string &&
+				 strcmp(pref->value.string, value))) {
+			g_free(pref->value.string);
+			pref->value.string = g_strdup(value);
+			do_callbacks(name, pref);
+		}
+	} else {
+		gaim_prefs_add_path(name, value);
+	}
+}
+
+void
+gaim_prefs_set_path_list(const char *name, GList *value)
+{
+	struct gaim_pref *pref = find_pref(name);
+	if(pref) {
+		GList *tmp;
+
+		if(pref->type != GAIM_PREF_STRING_LIST) {
+			gaim_debug_error("prefs",
+					"gaim_prefs_set_string_list: %s not a string list pref\n",
+					name);
+			return;
+		}
+
+		g_list_foreach(pref->value.stringlist, (GFunc)g_free, NULL);
+		g_list_free(pref->value.stringlist);
+		pref->value.stringlist = NULL;
+
+		for(tmp = value; tmp; tmp = tmp->next)
+			pref->value.stringlist = g_list_prepend(pref->value.stringlist,
+					g_strdup(tmp->data));
+		pref->value.stringlist = g_list_reverse(pref->value.stringlist);
+
+		do_callbacks(name, pref);
+
+	} else {
+		gaim_prefs_add_path_list(name, value);
+	}
+}
+
 
 gboolean
 gaim_prefs_exists(const char *name)
@@ -908,6 +1049,47 @@ gaim_prefs_get_string_list(const char *name)
 	return ret;
 }
 
+const char *
+gaim_prefs_get_path(const char *name)
+{
+	struct gaim_pref *pref = find_pref(name);
+
+	if(!pref) {
+		gaim_debug_error("prefs",
+				"gaim_prefs_get_string: Unknown pref %s\n", name);
+		return NULL;
+	} else if(pref->type != GAIM_PREF_PATH) {
+		gaim_debug_error("prefs",
+				"gaim_prefs_get_string: %s not a path pref\n", name);
+		return NULL;
+	}
+
+	return pref->value.string;
+}
+
+GList *
+gaim_prefs_get_path_list(const char *name)
+{
+	struct gaim_pref *pref = find_pref(name);
+	GList *ret = NULL, *tmp;
+
+	if(!pref) {
+		gaim_debug_error("prefs",
+				"gaim_prefs_get_string_list: Unknown pref %s\n", name);
+		return NULL;
+	} else if(pref->type != GAIM_PREF_PATH_LIST) {
+		gaim_debug_error("prefs",
+				"gaim_prefs_get_string_list: %s not a path list pref\n", name);
+		return NULL;
+	}
+
+	for(tmp = pref->value.stringlist; tmp; tmp = tmp->next)
+		ret = g_list_prepend(ret, g_strdup(tmp->data));
+	ret = g_list_reverse(ret);
+
+	return ret;
+}
+
 void
 gaim_prefs_rename(const char *oldname, const char *newname)
 {
@@ -956,6 +1138,12 @@ gaim_prefs_rename(const char *oldname, const char *newname)
 			break;
 		case GAIM_PREF_STRING_LIST:
 			gaim_prefs_set_string_list(newname, oldpref->value.stringlist);
+			break;
+		case GAIM_PREF_PATH:
+			gaim_prefs_set_path(newname, oldpref->value.string);
+			break;
+		case GAIM_PREF_PATH_LIST:
+			gaim_prefs_set_path_list(newname, oldpref->value.stringlist);
 			break;
 	}
 
