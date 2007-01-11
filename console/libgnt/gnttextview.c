@@ -542,28 +542,39 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 					GntTextSegment *seg = segs->data;
 					snext = segs->next;
 					if (seg->start >= tag->end) {
+						/* The segment is somewhere after the tag */
 						seg->start -= change;
 						seg->end -= change;
-						continue;
-					}
-					if (seg->end < tag->start)
-						continue;
-					
-					if (seg->start >= tag->start && seg->end <= tag->end) {
-						free_text_segment(seg, NULL);
-						line->segments = g_list_delete_link(line->segments, segs);
-						if (line->segments == NULL) {
-							free_text_line(line, NULL);
-							view->list = g_list_delete_link(view->list, iter);
+					} else if (seg->end <= tag->start) {
+						/* This segment is somewhere in front of the tag */
+					} else if (seg->start >= tag->start) {
+						/* This segment starts in the middle of the tag */
+						if (text == NULL) {
+							free_text_segment(seg, NULL);
+							line->segments = g_list_delete_link(line->segments, segs);
+							if (line->segments == NULL) {
+								free_text_line(line, NULL);
+								view->list = g_list_delete_link(view->list, iter);
+							}
+						} else {
+							/* XXX: (null) */
+							seg->start = tag->start;
+							seg->end = tag->end - change;
 						}
+						line->length -= change;
+						/* XXX: Make things work if the tagged text spans over several lines. */
+					} else {
+						/* XXX: handle the rest of the conditions */
+						g_printerr("WTF! This needs to be handled properly!!\n");
 					}
-					/* XXX: handle the rest of the conditions */
 				}
 			}
 			if (text == NULL) {
 				/* Remove the tag */
 				view->tags = g_list_delete_link(view->tags, list);
 				free_tag(tag, NULL);
+			} else {
+				tag->end -= change;
 			}
 			if (!all)
 				break;
