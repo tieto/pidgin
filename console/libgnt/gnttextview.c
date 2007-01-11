@@ -507,6 +507,7 @@ int gnt_text_view_get_lines_above(GntTextView *view)
  */
 int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all)
 {
+	GList *alllines = g_list_first(view->list);
 	GList *list, *next, *iter, *inext;
 	int count = 0;
 	for (list = view->tags; list; list = next) {
@@ -534,7 +535,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 			}
 
 			/* Update the offsets of the segments */
-			for (iter = view->list; iter; iter = inext) {
+			for (iter = alllines; iter; iter = inext) {
 				GList *segs, *snext;
 				GntTextLine *line = iter->data;
 				inext = iter->next;
@@ -554,7 +555,13 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 							line->segments = g_list_delete_link(line->segments, segs);
 							if (line->segments == NULL) {
 								free_text_line(line, NULL);
-								view->list = g_list_delete_link(view->list, iter);
+								if (view->list == iter) {
+									if (inext)
+										view->list = inext;
+									else
+										view->list = iter->prev;
+								}
+								alllines = g_list_delete_link(alllines, iter);
 							}
 						} else {
 							/* XXX: (null) */
