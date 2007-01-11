@@ -1,5 +1,10 @@
 #!/bin/sh
 
+CONFIGURE_ARGS=""
+if [ -f configure.args ] ; then
+	CONFIGURE_ARGS="${CONFIGURE_ARGS} `cat configure.args`"
+fi
+
 (glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
 	echo "You must have glib-gettextize installed to compile Gaim.";
@@ -60,5 +65,9 @@ autoheader || exit;
 automake --add-missing --copy;
 autoconf || exit;
 automake || exit;
-./configure $@
+
+echo;
+echo "Running ./configure ${CONFIGURE_ARGS} $@"
+echo;
+./configure ${CONFIGURE_ARGS} $@
 
