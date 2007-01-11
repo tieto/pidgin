@@ -46,20 +46,20 @@
 
 #include "config.h"
 
-static gboolean
-send_typing_notification(GntWidget *w, const char *key, GGConv *ggconv)
+static void
+send_typing_notification(GntWidget *w, GGConv *ggconv)
 {
-	if (key[0] != 27 && key[0] != '\r') {
-		const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-		gboolean first = (!text || !*text);
-		if (gaim_prefs_get_bool("/gaim/gnt/conversations/notify_typing")) {
-			/* Xerox'ed */
-			GaimConversation *conv = ggconv->active_conv;
-			GaimConvIm *im = GAIM_CONV_IM(conv);
+	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
+	gboolean empty = (!text || !*text);
+	if (gaim_prefs_get_bool("/gaim/gnt/conversations/notify_typing")) {
+		GaimConversation *conv = ggconv->active_conv;
+		GaimConvIm *im = GAIM_CONV_IM(conv);
+		if (!empty) {
+			gboolean send = (gaim_conv_im_get_send_typed_timeout(im) == 0);
 
 			gaim_conv_im_stop_send_typed_timeout(im);
 			gaim_conv_im_start_send_typed_timeout(im);
-			if (first || (gaim_conv_im_get_type_again(im) != 0 &&
+			if (send || (gaim_conv_im_get_type_again(im) != 0 &&
 						  time(NULL) > gaim_conv_im_get_type_again(im))) {
 				unsigned int timeout;
 				timeout = serv_send_typing(gaim_conversation_get_gc(conv),
@@ -67,9 +67,14 @@ send_typing_notification(GntWidget *w, const char *key, GGConv *ggconv)
 										   GAIM_TYPING);
 				gaim_conv_im_set_type_again(im, timeout);
 			}
+		} else {
+			gaim_conv_im_stop_send_typed_timeout(im);
+
+			serv_send_typing(gaim_conversation_get_gc(conv),
+							 gaim_conversation_get_name(conv),
+							 GAIM_NOT_TYPING);
 		}
 	}
-	return FALSE;
 }
 
 static gboolean
@@ -326,7 +331,7 @@ gg_create_conversation(GaimConversation *conv)
 	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
 
 	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
-	g_signal_connect(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(send_typing_notification), ggc);
+	g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
 	gnt_widget_set_position(ggc->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
