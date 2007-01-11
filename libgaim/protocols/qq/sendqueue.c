@@ -33,7 +33,7 @@
 #include "qq_proxy.h"
 #include "sendqueue.h"
 
-#define QQ_RESEND_MAX               5	/* max resend per packet */
+#define QQ_RESEND_MAX               8	/* max resend per packet */
 
 typedef struct _gc_and_packet gc_and_packet;
 
@@ -78,8 +78,9 @@ void qq_sendqueue_free(qq_data *qd)
 	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", i);
 }
 
-/* TODO drop get buddy list if we don't know about any buddies...
- * I think the server won't ACK a get buddies request if we have none */
+/* FIXME We shouldn't be dropping packets, but for now we have to because
+ * somewhere we're generating invalid packets that the server won't ack.
+ * Given enough time, a buildup of those packets would crash the client. */
 gboolean qq_sendqueue_timeout_callback(gpointer data)
 {
 	GaimConnection *gc;
@@ -131,10 +132,10 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 				break;
 			default:{
 				gaim_debug(GAIM_DEBUG_WARNING, "QQ", 
-					"%s packet sent %d times but not acked. Resetting sendqueue life\n", 
+					"%s packet sent %d times but not acked. Not resending it.\n", 
 					qq_get_cmd_desc(p->cmd), QQ_RESEND_MAX);
 				}
-				p->resend_times = 0;
+				p->resend_times = -1;
 			}
 		} else {	/* resend_times < QQ_RESEND_MAX, so sent it again */
 			wait_time = (gint) (QQ_SENDQUEUE_TIMEOUT / 1000);
