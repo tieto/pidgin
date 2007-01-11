@@ -1002,6 +1002,8 @@ static void
 gg_blist_toggle_tag_buddy(GaimBlistNode *node)
 {
 	GList *iter;
+	if (node == NULL)
+		return;
 	if (GAIM_BLIST_NODE_IS_CHAT(node) || GAIM_BLIST_NODE_IS_GROUP(node))
 		return;
 	if (ggblist->tagged && (iter = g_list_find(ggblist->tagged, node)) != NULL) {
@@ -1019,6 +1021,9 @@ gg_blist_place_tagged(GaimBlistNode *target)
 {
 	GaimGroup *tg = NULL;
 	GaimContact *tc = NULL;
+
+	if (target == NULL)
+		return;
 
 	/* This target resolution probably needs more clarification; for
 	 * example, if I tag a buddy in a contact, then place on
