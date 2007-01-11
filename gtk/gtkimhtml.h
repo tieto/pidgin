@@ -79,6 +79,7 @@ typedef enum {
 struct _GtkIMHtml {
 	GtkTextView text_view;
 	GtkTextBuffer *text_buffer;
+	GtkTextBuffer *empty_buffer;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
 	GdkCursor *text_cursor;
@@ -87,6 +88,7 @@ struct _GtkIMHtml {
 	char *protocol_name;
 	guint scroll_src;
 	GTimer *scroll_time;
+	gdouble adj;
 
 	gboolean show_comments;
 

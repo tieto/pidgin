@@ -1220,6 +1220,8 @@ gtk_imhtml_finalize (GObject *object)
 	g_slist_free(imhtml->im_images);
 	g_free(imhtml->protocol_name);
 	g_free(imhtml->search_string);
+	g_object_unref(imhtml->empty_buffer);
+	g_object_unref(imhtml->text_buffer);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -1317,6 +1319,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 {
 	GtkTextIter iter;
 	imhtml->text_buffer = gtk_text_buffer_new(NULL);
+	imhtml->empty_buffer = gtk_text_buffer_new(NULL);
 	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
@@ -2355,12 +2358,21 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 	}
 }
 
+static gboolean
+set_adj_idle_cb(gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	gtk_adjustment_set_value(GTK_TEXT_VIEW(imhtml)->vadjustment, imhtml->adj);
+	return FALSE;
+}
+
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
                                     const gchar      *text,
                                     GtkIMHtmlOptions  options,
                                     GtkTextIter      *iter)
 {
 	GdkRectangle rect;
+	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
 	gint pos = 0;
 	gchar *ws;
 	gchar *tag;
@@ -2371,6 +2383,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	const gchar *c;
 	gchar *amp;
 	gint len_protocol;
+
 
 	guint	bold = 0,
 		italics = 0,
@@ -2394,6 +2407,9 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	len = strlen(text);
 	ws = g_malloc(len + 1);
 	ws[0] = 0;
+
+	imhtml->adj = gtk_adjustment_get_value(adj);
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->empty_buffer);
 
 	while (pos < len) {
 		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
@@ -3052,6 +3068,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		gtk_imhtml_close_tags(imhtml, iter);
 
 	object = g_object_ref(G_OBJECT(imhtml));
+	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
+	g_idle_add(set_adj_idle_cb, imhtml);
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
 
