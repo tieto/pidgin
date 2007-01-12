@@ -3800,10 +3800,19 @@ headline_box_leave_cb(GtkWidget *widget, GdkEventCrossing *event, GaimGtkBuddyLi
 	return FALSE;
 }
 
+static void
+reset_headline(GaimGtkBuddyList *gtkblist)
+{
+	gtkblist->headline_callback = NULL;
+	gtkblist->headline_data = NULL;
+	gtkblist->headline_destroy = NULL;
+}
+
 static gboolean
 headline_click_callback(gpointer data)
 {
 	((GSourceFunc)gtkblist->headline_callback)(gtkblist->headline_data);
+	reset_headline(gtkblist);
 	return FALSE;
 }
 
@@ -3813,6 +3822,11 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, GaimGtkBuddyList
 	gtk_widget_hide(gtkblist->headline_hbox);
 	if (gtkblist->headline_callback && !headline_hover_close((int)event->x, (int)event->y))
 		g_idle_add((GSourceFunc)headline_click_callback, gtkblist->headline_data);
+	else {
+		if (gtkblist->headline_destroy)
+			gtkblist->headline_destroy(gtkblist->headline_data);
+		reset_headline(gtkblist);
+	}
 	return TRUE;
 }
 
@@ -5678,13 +5692,19 @@ void gaim_gtk_blist_add_alert(GtkWidget *widget)
 }
 
 void
-gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data)
+gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback,
+			gpointer user_data, GDestroyNotify destroy)
 {
+	/* Destroy any existing headline first */
+	if (gtkblist->headline_destroy)
+		gtkblist->headline_destroy(gtkblist->headline_data);
+
 	gtk_label_set_markup(GTK_LABEL(gtkblist->headline_label), text);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkblist->headline_image), pixbuf);
 
 	gtkblist->headline_callback = callback;
 	gtkblist->headline_data = user_data;
+	gtkblist->headline_destroy = destroy;
 	gtk_widget_show_all(gtkblist->headline_hbox);
 }
 

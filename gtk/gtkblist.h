@@ -106,6 +106,7 @@ struct _GaimGtkBuddyList {
 	GdkPixbuf *headline_close;      /**< Close image for closing the headline without triggering the callback */
 	GCallback headline_callback;    /**< Callback for headline notifications */
 	gpointer headline_data;         /**< User data for headline notifications */
+	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
 	gboolean changing_style;        /**< True when changing GTK+ theme style */
 	
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
@@ -340,7 +341,9 @@ void gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char 
  * @param pixbuf    The GdkPixbuf for the icon
  * @param callback  The callback to call when headline is clicked
  * @param user_data The userdata to include in the callback
+ * @param destroy   The callback to call when headline is closed or replaced by another headline.
  */
-void gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data);
+void gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data,
+		GDestroyNotify destroy);
 
 #endif /* _GAIM_GTKBLIST_H_ */

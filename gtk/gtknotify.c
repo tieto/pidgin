@@ -155,6 +155,15 @@ email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
 }
 
 static void
+reset_mail_dialog(GtkDialog *dialog)
+{
+	gaim_debug_fatal("WRTF!!", "resetting mail dialog\n");
+	gtk_widget_destroy(mail_dialog->dialog);
+	g_free(mail_dialog);
+	mail_dialog = NULL;
+}
+
+static void
 formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 {
 	gaim_notify_close(GAIM_NOTIFY_FORMATTED, win);
@@ -312,12 +321,18 @@ struct inbox_info {
 };
 
 static void
+free_inbox(struct inbox_info *inbox)
+{
+	g_free(inbox->url);
+	g_free(inbox);
+}
+
+static void
 open_inbox_cb(struct inbox_info *inbox)
 {
 	if (inbox->url)
 		gaim_notify_uri(inbox->handle, inbox->url);
-	g_free(inbox->url);
-	g_free(inbox);
+	free_inbox(inbox);
 }
 
 
@@ -348,7 +363,8 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		inbox->handle = gc;
 		inbox->url = urls ? g_strdup(urls[0]) : NULL;
 		gaim_gtk_blist_set_headline(label_text, 
-					    pixbuf, G_CALLBACK(open_inbox_cb), inbox);
+					    pixbuf, G_CALLBACK(open_inbox_cb), inbox,
+					    (GDestroyNotify)free_inbox);
 		g_object_unref(pixbuf);
 		return NULL;
 	}
@@ -540,7 +556,8 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 							    "<b>You have %d new e-mails.</b>",
 							    mail_dialog->total_count), mail_dialog->total_count);
 		gaim_gtk_blist_set_headline(label_text, 
-					    pixbuf, G_CALLBACK(gtk_widget_show_all), dialog);
+					    pixbuf, G_CALLBACK(gtk_widget_show_all), dialog,
+					    (GDestroyNotify)reset_mail_dialog);
 		g_object_unref(pixbuf);
 	}
 
