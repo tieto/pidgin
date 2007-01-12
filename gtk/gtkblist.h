@@ -302,6 +302,12 @@ gboolean gaim_gtk_blist_joinchat_is_showable(void);
 void gaim_gtk_blist_joinchat_show(void);
 
 /**
+ * Appends the privacy menu items for a GaimBlistNode
+ * TODO: Rename these.
+ */
+void gaim_gtk_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node);
+
+/**
  * Appends the protocol specific menu items for a GaimBlistNode
  * TODO: Rename these.
  */

@@ -107,6 +107,51 @@ gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
 gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
 								  gboolean local_only);
 
+/**
+ * Allow a user to send messages. If current privacy setting for the account is:
+ *		GAIM_PRIVACY_ALLOW_USERS:	The user is added to the allow-list.
+ *		GAIM_PRIVACY_DENY_USERS	:	The user is removed from the deny-list.
+ *		GAIM_PRIVACY_ALLOW_ALL	:	No changes made.
+ *		GAIM_PRIVACY_DENY_ALL	:	The privacy setting is changed to
+ *									GAIM_PRIVACY_ALLOW_USERS and the user
+ *									is added to the allow-list.
+ *		GAIM_PRIVACY_ALLOW_BUDDYLIST: No changes made if the user is already in
+ *									the buddy-list. Otherwise the setting is
+ *									changed to GAIM_PRIVACY_ALLOW_USERS, all the
+ *									buddies are added to the allow-list, and the
+ *									user is also added to the allow-list.
+ * 
+ * @param account	The account.
+ * @param who		The name of the user.
+ * @param local		Whether the change is local-only.
+ * @param restore	Should the previous allow/deny list be restored if the
+ *					privacy setting is changed.
+ */
+void gaim_privacy_allow(GaimAccount *account, const char *who, gboolean local,
+						gboolean restore);
+
+/**
+ * Block messages from a user. If current privacy setting for the account is:
+ *		GAIM_PRIVACY_ALLOW_USERS:	The user is removed from the allow-list.
+ *		GAIM_PRIVACY_DENY_USERS	:	The user is added to the deny-list.
+ *		GAIM_PRIVACY_DENY_ALL	:	No changes made.
+ *		GAIM_PRIVACY_ALLOW_ALL	:	The privacy setting is changed to
+ *									GAIM_PRIVACY_DENY_USERS and the user is
+ *									added to the deny-list.
+ *		GAIM_PRIVACY_ALLOW_BUDDYLIST: If the user is not in the buddy-list,
+ *									then no changes made. Otherwise, the setting
+ *									is changed to GAIM_PRIVACY_ALLOW_USERS, all
+ *									the buddies are added to the allow-list, and
+ *									this user is removed from the list.
+ *
+ * @param account	The account.
+ * @param who		The name of the user.
+ * @param local		Whether the change is local-only.
+ * @param restore	Should the previous allow/deny list be restored if the
+ *					privacy setting is changed.
+ */
+void gaim_privacy_deny(GaimAccount *account, const char *who, gboolean local,
+						gboolean restore);
 
 /**
  * Check the privacy-setting for a user.

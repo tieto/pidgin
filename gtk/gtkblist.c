@@ -954,6 +954,47 @@ gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node)
 	}
 }
 
+static void
+toggle_privacy(GtkWidget *widget, GaimBlistNode *node)
+{
+	GaimBuddy *buddy;
+	GaimAccount *account;
+	gboolean permitted;
+	const char *name;
+
+	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+		return;
+
+	buddy = (GaimBuddy *)node;
+	account = gaim_buddy_get_account(buddy);
+	name = gaim_buddy_get_name(buddy);
+
+	permitted = gaim_privacy_check(account, name);
+
+	/* XXX: Perhaps ask whether to restore the previous lists where appropirate? */
+
+	if (permitted)
+		gaim_privacy_deny(account, name, FALSE, FALSE);
+	else
+		gaim_privacy_allow(account, name, FALSE, FALSE);
+
+	gaim_gtk_blist_update(gaim_get_blist(), node);
+}
+
+void gaim_gtk_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node)
+{
+	GaimBuddy *buddy = (GaimBuddy *)node;
+	GaimAccount *account;
+	gboolean permitted;
+
+	account = gaim_buddy_get_account(buddy);
+	permitted = gaim_privacy_check(account, gaim_buddy_get_name(buddy));
+
+	gaim_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
+						GTK_STOCK_DIALOG_ERROR, G_CALLBACK(toggle_privacy),
+						node, 0 ,0, NULL);
+}
+
 void
 gaim_gtk_append_blist_node_proto_menu(GtkWidget *menu, GaimConnection *gc,
                                       GaimBlistNode *node)
@@ -1028,6 +1069,8 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
+	gaim_gtk_append_blist_node_privacy_menu(menu, (GaimBlistNode *)buddy);
+
 	gaim_gtk_append_blist_node_proto_menu(menu, buddy->account->gc,
 										  (GaimBlistNode *)buddy);
 	gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *)buddy);
@@ -1085,7 +1128,6 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 
 	return FALSE;
 }
-
 
 static GtkWidget *
 create_group_menu (GaimBlistNode *node, GaimGroup *g)

@@ -78,6 +78,7 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 	GSList *l;
 	const char *name;
 	GaimBuddy *buddy;
+	char *del;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
@@ -92,7 +93,10 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 	if (l == NULL)
 		return FALSE;
 
-	g_free(l->data);
+	/* We should not free l->data just yet. There can be occasions where
+	 * l->data == who. In such cases, freeing l->data here can cause crashes
+	 * later when who is used. */
+	del = l->data;
 	account->permit = g_slist_delete_link(account->permit, l);
 
 	if (!local_only && gaim_account_is_connected(account))
@@ -108,6 +112,7 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 		gaim_signal_emit(gaim_blist_get_handle(),
                 "buddy-privacy-changed", buddy);
 	}
+	g_free(del);
 	return TRUE;
 }
 
@@ -195,6 +200,105 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 	gaim_blist_schedule_save();
 
 	return TRUE;
+}
+
+/* This makes sure that only all the buddies are in the permit list. */
+static void
+add_buddies_in_permit(GaimAccount *account, gboolean local)
+{
+	GSList *list, *iter;
+	/* Remove anyone in the permit list who is not in the buddylist */
+	for (list = account->permit; list != NULL; ) {
+		char *person = list->data;
+		list = list->next;
+		if (!gaim_find_buddy(account, person))
+			gaim_privacy_permit_remove(account, person, local);
+	}
+	/* Now make sure everyone in the buddylist is in the permit list */
+	for (iter = list = gaim_find_buddies(account, NULL); iter; iter = iter->next) {
+		GaimBuddy *buddy = iter->data;
+		if (!g_slist_find_custom(account->permit, buddy->name, (GCompareFunc)g_utf8_collate))
+			gaim_privacy_permit_add(account, buddy->name, local);
+	}
+	g_slist_free(list);
+}
+
+void
+gaim_privacy_allow(GaimAccount *account, const char *who, gboolean local,
+						gboolean restore)
+{
+	GSList *list;
+
+	switch (account->perm_deny) {
+		case GAIM_PRIVACY_ALLOW_ALL:
+			return;
+		case GAIM_PRIVACY_ALLOW_USERS:
+			gaim_privacy_permit_add(account, who, local);
+			break;
+		case GAIM_PRIVACY_DENY_USERS:
+			gaim_privacy_deny_remove(account, who, local);
+			break;
+		case GAIM_PRIVACY_DENY_ALL:
+			if (!restore) {
+				/* Empty the allow-list. */
+				for (list = account->permit; list != NULL;) {
+					char *who = list->data;
+					list = list->next;
+					gaim_privacy_permit_remove(account, who, local);
+				}
+			}
+			gaim_privacy_permit_add(account, who, local);
+			account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
+			break;
+		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+			if (!gaim_find_buddy(account, who)) {
+				add_buddies_in_permit(account, local);
+				gaim_privacy_permit_add(account, who, local);
+				account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
+			}
+			break;
+		default:
+			g_return_if_reached();
+	}
+}
+
+void
+gaim_privacy_deny(GaimAccount *account, const char *who, gboolean local,
+					gboolean restore)
+{
+	GSList *list;
+
+	switch (account->perm_deny) {
+		case GAIM_PRIVACY_ALLOW_ALL:
+			if (!restore) {
+				/* Empty the deny-list. */
+				for (list = account->deny; list != NULL; ) {
+					char *person = list->data;
+					list = list->next;
+					gaim_privacy_deny_remove(account, person, local);
+				}
+			}
+			gaim_privacy_deny_add(account, who, local);
+			account->perm_deny = GAIM_PRIVACY_DENY_USERS;
+			break;
+		case GAIM_PRIVACY_ALLOW_USERS:
+			gaim_privacy_permit_remove(account, who, local);
+			break;
+		case GAIM_PRIVACY_DENY_USERS:
+			gaim_privacy_deny_add(account, who, local);
+			break;
+		case GAIM_PRIVACY_DENY_ALL:
+			break;
+		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+			if (gaim_find_buddy(account, who)) {
+				add_buddies_in_permit(account, local);
+				gaim_privacy_permit_remove(account, who, local);
+				account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
+			}
+			break;
+		default:
+			g_return_if_reached();
+	}
 }
 
 gboolean
