@@ -133,6 +133,7 @@ static const char *item_factory_translate_func (const char *path, gpointer func_
 static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove, gboolean rerender);
 static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node);
+static char *gaim_get_group_title(GaimBlistNode *gnode, gboolean expanded);
 
 static void gaim_gtk_blist_tooltip_destroy(void);
 
@@ -775,6 +776,16 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 	node = g_value_get_pointer(&val);
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		char *title;
+		
+		title = gaim_get_group_title(node, TRUE);
+		
+		gtk_tree_store_set(gtkblist->treemodel, iter,
+		   NAME_COLUMN, title,
+		   -1);
+
+		g_free(title);
+		
 		gaim_blist_node_set_bool(node, "collapsed", FALSE);
 	}
 }
@@ -789,6 +800,16 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 	node = g_value_get_pointer(&val);
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
+		char *title;
+		
+		title = gaim_get_group_title(node, FALSE);
+		
+		gtk_tree_store_set(gtkblist->treemodel, iter,
+		   NAME_COLUMN, title,
+		   -1);
+		
+		g_free(title);
+		
 		gaim_blist_node_set_bool(node, "collapsed", TRUE);
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_gtk_blist_collapse_contact_cb(NULL, node);
@@ -4619,7 +4640,6 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	int count;
 	gboolean show = FALSE;
 	GaimBlistNode* gnode;
-	gboolean selected;
 
 	g_return_if_fail(node != NULL);
 
@@ -4632,7 +4652,6 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 	else
 		return;
 
-	selected = gtkblist ? (gtkblist->selected_node == gnode) : FALSE;
 	group = (GaimGroup*)gnode;
 
 	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies"))
@@ -4647,44 +4666,28 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 			show = TRUE;}
 
 	if (show) {
-		char group_count[12] = "";
-		char *mark, *esc;
 		GtkTreeIter iter;
 		GtkTreePath *path;
 		gboolean expanded;
 		GdkColor bgcolor;
-		GdkColor textcolor;
+		char *title;
+
 
 		if(!insert_node(list, gnode, &iter))
 			return;
 
 		bgcolor = gtkblist->treeview->style->bg[GTK_STATE_ACTIVE];
-		textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
 
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
 		gtk_tree_path_free(path);
 
-		if (!expanded) {
-			g_snprintf(group_count, sizeof(group_count), " (%d/%d)",
-			           gaim_blist_get_group_online_count(group),
-			           gaim_blist_get_group_size(group, FALSE));
-		}
-
-		esc = g_markup_escape_text(group->name, -1);
-		if (selected)
-			mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc, group_count);
-		else
-			mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>%s",
-					       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-					       esc, group_count);
-
-		g_free(esc);
+		title = gaim_get_group_title(gnode, expanded);
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_VISIBLE_COLUMN, FALSE,
 				   STATUS_ICON_COLUMN, NULL,
-				   NAME_COLUMN, mark,
+				   NAME_COLUMN, title,
 				   NODE_COLUMN, gnode,
 				   BGCOLOR_COLUMN, &bgcolor,
 				   GROUP_EXPANDER_COLUMN, TRUE,
@@ -4692,10 +4695,40 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 				   BUDDY_ICON_VISIBLE_COLUMN, FALSE,
 				   IDLE_VISIBLE_COLUMN, FALSE,
 				   -1);
-		g_free(mark);
+		g_free(title);
 	} else {
 		gaim_gtk_blist_hide_node(list, gnode, TRUE);
 	}
+}
+
+static char *gaim_get_group_title(GaimBlistNode *gnode, gboolean expanded)
+{
+	GaimGroup *group;
+	GdkColor textcolor;
+	gboolean selected;
+	char group_count[12] = "";
+	char *mark, *esc;
+
+	group = (GaimGroup*)gnode;
+	textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
+	selected = gtkblist ? (gtkblist->selected_node == gnode) : FALSE;
+
+	if (!expanded) {
+		g_snprintf(group_count, sizeof(group_count), " (%d/%d)",
+		           gaim_blist_get_group_online_count(group),
+		           gaim_blist_get_group_size(group, FALSE));
+	}
+
+	esc = g_markup_escape_text(group->name, -1);
+	if (selected)
+		mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc, group_count);
+	else
+		mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>%s",
+				       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
+				       esc, group_count);
+
+	g_free(esc);
+	return mark;
 }
 
 static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
