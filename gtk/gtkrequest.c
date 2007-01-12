@@ -1065,7 +1065,6 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
-	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);
