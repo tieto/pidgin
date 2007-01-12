@@ -1468,7 +1468,7 @@ reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
 						   gaim_gtk_sound_get_event_option(sound_row_sel));
-	gaim_prefs_set_string(pref, "");
+	gaim_prefs_set_path(pref, "");
 	g_free(pref);
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
@@ -1485,7 +1485,7 @@ sound_chosen_cb(void *user_data, const char *filename)
 	/* Set it -- and forget it */
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
 						   gaim_gtk_sound_get_event_option(sound));
-	gaim_prefs_set_string(pref, filename);
+	gaim_prefs_set_path(pref, filename);
 	g_free(pref);
 
 	/*
@@ -1503,7 +1503,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
 						   gaim_gtk_sound_get_event_option(sound_row_sel));
-	filename = gaim_prefs_get_string(pref);
+	filename = gaim_prefs_get_path(pref);
 	g_free(pref);
 
 	if (*filename == '\0')
@@ -1555,7 +1555,7 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
 			gaim_gtk_sound_get_event_option(sound_row_sel));
-	file = gaim_prefs_get_string(pref);
+	file = gaim_prefs_get_path(pref);
 	g_free(pref);
 	if (sound_entry)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
@@ -1748,7 +1748,7 @@ sound_page()
 	sound_entry = gtk_entry_new();
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
 			       gaim_gtk_sound_get_event_option(0));
-	file = gaim_prefs_get_string(pref);
+	file = gaim_prefs_get_path(pref);
 	g_free(pref);
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
@@ -2040,7 +2040,7 @@ gaim_gtk_prefs_init(void)
 
 	/* Plugins */
 	gaim_prefs_add_none("/gaim/gtk/plugins");
-	gaim_prefs_add_string_list("/gaim/gtk/plugins/loaded", NULL);
+	gaim_prefs_add_path_list("/gaim/gtk/plugins/loaded", NULL);
 
 	/* File locations */
 	gaim_prefs_add_none("/gaim/gtk/filelocations");

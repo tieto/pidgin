@@ -1216,7 +1216,7 @@ gaim_plugins_save_loaded(const char *key)
 		}
 	}
 
-	gaim_prefs_set_string_list(key, files);
+	gaim_prefs_set_path_list(key, files);
 	g_list_free(files);
 #endif
 }
@@ -1229,7 +1229,7 @@ gaim_plugins_load_saved(const char *key)
 
 	g_return_if_fail(key != NULL);
 
-	files = gaim_prefs_get_string_list(key);
+	files = gaim_prefs_get_path_list(key);
 
 	for (f = files; f; f = f->next)
 	{

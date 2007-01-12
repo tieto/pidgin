@@ -36,7 +36,7 @@ void gg_prefs_init()
 	gaim_prefs_add_none("/gaim/gnt");
 
 	gaim_prefs_add_none("/gaim/gnt/plugins");
-	gaim_prefs_add_string_list("/gaim/gnt/plugins/loaded", NULL);
+	gaim_prefs_add_path_list("/gaim/gnt/plugins/loaded", NULL);
 
 	gaim_prefs_add_none("/gaim/gnt/conversations");
 	gaim_prefs_add_bool("/gaim/gnt/conversations/timestamps", TRUE);
