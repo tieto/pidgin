@@ -13,7 +13,9 @@ plugindir = $(libdir)/gaim
 
 gntgf_la_SOURCES      = gntgf.c
 gnthistory_la_SOURCES = gnthistory.c
-gntlastlog_la_SOURCES    = lastlog.c
+gntlastlog_la_SOURCES = lastlog.c
+
+gntgf_la_CFLAGS = $(X11_CFLAGS)
 
 gntgf_la_LIBADD       = $(GLIB_LIBS) $(X11_LIBS) $(top_builddir)/console/libgnt/libgnt.la
 gnthistory_la_LIBADD  = $(GLIB_LIBS)
