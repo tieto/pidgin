@@ -67,9 +67,7 @@ typedef struct
 enum
 {
 	GAIM_MAIL_ICON,
-	GAIM_MAIL_TO,
-	GAIM_MAIL_FROM,
-	GAIM_MAIL_SUBJECT,
+	GAIM_MAIL_TEXT,
 	GAIM_MAIL_DATA,
 	COLUMNS_GAIM_MAIL
 };
@@ -84,6 +82,7 @@ struct _GaimMailDialog
 	GtkLabel *label;
 	GtkWidget *open_button;
 	int total_count;
+	gboolean in_use;
 };
 
 static GaimMailDialog *mail_dialog = NULL;
@@ -97,15 +96,6 @@ static void
 message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 {
 	gaim_notify_close(GAIM_NOTIFY_MESSAGE, widget);
-}
-
-static void
-email_nondetailed_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
-{
-	if (id == GTK_RESPONSE_OK)
-		gaim_notify_uri(NULL, data->url);
-	gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
-	gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 static void
@@ -157,6 +147,8 @@ email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
 static void
 reset_mail_dialog(GtkDialog *dialog)
 {
+	if (mail_dialog->in_use)
+		return;
 	gtk_widget_destroy(mail_dialog->dialog);
 	g_free(mail_dialog);
 	mail_dialog = NULL;
@@ -314,87 +306,28 @@ gaim_gtk_notify_email(GaimConnection *gc, const char *subject, const char *from,
 								  (url     == NULL ? NULL : &url));
 }
 
-struct inbox_info {
-	char *url;
-	void *handle;
-};
-
-static void
-free_inbox(struct inbox_info *inbox)
+static GtkWidget *
+gaim_gtk_get_mail_dialog()
 {
-	g_free(inbox->url);
-	g_free(inbox);
-}
-
-static void
-open_inbox_cb(struct inbox_info *inbox)
-{
-	if (inbox->url)
-		gaim_notify_uri(inbox->handle, inbox->url);
-	free_inbox(inbox);
-}
-
-
-static void *
-gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
-					   const char **subjects, const char **froms,
-					   const char **tos, const char **urls)
-{
-	GaimNotifyMailData *data = NULL;
-	GtkWidget *dialog = NULL;
-	GtkWidget *vbox = NULL;
-	GtkWidget *label;
-	char *detail_text;
-	char *label_text;
-	GtkTreeIter iter;
-	GaimAccount *account;
-
-	account = gaim_connection_get_account(gc);
-
-	if (!detailed) {
-		struct inbox_info *inbox = g_new0(struct inbox_info, 1);
-		GdkPixbuf *pixbuf = gtk_widget_render_icon(gaim_gtk_blist_get_default_gtk_blist()->headline_hbox, 
-				                           GAIM_STOCK_ICON_ONLINE_MSG, GTK_ICON_SIZE_BUTTON, NULL);
-		char *label_text = g_strdup_printf(ngettext("<b>You have %d new e-mail.</b>",
-							    "<b>You have %d new e-mails.</b>",
-							    count), (int)count);
-		
-		inbox->handle = gc;
-		inbox->url = urls ? g_strdup(urls[0]) : NULL;
-		gaim_gtk_blist_set_headline(label_text, 
-					    pixbuf, G_CALLBACK(open_inbox_cb), inbox,
-					    (GDestroyNotify)free_inbox);
-		g_object_unref(pixbuf);
-		return NULL;
-	}
-
-	if (mail_dialog == NULL || !detailed)
-	{
+	if (mail_dialog == NULL) {
+		GtkWidget *dialog = NULL;
+		GtkWidget *label;
+		GtkWidget *sw;
 		GtkCellRenderer *rend;
 		GtkTreeViewColumn *column;
 		GtkWidget *button = NULL;
+		GtkWidget *vbox = NULL;
 
 		dialog = gtk_dialog_new_with_buttons(_("New Mail"), NULL, 0,
-											 GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-											 NULL);
-		if (detailed)
-			gtk_window_set_role(GTK_WINDOW(dialog), "new_mail_detailed");
-		else
-			gtk_window_set_role(GTK_WINDOW(dialog), "new_mail");
+						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+						     NULL);
+		gtk_window_set_role(GTK_WINDOW(dialog), "new_mail_detailed");
 
-		if (!detailed && urls)
-		{
-			gtk_dialog_add_button(GTK_DIALOG(dialog),
-					GAIM_STOCK_OPEN_MAIL, GTK_RESPONSE_OK);
-		}
-		else if (detailed && mail_dialog == NULL)
-		{
-			gtk_dialog_add_button(GTK_DIALOG(dialog),
+		gtk_dialog_add_button(GTK_DIALOG(dialog),
 					 _("Open All Messages"), GTK_RESPONSE_ACCEPT);
 
-			button = gtk_dialog_add_button(GTK_DIALOG(dialog),
+		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
 						 GAIM_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
-		}
 
 		/* Setup the dialog */
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BOX_SPACE);
@@ -405,162 +338,160 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		/* Vertical box */
 		vbox = GTK_DIALOG(dialog)->vbox;
 
-		if (mail_dialog == NULL && detailed)
-		{
-			GtkWidget *sw;
+		/* Golden ratio it up! */
+		gtk_widget_set_size_request(dialog, 550, 400);
 
-			/* Golden ratio it up! */
-			gtk_widget_set_size_request(dialog, 550, 400);
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 
-			sw = gtk_scrolled_window_new(NULL, NULL);
-			gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+		mail_dialog = g_new0(GaimMailDialog, 1);
+		mail_dialog->dialog = dialog;
+		mail_dialog->open_button = button;
 
-			mail_dialog = g_new0(GaimMailDialog, 1);
-			mail_dialog->dialog = dialog;
-			mail_dialog->open_button = button;
+		mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_GAIM_MAIL,
+						GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+		mail_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(mail_dialog->treemodel));
 
-			mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_GAIM_MAIL,
-							GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-			mail_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(mail_dialog->treemodel));
+		g_signal_connect(G_OBJECT(dialog), "response",
+						 G_CALLBACK(email_response_cb), mail_dialog);
+		g_signal_connect(G_OBJECT(gtk_tree_view_get_selection(GTK_TREE_VIEW(mail_dialog->treeview))),
+						 "changed", G_CALLBACK(selection_changed_cb), mail_dialog);
 
-			g_signal_connect(G_OBJECT(dialog), "response",
-							 G_CALLBACK(email_response_cb), mail_dialog);
-			g_signal_connect(G_OBJECT(gtk_tree_view_get_selection(GTK_TREE_VIEW(mail_dialog->treeview))),
-							 "changed", G_CALLBACK(selection_changed_cb), mail_dialog);
+		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(mail_dialog->treeview), FALSE);
+		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(mail_dialog->treeview), TRUE);
+		gtk_container_add(GTK_CONTAINER(sw), mail_dialog->treeview);
 
-			/* Account column */
-			column = gtk_tree_view_column_new();
-			gtk_tree_view_column_set_resizable(column, TRUE);
-			gtk_tree_view_column_set_title(column, _("Account"));
-			rend = gtk_cell_renderer_pixbuf_new();
-			gtk_tree_view_column_pack_start(column, rend, FALSE);
-			gtk_tree_view_column_set_attributes(column, rend, "pixbuf", GAIM_MAIL_ICON, NULL);
-			rend = gtk_cell_renderer_text_new();
-			gtk_tree_view_column_pack_start(column, rend, TRUE);
-			gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_TO, NULL);
-			gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
+		column = gtk_tree_view_column_new();
+		gtk_tree_view_column_set_resizable(column, TRUE);
+		rend = gtk_cell_renderer_pixbuf_new();
+		gtk_tree_view_column_pack_start(column, rend, FALSE);
+		gtk_tree_view_column_set_attributes(column, rend, "pixbuf", GAIM_MAIL_ICON, NULL);
+		rend = gtk_cell_renderer_text_new();
+		gtk_tree_view_column_pack_start(column, rend, TRUE);
+		gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_TEXT, NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
 
-			/* From column */
-			column = gtk_tree_view_column_new();
-			gtk_tree_view_column_set_resizable(column, TRUE);
-			gtk_tree_view_column_set_title(column, _("From"));
-			rend = gtk_cell_renderer_text_new();
-			gtk_tree_view_column_pack_start(column, rend, TRUE);
-			gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_FROM, NULL);
-			gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
-
-			/* Subject column */
-			column = gtk_tree_view_column_new();
-			gtk_tree_view_column_set_resizable(column, TRUE);
-			gtk_tree_view_column_set_title(column, _("Subject"));
-			rend = gtk_cell_renderer_text_new();
-			gtk_tree_view_column_pack_start(column, rend, TRUE);
-			gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_SUBJECT, NULL);
-			gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
-
-			gtk_container_add(GTK_CONTAINER(sw), mail_dialog->treeview);
-
-			label = gtk_label_new(NULL);
-			gtk_label_set_markup(GTK_LABEL(label), _("<span weight=\"bold\" size=\"larger\">You have mail!</span>"));
-			gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-			gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-			gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-			gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-		}
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label), _("<span weight=\"bold\" size=\"larger\">You have mail!</span>"));
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	}
 
-	if (detailed)
-	{
-		dialog = mail_dialog->dialog;
-		mail_dialog->total_count += count;
-		while (count--)
-		{
+	return mail_dialog->dialog;
+}
+
+static void *
+gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GdkPixbuf *icon, char *notification, const char *url)
+{
+	GaimNotifyMailData *data = NULL;
+	GtkTreeIter iter;
+
+	data = g_new0(GaimNotifyMailData, 1);
+	if (url != NULL)
+		data->url = g_strdup(url);
+
+	gtk_tree_store_append(treemodel, &iter, NULL);
+	gtk_tree_store_set(treemodel, &iter,
+								GAIM_MAIL_ICON, icon,
+								GAIM_MAIL_TEXT, notification,
+								GAIM_MAIL_DATA, data,
+								-1);
+	data->iter = iter;
+	gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
+						GAIM_MAIL_DATA, &data, -1);
+	return data;
+}
+
+static void *
+gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
+					   const char **subjects, const char **froms,
+					   const char **tos, const char **urls)
+{
+	GtkWidget *dialog = NULL;
+	char *notification;
+	GaimAccount *account;
+	GdkPixbuf *pixbuf;
+	GaimNotifyMailData *data = NULL;
+
+	account = gaim_connection_get_account(gc);
+	pixbuf = gaim_gtk_create_prpl_icon(account, 1);
+	dialog = gaim_gtk_get_mail_dialog();  /* This creates mail_dialog if necessary */
+ 
+	mail_dialog->total_count += count;
+	if (detailed) {
+		while (count--) {
 			char *to_text = NULL;
 			char *from_text = NULL;
 			char *subject_text = NULL;
-			GdkPixbuf *pixbuf;
+			char *tmp;
+			gboolean first = TRUE;
 
-			if (tos != NULL)
-				to_text = g_markup_escape_text(*tos, -1);
-			if (froms != NULL)
-				from_text = g_markup_escape_text(*froms, -1);
-			if (subjects != NULL)
-				subject_text = g_markup_escape_text(*subjects, -1);
-
-			data = g_new0(GaimNotifyMailData, 1);
-			if (urls != NULL)
-				data->url = g_strdup(*urls);
-
-			pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
-
-			gtk_tree_store_append(mail_dialog->treemodel, &iter, NULL);
-			gtk_tree_store_set(mail_dialog->treemodel, &iter,
-									GAIM_MAIL_ICON, pixbuf,
-									GAIM_MAIL_TO, to_text,
-									GAIM_MAIL_FROM, from_text,
-									GAIM_MAIL_SUBJECT, subject_text,
-									GAIM_MAIL_DATA, data,
-									-1);
-			if (pixbuf != NULL)
-				g_object_unref(pixbuf);
+			if (tos != NULL) {
+				tmp = g_markup_escape_text(*tos, -1);
+				to_text = g_strdup_printf("<b>%s</b>: %s\n", _("Account"), tmp);
+				g_free(tmp);
+				first = FALSE;
+				tos++;
+			}
+			if (froms != NULL) {
+				tmp = g_markup_escape_text(*froms, -1);
+				from_text = g_strdup_printf("%s<b>%s</b>: %s\n", first ? "<br>" : "", _("Sender"), tmp);
+				g_free(tmp);
+				first = FALSE;
+				froms++;
+			}
+			if (subjects != NULL) {
+				tmp = g_markup_escape_text(*subjects, -1);
+				subject_text = g_strdup_printf("%s<b>%s</b>: %s", first ? "<br>" : "", _("Subject"), tmp);
+				g_free(tmp);
+				first = FALSE;
+				subjects++;
+			}
+#define SAFE(x) ((x) ? (x) : "")
+			notification = g_strdup_printf("%s%s%s", SAFE(to_text), SAFE(from_text), SAFE(subject_text));
+#undef SAFE
 			g_free(to_text);
 			g_free(from_text);
 			g_free(subject_text);
-			data->iter = iter;
+
+			data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, pixbuf, notification, urls ? *urls : NULL);
+			g_free(notification);
 
 			if (urls != NULL)
 				urls++;
-			if (froms != NULL)
-				froms++;
-			if (subjects != NULL)
-				subjects++;
-			if (tos != NULL)
-				tos++;
 		}
+	} else {
+		notification = g_strdup_printf(ngettext("%s has %d new message.",
+						   "%s has %d new messages.",
+						   (int)count),
+						   *tos, (int)count);
+		data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, pixbuf, notification, urls ? *urls : NULL);
+		g_free(notification);
 	}
-	else
-	{
-		data = g_new0(GaimNotifyMailData, 1);
 
-		if (urls != NULL)
-			data->url = g_strdup(*urls);
-
-		g_signal_connect(G_OBJECT(dialog), "response",
-						 G_CALLBACK(email_nondetailed_cb), data);
-
-		detail_text = g_strdup_printf(ngettext("%s has %d new message.",
-											   "%s has %d new messages.",
-											   (int)count),
-									  *tos, (int)count);
-		label_text = g_strdup_printf(
-			_("<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-			"\n\n%s"), detail_text);
-
-		label = gtk_label_new(NULL);
-
-		gtk_label_set_markup(GTK_LABEL(label), label_text);
-		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
-
-		g_free(label_text);
-		g_free(detail_text);
-		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	}
 	if (!GTK_WIDGET_VISIBLE(dialog)) {
 		GdkPixbuf *pixbuf = gtk_widget_render_icon(dialog, GAIM_STOCK_ICON_ONLINE_MSG,
 							   GTK_ICON_SIZE_BUTTON, NULL);
 		char *label_text = g_strdup_printf(ngettext("<b>You have %d new e-mail.</b>",
 							    "<b>You have %d new e-mails.</b>",
 							    mail_dialog->total_count), mail_dialog->total_count);
+		mail_dialog->in_use = TRUE;     /* So that _set_headline doesn't accidentally
+										   remove the notifications when replacing an
+										   old notification. */
 		gaim_gtk_blist_set_headline(label_text, 
 					    pixbuf, G_CALLBACK(gtk_widget_show_all), dialog,
 					    (GDestroyNotify)reset_mail_dialog);
-		g_object_unref(pixbuf);
+		mail_dialog->in_use = FALSE;
+		g_free(label_text);
 	}
 
-	return data;
+	if (pixbuf != NULL)
+		g_object_unref(pixbuf);
+
+	return NULL;
 }
 
 static gboolean
