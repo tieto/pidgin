@@ -482,7 +482,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
-	gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), GAIM_INVISIBLE_CHAR);
+	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
+		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), GAIM_INVISIBLE_CHAR);
 	dialog->password_box = add_pref_box(dialog, vbox, _("Password:"),
 										  dialog->password_entry);
 
@@ -777,7 +778,8 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				if (gaim_account_option_get_masked(option))
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-					gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
+						gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
 				}
 
 				if (str_value != NULL)
@@ -1010,7 +1012,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Password */
 	dialog->proxy_pass_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->proxy_pass_entry), FALSE);
-	gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), GAIM_INVISIBLE_CHAR);
+	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry)) == '*')
+		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), GAIM_INVISIBLE_CHAR);
 	add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&

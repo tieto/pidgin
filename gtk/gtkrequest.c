@@ -423,7 +423,8 @@ gaim_gtk_request_input(const char *title, const char *primary,
 			if (masked)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-				gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+				if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
+					gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
 			}
 		}
 	}
@@ -760,7 +761,8 @@ create_string_field(GaimRequestField *field)
 		if (gaim_request_field_string_is_masked(field))
 		{
 			gtk_entry_set_visibility(GTK_ENTRY(widget), FALSE);
-			gtk_entry_set_invisible_char(GTK_ENTRY(widget),	GAIM_INVISIBLE_CHAR);
+			if (gtk_entry_get_invisible_char(GTK_ENTRY(widget)) == '*')
+				gtk_entry_set_invisible_char(GTK_ENTRY(widget),	GAIM_INVISIBLE_CHAR);
 		}
 
 		gtk_editable_set_editable(GTK_EDITABLE(widget),
