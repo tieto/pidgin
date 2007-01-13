@@ -2409,6 +2409,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	ws[0] = 0;
 
 	imhtml->adj = gtk_adjustment_get_value(adj);
+	gtk_widget_hide(GTK_WIDGET(imhtml));
+	gtk_widget_unrealize(GTK_WIDGET(imhtml));
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->empty_buffer);
 
 	while (pos < len) {
@@ -3067,12 +3069,13 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	if (!imhtml->wbfo)
 		gtk_imhtml_close_tags(imhtml, iter);
 
-	object = g_object_ref(G_OBJECT(imhtml));
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
+	gtk_widget_realize(GTK_WIDGET(imhtml));
+	gtk_widget_show_all(GTK_WIDGET(imhtml));
+	object = g_object_ref(G_OBJECT(imhtml));
 	g_idle_add(set_adj_idle_cb, imhtml);
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
-
 }
 
 void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
