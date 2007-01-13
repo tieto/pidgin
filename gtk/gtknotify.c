@@ -157,7 +157,6 @@ email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
 static void
 reset_mail_dialog(GtkDialog *dialog)
 {
-	gaim_debug_fatal("WRTF!!", "resetting mail dialog\n");
 	gtk_widget_destroy(mail_dialog->dialog);
 	g_free(mail_dialog);
 	mail_dialog = NULL;
