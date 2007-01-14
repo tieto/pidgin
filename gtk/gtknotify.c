@@ -40,10 +40,11 @@
 
 typedef struct
 {
-	GaimConnection *gc;
+	GaimAccount *account;
 	char *url;
 	GtkWidget *label;
 	GtkTreeIter iter;
+	int count;
 } GaimNotifyMailData;
 
 typedef struct
@@ -386,25 +387,56 @@ gaim_gtk_get_mail_dialog()
 	return mail_dialog->dialog;
 }
 
+/* count == 0 means this is a detailed mail notification.
+ * count > 0 mean non-detailed.
+ */
 static void *
-gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GdkPixbuf *icon, char *notification, const char *url)
+gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *notification, const char *url, int count)
 {
 	GaimNotifyMailData *data = NULL;
 	GtkTreeIter iter;
+	GdkPixbuf *icon;
+	gboolean new_n = TRUE;
 
-	data = g_new0(GaimNotifyMailData, 1);
+	icon = gaim_gtk_create_prpl_icon(account, 1);
+
+	if (count > 0) {
+		/* Allow only one non-detailed email notification for each account */
+		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(treemodel), &iter)) {
+			do {
+				gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
+						GAIM_MAIL_DATA, &data, -1);
+				if (data->account == account && data->count > 0) {
+					new_n = FALSE;
+					g_free(data->url);
+					data->url = NULL;
+					mail_dialog->total_count -= data->count;
+					break;
+				}
+			} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(treemodel), &iter));
+		}
+	}
+
+	if (new_n) {
+		data = g_new0(GaimNotifyMailData, 1);
+		gtk_tree_store_append(treemodel, &iter, NULL);
+	}
+
 	if (url != NULL)
 		data->url = g_strdup(url);
 
-	gtk_tree_store_append(treemodel, &iter, NULL);
 	gtk_tree_store_set(treemodel, &iter,
 								GAIM_MAIL_ICON, icon,
 								GAIM_MAIL_TEXT, notification,
 								GAIM_MAIL_DATA, data,
 								-1);
-	data->iter = iter;
+	data->iter = iter;              /* XXX: Do we use this for something? */
+	data->account = account;
+	data->count = count;
 	gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
 						GAIM_MAIL_DATA, &data, -1);
+	if (icon)
+		g_object_unref(icon);
 	return data;
 }
 
@@ -416,11 +448,9 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	GtkWidget *dialog = NULL;
 	char *notification;
 	GaimAccount *account;
-	GdkPixbuf *pixbuf;
 	GaimNotifyMailData *data = NULL;
 
 	account = gaim_connection_get_account(gc);
-	pixbuf = gaim_gtk_create_prpl_icon(account, 1);
 	dialog = gaim_gtk_get_mail_dialog();  /* This creates mail_dialog if necessary */
  
 	mail_dialog->total_count += count;
@@ -460,7 +490,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			g_free(from_text);
 			g_free(subject_text);
 
-			data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, pixbuf, notification, urls ? *urls : NULL);
+			data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0);
 			g_free(notification);
 
 			if (urls != NULL)
@@ -471,7 +501,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 						   "%s has %d new messages.",
 						   (int)count),
 						   *tos, (int)count);
-		data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, pixbuf, notification, urls ? *urls : NULL);
+		data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count);
 		g_free(notification);
 	}
 
@@ -489,10 +519,9 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 					    (GDestroyNotify)reset_mail_dialog);
 		mail_dialog->in_use = FALSE;
 		g_free(label_text);
+		if (pixbuf)
+			g_object_unref(pixbuf);
 	}
-
-	if (pixbuf != NULL)
-		g_object_unref(pixbuf);
 
 	return NULL;
 }
