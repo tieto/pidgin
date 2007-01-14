@@ -704,7 +704,7 @@ version 0.78 (05/30/2004):
 	* Removed "Icons on tabs", default to yes
 	* Removed "Sounds when you log in", default to no
 	* Removed "Seconds before resending autoresponse", default to 600
-          seconds
+	  seconds
 	* Removed "Send autoresponse in active conversations", default to no
 	* Removed "Show people joining in window", default to yes
 	* Removed "Show people leaving in window", default to yes
@@ -972,7 +972,7 @@ version 0.67 (08/14/2003):
 	  list as well.
 	* Events in a conversation (user logged in, logged out, window closed,
 	  etc.) now grey the tab.
-	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
+	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern
 	  Voigt, Paul A (darkrain))
 
 version 0.66 (07/18/2003):
@@ -1034,10 +1034,10 @@ version 0.63 (05/16/2003):
 	* Napster protocol updates (Thanks Auke Kok).
 
 version 0.62 (04/23/2003):
-	* Keyboard shortcuts in the buddy list work again (Thanks Joe 
+	* Keyboard shortcuts in the buddy list work again (Thanks Joe
 	  Clarke).
 	* Support for Jabber XHTML messages
-	* Ability to re-request authorization from ICQ and Jabber users by right 
+	* Ability to re-request authorization from ICQ and Jabber users by right
 	  clicking on them in your buddy list.
 	* Improved Zephyr internationalization.
 	* Bug causing 'Hide on Send' windows to be lost forever fixed.
@@ -1053,7 +1053,7 @@ version 0.61 (04/07/2003):
 	* Re-implemented the logout icons.
 	* New icons for "away" and "aol" (Thanks, Moses Lei)
 
-version 0.60 (04/04/2003): 
+version 0.60 (04/04/2003):
 	Core:
 	* Auto-loading protocol plugins.
 	* Plugins dialog and perl script menu merged into preferences.
@@ -1065,7 +1065,7 @@ version 0.60 (04/04/2003):
 	* Added support for automake 1.6.
 	* aim:// URI's supported with gaim-remote command.
 	* Quit Gaim remotely with gaim-remote. (Thanks, John Silvestri)
-	* Added rudimentary support for X11R6 session management. (Thanks, 
+	* Added rudimentary support for X11R6 session management. (Thanks,
 	  Robert McQueen)
 	* Conversation backend and UI are now separated. (Thanks,
 	  Christian Hammond)
@@ -1073,11 +1073,11 @@ version 0.60 (04/04/2003):
 	  Lichtmaier)
 	* As a side effect of the above: IPv6 support. Tested only with IRC
 	  (you can receive ipv6 chat requests from irssi!).
-	
+
 	Plugins:
-	* Tray icon plugin--replaces the old GNOME applet. You'll need 
-	  the panel Notification Area applet (aka system-tray-applet) 
-	  for GNOME 2, or the Kicker for KDE 3.1. (Thanks, Robert 
+	* Tray icon plugin--replaces the old GNOME applet. You'll need
+	  the panel Notification Area applet (aka system-tray-applet)
+	  for GNOME 2, or the Kicker for KDE 3.1. (Thanks, Robert
 	  McQueen, Nicolás Lichtmaier, Kristian Rietveld, Ari Pollak &
 	  Patrick Aussems)
 	* Added GAIM::remove_event_handler and made set_info short
@@ -1092,9 +1092,9 @@ version 0.60 (04/04/2003):
 	AIM/ICQ:
 	* TOC no longer compiles statically by default--use OSCAR.
 	* ICQ plugin no longer gets built--use OSCAR.
-	* Server-stored buddy lists for ICQ with full support for 
+	* Server-stored buddy lists for ICQ with full support for
 	  authorization (Thanks, Mark Doliner)
-	* File send/receive support for Aim over Oscar (Thanks, William T. 
+	* File send/receive support for Aim over Oscar (Thanks, William T.
 	  Mahan and Mark Doliner)
 	* Non-direct connect typing notification for AIM over OSCAR.
 	  (Thanks, Mark Doliner)
@@ -1107,19 +1107,19 @@ version 0.60 (04/04/2003):
 	* Ability to add screenname@mac.com people to AIM buddy lists.
 	  (Thanks, Graham Booker)
 	* Ability to change ICQ password. (Thanks, Mark Doliner)
-	* Option to have AIM notify you if you have 
+	* Option to have AIM notify you if you have
 	  unread mail. (Thanks, Mark Doliner)
 	* Parse URL messages, Contact Sending and Pager Messages
 	  in ICQ. (Thanks, Mark Doliner)
 	* use snprintf instead of sprintf. (Thanks, William T. Mahan)
-	* Fixed crashbug on empty rvous requests. (Thanks Brandon Scott 
+	* Fixed crashbug on empty rvous requests. (Thanks Brandon Scott
 	  (Xeon) for pointing this out, and Matt Pandina for the patch)
 	* Nice Oscar changes--mostly internal. (Thanks, Mark Doliner)
 
 	IRC:
 	* Added more IRC slash commands -- /W, /VERSION, /MODE, /CTCP stuff,
 	  -- and other cool IRC enhancments. (Thanks, Jonas Birmé)
-	* IRC's /topic with no argument displays the current topic (Thanks, 
+	* IRC's /topic with no argument displays the current topic (Thanks,
 	  Mark Doliner)
 	* DCC File Receive support for IRC.
 	* Optional password on IRC accounts. (Thanks, Christian Hammond)
@@ -1131,21 +1131,21 @@ version 0.60 (04/04/2003):
 	* Jabber roster updated on group renames.
 	* Fixed a possible segfault when signing off Jabber. (Thanks,
 	  Craig Boston)
-	* Improved typing notification support for Jabber and 
+	* Improved typing notification support for Jabber and
 	  Yahoo! (Thanks, Nathan Walp)
 	* File receive support for Jabber. (Thanks, Nathan Walp)
 
 	MSN:
 	* MSN users are notified when the other party closes the conversation
 	  window. (Thanks, Christian Hammond)
- 	* File receive support for MSN. (Thanks, Christian Hammond)
+	* File receive support for MSN. (Thanks, Christian Hammond)
 
 	Internationalization:
-	* Now using libiconv for better i18n support (Thanks, Junichi 
+	* Now using libiconv for better i18n support (Thanks, Junichi
 	  Uekawa)
 	* Lots of i18n fixes (Thanks Matt Wilson, Ethan Blanton, A Lee)
 	* Correct i18n handling for many parts of AIM/ICQ, including
-	  instant messages, away messages, and profiles (Thanks, 
+	  instant messages, away messages, and profiles (Thanks,
 	  Ethan Blanton)
 	* Improved MSN internationalization (Thanks, A Lee)
 
@@ -1160,7 +1160,7 @@ version 0.60 (04/04/2003):
 	* Fix first message in tab not displaying bug (Thanks, Etan Reisner)
 	* Changed some default options
 	* Updated desktop and window icons (Thanks, Robert McQueen)
-	* Switch the .desktop file to the new KDE/GNOME common vfolder 
+	* Switch the .desktop file to the new KDE/GNOME common vfolder
 	  format (Thanks, Robert McQueen)
 	* Removed all deprecated GTK calls.  Now 100% GTK 2. (Thanks Nathan
 	  Walp, Christian Hammond, Ari Pollak, Ethan Blanton, Robert McQueen)
@@ -1169,7 +1169,7 @@ version 0.60 (04/04/2003):
 	  Robert McQueen)
 	* Can get info for ICQ and Jabber users from the "Edit
 	  Buddies" tab (Thanks, Brian Bernas)
-	* Code cleanups and fixes (Thanks, Federico Mena Quintero and 
+	* Code cleanups and fixes (Thanks, Federico Mena Quintero and
 	  Ka-Hing Cheung)
 	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
 	* Generic File Transfer PRPL interface (Thanks, Christian Hammond)
@@ -1179,10 +1179,10 @@ version 0.60 (04/04/2003):
 
 version 0.59.9 (03/01/2003):
 	* Updated zh_TW.po file (Thanks breeze833)
-	* Fix an oscar bug that caused some messages from 
+	* Fix an oscar bug that caused some messages from
 	  AOL 8.0 to be dropped (Thanks Mark Doliner)
 	* Changed "openprojects" to "freenode" in irc.c
-	* Fixed charset conversion on systems which use a BOM for UCS-4 
+	* Fixed charset conversion on systems which use a BOM for UCS-4
 	  (Thanks, Alfredo Pen~a, Ethan Blanton)
 	* Fixed a typo in the man page (Thanks Eric S. Raymond)
 
@@ -1227,7 +1227,7 @@ version 0.59.3 (09/14/2002):
 	* Changed "color" binding to Ctrl-K.
 	* Unaliaising a person in the "Online" tab will show up
 	  in the "Edit" tab as well (Thanks, Jason Willis)
-	* Internationalization fixes, esp. with UTF-8 locales 
+	* Internationalization fixes, esp. with UTF-8 locales
 	  (Thanks Matt Wilson and Ethan Blanton)
 
 version 0.59.2 (09/09/2002):
@@ -1264,9 +1264,9 @@ version 0.59.1 (08/25/2002):
 	  Robert McQueen)
 	* Now using libiconv for better i18n support (Thanks Junichi
 	  Uekawa)
-	* Will work with Perl 5.8 (thanks, Timothy Lee and Dan 
+	* Will work with Perl 5.8 (thanks, Timothy Lee and Dan
 	  Colascione)
-	* Fix for HTTP proxies (thanks, Ethan Blanton)	
+	* Fix for HTTP proxies (thanks, Ethan Blanton)
 	* Read proxy environment variables. (thanks, Christian Hammond)
 	* Use the pretty gaim.png for our menu entry.
 	* Added support for gettext 0.11.x.
@@ -1290,7 +1290,7 @@ version 0.59 (06/24/2002):
 	* Perl scripts can play Gaim sounds (thanks Andrew Rodland)
 	* Internal sounds can be played by commands (thanks Lex Spoon)
 	* Auto-login item in applet menu (thanks Chris Boyle)
-	* Fixed MSN "Unkown Error Code", "Already there", and 
+	* Fixed MSN "Unkown Error Code", "Already there", and
 	  "Already in opposite list" errors
 	* Changed "Play sound" button to "Mute" button
 	* You can now have "reserved" chars in IM and proxy passwords
@@ -1307,7 +1307,7 @@ version 0.59 (06/24/2002):
 	  entirely
 	* Gaim can now handle messages from Mac ICQ and Miranda ICQ
 	  (Thanks, Mark Doliner)
-	* Added Mozilla to browser options and changed KFM to 
+	* Added Mozilla to browser options and changed KFM to
 	  Konqueror.
 	* Can now set the server and port for MSN and Napster
 	* MSN Internationalization (Thanks Felipe Contreras and
@@ -1318,7 +1318,7 @@ version 0.59 (06/24/2002):
 version 0.58 (05/13/2002):
 	* Better applet transparency
 	* Option to raise buddy list on signons/signoffs
-	* Formatting of incoming MSN messages	
+	* Formatting of incoming MSN messages
 	* Get Info from menu multiple-account-aware (thanks
 	  Brian Bernas)
 	* Hide and unhide functions for the filectl plugin.
@@ -1368,7 +1368,7 @@ version 0.56 (04/11/2002):
 	* Fixed MSN privacy settings
 	* Group deletion fix (Thanks Mark Doliner)
 	* Alias/Group syncronization for Jabber (Thanks JSeymour)
- 	* Fixed broken signal handling in gdm-started GNOME sessions 
+	* Fixed broken signal handling in gdm-started GNOME sessions
 	  (Thanks Jim Seymour, Vann, Robert McQueen)
 	* Oscar group syncronization (Thanks, Mark Doliner)
 	* ICQ Authorization via Oscar (Thanks, Mark Doliner)
@@ -1376,18 +1376,18 @@ version 0.56 (04/11/2002):
 version 0.55 (03/29/2002):
 	* Jabber improvements (Thanks Jim Seymour)
 	* Various sound cleanups (Thanks Robert McQueen)
-	* Login process shown in single window (Thanks Michael 
+	* Login process shown in single window (Thanks Michael
 	  Golden)
 	* Can reorder your accounts in the account editor (Thanks
 	  Luke Schierer)
 	* Shows "mobile" icon for Oscar buddies using mobile
 	  devices (Thanks Mark Doliner)
 	* Fixed bug in MSN smilies that crashed PPC (and other?) platforms
-	* HTTP Proxy settings now HTTP compliant (Thanks Robert McQueen)	
+	* HTTP Proxy settings now HTTP compliant (Thanks Robert McQueen)
 	* Speling corections (Thanks Tero Kuusela)
 	* Oscar list icon fixes (Thanks Mark Doliner)
 	* Oscar idle times work again (Thanks Mark Doliner)
-	* Protocol icons on Edit Buddies tab (Thanks Christian Hammond)	
+	* Protocol icons on Edit Buddies tab (Thanks Christian Hammond)
 
 version 0.54 (03/14/2002):
 	* Compiles without GdkPixbuf again
@@ -1398,8 +1398,8 @@ version 0.54 (03/14/2002):
 	* Option to globally disable Buddy Icon animation (Thanks
 	  Luke Schierer)
 	* Numerous bugfixes
-	* Yahoo! will tell you when your buddies are playing Yahoo! 
- 	  games and give you the ability to join them
+	* Yahoo! will tell you when your buddies are playing Yahoo!
+	  games and give you the ability to join them
 	* Yahoo! can receive offline messages
 	* IRC can do DCC chat.
 	* IRC will convert HTML formatting to mIRC formatting.
@@ -1502,7 +1502,7 @@ version 0.46 (10/18/2001):
 	* Better applet icon drawing (thanks to Ari Pollak)
 	* An extraordinary number of bug fixes
 	* Ability to stop animation on buddy icons, restart animation,
-	  hide certain buddy icons, and save people's buddy icons, all 
+	  hide certain buddy icons, and save people's buddy icons, all
 	  through a right-click menu
 	* Event handlers in perl passed arguments as elements of
 	  an array rather than all concatenated as a string, making
@@ -1513,7 +1513,7 @@ version 0.46 (10/18/2001):
 	* Add buddy dialog now lets you select which protocol
 	  to add the buddy to
 	* Pressing 'signon' on the first screen for accounts that
-	  do not require passwords no longer incorrectly displays 
+	  do not require passwords no longer incorrectly displays
 	  an error message.
 
 version 0.45 (10/04/2001):
@@ -1742,7 +1742,7 @@ version 0.11.0-pre3 (12/15/2000):
 		MSN (plugins/msn)
 
 version 0.11.0-pre2 (12/04/2000):
-	* Fixed a segfault with a bad util.c 
+	* Fixed a segfault with a bad util.c
 
 version 0.11.0-pre1 (12/03/2000):
 	* Multiple connections
@@ -1784,7 +1784,7 @@ version 0.10.1 (09/15/2000):
 	* A third conversation window display preference.
 	* Better support for things like Sawfish
 
-version 0.10.0 (09/11/2000): 
+version 0.10.0 (09/11/2000):
 	* New Smiley Faces and Pixmaps added.
 	* Smiley faces now properly wrap in the conversation windows.
 	* Smiley dialog
@@ -1798,7 +1798,7 @@ version 0.10.0 (09/11/2000):
 	* Redesigned preferences dialog
 	* Redesigned conversation dialog
 	* Removed the Lag-O-Meter (Lag-O-Meter is now a plugin)
-	* Socks 4/5 Proxy works
+	* SOCKS 4a/5 proxy works
 	* Buddy Pounces are now saved in .gaimrc
 	* Buddy Chats are now saved in .gaimrc
 	* Ability to merge gaim, aim2, aim4 buddylists. Thanks again bmiller!
@@ -1806,8 +1806,8 @@ version 0.10.0 (09/11/2000):
 	  as. For example, if your buddy's SN is 'CouldntGetMyName', you can
 	  alias him as 'Loser'.
 	* Compile with GNOME bits if available
-	* Added GNOME Url Handler as an available web-browser 
-	* Added the S html tag. 		
+	* Added GNOME Url Handler as an available web-browser
+	* Added the S html tag.
 	* Optionally Ignore TiK's Automated Messages
 	* Option to beep instead of play sound
 	* New icons for panel (depends on some GNOME pixmaps)
@@ -1819,11 +1819,11 @@ version 0.9.20 (07/14/2000):
 	* More plugin events, more plugin features
 	* Run-time OSCAR support
 	* Added buddy list ticker (See prefs/Appearance). Clicking on a
-	  name will cause a new or previous IM window to display for 
-	  that screenname 
+	  name will cause a new or previous IM window to display for
+	  that screenname
 	* "You are sending messages too quickly" error is now fixed
 	   when you have a large buddylist.
-	* Fixed the LC_ALL compile problem on Solaris boxes 
+	* Fixed the LC_ALL compile problem on Solaris boxes
 	* Fixed PPC and ARM compile problem with oscar.c
 	* Smileys work better, and don't cause font attributes to drop
 	* Dialog windows are now prettier
@@ -1846,7 +1846,7 @@ version 0.9.18 (06/02/2000):
 	* Double error bug when sending message to an offline user is
 	  fixed.
 	* Pressing enter once again sends a message in buddy chatrooms (oops)
-	* More fixes for the change on the AOL sign-on process. 
+	* More fixes for the change on the AOL sign-on process.
 	* Fixed bug where Gaim sometimes doesn't find a font to use.
 	* Per-conversation font and color dialogs (thanks fflewddur)
 	* Chat in oscar works (somewhat)
@@ -1861,14 +1861,14 @@ version 0.9.16 (05/31/2000):
 	* Paned buddy chat window (Thanks Syd)
 	* Buddy lists (and changes) are cached to ~/.gaim/<sn>.blist
 	  where <sn> is your screen name. If for some reason, you log
-          into the AOL server and the buddy list comes back empty, we
+	  into the AOL server and the buddy list comes back empty, we
 	  check for a cache file, and, if we find one, read it in. This
-          essentially implements recovery from a server crash at AOL
+	  essentially implements recovery from a server crash at AOL
 	  (AOL does not back up machines that contain TOC-based buddy
 	  lists, unfortunately).  (Thanks Syd)
-	* Font selection dialog 
+	* Font selection dialog
 	* Small changes to the Oscar/libfaim stuff (see libfaim/README.gaim)
-	* SOCKS v4 Proxy support
+	* SOCKS 4a proxy support
 	* Better proxy support overall (you can get people's info now! :) )
 	* Two-way file transfer (you can get and send files, but you still
 	  can't initiate either)
@@ -1912,13 +1912,13 @@ version 0.9.12 (03/25/2000):
 	* GNOME Applet support works better
 	  (thanks to Eric Warmenhoven for the patch)
 	* Support for displaying true type fonts
-	* Lag-O-Meter does not send lag-test if not selected 
+	* Lag-O-Meter does not send lag-test if not selected
 	* Fixed problem with saving away messages which contain spaces
 	  and numbers.
-	* Various GNOME Applet Enhancements (thanks AGAIN to 
-	  Eric.  Someone needs to stop this boy :-) ) 
+	* Various GNOME Applet Enhancements (thanks AGAIN to
+	  Eric.  Someone needs to stop this boy :-) )
 	* A lot of random, obscure bugs fixed
-	* All of the major and I believe all of the minor memory leaks are 
+	* All of the major and I believe all of the minor memory leaks are
 	  now fixed
 	  (Thanks to Peter Teichman, Larry Ewing, Jeramey Crawford, and me)
 
@@ -1928,9 +1928,9 @@ version 0.9.11 (03/22/2000):
 	* New .gaimrc format
 	* Better support for multiple screen names
 	* Font Properties
-	* Saving of buddylist window position 
+	* Saving of buddylist window position
 	* Fixed a problem with Gaim and the Netscape-branded version
-	  of Mozilla 
+	  of Mozilla
 	* New Sound Properties
 	* More General Properties
 	* Bigger Text-Entry field (Thanks to CrazyDavy for this one)
@@ -1960,8 +1960,8 @@ version 0.9.8  (10/04/1999):
 	* Some logging fixes and improvements
 	* configurable host/port selection
 	* Clickable Links in buddy chat
-	* New Gaim Logo 
-	* Display Signon/Signoff messages in conversation windows 
+	* New Gaim Logo
+	* Display Signon/Signoff messages in conversation windows
 	* Option to strip HTML from logged messages
 	* GNOME cleanups (It might work now haha)
 	* When viewing user info, URLS are converted to clickable links
@@ -2035,7 +2035,7 @@ version 0.8.0  (04/31/1999):
 	* `Blocking' on conversation window
 	* Add/Remove buddy from conversation window
 	* Scroll-Wheel Mice work in Conversation Window
-	* Fixed WindowMaker Appicon 
+	* Fixed WindowMaker Appicon
 	* Version Number in About Box
 	* Gaim Slogan in about box :)
-	* Created Changelog File :) 
+	* Created Changelog File :)
