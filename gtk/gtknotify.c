@@ -352,6 +352,9 @@ gaim_gtk_get_mail_dialog()
 		mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_GAIM_MAIL,
 						GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 		mail_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(mail_dialog->treemodel));
+		gtk_tree_view_set_search_column(GTK_TREE_VIEW(mail_dialog->treeview), GAIM_MAIL_TEXT);
+		gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(mail_dialog->treeview),
+			             gaim_gtk_tree_view_search_equal_func, NULL, NULL);
 
 		g_signal_connect(G_OBJECT(dialog), "response",
 						 G_CALLBACK(email_response_cb), mail_dialog);
