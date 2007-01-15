@@ -304,7 +304,11 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	char *title;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
-	sel_paths = gtk_tree_selection_get_selected_rows(selection, &model);
+#if GTK_CHECK_VERSION(2,2,0)
+	sel_paths = gtk_tree_selection_get_selected_rows(selection, NULL);
+#else
+	gtk_tree_selection_selected_foreach(selection, list_selected_helper, &sel_paths);
+#endif
 
 	/* This is ugly because we're not allowed to modify the model from within
 	 * gtk_tree_selection_selected_foreach() and the GtkTreePaths can become invalid
