@@ -1013,10 +1013,7 @@ gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
 
 	dialog->num_transfers--;
 
-	if (dialog->num_transfers == 0 && !dialog->keep_open)
-		gaim_gtkxfer_dialog_hide(dialog);
-	else
-		ensure_row_selected(dialog);
+	ensure_row_selected(dialog);
 
 	update_title_progress(dialog);
 	gaim_xfer_unref(xfer);
@@ -1078,6 +1075,8 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 	char *size_str, *remaining_str;
 	GtkTreeSelection *selection;
 	time_t current_time;
+	GtkTreeIter iter;
+	gboolean valid;
 
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
@@ -1132,6 +1131,33 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 		gaim_gtkxfer_dialog_remove_xfer(dialog, xfer);
 	else
 		update_buttons(dialog, xfer);
+
+	/*
+	 * If all transfers are finished, and the pref is set, then
+	 * close the dialog.  Otherwise just exit this function.
+	 */
+	if (dialog->keep_open)
+		return;
+
+	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(dialog->model), &iter);
+	while (valid)
+	{
+		GValue val;
+		GaimXfer *next;
+
+		val.g_type = 0;
+		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model),
+				&iter, COLUMN_DATA, &val);
+
+		next = g_value_get_pointer(&val);
+		if (!gaim_xfer_is_completed(next))
+			return;
+
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(dialog->model), &iter);
+	}
+
+	/* If we got to this point then we know everything is finished */
+	gaim_gtkxfer_dialog_hide(dialog);
 }
 
 /**************************************************************************
