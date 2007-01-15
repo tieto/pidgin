@@ -527,7 +527,7 @@ gaim_gtk_sound_play_event(GaimSoundEventID event)
 
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (gaim_prefs_get_bool(enable_pref)) {
-		char *filename = g_strdup(gaim_prefs_get_string(file_pref));
+		char *filename = g_strdup(gaim_prefs_get_path(file_pref));
 		if(!filename || !strlen(filename)) {
 			g_free(filename);
 			filename = g_build_filename(DATADIR, "sounds", "gaim", sounds[event].def, NULL);

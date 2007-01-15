@@ -900,9 +900,9 @@ gaim_prefs_set_path(const char *name, const char *value)
 	struct gaim_pref *pref = find_pref(name);
 
 	if(pref) {
-		if(pref->type != GAIM_PREF_STRING) {
+		if(pref->type != GAIM_PREF_PATH) {
 			gaim_debug_error("prefs",
-					"gaim_prefs_set_string: %s not a string pref\n", name);
+					"gaim_prefs_set_path: %s not a string pref\n", name);
 			return;
 		}
 
@@ -926,9 +926,9 @@ gaim_prefs_set_path_list(const char *name, GList *value)
 	if(pref) {
 		GList *tmp;
 
-		if(pref->type != GAIM_PREF_STRING_LIST) {
+		if(pref->type != GAIM_PREF_PATH_LIST) {
 			gaim_debug_error("prefs",
-					"gaim_prefs_set_string_list: %s not a string list pref\n",
+					"gaim_prefs_set_path_list: %s not a string list pref\n",
 					name);
 			return;
 		}
@@ -1056,11 +1056,11 @@ gaim_prefs_get_path(const char *name)
 
 	if(!pref) {
 		gaim_debug_error("prefs",
-				"gaim_prefs_get_string: Unknown pref %s\n", name);
+				"gaim_prefs_get_path: Unknown pref %s\n", name);
 		return NULL;
 	} else if(pref->type != GAIM_PREF_PATH) {
 		gaim_debug_error("prefs",
-				"gaim_prefs_get_string: %s not a path pref\n", name);
+				"gaim_prefs_get_path: %s not a path pref\n", name);
 		return NULL;
 	}
 
@@ -1075,11 +1075,11 @@ gaim_prefs_get_path_list(const char *name)
 
 	if(!pref) {
 		gaim_debug_error("prefs",
-				"gaim_prefs_get_string_list: Unknown pref %s\n", name);
+				"gaim_prefs_get_path_list: Unknown pref %s\n", name);
 		return NULL;
 	} else if(pref->type != GAIM_PREF_PATH_LIST) {
 		gaim_debug_error("prefs",
-				"gaim_prefs_get_string_list: %s not a path list pref\n", name);
+				"gaim_prefs_get_path_list: %s not a path list pref\n", name);
 		return NULL;
 	}
 

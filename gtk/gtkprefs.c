@@ -1375,7 +1375,7 @@ logging_page()
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
-	gaim_prefs_set_string("/gaim/gtk/sound/command",
+	gaim_prefs_set_path("/gaim/gtk/sound/command",
 			gtk_entry_get_text(GTK_ENTRY(entry)));
 	return TRUE;
 }
@@ -1619,7 +1619,7 @@ sound_page()
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
-	cmd = gaim_prefs_get_string("/gaim/gtk/sound/command");
+	cmd = gaim_prefs_get_path("/gaim/gtk/sound/command");
 	if(cmd)
 		gtk_entry_set_text(GTK_ENTRY(entry), cmd);
 
