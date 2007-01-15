@@ -509,6 +509,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 {
 	GList *alllines = g_list_first(view->list);
 	GList *list, *next, *iter, *inext;
+	const int text_length = text ? g_utf8_strlen(text, -1) : 0;
 	int count = 0;
 	for (list = view->tags; list; list = next) {
 		GntTextTag *tag = list->data;
@@ -521,7 +522,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 
 			before = g_strndup(view->string->str, tag->start);
 			after = g_strdup(view->string->str + tag->end);
-			change = (tag->end - tag->start) - (text ? strlen(text) : 0);
+			change = (tag->end - tag->start) - text_length;
 
 			g_string_printf(view->string, "%s%s%s", before, text ? text : "", after);
 			g_free(before);
