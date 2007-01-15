@@ -509,7 +509,7 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 {
 	GList *alllines = g_list_first(view->list);
 	GList *list, *next, *iter, *inext;
-	const int text_length = text ? g_utf8_strlen(text, -1) : 0;
+	const int text_length = text ? strlen(text) : 0;
 	int count = 0;
 	for (list = view->tags; list; list = next) {
 		GntTextTag *tag = list->data;
