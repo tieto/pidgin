@@ -269,43 +269,68 @@ status_window_modify_cb(GtkButton *button, gpointer user_data)
 }
 
 static void
-status_window_delete_confirm_cb(char *title)
+status_window_delete_cancel_cb(gpointer data)
 {
-	GtkTreeIter iter;
-
-	if (status_window_find_savedstatus(&iter, title))
-		gtk_list_store_remove(status_window->model, &iter);
-
-	gaim_savedstatus_delete(title);
-
-	g_free(title);
+	GList *sel_titles = data;
+	g_list_foreach(sel_titles, (GFunc) g_free, NULL);
+	g_list_free(sel_titles);
 }
 
 static void
-status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
-							 GtkTreeIter *iter, gpointer user_data)
+status_window_delete_confirm_cb(gpointer data)
 {
+	GtkTreeIter iter;
+	GList *sel_titles = data, *l;
 	char *title;
-	char *buf;
 
-	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
-
-	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title);
-	gaim_request_action(status_window, NULL, buf, NULL, 0, title, 2,
-						_("Delete"), status_window_delete_confirm_cb,
-						_("Cancel"), g_free);
-	g_free(buf);
+	for (l = sel_titles; l != NULL; l = l->next) {
+		title = l->data;
+		if (status_window_find_savedstatus(&iter, title))
+			gtk_list_store_remove(status_window->model, &iter);
+		gaim_savedstatus_delete(title);
+		g_free(title);
+	}
+	g_list_free(sel_titles);
 }
 
 static void
 status_window_delete_cb(GtkButton *button, gpointer user_data)
 {
 	StatusWindow *dialog = user_data;
+	GtkTreeIter iter;
 	GtkTreeSelection *selection;
+	GList *sel_paths, *l, *sel_titles = NULL;
+	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
+	char *title;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+	sel_paths = gtk_tree_selection_get_selected_rows(selection, &model);
 
-	gtk_tree_selection_selected_foreach(selection, status_window_delete_foreach, user_data);
+	/* This is ugly because we're not allowed to modify the model from within
+	 * gtk_tree_selection_selected_foreach() and the GtkTreePaths can become invalid
+	 * when something is removed from the model.  The selection can also change while
+	 * the request dialog is displayed, so we need to capture the selected rows at this time. */
+
+	for (l = sel_paths; l != NULL; l = l->next) {
+		if (gtk_tree_model_get_iter(model, &iter, l->data)) {
+			gtk_tree_model_get(model, &iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
+			sel_titles = g_list_prepend(sel_titles, title);
+		}
+		gtk_tree_path_free(l->data);
+	}
+	g_list_free(sel_paths);
+
+	if (g_list_length(sel_titles) == 1)
+		title = g_strdup_printf(_("Are you sure you want to delete %s?"), sel_titles->data);
+	else
+		title = g_strdup(_("Are you sure you want to delete the selected saved statuses?"));
+
+	gaim_request_action(dialog, NULL, title,
+		 NULL, 0, sel_titles, 2,
+		_("Delete"), status_window_delete_confirm_cb,
+		_("Cancel"), status_window_delete_cancel_cb);
+
+	g_free(title);
 }
 
 static void
