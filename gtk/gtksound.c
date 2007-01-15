@@ -420,7 +420,7 @@ gaim_gtk_sound_play_file(const char *filename)
 		char *command;
 		GError *error = NULL;
 
-		sound_cmd = gaim_prefs_get_string("/gaim/gtk/sound/command");
+		sound_cmd = gaim_prefs_get_path("/gaim/gtk/sound/command");
 
 		if (!sound_cmd || *sound_cmd == '\0') {
 			gaim_debug_error("gtksound",
