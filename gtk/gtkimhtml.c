@@ -3097,10 +3097,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	gtk_widget_realize(GTK_WIDGET(imhtml));
 	gtk_widget_show_all(GTK_WIDGET(imhtml));
 	g_idle_add_full(G_PRIORITY_HIGH_IDLE, set_adj_idle_cb, imhtml, NULL);
-	if (refocus){
-		printf("refocusing\n");
+	if (refocus)
 		gtk_widget_grab_focus(GTK_WIDGET(imhtml));
-	}
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
 }
