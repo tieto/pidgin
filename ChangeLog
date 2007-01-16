@@ -209,7 +209,7 @@ version 2.0.0:
 	  The spaces (and now backslashes) must be backslash-escaped.
 	  (Sadrul Habib Chowdhury)
 	* New e-mail notices are now grouped into one dialog.
-	  (Sadrul Habib Chowdhury)
+	  (Sadrul Habib Chowdhury, Chris Stafford)
 	* "Open" in the File Transfer window integrates with GNOME, KDE, and
 	  Windows and falls back to the browser in other environments.
 	* On Mac OS X, the keyboard/mouse idle time pref now uses system idle
