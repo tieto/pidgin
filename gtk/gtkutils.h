@@ -533,6 +533,15 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *handle, const char* stock_id,
 gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 			const gchar *key, GtkTreeIter *iter, gpointer data);
 
+/**
+ * Sets or resets a window to 'urgent,' by setting the URGENT hint in X 
+ * or blinking in the win32 taskbar
+ *
+ * @param window  The window to draw attention to
+ * @param urgent  Whether to set the urgent hint or not
+ */
+void gaim_gtk_set_urgent(GdkWindow *window, gboolean urgent);
+
 #if !GTK_CHECK_VERSION(2,2,0)
 /**
  * This is copied from Gtk to support Gtk 2.0

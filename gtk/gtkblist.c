@@ -3807,6 +3807,7 @@ reset_headline(GaimGtkBuddyList *gtkblist)
 	gtkblist->headline_callback = NULL;
 	gtkblist->headline_data = NULL;
 	gtkblist->headline_destroy = NULL;
+	gaim_gtk_set_urgent(gtkblist->window->window, FALSE);
 }
 
 static gboolean
@@ -5707,6 +5708,7 @@ gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callb
 	gtkblist->headline_callback = callback;
 	gtkblist->headline_data = user_data;
 	gtkblist->headline_destroy = destroy;
+	gaim_gtk_set_urgent(gtkblist->window->window, TRUE);
 	gtk_widget_show_all(gtkblist->headline_hbox);
 }
 

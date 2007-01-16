@@ -53,6 +53,7 @@ typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
 typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
 typedef struct _GtkIMHtmlFuncs		GtkIMHtmlFuncs;
+typedef struct _GtkIMHtmlAnchor         GtkIMHtmlAnchor;
 
 typedef enum {
 	GTK_IMHTML_BOLD =       1 << 0,
@@ -125,6 +126,7 @@ struct _GtkIMHtml {
 	char *clipboard_html_string;
 
 	GSList *im_images;
+	GSList *anchors;
 	GtkIMHtmlFuncs *funcs;
 };
 
@@ -188,6 +190,11 @@ struct _GtkIMHtmlImage {
 struct _GtkIMHtmlHr {
 	GtkIMHtmlScalable scalable;
 	GtkWidget *sep;
+};
+
+struct _GtkIMHtmlAnchor {
+	GtkTextChildAnchor *anchor;
+	GtkWidget *widget;
 };
 
 typedef enum {
@@ -472,6 +479,31 @@ void gtk_imhtml_hr_scale(GtkIMHtmlScalable *scale, int width, int height);
  * @param iter   The GtkTextIter at which to add the scalable.
  */
 void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter);
+
+/**
+ * Creates a new anchor for GTK+ widgets, taking care of reference counting
+ *
+ * @param anchor The GtkTextChildAnchor
+ * @param widget The GtkWidget
+ *
+ * @return The GtkIMHtmlAnchor
+ */
+GtkIMHtmlAnchor *gtk_imhtml_anchor_new(GtkTextChildAnchor *anchor, GtkWidget *widget);
+
+/**
+ * Frees an anchor, taking care of refcounting
+ *
+ * @param anchor The anchor
+ */
+void gtk_imhtml_anchor_free(GtkIMHtmlAnchor *anchor);
+
+/**
+ * Associates an anchor with an imhtml
+ *
+ * @param imhtml  The IMHTML to associate with.
+ * @param anchor  The anchor to associate
+ */
+void gtk_imhtml_add_anchor(GtkIMHtml *imhtml, GtkIMHtmlAnchor *anchor);
 
 /**
  * Finds and highlights a given string in a GTK+ IM/HTML.

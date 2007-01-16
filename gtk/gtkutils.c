@@ -2876,6 +2876,30 @@ char *gaim_gtk_make_pretty_arrows(const char *str)
 	return ret;
 }
 
+void gaim_gtk_set_urgent(GdkWindow *window, gboolean urgent)
+{
+#ifdef _WIN32
+#error Hey, Daniel! Make this work!
+#else
+	XWMHints *hints;
+
+	g_return_if_fail(window != NULL);
+
+	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(window),
+	                    GDK_WINDOW_XWINDOW(window));
+	if(!hints)
+		hints = XAllocWMHints();
+
+	if (urgent)
+		hints->flags |= XUrgencyHint;
+	else
+		hints->flags &= ~XUrgencyHint;
+	XSetWMHints(GDK_WINDOW_XDISPLAY(window),
+	            GDK_WINDOW_XWINDOW(window), hints);
+	XFree(hints);
+#endif
+}
+
 GSList *minidialogs = NULL;
 
 static void *
