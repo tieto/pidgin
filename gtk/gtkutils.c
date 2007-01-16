@@ -2879,7 +2879,7 @@ char *gaim_gtk_make_pretty_arrows(const char *str)
 void gaim_gtk_set_urgent(GtkWindow *window, gboolean urgent)
 {
 #if GTK_CHECK_VERSION(2,8,0)
-	gtk_window_set_urgency_hint(window, urgent)
+	gtk_window_set_urgency_hint(window, urgent);
 #elif defined _WIN32
 	gtkwgaim_window_flash(window, urgent);
 #else
@@ -2954,7 +2954,7 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE,0);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
+        gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BOX_SPACE);
 
 	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
 	minidialogs = g_slist_prepend(minidialogs, vbox);
@@ -2988,7 +2988,7 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
-	hbox2 = gtk_hbox_new(FALSE, 6);
+	hbox2 = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
 
 	va_start(args, user_data);

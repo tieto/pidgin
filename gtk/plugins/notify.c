@@ -545,24 +545,7 @@ static void
 handle_urgent(GaimGtkWindow *win, gboolean set)
 {
 #ifndef _WIN32
-	XWMHints *hints;
-
-	g_return_if_fail(win != NULL);
-	g_return_if_fail(win->window != NULL);
-	g_return_if_fail(win->window->window != NULL);
-
-	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win->window->window),
-	                    GDK_WINDOW_XWINDOW(win->window->window));
-	if(!hints)
-		hints = XAllocWMHints();
-
-	if (set)
-		hints->flags |= XUrgencyHint;
-	else
-		hints->flags &= ~XUrgencyHint;
-	XSetWMHints(GDK_WINDOW_XDISPLAY(win->window->window),
-	            GDK_WINDOW_XWINDOW(win->window->window), hints);
-	XFree(hints);
+	gaim_gtk_set_urgent(GTK_WINDOW(win->window), set);
 #endif
 }
 
