@@ -540,7 +540,7 @@ gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
  * @param window  The window to draw attention to
  * @param urgent  Whether to set the urgent hint or not
  */
-void gaim_gtk_set_urgent(GdkWindow *window, gboolean urgent);
+void gaim_gtk_set_urgent(GtkWindow *window, gboolean urgent);
 
 #if !GTK_CHECK_VERSION(2,2,0)
 /**

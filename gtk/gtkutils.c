@@ -2220,7 +2220,7 @@ struct _icon_chooser {
 	GtkWidget *icon_filesel;
 	GtkWidget *icon_preview;
 	GtkWidget *icon_text;
-	
+
 	void (*callback)(const char*,gpointer);
 	gpointer data;
 };
@@ -2678,7 +2678,7 @@ gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 #if !GTK_CHECK_VERSION(2,6,0)
 static void
-_gdk_file_scale_size_prepared_cb (GdkPixbufLoader *loader, 
+_gdk_file_scale_size_prepared_cb (GdkPixbufLoader *loader,
 		  int              width,
 		  int              height,
 		  gpointer         data)
@@ -2691,7 +2691,7 @@ _gdk_file_scale_size_prepared_cb (GdkPixbufLoader *loader,
 
 	g_return_if_fail (width > 0 && height > 0);
 
-	if (info->preserve_aspect_ratio && 
+	if (info->preserve_aspect_ratio &&
 		(info->width > 0 || info->height > 0)) {
 		if (info->width < 0)
 		{
@@ -2841,7 +2841,7 @@ void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const
 
 	if (filename) {
 		char *newfile;
-		
+
 		newfile = gaim_gtk_convert_buddy_icon(gaim_find_prpl(gaim_account_get_protocol_id(account)),
 						filename);
 		path = gaim_buddy_icons_get_full_path(newfile);
@@ -2876,17 +2876,24 @@ char *gaim_gtk_make_pretty_arrows(const char *str)
 	return ret;
 }
 
-void gaim_gtk_set_urgent(GdkWindow *window, gboolean urgent)
+void gaim_gtk_set_urgent(GtkWindow *window, gboolean urgent)
 {
-#ifdef _WIN32
-#error Hey, Daniel! Make this work!
+#if GTK_CHECK_VERSION(2,8,0)
+	gtk_window_set_urgency_hint(window, urgent)
+#elif defined _WIN32
+	gtkwgaim_window_flash(window, urgent);
 #else
+	GdkWindow *gdkwin;
 	XWMHints *hints;
 
 	g_return_if_fail(window != NULL);
 
-	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(window),
-	                    GDK_WINDOW_XWINDOW(window));
+	gdkwin = GTK_WIDGET(window)->window;
+
+	g_return_if_fail(gdkwin != NULL);
+
+	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gdkwin),
+	                    GDK_WINDOW_XWINDOW(gdkwin));
 	if(!hints)
 		hints = XAllocWMHints();
 
@@ -2894,8 +2901,8 @@ void gaim_gtk_set_urgent(GdkWindow *window, gboolean urgent)
 		hints->flags |= XUrgencyHint;
 	else
 		hints->flags &= ~XUrgencyHint;
-	XSetWMHints(GDK_WINDOW_XDISPLAY(window),
-	            GDK_WINDOW_XWINDOW(window), hints);
+	XSetWMHints(GDK_WINDOW_XDISPLAY(gdkwin),
+	            GDK_WINDOW_XWINDOW(gdkwin), hints);
 	XFree(hints);
 #endif
 }
@@ -2910,7 +2917,7 @@ gaim_gtk_utils_get_handle()
 	return &handle;
 }
 
-static void connection_signed_off_cb(GaimConnection *gc) 
+static void connection_signed_off_cb(GaimConnection *gc)
 {
 	GSList *list;
 	for (list = minidialogs; list; list = list->next) {
@@ -2955,17 +2962,17 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 
 	if (first_call) {
 		first_call = FALSE;
-		gaim_signal_connect(gaim_connections_get_handle(), "signed-off", 
+		gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
 				    gaim_gtk_utils_get_handle(),
 				    GAIM_CALLBACK(connection_signed_off_cb), NULL);
 	}
-	
+
       	hbox = gtk_hbox_new(FALSE, 0);
         gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	
+
         if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	
+
 	primary_esc = g_markup_escape_text(primary, -1);
 
 	if (secondary)
@@ -2980,15 +2987,15 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-	
+
 	hbox2 = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
-	
+
 	va_start(args, user_data);
 	while ((button_text = va_arg(args, char*))) {
 		callback = va_arg(args, GCallback);
 		button = gtk_button_new();
-	
+
 		if (callback)
 			g_signal_connect_swapped(G_OBJECT(button), "clicked", callback, user_data);
 		g_signal_connect_swapped(G_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), vbox);

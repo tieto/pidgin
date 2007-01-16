@@ -239,10 +239,48 @@ static HWND wgaim_message_window_init(void) {
 	return win_hwnd;
 }
 
+static gboolean stop_flashing(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
+	GtkWindow *window = data;
+	gtkwgaim_window_flash(window, FALSE);
+	return FALSE;
+}
+
+void
+gtkwgaim_window_flash(GtkWindow *window, gboolean flash) {
+	GdkWindow * gdkwin;
+
+	g_return_if_fail(window != NULL);
+
+	gdkwin = GTK_WIDGET(window)->window;
+
+	g_return_if_fail(GDK_IS_WINDOW(gdkwin));
+	g_return_if_fail(GDK_WINDOW_TYPE(gdkwin) != GDK_WINDOW_CHILD);
+
+	if(GDK_WINDOW_DESTROYED(gdkwin))
+	    return;
+
+	if(MyFlashWindowEx) {
+		FLASHWINFO info;
+
+		memset(&info, 0, sizeof(FLASHWINFO));
+		info.cbSize = sizeof(FLASHWINFO);
+		info.hwnd = GDK_WINDOW_HWND(gdkwin);
+		if (flash)
+			info.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
+		else
+			info.dwFlags = FLASHW_STOP;
+		info.dwTimeout = 0;
+		info.dwTimeout = 0;
+
+		MyFlashWindowEx(&info);
+	} else
+		FlashWindow(GDK_WINDOW_HWND(gdkwin), flash);
+}
+
 void
 gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 	GaimGtkWindow *win;
-	GtkWidget *window;
+	GtkWindow *window;
 
 	/* Don't flash for our own messages or system messages */
 	if(flags & GAIM_MESSAGE_SEND || flags & GAIM_MESSAGE_SYSTEM)
@@ -258,23 +296,12 @@ gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 		gaim_debug_info("gtkwgaim", "No conversation windows found to blink.\n");
 		return;
 	}
+	window = GTK_WINDOW(win->window);
 
-	window = win->window;
-
-	/* Don't flash if we have the window focused */
-	if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
-		return;
-
-	if(MyFlashWindowEx) {
-		FLASHWINFO info;
-
-		memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = GDK_WINDOW_HWND(window->window);
-		info.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
-		info.dwTimeout = 0;
-		MyFlashWindowEx(&info);
-	}
+	gtkwgaim_window_flash(window, TRUE);
+	/* Stop flashing when window receives focus */
+	g_signal_connect(G_OBJECT(window), "focus-in-event",
+					 G_CALLBACK(stop_flashing), window);
 }
 
 static gboolean

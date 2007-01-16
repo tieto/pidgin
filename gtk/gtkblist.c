@@ -778,15 +778,15 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
-		
+
 		title = gaim_get_group_title(node, TRUE);
-		
+
 		gtk_tree_store_set(gtkblist->treemodel, iter,
 		   NAME_COLUMN, title,
 		   -1);
 
 		g_free(title);
-		
+
 		gaim_blist_node_set_bool(node, "collapsed", FALSE);
 	}
 }
@@ -802,15 +802,15 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
-		
+
 		title = gaim_get_group_title(node, FALSE);
-		
+
 		gtk_tree_store_set(gtkblist->treemodel, iter,
 		   NAME_COLUMN, title,
 		   -1);
-		
+
 		g_free(title);
-		
+
 		gaim_blist_node_set_bool(node, "collapsed", TRUE);
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_gtk_blist_collapse_contact_cb(NULL, node);
@@ -3807,7 +3807,7 @@ reset_headline(GaimGtkBuddyList *gtkblist)
 	gtkblist->headline_callback = NULL;
 	gtkblist->headline_data = NULL;
 	gtkblist->headline_destroy = NULL;
-	gaim_gtk_set_urgent(gtkblist->window->window, FALSE);
+	gaim_gtk_set_urgent(GTK_WINDOW(gtkblist->window), FALSE);
 }
 
 static gboolean
@@ -5708,7 +5708,7 @@ gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callb
 	gtkblist->headline_callback = callback;
 	gtkblist->headline_data = user_data;
 	gtkblist->headline_destroy = destroy;
-	gaim_gtk_set_urgent(gtkblist->window->window, TRUE);
+	gaim_gtk_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 	gtk_widget_show_all(gtkblist->headline_hbox);
 }
 

@@ -37,6 +37,7 @@ void gtkwgaim_notify_uri(const char *uri);
 void gtkwgaim_shell_execute(const char *target, const char *verb, const char *clazz);
 void gtkwgaim_ensure_onscreen(GtkWidget *win);
 void gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags);
+void gtkwgaim_window_flash(GtkWindow *window, gboolean flash);
 
 /* init / cleanup */
 void gtkwgaim_init(HINSTANCE);
