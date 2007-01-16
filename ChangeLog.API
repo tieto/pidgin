@@ -356,6 +356,9 @@ version 2.0.0:
 	* gaim_xfer_set_bytes_sent().  Sets the offset in the file to
 	  read from or write to.
 	* gaim_privacy_deny and gaim_privacy_allow
+	* gaim_gtk_blist_set_headline
+	* gaim_gtk_set_urgent
+	* GtkGaimScrollBook and its functions.
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
