@@ -38,6 +38,10 @@ version 2.0.0:
 	  account editor)
 	* The space wasted by the group expanders has been eliminated and
 	  the expander setting in .gtkrc-2.0 is no longer needed
+	* Authorization requests don't popup new dialogs any more. They are
+	  displayed at the bottom of the buddy list instead.
+	* New mail notifications don't popup new dialogs any more. The are
+	  displayed at the top of the buddylist instead.
 
 	Conversations and Chats:
 	* Timestamps honor the locale.  To use the traditional style,
@@ -126,6 +130,8 @@ version 2.0.0:
 	  times when people in your buddylist will most likely respond
 	  to you, based on times in the past when they have responded
 	  (Geoffrey Foster, Google Summer of Code)
+	* A few new plugins: Autoaccept, Autoreply, Buddy Notes, New Line, Offline
+	  Message Emulation, Conversation Colors and Markerline
 
 	MSN Features:
 	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)
