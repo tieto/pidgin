@@ -1198,7 +1198,7 @@ network_page()
 static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gaim_prefs_set_string("/gaim/gtk/browsers/command", program);
+	gaim_prefs_set_path("/gaim/gtk/browsers/command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1331,7 +1331,7 @@ browser_page()
 	gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(entry),
-					   gaim_prefs_get_string("/gaim/gtk/browsers/command"));
+					   gaim_prefs_get_path("/gaim/gtk/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
 	gaim_set_accessible_label (entry, label);
@@ -2035,7 +2035,7 @@ gaim_gtk_prefs_init(void)
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
 	gaim_prefs_add_int("/gaim/gtk/browsers/place", GAIM_BROWSER_DEFAULT);
-	gaim_prefs_add_string("/gaim/gtk/browsers/command", "");
+	gaim_prefs_add_path("/gaim/gtk/browsers/command", "");
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
 #endif
 
@@ -2045,9 +2045,9 @@ gaim_gtk_prefs_init(void)
 
 	/* File locations */
 	gaim_prefs_add_none("/gaim/gtk/filelocations");
-	gaim_prefs_add_string("/gaim/gtk/filelocations/last_save_folder", "");
-	gaim_prefs_add_string("/gaim/gtk/filelocations/last_open_folder", "");
-	gaim_prefs_add_string("/gaim/gtk/filelocations/last_icon_folder", "");
+	gaim_prefs_add_path("/gaim/gtk/filelocations/last_save_folder", "");
+	gaim_prefs_add_path("/gaim/gtk/filelocations/last_open_folder", "");
+	gaim_prefs_add_path("/gaim/gtk/filelocations/last_icon_folder", "");
 
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");

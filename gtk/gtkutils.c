@@ -2261,7 +2261,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog->icon_filesel));
 	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel));
 	if (current_folder != NULL) {
-		gaim_prefs_set_string("/gaim/gtk/filelocations/last_icon_folder", current_folder);
+		gaim_prefs_set_path("/gaim/gtk/filelocations/last_icon_folder", current_folder);
 		g_free(current_folder);
 	}
 
@@ -2284,7 +2284,7 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 
 	current_folder = g_path_get_dirname(filename);
 	if (current_folder != NULL) {
-		gaim_prefs_set_string("/gaim/gtk/filelocations/last_icon_folder", current_folder);
+		gaim_prefs_set_path("/gaim/gtk/filelocations/last_icon_folder", current_folder);
 		g_free(current_folder);
 	}
 
@@ -2381,7 +2381,7 @@ GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(co
 		return NULL;
 	}
 
-	current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_icon_folder");
+	current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_icon_folder");
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 
 	dialog->icon_filesel = gtk_file_chooser_dialog_new(_("Buddy Icon"),

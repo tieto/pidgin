@@ -1159,9 +1159,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			gaim_account_set_buddy_icon_path(account, dialog->icon_path);
 			gaim_account_set_buddy_icon(account, dialog->cached_icon_path);
 		}
-		else if (gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon") && icon_change)
+		else if (gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon") && icon_change)
 		{
-			const char *filename = gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon");
+			const char *filename = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
 			char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, filename);
 			gaim_account_set_buddy_icon_path(account, filename);
 			gaim_account_set_buddy_icon(account, icon);
@@ -1987,7 +1987,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 	if (gaim_account_get_bool(account, "use-global-buddyicon", TRUE))
-		path = gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon");
+		path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
 	else
 		path = gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL);
 	if (path != NULL)
@@ -2547,7 +2547,7 @@ gaim_gtk_account_init(void)
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  520);
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 321);
-	gaim_prefs_add_string("/gaim/gtk/accounts/buddyicon", NULL);
+	gaim_prefs_add_path("/gaim/gtk/accounts/buddyicon", NULL);
 
 	gaim_signal_register(gaim_gtk_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,

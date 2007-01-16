@@ -1415,9 +1415,9 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData 
 	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(data->dialog));
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
-			gaim_prefs_set_string("/gaim/gtk/filelocations/last_save_folder", current_folder);
+			gaim_prefs_set_path("/gaim/gtk/filelocations/last_save_folder", current_folder);
 		} else {
-			gaim_prefs_set_string("/gaim/gtk/filelocations/last_open_folder", current_folder);
+			gaim_prefs_set_path("/gaim/gtk/filelocations/last_open_folder", current_folder);
 		}
 		g_free(current_folder);
 	}
@@ -1455,9 +1455,9 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
-			gaim_prefs_set_string("/gaim/gtk/filelocations/last_save_folder", current_folder);
+			gaim_prefs_set_path("/gaim/gtk/filelocations/last_save_folder", current_folder);
 		} else {
-			gaim_prefs_set_string("/gaim/gtk/filelocations/last_open_folder", current_folder);
+			gaim_prefs_set_path("/gaim/gtk/filelocations/last_open_folder", current_folder);
 		}
 		g_free(current_folder);
 	}
@@ -1524,9 +1524,9 @@ gaim_gtk_request_file(const char *title, const char *filename,
 	gtk_dialog_set_default_response(GTK_DIALOG(filesel), GTK_RESPONSE_ACCEPT);
 
 	if (savedialog) {
-		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_save_folder");
+		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_save_folder");
 	} else {
-		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_open_folder");
+		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_open_folder");
 	}
 
 	if ((filename != NULL) && (*filename != '\0')) {
@@ -1559,9 +1559,9 @@ gaim_gtk_request_file(const char *title, const char *filename,
 			title ? title : (savedialog ? _("Save File...")
 				: _("Open File...")));
 	if (savedialog) {
-		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_save_folder");
+		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_save_folder");
 	} else {
-		current_folder = gaim_prefs_get_string("/gaim/gtk/filelocations/last_open_folder");
+		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_open_folder");
 	}
 	if (current_folder != NULL) {
 		gchar *path = g_strdup_printf("%s%s", current_folder, G_DIR_SEPARATOR_S);

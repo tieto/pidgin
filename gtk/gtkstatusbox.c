@@ -248,7 +248,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *bo
 		menu_item = gaim_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
-		if (gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon") == NULL)
+		if (gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon") == NULL)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
 		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
@@ -339,7 +339,7 @@ setup_icon_box(GtkGaimStatusBox *status_box)
 	}
 	else
 	{
-		gtk_gaim_status_box_set_buddy_icon(status_box, gaim_prefs_get_string("/gaim/gtk/accounts/buddyicon"));
+		gtk_gaim_status_box_set_buddy_icon(status_box, gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon"));
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -1382,7 +1382,7 @@ remove_buddy_icon_cb(GtkWidget *w, GtkGaimStatusBox *box)
 {
 	if (box->account == NULL)
 		/* The pref-connect callback does the actual work */
-		gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", NULL);
+		gaim_prefs_set_path("/gaim/gtk/accounts/buddyicon", NULL);
 	else
 		buddy_icon_set_cb(NULL, box);
 
@@ -1397,7 +1397,7 @@ icon_choose_cb(const char *filename, gpointer data)
 	if (filename) {
 		if (box->account == NULL)
 			/* The pref-connect callback does the actual work */
-			gaim_prefs_set_string("/gaim/gtk/accounts/buddyicon", filename);
+			gaim_prefs_set_path("/gaim/gtk/accounts/buddyicon", filename);
 		else
 			buddy_icon_set_cb(filename, box);
 	}

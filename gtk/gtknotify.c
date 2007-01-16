@@ -1047,7 +1047,7 @@ gaim_gtk_notify_uri(const char *uri)
 	{
 		const char *web_command;
 
-		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
+		web_command = gaim_prefs_get_path("/gaim/gtk/browsers/command");
 
 		if (web_command == NULL || *web_command == '\0')
 		{
