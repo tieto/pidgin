@@ -4544,6 +4544,8 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		gtk_widget_show(icon);
 		ianchor = gtk_imhtml_anchor_new(anchor, icon);
 		imhtml->anchors = g_slist_append(imhtml->anchors, ianchor);
+		if (imhtml->text_buffer == GTK_TEXT_VIEW(imhtml)->buffer)
+			gtk_imhtml_add_anchor(imhtml, ianchor);
 	} else if (imhtml_smiley != NULL && (imhtml->format_functions & GTK_IMHTML_SMILEY)) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
