@@ -451,6 +451,18 @@ send_history_add(GaimGtkConversation *gtkconv, const char *message)
 	gtkconv->send_history = g_list_prepend(first, NULL);
 }
 
+static void
+reset_default_size(GaimGtkConversation *gtkconv)
+{
+	GaimConversation *conv = gtkconv->active_conv;
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+					    gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"));
+	else
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+					    gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
+}
+
 static gboolean
 check_for_and_do_command(GaimConversation *conv)
 {
@@ -537,6 +549,10 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 		return;
 
 	if (check_for_and_do_command(conv)) {
+		if (gtkconv->entry_growing) {
+			reset_default_size(gtkconv);
+			gtkconv->entry_growing = FALSE;
+		}
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 		return;
 	}
@@ -586,6 +602,10 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+	if (gtkconv->entry_growing) {
+		reset_default_size(gtkconv);
+		gtkconv->entry_growing = FALSE;
+	}
 	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
 }
 
@@ -3992,6 +4012,7 @@ static void resize_imhtml_cb(GaimGtkConversation *gtkconv)
 	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 	if (sr.height < height + GAIM_HIG_BOX_SPACE) {
 		gtkconv->auto_resize = TRUE;
+		gtkconv->entry_growing = TRUE;
 	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + GAIM_HIG_BOX_SPACE);
 	        g_idle_add(reset_auto_resize_cb, gtkconv);
 	}
