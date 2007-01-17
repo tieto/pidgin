@@ -1410,8 +1410,12 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 static void ggp_async_login_handler(gpointer _gc, gint fd, GaimInputCondition cond)
 {
 	GaimConnection *gc = _gc;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info;
 	struct gg_event *ev;
+
+	g_return_if_fail(GAIM_CONNECTION_IS_VALID(gc));
+
+	info = gc->proto_data;
 
 	gaim_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
 			info->session->check, info->session->state);
