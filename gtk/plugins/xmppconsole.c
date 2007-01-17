@@ -688,8 +688,8 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	gtk_widget_destroy(console->window);
-	console->window = NULL;
+	if (console)
+		gtk_widget_destroy(console->window);
 	return TRUE;
 }
 
