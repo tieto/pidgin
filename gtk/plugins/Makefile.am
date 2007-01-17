@@ -37,6 +37,7 @@ relnot_la_LDFLAGS           = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 timestamp_la_LDFLAGS        = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
+xmppconsole_la_LDFLAGS     = -module -avoid-version
 
 if PLUGINS
 
@@ -51,7 +52,8 @@ plugin_LTLIBRARIES = \
 	relnot.la           \
 	spellchk.la         \
 	timestamp.la        \
-	timestamp_format.la
+	timestamp_format.la \
+	xmppconsole.la
 
 convcolors_la_SOURCES       = convcolors.c
 extplacement_la_SOURCES     = extplacement.c
@@ -64,6 +66,7 @@ relnot_la_SOURCES           = relnot.c
 spellchk_la_SOURCES         = spellchk.c
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
+xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
 extplacement_la_LIBADD      = $(GTK_LIBS)
@@ -76,6 +79,7 @@ relnot_la_LIBADD            = $(GLIB_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
 timestamp_la_LIBADD         = $(GTK_LIBS)
 timestamp_format_la_LIBADD  = $(GTK_LIBS)
+xmppconsole_la_LIBADD       = $(GTK_LIBS)
 
 endif # PLUGINS
 

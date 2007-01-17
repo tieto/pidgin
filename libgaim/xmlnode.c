@@ -441,6 +441,7 @@ xmlnode_to_formatted_str(xmlnode *node, int *len)
 
 struct _xmlnode_parser_data {
 	xmlnode *current;
+	gboolean error;
 };
 
 static void
@@ -453,7 +454,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 	xmlnode *node;
 	int i;
 
-	if(!element_name) {
+	if(!element_name || xpd->error) {
 		return;
 	} else {
 		if(xpd->current)
@@ -486,7 +487,7 @@ xmlnode_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
-	if(!element_name || !xpd->current)
+       	if(!element_name || !xpd->current || xpd->error)
 		return;
 
 	if(xpd->current->parent) {
@@ -500,13 +501,20 @@ xmlnode_parser_element_text_libxml(void *user_data, const xmlChar *text, int tex
 {
 	struct _xmlnode_parser_data *xpd = user_data;
 
-	if(!xpd->current)
+	if(!xpd->current || xpd->error)
 		return;
-
+	
 	if(!text || !text_len)
 		return;
 
 	xmlnode_insert_data(xpd->current, (const char*) text, text_len);
+}
+
+static void
+xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
+{
+	struct _xmlnode_parser_data *xpd = user_data;
+	xpd->error = TRUE;
 }
 
 static xmlSAXHandler xmlnode_parser_libxml = {
@@ -532,7 +540,7 @@ static xmlSAXHandler xmlnode_parser_libxml = {
 	.processingInstruction  = NULL,
 	.comment                = NULL,
 	.warning                = NULL,
-	.error                  = NULL,
+	.error                  = xmlnode_parser_error_libxml,
 	.fatalError             = NULL,
 	.getParameterEntity     = NULL,
 	.cdataBlock             = NULL,
@@ -564,6 +572,12 @@ xmlnode_from_str(const char *str, gssize size)
 		xpd->current = NULL;
 	}
 	ret = xpd->current;
+	if (xpd->error) {
+		ret = NULL;
+		if (xpd->current)
+			xmlnode_free(xpd->current);
+	}
+
 	g_free(xpd);
 	return ret;
 }
