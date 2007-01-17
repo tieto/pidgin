@@ -4003,6 +4003,13 @@ headline_style_set (GtkWidget *widget,
 /* End of connection error handling stuff */
 /******************************************/
 
+static int
+blist_focus_cb(GtkWidget *widget, gpointer data, GaimGtkBuddyList *gtkblist)
+{
+	gaim_gtk_set_urgent(GTK_WINDOW(gtkblist->window), FALSE);
+	return 0;
+}
+
 #if 0
 static GtkWidget *
 kiosk_page()
@@ -4082,6 +4089,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
+			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 
 	gtkblist->main_vbox = gtk_vbox_new(FALSE, 0);
@@ -5692,6 +5701,8 @@ gaim_gtk_blist_visibility_manager_remove()
 void gaim_gtk_blist_add_alert(GtkWidget *widget)
 {
 	gtk_container_add(GTK_CONTAINER(gtkblist->scrollbook), widget);
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		gaim_gtk_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
 void
@@ -5708,7 +5719,8 @@ gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callb
 	gtkblist->headline_callback = callback;
 	gtkblist->headline_data = user_data;
 	gtkblist->headline_destroy = destroy;
-	gaim_gtk_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		gaim_gtk_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 	gtk_widget_show_all(gtkblist->headline_hbox);
 }
 
