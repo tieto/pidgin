@@ -1,8 +1,9 @@
 /*
- * Gaim - iChat-like timestamps
+ * Gaim - iChat-style timestamps
  *
  * Copyright (C) 2002-2003, Sean Egan
  * Copyright (C) 2003, Chris J. Friesen <Darth_Sebulba04@yahoo.com>
+ * Copyright (C) 2007, Andrew Gaul <andrew@gaul.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,141 +35,90 @@
 
 #define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
 
-/* Set the default to 5 minutes. */
-static int interval = 5 * 60 * 1000;
+/* minutes externally, seconds internally, and milliseconds in preferences */
+static int interval = 5 * 60;
 
-static GSList *timestamp_timeouts = NULL;
-
-static gboolean
-do_timestamp(gpointer data)
+static void
+timestamp_display(GaimConversation *conv, time_t then, time_t now)
 {
-	GaimConversation *c = (GaimConversation *)data;
-	GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
+	GaimGtkConversation *gtk_conv = GAIM_GTK_CONVERSATION(conv);
+	GtkWidget *imhtml = gtk_conv->imhtml;
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml));
 	GtkTextIter iter;
 	const char *mdate;
-	int is_conversation_active;
-	time_t tim = time(NULL);
+	int y, height;
+	GdkRectangle rect;
+	
+	/* display timestamp */
+	mdate = gaim_utf8_strftime(then == 0 ? "%H:%M" : "\n%H:%M",
+		localtime(&now));
+	gtk_text_buffer_get_end_iter(buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate,
+		strlen(mdate), "TIMESTAMP", NULL);
 
-	if (!g_list_find(gaim_get_conversations(), c))
-		return FALSE;
-
-	/* is_conversation_active is true if an im has been displayed since the last timestamp */
-	is_conversation_active = GPOINTER_TO_INT(gaim_conversation_get_data(c, "timestamp-conv-active"));
-
-	if (is_conversation_active){
-		int y, height;
-		GdkRectangle rect;
-		gboolean scroll = TRUE;
-		GtkWidget *imhtml = conv->imhtml;
-		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml));
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gaim_conversation_set_data(c, "timestamp-conv-active", GINT_TO_POINTER(FALSE));
-		mdate = gaim_utf8_strftime("\n%H:%M", localtime(&tim));
-		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
-		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
-		if(((y + height) - (rect.y + rect.height)) > height
-		   && gtk_text_buffer_get_char_count(buffer)){
-			scroll = FALSE;
-		}
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate, strlen(mdate), "TIMESTAMP", NULL);
-		if (scroll)
-			gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), gaim_prefs_get_bool("/gaim/gtk/conversations/use_smooth_scrolling"));
+	/* scroll view if necessary */
+	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+	gtk_text_view_get_line_yrange(
+		GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+	if (((y + height) - (rect.y + rect.height)) > height &&
+	    gtk_text_buffer_get_char_count(buffer)) {
+		gboolean smooth = gaim_prefs_get_bool(
+			"/gaim/gtk/conversations/use_smooth_scrolling");
+		gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), smooth);
 	}
-	else
-		gaim_conversation_set_data(c, "timestamp-enabled", GINT_TO_POINTER(FALSE));
-
-	return TRUE;
 }
 
-
 static gboolean
-timestamp_displaying_conv_msg(GaimAccount *account, const char *who, char **buffer,
-				GaimConversation *conv, GaimMessageFlags flags, void *data)
+timestamp_displaying_conv_msg(GaimAccount *account, const char *who,
+			      char **buffer, GaimConversation *conv,
+			      GaimMessageFlags flags, void *data)
 {
-	int is_timestamp_enabled;
+	time_t now = time(NULL) / interval * interval;
+	time_t then;
 
 	if (!g_list_find(gaim_get_conversations(), conv))
 		return FALSE;
 
-	/* set to true, since there has been an im since the last timestamp */
-	gaim_conversation_set_data(conv, "timestamp-conv-active", GINT_TO_POINTER(TRUE));
+	then = GPOINTER_TO_INT(gaim_conversation_get_data(
+		conv, "timestamp-last"));
 
-	is_timestamp_enabled = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "timestamp-enabled"));
-
-	if (!is_timestamp_enabled){
-		gaim_conversation_set_data(conv, "timestamp-enabled", GINT_TO_POINTER(TRUE));
-		do_timestamp((gpointer)conv);
+	if (now - then >= interval) {
+		timestamp_display(conv, then, now);
+		gaim_conversation_set_data(
+			conv, "timestamp-last", GINT_TO_POINTER(now));
 	}
 
 	return FALSE;
 }
 
-static void timestamp_new_convo(GaimConversation *conv)
+static void
+timestamp_new_convo(GaimConversation *conv)
 {
-	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
+	GaimGtkConversation *gtk_conv = GAIM_GTK_CONVERSATION(conv);
+	GtkTextBuffer *buffer;
 
 	if (!g_list_find(gaim_get_conversations(), conv))
 		return;
 
-	/*
-	This if statement stops conversations that have already been initialized for timestamps
-	from being reinitialized.  This prevents every active conversation from immediately being spammed
-	with a new timestamp when the user modifies the timer interval.
-	*/
-	if (!gaim_conversation_get_data(conv, "timestamp-initialized")){
-		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(c->imhtml));
-		gaim_conversation_set_data(conv, "timestamp-initialized", GINT_TO_POINTER(TRUE));
-		gaim_conversation_set_data(conv, "timestamp-enabled", GINT_TO_POINTER(TRUE));
-		gaim_conversation_set_data(conv, "timestamp-conv-active", GINT_TO_POINTER(TRUE));
-		gtk_text_buffer_create_tag (buffer, "TIMESTAMP", "foreground", "#888888", "justification", GTK_JUSTIFY_CENTER,
-					    "weight", PANGO_WEIGHT_BOLD, NULL);
-		do_timestamp(conv);
-	}
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_conv->imhtml));
+	gtk_text_buffer_create_tag(buffer, "TIMESTAMP",
+		"foreground", "#888888", "justification", GTK_JUSTIFY_CENTER,
+		"weight", PANGO_WEIGHT_BOLD, NULL);
 
-	timestamp_timeouts = g_slist_append(timestamp_timeouts,
-			GINT_TO_POINTER(g_timeout_add(interval, do_timestamp, conv)));
+	gaim_conversation_set_data(conv, "timestamp-last", GINT_TO_POINTER(0));
 }
 
-
-static void destroy_timer_list()
+static void
+set_timestamp(GtkWidget *spinner, void *null)
 {
-	GSList *to;
-
-	for (to = timestamp_timeouts; to != NULL; to = to->next)
-		g_source_remove(GPOINTER_TO_INT(to->data));
-
-	g_slist_free(timestamp_timeouts);
-
-	timestamp_timeouts = NULL;
-}
-
-static void init_timer_list()
-{
-	GList *cnvs;
-	GaimConversation *c;
-
-	if (timestamp_timeouts != NULL)
-		destroy_timer_list();
-
-	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
-		c = cnvs->data;
-		timestamp_new_convo(c);
-	}
-}
-
-
-
-static void set_timestamp(GtkWidget *spinner, void *null) {
 	int tm;
 
 	tm = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
-	gaim_debug(GAIM_DEBUG_MISC, "timestamp", "setting time to %d mins\n", tm);
+	gaim_debug(GAIM_DEBUG_MISC, "timestamp",
+		"setting interval to %d minutes\n", tm);
 
-	interval = tm * 60 * 1000;
-	gaim_prefs_set_int("/plugins/gtk/timestamp/interval", interval);
-
-	destroy_timer_list();
-	init_timer_list();
+	interval = tm * 60;
+	gaim_prefs_set_int("/plugins/gtk/timestamp/interval", interval * 1000);
 }
 
 static GtkWidget *
@@ -177,27 +127,26 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *ret;
 	GtkWidget *frame, *label;
 	GtkWidget *vbox, *hbox;
-	GtkAdjustment *adj;
+	GtkObject *adj;
 	GtkWidget *spinner;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	frame = gaim_gtk_make_frame(ret, _("iChat Timestamp"));
+	frame = gaim_gtk_make_frame(ret, _("Display Timestamps Every"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
 
-	label = gtk_label_new(_("Delay"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-
-	adj = (GtkAdjustment *)gtk_adjustment_new(interval/(60*1000), 1, G_MAXINT, 1, 0, 0);
-	spinner = gtk_spin_button_new(adj, 0, 0);
+	/* XXX limit to divisors of 60? */
+	adj = gtk_adjustment_new(interval / 60, 1, 60, 1, 0, 0);
+	spinner = gtk_spin_button_new(GTK_ADJUSTMENT(adj), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
-	g_signal_connect(G_OBJECT(spinner), "value-changed", G_CALLBACK(set_timestamp), NULL);
-	label = gtk_label_new(_("minutes."));
+	g_signal_connect(G_OBJECT(spinner), "value-changed",
+		G_CALLBACK(set_timestamp), NULL);
+	label = gtk_label_new(_("minutes"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
 	gtk_widget_show_all(ret);
@@ -210,27 +159,17 @@ plugin_load(GaimPlugin *plugin)
 	void *conv_handle = gaim_conversations_get_handle();
 	void *gtkconv_handle = gaim_gtk_conversations_get_handle();
 
-	init_timer_list();
-
-	gaim_signal_connect(conv_handle, "conversation-created",
-					plugin, GAIM_CALLBACK(timestamp_new_convo), NULL);
+	/* lower priority to display initial timestamp after logged messages */
+	gaim_signal_connect_priority(conv_handle, "conversation-created",
+		plugin, GAIM_CALLBACK(timestamp_new_convo), NULL,
+		GAIM_SIGNAL_PRIORITY_DEFAULT + 1);
 
 	gaim_signal_connect(gtkconv_handle, "displaying-chat-msg",
-					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
+		plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
 	gaim_signal_connect(gtkconv_handle, "displaying-im-msg",
-					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
+		plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg), NULL);
 
-	interval = gaim_prefs_get_int("/plugins/gtk/timestamp/interval");
-
-	return TRUE;
-}
-
-
-
-static gboolean
-plugin_unload(GaimPlugin *plugin)
-{
-	destroy_timer_list();
+	interval = gaim_prefs_get_int("/plugins/gtk/timestamp/interval") / 1000;
 
 	return TRUE;
 }
@@ -256,14 +195,14 @@ static GaimPluginInfo info =
 	N_("Timestamp"),                                  /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Adds iChat-style timestamps to conversations every N minutes."),
+	N_("Display iChat-style timestamps"),
 	                                                  /**  description    */
-	N_("Adds iChat-style timestamps to conversations every N minutes."),
+	N_("Display iChat-style timestamps every N minutes."),
 	"Sean Egan <seanegan@gmail.com>",                 /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	&ui_info,                                         /**< ui_info        */
@@ -276,7 +215,7 @@ static void
 init_plugin(GaimPlugin *plugin)
 {
 	gaim_prefs_add_none("/plugins/gtk/timestamp");
-	gaim_prefs_add_int("/plugins/gtk/timestamp/interval", interval);
+	gaim_prefs_add_int("/plugins/gtk/timestamp/interval", interval * 1000);
 }
 
 GAIM_INIT_PLUGIN(interval, init_plugin, info)
