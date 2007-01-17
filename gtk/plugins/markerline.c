@@ -20,10 +20,10 @@
 #include "internal.h"
 
 #define PLUGIN_ID			"gtk-plugin_pack-markerline"
-#define PLUGIN_NAME			"Markerline"
+#define PLUGIN_NAME			N_("Markerline")
 #define PLUGIN_STATIC_NAME	"Markerline"
-#define PLUGIN_SUMMARY		"Draw a line to indicate new messages in a conversation."
-#define PLUGIN_DESCRIPTION	"Draw a line to indicate new messages in a conversation."
+#define PLUGIN_SUMMARY		N_("Draw a line to indicate new messages in a conversation.")
+#define PLUGIN_DESCRIPTION	N_("Draw a line to indicate new messages in a conversation.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
 
 /* System headers */
@@ -274,10 +274,10 @@ static GaimPluginInfo info = {
 	GAIM_PRIORITY_DEFAULT,		/* priority				*/
 
 	PLUGIN_ID,					/* plugin id			*/
-	N_(PLUGIN_NAME),			/* name					*/
+	PLUGIN_NAME,			/* name					*/
 	VERSION,					/* version				*/
-	N_(PLUGIN_SUMMARY),			/* summary				*/
-	N_(PLUGIN_DESCRIPTION),		/* description			*/
+	PLUGIN_SUMMARY,			/* summary				*/
+	PLUGIN_DESCRIPTION,		/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
 	GAIM_WEBSITE,				/* website				*/
 

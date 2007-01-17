@@ -20,10 +20,10 @@
 #include "internal.h"
 
 #define PLUGIN_ID			"core-plugin_pack-autoaccept"
-#define PLUGIN_NAME			"Autoaccept"
+#define PLUGIN_NAME			N_("Autoaccept")
 #define PLUGIN_STATIC_NAME	"Autoaccept"
-#define PLUGIN_SUMMARY		"Auto-accept file transfer requests from selected users."
-#define PLUGIN_DESCRIPTION	"Auto-accept file transfer requests from selected users."
+#define PLUGIN_SUMMARY		N_("Auto-accept file transfer requests from selected users.")
+#define PLUGIN_DESCRIPTION	N_("Auto-accept file transfer requests from selected users.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
 
 /* System headers */
@@ -234,28 +234,28 @@ static GaimPluginInfo info = {
 	GAIM_PLUGIN_MAGIC,			/* Magic				*/
 	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
 	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
-	GAIM_PLUGIN_STANDARD,		/* plugin type			*/
-	NULL,						/* ui requirement		*/
-	0,							/* flags				*/
-	NULL,						/* dependencies			*/
-	GAIM_PRIORITY_DEFAULT,		/* priority				*/
+	GAIM_PLUGIN_STANDARD,			/* plugin type			*/
+	NULL,					/* ui requirement		*/
+	0,					/* flags				*/
+	NULL,					/* dependencies			*/
+	GAIM_PRIORITY_DEFAULT,			/* priority				*/
 
-	PLUGIN_ID,					/* plugin id			*/
-	N_(PLUGIN_NAME),			/* name					*/
-	VERSION,					/* version				*/
-	N_(PLUGIN_SUMMARY),			/* summary				*/
-	N_(PLUGIN_DESCRIPTION),		/* description			*/
+	PLUGIN_ID,				/* plugin id			*/
+	PLUGIN_NAME,				/* name					*/
+	VERSION,				/* version				*/
+	PLUGIN_SUMMARY,				/* summary				*/
+	PLUGIN_DESCRIPTION,			/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
 	GAIM_WEBSITE,				/* website				*/
 
 	plugin_load,				/* load					*/
 	plugin_unload,				/* unload				*/
-	NULL,						/* destroy				*/
+	NULL,					/* destroy				*/
 
-	NULL,						/* ui_info				*/
-	NULL,						/* extra_info			*/
+	NULL,					/* ui_info				*/
+	NULL,					/* extra_info			*/
 	&prefs_info,				/* prefs_info			*/
-	NULL						/* actions				*/
+	NULL					/* actions				*/
 };
 
 static void

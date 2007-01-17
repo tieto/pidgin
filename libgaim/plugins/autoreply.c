@@ -20,14 +20,14 @@
 #include "internal.h"
 
 #define PLUGIN_ID			"core-plugin_pack-autoreply"
-#define PLUGIN_NAME			"Autoreply"
+#define PLUGIN_NAME			N_("Autoreply")
 #define PLUGIN_STATIC_NAME	"Autoreply"
-#define PLUGIN_SUMMARY		"Autoreply for all the protocols"
-#define PLUGIN_DESCRIPTION	"This plugin lets you set autoreply message for any protocol. "\
+#define PLUGIN_SUMMARY		N_("Autoreply for all the protocols")
+#define PLUGIN_DESCRIPTION	N_("This plugin lets you set autoreply message for any protocol. "\
 							"You can set the global autoreply message from the Plugin-options dialog. " \
 							"To set some specific autoreply message for a particular buddy, right click " \
 							"on the buddy in the buddy-list window. To set autoreply messages for some " \
-							"account, go to the `Advanced' tab of the Account-edit dialog."
+							"account, go to the `Advanced' tab of the Account-edit dialog.")
 #define PLUGIN_AUTHOR		"Sadrul Habib Chowdhury <sadrul@users.sourceforge.net>"
 
 /* System headers */
@@ -395,28 +395,28 @@ static GaimPluginInfo info = {
 	GAIM_PLUGIN_MAGIC,			/* Magic				*/
 	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
 	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
-	GAIM_PLUGIN_STANDARD,		/* plugin type			*/
-	NULL,						/* ui requirement		*/
-	0,							/* flags				*/
-	NULL,						/* dependencies			*/
-	GAIM_PRIORITY_DEFAULT,		/* priority				*/
+	GAIM_PLUGIN_STANDARD,			/* plugin type			*/
+	NULL,					/* ui requirement		*/
+	0,					/* flags				*/
+	NULL,					/* dependencies			*/
+	GAIM_PRIORITY_DEFAULT,			/* priority				*/
 
-	PLUGIN_ID,					/* plugin id			*/
-	N_(PLUGIN_NAME),			/* name					*/
-	VERSION,					/* version				*/
-	N_(PLUGIN_SUMMARY),			/* summary				*/
-	N_(PLUGIN_DESCRIPTION),		/* description			*/
+	PLUGIN_ID,				/* plugin id			*/
+	PLUGIN_NAME,				/* name					*/
+	VERSION,				/* version				*/
+	PLUGIN_SUMMARY,				/* summary				*/
+	PLUGIN_DESCRIPTION,			/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
 	GAIM_WEBSITE,				/* website				*/
 
 	plugin_load,				/* load					*/
 	plugin_unload,				/* unload				*/
-	NULL,						/* destroy				*/
+	NULL,					/* destroy				*/
 
-	NULL,						/* ui_info				*/
-	NULL,						/* extra_info			*/
+	NULL,					/* ui_info				*/
+	NULL,					/* extra_info			*/
 	&prefs_info,				/* prefs_info			*/
-	NULL						/* actions				*/
+	NULL					/* actions				*/
 };
 
 static void

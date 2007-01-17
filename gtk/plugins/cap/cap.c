@@ -928,7 +928,7 @@ static GaimPluginInfo info = {
 	NULL,											/**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,							/**< priority		*/
 	CAP_PLUGIN_ID,									/**< id			*/
-	"Contact Availability Prediction",				/**< name		*/
+	N_("Contact Availability Prediction"),				/**< name		*/
 	VERSION,										/**< version		*/
 	N_("Contact Availability Prediction plugin."),	/**  summary		*/
 	N_("The contact availability plugin (cap) is used to display statistical information about buddies in a users contact list."),

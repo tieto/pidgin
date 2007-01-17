@@ -20,10 +20,10 @@
 #include "internal.h"
 
 #define PLUGIN_ID			"core-plugin_pack-offlinemsg"
-#define PLUGIN_NAME			"Offline Message Emulation"
+#define PLUGIN_NAME			N_("Offline Message Emulation")
 #define PLUGIN_STATIC_NAME	"offlinemsg"
-#define PLUGIN_SUMMARY		"Save messages sent to an offline user as pounce."
-#define PLUGIN_DESCRIPTION	"Save messages sent to an offline user as pounce."
+#define PLUGIN_SUMMARY		N_("Save messages sent to an offline user as pounce.")
+#define PLUGIN_DESCRIPTION	N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
 
 /* Gaim headers */
@@ -205,28 +205,28 @@ static GaimPluginInfo info =
 	GAIM_PLUGIN_MAGIC,			/* Magic				*/
 	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
 	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
-	GAIM_PLUGIN_STANDARD,		/* plugin type			*/
-	NULL,						/* ui requirement		*/
-	0,							/* flags				*/
-	NULL,						/* dependencies			*/
-	GAIM_PRIORITY_DEFAULT,		/* priority				*/
+	GAIM_PLUGIN_STANDARD,			/* plugin type			*/
+	NULL,					/* ui requirement		*/
+	0,					/* flags				*/
+	NULL,					/* dependencies			*/
+	GAIM_PRIORITY_DEFAULT,			/* priority				*/
 
-	PLUGIN_ID,					/* plugin id			*/
-	N_(PLUGIN_NAME),			/* name					*/
-	VERSION,					/* version				*/
-	N_(PLUGIN_SUMMARY),			/* summary				*/
-	N_(PLUGIN_DESCRIPTION),		/* description			*/
+	PLUGIN_ID,				/* plugin id			*/
+	PLUGIN_NAME,				/* name					*/
+	VERSION,				/* version				*/
+	PLUGIN_SUMMARY,				/* summary				*/
+	PLUGIN_DESCRIPTION,			/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
 	GAIM_WEBSITE,				/* website				*/
 
 	plugin_load,				/* load					*/
 	plugin_unload,				/* unload				*/
-	NULL,						/* destroy				*/
+	NULL,					/* destroy				*/
 
-	NULL,						/* ui_info				*/
-	NULL,						/* extra_info			*/
+	NULL,					/* ui_info				*/
+	NULL,					/* extra_info			*/
 	&prefs_info,				/* prefs_info			*/
-	NULL						/* actions				*/
+	NULL					/* actions				*/
 };
 
 static void

@@ -20,10 +20,10 @@
 #include "internal.h"
 
 #define PLUGIN_ID			"gtk-plugin_pack-convcolors"
-#define PLUGIN_NAME			"Conversation Colors"
+#define PLUGIN_NAME			N_("Conversation Colors")
 #define PLUGIN_STATIC_NAME	"Conversation Colors"
-#define PLUGIN_SUMMARY		"Customize colors in the conversation window"
-#define PLUGIN_DESCRIPTION	"Customize colors in the conversation window"
+#define PLUGIN_SUMMARY		N_("Customize colors in the conversation window")
+#define PLUGIN_DESCRIPTION	N_("Customize colors in the conversation window")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
 
 /* System headers */
@@ -324,10 +324,10 @@ static GaimPluginInfo info =
 	GAIM_PRIORITY_DEFAULT,        /* priority           */
 
 	PLUGIN_ID,                    /* plugin id          */
-	N_(PLUGIN_NAME),              /* name               */
+	PLUGIN_NAME,                  /* name               */
 	VERSION,                      /* version            */
-	N_(PLUGIN_SUMMARY),           /* summary            */
-	N_(PLUGIN_DESCRIPTION),       /* description        */
+	PLUGIN_SUMMARY,               /* summary            */
+	PLUGIN_DESCRIPTION,           /* description        */
 	PLUGIN_AUTHOR,                /* author             */
 	GAIM_WEBSITE,                 /* website            */
 
