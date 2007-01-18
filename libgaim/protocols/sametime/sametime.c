@@ -1470,16 +1470,22 @@ static void session_started(struct mwGaimPluginData *pd) {
   
   /* start watching for new conversations */
   gaim_signal_connect(gaim_conversations_get_handle(),
-		      "conversation-created", pd->gc,
+		      "conversation-created", pd,
 		      GAIM_CALLBACK(conversation_created_cb), pd);
 
   /* watch for group extended menu items */
   gaim_signal_connect(gaim_blist_get_handle(),
-		      "blist-node-extended-menu", pd->gc,
+		      "blist-node-extended-menu", pd,
 		      GAIM_CALLBACK(blist_node_menu_cb), pd);
-
+  
   /* use our services to do neat things */
   services_starting(pd);
+}
+
+
+static void session_stopping(struct mwGaimPluginData *pd) {
+  /* stop watching the signals from session_started */
+  gaim_signals_disconnect_by_handle(pd);
 }
 
 
@@ -1541,6 +1547,9 @@ static void mw_session_stateChange(struct mwSession *session,
     break;
 
   case mwSession_STOPPING:
+
+    session_stopping(pd);
+
     if(GPOINTER_TO_UINT(info) & ERR_FAILURE) {
       char *err = mwError(GPOINTER_TO_UINT(info));
       gaim_connection_error(gc, err);
