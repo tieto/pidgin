@@ -1,0 +1,19 @@
+Code Contributors
+=====
+puzzlebird  : original author
+gfhuang     : patches for gaim 2.0.0beta2, maintainer
+henryouly   : file transfer, udp sock5 proxy and qq_show, maintainer
+hzhr        : maintainer
+joymarquis  : maintainer
+arfankai    : fixed bugs in char_conv.c
+rakescar    : provided filter for HTML tag
+yyw         : improved performance on PPC linux
+lvxiang     : provided ip to location original code
+csyfek      : faces
+markhuetsch : OpenQ merge into gaim, maintainer 2006-2007
+
+Acknowledgement
+=====
+Shufeng Tan : http://sf.net/projects/perl-oicq
+Jeff Ye     : http://www.sinomac.com
+Hu Zheng    : http://forlinux.yeah.net
