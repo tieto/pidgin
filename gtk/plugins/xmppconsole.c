@@ -26,6 +26,9 @@
 #include "xmlnode.h"
 
 #include "gtkimhtml.h"
+#if !GTK_CHECK_VERSION(2,4,0)
+#include "gaimcombobox.h"
+#endif
 
 typedef struct {
 	GaimConnection *gc;
@@ -726,8 +729,10 @@ create_console()
 	GtkWidget *label;
 	GtkTextBuffer *buffer;
 	GtkWidget *toolbar;
-	GtkToolItem *button;
 	GList *connections;
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkToolItem *button;
+#endif
 
 	if (console) {
 		gtk_window_present(GTK_WINDOW(console->window));
@@ -776,18 +781,33 @@ create_console()
 	gtk_container_add(GTK_CONTAINER(sw), console->imhtml);
 	
 	toolbar = gtk_toolbar_new();
+#if GTK_CHECK_VERSION(2,4,0)	
 	button = gtk_tool_button_new(NULL, "<iq/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(iq_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
+#else
+	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<iq/>", 
+			           _("Insert an <iq/> stanza."), "foo", NULL, GTK_SIGNAL_FUNC(iq_clicked_cb), NULL);
+#endif
 
+#if GTK_CHECK_VERSION(2,4,0)	
 	button = gtk_tool_button_new(NULL, "<presence/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(presence_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
+#else
+	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<presence/>", 
+			           _("Insert a <presence/> stanza."), NULL, gtk_label_new(NULL), GTK_SIGNAL_FUNC(presence_clicked_cb), NULL);
+#endif
 
+#if GTK_CHECK_VERSION(2,4,0)
 	button = gtk_tool_button_new(NULL, "<message/>");
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(message_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(toolbar), GTK_WIDGET(button));
-
+#else
+	gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "<message/>", 
+			           _("Insert a <message/> stanza."), "foo", gtk_label_new(NULL), GTK_SIGNAL_FUNC(message_clicked_cb), NULL);
+#endif
+	
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 	
 	sw = gtk_scrolled_window_new(NULL, NULL);
