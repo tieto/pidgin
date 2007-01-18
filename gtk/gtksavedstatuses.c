@@ -325,7 +325,8 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	g_list_free(sel_paths);
 
 	if (g_list_length(sel_titles) == 1)
-		title = g_strdup_printf(_("Are you sure you want to delete %s?"), sel_titles->data);
+		title = g_strdup_printf(_("Are you sure you want to delete %s?"),
+				(const gchar *)sel_titles->data);
 	else
 		title = g_strdup(_("Are you sure you want to delete the selected saved statuses?"));
 
