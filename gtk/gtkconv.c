@@ -4810,7 +4810,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimConversationType type;
 	char *displaying;
 	gboolean plugin_return;
-
+	char *bracket;
+	int tag_count = 0;
+	
 	g_return_if_fail(conv != NULL);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	g_return_if_fail(gtkconv != NULL);
@@ -4853,6 +4855,19 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	message = displaying;
 	length = strlen(message) + 1;
 
+	/* Awful hack to work around GtkIMHtml's inefficient rendering of messages with lots of formatting changes.
+	 * If a message has over 100 '<' characters, strip formatting before appending it. Hopefully nobody actually
+	 * needs that much formatting, anyway.
+	 */
+	for (bracket = strchr(message, '<'); bracket && *(bracket + 1); bracket = strchr(bracket + 1, '<'))
+		tag_count++;
+	
+	if (tag_count > 100) {
+		char *tmp = message;
+		message = displaying = gaim_markup_strip_html(message);
+		g_free(tmp);
+	}	
+	
 	win = gtkconv->win;
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 

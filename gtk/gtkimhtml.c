@@ -1215,19 +1215,11 @@ gtk_imhtml_finalize (GObject *object)
 		g_free(imhtml->clipboard_text_string);
 		g_free(imhtml->clipboard_html_string);
 	}
-	
-	for (l = imhtml->anchors; l; l = l->next) {
-		GtkIMHtmlAnchor *anchor = l->data;
-		gtk_imhtml_anchor_free(anchor);
-	}
 
-	g_slist_free(imhtml->anchors);
 	g_list_free(imhtml->scalables);
 	g_slist_free(imhtml->im_images);
 	g_free(imhtml->protocol_name);
 	g_free(imhtml->search_string);
-	g_object_unref(imhtml->empty_buffer);
-	g_object_unref(imhtml->text_buffer);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -1325,7 +1317,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 {
 	GtkTextIter iter;
 	imhtml->text_buffer = gtk_text_buffer_new(NULL);
-	imhtml->empty_buffer = gtk_text_buffer_new(NULL);
 	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
@@ -2364,23 +2355,12 @@ void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 	}
 }
 
-static gboolean
-set_adj_idle_cb(gpointer data)
-{
-	GtkIMHtml *imhtml = data;
-
-	gtk_adjustment_set_value(GTK_TEXT_VIEW(imhtml)->vadjustment, imhtml->adj);
-	return FALSE;
-}
-
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
                                     const gchar      *text,
                                     GtkIMHtmlOptions  options,
                                     GtkTextIter      *iter)
 {
 	GdkRectangle rect;
-	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
-	GSList *anchors;
 	gint pos = 0;
 	gchar *ws;
 	gchar *tag;
@@ -2391,8 +2371,6 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	const gchar *c;
 	gchar *amp;
 	gint len_protocol;
-	gboolean refocus = GTK_WIDGET_HAS_FOCUS(imhtml);
-
 
 	guint	bold = 0,
 		italics = 0,
@@ -2404,6 +2382,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		pre = 0;
 
 	gboolean br = FALSE;
+
 	GSList *fonts = NULL;
 	GObject *object;
 	GtkIMHtmlScalable *scalable = NULL;
@@ -2415,22 +2394,6 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	len = strlen(text);
 	ws = g_malloc(len + 1);
 	ws[0] = 0;
-
-	imhtml->adj = gtk_adjustment_get_value(adj);
-
-	for (anchors = imhtml->anchors; anchors; anchors = anchors->next) {
-		GtkIMHtmlAnchor *anchor = anchors->data;
-		if (gtk_text_child_anchor_get_deleted(anchor->anchor)) {
-			imhtml->anchors = g_slist_remove(imhtml->anchors, anchor);
-			gtk_imhtml_anchor_free(anchor);
-			continue;
-		}
-		gtk_container_remove(GTK_CONTAINER(imhtml), anchor->widget);
-
-	}
-	gtk_widget_hide(GTK_WIDGET(imhtml));
-	gtk_widget_unrealize(GTK_WIDGET(imhtml));
-	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->empty_buffer);
 
 	while (pos < len) {
 		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
@@ -3088,19 +3051,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	if (!imhtml->wbfo)
 		gtk_imhtml_close_tags(imhtml, iter);
 
-	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
-	for (anchors = imhtml->anchors; anchors; anchors = anchors->next) {
-		GtkIMHtmlAnchor *anchor = anchors->data;
-		gtk_imhtml_add_anchor(imhtml, anchor);
-	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	gtk_widget_realize(GTK_WIDGET(imhtml));
-	gtk_widget_show_all(GTK_WIDGET(imhtml));
-	g_idle_add_full(G_PRIORITY_HIGH_IDLE, set_adj_idle_cb, imhtml, NULL);
-	if (refocus)
-		gtk_widget_grab_focus(GTK_WIDGET(imhtml));
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
+
 }
 
 void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
@@ -3491,7 +3445,6 @@ void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
 
 void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
 {
-	GtkIMHtmlAnchor *ianchor;
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 	GtkWidget *box = gtk_event_box_new();
 	char *tag;
@@ -3509,9 +3462,7 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
 	g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", tag, g_free);
 	g_object_set_data(G_OBJECT(anchor), "gtkimhtml_plaintext", "[Image]");
 
-	ianchor = gtk_imhtml_anchor_new(anchor, box);
-	imhtml->anchors = g_slist_append(imhtml->anchors, ianchor);
-
+	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), box, anchor);
 	g_signal_connect(G_OBJECT(box), "event", G_CALLBACK(gtk_imhtml_image_clicked), image);
 }
 
@@ -3537,48 +3488,16 @@ void gtk_imhtml_hr_scale(GtkIMHtmlScalable *scale, int width, int height)
 
 void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
 {
-	GtkIMHtmlAnchor *ianchor;
 	GtkIMHtmlHr *hr = (GtkIMHtmlHr *)scale;
 	GtkTextChildAnchor *anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 	g_object_set_data(G_OBJECT(anchor), "gtkimhtml_htmltext", "<hr>");
 	g_object_set_data(G_OBJECT(anchor), "gtkimhtml_plaintext", "\n---\n");
-	ianchor = gtk_imhtml_anchor_new(anchor, hr->sep);
-	imhtml->anchors = g_slist_append(imhtml->anchors, ianchor);
+	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), hr->sep, anchor);
 }
 
 void gtk_imhtml_hr_free(GtkIMHtmlScalable *scale)
 {
 	g_free(scale);
-}
-
-GtkIMHtmlAnchor *gtk_imhtml_anchor_new(GtkTextChildAnchor *anchor, GtkWidget *widget)
-{
-	GtkIMHtmlAnchor *a = g_new0(GtkIMHtmlAnchor, 1);
-	a->anchor = anchor;
-	a->widget = widget;
-	
-	g_object_ref(anchor);
-	g_object_ref(widget);
-	
-	return a;
-}
-
-void gtk_imhtml_anchor_free(GtkIMHtmlAnchor *anchor)
-{
-	g_object_unref(anchor->anchor);
-	g_object_unref(anchor->widget);
-	g_free(anchor);
-}
-
-void gtk_imhtml_add_anchor(GtkIMHtml *imhtml, GtkIMHtmlAnchor *anchor)
-{
-	if (gtk_text_child_anchor_get_deleted(anchor->anchor)) {
-		imhtml->anchors = g_slist_remove(imhtml->anchors, anchor);
-		gtk_imhtml_anchor_free(anchor);
-		return;
-	}
-
-	gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), anchor->widget, anchor->anchor);
 }
 
 gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
@@ -4530,7 +4449,6 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	}
 
 	if (icon) {
-		GtkIMHtmlAnchor *ianchor;
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
 		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
@@ -4542,10 +4460,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		g_signal_connect(G_OBJECT(icon), "expose-event", G_CALLBACK(image_expose), NULL);
 
 		gtk_widget_show(icon);
-		ianchor = gtk_imhtml_anchor_new(anchor, icon);
-		imhtml->anchors = g_slist_append(imhtml->anchors, ianchor);
-		if (imhtml->text_buffer == GTK_TEXT_VIEW(imhtml)->buffer)
-			gtk_imhtml_add_anchor(imhtml, ianchor);
+		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
 	} else if (imhtml_smiley != NULL && (imhtml->format_functions & GTK_IMHTML_SMILEY)) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
 		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
