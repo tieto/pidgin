@@ -64,7 +64,6 @@ SetDateSave on
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
 
 !define GTK_MIN_VERSION				"2.6.10"
-!define GTK_INSTALL_VERSION			"2.10.6"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
