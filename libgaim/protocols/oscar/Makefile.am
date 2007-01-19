@@ -34,6 +34,7 @@ OSCARSOURCES = \
 	oft.c               \
 	oscar.c             \
 	oscar.h             \
+	oscarcommon.h       \
 	oscar_data.c        \
 	peer.c              \
 	peer.h              \

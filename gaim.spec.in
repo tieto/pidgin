@@ -244,7 +244,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
 
 %find_lang %{name}
 
-find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
+find $RPM_BUILD_ROOT%{_libdir}/gaim -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v /gntgf.so | \
         grep -v /gnthistory.so | \
