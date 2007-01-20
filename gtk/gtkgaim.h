@@ -37,6 +37,11 @@
 #endif
 
 /**
+ * Our user-readable name
+ */
+#define PIDGIN_NAME "Pidgin" 
+
+/**
  * Our UI's identifier.
  */
 #define GAIM_GTK_UI "gtk-gaim"
@@ -44,7 +49,7 @@
 #ifndef _WIN32
 # define GAIM_ALERT_TITLE ""
 #else
-# define GAIM_ALERT_TITLE "Gaim"
+# define GAIM_ALERT_TITLE PIDGIN_NAME 
 #endif
 
 /*

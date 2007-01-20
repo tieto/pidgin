@@ -298,7 +298,7 @@ void gaim_gtkdialogs_about()
 	}
 
 	GAIM_DIALOG(about);
-	gtk_window_set_title(GTK_WINDOW(about), _("About Gaim"));
+	gtk_window_set_title(GTK_WINDOW(about), _("About " PIDGIN_NAME));
 	gtk_window_set_role(GTK_WINDOW(about), "about");
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(about), 340, 450);
@@ -322,7 +322,7 @@ void gaim_gtkdialogs_about()
 	gdk_pixbuf_unref(pixbuf);
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
-	atk_object_set_description(obj, "Gaim " VERSION);
+	atk_object_set_description(obj, PIDGIN_NAME " " VERSION);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = gaim_gtk_create_imhtml(FALSE, &text, NULL, NULL);
@@ -332,7 +332,7 @@ void gaim_gtkdialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append(str,
-		_("Gaim is a modular messaging client capable of using "
+		_(PIDGIN_NAME " is a modular messaging client capable of using "
 		  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 		  "Gadu-Gadu, and QQ all at once.  "
@@ -340,7 +340,7 @@ void gaim_gtkdialogs_about()
 		  "You may modify and redistribute the program under "
 		  "the terms of the GPL (version 2 or later).  A copy of the GPL is "
 		  "contained in the 'COPYING' file distributed with Gaim.  "
-		  "Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' "
+		  PIDGIN_NAME " is copyrighted by its contributors.  See the 'COPYRIGHT' "
 		  "file for the complete list of contributors.  We provide no "
 		  "warranty for this program.<BR><BR>"));
 
@@ -469,9 +469,9 @@ void gaim_gtkdialogs_about()
 #endif
 
 #ifdef HAVE_SSL
-	g_string_append(str, "  <b>SSL:</b> Gaim was compiled with SSL support.<br/>");
+	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was compiled with SSL support.<br/>");
 #else
-	g_string_append(str, "  <b>SSL:</b> Gaim was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
 #endif
 
 /* This might be useful elsewhere too, but it is particularly useful for

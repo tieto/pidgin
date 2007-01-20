@@ -341,9 +341,9 @@ show_usage(const char *name, gboolean terse)
 	char *text;
 
 	if (terse) {
-		text = g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+		text = g_strdup_printf(_(PIDGIN_NAME " %s. Try `%s -h' for more information.\n"), VERSION, name);
 	} else {
-		text = g_strdup_printf(_("Gaim %s\n"
+		text = g_strdup_printf(_(PIDGIN_NAME " %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
@@ -525,7 +525,7 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
 		segfault_message_tmp = g_strdup_printf(_(
-			"Gaim has segfaulted and attempted to dump a core file.\n"
+			PIDGIN_NAME " has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the gaim\n"
@@ -654,7 +654,7 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("Gaim %s\n", VERSION);
+		printf(PIDGIN_NAME " %s\n", VERSION);
 		return 0;
 	}
 
@@ -679,7 +679,7 @@ int main(int argc, char *argv[])
 	if (!gui_check) {
 		char *display = gdk_get_display();
 
-		printf("Gaim %s\n", VERSION);
+		printf(PIDGIN_NAME " %s\n", VERSION);
 
 		g_warning("cannot open display: %s", display ? display : "unset");
 		g_free(display);
@@ -705,7 +705,7 @@ int main(int argc, char *argv[])
 
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,
-				"Initialization of the Gaim core failed. Dumping core.\n"
+				"Initialization of the " PIDGIN_NAME " core failed. Dumping core.\n"
 				"Please report this!\n");
 		abort();
 	}

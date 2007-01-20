@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-_Name=Gaim Internet Messenger
+_Name=Pidgin Internet Messenger
 _GenericName=Internet Messenger
 _Comment=Send instant messages over multiple protocols
 Exec=gaim
