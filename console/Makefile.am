@@ -46,7 +46,7 @@ gaim_text_LDADD = \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
 	./libgnt/libgnt.la \
-	$(top_builddir)/libgaim/libgaim.la
+	$(top_builddir)/libpurple/libgaim.la
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
@@ -55,7 +55,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
-	-I$(top_srcdir)/libgaim/ \
+	-I$(top_srcdir)/libpurple/ \
 	-I$(top_srcdir) \
 	-I$(srcdir)/libgnt/ \
 	$(DEBUG_CFLAGS) \

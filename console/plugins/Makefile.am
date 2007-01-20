@@ -28,8 +28,8 @@ EXTRA_DIST =
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
-	-I$(top_builddir)/libgaim \
-	-I$(top_srcdir)/libgaim \
+	-I$(top_builddir)/libpurple \
+	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/console \
 	-I$(top_srcdir)/console/libgnt \

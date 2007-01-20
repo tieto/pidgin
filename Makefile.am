@@ -36,8 +36,8 @@ dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
 	rm $(distdir)/config.h
 
-distcheck-hook: libgaim/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/GtkUI.pm
-#	cp libgaim/plugins/perl/common/Gaim.pm $(distdir)/libgaim/plugins/perl/common
+distcheck-hook: libpurple/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/GtkUI.pm
+#	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
 appsdir = $(datadir)/applications
 apps_in_files = gaim.desktop.in
@@ -45,14 +45,14 @@ apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
 if ENABLE_GTK
-GTK_DIR=gtk
+GTK_DIR=pidgin
 endif
 
 if ENABLE_GNT
 GNT_DIR=console
 endif
 
-SUBDIRS = libgaim doc $(GNT_DIR) $(GTK_DIR) m4macros po
+SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po
 
 docs: Doxyfile
 if HAVE_DOXYGEN
@@ -69,5 +69,5 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Gaim.3pm
 
-DISTCLEANFILES= gaim.desktop libgaim/gconf/gaim.schemas intltool-extract \
+DISTCLEANFILES= gaim.desktop libpurple/gconf/gaim.schemas intltool-extract \
 			intltool-merge intltool-update

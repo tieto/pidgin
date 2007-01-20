@@ -9,14 +9,14 @@ s_la_SOURCES = s.c
 s_la_LIBADD =  \
   $(GLIB_LIBS) \
   $(top_builddir)/console/libgnt/libgnt.la \
-  $(top_builddir)/libgaim/libgaim.la
+  $(top_builddir)/libpurple/libgaim.la
 
 EXTRA_DIST = 
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
-	-I$(top_srcdir)/libgaim \
+	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir)/console \
 	-I$(top_srcdir)/console/libgnt \
 	$(DEBUG_CFLAGS) \
