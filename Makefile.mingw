@@ -6,7 +6,7 @@
 #
 
 GAIM_TOP := .
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 # Generate a X.X.X.X version for the installer file versioning header
 # The last digit will be 99 for a final release, 0 for dev or unknown, or the beta number

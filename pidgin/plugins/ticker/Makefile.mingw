@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = ticker
 
@@ -44,11 +44,10 @@ OBJECTS = $(C_SRC:%.c=%.o)
 LIBS =			-lgtk-win32-2.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
 			-lgobject-2.0 \
 			-lintl \
-			-lgaim \
-			-lgtkgaim
+			-lpurple \
+			-lpidgin
 
 include $(GAIM_COMMON_RULES)
 

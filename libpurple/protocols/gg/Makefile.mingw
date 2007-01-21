@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = libgg
 CFLAGS += -include win32dep.h
@@ -61,7 +61,7 @@ OBJECTS = $(C_SRC:%.c=%.o)
 LIBS =	\
 			-lglib-2.0 \
 			-lintl \
-			-lgaim \
+			-lpurple \
 			-lws2_32
 
 include $(GAIM_COMMON_RULES)

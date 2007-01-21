@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = libmsn
 TYPE = PLUGIN
@@ -76,7 +76,7 @@ LIBS =	\
 			-lglib-2.0 \
 			-lintl \
 			-lws2_32 \
-			-lgaim
+			-lpurple
 
 include $(GAIM_COMMON_RULES)
 

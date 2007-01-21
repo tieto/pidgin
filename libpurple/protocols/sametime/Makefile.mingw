@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = libsametime
 NEEDED_DLLS = $(MEANWHILE_TOP)/bin/libmeanwhile-1.dll
@@ -52,7 +52,7 @@ LIBS =		\
 		-lintl \
 		-lws2_32 \
 		-lmeanwhile \
-		-lgaim \
+		-lpurple
 
 include $(GAIM_COMMON_RULES)
 
