@@ -5,9 +5,9 @@
 #
 
 GAIM_TOP := ..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
-TARGET = libgaim
+TARGET = libpurple
 NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2.dll
 
 ##
@@ -77,7 +77,7 @@ C_SRC =	\
 			win32/libc_interface.c \
 			win32/win32dep.c
 
-RC_SRC = win32/libgaimrc.rc
+RC_SRC = win32/libpurplerc.rc
 
 OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 
@@ -112,7 +112,7 @@ install: install_shallow all
 	$(MAKE) -C $(GAIM_PROTOS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 	$(MAKE) -C $(GAIM_LIB_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 
-./win32/libgaimrc.rc: ./win32/libgaimrc.rc.in $(GAIM_TOP)/VERSION
+./win32/libpurplerc.rc: ./win32/libpurplerc.rc.in $(GAIM_TOP)/VERSION
 	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
 	    $@.in > $@
 

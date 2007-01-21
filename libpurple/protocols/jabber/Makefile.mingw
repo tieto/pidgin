@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = libjabber
 TYPE = PLUGIN
@@ -67,7 +67,7 @@ LIBS = \
 			-lxml2 \
 			-lws2_32 \
 			-lintl \
-			-lgaim
+			-lpurple
 
 include $(GAIM_COMMON_RULES)
 

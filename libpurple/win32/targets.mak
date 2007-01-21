@@ -9,22 +9,22 @@ $(GAIM_CONFIG_H): $(GAIM_TOP)/config.h.mingw
 	cp $(GAIM_TOP)/config.h.mingw $(GAIM_CONFIG_H)
 
 $(GAIM_LIBGAIM_DLL) $(GAIM_LIBGAIM_DLL).a:
-	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) libgaim.dll
+	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) libpurple.dll
 
 $(GAIM_LIBGAIM_PERL_DLL) $(GAIM_LIBGAIM_PERL_DLL).a:
 	$(MAKE) -C $(GAIM_LIB_PERL_TOP) -f $(GAIM_WIN32_MAKEFILE) perl.dll
 
 $(GAIM_GTKGAIM_DLL) $(GAIM_GTKGAIM_DLL).a:
-	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) gtkgaim.dll
+	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) pidgin.dll
 
 $(GAIM_IDLETRACK_DLL) $(GAIM_IDLETRACK_DLL).a:
 	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) idletrack.dll
 
 $(GAIM_EXE):
-	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) gaim.exe
+	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) pidgin.exe
 
 $(GAIM_PORTABLE_EXE):
-	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) gaim-portable.exe
+	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) pidgin-portable.exe
 
 # Installation Directories
 $(GAIM_INSTALL_DIR):

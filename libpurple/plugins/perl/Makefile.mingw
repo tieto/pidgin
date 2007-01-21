@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = perl
 
@@ -46,7 +46,7 @@ LIBS =	\
 			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
-			-lgaim \
+			-lpurple \
 			-lperl58
 
 include $(GAIM_COMMON_RULES)

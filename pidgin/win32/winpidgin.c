@@ -1,8 +1,8 @@
 /*
- *  win_gaim.c
+ *  winpidgin.c
  *
  *  Date: June, 2002
- *  Description: Entry point for win32 gaim, and various win32 dependant
+ *  Description: Entry point for win32 pidgin, and various win32 dependant
  *  routines.
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -529,7 +529,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			return 0;
 
 	/* Now we are ready for Gaim .. */
-	if ((hmod = LoadLibrary("gtkgaim.dll"))) {
+	if ((hmod = LoadLibrary("pidgin.dll"))) {
 		gaim_main = (LPFNGAIMMAIN) GetProcAddress(hmod, "gaim_main");
 	}
 
@@ -538,7 +538,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
 		const char *err_msg = get_win32_error_message(dw);
 
-		snprintf(errbuf, 512, "Error loading gtkgaim.dll.\nError: (%u) %s%s%s",
+		snprintf(errbuf, 512, "Error loading pidgin.dll.\nError: (%u) %s%s%s",
 			(UINT) dw, err_msg,
 			mod_not_found ? "\n" : "",
 			mod_not_found ? "This probably means that GTK+ can't be found." : "");

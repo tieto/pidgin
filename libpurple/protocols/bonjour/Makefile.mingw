@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = libbonjour
 NEEDED_DLLS = $(HOWL_TOP)/bin/libhowl-1.dll
@@ -55,7 +55,7 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-lhowl \
-			-lgaim
+			-lpurple
 
 include $(GAIM_COMMON_RULES)
 

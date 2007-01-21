@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = GtkUI
 EXTUTILS := C:/perl/lib/ExtUtils
@@ -73,8 +73,8 @@ OBJECTS = $(C_FILES:%.c=%.o)
 ##
 LIBS =			-lperl58 \
 			-lperl \
-			-lgaim \
-			-lgtkgaim \
+			-lpurple \
+			-lpidgin \
 			-lglib-2.0
 
 include $(GAIM_COMMON_RULES)

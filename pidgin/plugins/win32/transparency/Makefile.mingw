@@ -5,7 +5,7 @@
 #
 
 GAIM_TOP := ../../../..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = win2ktrans
 DEFINES += -D_WIN32_WINNT=0x0500
@@ -47,8 +47,8 @@ LIBS =			-lgtk-win32-2.0 \
 			-lgmodule-2.0 \
 			-lgobject-2.0 \
 			-lintl \
-			-lgtkgaim \
-			-lgaim
+			-lpidgin \
+			-lpurple
 
 include $(GAIM_COMMON_RULES)
 
