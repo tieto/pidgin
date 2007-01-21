@@ -56,7 +56,7 @@ typedef struct group *Gaim__Group;
 #include "status.h"
 #include "stringref.h"
 /* Ewww. perl has it's own util.h which is in the include path :( */
-#include "libgaim/util.h"
+#include "libpurple/util.h"
 #include "value.h"
 #include "xmlnode.h"
 
