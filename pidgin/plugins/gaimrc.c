@@ -613,7 +613,7 @@ static GaimPluginInfo gaimrc_info =
 	NULL,
 	GAIM_PRIORITY_DEFAULT,
 	"gaimrc",
-	N_("Gaim GTK+ Theme Control"),
+	N_(PIDGIN_NAME " GTK+ Theme Control"),
 	VERSION,
 	N_("Provides access to commonly used gtkrc settings."),
 	N_("Provides access to commonly used gtkrc settings."),

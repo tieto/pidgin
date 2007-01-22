@@ -38,6 +38,8 @@
 #include "util.h"
 #include "version.h"
 
+#include "gtkgaim.h"
+
 /* 1 day */
 #define MIN_CHECK_INTERVAL 60 * 60 * 24
 
@@ -66,7 +68,7 @@ version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	while(*changelog == '\n') changelog++;
 
 	message = g_string_new("");
-	g_string_append_printf(message, _("You are using Gaim version %s.  The "
+	g_string_append_printf(message, _("You are using " PIDGIN_NAME " version %s.  The "
 			"current version is %s.<hr>"),
 			gaim_core_get_version(), cur_ver);
 

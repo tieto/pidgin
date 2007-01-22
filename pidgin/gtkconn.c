@@ -177,7 +177,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 
 		p = g_strdup_printf(_("%s disconnected"), n);
 		s = g_strdup_printf(_("%s\n\n"
-				"Gaim will not attempt to reconnect the account until you "
+				PIDGIN_NAME " will not attempt to reconnect the account until you "
 				"correct the error and re-enable the account."), text);
 		gaim_notify_error(NULL, NULL, p, s);
 		g_free(p);

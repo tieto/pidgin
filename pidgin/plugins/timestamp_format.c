@@ -24,7 +24,7 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 	ppref = gaim_plugin_pref_new_with_name_and_label(
 			"/plugins/gtk/timestamp_format/force_24hr",
-			_("_Force (traditional Gaim) 24-hour time format"));
+			_("_Force (traditional " PIDGIN_NAME ") 24-hour time format"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_label(_("Show dates in..."));

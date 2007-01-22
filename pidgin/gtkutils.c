@@ -1409,7 +1409,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 
 			str = g_strdup_printf(_("Cannot send folder %s."), basename);
 			gaim_notify_error(NULL, NULL,
-					  str,_("Gaim cannot transfer a folder. You will need to send the files within individually"));
+					  str,_(PIDGIN_NAME " cannot transfer a folder. You will need to send the files within individually"));
 
 			g_free(str);
 
