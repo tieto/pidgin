@@ -334,4 +334,40 @@
 #define gaim_blist_init    purple_blist_init
 #define gaim_blist_uninit  purple_blist_uninit
 
+
+#define GaimBuddyIcon  PurpleBuddyIcon
+
+#define gaim_buddy_icon_new      purple_buddy_icon_new
+#define gaim_buddy_icon_destroy  purple_buddy_icon_destroy
+#define gaim_buddy_icon_ref      purple_buddy_icon_ref
+#define gaim_buddy_icon_unref    purple_buddy_icon_unref
+#define gaim_buddy_icon_update   purple_buddy_icon_update
+#define gaim_buddy_icon_cache    purple_buddy_icon_cache
+#define gaim_buddy_icon_uncache  purple_buddy_icon_uncache
+
+#define gaim_buddy_icon_set_account   purple_buddy_icon_set_account
+#define gaim_buddy_icon_set_username  purple_buddy_icon_set_username
+#define gaim_buddy_icon_set_data      purple_buddy_icon_set_data
+#define gaim_buddy_icon_set_path      purple_buddy_icon_set_path
+
+#define gaim_buddy_icon_get_account   purple_buddy_icon_get_account
+#define gaim_buddy_icon_get_username  purple_buddy_icon_get_username
+#define gaim_buddy_icon_get_data      purple_buddy_icon_get_data
+#define gaim_buddy_icon_get_path      purple_buddy_icon_get_path
+#define gaim_buddy_icon_get_type      purple_buddy_icon_get_type
+
+#define gaim_buddy_icons_set_for_user   purple_buddy_icons_set_for_user
+#define gaim_buddy_icons_find           purple_buddy_icons_find
+#define gaim_buddy_icons_set_caching    purple_buddy_icons_set_caching
+#define gaim_buddy_icons_is_caching     purple_buddy_icons_is_caching
+#define gaim_buddy_icons_set_cache_dir  purple_buddy_icons_set_cache_dir
+#define gaim_buddy_icons_get_cache_dir  purple_buddy_icons_get_cache_dir
+#define gaim_buddy_icons_get_full_path  purple_buddy_icons_get_full_path
+#define gaim_buddy_icons_get_handle     purple_buddy_icons_get_handle
+
+#define gaim_buddy_icons_init    purple_buddy_icons_init
+#define gaim_buddy_icons_uninit  purple_buddy_icons_uninit
+
+#define gaim_buddy_icon_get_scale_size  purple_buddy_icon_get_scale_size
+
 #endif /* _GAIM_COMPAT_H_ */
