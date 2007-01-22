@@ -1890,9 +1890,11 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/buddy_icons/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
-		   pidgin/pixmaps/smileys/Makefile
-		   pidgin/pixmaps/smileys/default/Makefile
-		   pidgin/pixmaps/smileys/none/Makefile
+		   pidgin/pixmaps/emotes/Makefile
+		   pidgin/pixmaps/emotes/default/Makefile
+		   pidgin/pixmaps/emotes/default/22/Makefile
+		   pidgin/pixmaps/emotes/default/scalable/Makefile	
+		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/pixmaps/status/Makefile
 		   pidgin/pixmaps/status/default/Makefile
 		   pidgin/plugins/Makefile
