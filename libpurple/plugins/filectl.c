@@ -245,12 +245,12 @@ static GaimPluginInfo info =
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
 	FILECTL_PLUGIN_ID,                                /**< id             */
-	N_("Gaim File Control"),                          /**< name           */
+	N_("File Control"),                               /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Allows you to control Gaim by entering commands in a file."),
+	N_("Allows control by entering commands in a file."),
 	                                                  /**  description    */
-	N_("Allows you to control Gaim by entering commands in a file."),
+	N_("Allows control by entering commands in a file."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
 	GAIM_WEBSITE,                                          /**< homepage       */
 

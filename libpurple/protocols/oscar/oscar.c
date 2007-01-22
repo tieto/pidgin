@@ -1469,7 +1469,7 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
-							_("Gaim was unable to get a valid AIM login hash."),
+							_("Unable to get a valid AIM login hash."),
 							buf);
 		gaim_input_remove(pos->inpa);
 		close(pos->fd);
@@ -1512,7 +1512,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
-							_("Gaim was unable to get a valid AIM login hash."),
+							_("Unable to get a valid AIM login hash."),
 							buf);
 		g_free(buf);
 		g_free(pos->modname);
@@ -1601,7 +1601,7 @@ int gaim_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 			"Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
-							_("Gaim was unable to get a valid login hash."),
+							_("Unable to get a valid login hash."),
 							buf);
 	}
 
@@ -4454,9 +4454,9 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 		{
 			gchar *errstr;
 			errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
-									 "has been exceeded.  Gaim has truncated it for you.",
+									 "has been exceeded.  It has been truncated it for you.",
 									 "The maximum profile length of %d bytes "
-									 "has been exceeded.  Gaim has truncated it for you.",
+									 "has been exceeded.  It has been truncated it for you.",
 									 od->rights.maxsiglen), od->rights.maxsiglen);
 			gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
 			g_free(errstr);
@@ -4683,7 +4683,7 @@ static int gaim_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
-						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few hours."));
 		if (od->getblisttimer > 0)
 			gaim_timeout_remove(od->getblisttimer);
 		od->getblisttimer = gaim_timeout_add(30000, gaim_ssi_rerequestdata, od);

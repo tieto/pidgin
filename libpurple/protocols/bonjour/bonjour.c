@@ -471,8 +471,7 @@ initialize_default_account_values()
 	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
 		;
 	else
-		fullname = _("Gaim User");
-
+		fullname = _("John Noname"); 
 	/* Make sure fullname is valid UTF-8.  If not, try to convert it. */
 	if (!g_utf8_validate(fullname, -1, NULL))
 	{

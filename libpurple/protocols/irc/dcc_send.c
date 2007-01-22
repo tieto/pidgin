@@ -294,7 +294,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 
 	if (sock < 0) {
 		gaim_notify_error(gc, NULL, _("File Transfer Failed"),
-		                  _("Gaim could not open a listening port."));
+		                  _("Could not open a listening port."));
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}
@@ -335,7 +335,7 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 	if (xd->listen_data == NULL) {
 		gaim_xfer_unref(xfer);
 		gaim_notify_error(gc, NULL, _("File Transfer Failed"),
-		                  _("Gaim could not open a listening port."));
+		                  _("Could not open a listening port."));
 		gaim_xfer_cancel_local(xfer);
 	}
 

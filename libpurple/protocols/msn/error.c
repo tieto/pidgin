@@ -35,7 +35,7 @@ msn_error_get_text(unsigned int type)
 					   _("Unable to parse message"));
 		case 200:
 			g_snprintf(msg, sizeof(msg),
-					   _("Syntax Error (probably a Gaim bug)"));
+					   _("Syntax Error (probably a client bug)"));
 			break;
 		case 201:
 			g_snprintf(msg, sizeof(msg),

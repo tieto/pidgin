@@ -297,7 +297,7 @@ silcgaim_login(GaimAccount *account)
 		gaim_account_set_user_info(account, client->realname);
 	} else {
 		free(realname);
-		client->realname = strdup(_("Gaim User"));
+		client->realname = strdup(_("John Noname"));
 	}
 	client->hostname = silc_net_localhost();
 
@@ -1531,7 +1531,7 @@ static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
 	g_free(silcargs);
 	if (!silc_client_command_call(sg->client, sg->conn, silccmd)) {
 		g_free(silccmd);
-		*error = g_strdup_printf(_("Unknown command: %s, (may be a Gaim bug)"), cmd);
+		*error = g_strdup_printf(_("Unknown command: %s, (may be a client bug)"), cmd);
 		return GAIM_CMD_RET_FAILED;
 	}
 	g_free(silccmd);

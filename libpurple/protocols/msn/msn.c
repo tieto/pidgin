@@ -1809,7 +1809,7 @@ msn_got_info(GaimUtilFetchUrlData *url_data, gpointer data,
 											   "This either means that the user does not exist, "
 											   "or that the user exists "
 											   "but has not created a public profile.") :
-										 _("Gaim could not find "	/* This should never happen */
+										 _("Could not find "	/* This should never happen */
 										   "any information in the user's profile. "
 										   "The user most likely does not exist."))));
 	}

@@ -995,13 +995,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		gaim_notify_info(gc, NULL, _("Password Change Successful"), NULL);
 	} else if (!g_ascii_strcasecmp(c, "PAUSE")) {
 		tdt->state = STATE_PAUSE;
-		gaim_notify_warning(gc, NULL,
-							_("TOC has sent a PAUSE command."),
-							_("When this happens, TOC ignores any messages "
-							  "sent to it, and may kick you off if you send a"
-							  " message. Gaim will prevent anything from "
-							  "going through. This is only temporary, please "
-							  "be patient."));
 	} else if (!g_ascii_strcasecmp(c, "RVOUS_PROPOSE")) {
 #if 0
 		char *user, *uuid, *cookie;
@@ -2192,7 +2185,7 @@ static void toc_accept_ft(struct ft_request *fr) {
 		ft->port = fr->port;
 		ft->files = fr->files;
 
-		ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
+		ft->window = window = gtk_file_selection_new(_("Save As..."));
 		g_snprintf(buf, sizeof(buf), "%s/%s", gaim_home_dir(), fr->filename ? fr->filename : "");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 		g_signal_connect(G_OBJECT(window), "destroy",

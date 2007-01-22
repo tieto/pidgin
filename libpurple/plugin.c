@@ -535,7 +535,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 			                      dep_name);
 
 			gaim_notify_error(NULL, NULL,
-			                  _("Gaim encountered errors loading the plugin."), tmp);
+			                  _("Unable to load the plugin"), tmp);
 			g_free(tmp);
 
 			g_list_free(dep_list);
@@ -561,7 +561,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 				                      plugin->info->name);
 
 				gaim_notify_error(NULL, NULL,
-				                 _("Gaim was unable to load your plugin."), tmp);
+				                 _("Unable to load your plugin."), tmp);
 				g_free(tmp);
 
 				g_list_free(dep_list);
@@ -666,7 +666,7 @@ gaim_plugin_unload(GaimPlugin *plugin)
 				g_free(translated_name);
 
 				gaim_notify_error(NULL, NULL,
-				                  _("Gaim encountered errors unloading the plugin."), tmp);
+				                  _("There were errors unloading the plugin."), tmp);
 				g_free(tmp);
 			}
 		}

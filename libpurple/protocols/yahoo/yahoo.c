@@ -1792,7 +1792,7 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		default:
 			buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
-						"authentication method.  This version of Gaim will likely not be able "
+						"authentication method.  You will probably not be able "
 						"to successfully sign on to Yahoo.  Check %s for updates."), GAIM_WEBSITE);
 			gaim_notify_error(gc, "", _("Failed Yahoo! Authentication"),
 					  buf);
@@ -1911,13 +1911,6 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 					"Gaim/" VERSION, FALSE, yahoo_login_page_cb, gc);
 			if (url_data != NULL)
 				yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-			gaim_notify_warning(gc, NULL, _("Normal authentication failed!"),
-			                    _("The normal authentication method has failed. "
-			                      "This means either your password is incorrect, "
-			                      "or Yahoo!'s authentication scheme has changed. "
-			                      "Gaim will now attempt to log in using Web "
-			                      "Messenger authentication, which will result "
-			                      "in reduced functionality and features."));
 			return;
 		}
 		msg = g_strdup(_("Incorrect password."));

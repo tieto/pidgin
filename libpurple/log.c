@@ -581,7 +581,7 @@ void gaim_log_init(void)
 									 txt_logger_list_syslog);
 	gaim_log_logger_add(txt_logger);
 
-	old_logger = gaim_log_logger_new("old", _("Old Gaim"), 9,
+	old_logger = gaim_log_logger_new("old", _("Old flat format"), 9,
 									 NULL,
 									 NULL,
 									 old_logger_finalize,

@@ -359,7 +359,7 @@ void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, c
 		return;
 
 	buf = g_strdup_printf(_("Unknown message '%s'"), args[1]);
-	gaim_notify_error(gc, _("Unknown message"), buf, _("Gaim has sent a message the IRC server did not understand."));
+	gaim_notify_error(gc, _("Unknown message"), buf, _("The IRC server received a message it did not understand."));
 	g_free(buf);
 }
 
