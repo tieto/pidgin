@@ -370,4 +370,67 @@
 
 #define gaim_buddy_icon_get_scale_size  purple_buddy_icon_get_scale_size
 
+#define GAIM_CIPHER          PURPLE_CIPHER
+#define GAIM_CIPHER_OPS      PURPLE_CIPHER_OPS
+#define GAIM_CIPHER_CONTEXT  PURPLE_CIPHER_CONTEXT
+
+#define GaimCipher         PurpleCipher
+#define GaimCipherOps      PurpleCipherOps
+#define GaimCipherContext  PurpleCipherContext
+
+#define GAIM_CIPHER_CAPS_SET_OPT  PURPLE_CIPHER_CAPS_SET_OPT
+#define GAIM_CIPHER_CAPS_GET_OPT  PURPLE_CIPHER_CAPS_GET_OPT
+#define GAIM_CIPHER_CAPS_INIT     PURPLE_CIPHER_CAPS_INIT
+#define GAIM_CIPHER_CAPS_RESET    PURPLE_CIPHER_CAPS_RESET
+#define GAIM_CIPHER_CAPS_UNINIT   PURPLE_CIPHER_CAPS_UNINIT
+#define GAIM_CIPHER_CAPS_SET_IV   PURPLE_CIPHER_CAPS_SET_IV
+#define GAIM_CIPHER_CAPS_APPEND   PURPLE_CIPHER_CAPS_APPEND
+#define GAIM_CIPHER_CAPS_DIGEST   PURPLE_CIPHER_CAPS_DIGEST
+#define GAIM_CIPHER_CAPS_ENCRYPT  PURPLE_CIPHER_CAPS_ENCRYPT
+#define GAIM_CIPHER_CAPS_DECRYPT  PURPLE_CIPHER_CAPS_DECRYPT
+#define GAIM_CIPHER_CAPS_SET_SALT  PURPLE_CIPHER_CAPS_SET_SALT
+#define GAIM_CIPHER_CAPS_GET_SALT_SIZE  PURPLE_CIPHER_CAPS_GET_SALT_SIZE
+#define GAIM_CIPHER_CAPS_SET_KEY        PURPLE_CIPHER_CAPS_SET_KEY
+#define GAIM_CIPHER_CAPS_GET_KEY_SIZE   PURPLE_CIPHER_CAPS_GET_KEY_SIZE
+#define GAIM_CIPHER_CAPS_UNKNOWN        PURPLE_CIPHER_CAPS_UNKNOWN
+
+#define gaim_cipher_get_name          purple_cipher_get_name
+#define gaim_cipher_get_capabilities  purple_cipher_get_capabilities
+#define gaim_cipher_digest_region     purple_cipher_digest_region
+
+#define gaim_ciphers_find_cipher        purple_ciphers_find_cipher
+#define gaim_ciphers_register_cipher    purple_ciphers_register_cipher
+#define gaim_ciphers_unregister_cipher  purple_ciphers_unregister_cipher
+#define gaim_ciphers_get_ciphers        purple_ciphers_get_ciphers
+
+#define gaim_ciphers_get_handle  purple_ciphers_get_handle
+#define gaim_ciphers_init        purple_ciphers_init
+#define gaim_ciphers_uninit      purple_ciphers_uninit
+
+#define gaim_cipher_context_set_option  purple_cipher_context_set_option
+#define gaim_cipher_context_get_option  purple_cipher_context_get_option
+
+#define gaim_cipher_context_new            purple_cipher_context_new
+#define gaim_cipher_context_new_by_name    purple_cipher_context_new_by_name
+#define gaim_cipher_context_reset          purple_cipher_context_reset
+#define gaim_cipher_context_destroy        purple_cipher_context_destroy
+#define gaim_cipher_context_set_iv         purple_cipher_context_set_iv
+#define gaim_cipher_context_append         purple_cipher_context_append
+#define gaim_cipher_context_digest         purple_cipher_context_digest
+#define gaim_cipher_context_digest_to_str  purple_cipher_context_digest_to_str
+#define gaim_cipher_context_encrypt        purple_cipher_context_encrypt
+#define gaim_cipher_context_decrypt        purple_cipher_context_decrypt
+#define gaim_cipher_context_set_salt       purple_cipher_context_set_salt
+#define gaim_cipher_context_get_salt_size  purple_cipher_context_get_salt_size
+#define gaim_cipher_context_set_key        purple_cipher_context_set_key
+#define gaim_cipher_context_get_key_size   purple_cipher_context_get_key_size
+#define gaim_cipher_context_set_data       purple_cipher_context_set_data
+#define gaim_cipher_context_get_data       purple_cipher_context_get_data
+
+#define gaim_cipher_http_digest_calculate_session_key \
+	purple_cipher_http_digest_calculate_session_key
+
+#define gaim_cipher_http_digest_calculate_response \
+	purple_cipher_http_digest_calculate_response
+
 #endif /* _GAIM_COMPAT_H_ */
