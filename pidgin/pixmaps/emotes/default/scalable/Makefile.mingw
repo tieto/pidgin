@@ -1,0 +1,10 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Pidgin pixmaps
+#
+
+.PHONY: install
+
+install:
+

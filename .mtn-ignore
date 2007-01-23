@@ -1,10 +1,12 @@
-.*/?Makefile(\.in)?
+.*/?Makefile(\.in)?$
 (.*/)?TAGS$
 .*/?.*\.pc$
 .*/perl/common/[^/]+\.c$
 .*/perl/common/blib.*
 .*/perl/common/pm_to_blib$
 .*\.bs$
+.*\.dll$
+.*\.exe$
 intltool-.*
 Doxyfile
 aclocal.m4
@@ -29,6 +31,8 @@ gaim.spec
 pidgin/gaim
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL
+pidgin/win32/pidgin_dll_rc.rc
+pidgin/win32/pidgin_exe_rc.rc
 install-sh
 libpurple/dbus-bindings.c
 libpurple/dbus-types.c
@@ -40,6 +44,8 @@ libpurple/gconf/gaim.schemas
 libpurple/plugins/dbus-example-bindings.c
 libpurple/plugins/perl/common/const-c.inc
 libpurple/plugins/perl/common/const-xs.inc
+libpurple/plugins/perl/common/lib
+libpurple/win32/libpurplerc.rc
 libtool
 ltmain.sh
 missing
@@ -47,3 +53,5 @@ mkinstalldirs
 po/POTFILES
 po/stamp-it
 stamp-h1
+win32-install-dir(\.release)?
+VERSION
