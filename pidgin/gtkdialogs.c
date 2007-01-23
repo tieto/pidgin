@@ -61,6 +61,11 @@ struct translator {
 	char *email;
 };
 
+struct artist {
+	char *name;
+	char *email;
+};
+
 /* Order: Lead Developer, then Alphabetical by Last Name */
 static struct developer developers[] = {
 	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
@@ -220,6 +225,11 @@ static struct translator past_translators[] = {
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao, Rocky S. Lee", NULL},
 	{N_("Traditional Chinese"), "zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
+};
+
+static struct artist artists[] = {
+	{"Hylke Bons",	"h.bons@student.rug.nl"},
+	{NULL, NULL}
 };
 
 void
@@ -399,6 +409,21 @@ void gaim_gtkdialogs_about()
 	}
 	g_string_append(str, "<BR/>");
 
+	/* Artists */
+        g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+                                                   _("Artists"));
+        for (i = 0; artists[i].name != NULL; i++) {
+        	if (artists[i].email != NULL) {
+			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
+			                           artists[i].name,
+			                           artists[i].email, artists[i].email);
+	        } else {
+	                g_string_append_printf(str, "  %s<br/>",
+	                                      artists[i].name);
+	        }
+	}
+	g_string_append(str, "<BR/>");
+			
 	/* Current Translators */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Current Translators"));
