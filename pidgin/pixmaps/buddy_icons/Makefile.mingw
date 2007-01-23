@@ -11,6 +11,6 @@ include ./Makefile.am
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
-	    $(MAKE) -C $$subdir -f Makefile.mingw install; \
+	    $(MAKE) -C $$subdir -f Makefile.mingw install || exit 1; \
 	  done; \
 	fi;
