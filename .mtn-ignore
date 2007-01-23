@@ -42,6 +42,7 @@ libpurple/gaim-client-bindings.h
 libpurple/gaim-client-example
 libpurple/gconf/gaim.schemas
 libpurple/plugins/dbus-example-bindings.c
+libpurple/plugins/perl/common/Makefile.PL
 libpurple/plugins/perl/common/const-c.inc
 libpurple/plugins/perl/common/const-xs.inc
 libpurple/plugins/perl/common/lib
@@ -50,6 +51,7 @@ libtool
 ltmain.sh
 missing
 mkinstalldirs
+po/Makefile.in.in
 po/POTFILES
 po/stamp-it
 stamp-h1
