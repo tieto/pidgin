@@ -518,7 +518,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	gboolean account_status = FALSE;
 	GaimAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
 
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
 	
 	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
@@ -818,7 +818,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		/* Odd... oh well, nothing we can do about it. */
 		return;
 
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	gtk_gaim_status_box_add_separator(statusbox);
 
@@ -956,7 +956,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	/* Unset the model while clearing it */
 	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), NULL);
@@ -1086,7 +1086,7 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 	GtkIconSize icon_size;
 	
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS_SMALL);
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	if (status_box->connecting_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);
@@ -1673,7 +1673,7 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toggle_button, requisition);
 
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
-	requisition->height = MAX(requisition->height, 30 + (border_width*2));
+	requisition->height = MAX(requisition->height, 32 + (border_width*2));
 
 	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
@@ -1735,7 +1735,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	gtk_widget_size_request(status_box->toggle_button, &req);
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
 
-	req.height = MAX(req.height, 30 + (border_width*2));
+	req.height = MAX(req.height, 32 + (border_width*2));
 
 	box_alc = *allocation;
 
@@ -1951,7 +1951,7 @@ gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box)
 	if (status_box->buddy_icon != NULL) {
 		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(status_box->buddy_icon);
-		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 30);
+		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 32);
 	}
 }
 

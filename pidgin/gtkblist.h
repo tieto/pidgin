@@ -111,6 +111,7 @@ struct _GaimGtkBuddyList {
 	
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
+	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
 };
 
 #define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)

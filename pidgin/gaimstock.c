@@ -117,9 +117,6 @@ static struct StockIcon
 	{ GAIM_STOCK_TYPED,           "gaim",    "typed.png"                },
 	{ GAIM_STOCK_TYPING,          "gaim",    "typing.png"               },
 	{ GAIM_STOCK_VOICE_CHAT,      "gaim",    "phone.png"                },
-	{ GAIM_STOCK_STATUS_ONLINE,   "gaim",    "status-online.png"        },
-	{ GAIM_STOCK_STATUS_OFFLINE,  "gaim",    "status-offline.png"       },
-	{ GAIM_STOCK_STATUS_AWAY,     "gaim",    "status-away.png"          },
 	{ GAIM_STOCK_STATUS_INVISIBLE,"gaim",    "status-invisible.png"     },
 	{ GAIM_STOCK_STATUS_TYPING0,  "gaim",    "status-typing0.png"       },
 	{ GAIM_STOCK_STATUS_TYPING1,  "gaim",    "status-typing1.png"       },
@@ -145,6 +142,28 @@ static const GtkStockItem stock_items[] =
 	{ GAIM_STOCK_PAUSE,      N_("_Pause"),      0, 0, NULL },
 };
 
+static struct SizedStockIcon {
+  const char *name;
+  const char *dir;
+  const char *filename;
+  gboolean extra_small;
+  gboolean small;
+  gboolean medium;
+  gboolean huge;
+} const sized_stock_icons [] = {
+	{ GAIM_STOCK_STATUS_AVAILABLE, 	"status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_AWAY, 	"status", "away.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, FALSE },
+	{ GAIM_STOCK_STATUS_OPERATOR, 	"status", "operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ GAIM_STOCK_STATUS_HALFOP, 	"status", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
+};
+
 static gchar *
 find_file(const char *dir, const char *base)
 {
@@ -161,16 +180,26 @@ find_file(const char *dir, const char *base)
 									base, NULL);
 	}
 
-	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
-	{
-		g_critical("Unable to load stock pixmap %s\n", base);
-
-		g_free(filename);
-
-		return NULL;
-	}
-
 	return filename;
+}
+
+static void
+add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir, 
+	       const char *size, const char *file)
+{
+	char *filename;
+	GtkIconSource *source;	
+
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, file, NULL);
+	source = gtk_icon_source_new();
+        gtk_icon_source_set_filename(source, filename);
+        gtk_icon_source_set_direction_wildcarded(source, TRUE);
+	gtk_icon_source_set_size(source, sizeid);
+        gtk_icon_source_set_size_wildcarded(source, FALSE);
+        gtk_icon_source_set_state_wildcarded(source, TRUE);
+        gtk_icon_set_add_source(iconset, source);
+	gtk_icon_source_free(source);
+        g_free(filename);
 }
 
 void
@@ -180,7 +209,8 @@ gaim_gtk_stock_init(void)
 	GtkIconFactory *icon_factory;
 	size_t i;
 	GtkWidget *win;
-
+	GtkIconSize extra_small, small, medium, huge;
+	
 	if (stock_initted)
 		return;
 
@@ -197,7 +227,7 @@ gaim_gtk_stock_init(void)
 
 	for (i = 0; i < G_N_ELEMENTS(stock_icons); i++)
 	{
-		GdkPixbuf *pixbuf;
+		GtkIconSource *source;
 		GtkIconSet *iconset;
 		gchar *filename;
 
@@ -214,13 +244,18 @@ gaim_gtk_stock_init(void)
 			if (filename == NULL)
 				continue;
 
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			source = gtk_icon_source_new();
+			gtk_icon_source_set_filename(source, filename);
+			gtk_icon_source_set_direction_wildcarded(source, TRUE);
+			gtk_icon_source_set_size_wildcarded(source, TRUE);
+			gtk_icon_source_set_state_wildcarded(source, TRUE);
+			
 
+			iconset = gtk_icon_set_new();
+			gtk_icon_set_add_source(iconset, source);
+			
+			gtk_icon_source_free(source);
 			g_free(filename);
-
-			iconset = gtk_icon_set_new_from_pixbuf(pixbuf);
-
-			g_object_unref(G_OBJECT(pixbuf));
 		}
 
 		gtk_icon_factory_add(icon_factory, stock_icons[i].name, iconset);
@@ -228,15 +263,40 @@ gaim_gtk_stock_init(void)
 		gtk_icon_set_unref(iconset);
 	}
 
-	gtk_widget_destroy(win);
-
 	/* register custom icon sizes */
 	gtk_icon_size_register(GAIM_ICON_SIZE_DIALOG_COOL, 40, 60);
-	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS, 30, 30);
-	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_TWO_LINE, 30, 30);
-	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_SMALL, 16, 16);
-	gtk_icon_size_register(GAIM_ICON_SIZE_STATUS_SMALL_TWO_LINE, 24, 24);
+	extra_small =  gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
+	small =        gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_SMALL, 22, 22);
+	medium =       gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_MEDIUM, 32, 32);
+	huge =         gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_HUGE, 64, 64);
 
+	for (i = 0; i < G_N_ELEMENTS(sized_stock_icons); i++)
+	{
+		GtkIconSet *iconset;
+
+		iconset = gtk_icon_set_new();
+		if (sized_stock_icons[i].extra_small)
+			add_sized_icon(iconset, extra_small,
+				       sized_stock_icons[i].dir,
+				       "16", sized_stock_icons[i].filename);
+               if (sized_stock_icons[i].small)
+                        add_sized_icon(iconset, small,
+				       sized_stock_icons[i].dir, 
+                                       "22", sized_stock_icons[i].filename);
+               if (sized_stock_icons[i].medium)
+                        add_sized_icon(iconset, medium,
+			               sized_stock_icons[i].dir, 
+                                       "32", sized_stock_icons[i].filename);
+               if (sized_stock_icons[i].huge)
+                        add_sized_icon(iconset, huge,
+	                               sized_stock_icons[i].dir, 
+                                       "64", sized_stock_icons[i].filename);
+
+		gtk_icon_factory_add(icon_factory, sized_stock_icons[i].name, iconset);
+		gtk_icon_set_unref(iconset);
+	}
+
+	gtk_widget_destroy(win);
 	g_object_unref(G_OBJECT(icon_factory));
 
 	/* Register the stock items. */

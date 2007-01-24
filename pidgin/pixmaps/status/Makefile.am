@@ -1,2 +1,2 @@
-SUBDIRS = default 
+SUBDIRS = 16 22 32
 

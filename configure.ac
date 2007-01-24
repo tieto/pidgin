@@ -1896,7 +1896,12 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emotes/default/scalable/Makefile	
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/pixmaps/status/Makefile
-		   pidgin/pixmaps/status/default/Makefile
+		   pidgin/pixmaps/status/16/Makefile
+		   pidgin/pixmaps/status/16/scalable/Makefile
+		   pidgin/pixmaps/status/22/Makefile
+		   pidgin/pixmaps/status/22/scalable/Makefile
+		   pidgin/pixmaps/status/32/Makefile
+		   pidgin/pixmaps/status/32/scalable/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
