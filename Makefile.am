@@ -1,4 +1,4 @@
-EXTRA_DIST = \
+EXTRA_DIST = config.rpath m4/ChangeLog  \
 		COPYRIGHT \
 		ChangeLog.API \
 		ChangeLog.win32 \
@@ -71,3 +71,5 @@ distuninstallcheck_listfiles = \
 
 DISTCLEANFILES= gaim.desktop libpurple/gconf/gaim.schemas intltool-extract \
 			intltool-merge intltool-update
+
+ACLOCAL_AMFLAGS = -I m4

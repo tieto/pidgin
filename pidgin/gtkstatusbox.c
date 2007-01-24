@@ -968,7 +968,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 	if (status_box->account == NULL)
 	{
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_ONLINE,
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AVAILABLE,
 		                                 icon_size, "GtkGaimStatusBox");
 		/* Do all the currently enabled accounts have the same statuses?
 		 * If so, display them instead of our global list.
