@@ -4239,7 +4239,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 #endif
 					    NULL);
-	g_object_set(rend, "xalign", 0.0, "ypad", 0, NULL);
+	g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
 
 	gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start (column, rend, TRUE);
