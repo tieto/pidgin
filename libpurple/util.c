@@ -3150,6 +3150,11 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		g_free(gfud->request);
 		gfud->request = NULL;
 
+		gaim_input_remove(gfud->inpa);
+		gfud->inpa = 0;
+		close(gfud->fd);
+		gfud->fd = 0;
+
 		g_free(gfud->website.user);
 		g_free(gfud->website.passwd);
 		g_free(gfud->website.address);
