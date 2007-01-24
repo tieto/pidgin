@@ -28,6 +28,11 @@
 #include "wgaimerror.h"
 #include "libc_interface.h"
 
+/* rpcndr.h defines small as char, causing problems, so we need to undefine it */
+#ifdef _WIN32
+#undef small
+#endif
+
 /*
  *  PROTOS
  */
