@@ -11,7 +11,7 @@ WriteMakefile(
        AUTHOR     => 'Gaim <http://gaim.sourceforge.net/>') : ()),
     'LIBS'		=> [''], # e.g., '-lm'
     'DEFINE'		=> '@DEBUG_CFLAGS@', # e.g., '-DHAVE_SOMETHING'
-    'INC'		=> '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libgaim @GLIB_CFLAGS@', # e.g., '-I. -I/usr/include/other'
+    'INC'		=> '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple @GLIB_CFLAGS@', # e.g., '-I. -I/usr/include/other'
     'OBJECT'		=> '$(O_FILES)', # link all the C files too
 );
 

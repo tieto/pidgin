@@ -8,7 +8,7 @@ WriteMakefile(
 	('ABSTRACT_FROM' => '@srcdir@/GtkUI.pm', # finds $ABSTRACT
 	'AUTHOR'        => 'Gaim <http://gaim.sourceforge.net/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@',
-    'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libgaim -I@top_srcdir@/gtk @GTK_CFLAGS@',
+    'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@',
 #    'PREREQ_PM'     => { 'Gaim' => '@VERSION@'},
     # Do this because the MakeMaker Makefile is dumb, and on clean it moves
     # Makefile to the default setting for MAKEFILE_OLD which is Makefile.old
