@@ -1,5 +1,5 @@
 Name=Default
-Description=Emotes from each protocol's official client, restyled.
+Description=Default Pidgin smileys
 Icon=smile.png
 Author=Hylke Bons
 
@@ -17,6 +17,8 @@ crying.png :'(
 thinking.png :-/ :-\\
 angel.png  O:-)
 shut-mouth.png :-X
+moneymouth.png :-$
+foot-in-mouth.png :-!
 
 [MSN]
 smile.png :)

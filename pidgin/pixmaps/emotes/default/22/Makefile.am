@@ -56,6 +56,7 @@ SMILEYS = 	act-up.png \
 		film.png \
 		fingers-crossed.png \
 		flag.png \
+		foot-in-mouth.png \
 		freaked-out.png \
 		ghost.png \
 		girl.png \
@@ -88,6 +89,7 @@ SMILEYS = 	act-up.png \
 		meeting.png \
 		mobile.png \
 		monkey.png \
+		moneymouth.png \
 		moon.png \
 		msn-away.png \
 		msn-busy.png \

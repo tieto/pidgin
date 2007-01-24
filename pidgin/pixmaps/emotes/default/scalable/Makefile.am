@@ -55,6 +55,7 @@ EXTRA_DIST = 	act-up.svg \
 		film.svg \
 		fingers-crossed.svg \
 		flag.svg \
+		foot-in-mouth.svg \
 		freaked-out.svg \
 		ghost.svg \
 		girl.svg \
@@ -85,6 +86,7 @@ EXTRA_DIST = 	act-up.svg \
 		meeting.svg \
 		mobile.svg \
 		monkey.svg \
+		moneymouth.png
 		moon.svg \
 		msn-away.svg \
 		msn-busy.svg \
