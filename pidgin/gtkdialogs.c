@@ -349,7 +349,7 @@ void gaim_gtkdialogs_about()
 		  "It is written using GTK+.<BR><BR>"
 		  "You may modify and redistribute the program under "
 		  "the terms of the GPL (version 2 or later).  A copy of the GPL is "
-		  "contained in the 'COPYING' file distributed with Gaim.  "
+		  "contained in the 'COPYING' file distributed with " PIDGIN_NAME ".  "
 		  PIDGIN_NAME " is copyrighted by its contributors.  See the 'COPYRIGHT' "
 		  "file for the complete list of contributors.  We provide no "
 		  "warranty for this program.<BR><BR>"));
