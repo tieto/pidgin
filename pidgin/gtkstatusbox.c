@@ -593,7 +593,33 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	else if (status_box->connecting)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
 	else
-	{
+	  {
+	    GaimStatusType *status_type;
+	    GaimStatusPrimitive prim;
+	    GtkIconSize icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	    if (account_status) {
+	    	status_type = gaim_status_get_type(gaim_account_get_active_status(acct));
+	        prim = gaim_status_type_get_primitive(status_type);
+	    } else {
+	    	prim = gaim_savedstatus_get_type(saved_status);
+	    }
+
+	    if (prim == GAIM_STATUS_UNAVAILABLE)
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_BUSY,
+		   			         icon_size, "GtkTreeView");
+	    else if (prim == GAIM_STATUS_AWAY)
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
+		 			         icon_size, "GtkTreeView");
+	    else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_XA,
+					         icon_size, "GtkTreeView");
+	    else if (prim == GAIM_STATUS_OFFLINE)
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
+					         icon_size, "GtkTreeView");
+	    else
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AVAILABLE,
+					         icon_size, "GtkTreeView");
+#if 0
 		if (account_status)
 			pixbuf = gaim_gtk_create_prpl_icon_with_status(acct,
 						gaim_status_get_type(gaim_account_get_active_status(acct)),
@@ -621,6 +647,8 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 				g_object_unref(G_OBJECT(emblem));
 			}
 		}
+#endif
+		
 	}
 
 	if (status_box->account != NULL) {
@@ -827,12 +855,27 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		GaimSavedStatus *saved = cur->data;
 		const gchar *message;
 		gchar *stripped = NULL;
+		GaimStatusPrimitive prim;
 
 		/* Get an appropriate status icon */
-		pixbuf = gaim_gtk_create_gaim_icon_with_status(
-					gaim_savedstatus_get_type(saved),
-					0.5);
+	      	prim = gaim_savedstatus_get_type(saved);
 
+            	if (prim == GAIM_STATUS_UNAVAILABLE)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_BUSY,
+                       	        	                  icon_size, "GtkTreeView");
+            	else if (prim == GAIM_STATUS_AWAY)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_AWAY,
+                        	                         icon_size, "GtkTreeView");
+            	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_XA,
+                        	                         icon_size, "GtkTreeView");
+            	else if (prim == GAIM_STATUS_OFFLINE)
+               		pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_OFFLINE,
+                        	                         icon_size, "GtkTreeView");
+            	else
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_AVAILABLE,
+                        	                         icon_size, "GtkTreeView");
+      
 		if (gaim_savedstatus_is_transient(saved))
 		{
 			/*
@@ -849,7 +892,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 				stripped = gaim_markup_strip_html(message);
 				gaim_util_chrreplace(stripped, '\n', ' ');
 			}
-
+#if 0
 			/* Overlay a disk in the bottom left corner */
 			emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
 						GTK_STOCK_SAVE, icon_size, "GtkGaimStatusBox");
@@ -862,6 +905,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
 				g_object_unref(G_OBJECT(emblem));
 			}
+#endif
 		}
 
 		gtk_gaim_status_box_add(statusbox, GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
@@ -930,23 +974,42 @@ add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account)
 {
 	/* Per-account */
 	const GList *l;
-	GdkPixbuf *tmp;
+	GdkPixbuf *pixbuf;
 
 	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
 	{
 		GaimStatusType *status_type = (GaimStatusType *)l->data;
+		GaimStatusPrimitive prim;
+		GtkIconSize icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 		if (!gaim_status_type_is_user_settable(status_type))
 			continue;
 
-		tmp = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
+            	prim = gaim_status_type_get_primitive(status_type);
+
+            	if (prim == GAIM_STATUS_UNAVAILABLE)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_BUSY,
+                       		                          icon_size, "GtkTreeView");
+            	else if (prim == GAIM_STATUS_AWAY)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
+                       		                          icon_size, "GtkTreeView");
+            	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_XA,
+                        	                         icon_size, "GtkTreeView");
+            	else if (prim == GAIM_STATUS_OFFLINE)
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
+                        	                         icon_size, "GtkTreeView");
+            	else
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AVAILABLE,
+                        	                         icon_size, "GtkTreeView");
+
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
-					GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, tmp,
+					GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf,
 					gaim_status_type_get_name(status_type),
 					NULL,
 					GINT_TO_POINTER(gaim_status_type_get_primitive(status_type)));
-		if (tmp != NULL)
-			g_object_unref(tmp);
+		if (pixbuf != NULL)
+			g_object_unref(pixbuf);
 	}
 }
 
@@ -1673,7 +1736,8 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toggle_button, requisition);
 
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
-	requisition->height = MAX(requisition->height, 32 + (border_width*2));
+	requisition->height = MAX(requisition->height, 34);
+	requisition->height += border_width * 2;
 
 	/* If the gtkimhtml is visible, then add some additional padding */
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
@@ -1735,7 +1799,8 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	gtk_widget_size_request(status_box->toggle_button, &req);
 	/* Make this icon the same size as other buddy icons in the list; unless it already wants to be bigger */
 
-	req.height = MAX(req.height, 32 + (border_width*2));
+	req.height = MAX(req.height, 34);
+	req.height += border_width * 2;
 
 	box_alc = *allocation;
 
@@ -1755,16 +1820,16 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	{
 		GtkTextDirection dir = gtk_widget_get_direction(widget);
 		parent_alc.width -= (parent_alc.height + border_width);
-		icon_alc = *allocation;
-		icon_alc.height = MAX(1,req.height) - (border_width*2);
+		icon_alc = parent_alc;
+		icon_alc.height = MAX(1,req.height) - (border_width*2) -2;
 		icon_alc.width = icon_alc.height;
 		if (dir == GTK_TEXT_DIR_RTL) {
 			icon_alc.x = parent_alc.x;
 			parent_alc.x += icon_alc.width + border_width;
 		} else {
-			icon_alc.x = allocation->width - (icon_alc.width + border_width);
+			icon_alc.x = allocation->width - (icon_alc.width + border_width + 1);
 		}
-		icon_alc.y += border_width;
+		icon_alc.y += 1;
 
 		if (status_box->icon_size != icon_alc.height)
 		{
@@ -1773,7 +1838,6 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 		}
 		gtk_widget_size_allocate(status_box->icon_box, &icon_alc);
 	}
-
 	gtk_widget_size_allocate(status_box->toggle_button, &parent_alc);
 	widget->allocation = *allocation;
 }
@@ -1785,8 +1849,11 @@ gtk_gaim_status_box_expose_event(GtkWidget *widget,
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->toggle_button, event);
-	if (status_box->icon_box)
-		gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->icon_box, event);
+	if (status_box->icon_box && status_box->icon_opaque) {
+		gtk_paint_box(widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL,
+				status_box->icon_box, "button", status_box->icon_box->allocation.x-1, status_box->icon_box->allocation.y-1,
+				34, 34);
+	}		
 	return FALSE;
 }
 
@@ -1949,9 +2016,11 @@ gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box)
 	}
 
 	if (status_box->buddy_icon != NULL) {
+	        status_box->icon_opaque = gaim_gdk_pixbuf_is_opaque(status_box->buddy_icon);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(status_box->buddy_icon);
 		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 32);
+		gtk_widget_queue_resize(GTK_WIDGET(status_box));
 	}
 }
 

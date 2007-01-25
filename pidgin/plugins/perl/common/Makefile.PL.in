@@ -15,6 +15,6 @@ WriteMakefile(
     # but this breaks running make clean more than once in a row.
     'MAKEFILE_OLD'  => "Makefile",
     'OBJECT'        => '$(O_FILES)',
-    'TYPEMAPS'      => ["@top_srcdir@/libgaim/plugins/perl/common/typemap"],
+    'TYPEMAPS'      => ["@top_srcdir@/libpurple/plugins/perl/common/typemap"],
 #    'OPTIMIZE'      => '-g', # For debugging.
 );

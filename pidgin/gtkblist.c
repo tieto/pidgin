@@ -2217,42 +2217,6 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
         return td;
 }
 
-static gboolean pixbuf_is_opaque(GdkPixbuf *pixbuf) {
-        int width, height, rowstride, i;
-        unsigned char *pixels;
-        unsigned char *row;
-
-        if (!gdk_pixbuf_get_has_alpha(pixbuf))
-                return TRUE;
-
-        width = gdk_pixbuf_get_width (pixbuf);
-        height = gdk_pixbuf_get_height (pixbuf);
-        rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-        pixels = gdk_pixbuf_get_pixels (pixbuf);
-
-        row = pixels;
-        for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
-                        return FALSE;
-        }
-
-        for (i = 1; i < height - 1; i++) {
-                row = pixels + (i*rowstride);
-                if (row[3] != 0xff || row[rowstride-1] != 0xff) {
-                        printf("0: %d, last: %d\n", row[3], row[rowstride-1]);
-                        return FALSE;
-                }
-        }
-
-        row = pixels + ((height-1) * rowstride);
-        for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
-                        return FALSE;
-        }
-
-        return TRUE;
-}
-
 static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, GaimBlistNode *node)
 {
         GtkStyle *style;
@@ -2277,7 +2241,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
         for(l = gtkblist->tooltipdata; l; l = l->next)
         {
                 struct tooltip_data *td = l->data;
-                if (td->avatar && pixbuf_is_opaque(td->avatar))
+                if (td->avatar && gaim_gdk_pixbuf_is_opaque(td->avatar))
                         gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
                                            NULL, gtkblist->tipwindow, "tooltip", max_width - (td->avatar_width+12)-1, current_height-1,td->avatar_width+2, td->avatar_height+2);
 
