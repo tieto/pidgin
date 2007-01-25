@@ -4855,6 +4855,8 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
+				BUDDY_ICON_COLUMN, gtkblist->empty_avatar,
+				BUDDY_ICON_VISIBLE_COLUMN, TRUE,
 				NAME_COLUMN, mark,
 				-1);
 
