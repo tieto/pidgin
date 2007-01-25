@@ -21,9 +21,10 @@
 #include <config.h>
 */
 #include <gtk/gtkversion.h>
-#if !GTK_CHECK_VERSION(2,4,0)
+#if !GTK_CHECK_VERSION(2,6,0)
 #include "gaimcombobox.h"
 
+#if !GTK_CHECK_VERSION(2,4,0)
 #include <gtk/gtkarrow.h>
 #include <gtk/gtkbindings.h>
 #include "gtkcelllayout.h"
@@ -3557,21 +3558,6 @@ gtk_combo_box_remove_text (GtkComboBox *combo_box,
     gtk_list_store_remove (store, &iter);
 }
 
-static gchar *
-gtk_combo_box_get_active_text (GtkComboBox *combo_box)
-{
-  GtkTreeIter iter;
-  gchar *text = NULL;
-
-  g_return_val_if_fail (GTK_IS_LIST_STORE (combo_box->priv->model), NULL);
-
-  if (gtk_combo_box_get_active_iter (combo_box, &iter))
-    gtk_tree_model_get (combo_box->priv->model, &iter, 
-    			0, &text, -1);
-  return text;
-}
-
-
 static gboolean
 gtk_combo_box_mnemonic_activate (GtkWidget *widget,
 				 gboolean   group_cycling)
@@ -3745,3 +3731,19 @@ gtk_menu_attach (GtkMenu   *menu,
     }
 }
 #endif /* Gtk 2.4 */
+
+gchar *
+gtk_combo_box_get_active_text (GtkComboBox *combo_box)
+{
+  GtkTreeIter iter;
+  gchar *text = NULL;
+
+  /* g_return_val_if_fail (GTK_IS_LIST_STORE (combo_box->priv->model), NULL); */
+
+  if (gtk_combo_box_get_active_iter (combo_box, &iter))
+    gtk_tree_model_get (gtk_combo_box_get_model(combo_box), &iter, 
+    			0, &text, -1);
+  return text;
+}
+
+#endif
