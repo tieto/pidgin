@@ -542,6 +542,15 @@ gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
  */
 void gaim_gtk_set_urgent(GtkWindow *window, gboolean urgent);
 
+/**
+ * Returns TRUE if the GdkPixbuf is opaque, as determined by no
+ * alpha at any of the edge pixels.
+ *
+ * @param pixbuf  The pixbug
+ * @return TRUE if the pixbuf is opaque around the edges, FALSE otherwise
+ */
+gboolean gaim_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
+
 #if !GTK_CHECK_VERSION(2,2,0)
 /**
  * This is copied from Gtk to support Gtk 2.0

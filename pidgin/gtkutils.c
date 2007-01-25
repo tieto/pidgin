@@ -3124,6 +3124,42 @@ gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 }
 
 
+gboolean gaim_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
+        int width, height, rowstride, i;
+        unsigned char *pixels;
+        unsigned char *row;
+
+        if (!gdk_pixbuf_get_has_alpha(pixbuf))
+                return TRUE;
+
+        width = gdk_pixbuf_get_width (pixbuf);
+        height = gdk_pixbuf_get_height (pixbuf);
+        rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+        pixels = gdk_pixbuf_get_pixels (pixbuf);
+
+        row = pixels;
+        for (i = 3; i < rowstride; i+=4) {
+                if (row[i] != 0xff)
+                        return FALSE;
+        }
+
+        for (i = 1; i < height - 1; i++) {
+                row = pixels + (i*rowstride);
+                if (row[3] != 0xff || row[rowstride-1] != 0xff) {
+                        printf("0: %d, last: %d\n", row[3], row[rowstride-1]);
+                        return FALSE;
+                }
+        }
+
+        row = pixels + ((height-1) * rowstride);
+        for (i = 3; i < rowstride; i+=4) {
+                if (row[i] != 0xff)
+                        return FALSE;
+        }
+
+        return TRUE;
+}
+
 #if !GTK_CHECK_VERSION(2,2,0)
 GtkTreePath *
 gtk_tree_path_new_from_indices (gint first_index, ...)
