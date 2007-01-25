@@ -716,6 +716,8 @@ for i in $STATIC_PRPLS ; do
 		msn)		static_msn=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
+		aim)		dynamic_oscar=yes ;;
+		icq)		dynamic_oscar=yes ;;
 		qq)		static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
@@ -767,6 +769,8 @@ for i in $DYNAMIC_PRPLS ; do
 		msn)		dynamic_msn=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
+		aim)		dynamic_oscar=yes ;;
+		icq)		dynamic_oscar=yes ;;
 		qq)		dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
