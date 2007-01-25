@@ -29,8 +29,6 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 %{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
-%{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
-%{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
@@ -40,6 +38,16 @@ BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 %{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{!?_without_text:BuildRequires: ncurses-devel}
 
+%if "%{_vendor}" == "suse"
+# For SuSE:
+BuildRequires: gnutls-devel
+%{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
+%{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
+%else
+%{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
+%{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
+%endif
+
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft" || "%{_vendor}" == "Mandriva"
 # For Mandrake/Mandriva:
@@ -48,10 +56,7 @@ Obsoletes:  libgaim-remote0
 %else
 # For SuSE, Red Hat, Fedora and others:
 BuildRequires: gtk2-devel
-%if "%{_vendor}" == "suse"
-# For SuSE:
-BuildRequires: gnutls-devel
-%else
+%if "%{_vendor}" != "suse"
 # For Red Hat, Fedora and others:
 # let's assume RH & FC1 are the only brain-dead distros missing the
 # perl-XML-Parser dependency on intltool and that other RH/FC releases
