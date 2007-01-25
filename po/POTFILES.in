@@ -83,6 +83,7 @@ gtk/plugins/spellchk.c
 gtk/plugins/ticker/ticker.c
 gtk/plugins/timestamp.c
 gtk/plugins/timestamp_format.c
+gtk/plugins/xmppconsole.c
 gtk/plugins/win32/transparency/win2ktrans.c
 gtk/plugins/win32/winprefs/winprefs.c
 libgaim/account.c
