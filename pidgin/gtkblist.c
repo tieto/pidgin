@@ -1007,7 +1007,7 @@ void gaim_gtk_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *nod
 	permitted = gaim_privacy_check(account, gaim_buddy_get_name(buddy));
 
 	gaim_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
-						GTK_STOCK_DIALOG_ERROR, G_CALLBACK(toggle_privacy),
+						GAIM_STOCK_BLOCK, G_CALLBACK(toggle_privacy),
 						node, 0 ,0, NULL);
 }
 
