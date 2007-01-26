@@ -404,7 +404,9 @@ parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 
 	acct_name = xmlnode_get_attrib(bnode, "account");
 	protocol = xmlnode_get_attrib(bnode, "protocol");
+	protocol = _gaim_oscar_convert(acct_name, protocol); /* XXX: Remove */
 	proto = xmlnode_get_attrib(bnode, "proto");
+	proto = _gaim_oscar_convert(acct_name, proto); /* XXX: Remove */
 
 	if (!acct_name || (!proto && !protocol))
 		return;

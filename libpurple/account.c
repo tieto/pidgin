@@ -697,7 +697,7 @@ parse_account(xmlnode *node)
 		return NULL;
 	}
 
-	ret = gaim_account_new(name, protocol_id);
+	ret = gaim_account_new(name, _gaim_oscar_convert(name, protocol_id)); /* XXX: */
 	g_free(name);
 	g_free(protocol_id);
 

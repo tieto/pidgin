@@ -4040,3 +4040,14 @@ gaim_escape_filename(const char *str)
 	return buf;
 }
 
+const char *_gaim_oscar_convert(const char *act, const char *protocol)
+{
+	if (protocol && act && strcmp(protocol, "prpl-oscar") == 0) {
+		if (isdigit(*act))
+			protocol = "prpl-icq";
+		else
+			protocol = "prpl-aim";
+	}
+	return protocol;
+}
+

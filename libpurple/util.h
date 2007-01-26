@@ -1064,6 +1064,11 @@ const char *gaim_unescape_filename(const char *str);
  */
 const char *gaim_escape_filename(const char *str);
 
+/**
+ * This is added temporarily to assist the split of oscar into aim and icq.
+ * This should not be used by plugins.
+ */
+const char *_gaim_oscar_convert(const char *act, const char *protocol);
 #ifdef __cplusplus
 }
 #endif

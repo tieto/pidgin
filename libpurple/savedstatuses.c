@@ -382,6 +382,7 @@ parse_substatus(xmlnode *substatus)
 		const char *protocol;
 		acct_name = xmlnode_get_data(node);
 		protocol = xmlnode_get_attrib(node, "protocol");
+		protocol = _gaim_oscar_convert(acct_name, protocol); /* XXX: Remove */
 		if ((acct_name != NULL) && (protocol != NULL))
 			ret->account = gaim_accounts_find(acct_name, protocol);
 		g_free(acct_name);
