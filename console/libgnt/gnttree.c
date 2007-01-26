@@ -1382,7 +1382,7 @@ GntTreeRow *gnt_tree_create_row_from_list(GntTree *tree, GList *list)
 	{
 		GntTreeCol *col = g_new0(GntTreeCol, 1);
 		col->span = 1;
-		col->text = g_strdup(iter->data);
+		col->text = g_strdup(iter->data ? iter->data : "");
 
 		row->columns = g_list_append(row->columns, col);
 	}
