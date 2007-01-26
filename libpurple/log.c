@@ -464,7 +464,7 @@ log_set_hash(gconstpointer key)
 	/* The account isn't hashed because we need GaimLogSets with NULL accounts
 	 * to be found when we search by a GaimLogSet that has a non-NULL account
 	 * but the same type and name. */
-	return g_int_hash((gint *)&set->type) + g_str_hash(set->name);
+	return g_int_hash(&set->type) + g_str_hash(set->name);
 }
 
 static gboolean
@@ -1105,6 +1105,8 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 	} else {
 		if (type & GAIM_MESSAGE_SYSTEM)
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
+		else if (type & GAIM_MESSAGE_RAW)
+			written += fprintf(data->file, "<font size=\"2\">(%s)</font> %s<br/>\n", date, msg_fixed);
 		else if (type & GAIM_MESSAGE_ERROR)
 			written += fprintf(data->file, "<font color=\"#FF0000\"><font size=\"2\">(%s)</font><b> %s</b></font><br/>\n", date, msg_fixed);
 		else if (type & GAIM_MESSAGE_WHISPER)
@@ -1256,7 +1258,9 @@ static gsize txt_logger_write(GaimLog *log,
 					written += fprintf(data->file, "(%s) %s: %s\n", date, from,
 							stripped);
 			}
-		} else if (type & GAIM_MESSAGE_SYSTEM)
+		} else if (type & GAIM_MESSAGE_SYSTEM ||
+			type & GAIM_MESSAGE_ERROR ||
+			type & GAIM_MESSAGE_RAW)
 			written += fprintf(data->file, "(%s) %s\n", date, stripped);
 		else if (type & GAIM_MESSAGE_NO_LOG) {
 			/* This shouldn't happen */
