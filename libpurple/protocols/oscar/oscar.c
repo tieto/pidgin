@@ -4503,9 +4503,9 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 			gchar *errstr;
 
 			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
-									 "has been exceeded.  Gaim has truncated it for you.",
+									 "has been exceeded.  It has been truncated for you.",
 									 "The maximum away message length of %d bytes "
-									 "has been exceeded.  Gaim has truncated it for you.",
+									 "has been exceeded.  It has been truncated for you.",
 									 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
 			gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 			g_free(errstr);

@@ -80,8 +80,8 @@ version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	}
 
 	g_string_append_printf(message, _("You can get version %s from:<br>"
-			"<a href=\"http://gaim.sourceforge.net/\">"
-			"http://gaim.sourceforge.net</a>."), cur_ver);
+			"<a href=\"http://pidgin.im/\">"
+			"http://pidgin.im</a>."), cur_ver);
 
 	gaim_notify_formatted(NULL, _("New Version Available"),
 			_("New Version Available"), NULL, message->str,

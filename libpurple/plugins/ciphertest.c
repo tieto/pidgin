@@ -264,9 +264,9 @@ static GaimPluginInfo info =
 	N_("Cipher Test"),									/**< name           */
 	VERSION,											/**< version        */
 														/**  summary        */
-	N_("Tests the ciphers that ship with gaim."),
+	N_("Tests the ciphers that ship with libpurple."),
 														/**  description    */
-	N_("Tests the ciphers that ship with gaim."),
+	N_("Tests the ciphers that ship with libpurple."),
 	"Gary Kramlich <amc_grim@users.sf.net>",			/**< author         */
 	GAIM_WEBSITE,										/**< homepage       */
 

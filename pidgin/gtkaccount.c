@@ -2130,11 +2130,11 @@ create_accounts_list(AccountsWindow *dialog)
        	label = gtk_label_new(NULL);
 	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
 	pretty = gaim_gtk_make_pretty_arrows(_(
-						 "<span size='larger' weight='bold'>Welcome to Gaim!</span>\n\n"
+						 "<span size='larger' weight='bold'>Welcome to " PIDGIN_NAME "!</span>\n\n"
 						 
-						 "You have no IM accounts configured. To start connecting with Gaim "
+						 "You have no IM accounts configured. To start connecting with " PIDGIN_NAME " "
 						 "press the <b>Add</b> button below and configure your first "
-						 "account. If you want Gaim to connect to multiple IM accounts, "
+						 "account. If you want " PIDGIN_NAME " to connect to multiple IM accounts, "
 						 "press <b>Add</b> again to configure them all.\n\n"
 						 
 						 "You can come back to this window to add, edit, or remove "

@@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 AC_PREREQ([2.50])
 
+AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
+
 AC_PATH_PROG(sedpath, sed)
 
 dnl Storing configure arguments
@@ -23,6 +25,7 @@ PKG_PROG_PKG_CONFIG
 
 GETTEXT_PACKAGE=gaim
 AC_SUBST(GETTEXT_PACKAGE)
+
 
 # before gettexting, in case iconv matters
 case "$host_os" in

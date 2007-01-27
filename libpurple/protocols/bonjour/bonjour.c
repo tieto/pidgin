@@ -478,7 +478,7 @@ initialize_default_account_values()
 		gchar *tmp;
 		tmp = g_locale_to_utf8(fullname, -1, NULL, NULL, NULL);
 		if ((tmp == NULL) || (*tmp == '\0'))
-			fullname = _("Gaim User");
+			fullname = _("Purple Person");
 	}
 
 #else
@@ -536,7 +536,7 @@ initialize_default_account_values()
 	}
 
 	if (!fullname)
-		fullname = g_strdup(_("Gaim User"));
+		fullname = g_strdup(_("Purple Person"));
 #endif
 
 	/* Split the real name into a first and last name */

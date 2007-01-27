@@ -4077,7 +4077,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 #endif
 
 	/* Translators: Please maintain the use of -> and <- to refer to menu heirarchy */
-	pretty = gaim_gtk_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to Gaim!</span>\n\n"
+	pretty = gaim_gtk_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to " PIDGIN_NAME "!</span>\n\n"
 
 					       "You have no accounts enabled. Enable your IM accounts from the "
 					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "

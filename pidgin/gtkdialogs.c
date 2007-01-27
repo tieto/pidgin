@@ -358,10 +358,10 @@ void gaim_gtkdialogs_about()
 					GAIM_WEBSITE "\">" GAIM_WEBSITE "</A><BR/><BR/>");
 #ifdef _WIN32
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#wingaim on irc.freenode.net<BR><BR>"));
+						   "#pidgwin on irc.freenode.net<BR><BR>"));
 #else
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#gaim on irc.freenode.net<BR><BR>"));
+						   "#pidgin on irc.freenode.net<BR><BR>"));
 #endif
 
 	/* Current Developers */
