@@ -441,7 +441,6 @@ gaim_gtk_protocol_option_menu_new(const char *id, GCallback cb,
 	GtkWidget *item;
 	GtkWidget *image;
 	GdkPixbuf *pixbuf;
-	GdkPixbuf *scale;
 	GList *p;
 	GtkSizeGroup *sg;
 	char *filename;
@@ -478,19 +477,15 @@ gaim_gtk_protocol_option_menu_new(const char *id, GCallback cb,
 		proto_name = prpl_info->list_icon(NULL, NULL);
 		g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
 
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-									"default", buf, NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+									"16", buf, NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 
-		if (pixbuf != NULL) {
-			/* Scale and insert the image */
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-											GDK_INTERP_BILINEAR);
-			image = gtk_image_new_from_pixbuf(scale);
+		if (pixbuf) {
+			image = gtk_image_new_from_pixbuf(pixbuf);
 
 			g_object_unref(G_OBJECT(pixbuf));
-			g_object_unref(G_OBJECT(scale));
 		}
 		else
 			image = gtk_image_new();
@@ -568,7 +563,6 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GdkPixbuf *pixbuf;
-	GdkPixbuf *scale;
 	GList *list;
 	GList *p;
 	GtkSizeGroup *sg;
@@ -622,24 +616,19 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 			proto_name = prpl_info->list_icon(account, NULL);
 			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
 
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-			                            "default", buf, NULL);
+			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+			                            "16", buf, NULL);
 			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 			g_free(filename);
 
 			if (pixbuf != NULL) {
-				/* Scale and insert the image */
-				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-				                                GDK_INTERP_BILINEAR);
-
 				if (gaim_account_is_disconnected(account) && show_all &&
 						gaim_connections_get_all())
-					gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
+					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-				image = gtk_image_new_from_pixbuf(scale);
+				image = gtk_image_new_from_pixbuf(pixbuf);
 
 				g_object_unref(G_OBJECT(pixbuf));
-				g_object_unref(G_OBJECT(scale));
 			}
 			else
 				image = gtk_image_new();
@@ -1543,14 +1532,14 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
 }
 
 GdkPixbuf *
-gaim_gtk_create_prpl_icon(GaimAccount *account, double scale_factor)
+gaim_gtk_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size)
 {
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
 	const char *protoname = NULL;
 	char buf[256]; /* TODO: We should use a define for max file length */
 	char *filename = NULL;
-	GdkPixbuf *pixbuf, *scaled;
+	GdkPixbuf *pixbuf;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
@@ -1572,16 +1561,14 @@ gaim_gtk_create_prpl_icon(GaimAccount *account, double scale_factor)
 	 */
 	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-								"default", buf, NULL);
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
+				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
+				    buf, NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
-	scaled = gdk_pixbuf_scale_simple(pixbuf, 32*scale_factor,
-				32*scale_factor, GDK_INTERP_BILINEAR);
-	g_object_unref(pixbuf);
-
-	return scaled;
+	return pixbuf;
 }
 
 static GdkPixbuf *

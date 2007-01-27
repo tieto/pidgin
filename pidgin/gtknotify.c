@@ -398,7 +398,7 @@ gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *no
 	GdkPixbuf *icon;
 	gboolean new_n = TRUE;
 
-	icon = gaim_gtk_create_prpl_icon(account, 1);
+	icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
 	if (count > 0) {
 		/* Allow only one non-detailed email notification for each account */

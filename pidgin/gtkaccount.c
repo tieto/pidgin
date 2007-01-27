@@ -1563,7 +1563,7 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 			g_free(pulse_data);
 		}
 
-		pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+		pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 		if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -1942,7 +1942,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
 
-	/* Status Icon */
+	/* Buddy Icon */
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
@@ -1982,7 +1982,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	GdkPixbuf *statusicon_pixbuf;
 	GdkPixbuf *statusicon_pixbuf_scaled;
 
-	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+	pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -1996,7 +1996,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 		statusicon_pixbuf = NULL;
 
 	if (statusicon_pixbuf) {
-		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 16, 16, GDK_INTERP_HYPER);
+		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
 	} else {
 		statusicon_pixbuf_scaled = NULL;
 	}

@@ -503,7 +503,8 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	}
 
 	display_log_viewer(ht, gaim_log_get_logs(type, screenname, account),
-			title, gaim_gtk_create_prpl_icon(account, 0.5), gaim_log_get_total_size(type, screenname, account));
+			title, gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM), 
+			gaim_log_get_total_size(type, screenname, account));
 	g_free(title);
 }
 

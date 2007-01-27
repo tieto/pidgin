@@ -6343,7 +6343,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 						gaim_account_get_protocol_name(account), ")", NULL);
 				menuitem = gtk_image_menu_item_new_with_label(buf);
 				g_free(buf);
-				pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+				pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 				if (pixbuf != NULL)
 				{
 					if (!gaim_account_is_connected(account))

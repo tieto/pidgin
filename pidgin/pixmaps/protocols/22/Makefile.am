@@ -3,7 +3,7 @@ SUBDIRS = scalable
 EXTRA_DIST =	aim.png \
 		bonjour.png \
 		gadu-gadu.png \
-		groupwise.png \
+		novell.png \
 		icq.png \
 		irc.png \
 		jabber.png \
@@ -12,7 +12,7 @@ EXTRA_DIST =	aim.png \
 		msn.png \
 		qq.png \
 		silc.png \
-		sip.png \
+		simple.png \
 		yahoo.png \
 		zephyr.png
 

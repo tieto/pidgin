@@ -2249,7 +2249,7 @@ gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 
 	/* If they don't have a buddy icon, then use the PRPL icon */
 	if (status == NULL)
-		status = gaim_gtk_create_prpl_icon(account, small_icon ? 0.5 : 1.0);
+		status = gaim_gtk_create_prpl_icon(account, small_icon ? PIDGIN_PRPL_ICON_SMALL : PIDGIN_PRPL_ICON_LARGE);
 
 	return status;
 }
