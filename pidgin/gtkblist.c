@@ -4887,7 +4887,7 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
 				BUDDY_ICON_COLUMN, avatar ? avatar : gtkblist->empty_avatar,
-				BUDDY_ICON_VISIBLE_COLUMN, TRUE,
+				BUDDY_ICON_VISIBLE_COLUMN,  gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"),
 				NAME_COLUMN, mark,
 				-1);
 
