@@ -254,7 +254,7 @@ docklet_x11_create()
 		docklet_x11_destroy();
 	}
 
-	docklet = egg_tray_icon_new("Gaim");
+	docklet = egg_tray_icon_new(PIDGIN_NAME);
 	box = gtk_event_box_new();
 	image = gtk_image_new();
 
