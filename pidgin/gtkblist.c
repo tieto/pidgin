@@ -2059,15 +2059,28 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	GaimBuddyIcon *icon;
 	const guchar *data = NULL;
 	gsize len;
-	GaimBuddy *buddy = (GaimBuddy *)node;
+	GaimBuddy *buddy = NULL;
+	GaimChat *chat = NULL;
+	GaimAccount *account = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (GaimBuddy*)node;
+	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+		chat = (GaimChat*)node;
 	} else {
 		return NULL;
 	}
+
+	if(buddy != NULL)
+		account = gaim_buddy_get_account(buddy);
+	else if(chat != NULL)
+		account = chat->account;
+
+	if(account && account->gc)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 #if 0
 	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
@@ -2090,12 +2103,32 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	}
 
 	if (data == NULL) {
-		if (!(icon = gaim_buddy_get_icon(buddy)))
-			if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-				return NULL;
-		data = gaim_buddy_icon_get_data(icon, &len);
+		if(buddy != NULL) {
+			if (!(icon = gaim_buddy_get_icon(buddy)))
+				if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
+					return NULL;
+			data = gaim_buddy_icon_get_data(icon, &len);
+		} else if(chat != NULL) {
+			if(prpl_info && prpl_info->list_icon) {
+				char *contents;
+				char *image = g_strdup_printf("%s.png", prpl_info->list_icon(account, NULL));
+				char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "32", image, NULL);
+				g_free(image);
+
+				gaim_debug_info("icon", "Using %s as a buddy icon for a chat\n");
+
+				/* we'll exit below with data == NULL if this fails */
+				if(g_file_get_contents(filename, &contents, &len, NULL)) {
+					data = (const guchar*)contents;
+				}
+				g_free(filename);
+			}
+		}
 		custom = FALSE;  /* We are not using the custom icon */
 	}
+
+	if(data == NULL)
+		return NULL;
 
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
@@ -2108,13 +2141,8 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	if (custom)
 		g_free((void*)data);
 	if (buf) {
-		GaimAccount *account = gaim_buddy_get_account(buddy);
-		GaimPluginProtocolInfo *prpl_info = NULL;
 		int orig_width, orig_height;
 		int scale_width, scale_height;
-
-		if(account && account->gc)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 		if (greyed) {
 			GaimPresence *presence = gaim_buddy_get_presence(buddy);
@@ -4842,6 +4870,7 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 	if(gaim_account_is_connected(chat->account)) {
 		GtkTreeIter iter;
 		GdkPixbuf *status;
+		GdkPixbuf *avatar;
 		char *mark;
 
 		if(!insert_node(list, node, &iter))
@@ -4850,12 +4879,14 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 		status = gaim_gtk_blist_get_status_icon(node,
 				 GAIM_STATUS_ICON_SMALL);
 
+		avatar = gaim_gtk_blist_get_buddy_icon(node, TRUE, FALSE, TRUE);
+
 		mark = g_markup_escape_text(gaim_chat_get_name(chat), -1);
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
-				BUDDY_ICON_COLUMN, gtkblist->empty_avatar,
+				BUDDY_ICON_COLUMN, avatar ? avatar : gtkblist->empty_avatar,
 				BUDDY_ICON_VISIBLE_COLUMN, TRUE,
 				NAME_COLUMN, mark,
 				-1);
@@ -4863,6 +4894,8 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 		g_free(mark);
 		if(status)
 			g_object_unref(status);
+		if(avatar)
+			g_object_unref(avatar);
 	} else {
 		gaim_gtk_blist_hide_node(list, node, TRUE);
 	}
