@@ -211,9 +211,9 @@ setup_io()
 	int result;
 	channel = g_io_channel_unix_new(STDIN_FILENO);
 
+#if 0
 	g_io_channel_set_encoding(channel, NULL, NULL);
 	g_io_channel_set_buffered(channel, FALSE);
-#if 0
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
 #endif
 
@@ -303,9 +303,9 @@ void gnt_init()
 	if (channel)
 		return;
 	
-	setup_io();
-
 	locale = setlocale(LC_ALL, "");
+
+	setup_io();
 
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
