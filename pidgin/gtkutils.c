@@ -2937,7 +2937,7 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 	va_list args;
 	static gboolean first_call = TRUE;
 
-	img = gtk_image_new_from_stock(icon_name, GTK_ICON_SIZE_BUTTON);
+	img = gtk_image_new_from_stock(icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE,0);

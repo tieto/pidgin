@@ -696,8 +696,8 @@ gaim_gtk_blist_joinchat_show(void)
 	GaimGtkJoinChatData *data = NULL;
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	data = g_new0(GaimGtkJoinChatData, 1);
 
 	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"),
@@ -2646,7 +2646,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, "<StockItem>", GAIM_STOCK_POUNCE },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", gaim_gtk_plugin_dialog_show, 0, "<StockItem>", GAIM_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
+	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_DIALOG_ERROR },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_gtkxfer_dialog_show, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
@@ -2897,8 +2897,8 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		{NULL, 0, 0}, {NULL, 15, 0}};
 	GaimBuddy *buddy = NULL;
 	GaimChat *chat = NULL;
-	GtkIconSize icon_size = gtk_icon_size_from_name((size == GAIM_STATUS_ICON_LARGE) ? GAIM_ICON_SIZE_TANGO_MEDIUM :
-											 GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	GtkIconSize icon_size = gtk_icon_size_from_name((size == GAIM_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_MEDIUM :
+											 PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -2944,31 +2944,31 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	if(buddy) {
                 GaimPresence *p = gaim_buddy_get_presence(buddy);
                 if (GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_LOGIN,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
                                                    icon_size, "GtkTreeView");
                 else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_LOGOUT,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_BUSY,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_AWAY,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_XA,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_OFFLINE,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
                                                    icon_size, "GtkTreeView");
                 else
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_AVAILABLE,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
                                                    icon_size, "GtkTreeView");
         } else if (chat) {
-        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_CHAT,
+        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
                                               icon_size, "GtkTreeView");
         } else {
-	        ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_PERSON,
+	        ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_PERSON,
                                               icon_size, "GtkTreeView");
         }
 
@@ -5112,8 +5112,8 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 		 ? account
 		 : gaim_connection_get_account(gaim_connections_get_all()->data));
 
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
@@ -5486,8 +5486,8 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	data->account = account;
 	data->default_chat_name = g_strdup(name);
 
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 

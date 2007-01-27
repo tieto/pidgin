@@ -781,7 +781,7 @@ gaim_gtkdialogs_ee(const char *ee)
 
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, gtk_icon_size_from_name(GAIM_ICON_SIZE_DIALOG_COOL));
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

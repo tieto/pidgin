@@ -2402,7 +2402,7 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 	gc = gaim_account_get_connection(account);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_INFO, buffer,
+	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_INFO, buffer,
 					  NULL, NULL, _("Close"), NULL, NULL);
 	gaim_gtk_blist_add_alert(alert);
 
@@ -2427,7 +2427,7 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	data->alias    = g_strdup(alias);
 	
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 					  _("Add buddy to your list?"), buffer, data, 
 					  _("Add"), G_CALLBACK(add_user_cb),
 					  _("Cancel"), G_CALLBACK(free_add_user_data), NULL);
@@ -2502,13 +2502,13 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
 		aa->account = account;
-		alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+		alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, aa,
 						  _("Authorize"), authorize_and_add_cb, 
 						  _("Deny"), deny_no_add_cb, 
 						  NULL);
 	} else {
-		alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+		alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, user_data,
 						  _("Authorize"), auth_cb, 
 						  _("Deny"), deny_cb, 

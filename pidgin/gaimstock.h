@@ -43,12 +43,6 @@
 #define GAIM_STOCK_CLOSE_TABS      "gaim-close-tab"
 #define GAIM_STOCK_CONNECT         "gaim-connect"
 #define GAIM_STOCK_DEBUG           "gaim-debug"
-#define GAIM_STOCK_DIALOG_AUTH     "gaim-dialog-auth"
-#define GAIM_STOCK_DIALOG_COOL     "gaim-dialog-cool"
-#define GAIM_STOCK_DIALOG_ERROR    "gaim-dialog-error"
-#define GAIM_STOCK_DIALOG_INFO     "gaim-dialog-info"
-#define GAIM_STOCK_DIALOG_QUESTION "gaim-dialog-question"
-#define GAIM_STOCK_DIALOG_WARNING  "gaim-dialog-warning"
 #define GAIM_STOCK_DISCONNECT      "gaim-disconnect"
 #define GAIM_STOCK_DOWNLOAD        "gaim-download"
 #define GAIM_STOCK_EDIT            "gaim-edit"
@@ -99,29 +93,37 @@
 #define GAIM_STOCK_UPLOAD          "gaim-upload"
 #define GAIM_STOCK_VOICE_CHAT      "gaim-voice-chat"
 
-#define GAIM_STOCK_STATUS_AVAILABLE "gaim-status-available"
-#define GAIM_STOCK_STATUS_AWAY      "gaim-status-away"
-#define GAIM_STOCK_STATUS_BUSY      "gaim-status-busy"
-#define GAIM_STOCK_STATUS_CHAT      "gaim-status-chat"
-#define GAIM_STOCK_STATUS_XA        "gaim-status-xa"
-#define GAIM_STOCK_STATUS_LOGIN     "gaim-status-login"
-#define GAIM_STOCK_STATUS_LOGOUT    "gaim-status-logout"
-#define GAIM_STOCK_STATUS_OFFLINE   "gaim-status-offline"
-#define GAIM_STOCK_STATUS_PERSON    "gaim-status-person"
-#define GAIM_STOCK_STATUS_OPERATOR  "gaim-status-operator"
-#define GAIM_STOCK_STATUS_HALFOP    "gaim-status-halfop"
+/* Status icons */
+#define PIDGIN_STOCK_STATUS_AVAILABLE "pidgin-status-available"
+#define PIDGIN_STOCK_STATUS_AWAY      "pidgin-status-away"
+#define PIDGIN_STOCK_STATUS_BUSY      "pidgin-status-busy"
+#define PIDGIN_STOCK_STATUS_CHAT      "pidgin-status-chat"
+#define PIDGIN_STOCK_STATUS_XA        "pidgin-status-xa"
+#define PIDGIN_STOCK_STATUS_LOGIN     "pidgin-status-login"
+#define PIDGIN_STOCK_STATUS_LOGOUT    "pidgin-status-logout"
+#define PIDGIN_STOCK_STATUS_OFFLINE   "pidgin-status-offline"
+#define PIDGIN_STOCK_STATUS_PERSON    "pidgin-status-person"
+#define PIDGIN_STOCK_STATUS_OPERATOR  "pidgin-status-operator"
+#define PIDGIN_STOCK_STATUS_HALFOP    "pidgin-status-halfop"
+
+/* Dialog icons */
+#define PIDGIN_STOCK_DIALOG_AUTH	"pidgin-dialog-auth"
+#define PIDGIN_STOCK_DIALOG_ERROR	"pidgin-dialog-error"
+#define PIDGIN_STOCK_DIALOG_INFO	"pidgin-dialog-info"
+#define PIDGIN_STOCK_DIALOG_MAIL	"pidgin-dialog-mail"
+#define PIDGIN_STOCK_DIALOG_QUESTION	"pidgin-dialog-question"
+#define PIDGIN_STOCK_DIALOG_COOL	"pidgin-dialog-cool"
+#define PIDGIN_STOCK_DIALOG_WARNING	"pidgin-dialog-warning"
 
 /*@}*/
 
 /**
  * For using icons that aren't one of the default GTK_ICON_SIZEs
  */
-#define GAIM_ICON_SIZE_DIALOG_COOL          "gaim-icon-size-dialog-cool"
-#define GAIM_ICON_SIZE_TANGO_EXTRA_SMALL    "gaim-icon-size-tango-extra-small"
-#define GAIM_ICON_SIZE_TANGO_SMALL          "gaim-icon-size-tango-small"
-#define GAIM_ICON_SIZE_TANGO_MEDIUM         "gaim-icon-size-tango-medium"
-#define GAIM_ICON_SIZE_TANGO_HUGE           "gaim-icon-size-tango-huge"
-#define GAIM_ICON_SIZE_TANGO
+#define PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL    "pidgin-icon-size-tango-extra-small"
+#define PIDGIN_ICON_SIZE_TANGO_SMALL          "pidgin-icon-size-tango-small"
+#define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"
+#define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
 /**
  * Sets up the gaim stock repository.
  */

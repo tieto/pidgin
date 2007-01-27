@@ -825,8 +825,8 @@ invite_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 		GtkWidget *table;
 		GtkWidget *img;
 
-		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-		                               GTK_ICON_SIZE_DIALOG);
+		img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+		                               gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 
 		info = g_new0(InviteBuddyInfo, 1);
 		info->conv = conv;
@@ -1128,8 +1128,8 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimGtkWindow *gtkwin = data;
 	GtkWidget *hbox;
-	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-											  GTK_ICON_SIZE_DIALOG);
+	GtkWidget *img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+						  gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	GtkWidget *label;
 	struct _search *s;
 
@@ -7014,8 +7014,8 @@ build_warn_close_dialog(GaimGtkWindow *gtkwin)
 	gtk_box_set_spacing(GTK_BOX(vbox), 12);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
 
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_WARNING,
-	                               GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_WARNING,
+	                               gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	/* Setup the inner hbox and put the dialog's icon in it. */
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
