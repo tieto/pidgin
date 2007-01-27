@@ -38,6 +38,7 @@
 #define GAIM_STOCK_AWAY            "gaim-away"
 #define GAIM_STOCK_BGCOLOR         "gaim-bgcolor"
 #define GAIM_STOCK_BLOCK           "gaim-block"
+#define GAIM_STOCK_UNBLOCK         "gaim-unblock"
 #define GAIM_STOCK_CHAT            "gaim-chat"
 #define GAIM_STOCK_CLEAR           "gaim-clear"
 #define GAIM_STOCK_CLOSE_TABS      "gaim-close-tab"

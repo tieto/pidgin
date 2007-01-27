@@ -56,6 +56,7 @@ struct _GaimGtkWindow
 
 		GtkWidget *alias;
 		GtkWidget *block;
+		GtkWidget *unblock;
 		GtkWidget *add;
 		GtkWidget *remove;
 

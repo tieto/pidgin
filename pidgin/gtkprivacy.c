@@ -529,9 +529,9 @@ static void
 confirm_permit_block_cb(GaimGtkPrivacyRequestData *data, int option)
 {
 	if (data->block)
-		gaim_privacy_deny_add(data->account, data->name, FALSE);
+		gaim_privacy_deny(data->account, data->name, FALSE, FALSE);
 	else
-		gaim_privacy_permit_add(data->account, data->name, FALSE);
+		gaim_privacy_allow(data->account, data->name, FALSE, FALSE);
 
 	destroy_request_data(data);
 }

@@ -712,6 +712,20 @@ block_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 }
 
 static void
+unblock_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
+{
+	GaimConversation *conv = gtkconv->active_conv;
+	GaimAccount *account;
+
+	account = gaim_conversation_get_account(conv);
+
+	if (account != NULL && gaim_account_is_connected(account))
+		gaim_gtk_request_add_permit(account, gaim_conversation_get_name(conv));
+
+	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
+}
+
+static void
 do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 {
 	const char *buddy, *message;
@@ -1294,6 +1308,17 @@ menu_block_cb(gpointer data, guint action, GtkWidget *widget)
 	conv = gaim_gtk_conv_window_get_active_conversation(win);
 
 	block_cb(NULL, GAIM_GTK_CONVERSATION(conv));
+}
+
+static void
+menu_unblock_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimGtkWindow *win = data;
+	GaimConversation *conv;
+
+	conv = gaim_gtk_conv_window_get_active_conversation(win);
+
+	unblock_cb(NULL, GAIM_GTK_CONVERSATION(conv));
 }
 
 static void
@@ -2735,6 +2760,8 @@ static GtkItemFactoryEntry menu_items[] =
 			"<StockItem>", GAIM_STOCK_EDIT },
 	{ N_("/Conversation/_Block..."), NULL, menu_block_cb, 0,
 			"<StockItem>", GAIM_STOCK_BLOCK },
+	{ N_("/Conversation/_Unblock..."), NULL, menu_unblock_cb, 0,
+			"<StockItem>", GAIM_STOCK_UNBLOCK },
 	{ N_("/Conversation/_Add..."), NULL, menu_add_remove_cb, 0,
 			"<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Conversation/_Remove..."), NULL, menu_add_remove_cb, 0,
@@ -2951,6 +2978,10 @@ setup_menubar(GaimGtkWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Block..."));
 
+	win->menu.unblock = 
+		gtk_item_factory_get_widget(win->menu.item_factory,
+					    N_("/Conversation/Unblock..."));
+	
 	win->menu.add =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Add..."));
@@ -5627,7 +5658,13 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_show(win->menu.get_info);
 		gtk_widget_hide(win->menu.invite);
 		gtk_widget_show(win->menu.alias);
-		gtk_widget_show(win->menu.block);
+ 		if (gaim_privacy_check(account, gaim_conversation_get_name(conv))) {
+ 			gtk_widget_hide(win->menu.unblock);
+ 			gtk_widget_show(win->menu.block);
+ 		} else {
+ 			gtk_widget_hide(win->menu.block);
+ 			gtk_widget_show(win->menu.unblock);
+ 		}
 
 		if ((account == NULL) || gaim_find_buddy(account, gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(win->menu.add);
@@ -6574,10 +6611,9 @@ update_buddy_privacy_changed(GaimBuddy *buddy)
 	GaimConversation *conv;
 
 	gtkconv = get_gtkconv_with_contact(gaim_buddy_get_contact(buddy));
-	if (gtkconv)
-	{
+	if (gtkconv) {
 		conv = gtkconv->active_conv;
-		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON);
+		gaim_gtkconv_update_fields(conv, GAIM_GTKCONV_TAB_ICON | GAIM_GTKCONV_MENU);
 	}
 }
 

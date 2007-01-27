@@ -46,6 +46,7 @@ static struct StockIcon
 #endif
 	{ GAIM_STOCK_BGCOLOR,         "buttons", "change-bgcolor-small.png" },
 	{ GAIM_STOCK_BLOCK,           NULL,      GTK_STOCK_STOP             },
+	{ GAIM_STOCK_UNBLOCK,         NULL,      GTK_STOCK_STOP /* XXX: */  },
 	{ GAIM_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
 	{ GAIM_STOCK_CLOSE_TABS,      NULL,      GTK_STOCK_CLOSE            },
