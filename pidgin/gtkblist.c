@@ -2273,7 +2273,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
         td->name_width = PANGO_PIXELS(td->name_width) + SMALL_SPACE + PRPL_SIZE;
 	td->name_height = MAX(PANGO_PIXELS(td->name_height), PRPL_SIZE + SMALL_SPACE);
 		
-        if(!td->avatar) {
+        if(!td->avatar && full) {
 		td->avatar = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
 		td->avatar_is_prpl_icon = TRUE;
 	}
