@@ -182,7 +182,7 @@ find_cb(GtkWidget *w, DebugWindow *win)
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(win->find)->vbox),
 					  hbox);
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
 								   GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
