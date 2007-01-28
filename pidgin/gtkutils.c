@@ -98,6 +98,27 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 	gaim_gtkthemes_smiley_themeize(imhtml);
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
+
+	/* Use the GNOME "document" font, if applicable */
+	if (gaim_running_gnome()) {
+		char *path, *font;
+		PangoFontDescription *desc = NULL;
+				
+		if ((path = g_find_program_in_path("gconftool-2"))) {
+			g_free(path);
+			if (!g_spawn_command_line_sync(
+					"gconftool-2 -g /desktop/gnome/interface/document_font_name", 
+					&font, NULL, NULL, NULL))
+				return;
+		}
+		desc = pango_font_description_from_string(font);
+		g_free(font);
+		
+		if (desc) {
+			gtk_widget_modify_font(imhtml, desc);
+			pango_font_description_free(desc);
+		}
+	}
 }
 
 GtkWidget *
