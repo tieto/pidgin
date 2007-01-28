@@ -370,6 +370,8 @@
 
 #define gaim_buddy_icon_get_scale_size  purple_buddy_icon_get_scale_size
 
+/* from cipher.h */
+
 #define GAIM_CIPHER          PURPLE_CIPHER
 #define GAIM_CIPHER_OPS      PURPLE_CIPHER_OPS
 #define GAIM_CIPHER_CONTEXT  PURPLE_CIPHER_CONTEXT
@@ -432,5 +434,487 @@
 
 #define gaim_cipher_http_digest_calculate_response \
 	purple_cipher_http_digest_calculate_response
+
+/* from circbuffer.h */
+
+#define GaimCircBuffer  PurpleCircBuffer
+
+#define gaim_circ_buffer_new           purple_circ_buffer_new
+#define gaim_circ_buffer_destroy       purple_circ_buffer_destroy
+#define gaim_circ_buffer_append        purple_circ_buffer_append
+#define gaim_circ_buffer_get_max_read  purple_circ_buffer_get_max_read
+#define gaim_circ_buffer_mark_read     purple_circ_buffer_mark_read
+
+/* from cmds.h */
+
+#define GaimCmdPriority  PurpleCmdPriority
+#define GaimCmdFlag      PurpleCmdFlag
+#define GaimCmdStatus    PurpleCmdStatus
+#define GaimCmdRet       PurpleCmdRet
+
+#define GAIM_CMD_FUNC  PURPLE_CMD_FUNC
+
+#define GaimCmdFunc  PurpleCmdFunc
+
+#define GaimCmdId  PurpleCmdId
+
+#define gaim_cmd_register    purple_cmd_register
+#define gaim_cmd_unregister  purple_cmd_unregister
+#define gaim_cmd_do_command  purple_cmd_do_command
+#define gaim_cmd_list        purple_cmd_list
+#define gaim_cmd_help        purple_cmd_help
+
+/* from connection.h */
+
+#define GaimConnection  PurpleConnection
+
+#define GAIM_CONNECTION_HTML              PURPLE_CONNECTION_HTML
+#define GAIM_CONNECTION_NO_BGCOLOR        PURPLE_CONNECTION_NO_BGCOLOR
+#define GAIM_CONNECTION_AUTO_RESP         PURPLE_CONNECTION_AUTO_RESP
+#define GAIM_CONNECTION_FORMATTING_WBFO   PURPLE_CONNECTION_FORMATTING_WBFO
+#define GAIM_CONNECTION_NO_NEWLINES       PURPLE_CONNECTION_NO_NEWLINES
+#define GAIM_CONNECTION_NO_FONTSIZE       PURPLE_CONNECTION_NO_FONTSIZE
+#define GAIM_CONNECTION_NO_URLDESC        PURPLE_CONNECTION_NO_URLDESC
+#define GAIM_CONNECTION_NO_IMAGES         PURPLE_CONNECTION_NO_IMAGES
+
+#define GaimConnectionFlags  PurpleConnectionFlags
+
+#define GAIM_DISCONNECTED  PURPLE_DISCONNECTED
+#define GAIM_CONNECTED     PURPLE_CONNECTED
+#define GAIM_CONNECTING    PURPLE_CONNECTING
+
+#define GaimConnectionState  PurpleConnectionState
+
+#define GaimConnectionUiOps  PurpleConnectionUiOps
+
+#define gaim_connection_new      purple_connection_new
+#define gaim_connection_destroy  purple_connection_destroy
+
+#define gaim_connection_set_state         purple_connection_set_state
+#define gaim_connection_set_account       purple_connection_set_account
+#define gaim_connection_set_display_name  purple_connection_set_display_name
+#define gaim_connection_get_state         purple_connection_get_state
+
+#define GAIM_CONNECTION_IS_CONNECTED  PURPLE_CONNECTION_IS_CONNECTED
+
+#define gaim_connection_get_account       purple_connection_get_account
+#define gaim_connection_get_password      purple_connection_get_password
+#define gaim_connection_get_display_name  purple_connection_get_display_name
+
+#define gaim_connection_update_progress  purple_connection_update_progress
+
+#define gaim_connection_notice  purple_connection_notice
+#define gaim_connection_error   purple_connection_error
+
+#define gaim_connections_disconnect_all  purple_connections_disconnect_all
+
+#define gaim_connections_get_all         purple_connections_get_all
+#define gaim_connections_get_connecting  purple_connections_get_connecting
+
+#define GAIM_CONNECTION_IS_VALID  PURPLE_CONNECTION_IS_VALID
+
+#define gaim_connections_set_ui_ops  purple_connections_set_ui_ops
+#define gaim_connections_get_ui_ops  purple_connections_get_ui_ops
+
+#define gaim_connections_init    purple_connections_init
+#define gaim_connections_uninit  purple_connections_uninit
+#define gaim_connections_get_handle  purple_connections_get_handle
+
+
+/* from conversation.h */
+
+#define GaimConversationUiOps  PurpleConversationUiOps
+#define GaimConversation       PurpleConversation
+#define GaimConvIm             PurpleConvIm
+#define GaimConvChat           PurpleConvChat
+#define GaimConvChatBuddy      PurpleConvChatBuddy
+
+#define GAIM_CONV_TYPE_UNKNOWN  PURPLE_CONV_TYPE_UNKNOWN
+#define GAIM_CONV_TYPE_IM       PURPLE_CONV_TYPE_IM
+#define GAIM_CONV_TYPE_CHAT     PURPLE_CONV_TYPE_CHAT
+#define GAIM_CONV_TYPE_MISC     PURPLE_CONV_TYPE_MISC
+#define GAIM_CONV_TYPE_ANY      PURPLE_CONV_TYPE_ANY
+
+#define GaimConversationType  PurpleConversationType
+
+#define GAIM_CONV_UPDATE_ADD       PURPLE_CONV_UPDATE_ADD
+#define GAIM_CONV_UPDATE_REMOVE    PURPLE_CONV_UPDATE_REMOVE
+#define GAIM_CONV_UPDATE_ACCOUNT   PURPLE_CONV_UPDATE_ACCOUNT
+#define GAIM_CONV_UPDATE_TYPING    PURPLE_CONV_UPDATE_TYPING
+#define GAIM_CONV_UPDATE_UNSEEN    PURPLE_CONV_UPDATE_UNSEEN
+#define GAIM_CONV_UPDATE_LOGGING   PURPLE_CONV_UPDATE_LOGGING
+#define GAIM_CONV_UPDATE_TOPIC     PURPLE_CONV_UPDATE_TOPIC
+#define GAIM_CONV_ACCOUNT_ONLINE   PURPLE_CONV_ACCOUNT_ONLINE
+#define GAIM_CONV_ACCOUNT_OFFLINE  PURPLE_CONV_ACCOUNT_OFFLINE
+#define GAIM_CONV_UPDATE_AWAY      PURPLE_CONV_UPDATE_AWAY
+#define GAIM_CONV_UPDATE_ICON      PURPLE_CONV_UPDATE_ICON
+#define GAIM_CONV_UPDATE_TITLE     PURPLE_CONV_UPDATE_TITLE
+#define GAIM_CONV_UPDATE_CHATLEFT  PURPLE_CONV_UPDATE_CHATLEFT
+#define GAIM_CONV_UPDATE_FEATURES  PURPLE_CONV_UPDATE_FEATURES
+
+#define GaimConvUpdateType  PurpleConvUpdateType
+
+#define GAIM_NOT_TYPING  PURPLE_NOT_TYPING
+#define GAIM_TYPING      PURPLE_TYPING
+#define GAIM_TYPED       PURPLE_TYPED
+
+#define GaimTypingState  PurpleTypingState
+
+#define GAIM_MESSAGE_SEND         PURPLE_MESSAGE_SEND
+#define GAIM_MESSAGE_RECV         PURPLE_MESSAGE_RECV
+#define GAIM_MESSAGE_SYSTEM       PURPLE_MESSAGE_SYSTEM
+#define GAIM_MESSAGE_AUTO_RESP    PURPLE_MESSAGE_AUTO_RESP
+#define GAIM_MESSAGE_ACTIVE_ONLY  PURPLE_MESSAGE_ACTIVE_ONLY
+#define GAIM_MESSAGE_NICK         PURPLE_MESSAGE_NICK
+#define GAIM_MESSAGE_NO_LOG       PURPLE_MESSAGE_NO_LOG
+#define GAIM_MESSAGE_WHISPER      PURPLE_MESSAGE_WHISPER
+#define GAIM_MESSAGE_ERROR        PURPLE_MESSAGE_ERROR
+#define GAIM_MESSAGE_DELAYED      PURPLE_MESSAGE_DELAYED
+#define GAIM_MESSAGE_RAW          PURPLE_MESSAGE_RAW
+#define GAIM_MESSAGE_IMAGES       PURPLE_MESSAGE_IMAGES
+
+#define GaimMessageFlags  PurpleMessageFlags
+
+#define GAIM_CBFLAGS_NONE     PURPLE_CBFLAGS_NONE
+#define GAIM_CBFLAGS_VOICE    PURPLE_CBFLAGS_VOICE
+#define GAIM_CBFLAGS_HALFOP   PURPLE_CBFLAGS_HALFOP
+#define GAIM_CBFLAGS_OP       PURPLE_CBFLAGS_OP
+#define GAIM_CBFLAGS_FOUNDER  PURPLE_CBFLAGS_FOUNDER
+#define GAIM_CBFLAGS_TYPING   PURPLE_CBFLAGS_TYPING
+
+#define GaimConvChatBuddyFlags  PurpleConvChatBuddyFlags
+
+#define gaim_conversations_set_ui_ops  purple_conversations_set_ui_ops
+
+#define gaim_conversation_new          purple_conversation_new
+#define gaim_conversation_destroy      purple_conversation_destroy
+#define gaim_conversation_present      purple_conversation_present
+#define gaim_conversation_get_type     purple_conversation_get_type
+#define gaim_conversation_set_ui_ops   purple_conversation_set_ui_ops
+#define gaim_conversation_get_ui_ops   purple_conversation_get_ui_ops
+#define gaim_conversation_set_account  purple_conversation_set_account
+#define gaim_conversation_get_account  purple_conversation_get_account
+#define gaim_conversation_get_gc       purple_conversation_get_gc
+#define gaim_conversation_set_title    purple_conversation_set_title
+#define gaim_conversation_get_title    purple_conversation_get_title
+#define gaim_conversation_autoset_title  purple_conversation_autoset_title
+#define gaim_conversation_set_name       purple_conversation_set_name
+#define gaim_conversation_get_name       purple_conversation_get_name
+#define gaim_conversation_set_logging    purple_conversation_set_logging
+#define gaim_conversation_is_logging     purple_conversation_is_logging
+#define gaim_conversation_close_logs     purple_conversation_close_logs
+#define gaim_conversation_get_im_data    purple_conversation_get_im_data
+
+#define GAIM_CONV_IM    PURPLE_CONV_IM
+
+#define gaim_conversation_get_chat_data  purple_conversation_get_chat_data
+
+#define GAIM_CONV_CHAT  PURPLE_CONV_CHAT
+
+#define gaim_conversation_set_data       purple_conversation_set_data
+#define gaim_conversation_get_data       purple_conversation_get_data
+
+#define gaim_get_conversations  purple_get_conversations
+#define gaim_get_ims            purple_get_ims
+#define gaim_get_chats          purple_get_chats
+
+#define gaim_find_conversation_with_account \
+	purple_find_conversation_with_account
+
+#define gaim_conversation_write         purple_conversation_write
+#define gaim_conversation_set_features  purple_conversation_set_features
+#define gaim_conversation_get_features  purple_conversation_get_features
+#define gaim_conversation_has_focus     purple_conversation_has_focus
+#define gaim_conversation_update        purple_conversation_update
+#define gaim_conversation_foreach       purple_conversation_foreach
+
+#define gaim_conv_im_get_conversation  purple_conv_im_get_conversation
+#define gaim_conv_im_set_icon          purple_conv_im_set_icon
+#define gaim_conv_im_get_icon          purple_conv_im_get_icon
+#define gaim_conv_im_set_typing_state  purple_conv_im_set_typing_state
+#define gaim_conv_im_get_typing_state  purple_conv_im_get_typing_state
+
+#define gaim_conv_im_start_typing_timeout  purple_conv_im_start_typing_timeout
+#define gaim_conv_im_stop_typing_timeout   purple_conv_im_stop_typing_timeout
+#define gaim_conv_im_get_typing_timeout    purple_conv_im_get_typing_timeout
+#define gaim_conv_im_set_type_again        purple_conv_im_set_type_again
+#define gaim_conv_im_get_type_again        purple_conv_im_get_type_again
+
+#define gaim_conv_im_start_send_typed_timeout \
+	purple_conv_im_start_send_typed_timeout
+
+#define gaim_conv_im_stop_send_typed_timeout \
+	purple_conv_im_stop_send_typed_timeout
+
+#define gaim_conv_im_get_send_typed_timeout \
+	purple_conv_im_get_send_typed_timeout
+
+#define gaim_conv_present_error     purple_conv_present_error
+#define gaim_conv_send_confirm      purple_conv_send_confirm
+
+#define gaim_conv_im_update_typing    purple_conv_im_update_typing
+#define gaim_conv_im_write            purple_conv_im_write
+#define gaim_conv_im_send             purple_conv_im_send
+#define gaim_conv_im_send_with_flags  purple_conv_im_send_with_flags
+
+#define gaim_conv_custom_smiley_add    purple_conv_custom_smiley_add
+#define gaim_conv_custom_smiley_write  purple_conv_custom_smiley_write
+#define gaim_conv_custom_smiley_close  purple_conv_custom_smiley_close
+
+#define gaim_conv_chat_get_conversation  purple_conv_chat_get_conversation
+#define gaim_conv_chat_set_users         purple_conv_chat_set_users
+#define gaim_conv_chat_get_users         purple_conv_chat_get_users
+#define gaim_conv_chat_ignore            purple_conv_chat_ignore
+#define gaim_conv_chat_unignore          purple_conv_chat_unignore
+#define gaim_conv_chat_set_ignored       purple_conv_chat_set_ignored
+#define gaim_conv_chat_get_ignored       purple_conv_chat_get_ignored
+#define gaim_conv_chat_get_ignored_user  purple_conv_chat_get_ignored_user
+#define gaim_conv_chat_is_user_ignored   purple_conv_chat_is_user_ignored
+#define gaim_conv_chat_set_topic         purple_conv_chat_set_topic
+#define gaim_conv_chat_get_topic         purple_conv_chat_get_topic
+#define gaim_conv_chat_set_id            purple_conv_chat_set_id
+#define gaim_conv_chat_get_id            purple_conv_chat_get_id
+#define gaim_conv_chat_write             purple_conv_chat_write
+#define gaim_conv_chat_send              purple_conv_chat_send
+#define gaim_conv_chat_send_with_flags   purple_conv_chat_send_with_flags
+#define gaim_conv_chat_add_user          purple_conv_chat_add_user
+#define gaim_conv_chat_add_users         purple_conv_chat_add_users
+#define gaim_conv_chat_rename_user       purple_conv_chat_rename_user
+#define gaim_conv_chat_remove_user       purple_conv_chat_remove_user
+#define gaim_conv_chat_remove_users      purple_conv_chat_remove_users
+#define gaim_conv_chat_find_user         purple_conv_chat_find_user
+#define gaim_conv_chat_user_set_flags    purple_conv_chat_user_set_flags
+#define gaim_conv_chat_user_get_flags    purple_conv_chat_user_get_flags
+#define gaim_conv_chat_clear_users       purple_conv_chat_clear_users
+#define gaim_conv_chat_set_nick          purple_conv_chat_set_nick
+#define gaim_conv_chat_get_nick          purple_conv_chat_get_nick
+#define gaim_conv_chat_left              purple_conv_chat_left
+#define gaim_conv_chat_has_left          purple_conv_chat_has_left
+
+#define gaim_find_chat                   purple_find_chat
+
+#define gaim_conv_chat_cb_new            purple_conv_chat_cb_new
+#define gaim_conv_chat_cb_find           purple_conv_chat_cb_find
+#define gaim_conv_chat_cb_get_name       purple_conv_chat_cb_get_name
+#define gaim_conv_chat_cb_destroy        purple_conv_chat_cb_destroy
+
+#define gaim_conversations_get_handle    purple_conversations_get_handle
+#define gaim_conversations_init          purple_conversations_init
+#define gaim_conversations_uninit        purple_conversations_uninit
+
+/* from core.h */
+
+#define GaimCore  PurpleCore
+
+#define GaimCoreUiOps  PurpleCoreUiOps
+
+#define gaim_core_init  purple_core_init
+#define gaim_core_quit  purple_core_quit
+
+#define gaim_core_quit_cb      purple_core_quit_cb
+#define gaim_core_get_version  purple_core_get_version
+#define gaim_core_get_ui       purple_core_get_ui
+#define gaim_get_core          purple_get_core
+#define gaim_core_set_ui_ops   purple_core_set_ui_ops
+#define gaim_core_get_ui_ops   purple_core_get_ui_ops
+
+/* from debug.h */
+
+#define GAIM_DEBUG_ALL      PURPLE_DEBUG_ALL
+#define GAIM_DEBUG_MISC     PURPLE_DEBUG_MISC
+#define GAIM_DEBUG_INFO     PURPLE_DEBUG_INFO
+#define GAIM_DEBUG_WARNING  PURPLE_DEBUG_WARNING
+#define GAIM_DEBUG_ERROR    PURPLE_DEBUG_ERROR
+#define GAIM_DEBUG_FATAL    PURPLE_DEBUG_FATAL
+
+#define GaimDebugLevel  PurpleDebugLevel
+
+#define GaimDebugUiOps  PurpleDebugUiOps
+
+
+#define gaim_debug          purple_debug
+#define gaim_debug_misc     purple_debug_misc
+#define gaim_debug_info     purple_debug_info
+#define gaim_debug_warning  purple_debug_warning
+#define gaim_debug_error    purple_debug_error
+#define gaim_debug_fatal    purple_debug_fatal
+
+#define gaim_debug_set_enabled  purple_debug_set_enabled
+#define gaim_debug_is_enabled   purple_debug_is_enabled
+
+#define gaim_debug_set_ui_ops  purple_debug_set_ui_ops
+#define gaim_debug_get_ui_ops  purple_debug_get_ui_ops
+
+#define gaim_debug_init  purple_debug_init
+
+/* from desktopitem.h */
+
+#define GAIM_DESKTOP_ITEM_TYPE_NULL          PURPLE_DESKTOP_ITEM_TYPE_NULL
+#define GAIM_DESKTOP_ITEM_TYPE_OTHER         PURPLE_DESKTOP_ITEM_TYPE_OTHER
+#define GAIM_DESKTOP_ITEM_TYPE_APPLICATION   PURPLE_DESKTOP_ITEM_TYPE_APPLICATION
+#define GAIM_DESKTOP_ITEM_TYPE_LINK          PURPLE_DESKTOP_ITEM_TYPE_LINK
+#define GAIM_DESKTOP_ITEM_TYPE_FSDEVICE      PURPLE_DESKTOP_ITEM_TYPE_FSDEVICE
+#define GAIM_DESKTOP_ITEM_TYPE_MIME_TYPE     PURPLE_DESKTOP_ITEM_TYPE_MIME_TYPE
+#define GAIM_DESKTOP_ITEM_TYPE_DIRECTORY     PURPLE_DESKTOP_ITEM_TYPE_DIRECTORY
+#define GAIM_DESKTOP_ITEM_TYPE_SERVICE       PURPLE_DESKTOP_ITEM_TYPE_SERVICE
+#define GAIM_DESKTOP_ITEM_TYPE_SERVICE_TYPE  PURPLE_DESKTOP_ITEM_TYPE_SERVICE_TYPE
+
+#define GaimDesktopItemType  PurpleDesktopItemType
+
+#define GaimDesktopItem  PurpleDesktopItem
+
+#define GAIM_TYPE_DESKTOP_ITEM         PURPLE_TYPE_DESKTOP_ITEM
+#define gaim_desktop_item_get_type     purple_desktop_item_get_type
+
+/* standard */
+/* ugh, i'm just copying these as strings, rather than pidginifying them */
+#define GAIM_DESKTOP_ITEM_ENCODING	"Encoding" /* string */
+#define GAIM_DESKTOP_ITEM_VERSION	"Version"  /* numeric */
+#define GAIM_DESKTOP_ITEM_NAME		"Name" /* localestring */
+#define GAIM_DESKTOP_ITEM_GENERIC_NAME	"GenericName" /* localestring */
+#define GAIM_DESKTOP_ITEM_TYPE		"Type" /* string */
+#define GAIM_DESKTOP_ITEM_FILE_PATTERN "FilePattern" /* regexp(s) */
+#define GAIM_DESKTOP_ITEM_TRY_EXEC	"TryExec" /* string */
+#define GAIM_DESKTOP_ITEM_NO_DISPLAY	"NoDisplay" /* boolean */
+#define GAIM_DESKTOP_ITEM_COMMENT	"Comment" /* localestring */
+#define GAIM_DESKTOP_ITEM_EXEC		"Exec" /* string */
+#define GAIM_DESKTOP_ITEM_ACTIONS	"Actions" /* strings */
+#define GAIM_DESKTOP_ITEM_ICON		"Icon" /* string */
+#define GAIM_DESKTOP_ITEM_MINI_ICON	"MiniIcon" /* string */
+#define GAIM_DESKTOP_ITEM_HIDDEN	"Hidden" /* boolean */
+#define GAIM_DESKTOP_ITEM_PATH		"Path" /* string */
+#define GAIM_DESKTOP_ITEM_TERMINAL	"Terminal" /* boolean */
+#define GAIM_DESKTOP_ITEM_TERMINAL_OPTIONS "TerminalOptions" /* string */
+#define GAIM_DESKTOP_ITEM_SWALLOW_TITLE "SwallowTitle" /* string */
+#define GAIM_DESKTOP_ITEM_SWALLOW_EXEC	"SwallowExec" /* string */
+#define GAIM_DESKTOP_ITEM_MIME_TYPE	"MimeType" /* regexp(s) */
+#define GAIM_DESKTOP_ITEM_PATTERNS	"Patterns" /* regexp(s) */
+#define GAIM_DESKTOP_ITEM_DEFAULT_APP	"DefaultApp" /* string */
+#define GAIM_DESKTOP_ITEM_DEV		"Dev" /* string */
+#define GAIM_DESKTOP_ITEM_FS_TYPE	"FSType" /* string */
+#define GAIM_DESKTOP_ITEM_MOUNT_POINT	"MountPoint" /* string */
+#define GAIM_DESKTOP_ITEM_READ_ONLY	"ReadOnly" /* boolean */
+#define GAIM_DESKTOP_ITEM_UNMOUNT_ICON "UnmountIcon" /* string */
+#define GAIM_DESKTOP_ITEM_SORT_ORDER	"SortOrder" /* strings */
+#define GAIM_DESKTOP_ITEM_URL		"URL" /* string */
+#define GAIM_DESKTOP_ITEM_DOC_PATH	"X-GNOME-DocPath" /* string */
+
+#define gaim_desktop_item_new_from_file   purple_desktop_item_new_from_file
+#define gaim_desktop_item_get_entry_type  purple_desktop_item_get_entry_type
+#define gaim_desktop_item_get_string      purple_desktop_item_get_string
+#define gaim_desktop_item_copy            purple_desktop_item_copy
+#define gaim_desktop_item_unref           purple_desktop_item_unref
+
+/* from dnsquery.h */
+
+#define GaimDnsQueryData  PurpleDnsQueryData
+#define GaimDnsQueryConnectFunction  PurpleDnsQueryConnectFunction
+
+#define gaim_dnsquery_a        purple_dnsquery_a
+#define gaim_dnsquery_destroy  purple_dnsquery_destroy
+#define gaim_dnsquery_init     purple_dnsquery_init
+#define gaim_dnsquery_uninit   purple_dnsquery_uninit
+
+/* from dnssrv.h */
+
+#define GaimSrvResponse   PurpleSrvResponse
+#define GaimSrvQueryData  PurpleSrvQueryData
+#define GaimSrvCallback   PurpleSrvCallback
+
+#define gaim_srv_resolve  purple_srv_resolve
+#define gaim_srv_cancel   purple_srv_cancel
+
+/* from eventloop.h */
+
+#define GAIM_INPUT_READ   PURPLE_INPUT_READ
+#define GAIM_INPUT_WRITE  PURPLE_INPUT_WRITE
+
+#define GaimInputCondition  PurpleInputCondition
+#define GaimInputFunction   PurpleInputFunction
+#define GaimEventLoopUiOps  PurpleEventLoopUiOps
+
+#define gaim_timeout_add     purple_timeout_add
+#define gaim_timeout_remove  purple_timeout_remove
+#define gaim_input_add       purple_input_add
+#define gaim_input_remove    purple_input_remove
+
+#define gaim_eventloop_set_ui_ops  purple_eventloop_set_ui_ops
+#define gaim_eventloop_get_ui_ops  purple_eventloop_get_ui_ops
+
+/* from ft.h */
+
+#define GaimXfer  PurpleXfer
+
+#define GAIM_XFER_UNKNOWN  PURPLE_XFER_UNKNOWN
+#define GAIM_XFER_SEND     PURPLE_XFER_SEND
+#define GAIM_XFER_RECEIVE  PURPLE_XFER_RECEIVE
+
+#define GaimXferType  PurpleXferType
+
+#define GAIM_XFER_STATUS_UNKNOWN        PURPLE_XFER_STATUS_UNKNOWN
+#define GAIM_XFER_STATUS_NOT_STARTED    PURPLE_XFER_STATUS_NOT_STARTED
+#define GAIM_XFER_STATUS_ACCEPTED       PURPLE_XFER_STATUS_ACCEPTED
+#define GAIM_XFER_STATUS_STARTED        PURPLE_XFER_STATUS_STARTED
+#define GAIM_XFER_STATUS_DONE           PURPLE_XFER_STATUS_DONE
+#define GAIM_XFER_STATUS_CANCEL_LOCAL   PURPLE_XFER_STATUS_CANCEL_LOCAL
+#define GAIM_XFER_STATUS_CANCEL_REMOTE  PURPLE_XFER_STATUS_CANCEL_REMOTE
+
+#define GaimXferStatusType  PurpleXferStatusType
+
+#define GaimXferUiOps  PurpleXferUiOps
+
+#define gaim_xfer_new                  purple_xfer_new
+#define gaim_xfer_ref                  purple_xfer_ref
+#define gaim_xfer_unref                purple_xfer_unref
+#define gaim_xfer_request              purple_xfer_request
+#define gaim_xfer_request_accepted     purple_xfer_request_accepted
+#define gaim_xfer_request_denied       purple_xfer_request_denied
+#define gaim_xfer_get_type             purple_xfer_get_type
+#define gaim_xfer_get_account          purple_xfer_get_account
+#define gaim_xfer_get_status           purple_xfer_get_status
+#define gaim_xfer_is_canceled          purple_xfer_is_canceled
+#define gaim_xfer_is_completed         purple_xfer_is_completed
+#define gaim_xfer_get_filename         purple_xfer_get_filename
+#define gaim_xfer_get_local_filename   purple_xfer_get_local_filename
+#define gaim_xfer_get_bytes_sent       purple_xfer_get_bytes_sent
+#define gaim_xfer_get_bytes_remaining  purple_xfer_get_bytes_remaining
+#define gaim_xfer_get_size             purple_xfer_get_size
+#define gaim_xfer_get_progress         purple_xfer_get_progress
+#define gaim_xfer_get_local_port       purple_xfer_get_local_port
+#define gaim_xfer_get_remote_ip        purple_xfer_get_remote_ip
+#define gaim_xfer_get_remote_port      purple_xfer_get_remote_port
+#define gaim_xfer_set_completed        purple_xfer_set_completed
+#define gaim_xfer_set_message          purple_xfer_set_message
+#define gaim_xfer_set_filename         purple_xfer_set_filename
+#define gaim_xfer_set_local_filename   purple_xfer_set_local_filename
+#define gaim_xfer_set_size             purple_xfer_set_size
+#define gaim_xfer_set_bytes_sent       purple_xfer_set_bytes_sent
+#define gaim_xfer_get_ui_ops           purple_xfer_get_ui_ops
+#define gaim_xfer_set_read_fnc         purple_xfer_set_read_fnc
+#define gaim_xfer_set_write_fnc        purple_xfer_set_write_fnc
+#define gaim_xfer_set_ack_fnc          purple_xfer_set_ack_fnc
+#define gaim_xfer_set_request_denied_fnc  purple_xfer_set_request_denied_fnc
+#define gaim_xfer_set_init_fnc         purple_xfer_set_init_fnc
+#define gaim_xfer_set_start_fnc        purple_xfer_set_start_fnc
+#define gaim_xfer_set_end_fnc          purple_xfer_set_end_fnc
+#define gaim_xfer_set_cancel_send_fnc  purple_xfer_set_cancel_send_fnc
+#define gaim_xfer_set_cancel_recv_fnc  purple_xfer_set_cancel_recv_fnc
+
+#define gaim_xfer_read                purple_xfer_read
+#define gaim_xfer_write               purple_xfer_write
+#define gaim_xfer_start               purple_xfer_start
+#define gaim_xfer_end                 purple_xfer_end
+#define gaim_xfer_add                 purple_xfer_add
+#define gaim_xfer_cancel_local        purple_xfer_cancel_local
+#define gaim_xfer_cancel_remote       purple_xfer_cancel_remote
+#define gaim_xfer_error               purple_xfer_error
+#define gaim_xfer_update_progress     purple_xfer_update_progress
+#define gaim_xfer_conversation_write  purple_xfer_conversation_write
+
+#define gaim_xfers_get_handle  purple_xfers_get_handle
+#define gaim_xfers_init        purple_xfers_init
+#define gaim_xfers_uninit      purple_xfers_uninit
+#define gaim_xfers_set_ui_ops  purple_xfers_set_ui_ops
+#define gaim_xfers_get_ui_ops  purple_xfers_get_ui_ops
 
 #endif /* _GAIM_COMPAT_H_ */
