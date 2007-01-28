@@ -696,8 +696,8 @@ gaim_gtk_blist_joinchat_show(void)
 	GaimGtkJoinChatData *data = NULL;
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	data = g_new0(GaimGtkJoinChatData, 1);
 
 	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"),
@@ -2059,15 +2059,28 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	GaimBuddyIcon *icon;
 	const guchar *data = NULL;
 	gsize len;
-	GaimBuddy *buddy = (GaimBuddy *)node;
+	GaimBuddy *buddy = NULL;
+	GaimChat *chat = NULL;
+	GaimAccount *account = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (GaimBuddy*)node;
+	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+		chat = (GaimChat*)node;
 	} else {
 		return NULL;
 	}
+
+	if(buddy != NULL)
+		account = gaim_buddy_get_account(buddy);
+	else if(chat != NULL)
+		account = chat->account;
+
+	if(account && account->gc)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 #if 0
 	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
@@ -2090,12 +2103,32 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	}
 
 	if (data == NULL) {
-		if (!(icon = gaim_buddy_get_icon(buddy)))
-			if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-				return NULL;
-		data = gaim_buddy_icon_get_data(icon, &len);
+		if(buddy != NULL) {
+			if (!(icon = gaim_buddy_get_icon(buddy)))
+				if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
+					return NULL;
+			data = gaim_buddy_icon_get_data(icon, &len);
+		} else if(chat != NULL) {
+			if(prpl_info && prpl_info->list_icon) {
+				char *contents;
+				char *image = g_strdup_printf("%s.png", prpl_info->list_icon(account, NULL));
+				char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "32", image, NULL);
+				g_free(image);
+
+				gaim_debug_info("icon", "Using %s as a buddy icon for a chat\n");
+
+				/* we'll exit below with data == NULL if this fails */
+				if(g_file_get_contents(filename, &contents, &len, NULL)) {
+					data = (const guchar*)contents;
+				}
+				g_free(filename);
+			}
+		}
 		custom = FALSE;  /* We are not using the custom icon */
 	}
+
+	if(data == NULL)
+		return NULL;
 
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
@@ -2108,13 +2141,8 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	if (custom)
 		g_free((void*)data);
 	if (buf) {
-		GaimAccount *account = gaim_buddy_get_account(buddy);
-		GaimPluginProtocolInfo *prpl_info = NULL;
 		int orig_width, orig_height;
 		int scale_width, scale_height;
-
-		if(account && account->gc)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 
 		if (greyed) {
 			GaimPresence *presence = gaim_buddy_get_presence(buddy);
@@ -2618,7 +2646,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, "<StockItem>", GAIM_STOCK_POUNCE },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", gaim_gtk_plugin_dialog_show, 0, "<StockItem>", GAIM_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
+	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_DIALOG_ERROR },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_gtkxfer_dialog_show, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
@@ -2869,8 +2897,8 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		{NULL, 0, 0}, {NULL, 15, 0}};
 	GaimBuddy *buddy = NULL;
 	GaimChat *chat = NULL;
-	GtkIconSize icon_size = gtk_icon_size_from_name((size == GAIM_STATUS_ICON_LARGE) ? GAIM_ICON_SIZE_TANGO_MEDIUM :
-											 GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	GtkIconSize icon_size = gtk_icon_size_from_name((size == GAIM_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_MEDIUM :
+											 PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -2916,31 +2944,31 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	if(buddy) {
                 GaimPresence *p = gaim_buddy_get_presence(buddy);
                 if (GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_LOGIN,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
                                                    icon_size, "GtkTreeView");
                 else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_LOGOUT,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_BUSY,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_AWAY,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_XA,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
                                                    icon_size, "GtkTreeView");
                 else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_OFFLINE,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
                                                    icon_size, "GtkTreeView");
                 else
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_AVAILABLE,
+	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
                                                    icon_size, "GtkTreeView");
         } else if (chat) {
-        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_CHAT,
+        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
                                               icon_size, "GtkTreeView");
         } else {
-	        ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), GAIM_STOCK_STATUS_PERSON,
+	        ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_PERSON,
                                               icon_size, "GtkTreeView");
         }
 
@@ -4049,7 +4077,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 #endif
 
 	/* Translators: Please maintain the use of -> and <- to refer to menu heirarchy */
-	pretty = gaim_gtk_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to Gaim!</span>\n\n"
+	pretty = gaim_gtk_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to " PIDGIN_NAME "!</span>\n\n"
 
 					       "You have no accounts enabled. Enable your IM accounts from the "
 					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "
@@ -4842,6 +4870,7 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 	if(gaim_account_is_connected(chat->account)) {
 		GtkTreeIter iter;
 		GdkPixbuf *status;
+		GdkPixbuf *avatar;
 		char *mark;
 
 		if(!insert_node(list, node, &iter))
@@ -4850,19 +4879,23 @@ static void gaim_gtk_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 		status = gaim_gtk_blist_get_status_icon(node,
 				 GAIM_STATUS_ICON_SMALL);
 
+		avatar = gaim_gtk_blist_get_buddy_icon(node, TRUE, FALSE, TRUE);
+
 		mark = g_markup_escape_text(gaim_chat_get_name(chat), -1);
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
-				BUDDY_ICON_COLUMN, gtkblist->empty_avatar,
-				BUDDY_ICON_VISIBLE_COLUMN, TRUE,
+				BUDDY_ICON_COLUMN, avatar ? avatar : gtkblist->empty_avatar,
+				BUDDY_ICON_VISIBLE_COLUMN,  gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"),
 				NAME_COLUMN, mark,
 				-1);
 
 		g_free(mark);
 		if(status)
 			g_object_unref(status);
+		if(avatar)
+			g_object_unref(avatar);
 	} else {
 		gaim_gtk_blist_hide_node(list, node, TRUE);
 	}
@@ -5079,8 +5112,8 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 		 ? account
 		 : gaim_connection_get_account(gaim_connections_get_all()->data));
 
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
@@ -5453,8 +5486,8 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 	data->account = account;
 	data->default_chat_name = g_strdup(name);
 
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 
@@ -6310,7 +6343,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 						gaim_account_get_protocol_name(account), ")", NULL);
 				menuitem = gtk_image_menu_item_new_with_label(buf);
 				g_free(buf);
-				pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+				pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 				if (pixbuf != NULL)
 				{
 					if (!gaim_account_is_connected(account))

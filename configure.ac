@@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 AC_PREREQ([2.50])
 
+AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
+
 AC_PATH_PROG(sedpath, sed)
 
 dnl Storing configure arguments
@@ -23,6 +25,7 @@ PKG_PROG_PKG_CONFIG
 
 GETTEXT_PACKAGE=gaim
 AC_SUBST(GETTEXT_PACKAGE)
+
 
 # before gettexting, in case iconv matters
 case "$host_os" in
@@ -1894,11 +1897,26 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/buddy_icons/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
+ 		   pidgin/pixmaps/dialogs/Makefile
+		   pidgin/pixmaps/dialogs/16/Makefile
+		   pidgin/pixmaps/dialogs/16/scalable/Makefile
+		   pidgin/pixmaps/dialogs/64/Makefile
+		   pidgin/pixmaps/dialogs/64/scalable/Makefile
+		   pidgin/pixmaps/emblems/Makefile
+		   pidgin/pixmaps/emblems/16/Makefile
+		   pidgin/pixmaps/emblems/16/scalable/Makefile
 		   pidgin/pixmaps/emotes/Makefile
 		   pidgin/pixmaps/emotes/default/Makefile
 		   pidgin/pixmaps/emotes/default/22/Makefile
-		   pidgin/pixmaps/emotes/default/scalable/Makefile	
+		   pidgin/pixmaps/emotes/default/22/scalable/Makefile	
 		   pidgin/pixmaps/emotes/none/Makefile
+		   pidgin/pixmaps/protocols/Makefile
+		   pidgin/pixmaps/protocols/16/Makefile
+		   pidgin/pixmaps/protocols/16/scalable/Makefile
+		   pidgin/pixmaps/protocols/22/Makefile
+		   pidgin/pixmaps/protocols/22/scalable/Makefile
+		   pidgin/pixmaps/protocols/48/Makefile
+		   pidgin/pixmaps/protocols/48/scalable/Makefile
 		   pidgin/pixmaps/status/Makefile
 		   pidgin/pixmaps/status/16/Makefile
 		   pidgin/pixmaps/status/16/scalable/Makefile

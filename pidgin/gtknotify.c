@@ -213,15 +213,15 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	switch (type)
 	{
 		case GAIM_NOTIFY_MSG_ERROR:
-			icon_name = GAIM_STOCK_DIALOG_ERROR;
+			icon_name = PIDGIN_STOCK_DIALOG_ERROR;
 			break;
 
 		case GAIM_NOTIFY_MSG_WARNING:
-			icon_name = GAIM_STOCK_DIALOG_WARNING;
+			icon_name = PIDGIN_STOCK_DIALOG_WARNING;
 			break;
 
 		case GAIM_NOTIFY_MSG_INFO:
-			icon_name = GAIM_STOCK_DIALOG_INFO;
+			icon_name = PIDGIN_STOCK_DIALOG_INFO;
 			break;
 
 		default:
@@ -231,7 +231,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 
 	if (icon_name != NULL)
 	{
-		img = gtk_image_new_from_stock(icon_name, GTK_ICON_SIZE_DIALOG);
+		img = gtk_image_new_from_stock(icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
 
@@ -398,7 +398,7 @@ gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *no
 	GdkPixbuf *icon;
 	gboolean new_n = TRUE;
 
-	icon = gaim_gtk_create_prpl_icon(account, 1);
+	icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
 	if (count > 0) {
 		/* Allow only one non-detailed email notification for each account */
@@ -506,8 +506,8 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	}
 
 	if (!GTK_WIDGET_VISIBLE(dialog)) {
-		GdkPixbuf *pixbuf = gtk_widget_render_icon(dialog, GAIM_STOCK_ICON_ONLINE_MSG,
-							   GTK_ICON_SIZE_BUTTON, NULL);
+		GdkPixbuf *pixbuf = gtk_widget_render_icon(dialog, PIDGIN_STOCK_DIALOG_MAIL,
+							   gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), NULL);
 		char *label_text = g_strdup_printf(ngettext("<b>You have %d new e-mail.</b>",
 							    "<b>You have %d new e-mails.</b>",
 							    mail_dialog->total_count), mail_dialog->total_count);
