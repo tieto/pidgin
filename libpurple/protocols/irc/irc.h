@@ -116,6 +116,7 @@ void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, ch
 void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_inviteonly(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char **args);

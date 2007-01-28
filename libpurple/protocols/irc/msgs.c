@@ -40,6 +40,8 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name,
                                    const char *from, const char *to,
                                    const char *rawmsg, gboolean notice);
 
+static char *mode_chars = NULL;
+
 static char *irc_mask_nick(const char *mask)
 {
 	char *end, *buf;
@@ -73,6 +75,24 @@ static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2])
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "irc", "Unrecognized message: %s\n", args[0]);
+}
+
+void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	gchar **features;
+	int i;
+
+	if (!args || !args[0] || !args[1])
+		return;
+
+	features = g_strsplit(args[1], " ", -1);
+	for (i = 0; features[i]; i++) {
+		char *val;
+		if (!strncmp(features[i], "PREFIX=", 7)) {
+			if ((val = strchr(features[i] + 7, ')')) != NULL)
+				mode_chars = g_strdup(val + 1);
+		}
+	}
 }
 
 void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -407,6 +427,9 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 					cur++;
 				} else if(*cur == '+') {
 					f = GAIM_CBFLAGS_VOICE;
+					cur++;
+				} else if(mode_chars
+					  && strchr(mode_chars, *cur)) {
 					cur++;
 				}
 				tmp = g_strndup(cur, end - cur);

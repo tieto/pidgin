@@ -52,6 +52,7 @@ static struct _irc_msg {
 	char *format;
 	void (*cb)(struct irc_conn *irc, const char *name, const char *from, char **args);
 } _irc_msgs[] = {
+	{ "005", "n*", irc_msg_features },	/* Feature list			*/
 	{ "301", "nn:", irc_msg_away },		/* User is away			*/
 	{ "303", "n:", irc_msg_ison },		/* ISON reply			*/
 	{ "311", "nnvvv:", irc_msg_whois },	/* Whois user			*/
