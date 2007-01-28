@@ -2181,14 +2181,52 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 
 	return ret;
 }
-
+/* # - Status Icon
+ * P - Protocol Icon
+ * A - Buddy Icon
+ * [ - SMALL_SPACE
+ * = - LARGE_SPACE
+ *                   +--- STATUS_SIZE                +--- td->avatar_width
+ *                   |         +-- td->name_width    |
+ *                +----+   +-------+            +---------+
+ *                |    |   |       |            |         |
+ *                +-------------------------------------------+
+ *                |       [          =        [               |--- TOOLTIP_BORDER
+ *name_height --+-| ######[BuddyName = PP     [   AAAAAAAAAAA |--+
+ *              | | ######[          = PP     [   AAAAAAAAAAA |  |
+ * STATUS SIZE -| | ######[[[[[[[[[[[[[[[[[[[[[   AAAAAAAAAAA |  |
+ *           +--+-| ######[Account: So-and-so [   AAAAAAAAAAA |  |-- td->avatar_height
+ *           |    |       [Idle: 4h 15m       [   AAAAAAAAAAA |  |
+ *  height --+    |       [Foo: Bar, Baz      [   AAAAAAAAAAA |  |
+ *           |    |       [Status: Awesome    [   AAAAAAAAAAA |--+
+ *           +----|       [Stop: Hammer Time  [               |
+ *                |       [                   [               |--- TOOLTIP_BORDER
+ *                +-------------------------------------------+
+ *                 |       |                |                |
+ *                 |       +----------------+                |
+ *                 |               |                         |
+ *                 |               +-- td->width             |
+ *                 |                                         |
+ *                 +---- TOOLTIP_BORDER                      +---- TOOLTIP_BORDER
+ *
+ * 
+ */
+#define STATUS_SIZE 32
+#define TOOLTIP_BORDER 12
+#define SMALL_SPACE 6
+#define LARGE_SPACE 12
+#define PRPL_SIZE 22
 struct tooltip_data {
         PangoLayout *layout;
+	PangoLayout *name_layout;
+	GdkPixbuf *prpl_icon;
         GdkPixbuf *status_icon;
         GdkPixbuf *avatar;
-        const char *protocol;
-        int avatar_width;
-        int avatar_height;
+        gboolean avatar_is_prpl_icon;
+	int avatar_width;
+ 	int avatar_height;
+	int name_height;
+	int name_width;
         int width;
         int height;
 };
@@ -2198,8 +2236,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
         char *tooltip_text = NULL;
         struct tooltip_data *td = g_new0(struct tooltip_data, 1);
         GaimAccount *account = NULL;
-        GaimPlugin *prpl = NULL;
-        GaimPluginProtocolInfo *prpl_info;
+	char *tmp, *node_name;
 
         if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
                 account = ((GaimBuddy*)(node))->account;
@@ -2207,40 +2244,42 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
                 account = ((GaimChat*)(node))->account;
         }
 
-        if(account != NULL) {
-                prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-        }
-
-        td->protocol = NULL;
-        if (prpl) {
-                prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-                if(prpl_info && prpl_info->list_icon) {
-                        td->protocol = prpl_info->list_icon(account, (GaimBuddy*)node);
-                }
-        }
         td->status_icon = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
         td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE, TRUE);
+	td->prpl_icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
         tooltip_text = gaim_get_tooltip_text(node, full);
         td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
+	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
+
+	if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		tmp = g_markup_escape_text(gaim_buddy_get_name((GaimBuddy*)node), -1);
+	else
+		tmp = g_markup_escape_text(gaim_chat_get_name((GaimChat*)node), -1);
+	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
+
         pango_layout_set_markup(td->layout, tooltip_text, -1);
         pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
         pango_layout_set_width(td->layout, 300000);
+	
+	pango_layout_get_size (td->layout, &td->width, &td->height);
+	td->width = PANGO_PIXELS(td->width);
+        td->height = PANGO_PIXELS(td->height);
 
-        pango_layout_get_size (td->layout, &td->width, &td->height);
-        td->width = PANGO_PIXELS(td->width) + 12 + 32 + 6 + 12;
-        td->height = MAX(PANGO_PIXELS(td->height + 4) + 24, 56);
+	pango_layout_set_markup(td->name_layout, node_name, -1);
+	pango_layout_set_wrap(td->name_layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(td->name_layout, 300000);
 
-        if(td->avatar) {
-                int height_with_protocol = 0;
-                td->avatar_width = gdk_pixbuf_get_width(td->avatar);
-                td->avatar_height = gdk_pixbuf_get_height(td->avatar);
-             height_with_protocol = td->avatar_height;
-                if (td->avatar_height < 50 && td->protocol != NULL)
-                        height_with_protocol += 24;
-                td->width += td->avatar_width + 8;
-                td->height = MAX(td->height, height_with_protocol + 24);
-        }
-
+	pango_layout_get_size (td->name_layout, &td->name_width, &td->name_height);
+        td->name_width = PANGO_PIXELS(td->name_width) + SMALL_SPACE + PRPL_SIZE;
+	td->name_height = MAX(PANGO_PIXELS(td->name_height), PRPL_SIZE + SMALL_SPACE);
+		
+        if(!td->avatar) {
+		td->avatar = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
+		td->avatar_is_prpl_icon = TRUE;
+	}
+        td->avatar_width = gdk_pixbuf_get_width(td->avatar);
+	td->avatar_height = gdk_pixbuf_get_height(td->avatar);
+        
         g_free(tooltip_text);
         return td;
 }
@@ -2262,25 +2301,37 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
         for(l = gtkblist->tooltipdata; l; l = l->next)
         {
                 struct tooltip_data *td = l->data;
-                max_width = MAX(max_width, td->width);
+                max_width = MAX(max_width, 
+				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
+				MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
         }
 
         current_height = 12;
         for(l = gtkblist->tooltipdata; l; l = l->next)
         {
                 struct tooltip_data *td = l->data;
+
                 if (td->avatar && gaim_gdk_pixbuf_is_opaque(td->avatar))
                         gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                                           NULL, gtkblist->tipwindow, "tooltip", max_width - (td->avatar_width+12)-1, current_height-1,td->avatar_width+2, td->avatar_height+2);
+                                           NULL, gtkblist->tipwindow, "tooltip", 
+					   max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
+					   current_height-1,td->avatar_width+2, td->avatar_height+2);
 
 
 #if GTK_CHECK_VERSION(2,2,0)
                 gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-                                0, 0, 12, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+                                0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
                 if(td->avatar)
                         gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
-                                        td->avatar, 0, 0, max_width - (td->avatar_width + 12), current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-
+                                        td->avatar, 0, 0, max_width - (td->avatar_width + TOOLTIP_BORDER),
+					current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+		if (!td->avatar_is_prpl_icon) 
+			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
+					0, 0, 
+					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + td->name_width - PRPL_SIZE,
+					current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)),
+							  -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+		
 #else
                 gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 12, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
              if(td->avatar)
@@ -2290,13 +2341,16 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
                                         current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
 
-                gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-                                NULL, gtkblist->tipwindow, "tooltip", 44 + 6, current_height, td->layout);
+	     gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+			       NULL, gtkblist->tipwindow, "tooltip", 
+			       TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
+	     current_height += td->name_height;
 
-                current_height += td->height;
+	     gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+			       NULL, gtkblist->tipwindow, "tooltip", 
+			       TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->layout);
 
-                if(l->next)
-                        gtk_paint_hline(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, NULL, NULL, NULL, 12, max_width - 12, current_height-6);
+	     current_height += td->height + TOOLTIP_BORDER;
 
         }
 }
@@ -2311,7 +2365,10 @@ static void gaim_gtk_blist_tooltip_destroy()
 			g_object_unref(td->avatar);
 		if(td->status_icon)
 			g_object_unref(td->status_icon);
+		if(td->prpl_icon)
+			g_object_unref(td->prpl_icon);
 		g_object_unref(td->layout);
+		g_object_unref(td->name_layout);
 		g_free(td);
 		gtkblist->tooltipdata = g_list_delete_link(gtkblist->tooltipdata, gtkblist->tooltipdata);
 	}
@@ -2416,8 +2473,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	if(GAIM_BLIST_NODE_IS_CHAT(node) || GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
-		w = td->width;
-		h = td->height;
+		w = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + 
+			MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER;
+		h = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height))
+			+ TOOLTIP_BORDER;
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBlistNode *child;
 		GaimBuddy *b = gaim_contact_get_priority_buddy((GaimContact *)node);
@@ -2431,8 +2490,11 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 				} else {
 					gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 				}
-				w = MAX(w, td->width);
-				h += td->height;
+				w = MAX(w, TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + 
+					MAX(td->width, td->name_width) + SMALL_SPACE + 
+					td->avatar_width + TOOLTIP_BORDER);
+				h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height) + TOOLTIP_BORDER, 
+					 TOOLTIP_BORDER + td->height + td->name_height + TOOLTIP_BORDER);
 			}
 		}
 	} else {
@@ -2683,10 +2745,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-		tmp = g_markup_escape_text(gaim_chat_get_name(chat), -1);
-		g_string_append_printf(str, "<span size='larger' weight='bold'>%s</span>", tmp);
-		g_free(tmp);
-
 		if (g_list_length(gaim_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
@@ -2749,12 +2807,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 		presence = gaim_buddy_get_presence(b);
-
-		/* Buddy Name */
-		tmp = g_markup_escape_text(gaim_buddy_get_name(b), -1);
-		g_string_append_printf(str, "<span size='larger' weight='bold'>%s</span>\n", tmp);
-		g_free(tmp);
-
 		user_info = gaim_notify_user_info_new();
 
 		/* Account */
