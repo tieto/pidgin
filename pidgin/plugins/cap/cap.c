@@ -136,6 +136,8 @@ static void destroy_stats(gpointer data) {
 	g_free(stats->prediction);
 	/* g_free(stats->hourly_usage); */
 	/* g_free(stats->daily_usage); */
+	if (stats->timeout_source_id != 0)
+		g_source_remove(stats->timeout_source_id);
 	g_free(stats);
 }
 
@@ -345,6 +347,7 @@ static gboolean max_message_difference_cb(gpointer data) {
 static void sent_im_msg(GaimAccount *account, const char *receiver, const char *message) {
 	GaimBuddy *buddy;
 	guint interval, words;
+	CapStatistics *stats = NULL;
 
 	buddy = gaim_find_buddy(account, receiver);
 
@@ -354,7 +357,7 @@ static void sent_im_msg(GaimAccount *account, const char *receiver, const char *
 	interval = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 1000 * 60;
 	words = word_count(message);
 
-	CapStatistics *stats = get_stats_for(buddy);
+	stats = get_stats_for(buddy);
 
 	insert_word_count(gaim_account_get_username(account), receiver, words);
 	stats->last_message = time(NULL);
