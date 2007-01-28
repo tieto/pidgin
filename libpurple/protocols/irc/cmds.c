@@ -245,8 +245,6 @@ int irc_cmd_names(struct irc_conn *irc, const char *cmd, const char *target, con
 	irc_send(irc, buf);
 	g_free(buf);
 
-	irc->nameconv = g_strdup(target);
-
 	return 0;
 }
 

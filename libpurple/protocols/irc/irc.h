@@ -41,6 +41,8 @@
 
 #define IRC_INITIAL_BUFSIZE 1024
 
+#define IRC_NAMES_FLAG "irc-namelist"
+
 
 enum { IRC_USEROPT_SERVER, IRC_USEROPT_PORT, IRC_USEROPT_CHARSET };
 enum irc_state { IRC_STATE_NEW, IRC_STATE_ESTABLISHED };
@@ -60,7 +62,6 @@ struct irc_conn {
 
 	GString *motd;
 	GString *names;
-	char *nameconv;
 	struct _whois {
 		char *nick;
 		char *away;
