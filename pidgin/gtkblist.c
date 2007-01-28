@@ -2217,38 +2217,38 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 #define LARGE_SPACE 12
 #define PRPL_SIZE 22
 struct tooltip_data {
-        PangoLayout *layout;
+	PangoLayout *layout;
 	PangoLayout *name_layout;
 	GdkPixbuf *prpl_icon;
-        GdkPixbuf *status_icon;
-        GdkPixbuf *avatar;
-        gboolean avatar_is_prpl_icon;
+	GdkPixbuf *status_icon;
+	GdkPixbuf *avatar;
+	gboolean avatar_is_prpl_icon;
 	int avatar_width;
- 	int avatar_height;
+	int avatar_height;
 	int name_height;
 	int name_width;
-        int width;
-        int height;
+	int width;
+	int height;
 };
 
 static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean full)
 {
-        char *tooltip_text = NULL;
-        struct tooltip_data *td = g_new0(struct tooltip_data, 1);
-        GaimAccount *account = NULL;
+	char *tooltip_text = NULL;
+	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
+	GaimAccount *account = NULL;
 	char *tmp, *node_name;
 
-        if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-                account = ((GaimBuddy*)(node))->account;
-        } else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
-                account = ((GaimChat*)(node))->account;
-        }
+	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+		account = ((GaimBuddy*)(node))->account;
+	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+		account = ((GaimChat*)(node))->account;
+	}
 
-        td->status_icon = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
-        td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE, TRUE);
+	td->status_icon = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
+	td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE, TRUE);
 	td->prpl_icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
-        tooltip_text = gaim_get_tooltip_text(node, full);
-        td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
+	tooltip_text = gaim_get_tooltip_text(node, full);
+	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node))
@@ -2257,102 +2257,101 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 		tmp = g_markup_escape_text(gaim_chat_get_name((GaimChat*)node), -1);
 	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
 
-        pango_layout_set_markup(td->layout, tooltip_text, -1);
-        pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
-        pango_layout_set_width(td->layout, 300000);
-	
+	pango_layout_set_markup(td->layout, tooltip_text, -1);
+	pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(td->layout, 300000);
+
 	pango_layout_get_size (td->layout, &td->width, &td->height);
 	td->width = PANGO_PIXELS(td->width);
-        td->height = PANGO_PIXELS(td->height);
+	td->height = PANGO_PIXELS(td->height);
 
 	pango_layout_set_markup(td->name_layout, node_name, -1);
 	pango_layout_set_wrap(td->name_layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(td->name_layout, 300000);
 
 	pango_layout_get_size (td->name_layout, &td->name_width, &td->name_height);
-        td->name_width = PANGO_PIXELS(td->name_width) + SMALL_SPACE + PRPL_SIZE;
+	td->name_width = PANGO_PIXELS(td->name_width) + SMALL_SPACE + PRPL_SIZE;
 	td->name_height = MAX(PANGO_PIXELS(td->name_height), PRPL_SIZE + SMALL_SPACE);
-		
-        if(!td->avatar && full) {
+
+	if(!td->avatar && full) {
 		td->avatar = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
 		td->avatar_is_prpl_icon = TRUE;
 	}
-        td->avatar_width = gdk_pixbuf_get_width(td->avatar);
+	td->avatar_width = gdk_pixbuf_get_width(td->avatar);
 	td->avatar_height = gdk_pixbuf_get_height(td->avatar);
-        
-        g_free(tooltip_text);
-        return td;
+
+	g_free(tooltip_text);
+	return td;
 }
 
 static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, GaimBlistNode *node)
 {
-        GtkStyle *style;
-        int current_height, max_width;
-        GList *l;
+	GtkStyle *style;
+	int current_height, max_width;
+	GList *l;
 
-        if(gtkblist->tooltipdata == NULL)
-                return;
+	if(gtkblist->tooltipdata == NULL)
+		return;
 
-        style = gtkblist->tipwindow->style;
-        gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                        NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
+	style = gtkblist->tipwindow->style;
+	gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+			NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
-        max_width = 0;
-        for(l = gtkblist->tooltipdata; l; l = l->next)
-        {
-                struct tooltip_data *td = l->data;
-                max_width = MAX(max_width, 
+	max_width = 0;
+	for(l = gtkblist->tooltipdata; l; l = l->next)
+	{
+		struct tooltip_data *td = l->data;
+		max_width = MAX(max_width,
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
 				MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
-        }
+	}
 
-        current_height = 12;
-        for(l = gtkblist->tooltipdata; l; l = l->next)
-        {
-                struct tooltip_data *td = l->data;
+	current_height = 12;
+	for(l = gtkblist->tooltipdata; l; l = l->next)
+	{
+		struct tooltip_data *td = l->data;
 
-                if (td->avatar && gaim_gdk_pixbuf_is_opaque(td->avatar))
-                        gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                                           NULL, gtkblist->tipwindow, "tooltip", 
-					   max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
-					   current_height-1,td->avatar_width+2, td->avatar_height+2);
+		if (td->avatar && gaim_gdk_pixbuf_is_opaque(td->avatar))
+			gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+					NULL, gtkblist->tipwindow, "tooltip",
+					max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
+					current_height-1,td->avatar_width+2, td->avatar_height+2);
 
 
 #if GTK_CHECK_VERSION(2,2,0)
-                gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-                                0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-                if(td->avatar)
-                        gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
-                                        td->avatar, 0, 0, max_width - (td->avatar_width + TOOLTIP_BORDER),
+		gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
+				0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+		if(td->avatar)
+			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
+					td->avatar, 0, 0, max_width - (td->avatar_width + TOOLTIP_BORDER),
 					current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-		if (!td->avatar_is_prpl_icon) 
+		if (!td->avatar_is_prpl_icon)
 			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
-					0, 0, 
+					0, 0,
 					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + td->name_width - PRPL_SIZE,
 					current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)),
-							  -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-		
+					-1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+
 #else
-                gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 12, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
-             if(td->avatar)
-                        gdk_pixbuf_render_to_drawable(td->avatar,
-                                        GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0,
-                                        max_width - (td->avatar_width + 12),
-                                        current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+		gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 12, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+		if(td->avatar)
+			gdk_pixbuf_render_to_drawable(td->avatar,
+					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0,
+					max_width - (td->avatar_width + 12),
+					current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
 
-	     gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-			       NULL, gtkblist->tipwindow, "tooltip", 
-			       TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
-	     current_height += td->name_height;
+		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				NULL, gtkblist->tipwindow, "tooltip",
+				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
+		current_height += td->name_height;
 
-	     gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-			       NULL, gtkblist->tipwindow, "tooltip", 
-			       TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->layout);
+		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				NULL, gtkblist->tipwindow, "tooltip",
+				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->layout);
 
-	     current_height += td->height + TOOLTIP_BORDER;
-
-        }
+		current_height += td->height + TOOLTIP_BORDER;
+	}
 }
 
 
@@ -2994,35 +2993,35 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	}
 	
 	if(buddy) {
-                GaimPresence *p = gaim_buddy_get_presence(buddy);
-                if (GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
-                                                   icon_size, "GtkTreeView");
-                else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
-                                                   icon_size, "GtkTreeView");
-                else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
-                                                   icon_size, "GtkTreeView");
-                else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
-                                                   icon_size, "GtkTreeView");
-                else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
-                                                   icon_size, "GtkTreeView");
-                else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
-                                                   icon_size, "GtkTreeView");
-                else
-	             ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
-                                                   icon_size, "GtkTreeView");
-        } else if (chat) {
-        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
-                                              icon_size, "GtkTreeView");
-        } else {
-	        ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_PERSON,
-                                              icon_size, "GtkTreeView");
-        }
+		GaimPresence *p = gaim_buddy_get_presence(buddy);
+		if (GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
+					icon_size, "GtkTreeView");
+		else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
+					icon_size, "GtkTreeView");
+		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
+					icon_size, "GtkTreeView");
+		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
+					icon_size, "GtkTreeView");
+		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
+					icon_size, "GtkTreeView");
+		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
+					icon_size, "GtkTreeView");
+		else
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
+					icon_size, "GtkTreeView");
+	} else if (chat) {
+		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
+				icon_size, "GtkTreeView");
+	} else {
+		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_PERSON,
+				icon_size, "GtkTreeView");
+	}
 
 	return ret;
 
@@ -4074,8 +4073,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtkblist = GAIM_GTK_BLIST(list);
 
-        gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
-        gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
+	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
+	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
 
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
@@ -5736,7 +5735,7 @@ gaim_gtk_blist_get_ui_ops(void)
 
 GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist()
 {
-        return gtkblist;
+	return gtkblist;
 }
 
 static void account_signon_cb(GaimConnection *gc, gpointer z)
