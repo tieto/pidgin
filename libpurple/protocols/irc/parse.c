@@ -53,6 +53,8 @@ static struct _irc_msg {
 	void (*cb)(struct irc_conn *irc, const char *name, const char *from, char **args);
 } _irc_msgs[] = {
 	{ "005", "n*", irc_msg_features },	/* Feature list			*/
+	{ "251", "n:", irc_msg_luser },		/* Client & Server count	*/
+	{ "255", "n:", irc_msg_luser },		/* Client & Server count Mk. II	*/
 	{ "301", "nn:", irc_msg_away },		/* User is away			*/
 	{ "303", "n:", irc_msg_ison },		/* ISON reply			*/
 	{ "311", "nnvvv:", irc_msg_whois },	/* Whois user			*/
@@ -73,13 +75,12 @@ static struct _irc_msg {
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/
 	{ "372", "n:", irc_msg_motd },		/* MOTD				*/
 	{ "375", "n:", irc_msg_motd },		/* Start MOTD			*/
-	{ "376", "n:", irc_msg_endmotd },	/* End of MOTD			*/
+	{ "376", "n:", irc_msg_motd },		/* End of MOTD			*/
 	{ "391", "nv:", irc_msg_time },		/* Time reply			*/
 	{ "401", "nt:", irc_msg_nonick },	/* No such nick/chan		*/
 	{ "403", "nc:", irc_msg_nochan },	/* No such channel		*/
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
-	{ "422", "nv:", irc_msg_endmotd },	/* No MOTD available		*/
 	{ "432", "vn:", irc_msg_badnick },	/* Erroneous nickname		*/
 	{ "433", "vn:", irc_msg_nickused },	/* Nickname already in use	*/
 	{ "437", "nc:", irc_msg_unavailable },  /* Nick/channel is unavailable */
