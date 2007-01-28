@@ -74,6 +74,7 @@ struct _GaimNetworkListenData {
 	gboolean adding;
 	GaimNetworkListenCallback cb;
 	gpointer cb_data;
+	UPnPMappingAddRemove *mapping_data;
 };
 
 #ifdef HAVE_LIBNM
@@ -210,28 +211,29 @@ gaim_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 		if (listen_data->retry) {
 			listen_data->retry = FALSE;
 			listen_data->adding = FALSE;
-			/* TODO: Need to keep track of this return value! */
-			gaim_upnp_remove_port_mapping(
-				gaim_network_get_port_from_fd(listen_data->listenfd),
-				(listen_data->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-				gaim_network_set_upnp_port_mapping_cb, listen_data);
+			listen_data->mapping_data = gaim_upnp_remove_port_mapping(
+						gaim_network_get_port_from_fd(listen_data->listenfd),
+						(listen_data->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+						gaim_network_set_upnp_port_mapping_cb, listen_data);
 			return;
 		}
 	} else if (!listen_data->adding) {
 		/* We've tried successfully to remove the port mapping.
 		 * Try to add it again */
 		listen_data->adding = TRUE;
-		/* TODO: Need to keep track of this return value! */
-		gaim_upnp_set_port_mapping(
-			gaim_network_get_port_from_fd(listen_data->listenfd),
-			(listen_data->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-			gaim_network_set_upnp_port_mapping_cb, listen_data);
+		listen_data->mapping_data = gaim_upnp_set_port_mapping(
+					gaim_network_get_port_from_fd(listen_data->listenfd),
+					(listen_data->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+					gaim_network_set_upnp_port_mapping_cb, listen_data);
 		return;
 	}
 
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
 
+	/* Clear the UPnP mapping data, since it's complete and gaim_netweork_listen_cancel() will try to cancel
+	 * it otherwise. */
+	listen_data->mapping_data = NULL;
 	gaim_network_listen_cancel(listen_data);
 }
 
@@ -327,11 +329,10 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	listen_data->cb = cb;
 	listen_data->cb_data = cb_data;
 
-	/* TODO: Need to keep track of this return value! */
-	gaim_upnp_set_port_mapping(
-			gaim_network_get_port_from_fd(listenfd),
-			(socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-			gaim_network_set_upnp_port_mapping_cb, listen_data);
+	listen_data->mapping_data = gaim_upnp_set_port_mapping(
+					gaim_network_get_port_from_fd(listenfd),
+					(socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+					gaim_network_set_upnp_port_mapping_cb, listen_data);
 
 	return listen_data;
 }
@@ -370,6 +371,9 @@ gaim_network_listen_range(unsigned short start, unsigned short end,
 
 void gaim_network_listen_cancel(GaimNetworkListenData *listen_data)
 {
+	if (listen_data->mapping_data != NULL)
+		gaim_upnp_cancel_port_mapping(listen_data->mapping_data);
+
 	g_free(listen_data);
 }
 

@@ -26,6 +26,7 @@
 #ifndef _GAIM_UPNP_H_
 #define _GAIM_UPNP_H_
 
+typedef struct _UPnPMappingAddRemove UPnPMappingAddRemove;
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,6 +75,14 @@ const GaimUPnPControlInfo* gaim_upnp_get_control_info(void);
 const gchar* gaim_upnp_get_public_ip(void);
 
 /**
+ * Cancel a pending port mapping request initiated with either
+ * gaim_upnp_set_port_mapping() or gaim_upnp_remove_port_mapping().
+ *
+ * @param mapping_data The data returned when you initiated the UPnP mapping request.
+ */
+void gaim_upnp_cancel_port_mapping(UPnPMappingAddRemove *mapping_data);
+
+/**
  * Maps Ports in a UPnP enabled IGD that sits on the local network to
  * this gaim client. Essentially, this function takes care of the port
  * forwarding so things like file transfers can work behind NAT firewalls
@@ -83,8 +92,10 @@ const gchar* gaim_upnp_get_public_ip(void);
  * @param cb an optional callback function to be notified when the mapping
  *           addition is complete
  * @param cb_data Extra data to be passed to the callback
+ *
+ * @return Data which can be passed to gaim_upnp_port_mapping_cancel() to cancel
  */
-void gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
+UPnPMappingAddRemove *gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 		GaimUPnPCallback cb, gpointer cb_data);
 
 /**
@@ -98,8 +109,10 @@ void gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
  * @param cb an optional callback function to be notified when the mapping
  *           removal is complete
  * @param cb_data Extra data to be passed to the callback
+ *
+ * @return Data which can be passed to gaim_upnp_port_mapping_cancel() to cancel
  */
-void gaim_upnp_remove_port_mapping(unsigned short portmap,
+UPnPMappingAddRemove *gaim_upnp_remove_port_mapping(unsigned short portmap,
 		const gchar* protocol, GaimUPnPCallback cb, gpointer cb_data);
 
 /*@}*/
