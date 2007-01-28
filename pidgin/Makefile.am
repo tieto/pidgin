@@ -8,15 +8,15 @@ EXTRA_DIST = \
 		win32/IdleTracker/idletrack.h \
 		win32/MinimizeToTray.h \
 		win32/MinimizeToTray.c \
-		win32/gaimrc.rc.in \
+		win32/pidgin_dll_rc.rc.in \
+		win32/pidgin_exe_rc.rc.in \
 		win32/gtkdocklet-win32.c \
-		win32/gtkgaimrc.rc.in \
 		win32/gtkwin32dep.c \
 		win32/gtkwin32dep.h \
 		win32/resource.h \
 		win32/untar.c \
 		win32/untar.h \
-		win32/win_gaim.c \
+		win32/winpidgin.c \
 		win32/wspell.c \
 		win32/wspell.h \
 		win32/nsis/gaim-header.bmp \

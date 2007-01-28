@@ -3,9 +3,10 @@ EXTRA_DIST = 	available.svg \
 		busy.svg \
 		chat.svg \
 		extended-away.svg \
-		half-operator.svg \
 		log-in.svg \
 		log-out.svg \
 		offline.svg \
-		operator.svg \
 		person.svg
+
+#		half-operator.svg
+#		operator.svg

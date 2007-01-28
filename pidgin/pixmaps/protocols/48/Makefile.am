@@ -7,7 +7,6 @@ EXTRA_DIST =	aim.png \
 		icq.png \
 		irc.png \
 		jabber.png \
-		Makefile.am \
 		meanwhile.png \
 		msn.png \
 		qq.png \

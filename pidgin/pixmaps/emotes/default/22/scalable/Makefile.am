@@ -86,7 +86,7 @@ EXTRA_DIST = 	act-up.svg \
 		meeting.svg \
 		mobile.svg \
 		monkey.svg \
-		moneymouth.png
+		moneymouth.svg \
 		moon.svg \
 		msn-away.svg \
 		msn-busy.svg \

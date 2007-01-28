@@ -6,7 +6,6 @@ EXTRA_DIST = 	auth.png \
 		error.png \
 		info.png \
 		mail.png \
-		Makefile.am \
 		question.png \
 		warning.png
 

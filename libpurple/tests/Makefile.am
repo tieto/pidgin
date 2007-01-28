@@ -9,7 +9,7 @@ check_libgaim_SOURCES=\
 		test_cipher.c \
 		test_jabber_jutil.c \
 		test_util.c \
-		$(top_builddir)/libgaim/util.h
+		$(top_builddir)/libpurple/util.h
 
 check_libgaim_CFLAGS=\
         @CHECK_CFLAGS@ \
@@ -20,7 +20,7 @@ check_libgaim_CFLAGS=\
 check_libgaim_LDADD=\
         @CHECK_LIBS@ \
 		$(GLIB_LIBS) \
-		$(top_builddir)/libgaim/protocols/jabber/libjabber.la \
-		$(top_builddir)/libgaim/libgaim.la
+		$(top_builddir)/libpurple/protocols/jabber/libjabber.la \
+		$(top_builddir)/libpurple/libgaim.la
 
 endif

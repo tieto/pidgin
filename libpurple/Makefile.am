@@ -11,7 +11,7 @@ EXTRA_DIST = \
 		win32/libc_interface.c \
 		win32/libc_interface.h \
 		win32/libc_internal.h \
-		win32/libgaimrc.rc.in \
+		win32/libpurplerc.rc.in \
 		win32/rules.mak \
 		win32/targets.mak \
 		win32/wgaimerror.h \

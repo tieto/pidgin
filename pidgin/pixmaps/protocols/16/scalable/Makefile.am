@@ -6,7 +6,7 @@ EXTRA_DIST = 	aim.svg \
 		irc.svg \
 		jabber.svg \
 		meanwhile.svg \
-		msn2.svg \
+		msn.svg \
 		qq.svg \
 		silc.svg \
 		simple.svg \
