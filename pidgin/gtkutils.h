@@ -46,6 +46,13 @@ typedef enum
 
 } GaimButtonStyle;
 
+typedef enum
+{
+	PIDGIN_PRPL_ICON_SMALL,
+	PIDGIN_PRPL_ICON_MEDIUM,
+	PIDGIN_PRPL_ICON_LARGE
+} PidginPrplIconSize;
+
 #ifndef _WIN32
 typedef enum
 {
@@ -369,11 +376,7 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
  * the currently selected theme.
  *
  * @param account      The account.
- * @param scale_factor The amount to scale to the original image.
- *                     The default size is 32x32 pixels.  A scale
- *                     factor of 1 means no scaling will be done.
- *                     A scale factor of 0.5 means the length
- *                     and width will be 16 pixels each.
+ * @param size         The size of the icon to return.
  *
  * @return A newly-created pixbuf with a reference count of 1,
  *         or NULL if any of several error conditions occurred:
@@ -382,7 +385,7 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account, double scale_factor);
+GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size);
 
 /**
  * Create a protocol icon with the status emblem overlayed in

@@ -312,7 +312,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
 	/* Autostart */
 	vbox = gaim_gtk_make_frame(ret, _("Startup"));
-	button = gtk_check_button_new_with_mnemonic(_("_Start Gaim on Windows startup"));
+	button = gtk_check_button_new_with_mnemonic(_("_Start " PIDGIN_NAME " on Windows startup"));
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 
 	if ((run_key_val = wgaim_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Gaim"))
@@ -363,10 +363,10 @@ static GaimPluginInfo info =
 	NULL,
 	GAIM_PRIORITY_DEFAULT,
 	WINPREFS_PLUGIN_ID,
-	N_("WinGaim Options"),
+	N_("Pidgwin Options"),
 	VERSION,
-	N_("Options specific to Windows Gaim."),
-	N_("Provides options specific to Windows Gaim, such as buddy list docking."),
+	N_("Options specific to Windows " PIDGIN_NAME "."),
+	N_("Provides options specific to Windows " PIDGIN_NAME ", such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	GAIM_WEBSITE,
 	plugin_load,

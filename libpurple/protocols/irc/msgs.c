@@ -40,6 +40,8 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name,
                                    const char *from, const char *to,
                                    const char *rawmsg, gboolean notice);
 
+static char *mode_chars = NULL;
+
 static char *irc_mask_nick(const char *mask)
 {
 	char *end, *buf;
@@ -73,6 +75,77 @@ static void irc_chat_remove_buddy(GaimConversation *convo, char *data[2])
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "irc", "Unrecognized message: %s\n", args[0]);
+}
+
+void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	gchar **features;
+	int i;
+
+	if (!args || !args[0] || !args[1])
+		return;
+
+	features = g_strsplit(args[1], " ", -1);
+	for (i = 0; features[i]; i++) {
+		char *val;
+		if (!strncmp(features[i], "PREFIX=", 7)) {
+			if ((val = strchr(features[i] + 7, ')')) != NULL)
+				mode_chars = g_strdup(val + 1);
+		}
+	}
+}
+
+void irc_msg_luser(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	GaimConnection *gc;
+	GaimStatus *status;
+	GaimBlistNode *gnode, *cnode, *bnode;
+
+	if (!args || !args[0] || !args[1])
+		return;
+
+	gc = gaim_account_get_connection(irc->account);
+	if (!gc)
+		return;
+
+	if (!strcmp(name, "251")) {
+		/* 251 is required, so we pluck our nick from here */
+		gaim_connection_set_display_name(gc, args[0]);
+	} else if (!strcmp(name, "255")) {
+		gaim_connection_set_state(gc, GAIM_CONNECTED);
+
+		/* If we're away then set our away message */
+		status = gaim_account_get_active_status(irc->account);
+		if (!gaim_status_get_type(status) != GAIM_STATUS_AVAILABLE) {
+			GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+			prpl_info->set_status(irc->account, status);
+		}
+
+		/* this used to be in the core, but it's not now */
+		for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+			for(cnode = gnode->child; cnode; cnode = cnode->next) {
+				if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+					continue;
+				for(bnode = cnode->child; bnode; bnode = bnode->next) {
+					GaimBuddy *b;
+					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					b = (GaimBuddy *)bnode;
+					if(b->account == gc->account) {
+						struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
+						ib->name = g_strdup(b->name);
+						g_hash_table_insert(irc->buddies, ib->name, ib);
+					}
+				}
+			}
+		}
+
+		irc_blist_timeout(irc);
+		if (!irc->timer)
+			irc->timer = gaim_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+	}
 }
 
 void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -408,6 +481,9 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 				} else if(*cur == '+') {
 					f = GAIM_CBFLAGS_VOICE;
 					cur++;
+				} else if(mode_chars
+					  && strchr(mode_chars, *cur)) {
+					cur++;
 				}
 				tmp = g_strndup(cur, end - cur);
 				users = g_list_prepend(users, tmp);
@@ -442,66 +518,29 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 
 void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	GaimConnection *gc;
 	char *escaped;
-	if (!strcmp(name, "375")) {
-		gc = gaim_account_get_connection(irc->account);
-		if (gc)
-			gaim_connection_set_display_name(gc, args[0]);
-	}
 
 	if (!irc->motd)
 		irc->motd = g_string_new("");
 
+	if (!strcmp(name, "375")) {
+		if (irc->motd)
+			g_string_free(irc->motd, TRUE);
+		irc->motd = g_string_new("");
+		return;
+	} else if (!strcmp(name, "376")) {
+		/* We no longer have to do anything for ENDMOTD */
+		return;
+	}
+
+	if (!irc->motd) {
+		gaim_debug_error("irc", "IRC server sent MOTD without STARTMOTD\n");
+		return;
+	}
+
 	escaped = g_markup_escape_text(args[1], -1);
 	g_string_append_printf(irc->motd, "%s<br>", escaped);
 	g_free(escaped);
-}
-
-void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, char **args)
-{
-	GaimConnection *gc;
-	GaimStatus *status;
-	GaimBlistNode *gnode, *cnode, *bnode;
-
-	gc = gaim_account_get_connection(irc->account);
-	if (!gc)
-		return;
-
-	gaim_connection_set_state(gc, GAIM_CONNECTED);
-
-	/* If we're away then set our away message */
-	status = gaim_account_get_active_status(irc->account);
-	if (!gaim_status_get_type(status) != GAIM_STATUS_AVAILABLE)
-	{
-		GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-		prpl_info->set_status(irc->account, status);
-	}
-
-	/* this used to be in the core, but it's not now */
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = cnode->child; bnode; bnode = bnode->next) {
-				GaimBuddy *b;
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (GaimBuddy *)bnode;
-				if(b->account == gc->account) {
-					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-					ib->name = g_strdup(b->name);
-					g_hash_table_insert(irc->buddies, ib->name, ib);
-				}
-			}
-		}
-	}
-
-	irc_blist_timeout(irc);
-	if (!irc->timer)
-		irc->timer = gaim_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
 void irc_msg_time(struct irc_conn *irc, const char *name, const char *from, char **args)

@@ -358,10 +358,10 @@ void gaim_gtkdialogs_about()
 					GAIM_WEBSITE "\">" GAIM_WEBSITE "</A><BR/><BR/>");
 #ifdef _WIN32
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#wingaim on irc.freenode.net<BR><BR>"));
+						   "#pidgwin on irc.freenode.net<BR><BR>"));
 #else
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#gaim on irc.freenode.net<BR><BR>"));
+						   "#pidgin on irc.freenode.net<BR><BR>"));
 #endif
 
 	/* Current Developers */
@@ -781,7 +781,7 @@ gaim_gtkdialogs_ee(const char *ee)
 
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_COOL, gtk_icon_size_from_name(GAIM_ICON_SIZE_DIALOG_COOL));
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

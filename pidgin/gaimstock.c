@@ -57,12 +57,6 @@ static struct StockIcon
 #endif
 	{ GAIM_STOCK_DEBUG,           NULL,      GTK_STOCK_PROPERTIES       },
 	{ GAIM_STOCK_DOWNLOAD,        NULL,      GTK_STOCK_GO_DOWN          },
-	{ GAIM_STOCK_DIALOG_AUTH,     "dialogs", "gaim_auth.png"            },
-	{ GAIM_STOCK_DIALOG_COOL,     "dialogs", "gaim_cool.png"            },
-	{ GAIM_STOCK_DIALOG_ERROR,    "dialogs", "gaim_error.png"           },
-	{ GAIM_STOCK_DIALOG_INFO,     "dialogs", "gaim_info.png"            },
-	{ GAIM_STOCK_DIALOG_QUESTION, "dialogs", "gaim_question.png"        },
-	{ GAIM_STOCK_DIALOG_WARNING,  "dialogs", "gaim_warning.png"         },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ GAIM_STOCK_DISCONNECT,      NULL,      GTK_STOCK_DISCONNECT       },
 #else
@@ -152,17 +146,25 @@ static struct SizedStockIcon {
   gboolean medium;
   gboolean huge;
 } const sized_stock_icons [] = {
-	{ GAIM_STOCK_STATUS_AVAILABLE, 	"status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_AWAY, 	"status", "away.png", 		TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, FALSE },
-	{ GAIM_STOCK_STATUS_OPERATOR, 	"status", "operator.png",	TRUE, FALSE, FALSE, FALSE },
-	{ GAIM_STOCK_STATUS_HALFOP, 	"status", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AVAILABLE,"status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AWAY, 	"status", "away.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_OPERATOR,	"status", "operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_HALFOP, 	"status", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
+
+	{ PIDGIN_STOCK_DIALOG_AUTH,	"dialogs", "auth.png",		TRUE, FALSE, FALSE, TRUE },
+	{ PIDGIN_STOCK_DIALOG_COOL,	"dialogs", "cool.png", 		FALSE, FALSE, FALSE, TRUE },
+	{ PIDGIN_STOCK_DIALOG_ERROR,	"dialogs", "error.png",		TRUE, FALSE, FALSE, TRUE },
+	{ PIDGIN_STOCK_DIALOG_INFO,	"dialogs", "info.png",		TRUE, FALSE, FALSE, TRUE },
+	{ PIDGIN_STOCK_DIALOG_MAIL,	"dialogs", "mail.png",		TRUE, FALSE, FALSE, TRUE },
+	{ PIDGIN_STOCK_DIALOG_QUESTION,	"dialogs", "question.png",	TRUE, FALSE, FALSE, TRUE },
+	{ PIDGIN_STOCK_DIALOG_WARNING,	"dialogs", "warning.png",	FALSE, FALSE, FALSE, TRUE },
 };
 
 static gchar *
@@ -265,11 +267,10 @@ gaim_gtk_stock_init(void)
 	}
 
 	/* register custom icon sizes */
-	gtk_icon_size_register(GAIM_ICON_SIZE_DIALOG_COOL, 40, 60);
-	extra_small =  gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
-	small =        gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_SMALL, 22, 22);
-	medium =       gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_MEDIUM, 32, 32);
-	huge =         gtk_icon_size_register(GAIM_ICON_SIZE_TANGO_HUGE, 64, 64);
+	extra_small =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
+	small =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_SMALL, 22, 22);
+	medium =       gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MEDIUM, 32, 32);
+	huge =         gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_HUGE, 64, 64);
 
 	for (i = 0; i < G_N_ELEMENTS(sized_stock_icons); i++)
 	{

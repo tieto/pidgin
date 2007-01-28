@@ -332,8 +332,8 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -493,8 +493,8 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-				       GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -602,8 +602,8 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
@@ -1077,8 +1077,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	gtk_widget_show(hbox);
 
 	/* Dialog icon. */
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);

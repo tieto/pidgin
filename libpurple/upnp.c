@@ -131,13 +131,16 @@ typedef struct {
 	gchar *full_url;
 } UPnPDiscoveryData;
 
-typedef struct {
+struct _UPnPMappingAddRemove
+{
 	unsigned short portmap;
 	gchar protocol[4];
 	gboolean add;
 	GaimUPnPCallback cb;
 	gpointer cb_data;
-} UPnPMappingAddRemove;
+	guint tima; /* gaim_timeout_add handle */
+	GaimUtilFetchUrlData *gfud;
+};
 
 static GaimUPnPControlInfo control_info = {
 	GAIM_UPNP_STATUS_UNDISCOVERED,
@@ -666,12 +669,12 @@ gaim_upnp_discover(GaimUPnPCallback cb, gpointer cb_data)
 	gaim_upnp_discover_send_broadcast(dd);
 }
 
-static void
+static GaimUtilFetchUrlData*
 gaim_upnp_generate_action_message_and_send(const gchar* actionName,
 		const gchar* actionParams, GaimUtilFetchUrlCallback cb,
 		gpointer cb_data)
 {
-
+	GaimUtilFetchUrlData* gfud;
 	gchar* soapMessage;
 	gchar* totalSendMessage;
 	gchar* pathOfControl;
@@ -703,11 +706,13 @@ gaim_upnp_generate_action_message_and_send(const gchar* actionName,
 	g_free(pathOfControl);
 	g_free(soapMessage);
 
-	gaim_util_fetch_url_request(control_info.control_url, FALSE, NULL, TRUE,
-			totalSendMessage, TRUE, cb, cb_data);
+	gfud = gaim_util_fetch_url_request(control_info.control_url, FALSE, NULL, TRUE,
+				totalSendMessage, TRUE, cb, cb_data);
 
 	g_free(totalSendMessage);
 	g_free(addressOfControl);
+	
+	return gfud;
 }
 
 const gchar *
@@ -884,8 +889,8 @@ do_port_mapping_cb(gboolean has_control_mapping, gpointer data)
 				ar->portmap, ar->protocol);
 		}
 
-		gaim_upnp_generate_action_message_and_send(action_name,
-				action_params, done_port_mapping_cb, ar);
+		ar->gfud = gaim_upnp_generate_action_message_and_send(action_name,
+						action_params, done_port_mapping_cb, ar);
 
 		g_free(action_params);
 		return;
@@ -904,7 +909,33 @@ fire_port_mapping_failure_cb(gpointer data)
 	return FALSE;
 }
 
-void
+void gaim_upnp_cancel_port_mapping(UPnPMappingAddRemove *ar)
+{
+	GSList *l;
+
+	/* Remove ar from discovery_callbacks if present; it was inserted after a cb.
+	 * The same cb may be in the list multple times, so be careful to remove the one assocaited with ar. */
+	l  = discovery_callbacks;
+	while (l)
+	{
+		if (l->next && (l->next->data == ar)) {
+			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l->next);
+			discovery_callbacks = g_slist_delete_link(discovery_callbacks, l);
+		}
+
+		l = l->next;
+	}
+
+	if (ar->tima > 0)
+		gaim_timeout_remove(ar->tima);
+
+	if (ar->gfud)
+		gaim_util_fetch_url_cancel(ar->gfud);
+
+	g_free(ar);
+}
+
+UPnPMappingAddRemove *
 gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 		GaimUPnPCallback cb, gpointer cb_data)
 {
@@ -925,7 +956,7 @@ gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 				discovery_callbacks, do_port_mapping_cb);
 		discovery_callbacks = g_slist_append(
 				discovery_callbacks, ar);
-		return;
+		return ar;
 	}
 
 	/* If we haven't had a successful UPnP discovery, check if 5 minutes has
@@ -934,22 +965,24 @@ gaim_upnp_set_port_mapping(unsigned short portmap, const gchar* protocol,
 			(control_info.status == GAIM_UPNP_STATUS_UNABLE_TO_DISCOVER
 			 && (time(NULL) - control_info.lookup_time) > 300)) {
 		gaim_upnp_discover(do_port_mapping_cb, ar);
-		return;
+		return ar;
 	} else if(control_info.status == GAIM_UPNP_STATUS_UNABLE_TO_DISCOVER) {
 		if (cb) {
 			/* Asynchronously trigger a failed response */
-			gaim_timeout_add(10, fire_port_mapping_failure_cb, ar);
+			ar->tima = gaim_timeout_add(10, fire_port_mapping_failure_cb, ar);
 		} else {
 			/* No need to do anything if nobody expects a response*/
 			g_free(ar);
+			ar = NULL;
 		}
-		return;
+		return ar;
 	}
 
 	do_port_mapping_cb(TRUE, ar);
+	return ar;
 }
 
-void
+UPnPMappingAddRemove *
 gaim_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 		GaimUPnPCallback cb, gpointer cb_data)
 {
@@ -968,7 +1001,7 @@ gaim_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 				discovery_callbacks, do_port_mapping_cb);
 		discovery_callbacks = g_slist_append(
 				discovery_callbacks, ar);
-		return;
+		return ar;
 	}
 
 	/* If we haven't had a successful UPnP discovery, check if 5 minutes has
@@ -977,17 +1010,19 @@ gaim_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 			(control_info.status == GAIM_UPNP_STATUS_UNABLE_TO_DISCOVER
 			 && (time(NULL) - control_info.lookup_time) > 300)) {
 		gaim_upnp_discover(do_port_mapping_cb, ar);
-		return;
+		return ar;
 	} else if(control_info.status == GAIM_UPNP_STATUS_UNABLE_TO_DISCOVER) {
 		if (cb) {
 			/* Asynchronously trigger a failed response */
-			gaim_timeout_add(10, fire_port_mapping_failure_cb, ar);
+			ar->tima = gaim_timeout_add(10, fire_port_mapping_failure_cb, ar);
 		} else {
 			/* No need to do anything if nobody expects a response*/
 			g_free(ar);
+			ar = NULL;
 		}
-		return;
+		return ar;
 	}
 
 	do_port_mapping_cb(TRUE, ar);
+	return ar;
 }

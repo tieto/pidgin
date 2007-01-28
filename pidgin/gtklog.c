@@ -365,18 +365,15 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 
 	/* Icon *************/
 	if (pixbuf != NULL) {
-		GdkPixbuf *scale;
 		GtkWidget *icon;
 
 		title_box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_container_set_border_width(GTK_CONTAINER(title_box), GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), title_box, FALSE, FALSE, 0);
 
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-		icon = gtk_image_new_from_pixbuf(scale);
+		icon = gtk_image_new_from_pixbuf(pixbuf);
 		gtk_box_pack_start(GTK_BOX(title_box), icon, FALSE, FALSE, 0);
 		g_object_unref(G_OBJECT(pixbuf));
-		g_object_unref(G_OBJECT(scale));
 	} else
 		title_box = GTK_DIALOG(lv->window)->vbox;
 
@@ -503,7 +500,8 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	}
 
 	display_log_viewer(ht, gaim_log_get_logs(type, screenname, account),
-			title, gaim_gtk_create_prpl_icon(account, 0.5), gaim_log_get_total_size(type, screenname, account));
+			title, gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM), 
+			gaim_log_get_total_size(type, screenname, account));
 	g_free(title);
 }
 

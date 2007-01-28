@@ -723,9 +723,7 @@ msn_login(GaimAccount *account)
 		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc,
 			_("SSL support is needed for MSN. Please install a supported "
-			  "SSL library. See http://gaim.sf.net/faq-ssl.php for more "
-			  "information."));
-
+			  "SSL library."));
 		return;
 	}
 

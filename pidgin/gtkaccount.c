@@ -1563,7 +1563,7 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 			g_free(pulse_data);
 		}
 
-		pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+		pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 		if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -1942,7 +1942,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
 
-	/* Status Icon */
+	/* Buddy Icon */
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
@@ -1982,7 +1982,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	GdkPixbuf *statusicon_pixbuf;
 	GdkPixbuf *statusicon_pixbuf_scaled;
 
-	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+	pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -1996,7 +1996,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 		statusicon_pixbuf = NULL;
 
 	if (statusicon_pixbuf) {
-		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 16, 16, GDK_INTERP_HYPER);
+		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
 	} else {
 		statusicon_pixbuf_scaled = NULL;
 	}
@@ -2130,11 +2130,11 @@ create_accounts_list(AccountsWindow *dialog)
        	label = gtk_label_new(NULL);
 	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
 	pretty = gaim_gtk_make_pretty_arrows(_(
-						 "<span size='larger' weight='bold'>Welcome to Gaim!</span>\n\n"
+						 "<span size='larger' weight='bold'>Welcome to " PIDGIN_NAME "!</span>\n\n"
 						 
-						 "You have no IM accounts configured. To start connecting with Gaim "
+						 "You have no IM accounts configured. To start connecting with " PIDGIN_NAME " "
 						 "press the <b>Add</b> button below and configure your first "
-						 "account. If you want Gaim to connect to multiple IM accounts, "
+						 "account. If you want " PIDGIN_NAME " to connect to multiple IM accounts, "
 						 "press <b>Add</b> again to configure them all.\n\n"
 						 
 						 "You can come back to this window to add, edit, or remove "
@@ -2402,7 +2402,7 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 	gc = gaim_account_get_connection(account);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_INFO, buffer,
+	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_INFO, buffer,
 					  NULL, NULL, _("Close"), NULL, NULL);
 	gaim_gtk_blist_add_alert(alert);
 
@@ -2427,7 +2427,7 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	data->alias    = g_strdup(alias);
 	
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 					  _("Add buddy to your list?"), buffer, data, 
 					  _("Add"), G_CALLBACK(add_user_cb),
 					  _("Cancel"), G_CALLBACK(free_add_user_data), NULL);
@@ -2502,13 +2502,13 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
 		aa->account = account;
-		alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+		alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, aa,
 						  _("Authorize"), authorize_and_add_cb, 
 						  _("Deny"), deny_no_add_cb, 
 						  NULL);
 	} else {
-		alert = gaim_gtk_make_mini_dialog(gc, GAIM_STOCK_DIALOG_QUESTION,
+		alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, user_data,
 						  _("Authorize"), auth_cb, 
 						  _("Deny"), deny_cb, 

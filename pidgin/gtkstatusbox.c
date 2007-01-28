@@ -518,7 +518,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	gboolean account_status = FALSE;
 	GaimAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
 
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	
 	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
@@ -596,7 +596,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	  {
 	    GaimStatusType *status_type;
 	    GaimStatusPrimitive prim;
-	    GtkIconSize icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	    GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	    if (account_status) {
 	    	status_type = gaim_status_get_type(gaim_account_get_active_status(acct));
 	        prim = gaim_status_type_get_primitive(status_type);
@@ -605,20 +605,20 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	    }
 
 	    if (prim == GAIM_STATUS_UNAVAILABLE)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_BUSY,
-		   			         icon_size, "GtkTreeView");
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
+		   			         icon_size, "PidginStatusBox");
 	    else if (prim == GAIM_STATUS_AWAY)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
-		 			         icon_size, "GtkTreeView");
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
+		 			         icon_size, "PidginStatusBox");
 	    else if (prim == GAIM_STATUS_EXTENDED_AWAY)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_XA,
-					         icon_size, "GtkTreeView");
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
+					         icon_size, "PidginStatusBox");
 	    else if (prim == GAIM_STATUS_OFFLINE)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
-					         icon_size, "GtkTreeView");
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
+					         icon_size, "PidginStatusBox");
 	    else
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AVAILABLE,
-					         icon_size, "GtkTreeView");
+	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AVAILABLE,
+					         icon_size, "PidginStatusBox");
 #if 0
 		if (account_status)
 			pixbuf = gaim_gtk_create_prpl_icon_with_status(acct,
@@ -846,7 +846,7 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 		/* Odd... oh well, nothing we can do about it. */
 		return;
 
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	gtk_gaim_status_box_add_separator(statusbox);
 
@@ -861,20 +861,20 @@ add_popular_statuses(GtkGaimStatusBox *statusbox)
 	      	prim = gaim_savedstatus_get_type(saved);
 
             	if (prim == GAIM_STATUS_UNAVAILABLE)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_BUSY,
-                       	        	                  icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_BUSY,
+                       	        	                  icon_size, "PidginStatusBox");
             	else if (prim == GAIM_STATUS_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_AWAY,
-                        	                         icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_AWAY,
+                        	                         icon_size, "PidginStatusBox");
             	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_XA,
-                        	                         icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_XA,
+                        	                         icon_size, "PidginStatusBox");
             	else if (prim == GAIM_STATUS_OFFLINE)
-               		pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_OFFLINE,
-                        	                         icon_size, "GtkTreeView");
+               		pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_OFFLINE,
+                        	                         icon_size, "PidginStatusBox");
             	else
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), GAIM_STOCK_STATUS_AVAILABLE,
-                        	                         icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_AVAILABLE,
+                        	                         icon_size, "PidginStatusBox");
       
 		if (gaim_savedstatus_is_transient(saved))
 		{
@@ -980,7 +980,7 @@ add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account)
 	{
 		GaimStatusType *status_type = (GaimStatusType *)l->data;
 		GaimStatusPrimitive prim;
-		GtkIconSize icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 		if (!gaim_status_type_is_user_settable(status_type))
 			continue;
@@ -988,20 +988,20 @@ add_account_statuses(GtkGaimStatusBox *status_box, GaimAccount *account)
             	prim = gaim_status_type_get_primitive(status_type);
 
             	if (prim == GAIM_STATUS_UNAVAILABLE)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_BUSY,
-                       		                          icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
+                       		                          icon_size, "PidginStatusBox");
             	else if (prim == GAIM_STATUS_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
-                       		                          icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
+                       		                          icon_size, "PidginStatusBox");
             	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_XA,
-                        	                         icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
+                        	                         icon_size, "PidginStatusBox");
             	else if (prim == GAIM_STATUS_OFFLINE)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
-                        	                         icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
+                        	                         icon_size, "PidginStatusBox");
             	else
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AVAILABLE,
-                        	                         icon_size, "GtkTreeView");
+                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AVAILABLE,
+                        	                         icon_size, "PidginStatusBox");
 
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
 					GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf,
@@ -1019,7 +1019,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	/* Unset the model while clearing it */
 	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), NULL);
@@ -1031,7 +1031,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 	if (status_box->account == NULL)
 	{
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AVAILABLE,
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_AVAILABLE,
 		                                 icon_size, "GtkGaimStatusBox");
 		/* Do all the currently enabled accounts have the same statuses?
 		 * If so, display them instead of our global list.
@@ -1040,12 +1040,12 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			add_account_statuses(status_box, status_box->token_status_account);
 		} else {
 			/* Global */
-			pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AWAY,
-			                                  icon_size, "GtkGaimStatusBox");
-			pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
-			                                  icon_size, "GtkGaimStatusBox");
+			pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_AWAY,
+			                                  icon_size, "PidginStatusBox");
+			pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_OFFLINE,
+			                                  icon_size, "PidginStatusBox");
 			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_INVISIBLE,
-			                                  icon_size, "GtkGaimStatusBox");
+			                                  icon_size, "PidginStatusBox");
 
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(GAIM_STATUS_AWAY));
@@ -1149,7 +1149,7 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 	GtkIconSize icon_size;
 	
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
-	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_TANGO_EXTRA_SMALL);
+	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	if (status_box->connecting_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);

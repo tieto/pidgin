@@ -186,7 +186,7 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 
 	events = gaim_pounce_get_events(pounce);
 
-	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+	pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
 	pouncer = gaim_account_get_username(account);
 	pouncee = gaim_pounce_get_pouncee(pounce);

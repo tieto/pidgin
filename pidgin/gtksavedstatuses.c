@@ -969,7 +969,7 @@ status_editor_set_account(GtkListStore *store, GaimAccount *account,
 	GdkPixbuf *pixbuf;
 	const char *id = NULL, *name = NULL, *message = NULL;
 
-	pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+	pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && !gaim_account_is_connected(account))
 	{
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
@@ -1538,7 +1538,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 			continue;
 
 		id = gaim_status_type_get_id(status_type);
-		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type, 0.5);
+		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, status_type, PIDGIN_PRPL_ICON_MEDIUM);
 		name = gaim_status_type_get_name(status_type);
 
 		gtk_list_store_append(dialog->model, &iter);

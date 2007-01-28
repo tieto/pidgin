@@ -37,11 +37,6 @@
 #endif
 
 /**
- * Our user-readable name
- */
-#define PIDGIN_NAME "Pidgin" 
-
-/**
  * Our UI's identifier.
  */
 #define GAIM_GTK_UI "gtk-gaim"
