@@ -159,7 +159,7 @@ static GHashTable *account_pref_wins;
 
 static void add_account_to_liststore(GaimAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
-						  GaimAccount *account);
+						  GaimAccount *account, GdkPixbuf *global_buddyicon);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -1369,7 +1369,7 @@ register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 
 static const GtkTargetEntry dnd_targets[] = {
-       {"text/plain", 0, 0},
+	{"text/plain", 0, 0},
 	{"text/uri-list", 0, 1},
 	{"STRING", 0, 2}
 };
@@ -1626,7 +1626,7 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 	/* Remove the account from the GtkListStore */
 	if (accounts_window_find_account_in_treemodel(&iter, account))
 		gtk_list_store_remove(accounts_window->model, &iter);
-	
+
 	if (gaim_accounts_get_all() == NULL)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 0);
 }
@@ -1694,7 +1694,7 @@ move_account_after(GtkListStore *store, GtkTreeIter *iter,
 
 	gtk_list_store_insert_after(store, &new_iter, position);
 
-	set_account(store, &new_iter, account);
+	set_account(store, &new_iter, account, NULL);
 
 	gtk_list_store_remove(store, iter);
 }
@@ -1712,7 +1712,7 @@ move_account_before(GtkListStore *store, GtkTreeIter *iter,
 
 	gtk_list_store_insert_before(store, &new_iter, position);
 
-	set_account(store, &new_iter, account);
+	set_account(store, &new_iter, account, NULL);
 
 	gtk_list_store_remove(store, iter);
 }
@@ -1975,35 +1975,35 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 }
 
 static void
-set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
+set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPixbuf *global_buddyicon)
 {
-	const char *path;
-	GdkPixbuf *pixbuf;
-	GdkPixbuf *statusicon_pixbuf;
-	GdkPixbuf *statusicon_pixbuf_scaled;
+	GdkPixbuf *pixbuf, *buddyicon = NULL;
+	const char *path = NULL;
 
 	pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	if (gaim_account_get_bool(account, "use-global-buddyicon", TRUE))
-		path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
-	else
+	if (gaim_account_get_bool(account, "use-global-buddyicon", TRUE)) {
+		if (global_buddyicon != NULL)
+			buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
+		/* This is for when set_account() is called for a single account */
+		else
+			path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
+	} else
 		path = gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL);
-	if (path != NULL)
-		statusicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
-	else
-		statusicon_pixbuf = NULL;
 
-	if (statusicon_pixbuf) {
-		statusicon_pixbuf_scaled = gdk_pixbuf_scale_simple(statusicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
-	} else {
-		statusicon_pixbuf_scaled = NULL;
+	if (path != NULL) {
+		GdkPixbuf *buddyicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+		if (buddyicon_pixbuf != NULL) {
+			buddyicon = gdk_pixbuf_scale_simple(buddyicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
+			g_object_unref(G_OBJECT(buddyicon_pixbuf));
+		}
 	}
 
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, pixbuf,
-			COLUMN_BUDDYICON, statusicon_pixbuf_scaled,
+			COLUMN_BUDDYICON, buddyicon,
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
 			COLUMN_ENABLED, gaim_account_get_enabled(account, GAIM_GTK_UI),
 			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
@@ -2012,16 +2012,15 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 
 	if (pixbuf != NULL)
 		g_object_unref(G_OBJECT(pixbuf));
-	if (statusicon_pixbuf != NULL)
-		g_object_unref(G_OBJECT(statusicon_pixbuf));
-	if (statusicon_pixbuf_scaled != NULL)
-		g_object_unref(G_OBJECT(statusicon_pixbuf_scaled));
+	if (buddyicon != NULL)
+		g_object_unref(G_OBJECT(buddyicon));
 }
 
 static void
 add_account_to_liststore(GaimAccount *account, gpointer user_data)
 {
 	GtkTreeIter iter;
+	GdkPixbuf *global_buddyicon = user_data;
 
 	if (accounts_window == NULL)
 		return;
@@ -2029,7 +2028,7 @@ add_account_to_liststore(GaimAccount *account, gpointer user_data)
 	gtk_list_store_append(accounts_window->model, &iter);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook),1);
 
-	set_account(accounts_window->model, &iter, account);
+	set_account(accounts_window->model, &iter, account, global_buddyicon);
 }
 
 static gboolean
@@ -2037,13 +2036,26 @@ populate_accounts_list(AccountsWindow *dialog)
 {
 	GList *l;
 	gboolean ret = FALSE;
-	
+	GdkPixbuf *global_buddyicon = NULL;
+	const char *path;
+
 	gtk_list_store_clear(dialog->model);
+
+	if ((path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon")) != NULL) {
+		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+		if (pixbuf != NULL) {
+			global_buddyicon = gdk_pixbuf_scale_simple(pixbuf, 22, 22, GDK_INTERP_HYPER);
+			g_object_unref(G_OBJECT(pixbuf));
+		}
+	}
 
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		ret = TRUE;
-		add_account_to_liststore((GaimAccount *)l->data, NULL);
+		add_account_to_liststore((GaimAccount *)l->data, global_buddyicon);
 	}
+
+	if (global_buddyicon != NULL)
+		g_object_unref(G_OBJECT(global_buddyicon));
 
 	return ret;
 }
@@ -2125,9 +2137,8 @@ create_accounts_list(AccountsWindow *dialog)
 	gtk_notebook_set_show_border(GTK_NOTEBOOK(accounts_window->notebook), FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), accounts_window->notebook);
 
-       	
 	/* Create a helpful first-time-use label */
-       	label = gtk_label_new(NULL);
+	label = gtk_label_new(NULL);
 	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
 	pretty = gaim_gtk_make_pretty_arrows(_(
 						 "<span size='larger' weight='bold'>Welcome to " PIDGIN_NAME "!</span>\n\n"
@@ -2190,7 +2201,7 @@ create_accounts_list(AccountsWindow *dialog)
 
 	if (populate_accounts_list(dialog))
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 1);
-	else 
+	else
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 0);
 
 	/* Setup DND. I wanna be an orc! */
@@ -2205,7 +2216,7 @@ create_accounts_list(AccountsWindow *dialog)
 					 G_CALLBACK(drag_data_received_cb), dialog);
 	g_signal_connect(G_OBJECT(treeview), "drag-data-get",
 					 G_CALLBACK(drag_data_get_cb), dialog);
-	
+
 	gtk_widget_show_all(frame);
 	return frame;
 }
@@ -2218,7 +2229,7 @@ account_modified_cb(GaimAccount *account, AccountsWindow *window)
 	if (!accounts_window_find_account_in_treemodel(&iter, account))
 		return;
 
-	set_account(window->model, &iter, account);
+	set_account(window->model, &iter, account, NULL);
 }
 
 static void
@@ -2425,14 +2436,14 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	data->account  = account;
 	data->username = g_strdup(remote_user);
 	data->alias    = g_strdup(alias);
-	
+
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 					  _("Add buddy to your list?"), buffer, data, 
 					  _("Add"), G_CALLBACK(add_user_cb),
 					  _("Cancel"), G_CALLBACK(free_add_user_data), NULL);
 	gaim_gtk_blist_add_alert(alert);
-        
+
 	g_free(buffer);
 }
 
@@ -2479,7 +2490,7 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 	gc = gaim_account_get_connection(account);
 	if (message != NULL && *message == '\0')
 		message = NULL;
-	
+
 	buffer = g_strdup_printf(_("%s%s%s%s wants to add %s to his or her buddy list%s%s"),
 				remote_user,
 	 	                (alias != NULL ? " ("  : ""),
