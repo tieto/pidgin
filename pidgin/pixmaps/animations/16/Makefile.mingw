@@ -1,0 +1,20 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of Pidgin pixmaps
+#
+
+GAIM_TOP := ../../../..
+include $(GAIM_TOP)/libpurple/win32/global.mak
+
+datadir = $(GAIM_INSTALL_DIR)
+include ./Makefile.am
+
+.PHONY: install
+
+install:
+	if test '$(pidginanimpix_DATA)'; then \
+	  mkdir -p $(pidginanimpixdir); \
+	  cp $(pidginanimpix_DATA) $(pidginanimpixdir); \
+	fi;
+
