@@ -134,7 +134,7 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 	wgaim_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	wgaim_nid.uCallbackMessage = WM_TRAYMESSAGE;
 	wgaim_nid.hIcon = icon;
-	lstrcpy(wgaim_nid.szTip, "Gaim");
+	lstrcpy(wgaim_nid.szTip, PIDGIN_NAME);
 	Shell_NotifyIcon(NIM_ADD, &wgaim_nid);
 	gaim_gtk_docklet_embedded();
 }
@@ -181,7 +181,7 @@ static void wgaim_tray_set_tooltip(gchar *tooltip) {
 		lstrcpyn(wgaim_nid.szTip, locenc, sizeof(wgaim_nid.szTip) / sizeof(TCHAR));
 		g_free(locenc);
 	} else {
-		lstrcpy(wgaim_nid.szTip, "Gaim");
+		lstrcpy(wgaim_nid.szTip, PIDGIN_NAME);
 	}
 	Shell_NotifyIcon(NIM_MODIFY, &wgaim_nid);
 }
