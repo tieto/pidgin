@@ -150,6 +150,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_STATUS_AWAY, 	"status", "away.png", 		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_INVISIBLE,"status", "invisible.png",      TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
@@ -165,6 +166,15 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_DIALOG_MAIL,	"dialogs", "mail.png",		TRUE, FALSE, FALSE, TRUE },
 	{ PIDGIN_STOCK_DIALOG_QUESTION,	"dialogs", "question.png",	TRUE, FALSE, FALSE, TRUE },
 	{ PIDGIN_STOCK_DIALOG_WARNING,	"dialogs", "warning.png",	FALSE, FALSE, FALSE, TRUE },
+
+	{ PIDGIN_STOCK_ANIMATION_CONNECT0, "animations", "connect0.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_CONNECT1, "animations", "connect1.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_CONNECT2, "animations", "connect2.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_CONNECT3, "animations", "connect3.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_TYPING0,  "animations", "typing0.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_TYPING1,  "animations", "typing1.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_TYPING2,  "animations", "typing2.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_TYPING3,  "animations", "typing3.png",TRUE, FALSE, FALSE, FALSE },
 };
 
 static gchar *

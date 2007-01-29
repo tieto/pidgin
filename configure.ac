@@ -1895,6 +1895,8 @@ AC_OUTPUT([Makefile
 		   m4macros/Makefile
 		   pidgin/Makefile
 		   pidgin/pixmaps/Makefile
+		   pidgin/pixmaps/animations/Makefile
+		   pidgin/pixmaps/animations/16/Makefile
 		   pidgin/pixmaps/buddy_icons/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
  		   pidgin/pixmaps/dialogs/Makefile

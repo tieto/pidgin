@@ -1044,7 +1044,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 			                                  icon_size, "PidginStatusBox");
 			pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_OFFLINE,
 			                                  icon_size, "PidginStatusBox");
-			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_INVISIBLE,
+			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_INVISIBLE,
 			                                  icon_size, "PidginStatusBox");
 
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
@@ -1161,14 +1161,14 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 		gdk_pixbuf_unref(status_box->connecting_pixbufs[3]);
 
 	status_box->connecting_index = 0;
-	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT0,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[1] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT1,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[2] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT2,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT3,
-								     icon_size, "GtkGaimStatusBox");
+	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT0,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[1] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT1,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[2] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT2,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT3,
+								     icon_size, "PidginStatusBox");
 
 	if (status_box->typing_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->typing_pixbufs[0]);
@@ -1180,14 +1180,14 @@ cache_pixbufs(GtkGaimStatusBox *status_box)
 		gdk_pixbuf_unref(status_box->typing_pixbufs[3]);
 
 	status_box->typing_index = 0;
-	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING0,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->typing_pixbufs[1] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING1,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->typing_pixbufs[2] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING2,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->typing_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING3,
-								     icon_size, "GtkGaimStatusBox");
+	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING0,
+								     icon_size, "PidginStatusBox");
+	status_box->typing_pixbufs[1] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING1,
+								     icon_size, "PidginStatusBox");
+	status_box->typing_pixbufs[2] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING2,
+								     icon_size, "PidginStatusBox");
+	status_box->typing_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING3,
+								     icon_size, "PidginStatusBox");
 }
 
 static void account_enabled_cb(GaimAccount *acct, GtkGaimStatusBox *status_box) {

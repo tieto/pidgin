@@ -99,6 +99,7 @@
 #define PIDGIN_STOCK_STATUS_AWAY      "pidgin-status-away"
 #define PIDGIN_STOCK_STATUS_BUSY      "pidgin-status-busy"
 #define PIDGIN_STOCK_STATUS_CHAT      "pidgin-status-chat"
+#define PIDGIN_STOCK_STATUS_INVISIBLE "pidgin-status-invisible"
 #define PIDGIN_STOCK_STATUS_XA        "pidgin-status-xa"
 #define PIDGIN_STOCK_STATUS_LOGIN     "pidgin-status-login"
 #define PIDGIN_STOCK_STATUS_LOGOUT    "pidgin-status-logout"
@@ -115,6 +116,16 @@
 #define PIDGIN_STOCK_DIALOG_QUESTION	"pidgin-dialog-question"
 #define PIDGIN_STOCK_DIALOG_COOL	"pidgin-dialog-cool"
 #define PIDGIN_STOCK_DIALOG_WARNING	"pidgin-dialog-warning"
+
+/* StatusBox Animations */
+#define PIDGIN_STOCK_ANIMATION_CONNECT0 "pidgin-anim-connect0"
+#define PIDGIN_STOCK_ANIMATION_CONNECT1 "pidgin-anim-connect1"
+#define PIDGIN_STOCK_ANIMATION_CONNECT2 "pidgin-anim-connect2"
+#define PIDGIN_STOCK_ANIMATION_CONNECT3 "pidgin-anim-connect3"
+#define PIDGIN_STOCK_ANIMATION_TYPING0	"pidgin-anim-typing0"
+#define PIDGIN_STOCK_ANIMATION_TYPING1	"pidgin-anim-typing1"
+#define PIDGIN_STOCK_ANIMATION_TYPING2	"pidgin-anim-typing2"
+#define PIDGIN_STOCK_ANIMATION_TYPING3	"pidgin-anim-typing3"
 
 /*@}*/
 

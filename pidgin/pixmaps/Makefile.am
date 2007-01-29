@@ -1,4 +1,4 @@
-SUBDIRS = buddy_icons dialogs emblems emotes protocols status
+SUBDIRS = animations buddy_icons dialogs emblems emotes protocols status
 
 EXTRA_DIST = \
 		about_menu.png			\
