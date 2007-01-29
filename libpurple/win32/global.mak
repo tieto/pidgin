@@ -5,20 +5,23 @@
 # wide definitions (after correctly defining GAIM_TOP).
 #
 
+#include optional $(GAIM_TOP)/local.mak to allow overriding of any definitions
+-include $(GAIM_TOP)/local.mak
+
 # Locations of our various dependencies
-WIN32_DEV_TOP := $(GAIM_TOP)/../win32-dev
-ASPELL_TOP := $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
-GTKSPELL_TOP := $(WIN32_DEV_TOP)/gtkspell-2.0.6
-GTK_TOP := $(WIN32_DEV_TOP)/gtk_2_0
-GTK_BIN := $(GTK_TOP)/bin
-HOWL_TOP := $(WIN32_DEV_TOP)/howl-1.0.0
-LIBXML2_TOP := $(WIN32_DEV_TOP)/libxml2
-MEANWHILE_TOP := $(WIN32_DEV_TOP)/meanwhile-1.0.2
-NSPR_TOP := $(WIN32_DEV_TOP)/nspr-4.6.4
-NSS_TOP := $(WIN32_DEV_TOP)/nss-3.11.4
-PERL_LIB_TOP := $(WIN32_DEV_TOP)/perl58
-SILC_TOOLKIT := $(WIN32_DEV_TOP)/silc-toolkit-1.0.2
-TCL_LIB_TOP := $(WIN32_DEV_TOP)/tcl-8.4.5
+WIN32_DEV_TOP ?= $(GAIM_TOP)/../win32-dev
+ASPELL_TOP ?= $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
+GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.6
+GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0
+GTK_BIN ?= $(GTK_TOP)/bin
+HOWL_TOP ?= $(WIN32_DEV_TOP)/howl-1.0.0
+LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2
+MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2
+NSPR_TOP ?= $(WIN32_DEV_TOP)/nspr-4.6.4
+NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.11.4
+PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl58
+SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.0.2
+TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 
 # Where we installing this stuff to?
 GAIM_INSTALL_DIR := $(GAIM_TOP)/win32-install-dir
@@ -44,8 +47,8 @@ GAIM_IDLETRACK_DLL := $(GAIM_GTK_IDLETRACK_TOP)/idletrack.dll
 GAIM_LIBGAIM_DLL := $(GAIM_LIB_TOP)/libpurple.dll
 GAIM_LIBGAIM_PERL_DLL := $(GAIM_LIB_PERL_TOP)/perl.dll
 GAIM_GTKGAIM_DLL := $(GAIM_GTK_TOP)/pidgin.dll
-GAIM_EXE := $(GAIM_GTK_TOP)/gaim.exe
-GAIM_PORTABLE_EXE := $(GAIM_GTK_TOP)/gaim-portable.exe
+GAIM_EXE := $(GAIM_GTK_TOP)/pidgin.exe
+GAIM_PORTABLE_EXE := $(GAIM_GTK_TOP)/pidgin-portable.exe
 
 GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
@@ -75,11 +78,13 @@ CFLAGS += -O2 -Wall $(GCCWARNINGS) -pipe -mno-cygwin -mms-bitfields -g
 DLL_LD_FLAGS += -Wl,--enable-auto-image-base
 
 # Build programs
-CC := gcc.exe
-GMSGFMT := $(GTK_BIN)/msgfmt
-MAKENSIS := makensis.exe
-PERL := /cygdrive/c/perl/bin/perl
-WINDRES := windres
+ifeq "$(origin CC)" "default"
+  CC := gcc.exe
+endif
+GMSGFMT ?= $(GTK_BIN)/msgfmt
+MAKENSIS ?= makensis.exe
+PERL ?= /cygdrive/c/perl/bin/perl
+WINDRES ?= windres
 
 GAIM_COMMON_RULES := $(GAIM_LIB_TOP)/win32/rules.mak
 GAIM_COMMON_TARGETS := $(GAIM_LIB_TOP)/win32/targets.mak

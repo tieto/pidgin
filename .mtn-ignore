@@ -48,6 +48,7 @@ libpurple/plugins/perl/common/const-xs.inc
 libpurple/plugins/perl/common/lib
 libpurple/win32/libpurplerc.rc
 libtool
+local.mak
 ltmain.sh
 missing
 mkinstalldirs

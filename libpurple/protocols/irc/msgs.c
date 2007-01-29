@@ -442,27 +442,23 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 	GaimConversation *convo;
 
 	if (!strcmp(name, "366")) {
-		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, irc->nameconv ? irc->nameconv : args[1], irc->account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, args[1], irc->account);
 		if (!convo) {
 			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Got a NAMES list for %s, which doesn't exist\n", args[1]);
 			g_string_free(irc->names, TRUE);
 			irc->names = NULL;
-			g_free(irc->nameconv);
-			irc->nameconv = NULL;
 			return;
 		}
 
 		names = cur = g_string_free(irc->names, FALSE);
 		irc->names = NULL;
-		if (irc->nameconv) {
+		if (gaim_conversation_get_data(convo, IRC_NAMES_FLAG)) {
 			msg = g_strdup_printf(_("Users on %s: %s"), args[1], names ? names : "");
 			if (gaim_conversation_get_type(convo) == GAIM_CONV_TYPE_CHAT)
 				gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			else
 				gaim_conv_im_write(GAIM_CONV_IM(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			g_free(msg);
-			g_free(irc->nameconv);
-			irc->nameconv = NULL;
 		} else {
 			GList *users = NULL;
 			GList *flags = NULL;
@@ -504,6 +500,9 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 				g_list_free(users);
 				g_list_free(flags);
 			}
+
+			gaim_conversation_set_data(convo, IRC_NAMES_FLAG,
+						   GINT_TO_POINTER(TRUE));
 		}
 		g_free(names);
 	} else {
@@ -723,10 +722,13 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 							    args[0],
 							    irc->account);
+
 		if (convo == NULL) {
 			gaim_debug_error("irc", "tried to join %s but couldn't\n", args[0]);
 			return;
 		}
+		gaim_conversation_set_data(convo, IRC_NAMES_FLAG,
+					   GINT_TO_POINTER(FALSE));
 		gaim_conversation_present(convo);
 		return;
 	}
