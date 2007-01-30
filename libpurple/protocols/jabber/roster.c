@@ -226,7 +226,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 					groups = g_slist_append(groups, group_name);
 			}
 			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
-				jabber_google_roster_incoming(js, item);
+				if (!jabber_google_roster_incoming(js, item))
+					continue;
 			add_gaim_buddies_in_groups(js, jid, name, groups);
 		}
 	}
