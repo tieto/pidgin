@@ -1146,6 +1146,8 @@ void
 gaim_plugins_init(void) {
 	void *handle = gaim_plugins_get_handle();
 
+        gaim_plugins_add_search_path(LIBDIR);
+
 	gaim_signal_register(handle, "plugin-load",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,

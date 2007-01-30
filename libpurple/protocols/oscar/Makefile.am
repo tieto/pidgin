@@ -3,7 +3,7 @@ EXTRA_DIST = \
 		AUTHORS \
 		Makefile.mingw
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 OSCARSOURCES = \
 	bstream.c           \

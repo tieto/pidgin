@@ -1,6 +1,6 @@
 EXTRA_DIST = README TODO Makefile.mingw
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 SILCSOURCES = silc.c silcgaim.h buddy.c chat.c ft.c ops.c pk.c util.c wb.c wb.h
 

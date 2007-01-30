@@ -1,10 +1,10 @@
-capdir = $(libdir)/gaim
+capdir = $(libdir)/pidgin
 
 cap_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
-cappixdir = $(datadir)/pixmaps/gaim/buttons
+cappixdir = $(datadir)/pixmaps/pidgin/buttons
 
 cap_LTLIBRARIES = cap.la
 

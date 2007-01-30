@@ -24,7 +24,7 @@ SUBDIRS = \
 	$(PERL_DIR) \
 	ticker
 
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/pidgin
 
 convcolors_la_LDFLAGS       = -module -avoid-version
 extplacement_la_LDFLAGS     = -module -avoid-version

@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	lib/pubdir50.c \
 	lib/pubdir.c
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 if USE_INTERNAL_LIBGADU
 INTGGSOURCES = \

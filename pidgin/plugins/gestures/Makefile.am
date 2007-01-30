@@ -1,4 +1,4 @@
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/pidgin
 
 gestures_la_LDFLAGS = -module -avoid-version
 

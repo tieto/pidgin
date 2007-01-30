@@ -59,9 +59,9 @@ if ENABLE_GTK
 
 SUBDIRS = pixmaps plugins sounds
 
-bin_PROGRAMS = gaim
+bin_PROGRAMS = pidgin
 
-gaim_SOURCES = \
+pidgin_SOURCES = \
 	eggtrayicon.c \
 	gaimcombobox.c \
 	gaimstock.c \
@@ -106,7 +106,7 @@ gaim_SOURCES = \
 	gtkutils.c \
 	gtkwhiteboard.c
 
-gaim_headers = \
+pidgin_headers = \
 	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
@@ -154,14 +154,14 @@ gaim_headers = \
 	gtkutils.h \
 	gtkwhiteboard.h
 
-gaimincludedir=$(includedir)/gaim
-gaiminclude_HEADERS = \
+pidginincludedir=$(includedir)/pidgin
+pidgininclude_HEADERS = \
 	$(gaim_headers)
 
 
-gaim_DEPENDENCIES = @LIBOBJS@
-gaim_LDFLAGS = -export-dynamic
-gaim_LDADD = \
+pidgin_DEPENDENCIES = @LIBOBJS@
+pidgin_LDFLAGS = -export-dynamic
+pidgin_LDADD = \
 	@LIBOBJS@ \
 	$(DBUS_LIBS) \
 	$(GSTREAMER_LIBS) \
@@ -172,7 +172,7 @@ gaim_LDADD = \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
-	$(top_builddir)/libpurple/libgaim.la
+	$(top_builddir)/libpurple/libpurple.la
 
 if USE_INTERNAL_LIBGADU
 INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
@@ -181,7 +181,7 @@ endif
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/gaim/\" \
+	-DLIBDIR=\"$(libdir)/pidgin/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libpurple/ \

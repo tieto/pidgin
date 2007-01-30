@@ -1,4 +1,4 @@
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 ZEPHYRSOURCES = \
 	ZAsyncLocate.c \

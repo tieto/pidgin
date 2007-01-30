@@ -1,4 +1,4 @@
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/libpurple
 hackdir = $(plugindir)/private
 
 perl_dirs = common

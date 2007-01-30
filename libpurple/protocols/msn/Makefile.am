@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 MSNSOURCES = \
 	cmdproc.c \

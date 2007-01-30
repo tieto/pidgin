@@ -2,7 +2,7 @@
 EXTRA_DIST = Makefile.mingw
 
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 
 noinst_HEADERS = sametime.h

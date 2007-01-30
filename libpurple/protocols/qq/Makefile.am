@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 QQSOURCES = \
 	buddy_info.c \

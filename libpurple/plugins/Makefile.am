@@ -22,7 +22,7 @@ SUBDIRS = \
 	ssl \
 	$(TCL_DIR)
 
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/libpurple
 
 autoaccept_la_LDFLAGS       = -module -avoid-version
 autoreply_la_LDFLAGS        = -module -avoid-version

@@ -2,7 +2,7 @@ EXTRA_DIST = \
 		PROTOCOL \
 		Makefile.mingw
 
-pkgdir = $(libdir)/gaim
+pkgdir = $(libdir)/libpurple
 
 TOCSOURCES = toc.c
 

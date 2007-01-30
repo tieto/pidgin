@@ -198,9 +198,9 @@ bin_SCRIPTS = gaim-remote gaim-send gaim-send-async gaim-url-handler
 
 endif
 
-lib_LTLIBRARIES = libgaim.la $(libgaim_client_lib)
+lib_LTLIBRARIES = libpurple.la $(libgaim_client_lib)
 
-libgaim_la_SOURCES = \
+libpurple_la_SOURCES = \
 	$(gaim_coresources) \
 	$(dbus_sources)
 
@@ -208,14 +208,14 @@ noinst_HEADERS= \
 	internal.h \
 	prefix.h
 
-libgaimincludedir=$(includedir)/gaim
-libgaiminclude_HEADERS = \
+libpurpleincludedir=$(includedir)/libpurple
+libpurpleinclude_HEADERS = \
 	$(gaim_coreheaders) \
 	$(dbus_headers)
 
-libgaim_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
-libgaim_la_LDFLAGS = -export-dynamic
-libgaim_la_LIBADD = \
+libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
+libpurple_la_LDFLAGS = -export-dynamic
+libpurple_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
@@ -227,7 +227,7 @@ libgaim_la_LIBADD = \
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/gaim/\" \
+	-DLIBDIR=\"$(libdir)/libpurple/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \

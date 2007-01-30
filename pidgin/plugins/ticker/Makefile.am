@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/pidgin
 
 ticker_la_LDFLAGS = -module -avoid-version
 

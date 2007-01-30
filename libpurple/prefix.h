@@ -76,7 +76,7 @@ extern "C" {
 	#define BINDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/bin")))
 	#define SBINDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/sbin")))
 	#define DATADIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/share")))
-	#define LIBDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/lib/gaim")))
+	#define LIBDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/lib/libpurple")))
 	#define LIBEXECDIR	(br_thread_local_store (br_prepend_prefix ((void *) "", "/libexec")))
 	#define ETCDIR		(br_thread_local_store (br_prepend_prefix ((void *) "", "/etc")))
 	#define SYSCONFDIR	(br_thread_local_store (br_prepend_prefix ((void *) "", "/etc")))
