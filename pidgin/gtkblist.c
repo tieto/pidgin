@@ -2272,11 +2272,12 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 	pango_layout_get_size (td->name_layout, &td->name_width, &td->name_height);
 	td->name_width = PANGO_PIXELS(td->name_width) + SMALL_SPACE + PRPL_SIZE;
 	td->name_height = MAX(PANGO_PIXELS(td->name_height), PRPL_SIZE + SMALL_SPACE);
-
+#if 0  /* PRPL Icon as avatar */
 	if(!td->avatar && full) {
 		td->avatar = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
 		td->avatar_is_prpl_icon = TRUE;
 	}
+#endif
 	td->avatar_width = gdk_pixbuf_get_width(td->avatar);
 	td->avatar_height = gdk_pixbuf_get_height(td->avatar);
 
@@ -2289,6 +2290,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	GtkStyle *style;
 	int current_height, max_width;
 	GList *l;
+	int prpl_col = 0;
 
 	if(gtkblist->tooltipdata == NULL)
 		return;
@@ -2304,6 +2306,8 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 		max_width = MAX(max_width,
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
 				MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
+		prpl_col = MAX(prpl_col, 
+				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + td->name_width - PRPL_SIZE);
 	}
 
 	current_height = 12;
@@ -2328,7 +2332,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 		if (!td->avatar_is_prpl_icon)
 			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
 					0, 0,
-					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + td->name_width - PRPL_SIZE,
+					prpl_col,
 					current_height + ((td->name_height / 2) - (PRPL_SIZE / 2)),
 					-1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 
