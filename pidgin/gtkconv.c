@@ -260,7 +260,7 @@ default_formatize(GaimGtkConversation *c)
 
 	if (conv->features & GAIM_CONNECTION_HTML)
 	{
-		char *color;
+		char color[8];
 		GdkColor fg_color, bg_color;
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold") != GTK_IMHTML(c->entry)->edit.bold)
@@ -281,42 +281,35 @@ default_formatize(GaimGtkConversation *c)
 
 			/* 3 is the default. */
 			if (size != 3)
-			{
 				gtk_imhtml_font_set_size(GTK_IMHTML(c->entry), size);
-			}
 		}
 
 		if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
 		{
 			gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
 							&fg_color);
-			color = g_strdup_printf("#%02x%02x%02x",
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
 									fg_color.red   / 256,
 									fg_color.green / 256,
 									fg_color.blue  / 256);
-		}
-		else
-			color = g_strdup("");
+		} else
+			strcpy(color, "");
 
 		gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
-		g_free(color);
 
 		if(!(conv->features & GAIM_CONNECTION_NO_BGCOLOR) &&
 		   strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
 		{
 			gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
 							&bg_color);
-			color = g_strdup_printf("#%02x%02x%02x",
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
 									bg_color.red   / 256,
 									bg_color.green / 256,
 									bg_color.blue  / 256);
-		}
-		else
-			color = g_strdup("");
+		} else
+			strcpy(color, "");
 
 		gtk_imhtml_toggle_background(GTK_IMHTML(c->entry), color);
-		g_free(color);
-
 
 		if (conv->features & GAIM_CONNECTION_FORMATTING_WBFO)
 			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), TRUE);
