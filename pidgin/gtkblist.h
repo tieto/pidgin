@@ -40,6 +40,8 @@ enum {
 	GROUP_EXPANDER_COLUMN,
 	CONTACT_EXPANDER_COLUMN,
 	CONTACT_EXPANDER_VISIBLE_COLUMN,
+	EMBLEM_COLUMN,
+	EMBLEM_VISIBLE_COLUMN,
 	BLIST_COLUMNS
 
 };
@@ -176,6 +178,16 @@ void gaim_gtk_blist_refresh(GaimBuddyList *list);
 
 void gaim_gtk_blist_update_columns(void);
 void gaim_gtk_blist_update_refresh_timeout(void);
+
+/**
+ * Returns the blist emblem
+ *
+ * @param node   The node to return an emblem for
+ * 
+ * @return  A newly created GdkPixbuf, or NULL
+ */
+GdkPixbuf *
+gaim_gtk_blist_get_emblem(GaimBlistNode *node);
 
 /**
  * Useful for the buddy ticker

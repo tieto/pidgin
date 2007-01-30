@@ -1068,8 +1068,7 @@ static const char *jabber_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "jabber";
 }
 
-static void jabber_list_emblems(GaimBuddy *b, const char **se, const char **sw,
-		const char **nw, const char **ne)
+static const char* jabber_list_emblem(GaimBuddy *b)
 {
 	JabberStream *js;
 	JabberBuddy *jb = NULL;
@@ -1081,22 +1080,11 @@ static void jabber_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 		jb = jabber_buddy_find(js, b->name, FALSE);
 
 	if(!GAIM_BUDDY_IS_ONLINE(b)) {
-		if(jb && jb->error_msg)
-			*nw = "error";
-
 		if(jb && (jb->subscription & JABBER_SUB_PENDING ||
 					!(jb->subscription & JABBER_SUB_TO)))
-			*se = "notauthorized";
-		else
-			*se = "offline";
-	} else {
-		GaimStatusType *status_type = gaim_status_get_type(gaim_presence_get_active_status(gaim_buddy_get_presence(b)));
-		GaimStatusPrimitive primitive = gaim_status_type_get_primitive(status_type);
-
-		if(primitive > GAIM_STATUS_AVAILABLE) {
-			*se = gaim_status_type_get_id(status_type);
-		}
+			return "not-authorized";
 	}
+	return NULL;
 }
 
 static char *jabber_status_text(GaimBuddy *b)
@@ -1853,7 +1841,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* protocol_options */
 	{"png,gif,jpeg", 32, 32, 96, 96, 8191, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
-	jabber_list_emblems,			/* list_emblems */
+	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
 	jabber_tooltip_text,			/* tooltip_text */
 	jabber_status_types,			/* status_types */

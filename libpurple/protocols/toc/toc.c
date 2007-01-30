@@ -1515,28 +1515,15 @@ static const char *toc_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "aim";
 }
 
-static void toc_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
+static const char* toc_list_emblem(GaimBuddy *b)
 {
-	char *emblems[4] = {NULL,NULL,NULL,NULL};
-	int i = 0;
-
-	if (!GAIM_BUDDY_IS_ONLINE(b)) {
-		*se = "offline";
-		return;
-	} else {
-		if (b->uc & UC_UNAVAILABLE)
-			emblems[i++] = "away";
-		if (b->uc & UC_AOL)
-			emblems[i++] = "aol";
-		if (b->uc & UC_ADMIN)
-			emblems[i++] = "admin";
-		if (b->uc & UC_WIRELESS)
-			emblems[i++] = "wireless";
-	}
-	*se = emblems[0];
-	*sw = emblems[1];
-	*nw = emblems[2];
-	*ne = emblems[3];
+	if (b->uc & UC_AOL)
+		return "aol";
+	if (b->uc & UC_ADMIN)
+		return "admin";
+	if (b->uc & UC_WIRELESS)
+		return "mobile";
+	return NULL	
 }
 
 static GList *toc_blist_node_menu(GaimBlistNode *node)
@@ -2243,7 +2230,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* protocol_options */
 	NO_BUDDY_ICONS,			/* icon_spec */
 	toc_list_icon,			/* list_icon */
-	toc_list_emblems,		/* list_emblems */
+	toc_list_emblem,		/* list_emblems */
 	NULL,					/* status_text */
 	NULL,					/* tooltip_text */
 	toc_away_states,		/* away_states */

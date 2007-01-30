@@ -32,12 +32,6 @@ silcgaim_list_icon(GaimAccount *a, GaimBuddy *b)
 	return (const char *)"silc";
 }
 
-static void
-silcgaim_list_emblems(GaimBuddy *b, const char **se, const char **sw,
-		      const char **nw, const char **ne)
-{
-}
-
 static GList *
 silcgaim_away_states(GaimAccount *account)
 {
@@ -1739,7 +1733,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NO_BUDDY_ICONS,
 #endif
 	silcgaim_list_icon,			/* list_icon */
-	silcgaim_list_emblems,		/* list_emblems */
+	NULL,				/* list_emblems */
 	silcgaim_status_text,		/* status_text */
 	silcgaim_tooltip_text,		/* tooltip_text */
 	silcgaim_away_states,		/* away_states */

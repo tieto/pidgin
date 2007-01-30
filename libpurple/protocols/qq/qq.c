@@ -250,38 +250,24 @@ static void _qq_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboole
 }
 
 /* we can show tiny icons on the four corners of buddy icon, */
-static void _qq_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
+static const char *_qq_list_emblem(GaimBuddy *b)
 {
 	/* each char** are refering to a filename in pixmaps/gaim/status/default/ */
 
 	qq_buddy *q_bud = b->proto_data;
-	const char *emblems[4] = { NULL, NULL, NULL, NULL };
-	int i = 1;
 
-	if (q_bud == NULL) {
-		emblems[0] = "offline";
-	} else {
-		if (q_bud->status == QQ_BUDDY_ONLINE_AWAY)
-			emblems[i++] = "away";
-		/*
-		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
-			emblems[i++] = "qq_member";
-		*/
+	if (q_bud) {
 		if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
-			emblems[i++] = "wireless";
+			return "mobile";
+		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
+			return "qq_member";
 		/*
 		if (q_bud->comm_flag & QQ_COMM_FLAG_VIDEO)
-			emblems[i%4] = "video";
+			return "video";
 		*/
-
 	}
 
-	*se = emblems[0];
-	*sw = emblems[1];
-	*nw = emblems[2];
-	*ne = emblems[3];
-
-	return;
+	return NULL;
 }
 
 /* QQ away status (used to initiate QQ away packet) */
@@ -655,7 +641,7 @@ static GaimPluginProtocolInfo prpl_info	= {
 	NULL,							/* protocol_options */
 	{"png", 96, 96, 96, 96, 0, GAIM_ICON_SCALE_SEND}, /* icon_spec */
 	_qq_list_icon,						/* list_icon */
-	_qq_list_emblems,					/* list_emblems */
+	_qq_list_emblem,					/* list_emblems */
 	_qq_status_text,					/* status_text	*/
 	_qq_tooltip_text,					/* tooltip_text */
 	_qq_away_states,					/* away_states	*/

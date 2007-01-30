@@ -479,40 +479,14 @@ msn_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "msn";
 }
 
-static void
-msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
-				 const char **nw, const char **ne)
+static const char* 
+msn_list_emblem(GaimBuddy *b)
 {
 	MsnUser *user;
-	GaimPresence *presence;
-	const char *emblems[4] = { NULL, NULL, NULL, NULL };
-	int i = 0;
-
 	user = b->proto_data;
-	presence = gaim_buddy_get_presence(b);
-
-	if (!gaim_presence_is_online(presence))
-		emblems[i++] = "offline";
-	else if (gaim_presence_is_status_active(presence, "busy") ||
-			 gaim_presence_is_status_active(presence, "phone"))
-		emblems[i++] = "occupied";
-	else if (!gaim_presence_is_available(presence))
-		emblems[i++] = "away";
-
-	if (user == NULL)
-	{
-		emblems[0] = "offline";
-	}
-	else
-	{
-		if (user->mobile)
-			emblems[i++] = "wireless";
-	}
-
-	*se = emblems[0];
-	*sw = emblems[1];
-	*nw = emblems[2];
-	*ne = emblems[3];
+		if (user && user->mobile)
+			return "mobile";
+	return NULL;
 }
 
 static char *
@@ -1956,7 +1930,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* protocol_options */
 	{"png", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
-	msn_list_emblems,		/* list_emblems */
+	msn_list_emblem,		/* list_emblems */
 	msn_status_text,		/* status_text */
 	msn_tooltip_text,		/* tooltip_text */
 	msn_status_types,		/* away_states */

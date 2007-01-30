@@ -35,7 +35,7 @@ static GaimPluginProtocolInfo prpl_info =
 	{"gif,jpeg,bmp,ico", 48, 48, 50, 50, 7168,
 		GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY},	/* icon_spec */
 	oscar_list_icon_icq,		/* list_icon */
-	oscar_list_emblems,		/* list_emblems */
+	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */
 	oscar_tooltip_text,		/* tooltip_text */
 	oscar_status_types,		/* status_types */

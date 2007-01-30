@@ -1515,31 +1515,6 @@ static const char *ggp_list_icon(GaimAccount *account, GaimBuddy *buddy)
 }
 /* }}} */
 
-/* static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne) {{{ */
-static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw,
-					   const char **nw, const char **ne)
-{
-	GaimPresence *presence = gaim_buddy_get_presence(b);
-
-	/* 
-	 * Note to myself:
-	 * 	The only valid status types are those defined
-	 * 	in prpl_info->status_types.
-	 *
-	 * Usable icons: away, blocked, dnd, extended_away,
-	 * freeforchat, ignored, invisible, na, offline.
-	 */
-
-	if (!GAIM_BUDDY_IS_ONLINE(b)) {
-		*se = "offline";
-	} else if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)) {
-		*se = "away";
-	} else if (gaim_presence_is_status_active(presence, "blocked")) {
-		*se = "blocked";
-	}
-}
-/* }}} */
-
 /* static char *ggp_status_text(GaimBuddy *b) {{{ */
 static char *ggp_status_text(GaimBuddy *b)
 {
@@ -2081,7 +2056,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,				/* protocol_options */
 	NO_BUDDY_ICONS,			/* icon_spec */
 	ggp_list_icon,			/* list_icon */
-	ggp_list_emblems,		/* list_emblems */
+	NULL,				/* list_emblem */
 	ggp_status_text,		/* status_text */
 	ggp_tooltip_text,		/* tooltip_text */
 	ggp_status_types,		/* status_types */

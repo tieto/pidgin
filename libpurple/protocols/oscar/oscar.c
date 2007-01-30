@@ -5397,7 +5397,7 @@ const char *oscar_list_icon_aim(GaimAccount *a, GaimBuddy *b)
 	return "aim";
 }
 
-void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
+const char* oscar_list_emblem(GaimBuddy *b)
 {
 	GaimConnection *gc = NULL;
 	OscarData *od = NULL;
@@ -5405,8 +5405,6 @@ void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const ch
 	GaimPresence *presence;
 	GaimStatus *status;
 	const char *status_id;
-	char *emblems[4] = {NULL,NULL,NULL,NULL};
-	int i = 0;
 	aim_userinfo_t *userinfo = NULL;
 
 	account = b->account;
@@ -5426,52 +5424,25 @@ void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, const ch
 		if ((b->name) && (od) && (od->ssi.received_data) &&
 			(gname = aim_ssi_itemlist_findparentname(od->ssi.local, b->name)) &&
 			(aim_ssi_waitingforauth(od->ssi.local, gname, b->name))) {
-			emblems[i++] = "notauthorized";
-		} else {
-			emblems[i++] = "offline";
+			return "not-authorized";
 		}
 	}
-
-	if (b->name && aim_sn_is_icq(b->name)) {
-		if (!strcmp(status_id, OSCAR_STATUS_ID_INVISIBLE))
-				emblems[i++] = "invisible";
-		else if (!strcmp(status_id, OSCAR_STATUS_ID_FREE4CHAT))
-			emblems[i++] = "freeforchat";
-		else if (!strcmp(status_id, OSCAR_STATUS_ID_DND))
-			emblems[i++] = "dnd";
-		else if (!strcmp(status_id, OSCAR_STATUS_ID_NA))
-			emblems[i++] = "unavailable";
-		else if (!strcmp(status_id, OSCAR_STATUS_ID_OCCUPIED))
-			emblems[i++] = "occupied";
-		else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
-			emblems[i++] = "away";
-	} else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY)) {
-		emblems[i++] = "away";
-	}
-
+	
 	if (userinfo != NULL ) {
-	/*  if (userinfo->flags & AIM_FLAG_UNCONFIRMED)
-			emblems[i++] = "unconfirmed"; */
-		if ((i < 4) && userinfo->flags & AIM_FLAG_ADMINISTRATOR)
-			emblems[i++] = "admin";
-		if ((i < 4) && userinfo->flags & AIM_FLAG_AOL)
-			emblems[i++] = "aol";
-		if ((i < 4) && userinfo->flags & AIM_FLAG_WIRELESS)
-			emblems[i++] = "wireless";
-		if ((i < 4) && userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
-			emblems[i++] = "activebuddy";
-
-		if ((i < 4) && (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP))
-			emblems[i++] = "hiptop";
-
-		if ((i < 4) && (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM))
-			emblems[i++] = "secure";
+		if (userinfo->flags & AIM_FLAG_ADMINISTRATOR)
+			return "admin";
+		if (userinfo->flags & AIM_FLAG_WIRELESS)
+			return "mobile";
+		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
+			return "mobile";
+		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
+			return "bot";
+		if (userinfo->flags & AIM_FLAG_AOL)
+			return "aolclient";
+		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
+			return "secure";
 	}
-
-	*se = emblems[0];
-	*sw = emblems[1];
-	*nw = emblems[2];
-	*ne = emblems[3];
+	return NULL;
 }
 
 void oscar_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full) {

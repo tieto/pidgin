@@ -2783,40 +2783,6 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 	}
 }
 
-static void
-novell_list_emblems(GaimBuddy * buddy, const char **se, const char **sw, const char **nw, const char **ne)
-{
-	NMUserRecord *user_record = NULL;
-	GaimConnection *gc;
-	NMUser *user;
-	int status = 0;
-
-	gc = gaim_account_get_connection(buddy->account);
-
-	if (gc == NULL || (user = gc->proto_data) == NULL)
-		return;
-
-	user_record = nm_find_user_record(user, buddy->name);
-
-	if (user_record)
-		status = nm_user_record_get_status(user_record);
-
-	switch (status) {
-		case NM_STATUS_AVAILABLE:
-			*se = "";
-			break;
-		case NM_STATUS_AWAY:
-			*se = "away";
-			break;
-		case NM_STATUS_BUSY:
-			*se = "occupied";
-			break;
-		case NM_STATUS_UNKNOWN:
-			*se = "error";
-			break;
-	}
-}
-
 static const char *
 novell_list_icon(GaimAccount * account, GaimBuddy * buddy)
 {
@@ -3472,7 +3438,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* protocol_options */
 	NO_BUDDY_ICONS,				/* icon_spec */
 	novell_list_icon,			/* list_icon */
-	novell_list_emblems,		/* list_emblems */
+	NULL,				/* list_emblems */
 	novell_status_text,			/* status_text */
 	novell_tooltip_text,		/* tooltip_text */
 	novell_status_types,		/* status_types */

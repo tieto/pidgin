@@ -2801,10 +2801,8 @@ static const char *yahoo_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "yahoo";
 }
 
-static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
+static const char *yahoo_list_emblem(GaimBuddy *b)
 {
-	int i = 0;
-	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	GaimAccount *account;
 	GaimConnection *gc;
 	struct yahoo_data *yd;
@@ -2817,29 +2815,20 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 
 	f = yahoo_friend_find(gc, b->name);
 	if (!f) {
-		*se = "notauthorized";
-		return;
+		return "not-authorized";
 	}
 
 	presence = gaim_buddy_get_presence(b);
 
-	if (gaim_presence_is_online(presence) == FALSE) {
-		*se = "offline";
-		return;
-	} else {
-		if (f->away)
-			emblems[i++] = "away";
+	if (gaim_presence_is_online(presence)) {
 		if (f->sms)
-			emblems[i++] = "wireless";
+			return "mobile";
 		if (yahoo_friend_get_game(f))
-			emblems[i++] = "game";
+			return "game";
 		if (f->protocol == 2)
-			emblems[i] = "msn";
+			return "msn";
 	}
-	*se = emblems[0];
-	*sw = emblems[1];
-	*nw = emblems[2];
-	*ne = emblems[3];
+	return NULL;
 }
 
 static const char *yahoo_get_status_string(enum yahoo_status a)
@@ -3816,7 +3805,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* protocol_options */
 	{"png,gif,jpeg", 96, 96, 96, 96, 0, GAIM_ICON_SCALE_SEND},
 	yahoo_list_icon,
-	yahoo_list_emblems,
+	yahoo_list_emblem,
 	yahoo_status_text,
 	yahoo_tooltip_text,
 	yahoo_status_types,

@@ -42,7 +42,6 @@
 static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
 
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b);
-static void irc_blist_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne);
 static GList *irc_status_types(GaimAccount *account);
 static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
@@ -220,15 +219,6 @@ static void irc_ison_one(struct irc_conn *irc, struct irc_buddy *ib)
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b)
 {
 	return "irc";
-}
-
-static void irc_blist_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
-{
-	GaimPresence *presence = gaim_buddy_get_presence(b);
-
-	if (gaim_presence_is_online(presence) == FALSE) {
-		*se = "offline";
-	}
 }
 
 static GList *irc_status_types(GaimAccount *account)
@@ -813,7 +803,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* protocol_options */
 	NO_BUDDY_ICONS,		/* icon_spec */
 	irc_blist_icon,		/* list_icon */
-	irc_blist_emblems,	/* list_emblems */
+	NULL,			/* list_emblems */
 	NULL,					/* status_text */
 	NULL,					/* tooltip_text */
 	irc_status_types,	/* away_states */

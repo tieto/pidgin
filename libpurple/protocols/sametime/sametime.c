@@ -3171,33 +3171,12 @@ static const char *mw_prpl_list_icon(GaimAccount *a, GaimBuddy *b) {
 }
 
 
-static void mw_prpl_list_emblems(GaimBuddy *b,
-				 const char **se, const char **sw,
-				 const char **nw, const char **ne) {
+static const char* mw_prpl_list_emblem(GaimBuddy *b)
+{
+  if(buddy_is_external(b)) 
+    return "external";
 
-  /* speaking of custom icons, the external icon here is an ugly
-     little example of what happens when I use Gimp */
-
-  GaimPresence *presence;
-  GaimStatus *status;
-  const char *status_id;
-
-  presence = gaim_buddy_get_presence(b);
-  status = gaim_presence_get_active_status(presence);
-  status_id = gaim_status_get_id(status);
-
-  if(! GAIM_BUDDY_IS_ONLINE(b)) {
-    *se = "offline";
-  } else if(!strcmp(status_id, MW_STATE_AWAY)) {
-    *se = "away";
-  } else if(!strcmp(status_id, MW_STATE_BUSY)) {
-    *se = "dnd";
-  }  
-
-  if(buddy_is_external(b)) {
-    /* best assignment ever */
-    *(*se?sw:se) = "external";
-  }
+  return NULL;
 }
 
 
@@ -5098,7 +5077,7 @@ static GaimPluginProtocolInfo mw_prpl_info = {
   .protocol_options          = NULL, /*< set in mw_plugin_init */
   .icon_spec                 = NO_BUDDY_ICONS,
   .list_icon                 = mw_prpl_list_icon,
-  .list_emblems              = mw_prpl_list_emblems,
+  .list_emblem               = mw_prpl_list_emblem,
   .status_text               = mw_prpl_status_text,
   .tooltip_text              = mw_prpl_tooltip_text,
   .status_types              = mw_prpl_status_types,
