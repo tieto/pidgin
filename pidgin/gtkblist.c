@@ -2950,6 +2950,10 @@ gaim_gtk_blist_get_emblem(GaimBlistNode *node)
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (GaimBuddy*)node;
 		gtkbuddynode = node->ui_data;
+		if (((struct _gaim_gtk_blist_node*)(node->parent->ui_data))->contact_expanded)
+			return gaim_gtk_create_prpl_icon(((GaimBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
+	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
+		return gaim_gtk_create_prpl_icon(((GaimChat*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 	} else {
 		return NULL;
 	}
