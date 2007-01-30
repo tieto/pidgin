@@ -46,7 +46,7 @@ gaim_text_LDADD = \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
 	./libgnt/libgnt.la \
-	$(top_builddir)/libpurple/libgaim.la
+	$(top_builddir)/libpurple/libpurple.la
 
 AM_CPPFLAGS = \
 	-DSTANDALONE \
