@@ -917,4 +917,235 @@
 #define gaim_xfers_set_ui_ops  purple_xfers_set_ui_ops
 #define gaim_xfers_get_ui_ops  purple_xfers_get_ui_ops
 
+/* from gaim-client.h */
+
+/* XXX: should this be purple_init, or pidgin_init */
+#define gaim_init  purple_init
+
+/* from idle.h */
+
+#define GaimIdleUiOps  PurpleIdleUiOps
+
+#define gaim_idle_touch       purple_idle_touch
+#define gaim_idle_set         purple_idle_set
+#define gaim_idle_set_ui_ops  purple_idle_set_ui_ops
+#define gaim_idle_get_ui_ops  purple_idle_get_ui_ops
+#define gaim_idle_init        purple_idle_init
+#define gaim_idle_uninit      purple_idle_uninit
+
+/* from imgstore.h */
+
+#define GaimStoredImage  PurpleStoredImage
+
+#define gaim_imgstore_add           purple_imgstore_add
+#define gaim_imgstore_get           purple_imgstore_get
+#define gaim_imgstore_get_data      purple_imgstore_get_data
+#define gaim_imgstore_get_size      purple_imgstore_get_size
+#define gaim_imgstore_get_filename  purple_imgstore_get_filename
+#define gaim_imgstore_ref           purple_imgstore_ref
+#define gaim_imgstore_unref         purple_imgstore_unref
+
+
+/* from log.h */
+
+#define GaimLog                  PurpleLog
+#define GaimLogLogger            PurpleLogLogger
+#define GaimLogCommonLoggerData  PurpleLogCommonLoggerData
+#define GaimLogSet               PurpleLogSet
+
+#define GAIM_LOG_IM      PURPLE_LOG_IM
+#define GAIM_LOG_CHAT    PURPLE_LOG_CHAT
+#define GAIM_LOG_SYSTEM  PURPLE_LOG_SYSTEM
+
+#define GaimLogType  PurpleLogType
+
+#define GAIM_LOG_READ_NO_NEWLINE  PURPLE_LOG_READ_NO_NEWLINE
+
+#define GaimLogReadFlags  PurpleLogReadFlags
+
+#define GaimLogSetCallback  PurpleLogSetCallback
+
+#define gaim_log_new    purple_log_new
+#define gaim_log_free   purple_log_free
+#define gaim_log_write  purple_log_write
+#define gaim_log_read   purple_log_read
+
+#define gaim_log_get_logs         purple_log_get_logs
+#define gaim_log_get_log_sets     purple_log_get_log_sets
+#define gaim_log_get_system_logs  purple_log_get_system_logs
+#define gaim_log_get_size         purple_log_get_size
+#define gaim_log_get_total_size   purple_log_get_total_size
+#define gaim_log_get_log_dir      purple_log_get_log_dir
+#define gaim_log_compare          purple_log_compare
+#define gaim_log_set_compare      purple_log_set_compare
+#define gaim_log_set_free         purple_log_set_free
+
+#define gaim_log_common_writer       purple_log_common_writer
+#define gaim_log_common_lister       purple_log_common_lister
+#define gaim_log_common_total_sizer  purple_log_common_total_sizer
+#define gaim_log_common_sizer        purple_log_common_sizer
+
+#define gaim_log_logger_new     purple_log_logger_new
+#define gaim_log_logger_free    purple_log_logger_free
+#define gaim_log_logger_add     purple_log_logger_add
+#define gaim_log_logger_remove  purple_log_logger_remove
+#define gaim_log_logger_set     purple_log_logger_set
+#define gaim_log_logger_get     purple_log_logger_get
+
+#define gaim_log_logger_get_options  purple_log_logger_get_options
+
+#define gaim_log_init        purple_log_init
+#define gaim_log_get_handle  purple_log_get_handle
+#define gaim_log_uninit      purple_log_uninit
+
+/* from mime.h */
+
+#define GaimMimeDocument  PurpleMimeDocument
+#define GaimMimePart      PurpleMimePart
+
+#define gaim_mime_document_new         purple_mime_document_new
+#define gaim_mime_document_free        purple_mime_document_free
+#define gaim_mime_document_parse       purple_mime_document_parse
+#define gaim_mime_document_parsen      purple_mime_document_parsen
+#define gaim_mime_document_write       purple_mime_document_write
+#define gaim_mime_document_get_fields  purple_mime_document_get_fields
+#define gaim_mime_document_get_field   purple_mime_document_get_field
+#define gaim_mime_document_set_field   purple_mime_document_set_field
+#define gaim_mime_document_get_parts   purple_mime_document_get_parts
+
+#define gaim_mime_part_new                purple_mime_part_new
+#define gaim_mime_part_get_fields         purple_mime_part_get_fields
+#define gaim_mime_part_get_field          purple_mime_part_get_field
+#define gaim_mime_part_get_field_decoded  purple_mime_part_get_field_decoded
+#define gaim_mime_part_set_field          purple_mime_part_set_field
+#define gaim_mime_part_get_data           purple_mime_part_get_data
+#define gaim_mime_part_get_data_decoded   purple_mime_part_get_data_decoded
+#define gaim_mime_part_get_length         purple_mime_part_get_length
+#define gaim_mime_part_set_data           purple_mime_part_set_data
+
+
+/* from network.h */
+
+#define GaimNetworkListenData  PurpleNetworkListenData
+
+#define GaimNetworkListenCallback  PurpleNetworkListenCallback
+
+#define gaim_network_ip_atoi              purple_network_ip_atoi
+#define gaim_network_set_public_ip        purple_network_set_public_ip
+#define gaim_network_get_public_ip        purple_network_get_public_ip
+#define gaim_network_get_local_system_ip  purple_network_get_local_system_ip
+#define gaim_network_get_my_ip            purple_network_get_my_ip
+
+#define gaim_network_listen            purple_network_listen
+#define gaim_network_listen_range      purple_network_listen_range
+#define gaim_network_listen_cancel     purple_network_listen_cancel
+#define gaim_network_get_port_from_fd  purple_network_get_port_from_fd
+
+#define gaim_network_is_available  purple_network_is_available
+
+#define gaim_network_init    purple_network_init
+#define gaim_network_uninit  purple_network_uninit
+
+/* from notify.h */
+
+
+#define GaimNotifyUserInfoEntry  PurpleNotifyUserInfoEntry
+#define GaimNotifyUserInfo       PurpleNotifyUserInfo
+
+#define GaimNotifyCloseCallback  PurpleNotifyCloseCallback
+
+#define GAIM_NOTIFY_MESSAGE        PURPLE_NOTIFY_MESSAGE
+#define GAIM_NOTIFY_EMAIL          PURPLE_NOTIFY_EMAIL
+#define GAIM_NOTIFY_EMAILS         PURPLE_NOTIFY_EMAILS
+#define GAIM_NOTIFY_FORMATTED      PURPLE_NOTIFY_FORMATTED
+#define GAIM_NOTIFY_SEARCHRESULTS  PURPLE_NOTIFY_SEARCHRESULTS
+#define GAIM_NOTIFY_USERINFO       PURPLE_NOTIFY_USERINFO
+#define GAIM_NOTIFY_URI            PURPLE_NOTIFY_URI
+
+#define GaimNotifyType  PurpleNotifyType
+
+#define GAIM_NOTIFY_MSG_ERROR    PURPLE_NOTIFY_MSG_ERROR
+#define GAIM_NOTIFY_MSG_WARNING  PURPLE_NOTIFY_MSG_WARNING
+#define GAIM_NOTIFY_MSG_INFO     PURPLE_NOTIFY_MSG_INFO
+
+#define GaimNotifyMsgType  PurpleNotifyMsgType
+
+#define GAIM_NOTIFY_BUTTON_LABELED   PURPLE_NOTIFY_BUTTON_LABELED
+#define GAIM_NOTIFY_BUTTON_CONTINUE  PURPLE_NOTIFY_BUTTON_CONTINUE
+#define GAIM_NOTIFY_BUTTON_ADD       PURPLE_NOTIFY_BUTTON_ADD
+#define GAIM_NOTIFY_BUTTON_INFO      PURPLE_NOTIFY_BUTTON_INFO
+#define GAIM_NOTIFY_BUTTON_IM        PURPLE_NOTIFY_BUTTON_IM
+#define GAIM_NOTIFY_BUTTON_JOIN      PURPLE_NOTIFY_BUTTON_JOIN
+#define GAIM_NOTIFY_BUTTON_INVITE    PURPLE_NOTIFY_BUTTON_INVITE
+
+#define GaimNotifySearchButtonType  PurpleNotifySearchButtonType
+
+#define GaimNotifySearchResults  PurpleNotifySearchResult
+
+#define GAIM_NOTIFY_USER_INFO_ENTRY_PAIR            PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR
+#define GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK   PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK
+#define GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER  PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER
+
+#define GaimNotifyUserInfoEntryType  PurpleNotifyUserInfoEntryType
+
+#define GaimNotifySearchColumn           PurpleNotifySearchColumn
+#define GaimNotifySearchResultsCallback  PurpleNotifySearchResultsCallback
+#define GaimNotifySearchButton           PurpleNotifySearchButton
+
+#define GaimNotifyUiOps  PurpleNotifyUiOps
+
+#define gaim_notify_searchresults                     purple_notify_searchresults
+#define gaim_notify_searchresults_free                purple_notify_searchresults_free
+#define gaim_notify_searchresults_new_rows            purple_notify_searchresults_new_rows
+#define gaim_notify_searchresults_button_add          purple_notify_searchresults_button_add
+#define gaim_notify_searchresults_button_add_labeled  purple_notify_searchresults_button_add_labeled
+#define gaim_notify_searchresults_new                 purple_notify_searchresults_new
+#define gaim_notify_searchresults_column_new          purple_notify_searchresults_column_new
+#define gaim_notify_searchresults_column_add          purple_notify_searchresults_column_add
+#define gaim_notify_searchresults_row_add             purple_notify_searchresults_row_add
+#define gaim_notify_searchresults_get_rows_count      purple_notify_searchresults_get_rows_count
+#define gaim_notify_searchresults_get_columns_count   purple_notify_searchresults_get_columns_count
+#define gaim_notify_searchresults_row_get             purple_notify_searchresults_row_get
+#define gaim_notify_searchresults_column_get_title    purple_notify_searchresults_column_get_title
+
+#define gaim_notify_message    purple_notify_message
+#define gaim_notify_email      purple_notify_email
+#define gaim_notify_emails     purple_notify_emails
+#define gaim_notify_formatted  purple_notify_formatted
+#define gaim_notify_userinfo   purple_notify_userinfo
+
+#define gaim_notify_user_info_new                    purple_notify_user_info_new
+#define gaim_notify_user_info_destroy                purple_notify_user_info_destroy
+#define gaim_notify_user_info_get_entries            purple_notify_user_info_get_entries
+#define gaim_notify_user_info_get_text_with_newline  purple_notify_user_info_get_text_with_newline
+#define gaim_notify_user_info_add_pair               purple_notify_user_info_add_pair
+#define gaim_notify_user_info_prepend_pair           purple_notify_user_info_prepend_pair
+#define gaim_notify_user_info_remove_entry           purple_notify_user_info_remove_entry
+#define gaim_notify_user_info_entry_new              purple_notify_user_info_entry_new
+#define gaim_notify_user_info_add_section_break      purple_notify_user_info_add_section_break
+#define gaim_notify_user_info_add_section_header     purple_notify_user_info_add_section_header
+#define gaim_notify_user_info_remove_last_item       purple_notify_user_info_remove_last_item
+#define gaim_notify_user_info_entry_get_label        purple_notify_user_info_entry_get_label
+#define gaim_notify_user_info_entry_set_label        purple_notify_user_info_entry_set_label
+#define gaim_notify_user_info_entry_get_value        purple_notify_user_info_entry_get_value
+#define gaim_notify_user_info_entry_set_value        purple_notify_user_info_entry_set_value
+#define gaim_notify_user_info_entry_get_type         purple_notify_user_info_entry_get_type
+#define gaim_notify_user_info_entry_set_type         purple_notify_user_info_entry_set_type
+
+#define gaim_notify_uri                purple_notify_uri
+#define gaim_notify_close              purple_notify_close
+#define gaim_notify_close_with_handle  purple_notify_close_with_handle
+
+#define gaim_notify_info     purple_notify_info
+#define gaim_notify_warning  purple_notify_warning
+#define gaim_notify_error    purple_notify_error
+
+#define gaim_notify_set_ui_ops  purple_notify_set_ui_ops
+#define gaim_notify_get_ui_ops  purple_notify_get_ui_ops
+
+#define gaim_notify_get_handle  purple_notify_get_handle
+
+#define gaim_notify_init    purple_notify_init
+#define gaim_notify_uninit  purple_notify_uninit
+
 #endif /* _GAIM_COMPAT_H_ */
