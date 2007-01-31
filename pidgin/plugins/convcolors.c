@@ -124,6 +124,11 @@ displaying_msg(GaimAccount *account, const char *who, char **displaying,
 		t = *displaying;
 		*displaying = gaim_markup_strip_html(t);
 		g_free(t);
+
+		t = *displaying;
+		*displaying = g_markup_escape_text(t, -1);
+		g_free(t);
+
 		/* Restore the links */
 		t = *displaying;
 		*displaying = gaim_markup_linkify(t);
