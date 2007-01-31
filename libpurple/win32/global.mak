@@ -85,6 +85,7 @@ GMSGFMT ?= $(GTK_BIN)/msgfmt
 MAKENSIS ?= makensis.exe
 PERL ?= /cygdrive/c/perl/bin/perl
 WINDRES ?= windres
+STRIP ?= strip
 
 GAIM_COMMON_RULES := $(GAIM_LIB_TOP)/win32/rules.mak
 GAIM_COMMON_TARGETS := $(GAIM_LIB_TOP)/win32/targets.mak

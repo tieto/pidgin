@@ -9,7 +9,7 @@ include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = Gaim
 AUTOSPLIT = lib/auto/Gaim/autosplit.ix
-EXTUTILS := C:/perl/lib/ExtUtils
+EXTUTILS ?= C:/perl/lib/ExtUtils
 PERL_PLUGIN_TOP := ..
 
 CFLAGS += -Wno-comment

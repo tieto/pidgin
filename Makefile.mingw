@@ -72,13 +72,13 @@ create_release_install_dir: install
 	rm -rf $(GAIM_INSTALL_DIR).release
 	cp -R $(GAIM_INSTALL_DIR) $(GAIM_INSTALL_DIR).release
 	find $(GAIM_INSTALL_DIR).release \( -name '*.dll' -o -name '*.exe' \) \
-	 -not \( -false $(NON_GAIM_DLLS_FIND_EXP) \) -exec strip --strip-unneeded {} ';'
+	 -not \( -false $(NON_GAIM_DLLS_FIND_EXP) \) -exec $(STRIP) --strip-unneeded {} ';'
 
 installer: create_release_install_dir
 	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DWITH_GTK /DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
 
 installer_nogtk: create_release_install_dir
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
+	$(MAKENSIS) -V3 -DGAIM_VERSION="$(GAIM_VERSION)" -DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" -DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR).release" -DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
 
 installer_debug: install
 	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR)" /DDEBUG /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
