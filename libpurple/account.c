@@ -57,6 +57,13 @@ typedef struct
 
 } GaimAccountSetting;
 
+typedef struct
+{
+	GaimAccountRequestType type;
+	GaimAccount *account;
+	void *ui_handle;
+
+} GaimAccountRequestInfo;
 
 static GaimAccountUiOps *account_ui_ops = NULL;
 
@@ -64,6 +71,7 @@ static GList   *accounts = NULL;
 static guint    save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
+static GList *handles = NULL;
 
 /*********************************************************************
  * Writing to disk                                                   *
@@ -1053,21 +1061,82 @@ gaim_account_request_add(GaimAccount *account, const char *remote_user,
 		ui_ops->request_add(account, remote_user, id, alias, message);
 }
 
-void
+static void
+gaim_account_request_close_info(GaimAccountRequestInfo *info)
+{
+	GaimAccountUiOps *ops;
+
+	ops = gaim_accounts_get_ui_ops();
+
+	if (ops != NULL && ops->close_account_request != NULL)
+		ops->close_account_request(info->ui_handle);
+
+	g_free(info);
+}
+
+void 
+gaim_account_request_close_with_account(GaimAccount *account)
+{
+	GList *l, *l_next;
+	
+	g_return_if_fail(account != NULL);
+	
+	for (l = handles; l != NULL; l = l_next) {
+		GaimAccountRequestInfo *info = l->data;
+		
+		l_next = l->next;
+		
+		if (info->account == account) {
+			handles = g_list_remove(handles, info);
+			gaim_account_request_close_info(info);
+		}
+	}
+}
+
+void 
+gaim_account_request_close(void *ui_handle)
+{
+	GList *l, *l_next;
+	
+	g_return_if_fail(ui_handle != NULL);
+	
+	for (l = handles; l != NULL; l = l_next) {
+		GaimAccountRequestInfo *info = l->data;
+		
+		l_next = l->next;
+		
+		if (info->ui_handle == ui_handle) {
+			handles = g_list_remove(handles, info);
+			gaim_account_request_close_info(info);
+		}
+	}
+}
+
+void *
 gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
 			           const char *id, const char *alias, const char *message, gboolean on_list,
 				   GCallback auth_cb, GCallback deny_cb, void *user_data)
 {
-        GaimAccountUiOps *ui_ops;
+	GaimAccountUiOps *ui_ops;
+	GaimAccountRequestInfo *info;
 
-	g_return_if_fail(account     != NULL);
-        g_return_if_fail(remote_user != NULL);
+	g_return_val_if_fail(account     != NULL, NULL);
+	g_return_val_if_fail(remote_user != NULL, NULL);
 
-        ui_ops = gaim_accounts_get_ui_ops();
+	ui_ops = gaim_accounts_get_ui_ops();
 
-        if (ui_ops != NULL && ui_ops->request_authorize != NULL)
-               ui_ops->request_authorize(account, remote_user, id, alias, message, on_list, auth_cb, deny_cb, user_data);
-						
+	if (ui_ops != NULL && ui_ops->request_authorize != NULL) {
+		info            = g_new0(GaimAccountRequestInfo, 1);
+		info->type      = GAIM_ACCOUNT_REQUEST_AUTHORIZATION;
+		info->account   = account;
+		info->ui_handle = ui_ops->request_authorize(account, remote_user, id, alias, message,
+									on_list, auth_cb, deny_cb, user_data);
+		
+		handles = g_list_append(handles, info);
+		return info->ui_handle;
+	}
+	
+	return NULL;
 }
 
 static void
