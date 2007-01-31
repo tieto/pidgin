@@ -156,7 +156,7 @@ pidgin_headers = \
 
 pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
-	$(gaim_headers)
+	$(pidgin_headers)
 
 
 pidgin_DEPENDENCIES = @LIBOBJS@

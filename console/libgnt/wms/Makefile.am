@@ -9,7 +9,7 @@ s_la_SOURCES = s.c
 s_la_LIBADD =  \
   $(GLIB_LIBS) \
   $(top_builddir)/console/libgnt/libgnt.la \
-  $(top_builddir)/libpurple/libgaim.la
+  $(top_builddir)/libpurple/libpurple.la
 
 EXTRA_DIST = 
 

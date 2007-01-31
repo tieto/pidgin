@@ -105,8 +105,10 @@
 #define NOTIFY_PLUGIN_ID "gtk-x11-notify"
 
 static GaimPlugin *my_plugin = NULL;
+#ifndef _WIN32
 static GdkAtom _Cardinal = GDK_NONE;
 static GdkAtom _GaimUnseenCount = GDK_NONE;
+#endif
 
 /* notification set/unset */
 static int notify(GaimConversation *conv, gboolean increment);

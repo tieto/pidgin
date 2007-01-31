@@ -8,7 +8,7 @@ GAIM_TOP := ../../../..
 include $(GAIM_TOP)/libpurple/win32/global.mak
 
 TARGET = GtkUI
-EXTUTILS := C:/perl/lib/ExtUtils
+EXTUTILS ?= C:/perl/lib/ExtUtils
 
 CFLAGS += -Wno-comment
 

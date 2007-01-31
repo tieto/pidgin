@@ -206,7 +206,7 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 
 }
 
-void jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
+gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 {
 	GaimAccount *account = gaim_connection_get_account(js->gc);
 	GSList *list = account->deny;
@@ -225,6 +225,12 @@ void jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		list = list->next;
 	}
 	
+	if (grt && (*grt == 'H' || *grt == 'h')) {
+		GaimBuddy *buddy = gaim_find_buddy(account, jid_norm);
+		gaim_blist_remove_buddy(buddy);
+		return FALSE;
+	}
+	
 	if (!on_block_list && (grt && (*grt == 'B' || *grt == 'b'))) {
 		gaim_debug_info("jabber", "Blocking %s\n", jid_norm);
 		gaim_privacy_deny_add(account, jid_norm, TRUE);
@@ -232,6 +238,7 @@ void jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		gaim_debug_info("jabber", "Unblocking %s\n", jid_norm);
 		gaim_privacy_deny_remove(account, jid_norm, TRUE);
 	}
+	return TRUE;
 }
 
 void jabber_google_roster_add_deny(GaimConnection *gc, const char *who) 

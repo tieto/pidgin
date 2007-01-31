@@ -31,7 +31,11 @@ void jabber_gmail_poke(JabberStream *js, xmlnode *node);
 
 void jabber_google_roster_init(JabberStream *js);
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);
-void jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
+
+/* Returns FALSE if this should short-circuit processing of this roster item, or TRUE
+ * if this roster item should continue to be processed
+ */
+gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
 void jabber_google_roster_add_deny(GaimConnection *gc, const char *who);
 void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who);
 
