@@ -2108,21 +2108,6 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 				if (!(icon = gaim_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
 					return NULL;
 			data = gaim_buddy_icon_get_data(icon, &len);
-		} else if(chat != NULL) {
-			if(prpl_info && prpl_info->list_icon) {
-				char *contents;
-				char *image = g_strdup_printf("%s.png", prpl_info->list_icon(account, NULL));
-				char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "32", image, NULL);
-				g_free(image);
-
-				gaim_debug_info("icon", "Using %s as a buddy icon for a chat\n");
-
-				/* we'll exit below with data == NULL if this fails */
-				if(g_file_get_contents(filename, &contents, &len, NULL)) {
-					data = (const guchar*)contents;
-				}
-				g_free(filename);
-			}
 		}
 		custom = FALSE;  /* We are not using the custom icon */
 	}
@@ -2289,6 +2274,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 {
 	GtkStyle *style;
 	int current_height, max_width;
+	int max_text_width;
 	GList *l;
 	int prpl_col = 0;
 
@@ -2300,13 +2286,16 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 			NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
 	max_width = 0;
+	max_text_width = 0;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
+		max_text_width = MAX(max_text_width,
+				MAX(td->width, td->name_width));
 		max_width = MAX(max_width,
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
-				MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
-		prpl_col = MAX(prpl_col, 
+				max_text_width + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
+		prpl_col = MAX(prpl_col,
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + td->name_width - PRPL_SIZE);
 	}
 
@@ -2475,13 +2464,14 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	if(GAIM_BLIST_NODE_IS_CHAT(node) || GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
-		w = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + 
+		w = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
 			MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER;
 		h = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height))
 			+ TOOLTIP_BORDER;
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBlistNode *child;
 		GaimBuddy *b = gaim_contact_get_priority_buddy((GaimContact *)node);
+		int tw = 0;
 		w = h = 0;
 		for(child = node->child; child; child = child->next)
 		{
@@ -2492,10 +2482,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 				} else {
 					gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 				}
-				w = MAX(w, TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + 
-					MAX(td->width, td->name_width) + SMALL_SPACE + 
-					td->avatar_width + TOOLTIP_BORDER);
-				h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height) + TOOLTIP_BORDER, 
+				tw = MAX(tw, MAX(td->width, td->name_width));
+				w = MAX(w, TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
+					tw + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
+				h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height) + TOOLTIP_BORDER,
 					 TOOLTIP_BORDER + td->height + td->name_height + TOOLTIP_BORDER);
 			}
 		}
