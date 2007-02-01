@@ -2348,13 +2348,12 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				NULL, gtkblist->tipwindow, "tooltip",
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
-		current_height += td->name_height;
 
 		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				NULL, gtkblist->tipwindow, "tooltip",
-				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->layout);
+				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height + td->name_height, td->layout);
 
-		current_height += td->height + TOOLTIP_BORDER;
+		current_height += MAX(td->name_height + td->height, td->avatar_height) + TOOLTIP_BORDER;
 	}
 }
 
