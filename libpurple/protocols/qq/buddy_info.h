@@ -93,7 +93,9 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
 void qq_info_query_free(qq_data *qd);
 void qq_send_packet_get_level(GaimConnection *gc, guint32 uid);
+/*
 void qq_send_packet_get_buddies_levels(GaimConnection *gc);
+*/
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
 
 #endif
