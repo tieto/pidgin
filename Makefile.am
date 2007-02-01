@@ -13,7 +13,7 @@ EXTRA_DIST = config.rpath m4/ChangeLog  \
 		gaim.pc.in \
 		gaim.spec.in \
 		gaim.apspec.in \
-		gaim.desktop.in \
+		pidgin.desktop.in \
 		gaim.service.in \
 		gaim-installer.nsi \
 		intltool-extract.in \
@@ -40,7 +40,7 @@ distcheck-hook: libpurple/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/Gt
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
 appsdir = $(datadir)/applications
-apps_in_files = gaim.desktop.in
+apps_in_files = pidgin.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
@@ -69,7 +69,7 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Gaim.3pm
 
-DISTCLEANFILES= gaim.desktop libpurple/gconf/gaim.schemas intltool-extract \
+DISTCLEANFILES= pidgin.desktop libpurple/gconf/gaim.schemas intltool-extract \
 			intltool-merge intltool-update
 
 ACLOCAL_AMFLAGS = -I m4
