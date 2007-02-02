@@ -2199,7 +2199,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 #define TOOLTIP_BORDER 12
 #define SMALL_SPACE 6
 #define LARGE_SPACE 12
-#define PRPL_SIZE 22
+#define PRPL_SIZE 16 
 struct tooltip_data {
 	PangoLayout *layout;
 	PangoLayout *name_layout;
@@ -2230,7 +2230,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 
 	td->status_icon = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
 	td->avatar = gaim_gtk_blist_get_buddy_icon(node, !full, FALSE, TRUE);
-	td->prpl_icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	td->prpl_icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 	tooltip_text = gaim_get_tooltip_text(node, full);
 	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
@@ -2344,9 +2344,6 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height + td->name_height, td->layout);
 
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + TOOLTIP_BORDER;
-		if(l->next)
-			gtk_paint_hline(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL,
-					NULL, NULL, NULL, 4, max_width - 4, current_height-6);
 	}
 }
 
