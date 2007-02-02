@@ -2050,6 +2050,45 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 	}
 }
 
+/* Altered from do_colorshift in gnome-panel */
+static void
+do_alphashift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
+{
+	gint i, j;
+	gint width, height, has_alpha, srcrowstride, destrowstride;
+	guchar *target_pixels;
+	guchar *original_pixels;
+	guchar *pixsrc;
+	guchar *pixdest;
+	int val;
+	guchar a;
+
+	has_alpha = gdk_pixbuf_get_has_alpha (src);
+	if (!has_alpha)
+	  return;
+
+	width = gdk_pixbuf_get_width (src);
+	height = gdk_pixbuf_get_height (src);
+	srcrowstride = gdk_pixbuf_get_rowstride (src);
+	destrowstride = gdk_pixbuf_get_rowstride (dest);
+	target_pixels = gdk_pixbuf_get_pixels (dest);
+	original_pixels = gdk_pixbuf_get_pixels (src);
+
+	for (i = 0; i < height; i++) {
+		pixdest = target_pixels + i*destrowstride;
+		pixsrc = original_pixels + i*srcrowstride;
+		for (j = 0; j < width; j++) {
+			*(pixdest++) = *(pixsrc++);
+			*(pixdest++) = *(pixsrc++);
+			*(pixdest++) = *(pixsrc++);
+			a = *(pixsrc++);
+			val = a - shift;
+			*(pixdest++) = CLAMP(val, 0, 255);
+		}
+	}
+}
+
+
 static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 		gboolean scaled, gboolean greyed, gboolean custom)
 {
@@ -4750,7 +4789,10 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	if (!avatar) {
 		g_object_ref(G_OBJECT(gtkblist->empty_avatar));
 		avatar = gtkblist->empty_avatar;
+	} else if ((!GAIM_BUDDY_IS_ONLINE(buddy) || gaim_presence_is_idle(presence))) {
+		do_alphashift(avatar, avatar, 77);
 	}
+
 	emblem = gaim_gtk_blist_get_emblem((GaimBlistNode*) buddy);
 	mark = gaim_gtk_blist_get_name_markup(buddy, selected);
 
