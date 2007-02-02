@@ -2265,6 +2265,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 	td->avatar_width = gdk_pixbuf_get_width(td->avatar);
 	td->avatar_height = gdk_pixbuf_get_height(td->avatar);
 
+	g_free(node_name);
 	g_free(tooltip_text);
 	return td;
 }
@@ -2343,6 +2344,9 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height + td->name_height, td->layout);
 
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + TOOLTIP_BORDER;
+		if(l->next)
+			gtk_paint_hline(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL,
+					NULL, NULL, NULL, 4, max_width - 4, current_height-6);
 	}
 }
 
