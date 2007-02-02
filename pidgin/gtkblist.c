@@ -1267,8 +1267,7 @@ create_buddy_menu(GaimBlistNode *node, GaimBuddy *b) {
 					continue;
 
 				menuitem = gtk_image_menu_item_new_with_label(buddy->name);
-				buf = gaim_gtk_blist_get_status_icon(bnode,
-										GAIM_STATUS_ICON_SMALL);
+				buf = gaim_gtk_create_prpl_icon(buddy->account,PIDGIN_PRPL_ICON_SMALL);
 				image = gtk_image_new_from_pixbuf(buf);
 				g_object_unref(G_OBJECT(buf));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem),
