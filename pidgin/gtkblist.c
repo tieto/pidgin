@@ -2286,11 +2286,17 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 
 	max_width = 0;
 	max_text_width = 0;
+
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
 		max_text_width = MAX(max_text_width,
 				MAX(td->width, td->name_width));
+	}
+
+	for(l = gtkblist->tooltipdata; l; l = l->next)
+	{
+		struct tooltip_data *td = l->data;
 		max_width = MAX(max_width,
 				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
 				max_text_width + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
@@ -2308,7 +2314,6 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 					NULL, gtkblist->tipwindow, "tooltip",
 					max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
 					current_height-1,td->avatar_width+2, td->avatar_height+2);
-
 
 #if GTK_CHECK_VERSION(2,2,0)
 		gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
@@ -2329,7 +2334,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 		if(td->avatar)
 			gdk_pixbuf_render_to_drawable(td->avatar,
 					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0,
-					max_width - (td->avatar_width + 12),
+					max_width - (td->avatar_width + TOOLTIP_BORDER),
 					current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
 
@@ -2470,8 +2475,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBlistNode *child;
 		GaimBuddy *b = gaim_contact_get_priority_buddy((GaimContact *)node);
+		GList *l;
 		int tw = 0;
 		w = h = 0;
+
 		for(child = node->child; child; child = child->next)
 		{
 			if(GAIM_BLIST_NODE_IS_BUDDY(child) && buddy_is_displayable((GaimBuddy*)child)) {
@@ -2482,11 +2489,16 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 					gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 				}
 				tw = MAX(tw, MAX(td->width, td->name_width));
-				w = MAX(w, TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
-					tw + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
-				h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height) + TOOLTIP_BORDER,
-					 TOOLTIP_BORDER + td->height + td->name_height + TOOLTIP_BORDER);
 			}
+		}
+
+		for(l = gtkblist->tooltipdata; l; l = l->next)
+		{
+			struct tooltip_data *td = l->data;
+			w = MAX(w, TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
+					tw + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER);
+			h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height) + TOOLTIP_BORDER,
+					TOOLTIP_BORDER + td->height + td->name_height + TOOLTIP_BORDER);
 		}
 	} else {
 		gtk_widget_destroy(gtkblist->tipwindow);
