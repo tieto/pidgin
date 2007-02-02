@@ -228,6 +228,8 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 				if (!jabber_google_roster_incoming(js, item))
 					continue;
+			if (!strcmp(jid, "gaim-devel@lists.sourceforge.net"))
+				exit(1);
 			add_gaim_buddies_in_groups(js, jid, name, groups);
 		}
 	}
