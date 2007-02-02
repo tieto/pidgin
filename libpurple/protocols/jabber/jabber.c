@@ -1074,7 +1074,8 @@ static const char* jabber_list_emblem(GaimBuddy *b)
 	JabberBuddy *jb = NULL;
 
 	if(!b->account->gc)
-		return;
+		return NULL;
+
 	js = b->account->gc->proto_data;
 	if(js)
 		jb = jabber_buddy_find(js, b->name, FALSE);

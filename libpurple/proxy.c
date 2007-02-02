@@ -597,7 +597,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	{
 		int major;
 		p = connect_data->read_buffer + 5;
-		major = strtol((const char *)p, (char **)&p, 10);
+		major = strtol((const char *)p, (char**)&p, 10);
 		error = (major == 0) || (*p != '.');
 		if(!error) {
 			int minor;

@@ -4876,22 +4876,21 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		g_free(displaying);
 		return;
 	}
-	message = displaying;
-	length = strlen(message) + 1;
+	length = strlen(displaying) + 1;
 
 	/* Awful hack to work around GtkIMHtml's inefficient rendering of messages with lots of formatting changes.
 	 * If a message has over 100 '<' characters, strip formatting before appending it. Hopefully nobody actually
 	 * needs that much formatting, anyway.
 	 */
-	for (bracket = strchr(message, '<'); bracket && *(bracket + 1); bracket = strchr(bracket + 1, '<'))
+	for (bracket = strchr(displaying, '<'); bracket && *(bracket + 1); bracket = strchr(bracket + 1, '<'))
 		tag_count++;
-	
+
 	if (tag_count > 100) {
-		char *tmp = message;
-		message = displaying = gaim_markup_strip_html(message);
+		char *tmp = displaying;
+		displaying = gaim_markup_strip_html(tmp);
 		g_free(tmp);
-	}	
-	
+	}
+
 	win = gtkconv->win;
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
@@ -4964,27 +4963,27 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	if (flags & GAIM_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
-			   sml_attrib ? sml_attrib : "", mdate, message);
+			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 
 	} else if (flags & GAIM_MESSAGE_ERROR) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
-			   sml_attrib ? sml_attrib : "", mdate, message);
+			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf2, BUF_LONG,
 			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
-			   sml_attrib ? sml_attrib : "", message);
+			   sml_attrib ? sml_attrib : "", displaying);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 	} else if (flags & GAIM_MESSAGE_RAW) {
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, gtk_font_options_all);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), displaying, gtk_font_options_all);
 	} else {
-		char *new_message = g_memdup(message, length);
+		char *new_message = g_memdup(displaying, length);
 		char *alias_escaped = (alias ? g_markup_escape_text(alias, strlen(alias)) : g_strdup(""));
 		/* The initial offset is to deal with
 		 * escaped entities making the string longer */
@@ -5180,7 +5179,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
 		(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
-		account, name, message, conv, flags);
+		account, name, displaying, conv, flags);
 	g_free(displaying);
 }
 static void
