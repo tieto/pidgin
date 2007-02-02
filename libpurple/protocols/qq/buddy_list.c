@@ -215,8 +215,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 				q_bud->flag1 = fe->flag1;
 				q_bud->comm_flag = fe->comm_flag;
 				qq_update_buddy_contact(gc, q_bud);
-			}
-			else {
+			} else {
 				gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
 						"Got an online buddy %d, but not in my buddy list\n", fe->s->uid);
 			}
@@ -234,9 +233,8 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Has more online buddies, position from %d\n", position);
 
 			qq_send_packet_get_buddies_online(gc, position);
-		}
-		else {
-			qq_send_packet_get_buddies_levels(gc);
+		} else {
+			/* qq_send_packet_get_buddies_levels(gc); */
 			qq_refresh_all_buddy_status(gc);
 		}
 

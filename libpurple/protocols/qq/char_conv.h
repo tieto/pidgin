@@ -27,7 +27,7 @@
 
 #include <glib.h>
 
-#define QQ_CHARSET_DEFAULT      "GBK"
+#define QQ_CHARSET_DEFAULT      "GB18030"
 
 gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset);
 

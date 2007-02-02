@@ -42,6 +42,14 @@ typedef void (*GaimAccountRequestAuthorizationCb)(void *);
 #include "prpl.h"
 #include "status.h"
 
+/**
+ * Account request types.
+ */
+typedef enum
+{
+	GAIM_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
+} GaimAccountRequestType;
+
 struct _GaimAccountUiOps
 {
 	/* A buddy we already have added us to their buddy list. */
@@ -53,9 +61,10 @@ struct _GaimAccountUiOps
 	void (*request_add)(GaimAccount *account, const char *remote_user,
 	                    const char *id, const char *alias,
 	                    const char *message);
-	void (*request_authorize)(GaimAccount *account, const char *remote_user, const char *id,
+	void *(*request_authorize)(GaimAccount *account, const char *remote_user, const char *id,
 				 const char *alias, const char *message, gboolean on_list, 
 				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
+	void (*close_account_request)(void *ui_handle);
 };
 
 struct _GaimAccount
@@ -192,10 +201,26 @@ void gaim_account_request_add(GaimAccount *account, const char *remote_user,
  * @param auth_cb      The callback called when the local user accepts
  * @param deny_cb      The callback called when the local user rejects
  * @param user_data    Data to be passed back to the above callbacks
+ *
+ * @return A UI-specific handle.
  */
-void gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
+void *gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data);
+
+/**
+ * Close account requests registered for the given GaimAccount
+ *
+ * @param handle	   The account for which requests should be closed
+ */
+void gaim_account_request_close_with_account(GaimAccount *account);
+
+/**
+ * Close the account request for the given ui handle
+ *
+ * @param handle	   The ui specific handle for which requests should be closed
+ */
+void gaim_account_request_close(void *ui_handle);
 
 /**
  * Requests information from the user to change the account's password.

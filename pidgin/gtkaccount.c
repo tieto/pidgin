@@ -2478,7 +2478,7 @@ deny_no_add_cb(struct auth_and_add *aa)
 	g_free(aa);
 }
 
-static void
+static void *
 gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data)
@@ -2528,6 +2528,14 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 	gaim_gtk_blist_add_alert(alert);
 
 	g_free(buffer);
+	
+	return NULL;
+}
+
+static void
+gaim_gtk_accounts_request_close(void *ui_handle)
+{
+	
 }
 
 static GaimAccountUiOps ui_ops =
@@ -2535,7 +2543,8 @@ static GaimAccountUiOps ui_ops =
 	gaim_gtk_accounts_notify_added,
 	NULL,
 	gaim_gtk_accounts_request_add,
-	gaim_gtk_accounts_request_authorization
+	gaim_gtk_accounts_request_authorization,
+	gaim_gtk_accounts_request_close
 };
 
 GaimAccountUiOps *

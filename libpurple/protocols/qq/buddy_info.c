@@ -741,6 +741,7 @@ void qq_send_packet_get_level(GaimConnection *gc, guint32 uid)
 	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, 5);
 }
 
+/*
 void qq_send_packet_get_buddies_levels(GaimConnection *gc)
 {
 	guint8 *buf, *tmp, size;
@@ -749,8 +750,10 @@ void qq_send_packet_get_buddies_levels(GaimConnection *gc)
 	GList *node = qd->buddies;
 
 	if (qd->buddies) {
+*/
 		/* server only sends back levels for online buddies, no point
  	 	* in asking for anyone else */
+/*
 		size = 4*g_list_length(qd->buddies) + 1;
 		buf = g_new0(guint8, size);
 		tmp = buf + 1;
@@ -767,8 +770,9 @@ void qq_send_packet_get_buddies_levels(GaimConnection *gc)
 		}
 		qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, size);
 		g_free(buf);
-        }
+	}
 }
+*/
 
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 {

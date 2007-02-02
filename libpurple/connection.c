@@ -225,6 +225,7 @@ gaim_connection_destroy(GaimConnection *gc)
 	}
 #endif
 
+	gaim_account_request_close_with_account(account);
 	gaim_request_close_with_handle(gc);
 	gaim_notify_close_with_handle(gc);
 
