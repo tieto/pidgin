@@ -1,12 +1,15 @@
 SUBDIRS = scalable
 
 EXTRA_DIST = 	available.png \
+		available_i.png \
 		away.png \
+		away_i.png \
 		busy.png \
+		busy_i.png \
 		chat.png \
 		extended-away.png \
+		extended-away_i.png \
 		half-operator.png \
-		invisible.png \
 		log-in.png \
 		log-out.png \
 		offline.png \

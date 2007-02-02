@@ -146,12 +146,15 @@ static struct SizedStockIcon {
   gboolean medium;
   gboolean huge;
 } const sized_stock_icons [] = {
-	{ PIDGIN_STOCK_STATUS_AVAILABLE,"status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
-	{ PIDGIN_STOCK_STATUS_AWAY, 	"status", "away.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AVAILABLE,   "status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AVAILABLE_I, "status", "available_i.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AWAY, 	   "status", "away.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AWAY_I, 	"status", "away_i.png",		TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_BUSY_I, 	"status", "busy_i.png", 	TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, FALSE },
-	{ PIDGIN_STOCK_STATUS_INVISIBLE,"status", "invisible.png",      TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_XA_I, 	"status", "extended-away_i.png",TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, FALSE },

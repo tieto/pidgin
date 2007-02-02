@@ -3072,19 +3072,34 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
 					icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
-					icon_size, "GtkTreeView");
+			if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY_I,
+						icon_size, "GtkTreeView");
+			else
+				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
+						icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
-					icon_size, "GtkTreeView");
+		        if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+		                ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY_I,
+		                                icon_size, "GtkTreeView");
+		 	else
+				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
+						icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
-					icon_size, "GtkTreeView");
+			if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+		        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA_I,
+						icon_size, "GtkTreeView");
+			else
+				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
+						icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
 					icon_size, "GtkTreeView");
+		else if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE_I,
+					icon_size, "GtkTreeView");
 		else
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
+			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
 					icon_size, "GtkTreeView");
 	} else if (chat) {
 		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
