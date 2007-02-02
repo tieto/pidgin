@@ -118,6 +118,7 @@ EXTRA_DIST = 	act-up.svg \
 		shame.svg \
 		sheep.svg \
 		shock.svg \
+		shout.svg \
 		shut-mouth.svg \
 		sick.svg \
 		sigarette.svg \
