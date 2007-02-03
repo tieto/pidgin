@@ -2267,7 +2267,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 		account = ((GaimChat*)(node))->account;
 	}
 
-	td->status_icon = pidgin_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
+	td->status_icon = pidgin_blist_get_status_icon(node, PIDGIN_STATUS_ICON_LARGE);
 	td->avatar = pidgin_blist_get_buddy_icon(node, !full, FALSE, TRUE);
 	td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 	tooltip_text = gaim_get_tooltip_text(node, full);
@@ -3022,7 +3022,7 @@ pidgin_blist_get_emblem(GaimBlistNode *node)
 
 
 GdkPixbuf *
-pidgin_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
+pidgin_blist_get_status_icon(GaimBlistNode *node, PidginStatusIconSize size)
 {
 	GdkPixbuf *ret;
 	const char *protoname = NULL;
@@ -3030,7 +3030,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	GaimBuddy *buddy = NULL;
 	GaimChat *chat = NULL;
-	GtkIconSize icon_size = gtk_icon_size_from_name((size == GAIM_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_MEDIUM :
+	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_MEDIUM :
 											 PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
@@ -3075,7 +3075,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		GaimPresence *p;
 		if(conv != NULL) {
 			PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-			if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv) && size == GAIM_STATUS_ICON_SMALL) {
+			if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv) && size == PIDGIN_STATUS_ICON_SMALL) {
 				return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_MESSAGE,
 							       icon_size, "GtkTreeView");
 			}
@@ -3089,21 +3089,21 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
 					icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
-			if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+			if (gaim_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
 				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY_I,
 						icon_size, "GtkTreeView");
 			else
 				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
 						icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
-		        if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+		        if (gaim_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
 		                ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY_I,
 		                                icon_size, "GtkTreeView");
 		 	else
 				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
 						icon_size, "GtkTreeView");
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
-			if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+			if (gaim_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
 		        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA_I,
 						icon_size, "GtkTreeView");
 			else
@@ -3112,7 +3112,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		else if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
 					icon_size, "GtkTreeView");
-		else if (gaim_presence_is_idle(p) && size == GAIM_STATUS_ICON_SMALL)
+		else if (gaim_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE_I,
 					icon_size, "GtkTreeView");
 		else
@@ -4745,7 +4745,7 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	presence = gaim_buddy_get_presence(buddy);
 
 	status = pidgin_blist_get_status_icon((GaimBlistNode*)buddy,
-						GAIM_STATUS_ICON_SMALL);
+						PIDGIN_STATUS_ICON_SMALL);
 
 	avatar = pidgin_blist_get_buddy_icon((GaimBlistNode *)buddy, TRUE, TRUE, TRUE);
 	if (!avatar) {
@@ -4847,7 +4847,7 @@ static void pidgin_blist_update_contact(GaimBuddyList *list, GaimBlistNode *node
 			char *mark;
 
 			status = pidgin_blist_get_status_icon(cnode,
-					 GAIM_STATUS_ICON_SMALL);
+					 PIDGIN_STATUS_ICON_SMALL);
 
 			mark = g_markup_escape_text(gaim_contact_get_alias(contact), -1);
 			gtk_tree_store_set(gtkblist->treemodel, &iter,
@@ -4928,7 +4928,7 @@ static void pidgin_blist_update_chat(GaimBuddyList *list, GaimBlistNode *node)
 			return;
 
 		status = pidgin_blist_get_status_icon(node,
-				 GAIM_STATUS_ICON_SMALL);
+				 PIDGIN_STATUS_ICON_SMALL);
 		emblem = pidgin_blist_get_emblem(node);
 		avatar = pidgin_blist_get_buddy_icon(node, TRUE, FALSE, TRUE);
 

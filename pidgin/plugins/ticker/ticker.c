@@ -117,7 +117,7 @@ static void buddy_ticker_set_pixmap(GaimContact *c) {
 		td->icon = gtk_image_new();
 
 	pixbuf = pidgin_blist_get_status_icon((GaimBlistNode*)c,
-			GAIM_STATUS_ICON_SMALL);
+			PIDGIN_STATUS_ICON_SMALL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(td->icon), pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
 }

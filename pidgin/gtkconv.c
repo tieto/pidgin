@@ -2261,7 +2261,7 @@ pidgin_conv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 				ops->update(NULL, (GaimBlistNode*)b);
 
 			status = pidgin_blist_get_status_icon((GaimBlistNode*)b,
-				(small_icon ? GAIM_STATUS_ICON_SMALL : GAIM_STATUS_ICON_LARGE));
+				(small_icon ? PIDGIN_STATUS_ICON_SMALL : PIDGIN_STATUS_ICON_LARGE));
 		}
 	}
 
@@ -3196,7 +3196,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 
 	/* Create a pixmap for the protocol icon. */
 	if (buddy != NULL)
-		pixbuf = pidgin_blist_get_status_icon((GaimBlistNode*)buddy, GAIM_STATUS_ICON_SMALL);
+		pixbuf = pidgin_blist_get_status_icon((GaimBlistNode*)buddy, PIDGIN_STATUS_ICON_SMALL);
 	else
 		pixbuf = pidgin_create_prpl_icon(account, 0.5);
 

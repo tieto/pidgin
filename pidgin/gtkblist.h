@@ -47,10 +47,10 @@ enum {
 };
 
 typedef enum {
-	GAIM_STATUS_ICON_LARGE,
-	GAIM_STATUS_ICON_SMALL
+	PIDGIN_STATUS_ICON_LARGE,
+	PIDGIN_STATUS_ICON_SMALL
 
-} GaimStatusIconSize;
+} PidginStatusIconSize;
 
 #include "gtkgaim.h"
 #include "blist.h"
@@ -193,7 +193,7 @@ pidgin_blist_get_emblem(GaimBlistNode *node);
  * Useful for the buddy ticker
  */
 GdkPixbuf *pidgin_blist_get_status_icon(GaimBlistNode *node,
-		GaimStatusIconSize size);
+		PidginStatusIconSize size);
 
 /**
  * Returns a boolean indicating if @a node is part of an expanded contact.
