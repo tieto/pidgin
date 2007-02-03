@@ -21,8 +21,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKDIALOGS_H_
-#define _GAIM_GTKDIALOGS_H_
+#ifndef _PIDGINDIALOGS_H_
+#define _PIDGINDIALOGS_H_
 
 #include "gtkgaim.h"
 
@@ -30,21 +30,21 @@
 #include "conversation.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
-void gaim_gtkdialogs_destroy_all(void);
-void gaim_gtkdialogs_about(void);
-void gaim_gtkdialogs_im(void);
-void gaim_gtkdialogs_im_with_user(GaimAccount *, const char *);
-void gaim_gtkdialogs_info(void);
-void gaim_gtkdialogs_log(void);
-void gaim_gtkdialogs_alias_contact(GaimContact *);
-void gaim_gtkdialogs_alias_buddy(GaimBuddy *);
-void gaim_gtkdialogs_alias_chat(GaimChat *);
+void pidgindialogs_destroy_all(void);
+void pidgindialogs_about(void);
+void pidgindialogs_im(void);
+void pidgindialogs_im_with_user(GaimAccount *, const char *);
+void pidgindialogs_info(void);
+void pidgindialogs_log(void);
+void pidgindialogs_alias_contact(GaimContact *);
+void pidgindialogs_alias_buddy(GaimBuddy *);
+void pidgindialogs_alias_chat(GaimChat *);
 
-void gaim_gtkdialogs_remove_buddy(GaimBuddy *);
-void gaim_gtkdialogs_remove_group(GaimGroup *);
-void gaim_gtkdialogs_remove_chat(GaimChat *);
-void gaim_gtkdialogs_remove_contact(GaimContact *);
-void gaim_gtkdialogs_merge_groups(GaimGroup *, const char *);
+void pidgindialogs_remove_buddy(GaimBuddy *);
+void pidgindialogs_remove_group(GaimGroup *);
+void pidgindialogs_remove_chat(GaimChat *);
+void pidgindialogs_remove_contact(GaimContact *);
+void pidgindialogs_merge_groups(GaimGroup *, const char *);
 
 /* Everything after this should probably be moved elsewhere */
 
@@ -55,4 +55,4 @@ void gaim_gtkdialogs_merge_groups(GaimGroup *, const char *);
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
 #define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
-#endif /* _GAIM_GTKDIALOGS_H_ */
+#endif /* _PIDGINDIALOGS_H_ */

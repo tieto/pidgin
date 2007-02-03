@@ -38,13 +38,13 @@ static void historize(GaimConversation *c)
 	const char *alias = name;
 	guint flags;
 	char *history;
-	GaimGtkConversation *gtkconv;
+	PidginConversation *gtkconv;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	char *header;
 	char *protocol;
 
 	convtype = gaim_conversation_get_type(c);
-	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkconv = PIDGIN_CONVERSATION(c);
 	if (convtype == GAIM_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
 	{
 		GSList *buddies;
@@ -106,7 +106,7 @@ static void historize(GaimConversation *c)
 		return;
 
 	history = gaim_log_read((GaimLog*)logs->data, &flags);
-	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkconv = PIDGIN_CONVERSATION(c);
 	if (flags & GAIM_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
 
@@ -180,7 +180,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,

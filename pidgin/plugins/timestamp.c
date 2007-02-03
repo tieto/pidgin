@@ -41,7 +41,7 @@ static int interval = 5 * 60;
 static void
 timestamp_display(GaimConversation *conv, time_t then, time_t now)
 {
-	GaimGtkConversation *gtk_conv = GAIM_GTK_CONVERSATION(conv);
+	PidginConversation *gtk_conv = PIDGIN_CONVERSATION(conv);
 	GtkWidget *imhtml = gtk_conv->imhtml;
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(imhtml));
 	GtkTextIter iter;
@@ -94,7 +94,7 @@ timestamp_displaying_conv_msg(GaimAccount *account, const char *who,
 static void
 timestamp_new_convo(GaimConversation *conv)
 {
-	GaimGtkConversation *gtk_conv = GAIM_GTK_CONVERSATION(conv);
+	PidginConversation *gtk_conv = PIDGIN_CONVERSATION(conv);
 	GtkTextBuffer *buffer;
 
 	if (!g_list_find(gaim_get_conversations(), conv))
@@ -133,7 +133,7 @@ get_config_frame(GaimPlugin *plugin)
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	frame = gaim_gtk_make_frame(ret, _("Display Timestamps Every"));
+	frame = pidgin_make_frame(ret, _("Display Timestamps Every"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
@@ -157,7 +157,7 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	void *conv_handle = gaim_conversations_get_handle();
-	void *gtkconv_handle = gaim_gtk_conversations_get_handle();
+	void *gtkconv_handle = pidgin_conversations_get_handle();
 
 	/* lower priority to display initial timestamp after logged messages */
 	gaim_signal_connect_priority(conv_handle, "conversation-created",
@@ -174,7 +174,7 @@ plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0 /* page_num (Reserved) */
@@ -186,7 +186,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

@@ -93,11 +93,11 @@ get_pending_list(guint max)
 	GList *l_im = NULL;
 	GList *l_chat = NULL;
 
-	l_im = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+	l_im = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
 						       GAIM_UNSEEN_TEXT,
 						       FALSE, max);
 
-	l_chat = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
+	l_chat = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
 		 					 GAIM_UNSEEN_NICK,
 							 FALSE, max);
 
@@ -144,7 +144,7 @@ docklet_update_status()
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
 				if (GAIM_IS_GTK_CONVERSATION(l->data)) {
-					GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)l->data);
+					PidginConversation *gtkconv = PIDGIN_CONVERSATION((GaimConversation *)l->data);
 					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
 						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
 					else
@@ -187,7 +187,7 @@ docklet_update_status()
 		GaimAccount *account = (GaimAccount*)l->data;
 		GaimStatus *account_status;
 
-		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+		if (!gaim_account_get_enabled(account, PIDGIN_UI))
 			continue;
 
 		if (gaim_account_is_disconnected(account))
@@ -306,7 +306,7 @@ docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
 			if (!visible)
 				ui_ops->create();
 			else if (!visibility_manager) {
-				gaim_gtk_blist_visibility_manager_add();
+				pidgin_blist_visibility_manager_add();
 				visibility_manager = TRUE;
 			}
 		}
@@ -315,7 +315,7 @@ docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
 			ui_ops->destroy();
 	} else {
 		if (visibility_manager) {
-			gaim_gtk_blist_visibility_manager_remove();
+			pidgin_blist_visibility_manager_remove();
 			visibility_manager = FALSE;
 		}
 		docklet_update_status();
@@ -386,7 +386,7 @@ show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
 	GaimSavedStatus *saved_status;
 	saved_status = gaim_savedstatus_get_current();
-	gaim_gtk_status_editor_show(FALSE,
+	pidgin_status_editor_show(FALSE,
 		gaim_savedstatus_is_transient(saved_status) ? saved_status : NULL);
 }
 
@@ -436,7 +436,7 @@ new_menu_item_with_gaim_icon(GtkWidget *menu, const char *str, GaimStatusPrimiti
 	if (sf)
 		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
 
-	pixbuf = gaim_gtk_create_gaim_icon_with_status(primitive, 0.5);
+	pixbuf = pidgin_create_gaim_icon_with_status(primitive, 0.5);
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(pixbuf);
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
@@ -489,7 +489,7 @@ docklet_status_submenu()
 	gaim_separator(submenu);
 
 	new_menu_item_with_gaim_icon(submenu, _("New..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
-	new_menu_item_with_gaim_icon(submenu, _("Saved..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(gaim_gtk_status_window_show), NULL, 0, 0, NULL);
+	new_menu_item_with_gaim_icon(submenu, _("Saved..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(pidgin_status_window_show), NULL, 0, 0, NULL);
 
 	return menuitem;
 }
@@ -520,7 +520,7 @@ docklet_menu() {
 			gaim_debug_warning("docklet",
 				"status indicates messages pending, but no conversations with unseen messages were found.");
 		} else {
-			gaim_gtk_conversations_fill_menu(submenu, l);
+			pidgin_conversations_fill_menu(submenu, l);
 			g_list_free(l);
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 		}
@@ -531,7 +531,7 @@ docklet_menu() {
 
 	gaim_separator(menu);
 
-	menuitem = gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
+	menuitem = gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(pidgindialogs_im), NULL, 0, 0, NULL);
 	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
@@ -540,9 +540,9 @@ docklet_menu() {
 
 	gaim_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(gaim_gtk_accounts_window_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Plugins"), GAIM_STOCK_PLUGIN, G_CALLBACK(gaim_gtk_plugin_dialog_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Plugins"), GAIM_STOCK_PLUGIN, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
 
@@ -580,18 +580,18 @@ docklet_menu() {
  * public api for ui_ops
  **************************************************************************/
 void
-gaim_gtk_docklet_clicked(int button_type)
+pidgin_docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
 			if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
-					gaim_gtkconv_present_conversation((GaimConversation *)l->data);
+					pidginconv_present_conversation((GaimConversation *)l->data);
 					g_list_free(l);
 				}
 			} else {
-				gaim_gtk_blist_toggle_visibility();
+				pidgin_blist_toggle_visibility();
 			}
 			break;
 		case 3:
@@ -601,11 +601,11 @@ gaim_gtk_docklet_clicked(int button_type)
 }
 
 void
-gaim_gtk_docklet_embedded()
+pidgin_docklet_embedded()
 {
 	if (!visibility_manager
 	    && strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
-		gaim_gtk_blist_visibility_manager_add();
+		pidgin_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}
 	visible = TRUE;
@@ -615,11 +615,11 @@ gaim_gtk_docklet_embedded()
 }
 
 void
-gaim_gtk_docklet_remove()
+pidgin_docklet_remove()
 {
 	if (visible) {
 		if (visibility_manager) {
-			gaim_gtk_blist_visibility_manager_remove();
+			pidgin_blist_visibility_manager_remove();
 			visibility_manager = FALSE;
 		}
 		if (docklet_blinking_timer) {
@@ -632,25 +632,25 @@ gaim_gtk_docklet_remove()
 }
 
 void
-gaim_gtk_docklet_set_ui_ops(struct docklet_ui_ops *ops)
+pidgin_docklet_set_ui_ops(struct docklet_ui_ops *ops)
 {
 	ui_ops = ops;
 }
 
 void*
-gaim_gtk_docklet_get_handle()
+pidgin_docklet_get_handle()
 {
 	static int i;
 	return &i;
 }
 
 void
-gaim_gtk_docklet_init()
+pidgin_docklet_init()
 {
 	void *conn_handle = gaim_connections_get_handle();
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
-	void *docklet_handle = gaim_gtk_docklet_get_handle();
+	void *docklet_handle = pidgin_docklet_get_handle();
 
 	gaim_prefs_add_none("/gaim/gtk/docklet");
 	gaim_prefs_add_bool("/gaim/gtk/docklet/blink", FALSE);
@@ -685,7 +685,7 @@ gaim_gtk_docklet_init()
 }
 
 void
-gaim_gtk_docklet_uninit()
+pidgin_docklet_uninit()
 {
 	if (visible && ui_ops && ui_ops->destroy)
 		ui_ops->destroy();

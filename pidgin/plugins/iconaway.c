@@ -34,7 +34,7 @@ static void
 iconify_windows(GaimAccount *account, GaimStatus *old, GaimStatus *newstatus)
 {
 	GaimPresence *presence;
-	GaimGtkWindow *win;
+	PidginWindow *win;
 	GList *windows;
 
 	presence = gaim_status_get_presence(newstatus);
@@ -44,11 +44,11 @@ iconify_windows(GaimAccount *account, GaimStatus *old, GaimStatus *newstatus)
 
 	gaim_blist_set_visible(FALSE);
 
-	for (windows = gaim_gtk_conv_windows_get_list();
+	for (windows = pidgin_conv_windows_get_list();
 		 windows != NULL;
 		 windows = windows->next) {
 
-		win = (GaimGtkWindow *)windows->data;
+		win = (PidginWindow *)windows->data;
 
 		gtk_window_iconify(GTK_WINDOW(win->window));
 	}
@@ -73,7 +73,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

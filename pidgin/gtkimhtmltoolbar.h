@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GAIM_GTKIMHTMLTOOLBAR_H_
-#define _GAIM_GTKIMHTMLTOOLBAR_H_
+#ifndef _PIDGINIMHTMLTOOLBAR_H_
+#define _PIDGINIMHTMLTOOLBAR_H_
 
 #include <gtk/gtkvbox.h>
 #include "gtkimhtml.h"
@@ -92,4 +92,4 @@ void gtk_imhtmltoolbar_associate_smileys (GtkIMHtmlToolbar *toolbar, const char 
 }
 #endif
 
-#endif /* _GAIM_GTKIMHTMLTOOLBAR_H_ */
+#endif /* _PIDGINIMHTMLTOOLBAR_H_ */

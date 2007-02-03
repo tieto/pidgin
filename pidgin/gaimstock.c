@@ -220,7 +220,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
 }
 
 void
-gaim_gtk_stock_init(void)
+pidgin_stock_init(void)
 {
 	static gboolean stock_initted = FALSE;
 	GtkIconFactory *icon_factory;

@@ -233,7 +233,7 @@ static struct artist artists[] = {
 };
 
 void
-gaim_gtkdialogs_destroy_all()
+pidgindialogs_destroy_all()
 {
 	while (dialogwindows) {
 		gtk_widget_destroy(dialogwindows->data);
@@ -251,7 +251,7 @@ static void destroy_about()
 /* This function puts the version number onto the pixmap we use in the 'about' 
  * screen in Gaim. */
 static void
-gaim_gtk_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
+pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	GdkPixmap *pixmap;
 	GtkStyle *style;
 	PangoContext *context;
@@ -286,7 +286,7 @@ gaim_gtk_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	g_object_unref(G_OBJECT(pixmap));
 }
 
-void gaim_gtkdialogs_about()
+void pidgindialogs_about()
 {
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -326,7 +326,7 @@ void gaim_gtkdialogs_about()
 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
-	gaim_gtk_logo_versionize(&pixbuf, logo);
+	pidgin_logo_versionize(&pixbuf, logo);
 	gtk_widget_destroy(logo);
 	logo = gtk_image_new_from_pixbuf(pixbuf);
 	gdk_pixbuf_unref(pixbuf);
@@ -335,7 +335,7 @@ void gaim_gtkdialogs_about()
 	atk_object_set_description(obj, PIDGIN_NAME " " VERSION);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = gaim_gtk_create_imhtml(FALSE, &text, NULL, NULL);
+	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
@@ -665,7 +665,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 }
 
 static void
-gaim_gtkdialogs_im_cb(gpointer data, GaimRequestFields *fields)
+pidgindialogs_im_cb(gpointer data, GaimRequestFields *fields)
 {
 	GaimAccount *account;
 	const char *username;
@@ -673,11 +673,11 @@ gaim_gtkdialogs_im_cb(gpointer data, GaimRequestFields *fields)
 	account  = gaim_request_fields_get_account(fields, "account");
 	username = gaim_request_fields_get_string(fields,  "screenname");
 
-	gaim_gtkdialogs_im_with_user(account, username);
+	pidgindialogs_im_with_user(account, username);
 }
 
 void
-gaim_gtkdialogs_im(void)
+pidgindialogs_im(void)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -706,13 +706,13 @@ gaim_gtkdialogs_im(void)
 						_("Please enter the screen name or alias of the person "
 						  "you would like to IM."),
 						fields,
-						_("OK"), G_CALLBACK(gaim_gtkdialogs_im_cb),
+						_("OK"), G_CALLBACK(pidgindialogs_im_cb),
 						_("Cancel"), NULL,
 						NULL);
 }
 
 void
-gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
+pidgindialogs_im_with_user(GaimAccount *account, const char *username)
 {
 	GaimConversation *conv;
 
@@ -724,11 +724,11 @@ gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 	if (conv == NULL)
 		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
 
-	gaim_gtkconv_present_conversation(conv);
+	pidginconv_present_conversation(conv);
 }
 
 static gboolean
-gaim_gtkdialogs_ee(const char *ee)
+pidgindialogs_ee(const char *ee)
 {
 	GtkWidget *window;
 	GtkWidget *hbox;
@@ -793,7 +793,7 @@ gaim_gtkdialogs_ee(const char *ee)
 }
 
 static void
-gaim_gtkdialogs_info_cb(gpointer data, GaimRequestFields *fields)
+pidgindialogs_info_cb(gpointer data, GaimRequestFields *fields)
 {
 	char *username;
 	gboolean found = FALSE;
@@ -805,7 +805,7 @@ gaim_gtkdialogs_info_cb(gpointer data, GaimRequestFields *fields)
 		gaim_request_fields_get_string(fields,  "screenname")));
 
 	if (username != NULL && gaim_str_has_suffix(username, "rocksmyworld"))
-		found = gaim_gtkdialogs_ee(username);
+		found = pidgindialogs_ee(username);
 
 	if (!found && username != NULL && *username != '\0' && account != NULL)
 		serv_get_info(gaim_account_get_connection(account), username);
@@ -814,7 +814,7 @@ gaim_gtkdialogs_info_cb(gpointer data, GaimRequestFields *fields)
 }
 
 void
-gaim_gtkdialogs_info(void)
+pidgindialogs_info(void)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -843,13 +843,13 @@ gaim_gtkdialogs_info(void)
 						_("Please enter the screen name or alias of the person "
 						  "whose info you would like to view."),
 						fields,
-						_("OK"), G_CALLBACK(gaim_gtkdialogs_info_cb),
+						_("OK"), G_CALLBACK(pidgindialogs_info_cb),
 						_("Cancel"), NULL,
 						NULL);
 }
 
 static void
-gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
+pidgindialogs_log_cb(gpointer data, GaimRequestFields *fields)
 {
 	char *username;
 	GaimAccount *account;
@@ -862,10 +862,10 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 
 	if (username != NULL && *username != '\0' && account != NULL)
 	{
-		GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+		PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 		GSList *buddies;
 
-		gaim_gtk_set_cursor(gtkblist->window, GDK_WATCH);
+		pidgin_set_cursor(gtkblist->window, GDK_WATCH);
 
 		buddies = gaim_find_buddies(account, username);
 		for (cur = buddies; cur != NULL; cur = cur->next)
@@ -873,18 +873,18 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 			GaimBlistNode *node = cur->data;
 			if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 			{
-				gaim_gtk_log_show_contact((GaimContact *)node->parent);
+				pidgin_log_show_contact((GaimContact *)node->parent);
 				g_slist_free(buddies);
-				gaim_gtk_clear_cursor(gtkblist->window);
+				pidgin_clear_cursor(gtkblist->window);
 				g_free(username);
 				return;
 			}
 		}
 		g_slist_free(buddies);
 
-		gaim_gtk_log_show(GAIM_LOG_IM, username, account);
+		pidgin_log_show(GAIM_LOG_IM, username, account);
 
-		gaim_gtk_clear_cursor(gtkblist->window);
+		pidgin_clear_cursor(gtkblist->window);
 	}
 
 	g_free(username);
@@ -894,7 +894,7 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
  * TODO - This needs to deal with logs of all types, not just IM logs.
  */
 void
-gaim_gtkdialogs_log(void)
+pidgindialogs_log(void)
 {
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -934,38 +934,38 @@ gaim_gtkdialogs_log(void)
 						_("Please enter the screen name or alias of the person "
 						  "whose log you would like to view."),
 						fields,
-						_("OK"), G_CALLBACK(gaim_gtkdialogs_log_cb),
+						_("OK"), G_CALLBACK(pidgindialogs_log_cb),
 						_("Cancel"), NULL,
 						NULL);
 }
 
 static void
-gaim_gtkdialogs_alias_contact_cb(GaimContact *contact, const char *new_alias)
+pidgindialogs_alias_contact_cb(GaimContact *contact, const char *new_alias)
 {
 	gaim_contact_set_alias(contact, new_alias);
 }
 
 void
-gaim_gtkdialogs_alias_contact(GaimContact *contact)
+pidgindialogs_alias_contact(GaimContact *contact)
 {
 	g_return_if_fail(contact != NULL);
 
 	gaim_request_input(NULL, _("Alias Contact"), NULL,
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(gaim_gtkdialogs_alias_contact_cb),
+					   _("Alias"), G_CALLBACK(pidgindialogs_alias_contact_cb),
 					   _("Cancel"), NULL, contact);
 }
 
 static void
-gaim_gtkdialogs_alias_buddy_cb(GaimBuddy *buddy, const char *new_alias)
+pidgindialogs_alias_buddy_cb(GaimBuddy *buddy, const char *new_alias)
 {
 	gaim_blist_alias_buddy(buddy, new_alias);
 	serv_alias_buddy(buddy);
 }
 
 void
-gaim_gtkdialogs_alias_buddy(GaimBuddy *buddy)
+pidgindialogs_alias_buddy(GaimBuddy *buddy)
 {
 	gchar *secondary;
 
@@ -975,32 +975,32 @@ gaim_gtkdialogs_alias_buddy(GaimBuddy *buddy)
 
 	gaim_request_input(NULL, _("Alias Buddy"), NULL,
 					   secondary, buddy->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(gaim_gtkdialogs_alias_buddy_cb),
+					   _("Alias"), G_CALLBACK(pidgindialogs_alias_buddy_cb),
 					   _("Cancel"), NULL, buddy);
 
 	g_free(secondary);
 }
 
 static void
-gaim_gtkdialogs_alias_chat_cb(GaimChat *chat, const char *new_alias)
+pidgindialogs_alias_chat_cb(GaimChat *chat, const char *new_alias)
 {
 	gaim_blist_alias_chat(chat, new_alias);
 }
 
 void
-gaim_gtkdialogs_alias_chat(GaimChat *chat)
+pidgindialogs_alias_chat(GaimChat *chat)
 {
 	g_return_if_fail(chat != NULL);
 
 	gaim_request_input(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(gaim_gtkdialogs_alias_chat_cb),
+					   _("Alias"), G_CALLBACK(pidgindialogs_alias_chat_cb),
 					   _("Cancel"), NULL, chat);
 }
 
 static void
-gaim_gtkdialogs_remove_contact_cb(GaimContact *contact)
+pidgindialogs_remove_contact_cb(GaimContact *contact)
 {
 	GaimBlistNode *bnode, *cnode;
 	GaimGroup *group;
@@ -1016,7 +1016,7 @@ gaim_gtkdialogs_remove_contact_cb(GaimContact *contact)
 }
 
 void
-gaim_gtkdialogs_remove_contact(GaimContact *contact)
+pidgindialogs_remove_contact(GaimContact *contact)
 {
 	GaimBuddy *buddy = gaim_contact_get_priority_buddy(contact);
 
@@ -1025,7 +1025,7 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 
 	if (((GaimBlistNode*)contact)->child == (GaimBlistNode*)buddy &&
 			!((GaimBlistNode*)buddy)->next) {
-		gaim_gtkdialogs_remove_buddy(buddy);
+		pidgindialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;
 		text = g_strdup_printf(
@@ -1039,7 +1039,7 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 					buddy->name, contact->totalsize - 1);
 
 		gaim_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
-				_("_Remove Contact"), G_CALLBACK(gaim_gtkdialogs_remove_contact_cb),
+				_("_Remove Contact"), G_CALLBACK(pidgindialogs_remove_contact_cb),
 				_("Cancel"), NULL);
 
 		g_free(text);
@@ -1053,14 +1053,14 @@ static void free_ggmo(struct _GaimGroupMergeObject *ggp)
 }
 
 static void
-gaim_gtkdialogs_merge_groups_cb(struct _GaimGroupMergeObject *GGP)
+pidgindialogs_merge_groups_cb(struct _GaimGroupMergeObject *GGP)
 {
 	gaim_blist_rename_group(GGP->parent, GGP->new_name);
 	free_ggmo(GGP);
 }
 
 void
-gaim_gtkdialogs_merge_groups(GaimGroup *source, const char *new_name)
+pidgindialogs_merge_groups(GaimGroup *source, const char *new_name)
 {
 	gchar *text;
 	struct _GaimGroupMergeObject *ggp;
@@ -1077,14 +1077,14 @@ gaim_gtkdialogs_merge_groups(GaimGroup *source, const char *new_name)
 	ggp->new_name = g_strdup(new_name);
 	
 	gaim_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
-			_("_Merge Groups"), G_CALLBACK(gaim_gtkdialogs_merge_groups_cb),
+			_("_Merge Groups"), G_CALLBACK(pidgindialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
 
 	g_free(text);
 }
 
 static void
-gaim_gtkdialogs_remove_group_cb(GaimGroup *group)
+pidgindialogs_remove_group_cb(GaimGroup *group)
 {
 	GaimBlistNode *cnode, *bnode;
 
@@ -1121,7 +1121,7 @@ gaim_gtkdialogs_remove_group_cb(GaimGroup *group)
 }
 
 void
-gaim_gtkdialogs_remove_group(GaimGroup *group)
+pidgindialogs_remove_group(GaimGroup *group)
 {
 	gchar *text;
 
@@ -1131,7 +1131,7 @@ gaim_gtkdialogs_remove_group(GaimGroup *group)
 						   group->name);
 
 	gaim_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
-						_("_Remove Group"), G_CALLBACK(gaim_gtkdialogs_remove_group_cb),
+						_("_Remove Group"), G_CALLBACK(pidgindialogs_remove_group_cb),
 						_("Cancel"), NULL);
 
 	g_free(text);
@@ -1139,7 +1139,7 @@ gaim_gtkdialogs_remove_group(GaimGroup *group)
 
 /* XXX - Some of this should be moved into the core, methinks. */
 static void
-gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
+pidgindialogs_remove_buddy_cb(GaimBuddy *buddy)
 {
 	GaimGroup *group;
 	gchar *name;
@@ -1158,7 +1158,7 @@ gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 }
 
 void
-gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
+pidgindialogs_remove_buddy(GaimBuddy *buddy)
 {
 	gchar *text;
 
@@ -1168,20 +1168,20 @@ gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
 						   buddy->name);
 
 	gaim_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
-						_("_Remove Buddy"), G_CALLBACK(gaim_gtkdialogs_remove_buddy_cb),
+						_("_Remove Buddy"), G_CALLBACK(pidgindialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 
 	g_free(text);
 }
 
 static void
-gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)
+pidgindialogs_remove_chat_cb(GaimChat *chat)
 {
 	gaim_blist_remove_chat(chat);
 }
 
 void
-gaim_gtkdialogs_remove_chat(GaimChat *chat)
+pidgindialogs_remove_chat(GaimChat *chat)
 {
 	const gchar *name;
 	gchar *text;
@@ -1193,7 +1193,7 @@ gaim_gtkdialogs_remove_chat(GaimChat *chat)
 			name ? name : "");
 
 	gaim_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
-						_("_Remove Chat"), G_CALLBACK(gaim_gtkdialogs_remove_chat_cb),
+						_("_Remove Chat"), G_CALLBACK(pidgindialogs_remove_chat_cb),
 						_("Cancel"), NULL);
 
 	g_free(text);

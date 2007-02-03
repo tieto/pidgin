@@ -45,18 +45,18 @@ static GtkWidget *pref_button = NULL;
 static GHashTable *plugin_pref_dialogs = NULL;
 
 GtkWidget *
-gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
+pidgin_plugin_get_config_frame(GaimPlugin *plugin)
 {
 	GtkWidget *config = NULL;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
 
 	if (GAIM_IS_GTK_PLUGIN(plugin) && plugin->info->ui_info
-		&& GAIM_GTK_PLUGIN_UI_INFO(plugin)->get_config_frame)
+		&& PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame)
 	{
-		GaimGtkPluginUiInfo *ui_info;
+		PidginPluginUiInfo *ui_info;
 
-		ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
+		ui_info = PIDGIN_PLUGIN_UI_INFO(plugin);
 
 		config = ui_info->get_config_frame(plugin);
 
@@ -77,7 +77,7 @@ gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 
 		frame = plugin->info->prefs_info->get_plugin_pref_frame(plugin);
 
-		config = gaim_gtk_plugin_pref_create_frame(frame);
+		config = pidgin_plugin_pref_create_frame(frame);
 
 		/* XXX According to bug #1407047 this broke saving pluging preferences, I'll look at fixing it correctly later.
 		gaim_plugin_pref_frame_destroy(frame);
@@ -88,7 +88,7 @@ gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 }
 
 void
-gaim_gtk_plugins_save(void)
+pidgin_plugins_save(void)
 {
 	gaim_plugins_save_loaded("/gaim/gtk/plugins/loaded");
 }
@@ -176,7 +176,7 @@ static void plugin_loading_common(GaimPlugin *plugin, GtkTreeView *view, gboolea
 					gtk_widget_set_sensitive(pref_button,
 						loaded
 						&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
-							&& GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame)
+							&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 						 || (plug->info->prefs_info
 							&& plug->info->prefs_info->get_plugin_pref_frame)));
 				}
@@ -246,12 +246,12 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 
 	if (!gaim_plugin_is_loaded(plug))
 	{
-		gaim_gtk_set_cursor(plugin_dialog, GDK_WATCH);
+		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
 		gaim_plugin_load(plug);
 		plugin_toggled_stage_two(plug, model, iter, FALSE);
 
-		gaim_gtk_clear_cursor(plugin_dialog);
+		pidgin_clear_cursor(plugin_dialog);
 	}
 	else
 	{
@@ -298,17 +298,17 @@ static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkT
 
 	if (unload)
 	{
-		gaim_gtk_set_cursor(plugin_dialog, GDK_WATCH);
+		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
 		gaim_plugin_unload(plug);
 
-		gaim_gtk_clear_cursor(plugin_dialog);
+		pidgin_clear_cursor(plugin_dialog);
 	}
 
 	gtk_widget_set_sensitive(pref_button,
 		gaim_plugin_is_loaded(plug)
 		&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
-			&& GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame)
+			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
@@ -342,7 +342,7 @@ static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkT
 	                   -1);
 	g_free(iter);
 
-	gaim_gtk_plugins_save();
+	pidgin_plugins_save();
 }
 
 static gboolean ensure_plugin_visible(void *data)
@@ -417,7 +417,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	gtk_widget_set_sensitive(pref_button,
 		gaim_plugin_is_loaded(plug)
 		&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
-			&& GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame)
+			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
@@ -466,7 +466,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		if (plugin_pref_dialogs != NULL &&
 			g_hash_table_lookup(plugin_pref_dialogs, plug))
 			break;
-		box = gaim_gtk_plugin_get_config_frame(plug);
+		box = pidgin_plugin_get_config_frame(plug);
 		if (box == NULL)
 			break;
 
@@ -511,7 +511,7 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 	plugin_dialog_response_cb(dialog, GAIM_RESPONSE_CONFIGURE, sel);
 }
 
-void gaim_gtk_plugin_dialog_show()
+void pidgin_plugin_dialog_show()
 {
 	GtkWidget *sw;
 	GtkWidget *event_view;
@@ -591,7 +591,7 @@ void gaim_gtk_plugin_dialog_show()
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(event_view), 1);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(event_view),
-				gaim_gtk_tree_view_search_equal_func, NULL, NULL);
+				pidgin_tree_view_search_equal_func, NULL, NULL);
 
 	expander = gtk_expander_new(_("<b>Plugin Details</b>"));
 	gtk_expander_set_use_markup(GTK_EXPANDER(expander), TRUE);

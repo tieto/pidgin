@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKFT_H_
-#define _GAIM_GTKFT_H_
+#ifndef _PIDGINFT_H_
+#define _PIDGINFT_H_
 
 #include "ft.h"
 
@@ -33,7 +33,7 @@
  * The structure is opaque, as nobody should be touching anything inside of
  * it.
  */
-typedef struct _GaimGtkXferDialog GaimGtkXferDialog;
+typedef struct _PidginXferDialog PidginXferDialog;
 
 /**************************************************************************/
 /** @name GTK+ File Transfer Dialog API                                   */
@@ -45,14 +45,14 @@ typedef struct _GaimGtkXferDialog GaimGtkXferDialog;
  *
  * @return The new dialog.
  */
-GaimGtkXferDialog *gaim_gtkxfer_dialog_new(void);
+PidginXferDialog *pidginxfer_dialog_new(void);
 
 /**
  * Destroys a file transfer dialog.
  *
  * @param dialog The file transfer dialog.
  */
-void gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog);
+void pidginxfer_dialog_destroy(PidginXferDialog *dialog);
 
 /**
  * Displays the file transfer dialog given.
@@ -60,14 +60,14 @@ void gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog);
  *
  * @param dialog The file transfer dialog to show.
  */
-void gaim_gtkxfer_dialog_show(GaimGtkXferDialog *dialog);
+void pidginxfer_dialog_show(PidginXferDialog *dialog);
 
 /**
  * Hides the file transfer dialog.
  *
  * @param dialog The file transfer dialog to hide.
  */
-void gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog);
+void pidginxfer_dialog_hide(PidginXferDialog *dialog);
 
 /**
  * Adds a file transfer to the dialog.
@@ -75,7 +75,7 @@ void gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog);
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer);
+void pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer);
 
 /**
  * Removes a file transfer from the dialog.
@@ -83,7 +83,7 @@ void gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer);
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
+void pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
 									 GaimXfer *xfer);
 
 /**
@@ -92,7 +92,7 @@ void gaim_gtkxfer_dialog_remove_xfer(GaimGtkXferDialog *dialog,
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer that was canceled.
  */
-void gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
+void pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									 GaimXfer *xfer);
 
 /**
@@ -101,7 +101,7 @@ void gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
+void pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 									 GaimXfer *xfer);
 
 /*@}*/
@@ -114,34 +114,34 @@ void gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 /**
  * Initializes the GTK+ file transfer system.
  */
-void gaim_gtk_xfers_init(void);
+void pidgin_xfers_init(void);
 
 /**
  * Uninitializes the GTK+ file transfer system.
  */
-void gaim_gtk_xfers_uninit(void);
+void pidgin_xfers_uninit(void);
 
 /**
  * Sets gaim's main file transfer dialog.
  *
  * @param dialog The main dialog.
  */
-void gaim_set_gtkxfer_dialog(GaimGtkXferDialog *dialog);
+void gaim_set_gtkxfer_dialog(PidginXferDialog *dialog);
 
 /**
  * Returns gaim's main file transfer dialog.
  *
  * @return The main dialog.
  */
-GaimGtkXferDialog *gaim_get_gtkxfer_dialog(void);
+PidginXferDialog *gaim_get_gtkxfer_dialog(void);
 
 /**
  * Returns the UI operations structure for the GTK+ file transfer UI.
  *
  * @return The GTK+ file transfer UI operations structure.
  */
-GaimXferUiOps *gaim_gtk_xfers_get_ui_ops(void);
+GaimXferUiOps *pidgin_xfers_get_ui_ops(void);
 
 /*@}*/
 
-#endif /* _GAIM_GTKFT_H_ */
+#endif /* _PIDGINFT_H_ */

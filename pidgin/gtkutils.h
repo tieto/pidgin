@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKUTILS_H_
-#define _GAIM_GTKUTILS_H_
+#ifndef _PIDGINUTILS_H_
+#define _PIDGINUTILS_H_
 
 #include "gtkconv.h"
 #include "gtkgaim.h"
@@ -90,7 +90,7 @@ void gaim_setup_imhtml(GtkWidget *imhtml);
  *        widget which contains the imhtml.
  * @return The GtkFrame containing the toolbar and imhtml.
  */
-GtkWidget *gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
+GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
  * Toggles the sensitivity of a widget.
@@ -98,7 +98,7 @@ GtkWidget *gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, Gtk
  * @param widget    @c NULL. Used for signal handlers.
  * @param to_toggle The widget to toggle.
  */
-void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
+void pidgin_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 
 /**
  * Checks if text has been entered into a GtkTextEntry widget.  If 
@@ -108,7 +108,7 @@ void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
  * @param entry  The text entry widget.
  * @param dialog The dialog containing the text entry widget.
  */
-void gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
+void pidgin_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
 
 /**
  * Toggles the sensitivity of all widgets in a pointer array.
@@ -116,7 +116,7 @@ void gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
  * @param w    @c NULL. Used for signal handlers.
  * @param data The array containing the widgets to toggle.
  */
-void gaim_gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
+void pidgin_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
 
 /**
  * Toggles the visibility of a widget.
@@ -124,7 +124,7 @@ void gaim_gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
  * @param widget    @c NULL. Used for signal handlers.
  * @param to_toggle The widget to toggle.
  */
-void gaim_gtk_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
+void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
 
 /**
  * Adds a separator to a menu.
@@ -206,7 +206,7 @@ GtkWidget *gaim_pixbuf_toolbar_button_from_stock(const char *stock);
  *
  * @return The vbox to put things into.
  */
-GtkWidget *gaim_gtk_make_frame(GtkWidget *parent, const char *title);
+GtkWidget *pidgin_make_frame(GtkWidget *parent, const char *title);
 
 /**
  * Creates a drop-down option menu filled with protocols.
@@ -217,7 +217,7 @@ GtkWidget *gaim_gtk_make_frame(GtkWidget *parent, const char *title);
  *
  * @return The drop-down option menu.
  */
-GtkWidget *gaim_gtk_protocol_option_menu_new(const char *id,
+GtkWidget *pidgin_protocol_option_menu_new(const char *id,
 											 GCallback cb,
 											 gpointer user_data);
 
@@ -234,7 +234,7 @@ GtkWidget *gaim_gtk_protocol_option_menu_new(const char *id,
  *
  * @return The drop-down option menu.
  */
-GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
+GtkWidget *pidgin_account_option_menu_new(GaimAccount *default_account,
 		gboolean show_all, GCallback cb,
 		GaimFilterAccountFunc filter_func, gpointer user_data);
 
@@ -242,30 +242,30 @@ GtkWidget *gaim_gtk_account_option_menu_new(GaimAccount *default_account,
  * Gets the currently selected account from an account drop down box.
  *
  * @param optmenu The GtkOptionMenu created by
- *        gaim_gtk_account_option_menu_new.
+ *        pidgin_account_option_menu_new.
  * @return Returns the GaimAccount that is currently selected.
  */
-GaimAccount *gaim_gtk_account_option_menu_get_selected(GtkWidget *optmenu);
+GaimAccount *pidgin_account_option_menu_get_selected(GtkWidget *optmenu);
 
 /**
  * Sets the currently selected account for an account drop down box.
  *
  * @param optmenu The GtkOptionMenu created by
- *        gaim_gtk_account_option_menu_new.
+ *        pidgin_account_option_menu_new.
  * @param account The GaimAccount to select.
  */
-void gaim_gtk_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account);
+void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account);
 
 /**
  * Add autocompletion of screenames to an entry.
  *
  * @param entry     The GtkEntry on which to setup autocomplete.
- * @param optmenu   A menu for accounts, returned by gaim_gtk_account_option_menu_new().
+ * @param optmenu   A menu for accounts, returned by pidgin_account_option_menu_new().
  *                  If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
  *                  from the autocomplete list.
  * @param all       Whether to include screennames from disconnected accounts.
  */
-void gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
+void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 
 /**
  * Check if the given path is a directory or not.  If it is, then modify
@@ -277,7 +277,7 @@ void gaim_gtk_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu
  *
  * @return TRUE if given path is a directory, FALSE otherwise.
  */
-gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
+gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
 
 /**
  * Sets up GtkSpell for the given GtkTextView, reporting errors
@@ -287,24 +287,24 @@ gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
  *
  * @param textview The textview widget to setup spellchecking for.
  */
-void gaim_gtk_setup_gtkspell(GtkTextView *textview);
+void pidgin_setup_gtkspell(GtkTextView *textview);
 
 /**
  * Save menu accelerators callback
  */
-void gaim_gtk_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
+void pidgin_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
 							 GdkModifierType arg2, GClosure *arg3,
 							 gpointer data);
 
 /**
  * Save menu accelerators
  */
-gboolean gaim_gtk_save_accels(gpointer data);
+gboolean pidgin_save_accels(gpointer data);
 
 /**
  * Load menu accelerators
  */
-void gaim_gtk_load_accels(void);
+void pidgin_load_accels(void);
 
 /**
  * Parses an application/x-im-contact MIME message and returns the
@@ -322,7 +322,7 @@ void gaim_gtk_load_accels(void);
  * @return TRUE if the message was parsed for the minimum necessary data.
  *         FALSE otherwise.
  */
-gboolean gaim_gtk_parse_x_im_contact(const char *msg, gboolean all_accounts,
+gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 									 GaimAccount **ret_account,
 									 char **ret_protocol, char **ret_username,
 									 char **ret_alias);
@@ -351,7 +351,7 @@ void gaim_set_accessible_label(GtkWidget *w, GtkWidget *l);
  * @param push_in This is an output parameter?
  * @param user_data Not used by this particular position function.
  */
-void gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
+void pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 												gint *x,
 												gint *y,
 												gboolean *push_in,
@@ -369,7 +369,7 @@ void gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char
 /**
  * Convenience wrapper for gaim_buddy_icon_get_scale_size
  */
-void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, GaimIconScaleRules rules, int *width, int *height);
+void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, GaimIconScaleRules rules, int *width, int *height);
 
 /**
  * Returns the base image to represent the account, based on
@@ -385,7 +385,7 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size);
+GdkPixbuf *pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size);
 
 /**
  * Create a protocol icon with the status emblem overlayed in
@@ -406,7 +406,7 @@ GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account, PidginPrplIconSize si
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type, double scale_factor);
+GdkPixbuf *pidgin_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type, double scale_factor);
 
 /**
  * Create a Gaim running-man icon with the status emblem overlayed
@@ -426,7 +426,7 @@ GdkPixbuf *gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatu
  *         allocate the image buffer, or the image file contained
  *         invalid data.
  */
-GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitive, double scale_factor);
+GdkPixbuf *pidgin_create_gaim_icon_with_status(GaimStatusPrimitive primitive, double scale_factor);
 
 
 /**
@@ -436,7 +436,7 @@ GdkPixbuf *gaim_gtk_create_gaim_icon_with_status(GaimStatusPrimitive primitive, 
  * @param act     The GaimMenuAction to append.
  * @param gobject The object to be passed to the action callback.
  */
-void gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
+void pidgin_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
                                  gpointer gobject);
 
 /**
@@ -450,7 +450,7 @@ void gaim_gtk_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
  * @param widget      The widget for which to set the mouse pointer
  * @param cursor_type The type of cursor to set
  */
-void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
+void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
 
 /**
  * Sets the mouse point for a GtkWidget back to that of its parent window.
@@ -461,7 +461,7 @@ void gaim_gtk_set_cursor(GtkWidget *widget, GdkCursorType cursor_type);
  *
  * @note The display is not flushed from this function.
  */
-void gaim_gtk_clear_cursor(GtkWidget *widget);
+void pidgin_clear_cursor(GtkWidget *widget);
 
 /**
  * Creates a File Selection widget for choosing a buddy icon
@@ -471,7 +471,7 @@ void gaim_gtk_clear_cursor(GtkWidget *widget);
  * @param data        Data to pass to @callback
  * @return            The file dialog 
  */
-GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data);
+GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data);
 
 /**
  * Converts a buddy icon to the required size and format
@@ -480,7 +480,7 @@ GtkWidget *gaim_gtk_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(co
  * @param path       The path of a buddy icon to convert
  * @return           The name of a new buddy icon
  */
-char* gaim_gtk_convert_buddy_icon(GaimPlugin *plugin, const char *path);
+char* pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path);
 
 #if !GTK_CHECK_VERSION(2,6,0)
 /**
@@ -501,7 +501,7 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
  * @param filename  The path of the custom icon. If this is @c NULL, then any
  *                  previously set custom buddy icon for the user is removed.
  */
-void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename);
+void pidgin_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename);
 
 /**
  * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing
@@ -510,7 +510,7 @@ void gaim_gtk_set_custom_buddy_icon(GaimAccount *account, const char *who, const
  * @param str      The text to convert
  * @return         A newly allocated string with unicode arrow characters
  */
-char *gaim_gtk_make_pretty_arrows(const char *str);
+char *pidgin_make_pretty_arrows(const char *str);
 
 /**
  * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
@@ -521,7 +521,7 @@ char *gaim_gtk_make_pretty_arrows(const char *str);
  * @param user_data      Data to pass to the callbacks
  * @param ...            a NULL-terminated list of button labels and callbacks
  */
-void *gaim_gtk_make_mini_dialog(GaimConnection *handle, const char* stock_id, 
+void *pidgin_make_mini_dialog(GaimConnection *handle, const char* stock_id, 
 				const char *primary, const char *secondary,
 				void *user_data,  ...);
 
@@ -529,11 +529,11 @@ void *gaim_gtk_make_mini_dialog(GaimConnection *handle, const char* stock_id,
  * This is a callback function to be used for Ctrl+F searching in treeviews.
  * Sample Use:
  * 		gtk_tree_view_set_search_equal_func(treeview,
- * 				gaim_gtk_tree_view_search_equal_func,
+ * 				pidgin_tree_view_search_equal_func,
  * 				search_data, search_data_destroy_cb);
  *
  */
-gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
+gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 			const gchar *key, GtkTreeIter *iter, gpointer data);
 
 /**
@@ -543,7 +543,7 @@ gboolean gaim_gtk_tree_view_search_equal_func(GtkTreeModel *model, gint column,
  * @param window  The window to draw attention to
  * @param urgent  Whether to set the urgent hint or not
  */
-void gaim_gtk_set_urgent(GtkWindow *window, gboolean urgent);
+void pidgin_set_urgent(GtkWindow *window, gboolean urgent);
 
 /**
  * Returns TRUE if the GdkPixbuf is opaque, as determined by no
@@ -569,5 +569,5 @@ gboolean gaim_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
 GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
 #endif
 
-#endif /* _GAIM_GTKUTILS_H_ */
+#endif /* _PIDGINUTILS_H_ */
 

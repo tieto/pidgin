@@ -59,18 +59,18 @@ static const char *widget_size_names[] = {
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
 static const char *font_prefs[] = {
-	"/plugins/gtk/gaimrc/font/*gaim_gtkconv_entry",
-	"/plugins/gtk/gaimrc/font/*gaim_gtkconv_imhtml",
-	"/plugins/gtk/gaimrc/font/*gaim_gtklog_imhtml",
-	"/plugins/gtk/gaimrc/font/*gaim_gtkrequest_imhtml",
-	"/plugins/gtk/gaimrc/font/*gaim_gtknotify_imhtml",
+	"/plugins/gtk/gaimrc/font/*pidginconv_entry",
+	"/plugins/gtk/gaimrc/font/*pidginconv_imhtml",
+	"/plugins/gtk/gaimrc/font/*pidginlog_imhtml",
+	"/plugins/gtk/gaimrc/font/*pidginrequest_imhtml",
+	"/plugins/gtk/gaimrc/font/*pidginnotify_imhtml",
 };
 static const char *font_prefs_set[] = {
-	"/plugins/gtk/gaimrc/set/font/*gaim_gtkconv_entry",
-	"/plugins/gtk/gaimrc/set/font/*gaim_gtkconv_imhtml",
-	"/plugins/gtk/gaimrc/set/font/*gaim_gtklog_imhtml",
-	"/plugins/gtk/gaimrc/set/font/*gaim_gtkrequest_imhtml",
-	"/plugins/gtk/gaimrc/set/font/*gaim_gtknotify_imhtml",
+	"/plugins/gtk/gaimrc/set/font/*pidginconv_entry",
+	"/plugins/gtk/gaimrc/set/font/*pidginconv_imhtml",
+	"/plugins/gtk/gaimrc/set/font/*pidginlog_imhtml",
+	"/plugins/gtk/gaimrc/set/font/*pidginrequest_imhtml",
+	"/plugins/gtk/gaimrc/set/font/*pidginnotify_imhtml",
 };
 static const char *font_names[] = {
 	N_("Conversation Entry"),
@@ -431,7 +431,7 @@ static GtkWidget *
 gaimrc_get_config_frame(GaimPlugin *plugin)
 {
 	/* Note: Intentionally not using the size group argument to the
-	 * gaim_gtk_prefs_labeled_* functions they only add the text label to
+	 * pidgin_prefs_labeled_* functions they only add the text label to
 	 * the size group not the whole thing, which isn't what I want. */
 	int i;
 	char *tmp;
@@ -445,12 +445,12 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	labelsg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	widgetsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	frame = gaim_gtk_make_frame(ret, _("General"));
+	frame = pidgin_make_frame(ret, _("General"));
 	/* interface font */
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-	check = gaim_gtk_prefs_checkbox(_("GTK+ Interface Font"),
+	check = pidgin_prefs_checkbox(_("GTK+ Interface Font"),
 	                                "/plugins/gtk/gaimrc/set/gtk-font-name",
 	                                hbox);
 	gtk_size_group_add_widget(labelsg, check);
@@ -462,7 +462,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	gtk_widget_set_sensitive(widget,
 	                         gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-font-name"));
 	g_signal_connect(G_OBJECT(check), "toggled",
-	                 G_CALLBACK(gaim_gtk_toggle_sensitive), widget);
+	                 G_CALLBACK(pidgin_toggle_sensitive), widget);
 	g_signal_connect(G_OBJECT(widget), "clicked",
 	                 G_CALLBACK(gaimrc_set_font_special), NULL);
 
@@ -470,12 +470,12 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-	check = gaim_gtk_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
+	check = pidgin_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
 	                                "/plugins/gtk/gaimrc/set/gtk-key-theme-name",
 	                                hbox);
 	gtk_size_group_add_widget(labelsg, check);
 
-	widget = gaim_gtk_prefs_labeled_entry(hbox, "",
+	widget = pidgin_prefs_labeled_entry(hbox, "",
 	                                      "/plugins/gtk/gaimrc/gtk-key-theme-name",
 	                                      NULL);
 	/*
@@ -484,34 +484,34 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	gtk_widget_set_sensitive(widget,
 	                         gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-key-theme-name"));
 	g_signal_connect(G_OBJECT(check), "toggled",
-	                 G_CALLBACK(gaim_gtk_toggle_sensitive), widget);
+	                 G_CALLBACK(pidgin_toggle_sensitive), widget);
 
 	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-		check = gaim_gtk_prefs_checkbox(_(widget_bool_names[i]),
+		check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
 		                                widget_bool_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
-		widget_bool_widgets[i] = gaim_gtk_prefs_checkbox("", widget_bool_prefs[i], hbox);
+		widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
 		/*
 		gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
 		*/
 		gtk_widget_set_sensitive(widget_bool_widgets[i],
 		                         gaim_prefs_get_bool(widget_bool_prefs_set[i]));
 		g_signal_connect(G_OBJECT(check), "toggled",
-		                 G_CALLBACK(gaim_gtk_toggle_sensitive),
+		                 G_CALLBACK(pidgin_toggle_sensitive),
 		                 widget_bool_widgets[i]);
 	}
 
-	frame = gaim_gtk_make_frame(ret, _("Interface colors"));
+	frame = pidgin_make_frame(ret, _("Interface colors"));
 	/* imhtml stuff */
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-		check = gaim_gtk_prefs_checkbox(_(color_names[i]),
+		check = pidgin_prefs_checkbox(_(color_names[i]),
 		                                color_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
@@ -522,41 +522,41 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		gtk_widget_set_sensitive(color_widgets[i],
 		                         gaim_prefs_get_bool(color_prefs_set[i]));
 		g_signal_connect(G_OBJECT(check), "toggled",
-		                 G_CALLBACK(gaim_gtk_toggle_sensitive),
+		                 G_CALLBACK(pidgin_toggle_sensitive),
 		                 color_widgets[i]);
 		g_signal_connect(G_OBJECT(color_widgets[i]), "clicked",
 		                 G_CALLBACK(gaimrc_set_color),
 		                 GINT_TO_POINTER(i));
 	}
 
-	frame = gaim_gtk_make_frame(ret, _("Widget Sizes"));
+	frame = pidgin_make_frame(ret, _("Widget Sizes"));
 	/* widget size stuff */
 	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-		check = gaim_gtk_prefs_checkbox(_(widget_size_names[i]),
+		check = pidgin_prefs_checkbox(_(widget_size_names[i]),
 		                                widget_size_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
-		widget_size_widgets[i] = gaim_gtk_prefs_labeled_spin_button(hbox, "", widget_size_prefs[i], 0, 50, NULL);
+		widget_size_widgets[i] = pidgin_prefs_labeled_spin_button(hbox, "", widget_size_prefs[i], 0, 50, NULL);
 		/*
 		gtk_size_group_add_widget(widgetsg, widget_size_widgets[i]);
 		*/
 		gtk_widget_set_sensitive(widget_size_widgets[i],
 		                         gaim_prefs_get_bool(widget_size_prefs_set[i]));
 		g_signal_connect(G_OBJECT(check), "toggled",
-		                 G_CALLBACK(gaim_gtk_toggle_sensitive),
+		                 G_CALLBACK(pidgin_toggle_sensitive),
 		                 widget_size_widgets[i]);
 	}
 
-	frame = gaim_gtk_make_frame(ret, _("Fonts"));
+	frame = pidgin_make_frame(ret, _("Fonts"));
 	/* imhtml font stuff */
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-		check = gaim_gtk_prefs_checkbox(_(font_names[i]),
+		check = pidgin_prefs_checkbox(_(font_names[i]),
 		                                font_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
@@ -567,13 +567,13 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		gtk_widget_set_sensitive(font_widgets[i],
 		                         gaim_prefs_get_bool(font_prefs_set[i]));
 		g_signal_connect(G_OBJECT(check), "toggled",
-		                 G_CALLBACK(gaim_gtk_toggle_sensitive),
+		                 G_CALLBACK(pidgin_toggle_sensitive),
 		                 font_widgets[i]);
 		g_signal_connect(G_OBJECT(font_widgets[i]), "clicked",
 		                 G_CALLBACK(gaimrc_set_font), GINT_TO_POINTER(i));
 	}
 
-	frame = gaim_gtk_make_frame(ret, _("Tools"));
+	frame = pidgin_make_frame(ret, _("Tools"));
 
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
@@ -596,7 +596,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	return ret;
 }
 
-static GaimGtkPluginUiInfo gaimrc_ui_info =
+static PidginPluginUiInfo gaimrc_ui_info =
 {
 	gaimrc_get_config_frame,
 	0 /* page_num (Reserved) */
@@ -608,7 +608,7 @@ static GaimPluginInfo gaimrc_info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,

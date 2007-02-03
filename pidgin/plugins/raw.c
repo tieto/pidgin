@@ -130,7 +130,7 @@ plugin_load(GaimPlugin *plugin)
 	gtk_container_add(GTK_CONTAINER(window), hbox);
 
 	/* Account drop-down menu. */
-	dropdown = gaim_gtk_account_option_menu_new(NULL, FALSE,
+	dropdown = pidgin_account_option_menu_new(NULL, FALSE,
 			G_CALLBACK(account_changed_cb), NULL, NULL);
 
 	if (gaim_connections_get_all())
@@ -167,7 +167,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,

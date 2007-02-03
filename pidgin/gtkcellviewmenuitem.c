@@ -56,7 +56,7 @@ gtk_cell_view_menu_item_get_type (void)
         };
 
       cell_view_menu_item_type =
-        g_type_register_static (GTK_TYPE_MENU_ITEM, "GaimGtkCellViewMenuItem",
+        g_type_register_static (GTK_TYPE_MENU_ITEM, "PidginCellViewMenuItem",
                                 &cell_view_menu_item_info, 0);
     }
 

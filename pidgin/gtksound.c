@@ -116,11 +116,11 @@ play_conv_event(GaimConversation *conv, GaimSoundEventID event)
 	/* If we should not play the sound for some reason, then exit early */
 	if (conv != NULL)
 	{
-		GaimGtkConversation *gtkconv;
-		GaimGtkWindow *win;
+		PidginConversation *gtkconv;
+		PidginWindow *win;
 		gboolean has_focus;
 
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		gtkconv = PIDGIN_CONVERSATION(conv);
 		win = gtkconv->win;
 
 		has_focus = gaim_conversation_has_focus(conv);
@@ -234,7 +234,7 @@ account_signon_cb(GaimConnection *gc, gpointer data)
 }
 
 const char *
-gaim_gtk_sound_get_event_option(GaimSoundEventID event)
+pidgin_sound_get_event_option(GaimSoundEventID event)
 {
 	if(event >= GAIM_NUM_SOUNDS)
 		return 0;
@@ -243,7 +243,7 @@ gaim_gtk_sound_get_event_option(GaimSoundEventID event)
 }
 
 const char *
-gaim_gtk_sound_get_event_label(GaimSoundEventID event)
+pidgin_sound_get_event_label(GaimSoundEventID event)
 {
 	if(event >= GAIM_NUM_SOUNDS)
 		return NULL;
@@ -252,7 +252,7 @@ gaim_gtk_sound_get_event_label(GaimSoundEventID event)
 }
 
 void *
-gaim_gtk_sound_get_handle()
+pidgin_sound_get_handle()
 {
 	static int handle;
 
@@ -260,9 +260,9 @@ gaim_gtk_sound_get_handle()
 }
 
 static void
-gaim_gtk_sound_init(void)
+pidgin_sound_init(void)
 {
-	void *gtk_sound_handle = gaim_gtk_sound_get_handle();
+	void *gtk_sound_handle = pidgin_sound_get_handle();
 	void *blist_handle = gaim_blist_get_handle();
 	void *conv_handle = gaim_conversations_get_handle();
 #ifdef USE_GSTREAMER
@@ -344,14 +344,14 @@ gaim_gtk_sound_init(void)
 }
 
 static void
-gaim_gtk_sound_uninit(void)
+pidgin_sound_uninit(void)
 {
 #ifdef USE_GSTREAMER
 	if (!gst_init_failed)
 		gst_deinit();
 #endif
 
-	gaim_signals_disconnect_by_handle(gaim_gtk_sound_get_handle());
+	gaim_signals_disconnect_by_handle(pidgin_sound_get_handle());
 }
 
 #ifdef USE_GSTREAMER
@@ -386,7 +386,7 @@ bus_call (GstBus     *bus,
 #endif
 
 static void
-gaim_gtk_sound_play_file(const char *filename)
+pidgin_sound_play_file(const char *filename)
 {
 	const char *method;
 #ifdef USE_GSTREAMER
@@ -508,7 +508,7 @@ gaim_gtk_sound_play_file(const char *filename)
 }
 
 static void
-gaim_gtk_sound_play_event(GaimSoundEventID event)
+pidgin_sound_play_event(GaimSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
@@ -543,14 +543,14 @@ gaim_gtk_sound_play_event(GaimSoundEventID event)
 
 static GaimSoundUiOps sound_ui_ops =
 {
-	gaim_gtk_sound_init,
-	gaim_gtk_sound_uninit,
-	gaim_gtk_sound_play_file,
-	gaim_gtk_sound_play_event
+	pidgin_sound_init,
+	pidgin_sound_uninit,
+	pidgin_sound_play_file,
+	pidgin_sound_play_event
 };
 
 GaimSoundUiOps *
-gaim_gtk_sound_get_ui_ops(void)
+pidgin_sound_get_ui_ops(void)
 {
 	return &sound_ui_ops;
 }

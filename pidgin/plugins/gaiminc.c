@@ -6,7 +6,7 @@
 #include "conversation.h"
 #include "version.h"
 
-/* include UI for gaim_gtkdialogs_about() */
+/* include UI for pidgindialogs_about() */
 #include "gtkplugin.h"
 #include "gtkdialogs.h"
 
@@ -16,7 +16,7 @@ static void
 echo_hi(GaimConnection *gc)
 {
 	/* this doesn't do much, just lets you know who we are :) */
-	gaim_gtkdialogs_about();
+	pidgindialogs_about();
 }
 
 static gboolean

@@ -29,47 +29,47 @@
 #include "gtkconvwin.h"
 
 static void
-conv_placement_by_number(GaimGtkConversation *conv)
+conv_placement_by_number(PidginConversation *conv)
 {
-	GaimGtkWindow *win = NULL;
+	PidginWindow *win = NULL;
 	GList *wins = NULL;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
-		win = gaim_gtk_conv_window_last_with_type(gaim_conversation_get_type(conv->active_conv));
-	else if ((wins = gaim_gtk_conv_windows_get_list()) != NULL)
+		win = pidgin_conv_window_last_with_type(gaim_conversation_get_type(conv->active_conv));
+	else if ((wins = pidgin_conv_windows_get_list()) != NULL)
 		win = g_list_last(wins)->data;
 
 	if (win == NULL) {
-		win = gaim_gtk_conv_window_new();
+		win = pidgin_conv_window_new();
 
-		gaim_gtk_conv_window_add_gtkconv(win, conv);
-		gaim_gtk_conv_window_show(win);
+		pidgin_conv_window_add_gtkconv(win, conv);
+		pidgin_conv_window_show(win);
 	} else {
 		int max_count = gaim_prefs_get_int("/plugins/gtk/extplacement/placement_number");
-		int count = gaim_gtk_conv_window_get_gtkconv_count(win);
+		int count = pidgin_conv_window_get_gtkconv_count(win);
 
 		if (count < max_count)
-			gaim_gtk_conv_window_add_gtkconv(win, conv);
+			pidgin_conv_window_add_gtkconv(win, conv);
 		else {
 			GList *l = NULL;
 
-			for (l = gaim_gtk_conv_windows_get_list(); l != NULL; l = l->next) {
+			for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
 				win = l->data;
 
 				if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate") &&
-					gaim_conversation_get_type(gaim_gtk_conv_window_get_active_conversation(win)) != gaim_conversation_get_type(conv->active_conv))
+					gaim_conversation_get_type(pidgin_conv_window_get_active_conversation(win)) != gaim_conversation_get_type(conv->active_conv))
 					continue;
 
-				count = gaim_gtk_conv_window_get_gtkconv_count(win);
+				count = pidgin_conv_window_get_gtkconv_count(win);
 				if (count < max_count) {
-					gaim_gtk_conv_window_add_gtkconv(win, conv);
+					pidgin_conv_window_add_gtkconv(win, conv);
 					return;
 				}
 			}
-			win = gaim_gtk_conv_window_new();
+			win = pidgin_conv_window_new();
 
-			gaim_gtk_conv_window_add_gtkconv(win, conv);
-			gaim_gtk_conv_window_show(win);
+			pidgin_conv_window_add_gtkconv(win, conv);
+			pidgin_conv_window_show(win);
 		}
 	}
 }
@@ -77,7 +77,7 @@ conv_placement_by_number(GaimGtkConversation *conv)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_gtkconv_placement_add_fnc("number", _("By conversation count"),
+	pidginconv_placement_add_fnc("number", _("By conversation count"),
 							   &conv_placement_by_number);
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 	return TRUE;
@@ -86,7 +86,7 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	gaim_gtkconv_placement_remove_fnc("number");
+	pidginconv_placement_remove_fnc("number");
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 	return TRUE;
 }
@@ -127,7 +127,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,							/**< type			*/
-	GAIM_GTK_PLUGIN_TYPE,							/**< ui_requirement	*/
+	PIDGIN_PLUGIN_TYPE,							/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
 	GAIM_PRIORITY_DEFAULT,							/**< priority		*/

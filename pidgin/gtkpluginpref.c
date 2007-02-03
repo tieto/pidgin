@@ -80,7 +80,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 
 	switch(gaim_plugin_pref_get_type(pref)) {
 		case GAIM_PLUGIN_PREF_CHOICE:
-			gtk_label = gaim_gtk_prefs_dropdown_from_list(parent, pref_label,
+			gtk_label = pidgin_prefs_dropdown_from_list(parent, pref_label,
 											  GAIM_PREF_STRING, pref_name,
 											  gaim_plugin_pref_get_choices(pref));
 			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
@@ -142,7 +142,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 				gtk_box_pack_start(GTK_BOX(hbox), spacer, FALSE, FALSE, 0);
 				gtk_widget_show(spacer);
 
-				frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
+				frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 				if (!(format & GAIM_STRING_FORMAT_TYPE_HTML))
 					gtk_widget_destroy(toolbar);
 
@@ -174,7 +174,7 @@ make_int_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 
 	switch(gaim_plugin_pref_get_type(pref)) {
 		case GAIM_PLUGIN_PREF_CHOICE:
-			gtk_label = gaim_gtk_prefs_dropdown_from_list(parent, pref_label,
+			gtk_label = pidgin_prefs_dropdown_from_list(parent, pref_label,
 					GAIM_PREF_INT, pref_name, gaim_plugin_pref_get_choices(pref));
 			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
 
@@ -185,7 +185,7 @@ make_int_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 		case GAIM_PLUGIN_PREF_NONE:
 		default:
 			gaim_plugin_pref_get_bounds(pref, &min, &max);
-			gaim_gtk_prefs_labeled_spin_button(parent, pref_label,
+			pidgin_prefs_labeled_spin_button(parent, pref_label,
 					pref_name, min, max, sg);
 			break;
 	}
@@ -203,7 +203,7 @@ make_info_pref(GtkWidget *parent, GaimPluginPref *pref) {
 
 
 GtkWidget *
-gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
+pidgin_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
 	GtkWidget *ret, *parent;
 	GtkSizeGroup *sg;
 	GList *pp;
@@ -232,7 +232,7 @@ gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
 			if(gaim_plugin_pref_get_type(pref) == GAIM_PLUGIN_PREF_INFO) {
 				make_info_pref(parent, pref);
 			} else {
-				parent = gaim_gtk_make_frame(ret, label);
+				parent = pidgin_make_frame(ret, label);
 				gtk_widget_show(parent);
 			}
 
@@ -241,7 +241,7 @@ gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
 
 		switch(gaim_prefs_get_type(name)) {
 			case GAIM_PREF_BOOLEAN:
-				gaim_gtk_prefs_checkbox(label, name, parent);
+				pidgin_prefs_checkbox(label, name, parent);
 				break;
 			case GAIM_PREF_INT:
 				make_int_pref(parent, pref, sg);

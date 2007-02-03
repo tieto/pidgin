@@ -143,6 +143,6 @@
 /**
  * Sets up the gaim stock repository.
  */
-void gaim_gtk_stock_init(void);
+void pidgin_stock_init(void);
 
 #endif /* _GAIM_STOCK_H_ */

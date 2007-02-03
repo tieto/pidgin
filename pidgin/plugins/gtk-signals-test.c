@@ -56,7 +56,7 @@ blist_drawing_tooltip_cb(GaimBlistNode *node, GString *str, gboolean full, void 
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static void
-conversation_dragging_cb(GaimGtkWindow *source, GaimGtkWindow *destination) {
+conversation_dragging_cb(PidginWindow *source, PidginWindow *destination) {
 	gaim_debug_info("gtk-signal-test", "conversation dragging cb\n");
 }
 
@@ -109,9 +109,9 @@ conversation_switched_cb(GaimConversation *conv, void *data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	void *accounts_handle = gaim_gtk_account_get_handle();
-	void *blist_handle = gaim_gtk_blist_get_handle();
-	void *conv_handle = gaim_gtk_conversations_get_handle();
+	void *accounts_handle = pidgin_account_get_handle();
+	void *blist_handle = pidgin_blist_get_handle();
+	void *conv_handle = pidgin_conversations_get_handle();
 
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-modified",
@@ -151,7 +151,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

@@ -41,22 +41,22 @@ typedef struct group *Gaim__GtkUI__Group;
 #include "gtkutils.h"
 
 /* gtkaccount.h */
-typedef GaimGtkAccountDialogType			Gaim__GtkUI__Account__Dialog__Type;
+typedef PidginAccountDialogType			Gaim__GtkUI__Account__Dialog__Type;
 
 /* gtkblist.h */
-typedef GaimGtkBuddyList *				Gaim__GtkUI__BuddyList;
-typedef gaim_gtk_blist_sort_function			Gaim__GtkUI__BuddyList__SortFunction;
+typedef PidginBuddyList *				Gaim__GtkUI__BuddyList;
+typedef pidgin_blist_sort_function			Gaim__GtkUI__BuddyList__SortFunction;
 
 /* gtkconv.h */
-typedef GaimGtkConversation *				Gaim__GtkUI__Conversation;
+typedef PidginConversation *				Gaim__GtkUI__Conversation;
 typedef GaimUnseenState					Gaim__UnseenState;
 
 /* gtkconvwin.h */
-typedef GaimGtkWindow *					Gaim__GtkUI__Conversation__Window;
+typedef PidginWindow *					Gaim__GtkUI__Conversation__Window;
 typedef GaimConvPlacementFunc				Gaim__Conversation__PlacementFunc;
 
 /* gtkft.h */
-typedef GaimGtkXferDialog *				Gaim__GtkUI__Xfer__Dialog;
+typedef PidginXferDialog *				Gaim__GtkUI__Xfer__Dialog;
 
 /* gtkimhtml.h */
 typedef GtkIMHtml *					Gaim__GtkUI__IMHtml;
@@ -70,7 +70,7 @@ typedef GtkIMHtmlOptions				Gaim__GtkUI__IMHtml__Options;
 typedef GtkIMHtmlToolbar *				Gaim__GtkUI__IMHtmlToolbar;
 
 /* gtkmenutray.h */
-typedef GaimGtkMenuTray *				Gaim__GtkUI__MenuTray;
+typedef PidginMenuTray *				Gaim__GtkUI__MenuTray;
 
 /* gtkstatusbox.h */
 typedef GtkGaimStatusBox *				Gaim__GtkUI__StatusBox;

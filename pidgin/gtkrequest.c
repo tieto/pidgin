@@ -76,19 +76,19 @@ typedef struct
 
 	} u;
 
-} GaimGtkRequestData;
+} PidginRequestData;
 
 static void
-generic_response_start(GaimGtkRequestData *data)
+generic_response_start(PidginRequestData *data)
 {
 	g_return_if_fail(data != NULL);
 
 	/* Tell the user we're doing something. */
-	gaim_gtk_set_cursor(GTK_WIDGET(data->dialog), GDK_WATCH);
+	pidgin_set_cursor(GTK_WIDGET(data->dialog), GDK_WATCH);
 }
 
 static void
-input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
+input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 {
 	const char *value;
 	char *multiline_value = NULL;
@@ -126,7 +126,7 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 }
 
 static void
-action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
+action_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 {
 	generic_response_start(data);
 
@@ -138,7 +138,7 @@ action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 
 
 static void
-choice_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
+choice_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 {
 	GtkWidget *radio = g_object_get_data(G_OBJECT(dialog), "radio");
 	GSList *group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio));
@@ -223,7 +223,7 @@ field_account_cb(GObject *w, GaimAccount *account, GaimRequestField *field)
 }
 
 static void
-multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
+multifield_ok_cb(GtkWidget *button, PidginRequestData *data)
 {
 	generic_response_start(data);
 
@@ -238,7 +238,7 @@ multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
 }
 
 static void
-multifield_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
+multifield_cancel_cb(GtkWidget *button, PidginRequestData *data)
 {
 	generic_response_start(data);
 
@@ -251,7 +251,7 @@ multifield_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
 
 static void
 destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
-					  GaimGtkRequestData *data)
+					  PidginRequestData *data)
 {
 	multifield_cancel_cb(NULL, data);
 }
@@ -280,14 +280,14 @@ text_to_stock(const char *text)
 }
 
 static void *
-gaim_gtk_request_input(const char *title, const char *primary,
+pidgin_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
 					   gboolean multiline, gboolean masked, gchar *hint,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   void *user_data)
 {
-	GaimGtkRequestData *data;
+	PidginRequestData *data;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
@@ -298,7 +298,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 
-	data            = g_new0(GaimGtkRequestData, 1);
+	data            = g_new0(PidginRequestData, 1);
 	data->type      = GAIM_REQUEST_INPUT;
 	data->user_data = user_data;
 
@@ -370,9 +370,9 @@ gaim_gtk_request_input(const char *title, const char *primary,
 		GtkWidget *frame;
 
 		/* imhtml */
-		frame = gaim_gtk_create_imhtml(TRUE, &entry, &toolbar, NULL);
+		frame = pidgin_create_imhtml(TRUE, &entry, &toolbar, NULL);
 		gtk_widget_set_size_request(entry, 320, 130);
-		gtk_widget_set_name(entry, "gaim_gtkrequest_imhtml");
+		gtk_widget_set_name(entry, "pidginrequest_imhtml");
 		if (default_value != NULL)
 			gtk_imhtml_append_text(GTK_IMHTML(entry), default_value, GTK_IMHTML_NO_SCROLL);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
@@ -406,7 +406,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 			gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 			if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-				gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
+				pidgin_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
 			gtk_container_add(GTK_CONTAINER(sw), entry);
 		}
@@ -439,13 +439,13 @@ gaim_gtk_request_input(const char *title, const char *primary,
 }
 
 static void *
-gaim_gtk_request_choice(const char *title, const char *primary,
+pidgin_request_choice(const char *title, const char *primary,
 			const char *secondary, unsigned int default_value,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
 			void *user_data, va_list args)
 {
-	GaimGtkRequestData *data;
+	PidginRequestData *data;
 	GtkWidget *dialog;
 	GtkWidget *vbox, *vbox2;
 	GtkWidget *hbox;
@@ -456,7 +456,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	char *radio_text;
 	char *primary_esc, *secondary_esc;
 
-	data            = g_new0(GaimGtkRequestData, 1);
+	data            = g_new0(PidginRequestData, 1);
 	data->type      = GAIM_REQUEST_ACTION;
 	data->user_data = user_data;
 
@@ -542,11 +542,11 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 }
 
 static void *
-gaim_gtk_request_action(const char *title, const char *primary,
+pidgin_request_action(const char *title, const char *primary,
 						const char *secondary, unsigned int default_action,
 						void *user_data, size_t action_count, va_list actions)
 {
-	GaimGtkRequestData *data;
+	PidginRequestData *data;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
@@ -557,7 +557,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	char *primary_esc, *secondary_esc;
 	int i;
 
-	data            = g_new0(GaimGtkRequestData, 1);
+	data            = g_new0(PidginRequestData, 1);
 	data->type      = GAIM_REQUEST_ACTION;
 	data->user_data = user_data;
 
@@ -650,12 +650,12 @@ gaim_gtk_request_action(const char *title, const char *primary,
 static void
 req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
 {
-	GaimGtkRequestData *req_data;
+	PidginRequestData *req_data;
 	const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	gaim_request_field_string_set_value(field, (*text == '\0' ? NULL : text));
 
-	req_data = (GaimGtkRequestData *)field->group->fields_list->ui_data;
+	req_data = (PidginRequestData *)field->group->fields_list->ui_data;
 
 	gtk_widget_set_sensitive(req_data->ok_button,
 		gaim_request_fields_all_required_filled(field->group->fields_list));
@@ -697,7 +697,7 @@ setup_entry_field(GtkWidget *entry, GaimRequestField *field)
 					}
 				}
 			}
-			gaim_gtk_setup_screenname_autocomplete(entry, optmenu, !strcmp(type_hint, "screenname-all"));
+			pidgin_setup_screenname_autocomplete(entry, optmenu, !strcmp(type_hint, "screenname-all"));
 		}
 	}
 }
@@ -727,7 +727,7 @@ create_string_field(GaimRequestField *field)
 									GTK_WRAP_WORD_CHAR);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(textview));
+			pidgin_setup_gtkspell(GTK_TEXT_VIEW(textview));
 
 		gtk_container_add(GTK_CONTAINER(widget), textview);
 		gtk_widget_show(textview);
@@ -924,7 +924,7 @@ create_account_field(GaimRequestField *field)
 {
 	GtkWidget *widget;
 
-	widget = gaim_gtk_account_option_menu_new(
+	widget = pidgin_account_option_menu_new(
 		gaim_request_field_account_get_default_value(field),
 		gaim_request_field_account_get_show_all(field),
 		G_CALLBACK(field_account_cb),
@@ -1021,13 +1021,13 @@ create_list_field(GaimRequestField *field)
 }
 
 static void *
-gaim_gtk_request_fields(const char *title, const char *primary,
+pidgin_request_fields(const char *title, const char *primary,
 						const char *secondary, GaimRequestFields *fields,
 						const char *ok_text, GCallback ok_cb,
 						const char *cancel_text, GCallback cancel_cb,
 						void *user_data)
 {
-	GaimGtkRequestData *data;
+	PidginRequestData *data;
 	GtkWidget *win;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -1047,7 +1047,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
 
-	data            = g_new0(GaimGtkRequestData, 1);
+	data            = g_new0(PidginRequestData, 1);
 	data->type      = GAIM_REQUEST_FIELDS;
 	data->user_data = user_data;
 	data->u.multifield.fields = fields;
@@ -1154,7 +1154,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 		if (gaim_request_field_group_get_title(group) != NULL)
 		{
-			frame = gaim_gtk_make_frame(vbox2,
+			frame = pidgin_make_frame(vbox2,
 				gaim_request_field_group_get_title(group));
 		}
 		else
@@ -1382,7 +1382,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 }
 
 static void
-file_yes_no_cb(GaimGtkRequestData *data, gint id)
+file_yes_no_cb(PidginRequestData *data, gint id)
 {
 	/* Only call the callback if yes was selected, otherwise the request
 	 * (eg. file transfer) will be cancelled, then when a new filename is chosen
@@ -1392,13 +1392,13 @@ file_yes_no_cb(GaimGtkRequestData *data, gint id)
 			((GaimRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
 		gaim_request_close(data->type, data);
 	} else {
-		gaim_gtk_clear_cursor(GTK_WIDGET(data->dialog));
+		pidgin_clear_cursor(GTK_WIDGET(data->dialog));
 	}
 }
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData *data)
+file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *data)
 {
 	gchar *current_folder;
 
@@ -1425,7 +1425,7 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData 
 #else /* FILECHOOSER */
 
 static void
-file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
+file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 {
 	const gchar *name;
 	gchar *current_folder;
@@ -1436,7 +1436,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 
 	/* If name is a directory then change directories */
 	if (data->type == GAIM_REQUEST_FILE) {
-		if (gaim_gtk_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
+		if (pidgin_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
 			return;
 	}
 
@@ -1476,7 +1476,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 static void
-file_cancel_cb(GaimGtkRequestData *data)
+file_cancel_cb(PidginRequestData *data)
 {
 	generic_response_start(data);
 
@@ -1488,19 +1488,19 @@ file_cancel_cb(GaimGtkRequestData *data)
 #endif /* FILECHOOSER */
 
 static void *
-gaim_gtk_request_file(const char *title, const char *filename,
+pidgin_request_file(const char *title, const char *filename,
 					  gboolean savedialog,
 					  GCallback ok_cb, GCallback cancel_cb,
 					  void *user_data)
 {
-	GaimGtkRequestData *data;
+	PidginRequestData *data;
 	GtkWidget *filesel;
 	const gchar *current_folder;
 #if GTK_CHECK_VERSION(2,4,0)
 	gboolean folder_set = FALSE;
 #endif
 
-	data = g_new0(GaimGtkRequestData, 1);
+	data = g_new0(PidginRequestData, 1);
 	data->type = GAIM_REQUEST_FILE;
 	data->user_data = user_data;
 	data->cb_count = 2;
@@ -1586,14 +1586,14 @@ gaim_gtk_request_file(const char *title, const char *filename,
 }
 
 static void *
-gaim_gtk_request_folder(const char *title, const char *dirname,
+pidgin_request_folder(const char *title, const char *dirname,
 					  GCallback ok_cb, GCallback cancel_cb,
 					  void *user_data)
 {
-	GaimGtkRequestData *data;
+	PidginRequestData *data;
 	GtkWidget *dirsel;
 
-	data = g_new0(GaimGtkRequestData, 1);
+	data = g_new0(PidginRequestData, 1);
 	data->type = GAIM_REQUEST_FOLDER;
 	data->user_data = user_data;
 	data->cb_count = 2;
@@ -1635,9 +1635,9 @@ gaim_gtk_request_folder(const char *title, const char *dirname,
 }
 
 static void
-gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
+pidgin_close_request(GaimRequestType type, void *ui_handle)
 {
-	GaimGtkRequestData *data = (GaimGtkRequestData *)ui_handle;
+	PidginRequestData *data = (PidginRequestData *)ui_handle;
 
 	g_free(data->cbs);
 
@@ -1653,17 +1653,17 @@ gaim_gtk_close_request(GaimRequestType type, void *ui_handle)
 
 static GaimRequestUiOps ops =
 {
-	gaim_gtk_request_input,
-	gaim_gtk_request_choice,
-	gaim_gtk_request_action,
-	gaim_gtk_request_fields,
-	gaim_gtk_request_file,
-	gaim_gtk_close_request,
-	gaim_gtk_request_folder
+	pidgin_request_input,
+	pidgin_request_choice,
+	pidgin_request_action,
+	pidgin_request_fields,
+	pidgin_request_file,
+	pidgin_close_request,
+	pidgin_request_folder
 };
 
 GaimRequestUiOps *
-gaim_gtk_request_get_ui_ops(void)
+pidgin_request_get_ui_ops(void)
 {
 	return &ops;
 }

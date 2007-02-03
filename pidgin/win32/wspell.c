@@ -43,26 +43,26 @@ gboolean  wgtkspell_set_language(GtkSpell *spell,
 void      wgtkspell_recheck_all(GtkSpell *spell) {}
 
 /* GTKSPELL PROTOS */
-GtkSpell*         (*wgaim_gtkspell_new_attach)              (GtkTextView *,
+GtkSpell*         (*wpidginspell_new_attach)              (GtkTextView *,
 							     const gchar *,
 							     GError **) = wgtkspell_new_attach;
 
-GtkSpell*         (*wgaim_gtkspell_get_from_text_view)      (GtkTextView*) = wgtkspell_get_from_text_view;
+GtkSpell*         (*wpidginspell_get_from_text_view)      (GtkTextView*) = wgtkspell_get_from_text_view;
 
-void              (*wgaim_gtkspell_detach)                  (GtkSpell*) = wgtkspell_detach;
+void              (*wpidginspell_detach)                  (GtkSpell*) = wgtkspell_detach;
 
-gboolean          (*wgaim_gtkspell_set_language)            (GtkSpell*,
+gboolean          (*wpidginspell_set_language)            (GtkSpell*,
 							     const gchar*,
 							     GError**) = wgtkspell_set_language;
 
-void              (*wgaim_gtkspell_recheck_all)             (GtkSpell*) = wgtkspell_recheck_all;
+void              (*wpidginspell_recheck_all)             (GtkSpell*) = wgtkspell_recheck_all;
 
 static void load_gtkspell() {
-	wgaim_gtkspell_new_attach = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_new_attach" );
-	wgaim_gtkspell_get_from_text_view = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_get_from_text_view");
-	wgaim_gtkspell_detach = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_detach");
-	wgaim_gtkspell_set_language = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_set_language");
-	wgaim_gtkspell_recheck_all = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_recheck_all");
+	wpidginspell_new_attach = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_new_attach" );
+	wpidginspell_get_from_text_view = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_get_from_text_view");
+	wpidginspell_detach = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_detach");
+	wpidginspell_set_language = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_set_language");
+	wpidginspell_recheck_all = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_recheck_all");
 }
 
 static char* lookup_aspell_path() {
@@ -74,7 +74,7 @@ static char* lookup_aspell_path() {
 	return wgaim_read_reg_string(HKEY_LOCAL_MACHINE, "Software\\Aspell", "Path");
 }
 
-void wgaim_gtkspell_init() {
+void wpidginspell_init() {
 	char *aspell_path = lookup_aspell_path();
 
 	if (aspell_path != NULL) {

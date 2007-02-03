@@ -55,10 +55,10 @@ typedef struct {
 static GHashTable *hash = NULL;
 
 static void
-gaim_gtk_connection_connect_progress(GaimConnection *gc,
+pidgin_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
@@ -67,13 +67,13 @@ gaim_gtk_connection_connect_progress(GaimConnection *gc,
 }
 
 static void
-gaim_gtk_connection_connected(GaimConnection *gc)
+pidgin_connection_connected(GaimConnection *gc)
 {
 	GaimAccount *account;
-	GaimGtkBuddyList *gtkblist;
+	PidginBuddyList *gtkblist;
 
 	account  = gaim_connection_get_account(gc);
-	gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if (gtkblist != NULL)
 		gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
@@ -81,13 +81,13 @@ gaim_gtk_connection_connected(GaimConnection *gc)
 
 	g_hash_table_remove(hash, account);
 
-	gaim_gtk_blist_update_account_error_state(account, NULL);
+	pidgin_blist_update_account_error_state(account, NULL);
 }
 
 static void
-gaim_gtk_connection_disconnected(GaimConnection *gc)
+pidgin_connection_disconnected(GaimConnection *gc)
 {
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
@@ -96,7 +96,7 @@ gaim_gtk_connection_disconnected(GaimConnection *gc)
 	if (gaim_connections_get_all() != NULL)
 		return;
 
-	gaim_gtkdialogs_destroy_all();
+	pidgindialogs_destroy_all();
 }
 
 static void
@@ -136,7 +136,7 @@ do_signon(gpointer data)
 }
 
 static void
-gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
+pidgin_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
 	GaimAccount *account = NULL;
 	GaimAutoRecon *info;
@@ -144,7 +144,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	account = gaim_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
 
-	gaim_gtk_blist_update_account_error_state(account, text);
+	pidgin_blist_update_account_error_state(account, text);
 	if (!gc->wants_to_die) {
 		if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
@@ -189,14 +189,14 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		 * disconnected by wants_to_die?  This happens when you sign
 		 * on from somewhere else, or when you enter an invalid password.
 		 */
-		gaim_account_set_enabled(account, GAIM_GTK_UI, FALSE);
+		gaim_account_set_enabled(account, PIDGIN_UI, FALSE);
 	}
 }
 
-static void gaim_gtk_connection_network_connected ()
+static void pidgin_connection_network_connected ()
 {
 	GList *list = gaim_accounts_get_all_active();
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if(gtkblist)
 		gtk_gaim_status_box_set_network_available(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), TRUE);
@@ -210,10 +210,10 @@ static void gaim_gtk_connection_network_connected ()
 	}
 }
 
-static void gaim_gtk_connection_network_disconnected ()
+static void pidgin_connection_network_disconnected ()
 {
 	GList *l = gaim_accounts_get_all_active();
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc = NULL;
 	
@@ -237,22 +237,22 @@ static void gaim_gtk_connection_network_disconnected ()
 	}
 }
 
-static void gaim_gtk_connection_notice(GaimConnection *gc, const char *text)
+static void pidgin_connection_notice(GaimConnection *gc, const char *text)
 { }
 
 static GaimConnectionUiOps conn_ui_ops =
 {
-	gaim_gtk_connection_connect_progress,
-	gaim_gtk_connection_connected,
-	gaim_gtk_connection_disconnected,
-	gaim_gtk_connection_notice,
-	gaim_gtk_connection_report_disconnect,
-	gaim_gtk_connection_network_connected,
-	gaim_gtk_connection_network_disconnected
+	pidgin_connection_connect_progress,
+	pidgin_connection_connected,
+	pidgin_connection_disconnected,
+	pidgin_connection_notice,
+	pidgin_connection_report_disconnect,
+	pidgin_connection_network_connected,
+	pidgin_connection_network_disconnected
 };
 
 GaimConnectionUiOps *
-gaim_gtk_connections_get_ui_ops(void)
+pidgin_connections_get_ui_ops(void)
 {
 	return &conn_ui_ops;
 }
@@ -262,7 +262,7 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 {
 	g_hash_table_remove(hash, account);
 
-	gaim_gtk_blist_update_account_error_state(account, NULL);
+	pidgin_blist_update_account_error_state(account, NULL);
 }
 
 
@@ -271,7 +271,7 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 **************************************************************************/
 
 void *
-gaim_gtk_connection_get_handle(void)
+pidgin_connection_get_handle(void)
 {
 	static int handle;
 
@@ -279,21 +279,21 @@ gaim_gtk_connection_get_handle(void)
 }
 
 void
-gaim_gtk_connection_init(void)
+pidgin_connection_init(void)
 {
 	hash = g_hash_table_new_full(
 							g_direct_hash, g_direct_equal,
 							NULL, free_auto_recon);
 
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
-						gaim_gtk_connection_get_handle(),
+						pidgin_connection_get_handle(),
 						GAIM_CALLBACK(account_removed_cb), NULL);
 }
 
 void
-gaim_gtk_connection_uninit(void)
+pidgin_connection_uninit(void)
 {
-	gaim_signals_disconnect_by_handle(gaim_gtk_connection_get_handle());
+	gaim_signals_disconnect_by_handle(pidgin_connection_get_handle());
 
 	g_hash_table_destroy(hash);
 }

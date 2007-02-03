@@ -22,15 +22,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKROOMLIST_H_
-#define _GAIM_GTKROOMLIST_H_
+#ifndef _PIDGINROOMLIST_H_
+#define _PIDGINROOMLIST_H_
 
 #include "roomlist.h"
 
 /**
  * Initializes the room list subsystem.
  */
-void gaim_gtk_roomlist_init(void);
+void pidgin_roomlist_init(void);
 
 /**
  * Determines if showing the room list dialog is a valid action.
@@ -38,18 +38,18 @@ void gaim_gtk_roomlist_init(void);
  * @return TRUE if there are accounts online that support listing
  *         chat rooms.  Otherwise return FALSE.
  */
-gboolean gaim_gtk_roomlist_is_showable(void);
+gboolean pidgin_roomlist_is_showable(void);
 
 /**
  * Shows a new roomlist dialog.
  */
-void gaim_gtk_roomlist_dialog_show(void);
+void pidgin_roomlist_dialog_show(void);
 
 /**
  * Shows a new room list dialog and fetches the list for the specified account.
  *
  * @param account The account to use.
  */
-void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account);
+void pidgin_roomlist_dialog_show_with_account(GaimAccount *account);
 
-#endif /* _GAIM_GTKROOMLIST_H_ */
+#endif /* _PIDGINROOMLIST_H_ */

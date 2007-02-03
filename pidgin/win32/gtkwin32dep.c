@@ -279,7 +279,7 @@ gtkwgaim_window_flash(GtkWindow *window, gboolean flash) {
 
 void
 gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
-	GaimGtkWindow *win;
+	PidginWindow *win;
 	GtkWindow *window;
 
 	/* Don't flash for our own messages or system messages */
@@ -291,7 +291,7 @@ gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 		return;
 	}
 
-	win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(conv));
+	win = pidginconv_get_window(PIDGIN_CONVERSATION(conv));
 	if(win == NULL) {
 		gaim_debug_info("gtkwgaim", "No conversation windows found to blink.\n");
 		return;
@@ -323,7 +323,7 @@ void gtkwgaim_init(HINSTANCE hint) {
 	if(!wgaim_set_idlehooks())
 		gaim_debug_error("gtkwgaim", "Failed to initialize idle tracker\n");
 
-	wgaim_gtkspell_init();
+	wpidginspell_init();
 	gaim_debug_info("gtkwgaim", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
@@ -339,7 +339,7 @@ void gtkwgaim_post_init(void) {
 	gaim_prefs_add_none("/gaim/gtk/win32");
 	gaim_prefs_add_bool("/gaim/gtk/win32/blink_im", TRUE);
 
-	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+	gaim_signal_connect(pidgin_conversations_get_handle(),
 		"displaying-im-msg", &gtkwin32_handle, GAIM_CALLBACK(gtkwgaim_conv_im_blink),
 		NULL);
 

@@ -22,28 +22,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKACCOUNT_H_
-#define _GAIM_GTKACCOUNT_H_
+#ifndef _PIDGINACCOUNT_H_
+#define _PIDGINACCOUNT_H_
 
 #include "account.h"
 
 typedef enum
 {
-	GAIM_GTK_ADD_ACCOUNT_DIALOG,
-	GAIM_GTK_MODIFY_ACCOUNT_DIALOG
+	PIDGIN_ADD_ACCOUNT_DIALOG,
+	PIDGIN_MODIFY_ACCOUNT_DIALOG
 
-} GaimGtkAccountDialogType;
+} PidginAccountDialogType;
 
 
 /**
  * Shows the accounts window.
  */
-void gaim_gtk_accounts_window_show(void);
+void pidgin_accounts_window_show(void);
 
 /**
  * Hides the accounts window.
  */
-void gaim_gtk_accounts_window_hide(void);
+void pidgin_accounts_window_hide(void);
 
 /**
  * Shows an add/modify account dialog.
@@ -51,7 +51,7 @@ void gaim_gtk_accounts_window_hide(void);
  * @param type    The type of dialog.
  * @param account The associated account, or @c NULL for an Add dialog.
  */
-void gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
+void pidgin_account_dialog_show(PidginAccountDialogType type,
 								  GaimAccount *account);
 
 /**
@@ -59,23 +59,23 @@ void gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
  *
  * @return The UI operations structure.
  */
-GaimAccountUiOps *gaim_gtk_accounts_get_ui_ops(void);
+GaimAccountUiOps *pidgin_accounts_get_ui_ops(void);
 
 /**
  * Returns the gtkaccounts handle
  *
  * @return The handle to the GTK+ account system
  */
-void *gaim_gtk_account_get_handle(void);
+void *pidgin_account_get_handle(void);
 
 /**
  * Initializes the GTK+ account system
  */
-void gaim_gtk_account_init(void);
+void pidgin_account_init(void);
 
 /**
  * Uninitializes the GTK+ account system
  */
-void gaim_gtk_account_uninit(void);
+void pidgin_account_uninit(void);
 
-#endif /* _GAIM_GTKACCOUNT_H_ */
+#endif /* _PIDGINACCOUNT_H_ */

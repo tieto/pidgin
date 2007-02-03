@@ -79,8 +79,8 @@ static void gtk_gaim_status_box_size_allocate (GtkWidget *widget, GtkAllocation 
 static gboolean gtk_gaim_status_box_expose_event (GtkWidget *widget, GdkEventExpose *event);
 static void gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_forall (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
-static void gaim_gtk_status_box_popup(GtkGaimStatusBox *box);
-static void gaim_gtk_status_box_popdown(GtkGaimStatusBox *box);
+static void pidgin_status_box_popup(GtkGaimStatusBox *box);
+static void pidgin_status_box_popdown(GtkGaimStatusBox *box);
 
 static void do_colorshift (GdkPixbuf *dest, GdkPixbuf *src, int shift);
 static void icon_choose_cb(const char *filename, gpointer data);
@@ -260,7 +260,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *bo
 			return FALSE;
 		}
 
-		box->buddy_icon_sel = gaim_gtk_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
 		gtk_widget_show_all(box->buddy_icon_sel);
 	}
 	return FALSE;
@@ -621,11 +621,11 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 					         icon_size, "PidginStatusBox");
 #if 0
 		if (account_status)
-			pixbuf = gaim_gtk_create_prpl_icon_with_status(acct,
+			pixbuf = pidgin_create_prpl_icon_with_status(acct,
 						gaim_status_get_type(gaim_account_get_active_status(acct)),
 						0.5);
 		else
-			pixbuf = gaim_gtk_create_gaim_icon_with_status(
+			pixbuf = pidgin_create_gaim_icon_with_status(
 						gaim_savedstatus_get_type(saved_status),
 						0.5);
 
@@ -1078,7 +1078,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 static gboolean combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
 {
-  	gaim_gtk_status_box_popup(GTK_GAIM_STATUS_BOX(w));
+  	pidgin_status_box_popup(GTK_GAIM_STATUS_BOX(w));
 	return TRUE;
 }
 
@@ -1217,7 +1217,7 @@ spellcheck_prefs_cb(const char *name, GaimPrefType type,
 	GtkGaimStatusBox *status_box = (GtkGaimStatusBox *)data;
 
 	if (value)
-		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
+		pidgin_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
 	else
 	{
 		GtkSpell *spell;
@@ -1351,7 +1351,7 @@ popup_grab_on_window (GdkWindow *window,
 
 
 static void
-gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
+pidgin_status_box_popup(GtkGaimStatusBox *box)
 {
 	int width, height, x, y;
 	gtk_gaim_status_box_list_position (box, &x, &y, &width, &height);
@@ -1378,7 +1378,7 @@ gaim_gtk_status_box_popup(GtkGaimStatusBox *box)
 }
 
 static void
-gaim_gtk_status_box_popdown(GtkGaimStatusBox *box) {
+pidgin_status_box_popdown(GtkGaimStatusBox *box) {
 	gtk_widget_hide(box->popup_window);
 	box->popup_in_progress = FALSE;
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
@@ -1392,9 +1392,9 @@ toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
 {
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))  {
 		if (!box->popup_in_progress) 
-			gaim_gtk_status_box_popup (box);
+			pidgin_status_box_popup (box);
 	}  else {
-		gaim_gtk_status_box_popdown(box);
+		pidgin_status_box_popdown(box);
 	}
 }
 
@@ -1409,9 +1409,9 @@ buddy_icon_set_cb(const char *filename, GtkGaimStatusBox *box)
 			if (prplinfo && prplinfo->icon_spec.format) {
 				char *icon = NULL;
 				if (filename)
-					icon = gaim_gtk_convert_buddy_icon(plug, filename);
+					icon = pidgin_convert_buddy_icon(plug, filename);
 				gaim_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
-				gaim_account_set_ui_string(box->account, GAIM_GTK_UI, "non-global-buddyicon-cached-path", icon);
+				gaim_account_set_ui_string(box->account, PIDGIN_UI, "non-global-buddyicon-cached-path", icon);
 				gaim_account_set_buddy_icon_path(box->account, filename);
 				gaim_account_set_buddy_icon(box->account, icon);
 				g_free(icon);
@@ -1429,7 +1429,7 @@ buddy_icon_set_cb(const char *filename, GtkGaimStatusBox *box)
 				    prplinfo->icon_spec.format) {
 					char *icon = NULL;
 					if (filename)
-						icon = gaim_gtk_convert_buddy_icon(plug, filename);
+						icon = pidgin_convert_buddy_icon(plug, filename);
 					gaim_account_set_buddy_icon_path(account, filename);
 					gaim_account_set_buddy_icon(account, icon);
 					g_free(icon);
@@ -1483,7 +1483,7 @@ treeview_activate_current_selection(GtkGaimStatusBox *status_box, GtkTreePath *p
 	
 	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
 	
-	gaim_gtk_status_box_popdown (status_box);
+	pidgin_status_box_popdown (status_box);
 	gtk_gaim_status_box_changed(status_box);
 }
 
@@ -1498,14 +1498,14 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStat
 		if (ewidget == status_box->toggle_button && 
 		    status_box->popup_in_progress &&
 		    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (status_box->toggle_button))) {
-			gaim_gtk_status_box_popdown (status_box);
+			pidgin_status_box_popdown (status_box);
 			return TRUE;
 		}
 		
 		/* released outside treeview */
 		if (ewidget != status_box->toggle_button) 
 			{
-				gaim_gtk_status_box_popdown (status_box);
+				pidgin_status_box_popdown (status_box);
 				return TRUE;
 			}
 		
@@ -1532,7 +1532,7 @@ treeview_key_press_event(GtkWidget *widget,
 {
 	if (box->popup_in_progress) {
 		if (event->keyval == GDK_Escape) {
-			gaim_gtk_status_box_popdown(box);
+			pidgin_status_box_popdown(box);
 			return TRUE;
 		} else if (event->keyval == GDK_Return) {
 			GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(box->tree_view));
@@ -1644,7 +1644,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_widget_show(status_box->tree_view);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(status_box->tree_view),
-				gaim_gtk_tree_view_search_equal_func, NULL, NULL);
+				pidgin_tree_view_search_equal_func, NULL, NULL);
 	  
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
@@ -1661,7 +1661,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 #endif
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
-	status_box->sw = gaim_gtk_create_imhtml(FALSE, &status_box->imhtml, NULL, NULL);
+	status_box->sw = pidgin_create_imhtml(FALSE, &status_box->imhtml, NULL, NULL);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
@@ -1682,7 +1682,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 #ifdef USE_GTKSPELL
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
+		pidgin_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
 #endif
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	gtk_widget_show_all(status_box->vbox);
@@ -2362,7 +2362,7 @@ static void gtk_gaim_status_box_changed(GtkGaimStatusBox *status_box)
 		{
 			GaimSavedStatus *saved_status;
 			saved_status = gaim_savedstatus_get_current();
-			gaim_gtk_status_editor_show(FALSE,
+			pidgin_status_editor_show(FALSE,
 				gaim_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
 			status_menu_refresh_iter(status_box);
@@ -2371,7 +2371,7 @@ static void gtk_gaim_status_box_changed(GtkGaimStatusBox *status_box)
 
 		if (type == GTK_GAIM_STATUS_BOX_TYPE_SAVED)
 		{
-			gaim_gtk_status_window_show();
+			pidgin_status_window_show();
 			status_menu_refresh_iter(status_box);
 			return;
 		}

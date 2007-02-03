@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GAIM_GTKCELLRENDERERPROGRESS_H_
-#define _GAIM_GTKCELLRENDERERPROGRESS_H_
+#ifndef _PIDGINCELLRENDERERPROGRESS_H_
+#define _PIDGINCELLRENDERERPROGRESS_H_
 
 #include <gtk/gtkcellrenderer.h>
 
@@ -28,17 +28,17 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-#define GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS         (gaim_gtk_cell_renderer_progress_get_type())
-#define GAIM_GTK_CELL_RENDERER_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, GaimGtkCellRendererProgress))
-#define GAIM_GTK_CELL_RENDERER_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, GaimGtkCellRendererProgressClass))
+#define GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS         (pidgin_cell_renderer_progress_get_type())
+#define PIDGIN_CELL_RENDERER_PROGRESS(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, PidginCellRendererProgress))
+#define PIDGIN_CELL_RENDERER_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, PidginCellRendererProgressClass))
 #define GAIM_IS_GTK_CELL_PROGRESS_PROGRESS(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS))
 #define GAIM_IS_GTK_CELL_PROGRESS_PROGRESS_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS))
-#define GAIM_GTK_CELL_RENDERER_PROGRESS_GET_CLASS(obj)         (G_TYPE_INSTANCE_GET_CLASS ((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, GaimGtkCellRendererProgressClass))
+#define PIDGIN_CELL_RENDERER_PROGRESS_GET_CLASS(obj)         (G_TYPE_INSTANCE_GET_CLASS ((obj), GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, PidginCellRendererProgressClass))
 
-typedef struct _GaimGtkCellRendererProgress GaimGtkCellRendererProgress;
-typedef struct _GaimGtkCellRendererProgressClass GaimGtkCellRendererProgressClass;
+typedef struct _PidginCellRendererProgress PidginCellRendererProgress;
+typedef struct _PidginCellRendererProgressClass PidginCellRendererProgressClass;
 
-struct _GaimGtkCellRendererProgress {
+struct _PidginCellRendererProgress {
 	GtkCellRenderer parent;
 
 	gdouble progress;
@@ -46,16 +46,16 @@ struct _GaimGtkCellRendererProgress {
 	gboolean text_set;
 };
 
-struct _GaimGtkCellRendererProgressClass {
+struct _PidginCellRendererProgressClass {
 	GtkCellRendererClass parent_class;
 };
 
-GType            gaim_gtk_cell_renderer_progress_get_type     (void);
-GtkCellRenderer  *gaim_gtk_cell_renderer_progress_new          (void);
+GType            pidgin_cell_renderer_progress_get_type     (void);
+GtkCellRenderer  *pidgin_cell_renderer_progress_new          (void);
 
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* _GAIM_GTKCELLRENDERERPROGRESS_H_ */
+#endif /* _PIDGINCELLRENDERERPROGRESS_H_ */

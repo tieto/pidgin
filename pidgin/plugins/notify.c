@@ -112,7 +112,7 @@ static GdkAtom _GaimUnseenCount = GDK_NONE;
 
 /* notification set/unset */
 static int notify(GaimConversation *conv, gboolean increment);
-static void notify_win(GaimGtkWindow *gaimwin);
+static void notify_win(PidginWindow *gaimwin);
 static void unnotify(GaimConversation *conv, gboolean reset);
 static int unnotify_cb(GtkWidget *widget, gpointer data,
                        GaimConversation *conv);
@@ -127,31 +127,31 @@ static void apply_method(void);
 static void apply_notify(void);
 
 /* string function */
-static void handle_string(GaimGtkWindow *gaimwin);
+static void handle_string(PidginWindow *gaimwin);
 
 /* count_title function */
-static void handle_count_title(GaimGtkWindow *gaimwin);
+static void handle_count_title(PidginWindow *gaimwin);
 
 /* count_xprop function */
-static void handle_count_xprop(GaimGtkWindow *gaimwin);
+static void handle_count_xprop(PidginWindow *gaimwin);
 
 /* urgent function */
-static void handle_urgent(GaimGtkWindow *gaimwin, gboolean set);
+static void handle_urgent(PidginWindow *gaimwin, gboolean set);
 
 /* raise function */
-static void handle_raise(GaimGtkWindow *gaimwin);
+static void handle_raise(PidginWindow *gaimwin);
 
 /****************************************/
 /* Begin doing stuff below this line... */
 /****************************************/
 static guint
-count_messages(GaimGtkWindow *gaimwin)
+count_messages(PidginWindow *gaimwin)
 {
 	guint count = 0;
 	GList *convs = NULL, *l;
 
 	for (convs = gaimwin->gtkconvs; convs != NULL; convs = convs->next) {
-		GaimGtkConversation *conv = convs->data;
+		PidginConversation *conv = convs->data;
 		for (l = conv->convs; l != NULL; l = l->next) {
 			count += GPOINTER_TO_INT(gaim_conversation_get_data(l->data, "notify-message-count"));
 		}
@@ -165,7 +165,7 @@ notify(GaimConversation *conv, gboolean increment)
 {
 	gint count;
 	gboolean has_focus;
-	GaimGtkWindow *gaimwin = NULL;
+	PidginWindow *gaimwin = NULL;
 
 	if (conv == NULL)
 		return 0;
@@ -173,7 +173,7 @@ notify(GaimConversation *conv, gboolean increment)
 	/* We want to remove the notifications, but not reset the counter */
 	unnotify(conv, FALSE);
 
-	gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
+	gaimwin = PIDGIN_CONVERSATION(conv)->win;
 
 	/* If we aren't doing notifications for this type of conversation, return */
 	if (((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
@@ -200,7 +200,7 @@ notify(GaimConversation *conv, gboolean increment)
 }
 
 static void
-notify_win(GaimGtkWindow *gaimwin)
+notify_win(PidginWindow *gaimwin)
 {
 	if (count_messages(gaimwin) <= 0)
 		return;
@@ -221,12 +221,12 @@ static void
 unnotify(GaimConversation *conv, gboolean reset)
 {
 	GaimConversation *active_conv = NULL;
-	GaimGtkWindow *gaimwin = NULL;
+	PidginWindow *gaimwin = NULL;
 
 	g_return_if_fail(conv != NULL);
 
-	gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
-	active_conv = gaim_gtk_conv_window_get_active_conversation(gaimwin);
+	gaimwin = PIDGIN_CONVERSATION(conv)->win;
+	active_conv = pidgin_conv_window_get_active_conversation(gaimwin);
 
 	/* reset the conversation window title */
 	gaim_conversation_autoset_title(active_conv);
@@ -295,12 +295,12 @@ chat_sent_im(GaimAccount *account, const char *message, int id)
 static int
 attach_signals(GaimConversation *conv)
 {
-	GaimGtkConversation *gtkconv = NULL;
-	GaimGtkWindow *gtkwin = NULL;
+	PidginConversation *gtkconv = NULL;
+	PidginWindow *gtkwin = NULL;
 	GSList *imhtml_ids = NULL, *entry_ids = NULL;
 	guint id;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 	if (!gtkconv) {
 		gaim_debug_misc("notify", "Failed to find gtkconv\n");
 		return 0;
@@ -350,11 +350,11 @@ attach_signals(GaimConversation *conv)
 static void
 detach_signals(GaimConversation *conv)
 {
-	GaimGtkConversation *gtkconv = NULL;
-	GaimGtkWindow *gtkwin = NULL;
+	PidginConversation *gtkconv = NULL;
+	PidginWindow *gtkwin = NULL;
 	GSList *ids = NULL, *l;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 	if (!gtkconv)
 		return;
 	gtkwin  = gtkconv->win;
@@ -390,7 +390,7 @@ static void
 conv_switched(GaimConversation *conv)
 {
 #if 0
-	GaimGtkWindow *gaimwin = gaim_conversation_get_window(new_conv);
+	PidginWindow *gaimwin = gaim_conversation_get_window(new_conv);
 #endif
 
 	/*
@@ -416,11 +416,11 @@ conv_switched(GaimConversation *conv)
 static void
 deleting_conv(GaimConversation *conv)
 {
-	GaimGtkWindow *gaimwin = NULL;
+	PidginWindow *gaimwin = NULL;
 
 	detach_signals(conv);
 
-	gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
+	gaimwin = PIDGIN_CONVERSATION(conv)->win;
 
 	handle_urgent(gaimwin, FALSE);
 	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
@@ -437,8 +437,8 @@ deleting_conv(GaimConversation *conv)
 #if 0
 static void
 conversation_dragging(GaimConversation *active_conv,
-                        GaimGtkWindow *old_gaimwin,
-                        GaimGtkWindow *new_gaimwin)
+                        PidginWindow *old_gaimwin,
+                        PidginWindow *new_gaimwin)
 {
 	if (old_gaimwin != new_gaimwin) {
 		if (old_gaimwin == NULL) {
@@ -484,7 +484,7 @@ conversation_dragging(GaimConversation *active_conv,
 #endif
 
 static void
-handle_string(GaimGtkWindow *gaimwin)
+handle_string(PidginWindow *gaimwin)
 {
 	GtkWindow *window = NULL;
 	gchar newtitle[256];
@@ -501,7 +501,7 @@ handle_string(GaimGtkWindow *gaimwin)
 }
 
 static void
-handle_count_title(GaimGtkWindow *gaimwin)
+handle_count_title(PidginWindow *gaimwin)
 {
 	GtkWindow *window;
 	char newtitle[256];
@@ -517,7 +517,7 @@ handle_count_title(GaimGtkWindow *gaimwin)
 }
 
 static void
-handle_count_xprop(GaimGtkWindow *gaimwin)
+handle_count_xprop(PidginWindow *gaimwin)
 {
 #ifndef _WIN32
 	guint count;
@@ -544,17 +544,17 @@ handle_count_xprop(GaimGtkWindow *gaimwin)
 }
 
 static void
-handle_urgent(GaimGtkWindow *win, gboolean set)
+handle_urgent(PidginWindow *win, gboolean set)
 {
 #ifndef _WIN32
-	gaim_gtk_set_urgent(GTK_WINDOW(win->window), set);
+	pidgin_set_urgent(GTK_WINDOW(win->window), set);
 #endif
 }
 
 static void
-handle_raise(GaimGtkWindow *gaimwin)
+handle_raise(PidginWindow *gaimwin)
 {
-	gaim_gtk_conv_window_raise(gaimwin);
+	pidgin_conv_window_raise(gaimwin);
 }
 
 static void
@@ -625,7 +625,7 @@ static void
 apply_method()
 {
 	GList *convs;
-	GaimGtkWindow *gaimwin = NULL;
+	PidginWindow *gaimwin = NULL;
 
 	for (convs = gaim_get_conversations(); convs != NULL;
 	     convs = convs->next) {
@@ -634,7 +634,7 @@ apply_method()
 		/* remove notifications */
 		unnotify(conv, FALSE);
 
-		gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
+		gaimwin = PIDGIN_CONVERSATION(conv)->win;
 		if (GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count")) != 0)
 			/* reattach appropriate notifications */
 			notify(conv, FALSE);
@@ -669,7 +669,7 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_container_set_border_width(GTK_CONTAINER (ret), 12);
 
 	/*---------- "Notify For" ----------*/
-	frame = gaim_gtk_make_frame(ret, _("Notify For"));
+	frame = pidgin_make_frame(ret, _("Notify For"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
@@ -696,7 +696,7 @@ get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(type_toggle_cb), "type_chat_nick");
 	gtk_widget_set_sensitive(toggle, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ref)));
 	g_signal_connect(G_OBJECT(ref), "toggled",
-	                 G_CALLBACK(gaim_gtk_toggle_sensitive), toggle);
+	                 G_CALLBACK(pidgin_toggle_sensitive), toggle);
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_Focused windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
@@ -706,7 +706,7 @@ get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(type_toggle_cb), "type_focused");
 
 	/*---------- "Notification Methods" ----------*/
-	frame = gaim_gtk_make_frame(ret, _("Notification Methods"));
+	frame = pidgin_make_frame(ret, _("Notification Methods"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
@@ -766,7 +766,7 @@ get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(method_toggle_cb), "method_raise");
 
 	/*---------- "Notification Removals" ----------*/
-	frame = gaim_gtk_make_frame(ret, _("Notification Removal"));
+	frame = pidgin_make_frame(ret, _("Notification Removal"));
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
@@ -820,7 +820,7 @@ plugin_load(GaimPlugin *plugin)
 {
 	GList *convs = gaim_get_conversations();
 	void *conv_handle = gaim_conversations_get_handle();
-	void *gtk_conv_handle = gaim_gtk_conversations_get_handle();
+	void *gtk_conv_handle = pidgin_conversations_get_handle();
 
 	my_plugin = plugin;
 
@@ -874,7 +874,7 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0 /* page_num (Reserved) */
@@ -886,7 +886,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

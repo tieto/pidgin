@@ -22,12 +22,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKCONVERSATION_H_
-#define _GAIM_GTKCONVERSATION_H_
+#ifndef _PIDGINCONVERSATION_H_
+#define _PIDGINCONVERSATION_H_
 
-typedef struct _GaimGtkImPane       GaimGtkImPane;
-typedef struct _GaimGtkChatPane     GaimGtkChatPane;
-typedef struct _GaimGtkConversation GaimGtkConversation;
+typedef struct _PidginImPane       PidginImPane;
+typedef struct _PidginChatPane     PidginChatPane;
+typedef struct _PidginConversation PidginConversation;
 
 /**
  * Unseen text states.
@@ -52,12 +52,12 @@ enum {
 	CHAT_USERS_COLUMNS
 };
 
-#define GAIM_GTK_CONVERSATION(conv) \
-	((GaimGtkConversation *)(conv)->ui_data)
+#define PIDGIN_CONVERSATION(conv) \
+	((PidginConversation *)(conv)->ui_data)
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
 	(gaim_conversation_get_ui_ops(conv) == \
-	 gaim_gtk_conversations_get_conv_ui_ops())
+	 pidgin_conversations_get_conv_ui_ops())
 
 #include "gtkgaim.h"
 #include "conversation.h"
@@ -76,7 +76,7 @@ enum {
 /**
  * A GTK+ Instant Message pane.
  */
-struct _GaimGtkImPane
+struct _PidginImPane
 {
 	GtkWidget *block;
 	GtkWidget *send_file;
@@ -98,7 +98,7 @@ struct _GaimGtkImPane
 /**
  * GTK+ Chat panes.
  */
-struct _GaimGtkChatPane
+struct _PidginChatPane
 {
 	GtkWidget *count;
 	GtkWidget *list;
@@ -108,13 +108,13 @@ struct _GaimGtkChatPane
 /**
  * A GTK+ conversation pane.
  */
-struct _GaimGtkConversation
+struct _PidginConversation
 {
 	GaimConversation *active_conv;
 	GList *convs;
 	GList *send_history;
 
-	GaimGtkWindow *win;
+	PidginWindow *win;
 
 	gboolean make_sound;
 
@@ -151,8 +151,8 @@ struct _GaimGtkConversation
 
 	union
 	{
-		GaimGtkImPane   *im;
-		GaimGtkChatPane *chat;
+		PidginImPane   *im;
+		PidginChatPane *chat;
 
 	} u;
 };
@@ -169,28 +169,28 @@ struct _GaimGtkConversation
  *
  * @return The GTK+ conversation operations structure.
  */
-GaimConversationUiOps *gaim_gtk_conversations_get_conv_ui_ops(void);
+GaimConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
 
 /**
  * Updates the buddy icon on a conversation.
  *
  * @param conv The conversation.
  */
-void gaim_gtkconv_update_buddy_icon(GaimConversation *conv);
+void pidginconv_update_buddy_icon(GaimConversation *conv);
 
 /**
  * Sets the active conversation within a GTK-conversation.
  *
  * @param conv The conversation
  */
-void gaim_gtkconv_switch_active_conversation(GaimConversation *conv);
+void pidginconv_switch_active_conversation(GaimConversation *conv);
 
 /**
  * Updates conversation buttons by protocol.
  *
  * @param conv The conversation.
  */
-void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
+void pidginconv_update_buttons_by_protocol(GaimConversation *conv);
 
 /**
  * Returns a list of conversations of the given type which have an unseen
@@ -208,7 +208,7 @@ void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
  * @return             List of GaimConversation matching criteria, or NULL.
  */
 GList *
-gaim_gtk_conversations_find_unseen_list(GaimConversationType type,
+pidgin_conversations_find_unseen_list(GaimConversationType type,
 										GaimUnseenState min_state,
 										gboolean hidden_only,
 										guint max_count);
@@ -222,20 +222,20 @@ gaim_gtk_conversations_find_unseen_list(GaimConversationType type,
  * @return       Number of conversations added to menu.
  */
 guint
-gaim_gtk_conversations_fill_menu(GtkWidget *menu, GList *convs);
+pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
 
 /**
  * Presents a gaim conversation to the user.
  *
  * @param conv The conversation.
  */
-void gaim_gtkconv_present_conversation(GaimConversation *conv);
+void pidginconv_present_conversation(GaimConversation *conv);
 
-GaimGtkWindow *gaim_gtkconv_get_window(GaimGtkConversation *gtkconv);
-GdkPixbuf *gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
-void gaim_gtkconv_new(GaimConversation *conv);
-int gaim_gtkconv_get_tab_at_xy(GaimGtkWindow *win, int x, int y, gboolean *to_right);
-gboolean gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv);
+PidginWindow *pidginconv_get_window(PidginConversation *gtkconv);
+GdkPixbuf *pidginconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
+void pidginconv_new(GaimConversation *conv);
+int pidginconv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
+gboolean pidginconv_is_hidden(PidginConversation *gtkconv);
 /*@}*/
 
 /**************************************************************************/
@@ -248,18 +248,18 @@ gboolean gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv);
  *
  * @return The conversations subsystem handle.
  */
-void *gaim_gtk_conversations_get_handle(void);
+void *pidgin_conversations_get_handle(void);
 
 /**
  * Initializes the GTK+ conversations subsystem.
  */
-void gaim_gtk_conversations_init(void);
+void pidgin_conversations_init(void);
 
 /**
  * Uninitialized the GTK+ conversation subsystem.
  */
-void gaim_gtk_conversations_uninit(void);
+void pidgin_conversations_uninit(void);
 
 /*@}*/
 
-#endif /* _GAIM_GTKCONVERSATION_H_ */
+#endif /* _PIDGINCONVERSATION_H_ */

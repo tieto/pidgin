@@ -69,7 +69,7 @@
  */
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 static time_t
-gaim_gtk_get_time_idle()
+pidgin_get_time_idle()
 {
 # ifdef HAVE_IOKIT
 	/* Query the IOKit API */
@@ -120,14 +120,14 @@ gaim_gtk_get_time_idle()
 static GaimIdleUiOps ui_ops =
 {
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
-	gaim_gtk_get_time_idle
+	pidgin_get_time_idle
 #else
 	NULL
 #endif /* USE_SCREENSAVER || HAVE_IOKIT */
 };
 
 GaimIdleUiOps *
-gaim_gtk_idle_get_ui_ops()
+pidgin_idle_get_ui_ops()
 {
 	return &ui_ops;
 }

@@ -597,8 +597,8 @@ static void add_button (MMConversation *mmconv)
 	gtk_widget_show(image);
 	gtk_widget_show(button);
 	
-	gtk_box_pack_start(GTK_BOX(GAIM_GTK_CONVERSATION(conv)->toolbar), sep, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(GAIM_GTK_CONVERSATION(conv)->toolbar), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(PIDGIN_CONVERSATION(conv)->toolbar), sep, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(PIDGIN_CONVERSATION(conv)->toolbar), button, FALSE, FALSE, 0);
 }
 
 static void remove_widget (GtkWidget *button)
@@ -622,7 +622,7 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 10);
 
 	/* Configuration frame */
-	vbox = gaim_gtk_make_frame(ret, _("Music Messaging Configuration"));
+	vbox = pidgin_make_frame(ret, _("Music Messaging Configuration"));
 	
 	/* Path to the score editor */
 	editor_path = gtk_entry_new();
@@ -643,7 +643,7 @@ get_config_frame(GaimPlugin *plugin)
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0 /* page_num (reserved) */
@@ -654,7 +654,7 @@ static GaimPluginInfo info = {
     GAIM_MAJOR_VERSION,
     GAIM_MINOR_VERSION,
     GAIM_PLUGIN_STANDARD,                                /**< type           */
-    GAIM_GTK_PLUGIN_TYPE,                                /**< ui_requirement */
+    PIDGIN_PLUGIN_TYPE,                                /**< ui_requirement */
     0,                                                   /**< flags          */
     NULL,                                                /**< dependencies   */
     GAIM_PRIORITY_DEFAULT,                               /**< priority       */

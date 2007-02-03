@@ -160,10 +160,10 @@ displaying_msg(GaimAccount *account, const char *who, char **displaying,
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+	gaim_signal_connect(pidgin_conversations_get_handle(),
 					"displaying-im-msg", plugin,
 					GAIM_CALLBACK(displaying_msg), NULL);
-	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+	gaim_signal_connect(pidgin_conversations_get_handle(),
 					"displaying-chat-msg", plugin,
 					GAIM_CALLBACK(displaying_msg), NULL);
 	return TRUE;
@@ -271,7 +271,7 @@ get_config_frame(GaimPlugin *plugin)
 		g_snprintf(tmp, sizeof(tmp), "%s/format", formats[i].prefix);
 		f = gaim_prefs_get_int(tmp);
 
-		frame = gaim_gtk_make_frame(ret, _(formats[i].text));
+		frame = pidgin_make_frame(ret, _(formats[i].text));
 		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
 
@@ -306,16 +306,16 @@ get_config_frame(GaimPlugin *plugin)
 				G_CALLBACK(toggle_underline), formats[i].prefix);
 	}
 
-	frame = gaim_gtk_make_frame(ret, _("General"));
-	gaim_gtk_prefs_checkbox(_("Ignore incoming format"), PREF_IGNORE, frame);
-	gaim_gtk_prefs_checkbox(_("Apply in Chats"), PREF_CHATS, frame);
-	gaim_gtk_prefs_checkbox(_("Apply in IMs"), PREF_IMS, frame);
+	frame = pidgin_make_frame(ret, _("General"));
+	pidgin_prefs_checkbox(_("Ignore incoming format"), PREF_IGNORE, frame);
+	pidgin_prefs_checkbox(_("Apply in Chats"), PREF_CHATS, frame);
+	pidgin_prefs_checkbox(_("Apply in IMs"), PREF_IMS, frame);
 
 	gtk_widget_show_all(ret);
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info = 
+static PidginPluginUiInfo ui_info = 
 {
 	get_config_frame,
 	0,
@@ -327,7 +327,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,           /* Gaim Major Version */
 	GAIM_MINOR_VERSION,           /* Gaim Minor Version */
 	GAIM_PLUGIN_STANDARD,         /* plugin type        */
-	GAIM_GTK_PLUGIN_TYPE,         /* ui requirement     */
+	PIDGIN_PLUGIN_TYPE,         /* ui requirement     */
 	0,                            /* flags              */
 	NULL,                         /* dependencies       */
 	GAIM_PRIORITY_DEFAULT,        /* priority           */

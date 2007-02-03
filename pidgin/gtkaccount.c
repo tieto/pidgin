@@ -64,7 +64,7 @@ typedef struct
 	char *username;
 	char *alias;
 
-} GaimGtkAccountAddUserData;
+} PidginAccountAddUserData;
 
 typedef struct
 {
@@ -84,7 +84,7 @@ typedef struct
 
 typedef struct
 {
-	GaimGtkAccountDialogType type;
+	PidginAccountDialogType type;
 
 	GaimAccount *account;
 	char *protocol_id;
@@ -151,7 +151,7 @@ typedef struct
 	GaimAccount *account;
 	GtkTreeModel *model;
 
-} GaimGtkPulseData;
+} PidginPulseData;
 
 
 static AccountsWindow *accounts_window = NULL;
@@ -218,7 +218,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 		int width, height;
 		GdkPixbuf *scale;
 
-		gaim_gtk_buddy_icon_get_scale_size(pixbuf, &dialog->prpl_info->icon_spec,
+		pidgin_buddy_icon_get_scale_size(pixbuf, &dialog->prpl_info->icon_spec,
 				GAIM_ICON_SCALE_DISPLAY, &width, &height);
 		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
 
@@ -305,7 +305,7 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 	dialog = data;
 
 	if (filename != NULL)
-		set_dialog_icon(dialog, gaim_gtk_convert_buddy_icon(dialog->plugin, filename), g_strdup(filename));
+		set_dialog_icon(dialog, pidgin_convert_buddy_icon(dialog->plugin, filename), g_strdup(filename));
 
 	dialog->icon_filesel = NULL;
 }
@@ -313,7 +313,7 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 static void
 icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-	dialog->icon_filesel = gaim_gtk_buddy_icon_chooser_new(GTK_WINDOW(dialog->window), icon_filesel_choose_cb, dialog);
+	dialog->icon_filesel = pidgin_buddy_icon_chooser_new(GTK_WINDOW(dialog->window), icon_filesel_choose_cb, dialog);
 	gtk_widget_show_all(dialog->icon_filesel);
 }
 
@@ -345,7 +345,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
-			set_dialog_icon(dialog, gaim_gtk_convert_buddy_icon(dialog->plugin, tmp), g_strdup(tmp));
+			set_dialog_icon(dialog, pidgin_convert_buddy_icon(dialog->plugin, tmp), g_strdup(tmp));
 			g_free(tmp);
 		}
 		gtk_drag_finish(dc, TRUE, FALSE, t);
@@ -387,7 +387,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_destroy(dialog->login_frame);
 
 	/* Build the login options frame. */
-	frame = gaim_gtk_make_frame(parent, _("Login Options"));
+	frame = pidgin_make_frame(parent, _("Login Options"));
 
 	/* cringe */
 	dialog->login_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
@@ -401,7 +401,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox);
 
 	/* Protocol */
-	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(
+	dialog->protocol_menu = pidgin_protocol_option_menu_new(
 			dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
 
 	add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
@@ -551,7 +551,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_destroy(dialog->user_frame);
 
 	/* Build the user options frame. */
-	frame = gaim_gtk_make_frame(parent, _("User Options"));
+	frame = pidgin_make_frame(parent, _("User Options"));
 	dialog->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
 	gtk_box_reorder_child(GTK_BOX(parent), dialog->user_frame, 1);
@@ -628,9 +628,9 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 								       TRUE));
 		set_dialog_icon(dialog,
 				g_strdup(gaim_account_get_ui_string(dialog->account,
-						GAIM_GTK_UI, "non-global-buddyicon-cached-path", NULL)),
+						PIDGIN_UI, "non-global-buddyicon-cached-path", NULL)),
 				g_strdup(gaim_account_get_ui_string(dialog->account, 
-						GAIM_GTK_UI, "non-global-buddyicon-path", NULL)));
+						PIDGIN_UI, "non-global-buddyicon-path", NULL)));
 	} else {
 		set_dialog_icon(dialog, NULL, NULL);
 	}
@@ -683,7 +683,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	/* Build the protocol options frame. */
 	g_snprintf(buf, sizeof(buf), _("%s Options"), dialog->plugin->info->name);
 
-	frame = gaim_gtk_make_frame(parent, buf);
+	frame = pidgin_make_frame(parent, buf);
 	dialog->protocol_frame =
 		gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
@@ -972,7 +972,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
 
-	frame = gaim_gtk_make_frame(parent, _("Proxy Options"));
+	frame = pidgin_make_frame(parent, _("Proxy Options"));
 	dialog->proxy_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
 	gtk_box_reorder_child(GTK_BOX(parent), dialog->proxy_frame, 1);
@@ -1077,7 +1077,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	if (dialog->cached_icon_path != NULL)
 	{
-		const char *icon = gaim_account_get_ui_string(dialog->account, GAIM_GTK_UI, "non-global-buddyicon-cached-path", NULL);
+		const char *icon = gaim_account_get_ui_string(dialog->account, PIDGIN_UI, "non-global-buddyicon-cached-path", NULL);
 		if (dialog->cached_icon_path != NULL && (icon == NULL || strcmp(dialog->cached_icon_path, icon)))
 		{
 			/* The user set an icon, which would've been cached by convert_buddy_icon,
@@ -1152,8 +1152,8 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			icon_change = TRUE;
 		}
 		gaim_account_set_bool(account, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
-		gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-cached-path", dialog->cached_icon_path);
-		gaim_account_set_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", dialog->icon_path);
+		gaim_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-cached-path", dialog->cached_icon_path);
+		gaim_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", dialog->icon_path);
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
 			gaim_account_set_buddy_icon_path(account, dialog->icon_path);
@@ -1162,7 +1162,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		else if (gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon") && icon_change)
 		{
 			const char *filename = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
-			char *icon = gaim_gtk_convert_buddy_icon(dialog->plugin, filename);
+			char *icon = pidgin_convert_buddy_icon(dialog->plugin, filename);
 			gaim_account_set_buddy_icon_path(account, filename);
 			gaim_account_set_buddy_icon(account, icon);
 			g_free(icon);
@@ -1339,7 +1339,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	if (new)
 		gaim_accounts_add(account);
 	else
-		gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
+		gaim_signal_emit(pidgin_account_get_handle(), "account-modified", account);
 
 	/* If this is a new account, then sign on! */
 	if (new && !dialog->registering) {
@@ -1348,7 +1348,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		saved_status = gaim_savedstatus_get_current();
 		if (saved_status != NULL) {
 			gaim_savedstatus_activate_for_account(saved_status, account);
-			gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
+			gaim_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
 
@@ -1375,7 +1375,7 @@ static const GtkTargetEntry dnd_targets[] = {
 };
 
 void
-gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
+pidgin_account_dialog_show(PidginAccountDialogType type,
 							 GaimAccount *account)
 {
 	AccountPrefsDialog *dialog;
@@ -1424,7 +1424,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "account");
 
-	if (type == GAIM_GTK_ADD_ACCOUNT_DIALOG)
+	if (type == PIDGIN_ADD_ACCOUNT_DIALOG)
 		gtk_window_set_title(GTK_WINDOW(win), _("Add Account"));
 	else
 		gtk_window_set_title(GTK_WINDOW(win), _("Modify Account"));
@@ -1534,7 +1534,7 @@ static void
 signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 {
 	GaimAccount *account;
-	GaimGtkPulseData *pulse_data;
+	PidginPulseData *pulse_data;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
@@ -1563,7 +1563,7 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 			g_free(pulse_data);
 		}
 
-		pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 		if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -1774,7 +1774,7 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 static gint
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
-	gaim_gtk_accounts_window_hide();
+	pidgin_accounts_window_hide();
 
 	return 0;
 }
@@ -1815,7 +1815,7 @@ configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsWindow *dialog)
 static void
 add_account_cb(GtkWidget *w, AccountsWindow *dialog)
 {
-	gaim_gtk_account_dialog_show(GAIM_GTK_ADD_ACCOUNT_DIALOG, NULL);
+	pidgin_account_dialog_show(PIDGIN_ADD_ACCOUNT_DIALOG, NULL);
 }
 
 static void
@@ -1827,7 +1827,7 @@ modify_account_sel(GtkTreeModel *model, GtkTreePath *path,
 	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
 	if (account != NULL)
-		gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, account);
+		pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 }
 
 static void
@@ -1884,7 +1884,7 @@ close_accounts_cb(GtkWidget *w, AccountsWindow *dialog)
 {
 	gtk_widget_destroy(dialog->window);
 
-	gaim_gtk_accounts_window_hide();
+	pidgin_accounts_window_hide();
 }
 
 
@@ -1915,7 +1915,7 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 		gaim_savedstatus_activate_for_account(saved_status, account);
 	}
 
-	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
+	gaim_account_set_enabled(account, PIDGIN_UI, !enabled);
 }
 
 static void
@@ -1980,7 +1980,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPix
 	GdkPixbuf *pixbuf, *buddyicon = NULL;
 	const char *path = NULL;
 
-	pixbuf = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -1991,7 +1991,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPix
 		else
 			path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
 	} else
-		path = gaim_account_get_ui_string(account, GAIM_GTK_UI, "non-global-buddyicon-path", NULL);
+		path = gaim_account_get_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", NULL);
 
 	if (path != NULL) {
 		GdkPixbuf *buddyicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
@@ -2005,7 +2005,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPix
 			COLUMN_ICON, pixbuf,
 			COLUMN_BUDDYICON, buddyicon,
 			COLUMN_SCREENNAME, gaim_account_get_username(account),
-			COLUMN_ENABLED, gaim_account_get_enabled(account, GAIM_GTK_UI),
+			COLUMN_ENABLED, gaim_account_get_enabled(account, PIDGIN_UI),
 			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
 			COLUMN_DATA, account,
 			-1);
@@ -2111,7 +2111,7 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 		(event->type == GDK_2BUTTON_PRESS) &&
 		(strcmp(gtk_tree_view_column_get_title(column), title)))
 	{
-		gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, account);
+		pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 		return TRUE;
 	}
 
@@ -2140,7 +2140,7 @@ create_accounts_list(AccountsWindow *dialog)
 	/* Create a helpful first-time-use label */
 	label = gtk_label_new(NULL);
 	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
-	pretty = gaim_gtk_make_pretty_arrows(_(
+	pretty = pidgin_make_pretty_arrows(_(
 						 "<span size='larger' weight='bold'>Welcome to " PIDGIN_NAME "!</span>\n\n"
 						 
 						 "You have no IM accounts configured. To start connecting with " PIDGIN_NAME " "
@@ -2243,7 +2243,7 @@ global_buddyicon_changed(const char *name, GaimPrefType type,
 }
 
 void
-gaim_gtk_accounts_window_show(void)
+pidgin_accounts_window_show(void)
 {
 	AccountsWindow *dialog;
 	GtkWidget *win;
@@ -2328,7 +2328,7 @@ gaim_gtk_accounts_window_show(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_accounts_cb), dialog);
 
-	gaim_signal_connect(gaim_gtk_account_get_handle(), "account-modified",
+	gaim_signal_connect(pidgin_account_get_handle(), "account-modified",
 	                    accounts_window,
 	                    GAIM_CALLBACK(account_modified_cb), accounts_window);
 	gaim_prefs_connect_callback(accounts_window,
@@ -2339,7 +2339,7 @@ gaim_gtk_accounts_window_show(void)
 }
 
 void
-gaim_gtk_accounts_window_hide(void)
+pidgin_accounts_window_hide(void)
 {
 	if (accounts_window == NULL)
 		return;
@@ -2351,7 +2351,7 @@ gaim_gtk_accounts_window_hide(void)
 	accounts_window = NULL;
 
 	/* See if we're the main window here. */
-	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
+	if (PIDGIN_BLIST(gaim_get_blist())->window == NULL &&
 		gaim_connections_get_all() == NULL) {
 
 		gaim_core_quit();
@@ -2359,7 +2359,7 @@ gaim_gtk_accounts_window_hide(void)
 }
 
 static void
-free_add_user_data(GaimGtkAccountAddUserData *data)
+free_add_user_data(PidginAccountAddUserData *data)
 {
 	g_free(data->username);
 	g_free(data->alias);
@@ -2367,7 +2367,7 @@ free_add_user_data(GaimGtkAccountAddUserData *data)
 }
 
 static void
-add_user_cb(GaimGtkAccountAddUserData *data)
+add_user_cb(PidginAccountAddUserData *data)
 {
 	GaimConnection *gc = gaim_account_get_connection(data->account);
 
@@ -2402,7 +2402,7 @@ make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
 }
 
 static void
-gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
+pidgin_accounts_notify_added(GaimAccount *account, const char *remote_user,
                                const char *id, const char *alias,
                                const char *msg)
 {
@@ -2413,36 +2413,36 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 	gc = gaim_account_get_connection(account);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_INFO, buffer,
+	alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_INFO, buffer,
 					  NULL, NULL, _("Close"), NULL, NULL);
-	gaim_gtk_blist_add_alert(alert);
+	pidgin_blist_add_alert(alert);
 
 	g_free(buffer);
 }
 
 static void
-gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
+pidgin_accounts_request_add(GaimAccount *account, const char *remote_user,
                               const char *id, const char *alias,
                               const char *msg)
 {
 	char *buffer;
 	GaimConnection *gc;
-	GaimGtkAccountAddUserData *data;
+	PidginAccountAddUserData *data;
 	GtkWidget *alert;
 
 	gc = gaim_account_get_connection(account);
 
-	data = g_new0(GaimGtkAccountAddUserData, 1);
+	data = g_new0(PidginAccountAddUserData, 1);
 	data->account  = account;
 	data->username = g_strdup(remote_user);
 	data->alias    = g_strdup(alias);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
+	alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 					  _("Add buddy to your list?"), buffer, data, 
 					  _("Add"), G_CALLBACK(add_user_cb),
 					  _("Cancel"), G_CALLBACK(free_add_user_data), NULL);
-	gaim_gtk_blist_add_alert(alert);
+	pidgin_blist_add_alert(alert);
 
 	g_free(buffer);
 }
@@ -2479,7 +2479,7 @@ deny_no_add_cb(struct auth_and_add *aa)
 }
 
 static void *
-gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote_user,
+pidgin_accounts_request_authorization(GaimAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data)
 {
@@ -2513,19 +2513,19 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
 		aa->account = account;
-		alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
+		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, aa,
 						  _("Authorize"), authorize_and_add_cb, 
 						  _("Deny"), deny_no_add_cb, 
 						  NULL);
 	} else {
-		alert = gaim_gtk_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
+		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, user_data,
 						  _("Authorize"), auth_cb, 
 						  _("Deny"), deny_cb, 
 						  NULL);
 	}
-	gaim_gtk_blist_add_alert(alert);
+	pidgin_blist_add_alert(alert);
 
 	g_free(buffer);
 	
@@ -2533,35 +2533,35 @@ gaim_gtk_accounts_request_authorization(GaimAccount *account, const char *remote
 }
 
 static void
-gaim_gtk_accounts_request_close(void *ui_handle)
+pidgin_accounts_request_close(void *ui_handle)
 {
 	
 }
 
 static GaimAccountUiOps ui_ops =
 {
-	gaim_gtk_accounts_notify_added,
+	pidgin_accounts_notify_added,
 	NULL,
-	gaim_gtk_accounts_request_add,
-	gaim_gtk_accounts_request_authorization,
-	gaim_gtk_accounts_request_close
+	pidgin_accounts_request_add,
+	pidgin_accounts_request_authorization,
+	pidgin_accounts_request_close
 };
 
 GaimAccountUiOps *
-gaim_gtk_accounts_get_ui_ops(void)
+pidgin_accounts_get_ui_ops(void)
 {
 	return &ui_ops;
 }
 
 void *
-gaim_gtk_account_get_handle(void) {
+pidgin_account_get_handle(void) {
 	static int handle;
 
 	return &handle;
 }
 
 void
-gaim_gtk_account_init(void)
+pidgin_account_init(void)
 {
 	gaim_prefs_add_none("/gaim/gtk/accounts");
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
@@ -2569,29 +2569,29 @@ gaim_gtk_account_init(void)
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 321);
 	gaim_prefs_add_path("/gaim/gtk/accounts/buddyicon", NULL);
 
-	gaim_signal_register(gaim_gtk_account_get_handle(), "account-modified",
+	gaim_signal_register(pidgin_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT));
 
 	/* Setup some gaim signal handlers. */
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						gaim_gtk_account_get_handle(),
+						pidgin_account_get_handle(),
 						GAIM_CALLBACK(signed_on_off_cb), NULL);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-						gaim_gtk_account_get_handle(),
+						pidgin_account_get_handle(),
 						GAIM_CALLBACK(signed_on_off_cb), NULL);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
-						gaim_gtk_account_get_handle(),
+						pidgin_account_get_handle(),
 						GAIM_CALLBACK(add_account_to_liststore), NULL);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
-						gaim_gtk_account_get_handle(),
+						pidgin_account_get_handle(),
 						GAIM_CALLBACK(account_removed_cb), NULL);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
-						gaim_gtk_account_get_handle(),
+						pidgin_account_get_handle(),
 						GAIM_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
-						gaim_gtk_account_get_handle(),
+						pidgin_account_get_handle(),
 						GAIM_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
 	account_pref_wins =
@@ -2599,7 +2599,7 @@ gaim_gtk_account_init(void)
 }
 
 void
-gaim_gtk_account_uninit(void)
+pidgin_account_uninit(void)
 {
 	/*
 	 * TODO: Need to free all the dialogs in here.  Could probably create
@@ -2608,7 +2608,7 @@ gaim_gtk_account_uninit(void)
 	 */
 	g_hash_table_destroy(account_pref_wins);
 
-	gaim_signals_disconnect_by_handle(gaim_gtk_account_get_handle());
-	gaim_signals_unregister_by_instance(gaim_gtk_account_get_handle());
+	gaim_signals_disconnect_by_handle(pidgin_account_get_handle());
+	gaim_signals_unregister_by_instance(pidgin_account_get_handle());
 }
 

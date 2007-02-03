@@ -59,7 +59,7 @@ typedef struct
 
 	GaimAccount *account;
 
-} GaimGtkPrivacyDialog;
+} PidginPrivacyDialog;
 
 typedef struct
 {
@@ -67,7 +67,7 @@ typedef struct
 	char *name;
 	gboolean block;
 
-} GaimGtkPrivacyRequestData;
+} PidginPrivacyRequestData;
 
 static struct
 {
@@ -85,10 +85,10 @@ static struct
 
 static size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
 
-static GaimGtkPrivacyDialog *privacy_dialog = NULL;
+static PidginPrivacyDialog *privacy_dialog = NULL;
 
 static void
-rebuild_allow_list(GaimGtkPrivacyDialog *dialog)
+rebuild_allow_list(PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	GtkTreeIter iter;
@@ -102,7 +102,7 @@ rebuild_allow_list(GaimGtkPrivacyDialog *dialog)
 }
 
 static void
-rebuild_block_list(GaimGtkPrivacyDialog *dialog)
+rebuild_block_list(PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	GtkTreeIter iter;
@@ -133,13 +133,13 @@ find_permit_block_by_name(GSList *list, const char *name)
 }
 
 static void
-user_selected_cb(GtkTreeSelection *sel, GaimGtkPrivacyDialog *dialog)
+user_selected_cb(GtkTreeSelection *sel, PidginPrivacyDialog *dialog)
 {
 	gtk_widget_set_sensitive(dialog->remove_button, TRUE);
 }
 
 static GtkWidget *
-build_list(GaimGtkPrivacyDialog *dialog, GtkListStore *model,
+build_list(PidginPrivacyDialog *dialog, GtkListStore *model,
 		   GtkWidget **ret_treeview)
 {
 	GtkWidget *sw;
@@ -180,7 +180,7 @@ build_list(GaimGtkPrivacyDialog *dialog, GtkListStore *model,
 }
 
 static GtkWidget *
-build_allow_list(GaimGtkPrivacyDialog *dialog)
+build_allow_list(PidginPrivacyDialog *dialog)
 {
 	GtkWidget *widget;
 	GtkWidget *list;
@@ -199,7 +199,7 @@ build_allow_list(GaimGtkPrivacyDialog *dialog)
 }
 
 static GtkWidget *
-build_block_list(GaimGtkPrivacyDialog *dialog)
+build_block_list(PidginPrivacyDialog *dialog)
 {
 	GtkWidget *widget;
 	GtkWidget *list;
@@ -218,16 +218,16 @@ build_block_list(GaimGtkPrivacyDialog *dialog)
 }
 
 static gint
-destroy_cb(GtkWidget *w, GdkEvent *event, GaimGtkPrivacyDialog *dialog)
+destroy_cb(GtkWidget *w, GdkEvent *event, PidginPrivacyDialog *dialog)
 {
-	gaim_gtk_privacy_dialog_hide();
+	pidgin_privacy_dialog_hide();
 
 	return 0;
 }
 
 static void
 select_account_cb(GtkWidget *dropdown, GaimAccount *account,
-				  GaimGtkPrivacyDialog *dialog)
+				  PidginPrivacyDialog *dialog)
 {
 	int i;
 
@@ -249,7 +249,7 @@ select_account_cb(GtkWidget *dropdown, GaimAccount *account,
  *       Even better: the privacy API needs to not suck.
  */
 static void
-type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
+type_changed_cb(GtkOptionMenu *optmenu, PidginPrivacyDialog *dialog)
 {
 	int new_type = menu_entries[gtk_option_menu_get_history(optmenu)].num;
 
@@ -272,20 +272,20 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 	}
 
 	gaim_blist_schedule_save();
-	gaim_gtk_blist_refresh(gaim_get_blist());
+	pidgin_blist_refresh(gaim_get_blist());
 }
 
 static void
-add_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
+add_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	if (dialog->in_allow_list)
-		gaim_gtk_request_add_permit(dialog->account, NULL);
+		pidgin_request_add_permit(dialog->account, NULL);
 	else
-		gaim_gtk_request_add_block(dialog->account, NULL);
+		pidgin_request_add_block(dialog->account, NULL);
 }
 
 static void
-remove_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
+remove_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -324,7 +324,7 @@ remove_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 }
 
 static void
-clear_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
+clear_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	if (dialog->in_allow_list)
@@ -343,17 +343,17 @@ clear_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 }
 
 static void
-close_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
+close_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	gtk_widget_destroy(dialog->win);
 
-	gaim_gtk_privacy_dialog_hide();
+	pidgin_privacy_dialog_hide();
 }
 
-static GaimGtkPrivacyDialog *
+static PidginPrivacyDialog *
 privacy_dialog_new(void)
 {
-	GaimGtkPrivacyDialog *dialog;
+	PidginPrivacyDialog *dialog;
 	GtkWidget *bbox;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -364,7 +364,7 @@ privacy_dialog_new(void)
 	int selected = 0;
 	int i;
 
-	dialog = g_new0(GaimGtkPrivacyDialog, 1);
+	dialog = g_new0(PidginPrivacyDialog, 1);
 
 	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_resizable(GTK_WINDOW(dialog->win), FALSE);
@@ -399,12 +399,12 @@ privacy_dialog_new(void)
 	gtk_widget_show(label);
 
 	/* Accounts drop-down */
-	dropdown = gaim_gtk_account_option_menu_new(NULL, FALSE,
+	dropdown = pidgin_account_option_menu_new(NULL, FALSE,
 												G_CALLBACK(select_account_cb), NULL, dialog);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
 	gaim_set_accessible_label (dropdown, label);
-	dialog->account = gaim_gtk_account_option_menu_get_selected(dropdown);
+	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
 	dialog->type_menu = gtk_option_menu_new();
@@ -497,7 +497,7 @@ privacy_dialog_new(void)
 }
 
 void
-gaim_gtk_privacy_dialog_show(void)
+pidgin_privacy_dialog_show(void)
 {
 	g_return_if_fail(gaim_connections_get_all() != NULL);
 
@@ -509,7 +509,7 @@ gaim_gtk_privacy_dialog_show(void)
 }
 
 void
-gaim_gtk_privacy_dialog_hide(void)
+pidgin_privacy_dialog_hide(void)
 {
 	if (privacy_dialog == NULL)
 		return;
@@ -519,14 +519,14 @@ gaim_gtk_privacy_dialog_hide(void)
 }
 
 static void
-destroy_request_data(GaimGtkPrivacyRequestData *data)
+destroy_request_data(PidginPrivacyRequestData *data)
 {
 	g_free(data->name);
 	g_free(data);
 }
 
 static void
-confirm_permit_block_cb(GaimGtkPrivacyRequestData *data, int option)
+confirm_permit_block_cb(PidginPrivacyRequestData *data, int option)
 {
 	if (data->block)
 		gaim_privacy_deny(data->account, data->name, FALSE, FALSE);
@@ -537,7 +537,7 @@ confirm_permit_block_cb(GaimGtkPrivacyRequestData *data, int option)
 }
 
 static void
-add_permit_block_cb(GaimGtkPrivacyRequestData *data, const char *name)
+add_permit_block_cb(PidginPrivacyRequestData *data, const char *name)
 {
 	data->name = g_strdup(name);
 
@@ -545,13 +545,13 @@ add_permit_block_cb(GaimGtkPrivacyRequestData *data, const char *name)
 }
 
 void
-gaim_gtk_request_add_permit(GaimAccount *account, const char *name)
+pidgin_request_add_permit(GaimAccount *account, const char *name)
 {
-	GaimGtkPrivacyRequestData *data;
+	PidginPrivacyRequestData *data;
 
 	g_return_if_fail(account != NULL);
 
-	data = g_new0(GaimGtkPrivacyRequestData, 1);
+	data = g_new0(PidginPrivacyRequestData, 1);
 	data->account = account;
 	data->name    = g_strdup(name);
 	data->block   = FALSE;
@@ -584,13 +584,13 @@ gaim_gtk_request_add_permit(GaimAccount *account, const char *name)
 }
 
 void
-gaim_gtk_request_add_block(GaimAccount *account, const char *name)
+pidgin_request_add_block(GaimAccount *account, const char *name)
 {
-	GaimGtkPrivacyRequestData *data;
+	PidginPrivacyRequestData *data;
 
 	g_return_if_fail(account != NULL);
 
-	data = g_new0(GaimGtkPrivacyRequestData, 1);
+	data = g_new0(PidginPrivacyRequestData, 1);
 	data->account = account;
 	data->name    = g_strdup(name);
 	data->block   = TRUE;
@@ -620,14 +620,14 @@ gaim_gtk_request_add_block(GaimAccount *account, const char *name)
 }
 
 static void
-gaim_gtk_permit_added_removed(GaimAccount *account, const char *name)
+pidgin_permit_added_removed(GaimAccount *account, const char *name)
 {
 	if (privacy_dialog != NULL)
 		rebuild_allow_list(privacy_dialog);
 }
 
 static void
-gaim_gtk_deny_added_removed(GaimAccount *account, const char *name)
+pidgin_deny_added_removed(GaimAccount *account, const char *name)
 {
 	if (privacy_dialog != NULL)
 		rebuild_block_list(privacy_dialog);
@@ -635,19 +635,19 @@ gaim_gtk_deny_added_removed(GaimAccount *account, const char *name)
 
 static GaimPrivacyUiOps privacy_ops =
 {
-	gaim_gtk_permit_added_removed,
-	gaim_gtk_permit_added_removed,
-	gaim_gtk_deny_added_removed,
-	gaim_gtk_deny_added_removed
+	pidgin_permit_added_removed,
+	pidgin_permit_added_removed,
+	pidgin_deny_added_removed,
+	pidgin_deny_added_removed
 };
 
 GaimPrivacyUiOps *
-gaim_gtk_privacy_get_ui_ops(void)
+pidgin_privacy_get_ui_ops(void)
 {
 	return &privacy_ops;
 }
 
 void
-gaim_gtk_privacy_init(void)
+pidgin_privacy_init(void)
 {
 }

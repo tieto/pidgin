@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKSESSION_H_
-#define _GAIM_GTKSESSION_H_
+#ifndef _PIDGINSESSION_H_
+#define _PIDGINSESSION_H_
 
 /**************************************************************************/
 /** @name X Windows session subsystem                                     */
@@ -40,14 +40,14 @@
  * @param config_dir  The path to the configuration directory used by
  *                    this instance of this program, e.g. '/home/user/.gaim'
  */
-void gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
+void pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
 
 /**
  * Unregister this instance of Gaim with the user's current session
  * manager.
  */
-void gaim_gtk_session_end(void);
+void pidgin_session_end(void);
 
 /*@}*/
 
-#endif /* _GAIM_GTKSESSION_H_ */
+#endif /* _PIDGINSESSION_H_ */

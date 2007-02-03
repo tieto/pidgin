@@ -22,10 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKBLIST_H_
-#define _GAIM_GTKBLIST_H_
+#ifndef _PIDGINBLIST_H_
+#define _PIDGINBLIST_H_
 
-typedef struct _GaimGtkBuddyList GaimGtkBuddyList;
+typedef struct _PidginBuddyList PidginBuddyList;
 
 enum {
 	STATUS_ICON_COLUMN,
@@ -61,7 +61,7 @@ typedef enum {
 /**
  * Like, everything you need to know about the gtk buddy list
  */
-struct _GaimGtkBuddyList {
+struct _PidginBuddyList {
 	GtkWidget *window;
 	GtkWidget *notebook;            /**< The notebook that switches between the real buddy list and the helpful 
 					   instructions page */
@@ -116,9 +116,9 @@ struct _GaimGtkBuddyList {
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
 };
 
-#define GAIM_GTK_BLIST(list) ((GaimGtkBuddyList *)(list)->ui_data)
+#define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
 #define GAIM_IS_GTK_BLIST(list) \
-	((list)->ui_ops == gaim_gtk_blist_get_ui_ops())
+	((list)->ui_ops == pidgin_blist_get_ui_ops())
 
 /**************************************************************************
  * @name GTK+ Buddy List API
@@ -129,35 +129,35 @@ struct _GaimGtkBuddyList {
  *
  * @return the handle to the blist system
  */
-void *gaim_gtk_blist_get_handle(void);
+void *pidgin_blist_get_handle(void);
 
 /**
  * Initializes the GTK+ blist system.
  */
-void gaim_gtk_blist_init(void);
+void pidgin_blist_init(void);
 
 /**
  * Uninitializes the GTK+ blist system.
  */
-void gaim_gtk_blist_uninit(void);
+void pidgin_blist_uninit(void);
 
 /**
  * Returns the UI operations structure for the buddy list.
  *
  * @return The GTK+ list operations structure.
  */
-GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
+GaimBlistUiOps *pidgin_blist_get_ui_ops(void);
 
 /**
  * Returns the default gtk buddy list
  *
  * There's normally only one buddy list window, but that isn't a necessity. This function
- * returns the GaimGtkBuddyList we're most likely wanting to work with. This is slightly
+ * returns the PidginBuddyList we're most likely wanting to work with. This is slightly
  * cleaner than an externed global.
  *
  * @return The default GTK+ buddy list
  */
-GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist(void);
+PidginBuddyList *pidgin_blist_get_default_gtk_blist(void);
 
 /**
  * Populates a menu with the items shown on the buddy list for a buddy.
@@ -166,7 +166,7 @@ GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist(void);
  * @param buddy The buddy whose menu to get
  * @param sub   TRUE if this is a sub-menu, FALSE otherwise
  */
-void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub);
+void pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub);
 
 /**
  * Refreshes all the nodes of the buddy list.
@@ -174,10 +174,10 @@ void gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean 
  *
  * @param list   This is the core list that gets updated from
  */
-void gaim_gtk_blist_refresh(GaimBuddyList *list);
+void pidgin_blist_refresh(GaimBuddyList *list);
 
-void gaim_gtk_blist_update_columns(void);
-void gaim_gtk_blist_update_refresh_timeout(void);
+void pidgin_blist_update_columns(void);
+void pidgin_blist_update_refresh_timeout(void);
 
 /**
  * Returns the blist emblem
@@ -187,12 +187,12 @@ void gaim_gtk_blist_update_refresh_timeout(void);
  * @return  A newly created GdkPixbuf, or NULL
  */
 GdkPixbuf *
-gaim_gtk_blist_get_emblem(GaimBlistNode *node);
+pidgin_blist_get_emblem(GaimBlistNode *node);
 
 /**
  * Useful for the buddy ticker
  */
-GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node,
+GdkPixbuf *pidgin_blist_get_status_icon(GaimBlistNode *node,
 		GaimStatusIconSize size);
 
 /**
@@ -204,14 +204,14 @@ GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node,
  * @param node The node in question.
  * @return A boolean indicating if @a node is part of an expanded contact.
  */
-gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node);
+gboolean pidgin_blist_node_is_contact_expanded(GaimBlistNode *node);
 
 /**
  * Intelligently toggles the visibility of the buddy list. If the buddy
  * list is obscured, it is brought to the front. If it is not obscured,
  * it is hidden. If it is hidden it is shown.
  */
-void gaim_gtk_blist_toggle_visibility(void);
+void pidgin_blist_toggle_visibility(void);
 
 /**
  * Increases the reference count of visibility managers. Callers should 
@@ -221,42 +221,42 @@ void gaim_gtk_blist_toggle_visibility(void);
  * A visibility manager is something that provides some method for
  * showing the buddy list after it is hidden (e.g. docklet plugin).
  */
-void gaim_gtk_blist_visibility_manager_add(void);
+void pidgin_blist_visibility_manager_add(void);
 
 /**
  * Decreases the reference count of visibility managers. If the count
  * drops below zero, the buddy list is shown.
  */
-void gaim_gtk_blist_visibility_manager_remove(void);
+void pidgin_blist_visibility_manager_remove(void);
 
 /**
  * Adds a mini-alert to the blist scrollbook
  *
  * @param widget   The widget to add
  */
-void gaim_gtk_blist_add_alert(GtkWidget *widget);
+void pidgin_blist_add_alert(GtkWidget *widget);
 
 
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/
 
-typedef void (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
+typedef void (*pidgin_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /**
  * Gets the current list of sort methods.
  *
  * @return A GSlist of sort methods
  */
-GList *gaim_gtk_blist_get_sort_methods(void);
+GList *pidgin_blist_get_sort_methods(void);
 
-struct gaim_gtk_blist_sort_method {
+struct pidgin_blist_sort_method {
 	char *id;
 	char *name;
-	gaim_gtk_blist_sort_function func;
+	pidgin_blist_sort_function func;
 };
 
-typedef struct gaim_gtk_blist_sort_method GaimGtkBlistSortMethod;
+typedef struct pidgin_blist_sort_method PidginBlistSortMethod;
 
 /**
  * Registers a buddy list sorting method.
@@ -266,41 +266,41 @@ typedef struct gaim_gtk_blist_sort_method GaimGtkBlistSortMethod;
  * @param func  A pointer to the function.
  *
  */
-void gaim_gtk_blist_sort_method_reg(const char *id, const char *name, gaim_gtk_blist_sort_function func);
+void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist_sort_function func);
 
 /**
  * Unregisters a buddy list sorting method.
  *
  * @param id The method's id
  */
-void gaim_gtk_blist_sort_method_unreg(const char *id);
+void pidgin_blist_sort_method_unreg(const char *id);
 
 /**
  * Sets a buddy list sorting method.
  *
  * @param id The method's id.
  */
-void gaim_gtk_blist_sort_method_set(const char *id);
+void pidgin_blist_sort_method_set(const char *id);
 
 /**
  * Sets up the programs default sort methods
  */
-void gaim_gtk_blist_setup_sort_methods(void);
+void pidgin_blist_setup_sort_methods(void);
 
 /**
  * Updates the accounts menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_accounts_menu(void);
+void pidgin_blist_update_accounts_menu(void);
 
 /**
  * Updates the plugin actions menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_plugin_actions(void);
+void pidgin_blist_update_plugin_actions(void);
 
 /**
  * Updates the Sorting menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_sort_methods(void);
+void pidgin_blist_update_sort_methods(void);
 
 /**
  * Determines if showing the join chat dialog is a valid action.
@@ -308,30 +308,30 @@ void gaim_gtk_blist_update_sort_methods(void);
  * @return Returns TRUE if there are accounts online capable of
  *         joining chat rooms.  Otherwise returns FALSE.
  */
-gboolean gaim_gtk_blist_joinchat_is_showable(void);
+gboolean pidgin_blist_joinchat_is_showable(void);
 
 /**
  * Shows the join chat dialog.
  */
-void gaim_gtk_blist_joinchat_show(void);
+void pidgin_blist_joinchat_show(void);
 
 /**
  * Appends the privacy menu items for a GaimBlistNode
  * TODO: Rename these.
  */
-void gaim_gtk_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node);
+void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node);
 
 /**
  * Appends the protocol specific menu items for a GaimBlistNode
  * TODO: Rename these.
  */
-void gaim_gtk_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node);
+void pidgin_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node);
 
 /**
  * Appends the extended menu items for a GaimBlistNode
  * TODO: Rename these.
  */
-void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node);
+void pidgin_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node);
 
 /**
  * Used by the connection API to tell the blist if an account
@@ -342,7 +342,7 @@ void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *no
  * @param message The connection error message, or NULL if this
  *        account is no longer in an error state.
  */
-void gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char *message);
+void pidgin_blist_update_account_error_state(GaimAccount *account, const char *message);
 
 /**
  * Sets a headline notification
@@ -356,7 +356,7 @@ void gaim_gtk_blist_update_account_error_state(GaimAccount *account, const char 
  * @param user_data The userdata to include in the callback
  * @param destroy   The callback to call when headline is closed or replaced by another headline.
  */
-void gaim_gtk_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data,
+void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data,
 		GDestroyNotify destroy);
 
-#endif /* _GAIM_GTKBLIST_H_ */
+#endif /* _PIDGINBLIST_H_ */

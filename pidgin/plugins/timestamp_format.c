@@ -115,7 +115,7 @@ static char *log_timestamp_cb(GaimLog *log, time_t t, gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_signal_connect(gaim_gtk_conversations_get_handle(), "conversation-timestamp",
+	gaim_signal_connect(pidgin_conversations_get_handle(), "conversation-timestamp",
 	                    plugin, GAIM_CALLBACK(conversation_timestamp_cb), NULL);
 	gaim_signal_connect(gaim_log_get_handle(), "log-timestamp",
 	                    plugin, GAIM_CALLBACK(log_timestamp_cb), NULL);
@@ -140,7 +140,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
