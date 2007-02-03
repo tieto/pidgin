@@ -2992,6 +2992,11 @@ gaim_gtk_blist_get_emblem(GaimBlistNode *node)
 	} else {
 		return NULL;
 	}
+	
+	if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy))) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "blocked.png", NULL);
+		return gdk_pixbuf_new_from_file(path, NULL);	
+	}
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(buddy->account));
 	if (!prpl)
@@ -3122,105 +3127,6 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	}
 
 	return ret;
-
-#if 0
-	if(buddy) {
-		GaimAccount *account;
-		GaimPlugin *prpl;
-		GaimPluginProtocolInfo *prpl_info;
-		GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-			gaim_buddy_get_name(buddy),
-			gaim_buddy_get_account(buddy));
-
-		account = buddy->account;
-
-		prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-		if(!prpl)
-			return NULL;
-
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-
-		if(prpl_info && prpl_info->list_icon) {
-			protoname = prpl_info->list_icon(account, buddy);
-		}
-
-		if(conv != NULL) {
-			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-			if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv)) {
-				/* add pending emblem */
-				if(size == GAIM_STATUS_ICON_SMALL) {
-					emblems[0].filename="pending";
-				}
-				else {
-					emblems[3].filename=emblems[2].filename;
-					emblems[2].filename="pending";
-				}
-			}
-		}
-	}
-
-	if(buddy && GAIM_BUDDY_IS_ONLINE(buddy) &&  gtkbuddynode && gtkbuddynode->recent_signonoff) {
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "login.png", NULL);
-	} else if(buddy && !GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff) {
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "logout.png", NULL);
-	} else if(buddy || chat) {
-		char *image = g_strdup_printf("%s.png", protoname);
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", image, NULL);
-		g_free(image);
-	} else {
-		/* gaim dude */
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);
-	}
-
-	status = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
-	if(!status) {
-		g_string_free(key, TRUE);
-		return NULL;
-	}
-
-	scale = gdk_pixbuf_scale_simple(status, scalesize, scalesize,
-			GDK_INTERP_BILINEAR);
-	g_object_unref(status);
-
-	if(buddy) {
-		presence = gaim_buddy_get_presence(buddy);
-		if (!GAIM_BUDDY_IS_ONLINE(buddy))
-			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
-		else if (gaim_presence_is_idle(presence))
-		{
-			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.25, FALSE);
-		}
-
-		if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy)))
-		{
-			GdkPixbuf *emblem;
-			char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "blocked.png", NULL);
-
-			emblem = gdk_pixbuf_new_from_file(filename, NULL);
-			g_free(filename);
-
-			if (emblem)
-			{
-				gdk_pixbuf_composite(emblem, scale,
-						0, 0, scalesize, scalesize,
-						0, 0,
-						(double)scalesize / gdk_pixbuf_get_width(emblem),
-						(double)scalesize / gdk_pixbuf_get_height(emblem),
-						GDK_INTERP_BILINEAR,
-						224);
-				g_object_unref(emblem);
-			}
-		}
-	}
-
-	/* Insert the new icon into the status icon hash table */
-	g_hash_table_insert (status_icon_hash_table, key, scale);
-	gdk_pixbuf_ref(scale);
-
-	return scale;
-#endif
 }
 
 static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
