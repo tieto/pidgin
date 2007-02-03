@@ -1148,4 +1148,334 @@
 #define gaim_notify_init    purple_notify_init
 #define gaim_notify_uninit  purple_notify_uninit
 
+/* from ntlm.h */
+
+#define gaim_ntlm_gen_type1    purple_ntlm_gen_type1
+#define gaim_ntlm_parse_type2  purple_ntlm_parse_type2
+#define gaim_ntlm_gen_type3    purple_ntlm_gen_type3
+
+/* from plugin.h */
+
+#define GaimPlugin            PurplePlugin
+#define GaimPluginInfo        PurplePluginInfo
+#define GaimPluginUiInfo      PurplePluginUiInfo
+#define GaimPluginLoaderInfo  PurplePluginLoaderInfo
+#define GaimPluginAction      PurplePluginAction
+#define GaimPluginPriority    PurplePluginPriority
+
+#define GAIM_PLUGIN_UNKNOWN   PURPLE_PLUGIN_UNKNOWN
+#define GAIM_PLUGIN_STANDARD  PURPLE_PLUGIN_STANDARD
+#define GAIM_PLUGIN_LOADER    PURPLE_PLUGIN_LOADER
+#define GAIM_PLUGIN_PROTOCOL  PURPLE_PLUGIN_PROTOCOL
+
+#define GaimPluginType        PurplePluginType
+
+#define GAIM_PRIORITY_DEFAULT  PURPLE_PRIORITY_DEFAULT
+#define GAIM_PRIORITY_HIGHEST  PURPLE_PRIORITY_HIGHEST
+#define GAIM_PRIORITY_LOWEST   PURPLE_PRIORITY_LOWEST
+
+#define GAIM_PLUGIN_FLAG_INVISIBLE  PURPLE_PLUGIN_FLAG_INVISIBLE
+
+#define GAIM_PLUGIN_MAGIC  PURPLE_PLUGIN_MAGIC
+
+#define GAIM_PLUGIN_LOADER_INFO     PURPLE_PLUGIN_LOADER_INFO
+#define GAIM_PLUGIN_HAS_PREF_FRAME  PURPLE_PLUGIN_HAS_PREF_FRAME
+#define GAIM_PLUGIN_UI_INFO         PURPLE_PLUGIN_UI_INFO
+
+#define GAIM_PLUGIN_HAS_ACTIONS  PURPLE_PLUGIN_HAS_ACTIONS
+#define GAIM_PLUGIN_ACTIONS      PURPLE_PLUGIN_ACTIONS
+
+#define GAIM_INIT_PLUGIN  PURPLE_INIT_PLUGIN
+
+#define gaim_plugin_new              purple_plugin_new
+#define gaim_plugin_probe            purple_plugin_probe
+#define gaim_plugin_register         purple_plugin_register
+#define gaim_plugin_load             purple_plugin_load
+#define gaim_plugin_unload           purple_plugin_unload
+#define gaim_plugin_reload           purple_plugin_reload
+#define gaim_plugin_destroy          purple_plugin_destroy
+#define gaim_plugin_is_loaded        purple_plugin_is_loaded
+#define gaim_plugin_is_unloadable    purple_plugin_is_unloadable
+#define gaim_plugin_get_id           purple_plugin_get_id
+#define gaim_plugin_get_name         purple_plugin_get_name
+#define gaim_plugin_get_version      purple_plugin_get_version
+#define gaim_plugin_get_summary      purple_plugin_get_summary
+#define gaim_plugin_get_description  purple_plugin_get_description
+#define gaim_plugin_get_author       purple_plugin_get_author
+#define gaim_plugin_get_homepage     purple_plugin_get_homepage
+
+#define gaim_plugin_ipc_register        purple_plugin_ipc_register
+#define gaim_plugin_ipc_unregister      purple_plugin_ipc_unregister
+#define gaim_plugin_ipc_unregister_all  purple_plugin_ipc_unregister_all
+#define gaim_plugin_ipc_get_params      purple_plugin_ipc_get_params
+#define gaim_plugin_ipc_call            purple_plugin_ipc_call
+
+#define gaim_plugins_add_search_path  purple_plugins_add_search_path
+#define gaim_plugins_unload_all       purple_plugins_unload_all
+#define gaim_plugins_destroy_all      purple_plugins_destroy_all
+#define gaim_plugins_save_loaded      purple_plugins_save_loaded
+#define gaim_plugins_load_saved       purple_plugins_load_saved
+#define gaim_plugins_probe            purple_plugins_probe
+#define gaim_plugins_enabled          purple_plugins_enabled
+
+#define gaim_plugins_register_probe_notify_cb     purple_plugins_register_probe_notify_cb
+#define gaim_plugins_unregister_probe_notify_cb   purple_plugins_unregister_probe_notify_cb
+#define gaim_plugins_register_load_notify_cb      purple_plugins_register_load_notify_cb
+#define gaim_plugins_unregister_load_notify_cb    purple_plugins_unregister_load_notify_cb
+#define gaim_plugins_register_unload_notify_cb    purple_plugins_register_unload_notify_cb
+#define gaim_plugins_unregister_unload_notify_cb  purple_plugins_unregister_unload_notify_cb
+
+#define gaim_plugins_find_with_name      purple_plugins_find_with_name
+#define gaim_plugins_find_with_filename  purple_plugins_find_with_filename
+#define gaim_plugins_find_with_basename  purple_plugins_find_with_basename
+#define gaim_plugins_find_with_id        purple_plugins_find_with_id
+
+#define gaim_plugins_get_loaded     purple_plugins_get_loaded
+#define gaim_plugins_get_protocols  purple_plugins_get_protocols
+#define gaim_plugins_get_all        purple_plugins_get_all
+
+#define gaim_plugins_get_handle  purple_plugins_get_handle
+#define gaim_plugins_init        purple_plugins_init
+#define gaim_plugins_uninit      purple_plugins_uninit
+
+#define gaim_plugin_action_new   purple_plugin_action_new
+#define gaim_plugin_action_free  purple_plugin_action_free
+
+/* pluginpref.h */
+
+#define GaimPluginPrefFrame  PurplePluginPrefFrame
+#define GaimPluginPref       PurplePluginPref
+
+#define GAIM_STRING_FORMAT_TYPE_NONE       PURPLE_STRING_FORMAT_TYPE_NONE
+#define GAIM_STRING_FORMAT_TYPE_MULTILINE  PURPLE_STRING_FORMAT_TYPE_MULTILINE
+#define GAIM_STRING_FORMAT_TYPE_HTML       PURPLE_STRING_FORMAT_TYPE_HTML
+
+#define GaimStringFormatType  PurpleStringFormatType
+
+#define GAIM_PLUGIN_PREF_NONE           PURPLE_PLUGIN_PREF_NONE
+#define GAIM_PLUGIN_PREF_CHOICE         PURPLE_PLUGIN_PREF_CHOICE
+#define GAIM_PLUGIN_PREF_INFO           PURPLE_PLUGIN_PREF_INFO
+#define GAIM_PLUGIN_PREF_STRING_FORMAT  PURPLE_PLUGIN_PREF_STRING_FORMAT
+
+#define GaimPluginPrefType  PurplePluginPrefType
+
+#define gaim_plugin_pref_frame_new        purple_plugin_pref_frame_new
+#define gaim_plugin_pref_frame_destroy    purple_plugin_pref_frame_destroy
+#define gaim_plugin_pref_frame_add        purple_plugin_pref_frame_add
+#define gaim_plugin_pref_frame_get_prefs  purple_plugin_pref_frame_get_prefs
+
+#define gaim_plugin_pref_new                      purple_plugin_pref_new
+#define gaim_plugin_pref_new_with_name            purple_plugin_pref_new_with_name
+#define gaim_plugin_pref_new_with_label           purple_plugin_pref_new_with_label
+#define gaim_plugin_pref_new_with_name_and_label  purple_plugin_pref_new_with_name_and_label
+#define gaim_plugin_pref_destroy                  purple_plugin_pref_destroy
+#define gaim_plugin_pref_set_name                 purple_plugin_pref_set_name
+#define gaim_plugin_pref_get_name                 purple_plugin_pref_get_name
+#define gaim_plugin_pref_set_label                purple_plugin_pref_set_label
+#define gaim_plugin_pref_get_label                purple_plugin_pref_get_label
+#define gaim_plugin_pref_set_bounds               purple_plugin_pref_set_bounds
+#define gaim_plugin_pref_get_bounds               purple_plugin_pref_get_bounds
+#define gaim_plugin_pref_set_type                 purple_plugin_pref_set_type
+#define gaim_plugin_pref_get_type                 purple_plugin_pref_get_type
+#define gaim_plugin_pref_add_choice               purple_plugin_pref_add_choice
+#define gaim_plugin_pref_get_choices              purple_plugin_pref_get_choices
+#define gaim_plugin_pref_set_max_length           purple_plugin_pref_set_max_length
+#define gaim_plugin_pref_get_max_length           purple_plugin_pref_get_max_length
+#define gaim_plugin_pref_set_masked               purple_plugin_pref_set_masked
+#define gaim_plugin_pref_get_masked               purple_plugin_pref_get_masked
+#define gaim_plugin_pref_set_format_type          purple_plugin_pref_set_format_type
+#define gaim_plugin_pref_get_format_type          purple_plugin_pref_get_format_type
+
+/* from pounce.h */
+
+#define GaimPounce  PurplePounce
+
+#define GAIM_POUNCE_NONE              PURPLE_POUNCE_NONE
+#define GAIM_POUNCE_SIGNON            PURPLE_POUNCE_SIGNON
+#define GAIM_POUNCE_SIGNOFF           PURPLE_POUNCE_SIGNOFF
+#define GAIM_POUNCE_AWAY              PURPLE_POUNCE_AWAY
+#define GAIM_POUNCE_AWAY_RETURN       PURPLE_POUNCE_AWAY_RETURN
+#define GAIM_POUNCE_IDLE              PURPLE_POUNCE_IDLE
+#define GAIM_POUNCE_IDLE_RETURN       PURPLE_POUNCE_IDLE_RETURN
+#define GAIM_POUNCE_TYPING            PURPLE_POUNCE_TYPING
+#define GAIM_POUNCE_TYPED             PURPLE_POUNCE_TYPED
+#define GAIM_POUNCE_TYPING_STOPPED    PURPLE_POUNCE_TYPING_STOPPED
+#define GAIM_POUNCE_MESSAGE_RECEIVED  PURPLE_POUNCE_MESSAGE_RECEIVED
+#define GaimPounceEvent  PurplePounceEvent
+
+#define GAIM_POUNCE_OPTION_NONE  PURPLE_POUNCE_OPTION_NONE
+#define GAIM_POUNCE_OPTION_AWAY  PURPLE_POUNCE_OPTION_AWAY
+#define GaimPounceOption  PurplePounceOption
+
+#define GaimPounceCb  PurplePounceCb
+
+#define gaim_pounce_new                     purple_pounce_new
+#define gaim_pounce_destroy                 purple_pounce_destroy
+#define gaim_pounce_destroy_all_by_account  purple_pounce_destroy_all_by_account
+#define gaim_pounce_set_events              purple_pounce_set_events
+#define gaim_pounce_set_options             purple_pounce_set_options
+#define gaim_pounce_set_pouncer             purple_pounce_set_pouncer
+#define gaim_pounce_set_pouncee             purple_pounce_set_pouncee
+#define gaim_pounce_set_save                purple_pounce_set_save
+#define gaim_pounce_action_register         purple_pounce_action_register
+#define gaim_pounce_action_set_enabled      purple_pounce_action_set_enabled
+#define gaim_pounce_action_set_attribute    purple_pounce_action_set_attribute
+#define gaim_pounce_set_data                purple_pounce_set_data
+#define gaim_pounce_get_events              purple_pounce_get_events
+#define gaim_pounce_get_options             purple_pounce_get_options
+#define gaim_pounce_get_pouncer             purple_pounce_get_pouncer
+#define gaim_pounce_get_pouncee             purple_pounce_get_pouncee
+#define gaim_pounce_get_save                purple_pounce_get_save
+#define gaim_pounce_action_is_enabled       purple_pounce_action_is_enabled
+#define gaim_pounce_action_get_attribute    purple_pounce_action_get_attribute
+#define gaim_pounce_get_data                purple_pounce_get_data
+#define gaim_pounce_execute                 purple_pounce_execute
+
+#define gaim_find_pounce                 purple_find_pounce
+#define gaim_pounces_load                purple_pounces_load
+#define gaim_pounces_register_handler    purple_pounces_register_handler
+#define gaim_pounces_unregister_handler  purple_pounces_unregister_handler
+#define gaim_pounces_get_all             purple_pounces_get_all
+#define gaim_pounces_get_handle          purple_pounces_get_handle
+#define gaim_pounces_init                purple_pounces_init
+#define gaim_pounces_uninit              purple_pounces_uninit
+
+/* from prefs.h */
+
+
+#define GAIM_PREF_NONE         PURPLE_PREF_NONE
+#define GAIM_PREF_BOOLEAN      PURPLE_PREF_BOOLEAN
+#define GAIM_PREF_INT          PURPLE_PREF_INT
+#define GAIM_PREF_STRING       PURPLE_PREF_STRING
+#define GAIM_PREF_STRING_LIST  PURPLE_PREF_STRING_LIST
+#define GAIM_PREF_PATH         PURPLE_PREF_PATH
+#define GAIM_PREF_PATH_LIST    PURPLE_PREF_PATH_LIST
+#define GaimPrefType  PurplePrefType
+
+#define GaimPrefCallback  PurplePrefCallback
+
+#define gaim_prefs_get_handle             purple_prefs_get_handle
+#define gaim_prefs_init                   purple_prefs_init
+#define gaim_prefs_uninit                 purple_prefs_uninit
+#define gaim_prefs_add_none               purple_prefs_add_none
+#define gaim_prefs_add_bool               purple_prefs_add_bool
+#define gaim_prefs_add_int                purple_prefs_add_int
+#define gaim_prefs_add_string             purple_prefs_add_string
+#define gaim_prefs_add_string_list        purple_prefs_add_string_list
+#define gaim_prefs_add_path               purple_prefs_add_path
+#define gaim_prefs_add_path_list          purple_prefs_add_path_list
+#define gaim_prefs_remove                 purple_prefs_remove
+#define gaim_prefs_rename                 purple_prefs_rename
+#define gaim_prefs_rename_boolean_toggle  purple_prefs_rename_boolean_toggle
+#define gaim_prefs_destroy                purple_prefs_destroy
+#define gaim_prefs_set_generic            purple_prefs_set_generic
+#define gaim_prefs_set_bool               purple_prefs_set_bool
+#define gaim_prefs_set_int                purple_prefs_set_int
+#define gaim_prefs_set_string             purple_prefs_set_string
+#define gaim_prefs_set_string_list        purple_prefs_set_string_list
+#define gaim_prefs_set_path               purple_prefs_set_path
+#define gaim_prefs_set_path_list          purple_prefs_set_path_list
+#define gaim_prefs_exists                 purple_prefs_exists
+#define gaim_prefs_get_type               purple_prefs_get_type
+#define gaim_prefs_get_bool               purple_prefs_get_bool
+#define gaim_prefs_get_int                purple_prefs_get_int
+#define gaim_prefs_get_string             purple_prefs_get_string
+#define gaim_prefs_get_string_list        purple_prefs_get_string_list
+#define gaim_prefs_get_path               purple_prefs_get_path
+#define gaim_prefs_get_path_list          purple_prefs_get_path_list
+#define gaim_prefs_connect_callback       purple_prefs_connect_callback
+#define gaim_prefs_disconnect_callback    purple_prefs_disconnect_callback
+#define gaim_prefs_disconnect_by_handle   purple_prefs_disconnect_by_handle
+#define gaim_prefs_trigger_callback       purple_prefs_trigger_callback
+#define gaim_prefs_load                   purple_prefs_load
+#define gaim_prefs_update_old             purple_prefs_update_old
+
+/* from privacy.h */
+
+#define GAIM_PRIVACY_ALLOW_ALL        PURPLE_PRIVACY_ALLOW_ALL
+#define GAIM_PRIVACY_DENY_ALL         PURPLE_PRIVACY_DENY_ALL
+#define GAIM_PRIVACY_ALLOW_USERS      PURPLE_PRIVACY_ALLOW_USERS
+#define GAIM_PRIVACY_DENY_USERS       PURPLE_PRIVACY_DENY_USERS
+#define GAIM_PRIVACY_ALLOW_BUDDYLIST  PURPLE_PRIVACY_ALLOW_BUDDYLIST
+#define GaimPrivacyType  PurplePrivacyType
+
+#define GaimPrivacyUiOps  PurplePrivacyUiOps
+
+#define gaim_privacy_permit_add     purple_privacy_permit_add
+#define gaim_privacy_permit_remove  purple_privacy_permit_remove
+#define gaim_privacy_deny_add       purple_privacy_deny_add
+#define gaim_privacy_deny_remove    purple_privacy_deny_remove
+#define gaim_privacy_allow          purple_privacy_allow
+#define gaim_privacy_deny           purple_privacy_deny
+#define gaim_privacy_check          purple_privacy_check
+#define gaim_privacy_set_ui_ops     purple_privacy_set_ui_ops
+#define gaim_privacy_get_ui_ops     purple_privacy_get_ui_ops
+#define gaim_privacy_init           purple_privacy_init
+
+/* from proxy.h */
+
+#define GAIM_PROXY_USE_GLOBAL  PURPLE_PROXY_USE_GLOBAL
+#define GAIM_PROXY_NONE        PURPLE_PROXY_NONE
+#define GAIM_PROXY_HTTP        PURPLE_PROXY_HTTP
+#define GAIM_PROXY_SOCKS4      PURPLE_PROXY_SOCKS4
+#define GAIM_PROXY_SOCKS5      PURPLE_PROXY_SOCKS5
+#define GAIM_PROXY_USE_ENVVAR  PURPLE_PROXY_USE_ENVVAR
+#define GaimProxyType  PurpleProxyType
+
+#define GaimProxyInfo  PurpleProxyInfo
+
+#define GaimProxyConnectData      PurpleProxyConnectData
+#define GaimProxyConnectFunction  PurpleProxyConnectFunction
+
+#define gaim_proxy_info_new           purple_proxy_info_new
+#define gaim_proxy_info_destroy       purple_proxy_info_destroy
+#define gaim_proxy_info_set_type      purple_proxy_info_set_type
+#define gaim_proxy_info_set_host      purple_proxy_info_set_host
+#define gaim_proxy_info_set_port      purple_proxy_info_set_port
+#define gaim_proxy_info_set_username  purple_proxy_info_set_username
+#define gaim_proxy_info_set_password  purple_proxy_info_set_password
+#define gaim_proxy_info_get_type      purple_proxy_info_get_type
+#define gaim_proxy_info_get_host      purple_proxy_info_get_host
+#define gaim_proxy_info_get_port      purple_proxy_info_get_port
+#define gaim_proxy_info_get_username  purple_proxy_info_get_username
+#define gaim_proxy_info_get_password  purple_proxy_info_get_password
+
+#define gaim_global_proxy_get_info    purple_global_proxy_get_info
+#define gaim_proxy_get_handle         purple_proxy_get_handle
+#define gaim_proxy_init               purple_proxy_init
+#define gaim_proxy_uninit             purple_proxy_uninit
+#define gaim_proxy_get_setup          purple_proxy_get_setup
+
+#define gaim_proxy_connect                     purple_proxy_connect
+#define gaim_proxy_connect_socks5              purple_proxy_connect_socks5
+#define gaim_proxy_connect_cancel              purple_proxy_connect_cancel
+#define gaim_proxy_connect_cancel_with_handle  purple_proxy_connect_cancel_with_handle
+
+/* from prpl.h */
+
+#define GaimPluginProtocolInfo  PurplePluginProtocolInfo
+
+#define GAIM_ICON_SCALE_DISPLAY  PURPLE_ICON_SCALE_DISPLAY
+#define GAIM_ICON_SCALE_SEND     PURPLE_ICON_SCALE_SEND
+#define GaimIconScaleRules  PurpleIconScaleRules
+
+#define GaimBuddyIconSpec  PurpleBuddyIconSpec
+
+#define GaimProtocolOptions  PurpleProtocolOptions
+
+#define GAIM_IS_PROTOCOL_PLUGIN  PURPLE_IS_PROTOCOL_PLUGIN
+
+#define GAIM_PLUGIN_PROTOCOL_INFO  PURPLE_PLUGIN_PROTOCOL_INFO
+
+#define gaim_prpl_got_account_idle        purple_prpl_got_account_idle
+#define gaim_prpl_got_account_login_time  purple_prpl_got_account_login_time
+#define gaim_prpl_got_account_status      purple_prpl_got_account_status
+#define gaim_prpl_got_user_idle           purple_prpl_got_user_idle
+#define gaim_prpl_got_user_login_time     purple_prpl_got_user_login_time
+#define gaim_prpl_got_user_status         purple_prpl_got_user_status
+#define gaim_prpl_change_account_status   purple_prpl_change_account_status
+#define gaim_prpl_get_statuses            purple_prpl_get_statuses
+
+#define gaim_find_prpl  purple_find_prpl
+
 #endif /* _GAIM_COMPAT_H_ */
