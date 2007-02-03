@@ -2889,7 +2889,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 #if GTK_CHECK_VERSION(2,8,0)
 	gtk_window_set_urgency_hint(window, urgent);
 #elif defined _WIN32
-	gtkwgaim_window_flash(window, urgent);
+	winpidgin_window_flash(window, urgent);
 #else
 	GdkWindow *gdkwin;
 	XWMHints *hints;

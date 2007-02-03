@@ -491,7 +491,7 @@ static void theme_install_theme(char *path, char *extn) {
 		g_free(path_escaped);
 		g_free(destdir_escaped);
 #else
-		if(!gtkwgaim_gz_untar(path, destdir)) {
+		if(!winpidgin_gz_untar(path, destdir)) {
 			g_free(destdir);
 			return;
 		}

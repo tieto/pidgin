@@ -99,7 +99,7 @@ static LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
 }
 
 
-EXPORT DWORD wgaim_get_lastactive() {
+EXPORT DWORD winpidgin_get_lastactive() {
 	DWORD result = 0;
 
 	/* If we have GetLastInputInfo then use it, otherwise use the hooks*/
@@ -122,7 +122,7 @@ EXPORT DWORD wgaim_get_lastactive() {
 }
 
 
-EXPORT BOOL wgaim_set_idlehooks() {
+EXPORT BOOL winpidgin_set_idlehooks() {
 	/* Is GetLastInputInfo available?*/
 	g_user32 = LoadLibrary("user32.dll");
 	if(g_user32) {
@@ -159,7 +159,7 @@ EXPORT BOOL wgaim_set_idlehooks() {
 }
 
 
-EXPORT void wgaim_remove_idlehooks() {
+EXPORT void winpidgin_remove_idlehooks() {
 	if(g_user32 != NULL)
 		FreeLibrary(g_user32);
 	if(keyHook)
