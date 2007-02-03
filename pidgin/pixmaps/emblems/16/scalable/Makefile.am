@@ -6,7 +6,6 @@ EXTRA_DIST = 	aol-client.svg \
 		free-for-chat.svg \
 		game.svg \
 		male.svg \
-		message-pending.svg \
 		mobile.svg \
 		not-authorized.svg \
 		qq-member.svg \
