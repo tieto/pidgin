@@ -4810,6 +4810,16 @@ static GtkTextTag *get_buddy_tag(GaimConversation *conv, const char *who) {
 	return buddytag;
 }
 
+static void pidgin_conv_calculate_newday(PidginConversation *gtkconv, time_t mtime)
+{
+	struct tm *tm = localtime(&mtime);
+
+	tm->tm_hour = tm->tm_min = tm->tm_sec = 0;
+	tm->tm_mday++;
+
+	gtkconv->newday = mktime(tm);
+}
+
 static void
 pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *alias,
 						const char *message, GaimMessageFlags flags,
@@ -4825,6 +4835,7 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 	int max_scrollback_lines;
 	int line_count;
 	char buf2[BUF_LONG];
+	gboolean show_date;
 	char *mdate;
 	char color[10];
 	char *str;
@@ -4932,17 +4943,29 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
 
+	/* First message in a conversation. */
+	if (gtkconv->newday == 0)
+		pidgin_conv_calculate_newday(gtkconv, mtime);
+
+	/* Show the date on the first message in a new day, or if the message is
+	 * older than 20 minutes. */
+	show_date = (mtime >= gtkconv->newday) || (time(NULL) > mtime + 20*60);
+
 	mdate = gaim_signal_emit_return_1(pidgin_conversations_get_handle(),
 	                                  "conversation-timestamp",
-	                                  conv, mtime);
+	                                  conv, mtime, show_date);
+
 	if (mdate == NULL)
 	{
 		struct tm *tm = localtime(&mtime);
-		if (time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
+		if (show_date)
 			mdate = g_strdup(gaim_date_format_long(tm));
 		else
 			mdate = g_strdup(gaim_time_format(tm));
 	}
+
+	if (mtime >= gtkconv->newday)
+		pidgin_conv_calculate_newday(gtkconv, mtime);
 
 	sml_attrib = g_strdup_printf("sml=\"%s\"", gaim_account_get_protocol_name(account));
 
@@ -6778,22 +6801,23 @@ pidgin_conversations_init(void)
 
 	gaim_signal_register(handle, "conversation-timestamp",
 #if SIZEOF_TIME_T == 4
-	                     gaim_marshal_POINTER__POINTER_INT,
+	                     gaim_marshal_POINTER__POINTER_INT_BOOLEAN,
 #elif SIZEOF_TIME_T == 8
-			     gaim_marshal_POINTER__POINTER_INT64,
+			     gaim_marshal_POINTER__POINTER_INT64_BOOLEAN,
 #else
 #error Unkown size of time_t
 #endif
-	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
+	                     gaim_value_new(GAIM_TYPE_POINTER), 3,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_CONVERSATION),
 #if SIZEOF_TIME_T == 4
-	                     gaim_value_new(GAIM_TYPE_INT));
+	                     gaim_value_new(GAIM_TYPE_INT),
 #elif SIZEOF_TIME_T == 8
-	                     gaim_value_new(GAIM_TYPE_INT64));
+	                     gaim_value_new(GAIM_TYPE_INT64),
 #else
 # error Unknown size of time_t
 #endif
+	                     gaim_value_new(GAIM_TYPE_BOOLEAN));
 
 	gaim_signal_register(handle, "displaying-im-msg",
 						 gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,

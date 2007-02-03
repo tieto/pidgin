@@ -155,6 +155,8 @@ struct _PidginConversation
 		PidginChatPane *chat;
 
 	} u;
+
+	time_t newday;
 };
 
 /*@}*/
