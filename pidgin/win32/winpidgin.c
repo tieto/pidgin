@@ -51,14 +51,14 @@
 #endif
 
 
-typedef int (CALLBACK* LPFNGAIMMAIN)(HINSTANCE, int, char**);
+typedef int (CALLBACK* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
 typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCTSTR);
 typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
 
 /*
  *  PROTOTYPES
  */
-static LPFNGAIMMAIN gaim_main = NULL;
+static LPFNPIDGINMAIN pidgin_main = NULL;
 static LPFNSETDLLDIRECTORY MySetDllDirectory = NULL;
 
 static const char *get_win32_error_message(DWORD err) {
@@ -249,7 +249,7 @@ static void dll_prep() {
 	}
 }
 
-static char* wgaim_lcid_to_posix(LCID lcid) {
+static char* winpidgin_lcid_to_posix(LCID lcid) {
 	char *posix = NULL;
 	int lang_id = PRIMARYLANGID(lcid);
 	int sub_id = SUBLANGID(lcid);
@@ -395,7 +395,7 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
    - Check NSIS Installer Language reg value
    - Use default user locale
 */
-static const char *wgaim_get_locale() {
+static const char *winpidgin_get_locale() {
 	const char *locale = NULL;
 	LCID lcid;
 #ifndef PORTABLE
@@ -410,23 +410,23 @@ static const char *wgaim_get_locale() {
 #ifndef PORTABLE
 	if (read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\gaim",
 			"Installer Language", (LPBYTE) &data, &datalen)) {
-		if ((locale = wgaim_lcid_to_posix(atoi(data))))
+		if ((locale = winpidgin_lcid_to_posix(atoi(data))))
 			return locale;
 	}
 #endif
 
 	lcid = GetUserDefaultLCID();
-	if ((locale = wgaim_lcid_to_posix(lcid)))
+	if ((locale = winpidgin_lcid_to_posix(lcid)))
 		return locale;
 
 	return "en";
 }
 
-static void wgaim_set_locale() {
+static void winpidgin_set_locale() {
 	const char *locale = NULL;
 	char envstr[25];
 
-	locale = wgaim_get_locale();
+	locale = winpidgin_get_locale();
 
 	snprintf(envstr, 25, "LANG=%s", locale);
 	printf("Setting locale: %s\n", envstr);
@@ -435,21 +435,21 @@ static void wgaim_set_locale() {
 
 #define WM_FOCUS_REQUEST (WM_APP + 13)
 
-static BOOL wgaim_set_running() {
+static BOOL winpidgin_set_running() {
 	HANDLE h;
 
-	if ((h = CreateMutex(NULL, FALSE, "gaim_is_running"))) {
+	if ((h = CreateMutex(NULL, FALSE, "pidgin_is_running"))) {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
 			HWND msg_win;
 
-			if((msg_win = FindWindow(TEXT("WingaimMsgWinCls"), NULL)))
+			if((msg_win = FindWindow(TEXT("WinpidginMsgWinCls"), NULL)))
 				if(SendMessage(msg_win, WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
 					return FALSE;
 
 			/* If we get here, the focus request wasn't successful */
 
 			MessageBox(NULL,
-				"An instance of Gaim is already running",
+				"An instance of Pidgin is already running",
 				NULL, MB_OK | MB_TOPMOST);
 
 			return FALSE;
@@ -469,7 +469,7 @@ int _stdcall
 WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		char *lpszCmdLine, int nCmdShow) {
 	char errbuf[512];
-	char gaimdir[MAX_PATH];
+	char pidgindir[MAX_PATH];
 	HMODULE hmod;
 
 	/* If debug or help or version flag used, create console for output */
@@ -492,8 +492,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	}
 
 	/* Load exception handler if we have it */
-	if (GetModuleFileName(NULL, gaimdir, MAX_PATH) != 0) {
-		char *tmp = gaimdir;
+	if (GetModuleFileName(NULL, pidgindir, MAX_PATH) != 0) {
+		char *tmp = pidgindir;
 		char *prev = NULL;
 
 		while ((tmp = strchr(tmp, '\\'))) {
@@ -503,8 +503,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 		if (prev) {
 			prev[0] = '\0';
-			strcat(gaimdir, "\\exchndl.dll");
-			if (LoadLibrary(gaimdir))
+			strcat(pidgindir, "\\exchndl.dll");
+			if (LoadLibrary(pidgindir))
 				printf("Loaded exchndl.dll\n");
 		}
 	} else {
@@ -522,18 +522,18 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 #endif
 		dll_prep();
 
-	wgaim_set_locale();
+	winpidgin_set_locale();
 	/* If help or version flag used, do not check Mutex */
 	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
-		if (!getenv("GAIM_MULTI_INST") && !wgaim_set_running())
+		if (!getenv("GAIM_MULTI_INST") && !winpidgin_set_running())
 			return 0;
 
 	/* Now we are ready for Gaim .. */
 	if ((hmod = LoadLibrary("pidgin.dll"))) {
-		gaim_main = (LPFNGAIMMAIN) GetProcAddress(hmod, "gaim_main");
+		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
 	}
 
-	if (!gaim_main) {
+	if (!pidgin_main) {
 		DWORD dw = GetLastError();
 		BOOL mod_not_found = (dw == ERROR_MOD_NOT_FOUND || dw == ERROR_DLL_NOT_FOUND);
 		const char *err_msg = get_win32_error_message(dw);
@@ -548,5 +548,5 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		return 0;
 	}
 
-	return gaim_main (hInstance, __argc, __argv);
+	return pidgin_main(hInstance, __argc, __argv);
 }

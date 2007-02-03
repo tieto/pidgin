@@ -455,7 +455,7 @@ static char *pidgin_find_binary_location(void *symbol, void *data)
 
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
-int gaim_main(HINSTANCE hint, int argc, char *argv[])
+int pidgin_main(HINSTANCE hint, int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
 #endif
@@ -688,7 +688,7 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef _WIN32
-	gtkwgaim_init(hint);
+	winpidgin_init(hint);
 #endif
 
 	gaim_core_set_ui_ops(pidgin_core_get_ui_ops());
@@ -737,7 +737,7 @@ int main(int argc, char *argv[])
 		if (!strcmp(gaim_account_get_protocol_id(account), "prpl-oscar")) {
 			if (isdigit(*gaim_account_get_username(account)))
 				gaim_account_set_protocol_id(account, "prpl-icq");
-			else 
+			else
 				gaim_account_set_protocol_id(account, "prpl-aim");
 		}
 	}
@@ -811,7 +811,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef _WIN32
-	gtkwgaim_post_init();
+	winpidgin_post_init();
 #endif
 
 	gtk_main();
@@ -821,7 +821,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef _WIN32
-	gtkwgaim_cleanup();
+	winpidgin_cleanup();
 #endif
 
 	return 0;

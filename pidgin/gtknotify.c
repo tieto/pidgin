@@ -1086,7 +1086,7 @@ pidgin_notify_uri(const char *uri)
 	g_free(command);
 
 #else /* !_WIN32 */
-	gtkwgaim_notify_uri(uri);
+	winpidgin_notify_uri(uri);
 #endif /* !_WIN32 */
 
 	return NULL;

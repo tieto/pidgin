@@ -169,7 +169,7 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 #ifdef _WIN32
 	if (resp == GTK_RESPONSE_HELP) {
 		char *logdir = g_build_filename(gaim_user_dir(), "logs", NULL);
-		gtkwgaim_shell_execute(logdir, "explore", NULL);
+		winpidgin_shell_execute(logdir, "explore", NULL);
 		g_free(logdir);
 		return;
 	}

@@ -3,6 +3,6 @@
  */
 #include <windows.h>
 
-DWORD wgaim_get_lastactive(void);
-BOOL wgaim_set_idlehooks(void);
-void wgaim_remove_idlehooks(void);
+DWORD winpidgin_get_lastactive(void);
+BOOL winpidgin_set_idlehooks(void);
+void winpidgin_remove_idlehooks(void);

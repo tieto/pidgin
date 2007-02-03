@@ -7759,7 +7759,7 @@ pidgin_conv_window_new()
 
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
-	                 G_CALLBACK(gtkwgaim_ensure_onscreen), win->window);
+	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
 #endif
 
 	return win;
