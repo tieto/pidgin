@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "account.h"
 #include "debug.h"
@@ -61,9 +61,9 @@ pidgin_connection_connect_progress(GaimConnection *gc,
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
-	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
-	gtk_gaim_status_box_pulse_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
+	pidgin_status_box_pulse_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox));
 }
 
 static void
@@ -76,7 +76,7 @@ pidgin_connection_connected(GaimConnection *gc)
 	gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if (gtkblist != NULL)
-		gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+		pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 
 	g_hash_table_remove(hash, account);
@@ -90,7 +90,7 @@ pidgin_connection_disconnected(GaimConnection *gc)
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
-	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
+	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 
 	if (gaim_connections_get_all() != NULL)
@@ -199,7 +199,7 @@ static void pidgin_connection_network_connected ()
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if(gtkblist)
-		gtk_gaim_status_box_set_network_available(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), TRUE);
+		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), TRUE);
 
 	while (list) {
 		GaimAccount *account = (GaimAccount*)list->data;
@@ -218,7 +218,7 @@ static void pidgin_connection_network_disconnected ()
 	GaimConnection *gc = NULL;
 	
 	if(gtkblist)
-		gtk_gaim_status_box_set_network_available(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), FALSE);
+		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), FALSE);
 
 	while (l) {
 		GaimAccount *a = (GaimAccount*)l->data;

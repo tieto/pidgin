@@ -24,7 +24,7 @@
  *
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #ifndef _WIN32
 # include <X11/Xlib.h>
@@ -6997,7 +6997,7 @@ pidgin_conversations_uninit(void)
  *
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 
 #include <gdk/gdkkeysyms.h>

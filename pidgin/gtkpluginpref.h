@@ -28,7 +28,7 @@
 
 #include "pluginpref.h"
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #ifdef __cplusplus
 extern "C" {

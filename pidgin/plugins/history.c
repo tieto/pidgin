@@ -2,7 +2,7 @@
  * stolen by Trillian "Pro") */
 
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "conversation.h"
 #include "debug.h"

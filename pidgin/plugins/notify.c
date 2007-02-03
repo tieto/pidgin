@@ -84,7 +84,7 @@
  */
 
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "gtkprefs.h"
 
 #include "conversation.h"

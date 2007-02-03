@@ -26,15 +26,15 @@
 #include "gtkscrollbook.h"
 
 
-static void gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book);
-static void gtk_gaim_scroll_book_class_init (GtkGaimScrollBookClass *klass);
-static void gtk_gaim_scroll_book_forall (GtkContainer *c, 
+static void pidgin_scroll_book_init (PidginScrollBook *scroll_book);
+static void pidgin_scroll_book_class_init (PidginScrollBookClass *klass);
+static void pidgin_scroll_book_forall (GtkContainer *c, 
 					 gboolean include_internals,
 			 		 GtkCallback callback,
 					 gpointer user_data);
 
 GType
-gtk_gaim_scroll_book_get_type (void)
+pidgin_scroll_book_get_type (void)
 {
 	static GType scroll_book_type = 0;
 
@@ -42,20 +42,20 @@ gtk_gaim_scroll_book_get_type (void)
 	{
 		static const GTypeInfo scroll_book_info =
 		{
-			sizeof (GtkGaimScrollBookClass),
+			sizeof (PidginScrollBookClass),
 			NULL, /* base_init */
 			NULL, /* base_finalize */
-			(GClassInitFunc) gtk_gaim_scroll_book_class_init,
+			(GClassInitFunc) pidgin_scroll_book_class_init,
 			NULL, /* class_finalize */
 			NULL, /* class_data */
-			sizeof (GtkGaimScrollBook),
+			sizeof (PidginScrollBook),
 			0,
-			(GInstanceInitFunc) gtk_gaim_scroll_book_init,
+			(GInstanceInitFunc) pidgin_scroll_book_init,
 			NULL  /* value_table */
 		};
 
 		scroll_book_type = g_type_register_static(GTK_TYPE_VBOX,
-							 "GtkGaimScrollBook",
+							 "PidginScrollBook",
 							 &scroll_book_info,
 							 0);
 	}
@@ -64,7 +64,7 @@ gtk_gaim_scroll_book_get_type (void)
 }
 
 static void
-scroll_left_cb(GtkGaimScrollBook *scroll_book)
+scroll_left_cb(PidginScrollBook *scroll_book)
 {
 	int index;
 	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
@@ -74,7 +74,7 @@ scroll_left_cb(GtkGaimScrollBook *scroll_book)
 }
 
 static void
-scroll_right_cb(GtkGaimScrollBook *scroll_book)
+scroll_right_cb(PidginScrollBook *scroll_book)
 {
 	int index, count;
 	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
@@ -89,7 +89,7 @@ scroll_right_cb(GtkGaimScrollBook *scroll_book)
 }
 
 static void
-refresh_scroll_box(GtkGaimScrollBook *scroll_book, int index, int count)
+refresh_scroll_box(PidginScrollBook *scroll_book, int index, int count)
 {
 	char *label;
 	gtk_widget_show_all(GTK_WIDGET(scroll_book));
@@ -117,7 +117,7 @@ refresh_scroll_box(GtkGaimScrollBook *scroll_book, int index, int count)
 
 
 static void
-page_count_change_cb(GtkGaimScrollBook *scroll_book)
+page_count_change_cb(PidginScrollBook *scroll_book)
 {
 	int count;
 	int index = gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook));
@@ -131,7 +131,7 @@ page_count_change_cb(GtkGaimScrollBook *scroll_book)
 }
 
 static void
-switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, GtkGaimScrollBook *scroll_book)
+switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, PidginScrollBook *scroll_book)
 {
 	int count;
 #if GTK_CHECK_VERSION(2,2,0)
@@ -143,37 +143,37 @@ switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, Gtk
 }
 
 static void
-gtk_gaim_scroll_book_add(GtkContainer *container, GtkWidget *widget)
+pidgin_scroll_book_add(GtkContainer *container, GtkWidget *widget)
 {
 	gtk_widget_show(widget);
-	gtk_notebook_append_page(GTK_NOTEBOOK(GTK_GAIM_SCROLL_BOOK(container)->notebook), widget, NULL);
-	page_count_change_cb(GTK_GAIM_SCROLL_BOOK(container));
+	gtk_notebook_append_page(GTK_NOTEBOOK(PIDGIN_SCROLL_BOOK(container)->notebook), widget, NULL);
+	page_count_change_cb(PIDGIN_SCROLL_BOOK(container));
 }
 
 static void
-gtk_gaim_scroll_book_forall(GtkContainer *container,
+pidgin_scroll_book_forall(GtkContainer *container,
 			   gboolean include_internals,
 			   GtkCallback callback,
 			   gpointer callback_data)
 {
-	GtkGaimScrollBook *scroll_book = GTK_GAIM_SCROLL_BOOK(container);
+	PidginScrollBook *scroll_book = PIDGIN_SCROLL_BOOK(container);
 	if (include_internals)
 		(*callback)(scroll_book->hbox, callback_data);
 	(*callback)(scroll_book->notebook, callback_data);
 }
 
 static void
-gtk_gaim_scroll_book_class_init (GtkGaimScrollBookClass *klass)
+pidgin_scroll_book_class_init (PidginScrollBookClass *klass)
 {
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
-	container_class->add = gtk_gaim_scroll_book_add;
-	container_class->forall = gtk_gaim_scroll_book_forall;	
+	container_class->add = pidgin_scroll_book_add;
+	container_class->forall = pidgin_scroll_book_forall;	
 	
 }
 
 static void
-gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book)
+pidgin_scroll_book_init (PidginScrollBook *scroll_book)
 {
 	GtkWidget *eb;
 
@@ -210,7 +210,7 @@ gtk_gaim_scroll_book_init (GtkGaimScrollBook *scroll_book)
 
 
 GtkWidget *
-gtk_gaim_scroll_book_new()
+pidgin_scroll_book_new()
 {
-	return g_object_new(GTK_GAIM_TYPE_SCROLL_BOOK, NULL);
+	return g_object_new(PIDGIN_TYPE_SCROLL_BOOK, NULL);
 }

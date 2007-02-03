@@ -25,7 +25,7 @@
 #ifndef _PIDGINPLUGIN_H_
 #define _PIDGINPLUGIN_H_
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "plugin.h"
 
 typedef struct _PidginPluginUiInfo PidginPluginUiInfo;

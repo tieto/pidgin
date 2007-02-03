@@ -73,4 +73,4 @@ typedef GtkIMHtmlToolbar *				Gaim__GtkUI__IMHtmlToolbar;
 typedef PidginMenuTray *				Gaim__GtkUI__MenuTray;
 
 /* gtkstatusbox.h */
-typedef GtkGaimStatusBox *				Gaim__GtkUI__StatusBox;
+typedef PidginStatusBox *				Gaim__GtkUI__StatusBox;
