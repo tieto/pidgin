@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _PIDGINCONVERSATION_H_
-#define _PIDGINCONVERSATION_H_
+#ifndef _PIDGIN_CONVERSATION_H_
+#define _PIDGIN_CONVERSATION_H_
 
 typedef struct _PidginImPane       PidginImPane;
 typedef struct _PidginChatPane     PidginChatPane;
@@ -176,21 +176,21 @@ GaimConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
  *
  * @param conv The conversation.
  */
-void pidginconv_update_buddy_icon(GaimConversation *conv);
+void pidgin_conv_update_buddy_icon(GaimConversation *conv);
 
 /**
  * Sets the active conversation within a GTK-conversation.
  *
  * @param conv The conversation
  */
-void pidginconv_switch_active_conversation(GaimConversation *conv);
+void pidgin_conv_switch_active_conversation(GaimConversation *conv);
 
 /**
  * Updates conversation buttons by protocol.
  *
  * @param conv The conversation.
  */
-void pidginconv_update_buttons_by_protocol(GaimConversation *conv);
+void pidgin_conv_update_buttons_by_protocol(GaimConversation *conv);
 
 /**
  * Returns a list of conversations of the given type which have an unseen
@@ -229,13 +229,13 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
  *
  * @param conv The conversation.
  */
-void pidginconv_present_conversation(GaimConversation *conv);
+void pidgin_conv_present_conversation(GaimConversation *conv);
 
-PidginWindow *pidginconv_get_window(PidginConversation *gtkconv);
-GdkPixbuf *pidginconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
-void pidginconv_new(GaimConversation *conv);
-int pidginconv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
-gboolean pidginconv_is_hidden(PidginConversation *gtkconv);
+PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
+GdkPixbuf *pidgin_conv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
+void pidgin_conv_new(GaimConversation *conv);
+int pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
+gboolean pidgin_conv_is_hidden(PidginConversation *gtkconv);
 /*@}*/
 
 /**************************************************************************/
@@ -262,4 +262,4 @@ void pidgin_conversations_uninit(void);
 
 /*@}*/
 
-#endif /* _PIDGINCONVERSATION_H_ */
+#endif /* _PIDGIN_CONVERSATION_H_ */

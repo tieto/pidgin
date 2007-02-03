@@ -291,7 +291,7 @@ gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 		return;
 	}
 
-	win = pidginconv_get_window(PIDGIN_CONVERSATION(conv));
+	win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	if(win == NULL) {
 		gaim_debug_info("gtkwgaim", "No conversation windows found to blink.\n");
 		return;

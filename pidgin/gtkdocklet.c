@@ -587,7 +587,7 @@ pidgin_docklet_clicked(int button_type)
 			if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
-					pidginconv_present_conversation((GaimConversation *)l->data);
+					pidgin_conv_present_conversation((GaimConversation *)l->data);
 					g_list_free(l);
 				}
 			} else {

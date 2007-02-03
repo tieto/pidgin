@@ -868,7 +868,7 @@ interface_page()
 	gtk_size_group_add_widget(sg, label);
         gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 		
-	names = pidginconv_placement_get_options();
+	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
 				GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);

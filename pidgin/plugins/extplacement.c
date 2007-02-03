@@ -77,7 +77,7 @@ conv_placement_by_number(PidginConversation *conv)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	pidginconv_placement_add_fnc("number", _("By conversation count"),
+	pidgin_conv_placement_add_fnc("number", _("By conversation count"),
 							   &conv_placement_by_number);
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 	return TRUE;
@@ -86,7 +86,7 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	pidginconv_placement_remove_fnc("number");
+	pidgin_conv_placement_remove_fnc("number");
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 	return TRUE;
 }

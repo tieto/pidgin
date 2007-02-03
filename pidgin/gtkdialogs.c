@@ -724,7 +724,7 @@ pidgindialogs_im_with_user(GaimAccount *account, const char *username)
 	if (conv == NULL)
 		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
 
-	pidginconv_present_conversation(conv);
+	pidgin_conv_present_conversation(conv);
 }
 
 static gboolean

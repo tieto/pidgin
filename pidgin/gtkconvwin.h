@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _PIDGINCONVERSATION_WINDOW_H_
-#define _PIDGINCONVERSATION_WINDOW_H_
+#ifndef _PIDGIN_CONVERSATION_WINDOW_H_
+#define _PIDGIN_CONVERSATION_WINDOW_H_
 
 typedef struct _PidginWindow       PidginWindow;
 
@@ -134,15 +134,15 @@ PidginWindow *pidgin_conv_window_last_with_type(GaimConversationType type);
 
 typedef void (*GaimConvPlacementFunc)(PidginConversation *);
 
-GList *pidginconv_placement_get_options(void);
-void pidginconv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc);
-void pidginconv_placement_remove_fnc(const char *id);
-const char *pidginconv_placement_get_name(const char *id);
-GaimConvPlacementFunc pidginconv_placement_get_fnc(const char *id);
-void pidginconv_placement_set_current_func(GaimConvPlacementFunc func);
-GaimConvPlacementFunc pidginconv_placement_get_current_func(void);
-void pidginconv_placement_place(PidginConversation *gtkconv);
+GList *pidgin_conv_placement_get_options(void);
+void pidgin_conv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc);
+void pidgin_conv_placement_remove_fnc(const char *id);
+const char *pidgin_conv_placement_get_name(const char *id);
+GaimConvPlacementFunc pidgin_conv_placement_get_fnc(const char *id);
+void pidgin_conv_placement_set_current_func(GaimConvPlacementFunc func);
+GaimConvPlacementFunc pidgin_conv_placement_get_current_func(void);
+void pidgin_conv_placement_place(PidginConversation *gtkconv);
 
 /*@}*/
 
-#endif /* _PIDGINCONVERSATION_WINDOW_H_ */
+#endif /* _PIDGIN_CONVERSATION_WINDOW_H_ */

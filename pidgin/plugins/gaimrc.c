@@ -59,15 +59,15 @@ static const char *widget_size_names[] = {
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
 static const char *font_prefs[] = {
-	"/plugins/gtk/gaimrc/font/*pidginconv_entry",
-	"/plugins/gtk/gaimrc/font/*pidginconv_imhtml",
+	"/plugins/gtk/gaimrc/font/*pidgin_conv_entry",
+	"/plugins/gtk/gaimrc/font/*pidgin_conv_imhtml",
 	"/plugins/gtk/gaimrc/font/*pidginlog_imhtml",
 	"/plugins/gtk/gaimrc/font/*pidginrequest_imhtml",
 	"/plugins/gtk/gaimrc/font/*pidginnotify_imhtml",
 };
 static const char *font_prefs_set[] = {
-	"/plugins/gtk/gaimrc/set/font/*pidginconv_entry",
-	"/plugins/gtk/gaimrc/set/font/*pidginconv_imhtml",
+	"/plugins/gtk/gaimrc/set/font/*pidgin_conv_entry",
+	"/plugins/gtk/gaimrc/set/font/*pidgin_conv_imhtml",
 	"/plugins/gtk/gaimrc/set/font/*pidginlog_imhtml",
 	"/plugins/gtk/gaimrc/set/font/*pidginrequest_imhtml",
 	"/plugins/gtk/gaimrc/set/font/*pidginnotify_imhtml",

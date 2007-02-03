@@ -234,7 +234,7 @@ static void cleanup_conv_window(PidginWindow *win) {
 }
 
 static void gaim_conversation_delete(GaimConversation *conv) {
-	PidginWindow *win = pidginconv_get_window(PIDGIN_CONVERSATION(conv));
+	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	/* If it is the last conversation in the window, cleanup */
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
 		cleanup_conv_window(win);
@@ -392,7 +392,7 @@ static void update_convs_wintrans(GtkWidget *toggle_btn, const char *pref) {
 }
 
 static void gaim_new_conversation(GaimConversation *conv) {
-	PidginWindow *win = pidginconv_get_window(PIDGIN_CONVERSATION(conv));
+	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 
 	/* If it is the first conversation in the window,
 	 * add the sliders, and set transparency */

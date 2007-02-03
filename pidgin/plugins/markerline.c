@@ -210,7 +210,7 @@ conv_created(GaimConversation *conv, gpointer null)
 	if (!gtkconv)
 		return;
 
-	win = pidginconv_get_window(gtkconv);
+	win = pidgin_conv_get_window(gtkconv);
 
 	detach_from_pidgin_window(win, NULL);
 	attach_to_pidgin_window(win, NULL);

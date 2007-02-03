@@ -301,7 +301,7 @@ static void gtk_blist_join_chat(GaimChat *chat)
 											   chat->account);
 
 	if (conv != NULL)
-		pidginconv_present_conversation(conv);
+		pidgin_conv_present_conversation(conv);
 
 	serv_join_chat(chat->account->gc, chat->components);
 }
@@ -3075,7 +3075,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		GaimPresence *p;
 		if(conv != NULL) {
 			PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-			if(gtkconv != NULL && pidginconv_is_hidden(gtkconv) && size == GAIM_STATUS_ICON_SMALL) {
+			if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv) && size == GAIM_STATUS_ICON_SMALL) {
 				return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_MESSAGE,
 							       icon_size, "GtkTreeView");
 			}
@@ -3148,7 +3148,7 @@ static gchar *pidgin_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 
 	if(conv != NULL) {
 		gtkconv = PIDGIN_CONVERSATION(conv);
-		if(gtkconv != NULL && pidginconv_is_hidden(gtkconv)) {
+		if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv)) {
 			hidden_conv = TRUE;
 		}
 	}
@@ -3500,7 +3500,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 			convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
 															GAIM_UNSEEN_TEXT, TRUE, 1);
 			if (convs) {
-				pidginconv_present_conversation((GaimConversation*)convs->data);
+				pidgin_conv_present_conversation((GaimConversation*)convs->data);
 				g_list_free(convs);
 			}
 			break;
