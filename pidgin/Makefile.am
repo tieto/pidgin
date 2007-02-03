@@ -128,7 +128,6 @@ pidgin_headers = \
 	gtkeventloop.h \
 	gtkexpander.h \
 	gtkft.h \
-	gtkgaim.h \
 	gtkidle.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
@@ -152,7 +151,8 @@ pidgin_headers = \
 	gaimstock.h \
 	gtkthemes.h \
 	gtkutils.h \
-	gtkwhiteboard.h
+	gtkwhiteboard.h \
+	pidgin.h
 
 pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
