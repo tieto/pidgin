@@ -53,18 +53,18 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 static char *timestamp_cb_common(GaimConversation *conv,
                                  time_t t,
+                                 gboolean show_date,
                                  gboolean force,
                                  const char *dates)
 {
-	struct tm *tm = localtime(&t);
 	g_return_val_if_fail(conv != NULL, NULL);
 	g_return_val_if_fail(dates != NULL, NULL);
 
-	if (!strcmp(dates, "always") ||
-	    (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
-	     !strcmp(dates, "chats")) ||
-	    (time(NULL) > (mktime(tm) + 20*60)))
+	if (show_date ||
+	    !strcmp(dates, "always") ||
+	    (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
 	{
+		struct tm *tm = localtime(&t);
 		if (force)
 			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
 		else
@@ -72,13 +72,16 @@ static char *timestamp_cb_common(GaimConversation *conv,
 	}
 
 	if (force)
+	{
+		struct tm *tm = localtime(&t);
 		return g_strdup(gaim_utf8_strftime("%H:%M:%S", tm));
+	}
 
 	return NULL;
 }
 
 static char *conversation_timestamp_cb(GaimConversation *conv,
-                                       time_t t, gpointer data)
+                                       time_t t, gboolean show_date, gpointer data)
 {
 	gboolean force = gaim_prefs_get_bool(
 				"/plugins/gtk/timestamp_format/force_24hr");
@@ -87,10 +90,10 @@ static char *conversation_timestamp_cb(GaimConversation *conv,
 
 	g_return_val_if_fail(conv != NULL, NULL);
 
-	return timestamp_cb_common(conv, t, force, dates);
+	return timestamp_cb_common(conv, t, show_date, force, dates);
 }
 
-static char *log_timestamp_cb(GaimLog *log, time_t t, gpointer data)
+static char *log_timestamp_cb(GaimLog *log, time_t t, gboolean show_date, gpointer data)
 {
 	gboolean force = gaim_prefs_get_bool(
 				"/plugins/gtk/timestamp_format/force_24hr");
@@ -99,17 +102,7 @@ static char *log_timestamp_cb(GaimLog *log, time_t t, gpointer data)
 
 	g_return_val_if_fail(log != NULL, NULL);
 
-	if (log->type == GAIM_LOG_SYSTEM)
-	{
-		if (force) {
-			struct tm *tm = localtime(&t);
-			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
-		} else {
-			return NULL;
-		}
-	}
-
-	return timestamp_cb_common(log->conv, t, force, dates);
+	return timestamp_cb_common(log->conv, t, show_date, force, dates);
 }
 
 static gboolean
@@ -140,7 +133,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                               /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
