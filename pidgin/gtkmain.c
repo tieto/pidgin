@@ -395,7 +395,7 @@ startup_notification_complete(void)
 #endif /* HAVE_STARTUP_NOTIFICATION */
 
 #ifndef _WIN32
-static char *gaim_find_binary_location(void *symbol, void *data)
+static char *pidgin_find_binary_location(void *symbol, void *data)
 {
 	static char *fullname = NULL;
 	static gboolean first = TRUE;
@@ -507,7 +507,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifndef _WIN32
-	br_set_locate_fallback_func(gaim_find_binary_location, argv[0]);
+	br_set_locate_fallback_func(pidgin_find_binary_location, argv[0]);
 #endif
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
