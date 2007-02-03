@@ -24,7 +24,7 @@
  *
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "gaimstock.h"
 

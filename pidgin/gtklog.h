@@ -25,7 +25,7 @@
 #ifndef _PIDGINLOG_H_
 #define _PIDGINLOG_H_
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "log.h"
 
 #include "account.h"

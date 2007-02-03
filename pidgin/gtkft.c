@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "debug.h"
 #include "notify.h"
@@ -881,7 +881,7 @@ pidginxfer_dialog_new(void)
 
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(dialog->window), "show",
-		G_CALLBACK(gtkwgaim_ensure_onscreen), dialog->window);
+		G_CALLBACK(winpidgin_ensure_onscreen), dialog->window);
 #endif
 
 	return dialog;

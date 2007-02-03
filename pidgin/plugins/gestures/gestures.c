@@ -19,7 +19,7 @@
  * 02111-1307, USA.
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "debug.h"
 #include "prefs.h"

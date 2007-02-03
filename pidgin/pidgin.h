@@ -1,5 +1,5 @@
 /**
- * @file gtkgaim.h UI definitions and includes
+ * @file pidgin.h UI definitions and includes
  * @ingroup gtkui
  *
  * gaim
@@ -22,7 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-/* #warning ***gtkgaim*** */
+/* #warning ***pidgin*** */
 #ifndef _PIDGINGAIM_H_
 #define _PIDGINGAIM_H_
 
@@ -39,7 +39,7 @@
 /**
  * Our UI's identifier.
  */
-#define PIDGIN_UI "gtk-gaim"
+#define PIDGIN_UI "pidgin"
 
 #ifndef _WIN32
 # define GAIM_ALERT_TITLE ""

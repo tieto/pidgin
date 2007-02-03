@@ -38,7 +38,7 @@
 #include "util.h"
 #include "version.h"
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 /* 1 day */
 #define MIN_CHECK_INTERVAL 60 * 60 * 24

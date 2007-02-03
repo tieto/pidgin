@@ -24,7 +24,7 @@
  *
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #ifndef _WIN32
 # include <X11/Xlib.h>
@@ -6973,7 +6973,7 @@ pidgin_conversations_uninit(void)
  *
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 
 #include <gdk/gdkkeysyms.h>
@@ -7759,7 +7759,7 @@ pidgin_conv_window_new()
 
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
-	                 G_CALLBACK(gtkwgaim_ensure_onscreen), win->window);
+	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
 #endif
 
 	return win;

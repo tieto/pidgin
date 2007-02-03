@@ -23,7 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -1086,7 +1086,7 @@ pidgin_notify_uri(const char *uri)
 	g_free(command);
 
 #else /* !_WIN32 */
-	gtkwgaim_notify_uri(uri);
+	winpidgin_notify_uri(uri);
 #endif /* !_WIN32 */
 
 	return NULL;

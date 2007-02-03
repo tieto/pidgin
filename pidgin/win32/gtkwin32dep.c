@@ -1,11 +1,10 @@
-/*
- * gaim
+/**
+ * @file gtkwin32dep.c UI Win32 Specific Functionality
+ * @ingroup win32
  *
- * File: gtkwin32dep.c
- * Date: June, 2002
- * Description: Windows dependant code for Gaim
- *
- * Copyright (C) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
+ * Pidgin is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +54,8 @@
 /*
  *  GLOBALS
  */
-HINSTANCE gaimexe_hInstance = 0;
-HINSTANCE gtkgaimdll_hInstance = 0;
+HINSTANCE exe_hInstance = 0;
+HINSTANCE dll_hInstance = 0;
 HWND messagewin_hwnd;
 static int gtkwin32_handle;
 
@@ -68,11 +67,11 @@ static LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
  *  PUBLIC CODE
  */
 
-HINSTANCE gtkwgaim_hinstance(void) {
-	return gaimexe_hInstance;
+HINSTANCE winpidgin_hinstance(void) {
+	return exe_hInstance;
 }
 
-int gtkwgaim_gz_decompress(const char* in, const char* out) {
+int winpidgin_gz_decompress(const char* in, const char* out) {
 	gzFile fin;
 	FILE *fout;
 	char buf[1024];
@@ -80,13 +79,13 @@ int gtkwgaim_gz_decompress(const char* in, const char* out) {
 
 	if((fin = gzopen(in, "rb"))) {
 		if(!(fout = g_fopen(out, "wb"))) {
-			gaim_debug_error("gtkwgaim_gz_decompress", "Error opening file: %s\n", out);
+			gaim_debug_error("winpidgin_gz_decompress", "Error opening file: %s\n", out);
 			gzclose(fin);
 			return 0;
 		}
 	}
 	else {
-		gaim_debug_error("gtkwgaim_gz_decompress", "gzopen failed to open: %s\n", in);
+		gaim_debug_error("winpidgin_gz_decompress", "gzopen failed to open: %s\n", in);
 		return 0;
 	}
 
@@ -102,36 +101,36 @@ int gtkwgaim_gz_decompress(const char* in, const char* out) {
 	gzclose(fin);
 
 	if(ret < 0) {
-		gaim_debug_error("gtkwgaim_gz_decompress", "gzread failed while reading: %s\n", in);
+		gaim_debug_error("winpidgin_gz_decompress", "gzread failed while reading: %s\n", in);
 		return 0;
 	}
 
 	return 1;
 }
 
-int gtkwgaim_gz_untar(const char* filename, const char* destdir) {
+int winpidgin_gz_untar(const char* filename, const char* destdir) {
 	char tmpfile[_MAX_PATH];
-	char template[]="wgaimXXXXXX";
+	char template[]="wpidginXXXXXX";
 
 	sprintf(tmpfile, "%s%s%s", g_get_tmp_dir(), G_DIR_SEPARATOR_S, _mktemp(template));
-	if(gtkwgaim_gz_decompress(filename, tmpfile)) {
+	if(winpidgin_gz_decompress(filename, tmpfile)) {
 		int ret;
 		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
 			ret = 1;
 		else {
-			gaim_debug_error("gtkwgaim_gz_untar", "Failure untarring %s\n", tmpfile);
+			gaim_debug_error("winpidgin_gz_untar", "Failure untarring %s\n", tmpfile);
 			ret = 0;
 		}
 		g_unlink(tmpfile);
 		return ret;
 	}
 	else {
-		gaim_debug_error("gtkwgaim_gz_untar", "Failed to gz decompress %s\n", filename);
+		gaim_debug_error("winpidgin_gz_untar", "Failed to gz decompress %s\n", filename);
 		return 0;
 	}
 }
 
-void gtkwgaim_shell_execute(const char *target, const char *verb, const char *clazz) {
+void winpidgin_shell_execute(const char *target, const char *verb, const char *clazz) {
 
 	g_return_if_fail(target != NULL);
 	g_return_if_fail(verb != NULL);
@@ -155,7 +154,7 @@ void gtkwgaim_shell_execute(const char *target, const char *verb, const char *cl
 		}
 
 		if(!ShellExecuteExW(&wsinfo))
-			gaim_debug_error("gtkwgaim", "Error opening URI: %s error: %d\n",
+			gaim_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
 				target, (int) wsinfo.hInstApp);
 
 		g_free(w_uri);
@@ -178,7 +177,7 @@ void gtkwgaim_shell_execute(const char *target, const char *verb, const char *cl
 		}
 
 		if(!ShellExecuteExA(&sinfo))
-			gaim_debug_error("gtkwgaim", "Error opening URI: %s error: %d\n",
+			gaim_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
 				target, (int) sinfo.hInstApp);
 
 		g_free(locale_uri);
@@ -186,11 +185,11 @@ void gtkwgaim_shell_execute(const char *target, const char *verb, const char *cl
 
 }
 
-void gtkwgaim_notify_uri(const char *uri) {
+void winpidgin_notify_uri(const char *uri) {
 	/* We'll allow whatever URI schemes are supported by the
 	 * default http browser.
 	 */
-	gtkwgaim_shell_execute(uri, "open", "http");
+	winpidgin_shell_execute(uri, "open", "http");
 }
 
 #define WM_FOCUS_REQUEST (WM_APP + 13)
@@ -198,7 +197,7 @@ void gtkwgaim_notify_uri(const char *uri) {
 static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 	if (msg == WM_FOCUS_REQUEST) {
-		gaim_debug_info("gtkwgaim", "Got external Buddy List focus request.");
+		gaim_debug_info("winpidgin", "Got external Buddy List focus request.");
 		gaim_blist_set_visible(TRUE);
 		return TRUE;
 	}
@@ -206,19 +205,19 @@ static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wpara
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-static HWND wgaim_message_window_init(void) {
+static HWND winpidgin_message_window_init(void) {
 	HWND win_hwnd;
 	WNDCLASSEX wcx;
 	LPCTSTR wname;
 
-	wname = TEXT("WingaimMsgWinCls");
+	wname = TEXT("WinpidginMsgWinCls");
 
 	wcx.cbSize = sizeof(wcx);
 	wcx.style = 0;
 	wcx.lpfnWndProc = message_window_handler;
 	wcx.cbClsExtra = 0;
 	wcx.cbWndExtra = 0;
-	wcx.hInstance = gtkwgaim_hinstance();
+	wcx.hInstance = winpidgin_hinstance();
 	wcx.hIcon = NULL;
 	wcx.hCursor = NULL;
 	wcx.hbrBackground = NULL;
@@ -229,9 +228,9 @@ static HWND wgaim_message_window_init(void) {
 	RegisterClassEx(&wcx);
 
 	/* Create the window */
-	if(!(win_hwnd = CreateWindow(wname, TEXT("WingaimMsgWin"), 0, 0, 0, 0, 0,
-			NULL, NULL, gtkwgaim_hinstance(), 0))) {
-		gaim_debug_error("gtkwgaim",
+	if(!(win_hwnd = CreateWindow(wname, TEXT("WinpidginMsgWin"), 0, 0, 0, 0, 0,
+			NULL, NULL, winpidgin_hinstance(), 0))) {
+		gaim_debug_error("winpidgin",
 			"Unable to create message window.\n");
 		return NULL;
 	}
@@ -241,12 +240,12 @@ static HWND wgaim_message_window_init(void) {
 
 static gboolean stop_flashing(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
 	GtkWindow *window = data;
-	gtkwgaim_window_flash(window, FALSE);
+	winpidgin_window_flash(window, FALSE);
 	return FALSE;
 }
 
 void
-gtkwgaim_window_flash(GtkWindow *window, gboolean flash) {
+winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	GdkWindow * gdkwin;
 
 	g_return_if_fail(window != NULL);
@@ -278,7 +277,7 @@ gtkwgaim_window_flash(GtkWindow *window, gboolean flash) {
 }
 
 void
-gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
+winpidgin_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 	PidginWindow *win;
 	GtkWindow *window;
 
@@ -287,99 +286,99 @@ gtkwgaim_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 		return;
 
 	if(conv == NULL) {
-		gaim_debug_info("gtkwgaim", "No conversation found to blink.\n");
+		gaim_debug_info("winpidgin", "No conversation found to blink.\n");
 		return;
 	}
 
 	win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	if(win == NULL) {
-		gaim_debug_info("gtkwgaim", "No conversation windows found to blink.\n");
+		gaim_debug_info("winpidgin", "No conversation windows found to blink.\n");
 		return;
 	}
 	window = GTK_WINDOW(win->window);
 
-	gtkwgaim_window_flash(window, TRUE);
+	winpidgin_window_flash(window, TRUE);
 	/* Stop flashing when window receives focus */
 	g_signal_connect(G_OBJECT(window), "focus-in-event",
 					 G_CALLBACK(stop_flashing), window);
 }
 
 static gboolean
-gtkwgaim_conv_im_blink(GaimAccount *account, const char *who, char **message,
+winpidgin_conv_im_blink(GaimAccount *account, const char *who, char **message,
 		GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	if (gaim_prefs_get_bool("/gaim/gtk/win32/blink_im"))
-		gtkwgaim_conv_blink(conv, flags);
+		winpidgin_conv_blink(conv, flags);
 	return FALSE;
 }
 
-void gtkwgaim_init(HINSTANCE hint) {
+void winpidgin_init(HINSTANCE hint) {
 
-	gaim_debug_info("gtkwgaim", "gtkwgaim_init start\n");
+	gaim_debug_info("winpidgin", "winpidgin_init start\n");
 
-	gaimexe_hInstance = hint;
+	exe_hInstance = hint;
 
 	/* IdleTracker Initialization */
-	if(!wgaim_set_idlehooks())
-		gaim_debug_error("gtkwgaim", "Failed to initialize idle tracker\n");
+	if(!winpidgin_set_idlehooks())
+		gaim_debug_error("winpidgin", "Failed to initialize idle tracker\n");
 
 	wpidginspell_init();
-	gaim_debug_info("gtkwgaim", "GTK+ :%u.%u.%u\n",
+	gaim_debug_info("winpidgin", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
-	messagewin_hwnd = wgaim_message_window_init();
+	messagewin_hwnd = winpidgin_message_window_init();
 
 	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wgaim_find_and_loadproc("user32.dll", "FlashWindowEx");
 
-	gaim_debug_info("gtkwgaim", "gtkwgaim_init end\n");
+	gaim_debug_info("winpidgin", "winpidgin_init end\n");
 }
 
-void gtkwgaim_post_init(void) {
+void winpidgin_post_init(void) {
 
 	gaim_prefs_add_none("/gaim/gtk/win32");
 	gaim_prefs_add_bool("/gaim/gtk/win32/blink_im", TRUE);
 
 	gaim_signal_connect(pidgin_conversations_get_handle(),
-		"displaying-im-msg", &gtkwin32_handle, GAIM_CALLBACK(gtkwgaim_conv_im_blink),
+		"displaying-im-msg", &gtkwin32_handle, GAIM_CALLBACK(winpidgin_conv_im_blink),
 		NULL);
 
 }
 
 /* Windows Cleanup */
 
-void gtkwgaim_cleanup(void) {
-	gaim_debug_info("gtkwgaim", "gtkwgaim_cleanup\n");
+void winpidgin_cleanup(void) {
+	gaim_debug_info("winpidgin", "winpidgin_cleanup\n");
 
 	if(messagewin_hwnd)
 		DestroyWindow(messagewin_hwnd);
 
 	/* Idle tracker cleanup */
-	wgaim_remove_idlehooks();
+	winpidgin_remove_idlehooks();
 
 }
 
 /* DLL initializer */
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
-	gtkgaimdll_hInstance = hinstDLL;
+	dll_hInstance = hinstDLL;
 	return TRUE;
 }
 
-typedef HMONITOR WINAPI gaim_MonitorFromWindow(HWND, DWORD);
-typedef BOOL WINAPI gaim_GetMonitorInfo(HMONITOR, LPMONITORINFO);
+typedef HMONITOR WINAPI _MonitorFromWindow(HWND, DWORD);
+typedef BOOL WINAPI _GetMonitorInfo(HMONITOR, LPMONITORINFO);
 
 static gboolean
 get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
-	static gaim_MonitorFromWindow *the_MonitorFromWindow;
-	static gaim_GetMonitorInfo *the_GetMonitorInfo;
+	static _MonitorFromWindow *the_MonitorFromWindow;
+	static _GetMonitorInfo *the_GetMonitorInfo;
 	static gboolean initialized = FALSE;
 
 	HMONITOR monitor;
 	MONITORINFO info;
 
 	if(!initialized) {
-		the_MonitorFromWindow = (gaim_MonitorFromWindow*)
+		the_MonitorFromWindow = (_MonitorFromWindow*)
 			wgaim_find_and_loadproc("user32", "MonitorFromWindow");
-		the_GetMonitorInfo = (gaim_GetMonitorInfo*)
+		the_GetMonitorInfo = (_GetMonitorInfo*)
 			wgaim_find_and_loadproc("user32", "GetMonitorInfoA");
 		initialized = TRUE;
 	}
@@ -400,7 +399,7 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 	return TRUE;
 }
 
-void gtkwgaim_ensure_onscreen(GtkWidget *win) {
+void winpidgin_ensure_onscreen(GtkWidget *win) {
 	RECT windowRect, workingAreaRect, intersectionRect;
 	HWND hwnd = GDK_WINDOW_HWND(win->window);
 

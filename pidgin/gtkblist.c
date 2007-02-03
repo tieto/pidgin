@@ -24,7 +24,7 @@
  *
  */
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "account.h"
 #include "connection.h"
@@ -4331,7 +4331,7 @@ static void pidgin_blist_show(GaimBuddyList *list)
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sep, FALSE, FALSE, 0);
 
-	gtkblist->scrollbook = gtk_gaim_scroll_book_new();
+	gtkblist->scrollbook = pidgin_scroll_book_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 
 	/* Create an empty vbox used for showing connection errors */
@@ -4339,7 +4339,7 @@ static void pidgin_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
 
 	/* Add the statusbox */
-	gtkblist->statusbox = gtk_gaim_status_box_new();
+	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
 	gtk_widget_set_name(gtkblist->statusbox, "pidginblist_statusbox");
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->statusbox), 3);

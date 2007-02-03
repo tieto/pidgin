@@ -1,5 +1,5 @@
 /**
- * @file gtkwhiteboard.h The GtkGaimWhiteboard frontend object
+ * @file gtkwhiteboard.h The PidginWhiteboard frontend object
  *
  * gaim
  *
@@ -25,7 +25,7 @@
 #ifndef _PIDGINWHITEBOARD_H_
 #define _PIDGINWHITEBOARD_H_
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "whiteboard.h"
 

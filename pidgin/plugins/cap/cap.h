@@ -23,7 +23,7 @@
 #define _CAP_H_
 
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "conversation.h"
 

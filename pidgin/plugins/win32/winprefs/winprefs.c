@@ -234,11 +234,11 @@ winprefs_set_blist_ontop(const char *pref, GaimPrefType type,
 }
 
 static gboolean
-gtkwgaim_conv_chat_blink(GaimAccount *account, const char *who, char **message,
+winpidgin_conv_chat_blink(GaimAccount *account, const char *who, char **message,
 		GaimConversation *conv, GaimMessageFlags flags, void *data)
 {
 	if(gaim_prefs_get_bool(PREF_CHAT_BLINK))
-		gtkwgaim_conv_blink(conv, flags);
+		winpidgin_conv_blink(conv, flags);
 
 	return FALSE;
 }
@@ -263,7 +263,7 @@ static gboolean plugin_load(GaimPlugin *plugin) {
 		plugin, GAIM_CALLBACK(blist_create_cb), NULL);
 
 	gaim_signal_connect(pidgin_conversations_get_handle(),
-		"displaying-chat-msg", plugin, GAIM_CALLBACK(gtkwgaim_conv_chat_blink),
+		"displaying-chat-msg", plugin, GAIM_CALLBACK(winpidgin_conv_chat_blink),
 		NULL);
 
 	gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin,

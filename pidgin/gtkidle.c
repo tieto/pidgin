@@ -97,7 +97,7 @@ pidgin_get_time_idle()
 # else
 #  ifdef _WIN32
 	/* Query Windows */
-	return (GetTickCount() - wgaim_get_lastactive()) / 1000;
+	return (GetTickCount() - winpidgin_get_lastactive()) / 1000;
 #  else
 	/* We're on X11 and not MacOS X with IOKit. */
 

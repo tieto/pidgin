@@ -21,7 +21,7 @@
 #include "internal.h"
 #include "gtkblist.h"
 #include "gtkexpander.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"
 
