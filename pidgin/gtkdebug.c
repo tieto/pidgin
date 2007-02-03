@@ -770,7 +770,7 @@ debug_window_new(void)
 		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
 		/* Pause */
-		image = gtk_image_new_from_stock(GAIM_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
+		image = gtk_image_new_from_stock(PIDGIN_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
 		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 		                                    NULL, _("Pause"), _("Pause"),

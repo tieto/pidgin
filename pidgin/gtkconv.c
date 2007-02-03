@@ -846,7 +846,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 			_("Invite Buddy Into Chat Room"),
 			GTK_WINDOW(gtkwin->window), 0,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			GAIM_STOCK_INVITE, GTK_RESPONSE_OK, NULL);
+			PIDGIN_STOCK_INVITE, GTK_RESPONSE_OK, NULL);
 
 		gtk_dialog_set_default_response(GTK_DIALOG(invite_dialog),
 		                                GTK_RESPONSE_OK);
@@ -1606,7 +1606,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	menu = gtk_menu_new();
 
 	if (!is_me) {
-		button = pidgin_new_item_from_stock(menu, _("IM"), GAIM_STOCK_IM,
+		button = pidgin_new_item_from_stock(menu, _("IM"), PIDGIN_STOCK_IM,
 					G_CALLBACK(menu_chat_im_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1618,7 +1618,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 		if (prpl_info && prpl_info->send_file)
 		{
 			button = pidgin_new_item_from_stock(menu, _("Send File"),
-				GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
+				PIDGIN_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
 				PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 			if (gc == NULL || prpl_info == NULL ||
@@ -1632,10 +1632,10 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 
 
 		if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
-			button = pidgin_new_item_from_stock(menu, _("Un-Ignore"), GAIM_STOCK_IGNORE,
+			button = pidgin_new_item_from_stock(menu, _("Un-Ignore"), PIDGIN_STOCK_IGNORE,
 							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 		else
-			button = pidgin_new_item_from_stock(menu, _("Ignore"), GAIM_STOCK_IGNORE,
+			button = pidgin_new_item_from_stock(menu, _("Ignore"), PIDGIN_STOCK_IGNORE,
 							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1645,7 +1645,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	}
 
 	if (prpl_info && (prpl_info->get_info || prpl_info->get_cb_info)) {
-		button = pidgin_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
+		button = pidgin_new_item_from_stock(menu, _("Info"), PIDGIN_STOCK_INFO,
 						G_CALLBACK(menu_chat_info_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1655,7 +1655,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	}
 
 	if (prpl_info && prpl_info->get_cb_away) {
-		button = pidgin_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
+		button = pidgin_new_item_from_stock(menu, _("Get Away Message"), PIDGIN_STOCK_AWAY,
 					G_CALLBACK(menu_chat_get_away_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -2725,36 +2725,36 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>", NULL },
 
 	{ N_("/Conversation/New Instant _Message..."), "<CTL>M", menu_new_conv_cb,
-			0, "<StockItem>", GAIM_STOCK_IM },
+			0, "<StockItem>", PIDGIN_STOCK_IM },
 
 	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/_Find..."), NULL, menu_find_cb, 0,
 			"<StockItem>", GTK_STOCK_FIND },
-	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
+	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<StockItem>", PIDGIN_STOCK_LOG },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 			"<StockItem>", GTK_STOCK_SAVE_AS },
 	{ N_("/Conversation/Clea_r Scrollback"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
-	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
+	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_FILE_TRANSFER },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
-			0, "<StockItem>", GAIM_STOCK_POUNCE },
+			0, "<StockItem>", PIDGIN_STOCK_POUNCE },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
-			"<StockItem>", GAIM_STOCK_INFO },
+			"<StockItem>", PIDGIN_STOCK_INFO },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
-			"<StockItem>", GAIM_STOCK_INVITE },
+			"<StockItem>", PIDGIN_STOCK_INVITE },
 	{ N_("/Conversation/M_ore"), NULL, NULL, 0, "<Branch>", NULL },
 
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Al_ias..."), NULL, menu_alias_cb, 0,
-			"<StockItem>", GAIM_STOCK_EDIT },
+			"<StockItem>", PIDGIN_STOCK_EDIT },
 	{ N_("/Conversation/_Block..."), NULL, menu_block_cb, 0,
-			"<StockItem>", GAIM_STOCK_BLOCK },
+			"<StockItem>", PIDGIN_STOCK_BLOCK },
 	{ N_("/Conversation/_Unblock..."), NULL, menu_unblock_cb, 0,
-			"<StockItem>", GAIM_STOCK_UNBLOCK },
+			"<StockItem>", PIDGIN_STOCK_UNBLOCK },
 	{ N_("/Conversation/_Add..."), NULL, menu_add_remove_cb, 0,
 			"<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Conversation/_Remove..."), NULL, menu_add_remove_cb, 0,
@@ -2763,9 +2763,9 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
-			"<StockItem>", GAIM_STOCK_LINK },
+			"<StockItem>", PIDGIN_STOCK_LINK },
 	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
-			"<StockItem>", GAIM_STOCK_IMAGE },
+			"<StockItem>", PIDGIN_STOCK_IMAGE },
 
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
 
@@ -3094,10 +3094,10 @@ update_typing_icon(PidginConversation *gtkconv)
 		return;
 
 	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		stock_id = GAIM_STOCK_TYPING;
+		stock_id = PIDGIN_STOCK_TYPING;
 		tooltip = _("User is typing...");
 	} else {
-		stock_id = GAIM_STOCK_TYPED;
+		stock_id = PIDGIN_STOCK_TYPED;
 		tooltip = _("User has typed something and stopped");
 	}
 
@@ -3988,7 +3988,7 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	g_return_if_fail(menu != NULL);
 	g_return_if_fail(gtkconv != NULL);
 
-	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), GAIM_STOCK_SEND,
+	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), PIDGIN_STOCK_SEND,
 										G_CALLBACK(send_menu_cb), gtkconv,
 										0, 0, NULL);
 	if (gtk_text_buffer_get_char_count(imhtml->text_buffer) == 0)
@@ -7025,7 +7025,7 @@ build_warn_close_dialog(PidginWindow *gtkwin)
 							_("Confirm close"),
 							GTK_WINDOW(gtkwin->window), GTK_DIALOG_MODAL,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-							GAIM_STOCK_CLOSE_TABS, GTK_RESPONSE_OK, NULL);
+							PIDGIN_STOCK_CLOSE_TABS, GTK_RESPONSE_OK, NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(warn_close_dialog),
 	                                GTK_RESPONSE_OK);

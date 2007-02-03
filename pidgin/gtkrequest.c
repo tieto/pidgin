@@ -274,7 +274,7 @@ text_to_stock(const char *text)
 	STOCK_ITEMIZE(_("Add"),     GTK_STOCK_ADD);
 	STOCK_ITEMIZE(_("Remove"),  GTK_STOCK_REMOVE);
 	STOCK_ITEMIZE(_("Save"),    GTK_STOCK_SAVE);
-	STOCK_ITEMIZE(_("Alias"),   GAIM_STOCK_ALIAS);
+	STOCK_ITEMIZE(_("Alias"),   PIDGIN_STOCK_ALIAS);
 
 	return text;
 }

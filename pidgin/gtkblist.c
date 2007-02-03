@@ -703,7 +703,7 @@ pidgin_blist_joinchat_show(void)
 	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"),
 		NULL, GTK_DIALOG_NO_SEPARATOR,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GAIM_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
+		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
@@ -1007,7 +1007,7 @@ void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node)
 	permitted = gaim_privacy_check(account, gaim_buddy_get_name(buddy));
 
 	pidgin_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
-						GAIM_STOCK_BLOCK, G_CALLBACK(toggle_privacy),
+						PIDGIN_STOCK_BLOCK, G_CALLBACK(toggle_privacy),
 						node, 0 ,0, NULL);
 }
 
@@ -1057,31 +1057,31 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	}
 
 	if (prpl_info && prpl_info->get_info) {
-		pidgin_new_item_from_stock(menu, _("Get _Info"), GAIM_STOCK_INFO,
+		pidgin_new_item_from_stock(menu, _("Get _Info"), PIDGIN_STOCK_INFO,
 				G_CALLBACK(gtk_blist_menu_info_cb), buddy, 0, 0, NULL);
 	}
-	pidgin_new_item_from_stock(menu, _("I_M"), GAIM_STOCK_IM,
+	pidgin_new_item_from_stock(menu, _("I_M"), PIDGIN_STOCK_IM,
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File"),
-									 GAIM_STOCK_FILE_TRANSFER,
+									 PIDGIN_STOCK_FILE_TRANSFER,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
 	}
 
-	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), GAIM_STOCK_POUNCE,
+	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), PIDGIN_STOCK_POUNCE,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
 	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
-		pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+		pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
 				G_CALLBACK(gtk_blist_menu_showlog_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub) {
-		pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+		pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
@@ -1094,7 +1094,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	if (((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
 		pidgin_separator(menu);
 
-		pidgin_new_item_from_stock(menu, _("Alias..."), GAIM_STOCK_ALIAS,
+		pidgin_new_item_from_stock(menu, _("Alias..."), PIDGIN_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb),
 				contact, 0, 0, NULL);
 		pidgin_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
@@ -1103,7 +1103,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	} else if (!sub || contact_expanded) {
 		pidgin_separator(menu);
 
-		pidgin_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
 		pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				G_CALLBACK(pidgin_blist_remove_cb), buddy,
@@ -1177,11 +1177,11 @@ create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 	autojoin = (gaim_blist_node_get_bool(node, "gtk-autojoin") ||
 			(gaim_blist_node_get_string(node, "gtk-autojoin") != NULL));
 
-	pidgin_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
+	pidgin_new_item_from_stock(menu, _("_Join"), PIDGIN_STOCK_CHAT,
 			G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
 	pidgin_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
-	pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+	pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 	pidgin_append_blist_node_proto_menu(menu, c->account->gc, node);
@@ -1189,7 +1189,7 @@ create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 
 	pidgin_separator(menu);
 
-	pidgin_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+	pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
@@ -1204,13 +1204,13 @@ create_contact_menu (GaimBlistNode *node)
 
 	menu = gtk_menu_new();
 
-	pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+	pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
 				 G_CALLBACK(gtk_blist_menu_showlog_cb),
 				 node, 0, 0, NULL);
 
 	pidgin_separator(menu);
 
-	pidgin_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+	pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
@@ -2716,10 +2716,10 @@ static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgindialogs_im, 0, "<StockItem>", GAIM_STOCK_IM },
-	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<StockItem>", GAIM_STOCK_CHAT },
-	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgindialogs_info, 0, "<StockItem>", GAIM_STOCK_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgindialogs_log, 0, "<StockItem>", GAIM_STOCK_LOG },
+	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgindialogs_im, 0, "<StockItem>", PIDGIN_STOCK_IM },
+	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<StockItem>", PIDGIN_STOCK_CHAT },
+	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgindialogs_info, 0, "<StockItem>", PIDGIN_STOCK_INFO },
+	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgindialogs_log, 0, "<StockItem>", PIDGIN_STOCK_LOG },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show _Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
@@ -2735,26 +2735,26 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Accounts menu */
 	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", pidgin_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
+	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", pidgin_accounts_window_show, 0, "<StockItem>", PIDGIN_STOCK_ACCOUNTS },
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<StockItem>", GAIM_STOCK_POUNCE },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", GAIM_STOCK_PLUGIN },
+	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<StockItem>", PIDGIN_STOCK_POUNCE },
+	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_DIALOG_ERROR },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/_File Transfers"), "<CTL>T", pidginxfer_dialog_show, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
+	{ N_("/Tools/_File Transfers"), "<CTL>T", pidginxfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
-	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
+	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", PIDGIN_STOCK_LOG },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
-	{ N_("/Help/_About"), NULL, pidgindialogs_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
+	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", PIDGIN_STOCK_DEBUG },
+	{ N_("/Help/_About"), NULL, pidgindialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
 };
 
 /*********************************************************
@@ -3553,7 +3553,7 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		if(tooltip_text->len > 0) {
 			/* get rid of the last newline */
 			g_string_truncate(tooltip_text, tooltip_text->len -1);
-			img = gtk_image_new_from_stock(GAIM_STOCK_PENDING, GTK_ICON_SIZE_MENU);
+			img = gtk_image_new_from_stock(PIDGIN_STOCK_PENDING, GTK_ICON_SIZE_MENU);
 
 			gtkblist->menutrayicon = gtk_event_box_new();
 			gtk_container_add(GTK_CONTAINER(gtkblist->menutrayicon), img);

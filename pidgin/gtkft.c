@@ -258,7 +258,7 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 		GdkPixbuf *pixbuf = NULL;
 
 		pixbuf = gtk_widget_render_icon(xfer_dialog->window,
-										GAIM_STOCK_FILE_DONE,
+										PIDGIN_STOCK_FILE_DONE,
 										GTK_ICON_SIZE_MENU, NULL);
 
 		gtk_list_store_set(GTK_LIST_STORE(xfer_dialog->model), &data->iter,
@@ -956,8 +956,8 @@ pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer)
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									(type == GAIM_XFER_RECEIVE
-									 ? GAIM_STOCK_DOWNLOAD
-									 : GAIM_STOCK_UPLOAD),
+									 ? PIDGIN_STOCK_DOWNLOAD
+									 : PIDGIN_STOCK_UPLOAD),
 									GTK_ICON_SIZE_MENU, NULL);
 
 	gtk_list_store_append(dialog->model, &data->iter);
@@ -1049,7 +1049,7 @@ pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 	update_title_progress(dialog);
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
-									GAIM_STOCK_FILE_CANCELED,
+									PIDGIN_STOCK_FILE_CANCELED,
 									GTK_ICON_SIZE_MENU, NULL);
 
 	if (gaim_xfer_is_canceled(xfer))
@@ -1110,7 +1110,7 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 		GdkPixbuf *pixbuf;
 
 		pixbuf = gtk_widget_render_icon(dialog->window,
-										GAIM_STOCK_FILE_DONE,
+										PIDGIN_STOCK_FILE_DONE,
 										GTK_ICON_SIZE_MENU, NULL);
 
 		gtk_list_store_set(GTK_LIST_STORE(xfer_dialog->model), &data->iter,

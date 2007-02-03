@@ -328,7 +328,7 @@ pidgin_get_mail_dialog()
 					 _("Open All Messages"), GTK_RESPONSE_ACCEPT);
 
 		button = gtk_dialog_add_button(GTK_DIALOG(dialog),
-						 GAIM_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
+						 PIDGIN_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
 
 		/* Setup the dialog */
 		gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BOX_SPACE);
@@ -795,16 +795,16 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 				button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 				break;
 			case GAIM_NOTIFY_BUTTON_INFO:
-				button = gtk_button_new_from_stock(GAIM_STOCK_INFO);
+				button = gtk_button_new_from_stock(PIDGIN_STOCK_INFO);
 				break;
 			case GAIM_NOTIFY_BUTTON_IM:
-				button = gtk_button_new_from_stock(GAIM_STOCK_IM);
+				button = gtk_button_new_from_stock(PIDGIN_STOCK_IM);
 				break;
 			case GAIM_NOTIFY_BUTTON_JOIN:
-				button = gtk_button_new_from_stock(GAIM_STOCK_CHAT);
+				button = gtk_button_new_from_stock(PIDGIN_STOCK_CHAT);
 				break;
 			case GAIM_NOTIFY_BUTTON_INVITE:
-				button = gtk_button_new_from_stock(GAIM_STOCK_INVITE);
+				button = gtk_button_new_from_stock(PIDGIN_STOCK_INVITE);
 				break;
 			default:
 				gaim_debug_warning("gtknotify", "Incorrect button type: %d\n", b->type);

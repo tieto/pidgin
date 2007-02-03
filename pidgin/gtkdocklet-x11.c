@@ -93,22 +93,22 @@ docklet_x11_update_icon(DockletStatus icon)
 
 	switch (icon) {
 		case DOCKLET_STATUS_OFFLINE:
-			icon_name = GAIM_STOCK_ICON_OFFLINE;
+			icon_name = PIDGIN_STOCK_ICON_OFFLINE;
 			break;
 		case DOCKLET_STATUS_CONNECTING:
-			icon_name = GAIM_STOCK_ICON_CONNECT;
+			icon_name = PIDGIN_STOCK_ICON_CONNECT;
 			break;
 		case DOCKLET_STATUS_ONLINE:
-			icon_name = GAIM_STOCK_ICON_ONLINE;
+			icon_name = PIDGIN_STOCK_ICON_ONLINE;
 			break;
 		case DOCKLET_STATUS_ONLINE_PENDING:
-			icon_name = GAIM_STOCK_ICON_ONLINE_MSG;
+			icon_name = PIDGIN_STOCK_ICON_ONLINE_MSG;
 			break;
 		case DOCKLET_STATUS_AWAY:
-			icon_name = GAIM_STOCK_ICON_AWAY;
+			icon_name = PIDGIN_STOCK_ICON_AWAY;
 			break;
 		case DOCKLET_STATUS_AWAY_PENDING:
-			icon_name = GAIM_STOCK_ICON_AWAY_MSG;
+			icon_name = PIDGIN_STOCK_ICON_AWAY_MSG;
 			break;
 	}
 

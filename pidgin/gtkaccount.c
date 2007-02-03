@@ -2301,7 +2301,7 @@ pidgin_accounts_window_show(void)
 					 G_CALLBACK(add_account_cb), dialog);
 
 	/* Modify button */
-	button = gtk_button_new_from_stock(GAIM_STOCK_MODIFY);
+	button = gtk_button_new_from_stock(PIDGIN_STOCK_MODIFY);
 	dialog->modify_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);

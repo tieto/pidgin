@@ -303,7 +303,7 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 	info.room = room;
 
 	menu = gtk_menu_new();
-	pidgin_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
+	pidgin_new_item_from_stock(menu, _("_Join"), PIDGIN_STOCK_CHAT,
 		                         G_CALLBACK(do_join_cb), &info, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Add"), GTK_STOCK_ADD,
 		                         G_CALLBACK(do_add_room_cb), &info, 0, 0, NULL);
@@ -460,7 +460,7 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 	gtk_widget_show(dialog->add_button);
 
 	/* join button */
-	dialog->join_button = pidgin_pixbuf_button_from_stock(_("_Join"), GAIM_STOCK_CHAT,
+	dialog->join_button = pidgin_pixbuf_button_from_stock(_("_Join"), PIDGIN_STOCK_CHAT,
 	                                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->join_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->join_button), "clicked",
